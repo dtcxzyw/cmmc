@@ -3,6 +3,7 @@ DBGFLAGS = -fsanitize=address -Og --fno-omit-frame-pointer -ggdb
 CFLAGS = -g $(OPTFLAGS)
 LDFLAGS = $(OPTFLAGS)
 
+BIN := bin
 DIR_BUILD := ./build
 
 CSRCS := $(wildcard cmmc/**/*.c)
