@@ -1,5 +1,5 @@
 OPTFLAGS = -O3
-DBGFLAGS = -fsanitize=address -O1 -fno-omit-frame-pointer -ggdb
+DBGFLAGS = -fsanitize=address -Og -ggdb
 CFLAGS = -g $(OPTFLAGS)
 LDFLAGS = $(OPTFLAGS)
 
