@@ -13,8 +13,10 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.h"
 
-struct BasicBlock {
-    LIST_NODE(Instruction) instructions;
+struct SourceLocation {
+    const char* file;
+    const char* func;
+    int line;
+    int column;
 };

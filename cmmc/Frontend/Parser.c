@@ -12,9 +12,4 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/Instruction.h"
-
-struct BasicBlock {
-    LIST_NODE(Instruction) instructions;
-};
+#include "cmmc/Frontend/ParserImpl.h"

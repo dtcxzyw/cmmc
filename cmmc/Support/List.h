@@ -13,8 +13,21 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.h"
 
-struct BasicBlock {
-    LIST_NODE(Instruction) instructions;
+struct ListNode {
+    struct ListNode* next;
 };
+
+#define LIST_NODE(TYPE) struct ListNode##TYPE*
+
+#define LIST_NODE_DECL(TYPE, STORAGE) \
+    struct ListNode##TYPE {           \
+        STORAGE value;                \
+        struct ListNode node;         \
+    };
+
+#define LIST_NEXT(TYPE, NODE) ((TYPE*)((NODE)->node.next))
+
+#define LIST_ADD(NODE)
+
+#define LIST_GET(NODE) (NODE)->value
