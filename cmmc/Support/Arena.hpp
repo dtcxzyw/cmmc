@@ -14,16 +14,27 @@
 
 #pragma once
 #include "cmmc/Config.hpp"
+#include <cstddef>
+#include <cstdint>
 #include <list>
+#include <set>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
 class Arena final {
+    static constexpr size_t blockSize = 4096;
+    std::vector<void*> mBlocks;
+    std::set<void*> mLargeBlocks;
+
+    std::uintptr_t mBlockPtr, mBlockEndPtr;
+
 public:
     Arena();
     Arena(const Arena&) = delete;
     Arena& operator=(const Arena&) = delete;
     void* allocate(size_t size, size_t alignment);
+    void deallocate(void* p, size_t size);
     ~Arena();
 
     enum class Source { AST, IR, MC, Max };
@@ -41,7 +52,9 @@ public:
     [[nodiscard]] constexpr T* allocate(size_t n) {
         return static_cast<T*>(mArena->allocate(n * sizeof(T), alignof(T)));
     }
-    constexpr void deallocate(T* p, size_t n) {}
+    void deallocate(T* p, size_t n) {
+        mArena->deallocate(p, n);
+    }
     bool operator==(const ArenaAllocator<T>& rhs) const noexcept {
         return mArena == rhs.mArena;
     }

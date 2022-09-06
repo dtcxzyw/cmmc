@@ -13,6 +13,7 @@
 */
 
 #include "cmmc/Support/Options.hpp"
+#include <cstdint>
 #include <cstdlib>
 #include <getopt.h>
 #include <iostream>
@@ -73,7 +74,8 @@ Flag& Flag::withDefault(bool flag) {
     return *this;
 }
 
-void Flag::handle(const char* str) {
+void Flag::handle(const char*) {
+    // std::cout << "set flag " << getShortName() << std::endl;
     mFlag = true;
 }
 
@@ -109,15 +111,21 @@ int parseCommands(int argc, char** argv) {
     }
 
     options.push_back(option{ 0, 0, nullptr, 0 });
+    // std::cout << shortopts << std::endl;
 
     while(true) {
         int idx;
         const auto c = getopt_long(argc, argv, shortopts.c_str(), options.data(), &idx);
+
         if(c == -1)
             break;
-        if(c == '?')
+        if(c == 0 || c == '?')
             continue;  // TODO: fatal
-        storage.options[idx]->handle(optarg);
+
+        for(auto opt : storage.options) {
+            if(opt->getShortName() == c)
+                opt->handle(optarg);
+        }
     }
 
     return optind;

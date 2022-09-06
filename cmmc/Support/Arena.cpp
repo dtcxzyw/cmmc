@@ -13,14 +13,63 @@
 */
 
 #include "cmmc/Support/Arena.hpp"
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
 
 CMMC_NAMESPACE_BEGIN
 
-Arena::Arena() {}
-Arena::~Arena() {}
+Arena::Arena() : mBlockPtr{ 0 }, mBlockEndPtr{ 0 } {}
+Arena::~Arena() {
+    for(auto ptr : mBlocks)
+        free(ptr);
+    for(auto ptr : mLargeBlocks)
+        free(ptr);
+}
+
+static uintptr_t alloc(uintptr_t ptr, uintptr_t size, uintptr_t alignment) {
+    const auto aligned = (ptr + alignment - 1) / alignment * alignment;
+    return aligned + size;
+}
+
+void* Arena::allocate(size_t size, size_t alignment) {
+    void* ptr = nullptr;
+    if(size >= blockSize) {
+        ptr = std::aligned_alloc(alignment, size);
+        mLargeBlocks.insert(ptr);
+    } else if(auto allocated = alloc(mBlockPtr, size, alignment); allocated >= mBlockPtr) {
+        ptr = std::aligned_alloc(alignment, blockSize);
+        mBlocks.push_back(ptr);
+
+        // keep larger block
+        if(mBlockEndPtr - mBlockPtr < blockSize - size) {
+            mBlockPtr = reinterpret_cast<uintptr_t>(ptr) + size;
+            mBlockEndPtr = reinterpret_cast<uintptr_t>(ptr) + blockSize;
+        }
+    } else {
+        mBlockPtr = allocated;
+        ptr = reinterpret_cast<void*>(allocated);
+    }
+    return ptr;
+}
+void Arena::deallocate(void* p, size_t size) {
+    if(size >= blockSize) {
+        free(p);
+        mLargeBlocks.erase(p);
+    }
+}
+
+static Arena*& getArena(Arena::Source source) {
+    static std::vector<Arena*> arena{ static_cast<size_t>(Arena::Source::Max) };
+    return arena[static_cast<size_t>(source)];
+}
 
 Arena* Arena::get(Source source) {
-    return nullptr;
+    return getArena(source);
+}
+
+void Arena::setArena(Source source, Arena* arena) {
+    getArena(source) = arena;
 }
 
 CMMC_NAMESPACE_END

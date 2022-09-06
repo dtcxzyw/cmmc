@@ -42,6 +42,9 @@ public:
     virtual void printDefault(std::ostream& out) const = 0;
     virtual void handle(const char* str) = 0;
     option getOption() const;
+    char getShortName() const noexcept {
+        return mShortName;
+    }
     void printHelp();
 };
 

@@ -31,8 +31,8 @@ static Integer optimizationLevel;
 static String outputPath;
 
 CMMC_INIT_OPTIONS_BEGIN
+version.setName("version", 'v');
 emitAST.setName("emitAST", 'a');
-emitAST.setName("version", 'v');
 emitIR.setName("emitIR", 'i');
 emitTAC.setName("emitTAC", 't');
 optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("Optimiaztion Level");
@@ -45,21 +45,28 @@ static std::string getOutputPath(const std::string& defaultPath) {
 
 int runIRPipeline(Module& module, const std::string& base) {
     if(emitIR.get()) {
-        std::ofstream out{ getOutputPath(base + ".ir2") };
+        const auto path = getOutputPath(base + ".ir2");
+        std::cout << "emitIR >> " << path << std::endl;
+        std::ofstream out{ path };
         module.dump(out);
         return EXIT_SUCCESS;
     }
 
     if(emitTAC.get()) {
-        std::ofstream out{ getOutputPath(base + ".ir") };
+        const auto path = getOutputPath(base + ".ir");
+        std::cout << "emitTAC >> " << path << std::endl;
+        std::ofstream out{ path };
         dumpTAC(module, out);
         return EXIT_SUCCESS;
     }
 
+    const auto path = getOutputPath(base + ".s");
+    std::cout << "emitASM >> " << path << std::endl;
+
     // TODO: transform pipeline
 
     // TODO: emit asm
-    // std::ofstream out{ getOutputPath(base + ".s") };
+    // std::ofstream out{ path };
 
     return EXIT_SUCCESS;
 }
@@ -70,10 +77,16 @@ int main(int argc, char** argv) {
     if(version.get()) {
         std::cout << "CMCC " CMCC_VERSION << std::endl;
         std::cout << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(argc == start) {
+        std::cerr << "no input files" << std::endl;
+        return EXIT_FAILURE;
     }
 
     if(argc - start != 1) {
-        std::cerr << "Only one input file is accepted" << std::endl;
+        std::cerr << "only one input file is accepted" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -86,7 +99,9 @@ int main(int argc, char** argv) {
             driver.parse();
 
             if(emitAST.get()) {
-                std::ofstream out{ getOutputPath(base + ".ast") };
+                const auto path = getOutputPath(base + ".ast");
+                std::cout << "emitAST >> " << path << std::endl;
+                std::ofstream out{ path };
                 driver.dump(out);
                 return EXIT_SUCCESS;
             }
