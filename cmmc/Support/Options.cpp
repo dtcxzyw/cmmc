@@ -79,21 +79,21 @@ void Flag::handle(const char*) {
     mFlag = true;
 }
 
-String& String::withDefault(std::string value) {
+StringOpt& StringOpt::withDefault(std::string value) {
     mStr = std::move(value);
     return *this;
 }
 
-void String::handle(const char* str) {
+void StringOpt::handle(const char* str) {
     mStr = str;
 }
 
-Integer& Integer::withDefault(uint32_t value) {
+IntegerOpt& IntegerOpt::withDefault(uint32_t value) {
     mValue = value;
     return *this;
 }
 
-void Integer::handle(const char* str) {
+void IntegerOpt::handle(const char* str) {
     mValue = strtol(str, nullptr, 10);
 }
 
@@ -138,24 +138,19 @@ OptionBase::OptionBase() : mName{ "" }, mShortName{ 0 }, mType{ ArgType::Flag } 
 void Flag::printDefault(std::ostream& out) const {
     out << mFlag;
 }
-void String::printDefault(std::ostream& out) const {
+void StringOpt::printDefault(std::ostream& out) const {
     out << mStr;
 }
-void Integer::printDefault(std::ostream& out) const {
+void IntegerOpt::printDefault(std::ostream& out) const {
     out << mValue;
 }
 
 Flag::Flag() : mFlag{ false } {}
-String::String() : mStr{ "" } {
+StringOpt::StringOpt() : mStr{ "" } {
     requireArg();
 }
-Integer::Integer() : mValue{ 0 } {
+IntegerOpt::IntegerOpt() : mValue{ 0 } {
     requireArg();
 }
-
-OptionBase::~OptionBase() {}
-Flag::~Flag() {}
-String::~String() {}
-Integer::~Integer() {}
 
 CMMC_NAMESPACE_END

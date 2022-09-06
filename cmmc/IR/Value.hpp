@@ -13,5 +13,18 @@
 */
 
 #pragma once
+#include "cmmc/Config.hpp"
 
-class Value {};
+CMMC_NAMESPACE_BEGIN
+
+class Value {
+public:
+    Value() = default;
+    Value(const Value&) = delete;
+    Value(Value&&) = delete;
+    Value& operator=(const Value&) = delete;
+    Value& operator=(Value&&) = delete;
+    virtual ~Value();
+};
+
+CMMC_NAMESPACE_END

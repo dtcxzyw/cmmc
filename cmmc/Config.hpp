@@ -15,7 +15,7 @@
 #pragma once
 
 #define MAKE_VERSION(MAJOR, MINOR, PATCH) #MAJOR "." #MINOR "." #PATCH
-#define CMCC_VERSION MAKE_VERSION(0, 1, 0)
+#define CMMC_VERSION MAKE_VERSION(0, 1, 0)
 
 #define CMMC_NAMESPACE_BEGIN namespace cmmc {
 #define CMMC_NAMESPACE_END }

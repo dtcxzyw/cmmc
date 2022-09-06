@@ -16,8 +16,10 @@
 #include "cmmc/Config.hpp"
 #include <cstddef>
 #include <cstdint>
+#include <deque>
 #include <list>
 #include <set>
+#include <string>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -37,7 +39,7 @@ public:
     void deallocate(void* p, size_t size);
     ~Arena();
 
-    enum class Source { AST, IR, MC, Max };
+    enum class Source { AST, IR, MC, OPT, Max };
     static Arena* get(Source source);
     static void setArena(Source source, Arena* arena);
 };
@@ -48,6 +50,11 @@ class ArenaAllocator {
 
 public:
     ArenaAllocator(Arena::Source source) : mArena{ Arena::get(source) } {};
+    template <typename U>
+    friend class ArenaAllocator;
+
+    template <typename U>
+    ArenaAllocator(const ArenaAllocator<U>& rhs) : mArena{ rhs.mArena } {}
     using value_type = T;
     [[nodiscard]] constexpr T* allocate(size_t n) {
         return static_cast<T*>(mArena->allocate(n * sizeof(T), alignof(T)));
@@ -58,9 +65,27 @@ public:
     bool operator==(const ArenaAllocator<T>& rhs) const noexcept {
         return mArena == rhs.mArena;
     }
+    bool operator!=(const ArenaAllocator<T>& rhs) const noexcept {
+        return mArena != rhs.mArena;
+    }
 };
 
 template <typename T>
 using List = std::list<T, ArenaAllocator<T>>;
+
+template <typename T>
+using Vector = std::vector<T, ArenaAllocator<T>>;
+
+template <typename T>
+using Deque = std::deque<T, ArenaAllocator<T>>;
+
+template <typename T, typename... Args>
+T* make(Args&&... args) {
+    const auto arena = Arena::get(T::arenaSource);
+    auto ptr = arena->allocate(sizeof(T), alignof(T));
+    return new(ptr) T{ std::forward<Args>(args)... };
+}
+
+using String = std::basic_string<char, std::char_traits<char>, ArenaAllocator<char>>;
 
 CMMC_NAMESPACE_END

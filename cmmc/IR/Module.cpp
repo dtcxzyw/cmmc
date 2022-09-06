@@ -17,8 +17,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Module::Module() {}
-Module::~Module() {}
 void Module::dump(std::ostream& out) {}
 
 CMMC_NAMESPACE_END

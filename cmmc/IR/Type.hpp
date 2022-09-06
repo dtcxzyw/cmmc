@@ -28,7 +28,7 @@ class PointerType final : public Type {
     struct Type* pointee;
 };
 
-class IntegerType final : public Type {
+class IntegerOptType final : public Type {
     uint32_t bitWidth;
     bool isSigned;
 };

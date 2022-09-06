@@ -17,28 +17,48 @@
 #include "cmmc/IR/BasicBlock.hpp"
 #include "cmmc/IR/Type.hpp"
 #include "cmmc/IR/Value.hpp"
+#include "cmmc/Support/Arena.hpp"
+#include <cstdint>
+#include <utility>
 
 CMMC_NAMESPACE_BEGIN
 
-using SymbolID = uint64_t;
+struct Qualifier final {
+    // bool isConst;
+    // bool isVolatile;
+};
+
+struct TypeRef final {
+    String typeIdentifier;
+    enum class LookupSpace { Default /* Builtins & Aliases */, Struct, Enum } space;
+
+    // Type* anonymousType = nullptr; // Function Signature/ Anonymous Struct
+    Qualifier qualifier;
+};
 
 struct QualifiedType final {
     Type* type;
     bool isLeftValue;
-    bool isConst;
-    // bool isVolatile;
+    Qualifier qualifier;
 };
+
+struct NamedArg final {
+    TypeRef type;
+    String name;
+};
+
+using ArgList = Deque<NamedArg>;
 
 struct FunctionDeclaration final {
     SourceLocation loc;
-    SymbolID symbol;
-    QualifiedType retType;
-    List<QualifiedType> args;
+    String symbol;
+    TypeRef retType;
+    ArgList args;
     // bool isVarArg;
 };
 
 class Expr;
-using StatementBlock = List<Expr*>;
+using StatementBlock = Deque<Expr*>;
 
 struct FunctionDefinition {
     FunctionDeclaration decl;
@@ -60,7 +80,15 @@ class Expr {
     SourceLocation mLocation;
 
 public:
-    virtual Value* emit(FunctionTranslationContext& ctx) = 0;
+    static constexpr auto arenaSource = Arena::Source::AST;
+
+    Expr() = default;
+    Expr(const Expr&) = delete;
+    Expr(Expr&&) = delete;
+    Expr& operator=(const Expr&) = delete;
+    Expr& operator=(Expr&&) = delete;
+    virtual ~Expr() = default;
+    virtual Value* emit(FunctionTranslationContext& ctx) const = 0;
 };
 
 enum class OperatorID {
@@ -68,7 +96,8 @@ enum class OperatorID {
     Sub,
     Mul,
     Div,
-    Mod,
+    Rem,
+    Neg,
     LessThan,
     LessEqual,
     GreaterThan,
@@ -80,20 +109,114 @@ enum class OperatorID {
     LogicalAnd,
     BitwiseAnd,
     LogicalOr,
-    BitwiseOr
+    BitwiseOr,
+    Assign
 };
 
 class BinaryExpr final : public Expr {
     OperatorID mOp;
     Expr* mLhs;
     Expr* mRhs;
+
+public:
+    BinaryExpr(OperatorID op, Expr* lhs, Expr* rhs) noexcept : mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
+    static BinaryExpr* get(OperatorID op, Expr* lhs, Expr* rhs);
+    Value* emit(FunctionTranslationContext& ctx) const override;
 };
 
 class UnaryExpr final : public Expr {
     OperatorID mOp;
-    Expr* mLhs;
+    Expr* mValue;
 
 public:
+    UnaryExpr(OperatorID op, Expr* value) noexcept : mOp{ op }, mValue{ value } {}
+    static UnaryExpr* get(OperatorID op, Expr* value);
+    Value* emit(FunctionTranslationContext& ctx) const override;
 };
+
+class ConstantIntExpr final : public Expr {
+    uintmax_t mValue;
+    uint32_t mBitWidth;
+    bool mIsSigned;
+
+public:
+    ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
+        : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static ConstantIntExpr* get(uintmax_t value, uint32_t bitWidth, bool isSigned);
+};
+
+class ConstantFloatExpr final : public Expr {
+    double mValue;
+    bool mIsFloat;
+
+public:
+    ConstantFloatExpr(double value, bool isFloat) noexcept : mValue{ value }, mIsFloat{ isFloat } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+};
+
+class ConstantCharExpr final : public Expr {
+    char mValue;
+
+public:
+    explicit ConstantCharExpr(char value) noexcept : mValue{ value } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+};
+
+class ConstantStringExpr final : public Expr {
+    String mString;
+
+public:
+    explicit ConstantStringExpr(const String& str) : mString{ str } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+};
+
+using ExprPack = Deque<Expr*>;
+
+class FunctionCallExpr final : public Expr {
+    Expr* mCallee;
+    ExprPack mArgs;
+
+public:
+    FunctionCallExpr(Expr* callee, ExprPack args) : mCallee{ callee }, mArgs{ std::move(args) } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static FunctionCallExpr* get(Expr* callee, ExprPack args);
+};
+
+class ReturnExpr final : public Expr {
+    Expr* mReturnValue;
+
+public:
+    explicit ReturnExpr(Expr* returnValue) noexcept : mReturnValue{ returnValue } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static ReturnExpr* get(Expr* returnValue);
+};
+
+class IfElseExpr final : public Expr {
+    Expr* mPredicate;
+    Expr* mIfBlock;
+    Expr* mElseBlock;
+
+public:
+    IfElseExpr(Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
+        : mPredicate{ pred }, mIfBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static IfElseExpr* get(Expr* pred, Expr* ifPart, Expr* elsePart);
+};
+
+class IdentifierExpr final : public Expr {
+    String mIdentifier;
+
+public:
+    explicit IdentifierExpr(const String& str) : mIdentifier{ str } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static IdentifierExpr* get(const String& str);
+};
+
+template <typename T>
+void concatPack(Deque<T>& res, const T& lhs, const Deque<T>& rhs) {
+    res = rhs;
+    res.push_front(lhs);
+}
 
 CMMC_NAMESPACE_END

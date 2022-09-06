@@ -29,7 +29,7 @@ class OptionBase {
 
 public:
     OptionBase();
-    virtual ~OptionBase() = 0;
+    virtual ~OptionBase() = default;
     OptionBase(const OptionBase&) = delete;
     OptionBase& operator=(const OptionBase&) = delete;
     OptionBase(OptionBase&&) = delete;
@@ -53,7 +53,6 @@ class Flag final : public OptionBase {
 
 public:
     Flag();
-    ~Flag();
     Flag& withDefault(bool flag);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
@@ -62,13 +61,12 @@ public:
     }
 };
 
-class String final : public OptionBase {
+class StringOpt final : public OptionBase {
     std::string mStr;
 
 public:
-    String();
-    ~String();
-    String& withDefault(std::string value);
+    StringOpt();
+    StringOpt& withDefault(std::string value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
     const std::string& get() const noexcept {
@@ -76,13 +74,12 @@ public:
     }
 };
 
-class Integer final : public OptionBase {
+class IntegerOpt final : public OptionBase {
     uint32_t mValue = 0;
 
 public:
-    Integer();
-    ~Integer();
-    Integer& withDefault(uint32_t value);
+    IntegerOpt();
+    IntegerOpt& withDefault(uint32_t value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
     uint32_t get() const noexcept {

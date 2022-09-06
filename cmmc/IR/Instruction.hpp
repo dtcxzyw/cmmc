@@ -74,15 +74,13 @@ enum class InstructionID {
 class Instruction final : public Value {
     InstructionID instID;
 
-    union {
-        struct {
-            Instruction* op1;
-            Instruction* op2;
-            Instruction* op3;
-        };
-
-        List<Instruction*> ops;
+    struct {
+        Instruction* op1;
+        Instruction* op2;
+        Instruction* op3;
     };
+
+    List<Instruction*> ops;
 
     BasicBlock* target1;
     BasicBlock* target2;

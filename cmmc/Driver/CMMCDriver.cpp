@@ -28,8 +28,8 @@ static Flag emitAST;
 static Flag version;
 static Flag emitIR;
 static Flag emitTAC;
-static Integer optimizationLevel;
-static String outputPath;
+static IntegerOpt optimizationLevel;
+static StringOpt outputPath;
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v');
@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     int start = parseCommands(argc, argv);
 
     if(version.get()) {
-        std::cout << "CMCC " CMCC_VERSION << std::endl;
+        std::cout << "CMMC " CMMC_VERSION << std::endl;
         std::cout << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
         return EXIT_SUCCESS;
     }

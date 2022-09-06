@@ -13,8 +13,9 @@
 */
 
 #pragma once
+#include "ParserDecl.hpp"
 #include "cmmc/Config.hpp"
-#include "cmmc/Frontend/ParserDecl.hpp"
+#include "cmmc/Frontend/AST.hpp"
 #include <ostream>
 #include <string>
 
@@ -25,6 +26,7 @@ class Module;
 class Driver final {
     std::string mFile;
     yy::location mLocation;
+    bool mEnd;
 
 public:
     explicit Driver(const std::string& file);
@@ -35,6 +37,8 @@ public:
     void emit(Module& module);
     void dump(std::ostream& out);
 
+    void markEnd() noexcept;
+    void addFunctionDef(FunctionDeclaration decl, StatementBlock body);
     yy::location& location() noexcept;
 };
 

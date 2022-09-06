@@ -21,12 +21,11 @@
 CMMC_NAMESPACE_BEGIN
 
 class Module final {
-    Arena mArena;
     // List<Function*> mFuncs;
 
 public:
-    Module();
-    ~Module();
+    Module() = default;
+    ~Module() = default;
     Module(const Module&) = delete;
     Module(Module&&) = delete;
     Module& operator=(const Module&) = delete;

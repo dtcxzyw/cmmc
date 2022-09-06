@@ -69,7 +69,7 @@
 "=" return yy::parser::make_ASSIGN(loc);
 
 "." return yy::parser::make_DOT(loc);
-":" return yy::parser::make_SEMI(loc);
+";" return yy::parser::make_SEMI(loc);
 "," return yy::parser::make_COMMA(loc);
 "#" return yy::parser::make_SHARP(loc);
 
