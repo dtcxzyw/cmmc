@@ -34,5 +34,5 @@ public:
 
 CMMC_NAMESPACE_END
 
-#define YY_DECL yy::Parser::symbol_type yylex(cmmc::Driver& driver)
+#define YY_DECL yy::parser::symbol_type yylex(cmmc::Driver& driver)
 extern "C" YY_DECL;

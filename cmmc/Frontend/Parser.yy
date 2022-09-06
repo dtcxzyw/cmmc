@@ -13,15 +13,12 @@
 */
 
 %defines
-%define api.parser.class {Parser}
 %skeleton "lalr1.cc"
 %locations
 %define api.token.constructor
 %define api.value.type variant
 %define parse.assert
-%define api.token.raw
 %define parse.trace
-%define parse.lac full
 
 %code requires {
   #include <string>
@@ -143,6 +140,6 @@ Args: Exp COMMA Args
 | Exp
 ;
 %%
-void yy::Parser::error(const location_type& l, const std::string& m) {
+void yy::parser::error(const location_type& l, const std::string& m) {
   std::cerr << l << ": " << m << '\n';
 }

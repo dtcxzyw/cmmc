@@ -27,7 +27,7 @@ void Driver::parse() {
     mLocation.initialize(&mFile);
     // yy_flex_debug;
     yyin = fopen(mFile.c_str(), "r");
-    yy::Parser parser{ *this };
+    yy::parser parser{ *this };
     // parser.set_debug_level();
     // parser.set_debug_stream();
     parser.parse();
