@@ -1,0 +1,12 @@
+int gcd(int x, int y) {
+    if(y) {
+        return gcd(y, x % y);
+    }
+    else {
+        return x;
+    }
+}
+
+int main() {
+    return gcd(7,11);
+}

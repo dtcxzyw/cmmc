@@ -124,6 +124,7 @@ Exp: Exp ASSIGN Exp
 | Exp SUB Exp
 | Exp MUL Exp
 | Exp DIV Exp
+| Exp REM Exp
 | LP Exp RP
 | SUB Exp
 | LNOT Exp

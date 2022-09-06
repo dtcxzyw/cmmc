@@ -13,10 +13,12 @@
 */
 
 #include "cmmc/Frontend/Driver.hpp"
+#include "cmmc/Frontend/ParserDecl.hpp"
 #include "cmmc/Frontend/ParserImpl.hpp"
 #include "cmmc/Frontend/ScannerImpl.hpp"
 #include <cstdio>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 CMMC_NAMESPACE_BEGIN
@@ -25,11 +27,11 @@ Driver::Driver(const std::string& file) : mFile{ file } {}
 
 void Driver::parse() {
     mLocation.initialize(&mFile);
-    // yy_flex_debug;
+    // yy_flex_debug = 1;
     yyin = fopen(mFile.c_str(), "r");
     yy::parser parser{ *this };
-    // parser.set_debug_level();
-    // parser.set_debug_stream();
+    parser.set_debug_level(10);
+    parser.set_debug_stream(std::cerr);
     parser.parse();
     fclose(yyin);
 }

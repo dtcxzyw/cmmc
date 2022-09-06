@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <string_view>
 
 using namespace cmmc;
 
@@ -71,6 +72,12 @@ int runIRPipeline(Module& module, const std::string& base) {
     return EXIT_SUCCESS;
 }
 
+static bool endswith(const std::string& str, const std::string_view& ext) {
+    if(str.size() < ext.size())
+        return false;
+    return str.substr(str.size() - ext.size()) == ext;
+}
+
 int main(int argc, char** argv) {
     int start = parseCommands(argc, argv);
 
@@ -93,7 +100,9 @@ int main(int argc, char** argv) {
     try {
         std::string path = argv[start];
 
-        if(path.find_last_of(".spl") == path.size() - 4) {
+        using namespace std::string_view_literals;
+
+        if(endswith(path, ".spl"sv)) {
             const auto base = path.substr(0, path.size() - 4);
             Driver driver{ path };
             driver.parse();
@@ -110,14 +119,16 @@ int main(int argc, char** argv) {
             driver.emit(mod);
 
             return runIRPipeline(mod, base);
-        } else if(path.find_last_of(".ir") == path.size() - 4) {
+        } else if(endswith(path, ".ir"sv)) {
             Module mod;
             loadTAC(mod, path);
             const auto base = path.substr(0, path.size() - 3);
             return runIRPipeline(mod, base);
         }
 
-        return EXIT_SUCCESS;
+        std::cout << "Unrecognized input" << std::endl;
+
+        return EXIT_FAILURE;
     } catch(const std::exception& ex) {
         std::cerr << "Exception: " << ex.what() << std::endl;
         return EXIT_FAILURE;
