@@ -5,7 +5,7 @@ BIN := bin/splc
 DIR_BUILD := ./build
 .DEFAULT_GOAL := $(BIN)
 
-CXXFLAGS = -std=c++17 -g $(OPTFLAGS) -I$(DIR_BUILD) -I./ -Wall
+CXXFLAGS = -std=c++17 -g $(OPTFLAGS) -I$(DIR_BUILD) -I./ -Wall -Werror -MD
 LDFLAGS = $(OPTFLAGS) -lfl
 
 CSRCS := $(wildcard cmmc/**/*.cpp)
@@ -22,14 +22,15 @@ $(DIR_BUILD)/cmmc/Frontend/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD
 
 $(DIR_BUILD)/%.o: %.cpp $(DIR_BUILD)/cmmc/Frontend/ScannerImpl.hpp $(DIR_BUILD)/cmmc/Frontend/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(BIN): $(OBJS)
 	mkdir -p bin
-	$(CXX) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) -o $@ $^
 
 .PHONY: clean bear
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear: clean # make clangd happy
 	bear -o $(DIR_BUILD)/compile_commands.json make
+-include $(OBJS:.o=.d)

@@ -14,5 +14,11 @@
 
 #pragma once
 
+#define CMCC_MAJOR 0
+#define CMCC_MINOR 1
+#define CMCC_PATCH 0
+#define MAKE_VERSION(MAJOR, MINOR, PATCH) #MAJOR "." #MINOR "." #PATCH
+#define CMCC_VERSION MAKE_VERSION(CMCC_MAJOR, CMCC_MINOR, CMCC_PATCH)
+
 #define CMMC_NAMESPACE_BEGIN namespace cmmc {
 #define CMMC_NAMESPACE_END }

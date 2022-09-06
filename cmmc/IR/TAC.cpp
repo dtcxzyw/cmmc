@@ -12,13 +12,11 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/Value.hpp"
+#include "cmmc/IR/TAC.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-public:
-};
+void loadTAC(Module& module, const std::string& path) {}
+void dumpTAC(Module& module, const std::ostream& out) {}
 
 CMMC_NAMESPACE_END

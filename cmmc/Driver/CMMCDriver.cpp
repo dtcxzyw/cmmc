@@ -12,9 +12,102 @@
     limitations under the License.
 */
 
+#include "cmmc/Frontend/Driver.hpp"
+#include "cmmc/IR/Module.hpp"
+#include "cmmc/IR/TAC.hpp"
+#include "cmmc/Support/Options.hpp"
 #include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
 
-int main(int argc, char** argv) {
+using namespace cmmc;
+
+static Flag emitAST;
+static Flag version;
+static Flag emitIR;
+static Flag emitTAC;
+static Integer optimizationLevel;
+static String outputPath;
+
+CMMC_INIT_OPTIONS_BEGIN
+emitAST.setName("emitAST", 'a');
+emitAST.setName("version", 'v');
+emitIR.setName("emitIR", 'i');
+emitTAC.setName("emitTAC", 't');
+optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("Optimiaztion Level");
+outputPath.setName("output", 'o').setDesc("path to the output file");
+CMMC_INIT_OPTIONS_END
+
+static std::string getOutputPath(const std::string& defaultPath) {
+    return outputPath.get().empty() ? defaultPath : outputPath.get();
+}
+
+int runIRPipeline(Module& module, const std::string& base) {
+    if(emitIR.get()) {
+        std::ofstream out{ getOutputPath(base + ".ir2") };
+        module.dump(out);
+        return EXIT_SUCCESS;
+    }
+
+    if(emitTAC.get()) {
+        std::ofstream out{ getOutputPath(base + ".ir") };
+        dumpTAC(module, out);
+        return EXIT_SUCCESS;
+    }
+
+    // TODO: transform pipeline
+
+    // TODO: emit asm
+    // std::ofstream out{ getOutputPath(base + ".s") };
 
     return EXIT_SUCCESS;
+}
+
+int main(int argc, char** argv) {
+    int start = parseCommands(argc, argv);
+
+    if(version.get()) {
+        std::cout << "CMCC " CMCC_VERSION << std::endl;
+        std::cout << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
+    }
+
+    if(argc - start != 1) {
+        std::cerr << "Only one input file is accepted" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    try {
+        std::string path = argv[start];
+
+        if(path.find_last_of(".spl") == path.size() - 4) {
+            const auto base = path.substr(0, path.size() - 4);
+            Driver driver{ path };
+            driver.parse();
+
+            if(emitAST.get()) {
+                std::ofstream out{ getOutputPath(base + ".ast") };
+                driver.dump(out);
+                return EXIT_SUCCESS;
+            }
+
+            Module mod;
+            driver.emit(mod);
+
+            return runIRPipeline(mod, base);
+        } else if(path.find_last_of(".ir") == path.size() - 4) {
+            Module mod;
+            loadTAC(mod, path);
+            const auto base = path.substr(0, path.size() - 3);
+            return runIRPipeline(mod, base);
+        }
+
+        return EXIT_SUCCESS;
+    } catch(const std::exception& ex) {
+        std::cerr << "Exception: " << ex.what() << std::endl;
+        return EXIT_FAILURE;
+    } catch(...) {
+        std::cerr << "Unknown error" << std::endl;
+        return EXIT_FAILURE;
+    }
 }

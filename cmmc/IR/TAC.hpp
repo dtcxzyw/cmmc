@@ -13,12 +13,13 @@
 */
 
 #pragma once
-#include "cmmc/IR/Value.hpp"
+#include "cmmc/IR/Module.hpp"
+#include <ostream>
+#include <string>
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-public:
-};
+void loadTAC(Module& module, const std::string& path);
+void dumpTAC(Module& module, const std::ostream& out);
 
 CMMC_NAMESPACE_END

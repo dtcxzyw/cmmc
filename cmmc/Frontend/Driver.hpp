@@ -15,9 +15,12 @@
 #pragma once
 #include "cmmc/Config.hpp"
 #include "cmmc/Frontend/ParserDecl.hpp"
+#include <ostream>
 #include <string>
 
 CMMC_NAMESPACE_BEGIN
+
+class Module;
 
 class Driver final {
     std::string mFile;
@@ -29,6 +32,9 @@ public:
     Driver& operator=(const Driver&) = delete;
 
     void parse();
+    void emit(Module& module);
+    void dump(std::ostream& out);
+
     yy::location& location() noexcept;
 };
 

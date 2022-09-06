@@ -38,4 +38,7 @@ yy::location& Driver::location() noexcept {
     return mLocation;
 }
 
+void Driver::emit(Module& module) {}
+void Driver::dump(std::ostream& out) {}
+
 CMMC_NAMESPACE_END

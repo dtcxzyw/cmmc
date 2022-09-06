@@ -12,13 +12,13 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/Value.hpp"
+#include "cmmc/IR/Module.hpp"
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-public:
-};
+Module::Module() {}
+Module::~Module() {}
+void Module::dump(std::ostream& out) {}
 
 CMMC_NAMESPACE_END
