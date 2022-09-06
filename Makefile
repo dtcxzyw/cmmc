@@ -5,28 +5,28 @@ BIN := bin/splc
 DIR_BUILD := ./build
 .DEFAULT_GOAL := $(BIN)
 
-CFLAGS = -g $(OPTFLAGS) -I$(DIR_BUILD) -I./
+CXXFLAGS = -std=c++17 -g $(OPTFLAGS) -I$(DIR_BUILD) -I./ -Wall
 LDFLAGS = $(OPTFLAGS) -lfl
 
-CSRCS := $(wildcard cmmc/**/*.c)
+CSRCS := $(wildcard cmmc/**/*.cpp)
 
-OBJS = $(CSRCS:%.c=$(DIR_BUILD)/%.o)
+OBJS = $(CSRCS:%.cpp=$(DIR_BUILD)/%.o)
 
-$(DIR_BUILD)/cmmc/Frontend/ParserImpl.h: cmmc/Frontend/Syntax.y
+$(DIR_BUILD)/cmmc/Frontend/ParserImpl.hpp: cmmc/Frontend/Parser.yy
 	mkdir -p $(dir $@)
-	bison -o $@ --defines=$(DIR_BUILD)/cmmc/Frontend/ParserDecl.h $<
+	bison -o $@ --language=c++ --defines=$(DIR_BUILD)/cmmc/Frontend/ParserDecl.hpp $<
 
-$(DIR_BUILD)/cmmc/Frontend/Lexer.h: cmmc/Frontend/Lex.l $(DIR_BUILD)/cmmc/Frontend/ParserImpl.h
+$(DIR_BUILD)/cmmc/Frontend/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD)/cmmc/Frontend/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	flex -o $@ $<
+	flex -o $@ --header-file=$(DIR_BUILD)/cmmc/Frontend/ScannerDecl.hpp $<
 
-$(DIR_BUILD)/%.o: %.c $(DIR_BUILD)/cmmc/Frontend/Lexer.h $(DIR_BUILD)/cmmc/Frontend/ParserImpl.h
+$(DIR_BUILD)/%.o: %.cpp $(DIR_BUILD)/cmmc/Frontend/ScannerImpl.hpp $(DIR_BUILD)/cmmc/Frontend/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BIN): $(OBJS)
 	mkdir -p bin
-	$(CC) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) $^ -o $@
 
 .PHONY: clean bear
 clean:
