@@ -14,14 +14,14 @@
 
 #pragma once
 #include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/Global.hpp"
+#include "cmmc/IR/GlobalValue.hpp"
 #include "cmmc/Support/Arena.hpp"
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 class Module final {
-    // List<Function*> mFuncs;
+    List<Function*> mFuncs;
 
 public:
     Module() = default;
@@ -33,5 +33,6 @@ public:
 
     void dump(std::ostream& out);
 };
+CMMC_ARENA_TRAIT(Module, IR);
 
 CMMC_NAMESPACE_END

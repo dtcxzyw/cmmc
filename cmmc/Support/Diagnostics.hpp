@@ -26,5 +26,6 @@ std::ostream& reportError();
 std::ostream& reportDebug();
 [[noreturn]] void reportFatal(std::string_view msg);
 [[noreturn]] void reportNotImplemented();
+[[noreturn]] void reportUnreachable();
 
 CMMC_NAMESPACE_END

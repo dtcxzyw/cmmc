@@ -14,8 +14,8 @@
 
 #include "cmmc/Frontend/Driver.hpp"
 #include "cmmc/Frontend/AST.hpp"
+#include "cmmc/Frontend/Location.hpp"
 #include "cmmc/Support/Diagnostics.hpp"
-#include "location.hh"
 #include <cassert>
 #include <cctype>
 #include <cstdint>
@@ -100,7 +100,7 @@ struct Hierarchy final {
     }
 
     [[noreturn]] static void print(std::ostream& out, const char*, uint32_t line, Empty) {
-        CMMC_UNREACHABLE();
+        reportUnreachable();
     }
 
     uint32_t updateLocation(DriverImpl& driver);
@@ -167,6 +167,10 @@ public:
 
     void emit(Module& module);
     void dump(std::ostream& out);
+
+    void reportLexerError(const char* str) {
+        reportError() << "Error type A at Line " << mLocation.begin.line << ": unknown lexeme " << str << std::endl;
+    }
 };
 
 CMMC_NAMESPACE_END
@@ -222,6 +226,10 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     mImpl = std::make_unique<DriverImpl>(file, recordHierarchy, strictMode, std::move(arena));
     // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
+    if(!yyin) {
+        reportError() << "Failed to open the source file " << file << std::endl;
+        std::abort();
+    }
     yy::parser parser{ *mImpl };
     // parser.set_debug_level(10);
     // parser.set_debug_stream(std::cerr);

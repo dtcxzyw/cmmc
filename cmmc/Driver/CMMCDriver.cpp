@@ -25,23 +25,29 @@
 
 using namespace cmmc;
 
-static Flag emitAST;
+CMMC_NAMESPACE_BEGIN
+
 static Flag version;
+static Flag help;
+static Flag emitAST;
 static Flag emitIR;
 static Flag emitTAC;
-static Flag strictMode;
-static IntegerOpt optimizationLevel;
+Flag strictMode;
+IntegerOpt optimizationLevel;
 static StringOpt outputPath;
 
 CMMC_INIT_OPTIONS_BEGIN
-version.setName("version", 'v');
+version.setName("version", 'v').setDesc("print CMMC build information");
+help.setName("help", 'h').setDesc("print help information");
 emitAST.setName("emitAST", 'a');
 emitIR.setName("emitIR", 'i');
 emitTAC.setName("emitTAC", 't');
 strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
-optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("Optimiaztion Level -O[0-3]");
+optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
 CMMC_INIT_OPTIONS_END
+
+CMMC_NAMESPACE_END
 
 static std::string getOutputPath(const std::string& defaultPath) {
     return outputPath.get().empty() ? defaultPath : outputPath.get();
@@ -87,6 +93,11 @@ int main(int argc, char** argv) {
     if(version.get()) {
         reportInfo() << "CMMC " CMMC_VERSION << std::endl;
         reportInfo() << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(help.get()) {
+        printHelpInfo();
         return EXIT_SUCCESS;
     }
 

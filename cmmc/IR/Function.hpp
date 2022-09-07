@@ -14,7 +14,7 @@
 
 #pragma once
 #include "cmmc/IR/BasicBlock.hpp"
-#include "cmmc/IR/Global.hpp"
+#include "cmmc/IR/GlobalValue.hpp"
 
 CMMC_NAMESPACE_BEGIN
 

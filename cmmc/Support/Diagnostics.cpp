@@ -23,10 +23,11 @@ CMMC_NAMESPACE_BEGIN
 
 static Flag verbose;
 static Flag warning;
+extern Flag strictMode;
 
 CMMC_INIT_OPTIONS_BEGIN
-verbose.setName("verbose", 'V').setDesc("Print debug messages");
-warning.setName("W", 'w').setDesc("Print warning messages");
+verbose.setName("verbose", 'V').setDesc("print debug messages");
+warning.withDefault(true).setName("warning", 'w').setDesc("print warning messages");
 CMMC_INIT_OPTIONS_END
 
 static std::ofstream null{ "/dev/null" };
@@ -39,6 +40,8 @@ std::ostream& reportWarning() {
     return (warning.get() ? std::cerr : null) << "[WARNING] ";
 }
 std::ostream& reportError() {
+    if(strictMode.get())
+        return std::cerr;
     return std::cerr << "[ERROR] ";
 }
 std::ostream& reportDebug() {
@@ -47,10 +50,13 @@ std::ostream& reportDebug() {
 void reportFatal(std::string_view msg) {
     std::cerr << "[FATAL] " << msg;
     printStackTrace();
-    std::abort();
+    __builtin_trap();
 }
 void reportNotImplemented() {
     reportFatal("not implemented");
+}
+void reportUnreachable() {
+    reportFatal("unreachable code");
 }
 
 CMMC_NAMESPACE_END

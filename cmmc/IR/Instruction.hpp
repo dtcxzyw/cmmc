@@ -72,22 +72,10 @@ enum class InstructionID {
 };
 
 class Instruction final : public Value {
-    InstructionID instID;
-
-    struct {
-        Instruction* op1;
-        Instruction* op2;
-        Instruction* op3;
-    };
-
-    List<Instruction*> ops;
-
-    BasicBlock* target1;
-    BasicBlock* target2;
-
-    Type* type;
-
+    InstructionID mInstID;
+    List<Value*> mOperands;
     // bool isVolatile;
+public:
 };
 
 CMMC_NAMESPACE_END

@@ -18,6 +18,7 @@
 #include <getopt.h>
 #include <ostream>
 #include <string>
+#include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -44,6 +45,9 @@ public:
     option getOption() const;
     char getShortName() const noexcept {
         return mShortName;
+    }
+    std::string_view getName() const noexcept {
+        return mName;
     }
     void printHelp();
 };
@@ -88,6 +92,7 @@ public:
 };
 
 int parseCommands(int argc, char** argv);
+void printHelpInfo();
 
 #define CMMC_INIT_OPTIONS_BEGIN [[maybe_unused]] static int __placeholder = ([] {
 #define CMMC_INIT_OPTIONS_END \

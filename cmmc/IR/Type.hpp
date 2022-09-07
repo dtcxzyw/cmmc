@@ -20,6 +20,12 @@ CMMC_NAMESPACE_BEGIN
 
 class Type {
 public:
+    Type() = default;
+    Type(const Type&) = delete;
+    Type(Type&&) = delete;
+    Type& operator=(const Type&) = delete;
+    Type& operator=(Type&&) = delete;
+    virtual ~Type();
 };
 
 class VoidType final : public Type {};
@@ -37,15 +43,21 @@ class FloatingPointType final : public Type {
     uint32_t bitWidth;
 };
 
-struct StructField {
+class FunctionType final : public Type {
+public:
+};
+
+struct StructField final {
     SourceLocation loc;
     Type* type;
 
     // uint32_t alignment;
 };
 
-struct StructType {
+class StructType final : public Type {
     List<StructField> fields;
+
+public:
 };
 
 CMMC_NAMESPACE_END

@@ -19,5 +19,3 @@
 
 #define CMMC_NAMESPACE_BEGIN namespace cmmc {
 #define CMMC_NAMESPACE_END }
-
-#define CMMC_UNREACHABLE() __builtin_trap()

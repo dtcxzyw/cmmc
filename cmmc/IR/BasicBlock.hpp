@@ -20,6 +20,8 @@ CMMC_NAMESPACE_BEGIN
 
 class BasicBlock final {
     List<Instruction*> mInstructions;
+
+public:
 };
 CMMC_ARENA_TRAIT(BasicBlock, IR);
 

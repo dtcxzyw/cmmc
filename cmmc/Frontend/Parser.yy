@@ -56,6 +56,22 @@
 %token DOT SEMI COMMA SHARP
 // ( ) [ ] { }
 %token LP RP LB RB LC RC
+
+%right NOT BNOT
+%left MUL DIV REM
+%left PLUS MINUS
+%left LT LE GT GE
+%left EQ NE
+%left BAND
+%left XOR
+%left BOR
+%left AND
+%left OR
+// %right ASSIGN
+%left COMMA
+
+%nonassoc ELSE
+
 %%
 
 %type <TypeRef> Specifier;

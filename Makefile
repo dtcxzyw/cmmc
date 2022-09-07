@@ -13,8 +13,8 @@ CXX = g++
 LEX = flex
 YACC = bison
 
-BIN := bin/splc
 DIR_BUILD := ./build
+BIN := ./bin/splc
 
 CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I$(abspath $(DIR_BUILD)/generated/) -I$(abspath ./) -Wall -Werror -MD
 LDFLAGS = $(ADDFLAGS) -lfl
@@ -24,11 +24,11 @@ CXXSRCS := $(wildcard cmmc/**/*.cpp)
 OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/%.o)
 
 .PHONY: all
-all: $(BIN)
+all: splc
 
 $(DIR_BUILD)/generated/ParserImpl.hpp: cmmc/Frontend/Parser.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ --language=c++ -Wall --defines=$(DIR_BUILD)/generated/ParserDecl.hpp $<
+	$(YACC) -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/ParserDecl.hpp $<
 
 $(DIR_BUILD)/generated/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD)/generated/ParserImpl.hpp
 	mkdir -p $(dir $@)
@@ -39,10 +39,10 @@ $(DIR_BUILD)/%.o: %.cpp $(DIR_BUILD)/generated/ScannerImpl.hpp $(DIR_BUILD)/gene
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 $(BIN): $(OBJS)
-	mkdir -p bin
+	mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
-.PHONY: clean bear debug test-parse
+.PHONY: clean bear debug test-parse splc
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear: clean # make clangd happy
@@ -50,5 +50,6 @@ bear: clean # make clangd happy
 -include $(OBJS:.o=.d)
 debug: $(BIN)
 	gdb $(BIN)
-test-parse: $(BIN)
+splc: $(BIN)
+test-parse: splc
 	./tests/Parse/parse_test.py $(BIN) ./tests/Parse/

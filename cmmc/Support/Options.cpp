@@ -14,6 +14,7 @@
 
 #include "cmmc/Support/Options.hpp"
 #include "cmmc/Support/Diagnostics.hpp"
+#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <getopt.h>
@@ -54,7 +55,6 @@ option OptionBase::getOption() const {
     return { mName, static_cast<int>(mType), nullptr, mShortName };
 }
 void OptionBase::printHelp() {
-    reportInfo() << mDesc << std::endl;
     auto& out = reportInfo();
     auto printArg = [&] {
         if(mType == ArgType::Required)
@@ -62,26 +62,36 @@ void OptionBase::printHelp() {
         else if(mType == ArgType::Optional)
             out << "=[ARG]";
     };
-    out << "\t--" << mName;
+    out << "--" << mName;
     printArg();
-    out << "\t|\t-" << mShortName;
+    out << "|-" << mShortName;
     printArg();
-    out << std::endl;
-    if(mType == ArgType::Optional)
+    out << " " << mDesc;
+    if(mType == ArgType::Optional) {
+        out << "( default = ";
         printDefault(out);
+        out << ")";
+    }
+    out << std::endl;
 }
 
 Flag& Flag::withDefault(bool flag) {
+    hasDefault();
     mFlag = flag;
     return *this;
 }
 
-void Flag::handle(const char*) {
+void Flag::handle(const char* str) {
     // std::cout << "set flag " << getShortName() << std::endl;
-    mFlag = true;
+    using namespace std::literals;
+    if(str)
+        mFlag = (str != "false"sv);
+    else
+        mFlag = true;
 }
 
 StringOpt& StringOpt::withDefault(std::string value) {
+    hasDefault();
     mStr = std::move(value);
     return *this;
 }
@@ -91,6 +101,7 @@ void StringOpt::handle(const char* str) {
 }
 
 IntegerOpt& IntegerOpt::withDefault(uint32_t value) {
+    hasDefault();
     mValue = value;
     return *this;
 }
@@ -121,8 +132,10 @@ int parseCommands(int argc, char** argv) {
 
         if(c == -1)
             break;
-        if(c == 0 || c == '?')
-            continue;  // TODO: fatal
+        if(c == 0 || c == '?') {
+            printHelpInfo();
+            reportFatal("unrecognized commands");
+        }
 
         for(auto opt : storage.options) {
             if(opt->getShortName() == c)
@@ -133,7 +146,7 @@ int parseCommands(int argc, char** argv) {
     return optind;
 }
 
-OptionBase::OptionBase() : mName{ "" }, mShortName{ 0 }, mType{ ArgType::Flag } {
+OptionBase::OptionBase() : mName{ "" }, mShortName{ 0 }, mDesc{ "no desc" }, mType{ ArgType::Flag } {
     OptionStorage::get().options.emplace_back(this);
 }
 
@@ -153,6 +166,15 @@ StringOpt::StringOpt() : mStr{ "" } {
 }
 IntegerOpt::IntegerOpt() : mValue{ 0 } {
     requireArg();
+}
+
+void printHelpInfo() {
+    auto& opts = OptionStorage::get().options;
+    std::sort(opts.begin(), opts.end(), [](auto lhs, auto rhs) { return lhs->getName() < rhs->getName(); });
+
+    reportInfo() << "Usage: CMMC [Options] Input" << std::endl;
+    for(auto opt : opts)
+        opt->printHelp();
 }
 
 CMMC_NAMESPACE_END
