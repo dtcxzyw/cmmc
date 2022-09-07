@@ -13,36 +13,25 @@
 */
 
 #pragma once
-#include "ParserDecl.hpp"
 #include "cmmc/Config.hpp"
-#include "cmmc/Frontend/AST.hpp"
+#include <memory>
 #include <ostream>
 #include <string>
 
 CMMC_NAMESPACE_BEGIN
 
 class Module;
+class DriverImpl;
 
 class Driver final {
-    std::string mFile;
-    yy::location mLocation;
-    bool mEnd;
+    void parse(const std::string& file);
+    std::unique_ptr<DriverImpl> mImpl;
 
 public:
-    explicit Driver(const std::string& file);
-    Driver(const Driver&) = delete;
-    Driver& operator=(const Driver&) = delete;
-
-    void parse();
+    Driver(const std::string& file);
+    ~Driver();
     void emit(Module& module);
     void dump(std::ostream& out);
-
-    void markEnd() noexcept;
-    void addFunctionDef(FunctionDeclaration decl, StatementBlock body);
-    yy::location& location() noexcept;
 };
 
 CMMC_NAMESPACE_END
-
-#define YY_DECL yy::parser::symbol_type yylex(cmmc::Driver& driver)
-extern "C" YY_DECL;

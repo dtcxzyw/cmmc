@@ -29,7 +29,7 @@ struct Qualifier final {
 };
 
 struct TypeRef final {
-    String typeIdentifier;
+    String<Arena::Source::AST> typeIdentifier;
     enum class LookupSpace { Default /* Builtins & Aliases */, Struct, Enum } space;
 
     // Type* anonymousType = nullptr; // Function Signature/ Anonymous Struct
@@ -44,14 +44,15 @@ struct QualifiedType final {
 
 struct NamedArg final {
     TypeRef type;
-    String name;
+    String<Arena::Source::AST> name;
 };
 
 using ArgList = Deque<NamedArg>;
+CMMC_ARENA_TRAIT(NamedArg, AST);
 
 struct FunctionDeclaration final {
     SourceLocation loc;
-    String symbol;
+    String<Arena::Source::AST> symbol;
     TypeRef retType;
     ArgList args;
     // bool isVarArg;
@@ -80,8 +81,6 @@ class Expr {
     SourceLocation mLocation;
 
 public:
-    static constexpr auto arenaSource = Arena::Source::AST;
-
     Expr() = default;
     Expr(const Expr&) = delete;
     Expr(Expr&&) = delete;
@@ -90,6 +89,7 @@ public:
     virtual ~Expr() = default;
     virtual Value* emit(FunctionTranslationContext& ctx) const = 0;
 };
+CMMC_ARENA_TRAIT_FAMILY(Expr, AST);
 
 enum class OperatorID {
     Add,
@@ -164,10 +164,10 @@ public:
 };
 
 class ConstantStringExpr final : public Expr {
-    String mString;
+    String<Arena::Source::AST> mString;
 
 public:
-    explicit ConstantStringExpr(const String& str) : mString{ str } {}
+    explicit ConstantStringExpr(const String<Arena::Source::AST>& str) : mString{ str } {}
     Value* emit(FunctionTranslationContext& ctx) const override;
 };
 
@@ -205,12 +205,21 @@ public:
 };
 
 class IdentifierExpr final : public Expr {
-    String mIdentifier;
+    String<Arena::Source::AST> mIdentifier;
 
 public:
-    explicit IdentifierExpr(const String& str) : mIdentifier{ str } {}
+    explicit IdentifierExpr(const String<Arena::Source::AST>& str) : mIdentifier{ str } {}
     Value* emit(FunctionTranslationContext& ctx) const override;
-    static IdentifierExpr* get(const String& str);
+    static IdentifierExpr* get(const String<Arena::Source::AST>& str);
+};
+
+class ScopedExpr final : public Expr {
+    StatementBlock mBlock;
+
+public:
+    explicit ScopedExpr(StatementBlock block) : mBlock{ std::move(block) } {};
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static ScopedExpr* get(StatementBlock block);
 };
 
 template <typename T>

@@ -13,9 +13,43 @@
 */
 
 #include "cmmc/Frontend/Driver.hpp"
-#include "ParserDecl.hpp"
 #include "cmmc/Frontend/AST.hpp"
+
+using StringAST = cmmc::String<cmmc::Arena::Source::AST>;
+
+#include "ParserDecl.hpp"
 #include <cstdlib>
+
+CMMC_NAMESPACE_BEGIN
+
+class DriverImpl final {
+    std::string mFile;
+    yy::location mLocation;
+    bool mEnd;
+    Arena mArena;
+
+public:
+    DriverImpl(const std::string& file) : mFile{ file } {
+        Arena::setArena(Arena::Source::AST, &mArena);
+        mLocation.initialize(&mFile);
+    }
+
+    void markEnd() noexcept {
+        mEnd = true;
+    }
+    void addFunctionDef(FunctionDeclaration decl, StatementBlock body);
+    yy::location& location() noexcept {
+        return mLocation;
+    }
+    bool complete() const noexcept {
+        return mEnd;
+    }
+};
+
+CMMC_NAMESPACE_END
+
+#define YY_DECL yy::parser::symbol_type yylex(cmmc::DriverImpl& driver)
+extern "C" YY_DECL;
 
 #define CMMC_BINARY_OP(OP, LHS, RHS) BinaryExpr::get(OperatorID::OP, LHS, RHS)
 #define CMMC_UNARY_OP(OP, VAL) UnaryExpr::get(OperatorID::OP, VAL)
@@ -25,21 +59,15 @@
 #define CMMC_RETURN(RET) ReturnExpr::get(RET)
 #define CMMC_IF(PRED, IF_PART) IfElseExpr::get(PRED, IF_PART, nullptr)
 #define CMMC_IF_ELSE(PRED, IF_PART, ELSE_PART) IfElseExpr::get(PRED, IF_PART, ELSE_PART)
-#define CMMC_EMPTY_PACK(TYPE)                     \
-    Deque<TYPE> {                                 \
-        ArenaAllocator<TYPE*>(Arena::Source::AST) \
-    }
-#define CMMC_SINGLE_PACK(TYPE, INIT_VALUE)                       \
-    Deque<TYPE> {                                                \
-        { INIT_VALUE }, ArenaAllocator<TYPE>(Arena::Source::AST) \
-    }
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
-#define CMMC_STR(STR)                                     \
-    {                                                     \
-        String {                                          \
-            STR, ArenaAllocator<char>(Arena::Source::AST) \
-        }                                                 \
+#define CMMC_STR(STR)            \
+    String<Arena::Source::AST> { \
+        std::string_view {       \
+            STR                  \
+        }                        \
     }
+
+#define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK);
 
 #include "ParserImpl.hpp"
 #include "ScannerImpl.hpp"
@@ -50,29 +78,24 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Driver::Driver(const std::string& file) : mFile{ file } {}
+Driver::Driver(const std::string& file) {
+    parse(file);
+}
+Driver::~Driver() {}
 
-void Driver::parse() {
-    Arena arena;
-    Arena::setArena(Arena::Source::AST, &arena);
-
-    mLocation.initialize(&mFile);
+void Driver::parse(const std::string& file) {
+    mImpl = std::make_unique<DriverImpl>(file);
     // yy_flex_debug = 1;
-    yyin = fopen(mFile.c_str(), "r");
-    mEnd = false;
-    yy::parser parser{ *this };
+    yyin = fopen(file.c_str(), "r");
+    yy::parser parser{ *mImpl };
     parser.set_debug_level(10);
     parser.set_debug_stream(std::cerr);
     parser.parse();
-    if(!mEnd) {
+    if(!mImpl->complete()) {
         std::cerr << "Failed to parse" << std::endl;
         std::abort();
     }
     fclose(yyin);
-}
-
-yy::location& Driver::location() noexcept {
-    return mLocation;
 }
 
 void Driver::emit(Module& module) {}
@@ -105,13 +128,13 @@ Value* IdentifierExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
 }
 
-void Driver::dump(std::ostream& out) {}
-
-void Driver::markEnd() noexcept {
-    mEnd = true;
+Value* ScopedExpr::emit(FunctionTranslationContext& ctx) const {
+    return nullptr;
 }
 
-void Driver::addFunctionDef(FunctionDeclaration decl, StatementBlock body) {}
+void Driver::dump(std::ostream& out) {}
+
+void DriverImpl::addFunctionDef(FunctionDeclaration decl, StatementBlock body) {}
 
 BinaryExpr* BinaryExpr::get(OperatorID op, Expr* lhs, Expr* rhs) {
     return make<BinaryExpr>(op, lhs, rhs);
@@ -125,7 +148,7 @@ ConstantIntExpr* ConstantIntExpr::get(uintmax_t value, uint32_t bitWidth, bool i
     return make<ConstantIntExpr>(value, bitWidth, isSigned);
 }
 
-IdentifierExpr* IdentifierExpr::get(const String& str) {
+IdentifierExpr* IdentifierExpr::get(const String<Arena::Source::AST>& str) {
     return make<IdentifierExpr>(str);
 }
 
@@ -139,6 +162,10 @@ ReturnExpr* ReturnExpr::get(Expr* returnValue) {
 
 IfElseExpr* IfElseExpr::get(Expr* pred, Expr* ifPart, Expr* elsePart) {
     return make<IfElseExpr>(pred, ifPart, elsePart);
+}
+
+ScopedExpr* ScopedExpr::get(StatementBlock block) {
+    return make<ScopedExpr>(std::move(block));
 }
 
 CMMC_NAMESPACE_END

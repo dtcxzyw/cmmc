@@ -105,7 +105,6 @@ int main(int argc, char** argv) {
         if(endswith(path, ".spl"sv)) {
             const auto base = path.substr(0, path.size() - 4);
             Driver driver{ path };
-            driver.parse();
 
             if(emitAST.get()) {
                 const auto path = getOutputPath(base + ".ast");

@@ -14,6 +14,7 @@
 
 #pragma once
 #include "cmmc/Config.hpp"
+#include "cmmc/Support/Arena.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
@@ -26,5 +27,6 @@ public:
     Value& operator=(Value&&) = delete;
     virtual ~Value();
 };
+CMMC_ARENA_TRAIT_FAMILY(Value, IR);
 
 CMMC_NAMESPACE_END
