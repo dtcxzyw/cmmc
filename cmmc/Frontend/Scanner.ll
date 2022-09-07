@@ -29,6 +29,10 @@
   yy::location& loc = driver.location();
   // Code run each time yylex is called.
   loc.step ();
+
+  auto emitType = [&]{
+    StringAST val{yytext}; CMMC_RECORD(TYPE, 0, val); return yy::parser::make_TYPE(val, loc);
+  };
 %}
 [ \t]+ loc.step ();
 [\n]+ loc.lines (yyleng); loc.step ();
@@ -80,8 +84,12 @@
 "{" { CMMC_TERMINAL(LC); }
 "}" { CMMC_TERMINAL(RC); }
 
-[0-9]+ { uintmax_t val = strtoull(yytext, NULL, 10); CMMC_RECORD(INT, 0, val); return yy::parser::make_INT(val, loc); }
+"int" { return emitType(); }
+"char" { return emitType(); }
+"float" { return emitType(); }
+0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); CMMC_RECORD(INT, 0, val); return yy::parser::make_INT(val, loc); }
+[a-zA-Z_][a-zA-Z_0-9]* { StringAST val{yytext}; CMMC_RECORD(ID, 0, val); return yy::parser::make_ID(val, loc); }
+"'"."'" { char ch = yytext[1]; CMMC_RECORD(CHAR, 0, ch); return yy::parser::make_CHAR(ch, loc); }
 
-[a-zA-Z_]+[a-zA-Z_0-9]* return yy::parser::make_IDG(StringAST{yytext}, loc);
 <<EOF>> return yy::parser::make_END(loc);
 %%

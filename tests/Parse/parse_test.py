@@ -11,26 +11,28 @@ tests = sys.argv[2]
 def test(src, ref):
     out = subprocess.run(args=[binary, '-s', '-a', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
-    print(out.stdout + out.stderr)
-    return False
+    #print('\n', out.stdout + out.stderr)
+    return out.returncode == 0
 
 
 print("Collecting tests...")
-test_set = set()
+test_set = []
 for r, ds, fs in os.walk(tests):
     for f in fs:
         if f.endswith(".spl"):
             f = r+f
             out = f[:-4]+".out"
-            test_set.add((f, out))
+            test_set.append((f, out))
+test_set.sort(key=lambda x: x[0])
+
 print("Testing...", end='')
 cnt = 0
-fail_set = set()
+fail_set = []
 for src, ref in test_set:
     cnt += 1
     print("\rTesting... {}/{}".format(cnt, len(test_set)), end='')
     if not test(src, ref):
-        fail_set.add(src)
+        fail_set.append(src)
 
 print("\r")
 print("[==========] {} tests ran.".format(cnt))

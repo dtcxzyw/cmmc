@@ -38,33 +38,50 @@ struct Hierarchy final {
     // NAME + Metadata
     // literals non-terminal identifiers others
     struct Empty final {};
-    using Desc = std::pair<const char*, std::variant<uintmax_t, double, yy::location, StringAST, Empty, std::monostate>>;
+    struct NonTerminal final {};
+    using Variant = std::variant<uintmax_t, double, char, NonTerminal, StringAST, Empty, std::monostate>;
+    struct Desc final {
+        const char* name;
+        uint32_t line;
+        Variant metadata;
+    };
     Desc desc;
     Deque<Hierarchy> children;
 
     template <typename T>
-    static void print(std::ostream& out, const char* name, T metadata) {
+    static void print(std::ostream& out, const char* name, uint32_t line, T metadata) {
         out << name << ": " << metadata << std::endl;
     }
 
-    static void print(std::ostream& out, const char* name, std::monostate) {
+    static void print(std::ostream& out, const char* name, uint32_t line, std::monostate) {
         out << name << std::endl;
     }
 
-    static void print(std::ostream& out, const char* name, const yy::location& loc) {
-        out << name << " (" << loc.begin.line << ')' << std::endl;
+    static void print(std::ostream& out, const char* name, uint32_t line, char ch) {
+        out << name << ": '" << ch << '\'' << std::endl;
     }
 
-    [[noreturn]] static void print(std::ostream& out, const char*, const Empty&) {
+    static void print(std::ostream& out, const char* name, uint32_t line, NonTerminal) {
+        out << name << " (" << line << ')' << std::endl;
+    }
+
+    [[noreturn]] static void print(std::ostream& out, const char*, uint32_t line, Empty) {
         CMMC_UNREACHABLE();
     }
 
+    uint32_t updateLocation() {
+        auto& res = desc.line;
+        for(auto& child : children)
+            res = std::min(res, child.updateLocation());
+        return res;
+    }
+
     void dump(std::ostream& out, uint32_t indent) {
-        if(std::holds_alternative<Empty>(desc.second))
+        if(std::holds_alternative<Empty>(desc.metadata))
             return;  // empty non-terminal
         for(uint32_t i = 0; i < indent; ++i)
             out << ' ';
-        std::visit([&](auto& val) { print(out, desc.first, val); }, desc.second);
+        std::visit([&](auto& val) { print(out, desc.name, desc.line, val); }, desc.metadata);
         indent += indentInc;
         for(auto& child : children)
             child.dump(out, indent);
@@ -139,18 +156,20 @@ extern "C" YY_DECL;
 
 #define CMMC_RECORD(ID, PACK, ...)     \
     if(driver.shouldRecordHierarchy()) \
-    driver.record(PACK, std::make_pair(#ID, Hierarchy::Desc::second_type{ __VA_ARGS__ }))
+    driver.record(                     \
+        PACK, Hierarchy::Desc{ #ID, static_cast<uint32_t>(driver.location().begin.line), Hierarchy::Variant{ __VA_ARGS__ } })
 
 #define CMMC_TERMINAL(ID)                 \
     CMMC_RECORD(ID, 0, std::monostate{}); \
     return yy::parser::make_##ID(loc);
 
-#define CMMC_NONTERMINAL(ID, PACK) CMMC_RECORD(ID, PACK, driver.location())
+#define CMMC_NONTERMINAL(ID, PACK) CMMC_RECORD(ID, PACK, Hierarchy::NonTerminal{})
 #define CMMC_EMPTY() CMMC_RECORD(Empty, 0, Hierarchy::Empty{})
 
 #define CMMC_BINARY_OP(OP, LHS, RHS) BinaryExpr::get(OperatorID::OP, LHS, RHS)
 #define CMMC_UNARY_OP(OP, VAL) UnaryExpr::get(OperatorID::OP, VAL)
 #define CMMC_INT(VAL, BIT_WIDTH, SIGNED) ConstantIntExpr::get(VAL, BIT_WIDTH, SIGNED)
+#define CMMC_CHAR(VAL) ConstantIntExpr::get(VAL, 8, true)
 #define CMMC_ID(NAME) IdentifierExpr::get(NAME)
 #define CMMC_CALL(CALLEE, ARGS) FunctionCallExpr::get(CALLEE, ARGS)
 #define CMMC_RETURN(RET) ReturnExpr::get(RET)
@@ -180,11 +199,11 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     auto arena = std::make_shared<Arena>();
     Arena::setArena(Arena::Source::AST, arena.get());
     mImpl = std::make_unique<DriverImpl>(file, recordHierarchy, strictMode, std::move(arena));
-    // yy_flex_debug = 1;
+    yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     yy::parser parser{ *mImpl };
-    // parser.set_debug_level(10);
-    // parser.set_debug_stream(std::cerr);
+    parser.set_debug_level(10);
+    parser.set_debug_stream(std::cerr);
     parser.parse();
     if(!mImpl->complete()) {
         std::cerr << "Failed to parse" << std::endl;
@@ -246,7 +265,9 @@ void DriverImpl::dump(std::ostream& out) {
         std::abort();
     }
 
-    mHierarchyStack.front().dump(out, 0);
+    auto& root = mHierarchyStack.front();
+    root.updateLocation();
+    root.dump(out, 0);
 }
 
 BinaryExpr* BinaryExpr::get(OperatorID op, Expr* lhs, Expr* rhs) {

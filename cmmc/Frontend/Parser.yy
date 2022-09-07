@@ -38,7 +38,9 @@
 %token <char> CHAR "Char"
 %token <StringAST> String "String"
 
-%token <StringAST> IDG "Identifier"
+%token <StringAST> ID "Identifier"
+%token <StringAST> TYPE "Type"
+
 // Control Flow Keywords
 %token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN GOTO SWITCH CASE
 // Aggregate Keywords
@@ -66,8 +68,6 @@
 %type <Expr*> Stmt;
 %type <Expr*> Exp;
 %type <ExprPack> Args;
-%type <StringAST> ID;
-%type <StringAST> TYPE;
 
 %start Program;
 
@@ -152,13 +152,11 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(Exp
 | ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(Expr, 1); }
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(Expr, 1); }
 // | FLOAT
-// | CHAR
+| CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(Expr, 1); }
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(Args, 3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(Args, 1); }
 ;
-ID: IDG { $$ = $1; CMMC_RECORD(ID, 0, $$); }
-TYPE: IDG { $$ = $1; CMMC_RECORD(TYPE, 0, $$); }
 %%
 void yy::parser::error(const location_type& l, const std::string& m) {
   std::cerr << l << ": " << m << '\n';
