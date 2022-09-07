@@ -14,42 +14,139 @@
 
 #include "cmmc/Frontend/Driver.hpp"
 #include "cmmc/Frontend/AST.hpp"
+#include "location.hh"
+#include <cassert>
+#include <cstdint>
+#include <memory>
+#include <ostream>
+#include <string_view>
 
 using StringAST = cmmc::String<cmmc::Arena::Source::AST>;
 
 #include "ParserDecl.hpp"
 #include <cstdlib>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
+using MixedDefinition = std::variant<FunctionDefinition>;
+CMMC_ARENA_TRAIT(MixedDefinition, AST);
+
+struct Hierarchy final {
+    static constexpr uint32_t indentInc = 2;
+
+    // NAME + Metadata
+    // literals non-terminal identifiers others
+    struct Empty final {};
+    using Desc = std::pair<const char*, std::variant<uintmax_t, double, yy::location, StringAST, Empty, std::monostate>>;
+    Desc desc;
+    Deque<Hierarchy> children;
+
+    template <typename T>
+    static void print(std::ostream& out, const char* name, T metadata) {
+        out << name << ": " << metadata << std::endl;
+    }
+
+    static void print(std::ostream& out, const char* name, std::monostate) {
+        out << name << std::endl;
+    }
+
+    static void print(std::ostream& out, const char* name, const yy::location& loc) {
+        out << name << " (" << loc.begin.line << ')' << std::endl;
+    }
+
+    [[noreturn]] static void print(std::ostream& out, const char*, const Empty&) {
+        CMMC_UNREACHABLE();
+    }
+
+    void dump(std::ostream& out, uint32_t indent) {
+        if(std::holds_alternative<Empty>(desc.second))
+            return;  // empty non-terminal
+        for(uint32_t i = 0; i < indent; ++i)
+            out << ' ';
+        std::visit([&](auto& val) { print(out, desc.first, val); }, desc.second);
+        indent += indentInc;
+        for(auto& child : children)
+            child.dump(out, indent);
+    }
+};
+CMMC_ARENA_TRAIT(Hierarchy, AST);
+
 class DriverImpl final {
     std::string mFile;
+    bool mRecordHierarchy;
+    bool mStrictMode;
     yy::location mLocation;
     bool mEnd;
-    Arena mArena;
+    std::shared_ptr<Arena> mArena;
+
+    Deque<MixedDefinition> mDefs;  // decls/defs **in order**
+    Deque<Hierarchy> mHierarchyStack;
 
 public:
-    DriverImpl(const std::string& file) : mFile{ file } {
-        Arena::setArena(Arena::Source::AST, &mArena);
+    DriverImpl(const std::string& file, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
+        : mFile{ file }, mRecordHierarchy{ recordHierarchy }, mStrictMode{ strictMode }, mArena{ std::move(arena) } {
         mLocation.initialize(&mFile);
+    }
+    ~DriverImpl() {
+        mDefs = {};
+        mHierarchyStack = {};
     }
 
     void markEnd() noexcept {
         mEnd = true;
     }
-    void addFunctionDef(FunctionDeclaration decl, StatementBlock body);
+    void addFunctionDef(FunctionDefinition def) {
+        mDefs.push_back(std::move(def));
+    }
     yy::location& location() noexcept {
         return mLocation;
     }
     bool complete() const noexcept {
         return mEnd;
     }
+
+    bool shouldRecordHierarchy() const noexcept {
+        return mRecordHierarchy;
+    }
+    bool checkExtension(const char* ext) const noexcept {
+        if(mStrictMode) {
+            std::cerr << "Extension " << ext << " is not allowed in strict mode" << std::endl;
+            return true;
+        }
+        return false;
+    }
+
+    void record(uint32_t pack, Hierarchy::Desc desc) {
+        assert(shouldRecordHierarchy());
+        assert(static_cast<size_t>(pack) <= mHierarchyStack.size());
+        Hierarchy unit{ std::move(desc) };
+        for(uint32_t i = 0; i < pack; ++i) {
+            unit.children.emplace_front(std::move(mHierarchyStack.back()));
+            mHierarchyStack.pop_back();
+        }
+        mHierarchyStack.emplace_back(std::move(unit));
+    }
+
+    void emit(Module& module);
+    void dump(std::ostream& out);
 };
 
 CMMC_NAMESPACE_END
 
 #define YY_DECL yy::parser::symbol_type yylex(cmmc::DriverImpl& driver)
 extern "C" YY_DECL;
+
+#define CMMC_RECORD(ID, PACK, ...)     \
+    if(driver.shouldRecordHierarchy()) \
+    driver.record(PACK, std::make_pair(#ID, Hierarchy::Desc::second_type{ __VA_ARGS__ }))
+
+#define CMMC_TERMINAL(ID)                 \
+    CMMC_RECORD(ID, 0, std::monostate{}); \
+    return yy::parser::make_##ID(loc);
+
+#define CMMC_NONTERMINAL(ID, PACK) CMMC_RECORD(ID, PACK, driver.location())
+#define CMMC_EMPTY() CMMC_RECORD(Empty, 0, Hierarchy::Empty{})
 
 #define CMMC_BINARY_OP(OP, LHS, RHS) BinaryExpr::get(OperatorID::OP, LHS, RHS)
 #define CMMC_UNARY_OP(OP, VAL) UnaryExpr::get(OperatorID::OP, VAL)
@@ -60,14 +157,10 @@ extern "C" YY_DECL;
 #define CMMC_IF(PRED, IF_PART) IfElseExpr::get(PRED, IF_PART, nullptr)
 #define CMMC_IF_ELSE(PRED, IF_PART, ELSE_PART) IfElseExpr::get(PRED, IF_PART, ELSE_PART)
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
-#define CMMC_STR(STR)            \
-    String<Arena::Source::AST> { \
-        std::string_view {       \
-            STR                  \
-        }                        \
-    }
-
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK);
+#define CMMC_EXTENSION(EXT)         \
+    if(driver.checkExtension(#EXT)) \
+        YYABORT;
 
 #include "ParserImpl.hpp"
 #include "ScannerImpl.hpp"
@@ -78,18 +171,20 @@ extern "C" YY_DECL;
 
 CMMC_NAMESPACE_BEGIN
 
-Driver::Driver(const std::string& file) {
-    parse(file);
+Driver::Driver(const std::string& file, bool recordHierarchy, bool strictMode) {
+    parse(file, recordHierarchy, strictMode);
 }
 Driver::~Driver() {}
 
-void Driver::parse(const std::string& file) {
-    mImpl = std::make_unique<DriverImpl>(file);
+void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMode) {
+    auto arena = std::make_shared<Arena>();
+    Arena::setArena(Arena::Source::AST, arena.get());
+    mImpl = std::make_unique<DriverImpl>(file, recordHierarchy, strictMode, std::move(arena));
     // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     yy::parser parser{ *mImpl };
-    parser.set_debug_level(10);
-    parser.set_debug_stream(std::cerr);
+    // parser.set_debug_level(10);
+    // parser.set_debug_stream(std::cerr);
     parser.parse();
     if(!mImpl->complete()) {
         std::cerr << "Failed to parse" << std::endl;
@@ -98,7 +193,11 @@ void Driver::parse(const std::string& file) {
     fclose(yyin);
 }
 
-void Driver::emit(Module& module) {}
+void Driver::emit(Module& module) {
+    mImpl->emit(module);
+}
+
+void DriverImpl::emit(Module& module) {}
 
 Value* BinaryExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
@@ -132,9 +231,23 @@ Value* ScopedExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
 }
 
-void Driver::dump(std::ostream& out) {}
+void Driver::dump(std::ostream& out) {
+    mImpl->dump(out);
+}
 
-void DriverImpl::addFunctionDef(FunctionDeclaration decl, StatementBlock body) {}
+void DriverImpl::dump(std::ostream& out) {
+    if(mHierarchyStack.empty()) {
+        std::cerr << "please enable recordHierarchy" << std::endl;
+        std::abort();
+    }
+
+    if(mHierarchyStack.size() != 1 || !mEnd) {
+        std::cerr << "invalid program" << std::endl;
+        std::abort();
+    }
+
+    mHierarchyStack.front().dump(out, 0);
+}
 
 BinaryExpr* BinaryExpr::get(OperatorID op, Expr* lhs, Expr* rhs) {
     return make<BinaryExpr>(op, lhs, rhs);

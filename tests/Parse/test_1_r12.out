@@ -1,0 +1,58 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: test_1_o02
+        LP
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: dec_int
+                ASSIGN
+                Exp (3)
+                  INT: 323
+            SEMI
+          DefList (4)
+            Def (4)
+              Specifier (4)
+                TYPE: int
+              DecList (4)
+                Dec (4)
+                  VarDec (4)
+                    ID: hex_int
+                  ASSIGN
+                  Exp (4)
+                    INT: 4095
+              SEMI
+            DefList (5)
+              Def (5)
+                Specifier (5)
+                  TYPE: char
+                DecList (5)
+                  Dec (5)
+                    VarDec (5)
+                      ID: ch
+                    ASSIGN
+                    Exp (5)
+                      CHAR: '\xC0'
+                SEMI
+        StmtList (6)
+          Stmt (6)
+            RETURN
+            Exp (6)
+              Exp (6)
+                ID: hex_int
+              MINUS
+              Exp (6)
+                ID: dec_int
+            SEMI
+        RC

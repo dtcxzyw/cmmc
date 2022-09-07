@@ -1,0 +1,83 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      ExtDecList (1)
+        VarDec (1)
+          ID: global
+      SEMI
+    ExtDefList (2)
+      ExtDef (2)
+        Specifier (2)
+          StructSpecifier (2)
+            STRUCT
+            ID: my_struct
+            LC
+            DefList (4)
+              Def (4)
+                Specifier (4)
+                  TYPE: int
+                DecList (4)
+                  Dec (4)
+                    VarDec (4)
+                      ID: code
+                SEMI
+              DefList (5)
+                Def (5)
+                  Specifier (5)
+                    TYPE: char
+                  DecList (5)
+                    Dec (5)
+                      VarDec (5)
+                        ID: data
+                  SEMI
+            RC
+        SEMI
+      ExtDefList (7)
+        ExtDef (7)
+          Specifier (7)
+            TYPE: int
+          FunDec (7)
+            ID: test_1_r02
+            LP
+            RP
+          CompSt (8)
+            LC
+            DefList (9)
+              Def (9)
+                Specifier (9)
+                  StructSpecifier (9)
+                    STRUCT
+                    ID: my_struct
+                DecList (9)
+                  Dec (9)
+                    VarDec (9)
+                      ID: obj
+                SEMI
+            StmtList (10)
+              Stmt (10)
+                Exp (10)
+                  Exp (10)
+                    Exp (10)
+                      ID: obj
+                    DOT
+                    ID: code
+                  ASSIGN
+                  Exp (10)
+                    ID: global
+                SEMI
+              StmtList (11)
+                Stmt (11)
+                  Exp (11)
+                    Exp (11)
+                      ID: global
+                    ASSIGN
+                    Exp (11)
+                      Exp (11)
+                        ID: global
+                      PLUS
+                      Exp (11)
+                        INT: 1
+                  SEMI
+            RC

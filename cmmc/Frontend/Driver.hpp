@@ -24,11 +24,11 @@ class Module;
 class DriverImpl;
 
 class Driver final {
-    void parse(const std::string& file);
+    void parse(const std::string& file, bool recordHierarchy, bool strictMode);
     std::unique_ptr<DriverImpl> mImpl;
 
 public:
-    Driver(const std::string& file);
+    Driver(const std::string& file, bool recordHierarchy, bool strictMode);
     ~Driver();
     void emit(Module& module);
     void dump(std::ostream& out);

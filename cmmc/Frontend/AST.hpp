@@ -61,17 +61,16 @@ struct FunctionDeclaration final {
 class Expr;
 using StatementBlock = Deque<Expr*>;
 
-struct FunctionDefinition {
+struct FunctionDefinition final {
     FunctionDeclaration decl;
     StatementBlock block;
 };
 
-struct FunctionTranslationContext {
+struct FunctionTranslationContext final {
     BasicBlock* currentBB;
 
-    // functions
     // labels
-    // variables
+    // symbols
 
     // BasicBlock* breakTarget;
     // BasicBlock* continuousTarget;

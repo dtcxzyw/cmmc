@@ -1,5 +1,13 @@
-OPTFLAGS = -O3 -flto
-DBGFLAGS = -fsanitize=address -Og --fno-omit-frame-pointer -ggdb
+BUILD_TYPE = Release
+OPTFLAGS = -O3 -flto -DNDEBUG
+DBGFLAGS = -fsanitize=address -O0 -fno-omit-frame-pointer -ggdb
+ADDFLAGS = 
+
+ifeq ($(BUILD_TYPE), Debug)
+ADDFLAGS += $(DBGFLAGS)
+else
+ADDFLAGS += $(OPTFLAGS)
+endif
 
 CXX = g++
 LEX = flex
@@ -8,8 +16,8 @@ YACC = bison
 BIN := bin/splc
 DIR_BUILD := ./build
 
-CXXFLAGS = -std=c++17 -g $(OPTFLAGS) -I$(abspath $(DIR_BUILD)/generated/) -I$(abspath ./) -Wall -Werror -MD
-LDFLAGS = $(OPTFLAGS) -lfl
+CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I$(abspath $(DIR_BUILD)/generated/) -I$(abspath ./) -Wall -Werror -MD
+LDFLAGS = $(ADDFLAGS) -lfl
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp)
 
@@ -34,9 +42,13 @@ $(BIN): $(OBJS)
 	mkdir -p bin
 	$(CXX) $(LDFLAGS) -o $@ $^
 
-.PHONY: clean bear
+.PHONY: clean bear debug test-parse
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear: clean # make clangd happy
 	bear -o $(DIR_BUILD)/compile_commands.json make
 -include $(OBJS:.o=.d)
+debug: $(BIN)
+	gdb $(BIN)
+test-parse: $(BIN)
+	./tests/Parse/parse_test.py $(BIN) ./tests/Parse/

@@ -28,6 +28,7 @@ static Flag emitAST;
 static Flag version;
 static Flag emitIR;
 static Flag emitTAC;
+static Flag strictMode;
 static IntegerOpt optimizationLevel;
 static StringOpt outputPath;
 
@@ -36,7 +37,8 @@ version.setName("version", 'v');
 emitAST.setName("emitAST", 'a');
 emitIR.setName("emitIR", 'i');
 emitTAC.setName("emitTAC", 't');
-optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("Optimiaztion Level");
+strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
+optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("Optimiaztion Level -O[0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
 CMMC_INIT_OPTIONS_END
 
@@ -104,7 +106,7 @@ int main(int argc, char** argv) {
 
         if(endswith(path, ".spl"sv)) {
             const auto base = path.substr(0, path.size() - 4);
-            Driver driver{ path };
+            Driver driver{ path, emitAST.get(), strictMode.get() };
 
             if(emitAST.get()) {
                 const auto path = getOutputPath(base + ".ast");
