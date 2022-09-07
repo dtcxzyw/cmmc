@@ -13,29 +13,12 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
+#include "cmmc/IR/Value.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-enum class PassType {
-    AttributeInference,  // don't change instructions
-    SideEffectEquality,  // don't change count/order of load/store instructions, -O1
-    IgnoreUB,            // don't change side effects when the program executes normally, -O2
-    Expensive            // take a much longer compile time, -O3
-};
-
-// **Stateless** Transform Pass
-
-template <typename Scope>
-class TransformPass {
+class ConstantValue : public Value {
 public:
-    TransformPass() = default;
-    virtual ~TransformPass();
-    TransformPass(const TransformPass&) = delete;
-    TransformPass& operator=(const TransformPass&) = delete;
-
-    virtual bool run(Scope& item) const = 0;
-    virtual PassType type() const noexcept = 0;
 };
 
 CMMC_NAMESPACE_END

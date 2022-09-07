@@ -12,26 +12,20 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/Config.hpp"
-#include <ostream>
-#include <string_view>
-
-CMMC_NAMESPACE_BEGIN
-
-void printStackTrace();
-std::ostream& reportInfo();
-std::ostream& reportWarning();
-std::ostream& reportError();
-std::ostream& reportDebug();
-[[noreturn]] void reportFatal(std::string_view msg);
-[[noreturn]] void reportNotImplemented();
-[[noreturn]] void reportUnreachable();
-
-template <typename Loc>
-class DiagnosticsContext final {
-public:
-    void assertion();
-};
-
-CMMC_NAMESPACE_END
+// func add(int a, int b) -> int:
+// entry(int a, int b):
+//     int c = a + b;
+//     cbreak true, b2(1), b3(c);
+// b2(int c):
+//     return c;
+// b3(int c):
+//     reutrn c;
+// ==>
+// func add(int a, int b) -> int:
+// entry(int a, int b):
+//     int c = a + b;
+//     break true, b2(1);
+// b2(int c):
+//     return c;
+// b3(int c):
+//     reutrn c;

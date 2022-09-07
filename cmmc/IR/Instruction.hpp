@@ -15,23 +15,29 @@
 #pragma once
 #include "cmmc/IR/Value.hpp"
 #include "cmmc/Support/Arena.hpp"
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-class BasicBlock;
+class Block;
 class Type;
 
 enum class InstructionID {
     // control-flow
     // terminators
+    TerminatorBegin,
     Ret,
     Break,
+    ConditionalBreak,
     Unreachable,
+    TerminatorEnd,
     // memory ops
-    Alloc,
+    MemoryOpBegin,
     Load,
     Store,
+    MemoryOpEnd,
     // integer arithmetic ops
+    IntegerOpBegin,
     Add,
     Sub,
     Mul,
@@ -47,17 +53,22 @@ enum class InstructionID {
     Shl,
     LShr,
     AShr,
+    IntegerOpEnd,
     // floating point ops
+    FloatingPointOpBegin,
     FAdd,
     FSub,
     FMul,
     FDiv,
     FNeg,
+    FFma,
     // compare ops
     SCmp,
     UCmp,
     FCmp,
+    FloatingPointOpEnd,
     // convert ops
+    ConvertOpBegin,
     SExt,
     ZExt,
     Trunc,
@@ -66,16 +77,89 @@ enum class InstructionID {
     F2S,
     U2F,
     S2F,
+    ConvertOpEnd,
     // miscellaneous
+    Alloc,
     Select,
-    Call
+    Call,
+    // Pesudo Ops
+    PesudoOpBegin,
+    Assume,
+    PesudoOpEnd
 };
 
-class Instruction final : public Value {
+class Instruction : public Value {
     InstructionID mInstID;
     List<Value*> mOperands;
     // bool isVolatile;
 public:
+    InstructionID getInstID() const noexcept {
+        return mInstID;
+    }
+    void dump(std::ostream& out) const;
+
+#define CMMC_GET_INST_CATEGORY(KIND)                                                       \
+    bool is##KIND() const noexcept {                                                       \
+        return InstructionID::KIND##Begin < mInstID && mInstID < InstructionID::KIND##End; \
+    }
+
+    CMMC_GET_INST_CATEGORY(Terminator);
+    CMMC_GET_INST_CATEGORY(MemoryOp);
+    CMMC_GET_INST_CATEGORY(IntegerOp);
+    CMMC_GET_INST_CATEGORY(FloatingPointOp);
+    CMMC_GET_INST_CATEGORY(ConvertOp);
+    CMMC_GET_INST_CATEGORY(PesudoOp);
+
+#undef CMMC_GET_INST_CATEGORY
+};
+
+class BinaryInstruction final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class UnaryInstruction final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class ConditionalBreak final : public Instruction {
+    Block *mIfTarget, *mElseTarget;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class Break final : public Instruction {
+    Block* mTarget;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class Return final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class Unreachable final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class FunctionCall final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class Select final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class Assume final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
 };
 
 CMMC_NAMESPACE_END

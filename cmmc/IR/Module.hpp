@@ -21,7 +21,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class Module final {
-    List<Function*> mFuncs;
+    List<GlobalValue*> mGlobals;
 
 public:
     Module() = default;
@@ -31,7 +31,7 @@ public:
     Module& operator=(const Module&) = delete;
     Module& operator=(Module&&) = delete;
 
-    void dump(std::ostream& out);
+    void dump(std::ostream& out) const;
 };
 CMMC_ARENA_TRAIT(Module, IR);
 

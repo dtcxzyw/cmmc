@@ -20,6 +20,7 @@
 #include <list>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -57,48 +58,10 @@ constexpr Arena::Source getArenaSource(ArenaSourceTrait<T*>) {
         return Arena::Source::SOURCE;                                \
     }
 
-#define CMMC_ARENA_TRAIT_FAMILY(BASE, SOURCE)                                                                        \
-    template <typename T>                                                                                            \
-    constexpr std::enable_if_t<std::is_same_v<BASE, T> || std::is_base_of_v<BASE, T>, Arena::Source> getArenaSource( \
-        ArenaSourceTrait<T>) {                                                                                       \
-        return Arena::Source::SOURCE;                                                                                \
-    }
-
-template <typename T>
-class ArenaAllocator {
-    Arena* mArena;
-
-public:
-    ArenaAllocator() : mArena{ Arena::get(getArenaSource(ArenaSourceTrait<T>{})) } {};
-    template <typename U>
-    friend class ArenaAllocator;
-
-    template <typename U>
-    ArenaAllocator(const ArenaAllocator<U>& rhs) : mArena{ rhs.mArena } {}
-    using value_type = T;
-
-    [[nodiscard]] constexpr T* allocate(size_t n) {
-        return static_cast<T*>(mArena->allocate(n * sizeof(T), alignof(T)));
-    }
-    void deallocate(T* p, size_t n) {
-        mArena->deallocate(p, n);
-    }
-    bool operator==(const ArenaAllocator<T>& rhs) const noexcept {
-        return mArena == rhs.mArena;
-    }
-    bool operator!=(const ArenaAllocator<T>& rhs) const noexcept {
-        return mArena != rhs.mArena;
-    }
-};
-
-template <typename T>
-using List = std::list<T, ArenaAllocator<T>>;
-
-template <typename T>
-using Vector = std::vector<T, ArenaAllocator<T>>;
-
-template <typename T>
-using Deque = std::deque<T, ArenaAllocator<T>>;
+template <typename T, Arena::Source src = T::arenaSource>
+constexpr Arena::Source getArenaSource(ArenaSourceTrait<T>) {
+    return src;
+}
 
 template <typename T, typename... Args>
 T* make(Args&&... args) {
@@ -141,5 +104,18 @@ public:
 template <Arena::Source source>
 using String =
     std::basic_string<char, std::char_traits<char>, typename GeneralArenaAllocator<source>::template ArenaAllocator<char>>;
+
+template <typename T>
+using ArenaSourceHint = typename GeneralArenaAllocator<Arena::Source::AST>::template ArenaAllocator<
+    T>;  // typename GeneralArenaAllocator<getArenaSource(ArenaSourceTrait<T>{})>::template ArenaAllocator<T>;
+
+template <typename T>
+using List = std::list<T, ArenaSourceHint<T>>;
+
+template <typename T>
+using Vector = std::vector<T, ArenaSourceHint<T>>;
+
+template <typename T>
+using Deque = std::deque<T, ArenaSourceHint<T>>;
 
 CMMC_NAMESPACE_END

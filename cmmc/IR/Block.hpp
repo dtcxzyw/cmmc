@@ -15,14 +15,29 @@
 #pragma once
 #include "cmmc/IR/Instruction.hpp"
 #include "cmmc/Support/Arena.hpp"
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-class BasicBlock final {
+class Block final {
+    String<Arena::Source::IR> mLabel;
+    List<Type*> mArgs;
     List<Instruction*> mInstructions;
 
 public:
+    explicit Block(const String<Arena::Source::IR>& label) : mLabel{ label } {}
+    void dump(std::ostream& out) const;
+
+    const String<Arena::Source::IR>& label() const noexcept {
+        return mLabel;
+    }
+    List<Type*>& args() noexcept {
+        return mArgs;
+    }
+    List<Instruction*>& instructions() noexcept {
+        return mInstructions;
+    }
 };
-CMMC_ARENA_TRAIT(BasicBlock, IR);
+CMMC_ARENA_TRAIT(Block, IR);
 
 CMMC_NAMESPACE_END

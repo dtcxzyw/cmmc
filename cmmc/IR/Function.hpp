@@ -13,15 +13,28 @@
 */
 
 #pragma once
-#include "cmmc/IR/BasicBlock.hpp"
+#include "cmmc/IR/Block.hpp"
 #include "cmmc/IR/GlobalValue.hpp"
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
+class ExternalFunctionDeclaration final : public GlobalValue {
+public:
+    void dump(std::ostream& out) const override;
+};
+
 class Function final : public GlobalValue {
-    List<BasicBlock> mBasicBlocks;
+    List<Block*> mBlocks;
 
 public:
+    Block* entryBlock() const noexcept {
+        return mBlocks.front();
+    }
+    List<Block*>& blocks() noexcept {
+        return mBlocks;
+    }
+    void dump(std::ostream& out) const override;
 };
 
 CMMC_NAMESPACE_END

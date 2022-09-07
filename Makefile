@@ -19,9 +19,9 @@ BIN := ./bin/splc
 CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I$(abspath $(DIR_BUILD)/generated/) -I$(abspath ./) -Wall -Werror -MD
 LDFLAGS = $(ADDFLAGS) -lfl
 
-CXXSRCS := $(wildcard cmmc/**/*.cpp)
+CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp)
 
-OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/%.o)
+OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 
 .PHONY: all
 all: splc
@@ -34,7 +34,7 @@ $(DIR_BUILD)/generated/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD)/ge
 	mkdir -p $(dir $@)
 	$(LEX) -o $@ --header-file=$(DIR_BUILD)/generated/ScannerDecl.hpp $<
 
-$(DIR_BUILD)/%.o: %.cpp $(DIR_BUILD)/generated/ScannerImpl.hpp $(DIR_BUILD)/generated/ParserImpl.hpp
+$(DIR_BUILD)/objs/%.o: %.cpp $(DIR_BUILD)/generated/ScannerImpl.hpp $(DIR_BUILD)/generated/ParserImpl.hpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 

@@ -14,19 +14,28 @@
 
 #pragma once
 #include "cmmc/Config.hpp"
+#include "cmmc/IR/Type.hpp"
 #include "cmmc/Support/Arena.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
 class Value {
+    Type* mType;
+
 public:
-    Value() = default;
+    static constexpr auto arenaSource = Arena::Source::IR;
+
+    explicit Value(Type* type) : mType{ type } {}
     Value(const Value&) = delete;
     Value(Value&&) = delete;
     Value& operator=(const Value&) = delete;
     Value& operator=(Value&&) = delete;
     virtual ~Value();
+
+    virtual void dump(std::ostream& out) const = 0;
+    Type* getType() const noexcept {
+        return mType;
+    }
 };
-CMMC_ARENA_TRAIT_FAMILY(Value, IR);
 
 CMMC_NAMESPACE_END

@@ -14,7 +14,7 @@
 
 #pragma once
 #include "cmmc/Frontend/SourceLocation.hpp"
-#include "cmmc/IR/BasicBlock.hpp"
+#include "cmmc/IR/Block.hpp"
 #include "cmmc/IR/Type.hpp"
 #include "cmmc/IR/Value.hpp"
 #include "cmmc/Support/Arena.hpp"
@@ -67,19 +67,21 @@ struct FunctionDefinition final {
 };
 
 struct FunctionTranslationContext final {
-    BasicBlock* currentBB;
+    Block* currentBB;
 
     // labels
     // symbols
 
-    // BasicBlock* breakTarget;
-    // BasicBlock* continuousTarget;
+    // Block* breakTarget;
+    // Block* continuousTarget;
 };
 
 class Expr {
     SourceLocation mLocation;
 
 public:
+    static constexpr auto arenaSource = Arena::Source::AST;
+
     Expr() = default;
     Expr(const Expr&) = delete;
     Expr(Expr&&) = delete;
@@ -88,7 +90,6 @@ public:
     virtual ~Expr() = default;
     virtual Value* emit(FunctionTranslationContext& ctx) const = 0;
 };
-CMMC_ARENA_TRAIT_FAMILY(Expr, AST);
 
 enum class OperatorID {
     Add,

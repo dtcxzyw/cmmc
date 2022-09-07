@@ -20,13 +20,24 @@ CMMC_NAMESPACE_BEGIN
 
 class Type {
 public:
+    static constexpr auto arenaSource = Arena::Source::IR;
+
     Type() = default;
     Type(const Type&) = delete;
     Type(Type&&) = delete;
     Type& operator=(const Type&) = delete;
     Type& operator=(Type&&) = delete;
     virtual ~Type();
+
+    template <typename T>
+    T* as() {
+        return dynamic_cast<T*>(this);
+    }
 };
+
+inline bool isSameType(Type* lhs, Type* rhs) noexcept {
+    return lhs == rhs;
+}
 
 class VoidType final : public Type {};
 
@@ -44,6 +55,9 @@ class FloatingPointType final : public Type {
 };
 
 class FunctionType final : public Type {
+    Type* mRetType;
+    Vector<Type*> mArgTypes;
+    // bool isVarArg
 public:
 };
 

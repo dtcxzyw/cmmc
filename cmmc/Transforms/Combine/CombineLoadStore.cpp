@@ -12,26 +12,14 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/Config.hpp"
-#include <ostream>
-#include <string_view>
-
-CMMC_NAMESPACE_BEGIN
-
-void printStackTrace();
-std::ostream& reportInfo();
-std::ostream& reportWarning();
-std::ostream& reportError();
-std::ostream& reportDebug();
-[[noreturn]] void reportFatal(std::string_view msg);
-[[noreturn]] void reportNotImplemented();
-[[noreturn]] void reportUnreachable();
-
-template <typename Loc>
-class DiagnosticsContext final {
-public:
-    void assertion();
-};
-
-CMMC_NAMESPACE_END
+// char arr[10]; // aligned
+// char a = arr[0];
+// char b = arr[1];
+// char c = arr[2];
+// char d = arr[3];
+// ==>
+// uint32_t val = *reinterpret_cast<uint32_t*>(arr);
+// char a = val >> 24;
+// char b = (val >> 16) & 255;
+// char c = (val >> 8) & 255;
+// char d = val & 255;

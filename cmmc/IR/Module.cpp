@@ -17,6 +17,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void Module::dump(std::ostream& out) {}
+void Module::dump(std::ostream& out) const {}
 
 CMMC_NAMESPACE_END
