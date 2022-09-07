@@ -14,12 +14,30 @@
 
 #include "cmmc/Frontend/Driver.hpp"
 #include "cmmc/Frontend/AST.hpp"
+#include "cmmc/Support/Diagnostics.hpp"
 #include "location.hh"
 #include <cassert>
+#include <cctype>
 #include <cstdint>
 #include <memory>
 #include <ostream>
 #include <string_view>
+
+namespace std {  // NOTICE: we need ADL
+    std::ostream& operator<<(std::ostream& out, const std::pair<uint32_t, yy::location>& loc) {
+        return out << loc.second;
+    }
+}  // namespace std
+
+#define YYLLOC_DEFAULT(CURRENT, RHS, N)                                                  \
+    do                                                                                   \
+        if(N) {                                                                          \
+            (CURRENT).second.begin = YYRHSLOC(RHS, 1).second.begin;                      \
+            (CURRENT).second.end = YYRHSLOC(RHS, N).second.end;                          \
+        } else {                                                                         \
+            (CURRENT).second.begin = (CURRENT).second.end = YYRHSLOC(RHS, 0).second.end; \
+        }                                                                                \
+    while(false)
 
 using StringAST = cmmc::String<cmmc::Arena::Source::AST>;
 
@@ -39,26 +57,42 @@ struct Hierarchy final {
     // literals non-terminal identifiers others
     struct Empty final {};
     struct NonTerminal final {};
-    using Variant = std::variant<uintmax_t, double, char, NonTerminal, StringAST, Empty, std::monostate>;
+    using Variant = std::variant<NonTerminal, uintmax_t, char, double, StringAST, Empty, std::monostate>;
     struct Desc final {
         const char* name;
         uint32_t line;
         Variant metadata;
     };
+
     Desc desc;
-    Deque<Hierarchy> children;
+    struct ChildRef final {
+        uint32_t pos;
+
+        ChildRef(const std::pair<uint32_t, yy::location>& loc) : pos{ loc.first } {}
+    };
+    Deque<ChildRef> children;
 
     template <typename T>
-    static void print(std::ostream& out, const char* name, uint32_t line, T metadata) {
+    static void print(std::ostream& out, const char* name, uint32_t, const T& metadata) {
         out << name << ": " << metadata << std::endl;
+    }
+
+    static void print(std::ostream& out, const char* name, uint32_t, const char metadata) {
+        out << name << ": '";
+        if(std::isprint(metadata))
+            out << metadata;
+        else {
+            constexpr auto lut = "0123456789ABCDEF";
+            const uint8_t val = metadata;
+            const auto p1 = lut[val / 16];
+            const auto p2 = lut[val % 16];
+            out << "\\x" << p1 << p2;
+        }
+        out << '\'' << std::endl;
     }
 
     static void print(std::ostream& out, const char* name, uint32_t line, std::monostate) {
         out << name << std::endl;
-    }
-
-    static void print(std::ostream& out, const char* name, uint32_t line, char ch) {
-        out << name << ": '" << ch << '\'' << std::endl;
     }
 
     static void print(std::ostream& out, const char* name, uint32_t line, NonTerminal) {
@@ -69,25 +103,11 @@ struct Hierarchy final {
         CMMC_UNREACHABLE();
     }
 
-    uint32_t updateLocation() {
-        auto& res = desc.line;
-        for(auto& child : children)
-            res = std::min(res, child.updateLocation());
-        return res;
-    }
-
-    void dump(std::ostream& out, uint32_t indent) {
-        if(std::holds_alternative<Empty>(desc.metadata))
-            return;  // empty non-terminal
-        for(uint32_t i = 0; i < indent; ++i)
-            out << ' ';
-        std::visit([&](auto& val) { print(out, desc.name, desc.line, val); }, desc.metadata);
-        indent += indentInc;
-        for(auto& child : children)
-            child.dump(out, indent);
-    }
+    uint32_t updateLocation(DriverImpl& driver);
+    void dump(DriverImpl& driver, std::ostream& out, uint32_t indent) const;
 };
 CMMC_ARENA_TRAIT(Hierarchy, AST);
+CMMC_ARENA_TRAIT(Hierarchy::ChildRef, AST);
 
 class DriverImpl final {
     std::string mFile;
@@ -98,7 +118,7 @@ class DriverImpl final {
     std::shared_ptr<Arena> mArena;
 
     Deque<MixedDefinition> mDefs;  // decls/defs **in order**
-    Deque<Hierarchy> mHierarchyStack;
+    Deque<Hierarchy> mHierarchyTree;
 
 public:
     DriverImpl(const std::string& file, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
@@ -107,7 +127,7 @@ public:
     }
     ~DriverImpl() {
         mDefs = {};
-        mHierarchyStack = {};
+        mHierarchyTree = {};
     }
 
     void markEnd() noexcept {
@@ -128,21 +148,21 @@ public:
     }
     bool checkExtension(const char* ext) const noexcept {
         if(mStrictMode) {
-            std::cerr << "Extension " << ext << " is not allowed in strict mode" << std::endl;
+            reportError() << "Extension " << ext << " is not allowed in strict mode" << std::endl;
             return true;
         }
         return false;
     }
 
-    void record(uint32_t pack, Hierarchy::Desc desc) {
+    Hierarchy& hierarchy(Hierarchy::ChildRef ref) {
+        return mHierarchyTree[ref.pos];
+    }
+
+    uint32_t record(Deque<Hierarchy::ChildRef> children, Hierarchy::Desc desc) {
         assert(shouldRecordHierarchy());
-        assert(static_cast<size_t>(pack) <= mHierarchyStack.size());
-        Hierarchy unit{ std::move(desc) };
-        for(uint32_t i = 0; i < pack; ++i) {
-            unit.children.emplace_front(std::move(mHierarchyStack.back()));
-            mHierarchyStack.pop_back();
-        }
-        mHierarchyStack.emplace_back(std::move(unit));
+        const auto index = static_cast<uint32_t>(mHierarchyTree.size());
+        mHierarchyTree.push_back(Hierarchy{ std::move(desc), std::move(children) });
+        return index;
     }
 
     void emit(Module& module);
@@ -154,21 +174,21 @@ CMMC_NAMESPACE_END
 #define YY_DECL yy::parser::symbol_type yylex(cmmc::DriverImpl& driver)
 extern "C" YY_DECL;
 
-#define CMMC_RECORD(ID, PACK, ...)     \
-    if(driver.shouldRecordHierarchy()) \
-    driver.record(                     \
-        PACK, Hierarchy::Desc{ #ID, static_cast<uint32_t>(driver.location().begin.line), Hierarchy::Variant{ __VA_ARGS__ } })
+#define CMMC_RECORD(ID, METADATA, ...)                                                                                         \
+    (driver.shouldRecordHierarchy() ? driver.record({ __VA_ARGS__ },                                                           \
+                                                    Hierarchy::Desc{ #ID, static_cast<uint32_t>(driver.location().begin.line), \
+                                                                     Hierarchy::Variant{ METADATA } }) :                       \
+                                      0)
 
-#define CMMC_TERMINAL(ID)                 \
-    CMMC_RECORD(ID, 0, std::monostate{}); \
-    return yy::parser::make_##ID(loc);
+#define CMMC_TERMINAL(ID) return yy::parser::make_##ID({ CMMC_RECORD(ID, std::monostate{}), loc })
 
-#define CMMC_NONTERMINAL(ID, PACK) CMMC_RECORD(ID, PACK, Hierarchy::NonTerminal{})
-#define CMMC_EMPTY() CMMC_RECORD(Empty, 0, Hierarchy::Empty{})
+#define CMMC_NONTERMINAL(LOC, ID, ...) LOC.first = CMMC_RECORD(ID, Hierarchy::NonTerminal{}, __VA_ARGS__)
+#define CMMC_EMPTY(LOC, ID) LOC.first = CMMC_RECORD(Empty##ID, Hierarchy::Empty{})
 
 #define CMMC_BINARY_OP(OP, LHS, RHS) BinaryExpr::get(OperatorID::OP, LHS, RHS)
 #define CMMC_UNARY_OP(OP, VAL) UnaryExpr::get(OperatorID::OP, VAL)
 #define CMMC_INT(VAL, BIT_WIDTH, SIGNED) ConstantIntExpr::get(VAL, BIT_WIDTH, SIGNED)
+#define CMMC_FLOAT(VAL, IS_FLOAT) ConstantFloatExpr::get(VAL, IS_FLOAT)
 #define CMMC_CHAR(VAL) ConstantIntExpr::get(VAL, 8, true)
 #define CMMC_ID(NAME) IdentifierExpr::get(NAME)
 #define CMMC_CALL(CALLEE, ARGS) FunctionCallExpr::get(CALLEE, ARGS)
@@ -177,6 +197,7 @@ extern "C" YY_DECL;
 #define CMMC_IF_ELSE(PRED, IF_PART, ELSE_PART) IfElseExpr::get(PRED, IF_PART, ELSE_PART)
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK);
+#define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK);
 #define CMMC_EXTENSION(EXT)         \
     if(driver.checkExtension(#EXT)) \
         YYABORT;
@@ -199,14 +220,14 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     auto arena = std::make_shared<Arena>();
     Arena::setArena(Arena::Source::AST, arena.get());
     mImpl = std::make_unique<DriverImpl>(file, recordHierarchy, strictMode, std::move(arena));
-    yy_flex_debug = 1;
+    // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     yy::parser parser{ *mImpl };
-    parser.set_debug_level(10);
-    parser.set_debug_stream(std::cerr);
+    // parser.set_debug_level(10);
+    // parser.set_debug_stream(std::cerr);
     parser.parse();
     if(!mImpl->complete()) {
-        std::cerr << "Failed to parse" << std::endl;
+        reportError() << "Failed to parse" << std::endl;
         std::abort();
     }
     fclose(yyin);
@@ -230,6 +251,14 @@ Value* ConstantIntExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
 }
 
+Value* ConstantFloatExpr::emit(FunctionTranslationContext& ctx) const {
+    return nullptr;
+}
+
+Value* ConstantStringExpr::emit(FunctionTranslationContext& ctx) const {
+    return nullptr;
+}
+
 Value* FunctionCallExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
 }
@@ -250,24 +279,46 @@ Value* ScopedExpr::emit(FunctionTranslationContext& ctx) const {
     return nullptr;
 }
 
+Value* WhileExpr::emit(FunctionTranslationContext& ctx) const {
+    return nullptr;
+}
+
 void Driver::dump(std::ostream& out) {
     mImpl->dump(out);
 }
 
 void DriverImpl::dump(std::ostream& out) {
-    if(mHierarchyStack.empty()) {
-        std::cerr << "please enable recordHierarchy" << std::endl;
+    if(!mRecordHierarchy) {
+        reportError() << "please enable recordHierarchy" << std::endl;
         std::abort();
     }
 
-    if(mHierarchyStack.size() != 1 || !mEnd) {
-        std::cerr << "invalid program" << std::endl;
+    if(!mEnd) {
+        reportError() << "invalid program" << std::endl;
         std::abort();
     }
 
-    auto& root = mHierarchyStack.front();
-    root.updateLocation();
-    root.dump(out, 0);
+    auto& root = mHierarchyTree.back();
+    root.updateLocation(*this);
+    root.dump(*this, out, 0);
+}
+
+uint32_t Hierarchy::updateLocation(DriverImpl& driver) {
+    auto& res = desc.line;
+    for(auto child : children)
+        res = std::min(res, driver.hierarchy(child).updateLocation(driver));
+    return res;
+}
+
+void Hierarchy::dump(DriverImpl& driver, std::ostream& out, uint32_t indent) const {
+    if(std::holds_alternative<Empty>(desc.metadata))
+        return;  // empty non-terminal
+    for(uint32_t i = 0; i < indent; ++i)
+        out << ' ';
+    std::visit([&](auto& val) { print(out, desc.name, desc.line, val); }, desc.metadata);
+    indent += indentInc;
+    for(auto child : children)
+        driver.hierarchy(child).dump(driver, out, indent);
 }
 
 BinaryExpr* BinaryExpr::get(OperatorID op, Expr* lhs, Expr* rhs) {
@@ -300,6 +351,14 @@ IfElseExpr* IfElseExpr::get(Expr* pred, Expr* ifPart, Expr* elsePart) {
 
 ScopedExpr* ScopedExpr::get(StatementBlock block) {
     return make<ScopedExpr>(std::move(block));
+}
+
+WhileExpr* WhileExpr::get(Expr* pred, Expr* block) {
+    return make<WhileExpr>(pred, block);
+}
+
+ConstantFloatExpr* ConstantFloatExpr::get(double value, bool isFloat) {
+    return make<ConstantFloatExpr>(value, isFloat);
 }
 
 CMMC_NAMESPACE_END

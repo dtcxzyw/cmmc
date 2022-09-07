@@ -108,7 +108,7 @@ T* make(Args&&... args) {
 }
 
 template <Arena::Source source>
-class ArenaStringAllocator {
+class GeneralArenaAllocator {
 public:
     template <typename T>
     class ArenaAllocator {
@@ -140,6 +140,6 @@ public:
 
 template <Arena::Source source>
 using String =
-    std::basic_string<char, std::char_traits<char>, typename ArenaStringAllocator<source>::template ArenaAllocator<char>>;
+    std::basic_string<char, std::char_traits<char>, typename GeneralArenaAllocator<source>::template ArenaAllocator<char>>;
 
 CMMC_NAMESPACE_END

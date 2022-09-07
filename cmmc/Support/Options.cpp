@@ -13,6 +13,7 @@
 */
 
 #include "cmmc/Support/Options.hpp"
+#include "cmmc/Support/Diagnostics.hpp"
 #include <cstdint>
 #include <cstdlib>
 #include <getopt.h>
@@ -53,20 +54,21 @@ option OptionBase::getOption() const {
     return { mName, static_cast<int>(mType), nullptr, mShortName };
 }
 void OptionBase::printHelp() {
-    std::cerr << mDesc << std::endl;
+    reportInfo() << mDesc << std::endl;
+    auto& out = reportInfo();
     auto printArg = [&] {
         if(mType == ArgType::Required)
-            std::cerr << "=ARG";
+            out << "=ARG";
         else if(mType == ArgType::Optional)
-            std::cerr << "=[ARG]";
+            out << "=[ARG]";
     };
-    std::cerr << "\t--" << mName;
+    out << "\t--" << mName;
     printArg();
-    std::cerr << "\t|\t-" << mShortName;
+    out << "\t|\t-" << mShortName;
     printArg();
-    std::cerr << std::endl;
+    out << std::endl;
     if(mType == ArgType::Optional)
-        printDefault(std::cerr);
+        printDefault(out);
 }
 
 Flag& Flag::withDefault(bool flag) {

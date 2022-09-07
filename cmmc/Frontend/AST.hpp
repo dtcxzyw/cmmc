@@ -152,14 +152,7 @@ class ConstantFloatExpr final : public Expr {
 public:
     ConstantFloatExpr(double value, bool isFloat) noexcept : mValue{ value }, mIsFloat{ isFloat } {}
     Value* emit(FunctionTranslationContext& ctx) const override;
-};
-
-class ConstantCharExpr final : public Expr {
-    char mValue;
-
-public:
-    explicit ConstantCharExpr(char value) noexcept : mValue{ value } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    static ConstantFloatExpr* get(double value, bool isFloat);
 };
 
 class ConstantStringExpr final : public Expr {
@@ -219,6 +212,16 @@ public:
     explicit ScopedExpr(StatementBlock block) : mBlock{ std::move(block) } {};
     Value* emit(FunctionTranslationContext& ctx) const override;
     static ScopedExpr* get(StatementBlock block);
+};
+
+class WhileExpr final : public Expr {
+    Expr* mPredicate;
+    Expr* mBlock;
+
+public:
+    WhileExpr(Expr* pred, Expr* block) : mPredicate{ pred }, mBlock{ block } {}
+    Value* emit(FunctionTranslationContext& ctx) const override;
+    static WhileExpr* get(Expr* pred, Expr* block);
 };
 
 template <typename T>

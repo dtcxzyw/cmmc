@@ -15,6 +15,7 @@
 #include "cmmc/Frontend/Driver.hpp"
 #include "cmmc/IR/Module.hpp"
 #include "cmmc/IR/TAC.hpp"
+#include "cmmc/Support/Diagnostics.hpp"
 #include "cmmc/Support/Options.hpp"
 #include <cstdlib>
 #include <fstream>
@@ -49,7 +50,7 @@ static std::string getOutputPath(const std::string& defaultPath) {
 int runIRPipeline(Module& module, const std::string& base) {
     if(emitIR.get()) {
         const auto path = getOutputPath(base + ".ir2");
-        std::cout << "emitIR >> " << path << std::endl;
+        reportDebug() << "emitIR >> " << path << std::endl;
         std::ofstream out{ path };
         module.dump(out);
         return EXIT_SUCCESS;
@@ -57,14 +58,14 @@ int runIRPipeline(Module& module, const std::string& base) {
 
     if(emitTAC.get()) {
         const auto path = getOutputPath(base + ".ir");
-        std::cout << "emitTAC >> " << path << std::endl;
+        reportDebug() << "emitTAC >> " << path << std::endl;
         std::ofstream out{ path };
         dumpTAC(module, out);
         return EXIT_SUCCESS;
     }
 
     const auto path = getOutputPath(base + ".s");
-    std::cout << "emitASM >> " << path << std::endl;
+    reportDebug() << "emitASM >> " << path << std::endl;
 
     // TODO: transform pipeline
 
@@ -84,18 +85,18 @@ int main(int argc, char** argv) {
     int start = parseCommands(argc, argv);
 
     if(version.get()) {
-        std::cout << "CMMC " CMMC_VERSION << std::endl;
-        std::cout << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
+        reportInfo() << "CMMC " CMMC_VERSION << std::endl;
+        reportInfo() << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
         return EXIT_SUCCESS;
     }
 
     if(argc == start) {
-        std::cerr << "no input files" << std::endl;
+        reportError() << "no input files" << std::endl;
         return EXIT_FAILURE;
     }
 
     if(argc - start != 1) {
-        std::cerr << "only one input file is accepted" << std::endl;
+        reportError() << "only one input file is accepted" << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -110,7 +111,7 @@ int main(int argc, char** argv) {
 
             if(emitAST.get()) {
                 const auto path = getOutputPath(base + ".ast");
-                std::cout << "emitAST >> " << path << std::endl;
+                reportDebug() << "emitAST >> " << path << std::endl;
                 std::ofstream out{ path };
                 driver.dump(out);
                 return EXIT_SUCCESS;
@@ -127,14 +128,11 @@ int main(int argc, char** argv) {
             return runIRPipeline(mod, base);
         }
 
-        std::cout << "Unrecognized input" << std::endl;
-
+        reportError() << "Unrecognized input" << std::endl;
         return EXIT_FAILURE;
     } catch(const std::exception& ex) {
-        std::cerr << "Exception: " << ex.what() << std::endl;
-        return EXIT_FAILURE;
+        reportFatal("Unexpected exception: " + std::string{ ex.what() });
     } catch(...) {
-        std::cerr << "Unknown error" << std::endl;
-        return EXIT_FAILURE;
+        reportFatal("Unknown error");
     }
 }

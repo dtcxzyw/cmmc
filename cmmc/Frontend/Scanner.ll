@@ -31,7 +31,7 @@
   loc.step ();
 
   auto emitType = [&]{
-    StringAST val{yytext}; CMMC_RECORD(TYPE, 0, val); return yy::parser::make_TYPE(val, loc);
+    StringAST val{yytext}; return yy::parser::make_TYPE(val, {CMMC_RECORD(TYPE, val), loc});
   };
 %}
 [ \t]+ loc.step ();
@@ -52,24 +52,24 @@
 "struct" { CMMC_TERMINAL(STRUCT); }
 "union" { CMMC_TERMINAL(UNION); }
 
-"+" { CMMC_TERMINAL(ADD); }
-"-" { CMMC_TERMINAL(SUB); }
+"+" { CMMC_TERMINAL(PLUS); }
+"-" { CMMC_TERMINAL(MINUS); }
 "*" { CMMC_TERMINAL(MUL); }
 "/" { CMMC_TERMINAL(DIV); }
 "%" { CMMC_TERMINAL(REM); }
-"!" { CMMC_TERMINAL(LNOT); }
+"!" { CMMC_TERMINAL(NOT); }
 "~" { CMMC_TERMINAL(BNOT); }
-"&&" { CMMC_TERMINAL(LAND); }
+"&&" { CMMC_TERMINAL(AND); }
 "&" { CMMC_TERMINAL(BAND); }
 "^" { CMMC_TERMINAL(XOR); }
-"||" { CMMC_TERMINAL(LOR); }
+"||" { CMMC_TERMINAL(OR); }
 "|" { CMMC_TERMINAL(BOR); }
 "<" { CMMC_TERMINAL(LT); }
 ">" { CMMC_TERMINAL(GT); }
 "<=" { CMMC_TERMINAL(LE); }
 ">=" { CMMC_TERMINAL(GE); }
 "==" { CMMC_TERMINAL(EQ); }
-"!=" { CMMC_TERMINAL(NEQ); }
+"!=" { CMMC_TERMINAL(NE); }
 "=" { CMMC_TERMINAL(ASSIGN); }
 
 "." { CMMC_TERMINAL(DOT); }
@@ -87,9 +87,12 @@
 "int" { return emitType(); }
 "char" { return emitType(); }
 "float" { return emitType(); }
-0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); CMMC_RECORD(INT, 0, val); return yy::parser::make_INT(val, loc); }
-[a-zA-Z_][a-zA-Z_0-9]* { StringAST val{yytext}; CMMC_RECORD(ID, 0, val); return yy::parser::make_ID(val, loc); }
-"'"."'" { char ch = yytext[1]; CMMC_RECORD(CHAR, 0, ch); return yy::parser::make_CHAR(ch, loc); }
+"0x"[0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return yy::parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
+0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); return yy::parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
+(0|[1-9][0-9]*).[0-9]+ { double val = strtod(yytext, NULL); return yy::parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
+[a-zA-Z_][a-zA-Z_0-9]* { StringAST val{yytext}; return yy::parser::make_ID(val, {CMMC_RECORD(ID, StringAST{yytext}), loc}); }
+"'"."'" { char ch = yytext[1]; return yy::parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
+"'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return yy::parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 
-<<EOF>> return yy::parser::make_END(loc);
+<<EOF>> return yy::parser::make_END({0,loc});
 %%

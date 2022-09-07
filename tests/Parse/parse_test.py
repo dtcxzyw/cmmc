@@ -11,8 +11,16 @@ tests = sys.argv[2]
 def test(src, ref):
     out = subprocess.run(args=[binary, '-s', '-a', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
-    #print('\n', out.stdout + out.stderr)
-    return out.returncode == 0
+    ref_content = ""
+    with open(ref, mode="r", encoding="utf-8") as f:
+        for line in f.readlines():
+            ref_content += line
+    is_error = "Error" in ref_content
+    if out.returncode == 0 and not is_error:
+        return ref_content == out.stdout
+    elif out.returncode != 0 and is_error:
+        return True
+    return False
 
 
 print("Collecting tests...")
@@ -36,10 +44,10 @@ for src, ref in test_set:
 
 print("\r")
 print("[==========] {} tests ran.".format(cnt))
-print("[  PASSED  ] {} test.".format(cnt-len(fail_set)))
+print("[  PASSED  ] {} tests.".format(cnt-len(fail_set)))
 
 if len(fail_set):
-    print("[  FAILED  ] {} test, listed below:".format(len(fail_set)))
+    print("[  FAILED  ] {} tests, listed below:".format(len(fail_set)))
 
     for src in fail_set:
         print("[  FAILED  ]", src)
