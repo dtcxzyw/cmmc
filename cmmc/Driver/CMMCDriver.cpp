@@ -17,6 +17,7 @@
 #include "cmmc/IR/TAC.hpp"
 #include "cmmc/Support/Diagnostics.hpp"
 #include "cmmc/Support/Options.hpp"
+#include "cmmc/Transforms/TransformPass.hpp"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -73,7 +74,8 @@ int runIRPipeline(Module& module, const std::string& base) {
     const auto path = getOutputPath(base + ".s");
     reportDebug() << "emitASM >> " << path << std::endl;
 
-    // TODO: transform pipeline
+    auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
+    opt->run(module);
 
     // TODO: emit asm
     // std::ofstream out{ path };

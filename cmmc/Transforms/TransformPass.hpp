@@ -14,6 +14,9 @@
 
 #pragma once
 #include "cmmc/Config.hpp"
+#include "cmmc/IR/Function.hpp"
+#include "cmmc/IR/Module.hpp"
+#include <memory>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -21,7 +24,8 @@ enum class PassType {
     AttributeInference,  // don't change instructions
     SideEffectEquality,  // don't change count/order of load/store instructions, -O1
     IgnoreUB,            // don't change side effects when the program executes normally, -O2
-    Expensive            // take a much longer compile time, -O3
+    Expensive,           // take a much longer compile time, -O3
+    Max
 };
 
 // **Stateless** Transform Pass
@@ -36,6 +40,39 @@ public:
 
     virtual bool run(Scope& item) const = 0;
     virtual PassType type() const noexcept = 0;
+};
+
+enum class OptimizationLevel { O0 = 0, O1 = 1, O2 = 2, O3 = 3 };
+
+class PassManager final {
+    std::vector<std::shared_ptr<TransformPass<Module>>> mPasses;
+
+public:
+    PassManager() = default;
+    bool run(Module& item) const;
+    void addPass(std::shared_ptr<TransformPass<Module>> pass);
+    static std::shared_ptr<PassManager> get(OptimizationLevel level);
+};
+
+class IterationPassWrapper final : public TransformPass<Module> {
+    std::shared_ptr<PassManager> mSubPasses;
+    uint32_t mMaxIterations;
+
+public:
+    IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
+    bool run(Module& item) const override;
+    PassType type() const noexcept override;
+};
+
+class PassRegister final {
+    std::vector<std::shared_ptr<TransformPass<Module>>> mPasses[static_cast<uint32_t>(PassType::Max)];
+
+public:
+    void registerPass(std::shared_ptr<TransformPass<Module>> pass);
+    void registerPass(std::shared_ptr<TransformPass<Function>> pass);
+    const std::vector<std::shared_ptr<TransformPass<Module>>>& collect(PassType type) const;
+
+    static PassRegister& get();
 };
 
 CMMC_NAMESPACE_END
