@@ -13,35 +13,19 @@
 */
 
 #pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/Support/Arena.hpp"
-#include <ostream>
+#include "cmmc/CodeGen/MachineInst.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
+enum class Endian { Big, Little };
 
-class Module final {
-    List<GlobalValue*> mGlobals;
-    const Target* mTarget = nullptr;
-
+class DataLayout {
 public:
-    Module() = default;
-    ~Module() = default;
-    Module(const Module&) = delete;
-    Module(Module&&) = delete;
-    Module& operator=(const Module&) = delete;
-    Module& operator=(Module&&) = delete;
+    virtual ~DataLayout();
 
-    void setTarget(const Target* target) {
-        mTarget = target;
-    }
-    const Target& getTarget() const noexcept {
-        return *mTarget;
-    }
-    void dump(std::ostream& out) const;
+    virtual Endian getEndian() const noexcept = 0;
+    virtual size_t getAlignment(Type* type) const noexcept = 0;
+    virtual size_t getPointerSize() const noexcept = 0;
 };
-CMMC_ARENA_TRAIT(Module, IR);
 
 CMMC_NAMESPACE_END

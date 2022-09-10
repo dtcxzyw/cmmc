@@ -13,35 +13,45 @@
 */
 
 #pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
+#include "cmmc/CodeGen/MachineInst.hpp"
 #include "cmmc/Support/Arena.hpp"
+#include <memory>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
+class MachineSymbol {
+public:
+    virtual ~MachineSymbol();
+    // visibility
+};
 
-class Module final {
-    List<GlobalValue*> mGlobals;
-    const Target* mTarget = nullptr;
+class MachineData {
+public:
+};
+
+class MachineBasicBlock final {
+public:
+};
+
+class MachineFunction final : public MachineSymbol {
+public:
+};
+
+class MachineModule final {
+    Arena mArena;
+    std::vector<MachineSymbol*> mSymbols;
 
 public:
-    Module() = default;
-    ~Module() = default;
-    Module(const Module&) = delete;
-    Module(Module&&) = delete;
-    Module& operator=(const Module&) = delete;
-    Module& operator=(Module&&) = delete;
-
-    void setTarget(const Target* target) {
-        mTarget = target;
+    MachineModule();
+    std::vector<MachineSymbol*>& symbols() noexcept {
+        return mSymbols;
     }
-    const Target& getTarget() const noexcept {
-        return *mTarget;
-    }
-    void dump(std::ostream& out) const;
+    void emitAssembly(std::ostream& out) const;
+    bool verify() const;
 };
-CMMC_ARENA_TRAIT(Module, IR);
+
+class Module;
+std::unique_ptr<MachineModule> lowerToMachineModule(Module& module);
 
 CMMC_NAMESPACE_END

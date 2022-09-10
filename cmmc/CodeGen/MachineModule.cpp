@@ -12,36 +12,17 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
+#include "cmmc/CodeGen/MachineModule.hpp"
 #include "cmmc/Support/Arena.hpp"
-#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
-
-class Module final {
-    List<GlobalValue*> mGlobals;
-    const Target* mTarget = nullptr;
-
-public:
-    Module() = default;
-    ~Module() = default;
-    Module(const Module&) = delete;
-    Module(Module&&) = delete;
-    Module& operator=(const Module&) = delete;
-    Module& operator=(Module&&) = delete;
-
-    void setTarget(const Target* target) {
-        mTarget = target;
-    }
-    const Target& getTarget() const noexcept {
-        return *mTarget;
-    }
-    void dump(std::ostream& out) const;
-};
-CMMC_ARENA_TRAIT(Module, IR);
+MachineModule::MachineModule() {
+    Arena::setArena(Arena::Source::MC, &mArena);
+}
+void MachineModule::emitAssembly(std::ostream& out) const {}
+bool MachineModule::verify() const {
+    return false;
+}
 
 CMMC_NAMESPACE_END

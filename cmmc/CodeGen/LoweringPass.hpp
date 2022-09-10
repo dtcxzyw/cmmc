@@ -13,35 +13,13 @@
 */
 
 #pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/Support/Arena.hpp"
-#include <ostream>
+#include "cmmc/CodeGen/MachineModule.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
-
-class Module final {
-    List<GlobalValue*> mGlobals;
-    const Target* mTarget = nullptr;
-
+class LoweringPass {
 public:
-    Module() = default;
-    ~Module() = default;
-    Module(const Module&) = delete;
-    Module(Module&&) = delete;
-    Module& operator=(const Module&) = delete;
-    Module& operator=(Module&&) = delete;
-
-    void setTarget(const Target* target) {
-        mTarget = target;
-    }
-    const Target& getTarget() const noexcept {
-        return *mTarget;
-    }
-    void dump(std::ostream& out) const;
+    virtual ~LoweringPass();
 };
-CMMC_ARENA_TRAIT(Module, IR);
 
 CMMC_NAMESPACE_END

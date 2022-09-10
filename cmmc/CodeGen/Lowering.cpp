@@ -12,36 +12,27 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/Support/Arena.hpp"
-#include <ostream>
+#include "cmmc/CodeGen/MachineModule.hpp"
+#include "cmmc/CodeGen/Target.hpp"
+#include "cmmc/IR/Module.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
+std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
+    auto& target = module.getTarget();
 
-class Module final {
-    List<GlobalValue*> mGlobals;
-    const Target* mTarget = nullptr;
+    // emit legal instructions/types using virtual registers
+    auto machineModule = target.translateIR(module);
 
-public:
-    Module() = default;
-    ~Module() = default;
-    Module(const Module&) = delete;
-    Module(Module&&) = delete;
-    Module& operator=(const Module&) = delete;
-    Module& operator=(Module&&) = delete;
+    // basic block level DAG scheduling
 
-    void setTarget(const Target* target) {
-        mTarget = target;
-    }
-    const Target& getTarget() const noexcept {
-        return *mTarget;
-    }
-    void dump(std::ostream& out) const;
-};
-CMMC_ARENA_TRAIT(Module, IR);
+    // register allocation
+
+    // stack location
+
+    // peephole optimizations
+
+    return machineModule;
+}
 
 CMMC_NAMESPACE_END

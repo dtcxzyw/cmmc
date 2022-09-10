@@ -12,12 +12,14 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/Target.hpp"
 #include "cmmc/Frontend/Driver.hpp"
 #include "cmmc/IR/Module.hpp"
 #include "cmmc/IR/TAC.hpp"
 #include "cmmc/Support/Diagnostics.hpp"
 #include "cmmc/Support/Options.hpp"
 #include "cmmc/Transforms/TransformPass.hpp"
+#include <cassert>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -54,7 +56,7 @@ static std::string getOutputPath(const std::string& defaultPath) {
     return outputPath.get().empty() ? defaultPath : outputPath.get();
 }
 
-int runIRPipeline(Module& module, const std::string& base) {
+static int runIRPipeline(Module& module, const std::string& base) {
     if(emitIR.get()) {
         const auto path = getOutputPath(base + ".ir2");
         reportDebug() << "emitIR >> " << path << std::endl;
@@ -74,11 +76,15 @@ int runIRPipeline(Module& module, const std::string& base) {
     const auto path = getOutputPath(base + ".s");
     reportDebug() << "emitASM >> " << path << std::endl;
 
-    auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
+    const auto target = TargetRegistry::get().selectTarget();
+    module.setTarget(target.get());
+    const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
     opt->run(module);
 
-    // TODO: emit asm
-    // std::ofstream out{ path };
+    std::ofstream out{ path };
+    const auto machineModule = lowerToMachineModule(module);
+    assert(machineModule->verify());
+    machineModule->emitAssembly(out);
 
     return EXIT_SUCCESS;
 }

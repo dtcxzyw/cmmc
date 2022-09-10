@@ -11,15 +11,3 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-
-#pragma once
-#include "cmmc/CodeGen/MachineInst.hpp"
-
-CMMC_NAMESPACE_BEGIN
-
-class RegisterAllocator {
-public:
-    virtual ~RegisterAllocator();
-};
-
-CMMC_NAMESPACE_END
