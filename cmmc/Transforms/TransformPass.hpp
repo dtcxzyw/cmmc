@@ -64,7 +64,7 @@ public:
     PassType type() const noexcept override;
 };
 
-class PassRegister final {
+class PassRegistry final {
     std::vector<std::shared_ptr<TransformPass<Module>>> mPasses[static_cast<uint32_t>(PassType::Max)];
 
 public:
@@ -72,7 +72,7 @@ public:
     void registerPass(std::shared_ptr<TransformPass<Function>> pass);
     const std::vector<std::shared_ptr<TransformPass<Module>>>& collect(PassType type) const;
 
-    static PassRegister& get();
+    static PassRegistry& get();
 };
 
 CMMC_NAMESPACE_END

@@ -60,7 +60,7 @@ void Arena::deallocate(void* p, size_t size) {
 }
 
 static Arena*& getArena(Arena::Source source) {
-    static std::vector<Arena*> arena{ static_cast<size_t>(Arena::Source::Max) };
+    static Arena* arena[static_cast<size_t>(Arena::Source::Max)] = {};
     return arena[static_cast<size_t>(source)];
 }
 

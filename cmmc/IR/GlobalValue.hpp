@@ -19,6 +19,7 @@ CMMC_NAMESPACE_BEGIN
 
 class GlobalValue : public Value {
 public:
+    // visibility
 };
 
 CMMC_NAMESPACE_END

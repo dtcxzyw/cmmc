@@ -66,14 +66,6 @@ static int runIRPipeline(Module& module, const std::string& base) {
         return EXIT_SUCCESS;
     }
 
-    if(emitTAC.get()) {
-        const auto path = getOutputPath(base + ".ir");
-        reportDebug() << "emitTAC >> " << path << std::endl;
-        std::ofstream out{ path };
-        dumpTAC(module, out);
-        return EXIT_SUCCESS;
-    }
-
     const auto path = getOutputPath(base + ".s");
     reportDebug() << "emitASM >> " << path << std::endl;
 
@@ -81,6 +73,14 @@ static int runIRPipeline(Module& module, const std::string& base) {
     module.setTarget(target.get());
     const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
     opt->run(module);
+
+    if(emitTAC.get()) {
+        const auto path = getOutputPath(base + ".ir");
+        reportDebug() << "emitTAC >> " << path << std::endl;
+        std::ofstream out{ path };
+        dumpTAC(module, out);
+        return EXIT_SUCCESS;
+    }
 
     std::ofstream out{ path };
     const auto machineModule = lowerToMachineModule(module);

@@ -27,6 +27,7 @@ class Block final {
 public:
     explicit Block(const String<Arena::Source::IR>& label) : mLabel{ label } {}
     void dump(std::ostream& out) const;
+    bool verify() const;
 
     const String<Arena::Source::IR>& label() const noexcept {
         return mLabel;

@@ -57,7 +57,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     if(level == OptimizationLevel::O0)
         return root;
 
-    auto& passesSource = PassRegister::get();
+    auto& passesSource = PassRegistry::get();
 
     auto basic = std::make_shared<PassManager>();
     for(auto& pass : passesSource.collect(PassType::AttributeInference))
@@ -96,18 +96,18 @@ public:
     }
 };
 
-void PassRegister::registerPass(std::shared_ptr<TransformPass<Module>> pass) {
+void PassRegistry::registerPass(std::shared_ptr<TransformPass<Module>> pass) {
     mPasses[static_cast<uint32_t>(pass->type())].push_back(std::move(pass));
 }
-void PassRegister::registerPass(std::shared_ptr<TransformPass<Function>> pass) {
+void PassRegistry::registerPass(std::shared_ptr<TransformPass<Function>> pass) {
     mPasses[static_cast<uint32_t>(pass->type())].push_back(std::make_shared<FunctionPassWrapper>(std::move(pass)));
 }
-const std::vector<std::shared_ptr<TransformPass<Module>>>& PassRegister::collect(PassType type) const {
+const std::vector<std::shared_ptr<TransformPass<Module>>>& PassRegistry::collect(PassType type) const {
     return mPasses[static_cast<uint32_t>(type)];
 }
 
-PassRegister& PassRegister::get() {
-    static PassRegister instance;
+PassRegistry& PassRegistry::get() {
+    static PassRegistry instance;
     return instance;
 }
 
