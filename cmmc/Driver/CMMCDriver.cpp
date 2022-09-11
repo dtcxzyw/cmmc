@@ -53,7 +53,8 @@ CMMC_INIT_OPTIONS_END
 CMMC_NAMESPACE_END
 
 static std::string getOutputPath(const std::string& defaultPath) {
-    return outputPath.get().empty() ? defaultPath : outputPath.get();
+    const auto& path = outputPath.get(false);
+    return path.empty() ? defaultPath : path;
 }
 
 static int runIRPipeline(Module& module, const std::string& base) {

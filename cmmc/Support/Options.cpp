@@ -103,10 +103,12 @@ void StringOpt::handle(const char* str) {
 IntegerOpt& IntegerOpt::withDefault(uint32_t value) {
     hasDefault();
     mValue = value;
+    mHasValue = true;
     return *this;
 }
 
 void IntegerOpt::handle(const char* str) {
+    mHasValue = true;
     mValue = strtol(str, nullptr, 10);
 }
 
@@ -175,6 +177,22 @@ void printHelpInfo() {
     reportInfo() << "Usage: CMMC [Options] Input" << std::endl;
     for(auto opt : opts)
         opt->printHelp();
+}
+
+uint32_t IntegerOpt::get(bool required) const noexcept {
+    if(required && !mHasValue) {
+        using namespace std::string_literals;
+        reportFatal("option "s + getName().data() + " [integer] is requied");
+    }
+    return mValue;
+}
+
+const std::string& StringOpt::get(bool required) const noexcept {
+    if(required && !mHasValue) {
+        using namespace std::string_literals;
+        reportFatal("option "s + getName().data() + " [string] is requied");
+    }
+    return mStr;
 }
 
 CMMC_NAMESPACE_END

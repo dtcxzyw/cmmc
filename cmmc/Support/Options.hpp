@@ -67,28 +67,26 @@ public:
 
 class StringOpt final : public OptionBase {
     std::string mStr;
+    bool mHasValue = false;
 
 public:
     StringOpt();
     StringOpt& withDefault(std::string value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
-    const std::string& get() const noexcept {
-        return mStr;
-    }
+    const std::string& get(bool required = true) const noexcept;
 };
 
 class IntegerOpt final : public OptionBase {
     uint32_t mValue = 0;
+    bool mHasValue = false;
 
 public:
     IntegerOpt();
     IntegerOpt& withDefault(uint32_t value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
-    uint32_t get() const noexcept {
-        return mValue;
-    }
+    uint32_t get(bool required = true) const noexcept;
 };
 
 int parseCommands(int argc, char** argv);

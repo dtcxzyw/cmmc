@@ -22,7 +22,6 @@ class MachineInst {
 
 public:
     virtual ~MachineInst();
-    virtual bool isLegal() const noexcept = 0;
 };
 
 CMMC_NAMESPACE_END
