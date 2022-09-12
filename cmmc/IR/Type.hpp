@@ -64,6 +64,9 @@ public:
     bool isPrimitiveType() const noexcept {
         return !isArray() && !isStruct();
     }
+    virtual size_t getFixedSize() const noexcept {
+        return 0;
+    }
 
     virtual bool isSame(Type* rhs) const = 0;
 };
@@ -90,25 +93,26 @@ public:
         return mPointee;
     }
     bool isSame(Type* rhs) const override;
+    static PointerType* get(Type* pointee);
 };
 
 class IntegerType final : public Type {
     uint32_t mBitWidth;
-    bool mIsSigned;
 
 public:
-    IntegerType(uint32_t bitWidth, bool isSigned) : mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
-    static IntegerType* get(uint32_t bitWidth, bool isSigned);
+    IntegerType(uint32_t bitWidth) : mBitWidth{ bitWidth } {}
+    static IntegerType* get(uint32_t bitWidth);
     static IntegerType* getBoolean() {
-        return get(1, false);
+        return get(1);
     }
     bool isInteger() const noexcept override {
         return true;
     }
     bool isBoolean() const noexcept override {
-        return mBitWidth == 1 && !mIsSigned;
+        return mBitWidth == 1;
     }
     bool isSame(Type* rhs) const override;
+    size_t getFixedSize() const noexcept override;
 };
 
 class FloatingPointType final : public Type {
@@ -127,6 +131,7 @@ public:
         return true;
     }
     bool isSame(Type* rhs) const override;
+    size_t getFixedSize() const noexcept override;
 };
 
 class FunctionType final : public Type {
@@ -134,10 +139,17 @@ class FunctionType final : public Type {
     Vector<Type*> mArgTypes;
     // bool isVarArg
 public:
+    FunctionType(Type* retType, Vector<Type*> argTypes) : mRetType{ retType }, mArgTypes{ std::move(argTypes) } {}
     bool isFunction() const noexcept override {
         return true;
     }
     bool isSame(Type* rhs) const override;
+    Type* getRetType() const noexcept {
+        return mRetType;
+    }
+    const Vector<Type*> getArgTypes() const noexcept {
+        return mArgTypes;
+    }
 };
 
 struct StructField final {

@@ -28,8 +28,8 @@ enum class InstructionID {
     // terminators
     TerminatorBegin,
     Ret,
-    Break,
-    ConditionalBreak,
+    Branch,
+    ConditionalBranch,
     Unreachable,
     TerminatorEnd,
     // memory ops
@@ -46,6 +46,7 @@ enum class InstructionID {
     UDiv,
     SRem,
     URem,
+    Neg,
     // bitwise ops
     And,
     Or,
@@ -83,10 +84,6 @@ enum class InstructionID {
     Alloc,
     Select,
     Call,
-    // Pesudo Ops
-    PesudoOpBegin,
-    Assume,
-    PesudoOpEnd
 };
 
 class Instruction : public Value {
@@ -108,6 +105,9 @@ public:
     Block* getBlock() const noexcept {
         return mBlock;
     }
+    Deque<Value*>& operands() noexcept {
+        return mOperands;
+    }
     virtual void dump(std::ostream& out) const = 0;
 
 #define CMMC_GET_INST_CATEGORY(KIND)                                                       \
@@ -120,7 +120,6 @@ public:
     CMMC_GET_INST_CATEGORY(IntegerOp);
     CMMC_GET_INST_CATEGORY(FloatingPointOp);
     CMMC_GET_INST_CATEGORY(ConvertOp);
-    CMMC_GET_INST_CATEGORY(PesudoOp);
 
 #undef CMMC_GET_INST_CATEGORY
 };
@@ -164,7 +163,7 @@ class LoadInst final : public Instruction {
 
 public:
     explicit LoadInst(Value* address)
-        : Instruction{ InstructionID::Load, dynamic_cast<PointerType*>(address->getType())->getPointee(), { address } } {}
+        : Instruction{ InstructionID::Load, address->getType()->as<PointerType>()->getPointee(), { address } } {}
     void dump(std::ostream& out) const override;
 };
 
@@ -195,45 +194,56 @@ public:
 };
 
 class ConditionalBranchInst final : public Instruction {
-    Value* mCondition;
     BranchTarget mTrueTarget, mFalseTarget;
 
 public:
     explicit ConditionalBranchInst(BranchTarget target)
-        : mCondition{ nullptr }, mTrueTarget{ std::move(target) }, mFalseTarget{} {}
+        : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr } {}
     explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget)
-        : mCondition{ condition }, mTrueTarget{ std::move(trueTarget) }, mFalseTarget{ std::move(falseTarget) } {}
+        : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ std::move(trueTarget) },
+          mFalseTarget{ std::move(falseTarget) } {}
 
     void dump(std::ostream& out) const override;
 };
 
 class ReturnInst final : public Instruction {
 public:
+    explicit ReturnInst() : Instruction{ InstructionID::Ret, VoidType::get(), {} } {}
+    explicit ReturnInst(Value* retValue) : Instruction{ InstructionID::Ret, VoidType::get(), { retValue } } {}
     void dump(std::ostream& out) const override;
 };
 
 class UnreachableInst final : public Instruction {
 public:
+    explicit UnreachableInst() : Instruction{ InstructionID::Unreachable, VoidType::get(), {} } {}
     void dump(std::ostream& out) const override;
 };
 
 class FunctionCallInst final : public Instruction {
 public:
+    FunctionCallInst(Value* callee, const Vector<Value*>& args)
+        : Instruction{ InstructionID::Call, callee->getType()->as<FunctionType>()->getRetType(), {} } {
+        auto& list = operands();
+        list.insert(list.cend(), args.cbegin(), args.cend());
+        list.push_back(callee);
+    }
     void dump(std::ostream& out) const override;
 };
 
 class SelectInst final : public Instruction {
 public:
-    void dump(std::ostream& out) const override;
-};
+    SelectInst(Value* predicate, Value* lhs, Value* rhs) : Instruction{ InstructionID::Select, lhs->getType(), { lhs, rhs } } {}
 
-class AssumeInst final : public Instruction {
-public:
     void dump(std::ostream& out) const override;
 };
 
 class StackAllocInst final : public Instruction {
+    Type* mType;
+
 public:
+    // TODO: VLA
+    explicit StackAllocInst(Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
+
     void dump(std::ostream& out) const override;
 };
 

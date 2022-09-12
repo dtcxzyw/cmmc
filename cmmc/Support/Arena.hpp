@@ -21,6 +21,7 @@
 #include <set>
 #include <string>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -117,5 +118,9 @@ using Vector = std::vector<T, ArenaSourceHint<T>>;
 
 template <typename T>
 using Deque = std::deque<T, ArenaSourceHint<T>>;
+
+template <typename Key, typename Value, Arena::Source source>
+using HashTable =
+    std::unordered_map<Key, Value, typename GeneralArenaAllocator<source>::template ArenaAllocator<std::pair<const Key, Value>>>;
 
 CMMC_NAMESPACE_END

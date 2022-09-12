@@ -12,31 +12,16 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/IR/IRBuilder.hpp"
-#include "cmmc/IR/Value.hpp"
-#include "cmmc/Support/Arena.hpp"
-#include <cstdint>
-#include <utility>
+#include "cmmc/IR/ConstantValue.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Expr;
+void ConstantInteger::dump(std::ostream& out) const {
+    out << mValue;
+}
 
-using Scope = HashTable<String<Arena::Source::AST>, Value*, Arena::Source::AST>;
-CMMC_ARENA_TRAIT(Scope, AST);
-
-class EmitContext final : public IRBuilder {
-    Deque<Scope> mScopes;
-
-public:
-    Value* convertTo(Value* value, Type* type) const;
-    Value* getRValue(Expr* expr) const;
-    Value* getLValue(Expr* expr) const;
-    void pushScope();
-    void popScope();
-    void addIdentifier(String<Arena::Source::AST> identifier, Value* value);
-    Value* lookupIdentifier(const String<Arena::Source::AST>& identifier);
-};
+void ConstantFloatingPoint::dump(std::ostream& out) const {
+    out << mValue;
+}
 
 CMMC_NAMESPACE_END

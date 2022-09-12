@@ -45,7 +45,10 @@ $(BIN): $(OBJS)
 .PHONY: clean bear debug test-parse splc
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
-bear: clean # make clangd happy
+bear2: clean # make clangd happy
+	mkdir -p $(DIR_BUILD)
+	bear -o $(DIR_BUILD)/compile_commands.json make
+bear3: clean # make clangd happy
 	mkdir -p $(DIR_BUILD)
 	bear --output $(DIR_BUILD)/compile_commands.json -- make
 -include $(OBJS:.o=.d)

@@ -15,23 +15,29 @@
 #pragma once
 #include "cmmc/IR/Value.hpp"
 #include <cstdint>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 class ConstantValue : public Value {
 public:
+    explicit ConstantValue(Type* type) : Value{ type } {}
 };
 
 class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
 
 public:
+    ConstantInteger(Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {}
+    void dump(std::ostream& out) const override;
 };
 
 class ConstantFloatingPoint final : public ConstantValue {
     double mValue;
 
 public:
+    ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {}
+    void dump(std::ostream& out) const override;
 };
 
 CMMC_NAMESPACE_END

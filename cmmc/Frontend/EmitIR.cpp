@@ -111,7 +111,7 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
     if(mOp == OperatorID::Assign) {
         auto lhs = ctx.getLValue(mLhs);
         auto rhs = ctx.getRValue(mRhs);
-        rhs = ctx.convertTo(rhs, dynamic_cast<PointerType*>(lhs->getType())->getPointee());
+        rhs = ctx.convertTo(rhs, lhs->getType()->as<PointerType>()->getPointee());
 
         return ctx.makeOp<StoreInst>(lhs, rhs);
     }
@@ -169,7 +169,7 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::NotEqual: {
             Type* target = nullptr;
             if((lt->isInteger() && rt->isInteger()) || (lt->isFloatingPoint() || rt->isFloatingPoint())) {
-                target = lt->getSize() > rt->getSize() ? lt : rt;
+                target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
             } else {
                 target = lt->isFloatingPoint() ? lt : rt;
 
@@ -190,7 +190,9 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
                 reportFatal("");
 
-            const auto target = lt->getSize() > rt->getSize() ? lt : rt;
+            const auto target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
+            lhs = ctx.convertTo(lhs, target);
+            rhs = ctx.convertTo(rhs, target);
             return makeBinaryOp(ctx, mOp, false, lhs, rhs);
         }
         default:
@@ -204,18 +206,19 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
     switch(mOp) {
         case OperatorID::Neg: {
             if(value->getType()->isInteger())
-                return ctx.makeOp<UnaryInst>(InstructionID::Neg, value);
-            return ctx.makeOp<UnaryInst>(InstructionID::FNeg, value);
+                return ctx.makeOp<UnaryInst>(InstructionID::Neg, value->getType(), value);
+            return ctx.makeOp<UnaryInst>(InstructionID::FNeg, value->getType(), value);
         }
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
-                return ctx.makeOp<UnaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), -1));
+                return ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
+                                              make<ConstantInteger>(value->getType(), -1));
             }
             reportFatal("");
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean());
-            return ctx.makeOp<UnaryInst>(InstructionID::Not, value);
+            return ctx.makeOp<UnaryInst>(InstructionID::Not, value->getType(), value);
         }
         default:
             reportUnreachable();
@@ -223,11 +226,11 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
 }
 
 Value* ConstantIntExpr::emit(EmitContext& ctx) const {
-    return ConstantInteger::get(IntegerType::get(mBitWidth, mIsSigned), mValue);
+    return make<ConstantInteger>(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue));
 }
 
 Value* ConstantFloatExpr::emit(EmitContext& ctx) const {
-    return ConstantFloatingPoint::get(FloatingPointType::get(mIsFloat), mValue);
+    return make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue);
 }
 
 Value* ConstantStringExpr::emit(EmitContext& ctx) const {
@@ -235,63 +238,64 @@ Value* ConstantStringExpr::emit(EmitContext& ctx) const {
 }
 
 Value* FunctionCallExpr::emit(EmitContext& ctx) const {
-    auto callee = ctx.convertToRValue(mCallee, mCallee->isAddressable(ctx));
+    auto callee = ctx.getRValue(mCallee);
 
     Vector<Value*> args;
     args.reserve(mArgs.size());
     for(auto arg : mArgs)
-        args.push_back(ctx.convertToRValue(arg->emit(ctx)));
+        args.push_back(ctx.getRValue(arg));
 
     // TODO: va_args
-    auto& argTypes = dynamic_cast<FunctionType*>(callee->getType())->getArgTypes();
+    auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
     if(argTypes.size() != args.size())
         reportFatal("");
 
     for(size_t idx = 0; idx < args.size(); ++idx)
         args[idx] = ctx.convertTo(args[idx], argTypes[idx]);
 
-    return ctx.makeOp<FunctionCall>(callee, std::move(args));
+    return ctx.makeOp<FunctionCallInst>(callee, std::move(args));
 }
 
 Value* ReturnExpr::emit(EmitContext& ctx) const {
     auto func = ctx.getCurrentFunction();
-    auto type = func->getRetType();
-    if(type->isVoidType()) {
-        if(mValue)
+    auto type = func->getType()->as<FunctionType>();
+    auto retType = type->getRetType();
+    if(retType->isVoid()) {
+        if(mReturnValue)
             reportFatal("");
-    } else if(!mValue) {
+    } else if(!mReturnValue) {
         reportFatal("");
     }
 
-    if(type->isVoidType())
+    if(type->isVoid())
         return ctx.makeOp<ReturnInst>(nullptr);
-    auto val = ctx.convertTo(ctx.convertToRValue(mValue->emit(ctx), mValue->isAddressable(ctx)), type);
+    auto val = ctx.convertTo(ctx.getRValue(mReturnValue), retType);
     return ctx.makeOp<ReturnInst>(val);
 }
 
 Value* IfElseExpr::emit(EmitContext& ctx) const {
-    auto val = ctx.convertTo(ctx.convertToRValue(mPredicate->emit(ctx), mPredicate->isAddressable(ctx)), ctx.getBooleanType());
+    auto pred = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
 
-    auto ifBlock = make<Block>();
-    auto elseBlock = make<Block>();
-    auto newBlock = make<Block>();
-    ctx.makeOp<ConditionalBranch>(val, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+    auto ifBlock = ctx.addBlock();
+    auto elseBlock = ctx.addBlock();
+    auto newBlock = ctx.addBlock();
+    ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
 
     ctx.setCurrentBlock(ifBlock);
     mIfBlock->emit(ctx);
-    ctx.makeOp<ConditionalBranch>(BranchTarget{ newBlock });
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
     ctx.setCurrentBlock(elseBlock);
     mElseBlock->emit(ctx);
-    ctx.makeOp<ConditionalBranch>(BranchTarget{ newBlock });
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
 
     ctx.setCurrentBlock(newBlock);
     return nullptr;
 }
 
 Value* IdentifierExpr::emit(EmitContext& ctx) const {
-    auto value = ctx.lookUpIdentifier(mIdentifier);
+    auto value = ctx.lookupIdentifier(mIdentifier);
     if(!value) {
-        value = ctx.makeOp<StackAllocInst>(IntegerType::get(32, true));
+        value = ctx.makeOp<StackAllocInst>(IntegerType::get(32));
         ctx.addIdentifier(mIdentifier, value);
     }
     return value;
@@ -306,20 +310,20 @@ Value* ScopedExpr::emit(EmitContext& ctx) const {
 }
 
 Value* WhileExpr::emit(EmitContext& ctx) const {
-    auto whileHeader = make<Block>();
-    ctx.makeOp<ConditionalBranch>(BranchTarget{ whileHeader });
+    auto whileHeader = ctx.addBlock();
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
     ctx.setCurrentBlock(whileHeader);
 
-    auto val = ctx.convertTo(ctx.convertToRValue(mPredicate->emit(ctx), mPredicate->isAddressable(ctx)), ctx.getBooleanType());
+    auto val = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
 
-    auto whileBody = make<Block>();
-    auto newBlock = make<Block>();
+    auto whileBody = ctx.addBlock();
+    auto newBlock = ctx.addBlock();
 
-    ctx.makeOp<ConditionalBranch>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
+    ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
 
     ctx.setCurrentBlock(whileBody);
     mBlock->emit(ctx);
-    ctx.makeOp<ConditionalBranch>(BranchTarget{ whileHeader });
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
 
     ctx.setCurrentBlock(newBlock);
 
