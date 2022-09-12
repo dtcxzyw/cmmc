@@ -14,18 +14,31 @@
 
 #pragma once
 #include "cmmc/IR/Instruction.hpp"
+#include "cmmc/IR/Value.hpp"
 #include "cmmc/Support/Arena.hpp"
+#include <cstdint>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
+class Function;
+
+class BlockArgument final : public Value {
+    Block* mBlock;
+    uint32_t mIdx;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
 class Block final {
+    Function* mFunction;
     String<Arena::Source::IR> mLabel;
     List<Type*> mArgs;
     List<Instruction*> mInstructions;
 
 public:
-    explicit Block(const String<Arena::Source::IR>& label) : mLabel{ label } {}
+    explicit Block(Function* function, const String<Arena::Source::IR>& label = "") : mFunction{ function }, mLabel{ label } {}
     void dump(std::ostream& out) const;
     bool verify() const;
 
@@ -38,6 +51,10 @@ public:
     List<Instruction*>& instructions() noexcept {
         return mInstructions;
     }
+    Function* getFunction() const noexcept {
+        return mFunction;
+    }
+    Value* getArg(uint32_t idx) const;
 };
 CMMC_ARENA_TRAIT(Block, IR);
 

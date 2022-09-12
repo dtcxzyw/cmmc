@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/IR/Type.hpp"
 #include "cmmc/IR/Value.hpp"
 #include "cmmc/Support/Arena.hpp"
 #include <ostream>
@@ -90,11 +91,22 @@ enum class InstructionID {
 
 class Instruction : public Value {
     InstructionID mInstID;
-    List<Value*> mOperands;
+    Deque<Value*> mOperands;
+    Block* mBlock;
+
     // bool isVolatile;
 public:
+    Instruction(InstructionID instID, Type* valueType, Deque<Value*> operands)
+        : Value{ valueType }, mInstID{ instID }, mOperands{ std::move(operands) } {}
+
     InstructionID getInstID() const noexcept {
         return mInstID;
+    }
+    void setBlock(Block* block) noexcept {
+        mBlock = block;
+    }
+    Block* getBlock() const noexcept {
+        return mBlock;
     }
     virtual void dump(std::ostream& out) const = 0;
 
@@ -113,30 +125,37 @@ public:
 #undef CMMC_GET_INST_CATEGORY
 };
 
-class BinaryInstruction final : public Instruction {
+class BinaryInst final : public Instruction {
 public:
+    BinaryInst(InstructionID instID, Type* valueType, Value* lhs, Value* rhs) : Instruction{ instID, valueType, { lhs, rhs } } {}
     void dump(std::ostream& out) const override;
 };
 
 enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
 
-class IntegerCompareInstruction final : public Instruction {
-    bool mIsSigned;
+class IntegerCompareInst final : public Instruction {
     CompareOp mCompare;
 
 public:
+    IntegerCompareInst(bool isSigned, CompareOp compare, Value* lhs, Value* rhs)
+        : Instruction{ isSigned ? InstructionID::SCmp : InstructionID::UCmp, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{
+              compare
+          } {}
     void dump(std::ostream& out) const override;
 };
 
-class FloatingPointCompareInstruction final : public Instruction {
+class FloatingPointCompareInst final : public Instruction {
     CompareOp mCompare;
 
 public:
+    FloatingPointCompareInst(CompareOp compare, Value* lhs, Value* rhs)
+        : Instruction{ InstructionID::FCmp, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
 };
 
-class UnaryInstruction final : public Instruction {
+class UnaryInst final : public Instruction {
 public:
+    UnaryInst(InstructionID instID, Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
     void dump(std::ostream& out) const override;
 };
 
@@ -144,6 +163,8 @@ class LoadInst final : public Instruction {
     Value* mAddress;
 
 public:
+    explicit LoadInst(Value* address)
+        : Instruction{ InstructionID::Load, dynamic_cast<PointerType*>(address->getType())->getPointee(), { address } } {}
     void dump(std::ostream& out) const override;
 };
 
@@ -152,13 +173,37 @@ class StoreInst final : public Instruction {
     Value* mValue;
 
 public:
+    explicit StoreInst(Value* address, Value* value) : Instruction{ InstructionID::Load, VoidType::get(), { address, value } } {}
     void dump(std::ostream& out) const override;
 };
 
-class ConditionalBranch final : public Instruction {
-    Block *mIfTarget, *mElseTarget;
+class BranchTarget final {
+    Block* mTarget;
+    Vector<Value*> mArgs;
 
 public:
+    BranchTarget() : mTarget{ nullptr } {}
+    template <typename... Args>
+    explicit BranchTarget(Block* target, Args... args) : mTarget{ target }, mArgs{ args... } {}
+
+    Block* getTarget() const noexcept {
+        return mTarget;
+    }
+    Vector<Value*>& getArgs() noexcept {
+        return mArgs;
+    }
+};
+
+class ConditionalBranchInst final : public Instruction {
+    Value* mCondition;
+    BranchTarget mTrueTarget, mFalseTarget;
+
+public:
+    explicit ConditionalBranchInst(BranchTarget target)
+        : mCondition{ nullptr }, mTrueTarget{ std::move(target) }, mFalseTarget{} {}
+    explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget)
+        : mCondition{ condition }, mTrueTarget{ std::move(trueTarget) }, mFalseTarget{ std::move(falseTarget) } {}
+
     void dump(std::ostream& out) const override;
 };
 
@@ -172,7 +217,7 @@ public:
     void dump(std::ostream& out) const override;
 };
 
-class FunctionCall final : public Instruction {
+class FunctionCallInst final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };

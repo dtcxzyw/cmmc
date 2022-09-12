@@ -13,8 +13,11 @@
 */
 
 #pragma once
+#include "cmmc/Frontend/EmitIR.hpp"
 #include "cmmc/Frontend/SourceLocation.hpp"
 #include "cmmc/IR/Block.hpp"
+#include "cmmc/IR/IRBuilder.hpp"
+#include "cmmc/IR/Module.hpp"
 #include "cmmc/IR/Type.hpp"
 #include "cmmc/IR/Value.hpp"
 #include "cmmc/Support/Arena.hpp"
@@ -22,6 +25,8 @@
 #include <utility>
 
 CMMC_NAMESPACE_BEGIN
+
+class EmitContext;
 
 struct Qualifier final {
     // bool isConst;
@@ -64,16 +69,8 @@ using StatementBlock = Deque<Expr*>;
 struct FunctionDefinition final {
     FunctionDeclaration decl;
     StatementBlock block;
-};
 
-struct FunctionTranslationContext final {
-    Block* currentBB;
-
-    // labels
-    // symbols
-
-    // Block* breakTarget;
-    // Block* continuousTarget;
+    void emit(EmitContext& ctx) const;
 };
 
 class Expr {
@@ -88,7 +85,7 @@ public:
     Expr& operator=(const Expr&) = delete;
     Expr& operator=(Expr&&) = delete;
     virtual ~Expr() = default;
-    virtual Value* emit(FunctionTranslationContext& ctx) const = 0;
+    virtual Value* emit(EmitContext& ctx) const = 0;
 };
 
 enum class OperatorID {
@@ -122,7 +119,7 @@ class BinaryExpr final : public Expr {
 public:
     BinaryExpr(OperatorID op, Expr* lhs, Expr* rhs) noexcept : mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
     static BinaryExpr* get(OperatorID op, Expr* lhs, Expr* rhs);
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
 };
 
 class UnaryExpr final : public Expr {
@@ -132,7 +129,7 @@ class UnaryExpr final : public Expr {
 public:
     UnaryExpr(OperatorID op, Expr* value) noexcept : mOp{ op }, mValue{ value } {}
     static UnaryExpr* get(OperatorID op, Expr* value);
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
 };
 
 class ConstantIntExpr final : public Expr {
@@ -143,7 +140,7 @@ class ConstantIntExpr final : public Expr {
 public:
     ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
         : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static ConstantIntExpr* get(uintmax_t value, uint32_t bitWidth, bool isSigned);
 };
 
@@ -153,7 +150,7 @@ class ConstantFloatExpr final : public Expr {
 
 public:
     ConstantFloatExpr(double value, bool isFloat) noexcept : mValue{ value }, mIsFloat{ isFloat } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static ConstantFloatExpr* get(double value, bool isFloat);
 };
 
@@ -162,7 +159,7 @@ class ConstantStringExpr final : public Expr {
 
 public:
     explicit ConstantStringExpr(const String<Arena::Source::AST>& str) : mString{ str } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
 };
 
 using ExprPack = Deque<Expr*>;
@@ -173,7 +170,7 @@ class FunctionCallExpr final : public Expr {
 
 public:
     FunctionCallExpr(Expr* callee, ExprPack args) : mCallee{ callee }, mArgs{ std::move(args) } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static FunctionCallExpr* get(Expr* callee, ExprPack args);
 };
 
@@ -182,7 +179,7 @@ class ReturnExpr final : public Expr {
 
 public:
     explicit ReturnExpr(Expr* returnValue) noexcept : mReturnValue{ returnValue } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static ReturnExpr* get(Expr* returnValue);
 };
 
@@ -194,7 +191,7 @@ class IfElseExpr final : public Expr {
 public:
     IfElseExpr(Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
         : mPredicate{ pred }, mIfBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static IfElseExpr* get(Expr* pred, Expr* ifPart, Expr* elsePart);
 };
 
@@ -203,7 +200,7 @@ class IdentifierExpr final : public Expr {
 
 public:
     explicit IdentifierExpr(const String<Arena::Source::AST>& str) : mIdentifier{ str } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static IdentifierExpr* get(const String<Arena::Source::AST>& str);
 };
 
@@ -212,7 +209,7 @@ class ScopedExpr final : public Expr {
 
 public:
     explicit ScopedExpr(StatementBlock block) : mBlock{ std::move(block) } {};
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static ScopedExpr* get(StatementBlock block);
 };
 
@@ -222,7 +219,7 @@ class WhileExpr final : public Expr {
 
 public:
     WhileExpr(Expr* pred, Expr* block) : mPredicate{ pred }, mBlock{ block } {}
-    Value* emit(FunctionTranslationContext& ctx) const override;
+    Value* emit(EmitContext& ctx) const override;
     static WhileExpr* get(Expr* pred, Expr* block);
 };
 

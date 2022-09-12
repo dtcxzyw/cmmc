@@ -13,31 +13,22 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Type.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include "cmmc/IR/IRBuilder.hpp"
+#include "cmmc/IR/Value.hpp"
+#include <cstdint>
+#include <utility>
 
 CMMC_NAMESPACE_BEGIN
 
-class Module;
+class Expr;
 
-class Value {
-    Type* mType;
-
+class EmitContext final : public IRBuilder {
 public:
-    static constexpr auto arenaSource = Arena::Source::IR;
-
-    explicit Value(Type* type) : mType{ type } {}
-    Value(const Value&) = delete;
-    Value(Value&&) = delete;
-    Value& operator=(const Value&) = delete;
-    Value& operator=(Value&&) = delete;
-    virtual ~Value();
-
-    virtual void dump(std::ostream& out) const = 0;
-    Type* getType() const noexcept {
-        return mType;
-    }
+    Value* convertTo(Value* value, Type* type) const;
+    Value* getRValue(Expr* expr) const;
+    Value* getLValue(Expr* expr) const;
+    void pushScope();
+    void popScope();
 };
 
 CMMC_NAMESPACE_END

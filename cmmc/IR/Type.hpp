@@ -15,8 +15,11 @@
 #pragma once
 #include "cmmc/Frontend/SourceLocation.hpp"
 #include "cmmc/Support/Arena.hpp"
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
+
+class Module;
 
 class Type {
 public:
@@ -33,25 +36,97 @@ public:
     T* as() {
         return dynamic_cast<T*>(this);
     }
+
+    virtual bool isVoid() const noexcept {
+        return false;
+    }
+    virtual bool isPointer() const noexcept {
+        return false;
+    }
+    virtual bool isInteger() const noexcept {
+        return false;
+    }
+    virtual bool isBoolean() const noexcept {
+        return false;
+    }
+    virtual bool isFloatingPoint() const noexcept {
+        return false;
+    }
+    virtual bool isStruct() const noexcept {
+        return false;
+    }
+    virtual bool isArray() const noexcept {
+        return false;
+    }
+    virtual bool isFunction() const noexcept {
+        return false;
+    }
+    bool isPrimitiveType() const noexcept {
+        return !isArray() && !isStruct();
+    }
+
+    virtual bool isSame(Type* rhs) const = 0;
+};
+CMMC_ARENA_TRAIT(Type, IR);
+
+class VoidType final : public Type {
+public:
+    bool isVoid() const noexcept override {
+        return true;
+    }
+    bool isSame(Type* rhs) const override;
+    static VoidType* get();
 };
 
-inline bool isSameType(Type* lhs, Type* rhs) noexcept {
-    return lhs == rhs;
-}
-
-class VoidType final : public Type {};
-
 class PointerType final : public Type {
-    struct Type* pointee;
+    Type* mPointee;
+
+public:
+    explicit PointerType(Type* pointee) : mPointee{ pointee } {}
+    bool isPointer() const noexcept override {
+        return true;
+    }
+    Type* getPointee() const noexcept {
+        return mPointee;
+    }
+    bool isSame(Type* rhs) const override;
 };
 
 class IntegerType final : public Type {
-    uint32_t bitWidth;
-    bool isSigned;
+    uint32_t mBitWidth;
+    bool mIsSigned;
+
+public:
+    IntegerType(uint32_t bitWidth, bool isSigned) : mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
+    static IntegerType* get(uint32_t bitWidth, bool isSigned);
+    static IntegerType* getBoolean() {
+        return get(1, false);
+    }
+    bool isInteger() const noexcept override {
+        return true;
+    }
+    bool isBoolean() const noexcept override {
+        return mBitWidth == 1 && !mIsSigned;
+    }
+    bool isSame(Type* rhs) const override;
 };
 
 class FloatingPointType final : public Type {
-    uint32_t bitWidth;
+    bool mIsFloat;
+
+public:
+    FloatingPointType(bool isFloat) : mIsFloat{ isFloat } {}
+    static FloatingPointType* get(bool isFloat);
+    static FloatingPointType* getFloat() {
+        return get(true);
+    }
+    static FloatingPointType* getDouble() {
+        return get(false);
+    }
+    bool isFloatingPoint() const noexcept override {
+        return true;
+    }
+    bool isSame(Type* rhs) const override;
 };
 
 class FunctionType final : public Type {
@@ -59,6 +134,10 @@ class FunctionType final : public Type {
     Vector<Type*> mArgTypes;
     // bool isVarArg
 public:
+    bool isFunction() const noexcept override {
+        return true;
+    }
+    bool isSame(Type* rhs) const override;
 };
 
 struct StructField final {
@@ -72,6 +151,10 @@ class StructType final : public Type {
     List<StructField> fields;
 
 public:
+    bool isStruct() const noexcept override {
+        return true;
+    }
+    bool isSame(Type* rhs) const override;
 };
 
 CMMC_NAMESPACE_END
