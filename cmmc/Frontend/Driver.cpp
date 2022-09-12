@@ -245,22 +245,228 @@ void Driver::emit(Module& module) {
     mImpl->emit(module);
 }
 
-void DriverImpl::emit(Module& module) {}
+void DriverImpl::emit(Module& module) {
+    FunctionTranslationContext ctx{ module };
+    for(auto& func : mFunctionDef) {
+        func.emit(ctx);
+    }
+    // block arg propagation using DominatorTree
+
+    assert(module.verify());
+}
+
+static InstructionID getBinaryOp(OperatorID op, bool isFloatingPoint) {
+    if(ifFloatingPoint) {
+        switch(op) {
+            case OperatorID::Add:
+                return InstructionID::FAdd;
+            case OperatorID::Sub:
+                return InstructionID::FSub;
+            case OperatorID::Mul:
+                return InstructionID::FMul;
+            case OperatorID::Div:
+                return InstructionID::FDiv;
+
+            case OperatorID::LessThan:
+                [[fallthrough]];
+            case OperatorID::LessEqual:
+                [[fallthrough]];
+            case OperatorID::GreaterThan:
+                [[fallthrough]];
+            case OperatorID::GreaterEqual:
+                [[fallthrough]];
+            case OperatorID::Equal:
+                [[fallthrough]];
+            case OperatorID::NotEqual:
+                return InstructionID::FCmp;
+
+            default:
+                reportUnreachable();
+        }
+    } else {
+        switch(op) {
+            case OperatorID::Add:
+                return InstructionID::Add;
+            case OperatorID::Sub:
+                return InstructionID::Sub;
+            case OperatorID::Mul:
+                return InstructionID::Mul;
+
+                // TODO: unsigned
+            case OperatorID::Div:
+                return InstructionID::SDiv;
+            case OperatorID::Rem:
+                return InstructionID::SRem;
+
+            case OperatorID::LessThan:
+                [[fallthrough]];
+            case OperatorID::LessEqual:
+                [[fallthrough]];
+            case OperatorID::GreaterThan:
+                [[fallthrough]];
+            case OperatorID::GreaterEqual:
+                [[fallthrough]];
+            case OperatorID::Equal:
+                [[fallthrough]];
+            case OperatorID::NotEqual:
+                return InstructionID::SCmp;
+
+            default:
+                reportUnreachable();
+        }
+    }
+}
+
+static CompareOp getCompareOp(OperatorID op) {
+    assert(static_cast<uint32_t>(op) >= static_cast<uint32_t>(OperatorID::LessThan) &&
+           static_cast<uint32_t>(op) <= static_cast<uint32_t>(OperatorID::NotEqual));
+    return static_cast<CompareOp>(static_cast<uint32_t>(op) - static_cast<uint32_t>(OperatorID::LessThan) +
+                                  static_cast<uint32_t>(CompareOp::LessThan));
+}
+
+static Value* makeBinaryOp(FunctionTranslationContext& ctx, OperatorID op, bool isFloatintPoint, Value* lhs, Value* rhs) {
+    auto inst = getBinaryOp(op, isFloatintPoint);
+
+    if(inst == InstructionID::FCmp) {
+        return ctx.makeOp<FloatingPointCompareInstruction>(getCompareOp(op), lhs, rhs);
+    } else if(inst == InstructionID::SCmp) {
+        return ctx.makeOp<IntegerCompareInstruction>(true, getCompareOp(op), lhs, rhs);
+    } else {
+        return ctx.makeOp<BinaryInstruction>(inst, lhs, rhs);
+    }
+}
 
 Value* BinaryExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    // short circut logical op
+    auto lhs = mLhs->emit(ctx);
+    if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
+        lhs = ctx.convertTo(lhs, ctx.getBooleanType());
+
+        auto rhsBlock = make<Block>();
+        auto newBlock = make<Block>({ ctx.getBooleanType() });
+
+        if(mOp == OperatorID::LogicalAnd) {
+            ctx.makeOp<ConditionalBranch>(lhs, BranchTarget{ rhsBlock }, BranchTarget{ newBlock, ctx.getFalse() });
+        } else {
+            ctx.makeOp<ConditionalBranch>(lhs, BranchTarget{ newBlock, ctx.getTrue() }, BranchTarget{ rhsBlock });
+        }
+
+        ctx.setCurrentBlock(rhsBlock);
+        ctx.makeOp<ConditionalBranch>(BranchTarget{ rhsBlock, ctx.convertTo(mRhs->emit(ctx), ctx.getBooleanType()) });
+        ctx.setCurrentBlock(newBlock);
+        return newBlock.getArg(0);
+    }
+
+    // assign op
+    if(mOp == OperatorID::Assign) {
+        auto lhs = mLhs->emit(ctx);
+
+        if(!mLhs->isAddressable()) {
+            fatal("Cannot assign to a rvalue");
+        }
+        if(mLhs->isMutable()) {
+            fatal("Cannot assign to an immutable lvalue");
+        }
+
+        auto rhs = ctx.convertToRValue(mRhs->emit(ctx), mRhs->isAddressable(ctx));
+        rhs = ctx.convertTo(rhs, lhs->getType()->getPointeeType());
+
+        return ctx.makeOp<StoreInst>(lhs, rhs);
+    }
+
+    // arithmetic op
+    auto rhs = mRhs->emit(ctx);
+    lhs = ctx.convertToRValue(lhs, mLhs->isAddressable(ctx));
+    rhs = ctx.convertToRValue(rhs, mRhs->isAddressable(ctx));
+
+    auto lt = lhs->getType();
+    auto rt = rhs->getType();
+    if(!lt->isBuiltinType() || !rt->isBuiltinType())
+        fatal("Custom operator is not supported");
+
+    assert(!lt->isPointer() && !rt->isPointer());
+
+    switch(mOp) {
+        // IOP/FOP
+        case OperatorID::Add:
+            [[fallthrough]];
+        case OperatorID::Sub:
+            [[fallthrough]];
+        case OperatorID::Mul:
+            [[fallthrough]];
+        case OperatorID::Div:
+            [[fallthrough]];
+        case OperatorID::LessThan:
+            [[fallthrough]];
+        case OperatorID::LessEqual:
+            [[fallthrough]];
+        case OperatorID::GreaterThan:
+            [[fallthrough]];
+        case OperatorID::GreaterEqual:
+            [[fallthrough]];
+        case OperatorID::Equal:
+            [[fallthrough]];
+        case OperatorID::NotEqual: {
+            auto target = nullptr;
+            if((lt->isInteger() && rt->isInteger()) || (lt->isFloatingPoint() || rt->isFloatingPoint())) {
+                target = lt->getSize() > rt->getSize() ? lt : rt;
+            } else {
+                target = lt->isFloatingPoint() ? lt : rt;
+
+                lhs = ctx.convertTo(lhs, target);
+                rhs = ctx.convertTo(rhs, target);
+
+                return makeBinaryOp(ctx, mOp, target->isFloatingPoint(), lhs, rhs);
+            }
+        }
+        // IOP
+        case OperatorID::Rem:
+            [[fallthrough]];
+        case OperatorID::BitwiseAnd:
+            [[fallthrough]];
+        case OperatorID::BitwiseOr:
+            [[fallthrough]];
+        case OperatorID::Xor: {
+            if(lt->isFloatingPoint() || rt->isFloatingPoint())
+                fatal("");
+
+            const auto target = lt->getSize() > rt->getSize() ? lt : rt;
+            return makeBinaryOp(ctx, mOp, false, lhs, rhs);
+        }
+        default:
+            reportUnreachable();
+    }
 }
 
 Value* UnaryExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    auto value = ctx.convertToRValue(mValue->emit(ctx));
+    switch(mOp) {
+        case OperatorID::Neg: {
+            if(value->getType()->isInteger())
+                return ctx.makeOp<UnaryInstruction>(InstructionID::Neg, value);
+            return ctx.makeOp<UnaryInstruction>(InstructionID::FNeg, value);
+        }
+        case OperatorID::BitwiseNot: {
+            if(value->getType()->isInteger()) {
+                return ctx.makeOp<UnaryInstruction>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), -1));
+            }
+            fatal("");
+        }
+        case OperatorID::LogicalNot: {
+            value = ctx.convertTo(value, ctx.getBooleanType());
+            return ctx.makeOp<UnaryInstruction>(Instruction::Not, value);
+        }
+        default:
+            reportUnreachable();
+    }
 }
 
 Value* ConstantIntExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    return ConstantInteger::get(IntegerType::get(mBitWidth, mIsSigned), mValue);
 }
 
 Value* ConstantFloatExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    return ConstantFloatingPoint::get(FloatingPointType::get(mIsFloat), mValue);
 }
 
 Value* ConstantStringExpr::emit(FunctionTranslationContext& ctx) const {
@@ -268,26 +474,94 @@ Value* ConstantStringExpr::emit(FunctionTranslationContext& ctx) const {
 }
 
 Value* FunctionCallExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    auto callee = ctx.convertToRValue(mCallee, mCallee->isAddressable(ctx));
+
+    Vector<Value*> args;
+    args.reserve(mArgs.size());
+    for(auto arg : mArgs)
+        args.push_back(ctx.convertToRValue(arg->emit(ctx)));
+
+    // TODO: va_args
+    auto& argTypes = dynamic_cast<FunctionType*>(callee->getType())->getArgTypes();
+    if(argTypes.size() != args.size())
+        fatal("");
+
+    for(size_t idx = 0; idx < args.size(); ++idx)
+        args[idx] = ctx.convertTo(args[idx], argTypes[idx]);
+
+    return ctx.makeOp<FunctionCall>(callee, std::move(args));
 }
 
 Value* ReturnExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    auto func = ctx.getCurrentFunction();
+    auto type = func->getRetType();
+    if(type->isVoidType()) {
+        if(mValue)
+            fatal("");
+    } else if(!mValue) {
+        fatal("");
+    }
+
+    if(type->isVoidType())
+        return ctx.makeOp<ReturnInst>(nullptr);
+    auto val = ctx.convertTo(ctx.convertToRValue(mValue->emit(ctx), mValue->isAddressable(ctx)), type);
+    return ctx.makeOp<ReturnInst>(val);
 }
 
 Value* IfElseExpr::emit(FunctionTranslationContext& ctx) const {
+    auto val = ctx.convertTo(ctx.convertToRValue(mPredicate->emit(ctx), mPredicate->isAddressable(ctx)), ctx.getBooleanType());
+
+    auto ifBlock = make<Block>();
+    auto elseBlock = make<Block>();
+    auto newBlock = make<Block>();
+    ctx.makeOp<ConditionalBranch>(val, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+
+    ctx.setCurrentBlock(ifBlock);
+    mIfBlock->emit(ctx);
+    ctx.makeOp<ConditionalBranch>(BranchTarget{ newBlock });
+    ctx.setCurrentBlock(elseBlock);
+    mElseBlock->emit(ctx);
+    ctx.makeOp<ConditionalBranch>(BranchTarget{ newBlock });
+
+    ctx.setCurrentBlock(newBlock);
     return nullptr;
 }
 
 Value* IdentifierExpr::emit(FunctionTranslationContext& ctx) const {
-    return nullptr;
+    auto value = ctx.lookUpIdentifier(mIdentifier);
+    if(!value) {
+        value = ctx.makeOp<StackAllocInst>(IntegerType::get(32, true));
+        ctx.addIdentifier(mIdentifier, value);
+    }
+    return value;
 }
 
 Value* ScopedExpr::emit(FunctionTranslationContext& ctx) const {
+    ctx.pushScope();
+    for(auto statement : mBlock)
+        statement->emit(ctx);
+    ctx.popScope();
     return nullptr;
 }
 
 Value* WhileExpr::emit(FunctionTranslationContext& ctx) const {
+    auto whileHeader = make<Block>();
+    ctx.makeOp<ConditionalBranch>(BranchTarget{ whileHeader });
+    ctx.setCurrentBlock(whileHeader);
+
+    auto val = ctx.convertTo(ctx.convertToRValue(mPredicate->emit(ctx), mPredicate->isAddressable(ctx)), ctx.getBooleanType());
+
+    auto whileBody = make<Block>();
+    auto newBlock = make<Block>();
+
+    ctx.makeOp<ConditionalBranch>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
+
+    ctx.setCurrentBlock(whileBody);
+    mBlock->emit(ctx);
+    ctx.makeOp<ConditionalBranch>(BranchTarget{ whileHeader });
+
+    ctx.setCurrentBlock(newBlock);
+
     return nullptr;
 }
 

@@ -110,6 +110,7 @@ enum class OperatorID {
     BitwiseAnd,
     LogicalOr,
     BitwiseOr,
+    Xor,
     Assign
 };
 

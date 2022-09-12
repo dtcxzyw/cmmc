@@ -96,7 +96,7 @@ public:
     InstructionID getInstID() const noexcept {
         return mInstID;
     }
-    void dump(std::ostream& out) const;
+    virtual void dump(std::ostream& out) const = 0;
 
 #define CMMC_GET_INST_CATEGORY(KIND)                                                       \
     bool is##KIND() const noexcept {                                                       \
@@ -118,31 +118,56 @@ public:
     void dump(std::ostream& out) const override;
 };
 
+enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
+
+class IntegerCompareInstruction final : public Instruction {
+    bool mIsSigned;
+    CompareOp mCompare;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class FloatingPointCompareInstruction final : public Instruction {
+    CompareOp mCompare;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
 class UnaryInstruction final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };
 
-class ConditionalBreak final : public Instruction {
+class LoadInst final : public Instruction {
+    Value* mAddress;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class StoreInst final : public Instruction {
+    Value* mAddress;
+    Value* mValue;
+
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class ConditionalBranch final : public Instruction {
     Block *mIfTarget, *mElseTarget;
 
 public:
     void dump(std::ostream& out) const override;
 };
 
-class Break final : public Instruction {
-    Block* mTarget;
-
+class ReturnInst final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };
 
-class Return final : public Instruction {
-public:
-    void dump(std::ostream& out) const override;
-};
-
-class Unreachable final : public Instruction {
+class UnreachableInst final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };
@@ -152,12 +177,17 @@ public:
     void dump(std::ostream& out) const override;
 };
 
-class Select final : public Instruction {
+class SelectInst final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };
 
-class Assume final : public Instruction {
+class AssumeInst final : public Instruction {
+public:
+    void dump(std::ostream& out) const override;
+};
+
+class StackAllocInst final : public Instruction {
 public:
     void dump(std::ostream& out) const override;
 };

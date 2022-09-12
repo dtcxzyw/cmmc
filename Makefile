@@ -16,7 +16,7 @@ YACC = bison
 DIR_BUILD := ./build
 BIN := ./bin/splc
 
-CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I$(abspath $(DIR_BUILD)/generated/) -I$(abspath ./) -Wall -Werror -MD
+CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -I $(abspath ./) -Wall -Werror -MD
 LDFLAGS = $(ADDFLAGS) -lfl
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp)
@@ -46,7 +46,8 @@ $(BIN): $(OBJS)
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear: clean # make clangd happy
-	bear -o $(DIR_BUILD)/compile_commands.json make
+	mkdir -p $(DIR_BUILD)
+	bear --output $(DIR_BUILD)/compile_commands.json -- make
 -include $(OBJS:.o=.d)
 debug: $(BIN)
 	gdb $(BIN)

@@ -14,10 +14,23 @@
 
 #pragma once
 #include "cmmc/IR/Value.hpp"
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
 class ConstantValue : public Value {
+public:
+};
+
+class ConstantInteger final : public ConstantValue {
+    intmax_t mValue;
+
+public:
+};
+
+class ConstantFloatingPoint final : public ConstantValue {
+    double mValue;
+
 public:
 };
 
