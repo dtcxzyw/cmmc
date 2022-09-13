@@ -14,9 +14,12 @@
 
 #include <cmmc/IR/LabelAllocator.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
+
+Module::Module() : mArena{ Arena::Source::IR } {}
 
 void Module::dump(std::ostream& out) const {
     // TODO: dump struct/opaque types

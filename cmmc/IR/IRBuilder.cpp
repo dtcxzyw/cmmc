@@ -30,6 +30,7 @@ Block* IRBuilder::addBlock(const Vector<Type*>& types) {
     auto block = make<Block>(mCurrentFunction);
     for(auto type : types)
         block->addArg(type);
+    block->setLabel("b");
     mCurrentFunction->blocks().push_back(block);
     return block;
 }

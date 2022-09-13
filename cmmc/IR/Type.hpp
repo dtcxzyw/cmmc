@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cassert>
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
@@ -35,7 +36,9 @@ public:
 
     template <typename T>
     T* as() {
-        return dynamic_cast<T*>(this);
+        const auto ptr = dynamic_cast<T*>(this);
+        assert(ptr);
+        return ptr;
     }
 
     virtual bool isVoid() const noexcept {

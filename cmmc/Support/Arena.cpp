@@ -20,6 +20,9 @@
 CMMC_NAMESPACE_BEGIN
 
 Arena::Arena() : mBlockPtr{ 0 }, mBlockEndPtr{ 0 } {}
+Arena::Arena(Arena::Source src) : Arena{} {
+    Arena::setArena(src, this);
+}
 Arena::~Arena() {
     for(auto ptr : mBlocks)
         free(ptr);

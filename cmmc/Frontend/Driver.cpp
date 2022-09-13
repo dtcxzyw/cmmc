@@ -253,7 +253,7 @@ void DriverImpl::emit(Module& module) {
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
     }
-    assert(module.verify());
+    assert(module.verify(std::cerr));
 }
 
 void Driver::dump(std::ostream& out) {

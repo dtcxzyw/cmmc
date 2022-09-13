@@ -28,6 +28,9 @@ public:
         return mSymbol;
     }
     void dumpAsOperand(std::ostream& out) const final;
+    bool isGlobal() const noexcept override {
+        return true;
+    }
 };
 
 CMMC_NAMESPACE_END

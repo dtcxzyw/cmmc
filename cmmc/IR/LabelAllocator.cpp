@@ -18,14 +18,15 @@
 CMMC_NAMESPACE_BEGIN
 
 static void emitID(String<Arena::Source::IR>& str, uint32_t idx) {
-    emitID(str, idx);
+    if(idx >= 10)
+        emitID(str, idx / 10);
     str.push_back('0' + idx % 10);
 }
 
 String<Arena::Source::IR> LabelAllocator::allocate(const String<Arena::Source::IR>& base) {
     uint32_t end = 0;
     while(end != base.size()) {
-        if(!isalpha(base[end]))
+        if(isdigit(base[end]))
             break;
         ++end;
     }

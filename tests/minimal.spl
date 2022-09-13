@@ -8,5 +8,5 @@ int gcd(int x, int y) {
 }
 
 int main() {
-    return gcd(7,11);
+    return gcd(7, 11);
 }

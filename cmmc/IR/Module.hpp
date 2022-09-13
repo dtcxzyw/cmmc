@@ -23,11 +23,12 @@ CMMC_NAMESPACE_BEGIN
 class Target;
 
 class Module final {
+    Arena mArena;
     HashTable<String<Arena::Source::IR>, GlobalValue*, Arena::Source::IR, StringHasher<Arena::Source::IR>> mGlobals;
     const Target* mTarget = nullptr;
 
 public:
-    Module() = default;
+    Module();
     ~Module() = default;
     Module(const Module&) = delete;
     Module(Module&&) = delete;

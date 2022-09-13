@@ -41,9 +41,9 @@ public:
     Module* getModule() const noexcept {
         return mModule;
     }
-    Value* convertTo(Value* value, Type* type) const;
-    Value* getRValue(Expr* expr) const;
-    Value* getLValue(Expr* expr) const;
+    Value* convertTo(Value* value, Type* type);
+    Value* getRValue(Expr* expr);
+    Value* getLValue(Expr* expr);
     void pushScope();
     void popScope();
     void addIdentifier(String<Arena::Source::AST> identifier, Value* value);

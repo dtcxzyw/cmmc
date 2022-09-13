@@ -43,7 +43,7 @@ void Block::dump(std::ostream& out) const {
         if(!isFirst)
             out << ", ";
         else
-            isFirst = true;
+            isFirst = false;
         arg->dump(out);
     }
     out << "):" << std::endl;

@@ -12,10 +12,15 @@
     limitations under the License.
 */
 
+#include <cassert>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
+
+Value::Value(Type* type) : mType{ type } {
+    assert(type);
+}
 
 void Value::dumpAsOperand(std::ostream& out) const {
     mType->dumpName(out);

@@ -28,7 +28,7 @@ class Value {
 public:
     static constexpr auto arenaSource = Arena::Source::IR;
 
-    explicit Value(Type* type) : mType{ type } {}
+    explicit Value(Type* type);
     Value(const Value&) = delete;
     Value(Value&&) = delete;
     Value& operator=(const Value&) = delete;
@@ -39,6 +39,9 @@ public:
     virtual void dumpAsOperand(std::ostream& out) const;
     Type* getType() const noexcept {
         return mType;
+    }
+    virtual bool isGlobal() const noexcept {
+        return false;
     }
 };
 

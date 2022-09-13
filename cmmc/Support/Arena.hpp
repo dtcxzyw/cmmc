@@ -34,14 +34,15 @@ class Arena final {
     std::uintptr_t mBlockPtr, mBlockEndPtr;
 
 public:
+    enum class Source { AST, IR, MC, OPT, Max };
     Arena();
+    explicit Arena(Source src);
     Arena(const Arena&) = delete;
     Arena& operator=(const Arena&) = delete;
     void* allocate(size_t size, size_t alignment);
     void deallocate(void* p, size_t size);
     ~Arena();
 
-    enum class Source { AST, IR, MC, OPT, Max };
     static Arena* get(Source source);
     static void setArena(Source source, Arena* arena);
 };

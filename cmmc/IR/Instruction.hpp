@@ -24,6 +24,7 @@ class Block;
 class Type;
 
 enum class InstructionID {
+    None,
     // control-flow
     // terminators
     TerminatorBegin,
@@ -79,6 +80,7 @@ enum class InstructionID {
     F2S,
     U2F,
     S2F,
+    FCast,
     ConvertOpEnd,
     // miscellaneous
     Alloc,
@@ -179,6 +181,12 @@ public:
     void dump(std::ostream& out) const override;
 };
 
+class CastInst final : public Instruction {
+public:
+    CastInst(InstructionID instID, Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
+    void dump(std::ostream& out) const override;
+};
+
 class LoadInst final : public Instruction {
     Value* mAddress;
 
@@ -261,8 +269,6 @@ public:
 };
 
 class StackAllocInst final : public Instruction {
-    Type* mType;
-
 public:
     // TODO: VLA
     explicit StackAllocInst(Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}

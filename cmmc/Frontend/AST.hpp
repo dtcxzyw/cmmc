@@ -88,6 +88,9 @@ public:
     Expr& operator=(Expr&&) = delete;
     virtual ~Expr() = default;
     virtual Value* emit(EmitContext& ctx) const = 0;
+    virtual bool isLValue() const noexcept {
+        return false;
+    }
 };
 
 enum class OperatorID {
@@ -204,6 +207,9 @@ public:
     explicit IdentifierExpr(const String<Arena::Source::AST>& str) : mIdentifier{ str } {}
     Value* emit(EmitContext& ctx) const override;
     static IdentifierExpr* get(const String<Arena::Source::AST>& str);
+    bool isLValue() const noexcept override {
+        return true;
+    }
 };
 
 class ScopedExpr final : public Expr {

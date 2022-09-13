@@ -84,7 +84,7 @@ void FunctionType::dumpName(std::ostream& out) const {
         if(!isFirst) {
             out << ", ";
         } else
-            isFirst = true;
+            isFirst = false;
         arg->dumpName(out);
     }
     out << ") -> ";
@@ -99,7 +99,7 @@ void StructType::dump(std::ostream& out) const {
         if(!isFirst) {
             out << ", ";
         } else
-            isFirst = true;
+            isFirst = false;
 
         field.type->dumpName(out);
         out << ' ' << field.fieldName;

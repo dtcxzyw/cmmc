@@ -19,6 +19,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -43,17 +44,23 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     const auto entry = ctx.addBlock(funcType->getArgTypes());
     entry->setLabel("entry");
     ctx.setCurrentBlock(entry);
+    // NOTICE: function arguments must be lvalues
+    for(size_t idx = 0; idx < decl.args.size(); ++idx) {
+        const auto arg = entry->getArg(idx);
+        const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
+        ctx.addIdentifier(decl.args[idx].name, memArg);
+    }
     for(auto st : block)
         st->emit(ctx);
     // fix terminator
     const auto retType = funcType->getRetType();
     for(auto funcBlock : func->blocks()) {
         if(!funcBlock->endswithTerminator()) {
+            ctx.setCurrentBlock(funcBlock);
             if(retType->isVoid()) {
-                ctx.setCurrentBlock(funcBlock);
                 ctx.makeOp<ReturnInst>();
             } else {
-                reportFatal("");
+                ctx.makeOp<UnreachableInst>();
             }
         }
     }
@@ -313,7 +320,9 @@ Value* IfElseExpr::emit(EmitContext& ctx) const {
     auto pred = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
 
     auto ifBlock = ctx.addBlock();
+    ifBlock->setLabel("if.then");
     auto elseBlock = ctx.addBlock();
+    elseBlock->setLabel("if.else");
     auto newBlock = ctx.addBlock();
     ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
 
@@ -347,12 +356,14 @@ Value* ScopedExpr::emit(EmitContext& ctx) const {
 
 Value* WhileExpr::emit(EmitContext& ctx) const {
     auto whileHeader = ctx.addBlock();
+    whileHeader->setLabel("while.header");
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
     ctx.setCurrentBlock(whileHeader);
 
     auto val = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
 
     auto whileBody = ctx.addBlock();
+    whileBody->setLabel("while.body");
     auto newBlock = ctx.addBlock();
 
     ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
@@ -366,15 +377,55 @@ Value* WhileExpr::emit(EmitContext& ctx) const {
     return nullptr;
 }
 
-Value* EmitContext::convertTo(Value* value, Type* type) const {
-    [[maybe_unused]] const auto srcType = value->getType();
-    return nullptr;
+Value* EmitContext::convertTo(Value* value, Type* type) {
+    const auto srcType = value->getType();
+
+    if(srcType->isSame(type))
+        return value;
+
+    InstructionID id = InstructionID::None;
+    if(type->isBoolean()) {
+        if(srcType->isInteger()) {
+            return makeOp<IntegerCompareInst>(true, CompareOp::NotEqual, value, make<ConstantInteger>(srcType, 0));
+        } else if(srcType->isFloatingPoint()) {
+            return makeOp<FloatingPointCompareInst>(CompareOp::NotEqual, value, make<ConstantFloatingPoint>(srcType, 0.0));
+        }
+    } else if(srcType->isInteger() && type->isInteger()) {
+        if(srcType->getFixedSize() < type->getFixedSize())
+            id = InstructionID::SExt;
+        else
+            id = InstructionID::Trunc;
+    } else if(srcType->isInteger() && type->isFloatingPoint()) {
+        id = InstructionID::S2F;
+    } else if(srcType->isFloatingPoint() && type->isInteger()) {
+        id = InstructionID::F2S;
+    } else if(srcType->isFloatingPoint() && type->isFloatingPoint()) {
+        id = InstructionID::FCast;
+    }
+
+    if(id == InstructionID::None)
+        reportFatal("");
+
+    return makeOp<CastInst>(id, type, value);
 }
-Value* EmitContext::getRValue(Expr* expr) const {
-    return nullptr;
+Value* EmitContext::getRValue(Expr* expr) {
+    const auto val = expr->emit(*this);
+    if(expr->isLValue()) {
+        if(!val->isGlobal() && !val->getType()->isPointer())
+            reportFatal("");
+        if(val->getType()->isPointer())
+            return makeOp<LoadInst>(val);
+    }
+
+    return val;
 }
-Value* EmitContext::getLValue(Expr* expr) const {
-    return nullptr;
+Value* EmitContext::getLValue(Expr* expr) {
+    if(!expr->isLValue())
+        reportFatal("");
+    const auto val = expr->emit(*this);
+    if(val->isGlobal())
+        reportFatal("");
+    return val;
 }
 void EmitContext::pushScope() {
     mScopes.push_back({});
@@ -383,14 +434,14 @@ void EmitContext::popScope() {
     mScopes.pop_back();
 }
 void EmitContext::addIdentifier(String<Arena::Source::AST> identifier, Value* value) {
-    assert(!mScope.empty());
+    assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.count(identifier))
         reportFatal("");
     scope.emplace(std::move(identifier), value);
 }
 Value* EmitContext::lookupIdentifier(const String<Arena::Source::AST>& identifier) {
-    assert(!mScope.empty());
+    assert(!mScopes.empty());
 
     for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
         if(auto it = iter->find(identifier); it != iter->cend())

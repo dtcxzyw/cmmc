@@ -176,6 +176,14 @@ void UnaryInst::dump(std::ostream& out) const {
     dumpUnary(out);
 }
 
+void CastInst::dump(std::ostream& out) const {
+    dumpWithNoOperand(out);
+    out << ' ';
+    getOperand(0)->dumpAsOperand(out);
+    out << " to ";
+    getType()->dumpName(out);
+}
+
 void LoadInst::dump(std::ostream& out) const {
     dumpUnary(out);
 }
@@ -219,7 +227,7 @@ void ReturnInst::dump(std::ostream& out) const {
     out << getInstName(getInstID());
     if(!operands().empty()) {
         out << ' ';
-        getOperand(1)->dumpAsOperand(out);
+        getOperand(0)->dumpAsOperand(out);
     }
 }
 
@@ -232,7 +240,7 @@ void FunctionCallInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     callee->dumpAsOperand(out);
-    out << " (";
+    out << '(';
     auto& args = operands();
     size_t cnt = 0, size = args.size() - 1;
     for(auto arg : operands()) {
@@ -259,7 +267,7 @@ void SelectInst::dump(std::ostream& out) const {
 
 void StackAllocInst::dump(std::ostream& out) const {
     out << getInstName(getInstID()) << ' ';
-    mType->dumpName(out);
+    getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
 CMMC_NAMESPACE_END
