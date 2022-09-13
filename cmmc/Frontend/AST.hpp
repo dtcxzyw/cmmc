@@ -51,9 +51,8 @@ struct NamedArg final {
     TypeRef type;
     String<Arena::Source::AST> name;
 };
-
-using ArgList = Deque<NamedArg>;
 CMMC_ARENA_TRAIT(NamedArg, AST);
+using ArgList = Deque<NamedArg>;
 
 struct FunctionDeclaration final {
     SourceLocation loc;
@@ -64,6 +63,7 @@ struct FunctionDeclaration final {
 };
 
 class Expr;
+CMMC_ARENA_TRAIT(Expr*, AST);
 using StatementBlock = Deque<Expr*>;
 
 struct FunctionDefinition final {

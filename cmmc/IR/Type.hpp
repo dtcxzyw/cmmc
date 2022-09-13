@@ -30,7 +30,7 @@ public:
     Type(Type&&) = delete;
     Type& operator=(const Type&) = delete;
     Type& operator=(Type&&) = delete;
-    virtual ~Type();
+    virtual ~Type() = default;
 
     template <typename T>
     T* as() {
@@ -158,6 +158,7 @@ struct StructField final {
 
     // uint32_t alignment;
 };
+CMMC_ARENA_TRAIT(StructField, IR);
 
 class StructType final : public Type {
     List<StructField> fields;

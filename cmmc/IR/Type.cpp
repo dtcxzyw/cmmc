@@ -36,6 +36,9 @@ bool IntegerType::isSame(Type* rhs) const {
 size_t IntegerType::getFixedSize() const noexcept {
     return mBitWidth / 8;
 }
+IntegerType* IntegerType::get(uint32_t bitWidth) {
+    return make<IntegerType>(bitWidth);
+}
 
 FloatingPointType* FloatingPointType::get(bool isFloat) {
     return make<FloatingPointType>(isFloat);

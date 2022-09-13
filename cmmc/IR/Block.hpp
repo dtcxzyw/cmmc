@@ -28,13 +28,14 @@ class BlockArgument final : public Value {
     uint32_t mIdx;
 
 public:
+    BlockArgument(Block* block, Type* type, uint32_t idx) noexcept : Value{ type }, mBlock{ block }, mIdx{ idx } {}
     void dump(std::ostream& out) const override;
 };
 
 class Block final {
     Function* mFunction;
     String<Arena::Source::IR> mLabel;
-    List<Type*> mArgs;
+    Deque<Type*> mArgs;
     List<Instruction*> mInstructions;
 
 public:
@@ -45,7 +46,7 @@ public:
     const String<Arena::Source::IR>& label() const noexcept {
         return mLabel;
     }
-    List<Type*>& args() noexcept {
+    Deque<Type*>& args() noexcept {
         return mArgs;
     }
     List<Instruction*>& instructions() noexcept {
@@ -54,7 +55,7 @@ public:
     Function* getFunction() const noexcept {
         return mFunction;
     }
-    Value* getArg(uint32_t idx) const;
+    Value* getArg(uint32_t idx);
 };
 CMMC_ARENA_TRAIT(Block, IR);
 

@@ -50,6 +50,13 @@ CMMC_NAMESPACE_BEGIN
 using MixedDefinition = std::variant<FunctionDefinition>;
 CMMC_ARENA_TRAIT(MixedDefinition, AST);
 
+struct ChildRef final {
+    uint32_t pos;
+
+    ChildRef(const std::pair<uint32_t, yy::location>& loc) : pos{ loc.first } {}
+};
+CMMC_ARENA_TRAIT(ChildRef, AST);
+
 struct Hierarchy final {
     static constexpr uint32_t indentInc = 2;
 
@@ -65,11 +72,6 @@ struct Hierarchy final {
     };
 
     Desc desc;
-    struct ChildRef final {
-        uint32_t pos;
-
-        ChildRef(const std::pair<uint32_t, yy::location>& loc) : pos{ loc.first } {}
-    };
     Deque<ChildRef> children;
 
     template <typename T>
@@ -107,7 +109,6 @@ struct Hierarchy final {
     void dump(DriverImpl& driver, std::ostream& out, uint32_t indent) const;
 };
 CMMC_ARENA_TRAIT(Hierarchy, AST);
-CMMC_ARENA_TRAIT(Hierarchy::ChildRef, AST);
 
 class DriverImpl final {
     std::string mFile;
@@ -154,11 +155,11 @@ public:
         return false;
     }
 
-    Hierarchy& hierarchy(Hierarchy::ChildRef ref) {
+    Hierarchy& hierarchy(ChildRef ref) {
         return mHierarchyTree[ref.pos];
     }
 
-    uint32_t record(Deque<Hierarchy::ChildRef> children, Hierarchy::Desc desc) {
+    uint32_t record(Deque<ChildRef> children, Hierarchy::Desc desc) {
         assert(shouldRecordHierarchy());
         const auto index = static_cast<uint32_t>(mHierarchyTree.size());
         mHierarchyTree.push_back(Hierarchy{ std::move(desc), std::move(children) });

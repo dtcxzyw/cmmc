@@ -106,9 +106,15 @@ template <Arena::Source source>
 using String =
     std::basic_string<char, std::char_traits<char>, typename GeneralArenaAllocator<source>::template ArenaAllocator<char>>;
 
+template <Arena::Source source>
+struct StringHasher final {
+    size_t operator()(const String<source>& src) const {
+        return std::hash<std::string_view>{}(src);
+    }
+};
+
 template <typename T>
-using ArenaSourceHint = typename GeneralArenaAllocator<Arena::Source::AST>::template ArenaAllocator<
-    T>;  // typename GeneralArenaAllocator<getArenaSource(ArenaSourceTrait<T>{})>::template ArenaAllocator<T>;
+using ArenaSourceHint = typename GeneralArenaAllocator<getArenaSource(ArenaSourceTrait<T>{})>::template ArenaAllocator<T>;
 
 template <typename T>
 using List = std::list<T, ArenaSourceHint<T>>;
@@ -119,8 +125,9 @@ using Vector = std::vector<T, ArenaSourceHint<T>>;
 template <typename T>
 using Deque = std::deque<T, ArenaSourceHint<T>>;
 
-template <typename Key, typename Value, Arena::Source source>
+template <typename Key, typename Value, Arena::Source source, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
 using HashTable =
-    std::unordered_map<Key, Value, typename GeneralArenaAllocator<source>::template ArenaAllocator<std::pair<const Key, Value>>>;
+    std::unordered_map<Key, Value, Hash, Equal,
+                       typename GeneralArenaAllocator<source>::template ArenaAllocator<std::pair<const Key, Value>>>;
 
 CMMC_NAMESPACE_END

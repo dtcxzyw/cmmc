@@ -330,4 +330,36 @@ Value* WhileExpr::emit(EmitContext& ctx) const {
     return nullptr;
 }
 
+Value* EmitContext::convertTo(Value* value, Type* type) const {
+    [[maybe_unused]] const auto srcType = value->getType();
+    return nullptr;
+}
+Value* EmitContext::getRValue(Expr* expr) const {
+    return nullptr;
+}
+Value* EmitContext::getLValue(Expr* expr) const {
+    return nullptr;
+}
+void EmitContext::pushScope() {
+    mScopes.push_back({});
+}
+void EmitContext::popScope() {
+    mScopes.pop_back();
+}
+void EmitContext::addIdentifier(String<Arena::Source::AST> identifier, Value* value) {
+    assert(!mScope.empty());
+    auto& scope = mScopes.back();
+    if(scope.count(identifier))
+        reportFatal("");
+    scope.emplace(std::move(identifier), value);
+}
+Value* EmitContext::lookupIdentifier(const String<Arena::Source::AST>& identifier) {
+    assert(!mScope.empty());
+
+    for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
+        if(auto it = iter->find(identifier); it != iter->cend())
+            return it->second;
+    reportFatal("");
+}
+
 CMMC_NAMESPACE_END

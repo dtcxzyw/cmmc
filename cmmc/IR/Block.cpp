@@ -12,32 +12,23 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Type.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include "cmmc/IR/Block.hpp"
+#include "cmmc/Support/Diagnostics.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Module;
+void BlockArgument::dump(std::ostream& out) const {
+    reportNotImplemented();
+}
 
-class Value {
-    Type* mType;
-
-public:
-    static constexpr auto arenaSource = Arena::Source::IR;
-
-    explicit Value(Type* type) : mType{ type } {}
-    Value(const Value&) = delete;
-    Value(Value&&) = delete;
-    Value& operator=(const Value&) = delete;
-    Value& operator=(Value&&) = delete;
-    virtual ~Value() = default;
-
-    virtual void dump(std::ostream& out) const = 0;
-    Type* getType() const noexcept {
-        return mType;
-    }
-};
+void Block::dump(std::ostream& out) const {
+    reportNotImplemented();
+}
+bool Block::verify() const {
+    return false;
+}
+Value* Block::getArg(uint32_t idx) {
+    return make<BlockArgument>(this, mArgs[idx], idx);
+}
 
 CMMC_NAMESPACE_END

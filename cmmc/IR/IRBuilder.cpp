@@ -12,32 +12,19 @@
     limitations under the License.
 */
 
-#pragma once
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Type.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include "cmmc/IR/IRBuilder.hpp"
+#include "cmmc/IR/ConstantValue.hpp"
 
 CMMC_NAMESPACE_BEGIN
 
-class Module;
-
-class Value {
-    Type* mType;
-
-public:
-    static constexpr auto arenaSource = Arena::Source::IR;
-
-    explicit Value(Type* type) : mType{ type } {}
-    Value(const Value&) = delete;
-    Value(Value&&) = delete;
-    Value& operator=(const Value&) = delete;
-    Value& operator=(Value&&) = delete;
-    virtual ~Value() = default;
-
-    virtual void dump(std::ostream& out) const = 0;
-    Type* getType() const noexcept {
-        return mType;
-    }
-};
+Value* IRBuilder::getTrue() const {
+    return make<ConstantInteger>(IntegerType::getBoolean(), 1);
+}
+Value* IRBuilder::getFalse() const {
+    return make<ConstantInteger>(IntegerType::getBoolean(), 0);
+}
+Value* IRBuilder::getInteger(IntegerType* type, intmax_t value) const {
+    return make<ConstantInteger>(type, value);
+}
 
 CMMC_NAMESPACE_END

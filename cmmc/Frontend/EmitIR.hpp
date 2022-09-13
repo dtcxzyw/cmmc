@@ -23,7 +23,7 @@ CMMC_NAMESPACE_BEGIN
 
 class Expr;
 
-using Scope = HashTable<String<Arena::Source::AST>, Value*, Arena::Source::AST>;
+using Scope = HashTable<String<Arena::Source::AST>, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
 CMMC_ARENA_TRAIT(Scope, AST);
 
 class EmitContext final : public IRBuilder {
