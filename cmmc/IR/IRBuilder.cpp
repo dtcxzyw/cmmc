@@ -26,5 +26,12 @@ Value* IRBuilder::getFalse() const {
 Value* IRBuilder::getInteger(IntegerType* type, intmax_t value) const {
     return make<ConstantInteger>(type, value);
 }
+Block* IRBuilder::addBlock(const Vector<Type*>& types) {
+    auto block = make<Block>(mCurrentFunction);
+    for(auto type : types)
+        block->addArg(type);
+    mCurrentFunction->blocks().push_back(block);
+    return block;
+}
 
 CMMC_NAMESPACE_END

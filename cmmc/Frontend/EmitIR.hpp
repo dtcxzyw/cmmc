@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/IR/IRBuilder.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
@@ -27,9 +28,19 @@ using Scope = HashTable<String<Arena::Source::AST>, Value*, Arena::Source::AST, 
 CMMC_ARENA_TRAIT(Scope, AST);
 
 class EmitContext final : public IRBuilder {
+    Module* mModule;
     Deque<Scope> mScopes;
 
+    Type* mInteger;
+    Type* mFloat;
+    Type* mChar;
+
 public:
+    explicit EmitContext(Module* module);
+
+    Module* getModule() const noexcept {
+        return mModule;
+    }
     Value* convertTo(Value* value, Type* type) const;
     Value* getRValue(Expr* expr) const;
     Value* getLValue(Expr* expr) const;
@@ -37,6 +48,7 @@ public:
     void popScope();
     void addIdentifier(String<Arena::Source::AST> identifier, Value* value);
     Value* lookupIdentifier(const String<Arena::Source::AST>& identifier);
+    Type* getType(const String<Arena::Source::AST>& name) const;  // TODO: lookup space
 };
 
 CMMC_NAMESPACE_END

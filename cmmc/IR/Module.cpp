@@ -34,4 +34,8 @@ bool Module::verify(std::ostream& out) const {
     return true;
 }
 
+void Module::add(GlobalValue* globalValue) {
+    mGlobals.emplace(globalValue->getSymbol(), globalValue);
+}
+
 CMMC_NAMESPACE_END

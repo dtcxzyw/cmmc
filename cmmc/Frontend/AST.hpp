@@ -60,6 +60,8 @@ struct FunctionDeclaration final {
     TypeRef retType;
     ArgList args;
     // bool isVarArg;
+
+    FunctionType* getSignature(EmitContext& ctx) const;
 };
 
 class Expr;

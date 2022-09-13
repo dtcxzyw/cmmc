@@ -247,13 +247,12 @@ void Driver::emit(Module& module) {
 }
 
 void DriverImpl::emit(Module& module) {
-    EmitContext ctx;
+    EmitContext ctx{ &module };
+    ctx.pushScope();
 
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
     }
-    // block arg propagation using DominatorTree
-
     assert(module.verify());
 }
 

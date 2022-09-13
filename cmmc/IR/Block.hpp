@@ -43,6 +43,7 @@ public:
     explicit Block(Function* function) : mFunction{ function } {}
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
+    bool endswithTerminator() const noexcept;
 
     const String<Arena::Source::IR>& getLabel() const noexcept {
         return mLabel;

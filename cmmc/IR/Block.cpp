@@ -93,4 +93,8 @@ void Block::dumpAsTarget(std::ostream& out) const {
     out << '^' << mLabel;
 }
 
+bool Block::endswithTerminator() const noexcept {
+    return !mInstructions.empty() && mInstructions.back()->isTerminator();
+}
+
 CMMC_NAMESPACE_END

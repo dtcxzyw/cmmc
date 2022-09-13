@@ -28,6 +28,7 @@ class Function final : public GlobalValue {
     List<Block*> mBlocks;
 
 public:
+    Function(String<Arena::Source::IR> symbol, FunctionType* type) : GlobalValue{ symbol, type } {}
     Block* entryBlock() const noexcept {
         return mBlocks.front();
     }

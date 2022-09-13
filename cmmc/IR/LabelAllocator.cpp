@@ -12,22 +12,27 @@
     limitations under the License.
 */
 
-#pragma once
-#include <cmmc/IR/Value.hpp>
-#include <cmmc/Support/Arena.hpp>
+#include <cctype>
+#include <cmmc/IR/LabelAllocator.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-    String<Arena::Source::IR> mSymbol;
+static void emitID(String<Arena::Source::IR>& str, uint32_t idx) {
+    emitID(str, idx);
+    str.push_back('0' + idx % 10);
+}
 
-public:
-    GlobalValue(String<Arena::Source::IR> symbol, Type* type) : Value{ type }, mSymbol{ std::move(symbol) } {}
-    // TODO: visibility
-    const String<Arena::Source::IR>& getSymbol() const noexcept {
-        return mSymbol;
+String<Arena::Source::IR> LabelAllocator::allocate(const String<Arena::Source::IR>& base) {
+    uint32_t end = 0;
+    while(end != base.size()) {
+        if(!isalpha(base[end]))
+            break;
+        ++end;
     }
-    void dumpAsOperand(std::ostream& out) const final;
-};
+    auto prefix = base.substr(0, end);
+    const auto id = mBase[prefix]++;
+    emitID(prefix, id);
+    return prefix;
+}
 
 CMMC_NAMESPACE_END

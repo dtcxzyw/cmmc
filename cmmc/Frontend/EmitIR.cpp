@@ -15,14 +15,50 @@
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
+FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
+    const auto ret = ctx.getType(retType.typeIdentifier);
+    Vector<Type*> argTypes;
+    for(auto& arg : args)
+        argTypes.push_back(ctx.getType(arg.type.typeIdentifier));
+
+    return make<FunctionType>(ret, std::move(argTypes));
+}
+
 void FunctionDefinition::emit(EmitContext& ctx) const {
-    reportNotImplemented();
+    auto mod = ctx.getModule();
+    const auto funcType = decl.getSignature(ctx);
+    auto func = make<Function>(String<Arena::Source::IR>{ decl.symbol }, funcType);
+    mod->add(func);
+    ctx.addIdentifier(decl.symbol, func);
+
+    ctx.setCurrentFunction(func);
+    ctx.pushScope();  // arguments
+    const auto entry = ctx.addBlock(funcType->getArgTypes());
+    entry->setLabel("entry");
+    ctx.setCurrentBlock(entry);
+    for(auto st : block)
+        st->emit(ctx);
+    // fix terminator
+    const auto retType = funcType->getRetType();
+    for(auto funcBlock : func->blocks()) {
+        if(!funcBlock->endswithTerminator()) {
+            if(retType->isVoid()) {
+                ctx.setCurrentBlock(funcBlock);
+                ctx.makeOp<ReturnInst>();
+            } else {
+                reportFatal("");
+            }
+        }
+    }
+    // block arg propagation using DominatorTree
+    ctx.popScope();
 }
 
 static InstructionID getBinaryOp(OperatorID op, bool isFloatingPoint) {
@@ -360,6 +396,23 @@ Value* EmitContext::lookupIdentifier(const String<Arena::Source::AST>& identifie
         if(auto it = iter->find(identifier); it != iter->cend())
             return it->second;
     reportFatal("");
+}
+EmitContext::EmitContext(Module* module) : mModule{ module } {
+    mInteger = make<IntegerType>(32U);
+    mFloat = make<FloatingPointType>(true);
+    mChar = make<IntegerType>(8U);
+}
+Type* EmitContext::getType(const String<Arena::Source::AST>& name) const {
+    if(name == "int") {
+        return mInteger;
+    }
+    if(name == "float") {
+        return mFloat;
+    }
+    if(name == "char") {
+        return mChar;
+    }
+    reportNotImplemented();
 }
 
 CMMC_NAMESPACE_END

@@ -36,6 +36,10 @@ public:
     Function* getCurrentFunction() const noexcept {
         return mCurrentFunction;
     }
+    void setCurrentFunction(Function* func) noexcept {
+        mCurrentFunction = func;
+        mCurrentBlock = nullptr;
+    }
     Block* getCurrentBlock() const noexcept {
         return mCurrentBlock;
     }
@@ -51,13 +55,11 @@ public:
         return inst;
     }
 
+    Block* addBlock(const Vector<Type*>& types);
+
     template <typename... Args>
     Block* addBlock(Args... types) {
-        auto block = make<Block>(mCurrentFunction);
-        for(auto type : std::initializer_list<Type*>{ types... })
-            block->addArg(type);
-        mCurrentFunction->blocks().push_back(block);
-        return block;
+        return addBlock({ types... });
     }
 
     Value* getTrue() const;

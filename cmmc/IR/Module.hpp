@@ -42,6 +42,7 @@ public:
     }
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
+    void add(GlobalValue* globalValue);
 };
 CMMC_ARENA_TRAIT(Module, IR);
 
