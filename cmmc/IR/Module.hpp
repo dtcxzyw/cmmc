@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN

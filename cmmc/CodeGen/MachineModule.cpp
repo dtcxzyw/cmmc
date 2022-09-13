@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MachineModule.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/Support/Arena.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

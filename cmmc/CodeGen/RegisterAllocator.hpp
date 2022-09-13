@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/MachineInst.hpp"
+#include <cmmc/CodeGen/MachineInst.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

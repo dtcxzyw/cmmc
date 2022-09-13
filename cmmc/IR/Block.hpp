@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.hpp"
-#include "cmmc/IR/Value.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 #include <ostream>
 

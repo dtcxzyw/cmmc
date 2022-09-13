@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Module.hpp"
+#include <cmmc/IR/Module.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN

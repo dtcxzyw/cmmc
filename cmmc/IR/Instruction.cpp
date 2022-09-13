@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

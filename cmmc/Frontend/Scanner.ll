@@ -17,7 +17,7 @@
 #undef yywrap
 #define yywrap() 1
 
-#include "cmmc/Frontend/Driver.hpp"
+#include <cmmc/Frontend/Driver.hpp>
 %}
 %{
   // Code run each time a pattern is matched.

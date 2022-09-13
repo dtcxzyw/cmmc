@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
+#include <cmmc/Config.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN

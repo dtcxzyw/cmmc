@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Options.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
 #include <algorithm>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cstdint>
 #include <cstdlib>
 #include <getopt.h>

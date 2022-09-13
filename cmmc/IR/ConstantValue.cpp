@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/ConstantValue.hpp"
+#include <cmmc/IR/ConstantValue.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

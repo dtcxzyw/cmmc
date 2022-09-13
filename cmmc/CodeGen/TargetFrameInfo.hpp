@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/DataLayout.hpp"
+#include <cmmc/CodeGen/DataLayout.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/Support/Arena.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>

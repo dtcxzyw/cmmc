@@ -12,12 +12,12 @@
     limitations under the License.
 */
 
-#include "cmmc/Frontend/EmitIR.hpp"
-#include "cmmc/Frontend/AST.hpp"
-#include "cmmc/IR/ConstantValue.hpp"
-#include "cmmc/IR/Instruction.hpp"
-#include "cmmc/IR/Type.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
+#include <cmmc/Frontend/AST.hpp>
+#include <cmmc/Frontend/EmitIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/Module.hpp"
+#include <cmmc/Config.hpp>
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN

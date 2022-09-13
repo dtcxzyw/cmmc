@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/IR/Type.hpp"
-#include "cmmc/IR/Value.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN

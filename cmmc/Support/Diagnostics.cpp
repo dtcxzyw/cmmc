@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
-#include "cmmc/Support/Options.hpp"
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>

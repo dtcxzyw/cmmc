@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/Frontend/SourceLocation.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/Frontend/SourceLocation.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN

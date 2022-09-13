@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/IR/Module.hpp"
+#include <cmmc/IR/Module.hpp>
 #include <ostream>
 #include <string>
 

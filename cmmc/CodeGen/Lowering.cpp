@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MachineModule.hpp"
-#include "cmmc/CodeGen/Target.hpp"
-#include "cmmc/IR/Module.hpp"
+#include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Module.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

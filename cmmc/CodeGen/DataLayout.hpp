@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/IR/Type.hpp"
+#include <cmmc/IR/Type.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

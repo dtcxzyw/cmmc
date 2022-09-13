@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/Transforms/TransformPass.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN

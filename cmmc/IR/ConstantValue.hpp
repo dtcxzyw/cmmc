@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/IR/Value.hpp"
+#include <cmmc/IR/Value.hpp>
 #include <cstdint>
 #include <ostream>
 

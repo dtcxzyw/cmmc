@@ -12,12 +12,12 @@
     limitations under the License.
 */
 
-#include "cmmc/Frontend/Driver.hpp"
-#include "cmmc/Frontend/AST.hpp"
-#include "cmmc/Frontend/Location.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cassert>
 #include <cctype>
+#include <cmmc/Frontend/AST.hpp>
+#include <cmmc/Frontend/Driver.hpp>
+#include <cmmc/Frontend/Location.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <memory>
 #include <ostream>
@@ -41,7 +41,7 @@ namespace std {  // NOTICE: we need ADL
 
 using StringAST = cmmc::String<cmmc::Arena::Source::AST>;
 
-#include "ParserDecl.hpp"
+#include <ParserDecl.hpp>
 #include <cstdlib>
 #include <variant>
 
@@ -207,8 +207,8 @@ extern "C" YY_DECL;
     if(driver.checkExtension(#EXT)) \
         YYABORT;
 
-#include "ParserImpl.hpp"
-#include "ScannerImpl.hpp"
+#include <ParserImpl.hpp>
+#include <ScannerImpl.hpp>
 #include <cstdio>
 #include <fstream>
 #include <iostream>

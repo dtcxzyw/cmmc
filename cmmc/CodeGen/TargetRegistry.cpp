@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/Target.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
-#include "cmmc/Support/Options.hpp"
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

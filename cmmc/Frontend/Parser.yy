@@ -23,8 +23,8 @@
 %define parse.error verbose
 
 %code requires {
-  #include "cmmc/Support/Arena.hpp"
-  #include "cmmc/Frontend/Driver.hpp"
+  #include <cmmc/Support/Arena.hpp>
+  #include <cmmc/Frontend/Driver.hpp>
   using namespace cmmc;
 }
 %param { cmmc::DriverImpl& driver }

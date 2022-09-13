@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
+#include <cmmc/Config.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <deque>

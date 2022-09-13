@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/IRBuilder.hpp"
-#include "cmmc/IR/ConstantValue.hpp"
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

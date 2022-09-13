@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
+#include <cmmc/Config.hpp>
 #include <memory>
 #include <ostream>
 #include <string>

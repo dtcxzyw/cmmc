@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/MachineInst.hpp"
-#include "cmmc/Support/Arena.hpp"
+#include <cmmc/CodeGen/MachineInst.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <memory>
 #include <ostream>
 
