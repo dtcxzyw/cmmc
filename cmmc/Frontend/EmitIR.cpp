@@ -48,6 +48,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto arg = entry->getArg(idx);
         const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
+        ctx.makeOp<StoreInst>(memArg, arg);
         ctx.addIdentifier(decl.args[idx].name, memArg);
     }
     for(auto st : block)

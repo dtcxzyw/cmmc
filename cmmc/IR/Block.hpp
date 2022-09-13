@@ -30,6 +30,9 @@ class BlockArgument final : public Value {
 public:
     BlockArgument(Block* block, Type* type) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
+    void dumpAsOperand(std::ostream& out) const override {
+        dump(out);
+    }
     void setLabel(String<Arena::Source::IR> label);
 };
 

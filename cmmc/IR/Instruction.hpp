@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cassert>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
@@ -201,7 +202,9 @@ class StoreInst final : public Instruction {
     Value* mValue;
 
 public:
-    explicit StoreInst(Value* address, Value* value) : Instruction{ InstructionID::Load, VoidType::get(), { address, value } } {}
+    explicit StoreInst(Value* address, Value* value) : Instruction{ InstructionID::Store, VoidType::get(), { address, value } } {
+        assert(mAddress->as<PointerType>()->isSame(value));
+    }
     void dump(std::ostream& out) const override;
 };
 

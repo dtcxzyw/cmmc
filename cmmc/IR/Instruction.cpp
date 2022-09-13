@@ -189,7 +189,11 @@ void LoadInst::dump(std::ostream& out) const {
 }
 
 void StoreInst::dump(std::ostream& out) const {
-    dumpBinary(out);
+    out << getInstName(getInstID());
+    out << ' ';
+    getOperand(0)->dumpAsOperand(out);
+    out << " with ";
+    getOperand(1)->dumpAsOperand(out);
 }
 
 void BranchTarget::dump(std::ostream& out) const {
@@ -266,7 +270,8 @@ void SelectInst::dump(std::ostream& out) const {
 }
 
 void StackAllocInst::dump(std::ostream& out) const {
-    out << getInstName(getInstID()) << ' ';
+    dumpWithNoOperand(out);
+    out << ' ';
     getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
