@@ -34,7 +34,7 @@ class Arena final {
     std::uintptr_t mBlockPtr, mBlockEndPtr;
 
 public:
-    enum class Source { AST, IR, MC, OPT, Max };
+    enum class Source { AST, IR, MC, Max };
     Arena();
     explicit Arena(Source src);
     Arena(const Arena&) = delete;

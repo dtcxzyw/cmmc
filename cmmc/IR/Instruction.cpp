@@ -15,12 +15,19 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 void Instruction::dumpAsOperand(std::ostream& out) const {
     getType()->dumpName(out);
     out << " %" << mLabel;
+}
+
+void Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
+    for(auto& operand : mOperands)
+        if(operand == oldOperand)
+            operand = newOperand;
 }
 
 bool Instruction::verify(std::ostream& out) const {
@@ -156,20 +163,20 @@ static const char* getCompareName(CompareOp op) {
     }
 }
 
-void IntegerCompareInst::dump(std::ostream& out) const {
-    dumpAsOperand(out);
-    out << " = " << getInstName(getInstID()) << ' ' << getCompareName(mCompare);
-    getOperand(0)->dumpAsOperand(out);
+static void dumpCompare(std::ostream& out, const Instruction* inst, CompareOp op) {
+    inst->dumpAsOperand(out);
+    out << " = " << getInstName(inst->getInstID()) << ' ' << getCompareName(op) << ' ';
+    inst->getOperand(0)->dumpAsOperand(out);
     out << ' ';
-    getOperand(1)->dumpAsOperand(out);
+    inst->getOperand(1)->dumpAsOperand(out);
+}
+
+void IntegerCompareInst::dump(std::ostream& out) const {
+    dumpCompare(out, this, mCompare);
 }
 
 void FloatingPointCompareInst::dump(std::ostream& out) const {
-    dumpAsOperand(out);
-    out << " = " << getInstName(getInstID()) << ' ' << getCompareName(mCompare);
-    getOperand(0)->dumpAsOperand(out);
-    out << ' ';
-    getOperand(1)->dumpAsOperand(out);
+    dumpCompare(out, this, mCompare);
 }
 
 void UnaryInst::dump(std::ostream& out) const {
@@ -219,12 +226,35 @@ void ConditionalBranchInst::dump(std::ostream& out) const {
         out << " ]";
     } else {
         getOperand(0)->dumpAsOperand(out);
-        out << " [ ";
+        out << ", [ ";
         mTrueTarget.dump(out);
         out << " ], [ ";
         mFalseTarget.dump(out);
         out << " ]";
     }
+}
+
+void BranchTarget::replaceOperand(Value* oldOperand, Value* newOperand) {
+    for(auto& operand : mArgs)
+        if(operand == oldOperand)
+            operand = newOperand;
+}
+
+ConditionalBranchInst::ConditionalBranchInst(BranchTarget target)
+    : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr } {
+    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
+}
+ConditionalBranchInst::ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget)
+    : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ std::move(trueTarget) },
+      mFalseTarget{ std::move(falseTarget) } {
+    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
+    operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
+}
+
+void ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {
+    Instruction::replaceOperand(oldOperand, newOperand);
+    mTrueTarget.replaceOperand(oldOperand, newOperand);
+    mFalseTarget.replaceOperand(oldOperand, newOperand);
 }
 
 void ReturnInst::dump(std::ostream& out) const {

@@ -20,7 +20,6 @@ CMMC_NAMESPACE_BEGIN
 
 class LabelAllocator final {
     HashTable<String<Arena::Source::IR>, uint32_t, Arena::Source::IR, StringHasher<Arena::Source::IR>> mBase;
-    HashSet<String<Arena::Source::IR>, Arena::Source::IR, StringHasher<Arena::Source::IR>> mAllocated;
 
 public:
     String<Arena::Source::IR> allocate(const String<Arena::Source::IR>& base);

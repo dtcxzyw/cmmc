@@ -43,6 +43,16 @@ public:
     virtual bool isGlobal() const noexcept {
         return false;
     }
+    virtual bool isInstruction() const noexcept {
+        return false;
+    }
+
+    template <typename T>
+    T* as() {
+        const auto ptr = dynamic_cast<T*>(this);
+        assert(ptr);
+        return ptr;
+    }
 };
 
 CMMC_NAMESPACE_END

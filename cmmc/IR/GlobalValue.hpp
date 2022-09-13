@@ -28,7 +28,7 @@ public:
         return mSymbol;
     }
     void dumpAsOperand(std::ostream& out) const final;
-    bool isGlobal() const noexcept override {
+    bool isGlobal() const noexcept final {
         return true;
     }
 };

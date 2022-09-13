@@ -35,7 +35,8 @@ void Block::dump(std::ostream& out) const {
     for(auto arg : mArgs)
         arg->setLabel(allocator.allocate(argBaseLabel));
     for(auto inst : mInstructions)
-        inst->setLabel(allocator.allocate(inst->getLabel()));
+        if(inst->canbeOperand())
+            inst->setLabel(allocator.allocate(inst->getLabel()));
 
     out << '^' << mLabel << '(';
     bool isFirst = true;
@@ -91,10 +92,6 @@ void Block::removeArg(BlockArgument* arg) {
 
 void Block::dumpAsTarget(std::ostream& out) const {
     out << '^' << mLabel;
-}
-
-bool Block::endswithTerminator() const noexcept {
-    return !mInstructions.empty() && mInstructions.back()->isTerminator();
 }
 
 CMMC_NAMESPACE_END

@@ -68,7 +68,7 @@ void OptionBase::printHelp() {
     printArg();
     out << " " << mDesc;
     if(mType == ArgType::Optional) {
-        out << "( default = ";
+        out << " (default = ";
         printDefault(out);
         out << ")";
     }

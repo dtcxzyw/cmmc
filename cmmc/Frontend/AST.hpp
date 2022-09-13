@@ -190,12 +190,12 @@ public:
 
 class IfElseExpr final : public Expr {
     Expr* mPredicate;
-    Expr* mIfBlock;
+    Expr* mThenBlock;
     Expr* mElseBlock;
 
 public:
     IfElseExpr(Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
-        : mPredicate{ pred }, mIfBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
+        : mPredicate{ pred }, mThenBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
     Value* emit(EmitContext& ctx) const override;
     static IfElseExpr* get(Expr* pred, Expr* ifPart, Expr* elsePart);
 };

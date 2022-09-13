@@ -118,11 +118,15 @@ public:
     Value* getOperand(uint32_t idx) const noexcept {
         return mOperands[idx];
     }
+    virtual void replaceOperand(Value* oldOperand, Value* newOperand);
     void setLabel(String<Arena::Source::IR> label) {
         mLabel = std::move(label);
     }
     const String<Arena::Source::IR>& getLabel() const noexcept {
         return mLabel;
+    }
+    bool isInstruction() const noexcept final {
+        return true;
     }
 
     virtual bool verify(std::ostream& out) const;
@@ -146,6 +150,13 @@ public:
     CMMC_GET_INST_CATEGORY(ConvertOp);
 
 #undef CMMC_GET_INST_CATEGORY
+
+    bool isBranch() const noexcept {
+        return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch;
+    }
+    bool canbeOperand() const noexcept {
+        return !isTerminator() && mInstID != InstructionID::Store;
+    }
 };
 
 class BinaryInst final : public Instruction {
@@ -224,19 +235,25 @@ public:
         return mArgs;
     }
     void dump(std::ostream& out) const;
+    void replaceOperand(Value* oldOperand, Value* newOperand);
 };
 
 class ConditionalBranchInst final : public Instruction {
     BranchTarget mTrueTarget, mFalseTarget;
 
 public:
-    explicit ConditionalBranchInst(BranchTarget target)
-        : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr } {}
-    explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget)
-        : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ std::move(trueTarget) },
-          mFalseTarget{ std::move(falseTarget) } {}
+    explicit ConditionalBranchInst(BranchTarget target);
+    explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget);
 
+    void replaceOperand(Value* oldOperand, Value* newOperand) override;
     void dump(std::ostream& out) const override;
+
+    BranchTarget& getTrueTarget() noexcept {
+        return mTrueTarget;
+    }
+    BranchTarget& getFalseTarget() noexcept {
+        return mFalseTarget;
+    }
 };
 
 class ReturnInst final : public Instruction {

@@ -32,6 +32,8 @@ FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
     return make<FunctionType>(ret, std::move(argTypes));
 }
 
+static void blockArgPropagation(Function* func);
+
 void FunctionDefinition::emit(EmitContext& ctx) const {
     auto mod = ctx.getModule();
     const auto funcType = decl.getSignature(ctx);
@@ -53,10 +55,22 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     }
     for(auto st : block)
         st->emit(ctx);
-    // fix terminator
+
+    // trim instructions after the first terminator
     const auto retType = funcType->getRetType();
     for(auto funcBlock : func->blocks()) {
-        if(!funcBlock->endswithTerminator()) {
+        auto& insts = funcBlock->instructions();
+        bool hasTerminator = false;
+        for(auto iter = insts.cbegin(); iter != insts.cend(); ++iter) {
+            if((*iter)->isTerminator()) {
+                ++iter;
+                insts.erase(iter, insts.cend());
+                hasTerminator = true;
+                break;
+            }
+        }
+        if(!hasTerminator) {
+            // fix terminator
             ctx.setCurrentBlock(funcBlock);
             if(retType->isVoid()) {
                 ctx.makeOp<ReturnInst>();
@@ -65,7 +79,8 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
             }
         }
     }
-    // block arg propagation using DominatorTree
+
+    blockArgPropagation(func);
     ctx.popScope();
 }
 
@@ -328,7 +343,7 @@ Value* IfElseExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
 
     ctx.setCurrentBlock(ifBlock);
-    mIfBlock->emit(ctx);
+    mThenBlock->emit(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
     ctx.setCurrentBlock(elseBlock);
     mElseBlock->emit(ctx);
@@ -465,6 +480,111 @@ Type* EmitContext::getType(const String<Arena::Source::AST>& name) const {
         return mChar;
     }
     reportNotImplemented();
+}
+
+static void blockArgPropagation(Function* func) {
+    auto& blocks = func->blocks();
+
+    struct BlockArgPropagationContext final {
+        std::unordered_set<Instruction*> req;
+        std::vector<Instruction*> todo;
+    };
+
+    std::unordered_map<Block*, BlockArgPropagationContext> ctx;
+
+    // bottom-up
+    for(auto block : blocks) {
+        auto& data = ctx[block];
+        for(auto inst : block->instructions()) {
+            bool isInvalid = false;
+            for(auto operand : inst->operands()) {
+                if(operand->isInstruction()) {
+                    auto inst = dynamic_cast<Instruction*>(operand);
+                    assert(inst->getBlock());
+                    if(inst->getBlock() != block) {
+                        data.req.emplace(inst);
+                        isInvalid = true;
+                    }
+                }
+            }
+            if(isInvalid)
+                data.todo.push_back(inst);
+        }
+    }
+
+    while(true) {
+        bool modified = false;
+
+        for(auto iter = blocks.crbegin(); iter != blocks.crend(); ++iter) {
+            auto block = *iter;
+            auto terminator = block->getTerminator();
+            if(!terminator->isBranch())
+                continue;
+
+            auto& dst = ctx[block].req;
+
+            const auto inst = terminator->as<ConditionalBranchInst>();
+            const auto propagation = [&](BranchTarget& target) {
+                auto targetBlock = target.getTarget();
+                if(!targetBlock)
+                    return;
+
+                for(auto ref : ctx[targetBlock].req) {
+                    if(ref->getBlock() != block)
+                        modified |= dst.insert(ref).second;
+                }
+            };
+
+            propagation(inst->getTrueTarget());
+            propagation(inst->getFalseTarget());
+        }
+
+        if(!modified)
+            break;
+    }
+
+    // per-block
+    for(auto block : blocks) {
+        // append arguments
+        auto& blockCtx = ctx[block];
+        auto& req = blockCtx.req;
+        if(block == blocks.front() && !req.empty())
+            reportFatal("");
+
+        std::unordered_map<Instruction*, Value*> map;
+        for(auto inst : req)
+            map[inst] = block->addArg(inst->getType());
+
+        // fix branch arguments
+        {
+            auto terminator = block->getTerminator();
+            if(!terminator->isBranch())
+                continue;
+
+            const auto inst = terminator->as<ConditionalBranchInst>();
+            const auto propagation = [&](BranchTarget& target) {
+                auto targetBlock = target.getTarget();
+                if(!targetBlock)
+                    return;
+
+                auto& targetReq = ctx[targetBlock].req;
+                for(auto inst : targetReq) {
+                    assert(map.count(inst));
+                    const auto operand = inst->getBlock() == block ? inst : map[inst];
+                    target.getArgs().push_back(operand);
+                }
+            };
+
+            propagation(inst->getTrueTarget());
+            propagation(inst->getFalseTarget());
+        }
+
+        // replace operands
+        for(auto inst : blockCtx.todo) {
+            for(auto [src, dst] : map)
+                inst->replaceOperand(src, dst);
+        }
+    }
 }
 
 CMMC_NAMESPACE_END

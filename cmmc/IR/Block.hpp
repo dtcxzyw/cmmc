@@ -46,12 +46,14 @@ public:
     explicit Block(Function* function) : mFunction{ function } {}
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
-    bool endswithTerminator() const noexcept;
+
+    Instruction* getTerminator() const noexcept {
+        return mInstructions.back();
+    }
 
     const String<Arena::Source::IR>& getLabel() const noexcept {
         return mLabel;
     }
-
     void setLabel(String<Arena::Source::IR> label) {
         mLabel = std::move(label);
     }
