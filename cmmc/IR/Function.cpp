@@ -12,25 +12,32 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/LabelAllocator.hpp>
-#include <cmmc/IR/Module.hpp>
-#include <ostream>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-void Module::dump(std::ostream& out) const {
-    // TODO: dump struct/opaque types
-
-    for(auto value : mGlobals)
-        value.second->dump(out);
+void ExternalFunctionDeclaration::dump(std::ostream& out) const {
+    reportNotImplemented();
 }
 
-bool Module::verify(std::ostream& out) const {
-    for(auto value : mGlobals) {
-        if(auto func = dynamic_cast<Function*>(value.second))
-            if(!func->verify(out))
-                return false;
-    }
+void Function::dump(std::ostream& out) const {
+    LabelAllocator allocator;
+    for(auto block : mBlocks)
+        block->setLabel(allocator.allocate(block->getLabel()));
+    out << "func " << getSymbol();
+    getType()->dump(out);
+    out << " {" << std::endl;
+    for(auto block : mBlocks)
+        block->dump(out);
+    out << '}' << std::endl;
+}
+
+bool Function::verify(std::ostream& out) const {
+    for(auto block : mBlocks)
+        if(!block->verify(out))
+            return false;
     return true;
 }
 

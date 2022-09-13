@@ -23,7 +23,7 @@ CMMC_NAMESPACE_BEGIN
 class Target;
 
 class Module final {
-    List<GlobalValue*> mGlobals;
+    HashTable<String<Arena::Source::IR>, GlobalValue*, Arena::Source::IR, StringHasher<Arena::Source::IR>> mGlobals;
     const Target* mTarget = nullptr;
 
 public:
@@ -41,6 +41,7 @@ public:
         return *mTarget;
     }
     void dump(std::ostream& out) const;
+    bool verify(std::ostream& out) const;
 };
 CMMC_ARENA_TRAIT(Module, IR);
 

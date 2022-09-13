@@ -12,23 +12,85 @@
     limitations under the License.
 */
 
+#include <algorithm>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/LabelAllocator.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 void BlockArgument::dump(std::ostream& out) const {
-    reportNotImplemented();
+    getType()->dumpName(out);
+    out << " %" << mLabel;
+}
+
+void BlockArgument::setLabel(String<Arena::Source::IR> label) {
+    mLabel = std::move(label);
 }
 
 void Block::dump(std::ostream& out) const {
-    reportNotImplemented();
+    // relabel args and instructions
+    LabelAllocator allocator;
+    String<Arena::Source::IR> argBaseLabel{ "arg" };
+    for(auto arg : mArgs)
+        arg->setLabel(allocator.allocate(argBaseLabel));
+    for(auto inst : mInstructions)
+        inst->setLabel(allocator.allocate(inst->getLabel()));
+
+    out << '^' << mLabel << '(';
+    bool isFirst = true;
+    for(auto arg : mArgs) {
+        if(!isFirst)
+            out << ", ";
+        else
+            isFirst = true;
+        arg->dump(out);
+    }
+    out << "):" << std::endl;
+    for(auto inst : mInstructions) {
+        out << "    ";
+        inst->dump(out);
+        out << ';' << std::endl;
+    }
 }
-bool Block::verify() const {
-    return false;
+
+bool Block::verify(std::ostream& out) const {
+    // terminator
+
+    if(mInstructions.empty() || !mInstructions.back()->isTerminator()) {
+        out << "require a terminator";
+        return false;
+    }
+
+    // topological ordering
+
+    // cross block/function reference
+    for(auto inst : mInstructions)
+        if(!inst->verify(out))
+            return false;
+
+    return true;
 }
 Value* Block::getArg(uint32_t idx) {
-    return make<BlockArgument>(this, mArgs[idx], idx);
+    return mArgs[idx];
+}
+
+BlockArgument* Block::addArg(Type* type) {
+    auto arg = make<BlockArgument>(this, type);
+    mArgs.push_back(arg);
+    return arg;
+}
+void Block::removeArg(BlockArgument* arg) {
+    const auto iter = std::find(mArgs.begin(), mArgs.end(), arg);
+    if(iter != mArgs.end()) {
+        mArgs.erase(iter);
+    } else {
+        reportFatal("");
+    }
+}
+
+void Block::dumpAsTarget(std::ostream& out) const {
+    out << '^' << mLabel;
 }
 
 CMMC_NAMESPACE_END

@@ -12,24 +12,15 @@
     limitations under the License.
 */
 
-#pragma once
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-    String<Arena::Source::IR> mSymbol;
-
-public:
-    // visibility
-
-    const String<Arena::Source::IR>& getSymbol() const noexcept {
-        return mSymbol;
-    }
-    void setSymbol(String<Arena::Source::IR> symbol) {
-        mSymbol = std::move(symbol);
-    }
-    void dumpAsOperand(std::ostream& out) const final;
-};
+void Value::dumpAsOperand(std::ostream& out) const {
+    mType->dumpName(out);
+    out << ' ';
+    dump(out);
+}
 
 CMMC_NAMESPACE_END

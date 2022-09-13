@@ -25,37 +25,48 @@ class Function;
 
 class BlockArgument final : public Value {
     Block* mBlock;
-    uint32_t mIdx;
+    String<Arena::Source::IR> mLabel;
 
 public:
-    BlockArgument(Block* block, Type* type, uint32_t idx) noexcept : Value{ type }, mBlock{ block }, mIdx{ idx } {}
+    BlockArgument(Block* block, Type* type) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
+    void setLabel(String<Arena::Source::IR> label);
 };
 
 class Block final {
     Function* mFunction;
     String<Arena::Source::IR> mLabel;
-    Deque<Type*> mArgs;
+    Deque<BlockArgument*> mArgs;
     List<Instruction*> mInstructions;
 
 public:
-    explicit Block(Function* function, const String<Arena::Source::IR>& label = "") : mFunction{ function }, mLabel{ label } {}
+    explicit Block(Function* function) : mFunction{ function } {}
     void dump(std::ostream& out) const;
-    bool verify() const;
+    bool verify(std::ostream& out) const;
 
-    const String<Arena::Source::IR>& label() const noexcept {
+    const String<Arena::Source::IR>& getLabel() const noexcept {
         return mLabel;
     }
-    Deque<Type*>& args() noexcept {
+
+    void setLabel(String<Arena::Source::IR> label) {
+        mLabel = std::move(label);
+    }
+
+    const Deque<BlockArgument*>& args() const noexcept {
         return mArgs;
     }
+    BlockArgument* addArg(Type* type);
+    void removeArg(BlockArgument* arg);
+    Value* getArg(uint32_t idx);
+
     List<Instruction*>& instructions() noexcept {
         return mInstructions;
     }
     Function* getFunction() const noexcept {
         return mFunction;
     }
-    Value* getArg(uint32_t idx);
+
+    void dumpAsTarget(std::ostream& out) const;
 };
 CMMC_ARENA_TRAIT(Block, IR);
 

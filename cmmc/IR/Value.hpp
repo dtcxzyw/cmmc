@@ -16,6 +16,7 @@
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -35,6 +36,7 @@ public:
     virtual ~Value() = default;
 
     virtual void dump(std::ostream& out) const = 0;
+    virtual void dumpAsOperand(std::ostream& out) const;
     Type* getType() const noexcept {
         return mType;
     }

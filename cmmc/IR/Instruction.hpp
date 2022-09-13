@@ -90,6 +90,7 @@ class Instruction : public Value {
     InstructionID mInstID;
     Deque<Value*> mOperands;
     Block* mBlock;
+    String<Arena::Source::IR> mLabel;
 
     // bool isVolatile;
 public:
@@ -108,7 +109,27 @@ public:
     Deque<Value*>& operands() noexcept {
         return mOperands;
     }
+    const Deque<Value*>& operands() const noexcept {
+        return mOperands;
+    }
+    Value* getOperand(uint32_t idx) const noexcept {
+        return mOperands[idx];
+    }
+    void setLabel(String<Arena::Source::IR> label) {
+        mLabel = std::move(label);
+    }
+    const String<Arena::Source::IR>& getLabel() const noexcept {
+        return mLabel;
+    }
+
+    virtual bool verify(std::ostream& out) const;
+
     virtual void dump(std::ostream& out) const = 0;
+    void dumpAsOperand(std::ostream& out) const final;
+
+    void dumpWithNoOperand(std::ostream& out) const;
+    void dumpBinary(std::ostream& out) const;
+    void dumpUnary(std::ostream& out) const;
 
 #define CMMC_GET_INST_CATEGORY(KIND)                                                       \
     bool is##KIND() const noexcept {                                                       \
@@ -191,6 +212,7 @@ public:
     Vector<Value*>& getArgs() noexcept {
         return mArgs;
     }
+    void dump(std::ostream& out) const;
 };
 
 class ConditionalBranchInst final : public Instruction {
@@ -232,7 +254,8 @@ public:
 
 class SelectInst final : public Instruction {
 public:
-    SelectInst(Value* predicate, Value* lhs, Value* rhs) : Instruction{ InstructionID::Select, lhs->getType(), { lhs, rhs } } {}
+    SelectInst(Value* predicate, Value* lhs, Value* rhs)
+        : Instruction{ InstructionID::Select, lhs->getType(), { predicate, lhs, rhs } } {}
 
     void dump(std::ostream& out) const override;
 };

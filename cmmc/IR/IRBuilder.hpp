@@ -54,7 +54,8 @@ public:
     template <typename... Args>
     Block* addBlock(Args... types) {
         auto block = make<Block>(mCurrentFunction);
-        block->args() = { types... };
+        for(auto type : std::initializer_list<Type*>{ types... })
+            block->addArg(type);
         mCurrentFunction->blocks().push_back(block);
         return block;
     }

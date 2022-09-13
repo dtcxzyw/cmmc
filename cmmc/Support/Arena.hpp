@@ -18,10 +18,10 @@
 #include <cstdint>
 #include <deque>
 #include <list>
-#include <set>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -29,7 +29,7 @@ CMMC_NAMESPACE_BEGIN
 class Arena final {
     static constexpr size_t blockSize = 4096;
     std::vector<void*> mBlocks;
-    std::set<void*> mLargeBlocks;
+    std::unordered_set<void*> mLargeBlocks;
 
     std::uintptr_t mBlockPtr, mBlockEndPtr;
 
@@ -129,5 +129,8 @@ template <typename Key, typename Value, Arena::Source source, typename Hash = st
 using HashTable =
     std::unordered_map<Key, Value, Hash, Equal,
                        typename GeneralArenaAllocator<source>::template ArenaAllocator<std::pair<const Key, Value>>>;
+
+template <typename Key, Arena::Source source, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
+using HashSet = std::unordered_set<Key, Hash, Equal, typename GeneralArenaAllocator<source>::template ArenaAllocator<Key>>;
 
 CMMC_NAMESPACE_END

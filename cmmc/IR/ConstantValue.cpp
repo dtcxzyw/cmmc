@@ -17,7 +17,10 @@
 CMMC_NAMESPACE_BEGIN
 
 void ConstantInteger::dump(std::ostream& out) const {
-    out << mValue;
+    if(getType()->isBoolean())
+        out << (mValue ? "true" : "false");
+    else
+        out << mValue;
 }
 
 void ConstantFloatingPoint::dump(std::ostream& out) const {

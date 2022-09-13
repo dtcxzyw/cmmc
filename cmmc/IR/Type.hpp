@@ -16,6 +16,7 @@
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -69,6 +70,10 @@ public:
     }
 
     virtual bool isSame(Type* rhs) const = 0;
+    virtual void dump(std::ostream& out) const {
+        dumpName(out);
+    }
+    virtual void dumpName(std::ostream& out) const = 0;
 };
 CMMC_ARENA_TRAIT(Type, IR);
 
@@ -78,6 +83,7 @@ public:
         return true;
     }
     bool isSame(Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
     static VoidType* get();
 };
 
@@ -93,6 +99,7 @@ public:
         return mPointee;
     }
     bool isSame(Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
     static PointerType* get(Type* pointee);
 };
 
@@ -112,6 +119,7 @@ public:
         return mBitWidth == 1;
     }
     bool isSame(Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
 };
 
@@ -131,6 +139,7 @@ public:
         return true;
     }
     bool isSame(Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
 };
 
@@ -143,6 +152,7 @@ public:
     bool isFunction() const noexcept override {
         return true;
     }
+    void dumpName(std::ostream& out) const override;
     bool isSame(Type* rhs) const override;
     Type* getRetType() const noexcept {
         return mRetType;
@@ -155,18 +165,22 @@ public:
 struct StructField final {
     SourceLocation loc;
     Type* type;
+    String<Arena::Source::IR> fieldName;
 
     // uint32_t alignment;
 };
 CMMC_ARENA_TRAIT(StructField, IR);
 
 class StructType final : public Type {
-    List<StructField> fields;
+    String<Arena::Source::IR> mName;
+    List<StructField> mFields;
 
 public:
     bool isStruct() const noexcept override {
         return true;
     }
+    void dump(std::ostream& out) const override;
+    void dumpName(std::ostream& out) const override;
     bool isSame(Type* rhs) const override;
 };
 

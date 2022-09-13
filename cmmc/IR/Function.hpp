@@ -35,6 +35,7 @@ public:
         return mBlocks;
     }
     void dump(std::ostream& out) const override;
+    bool verify(std::ostream& out) const;
 };
 
 CMMC_NAMESPACE_END

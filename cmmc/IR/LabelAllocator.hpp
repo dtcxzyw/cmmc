@@ -13,23 +13,17 @@
 */
 
 #pragma once
-#include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Arena.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
-class GlobalValue : public Value {
-    String<Arena::Source::IR> mSymbol;
+class LabelAllocator final {
+    HashTable<String<Arena::Source::IR>, uint32_t, Arena::Source::IR, StringHasher<Arena::Source::IR>> mBase;
+    HashSet<String<Arena::Source::IR>, Arena::Source::IR, StringHasher<Arena::Source::IR>> mAllocated;
 
 public:
-    // visibility
-
-    const String<Arena::Source::IR>& getSymbol() const noexcept {
-        return mSymbol;
-    }
-    void setSymbol(String<Arena::Source::IR> symbol) {
-        mSymbol = std::move(symbol);
-    }
-    void dumpAsOperand(std::ostream& out) const final;
+    String<Arena::Source::IR> allocate(const String<Arena::Source::IR>& base);
 };
 
 CMMC_NAMESPACE_END
