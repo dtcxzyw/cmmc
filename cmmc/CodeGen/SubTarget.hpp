@@ -13,13 +13,24 @@
 */
 
 #pragma once
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/Register.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 class SubTarget {
 public:
-    virtual ~SubTarget();
+    virtual ~SubTarget() = default;
+    virtual uint32_t issueWidth() const noexcept = 0;
+    virtual uint32_t physicalRegisterCount(const RegisterClass* regClass) const = 0;
+    virtual uint32_t getLatency(const MachineInst* inst) const = 0;
+};
+
+class SimpleSubTarget final : public SubTarget {
+public:
+    uint32_t issueWidth() const noexcept override;
+    uint32_t physicalRegisterCount(const RegisterClass* regClass) const override;
+    uint32_t getLatency(const MachineInst* inst) const override;
 };
 
 CMMC_NAMESPACE_END

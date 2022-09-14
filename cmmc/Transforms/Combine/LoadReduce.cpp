@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// replace load with just stored value
+// replace load with the last loaded/stored value
 // ^entry(i32* %a, i32 %b):
 //     store i32* %a with i32 0
 //     i32 %c = load i32* %a;
@@ -35,28 +35,33 @@ CMMC_NAMESPACE_BEGIN
 
 class LoadAfterStoreReduce final : public TransformPass<Function> {
     bool runOnBlock(Block& block, const DistinctPointerSet& set) const {
-        std::unordered_map<Value*, Value*> storedValue;
+        std::unordered_map<Value*, Value*> lastValue;
         std::unordered_map<Instruction*, Value*> replace;
+
+        const auto update = [&](Value* addr, Value* val) {
+            std::vector<Value*> outdated;
+            for(auto [ptr, val] : lastValue) {
+                CMMC_UNUSED(val);
+                if(ptr != addr && !set.isDistinct(ptr, addr))
+                    outdated.push_back(val);
+            }
+            for(auto key : outdated)
+                lastValue.erase(key);
+
+            lastValue[addr] = val;
+        };
 
         for(auto inst : block.instructions()) {
             const auto addr = inst->getOperand(0);
 
             if(inst->getInstID() == InstructionID::Load) {
-                const auto iter = storedValue.find(addr);
-                if(iter != storedValue.cend())
+                const auto iter = lastValue.find(addr);
+                if(iter != lastValue.cend())
                     replace[inst] = iter->second;
-
+                else
+                    update(addr, inst);
             } else if(inst->getInstID() == InstructionID::Store) {
-                std::vector<Value*> outdated;
-                for(auto [ptr, val] : storedValue) {
-                    CMMC_UNUSED(val);
-                    if(ptr != addr && !set.isDistinct(ptr, addr))
-                        outdated.push_back(val);
-                }
-                for(auto key : outdated)
-                    storedValue.erase(key);
-
-                storedValue[addr] = inst->getOperand(1);
+                update(addr, inst->getOperand(1));
             }
         }
 

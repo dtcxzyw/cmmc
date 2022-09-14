@@ -28,9 +28,11 @@ void TargetRegistry::addTarget(const TargetBuilder& targetBuilder) {
 }
 
 static StringOpt target;
+StringOpt targetMachine;
 
 CMMC_INIT_OPTIONS_BEGIN
 target.withDefault("mips").setName("target", 't').setDesc("target ISA");
+targetMachine.withDefault("emulator").setName("machine", 'm').setDesc("target machine");
 CMMC_INIT_OPTIONS_END
 
 std::unique_ptr<Target> TargetRegistry::selectTarget() const {

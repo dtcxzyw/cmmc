@@ -13,28 +13,15 @@
 */
 
 #pragma once
-#include <cmmc/Config.hpp>
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
-class RegisterClass {
-public:
-    virtual ~RegisterClass() = default;
-    virtual uint32_t count() const noexcept = 0;
-};
-
-struct Register final {
-    uint16_t idx;
-    bool isVirtual;
-};
-
-class TargetRegisterInfo {
-public:
-    virtual ~TargetRegisterInfo() = default;
-
-    virtual const RegisterClass& getRegisterClass(uint32_t idx) const noexcept = 0;
-    virtual const char* getTextualName(uint32_t idx) const noexcept = 0;
+enum class MIPSInstructionID : uint32_t {
+#define INST(ID, MNEMONIC, FORMAT, OPCODE, FUNCT, FMT, FT) ID,
+#include <cmmc/Target/MIPS/MIPSInstMetadata.hpp>
+#undef INST
 };
 
 CMMC_NAMESPACE_END

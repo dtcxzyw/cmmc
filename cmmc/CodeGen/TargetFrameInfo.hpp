@@ -19,7 +19,7 @@ CMMC_NAMESPACE_BEGIN
 
 class TargetFrameInfo {
 public:
-    virtual ~TargetFrameInfo();
+    virtual ~TargetFrameInfo() = default;
 };
 
 CMMC_NAMESPACE_END

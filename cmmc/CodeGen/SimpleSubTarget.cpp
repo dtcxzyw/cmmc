@@ -12,29 +12,18 @@
     limitations under the License.
 */
 
-#pragma once
-#include <cmmc/Config.hpp>
-#include <cstdint>
+#include <cmmc/CodeGen/SubTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-class RegisterClass {
-public:
-    virtual ~RegisterClass() = default;
-    virtual uint32_t count() const noexcept = 0;
-};
-
-struct Register final {
-    uint16_t idx;
-    bool isVirtual;
-};
-
-class TargetRegisterInfo {
-public:
-    virtual ~TargetRegisterInfo() = default;
-
-    virtual const RegisterClass& getRegisterClass(uint32_t idx) const noexcept = 0;
-    virtual const char* getTextualName(uint32_t idx) const noexcept = 0;
-};
+uint32_t SimpleSubTarget::issueWidth() const noexcept {
+    return 1;
+}
+uint32_t SimpleSubTarget::physicalRegisterCount(const RegisterClass* regClass) const {
+    return regClass->count();
+}
+uint32_t SimpleSubTarget::getLatency(const MachineInst*) const {
+    return 0;
+}
 
 CMMC_NAMESPACE_END

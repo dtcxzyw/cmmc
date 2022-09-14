@@ -42,7 +42,7 @@ bool IntegerType::isSame(Type* rhs) const {
     return rhs->isInteger() && (mBitWidth == rhs->as<IntegerType>()->mBitWidth);
 }
 size_t IntegerType::getFixedSize() const noexcept {
-    return mBitWidth / 8;
+    return mBitWidth / 8 + (mBitWidth % 8 ? 1 : 0);
 }
 IntegerType* IntegerType::get(uint32_t bitWidth) {
     return make<IntegerType>(bitWidth);
