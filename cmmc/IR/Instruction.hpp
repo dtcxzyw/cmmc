@@ -106,7 +106,7 @@ public:
     void setBlock(Block* block) noexcept {
         mBlock = block;
     }
-    Block* getBlock() const noexcept {
+    Block* getBlock() const noexcept final {
         return mBlock;
     }
     Deque<Value*>& operands() noexcept {
@@ -118,7 +118,10 @@ public:
     Value* getOperand(uint32_t idx) const noexcept {
         return mOperands[idx];
     }
-    virtual void replaceOperand(Value* oldOperand, Value* newOperand);
+
+    virtual bool replaceOperand(Value* oldOperand, Value* newOperand);
+    bool hasOperand(Value* operand) const noexcept;
+
     void setLabel(String<Arena::Source::IR> label) {
         mLabel = std::move(label);
     }
@@ -234,6 +237,9 @@ public:
     Vector<Value*>& getArgs() noexcept {
         return mArgs;
     }
+    const Vector<Value*>& getArgs() const noexcept {
+        return mArgs;
+    }
     void dump(std::ostream& out) const;
     void replaceOperand(Value* oldOperand, Value* newOperand);
 };
@@ -245,7 +251,7 @@ public:
     explicit ConditionalBranchInst(BranchTarget target);
     explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget);
 
-    void replaceOperand(Value* oldOperand, Value* newOperand) override;
+    bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void dump(std::ostream& out) const override;
 
     BranchTarget& getTrueTarget() noexcept {

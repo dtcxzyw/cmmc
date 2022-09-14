@@ -499,7 +499,7 @@ static void blockArgPropagation(Function* func) {
             bool isInvalid = false;
             for(auto operand : inst->operands()) {
                 if(operand->isInstruction()) {
-                    auto inst = dynamic_cast<Instruction*>(operand);
+                    auto inst = operand->as<Instruction>();
                     assert(inst->getBlock());
                     if(inst->getBlock() != block) {
                         data.req.emplace(inst);

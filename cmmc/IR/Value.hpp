@@ -21,6 +21,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class Module;
+class Block;
 
 class Value {
     Type* mType;
@@ -45,6 +46,9 @@ public:
     }
     virtual bool isInstruction() const noexcept {
         return false;
+    }
+    virtual Block* getBlock() const noexcept {
+        return nullptr;
     }
 
     template <typename T>

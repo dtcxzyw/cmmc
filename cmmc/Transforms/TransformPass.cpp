@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <memory>
@@ -97,7 +98,7 @@ public:
         for(auto [sym, global] : module.globals()) {
             CMMC_UNUSED(sym);
             if(global->isFunction())
-                modified |= mPass->run(*dynamic_cast<Function*>(global));
+                modified |= mPass->run(*global->as<Function>());
         }
         return modified;
     }

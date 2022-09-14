@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/IR/Attribute.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <ostream>
@@ -24,8 +25,18 @@ public:
     void dump(std::ostream& out) const override;
 };
 
+enum class FunctionAttribute {
+    NoMemoryRead = 1 << 0,
+    NoSideEffect = 1 << 1,
+    Stateless = 1 << 2,
+    NoAlias = 1 << 3,
+    NoReturn = 1 << 4,
+    NoRecurse = 1 << 5
+};
+
 class Function final : public GlobalValue {
     List<Block*> mBlocks;
+    Attribute<FunctionAttribute> mAttr;
 
 public:
     Function(String<Arena::Source::IR> symbol, FunctionType* type) : GlobalValue{ symbol, type } {}
@@ -39,6 +50,10 @@ public:
     bool verify(std::ostream& out) const;
     bool isFunction() const noexcept override {
         return true;
+    }
+
+    auto& attr() noexcept {
+        return mAttr;
     }
 };
 

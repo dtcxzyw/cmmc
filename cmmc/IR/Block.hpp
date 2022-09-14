@@ -34,6 +34,9 @@ public:
         dump(out);
     }
     void setLabel(String<Arena::Source::IR> label);
+    Block* getBlock() const noexcept override {
+        return mBlock;
+    }
 };
 
 class Block final {

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -24,10 +25,17 @@ void Instruction::dumpAsOperand(std::ostream& out) const {
     out << " %" << mLabel;
 }
 
-void Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
+bool Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
+    bool modified = false;
     for(auto& operand : mOperands)
-        if(operand == oldOperand)
+        if(operand == oldOperand) {
             operand = newOperand;
+            modified = true;
+        }
+    return modified;
+}
+bool Instruction::hasOperand(Value* operand) const noexcept {
+    return std::find(mOperands.cbegin(), mOperands.cend(), operand) != mOperands.cend();
 }
 
 bool Instruction::verify(std::ostream& out) const {
@@ -251,10 +259,11 @@ ConditionalBranchInst::ConditionalBranchInst(Value* condition, BranchTarget true
     operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
 }
 
-void ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {
-    Instruction::replaceOperand(oldOperand, newOperand);
+bool ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {
+    bool ret = Instruction::replaceOperand(oldOperand, newOperand);
     mTrueTarget.replaceOperand(oldOperand, newOperand);
     mFalseTarget.replaceOperand(oldOperand, newOperand);
+    return ret;
 }
 
 void ReturnInst::dump(std::ostream& out) const {
