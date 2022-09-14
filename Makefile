@@ -19,7 +19,7 @@ BIN := ./bin/splc
 CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -I $(abspath ./) -Wall -Werror -MD
 LDFLAGS = $(ADDFLAGS) -lfl
 
-CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp)
+CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)
 
 OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 

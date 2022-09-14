@@ -30,15 +30,16 @@ void TargetRegistry::addTarget(const TargetBuilder& targetBuilder) {
 static StringOpt target;
 
 CMMC_INIT_OPTIONS_BEGIN
-target.setName("target", 't').setDesc("target ISA");
+target.withDefault("mips").setName("target", 't').setDesc("target ISA");
 CMMC_INIT_OPTIONS_END
 
 std::unique_ptr<Target> TargetRegistry::selectTarget() const {
     const auto& targetName = target.get();
-    for(auto& builder : mTargets)
+    for(auto& builder : mTargets) {
         if(builder.first == targetName) {
             return builder.second();
         }
+    }
 
     reportFatal("Unrecognized target");
 }

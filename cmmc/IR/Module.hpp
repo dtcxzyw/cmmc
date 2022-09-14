@@ -41,6 +41,11 @@ public:
     const Target& getTarget() const noexcept {
         return *mTarget;
     }
+
+    auto& globals() noexcept {
+        return mGlobals;
+    }
+
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
     void add(GlobalValue* globalValue);

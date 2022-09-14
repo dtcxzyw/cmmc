@@ -11,3 +11,30 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
+
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+CMMC_NAMESPACE_BEGIN
+
+class MIPSTarget final : public Target {
+public:
+    const DataLayout& getDataLayout() const noexcept override {
+        reportUnreachable();
+    }
+    const TargetRegisterInfo& getTargetRegisterInfo() const noexcept override {
+        reportUnreachable();
+    }
+    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
+        reportUnreachable();
+    }
+    const SubTarget& getSubTarget() const noexcept override {
+        reportUnreachable();
+    }
+    std::unique_ptr<MachineModule> translateIR(Module& module) const override {
+        reportUnreachable();
+    }
+};
+
+CMMC_TARGET("mips", MIPSTarget);
+
+CMMC_NAMESPACE_END

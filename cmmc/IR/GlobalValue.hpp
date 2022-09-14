@@ -31,6 +31,9 @@ public:
     bool isGlobal() const noexcept final {
         return true;
     }
+    virtual bool isFunction() const noexcept {
+        return false;
+    }
 };
 
 CMMC_NAMESPACE_END

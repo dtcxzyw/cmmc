@@ -37,6 +37,9 @@ public:
     }
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const;
+    bool isFunction() const noexcept override {
+        return true;
+    }
 };
 
 CMMC_NAMESPACE_END

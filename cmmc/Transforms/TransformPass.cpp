@@ -39,11 +39,16 @@ IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasse
 
 bool IterationPassWrapper::run(Module& item) const {
     bool modified = false;
+    bool stopEarly = false;
     for(uint32_t i = 0; i < mMaxIterations; ++i) {
-        if(!mSubPasses->run(item))
+        if(!mSubPasses->run(item)) {
+            stopEarly = true;
             break;
+        }
         modified = true;
     }
+    if(!stopEarly)
+        reportWarning() << "partial optimization" << std::endl;
     return modified;
 }
 
@@ -87,9 +92,13 @@ class FunctionPassWrapper final : public TransformPass<Module> {
 
 public:
     explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
-    bool run(Module& item) const override {
-        reportNotImplemented();
-        return false;
+    bool run(Module& module) const override {
+        bool modified = false;
+        for(auto [sym, global] : module.globals()) {
+            if(global->isFunction())
+                modified |= mPass->run(*dynamic_cast<Function*>(global));
+        }
+        return modified;
     }
     PassType type() const noexcept override {
         return mPass->type();

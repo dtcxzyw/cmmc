@@ -92,6 +92,7 @@ void Flag::handle(const char* str) {
 
 StringOpt& StringOpt::withDefault(std::string value) {
     hasDefault();
+    mHasValue = true;
     mStr = std::move(value);
     return *this;
 }

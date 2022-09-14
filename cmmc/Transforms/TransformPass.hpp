@@ -75,4 +75,10 @@ public:
     static PassRegistry& get();
 };
 
+#define CMMC_TRANSFORM_PASS(CLASS)                                   \
+    static int __pass = [] {                                         \
+        PassRegistry::get().registerPass(std::make_shared<CLASS>()); \
+        return 0;                                                    \
+    }()
+
 CMMC_NAMESPACE_END

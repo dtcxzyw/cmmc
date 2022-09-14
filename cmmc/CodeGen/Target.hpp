@@ -27,7 +27,7 @@ CMMC_NAMESPACE_BEGIN
 
 class Target {
 public:
-    virtual ~Target();
+    virtual ~Target() = default;
 
     virtual const DataLayout& getDataLayout() const noexcept = 0;
     virtual const TargetRegisterInfo& getTargetRegisterInfo() const noexcept = 0;
@@ -47,5 +47,11 @@ public:
 
     static TargetRegistry& get();
 };
+
+#define CMMC_TARGET(NAME, CLASS)                                                             \
+    static int __target = [] {                                                               \
+        TargetRegistry::get().addTarget({ NAME, [] { return std::make_unique<CLASS>(); } }); \
+        return 0;                                                                            \
+    }();
 
 CMMC_NAMESPACE_END

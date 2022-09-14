@@ -12,10 +12,60 @@
     limitations under the License.
 */
 
-// entry(int a, int b):
-//     return 0;
-// b2(int a):
-//     return 0;
+// eliminate unreachable blocks
+// ^entry(i32 %a, i32 %b):
+//     ret i32 0;
+// ^b2(int %a):
+//     ret i32 0;
 // ==>
-// entry(int a, int b):
-//     return 0;
+// ^entry(i32 %a, int %b):
+//     ret i32 0;
+
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
+#include <queue>
+
+CMMC_NAMESPACE_BEGIN
+
+class BlockEliminate final : public TransformPass<Function> {
+public:
+    bool run(Function& func) const override {
+        std::unordered_set<Block*> reachable;
+        std::queue<Block*> q;
+
+        q.push(func.entryBlock());
+        reachable.insert(func.entryBlock());
+
+        while(!q.empty()) {
+            auto u = q.front();
+            q.pop();
+
+            const auto terminator = u->getTerminator();
+            if(terminator->isBranch()) {
+                const auto inst = terminator->as<ConditionalBranchInst>();
+                const auto trueTarget = inst->getTrueTarget().getTarget();
+                if(!reachable.insert(trueTarget).second) {
+                    q.push(trueTarget);
+                }
+                const auto falseTarget = inst->getFalseTarget().getTarget();
+                if(falseTarget && !reachable.insert(falseTarget).second) {
+                    q.push(falseTarget);
+                }
+            }
+        }
+
+        auto& blocks = func.blocks();
+        size_t oldSize = blocks.size();
+        blocks.remove_if([&](auto block) { return !reachable.count(block); });
+
+        return blocks.size() != oldSize;
+    }
+
+    PassType type() const noexcept override {
+        return PassType::SideEffectEquality;
+    }
+};
+
+CMMC_TRANSFORM_PASS(BlockEliminate);
+
+CMMC_NAMESPACE_END

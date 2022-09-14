@@ -167,7 +167,7 @@ static void dumpCompare(std::ostream& out, const Instruction* inst, CompareOp op
     inst->dumpAsOperand(out);
     out << " = " << getInstName(inst->getInstID()) << ' ' << getCompareName(op) << ' ';
     inst->getOperand(0)->dumpAsOperand(out);
-    out << ' ';
+    out << ", ";
     inst->getOperand(1)->dumpAsOperand(out);
 }
 
