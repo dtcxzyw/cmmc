@@ -95,6 +95,7 @@ public:
     bool run(Module& module) const override {
         bool modified = false;
         for(auto [sym, global] : module.globals()) {
+            CMMC_UNUSED(sym);
             if(global->isFunction())
                 modified |= mPass->run(*dynamic_cast<Function*>(global));
         }
