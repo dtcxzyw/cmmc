@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MachineInst.hpp"
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>

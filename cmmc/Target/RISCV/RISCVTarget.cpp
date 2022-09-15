@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/Register.hpp"
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -38,41 +40,30 @@ public:
     }
 };
 
-class RISCVGPRClass final : public RegisterClass {
+class RISCVGPRClass final : public TargetRegisterClass {
 public:
     uint32_t count() const noexcept override {
         return 32;
     }
 };
 
-class RISCVFPRClass final : public RegisterClass {
+class RISCVFPRClass final : public TargetRegisterClass {
 public:
     uint32_t count() const noexcept override {
         return 32;
     }
 };
 
-class RISCVRegisterInfo final : public TargetRegisterInfo {
+class RISCVInstInfo final : public TargetInstInfo {
     RISCVGPRClass mGPR;
     RISCVFPRClass mFPR;
 
 public:
-    const RegisterClass& getRegisterClass(uint32_t idx) const noexcept {
-        return idx < 32 ? static_cast<const RegisterClass&>(mGPR) : static_cast<const RegisterClass&>(mFPR);
+    const TargetRegisterClass& getRegisterClass(Register reg) const override {
+        return reg < 32 ? static_cast<const TargetRegisterClass&>(mGPR) : static_cast<const TargetRegisterClass&>(mFPR);
     }
-
-    const char* getTextualName(uint32_t idx) const noexcept {
-        constexpr const char* name[] = {
-            "zero", "ra",  "sp",  "gp",  "tp",  "t0",  "t1",  "t2",   //
-            "s0",   "s1",  "a0",  "a1",  "a2",  "a3",  "a4",  "a5",   //
-            "a6",   "a7",  "s2",  "s3",  "s4",  "s5",  "s6",  "s7",   //
-            "s8",   "s9",  "s10", "s11", "t3",  "t4",  "t5",  "t6",   //
-            "f0",   "f1",  "f2",  "f3",  "f4",  "f5",  "f6",  "f7",   //
-            "f8",   "f9",  "f10", "f11", "f12", "f13", "f14", "f15",  //
-            "f16",  "f17", "f18", "f19", "f20", "f21", "f22", "f23",  //
-            "f24",  "f25", "f26", "f27", "f28", "f29", "f30", "f31"   //
-        };
-        return name[idx];
+    const TargetInstClass& getInstClass(uint32_t instID) const override {
+        reportNotImplemented();
     }
 };
 
@@ -80,7 +71,7 @@ public:
 class RISCVTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     RISCVDataLayout mDataLayout;
-    RISCVRegisterInfo mRegisterInfo;
+    RISCVInstInfo mInstInfo;
 
 public:
     explicit RISCVTarget() {
@@ -92,8 +83,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetRegisterInfo& getTargetRegisterInfo() const noexcept override {
-        return mRegisterInfo;
+    const TargetInstInfo& getTargetInstInfo() const noexcept override {
+        return mInstInfo;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         reportUnreachable();
@@ -102,12 +93,17 @@ public:
         return *mSubTarget;
     }
     std::unique_ptr<MachineModule> translateIR(Module& module) const override;
+    void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("riscv", RISCVTarget);
 
 std::unique_ptr<MachineModule> RISCVTarget::translateIR(Module& module) const {
     return nullptr;
+}
+
+void RISCVTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
+    reportNotImplemented();
 }
 
 CMMC_NAMESPACE_END

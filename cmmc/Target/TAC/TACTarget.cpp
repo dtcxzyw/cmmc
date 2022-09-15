@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
-#include "cmmc/IR/Type.hpp"
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <memory>
