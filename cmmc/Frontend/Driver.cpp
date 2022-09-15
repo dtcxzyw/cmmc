@@ -201,8 +201,13 @@ extern "C" YY_DECL;
 #define CMMC_IF(PRED, IF_PART) IfElseExpr::get(PRED, IF_PART, nullptr)
 #define CMMC_IF_ELSE(PRED, IF_PART, ELSE_PART) IfElseExpr::get(PRED, IF_PART, ELSE_PART)
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
-#define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK);
-#define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK);
+#define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK)
+#define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
+#define CMMC_VAR(NAME, INIT_EXPR) \
+    NamedVar {                    \
+        NAME, INIT_EXPR           \
+    }
+#define CMMC_VAR_DEF(TYPE, VARS) LocalVarDefExpr::get(TYPE, VARS)
 #define CMMC_EXTENSION(EXT)         \
     if(driver.checkExtension(#EXT)) \
         YYABORT;

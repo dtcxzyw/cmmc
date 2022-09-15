@@ -65,14 +65,14 @@ bool Block::verify(std::ostream& out) const {
 
     // topological ordering
 
-    // cross block/function reference
+    // per-instruction
     for(auto inst : mInstructions)
         if(!inst->verify(out))
             return false;
 
     return true;
 }
-Value* Block::getArg(uint32_t idx) {
+BlockArgument* Block::getArg(uint32_t idx) {
     return mArgs[idx];
 }
 

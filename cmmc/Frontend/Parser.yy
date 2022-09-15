@@ -85,6 +85,10 @@
 %type <Expr*> Stmt;
 %type <Expr*> Exp;
 %type <ExprPack> Args;
+%type <ExprPack> DefList;
+%type <Expr*> Def;
+%type <VarList> DecList;
+%type <NamedVar> Dec;
 
 %start Program;
 
@@ -120,7 +124,7 @@ VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL
 ParamDec: Specifier VarDec { $$ = { $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
 ;
 /* statement */
-CompSt: LC DefList StmtList RC { $$ = $3; CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
+CompSt: LC DefList StmtList RC { CMMC_CONCAT_PACK($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
@@ -133,16 +137,16 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 ;
 /* local definition */
-DefList: Def DefList { CMMC_NONTERMINAL(@$, DefList, @1, @2); }
-| %empty { CMMC_EMPTY(@$, DefList); }
+DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
+| %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
-Def: Specifier DecList SEMI { CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
+Def: Specifier DecList SEMI { $$ = CMMC_VAR_DEF($1, $2); CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
 ;
-DecList: Dec { CMMC_NONTERMINAL(@$, DecList, @1); }
-| Dec COMMA DecList { CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
+DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
+| Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
 ;
-Dec: VarDec { CMMC_NONTERMINAL(@$, Dec, @1); }
-| VarDec ASSIGN Exp { CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
+Dec: VarDec { $$ = CMMC_VAR($1, nullptr); CMMC_NONTERMINAL(@$, Dec, @1); }
+| VarDec ASSIGN Exp { $$ = CMMC_VAR($1, $3); CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
 ;
 /* Expression */
 Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }

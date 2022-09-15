@@ -42,7 +42,7 @@ $(BIN): $(OBJS)
 	mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
-.PHONY: clean bear debug test-parse splc
+.PHONY: clean bear debug splc
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear2: clean # make clangd happy
@@ -55,5 +55,10 @@ bear3: clean # make clangd happy
 debug: $(BIN)
 	gdb $(BIN)
 splc: $(BIN)
+
+.PHONY: test-parse test-semantic test
 test-parse: splc
 	./tests/Parse/parse_test.py $(BIN) ./tests/Parse/
+test-semantic: splc
+	./tests/Semantic/semantic_test.py $(BIN) ./tests/Semantic/
+test: test-parse test-semantic

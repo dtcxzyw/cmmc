@@ -66,7 +66,7 @@ public:
     }
     BlockArgument* addArg(Type* type);
     void removeArg(BlockArgument* arg);
-    Value* getArg(uint32_t idx);
+    BlockArgument* getArg(uint32_t idx);
 
     List<Instruction*>& instructions() noexcept {
         return mInstructions;

@@ -9,15 +9,15 @@ tests = sys.argv[2]
 
 
 def test(src, ref):
-    out = subprocess.run(args=[binary, '-s', '-a', '-o',
+    out = subprocess.run(args=[binary, '-s', '-i', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     ref_content = ""
     with open(ref, mode="r", encoding="utf-8") as f:
         for line in f.readlines():
             ref_content += line
-    is_error = "Error" in ref_content
+    is_error = ref_content != ""
     if out.returncode == 0 and not is_error:
-        return ref_content == out.stdout
+        return True
     elif out.returncode != 0 and is_error:
         return True  # TODO: verify error output
     return False

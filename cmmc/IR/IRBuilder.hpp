@@ -49,7 +49,7 @@ public:
     }
 
     template <typename T, typename... Args>
-    Value* makeOp(Args&&... args) {
+    Instruction* makeOp(Args&&... args) {
         auto inst = make<T>(std::forward<Args>(args)...);
         mCurrentBlock->instructions().push_back(inst);
         inst->setBlock(mCurrentBlock);

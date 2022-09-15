@@ -28,6 +28,9 @@ CMMC_NAMESPACE_BEGIN
 
 class EmitContext;
 
+class Expr;
+CMMC_ARENA_TRAIT(Expr*, AST);
+
 struct Qualifier final {
     // bool isConst;
     // bool isVolatile;
@@ -52,7 +55,15 @@ struct NamedArg final {
     String<Arena::Source::AST> name;
 };
 CMMC_ARENA_TRAIT(NamedArg, AST);
+
 using ArgList = Deque<NamedArg>;
+
+struct NamedVar final {
+    String<Arena::Source::AST> name;
+    Expr* initialValue;
+};
+CMMC_ARENA_TRAIT(NamedVar, AST);
+using VarList = Deque<NamedVar>;
 
 struct FunctionDeclaration final {
     SourceLocation loc;
@@ -64,8 +75,6 @@ struct FunctionDeclaration final {
     FunctionType* getSignature(EmitContext& ctx) const;
 };
 
-class Expr;
-CMMC_ARENA_TRAIT(Expr*, AST);
 using StatementBlock = Deque<Expr*>;
 
 struct FunctionDefinition final {
@@ -231,10 +240,32 @@ public:
     static WhileExpr* get(Expr* pred, Expr* block);
 };
 
+class LocalVarDefExpr final : public Expr {
+    TypeRef mType;
+    Deque<NamedVar> mVars;
+
+public:
+    LocalVarDefExpr(TypeRef type, Deque<NamedVar> vars) : mType{ std::move(type) }, mVars{ std::move(vars) } {}
+    Value* emit(EmitContext& ctx) const override;
+    static LocalVarDefExpr* get(TypeRef type, Deque<NamedVar> vars);
+};
+
 template <typename T>
 void concatPack(Deque<T>& res, const T& lhs, const Deque<T>& rhs) {
     res = rhs;
     res.push_front(lhs);
+}
+
+template <typename T>
+void concatPack(Deque<T>& res, const Deque<T>& lhs, const Deque<T>& rhs) {
+    res = lhs;
+    res.insert(res.cend(), rhs.cbegin(), rhs.cend());
+}
+
+template <typename T>
+void concatPack(Deque<T>& res, const Deque<T>& lhs, const T& rhs) {
+    res = lhs;
+    res.push_back(rhs);
 }
 
 CMMC_NAMESPACE_END

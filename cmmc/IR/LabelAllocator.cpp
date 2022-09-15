@@ -56,7 +56,8 @@ String<Arena::Source::IR> LabelAllocator::allocate(const String<Arena::Source::I
     }
     auto prefix = base.substr(0, end);
     const auto id = mBase[prefix]++;
-    emitID(prefix, id);
+    if(id != 0 || prefix.empty())
+        emitID(prefix, id);
     return prefix;
 }
 

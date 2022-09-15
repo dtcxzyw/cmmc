@@ -19,9 +19,12 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <iostream>
 
 CMMC_NAMESPACE_BEGIN
+
+extern Flag strictMode;
 
 FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
     const auto ret = ctx.getType(retType.typeIdentifier);
@@ -48,10 +51,14 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(entry);
     // NOTICE: function arguments must be lvalues
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
+        const auto& name = decl.args[idx].name;
+        auto label = String<Arena::Source::IR>{ name };
         const auto arg = entry->getArg(idx);
+        arg->setLabel(label);
         const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
+        memArg->setLabel(label);
         ctx.makeOp<StoreInst>(memArg, arg);
-        ctx.addIdentifier(decl.args[idx].name, memArg);
+        ctx.addIdentifier(name, memArg);
     }
     for(auto st : block)
         st->emit(ctx);
@@ -333,21 +340,32 @@ Value* ReturnExpr::emit(EmitContext& ctx) const {
 }
 
 Value* IfElseExpr::emit(EmitContext& ctx) const {
-    auto pred = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
+    const auto pred = ctx.convertTo(ctx.getRValue(mPredicate), IntegerType::getBoolean());
 
-    auto ifBlock = ctx.addBlock();
+    const auto oldBlock = ctx.getCurrentBlock();
+
+    const auto ifBlock = ctx.addBlock();
     ifBlock->setLabel("if.then");
-    auto elseBlock = ctx.addBlock();
-    elseBlock->setLabel("if.else");
-    auto newBlock = ctx.addBlock();
-    ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+    const auto newBlock = ctx.addBlock();
 
     ctx.setCurrentBlock(ifBlock);
     mThenBlock->emit(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
-    ctx.setCurrentBlock(elseBlock);
-    mElseBlock->emit(ctx);
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
+
+    if(mElseBlock) {
+        const auto elseBlock = ctx.addBlock();
+        elseBlock->setLabel("if.else");
+
+        ctx.setCurrentBlock(oldBlock);
+        ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+
+        ctx.setCurrentBlock(elseBlock);
+        mElseBlock->emit(ctx);
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
+    } else {
+        ctx.setCurrentBlock(oldBlock);
+        ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ newBlock });
+    }
 
     ctx.setCurrentBlock(newBlock);
     return nullptr;
@@ -393,6 +411,24 @@ Value* WhileExpr::emit(EmitContext& ctx) const {
     return nullptr;
 }
 
+Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
+    const auto type = ctx.getType(mType.typeIdentifier);
+
+    for(auto& [name, initExpr] : mVars) {
+        auto local = ctx.makeOp<StackAllocInst>(type);
+        local->setLabel(String<Arena::Source::IR>{ name });
+        ctx.addIdentifier(name, local);
+        if(initExpr)
+            ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
+    }
+
+    return nullptr;
+}
+
+LocalVarDefExpr* LocalVarDefExpr::get(TypeRef type, Deque<NamedVar> vars) {
+    return make<LocalVarDefExpr>(std::move(type), std::move(vars));
+}
+
 Value* EmitContext::convertTo(Value* value, Type* type) {
     const auto srcType = value->getType();
 
@@ -412,8 +448,12 @@ Value* EmitContext::convertTo(Value* value, Type* type) {
         else
             id = InstructionID::Trunc;
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
+        if(strictMode.get())
+            reportFatal("implicit I2F conversion is not allowed in strict mode");
         id = InstructionID::S2F;
     } else if(srcType->isFloatingPoint() && type->isInteger()) {
+        if(strictMode.get())
+            reportFatal("implicit F2I conversion is not allowed in strict mode");
         id = InstructionID::F2S;
     } else if(srcType->isFloatingPoint() && type->isFloatingPoint()) {
         id = InstructionID::FCast;
