@@ -12,11 +12,15 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/TAC.hpp>
+#include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 void loadTAC(Module& module, const std::string& path) {}
-void dumpTAC(Module& module, const std::ostream& out) {}
 
 CMMC_NAMESPACE_END

@@ -34,9 +34,9 @@ static Flag version;
 static Flag help;
 static Flag emitAST;
 static Flag emitIR;
-static Flag emitTAC;
 Flag strictMode;
 IntegerOpt optimizationLevel;
+extern StringOpt target;
 static StringOpt outputPath;
 
 CMMC_INIT_OPTIONS_BEGIN
@@ -44,7 +44,6 @@ version.setName("version", 'v').setDesc("print CMMC build information");
 help.setName("help", 'h').setDesc("print help information");
 emitAST.setName("emitAST", 'a');
 emitIR.setName("emitIR", 'i');
-emitTAC.setName("emitTAC", 't');
 strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
 optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
@@ -71,16 +70,9 @@ static int runIRPipeline(Module& module, const std::string& base) {
         return EXIT_SUCCESS;
     }
 
-    if(emitTAC.get()) {
-        const auto path = getOutputPath(base + ".ir");
-        reportDebug() << "emitTAC >> " << path << std::endl;
-        std::ofstream out{ path };
-        dumpTAC(module, out);
-        return EXIT_SUCCESS;
-    }
-
-    const auto path = getOutputPath(base + ".s");
-    reportDebug() << "emitASM >> " << path << std::endl;
+    const auto emitTAC = (::target.get() == "tac");
+    const auto path = getOutputPath(base + (emitTAC ? ".ir" : ".s"));
+    reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 
     std::ofstream out{ path };
     const auto machineModule = lowerToMachineModule(module);

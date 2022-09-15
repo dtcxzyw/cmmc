@@ -27,7 +27,7 @@ void TargetRegistry::addTarget(const TargetBuilder& targetBuilder) {
     mTargets.emplace_back(targetBuilder);
 }
 
-static StringOpt target;
+StringOpt target;
 StringOpt targetMachine;
 
 CMMC_INIT_OPTIONS_BEGIN

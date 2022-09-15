@@ -20,6 +20,5 @@
 CMMC_NAMESPACE_BEGIN
 
 void loadTAC(Module& module, const std::string& path);
-void dumpTAC(Module& module, const std::ostream& out);
 
 CMMC_NAMESPACE_END
