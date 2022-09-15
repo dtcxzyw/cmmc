@@ -22,7 +22,7 @@ CMMC_NAMESPACE_BEGIN
 
 class MachineSymbol {
 public:
-    virtual ~MachineSymbol();
+    virtual ~MachineSymbol() = default;
     // visibility
 };
 
@@ -47,7 +47,6 @@ public:
     std::vector<MachineSymbol*>& symbols() noexcept {
         return mSymbols;
     }
-    void emitAssembly(std::ostream& out) const;
     bool verify() const;
 };
 

@@ -19,7 +19,7 @@ CMMC_NAMESPACE_BEGIN
 uint32_t SimpleSubTarget::issueWidth() const noexcept {
     return 1;
 }
-uint32_t SimpleSubTarget::physicalRegisterCount(const RegisterClass* regClass) const {
+uint32_t SimpleSubTarget::physicalRegisterCount(const TargetRegisterClass* regClass) const {
     return regClass->count();
 }
 uint32_t SimpleSubTarget::getLatency(const MachineInst*) const {

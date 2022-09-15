@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MachineInst.hpp"
+#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -38,29 +40,33 @@ public:
     }
 };
 
-class MIPSGPRClass final : public RegisterClass {
+class MIPSGPRClass final : public TargetRegisterClass {
 public:
     uint32_t count() const noexcept override {
         return 32;
     }
 };
 
-class MIPSFPRClass final : public RegisterClass {
+class MIPSFPRClass final : public TargetRegisterClass {
 public:
     uint32_t count() const noexcept override {
         return 32;
     }
 };
 
-class MIPSRegisterInfo final : public TargetRegisterInfo {
+class MIPSInstInfo final : public TargetInstInfo {
     MIPSGPRClass mGPR;
     MIPSFPRClass mFPR;
 
 public:
-    const RegisterClass& getRegisterClass(uint32_t idx) const noexcept {
-        return idx < 32 ? static_cast<const RegisterClass&>(mGPR) : static_cast<const RegisterClass&>(mFPR);
+    const TargetRegisterClass& getRegisterClass(Register reg) const override {
+        return reg < 32 ? static_cast<const TargetRegisterClass&>(mGPR) : static_cast<const TargetRegisterClass&>(mFPR);
+    }
+    const TargetInstClass& getInstClass(uint32_t instID) const override {
+        reportNotImplemented();
     }
 
+    /*
     const char* getTextualName(uint32_t idx) const noexcept {
         constexpr const char* name[] = {
             "zero", "at",  "v0",  "v1",  "a0",  "a1",  "a2",  "a3",   //
@@ -74,13 +80,14 @@ public:
         };
         return name[idx];
     }
+    */
 };
 
 // MIPS o32
 class MIPSTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     MIPSDataLayout mDataLayout;
-    MIPSRegisterInfo mRegisterInfo;
+    MIPSInstInfo mInstInfo;
 
 public:
     explicit MIPSTarget() {
@@ -92,8 +99,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetRegisterInfo& getTargetRegisterInfo() const noexcept override {
-        return mRegisterInfo;
+    const TargetInstInfo& getTargetInstInfo() const noexcept override {
+        return mInstInfo;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         reportUnreachable();
@@ -102,6 +109,7 @@ public:
         return *mSubTarget;
     }
     std::unique_ptr<MachineModule> translateIR(Module& module) const override;
+    void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("mips", MIPSTarget);
@@ -109,5 +117,7 @@ CMMC_TARGET("mips", MIPSTarget);
 std::unique_ptr<MachineModule> MIPSTarget::translateIR(Module& module) const {
     return nullptr;
 }
+
+void MIPSTarget::emitAssembly(MachineModule& module, std::ostream& out) const {}
 
 CMMC_NAMESPACE_END

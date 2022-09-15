@@ -22,14 +22,14 @@ class SubTarget {
 public:
     virtual ~SubTarget() = default;
     virtual uint32_t issueWidth() const noexcept = 0;
-    virtual uint32_t physicalRegisterCount(const RegisterClass* regClass) const = 0;
+    virtual uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const = 0;
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
 };
 
 class SimpleSubTarget final : public SubTarget {
 public:
     uint32_t issueWidth() const noexcept override;
-    uint32_t physicalRegisterCount(const RegisterClass* regClass) const override;
+    uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const override;
     uint32_t getLatency(const MachineInst* inst) const override;
 };
 

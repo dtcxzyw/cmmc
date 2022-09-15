@@ -77,7 +77,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
     std::ofstream out{ path };
     const auto machineModule = lowerToMachineModule(module);
     assert(machineModule->verify());
-    machineModule->emitAssembly(out);
+    target->emitAssembly(*machineModule, out);
 
     return EXIT_SUCCESS;
 }

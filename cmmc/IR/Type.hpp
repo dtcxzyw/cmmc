@@ -41,6 +41,13 @@ public:
         return ptr;
     }
 
+    template <typename T>
+    const T* as() const {
+        const auto ptr = dynamic_cast<const T*>(this);
+        assert(ptr);
+        return ptr;
+    }
+
     virtual bool isVoid() const noexcept {
         return false;
     }
@@ -120,6 +127,9 @@ public:
     }
     bool isBoolean() const noexcept override {
         return mBitWidth == 1;
+    }
+    uint32_t getBitwidth() const noexcept {
+        return mBitWidth;
     }
     bool isSame(Type* rhs) const override;
     void dumpName(std::ostream& out) const override;

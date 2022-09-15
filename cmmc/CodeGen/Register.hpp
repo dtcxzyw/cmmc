@@ -18,23 +18,20 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class RegisterClass {
+class TargetRegisterClass {
 public:
-    virtual ~RegisterClass() = default;
+    virtual ~TargetRegisterClass() = default;
     virtual uint32_t count() const noexcept = 0;
 };
 
-struct Register final {
-    uint16_t idx;
-    bool isVirtual;
-};
+using Register = uint32_t;
 
-class TargetRegisterInfo {
-public:
-    virtual ~TargetRegisterInfo() = default;
+constexpr Register makeVirtualRegister(uint32_t id) {
+    return 0xf0000000 | id;
+}
 
-    virtual const RegisterClass& getRegisterClass(uint32_t idx) const noexcept = 0;
-    virtual const char* getTextualName(uint32_t idx) const noexcept = 0;
-};
+constexpr bool isVirtualRegister(Register reg) {
+    return reg & 0xf0000000;
+}
 
 CMMC_NAMESPACE_END

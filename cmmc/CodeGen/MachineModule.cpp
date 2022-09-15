@@ -20,7 +20,6 @@ CMMC_NAMESPACE_BEGIN
 MachineModule::MachineModule() {
     Arena::setArena(Arena::Source::MC, &mArena);
 }
-void MachineModule::emitAssembly(std::ostream& out) const {}
 bool MachineModule::verify() const {
     return false;
 }

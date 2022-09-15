@@ -12,12 +12,34 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Instruction.hpp"
+#include "cmmc/IR/Type.hpp"
+#include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN
+
+enum class TACInst : uint32_t {
+    Load,
+    Store,
+    Read,
+    Write,
+    Return,
+    Add,
+    Sub,
+    Mul,
+    Div,
+    Call,
+    BranchEqual,
+    BranchNotEqual,
+    BranchLessThan,
+    BranchLessEqual,
+    BranchGreaterThan,
+    BranchGreaterEqual
+};
 
 extern StringOpt targetMachine;
 
@@ -37,31 +59,30 @@ public:
     }
 };
 
-class TACGPRClass final : public RegisterClass {
+class TACGPRClass final : public TargetRegisterClass {
 public:
     uint32_t count() const noexcept override {
         return 1024;
     }
 };
 
-class TACRegisterInfo final : public TargetRegisterInfo {
+class TACInstInfo final : public TargetInstInfo {
     TACGPRClass mGPR;
 
 public:
-    const RegisterClass& getRegisterClass(uint32_t idx) const noexcept {
+    const TargetRegisterClass& getRegisterClass(uint32_t idx) const noexcept override {
         return mGPR;
     }
-
-    const char* getTextualName(uint32_t idx) const noexcept {
-        return nullptr;
+    const TargetInstClass& getInstClass(uint32_t instID) const override {
+        reportNotImplemented();
     }
 };
 
-// TAC
+// TAC Virtual Target
 class TACTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     TACDataLayout mDataLayout;
-    TACRegisterInfo mRegisterInfo;
+    TACInstInfo mInstInfo;
 
 public:
     explicit TACTarget() {
@@ -73,8 +94,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetRegisterInfo& getTargetRegisterInfo() const noexcept override {
-        return mRegisterInfo;
+    const TargetInstInfo& getTargetInstInfo() const noexcept override {
+        return mInstInfo;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         reportUnreachable();
@@ -82,13 +103,28 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
+
     std::unique_ptr<MachineModule> translateIR(Module& module) const override;
+    void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("tac", TACTarget);
 
 std::unique_ptr<MachineModule> TACTarget::translateIR(Module& module) const {
-    return nullptr;
+    auto targetModule = std::make_unique<MachineModule>();
+
+    // TODO: emit global values in main
+
+    for(auto global : module.globals()) {
+        if(!global.second->isFunction())
+            reportFatal("");
+
+        // targetModule->symbols();
+    }
+
+    return targetModule;
 }
+
+void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {}
 
 CMMC_NAMESPACE_END

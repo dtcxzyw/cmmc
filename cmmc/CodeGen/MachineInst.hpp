@@ -14,14 +14,41 @@
 
 #pragma once
 #include <cmmc/CodeGen/Register.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
-class MachineInst {
+class MachineInst final {
     uint32_t mInstID;
+    Register mReg[3];
+    uint64_t mImm;
 
 public:
-    virtual ~MachineInst();
+    template <typename Inst>
+    constexpr explicit MachineInst(Inst instID) noexcept : mInstID{ static_cast<uint32_t>(instID) } {}
+
+    MachineInst& setReg(uint32_t idx, Register reg) {
+        mReg[idx] = reg;
+        return *this;
+    }
+    MachineInst& setImm(uint64_t metadata) noexcept {
+        mImm = metadata;
+        return *this;
+    }
+};
+
+class TargetInstClass {
+public:
+    virtual ~TargetInstClass() = default;
+    virtual const TargetRegisterClass* getRegisterClass(uint32_t idx) const noexcept = 0;
+};
+
+class TargetInstInfo {
+public:
+    virtual ~TargetInstInfo() = default;
+
+    virtual const TargetRegisterClass& getRegisterClass(Register reg) const = 0;
+    virtual const TargetInstClass& getInstClass(uint32_t instID) const = 0;
 };
 
 CMMC_NAMESPACE_END
