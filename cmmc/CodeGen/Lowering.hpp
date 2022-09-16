@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <variant>
@@ -49,6 +50,7 @@ public:
         return mCurrentBasicBlock->instructions.emplace_back(instID);
     }
     void addAddress(Value* value, Address address);
+    void addOperand(Value* value, Register reg);
 };
 
 class Module;

@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/Register.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <variant>
@@ -115,6 +116,7 @@ public:
     // For lowering
     virtual bool isSupportedInstruction(InstructionID inst) const noexcept = 0;
     virtual void emit(Instruction* inst, LoweringContext& ctx) const = 0;
+    virtual Register emitConstant(ConstantValue* value, LoweringContext& ctx) const = 0;
 };
 
 CMMC_NAMESPACE_END

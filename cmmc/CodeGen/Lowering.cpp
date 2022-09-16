@@ -58,6 +58,9 @@ MachineBasicBlock* LoweringContext::addBlockAfter() {
 void LoweringContext::addAddress(Value* value, Address address) {
     mAddressMap.emplace(value, address);
 }
+void LoweringContext::addOperand(Value* value, Register reg) {
+    mValueMap.emplace(value, reg);
+}
 MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     for(auto symbol : mModule.symbols()) {
         if(std::string_view{ symbol->getSymbol() } == global->getSymbol()) {

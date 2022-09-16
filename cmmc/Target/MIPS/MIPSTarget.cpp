@@ -72,6 +72,9 @@ public:
     void emit(Instruction* inst, LoweringContext& ctx) const override {
         reportNotImplemented();
     }
+    Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override {
+        reportNotImplemented();
+    }
 
     /*
     const char* getTextualName(uint32_t idx) const noexcept {

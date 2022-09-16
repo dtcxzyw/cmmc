@@ -71,6 +71,9 @@ public:
     void emit(Instruction* inst, LoweringContext& ctx) const override {
         reportNotImplemented();
     }
+    Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override {
+        reportNotImplemented();
+    }
 };
 
 // RISC-V lp32d

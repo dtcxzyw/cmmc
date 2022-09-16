@@ -118,13 +118,13 @@ public:
         return true;
     }
 
-    Register emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const {
+    void emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const {
         const auto ret = ctx.newReg();
         auto& minst =
             ctx.emitInst(instID).setReg(0, ctx.mapOperand(inst->getOperand(0))).setReg(1, ctx.mapOperand(inst->getOperand(1)));
         if(inst->isInstruction())
             minst.addAttr(TACInstAttr::FloatingPointOp);
-        return ret;
+        ctx.addOperand(inst, ret);
     }
 
     void emitBranch(const BranchTarget& target, LoweringContext& ctx) const {
@@ -134,6 +134,10 @@ public:
         for(size_t idx = 0; idx < dst.size(); ++idx)
             ctx.emitInst(TACInst::Copy).setWriteReg(ctx.mapBlockArg(dst[idx])).setReg(0, ctx.mapOperand(src[idx]));
         ctx.emitInst(TACInst::Branch).setImm(0, reinterpret_cast<uint64_t>(ctx.mapBlock(dstBlock)));
+    }
+
+    Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override {
+        reportNotImplemented();
     }
 
     void emit(Instruction* inst, LoweringContext& ctx) const override {
@@ -259,7 +263,14 @@ public:
 
 CMMC_TARGET("tac", TACTarget);
 
-static void printConstant(std::ostream& out, uint64_t metadata, bool isFloatingPoint) {}
+static void printConstant(std::ostream& out, uint64_t metadata, bool isFloatingPoint) {
+    out << '#';
+    if(isFloatingPoint) {
+        const auto ptr = static_cast<void*>(&metadata);
+        out << *static_cast<double*>(ptr);
+    } else
+        out << static_cast<int64_t>(metadata);
+}
 
 static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t idx) {
     if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm1)) {
