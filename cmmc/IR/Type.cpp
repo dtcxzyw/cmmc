@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 
@@ -26,6 +27,12 @@ VoidType* VoidType::get() {
 void VoidType::dumpName(std::ostream& out) const {
     out << "void";
 }
+size_t VoidType::getSize(const DataLayout& dataLayout) const noexcept {
+    reportUnreachable();
+}
+size_t VoidType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    reportUnreachable();
+}
 
 bool PointerType::isSame(Type* rhs) const {
     return rhs->isPointer() && getPointee()->isSame(rhs->as<PointerType>()->getPointee());
@@ -36,6 +43,12 @@ PointerType* PointerType::get(Type* pointee) {
 void PointerType::dumpName(std::ostream& out) const {
     mPointee->dumpName(out);
     out << '*';
+}
+size_t PointerType::getSize(const DataLayout& dataLayout) const noexcept {
+    return dataLayout.getPointerSize();
+}
+size_t PointerType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    return dataLayout.getBuiltinAlignment(this);
 }
 
 bool IntegerType::isSame(Type* rhs) const {
@@ -50,6 +63,12 @@ IntegerType* IntegerType::get(uint32_t bitWidth) {
 void IntegerType::dumpName(std::ostream& out) const {
     out << 'i' << mBitWidth;
 }
+size_t IntegerType::getSize(const DataLayout&) const noexcept {
+    return getFixedSize();
+}
+size_t IntegerType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    return dataLayout.getBuiltinAlignment(this);
+}
 
 FloatingPointType* FloatingPointType::get(bool isFloat) {
     return make<FloatingPointType>(isFloat);
@@ -62,6 +81,12 @@ size_t FloatingPointType::getFixedSize() const noexcept {
 }
 void FloatingPointType::dumpName(std::ostream& out) const {
     out << (mIsFloat ? "f32" : "f64");
+}
+size_t FloatingPointType::getSize(const DataLayout&) const noexcept {
+    return getFixedSize();
+}
+size_t FloatingPointType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    return dataLayout.getBuiltinAlignment(this);
 }
 
 bool FunctionType::isSame(Type* rhs) const {
@@ -90,6 +115,12 @@ void FunctionType::dumpName(std::ostream& out) const {
     out << ") -> ";
     mRetType->dumpName(out);
 }
+size_t FunctionType::getSize(const DataLayout&) const noexcept {
+    reportUnreachable();
+}
+size_t FunctionType::getAlignment(const DataLayout&) const noexcept {
+    reportUnreachable();
+}
 
 void StructType::dump(std::ostream& out) const {
     out << "struct " << mName;
@@ -114,6 +145,12 @@ bool StructType::isSame(Type* rhs) const {
         return false;
     reportNotImplemented();
     return false;
+}
+size_t StructType::getSize(const DataLayout&) const noexcept {
+    reportNotImplemented();
+}
+size_t StructType::getAlignment(const DataLayout&) const noexcept {
+    reportNotImplemented();
 }
 
 CMMC_NAMESPACE_END

@@ -24,7 +24,7 @@ public:
     virtual ~DataLayout() = default;
 
     virtual Endian getEndian() const noexcept = 0;
-    virtual size_t getAlignment(Type* type) const noexcept = 0;
+    virtual size_t getBuiltinAlignment(const Type* type) const noexcept = 0;
     virtual size_t getPointerSize() const noexcept = 0;
 };
 

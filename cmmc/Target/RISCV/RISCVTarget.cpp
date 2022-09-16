@@ -29,7 +29,7 @@ public:
     Endian getEndian() const noexcept override {
         return Endian::Little;
     }
-    size_t getAlignment(Type* type) const noexcept override {
+    size_t getBuiltinAlignment(const Type* type) const noexcept override {
         assert(type->isBuiltin());
         if(type->isPointer())
             return getPointerSize();

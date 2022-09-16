@@ -25,10 +25,13 @@ class MachineSymbol {
     String<Arena::Source::MC> mSymbol;
 
 public:
-    // visibility
+    // linkage
     explicit MachineSymbol(String<Arena::Source::MC> symbol) : mSymbol{ std::move(symbol) } {}
     static constexpr auto arenaSource = Arena::Source::MC;
     virtual ~MachineSymbol() = default;
+    const String<Arena::Source::MC>& getSymbol() const noexcept {
+        return mSymbol;
+    }
 };
 
 struct MachineData : public MachineSymbol {
@@ -39,8 +42,17 @@ struct MachineData : public MachineSymbol {
         : MachineSymbol{ std::move(symbol) }, data{ std::move(data) }, isReadOnly{ isReadOnly } {}
 };
 
+struct StackAllocation final {
+    size_t allocation;
+    size_t alignment;
+};
+CMMC_ARENA_TRAIT(StackAllocation, MC);
+
 struct MachineBasicBlock final {
     Deque<MachineInst> instructions;
+    Deque<StackAllocation*> stackAllocations;  // TODO: it should be temporary variable
+
+    Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> successors;
 };
 CMMC_ARENA_TRAIT(MachineBasicBlock, MC);
 

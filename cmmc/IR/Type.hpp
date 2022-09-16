@@ -22,6 +22,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class Module;
+class DataLayout;
 
 class Type {
 public:
@@ -84,6 +85,8 @@ public:
         dumpName(out);
     }
     virtual void dumpName(std::ostream& out) const = 0;
+    virtual size_t getSize(const DataLayout& dataLayout) const noexcept = 0;
+    virtual size_t getAlignment(const DataLayout& dataLayout) const noexcept = 0;
 };
 CMMC_ARENA_TRAIT(Type, IR);
 
@@ -95,6 +98,8 @@ public:
     bool isSame(Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static VoidType* get();
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class PointerType final : public Type {
@@ -111,6 +116,8 @@ public:
     bool isSame(Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static PointerType* get(Type* pointee);
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class IntegerType final : public Type {
@@ -134,6 +141,8 @@ public:
     bool isSame(Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class FloatingPointType final : public Type {
@@ -154,6 +163,8 @@ public:
     bool isSame(Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class FunctionType final : public Type {
@@ -173,6 +184,8 @@ public:
     const Vector<Type*> getArgTypes() const noexcept {
         return mArgTypes;
     }
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 struct StructField final {
@@ -195,6 +208,8 @@ public:
     void dump(std::ostream& out) const override;
     void dumpName(std::ostream& out) const override;
     bool isSame(Type* rhs) const override;
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 CMMC_NAMESPACE_END

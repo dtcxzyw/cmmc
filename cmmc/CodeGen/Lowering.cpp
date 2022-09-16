@@ -15,10 +15,20 @@
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
+
+MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
+    for(auto symbol : mModule.symbols()) {
+        if(std::string_view{ symbol->getSymbol() } == global->getSymbol()) {
+            return symbol;
+        }
+    }
+    reportUnreachable();
+}
 
 static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, MachineModule& machineModule) {
     std::unordered_map<Block*, MachineBasicBlock*> blockMap;
@@ -37,33 +47,36 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
 
     auto& target = machineModule.getTarget();
     auto& instInfo = target.getTargetInstInfo();
+    auto& dataLayout = target.getDataLayout();
 
     LoweringContext ctx{ machineModule, blockMap, blockArgMap, valueMap, addressMap, allocateBase };
+
+    for(auto block : func->blocks()) {
+        auto mblock = blockMap[block];
+        for(auto inst : block->instructions()) {
+            if(inst->getInstID() == InstructionID::Alloc) {
+                const auto type = inst->getType()->as<PointerType>()->getPointee();
+                const auto size = type->getSize(dataLayout);
+                const auto alignment = type->getAlignment(dataLayout);
+                auto alloc = make<StackAllocation>(size, alignment);
+                mblock->stackAllocations.push_back(alloc);
+                ctx.addAddress(inst, { StackFrame{ alloc }, 0 });
+            }
+        }
+    }
 
     for(auto block : func->blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
 
         for(auto inst : block->instructions()) {
-            switch(inst->getInstID()) {
-                case InstructionID::Alloc: {
+            if(inst->getInstID() != InstructionID::Alloc) {
+                if(instInfo.isSupportedInstruction(inst->getInstID())) {
+                    instInfo.emit(inst, ctx);
+                } else {
+                    // fallback to supported instructions
                     reportNotImplemented();
-                    break;
                 }
-                case InstructionID::Branch:
-                    [[fallthrough]];
-                case InstructionID::ConditionalBranch: {
-                    reportNotImplemented();
-                    break;
-                }
-                default:
-                    if(instInfo.isSupportedInstruction(inst->getInstID())) {
-                        instInfo.emit(inst, ctx);
-                    } else {
-                        // fallback to supported instructions
-                        reportNotImplemented();
-                    }
-                    break;
             }
         }
     }

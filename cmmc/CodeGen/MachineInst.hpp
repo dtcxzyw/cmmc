@@ -16,14 +16,33 @@
 #include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
+
+struct StackAllocation;
+class MachineSymbol;
+
+struct StackFrame final {
+    StackAllocation* element;
+};
+struct Global final {
+    MachineSymbol* symbol;
+};
+struct Zero final {};
+
+struct Address final {
+    std::variant<StackFrame, Global, Zero> base;
+    int32_t offset;
+};
 
 class MachineInst final {
     uint32_t mInstID;
     Register mReadReg[3];
     Register mWriteReg;
+    Address mAddress;
     uint64_t mImm;
+    uint32_t mAttr;
 
 public:
     template <typename Inst>
@@ -40,6 +59,24 @@ public:
     MachineInst& setImm(uint64_t metadata) noexcept {
         mImm = metadata;
         return *this;
+    }
+    MachineInst& setAddr(Address address) noexcept {
+        mAddress = address;
+        return *this;
+    }
+    MachineInst& setAttr(uint32_t attr) noexcept {
+        mAttr = attr;
+        return *this;
+    }
+
+    template <typename Inst>
+    Inst getInstID() const noexcept {
+        return static_cast<Inst>(mInstID);
+    }
+    template <typename Attr>
+    bool hasAttr(Attr attr) const noexcept {
+        const auto mask = static_cast<uint32_t>(attr);
+        return (mAttr & mask) == mask;
     }
 };
 CMMC_ARENA_TRAIT(MachineInst, MC);

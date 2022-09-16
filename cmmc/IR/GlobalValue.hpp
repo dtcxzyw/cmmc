@@ -18,15 +18,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class Visibility { Global, Internal };
+enum class Linkage { Global, Internal };
 
 class GlobalValue : public Value {
     String<Arena::Source::IR> mSymbol;
-    Visibility mVisibility;
+    Linkage mLinkage;
 
 public:
     GlobalValue(String<Arena::Source::IR> symbol, Type* type)
-        : Value{ type }, mSymbol{ std::move(symbol) }, mVisibility{ Visibility::Global } {}
+        : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
     const String<Arena::Source::IR>& getSymbol() const noexcept {
         return mSymbol;
     }
@@ -37,11 +37,11 @@ public:
     virtual bool isFunction() const noexcept {
         return false;
     }
-    Visibility getVisibility() const noexcept {
-        return mVisibility;
+    Linkage getLinkage() const noexcept {
+        return mLinkage;
     }
-    void setVisibility(Visibility visibility) noexcept {
-        mVisibility = visibility;
+    void setLinkage(Linkage linkage) noexcept {
+        mLinkage = linkage;
     }
 };
 

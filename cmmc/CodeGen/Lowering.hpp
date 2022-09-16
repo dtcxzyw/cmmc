@@ -13,22 +13,13 @@
 */
 
 #pragma once
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
-
-struct StackFrame final {};
-struct Global final {
-    MachineSymbol* symbol;
-};
-struct Zero final {};
-
-struct Address final {
-    std::variant<StackFrame, Global, Zero> base;
-    int32_t offset;
-};
 
 class LoweringContext final {
     MachineModule& mModule;
@@ -63,13 +54,17 @@ public:
     Address mapAddress(Value* address) const {
         return mAddressMap.find(address)->second;
     }
+    MachineSymbol* mapGlobal(GlobalValue* global) const;
 
     void setCurrentBasicBlock(MachineBasicBlock* block) noexcept {
         mCurrentBasicBlock = block;
     }
     template <typename Inst>
-    MachineInst& addInst(Inst instID) {
+    MachineInst& emitInst(Inst instID) {
         return mCurrentBasicBlock->instructions.emplace_back(instID);
+    }
+    void addAddress(Value* value, Address address) {
+        mAddressMap.emplace(value, address);
     }
 };
 

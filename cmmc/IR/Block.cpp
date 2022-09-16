@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 
@@ -24,6 +24,8 @@ void BlockArgument::dump(std::ostream& out) const {
     dumpAsOperand(out);
     if(mRoot) {
         out << " <- ";
+        if(auto block = mRoot->getBlock())
+            out << '^' << block->getLabel() << "::";
         mRoot->dumpAsOperand(out);
     }
 }

@@ -36,6 +36,7 @@ enum class FunctionAttribute {
 
 enum class CallingConvention { C, Fast };
 
+// TODO: intrinsic
 class Function final : public GlobalValue {
     List<Block*> mBlocks;
     Attribute<FunctionAttribute> mAttr;
