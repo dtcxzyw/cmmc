@@ -25,27 +25,37 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cstdint>
+#include <limits>
 #include <memory>
+#include <ostream>
 #include <string>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
 enum class TACInstAttr : uint32_t {
-    FuseLoad1 = 1 << 0,
-    FuseLoad2 = 1 << 1,
-    FuseWrite = 1 << 2,
+    FuseLoadStore1 = 1 << 0,
+    FuseLoadStore2 = 1 << 1,
+    FuseLoadStore3 = 1 << 2,
 
-    CompareEqual = 1 << 3,
-    CompareLess = 1 << 4,
-    CompareReverse = 1 << 5,
+    WithImm1 = 1 << 3,
+    WithImm2 = 1 << 4,
+    WithImm3 = 1 << 5,
+
+    CompareEqual = 1 << 6,
+    CompareLess = 1 << 7,
+    CompareReverse = 1 << 8,
 
     CmpEqual = CompareEqual,
     CmpNotEqual = CompareEqual | CompareReverse,
     CmpLessThan = CompareLess,
     CmpLessEqual = CompareLess | CompareEqual,
     CmpGreaterThan = CmpLessEqual | CompareReverse,
-    CmpGreaterEqual = CmpLessThan | CompareReverse
+    CmpGreaterEqual = CmpLessThan | CompareReverse,
+    CmpMask = CompareEqual | CompareLess | CompareReverse,
+
+    FloatingPointOp = 1 << 9,
 };
 
 enum class TACInst : uint32_t {
@@ -62,7 +72,9 @@ enum class TACInst : uint32_t {
     Call,
     Compare,
     Branch,
-    BranchCompare
+    BranchCompare,
+    Imm,
+    Copy,
 };
 
 extern StringOpt targetMachine;
@@ -108,8 +120,20 @@ public:
 
     Register emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const {
         const auto ret = ctx.newReg();
-        ctx.emitInst(instID).setReg(0, ctx.mapOperand(inst->getOperand(0))).setReg(1, ctx.mapOperand(inst->getOperand(1)));
+        auto& minst =
+            ctx.emitInst(instID).setReg(0, ctx.mapOperand(inst->getOperand(0))).setReg(1, ctx.mapOperand(inst->getOperand(1)));
+        if(inst->isInstruction())
+            minst.addAttr(TACInstAttr::FloatingPointOp);
         return ret;
+    }
+
+    void emitBranch(const BranchTarget& target, LoweringContext& ctx) const {
+        const auto dstBlock = target.getTarget();
+        auto& dst = dstBlock->args();
+        auto& src = target.getArgs();
+        for(size_t idx = 0; idx < dst.size(); ++idx)
+            ctx.emitInst(TACInst::Copy).setWriteReg(ctx.mapBlockArg(dst[idx])).setReg(0, ctx.mapOperand(src[idx]));
+        ctx.emitInst(TACInst::Branch).setImm(0, reinterpret_cast<uint64_t>(ctx.mapBlock(dstBlock)));
     }
 
     void emit(Instruction* inst, LoweringContext& ctx) const override {
@@ -176,11 +200,25 @@ public:
                 break;
             }
             case InstructionID::Branch: {
-                reportNotImplemented();
+                const auto branchInst = inst->as<ConditionalBranchInst>();
+                emitBranch(branchInst->getTrueTarget(), ctx);
                 break;
             }
             case InstructionID::ConditionalBranch: {
-                reportNotImplemented();
+                const auto branchInst = inst->as<ConditionalBranchInst>();
+                const auto falsePrepareblock = ctx.addBlockAfter();
+
+                // bnez %cond, false_label
+                ctx.emitInst(TACInst::BranchCompare)
+                    .setReg(0, ctx.mapOperand(inst->getOperand(0)))
+                    .setImm(1, 0)
+                    .addAttr(TACInstAttr::WithImm1)
+                    .addAttr(TACInstAttr::CmpNotEqual)
+                    .setImm(2, reinterpret_cast<uint64_t>(falsePrepareblock));
+                emitBranch(branchInst->getTrueTarget(), ctx);
+
+                ctx.setCurrentBasicBlock(falsePrepareblock);
+                emitBranch(branchInst->getFalseTarget(), ctx);
                 break;
             }
 
@@ -221,11 +259,65 @@ public:
 
 CMMC_TARGET("tac", TACTarget);
 
-static void emitBinary(std::ostream& out, MachineInst inst, std::string_view op) {}
+static void printConstant(std::ostream& out, uint64_t metadata, bool isFloatingPoint) {}
+
+static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t idx) {
+    if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm1)) {
+        printConstant(out, inst.getImm(0), inst.hasAttr(TACInstAttr::FloatingPointOp));
+        return;
+    }
+
+    if(idx == 1 && inst.hasAttr(TACInstAttr::WithImm2)) {
+        printConstant(out, inst.getImm(1), inst.hasAttr(TACInstAttr::FloatingPointOp));
+        return;
+    }
+
+    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoadStore1) << idx)))
+        out << '*';
+    auto reg = inst.getReg(idx);
+    out << 'v' << reg;
+}
+
+static void printResult(std::ostream& out, const MachineInst& inst, uint32_t fusedIdx) {
+    auto reg = inst.getWriteReg();
+    if(reg)
+        out << 'v' << reg;
+    else
+        printOperand(out, inst, fusedIdx);
+}
+
+static void emitBinary(std::ostream& out, const MachineInst& inst, std::string_view op) {
+    printResult(out, inst, 2);
+    out << " := ";
+    printOperand(out, inst, 0);
+    out << ' ' << op << ' ';
+    printOperand(out, inst, 1);
+    out << std::endl;
+}
+
+static std::string_view getCompareOp(const MachineInst& inst) {
+    switch(static_cast<TACInstAttr>(inst.getAttr() & static_cast<uint32_t>(TACInstAttr::CmpMask))) {
+        case TACInstAttr::CmpEqual:
+            return "==";
+        case TACInstAttr::CmpNotEqual:
+            return "!=";
+        case TACInstAttr::CmpLessThan:
+            return "<";
+        case TACInstAttr::CmpLessEqual:
+            return "<=";
+        case TACInstAttr::CmpGreaterThan:
+            return ">";
+        case TACInstAttr::CmpGreaterEqual:
+            return ">=";
+        default:
+            reportUnreachable();
+    }
+}
 
 void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
     LabelAllocator allocator;
     using namespace std::string_literals;
+    constexpr uint32_t invalidIdx = std::numeric_limits<uint32_t>::max();
 
     for(auto symbol : module.symbols()) {
         if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
@@ -236,9 +328,10 @@ void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
                 const auto label = allocator.allocate("label"s);
                 labelMap[block] = label;
             }
+
             for(auto block : func->basicblocks) {
                 const auto& label = labelMap[block];
-                out << "LABEL " << label << ':' << std::endl;
+                out << "LABEL " << label << " :" << std::endl;
 
                 for(auto& inst : block->instructions) {
                     switch(inst.getInstID<TACInst>()) {
@@ -259,35 +352,61 @@ void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
                             break;
                         }
                         case TACInst::Branch: {
-
+                            out << "GOTO ";
+                            auto target = reinterpret_cast<MachineBasicBlock*>(inst.getImm(0));
+                            out << labelMap.find(target)->second << std::endl;
                             break;
                         }
                         case TACInst::BranchCompare: {
-
+                            out << "IF ";
+                            printOperand(out, inst, 0);
+                            out << ' ' << getCompareOp(inst) << ' ';
+                            printOperand(out, inst, 1);
+                            out << " GOTO ";
+                            auto target = reinterpret_cast<MachineBasicBlock*>(inst.getImm(2));
+                            out << labelMap.find(target)->second << std::endl;
                             break;
                         }
                         case TACInst::Return: {
-
+                            out << "RETURN ";
+                            printOperand(out, inst, 0);
+                            out << std::endl;
                             break;
                         }
                         case TACInst::Write: {
-
+                            out << "WRITE ";
+                            printOperand(out, inst, 0);
+                            out << std::endl;
                             break;
                         }
                         case TACInst::Read: {
-
+                            out << "READ ";
+                            printResult(out, inst, invalidIdx);  // cannot be fused
+                            out << std::endl;
                             break;
                         }
                         case TACInst::PushArg: {
-
+                            out << "ARG ";
+                            printOperand(out, inst, 0);
+                            out << std::endl;
                             break;
                         }
                         case TACInst::Call: {
-
+                            printResult(out, inst, 0);
+                            out << " := CALL " << std::get<Global>(inst.getAddr().base).symbol->getSymbol() << std::endl;
                             break;
                         }
                         case TACInst::Compare: {
-
+                            emitBinary(out, inst, getCompareOp(inst));
+                            break;
+                        }
+                        case TACInst::Imm:
+                            [[fallthrough]];
+                        case TACInst::Copy: {
+                            printResult(out, inst, 1);
+                            out << " := ";
+                            printOperand(out, inst, 0);
+                            out << std::endl;
                             break;
                         }
                         default:

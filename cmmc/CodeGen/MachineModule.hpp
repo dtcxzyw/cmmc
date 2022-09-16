@@ -48,11 +48,16 @@ struct StackAllocation final {
 };
 CMMC_ARENA_TRAIT(StackAllocation, MC);
 
+class MachineFunction;
+
 struct MachineBasicBlock final {
+    MachineFunction* func;
     Deque<MachineInst> instructions;
     Deque<StackAllocation*> stackAllocations;  // TODO: it should be temporary variable
 
-    Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> successors;
+    // Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> successors;
+
+    explicit MachineBasicBlock(MachineFunction* func) : func{ func } {}
 };
 CMMC_ARENA_TRAIT(MachineBasicBlock, MC);
 

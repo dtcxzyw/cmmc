@@ -41,42 +41,58 @@ class MachineInst final {
     Register mReadReg[3];
     Register mWriteReg;
     Address mAddress;
-    uint64_t mImm;
+    uint64_t mImm[3];
     uint32_t mAttr;
 
 public:
     template <typename Inst>
     constexpr explicit MachineInst(Inst instID) noexcept : mInstID{ static_cast<uint32_t>(instID) } {}
+    template <typename Inst>
+    Inst getInstID() const noexcept {
+        return static_cast<Inst>(mInstID);
+    }
 
-    MachineInst& setReg(uint32_t idx, Register reg) {
+    MachineInst& setReg(uint32_t idx, Register reg) noexcept {
         mReadReg[idx] = reg;
         return *this;
     }
-    MachineInst& setWriteReg(Register reg) {
+    Register getReg(uint32_t idx) const noexcept {
+        return mReadReg[idx];
+    }
+    MachineInst& setWriteReg(Register reg) noexcept {
         mWriteReg = reg;
         return *this;
     }
-    MachineInst& setImm(uint64_t metadata) noexcept {
-        mImm = metadata;
+    Register getWriteReg() const noexcept {
+        return mWriteReg;
+    }
+    MachineInst& setImm(uint32_t idx, uint64_t metadata) noexcept {
+        mImm[idx] = metadata;
         return *this;
+    }
+    uint64_t getImm(uint32_t idx) const noexcept {
+        return mImm[idx];
     }
     MachineInst& setAddr(Address address) noexcept {
         mAddress = address;
         return *this;
     }
-    MachineInst& setAttr(uint32_t attr) noexcept {
-        mAttr = attr;
-        return *this;
+    const Address& getAddr() const noexcept {
+        return mAddress;
     }
 
-    template <typename Inst>
-    Inst getInstID() const noexcept {
-        return static_cast<Inst>(mInstID);
+    template <typename Attr>
+    MachineInst& addAttr(Attr attr) noexcept {
+        mAttr |= static_cast<uint32_t>(attr);
+        return *this;
     }
     template <typename Attr>
     bool hasAttr(Attr attr) const noexcept {
         const auto mask = static_cast<uint32_t>(attr);
         return (mAttr & mask) == mask;
+    }
+    uint32_t getAttr() const noexcept {
+        return mAttr;
     }
 };
 CMMC_ARENA_TRAIT(MachineInst, MC);

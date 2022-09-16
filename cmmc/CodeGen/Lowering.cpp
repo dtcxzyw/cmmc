@@ -21,6 +21,43 @@
 
 CMMC_NAMESPACE_BEGIN
 
+LoweringContext::LoweringContext(MachineModule& module, std::unordered_map<Block*, MachineBasicBlock*>& blockMap,
+                                 std::unordered_map<BlockArgument*, Register>& blockArgs,
+                                 std::unordered_map<Value*, Register>& valueMap, std::unordered_map<Value*, Address>& addressMap,
+                                 uint32_t& allocateBase)
+    : mModule{ module }, mBlockMap{ blockMap }, mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mAddressMap{ addressMap },
+      mAllocateBase{ allocateBase }, mCurrentBasicBlock{ nullptr } {}
+Register LoweringContext::newReg() noexcept {
+    return makeVirtualRegister(++mAllocateBase);
+}
+MachineModule& LoweringContext::getModule() const noexcept {
+    return mModule;
+}
+MachineBasicBlock* LoweringContext::mapBlock(Block* block) const {
+    return mBlockMap.find(block)->second;
+}
+Register LoweringContext::mapBlockArg(BlockArgument* arg) const {
+    return mBlockArgs.find(arg)->second;
+}
+Register LoweringContext::mapOperand(Value* operand) const {
+    return mValueMap.find(operand)->second;
+}
+Address LoweringContext::mapAddress(Value* address) const {
+    return mAddressMap.find(address)->second;
+}
+void LoweringContext::setCurrentBasicBlock(MachineBasicBlock* block) noexcept {
+    mCurrentBasicBlock = block;
+}
+MachineBasicBlock* LoweringContext::addBlockAfter() {
+    auto& blocks = mCurrentBasicBlock->func->basicblocks;
+    auto iter = std::find(blocks.cbegin(), blocks.cend(), mCurrentBasicBlock);
+    auto newBlock = make<MachineBasicBlock>(mCurrentBasicBlock->func);
+    blocks.insert(std::next(iter), newBlock);
+    return newBlock;
+}
+void LoweringContext::addAddress(Value* value, Address address) {
+    mAddressMap.emplace(value, address);
+}
 MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     for(auto symbol : mModule.symbols()) {
         if(std::string_view{ symbol->getSymbol() } == global->getSymbol()) {
@@ -39,7 +76,7 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
     auto allocateBase = makeVirtualRegister(0);
 
     for(auto block : func->blocks()) {
-        auto mblock = make<MachineBasicBlock>();
+        auto mblock = make<MachineBasicBlock>(mfunc);
         blockMap.emplace(block, mblock);
         for(auto arg : block->args())
             blockArgMap[arg] = allocateBase++;

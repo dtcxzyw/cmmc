@@ -33,39 +33,22 @@ class LoweringContext final {
 public:
     LoweringContext(MachineModule& module, std::unordered_map<Block*, MachineBasicBlock*>& blockMap,
                     std::unordered_map<BlockArgument*, Register>& blockArgs, std::unordered_map<Value*, Register>& valueMap,
-                    std::unordered_map<Value*, Address>& addressMap, uint32_t& allocateBase)
-        : mModule{ module }, mBlockMap{ blockMap }, mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mAddressMap{ addressMap },
-          mAllocateBase{ allocateBase }, mCurrentBasicBlock{ nullptr } {}
-    Register newReg() noexcept {
-        return makeVirtualRegister(++mAllocateBase);
-    }
-    MachineModule& getModule() const noexcept {
-        return mModule;
-    }
-    MachineBasicBlock* mapBlock(Block* block) const {
-        return mBlockMap.find(block)->second;
-    }
-    Register mapBlockArg(BlockArgument* arg) const {
-        return mBlockArgs.find(arg)->second;
-    }
-    Register mapOperand(Value* operand) const {
-        return mValueMap.find(operand)->second;
-    }
-    Address mapAddress(Value* address) const {
-        return mAddressMap.find(address)->second;
-    }
+                    std::unordered_map<Value*, Address>& addressMap, uint32_t& allocateBase);
+    Register newReg() noexcept;
+    MachineModule& getModule() const noexcept;
+    MachineBasicBlock* mapBlock(Block* block) const;
+    Register mapBlockArg(BlockArgument* arg) const;
+    Register mapOperand(Value* operand) const;
+    Address mapAddress(Value* address) const;
     MachineSymbol* mapGlobal(GlobalValue* global) const;
+    void setCurrentBasicBlock(MachineBasicBlock* block) noexcept;
+    MachineBasicBlock* addBlockAfter();
 
-    void setCurrentBasicBlock(MachineBasicBlock* block) noexcept {
-        mCurrentBasicBlock = block;
-    }
     template <typename Inst>
     MachineInst& emitInst(Inst instID) {
         return mCurrentBasicBlock->instructions.emplace_back(instID);
     }
-    void addAddress(Value* value, Address address) {
-        mAddressMap.emplace(value, address);
-    }
+    void addAddress(Value* value, Address address);
 };
 
 class Module;
