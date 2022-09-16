@@ -539,10 +539,10 @@ static void blockArgPropagation(Function* func) {
             bool isInvalid = false;
             for(auto operand : inst->operands()) {
                 if(operand->isInstruction()) {
-                    auto inst = operand->as<Instruction>();
-                    assert(inst->getBlock());
-                    if(inst->getBlock() != block) {
-                        data.req.emplace(inst);
+                    auto op = operand->as<Instruction>();
+                    assert(op->getBlock());
+                    if(op->getBlock() != block) {
+                        data.req.emplace(op);
                         isInvalid = true;
                     }
                 }
@@ -593,14 +593,10 @@ static void blockArgPropagation(Function* func) {
 
         std::unordered_map<Instruction*, Value*> map;
         for(auto inst : req)
-            map[inst] = block->addArg(inst->getType());
+            map[inst] = block->addArg(inst);
 
         // fix branch arguments
-        {
-            auto terminator = block->getTerminator();
-            if(!terminator->isBranch())
-                continue;
-
+        if(auto terminator = block->getTerminator(); terminator->isBranch()) {
             const auto inst = terminator->as<ConditionalBranchInst>();
             const auto propagation = [&](BranchTarget& target) {
                 auto targetBlock = target.getTarget();

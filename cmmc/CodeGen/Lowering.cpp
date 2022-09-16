@@ -12,11 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
-#include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
-#include <cmmc/IR/Block.hpp>
-#include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <unordered_map>
 
@@ -25,6 +23,8 @@ CMMC_NAMESPACE_BEGIN
 static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, MachineModule& machineModule) {
     std::unordered_map<Block*, MachineBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Register> blockArgMap;
+    std::unordered_map<Value*, Register> valueMap;
+    std::unordered_map<Value*, Address> addressMap;
 
     auto allocateBase = makeVirtualRegister(0);
 
@@ -35,9 +35,36 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
             blockArgMap[arg] = allocateBase++;
     }
 
+    auto& target = machineModule.getTarget();
+    auto& instInfo = target.getTargetInstInfo();
+
+    LoweringContext ctx{ machineModule, blockMap, blockArgMap, valueMap, addressMap, allocateBase };
+
     for(auto block : func->blocks()) {
+        auto mblock = blockMap[block];
+        ctx.setCurrentBasicBlock(mblock);
+
         for(auto inst : block->instructions()) {
-            CMMC_UNUSED(inst);
+            switch(inst->getInstID()) {
+                case InstructionID::Alloc: {
+                    reportNotImplemented();
+                    break;
+                }
+                case InstructionID::Branch:
+                    [[fallthrough]];
+                case InstructionID::ConditionalBranch: {
+                    reportNotImplemented();
+                    break;
+                }
+                default:
+                    if(instInfo.isSupportedInstruction(inst->getInstID())) {
+                        instInfo.emit(inst, ctx);
+                    } else {
+                        // fallback to supported instructions
+                        reportNotImplemented();
+                    }
+                    break;
+            }
         }
     }
 }

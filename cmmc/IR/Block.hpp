@@ -26,16 +26,18 @@ class Function;
 class BlockArgument final : public Value {
     Block* mBlock;
     String<Arena::Source::IR> mLabel;
+    Value* mRoot;
 
 public:
-    BlockArgument(Block* block, Type* type) noexcept : Value{ type }, mBlock{ block } {}
+    BlockArgument(Block* block, Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block }, mRoot{ root } {}
     void dump(std::ostream& out) const override;
-    void dumpAsOperand(std::ostream& out) const override {
-        dump(out);
-    }
+    void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String<Arena::Source::IR> label);
     Block* getBlock() const noexcept override {
         return mBlock;
+    }
+    Value* getTarget() const noexcept {
+        return mRoot;
     }
 };
 
@@ -65,6 +67,7 @@ public:
         return mArgs;
     }
     BlockArgument* addArg(Type* type);
+    BlockArgument* addArg(Value* root);
     void removeArg(BlockArgument* arg);
     BlockArgument* getArg(uint32_t idx);
 

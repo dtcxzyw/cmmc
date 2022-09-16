@@ -40,7 +40,7 @@ struct MachineData : public MachineSymbol {
 };
 
 struct MachineBasicBlock final {
-    Vector<MachineInst> instructions;
+    Deque<MachineInst> instructions;
 };
 CMMC_ARENA_TRAIT(MachineBasicBlock, MC);
 
@@ -58,7 +58,7 @@ class MachineModule final {
     std::vector<MachineSymbol*> mSymbols;
 
 public:
-    MachineModule(const Target& target);
+    explicit MachineModule(const Target& target);
     std::vector<MachineSymbol*>& symbols() noexcept {
         return mSymbols;
     }
@@ -67,8 +67,5 @@ public:
     }
     bool verify() const;
 };
-
-class Module;
-std::unique_ptr<MachineModule> lowerToMachineModule(Module& module);
 
 CMMC_NAMESPACE_END

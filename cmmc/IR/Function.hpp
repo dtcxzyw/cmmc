@@ -34,12 +34,16 @@ enum class FunctionAttribute {
     NoRecurse = 1 << 5
 };
 
+enum class CallingConvention { C, Fast };
+
 class Function final : public GlobalValue {
     List<Block*> mBlocks;
     Attribute<FunctionAttribute> mAttr;
+    CallingConvention mCallingConvention;
 
 public:
-    Function(String<Arena::Source::IR> symbol, FunctionType* type) : GlobalValue{ symbol, type } {}
+    Function(String<Arena::Source::IR> symbol, FunctionType* type)
+        : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C } {}
     Block* entryBlock() const noexcept {
         return mBlocks.front();
     }

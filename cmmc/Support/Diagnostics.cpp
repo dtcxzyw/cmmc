@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <ostream>
 #include <sstream>
 
 CMMC_NAMESPACE_BEGIN
@@ -50,6 +51,7 @@ std::ostream& reportDebug() {
 void reportFatal(std::string_view msg) {
     std::cerr << "[FATAL] " << msg;
     printStackTrace();
+    std::cerr << std::flush;
     __builtin_trap();
 }
 void reportNotImplemented() {

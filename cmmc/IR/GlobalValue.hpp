@@ -18,12 +18,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
+enum class Visibility { Global, Internal };
+
 class GlobalValue : public Value {
     String<Arena::Source::IR> mSymbol;
+    Visibility mVisibility;
 
 public:
-    GlobalValue(String<Arena::Source::IR> symbol, Type* type) : Value{ type }, mSymbol{ std::move(symbol) } {}
-    // TODO: visibility
+    GlobalValue(String<Arena::Source::IR> symbol, Type* type)
+        : Value{ type }, mSymbol{ std::move(symbol) }, mVisibility{ Visibility::Global } {}
     const String<Arena::Source::IR>& getSymbol() const noexcept {
         return mSymbol;
     }
@@ -33,6 +36,12 @@ public:
     }
     virtual bool isFunction() const noexcept {
         return false;
+    }
+    Visibility getVisibility() const noexcept {
+        return mVisibility;
+    }
+    void setVisibility(Visibility visibility) noexcept {
+        mVisibility = visibility;
     }
 };
 

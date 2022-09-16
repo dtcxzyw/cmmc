@@ -203,8 +203,6 @@ public:
 };
 
 class LoadInst final : public Instruction {
-    Value* mAddress;
-
 public:
     explicit LoadInst(Value* address)
         : Instruction{ InstructionID::Load, address->getType()->as<PointerType>()->getPointee(), { address } } {}
@@ -212,12 +210,9 @@ public:
 };
 
 class StoreInst final : public Instruction {
-    Value* mAddress;
-    Value* mValue;
-
 public:
     explicit StoreInst(Value* address, Value* value) : Instruction{ InstructionID::Store, VoidType::get(), { address, value } } {
-        assert(mAddress->as<PointerType>()->isSame(value));
+        assert(address->as<PointerType>()->isSame(value));
     }
     void dump(std::ostream& out) const override;
 };

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -20,6 +21,14 @@
 CMMC_NAMESPACE_BEGIN
 
 void BlockArgument::dump(std::ostream& out) const {
+    dumpAsOperand(out);
+    if(mRoot) {
+        out << " <- ";
+        mRoot->dumpAsOperand(out);
+    }
+}
+
+void BlockArgument::dumpAsOperand(std::ostream& out) const {
     getType()->dumpName(out);
     out << " %" << mLabel;
 }
@@ -78,6 +87,11 @@ BlockArgument* Block::getArg(uint32_t idx) {
 
 BlockArgument* Block::addArg(Type* type) {
     auto arg = make<BlockArgument>(this, type);
+    mArgs.push_back(arg);
+    return arg;
+}
+BlockArgument* Block::addArg(Value* root) {
+    auto arg = make<BlockArgument>(this, root->getType(), root);
     mArgs.push_back(arg);
     return arg;
 }

@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/Register.hpp"
 #include <cmmc/CodeGen/MachineInst.hpp>
+#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -68,7 +68,7 @@ public:
     bool isSupportedInstruction(InstructionID inst) const noexcept override {
         reportNotImplemented();
     }
-    void emit(Instruction& inst) const noexcept override {
+    void emit(Instruction* inst, LoweringContext& ctx) const override {
         reportNotImplemented();
     }
 };

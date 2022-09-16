@@ -32,6 +32,10 @@ enum class TACInst : uint32_t {
     Sub,
     Mul,
     Div,
+    FAdd,
+    FSub,
+    FMul,
+    FDiv,
     Call,
     BranchEqual,
     BranchNotEqual,
@@ -77,10 +81,21 @@ public:
         reportNotImplemented();
     }
     bool isSupportedInstruction(InstructionID inst) const noexcept override {
-        reportNotImplemented();
+        // TODO
+        return true;
     }
-    void emit(Instruction& inst) const noexcept override {
-        reportNotImplemented();
+    void emit(Instruction* inst, LoweringContext& ctx) const override {
+        switch(inst->getInstID()) {
+            case InstructionID::Add: {
+                break;
+            }
+            case InstructionID::Sub: {
+                break;
+            }
+
+            default:
+                reportUnreachable();
+        }
     }
 };
 

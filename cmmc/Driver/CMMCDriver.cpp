@@ -13,6 +13,7 @@
 */
 
 #include <cassert>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/IR/Module.hpp>

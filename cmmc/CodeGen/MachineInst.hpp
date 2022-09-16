@@ -21,7 +21,8 @@ CMMC_NAMESPACE_BEGIN
 
 class MachineInst final {
     uint32_t mInstID;
-    Register mReg[3];
+    Register mReadReg[3];
+    Register mWriteReg;
     uint64_t mImm;
 
 public:
@@ -29,7 +30,11 @@ public:
     constexpr explicit MachineInst(Inst instID) noexcept : mInstID{ static_cast<uint32_t>(instID) } {}
 
     MachineInst& setReg(uint32_t idx, Register reg) {
-        mReg[idx] = reg;
+        mReadReg[idx] = reg;
+        return *this;
+    }
+    MachineInst& setWriteReg(Register reg) {
+        mWriteReg = reg;
         return *this;
     }
     MachineInst& setImm(uint64_t metadata) noexcept {
@@ -45,6 +50,8 @@ public:
     virtual const TargetRegisterClass* getRegisterClass(uint32_t idx) const noexcept = 0;
 };
 
+class LoweringContext;
+
 class TargetInstInfo {
 public:
     virtual ~TargetInstInfo() = default;
@@ -54,7 +61,7 @@ public:
 
     // For lowering
     virtual bool isSupportedInstruction(InstructionID inst) const noexcept = 0;
-    virtual void emit(Instruction& inst) const noexcept = 0;
+    virtual void emit(Instruction* inst, LoweringContext& ctx) const = 0;
 };
 
 CMMC_NAMESPACE_END
