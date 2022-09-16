@@ -15,14 +15,19 @@
 #pragma once
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
+#include <string>
 
 CMMC_NAMESPACE_BEGIN
 
 class LabelAllocator final {
-    HashTable<String<Arena::Source::IR>, uint32_t, Arena::Source::IR, StringHasher<Arena::Source::IR>> mBase;
+    std::unordered_map<std::string, uint32_t> mBase;
 
 public:
-    String<Arena::Source::IR> allocate(const String<Arena::Source::IR>& base);
+    std::string allocate(const std::string& base);
+    template <typename Str>
+    Str allocate(const Str& str) {
+        return Str{ allocate(std::string{ str }) };
+    }
 };
 
 CMMC_NAMESPACE_END

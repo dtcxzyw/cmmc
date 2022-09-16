@@ -15,37 +15,55 @@
 #pragma once
 #include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cstddef>
 #include <memory>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
 class MachineSymbol {
+    String<Arena::Source::MC> mSymbol;
+
 public:
-    virtual ~MachineSymbol() = default;
     // visibility
+    explicit MachineSymbol(String<Arena::Source::MC> symbol) : mSymbol{ std::move(symbol) } {}
+    static constexpr auto arenaSource = Arena::Source::MC;
+    virtual ~MachineSymbol() = default;
 };
 
-class MachineData {
-public:
+struct MachineData : public MachineSymbol {
+    Vector<std::byte, ArenaAllocator<arenaSource, std::byte>> data;
+    bool isReadOnly;
+
+    MachineData(String<Arena::Source::MC> symbol, Vector<std::byte, ArenaAllocator<arenaSource, std::byte>> data, bool isReadOnly)
+        : MachineSymbol{ std::move(symbol) }, data{ std::move(data) }, isReadOnly{ isReadOnly } {}
 };
 
-class MachineBasicBlock final {
-public:
+struct MachineBasicBlock final {
+    Vector<MachineInst> instructions;
+};
+CMMC_ARENA_TRAIT(MachineBasicBlock, MC);
+
+struct MachineFunction final : public MachineSymbol {
+    Vector<MachineBasicBlock*> basicblocks;
+
+    explicit MachineFunction(String<Arena::Source::MC> symbol) : MachineSymbol{ std::move(symbol) } {}
 };
 
-class MachineFunction final : public MachineSymbol {
-public:
-};
+class Target;
 
 class MachineModule final {
     Arena mArena;
+    const Target& mTarget;
     std::vector<MachineSymbol*> mSymbols;
 
 public:
-    MachineModule();
+    MachineModule(const Target& target);
     std::vector<MachineSymbol*>& symbols() noexcept {
         return mSymbols;
+    }
+    const Target& getTarget() const noexcept {
+        return mTarget;
     }
     bool verify() const;
 };

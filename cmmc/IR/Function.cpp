@@ -13,8 +13,8 @@
 */
 
 #include <cmmc/IR/Function.hpp>
-#include <cmmc/IR/LabelAllocator.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

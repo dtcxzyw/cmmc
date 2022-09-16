@@ -76,6 +76,12 @@ public:
     const TargetInstClass& getInstClass(uint32_t instID) const override {
         reportNotImplemented();
     }
+    bool isSupportedInstruction(InstructionID inst) const noexcept override {
+        reportNotImplemented();
+    }
+    void emit(Instruction& inst) const noexcept override {
+        reportNotImplemented();
+    }
 };
 
 // TAC Virtual Target
@@ -104,26 +110,10 @@ public:
         return *mSubTarget;
     }
 
-    std::unique_ptr<MachineModule> translateIR(Module& module) const override;
     void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("tac", TACTarget);
-
-std::unique_ptr<MachineModule> TACTarget::translateIR(Module& module) const {
-    auto targetModule = std::make_unique<MachineModule>();
-
-    // TODO: emit global values in main
-
-    for(auto global : module.globals()) {
-        if(!global.second->isFunction())
-            reportFatal("");
-
-        // targetModule->symbols();
-    }
-
-    return targetModule;
-}
 
 void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {}
 

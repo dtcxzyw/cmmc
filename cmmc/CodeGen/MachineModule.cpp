@@ -17,7 +17,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-MachineModule::MachineModule() {
+MachineModule::MachineModule(const Target& target) : mTarget{ target } {
     Arena::setArena(Arena::Source::MC, &mArena);
 }
 bool MachineModule::verify() const {

@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include <cmmc/IR/LabelAllocator.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN

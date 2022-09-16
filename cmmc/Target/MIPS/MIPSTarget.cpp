@@ -66,6 +66,13 @@ public:
         reportNotImplemented();
     }
 
+    bool isSupportedInstruction(InstructionID inst) const noexcept override {
+        reportNotImplemented();
+    }
+    void emit(Instruction& inst) const noexcept override {
+        reportNotImplemented();
+    }
+
     /*
     const char* getTextualName(uint32_t idx) const noexcept {
         constexpr const char* name[] = {
@@ -108,15 +115,10 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    std::unique_ptr<MachineModule> translateIR(Module& module) const override;
     void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("mips", MIPSTarget);
-
-std::unique_ptr<MachineModule> MIPSTarget::translateIR(Module& module) const {
-    return nullptr;
-}
 
 void MIPSTarget::emitAssembly(MachineModule& module, std::ostream& out) const {}
 

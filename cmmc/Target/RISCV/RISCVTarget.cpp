@@ -65,6 +65,12 @@ public:
     const TargetInstClass& getInstClass(uint32_t instID) const override {
         reportNotImplemented();
     }
+    bool isSupportedInstruction(InstructionID inst) const noexcept override {
+        reportNotImplemented();
+    }
+    void emit(Instruction& inst) const noexcept override {
+        reportNotImplemented();
+    }
 };
 
 // RISC-V lp32d
@@ -92,15 +98,10 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    std::unique_ptr<MachineModule> translateIR(Module& module) const override;
     void emitAssembly(MachineModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("riscv", RISCVTarget);
-
-std::unique_ptr<MachineModule> RISCVTarget::translateIR(Module& module) const {
-    return nullptr;
-}
 
 void RISCVTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
     reportNotImplemented();

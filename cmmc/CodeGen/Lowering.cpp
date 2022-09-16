@@ -12,25 +12,68 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
+static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, MachineModule& machineModule) {
+    std::unordered_map<Block*, MachineBasicBlock*> blockMap;
+    std::unordered_map<BlockArgument*, Register> blockArgMap;
+
+    auto allocateBase = makeVirtualRegister(0);
+
+    for(auto block : func->blocks()) {
+        auto mblock = make<MachineBasicBlock>();
+        blockMap.emplace(block, mblock);
+        for(auto arg : block->args())
+            blockArgMap[arg] = allocateBase++;
+    }
+
+    for(auto block : func->blocks()) {
+        for(auto inst : block->instructions()) {
+            CMMC_UNUSED(inst);
+        }
+    }
+}
+
+static void lowerToMachineModule(MachineModule& machineModule, const Module& module) {
+    auto& symbols = machineModule.symbols();
+
+    std::vector<std::pair<MachineFunction*, Function*>> funcTask;
+
+    for(auto global : module.globals()) {
+        if(global.second->isFunction()) {
+            auto func = global.second->as<Function>();
+            auto mfunc = make<MachineFunction>(String<Arena::Source::MC>{ func->getSymbol() });
+            symbols.push_back(mfunc);
+            funcTask.emplace_back(mfunc, func);
+        } else {
+            reportNotImplemented();
+        }
+    }
+
+    for(auto [mfunc, func] : funcTask)
+        lowerToMachineFunction(mfunc, func, machineModule);
+}
+
 std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
-    auto& target = module.getTarget();
+    // Stage1: instruction selection
+    auto machineModule = std::make_unique<MachineModule>(module.getTarget());
+    lowerToMachineModule(*machineModule, module);
 
-    // emit legal instructions/types using virtual registers
-    auto machineModule = target.translateIR(module);
+    // Stage2: basic block level DAG scheduling
 
-    // basic block level DAG scheduling
+    // Stage3: register allocation
 
-    // register allocation
+    // Stage4: stack location
 
-    // stack location
-
-    // peephole optimizations
+    // Stage5: post peephole optimizations
 
     return machineModule;
 }

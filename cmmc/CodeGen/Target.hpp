@@ -36,7 +36,6 @@ public:
     virtual const TargetInstInfo& getTargetInstInfo() const noexcept = 0;
     virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
-    virtual std::unique_ptr<MachineModule> translateIR(Module& module) const = 0;
     virtual void emitAssembly(MachineModule& module, std::ostream& out) const = 0;
 };
 

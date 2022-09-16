@@ -117,21 +117,23 @@ struct StringHasher final {
 template <typename T>
 using ArenaSourceHint = typename GeneralArenaAllocator<getArenaSource(ArenaSourceTrait<T>{})>::template ArenaAllocator<T>;
 
-template <typename T>
-using List = std::list<T, ArenaSourceHint<T>>;
+template <Arena::Source Src, typename T>
+using ArenaAllocator = typename GeneralArenaAllocator<Src>::template ArenaAllocator<T>;
 
-template <typename T>
-using Vector = std::vector<T, ArenaSourceHint<T>>;
+template <typename T, typename Allocator = ArenaSourceHint<T>>
+using List = std::list<T, Allocator>;
 
-template <typename T>
-using Deque = std::deque<T, ArenaSourceHint<T>>;
+template <typename T, typename Allocator = ArenaSourceHint<T>>
+using Vector = std::vector<T, Allocator>;
 
-template <typename Key, typename Value, Arena::Source source, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
-using HashTable =
-    std::unordered_map<Key, Value, Hash, Equal,
-                       typename GeneralArenaAllocator<source>::template ArenaAllocator<std::pair<const Key, Value>>>;
+template <typename T, typename Allocator = ArenaSourceHint<T>>
+using Deque = std::deque<T, Allocator>;
 
-template <typename Key, Arena::Source source, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
-using HashSet = std::unordered_set<Key, Hash, Equal, typename GeneralArenaAllocator<source>::template ArenaAllocator<Key>>;
+template <typename Key, typename Value, Arena::Source Src, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
+using HashTable = std::unordered_map<Key, Value, Hash, Equal,
+                                     typename GeneralArenaAllocator<Src>::template ArenaAllocator<std::pair<const Key, Value>>>;
+
+template <typename Key, Arena::Source Src, typename Hash = std::hash<Key>, typename Equal = std::equal_to<Key>>
+using HashSet = std::unordered_set<Key, Hash, Equal, typename GeneralArenaAllocator<Src>::template ArenaAllocator<Key>>;
 
 CMMC_NAMESPACE_END

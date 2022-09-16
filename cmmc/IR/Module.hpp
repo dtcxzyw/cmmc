@@ -45,6 +45,9 @@ public:
     auto& globals() noexcept {
         return mGlobals;
     }
+    auto& globals() const noexcept {
+        return mGlobals;
+    }
 
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;

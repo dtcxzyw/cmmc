@@ -13,7 +13,7 @@
 */
 
 #include <cctype>
-#include <cmmc/IR/LabelAllocator.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
 
@@ -23,18 +23,18 @@ static Flag uniqueLabel;
 static uint64_t uniqueID = 0;
 
 CMMC_INIT_OPTIONS_BEGIN
-uniqueLabel.setName("uniqueid", 'u').setDesc("generate ~~~almost~~~ global unique label");
+uniqueLabel.setName("uniqueid", 'u').setDesc("generate global unique label");
 CMMC_INIT_OPTIONS_END
 
-static void emitID(String<Arena::Source::IR>& str, uint32_t idx) {
+static void emitID(std::string& str, uint32_t idx) {
     if(idx >= 10)
         emitID(str, idx / 10);
     str.push_back('0' + idx % 10);
 }
 
-static String<Arena::Source::IR> generateUniqueID() {
+static std::string generateUniqueID() {
     constexpr auto lut = "abcdefghijklmnopqrstuvwxyz";
-    String<Arena::Source::IR> res;
+    std::string res;
     auto id = uniqueID++;
     while(id >= 26) {
         res.push_back(lut[id % 26]);
@@ -44,7 +44,7 @@ static String<Arena::Source::IR> generateUniqueID() {
     return res;
 }
 
-String<Arena::Source::IR> LabelAllocator::allocate(const String<Arena::Source::IR>& base) {
+std::string LabelAllocator::allocate(const std::string& base) {
     if(uniqueLabel.get())
         return generateUniqueID();
 
