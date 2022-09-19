@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -38,7 +39,7 @@ public:
     TransformPass(const TransformPass&) = delete;
     TransformPass& operator=(const TransformPass&) = delete;
 
-    virtual bool run(Scope& item) const = 0;
+    virtual bool run(Scope& item, AnalysisPassManager& analysis) const = 0;
     virtual PassType type() const noexcept = 0;
 };
 
@@ -49,7 +50,7 @@ class PassManager final {
 
 public:
     PassManager() = default;
-    bool run(Module& item) const;
+    bool run(Module& item, AnalysisPassManager& analysis) const;
     void addPass(std::shared_ptr<TransformPass<Module>> pass);
     static std::shared_ptr<PassManager> get(OptimizationLevel level);
 };
@@ -60,7 +61,7 @@ class IterationPassWrapper final : public TransformPass<Module> {
 
 public:
     IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
-    bool run(Module& item) const override;
+    bool run(Module& item, AnalysisPassManager& analysis) const override;
     PassType type() const noexcept override;
 };
 

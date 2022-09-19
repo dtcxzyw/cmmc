@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <memory>
@@ -24,10 +25,13 @@ TransformPass<Function>::~TransformPass() {}
 template <>
 TransformPass<Module>::~TransformPass() {}
 
-bool PassManager::run(Module& item) const {
+bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
     for(auto& pass : mPasses)
-        modified |= pass->run(item);
+        if(pass->run(item, analysis)) {
+            analysis.invalidateModule();
+            modified = true;
+        }
     return modified;
 }
 
@@ -38,14 +42,15 @@ void PassManager::addPass(std::shared_ptr<TransformPass<Module>> pass) {
 IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations)
     : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations } {}
 
-bool IterationPassWrapper::run(Module& item) const {
+bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
     bool stopEarly = false;
     for(uint32_t i = 0; i < mMaxIterations; ++i) {
-        if(!mSubPasses->run(item)) {
+        if(!mSubPasses->run(item, analysis)) {
             stopEarly = true;
             break;
-        }
+        } else
+            analysis.invalidateModule();
         modified = true;
     }
     if(!stopEarly)
@@ -93,12 +98,17 @@ class FunctionPassWrapper final : public TransformPass<Module> {
 
 public:
     explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
-    bool run(Module& module) const override {
+    bool run(Module& module, AnalysisPassManager& analysis) const override {
         bool modified = false;
         for(auto [sym, global] : module.globals()) {
             CMMC_UNUSED(sym);
-            if(global->isFunction())
-                modified |= mPass->run(*global->as<Function>());
+            if(global->isFunction()) {
+                auto& func = *global->as<Function>();
+                if(mPass->run(func, analysis)) {
+                    analysis.invalidateFunc(func);
+                    modified = true;
+                }
+            }
         }
         return modified;
     }

@@ -33,10 +33,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class LoadAfterStoreReduce final : public TransformPass<Function> {
+class LoadReduce final : public TransformPass<Function> {
     bool runOnBlock(Block& block, const DistinctPointerSet& set) const {
-        std::unordered_map<Value*, Value*> lastValue;
-        std::unordered_map<Instruction*, Value*> replace;
+        std::unordered_map<Value*, Value*> lastValue;      // <pointer,value>
+        std::unordered_map<Instruction*, Value*> replace;  // <load inst, loaded value>
 
         const auto update = [&](Value* addr, Value* val) {
             std::vector<Value*> outdated;
@@ -76,7 +76,7 @@ class LoadAfterStoreReduce final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto set = analysisAliases(func);
 
         bool modified = false;
@@ -91,6 +91,6 @@ public:
     }
 };
 
-CMMC_TRANSFORM_PASS(LoadAfterStoreReduce);
+CMMC_TRANSFORM_PASS(LoadReduce);
 
 CMMC_NAMESPACE_END

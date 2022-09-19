@@ -32,7 +32,7 @@ CMMC_NAMESPACE_BEGIN
 
 class NoSideEffectEliminate final : public TransformPass<Function> {
 public:
-    bool run(Function& func) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
         std::unordered_set<Instruction*> used;
         std::queue<Instruction*> q;
         // collect side effect sinks (terminators/stores)

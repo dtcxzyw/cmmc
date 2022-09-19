@@ -12,23 +12,29 @@
     limitations under the License.
 */
 
-#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/Analysis/AnalysisPass.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-void ConstantInteger::dump(std::ostream& out) const {
-    if(getType()->isBoolean())
-        out << (mValue ? "true" : "false");
-    else
-        out << mValue;
+const void* AnalysisPassManager::getPassResult(Function& func, void* id) {
+    auto& map = mFuncLevelAnalysis[&func];
+    auto& pass = map[id];
+    if(!pass)
+        pass = mFuncAnalysisBuilder[id]();
+    return pass->getPassResult(func, *this);
+}
+const void* AnalysisPassManager::getPassResult(void* id) {
+    auto& pass = mModuleLevelAnalysis[id];
+    if(!pass)
+        pass = mModuleAnalysisBuilder[id]();
+    return pass->getPassResult(*mModule, *this);
 }
 
-void ConstantFloatingPoint::dump(std::ostream& out) const {
-    out << mValue;
+void AnalysisPassManager::invalidateFunc(Function& func) {
+    mFuncLevelAnalysis[&func].clear();
 }
-
-void UndefinedValue::dump(std::ostream& out) const {
-    out << "undef";
+void AnalysisPassManager::invalidateModule() {
+    mModuleLevelAnalysis.clear();
 }
 
 CMMC_NAMESPACE_END

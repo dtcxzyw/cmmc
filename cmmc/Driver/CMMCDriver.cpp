@@ -61,7 +61,8 @@ static int runIRPipeline(Module& module, const std::string& base) {
     const auto target = TargetRegistry::get().selectTarget();
     module.setTarget(target.get());
     const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
-    opt->run(module);
+    AnalysisPassManager analysis{ &module };
+    opt->run(module, analysis);
 
     if(emitIR.get()) {
         const auto path = getOutputPath(base + ".ir2");

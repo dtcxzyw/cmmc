@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cstdint>
 #include <ostream>
@@ -37,6 +38,12 @@ class ConstantFloatingPoint final : public ConstantValue {
 
 public:
     ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {}
+    void dump(std::ostream& out) const override;
+};
+
+class UndefinedValue final : public ConstantValue {
+public:
+    explicit UndefinedValue(Type* type) : ConstantValue{ type } {}
     void dump(std::ostream& out) const override;
 };
 

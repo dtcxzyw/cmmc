@@ -29,7 +29,7 @@ CMMC_NAMESPACE_BEGIN
 
 class BlockEliminate final : public TransformPass<Function> {
 public:
-    bool run(Function& func) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_set<Block*> reachable;
         std::queue<Block*> q;
 

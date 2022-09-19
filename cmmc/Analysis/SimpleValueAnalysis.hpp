@@ -12,23 +12,21 @@
     limitations under the License.
 */
 
-#include <cmmc/IR/ConstantValue.hpp>
+#pragma once
+#include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/IR/Instruction.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-void ConstantInteger::dump(std::ostream& out) const {
-    if(getType()->isBoolean())
-        out << (mValue ? "true" : "false");
-    else
-        out << mValue;
-}
+class SimpleValueAnalysis final {
+    const DistinctPointerSet& mSet;
+    std::unordered_map<Value*, Value*> mBasePointer;                            // <pointer, base pointer>
+    std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base address, <pointer, value>>
 
-void ConstantFloatingPoint::dump(std::ostream& out) const {
-    out << mValue;
-}
-
-void UndefinedValue::dump(std::ostream& out) const {
-    out << "undef";
-}
+public:
+    explicit SimpleValueAnalysis(const DistinctPointerSet& set) noexcept : mSet{ set } {}
+    void next(Instruction* inst);
+    Value* getLastValue(Value* pointer) const;
+};
 
 CMMC_NAMESPACE_END
