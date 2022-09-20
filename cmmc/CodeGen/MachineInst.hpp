@@ -27,13 +27,18 @@ class MachineSymbol;
 struct StackFrame final {
     StackAllocation* element;
 };
+
+struct RegBase final {
+    uint32_t reg;
+};
+
 struct Global final {
     MachineSymbol* symbol;
 };
 struct Zero final {};
 
 struct Address final {
-    std::variant<StackFrame, Global, Zero> base;
+    std::variant<StackFrame, RegBase, Global, Zero> base;
     int32_t offset;
 };
 

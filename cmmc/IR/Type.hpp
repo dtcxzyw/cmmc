@@ -73,7 +73,7 @@ public:
     virtual bool isFunction() const noexcept {
         return false;
     }
-    bool isPrimitiveType() const noexcept {
+    bool isPrimitive() const noexcept {
         return !isArray() && !isStruct();
     }
     virtual size_t getFixedSize() const noexcept {

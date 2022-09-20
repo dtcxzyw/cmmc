@@ -24,6 +24,7 @@ CMMC_NAMESPACE_BEGIN
 
 class LoweringContext final {
     MachineModule& mModule;
+    const TargetInstInfo& mTargetInstInfo;
     std::unordered_map<Block*, MachineBasicBlock*>& mBlockMap;
     std::unordered_map<BlockArgument*, Register>& mBlockArgs;
     std::unordered_map<Value*, Register>& mValueMap;
@@ -39,8 +40,8 @@ public:
     MachineModule& getModule() const noexcept;
     MachineBasicBlock* mapBlock(Block* block) const;
     Register mapBlockArg(BlockArgument* arg) const;
-    Register mapOperand(Value* operand) const;
-    Address mapAddress(Value* address) const;
+    Register mapOperand(Value* operand);
+    Address mapAddress(Value* address);
     MachineSymbol* mapGlobal(GlobalValue* global) const;
     void setCurrentBasicBlock(MachineBasicBlock* block) noexcept;
     MachineBasicBlock* addBlockAfter();

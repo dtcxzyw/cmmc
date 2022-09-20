@@ -62,7 +62,7 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     auto& attr2 = mPointerAttributes.find(p2)->second;
     for(auto attrX : attr1)
         for(auto attrY : attr2)
-            if(mDistinctPairs.count(encode(attrX, attrY)))
+            if(attrX != attrY && mDistinctPairs.count(encode(attrX, attrY)))
                 return true;
     return false;
 }

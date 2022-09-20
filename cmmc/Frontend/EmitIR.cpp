@@ -207,7 +207,7 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
 
     auto lt = lhs->getType();
     auto rt = rhs->getType();
-    if(!lt->isPrimitiveType() || !rt->isPrimitiveType())
+    if(!lt->isPrimitive() || !rt->isPrimitive())
         reportFatal("Custom operator is not supported");
 
     assert(!lt->isPointer() && !rt->isPointer());
@@ -605,7 +605,7 @@ static void blockArgPropagation(Function* func) {
 
                 auto& targetReq = ctx[targetBlock].req;
                 for(auto inst : targetReq) {
-                    assert(map.count(inst));
+                    assert(inst->getBlock() == block || map.count(inst));
                     const auto operand = inst->getBlock() == block ? inst : map[inst];
                     target.getArgs().push_back(operand);
                 }

@@ -134,8 +134,11 @@ static const char* getInstName(InstructionID instID) {
 }
 
 void Instruction::dumpWithNoOperand(std::ostream& out) const {
-    dumpAsOperand(out);
-    out << " = " << getInstName(getInstID());
+    if(!getType()->isVoid()) {
+        dumpAsOperand(out);
+        out << " = ";
+    }
+    out << getInstName(getInstID());
 }
 void Instruction::dumpBinary(std::ostream& out) const {
     dumpUnary(out);
@@ -183,8 +186,16 @@ void IntegerCompareInst::dump(std::ostream& out) const {
     dumpCompare(out, this, mCompare);
 }
 
+CompareOp IntegerCompareInst::getOp() const noexcept {
+    return mCompare;
+}
+
 void FloatingPointCompareInst::dump(std::ostream& out) const {
     dumpCompare(out, this, mCompare);
+}
+
+CompareOp FloatingPointCompareInst::getOp() const noexcept {
+    return mCompare;
 }
 
 void UnaryInst::dump(std::ostream& out) const {

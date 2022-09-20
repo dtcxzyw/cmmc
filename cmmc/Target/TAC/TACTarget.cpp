@@ -85,7 +85,7 @@ public:
         return Endian::Little;
     }
     size_t getBuiltinAlignment(const Type* type) const noexcept override {
-        assert(type->isBuiltin());
+        assert(type->isPrimitive());
         if(type->isPointer())
             return getPointerSize();
         return type->getFixedSize();
@@ -122,7 +122,7 @@ public:
         const auto ret = ctx.newReg();
         auto& minst =
             ctx.emitInst(instID).setReg(0, ctx.mapOperand(inst->getOperand(0))).setReg(1, ctx.mapOperand(inst->getOperand(1)));
-        if(inst->isInstruction())
+        if(inst->getOperand(0)->getType()->isFloatingPoint())
             minst.addAttr(TACInstAttr::FloatingPointOp);
         ctx.addOperand(inst, ret);
     }
@@ -137,6 +137,17 @@ public:
     }
 
     Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override {
+        const auto reg = ctx.newReg();
+        if(value->getType()->isInteger()) {
+            ctx.emitInst(TACInst::Imm).setWriteReg(reg).setImm(0, static_cast<int64_t>(value->as<ConstantInteger>()->getValue()));
+            return reg;
+        }
+        if(value->getType()->isFloatingPoint()) {
+            const auto fpValue = value->as<ConstantFloatingPoint>()->getValue();
+            const auto ptr = static_cast<const void*>(&fpValue);
+            ctx.emitInst(TACInst::Imm).setWriteReg(reg).setImm(0, *static_cast<const int64_t*>(ptr));
+            return reg;
+        }
         reportNotImplemented();
     }
 
@@ -189,7 +200,9 @@ public:
 
                 const std::string funcName{ calleeFunc->getSymbol() };
                 if(readIntrinsics.count(funcName)) {
-                    ctx.emitInst(TACInst::Read).setWriteReg(ctx.newReg());
+                    const auto reg = ctx.newReg();
+                    ctx.emitInst(TACInst::Read).setWriteReg(reg);
+                    ctx.addOperand(inst, reg);
                 } else if(writeIntrinsics.count(funcName)) {
                     ctx.emitInst(TACInst::Write).setReg(0, ctx.mapOperand(inst->getOperand(0)));
                 } else {
@@ -197,7 +210,13 @@ public:
                         if(operand != callee) {
                             ctx.emitInst(TACInst::PushArg).setReg(0, ctx.mapOperand(operand));
                         } else {
-                            ctx.emitInst(TACInst::Call).setAddr({ Global{ ctx.mapGlobal(calleeFunc) }, 0 });
+                            auto& minst = ctx.emitInst(TACInst::Call).setAddr({ Global{ ctx.mapGlobal(calleeFunc) }, 0 });
+                            const auto ret = callee->getType()->as<FunctionType>()->getRetType();
+                            if(!ret->isVoid()) {
+                                const auto reg = ctx.newReg();
+                                minst.setWriteReg(reg);
+                                ctx.addOperand(inst, reg);
+                            }
                         }
                     }
                 }
@@ -225,9 +244,63 @@ public:
                 emitBranch(branchInst->getFalseTarget(), ctx);
                 break;
             }
+            case InstructionID::Load: {
+                const auto reg = ctx.newReg();
+                ctx.emitInst(TACInst::Load).setAddr(ctx.mapAddress(inst->getOperand(0))).setWriteReg(reg);
+                ctx.addOperand(inst, reg);
+                break;
+            }
+            case InstructionID::Store: {
+                ctx.emitInst(TACInst::Store)
+                    .setAddr(ctx.mapAddress(inst->getOperand(0)))
+                    .setReg(1, ctx.mapOperand(inst->getOperand(1)));
+                break;
+            }
+            case InstructionID::SCmp:
+            case InstructionID::UCmp:
+            case InstructionID::FCmp: {
+                const auto reg = ctx.newReg();
+                auto& minst = ctx.emitInst(TACInst::Compare)
+                                  .setReg(0, ctx.mapOperand(inst->getOperand(0)))
+                                  .setReg(1, ctx.mapOperand(inst->getOperand(1)))
+                                  .setWriteReg(reg);
 
-            default:
-                reportUnreachable();
+                const auto op = (inst->getInstID() != InstructionID::FCmp ? inst->as<IntegerCompareInst>()->getOp() :
+                                                                            inst->as<FloatingPointCompareInst>()->getOp());
+
+                switch(op) {
+                    case CompareOp::Equal:
+                        minst.addAttr(TACInstAttr::CmpEqual);
+                        break;
+                    case CompareOp::NotEqual:
+                        minst.addAttr(TACInstAttr::CmpNotEqual);
+                        break;
+                    case CompareOp::LessThan:
+                        minst.addAttr(TACInstAttr::CmpLessThan);
+                        break;
+                    case CompareOp::LessEqual:
+                        minst.addAttr(TACInstAttr::CmpLessEqual);
+                        break;
+                    case CompareOp::GreaterThan:
+                        minst.addAttr(TACInstAttr::CmpGreaterThan);
+                        break;
+                    case CompareOp::GreaterEqual:
+                        minst.addAttr(TACInstAttr::CmpGreaterEqual);
+                        break;
+                    default:
+                        reportUnreachable();
+                }
+
+                if(inst->getInstID() == InstructionID::FCmp)
+                    minst.addAttr(TACInstAttr::FloatingPointOp);
+
+                ctx.addOperand(inst, reg);
+                break;
+            }
+            default: {
+                inst->dump(reportError() << "unsupported inst ");
+                reportNotImplemented();
+            }
         }
     }
 };

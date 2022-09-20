@@ -179,6 +179,7 @@ public:
               compare
           } {}
     void dump(std::ostream& out) const override;
+    CompareOp getOp() const noexcept;
 };
 
 class FloatingPointCompareInst final : public Instruction {
@@ -188,6 +189,7 @@ public:
     FloatingPointCompareInst(CompareOp compare, Value* lhs, Value* rhs)
         : Instruction{ InstructionID::FCmp, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
+    CompareOp getOp() const noexcept;
 };
 
 class UnaryInst final : public Instruction {
@@ -212,7 +214,7 @@ public:
 class StoreInst final : public Instruction {
 public:
     explicit StoreInst(Value* address, Value* value) : Instruction{ InstructionID::Store, VoidType::get(), { address, value } } {
-        assert(address->as<PointerType>()->isSame(value));
+        assert(address->getType()->as<PointerType>()->getPointee()->isSame(value->getType()));
     }
     void dump(std::ostream& out) const override;
 };

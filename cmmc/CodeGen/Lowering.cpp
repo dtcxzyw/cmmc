@@ -17,6 +17,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -25,8 +26,9 @@ LoweringContext::LoweringContext(MachineModule& module, std::unordered_map<Block
                                  std::unordered_map<BlockArgument*, Register>& blockArgs,
                                  std::unordered_map<Value*, Register>& valueMap, std::unordered_map<Value*, Address>& addressMap,
                                  uint32_t& allocateBase)
-    : mModule{ module }, mBlockMap{ blockMap }, mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mAddressMap{ addressMap },
-      mAllocateBase{ allocateBase }, mCurrentBasicBlock{ nullptr } {}
+    : mModule{ module }, mTargetInstInfo{ module.getTarget().getTargetInstInfo() }, mBlockMap{ blockMap },
+      mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mAddressMap{ addressMap }, mAllocateBase{ allocateBase },
+      mCurrentBasicBlock{ nullptr } {}
 Register LoweringContext::newReg() noexcept {
     return makeVirtualRegister(++mAllocateBase);
 }
@@ -39,10 +41,19 @@ MachineBasicBlock* LoweringContext::mapBlock(Block* block) const {
 Register LoweringContext::mapBlockArg(BlockArgument* arg) const {
     return mBlockArgs.find(arg)->second;
 }
-Register LoweringContext::mapOperand(Value* operand) const {
-    return mValueMap.find(operand)->second;
+Register LoweringContext::mapOperand(Value* operand) {
+    const auto iter = mValueMap.find(operand);
+    if(iter != mValueMap.cend())
+        return iter->second;
+    if(!operand->isConstant()) {
+        operand->dump(reportError() << "undefined operand ");
+        reportUnreachable();
+    }
+    const auto reg = mTargetInstInfo.emitConstant(operand->as<ConstantValue>(), *this);
+    mValueMap.emplace(operand, reg);
+    return reg;
 }
-Address LoweringContext::mapAddress(Value* address) const {
+Address LoweringContext::mapAddress(Value* address) {
     return mAddressMap.find(address)->second;
 }
 void LoweringContext::setCurrentBasicBlock(MachineBasicBlock* block) noexcept {
@@ -51,6 +62,7 @@ void LoweringContext::setCurrentBasicBlock(MachineBasicBlock* block) noexcept {
 MachineBasicBlock* LoweringContext::addBlockAfter() {
     auto& blocks = mCurrentBasicBlock->func->basicblocks;
     auto iter = std::find(blocks.cbegin(), blocks.cend(), mCurrentBasicBlock);
+    assert(iter != blocks.cend());
     auto newBlock = make<MachineBasicBlock>(mCurrentBasicBlock->func);
     blocks.insert(std::next(iter), newBlock);
     return newBlock;
@@ -80,9 +92,17 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
 
     for(auto block : func->blocks()) {
         auto mblock = make<MachineBasicBlock>(mfunc);
+        mfunc->basicblocks.emplace_back(mblock);
         blockMap.emplace(block, mblock);
-        for(auto arg : block->args())
-            blockArgMap[arg] = allocateBase++;
+
+        for(auto arg : block->args()) {
+            const auto reg = allocateBase++;
+            blockArgMap[arg] = reg;
+            valueMap[arg] = reg;
+            if(arg->getType()->isPointer()) {
+                addressMap[arg] = { RegBase{ reg }, 0 };
+            }
+        }
     }
 
     auto& target = machineModule.getTarget();

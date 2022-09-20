@@ -30,7 +30,7 @@ public:
         return Endian::Little;
     }
     size_t getBuiltinAlignment(const Type* type) const noexcept override {
-        assert(type->isBuiltin());
+        assert(type->isPrimitive());
         if(type->isPointer())
             return getPointerSize();
         return type->getFixedSize();

@@ -44,6 +44,9 @@ public:
     virtual bool isGlobal() const noexcept {
         return false;
     }
+    virtual bool isConstant() const noexcept {
+        return false;
+    }
     virtual bool isInstruction() const noexcept {
         return false;
     }

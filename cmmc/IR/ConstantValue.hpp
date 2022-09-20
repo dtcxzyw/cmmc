@@ -23,6 +23,9 @@ CMMC_NAMESPACE_BEGIN
 class ConstantValue : public Value {
 public:
     explicit ConstantValue(Type* type) : Value{ type } {}
+    bool isConstant() const noexcept override {
+        return true;
+    }
 };
 
 class ConstantInteger final : public ConstantValue {
@@ -31,6 +34,9 @@ class ConstantInteger final : public ConstantValue {
 public:
     ConstantInteger(Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {}
     void dump(std::ostream& out) const override;
+    intmax_t getValue() const noexcept {
+        return mValue;
+    }
 };
 
 class ConstantFloatingPoint final : public ConstantValue {
@@ -39,6 +45,9 @@ class ConstantFloatingPoint final : public ConstantValue {
 public:
     ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {}
     void dump(std::ostream& out) const override;
+    double getValue() const noexcept {
+        return mValue;
+    }
 };
 
 class UndefinedValue final : public ConstantValue {
