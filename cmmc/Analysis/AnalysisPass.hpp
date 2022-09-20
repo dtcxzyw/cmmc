@@ -51,7 +51,7 @@ public:
     const void* getPassResult(Function& item, AnalysisPassManager& analysis) override {
         if(!mResult.has_value())
             mResult.emplace(Pass::run(item, analysis));
-        return mResult;
+        return &mResult.value();
     }
 };
 
@@ -72,7 +72,7 @@ public:
     const void* getPassResult(Module& item, AnalysisPassManager& analysis) override {
         if(!mResult.has_value())
             mResult.emplace(Pass::run(item, analysis));
-        return mResult;
+        return &mResult.value();
     }
 };
 

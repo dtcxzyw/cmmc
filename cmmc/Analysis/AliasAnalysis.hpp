@@ -13,25 +13,25 @@
 */
 
 #pragma once
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
-struct PointPairHasher final {
-    size_t operator()(std::pair<Value*, Value*> val) const noexcept {
-        std::hash<Value*> hasher;
-        return (hasher(val.first) * 998244353) ^ hasher(val.second);
-    }
-};
-
-class DistinctPointerSet final {
-    std::unordered_set<std::pair<Value*, Value*>, PointPairHasher> mPairs;
+class AliasAnalysisResult final {
+    std::unordered_set<uint64_t> mDistinctPairs;
+    std::unordered_map<Value*, std::vector<uint32_t>> mPointerAttributes;
 
 public:
-    void addPair(Value* ptr1, Value* ptr2);
-    bool isDistinct(Value* ptr1, Value* ptr2) const;
+    void addPair(uint32_t attr1, uint32_t attr2);
+    void addValue(Value* p, std::vector<uint32_t> attrs);
+    bool isDistinct(Value* p1, Value* p2) const;
 };
 
-DistinctPointerSet analysisAliases(Function& func);
+class AliasAnalysis final : public FuncAnalysisPassWrapper<AliasAnalysis, AliasAnalysisResult> {
+public:
+    static AliasAnalysisResult run(Function& func, AnalysisPassManager& analysis);
+};
 
 CMMC_NAMESPACE_END

@@ -34,7 +34,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LoadReduce final : public TransformPass<Function> {
-    bool runOnBlock(Block& block, const DistinctPointerSet& set) const {
+    bool runOnBlock(Block& block, const AliasAnalysisResult& alias) const {
         std::unordered_map<Value*, Value*> lastValue;      // <pointer,value>
         std::unordered_map<Instruction*, Value*> replace;  // <load inst, loaded value>
 
@@ -42,7 +42,7 @@ class LoadReduce final : public TransformPass<Function> {
             std::vector<Value*> outdated;
             for(auto [ptr, val] : lastValue) {
                 CMMC_UNUSED(val);
-                if(ptr != addr && !set.isDistinct(ptr, addr))
+                if(ptr != addr && !alias.isDistinct(ptr, addr))
                     outdated.push_back(val);
             }
             for(auto key : outdated)
@@ -77,11 +77,11 @@ class LoadReduce final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto set = analysisAliases(func);
+        const auto& alias = analysis.get<AliasAnalysis>(func);
 
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, set);
+            modified |= runOnBlock(*block, alias);
         }
         return modified;
     }
