@@ -36,6 +36,7 @@ MachineModule& LoweringContext::getModule() const noexcept {
     return mModule;
 }
 MachineBasicBlock* LoweringContext::mapBlock(Block* block) const {
+    assert(mBlockMap.count(block));
     return mBlockMap.find(block)->second;
 }
 Register LoweringContext::mapBlockArg(BlockArgument* arg) const {
@@ -130,13 +131,11 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
         ctx.setCurrentBasicBlock(mblock);
 
         for(auto inst : block->instructions()) {
-            if(inst->getInstID() != InstructionID::Alloc) {
-                if(instInfo.isSupportedInstruction(inst->getInstID())) {
-                    instInfo.emit(inst, ctx);
-                } else {
-                    // fallback to supported instructions
-                    reportNotImplemented();
-                }
+            if(instInfo.isSupportedInstruction(inst->getInstID())) {
+                instInfo.emit(inst, ctx);
+            } else {
+                // fallback to supported instructions
+                reportNotImplemented();
             }
         }
     }
@@ -150,9 +149,13 @@ static void lowerToMachineModule(MachineModule& machineModule, const Module& mod
     for(auto global : module.globals()) {
         if(global.second->isFunction()) {
             auto func = global.second->as<Function>();
-            auto mfunc = make<MachineFunction>(String<Arena::Source::MC>{ func->getSymbol() });
-            symbols.push_back(mfunc);
-            funcTask.emplace_back(mfunc, func);
+            if(func->blocks().empty()) {
+                // TODO: external func
+            } else {
+                auto mfunc = make<MachineFunction>(String<Arena::Source::MC>{ func->getSymbol() });
+                symbols.push_back(mfunc);
+                funcTask.emplace_back(mfunc, func);
+            }
         } else {
             reportNotImplemented();
         }
@@ -166,15 +169,18 @@ std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
     // Stage1: instruction selection
     auto machineModule = std::make_unique<MachineModule>(module.getTarget());
     lowerToMachineModule(*machineModule, module);
+    // Stage2: peephole optimizations
+    auto& subTarget = module.getTarget().getSubTarget();
+    subTarget.peepholeOpt(*machineModule);
+    // Stage3: basic block level DAG scheduling
 
-    // Stage2: basic block level DAG scheduling
+    // Stage4: register allocation
 
-    // Stage3: register allocation
+    // Stage5: stack location
 
-    // Stage4: stack location
-
-    // Stage5: post peephole optimizations
-
+    // Stage6: post peephole optimizations
+    subTarget.postPeepholeOpt(*machineModule);
+    assert(machineModule->verify());
     return machineModule;
 }
 

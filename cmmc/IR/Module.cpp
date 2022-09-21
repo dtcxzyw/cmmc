@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <ostream>

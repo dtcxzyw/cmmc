@@ -255,6 +255,15 @@ void DriverImpl::emit(Module& module) {
     EmitContext ctx{ &module };
     ctx.pushScope();
 
+    const auto read =
+        make<Function>(String<Arena::Source::IR>{ "read" }, make<FunctionType>(IntegerType::get(32), Vector<Type*>{}));
+    const auto write = make<Function>(String<Arena::Source::IR>{ "write" },
+                                      make<FunctionType>(VoidType::get(), Vector<Type*>{ IntegerType::get(32) }));
+    ctx.addIdentifier(StringAST{ "read" }, read);
+    ctx.addIdentifier(StringAST{ "write" }, write);
+    module.add(read);
+    module.add(write);
+
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
     }

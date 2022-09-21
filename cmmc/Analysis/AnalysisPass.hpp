@@ -49,6 +49,7 @@ public:
         mResult.reset();
     }
     const void* getPassResult(Function& item, AnalysisPassManager& analysis) override {
+        assert(!item.blocks().empty());
         if(!mResult.has_value())
             mResult.emplace(Pass::run(item, analysis));
         return &mResult.value();

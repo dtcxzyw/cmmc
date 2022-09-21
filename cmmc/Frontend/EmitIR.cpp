@@ -88,6 +88,8 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     }
 
     blockArgPropagation(func);
+    // TODO: sort blocks
+
     ctx.popScope();
 }
 

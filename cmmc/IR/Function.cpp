@@ -18,16 +18,17 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void ExternalFunctionDeclaration::dump(std::ostream& out) const {
-    reportNotImplemented();
-}
-
 void Function::dump(std::ostream& out) const {
+    out << "func " << getSymbol();
+    getType()->dump(out);
+    if(mBlocks.empty()) {  // decl only
+        out << ';' << std::endl;
+        return;
+    }
+
     LabelAllocator allocator;
     for(auto block : mBlocks)
         block->setLabel(allocator.allocate(block->getLabel()));
-    out << "func " << getSymbol();
-    getType()->dump(out);
     out << " {" << std::endl;
     for(auto block : mBlocks)
         block->dump(out);

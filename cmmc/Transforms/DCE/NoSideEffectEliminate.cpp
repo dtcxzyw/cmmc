@@ -35,7 +35,7 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         std::unordered_set<Instruction*> used;
         std::queue<Instruction*> q;
-        // collect side effect sinks (terminators/stores)
+        // collect side effect sinks (terminators/stores/funcs)
 
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
@@ -46,6 +46,12 @@ public:
         for(auto block : func.blocks()) {
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Store) {
+                    used.insert(inst);
+                    q.push(inst);
+                } else if(inst->getInstID() == InstructionID::Call) {
+                    const auto callee = inst->getOperand(inst->operands().size() - 1);
+                    if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
+                        continue;
                     used.insert(inst);
                     q.push(inst);
                 }

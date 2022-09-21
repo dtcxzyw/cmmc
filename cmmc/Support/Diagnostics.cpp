@@ -49,7 +49,7 @@ std::ostream& reportDebug() {
     return (verbose.get() ? std::cerr : null) << "[DEBUG] ";
 }
 void reportFatal(std::string_view msg) {
-    std::cerr << "[FATAL] " << msg;
+    std::cerr << "\n[FATAL] " << msg;
     printStackTrace();
     std::cerr << std::flush;
     __builtin_trap();

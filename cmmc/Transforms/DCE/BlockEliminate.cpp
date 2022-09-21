@@ -44,11 +44,11 @@ public:
             if(terminator->isBranch()) {
                 const auto inst = terminator->as<ConditionalBranchInst>();
                 const auto trueTarget = inst->getTrueTarget().getTarget();
-                if(!reachable.insert(trueTarget).second) {
+                if(reachable.insert(trueTarget).second) {
                     q.push(trueTarget);
                 }
                 const auto falseTarget = inst->getFalseTarget().getTarget();
-                if(falseTarget && !reachable.insert(falseTarget).second) {
+                if(falseTarget && reachable.insert(falseTarget).second) {
                     q.push(falseTarget);
                 }
             }

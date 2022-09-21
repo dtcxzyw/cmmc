@@ -20,11 +20,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class ExternalFunctionDeclaration final : public GlobalValue {
-public:
-    void dump(std::ostream& out) const override;
-};
-
 enum class FunctionAttribute {
     NoMemoryRead = 1 << 0,
     NoSideEffect = 1 << 1,

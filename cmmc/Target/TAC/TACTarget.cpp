@@ -23,6 +23,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
@@ -75,6 +76,7 @@ enum class TACInst : uint32_t {
     BranchCompare,
     Imm,
     Copy,
+    LoadAddress
 };
 
 extern StringOpt targetMachine;
@@ -122,7 +124,7 @@ public:
         const auto ret = ctx.newReg();
         auto& minst =
             ctx.emitInst(instID).setReg(0, ctx.mapOperand(inst->getOperand(0))).setReg(1, ctx.mapOperand(inst->getOperand(1)));
-        if(inst->getOperand(0)->getType()->isFloatingPoint())
+        if(inst->isFloatingPointOp())
             minst.addAttr(TACInstAttr::FloatingPointOp);
         ctx.addOperand(inst, ret);
     }
@@ -190,20 +192,12 @@ public:
                     reportFatal("");
                 const auto calleeFunc = callee->as<Function>();
 
-                using namespace std::string_literals;
-                static const std::unordered_set<std::string> readIntrinsics = {
-                    "spl.read.char", "spl.read.int", "spl.read.float"  //
-                };
-                static const std::unordered_set<std::string> writeIntrinsics = {
-                    "spl.write.char", "spl.write.int", "spl.write.float"  //
-                };
-
                 const std::string funcName{ calleeFunc->getSymbol() };
-                if(readIntrinsics.count(funcName)) {
+                if(funcName == "read") {
                     const auto reg = ctx.newReg();
                     ctx.emitInst(TACInst::Read).setWriteReg(reg);
                     ctx.addOperand(inst, reg);
-                } else if(writeIntrinsics.count(funcName)) {
+                } else if(funcName == "write") {
                     ctx.emitInst(TACInst::Write).setReg(0, ctx.mapOperand(inst->getOperand(0)));
                 } else {
                     for(auto operand : inst->operands()) {
@@ -294,6 +288,25 @@ public:
                 if(inst->getInstID() == InstructionID::FCmp)
                     minst.addAttr(TACInstAttr::FloatingPointOp);
 
+                ctx.addOperand(inst, reg);
+                break;
+            }
+            case InstructionID::Alloc: {
+                const auto reg = ctx.newReg();
+                ctx.emitInst(TACInst::LoadAddress).setAddr(ctx.mapAddress(inst)).setWriteReg(reg);
+                ctx.addOperand(inst, reg);
+                break;
+            }
+            case InstructionID::Neg:
+            case InstructionID::FNeg: {
+                const auto reg = ctx.newReg();
+                auto& minst = ctx.emitInst(TACInst::Sub)
+                                  .setImm(0, 0)
+                                  .setReg(1, ctx.mapOperand(inst->getOperand(0)))
+                                  .addAttr(TACInstAttr::WithImm1)
+                                  .setWriteReg(reg);
+                if(inst->getInstID() == InstructionID::FNeg)
+                    minst.addAttr(TACInstAttr::FloatingPointOp);
                 ctx.addOperand(inst, reg);
                 break;
             }
@@ -486,15 +499,27 @@ void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
                         }
                         case TACInst::Imm:
                             [[fallthrough]];
-                        case TACInst::Copy: {
+                        case TACInst::Copy:
+                            [[fallthrough]];
+                        case TACInst::LoadAddress: {
                             printResult(out, inst, 1);
                             out << " := ";
                             printOperand(out, inst, 0);
                             out << std::endl;
                             break;
                         }
-                        default:
+                        case TACInst::Load: {
+                            reportNotImplemented();
+                            break;
+                        }
+                        case TACInst::Store: {
+                            reportNotImplemented();
+                            break;
+                        }
+                        default: {
+                            reportError() << "Unsupported inst " << enumName(inst.getInstID<TACInst>()) << std::endl;
                             reportUnreachable();
+                        }
                     }
                 }
             }

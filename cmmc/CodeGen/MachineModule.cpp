@@ -21,7 +21,8 @@ MachineModule::MachineModule(const Target& target) : mTarget{ target } {
     Arena::setArena(Arena::Source::MC, &mArena);
 }
 bool MachineModule::verify() const {
-    return false;
+    // TODO: verify symbols
+    return true;
 }
 
 CMMC_NAMESPACE_END

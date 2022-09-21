@@ -104,7 +104,7 @@ public:
             CMMC_UNUSED(sym);
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
-                if(mPass->run(func, analysis)) {
+                if(!func.blocks().empty() && mPass->run(func, analysis)) {
                     analysis.invalidateFunc(func);
                     modified = true;
                 }

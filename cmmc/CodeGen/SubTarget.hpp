@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/MachineInst.hpp>
+#include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/Register.hpp>
 
 CMMC_NAMESPACE_BEGIN
@@ -24,6 +25,8 @@ public:
     virtual uint32_t issueWidth() const noexcept = 0;
     virtual uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const = 0;
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
+    virtual void peepholeOpt(MachineModule& mod) const {}
+    virtual void postPeepholeOpt(MachineModule& mod) const {}
 };
 
 class SimpleSubTarget final : public SubTarget {
