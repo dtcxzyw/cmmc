@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/Config.hpp>
 #include <cstdint>
+#include <limits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -33,5 +34,7 @@ constexpr Register makeVirtualRegister(uint32_t id) {
 constexpr bool isVirtualRegister(Register reg) {
     return reg & 0xf0000000;
 }
+
+constexpr auto invalidReg = std::numeric_limits<Register>::max();
 
 CMMC_NAMESPACE_END

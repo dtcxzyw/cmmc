@@ -25,15 +25,15 @@ public:
     virtual uint32_t issueWidth() const noexcept = 0;
     virtual uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const = 0;
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
-    virtual void peepholeOpt(MachineModule& mod) const {}
-    virtual void postPeepholeOpt(MachineModule& mod) const {}
+    virtual void peepholeOpt(MachineModule& module) const {}
+    virtual void postPeepholeOpt(MachineModule& module) const {}
 };
 
-class SimpleSubTarget final : public SubTarget {
+class SimpleSubTarget : public SubTarget {
 public:
-    uint32_t issueWidth() const noexcept override;
-    uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const override;
-    uint32_t getLatency(const MachineInst* inst) const override;
+    uint32_t issueWidth() const noexcept final;
+    uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const final;
+    uint32_t getLatency(const MachineInst* inst) const final;
 };
 
 CMMC_NAMESPACE_END

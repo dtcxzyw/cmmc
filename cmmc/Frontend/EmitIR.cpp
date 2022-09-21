@@ -38,10 +38,10 @@ FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
 static void blockArgPropagation(Function* func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
-    auto mod = ctx.getModule();
+    auto module = ctx.getModule();
     const auto funcType = decl.getSignature(ctx);
     auto func = make<Function>(String<Arena::Source::IR>{ decl.symbol }, funcType);
-    mod->add(func);
+    module->add(func);
     ctx.addIdentifier(decl.symbol, func);
 
     ctx.setCurrentFunction(func);

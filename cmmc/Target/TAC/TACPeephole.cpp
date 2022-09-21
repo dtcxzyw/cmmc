@@ -12,27 +12,16 @@
     limitations under the License.
 */
 
-#include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-extern StringOpt targetMachine;
+void TACSubTarget::peepholeOpt(MachineModule& module) const {
+    // load/store fusion
 
-const TargetRegisterClass& TACInstInfo::getRegisterClass(uint32_t idx) const noexcept {
-    return mGPR;
+    // conditional branch fusion
 }
 
-const TargetInstClass& TACInstInfo::getInstClass(uint32_t instID) const {
-    reportNotImplemented();
-}
-
-TACTarget::TACTarget() {
-    if(targetMachine.get() != "emulator")
-        reportFatal("Unsupported target machine");
-}
-
-CMMC_TARGET("tac", TACTarget);
+void TACSubTarget::postPeepholeOpt(MachineModule& module) const {}
 
 CMMC_NAMESPACE_END

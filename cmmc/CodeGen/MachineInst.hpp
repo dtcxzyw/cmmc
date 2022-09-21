@@ -44,8 +44,8 @@ struct Address final {
 
 class MachineInst final {
     uint32_t mInstID;
-    Register mReadReg[3];
-    Register mWriteReg;
+    Register mReadReg[3]{ invalidReg, invalidReg, invalidReg };
+    Register mWriteReg{ invalidReg };
     Address mAddress;
     uint64_t mImm[3];
     uint32_t mAttr;

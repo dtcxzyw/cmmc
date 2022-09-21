@@ -131,15 +131,15 @@ int main(int argc, char** argv) {
                 return EXIT_SUCCESS;
             }
 
-            Module mod;
-            driver.emit(mod);
+            Module module;
+            driver.emit(module);
 
-            return runIRPipeline(mod, base);
+            return runIRPipeline(module, base);
         } else if(endswith(path, ".ir"sv)) {
-            Module mod;
-            loadTAC(mod, path);
+            Module module;
+            loadTAC(module, path);
             const auto base = path.substr(0, path.size() - 3);
-            return runIRPipeline(mod, base);
+            return runIRPipeline(module, base);
         }
 
         reportError() << "Unrecognized input" << std::endl;
