@@ -165,6 +165,8 @@ static void lowerToMachineModule(MachineModule& machineModule, const Module& mod
         lowerToMachineFunction(mfunc, func, machineModule);
 }
 
+void schedule(MachineFunction& func, const Target& target);
+
 std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
     // Stage1: instruction selection
     auto machineModule = std::make_unique<MachineModule>(module.getTarget());
@@ -172,13 +174,18 @@ std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
     // Stage2: peephole optimizations
     auto& subTarget = module.getTarget().getSubTarget();
     subTarget.peepholeOpt(*machineModule);
-    // Stage3: basic block level DAG scheduling
+    for(auto symbol : machineModule->symbols()) {
+        if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
+            // Stage3: block relayout to eliminate unconditional blocks
 
-    // Stage4: register allocation
+            // Stage4: basic block level DAG scheduling
+            schedule(*func, module.getTarget());
+            // Stage5: register allocation
 
-    // Stage5: stack location
-
-    // Stage6: post peephole optimizations
+            // Stage6: stack location
+        }
+    }
+    // Stage7: post peephole optimizations
     subTarget.postPeepholeOpt(*machineModule);
     assert(machineModule->verify());
     return machineModule;

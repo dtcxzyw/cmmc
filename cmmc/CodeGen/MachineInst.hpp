@@ -43,11 +43,16 @@ struct Address final {
 };
 
 class MachineInst final {
+public:
+    static constexpr uint32_t regSize = 3;
+    static constexpr uint32_t immSize = regSize;
+
+private:
     uint32_t mInstID;
-    Register mReadReg[3]{ invalidReg, invalidReg, invalidReg };
+    Register mReadReg[regSize]{ invalidReg, invalidReg, invalidReg };
     Register mWriteReg{ invalidReg };
     Address mAddress = { Zero{}, 0 };
-    uint64_t mImm[3] = { 0, 0, 0 };
+    uint64_t mImm[immSize] = { 0, 0, 0 };
     uint32_t mAttr = 0;
 
 public:
@@ -129,6 +134,7 @@ public:
 
     virtual const TargetRegisterClass& getRegisterClass(Register reg) const = 0;
     virtual const TargetInstClass& getInstClass(uint32_t instID) const = 0;
+    virtual bool hasSideEffect(MachineInst& inst) const noexcept = 0;
 
     // For lowering
     virtual bool isSupportedInstruction(InstructionID inst) const noexcept = 0;

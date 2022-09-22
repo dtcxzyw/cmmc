@@ -24,25 +24,25 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
     for(auto symbol : module.symbols()) {
         if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
             // TODO: move to helper functions
-            std::unordered_map<Register, MachineInst*> uniqueWritter;
+            std::unordered_map<Register, MachineInst*> uniqueWriter;
             for(auto& block : func->basicblocks)
                 for(auto& inst : block->instructions) {
                     const auto reg = inst.getWriteReg();
                     if(reg != invalidReg) {
-                        const auto iter = uniqueWritter.find(reg);
-                        if(iter == uniqueWritter.cend())
-                            uniqueWritter.emplace(reg, &inst);
+                        const auto iter = uniqueWriter.find(reg);
+                        if(iter == uniqueWriter.cend())
+                            uniqueWriter.emplace(reg, &inst);
                         else
                             iter->second = nullptr;
                     }
                 }
             {
                 std::vector<Register> deferred;
-                for(auto& [k, v] : uniqueWritter)
+                for(auto& [k, v] : uniqueWriter)
                     if(!v)
                         deferred.emplace_back(k);
                 for(auto k : deferred)
-                    uniqueWritter.erase(k);
+                    uniqueWriter.erase(k);
             }
 
             for(auto& block : func->basicblocks)
@@ -54,8 +54,8 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
                             return;
 
                         const auto reg = inst.getReg(idx);
-                        const auto iter = uniqueWritter.find(reg);
-                        if(iter == uniqueWritter.cend())
+                        const auto iter = uniqueWriter.find(reg);
+                        if(iter == uniqueWriter.cend())
                             return;
                         const auto srcInst = iter->second;
                         const auto instID = srcInst->getInstID<TACInst>();
@@ -66,30 +66,29 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
                             }
                         } else if(instID == TACInst::Copy) {
                             if(srcInst->hasAttr(TACInstAttr::WithImm0)) {
-                                inst.setImm(idx, srcInst->getImm(0)).addAttr(fuseImm);
+                                inst.setImm(idx, srcInst->getImm(0)).addAttr(fuseImm).setReg(idx, invalidReg);
                             } else {
                                 inst.setReg(idx, srcInst->getReg(0));
-                                if(srcInst->hasAttr(TACInstAttr::FuseLoadStore0))
+                                if(srcInst->hasAttr(TACInstAttr::FuseLoad0))
                                     inst.addAttr(fuseLoad);
                             }
                         }
                     };
 
-                    fuseLoadCopy(0, TACInstAttr::FuseLoadStore0, TACInstAttr::WithImm0);
-                    fuseLoadCopy(1, TACInstAttr::FuseLoadStore1, TACInstAttr::WithImm1);
-                    fuseLoadCopy(2, TACInstAttr::FuseLoadStore2, TACInstAttr::WithImm2);
+                    fuseLoadCopy(0, TACInstAttr::FuseLoad0, TACInstAttr::WithImm0);
+                    fuseLoadCopy(1, TACInstAttr::FuseLoad1, TACInstAttr::WithImm1);
 
                     // TODO: fuse store
 
                     // conditional branch fusion
                     if(inst.getInstID<TACInst>() == TACInst::BranchCompare && inst.hasAttr(TACInstAttr::CmpNotEqual) &&
                        inst.getImm(1) == 0 && inst.hasAttr(TACInstAttr::WithImm1) && !inst.hasAttr(TACInstAttr::WithImm0) &&
-                       !inst.hasAttr(TACInstAttr::FloatingPointOp) && !inst.hasAttr(TACInstAttr::FuseLoadStore0)) {
+                       !inst.hasAttr(TACInstAttr::FloatingPointOp) && !inst.hasAttr(TACInstAttr::FuseLoad0)) {
                         // (a op b) != 0 ==> a op b
                         const auto reg = inst.getReg(0);
                         assert(reg != invalidReg);
-                        const auto iter = uniqueWritter.find(reg);
-                        if(iter != uniqueWritter.cend()) {
+                        const auto iter = uniqueWriter.find(reg);
+                        if(iter != uniqueWriter.cend()) {
                             const auto& srcInst = *iter->second;
                             if(srcInst.getInstID<TACInst>() == TACInst::Compare) {
                                 const auto target = inst.getImm(2);

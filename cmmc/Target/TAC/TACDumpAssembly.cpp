@@ -39,7 +39,7 @@ static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t id
         return;
     }
 
-    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoadStore0) << idx)))
+    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoad0) << idx)))
         out << '*';
     auto reg = inst.getReg(idx);
     out << 'v' << reg;

@@ -65,7 +65,9 @@ public:
     const TargetInstClass& getInstClass(uint32_t instID) const override {
         reportNotImplemented();
     }
-
+    bool hasSideEffect(MachineInst& inst) const noexcept override {
+        reportNotImplemented();
+    }
     bool isSupportedInstruction(InstructionID inst) const noexcept override {
         reportNotImplemented();
     }

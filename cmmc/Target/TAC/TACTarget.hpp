@@ -18,9 +18,9 @@
 CMMC_NAMESPACE_BEGIN
 
 enum class TACInstAttr : uint32_t {
-    FuseLoadStore0 = 1 << 0,
-    FuseLoadStore1 = 1 << 1,
-    FuseLoadStore2 = 1 << 2,
+    FuseLoad0 = 1 << 0,
+    FuseLoad1 = 1 << 1,
+    FuseStore = 1 << 2,
 
     WithImm0 = 1 << 3,
     WithImm1 = 1 << 4,
@@ -92,6 +92,7 @@ class TACInstInfo final : public TargetInstInfo {
 public:
     const TargetRegisterClass& getRegisterClass(uint32_t idx) const noexcept override;
     const TargetInstClass& getInstClass(uint32_t instID) const override;
+    bool hasSideEffect(MachineInst& inst) const noexcept override;
     bool isSupportedInstruction(InstructionID inst) const noexcept override;
     Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override;
     void emit(Instruction* inst, LoweringContext& ctx) const override;

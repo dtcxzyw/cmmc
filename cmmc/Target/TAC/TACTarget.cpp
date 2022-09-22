@@ -28,6 +28,30 @@ const TargetInstClass& TACInstInfo::getInstClass(uint32_t instID) const {
     reportNotImplemented();
 }
 
+bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
+    switch(inst.getInstID<TACInst>()) {
+        case TACInst::Branch:
+            [[fallthrough]];
+        case TACInst::BranchCompare:
+            [[fallthrough]];
+        case TACInst::Store:
+            [[fallthrough]];
+        case TACInst::Return:
+            [[fallthrough]];
+        case TACInst::Call:
+            [[fallthrough]];
+        case TACInst::PushArg:
+            [[fallthrough]];
+        case TACInst::Write:
+            [[fallthrough]];
+        case TACInst::Read:
+            return true;
+        default: {
+            return inst.hasAttr(TACInstAttr::FuseStore);
+        }
+    }
+}
+
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         reportFatal("Unsupported target machine");
