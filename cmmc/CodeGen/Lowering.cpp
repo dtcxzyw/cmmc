@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MachineInst.hpp"
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -74,6 +75,10 @@ void LoweringContext::addAddress(Value* value, Address address) {
 }
 void LoweringContext::addOperand(Value* value, Register reg) {
     mValueMap.emplace(value, reg);
+}
+void LoweringContext::addLink(MachineBasicBlock* successor) {
+    mCurrentBasicBlock->successors.push_back(successor);
+    successor->predecessors.push_back(mCurrentBasicBlock);
 }
 MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     for(auto symbol : mModule.symbols()) {

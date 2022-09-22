@@ -68,6 +68,9 @@ public:
     bool hasSideEffect(MachineInst& inst) const noexcept override {
         reportNotImplemented();
     }
+    bool isTerminator(MachineInst& inst) const noexcept override {
+        reportNotImplemented();
+    }
     bool isSupportedInstruction(InstructionID inst) const noexcept override {
         reportNotImplemented();
     }

@@ -71,6 +71,9 @@ public:
     bool hasSideEffect(MachineInst& inst) const noexcept override {
         reportNotImplemented();
     }
+    bool isTerminator(MachineInst& inst) const noexcept override {
+        reportNotImplemented();
+    }
     void emit(Instruction* inst, LoweringContext& ctx) const override {
         reportNotImplemented();
     }

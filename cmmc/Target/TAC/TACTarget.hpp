@@ -93,6 +93,7 @@ public:
     const TargetRegisterClass& getRegisterClass(uint32_t idx) const noexcept override;
     const TargetInstClass& getInstClass(uint32_t instID) const override;
     bool hasSideEffect(MachineInst& inst) const noexcept override;
+    bool isTerminator(MachineInst& inst) const noexcept override;
     bool isSupportedInstruction(InstructionID inst) const noexcept override;
     Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override;
     void emit(Instruction* inst, LoweringContext& ctx) const override;

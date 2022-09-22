@@ -135,6 +135,7 @@ public:
     virtual const TargetRegisterClass& getRegisterClass(Register reg) const = 0;
     virtual const TargetInstClass& getInstClass(uint32_t instID) const = 0;
     virtual bool hasSideEffect(MachineInst& inst) const noexcept = 0;
+    virtual bool isTerminator(MachineInst& inst) const noexcept = 0;
 
     // For lowering
     virtual bool isSupportedInstruction(InstructionID inst) const noexcept = 0;

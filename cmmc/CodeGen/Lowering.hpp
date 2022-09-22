@@ -52,6 +52,7 @@ public:
     }
     void addAddress(Value* value, Address address);
     void addOperand(Value* value, Register reg);
+    void addLink(MachineBasicBlock* successor);
 };
 
 class Module;

@@ -56,7 +56,9 @@ void TACInstInfo::emitBranch(const BranchTarget& target, LoweringContext& ctx) c
         const auto arg = ctx.mapOperand(src[idx]);
         ctx.emitInst(TACInst::Copy).setWriteReg(ctx.mapBlockArg(dst[idx])).setReg(0, arg);
     }
-    ctx.emitInst(TACInst::Branch).setImm(0, reinterpret_cast<uint64_t>(ctx.mapBlock(dstBlock)));
+    const auto dstMachineBlock = ctx.mapBlock(dstBlock);
+    ctx.emitInst(TACInst::Branch).setImm(0, reinterpret_cast<uint64_t>(dstMachineBlock));
+    ctx.addLink(dstMachineBlock);
 }
 
 Register TACInstInfo::emitConstant(ConstantValue* value, LoweringContext& ctx) const {
@@ -160,6 +162,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
                 .addAttr(TACInstAttr::WithImm1)
                 .addAttr(TACInstAttr::CmpNotEqual)
                 .setImm(2, reinterpret_cast<uint64_t>(falsePrepareblock));
+            ctx.addLink(falsePrepareblock);
             emitBranch(branchInst->getTrueTarget(), ctx);
 
             ctx.setCurrentBasicBlock(falsePrepareblock);

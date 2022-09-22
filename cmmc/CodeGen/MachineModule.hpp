@@ -55,7 +55,8 @@ struct MachineBasicBlock final {
     Deque<MachineInst> instructions;
     Deque<StackAllocation*> stackAllocations;  // TODO: it should be temporary variable
 
-    // Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> successors;
+    Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> predecessors;
+    Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> successors;
 
     explicit MachineBasicBlock(MachineFunction* func) : func{ func } {}
 };

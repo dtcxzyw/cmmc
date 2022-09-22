@@ -27,7 +27,18 @@ const TargetRegisterClass& TACInstInfo::getRegisterClass(uint32_t idx) const noe
 const TargetInstClass& TACInstInfo::getInstClass(uint32_t instID) const {
     reportNotImplemented();
 }
-
+bool TACInstInfo::isTerminator(MachineInst& inst) const noexcept {
+    switch(inst.getInstID<TACInst>()) {
+        case TACInst::Branch:
+            [[fallthrough]];
+        case TACInst::BranchCompare:
+            [[fallthrough]];
+        case TACInst::Return:
+            return true;
+        default:
+            return false;
+    }
+}
 bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
     switch(inst.getInstID<TACInst>()) {
         case TACInst::Branch:
