@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -165,24 +166,28 @@ static void lowerToMachineModule(MachineModule& machineModule, const Module& mod
         lowerToMachineFunction(mfunc, func, machineModule);
 }
 
+void optimizeBlockLayout(MachineFunction& func, const Target& target);
 void schedule(MachineFunction& func, const Target& target);
+void allocateStackObjects(MachineFunction& func, const Target& target);
 
 std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
+    auto& target = module.getTarget();
     // Stage1: instruction selection
-    auto machineModule = std::make_unique<MachineModule>(module.getTarget());
+    auto machineModule = std::make_unique<MachineModule>(target);
     lowerToMachineModule(*machineModule, module);
     // Stage2: peephole optimizations
-    auto& subTarget = module.getTarget().getSubTarget();
+    auto& subTarget = target.getSubTarget();
     subTarget.peepholeOpt(*machineModule);
     for(auto symbol : machineModule->symbols()) {
         if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
-            // Stage3: block relayout to eliminate unconditional blocks
-
+            // Stage3: block layout optimization
+            optimizeBlockLayout(*func, target);
             // Stage4: basic block level DAG scheduling
-            schedule(*func, module.getTarget());
+            schedule(*func, target);
             // Stage5: register allocation
-
+            assignRegisters(*func, target);
             // Stage6: stack location
+            allocateStackObjects(*func, target);
         }
     }
     // Stage7: post peephole optimizations

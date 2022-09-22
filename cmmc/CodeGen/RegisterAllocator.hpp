@@ -13,13 +13,28 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/MachineInst.hpp>
+#include <cmmc/CodeGen/MachineModule.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-class RegisterAllocator {
+using RegisterAllocFunc = void (*)(MachineFunction& func, const Target& target);
+
+class RegisterAllocatorRegistry final {
+    std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
+
 public:
-    virtual ~RegisterAllocator();
+    void addMethod(std::string_view name, RegisterAllocFunc func);
+    RegisterAllocFunc selectMethod() const;
+
+    static RegisterAllocatorRegistry& get();
 };
+
+#define CMMC_REGISTER_ALLOCATOR(NAME, FUNC)                     \
+    static int __allocator = [] {                               \
+        RegisterAllocatorRegistry::get().addMethod(NAME, FUNC); \
+        return 0;                                               \
+    }();
+
+void assignRegisters(MachineFunction& func, const Target& target);
 
 CMMC_NAMESPACE_END
