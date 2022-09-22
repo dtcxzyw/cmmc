@@ -29,17 +29,17 @@ static void printConstant(std::ostream& out, uint64_t metadata, bool isFloatingP
 }
 
 static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t idx) {
-    if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm1)) {
+    if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm0)) {
         printConstant(out, inst.getImm(0), inst.hasAttr(TACInstAttr::FloatingPointOp));
         return;
     }
 
-    if(idx == 1 && inst.hasAttr(TACInstAttr::WithImm2)) {
+    if(idx == 1 && inst.hasAttr(TACInstAttr::WithImm1)) {
         printConstant(out, inst.getImm(1), inst.hasAttr(TACInstAttr::FloatingPointOp));
         return;
     }
 
-    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoadStore1) << idx)))
+    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoadStore0) << idx)))
         out << '*';
     auto reg = inst.getReg(idx);
     out << 'v' << reg;

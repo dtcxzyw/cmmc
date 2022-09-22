@@ -65,13 +65,13 @@ Register TACInstInfo::emitConstant(ConstantValue* value, LoweringContext& ctx) c
         ctx.emitInst(TACInst::Copy)
             .setWriteReg(reg)
             .setImm(0, static_cast<int64_t>(value->as<ConstantInteger>()->getValue()))
-            .addAttr(TACInstAttr::WithImm1);
+            .addAttr(TACInstAttr::WithImm0);
         return reg;
     }
     if(value->getType()->isFloatingPoint()) {
         const auto fpValue = value->as<ConstantFloatingPoint>()->getValue();
         const auto ptr = static_cast<const void*>(&fpValue);
-        ctx.emitInst(TACInst::Copy).setWriteReg(reg).setImm(0, *static_cast<const int64_t*>(ptr)).addAttr(TACInstAttr::WithImm1);
+        ctx.emitInst(TACInst::Copy).setWriteReg(reg).setImm(0, *static_cast<const int64_t*>(ptr)).addAttr(TACInstAttr::WithImm0);
         return reg;
     }
     reportNotImplemented();
@@ -157,7 +157,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             ctx.emitInst(TACInst::BranchCompare)
                 .setReg(0, flag)
                 .setImm(1, 0)
-                .addAttr(TACInstAttr::WithImm2)
+                .addAttr(TACInstAttr::WithImm1)
                 .addAttr(TACInstAttr::CmpNotEqual)
                 .setImm(2, reinterpret_cast<uint64_t>(falsePrepareblock));
             emitBranch(branchInst->getTrueTarget(), ctx);
@@ -230,7 +230,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
         case InstructionID::FNeg: {
             const auto reg = ctx.newReg();
             const auto val = ctx.mapOperand(inst->getOperand(0));
-            auto& minst = ctx.emitInst(TACInst::Sub).setImm(0, 0).setReg(1, val).addAttr(TACInstAttr::WithImm1).setWriteReg(reg);
+            auto& minst = ctx.emitInst(TACInst::Sub).setImm(0, 0).setReg(1, val).addAttr(TACInstAttr::WithImm0).setWriteReg(reg);
             if(inst->getInstID() == InstructionID::FNeg)
                 minst.addAttr(TACInstAttr::FloatingPointOp);
             ctx.addOperand(inst, reg);

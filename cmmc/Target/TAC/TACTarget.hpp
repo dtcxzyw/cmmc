@@ -18,13 +18,13 @@
 CMMC_NAMESPACE_BEGIN
 
 enum class TACInstAttr : uint32_t {
-    FuseLoadStore1 = 1 << 0,
-    FuseLoadStore2 = 1 << 1,
-    FuseLoadStore3 = 1 << 2,
+    FuseLoadStore0 = 1 << 0,
+    FuseLoadStore1 = 1 << 1,
+    FuseLoadStore2 = 1 << 2,
 
-    WithImm1 = 1 << 3,
-    WithImm2 = 1 << 4,
-    WithImm3 = 1 << 5,
+    WithImm0 = 1 << 3,
+    WithImm1 = 1 << 4,
+    WithImm2 = 1 << 5,
 
     CompareEqual = 1 << 6,
     CompareLess = 1 << 7,

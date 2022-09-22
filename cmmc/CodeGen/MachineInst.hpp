@@ -46,13 +46,20 @@ class MachineInst final {
     uint32_t mInstID;
     Register mReadReg[3]{ invalidReg, invalidReg, invalidReg };
     Register mWriteReg{ invalidReg };
-    Address mAddress;
-    uint64_t mImm[3];
-    uint32_t mAttr;
+    Address mAddress = { Zero{}, 0 };
+    uint64_t mImm[3] = { 0, 0, 0 };
+    uint32_t mAttr = 0;
 
 public:
     template <typename Inst>
     constexpr explicit MachineInst(Inst instID) noexcept : mInstID{ static_cast<uint32_t>(instID) } {}
+
+    template <typename Inst>
+    MachineInst& setInstID(Inst instID) noexcept {
+        mInstID = static_cast<uint32_t>(instID);
+        return *this;
+    }
+
     template <typename Inst>
     Inst getInstID() const noexcept {
         return static_cast<Inst>(mInstID);
@@ -90,6 +97,11 @@ public:
     template <typename Attr>
     MachineInst& addAttr(Attr attr) noexcept {
         mAttr |= static_cast<uint32_t>(attr);
+        return *this;
+    }
+    template <typename Attr>
+    MachineInst& clearAttr(Attr attr) noexcept {
+        mAttr &= ~static_cast<uint32_t>(attr);
         return *this;
     }
     template <typename Attr>
