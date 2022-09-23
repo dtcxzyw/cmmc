@@ -277,6 +277,17 @@ bool ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand)
     return ret;
 }
 
+void ConditionalBranchInst::updateTargetArgs(BranchTarget& target, Vector<Value*> args) {
+    target.getArgsRef() = std::move(args);
+    if(getInstID() == InstructionID::Branch)
+        operands().clear();
+    else
+        operands().resize(1);
+    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
+    if(getInstID() != InstructionID::Branch)
+        operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
+}
+
 void ReturnInst::dump(std::ostream& out) const {
     out << getInstName(getInstID());
     if(!operands().empty()) {

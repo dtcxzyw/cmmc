@@ -606,11 +606,15 @@ static void blockArgPropagation(Function* func) {
                     return;
 
                 auto& targetReq = ctx[targetBlock].req;
+                if(targetReq.empty())
+                    return;
+                auto args = target.getArgs();
                 for(auto inst : targetReq) {
                     assert(inst->getBlock() == block || map.count(inst));
                     const auto operand = inst->getBlock() == block ? inst : map[inst];
-                    target.getArgs().push_back(operand);
+                    args.push_back(operand);
                 }
+                inst->updateTargetArgs(target, std::move(args));
             };
 
             propagation(inst->getTrueTarget());

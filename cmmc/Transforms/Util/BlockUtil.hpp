@@ -19,5 +19,23 @@ CMMC_NAMESPACE_BEGIN
 
 using BlockReducer = Value* (*)(Instruction* inst);
 bool reduceBlock(Block& block, BlockReducer reducer);
+void removeInst(Instruction* inst);
+
+template <typename Callable>
+bool scanInstructions(Block& block, Callable callable) {
+    bool modified = false;
+    while(true) {
+        bool rescan = false;
+        for(auto inst : block.instructions()) {
+            if(callable(inst)) {
+                modified = rescan = true;
+                break;
+            }
+        }
+        if(!rescan)
+            break;
+    }
+    return modified;
+}
 
 CMMC_NAMESPACE_END

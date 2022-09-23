@@ -33,5 +33,9 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
     }
     return modified;
 }
+void removeInst(Instruction* inst) {
+    const auto block = inst->getBlock();
+    block->instructions().remove(inst);
+}
 
 CMMC_NAMESPACE_END

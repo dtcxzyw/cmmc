@@ -223,8 +223,13 @@ class BranchTarget final {
     Block* mTarget;
     Vector<Value*> mArgs;
 
+    friend class ConditionalBranchInst;
+    Vector<Value*>& getArgsRef() noexcept {
+        return mArgs;
+    }
+
 public:
-    BranchTarget() : mTarget{ nullptr } {}
+    BranchTarget() noexcept : mTarget{ nullptr } {}
     template <typename... Args>
     explicit BranchTarget(Block* target, Args... args) : mTarget{ target }, mArgs{ args... } {}
 
@@ -233,9 +238,6 @@ public:
     }
     Block* getTarget() const noexcept {
         return mTarget;
-    }
-    Vector<Value*>& getArgs() noexcept {
-        return mArgs;
     }
     const Vector<Value*>& getArgs() const noexcept {
         return mArgs;
@@ -252,6 +254,7 @@ public:
     explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget);
 
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
+    void updateTargetArgs(BranchTarget& target, Vector<Value*> args);
     void dump(std::ostream& out) const override;
 
     BranchTarget& getTrueTarget() noexcept {

@@ -46,17 +46,18 @@ class CombineBranch final : public TransformPass<Function> {
         return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch;
     }
 
-    void foldForward(BranchTarget& target) const {
+    void foldForward(ConditionalBranchInst* branch, BranchTarget& target) const {
         const auto nextBranch = target.getTarget()->getTerminator()->as<ConditionalBranchInst>();
         const auto& nextTarget = nextBranch->getTrueTarget();
         target.resetTarget(nextTarget.getTarget());
-        auto args1 = target.getArgs();
+        const auto& args1 = target.getArgs();
         const auto& args2 = target.getTarget()->args();
-        target.getArgs() = nextTarget.getArgs();
-        for(auto& arg : target.getArgs()) {
+        auto newArgs = nextTarget.getArgs();
+        for(auto& arg : newArgs) {
             const auto pos = std::find(args2.cbegin(), args2.cend(), arg) - args2.cbegin();
             arg = args1[pos];
         }
+        branch->updateTargetArgs(target, std::move(newArgs));
     }
 
 public:
@@ -74,12 +75,12 @@ public:
                 auto branch = terminator->as<ConditionalBranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
                 if(forwardBlocks.count(trueTarget.getTarget())) {
-                    foldForward(trueTarget);
+                    foldForward(branch, trueTarget);
                     modified = true;
                 }
                 auto& falseTarget = branch->getFalseTarget();
                 if(forwardBlocks.count(falseTarget.getTarget())) {
-                    foldForward(falseTarget);
+                    foldForward(branch, falseTarget);
                     modified = true;
                 }
             }
