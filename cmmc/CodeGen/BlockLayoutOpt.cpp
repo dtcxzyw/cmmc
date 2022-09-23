@@ -26,33 +26,49 @@
 CMMC_NAMESPACE_BEGIN
 
 using BlockSeq = std::vector<uint32_t>;
+using CostT = double;
 
-static uint32_t evalCost(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                         const std::vector<uint32_t>& weights) {
+static CostT evalCost(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
+                      const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     assert(seq[0] == 0);
     for(uint32_t idx = 0; idx < seq.size(); ++idx)
         invMap[seq[idx]] = idx;
-    uint32_t cost = 0;
+    uint32_t cost = 0, totalJumpSize = 0;
+
+    // TODO: provided by subtarget
+    constexpr uint32_t branchPenalty = 5;
+    constexpr uint32_t bufferFlushPenalty = 100;
+
     for(auto [u, v] : edges) {
         if(u == v)
             continue;
         auto p1 = invMap[u];
         auto p2 = invMap[v];
-        if(p1 > p2)
+        bool backward = false;
+        if(p1 > p2) {
             std::swap(p1, p2);
+            backward = true;
+        }
+        uint32_t jumpSize = 0;
         for(uint32_t i = p1 + 1; i < p2; ++i)
-            cost += weights[i];
+            jumpSize += weights[i];
+        totalJumpSize += jumpSize;
+        if(jumpSize > bufferSize || backward) {
+            cost += bufferFlushPenalty;
+        } else if(jumpSize != 0) {
+            cost += branchPenalty;
+        }
     }
-    return cost;
+    return cost + 1.0 / (1.0 + exp(-static_cast<double>(totalJumpSize)));
 }
 
 static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                            const std::vector<uint32_t>& weights) {
+                            const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     std::vector<uint32_t> invMap(seq.size());
     BlockSeq best;
-    uint32_t bestCost = std::numeric_limits<uint32_t>::max();
+    CostT bestCost = 1e10;
     do {
-        const auto cost = evalCost(seq, invMap, edges, weights);
+        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
         if(cost < bestCost) {
             bestCost = cost;
             best = seq;
@@ -62,11 +78,11 @@ static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<uint32_t,
 }
 
 static uint32_t localSearch(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                            const std::vector<uint32_t>& weights, std::mt19937_64& urbg) {
+                            const std::vector<uint32_t>& weights, uint32_t bufferSize, std::mt19937_64& urbg) {
     constexpr uint32_t mutateCount = 20;
     BlockSeq best = seq;
-    uint32_t bestCost = evalCost(seq, invMap, edges, weights);
-    uint32_t lastCost = bestCost;
+    CostT bestCost = evalCost(seq, invMap, edges, weights, bufferSize);
+    CostT lastCost = bestCost;
     std::uniform_int_distribution<uint32_t> selector{ 1, static_cast<uint32_t>(seq.size()) - 1 };
     for(uint32_t idx = 0; idx < mutateCount; ++idx) {
         const auto p1 = selector(urbg);
@@ -74,7 +90,7 @@ static uint32_t localSearch(BlockSeq& seq, std::vector<uint32_t>& invMap, const 
         if(p1 == p2)
             continue;
         std::swap(seq[p1], seq[p2]);
-        const auto cost = evalCost(seq, invMap, edges, weights);
+        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
         if(cost < bestCost) {
             bestCost = cost;
             best = seq;
@@ -89,8 +105,8 @@ static uint32_t localSearch(BlockSeq& seq, std::vector<uint32_t>& invMap, const 
     return bestCost;
 }
 
-static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                    const std::vector<uint32_t>& weights) {
+static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_t>>& edges, const std::vector<uint32_t>& weights,
+                    uint32_t bufferSize) {
     std::random_device entropySrc;
     std::mt19937_64 urbg(entropySrc());
 
@@ -98,9 +114,9 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_
     constexpr uint32_t crossCount = 20;
     constexpr uint32_t iteration = 100;
     std::vector<uint32_t> invMap(seq.size());
-    std::vector<std::pair<BlockSeq, uint32_t>> pop;
+    std::vector<std::pair<BlockSeq, CostT>> pop;
     for(uint32_t k = 0; k < popSize; ++k) {
-        const auto cost = evalCost(seq, invMap, edges, weights);
+        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
         pop.emplace_back(seq, cost);
         std::shuffle(seq.begin() + 1, seq.end(), urbg);
     }
@@ -130,7 +146,7 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_
                 if(!used[seq2[idx]])
                     newSeq[freePos++] = seq2[idx];
             }
-            const auto cost = localSearch(newSeq, invMap, edges, weights, urbg);
+            const auto cost = localSearch(newSeq, invMap, edges, weights, bufferSize, urbg);
             pop.emplace_back(std::move(newSeq), cost);
         }
         std::sort(pop.begin(), pop.end(), [](const auto& lhs, const auto& rhs) { return lhs.second < rhs.second; });
@@ -174,11 +190,17 @@ void optimizeBlockLayout(MachineFunction& func, const Target& target) {
     BlockSeq seq(func.basicblocks.size());
     std::iota(seq.begin(), seq.end(), 0U);
 
+    const auto bufferSize = target.getSubTarget().getOpBufferSize();
     if(seq.size() <= 10) {
-        solveBruteForce(seq, edges, weights);
+        solveBruteForce(seq, edges, weights, bufferSize);
     } else {
-        solveGA(seq, edges, weights);
+        solveGA(seq, edges, weights, bufferSize);
     }
+
+    Vector<MachineBasicBlock*> newBlock(seq.size());
+    for(uint32_t idx = 0; idx < newBlock.size(); ++idx)
+        newBlock[idx] = func.basicblocks[seq[idx]];
+    func.basicblocks = std::move(newBlock);
 
     // eliminate 'goto next block' and merge blocks
     // TODO

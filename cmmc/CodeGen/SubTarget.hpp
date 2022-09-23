@@ -23,6 +23,9 @@ class SubTarget {
 public:
     virtual ~SubTarget() = default;
     virtual uint32_t issueWidth() const noexcept = 0;
+    virtual uint32_t getOpBufferSize() const noexcept {
+        return 32;
+    }
     virtual uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const = 0;
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
     virtual void peepholeOpt(MachineModule& module) const {}
