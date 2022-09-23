@@ -93,7 +93,8 @@ class TACFrameInfo final : public TargetFrameInfo {
 public:
     std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
                                                       CallingConvention cc) const override;
-    void emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const override;
+    void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
+                      TargetRegisterUsage& usage) const override;
 };
 
 class TACSubTarget final : public SimpleSubTarget {

@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/CodeGen/MachineInst.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -26,7 +27,9 @@ class TargetFrameInfo {
 public:
     virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
                                                               CallingConvention cc) const = 0;
-    virtual void emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const = 0;
+    virtual void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
+                              TargetRegisterUsage& usage) const = 0;
+    // virtual void fixCall(List<MachineInst>& block, FunctionType* func, CallingConvention cc) const = 0;
     virtual ~TargetFrameInfo() = default;
 };
 

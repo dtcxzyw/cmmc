@@ -52,7 +52,7 @@ class MachineFunction;
 
 struct MachineBasicBlock final {
     MachineFunction* func;
-    Deque<MachineInst> instructions;
+    List<MachineInst> instructions;
     Deque<StackAllocation*> stackAllocations;  // TODO: it should be temporary variable
 
     Vector<MachineBasicBlock*, ArenaAllocator<Arena::Source::MC, MachineBasicBlock*>> predecessors;

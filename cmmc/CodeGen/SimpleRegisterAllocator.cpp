@@ -17,8 +17,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static void simpleAllocate(MachineFunction& func, const Target& target) {
+static void simpleAllocate(MachineFunction& mfunc, Function& func, const Target& target) {
     // auto& frameInfo = target.getTargetFrameInfo();
+    // auto usage =
+    //    frameInfo.emitPrologue(mfunc.basicblocks.front(), func.getType()->as<FunctionType>(), func.getCallingConvention());
 }
 
 CMMC_REGISTER_ALLOCATOR("simple", simpleAllocate);

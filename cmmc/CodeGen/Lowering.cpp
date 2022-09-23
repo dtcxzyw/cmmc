@@ -147,10 +147,10 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
     }
 }
 
-static void lowerToMachineModule(MachineModule& machineModule, const Module& module) {
+static auto lowerToMachineModule(MachineModule& machineModule, const Module& module) {
     auto& symbols = machineModule.symbols();
 
-    std::vector<std::pair<MachineFunction*, Function*>> funcTask;
+    std::unordered_map<MachineFunction*, Function*> funcTask;
 
     for(auto global : module.globals()) {
         if(global.second->isFunction()) {
@@ -160,7 +160,7 @@ static void lowerToMachineModule(MachineModule& machineModule, const Module& mod
             } else {
                 auto mfunc = make<MachineFunction>(String<Arena::Source::MC>{ func->getSymbol() });
                 symbols.push_back(mfunc);
-                funcTask.emplace_back(mfunc, func);
+                funcTask.emplace(mfunc, func);
             }
         } else {
             reportNotImplemented();
@@ -169,6 +169,7 @@ static void lowerToMachineModule(MachineModule& machineModule, const Module& mod
 
     for(auto [mfunc, func] : funcTask)
         lowerToMachineFunction(mfunc, func, machineModule);
+    return funcTask;
 }
 
 void optimizeBlockLayout(MachineFunction& func, const Target& target);
@@ -179,7 +180,7 @@ std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
     auto& target = module.getTarget();
     // Stage1: instruction selection
     auto machineModule = std::make_unique<MachineModule>(target);
-    lowerToMachineModule(*machineModule, module);
+    auto funcMap = lowerToMachineModule(*machineModule, module);
     // Stage2: peephole optimizations
     auto& subTarget = target.getSubTarget();
     subTarget.peepholeOpt(*machineModule);
@@ -190,7 +191,7 @@ std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
             // Stage4: basic block level DAG scheduling
             schedule(*func, target);
             // Stage5: register allocation
-            assignRegisters(*func, target);
+            assignRegisters(*func, *funcMap[func], target);
             // Stage6: stack location
             allocateStackObjects(*func, target);
         }

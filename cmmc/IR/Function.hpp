@@ -51,7 +51,9 @@ public:
     bool isFunction() const noexcept override {
         return true;
     }
-
+    CallingConvention getCallingConvention() const noexcept {
+        return mCallingConvention;
+    }
     auto& attr() noexcept {
         return mAttr;
     }

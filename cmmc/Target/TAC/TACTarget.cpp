@@ -68,7 +68,8 @@ std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBloc
                                                                 CallingConvention cc) const {
     reportNotImplemented();
 }
-void TACFrameInfo::emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const {
+void TACFrameInfo::emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
+                                TargetRegisterUsage& usage) const {
     reportNotImplemented();
 }
 

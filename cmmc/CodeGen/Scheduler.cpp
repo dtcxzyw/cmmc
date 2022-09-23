@@ -64,16 +64,7 @@ void schedule(MachineFunction& func, const Target& target) {
 
     for(auto block : func.basicblocks) {
         auto& insts = block->instructions;
-        std::vector<uint32_t> deferred;
-        for(uint32_t idx = 0; idx < insts.size(); ++idx) {
-            auto& inst = insts[idx];
-            if(!usedInst.count(&inst)) {
-                deferred.push_back(idx);
-            }
-        }
-
-        for(auto iter = deferred.rbegin(); iter != deferred.rend(); ++iter)
-            insts.erase(insts.cbegin() + *iter);
+        insts.remove_if([&](auto& inst) { return !usedInst.count(&inst); });
     }
 
     // TODO: schedule by port utilization estimation

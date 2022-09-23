@@ -45,7 +45,8 @@ public:
     virtual std::unique_ptr<TargetRegisterUsage> clone() const = 0;
 };
 
-using RegisterAllocFunc = void (*)(MachineFunction& func, const Target& target);
+class Function;
+using RegisterAllocFunc = void (*)(MachineFunction& mfunc, Function& func, const Target& target);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -63,6 +64,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(MachineFunction& func, const Target& target);
+void assignRegisters(MachineFunction& mfunc, Function& func, const Target& target);
 
 CMMC_NAMESPACE_END
