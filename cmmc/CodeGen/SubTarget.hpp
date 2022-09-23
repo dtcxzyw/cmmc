@@ -26,7 +26,7 @@ public:
     virtual uint32_t getOpBufferSize() const noexcept {
         return 32;
     }
-    virtual uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const = 0;
+    // TODO: register renaming?
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
     virtual void peepholeOpt(MachineModule& module) const {}
     virtual void postPeepholeOpt(MachineModule& module) const {}
@@ -35,7 +35,6 @@ public:
 class SimpleSubTarget : public SubTarget {
 public:
     uint32_t issueWidth() const noexcept final;
-    uint32_t physicalRegisterCount(const TargetRegisterClass* regClass) const final;
     uint32_t getLatency(const MachineInst* inst) const final;
 };
 

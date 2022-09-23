@@ -76,21 +76,11 @@ public:
     }
 };
 
-class TACGPRClass final : public TargetRegisterClass {
-public:
-    uint32_t count() const noexcept override {
-        return 1024;
-    }
-};
-
 class TACInstInfo final : public TargetInstInfo {
-    TACGPRClass mGPR;
-
     void emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const;
     void emitBranch(const BranchTarget& target, LoweringContext& ctx) const;
 
 public:
-    const TargetRegisterClass& getRegisterClass(uint32_t idx) const noexcept override;
     const TargetInstClass& getInstClass(uint32_t instID) const override;
     bool hasSideEffect(MachineInst& inst) const noexcept override;
     bool isTerminator(MachineInst& inst) const noexcept override;
@@ -101,6 +91,9 @@ public:
 
 class TACFrameInfo final : public TargetFrameInfo {
 public:
+    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
+                                                      CallingConvention cc) const override;
+    void emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const override;
 };
 
 class TACSubTarget final : public SimpleSubTarget {

@@ -20,10 +20,6 @@ CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
-const TargetRegisterClass& TACInstInfo::getRegisterClass(uint32_t idx) const noexcept {
-    return mGPR;
-}
-
 const TargetInstClass& TACInstInfo::getInstClass(uint32_t instID) const {
     reportNotImplemented();
 }
@@ -66,6 +62,14 @@ bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         reportFatal("Unsupported target machine");
+}
+
+std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock* block, FunctionType* func,
+                                                                CallingConvention cc) const {
+    reportNotImplemented();
+}
+void TACFrameInfo::emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const {
+    reportNotImplemented();
 }
 
 CMMC_TARGET("tac", TACTarget);

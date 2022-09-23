@@ -40,28 +40,8 @@ public:
     }
 };
 
-class RISCVGPRClass final : public TargetRegisterClass {
-public:
-    uint32_t count() const noexcept override {
-        return 32;
-    }
-};
-
-class RISCVFPRClass final : public TargetRegisterClass {
-public:
-    uint32_t count() const noexcept override {
-        return 32;
-    }
-};
-
 class RISCVInstInfo final : public TargetInstInfo {
-    RISCVGPRClass mGPR;
-    RISCVFPRClass mFPR;
-
 public:
-    const TargetRegisterClass& getRegisterClass(Register reg) const override {
-        return reg < 32 ? static_cast<const TargetRegisterClass&>(mGPR) : static_cast<const TargetRegisterClass&>(mFPR);
-    }
     const TargetInstClass& getInstClass(uint32_t instID) const override {
         reportNotImplemented();
     }

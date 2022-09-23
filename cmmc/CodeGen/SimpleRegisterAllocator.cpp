@@ -13,10 +13,13 @@
 */
 
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-static void simpleAllocate(MachineFunction& func, const Target& target) {}
+static void simpleAllocate(MachineFunction& func, const Target& target) {
+    // auto& frameInfo = target.getTargetFrameInfo();
+}
 
 CMMC_REGISTER_ALLOCATOR("simple", simpleAllocate);
 

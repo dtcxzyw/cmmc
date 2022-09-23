@@ -16,14 +16,9 @@
 #include <cmmc/Config.hpp>
 #include <cstdint>
 #include <limits>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
-
-class TargetRegisterClass {
-public:
-    virtual ~TargetRegisterClass() = default;
-    virtual uint32_t count() const noexcept = 0;
-};
 
 using Register = uint32_t;
 

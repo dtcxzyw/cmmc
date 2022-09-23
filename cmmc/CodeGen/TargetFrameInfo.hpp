@@ -14,11 +14,19 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/CodeGen/RegisterAllocator.hpp>
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Type.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
 class TargetFrameInfo {
 public:
+    virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
+                                                              CallingConvention cc) const = 0;
+    virtual void emitEpilogue(MachineBasicBlock* block, TargetRegisterUsage& usage) const = 0;
     virtual ~TargetFrameInfo() = default;
 };
 

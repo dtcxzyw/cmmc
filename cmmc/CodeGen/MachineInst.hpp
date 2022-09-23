@@ -123,7 +123,8 @@ CMMC_ARENA_TRAIT(MachineInst, MC);
 class TargetInstClass {
 public:
     virtual ~TargetInstClass() = default;
-    virtual const TargetRegisterClass* getRegisterClass(uint32_t idx) const noexcept = 0;
+    virtual uint32_t getRegisterClass(uint32_t idx) const noexcept = 0;
+    virtual uint32_t getWriteRegisterClass() const noexcept = 0;
 };
 
 class LoweringContext;
@@ -132,7 +133,6 @@ class TargetInstInfo {
 public:
     virtual ~TargetInstInfo() = default;
 
-    virtual const TargetRegisterClass& getRegisterClass(Register reg) const = 0;
     virtual const TargetInstClass& getInstClass(uint32_t instID) const = 0;
     virtual bool hasSideEffect(MachineInst& inst) const noexcept = 0;
     virtual bool isTerminator(MachineInst& inst) const noexcept = 0;
