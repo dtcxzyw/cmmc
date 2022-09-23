@@ -77,7 +77,7 @@ public:
 };
 
 #define CMMC_TRANSFORM_PASS(CLASS)                                   \
-    static int __pass = [] {                                         \
+    static int __pass_##CLASS = [] {                                 \
         PassRegistry::get().registerPass(std::make_shared<CLASS>()); \
         return 0;                                                    \
     }()

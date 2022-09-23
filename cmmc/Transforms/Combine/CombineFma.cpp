@@ -13,3 +13,40 @@
 */
 
 // a * b + c -> fma(a, b, c)
+
+#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Value.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstdint>
+#include <unordered_map>
+
+CMMC_NAMESPACE_BEGIN
+
+class CombineFma final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        for(auto block : func.blocks()) {
+            modified |= reduceBlock(*block, [](Instruction* inst) -> Value* {
+                Value *v1, *v2, *v3;
+                if(fadd(fmul(any(v1), any(v2)), any(v3))(inst)) {
+                    return make<FMAInst>(v1, v2, v3);
+                }
+                return nullptr;
+            });
+        }
+        return modified;
+    }
+
+    PassType type() const noexcept override {
+        return PassType::SideEffectEquality;
+    }
+};
+
+CMMC_TRANSFORM_PASS(CombineFma);
+
+CMMC_NAMESPACE_END

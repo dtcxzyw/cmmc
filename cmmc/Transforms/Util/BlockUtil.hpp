@@ -12,20 +12,12 @@
     limitations under the License.
 */
 
-// func foo(int a, int b) -> int:
-// entry(int a, int b):
-//     int c = a + b;
-//     break b2(c);
-// b1(int c):
-//     return c;
-// b2(int c):
-//     break b2(c);
-// ==>
-// func foo(int a, int b) -> int:
-// entry(int a, int b):
-//     int c = a + b;
-//     break b2(c);
-// b2(int c):
-//     break b1(c);
-// b1(int c):
-//     return c;
+#pragma once
+#include <cmmc/IR/Block.hpp>
+
+CMMC_NAMESPACE_BEGIN
+
+using BlockReducer = Value* (*)(Instruction* inst);
+bool reduceBlock(Block& block, BlockReducer reducer);
+
+CMMC_NAMESPACE_END

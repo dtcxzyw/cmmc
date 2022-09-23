@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/MachineInst.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/IR/Function.hpp>

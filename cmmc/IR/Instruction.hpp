@@ -228,6 +228,9 @@ public:
     template <typename... Args>
     explicit BranchTarget(Block* target, Args... args) : mTarget{ target }, mArgs{ args... } {}
 
+    void resetTarget(Block* target) noexcept {
+        mTarget = target;
+    }
     Block* getTarget() const noexcept {
         return mTarget;
     }
@@ -285,7 +288,7 @@ public:
 
 class SelectInst final : public Instruction {
 public:
-    SelectInst(Value* predicate, Value* lhs, Value* rhs)
+    explicit SelectInst(Value* predicate, Value* lhs, Value* rhs)
         : Instruction{ InstructionID::Select, lhs->getType(), { predicate, lhs, rhs } } {}
 
     void dump(std::ostream& out) const override;
@@ -296,6 +299,12 @@ public:
     // TODO: VLA
     explicit StackAllocInst(Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
 
+    void dump(std::ostream& out) const override;
+};
+
+class FMAInst final : public Instruction {
+public:
+    explicit FMAInst(Value* x, Value* y, Value* z) : Instruction{ InstructionID::FFma, x->getType(), { x, y, z } } {}
     void dump(std::ostream& out) const override;
 };
 

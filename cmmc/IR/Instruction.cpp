@@ -325,4 +325,10 @@ void StackAllocInst::dump(std::ostream& out) const {
     getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
+void FMAInst::dump(std::ostream& out) const {
+    dumpBinary(out);
+    out << ", ";
+    getOperand(2)->dumpAsOperand(out);
+}
+
 CMMC_NAMESPACE_END

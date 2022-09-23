@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MachineInst.hpp"
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
