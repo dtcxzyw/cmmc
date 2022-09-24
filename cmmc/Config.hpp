@@ -21,3 +21,7 @@
 #define CMMC_NAMESPACE_END }
 
 #define CMMC_UNUSED(VAR) (void)(VAR)
+
+#ifndef __GNUC__
+#error "Unsupported compiler"
+#endif
