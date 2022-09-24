@@ -12,11 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN

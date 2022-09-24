@@ -94,7 +94,8 @@ bool LossyAnalysisTransformDriver::run(Function& func) const {
             break;
 
         // break one cycle
-        assert(!frontier.empty());
+        if(frontier.empty())
+            break;  // unreachable
         runBlock(*frontier.begin());
     }
 
