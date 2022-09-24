@@ -15,14 +15,24 @@
 #include <cassert>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 
 CMMC_NAMESPACE_BEGIN
+
+extern Flag uniqueLabel;
 
 Value::Value(Type* type) : mType{ type } {
     assert(type);
 }
 
+void Value::dumpPrefix(std::ostream& out) const {
+    if(uniqueLabel.get()) {
+        out << this << ' ';
+    }
+}
+
 void Value::dumpAsOperand(std::ostream& out) const {
+    dumpPrefix(out);
     mType->dumpName(out);
     out << ' ';
     dump(out);

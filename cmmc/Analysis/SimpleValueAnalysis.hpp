@@ -15,18 +15,24 @@
 #pragma once
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Value.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 class SimpleValueAnalysis final {
-    const DistinctPointerSet& mSet;
+    const AliasAnalysisResult& mAliasSet;
     std::unordered_map<Value*, Value*> mBasePointer;                            // <pointer, base pointer>
-    std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base address, <pointer, value>>
+    std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base pointer, <pointer, value>>
 
 public:
-    explicit SimpleValueAnalysis(const DistinctPointerSet& set) noexcept : mSet{ set } {}
+    explicit SimpleValueAnalysis(const AliasAnalysisResult& aliasSet) noexcept : mAliasSet{ aliasSet } {}
     void next(Instruction* inst);
     Value* getLastValue(Value* pointer) const;
+
+    // for merge
+    void addAlias(Value* newPtr, Value* srcPtr);
+    void merge(const SimpleValueAnalysis& rhs);
+    void completeMerge();
 };
 
 CMMC_NAMESPACE_END

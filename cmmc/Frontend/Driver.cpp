@@ -257,8 +257,11 @@ void DriverImpl::emit(Module& module) {
 
     const auto read =
         make<Function>(String<Arena::Source::IR>{ "read" }, make<FunctionType>(IntegerType::get(32), Vector<Type*>{}));
+    read->attr().addAttr(FunctionAttribute::NoMemoryRead);
     const auto write = make<Function>(String<Arena::Source::IR>{ "write" },
                                       make<FunctionType>(VoidType::get(), Vector<Type*>{ IntegerType::get(32) }));
+    write->attr().addAttr(FunctionAttribute::NoMemoryRead);
+
     ctx.addIdentifier(StringAST{ "read" }, read);
     ctx.addIdentifier(StringAST{ "write" }, write);
     module.add(read);

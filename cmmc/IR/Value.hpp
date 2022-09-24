@@ -37,6 +37,7 @@ public:
     virtual ~Value() = default;
 
     virtual void dump(std::ostream& out) const = 0;
+    void dumpPrefix(std::ostream& out) const;
     virtual void dumpAsOperand(std::ostream& out) const;
     Type* getType() const noexcept {
         return mType;

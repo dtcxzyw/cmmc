@@ -21,14 +21,35 @@ CMMC_NAMESPACE_BEGIN
 void Function::dump(std::ostream& out) const {
     out << "func " << getSymbol();
     getType()->dump(out);
+    if(!mAttr.empty()) {
+        out << " { ";
+#define HANDLE_ATTR(NAME)                      \
+    if(mAttr.hasAttr(FunctionAttribute::NAME)) \
+    out << #NAME " "
+
+        HANDLE_ATTR(NoMemoryRead);
+        HANDLE_ATTR(NoSideEffect);
+        HANDLE_ATTR(Stateless);
+        HANDLE_ATTR(NoAlias);
+        HANDLE_ATTR(NoReturn);
+        HANDLE_ATTR(NoRecurse);
+
+#undef HANDLE_ATTR
+        out << "}";
+    }
+
+    // TODO: print CC
+
     if(mBlocks.empty()) {  // decl only
         out << ';' << std::endl;
         return;
     }
 
     LabelAllocator allocator;
-    for(auto block : mBlocks)
+    for(auto block : mBlocks) {
         block->setLabel(allocator.allocate(block->getLabel()));
+        block->relabel();
+    }
     out << " {" << std::endl;
     for(auto block : mBlocks)
         block->dump(out);

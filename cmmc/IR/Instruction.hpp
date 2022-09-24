@@ -157,9 +157,7 @@ public:
     bool isBranch() const noexcept {
         return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch;
     }
-    bool canbeOperand() const noexcept {
-        return !isTerminator() && mInstID != InstructionID::Store;
-    }
+    bool canbeOperand() const noexcept;
 };
 
 class BinaryInst final : public Instruction {

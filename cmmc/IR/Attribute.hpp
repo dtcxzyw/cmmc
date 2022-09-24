@@ -31,6 +31,9 @@ public:
     void addAttr(Attr attr) noexcept {
         mAttr = static_cast<Attr>(static_cast<uint32_t>(mAttr) | static_cast<uint32_t>(attr));
     }
+    bool empty() const noexcept {
+        return !static_cast<uint32_t>(mAttr);
+    }
 };
 
 CMMC_NAMESPACE_END

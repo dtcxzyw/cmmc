@@ -20,6 +20,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iostream>
 
 CMMC_NAMESPACE_BEGIN
@@ -34,8 +35,6 @@ FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
 
     return make<FunctionType>(ret, std::move(argTypes));
 }
-
-static void blockArgPropagation(Function* func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
@@ -87,7 +86,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         }
     }
 
-    blockArgPropagation(func);
+    blockArgPropagation(*func);
     // TODO: sort blocks
 
     ctx.popScope();
@@ -522,111 +521,6 @@ Type* EmitContext::getType(const String<Arena::Source::AST>& name) const {
         return mChar;
     }
     reportNotImplemented();
-}
-
-static void blockArgPropagation(Function* func) {
-    auto& blocks = func->blocks();
-
-    struct BlockArgPropagationContext final {
-        std::unordered_set<Instruction*> req;
-        std::vector<Instruction*> todo;
-    };
-
-    std::unordered_map<Block*, BlockArgPropagationContext> ctx;
-
-    // bottom-up
-    for(auto block : blocks) {
-        auto& data = ctx[block];
-        for(auto inst : block->instructions()) {
-            bool isInvalid = false;
-            for(auto operand : inst->operands()) {
-                if(operand->isInstruction()) {
-                    auto op = operand->as<Instruction>();
-                    assert(op->getBlock());
-                    if(op->getBlock() != block) {
-                        data.req.emplace(op);
-                        isInvalid = true;
-                    }
-                }
-            }
-            if(isInvalid)
-                data.todo.push_back(inst);
-        }
-    }
-
-    while(true) {
-        bool modified = false;
-
-        for(auto iter = blocks.crbegin(); iter != blocks.crend(); ++iter) {
-            auto block = *iter;
-            auto terminator = block->getTerminator();
-            if(!terminator->isBranch())
-                continue;
-
-            auto& dst = ctx[block].req;
-
-            const auto inst = terminator->as<ConditionalBranchInst>();
-            const auto propagation = [&](BranchTarget& target) {
-                auto targetBlock = target.getTarget();
-                if(!targetBlock)
-                    return;
-
-                for(auto ref : ctx[targetBlock].req) {
-                    if(ref->getBlock() != block)
-                        modified |= dst.insert(ref).second;
-                }
-            };
-
-            propagation(inst->getTrueTarget());
-            propagation(inst->getFalseTarget());
-        }
-
-        if(!modified)
-            break;
-    }
-
-    // per-block
-    for(auto block : blocks) {
-        // append arguments
-        auto& blockCtx = ctx[block];
-        auto& req = blockCtx.req;
-        if(block == blocks.front() && !req.empty())
-            reportFatal("");
-
-        std::unordered_map<Instruction*, Value*> map;
-        for(auto inst : req)
-            map[inst] = block->addArg(inst);
-
-        // fix branch arguments
-        if(auto terminator = block->getTerminator(); terminator->isBranch()) {
-            const auto inst = terminator->as<ConditionalBranchInst>();
-            const auto propagation = [&](BranchTarget& target) {
-                auto targetBlock = target.getTarget();
-                if(!targetBlock)
-                    return;
-
-                auto& targetReq = ctx[targetBlock].req;
-                if(targetReq.empty())
-                    return;
-                auto args = target.getArgs();
-                for(auto inst : targetReq) {
-                    assert(inst->getBlock() == block || map.count(inst));
-                    const auto operand = inst->getBlock() == block ? inst : map[inst];
-                    args.push_back(operand);
-                }
-                inst->updateTargetArgs(target, std::move(args));
-            };
-
-            propagation(inst->getTrueTarget());
-            propagation(inst->getFalseTarget());
-        }
-
-        // replace operands
-        for(auto inst : blockCtx.todo) {
-            for(auto [src, dst] : map)
-                inst->replaceOperand(src, dst);
-        }
-    }
 }
 
 CMMC_NAMESPACE_END

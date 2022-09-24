@@ -25,44 +25,41 @@
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/FunctionAnalysis.hpp>
+#include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <iostream>
 #include <queue>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
-class LoadReduce final : public TransformPass<Function> {
-    bool runOnBlock(Block& block, const AliasAnalysisResult& alias) const {
-        std::unordered_map<Value*, Value*> lastValue;      // <pointer,value>
-        std::unordered_map<Instruction*, Value*> replace;  // <load inst, loaded value>
+class LoadReducePayload : public LossyAnalysisPayload {
+    SimpleValueAnalysis mAnalysis;
 
-        const auto update = [&](Value* addr, Value* val) {
-            std::vector<Value*> outdated;
-            for(auto [ptr, val] : lastValue) {
-                CMMC_UNUSED(val);
-                if(ptr != addr && !alias.isDistinct(ptr, addr))
-                    outdated.push_back(val);
-            }
-            for(auto key : outdated)
-                lastValue.erase(key);
+public:
+    explicit LoadReducePayload(const AliasAnalysisResult& aliasSet) : mAnalysis{ aliasSet } {}
 
-            lastValue[addr] = val;
-        };
+    bool run(Block& block) override {
+        auto& args = block.args();
+        for(auto arg : args) {
+            if(!arg->getType()->isPointer())
+                continue;
+            if(auto root = arg->getTarget())
+                mAnalysis.addAlias(arg, root);
+        }
+        std::unordered_map<Value*, Value*> replace;
 
         for(auto inst : block.instructions()) {
-            const auto addr = inst->getOperand(0);
-
             if(inst->getInstID() == InstructionID::Load) {
-                const auto iter = lastValue.find(addr);
-                if(iter != lastValue.cend())
-                    replace[inst] = iter->second;
-                else
-                    update(addr, inst);
-            } else if(inst->getInstID() == InstructionID::Store) {
-                update(addr, inst->getOperand(1));
+                const auto val = mAnalysis.getLastValue(inst->getOperand(0));
+                if(val)
+                    replace.emplace(inst, val);
             }
+
+            mAnalysis.next(inst);
         }
 
         bool modified = false;
@@ -74,16 +71,27 @@ class LoadReduce final : public TransformPass<Function> {
 
         return modified;
     }
+    void merge(const LossyAnalysisPayload& rhs) override {
+        mAnalysis.merge(dynamic_cast<const LoadReducePayload&>(rhs).mAnalysis);
+    }
+    void completeMerge() override {
+        mAnalysis.completeMerge();
+    }
+};
 
+class LoadReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& alias = analysis.get<AliasAnalysis>(func);
+        LossyAnalysisTransformDriver driver{ [&]() -> std::unique_ptr<LossyAnalysisPayload> {
+            return std::make_unique<LoadReducePayload>(alias);
+        } };
 
-        bool modified = false;
-        for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, alias);
+        if(driver.run(func)) {
+            blockArgPropagation(func);  // fixup cross references
+            return true;
         }
-        return modified;
+        return false;
     }
 
     PassType type() const noexcept override {

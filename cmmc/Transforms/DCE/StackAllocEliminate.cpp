@@ -18,6 +18,7 @@
 // ==>
 // eliminate all
 
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -30,6 +31,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class StackAllocEliminate final : public TransformPass<Function> {
     static bool isStoreOnly(Value* root, const BranchTarget& target, std::unordered_set<Block*>& visited,
                             std::unordered_set<Instruction*>& storeInsts) {
@@ -72,9 +74,18 @@ class StackAllocEliminate final : public TransformPass<Function> {
                     return true;
                 }
             }
+            if(!inst->hasOperand(alloc))
+                continue;
             if(inst->getInstID() == InstructionID::Store && inst->getOperand(0) == alloc) {
                 storeInsts.insert(inst);
                 continue;
+            }
+            if(inst->getInstID() == InstructionID::Call) {
+                const auto callee = inst->operands().back();
+                if(const auto func = dynamic_cast<Function*>(callee)) {
+                    if(func->attr().hasAttr(FunctionAttribute::NoMemoryRead))
+                        continue;
+                }
             }
             return false;
         }
@@ -148,5 +159,8 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(StackAllocEliminate);
+*/
+
+// TODO: combine UselessStoreEliminate and NoSideEffectEliminate
 
 CMMC_NAMESPACE_END

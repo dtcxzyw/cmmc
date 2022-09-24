@@ -31,6 +31,7 @@ void BlockArgument::dump(std::ostream& out) const {
 }
 
 void BlockArgument::dumpAsOperand(std::ostream& out) const {
+    dumpPrefix(out);
     getType()->dumpName(out);
     out << " %" << mLabel;
 }
@@ -39,7 +40,7 @@ void BlockArgument::setLabel(String<Arena::Source::IR> label) {
     mLabel = std::move(label);
 }
 
-void Block::dump(std::ostream& out) const {
+void Block::relabel() {
     // relabel args and instructions
     LabelAllocator allocator;
     String<Arena::Source::IR> argBaseLabel{ "arg" };
@@ -48,7 +49,9 @@ void Block::dump(std::ostream& out) const {
     for(auto inst : mInstructions)
         if(inst->canbeOperand())
             inst->setLabel(allocator.allocate(inst->getLabel()));
+}
 
+void Block::dump(std::ostream& out) const {
     out << '^' << mLabel << '(';
     bool isFirst = true;
     for(auto arg : mArgs) {

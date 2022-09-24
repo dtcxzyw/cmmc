@@ -21,6 +21,7 @@
 CMMC_NAMESPACE_BEGIN
 
 void Instruction::dumpAsOperand(std::ostream& out) const {
+    dumpPrefix(out);
     getType()->dumpName(out);
     out << " %" << mLabel;
 }
@@ -36,6 +37,13 @@ bool Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
 }
 bool Instruction::hasOperand(Value* operand) const noexcept {
     return std::find(mOperands.cbegin(), mOperands.cend(), operand) != mOperands.cend();
+}
+
+bool Instruction::canbeOperand() const noexcept {
+    if(mInstID == InstructionID::Call) {
+        return !getType()->isVoid();
+    }
+    return !isTerminator() && mInstID != InstructionID::Store;
 }
 
 bool Instruction::verify(std::ostream& out) const {
@@ -253,10 +261,35 @@ void ConditionalBranchInst::dump(std::ostream& out) const {
     }
 }
 
+static void replaceRoot(Block* block, Value* oldOperand, Value* newOperand) {
+    if(!block)
+        return;
+    bool modified = false;
+    for(auto arg : block->args()) {
+        if(arg->getTarget() == oldOperand) {
+            arg->setTarget(newOperand);
+            modified = true;
+        }
+    }
+    if(!modified)
+        return;
+    const auto terminator = block->getTerminator();
+    if(terminator->isBranch()) {
+        const auto branch = dynamic_cast<ConditionalBranchInst*>(terminator);
+        replaceRoot(branch->getTrueTarget().getTarget(), oldOperand, newOperand);
+        replaceRoot(branch->getFalseTarget().getTarget(), oldOperand, newOperand);
+    }
+}
+
 void BranchTarget::replaceOperand(Value* oldOperand, Value* newOperand) {
+    bool modified = false;
     for(auto& operand : mArgs)
-        if(operand == oldOperand)
+        if(operand == oldOperand) {
             operand = newOperand;
+            modified = true;
+        }
+    if(modified)
+        replaceRoot(mTarget, oldOperand, newOperand);
 }
 
 ConditionalBranchInst::ConditionalBranchInst(BranchTarget target)

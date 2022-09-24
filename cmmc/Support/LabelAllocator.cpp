@@ -19,7 +19,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag uniqueLabel;
+Flag uniqueLabel;
 static uint64_t uniqueID = 0;
 
 CMMC_INIT_OPTIONS_BEGIN
