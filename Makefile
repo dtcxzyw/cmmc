@@ -56,9 +56,11 @@ debug: $(BIN)
 	gdb $(BIN)
 splc: $(BIN)
 
-.PHONY: test-parse test-semantic test
+.PHONY: test-parse test-semantic test-codegentac test
 test-parse: splc
 	./tests/Parse/parse_test.py $(BIN) ./tests/Parse/
 test-semantic: splc
 	./tests/Semantic/semantic_test.py $(BIN) ./tests/Semantic/
-test: test-parse test-semantic
+test-codegentac: splc
+	./tests/CodeGenTAC/codegen_test.py $(BIN) ./tests/CodeGenTAC/
+test: test-parse test-semantic test-codegentac
