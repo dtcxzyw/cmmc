@@ -28,10 +28,10 @@ CMMC_NAMESPACE_BEGIN
 extern Flag strictMode;
 
 FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
-    const auto ret = ctx.getType(retType.typeIdentifier);
+    const auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
     Vector<Type*> argTypes;
     for(auto& arg : args)
-        argTypes.push_back(ctx.getType(arg.type.typeIdentifier));
+        argTypes.push_back(ctx.getType(arg.type.typeIdentifier, arg.type.space, {}));  // TODO: pass array base pointer
 
     return make<FunctionType>(ret, std::move(argTypes));
 }
@@ -50,10 +50,12 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(entry);
     // NOTICE: function arguments must be lvalues
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
-        const auto& name = decl.args[idx].name;
+        const auto& name = decl.args[idx].var.name;
         auto label = String<Arena::Source::IR>{ name };
         const auto arg = entry->getArg(idx);
         arg->setLabel(label);
+        if(arg->getType()->isArray())
+            reportNotImplemented();
         const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
         memArg->setLabel(label);
         ctx.makeOp<StoreInst>(memArg, arg);
@@ -411,9 +413,8 @@ Value* WhileExpr::emit(EmitContext& ctx) const {
 }
 
 Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
-    const auto type = ctx.getType(mType.typeIdentifier);
-
-    for(auto& [name, initExpr] : mVars) {
+    for(auto& [name, arraySize, initExpr] : mVars) {
+        const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
         local->setLabel(String<Arena::Source::IR>{ name });
         ctx.addIdentifier(name, local);
@@ -489,14 +490,14 @@ void EmitContext::pushScope() {
 void EmitContext::popScope() {
     mScopes.pop_back();
 }
-void EmitContext::addIdentifier(String<Arena::Source::AST> identifier, Value* value) {
+void EmitContext::addIdentifier(StringAST identifier, Value* value) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.count(identifier))
         reportFatal("");
     scope.emplace(std::move(identifier), value);
 }
-Value* EmitContext::lookupIdentifier(const String<Arena::Source::AST>& identifier) {
+Value* EmitContext::lookupIdentifier(const StringAST& identifier) {
     assert(!mScopes.empty());
 
     for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
@@ -509,17 +510,22 @@ EmitContext::EmitContext(Module* module) : mModule{ module } {
     mFloat = make<FloatingPointType>(true);
     mChar = make<IntegerType>(8U);
 }
-Type* EmitContext::getType(const String<Arena::Source::AST>& name) const {
-    if(name == "int") {
-        return mInteger;
+Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const {
+    Type* ret = nullptr;
+    if(space == TypeLookupSpace::Default) {
+        if(type == "int")
+            ret = mInteger;
+        else if(type == "float")
+            ret = mFloat;
+        else if(type == "char")
+            ret = mChar;
+        if(!ret)
+            reportNotImplemented();
     }
-    if(name == "float") {
-        return mFloat;
-    }
-    if(name == "char") {
-        return mChar;
-    }
-    reportNotImplemented();
+
+    for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter)
+        ret = make<ArrayType>(ret, *iter);
+    return ret;
 }
 
 CMMC_NAMESPACE_END

@@ -212,4 +212,30 @@ public:
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
+class ArrayType final : public Type {
+    Type* mElementType;
+    uint32_t mElementCount;
+
+public:
+    ArrayType(Type* elementType, uint32_t elementCount) noexcept : mElementType{ elementType }, mElementCount{ elementCount } {
+        assert(!elementType->isVoid());
+        assert(elementCount);
+    }
+
+    Type* getElementType() const noexcept {
+        return mElementType;
+    }
+    uint32_t getElementCount() const noexcept {
+        return mElementCount;
+    }
+
+    bool isArray() const noexcept override {
+        return true;
+    }
+    void dumpName(std::ostream& out) const override;
+    bool isSame(Type* rhs) const override;
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+};
+
 CMMC_NAMESPACE_END

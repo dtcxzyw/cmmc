@@ -19,7 +19,7 @@
 CMMC_NAMESPACE_BEGIN
 
 void Function::dump(std::ostream& out) const {
-    out << "func " << getSymbol();
+    out << "func @" << getSymbol();
     getType()->dump(out);
     if(!mAttr.empty()) {
         out << " { ";

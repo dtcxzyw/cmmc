@@ -76,7 +76,8 @@
 
 %type <TypeRef> Specifier;
 %type <TypeRef> StructSpecifier;
-%type <StringAST> VarDec;
+%type <VarList> ExtDecList;
+%type <NamedVar> VarDec;
 %type <FunctionDeclaration> FunDec;
 %type <ArgList> VarList;
 %type <NamedArg> ParamDec;
@@ -97,23 +98,23 @@ Program: ExtDefList END { driver.markEnd(); CMMC_NONTERMINAL(@$, Program, @1); }
 ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 | %empty { CMMC_EMPTY(@$, ExtDefList); }
 ;
-ExtDef: Specifier ExtDecList SEMI { CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
-| Specifier SEMI { CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
+ExtDef: Specifier ExtDecList SEMI { driver.addGlobalDef($1, $2); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
+| Specifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 | Specifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 ;
-ExtDecList: VarDec { CMMC_NONTERMINAL(@$, ExtDecList, @1); }
-| VarDec COMMA ExtDecList { CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
+ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
+| VarDec COMMA ExtDecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
 ;
 /* specifier */
-Specifier: TYPE { $$ = { $1, TypeRef::LookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
+Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
 StructSpecifier: STRUCT ID LC DefList RC { CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
-| STRUCT ID { $$ = { $2, TypeRef::LookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+| STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
-VarDec: ID { $$ = $1; CMMC_NONTERMINAL(@$, VarDec, @1); }
-| VarDec LB INT RB { CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
+| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(static_cast<uint32_t>($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
 ;
 FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
 | ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
@@ -121,7 +122,7 @@ FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, Fu
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
 ;
-ParamDec: Specifier VarDec { $$ = { $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
+ParamDec: Specifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
 ;
 /* statement */
 CompSt: LC DefList StmtList RC { CMMC_CONCAT_PACK($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
@@ -145,8 +146,8 @@ Def: Specifier DecList SEMI { $$ = CMMC_VAR_DEF($1, $2); CMMC_NONTERMINAL(@$, De
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
 ;
-Dec: VarDec { $$ = CMMC_VAR($1, nullptr); CMMC_NONTERMINAL(@$, Dec, @1); }
-| VarDec ASSIGN Exp { $$ = CMMC_VAR($1, $3); CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
+Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
+| VarDec ASSIGN Exp { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
 ;
 /* Expression */
 Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }

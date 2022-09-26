@@ -21,10 +21,14 @@
 #include <utility>
 
 CMMC_NAMESPACE_BEGIN
+using StringAST = String<Arena::Source::AST>;
+
+enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
+using ArraySize = Vector<uint32_t, ArenaAllocator<Arena::Source::AST, uint32_t>>;
 
 class Expr;
 
-using Scope = HashTable<String<Arena::Source::AST>, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
+using Scope = HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
 CMMC_ARENA_TRAIT(Scope, AST);
 
 class EmitContext final : public IRBuilder {
@@ -46,9 +50,9 @@ public:
     Value* getLValue(Expr* expr);
     void pushScope();
     void popScope();
-    void addIdentifier(String<Arena::Source::AST> identifier, Value* value);
-    Value* lookupIdentifier(const String<Arena::Source::AST>& identifier);
-    Type* getType(const String<Arena::Source::AST>& name) const;  // TODO: lookup space
+    void addIdentifier(StringAST identifier, Value* value);
+    Value* lookupIdentifier(const StringAST& identifier);
+    Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const;
 };
 
 CMMC_NAMESPACE_END

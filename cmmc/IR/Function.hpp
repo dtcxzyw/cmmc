@@ -16,7 +16,6 @@
 #include <cmmc/IR/Attribute.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
-#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 

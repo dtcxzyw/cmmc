@@ -17,6 +17,7 @@
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/Location.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <memory>
@@ -39,15 +40,19 @@ namespace std {  // NOTICE: we need ADL
         }                                                                                \
     while(false)
 
-using StringAST = cmmc::String<cmmc::Arena::Source::AST>;
-
 #include <ParserDecl.hpp>
 #include <cstdlib>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-using MixedDefinition = std::variant<FunctionDefinition>;
+struct GlobalVarDefinition final {
+    TypeRef type;
+    NamedVar var;
+    void emit(EmitContext& ctx) const;
+};
+
+using MixedDefinition = std::variant<FunctionDefinition, GlobalVarDefinition>;
 CMMC_ARENA_TRAIT(MixedDefinition, AST);
 
 struct ChildRef final {
@@ -137,6 +142,13 @@ public:
     void addFunctionDef(FunctionDefinition def) {
         mDefs.push_back(std::move(def));
     }
+    void addGlobalDef(const TypeRef& typeDef, const VarList& varList) {
+        for(auto& var : varList)
+            mDefs.push_back(GlobalVarDefinition{ typeDef, var });
+    }
+    void addOpaqueType(const TypeRef& typeDef) {
+        // TODO
+    }
     yy::location& location() noexcept {
         return mLocation;
     }
@@ -203,10 +215,6 @@ extern "C" YY_DECL;
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK)
 #define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
-#define CMMC_VAR(NAME, INIT_EXPR) \
-    NamedVar {                    \
-        NAME, INIT_EXPR           \
-    }
 #define CMMC_VAR_DEF(TYPE, VARS) LocalVarDefExpr::get(TYPE, VARS)
 #define CMMC_EXTENSION(EXT)         \
     if(driver.checkExtension(#EXT)) \
@@ -323,7 +331,7 @@ ConstantIntExpr* ConstantIntExpr::get(uintmax_t value, uint32_t bitWidth, bool i
     return make<ConstantIntExpr>(value, bitWidth, isSigned);
 }
 
-IdentifierExpr* IdentifierExpr::get(const String<Arena::Source::AST>& str) {
+IdentifierExpr* IdentifierExpr::get(const StringAST& str) {
     return make<IdentifierExpr>(str);
 }
 
@@ -349,6 +357,15 @@ WhileExpr* WhileExpr::get(Expr* pred, Expr* block) {
 
 ConstantFloatExpr* ConstantFloatExpr::get(double value, bool isFloat) {
     return make<ConstantFloatExpr>(value, isFloat);
+}
+
+void GlobalVarDefinition::emit(EmitContext& ctx) const {
+    auto module = ctx.getModule();
+    auto global =
+        make<GlobalVariable>(String<Arena::Source::IR>{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
+                             ctx.getRValue(var.initialValue));  // TODO: dynamic initializer?
+    module->add(global);
+    ctx.addIdentifier(var.name, global);
 }
 
 CMMC_NAMESPACE_END

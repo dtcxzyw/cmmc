@@ -37,8 +37,8 @@ struct Qualifier final {
 };
 
 struct TypeRef final {
-    String<Arena::Source::AST> typeIdentifier;
-    enum class LookupSpace { Default /* Builtins & Aliases */, Struct, Enum } space;
+    StringAST typeIdentifier;
+    TypeLookupSpace space;
 
     // Type* anonymousType = nullptr; // Function Signature/ Anonymous Struct
     Qualifier qualifier;
@@ -50,24 +50,25 @@ struct QualifiedType final {
     Qualifier qualifier;
 };
 
-struct NamedArg final {
-    TypeRef type;
-    String<Arena::Source::AST> name;
-};
-CMMC_ARENA_TRAIT(NamedArg, AST);
-
-using ArgList = Deque<NamedArg>;
-
 struct NamedVar final {
-    String<Arena::Source::AST> name;
+    StringAST name;
+    ArraySize arraySize;
     Expr* initialValue;
 };
 CMMC_ARENA_TRAIT(NamedVar, AST);
 using VarList = Deque<NamedVar>;
 
+struct NamedArg final {
+    TypeRef type;
+    NamedVar var;
+};
+CMMC_ARENA_TRAIT(NamedArg, AST);
+
+using ArgList = Deque<NamedArg>;
+
 struct FunctionDeclaration final {
     SourceLocation loc;
-    String<Arena::Source::AST> symbol;
+    StringAST symbol;
     TypeRef retType;
     ArgList args;
     // bool isVarArg;
@@ -169,10 +170,10 @@ public:
 };
 
 class ConstantStringExpr final : public Expr {
-    String<Arena::Source::AST> mString;
+    StringAST mString;
 
 public:
-    explicit ConstantStringExpr(const String<Arena::Source::AST>& str) : mString{ str } {}
+    explicit ConstantStringExpr(const StringAST& str) : mString{ str } {}
     Value* emit(EmitContext& ctx) const override;
 };
 
@@ -210,12 +211,12 @@ public:
 };
 
 class IdentifierExpr final : public Expr {
-    String<Arena::Source::AST> mIdentifier;
+    StringAST mIdentifier;
 
 public:
-    explicit IdentifierExpr(const String<Arena::Source::AST>& str) : mIdentifier{ str } {}
+    explicit IdentifierExpr(const StringAST& str) : mIdentifier{ str } {}
     Value* emit(EmitContext& ctx) const override;
-    static IdentifierExpr* get(const String<Arena::Source::AST>& str);
+    static IdentifierExpr* get(const StringAST& str);
     bool isLValue() const noexcept override {
         return true;
     }

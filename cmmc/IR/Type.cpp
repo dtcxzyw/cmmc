@@ -15,6 +15,7 @@
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -151,6 +152,32 @@ size_t StructType::getSize(const DataLayout&) const noexcept {
 }
 size_t StructType::getAlignment(const DataLayout&) const noexcept {
     reportNotImplemented();
+}
+
+void ArrayType::dumpName(std::ostream& out) const {
+    const ArrayType* cur = this;
+    while(cur->getElementType()->isArray())
+        cur = cur->getElementType()->as<ArrayType>();
+    cur->getElementType()->dump(out);
+    cur = this;
+    while(true) {
+        out << '[' << cur->getElementCount() << ']';
+        if(cur->getElementType()->isArray())
+            cur = cur->getElementType()->as<ArrayType>();
+    }
+}
+bool ArrayType::isSame(Type* rhs) const {
+    if(auto rhsArray = dynamic_cast<ArrayType*>(rhs))
+        return mElementCount == rhsArray->mElementCount && mElementType->isSame(rhsArray->mElementType);
+    return false;
+}
+size_t ArrayType::getSize(const DataLayout& dataLayout) const noexcept {
+    const auto size = mElementType->getSize(dataLayout);
+    const auto alignment = mElementType->getAlignment(dataLayout);
+    return (size + alignment - 1) / alignment * alignment * mElementCount;
+}
+size_t ArrayType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    return mElementType->getAlignment(dataLayout);
 }
 
 CMMC_NAMESPACE_END
