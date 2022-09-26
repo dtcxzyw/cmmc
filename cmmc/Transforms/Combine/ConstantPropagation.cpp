@@ -58,60 +58,59 @@ class ConstantPropagation final : public TransformPass<Function> {
                 uintmax_t u1, u2;
                 CompareOp cmp;
 
-                if(not_(int_(i1))(inst)) {
+                if(not_(int_(i1))(inst))
                     return makeInt(inst, !i1);
-                } else if(neg(int_(i1))(inst)) {
+                if(neg(int_(i1))(inst))
                     return makeInt(inst, -i1);
-                } else if(add(int_(i1), int_(i2))(inst)) {
+                if(add(int_(i1), int_(i2))(inst))
                     return makeInt(inst, i1 + i2);
-                } else if(sub(int_(i1), int_(i2))(inst)) {
+                if(sub(int_(i1), int_(i2))(inst))
                     return makeInt(inst, i1 - i2);
-                } else if(mul(int_(i1), int_(i2))(inst)) {
+                if(mul(int_(i1), int_(i2))(inst))
                     return makeInt(inst, i1 * i2);
-                } else if(sdiv(int_(i1), int_(i2))(inst) && i2) {
+                if(sdiv(int_(i1), int_(i2))(inst) && i2)
                     return makeInt(inst, i1 / i2);
-                } else if(udiv(uint_(u1), uint_(u2))(inst) && u2) {
+                if(udiv(uint_(u1), uint_(u2))(inst) && u2)
                     return makeInt(inst, u1 / u2);
-                } else if(srem(int_(i1), int_(i2))(inst) && i2) {
+                if(srem(int_(i1), int_(i2))(inst) && i2)
                     return makeInt(inst, i1 % i2);
-                } else if(urem(uint_(u1), uint_(u2))(inst) && u2) {
+                if(urem(uint_(u1), uint_(u2))(inst) && u2)
                     return makeInt(inst, u1 % u2);
-                } else if(scmp(cmp, int_(i1), int_(i2))(inst)) {
+                if(scmp(cmp, int_(i1), int_(i2))(inst))
                     return makeInt(inst, doCompare(cmp, i1, i2));
-                } else if(ucmp(cmp, uint_(u1), uint_(u2))(inst)) {
+                if(ucmp(cmp, uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, doCompare(cmp, u1, u2));
-                } else if(fcmp(cmp, fp_(f1), fp_(f2))(inst)) {
+                if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
                     return makeInt(inst, doCompare(cmp, f1, f2));
-                } else if(shl(uint_(u1), uint_(u2))(inst)) {
+                if(shl(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 << u2);
-                } else if(lshr(uint_(u1), uint_(u2))(inst)) {
+                if(lshr(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 >> u2);
-                } else if(ashr(int_(i1), uint_(u2))(inst)) {
+                if(ashr(int_(i1), uint_(u2))(inst))
                     return makeInt(inst, i1 >> u2);
-                } else if(and_(uint_(u1), uint_(u2))(inst)) {
+                if(and_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 & u2);
-                } else if(or_(uint_(u1), uint_(u2))(inst)) {
+                if(or_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 | u2);
-                } else if(xor_(uint_(u1), uint_(u2))(inst)) {
+                if(xor_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, i1 ^ u2);
-                }
+
             } else if(inst->isFloatingPointOp()) {
                 auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
                 double f3;
 
-                if(fneg(fp_(f1))(inst)) {
+                if(fneg(fp_(f1))(inst))
                     return makeFP(inst, -f1);
-                } else if(fadd(fp_(f1), fp_(f2))(inst)) {
+                if(fadd(fp_(f1), fp_(f2))(inst))
                     return makeFP(inst, f1 + f2);
-                } else if(fsub(fp_(f1), fp_(f2))(inst)) {
+                if(fsub(fp_(f1), fp_(f2))(inst))
                     return makeFP(inst, f1 - f2);
-                } else if(fmul(fp_(f1), fp_(f2))(inst)) {
+                if(fmul(fp_(f1), fp_(f2))(inst))
                     return makeFP(inst, f1 * f2);
-                } else if(fdiv(fp_(f1), fp_(f2))(inst)) {
+                if(fdiv(fp_(f1), fp_(f2))(inst))
                     return makeFP(inst, f1 / f2);
-                } else if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst)) {
+                if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst))
                     return makeFP(inst, fma(f1, f2, f3));
-                }
             }
             return nullptr;
         });
