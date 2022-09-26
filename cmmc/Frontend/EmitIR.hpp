@@ -15,13 +15,13 @@
 #pragma once
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 #include <utility>
 
 CMMC_NAMESPACE_BEGIN
-using StringAST = String<Arena::Source::AST>;
 
 enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<uint32_t, ArenaAllocator<Arena::Source::AST, uint32_t>>;
@@ -34,6 +34,7 @@ CMMC_ARENA_TRAIT(Scope, AST);
 class EmitContext final : public IRBuilder {
     Module* mModule;
     Deque<Scope> mScopes;
+    HashTable<StringAST, StructType*, Arena::Source::AST, StringHasher<Arena::Source::AST>> mStructTypes;
 
     Type* mInteger;
     Type* mFloat;
@@ -51,6 +52,7 @@ public:
     void pushScope();
     void popScope();
     void addIdentifier(StringAST identifier, Value* value);
+    void addIdentifier(StringAST identifier, StructType* type);
     Value* lookupIdentifier(const StringAST& identifier);
     Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const;
 };

@@ -20,6 +20,8 @@
 CMMC_NAMESPACE_BEGIN
 
 bool VoidType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     return rhs->isVoid();
 }
 VoidType* VoidType::get() {
@@ -36,6 +38,8 @@ size_t VoidType::getAlignment(const DataLayout& dataLayout) const noexcept {
 }
 
 bool PointerType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     return rhs->isPointer() && getPointee()->isSame(rhs->as<PointerType>()->getPointee());
 }
 PointerType* PointerType::get(Type* pointee) {
@@ -53,6 +57,8 @@ size_t PointerType::getAlignment(const DataLayout& dataLayout) const noexcept {
 }
 
 bool IntegerType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     return rhs->isInteger() && (mBitWidth == rhs->as<IntegerType>()->mBitWidth);
 }
 size_t IntegerType::getFixedSize() const noexcept {
@@ -75,6 +81,8 @@ FloatingPointType* FloatingPointType::get(bool isFloat) {
     return make<FloatingPointType>(isFloat);
 }
 bool FloatingPointType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     return rhs->isFloatingPoint() && (mIsFloat == rhs->as<FloatingPointType>()->mIsFloat);
 }
 size_t FloatingPointType::getFixedSize() const noexcept {
@@ -91,6 +99,8 @@ size_t FloatingPointType::getAlignment(const DataLayout& dataLayout) const noexc
 }
 
 bool FunctionType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     if(!rhs->isFunction())
         return false;
     auto rt = rhs->as<FunctionType>();
@@ -142,16 +152,22 @@ void StructType::dumpName(std::ostream& out) const {
     out << "struct " << mName;
 }
 bool StructType::isSame(Type* rhs) const {
-    if(!rhs->isStruct())
-        return false;
-    reportNotImplemented();
-    return false;
+    return this == rhs;
 }
-size_t StructType::getSize(const DataLayout&) const noexcept {
-    reportNotImplemented();
+size_t StructType::getSize(const DataLayout& dataLayout) const noexcept {
+    size_t offset = 0;
+    for(auto& field : mFields) {
+        const auto size = field.type->getSize(dataLayout);
+        const auto alignment = field.type->getAlignment(dataLayout);
+        offset = ((offset + alignment - 1) / alignment + 1) * alignment + size;
+    }
+    return offset;
 }
-size_t StructType::getAlignment(const DataLayout&) const noexcept {
-    reportNotImplemented();
+size_t StructType::getAlignment(const DataLayout& dataLayout) const noexcept {
+    size_t maxAlignment = 1;
+    for(auto& field : mFields)
+        maxAlignment = std::max(maxAlignment, field.type->getAlignment(dataLayout));
+    return maxAlignment;
 }
 
 void ArrayType::dumpName(std::ostream& out) const {
@@ -167,6 +183,8 @@ void ArrayType::dumpName(std::ostream& out) const {
     }
 }
 bool ArrayType::isSame(Type* rhs) const {
+    if(this == rhs)
+        return true;
     if(auto rhsArray = dynamic_cast<ArrayType*>(rhs))
         return mElementCount == rhsArray->mElementCount && mElementType->isSame(rhsArray->mElementType);
     return false;

@@ -158,7 +158,7 @@ static auto lowerToMachineModule(MachineModule& machineModule, const Module& mod
             if(func->blocks().empty()) {
                 // TODO: external func
             } else {
-                auto mfunc = make<MachineFunction>(String<Arena::Source::MC>{ func->getSymbol() });
+                auto mfunc = make<MachineFunction>(StringMC{ func->getSymbol() });
                 symbols.push_back(mfunc);
                 funcTask.emplace(mfunc, func);
             }

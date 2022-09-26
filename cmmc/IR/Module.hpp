@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <ostream>
 
@@ -24,7 +25,8 @@ class Target;
 
 class Module final {
     Arena mArena;
-    HashTable<String<Arena::Source::IR>, GlobalValue*, Arena::Source::IR, StringHasher<Arena::Source::IR>> mGlobals;
+    HashTable<StringIR, GlobalValue*, Arena::Source::IR, StringHasher<Arena::Source::IR>> mGlobals;
+    Vector<Type*> mTypes;
     const Target* mTarget = nullptr;
 
 public:
@@ -52,6 +54,7 @@ public:
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
     void add(GlobalValue* globalValue);
+    void add(Type* type);
 };
 CMMC_ARENA_TRAIT(Module, IR);
 

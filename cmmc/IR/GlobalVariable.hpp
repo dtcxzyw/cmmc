@@ -27,8 +27,7 @@ class GlobalVariable final : public GlobalValue {
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(String<Arena::Source::IR> symbol, Type* type, Value* value)
-        : GlobalValue{ symbol, type }, mStaticInitializedValue{ value } {
+    GlobalVariable(StringIR symbol, Type* type, Value* value) : GlobalValue{ symbol, type }, mStaticInitializedValue{ value } {
         assert(value->isConstant());
     }
     void dump(std::ostream& out) const override;

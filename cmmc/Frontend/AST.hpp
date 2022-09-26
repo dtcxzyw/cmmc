@@ -58,6 +58,13 @@ struct NamedVar final {
 CMMC_ARENA_TRAIT(NamedVar, AST);
 using VarList = Deque<NamedVar>;
 
+struct VarDef final {
+    TypeRef type;
+    VarList var;
+};
+CMMC_ARENA_TRAIT(VarDef, AST);
+using VarDefList = Deque<VarDef>;
+
 struct NamedArg final {
     TypeRef type;
     NamedVar var;

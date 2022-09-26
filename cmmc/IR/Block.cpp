@@ -36,14 +36,14 @@ void BlockArgument::dumpAsOperand(std::ostream& out) const {
     out << " %" << mLabel;
 }
 
-void BlockArgument::setLabel(String<Arena::Source::IR> label) {
+void BlockArgument::setLabel(StringIR label) {
     mLabel = std::move(label);
 }
 
 void Block::relabel() {
     // relabel args and instructions
     LabelAllocator allocator;
-    String<Arena::Source::IR> argBaseLabel{ "arg" };
+    StringIR argBaseLabel{ "arg" };
     for(auto arg : mArgs)
         arg->setLabel(allocator.allocate(argBaseLabel));
     for(auto inst : mInstructions)

@@ -39,7 +39,7 @@ FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
 void FunctionDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
     const auto funcType = decl.getSignature(ctx);
-    auto func = make<Function>(String<Arena::Source::IR>{ decl.symbol }, funcType);
+    auto func = make<Function>(StringIR{ decl.symbol }, funcType);
     module->add(func);
     ctx.addIdentifier(decl.symbol, func);
 
@@ -51,7 +51,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     // NOTICE: function arguments must be lvalues
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
-        auto label = String<Arena::Source::IR>{ name };
+        auto label = StringIR{ name };
         const auto arg = entry->getArg(idx);
         arg->setLabel(label);
         if(arg->getType()->isArray())
@@ -416,7 +416,7 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
     for(auto& [name, arraySize, initExpr] : mVars) {
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
-        local->setLabel(String<Arena::Source::IR>{ name });
+        local->setLabel(StringIR{ name });
         ctx.addIdentifier(name, local);
         if(initExpr)
             ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
@@ -519,13 +519,23 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
             ret = mFloat;
         else if(type == "char")
             ret = mChar;
-        if(!ret)
-            reportNotImplemented();
+    } else if(space == TypeLookupSpace::Struct) {
+        const auto iter = mStructTypes.find(type);
+        if(iter != mStructTypes.cend())
+            ret = iter->second;
     }
+
+    if(!ret)
+        reportNotImplemented();
 
     for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter)
         ret = make<ArrayType>(ret, *iter);
     return ret;
+}
+void EmitContext::addIdentifier(StringAST identifier, StructType* type) {
+    if(mStructTypes.count(identifier))
+        reportFatal("");
+    mStructTypes.emplace(std::move(identifier), type);
 }
 
 CMMC_NAMESPACE_END

@@ -93,7 +93,7 @@ class Instruction : public Value {
     InstructionID mInstID;
     Deque<Value*> mOperands;
     Block* mBlock;
-    String<Arena::Source::IR> mLabel;
+    StringIR mLabel;
 
     // bool isVolatile;
 public:
@@ -122,10 +122,10 @@ public:
     virtual bool replaceOperand(Value* oldOperand, Value* newOperand);
     bool hasOperand(Value* operand) const noexcept;
 
-    void setLabel(String<Arena::Source::IR> label) {
+    void setLabel(StringIR label) {
         mLabel = std::move(label);
     }
-    const String<Arena::Source::IR>& getLabel() const noexcept {
+    const StringIR& getLabel() const noexcept {
         return mLabel;
     }
     bool isInstruction() const noexcept final {

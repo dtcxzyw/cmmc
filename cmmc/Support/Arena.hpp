@@ -107,6 +107,10 @@ template <Arena::Source source>
 using String =
     std::basic_string<char, std::char_traits<char>, typename GeneralArenaAllocator<source>::template ArenaAllocator<char>>;
 
+using StringAST = String<Arena::Source::AST>;
+using StringIR = String<Arena::Source::IR>;
+using StringMC = String<Arena::Source::MC>;
+
 template <Arena::Source source>
 struct StringHasher final {
     size_t operator()(const String<source>& src) const {

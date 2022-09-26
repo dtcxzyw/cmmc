@@ -22,14 +22,14 @@
 CMMC_NAMESPACE_BEGIN
 
 class MachineSymbol {
-    String<Arena::Source::MC> mSymbol;
+    StringMC mSymbol;
 
 public:
     // linkage
-    explicit MachineSymbol(String<Arena::Source::MC> symbol) : mSymbol{ std::move(symbol) } {}
+    explicit MachineSymbol(StringMC symbol) : mSymbol{ std::move(symbol) } {}
     static constexpr auto arenaSource = Arena::Source::MC;
     virtual ~MachineSymbol() = default;
-    const String<Arena::Source::MC>& getSymbol() const noexcept {
+    const StringMC& getSymbol() const noexcept {
         return mSymbol;
     }
 };
@@ -38,7 +38,7 @@ struct MachineData : public MachineSymbol {
     Vector<std::byte, ArenaAllocator<arenaSource, std::byte>> data;
     bool isReadOnly;
 
-    MachineData(String<Arena::Source::MC> symbol, Vector<std::byte, ArenaAllocator<arenaSource, std::byte>> data, bool isReadOnly)
+    MachineData(StringMC symbol, Vector<std::byte, ArenaAllocator<arenaSource, std::byte>> data, bool isReadOnly)
         : MachineSymbol{ std::move(symbol) }, data{ std::move(data) }, isReadOnly{ isReadOnly } {}
 };
 
@@ -65,7 +65,7 @@ CMMC_ARENA_TRAIT(MachineBasicBlock, MC);
 struct MachineFunction final : public MachineSymbol {
     Vector<MachineBasicBlock*> basicblocks;
 
-    explicit MachineFunction(String<Arena::Source::MC> symbol) : MachineSymbol{ std::move(symbol) } {}
+    explicit MachineFunction(StringMC symbol) : MachineSymbol{ std::move(symbol) } {}
 };
 
 class Target;

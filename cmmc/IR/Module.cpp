@@ -23,7 +23,10 @@ CMMC_NAMESPACE_BEGIN
 Module::Module() : mArena{ Arena::Source::IR } {}
 
 void Module::dump(std::ostream& out) const {
-    // TODO: dump struct/opaque types
+    for(auto type : mTypes)
+        type->dump(out);
+
+    out << std::endl;
 
     for(auto value : mGlobals)
         value.second->dump(out);
@@ -40,6 +43,10 @@ bool Module::verify(std::ostream& out) const {
 
 void Module::add(GlobalValue* globalValue) {
     mGlobals.emplace(globalValue->getSymbol(), globalValue);
+}
+
+void Module::add(Type* type) {
+    mTypes.push_back(type);
 }
 
 CMMC_NAMESPACE_END

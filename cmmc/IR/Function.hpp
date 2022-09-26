@@ -37,8 +37,7 @@ class Function final : public GlobalValue {
     CallingConvention mCallingConvention;
 
 public:
-    Function(String<Arena::Source::IR> symbol, FunctionType* type)
-        : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C } {}
+    Function(StringIR symbol, FunctionType* type) : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C } {}
     Block* entryBlock() const noexcept {
         return mBlocks.front();
     }

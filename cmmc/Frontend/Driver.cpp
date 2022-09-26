@@ -18,6 +18,7 @@
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/Location.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <memory>
@@ -46,13 +47,20 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
+struct StructDefinition final {
+    StringAST name;
+    VarDefList list;
+
+    void emit(EmitContext& ctx) const;
+};
+
 struct GlobalVarDefinition final {
     TypeRef type;
     NamedVar var;
     void emit(EmitContext& ctx) const;
 };
 
-using MixedDefinition = std::variant<FunctionDefinition, GlobalVarDefinition>;
+using MixedDefinition = std::variant<FunctionDefinition, GlobalVarDefinition, StructDefinition>;
 CMMC_ARENA_TRAIT(MixedDefinition, AST);
 
 struct ChildRef final {
@@ -146,8 +154,11 @@ public:
         for(auto& var : varList)
             mDefs.push_back(GlobalVarDefinition{ typeDef, var });
     }
-    void addOpaqueType(const TypeRef& typeDef) {
+    void addOpaqueType(const TypeRef& typeName) {
         // TODO
+    }
+    void addStructType(StringAST typeName, VarDefList list) {
+        mDefs.push_back(StructDefinition{ std::move(typeName), std::move(list) });
     }
     yy::location& location() noexcept {
         return mLocation;
@@ -186,6 +197,12 @@ public:
     }
 };
 
+static void generateScope(ExprPack& result, const VarDefList& list, const ExprPack& src) {
+    for(auto var : list)
+        result.push_back(LocalVarDefExpr::get(var.type, var.var));
+    result.insert(result.cend(), src.cbegin(), src.cend());
+}
+
 CMMC_NAMESPACE_END
 
 #define YY_DECL yy::parser::symbol_type yylex(cmmc::DriverImpl& driver)
@@ -215,10 +232,10 @@ extern "C" YY_DECL;
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK)
 #define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
-#define CMMC_VAR_DEF(TYPE, VARS) LocalVarDefExpr::get(TYPE, VARS)
 #define CMMC_EXTENSION(EXT)         \
     if(driver.checkExtension(#EXT)) \
         YYABORT;
+#define CMMC_SCOPE_GEN(EXPR_PACK, LOCAL_VARS, STATEMENTS) generateScope((EXPR_PACK), (LOCAL_VARS), (STATEMENTS))
 
 #include <ParserImpl.hpp>
 #include <ScannerImpl.hpp>
@@ -263,11 +280,10 @@ void DriverImpl::emit(Module& module) {
     EmitContext ctx{ &module };
     ctx.pushScope();
 
-    const auto read =
-        make<Function>(String<Arena::Source::IR>{ "read" }, make<FunctionType>(IntegerType::get(32), Vector<Type*>{}));
+    const auto read = make<Function>(StringIR{ "read" }, make<FunctionType>(IntegerType::get(32), Vector<Type*>{}));
     read->attr().addAttr(FunctionAttribute::NoMemoryRead);
-    const auto write = make<Function>(String<Arena::Source::IR>{ "write" },
-                                      make<FunctionType>(VoidType::get(), Vector<Type*>{ IntegerType::get(32) }));
+    const auto write =
+        make<Function>(StringIR{ "write" }, make<FunctionType>(VoidType::get(), Vector<Type*>{ IntegerType::get(32) }));
     write->attr().addAttr(FunctionAttribute::NoMemoryRead);
 
     ctx.addIdentifier(StringAST{ "read" }, read);
@@ -361,11 +377,24 @@ ConstantFloatExpr* ConstantFloatExpr::get(double value, bool isFloat) {
 
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
-    auto global =
-        make<GlobalVariable>(String<Arena::Source::IR>{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
-                             ctx.getRValue(var.initialValue));  // TODO: dynamic initializer?
+    auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
+                                       ctx.getRValue(var.initialValue));  // TODO: dynamic initializer?
     module->add(global);
     ctx.addIdentifier(var.name, global);
+}
+
+void StructDefinition::emit(EmitContext& ctx) const {
+    Vector<StructField> fields;
+    for(auto& item : list) {
+        for(auto& subItem : item.var) {
+            const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);  // TODO: array
+            fields.push_back(StructField{ SourceLocation{}, type, StringIR{ subItem.name } });
+            if(subItem.initialValue)
+                reportFatal("");
+        }
+    }
+    auto type = make<StructType>(StringIR{ name }, std::move(fields));
+    ctx.addIdentifier(name, type);
 }
 
 CMMC_NAMESPACE_END

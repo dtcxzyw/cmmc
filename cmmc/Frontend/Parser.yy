@@ -86,8 +86,8 @@
 %type <Expr*> Stmt;
 %type <Expr*> Exp;
 %type <ExprPack> Args;
-%type <ExprPack> DefList;
-%type <Expr*> Def;
+%type <VarDefList> DefList;
+%type <VarDef> Def;
 %type <VarList> DecList;
 %type <NamedVar> Dec;
 
@@ -109,7 +109,7 @@ ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
 Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
@@ -125,7 +125,7 @@ VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL
 ParamDec: Specifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
 ;
 /* statement */
-CompSt: LC DefList StmtList RC { CMMC_CONCAT_PACK($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
+CompSt: LC DefList StmtList RC { CMMC_SCOPE_GEN($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
@@ -141,7 +141,7 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
-Def: Specifier DecList SEMI { $$ = CMMC_VAR_DEF($1, $2); CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
+Def: Specifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }

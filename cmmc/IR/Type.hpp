@@ -191,17 +191,18 @@ public:
 struct StructField final {
     SourceLocation loc;
     Type* type;
-    String<Arena::Source::IR> fieldName;
+    StringIR fieldName;
 
     // uint32_t alignment;
 };
 CMMC_ARENA_TRAIT(StructField, IR);
 
 class StructType final : public Type {
-    String<Arena::Source::IR> mName;
-    List<StructField> mFields;
+    StringIR mName;
+    Vector<StructField> mFields;
 
 public:
+    StructType(StringIR name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
     bool isStruct() const noexcept override {
         return true;
     }
