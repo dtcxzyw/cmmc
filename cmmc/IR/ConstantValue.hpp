@@ -32,27 +32,32 @@ class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
 
 public:
-    ConstantInteger(Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {}
-    void dump(std::ostream& out) const override;
-    intmax_t getValue() const noexcept {
-        return mValue;
+    ConstantInteger(Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
+        assert(type->isInteger());
     }
+    void dump(std::ostream& out) const override;
+
+    uintmax_t getZeroExtended() const noexcept;
+    intmax_t getSignExtended() const noexcept;
 };
 
 class ConstantFloatingPoint final : public ConstantValue {
     double mValue;
 
 public:
-    ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {}
-    void dump(std::ostream& out) const override;
-    double getValue() const noexcept {
-        return mValue;
+    ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {
+        assert(type->isFloatingPoint());
     }
+    void dump(std::ostream& out) const override;
+    double getValue() const noexcept;
+    bool isEqual(double val) const noexcept;
 };
 
 class UndefinedValue final : public ConstantValue {
 public:
-    explicit UndefinedValue(Type* type) : ConstantValue{ type } {}
+    explicit UndefinedValue(Type* type) : ConstantValue{ type } {
+        assert(!type->isVoid());
+    }
     void dump(std::ostream& out) const override;
 };
 

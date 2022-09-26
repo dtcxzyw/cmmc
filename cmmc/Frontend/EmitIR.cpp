@@ -164,10 +164,8 @@ static CompareOp getCompareOp(OperatorID op) {
 static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatintPoint, Value* lhs, Value* rhs) {
     auto inst = getBinaryOp(op, isFloatintPoint);
 
-    if(inst == InstructionID::FCmp) {
-        return ctx.makeOp<FloatingPointCompareInst>(getCompareOp(op), lhs, rhs);
-    } else if(inst == InstructionID::SCmp) {
-        return ctx.makeOp<IntegerCompareInst>(true, getCompareOp(op), lhs, rhs);
+    if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
+        return ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs);
     } else {
         return ctx.makeOp<BinaryInst>(inst, lhs->getType(), lhs, rhs);
     }
@@ -439,9 +437,10 @@ Value* EmitContext::convertTo(Value* value, Type* type) {
     InstructionID id = InstructionID::None;
     if(type->isBoolean()) {
         if(srcType->isInteger()) {
-            return makeOp<IntegerCompareInst>(true, CompareOp::NotEqual, value, make<ConstantInteger>(srcType, 0));
+            return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, make<ConstantInteger>(srcType, 0));
         } else if(srcType->isFloatingPoint()) {
-            return makeOp<FloatingPointCompareInst>(CompareOp::NotEqual, value, make<ConstantFloatingPoint>(srcType, 0.0));
+            return makeOp<CompareInst>(InstructionID::FCmp, CompareOp::NotEqual, value,
+                                       make<ConstantFloatingPoint>(srcType, 0.0));
         }
     } else if(srcType->isInteger() && type->isInteger()) {
         if(srcType->getFixedSize() < type->getFixedSize())

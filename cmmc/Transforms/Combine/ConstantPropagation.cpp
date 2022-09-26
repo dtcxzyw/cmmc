@@ -15,10 +15,12 @@
 // 1 + 2 -> 3
 // 2 < 1 -> false
 
+#include <cmath>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -30,12 +32,32 @@ CMMC_NAMESPACE_BEGIN
 class ConstantPropagation final : public TransformPass<Function> {
     bool runOnBlock(Block& block) const {
         return reduceBlock(block, [](Instruction* inst) -> Value* {
-            auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
-            auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
-
-            intmax_t i1, i2;
             double f1, f2;
             if(inst->isIntegerOp()) {
+                auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
+
+                auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
+                    switch(cmp) {
+                        case CompareOp::LessThan:
+                            return lhs < rhs;
+                        case CompareOp::LessEqual:
+                            return lhs <= rhs;
+                        case CompareOp::GreaterThan:
+                            return lhs > rhs;
+                        case CompareOp::GreaterEqual:
+                            return lhs >= rhs;
+                        case CompareOp::Equal:
+                            return lhs == rhs;
+                        case CompareOp::NotEqual:
+                            return lhs != rhs;
+                    }
+                    reportUnreachable();
+                };
+
+                intmax_t i1, i2;
+                uintmax_t u1, u2;
+                CompareOp cmp;
+
                 if(not_(int_(i1))(inst)) {
                     return makeInt(inst, !i1);
                 } else if(neg(int_(i1))(inst)) {
@@ -48,14 +70,35 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeInt(inst, i1 * i2);
                 } else if(sdiv(int_(i1), int_(i2))(inst) && i2) {
                     return makeInt(inst, i1 / i2);
-                } else if(udiv(int_(i1), int_(i2))(inst) && i2) {
-                    return makeInt(inst, static_cast<uintmax_t>(i1) / static_cast<uintmax_t>(i2));
+                } else if(udiv(uint_(u1), uint_(u2))(inst) && u2) {
+                    return makeInt(inst, u1 / u2);
                 } else if(srem(int_(i1), int_(i2))(inst) && i2) {
                     return makeInt(inst, i1 % i2);
-                } else if(urem(int_(i1), int_(i2))(inst) && i2) {
-                    return makeInt(inst, static_cast<uintmax_t>(i1) % static_cast<uintmax_t>(i2));
+                } else if(urem(uint_(u1), uint_(u2))(inst) && u2) {
+                    return makeInt(inst, u1 % u2);
+                } else if(scmp(cmp, int_(i1), int_(i2))(inst)) {
+                    return makeInt(inst, doCompare(cmp, i1, i2));
+                } else if(ucmp(cmp, uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, doCompare(cmp, u1, u2));
+                } else if(fcmp(cmp, fp_(f1), fp_(f2))(inst)) {
+                    return makeInt(inst, doCompare(cmp, f1, f2));
+                } else if(shl(uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, u1 << u2);
+                } else if(lshr(uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, u1 >> u2);
+                } else if(ashr(int_(i1), uint_(u2))(inst)) {
+                    return makeInt(inst, i1 >> u2);
+                } else if(and_(uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, u1 & u2);
+                } else if(or_(uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, u1 | u2);
+                } else if(xor_(uint_(u1), uint_(u2))(inst)) {
+                    return makeInt(inst, i1 ^ u2);
                 }
             } else if(inst->isFloatingPointOp()) {
+                auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
+                double f3;
+
                 if(fneg(fp_(f1))(inst)) {
                     return makeFP(inst, -f1);
                 } else if(fadd(fp_(f1), fp_(f2))(inst)) {
@@ -66,6 +109,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeFP(inst, f1 * f2);
                 } else if(fdiv(fp_(f1), fp_(f2))(inst)) {
                     return makeFP(inst, f1 / f2);
+                } else if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst)) {
+                    return makeFP(inst, fma(f1, f2, f3));
                 }
             }
             return nullptr;

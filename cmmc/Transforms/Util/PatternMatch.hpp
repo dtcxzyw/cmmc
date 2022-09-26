@@ -17,6 +17,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cstdint>
+#include <type_traits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -46,19 +47,49 @@ inline auto any(Value*& val) {
     return AnyMatcher{ val };
 }
 
-class ConstantIntegerMatcher final : public GenericMatcher<ConstantInteger, ConstantIntegerMatcher> {
-    intmax_t& mVal;
+template <bool IsSigned>
+class ConstantIntegerMatcher final : public GenericMatcher<ConstantInteger, ConstantIntegerMatcher<IsSigned>> {
+    using Value = std::conditional_t<IsSigned, intmax_t, uintmax_t>;
+    Value& mVal;
 
 public:
-    explicit ConstantIntegerMatcher(intmax_t& val) noexcept : mVal{ val } {}
+    explicit ConstantIntegerMatcher(Value& val) noexcept : mVal{ val } {}
     bool handle(ConstantInteger* value) const noexcept {
-        mVal = value->getValue();
+        if constexpr(IsSigned)
+            mVal = value->getSignExtended();
+        else
+            mVal = value->getZeroExtended();
+
         return true;
     }
 };
 
+template <bool IsSigned>
+class ConstantIntegerValueMatcher final : public GenericMatcher<ConstantInteger, ConstantIntegerValueMatcher<IsSigned>> {
+    using Value = std::conditional_t<IsSigned, intmax_t, uintmax_t>;
+    Value mVal;
+
+public:
+    constexpr explicit ConstantIntegerValueMatcher(Value val) noexcept : mVal{ val } {}
+    bool handle(ConstantInteger* value) const noexcept {
+        if constexpr(IsSigned)
+            return mVal == value->getSignExtended();
+        else
+            return mVal == value->getZeroExtended();
+    }
+};
+
 inline auto int_(intmax_t& val) noexcept {
-    return ConstantIntegerMatcher{ val };
+    return ConstantIntegerMatcher<true>{ val };
+}
+inline auto uint_(uintmax_t& val) noexcept {
+    return ConstantIntegerMatcher<false>{ val };
+}
+constexpr auto cint_(intmax_t val) noexcept {
+    return ConstantIntegerValueMatcher<true>{ val };
+}
+constexpr auto cuint_(uintmax_t val) noexcept {
+    return ConstantIntegerValueMatcher<false>{ val };
 }
 
 class ConstantFloatingPointMatcher final : public GenericMatcher<ConstantFloatingPoint, ConstantFloatingPointMatcher> {
@@ -71,9 +102,21 @@ public:
         return true;
     }
 };
+class ConstantFloatingPointValueMatcher final : public GenericMatcher<ConstantFloatingPoint, ConstantFloatingPointValueMatcher> {
+    double mVal;
+
+public:
+    constexpr explicit ConstantFloatingPointValueMatcher(double val) noexcept : mVal{ val } {}
+    bool handle(ConstantFloatingPoint* value) const noexcept {
+        return value->isEqual(mVal);
+    }
+};
 
 inline auto fp_(double& val) noexcept {
     return ConstantFloatingPointMatcher{ val };
+}
+constexpr auto cfp_(double val) noexcept {
+    return ConstantFloatingPointValueMatcher{ val };
 }
 
 template <typename ValMatcher>
@@ -104,7 +147,7 @@ auto fneg(T value) noexcept {
 }
 
 template <bool IsCommutative, typename LhsMatcher, typename RhsMatcher>
-class BinaryOpMatcher final : public GenericMatcher<UnaryInst, BinaryOpMatcher<IsCommutative, LhsMatcher, RhsMatcher>> {
+class BinaryOpMatcher final : public GenericMatcher<BinaryInst, BinaryOpMatcher<IsCommutative, LhsMatcher, RhsMatcher>> {
     InstructionID mTarget;
     LhsMatcher mLhsMatcher;
     RhsMatcher mRhsMatcher;
@@ -112,7 +155,7 @@ class BinaryOpMatcher final : public GenericMatcher<UnaryInst, BinaryOpMatcher<I
 public:
     explicit BinaryOpMatcher(InstructionID target, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
-    bool handle(UnaryInst* value) const noexcept {
+    bool handle(BinaryInst* value) const noexcept {
         if(value->getInstID() != mTarget)
             return false;
         if(mLhsMatcher(value->getOperand(0)) && mRhsMatcher(value->getOperand(1)))
@@ -153,6 +196,31 @@ auto urem(Lhs lhs, Rhs rhs) {
 }
 
 template <typename Lhs, typename Rhs>
+auto shl(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::Shl, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto ashr(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::AShr, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto lshr(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::LShr, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto and_(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::And, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto or_(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Or, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto xor_(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Xor, lhs, rhs };
+}
+
+template <typename Lhs, typename Rhs>
 auto fadd(Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::FAdd, lhs, rhs };
 }
@@ -167,6 +235,66 @@ auto fmul(Lhs lhs, Rhs rhs) {
 template <typename Lhs, typename Rhs>
 auto fdiv(Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::FDiv, lhs, rhs };
+}
+
+template <typename LhsMatcher, typename RhsMatcher>
+class CompareMatcher final : public GenericMatcher<CompareInst, CompareMatcher<LhsMatcher, RhsMatcher>> {
+    InstructionID mTarget;
+    CompareOp& mCompare;
+    LhsMatcher mLhsMatcher;
+    RhsMatcher mRhsMatcher;
+
+public:
+    explicit CompareMatcher(InstructionID target, CompareOp& compare, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
+        : mTarget{ target }, mCompare{ compare }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
+    bool handle(CompareInst* value) const noexcept {
+        if(value->getInstID() != mTarget)
+            return false;
+        mCompare = value->getOp();
+        if(mLhsMatcher(value->getOperand(0)) && mRhsMatcher(value->getOperand(1)))
+            return true;
+        if(mLhsMatcher(value->getOperand(1)) && mRhsMatcher(value->getOperand(0))) {
+            mCompare = getReversedOp(mCompare);
+            return true;
+        }
+        return false;
+    }
+};
+
+template <typename Lhs, typename Rhs>
+auto scmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
+    return CompareMatcher{ InstructionID::SCmp, compare, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto ucmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
+    return CompareMatcher{ InstructionID::UCmp, compare, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto fcmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
+    return CompareMatcher{ InstructionID::FCmp, compare, lhs, rhs };
+}
+
+// x*y+z
+template <typename XMatcher, typename YMatcher, typename ZMatcher>
+class FMAMatcher final : public GenericMatcher<FMAInst, FMAMatcher<XMatcher, YMatcher, ZMatcher>> {
+    XMatcher mX;
+    YMatcher mY;
+    ZMatcher mZ;
+
+public:
+    explicit FMAMatcher(XMatcher x, YMatcher y, ZMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
+    bool handle(FMAInst* value) const noexcept {
+        if(!mZ(value->getOperand(2)))
+            return false;
+        if(mX(value->getOperand(0)) && mY(value->getOperand(1)))
+            return true;
+        return mX(value->getOperand(1)) && mY(value->getOperand(0));
+    }
+};
+
+template <typename X, typename Y, typename Z>
+auto fma_(X x, Y y, Z z) {
+    return FMAMatcher{ x, y, z };
 }
 
 CMMC_NAMESPACE_END

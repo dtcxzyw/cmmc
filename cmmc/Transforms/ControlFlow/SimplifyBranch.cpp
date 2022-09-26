@@ -50,14 +50,15 @@ public:
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
             const auto cond = terminator->getOperand(0);
-            if(!cond->isConstant())
+            uintmax_t constCond;
+            if(!uint_(constCond)(cond))
                 continue;
             auto branch = terminator->as<ConditionalBranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
             auto& insts = block->instructions();
             insts.pop_back();
-            insts.push_back(make<ConditionalBranchInst>(cond->as<ConstantInteger>()->getValue() ? trueTarget : falseTarget));
+            insts.push_back(make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget));
             modified = true;
         }
         return modified;

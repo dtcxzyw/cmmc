@@ -66,7 +66,7 @@ Register TACInstInfo::emitConstant(ConstantValue* value, LoweringContext& ctx) c
     if(value->getType()->isInteger()) {
         ctx.emitInst(TACInst::Copy)
             .setWriteReg(reg)
-            .setImm(0, static_cast<int64_t>(value->as<ConstantInteger>()->getValue()))
+            .setImm(0, static_cast<int64_t>(value->as<ConstantInteger>()->getSignExtended()))
             .addAttr(TACInstAttr::WithImm0);
         return reg;
     }
@@ -190,8 +190,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             const auto rhs = ctx.mapOperand(inst->getOperand(1));
             auto& minst = ctx.emitInst(TACInst::Compare).setReg(0, lhs).setReg(1, rhs).setWriteReg(reg);
 
-            const auto op = (inst->getInstID() != InstructionID::FCmp ? inst->as<IntegerCompareInst>()->getOp() :
-                                                                        inst->as<FloatingPointCompareInst>()->getOp());
+            const auto op = inst->as<CompareInst>()->getOp();
 
             switch(op) {
                 case CompareOp::Equal:

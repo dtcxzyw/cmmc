@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -29,6 +30,31 @@ void ConstantFloatingPoint::dump(std::ostream& out) const {
 
 void UndefinedValue::dump(std::ostream& out) const {
     out << "undef";
+}
+
+intmax_t ConstantInteger::getSignExtended() const noexcept {
+    const auto bits = 8 * getType()->getFixedSize();
+    const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
+    const auto low = mValue & mask;
+    const auto high = ((mValue >> (bits - 1)) & 1) ? ~mask : 0;
+    return high | low;
+}
+
+uintmax_t ConstantInteger::getZeroExtended() const noexcept {
+    const auto bits = 8 * getType()->getFixedSize();
+    const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
+    return mValue & mask;
+}
+
+double ConstantFloatingPoint::getValue() const noexcept {
+    if(getType()->as<FloatingPointType>()->getFixedSize() == 4)
+        return static_cast<double>(static_cast<float>(mValue));
+    return mValue;
+}
+bool ConstantFloatingPoint::isEqual(double val) const noexcept {
+    if(getType()->as<FloatingPointType>()->getFixedSize() == 4)
+        return static_cast<float>(mValue) == static_cast<float>(val);
+    return mValue == val;
 }
 
 CMMC_NAMESPACE_END

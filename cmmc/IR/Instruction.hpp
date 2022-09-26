@@ -168,26 +168,36 @@ public:
 
 enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
 
-class IntegerCompareInst final : public Instruction {
+// a < b => b > a
+constexpr auto getReversedOp(CompareOp op) {
+    switch(op) {
+        case CompareOp::LessThan:
+            return CompareOp::GreaterThan;
+        case CompareOp::LessEqual:
+            return CompareOp::GreaterEqual;
+        case CompareOp::GreaterThan:
+            return CompareOp::LessThan;
+        case CompareOp::GreaterEqual:
+            return CompareOp::LessEqual;
+        case CompareOp::Equal:
+            return CompareOp::Equal;
+        case CompareOp::NotEqual:
+            return CompareOp::NotEqual;
+    }
+    // unreachable
+    return static_cast<CompareOp>(-1);
+}
+
+class CompareInst final : public Instruction {
     CompareOp mCompare;
 
 public:
-    IntegerCompareInst(bool isSigned, CompareOp compare, Value* lhs, Value* rhs)
-        : Instruction{ isSigned ? InstructionID::SCmp : InstructionID::UCmp, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{
-              compare
-          } {}
+    CompareInst(InstructionID instID, CompareOp compare, Value* lhs, Value* rhs)
+        : Instruction{ instID, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
-    CompareOp getOp() const noexcept;
-};
-
-class FloatingPointCompareInst final : public Instruction {
-    CompareOp mCompare;
-
-public:
-    FloatingPointCompareInst(CompareOp compare, Value* lhs, Value* rhs)
-        : Instruction{ InstructionID::FCmp, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
-    void dump(std::ostream& out) const override;
-    CompareOp getOp() const noexcept;
+    CompareOp getOp() const noexcept {
+        return mCompare;
+    }
 };
 
 class UnaryInst final : public Instruction {

@@ -182,28 +182,12 @@ static const char* getCompareName(CompareOp op) {
     }
 }
 
-static void dumpCompare(std::ostream& out, const Instruction* inst, CompareOp op) {
-    inst->dumpAsOperand(out);
-    out << " = " << getInstName(inst->getInstID()) << ' ' << getCompareName(op) << ' ';
-    inst->getOperand(0)->dumpAsOperand(out);
+void CompareInst::dump(std::ostream& out) const {
+    dumpAsOperand(out);
+    out << " = " << getInstName(getInstID()) << ' ' << getCompareName(mCompare) << ' ';
+    getOperand(0)->dumpAsOperand(out);
     out << ", ";
-    inst->getOperand(1)->dumpAsOperand(out);
-}
-
-void IntegerCompareInst::dump(std::ostream& out) const {
-    dumpCompare(out, this, mCompare);
-}
-
-CompareOp IntegerCompareInst::getOp() const noexcept {
-    return mCompare;
-}
-
-void FloatingPointCompareInst::dump(std::ostream& out) const {
-    dumpCompare(out, this, mCompare);
-}
-
-CompareOp FloatingPointCompareInst::getOp() const noexcept {
-    return mCompare;
+    getOperand(1)->dumpAsOperand(out);
 }
 
 void UnaryInst::dump(std::ostream& out) const {
