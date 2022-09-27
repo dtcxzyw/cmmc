@@ -301,6 +301,7 @@ Value* ConstantFloatExpr::emit(EmitContext& ctx) const {
 }
 
 Value* ConstantStringExpr::emit(EmitContext& ctx) const {
+    reportNotImplemented();
     return nullptr;
 }
 

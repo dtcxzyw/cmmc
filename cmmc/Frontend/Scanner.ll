@@ -13,10 +13,6 @@
 */
 %option noyywrap nounput noinput batch
 %{
-
-#undef yywrap
-#define yywrap() 1
-
 #include <cmmc/Frontend/Driver.hpp>
 %}
 %{
@@ -95,5 +91,5 @@
 "'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return yy::parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 
 <<EOF>> return yy::parser::make_END({0,loc});
-. { driver.reportLexerError(yytext); }
+. { driver.reportLexerError(yytext); CMMC_TERMINAL(ERR); }
 %%

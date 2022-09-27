@@ -19,7 +19,7 @@ def test(src, ref):
     if out.returncode == 0 and not is_error:
         return ref_content == out.stdout
     elif out.returncode != 0 and is_error:
-        return True  # TODO: verify error output
+        return ref_content == out.stderr
     return False
 
 

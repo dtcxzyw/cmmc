@@ -56,6 +56,7 @@
 %token DOT SEMI COMMA SHARP
 // ( ) [ ] { }
 %token LP RP LB RB LC RC
+%token ERR
 
 %right NOT BNOT
 %left MUL DIV REM
@@ -111,6 +112,7 @@ Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Sp
 ;
 StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+| STRUCT ID LC DefList error { CMMC_MISS_RC(@$); }
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
@@ -118,6 +120,8 @@ VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1)
 ;
 FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
 | ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
+| ID LP VarList error { CMMC_MISS_RP(@$); }
+| ID LP { CMMC_MISS_RP(@$); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
@@ -126,6 +130,7 @@ ParamDec: Specifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, Param
 ;
 /* statement */
 CompSt: LC DefList StmtList RC { CMMC_SCOPE_GEN($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
+| LC DefList StmtList error { CMMC_MISS_RC(@$); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
@@ -136,6 +141,10 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | IF LP Exp RP Stmt { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE($3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| Exp error { CMMC_MISS_SEMI(@$); }
+| RETURN Exp error { CMMC_MISS_SEMI(@$); }
+| IF LP Exp Stmt { CMMC_MISS_RP(@$); }
+| IF LP Exp Stmt ELSE Stmt { CMMC_MISS_RP(@$); }
 ;
 /* local definition */
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
@@ -175,11 +184,17 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(@$, Exp, @1); }
+| LP Exp { CMMC_MISS_RP(@$); }
+| Exp LP Args { CMMC_MISS_RP(@$); }
+| Exp LP { CMMC_MISS_RP(@$); }
+| Exp LB Exp { CMMC_MISS_RB(@$); }
+| Exp ERR {}
+| ERR {}
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }
 ;
 %%
 void yy::parser::error(const location_type& l, const std::string& m) {
-  reportError() << l << ": " << m << '\n';
+    // reportError() << l << ": " << m << '\n';
 }

@@ -128,7 +128,8 @@ class DriverImpl final {
     bool mRecordHierarchy;
     bool mStrictMode;
     yy::location mLocation;
-    bool mEnd;
+    bool mEnd = false;
+    bool mError = false;
     std::shared_ptr<Arena> mArena;
 
     Deque<MixedDefinition> mDefs;  // decls/defs **in order**
@@ -164,18 +165,17 @@ public:
         return mLocation;
     }
     bool complete() const noexcept {
-        return mEnd;
+        return mEnd && !mError;
     }
 
     bool shouldRecordHierarchy() const noexcept {
         return mRecordHierarchy;
     }
-    bool checkExtension(const char* ext) const noexcept {
+    void checkExtension(const char* ext) noexcept {
         if(mStrictMode) {
             reportError() << "Extension " << ext << " is not allowed in strict mode" << std::endl;
-            return true;
+            mError = true;
         }
-        return false;
     }
 
     Hierarchy& hierarchy(ChildRef ref) {
@@ -194,6 +194,11 @@ public:
 
     void reportLexerError(const char* str) {
         reportError() << "Error type A at Line " << mLocation.begin.line << ": unknown lexeme " << str << std::endl;
+        mError = true;
+    }
+    void reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {
+        reportError() << "Error type B at Line " << location.second.begin.line << ": " << str << std::endl;
+        mError = true;
     }
 };
 
@@ -232,10 +237,12 @@ extern "C" YY_DECL;
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK)
 #define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
-#define CMMC_EXTENSION(EXT)         \
-    if(driver.checkExtension(#EXT)) \
-        YYABORT;
+#define CMMC_EXTENSION(EXT) driver.checkExtension(#EXT)
 #define CMMC_SCOPE_GEN(EXPR_PACK, LOCAL_VARS, STATEMENTS) generateScope((EXPR_PACK), (LOCAL_VARS), (STATEMENTS))
+#define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
+#define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")
+#define CMMC_MISS_RC(LOC) driver.reportParserError((LOC), "Missing closing curly bracket '}'")
+#define CMMC_MISS_SEMI(LOC) driver.reportParserError((LOC), "Missing semicolon ';'")
 
 #include <ParserImpl.hpp>
 #include <ScannerImpl.hpp>
@@ -264,10 +271,12 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     yy::parser parser{ *mImpl };
     // parser.set_debug_level(10);
     // parser.set_debug_stream(std::cerr);
-    parser.parse();
-    if(!mImpl->complete()) {
-        reportError() << "Failed to parse" << std::endl;
-        std::abort();
+    if(parser.parse() != 0 || !mImpl->complete()) {
+        if(!strictMode) {
+            reportError() << "Failed to parse" << std::endl;
+            std::abort();
+        } else
+            std::exit(EXIT_FAILURE);
     }
     fclose(yyin);
 }
