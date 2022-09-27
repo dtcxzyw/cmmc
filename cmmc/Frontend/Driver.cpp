@@ -171,11 +171,8 @@ public:
     bool shouldRecordHierarchy() const noexcept {
         return mRecordHierarchy;
     }
-    void checkExtension(const char* ext) noexcept {
-        if(mStrictMode) {
-            reportError() << "Extension " << ext << " is not allowed in strict mode" << std::endl;
-            mError = true;
-        }
+    bool checkExtension() noexcept {
+        return !mStrictMode;
     }
 
     Hierarchy& hierarchy(ChildRef ref) {
@@ -237,12 +234,18 @@ extern "C" YY_DECL;
 #define CMMC_CONCAT_PACK(RES_PACK, LHS_VALUE, RHS_PACK) concatPack((RES_PACK), (LHS_VALUE), (RHS_PACK))
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(BLOCK)
 #define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
-#define CMMC_EXTENSION(EXT) driver.checkExtension(#EXT)
 #define CMMC_SCOPE_GEN(EXPR_PACK, LOCAL_VARS, STATEMENTS) generateScope((EXPR_PACK), (LOCAL_VARS), (STATEMENTS))
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")
 #define CMMC_MISS_RC(LOC) driver.reportParserError((LOC), "Missing closing curly bracket '}'")
 #define CMMC_MISS_SEMI(LOC) driver.reportParserError((LOC), "Missing semicolon ';'")
+#define CMMC_MISS_SPECIFIER(LOC) driver.reportParserError((LOC), "Missing specifier")
+#define CMMC_NEED_EXTENSION(LOC, EXT) \
+    if(!driver.checkExtension())      \
+    driver.reportParserError((LOC), #EXT " is not allowed in strict spl mode")
+#define CMMC_LEXER_ERROR(TEXT)     \
+    driver.reportLexerError(TEXT); \
+    CMMC_TERMINAL(ERR)
 
 #include <ParserImpl.hpp>
 #include <ScannerImpl.hpp>

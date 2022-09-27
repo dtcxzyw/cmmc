@@ -28,7 +28,7 @@ all: splc
 
 $(DIR_BUILD)/generated/ParserImpl.hpp: cmmc/Frontend/Parser.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/ParserDecl.hpp $<
+	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/ParserDecl.hpp $<
 
 $(DIR_BUILD)/generated/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD)/generated/ParserImpl.hpp
 	mkdir -p $(dir $@)

@@ -56,10 +56,10 @@
 "!" { CMMC_TERMINAL(NOT); }
 "~" { CMMC_TERMINAL(BNOT); }
 "&&" { CMMC_TERMINAL(AND); }
-"&" { CMMC_TERMINAL(BAND); }
+"&" { if(driver.checkExtension()) { CMMC_TERMINAL(BAND); } else { CMMC_LEXER_ERROR(yytext); } }
 "^" { CMMC_TERMINAL(XOR); }
 "||" { CMMC_TERMINAL(OR); }
-"|" { CMMC_TERMINAL(BOR); }
+"|" { if(driver.checkExtension()) { CMMC_TERMINAL(BOR); } else { CMMC_LEXER_ERROR(yytext); } }
 "<" { CMMC_TERMINAL(LT); }
 ">" { CMMC_TERMINAL(GT); }
 "<=" { CMMC_TERMINAL(LE); }
@@ -91,5 +91,8 @@
 "'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return yy::parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 
 <<EOF>> return yy::parser::make_END({0,loc});
-. { driver.reportLexerError(yytext); CMMC_TERMINAL(ERR); }
+
+"'\\x".+"'" { CMMC_LEXER_ERROR(yytext); }
+[a-zA-Z_0-9]+ { CMMC_LEXER_ERROR(yytext);}
+. { CMMC_LEXER_ERROR(yytext); }
 %%

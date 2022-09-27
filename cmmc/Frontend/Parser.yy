@@ -58,7 +58,7 @@
 %token LP RP LB RB LC RC
 %token ERR
 
-%right NOT BNOT
+// %right NOT BNOT
 %left MUL DIV REM
 %left PLUS MINUS
 %left LT LE GT GE
@@ -69,9 +69,9 @@
 %left AND
 %left OR
 // %right ASSIGN
-%left COMMA
+// %left COMMA
 
-%nonassoc ELSE
+// %nonassoc ELSE
 
 %%
 
@@ -102,6 +102,8 @@ ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 ExtDef: Specifier ExtDecList SEMI { driver.addGlobalDef($1, $2); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 | Specifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 | Specifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
+| Specifier ExtDecList error { CMMC_MISS_SEMI(@$); }
+| Specifier error { CMMC_MISS_SEMI(@$); }
 ;
 ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
 | VarDec COMMA ExtDecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
@@ -117,11 +119,13 @@ StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct };
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
 | VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(static_cast<uint32_t>($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+| VarDec LB INT error { CMMC_MISS_RB(@$); }
+| ERR {}
 ;
 FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
 | ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
 | ID LP VarList error { CMMC_MISS_RP(@$); }
-| ID LP { CMMC_MISS_RP(@$); }
+| ID LP error { CMMC_MISS_RP(@$); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
@@ -143,14 +147,17 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | Exp error { CMMC_MISS_SEMI(@$); }
 | RETURN Exp error { CMMC_MISS_SEMI(@$); }
-| IF LP Exp Stmt { CMMC_MISS_RP(@$); }
-| IF LP Exp Stmt ELSE Stmt { CMMC_MISS_RP(@$); }
+| RETURN error { CMMC_MISS_SEMI(@$); }
+| IF LP Exp Stmt error { CMMC_MISS_RP(@$); }
+| IF LP Exp Stmt ELSE Stmt error { CMMC_MISS_RP(@$); }
 ;
 /* local definition */
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
 Def: Specifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
+| Specifier DecList error { CMMC_MISS_SEMI(@$); }
+| error DecList SEMI { CMMC_MISS_SPECIFIER(@$); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
@@ -172,7 +179,10 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp MINUS Exp { $$ = CMMC_BINARY_OP(Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp MUL Exp { $$ = CMMC_BINARY_OP(Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp DIV Exp { $$ = CMMC_BINARY_OP(Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp REM Exp { CMMC_EXTENSION(Remainder); $$ = CMMC_BINARY_OP(Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp REM Exp { CMMC_NEED_EXTENSION(@$, Remainder); $$ = CMMC_BINARY_OP(Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BAND Exp { CMMC_NEED_EXTENSION(@$, BitwiseAnd); $$ = CMMC_BINARY_OP(BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BOR Exp { CMMC_NEED_EXTENSION(@$, BitwiseOr); $$ = CMMC_BINARY_OP(BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp XOR Exp { CMMC_NEED_EXTENSION(@$, Xor); $$ = CMMC_BINARY_OP(Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | MINUS Exp { $$ = CMMC_UNARY_OP(Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
@@ -184,11 +194,11 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| LP Exp { CMMC_MISS_RP(@$); }
-| Exp LP Args { CMMC_MISS_RP(@$); }
-| Exp LP { CMMC_MISS_RP(@$); }
-| Exp LB Exp { CMMC_MISS_RB(@$); }
-| Exp ERR {}
+| LP Exp error { CMMC_MISS_RP(@$); }
+| Exp LP Args error { CMMC_MISS_RP(@$); }
+| Exp LP error { CMMC_MISS_RP(@$); }
+| Exp LB Exp error { CMMC_MISS_RB(@$); }
+| Exp ERR Exp {}
 | ERR {}
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
