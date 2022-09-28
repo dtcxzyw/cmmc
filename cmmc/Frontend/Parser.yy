@@ -58,7 +58,7 @@
 %token LP RP LB RB LC RC
 %token ERR
 
-// %right NOT BNOT
+%precedence NOT
 %left MUL DIV REM
 %left PLUS MINUS
 %left LT LE GT GE
@@ -70,8 +70,11 @@
 %left OR
 // %right ASSIGN
 // %left COMMA
+%precedence LB DOT
 
-// %nonassoc ELSE
+// Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
+%precedence THEN
+%precedence ELSE
 
 %%
 
@@ -104,6 +107,8 @@ ExtDef: Specifier ExtDecList SEMI { driver.addGlobalDef($1, $2); CMMC_NONTERMINA
 | Specifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 | Specifier ExtDecList error { CMMC_MISS_SEMI(@$); }
 | Specifier error { CMMC_MISS_SEMI(@$); }
+| error ExtDecList SEMI { CMMC_MISS_SPECIFIER(@2); }
+| error SEMI { CMMC_MISS_SPECIFIER(@2); }
 ;
 ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
 | VarDec COMMA ExtDecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
@@ -134,7 +139,7 @@ ParamDec: Specifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, Param
 ;
 /* statement */
 CompSt: LC DefList StmtList RC { CMMC_SCOPE_GEN($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
-| LC DefList StmtList error { CMMC_MISS_RC(@$); }
+// | LC DefList StmtList error { CMMC_MISS_RC(@$); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
@@ -142,22 +147,23 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | CompSt { $$ = CMMC_SCOPE($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | RETURN Exp SEMI { $$ = CMMC_RETURN($2); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3); }
 | RETURN SEMI { $$ = CMMC_RETURN(nullptr); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
-| IF LP Exp RP Stmt { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE($3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | Exp error { CMMC_MISS_SEMI(@$); }
 | RETURN Exp error { CMMC_MISS_SEMI(@$); }
 | RETURN error { CMMC_MISS_SEMI(@$); }
-| IF LP Exp Stmt error { CMMC_MISS_RP(@$); }
-| IF LP Exp Stmt ELSE Stmt error { CMMC_MISS_RP(@$); }
+| IF LP Exp error Stmt %prec THEN { CMMC_MISS_RP(@$); }
+| IF LP Exp error Stmt ELSE Stmt { CMMC_MISS_RP(@$); }
+| WHILE LP Exp error Stmt { CMMC_MISS_RP(@$); }
 ;
 /* local definition */
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
+| DefList error DecList SEMI DefList { CMMC_MISS_SPECIFIER(@2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
 Def: Specifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
 | Specifier DecList error { CMMC_MISS_SEMI(@$); }
-| error DecList SEMI { CMMC_MISS_SPECIFIER(@$); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
@@ -198,7 +204,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp LP Args error { CMMC_MISS_RP(@$); }
 | Exp LP error { CMMC_MISS_RP(@$); }
 | Exp LB Exp error { CMMC_MISS_RB(@$); }
-| Exp ERR Exp {}
+| Exp ERR Exp error {}
 | ERR {}
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }

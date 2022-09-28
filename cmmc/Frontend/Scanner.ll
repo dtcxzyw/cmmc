@@ -93,6 +93,6 @@
 <<EOF>> return yy::parser::make_END({0,loc});
 
 "'\\x".+"'" { CMMC_LEXER_ERROR(yytext); }
-[a-zA-Z_0-9]+ { CMMC_LEXER_ERROR(yytext);}
+[a-zA-Z_0-9]+ { CMMC_LEXER_ERROR(yytext); }
 . { CMMC_LEXER_ERROR(yytext); }
 %%
