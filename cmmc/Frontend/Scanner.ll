@@ -33,6 +33,8 @@
 [ \t]+ loc.step ();
 [\n]+ loc.lines (yyleng); loc.step ();
 
+"//".* {}
+
 "if" { CMMC_TERMINAL(IF); }
 "else" { CMMC_TERMINAL(ELSE); }
 "while" { CMMC_TERMINAL(WHILE); }
@@ -83,7 +85,7 @@
 "int" { return emitType(); }
 "char" { return emitType(); }
 "float" { return emitType(); }
-"0x"[0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return yy::parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
+"0"[xX][0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return yy::parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); return yy::parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 (0|[1-9][0-9]*).[0-9]+ { double val = strtod(yytext, NULL); return yy::parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
 [a-zA-Z_][a-zA-Z_0-9]* { StringAST val{yytext}; return yy::parser::make_ID(val, {CMMC_RECORD(ID, StringAST{yytext}), loc}); }

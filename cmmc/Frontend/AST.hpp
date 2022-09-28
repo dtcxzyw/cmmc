@@ -259,20 +259,20 @@ public:
 };
 
 template <typename T>
-void concatPack(Deque<T>& res, const T& lhs, const Deque<T>& rhs) {
-    res = rhs;
+void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
+    res.swap(rhs);
     res.push_front(lhs);
 }
 
 template <typename T>
-void concatPack(Deque<T>& res, const Deque<T>& lhs, const Deque<T>& rhs) {
-    res = lhs;
+void concatPack(Deque<T>& res, Deque<T>& lhs, const Deque<T>& rhs) {
+    res.swap(lhs);
     res.insert(res.cend(), rhs.cbegin(), rhs.cend());
 }
 
 template <typename T>
-void concatPack(Deque<T>& res, const Deque<T>& lhs, const T& rhs) {
-    res = lhs;
+void concatPack(Deque<T>& res, Deque<T>& lhs, const T& rhs) {
+    res.swap(lhs);
     res.push_back(rhs);
 }
 

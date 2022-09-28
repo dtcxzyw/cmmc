@@ -42,13 +42,13 @@ def spl_semantic(src):
 
 def spl_codegen_tac(src):
     out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+                               '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
 
 def sysy_parse(src):
     out = subprocess.run(args=[binary_path, '-a', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+                               '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
 

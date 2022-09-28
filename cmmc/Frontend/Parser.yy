@@ -198,7 +198,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp LB Exp RB { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 // | LC Args RC { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-// | LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
