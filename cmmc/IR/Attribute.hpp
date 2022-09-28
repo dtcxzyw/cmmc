@@ -28,8 +28,9 @@ public:
     bool hasAttr(Attr attr) const noexcept {
         return static_cast<uint32_t>(mAttr) & static_cast<uint32_t>(attr);
     }
-    void addAttr(Attr attr) noexcept {
+    Attribute& addAttr(Attr attr) noexcept {
         mAttr = static_cast<Attr>(static_cast<uint32_t>(mAttr) | static_cast<uint32_t>(attr));
+        return *this;
     }
     bool empty() const noexcept {
         return !static_cast<uint32_t>(mAttr);

@@ -21,11 +21,12 @@ CMMC_NAMESPACE_BEGIN
 
 enum class FunctionAttribute {
     NoMemoryRead = 1 << 0,
-    NoSideEffect = 1 << 1,
-    Stateless = 1 << 2,
-    NoAlias = 1 << 3,
-    NoReturn = 1 << 4,
-    NoRecurse = 1 << 5
+    NoMemoryWrite = 1 << 1,
+    NoSideEffect = 1 << 2,
+    Stateless = 1 << 3,
+    NoAlias = 1 << 4,
+    NoReturn = 1 << 5,
+    NoRecurse = 1 << 6
 };
 
 enum class CallingConvention { C, Fast };

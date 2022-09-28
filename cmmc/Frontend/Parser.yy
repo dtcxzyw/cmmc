@@ -124,6 +124,7 @@ StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct };
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
 | VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(static_cast<uint32_t>($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+| VarDec LB RB { $$ = $1; $$.arraySize.push_back(0); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
 | VarDec LB INT error { CMMC_MISS_RB(@$); }
 | ERR {}
 ;
@@ -196,6 +197,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp LP RP { $$ = CMMC_CALL($1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+// | LC Args RC { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+// | LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
