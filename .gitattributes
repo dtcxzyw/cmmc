@@ -1,2 +1,3 @@
 * text eol=lf
 irsim -text
+*.in filter=lfs diff=lfs merge=lfs
