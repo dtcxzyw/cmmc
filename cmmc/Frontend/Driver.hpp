@@ -23,6 +23,8 @@ CMMC_NAMESPACE_BEGIN
 class Module;
 class DriverImpl;
 
+enum class FrontEndLang { SysY, Spl };
+
 class Driver final {
     void parse(const std::string& file, bool recordHierarchy, bool strictMode);
     std::unique_ptr<DriverImpl> mImpl;
@@ -30,7 +32,7 @@ class Driver final {
 public:
     Driver(const std::string& file, bool recordHierarchy, bool strictMode);
     ~Driver();
-    void emit(Module& module);
+    void emit(Module& module, FrontEndLang lang);
     void dump(std::ostream& out);
 };
 

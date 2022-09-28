@@ -186,7 +186,7 @@ public:
         return index;
     }
 
-    void emit(Module& module);
+    void emit(Module& module, FrontEndLang lang);
     void dump(std::ostream& out);
 
     void reportLexerError(const char* str) {
@@ -284,14 +284,11 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     fclose(yyin);
 }
 
-void Driver::emit(Module& module) {
-    mImpl->emit(module);
+void Driver::emit(Module& module, FrontEndLang lang) {
+    mImpl->emit(module, lang);
 }
 
-void DriverImpl::emit(Module& module) {
-    EmitContext ctx{ &module };
-    ctx.pushScope();
-
+static void emitSplRuntime(Module& module, EmitContext& ctx) {
     const auto read = make<Function>(StringIR{ "read" }, make<FunctionType>(IntegerType::get(32), Vector<Type*>{}));
     read->attr().addAttr(FunctionAttribute::NoMemoryRead);
     const auto write =
@@ -302,6 +299,18 @@ void DriverImpl::emit(Module& module) {
     ctx.addIdentifier(StringAST{ "write" }, write);
     module.add(read);
     module.add(write);
+}
+
+static void emitSysYRuntime(Module& module, EmitContext& ctx) {}
+
+void DriverImpl::emit(Module& module, FrontEndLang lang) {
+    EmitContext ctx{ &module };
+    ctx.pushScope();
+
+    if(lang == FrontEndLang::Spl)
+        emitSplRuntime(module, ctx);
+    else if(lang == FrontEndLang::SysY)
+        emitSysYRuntime(module, ctx);
 
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);

@@ -118,8 +118,10 @@ int main(int argc, char** argv) {
         std::string path = argv[start];
 
         using namespace std::string_view_literals;
+        bool isSpl = endswith(path, ".spl"sv);
+        bool isSysY = endswith(path, ".sy"sv);
 
-        if(endswith(path, ".spl"sv)) {
+        if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - 4);
             Driver driver{ path, emitAST.get(), strictMode.get() };
 
@@ -132,7 +134,7 @@ int main(int argc, char** argv) {
             }
 
             Module module;
-            driver.emit(module);
+            driver.emit(module, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY);
 
             return runIRPipeline(module, base);
         } else if(endswith(path, ".ir"sv)) {
