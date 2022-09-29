@@ -11,7 +11,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 */
-%option noyywrap nounput noinput batch
+%option noyywrap batch
 %{
 #include <cmmc/Frontend/Driver.hpp>
 %}
@@ -33,7 +33,38 @@
 [ \t]+ loc.step ();
 [\n]+ loc.lines (yyleng); loc.step ();
 
-"//".* {}
+"//" { 
+  char c;
+  // ignore the following chars until seeing a newline character
+  do c = yyinput();
+  while(c != '\n' && c != '\0'); 
+  // put the newline character back to the input buffer
+  if(c == '\n')
+    unput(c); 
+}
+
+"/*" {
+  char c1 = yyinput();
+  auto consume = [&](char ch) {
+    if(ch == '\n')
+      loc.lines(1);
+    else 
+      loc.columns(1);
+  };
+  while(true) {
+    if(c1 == '\0') {
+      CMMC_COMMENT_ERROR();
+      break;
+    }
+    consume(c1);
+    char c2 = yyinput();
+    if(c1 == '*' && c2 == '/') {
+      consume(c2);
+      break;
+    }
+    c1 = c2;
+  }
+}
 
 "if" { CMMC_TERMINAL(IF); }
 "else" { CMMC_TERMINAL(ELSE); }
@@ -50,6 +81,8 @@
 "struct" { CMMC_TERMINAL(STRUCT); }
 "union" { CMMC_TERMINAL(UNION); }
 
+"const" { CMMC_TERMINAL(CONST); }
+
 "+" { CMMC_TERMINAL(PLUS); }
 "-" { CMMC_TERMINAL(MINUS); }
 "*" { CMMC_TERMINAL(MUL); }
@@ -58,10 +91,10 @@
 "!" { CMMC_TERMINAL(NOT); }
 "~" { CMMC_TERMINAL(BNOT); }
 "&&" { CMMC_TERMINAL(AND); }
-"&" { if(driver.checkExtension()) { CMMC_TERMINAL(BAND); } else { CMMC_LEXER_ERROR(yytext); } }
+"&" { CMMC_TERMINAL(BAND); }
 "^" { CMMC_TERMINAL(XOR); }
 "||" { CMMC_TERMINAL(OR); }
-"|" { if(driver.checkExtension()) { CMMC_TERMINAL(BOR); } else { CMMC_LEXER_ERROR(yytext); } }
+"|" { CMMC_TERMINAL(BOR); }
 "<" { CMMC_TERMINAL(LT); }
 ">" { CMMC_TERMINAL(GT); }
 "<=" { CMMC_TERMINAL(LE); }
@@ -82,9 +115,11 @@
 "{" { CMMC_TERMINAL(LC); }
 "}" { CMMC_TERMINAL(RC); }
 
+"void" { return emitType(); }
 "int" { return emitType(); }
 "char" { return emitType(); }
 "float" { return emitType(); }
+
 "0"[xX][0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 (0|[1-9][0-9]*).[0-9]+ { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
@@ -94,7 +129,5 @@
 
 <<EOF>> return Parser::make_END({0,loc});
 
-"'\\x".+"'" { CMMC_LEXER_ERROR(yytext); }
-[a-zA-Z_0-9]+ { CMMC_LEXER_ERROR(yytext); }
 . { CMMC_LEXER_ERROR(yytext); }
 %%

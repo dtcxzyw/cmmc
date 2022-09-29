@@ -529,8 +529,11 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
     if(!ret)
         reportNotImplemented();
 
-    for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter)
-        ret = make<ArrayType>(ret, *iter);
+    for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
+        // TODO: handle array
+        reportNotImplemented();
+        // ret = make<ArrayType>(ret, *iter);
+    }
     return ret;
 }
 void EmitContext::addIdentifier(StringAST identifier, StructType* type) {

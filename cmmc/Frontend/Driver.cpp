@@ -25,15 +25,15 @@ Driver::Driver(const std::string& file, FrontEndLang lang, bool recordHierarchy,
 }
 Driver::~Driver() {}
 
-bool parseSpl(DriverImpl& driver, const std::string& file, bool strictMode);
-bool parseSysY(DriverImpl& driver, const std::string& file, bool strictMode);
+bool parseSpl(DriverImpl& driver, const std::string& file);
+bool parseSysY(DriverImpl& driver, const std::string& file);
 
 void Driver::parse(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode) {
     auto arena = std::make_shared<Arena>();
     Arena::setArena(Arena::Source::AST, arena.get());
     mImpl = std::make_unique<DriverImpl>(file, lang, recordHierarchy, strictMode, std::move(arena));
     const auto parseImpl = lang == FrontEndLang::Spl ? parseSpl : parseSysY;
-    if(!parseImpl(*mImpl, file, strictMode) || !mImpl->complete()) {
+    if(!parseImpl(*mImpl, file) || !mImpl->complete()) {
         if(!strictMode) {
             reportError() << "Failed to parse" << std::endl;
             std::abort();

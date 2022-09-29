@@ -45,6 +45,8 @@
 
 // Control Flow Keywords
 %token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN GOTO SWITCH CASE
+// Qualifier Keywords
+%token CONST
 // Aggregate Keywords
 %token STRUCT UNION
 // Unary/Binary Operators
@@ -79,9 +81,9 @@
 
 %%
 
+%type <TypeRef> QualifiedSpecifier;
 %type <TypeRef> Specifier;
 %type <TypeRef> StructSpecifier;
-%type <VarList> ExtDecList;
 %type <NamedVar> VarDec;
 %type <FunctionDeclaration> FunDec;
 %type <ArgList> VarList;
@@ -95,6 +97,8 @@
 %type <VarDef> Def;
 %type <VarList> DecList;
 %type <NamedVar> Dec;
+%type <Expr*> Initializer;
+%type <ExprPack> InitializerList;
 
 %start Program;
 
@@ -103,45 +107,34 @@ Program: ExtDefList END { driver.markEnd(); CMMC_NONTERMINAL(@$, Program, @1); }
 ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 | %empty { CMMC_EMPTY(@$, ExtDefList); }
 ;
-ExtDef: Specifier ExtDecList SEMI { driver.addGlobalDef($1, $2); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
-| Specifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
-| Specifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
-| Specifier ExtDecList error { CMMC_MISS_SEMI(@$); }
-| Specifier error { CMMC_MISS_SEMI(@$); }
-| error ExtDecList SEMI { CMMC_MISS_SPECIFIER(@2); }
-| error SEMI { CMMC_MISS_SPECIFIER(@2); }
-;
-ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
-| VarDec COMMA ExtDecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
+ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
+| Def { driver.addGlobalDef($1.type, $1.var); CMMC_NONTERMINAL(@$, ExtDef, @1); }
+| QualifiedSpecifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 ;
 /* specifier */
+QualifiedSpecifier: Specifier { $$ = $1; CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
+| CONST Specifier { $$ = $2; $$.qualifier.isConst = true;  CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1, @2); }
 Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
 StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
-| STRUCT ID LC DefList error { CMMC_MISS_RC(@$); }
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
-| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(static_cast<uint32_t>($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
-| VarDec LB RB { $$ = $1; $$.arraySize.push_back(0); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
-| VarDec LB INT error { CMMC_MISS_RB(@$); }
-| ERR {}
+| VarDec LB Exp RB { $$ = $1; $$.arraySize.push_back($3); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+| VarDec LB RB { $$ = $1; $$.arraySize.push_back(nullptr); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
 ;
 FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
 | ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
-| ID LP VarList error { CMMC_MISS_RP(@$); }
-| ID LP error { CMMC_MISS_RP(@$); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
 ;
-ParamDec: Specifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
+ParamDec: QualifiedSpecifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
 ;
 /* statement */
-CompSt: LC DefList StmtList RC { CMMC_SCOPE_GEN($$, $2, $3); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3, @4); }
-// | LC DefList StmtList error { CMMC_MISS_RC(@$); }
+CompSt: LC StmtList RC { $$ = $2; CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
@@ -152,26 +145,28 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE($3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
-| Exp error { CMMC_MISS_SEMI(@$); }
-| RETURN Exp error { CMMC_MISS_SEMI(@$); }
-| RETURN error { CMMC_MISS_SEMI(@$); }
-| IF LP Exp error Stmt %prec THEN { CMMC_MISS_RP(@$); }
-| IF LP Exp error Stmt ELSE Stmt { CMMC_MISS_RP(@$); }
-| WHILE LP Exp error Stmt { CMMC_MISS_RP(@$); }
+| BREAK SEMI { CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| CONTINUE SEMI { CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| Def { $$ = CMMC_DEF($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
+| SEMI {}
 ;
-/* local definition */
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
-| DefList error DecList SEMI DefList { CMMC_MISS_SPECIFIER(@2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
-Def: Specifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
-| Specifier DecList error { CMMC_MISS_SEMI(@$); }
+Def: QualifiedSpecifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
 ;
 Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
-| VarDec ASSIGN Exp { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
+| VarDec ASSIGN Initializer { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
+;
+Initializer: Exp { $$ = $1; }
+| LC InitializerList RC { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+;
+InitializerList: Initializer COMMA InitializerList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
+| Initializer { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }
 ;
 /* Expression */
 Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
@@ -187,29 +182,22 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp MINUS Exp { $$ = CMMC_BINARY_OP(Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp MUL Exp { $$ = CMMC_BINARY_OP(Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp DIV Exp { $$ = CMMC_BINARY_OP(Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp REM Exp { CMMC_NEED_EXTENSION(@$, Remainder); $$ = CMMC_BINARY_OP(Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp BAND Exp { CMMC_NEED_EXTENSION(@$, BitwiseAnd); $$ = CMMC_BINARY_OP(BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp BOR Exp { CMMC_NEED_EXTENSION(@$, BitwiseOr); $$ = CMMC_BINARY_OP(BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp XOR Exp { CMMC_NEED_EXTENSION(@$, Xor); $$ = CMMC_BINARY_OP(Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp REM Exp { $$ = CMMC_BINARY_OP(Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BAND Exp { $$ = CMMC_BINARY_OP(BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BOR Exp { $$ = CMMC_BINARY_OP(BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp XOR Exp { $$ = CMMC_BINARY_OP(Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | MINUS Exp { $$ = CMMC_UNARY_OP(Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| PLUS Exp { $$ = CMMC_UNARY_OP(Positive, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | Exp LP Args RP { $$ = CMMC_CALL($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp LP RP { $$ = CMMC_CALL($1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-// | LC Args RC { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| LP Exp error { CMMC_MISS_RP(@$); }
-| Exp LP Args error { CMMC_MISS_RP(@$); }
-| Exp LP error { CMMC_MISS_RP(@$); }
-| Exp LB Exp error { CMMC_MISS_RB(@$); }
-| Exp ERR Exp error {}
-| ERR {}
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }

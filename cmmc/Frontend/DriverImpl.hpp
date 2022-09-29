@@ -178,8 +178,8 @@ public:
     void emit(Module& module);
     void dump(std::ostream& out);
 
-    void reportLexerError(const char* str) {
-        reportError() << "Error type A at Line " << mLocation.begin.line << ": unknown lexeme " << str << std::endl;
+    void reportLexerError(const char* reason, const char* str) {
+        reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << str << std::endl;
         mError = true;
     }
     void reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {
@@ -189,5 +189,6 @@ public:
 };
 
 void generateScope(ExprPack& result, const VarDefList& list, const ExprPack& src);
+Expr* generateDef(const VarDef& def);
 
 CMMC_NAMESPACE_END

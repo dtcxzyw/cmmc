@@ -31,7 +31,7 @@ extern "C" YY_DECL;
 
 CMMC_NAMESPACE_BEGIN
 
-bool parseSysY(DriverImpl& driver, const std::string& file, bool strictMode) {
+bool parseSysY(DriverImpl& driver, const std::string& file) {
     // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     if(!yyin) {

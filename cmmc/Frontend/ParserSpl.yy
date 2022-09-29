@@ -124,8 +124,7 @@ StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct };
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
-| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(static_cast<uint32_t>($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
-| VarDec LB RB { $$ = $1; $$.arraySize.push_back(0); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
+| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(CMMC_INT($3, 32, true)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
 | VarDec LB INT error { CMMC_MISS_RB(@$); }
 | ERR {}
 ;

@@ -28,6 +28,9 @@ void generateScope(ExprPack& result, const VarDefList& list, const ExprPack& src
         result.push_back(LocalVarDefExpr::get(var.type, var.var));
     result.insert(result.cend(), src.cbegin(), src.cend());
 }
+Expr* generateDef(const VarDef& def) {
+    return LocalVarDefExpr::get(def.type, def.var);
+}
 
 static void emitSplRuntime(Module& module, EmitContext& ctx) {
     const auto i32 = IntegerType::get(32);

@@ -51,6 +51,7 @@
 #define CMMC_SCOPE(BLOCK) ScopedExpr::get(std::move(BLOCK))
 #define CMMC_WHILE(PRED, BLOCK) WhileExpr::get(PRED, BLOCK)
 #define CMMC_SCOPE_GEN(EXPR_PACK, LOCAL_VARS, STATEMENTS) generateScope((EXPR_PACK), (LOCAL_VARS), (STATEMENTS))
+#define CMMC_DEF(DEF) generateDef((DEF))
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")
 #define CMMC_MISS_RC(LOC) driver.reportParserError((LOC), "Missing closing curly bracket '}'")
@@ -59,6 +60,7 @@
 #define CMMC_NEED_EXTENSION(LOC, EXT) \
     if(!driver.checkExtension())      \
     driver.reportParserError((LOC), #EXT " is not allowed in strict spl mode")
-#define CMMC_LEXER_ERROR(TEXT)     \
-    driver.reportLexerError(TEXT); \
+#define CMMC_LEXER_ERROR(TEXT)                       \
+    driver.reportLexerError("unknown lexeme", TEXT); \
     CMMC_TERMINAL(ERR)
+#define CMMC_COMMENT_ERROR() driver.reportLexerError("Missing closing comment", "*/")

@@ -32,7 +32,7 @@ class Expr;
 CMMC_ARENA_TRAIT(Expr*, AST);
 
 struct Qualifier final {
-    // bool isConst;
+    bool isConst;
     // bool isVolatile;
 };
 
@@ -40,7 +40,6 @@ struct TypeRef final {
     StringAST typeIdentifier;
     TypeLookupSpace space;
 
-    // Type* anonymousType = nullptr; // Function Signature/ Anonymous Struct
     Qualifier qualifier;
 };
 
@@ -117,6 +116,7 @@ enum class OperatorID {
     Div,
     Rem,
     Neg,
+    Positive,
     LessThan,
     LessEqual,
     GreaterThan,

@@ -39,6 +39,7 @@ Flag strictMode;
 IntegerOpt optimizationLevel;
 extern StringOpt target;
 static StringOpt outputPath;
+static Flag grammarCheck;
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
@@ -48,6 +49,7 @@ emitIR.setName("emitIR", 'i');
 strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
 optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
+grammarCheck.setName("grammar-check", 'g').setDesc("Only check grammar");
 CMMC_INIT_OPTIONS_END
 
 CMMC_NAMESPACE_END
@@ -124,6 +126,9 @@ int main(int argc, char** argv) {
         if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - 4);
             Driver driver{ path, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY, emitAST.get(), strictMode.get() };
+
+            if(grammarCheck.get())
+                return EXIT_SUCCESS;
 
             if(emitAST.get()) {
                 const auto path = getOutputPath(base + ".ast");

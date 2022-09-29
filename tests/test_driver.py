@@ -47,8 +47,8 @@ def spl_codegen_tac(src):
 
 
 def sysy_parse(src):
-    out = subprocess.run(args=[binary_path, '-a', '-o',
-                               '/dev/null', src], capture_output=True, text=True)
+    out = subprocess.run(
+        args=[binary_path, '-g', src], capture_output=True, text=True)
     return out.returncode == 0
 
 
@@ -74,6 +74,7 @@ def test(name, path, filter, tester):
     for src in test_set:
         cnt += 1
         print("\rTesting... {}/{}".format(cnt, len(test_set)), end='')
+        sys.stdout.flush()
         if not tester(src):
             fail_set.append(src)
 

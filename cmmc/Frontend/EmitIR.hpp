@@ -20,13 +20,13 @@
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 #include <utility>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
-using ArraySize = Vector<uint32_t, ArenaAllocator<Arena::Source::AST, uint32_t>>;
-
 class Expr;
+enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
+using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 
 using Scope = HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
 CMMC_ARENA_TRAIT(Scope, AST);
