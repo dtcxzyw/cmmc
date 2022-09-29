@@ -100,7 +100,7 @@ res.append(test("SPL semantic", tests_path+"/Semantic", ".spl", spl_semantic))
 res.append(test("SPL codegen TAC", tests_path +
            "/CodeGenTAC", ".spl", spl_codegen_tac))
 res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
-# res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
+res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 
 
 total_tests = 0

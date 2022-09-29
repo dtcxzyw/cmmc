@@ -179,7 +179,10 @@ public:
     void dump(std::ostream& out);
 
     void reportLexerError(const char* reason, const char* str) {
-        reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << str << std::endl;
+        if(mStrictMode)
+            reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << str << std::endl;
+        else
+            reportError() << "Lexer error" << mLocation.begin << ": " << reason << " <" << str << ">" << std::endl;
         mError = true;
     }
     void reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {

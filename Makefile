@@ -36,7 +36,7 @@ $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp: cmmc/Frontend/ScannerSpl.ll $(DIR_BU
 
 $(DIR_BUILD)/objs/SplSupport.o: cmmc/Frontend/Support/SplSupport.cpp $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SplSupport.cpp
 
 $(DIR_BUILD)/generated/SysY/ParserImpl.hpp: cmmc/Frontend/ParserSysY.yy
 	mkdir -p $(dir $@)
@@ -48,7 +48,7 @@ $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp: cmmc/Frontend/ScannerSysY.ll $(DIR_
 
 $(DIR_BUILD)/objs/SysYSupport.o: cmmc/Frontend/Support/SysYSupport.cpp $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SysYSupport.cpp
 
 $(DIR_BUILD)/objs/%.o: %.cpp
 	mkdir -p $(dir $@)

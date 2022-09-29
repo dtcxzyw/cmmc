@@ -32,7 +32,7 @@
 %}
 [ \t]+ loc.step ();
 [\n]+ loc.lines (yyleng); loc.step ();
-
+[\r]+ loc.step ();
 
 "//" { 
   char c;
@@ -118,8 +118,8 @@
 "char" { return emitType(); }
 "float" { return emitType(); }
 "0"[xX][0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
-0|[1-9][0-9]* { uintmax_t val = strtoull(yytext, NULL, 10); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
-(0|[1-9][0-9]*).[0-9]+ { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
+0|([1-9][0-9]*) { uintmax_t val = strtoull(yytext, NULL, 10); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
+(0|([1-9][0-9]*))"."[0-9]+ { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
 [a-zA-Z_][a-zA-Z_0-9]* { StringAST val{yytext}; return Parser::make_ID(val, {CMMC_RECORD(ID, StringAST{yytext}), loc}); }
 "'"."'" { char ch = yytext[1]; return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 "'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }

@@ -161,12 +161,12 @@ DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
 | VarDec ASSIGN Initializer { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
 ;
-Initializer: Exp { $$ = $1; }
-| LC InitializerList RC { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| LC RC { CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+Initializer: Exp { $$ = $1; CMMC_NONTERMINAL(@$, Initializer, @1); }
+| LC InitializerList RC { CMMC_NONTERMINAL(@$, Initializer, @1, @2, @3); }
+| LC RC { CMMC_NONTERMINAL(@$, Initializer, @1, @2); }
 ;
-InitializerList: Initializer COMMA InitializerList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
-| Initializer { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }
+InitializerList: Initializer COMMA InitializerList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, InitializerList, @1, @2, @3); }
+| Initializer { $$ = { $1 }; CMMC_NONTERMINAL(@$, InitializerList, @1); }
 ;
 /* Expression */
 Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
