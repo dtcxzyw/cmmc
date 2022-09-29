@@ -26,15 +26,15 @@ OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 .PHONY: all
 all: splc
 
-$(DIR_BUILD)/generated/ParserImpl.hpp: cmmc/Frontend/Parser.yy
+$(DIR_BUILD)/generated/Spl/ParserImpl.hpp: cmmc/Frontend/ParserSpl.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/ParserDecl.hpp $<
+	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/Spl/ParserDecl.hpp $<
 
-$(DIR_BUILD)/generated/ScannerImpl.hpp: cmmc/Frontend/Scanner.ll $(DIR_BUILD)/generated/ParserImpl.hpp
+$(DIR_BUILD)/generated/Spl/ScannerImpl.hpp: cmmc/Frontend/ScannerSpl.ll $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(LEX) -o $@ --header-file=$(DIR_BUILD)/generated/ScannerDecl.hpp $<
+	$(LEX) -o $@ --header-file=$(DIR_BUILD)/generated/Spl/ScannerDecl.hpp $<
 
-$(DIR_BUILD)/objs/%.o: %.cpp $(DIR_BUILD)/generated/ScannerImpl.hpp $(DIR_BUILD)/generated/ParserImpl.hpp
+$(DIR_BUILD)/objs/%.o: %.cpp $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
