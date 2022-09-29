@@ -53,6 +53,16 @@ public:
     bool isEqual(double val) const noexcept;
 };
 
+class ConstantOffset final : public ConstantValue {
+    StructType* mBase;
+    uint32_t mIndex;
+
+public:
+    ConstantOffset(StructType* base, uint32_t index)
+        : ConstantValue{ base->fields()[index].type }, mBase{ base }, mIndex{ index } {}
+    void dump(std::ostream& out) const override;
+};
+
 class UndefinedValue final : public ConstantValue {
 public:
     explicit UndefinedValue(Type* type) : ConstantValue{ type } {

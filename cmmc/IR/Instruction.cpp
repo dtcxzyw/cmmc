@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <ostream>
@@ -357,6 +358,35 @@ void FMAInst::dump(std::ostream& out) const {
     dumpBinary(out);
     out << ", ";
     getOperand(2)->dumpAsOperand(out);
+}
+
+Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
+    for(auto idx : indices) {
+        if(idx->as<ConstantInteger>()) {
+
+        } else if(idx->as<ConstantOffset>()) {
+
+        } else
+            reportUnreachable();
+    }
+    reportUnreachable();
+}
+
+void GetElementPtrInst::dump(std::ostream& out) const {
+    dumpWithNoOperand(out);
+    const auto base = operands().back();
+    out << ' ';
+    base->dump(out);
+    for(auto idx : operands()) {
+        if(idx == base)
+            break;
+        if(idx->as<ConstantInteger>()) {
+
+        } else if(idx->as<ConstantOffset>()) {
+
+        } else
+            reportUnreachable();
+    }
 }
 
 CMMC_NAMESPACE_END

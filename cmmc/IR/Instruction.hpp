@@ -85,6 +85,7 @@ enum class InstructionID {
     ConvertOpEnd,
     // miscellaneous
     Alloc,
+    GetElementPtr,
     Select,
     Call,
 };
@@ -316,6 +317,18 @@ public:
 class FMAInst final : public Instruction {
 public:
     explicit FMAInst(Value* x, Value* y, Value* z) : Instruction{ InstructionID::FFma, x->getType(), { x, y, z } } {}
+    void dump(std::ostream& out) const override;
+};
+
+class GetElementPtrInst final : public Instruction {
+public:
+    static Type* getValueType(Value* base, const Vector<Value*>& indices);
+    explicit GetElementPtrInst(Value* base, const Vector<Value*>& indices)
+        : Instruction{ InstructionID::GetElementPtr, getValueType(base, indices), {} } {
+        auto& list = operands();
+        list.insert(list.cend(), indices.cbegin(), indices.cend());
+        list.push_back(base);
+    }
     void dump(std::ostream& out) const override;
 };
 

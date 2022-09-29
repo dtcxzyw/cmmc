@@ -50,46 +50,6 @@ void Driver::dump(std::ostream& out) {
     mImpl->dump(out);
 }
 
-BinaryExpr* BinaryExpr::get(OperatorID op, Expr* lhs, Expr* rhs) {
-    return make<BinaryExpr>(op, lhs, rhs);
-}
-
-UnaryExpr* UnaryExpr::get(OperatorID op, Expr* value) {
-    return make<UnaryExpr>(op, value);
-}
-
-ConstantIntExpr* ConstantIntExpr::get(uintmax_t value, uint32_t bitWidth, bool isSigned) {
-    return make<ConstantIntExpr>(value, bitWidth, isSigned);
-}
-
-IdentifierExpr* IdentifierExpr::get(const StringAST& str) {
-    return make<IdentifierExpr>(str);
-}
-
-FunctionCallExpr* FunctionCallExpr::get(Expr* callee, ExprPack args) {
-    return make<FunctionCallExpr>(callee, std::move(args));
-}
-
-ReturnExpr* ReturnExpr::get(Expr* returnValue) {
-    return make<ReturnExpr>(returnValue);
-}
-
-IfElseExpr* IfElseExpr::get(Expr* pred, Expr* ifPart, Expr* elsePart) {
-    return make<IfElseExpr>(pred, ifPart, elsePart);
-}
-
-ScopedExpr* ScopedExpr::get(StatementBlock block) {
-    return make<ScopedExpr>(std::move(block));
-}
-
-WhileExpr* WhileExpr::get(Expr* pred, Expr* block) {
-    return make<WhileExpr>(pred, block);
-}
-
-ConstantFloatExpr* ConstantFloatExpr::get(double value, bool isFloat) {
-    return make<ConstantFloatExpr>(value, isFloat);
-}
-
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
     auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),

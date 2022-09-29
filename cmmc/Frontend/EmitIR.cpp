@@ -426,8 +426,14 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
     return nullptr;
 }
 
-LocalVarDefExpr* LocalVarDefExpr::get(TypeRef type, Deque<NamedVar> vars) {
-    return make<LocalVarDefExpr>(std::move(type), std::move(vars));
+Value* ArrayIndexExpr::emit(EmitContext& ctx) const {
+    const auto base = ctx.getRValue(mBase);
+    const auto idx = ctx.convertTo(ctx.getRValue(mIndex), IntegerType::get(32U));
+    return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx });
+}
+
+Value* StructIndexExpr::emit(EmitContext& ctx) const {
+    reportNotImplemented();
 }
 
 Value* EmitContext::convertTo(Value* value, Type* type) {

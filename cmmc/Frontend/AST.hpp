@@ -140,7 +140,6 @@ class BinaryExpr final : public Expr {
 
 public:
     BinaryExpr(OperatorID op, Expr* lhs, Expr* rhs) noexcept : mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
-    static BinaryExpr* get(OperatorID op, Expr* lhs, Expr* rhs);
     Value* emit(EmitContext& ctx) const override;
 };
 
@@ -150,7 +149,6 @@ class UnaryExpr final : public Expr {
 
 public:
     UnaryExpr(OperatorID op, Expr* value) noexcept : mOp{ op }, mValue{ value } {}
-    static UnaryExpr* get(OperatorID op, Expr* value);
     Value* emit(EmitContext& ctx) const override;
 };
 
@@ -163,7 +161,6 @@ public:
     ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
         : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
     Value* emit(EmitContext& ctx) const override;
-    static ConstantIntExpr* get(uintmax_t value, uint32_t bitWidth, bool isSigned);
 };
 
 class ConstantFloatExpr final : public Expr {
@@ -173,7 +170,6 @@ class ConstantFloatExpr final : public Expr {
 public:
     ConstantFloatExpr(double value, bool isFloat) noexcept : mValue{ value }, mIsFloat{ isFloat } {}
     Value* emit(EmitContext& ctx) const override;
-    static ConstantFloatExpr* get(double value, bool isFloat);
 };
 
 class ConstantStringExpr final : public Expr {
@@ -193,7 +189,6 @@ class FunctionCallExpr final : public Expr {
 public:
     FunctionCallExpr(Expr* callee, ExprPack args) : mCallee{ callee }, mArgs{ std::move(args) } {}
     Value* emit(EmitContext& ctx) const override;
-    static FunctionCallExpr* get(Expr* callee, ExprPack args);
 };
 
 class ReturnExpr final : public Expr {
@@ -202,7 +197,6 @@ class ReturnExpr final : public Expr {
 public:
     explicit ReturnExpr(Expr* returnValue) noexcept : mReturnValue{ returnValue } {}
     Value* emit(EmitContext& ctx) const override;
-    static ReturnExpr* get(Expr* returnValue);
 };
 
 class IfElseExpr final : public Expr {
@@ -214,7 +208,6 @@ public:
     IfElseExpr(Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
         : mPredicate{ pred }, mThenBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
     Value* emit(EmitContext& ctx) const override;
-    static IfElseExpr* get(Expr* pred, Expr* ifPart, Expr* elsePart);
 };
 
 class IdentifierExpr final : public Expr {
@@ -223,7 +216,6 @@ class IdentifierExpr final : public Expr {
 public:
     explicit IdentifierExpr(const StringAST& str) : mIdentifier{ str } {}
     Value* emit(EmitContext& ctx) const override;
-    static IdentifierExpr* get(const StringAST& str);
     bool isLValue() const noexcept override {
         return true;
     }
@@ -235,7 +227,6 @@ class ScopedExpr final : public Expr {
 public:
     explicit ScopedExpr(StatementBlock block) : mBlock{ std::move(block) } {};
     Value* emit(EmitContext& ctx) const override;
-    static ScopedExpr* get(StatementBlock block);
 };
 
 class WhileExpr final : public Expr {
@@ -245,7 +236,6 @@ class WhileExpr final : public Expr {
 public:
     WhileExpr(Expr* pred, Expr* block) : mPredicate{ pred }, mBlock{ block } {}
     Value* emit(EmitContext& ctx) const override;
-    static WhileExpr* get(Expr* pred, Expr* block);
 };
 
 class LocalVarDefExpr final : public Expr {
@@ -255,7 +245,25 @@ class LocalVarDefExpr final : public Expr {
 public:
     LocalVarDefExpr(TypeRef type, Deque<NamedVar> vars) : mType{ std::move(type) }, mVars{ std::move(vars) } {}
     Value* emit(EmitContext& ctx) const override;
-    static LocalVarDefExpr* get(TypeRef type, Deque<NamedVar> vars);
+};
+
+class ArrayIndexExpr final : public Expr {
+    Expr* mBase;
+    Expr* mIndex;
+
+public:
+    ArrayIndexExpr(Expr* base, Expr* index) noexcept : mBase{ base }, mIndex{ index } {}
+    Value* emit(EmitContext& ctx) const override;
+};
+
+class StructIndexExpr final : public Expr {
+    Expr* mBase;
+    StringAST mField;
+
+public:
+    StructIndexExpr(Expr* base, StringAST field) : mBase{ base }, mField{ field } {}
+    Value* emit(EmitContext& ctx) const override;
+    static StructIndexExpr* get(Expr* base, StringAST field);
 };
 
 template <typename T>

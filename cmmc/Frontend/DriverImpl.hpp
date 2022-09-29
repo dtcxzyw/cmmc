@@ -191,7 +191,7 @@ public:
     }
 };
 
-void generateScope(ExprPack& result, const VarDefList& list, const ExprPack& src);
-Expr* generateDef(const VarDef& def);
+void generateScope(ExprPack& result, VarDefList list, const ExprPack& src);
+Expr* generateDef(VarDef def);
 
 CMMC_NAMESPACE_END

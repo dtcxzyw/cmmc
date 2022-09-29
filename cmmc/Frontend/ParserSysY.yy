@@ -192,10 +192,10 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | NOT Exp { $$ = CMMC_UNARY_OP(LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | Exp LP Args RP { $$ = CMMC_CALL($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp LP RP { $$ = CMMC_CALL($1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp LB Exp RB { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
-| Exp DOT ID { CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
+| Exp DOT ID { $$ = CMMC_STRUCT_INDEX($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| INT { $$ = CMMC_INT($1, 32, true); CMMC_NONTERMINAL(@$, Exp, @1); }
+| INT { $$ = CMMC_INT($1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(@$, Exp, @1); }
 ;

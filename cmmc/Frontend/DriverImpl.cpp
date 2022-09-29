@@ -23,13 +23,13 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
-void generateScope(ExprPack& result, const VarDefList& list, const ExprPack& src) {
-    for(auto var : list)
-        result.push_back(LocalVarDefExpr::get(var.type, var.var));
+void generateScope(ExprPack& result, VarDefList list, const ExprPack& src) {
+    for(auto& var : list)
+        result.push_back(make<LocalVarDefExpr>(std::move(var.type), std::move(var.var)));
     result.insert(result.cend(), src.cbegin(), src.cend());
 }
-Expr* generateDef(const VarDef& def) {
-    return LocalVarDefExpr::get(def.type, def.var);
+Expr* generateDef(VarDef def) {
+    return make<LocalVarDefExpr>(std::move(def.type), std::move(def.var));
 }
 
 static void emitSplRuntime(Module& module, EmitContext& ctx) {

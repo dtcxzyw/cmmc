@@ -197,6 +197,8 @@ struct StructField final {
 };
 CMMC_ARENA_TRAIT(StructField, IR);
 
+class ConstantOffset;
+
 class StructType final : public Type {
     StringIR mName;
     Vector<StructField> mFields;
@@ -211,6 +213,10 @@ public:
     bool isSame(Type* rhs) const override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    const Vector<StructField>& fields() const noexcept {
+        return mFields;
+    }
+    ConstantOffset* getOffset(const std::string_view& fieldName);
 };
 
 class ArrayType final : public Type {

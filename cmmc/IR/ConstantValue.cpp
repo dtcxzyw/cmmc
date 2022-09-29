@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
@@ -55,6 +56,10 @@ bool ConstantFloatingPoint::isEqual(double val) const noexcept {
     if(getType()->as<FloatingPointType>()->getFixedSize() == 4)
         return static_cast<float>(mValue) == static_cast<float>(val);
     return mValue == val;
+}
+
+void ConstantOffset::dump(std::ostream& out) const {
+    reportNotImplemented();
 }
 
 CMMC_NAMESPACE_END
