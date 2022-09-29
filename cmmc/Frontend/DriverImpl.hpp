@@ -112,6 +112,7 @@ CMMC_ARENA_TRAIT(Hierarchy, AST);
 
 class DriverImpl final {
     std::string mFile;
+    FrontEndLang mLang;
     bool mRecordHierarchy;
     bool mStrictMode;
     yy::location mLocation;
@@ -123,8 +124,9 @@ class DriverImpl final {
     Deque<Hierarchy> mHierarchyTree;
 
 public:
-    DriverImpl(const std::string& file, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
-        : mFile{ file }, mRecordHierarchy{ recordHierarchy }, mStrictMode{ strictMode }, mArena{ std::move(arena) } {
+    DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
+        : mFile{ file }, mLang{ lang }, mRecordHierarchy{ recordHierarchy },  //
+          mStrictMode{ strictMode }, mArena{ std::move(arena) } {
         mLocation.initialize(&mFile);
     }
     ~DriverImpl() {
@@ -173,7 +175,7 @@ public:
         return index;
     }
 
-    void emit(Module& module, FrontEndLang lang);
+    void emit(Module& module);
     void dump(std::ostream& out);
 
     void reportLexerError(const char* str) {

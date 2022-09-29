@@ -26,13 +26,13 @@ class DriverImpl;
 enum class FrontEndLang { SysY, Spl };
 
 class Driver final {
-    void parse(const std::string& file, bool recordHierarchy, bool strictMode);
+    void parse(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode);
     std::unique_ptr<DriverImpl> mImpl;
 
 public:
-    Driver(const std::string& file, bool recordHierarchy, bool strictMode);
+    Driver(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode);
     ~Driver();
-    void emit(Module& module, FrontEndLang lang);
+    void emit(Module& module);
     void dump(std::ostream& out);
 };
 

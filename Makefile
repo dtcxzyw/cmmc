@@ -16,8 +16,8 @@ YACC = bison
 DIR_BUILD := ./build
 BIN := ./bin/splc
 
-CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -I $(abspath ./) -Wall -Werror -MD
-LDFLAGS = $(ADDFLAGS) -lfl
+CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath ./) -Wall -Werror -MD
+LDFLAGS = $(ADDFLAGS)
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)
 
@@ -32,13 +32,29 @@ $(DIR_BUILD)/generated/Spl/ParserImpl.hpp: cmmc/Frontend/ParserSpl.yy
 
 $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp: cmmc/Frontend/ScannerSpl.ll $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(LEX) -o $@ --header-file=$(DIR_BUILD)/generated/Spl/ScannerDecl.hpp $<
+	$(LEX) -o $@ -P Spl --header-file=$(DIR_BUILD)/generated/Spl/ScannerDecl.hpp $<
 
-$(DIR_BUILD)/objs/%.o: %.cpp $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
+$(DIR_BUILD)/objs/SplSupport.o: cmmc/Frontend/Support/SplSupport.cpp $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ $<
+
+$(DIR_BUILD)/generated/SysY/ParserImpl.hpp: cmmc/Frontend/ParserSysY.yy
+	mkdir -p $(dir $@)
+	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/SysY/ParserDecl.hpp $<
+
+$(DIR_BUILD)/generated/SysY/ScannerImpl.hpp: cmmc/Frontend/ScannerSysY.ll $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
+	mkdir -p $(dir $@)
+	$(LEX) -o $@ -P SysY --header-file=$(DIR_BUILD)/generated/SysY/ScannerDecl.hpp $<
+
+$(DIR_BUILD)/objs/SysYSupport.o: cmmc/Frontend/Support/SysYSupport.cpp $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ $<
+
+$(DIR_BUILD)/objs/%.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
-$(BIN): $(OBJS)
+$(BIN): $(OBJS) $(DIR_BUILD)/objs/SplSupport.o $(DIR_BUILD)/objs/SysYSupport.o
 	mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) -o $@ $^
 

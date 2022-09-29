@@ -14,24 +14,31 @@
 
 #include <cmmc/Frontend/DriverImpl.hpp>
 
-#include <Spl/ParserDecl.hpp>
+namespace SysY {
+    using yy::location;
+}
 
+#include <SysY/ParserDecl.hpp>
+
+using Parser = SysY::parser;
 #include <cmmc/Frontend/FrontendSupport.hpp>
+#define YY_DECL SysY::parser::symbol_type SysYlex(cmmc::DriverImpl& driver)
+extern "C" YY_DECL;
 
-#include <Spl/ParserImpl.hpp>
-#include <Spl/ScannerImpl.hpp>
+#include <SysY/ParserImpl.hpp>
+#include <SysY/ScannerImpl.hpp>
 #include <cstdio>
 
 CMMC_NAMESPACE_BEGIN
 
-bool parseSpl(DriverImpl& driver, const std::string& file, bool strictMode) {
+bool parseSysY(DriverImpl& driver, const std::string& file, bool strictMode) {
     // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     if(!yyin) {
         reportError() << "Failed to open the source file " << file << std::endl;
         std::abort();
     }
-    yy::parser parser{ driver };
+    SysY::parser parser{ driver };
     // parser.set_debug_level(10);
     // parser.set_debug_stream(std::cerr);
     bool ret = parser.parse() == 0;

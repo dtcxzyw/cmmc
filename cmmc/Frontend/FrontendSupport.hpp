@@ -26,16 +26,13 @@
         }                                                                                \
     while(false)
 
-#define YY_DECL yy::parser::symbol_type yylex(cmmc::DriverImpl& driver)
-extern "C" YY_DECL;
-
 #define CMMC_RECORD(ID, METADATA, ...)                                                                                         \
     (driver.shouldRecordHierarchy() ? driver.record({ __VA_ARGS__ },                                                           \
                                                     Hierarchy::Desc{ #ID, static_cast<uint32_t>(driver.location().begin.line), \
                                                                      Hierarchy::Variant{ METADATA } }) :                       \
                                       0)
 
-#define CMMC_TERMINAL(ID) return yy::parser::make_##ID({ CMMC_RECORD(ID, std::monostate{}), loc })
+#define CMMC_TERMINAL(ID) return Parser::make_##ID({ CMMC_RECORD(ID, std::monostate{}), loc })
 
 #define CMMC_NONTERMINAL(LOC, ID, ...) LOC.first = CMMC_RECORD(ID, Hierarchy::NonTerminal{}, __VA_ARGS__)
 #define CMMC_EMPTY(LOC, ID) LOC.first = CMMC_RECORD(Empty##ID, Hierarchy::Empty{})

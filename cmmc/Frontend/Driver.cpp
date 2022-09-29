@@ -20,18 +20,19 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Driver::Driver(const std::string& file, bool recordHierarchy, bool strictMode) {
-    parse(file, recordHierarchy, strictMode);
+Driver::Driver(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode) {
+    parse(file, lang, recordHierarchy, strictMode);
 }
 Driver::~Driver() {}
 
 bool parseSpl(DriverImpl& driver, const std::string& file, bool strictMode);
+bool parseSysY(DriverImpl& driver, const std::string& file, bool strictMode);
 
-void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMode) {
+void Driver::parse(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode) {
     auto arena = std::make_shared<Arena>();
     Arena::setArena(Arena::Source::AST, arena.get());
-    mImpl = std::make_unique<DriverImpl>(file, recordHierarchy, strictMode, std::move(arena));
-    const auto parseImpl = parseSpl;
+    mImpl = std::make_unique<DriverImpl>(file, lang, recordHierarchy, strictMode, std::move(arena));
+    const auto parseImpl = lang == FrontEndLang::Spl ? parseSpl : parseSysY;
     if(!parseImpl(*mImpl, file, strictMode) || !mImpl->complete()) {
         if(!strictMode) {
             reportError() << "Failed to parse" << std::endl;
@@ -41,8 +42,8 @@ void Driver::parse(const std::string& file, bool recordHierarchy, bool strictMod
     }
 }
 
-void Driver::emit(Module& module, FrontEndLang lang) {
-    mImpl->emit(module, lang);
+void Driver::emit(Module& module) {
+    mImpl->emit(module);
 }
 
 void Driver::dump(std::ostream& out) {

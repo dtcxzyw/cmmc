@@ -90,13 +90,13 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
     }
 }
 
-void DriverImpl::emit(Module& module, FrontEndLang lang) {
+void DriverImpl::emit(Module& module) {
     EmitContext ctx{ &module };
     ctx.pushScope();
 
-    if(lang == FrontEndLang::Spl)
+    if(mLang == FrontEndLang::Spl)
         emitSplRuntime(module, ctx);
-    else if(lang == FrontEndLang::SysY)
+    else if(mLang == FrontEndLang::SysY)
         emitSysYRuntime(module, ctx);
 
     for(auto& def : mDefs) {

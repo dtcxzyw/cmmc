@@ -21,7 +21,7 @@
 %define parse.assert
 %define parse.trace
 %define parse.error verbose
-%define api.prefix {Spl}
+%define api.prefix {SysY}
 
 %code requires {
   #include <cmmc/Support/Arena.hpp>
@@ -215,6 +215,6 @@ Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, 
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }
 ;
 %%
-void Spl::parser::error(const location_type& l, const std::string& m) {
-    // reportError() << l << ": " << m << '\n';
+void SysY::parser::error(const location_type& l, const std::string& m) {
+    reportError() << l << ": " << m << '\n';
 }

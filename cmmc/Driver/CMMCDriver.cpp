@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
 
         if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - 4);
-            Driver driver{ path, emitAST.get(), strictMode.get() };
+            Driver driver{ path, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY, emitAST.get(), strictMode.get() };
 
             if(emitAST.get()) {
                 const auto path = getOutputPath(base + ".ast");
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
             }
 
             Module module;
-            driver.emit(module, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY);
+            driver.emit(module);
 
             return runIRPipeline(module, base);
         } else if(endswith(path, ".ir"sv)) {
