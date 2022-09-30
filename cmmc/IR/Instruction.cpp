@@ -29,6 +29,7 @@ void Instruction::dumpAsOperand(std::ostream& out) const {
 }
 
 bool Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
+    assert(newOperand);
     bool modified = false;
     for(auto& operand : mOperands)
         if(operand == oldOperand) {

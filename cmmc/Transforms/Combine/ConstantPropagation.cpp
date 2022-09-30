@@ -32,31 +32,13 @@ CMMC_NAMESPACE_BEGIN
 class ConstantPropagation final : public TransformPass<Function> {
     bool runOnBlock(Block& block) const {
         return reduceBlock(block, [](Instruction* inst) -> Value* {
+            intmax_t i1, i2;
+            uintmax_t u1, u2;
             double f1, f2;
+            CompareOp cmp;
+
             if(inst->isIntegerOp()) {
                 auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
-
-                auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
-                    switch(cmp) {
-                        case CompareOp::LessThan:
-                            return lhs < rhs;
-                        case CompareOp::LessEqual:
-                            return lhs <= rhs;
-                        case CompareOp::GreaterThan:
-                            return lhs > rhs;
-                        case CompareOp::GreaterEqual:
-                            return lhs >= rhs;
-                        case CompareOp::Equal:
-                            return lhs == rhs;
-                        case CompareOp::NotEqual:
-                            return lhs != rhs;
-                    }
-                    reportUnreachable();
-                };
-
-                intmax_t i1, i2;
-                uintmax_t u1, u2;
-                CompareOp cmp;
 
                 if(not_(int_(i1))(inst))
                     return makeInt(inst, !i1);
@@ -76,12 +58,6 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeInt(inst, i1 % i2);
                 if(urem(uint_(u1), uint_(u2))(inst) && u2)
                     return makeInt(inst, u1 % u2);
-                if(scmp(cmp, int_(i1), int_(i2))(inst))
-                    return makeInt(inst, doCompare(cmp, i1, i2));
-                if(ucmp(cmp, uint_(u1), uint_(u2))(inst))
-                    return makeInt(inst, doCompare(cmp, u1, u2));
-                if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
-                    return makeInt(inst, doCompare(cmp, f1, f2));
                 if(shl(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 << u2);
                 if(lshr(uint_(u1), uint_(u2))(inst))
@@ -111,6 +87,32 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeFP(inst, f1 / f2);
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst))
                     return makeFP(inst, fma(f1, f2, f3));
+            } else if(inst->isCompareOp()) {
+                auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
+                    switch(cmp) {
+                        case CompareOp::LessThan:
+                            return lhs < rhs;
+                        case CompareOp::LessEqual:
+                            return lhs <= rhs;
+                        case CompareOp::GreaterThan:
+                            return lhs > rhs;
+                        case CompareOp::GreaterEqual:
+                            return lhs >= rhs;
+                        case CompareOp::Equal:
+                            return lhs == rhs;
+                        case CompareOp::NotEqual:
+                            return lhs != rhs;
+                    }
+                    reportUnreachable();
+                };
+                auto makeBool = [&](Instruction* inst, bool val) { return make<ConstantInteger>(inst->getType(), val); };
+
+                if(scmp(cmp, int_(i1), int_(i2))(inst))
+                    return makeBool(inst, doCompare(cmp, i1, i2));
+                if(ucmp(cmp, uint_(u1), uint_(u2))(inst))
+                    return makeBool(inst, doCompare(cmp, u1, u2));
+                if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
+                    return makeBool(inst, doCompare(cmp, f1, f2));
             }
             return nullptr;
         });

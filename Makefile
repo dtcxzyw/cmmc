@@ -1,6 +1,6 @@
 BUILD_TYPE = Release
 OPTFLAGS = -O3 -flto -DNDEBUG
-DBGFLAGS = -fsanitize=address -O0 -fno-omit-frame-pointer -ggdb
+DBGFLAGS = -fsanitize=address,undefined -O0 -fno-omit-frame-pointer -ggdb
 ADDFLAGS = 
 
 ifeq ($(BUILD_TYPE), Debug)

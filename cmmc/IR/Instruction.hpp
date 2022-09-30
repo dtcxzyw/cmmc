@@ -66,11 +66,13 @@ enum class InstructionID {
     FDiv,
     FNeg,
     FFma,
+    FloatingPointOpEnd,
     // compare ops
+    CompareOpBegin,
     SCmp,
     UCmp,
     FCmp,
-    FloatingPointOpEnd,
+    CompareOpEnd,
     // convert ops
     ConvertOpBegin,
     SExt,
@@ -154,6 +156,7 @@ public:
     CMMC_GET_INST_CATEGORY(IntegerOp);
     CMMC_GET_INST_CATEGORY(FloatingPointOp);
     CMMC_GET_INST_CATEGORY(ConvertOp);
+    CMMC_GET_INST_CATEGORY(CompareOp);
 
 #undef CMMC_GET_INST_CATEGORY
 
