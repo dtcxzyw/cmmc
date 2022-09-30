@@ -16,6 +16,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <iostream>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN
@@ -104,6 +105,10 @@ public:
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
                 if(!func.blocks().empty() && mPass->run(func, analysis)) {
+#ifndef NDEBUG
+                    std::cerr << typeid(*mPass).name() << std::endl;
+                    func.dump(std::cerr);
+#endif
                     analysis.invalidateFunc(func);
                     modified = true;
                 }

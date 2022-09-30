@@ -54,8 +54,11 @@ class CombineBranch final : public TransformPass<Function> {
         const auto& args2 = target.getTarget()->args();
         auto newArgs = nextTarget.getArgs();
         for(auto& arg : newArgs) {
-            const auto pos = std::find(args2.cbegin(), args2.cend(), arg) - args2.cbegin();
-            arg = args1[pos];
+            const auto iter = std::find(args2.cbegin(), args2.cend(), arg);
+            if(iter != args2.cend()) {  // only replace block arguments, keep globals/constants
+                const auto pos = iter - args2.cbegin();
+                arg = args1[pos];
+            }
         }
         branch->updateTargetArgs(target, std::move(newArgs));
     }
