@@ -54,13 +54,19 @@ public:
 };
 
 class ConstantOffset final : public ConstantValue {
-    StructType* mBase;
+    const StructType* mBase;
     uint32_t mIndex;
 
 public:
-    ConstantOffset(StructType* base, uint32_t index)
-        : ConstantValue{ base->fields()[index].type }, mBase{ base }, mIndex{ index } {}
+    ConstantOffset(const StructType* base, uint32_t index) : ConstantValue{ VoidType::get() }, mBase{ base }, mIndex{ index } {}
     void dump(std::ostream& out) const override;
+    const StructType* base() const noexcept {
+        return mBase;
+    }
+    uint32_t index() const noexcept {
+        return mIndex;
+    }
+    std::string_view getName() const;
 };
 
 class UndefinedValue final : public ConstantValue {

@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <ostream>
@@ -25,7 +26,8 @@ bool VoidType::isSame(Type* rhs) const {
     return rhs->isVoid();
 }
 VoidType* VoidType::get() {
-    return make<VoidType>();
+    static VoidType type;
+    return &type;
 }
 void VoidType::dumpName(std::ostream& out) const {
     out << "void";
@@ -136,7 +138,7 @@ size_t FunctionType::getAlignment(const DataLayout&) const noexcept {
 void StructType::dump(std::ostream& out) const {
     out << "struct " << mName;
     out << " {";
-    bool isFirst = false;
+    bool isFirst = true;
     for(auto& field : mFields) {
         if(!isFirst) {
             out << ", ";
@@ -146,7 +148,7 @@ void StructType::dump(std::ostream& out) const {
         field.type->dumpName(out);
         out << ' ' << field.fieldName;
     }
-    out << "}";
+    out << "};" << std::endl;
 }
 void StructType::dumpName(std::ostream& out) const {
     out << "struct " << mName;
@@ -169,18 +171,26 @@ size_t StructType::getAlignment(const DataLayout& dataLayout) const noexcept {
         maxAlignment = std::max(maxAlignment, field.type->getAlignment(dataLayout));
     return maxAlignment;
 }
+ConstantOffset* StructType::getOffset(const std::string_view& fieldName) const {
+    for(uint32_t idx = 0; idx < mFields.size(); ++idx)
+        if(mFields[idx].fieldName == fieldName)
+            return make<ConstantOffset>(this, idx);
+    reportFatal("");
+}
+Type* StructType::getFieldType(const ConstantOffset* offset) const {
+    if(offset->base() != this)
+        reportFatal("");
+    assert(offset->index() <= mFields.size());
+    return mFields[offset->index()].type;
+}
 
+PointerType* ArrayType::getPointerType() const {
+    return make<PointerType>(mElementType);
+}
 void ArrayType::dumpName(std::ostream& out) const {
-    const ArrayType* cur = this;
-    while(cur->getElementType()->isArray())
-        cur = cur->getElementType()->as<ArrayType>();
-    cur->getElementType()->dump(out);
-    cur = this;
-    while(true) {
-        out << '[' << cur->getElementCount() << ']';
-        if(cur->getElementType()->isArray())
-            cur = cur->getElementType()->as<ArrayType>();
-    }
+    out << '[' << mElementCount << " * ";
+    mElementType->dumpName(out);
+    out << ']';
 }
 bool ArrayType::isSame(Type* rhs) const {
     if(this == rhs)

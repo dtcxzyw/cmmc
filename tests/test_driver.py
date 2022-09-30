@@ -25,7 +25,7 @@ def spl_parse(src):
 
 
 def spl_semantic(src):
-    out = subprocess.run(args=[binary_path, '-s', '-i', '-o',
+    out = subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     ref_content = ""
     ref = src[:-4]+".out"
@@ -53,7 +53,7 @@ def sysy_parse(src):
 
 
 def sysy_semantic(src):
-    out = subprocess.run(args=[binary_path, '-i', '-o',
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 

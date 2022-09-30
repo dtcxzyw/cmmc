@@ -153,8 +153,8 @@ static auto lowerToMachineModule(MachineModule& machineModule, const Module& mod
     std::unordered_map<MachineFunction*, Function*> funcTask;
 
     for(auto global : module.globals()) {
-        if(global.second->isFunction()) {
-            auto func = global.second->as<Function>();
+        if(global->isFunction()) {
+            auto func = global->as<Function>();
             if(func->blocks().empty()) {
                 // TODO: external func
             } else {

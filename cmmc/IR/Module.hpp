@@ -25,7 +25,7 @@ class Target;
 
 class Module final {
     Arena mArena;
-    HashTable<StringIR, GlobalValue*, Arena::Source::IR, StringHasher<Arena::Source::IR>> mGlobals;
+    Vector<GlobalValue*> mGlobals;
     Vector<Type*> mTypes;
     const Target* mTarget = nullptr;
 

@@ -58,8 +58,12 @@ bool ConstantFloatingPoint::isEqual(double val) const noexcept {
     return mValue == val;
 }
 
-void ConstantOffset::dump(std::ostream& out) const {
-    reportNotImplemented();
+std::string_view ConstantOffset::getName() const {
+    return mBase->fields()[mIndex].fieldName;
+}
+
+void ConstantOffset::dump(std::ostream&) const {
+    reportUnreachable();
 }
 
 CMMC_NAMESPACE_END

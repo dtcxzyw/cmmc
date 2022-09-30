@@ -37,6 +37,7 @@ public:
 
     template <typename T>
     T* as() {
+        static_assert(std::is_base_of_v<Type, T>);
         const auto ptr = dynamic_cast<T*>(this);
         assert(ptr);
         return ptr;
@@ -216,7 +217,8 @@ public:
     const Vector<StructField>& fields() const noexcept {
         return mFields;
     }
-    ConstantOffset* getOffset(const std::string_view& fieldName);
+    ConstantOffset* getOffset(const std::string_view& fieldName) const;
+    Type* getFieldType(const ConstantOffset* offset) const;
 };
 
 class ArrayType final : public Type {
@@ -235,6 +237,7 @@ public:
     uint32_t getElementCount() const noexcept {
         return mElementCount;
     }
+    PointerType* getPointerType() const;
 
     bool isArray() const noexcept override {
         return true;

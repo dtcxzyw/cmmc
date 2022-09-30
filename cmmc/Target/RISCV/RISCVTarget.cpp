@@ -62,11 +62,24 @@ public:
     }
 };
 
+class RISCVFrameInfo final : public TargetFrameInfo {
+public:
+    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
+                                                      CallingConvention cc) const override {
+        reportNotImplemented();
+    }
+    void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
+                      TargetRegisterUsage& usage) const override {
+        reportNotImplemented();
+    }
+};
+
 // RISC-V lp32d
 class RISCVTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     RISCVDataLayout mDataLayout;
     RISCVInstInfo mInstInfo;
+    RISCVFrameInfo mFrameInfo;
 
 public:
     explicit RISCVTarget() {
@@ -82,7 +95,7 @@ public:
         return mInstInfo;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        reportUnreachable();
+        return mFrameInfo;
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;

@@ -66,6 +66,10 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
                 return true;
     return false;
 }
+std::vector<uint32_t> AliasAnalysisResult::inheritFrom(Value* ptr) const {
+    assert(mPointerAttributes.count(ptr));
+    return mPointerAttributes.find(ptr)->second;
+}
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     AliasAnalysisResult result;
@@ -83,6 +87,10 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                 for(uint32_t id = argID; id < newID; ++id)
                     result.addPair(id, newID);
                 result.addValue(inst, { newID });
+            } else if(inst->getInstID() == InstructionID::GetElementPtr) {
+                // TODO: handle distinct array indices and distinct struct fields
+                const auto src = result.inheritFrom(inst->operands().back());
+                result.addValue(inst, src);
             }
         }
     }

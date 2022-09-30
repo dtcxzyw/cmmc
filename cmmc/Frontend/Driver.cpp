@@ -70,6 +70,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
     }
     auto type = make<StructType>(StringIR{ name }, std::move(fields));
     ctx.addIdentifier(name, type);
+    ctx.getModule()->add(type);
 }
 
 CMMC_NAMESPACE_END

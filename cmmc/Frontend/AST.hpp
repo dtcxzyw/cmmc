@@ -23,6 +23,7 @@
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 #include <utility>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -79,7 +80,7 @@ struct FunctionDeclaration final {
     ArgList args;
     // bool isVarArg;
 
-    FunctionType* getSignature(EmitContext& ctx) const;
+    std::pair<PassingPlan, FunctionType*> getSignature(EmitContext& ctx) const;
 };
 
 using StatementBlock = Deque<Expr*>;
@@ -90,6 +91,8 @@ struct FunctionDefinition final {
 
     void emit(EmitContext& ctx) const;
 };
+
+using CompileTimeEvaluatedValue = std::variant<std::monostate, uintmax_t>;
 
 class Expr {
     SourceLocation mLocation;
@@ -106,6 +109,9 @@ public:
     virtual Value* emit(EmitContext& ctx) const = 0;
     virtual bool isLValue() const noexcept {
         return false;
+    }
+    virtual CompileTimeEvaluatedValue evaluate() const noexcept {
+        return std::monostate{};
     }
 };
 
@@ -161,6 +167,9 @@ public:
     ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
         : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
     Value* emit(EmitContext& ctx) const override;
+    CompileTimeEvaluatedValue evaluate() const noexcept override {
+        return mValue;
+    }
 };
 
 class ConstantFloatExpr final : public Expr {
@@ -254,6 +263,9 @@ class ArrayIndexExpr final : public Expr {
 public:
     ArrayIndexExpr(Expr* base, Expr* index) noexcept : mBase{ base }, mIndex{ index } {}
     Value* emit(EmitContext& ctx) const override;
+    bool isLValue() const noexcept override {
+        return true;
+    }
 };
 
 class StructIndexExpr final : public Expr {
@@ -264,6 +276,9 @@ public:
     StructIndexExpr(Expr* base, StringAST field) : mBase{ base }, mField{ field } {}
     Value* emit(EmitContext& ctx) const override;
     static StructIndexExpr* get(Expr* base, StringAST field);
+    bool isLValue() const noexcept override {
+        return true;
+    }
 };
 
 template <typename T>

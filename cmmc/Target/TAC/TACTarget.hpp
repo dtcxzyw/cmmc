@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+// TAC Virtual Target
 #pragma once
 #include <cmmc/CodeGen/Target.hpp>
 
@@ -91,6 +92,7 @@ public:
 
 class TACFrameInfo final : public TargetFrameInfo {
 public:
+    bool shouldPassByRegister(Type* type, const DataLayout& dataLayout) const override;
     std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
                                                       CallingConvention cc) const override;
     void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
@@ -103,7 +105,6 @@ public:
     void postPeepholeOpt(MachineModule& module) const override;
 };
 
-// TAC Virtual Target
 class TACTarget final : public Target {
     TACSubTarget mSubTarget;
     TACDataLayout mDataLayout;

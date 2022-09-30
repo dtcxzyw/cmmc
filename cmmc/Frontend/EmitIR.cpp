@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -21,45 +23,92 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
-#include <iostream>
+#include <cstdint>
+#include <limits>
+#include <queue>
+#include <type_traits>
 
 CMMC_NAMESPACE_BEGIN
 
 extern Flag strictMode;
 
-FunctionType* FunctionDeclaration::getSignature(EmitContext& ctx) const {
-    const auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
-    Vector<Type*> argTypes;
-    for(auto& arg : args)
-        argTypes.push_back(ctx.getType(arg.type.typeIdentifier, arg.type.space, {}));  // TODO: pass array base pointer
+std::pair<PassingPlan, FunctionType*> FunctionDeclaration::getSignature(EmitContext& ctx) const {
+    PassingPlan plan;
 
-    return make<FunctionType>(ret, std::move(argTypes));
+    auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
+    if(ret->isArray())
+        reportFatal("");
+
+    const auto& target = ctx.getModule()->getTarget();
+    const auto& targetFrameInfo = target.getTargetFrameInfo();
+    const auto& dataLayout = target.getDataLayout();
+    Vector<Type*> argTypes;
+    for(auto& arg : args) {
+        assert(!arg.var.initialValue);
+        const auto type = ctx.getType(arg.type.typeIdentifier, arg.type.space, arg.var.arraySize);
+        if(type->isVoid())
+            reportFatal("");
+        if(!type->isArray() && targetFrameInfo.shouldPassByRegister(type, dataLayout)) {
+            argTypes.push_back(type);
+            plan.passingArgsByPointer.push_back(false);
+        } else {
+            argTypes.push_back(make<PointerType>(type));
+            plan.passingArgsByPointer.push_back(true);
+        }
+    }
+
+    if(!ret->isVoid() && !targetFrameInfo.shouldPassByRegister(ret, dataLayout)) {
+        argTypes.push_back(make<PointerType>(ret));
+        ret = VoidType::get();
+        plan.passingRetValByPointer = true;
+    }
+
+    return { std::move(plan), make<FunctionType>(ret, std::move(argTypes)) };
 }
+
+static void sortBlocks(Function& func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
-    const auto funcType = decl.getSignature(ctx);
+    auto [plan, funcType] = decl.getSignature(ctx);
     auto func = make<Function>(StringIR{ decl.symbol }, funcType);
     module->add(func);
     ctx.addIdentifier(decl.symbol, func);
+    ctx.addPassingPlan(func, plan);
 
     ctx.setCurrentFunction(func);
     ctx.pushScope();  // arguments
     const auto entry = ctx.addBlock(funcType->getArgTypes());
     entry->setLabel("entry");
     ctx.setCurrentBlock(entry);
+
     // NOTICE: function arguments must be lvalues
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
         auto label = StringIR{ name };
         const auto arg = entry->getArg(idx);
         arg->setLabel(label);
-        if(arg->getType()->isArray())
-            reportNotImplemented();
-        const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
-        memArg->setLabel(label);
-        ctx.makeOp<StoreInst>(memArg, arg);
-        ctx.addIdentifier(name, memArg);
+
+        if(!plan.passingArgsByPointer[idx]) {
+            // passing by register
+            const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
+            memArg->setLabel(label);
+            ctx.makeOp<StoreInst>(memArg, arg);
+            ctx.addIdentifier(name, memArg);
+        } else {
+            // passing by pointer
+            if(arg->getType()->isArray()) {
+                ctx.addIdentifier(name, arg);
+            } else {
+                // TODO: handle const args
+                // create a copy
+                const auto type = arg->getType()->as<PointerType>()->getPointee();
+                const auto memArg = ctx.makeOp<StackAllocInst>(type);
+                memArg->setLabel(label);
+                ctx.makeOp<StoreInst>(memArg, ctx.makeOp<LoadInst>(arg));
+                ctx.addIdentifier(name, memArg);
+            }
+        }
     }
     for(auto st : block)
         st->emit(ctx);
@@ -80,7 +129,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         if(!hasTerminator) {
             // fix terminator
             ctx.setCurrentBlock(funcBlock);
-            if(retType->isVoid()) {
+            if(retType->isVoid() && !plan.passingRetValByPointer) {
                 ctx.makeOp<ReturnInst>();
             } else {
                 ctx.makeOp<UnreachableInst>();
@@ -89,7 +138,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     }
 
     blockArgPropagation(*func);
-    // TODO: sort blocks
+    sortBlocks(*func);
 
     ctx.popScope();
 }
@@ -307,38 +356,61 @@ Value* ConstantStringExpr::emit(EmitContext& ctx) const {
 
 Value* FunctionCallExpr::emit(EmitContext& ctx) const {
     auto callee = ctx.getRValue(mCallee);
-
-    Vector<Value*> args;
-    args.reserve(mArgs.size());
-    for(auto arg : mArgs)
-        args.push_back(ctx.getRValue(arg));
+    const auto& passing = ctx.getPassingPlan(callee);
 
     // TODO: va_args
     auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
-    if(argTypes.size() != args.size())
+    if(argTypes.size() != mArgs.size())
         reportFatal("");
 
-    for(size_t idx = 0; idx < args.size(); ++idx)
-        args[idx] = ctx.convertTo(args[idx], argTypes[idx]);
+    Vector<Value*> args;
+    args.reserve(mArgs.size());
+    for(uint32_t idx = 0; idx < mArgs.size(); ++idx) {
+        const auto arg = mArgs[idx];
+        const auto destType = argTypes[idx];
+        if(passing.passingArgsByPointer[idx]) {
+            const auto val = ctx.getLValueForce(arg, destType);
+            args.push_back(val);
+        } else {
+            const auto val = ctx.getRValue(arg);
+            args.push_back(ctx.convertTo(val, destType));
+        }
+    }
 
-    return ctx.makeOp<FunctionCallInst>(callee, std::move(args));
+    if(passing.passingRetValByPointer) {
+        const auto retType = argTypes.back()->as<PointerType>()->getPointee();
+        const auto storage = make<StackAllocInst>(retType);
+        args.push_back(storage);
+        ctx.makeOp<FunctionCallInst>(callee, std::move(args));
+        return ctx.makeOp<LoadInst>(storage);
+    } else
+        return ctx.makeOp<FunctionCallInst>(callee, std::move(args));
 }
 
 Value* ReturnExpr::emit(EmitContext& ctx) const {
     auto func = ctx.getCurrentFunction();
-    auto type = func->getType()->as<FunctionType>();
-    auto retType = type->getRetType();
-    if(retType->isVoid()) {
-        if(mReturnValue)
-            reportFatal("");
-    } else if(!mReturnValue) {
-        reportFatal("");
-    }
+    const auto& passing = ctx.getPassingPlan(func);
 
-    if(type->isVoid())
+    if(passing.passingRetValByPointer) {
+        const auto ret = func->entryBlock()->args().back();
+        const auto retType = ret->getType();
+        auto val = ctx.convertTo(ctx.getRValue(mReturnValue), retType);
+        ctx.makeOp<StoreInst>(ret, val);
         return ctx.makeOp<ReturnInst>(nullptr);
-    auto val = ctx.convertTo(ctx.getRValue(mReturnValue), retType);
-    return ctx.makeOp<ReturnInst>(val);
+    } else {
+        auto type = func->getType()->as<FunctionType>();
+        auto retType = type->getRetType();
+        if(retType->isVoid()) {
+            if(mReturnValue)
+                reportFatal("");
+        } else if(!mReturnValue) {
+            reportFatal("");
+        }
+        if(type->isVoid())
+            return ctx.makeOp<ReturnInst>(nullptr);
+        auto val = ctx.convertTo(ctx.getRValue(mReturnValue), retType);
+        return ctx.makeOp<ReturnInst>(val);
+    }
 }
 
 Value* IfElseExpr::emit(EmitContext& ctx) const {
@@ -427,13 +499,19 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
 }
 
 Value* ArrayIndexExpr::emit(EmitContext& ctx) const {
-    const auto base = ctx.getRValue(mBase);
+    const auto base = ctx.getLValue(mBase);
     const auto idx = ctx.convertTo(ctx.getRValue(mIndex), IntegerType::get(32U));
     return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx });
 }
 
 Value* StructIndexExpr::emit(EmitContext& ctx) const {
-    reportNotImplemented();
+    const auto base = ctx.getLValue(mBase);
+    const auto pointer = base->getType()->as<PointerType>();
+    const auto structType = pointer->getPointee();
+    if(!structType->isStruct())
+        reportFatal("");
+    const auto offset = structType->as<StructType>()->getOffset(mField);
+    return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ offset });
 }
 
 Value* EmitContext::convertTo(Value* value, Type* type) {
@@ -486,10 +564,27 @@ Value* EmitContext::getRValue(Expr* expr) {
 Value* EmitContext::getLValue(Expr* expr) {
     if(!expr->isLValue())
         reportFatal("");
-    const auto val = expr->emit(*this);
-    if(val->isGlobal())
-        reportFatal("");
-    return val;
+    return expr->emit(*this);
+}
+Value* EmitContext::getLValueForce(Expr* expr, Type* type) {
+    const auto createFromRValue = [&](Value* rvalue) -> Value* {
+        const auto val = convertTo(rvalue, type);
+        const auto storage = makeOp<StackAllocInst>(val->getType());
+        makeOp<StoreInst>(storage, val);
+        return storage;
+    };
+
+    if(expr->isLValue()) {
+        const auto ptr = expr->emit(*this);
+        if(ptr->getType()->isSame(type))
+            return ptr;
+        assert(ptr->getType()->isPointer());
+        const auto rvalue = makeOp<LoadInst>(ptr);
+        return createFromRValue(rvalue);
+    } else {
+        const auto val = getRValue(expr);
+        return createFromRValue(val);
+    }
 }
 void EmitContext::pushScope() {
     mScopes.push_back({});
@@ -526,6 +621,8 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
             ret = mFloat;
         else if(type == "char")
             ret = mChar;
+        else if(type == "void")
+            ret = VoidType::get();
     } else if(space == TypeLookupSpace::Struct) {
         const auto iter = mStructTypes.find(type);
         if(iter != mStructTypes.cend())
@@ -535,10 +632,36 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
     if(!ret)
         reportNotImplemented();
 
-    for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
-        // TODO: handle array
-        reportNotImplemented();
-        // ret = make<ArrayType>(ret, *iter);
+    {
+        bool unknownSize = false;
+        for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
+            const auto expr = *iter;
+
+            if(expr == nullptr) {
+                if(unknownSize)
+                    reportFatal("");
+                unknownSize = true;
+                ret = make<PointerType>(ret);
+            } else {
+                const auto constantSize = (*iter)->evaluate();
+
+                std::visit(
+                    [&](auto x) {
+                        using T = std::decay_t<decltype(x)>;
+                        if constexpr(std::is_same_v<uintmax_t, T>) {
+                            if(x == 0)
+                                reportFatal("");
+                            if(x >= (1U << 24))
+                                reportFatal("array is too large");
+
+                            ret = make<ArrayType>(ret, static_cast<uint32_t>(x));
+                        } else {
+                            reportFatal("");
+                        }
+                    },
+                    constantSize);
+            }
+        }
     }
     return ret;
 }
@@ -546,6 +669,76 @@ void EmitContext::addIdentifier(StringAST identifier, StructType* type) {
     if(mStructTypes.count(identifier))
         reportFatal("");
     mStructTypes.emplace(std::move(identifier), type);
+}
+
+void EmitContext::addPassingPlan(Value* func, PassingPlan plan) {
+    mPassingPlan.emplace(func, std::move(plan));
+}
+const PassingPlan& EmitContext::getPassingPlan(Value* func) {
+    const auto iter = mPassingPlan.find(func);
+    if(iter != mPassingPlan.cend())
+        return iter->second;
+    const auto type = func->getType()->as<FunctionType>();
+    PassingPlan defaultPlan;
+    defaultPlan.passingArgsByPointer.resize(type->getArgTypes().size(), false);
+    return mPassingPlan.emplace(func, std::move(defaultPlan)).first->second;
+}
+
+// Simple BFS with post heuristic
+// not for performance, just for readability
+void sortBlocks(Function& func) {
+    std::unordered_map<Block*, uint32_t> weight;
+    constexpr uint32_t branchTrueCost = 100;
+    constexpr uint32_t branchFalseCost = 101;
+    constexpr uint32_t ubrCost = 2;
+    constexpr uint32_t brCost = 0;
+    constexpr uint32_t retCost = 10;
+    constexpr uint32_t unreachableCost = 1'000'000;
+
+    std::queue<Block*> q{ { func.entryBlock() } };
+    const auto addTarget = [&](const BranchTarget& target, uint32_t w) {
+        const auto block = target.getTarget();
+        if(weight.emplace(block, w).second)
+            q.push(block);
+    };
+
+    while(!q.empty()) {
+        const auto u = q.front();
+        q.pop();
+        auto& val = weight[u];
+        const auto terminator = u->getTerminator();
+        switch(terminator->getInstID()) {
+            case InstructionID::Branch: {
+                const auto& branch = terminator->as<ConditionalBranchInst>();
+                addTarget(branch->getTrueTarget(), val + branchTrueCost);
+                val += brCost;
+                break;
+            }
+            case InstructionID::ConditionalBranch: {
+                const auto& branch = terminator->as<ConditionalBranchInst>();
+                addTarget(branch->getTrueTarget(), val + branchTrueCost);
+                addTarget(branch->getFalseTarget(), val + branchFalseCost);
+                val += ubrCost;
+                break;
+            }
+            case InstructionID::Unreachable: {
+                val += unreachableCost;
+                break;
+            }
+            case InstructionID::Ret: {
+                val += retCost;
+                break;
+            }
+            default:
+                reportUnreachable();
+        }
+    }
+
+    for(auto& block : func.blocks())
+        if(!weight.count(block))
+            weight[block] = std::numeric_limits<uint32_t>::max();
+
+    func.blocks().sort([&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; });
 }
 
 CMMC_NAMESPACE_END

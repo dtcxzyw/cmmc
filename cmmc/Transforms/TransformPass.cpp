@@ -100,8 +100,7 @@ public:
     explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
     bool run(Module& module, AnalysisPassManager& analysis) const override {
         bool modified = false;
-        for(auto [sym, global] : module.globals()) {
-            CMMC_UNUSED(sym);
+        for(auto global : module.globals()) {
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
                 if(!func.blocks().empty() && mPass->run(func, analysis)) {

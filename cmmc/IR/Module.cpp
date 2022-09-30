@@ -23,18 +23,20 @@ CMMC_NAMESPACE_BEGIN
 Module::Module() : mArena{ Arena::Source::IR } {}
 
 void Module::dump(std::ostream& out) const {
-    for(auto type : mTypes)
-        type->dump(out);
+    if(!mTypes.empty()) {
+        for(auto type : mTypes)
+            type->dump(out);
 
-    out << std::endl;
+        out << std::endl;
+    }
 
     for(auto value : mGlobals)
-        value.second->dump(out);
+        value->dump(out);
 }
 
 bool Module::verify(std::ostream& out) const {
     for(auto value : mGlobals) {
-        if(auto func = dynamic_cast<Function*>(value.second))
+        if(auto func = dynamic_cast<Function*>(value))
             if(!func->verify(out))
                 return false;
     }
@@ -42,10 +44,11 @@ bool Module::verify(std::ostream& out) const {
 }
 
 void Module::add(GlobalValue* globalValue) {
-    mGlobals.emplace(globalValue->getSymbol(), globalValue);
+    mGlobals.push_back(globalValue);
 }
 
 void Module::add(Type* type) {
+    assert(type->isStruct());
     mTypes.push_back(type);
 }
 

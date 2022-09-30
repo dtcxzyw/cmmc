@@ -16,6 +16,7 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <ostream>
 
@@ -133,6 +134,12 @@ static const char* getInstName(InstructionID instID) {
             return "s2f";
         case InstructionID::Alloc:
             return "alloc";
+        case InstructionID::GetElementPtr:
+            return "getelementptr";
+        case InstructionID::ExtractValue:
+            return "extractvalue";
+        case InstructionID::InsertValue:
+            return "insertvalue";
         case InstructionID::Select:
             return "select";
         case InstructionID::Call:
@@ -361,29 +368,38 @@ void FMAInst::dump(std::ostream& out) const {
 }
 
 Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
+    Type* cur = base->getType()->as<PointerType>()->getPointee();
     for(auto idx : indices) {
-        if(idx->as<ConstantInteger>()) {
-
-        } else if(idx->as<ConstantOffset>()) {
-
+        if(idx->getType()->isInteger()) {
+            if(cur->isArray()) {
+                cur = cur->as<ArrayType>()->getElementType();
+            } else if(cur->isPointer()) {
+                cur = cur->as<PointerType>()->getPointee();
+            } else
+                reportFatal("");
+        } else if(auto offset = idx->as<ConstantOffset>(); offset) {
+            cur = cur->as<StructType>()->getFieldType(offset);
         } else
             reportUnreachable();
     }
-    reportUnreachable();
+    return cur;
 }
 
 void GetElementPtrInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     const auto base = operands().back();
-    out << ' ';
-    base->dump(out);
+    out << " &(*";
+    base->dumpAsOperand(out);
+    out << ')';
     for(auto idx : operands()) {
         if(idx == base)
             break;
-        if(idx->as<ConstantInteger>()) {
-
-        } else if(idx->as<ConstantOffset>()) {
-
+        if(idx->getType()->isInteger()) {
+            out << '[';
+            idx->dumpAsOperand(out);
+            out << ']';
+        } else if(auto offset = idx->as<ConstantOffset>()) {
+            out << '.' << offset->getName();
         } else
             reportUnreachable();
     }

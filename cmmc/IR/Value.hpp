@@ -57,6 +57,7 @@ public:
 
     template <typename T>
     T* as() {
+        static_assert(std::is_base_of_v<Value, T>);
         const auto ptr = dynamic_cast<T*>(this);
         assert(ptr);
         return ptr;

@@ -13,12 +13,14 @@
 */
 
 #pragma once
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
+#include <deque>
 #include <utility>
 #include <variant>
 
@@ -31,10 +33,16 @@ using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 using Scope = HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
 CMMC_ARENA_TRAIT(Scope, AST);
 
+struct PassingPlan final {
+    bool passingRetValByPointer = false;
+    std::vector<bool> passingArgsByPointer;
+};
+
 class EmitContext final : public IRBuilder {
     Module* mModule;
-    Deque<Scope> mScopes;
-    HashTable<StringAST, StructType*, Arena::Source::AST, StringHasher<Arena::Source::AST>> mStructTypes;
+    std::deque<Scope> mScopes;
+    std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
+    std::unordered_map<Value*, PassingPlan> mPassingPlan;
 
     Type* mInteger;
     Type* mFloat;
@@ -49,12 +57,15 @@ public:
     Value* convertTo(Value* value, Type* type);
     Value* getRValue(Expr* expr);
     Value* getLValue(Expr* expr);
+    Value* getLValueForce(Expr* expr, Type* type);
     void pushScope();
     void popScope();
     void addIdentifier(StringAST identifier, Value* value);
     void addIdentifier(StringAST identifier, StructType* type);
     Value* lookupIdentifier(const StringAST& identifier);
     Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const;
+    void addPassingPlan(Value* func, PassingPlan plan);
+    const PassingPlan& getPassingPlan(Value* func);
 };
 
 CMMC_NAMESPACE_END

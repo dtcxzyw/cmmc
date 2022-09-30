@@ -60,8 +60,6 @@ static std::string getOutputPath(const std::string& defaultPath) {
 }
 
 static int runIRPipeline(Module& module, const std::string& base) {
-    const auto target = TargetRegistry::get().selectTarget();
-    module.setTarget(target.get());
     const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
     AnalysisPassManager analysis{ &module };
     opt->run(module, analysis);
@@ -81,7 +79,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
     std::ofstream out{ path };
     const auto machineModule = lowerToMachineModule(module);
     assert(machineModule->verify());
-    target->emitAssembly(*machineModule, out);
+    machineModule->getTarget().emitAssembly(*machineModule, out);
 
     return EXIT_SUCCESS;
 }
@@ -139,11 +137,15 @@ int main(int argc, char** argv) {
             }
 
             Module module;
+            const auto target = TargetRegistry::get().selectTarget();
+            module.setTarget(target.get());
             driver.emit(module);
 
             return runIRPipeline(module, base);
         } else if(endswith(path, ".ir"sv)) {
             Module module;
+            const auto target = TargetRegistry::get().selectTarget();
+            module.setTarget(target.get());
             loadTAC(module, path);
             const auto base = path.substr(0, path.size() - 3);
             return runIRPipeline(module, base);

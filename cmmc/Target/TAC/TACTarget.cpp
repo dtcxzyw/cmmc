@@ -64,6 +64,10 @@ TACTarget::TACTarget() {
         reportFatal("Unsupported target machine");
 }
 
+bool TACFrameInfo::shouldPassByRegister(Type* type, const DataLayout& dataLayout) const {
+    return true;
+}
+
 std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock* block, FunctionType* func,
                                                                 CallingConvention cc) const {
     reportNotImplemented();

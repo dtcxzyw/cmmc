@@ -27,6 +27,7 @@ public:
     void addPair(uint32_t attr1, uint32_t attr2);
     void addValue(Value* p, std::vector<uint32_t> attrs);
     bool isDistinct(Value* p1, Value* p2) const;
+    std::vector<uint32_t> inheritFrom(Value* value) const;
 };
 
 class AliasAnalysis final : public FuncAnalysisPassWrapper<AliasAnalysis, AliasAnalysisResult> {

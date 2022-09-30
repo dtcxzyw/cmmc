@@ -78,11 +78,24 @@ public:
     */
 };
 
+class MIPSFrameInfo final : public TargetFrameInfo {
+public:
+    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
+                                                      CallingConvention cc) const override {
+        reportNotImplemented();
+    }
+    void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
+                      TargetRegisterUsage& usage) const override {
+        reportNotImplemented();
+    }
+};
+
 // MIPS o32
 class MIPSTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     MIPSDataLayout mDataLayout;
     MIPSInstInfo mInstInfo;
+    MIPSFrameInfo mFrameInfo;
 
 public:
     explicit MIPSTarget() {
@@ -98,7 +111,7 @@ public:
         return mInstInfo;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        reportUnreachable();
+        return mFrameInfo;
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;

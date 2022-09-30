@@ -86,6 +86,8 @@ enum class InstructionID {
     // miscellaneous
     Alloc,
     GetElementPtr,
+    ExtractValue,
+    InsertValue,
     Select,
     Call,
 };
@@ -324,7 +326,7 @@ class GetElementPtrInst final : public Instruction {
 public:
     static Type* getValueType(Value* base, const Vector<Value*>& indices);
     explicit GetElementPtrInst(Value* base, const Vector<Value*>& indices)
-        : Instruction{ InstructionID::GetElementPtr, getValueType(base, indices), {} } {
+        : Instruction{ InstructionID::GetElementPtr, PointerType::get(getValueType(base, indices)), {} } {
         auto& list = operands();
         list.insert(list.cend(), indices.cbegin(), indices.cend());
         list.push_back(base);
