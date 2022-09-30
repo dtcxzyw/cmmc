@@ -35,7 +35,7 @@ CMMC_NAMESPACE_BEGIN
 class StoreEliminate final : public TransformPass<Function> {
     static bool isInvisible(Instruction* store, Block& block, const AliasAnalysisResult& aliasSet) {
         const auto addr = store->getOperand(0);
-        // FIXME: too limited
+        // FIXME: only works on limited scenario
         if(addr->isInstruction() && addr->as<Instruction>()->getInstID() == InstructionID::Alloc) {
             bool isAfterStore = false;
             for(auto inst : block.instructions()) {

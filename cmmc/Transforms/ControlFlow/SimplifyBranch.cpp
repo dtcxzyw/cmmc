@@ -69,6 +69,6 @@ public:
     }
 };
 
-CMMC_TRANSFORM_PASS(SimplyBranch);
+// CMMC_TRANSFORM_PASS(SimplyBranch);
 
 CMMC_NAMESPACE_END

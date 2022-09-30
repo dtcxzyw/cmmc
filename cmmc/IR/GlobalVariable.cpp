@@ -13,11 +13,12 @@
 */
 
 #include <cmmc/IR/GlobalVariable.hpp>
+#include <cmmc/IR/Type.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 void GlobalVariable::dump(std::ostream& out) const {
-    getType()->dump(out);
+    getType()->as<PointerType>()->dump(out);
     out << " @" << getSymbol();
     if(!mAttr.empty()) {
         out << " { ";

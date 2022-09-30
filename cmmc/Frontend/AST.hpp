@@ -191,6 +191,14 @@ public:
 
 using ExprPack = Deque<Expr*>;
 
+class StaticArrayInitializer final : public Expr {
+    ExprPack mElements;
+
+public:
+    explicit StaticArrayInitializer(ExprPack elements) : mElements{ std::move(elements) } {}
+    Value* emit(EmitContext& ctx) const override;
+};
+
 class FunctionCallExpr final : public Expr {
     Expr* mCallee;
     ExprPack mArgs;

@@ -27,8 +27,9 @@ class GlobalVariable final : public GlobalValue {
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(StringIR symbol, Type* type, Value* value) : GlobalValue{ symbol, type }, mStaticInitializedValue{ value } {
-        assert(value->isConstant());
+    GlobalVariable(StringIR symbol, Type* type, Value* value)
+        : GlobalValue{ symbol, PointerType::get(type) }, mStaticInitializedValue{ value } {
+        assert(!value || value->isConstant());
     }
     void dump(std::ostream& out) const override;
     auto& attr() noexcept {

@@ -62,6 +62,12 @@ public:
         assert(ptr);
         return ptr;
     }
+
+    template <typename T>
+    bool is() const {
+        static_assert(std::is_base_of_v<Value, T>);
+        return dynamic_cast<const T*>(this);
+    }
 };
 
 CMMC_NAMESPACE_END

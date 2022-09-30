@@ -270,6 +270,7 @@ public:
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void updateTargetArgs(BranchTarget& target, Vector<Value*> args);
     void dump(std::ostream& out) const override;
+    bool verify(std::ostream& out) const override;
 
     BranchTarget& getTrueTarget() noexcept {
         return mTrueTarget;

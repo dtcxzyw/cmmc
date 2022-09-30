@@ -35,8 +35,16 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         lastValue[addr] = val;
     };
 
+    // globals
+    for(auto operand : inst->operands())
+        if(operand->isGlobal() && operand->getType()->isPointer())
+            mBasePointer.emplace(operand, operand);
+
     switch(inst->getInstID()) {
         case InstructionID::Load: {
+            // TODO: better strategy?
+            if(inst->getType()->isArray())
+                break;
             const auto addr = inst->getOperand(0);
             const auto base = mBasePointer.find(addr);
             if(base != mBasePointer.cend())

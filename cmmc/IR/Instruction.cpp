@@ -18,6 +18,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
@@ -50,7 +51,16 @@ bool Instruction::canbeOperand() const noexcept {
 }
 
 bool Instruction::verify(std::ostream& out) const {
-    // TODO: cross block reference
+    // cross block reference
+    for(auto operand : operands())
+        if(auto block = operand->getBlock(); block && block != getBlock()) {
+            out << "cross block reference" << std::endl;
+            out << "current block: " << getBlock()->getLabel() << std::endl;
+            getBlock()->dump(out);
+            out << "used block: " << block->getLabel() << std::endl;
+            block->dump(out);
+            return false;
+        }
 
     return true;
 }
@@ -254,7 +264,36 @@ void ConditionalBranchInst::dump(std::ostream& out) const {
     }
 }
 
+bool ConditionalBranchInst::verify(std::ostream& out) const {
+    if(!Instruction::verify(out))
+        return false;
+    auto verifyTarget = [&](const BranchTarget& target) {
+        const auto block = target.getTarget();
+        if(!block)
+            return true;
+        auto& args1 = target.getArgs();
+        auto& args2 = block->args();
+        if(args1.size() != args2.size()) {
+            out << "The counts of block arguments mismatch." << std::endl;
+            out << "Source block: " << getBlock()->getLabel() << std::endl;
+            out << "Dest block:" << block->getLabel() << std::endl;
+            return false;
+        }
+        for(uint32_t idx = 0; idx < args1.size(); ++idx) {
+            const auto t1 = args1[idx];
+            const auto t2 = args2[idx];
+            if(!t1->getType()->isSame(t2->getType())) {
+                out << "The types of block arguments mismatch." << std::endl;
+                return false;
+            }
+        }
+        return true;
+    };
+    return verifyTarget(mTrueTarget) && verifyTarget(mFalseTarget);
+}
+
 static void replaceRoot(Block* block, Value* oldOperand, Value* newOperand) {
+    assert(oldOperand != newOperand);
     if(!block)
         return;
     bool modified = false;

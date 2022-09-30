@@ -19,7 +19,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern Flag uniqueLabel;
+Flag uniqueLabel;
+
+CMMC_INIT_OPTIONS_BEGIN
+uniqueLabel.setName("uniqueid", 'u').setDesc("generate global unique label prefix");
+CMMC_INIT_OPTIONS_END
 
 Value::Value(Type* type) : mType{ type } {
     assert(type);

@@ -53,7 +53,8 @@ void Driver::dump(std::ostream& out) {
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
     auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
-                                       ctx.getRValue(var.initialValue));  // TODO: dynamic initializer?
+                                       var.initialValue ? ctx.getRValue(var.initialValue) : nullptr);
+    // TODO: dynamic initializer?
     module->add(global);
     ctx.addIdentifier(var.name, global);
 }

@@ -17,32 +17,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
-DistinctPointerSet analysisAliases(Function& func) {
-    DistinctPointerSet set;
-
-    for(auto block : func.blocks()) {
-        std::vector<Value*> allocs;
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc)
-                allocs.push_back(inst);
-        }
-
-        for(uint32_t i = 0; i < allocs.size(); ++i)
-            for(uint32_t j = i + 1; j < allocs.size(); ++j)
-                set.addPair(allocs[i], allocs[j]);
-    }
-
-    // TODO: safe pointer arithmetic
-
-    // TODO: global pointers
-
-    // TODO: cross block pointers
-
-    return set;
-}
-*/
-
 static uint64_t encode(uint32_t a, uint32_t b) {
     assert(a != b);
     if(a < b)
@@ -74,6 +48,11 @@ std::vector<uint32_t> AliasAnalysisResult::inheritFrom(Value* ptr) const {
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     AliasAnalysisResult result;
     uint32_t allocateID = 0;
+    const auto globalID = ++allocateID;
+    const auto stackID = ++allocateID;
+    result.addPair(globalID, stackID);
+
+    std::unordered_set<Value*> globals;
 
     for(auto block : func.blocks()) {
         const auto argID = ++allocateID;
@@ -86,18 +65,20 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                 uint32_t newID = ++allocateID;
                 for(uint32_t id = argID; id < newID; ++id)
                     result.addPair(id, newID);
-                result.addValue(inst, { newID });
+                result.addValue(inst, { stackID, newID });
             } else if(inst->getInstID() == InstructionID::GetElementPtr) {
                 // TODO: handle distinct array indices and distinct struct fields
                 const auto src = result.inheritFrom(inst->operands().back());
                 result.addValue(inst, src);
             }
+            for(auto operand : inst->operands())
+                if(operand->isGlobal() && operand->getType()->isPointer())
+                    globals.insert(operand);
         }
     }
 
-    // TODO: safe pointer arithmetic
-
-    // TODO: global pointers
+    for(auto global : globals)
+        result.addValue(global, { globalID });
 
     return result;
 }

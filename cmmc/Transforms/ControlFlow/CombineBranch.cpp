@@ -34,9 +34,11 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -52,12 +54,25 @@ class CombineBranch final : public TransformPass<Function> {
         target.resetTarget(nextTarget.getTarget());
         const auto& args1 = target.getArgs();
         const auto& args2 = target.getTarget()->args();
+        assert(args1.size() == args2.size());
         auto newArgs = nextTarget.getArgs();
         for(auto& arg : newArgs) {
             const auto iter = std::find(args2.cbegin(), args2.cend(), arg);
             if(iter != args2.cend()) {  // only replace block arguments, keep globals/constants
                 const auto pos = iter - args2.cbegin();
                 arg = args1[pos];
+            } else {
+#ifndef NDEBUG
+                if(!arg->is<BlockArgument>()) {
+                    reportError() << "Bad block argument when forwarding";
+                    reportError() << "BlockA: " << branch->getBlock()->getLabel() << std::endl;
+                    reportError() << "BlockB: " << target.getTarget()->getLabel() << std::endl;
+                    reportError() << "BlockC: " << nextTarget.getTarget()->getLabel() << std::endl;
+                    reportError() << "BlockB:" << std::endl;
+                    target.getTarget()->dump(std::cerr);
+                    reportUnreachable();
+                }
+#endif
             }
         }
         branch->updateTargetArgs(target, std::move(newArgs));
@@ -77,12 +92,12 @@ public:
             if(terminator->isBranch()) {
                 auto branch = terminator->as<ConditionalBranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
-                if(forwardBlocks.count(trueTarget.getTarget())) {
+                if(trueTarget.getTarget() != block && forwardBlocks.count(trueTarget.getTarget())) {
                     foldForward(branch, trueTarget);
                     modified = true;
                 }
                 auto& falseTarget = branch->getFalseTarget();
-                if(forwardBlocks.count(falseTarget.getTarget())) {
+                if(falseTarget.getTarget() != block && forwardBlocks.count(falseTarget.getTarget())) {
                     foldForward(branch, falseTarget);
                     modified = true;
                 }
@@ -96,6 +111,6 @@ public:
     }
 };
 
-CMMC_TRANSFORM_PASS(CombineBranch);
+// CMMC_TRANSFORM_PASS(CombineBranch);
 
 CMMC_NAMESPACE_END

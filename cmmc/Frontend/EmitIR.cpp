@@ -247,7 +247,8 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
         }
 
         ctx.setCurrentBlock(rhsBlock);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ rhsBlock, ctx.convertTo(mRhs->emit(ctx), IntegerType::getBoolean()) });
+        ctx.makeOp<ConditionalBranchInst>(
+            BranchTarget{ newBlock, ctx.convertTo(ctx.getRValue(mRhs), IntegerType::getBoolean()) });
         ctx.setCurrentBlock(newBlock);
         return newBlock->getArg(0);
     }
@@ -320,11 +321,9 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
     auto value = ctx.getRValue(mValue);
 
     switch(mOp) {
-        case OperatorID::Neg: {
-            if(value->getType()->isInteger())
-                return ctx.makeOp<UnaryInst>(InstructionID::Neg, value->getType(), value);
-            return ctx.makeOp<UnaryInst>(InstructionID::FNeg, value->getType(), value);
-        }
+        case OperatorID::Neg:
+            return ctx.makeOp<UnaryInst>(value->getType()->isInteger() ? InstructionID::Neg : InstructionID::FNeg,
+                                         value->getType(), value);
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
                 return ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
@@ -335,6 +334,11 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean());
             return ctx.makeOp<UnaryInst>(InstructionID::Not, value->getType(), value);
+        }
+        case OperatorID::Positive: {
+            if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
+                return value;
+            reportFatal("");
         }
         default:
             reportUnreachable();
@@ -553,10 +557,12 @@ Value* EmitContext::convertTo(Value* value, Type* type) {
 Value* EmitContext::getRValue(Expr* expr) {
     const auto val = expr->emit(*this);
     if(expr->isLValue()) {
-        if(!val->isGlobal() && !val->getType()->isPointer())
-            reportFatal("");
-        if(val->getType()->isPointer())
-            return makeOp<LoadInst>(val);
+        if(!val->getType()->isPointer()) {
+            if(val->is<Function>())
+                return val;
+            reportUnreachable();
+        }
+        return makeOp<LoadInst>(val);
     }
 
     return val;
@@ -739,6 +745,10 @@ void sortBlocks(Function& func) {
             weight[block] = std::numeric_limits<uint32_t>::max();
 
     func.blocks().sort([&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; });
+}
+
+Value* StaticArrayInitializer::emit(EmitContext& ctx) const {
+    reportNotImplemented();
 }
 
 CMMC_NAMESPACE_END

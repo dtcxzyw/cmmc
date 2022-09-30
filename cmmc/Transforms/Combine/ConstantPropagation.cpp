@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -30,6 +31,23 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
+    bool reduceConstantBlockArgs(Block& block) const {
+        std::vector<std::pair<Value*, Value*>> replace;
+        for(auto arg : block.args()) {
+            const auto target = arg->getTarget();
+            if(!target)
+                continue;
+            if(target->isConstant() || target->isGlobal())
+                replace.emplace_back(arg, target);
+        }
+        bool modified = false;
+        for(auto inst : block.instructions()) {
+            for(auto [src, dst] : replace)
+                modified |= inst->replaceOperand(src, dst);
+        }
+        return modified;
+    }
+
     bool runOnBlock(Block& block) const {
         return reduceBlock(block, [](Instruction* inst) -> Value* {
             intmax_t i1, i2;
@@ -114,6 +132,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
                     return makeBool(inst, doCompare(cmp, f1, f2));
             }
+
             return nullptr;
         });
     }
@@ -121,10 +140,16 @@ class ConstantPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         bool modified = false;
-        for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block);
+        while(true) {
+            bool changed = false;
+            for(auto block : func.blocks()) {
+                modified |= reduceConstantBlockArgs(*block);
+                modified |= runOnBlock(*block);
+            }
+            modified |= changed;
+            if(!changed)
+                return modified;
         }
-        return modified;
     }
 
     PassType type() const noexcept override {

@@ -19,35 +19,13 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Flag uniqueLabel;
-static uint64_t uniqueID = 0;
-
-CMMC_INIT_OPTIONS_BEGIN
-uniqueLabel.setName("uniqueid", 'u').setDesc("generate global unique label");
-CMMC_INIT_OPTIONS_END
-
 static void emitID(std::string& str, uint32_t idx) {
     if(idx >= 10)
         emitID(str, idx / 10);
     str.push_back('0' + idx % 10);
 }
 
-static std::string generateUniqueID() {
-    constexpr auto lut = "abcdefghijklmnopqrstuvwxyz";
-    std::string res;
-    auto id = uniqueID++;
-    while(id >= 26) {
-        res.push_back(lut[id % 26]);
-        id /= 26;
-    }
-    res.push_back(lut[id % 26]);
-    return res;
-}
-
 std::string LabelAllocator::allocate(const std::string& base) {
-    if(uniqueLabel.get())
-        return generateUniqueID();
-
     uint32_t end = 0;
     while(end != base.size()) {
         if(isdigit(base[end]))
