@@ -28,9 +28,12 @@ class IRBuilder {
     Function* mCurrentFunction;
     Block* mCurrentBlock;
 
+    Type* mIndexType;
+    Value *mTrueValue, *mFalseValue, *mZeroIndex;
+
 public:
-    IRBuilder() : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {}
-    explicit IRBuilder(Block* block) {
+    IRBuilder();
+    explicit IRBuilder(Block* block) : IRBuilder{} {
         setCurrentBlock(block);
     }
 
@@ -52,7 +55,7 @@ public:
     }
 
     template <typename T, typename... Args>
-    Instruction* makeOp(Args&&... args) {
+    auto makeOp(Args&&... args) {
         auto inst = make<T>(std::forward<Args>(args)...);
         auto block = getCurrentBlock();
         block->instructions().push_back(inst);
@@ -67,9 +70,18 @@ public:
         return addBlock({ types... });
     }
 
-    Value* getTrue() const;
-    Value* getFalse() const;
-    Value* getInteger(IntegerType* type, intmax_t value) const;
+    Value* getTrue() const noexcept {
+        return mTrueValue;
+    }
+    Value* getFalse() const noexcept {
+        return mFalseValue;
+    }
+    Value* getZeroIndex() const noexcept {
+        return mZeroIndex;
+    }
+    Type* getIndexType() const noexcept {
+        return mIndexType;
+    }
 };
 
 CMMC_NAMESPACE_END

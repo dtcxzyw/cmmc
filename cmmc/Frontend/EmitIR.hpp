@@ -23,6 +23,7 @@
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
 #include <deque>
+#include <unordered_map>
 #include <utility>
 #include <variant>
 
@@ -32,28 +33,55 @@ class Expr;
 enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 
-using CompileTimeEvaluatedValue = std::variant<std::monostate, intmax_t>;
+struct Qualifier final {
+    bool isConst = false;
+    bool isSigned = true;
+    // bool isVolatile;
+
+    static Qualifier getSigned() noexcept {
+        return Qualifier{ false, true };
+    }
+    static Qualifier getUnsigned() noexcept {
+        return Qualifier{ false, false };
+    }
+};
+
+enum class ValueQualifier { AsRValue, AsLValue };
+
+struct QualifiedValue final {
+    Value* value;
+    ValueQualifier valueQualifier;
+    Qualifier qualifier;
+
+    explicit QualifiedValue() : value{ nullptr }, valueQualifier{ ValueQualifier::AsRValue } {}
+    explicit QualifiedValue(Value* value) : value{ value }, valueQualifier{ ValueQualifier::AsRValue } {}
+    QualifiedValue(Value* value, ValueQualifier valueQualifier, Qualifier qualifier)
+        : value{ value }, valueQualifier{ valueQualifier }, qualifier{ qualifier } {}
+};
+
 struct Scope final {
-    HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>> variables;
-    HashTable<StringAST, CompileTimeEvaluatedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> constants;
+    HashTable<StringAST, QualifiedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> variables;
 };
 
 CMMC_ARENA_TRAIT(Scope, AST);
 
-struct PassingPlan final {
+struct FunctionCallInfo final {
     bool passingRetValByPointer = false;
     std::vector<bool> passingArgsByPointer;
+    std::vector<Qualifier> argQualifiers;
+    Qualifier retQualifier;
 };
 
 class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
 
-    HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>> uniqueVariables;
+    HashTable<StringAST, QualifiedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> uniqueVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
-    std::unordered_map<Value*, PassingPlan> mPassingPlan;
+    std::unordered_map<FunctionType*, FunctionCallInfo> mCallInfo;
+    std::unordered_map<Value*, Value*> mConstantBinding;
 
     Type* mInteger;
     Type* mFloat;
@@ -65,26 +93,26 @@ public:
     Module* getModule() const noexcept {
         return mModule;
     }
-    Value* convertTo(Value* value, Type* type);
-    ConstantValue* convertToConstant(ConstantValue* value, Type* type);
-    Value* getRValue(Expr* expr);
-    Value* getLValue(Expr* expr);
-    Value* getLValueForce(Expr* expr, Type* type);
+    Value* convertTo(Value* value, Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
+    std::pair<Value*, Qualifier> getRValue(Expr* expr);
+    Value* getRValue(Expr* expr, Type* type, Qualifier dstQualifier);
+    std::pair<Value*, Qualifier> getLValue(Expr* expr);
+    Value* getLValueForce(Expr* expr, Type* type, Qualifier dstQualifier);
     void pushScope();
     void popScope();
-    void addIdentifier(StringAST identifier, Value* value);
+    void addIdentifier(StringAST identifier, QualifiedValue value);
     void addIdentifier(StringAST identifier, StructType* type);
-    Value* lookupIdentifier(const StringAST& identifier);
-    Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const;
-    void addPassingPlan(Value* func, PassingPlan plan);
-    const PassingPlan& getPassingPlan(Value* func);
+    void addConstant(Value* address, Value* val);
+    QualifiedValue lookupIdentifier(const StringAST& identifier);
+    Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize);
+
+    void addFunctionCallInfo(FunctionType* func, FunctionCallInfo info);
+    const FunctionCallInfo& getFunctionCallInfo(FunctionType* func);
+
     void pushLoop(Block* continueTarget, Block* breakTarget);
     void popLoop();
     Block* getContinueTarget();
     Block* getBreakTarget();
-
-    void addConstant(StringAST identifier, CompileTimeEvaluatedValue val);
-    CompileTimeEvaluatedValue lookupConstant(const StringAST& identifier) const;
 };
 
 CMMC_NAMESPACE_END

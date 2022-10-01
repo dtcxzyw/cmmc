@@ -67,6 +67,17 @@ size_t IntegerType::getFixedSize() const noexcept {
     return mBitWidth / 8 + (mBitWidth % 8 ? 1 : 0);
 }
 IntegerType* IntegerType::get(uint32_t bitWidth) {
+    static IntegerType i1{ 1U }, i8{ 8U }, i16{ 16U }, i32{ 32U }, i64{ 64U };
+    if(bitWidth == 32U)
+        return &i32;
+    if(bitWidth == 1U)
+        return &i1;
+    if(bitWidth == 8U)
+        return &i8;
+    if(bitWidth == 64U)
+        return &i64;
+    if(bitWidth == 16U)
+        return &i16;
     return make<IntegerType>(bitWidth);
 }
 void IntegerType::dumpName(std::ostream& out) const {
@@ -80,7 +91,8 @@ size_t IntegerType::getAlignment(const DataLayout& dataLayout) const noexcept {
 }
 
 FloatingPointType* FloatingPointType::get(bool isFloat) {
-    return make<FloatingPointType>(isFloat);
+    static FloatingPointType fp32{ true }, fp64{ false };
+    return isFloat ? &fp32 : &fp64;
 }
 bool FloatingPointType::isSame(Type* rhs) const {
     if(this == rhs)

@@ -408,11 +408,14 @@ void FMAInst::dump(std::ostream& out) const {
 }
 
 Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
-    Type* cur = base->getType()->as<PointerType>()->getPointee();
+    assert(base->getType()->isPointer());
+    Type* cur = base->getType();
     for(auto idx : indices) {
         if(idx->getType()->isInteger()) {
             if(cur->isArray()) {
                 cur = cur->as<ArrayType>()->getElementType();
+            } else if(cur->isPointer()) {
+                cur = cur->as<PointerType>()->getPointee();
             } else
                 reportFatal("invalid GEP");
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {
@@ -426,7 +429,7 @@ Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices
 void GetElementPtrInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     const auto base = operands().back();
-    out << " &(*";
+    out << " &(";
     base->dumpAsOperand(out);
     out << ')';
     for(auto idx : operands()) {

@@ -53,7 +53,7 @@ def sysy_parse(src):
 
 
 def sysy_semantic(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-o',
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-O', '0', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 

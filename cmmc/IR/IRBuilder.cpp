@@ -14,17 +14,16 @@
 
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
+#include <cmmc/IR/Type.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-Value* IRBuilder::getTrue() const {
-    return make<ConstantInteger>(IntegerType::getBoolean(), 1);
-}
-Value* IRBuilder::getFalse() const {
-    return make<ConstantInteger>(IntegerType::getBoolean(), 0);
-}
-Value* IRBuilder::getInteger(IntegerType* type, intmax_t value) const {
-    return make<ConstantInteger>(type, value);
+IRBuilder::IRBuilder() : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {
+    const auto boolean = IntegerType::getBoolean();
+    mTrueValue = make<ConstantInteger>(boolean, 1);
+    mFalseValue = make<ConstantInteger>(boolean, 0);
+    mIndexType = IntegerType::get(32U);  // TODO: size_t, get from target
+    mZeroIndex = make<ConstantInteger>(mIndexType, 0);
 }
 Block* IRBuilder::addBlock(const Vector<Type*>& types) {
     auto block = make<Block>(mCurrentFunction);
