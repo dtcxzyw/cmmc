@@ -33,7 +33,7 @@ class Expr;
 CMMC_ARENA_TRAIT(Expr*, AST);
 
 struct Qualifier final {
-    bool isConst;
+    bool isConst = false;
     // bool isVolatile;
 };
 
@@ -105,8 +105,6 @@ struct FunctionDefinition final {
     void emit(EmitContext& ctx) const;
 };
 
-using CompileTimeEvaluatedValue = std::variant<std::monostate, uintmax_t>;
-
 class Expr {
     SourceLocation mLocation;
 
@@ -123,7 +121,7 @@ public:
     virtual bool isLValue() const noexcept {
         return false;
     }
-    virtual CompileTimeEvaluatedValue evaluate() const noexcept {
+    virtual CompileTimeEvaluatedValue evaluate(const EmitContext& ctx) const {
         return std::monostate{};
     }
 };
@@ -160,6 +158,7 @@ class BinaryExpr final : public Expr {
 public:
     BinaryExpr(OperatorID op, Expr* lhs, Expr* rhs) noexcept : mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
     Value* emit(EmitContext& ctx) const override;
+    CompileTimeEvaluatedValue evaluate(const EmitContext& ctx) const override;
 };
 
 class UnaryExpr final : public Expr {
@@ -180,7 +179,7 @@ public:
     ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
         : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
     Value* emit(EmitContext& ctx) const override;
-    CompileTimeEvaluatedValue evaluate() const noexcept override {
+    CompileTimeEvaluatedValue evaluate(const EmitContext&) const override {
         return mValue;
     }
 };
@@ -251,6 +250,7 @@ public:
     bool isLValue() const noexcept override {
         return true;
     }
+    CompileTimeEvaluatedValue evaluate(const EmitContext& ctx) const override;
 };
 
 class ScopedExpr final : public Expr {

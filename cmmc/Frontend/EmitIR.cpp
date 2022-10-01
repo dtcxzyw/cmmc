@@ -322,6 +322,30 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
     }
 }
 
+CompileTimeEvaluatedValue BinaryExpr::evaluate(const EmitContext& ctx) const {
+    const auto lhs = mLhs->evaluate(ctx);
+    const auto rhs = mRhs->evaluate(ctx);
+
+    if(auto lhsValue = std::get_if<uintmax_t>(&lhs), rhsValue = std::get_if<uintmax_t>(&rhs); lhsValue && rhsValue) {
+        switch(mOp) {
+            case OperatorID::Add:
+                return *lhsValue + *rhsValue;
+            case OperatorID::Sub:
+                return *lhsValue - *rhsValue;
+            case OperatorID::Mul:
+                return *lhsValue * *rhsValue;
+            case OperatorID::Div: {
+                if(*rhsValue)
+                    return *lhsValue / *rhsValue;
+                reportFatal("divide by zero");
+            }
+            default:
+                break;
+        }
+    }
+    return std::monostate{};
+}
+
 Value* UnaryExpr::emit(EmitContext& ctx) const {
     auto value = ctx.getRValue(mValue);
 
@@ -462,6 +486,9 @@ Value* IdentifierExpr::emit(EmitContext& ctx) const {
     }
     return value;
 }
+CompileTimeEvaluatedValue IdentifierExpr::evaluate(const EmitContext& ctx) const {
+    return ctx.lookupConstant(mIdentifier);
+}
 
 Value* ScopedExpr::emit(EmitContext& ctx) const {
     ctx.pushScope();
@@ -501,7 +528,6 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
         local->setLabel(StringIR{ name });
-        ctx.addIdentifier(name, local);
         if(initExpr) {
             if(type->isArray()) {
                 if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(initExpr)) {
@@ -513,7 +539,15 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
                     reportFatal("");
                 ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
             }
+
+            if(mType.qualifier.isConst) {
+                const auto val = initExpr->evaluate(ctx);
+                if(val.index() != 0)
+                    ctx.addConstant(name, val);
+            }
         }
+
+        ctx.addIdentifier(name, local);
     }
 
     return nullptr;
@@ -620,18 +654,41 @@ void EmitContext::popScope() {
 void EmitContext::addIdentifier(StringAST identifier, Value* value) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
-    if(scope.count(identifier))
+    if(scope.variables.count(identifier))
         reportFatal("");
-    scope.emplace(std::move(identifier), value);
+    scope.variables.emplace(identifier, value);
+    if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend())
+        iter->second = nullptr;
+    else
+        uniqueVariables.emplace(identifier, value);
 }
 Value* EmitContext::lookupIdentifier(const StringAST& identifier) {
     assert(!mScopes.empty());
+    if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend() && iter->second)
+        return iter->second;
 
     for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
-        if(auto it = iter->find(identifier); it != iter->cend())
+        if(auto it = iter->variables.find(identifier); it != iter->variables.cend())
             return it->second;
     reportFatal("");
 }
+void EmitContext::addConstant(StringAST identifier, CompileTimeEvaluatedValue val) {
+    assert(!mScopes.empty());
+    auto& scope = mScopes.back();
+    if(scope.constants.count(identifier))
+        reportFatal("");
+    scope.constants.emplace(std::move(identifier), std::move(val));
+}
+
+CompileTimeEvaluatedValue EmitContext::lookupConstant(const StringAST& identifier) const {
+    assert(!mScopes.empty());
+
+    for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
+        if(auto it = iter->constants.find(identifier); it != iter->constants.cend())
+            return it->second;
+    return std::monostate{};
+}
+
 EmitContext::EmitContext(Module* module) : mModule{ module } {
     mInteger = make<IntegerType>(32U);
     mFloat = make<FloatingPointType>(true);
@@ -668,7 +725,7 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
                 unknownSize = true;
                 ret = make<PointerType>(ret);
             } else {
-                const auto constantSize = (*iter)->evaluate();
+                const auto constantSize = (*iter)->evaluate(*this);
 
                 std::visit(
                     [&](auto x) {
@@ -681,7 +738,7 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
 
                             ret = make<ArrayType>(ret, static_cast<uint32_t>(x));
                         } else {
-                            reportFatal("");
+                            reportFatal("array size must be constant");
                         }
                     },
                     constantSize);

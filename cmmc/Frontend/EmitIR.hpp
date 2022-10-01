@@ -32,7 +32,12 @@ class Expr;
 enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 
-using Scope = HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>>;
+using CompileTimeEvaluatedValue = std::variant<std::monostate, uintmax_t>;
+struct Scope final {
+    HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>> variables;
+    HashTable<StringAST, CompileTimeEvaluatedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> constants;
+};
+
 CMMC_ARENA_TRAIT(Scope, AST);
 
 struct PassingPlan final {
@@ -43,6 +48,9 @@ struct PassingPlan final {
 class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
+
+    HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>> uniqueVariables;
+
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
     std::unordered_map<Value*, PassingPlan> mPassingPlan;
@@ -74,6 +82,9 @@ public:
     void popLoop();
     Block* getContinueTarget();
     Block* getBreakTarget();
+
+    void addConstant(StringAST identifier, CompileTimeEvaluatedValue val);
+    CompileTimeEvaluatedValue lookupConstant(const StringAST& identifier) const;
 };
 
 CMMC_NAMESPACE_END
