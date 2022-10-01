@@ -57,6 +57,7 @@
 #define CMMC_ARRAY_INITIALIZER(EXPR_PACK) make<ArrayInitializer>(std::move(EXPR_PACK))
 #define CMMC_BREAK() make<BreakExpr>()
 #define CMMC_CONTINUE() make<ContinueExpr>()
+#define CMMC_EMPTY_STMT() make<EmptyExpr>()
 
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")

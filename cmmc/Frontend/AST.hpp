@@ -313,6 +313,11 @@ public:
     Value* emit(EmitContext& ctx) const override;
 };
 
+class EmptyExpr final : public Expr {
+public:
+    Value* emit(EmitContext& ctx) const override;
+};
+
 template <typename T>
 void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
     res.swap(rhs);
