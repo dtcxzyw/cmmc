@@ -217,8 +217,38 @@ static CompareOp getCompareOp(OperatorID op) {
                                   static_cast<uint32_t>(CompareOp::LessThan));
 }
 
-static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatintPoint, Value* lhs, Value* rhs) {
-    auto inst = getBinaryOp(op, isFloatintPoint);
+// TODO: [un]signed ops
+
+template <typename T>
+T evaluateOp(OperatorID op, T lhs, T rhs) {
+    switch(op) {
+        case OperatorID::Add:
+            return lhs + rhs;
+        case OperatorID::Sub:
+            return lhs - rhs;
+        case OperatorID::Mul:
+            return lhs * rhs;
+        default:
+            reportNotImplemented();
+    }
+}
+
+static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint, Value* lhs, Value* rhs) {
+    if(lhs->isConstant() && rhs->isConstant()) {
+        if(isFloatingPoint) {
+            const auto lhsValue = lhs->as<ConstantFloatingPoint>()->getValue();
+            const auto rhsValue = rhs->as<ConstantFloatingPoint>()->getValue();
+
+            return make<ConstantFloatingPoint>(lhs->getType(), evaluateOp(op, lhsValue, rhsValue));
+        } else {
+            const auto lhsValue = lhs->as<ConstantInteger>()->getSignExtended();
+            const auto rhsValue = rhs->as<ConstantInteger>()->getSignExtended();
+
+            return make<ConstantInteger>(lhs->getType(), evaluateOp(op, lhsValue, rhsValue));
+        }
+    }
+
+    auto inst = getBinaryOp(op, isFloatingPoint);
 
     if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
         return ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs);
@@ -326,7 +356,7 @@ CompileTimeEvaluatedValue BinaryExpr::evaluate(const EmitContext& ctx) const {
     const auto lhs = mLhs->evaluate(ctx);
     const auto rhs = mRhs->evaluate(ctx);
 
-    if(auto lhsValue = std::get_if<uintmax_t>(&lhs), rhsValue = std::get_if<uintmax_t>(&rhs); lhsValue && rhsValue) {
+    if(auto lhsValue = std::get_if<intmax_t>(&lhs), rhsValue = std::get_if<intmax_t>(&rhs); lhsValue && rhsValue) {
         switch(mOp) {
             case OperatorID::Add:
                 return *lhsValue + *rhsValue;
@@ -346,8 +376,48 @@ CompileTimeEvaluatedValue BinaryExpr::evaluate(const EmitContext& ctx) const {
     return std::monostate{};
 }
 
+// TODO: [un]signed ops
+
+template <typename T>
+T evaluateOp(OperatorID op, T val) {
+    switch(op) {
+        case OperatorID::Neg:
+            return -val;
+        case OperatorID::Positive:
+            return val;
+        default:
+            reportNotImplemented();
+    }
+}
+
+CompileTimeEvaluatedValue UnaryExpr::evaluate(const EmitContext& ctx) const {
+    const auto val = mValue->evaluate(ctx);
+    if(auto value = std::get_if<intmax_t>(&val)) {
+        switch(mOp) {
+            case OperatorID::Neg:
+                return -*value;
+            case OperatorID::Positive:
+                return *value;
+            default:
+                break;
+        }
+    }
+    return std::monostate{};
+}
+
 Value* UnaryExpr::emit(EmitContext& ctx) const {
     auto value = ctx.getRValue(mValue);
+
+    if(value->isConstant()) {
+        if(value->getType()->isFloatingPoint()) {
+            const auto val = value->as<ConstantFloatingPoint>()->getValue();
+
+            return make<ConstantFloatingPoint>(value->getType(), evaluateOp(mOp, val));
+        } else {
+            const auto val = value->as<ConstantInteger>()->getSignExtended();
+            return make<ConstantInteger>(value->getType(), evaluateOp(mOp, val));
+        }
+    }
 
     switch(mOp) {
         case OperatorID::Neg:
@@ -715,6 +785,9 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
         reportNotImplemented();
 
     {
+        if(ret->isVoid())
+            reportFatal("");
+
         bool unknownSize = false;
         for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
             const auto expr = *iter;
@@ -730,9 +803,9 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
                 std::visit(
                     [&](auto x) {
                         using T = std::decay_t<decltype(x)>;
-                        if constexpr(std::is_same_v<uintmax_t, T>) {
-                            if(x == 0)
-                                reportFatal("");
+                        if constexpr(std::is_same_v<intmax_t, T>) {
+                            if(x <= 0)
+                                reportFatal("invalid array size");
                             if(x >= (1U << 24))
                                 reportFatal("array is too large");
 
@@ -1069,6 +1142,12 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
             else
                 reportFatal("");
         } else {
+            if(type.qualifier.isConst) {
+                const auto value = var.initialValue->evaluate(ctx);
+                if(value.index() != 0)
+                    ctx.addConstant(var.name, value);
+            }
+
             const auto value = ctx.getRValue(var.initialValue);
             if(value->isConstant())
                 global->setInitialValue(value->as<ConstantValue>());

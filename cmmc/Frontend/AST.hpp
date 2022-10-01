@@ -168,6 +168,7 @@ class UnaryExpr final : public Expr {
 public:
     UnaryExpr(OperatorID op, Expr* value) noexcept : mOp{ op }, mValue{ value } {}
     Value* emit(EmitContext& ctx) const override;
+    CompileTimeEvaluatedValue evaluate(const EmitContext& ctx) const override;
 };
 
 class ConstantIntExpr final : public Expr {

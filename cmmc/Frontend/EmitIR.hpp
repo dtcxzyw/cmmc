@@ -32,7 +32,7 @@ class Expr;
 enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 
-using CompileTimeEvaluatedValue = std::variant<std::monostate, uintmax_t>;
+using CompileTimeEvaluatedValue = std::variant<std::monostate, intmax_t>;
 struct Scope final {
     HashTable<StringAST, Value*, Arena::Source::AST, StringHasher<Arena::Source::AST>> variables;
     HashTable<StringAST, CompileTimeEvaluatedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> constants;

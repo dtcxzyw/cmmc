@@ -29,7 +29,7 @@ class IRBuilder {
     Block* mCurrentBlock;
 
 public:
-    IRBuilder() = default;
+    IRBuilder() : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {}
     explicit IRBuilder(Block* block) {
         setCurrentBlock(block);
     }

@@ -33,6 +33,9 @@ public:
     void setInitialValue(ConstantValue* value) noexcept {
         mStaticInitializedValue = value;
     }
+    ConstantValue* initialValue() const noexcept {
+        return mStaticInitializedValue;
+    }
     void dump(std::ostream& out) const override;
     auto& attr() noexcept {
         return mAttr;
