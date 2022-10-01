@@ -175,11 +175,11 @@ ConstantOffset* StructType::getOffset(const std::string_view& fieldName) const {
     for(uint32_t idx = 0; idx < mFields.size(); ++idx)
         if(mFields[idx].fieldName == fieldName)
             return make<ConstantOffset>(this, idx);
-    reportFatal("");
+    reportFatal("invalid field");
 }
 Type* StructType::getFieldType(const ConstantOffset* offset) const {
     if(offset->base() != this)
-        reportFatal("");
+        reportFatal("mismatched offset");
     assert(offset->index() <= mFields.size());
     return mFields[offset->index()].type;
 }

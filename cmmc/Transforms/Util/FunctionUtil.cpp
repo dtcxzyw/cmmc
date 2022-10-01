@@ -169,7 +169,7 @@ void blockArgPropagation(Function& func) {
         auto& blockCtx = ctx[block];
         auto& req = blockCtx.req;
         if(block == blocks.front() && !req.empty())
-            reportFatal("");
+            reportFatal("cannot change arguments of the entry block");
 
         std::unordered_map<Instruction*, Value*> map;
         for(auto inst : req)

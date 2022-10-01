@@ -414,7 +414,7 @@ Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices
             if(cur->isArray()) {
                 cur = cur->as<ArrayType>()->getElementType();
             } else
-                reportFatal("");
+                reportFatal("invalid GEP");
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {
             cur = cur->as<StructType>()->getFieldType(offset);
         } else

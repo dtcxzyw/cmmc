@@ -41,7 +41,7 @@ std::pair<PassingPlan, FunctionType*> FunctionDeclaration::getSignature(EmitCont
 
     auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
     if(ret->isArray())
-        reportFatal("");
+        reportFatal("returning an array is not allowed");
 
     const auto& target = ctx.getModule()->getTarget();
     const auto& targetFrameInfo = target.getTargetFrameInfo();
@@ -51,7 +51,7 @@ std::pair<PassingPlan, FunctionType*> FunctionDeclaration::getSignature(EmitCont
         assert(!arg.var.initialValue);
         const auto type = ctx.getType(arg.type.typeIdentifier, arg.type.space, arg.var.arraySize);
         if(type->isVoid())
-            reportFatal("");
+            reportFatal("the type of argument cannot be void");
         if(!type->isArray() && targetFrameInfo.shouldPassByRegister(type, dataLayout)) {
             argTypes.push_back(type);
             plan.passingArgsByPointer.push_back(false);
@@ -220,7 +220,7 @@ static CompareOp getCompareOp(OperatorID op) {
 // TODO: [un]signed ops
 
 template <typename T>
-T evaluateOp(OperatorID op, T lhs, T rhs) {
+std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
     switch(op) {
         case OperatorID::Add:
             return lhs + rhs;
@@ -229,7 +229,7 @@ T evaluateOp(OperatorID op, T lhs, T rhs) {
         case OperatorID::Mul:
             return lhs * rhs;
         default:
-            reportNotImplemented();
+            return std::monostate{};
     }
 }
 
@@ -238,13 +238,17 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
         if(isFloatingPoint) {
             const auto lhsValue = lhs->as<ConstantFloatingPoint>()->getValue();
             const auto rhsValue = rhs->as<ConstantFloatingPoint>()->getValue();
+            const auto res = evaluateOp(op, lhsValue, rhsValue);
 
-            return make<ConstantFloatingPoint>(lhs->getType(), evaluateOp(op, lhsValue, rhsValue));
+            if(res.index() != 0)
+                return make<ConstantFloatingPoint>(lhs->getType(), std::get<double>(res));
         } else {
             const auto lhsValue = lhs->as<ConstantInteger>()->getSignExtended();
             const auto rhsValue = rhs->as<ConstantInteger>()->getSignExtended();
+            const auto res = evaluateOp(op, lhsValue, rhsValue);
 
-            return make<ConstantInteger>(lhs->getType(), evaluateOp(op, lhsValue, rhsValue));
+            if(res.index() != 0)
+                return make<ConstantInteger>(lhs->getType(), std::get<intmax_t>(res));
         }
     }
 
@@ -340,7 +344,7 @@ Value* BinaryExpr::emit(EmitContext& ctx) const {
             [[fallthrough]];
         case OperatorID::Xor: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
-                reportFatal("");
+                reportFatal("xor float,float is not allowed");
 
             const auto target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
             lhs = ctx.convertTo(lhs, target);
@@ -379,14 +383,14 @@ CompileTimeEvaluatedValue BinaryExpr::evaluate(const EmitContext& ctx) const {
 // TODO: [un]signed ops
 
 template <typename T>
-T evaluateOp(OperatorID op, T val) {
+std::variant<std::monostate, T> evaluateOp(OperatorID op, T val) {
     switch(op) {
         case OperatorID::Neg:
             return -val;
         case OperatorID::Positive:
             return val;
         default:
-            reportNotImplemented();
+            return std::monostate{};
     }
 }
 
@@ -411,11 +415,16 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
     if(value->isConstant()) {
         if(value->getType()->isFloatingPoint()) {
             const auto val = value->as<ConstantFloatingPoint>()->getValue();
+            const auto res = evaluateOp(mOp, val);
 
-            return make<ConstantFloatingPoint>(value->getType(), evaluateOp(mOp, val));
+            if(res.index() != 0)
+                return make<ConstantFloatingPoint>(value->getType(), std::get<double>(res));
         } else {
             const auto val = value->as<ConstantInteger>()->getSignExtended();
-            return make<ConstantInteger>(value->getType(), evaluateOp(mOp, val));
+            const auto res = evaluateOp(mOp, val);
+
+            if(res.index() != 0)
+                return make<ConstantInteger>(value->getType(), std::get<intmax_t>(res));
         }
     }
 
@@ -428,7 +437,7 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
                 return ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
                                               make<ConstantInteger>(value->getType(), -1));
             }
-            reportFatal("");
+            reportFatal("bitwise not is only allowed for integer types");
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean());
@@ -437,7 +446,7 @@ Value* UnaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
                 return value;
-            reportFatal("");
+            reportFatal("unary plus is only allowed for scalar types");
         }
         default:
             reportUnreachable();
@@ -464,7 +473,7 @@ Value* FunctionCallExpr::emit(EmitContext& ctx) const {
     // TODO: va_args
     auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
     if(argTypes.size() != mArgs.size())
-        reportFatal("");
+        reportFatal("the numbers of provided/required arguments mismatch");
 
     Vector<Value*> args;
     args.reserve(mArgs.size());
@@ -505,9 +514,9 @@ Value* ReturnExpr::emit(EmitContext& ctx) const {
         auto retType = type->getRetType();
         if(retType->isVoid()) {
             if(mReturnValue)
-                reportFatal("");
+                reportFatal("the function should return nothing");
         } else if(!mReturnValue) {
-            reportFatal("");
+            reportFatal("the function should return a value");
         }
         if(type->isVoid())
             return ctx.makeOp<ReturnInst>(nullptr);
@@ -603,10 +612,10 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
                 if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(initExpr)) {
                     arrayInitializer->shapeAwareEmitDynamic(ctx, local, type->as<ArrayType>());
                 } else
-                    reportFatal("");
+                    reportFatal("cannot initialize an array with a scalar value");
             } else {
                 if(dynamic_cast<ArrayInitializer*>(initExpr))
-                    reportFatal("");
+                    reportFatal("cannot initialize a scalar with an array initializer");
                 ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
             }
 
@@ -626,7 +635,7 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
 Value* ArrayIndexExpr::emit(EmitContext& ctx) const {
     const auto base = ctx.getLValue(mBase);
     if(!base->getType()->as<PointerType>()->getPointee()->isArray())
-        reportFatal("");
+        reportFatal("cannot index a non-array value");
     const auto idx = ctx.convertTo(ctx.getRValue(mIndex), IntegerType::get(32U));
     return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx });
 }
@@ -636,7 +645,7 @@ Value* StructIndexExpr::emit(EmitContext& ctx) const {
     const auto pointer = base->getType()->as<PointerType>();
     const auto structType = pointer->getPointee();
     if(!structType->isStruct())
-        reportFatal("");
+        reportFatal("cannot index a non-struct value");
     const auto offset = structType->as<StructType>()->getOffset(mField);
     return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ offset });
 }
@@ -673,7 +682,7 @@ Value* EmitContext::convertTo(Value* value, Type* type) {
     }
 
     if(id == InstructionID::None)
-        reportFatal("");
+        reportFatal("cannot convert scalar value");
 
     return makeOp<CastInst>(id, type, value);
 }
@@ -692,7 +701,7 @@ Value* EmitContext::getRValue(Expr* expr) {
 }
 Value* EmitContext::getLValue(Expr* expr) {
     if(!expr->isLValue())
-        reportFatal("");
+        reportFatal("require a lvalue");
     return expr->emit(*this);
 }
 Value* EmitContext::getLValueForce(Expr* expr, Type* type) {
@@ -725,7 +734,7 @@ void EmitContext::addIdentifier(StringAST identifier, Value* value) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.variables.count(identifier))
-        reportFatal("");
+        reportFatal("redefined identifier");
     scope.variables.emplace(identifier, value);
     if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend())
         iter->second = nullptr;
@@ -740,13 +749,13 @@ Value* EmitContext::lookupIdentifier(const StringAST& identifier) {
     for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
         if(auto it = iter->variables.find(identifier); it != iter->variables.cend())
             return it->second;
-    reportFatal("");
+    reportFatal("undefined identifier");
 }
 void EmitContext::addConstant(StringAST identifier, CompileTimeEvaluatedValue val) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.constants.count(identifier))
-        reportFatal("");
+        reportFatal("redefined identifier");
     scope.constants.emplace(std::move(identifier), std::move(val));
 }
 
@@ -784,9 +793,9 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
     if(!ret)
         reportNotImplemented();
 
-    {
+    if(!arraySize.empty()) {
         if(ret->isVoid())
-            reportFatal("");
+            reportFatal("void-based array is not allowed");
 
         bool unknownSize = false;
         for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
@@ -794,10 +803,12 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
 
             if(expr == nullptr) {
                 if(unknownSize)
-                    reportFatal("");
+                    reportFatal("invalid unknown-sized array");
                 unknownSize = true;
                 ret = make<PointerType>(ret);
             } else {
+                if(unknownSize)
+                    reportFatal("invalid unknown-sized array");
                 const auto constantSize = (*iter)->evaluate(*this);
 
                 std::visit(
@@ -822,7 +833,7 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
 }
 void EmitContext::addIdentifier(StringAST identifier, StructType* type) {
     if(mStructTypes.count(identifier))
-        reportFatal("");
+        reportFatal("redefined struct");
     mStructTypes.emplace(std::move(identifier), type);
 }
 
@@ -848,12 +859,12 @@ void EmitContext::popLoop() {
 Block* EmitContext::getContinueTarget() {
     if(!mTerminatorTarget.empty())
         return mTerminatorTarget.back().first;
-    reportFatal("");
+    reportFatal("no continue target");
 }
 Block* EmitContext::getBreakTarget() {
     if(!mTerminatorTarget.empty())
         return mTerminatorTarget.back().second;
-    reportFatal("");
+    reportFatal("no break target");
 }
 ConstantValue* EmitContext::convertToConstant(ConstantValue* value, Type* type) {
     if(value->getType()->isSame(type))
@@ -953,14 +964,12 @@ static ConstantArray* flushScalarsStatic(const std::vector<ConstantValue*>& valu
 
 ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type) const {
     const auto elementType = type->getElementType();
-    if(mElements.size() > type->getElementCount())
-        reportFatal("");
     Vector<ConstantValue*> values;
     values.reserve(mElements.size());
     auto getConstantScalar = [&](Expr* expr, Type* type) {
         const auto value = ctx.getRValue(expr);
         if(!value->isConstant())
-            reportFatal("");
+            reportFatal("require constants in static array initialization");
         return ctx.convertToConstant(value->as<ConstantValue>(), type);
     };
 
@@ -978,7 +987,7 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayTyp
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
                 if(!cachedScalars.empty()) {
                     if(cachedScalars.size() != count)
-                        reportFatal("");
+                        reportFatal("invalid array initializer");
                     flushScalars();
                 }
                 values.push_back(subArr->shapeAwareEmitStatic(ctx, subArrayType));
@@ -995,14 +1004,14 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayTyp
     } else {
         for(auto element : mElements) {
             if(dynamic_cast<ArrayInitializer*>(element))
-                reportFatal("");
+                reportFatal("too many braces");
             else
                 values.push_back(getConstantScalar(element, elementType));
         }
     }
 
     if(values.size() > type->getElementCount())
-        reportFatal("");
+        reportFatal("too much elements in the array initializer");
 
     return make<ConstantArray>(type, std::move(values));
 }
@@ -1022,7 +1031,7 @@ static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
         } else if(type->isFloatingPoint()) {
             ctx.makeOp<StoreInst>(storage, make<ConstantFloatingPoint>(type, 0.0));
         } else
-            reportFatal("");
+            reportFatal("cannot zero initialize a non-scalar");
     }
 }
 
@@ -1067,7 +1076,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
     const auto elementCount = type->getElementCount();
     const auto makePtr = [&](uint32_t idx) {
         if(idx >= elementCount)
-            reportFatal("");
+            reportFatal("too much elements in the array initializer");
         return ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
     };
 
@@ -1086,7 +1095,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
                 if(!cachedScalars.empty()) {
                     if(cachedScalars.size() != count)
-                        reportFatal("");
+                        reportFatal("invalid array initializer");
                     flushScalars();
                 }
 
@@ -1105,7 +1114,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
     } else {
         for(auto element : mElements) {
             if(dynamic_cast<ArrayInitializer*>(element))
-                reportFatal("");
+                reportFatal("too many braces");
             else {
                 const auto ptr = makePtr(idx++);
                 const auto value = ctx.convertTo(ctx.getRValue(element), elementType);
@@ -1140,8 +1149,11 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
             if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))
                 global->setInitialValue(arrayInitializer->shapeAwareEmitStatic(ctx, t->as<ArrayType>()));
             else
-                reportFatal("");
+                reportFatal("cannot initialize a global array with a scalar");
         } else {
+            if(dynamic_cast<ArrayInitializer*>(var.initialValue))
+                reportFatal("cannot initialize a global scalar with an array initializer");
+
             if(type.qualifier.isConst) {
                 const auto value = var.initialValue->evaluate(ctx);
                 if(value.index() != 0)
@@ -1152,7 +1164,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
             if(value->isConstant())
                 global->setInitialValue(value->as<ConstantValue>());
             else
-                reportFatal("");
+                reportFatal("cannot initialize a global scalar with a non-constant");
         }
     }
     module->add(global);
@@ -1166,7 +1178,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);  // TODO: array
             fields.push_back(StructField{ SourceLocation{}, type, StringIR{ subItem.name } });
             if(subItem.initialValue)
-                reportFatal("");
+                reportFatal("initial values of struct fields is not allowed");
         }
     }
     auto type = make<StructType>(StringIR{ name }, std::move(fields));

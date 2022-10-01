@@ -116,7 +116,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             auto& operands = inst->operands();
             auto callee = operands.back();
             if(!callee->isGlobal())
-                reportFatal("");
+                reportFatal("dynamic callee is not supported by TAC target");
             const auto calleeFunc = callee->as<Function>();
 
             const std::string funcName{ calleeFunc->getSymbol() };

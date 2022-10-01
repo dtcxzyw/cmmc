@@ -18,8 +18,6 @@
 %define api.token.constructor
 %define api.value.type variant
 %define api.location.type { std::pair<uint32_t, yy::location> }
-%define parse.assert
-%define parse.trace
 %define parse.error verbose
 %define api.prefix {SysY}
 

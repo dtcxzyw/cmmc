@@ -105,7 +105,7 @@ void Block::removeArg(BlockArgument* arg) {
     if(iter != mArgs.end()) {
         mArgs.erase(iter);
     } else {
-        reportFatal("");
+        reportFatal("invalid block arg");
     }
 }
 
