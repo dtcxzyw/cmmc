@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/IR/Attribute.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -23,13 +24,14 @@ CMMC_NAMESPACE_BEGIN
 enum class GlobalVariableAttribute { ReadOnly = 1 << 0, ZeroInitialized = 1 << 1, NotInitialized = 1 << 2 };
 
 class GlobalVariable final : public GlobalValue {
-    Value* mStaticInitializedValue;
+    ConstantValue* mStaticInitializedValue;
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(StringIR symbol, Type* type, Value* value)
-        : GlobalValue{ symbol, PointerType::get(type) }, mStaticInitializedValue{ value } {
-        assert(!value || value->isConstant());
+    GlobalVariable(StringIR symbol, Type* type)
+        : GlobalValue{ symbol, PointerType::get(type) }, mStaticInitializedValue{ nullptr } {}
+    void setInitialValue(ConstantValue* value) noexcept {
+        mStaticInitializedValue = value;
     }
     void dump(std::ostream& out) const override;
     auto& attr() noexcept {

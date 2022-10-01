@@ -183,10 +183,6 @@ Type* StructType::getFieldType(const ConstantOffset* offset) const {
     assert(offset->index() <= mFields.size());
     return mFields[offset->index()].type;
 }
-
-PointerType* ArrayType::getPointerType() const {
-    return make<PointerType>(mElementType);
-}
 void ArrayType::dumpName(std::ostream& out) const {
     out << '[' << mElementCount << " * ";
     mElementType->dumpName(out);
@@ -206,6 +202,16 @@ size_t ArrayType::getSize(const DataLayout& dataLayout) const noexcept {
 }
 size_t ArrayType::getAlignment(const DataLayout& dataLayout) const noexcept {
     return mElementType->getAlignment(dataLayout);
+}
+uint32_t ArrayType::getScalarCount() const noexcept {
+    if(mElementType->isArray())
+        return mElementCount * mElementType->as<ArrayType>()->getScalarCount();
+    return mElementCount;
+}
+Type* ArrayType::getScalarType() const noexcept {
+    if(mElementType->isArray())
+        return mElementType->as<ArrayType>()->getScalarType();
+    return mElementType;
 }
 
 CMMC_NAMESPACE_END

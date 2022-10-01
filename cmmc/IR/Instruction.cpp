@@ -413,8 +413,6 @@ Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices
         if(idx->getType()->isInteger()) {
             if(cur->isArray()) {
                 cur = cur->as<ArrayType>()->getElementType();
-            } else if(cur->isPointer()) {
-                cur = cur->as<PointerType>()->getPointee();
             } else
                 reportFatal("");
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {

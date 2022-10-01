@@ -30,6 +30,7 @@
 #include <limits>
 #include <queue>
 #include <type_traits>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -387,7 +388,7 @@ Value* FunctionCallExpr::emit(EmitContext& ctx) const {
 
     if(passing.passingRetValByPointer) {
         const auto retType = argTypes.back()->as<PointerType>()->getPointee();
-        const auto storage = make<StackAllocInst>(retType);
+        const auto storage = ctx.makeOp<StackAllocInst>(retType);
         args.push_back(storage);
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
         return ctx.makeOp<LoadInst>(storage);
@@ -501,8 +502,18 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
         auto local = ctx.makeOp<StackAllocInst>(type);
         local->setLabel(StringIR{ name });
         ctx.addIdentifier(name, local);
-        if(initExpr)
-            ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
+        if(initExpr) {
+            if(type->isArray()) {
+                if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(initExpr)) {
+                    arrayInitializer->shapeAwareEmitDynamic(ctx, local, type->as<ArrayType>());
+                } else
+                    reportFatal("");
+            } else {
+                if(dynamic_cast<ArrayInitializer*>(initExpr))
+                    reportFatal("");
+                ctx.makeOp<StoreInst>(local, ctx.getRValue(initExpr));
+            }
+        }
     }
 
     return nullptr;
@@ -510,6 +521,8 @@ Value* LocalVarDefExpr::emit(EmitContext& ctx) const {
 
 Value* ArrayIndexExpr::emit(EmitContext& ctx) const {
     const auto base = ctx.getLValue(mBase);
+    if(!base->getType()->as<PointerType>()->getPointee()->isArray())
+        reportFatal("");
     const auto idx = ctx.convertTo(ctx.getRValue(mIndex), IntegerType::get(32U));
     return ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx });
 }
@@ -778,39 +791,100 @@ void sortBlocks(Function& func) {
 Value* ArrayInitializer::emit(EmitContext&) const {
     reportUnreachable();
 }
+
+static ConstantArray* flushScalarsStatic(const std::vector<ConstantValue*>& values, uint32_t offset, ArrayType* type) {
+    const auto elementType = type->getElementType();
+    const auto count = type->getElementCount();
+
+    Vector<ConstantValue*> elements;
+
+    if(elementType->isArray()) {
+        const auto subArrayType = elementType->as<ArrayType>();
+        const auto subCount = subArrayType->getScalarCount();
+        for(uint32_t idx = 0; idx < count; ++idx) {
+            const auto newOffset = offset + idx * subCount;
+            if(newOffset < values.size()) {
+                elements.push_back(flushScalarsStatic(values, newOffset, subArrayType));
+            } else
+                break;
+        }
+
+    } else {
+        for(uint32_t idx = 0; idx < count; ++idx) {
+            const auto newOffset = offset + idx;
+            if(newOffset >= values.size())
+                break;
+            elements.push_back(values[newOffset]);
+        }
+    }
+
+    return make<ConstantArray>(type, std::move(elements));
+}
+
 ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type) const {
     const auto elementType = type->getElementType();
     if(mElements.size() > type->getElementCount())
         reportFatal("");
     Vector<ConstantValue*> values;
     values.reserve(mElements.size());
+    auto getConstantScalar = [&](Expr* expr, Type* type) {
+        const auto value = ctx.getRValue(expr);
+        if(!value->isConstant())
+            reportFatal("");
+        return ctx.convertToConstant(value->as<ConstantValue>(), type);
+    };
+
     if(elementType->isArray()) {
+        const auto subArrayType = elementType->as<ArrayType>();
+        const auto count = subArrayType->getScalarCount();
+        const auto scalarType = subArrayType->getScalarType();
+
+        std::vector<ConstantValue*> cachedScalars;
+        auto flushScalars = [&] {
+            values.push_back(flushScalarsStatic(cachedScalars, 0, subArrayType));
+            cachedScalars.clear();
+        };
         for(auto element : mElements) {
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
-                values.push_back(subArr->shapeAwareEmitStatic(ctx, type));
-            } else
-                reportFatal("");
+                if(!cachedScalars.empty()) {
+                    if(cachedScalars.size() != count)
+                        reportFatal("");
+                    flushScalars();
+                }
+                values.push_back(subArr->shapeAwareEmitStatic(ctx, subArrayType));
+            } else {
+                const auto value = getConstantScalar(element, scalarType);
+                cachedScalars.push_back(value);
+                if(cachedScalars.size() == count)
+                    flushScalars();
+            }
         }
+
+        if(!cachedScalars.empty())
+            flushScalars();
     } else {
         for(auto element : mElements) {
             if(dynamic_cast<ArrayInitializer*>(element))
                 reportFatal("");
-            else {
-                const auto value = ctx.getRValue(element);
-                assert(value->isConstant());
-                values.push_back(ctx.convertToConstant(value->as<ConstantValue>(), elementType));
-            }
+            else
+                values.push_back(getConstantScalar(element, elementType));
         }
     }
+
+    if(values.size() > type->getElementCount())
+        reportFatal("");
+
     return make<ConstantArray>(type, std::move(values));
 }
+
 static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
     // TODO: use memset?
     if(type->isArray()) {
         const auto arrayType = type->as<ArrayType>();
+        const auto subType = arrayType->getElementType();
         for(uint32_t idx = 0; idx < arrayType->getElementCount(); ++idx) {
-            const auto ptr = make<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
-            zeroInitialize(ctx, ptr, type);
+            const auto ptr = ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
+            zeroInitialize(ctx, ptr, subType);
         }
     } else {
         if(type->isInteger()) {
@@ -821,23 +895,83 @@ static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
             reportFatal("");
     }
 }
+
+static void flushScalarsDynamic(EmitContext& ctx, const std::vector<Value*>& values, uint32_t offset, Value* storage,
+                                ArrayType* type) {
+    if(offset >= values.size()) {
+        zeroInitialize(ctx, storage, type);
+        return;
+    }
+
+    const auto makePtr = [&](uint32_t idx) {
+        return ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
+    };
+
+    const auto elementType = type->getElementType();
+    const auto count = type->getElementCount();
+
+    if(elementType->isArray()) {
+        const auto subArrayType = elementType->as<ArrayType>();
+        const auto subCount = subArrayType->getScalarCount();
+
+        for(uint32_t idx = 0; idx < count; ++idx) {
+            const auto newOffset = offset + idx * subCount;
+            flushScalarsDynamic(ctx, values, newOffset, makePtr(idx), subArrayType);
+        }
+
+    } else {
+        for(uint32_t idx = 0; idx < count; ++idx) {
+            const auto ptr = makePtr(idx);
+            const auto newOffset = offset + idx;
+            if(newOffset >= values.size()) {
+                zeroInitialize(ctx, ptr, elementType);
+            } else {
+                ctx.makeOp<StoreInst>(ptr, values[newOffset]);
+            }
+        }
+    }
+}
+
 void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type) const {
     const auto elementType = type->getElementType();
-    if(mElements.size() > type->getElementCount())
-        reportFatal("");
+    const auto elementCount = type->getElementCount();
     const auto makePtr = [&](uint32_t idx) {
-        return make<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx++) });
+        if(idx >= elementCount)
+            reportFatal("");
+        return ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
     };
+
     uint32_t idx = 0;
     if(elementType->isArray()) {
         auto subArrayType = elementType->as<ArrayType>();
+        const auto count = subArrayType->getScalarCount();
+        const auto scalarType = subArrayType->getScalarType();
+
+        std::vector<Value*> cachedScalars;
+        auto flushScalars = [&] {
+            flushScalarsDynamic(ctx, cachedScalars, 0, makePtr(idx++), subArrayType);
+            cachedScalars.clear();
+        };
         for(auto element : mElements) {
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
+                if(!cachedScalars.empty()) {
+                    if(cachedScalars.size() != count)
+                        reportFatal("");
+                    flushScalars();
+                }
+
                 const auto ptr = makePtr(idx++);
                 subArr->shapeAwareEmitDynamic(ctx, ptr, subArrayType);
-            } else
-                reportFatal("");
+            } else {
+                const auto value = ctx.convertTo(ctx.getRValue(element), scalarType);
+                cachedScalars.push_back(value);
+                if(cachedScalars.size() == count)
+                    flushScalars();
+            }
         }
+
+        if(!cachedScalars.empty())
+            flushScalars();
     } else {
         for(auto element : mElements) {
             if(dynamic_cast<ArrayInitializer*>(element))
@@ -849,7 +983,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
             }
         }
     }
-    for(; idx <= type->getElementCount(); ++idx) {
+    for(; idx < type->getElementCount(); ++idx) {
         zeroInitialize(ctx, makePtr(idx), elementType);
     }
 }
@@ -865,9 +999,22 @@ Value* ContinueExpr::emit(EmitContext& ctx) const {
 
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
-    auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
-                                       var.initialValue ? ctx.getRValue(var.initialValue) : nullptr);
-    // TODO: dynamic initializer?
+    const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
+    auto global = make<GlobalVariable>(StringIR{ var.name }, t);
+    if(var.initialValue) {
+        if(t->isArray()) {
+            if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))
+                global->setInitialValue(arrayInitializer->shapeAwareEmitStatic(ctx, t->as<ArrayType>()));
+            else
+                reportFatal("");
+        } else {
+            const auto value = ctx.getRValue(var.initialValue);
+            if(value->isConstant())
+                global->setInitialValue(value->as<ConstantValue>());
+            else
+                reportFatal("");
+        }
+    }
     module->add(global);
     ctx.addIdentifier(var.name, global);
 }

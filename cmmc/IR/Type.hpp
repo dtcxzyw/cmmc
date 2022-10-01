@@ -237,7 +237,8 @@ public:
     uint32_t getElementCount() const noexcept {
         return mElementCount;
     }
-    PointerType* getPointerType() const;
+    uint32_t getScalarCount() const noexcept;
+    Type* getScalarType() const noexcept;
 
     bool isArray() const noexcept override {
         return true;
