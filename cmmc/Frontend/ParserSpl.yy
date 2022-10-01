@@ -59,19 +59,21 @@
 %token LP RP LB RB LC RC
 %token ERR
 
-%precedence NOT
-%left MUL DIV REM
-%left PLUS MINUS
-%left LT LE GT GE
-%left EQ NE
-%left BAND
-%left XOR
-%left BOR
-%left AND
+%left COMMA
+%right ASSIGN
 %left OR
-// %right ASSIGN
-// %left COMMA
-%precedence LB DOT
+%left AND
+%left BOR
+%left XOR
+%left BAND
+%left EQ NE
+%left LT LE GT GE
+%left PLUS MINUS
+%left MUL DIV REM
+%right UMINUS BNOT NOT
+%left LB LP DOT
+
+/* %precedence LB DOT */
 
 // Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
 %precedence THEN
@@ -191,7 +193,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$,
 | Exp BOR Exp { CMMC_NEED_EXTENSION(@$, BitwiseOr); $$ = CMMC_BINARY_OP(BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp XOR Exp { CMMC_NEED_EXTENSION(@$, Xor); $$ = CMMC_BINARY_OP(Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| MINUS Exp { $$ = CMMC_UNARY_OP(Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | Exp LP Args RP { $$ = CMMC_CALL($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp LP RP { $$ = CMMC_CALL($1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
