@@ -13,7 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/IR/Block.hpp"
+#include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -57,6 +58,7 @@ public:
         return mModule;
     }
     Value* convertTo(Value* value, Type* type);
+    ConstantValue* convertToConstant(ConstantValue* value, Type* type);
     Value* getRValue(Expr* expr);
     Value* getLValue(Expr* expr);
     Value* getLValueForce(Expr* expr, Type* type);

@@ -50,28 +50,4 @@ void Driver::dump(std::ostream& out) {
     mImpl->dump(out);
 }
 
-void GlobalVarDefinition::emit(EmitContext& ctx) const {
-    auto module = ctx.getModule();
-    auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
-                                       var.initialValue ? ctx.getRValue(var.initialValue) : nullptr);
-    // TODO: dynamic initializer?
-    module->add(global);
-    ctx.addIdentifier(var.name, global);
-}
-
-void StructDefinition::emit(EmitContext& ctx) const {
-    Vector<StructField> fields;
-    for(auto& item : list) {
-        for(auto& subItem : item.var) {
-            const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);  // TODO: array
-            fields.push_back(StructField{ SourceLocation{}, type, StringIR{ subItem.name } });
-            if(subItem.initialValue)
-                reportFatal("");
-        }
-    }
-    auto type = make<StructType>(StringIR{ name }, std::move(fields));
-    ctx.addIdentifier(name, type);
-    ctx.getModule()->add(type);
-}
-
 CMMC_NAMESPACE_END

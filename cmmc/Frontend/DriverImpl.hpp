@@ -34,19 +34,6 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
-struct StructDefinition final {
-    StringAST name;
-    VarDefList list;
-
-    void emit(EmitContext& ctx) const;
-};
-
-struct GlobalVarDefinition final {
-    TypeRef type;
-    NamedVar var;
-    void emit(EmitContext& ctx) const;
-};
-
 using MixedDefinition = std::variant<FunctionDefinition, GlobalVarDefinition, StructDefinition>;
 CMMC_ARENA_TRAIT(MixedDefinition, AST);
 

@@ -69,6 +69,17 @@ public:
     std::string_view getName() const;
 };
 
+class ConstantArray final : public ConstantValue {
+    Vector<ConstantValue*> mValues;
+
+public:
+    ConstantArray(ArrayType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
+    void dump(std::ostream& out) const override;
+    const Vector<ConstantValue*>& values() const noexcept {
+        return mValues;
+    }
+};
+
 class UndefinedValue final : public ConstantValue {
 public:
     explicit UndefinedValue(Type* type) : ConstantValue{ type } {

@@ -66,4 +66,17 @@ void ConstantOffset::dump(std::ostream&) const {
     reportUnreachable();
 }
 
+void ConstantArray::dump(std::ostream& out) const {
+    out << '[';
+    bool isFirst = true;
+    for(auto val : mValues) {
+        if(!isFirst)
+            out << ", ";
+        else
+            isFirst = false;
+        val->dump(out);
+    }
+    out << ']';
+}
+
 CMMC_NAMESPACE_END

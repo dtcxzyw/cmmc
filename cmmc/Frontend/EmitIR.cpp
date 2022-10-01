@@ -12,14 +12,17 @@
     limitations under the License.
 */
 
+#include <cassert>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
@@ -112,6 +115,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     }
     for(auto st : block)
         st->emit(ctx);
+    ctx.setCurrentBlock(nullptr);  // clean up
 
     // trim instructions after the first terminator
     const auto retType = funcType->getRetType();
@@ -708,6 +712,11 @@ Block* EmitContext::getBreakTarget() {
         return mTerminatorTarget.back().second;
     reportFatal("");
 }
+ConstantValue* EmitContext::convertToConstant(ConstantValue* value, Type* type) {
+    if(value->getType()->isSame(type))
+        return value;
+    reportNotImplemented();
+}
 
 // Simple BFS with post heuristic
 // not for performance, just for readability
@@ -766,8 +775,83 @@ void sortBlocks(Function& func) {
     func.blocks().sort([&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; });
 }
 
-Value* ArrayInitializer::emit(EmitContext& ctx) const {
+Value* ArrayInitializer::emit(EmitContext&) const {
     reportUnreachable();
+}
+ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type) const {
+    const auto elementType = type->getElementType();
+    if(mElements.size() > type->getElementCount())
+        reportFatal("");
+    Vector<ConstantValue*> values;
+    values.reserve(mElements.size());
+    if(elementType->isArray()) {
+        for(auto element : mElements) {
+            if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
+                values.push_back(subArr->shapeAwareEmitStatic(ctx, type));
+            } else
+                reportFatal("");
+        }
+    } else {
+        for(auto element : mElements) {
+            if(dynamic_cast<ArrayInitializer*>(element))
+                reportFatal("");
+            else {
+                const auto value = ctx.getRValue(element);
+                assert(value->isConstant());
+                values.push_back(ctx.convertToConstant(value->as<ConstantValue>(), elementType));
+            }
+        }
+    }
+    return make<ConstantArray>(type, std::move(values));
+}
+static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
+    // TODO: use memset?
+    if(type->isArray()) {
+        const auto arrayType = type->as<ArrayType>();
+        for(uint32_t idx = 0; idx < arrayType->getElementCount(); ++idx) {
+            const auto ptr = make<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx) });
+            zeroInitialize(ctx, ptr, type);
+        }
+    } else {
+        if(type->isInteger()) {
+            ctx.makeOp<StoreInst>(storage, make<ConstantInteger>(type, 0));
+        } else if(type->isFloatingPoint()) {
+            ctx.makeOp<StoreInst>(storage, make<ConstantFloatingPoint>(type, 0.0));
+        } else
+            reportFatal("");
+    }
+}
+void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type) const {
+    const auto elementType = type->getElementType();
+    if(mElements.size() > type->getElementCount())
+        reportFatal("");
+    const auto makePtr = [&](uint32_t idx) {
+        return make<GetElementPtrInst>(storage, Vector<Value*>{ ctx.getInteger(IntegerType::get(32), idx++) });
+    };
+    uint32_t idx = 0;
+    if(elementType->isArray()) {
+        auto subArrayType = elementType->as<ArrayType>();
+        for(auto element : mElements) {
+            if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
+                const auto ptr = makePtr(idx++);
+                subArr->shapeAwareEmitDynamic(ctx, ptr, subArrayType);
+            } else
+                reportFatal("");
+        }
+    } else {
+        for(auto element : mElements) {
+            if(dynamic_cast<ArrayInitializer*>(element))
+                reportFatal("");
+            else {
+                const auto ptr = makePtr(idx++);
+                const auto value = ctx.convertTo(ctx.getRValue(element), elementType);
+                ctx.makeOp<StoreInst>(ptr, value);
+            }
+        }
+    }
+    for(; idx <= type->getElementCount(); ++idx) {
+        zeroInitialize(ctx, makePtr(idx), elementType);
+    }
 }
 
 Value* BreakExpr::emit(EmitContext& ctx) const {
@@ -777,6 +861,30 @@ Value* BreakExpr::emit(EmitContext& ctx) const {
 Value* ContinueExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getContinueTarget() });
     return nullptr;
+}
+
+void GlobalVarDefinition::emit(EmitContext& ctx) const {
+    auto module = ctx.getModule();
+    auto global = make<GlobalVariable>(StringIR{ var.name }, ctx.getType(type.typeIdentifier, type.space, var.arraySize),
+                                       var.initialValue ? ctx.getRValue(var.initialValue) : nullptr);
+    // TODO: dynamic initializer?
+    module->add(global);
+    ctx.addIdentifier(var.name, global);
+}
+
+void StructDefinition::emit(EmitContext& ctx) const {
+    Vector<StructField> fields;
+    for(auto& item : list) {
+        for(auto& subItem : item.var) {
+            const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);  // TODO: array
+            fields.push_back(StructField{ SourceLocation{}, type, StringIR{ subItem.name } });
+            if(subItem.initialValue)
+                reportFatal("");
+        }
+    }
+    auto type = make<StructType>(StringIR{ name }, std::move(fields));
+    ctx.addIdentifier(name, type);
+    ctx.getModule()->add(type);
 }
 
 CMMC_NAMESPACE_END

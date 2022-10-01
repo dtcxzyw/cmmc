@@ -83,6 +83,19 @@ struct FunctionDeclaration final {
     std::pair<PassingPlan, FunctionType*> getSignature(EmitContext& ctx) const;
 };
 
+struct StructDefinition final {
+    StringAST name;
+    VarDefList list;
+
+    void emit(EmitContext& ctx) const;
+};
+
+struct GlobalVarDefinition final {
+    TypeRef type;
+    NamedVar var;
+    void emit(EmitContext& ctx) const;
+};
+
 using StatementBlock = Deque<Expr*>;
 
 struct FunctionDefinition final {
@@ -197,6 +210,8 @@ class ArrayInitializer final : public Expr {
 public:
     explicit ArrayInitializer(ExprPack elements) : mElements{ std::move(elements) } {}
     Value* emit(EmitContext& ctx) const override;
+    ConstantValue* shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type) const;
+    void shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type) const;
 };
 
 class FunctionCallExpr final : public Expr {

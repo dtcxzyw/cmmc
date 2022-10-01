@@ -19,6 +19,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
@@ -40,19 +41,22 @@ public:
         mCurrentFunction = func;
         mCurrentBlock = nullptr;
     }
-    Block* getCurrentBlock() const noexcept {
+    Block* getCurrentBlock() const {
+        if(!mCurrentBlock)
+            reportFatal("Dynamic initialization of global variable is not allowed");
         return mCurrentBlock;
     }
     void setCurrentBlock(Block* block) {
-        mCurrentFunction = block->getFunction();
+        mCurrentFunction = block ? block->getFunction() : nullptr;
         mCurrentBlock = block;
     }
 
     template <typename T, typename... Args>
     Instruction* makeOp(Args&&... args) {
         auto inst = make<T>(std::forward<Args>(args)...);
-        mCurrentBlock->instructions().push_back(inst);
-        inst->setBlock(mCurrentBlock);
+        auto block = getCurrentBlock();
+        block->instructions().push_back(inst);
+        inst->setBlock(block);
         return inst;
     }
 
