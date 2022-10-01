@@ -21,10 +21,12 @@ CMMC_NAMESPACE_BEGIN
 
 class AliasAnalysisResult final {
     std::unordered_set<uint64_t> mDistinctPairs;
+    std::vector<std::unordered_set<uint32_t>> mDistinctGroups;
     std::unordered_map<Value*, std::vector<uint32_t>> mPointerAttributes;
 
 public:
     void addPair(uint32_t attr1, uint32_t attr2);
+    void addDistinctGroup(std::unordered_set<uint32_t> group);
     void addValue(Value* p, std::vector<uint32_t> attrs);
     bool isDistinct(Value* p1, Value* p2) const;
     std::vector<uint32_t> inheritFrom(Value* value) const;
