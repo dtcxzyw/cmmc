@@ -997,6 +997,10 @@ Value* ContinueExpr::emit(EmitContext& ctx) const {
     return nullptr;
 }
 
+Value* EmptyExpr::emit(EmitContext& ctx) const {
+    return nullptr;
+}
+
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);

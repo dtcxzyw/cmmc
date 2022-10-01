@@ -148,7 +148,7 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | BREAK SEMI { $$ = CMMC_BREAK(); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | CONTINUE SEMI { $$ = CMMC_CONTINUE(); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | Def { $$ = CMMC_DEF($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
-| SEMI {}
+| SEMI { $$ = CMMC_EMPTY_STMT(); CMMC_NONTERMINAL(@$, Stmt, @1); }
 ;
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
