@@ -480,9 +480,11 @@ Value* WhileExpr::emit(EmitContext& ctx) const {
 
     ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
 
+    ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
     mBlock->emit(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
+    ctx.popLoop();
 
     ctx.setCurrentBlock(newBlock);
 
@@ -690,6 +692,23 @@ const PassingPlan& EmitContext::getPassingPlan(Value* func) {
     return mPassingPlan.emplace(func, std::move(defaultPlan)).first->second;
 }
 
+void EmitContext::pushLoop(Block* continueTarget, Block* breakTarget) {
+    mTerminatorTarget.emplace_back(continueTarget, breakTarget);
+}
+void EmitContext::popLoop() {
+    mTerminatorTarget.pop_back();
+}
+Block* EmitContext::getContinueTarget() {
+    if(!mTerminatorTarget.empty())
+        return mTerminatorTarget.back().first;
+    reportFatal("");
+}
+Block* EmitContext::getBreakTarget() {
+    if(!mTerminatorTarget.empty())
+        return mTerminatorTarget.back().second;
+    reportFatal("");
+}
+
 // Simple BFS with post heuristic
 // not for performance, just for readability
 void sortBlocks(Function& func) {
@@ -747,8 +766,17 @@ void sortBlocks(Function& func) {
     func.blocks().sort([&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; });
 }
 
-Value* StaticArrayInitializer::emit(EmitContext& ctx) const {
-    reportNotImplemented();
+Value* ArrayInitializer::emit(EmitContext& ctx) const {
+    reportUnreachable();
+}
+
+Value* BreakExpr::emit(EmitContext& ctx) const {
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getBreakTarget() });
+    return nullptr;
+}
+Value* ContinueExpr::emit(EmitContext& ctx) const {
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getContinueTarget() });
+    return nullptr;
 }
 
 CMMC_NAMESPACE_END

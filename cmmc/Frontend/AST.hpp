@@ -191,11 +191,11 @@ public:
 
 using ExprPack = Deque<Expr*>;
 
-class StaticArrayInitializer final : public Expr {
+class ArrayInitializer final : public Expr {
     ExprPack mElements;
 
 public:
-    explicit StaticArrayInitializer(ExprPack elements) : mElements{ std::move(elements) } {}
+    explicit ArrayInitializer(ExprPack elements) : mElements{ std::move(elements) } {}
     Value* emit(EmitContext& ctx) const override;
 };
 
@@ -283,10 +283,19 @@ class StructIndexExpr final : public Expr {
 public:
     StructIndexExpr(Expr* base, StringAST field) : mBase{ base }, mField{ field } {}
     Value* emit(EmitContext& ctx) const override;
-    static StructIndexExpr* get(Expr* base, StringAST field);
     bool isLValue() const noexcept override {
         return true;
     }
+};
+
+class BreakExpr final : public Expr {
+public:
+    Value* emit(EmitContext& ctx) const override;
+};
+
+class ContinueExpr final : public Expr {
+public:
+    Value* emit(EmitContext& ctx) const override;
 };
 
 template <typename T>

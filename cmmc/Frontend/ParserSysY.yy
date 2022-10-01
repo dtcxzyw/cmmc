@@ -145,8 +145,8 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE($3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
-| BREAK SEMI { CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
-| CONTINUE SEMI { CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| BREAK SEMI { $$ = CMMC_BREAK(); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| CONTINUE SEMI { $$ = CMMC_CONTINUE(); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | Def { $$ = CMMC_DEF($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | SEMI {}
 ;
@@ -162,8 +162,8 @@ Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
 | VarDec ASSIGN Initializer { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
 ;
 Initializer: Exp { $$ = $1; CMMC_NONTERMINAL(@$, Initializer, @1); }
-| LC InitializerList RC { $$ = CMMC_STATIC_ARRAY_INITIALIZER($2); CMMC_NONTERMINAL(@$, Initializer, @1, @2, @3); }
-| LC RC { $$ = CMMC_STATIC_ARRAY_INITIALIZER(ExprPack{}); CMMC_NONTERMINAL(@$, Initializer, @1, @2); }
+| LC InitializerList RC { $$ = CMMC_ARRAY_INITIALIZER($2); CMMC_NONTERMINAL(@$, Initializer, @1, @2, @3); }
+| LC RC { $$ = CMMC_ARRAY_INITIALIZER(ExprPack{}); CMMC_NONTERMINAL(@$, Initializer, @1, @2); }
 ;
 InitializerList: Initializer COMMA InitializerList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, InitializerList, @1, @2, @3); }
 | Initializer { $$ = { $1 }; CMMC_NONTERMINAL(@$, InitializerList, @1); }

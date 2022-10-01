@@ -54,7 +54,9 @@
 #define CMMC_DEF(DEF) generateDef(std::move(DEF))
 #define CMMC_ARRAY_INDEX(BASE, INDEX) make<ArrayIndexExpr>((BASE), INDEX)
 #define CMMC_STRUCT_INDEX(BASE, ID) make<StructIndexExpr>((BASE), std::move(ID))
-#define CMMC_STATIC_ARRAY_INITIALIZER(EXPR_PACK) make<StaticArrayInitializer>(std::move(EXPR_PACK))
+#define CMMC_ARRAY_INITIALIZER(EXPR_PACK) make<ArrayInitializer>(std::move(EXPR_PACK))
+#define CMMC_BREAK() make<BreakExpr>()
+#define CMMC_CONTINUE() make<ContinueExpr>()
 
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")

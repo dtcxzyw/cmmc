@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/IR/Block.hpp"
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -41,6 +42,7 @@ struct PassingPlan final {
 class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
+    std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
     std::unordered_map<Value*, PassingPlan> mPassingPlan;
 
@@ -66,6 +68,10 @@ public:
     Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) const;
     void addPassingPlan(Value* func, PassingPlan plan);
     const PassingPlan& getPassingPlan(Value* func);
+    void pushLoop(Block* continueTarget, Block* breakTarget);
+    void popLoop();
+    Block* getContinueTarget();
+    Block* getBreakTarget();
 };
 
 CMMC_NAMESPACE_END
