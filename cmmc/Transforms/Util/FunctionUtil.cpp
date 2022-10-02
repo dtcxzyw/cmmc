@@ -103,7 +103,6 @@ bool LossyAnalysisTransformDriver::run(Function& func) const {
 }
 
 void blockArgPropagation(Function& func) {
-    func.dump(reportError());
     auto& blocks = func.blocks();
 
     struct BlockArgPropagationContext final {

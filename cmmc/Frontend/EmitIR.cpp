@@ -342,6 +342,9 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         }
     };
 
+    Type* target = nullptr;
+    Qualifier targetQualifier;
+
     switch(mOp) {
         // IOP/FOP
         case OperatorID::Add:
@@ -363,20 +366,13 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::Equal:
             [[fallthrough]];
         case OperatorID::NotEqual: {
-            Type* target = nullptr;
-            Qualifier targetQualifier;
-
-            if((lt->isInteger() && rt->isInteger()) || (lt->isFloatingPoint() || rt->isFloatingPoint())) {
+            if((lt->isInteger() && rt->isInteger()) || (lt->isFloatingPoint() && rt->isFloatingPoint())) {
                 selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
             } else {
                 target = lt->isFloatingPoint() ? lt : rt;
                 targetQualifier = (target == lt ? lhsQualifier : rhsQualifier);
-
-                lhs = ctx.convertTo(lhs, target, lhsQualifier, targetQualifier);
-                rhs = ctx.convertTo(rhs, target, rhsQualifier, targetQualifier);
-
-                return QualifiedValue{ makeBinaryOp(ctx, mOp, target->isFloatingPoint(), targetQualifier.isSigned, lhs, rhs) };
             }
+            break;
         }
         // IOP
         case OperatorID::Rem:
@@ -387,20 +383,18 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
             [[fallthrough]];
         case OperatorID::Xor: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
-                reportFatal("xor float,float is not allowed");
-            Type* target = nullptr;
-            Qualifier targetQualifier;
+                reportFatal("rem/band/bor/xor float,float is not allowed");
             selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
-            lhs = ctx.convertTo(lhs, target, lhsQualifier, targetQualifier);
-            rhs = ctx.convertTo(rhs, target, rhsQualifier, targetQualifier);
-            return QualifiedValue{ makeBinaryOp(ctx, mOp, false, targetQualifier.isSigned, lhs, rhs) };
+            break;
         }
         default:
             reportUnreachable();
     }
-}
 
-// TODO: [un]signed ops
+    lhs = ctx.convertTo(lhs, target, lhsQualifier, targetQualifier);
+    rhs = ctx.convertTo(rhs, target, rhsQualifier, targetQualifier);
+    return QualifiedValue{ makeBinaryOp(ctx, mOp, target->isFloatingPoint(), targetQualifier.isSigned, lhs, rhs) };
+}
 
 template <typename T>
 std::variant<std::monostate, T> evaluateOp(OperatorID op, T val) {
@@ -674,6 +668,12 @@ Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, 
                                        make<ConstantFloatingPoint>(srcType, 0.0));
         }
     } else if(srcType->isInteger() && type->isInteger()) {
+        if(value->isConstant()) {
+            const auto cint = value->as<ConstantInteger>();
+            return make<ConstantInteger>(
+                type, srcQualifier.isSigned ? cint->getSignExtended() : static_cast<intmax_t>(cint->getZeroExtended()));
+        }
+
         if(srcType->getFixedSize() < type->getFixedSize())
             id = srcQualifier.isSigned ? InstructionID::SExt : InstructionID::ZExt;
         else
@@ -681,12 +681,30 @@ Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, 
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
         if(strictMode.get())
             reportFatal("implicit I2F conversion is not allowed in strict mode");
+
+        if(value->isConstant()) {
+            const auto cint = value->as<ConstantInteger>();
+            return make<ConstantFloatingPoint>(type,
+                                               srcQualifier.isSigned ? static_cast<double>(cint->getSignExtended()) :
+                                                                       static_cast<double>(cint->getZeroExtended()));
+        }
         id = srcQualifier.isSigned ? InstructionID::S2F : InstructionID::U2F;
     } else if(srcType->isFloatingPoint() && type->isInteger()) {
         if(strictMode.get())
             reportFatal("implicit F2I conversion is not allowed in strict mode");
+
+        if(value->isConstant()) {
+            const auto cfp = value->as<ConstantFloatingPoint>()->getValue();
+            return make<ConstantInteger>(
+                type, dstQualifier.isSigned ? static_cast<intmax_t>(cfp) : static_cast<intmax_t>(static_cast<uintmax_t>(cfp)));
+        }
         id = dstQualifier.isSigned ? InstructionID::F2S : InstructionID::F2U;
     } else if(srcType->isFloatingPoint() && type->isFloatingPoint()) {
+        if(value->isConstant()) {
+            const auto cfp = value->as<ConstantFloatingPoint>()->getValue();
+            return make<ConstantFloatingPoint>(type, cfp);
+        }
+
         id = InstructionID::FCast;
     }
 
