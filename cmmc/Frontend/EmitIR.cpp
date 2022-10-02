@@ -514,19 +514,17 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
         const auto retType = ret->getType();
         const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier);
         ctx.makeOp<StoreInst>(ret, retVal);
-        ctx.makeOp<ReturnInst>(nullptr);
+        ctx.makeOp<ReturnInst>();
     } else {
         auto type = func->getType()->as<FunctionType>();
         auto retType = type->getRetType();
         if(retType->isVoid()) {
             if(mReturnValue)
                 reportFatal("the function should return nothing");
-        } else if(!mReturnValue) {
-            reportFatal("the function should return a value");
-        }
-        if(type->isVoid()) {
-            ctx.makeOp<ReturnInst>(nullptr);
+            ctx.makeOp<ReturnInst>();
         } else {
+            if(!mReturnValue)
+                reportFatal("the function should return a value");
             const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier);
             ctx.makeOp<ReturnInst>(retVal);
         }

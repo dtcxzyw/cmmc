@@ -283,7 +283,9 @@ public:
 class ReturnInst final : public Instruction {
 public:
     explicit ReturnInst() : Instruction{ InstructionID::Ret, VoidType::get(), {} } {}
-    explicit ReturnInst(Value* retValue) : Instruction{ InstructionID::Ret, VoidType::get(), { retValue } } {}
+    explicit ReturnInst(Value* retValue) : Instruction{ InstructionID::Ret, VoidType::get(), { retValue } } {
+        assert(retValue);
+    }
     void dump(std::ostream& out) const override;
 };
 
