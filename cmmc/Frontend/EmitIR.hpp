@@ -113,6 +113,8 @@ public:
     void popLoop();
     Block* getContinueTarget();
     Block* getBreakTarget();
+
+    Function* getIntrinsic(Intrinsic intrinsic);
 };
 
 CMMC_NAMESPACE_END

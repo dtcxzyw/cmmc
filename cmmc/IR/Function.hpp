@@ -31,14 +31,17 @@ enum class FunctionAttribute {
 
 enum class CallingConvention { C, Fast };
 
-// TODO: intrinsic
+enum class Intrinsic { none, memset, memcpy, memmove };
+
 class Function final : public GlobalValue {
     List<Block*> mBlocks;
     Attribute<FunctionAttribute> mAttr;
     CallingConvention mCallingConvention;
+    Intrinsic mIntrinsic;
 
 public:
-    Function(StringIR symbol, FunctionType* type) : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C } {}
+    Function(StringIR symbol, FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
+        : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C }, mIntrinsic{ intrinsic } {}
     Block* entryBlock() const noexcept {
         return mBlocks.front();
     }
@@ -55,6 +58,9 @@ public:
     }
     auto& attr() noexcept {
         return mAttr;
+    }
+    Intrinsic getIntrinsic() const noexcept {
+        return mIntrinsic;
     }
 };
 

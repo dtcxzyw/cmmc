@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -25,6 +26,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
@@ -1070,15 +1072,20 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayTyp
 }
 
 static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
-    // TODO: use memset?
+    assert(storage->getType()->as<PointerType>()->getPointee()->isSame(type));
     if(type->isArray()) {
-        const auto arrayType = type->as<ArrayType>();
-        const auto subType = arrayType->getElementType();
-        for(uint32_t idx = 0; idx < arrayType->getElementCount(); ++idx) {
-            const auto ptr =
-                ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ make<ConstantInteger>(ctx.getIndexType(), idx) });
-            zeroInitialize(ctx, ptr, subType);
-        }
+        const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
+        const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
+        const auto i8ptr = make<PointerType>(IntegerType::get(8U));
+        const auto ptr = ctx.makeOp<PtrCastInst>(storage, i8ptr);
+        const auto zero = make<ConstantInteger>(IntegerType::get(32), 0);
+        const auto size = make<ConstantInteger>(ctx.getIndexType(), static_cast<intmax_t>(type->getSize(dataLayout)));
+        ctx.makeOp<FunctionCallInst>(memsetFunc,
+                                     Vector<Value*>{
+                                         ptr,
+                                         zero,
+                                         size,
+                                     });
     } else {
         if(type->isInteger()) {
             ctx.makeOp<StoreInst>(storage, make<ConstantInteger>(type, 0));
@@ -1097,7 +1104,8 @@ static void flushScalarsDynamic(EmitContext& ctx, const std::vector<Value*>& val
     }
 
     const auto makePtr = [&](uint32_t idx) {
-        return ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ make<ConstantInteger>(ctx.getIndexType(), idx) });
+        return ctx.makeOp<GetElementPtrInst>(
+            storage, Vector<Value*>{ ctx.getZeroIndex(), make<ConstantInteger>(ctx.getIndexType(), idx) });
     };
 
     const auto elementType = type->getElementType();
@@ -1131,7 +1139,8 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
     const auto makePtr = [&](uint32_t idx) {
         if(idx >= elementCount)
             reportFatal("too much elements in the array initializer");
-        return ctx.makeOp<GetElementPtrInst>(storage, Vector<Value*>{ make<ConstantInteger>(ctx.getIndexType(), idx) });
+        return ctx.makeOp<GetElementPtrInst>(
+            storage, Vector<Value*>{ ctx.getZeroIndex(), make<ConstantInteger>(ctx.getIndexType(), idx) });
     };
 
     uint32_t idx = 0;
@@ -1233,6 +1242,28 @@ void StructDefinition::emit(EmitContext& ctx) const {
     auto type = make<StructType>(StringIR{ name }, std::move(fields));
     ctx.addIdentifier(name, type);
     ctx.getModule()->add(type);
+}
+
+Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
+    auto symbol = enumName(intrinsic);
+    for(auto global : mModule->globals())
+        if(global->getSymbol() == symbol)
+            return global->as<Function>();
+    FunctionType* funcType = nullptr;
+    switch(intrinsic) {
+        case Intrinsic::none:
+            reportUnreachable();
+        case Intrinsic::memset: {
+            const auto ptr = make<PointerType>(IntegerType::get(8));
+            funcType = make<FunctionType>(ptr, Vector<Type*>{ ptr, IntegerType::get(32), getIndexType() });
+            break;
+        }
+        default:
+            reportNotImplemented();
+    }
+    auto func = make<Function>(StringIR{ symbol }, funcType, intrinsic);
+    mModule->add(func);
+    return func;
 }
 
 CMMC_NAMESPACE_END

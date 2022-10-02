@@ -88,6 +88,7 @@ enum class InstructionID {
     // miscellaneous
     Alloc,
     GetElementPtr,
+    PtrCast,
     ExtractValue,
     InsertValue,
     Select,
@@ -336,6 +337,15 @@ public:
         auto& list = operands();
         list.insert(list.cend(), indices.cbegin(), indices.cend());
         list.push_back(base);
+    }
+    void dump(std::ostream& out) const override;
+};
+
+class PtrCastInst final : public Instruction {
+public:
+    explicit PtrCastInst(Value* base, Type* targetType) : Instruction{ InstructionID::PtrCast, targetType, { base } } {
+        assert(base->getType()->isPointer());
+        assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;
 };

@@ -147,6 +147,8 @@ static const char* getInstName(InstructionID instID) {
             return "alloc";
         case InstructionID::GetElementPtr:
             return "getelementptr";
+        case InstructionID::PtrCast:
+            return "ptrcast";
         case InstructionID::ExtractValue:
             return "extractvalue";
         case InstructionID::InsertValue:
@@ -444,6 +446,10 @@ void GetElementPtrInst::dump(std::ostream& out) const {
         } else
             reportUnreachable();
     }
+}
+
+void PtrCastInst::dump(std::ostream& out) const {
+    dumpUnary(out);
 }
 
 CMMC_NAMESPACE_END

@@ -81,15 +81,25 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                         globalGroup.insert(id);
                     }
 
-            if(inst->getInstID() == InstructionID::Alloc) {
-                uint32_t id = ++allocateID;
-                stackGroup.insert(id);
-                result.addPair(id, argID);
-                result.addValue(inst, { stackID, id });
-            } else if(inst->getInstID() == InstructionID::GetElementPtr) {
-                // TODO: handle distinct array indices and distinct struct fields
-                const auto src = result.inheritFrom(inst->operands().back());
-                result.addValue(inst, src);
+            switch(inst->getInstID()) {
+                case InstructionID::Alloc: {
+                    uint32_t id = ++allocateID;
+                    stackGroup.insert(id);
+                    result.addPair(id, argID);
+                    result.addValue(inst, { stackID, id });
+                    break;
+                }
+                case InstructionID::GetElementPtr: {
+                    // TODO: handle distinct array indices and distinct struct fields
+                    const auto src = result.inheritFrom(inst->operands().back());
+                    result.addValue(inst, src);
+                    break;
+                }
+                case InstructionID::PtrCast: {
+                    result.addValue(inst, {});  // TODO: provide basic information
+                }
+                default:
+                    break;
             }
         }
     }

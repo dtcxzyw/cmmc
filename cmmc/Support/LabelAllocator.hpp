@@ -24,6 +24,8 @@ class LabelAllocator final {
 
 public:
     std::string allocate(const std::string& base);
+
+    // FIXME: too many allocations in arena
     template <typename Str>
     Str allocate(const Str& str) {
         return Str{ allocate(std::string{ str }) };
