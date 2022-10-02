@@ -168,8 +168,17 @@ void blockArgPropagation(Function& func) {
         // append arguments
         auto& blockCtx = ctx[block];
         auto& req = blockCtx.req;
-        if(block == blocks.front() && !req.empty())
+        if(block == blocks.front() && !req.empty()) {
+            auto& err = reportError();
+            err << "required arguments:" << std::endl;
+            for(auto val : req) {
+                val->dump(err);
+                err << std::endl;
+            }
+            err << "func:" << std::endl;
+            func.dump(err);
             reportFatal("cannot change arguments of the entry block");
+        }
 
         std::unordered_map<Instruction*, Value*> map;
         for(auto inst : req)

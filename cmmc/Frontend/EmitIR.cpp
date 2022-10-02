@@ -661,6 +661,8 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
 
 Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, Qualifier dstQualifier) {
     const auto srcType = value->getType();
+    if(srcType->isPointer() && srcQualifier.isConst && !dstQualifier.isConst)
+        reportFatal("cannot remove the const qualifier");
 
     if(srcType->isSame(type))
         return value;
@@ -703,7 +705,11 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
     if(valQualifier == ValueQualifier::AsLValue) {
         if(auto iter = mConstantBinding.find(val); iter != mConstantBinding.cend())
             return { iter->second, qualifier };
-        return { makeOp<LoadInst>(val), qualifier };
+        if(val->getType()->as<PointerType>()->getPointee()->isArray())
+            return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
+                     qualifier };  // decay to pointer
+        else
+            return { makeOp<LoadInst>(val), qualifier };
     }
     return { val, qualifier };
 }
