@@ -36,7 +36,9 @@ def spl_semantic(src):
     if out.returncode == 0 and not is_error:
         return True
     elif out.returncode != 0 and is_error:
-        return True  # TODO: verify error output
+        if len(out.stdout) == 0 and len(out.stderr) == 0:
+            return False
+        return True
     return False
 
 
@@ -54,6 +56,12 @@ def sysy_parse(src):
 
 def sysy_semantic(src):
     out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-O', '0', '-o',
+                               '/dev/stdout', src], capture_output=True, text=True)
+    return out.returncode == 0
+
+
+def sysy_opt(src):
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -96,11 +104,13 @@ def test(name, path, filter, tester):
 
 res = []
 res.append(test("SPL parse", tests_path+"/Parse", ".spl", spl_parse))
-res.append(test("SPL semantic", tests_path+"/Semantic", ".spl", spl_semantic))
+res.append(test("SPL semantic & opt", tests_path +
+           "/Semantic", ".spl", spl_semantic))
 res.append(test("SPL codegen TAC", tests_path +
            "/CodeGenTAC", ".spl", spl_codegen_tac))
 res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
+# res.append(test("SysY opt", tests_path+"/SysY2022", ".sy", sysy_opt))
 
 
 total_tests = 0

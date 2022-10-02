@@ -105,34 +105,34 @@ Program: ExtDefList END { driver.markEnd(); CMMC_NONTERMINAL(@$, Program, @1); }
 ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 | %empty { CMMC_EMPTY(@$, ExtDefList); }
 ;
-ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
-| Def { driver.addGlobalDef($1.type, $1.var); CMMC_NONTERMINAL(@$, ExtDef, @1); }
-| QualifiedSpecifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
+ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType(std::move($1)); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
+| Def { driver.addGlobalDef(std::move($1.type), std::move($1.var)); CMMC_NONTERMINAL(@$, ExtDef, @1); }
+| QualifiedSpecifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({std::move($2), std::move($3)}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 ;
 /* specifier */
-QualifiedSpecifier: Specifier { $$ = $1; CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
-| CONST Specifier { $$ = $2; $$.qualifier.isConst = true;  CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1, @2); }
-Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
-| StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
+QualifiedSpecifier: Specifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
+| CONST Specifier { $$ = std::move($2); $$.qualifier.isConst = true;  CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1, @2); }
+Specifier: TYPE { $$ = { std::move($1), TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
+| StructSpecifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
-| STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType(std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+| STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
-VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
-| VarDec LB Exp RB { $$ = $1; $$.arraySize.push_back($3); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
-| VarDec LB RB { $$ = $1; $$.arraySize.push_back(nullptr); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
+VarDec: ID { $$ = { std::move($1), ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
+| VarDec LB Exp RB { $$ = std::move($1); $$.arraySize.push_back(std::move($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+| VarDec LB RB { $$ = std::move($1); $$.arraySize.push_back(nullptr); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
 ;
-FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
-| ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
+FunDec: ID LP VarList RP { $$.symbol = std::move($1); $$.args = std::move($3); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
+| ID LP RP { $$.symbol = std::move($1); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
-| ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
+| ParamDec { $$ = { std::move($1) }; CMMC_NONTERMINAL(@$, VarList, @1); }
 ;
-ParamDec: QualifiedSpecifier VarDec { $$ = NamedArg{ $1, $2 }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
+ParamDec: QualifiedSpecifier VarDec { $$ = NamedArg{ std::move($1), std::move($2) }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
 ;
 /* statement */
-CompSt: LC StmtList RC { $$ = $2; CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3); }
+CompSt: LC StmtList RC { $$ = std::move($2); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3); }
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;

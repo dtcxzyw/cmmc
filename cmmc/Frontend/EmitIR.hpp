@@ -60,7 +60,7 @@ struct QualifiedValue final {
 };
 
 struct Scope final {
-    HashTable<StringAST, QualifiedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> variables;
+    std::unordered_map<StringAST, QualifiedValue, StringHasher<Arena::Source::AST>> variables;
 };
 
 CMMC_ARENA_TRAIT(Scope, AST);
@@ -76,7 +76,7 @@ class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
 
-    HashTable<StringAST, QualifiedValue, Arena::Source::AST, StringHasher<Arena::Source::AST>> uniqueVariables;
+    std::unordered_map<StringAST, QualifiedValue, StringHasher<Arena::Source::AST>> uniqueVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;

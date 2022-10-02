@@ -23,6 +23,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
@@ -468,6 +469,8 @@ QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
 
 QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     auto [callee, calleeQualifier] = ctx.getRValue(mCallee);
+    if(!callee->getType()->isFunction())
+        reportFatal("cannot call uninvokable");
     const auto& info = ctx.getFunctionCallInfo(callee->getType()->as<FunctionType>());
 
     auto argExprs = mArgs;
@@ -670,6 +673,19 @@ Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, 
 
     if(srcType->isSame(type))
         return value;
+    if(srcType->isPointer() && type->isPointer()) {
+        const auto pointee = srcType->as<PointerType>()->getPointee();
+        if(pointee->isArray()) {
+            auto base = makeOp<GetElementPtrInst>(value, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
+            while(!base->getType()->isSame(type)) {
+                if(!base->getType()->as<PointerType>()->getPointee()->isArray())
+                    reportFatal("cannot decay array to pointer");
+                base = makeOp<GetElementPtrInst>(base, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
+            }
+            return base;
+        } else
+            reportFatal("unsupported pointer conversion");
+    }
 
     InstructionID id = InstructionID::None;
     if(type->isBoolean()) {
@@ -775,6 +791,12 @@ void EmitContext::pushScope() {
     mScopes.push_back({});
 }
 void EmitContext::popScope() {
+    assert(!mScopes.empty());
+    for(auto& [symbol, val] : mScopes.back().variables) {
+        if(auto iter = uniqueVariables.find(symbol); iter != uniqueVariables.cend())
+            uniqueVariables.erase(iter);
+        mConstantBinding.erase(val.value);
+    }
     mScopes.pop_back();
 }
 void EmitContext::addIdentifier(StringAST identifier, QualifiedValue value) {

@@ -314,9 +314,14 @@ void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
 }
 
 template <typename T>
-void concatPack(Deque<T>& res, Deque<T>& lhs, const Deque<T>& rhs) {
-    res.swap(lhs);
-    res.insert(res.cend(), rhs.cbegin(), rhs.cend());
+void concatPack(Deque<T>& res, Deque<T>& lhs, Deque<T>& rhs) {
+    if(lhs.size() > rhs.size()) {
+        res.swap(lhs);
+        res.insert(res.cend(), rhs.cbegin(), rhs.cend());
+    } else {
+        res.swap(rhs);
+        res.insert(res.begin(), lhs.cbegin(), lhs.cend());
+    }
 }
 
 template <typename T>
