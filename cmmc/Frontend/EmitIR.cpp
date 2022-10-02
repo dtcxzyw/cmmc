@@ -470,15 +470,27 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     auto [callee, calleeQualifier] = ctx.getRValue(mCallee);
     const auto& info = ctx.getFunctionCallInfo(callee->getType()->as<FunctionType>());
 
+    auto argExprs = mArgs;
+    // SysY starttime/stoptime
+    if(auto func = dynamic_cast<Function*>(callee)) {
+        const auto symbol = func->getSymbol();
+        if(symbol == "starttime" || symbol == "stoptime") {
+            if(argExprs.empty())
+                argExprs.push_back(make<ConstantIntExpr>(location(), location().line, 32U, false));
+            else
+                reportFatal("the numbers of provided/required arguments mismatch");
+        }
+    }
+
     // TODO: va_args
     auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
-    if(argTypes.size() != mArgs.size())
+    if(argTypes.size() != argExprs.size())
         reportFatal("the numbers of provided/required arguments mismatch");
 
     Vector<Value*> args;
-    args.reserve(mArgs.size());
-    for(uint32_t idx = 0; idx < mArgs.size(); ++idx) {
-        const auto arg = mArgs[idx];
+    args.reserve(argExprs.size());
+    for(uint32_t idx = 0; idx < argExprs.size(); ++idx) {
+        const auto arg = argExprs[idx];
         const auto destType = argTypes[idx];
         const auto destQualifier = info.argQualifiers[idx];
         if(info.passingArgsByPointer[idx]) {
@@ -839,7 +851,7 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
 
                     if(size <= 0)
                         reportFatal("invalid array size");
-                    if(size >= (1U << 24))
+                    if(size >= (1U << 30))
                         reportFatal("array is too large");
 
                     ret = make<ArrayType>(ret, static_cast<uint32_t>(size));
@@ -1003,8 +1015,10 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayTyp
         for(auto element : mElements) {
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
                 if(!cachedScalars.empty()) {
-                    if(cachedScalars.size() != count)
+                    if(cachedScalars.size() != count) {
+                        reportError() << "require " << count << " got " << cachedScalars.size() << std::endl;
                         reportFatal("invalid array initializer");
+                    }
                     flushScalars();
                 }
                 values.push_back(subArr->shapeAwareEmitStatic(ctx, subArrayType, dstQualifier));
@@ -1112,8 +1126,10 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, A
         for(auto element : mElements) {
             if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
                 if(!cachedScalars.empty()) {
-                    if(cachedScalars.size() != count)
+                    if(cachedScalars.size() != count) {
+                        reportError() << "require " << count << " got " << cachedScalars.size() << std::endl;
                         reportFatal("invalid array initializer");
+                    }
                     flushScalars();
                 }
 

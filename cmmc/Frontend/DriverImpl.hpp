@@ -18,6 +18,7 @@
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/Location.hpp>
+#include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -96,6 +97,8 @@ struct Hierarchy final {
     void dump(DriverImpl& driver, std::ostream& out, uint32_t indent) const;
 };
 CMMC_ARENA_TRAIT(Hierarchy, AST);
+
+SourceLocation castLoc(const std::pair<uint32_t, yy::location>& location);
 
 class DriverImpl final {
     std::string mFile;

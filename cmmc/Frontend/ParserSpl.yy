@@ -126,7 +126,7 @@ StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct };
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
-| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(CMMC_INT($3, 32U, true)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
+| VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(CMMC_INT(@3, $3, 32U, true)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
 | VarDec LB INT error { CMMC_MISS_RB(@$); }
 | ERR {}
 ;
@@ -147,12 +147,12 @@ StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, Stm
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
 Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
-| CompSt { $$ = CMMC_SCOPE($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
-| RETURN Exp SEMI { $$ = CMMC_RETURN($2); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3); }
-| RETURN SEMI { $$ = CMMC_RETURN(nullptr); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
-| IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
-| IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE($3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
-| WHILE LP Exp RP Stmt { $$ = CMMC_WHILE($3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| CompSt { $$ = CMMC_SCOPE(@1, $1); CMMC_NONTERMINAL(@$, Stmt, @1); }
+| RETURN Exp SEMI { $$ = CMMC_RETURN(@1, $2); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3); }
+| RETURN SEMI { $$ = CMMC_RETURN(@1, nullptr); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE(@1, $3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
+| WHILE LP Exp RP Stmt { $$ = CMMC_WHILE(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | Exp error { CMMC_MISS_SEMI(@$); }
 | RETURN Exp error { CMMC_MISS_SEMI(@$); }
 | RETURN error { CMMC_MISS_SEMI(@$); }
@@ -165,7 +165,7 @@ DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefLis
 | DefList error DecList SEMI DefList { CMMC_MISS_SPECIFIER(@2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
-Def: Specifier DecList SEMI { $$ = VarDef{$1, $2}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
+Def: Specifier DecList SEMI { $$ = VarDef{castLoc(@1), std::move($1), std::move($2)}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
 | Specifier DecList error { CMMC_MISS_SEMI(@$); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
@@ -175,34 +175,34 @@ Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
 | VarDec ASSIGN Exp { $$ = $1; $$.initialValue = $3; CMMC_NONTERMINAL(@$, Dec, @1, @2, @3); }
 ;
 /* Expression */
-Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp AND Exp { $$ = CMMC_BINARY_OP(LogicalAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp OR Exp { $$ = CMMC_BINARY_OP(LogicalOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp LT Exp { $$ = CMMC_BINARY_OP(LessThan, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp LE Exp { $$ = CMMC_BINARY_OP(LessEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp GT Exp { $$ = CMMC_BINARY_OP(GreaterThan, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp GE Exp { $$ = CMMC_BINARY_OP(GreaterEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp NE Exp { $$ = CMMC_BINARY_OP(NotEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp EQ Exp { $$ = CMMC_BINARY_OP(Equal, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp PLUS Exp { $$ = CMMC_BINARY_OP(Add, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp MINUS Exp { $$ = CMMC_BINARY_OP(Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp MUL Exp { $$ = CMMC_BINARY_OP(Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp DIV Exp { $$ = CMMC_BINARY_OP(Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp REM Exp { CMMC_NEED_EXTENSION(@$, Remainder); $$ = CMMC_BINARY_OP(Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp BAND Exp { CMMC_NEED_EXTENSION(@$, BitwiseAnd); $$ = CMMC_BINARY_OP(BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp BOR Exp { CMMC_NEED_EXTENSION(@$, BitwiseOr); $$ = CMMC_BINARY_OP(BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp XOR Exp { CMMC_NEED_EXTENSION(@$, Xor); $$ = CMMC_BINARY_OP(Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp AND Exp { $$ = CMMC_BINARY_OP(@2, LogicalAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp OR Exp { $$ = CMMC_BINARY_OP(@2, LogicalOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp LT Exp { $$ = CMMC_BINARY_OP(@2, LessThan, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp LE Exp { $$ = CMMC_BINARY_OP(@2, LessEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp GT Exp { $$ = CMMC_BINARY_OP(@2, GreaterThan, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp GE Exp { $$ = CMMC_BINARY_OP(@2, GreaterEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp NE Exp { $$ = CMMC_BINARY_OP(@2, NotEqual, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp EQ Exp { $$ = CMMC_BINARY_OP(@2, Equal, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp PLUS Exp { $$ = CMMC_BINARY_OP(@2, Add, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MINUS Exp { $$ = CMMC_BINARY_OP(@2, Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MUL Exp { $$ = CMMC_BINARY_OP(@2, Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp DIV Exp { $$ = CMMC_BINARY_OP(@2, Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp REM Exp { CMMC_NEED_EXTENSION(@$, Remainder); $$ = CMMC_BINARY_OP(@2, Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BAND Exp { CMMC_NEED_EXTENSION(@$, BitwiseAnd); $$ = CMMC_BINARY_OP(@2, BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BOR Exp { CMMC_NEED_EXTENSION(@$, BitwiseOr); $$ = CMMC_BINARY_OP(@2, BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp XOR Exp { CMMC_NEED_EXTENSION(@$, Xor); $$ = CMMC_BINARY_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
-| NOT Exp { $$ = CMMC_UNARY_OP(LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
-| Exp LP Args RP { $$ = CMMC_CALL($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
-| Exp LP RP { $$ = CMMC_CALL($1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
-| Exp DOT ID { $$ = CMMC_STRUCT_INDEX($1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| ID { $$ = CMMC_ID($1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| INT { $$ = CMMC_INT($1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
-| FLOAT { $$ = CMMC_FLOAT($1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
-| CHAR { $$ = CMMC_CHAR($1); CMMC_NONTERMINAL(@$, Exp, @1); }
+| MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| Exp LP Args RP { $$ = CMMC_CALL(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
+| Exp LP RP { $$ = CMMC_CALL(@2, $1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
+| Exp DOT ID { $$ = CMMC_STRUCT_INDEX(@3, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| ID { $$ = CMMC_ID(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
+| INT { $$ = CMMC_INT(@1, $1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
+| FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
+| CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | LP Exp error { CMMC_MISS_RP(@$); }
 | Exp LP Args error { CMMC_MISS_RP(@$); }
 | Exp LP error { CMMC_MISS_RP(@$); }

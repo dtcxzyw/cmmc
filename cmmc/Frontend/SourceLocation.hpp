@@ -19,8 +19,8 @@
 CMMC_NAMESPACE_BEGIN
 
 struct SourceLocation final {
-    const char* file;
-    const char* func;
+    // const char* file;
+    // const char* func;
     uint32_t line;
     uint32_t column;
 };

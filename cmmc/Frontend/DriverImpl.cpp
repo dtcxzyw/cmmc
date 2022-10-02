@@ -25,11 +25,11 @@ CMMC_NAMESPACE_BEGIN
 
 void generateScope(ExprPack& result, VarDefList list, const ExprPack& src) {
     for(auto& var : list)
-        result.push_back(make<LocalVarDefExpr>(std::move(var.type), std::move(var.var)));
+        result.push_back(make<LocalVarDefExpr>(var.loc, std::move(var.type), std::move(var.var)));
     result.insert(result.cend(), src.cbegin(), src.cend());
 }
 Expr* generateDef(VarDef def) {
-    return make<LocalVarDefExpr>(std::move(def.type), std::move(def.var));
+    return make<LocalVarDefExpr>(def.loc, std::move(def.type), std::move(def.var));
 }
 
 static void emitSplRuntime(Module& module, EmitContext& ctx) {
@@ -140,6 +140,11 @@ void Hierarchy::dump(DriverImpl& driver, std::ostream& out, uint32_t indent) con
     indent += indentInc;
     for(auto child : children)
         driver.hierarchy(child).dump(driver, out, indent);
+}
+
+SourceLocation castLoc(const std::pair<uint32_t, yy::location>& location) {
+    const auto& pos = location.second.begin;
+    return { static_cast<uint32_t>(pos.line), static_cast<uint32_t>(pos.column) };
 }
 
 CMMC_NAMESPACE_END

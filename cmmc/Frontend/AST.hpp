@@ -54,6 +54,7 @@ CMMC_ARENA_TRAIT(NamedVar, AST);
 using VarList = Deque<NamedVar>;
 
 struct VarDef final {
+    SourceLocation loc;
     TypeRef type;
     VarList var;
 };
@@ -106,13 +107,16 @@ class Expr {
 public:
     static constexpr auto arenaSource = Arena::Source::AST;
 
-    Expr() = default;
+    explicit Expr(const SourceLocation& location) : mLocation{ location } {}
     Expr(const Expr&) = delete;
     Expr(Expr&&) = delete;
     Expr& operator=(const Expr&) = delete;
     Expr& operator=(Expr&&) = delete;
     virtual ~Expr() = default;
     virtual QualifiedValue emit(EmitContext& ctx) const = 0;
+    const SourceLocation& location() const noexcept {
+        return mLocation;
+    }
 };
 
 enum class OperatorID {
@@ -145,7 +149,8 @@ class BinaryExpr final : public Expr {
     Expr* mRhs;
 
 public:
-    BinaryExpr(OperatorID op, Expr* lhs, Expr* rhs) noexcept : mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
+    BinaryExpr(const SourceLocation& location, OperatorID op, Expr* lhs, Expr* rhs) noexcept
+        : Expr{ location }, mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -154,7 +159,8 @@ class UnaryExpr final : public Expr {
     Expr* mValue;
 
 public:
-    UnaryExpr(OperatorID op, Expr* value) noexcept : mOp{ op }, mValue{ value } {}
+    UnaryExpr(const SourceLocation& location, OperatorID op, Expr* value) noexcept
+        : Expr{ location }, mOp{ op }, mValue{ value } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -164,8 +170,8 @@ class ConstantIntExpr final : public Expr {
     bool mIsSigned;
 
 public:
-    ConstantIntExpr(uintmax_t value, uint32_t bitWidth, bool isSigned)
-        : mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
+    ConstantIntExpr(const SourceLocation& location, uintmax_t value, uint32_t bitWidth, bool isSigned)
+        : Expr{ location }, mValue{ value }, mBitWidth{ bitWidth }, mIsSigned{ isSigned } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -174,7 +180,8 @@ class ConstantFloatExpr final : public Expr {
     bool mIsFloat;
 
 public:
-    ConstantFloatExpr(double value, bool isFloat) noexcept : mValue{ value }, mIsFloat{ isFloat } {}
+    ConstantFloatExpr(const SourceLocation& location, double value, bool isFloat) noexcept
+        : Expr{ location }, mValue{ value }, mIsFloat{ isFloat } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -182,7 +189,7 @@ class ConstantStringExpr final : public Expr {
     StringAST mString;
 
 public:
-    explicit ConstantStringExpr(const StringAST& str) : mString{ str } {}
+    ConstantStringExpr(const SourceLocation& location, const StringAST& str) : Expr{ location }, mString{ str } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -192,7 +199,7 @@ class ArrayInitializer final : public Expr {
     ExprPack mElements;
 
 public:
-    explicit ArrayInitializer(ExprPack elements) : mElements{ std::move(elements) } {}
+    ArrayInitializer(const SourceLocation& location, ExprPack elements) : Expr{ location }, mElements{ std::move(elements) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
     ConstantValue* shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type, Qualifier dstQualifier) const;
     void shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type, Qualifier dstQualifier) const;
@@ -203,7 +210,8 @@ class FunctionCallExpr final : public Expr {
     ExprPack mArgs;
 
 public:
-    FunctionCallExpr(Expr* callee, ExprPack args) : mCallee{ callee }, mArgs{ std::move(args) } {}
+    FunctionCallExpr(const SourceLocation& location, Expr* callee, ExprPack args)
+        : Expr{ location }, mCallee{ callee }, mArgs{ std::move(args) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -211,7 +219,7 @@ class ReturnExpr final : public Expr {
     Expr* mReturnValue;
 
 public:
-    explicit ReturnExpr(Expr* returnValue) noexcept : mReturnValue{ returnValue } {}
+    ReturnExpr(const SourceLocation& location, Expr* returnValue) noexcept : Expr{ location }, mReturnValue{ returnValue } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -221,8 +229,8 @@ class IfElseExpr final : public Expr {
     Expr* mElseBlock;
 
 public:
-    IfElseExpr(Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
-        : mPredicate{ pred }, mThenBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
+    IfElseExpr(const SourceLocation& location, Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
+        : Expr{ location }, mPredicate{ pred }, mThenBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -230,7 +238,7 @@ class IdentifierExpr final : public Expr {
     StringAST mIdentifier;
 
 public:
-    explicit IdentifierExpr(const StringAST& str) : mIdentifier{ str } {}
+    IdentifierExpr(const SourceLocation& location, const StringAST& str) : Expr{ location }, mIdentifier{ str } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -238,7 +246,7 @@ class ScopedExpr final : public Expr {
     StatementBlock mBlock;
 
 public:
-    explicit ScopedExpr(StatementBlock block) : mBlock{ std::move(block) } {};
+    ScopedExpr(const SourceLocation& location, StatementBlock block) : Expr{ location }, mBlock{ std::move(block) } {};
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -247,7 +255,7 @@ class WhileExpr final : public Expr {
     Expr* mBlock;
 
 public:
-    WhileExpr(Expr* pred, Expr* block) : mPredicate{ pred }, mBlock{ block } {}
+    WhileExpr(const SourceLocation& location, Expr* pred, Expr* block) : Expr{ location }, mPredicate{ pred }, mBlock{ block } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -256,7 +264,8 @@ class LocalVarDefExpr final : public Expr {
     Deque<NamedVar> mVars;
 
 public:
-    LocalVarDefExpr(TypeRef type, Deque<NamedVar> vars) : mType{ std::move(type) }, mVars{ std::move(vars) } {}
+    LocalVarDefExpr(const SourceLocation& location, TypeRef type, Deque<NamedVar> vars)
+        : Expr{ location }, mType{ std::move(type) }, mVars{ std::move(vars) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -265,7 +274,8 @@ class ArrayIndexExpr final : public Expr {
     Expr* mIndex;
 
 public:
-    ArrayIndexExpr(Expr* base, Expr* index) noexcept : mBase{ base }, mIndex{ index } {}
+    ArrayIndexExpr(const SourceLocation& location, Expr* base, Expr* index) noexcept
+        : Expr{ location }, mBase{ base }, mIndex{ index } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -274,22 +284,26 @@ class StructIndexExpr final : public Expr {
     StringAST mField;
 
 public:
-    StructIndexExpr(Expr* base, StringAST field) : mBase{ base }, mField{ field } {}
+    StructIndexExpr(const SourceLocation& location, Expr* base, StringAST field)
+        : Expr{ location }, mBase{ base }, mField{ field } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
 class BreakExpr final : public Expr {
 public:
+    explicit BreakExpr(const SourceLocation& location) noexcept : Expr{ location } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
 class ContinueExpr final : public Expr {
 public:
+    explicit ContinueExpr(const SourceLocation& location) noexcept : Expr{ location } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
 class EmptyExpr final : public Expr {
 public:
+    explicit EmptyExpr(const SourceLocation& location) noexcept : Expr{ location } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
