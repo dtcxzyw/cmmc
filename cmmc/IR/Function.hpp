@@ -16,6 +16,7 @@
 #include <cmmc/IR/Attribute.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -49,6 +50,7 @@ public:
         return mBlocks;
     }
     void dump(std::ostream& out) const override;
+    void dumpCFG(std::ostream& out) const;
     bool verify(std::ostream& out) const;
     bool isFunction() const noexcept override {
         return true;

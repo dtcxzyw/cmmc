@@ -25,3 +25,15 @@
 #ifndef __GNUC__
 #error "Unsupported compiler"
 #endif
+
+CMMC_NAMESPACE_BEGIN
+
+namespace Config {
+#ifndef NDEBUG
+    constexpr bool debug = true;
+#else
+    constexpr bool debug = false;
+#endif
+}  // namespace Config
+
+CMMC_NAMESPACE_END

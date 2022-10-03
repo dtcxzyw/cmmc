@@ -15,6 +15,9 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <cstdint>
+#include <string>
+#include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -64,6 +67,54 @@ bool Function::verify(std::ostream& out) const {
         if(!block->verify(out))
             return false;
     return true;
+}
+
+void Function::dumpCFG(std::ostream& out) const {
+    out << "digraph " << getSymbol() << '{' << std::endl;
+    std::unordered_map<Block*, std::string> ids;
+    uint32_t id = 0;
+
+    using namespace std::string_view_literals;
+
+    for(auto block : mBlocks) {
+        ids[block] = "b" + std::to_string(++id);
+
+        std::string_view shape = "ellipse"sv;
+        std::string_view color = "black"sv;
+
+        auto terminator = block->getTerminator();
+        switch(terminator->getInstID()) {
+            case InstructionID::Ret: {
+                shape = "doublecircle"sv;
+                color = "green"sv;
+                break;
+            }
+            case InstructionID::Unreachable: {
+                shape = "doublecircle"sv;
+                color = "red"sv;
+                break;
+            }
+            default:
+                break;
+        }
+
+        out << ids[block] << " [shape = " << shape << ", color = " << color << ", label = \"" << block->getLabel() << "\"];"
+            << std::endl;
+    }
+
+    for(auto block : mBlocks) {
+        auto terminator = block->getTerminator();
+        if(terminator->isBranch()) {
+            auto branch = terminator->as<ConditionalBranchInst>();
+            auto& trueTarget = branch->getTrueTarget();
+            out << ids[block] << "->" << ids[trueTarget.getTarget()] << ';' << std::endl;
+            auto& falseTarget = branch->getFalseTarget();
+            if(falseTarget.getTarget())
+                out << ids[block] << "->" << ids[falseTarget.getTarget()] << ';' << std::endl;
+        }
+    }
+
+    out << "}" << std::endl;
 }
 
 CMMC_NAMESPACE_END

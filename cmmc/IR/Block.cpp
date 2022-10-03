@@ -17,6 +17,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -77,7 +78,33 @@ bool Block::verify(std::ostream& out) const {
         return false;
     }
 
+    // ownership
+    for(auto arg : mArgs)
+        if(arg->getBlock() != this) {
+            out << "bad ownership";
+            arg->dump(out);
+            return false;
+        }
+
+    for(auto inst : mInstructions)
+        if(inst->getBlock() != this) {
+            out << "bad ownership";
+            inst->dump(out);
+            return false;
+        }
+
     // topological ordering
+    std::unordered_set<Value*> definedInst;
+    for(auto inst : mInstructions) {
+        for(auto operand : inst->operands())
+            if(operand->isInstruction()) {
+                if(!definedInst.count(operand)) {
+                    out << "bad instruction order";
+                    return false;
+                }
+            }
+        definedInst.insert(inst);
+    }
 
     // per-instruction
     for(auto inst : mInstructions)

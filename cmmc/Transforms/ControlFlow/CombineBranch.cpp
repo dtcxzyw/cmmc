@@ -51,30 +51,29 @@ class CombineBranch final : public TransformPass<Function> {
     void foldForward(ConditionalBranchInst* branch, BranchTarget& target) const {
         const auto nextBranch = target.getTarget()->getTerminator()->as<ConditionalBranchInst>();
         const auto& nextTarget = nextBranch->getTrueTarget();
-        target.resetTarget(nextTarget.getTarget());
         const auto& args1 = target.getArgs();
         const auto& args2 = target.getTarget()->args();
         assert(args1.size() == args2.size());
         auto newArgs = nextTarget.getArgs();
         for(auto& arg : newArgs) {
+            if(arg->isConstant() || arg->isGlobal())
+                continue;
             const auto iter = std::find(args2.cbegin(), args2.cend(), arg);
             if(iter != args2.cend()) {  // only replace block arguments, keep globals/constants
                 const auto pos = iter - args2.cbegin();
                 arg = args1[pos];
             } else {
-#ifndef NDEBUG
-                if(!arg->is<BlockArgument>()) {
-                    reportError() << "Bad block argument when forwarding";
-                    reportError() << "BlockA: " << branch->getBlock()->getLabel() << std::endl;
-                    reportError() << "BlockB: " << target.getTarget()->getLabel() << std::endl;
-                    reportError() << "BlockC: " << nextTarget.getTarget()->getLabel() << std::endl;
-                    reportError() << "BlockB:" << std::endl;
-                    target.getTarget()->dump(std::cerr);
-                    reportUnreachable();
-                }
-#endif
+                reportError() << "Bad block argument when forwarding" << std::endl;
+                reportError() << "BlockA:" << std::endl;
+                branch->getBlock()->dump(std::cerr);
+                reportError() << "BlockB:" << std::endl;
+                target.getTarget()->dump(std::cerr);
+                arg->dump(reportError() << "arg ");
+                reportUnreachable();
             }
         }
+
+        target.resetTarget(nextTarget.getTarget());
         branch->updateTargetArgs(target, std::move(newArgs));
     }
 
@@ -111,7 +110,6 @@ public:
     }
 };
 
-// FIXME
-// CMMC_TRANSFORM_PASS(CombineBranch);
+CMMC_TRANSFORM_PASS(CombineBranch);
 
 CMMC_NAMESPACE_END

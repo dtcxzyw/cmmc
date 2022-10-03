@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cstdint>
 
@@ -32,10 +33,22 @@ void AliasAnalysisResult::addDistinctGroup(std::unordered_set<uint32_t> group) {
         mDistinctGroups.push_back(std::move(group));
 }
 void AliasAnalysisResult::addValue(Value* p, std::vector<uint32_t> attrs) {
+    assert(p->getType()->isPointer());
     mPointerAttributes.emplace(p, std::move(attrs));
 }
 bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
-    assert(mPointerAttributes.count(p1) && mPointerAttributes.count(p2));
+    if constexpr(Config::debug) {
+        if(!mPointerAttributes.count(p1)) {
+            p1->dump(reportError() << "undefined pointer ");
+            p1->getBlock()->dump(reportError());
+            reportUnreachable();
+        }
+        if(!mPointerAttributes.count(p2)) {
+            p2->dump(reportError() << "undefined pointer ");
+            p2->getBlock()->dump(reportError());
+            reportUnreachable();
+        }
+    }
     auto& attr1 = mPointerAttributes.find(p1)->second;
     auto& attr2 = mPointerAttributes.find(p2)->second;
     for(auto attrX : attr1)
@@ -97,6 +110,12 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                 }
                 case InstructionID::PtrCast: {
                     result.addValue(inst, {});  // TODO: provide basic information
+                    break;
+                }
+                case InstructionID::Load: {
+                    if(inst->getType()->isPointer())
+                        result.addValue(inst, {});
+                    break;
                 }
                 default:
                     break;

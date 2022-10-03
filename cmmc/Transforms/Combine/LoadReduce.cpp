@@ -124,6 +124,7 @@ public:
     }
 };
 
-CMMC_TRANSFORM_PASS(LoadReduce);
+// FIXME: lossy reduce is not sound. test: 62_percolation.sy
+// CMMC_TRANSFORM_PASS(LoadReduce);
 
 CMMC_NAMESPACE_END

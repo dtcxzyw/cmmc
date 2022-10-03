@@ -104,13 +104,13 @@ public:
         for(auto global : module.globals()) {
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
-#ifndef NDEBUG
-                std::cerr << typeid(*mPass).name() << " " << func.getSymbol() << std::endl;
-#endif
+                if constexpr(Config::debug) {
+                    std::cerr << typeid(*mPass).name() << " " << func.getSymbol() << std::endl;
+                }
                 if(!func.blocks().empty() && mPass->run(func, analysis)) {
-#ifndef NDEBUG
-                    func.dump(std::cerr);
-#endif
+                    if constexpr(Config::debug) {
+                        func.dump(std::cerr);
+                    }
                     analysis.invalidateFunc(func);
                     modified = true;
                     assert(func.verify(std::cerr));

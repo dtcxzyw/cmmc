@@ -177,6 +177,8 @@ void blockArgPropagation(Function& func) {
             }
             err << "func:" << std::endl;
             func.dump(err);
+            err << "CFG: " << std::endl;
+            func.dumpCFG(err);
             reportFatal("cannot change arguments of the entry block");
         }
 

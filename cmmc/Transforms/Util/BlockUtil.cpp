@@ -24,7 +24,9 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
         const auto inst = *iter;
         if(auto value = reducer(inst)) {
             if(value->isInstruction()) {
-                insts.insert(iter, value->as<Instruction>());
+                auto newInst = value->as<Instruction>();
+                newInst->setBlock(&block);
+                insts.insert(iter, newInst);
                 modified = true;
             }
             for(auto i2 = std::next(iter); i2 != insts.end(); ++i2)
