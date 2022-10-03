@@ -28,6 +28,7 @@ void Function::dump(std::ostream& out) const {
     out << #NAME " "
 
         HANDLE_ATTR(NoMemoryRead);
+        HANDLE_ATTR(NoMemoryWrite);
         HANDLE_ATTR(NoSideEffect);
         HANDLE_ATTR(Stateless);
         HANDLE_ATTR(NoAlias);

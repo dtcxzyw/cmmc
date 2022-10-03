@@ -22,6 +22,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cstdint>
+#include <map>
 #include <utility>
 #include <variant>
 
@@ -197,6 +198,12 @@ using ExprPack = Deque<Expr*>;
 
 class ArrayInitializer final : public Expr {
     ExprPack mElements;
+
+    void gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offset, uint32_t layer, const std::vector<uint32_t>& sizes,
+                                 std::map<uint32_t, Expr*>& values) const;
+    std::map<uint32_t, Expr*> gatherArrayElements(EmitContext& ctx, ArrayType* type) const;
+    ConstantValue* shapeAwareEmitStaticImpl(EmitContext& ctx, const std::map<uint32_t, Expr*>& values, uint32_t offset,
+                                            ArrayType* type, Qualifier dstQualifier) const;
 
 public:
     ArrayInitializer(const SourceLocation& location, ExprPack elements) : Expr{ location }, mElements{ std::move(elements) } {}

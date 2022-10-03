@@ -450,6 +450,8 @@ void GetElementPtrInst::dump(std::ostream& out) const {
 
 void PtrCastInst::dump(std::ostream& out) const {
     dumpUnary(out);
+    out << " to ";
+    getType()->dump(out);
 }
 
 CMMC_NAMESPACE_END

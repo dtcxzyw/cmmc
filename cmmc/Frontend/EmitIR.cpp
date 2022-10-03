@@ -29,10 +29,12 @@
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <limits>
 #include <queue>
 #include <type_traits>
+#include <unordered_map>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -986,29 +988,97 @@ QualifiedValue ArrayInitializer::emit(EmitContext&) const {
     reportUnreachable();
 }
 
-static ConstantArray* flushScalarsStatic(const std::vector<ConstantValue*>& values, uint32_t offset, ArrayType* type) {
-    const auto elementType = type->getElementType();
+void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offset, uint32_t layer,
+                                               const std::vector<uint32_t>& sizes, std::map<uint32_t, Expr*>& values) const {
+    assert(offset % sizes[layer] == 0);
+    const auto upperBound = offset + sizes[layer];
+    uint32_t nextLayer = std::numeric_limits<uint32_t>::max();
+    for(auto element : mElements) {
+        if(auto subArray = dynamic_cast<ArrayInitializer*>(element)) {
+            if(element == mElements.front()) {  // begins with an opening brace
+                nextLayer = layer + 1;
+                if(nextLayer >= sizes.size())
+                    reportFatal("too many braces in array initializer");
+            } else if(nextLayer == std::numeric_limits<uint32_t>::max()) {
+                for(uint32_t idx = layer + 1; idx < sizes.size(); ++idx) {
+                    if(offset % sizes[idx] == 0) {
+                        nextLayer = idx;
+                        break;
+                    }
+                }
+                if(nextLayer == std::numeric_limits<uint32_t>::max())
+                    reportFatal("invalid array initializer");
+            }
+
+            subArray->gatherArrayElementsImpl(ctx, offset, nextLayer, sizes, values);
+        } else {
+            values[offset++] = element;
+        }
+    }
+    if(offset > upperBound)
+        reportFatal("too many elements in array initializer");
+    offset = upperBound;
+}
+
+static std::vector<uint32_t> calculateArrayScalarSizes(ArrayType* type) {
+    std::vector<uint32_t> sizes;
+
+    auto cur = type;
+    while(true) {
+        sizes.push_back(cur->getElementCount());
+        const auto next = cur->getElementType();
+        if(next->isArray())
+            cur = next->as<ArrayType>();
+        else {
+            sizes.push_back(1);
+            break;
+        }
+    }
+    for(uint32_t idx = sizes.size() - 1; idx >= 1; --idx)
+        sizes[idx - 1] *= sizes[idx];
+    return sizes;
+}
+
+std::map<uint32_t, Expr*> ArrayInitializer::gatherArrayElements(EmitContext& ctx, ArrayType* type) const {
+    std::map<uint32_t, Expr*> values;
+    uint32_t offset = 0;
+    gatherArrayElementsImpl(ctx, offset, 0, calculateArrayScalarSizes(type), values);
+    return values;
+}
+
+ConstantValue* ArrayInitializer::shapeAwareEmitStaticImpl(EmitContext& ctx, const std::map<uint32_t, Expr*>& values,
+                                                          uint32_t offset, ArrayType* type, Qualifier dstQualifier) const {
+    const auto subType = type->getElementType();
     const auto count = type->getElementCount();
 
     Vector<ConstantValue*> elements;
 
-    if(elementType->isArray()) {
-        const auto subArrayType = elementType->as<ArrayType>();
+    if(subType->isArray()) {
+        const auto subArrayType = subType->as<ArrayType>();
         const auto subCount = subArrayType->getScalarCount();
         for(uint32_t idx = 0; idx < count; ++idx) {
-            const auto newOffset = offset + idx * subCount;
-            if(newOffset < values.size()) {
-                elements.push_back(flushScalarsStatic(values, newOffset, subArrayType));
-            } else
-                break;
-        }
+            const auto beg = offset + subCount * idx;
+            const auto end = offset + subCount * (idx + 1);
 
+            auto begIter = values.lower_bound(beg);
+            auto endIter = values.lower_bound(end);
+
+            if(begIter != endIter) {
+                if(elements.size() != idx)
+                    reportFatal("sparse array initialization is not supported");
+                elements.push_back(shapeAwareEmitStaticImpl(ctx, values, beg, subArrayType, dstQualifier));
+            }
+        }
     } else {
         for(uint32_t idx = 0; idx < count; ++idx) {
-            const auto newOffset = offset + idx;
-            if(newOffset >= values.size())
-                break;
-            elements.push_back(values[newOffset]);
+            if(auto iter = values.find(idx + offset); iter != values.cend()) {
+                if(elements.size() != idx)
+                    reportFatal("sparse array initialization is not supported");
+                const auto value = ctx.getRValue(iter->second, subType, dstQualifier);
+                if(!value->isConstant())
+                    reportFatal("require constants in static array initialization");
+                elements.push_back(value->as<ConstantValue>());
+            }
         }
     }
 
@@ -1016,179 +1086,75 @@ static ConstantArray* flushScalarsStatic(const std::vector<ConstantValue*>& valu
 }
 
 ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type, Qualifier dstQualifier) const {
-    const auto elementType = type->getElementType();
-    Vector<ConstantValue*> values;
-    values.reserve(mElements.size());
-    auto getConstantScalar = [&](Expr* expr, Type* type) {
-        const auto value = ctx.getRValue(expr, type, dstQualifier);
-        if(!value->isConstant())
-            reportFatal("require constants in static array initialization");
-        return value->as<ConstantValue>();
-    };
-
-    if(elementType->isArray()) {
-        const auto subArrayType = elementType->as<ArrayType>();
-        const auto count = subArrayType->getScalarCount();
-        const auto scalarType = subArrayType->getScalarType();
-
-        std::vector<ConstantValue*> cachedScalars;
-        auto flushScalars = [&] {
-            values.push_back(flushScalarsStatic(cachedScalars, 0, subArrayType));
-            cachedScalars.clear();
-        };
-        for(auto element : mElements) {
-            if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
-                if(!cachedScalars.empty()) {
-                    if(cachedScalars.size() != count) {
-                        reportError() << "require " << count << " got " << cachedScalars.size() << std::endl;
-                        reportFatal("invalid array initializer");
-                    }
-                    flushScalars();
-                }
-                values.push_back(subArr->shapeAwareEmitStatic(ctx, subArrayType, dstQualifier));
-            } else {
-                const auto value = getConstantScalar(element, scalarType);
-                cachedScalars.push_back(value);
-                if(cachedScalars.size() == count)
-                    flushScalars();
-            }
-        }
-
-        if(!cachedScalars.empty())
-            flushScalars();
-    } else {
-        for(auto element : mElements) {
-            if(dynamic_cast<ArrayInitializer*>(element))
-                reportFatal("too many braces");
-            else
-                values.push_back(getConstantScalar(element, elementType));
-        }
-    }
-
-    if(values.size() > type->getElementCount())
-        reportFatal("too much elements in the array initializer");
-
-    return make<ConstantArray>(type, std::move(values));
-}
-
-static void zeroInitialize(EmitContext& ctx, Value* storage, Type* type) {
-    assert(storage->getType()->as<PointerType>()->getPointee()->isSame(type));
-    if(type->isArray()) {
-        const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
-        const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
-        const auto i8ptr = make<PointerType>(IntegerType::get(8U));
-        const auto ptr = ctx.makeOp<PtrCastInst>(storage, i8ptr);
-        const auto zero = make<ConstantInteger>(IntegerType::get(32), 0);
-        const auto size = make<ConstantInteger>(ctx.getIndexType(), static_cast<intmax_t>(type->getSize(dataLayout)));
-        ctx.makeOp<FunctionCallInst>(memsetFunc,
-                                     Vector<Value*>{
-                                         ptr,
-                                         zero,
-                                         size,
-                                     });
-    } else {
-        if(type->isInteger()) {
-            ctx.makeOp<StoreInst>(storage, make<ConstantInteger>(type, 0));
-        } else if(type->isFloatingPoint()) {
-            ctx.makeOp<StoreInst>(storage, make<ConstantFloatingPoint>(type, 0.0));
-        } else
-            reportFatal("cannot zero initialize a non-scalar");
-    }
-}
-
-static void flushScalarsDynamic(EmitContext& ctx, const std::vector<Value*>& values, uint32_t offset, Value* storage,
-                                ArrayType* type, Qualifier dstQualifier) {
-    if(offset >= values.size()) {
-        zeroInitialize(ctx, storage, type);
-        return;
-    }
-
-    const auto makePtr = [&](uint32_t idx) {
-        return ctx.makeOp<GetElementPtrInst>(
-            storage, Vector<Value*>{ ctx.getZeroIndex(), make<ConstantInteger>(ctx.getIndexType(), idx) });
-    };
-
-    const auto elementType = type->getElementType();
-    const auto count = type->getElementCount();
-
-    if(elementType->isArray()) {
-        const auto subArrayType = elementType->as<ArrayType>();
-        const auto subCount = subArrayType->getScalarCount();
-
-        for(uint32_t idx = 0; idx < count; ++idx) {
-            const auto newOffset = offset + idx * subCount;
-            flushScalarsDynamic(ctx, values, newOffset, makePtr(idx), subArrayType, dstQualifier);
-        }
-
-    } else {
-        for(uint32_t idx = 0; idx < count; ++idx) {
-            const auto ptr = makePtr(idx);
-            const auto newOffset = offset + idx;
-            if(newOffset >= values.size()) {
-                zeroInitialize(ctx, ptr, elementType);
-            } else {
-                ctx.makeOp<StoreInst>(ptr, values[newOffset]);
-            }
-        }
-    }
+    const auto values = gatherArrayElements(ctx, type);
+    return shapeAwareEmitStaticImpl(ctx, values, 0, type, dstQualifier);
 }
 
 void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type, Qualifier dstQualifier) const {
-    const auto elementType = type->getElementType();
-    const auto elementCount = type->getElementCount();
-    const auto makePtr = [&](uint32_t idx) {
-        if(idx >= elementCount)
-            reportFatal("too much elements in the array initializer");
-        return ctx.makeOp<GetElementPtrInst>(
-            storage, Vector<Value*>{ ctx.getZeroIndex(), make<ConstantInteger>(ctx.getIndexType(), idx) });
+    const auto scalarType = type->getScalarType();
+    ConstantValue* zero = nullptr;
+    if(scalarType->isInteger())
+        zero = make<ConstantInteger>(scalarType, 0);
+    else if(scalarType->isFloatingPoint())
+        zero = make<ConstantFloatingPoint>(scalarType, 0.0);
+    else
+        reportFatal("cannot zero initialization a non-builtin scalar");
+
+    const auto sizes = calculateArrayScalarSizes(type);
+    const auto getAddress = [&](uint32_t offset) -> Value* {
+        Vector<Value*> indices;
+        indices.reserve(sizes.size());
+
+        for(auto siz : sizes) {
+            indices.push_back(make<ConstantInteger>(ctx.getIndexType(), offset / siz));
+            offset %= siz;
+        }
+
+        const auto ptr = ctx.makeOp<GetElementPtrInst>(storage, std::move(indices));
+        assert(ptr->getType()->as<PointerType>()->getPointee()->isSame(scalarType));
+        return ptr;
     };
 
-    uint32_t idx = 0;
-    if(elementType->isArray()) {
-        auto subArrayType = elementType->as<ArrayType>();
-        const auto count = subArrayType->getScalarCount();
-        const auto scalarType = subArrayType->getScalarType();
+    const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
+    const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
+    const auto i8ptr = make<PointerType>(IntegerType::get(8U));
+    const auto zeroByte = make<ConstantInteger>(IntegerType::get(32), 0);
+    const auto scalarSize = scalarType->getSize(dataLayout);
 
-        std::vector<Value*> cachedScalars;
-        auto flushScalars = [&] {
-            flushScalarsDynamic(ctx, cachedScalars, 0, makePtr(idx++), subArrayType, dstQualifier);
-            cachedScalars.clear();
-        };
-        for(auto element : mElements) {
-            if(auto subArr = dynamic_cast<ArrayInitializer*>(element)) {
-                if(!cachedScalars.empty()) {
-                    if(cachedScalars.size() != count) {
-                        reportError() << "require " << count << " got " << cachedScalars.size() << std::endl;
-                        reportFatal("invalid array initializer");
-                    }
-                    flushScalars();
-                }
-
-                const auto ptr = makePtr(idx++);
-                subArr->shapeAwareEmitDynamic(ctx, ptr, subArrayType, dstQualifier);
-            } else {
-                const auto value = ctx.getRValue(element, scalarType, dstQualifier);
-                cachedScalars.push_back(value);
-                if(cachedScalars.size() == count)
-                    flushScalars();
-            }
+    uint32_t lastNotAssigned = 0;
+    const auto zeroTo = [&](uint32_t offset) -> Value* {
+        const auto end = getAddress(offset);
+        if(lastNotAssigned == offset)
+            return end;
+        const auto beg = getAddress(lastNotAssigned);
+        if(lastNotAssigned + 1 == offset) {
+            ctx.makeOp<StoreInst>(beg, zero);
+        } else {
+            const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
+            const auto size =
+                make<ConstantInteger>(ctx.getIndexType(), static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned)));
+            ctx.makeOp<FunctionCallInst>(memsetFunc,
+                                         Vector<Value*>{
+                                             ptr,
+                                             zeroByte,
+                                             size,
+                                         });
         }
+        return end;
+    };
 
-        if(!cachedScalars.empty())
-            flushScalars();
-    } else {
-        for(auto element : mElements) {
-            if(dynamic_cast<ArrayInitializer*>(element))
-                reportFatal("too many braces");
-            else {
-                const auto ptr = makePtr(idx++);
-                ctx.makeOp<StoreInst>(ptr, ctx.getRValue(element, elementType, dstQualifier));
-            }
+    const auto values = gatherArrayElements(ctx, type);
+    for(auto [offset, value] : values) {
+        const auto val = ctx.getRValue(value, scalarType, dstQualifier);
+        if(val->isConstant()) {
+            if(cint_(0)(val) || cfp_(0.0)(val))
+                continue;  // use zero initialization
         }
+        const auto dst = zeroTo(offset);
+        lastNotAssigned = offset + 1;
+        ctx.makeOp<StoreInst>(dst, val);
     }
-    for(; idx < type->getElementCount(); ++idx) {
-        zeroInitialize(ctx, makePtr(idx), elementType);
-    }
+    zeroTo(type->getScalarCount());
 }
 QualifiedValue BreakExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getBreakTarget() });
