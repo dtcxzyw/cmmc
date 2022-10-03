@@ -58,7 +58,9 @@ public:
             auto& falseTarget = branch->getFalseTarget();
             auto& insts = block->instructions();
             insts.pop_back();
-            insts.push_back(make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget));
+            const auto inst = make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget);
+            inst->setBlock(block);
+            insts.push_back(inst);
             modified = true;
         }
         return modified;
@@ -69,6 +71,6 @@ public:
     }
 };
 
-// CMMC_TRANSFORM_PASS(SimplyBranch);
+CMMC_TRANSFORM_PASS(SimplyBranch);
 
 CMMC_NAMESPACE_END
