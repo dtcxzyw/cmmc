@@ -97,6 +97,8 @@ void Function::dumpCFG(std::ostream& out) const {
             default:
                 break;
         }
+        if(block == entryBlock())
+            shape = "diamond"sv;
 
         out << ids[block] << " [shape = " << shape << ", color = " << color << ", label = \"" << block->getLabel() << "\"];"
             << std::endl;
