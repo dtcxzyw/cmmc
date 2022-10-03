@@ -1173,6 +1173,9 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
     auto module = ctx.getModule();
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
     auto global = make<GlobalVariable>(StringIR{ var.name }, t);
+    if(type.qualifier.isConst) {
+        global->attr().addAttr(GlobalVariableAttribute::ReadOnly);
+    }
     if(var.initialValue) {
         if(t->isArray()) {
             if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))

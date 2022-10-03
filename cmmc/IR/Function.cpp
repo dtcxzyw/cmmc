@@ -19,6 +19,8 @@
 CMMC_NAMESPACE_BEGIN
 
 void Function::dump(std::ostream& out) const {
+    if(getLinkage() == Linkage::Internal)
+        out << "internal ";
     out << "func @" << getSymbol();
     getType()->dump(out);
     if(!mAttr.empty()) {

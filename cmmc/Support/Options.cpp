@@ -58,14 +58,16 @@ void OptionBase::printHelp() {
     auto& out = reportInfo();
     auto printArg = [&] {
         if(mType == ArgType::Required)
-            out << "=ARG";
+            out << "ARG";
         else if(mType == ArgType::Optional)
-            out << "=[ARG]";
+            out << "[ARG]";
     };
-    out << "--" << mName;
+    out << "--" << mName << '=';
     printArg();
-    out << "|-" << mShortName;
-    printArg();
+    if(mShortName) {
+        out << "|-" << mShortName << ' ';
+        printArg();
+    }
     out << " " << mDesc;
     if(mType == ArgType::Optional) {
         out << " (default = ";

@@ -36,7 +36,7 @@ public:
     OptionBase(OptionBase&&) = delete;
     OptionBase& operator=(OptionBase&&) = delete;
 
-    OptionBase& setName(const char* name, char shortName);
+    OptionBase& setName(const char* name, char shortName = '\0');
     OptionBase& hasDefault();
     OptionBase& requireArg();
     OptionBase& setDesc(const char* desc);

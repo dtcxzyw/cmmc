@@ -18,6 +18,8 @@
 CMMC_NAMESPACE_BEGIN
 
 void GlobalVariable::dump(std::ostream& out) const {
+    if(getLinkage() == Linkage::Internal)
+        out << "internal ";
     getType()->as<PointerType>()->dump(out);
     out << " @" << getSymbol();
     if(!mAttr.empty()) {
@@ -27,8 +29,6 @@ void GlobalVariable::dump(std::ostream& out) const {
     out << #NAME " "
 
         HANDLE_ATTR(ReadOnly);
-        HANDLE_ATTR(ZeroInitialized);
-        HANDLE_ATTR(NotInitialized);
 
 #undef HANDLE_ATTR
         out << "}";

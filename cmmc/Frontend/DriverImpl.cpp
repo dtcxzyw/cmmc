@@ -14,6 +14,7 @@
 
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
+#include <cmmc/Support/Options.hpp>
 
 namespace std {  // NOTICE: we need ADL
     std::ostream& operator<<(std::ostream& out, const std::pair<uint32_t, yy::location>& loc) {
@@ -22,6 +23,12 @@ namespace std {  // NOTICE: we need ADL
 }  // namespace std
 
 CMMC_NAMESPACE_BEGIN
+
+static Flag hideSymbol;
+
+CMMC_INIT_OPTIONS_BEGIN
+hideSymbol.setName("hide-symbol", 'H').setDesc("only make main function public");
+CMMC_INIT_OPTIONS_END
 
 void generateScope(ExprPack& result, VarDefList list, const ExprPack& src) {
     for(auto& var : list)
@@ -104,6 +111,12 @@ void DriverImpl::emit(Module& module) {
 
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
+    }
+    if(hideSymbol.get()) {
+        using namespace std::string_view_literals;
+        for(auto global : module.globals())
+            if(global->getSymbol() != "main"sv)
+                global->setLinkage(Linkage::Internal);
     }
     assert(module.verify(std::cerr));
 }

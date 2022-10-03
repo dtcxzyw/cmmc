@@ -61,7 +61,7 @@ def sysy_semantic(src):
 
 
 def sysy_opt(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-o',
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-H', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 
