@@ -128,8 +128,8 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
                 const auto arg = ctx.mapOperand(inst->getOperand(0));
                 ctx.emitInst(TACInst::Write).setReg(0, arg);
             } else {
-                for(auto operand : inst->operands()) {
-                    if(operand != callee) {
+                for(auto& operand : inst->operands()) {
+                    if(&operand != &inst->operands().back()) {
                         const auto arg = ctx.mapOperand(operand);
                         ctx.emitInst(TACInst::PushArg).setReg(0, arg);
                     } else {

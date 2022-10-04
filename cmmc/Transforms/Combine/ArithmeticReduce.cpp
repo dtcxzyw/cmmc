@@ -149,7 +149,7 @@ public:
     }
 
     PassType type() const noexcept override {
-        return PassType::IgnoreUB;
+        return PassType::SideEffectEquality;
     }
 };
 

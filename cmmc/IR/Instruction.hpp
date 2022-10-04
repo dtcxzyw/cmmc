@@ -18,6 +18,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <ostream>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -165,12 +166,15 @@ public:
         return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch;
     }
     bool canbeOperand() const noexcept;
+
+    virtual Instruction* clone() const = 0;
 };
 
 class BinaryInst final : public Instruction {
 public:
     BinaryInst(InstructionID instID, Type* valueType, Value* lhs, Value* rhs) : Instruction{ instID, valueType, { lhs, rhs } } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
@@ -202,6 +206,7 @@ public:
     CompareInst(InstructionID instID, CompareOp compare, Value* lhs, Value* rhs)
         : Instruction{ instID, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
     CompareOp getOp() const noexcept {
         return mCompare;
     }
@@ -211,12 +216,14 @@ class UnaryInst final : public Instruction {
 public:
     UnaryInst(InstructionID instID, Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class CastInst final : public Instruction {
 public:
     CastInst(InstructionID instID, Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class LoadInst final : public Instruction {
@@ -224,6 +231,7 @@ public:
     explicit LoadInst(Value* address)
         : Instruction{ InstructionID::Load, address->getType()->as<PointerType>()->getPointee(), { address } } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class StoreInst final : public Instruction {
@@ -232,6 +240,7 @@ public:
         assert(address->getType()->as<PointerType>()->getPointee()->isSame(value->getType()));
     }
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class BranchTarget final {
@@ -273,12 +282,19 @@ public:
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
 
+    const BranchTarget& getTrueTarget() const noexcept {
+        return mTrueTarget;
+    }
+    const BranchTarget& getFalseTarget() const noexcept {
+        return mFalseTarget;
+    }
     BranchTarget& getTrueTarget() noexcept {
         return mTrueTarget;
     }
     BranchTarget& getFalseTarget() noexcept {
         return mFalseTarget;
     }
+    Instruction* clone() const override;
 };
 
 class ReturnInst final : public Instruction {
@@ -288,12 +304,14 @@ public:
         assert(retValue);
     }
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class UnreachableInst final : public Instruction {
 public:
     explicit UnreachableInst() : Instruction{ InstructionID::Unreachable, VoidType::get(), {} } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class FunctionCallInst final : public Instruction {
@@ -305,14 +323,18 @@ public:
         list.push_back(callee);
     }
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class SelectInst final : public Instruction {
 public:
     explicit SelectInst(Value* predicate, Value* lhs, Value* rhs)
-        : Instruction{ InstructionID::Select, lhs->getType(), { predicate, lhs, rhs } } {}
+        : Instruction{ InstructionID::Select, lhs->getType(), { predicate, lhs, rhs } } {
+        assert(lhs->getType()->isSame(rhs->getType()));
+    }
 
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class StackAllocInst final : public Instruction {
@@ -321,12 +343,14 @@ public:
     explicit StackAllocInst(Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
 
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class FMAInst final : public Instruction {
 public:
     explicit FMAInst(Value* x, Value* y, Value* z) : Instruction{ InstructionID::FFma, x->getType(), { x, y, z } } {}
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class GetElementPtrInst final : public Instruction {
@@ -339,6 +363,7 @@ public:
         list.push_back(base);
     }
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 class PtrCastInst final : public Instruction {
@@ -348,6 +373,7 @@ public:
         assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
 };
 
 CMMC_NAMESPACE_END

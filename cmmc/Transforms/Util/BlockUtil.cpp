@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iterator>
 
@@ -38,6 +39,25 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
 void removeInst(Instruction* inst) {
     const auto block = inst->getBlock();
     block->instructions().remove(inst);
+    if constexpr(Config::debug) {
+        inst->setBlock(nullptr);
+        inst->setLabel("removed");
+    }
+}
+
+Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after) {
+    auto preBlock = *block;
+    auto nextBlock = make<Block>(preBlock->getFunction());
+    nextBlock->setLabel(preBlock->getLabel());
+    auto& oldInsts = preBlock->instructions();
+    auto beg = std::next(after);
+    auto end = oldInsts.end();
+    auto& newInsts = nextBlock->instructions();
+    newInsts.insert(newInsts.cbegin(), beg, end);
+    oldInsts.erase(beg, end);
+    for(auto inst : newInsts)
+        inst->setBlock(nextBlock);
+    return nextBlock;
 }
 
 CMMC_NAMESPACE_END

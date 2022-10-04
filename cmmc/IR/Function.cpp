@@ -63,9 +63,14 @@ void Function::dump(std::ostream& out) const {
 }
 
 bool Function::verify(std::ostream& out) const {
-    for(auto block : mBlocks)
+    for(auto block : mBlocks) {
+        if(block->getFunction() != this) {
+            out << "bad ownership" << std::endl;
+            return false;
+        }
         if(!block->verify(out))
             return false;
+    }
     return true;
 }
 

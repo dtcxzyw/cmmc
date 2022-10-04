@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Arena.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -452,6 +453,81 @@ void PtrCastInst::dump(std::ostream& out) const {
     dumpUnary(out);
     out << " to ";
     getType()->dump(out);
+}
+
+Instruction* BinaryInst::clone() const {
+    return make<BinaryInst>(getInstID(), getType(), getOperand(0), getOperand(1));
+}
+
+Instruction* CompareInst::clone() const {
+    return make<CompareInst>(getInstID(), getOp(), getOperand(0), getOperand(1));
+}
+
+Instruction* UnaryInst::clone() const {
+    return make<UnaryInst>(getInstID(), getType(), getOperand(0));
+}
+
+Instruction* CastInst::clone() const {
+    return make<CastInst>(getInstID(), getType(), getOperand(0));
+}
+
+Instruction* LoadInst::clone() const {
+    return make<LoadInst>(getOperand(0));
+}
+
+Instruction* StoreInst::clone() const {
+    return make<StoreInst>(getOperand(0), getOperand(1));
+}
+
+Instruction* ConditionalBranchInst::clone() const {
+    if(getInstID() == InstructionID::Branch)
+        return make<ConditionalBranchInst>(getTrueTarget());
+    return make<ConditionalBranchInst>(getOperand(0), getTrueTarget(), getFalseTarget());
+}
+
+Instruction* ReturnInst::clone() const {
+    if(operands().empty())
+        return make<ReturnInst>();
+    return make<ReturnInst>(getOperand(0));
+}
+
+Instruction* UnreachableInst::clone() const {
+    return make<UnreachableInst>();
+}
+
+Instruction* FunctionCallInst::clone() const {
+    Vector<Value*> args;
+    args.reserve(operands().size() - 1);
+    for(auto& arg : operands()) {
+        if(&arg == &operands().back())
+            break;
+        args.push_back(arg);
+    }
+    return make<FunctionCallInst>(operands().back(), args);
+}
+
+Instruction* SelectInst::clone() const {
+    return make<SelectInst>(getOperand(0), getOperand(1), getOperand(2));
+}
+
+Instruction* StackAllocInst::clone() const {
+    return make<StackAllocInst>(getType()->as<PointerType>()->getPointee());
+}
+
+Instruction* FMAInst::clone() const {
+    return make<FMAInst>(getOperand(0), getOperand(1), getOperand(2));
+}
+
+Instruction* GetElementPtrInst::clone() const {
+    Vector<Value*> indices;
+    for(uint32_t idx = 1; idx < operands().size(); ++idx) {
+        indices.push_back(getOperand(idx));
+    }
+    return make<GetElementPtrInst>(getOperand(0), indices);
+}
+
+Instruction* PtrCastInst::clone() const {
+    return make<PtrCastInst>(getOperand(0), getType());
 }
 
 CMMC_NAMESPACE_END

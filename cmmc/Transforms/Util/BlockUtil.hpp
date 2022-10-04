@@ -20,6 +20,8 @@ CMMC_NAMESPACE_BEGIN
 using BlockReducer = Value* (*)(Instruction* inst);
 bool reduceBlock(Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
+// NOTICE: no terminator/operand fix
+Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
 
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {

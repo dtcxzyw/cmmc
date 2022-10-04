@@ -23,8 +23,8 @@ CMMC_NAMESPACE_BEGIN
 
 enum class PassType {
     AttributeInference,  // don't change instructions
-    SideEffectEquality,  // don't change count/order of load/store instructions, -O1
-    IgnoreUB,            // don't change side effects when the program executes normally, -O2
+    SideEffectEquality,  // don't change side effects when the program executes normally, -O1
+    TargetSpecific,      // target-specific optimizations (may cause binary bloat), -O2
     Expensive,           // take a much longer compile time, -O3
     Max
 };

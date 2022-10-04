@@ -77,7 +77,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     for(auto& pass : passesSource.collect(PassType::SideEffectEquality))
         basic->addPass(pass);
     if(level >= OptimizationLevel::O2) {
-        for(auto& pass : passesSource.collect(PassType::IgnoreUB))
+        for(auto& pass : passesSource.collect(PassType::TargetSpecific))
             basic->addPass(pass);
     }
 

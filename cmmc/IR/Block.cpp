@@ -17,6 +17,8 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <iostream>
+#include <unordered_map>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
@@ -138,6 +140,49 @@ void Block::removeArg(BlockArgument* arg) {
 
 void Block::dumpAsTarget(std::ostream& out) const {
     out << '^' << mLabel;
+}
+
+Block* Block::clone() const {
+    assert(verify(std::cerr));
+    auto block = make<Block>(mFunction);
+    block->setLabel(block->getLabel());
+    std::unordered_map<Value*, Value*> replace;
+
+    for(auto arg : mArgs) {
+        auto newArg = block->addArg(arg->getType());
+        if(auto target = arg->getTarget())
+            arg->setTarget(target);
+        newArg->setLabel(arg->getLabel());
+        replace.emplace(arg, newArg);
+    }
+
+    for(auto inst : mInstructions) {
+        auto newInst = inst->clone();
+        if(!newInst->isBranch()) {
+            for(auto& operand : newInst->operands()) {
+                if(operand->getBlock()) {
+                    assert(replace.count(operand));
+                    const auto newOperand = replace.find(operand)->second;
+                    operand = newOperand;
+                }
+            }
+        } else {
+            for(auto& operand : newInst->operands()) {
+                if(operand->getBlock()) {
+                    assert(replace.count(operand));
+                    const auto newOperand = replace.find(operand)->second;
+                    newInst->replaceOperand(operand, newOperand);
+                }
+            }
+        }
+
+        newInst->setLabel(inst->getLabel());
+        newInst->setBlock(block);
+        replace.emplace(inst, newInst);
+        block->mInstructions.push_back(newInst);
+    }
+
+    return block;
 }
 
 CMMC_NAMESPACE_END

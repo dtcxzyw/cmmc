@@ -33,6 +33,9 @@ public:
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(StringIR label);
+    const StringIR& getLabel() const noexcept {
+        return mLabel;
+    }
     Block* getBlock() const noexcept override {
         return mBlock;
     }
@@ -81,8 +84,12 @@ public:
     Function* getFunction() const noexcept {
         return mFunction;
     }
+    void setFunction(Function* func) noexcept {
+        mFunction = func;
+    }
 
     void dumpAsTarget(std::ostream& out) const;
+    Block* clone() const;
 };
 CMMC_ARENA_TRAIT(Block, IR);
 
