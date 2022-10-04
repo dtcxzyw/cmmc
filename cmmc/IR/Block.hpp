@@ -26,10 +26,9 @@ class Function;
 class BlockArgument final : public Value {
     Block* mBlock;
     StringIR mLabel;
-    Value* mRoot;
 
 public:
-    BlockArgument(Block* block, Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block }, mRoot{ root } {}
+    BlockArgument(Block* block, Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(StringIR label);
@@ -38,12 +37,6 @@ public:
     }
     Block* getBlock() const noexcept override {
         return mBlock;
-    }
-    Value* getTarget() const noexcept {
-        return mRoot;
-    }
-    void setTarget(Value* root) noexcept {
-        mRoot = root;
     }
 };
 

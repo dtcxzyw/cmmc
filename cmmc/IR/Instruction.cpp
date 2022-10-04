@@ -296,36 +296,10 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
     return verifyTarget(mTrueTarget) && verifyTarget(mFalseTarget);
 }
 
-static void replaceRoot(Block* block, Value* oldOperand, Value* newOperand) {
-    assert(oldOperand != newOperand);
-    if(!block)
-        return;
-    bool modified = false;
-    for(auto arg : block->args()) {
-        if(arg->getTarget() == oldOperand) {
-            arg->setTarget(newOperand);
-            modified = true;
-        }
-    }
-    if(!modified)
-        return;
-    const auto terminator = block->getTerminator();
-    if(terminator->isBranch()) {
-        const auto branch = dynamic_cast<ConditionalBranchInst*>(terminator);
-        replaceRoot(branch->getTrueTarget().getTarget(), oldOperand, newOperand);
-        replaceRoot(branch->getFalseTarget().getTarget(), oldOperand, newOperand);
-    }
-}
-
 void BranchTarget::replaceOperand(Value* oldOperand, Value* newOperand) {
-    bool modified = false;
     for(auto& operand : mArgs)
-        if(operand == oldOperand) {
+        if(operand == oldOperand)
             operand = newOperand;
-            modified = true;
-        }
-    if(modified)
-        replaceRoot(mTarget, oldOperand, newOperand);
 }
 
 ConditionalBranchInst::ConditionalBranchInst(BranchTarget target)

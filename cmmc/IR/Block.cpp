@@ -25,12 +25,6 @@ CMMC_NAMESPACE_BEGIN
 
 void BlockArgument::dump(std::ostream& out) const {
     dumpAsOperand(out);
-    if(mRoot) {
-        out << " <- ";
-        if(auto block = mRoot->getBlock())
-            out << '^' << block->getLabel() << "::";
-        mRoot->dumpAsOperand(out);
-    }
 }
 
 void BlockArgument::dumpAsOperand(std::ostream& out) const {
@@ -109,22 +103,6 @@ bool Block::verify(std::ostream& out) const {
         definedInst.insert(inst);
     }
 
-    // arguments
-    for(auto arg : mArgs) {
-        if(auto target = arg->getTarget()) {
-            if(auto block = target->getBlock(); block != nullptr && (block == this || block->getFunction() != getFunction())) {
-                out << "invalid block arg target" << std::endl;
-                arg->dump(out);
-                out << std::endl << "target block:" << std::endl;
-                block->dump(out);
-                out << std::endl << "this block:" << std::endl;
-                dump(out);
-                out << "target func:" << block->getFunction() << " this func:" << getFunction() << std::endl;
-                return false;
-            }
-        }
-    }
-
     // per-instruction
     for(auto inst : mInstructions)
         if(!inst->verify(out))
@@ -165,8 +143,6 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
 
     for(auto arg : mArgs) {
         auto newArg = block->addArg(arg->getType());
-        if(auto target = arg->getTarget())
-            newArg->setTarget(target);
         newArg->setLabel(arg->getLabel());
         replace.emplace(arg, newArg);
     }

@@ -69,17 +69,6 @@ class FuncInlining final : public TransformPass<Function> {
             replace.emplace(subBlock, newBlock);
         }
 
-        // update target
-        for(auto [oldBlock, newBlock] : replace) {
-            CMMC_UNUSED(oldBlock);
-            for(auto arg : newBlock->args()) {
-                if(auto target = arg->getTarget()) {
-                    if(const auto iter = targetReplace.find(target); iter != targetReplace.cend()) {
-                        arg->setTarget(iter->second);
-                    }
-                }
-            }
-        }
         // replace call with unconditional branch
         {
             assert(entryBlock);

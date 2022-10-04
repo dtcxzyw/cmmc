@@ -32,6 +32,9 @@ CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
     bool reduceConstantBlockArgs(Block& block) const {
+        // TODO: cross block reference analysis
+
+        /*
         std::vector<std::pair<Value*, Value*>> replace;
         for(auto arg : block.args()) {
             const auto target = arg->getTarget();
@@ -46,6 +49,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                 modified |= inst->replaceOperand(src, dst);
         }
         return modified;
+        */
+        return false;
     }
 
     bool runOnBlock(Block& block) const {

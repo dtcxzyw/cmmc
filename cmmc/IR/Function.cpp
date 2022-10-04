@@ -80,15 +80,6 @@ bool Function::verify(std::ostream& out) const {
         blocks.insert(block);
     }
     for(auto block : mBlocks) {
-        for(auto arg : block->args()) {
-            if(auto target = arg->getTarget()) {
-                if(auto targetBlock = target->getBlock(); targetBlock && !blocks.count(targetBlock)) {
-                    out << "invalid use of deleted block ^" << targetBlock->getLabel() << std::endl;
-                    arg->dump(out);
-                    return false;
-                }
-            }
-        }
         auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
             const auto branch = terminator->as<ConditionalBranchInst>();

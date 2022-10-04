@@ -72,8 +72,6 @@ public:
         for(auto arg : args) {
             if(!arg->getType()->isPointer())
                 continue;
-            if(auto root = arg->getTarget())
-                mAnalysis.addAlias(arg, root);
         }
         std::unordered_map<Value*, Value*> replace;
 
