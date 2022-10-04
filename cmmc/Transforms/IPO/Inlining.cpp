@@ -28,12 +28,11 @@
 // entry():
 //     return 3;
 
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Type.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
@@ -51,20 +50,35 @@ class FuncInlining final : public TransformPass<Function> {
     }
 
     void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) const {
+        callee->dump(reportError());
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
+        const auto callRet = *call;
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
+        std::unordered_map<Value*, Value*> targetReplace;
         Block* entryBlock = nullptr;
         for(auto subBlock : callee->blocks()) {
-            auto newBlock = subBlock->clone();
+            auto newBlock = subBlock->clone(targetReplace);
             if(subBlock == callee->entryBlock())
                 entryBlock = newBlock;
 
             newBlock->setFunction(caller);
             callerBlocks.insert(insertPoint, newBlock);
             replace.emplace(subBlock, newBlock);
+        }
+
+        // update target
+        for(auto [oldBlock, newBlock] : replace) {
+            CMMC_UNUSED(oldBlock);
+            for(auto arg : newBlock->args()) {
+                if(auto target = arg->getTarget()) {
+                    if(const auto iter = targetReplace.find(target); iter != targetReplace.cend()) {
+                        arg->setTarget(iter->second);
+                    }
+                }
+            }
         }
         // replace call with unconditional branch
         {
@@ -105,11 +119,11 @@ class FuncInlining final : public TransformPass<Function> {
             }
         }
         // fix references to return value
-        auto retType = (*call)->getType();
+        auto retType = callRet->getType();
         if(!retType->isVoid()) {
             auto arg = sinkBlock->addArg(retType);
             for(auto inst : sinkBlock->instructions()) {
-                inst->replaceOperand(*call, arg);
+                inst->replaceOperand(callRet, arg);
             }
         }
     }

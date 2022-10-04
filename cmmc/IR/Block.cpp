@@ -101,11 +101,28 @@ bool Block::verify(std::ostream& out) const {
         for(auto operand : inst->operands())
             if(operand->isInstruction()) {
                 if(!definedInst.count(operand)) {
-                    out << "bad instruction order";
+                    out << "bad instruction order" << std::endl;
+                    dump(out);
                     return false;
                 }
             }
         definedInst.insert(inst);
+    }
+
+    // arguments
+    for(auto arg : mArgs) {
+        if(auto target = arg->getTarget()) {
+            if(auto block = target->getBlock(); block != nullptr && (block == this || block->getFunction() != getFunction())) {
+                out << "invalid block arg target" << std::endl;
+                arg->dump(out);
+                out << std::endl << "target block:" << std::endl;
+                block->dump(out);
+                out << std::endl << "this block:" << std::endl;
+                dump(out);
+                out << "target func:" << block->getFunction() << " this func:" << getFunction() << std::endl;
+                return false;
+            }
+        }
     }
 
     // per-instruction
@@ -142,16 +159,14 @@ void Block::dumpAsTarget(std::ostream& out) const {
     out << '^' << mLabel;
 }
 
-Block* Block::clone() const {
-    assert(verify(std::cerr));
+Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
     auto block = make<Block>(mFunction);
-    block->setLabel(block->getLabel());
-    std::unordered_map<Value*, Value*> replace;
+    block->setLabel(getLabel());
 
     for(auto arg : mArgs) {
         auto newArg = block->addArg(arg->getType());
         if(auto target = arg->getTarget())
-            arg->setTarget(target);
+            newArg->setTarget(target);
         newArg->setLabel(arg->getLabel());
         replace.emplace(arg, newArg);
     }
@@ -168,7 +183,7 @@ Block* Block::clone() const {
             }
         } else {
             for(auto& operand : newInst->operands()) {
-                if(operand->getBlock()) {
+                if(auto srcBlock = operand->getBlock(); srcBlock == this) {
                     assert(replace.count(operand));
                     const auto newOperand = replace.find(operand)->second;
                     newInst->replaceOperand(operand, newOperand);

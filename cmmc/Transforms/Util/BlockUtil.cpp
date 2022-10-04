@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iterator>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -24,7 +24,7 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         const auto inst = *iter;
         if(auto value = reducer(inst)) {
-            if(value->isInstruction()) {
+            if(value->isInstruction() && value->getBlock() != &block) {  // new instruction
                 auto newInst = value->as<Instruction>();
                 newInst->setBlock(&block);
                 insts.insert(iter, newInst);
@@ -57,6 +57,7 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
     oldInsts.erase(beg, end);
     for(auto inst : newInsts)
         inst->setBlock(nextBlock);
+    blocks.insert(std::next(block), nextBlock);
     return nextBlock;
 }
 

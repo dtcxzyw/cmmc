@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <string>
 #include <string_view>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -63,10 +64,46 @@ void Function::dump(std::ostream& out) const {
 }
 
 bool Function::verify(std::ostream& out) const {
+    std::unordered_set<Value*> set;
+    std::unordered_set<Block*> blocks;
     for(auto block : mBlocks) {
         if(block->getFunction() != this) {
             out << "bad ownership" << std::endl;
             return false;
+        }
+        for(auto inst : block->instructions())
+            if(!set.insert(inst).second) {
+                out << "unexpected copy of instruction " << inst << std::endl;
+                inst->dump(out);
+                return false;
+            }
+        blocks.insert(block);
+    }
+    for(auto block : mBlocks) {
+        for(auto arg : block->args()) {
+            if(auto target = arg->getTarget()) {
+                if(auto targetBlock = target->getBlock(); targetBlock && !blocks.count(targetBlock)) {
+                    out << "invalid use of deleted block ^" << targetBlock->getLabel() << std::endl;
+                    arg->dump(out);
+                    return false;
+                }
+            }
+        }
+        auto terminator = block->getTerminator();
+        if(terminator->isBranch()) {
+            const auto branch = terminator->as<ConditionalBranchInst>();
+            auto& trueTarget = branch->getTrueTarget();
+            auto& falseTarget = branch->getFalseTarget();
+            if(!blocks.count(trueTarget.getTarget())) {
+                out << "invalid use of deleted block ^" << trueTarget.getTarget()->getLabel() << std::endl;
+                terminator->dump(out);
+                return false;
+            }
+            if(falseTarget.getTarget() && !blocks.count(falseTarget.getTarget())) {
+                out << "invalid use of deleted block ^" << falseTarget.getTarget()->getLabel() << std::endl;
+                terminator->dump(out);
+                return false;
+            }
         }
         if(!block->verify(out))
             return false;

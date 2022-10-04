@@ -104,10 +104,12 @@ public:
         for(auto global : module.globals()) {
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
+                if(func.blocks().empty())
+                    continue;
                 if constexpr(Config::debug) {
                     std::cerr << typeid(*mPass).name() << " " << func.getSymbol() << std::endl;
                 }
-                if(!func.blocks().empty() && mPass->run(func, analysis)) {
+                if(mPass->run(func, analysis)) {
                     if constexpr(Config::debug) {
                         func.dump(std::cerr);
                     }
@@ -117,6 +119,17 @@ public:
                 }
             }
         }
+        if constexpr(Config::debug) {
+            for(auto global : module.globals()) {
+                if(global->isFunction()) {
+                    auto& func = *global->as<Function>();
+                    if(func.blocks().empty())
+                        continue;
+                    assert(func.verify(std::cerr));
+                }
+            }
+        }
+
         return modified;
     }
     PassType type() const noexcept override {

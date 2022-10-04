@@ -106,7 +106,7 @@ void blockArgPropagation(Function& func) {
     auto& blocks = func.blocks();
 
     struct BlockArgPropagationContext final {
-        std::unordered_set<Instruction*> req;
+        std::unordered_set<Value*> req;  // instructions/block arguments
         std::vector<Instruction*> todo;
     };
 
@@ -118,11 +118,9 @@ void blockArgPropagation(Function& func) {
         for(auto inst : block->instructions()) {
             bool isInvalid = false;
             for(auto operand : inst->operands()) {
-                if(operand->isInstruction()) {
-                    auto op = operand->as<Instruction>();
-                    assert(op->getBlock());
-                    if(op->getBlock() != block) {
-                        data.req.emplace(op);
+                if(auto operandBlock = operand->getBlock()) {
+                    if(operandBlock != block) {
+                        data.req.emplace(operand);
                         isInvalid = true;
                     }
                 }
@@ -182,9 +180,9 @@ void blockArgPropagation(Function& func) {
             reportFatal("cannot change arguments of the entry block");
         }
 
-        std::unordered_map<Instruction*, Value*> map;
-        for(auto inst : req)
-            map[inst] = block->addArg(inst);
+        std::unordered_map<Value*, Value*> map;
+        for(auto val : req)
+            map[val] = block->addArg(val);
 
         // fix branch arguments
         if(auto terminator = block->getTerminator(); terminator->isBranch()) {
@@ -198,9 +196,9 @@ void blockArgPropagation(Function& func) {
                 if(targetReq.empty())
                     return;
                 auto args = target.getArgs();
-                for(auto inst : targetReq) {
-                    assert(inst->getBlock() == block || map.count(inst));
-                    const auto operand = inst->getBlock() == block ? inst : map[inst];
+                for(auto val : targetReq) {
+                    assert(val->getBlock() == block || map.count(val));
+                    const auto operand = val->getBlock() == block ? val : map.find(val)->second;
                     args.push_back(operand);
                 }
                 inst->updateTargetArgs(target, std::move(args));

@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Arena.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -56,7 +55,9 @@ bool Instruction::verify(std::ostream& out) const {
     for(auto operand : operands())
         if(auto block = operand->getBlock(); block && block != getBlock()) {
             out << "cross block reference" << std::endl;
-            out << "current block: " << getBlock()->getLabel() << std::endl;
+            out << "user: ";
+            dump(out);
+            out << std::endl << "current block: " << getBlock()->getLabel() << std::endl;
             getBlock()->dump(out);
             out << "used block: " << block->getLabel() << std::endl;
             block->dump(out);
@@ -520,10 +521,10 @@ Instruction* FMAInst::clone() const {
 
 Instruction* GetElementPtrInst::clone() const {
     Vector<Value*> indices;
-    for(uint32_t idx = 1; idx < operands().size(); ++idx) {
+    for(uint32_t idx = 0; idx + 1 < operands().size(); ++idx) {
         indices.push_back(getOperand(idx));
     }
-    return make<GetElementPtrInst>(getOperand(0), indices);
+    return make<GetElementPtrInst>(operands().back(), indices);
 }
 
 Instruction* PtrCastInst::clone() const {

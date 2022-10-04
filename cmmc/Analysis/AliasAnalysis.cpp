@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN

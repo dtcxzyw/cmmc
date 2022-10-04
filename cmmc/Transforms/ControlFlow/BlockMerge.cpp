@@ -38,47 +38,56 @@ CMMC_NAMESPACE_BEGIN
 class BlockMerge final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        std::unordered_map<Block*, uint32_t> blockRef;
-        for(auto& block : func.blocks()) {
-            const auto inst = block->getTerminator();
-            if(!inst->isBranch())
-                continue;
-            const auto branch = inst->as<ConditionalBranchInst>();
-            ++blockRef[branch->getTrueTarget().getTarget()];
-            ++blockRef[branch->getFalseTarget().getTarget()];
-        }
-        std::vector<Block*> deferred;
-        for(auto& block : func.blocks()) {
-            const auto inst = block->getTerminator();
-            if(inst->getInstID() != InstructionID::Branch)
-                continue;
-            const auto branch = inst->as<ConditionalBranchInst>();
-            const auto target = branch->getTrueTarget().getTarget();
-            assert(blockRef[target] >= 1);
-            if(blockRef.find(target)->second == 1) {
-                auto& instsA = block->instructions();
-                auto& instsB = target->instructions();
-                const auto& argsA = branch->getTrueTarget().getArgs();
-                const auto& argsB = target->args();
-                assert(argsA.size() == argsB.size());
-                for(uint32_t idx = 0; idx < argsB.size(); ++idx) {
-                    const auto src = argsB[idx];
-                    const auto dst = argsA[idx];
-                    for(auto inst : instsB)
-                        inst->replaceOperand(src, dst);
-                }
-
-                instsA.pop_back();
-                for(auto inst : instsB)
-                    inst->setBlock(block);
-                instsA.insert(instsA.cend(), instsB.cbegin(), instsB.cend());
-                deferred.push_back(target);
+        auto tryMerge = [&] {
+            std::unordered_map<Block*, uint32_t> blockRef;
+            for(auto& block : func.blocks()) {
+                const auto inst = block->getTerminator();
+                if(!inst->isBranch())
+                    continue;
+                const auto branch = inst->as<ConditionalBranchInst>();
+                ++blockRef[branch->getTrueTarget().getTarget()];
+                ++blockRef[branch->getFalseTarget().getTarget()];
             }
-        }
+            std::unordered_set<Block*> deferred;
+            for(auto block : func.blocks()) {
+                if(deferred.count(block))
+                    continue;  // merged
+                const auto inst = block->getTerminator();
+                if(inst->getInstID() != InstructionID::Branch)
+                    continue;
+                const auto branch = inst->as<ConditionalBranchInst>();
+                const auto target = branch->getTrueTarget().getTarget();
+                assert(blockRef[target] >= 1);
+                if(blockRef.find(target)->second == 1) {
+                    auto& instsA = block->instructions();
+                    auto& instsB = target->instructions();
+                    const auto& argsA = branch->getTrueTarget().getArgs();
+                    const auto& argsB = target->args();
+                    assert(argsA.size() == argsB.size());
+                    for(uint32_t idx = 0; idx < argsB.size(); ++idx) {
+                        const auto src = argsB[idx];
+                        const auto dst = argsA[idx];
+                        for(auto inst : instsB)
+                            inst->replaceOperand(src, dst);
+                    }
 
-        for(auto block : deferred)
-            func.blocks().remove(block);
-        return !deferred.empty();
+                    instsA.pop_back();
+                    for(auto inst : instsB)
+                        inst->setBlock(block);
+                    instsA.insert(instsA.cend(), instsB.cbegin(), instsB.cend());
+                    deferred.insert(target);
+                }
+            }
+
+            for(auto block : deferred)
+                func.blocks().remove(block);
+            return !deferred.empty();
+        };
+
+        bool modified = false;
+        while(tryMerge())
+            modified = true;
+        return modified;
     }
 
     PassType type() const noexcept override {
