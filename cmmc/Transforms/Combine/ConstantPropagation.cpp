@@ -16,7 +16,7 @@
 // 2 < 1 -> false
 
 #include <cmath>
-#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -31,13 +31,10 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
-    bool reduceConstantBlockArgs(Block& block) const {
-        // TODO: cross block reference analysis
-
-        /*
+    bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) const {
         std::vector<std::pair<Value*, Value*>> replace;
         for(auto arg : block.args()) {
-            const auto target = arg->getTarget();
+            const auto target = blockArgRef.query(arg);
             if(!target)
                 continue;
             if(target->isConstant() || target->isGlobal())
@@ -49,8 +46,6 @@ class ConstantPropagation final : public TransformPass<Function> {
                 modified |= inst->replaceOperand(src, dst);
         }
         return modified;
-        */
-        return false;
     }
 
     bool runOnBlock(Block& block) const {
@@ -144,11 +139,12 @@ class ConstantPropagation final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
         bool modified = false;
         while(true) {
             bool changed = false;
             for(auto block : func.blocks()) {
-                modified |= reduceConstantBlockArgs(*block);
+                modified |= reduceConstantBlockArgs(*block, blockArgRef);
                 modified |= runOnBlock(*block);
             }
             modified |= changed;

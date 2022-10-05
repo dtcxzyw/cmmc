@@ -48,6 +48,7 @@
 // ^d(i32 %x):
 //
 
+#include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -60,7 +61,9 @@ CMMC_NAMESPACE_BEGIN
 
 class FunctionAttrInfer final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
+
         bool modified = false;
         if(!func.attr().hasAttr(FunctionAttribute::NoReturn)) {
             bool noReturn = true;
@@ -82,8 +85,7 @@ public:
                         switch(inst->getInstID()) {
                             case InstructionID::Load: {
                                 const auto addr = inst->getOperand(0);
-                                // TODO: pointer coloring for GEP
-                                if(addr->is<StackAllocInst>())
+                                if(addressSpace.mustBe(addr, AddressSpace::InternalStack))
                                     continue;
                                 return true;
                             }
@@ -119,8 +121,7 @@ public:
                         switch(inst->getInstID()) {
                             case InstructionID::Store: {
                                 const auto addr = inst->getOperand(0);
-                                // TODO: pointer coloring for GEP
-                                if(addr->is<StackAllocInst>())
+                                if(addressSpace.mustBe(addr, AddressSpace::InternalStack))
                                     continue;
                                 return true;
                             }
