@@ -12,42 +12,6 @@
     limitations under the License.
 */
 
-// replace load with the last loaded/stored value
-// ^entry(i32* %a, i32 %b):
-//     store i32* %a with i32 0
-//     i32 %c = load i32* %a;
-//     ret i32 %c;
-// ==>
-// ^entry(i32* %a, i32* %b):
-//     store i32* %a with i32 0
-//     i32 %c = load i32* %a;
-//     ret i32 0; // replace %c with 0
-
-// TODO: handling branches:
-// ^a(i1 %arg):
-//     i32* %x = alloc i32;
-//     cbr %arg, [^b i32* %x], [^c i32* %x];
-// ^b(i32* %arg):
-//     store i32* %arg with i32 1;
-//     ubr [^d i32* %arg];
-// ^c(i32* %arg):
-//     store i32* %arg with i32 2;
-//     ubr [^d i32* %arg];
-// ^d(i32* %arg):
-//     i32 %x = load i32* %arg;
-// ==>
-// ^a(i1 %arg):
-//     i32* %x = alloc i32;
-//     cbr %arg, [^b i32* %x], [^c i32* %x];
-// ^b(i32* %arg):
-//     store i32* %arg with i32 1;
-//     ubr [^d i32 1];
-// ^c(i32* %arg):
-//     store i32* %arg with i32 2;
-//     ubr [^d i32 2];
-// ^d(i32 %x):
-//
-
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
