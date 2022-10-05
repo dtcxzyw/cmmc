@@ -21,7 +21,7 @@
 //     call () -> void @exit(i32 0); // no return call
 //     unreachable;
 
-#include "cmmc/IR/Function.hpp"
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <queue>
@@ -55,6 +55,11 @@ public:
 
     PassType type() const noexcept override {
         return PassType::SideEffectEquality;
+    }
+
+    std::string_view name() const noexcept override {
+        using namespace std::string_view_literals;
+        return "NoReturnCallEliminate"sv;
     }
 };
 

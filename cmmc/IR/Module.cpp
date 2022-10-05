@@ -16,6 +16,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
@@ -23,6 +24,8 @@ CMMC_NAMESPACE_BEGIN
 Module::Module() : mArena{ Arena::Source::IR } {}
 
 void Module::dump(std::ostream& out) const {
+    Stage stage{ "dump IR" };
+
     if(!mTypes.empty()) {
         for(auto type : mTypes)
             type->dump(out);

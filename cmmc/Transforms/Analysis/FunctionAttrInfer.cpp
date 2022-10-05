@@ -19,6 +19,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <iostream>
 #include <queue>
+#include <string_view>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
@@ -182,6 +183,11 @@ public:
 
     PassType type() const noexcept override {
         return PassType::AttributeInference;
+    }
+
+    std::string_view name() const noexcept override {
+        using namespace std::string_view_literals;
+        return "FunctionAttrInfer"sv;
     }
 };
 

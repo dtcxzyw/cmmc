@@ -20,6 +20,7 @@
 #include <cmmc/IR/TAC.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdlib>
 #include <fstream>
@@ -60,9 +61,12 @@ static std::string getOutputPath(const std::string& defaultPath) {
 }
 
 static int runIRPipeline(Module& module, const std::string& base) {
-    const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
-    AnalysisPassManager analysis{ &module };
-    opt->run(module, analysis);
+    {
+        Stage stage{ "optimize IR" };
+        const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
+        AnalysisPassManager analysis{ &module };
+        opt->run(module, analysis);
+    }
 
     if(emitIR.get()) {
         const auto path = getOutputPath(base + ".ir2");
@@ -79,7 +83,10 @@ static int runIRPipeline(Module& module, const std::string& base) {
     std::ofstream out{ path };
     const auto machineModule = lowerToMachineModule(module);
     assert(machineModule->verify());
-    machineModule->getTarget().emitAssembly(*machineModule, out);
+    {
+        Stage stage{ "dump ASM" };
+        machineModule->getTarget().emitAssembly(*machineModule, out);
+    }
 
     return EXIT_SUCCESS;
 }
@@ -90,7 +97,7 @@ static bool endswith(const std::string& str, const std::string_view& ext) {
     return str.substr(str.size() - ext.size()) == ext;
 }
 
-int main(int argc, char** argv) {
+int mainImpl(int argc, char** argv) {
     int start = parseCommands(argc, argv);
 
     if(version.get()) {
@@ -158,4 +165,13 @@ int main(int argc, char** argv) {
     } catch(...) {
         reportFatal("Unknown error");
     }
+}
+
+int main(int argc, char** argv) {
+    auto& profiler = Profiler::get();
+    const auto ret = mainImpl(argc, argv);
+    if(ret == EXIT_SUCCESS) {
+        profiler.printStatistics();
+    }
+    return ret;
 }

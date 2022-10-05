@@ -156,6 +156,11 @@ public:
     PassType type() const noexcept override {
         return PassType::SideEffectEquality;
     }
+
+    std::string_view name() const noexcept override {
+        using namespace std::string_view_literals;
+        return "ConstantPropagation"sv;
+    }
 };
 
 CMMC_TRANSFORM_PASS(ConstantPropagation);

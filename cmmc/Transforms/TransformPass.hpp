@@ -18,6 +18,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <memory>
+#include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -41,6 +42,10 @@ public:
 
     virtual bool run(Scope& item, AnalysisPassManager& analysis) const = 0;
     virtual PassType type() const noexcept = 0;
+    virtual std::string_view name() const noexcept = 0;
+    virtual bool isWrapper() const noexcept {
+        return false;
+    }
 };
 
 enum class OptimizationLevel { O0 = 0, O1 = 1, O2 = 2, O3 = 3 };
@@ -63,6 +68,10 @@ public:
     IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
     bool run(Module& item, AnalysisPassManager& analysis) const override;
     PassType type() const noexcept override;
+    std::string_view name() const noexcept override;
+    bool isWrapper() const noexcept override {
+        return true;
+    }
 };
 
 class PassRegistry final {

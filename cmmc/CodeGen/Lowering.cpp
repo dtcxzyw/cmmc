@@ -19,6 +19,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <iostream>
 #include <unordered_map>
 
@@ -177,6 +178,8 @@ void schedule(MachineFunction& func, const Target& target);
 void allocateStackObjects(MachineFunction& func, const Target& target);
 
 std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
+    Stage stage{ "lower to MIR" };
+
     auto& target = module.getTarget();
     // Stage1: instruction selection
     auto machineModule = std::make_unique<MachineModule>(target);

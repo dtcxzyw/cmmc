@@ -28,6 +28,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
@@ -80,6 +81,8 @@ std::pair<FunctionCallInfo, FunctionType*> FunctionDeclaration::getSignature(Emi
 static void sortBlocks(Function& func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
+    Stage stage{ "emit function" };
+
     auto module = ctx.getModule();
     auto [info, funcType] = decl.getSignature(ctx);
     auto func = make<Function>(StringIR{ decl.symbol }, funcType);
@@ -120,36 +123,42 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
             }
         }
     }
-    for(auto st : block)
-        st->emit(ctx);
+    {
+        Stage stage{ "emit function body" };
+        for(auto st : block)
+            st->emit(ctx);
+    }
     ctx.setCurrentBlock(nullptr);  // clean up
 
-    // trim instructions after the first terminator
-    const auto retType = funcType->getRetType();
-    for(auto funcBlock : func->blocks()) {
-        auto& insts = funcBlock->instructions();
-        bool hasTerminator = false;
-        for(auto iter = insts.cbegin(); iter != insts.cend(); ++iter) {
-            if((*iter)->isTerminator()) {
-                ++iter;
-                insts.erase(iter, insts.cend());
-                hasTerminator = true;
-                break;
+    {
+        Stage stage{ "post fixup" };
+        // trim instructions after the first terminator
+        const auto retType = funcType->getRetType();
+        for(auto funcBlock : func->blocks()) {
+            auto& insts = funcBlock->instructions();
+            bool hasTerminator = false;
+            for(auto iter = insts.cbegin(); iter != insts.cend(); ++iter) {
+                if((*iter)->isTerminator()) {
+                    ++iter;
+                    insts.erase(iter, insts.cend());
+                    hasTerminator = true;
+                    break;
+                }
+            }
+            if(!hasTerminator) {
+                // fix terminator
+                ctx.setCurrentBlock(funcBlock);
+                if(retType->isVoid() && !info.passingRetValByPointer) {
+                    ctx.makeOp<ReturnInst>();
+                } else {
+                    ctx.makeOp<UnreachableInst>();
+                }
             }
         }
-        if(!hasTerminator) {
-            // fix terminator
-            ctx.setCurrentBlock(funcBlock);
-            if(retType->isVoid() && !info.passingRetValByPointer) {
-                ctx.makeOp<ReturnInst>();
-            } else {
-                ctx.makeOp<UnreachableInst>();
-            }
-        }
-    }
 
-    blockArgPropagation(*func);
-    sortBlocks(*func);
+        blockArgPropagation(*func);
+        sortBlocks(*func);
+    }
 
     ctx.popScope();
     assert(func->verify(reportDebug()));
@@ -1170,6 +1179,8 @@ QualifiedValue EmptyExpr::emit(EmitContext& ctx) const {
 }
 
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
+    Stage stage{ "emit global" };
+
     auto module = ctx.getModule();
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
     auto global = make<GlobalVariable>(StringIR{ var.name }, t);
@@ -1199,6 +1210,8 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 }
 
 void StructDefinition::emit(EmitContext& ctx) const {
+    Stage stage{ "emit struct" };
+
     Vector<StructField> fields;
     for(auto& item : list) {
         for(auto& subItem : item.var) {

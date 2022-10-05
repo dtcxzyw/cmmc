@@ -151,6 +151,11 @@ public:
     PassType type() const noexcept override {
         return PassType::Expensive;
     }
+
+    std::string_view name() const noexcept override {
+        using namespace std::string_view_literals;
+        return "FuncInlining"sv;
+    }
 };
 
 CMMC_TRANSFORM_PASS(FuncInlining);

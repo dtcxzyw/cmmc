@@ -15,6 +15,7 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <iostream>
 #include <memory>
@@ -28,11 +29,27 @@ TransformPass<Module>::~TransformPass() {}
 
 bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
-    for(auto& pass : mPasses)
-        if(pass->run(item, analysis)) {
-            analysis.invalidateModule();
-            modified = true;
+    for(auto& pass : mPasses) {
+        if(pass->isWrapper()) {
+            if(pass->run(item, analysis)) {
+                analysis.invalidateModule();
+                modified = true;
+            }
+        } else {
+            Stage stage{ pass->name() };
+            if constexpr(Config::debug) {
+                std::cerr << pass->name() << std::endl;
+            }
+            if(pass->run(item, analysis)) {
+                analysis.invalidateModule();
+                modified = true;
+
+                if constexpr(Config::debug)
+                    item.dump(std::cerr);
+                assert(item.verify(std::cerr));
+            }
         }
+    }
     return modified;
 }
 
@@ -61,6 +78,11 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
 
 PassType IterationPassWrapper::type() const noexcept {
     return PassType::Expensive;
+}
+
+std::string_view IterationPassWrapper::name() const noexcept {
+    using namespace std::string_view_literals;
+    return "IterationPassWrapper"sv;
 }
 
 std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
@@ -106,8 +128,9 @@ public:
                 auto& func = *global->as<Function>();
                 if(func.blocks().empty())
                     continue;
+                Stage stage{ mPass->name() };
                 if constexpr(Config::debug) {
-                    std::cerr << typeid(*mPass).name() << " " << func.getSymbol() << std::endl;
+                    std::cerr << mPass->name() << " " << func.getSymbol() << std::endl;
                 }
                 if(mPass->run(func, analysis)) {
                     if constexpr(Config::debug) {
@@ -134,6 +157,13 @@ public:
     }
     PassType type() const noexcept override {
         return mPass->type();
+    }
+    bool isWrapper() const noexcept override {
+        return true;
+    }
+    std::string_view name() const noexcept override {
+        using namespace std::string_view_literals;
+        return "FunctioFunctionPassWrappernAttrInfer"sv;
     }
 };
 
