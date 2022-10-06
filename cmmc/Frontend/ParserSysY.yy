@@ -188,6 +188,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | PLUS Exp %prec UPLUS { $$ = CMMC_UNARY_OP(@1, Positive, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| BNOT Exp { $$ = CMMC_UNARY_OP(@1, BitwiseNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | Exp LP Args RP { $$ = CMMC_CALL(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp LP RP { $$ = CMMC_CALL(@2, $1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }

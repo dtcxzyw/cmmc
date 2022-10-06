@@ -72,8 +72,9 @@
 %left MUL DIV REM
 %right UMINUS BNOT NOT
 %left LB LP DOT
-
-/* %precedence LB DOT */
+%precedence ERR
+%precedence FAKE_ERR
+%precedence NORMAL
 
 // Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
 %precedence THEN
@@ -122,18 +123,18 @@ Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Sp
 ;
 StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
-| STRUCT ID LC DefList error { CMMC_MISS_RC(@$); }
+| STRUCT ID LC DefList error %prec FAKE_ERR { CMMC_MISS_RC(@$); }
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
 | VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(CMMC_INT(@3, $3, 32U, true)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
-| VarDec LB INT error { CMMC_MISS_RB(@$); }
+| VarDec LB INT error %prec FAKE_ERR { CMMC_MISS_RB(@$); }
 | ERR {}
 ;
 FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
 | ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
-| ID LP VarList error { CMMC_MISS_RP(@$); }
-| ID LP error { CMMC_MISS_RP(@$); }
+| ID LP VarList error %prec FAKE_ERR { CMMC_MISS_RP(@$); }
+| ID LP error %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, VarList, @1); }
@@ -153,20 +154,20 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE(@1, $3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
-| Exp error { CMMC_MISS_SEMI(@$); }
-| RETURN Exp error { CMMC_MISS_SEMI(@$); }
-| RETURN error { CMMC_MISS_SEMI(@$); }
-| IF LP Exp error Stmt %prec THEN { CMMC_MISS_RP(@$); }
-| IF LP Exp error Stmt ELSE Stmt { CMMC_MISS_RP(@$); }
-| WHILE LP Exp error Stmt { CMMC_MISS_RP(@$); }
+| Exp error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
+| RETURN Exp error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
+| RETURN error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
+| IF LP Exp error Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
+| IF LP Exp error Stmt ELSE Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
+| WHILE LP Exp error Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 ;
 /* local definition */
-DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
-| DefList error DecList SEMI DefList { CMMC_MISS_SPECIFIER(@2); }
+DefList: Def DefList %prec NORMAL { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
+| DefList error DecList SEMI %prec FAKE_ERR { CMMC_MISS_SPECIFIER(@2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }
 ;
 Def: Specifier DecList SEMI { $$ = VarDef{castLoc(@1), std::move($1), std::move($2)}; CMMC_NONTERMINAL(@$, Def, @1, @2, @3); }
-| Specifier DecList error { CMMC_MISS_SEMI(@$); }
+| Specifier DecList error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
 ;
 DecList: Dec { $$ = {$1}; CMMC_NONTERMINAL(@$, DecList, @1); }
 | Dec COMMA DecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, DecList, @1, @2, @3); }
@@ -195,6 +196,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
+| BNOT Exp { CMMC_NEED_EXTENSION(@$, BitwiseNot); $$ = CMMC_UNARY_OP(@1, BitwiseNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | Exp LP Args RP { $$ = CMMC_CALL(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp LP RP { $$ = CMMC_CALL(@2, $1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
@@ -208,7 +210,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp LP error { CMMC_MISS_RP(@$); }
 | Exp LB Exp error { CMMC_MISS_RB(@$); }
 | Exp ERR Exp error {}
-| ERR {}
+| ERR error {}
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }

@@ -28,7 +28,7 @@ all: splc
 
 $(DIR_BUILD)/generated/Spl/ParserImpl.hpp: cmmc/Frontend/ParserSpl.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/Spl/ParserDecl.hpp $<
+	$(YACC) -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/Spl/ParserDecl.hpp $<
 
 $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp: cmmc/Frontend/ScannerSpl.ll $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
@@ -40,7 +40,7 @@ $(DIR_BUILD)/objs/SplSupport.o: cmmc/Frontend/Support/SplSupport.cpp $(DIR_BUILD
 
 $(DIR_BUILD)/generated/SysY/ParserImpl.hpp: cmmc/Frontend/ParserSysY.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ -Wall --language=c++ --defines=$(DIR_BUILD)/generated/SysY/ParserDecl.hpp $<
+	$(YACC) -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/SysY/ParserDecl.hpp $<
 
 $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp: cmmc/Frontend/ScannerSysY.ll $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
 	mkdir -p $(dir $@)
