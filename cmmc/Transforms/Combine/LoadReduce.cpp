@@ -54,6 +54,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iostream>
 #include <queue>
@@ -61,60 +62,29 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class LoadReducePayload : public LossyAnalysisPayload {
-    SimpleValueAnalysis mAnalysis;
-
-public:
-    explicit LoadReducePayload(const AliasAnalysisResult& aliasSet) : mAnalysis{ aliasSet } {}
-
-    bool run(Block& block) override {
-        auto& args = block.args();
-        for(auto arg : args) {
-            if(!arg->getType()->isPointer())
-                continue;
-        }
-        std::unordered_map<Value*, Value*> replace;
-
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() == InstructionID::Load) {
-                const auto val = mAnalysis.getLastValue(inst->getOperand(0));
-                if(val)
-                    replace.emplace(inst, val);
-            }
-
-            mAnalysis.next(inst);
-        }
-
-        bool modified = false;
-
-        for(auto inst : block.instructions()) {
-            for(auto [key, val] : replace)
-                modified |= inst->replaceOperand(key, val);
-        }
-
-        return modified;
-    }
-    void merge(const LossyAnalysisPayload& rhs) override {
-        mAnalysis.merge(dynamic_cast<const LoadReducePayload&>(rhs).mAnalysis);
-    }
-    void completeMerge() override {
-        mAnalysis.completeMerge();
-    }
-};
-
 class LoadReduce final : public TransformPass<Function> {
+    bool runBlock(Block& block, const AliasAnalysisResult& alias) const {
+        SimpleValueAnalysis valueAnalysis{ alias };
+        std::unordered_map<Value*, Value*> replace;
+        for(auto inst : block.instructions()) {
+            if(inst->getInstID() == InstructionID::Load)
+                if(auto value = valueAnalysis.getLastValue(inst->getOperand(0)))
+                    replace.emplace(inst, value);
+            valueAnalysis.next(inst);
+        }
+
+        return replaceOperands(block, replace);
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& alias = analysis.get<AliasAnalysis>(func);
-        LossyAnalysisTransformDriver driver{ [&]() -> std::unique_ptr<LossyAnalysisPayload> {
-            return std::make_unique<LoadReducePayload>(alias);
-        } };
-
-        if(driver.run(func)) {
-            blockArgPropagation(func);  // fixup cross references
-            return true;
-        }
-        return false;
+        bool modified = false;
+        // intra-block
+        for(auto block : func.blocks())
+            modified |= runBlock(*block, alias);
+        // inter-block
+        return modified;
     }
 
     PassType type() const noexcept override {
@@ -127,7 +97,6 @@ public:
     }
 };
 
-// FIXME: lossy reduce is not sound. test: 62_percolation.sy
-// CMMC_TRANSFORM_PASS(LoadReduce);
+CMMC_TRANSFORM_PASS(LoadReduce);
 
 CMMC_NAMESPACE_END

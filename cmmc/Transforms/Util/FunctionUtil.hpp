@@ -20,61 +20,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-// Break cycles in the CFG with some information loss
-// Case 1:
-// A
-// |
-// B
-// |
-// C <- |
-// |    |
-// D -> |
-// |
-// E
-//
-// Order:
-// A:
-// B: A
-// C:
-// D: C
-// E: C D E
-//
-// Case 2:
-// A
-// |
-// B -> C
-// |    |
-// D <- |
-// |
-// E
-//
-// Order:
-// A:
-// B: A
-// C: A B
-// D: merge({A B}, {A B C})
-// E: merge({A B}, {A B C}) D
-
-class LossyAnalysisPayload {
-public:
-    virtual ~LossyAnalysisPayload() = default;
-    virtual bool run(Block& block) = 0;
-    virtual void merge(const LossyAnalysisPayload& rhs) = 0;
-    virtual void completeMerge() = 0;
-};
-
-class LossyAnalysisTransformDriver final {
-public:
-    using Builder = std::function<std::unique_ptr<LossyAnalysisPayload>()>;
-
-private:
-    Builder mBuilder;
-
-public:
-    explicit LossyAnalysisTransformDriver(Builder builder) : mBuilder{ std::move(builder) } {}
-    bool run(Function& func) const;
-};
-
 void blockArgPropagation(Function& func);
 
 CMMC_NAMESPACE_END

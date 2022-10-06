@@ -14,14 +14,19 @@
 
 #pragma once
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Instruction.hpp>
+#include <functional>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
-using BlockReducer = Value* (*)(Instruction* inst);
+using BlockReducer = std::function<Value*(Instruction* inst)>;
 bool reduceBlock(Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
+bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace);
+bool replaceOperands(const std::vector<Instruction*>& insts, std::unordered_map<Value*, Value*>& replace);
 
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {

@@ -32,20 +32,15 @@ CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
     bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) const {
-        std::vector<std::pair<Value*, Value*>> replace;
+        std::unordered_map<Value*, Value*> replace;
         for(auto arg : block.args()) {
             const auto target = blockArgRef.query(arg);
             if(!target)
                 continue;
             if(target->isConstant() || target->isGlobal())
-                replace.emplace_back(arg, target);
+                replace.emplace(arg, target);
         }
-        bool modified = false;
-        for(auto inst : block.instructions()) {
-            for(auto [src, dst] : replace)
-                modified |= inst->replaceOperand(src, dst);
-        }
-        return modified;
+        return replaceOperands(block, replace);
     }
 
     bool runOnBlock(Block& block) const {

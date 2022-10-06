@@ -77,24 +77,6 @@ void SimpleValueAnalysis::next(Instruction* inst) {
     }
 }
 
-void SimpleValueAnalysis::addAlias(Value* newPtr, Value* srcPtr) {
-    assert(newPtr->getType()->isSame(srcPtr->getType()));
-    const auto iter = mBasePointer.find(srcPtr);
-    if(iter == mBasePointer.cend())
-        return;
-    const auto basePtr = iter->second;
-    const auto it = mBasePointer.find(newPtr);
-    if(it != mBasePointer.cend()) {
-        if(it->second != basePtr) {  // mark as nondeterministic
-            it->second = nullptr;
-        }
-    } else {
-        mBasePointer.emplace(newPtr, basePtr);
-        auto& value = mLastValue[basePtr];
-        value[newPtr] = value[srcPtr];
-    }
-}
-
 Value* SimpleValueAnalysis::getLastValue(Value* pointer) const {
     const auto iter = mBasePointer.find(pointer);
     if(iter == mBasePointer.cend())
@@ -104,50 +86,6 @@ Value* SimpleValueAnalysis::getLastValue(Value* pointer) const {
         return nullptr;
     const auto val = it->second.find(pointer);
     return val == it->second.cend() ? nullptr : val->second;
-}
-
-void SimpleValueAnalysis::merge(const SimpleValueAnalysis& rhs) {
-    assert(&mAliasSet == &rhs.mAliasSet);
-
-    for(auto [ptr, base] : rhs.mBasePointer) {
-        const auto iter = mBasePointer.find(ptr);
-        if(iter != mBasePointer.cend()) {
-            if(iter->second != base)
-                iter->second = nullptr;  // mark as nondeterministic
-        } else {
-            mBasePointer.emplace(ptr, base);
-        }
-    }
-
-    for(auto& [base, table] : rhs.mLastValue) {
-        auto& lastValue = mLastValue[base];
-        for(auto [ptr, val] : table) {
-            const auto iter = lastValue.find(ptr);
-            if(iter == lastValue.cend())
-                lastValue.emplace(ptr, val);
-            else if(iter->second != val)  // TODO: call Value::isEqual?
-                iter->second = nullptr;   // mark as nondeterministic
-        }
-    }
-}
-
-void SimpleValueAnalysis::completeMerge() {
-    // remove nondeterministic bases and values
-    auto cleanNondeterministic = [](std::unordered_map<Value*, Value*>& map) {
-        std::vector<Value*> deferred;
-        for(auto [ptr, val] : map)
-            if(val == nullptr)
-                deferred.push_back(ptr);
-        for(auto ptr : deferred)
-            map.erase(ptr);
-    };
-
-    cleanNondeterministic(mBasePointer);
-
-    for(auto& [base, table] : mLastValue) {
-        CMMC_UNUSED(base);
-        cleanNondeterministic(table);
-    }
 }
 
 CMMC_NAMESPACE_END

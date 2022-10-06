@@ -16,91 +16,12 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <queue>
 
 CMMC_NAMESPACE_BEGIN
-
-bool LossyAnalysisTransformDriver::run(Function& func) const {
-    struct BlockContext final {
-        std::vector<Block*> successors;
-        std::unique_ptr<LossyAnalysisPayload> payload;
-        uint32_t degree = 0;
-    };
-    std::unordered_map<Block*, BlockContext> blockCtx;
-
-    auto addTarget = [&](BlockContext& self, BranchTarget& target) {
-        if(auto targetBlock = target.getTarget()) {
-            self.successors.push_back(targetBlock);
-            auto& ctx = blockCtx[targetBlock];
-            ++ctx.degree;
-        }
-    };
-
-    for(auto block : func.blocks()) {
-        auto& ctx = blockCtx[block];
-        ctx.payload = mBuilder();
-
-        const auto terminator = block->getTerminator();
-        if(terminator->isBranch()) {
-            const auto branch = terminator->as<ConditionalBranchInst>();
-            addTarget(ctx, branch->getTrueTarget());
-            addTarget(ctx, branch->getFalseTarget());
-        }
-    }
-
-    std::queue<Block*> q;
-    std::unordered_set<Block*> frontier;
-    q.push(func.entryBlock());
-    frontier.insert(func.entryBlock());
-    std::unordered_set<Block*> solved;
-
-    bool modified = false;
-    auto runBlock = [&](Block* block) {
-        auto& ctx = blockCtx[block];
-        if(ctx.degree == 0) {
-            ctx.payload->completeMerge();
-        } else {
-            ctx.payload = mBuilder();  // invalidate incomplete information
-        }
-        modified |= ctx.payload->run(*block);
-        solved.insert(block);
-        frontier.erase(block);
-
-        for(auto successor : ctx.successors) {
-            if(solved.count(successor))
-                continue;
-            auto& sctx = blockCtx[successor];
-            sctx.payload->merge(*ctx.payload);
-            --sctx.degree;
-            if(sctx.degree == 0)
-                q.push(successor);
-            frontier.insert(successor);
-        }
-
-        blockCtx.erase(block);
-    };
-
-    while(true) {
-        // topology sort
-        while(!q.empty()) {
-            const auto u = q.front();
-            q.pop();
-            runBlock(u);
-        }
-
-        if(solved.size() == func.blocks().size())
-            break;
-
-        // break one cycle
-        if(frontier.empty())
-            break;  // unreachable
-        runBlock(*frontier.begin());
-    }
-
-    return modified;
-}
 
 void blockArgPropagation(Function& func) {
     auto& blocks = func.blocks();
@@ -209,10 +130,7 @@ void blockArgPropagation(Function& func) {
         }
 
         // replace operands
-        for(auto inst : blockCtx.todo) {
-            for(auto [src, dst] : map)
-                inst->replaceOperand(src, dst);
-        }
+        replaceOperands(blockCtx.todo, map);
     }
 }
 

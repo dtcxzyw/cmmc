@@ -28,11 +28,6 @@ public:
     explicit SimpleValueAnalysis(const AliasAnalysisResult& aliasSet) noexcept : mAliasSet{ aliasSet } {}
     void next(Instruction* inst);
     Value* getLastValue(Value* pointer) const;
-
-    // for merge
-    void addAlias(Value* newPtr, Value* srcPtr);
-    void merge(const SimpleValueAnalysis& rhs);
-    void completeMerge();
 };
 
 CMMC_NAMESPACE_END

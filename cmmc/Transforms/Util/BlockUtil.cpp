@@ -14,6 +14,7 @@
 
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iterator>
+#include <unordered_map>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
@@ -21,21 +22,55 @@ CMMC_NAMESPACE_BEGIN
 bool reduceBlock(Block& block, BlockReducer reducer) {
     auto& insts = block.instructions();
     bool modified = false;
+    std::unordered_map<Value*, Value*> replace;
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         const auto inst = *iter;
         if(auto value = reducer(inst)) {
             if(value->isInstruction() && value->getBlock() != &block) {  // new instruction
                 auto newInst = value->as<Instruction>();
                 newInst->setBlock(&block);
-                insts.insert(iter, newInst);
+                iter = insts.insert(std::next(iter), newInst);
                 modified = true;
             }
-            for(auto i2 = std::next(iter); i2 != insts.end(); ++i2)
-                modified |= (*i2)->replaceOperand(inst, value);
+            replace.emplace(inst, value);
+        }
+    }
+    modified |= replaceOperands(block, replace);
+    return modified;
+}
+
+static bool applyReplace(Instruction* inst, std::unordered_map<Value*, Value*>& replace) {
+    bool modified = false;
+    if(!inst->isBranch())
+        for(auto& operand : inst->operands()) {
+            if(auto iter = replace.find(operand); iter != replace.cend()) {
+                operand = iter->second;
+                modified = true;
+            }
+        }
+    else {
+        for(auto& operand : inst->operands()) {
+            if(auto iter = replace.find(operand); iter != replace.cend()) {
+                inst->replaceOperand(operand, iter->second);
+                modified = true;
+            }
         }
     }
     return modified;
 }
+bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace) {
+    bool modified = false;
+    for(auto inst : block.instructions())
+        modified |= applyReplace(inst, replace);
+    return modified;
+}
+bool replaceOperands(const std::vector<Instruction*>& insts, std::unordered_map<Value*, Value*>& replace) {
+    bool modified = false;
+    for(auto inst : insts)
+        modified |= applyReplace(inst, replace);
+    return modified;
+}
+
 void removeInst(Instruction* inst) {
     const auto block = inst->getBlock();
     block->instructions().remove(inst);

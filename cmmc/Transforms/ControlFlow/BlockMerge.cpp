@@ -29,6 +29,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -60,18 +61,20 @@ public:
                 assert(blockRef[target] >= 1);
                 if(blockRef.find(target)->second == 1) {
                     auto& instsA = block->instructions();
-                    auto& instsB = target->instructions();
+
                     const auto& argsA = branch->getTrueTarget().getArgs();
                     const auto& argsB = target->args();
                     assert(argsA.size() == argsB.size());
+                    std::unordered_map<Value*, Value*> replace;
                     for(uint32_t idx = 0; idx < argsB.size(); ++idx) {
                         const auto src = argsB[idx];
                         const auto dst = argsA[idx];
-                        for(auto inst : instsB)
-                            inst->replaceOperand(src, dst);
+                        replace.emplace(src, dst);
                     }
+                    replaceOperands(*target, replace);
 
                     instsA.pop_back();
+                    auto& instsB = target->instructions();
                     for(auto inst : instsB)
                         inst->setBlock(block);
                     instsA.insert(instsA.cend(), instsB.cbegin(), instsB.cend());
