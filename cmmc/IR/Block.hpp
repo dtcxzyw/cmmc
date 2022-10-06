@@ -28,7 +28,7 @@ class BlockArgument final : public Value {
     StringIR mLabel;
 
 public:
-    BlockArgument(Block* block, Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block } {}
+    BlockArgument(Block* block, const Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(StringIR label);
@@ -66,7 +66,7 @@ public:
     const Deque<BlockArgument*>& args() const noexcept {
         return mArgs;
     }
-    BlockArgument* addArg(Type* type);
+    BlockArgument* addArg(const Type* type);
     BlockArgument* addArg(Value* root);
     void removeArg(BlockArgument* arg);
     BlockArgument* getArg(uint32_t idx);

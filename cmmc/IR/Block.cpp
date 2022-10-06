@@ -114,7 +114,7 @@ BlockArgument* Block::getArg(uint32_t idx) {
     return mArgs[idx];
 }
 
-BlockArgument* Block::addArg(Type* type) {
+BlockArgument* Block::addArg(const Type* type) {
     auto arg = make<BlockArgument>(this, type);
     mArgs.push_back(arg);
     return arg;

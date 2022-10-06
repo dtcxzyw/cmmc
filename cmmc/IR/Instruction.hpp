@@ -104,7 +104,7 @@ class Instruction : public Value {
 
     // bool isVolatile;
 public:
-    Instruction(InstructionID instID, Type* valueType, Deque<Value*> operands)
+    Instruction(InstructionID instID, const Type* valueType, Deque<Value*> operands)
         : Value{ valueType }, mInstID{ instID }, mOperands{ std::move(operands) } {}
 
     InstructionID getInstID() const noexcept {
@@ -172,7 +172,8 @@ public:
 
 class BinaryInst final : public Instruction {
 public:
-    BinaryInst(InstructionID instID, Type* valueType, Value* lhs, Value* rhs) : Instruction{ instID, valueType, { lhs, rhs } } {}
+    BinaryInst(InstructionID instID, const Type* valueType, Value* lhs, Value* rhs)
+        : Instruction{ instID, valueType, { lhs, rhs } } {}
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
 };
@@ -214,14 +215,14 @@ public:
 
 class UnaryInst final : public Instruction {
 public:
-    UnaryInst(InstructionID instID, Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
+    UnaryInst(InstructionID instID, const Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
 };
 
 class CastInst final : public Instruction {
 public:
-    CastInst(InstructionID instID, Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
+    CastInst(InstructionID instID, const Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
 };
@@ -340,7 +341,7 @@ public:
 class StackAllocInst final : public Instruction {
 public:
     // TODO: VLA
-    explicit StackAllocInst(Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
+    explicit StackAllocInst(const Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
 
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
@@ -355,7 +356,7 @@ public:
 
 class GetElementPtrInst final : public Instruction {
 public:
-    static Type* getValueType(Value* base, const Vector<Value*>& indices);
+    static const Type* getValueType(Value* base, const Vector<Value*>& indices);
     explicit GetElementPtrInst(Value* base, const Vector<Value*>& indices)
         : Instruction{ InstructionID::GetElementPtr, PointerType::get(getValueType(base, indices)), {} } {
         auto& list = operands();
@@ -368,7 +369,7 @@ public:
 
 class PtrCastInst final : public Instruction {
 public:
-    explicit PtrCastInst(Value* base, Type* targetType) : Instruction{ InstructionID::PtrCast, targetType, { base } } {
+    explicit PtrCastInst(Value* base, const Type* targetType) : Instruction{ InstructionID::PtrCast, targetType, { base } } {
         assert(base->getType()->isPointer());
         assert(targetType->isPointer());
     }

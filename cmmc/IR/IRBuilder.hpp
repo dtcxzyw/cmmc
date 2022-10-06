@@ -28,7 +28,7 @@ class IRBuilder {
     Function* mCurrentFunction;
     Block* mCurrentBlock;
 
-    Type* mIndexType;
+    const Type* mIndexType;
     Value *mTrueValue, *mFalseValue, *mZeroIndex;
 
 public:
@@ -63,7 +63,7 @@ public:
         return inst;
     }
 
-    Block* addBlock(const Vector<Type*>& types);
+    Block* addBlock(const Vector<const Type*>& types);
 
     template <typename... Args>
     Block* addBlock(Args... types) {
@@ -79,7 +79,7 @@ public:
     Value* getZeroIndex() const noexcept {
         return mZeroIndex;
     }
-    Type* getIndexType() const noexcept {
+    const Type* getIndexType() const noexcept {
         return mIndexType;
     }
 };

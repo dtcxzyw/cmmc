@@ -22,7 +22,7 @@ CMMC_NAMESPACE_BEGIN
 
 class ConstantValue : public Value {
 public:
-    explicit ConstantValue(Type* type) : Value{ type } {}
+    explicit ConstantValue(const Type* type) : Value{ type } {}
     bool isConstant() const noexcept override {
         return true;
     }
@@ -32,7 +32,7 @@ class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
 
 public:
-    ConstantInteger(Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
+    ConstantInteger(const Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
         assert(type->isInteger());
     }
     void dump(std::ostream& out) const override;
@@ -45,7 +45,7 @@ class ConstantFloatingPoint final : public ConstantValue {
     double mValue;
 
 public:
-    ConstantFloatingPoint(Type* type, double value) : ConstantValue{ type }, mValue{ value } {
+    ConstantFloatingPoint(const Type* type, double value) : ConstantValue{ type }, mValue{ value } {
         assert(type->isFloatingPoint());
     }
     void dump(std::ostream& out) const override;
@@ -73,7 +73,7 @@ class ConstantArray final : public ConstantValue {
     Vector<ConstantValue*> mValues;
 
 public:
-    ConstantArray(ArrayType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
+    ConstantArray(const ArrayType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
     void dump(std::ostream& out) const override;
     const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
@@ -82,7 +82,7 @@ public:
 
 class UndefinedValue final : public ConstantValue {
 public:
-    explicit UndefinedValue(Type* type) : ConstantValue{ type } {
+    explicit UndefinedValue(const Type* type) : ConstantValue{ type } {
         assert(!type->isVoid());
     }
     void dump(std::ostream& out) const override;

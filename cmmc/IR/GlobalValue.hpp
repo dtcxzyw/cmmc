@@ -25,7 +25,7 @@ class GlobalValue : public Value {
     Linkage mLinkage;
 
 public:
-    GlobalValue(StringIR symbol, Type* type) : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
+    GlobalValue(StringIR symbol, const Type* type) : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
     const StringIR& getSymbol() const noexcept {
         return mSymbol;
     }

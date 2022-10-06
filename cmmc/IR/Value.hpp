@@ -24,12 +24,12 @@ class Module;
 class Block;
 
 class Value {
-    Type* mType;
+    const Type* mType;
 
 public:
     static constexpr auto arenaSource = Arena::Source::IR;
 
-    explicit Value(Type* type);
+    explicit Value(const Type* type);
     Value(const Value&) = delete;
     Value(Value&&) = delete;
     Value& operator=(const Value&) = delete;
@@ -39,7 +39,7 @@ public:
     virtual void dump(std::ostream& out) const = 0;
     void dumpPrefix(std::ostream& out) const;
     virtual void dumpAsOperand(std::ostream& out) const;
-    Type* getType() const noexcept {
+    const Type* getType() const noexcept {
         return mType;
     }
     virtual bool isGlobal() const noexcept {

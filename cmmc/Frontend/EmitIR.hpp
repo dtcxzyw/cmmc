@@ -79,13 +79,13 @@ class EmitContext final : public IRBuilder {
     std::unordered_map<StringAST, QualifiedValue, StringHasher<Arena::Source::AST>> uniqueVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
-    std::unordered_map<StringAST, StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
-    std::unordered_map<FunctionType*, FunctionCallInfo> mCallInfo;
+    std::unordered_map<StringAST, const StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
+    std::unordered_map<const FunctionType*, FunctionCallInfo> mCallInfo;
     std::unordered_map<Value*, Value*> mConstantBinding;
 
-    Type* mInteger;
-    Type* mFloat;
-    Type* mChar;
+    const Type* mInteger;
+    const Type* mFloat;
+    const Type* mChar;
 
 public:
     explicit EmitContext(Module* module);
@@ -93,22 +93,22 @@ public:
     Module* getModule() const noexcept {
         return mModule;
     }
-    Value* convertTo(Value* value, Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
+    Value* convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
     std::pair<Value*, Qualifier> getRValue(const QualifiedValue& value);
     std::pair<Value*, Qualifier> getRValue(Expr* expr);
-    Value* getRValue(Expr* expr, Type* type, Qualifier dstQualifier);
+    Value* getRValue(Expr* expr, const Type* type, Qualifier dstQualifier);
     std::pair<Value*, Qualifier> getLValue(Expr* expr);
-    Value* getLValueForce(Expr* expr, Type* type, Qualifier dstQualifier);
+    Value* getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier);
     void pushScope();
     void popScope();
     void addIdentifier(StringAST identifier, QualifiedValue value);
-    void addIdentifier(StringAST identifier, StructType* type);
+    void addIdentifier(StringAST identifier, const StructType* type);
     void addConstant(Value* address, Value* val);
     QualifiedValue lookupIdentifier(const StringAST& identifier);
-    Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize);
+    const Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize);
 
-    void addFunctionCallInfo(FunctionType* func, FunctionCallInfo info);
-    const FunctionCallInfo& getFunctionCallInfo(FunctionType* func);
+    void addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info);
+    const FunctionCallInfo& getFunctionCallInfo(const FunctionType* func);
 
     void pushLoop(Block* continueTarget, Block* breakTarget);
     void popLoop();

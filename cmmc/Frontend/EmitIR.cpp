@@ -42,7 +42,7 @@ CMMC_NAMESPACE_BEGIN
 
 extern Flag strictMode;
 
-std::pair<FunctionCallInfo, FunctionType*> FunctionDeclaration::getSignature(EmitContext& ctx) const {
+std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignature(EmitContext& ctx) const {
     FunctionCallInfo info;
 
     auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
@@ -53,7 +53,7 @@ std::pair<FunctionCallInfo, FunctionType*> FunctionDeclaration::getSignature(Emi
     const auto& target = ctx.getModule()->getTarget();
     const auto& targetFrameInfo = target.getTargetFrameInfo();
     const auto& dataLayout = target.getDataLayout();
-    Vector<Type*> argTypes;
+    Vector<const Type*> argTypes;
     for(auto& arg : args) {
         assert(!arg.var.initialValue);
         const auto type = ctx.getType(arg.type.typeIdentifier, arg.type.space, arg.var.arraySize);
@@ -319,7 +319,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
 
     assert(!lt->isPointer() && !rt->isPointer());
 
-    auto selectTargetType = [&](Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
+    auto selectTargetType = [&](const Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
         if(lt->getFixedSize() != rt->getFixedSize()) {
             target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
             targetQualifier = (target == lt ? lhsQ : rhsQ);
@@ -329,7 +329,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
         }
     };
 
-    Type* target = nullptr;
+    const Type* target = nullptr;
     Qualifier targetQualifier;
 
     switch(op) {
@@ -729,7 +729,7 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
 }
 
-Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, Qualifier dstQualifier) {
+Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier) {
     const auto srcType = value->getType();
     if(srcType->isPointer() && srcQualifier.isConst && !dstQualifier.isConst)
         reportFatal("cannot remove the const qualifier");
@@ -810,7 +810,7 @@ Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, 
 std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
     return getRValue(expr->emit(*this));
 }
-Value* EmitContext::getRValue(Expr* expr, Type* type, Qualifier dstQualifier) {
+Value* EmitContext::getRValue(Expr* expr, const Type* type, Qualifier dstQualifier) {
     const auto [val, valQualifier] = getRValue(expr);
     return convertTo(val, type, valQualifier, dstQualifier);
 }
@@ -820,7 +820,7 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr) {
         return { val, qualifier };
     reportFatal("cannot convert a rvalue to a lvalue");
 }
-Value* EmitContext::getLValueForce(Expr* expr, Type* type, Qualifier dstQualifier) {
+Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier) {
     const auto createFromRValue = [&](Value* rvalue, Qualifier srcQualifier) -> Value* {
         const auto val = convertTo(rvalue, type, srcQualifier, dstQualifier);
         const auto storage = makeOp<StackAllocInst>(val->getType());
@@ -881,8 +881,8 @@ EmitContext::EmitContext(Module* module) : mModule{ module } {
     mFloat = make<FloatingPointType>(true);
     mChar = make<IntegerType>(8U);
 }
-Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) {
-    Type* ret = nullptr;
+const Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) {
+    const Type* ret = nullptr;
     if(space == TypeLookupSpace::Default) {
         if(type == "int")
             ret = mInteger;
@@ -937,16 +937,16 @@ Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const A
     }
     return ret;
 }
-void EmitContext::addIdentifier(StringAST identifier, StructType* type) {
+void EmitContext::addIdentifier(StringAST identifier, const StructType* type) {
     if(mStructTypes.count(identifier))
         reportFatal("redefined struct");
     mStructTypes.emplace(std::move(identifier), type);
 }
 
-void EmitContext::addFunctionCallInfo(FunctionType* func, FunctionCallInfo info) {
+void EmitContext::addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info) {
     mCallInfo.emplace(func, std::move(info));
 }
-const FunctionCallInfo& EmitContext::getFunctionCallInfo(FunctionType* func) {
+const FunctionCallInfo& EmitContext::getFunctionCallInfo(const FunctionType* func) {
     const auto iter = mCallInfo.find(func);
     if(iter != mCallInfo.cend())
         return iter->second;
@@ -1069,7 +1069,7 @@ void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offse
     offset = upperBound;
 }
 
-static std::vector<uint32_t> calculateArrayScalarSizes(ArrayType* type) {
+static std::vector<uint32_t> calculateArrayScalarSizes(const ArrayType* type) {
     std::vector<uint32_t> sizes;
 
     auto cur = type;
@@ -1088,7 +1088,7 @@ static std::vector<uint32_t> calculateArrayScalarSizes(ArrayType* type) {
     return sizes;
 }
 
-std::map<uint32_t, Expr*> ArrayInitializer::gatherArrayElements(EmitContext& ctx, ArrayType* type) const {
+std::map<uint32_t, Expr*> ArrayInitializer::gatherArrayElements(EmitContext& ctx, const ArrayType* type) const {
     std::map<uint32_t, Expr*> values;
     uint32_t offset = 0;
     gatherArrayElementsImpl(ctx, offset, 0, calculateArrayScalarSizes(type), values);
@@ -1096,7 +1096,7 @@ std::map<uint32_t, Expr*> ArrayInitializer::gatherArrayElements(EmitContext& ctx
 }
 
 ConstantValue* ArrayInitializer::shapeAwareEmitStaticImpl(EmitContext& ctx, const std::map<uint32_t, Expr*>& values,
-                                                          uint32_t offset, ArrayType* type, Qualifier dstQualifier) const {
+                                                          uint32_t offset, const ArrayType* type, Qualifier dstQualifier) const {
     const auto subType = type->getElementType();
     const auto count = type->getElementCount();
 
@@ -1134,12 +1134,13 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStaticImpl(EmitContext& ctx, cons
     return make<ConstantArray>(type, std::move(elements));
 }
 
-ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type, Qualifier dstQualifier) const {
+ConstantValue* ArrayInitializer::shapeAwareEmitStatic(EmitContext& ctx, const ArrayType* type, Qualifier dstQualifier) const {
     const auto values = gatherArrayElements(ctx, type);
     return shapeAwareEmitStaticImpl(ctx, values, 0, type, dstQualifier);
 }
 
-void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type, Qualifier dstQualifier) const {
+void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, const ArrayType* type,
+                                             Qualifier dstQualifier) const {
     const auto scalarType = type->getScalarType();
     ConstantValue* zero = nullptr;
     if(scalarType->isInteger())
@@ -1277,7 +1278,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
             reportUnreachable();
         case Intrinsic::memset: {
             const auto ptr = make<PointerType>(IntegerType::get(8));
-            funcType = make<FunctionType>(ptr, Vector<Type*>{ ptr, IntegerType::get(32), getIndexType() });
+            funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, IntegerType::get(32), getIndexType() });
             break;
         }
         default:

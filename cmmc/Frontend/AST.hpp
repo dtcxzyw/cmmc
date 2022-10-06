@@ -77,7 +77,7 @@ struct FunctionDeclaration final {
     ArgList args;
     // bool isVarArg;
 
-    std::pair<FunctionCallInfo, FunctionType*> getSignature(EmitContext& ctx) const;
+    std::pair<FunctionCallInfo, const FunctionType*> getSignature(EmitContext& ctx) const;
 };
 
 struct StructDefinition final {
@@ -212,15 +212,15 @@ class ArrayInitializer final : public Expr {
 
     void gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offset, uint32_t layer, const std::vector<uint32_t>& sizes,
                                  std::map<uint32_t, Expr*>& values) const;
-    std::map<uint32_t, Expr*> gatherArrayElements(EmitContext& ctx, ArrayType* type) const;
+    std::map<uint32_t, Expr*> gatherArrayElements(EmitContext& ctx, const ArrayType* type) const;
     ConstantValue* shapeAwareEmitStaticImpl(EmitContext& ctx, const std::map<uint32_t, Expr*>& values, uint32_t offset,
-                                            ArrayType* type, Qualifier dstQualifier) const;
+                                            const ArrayType* type, Qualifier dstQualifier) const;
 
 public:
     ArrayInitializer(const SourceLocation& location, ExprPack elements) : Expr{ location }, mElements{ std::move(elements) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
-    ConstantValue* shapeAwareEmitStatic(EmitContext& ctx, ArrayType* type, Qualifier dstQualifier) const;
-    void shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, ArrayType* type, Qualifier dstQualifier) const;
+    ConstantValue* shapeAwareEmitStatic(EmitContext& ctx, const ArrayType* type, Qualifier dstQualifier) const;
+    void shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, const ArrayType* type, Qualifier dstQualifier) const;
 };
 
 class FunctionCallExpr final : public Expr {

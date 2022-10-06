@@ -385,9 +385,9 @@ void FMAInst::dump(std::ostream& out) const {
     getOperand(2)->dumpAsOperand(out);
 }
 
-Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
+const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
     assert(base->getType()->isPointer());
-    Type* cur = base->getType();
+    const Type* cur = base->getType();
     for(auto idx : indices) {
         if(idx->getType()->isInteger()) {
             if(cur->isArray()) {

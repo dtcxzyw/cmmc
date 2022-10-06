@@ -64,7 +64,7 @@ TACTarget::TACTarget() {
         reportFatal("Unsupported target machine");
 }
 
-bool TACFrameInfo::shouldPassByRegister(Type* type, const DataLayout& dataLayout) const {
+bool TACFrameInfo::shouldPassByRegister(const Type* type, const DataLayout& dataLayout) const {
     return true;
 }
 

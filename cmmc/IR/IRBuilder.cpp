@@ -25,7 +25,7 @@ IRBuilder::IRBuilder() : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {
     mIndexType = IntegerType::get(32U);  // TODO: size_t, get from target
     mZeroIndex = make<ConstantInteger>(mIndexType, 0);
 }
-Block* IRBuilder::addBlock(const Vector<Type*>& types) {
+Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
     auto block = make<Block>(mCurrentFunction);
     for(auto type : types)
         block->addArg(type);

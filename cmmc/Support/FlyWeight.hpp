@@ -12,34 +12,21 @@
     limitations under the License.
 */
 
-#include <cassert>
-#include <cmmc/IR/Value.hpp>
-#include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Support/Options.hpp>
+#pragma once
+#include <cmmc/Config.hpp>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
-Flag uniqueLabel;
+template <typename T, typename Hasher, typename Equal>
+class FlyWeight final {
+    std::unordered_set<T, Hasher, Equal> mStorage;
 
-CMMC_INIT_OPTIONS_BEGIN
-uniqueLabel.setName("uniqueid", 'u').setDesc("generate global unique label prefix");
-CMMC_INIT_OPTIONS_END
-
-Value::Value(const Type* type) : mType{ type } {
-    assert(type);
-}
-
-void Value::dumpPrefix(std::ostream& out) const {
-    if(uniqueLabel.get()) {
-        out << this << ' ';
+public:
+    template <typename... Args>
+    const T* get(Args&&... args) {
+        return &*mStorage.emplace(std::forward<Args>(args)...).first;
     }
-}
-
-void Value::dumpAsOperand(std::ostream& out) const {
-    dumpPrefix(out);
-    mType->dumpName(out);
-    out << ' ';
-    dump(out);
-}
+};
 
 CMMC_NAMESPACE_END

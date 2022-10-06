@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 import subprocess
 
 binary_path = sys.argv[1]
@@ -103,6 +104,7 @@ def test(name, path, filter, tester):
 
 
 res = []
+start = time.perf_counter()
 res.append(test("SPL parse", tests_path+"/Parse", ".spl", spl_parse))
 res.append(test("SPL semantic & opt", tests_path +
            "/Semantic", ".spl", spl_semantic))
@@ -120,6 +122,7 @@ res.append(test("SysY opt final_performance", tests_path +
                 "/SysY2022/final_performance", ".sy", sysy_opt))
 res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
 res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
+end = time.perf_counter()
 
 total_tests = 0
 failed_tests = 0
@@ -129,3 +132,4 @@ for t, f in res:
 
 print("Passed", total_tests-failed_tests,
       "Failed", failed_tests, "Total", total_tests)
+print("Total time: ", end-start)

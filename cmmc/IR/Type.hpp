@@ -36,14 +36,6 @@ public:
     virtual ~Type() = default;
 
     template <typename T>
-    T* as() {
-        static_assert(std::is_base_of_v<Type, T>);
-        const auto ptr = dynamic_cast<T*>(this);
-        assert(ptr);
-        return ptr;
-    }
-
-    template <typename T>
     const T* as() const {
         const auto ptr = dynamic_cast<const T*>(this);
         assert(ptr);
@@ -81,7 +73,7 @@ public:
         return 0;
     }
 
-    virtual bool isSame(Type* rhs) const = 0;
+    virtual bool isSame(const Type* rhs) const = 0;
     virtual void dump(std::ostream& out) const {
         dumpName(out);
     }
@@ -96,27 +88,27 @@ public:
     bool isVoid() const noexcept override {
         return true;
     }
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
-    static VoidType* get();
+    static const VoidType* get();
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class PointerType final : public Type {
-    Type* mPointee;
+    const Type* mPointee;
 
 public:
-    explicit PointerType(Type* pointee) : mPointee{ pointee } {}
+    explicit PointerType(const Type* pointee) : mPointee{ pointee } {}
     bool isPointer() const noexcept override {
         return true;
     }
-    Type* getPointee() const noexcept {
+    const Type* getPointee() const noexcept {
         return mPointee;
     }
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
-    static PointerType* get(Type* pointee);
+    static const PointerType* get(const Type* pointee);
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
@@ -126,8 +118,8 @@ class IntegerType final : public Type {
 
 public:
     IntegerType(uint32_t bitWidth) : mBitWidth{ bitWidth } {}
-    static IntegerType* get(uint32_t bitWidth);
-    static IntegerType* getBoolean() {
+    static const IntegerType* get(uint32_t bitWidth);
+    static const IntegerType* getBoolean() {
         return get(1);
     }
     bool isInteger() const noexcept override {
@@ -139,7 +131,7 @@ public:
     uint32_t getBitwidth() const noexcept {
         return mBitWidth;
     }
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
@@ -151,17 +143,17 @@ class FloatingPointType final : public Type {
 
 public:
     FloatingPointType(bool isFloat) : mIsFloat{ isFloat } {}
-    static FloatingPointType* get(bool isFloat);
-    static FloatingPointType* getFloat() {
+    static const FloatingPointType* get(bool isFloat);
+    static const FloatingPointType* getFloat() {
         return get(true);
     }
-    static FloatingPointType* getDouble() {
+    static const FloatingPointType* getDouble() {
         return get(false);
     }
     bool isFloatingPoint() const noexcept override {
         return true;
     }
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     size_t getFixedSize() const noexcept override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
@@ -169,20 +161,20 @@ public:
 };
 
 class FunctionType final : public Type {
-    Type* mRetType;
-    Vector<Type*> mArgTypes;
+    const Type* mRetType;
+    Vector<const Type*> mArgTypes;
     // bool isVarArg
 public:
-    FunctionType(Type* retType, Vector<Type*> argTypes) : mRetType{ retType }, mArgTypes{ std::move(argTypes) } {}
+    FunctionType(const Type* retType, Vector<const Type*> argTypes) : mRetType{ retType }, mArgTypes{ std::move(argTypes) } {}
     bool isFunction() const noexcept override {
         return true;
     }
     void dumpName(std::ostream& out) const override;
-    bool isSame(Type* rhs) const override;
-    Type* getRetType() const noexcept {
+    bool isSame(const Type* rhs) const override;
+    const Type* getRetType() const noexcept {
         return mRetType;
     }
-    const Vector<Type*> getArgTypes() const noexcept {
+    const Vector<const Type*> getArgTypes() const noexcept {
         return mArgTypes;
     }
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
@@ -191,7 +183,7 @@ public:
 
 struct StructField final {
     SourceLocation loc;
-    Type* type;
+    const Type* type;
     StringIR fieldName;
 
     // uint32_t alignment;
@@ -211,40 +203,41 @@ public:
     }
     void dump(std::ostream& out) const override;
     void dumpName(std::ostream& out) const override;
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
     const Vector<StructField>& fields() const noexcept {
         return mFields;
     }
     ConstantOffset* getOffset(const std::string_view& fieldName) const;
-    Type* getFieldType(const ConstantOffset* offset) const;
+    const Type* getFieldType(const ConstantOffset* offset) const;
 };
 
 class ArrayType final : public Type {
-    Type* mElementType;
+    const Type* mElementType;
     uint32_t mElementCount;
 
 public:
-    ArrayType(Type* elementType, uint32_t elementCount) noexcept : mElementType{ elementType }, mElementCount{ elementCount } {
+    ArrayType(const Type* elementType, uint32_t elementCount) noexcept
+        : mElementType{ elementType }, mElementCount{ elementCount } {
         assert(!elementType->isVoid());
         assert(elementCount);
     }
 
-    Type* getElementType() const noexcept {
+    const Type* getElementType() const noexcept {
         return mElementType;
     }
     uint32_t getElementCount() const noexcept {
         return mElementCount;
     }
     uint32_t getScalarCount() const noexcept;
-    Type* getScalarType() const noexcept;
+    const Type* getScalarType() const noexcept;
 
     bool isArray() const noexcept override {
         return true;
     }
     void dumpName(std::ostream& out) const override;
-    bool isSame(Type* rhs) const override;
+    bool isSame(const Type* rhs) const override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };

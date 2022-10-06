@@ -16,16 +16,18 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/FlyWeight.hpp>
+#include <cstdint>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
-bool VoidType::isSame(Type* rhs) const {
+bool VoidType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
     return rhs->isVoid();
 }
-VoidType* VoidType::get() {
+const VoidType* VoidType::get() {
     static VoidType type;
     return &type;
 }
@@ -39,13 +41,24 @@ size_t VoidType::getAlignment(const DataLayout& dataLayout) const noexcept {
     reportUnreachable();
 }
 
-bool PointerType::isSame(Type* rhs) const {
+bool PointerType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
     return rhs->isPointer() && getPointee()->isSame(rhs->as<PointerType>()->getPointee());
 }
-PointerType* PointerType::get(Type* pointee) {
-    return make<PointerType>(pointee);
+struct PointerTypeHasher final {
+    size_t operator()(const PointerType& type) const noexcept {
+        return std::hash<const Type*>{}(type.getPointee());
+    }
+};
+struct PointerTypeEqual final {
+    size_t operator()(const PointerType& lhs, const PointerType& rhs) const noexcept {
+        return lhs.getPointee() == rhs.getPointee();
+    }
+};
+const PointerType* PointerType::get(const Type* pointee) {
+    static FlyWeight<PointerType, PointerTypeHasher, PointerTypeEqual> flyweight;
+    return flyweight.get(pointee);
 }
 void PointerType::dumpName(std::ostream& out) const {
     mPointee->dumpName(out);
@@ -58,7 +71,7 @@ size_t PointerType::getAlignment(const DataLayout& dataLayout) const noexcept {
     return dataLayout.getBuiltinAlignment(this);
 }
 
-bool IntegerType::isSame(Type* rhs) const {
+bool IntegerType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
     return rhs->isInteger() && (mBitWidth == rhs->as<IntegerType>()->mBitWidth);
@@ -66,19 +79,21 @@ bool IntegerType::isSame(Type* rhs) const {
 size_t IntegerType::getFixedSize() const noexcept {
     return mBitWidth / 8 + (mBitWidth % 8 ? 1 : 0);
 }
-IntegerType* IntegerType::get(uint32_t bitWidth) {
-    static IntegerType i1{ 1U }, i8{ 8U }, i16{ 16U }, i32{ 32U }, i64{ 64U };
-    if(bitWidth == 32U)
-        return &i32;
-    if(bitWidth == 1U)
-        return &i1;
-    if(bitWidth == 8U)
-        return &i8;
-    if(bitWidth == 64U)
-        return &i64;
-    if(bitWidth == 16U)
-        return &i16;
-    return make<IntegerType>(bitWidth);
+
+struct IntegerTypeHasher final {
+    size_t operator()(const IntegerType& type) const noexcept {
+        return std::hash<uint32_t>{}(type.getBitwidth());
+    }
+};
+struct IntegerTypeEqual final {
+    size_t operator()(const IntegerType& lhs, const IntegerType& rhs) const noexcept {
+        return lhs.getBitwidth() == rhs.getBitwidth();
+    }
+};
+
+const IntegerType* IntegerType::get(uint32_t bitWidth) {
+    static FlyWeight<IntegerType, IntegerTypeHasher, IntegerTypeEqual> flyweight;
+    return flyweight.get(bitWidth);
 }
 void IntegerType::dumpName(std::ostream& out) const {
     out << 'i' << mBitWidth;
@@ -90,11 +105,11 @@ size_t IntegerType::getAlignment(const DataLayout& dataLayout) const noexcept {
     return dataLayout.getBuiltinAlignment(this);
 }
 
-FloatingPointType* FloatingPointType::get(bool isFloat) {
+const FloatingPointType* FloatingPointType::get(bool isFloat) {
     static FloatingPointType fp32{ true }, fp64{ false };
     return isFloat ? &fp32 : &fp64;
 }
-bool FloatingPointType::isSame(Type* rhs) const {
+bool FloatingPointType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
     return rhs->isFloatingPoint() && (mIsFloat == rhs->as<FloatingPointType>()->mIsFloat);
@@ -112,7 +127,7 @@ size_t FloatingPointType::getAlignment(const DataLayout& dataLayout) const noexc
     return dataLayout.getBuiltinAlignment(this);
 }
 
-bool FunctionType::isSame(Type* rhs) const {
+bool FunctionType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
     if(!rhs->isFunction())
@@ -165,7 +180,7 @@ void StructType::dump(std::ostream& out) const {
 void StructType::dumpName(std::ostream& out) const {
     out << "struct " << mName;
 }
-bool StructType::isSame(Type* rhs) const {
+bool StructType::isSame(const Type* rhs) const {
     return this == rhs;
 }
 size_t StructType::getSize(const DataLayout& dataLayout) const noexcept {
@@ -189,7 +204,7 @@ ConstantOffset* StructType::getOffset(const std::string_view& fieldName) const {
             return make<ConstantOffset>(this, idx);
     reportFatal("invalid field");
 }
-Type* StructType::getFieldType(const ConstantOffset* offset) const {
+const Type* StructType::getFieldType(const ConstantOffset* offset) const {
     if(offset->base() != this)
         reportFatal("mismatched offset");
     assert(offset->index() <= mFields.size());
@@ -200,10 +215,10 @@ void ArrayType::dumpName(std::ostream& out) const {
     mElementType->dumpName(out);
     out << ']';
 }
-bool ArrayType::isSame(Type* rhs) const {
+bool ArrayType::isSame(const Type* rhs) const {
     if(this == rhs)
         return true;
-    if(auto rhsArray = dynamic_cast<ArrayType*>(rhs))
+    if(auto rhsArray = dynamic_cast<const ArrayType*>(rhs))
         return mElementCount == rhsArray->mElementCount && mElementType->isSame(rhsArray->mElementType);
     return false;
 }
@@ -220,7 +235,7 @@ uint32_t ArrayType::getScalarCount() const noexcept {
         return mElementCount * mElementType->as<ArrayType>()->getScalarCount();
     return mElementCount;
 }
-Type* ArrayType::getScalarType() const noexcept {
+const Type* ArrayType::getScalarType() const noexcept {
     if(mElementType->isArray())
         return mElementType->as<ArrayType>()->getScalarType();
     return mElementType;
