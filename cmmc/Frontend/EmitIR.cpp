@@ -219,6 +219,15 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
             case OperatorID::NotEqual:
                 return isSigned ? InstructionID::SCmp : InstructionID::UCmp;
 
+            case OperatorID::BitwiseNot:
+                return InstructionID::Not;
+            case OperatorID::BitwiseAnd:
+                return InstructionID::And;
+            case OperatorID::BitwiseOr:
+                return InstructionID::Or;
+            case OperatorID::Xor:
+                return InstructionID::Xor;
+
             default:
                 reportUnreachable();
         }
@@ -301,44 +310,8 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
     }
 }
 
-QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
-    // assign op
-    if(mOp == OperatorID::Assign) {
-        auto [lhs, dstQualifier] = ctx.getLValue(mLhs);
-        if(dstQualifier.isConst)
-            reportFatal("require a mutable lvalue");
-        auto rhs = ctx.getRValue(mRhs, lhs->getType()->as<PointerType>()->getPointee(), dstQualifier);
-        if(rhs->getType()->isArray())
-            reportFatal("cannot assign an array");
-
-        ctx.makeOp<StoreInst>(lhs, rhs);
-        return { lhs, ValueQualifier::AsLValue, dstQualifier };
-    }
-
-    // short circut logical op
-    auto [lhs, lhsQualifier] = ctx.getRValue(mLhs);
-    if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
-        lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, {});
-
-        auto rhsBlock = ctx.addBlock();
-        auto newBlock = ctx.addBlock(IntegerType::getBoolean());
-
-        if(mOp == OperatorID::LogicalAnd) {
-            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ rhsBlock }, BranchTarget{ newBlock, ctx.getFalse() });
-        } else {
-            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ newBlock, ctx.getTrue() }, BranchTarget{ rhsBlock });
-        }
-
-        ctx.setCurrentBlock(rhsBlock);
-        const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {});
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock, rhs });
-        ctx.setCurrentBlock(newBlock);
-        return QualifiedValue{ newBlock->getArg(0) };
-    }
-
-    // arithmetic op
-    auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
-
+static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Qualifier& lhsQualifier, Value* rhs,
+                                       const Qualifier& rhsQualifier, OperatorID op) {
     auto lt = lhs->getType();
     auto rt = rhs->getType();
     if(!lt->isPrimitive() || !rt->isPrimitive())
@@ -359,7 +332,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     Type* target = nullptr;
     Qualifier targetQualifier;
 
-    switch(mOp) {
+    switch(op) {
         // IOP/FOP
         case OperatorID::Add:
             [[fallthrough]];
@@ -407,7 +380,61 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
 
     lhs = ctx.convertTo(lhs, target, lhsQualifier, targetQualifier);
     rhs = ctx.convertTo(rhs, target, rhsQualifier, targetQualifier);
-    return QualifiedValue{ makeBinaryOp(ctx, mOp, target->isFloatingPoint(), targetQualifier.isSigned, lhs, rhs) };
+    return QualifiedValue{ makeBinaryOp(ctx, op, target->isFloatingPoint(), targetQualifier.isSigned, lhs, rhs),
+                           ValueQualifier::AsRValue, targetQualifier };
+}
+
+QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
+    // assign op
+    if(mOp == OperatorID::Assign) {
+        auto [lhs, dstQualifier] = ctx.getLValue(mLhs);
+        if(dstQualifier.isConst)
+            reportFatal("require a mutable lvalue");
+        auto rhs = ctx.getRValue(mRhs, lhs->getType()->as<PointerType>()->getPointee(), dstQualifier);
+        if(rhs->getType()->isArray())
+            reportFatal("cannot assign an array");
+
+        ctx.makeOp<StoreInst>(lhs, rhs);
+        return { lhs, ValueQualifier::AsLValue, dstQualifier };
+    }
+
+    // short circut logical op
+    auto [lhs, lhsQualifier] = ctx.getRValue(mLhs);
+    if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
+        lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, {});
+
+        auto rhsBlock = ctx.addBlock();
+        auto newBlock = ctx.addBlock(IntegerType::getBoolean());
+
+        if(mOp == OperatorID::LogicalAnd) {
+            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ rhsBlock }, BranchTarget{ newBlock, ctx.getFalse() });
+        } else {
+            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ newBlock, ctx.getTrue() }, BranchTarget{ rhsBlock });
+        }
+
+        ctx.setCurrentBlock(rhsBlock);
+        const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {});
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock, rhs });
+        ctx.setCurrentBlock(newBlock);
+        return QualifiedValue{ newBlock->getArg(0) };
+    }
+
+    auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
+    return emitArithmeticOp(ctx, lhs, lhsQualifier, rhs, rhsQualifier, mOp);
+}
+
+QualifiedValue CompoundAssignExpr::emit(EmitContext& ctx) const {
+    const auto [lhs, lhsQualifier] = ctx.getLValue(mLhs);
+    if(lhsQualifier.isConst)
+        reportFatal("require a mutable lvalue");
+    const auto valueType = lhs->getType()->as<PointerType>()->getPointee();
+
+    const auto lhsValue = ctx.makeOp<LoadInst>(lhs);
+    const auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
+    const auto newValue = emitArithmeticOp(ctx, lhsValue, lhsQualifier, rhs, rhsQualifier, mOp);
+    const auto newResult = ctx.convertTo(newValue.value, valueType, newValue.qualifier, lhsQualifier);
+    ctx.makeOp<StoreInst>(lhs, newResult);
+    return QualifiedValue{ lhs, ValueQualifier::AsLValue, lhsQualifier };
 }
 
 template <typename T>

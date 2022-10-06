@@ -52,6 +52,9 @@
 %token NOT BNOT AND BAND OR BOR XOR
 %token LT GT LE GE EQ NE
 %token ASSIGN
+// Compound assignments
+%token PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN
+%token BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN
 // Miscellaneous
 // . ; , # ? :
 %token DOT SEMI COMMA SHARP QUEST COLON
@@ -60,7 +63,7 @@
 %token ERR
 
 %left COMMA
-%right ASSIGN SELECT QUEST COLON
+%right ASSIGN SELECT QUEST COLON PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN
 %left OR
 %left AND
 %left BOR
@@ -203,7 +206,15 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | INT { $$ = CMMC_INT(@1, $1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| Exp QUEST Exp COLON Exp %prec SELECT { $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| Exp QUEST Exp COLON Exp %prec SELECT { $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4, @5); }
+| Exp PLUS_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Add, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MINUS_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MUL_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp DIV_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp REM_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Rem, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BAND_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp BOR_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp XOR_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }

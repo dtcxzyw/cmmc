@@ -155,6 +155,17 @@ public:
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
+class CompoundAssignExpr final : public Expr {
+    OperatorID mOp;
+    Expr* mLhs;
+    Expr* mRhs;
+
+public:
+    CompoundAssignExpr(const SourceLocation& location, OperatorID op, Expr* lhs, Expr* rhs) noexcept
+        : Expr{ location }, mOp{ op }, mLhs{ lhs }, mRhs{ rhs } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
 class UnaryExpr final : public Expr {
     OperatorID mOp;
     Expr* mValue;

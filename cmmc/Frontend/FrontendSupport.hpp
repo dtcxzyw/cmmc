@@ -38,6 +38,7 @@
 #define CMMC_EMPTY(LOC, ID) LOC.first = CMMC_RECORD(Empty##ID, Hierarchy::Empty{})
 
 #define CMMC_BINARY_OP(LOC, OP, LHS, RHS) make<BinaryExpr>(castLoc(LOC), OperatorID::OP, LHS, RHS)
+#define CMMC_COMPOUND_ASSIGN_OP(LOC, OP, LHS, RHS) make<CompoundAssignExpr>(castLoc(LOC), OperatorID::OP, LHS, RHS)
 #define CMMC_UNARY_OP(LOC, OP, VAL) make<UnaryExpr>(castLoc(LOC), OperatorID::OP, VAL)
 #define CMMC_INT(LOC, VAL, BIT_WIDTH, SIGNED) make<ConstantIntExpr>(castLoc(LOC), VAL, BIT_WIDTH, SIGNED)
 #define CMMC_FLOAT(LOC, VAL, IS_FLOAT) make<ConstantFloatExpr>(castLoc(LOC), VAL, IS_FLOAT)
