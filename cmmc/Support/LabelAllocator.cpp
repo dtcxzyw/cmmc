@@ -25,7 +25,7 @@ String LabelAllocator::allocate(const String& base) {
     if(iter != mBase.cend())
         return iter->first.withID(++iter->second);
     mBase.emplace(key, 0);
-    return key;
+    return key.prefix().empty() ? key.withID(0) : key;
 }
 
 CMMC_NAMESPACE_END

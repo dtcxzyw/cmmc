@@ -508,6 +508,7 @@ QualifiedValue ConstantStringExpr::emit(EmitContext&) const {
 
 QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     auto [callee, calleeQualifier] = ctx.getRValue(mCallee);
+    CMMC_UNUSED(calleeQualifier);
     if(!callee->getType()->isFunction())
         reportFatal("cannot call uninvokable");
     const auto& info = ctx.getFunctionCallInfo(callee->getType()->as<FunctionType>());

@@ -96,10 +96,7 @@ String String::withID(int32_t id) const noexcept {
 }
 
 std::ostream& operator<<(std::ostream& out, const String& str) {
-    if(!str.mStorage.empty())
-        out << str.mStorage;
-    else
-        out << "unnamed";
+    out << str.mStorage;
     if(str.mId >= 0)
         out << str.mId;
     return out;

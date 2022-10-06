@@ -40,6 +40,9 @@ public:
 
     String withoutID() const noexcept;
     String withID(int32_t id) const noexcept;
+    const std::string_view& prefix() const noexcept {
+        return mStorage;
+    }
 
     static String get(const char* str);
     static String get(const std::string_view& str);
