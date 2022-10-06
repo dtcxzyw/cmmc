@@ -34,7 +34,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool TACInstInfo::isSupportedInstruction(InstructionID inst) const noexcept {
+bool TACInstInfo::isSupportedInstruction(InstructionID) const noexcept {
     return true;
 }
 

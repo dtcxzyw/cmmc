@@ -81,7 +81,7 @@ struct Hierarchy final {
         out << '\'' << std::endl;
     }
 
-    static void print(std::ostream& out, const char* name, uint32_t line, std::monostate) {
+    static void print(std::ostream& out, const char* name, uint32_t, std::monostate) {
         out << name << std::endl;
     }
 
@@ -89,7 +89,7 @@ struct Hierarchy final {
         out << name << " (" << line << ')' << std::endl;
     }
 
-    [[noreturn]] static void print(std::ostream& out, const char*, uint32_t line, Empty) {
+    [[noreturn]] static void print(std::ostream&, const char*, uint32_t, Empty) {
         reportUnreachable();
     }
 
@@ -134,7 +134,7 @@ public:
         for(auto& var : varList)
             mDefs.push_back(GlobalVarDefinition{ typeDef, var });
     }
-    void addOpaqueType(const TypeRef& typeName) {
+    void addOpaqueType(const TypeRef&) {
         // TODO
     }
     void addStructType(String typeName, VarDefList list) {

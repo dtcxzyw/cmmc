@@ -25,7 +25,7 @@ CMMC_NAMESPACE_BEGIN
 
 class TargetFrameInfo {
 public:
-    virtual bool shouldPassByRegister(const Type* type, const DataLayout& dataLayout) const {
+    virtual bool shouldPassByRegister(const Type* type, const DataLayout&) const {
         return type->isPrimitive();
     }
     virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,

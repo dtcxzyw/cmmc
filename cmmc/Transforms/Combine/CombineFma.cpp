@@ -28,7 +28,7 @@ CMMC_NAMESPACE_BEGIN
 
 class CombineFma final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
         for(auto block : func.blocks()) {
             modified |= reduceBlock(*block, [](Instruction* inst) -> Value* {

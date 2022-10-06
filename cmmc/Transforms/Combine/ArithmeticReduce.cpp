@@ -140,7 +140,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
         for(auto block : func.blocks()) {
             modified |= runOnBlock(*block);

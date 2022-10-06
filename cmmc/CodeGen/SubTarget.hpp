@@ -28,8 +28,12 @@ public:
     }
     // TODO: register renaming?
     virtual uint32_t getLatency(const MachineInst* inst) const = 0;
-    virtual void peepholeOpt(MachineModule& module) const {}
-    virtual void postPeepholeOpt(MachineModule& module) const {}
+    virtual void peepholeOpt(MachineModule& module) const {
+        CMMC_UNUSED(module);
+    }
+    virtual void postPeepholeOpt(MachineModule& module) const {
+        CMMC_UNUSED(module);
+    }
 };
 
 class SimpleSubTarget : public SubTarget {

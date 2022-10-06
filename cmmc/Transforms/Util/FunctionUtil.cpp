@@ -103,7 +103,7 @@ void blockArgPropagation(Function& func) {
 
         std::unordered_map<Value*, Value*> map;
         for(auto val : req)
-            map[val] = block->addArg(val);
+            map[val] = block->addArg(val->getType());
 
         // fix branch arguments
         if(auto terminator = block->getTerminator(); terminator->isBranch()) {

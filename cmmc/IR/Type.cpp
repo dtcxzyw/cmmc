@@ -34,10 +34,10 @@ const VoidType* VoidType::get() {
 void VoidType::dumpName(std::ostream& out) const {
     out << "void";
 }
-size_t VoidType::getSize(const DataLayout& dataLayout) const noexcept {
+size_t VoidType::getSize(const DataLayout&) const noexcept {
     reportUnreachable();
 }
-size_t VoidType::getAlignment(const DataLayout& dataLayout) const noexcept {
+size_t VoidType::getAlignment(const DataLayout&) const noexcept {
     reportUnreachable();
 }
 

@@ -21,6 +21,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void loadTAC(Module& module, const std::string& path) {}
+void loadTAC(Module& module, const std::string& path) {
+    CMMC_UNUSED(module);
+    CMMC_UNUSED(path);
+}
 
 CMMC_NAMESPACE_END

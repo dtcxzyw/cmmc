@@ -116,11 +116,11 @@ ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType(std::move($1)); CMMC_NONT
 /* specifier */
 QualifiedSpecifier: Specifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
 | CONST Specifier { $$ = std::move($2); $$.qualifier.isConst = true;  CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1, @2); }
-Specifier: TYPE { $$ = { std::move($1), TypeLookupSpace::Default }; CMMC_NONTERMINAL(@$, Specifier, @1); }
+Specifier: TYPE { $$ = { std::move($1), TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct }; driver.addStructType(std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
-| STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+| STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
 VarDec: ID { $$ = { std::move($1), ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }

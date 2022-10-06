@@ -16,7 +16,7 @@ YACC = bison
 DIR_BUILD := ./build
 BIN := ./bin/splc
 
-CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath ./) -Wall -Werror -MD
+CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath ./) -Wextra -Wall -Werror -MD
 LDFLAGS = $(ADDFLAGS)
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)

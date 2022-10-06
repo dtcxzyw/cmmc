@@ -103,6 +103,6 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
     }
 }
 
-void TACSubTarget::postPeepholeOpt(MachineModule& module) const {}
+void TACSubTarget::postPeepholeOpt(MachineModule&) const {}
 
 CMMC_NAMESPACE_END

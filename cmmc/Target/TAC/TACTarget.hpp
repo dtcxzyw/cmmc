@@ -92,7 +92,6 @@ public:
 
 class TACFrameInfo final : public TargetFrameInfo {
 public:
-    bool shouldPassByRegister(const Type* type, const DataLayout& dataLayout) const override;
     std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
                                                       CallingConvention cc) const override;
     void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,

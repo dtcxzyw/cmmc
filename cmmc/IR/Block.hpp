@@ -28,7 +28,7 @@ class BlockArgument final : public Value {
     String mLabel;
 
 public:
-    BlockArgument(Block* block, const Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block } {}
+    BlockArgument(Block* block, const Type* type) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String label);
@@ -67,7 +67,6 @@ public:
         return mArgs;
     }
     BlockArgument* addArg(const Type* type);
-    BlockArgument* addArg(Value* root);
     void removeArg(BlockArgument* arg);
     BlockArgument* getArg(uint32_t idx);
 

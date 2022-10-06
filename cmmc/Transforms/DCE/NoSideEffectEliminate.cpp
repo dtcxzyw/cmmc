@@ -22,7 +22,6 @@
 //     i32 %c = load i32* %a;
 //     ret %c;
 
-#include <cmmc/Analysis/FunctionAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <queue>
@@ -32,7 +31,7 @@ CMMC_NAMESPACE_BEGIN
 
 class NoSideEffectEliminate final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_set<Instruction*> used;
         std::queue<Instruction*> q;
         // collect side effect sinks (terminators/stores/funcs)

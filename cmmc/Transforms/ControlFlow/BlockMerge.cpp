@@ -38,7 +38,7 @@ CMMC_NAMESPACE_BEGIN
 
 class BlockMerge final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         auto tryMerge = [&] {
             std::unordered_map<Block*, uint32_t> blockRef;
             for(auto& block : func.blocks()) {

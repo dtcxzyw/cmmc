@@ -43,12 +43,14 @@ namespace impl {
     template <typename Enum, Enum Value>
     CMMC_ENUM_CONSTEXPR std::string_view enumName(Enum val) {
         if constexpr(static_cast<uint32_t>(Value) >= 128) {  // make clangd happy
+            CMMC_UNUSED(val);
             return "Unknown";
         } else {
             CMMC_ENUM_CONSTEXPR auto name = staticEnumName<Enum, Value>();
-            if CMMC_ENUM_CONSTEXPR(name[0] == '(')
+            if CMMC_ENUM_CONSTEXPR(name[0] == '(') {
+                CMMC_UNUSED(val);
                 return "Unknown";
-            else {
+            } else {
                 if(val == Value)
                     return name;
                 return enumName<Enum, static_cast<Enum>(static_cast<uint32_t>(Value) + 1)>(val);

@@ -68,7 +68,7 @@ std::vector<uint32_t> AliasAnalysisResult::inheritFrom(Value* ptr) const {
     return mPointerAttributes.find(ptr)->second;
 }
 
-AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
+AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
     AliasAnalysisResult result;
     uint32_t allocateID = 0;
     const auto globalID = ++allocateID;

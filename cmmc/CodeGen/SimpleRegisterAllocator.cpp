@@ -21,6 +21,9 @@ static void simpleAllocate(MachineFunction& mfunc, Function& func, const Target&
     // auto& frameInfo = target.getTargetFrameInfo();
     // auto usage =
     //    frameInfo.emitPrologue(mfunc.basicblocks.front(), func.getType()->as<FunctionType>(), func.getCallingConvention());
+    CMMC_UNUSED(mfunc);
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(target);
 }
 
 CMMC_REGISTER_ALLOCATOR("simple", simpleAllocate);

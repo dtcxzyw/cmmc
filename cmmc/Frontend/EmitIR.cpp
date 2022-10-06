@@ -492,17 +492,17 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     }
 }
 
-QualifiedValue ConstantIntExpr::emit(EmitContext& ctx) const {
+QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
     // TODO: signed/unsigned?
     return QualifiedValue{ make<ConstantInteger>(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),
                            ValueQualifier::AsRValue, Qualifier::getSigned() };
 }
 
-QualifiedValue ConstantFloatExpr::emit(EmitContext& ctx) const {
+QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
     return QualifiedValue{ make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue) };
 }
 
-QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
+QualifiedValue ConstantStringExpr::emit(EmitContext&) const {
     reportNotImplemented();
 }
 
@@ -1214,7 +1214,7 @@ QualifiedValue ContinueExpr::emit(EmitContext& ctx) const {
     return QualifiedValue{};
 }
 
-QualifiedValue EmptyExpr::emit(EmitContext& ctx) const {
+QualifiedValue EmptyExpr::emit(EmitContext&) const {
     return QualifiedValue{};
 }
 

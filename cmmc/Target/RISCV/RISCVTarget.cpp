@@ -42,34 +42,32 @@ public:
 
 class RISCVInstInfo final : public TargetInstInfo {
 public:
-    const TargetInstClass& getInstClass(uint32_t instID) const override {
+    const TargetInstClass& getInstClass(uint32_t) const override {
         reportNotImplemented();
     }
-    bool isSupportedInstruction(InstructionID inst) const noexcept override {
+    bool isSupportedInstruction(InstructionID) const noexcept override {
         reportNotImplemented();
     }
-    bool hasSideEffect(MachineInst& inst) const noexcept override {
+    bool hasSideEffect(MachineInst&) const noexcept override {
         reportNotImplemented();
     }
-    bool isTerminator(MachineInst& inst) const noexcept override {
+    bool isTerminator(MachineInst&) const noexcept override {
         reportNotImplemented();
     }
-    void emit(Instruction* inst, LoweringContext& ctx) const override {
+    void emit(Instruction*, LoweringContext&) const override {
         reportNotImplemented();
     }
-    Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override {
+    Register emitConstant(ConstantValue*, LoweringContext&) const override {
         reportNotImplemented();
     }
 };
 
 class RISCVFrameInfo final : public TargetFrameInfo {
 public:
-    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
-                                                      CallingConvention cc) const override {
+    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const override {
         reportNotImplemented();
     }
-    void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
-                      TargetRegisterUsage& usage) const override {
+    void emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const override {
         reportNotImplemented();
     }
 };
@@ -105,7 +103,7 @@ public:
 
 CMMC_TARGET("riscv", RISCVTarget);
 
-void RISCVTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
+void RISCVTarget::emitAssembly(MachineModule&, std::ostream&) const {
     reportNotImplemented();
 }
 

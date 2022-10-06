@@ -20,7 +20,7 @@ CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
-const TargetInstClass& TACInstInfo::getInstClass(uint32_t instID) const {
+const TargetInstClass& TACInstInfo::getInstClass(uint32_t) const {
     reportNotImplemented();
 }
 bool TACInstInfo::isTerminator(MachineInst& inst) const noexcept {
@@ -64,16 +64,10 @@ TACTarget::TACTarget() {
         reportFatal("Unsupported target machine");
 }
 
-bool TACFrameInfo::shouldPassByRegister(const Type* type, const DataLayout& dataLayout) const {
-    return true;
-}
-
-std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock* block, FunctionType* func,
-                                                                CallingConvention cc) const {
+std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const {
     reportNotImplemented();
 }
-void TACFrameInfo::emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
-                                TargetRegisterUsage& usage) const {
+void TACFrameInfo::emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const {
     reportNotImplemented();
 }
 

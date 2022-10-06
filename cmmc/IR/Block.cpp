@@ -119,11 +119,6 @@ BlockArgument* Block::addArg(const Type* type) {
     mArgs.push_back(arg);
     return arg;
 }
-BlockArgument* Block::addArg(Value* root) {
-    auto arg = make<BlockArgument>(this, root->getType(), root);
-    mArgs.push_back(arg);
-    return arg;
-}
 void Block::removeArg(BlockArgument* arg) {
     const auto iter = std::find(mArgs.begin(), mArgs.end(), arg);
     if(iter != mArgs.end()) {

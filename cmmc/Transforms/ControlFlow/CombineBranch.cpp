@@ -78,7 +78,7 @@ class CombineBranch final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_set<Block*> forwardBlocks;
         for(auto block : func.blocks()) {
             if(isForwardBlock(*block))
