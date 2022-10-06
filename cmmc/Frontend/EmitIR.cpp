@@ -781,17 +781,7 @@ Value* EmitContext::convertTo(Value* value, Type* type, Qualifier srcQualifier, 
     return makeOp<CastInst>(id, type, value);
 }
 std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
-    const auto [val, valQualifier, qualifier] = expr->emit(*this);
-    if(valQualifier == ValueQualifier::AsLValue) {
-        if(auto iter = mConstantBinding.find(val); iter != mConstantBinding.cend())
-            return { iter->second, qualifier };
-        if(val->getType()->as<PointerType>()->getPointee()->isArray())
-            return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
-                     qualifier };  // decay to pointer
-        else
-            return { makeOp<LoadInst>(val), qualifier };
-    }
-    return { val, qualifier };
+    return getRValue(expr->emit(*this));
 }
 Value* EmitContext::getRValue(Expr* expr, Type* type, Qualifier dstQualifier) {
     const auto [val, valQualifier] = getRValue(expr);
@@ -1305,6 +1295,74 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.popScope();
     ctx.setCurrentBlock(next);
     return QualifiedValue{ nullptr };
+}
+std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value) {
+    const auto [val, valQualifier, qualifier] = value;
+    if(valQualifier == ValueQualifier::AsLValue) {
+        if(auto iter = mConstantBinding.find(val); iter != mConstantBinding.cend())
+            return { iter->second, qualifier };
+        if(val->getType()->as<PointerType>()->getPointee()->isArray())
+            return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
+                     qualifier };  // decay to pointer
+        else
+            return { makeOp<LoadInst>(val), qualifier };
+    }
+    return { val, qualifier };
+}
+QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
+    auto lhsBlock = ctx.addBlock();
+    lhsBlock->setLabel("lhsBlock");
+    auto rhsBlock = ctx.addBlock();
+    rhsBlock->setLabel("rhsBlock");
+
+    const auto condition = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{});
+    ctx.makeOp<ConditionalBranchInst>(condition, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });
+
+    ctx.setCurrentBlock(lhsBlock);
+    const auto lhs = mLhs->emit(ctx);
+
+    ctx.setCurrentBlock(rhsBlock);
+    const auto rhs = mRhs->emit(ctx);
+
+    Qualifier qualifier;
+    ValueQualifier valueQualifier;
+    auto next = ctx.addBlock();
+    if(lhs.valueQualifier == ValueQualifier::AsLValue && rhs.valueQualifier == ValueQualifier::AsLValue) {
+        if(!lhs.value->getType()->isSame(rhs.value->getType()))
+            reportFatal("type mismatch");
+        if(lhs.qualifier.isSigned != rhs.qualifier.isSigned)
+            reportFatal("type mismatch");
+        next->addArg(lhs.value->getType());
+        qualifier.isSigned = lhs.qualifier.isSigned;
+        qualifier.isConst = lhs.qualifier.isConst || rhs.qualifier.isConst;
+        ctx.setCurrentBlock(lhsBlock);
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, lhs.value });
+        ctx.setCurrentBlock(rhsBlock);
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, rhs.value });
+        valueQualifier = ValueQualifier::AsLValue;
+    } else {
+        // convert to rvalue
+        ctx.setCurrentBlock(lhsBlock);
+        auto [lhsValue, lhsQualifier] = ctx.getRValue(lhs);
+        ctx.setCurrentBlock(rhsBlock);
+        auto [rhsValue, rhsQualifier] = ctx.getRValue(rhs);
+
+        if(!lhsValue->getType()->isSame(rhsValue->getType()))
+            reportFatal("type mismatch");
+        next->addArg(lhsValue->getType());
+        if(lhsQualifier.isSigned != rhsQualifier.isSigned)
+            reportFatal("type mismatch");
+        qualifier.isSigned = lhsQualifier.isSigned;
+        qualifier.isConst = lhsQualifier.isConst || rhsQualifier.isConst;
+        ctx.setCurrentBlock(lhsBlock);
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, lhsValue });
+        ctx.setCurrentBlock(rhsBlock);
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, rhsValue });
+        valueQualifier = ValueQualifier::AsRValue;
+    }
+
+    ctx.setCurrentBlock(next);
+    return QualifiedValue{ next->getArg(0), valueQualifier, qualifier };
 }
 
 CMMC_NAMESPACE_END

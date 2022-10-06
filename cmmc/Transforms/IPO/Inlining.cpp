@@ -46,7 +46,7 @@ CMMC_NAMESPACE_BEGIN
 class FuncInlining final : public TransformPass<Function> {
     bool shouldInline(Function& func) const {
         // TODO: use better heuristic?
-        return func.attr().hasAttr(FunctionAttribute::NoRecurse) && func.blocks().size() <= 10;
+        return func.attr().hasAttr(FunctionAttribute::NoRecurse);
     }
 
     void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) const {

@@ -40,7 +40,7 @@ $(DIR_BUILD)/objs/SplSupport.o: cmmc/Frontend/Support/SplSupport.cpp $(DIR_BUILD
 
 $(DIR_BUILD)/generated/SysY/ParserImpl.hpp: cmmc/Frontend/ParserSysY.yy
 	mkdir -p $(dir $@)
-	$(YACC) -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/SysY/ParserDecl.hpp $<
+	$(YACC) -Wcounterexamples -o $@ --language=c++ --defines=$(DIR_BUILD)/generated/SysY/ParserDecl.hpp $<
 
 $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp: cmmc/Frontend/ScannerSysY.ll $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
 	mkdir -p $(dir $@)

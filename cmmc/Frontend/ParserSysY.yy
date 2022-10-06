@@ -53,14 +53,14 @@
 %token LT GT LE GE EQ NE
 %token ASSIGN
 // Miscellaneous
-// . ; , #
-%token DOT SEMI COMMA SHARP
+// . ; , # ? :
+%token DOT SEMI COMMA SHARP QUEST COLON
 // ( ) [ ] { }
 %token LP RP LB RB LC RC
 %token ERR
 
 %left COMMA
-%right ASSIGN
+%right ASSIGN SELECT QUEST COLON
 %left OR
 %left AND
 %left BOR
@@ -203,6 +203,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | INT { $$ = CMMC_INT(@1, $1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
+| Exp QUEST Exp COLON Exp %prec SELECT { $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }

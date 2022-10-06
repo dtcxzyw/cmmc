@@ -60,6 +60,7 @@
 #define CMMC_EMPTY_STMT(LOC) make<EmptyExpr>(castLoc(LOC))
 #define CMMC_FOR_LOOP(LOC, INIT, COND, ITER, BODY) make<ForExpr>(castLoc(LOC), INIT, COND, ITER, BODY)
 #define CMMC_DO_WHILE(LOC, BODY, COND) make<DoWhileExpr>(castLoc(LOC), BODY, COND)
+#define CMMC_SELECT(LOC, COND, LHS, RHS) make<SelectExpr>(castLoc(LOC), COND, LHS, RHS)
 
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")

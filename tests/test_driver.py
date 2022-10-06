@@ -112,8 +112,14 @@ res.append(test("SPL semantic & opt", tests_path +
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 res.append(test("SysY opt functional", tests_path +
            "/SysY2022/functional", ".sy", sysy_opt))
-# res.append(test("SysY opt hidden_functional", tests_path + "/SysY2022/hidden_functional", ".sy", sysy_opt))
+res.append(test("SysY opt hidden_functional", tests_path +
+           "/SysY2022/hidden_functional", ".sy", sysy_opt))
+# res.append(test("SysY opt performance", tests_path +
+#                "/SysY2022/performance", ".sy", sysy_opt))
+res.append(test("SysY opt final_performance", tests_path +
+                "/SysY2022/final_performance", ".sy", sysy_opt))
 res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
+res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
 
 total_tests = 0
 failed_tests = 0

@@ -336,6 +336,17 @@ public:
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
+class SelectExpr final : public Expr {
+    Expr* mCondition;
+    Expr* mLhs;
+    Expr* mRhs;
+
+public:
+    explicit SelectExpr(const SourceLocation& location, Expr* condition, Expr* lhs, Expr* rhs)
+        : Expr{ location }, mCondition{ condition }, mLhs{ lhs }, mRhs{ rhs } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
 template <typename T>
 void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
     res.swap(rhs);

@@ -96,6 +96,8 @@ void Profiler::printStatistics() {
         std::cerr.precision(2);
         std::cerr << std::fixed;
         std::cerr << "===================== PERFORMANCE PROFILING RESULT =====================" << std::endl;
+        constexpr auto ratio = static_cast<double>(Clock::period::num) / static_cast<double>(Clock::period::den);
+        std::cerr << "Total used: " << (mRootStage.duration().count() * ratio * 1000.0) << " ms" << std::endl;
         mRootStage.printNested(0, static_cast<double>(mRootStage.duration().count()));
         std::cerr << "========================================================================" << std::endl;
     }

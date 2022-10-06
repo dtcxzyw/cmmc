@@ -94,6 +94,7 @@ public:
         return mModule;
     }
     Value* convertTo(Value* value, Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
+    std::pair<Value*, Qualifier> getRValue(const QualifiedValue& value);
     std::pair<Value*, Qualifier> getRValue(Expr* expr);
     Value* getRValue(Expr* expr, Type* type, Qualifier dstQualifier);
     std::pair<Value*, Qualifier> getLValue(Expr* expr);
