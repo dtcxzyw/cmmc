@@ -113,7 +113,7 @@ res.append(test("SPL semantic & opt", tests_path +
 res.append(test("SysY opt functional", tests_path +
            "/SysY2022/functional", ".sy", sysy_opt))
 # res.append(test("SysY opt hidden_functional", tests_path + "/SysY2022/hidden_functional", ".sy", sysy_opt))
-
+res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
 
 total_tests = 0
 failed_tests = 0

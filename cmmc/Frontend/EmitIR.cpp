@@ -624,6 +624,29 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     return QualifiedValue{};
 }
 
+QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
+    auto body = ctx.addBlock();
+    body->setLabel("dowhile.body");
+    auto header = ctx.addBlock();
+    header->setLabel("dowhile.header");
+    auto next = ctx.addBlock();
+
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
+
+    ctx.pushLoop(header, next);
+    ctx.setCurrentBlock(body);
+    mBody->emit(ctx);
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+    ctx.popLoop();
+
+    ctx.setCurrentBlock(header);
+    auto val = ctx.getRValue(mCondition, IntegerType::getBoolean(), {});
+    ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ body }, BranchTarget{ next });
+    ctx.setCurrentBlock(next);
+
+    return QualifiedValue{};
+}
+
 QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
     for(auto& [name, arraySize, initExpr] : mVars) {
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
@@ -1246,6 +1269,42 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
     auto func = make<Function>(StringIR{ symbol }, funcType, intrinsic);
     mModule->add(func);
     return func;
+}
+
+QualifiedValue ForExpr::emit(EmitContext& ctx) const {
+    ctx.pushScope();
+    mInit->emit(ctx);
+
+    auto header = ctx.addBlock();
+    header->setLabel("for.header");
+    auto body = ctx.addBlock();
+    body->setLabel("for.body");
+    auto iteration = ctx.addBlock();
+    iteration->setLabel("for.iteration");
+    auto next = ctx.addBlock();
+
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+    ctx.setCurrentBlock(header);
+    if(mCondition)
+        ctx.makeOp<ConditionalBranchInst>(ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}), BranchTarget{ body },
+                                          BranchTarget{ next });
+    else
+        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
+
+    ctx.setCurrentBlock(body);
+    ctx.pushLoop(iteration, next);
+    mBody->emit(ctx);
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ iteration });
+    ctx.popLoop();
+
+    ctx.setCurrentBlock(iteration);
+    if(mIteration)
+        mIteration->emit(ctx);
+    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+
+    ctx.popScope();
+    ctx.setCurrentBlock(next);
+    return QualifiedValue{ nullptr };
 }
 
 CMMC_NAMESPACE_END

@@ -97,6 +97,7 @@
 %type <NamedVar> Dec;
 %type <Expr*> Initializer;
 %type <ExprPack> InitializerList;
+%type <Expr*> ForOptional;
 
 %start Program;
 
@@ -147,6 +148,11 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | CONTINUE SEMI { $$ = CMMC_CONTINUE(@1); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | Def { $$ = CMMC_DEF($1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | SEMI { $$ = CMMC_EMPTY_STMT(@1); CMMC_NONTERMINAL(@$, Stmt, @1); }
+| FOR LP Stmt ForOptional SEMI ForOptional RP Stmt { $$ = CMMC_FOR_LOOP(@1, $3, $4, $6, $8); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7, @8); }
+| DO Stmt WHILE LP Exp RP SEMI { $$ = CMMC_DO_WHILE(@1, $2, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
+;
+ForOptional: Exp { $$ = $1; CMMC_NONTERMINAL(@$, ForOptional, @1); }
+| %empty { $$ = nullptr; CMMC_EMPTY(@$, ForOptional); }
 ;
 DefList: Def DefList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, DefList); }

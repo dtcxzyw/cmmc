@@ -314,6 +314,28 @@ public:
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
+class ForExpr final : public Expr {
+    Expr* mInit;
+    Expr* mCondition;
+    Expr* mIteration;
+    Expr* mBody;
+
+public:
+    explicit ForExpr(const SourceLocation& location, Expr* init, Expr* condition, Expr* iteration, Expr* body) noexcept
+        : Expr{ location }, mInit{ init }, mCondition{ condition }, mIteration{ iteration }, mBody{ body } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class DoWhileExpr final : public Expr {
+    Expr* mBody;
+    Expr* mCondition;
+
+public:
+    explicit DoWhileExpr(const SourceLocation& location, Expr* body, Expr* condition) noexcept
+        : Expr{ location }, mBody{ body }, mCondition{ condition } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
 template <typename T>
 void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
     res.swap(rhs);
