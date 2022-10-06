@@ -25,14 +25,14 @@ class Function;
 
 class BlockArgument final : public Value {
     Block* mBlock;
-    StringIR mLabel;
+    String mLabel;
 
 public:
     BlockArgument(Block* block, const Type* type, Value* root = nullptr) noexcept : Value{ type }, mBlock{ block } {}
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
-    void setLabel(StringIR label);
-    const StringIR& getLabel() const noexcept {
+    void setLabel(String label);
+    const String& getLabel() const noexcept {
         return mLabel;
     }
     Block* getBlock() const noexcept override {
@@ -42,7 +42,7 @@ public:
 
 class Block final {
     Function* mFunction;
-    StringIR mLabel;
+    String mLabel;
     Deque<BlockArgument*> mArgs;
     List<Instruction*> mInstructions;
 
@@ -56,10 +56,10 @@ public:
         return mInstructions.back();
     }
 
-    const StringIR& getLabel() const noexcept {
+    const String& getLabel() const noexcept {
         return mLabel;
     }
-    void setLabel(StringIR label) {
+    void setLabel(String label) {
         mLabel = std::move(label);
     }
 

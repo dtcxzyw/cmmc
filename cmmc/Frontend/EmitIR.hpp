@@ -60,7 +60,7 @@ struct QualifiedValue final {
 };
 
 struct Scope final {
-    std::unordered_map<StringAST, QualifiedValue, StringHasher<Arena::Source::AST>> variables;
+    std::unordered_map<String, QualifiedValue, StringHasher> variables;
 };
 
 CMMC_ARENA_TRAIT(Scope, AST);
@@ -76,10 +76,10 @@ class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
 
-    std::unordered_map<StringAST, QualifiedValue, StringHasher<Arena::Source::AST>> uniqueVariables;
+    std::unordered_map<String, QualifiedValue, StringHasher> uniqueVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
-    std::unordered_map<StringAST, const StructType*, StringHasher<Arena::Source::AST>> mStructTypes;
+    std::unordered_map<String, const StructType*, StringHasher> mStructTypes;
     std::unordered_map<const FunctionType*, FunctionCallInfo> mCallInfo;
     std::unordered_map<Value*, Value*> mConstantBinding;
 
@@ -101,11 +101,11 @@ public:
     Value* getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier);
     void pushScope();
     void popScope();
-    void addIdentifier(StringAST identifier, QualifiedValue value);
-    void addIdentifier(StringAST identifier, const StructType* type);
+    void addIdentifier(String identifier, QualifiedValue value);
+    void addIdentifier(String identifier, const StructType* type);
     void addConstant(Value* address, Value* val);
-    QualifiedValue lookupIdentifier(const StringAST& identifier);
-    const Type* getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize);
+    QualifiedValue lookupIdentifier(const String& identifier);
+    const Type* getType(const String& type, TypeLookupSpace space, const ArraySize& arraySize);
 
     void addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info);
     const FunctionCallInfo& getFunctionCallInfo(const FunctionType* func);

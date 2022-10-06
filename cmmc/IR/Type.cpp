@@ -198,7 +198,7 @@ size_t StructType::getAlignment(const DataLayout& dataLayout) const noexcept {
         maxAlignment = std::max(maxAlignment, field.type->getAlignment(dataLayout));
     return maxAlignment;
 }
-ConstantOffset* StructType::getOffset(const std::string_view& fieldName) const {
+ConstantOffset* StructType::getOffset(const String& fieldName) const {
     for(uint32_t idx = 0; idx < mFields.size(); ++idx)
         if(mFields[idx].fieldName == fieldName)
             return make<ConstantOffset>(this, idx);

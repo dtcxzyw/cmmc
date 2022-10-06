@@ -21,12 +21,12 @@ CMMC_NAMESPACE_BEGIN
 enum class Linkage { Global, Internal };
 
 class GlobalValue : public Value {
-    StringIR mSymbol;
+    String mSymbol;
     Linkage mLinkage;
 
 public:
-    GlobalValue(StringIR symbol, const Type* type) : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
-    const StringIR& getSymbol() const noexcept {
+    GlobalValue(String symbol, const Type* type) : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
+    const String& getSymbol() const noexcept {
         return mSymbol;
     }
     void dumpAsOperand(std::ostream& out) const final;

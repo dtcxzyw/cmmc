@@ -83,7 +83,7 @@ void LoweringContext::addLink(MachineBasicBlock* successor) {
 }
 MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     for(auto symbol : mModule.symbols()) {
-        if(std::string_view{ symbol->getSymbol() } == global->getSymbol()) {
+        if(symbol->getSymbol() == global->getSymbol()) {
             return symbol;
         }
     }
@@ -159,7 +159,7 @@ static auto lowerToMachineModule(MachineModule& machineModule, const Module& mod
             if(func->blocks().empty()) {
                 // TODO: external func
             } else {
-                auto mfunc = make<MachineFunction>(StringMC{ func->getSymbol() });
+                auto mfunc = make<MachineFunction>(func->getSymbol());
                 symbols.push_back(mfunc);
                 funcTask.emplace(mfunc, func);
             }

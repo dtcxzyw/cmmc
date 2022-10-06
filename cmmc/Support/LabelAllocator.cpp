@@ -12,31 +12,20 @@
     limitations under the License.
 */
 
-#include <cctype>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
-static void emitID(std::string& str, uint32_t idx) {
-    if(idx >= 10)
-        emitID(str, idx / 10);
-    str.push_back('0' + idx % 10);
-}
-
-std::string LabelAllocator::allocate(const std::string& base) {
-    uint32_t end = 0;
-    while(end != base.size()) {
-        if(isdigit(base[end]))
-            break;
-        ++end;
-    }
-    auto prefix = base.substr(0, end);
-    const auto id = mBase[prefix]++;
-    if(id != 0 || prefix.empty())
-        emitID(prefix, id);
-    return prefix;
+String LabelAllocator::allocate(const String& base) {
+    const auto key = base.withoutID();
+    const auto iter = mBase.find(key);
+    if(iter != mBase.cend())
+        return iter->first.withID(++iter->second);
+    mBase.emplace(key, 0);
+    return key;
 }
 
 CMMC_NAMESPACE_END

@@ -52,7 +52,7 @@ struct Hierarchy final {
     // literals non-terminal identifiers others
     struct Empty final {};
     struct NonTerminal final {};
-    using Variant = std::variant<NonTerminal, uintmax_t, char, double, StringAST, Empty, std::monostate>;
+    using Variant = std::variant<NonTerminal, uintmax_t, char, double, String, Empty, std::monostate>;
     struct Desc final {
         const char* name;
         uint32_t line;
@@ -137,7 +137,7 @@ public:
     void addOpaqueType(const TypeRef& typeName) {
         // TODO
     }
-    void addStructType(StringAST typeName, VarDefList list) {
+    void addStructType(String typeName, VarDefList list) {
         mDefs.push_back(StructDefinition{ std::move(typeName), std::move(list) });
     }
     yy::location& location() noexcept {

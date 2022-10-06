@@ -76,7 +76,7 @@ void removeInst(Instruction* inst) {
     block->instructions().remove(inst);
     if constexpr(Config::debug) {
         inst->setBlock(nullptr);
-        inst->setLabel("removed");
+        inst->setLabel(String::get("removed"));
     }
 }
 

@@ -29,7 +29,7 @@ Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
     auto block = make<Block>(mCurrentFunction);
     for(auto type : types)
         block->addArg(type);
-    block->setLabel("b");
+    block->setLabel(String::get("b"));
     mCurrentFunction->blocks().push_back(block);
     return block;
 }

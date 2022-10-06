@@ -100,7 +100,7 @@ class Instruction : public Value {
     InstructionID mInstID;
     Deque<Value*> mOperands;
     Block* mBlock;
-    StringIR mLabel;
+    String mLabel;
 
     // bool isVolatile;
 public:
@@ -129,10 +129,10 @@ public:
     virtual bool replaceOperand(Value* oldOperand, Value* newOperand);
     bool hasOperand(Value* operand) const noexcept;
 
-    void setLabel(StringIR label) {
+    void setLabel(String label) {
         mLabel = std::move(label);
     }
-    const StringIR& getLabel() const noexcept {
+    const String& getLabel() const noexcept {
         return mLabel;
     }
     bool isInstruction() const noexcept final {

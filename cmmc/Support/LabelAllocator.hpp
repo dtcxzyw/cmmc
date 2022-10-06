@@ -13,23 +13,18 @@
 */
 
 #pragma once
-#include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
 class LabelAllocator final {
-    std::unordered_map<std::string, uint32_t> mBase;
+    std::unordered_map<String, uint32_t, StringHasher> mBase;
 
 public:
-    std::string allocate(const std::string& base);
-
-    // FIXME: too many allocations in arena
-    template <typename Str>
-    Str allocate(const Str& str) {
-        return Str{ allocate(std::string{ str }) };
-    }
+    String allocate(const String& base);
 };
 
 CMMC_NAMESPACE_END

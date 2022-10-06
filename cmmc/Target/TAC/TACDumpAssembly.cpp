@@ -111,10 +111,11 @@ void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
     for(auto symbol : module.symbols()) {
         if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
             out << "FUNCTION " << func->getSymbol() << " :" << std::endl;
-            std::unordered_map<MachineBasicBlock*, std::string> labelMap;
+            std::unordered_map<MachineBasicBlock*, String> labelMap;
 
+            String labelBase = String::get("label");
             for(auto block : func->basicblocks) {
-                const auto label = allocator.allocate("label"s);
+                const auto label = allocator.allocate(labelBase);
                 labelMap[block] = label;
             }
 

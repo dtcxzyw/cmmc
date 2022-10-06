@@ -66,7 +66,7 @@ public:
     uint32_t index() const noexcept {
         return mIndex;
     }
-    std::string_view getName() const;
+    String getName() const;
 };
 
 class ConstantArray final : public ConstantValue {

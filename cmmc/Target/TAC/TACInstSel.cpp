@@ -119,7 +119,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
                 reportFatal("dynamic callee is not supported by TAC target");
             const auto calleeFunc = callee->as<Function>();
 
-            const std::string funcName{ calleeFunc->getSymbol() };
+            const auto funcName = calleeFunc->getSymbol();
             if(funcName == "read") {
                 const auto reg = ctx.newReg();
                 ctx.emitInst(TACInst::Read).setWriteReg(reg);

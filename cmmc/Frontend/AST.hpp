@@ -34,7 +34,7 @@ class Expr;
 CMMC_ARENA_TRAIT(Expr*, AST);
 
 struct TypeRef final {
-    StringAST typeIdentifier;
+    String typeIdentifier;
     TypeLookupSpace space;
 
     Qualifier qualifier;
@@ -47,7 +47,7 @@ struct QualifiedType final {
 };
 
 struct NamedVar final {
-    StringAST name;
+    String name;
     ArraySize arraySize;
     Expr* initialValue;
 };
@@ -72,7 +72,7 @@ using ArgList = Deque<NamedArg>;
 
 struct FunctionDeclaration final {
     SourceLocation loc;
-    StringAST symbol;
+    String symbol;
     TypeRef retType;
     ArgList args;
     // bool isVarArg;
@@ -81,7 +81,7 @@ struct FunctionDeclaration final {
 };
 
 struct StructDefinition final {
-    StringAST name;
+    String name;
     VarDefList list;
 
     void emit(EmitContext& ctx) const;
@@ -198,10 +198,10 @@ public:
 };
 
 class ConstantStringExpr final : public Expr {
-    StringAST mString;
+    String mString;
 
 public:
-    ConstantStringExpr(const SourceLocation& location, const StringAST& str) : Expr{ location }, mString{ str } {}
+    ConstantStringExpr(const SourceLocation& location, const String& str) : Expr{ location }, mString{ str } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -253,10 +253,10 @@ public:
 };
 
 class IdentifierExpr final : public Expr {
-    StringAST mIdentifier;
+    String mIdentifier;
 
 public:
-    IdentifierExpr(const SourceLocation& location, const StringAST& str) : Expr{ location }, mIdentifier{ str } {}
+    IdentifierExpr(const SourceLocation& location, const String& str) : Expr{ location }, mIdentifier{ str } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -299,10 +299,10 @@ public:
 
 class StructIndexExpr final : public Expr {
     Expr* mBase;
-    StringAST mField;
+    String mField;
 
 public:
-    StructIndexExpr(const SourceLocation& location, Expr* base, StringAST field)
+    StructIndexExpr(const SourceLocation& location, Expr* base, String field)
         : Expr{ location }, mBase{ base }, mField{ field } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };

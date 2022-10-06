@@ -41,7 +41,7 @@ class Function final : public GlobalValue {
     Intrinsic mIntrinsic;
 
 public:
-    Function(StringIR symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
+    Function(String symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
         : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C }, mIntrinsic{ intrinsic } {}
     Block* entryBlock() const noexcept {
         return mBlocks.front();

@@ -16,6 +16,7 @@
 #include <cassert>
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cstdint>
 #include <ostream>
 
@@ -184,7 +185,7 @@ public:
 struct StructField final {
     SourceLocation loc;
     const Type* type;
-    StringIR fieldName;
+    String fieldName;
 
     // uint32_t alignment;
 };
@@ -193,11 +194,11 @@ CMMC_ARENA_TRAIT(StructField, IR);
 class ConstantOffset;
 
 class StructType final : public Type {
-    StringIR mName;
+    String mName;
     Vector<StructField> mFields;
 
 public:
-    StructType(StringIR name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
+    StructType(String name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
     bool isStruct() const noexcept override {
         return true;
     }
@@ -209,7 +210,7 @@ public:
     const Vector<StructField>& fields() const noexcept {
         return mFields;
     }
-    ConstantOffset* getOffset(const std::string_view& fieldName) const;
+    ConstantOffset* getOffset(const String& fieldName) const;
     const Type* getFieldType(const ConstantOffset* offset) const;
 };
 

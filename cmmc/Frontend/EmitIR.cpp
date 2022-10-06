@@ -85,7 +85,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
 
     auto module = ctx.getModule();
     auto [info, funcType] = decl.getSignature(ctx);
-    auto func = make<Function>(StringIR{ decl.symbol }, funcType);
+    auto func = make<Function>(decl.symbol, funcType);
     module->add(func);
     ctx.addIdentifier(decl.symbol, QualifiedValue{ func });
     ctx.addFunctionCallInfo(funcType, info);
@@ -93,20 +93,19 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     ctx.setCurrentFunction(func);
     ctx.pushScope();  // arguments
     const auto entry = ctx.addBlock(funcType->getArgTypes());
-    entry->setLabel("entry");
+    entry->setLabel(String::get("entry"));
     ctx.setCurrentBlock(entry);
 
     // NOTICE: function arguments must be lvalues
     for(size_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
-        auto label = StringIR{ name };
         const auto arg = entry->getArg(idx);
-        arg->setLabel(label);
+        arg->setLabel(name);
 
         if(!info.passingArgsByPointer[idx]) {
             // passing by register
             const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
-            memArg->setLabel(label);
+            memArg->setLabel(name);
             ctx.makeOp<StoreInst>(memArg, arg);
             ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
         } else {
@@ -117,7 +116,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
                 // create a copy
                 const auto type = arg->getType()->as<PointerType>()->getPointee();
                 const auto memArg = ctx.makeOp<StackAllocInst>(type);
-                memArg->setLabel(label);
+                memArg->setLabel(name);
                 ctx.makeOp<StoreInst>(memArg, ctx.makeOp<LoadInst>(arg));
                 ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
             }
@@ -588,7 +587,7 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
     const auto oldBlock = ctx.getCurrentBlock();
 
     const auto ifBlock = ctx.addBlock();
-    ifBlock->setLabel("if.then");
+    ifBlock->setLabel(String::get("if.then"));
     const auto newBlock = ctx.addBlock();
 
     ctx.setCurrentBlock(ifBlock);
@@ -597,7 +596,7 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
 
     if(mElseBlock) {
         const auto elseBlock = ctx.addBlock();
-        elseBlock->setLabel("if.else");
+        elseBlock->setLabel(String::get("if.else"));
 
         ctx.setCurrentBlock(oldBlock);
         ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
@@ -628,14 +627,14 @@ QualifiedValue ScopedExpr::emit(EmitContext& ctx) const {
 
 QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     auto whileHeader = ctx.addBlock();
-    whileHeader->setLabel("while.header");
+    whileHeader->setLabel(String::get("while.header"));
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
     ctx.setCurrentBlock(whileHeader);
 
     auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {});
 
     auto whileBody = ctx.addBlock();
-    whileBody->setLabel("while.body");
+    whileBody->setLabel(String::get("while.body"));
     auto newBlock = ctx.addBlock();
 
     ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
@@ -653,9 +652,9 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
 
 QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
     auto body = ctx.addBlock();
-    body->setLabel("dowhile.body");
+    body->setLabel(String::get("dowhile.body"));
     auto header = ctx.addBlock();
-    header->setLabel("dowhile.header");
+    header->setLabel(String::get("dowhile.header"));
     auto next = ctx.addBlock();
 
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
@@ -678,7 +677,7 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
     for(auto& [name, arraySize, initExpr] : mVars) {
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
-        local->setLabel(StringIR{ name });
+        local->setLabel(name);
 
         if(initExpr) {
             if(type->isArray()) {
@@ -852,7 +851,7 @@ void EmitContext::popScope() {
     }
     mScopes.pop_back();
 }
-void EmitContext::addIdentifier(StringAST identifier, QualifiedValue value) {
+void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.variables.count(identifier))
@@ -863,7 +862,7 @@ void EmitContext::addIdentifier(StringAST identifier, QualifiedValue value) {
     else
         uniqueVariables.emplace(identifier, value);
 }
-QualifiedValue EmitContext::lookupIdentifier(const StringAST& identifier) {
+QualifiedValue EmitContext::lookupIdentifier(const String& identifier) {
     assert(!mScopes.empty());
     if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend() && iter->second.value)
         return iter->second;
@@ -881,7 +880,7 @@ EmitContext::EmitContext(Module* module) : mModule{ module } {
     mFloat = make<FloatingPointType>(true);
     mChar = make<IntegerType>(8U);
 }
-const Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, const ArraySize& arraySize) {
+const Type* EmitContext::getType(const String& type, TypeLookupSpace space, const ArraySize& arraySize) {
     const Type* ret = nullptr;
     if(space == TypeLookupSpace::Default) {
         if(type == "int")
@@ -937,7 +936,7 @@ const Type* EmitContext::getType(const StringAST& type, TypeLookupSpace space, c
     }
     return ret;
 }
-void EmitContext::addIdentifier(StringAST identifier, const StructType* type) {
+void EmitContext::addIdentifier(String identifier, const StructType* type) {
     if(mStructTypes.count(identifier))
         reportFatal("redefined struct");
     mStructTypes.emplace(std::move(identifier), type);
@@ -1224,7 +1223,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 
     auto module = ctx.getModule();
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
-    auto global = make<GlobalVariable>(StringIR{ var.name }, t);
+    auto global = make<GlobalVariable>(var.name, t);
     if(type.qualifier.isConst) {
         global->attr().addAttr(GlobalVariableAttribute::ReadOnly);
     }
@@ -1257,12 +1256,12 @@ void StructDefinition::emit(EmitContext& ctx) const {
     for(auto& item : list) {
         for(auto& subItem : item.var) {
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);
-            fields.push_back(StructField{ SourceLocation{}, type, StringIR{ subItem.name } });
+            fields.push_back(StructField{ SourceLocation{}, type, subItem.name });
             if(subItem.initialValue)
                 reportFatal("initial values of struct fields is not allowed");
         }
     }
-    auto type = make<StructType>(StringIR{ name }, std::move(fields));
+    auto type = make<StructType>(name, std::move(fields));
     ctx.addIdentifier(name, type);
     ctx.getModule()->add(type);
 }
@@ -1284,7 +1283,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
         default:
             reportNotImplemented();
     }
-    auto func = make<Function>(StringIR{ symbol }, funcType, intrinsic);
+    auto func = make<Function>(String::get(symbol), funcType, intrinsic);
     mModule->add(func);
     return func;
 }
@@ -1294,11 +1293,11 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     mInit->emit(ctx);
 
     auto header = ctx.addBlock();
-    header->setLabel("for.header");
+    header->setLabel(String::get("for.header"));
     auto body = ctx.addBlock();
-    body->setLabel("for.body");
+    body->setLabel(String::get("for.body"));
     auto iteration = ctx.addBlock();
-    iteration->setLabel("for.iteration");
+    iteration->setLabel(String::get("for.iteration"));
     auto next = ctx.addBlock();
 
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
@@ -1339,9 +1338,9 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value)
 }
 QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     auto lhsBlock = ctx.addBlock();
-    lhsBlock->setLabel("lhsBlock");
+    lhsBlock->setLabel(String::get("lhsBlock"));
     auto rhsBlock = ctx.addBlock();
-    rhsBlock->setLabel("rhsBlock");
+    rhsBlock->setLabel(String::get("rhsBlock"));
 
     const auto condition = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{});
     ctx.makeOp<ConditionalBranchInst>(condition, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });

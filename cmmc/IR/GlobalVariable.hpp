@@ -28,7 +28,7 @@ class GlobalVariable final : public GlobalValue {
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(StringIR symbol, const Type* type)
+    GlobalVariable(String symbol, const Type* type)
         : GlobalValue{ symbol, PointerType::get(type) }, mStaticInitializedValue{ nullptr } {}
     void setInitialValue(ConstantValue* value) noexcept {
         mStaticInitializedValue = value;

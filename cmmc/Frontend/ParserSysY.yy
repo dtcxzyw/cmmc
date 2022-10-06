@@ -36,10 +36,10 @@
 %token <uintmax_t> INT "Integer"
 %token <double> FLOAT "Float"
 %token <char> CHAR "Char"
-%token <StringAST> String "String"
+%token <String> String "String"
 
-%token <StringAST> ID "Identifier"
-%token <StringAST> TYPE "Type"
+%token <String> ID "Identifier"
+%token <String> TYPE "Type"
 
 // Control Flow Keywords
 %token IF ELSE WHILE DO FOR CONTINUE BREAK RETURN GOTO SWITCH CASE

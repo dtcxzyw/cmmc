@@ -58,7 +58,7 @@ bool ConstantFloatingPoint::isEqual(double val) const noexcept {
     return mValue == val;
 }
 
-std::string_view ConstantOffset::getName() const {
+String ConstantOffset::getName() const {
     return mBase->fields()[mIndex].fieldName;
 }
 
