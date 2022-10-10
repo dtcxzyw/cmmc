@@ -61,7 +61,7 @@ bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
 
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
-        reportFatal("Unsupported target machine");
+        DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
 
 std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const {

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -88,17 +89,10 @@ void blockArgPropagation(Function& func) {
         auto& blockCtx = ctx[block];
         auto& req = blockCtx.req;
         if(block == blocks.front() && !req.empty()) {
-            auto& err = reportError();
-            err << "required arguments:" << std::endl;
-            for(auto val : req) {
-                val->dump(err);
-                err << std::endl;
-            }
-            err << "func:" << std::endl;
-            func.dump(err);
-            err << "CFG: " << std::endl;
-            func.dumpCFG(err);
-            reportFatal("cannot change arguments of the entry block");
+            DiagnosticsContext::get()
+                .attach<Reason>("Bad dominant tree")
+                .attach<CFGAttachment>("func CFG: ", &func)
+                .reportFatal();
         }
 
         std::unordered_map<Value*, Value*> map;

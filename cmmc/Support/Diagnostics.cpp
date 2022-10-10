@@ -33,7 +33,6 @@ CMMC_INIT_OPTIONS_END
 
 static std::ofstream null{ "/dev/null" };
 
-void printStackTrace() {}
 std::ostream& reportInfo() {
     return std::cout << "[INFO] ";
 }
@@ -48,17 +47,43 @@ std::ostream& reportError() {
 std::ostream& reportDebug() {
     return (verbose.get() ? std::cerr : null) << "[DEBUG] ";
 }
-void reportFatal(std::string_view msg) {
-    std::cerr << "\n[FATAL] " << msg;
-    printStackTrace();
-    std::cerr << std::flush;
+[[noreturn]] void reportUnreachable() {
+    std::cerr << "Unreachable code" << std::endl;
     __builtin_trap();
 }
-void reportNotImplemented() {
-    reportFatal("not implemented");
+[[noreturn]] void reportNotImplemented() {
+    std::cerr << "Not implemented feature" << std::endl;
+    __builtin_trap();
 }
-void reportUnreachable() {
-    reportFatal("unreachable code");
+
+template <typename T>
+class Optional final {
+    const T* mValue;
+
+public:
+    Optional(const std::deque<T>& stack) : mValue{ !stack.empty() ? &stack.back() : nullptr } {}
+    friend void operator<<(std::ostream& out, const Optional<T>& val) {
+        if(val.mValue)
+            out << *val.mValue;
+    }
+};
+
+template <typename T>
+Optional(const std::deque<T>&) -> Optional<T>;
+
+[[noreturn]] void DiagnosticsContext::reportFatal() {
+    auto& out = std::cerr;
+    for(auto& func : mAttachments)
+        func(out);
+    out << "Context: " << std::endl;
+    std::apply([&](auto&... args) { (out << ... << Optional{ args }); }, mContext);
+    out << std::flush;
+    __builtin_trap();
+}
+
+DiagnosticsContext& DiagnosticsContext::get() {
+    static DiagnosticsContext context;
+    return context;
 }
 
 CMMC_NAMESPACE_END

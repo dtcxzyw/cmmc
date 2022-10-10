@@ -160,7 +160,10 @@ void optimizeBlockLayout(MachineFunction& func, const Target& target) {
     const auto& info = target.getTargetInstInfo();
     for(auto block : func.basicblocks) {
         if(block->instructions.empty() || !info.isTerminator(block->instructions.back())) {
-            reportFatal("A valid machine basic block must end with explicit terminator");
+            DiagnosticsContext::get()
+                .attach<Reason>("A valid machine basic block must end with explicit terminator")
+                //.attach<BlockAttachment>("related block", block)
+                .reportFatal();
         }
     }
     // eliminate blocks with single unconditional branch

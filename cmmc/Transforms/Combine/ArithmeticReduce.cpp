@@ -135,6 +135,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                         break;
                 }
             }
+            // !!a -> a
+            // a + -b -> a - b
+            // a - -b -> b - a
             return nullptr;
         });
     }

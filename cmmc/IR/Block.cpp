@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -124,7 +125,7 @@ void Block::removeArg(BlockArgument* arg) {
     if(iter != mArgs.end()) {
         mArgs.erase(iter);
     } else {
-        reportFatal("invalid block arg");
+        DiagnosticsContext::get().attach<ValueAttachment>("invalid block arg", arg).reportFatal();
     }
 }
 

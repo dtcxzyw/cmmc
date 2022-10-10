@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -76,7 +77,7 @@ class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
 
-    std::unordered_map<String, QualifiedValue, StringHasher> uniqueVariables;
+    std::unordered_map<String, QualifiedValue, StringHasher> uniqueVariables;  // TODO: QualifiedValue stack
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<String, const StructType*, StringHasher> mStructTypes;
@@ -116,6 +117,8 @@ public:
     Block* getBreakTarget();
 
     Function* getIntrinsic(Intrinsic intrinsic);
+    void pushLoc(const SourceLocation& loc);
+    void popLoc();
 };
 
 CMMC_NAMESPACE_END

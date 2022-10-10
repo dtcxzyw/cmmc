@@ -12,20 +12,13 @@
     limitations under the License.
 */
 
-#pragma once
-#include <cmmc/Config.hpp>
-#include <cstdint>
-#include <ostream>
+#include <cmmc/Frontend/SourceLocation.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-struct SourceLocation final {
-    // const char* file;
-    // const char* func;
-    uint32_t line;
-    uint32_t column;
-};
-
-void operator<<(std::ostream& out, const SourceLocation& loc);
+void operator<<(std::ostream& out, const SourceLocation& loc) {
+    out << "line: " << loc.line << " col:" << loc.column << std::endl;
+    // TODO: show source code
+}
 
 CMMC_NAMESPACE_END

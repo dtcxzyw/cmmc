@@ -14,24 +14,76 @@
 
 #pragma once
 #include <cmmc/Config.hpp>
+#include <cmmc/Frontend/SourceLocation.hpp>
+#include <deque>
+#include <functional>
+#include <optional>
 #include <ostream>
 #include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
-void printStackTrace();
+class DiagnosticsContext final {
+    template <typename... T>
+    using ContextStorage = std::tuple<std::deque<T>...>;
+    ContextStorage<SourceLocation> mContext;
+    std::vector<std::function<void(std::ostream&)>> mAttachments;
+
+    template <typename T>
+    std::deque<T>& select() noexcept {
+        return std::get<std::deque<T>>(mContext);
+    }
+
+public:
+    template <typename T, typename... Args>
+    void push(Args&&... args) {
+        select<T>().emplace_back(std::forward<Args>(args)...);
+    }
+
+    template <typename T>
+    void pop() {
+        select<T>().pop_back();
+    }
+
+    template <typename T, typename... Args>
+    [[nodiscard]] DiagnosticsContext& attach(Args&&... args) {
+        mAttachments.push_back([payload = T{ std::forward<Args>(args)... }](std::ostream& out) { out << payload; });
+        return *this;
+    }
+
+    template <typename T>
+    [[nodiscard]] DiagnosticsContext& attach(T&& val) {
+        mAttachments.push_back([payload = std::forward<T>(val)](std::ostream& out) { out << payload; });
+        return *this;
+    }
+
+    [[noreturn]] void reportFatal();
+
+    [[nodiscard]] static DiagnosticsContext& get();
+};
+
+struct Reason final {
+    std::string_view reason;
+
+    friend void operator<<(std::ostream& out, const Reason& reason) {
+        out << reason.reason;
+    }
+};
+
+struct UnrecognizedInput final {
+    std::string_view type;
+    std::string_view value;
+
+    friend void operator<<(std::ostream& out, const UnrecognizedInput& err) {
+        out << "Unrecognized " << err.type << " \"" << err.value << '"';
+    }
+};
+
 std::ostream& reportInfo();
 std::ostream& reportWarning();
 std::ostream& reportError();
 std::ostream& reportDebug();
-[[noreturn]] void reportFatal(std::string_view msg);
-[[noreturn]] void reportNotImplemented();
 [[noreturn]] void reportUnreachable();
-
-template <typename Loc>
-class DiagnosticsContext final {
-public:
-    void assertion();
-};
+[[noreturn]] void reportNotImplemented();
 
 CMMC_NAMESPACE_END

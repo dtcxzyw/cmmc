@@ -46,7 +46,7 @@ public:
     }
     Block* getCurrentBlock() const {
         if(!mCurrentBlock)
-            reportFatal("Dynamic initialization of global variable is not allowed");
+            DiagnosticsContext::get().attach<Reason>("Dynamic initialization of global variable is not allowed").reportFatal();
         return mCurrentBlock;
     }
     void setCurrentBlock(Block* block) {

@@ -161,10 +161,11 @@ int mainImpl(int argc, char** argv) {
         reportError() << "Unrecognized input" << std::endl;
         return EXIT_FAILURE;
     } catch(const std::exception& ex) {
-        reportFatal("Unexpected exception: " + std::string{ ex.what() });
+        std::cerr << "Unexpected exception: " << ex.what() << std::endl;
     } catch(...) {
-        reportFatal("Unknown error");
+        std::cerr << "Unknown error" << std::endl;
     }
+    return EXIT_FAILURE;
 }
 
 int main(int argc, char** argv) {

@@ -198,15 +198,35 @@ size_t StructType::getAlignment(const DataLayout& dataLayout) const noexcept {
         maxAlignment = std::max(maxAlignment, field.type->getAlignment(dataLayout));
     return maxAlignment;
 }
+struct InvalidField final {
+    String structName;
+    String fieldName;
+    friend void operator<<(std::ostream& out, const InvalidField& field) {
+        out << "invalid field \"" << field.fieldName << "\" for struct " << field.structName << std::endl;
+    }
+};
 ConstantOffset* StructType::getOffset(const String& fieldName) const {
     for(uint32_t idx = 0; idx < mFields.size(); ++idx)
         if(mFields[idx].fieldName == fieldName)
             return make<ConstantOffset>(this, idx);
-    reportFatal("invalid field");
+    DiagnosticsContext::get().attach<InvalidField>(mName, fieldName).reportFatal();
 }
+struct InvalidOffset final {
+    const StructType* thisStruct;
+    const ConstantOffset* offset;
+    friend void operator<<(std::ostream& out, const InvalidOffset& offset) {
+        out << "mismatched struct offset:" << std::endl;
+        out << "base's struct: ";
+        offset.thisStruct->dump(out);
+        out << std::endl;
+        out << "offset's struct: ";
+        offset.offset->base()->dump(out);
+        out << std::endl;
+    }
+};
 const Type* StructType::getFieldType(const ConstantOffset* offset) const {
     if(offset->base() != this)
-        reportFatal("mismatched offset");
+        DiagnosticsContext::get().attach<InvalidOffset>(this, offset).reportFatal();
     assert(offset->index() <= mFields.size());
     return mFields[offset->index()].type;
 }

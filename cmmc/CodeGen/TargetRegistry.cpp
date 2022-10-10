@@ -43,7 +43,7 @@ std::unique_ptr<Target> TargetRegistry::selectTarget() const {
         }
     }
 
-    reportFatal("Unrecognized target");
+    DiagnosticsContext::get().attach<UnrecognizedInput>("target", targetName).reportFatal();
 }
 
 CMMC_NAMESPACE_END

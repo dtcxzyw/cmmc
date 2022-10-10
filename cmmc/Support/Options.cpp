@@ -19,7 +19,9 @@
 #include <cstdlib>
 #include <getopt.h>
 #include <iostream>
+#include <ostream>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <vector>
 
@@ -139,7 +141,7 @@ int parseCommands(int argc, char** argv) {
             break;
         if(c == 0 || c == '?') {
             printHelpInfo();
-            reportFatal("unrecognized commands");
+            DiagnosticsContext::get().attach<Reason>("unrecognized commands").reportFatal();
         }
 
         for(auto opt : storage.options) {
@@ -182,19 +184,23 @@ void printHelpInfo() {
         opt->printHelp();
 }
 
-uint32_t IntegerOpt::get(bool required) const noexcept {
-    if(required && !mHasValue) {
-        using namespace std::string_literals;
-        reportFatal("option "s + getName().data() + " [integer] is requied");
+struct RequiredArgument final {
+    std::string_view name;
+    std::string_view type;
+    friend void operator<<(std::ostream& out, const RequiredArgument& req) {
+        out << "option " << req.name << " [" << req.type << "] is required" << std::endl;
     }
+};
+
+uint32_t IntegerOpt::get(bool required) const noexcept {
+    if(required && !mHasValue)
+        DiagnosticsContext::get().attach<RequiredArgument>(getName(), "integer").reportFatal();
     return mValue;
 }
 
 const std::string& StringOpt::get(bool required) const noexcept {
-    if(required && !mHasValue) {
-        using namespace std::string_literals;
-        reportFatal("option "s + getName().data() + " [string] is requied");
-    }
+    if(required && !mHasValue)
+        DiagnosticsContext::get().attach<RequiredArgument>(getName(), "string").reportFatal();
     return mStr;
 }
 

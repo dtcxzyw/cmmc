@@ -17,6 +17,8 @@
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
+#include <cmmc/Frontend/SourceLocation.hpp>
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -29,6 +31,7 @@
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
@@ -48,7 +51,7 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
     auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
     info.retQualifier = info.retQualifier;
     if(ret->isArray())
-        reportFatal("returning an array is not allowed");
+        DiagnosticsContext::get().attach<Reason>("returning an array is not allowed").reportFatal();
 
     const auto& target = ctx.getModule()->getTarget();
     const auto& targetFrameInfo = target.getTargetFrameInfo();
@@ -58,7 +61,7 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
         assert(!arg.var.initialValue);
         const auto type = ctx.getType(arg.type.typeIdentifier, arg.type.space, arg.var.arraySize);
         if(type->isVoid())
-            reportFatal("the type of argument cannot be void");
+            DiagnosticsContext::get().attach<Reason>("the type of argument cannot be void").reportFatal();
         if(!type->isArray() && targetFrameInfo.shouldPassByRegister(type, dataLayout)) {
             argTypes.push_back(type);
             info.passingArgsByPointer.push_back(false);
@@ -125,7 +128,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     {
         Stage stage{ "emit function body" };
         for(auto st : block)
-            st->emit(ctx);
+            st->emitWithLoc(ctx);
     }
     ctx.setCurrentBlock(nullptr);  // clean up
 
@@ -240,6 +243,10 @@ static CompareOp getCompareOp(OperatorID op) {
                                   static_cast<uint32_t>(CompareOp::LessThan));
 }
 
+[[noreturn]] static void reportDividedByZero() {
+    DiagnosticsContext::get().attach<Reason>("divided by zero").reportFatal();
+};
+
 // TODO: [un]signed ops
 
 template <typename T>
@@ -255,7 +262,7 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
             if constexpr(std::is_integral_v<T>) {
                 if(rhs)
                     return lhs / rhs;
-                reportFatal("divided by zero");
+                reportDividedByZero();
             } else
                 return lhs / rhs;
         }
@@ -263,7 +270,7 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
             if constexpr(std::is_integral_v<T>) {
                 if(rhs)
                     return lhs % rhs;
-                reportFatal("divided by zero");
+                reportDividedByZero();
             } else
                 reportUnreachable();
         }
@@ -314,7 +321,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
     auto lt = lhs->getType();
     auto rt = rhs->getType();
     if(!lt->isPrimitive() || !rt->isPrimitive())
-        reportFatal("Custom operator is not supported");
+        DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
 
     assert(!lt->isPointer() && !rt->isPointer());
 
@@ -369,7 +376,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
             [[fallthrough]];
         case OperatorID::Xor: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
-                reportFatal("rem/band/bor/xor float,float is not allowed");
+                DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor float,float is not allowed").reportFatal();
             selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
             break;
         }
@@ -388,10 +395,10 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     if(mOp == OperatorID::Assign) {
         auto [lhs, dstQualifier] = ctx.getLValue(mLhs);
         if(dstQualifier.isConst)
-            reportFatal("require a mutable lvalue");
+            DiagnosticsContext::get().attach<Reason>("require a mutable lvalue").reportFatal();
         auto rhs = ctx.getRValue(mRhs, lhs->getType()->as<PointerType>()->getPointee(), dstQualifier);
         if(rhs->getType()->isArray())
-            reportFatal("cannot assign an array");
+            DiagnosticsContext::get().attach<Reason>("cannot assign an array").reportFatal();
 
         ctx.makeOp<StoreInst>(lhs, rhs);
         return { lhs, ValueQualifier::AsLValue, dstQualifier };
@@ -425,7 +432,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
 QualifiedValue CompoundAssignExpr::emit(EmitContext& ctx) const {
     const auto [lhs, lhsQualifier] = ctx.getLValue(mLhs);
     if(lhsQualifier.isConst)
-        reportFatal("require a mutable lvalue");
+        DiagnosticsContext::get().attach<Reason>("require a mutable lvalue").reportFatal();
     const auto valueType = lhs->getType()->as<PointerType>()->getPointee();
 
     const auto lhsValue = ctx.makeOp<LoadInst>(lhs);
@@ -476,7 +483,10 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
                 return QualifiedValue{ ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
                                                               make<ConstantInteger>(value->getType(), -1)) };
             }
-            reportFatal("bitwise not is only allowed for integer types");
+            DiagnosticsContext::get()
+                .attach<Reason>("bitwise not is only allowed for integer types")
+                .attach<TypeAttachment>("operand type", value->getType())
+                .reportFatal();
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {});
@@ -485,7 +495,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
                 return QualifiedValue{ value };
-            reportFatal("unary plus is only allowed for scalar types");
+            DiagnosticsContext::get().attach<Reason>("unary plus is only allowed for scalar types").reportFatal();
         }
         default:
             reportUnreachable();
@@ -510,7 +520,7 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     auto [callee, calleeQualifier] = ctx.getRValue(mCallee);
     CMMC_UNUSED(calleeQualifier);
     if(!callee->getType()->isFunction())
-        reportFatal("cannot call uninvokable");
+        DiagnosticsContext::get().attach<Reason>("cannot call uninvokable").reportFatal();
     const auto& info = ctx.getFunctionCallInfo(callee->getType()->as<FunctionType>());
 
     auto argExprs = mArgs;
@@ -521,14 +531,14 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
             if(argExprs.empty())
                 argExprs.push_back(make<ConstantIntExpr>(location(), location().line, 32U, false));
             else
-                reportFatal("the numbers of provided/required arguments mismatch");
+                DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
         }
     }
 
     // TODO: va_args
     auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
     if(argTypes.size() != argExprs.size())
-        reportFatal("the numbers of provided/required arguments mismatch");
+        DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
 
     Vector<Value*> args;
     args.reserve(argExprs.size());
@@ -569,11 +579,11 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
         auto retType = type->getRetType();
         if(retType->isVoid()) {
             if(mReturnValue)
-                reportFatal("the function should return nothing");
+                DiagnosticsContext::get().attach<Reason>("the function should return nothing").reportFatal();
             ctx.makeOp<ReturnInst>();
         } else {
             if(!mReturnValue)
-                reportFatal("the function should return a value");
+                DiagnosticsContext::get().attach<Reason>("the function should return a value").reportFatal();
             const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier);
             ctx.makeOp<ReturnInst>(retVal);
         }
@@ -592,7 +602,7 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
     const auto newBlock = ctx.addBlock();
 
     ctx.setCurrentBlock(ifBlock);
-    mThenBlock->emit(ctx);
+    mThenBlock->emitWithLoc(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
 
     if(mElseBlock) {
@@ -603,7 +613,7 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
         ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
 
         ctx.setCurrentBlock(elseBlock);
-        mElseBlock->emit(ctx);
+        mElseBlock->emitWithLoc(ctx);
         ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
     } else {
         ctx.setCurrentBlock(oldBlock);
@@ -621,7 +631,7 @@ QualifiedValue IdentifierExpr::emit(EmitContext& ctx) const {
 QualifiedValue ScopedExpr::emit(EmitContext& ctx) const {
     ctx.pushScope();
     for(auto statement : mBlock)
-        statement->emit(ctx);
+        statement->emitWithLoc(ctx);
     ctx.popScope();
     return QualifiedValue{};
 }
@@ -642,7 +652,7 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
 
     ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
-    mBlock->emit(ctx);
+    mBlock->emitWithLoc(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
     ctx.popLoop();
 
@@ -662,7 +672,7 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
 
     ctx.pushLoop(header, next);
     ctx.setCurrentBlock(body);
-    mBody->emit(ctx);
+    mBody->emitWithLoc(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
     ctx.popLoop();
 
@@ -685,10 +695,12 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
                 if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(initExpr)) {
                     arrayInitializer->shapeAwareEmitDynamic(ctx, local, type->as<ArrayType>(), mType.qualifier);
                 } else
-                    reportFatal("cannot initialize an array with a scalar value");
+                    DiagnosticsContext::get().attach<Reason>("cannot initialize an array with a scalar value").reportFatal();
             } else {
                 if(dynamic_cast<ArrayInitializer*>(initExpr))
-                    reportFatal("cannot initialize a scalar with an array initializer");
+                    DiagnosticsContext::get()
+                        .attach<Reason>("cannot initialize a scalar with an array initializer")
+                        .reportFatal();
                 const auto val = ctx.getRValue(initExpr, type, mType.qualifier);
                 ctx.makeOp<StoreInst>(local, val);
 
@@ -704,7 +716,7 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
 }
 
 QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
-    const auto [base, valueQualifier, qualifier] = mBase->emit(ctx);
+    const auto [base, valueQualifier, qualifier] = mBase->emitWithLoc(ctx);
     const auto idx = ctx.getRValue(mIndex, ctx.getIndexType(), Qualifier::getUnsigned());
     if(valueQualifier == ValueQualifier::AsLValue) {
         // int a[10];
@@ -723,7 +735,7 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
     const auto pointer = base->getType()->as<PointerType>();
     const auto structType = pointer->getPointee();
     if(!structType->isStruct())
-        reportFatal("cannot index a non-struct value");
+        DiagnosticsContext::get().attach<Reason>("cannot index a non-struct value").reportFatal();
     const auto offset = structType->as<StructType>()->getOffset(mField);
     const auto ptr = ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), offset });
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
@@ -732,7 +744,7 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
 Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier) {
     const auto srcType = value->getType();
     if(srcType->isPointer() && srcQualifier.isConst && !dstQualifier.isConst)
-        reportFatal("cannot remove the const qualifier");
+        DiagnosticsContext::get().attach<Reason>("cannot remove the const qualifier").reportFatal();
 
     if(srcType->isSame(type))
         return value;
@@ -742,12 +754,12 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
             auto base = makeOp<GetElementPtrInst>(value, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
             while(!base->getType()->isSame(type)) {
                 if(!base->getType()->as<PointerType>()->getPointee()->isArray())
-                    reportFatal("cannot decay array to pointer");
+                    DiagnosticsContext::get().attach<Reason>("cannot decay array to pointer").reportFatal();
                 base = makeOp<GetElementPtrInst>(base, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
             }
             return base;
         } else
-            reportFatal("unsupported pointer conversion");
+            DiagnosticsContext::get().attach<Reason>("unsupported pointer conversion").reportFatal();
     }
 
     InstructionID id = InstructionID::None;
@@ -771,7 +783,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
             id = InstructionID::Trunc;
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
         if(strictMode.get())
-            reportFatal("implicit I2F conversion is not allowed in strict mode");
+            DiagnosticsContext::get().attach<Reason>("implicit I2F conversion is not allowed in strict mode").reportFatal();
 
         if(value->isConstant()) {
             const auto cint = value->as<ConstantInteger>();
@@ -782,7 +794,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
         id = srcQualifier.isSigned ? InstructionID::S2F : InstructionID::U2F;
     } else if(srcType->isFloatingPoint() && type->isInteger()) {
         if(strictMode.get())
-            reportFatal("implicit F2I conversion is not allowed in strict mode");
+            DiagnosticsContext::get().attach<Reason>("implicit F2I conversion is not allowed in strict mode").reportFatal();
 
         if(value->isConstant()) {
             const auto cfp = value->as<ConstantFloatingPoint>()->getValue();
@@ -803,22 +815,26 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
         auto& err = reportError();
         srcType->dump(err << "from ");
         type->dump(err << " to ");
-        reportFatal("cannot convert scalar value");
+        DiagnosticsContext::get()
+            .attach<Reason>("cannot convert scalar value")
+            .attach<TypeAttachment>("from", srcType)
+            .attach<TypeAttachment>("to", type)
+            .reportFatal();
     }
     return makeOp<CastInst>(id, type, value);
 }
 std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
-    return getRValue(expr->emit(*this));
+    return getRValue(expr->emitWithLoc(*this));
 }
 Value* EmitContext::getRValue(Expr* expr, const Type* type, Qualifier dstQualifier) {
     const auto [val, valQualifier] = getRValue(expr);
     return convertTo(val, type, valQualifier, dstQualifier);
 }
 std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr) {
-    const auto [val, valQualifier, qualifier] = expr->emit(*this);
+    const auto [val, valQualifier, qualifier] = expr->emitWithLoc(*this);
     if(valQualifier == ValueQualifier::AsLValue)
         return { val, qualifier };
-    reportFatal("cannot convert a rvalue to a lvalue");
+    DiagnosticsContext::get().attach<Reason>("cannot convert a rvalue to a lvalue").reportFatal();
 }
 Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier) {
     const auto createFromRValue = [&](Value* rvalue, Qualifier srcQualifier) -> Value* {
@@ -828,7 +844,7 @@ Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQu
         return storage;
     };
 
-    const auto [val, valQualifier, qualifier] = expr->emit(*this);
+    const auto [val, valQualifier, qualifier] = expr->emitWithLoc(*this);
 
     if(valQualifier == ValueQualifier::AsLValue) {
         if(val->getType()->isSame(type))
@@ -852,17 +868,31 @@ void EmitContext::popScope() {
     }
     mScopes.pop_back();
 }
+
+// TODO: last definition?
+struct RedefinedIdentifier final {
+    String identifier;
+    friend void operator<<(std::ostream& out, const RedefinedIdentifier& err) {
+        out << "Redefined identifier \"" << err.identifier << '"' << std::endl;
+    }
+};
 void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.variables.count(identifier))
-        reportFatal("redefined identifier");
+        DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
     scope.variables.emplace(identifier, value);
     if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend())
         iter->second.value = nullptr;
     else
         uniqueVariables.emplace(identifier, value);
 }
+struct UndefinedIdentifier final {
+    String identifier;
+    friend void operator<<(std::ostream& out, const UndefinedIdentifier& err) {
+        out << "Undefined identifier \"" << err.identifier << '"' << std::endl;
+    }
+};
 QualifiedValue EmitContext::lookupIdentifier(const String& identifier) {
     assert(!mScopes.empty());
     if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend() && iter->second.value)
@@ -871,7 +901,7 @@ QualifiedValue EmitContext::lookupIdentifier(const String& identifier) {
     for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
         if(auto it = iter->variables.find(identifier); it != iter->variables.cend())
             return it->second;
-    reportFatal("undefined identifier");
+    DiagnosticsContext::get().attach<UndefinedIdentifier>(identifier).reportFatal();
 }
 void EmitContext::addConstant(Value* address, Value* val) {
     mConstantBinding.emplace(address, val);
@@ -903,21 +933,19 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
     if(!arraySize.empty()) {
         if(ret->isVoid())
-            reportFatal("void-based array is not allowed");
+            DiagnosticsContext::get().attach<Reason>("void-based array is not allowed").reportFatal();
 
         bool unknownSize = false;
         for(auto iter = arraySize.rbegin(); iter != arraySize.rend(); ++iter) {
             const auto expr = *iter;
 
+            if(unknownSize)
+                DiagnosticsContext::get().attach<Reason>("invalid unknown-sized array").reportFatal();
+
             if(expr == nullptr) {
-                if(unknownSize)
-                    reportFatal("invalid unknown-sized array");
                 unknownSize = true;
                 ret = make<PointerType>(ret);
             } else {
-                if(unknownSize)
-                    reportFatal("invalid unknown-sized array");
-
                 const auto constantSize = getRValue(*iter, getIndexType(), Qualifier::getUnsigned());
 
                 if(constantSize->isConstant()) {
@@ -925,21 +953,22 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
                     const auto size = val->getZeroExtended();
 
                     if(size <= 0)
-                        reportFatal("invalid array size");
+                        DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
                     if(size >= (1U << 30))
-                        reportFatal("array is too large");
+                        DiagnosticsContext::get().attach<Reason>("array is too large").reportFatal();
 
                     ret = make<ArrayType>(ret, static_cast<uint32_t>(size));
                 } else
-                    reportFatal("array size must be constant integer");
+                    DiagnosticsContext::get().attach<Reason>("array size must be constant integer").reportFatal();
             }
         }
     }
     return ret;
 }
+
 void EmitContext::addIdentifier(String identifier, const StructType* type) {
     if(mStructTypes.count(identifier))
-        reportFatal("redefined struct");
+        DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
     mStructTypes.emplace(std::move(identifier), type);
 }
 
@@ -968,12 +997,12 @@ void EmitContext::popLoop() {
 Block* EmitContext::getContinueTarget() {
     if(!mTerminatorTarget.empty())
         return mTerminatorTarget.back().first;
-    reportFatal("no continue target");
+    DiagnosticsContext::get().attach<Reason>("no continue target").reportFatal();
 }
 Block* EmitContext::getBreakTarget() {
     if(!mTerminatorTarget.empty())
         return mTerminatorTarget.back().second;
-    reportFatal("no break target");
+    DiagnosticsContext::get().attach<Reason>("no break target").reportFatal();
 }
 
 // Simple BFS with post heuristic
@@ -1047,7 +1076,7 @@ void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offse
             if(element == mElements.front()) {  // begins with an opening brace
                 nextLayer = layer + 1;
                 if(nextLayer >= sizes.size())
-                    reportFatal("too many braces in array initializer");
+                    DiagnosticsContext::get().attach<Reason>("too many braces in array initializer").reportFatal();
             } else if(nextLayer == std::numeric_limits<uint32_t>::max()) {
                 for(uint32_t idx = layer + 1; idx < sizes.size(); ++idx) {
                     if(offset % sizes[idx] == 0) {
@@ -1056,7 +1085,7 @@ void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offse
                     }
                 }
                 if(nextLayer == std::numeric_limits<uint32_t>::max())
-                    reportFatal("invalid array initializer");
+                    DiagnosticsContext::get().attach<Reason>("invalid array initializer").reportFatal();
             }
 
             subArray->gatherArrayElementsImpl(ctx, offset, nextLayer, sizes, values);
@@ -1065,7 +1094,7 @@ void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offse
         }
     }
     if(offset > upperBound)
-        reportFatal("too many elements in array initializer");
+        DiagnosticsContext::get().attach<Reason>("too many elements in array initializer").reportFatal();
     offset = upperBound;
 }
 
@@ -1114,7 +1143,7 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStaticImpl(EmitContext& ctx, cons
 
             if(begIter != endIter) {
                 if(elements.size() != idx)
-                    reportFatal("sparse array initialization is not supported");
+                    DiagnosticsContext::get().attach<Reason>("sparse array initialization is not supported").reportFatal();
                 elements.push_back(shapeAwareEmitStaticImpl(ctx, values, beg, subArrayType, dstQualifier));
             }
         }
@@ -1122,10 +1151,10 @@ ConstantValue* ArrayInitializer::shapeAwareEmitStaticImpl(EmitContext& ctx, cons
         for(uint32_t idx = 0; idx < count; ++idx) {
             if(auto iter = values.find(idx + offset); iter != values.cend()) {
                 if(elements.size() != idx)
-                    reportFatal("sparse array initialization is not supported");
+                    DiagnosticsContext::get().attach<Reason>("sparse array initialization is not supported").reportFatal();
                 const auto value = ctx.getRValue(iter->second, subType, dstQualifier);
                 if(!value->isConstant())
-                    reportFatal("require constants in static array initialization");
+                    DiagnosticsContext::get().attach<Reason>("require constants in static array initialization").reportFatal();
                 elements.push_back(value->as<ConstantValue>());
             }
         }
@@ -1148,7 +1177,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     else if(scalarType->isFloatingPoint())
         zero = make<ConstantFloatingPoint>(scalarType, 0.0);
     else
-        reportFatal("cannot zero initialization a non-builtin scalar");
+        DiagnosticsContext::get().attach<Reason>("cannot zero initialization a non-builtin scalar").reportFatal();
 
     const auto sizes = calculateArrayScalarSizes(type);
     const auto getAddress = [&](uint32_t offset) -> Value* {
@@ -1233,17 +1262,19 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
             if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))
                 global->setInitialValue(arrayInitializer->shapeAwareEmitStatic(ctx, t->as<ArrayType>(), type.qualifier));
             else
-                reportFatal("cannot initialize a global array with a scalar");
+                DiagnosticsContext::get().attach<Reason>("cannot initialize a global array with a scalar").reportFatal();
         } else {
             if(dynamic_cast<ArrayInitializer*>(var.initialValue))
-                reportFatal("cannot initialize a global scalar with an array initializer");
+                DiagnosticsContext::get()
+                    .attach<Reason>("cannot initialize a global scalar with an array initializer")
+                    .reportFatal();
 
             const auto initialValue = ctx.getRValue(var.initialValue, t, type.qualifier);
             if(initialValue->isConstant()) {
                 global->setInitialValue(initialValue->as<ConstantValue>());
                 ctx.addConstant(global, initialValue);
             } else
-                reportFatal("cannot initialize a global scalar with a non-constant");
+                DiagnosticsContext::get().attach<Reason>("cannot initialize a global scalar with a non-constant").reportFatal();
         }
     }
     module->add(global);
@@ -1259,7 +1290,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);
             fields.push_back(StructField{ SourceLocation{}, type, subItem.name });
             if(subItem.initialValue)
-                reportFatal("initial values of struct fields is not allowed");
+                DiagnosticsContext::get().attach<Reason>("initial values of struct fields is not allowed").reportFatal();
         }
     }
     auto type = make<StructType>(name, std::move(fields));
@@ -1291,7 +1322,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
 
 QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.pushScope();
-    mInit->emit(ctx);
+    mInit->emitWithLoc(ctx);
 
     auto header = ctx.addBlock();
     header->setLabel(String::get("for.header"));
@@ -1311,13 +1342,13 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
 
     ctx.setCurrentBlock(body);
     ctx.pushLoop(iteration, next);
-    mBody->emit(ctx);
+    mBody->emitWithLoc(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ iteration });
     ctx.popLoop();
 
     ctx.setCurrentBlock(iteration);
     if(mIteration)
-        mIteration->emit(ctx);
+        mIteration->emitWithLoc(ctx);
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
 
     ctx.popScope();
@@ -1347,19 +1378,23 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<ConditionalBranchInst>(condition, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });
 
     ctx.setCurrentBlock(lhsBlock);
-    const auto lhs = mLhs->emit(ctx);
+    const auto lhs = mLhs->emitWithLoc(ctx);
 
     ctx.setCurrentBlock(rhsBlock);
-    const auto rhs = mRhs->emit(ctx);
+    const auto rhs = mRhs->emitWithLoc(ctx);
 
     Qualifier qualifier;
     ValueQualifier valueQualifier;
     auto next = ctx.addBlock();
     if(lhs.valueQualifier == ValueQualifier::AsLValue && rhs.valueQualifier == ValueQualifier::AsLValue) {
         if(!lhs.value->getType()->isSame(rhs.value->getType()))
-            reportFatal("type mismatch");
+            DiagnosticsContext::get()
+                .attach<Reason>("type mismatch")
+                .attach<TypeAttachment>("lhs", lhs.value->getType())
+                .attach<TypeAttachment>("rhs", rhs.value->getType())
+                .reportFatal();
         if(lhs.qualifier.isSigned != rhs.qualifier.isSigned)
-            reportFatal("type mismatch");
+            DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
         next->addArg(lhs.value->getType());
         qualifier.isSigned = lhs.qualifier.isSigned;
         qualifier.isConst = lhs.qualifier.isConst || rhs.qualifier.isConst;
@@ -1376,10 +1411,14 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
         auto [rhsValue, rhsQualifier] = ctx.getRValue(rhs);
 
         if(!lhsValue->getType()->isSame(rhsValue->getType()))
-            reportFatal("type mismatch");
+            DiagnosticsContext::get()
+                .attach<Reason>("type mismatch")
+                .attach<TypeAttachment>("lhs", lhsValue->getType())
+                .attach<TypeAttachment>("rhs", rhsValue->getType())
+                .reportFatal();
         next->addArg(lhsValue->getType());
         if(lhsQualifier.isSigned != rhsQualifier.isSigned)
-            reportFatal("type mismatch");
+            DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
         qualifier.isSigned = lhsQualifier.isSigned;
         qualifier.isConst = lhsQualifier.isConst || rhsQualifier.isConst;
         ctx.setCurrentBlock(lhsBlock);
@@ -1391,6 +1430,27 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
 
     ctx.setCurrentBlock(next);
     return QualifiedValue{ next->getArg(0), valueQualifier, qualifier };
+}
+
+QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
+#ifndef NDEBUG
+    if(mEmitted) {
+        ctx.DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
+    } else {
+        mEmitted = true;
+    }
+#endif
+    ctx.pushLoc(mLocation);
+    const auto ret = emit(ctx);
+    ctx.popLoc();
+    return ret;
+}
+
+void EmitContext::pushLoc(const SourceLocation& loc) {
+    DiagnosticsContext::get().push<SourceLocation>(loc);
+}
+void EmitContext::popLoc() {
+    DiagnosticsContext::get().pop<SourceLocation>();
 }
 
 CMMC_NAMESPACE_END

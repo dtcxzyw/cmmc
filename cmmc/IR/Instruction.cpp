@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -394,8 +395,12 @@ const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& i
                 cur = cur->as<ArrayType>()->getElementType();
             } else if(cur->isPointer()) {
                 cur = cur->as<PointerType>()->getPointee();
-            } else
-                reportFatal("invalid GEP");
+            } else {
+                DiagnosticsContext::get()
+                    .attach<TypeAttachment>("cur type", cur)
+                    .attach<ValueAttachment>("index", idx)
+                    .reportFatal();
+            }
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {
             cur = cur->as<StructType>()->getFieldType(offset);
         } else

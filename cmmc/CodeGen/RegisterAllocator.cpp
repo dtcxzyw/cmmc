@@ -32,7 +32,7 @@ RegisterAllocFunc RegisterAllocatorRegistry::selectMethod() const {
     const auto value = regAllocMethod.get();
     if(auto iter = mMethods.find(value); iter != mMethods.cend())
         return iter->second;
-    reportFatal("Unrecognized register allocation method");
+    DiagnosticsContext::get().attach<UnrecognizedInput>("register allocation method", value).reportFatal();
 }
 
 RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {

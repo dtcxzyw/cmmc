@@ -104,6 +104,10 @@ struct FunctionDefinition final {
 
 class Expr {
     SourceLocation mLocation;
+#ifndef NDEBUG
+    bool mEmitted = false;
+#endif
+    virtual QualifiedValue emit(EmitContext& ctx) const = 0;
 
 public:
     static constexpr auto arenaSource = Arena::Source::AST;
@@ -114,7 +118,7 @@ public:
     Expr& operator=(const Expr&) = delete;
     Expr& operator=(Expr&&) = delete;
     virtual ~Expr() = default;
-    virtual QualifiedValue emit(EmitContext& ctx) const = 0;
+    QualifiedValue emitWithLoc(EmitContext& ctx) const;
     const SourceLocation& location() const noexcept {
         return mLocation;
     }

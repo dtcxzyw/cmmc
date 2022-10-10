@@ -84,7 +84,7 @@ public:
         if(targetMachine.get() == "emulator")
             mSubTarget = std::make_unique<SimpleSubTarget>();
         else
-            reportFatal("Unsupported target machine");
+            DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
     }
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;

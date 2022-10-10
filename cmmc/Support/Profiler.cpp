@@ -92,7 +92,7 @@ void Profiler::printStatistics() {
 
     if(enableProfiling.get()) {
         if(!mStageStack.empty())
-            reportFatal("bad profiler state");
+            reportUnreachable();
         std::cerr.precision(2);
         std::cerr << std::fixed;
         std::cerr << "===================== PERFORMANCE PROFILING RESULT =====================" << std::endl;

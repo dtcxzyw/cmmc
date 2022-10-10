@@ -116,7 +116,7 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             auto& operands = inst->operands();
             auto callee = operands.back();
             if(!callee->isGlobal())
-                reportFatal("dynamic callee is not supported by TAC target");
+                DiagnosticsContext::get().attach<Reason>("dynamic callee is not supported by TAC target").reportFatal();
             const auto calleeFunc = callee->as<Function>();
 
             const auto funcName = calleeFunc->getSymbol();
