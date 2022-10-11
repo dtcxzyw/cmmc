@@ -92,6 +92,7 @@ void blockArgPropagation(Function& func) {
             DiagnosticsContext::get()
                 .attach<Reason>("Bad dominant tree")
                 .attach<CFGAttachment>("func CFG: ", &func)
+                .attach<ValueAttachment>("example", *req.cbegin())
                 .reportFatal();
         }
 

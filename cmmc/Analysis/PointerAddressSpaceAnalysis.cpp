@@ -103,6 +103,9 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                         inheritFrom(inst->getOperand(0), inst);
                         break;
                     }
+                    case InstructionID::IntToPtr: {
+                        break;
+                    }
                     default: {
                         inst->dump(reportError() << "unimplemented inst ");
                         reportNotImplemented();

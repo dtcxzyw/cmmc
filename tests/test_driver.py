@@ -43,8 +43,20 @@ def spl_semantic(src):
     return False
 
 
+def spl_semantic_noref(src):
+    out = subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
+                               '/dev/null', src], capture_output=True, text=True)
+    return out.returncode == 0
+
+
 def spl_codegen_tac(src):
     out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-o',
+                               '/dev/null', src], capture_output=True, text=True)
+    return out.returncode == 0
+
+
+def spl_tac2ir(src):
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'tac', '-o',
                                '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -108,6 +120,12 @@ start = time.perf_counter()
 res.append(test("SPL parse", tests_path+"/Parse", ".spl", spl_parse))
 res.append(test("SPL semantic & opt", tests_path +
            "/Semantic", ".spl", spl_semantic))
+res.append(test("SPL SPL->TAC sample", tests_path +
+           "/TAC2MIPS", ".spl", spl_semantic_noref))
+res.append(test("SPL TAC->IR project3", tests_path +
+           "/CodeGenTAC", ".ir", spl_tac2ir))
+res.append(test("SPL TAC->IR project4", tests_path +
+           "/TAC2MIPS", ".ir", spl_tac2ir))
 # res.append(test("SPL codegen TAC", tests_path +
 #           "/CodeGenTAC", ".spl", spl_codegen_tac))
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))

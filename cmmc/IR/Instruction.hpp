@@ -90,6 +90,8 @@ enum class InstructionID {
     Alloc,
     GetElementPtr,
     PtrCast,
+    PtrToInt,
+    IntToPtr,
     ExtractValue,
     InsertValue,
     Select,
@@ -371,6 +373,26 @@ class PtrCastInst final : public Instruction {
 public:
     explicit PtrCastInst(Value* base, const Type* targetType) : Instruction{ InstructionID::PtrCast, targetType, { base } } {
         assert(base->getType()->isPointer());
+        assert(targetType->isPointer());
+    }
+    void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
+};
+
+class PtrToIntInst final : public Instruction {
+public:
+    explicit PtrToIntInst(Value* base, const Type* targetType) : Instruction{ InstructionID::PtrToInt, targetType, { base } } {
+        assert(base->getType()->isPointer());
+        assert(targetType->isInteger());
+    }
+    void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
+};
+
+class IntToPtrInst final : public Instruction {
+public:
+    explicit IntToPtrInst(Value* base, const Type* targetType) : Instruction{ InstructionID::IntToPtr, targetType, { base } } {
+        assert(base->getType()->isInteger());
         assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;

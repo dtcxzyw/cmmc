@@ -108,7 +108,9 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
                     result.addValue(inst, src);
                     break;
                 }
-                case InstructionID::PtrCast: {
+                case InstructionID::PtrCast:
+                    [[fallthrough]];
+                case InstructionID::IntToPtr: {
                     result.addValue(inst, {});  // TODO: provide basic information
                     break;
                 }

@@ -45,6 +45,8 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
                     uniqueWriter.erase(k);
             }
 
+            // FIXME: wrong fusion
+            /*
             for(auto& block : func->basicblocks)
                 for(auto& inst : block->instructions) {
                     // load/store/copy fusion
@@ -99,6 +101,7 @@ void TACSubTarget::peepholeOpt(MachineModule& module) const {
                         }
                     }
                 }
+            */
         }
     }
 }

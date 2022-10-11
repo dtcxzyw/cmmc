@@ -105,7 +105,7 @@ struct FunctionDefinition final {
 class Expr {
     SourceLocation mLocation;
 #ifndef NDEBUG
-    bool mEmitted = false;
+    mutable bool mEmitted = false;
 #endif
     virtual QualifiedValue emit(EmitContext& ctx) const = 0;
 

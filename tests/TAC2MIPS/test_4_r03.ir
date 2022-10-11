@@ -1,0 +1,13 @@
+FUNCTION main :
+v0 := #110
+v2 := #97
+v4 := #3
+v8 := v0 - v2
+v13 := #2
+v11 := v4 * v13
+v7 := v8 + v11
+v4 := v7
+v15 := v4
+WRITE v15
+v16 := #0
+RETURN v16

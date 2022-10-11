@@ -1435,7 +1435,7 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
 #ifndef NDEBUG
     if(mEmitted) {
-        ctx.DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
+        DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
     } else {
         mEmitted = true;
     }

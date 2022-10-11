@@ -152,6 +152,10 @@ static const char* getInstName(InstructionID instID) {
             return "getelementptr";
         case InstructionID::PtrCast:
             return "ptrcast";
+        case InstructionID::PtrToInt:
+            return "ptrtoint";
+        case InstructionID::IntToPtr:
+            return "inttoptr";
         case InstructionID::ExtractValue:
             return "extractvalue";
         case InstructionID::InsertValue:
@@ -508,6 +512,24 @@ Instruction* GetElementPtrInst::clone() const {
 
 Instruction* PtrCastInst::clone() const {
     return make<PtrCastInst>(getOperand(0), getType());
+}
+
+void PtrToIntInst::dump(std::ostream& out) const {
+    dumpUnary(out);
+    out << " to ";
+    getType()->dump(out);
+}
+Instruction* PtrToIntInst::clone() const {
+    return make<PtrToIntInst>(getOperand(0), getType());
+}
+
+void IntToPtrInst::dump(std::ostream& out) const {
+    dumpUnary(out);
+    out << " to ";
+    getType()->dump(out);
+}
+Instruction* IntToPtrInst::clone() const {
+    return make<IntToPtrInst>(getOperand(0), getType());
 }
 
 CMMC_NAMESPACE_END

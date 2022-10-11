@@ -66,7 +66,7 @@ struct Reason final {
     std::string_view reason;
 
     friend void operator<<(std::ostream& out, const Reason& reason) {
-        out << reason.reason;
+        out << "Reason: " << reason.reason << std::endl;
     }
 };
 
@@ -75,7 +75,7 @@ struct UnrecognizedInput final {
     std::string_view value;
 
     friend void operator<<(std::ostream& out, const UnrecognizedInput& err) {
-        out << "Unrecognized " << err.type << " \"" << err.value << '"';
+        out << "Unrecognized " << err.type << " \"" << err.value << '"' << std::endl;
     }
 };
 
