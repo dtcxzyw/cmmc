@@ -21,11 +21,14 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -52,16 +55,7 @@ void loadTAC(Module& module, const std::string& path) {
         DiagnosticsContext::get().attach<Reason>("invalid path").reportFatal();
     }
 
-    in.seekg(0, std::ios::end);
-    size_t size = in.tellg();
-    in.seekg(0, std::ios::beg);
-
-    std::vector<char> input(size);
-    in.read(input.data(), size);
-    if(input.empty() || input.back() != '\n')
-        input.push_back('\n');
-    input.push_back('\x7f');
-    auto iter = tac_from_buffer(input.data());
+    const auto seq = readTACSeq(in);
 
     IRBuilder builder;
     std::unordered_map<String, Function*, StringHasher> callables;
@@ -69,11 +63,11 @@ void loadTAC(Module& module, const std::string& path) {
     std::unordered_map<String, Value*, StringHasher> identifierMap;
     std::unordered_map<int, Block*> blockMap;
     Vector<Value*> paramStack;
-    std::vector<std::tuple<tac_node*, Block*, Block*>> postTerminator;
+    std::vector<std::tuple<const TACInstStorage*, Block*, Block*>> postTerminator;
 
-    auto getLValue = [&](tac_opd* operand, bool required) -> Value* {
-        if(operand->kind == OP_VARIABLE || operand->kind == OP_POINTER) {
-            const auto identifier = String::get(operand->char_val);
+    auto getLValue = [&](const TACOperand& operand, bool required) -> Value* {
+        if(operand.kind == TACOperandType::Variable || operand.kind == TACOperandType::Pointer) {
+            const auto identifier = std::get<String>(operand.val);
             if(auto iter = identifierMap.find(identifier); iter != identifierMap.cend()) {
                 return iter->second;
             }
@@ -96,25 +90,21 @@ void loadTAC(Module& module, const std::string& path) {
         reportUnreachable();
     };
 
-    auto getRValue = [&](tac_opd* operand) -> Value* {
-        switch(operand->kind) {
-            case OP_VARIABLE:
-                [[fallthrough]];
-            case OP_POINTER: {
+    auto getRValue = [&](const TACOperand& operand) -> Value* {
+        switch(operand.kind) {
+            case TACOperandType::Variable: {
                 const auto addr = getLValue(operand, true);
                 return builder.makeOp<LoadInst>(addr);
             }
-            case OP_CONSTANT:
-                return make<ConstantInteger>(i32, operand->int_val);
+            case TACOperandType::Pointer: {
+                const auto addr = getLValue(operand, true);
+                return builder.makeOp<PtrToIntInst>(addr, i32);
+            }
+            case TACOperandType::Constant:
+                return make<ConstantInteger>(i32, std::get<int>(operand.val));
             default:
                 reportUnreachable();
         }
-    };
-
-    const auto makeConditionalBranch = [&](CompareOp op, tac_opd* lhs, tac_opd* rhs, int target, Block* nextBlock) {
-        const auto ret = builder.makeOp<CompareInst>(InstructionID::SCmp, op, getRValue(lhs), getRValue(rhs));
-        const auto targetBlock = blockMap.find(target)->second;
-        builder.makeOp<ConditionalBranchInst>(ret, BranchTarget{ targetBlock }, BranchTarget{ nextBlock });
     };
 
     const auto fixFunction = [&] {
@@ -124,29 +114,17 @@ void loadTAC(Module& module, const std::string& path) {
         for(auto [node, block, next] : postTerminator) {
             builder.setCurrentBlock(block);
 
-            switch(node->code.kind) {
-                case GOTO: {
-                    builder.makeOp<ConditionalBranchInst>(
-                        BranchTarget{ blockMap.find(node->code.goto_.labelno->int_val)->second });
-                    break;
-                }
-#define CMMC_COND_BRANCH(TAC_OP, FIELD, CMP_OP)                                                                               \
-    case TAC_OP: {                                                                                                            \
-        makeConditionalBranch(CompareOp::CMP_OP, node->code.FIELD.c1, node->code.FIELD.c2, node->code.FIELD.labelno->int_val, \
-                              next);                                                                                          \
-        break;                                                                                                                \
-    }
-
-                    CMMC_COND_BRANCH(IFLT, iflt, LessThan);
-                    CMMC_COND_BRANCH(IFLE, ifle, LessEqual);
-                    CMMC_COND_BRANCH(IFGT, ifgt, GreaterThan);
-                    CMMC_COND_BRANCH(IFGE, ifge, GreaterEqual);
-                    CMMC_COND_BRANCH(IFNE, ifne, NotEqual);
-                    CMMC_COND_BRANCH(IFEQ, ifeq, Equal);
-
-#undef CMMC_COND_BRANCH
-                default:
-                    reportUnreachable();
+            if(std::holds_alternative<TACGoto>(*node)) {
+                builder.makeOp<ConditionalBranchInst>(
+                    BranchTarget{ blockMap.find(std::get<int>(std::get<TACGoto>(*node).label.val))->second });
+            } else if(std::holds_alternative<TACConditionalGoto>(*node)) {
+                auto& branch = std::get<TACConditionalGoto>(*node);
+                const auto ret =
+                    builder.makeOp<CompareInst>(InstructionID::SCmp, branch.cmp, getRValue(branch.lhs), getRValue(branch.rhs));
+                const auto targetBlock = blockMap.find(std::get<int>(branch.label.val))->second;
+                builder.makeOp<ConditionalBranchInst>(ret, BranchTarget{ targetBlock }, BranchTarget{ next });
+            } else {
+                reportUnreachable();
             }
         }
         postTerminator.clear();
@@ -166,50 +144,52 @@ void loadTAC(Module& module, const std::string& path) {
         blockArgPropagation(*func);
     };
 
-    const auto makeBinaryOp = [&](InstructionID id, tac_opd* lhs, tac_opd* rhs, tac_opd* dst) {
-        const auto dest = getLValue(dst, false);
-        const auto lhsVal = getRValue(lhs);
-        const auto rhsVal = getRValue(rhs);
-        const auto res = builder.makeOp<BinaryInst>(id, i32, lhsVal, rhsVal);
-        builder.makeOp<StoreInst>(dest, res);
-    };
+    for(uint32_t k = 0; k < seq.size(); ++k) {
+        auto& inst = seq[k];
 
-    while(iter) {
-        switch(iter->code.kind) {
-            case LABEL: {
+        dispatch(
+            inst,
+            [&] {
+                if(std::holds_alternative<TACGoto>(inst) || std::holds_alternative<TACConditionalGoto>(inst)) {
+                    const auto nextBlock = builder.addBlock();
+                    postTerminator.emplace_back(&inst, builder.getCurrentBlock(), nextBlock);
+                    builder.setCurrentBlock(nextBlock);
+                } else
+                    reportUnreachable();
+            },
+            [&](const TACLabel& label) {
                 const auto nextBlock = builder.addBlock();
                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ nextBlock });
                 builder.setCurrentBlock(nextBlock);
-                blockMap.emplace(iter->code.label.labelno->int_val, nextBlock);
-                break;
-            }
-            case FUNCTION: {
+                blockMap.emplace(std::get<int>(label.label.val), nextBlock);
+            },
+            [&](const TACFunctionDecl& function) {
                 fixFunction();
-                auto symbol = String::get(iter->code.function.funcname);
 
                 std::vector<String> argNames;
                 Vector<const Type*> args;
 
-                auto arg = iter->next;
-                while(arg && arg->code.kind == PARAM) {
-                    assert(arg->code.param.p->kind == OP_VARIABLE);
-                    auto name = String::get(arg->code.param.p->char_val);
+                uint32_t idx = k + 1;
+                for(; idx < seq.size() && std::holds_alternative<TACParam>(seq[idx]); ++idx) {
+                    auto& arg = std::get<TACParam>(seq[idx]);
+                    assert(arg.name.kind == TACOperandType::Variable);
+                    auto name = std::get<String>(arg.name.val);
                     argNames.push_back(name);
                     args.push_back(i32);
-                    arg = arg->next;
                 }
-                iter = arg->prev;
+                k = idx - 1;
 
                 auto funcType = make<FunctionType>(i32, args);
-                auto func = make<Function>(symbol, funcType);
+                auto func = make<Function>(function.symbol, funcType);
                 module.add(func);
-                callables.emplace(symbol, func);
+                callables.emplace(function.symbol, func);
 
                 builder.setCurrentFunction(func);
                 auto entryBlock = builder.addBlock();
                 builder.setCurrentBlock(entryBlock);
                 entryBlock->setLabel(String::get("entry"));
-                size_t idx = 0;
+
+                idx = 0;
                 for(auto arg : args) {
                     const auto val = entryBlock->addArg(arg);
                     const auto storage = builder.makeOp<StackAllocInst>(val->getType());
@@ -222,112 +202,67 @@ void loadTAC(Module& module, const std::string& path) {
                 builder.setCurrentBlock(entryBlock);
                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ codeBlock });
                 builder.setCurrentBlock(codeBlock);
-                break;
-            }
-            case ASSIGN: {
-                const auto lvalue = getLValue(iter->code.assign.left, false);
-                const auto rvalue = getRValue(iter->code.assign.right);
+            },
+            [&](const TACAssign& assign) {
+                const auto lvalue = getLValue(assign.lhs, false);
+                const auto rvalue = getRValue(assign.rhs);
                 builder.makeOp<StoreInst>(lvalue, rvalue);
-                break;
-            }
-#define CMMC_BINARY(TAC_OP, FIELD, IR_OP)                                                                    \
-    case TAC_OP: {                                                                                           \
-        makeBinaryOp(InstructionID::IR_OP, iter->code.FIELD.r1, iter->code.FIELD.r2, iter->code.FIELD.left); \
-        break;                                                                                               \
-    }
-                CMMC_BINARY(ADD, add, Add);
-                CMMC_BINARY(SUB, sub, Sub);
-                CMMC_BINARY(MUL, mul, Mul);
-                CMMC_BINARY(DIV, div, SDiv);
-#undef CMMC_BINARY
-            case ADDR: {
-                const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(iter->code.addr.right, true), i32);
-                const auto base = getLValue(iter->code.addr.left, false);
+            },
+            [&](const TACBinary& binary) {
+                const auto dest = getLValue(binary.result, false);
+                const auto lhsVal = getRValue(binary.lhs);
+                const auto rhsVal = getRValue(binary.rhs);
+                const auto res = builder.makeOp<BinaryInst>(binary.instruction, i32, lhsVal, rhsVal);
+                builder.makeOp<StoreInst>(dest, res);
+            },
+            [&](const TACAddr& addr) {
+                const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(addr.rhs, true), i32);
+                const auto base = getLValue(addr.lhs, false);
                 builder.makeOp<StoreInst>(base, ptr);
-                break;
-            }
-            case FETCH: {
-                const auto ptr = builder.makeOp<IntToPtrInst>(getRValue(iter->code.fetch.raddr), i32ptr);
-                const auto base = getLValue(iter->code.fetch.left, false);
+            },
+            [&](const TACFetch& fetch) {
+                const auto ptr = builder.makeOp<IntToPtrInst>(getRValue(fetch.rhsAddr), i32ptr);
+                const auto base = getLValue(fetch.lhs, false);
                 builder.makeOp<StoreInst>(base, builder.makeOp<LoadInst>(ptr));
-                break;
-            }
-            case DEREF: {
-                const auto val = getRValue(iter->code.deref.right);
-                const auto base = getRValue(iter->code.deref.laddr);
+            },
+            [&](const TACDeref& deref) {
+                const auto val = getRValue(deref.rhs);
+                const auto base = getRValue(deref.lhsAddr);
                 const auto ptr = builder.makeOp<IntToPtrInst>(base, i32ptr);
                 builder.makeOp<StoreInst>(ptr, val);
-                break;
-            }
-            case GOTO:
-                [[fallthrough]];
-            case IFLT:
-                [[fallthrough]];
-            case IFLE:
-                [[fallthrough]];
-            case IFGT:
-                [[fallthrough]];
-            case IFGE:
-                [[fallthrough]];
-            case IFNE:
-                [[fallthrough]];
-            case IFEQ: {
-                const auto nextBlock = builder.addBlock();
-                postTerminator.emplace_back(iter, builder.getCurrentBlock(), nextBlock);
-                builder.setCurrentBlock(nextBlock);
-                break;
-            }
-            case RETURN: {
-                builder.makeOp<ReturnInst>(getRValue(iter->code.return_.var));
+            },
+            [&](const TACReturn& ret) {
+                builder.makeOp<ReturnInst>(getRValue(ret.val));
                 const auto nextBlock = builder.addBlock();
                 builder.setCurrentBlock(nextBlock);
-                break;
-            }
-            case DEC: {
-                const auto size = static_cast<uint32_t>(iter->code.dec.size);
+            },
+            [&](const TACLocalDecl& dec) {
+                const auto size = static_cast<uint32_t>(dec.size);
                 assert(size % 4 == 0);
                 const auto type = make<ArrayType>(i32, size / 4);
                 const auto ptr = builder.makeOp<StackAllocInst>(type);
-                const auto intPtr = builder.makeOp<PtrToIntInst>(ptr, i32);
-                const auto ptrStorage = builder.makeOp<StackAllocInst>(i32);
-                builder.makeOp<StoreInst>(ptrStorage, intPtr);
-                identifierMap.emplace(String::get(iter->code.dec.var->char_val), ptrStorage);
-                break;
-            }
-            case ARG: {
-                paramStack.push_back(getRValue(iter->code.arg.var));
-                break;
-            }
-            case CALL: {
-                const auto symbol = String::get(iter->code.call.funcname);
-                const auto func = callables.find(symbol);
+                identifierMap.emplace(std::get<String>(dec.var.val), ptr);
+            },
+            [&](const TACArg& arg) { paramStack.push_back(getRValue(arg.val)); },
+            [&](const TACCall& call) {
+                const auto func = callables.find(call.callee);
                 if(func == callables.cend())
                     DiagnosticsContext::get().attach<Reason>("missing function").reportFatal();
                 const auto ret = builder.makeOp<FunctionCallInst>(func->second, paramStack);
                 paramStack.clear();
-                const auto dst = getLValue(iter->code.call.ret, false);
+                const auto dst = getLValue(call.ret, false);
                 builder.makeOp<StoreInst>(dst, ret);
-                break;
-            }
-            case READ: {
-                const auto dst = getLValue(iter->code.read.p, false);
+            },
+            [&](const TACRead& readInst) {
+                const auto dst = getLValue(readInst.var, false);
                 const auto ret = builder.makeOp<FunctionCallInst>(read, Vector<Value*>{});
                 builder.makeOp<StoreInst>(dst, ret);
-                break;
-            }
-            case WRITE: {
-                const auto val = getRValue(iter->code.write.p);
+            },
+            [&](const TACWrite& writeInst) {
+                const auto val = getRValue(writeInst.val);
                 builder.makeOp<FunctionCallInst>(write, Vector<Value*>{ val });
-                break;
-            }
-            case NONE: {
-                break;
-            }
-            default:
-                reportUnreachable();
-        }
-
-        iter = iter->next;
+            },
+            [&](std::monostate) {});
     }
 
     fixFunction();

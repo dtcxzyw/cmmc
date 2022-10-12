@@ -1,225 +1,106 @@
+/*
+    SPDX-License-Identifier: Apache-2.0
+    Copyright 2022 Yingwei Zheng and Bingzhen Wang
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
 #pragma once
+#include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
+#include <cstdint>
+#include <iostream>
+#include <variant>
+#include <vector>
 
-#include <assert.h>
-#include <ctype.h>
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+CMMC_NAMESPACE_BEGIN
+enum class TACOperandType { Label, Variable, Constant, Pointer };
 
-typedef struct tac_opd tac_opd;
-typedef struct tac_node tac;
-
-enum TACOperandType { OP_LABEL, OP_VARIABLE, OP_CONSTANT, OP_POINTER };
-
-struct tac_opd {
+struct TACOperand final {
     TACOperandType kind;
-    union {
-        char char_val[8];  // stores variable name, pointer name
-        int int_val;       // stores label number, int constant
-    };
+    std::variant<String, int> val;
 };
 
-enum TACInstID {
-    LABEL,
-    FUNCTION,
-    ASSIGN,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    ADDR,
-    FETCH,
-    DEREF,
-    GOTO,
-    IFLT,
-    IFLE,
-    IFGT,
-    IFGE,
-    IFNE,
-    IFEQ,
-    RETURN,
-    DEC,
-    ARG,
-    CALL,
-    PARAM,
-    READ,
-    WRITE,
-    NONE
+struct TACLabel final {
+    TACOperand label;
 };
 
-struct _tac_inst {
-    TACInstID kind;
-    union {  // all union variables are not pointer!
-        // LABEL label[labelno] :
-        struct {
-            tac_opd* labelno;
-        } label;
-        // FUNCTION funcname :
-        struct {
-            char* funcname;
-        } function;
-        // left := right
-        struct {
-            tac_opd *left, *right;
-        } assign;
-        // left := r1 + r2
-        struct {
-            tac_opd *left, *r1, *r2;
-        } add;
-        // left := r1 - r2
-        struct {
-            tac_opd *left, *r1, *r2;
-        } sub;
-        // left := r1 * r2
-        struct {
-            tac_opd *left, *r1, *r2;
-        } mul;
-        // left := r1 / r2
-        struct {
-            tac_opd *left, *r1, *r2;
-        } div;
-        // left := &right
-        struct {
-            tac_opd *left, *right;
-        } addr;
-        // left := *raddr
-        struct {
-            tac_opd *left, *raddr;
-        } fetch;
-        // *laddr := right
-        struct {
-            tac_opd *laddr, *right;
-        } deref;
-        // GOTO label[labelno]
-        struct {
-            tac_opd* labelno;
-        } goto_;
-        // IF c1 < c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } iflt;
-        // IF c1 <= c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } ifle;
-        // IF c1 > c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } ifgt;
-        // IF c1 >= c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } ifge;
-        // IF c1 != c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } ifne;
-        // IF c1 == c2 GOTO label[labelno]
-        struct {
-            tac_opd *c1, *c2;
-            tac_opd* labelno;
-        } ifeq;
-        // RETURN var
-        struct {
-            tac_opd* var;
-        } return_;
-        // DEC var size
-        struct {
-            tac_opd* var;
-            int size;
-        } dec;
-        // ARG var
-        struct {
-            tac_opd* var;
-        } arg;
-        // ret := CALL funcname
-        struct {
-            tac_opd* ret;
-            char* funcname;
-        } call;
-        // PARAM p
-        struct {
-            tac_opd* p;
-        } param;
-        // READ p
-        struct {
-            tac_opd* p;
-        } read;
-        // WRITE p
-        struct {
-            tac_opd* p;
-        } write;
-    };
+struct TACFunctionDecl final {
+    String symbol;
 };
 
-struct tac_node {
-    struct _tac_inst code;         // code is not a pointer!
-    struct tac_node *prev, *next;  // doubly linked list impl
+struct TACAssign final {
+    TACOperand lhs, rhs;
 };
 
-/*
- * construct a tac list from the input buffer
- * put a '\n' after each instruction (also the last one)
- * ## you should put a '\x7f' at the end of the buffer ##
- */
-tac* tac_from_buffer(char* buf);
+struct TACBinary final {
+    InstructionID instruction;
+    TACOperand result;
+    TACOperand lhs, rhs;
+};
 
-/*****************************************************************
-    ####################### STOP HERE #########################
-     The declaration below is related to the intermediate code
-     generation, they are not helpful to you in project 4.
-    ####################### STOP HERE #########################
- *****************************************************************/
+struct TACAddr final {
+    TACOperand lhs, rhs;
+};
 
-void tac_opd_print(tac_opd*, FILE*);
+struct TACFetch final {
+    TACOperand lhs, rhsAddr;
+};
 
-/*
- * related to intermediate code generation
- * returns a single TAC operand
- */
-tac_opd* tac_opd_label(int);
-tac_opd* tac_opd_variable(char*);
-tac_opd* tac_opd_constant(int);
-tac_opd* tac_opd_pointer(char*);
+struct TACDeref final {
+    TACOperand lhsAddr, rhs;
+};
 
-// insert a segment of TAC next to head
-void tac_insert(tac*, tac*);
+struct TACGoto final {
+    TACOperand label;
+};
 
-// insert a segment of TAC at the end of list
-void tac_append(tac*, tac*);
+struct TACConditionalGoto final {
+    CompareOp cmp;
+    TACOperand lhs, rhs;
+    TACOperand label;
+};
 
-/*
- * related to intermediate code generation
- * returns a single TAC quadruple
- */
-tac* tac_init_label(tac_opd*);
-tac* tac_init_function(char*);
-tac* tac_init_assign(tac_opd*, tac_opd*);
-tac* tac_init_add(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_sub(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_mul(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_div(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_addr(tac_opd*, tac_opd*);
-tac* tac_init_fetch(tac_opd*, tac_opd*);
-tac* tac_init_deref(tac_opd*, tac_opd*);
-tac* tac_init_goto(tac_opd*);
-tac* tac_init_iflt(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_ifle(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_ifgt(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_ifge(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_ifne(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_ifeq(tac_opd*, tac_opd*, tac_opd*);
-tac* tac_init_return(tac_opd*);
-tac* tac_init_dec(tac_opd*, int);
-tac* tac_init_arg(tac_opd*);
-tac* tac_init_call(tac_opd*, char*);
-tac* tac_init_param(tac_opd*);
-tac* tac_init_read(tac_opd*);
-tac* tac_init_write(tac_opd*);
-tac* tac_init_none();
+struct TACReturn final {
+    TACOperand val;
+};
+
+struct TACLocalDecl final {
+    TACOperand var;
+    uint32_t size;
+};
+
+struct TACRead final {
+    TACOperand var;
+};
+
+struct TACWrite final {
+    TACOperand val;
+};
+
+struct TACArg final {
+    TACOperand val;
+};
+
+struct TACCall final {
+    String callee;
+    TACOperand ret;
+};
+
+struct TACParam final {
+    TACOperand name;
+};
+
+using TACInstStorage =
+    std::variant<TACLabel, TACFunctionDecl, TACAssign, TACBinary, TACAddr, TACFetch, TACDeref, TACGoto, TACConditionalGoto,
+                 TACReturn, TACLocalDecl, TACRead, TACWrite, TACArg, TACCall, TACParam, std::monostate>;
+
+std::vector<TACInstStorage> readTACSeq(std::istream& buf);
+CMMC_NAMESPACE_END
