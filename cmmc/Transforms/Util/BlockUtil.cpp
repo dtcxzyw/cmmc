@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/IRBuilder.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iterator>
 #include <unordered_map>
@@ -94,6 +96,20 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
         inst->setBlock(nextBlock);
     blocks.insert(std::next(block), nextBlock);
     return nextBlock;
+}
+
+std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& func, BranchTarget& target) {
+    IRBuilder builder;
+    builder.setCurrentFunction(&func);
+    const auto block = builder.addBlock();
+    builder.setCurrentBlock(block);
+    block->setLabel(String::get("indirect"));
+    Vector<Value*> args;
+    for(auto arg : target.getArgs())
+        args.push_back(block->addArg(arg->getType()));
+    const auto inst = builder.makeOp<ConditionalBranchInst>(BranchTarget{ target.getTarget(), std::move(args) });
+    target.resetTarget(block);
+    return { inst, &inst->getTrueTarget() };
 }
 
 CMMC_NAMESPACE_END

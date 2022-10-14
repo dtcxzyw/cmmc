@@ -25,7 +25,7 @@ class SimpleValueAnalysis final {
     std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base pointer, <pointer, value>>
 
 public:
-    explicit SimpleValueAnalysis(const AliasAnalysisResult& aliasSet) noexcept : mAliasSet{ aliasSet } {}
+    explicit SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet);
     void next(Instruction* inst);
     Value* getLastValue(Value* pointer) const;
 };

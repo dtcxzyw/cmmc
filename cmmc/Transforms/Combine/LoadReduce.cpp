@@ -23,7 +23,7 @@
 //     i32 %c = load i32* %a;
 //     ret i32 0; // replace %c with 0
 
-// TODO: handling branches:
+// PHI value:
 // ^a(i1 %arg):
 //     i32* %x = alloc i32;
 //     cbr %arg, [^b i32* %x], [^c i32* %x];
@@ -49,22 +49,27 @@
 //
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/FunctionAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iostream>
 #include <queue>
+#include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
 class LoadReduce final : public TransformPass<Function> {
-    bool runBlock(Block& block, const AliasAnalysisResult& alias) const {
-        SimpleValueAnalysis valueAnalysis{ alias };
+    bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) const {
         std::unordered_map<Value*, Value*> replace;
         for(auto inst : block.instructions()) {
             if(inst->getInstID() == InstructionID::Load)
@@ -79,11 +84,120 @@ class LoadReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& alias = analysis.get<AliasAnalysis>(func);
+        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+        const auto& cfg = analysis.get<CFGAnalysis>(func);
+
+        std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
         bool modified = false;
         // intra-block
-        for(auto block : func.blocks())
-            modified |= runBlock(*block, alias);
+        for(auto block : func.blocks()) {
+            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
+            modified |= runBlock(*block, iter->second);
+        }
         // inter-block
+        std::vector<Block*> blocks{ func.blocks().begin(), func.blocks().end() };
+        for(auto block : blocks) {
+            std::vector<Instruction*> loadInsts;
+            std::vector<Value*> storePointers;
+            for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Load) {
+                    auto ptr = blockArgMap.queryRoot(inst->getOperand(0));
+                    if(ptr->isInstruction() && ptr->getBlock() == block)  // GEP-based load reduce is not supported
+                        continue;
+                    bool mayBeOverrided = false;
+                    for(auto storePtr : storePointers) {
+                        if(!alias.isDistinct(storePtr, ptr)) {
+                            mayBeOverrided = true;
+                            break;
+                        }
+                    }
+
+                    if(!mayBeOverrided)
+                        loadInsts.push_back(inst);
+                } else if(inst->getInstID() == InstructionID::Store) {
+                    auto ptr = blockArgMap.queryRoot(inst->getOperand(0));
+                    storePointers.push_back(ptr);
+                } else if(inst->getInstID() == InstructionID::Call) {
+                    const auto callee = inst->operands().back();
+                    if(const auto func = dynamic_cast<Function*>(callee)) {
+                        if(func->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
+                            continue;
+                    }
+                    break;  // may store before load
+                }
+            }
+            if(loadInsts.empty())
+                continue;
+            auto& predecessors = cfg.predecessors(block);
+            if(predecessors.empty())
+                continue;
+
+            std::unordered_map<Instruction*, std::unordered_map<BranchTarget*, Value*>> reuseValues;
+            for(auto [pred, target] : predecessors) {
+                const auto& lut = valueAnalysis.find(pred)->second;
+                for(auto inst : loadInsts) {
+                    auto ptr = inst->getOperand(0);
+                    if(const auto arg = dynamic_cast<BlockArgument*>(ptr))
+                        ptr = target->getOperand(arg);
+                    if(auto val = lut.getLastValue(ptr)) {
+                        if(const auto load = dynamic_cast<LoadInst*>(val)) {
+                            // Deferred load is better than reusing this load !
+                            bool used = false;
+                            for(auto user : load->getBlock()->instructions()) {
+                                if(user->isTerminator())
+                                    continue;
+                                if(user->hasOperand(load)) {
+                                    used = true;
+                                }
+                            }
+                            if(!used)
+                                continue;
+                        }
+                        reuseValues[inst].emplace(target, val);
+                    }
+                }
+            }
+
+            if(reuseValues.empty())
+                continue;
+
+            modified = true;
+
+            for(auto [pred, target] : predecessors) {
+                const auto branch = pred->getTerminator()->as<ConditionalBranchInst>();
+                const auto [indirectBranch, indirectTarget] = createIndirectBlock(func, *target);
+                const auto indirectBlock = indirectBranch->getBlock();
+                auto args = target->getArgs();
+                auto indirectArgs = indirectTarget->getArgs();
+
+                for(auto& [inst, vals] : reuseValues) {
+                    if(auto iter = vals.find(target); iter != vals.cend()) {
+                        args.push_back(iter->second);
+                        indirectArgs.push_back(indirectBlock->addArg(iter->second->getType()));
+                    } else {
+                        auto ptr = inst->getOperand(0);
+                        if(const auto arg = dynamic_cast<BlockArgument*>(ptr))
+                            ptr = indirectTarget->getOperand(arg);
+                        auto load = make<LoadInst>(ptr);
+                        load->setBlock(indirectBlock);
+                        indirectBlock->instructions().push_front(load);
+                        indirectArgs.push_back(load);
+                    }
+                }
+
+                branch->updateTargetArgs(*target, args);
+                indirectBranch->updateTargetArgs(*indirectTarget, indirectArgs);
+            }
+
+            std::unordered_map<Value*, Value*> map;
+            for(auto& [inst, vals] : reuseValues) {
+                CMMC_UNUSED(vals);
+                const auto arg = block->addArg(inst->getType());
+                map.emplace(inst, arg);
+            }
+            replaceOperands(*block, map);
+        }
+
         return modified;
     }
 

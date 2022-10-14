@@ -15,10 +15,42 @@
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
+
+SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet) : mAliasSet{ aliasSet } {
+    std::vector<Value*> args;
+    for(auto arg : block->args()) {
+        if(arg->getType()->isPointer()) {
+            args.push_back(arg);
+        }
+    }
+
+    bool allDistinct = true;
+
+    for(uint32_t idx1 = 0; idx1 < args.size(); ++idx1) {
+        for(uint32_t idx2 = idx1 + 1; idx2 < args.size(); ++idx2) {
+            if(!aliasSet.isDistinct(args[idx1], args[idx2])) {
+                allDistinct = false;
+                break;
+            }
+        }
+        if(!allDistinct)
+            break;
+    }
+
+    if(allDistinct) {
+        for(auto arg : args)
+            mBasePointer.emplace(arg, arg);
+    } else {
+        for(auto arg : args)
+            mBasePointer.emplace(arg, nullptr);
+    }
+}
 
 void SimpleValueAnalysis::next(Instruction* inst) {
     const auto update = [&](Value* base, Value* addr, Value* val) {
@@ -61,7 +93,7 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         case InstructionID::Call: {
             const auto callee = inst->operands().back();
             if(auto func = dynamic_cast<Function*>(callee)) {
-                if(!func->attr().hasAttr(FunctionAttribute::NoSideEffect))
+                if(!func->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                     mLastValue.clear();  // discard all cached values
             } else {
                 mLastValue.clear();  // discard all cached values
@@ -69,7 +101,7 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         } break;
         case InstructionID::Alloc: {
             mBasePointer.emplace(inst, inst);
-            mLastValue[inst].emplace(inst, make<UndefinedValue>(inst->getType()));
+            mLastValue[inst].emplace(inst, make<UndefinedValue>(inst->getType()->as<PointerType>()->getPointee()));
         } break;
             // TODO: GEP
         default:

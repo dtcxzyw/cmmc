@@ -62,6 +62,9 @@ bool Instruction::verify(std::ostream& out) const {
             getBlock()->dump(out);
             out << "used block: " << block->getLabel() << std::endl;
             block->dump(out);
+            out << "used operand: " << std::endl;
+            operand->dump(out);
+            out << std::endl;
             return false;
         }
 
@@ -285,7 +288,7 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
         if(args1.size() != args2.size()) {
             out << "The counts of block arguments mismatch." << std::endl;
             out << "Source block: " << getBlock()->getLabel() << std::endl;
-            out << "Dest block:" << block->getLabel() << std::endl;
+            out << "Dest block: " << block->getLabel() << std::endl;
             return false;
         }
         for(uint32_t idx = 0; idx < args1.size(); ++idx) {
@@ -293,6 +296,14 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
             const auto t2 = args2[idx];
             if(!t1->getType()->isSame(t2->getType())) {
                 out << "The types of block arguments mismatch." << std::endl;
+                out << "Source block: " << getBlock()->getLabel() << std::endl;
+                out << "Dest block: " << block->getLabel() << std::endl;
+                out << "Index: " << idx << std::endl;
+                out << "Source type: ";
+                t1->getType()->dump(out);
+                out << std::endl << "Dest type: ";
+                t2->getType()->dump(out);
+                out << std::endl;
                 return false;
             }
         }
@@ -530,6 +541,15 @@ void IntToPtrInst::dump(std::ostream& out) const {
 }
 Instruction* IntToPtrInst::clone() const {
     return make<IntToPtrInst>(getOperand(0), getType());
+}
+
+Value* BranchTarget::getOperand(BlockArgument* arg) const {
+    const auto& args = mTarget->args();
+    for(size_t idx = 0; idx < mArgs.size(); ++idx) {
+        if(args[idx] == arg)
+            return mArgs[idx];
+    }
+    reportUnreachable();
 }
 
 CMMC_NAMESPACE_END

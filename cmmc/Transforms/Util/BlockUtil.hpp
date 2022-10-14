@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <functional>
 #include <unordered_map>
@@ -27,6 +28,7 @@ void removeInst(Instruction* inst);
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
 bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, std::unordered_map<Value*, Value*>& replace);
+std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& func, BranchTarget& target);
 
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {

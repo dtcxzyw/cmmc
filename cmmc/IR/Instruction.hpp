@@ -246,6 +246,8 @@ public:
     Instruction* clone() const override;
 };
 
+class BlockArgument;
+
 class BranchTarget final {
     Block* mTarget;
     Vector<Value*> mArgs;
@@ -271,6 +273,7 @@ public:
     }
     void dump(std::ostream& out) const;
     void replaceOperand(Value* oldOperand, Value* newOperand);
+    Value* getOperand(BlockArgument* arg) const;
 };
 
 class ConditionalBranchInst final : public Instruction {

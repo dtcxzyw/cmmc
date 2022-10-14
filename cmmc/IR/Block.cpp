@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <cmmc/Config.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -91,17 +92,30 @@ bool Block::verify(std::ostream& out) const {
         }
 
     // topological ordering
-    std::unordered_set<Value*> definedInst;
+    std::unordered_set<Value*> definedValue;
+    for(auto arg : mArgs) {
+        definedValue.insert(arg);
+    }
     for(auto inst : mInstructions) {
-        for(auto operand : inst->operands())
-            if(operand->isInstruction()) {
-                if(!definedInst.count(operand)) {
+        if(inst->isTerminator() && inst != mInstructions.back()) {
+            out << "the terminator must be in the end of a block" << std::endl;
+            return false;
+        }
+        for(auto operand : inst->operands()) {
+            if(!operand->isConstant() && !operand->isGlobal()) {
+                if(!definedValue.count(operand)) {
                     out << "bad instruction order" << std::endl;
                     dump(out);
+                    out << "this operand is required: " << std::endl;
+                    operand->dump(out);
+                    out << std::endl << "user: " << std::endl;
+                    inst->dump(out);
+                    out << std::endl;
                     return false;
                 }
             }
-        definedInst.insert(inst);
+        }
+        definedValue.insert(inst);
     }
 
     // per-instruction
@@ -124,6 +138,9 @@ void Block::removeArg(BlockArgument* arg) {
     const auto iter = std::find(mArgs.begin(), mArgs.end(), arg);
     if(iter != mArgs.end()) {
         mArgs.erase(iter);
+        if constexpr(Config::debug) {
+            arg->setLabel(String::get("removed"));
+        }
     } else {
         DiagnosticsContext::get().attach<ValueAttachment>("invalid block arg", arg).reportFatal();
     }
