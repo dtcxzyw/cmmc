@@ -1,0 +1,7 @@
+int main() {
+    float x = getfloat();
+    float y = getfloat();
+    float z = getfloat();
+    int w = x + y * z;
+    return w;
+}

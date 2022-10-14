@@ -81,7 +81,7 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
     return { std::move(info), make<FunctionType>(ret, std::move(argTypes)) };
 }
 
-static void sortBlocks(Function& func);
+bool sortBlocks(Function& func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
     Stage stage{ "emit function" };
@@ -1003,63 +1003,6 @@ Block* EmitContext::getBreakTarget() {
     if(!mTerminatorTarget.empty())
         return mTerminatorTarget.back().second;
     DiagnosticsContext::get().attach<Reason>("no break target").reportFatal();
-}
-
-// Simple BFS with post heuristic
-// not for performance, just for readability
-void sortBlocks(Function& func) {
-    std::unordered_map<Block*, uint32_t> weight;
-    constexpr uint32_t branchTrueCost = 100;
-    constexpr uint32_t branchFalseCost = 101;
-    constexpr uint32_t ubrCost = 2;
-    constexpr uint32_t brCost = 0;
-    constexpr uint32_t retCost = 10;
-    constexpr uint32_t unreachableCost = 1'000'000;
-
-    std::queue<Block*> q{ { func.entryBlock() } };
-    const auto addTarget = [&](const BranchTarget& target, uint32_t w) {
-        const auto block = target.getTarget();
-        if(weight.emplace(block, w).second)
-            q.push(block);
-    };
-
-    while(!q.empty()) {
-        const auto u = q.front();
-        q.pop();
-        auto& val = weight[u];
-        const auto terminator = u->getTerminator();
-        switch(terminator->getInstID()) {
-            case InstructionID::Branch: {
-                const auto& branch = terminator->as<ConditionalBranchInst>();
-                addTarget(branch->getTrueTarget(), val + branchTrueCost);
-                val += brCost;
-                break;
-            }
-            case InstructionID::ConditionalBranch: {
-                const auto& branch = terminator->as<ConditionalBranchInst>();
-                addTarget(branch->getTrueTarget(), val + branchTrueCost);
-                addTarget(branch->getFalseTarget(), val + branchFalseCost);
-                val += ubrCost;
-                break;
-            }
-            case InstructionID::Unreachable: {
-                val += unreachableCost;
-                break;
-            }
-            case InstructionID::Ret: {
-                val += retCost;
-                break;
-            }
-            default:
-                reportUnreachable();
-        }
-    }
-
-    for(auto& block : func.blocks())
-        if(!weight.count(block))
-            weight[block] = std::numeric_limits<uint32_t>::max();
-
-    func.blocks().sort([&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; });
 }
 
 QualifiedValue ArrayInitializer::emit(EmitContext&) const {

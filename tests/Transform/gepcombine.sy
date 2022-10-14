@@ -1,0 +1,10 @@
+struct foo {
+    int x;
+    int y;
+};
+int main() {
+    struct foo a[10];
+    a[0].x = getint();
+    a[1].y = getint();
+    return a[0].y + a[1].x;
+}

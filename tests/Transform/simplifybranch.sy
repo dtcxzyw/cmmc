@@ -1,0 +1,16 @@
+int main() {
+    while(getint()) {
+        if(getint()) {
+            return 1;
+        }
+        else if(getint()) {
+            int x = getint();
+            while(x >= 0) {
+                break;
+            }
+            if(getint())
+                continue;
+        }
+    }
+    return 0;
+}

@@ -42,9 +42,9 @@ Expr* generateDef(VarDef def) {
 static void emitSplRuntime(Module& module, EmitContext& ctx) {
     const auto i32 = IntegerType::get(32);
     const auto read = make<Function>(String::get("read"), make<FunctionType>(i32, Vector<const Type*>{}));
-    read->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    read->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
     const auto write = make<Function>(String::get("write"), make<FunctionType>(VoidType::get(), Vector<const Type*>{ i32 }));
-    write->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    write->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
     ctx.addIdentifier(String::get("read"), QualifiedValue{ read });
     ctx.addIdentifier(String::get("write"), QualifiedValue{ write });
@@ -60,16 +60,16 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
     const auto f32ptr = PointerType::get(f32);
 
     const auto getInt = make<Function>(String::get("getint"), make<FunctionType>(i32, Vector<const Type*>{}));
-    getInt->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    getInt->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
     const auto getCh = make<Function>(String::get("getch"), make<FunctionType>(i32, Vector<const Type*>{}));
-    getCh->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    getCh->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
     const auto getArray = make<Function>(String::get("getarray"), make<FunctionType>(i32, Vector<const Type*>{ i32ptr }));
     getArray->attr().addAttr(FunctionAttribute::NoMemoryRead);
 
     const auto getFloat = make<Function>(String::get("getfloat"), make<FunctionType>(f32, Vector<const Type*>{}));
-    getFloat->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    getFloat->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
     const auto getFloatArray = make<Function>(String::get("getfarray"), make<FunctionType>(i32, Vector<const Type*>{ f32ptr }));
     getFloatArray->attr().addAttr(FunctionAttribute::NoMemoryRead);
@@ -82,7 +82,7 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
 
     const auto putArray =
         make<Function>(String::get("putarray"), make<FunctionType>(voidType, Vector<const Type*>{ i32, i32ptr }));
-    putArray->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
+    putArray->attr().addAttr(FunctionAttribute::NoMemoryWrite);
 
     const auto putFloat = make<Function>(String::get("putfloat"), make<FunctionType>(voidType, Vector<const Type*>{ f32 }));
     putFloat->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
@@ -92,7 +92,9 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
     putFloatArray->attr().addAttr(FunctionAttribute::NoMemoryWrite);
 
     const auto startTime = make<Function>(String::get("starttime"), make<FunctionType>(voidType, Vector<const Type*>{ i32 }));
+    startTime->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
     const auto stopTime = make<Function>(String::get("stoptime"), make<FunctionType>(voidType, Vector<const Type*>{ i32 }));
+    stopTime->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
     for(auto func : { getInt, getCh, getArray, getFloat, getFloatArray, putInt, putCh, putArray, putFloat, putFloatArray,
                       startTime, stopTime }) {

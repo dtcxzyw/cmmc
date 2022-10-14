@@ -1,0 +1,7 @@
+int main() {
+    while(1) {
+        if(getint()) break;
+        else break;
+    }
+    return 0;
+}

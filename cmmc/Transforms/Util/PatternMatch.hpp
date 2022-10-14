@@ -297,4 +297,22 @@ auto fma_(X x, Y y, Z z) {
     return FMAMatcher{ x, y, z };
 }
 
+template <typename CondMatcher, typename LhsMatcher, typename RhsMatcher>
+class SelectMatcher final : public GenericMatcher<SelectInst, SelectMatcher<CondMatcher, LhsMatcher, RhsMatcher>> {
+    CondMatcher mX;
+    LhsMatcher mY;
+    RhsMatcher mZ;
+
+public:
+    explicit SelectMatcher(CondMatcher x, LhsMatcher y, RhsMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
+    bool handle(SelectInst* value) const noexcept {
+        return mX(value->getOperand(0)) && mY(value->getOperand(1)) && mZ(value->getOperand(2));
+    }
+};
+
+template <typename X, typename Y, typename Z>
+auto select(X x, Y y, Z z) {
+    return SelectMatcher{ x, y, z };
+}
+
 CMMC_NAMESPACE_END

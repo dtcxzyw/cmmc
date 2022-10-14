@@ -44,9 +44,9 @@ void loadTAC(Module& module, const std::string& path) {
     const auto i32 = IntegerType::get(32);
     const auto i32ptr = PointerType::get(i32);
     const auto read = make<Function>(String::get("read"), make<FunctionType>(i32, Vector<const Type*>{}));
-    read->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    read->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
     const auto write = make<Function>(String::get("write"), make<FunctionType>(VoidType::get(), Vector<const Type*>{ i32 }));
-    write->attr().addAttr(FunctionAttribute::NoMemoryRead);
+    write->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
     module.add(read);
     module.add(write);
 

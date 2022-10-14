@@ -1,0 +1,9 @@
+int main() {
+    int x = getint();
+    int y = x + 1;
+    int z = x + getint();
+    if(getint()) {
+        z = z + getint();
+    }
+    return z;
+}

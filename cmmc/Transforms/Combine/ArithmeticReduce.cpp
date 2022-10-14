@@ -29,8 +29,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-// TODO: symbolic reduce ???
-
 class ArithmeticReduce final : public TransformPass<Function> {
     bool runOnBlock(Block& block) const {
         return reduceBlock(block, [](Instruction* inst) -> Value* {
@@ -136,8 +134,20 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
             // !!a -> a
+            if(not_(not_(any(v1)))(inst))
+                return v1;
             // a + -b -> a - b
-            // a - -b -> b - a
+            if(add(any(v1), neg(any(v2)))(inst)) {
+                return make<BinaryInst>(InstructionID::Sub, inst->getType(), v1, v2);
+            }
+            // a - -b -> a + b
+            if(sub(any(v1), neg(any(v2)))(inst)) {
+                return make<BinaryInst>(InstructionID::Add, inst->getType(), v1, v2);
+            }
+            // select c?a:a -> a
+            if(select(any(v1), any(v2), any(v3))(inst) && v2 == v3) {
+                return v2;
+            }
             return nullptr;
         });
     }

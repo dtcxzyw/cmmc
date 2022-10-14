@@ -82,7 +82,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(or_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 | u2);
                 if(xor_(uint_(u1), uint_(u2))(inst))
-                    return makeInt(inst, i1 ^ u2);
+                    return makeInt(inst, u1 ^ u2);
 
             } else if(inst->isFloatingPointOp()) {
                 auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
@@ -126,6 +126,20 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeBool(inst, doCompare(cmp, u1, u2));
                 if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
                     return makeBool(inst, doCompare(cmp, f1, f2));
+            } else {
+                // select cval?a:b -> a/b
+                Value *v1, *v2;
+                if(select(uint_(u1), any(v1), any(v2))(inst)) {
+                    return u1 ? v1 : v2;
+                }
+                // select c?a:a -> a
+                if(select(any(v1), cuint_(u1), cuint_(u2))(inst) && u1 == u2) {
+                    return inst->getOperand(1);
+                }
+                // select c?a:a -> a
+                if(select(any(v1), fp_(f1), fp_(f2))(inst) && f1 == f2) {
+                    return inst->getOperand(1);
+                }
             }
 
             return nullptr;
