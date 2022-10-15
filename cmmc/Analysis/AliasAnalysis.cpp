@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <iterator>
