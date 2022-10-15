@@ -21,6 +21,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <limits>
 #include <queue>
 #include <unordered_map>
 
@@ -29,6 +30,9 @@ CMMC_NAMESPACE_BEGIN
 // Simple BFS with post heuristic
 // not for performance, just for readability
 bool sortBlocks(Function& func) {
+    if(func.blocks().size() <= 1)
+        return false;
+
     std::unordered_map<Block*, uint32_t> weight;
     constexpr uint32_t branchTrueCost = 100;
     constexpr uint32_t branchFalseCost = 101;
@@ -81,7 +85,7 @@ bool sortBlocks(Function& func) {
             weight[block] = std::numeric_limits<uint32_t>::max();
 
     const auto comp = [&](Block* lhs, Block* rhs) { return weight[lhs] < weight[rhs]; };
-    bool modified = std::is_sorted(func.blocks().begin(), func.blocks().end(), comp);
+    bool modified = !std::is_sorted(func.blocks().begin(), func.blocks().end(), comp);
     if(modified)
         func.blocks().sort(comp);
     return modified;

@@ -12,9 +12,13 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Instruction.hpp"
+#include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
+#include <iterator>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -63,7 +67,7 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
         }
     return false;
 }
-std::vector<uint32_t> AliasAnalysisResult::inheritFrom(Value* ptr) const {
+const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const {
     assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.find(ptr)->second;
 }
@@ -94,6 +98,9 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
                         globalGroup.insert(id);
                     }
 
+            if(!inst->getType()->isPointer())
+                continue;
+
             switch(inst->getInstID()) {
                 case InstructionID::Alloc: {
                     uint32_t id = ++allocateID;
@@ -104,23 +111,36 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
                 }
                 case InstructionID::GetElementPtr: {
                     // TODO: handle distinct array indices and distinct struct fields
-                    const auto src = result.inheritFrom(inst->operands().back());
+                    const auto& src = result.inheritFrom(inst->operands().back());
                     result.addValue(inst, src);
                     break;
                 }
-                case InstructionID::PtrCast:
+                case InstructionID::PtrCast: {
+                    const auto& src = result.inheritFrom(inst->getOperand(0));
+                    result.addValue(inst, src);
+                    break;
+                }
+                case InstructionID::Select: {
+                    auto lhs = result.inheritFrom(inst->getOperand(1));
+                    std::sort(lhs.begin(), lhs.end());
+                    auto rhs = result.inheritFrom(inst->getOperand(2));
+                    std::sort(rhs.begin(), rhs.end());
+                    std::vector<uint32_t> intersection;
+                    std::set_intersection(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend(), std::back_inserter(intersection));
+                    result.addValue(inst, std::move(intersection));
+                    break;
+                }
+                case InstructionID::IntToPtr:
                     [[fallthrough]];
-                case InstructionID::IntToPtr: {
-                    result.addValue(inst, {});  // TODO: provide basic information
+                case InstructionID::Load:
+                    [[fallthrough]];
+                case InstructionID::Call: {
+                    result.addValue(inst, {});
                     break;
                 }
-                case InstructionID::Load: {
-                    if(inst->getType()->isPointer())
-                        result.addValue(inst, {});
-                    break;
+                default: {
+                    reportNotImplemented();
                 }
-                default:
-                    break;
             }
         }
     }

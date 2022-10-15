@@ -29,7 +29,7 @@ public:
     void addDistinctGroup(std::unordered_set<uint32_t> group);
     void addValue(Value* p, std::vector<uint32_t> attrs);
     bool isDistinct(Value* p1, Value* p2) const;
-    std::vector<uint32_t> inheritFrom(Value* value) const;
+    const std::vector<uint32_t>& inheritFrom(Value* value) const;
 };
 
 class AliasAnalysis final : public FuncAnalysisPassWrapper<AliasAnalysis, AliasAnalysisResult> {
