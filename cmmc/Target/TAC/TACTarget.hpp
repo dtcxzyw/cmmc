@@ -19,17 +19,13 @@
 CMMC_NAMESPACE_BEGIN
 
 enum class TACInstAttr : uint32_t {
-    FuseLoad0 = 1 << 0,
-    FuseLoad1 = 1 << 1,
-    FuseStore = 1 << 2,
+    WithImm0 = 1 << 0,
+    WithImm1 = 1 << 1,
+    WithImm2 = 1 << 2,
 
-    WithImm0 = 1 << 3,
-    WithImm1 = 1 << 4,
-    WithImm2 = 1 << 5,
-
-    CompareEqual = 1 << 6,
-    CompareLess = 1 << 7,
-    CompareReverse = 1 << 8,
+    CompareEqual = 1 << 3,
+    CompareLess = 1 << 4,
+    CompareReverse = 1 << 5,
 
     CmpEqual = CompareEqual,
     CmpNotEqual = CompareEqual | CompareReverse,
@@ -37,14 +33,10 @@ enum class TACInstAttr : uint32_t {
     CmpLessEqual = CompareLess | CompareEqual,
     CmpGreaterThan = CmpLessEqual | CompareReverse,
     CmpGreaterEqual = CmpLessThan | CompareReverse,
-    CmpMask = CompareEqual | CompareLess | CompareReverse,
-
-    FloatingPointOp = 1 << 9,
+    CmpMask = CompareEqual | CompareLess | CompareReverse
 };
 
 enum class TACInst : uint32_t {
-    Load,
-    Store,
     Read,
     Write,
     Return,
@@ -54,11 +46,13 @@ enum class TACInst : uint32_t {
     Div,
     PushArg,
     Call,
-    Compare,
     Branch,
     BranchCompare,
-    Copy,
-    LoadAddress
+    Address,
+    Fetch,
+    Deref,
+    Assign,
+    Decl
 };
 
 class TACDataLayout final : public DataLayout {

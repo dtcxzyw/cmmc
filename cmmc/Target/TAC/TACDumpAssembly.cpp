@@ -19,52 +19,23 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static void printConstant(std::ostream& out, uint64_t metadata, bool isFloatingPoint) {
-    out << '#';
-    if(isFloatingPoint) {
-        const auto ptr = static_cast<void*>(&metadata);
-        out << *static_cast<double*>(ptr);
-    } else
-        out << static_cast<int64_t>(metadata);
+static void printConstant(std::ostream& out, uint64_t metadata) {
+    out << '#' << static_cast<int64_t>(metadata);
 }
 
 static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t idx) {
     if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm0)) {
-        printConstant(out, inst.getImm(0), inst.hasAttr(TACInstAttr::FloatingPointOp));
+        printConstant(out, inst.getImm(0));
         return;
     }
 
     if(idx == 1 && inst.hasAttr(TACInstAttr::WithImm1)) {
-        printConstant(out, inst.getImm(1), inst.hasAttr(TACInstAttr::FloatingPointOp));
+        printConstant(out, inst.getImm(1));
         return;
     }
 
-    if(inst.hasAttr(static_cast<TACInstAttr>(static_cast<uint32_t>(TACInstAttr::FuseLoad0) << idx)))
-        out << '*';
     auto reg = inst.getReg(idx);
     out << 'v' << reg;
-}
-
-static void printAddress(std::ostream& out, const MachineInst& inst) {
-    const auto& addr = inst.getAddr();
-    if(auto reg = std::get_if<RegBase>(&addr.base); reg && addr.offset == 0)
-        out << "*v" << reg->reg;
-    else {
-        out << "unsupported ";
-        switch(addr.base.index()) {
-            case 0:
-                out << "stack";
-                break;
-            case 2:
-                out << "global";
-                break;
-            case 3:
-                out << "zero";
-                break;
-            default:
-                reportUnreachable();
-        }
-    }
 }
 
 static void printResult(std::ostream& out, const MachineInst& inst, uint32_t fusedIdx) {
@@ -184,33 +155,6 @@ void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
                         case TACInst::Call: {
                             printResult(out, inst, 0);
                             out << " := CALL " << std::get<Global>(inst.getAddr().base).symbol->getSymbol() << std::endl;
-                            break;
-                        }
-                        case TACInst::Compare: {
-                            emitBinary(out, inst, getCompareOp(inst));
-                            break;
-                        }
-                        case TACInst::Copy:
-                            [[fallthrough]];
-                        case TACInst::LoadAddress: {
-                            printResult(out, inst, 1);
-                            out << " := ";
-                            printOperand(out, inst, 0);
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::Load: {
-                            printResult(out, inst, 1);
-                            out << " := ";
-                            printAddress(out, inst);
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::Store: {
-                            printAddress(out, inst);
-                            out << " := ";
-                            printOperand(out, inst, 0);
-                            out << std::endl;
                             break;
                         }
                         default: {

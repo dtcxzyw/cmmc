@@ -41,8 +41,6 @@ bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
             [[fallthrough]];
         case TACInst::BranchCompare:
             [[fallthrough]];
-        case TACInst::Store:
-            [[fallthrough]];
         case TACInst::Return:
             [[fallthrough]];
         case TACInst::Call:
@@ -53,8 +51,9 @@ bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
             [[fallthrough]];
         case TACInst::Read:
             return true;
+        // TODO: more instructions
         default: {
-            return inst.hasAttr(TACInstAttr::FuseStore);
+            return false;
         }
     }
 }
