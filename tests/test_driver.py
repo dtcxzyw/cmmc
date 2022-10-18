@@ -74,8 +74,16 @@ def sysy_semantic(src):
 
 
 def sysy_opt(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-H', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+    white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
+    args = [binary_path, '-i', '-t', 'riscv', '-H', '-o',
+            '/dev/stdout', src]
+
+    for key in white_list:
+        if key in src:
+            args.insert(-1, '-U')
+            break
+
+    out = subprocess.run(args, capture_output=True, text=True)
     return out.returncode == 0
 
 

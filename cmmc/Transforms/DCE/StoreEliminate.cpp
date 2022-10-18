@@ -54,7 +54,7 @@ class StoreEliminate final : public TransformPass<Function> {
                     if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, blockArgMap, nullptr, visited))
                         return false;
                     if(falseTarget.getTarget() &&
-                       !isInvisible(addr, *trueTarget.getTarget(), aliasSet, blockArgMap, nullptr, visited))
+                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, blockArgMap, nullptr, visited))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();

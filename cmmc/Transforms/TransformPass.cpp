@@ -113,6 +113,9 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     }
 
     root->addPass(iter);  // post optimization
+
+    for(auto& pass : passesSource.collect(PassType::Postprocess))
+        root->addPass(pass);
     return root;
 }
 

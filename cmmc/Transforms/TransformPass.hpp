@@ -27,6 +27,7 @@ enum class PassType {
     SideEffectEquality,  // don't change side effects when the program executes normally, -O1
     TargetSpecific,      // target-specific optimizations (may cause binary bloat), -O2
     Expensive,           // take a much longer compile time, -O3
+    Postprocess,         // post processing (verification, etc.)
     Max
 };
 

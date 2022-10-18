@@ -39,7 +39,7 @@ void BlockArgument::setLabel(String label) {
     mLabel = std::move(label);
 }
 
-void Block::relabel() {
+void Block::dump(std::ostream& out) const {
     // relabel args and instructions
     LabelAllocator allocator;
     auto argBaseLabel = String::get("arg");  // TODO: use default label
@@ -48,9 +48,7 @@ void Block::relabel() {
     for(auto inst : mInstructions)
         if(inst->canbeOperand())
             inst->setLabel(allocator.allocate(inst->getLabel()));
-}
 
-void Block::dump(std::ostream& out) const {
     out << '^' << mLabel << '(';
     bool isFirst = true;
     for(auto arg : mArgs) {

@@ -53,10 +53,8 @@ void Function::dump(std::ostream& out) const {
     }
 
     LabelAllocator allocator;
-    for(auto block : mBlocks) {
+    for(auto block : mBlocks)
         block->setLabel(allocator.allocate(block->getLabel()));
-        block->relabel();
-    }
     out << " {" << std::endl;
     for(auto block : mBlocks)
         block->dump(out);

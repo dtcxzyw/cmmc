@@ -48,7 +48,6 @@ class Block final {
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
-    void relabel();
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
 
