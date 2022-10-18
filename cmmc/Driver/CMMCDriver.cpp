@@ -81,7 +81,8 @@ static int runIRPipeline(Module& module, const std::string& base) {
     reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 
     std::ofstream out{ path };
-    const auto machineModule = lowerToMachineModule(module);
+    AnalysisPassManager analysis{ &module };
+    const auto machineModule = lowerToMachineModule(module, analysis);
     assert(machineModule->verify());
     {
         Stage stage{ "dump ASM" };

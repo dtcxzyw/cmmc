@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -90,11 +91,14 @@ MachineSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     reportUnreachable();
 }
 
-static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, MachineModule& machineModule) {
+static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, MachineModule& machineModule,
+                                   AnalysisPassManager& analysis) {
     std::unordered_map<Block*, MachineBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Register> blockArgMap;
     std::unordered_map<Value*, Register> valueMap;
     std::unordered_map<Value*, Address> addressMap;
+    auto& argMap = analysis.get<BlockArgumentAnalysis>(*func);
+    CMMC_UNUSED(argMap);
 
     auto allocateBase = makeVirtualRegister(0);
 
@@ -148,7 +152,7 @@ static void lowerToMachineFunction(MachineFunction* mfunc, Function* func, Machi
     }
 }
 
-static auto lowerToMachineModule(MachineModule& machineModule, const Module& module) {
+static auto lowerToMachineModule(MachineModule& machineModule, const Module& module, AnalysisPassManager& analysis) {
     auto& symbols = machineModule.symbols();
 
     std::unordered_map<MachineFunction*, Function*> funcTask;
@@ -169,7 +173,7 @@ static auto lowerToMachineModule(MachineModule& machineModule, const Module& mod
     }
 
     for(auto [mfunc, func] : funcTask)
-        lowerToMachineFunction(mfunc, func, machineModule);
+        lowerToMachineFunction(mfunc, func, machineModule, analysis);
     return funcTask;
 }
 
@@ -177,13 +181,13 @@ void optimizeBlockLayout(MachineFunction& func, const Target& target);
 void schedule(MachineFunction& func, const Target& target);
 void allocateStackObjects(MachineFunction& func, const Target& target);
 
-std::unique_ptr<MachineModule> lowerToMachineModule(Module& module) {
+std::unique_ptr<MachineModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis) {
     Stage stage{ "lower to MIR" };
 
     auto& target = module.getTarget();
     // Stage1: instruction selection
     auto machineModule = std::make_unique<MachineModule>(target);
-    auto funcMap = lowerToMachineModule(*machineModule, module);
+    auto funcMap = lowerToMachineModule(*machineModule, module, analysis);
     // Stage2: peephole optimizations
     auto& subTarget = target.getSubTarget();
     subTarget.peepholeOpt(*machineModule);

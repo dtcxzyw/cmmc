@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/MachineInst.hpp>
 #include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/Register.hpp>
@@ -56,6 +57,6 @@ public:
 };
 
 class Module;
-std::unique_ptr<MachineModule> lowerToMachineModule(Module& module);
+std::unique_ptr<MachineModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis);
 
 CMMC_NAMESPACE_END

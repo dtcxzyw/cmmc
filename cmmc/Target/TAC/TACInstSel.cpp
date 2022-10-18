@@ -34,15 +34,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool TACInstInfo::isSupportedInstruction(InstructionID) const noexcept {
-    return true;
+bool TACInstInfo::isSupportedInstruction(InstructionID instID) const noexcept {
+    return !(InstructionID::FloatingPointOpBegin < instID && instID < InstructionID::FloatingPointOpEnd);
 }
 
 void TACInstInfo::emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const {
     const auto ret = ctx.newReg();
     const auto lhs = ctx.mapOperand(inst->getOperand(0));
     const auto rhs = ctx.mapOperand(inst->getOperand(1));
-    ctx.emitInst(instID).setReg(0, lhs).setReg(1, rhs);
+    ctx.emitInst(instID).setReg(0, lhs).setReg(1, rhs).setWriteReg(ret);
     ctx.addOperand(inst, ret);
 }
 
