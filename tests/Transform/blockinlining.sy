@@ -1,0 +1,13 @@
+int fac(int a) {
+    int res;
+    if(a == 1)
+        res = 1;
+    else 
+        res = a * fac(a - 1);
+    return res;
+}
+
+int main() {
+    int x = getint();
+    return fac(x);
+}
