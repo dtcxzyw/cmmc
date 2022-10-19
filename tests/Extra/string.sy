@@ -1,0 +1,29 @@
+void concat(const char a[], const char b[], char c[]) {
+    int j = 0;
+    for(int i = 0;a[i];i = i + 1) {
+        c[j] = a[i];
+        j = j + 1;
+    }
+    c[j] = ' ';
+    j = j + 1;
+    for(int i = 0;b[i];i = i + 1) {
+        c[j] = b[i];
+        j = j + 1;
+    }
+    c[j] = '\0';
+}
+int BKDRHash(const char a[]) {
+    int ret = 0;
+    for(int i = 0;a[i];i = i + 1) {
+        ret = ret * 131 + a[i];
+    }
+    return ret;
+}
+const char a[] = "Hello";
+int main() {
+    const char b[] = "World";
+    const int BUF_SIZ = 512;
+    char c[BUF_SIZ];
+    concat(a,b,c);
+    return BKDRHash(c);
+}
