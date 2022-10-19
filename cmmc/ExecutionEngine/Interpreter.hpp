@@ -27,7 +27,8 @@ enum class SimulationFailReason {
     ExceedMaxRecordedSizeEffect,  //
     UnexpectedException,          //
     UndeterminedControlFlow,      //
-    UndeterminedSideEffect
+    UndeterminedSideEffect,       //
+    UnsupportedTarget
 };
 
 class Interpreter final {
@@ -39,7 +40,8 @@ class Interpreter final {
 public:
     Interpreter(size_t timeBudget = 10'000'000'000U, size_t memBudget = 2 << 30U, size_t maxRecursiveDepth = 256,
                 size_t maxRecordedSizeEffect = 128);
-    std::variant<Function*, SimulationFailReason> execute(Function& func, const std::vector<ConstantValue*>& arguments) const;
+    std::variant<Function*, SimulationFailReason> execute(Module& module, Function& func,
+                                                          const std::vector<ConstantValue*>& arguments) const;
 };
 
 CMMC_NAMESPACE_END
