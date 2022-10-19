@@ -69,6 +69,7 @@ public:
             if(nextBlock->instructions().size() > sizeThreshold)
                 continue;
 
+            modified = true;
             auto& insts = block->instructions();
             insts.pop_back();
 

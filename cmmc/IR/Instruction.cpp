@@ -287,8 +287,8 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
         auto& args2 = block->args();
         if(args1.size() != args2.size()) {
             out << "The counts of block arguments mismatch." << std::endl;
-            out << "Source block: " << getBlock()->getLabel() << std::endl;
-            out << "Dest block: " << block->getLabel() << std::endl;
+            out << "Source block: " << getBlock()->getLabel() << " provided " << args1.size() << std::endl;
+            out << "Dest block: " << block->getLabel() << " required " << args2.size() << std::endl;
             return false;
         }
         for(uint32_t idx = 0; idx < args1.size(); ++idx) {

@@ -61,11 +61,17 @@ static std::string getOutputPath(const std::string& defaultPath) {
 }
 
 static int runIRPipeline(Module& module, const std::string& base) {
+    if(!module.verify(std::cerr)) {
+        DiagnosticsContext::get().attach<Reason>("Invalid IR").reportFatal();
+    }
     {
         Stage stage{ "optimize IR" };
         const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
         AnalysisPassManager analysis{ &module };
         opt->run(module, analysis);
+    }
+    if(!module.verify(std::cerr)) {
+        DiagnosticsContext::get().attach<Reason>("Invalid optimized IR").reportFatal();
     }
 
     if(emitIR.get()) {
