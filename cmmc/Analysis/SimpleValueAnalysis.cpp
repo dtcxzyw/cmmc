@@ -14,6 +14,7 @@
 
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -69,8 +70,14 @@ void SimpleValueAnalysis::next(Instruction* inst) {
 
     // globals
     for(auto operand : inst->operands())
-        if(operand->isGlobal() && operand->getType()->isPointer())
+        if(operand->isGlobal() && operand->getType()->isPointer()) {
             mBasePointer.emplace(operand, operand);
+            // read-only globals
+            const auto var = operand->as<GlobalVariable>();
+            if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly) && var->initialValue()) {
+                mLastValue[operand].emplace(operand, var->initialValue());
+            }
+        }
 
     switch(inst->getInstID()) {
         case InstructionID::Load: {
