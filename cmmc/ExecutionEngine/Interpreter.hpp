@@ -28,7 +28,8 @@ enum class SimulationFailReason {
     UnexpectedException,          //
     UndeterminedControlFlow,      //
     UndeterminedSideEffect,       //
-    UnsupportedTarget
+    UnsupportedTarget,            // non-64-bit-el target
+    UnsupportedInstruction        // int2ptr/ptr2int
 };
 
 class Interpreter final {

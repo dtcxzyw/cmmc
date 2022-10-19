@@ -12,13 +12,13 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <deque>
 #include <map>
@@ -179,20 +179,18 @@ public:
         }
     }
 
-    void storeValue(uintptr_t val, Value* value) {
-        const auto alignment = value->getType()->getSize(mDataLayout);
-        if(val % alignment != 0) {
+    void storeValue(uintptr_t ptr, Value* value) {
+        const auto alignment = value->getType()->getAlignment(mDataLayout);
+        if(ptr % alignment != 0) {
             mHasMemoryError = true;
             return;
         }
-        // TODO: check alignment
-
         if(value->isConstant()) {
-
+            reportNotImplemented();
         } else {
             const auto size = value->getType()->getSize(mDataLayout);
-            CMMC_UNUSED(size);
-            // make them undetermined
+            for(size_t idx = 0; idx < size; ++idx)
+                store(ptr + idx, invalidByte);
         }
     }
 };
