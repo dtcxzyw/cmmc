@@ -145,7 +145,11 @@ enum class OperatorID {
     LogicalOr,
     BitwiseOr,
     Xor,
-    Assign
+    Assign,
+    PrefixInc,
+    PrefixDec,
+    SuffixInc,
+    SuffixDec
 };
 
 class BinaryExpr final : public Expr {
@@ -176,6 +180,16 @@ class UnaryExpr final : public Expr {
 
 public:
     UnaryExpr(const SourceLocation& location, OperatorID op, Expr* value) noexcept
+        : Expr{ location }, mOp{ op }, mValue{ value } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class SelfIncDecExpr final : public Expr {
+    OperatorID mOp;
+    Expr* mValue;
+
+public:
+    SelfIncDecExpr(const SourceLocation& location, OperatorID op, Expr* value) noexcept
         : Expr{ location }, mOp{ op }, mValue{ value } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };

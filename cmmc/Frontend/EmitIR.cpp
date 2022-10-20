@@ -503,6 +503,38 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     }
 }
 
+QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
+    auto [ptr, qualifier] = ctx.getLValue(mValue);
+    if(qualifier.isConst)
+        DiagnosticsContext::get()
+            .attach<Reason>("Cannot apply self increment/decrement operator to an immutable left value")
+            .reportFatal();
+    const auto type = ptr->getType()->as<PointerType>()->getPointee();
+    const auto val = ctx.makeOp<LoadInst>(ptr);
+    if(type->isBoolean()) {
+        reportWarning() << "Apply self increment/decrement operator to a boolean" << std::endl;
+    }
+    InstructionID instID;
+    Value* rhs;
+    if(type->isInteger()) {
+        rhs = make<ConstantInteger>(val->getType(), 1);
+        instID = ((mOp == OperatorID::PrefixInc || mOp == OperatorID::SuffixInc) ? InstructionID::Add : InstructionID::Sub);
+    } else if(type->isFloatingPoint()) {
+        rhs = make<ConstantFloatingPoint>(val->getType(), 1.0);
+        instID = ((mOp == OperatorID::PrefixInc || mOp == OperatorID::SuffixInc) ? InstructionID::FAdd : InstructionID::FSub);
+    } else {
+        DiagnosticsContext::get().attach<Reason>("Unsupported type for self increment/decrement operator").reportFatal();
+    }
+
+    const auto newVal = ctx.makeOp<BinaryInst>(instID, type, val, rhs);
+    ctx.makeOp<StoreInst>(ptr, newVal);
+    if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
+        return QualifiedValue{ ptr, ValueQualifier::AsLValue, qualifier };
+    } else {
+        return QualifiedValue{ val, ValueQualifier::AsRValue, qualifier };
+    }
+}
+
 QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
     // TODO: signed/unsigned?
     return QualifiedValue{ make<ConstantInteger>(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),

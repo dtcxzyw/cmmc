@@ -48,6 +48,7 @@
 // Aggregate Keywords
 %token STRUCT UNION
 // Unary/Binary Operators
+%token INC DEC
 %token PLUS MINUS MUL DIV REM
 %token NOT BNOT AND BAND OR BOR XOR
 %token LT GT LE GE EQ NE
@@ -73,8 +74,8 @@
 %left LT LE GT GE
 %left PLUS MINUS
 %left MUL DIV REM
-%right UPLUS UMINUS BNOT NOT
-%left LB LP DOT
+%right UPLUS UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC
+%left LB LP DOT SUFFIX_INC SUFFIX_DEC
 
 // Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
 %precedence THEN
@@ -194,6 +195,10 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp BOR Exp { $$ = CMMC_BINARY_OP(@2, BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp XOR Exp { $$ = CMMC_BINARY_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| INC Exp %prec PREFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixInc, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| DEC Exp %prec PREFIX_DEC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixDec, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| Exp INC %prec SUFFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@2, SuffixInc, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| Exp DEC %prec SUFFIX_DEC {$$ = CMMC_SELF_INCDEC_OP(@2, SuffixDec, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | PLUS Exp %prec UPLUS { $$ = CMMC_UNARY_OP(@1, Positive, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
