@@ -26,7 +26,6 @@
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <fstream>
-#include <iostream>
 #include <unordered_map>
 #include <variant>
 #include <vector>
@@ -130,8 +129,6 @@ void loadTAC(Module& module, const std::string& path) {
         postTerminator.clear();
         blockMap.clear();
         identifierMap.clear();
-
-        func->dump(std::cerr);
 
         // insert unreachables
         for(auto block : func->blocks()) {

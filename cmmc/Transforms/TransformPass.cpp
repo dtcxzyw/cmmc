@@ -103,7 +103,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             basic->addPass(pass);
     }
 
-    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 128);
+    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 512);
 
     root->addPass(iter);  // pre optimization
 
