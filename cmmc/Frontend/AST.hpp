@@ -194,6 +194,22 @@ public:
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
+class AddressExpr final : public Expr {
+    Expr* mValue;
+
+public:
+    AddressExpr(const SourceLocation& location, Expr* value) noexcept : Expr{ location }, mValue{ value } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class DerefExpr final : public Expr {
+    Expr* mValue;
+
+public:
+    DerefExpr(const SourceLocation& location, Expr* value) noexcept : Expr{ location }, mValue{ value } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
 class ConstantIntExpr final : public Expr {
     uintmax_t mValue;
     uint32_t mBitWidth;

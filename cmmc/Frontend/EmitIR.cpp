@@ -535,6 +535,15 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     }
 }
 
+QualifiedValue AddressExpr::emit(EmitContext& ctx) const {
+    const auto [val, qualifier] = ctx.getLValue(mValue);
+    return { val, ValueQualifier::AsRValue, qualifier };
+}
+QualifiedValue DerefExpr::emit(EmitContext& ctx) const {
+    const auto [val, qualifier] = ctx.getRValue(mValue);
+    return { val, ValueQualifier::AsLValue, qualifier };
+}
+
 QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
     // TODO: signed/unsigned?
     return QualifiedValue{ make<ConstantInteger>(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),
@@ -981,6 +990,8 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
             if(expr == nullptr) {
                 unknownSize = true;
                 ret = make<PointerType>(ret);
+                // TODO: add const qualifier
+                // int[] -> int* const
             } else {
                 const auto constantSize = getRValue(*iter, getIndexType(), Qualifier::getUnsigned());
 

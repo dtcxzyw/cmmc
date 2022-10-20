@@ -74,7 +74,7 @@
 %left LT LE GT GE
 %left PLUS MINUS
 %left MUL DIV REM
-%right UPLUS UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC
+%right UPLUS UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC DEREF ADDRESS
 %left LB LP DOT SUFFIX_INC SUFFIX_DEC
 
 // Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
@@ -199,6 +199,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | DEC Exp %prec PREFIX_DEC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixDec, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | Exp INC %prec SUFFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@2, SuffixInc, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | Exp DEC %prec SUFFIX_DEC {$$ = CMMC_SELF_INCDEC_OP(@2, SuffixDec, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| BAND Exp %prec ADDRESS {$$ = CMMC_ADDRESS_OP(@1, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| MUL Exp %prec DEREF {$$ = CMMC_DEREF_OP(@1, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | PLUS Exp %prec UPLUS { $$ = CMMC_UNARY_OP(@1, Positive, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
