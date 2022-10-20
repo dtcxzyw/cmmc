@@ -22,7 +22,7 @@
 // b2():
 //     return 0;
 
-// recursion
+// cycles
 // entry(int a, int b):
 //     break b2(a);
 // b2(int a):
@@ -120,8 +120,14 @@ class BlockArgEliminate final : public TransformPass<Function> {
         return !modified.empty();
     }
 
-    bool tryElimiteArgPath(BlockArgument* arg, std::unordered_map<Block*, bool>& visit,
-                           std::unordered_set<BlockArgument*>& interested) const {
+    // TODO: improve eliminate performance
+    static constexpr uint32_t maxDepth = 32;
+
+    bool tryEliminateArgPath(BlockArgument* arg, std::unordered_map<Block*, bool>& visit,
+                             std::unordered_set<BlockArgument*>& interested, uint32_t depth) const {
+        if(depth > maxDepth)
+            return false;
+
         if(!interested.count(arg))
             return false;
 
@@ -138,7 +144,7 @@ class BlockArgEliminate final : public TransformPass<Function> {
                     return true;
                 for(uint32_t idx = 0; idx < target.getArgs().size(); ++idx) {
                     if(target.getArgs()[idx] == arg) {
-                        if(!tryElimiteArgPath(target.getTarget()->getArg(idx), visit, interested)) {
+                        if(!tryEliminateArgPath(target.getTarget()->getArg(idx), visit, interested, depth + 1)) {
                             return false;
                         }
                     }
@@ -170,7 +176,9 @@ class BlockArgEliminate final : public TransformPass<Function> {
                     if(inst->isBranch()) {
                         if(inst->getInstID() == InstructionID::ConditionalBranch && inst->getOperand(0) == arg) {
                             used = true;
+                            break;
                         }
+                        continue;
                     }
                     if(inst->hasOperand(arg)) {
                         used = true;
@@ -185,7 +193,7 @@ class BlockArgEliminate final : public TransformPass<Function> {
         std::unordered_set<BlockArgument*> removeList;
 
         for(auto arg : interested)
-            if(tryElimiteArgPath(arg, visit, interested))
+            if(tryEliminateArgPath(arg, visit, interested, 0))
                 removeList.insert(arg);
 
         bool isModified = false;
