@@ -130,6 +130,8 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         for(auto st : block)
             st->emitWithLoc(ctx);
     }
+
+    ctx.popScope();
     ctx.setCurrentBlock(nullptr);  // clean up
 
     {
@@ -162,7 +164,6 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         sortBlocks(*func);
     }
 
-    ctx.popScope();
     assert(func->verify(reportDebug()));
 }
 
@@ -865,6 +866,9 @@ void EmitContext::popScope() {
         if(auto iter = uniqueVariables.find(symbol); iter != uniqueVariables.cend())
             uniqueVariables.erase(iter);
         mConstantBinding.erase(val.value);
+        if(auto alloc = dynamic_cast<StackAllocInst*>(val.value)) {
+            makeOp<StackFreeInst>(alloc);
+        }
     }
     mScopes.pop_back();
 }
@@ -1292,10 +1296,12 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(iteration);
     if(mIteration)
         mIteration->emitWithLoc(ctx);
+
     ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
 
-    ctx.popScope();
     ctx.setCurrentBlock(next);
+    ctx.popScope();
+
     return QualifiedValue{ nullptr };
 }
 std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value) {

@@ -88,6 +88,7 @@ enum class InstructionID {
     ConvertOpEnd,
     // miscellaneous
     Alloc,
+    Free,
     GetElementPtr,
     PtrCast,
     PtrToInt,
@@ -347,6 +348,16 @@ class StackAllocInst final : public Instruction {
 public:
     // TODO: VLA
     explicit StackAllocInst(const Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
+
+    void dump(std::ostream& out) const override;
+    Instruction* clone() const override;
+};
+
+class StackFreeInst final : public Instruction {
+public:
+    explicit StackFreeInst(Value* ptr) : Instruction{ InstructionID::Free, VoidType::get(), { ptr } } {
+        assert(ptr->getType()->isPointer());
+    }
 
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;

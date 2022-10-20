@@ -55,6 +55,8 @@ BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisP
                 Value* root = nullptr;
                 for(auto& [predBlock, pred] : cfg.predecessors(block)) {
                     CMMC_UNUSED(predBlock);
+                    if(predBlock == block && pred->getArgs()[idx] == block->args()[idx])
+                        continue;  // TODO: handle long cycle
 
                     auto val = result.queryRoot(pred->getArgs()[idx]);
                     if(root) {

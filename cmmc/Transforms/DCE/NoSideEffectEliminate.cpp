@@ -44,10 +44,11 @@ public:
 
         for(auto block : func.blocks()) {
             for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Store) {
+                const auto instID = inst->getInstID();
+                if(instID == InstructionID::Store || instID == InstructionID::Free) {
                     used.insert(inst);
                     q.push(inst);
-                } else if(inst->getInstID() == InstructionID::Call) {
+                } else if(instID == InstructionID::Call) {
                     const auto callee = inst->getOperand(inst->operands().size() - 1);
                     if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
                         continue;

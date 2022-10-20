@@ -48,7 +48,7 @@ bool Instruction::canbeOperand() const noexcept {
     if(mInstID == InstructionID::Call) {
         return !getType()->isVoid();
     }
-    return !isTerminator() && mInstID != InstructionID::Store;
+    return !isTerminator() && mInstID != InstructionID::Store && mInstID != InstructionID::Free;
 }
 
 bool Instruction::verify(std::ostream& out) const {
@@ -151,6 +151,8 @@ static const char* getInstName(InstructionID instID) {
             return "s2f";
         case InstructionID::Alloc:
             return "alloc";
+        case InstructionID::Free:
+            return "free";
         case InstructionID::GetElementPtr:
             return "getelementptr";
         case InstructionID::PtrCast:
@@ -395,6 +397,10 @@ void StackAllocInst::dump(std::ostream& out) const {
     getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
+void StackFreeInst::dump(std::ostream& out) const {
+    dumpUnary(out);
+}
+
 void FMAInst::dump(std::ostream& out) const {
     dumpBinary(out);
     out << ", ";
@@ -507,6 +513,10 @@ Instruction* SelectInst::clone() const {
 
 Instruction* StackAllocInst::clone() const {
     return make<StackAllocInst>(getType()->as<PointerType>()->getPointee());
+}
+
+Instruction* StackFreeInst::clone() const {
+    return make<StackFreeInst>(getOperand(0));
 }
 
 Instruction* FMAInst::clone() const {

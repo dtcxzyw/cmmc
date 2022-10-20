@@ -77,6 +77,10 @@ class StoreEliminate final : public TransformPass<Function> {
                     if(!aliasSet.isDistinct(addr, storeAddr)) {
                         return false;
                     }
+                } else if(inst->getInstID() == InstructionID::Free) {
+                    if(blockArgMap.queryRoot(inst->getOperand(0)) == addr) {
+                        break;  // end of lifetime
+                    }
                 } else {
                     for(auto operand : inst->operands())
                         if(operand->getType()->isPointer() && !aliasSet.isDistinct(addr, blockArgMap.queryRoot(operand)))
