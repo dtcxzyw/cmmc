@@ -8,5 +8,5 @@ int main() {
     b[2] = 5;
     *(b + 1) = 10;
     int* c = a;
-    return test(c) + test(a) + c[0] + c[1] + c[2];
+    return a + 1 == b ? test(c) + test(a) + c[0] + c[1] + c[2]: c - a;
 }
