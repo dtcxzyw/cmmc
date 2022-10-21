@@ -123,7 +123,7 @@ class FuncInlining final : public TransformPass<Function> {
                 if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
-                        if(shouldInline(*calleeFunc)) {
+                        if(!calleeFunc->blocks().empty() && shouldInline(*calleeFunc)) {
                             applyInline(block, iter, &func, calleeFunc);
                             return true;
                         }
@@ -136,8 +136,6 @@ class FuncInlining final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
-        if(!func.attr().hasAttr(FunctionAttribute::NoRecurse))
-            return false;
         bool modified = false;
         while(tryInline(func))
             modified = true;

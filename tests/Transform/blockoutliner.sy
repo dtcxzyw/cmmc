@@ -1,0 +1,11 @@
+int main() {
+    if(getint()) {
+        putint(getint());
+        return 0;
+    }
+    else {
+        putint(getint());
+        return 0;
+    }
+    return 0;
+}
