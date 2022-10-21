@@ -1,0 +1,28 @@
+int pow1(int x) {
+    return x;
+}
+int pow2(int x) {
+    return x*x;
+}
+int pow3(int x) {
+    return pow2(x)*x;
+}
+int pow4(int x) {
+    return pow3(x)*x;
+}
+int pow5(int x) {
+    return pow4(x)*x;
+}
+int pow6(int x) {
+    return pow5(x)*x;
+}
+int main() {
+    int x = getint();
+    putint(pow1(x));
+    putint(pow2(x));
+    putint(pow3(x));
+    putint(pow4(x));
+    putint(pow5(x));
+    putint(pow6(x));
+    return x;
+}

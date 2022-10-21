@@ -76,8 +76,6 @@ BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisP
             }
         }
 
-        // TODO: merge same constant value
-
         if(!modified)
             break;
     }

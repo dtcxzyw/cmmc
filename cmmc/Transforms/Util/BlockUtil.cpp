@@ -61,12 +61,16 @@ static bool applyReplace(Instruction* inst, std::unordered_map<Value*, Value*>& 
     return modified;
 }
 bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace) {
+    if(replace.empty())
+        return false;
     bool modified = false;
     for(auto inst : block.instructions())
         modified |= applyReplace(inst, replace);
     return modified;
 }
 bool replaceOperands(const std::vector<Instruction*>& insts, std::unordered_map<Value*, Value*>& replace) {
+    if(replace.empty())
+        return false;
     bool modified = false;
     for(auto inst : insts)
         modified |= applyReplace(inst, replace);
