@@ -18,7 +18,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <getopt.h>
-#include <iostream>
 #include <ostream>
 #include <string>
 #include <string_view>

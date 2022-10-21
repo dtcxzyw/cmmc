@@ -36,7 +36,6 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
-#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>

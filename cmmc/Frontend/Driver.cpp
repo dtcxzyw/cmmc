@@ -16,7 +16,7 @@
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <fstream>
-#include <iostream>
+
 #include <string>
 
 CMMC_NAMESPACE_BEGIN

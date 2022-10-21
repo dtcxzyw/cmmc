@@ -31,7 +31,7 @@ struct InstHasher final {
     size_t operator()(const Instruction* inst) const {
         size_t hashValue = std::hash<InstructionID>{}(inst->getInstID());
         for(auto operand : inst->operands())
-            hashValue ^= std::hash<Value*>{}(operand);
+            hashValue = hashValue * 131 + std::hash<Value*>{}(operand);
         return hashValue;
     }
 };
@@ -39,6 +39,8 @@ struct InstHasher final {
 struct InstEqual final {
     bool operator()(const Instruction* lhs, const Instruction* rhs) const {
         if(lhs->getInstID() != rhs->getInstID())
+            return false;
+        if(!lhs->getType()->isSame(rhs->getType()))
             return false;
         auto& lhsOperands = lhs->operands();
         auto& rhsOperands = rhs->operands();

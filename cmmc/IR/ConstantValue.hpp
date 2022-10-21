@@ -21,11 +21,26 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantValue : public Value {
+protected:
+    template <typename T, typename Callable>
+    bool isEqualImpl(ConstantValue* rhs, Callable callable) const {
+        if(this == rhs)
+            return true;
+        if(auto rhsValue = dynamic_cast<T*>(rhs)) {
+            if(!this->getType()->isSame(rhs->getType()))
+                return false;
+            return callable(rhsValue);
+        }
+        return false;
+    }
+
 public:
     explicit ConstantValue(const Type* type) : Value{ type } {}
     bool isConstant() const noexcept override {
         return true;
     }
+    virtual bool isEqual(ConstantValue* rhs) const = 0;
+    virtual size_t hash() const = 0;
 };
 
 class ConstantInteger final : public ConstantValue {
@@ -39,6 +54,8 @@ public:
 
     uintmax_t getZeroExtended() const noexcept;
     intmax_t getSignExtended() const noexcept;
+    bool isEqual(ConstantValue* rhs) const override;
+    size_t hash() const override;
 };
 
 class ConstantFloatingPoint final : public ConstantValue {
@@ -51,6 +68,8 @@ public:
     void dump(std::ostream& out) const override;
     double getValue() const noexcept;
     bool isEqual(double val) const noexcept;
+    bool isEqual(ConstantValue* rhs) const override;
+    size_t hash() const override;
 };
 
 class ConstantOffset final : public ConstantValue {
@@ -67,6 +86,8 @@ public:
         return mIndex;
     }
     String getName() const;
+    bool isEqual(ConstantValue* rhs) const override;
+    size_t hash() const override;
 };
 
 class ConstantArray final : public ConstantValue {
@@ -78,6 +99,8 @@ public:
     const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
+    bool isEqual(ConstantValue* rhs) const override;
+    size_t hash() const override;
 };
 
 class UndefinedValue final : public ConstantValue {
@@ -86,6 +109,8 @@ public:
         assert(!type->isVoid());
     }
     void dump(std::ostream& out) const override;
+    bool isEqual(ConstantValue* rhs) const override;
+    size_t hash() const override;
 };
 
 CMMC_NAMESPACE_END

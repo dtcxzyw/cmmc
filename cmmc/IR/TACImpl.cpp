@@ -18,6 +18,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <variant>

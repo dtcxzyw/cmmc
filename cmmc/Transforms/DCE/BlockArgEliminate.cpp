@@ -43,7 +43,6 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdint>
-#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>

@@ -17,7 +17,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
-#include <ostream>
 #include <sstream>
 
 CMMC_NAMESPACE_BEGIN

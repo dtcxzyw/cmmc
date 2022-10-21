@@ -38,7 +38,6 @@
 #ifndef YY_YY_BUILD_GENERATED_LOCATION_HH_INCLUDED
 #define YY_YY_BUILD_GENERATED_LOCATION_HH_INCLUDED
 
-#include <iostream>
 #include <string>
 
 #ifndef YY_NULLPTR

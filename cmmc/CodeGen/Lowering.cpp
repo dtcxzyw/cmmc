@@ -21,7 +21,6 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Profiler.hpp>
-#include <iostream>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN

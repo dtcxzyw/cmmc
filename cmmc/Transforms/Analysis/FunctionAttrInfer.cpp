@@ -17,7 +17,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <iostream>
 #include <queue>
 #include <string_view>
 #include <unordered_set>

@@ -48,22 +48,20 @@
 // ^d(i32 %x):
 //
 
-#include "cmmc/Analysis/AnalysisPass.hpp"
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/FunctionAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
-#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>

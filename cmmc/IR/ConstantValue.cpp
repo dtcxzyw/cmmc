@@ -13,8 +13,10 @@
 */
 
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
+#include <functional>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -77,6 +79,42 @@ void ConstantArray::dump(std::ostream& out) const {
         val->dump(out);
     }
     out << ']';
+}
+
+size_t ConstantInteger::hash() const {
+    return std::hash<intmax_t>{}(getSignExtended());
+}
+bool ConstantInteger::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<ConstantInteger>(rhs,
+                                        [&](ConstantInteger* rhs) { return this->getSignExtended() == rhs->getSignExtended(); });
+}
+
+size_t ConstantFloatingPoint::hash() const {
+    return std::hash<double>{}(getValue());
+}
+bool ConstantFloatingPoint::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<ConstantFloatingPoint>(rhs, [&](ConstantFloatingPoint* rhs) { return getValue() == rhs->getValue(); });
+}
+
+size_t ConstantOffset::hash() const {
+    return std::hash<uint32_t>{}(mIndex) ^ std::hash<const StructType*>{}(mBase);
+}
+bool ConstantOffset::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<ConstantOffset>(rhs, [&](ConstantOffset* rhs) { return mBase == rhs->mBase && mIndex == rhs->mIndex; });
+}
+
+size_t ConstantArray::hash() const {
+    return std::hash<const ConstantArray*>{}(this);
+}
+bool ConstantArray::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<ConstantArray>(rhs, [](ConstantArray*) { return false; });
+}
+
+size_t UndefinedValue::hash() const {
+    return 0;
+}
+bool UndefinedValue::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<UndefinedValue>(rhs, [](UndefinedValue*) { return true; });
 }
 
 CMMC_NAMESPACE_END

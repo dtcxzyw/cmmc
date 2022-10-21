@@ -16,7 +16,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cstdint>
-#include <iostream>
+
 #include <variant>
 #include <vector>
 

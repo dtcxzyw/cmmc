@@ -19,7 +19,6 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 
