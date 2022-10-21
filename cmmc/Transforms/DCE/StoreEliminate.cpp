@@ -20,7 +20,6 @@
 // int* a = alloc int;
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -35,8 +34,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class StoreEliminate final : public TransformPass<Function> {
-    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet,
-                            const BlockArgumentAnalysisResult& blockArgMap, Instruction* store,
+    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet, Instruction* store,
                             std::unordered_set<Block*>& visited) {
         if(!store) {
             if(visited.count(&block))
@@ -51,10 +49,9 @@ class StoreEliminate final : public TransformPass<Function> {
                     const auto branch = inst->as<ConditionalBranchInst>();
                     const auto& trueTarget = branch->getTrueTarget();
                     const auto& falseTarget = branch->getFalseTarget();
-                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, blockArgMap, nullptr, visited))
+                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, nullptr, visited))
                         return false;
-                    if(falseTarget.getTarget() &&
-                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, blockArgMap, nullptr, visited))
+                    if(falseTarget.getTarget() && !isInvisible(addr, *falseTarget.getTarget(), aliasSet, nullptr, visited))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
@@ -64,10 +61,10 @@ class StoreEliminate final : public TransformPass<Function> {
                     } else
                         return false;
                 } else if(inst->getInstID() == InstructionID::Store) {
-                    const auto storeAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                    const auto storeAddr = inst->getOperand(0);
                     const auto storeValue = inst->getOperand(1);
 
-                    if(storeValue->getType()->isPointer() && !aliasSet.isDistinct(addr, blockArgMap.queryRoot(storeValue)))
+                    if(storeValue->getType()->isPointer() && !aliasSet.isDistinct(addr, storeValue))
                         return false;
 
                     // overrided
@@ -78,12 +75,12 @@ class StoreEliminate final : public TransformPass<Function> {
                         return false;
                     }
                 } else if(inst->getInstID() == InstructionID::Free) {
-                    if(blockArgMap.queryRoot(inst->getOperand(0)) == addr) {
+                    if(inst->getOperand(0) == addr) {
                         break;  // end of lifetime
                     }
                 } else {
                     for(auto operand : inst->operands())
-                        if(operand->getType()->isPointer() && !aliasSet.isDistinct(addr, blockArgMap.queryRoot(operand)))
+                        if(operand->getType()->isPointer() && !aliasSet.isDistinct(addr, operand))
                             return false;
                 }
             } else if(inst == store) {
@@ -93,15 +90,15 @@ class StoreEliminate final : public TransformPass<Function> {
         return true;
     }
 
-    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet, const BlockArgumentAnalysisResult& blockArgMap) {
+    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet) {
         auto& insts = block.instructions();
         const auto size = insts.size();
         insts.remove_if([&](Instruction* inst) {
             if(inst->getInstID() != InstructionID::Store)
                 return false;
-            const auto addr = blockArgMap.queryRoot(inst->getOperand(0));
+            const auto addr = inst->getOperand(0);
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, blockArgMap, inst, visited);
+            return isInvisible(addr, block, aliasSet, inst, visited);
         });
         return insts.size() != size;
     }
@@ -109,10 +106,9 @@ class StoreEliminate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet, blockArgMap);
+            modified |= runOnBlock(*block, aliasSet);
         }
         return modified;
     }

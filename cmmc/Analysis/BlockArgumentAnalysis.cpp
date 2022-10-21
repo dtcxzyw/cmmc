@@ -14,7 +14,7 @@
 
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
-#include <cmmc/Config.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -27,8 +27,7 @@ Value* BlockArgumentAnalysisResult::queryRoot(Value* arg) const {
     if(auto blockArg = dynamic_cast<BlockArgument*>(arg)) {
         const auto iter = mMappings.find(blockArg);
         if(iter != mMappings.cend())
-            return iter->second = queryRoot(iter->second);
-        return arg;
+            return iter->second;
     }
     return arg;
 }
@@ -43,44 +42,53 @@ Value* BlockArgumentAnalysisResult::query(BlockArgument* arg) const {
 
 BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     const auto& cfg = analysis.get<CFGAnalysis>(func);
-    BlockArgumentAnalysisResult result;
-    // TODO: merge same constant values
+    std::unordered_map<BlockArgument*, std::vector<Value*>> phiMap;
+
+    for(auto block : func.blocks()) {
+        for(uint32_t idx = 0; idx < block->args().size(); ++idx) {
+            auto arg = block->args()[idx];
+            auto& phi = phiMap[arg];
+            for(auto& [predBlock, pred] : cfg.predecessors(block)) {
+                CMMC_UNUSED(predBlock);
+                phi.push_back(pred->getArgs()[idx]);
+            }
+        }
+    }
 
     while(true) {
         bool modified = false;
 
-        for(auto block : func.blocks()) {
-            for(uint32_t idx = 0; idx < block->args().size(); ++idx) {
-                bool unique = true;
-                Value* root = nullptr;
-                for(auto& [predBlock, pred] : cfg.predecessors(block)) {
-                    CMMC_UNUSED(predBlock);
-                    if(predBlock == block && pred->getArgs()[idx] == block->args()[idx])
-                        continue;  // TODO: handle long cycle
-
-                    auto val = result.queryRoot(pred->getArgs()[idx]);
-                    if(root) {
-                        if(root != val) {
-                            unique = false;
-                            break;
-                        }
-                    } else
-                        root = val;
-                }
-                if(root && unique) {
-                    const auto arg = block->args()[idx];
-                    const auto oldRoot = result.queryRoot(arg);
-                    if(oldRoot != root) {
-                        result.addMapping(arg, root);
+        for(auto& [blockArg, phi] : phiMap) {
+            size_t oldSize = phi.size();
+            phi.erase(std::remove(phi.begin(), phi.end(), blockArg), phi.end());
+            std::sort(phi.begin(), phi.end());
+            phi.erase(std::unique(phi.begin(), phi.end()), phi.end());
+            size_t newSize = phi.size();
+            modified |= (oldSize != newSize);
+            for(auto& val : phi) {
+                if(auto arg = dynamic_cast<BlockArgument*>(val)) {
+                    const auto& rhsPhi = phiMap[arg];
+                    if(rhsPhi.size() == 1) {
+                        val = rhsPhi.front();
                         modified = true;
                     }
                 }
             }
         }
 
+        // TODO: merge same constant value
+
         if(!modified)
             break;
     }
+
+    BlockArgumentAnalysisResult result;
+    for(auto& [blockArg, phi] : phiMap) {
+        if(phi.size() == 1) {
+            result.addMapping(blockArg, phi.front());
+        }
+    }
+
     return result;
 }
 

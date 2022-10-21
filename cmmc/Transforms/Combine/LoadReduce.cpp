@@ -48,6 +48,9 @@
 // ^d(i32 %x):
 //
 
+#include "cmmc/Analysis/AnalysisPass.hpp"
+#include "cmmc/Config.hpp"
+#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
@@ -81,20 +84,13 @@ class LoadReduce final : public TransformPass<Function> {
         return replaceOperands(block, replace);
     }
 
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto& alias = analysis.get<AliasAnalysis>(func);
+    bool runInterBlock(Function& func, AnalysisPassManager& analysis,
+                       std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis) const {
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& alias = analysis.get<AliasAnalysis>(func);
 
-        std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
         bool modified = false;
-        // intra-block
-        for(auto block : func.blocks()) {
-            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
-            modified |= runBlock(*block, iter->second);
-        }
-        // inter-block
         std::vector<Block*> blocks{ func.blocks().begin(), func.blocks().end() };
         for(auto block : blocks) {
             std::vector<Instruction*> loadInsts;
@@ -198,6 +194,23 @@ public:
             replaceOperands(*block, map);
         }
 
+        return modified;
+    }
+
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& alias = analysis.get<AliasAnalysis>(func);
+
+        std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
+        bool modified = false;
+        // intra-block
+        for(auto block : func.blocks()) {
+            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
+            modified |= runBlock(*block, iter->second);
+        }
+        // inter-block
+        modified |= runInterBlock(func, analysis, valueAnalysis);
+        // TODO: handle cross blockchain reusing, e.g., test_3_r03.spl
         return modified;
     }
 

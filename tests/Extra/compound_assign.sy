@@ -8,5 +8,5 @@ int main() {
     a^=12;
     a&=15;
     a|=31;
-    return 0;
+    return a;
 }

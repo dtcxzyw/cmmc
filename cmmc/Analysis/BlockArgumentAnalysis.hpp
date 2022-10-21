@@ -21,12 +21,15 @@
 CMMC_NAMESPACE_BEGIN
 
 class BlockArgumentAnalysisResult final {
-    mutable std::unordered_map<BlockArgument*, Value*> mMappings;
+    std::unordered_map<BlockArgument*, Value*> mMappings;
 
 public:
     Value* queryRoot(Value* val) const;
     void addMapping(BlockArgument* arg, Value* val);
     Value* query(BlockArgument* arg) const;
+    const std::unordered_map<BlockArgument*, Value*>& map() const noexcept {
+        return mMappings;
+    }
 };
 
 class BlockArgumentAnalysis final : public FuncAnalysisPassWrapper<BlockArgumentAnalysis, BlockArgumentAnalysisResult> {

@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
@@ -71,8 +72,15 @@ const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const 
     assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.find(ptr)->second;
 }
+void AliasAnalysisResult::appendValue(Value* p, const std::vector<uint32_t>& newAttrs) {
+    assert(mPointerAttributes.count(p));
+    auto& attrs = mPointerAttributes.find(p)->second;
+    attrs.insert(attrs.cend(), newAttrs.cbegin(), newAttrs.cend());
+    std::sort(attrs.begin(), attrs.end());
+    attrs.erase(std::unique(attrs.begin(), attrs.end()), attrs.end());
+}
 
-AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
+AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     AliasAnalysisResult result;
     uint32_t allocateID = 0;
     const auto globalID = ++allocateID;
@@ -142,6 +150,13 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager&) {
                     reportNotImplemented();
                 }
             }
+        }
+    }
+
+    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+    for(auto [arg, val] : blockArgMap.map()) {
+        if(arg->getType()->isPointer()) {
+            result.appendValue(arg, result.inheritFrom(val));
         }
     }
 
