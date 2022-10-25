@@ -729,7 +729,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 ioCtx.stdinStream >> x;
                                 addInt(x);
                             } else if(symbol == "write" || symbol == "putint") {
-                                ioCtx.stdoutStream << getInt(0) << std::endl;
+                                ioCtx.stdoutStream << getInt(0);
                             } else if(symbol == "getch") {
                                 reportNotImplemented();
                             } else if(symbol == "putch") {

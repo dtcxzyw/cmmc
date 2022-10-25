@@ -107,7 +107,10 @@ def sysy_test(src: str, opt=True):
             break
 
     out = subprocess.run(args, capture_output=True, text=True)
-    output = out.stdout + str(out.returncode) + '\n'
+    output = out.stdout
+    if len(output) != 0:
+        output += '\n'
+    output += str(out.returncode) + '\n'
     output_file = src[:-3] + '.out'
     # print(output.encode('utf-8'))
     standard_answer = ''
