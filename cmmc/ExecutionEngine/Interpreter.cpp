@@ -31,6 +31,7 @@
 #include <deque>
 #include <iostream>
 #include <map>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -231,6 +232,33 @@ public:
         return nullptr;
     }
 
+    template <typename T>
+    T loadValue(uintptr_t ptr) {
+        const auto alignment = alignof(T);
+        if(ptr % alignment != 0) {
+            mHasMemoryError = true;
+            return T{};
+        }
+
+        const auto size = sizeof(T);
+        if constexpr(std::is_integral_v<T>) {
+            static_assert(sizeof(uintmax_t) >= 8);
+            uintmax_t val = 0;
+            const auto base = reinterpret_cast<std::byte*>(&val);
+
+            for(uint32_t idx = 0; idx < size; ++idx)
+                base[idx] = load(ptr + idx);
+            return static_cast<T>(val);
+        } else if constexpr(std::is_floating_point_v<T>) {
+            std::byte storage[sizeof(double)];
+            for(uint32_t idx = 0; idx < size; ++idx)
+                storage[idx] = load(ptr + idx);
+            return *reinterpret_cast<T*>(storage);
+        } else {
+            static_assert(FalseType<T>::value, "unsupported type");
+        }
+    }
+
     void memReset(uintptr_t ptr, size_t size, std::byte byte) {
         for(size_t idx = 0; idx < size; ++idx)
             store(ptr + idx, byte);
@@ -282,6 +310,37 @@ public:
             }
         } else
             reportNotImplemented();
+    }
+
+    template <typename T>
+    struct FalseType final {
+        static constexpr bool value = false;
+    };
+
+    template <typename T>
+    void storeValue(uintptr_t ptr, T value) {
+        const auto alignment = alignof(T);
+        if(ptr % alignment != 0) {
+            mHasMemoryError = true;
+            return;
+        }
+
+        const auto size = sizeof(T);
+        if constexpr(std::is_integral_v<T>) {
+            static_assert(sizeof(uintmax_t) >= 8);
+            const uintmax_t val = value;
+            const auto base = reinterpret_cast<const std::byte*>(&val);
+            for(uint32_t idx = 0; idx < size; ++idx)
+                store(ptr + idx, base[idx]);
+        } else if constexpr(std::is_floating_point_v<T>) {
+            std::byte storage[sizeof(double)];
+            *reinterpret_cast<T*>(storage) = value;
+
+            for(uint32_t idx = 0; idx < size; ++idx)
+                store(ptr + idx, storage[idx]);
+        } else {
+            static_assert(FalseType<T>::value, "unsupported type");
+        }
     }
 
     size_t getTotalLoad() const noexcept {
@@ -722,34 +781,77 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 switch(callee->getIntrinsic()) {
                     case Intrinsic::none: {
                         if(callee->blocks().empty()) {
+                            using namespace std::string_view_literals;
+
                             // runtime func
                             const auto symbol = callee->getSymbol().prefix();
-                            if(symbol == "read" || symbol == "getint") {
+                            if(symbol == "read"sv || symbol == "getint"sv) {
                                 int x;
                                 ioCtx.stdinStream >> x;
                                 addInt(x);
-                            } else if(symbol == "write" || symbol == "putint") {
+                            } else if(symbol == "write"sv || symbol == "putint"sv) {
                                 ioCtx.stdoutStream << getInt(0);
-                            } else if(symbol == "getch") {
-                                reportNotImplemented();
-                            } else if(symbol == "putch") {
-                                reportNotImplemented();
-                            } else if(symbol == "getarray") {
-                                reportNotImplemented();
-                            } else if(symbol == "putarray") {
-                                reportNotImplemented();
-                            } else if(symbol == "getfloat") {
-                                reportNotImplemented();
-                            } else if(symbol == "putfloat") {
-                                reportNotImplemented();
-                            } else if(symbol == "getfarray") {
-                                reportNotImplemented();
-                            } else if(symbol == "putfarray") {
-                                reportNotImplemented();
-                            } else if(symbol == "starttime") {
-                                reportNotImplemented();
-                            } else if(symbol == "stoptime") {
-                                reportNotImplemented();
+                            } else if(symbol == "getch"sv) {
+                                char ch;
+                                ioCtx.stdinStream >> ch;
+                                addInt(ch);
+                            } else if(symbol == "putch"sv) {
+                                ioCtx.stdoutStream << static_cast<char>(getInt(0));
+                            } else if(symbol == "getarray"sv) {
+                                int size;
+                                ioCtx.stdinStream >> size;
+
+                                const auto ptr = getPtr(0);
+                                for(int idx = 0; idx < size; ++idx) {
+                                    int val;
+                                    ioCtx.stdinStream >> val;
+                                    memCtx.storeValue(ptr + idx * sizeof(int), val);
+                                }
+
+                                addUInt(size);
+                            } else if(symbol == "putarray"sv) {
+                                const auto size = getUInt(0);
+                                const auto ptr = getPtr(1);
+
+                                ioCtx.stdoutStream << size << ':';
+                                for(size_t idx = 0; idx < size; ++idx) {
+                                    const auto val = memCtx.loadValue<int>(ptr + idx * sizeof(int));
+                                    ioCtx.stdoutStream << ' ' << val;
+                                }
+                                ioCtx.stdoutStream << '\n';
+                            } else if(symbol == "getfloat"sv) {
+                                float val;
+                                ioCtx.stdinStream >> val;
+                                addFP(val);
+                            } else if(symbol == "putfloat"sv) {
+                                const auto val = static_cast<float>(getFP(0));
+                                ioCtx.stdoutStream << std::hexfloat << val;
+                            } else if(symbol == "getfarray"sv) {
+                                int size;
+                                ioCtx.stdinStream >> size;
+
+                                const auto ptr = getPtr(0);
+                                for(int idx = 0; idx < size; ++idx) {
+                                    float val;
+                                    ioCtx.stdinStream >> val;
+                                    memCtx.storeValue(ptr + idx * sizeof(float), val);
+                                }
+
+                                addUInt(size);
+                            } else if(symbol == "putfarray"sv) {
+                                const auto size = getUInt(0);
+                                const auto ptr = getPtr(1);
+
+                                ioCtx.stdoutStream << size << ':';
+                                for(size_t idx = 0; idx < size; ++idx) {
+                                    const auto val = memCtx.loadValue<float>(ptr + idx * sizeof(float));
+                                    ioCtx.stdoutStream << ' ' << std::hexfloat << val;
+                                }
+                                ioCtx.stdoutStream << '\n';
+                            } else if(symbol == "starttime"sv) {
+                                // ignore
+                            } else if(symbol == "stoptime"sv) {
+                                // ignore
                             } else
                                 reportUnreachable();
                         } else {
