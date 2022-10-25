@@ -49,10 +49,10 @@ class ConstantPropagation final : public TransformPass<Function> {
             uintmax_t u1, u2;
             double f1, f2;
             CompareOp cmp;
+            auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
+            auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
 
             if(inst->isIntegerOp()) {
-                auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
-
                 if(not_(int_(i1))(inst))
                     return makeInt(inst, !i1);
                 if(neg(int_(i1))(inst))
@@ -83,11 +83,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeInt(inst, u1 | u2);
                 if(xor_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 ^ u2);
-
-                // TODO: sext/zext/trunc
-
             } else if(inst->isFloatingPointOp()) {
-                auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
                 double f3;
 
                 if(fneg(fp_(f1))(inst))
@@ -102,9 +98,6 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeFP(inst, f1 / f2);
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst))
                     return makeFP(inst, fma(f1, f2, f3));
-
-                // TODO: fp2int/int2fp/fpcast
-
             } else if(inst->isCompareOp()) {
                 auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
                     switch(cmp) {
@@ -131,6 +124,52 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeBool(inst, doCompare(cmp, u1, u2));
                 if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
                     return makeBool(inst, doCompare(cmp, f1, f2));
+            } else if(inst->isConvertOp()) {
+                uintmax_t uval;
+                intmax_t sval;
+                double fval;
+                const auto val = inst->getOperand(0);
+                switch(inst->getInstID()) {
+                    case InstructionID::SExt: {
+                        if(int_(sval)(val))
+                            return makeInt(inst, sval);
+                        break;
+                    }
+                    case InstructionID::ZExt:
+                        [[fallthrough]];
+                    case InstructionID::Trunc: {
+                        if(uint_(uval)(val))
+                            return makeInt(inst, static_cast<intmax_t>(uval));
+                        break;
+                    }
+                    case InstructionID::F2U:
+                        [[fallthrough]];
+                    case InstructionID::F2S: {
+                        if(fp_(fval)(val))
+                            return makeInt(inst,
+                                           inst->getInstID() == InstructionID::F2S ?
+                                               static_cast<intmax_t>(fval) :
+                                               static_cast<intmax_t>(static_cast<uintmax_t>(fval)));
+                        break;
+                    }
+                    case InstructionID::U2F: {
+                        if(uint_(uval)(val))
+                            return makeFP(inst, static_cast<double>(uval));
+                        break;
+                    }
+                    case InstructionID::S2F: {
+                        if(int_(sval)(val))
+                            return makeFP(inst, static_cast<double>(sval));
+                        break;
+                    }
+                    case InstructionID::FCast: {
+                        if(fp_(fval)(val))
+                            return makeFP(inst, fval);
+                        break;
+                    }
+                    default:
+                        break;
+                }
             } else {
                 // select cval?a:b -> a/b
                 Value *v1, *v2;

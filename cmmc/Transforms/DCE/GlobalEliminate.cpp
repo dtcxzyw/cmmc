@@ -24,6 +24,7 @@
 //     ret i32 0;
 // }
 
+#include "cmmc/IR/Function.hpp"
 #include <algorithm>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -45,19 +46,36 @@ public:
         if(unused.empty())
             return false;
 
-        for(auto global : mod.globals()) {
-            if(const auto func = dynamic_cast<Function*>(global)) {
-                for(auto block : func->blocks()) {
-                    for(auto inst : block->instructions()) {
-                        for(auto operand : inst->operands())
-                            if(operand->isGlobal()) {
-                                unused.erase(operand);
-                                if(unused.empty())
-                                    return false;
-                            }
-                    }
+        auto color = [&](Function* func) {
+            for(auto block : func->blocks()) {
+                for(auto inst : block->instructions()) {
+                    for(auto operand : inst->operands())
+                        if(operand->isGlobal()) {
+                            unused.erase(operand);
+                        }
                 }
             }
+        };
+
+        std::unordered_set<Function*> colored;
+
+        while(true) {
+            bool modified = false;
+            for(auto global : mod.globals()) {
+                if(const auto func = dynamic_cast<Function*>(global)) {
+                    if(colored.count(func) || unused.count(func))
+                        continue;
+
+                    color(func);
+                    colored.insert(func);
+                    modified = true;
+
+                    if(unused.empty())
+                        return false;
+                }
+            }
+            if(!modified)
+                break;
         }
 
         auto& globals = mod.globals();

@@ -20,6 +20,7 @@
 // int* a = alloc int;
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -35,7 +36,8 @@ CMMC_NAMESPACE_BEGIN
 
 class StoreEliminate final : public TransformPass<Function> {
     // FIXME: 'return after global store'
-    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet, Instruction* store,
+    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet,
+                            const PointerAddressSpaceAnalysisResult& addressSpace, Instruction* store,
                             std::unordered_set<Block*>& visited) {
         if(!store) {
             if(visited.count(&block))
@@ -50,9 +52,10 @@ class StoreEliminate final : public TransformPass<Function> {
                     const auto branch = inst->as<ConditionalBranchInst>();
                     const auto& trueTarget = branch->getTrueTarget();
                     const auto& falseTarget = branch->getFalseTarget();
-                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, nullptr, visited))
+                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, addressSpace, nullptr, visited))
                         return false;
-                    if(falseTarget.getTarget() && !isInvisible(addr, *falseTarget.getTarget(), aliasSet, nullptr, visited))
+                    if(falseTarget.getTarget() &&
+                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, addressSpace, nullptr, visited))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
@@ -79,6 +82,8 @@ class StoreEliminate final : public TransformPass<Function> {
                     if(inst->getOperand(0) == addr) {
                         break;  // end of lifetime
                     }
+                } else if(inst->isTerminator()) {
+                    return addressSpace.mustBe(addr, AddressSpace::InternalStack);
                 } else {
                     for(auto operand : inst->operands())
                         if(operand->getType()->isPointer() && !aliasSet.isDistinct(addr, operand))
@@ -91,7 +96,8 @@ class StoreEliminate final : public TransformPass<Function> {
         return true;
     }
 
-    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet) {
+    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet,
+                           const PointerAddressSpaceAnalysisResult& addressSpace) {
         auto& insts = block.instructions();
         const auto size = insts.size();
         insts.remove_if([&](Instruction* inst) {
@@ -99,7 +105,7 @@ class StoreEliminate final : public TransformPass<Function> {
                 return false;
             const auto addr = inst->getOperand(0);
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, inst, visited);
+            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited);
         });
         return insts.size() != size;
     }
@@ -107,9 +113,10 @@ class StoreEliminate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
+        auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet);
+            modified |= runOnBlock(*block, aliasSet, addressSpace);
         }
         return modified;
     }
