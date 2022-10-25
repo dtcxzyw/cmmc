@@ -73,8 +73,10 @@ def sysy_semantic(src):
     return out.returncode == 0
 
 
+white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
+
+
 def sysy_opt(src):
-    white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
     args = [binary_path, '-i', '-t', 'riscv', '-H', '-o',
             '/dev/stdout', src]
 
@@ -85,6 +87,39 @@ def sysy_opt(src):
 
     out = subprocess.run(args, capture_output=True, text=True)
     return out.returncode == 0
+
+
+# TODO: collect metrics
+def sysy_test(src: str, opt=True):
+    input_file = src[:-3] + '.in'
+    if not os.path.exists(input_file):
+        input_file = "/dev/null"
+    args = [binary_path, '-t', 'riscv', '-H', '-o',
+            '/dev/stdout', '-e', input_file, src]
+
+    if not opt:
+        args.insert(-1, '-O')
+        args.insert(-1, '0')
+
+    for key in white_list:
+        if key in src:
+            args.insert(-1, '-U')
+            break
+
+    out = subprocess.run(args, capture_output=True, text=True)
+    output = out.stdout + str(out.returncode) + '\n'
+    output_file = src[:-3] + '.out'
+    # print(output.encode('utf-8'))
+    standard_answer = ''
+    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
+        for line in f.readlines():
+            standard_answer += line
+    # print(standard_answer.encode('utf-8'))
+    return output == standard_answer
+
+
+def sysy_test_noopt(src: str):
+    return sysy_test(src, opt=False)
 
 
 def test(name, path, filter, tester):
@@ -138,8 +173,12 @@ res.append(test("SPL TAC->IR project4", tests_path +
 #           "/CodeGenTAC", ".spl", spl_codegen_tac))
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
-res.append(test("SysY opt functional", tests_path +
-           "/SysY2022/functional", ".sy", sysy_opt))
+# res.append(test("SysY opt functional", tests_path +
+#           "/SysY2022/functional", ".sy", sysy_opt))
+res.append(test("SysY semantic & test functional", tests_path +
+           "/SysY2022/functional", ".sy", sysy_test_noopt))
+# res.append(test("SysY opt & test functional", tests_path +
+#           "/SysY2022/functional", ".sy", sysy_test))
 # res.append(test("SysY opt hidden_functional", tests_path +
 #           "/SysY2022/hidden_functional", ".sy", sysy_opt))
 # res.append(test("SysY opt performance", tests_path +

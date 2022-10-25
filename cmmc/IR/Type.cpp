@@ -230,6 +230,22 @@ const Type* StructType::getFieldType(const ConstantOffset* offset) const {
     assert(offset->index() <= mFields.size());
     return mFields[offset->index()].type;
 }
+size_t StructType::getFieldOffset(const ConstantOffset* offset, const DataLayout& dataLayout) const {
+    if(offset->base() != this)
+        DiagnosticsContext::get().attach<InvalidOffset>(this, offset).reportFatal();
+    uint32_t idx = 0;
+    size_t offsetBytes = 0;
+    for(auto& field : mFields) {
+        const auto size = field.type->getSize(dataLayout);
+        const auto alignment = field.type->getAlignment(dataLayout);
+        offsetBytes = ((offsetBytes + alignment - 1) / alignment + 1) * alignment;
+        if(idx == offset->index()) {
+            return offsetBytes;
+        }
+        offsetBytes += size;
+    }
+    reportUnreachable();
+}
 void ArrayType::dumpName(std::ostream& out) const {
     out << '[' << mElementCount << " * ";
     mElementType->dumpName(out);

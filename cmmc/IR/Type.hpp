@@ -212,6 +212,7 @@ public:
     }
     ConstantOffset* getOffset(const String& fieldName) const;
     const Type* getFieldType(const ConstantOffset* offset) const;
+    size_t getFieldOffset(const ConstantOffset* offset, const DataLayout& dataLayout) const;
 };
 
 class ArrayType final : public Type {

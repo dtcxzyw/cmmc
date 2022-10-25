@@ -36,7 +36,7 @@ public:
         return type->getFixedSize();
     }
     size_t getPointerSize() const noexcept override {
-        return 4;
+        return 8;
     }
 };
 

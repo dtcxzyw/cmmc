@@ -93,8 +93,6 @@ enum class InstructionID {
     PtrCast,
     PtrToInt,
     IntToPtr,
-    ExtractValue,
-    InsertValue,
     Select,
     Call,
 };

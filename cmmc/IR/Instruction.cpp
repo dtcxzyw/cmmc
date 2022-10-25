@@ -161,10 +161,6 @@ static const char* getInstName(InstructionID instID) {
             return "ptrtoint";
         case InstructionID::IntToPtr:
             return "inttoptr";
-        case InstructionID::ExtractValue:
-            return "extractvalue";
-        case InstructionID::InsertValue:
-            return "insertvalue";
         case InstructionID::Select:
             return "select";
         case InstructionID::Call:

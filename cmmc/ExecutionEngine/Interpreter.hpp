@@ -15,34 +15,39 @@
 #pragma once
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <fstream>
 #include <memory>
+#include <ostream>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
 enum class SimulationFailReason {
-    ExceedMemoryBudget,           //
-    ExceedTimeBudget,             //
-    ExceedMaxRecursiveDepth,      //
-    ExceedMaxRecordedSizeEffect,  //
-    UnexpectedException,          //
-    UndeterminedControlFlow,      //
-    UndeterminedSideEffect,       //
-    UnsupportedTarget,            // non-64-bit-el target
-    UnsupportedInstruction        // int2ptr/ptr2int
+    ExceedMemoryLimit,        //
+    ExceedTimeLimit,          //
+    ExceedMaxRecursiveDepth,  //
+    MemoryError,              //
+    DividedByZero,            //
+    UnknownError,             //
+    UnsupportedTarget,        //
+    Undefined,                //
+    Unreachable
+};
+
+struct SimulationIOContext final {
+    std::istream& stdinStream;
+    std::ostream& stdoutStream;
 };
 
 class Interpreter final {
     size_t mTimeBudget,      // in ns
         mMemBudget,          // in bytes
-        mMaxRecursiveDepth,  //
-        mMaxRecordedSizeEffect;
+        mMaxRecursiveDepth;  //
 
 public:
-    Interpreter(size_t timeBudget = 10'000'000'000U, size_t memBudget = 2 << 30U, size_t maxRecursiveDepth = 256,
-                size_t maxRecordedSizeEffect = 128);
-    std::variant<Function*, SimulationFailReason> execute(Module& module, Function& func,
-                                                          const std::vector<ConstantValue*>& arguments) const;
+    Interpreter(size_t timeBudget = 10'000'000'000ULL, size_t memBudget = 2ULL << 30, size_t maxRecursiveDepth = 256);
+    std::variant<ConstantValue*, SimulationFailReason>
+    execute(Module& module, Function& func, const std::vector<ConstantValue*>& arguments, SimulationIOContext& ioCtx) const;
 };
 
 CMMC_NAMESPACE_END

@@ -15,10 +15,12 @@
 #include <cassert>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/TAC.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -27,6 +29,8 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <variant>
 
 using namespace cmmc;
 
@@ -40,6 +44,7 @@ Flag strictMode;
 IntegerOpt optimizationLevel;
 extern StringOpt target;
 static StringOpt outputPath;
+static StringOpt executeInput;
 static Flag grammarCheck;
 
 CMMC_INIT_OPTIONS_BEGIN
@@ -51,6 +56,7 @@ strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only
 optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
 grammarCheck.setName("grammar-check", 'g').setDesc("Only check grammar");
+executeInput.setName("execute-input", 'e').setDesc("Execute with built-in interpreter");
 CMMC_INIT_OPTIONS_END
 
 CMMC_NAMESPACE_END
@@ -80,6 +86,35 @@ static int runIRPipeline(Module& module, const std::string& base) {
         std::ofstream out{ path };
         module.dump(out);
         return EXIT_SUCCESS;
+    }
+
+    if(auto& input = executeInput.get(false); !input.empty()) {
+        std::ifstream in{ input };
+        const auto path = getOutputPath(base + ".out");
+        reportDebug() << "simulation << " << input << " >> " << path << std::endl;
+        std::ofstream out{ path };
+        Interpreter interpreter{ 600'000'000'000ULL, 2ULL << 30, 1024 };
+        Function* func;
+        for(auto global : module.globals())
+            if(global->isFunction() && global->getSymbol() == "main") {
+                func = global->as<Function>();
+                break;
+            }
+        SimulationIOContext ctx{ in, out };
+        const auto ret = interpreter.execute(module, *func, {}, ctx);
+        return std::visit(
+            [](auto ret) -> int {
+                if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
+                    if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
+                        return val->getSignExtended();
+                    }
+                    return EXIT_FAILURE;
+                } else {
+                    reportError() << enumName(ret) << std::endl;
+                    return EXIT_FAILURE;
+                }
+            },
+            ret);
     }
 
     const auto emitTAC = (::target.get() == "tac");

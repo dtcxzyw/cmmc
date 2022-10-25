@@ -22,9 +22,9 @@ CMMC_NAMESPACE_BEGIN
 
 void ConstantInteger::dump(std::ostream& out) const {
     if(getType()->isBoolean())
-        out << (mValue ? "true" : "false");
+        out << (getZeroExtended() ? "true" : "false");
     else
-        out << mValue;
+        out << getSignExtended();
 }
 
 void ConstantFloatingPoint::dump(std::ostream& out) const {
@@ -36,7 +36,7 @@ void UndefinedValue::dump(std::ostream& out) const {
 }
 
 intmax_t ConstantInteger::getSignExtended() const noexcept {
-    const auto bits = 8 * getType()->getFixedSize();
+    const auto bits = getType()->as<IntegerType>()->getBitwidth();
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
     const auto low = mValue & mask;
     const auto high = ((mValue >> (bits - 1)) & 1) ? ~mask : 0;
@@ -44,9 +44,9 @@ intmax_t ConstantInteger::getSignExtended() const noexcept {
 }
 
 uintmax_t ConstantInteger::getZeroExtended() const noexcept {
-    const auto bits = 8 * getType()->getFixedSize();
+    const auto bits = getType()->as<IntegerType>()->getBitwidth();
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
-    return mValue & mask;
+    return static_cast<uintmax_t>(mValue) & mask;
 }
 
 double ConstantFloatingPoint::getValue() const noexcept {
