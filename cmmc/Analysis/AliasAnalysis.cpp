@@ -15,10 +15,13 @@
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <iterator>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -72,12 +75,50 @@ const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const 
     assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.find(ptr)->second;
 }
-void AliasAnalysisResult::appendValue(Value* p, const std::vector<uint32_t>& newAttrs) {
+void AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newAttrs) {
     assert(mPointerAttributes.count(p));
     auto& attrs = mPointerAttributes.find(p)->second;
     attrs.insert(attrs.cend(), newAttrs.cbegin(), newAttrs.cend());
     std::sort(attrs.begin(), attrs.end());
     attrs.erase(std::unique(attrs.begin(), attrs.end()), attrs.end());
+}
+void AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
+    assert(mPointerAttributes.count(p));
+    auto& attrs = mPointerAttributes.find(p)->second;
+    attrs.push_back(newAttr);
+}
+
+static void divide(const std::vector<GetElementPtrInst*>& gepList, uint32_t& allocateID, AliasAnalysisResult& result,
+                   uint32_t idx) {
+    if(gepList.size() <= 1)
+        return;
+
+    std::unordered_map<ConstantValue*, std::vector<GetElementPtrInst*>, ConstantHasher, ConstantEqual> clusters;
+    for(auto gep : gepList) {
+        if(gep->operands().size() <= idx + 1)
+            continue;
+        const auto index = gep->getOperand(idx);
+        if(auto constantIndex = dynamic_cast<ConstantValue*>(index)) {
+            clusters[constantIndex].push_back(gep);
+        }
+    }
+    if(clusters.empty())
+        return;
+
+    if(clusters.size() >= 2) {
+        std::unordered_set<uint32_t> distinctGroup;
+        for(auto& [base, geps] : clusters) {
+            CMMC_UNUSED(base);
+            const auto id = ++allocateID;
+            distinctGroup.insert(id);
+            for(auto gep : geps)
+                result.appendAttr(gep, id);
+            divide(geps, allocateID, result, idx + 1);
+        }
+        result.addDistinctGroup(std::move(distinctGroup));
+    } else {
+        divide(gepList, allocateID, result, idx + 1);
+    }
 }
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
@@ -90,6 +131,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     std::unordered_set<Value*> globals;
     std::unordered_set<uint32_t> globalGroup;
     std::unordered_set<uint32_t> stackGroup;
+    std::vector<GetElementPtrInst*> geps;
 
     for(auto block : func.blocks()) {
         const auto argID = ++allocateID;
@@ -118,9 +160,9 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::GetElementPtr: {
-                    // TODO: handle distinct array indices and distinct struct fields
                     const auto& src = result.inheritFrom(inst->operands().back());
                     result.addValue(inst, src);
+                    geps.push_back(inst->as<GetElementPtrInst>());
                     break;
                 }
                 case InstructionID::PtrCast: {
@@ -156,8 +198,17 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
     for(auto [arg, val] : blockArgMap.map()) {
         if(arg->getType()->isPointer()) {
-            result.appendValue(arg, result.inheritFrom(val));
+            result.appendAttr(arg, result.inheritFrom(val));
         }
+    }
+
+    // geps
+    std::unordered_map<Value*, std::vector<GetElementPtrInst*>> clusters;
+    for(auto gep : geps)
+        clusters[blockArgMap.queryRoot(gep->operands().back())].push_back(gep);
+    for(auto& [base, gepList] : clusters) {
+        CMMC_UNUSED(base);
+        divide(gepList, allocateID, result, 0);
     }
 
     result.addDistinctGroup(std::move(globalGroup));

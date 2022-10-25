@@ -43,6 +43,18 @@ public:
     virtual size_t hash() const = 0;
 };
 
+struct ConstantHasher final {
+    size_t operator()(const ConstantValue* val) const {
+        return val->hash();
+    }
+};
+
+struct ConstantEqual final {
+    bool operator()(ConstantValue* lhs, ConstantValue* rhs) const {
+        return lhs->isEqual(rhs);
+    }
+};
+
 class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
 

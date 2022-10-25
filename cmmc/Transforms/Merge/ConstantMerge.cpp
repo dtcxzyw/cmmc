@@ -28,18 +28,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-struct ConstantHasher final {
-    size_t operator()(const ConstantValue* val) const {
-        return val->hash();
-    }
-};
-
-struct ConstantEqual final {
-    bool operator()(ConstantValue* lhs, ConstantValue* rhs) const {
-        return lhs->isEqual(rhs);
-    }
-};
-
 class ConstantMerge final : public TransformPass<Module> {
 public:
     bool run(Module& module, AnalysisPassManager&) const override {

@@ -23,7 +23,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet) : mAliasSet{ aliasSet } {
+SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet,
+                                         const BlockArgumentAnalysisResult& blockArgMap)
+    : mAliasSet{ aliasSet }, mBlockArgMap{ blockArgMap } {
     std::vector<Value*> args;
     for(auto arg : block->args()) {
         if(arg->getType()->isPointer()) {
@@ -54,8 +56,7 @@ SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult
 }
 
 void SimpleValueAnalysis::next(Instruction* inst) {
-    const auto update = [&](Value* base, Value* addr, Value* val) {
-        auto& lastValue = mLastValue[base];
+    const auto invalidate = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr) {
         std::vector<Value*> outdated;
         for(auto [ptr, val] : lastValue) {
             CMMC_UNUSED(val);
@@ -64,8 +65,22 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         }
         for(auto key : outdated)
             lastValue.erase(key);
+    };
 
-        lastValue[addr] = val;
+    const auto update = [&](Value* base, Value* addr, Value* val) {
+        if(base == nullptr) {
+            for(auto& [rhsBase, values] : mLastValue) {
+                if(rhsBase != nullptr && mAliasSet.isDistinct(rhsBase, addr))
+                    continue;
+                invalidate(values, addr);
+            }
+            mLastValue[nullptr][addr] = val;
+        } else {
+            auto& lastValue = mLastValue[base];
+            invalidate(lastValue, addr);
+            invalidate(mLastValue[nullptr], addr);
+            lastValue[addr] = val;
+        }
     };
 
     // globals
@@ -88,6 +103,10 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             const auto base = mBasePointer.find(addr);
             if(base != mBasePointer.cend())
                 update(base->second, addr, inst);
+
+            if(inst->getType()->isPointer()) {
+                mBasePointer.emplace(inst, nullptr);
+            }
         } break;
         case InstructionID::Store: {
             const auto addr = inst->getOperand(0);
@@ -110,9 +129,17 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             mBasePointer.emplace(inst, inst);
             mLastValue[inst].emplace(inst, make<UndefinedValue>(inst->getType()->as<PointerType>()->getPointee()));
         } break;
-            // TODO: GEP
-        default:
-            break;
+        case InstructionID::GetElementPtr: {
+            const auto root = mBlockArgMap.queryRoot(inst->operands().back());
+            if(const auto iter = mBasePointer.find(root); iter != mBasePointer.cend())
+                mBasePointer.emplace(inst, iter->second);
+            else
+                mBasePointer.emplace(inst, nullptr);
+        } break;
+        default: {
+            if(inst->getType()->isPointer())
+                mBasePointer.emplace(inst, nullptr);
+        } break;
     }
 }
 

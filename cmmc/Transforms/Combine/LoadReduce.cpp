@@ -198,12 +198,13 @@ class LoadReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& alias = analysis.get<AliasAnalysis>(func);
+        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
 
         std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
         bool modified = false;
         // intra-block
         for(auto block : func.blocks()) {
-            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
+            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias, blockArgMap }).first;
             modified |= runBlock(*block, iter->second);
         }
         // inter-block

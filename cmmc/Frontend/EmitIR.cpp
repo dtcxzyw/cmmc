@@ -1195,10 +1195,16 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         const auto end = getAddress(offset);
         if(lastNotAssigned == offset)
             return end;
-        const auto beg = getAddress(lastNotAssigned);
-        if(lastNotAssigned + 1 == offset) {
-            ctx.makeOp<StoreInst>(beg, zero);
+        const auto totalSize = static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned));
+        constexpr uint32_t inlineMemsetThreshold = 4096U;
+
+        if(totalSize <= inlineMemsetThreshold) {
+            while(lastNotAssigned != offset) {
+                ctx.makeOp<StoreInst>(getAddress(lastNotAssigned), zero);
+                ++lastNotAssigned;
+            }
         } else {
+            const auto beg = getAddress(lastNotAssigned);
             const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
             const auto size =
                 make<ConstantInteger>(ctx.getIndexType(), static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned)));
@@ -1307,6 +1313,16 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
     }
     auto func = make<Function>(String::get(symbol), funcType, intrinsic);
     mModule->add(func);
+    switch(intrinsic) {
+        case Intrinsic::none:
+            reportUnreachable();
+        case Intrinsic::memset: {
+            func->attr().addAttr(FunctionAttribute::NoMemoryRead);
+            break;
+        }
+        default:
+            reportNotImplemented();
+    }
     return func;
 }
 
