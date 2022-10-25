@@ -10,7 +10,7 @@ void concat(const char a[], const char b[], char c[]) {
         c[j] = b[i];
         j = j + 1;
     }
-    c[j] = '\0';
+    c[j] = 0; //'\0';
 }
 int BKDRHash(const char a[]) {
     int ret = 0;

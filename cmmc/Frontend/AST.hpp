@@ -16,11 +16,13 @@
 #include <cmmc/Frontend/EmitIR.hpp>
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cstdint>
 #include <map>
 #include <utility>
@@ -237,6 +239,7 @@ class ConstantStringExpr final : public Expr {
 public:
     ConstantStringExpr(const SourceLocation& location, const String& str) : Expr{ location }, mString{ str } {}
     QualifiedValue emit(EmitContext& ctx) const override;
+    GlobalVariable* emitGlobal(String symbol, uint32_t size, EmitContext& ctx) const;
 };
 
 using ExprPack = Deque<Expr*>;

@@ -555,16 +555,28 @@ QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
 }
 
 QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
-    const auto count = mString.prefix().size();
+    const auto val =
+        emitGlobal(String::get("cmmc.str.s" + std::to_string(mString.hash())), std::numeric_limits<uint32_t>::max(), ctx);
+    val->attr().addAttr(GlobalVariableAttribute::ReadOnly);
+    return QualifiedValue{ val, ValueQualifier::AsRValue, Qualifier{ true } };
+}
+
+GlobalVariable* ConstantStringExpr::emitGlobal(String symbol, uint32_t size, EmitContext& ctx) const {
+    const auto str = mString.prefix();
+    const auto count = str.size();
+    const auto i8 = IntegerType::get(8);
     Vector<ConstantValue*> elements;
+    if(size < count)
+        DiagnosticsContext::get().attach<Reason>("the array size is too small").reportFatal();
+
     for(uint32_t idx = 0; idx < count; ++idx) {
-        elements.push_back(make<ConstantInteger>(IntegerType::get(8), static_cast<intmax_t>(mString.prefix()[idx])));
+        elements.push_back(make<ConstantInteger>(i8, static_cast<intmax_t>(str[idx])));
     }
-    const auto type = make<ArrayType>(IntegerType::get(8), static_cast<uint32_t>(count+1));
-    const auto global = make<GlobalVariable>(String::get("cmmc.str.s"+std::to_string(mString.hash())), type);
-    global->setInitialValue( make<ConstantArray>(type, std::move(elements)));
+    const auto type = make<ArrayType>(i8, size == std::numeric_limits<uint32_t>::max() ? static_cast<uint32_t>(count + 1) : size);
+    const auto global = make<GlobalVariable>(symbol, type);
+    global->setInitialValue(make<ConstantArray>(type, std::move(elements)));
     ctx.getModule()->add(global);
-    return QualifiedValue{global,ValueQualifier::AsRValue, Qualifier{true}};
+    return global;
 }
 
 QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
@@ -770,10 +782,18 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
     const auto [base, valueQualifier, qualifier] = mBase->emitWithLoc(ctx);
     const auto idx = ctx.getRValue(mIndex, ctx.getIndexType(), Qualifier::getUnsigned());
     if(valueQualifier == ValueQualifier::AsLValue) {
-        // int a[10];
-        // a[i];
-        return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), idx }), ValueQualifier::AsLValue,
-                 qualifier };
+        if(base->getType()->as<PointerType>()->getPointee()->isArray()) {
+            // int a[10];
+            // a[i];
+            return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), idx }), ValueQualifier::AsLValue,
+                     qualifier };
+        } else if(base->getType()->as<PointerType>()->getPointee()->isPointer()) {
+            // int a[];
+            // a[i];
+            const auto addr = ctx.makeOp<LoadInst>(base);
+            return { ctx.makeOp<GetElementPtrInst>(addr, Vector<Value*>{ idx }), ValueQualifier::AsLValue, qualifier };
+        } else
+            reportUnreachable();
     } else {
         // int* a;
         // a[i];
@@ -1257,32 +1277,52 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
     Stage stage{ "emit global" };
 
     auto module = ctx.getModule();
+    GlobalVariable* global = nullptr;
     const auto t = ctx.getType(type.typeIdentifier, type.space, var.arraySize);
-    auto global = make<GlobalVariable>(var.name, t);
+    if(auto str = dynamic_cast<ConstantStringExpr*>(var.initialValue)) {
+        uint32_t size = std::numeric_limits<uint32_t>::max();
+        const auto i8 = IntegerType::get(8U);
+        if(auto arr = dynamic_cast<const ArrayType*>(t)) {
+            size = arr->getElementCount();
+            if(!arr->getElementType()->isSame(i8))
+                DiagnosticsContext::get().attach<Reason>("type mismatch").reportFatal();
+        } else if(auto ptr = dynamic_cast<const PointerType*>(t)) {
+            if(!ptr->getPointee()->isSame(i8))
+                DiagnosticsContext::get().attach<Reason>("type mismatch").reportFatal();
+        } else
+            reportUnreachable();
+
+        global = str->emitGlobal(var.name, size, ctx);
+    } else {
+        global = make<GlobalVariable>(var.name, t);
+        if(var.initialValue) {
+            if(t->isArray()) {
+                if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))
+                    global->setInitialValue(arrayInitializer->shapeAwareEmitStatic(ctx, t->as<ArrayType>(), type.qualifier));
+                else
+                    DiagnosticsContext::get().attach<Reason>("cannot initialize a global array with a scalar").reportFatal();
+            } else {
+                if(dynamic_cast<ArrayInitializer*>(var.initialValue))
+                    DiagnosticsContext::get()
+                        .attach<Reason>("cannot initialize a global scalar with an array initializer")
+                        .reportFatal();
+
+                const auto initialValue = ctx.getRValue(var.initialValue, t, type.qualifier);
+                if(initialValue->isConstant()) {
+                    global->setInitialValue(initialValue->as<ConstantValue>());
+                    ctx.addConstant(global, initialValue);
+                } else
+                    DiagnosticsContext::get()
+                        .attach<Reason>("cannot initialize a global scalar with a non-constant")
+                        .reportFatal();
+            }
+        }
+        module->add(global);
+    }
+
     if(type.qualifier.isConst) {
         global->attr().addAttr(GlobalVariableAttribute::ReadOnly);
     }
-    if(var.initialValue) {
-        if(t->isArray()) {
-            if(auto arrayInitializer = dynamic_cast<ArrayInitializer*>(var.initialValue))
-                global->setInitialValue(arrayInitializer->shapeAwareEmitStatic(ctx, t->as<ArrayType>(), type.qualifier));
-            else
-                DiagnosticsContext::get().attach<Reason>("cannot initialize a global array with a scalar").reportFatal();
-        } else {
-            if(dynamic_cast<ArrayInitializer*>(var.initialValue))
-                DiagnosticsContext::get()
-                    .attach<Reason>("cannot initialize a global scalar with an array initializer")
-                    .reportFatal();
-
-            const auto initialValue = ctx.getRValue(var.initialValue, t, type.qualifier);
-            if(initialValue->isConstant()) {
-                global->setInitialValue(initialValue->as<ConstantValue>());
-                ctx.addConstant(global, initialValue);
-            } else
-                DiagnosticsContext::get().attach<Reason>("cannot initialize a global scalar with a non-constant").reportFatal();
-        }
-    }
-    module->add(global);
     ctx.addIdentifier(var.name, QualifiedValue{ global, ValueQualifier::AsLValue, type.qualifier });
 }
 

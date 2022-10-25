@@ -24,8 +24,8 @@
 //     ret i32 0;
 // }
 
-#include "cmmc/IR/Function.hpp"
 #include <algorithm>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
