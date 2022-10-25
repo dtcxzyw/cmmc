@@ -142,6 +142,7 @@
 0[xX][0-9a-fA-F]*"."[0-9a-fA-F]*[pP][+-]?[0-9]+ { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
 [a-zA-Z_][a-zA-Z_0-9]* { String val = String::get(yytext); return Parser::make_ID(val, {CMMC_RECORD(ID, val), loc}); }
 "'"."'" { char ch = yytext[1]; return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
+"\"".*"\"" { std::string_view text{yytext}; String str = String::get(text.substr(1, text.size()-2)); return Parser::make_STRING(str, {CMMC_RECORD(STRING, str), loc}); }
 "'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 
 <<EOF>> return Parser::make_END({0,loc});

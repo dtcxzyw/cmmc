@@ -554,8 +554,17 @@ QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
     return QualifiedValue{ make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue) };
 }
 
-QualifiedValue ConstantStringExpr::emit(EmitContext&) const {
-    reportNotImplemented();
+QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
+    const auto count = mString.prefix().size();
+    Vector<ConstantValue*> elements;
+    for(uint32_t idx = 0; idx < count; ++idx) {
+        elements.push_back(make<ConstantInteger>(IntegerType::get(8), static_cast<intmax_t>(mString.prefix()[idx])));
+    }
+    const auto type = make<ArrayType>(IntegerType::get(8), static_cast<uint32_t>(count+1));
+    const auto global = make<GlobalVariable>(String::get("cmmc.str.s"+std::to_string(mString.hash())), type);
+    global->setInitialValue( make<ConstantArray>(type, std::move(elements)));
+    ctx.getModule()->add(global);
+    return QualifiedValue{global,ValueQualifier::AsRValue, Qualifier{true}};
 }
 
 QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {

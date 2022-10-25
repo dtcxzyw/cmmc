@@ -44,6 +44,7 @@
 #define CMMC_INT(LOC, VAL, BIT_WIDTH, SIGNED) make<ConstantIntExpr>(castLoc(LOC), VAL, BIT_WIDTH, SIGNED)
 #define CMMC_FLOAT(LOC, VAL, IS_FLOAT) make<ConstantFloatExpr>(castLoc(LOC), VAL, IS_FLOAT)
 #define CMMC_CHAR(LOC, VAL) make<ConstantIntExpr>(castLoc(LOC), static_cast<uintmax_t>(VAL), 8U, true)
+#define CMMC_STRING(LOC, VAL) make<ConstantStringExpr>(castLoc(LOC), VAL)
 #define CMMC_ID(LOC, NAME) make<IdentifierExpr>(castLoc(LOC), std::move(NAME))
 #define CMMC_CALL(LOC, CALLEE, ARGS) make<FunctionCallExpr>(castLoc(LOC), CALLEE, std::move(ARGS))
 #define CMMC_RETURN(LOC, RET) make<ReturnExpr>(castLoc(LOC), RET)

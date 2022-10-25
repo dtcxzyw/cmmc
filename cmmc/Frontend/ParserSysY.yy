@@ -36,7 +36,7 @@
 %token <uintmax_t> INT "Integer"
 %token <double> FLOAT "Float"
 %token <char> CHAR "Char"
-%token <String> String "String"
+%token <String> STRING "String"
 
 %token <String> ID "Identifier"
 %token <String> TYPE "Type"
@@ -213,6 +213,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | INT { $$ = CMMC_INT(@1, $1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
+| STRING { $$ = CMMC_STRING(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | Exp QUEST Exp COLON Exp %prec SELECT { $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4, @5); }
 | Exp PLUS_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Add, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp MINUS_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
