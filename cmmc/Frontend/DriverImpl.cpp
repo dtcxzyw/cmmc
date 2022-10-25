@@ -15,6 +15,7 @@
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <iostream>
 
 namespace std {  // NOTICE: we need ADL
     std::ostream& operator<<(std::ostream& out, const std::pair<uint32_t, yy::location>& loc) {

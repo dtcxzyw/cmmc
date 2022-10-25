@@ -311,6 +311,7 @@ public:
         assert(retValue);
     }
     void dump(std::ostream& out) const override;
+    bool verify(std::ostream& out) const override;
     Instruction* clone() const override;
 };
 

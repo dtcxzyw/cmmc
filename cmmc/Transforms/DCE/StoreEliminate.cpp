@@ -34,6 +34,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class StoreEliminate final : public TransformPass<Function> {
+    // FIXME: 'return after global store'
     static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet, Instruction* store,
                             std::unordered_set<Block*>& visited) {
         if(!store) {

@@ -84,6 +84,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(xor_(uint_(u1), uint_(u2))(inst))
                     return makeInt(inst, u1 ^ u2);
 
+                // TODO: sext/zext/trunc
+
             } else if(inst->isFloatingPointOp()) {
                 auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
                 double f3;
@@ -100,6 +102,9 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeFP(inst, f1 / f2);
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst))
                     return makeFP(inst, fma(f1, f2, f3));
+
+                // TODO: fp2int/int2fp/fpcast
+
             } else if(inst->isCompareOp()) {
                 auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
                     switch(cmp) {
@@ -133,7 +138,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return u1 ? v1 : v2;
                 }
                 // select c?a:a -> a
-                if(select(any(v1), cuint_(u1), cuint_(u2))(inst) && u1 == u2) {
+                if(select(any(v1), uint_(u1), uint_(u2))(inst) && u1 == u2) {
                     return inst->getOperand(1);
                 }
                 // select c?a:a -> a

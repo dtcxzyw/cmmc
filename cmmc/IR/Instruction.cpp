@@ -562,4 +562,25 @@ Value* BranchTarget::getOperand(BlockArgument* arg) const {
     reportUnreachable();
 }
 
+bool ReturnInst::verify(std::ostream& out) const {
+    if(!Instruction::verify(out))
+        return false;
+    const auto func = getBlock()->getFunction();
+    const auto ret = func->getType()->as<FunctionType>()->getRetType();
+    if(ret->isVoid()) {
+        if(operands().empty())
+            return true;
+        else {
+            out << "should return void" << std::endl;
+            return false;
+        }
+    } else {
+        if(operands().size() == 1 && getOperand(0)->getType()->isSame(ret)) {
+            return true;
+        }
+        out << "return type mismatch" << std::endl;
+        return false;
+    }
+}
+
 CMMC_NAMESPACE_END

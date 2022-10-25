@@ -17,7 +17,9 @@
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
 
@@ -52,6 +54,39 @@ SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult
     } else {
         for(auto arg : args)
             mBasePointer.emplace(arg, nullptr);
+    }
+}
+
+static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* inst, uint32_t index) {
+    if(initialValue) {
+        if(index + 1 >= inst->operands().size()) {
+            return initialValue;
+        } else {
+            auto arr = dynamic_cast<ConstantArray*>(initialValue);
+            if(!arr)
+                return nullptr;
+            const auto operand = inst->getOperand(index);
+            uintmax_t idx;
+            if(uint_(idx)(operand)) {
+                auto& values = arr->values();
+                if(idx < values.size()) {
+                    return extractConstant(values[idx], inst, index + 1);
+                } else {
+                    return extractConstant(nullptr, inst, index + 1);
+                }
+            } else {
+                return nullptr;
+            }
+        }
+    } else {
+        const auto pointee = inst->getType()->as<PointerType>()->getPointee();
+        if(pointee->isInteger()) {
+            return make<ConstantInteger>(pointee, 0);
+        } else if(pointee->isFloatingPoint()) {
+            return make<ConstantFloatingPoint>(pointee, 0.0);
+        } else {
+            reportUnreachable();
+        }
     }
 }
 
@@ -135,6 +170,17 @@ void SimpleValueAnalysis::next(Instruction* inst) {
                 mBasePointer.emplace(inst, iter->second);
             else
                 mBasePointer.emplace(inst, nullptr);
+            if(inst->getType()->as<PointerType>()->getPointee()->isPrimitive() && cuint_(0)(inst->getOperand(0))) {
+                if(const auto globalVar = dynamic_cast<GlobalVariable*>(root);
+                   globalVar && globalVar->attr().hasAttr(GlobalVariableAttribute::ReadOnly)) {
+                    const auto initialValue = globalVar->initialValue();
+                    auto value = extractConstant(initialValue, inst->as<GetElementPtrInst>(), 1);
+                    if(value) {
+                        auto& lastValue = mLastValue[mBasePointer[inst]];
+                        lastValue[inst] = value;
+                    }
+                }
+            }
         } break;
         default: {
             if(inst->getType()->isPointer())

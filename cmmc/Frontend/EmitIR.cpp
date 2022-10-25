@@ -1196,7 +1196,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         if(lastNotAssigned == offset)
             return end;
         const auto totalSize = static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned));
-        constexpr uint32_t inlineMemsetThreshold = 4096U;
+        constexpr intmax_t inlineMemsetThreshold = 256;
 
         if(totalSize <= inlineMemsetThreshold) {
             while(lastNotAssigned != offset) {
