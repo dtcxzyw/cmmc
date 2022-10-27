@@ -311,7 +311,7 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
     auto inst = getBinaryOp(op, isSigned, isFloatingPoint);
 
     if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
-        return ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs);
+        return ctx.booleanToInt(ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs));
     } else {
         return ctx.makeOp<BinaryInst>(inst, lhs->getType(), lhs, rhs);
     }
@@ -423,7 +423,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {});
         ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock, rhs });
         ctx.setCurrentBlock(newBlock);
-        return QualifiedValue{ newBlock->getArg(0) };
+        return QualifiedValue{ ctx.booleanToInt(newBlock->getArg(0)) };
     }
 
     auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
@@ -491,7 +491,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {});
-            return QualifiedValue{ ctx.makeOp<UnaryInst>(InstructionID::Not, value->getType(), value) };
+            return QualifiedValue{ ctx.booleanToInt(ctx.makeOp<UnaryInst>(InstructionID::Not, value->getType(), value)) };
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
@@ -811,7 +811,10 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
     const auto ptr = ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), offset });
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
 }
-
+Value* EmitContext::booleanToInt(Value* value) {
+    assert(value->getType()->isBoolean());
+    return makeOp<CastInst>(InstructionID::ZExt, mInteger, value);
+}
 Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier) {
     const auto srcType = value->getType();
     if(srcType->isPointer() && srcQualifier.isConst && !dstQualifier.isConst)
@@ -848,9 +851,9 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
                 type, srcQualifier.isSigned ? cint->getSignExtended() : static_cast<intmax_t>(cint->getZeroExtended()));
         }
 
-        if(srcType->getFixedSize() < type->getFixedSize())
+        if(srcType->getFixedSize() < type->getFixedSize()) {
             id = srcQualifier.isSigned ? InstructionID::SExt : InstructionID::ZExt;
-        else
+        } else
             id = InstructionID::Trunc;
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
         if(strictMode.get())
@@ -1310,7 +1313,8 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
                 const auto initialValue = ctx.getRValue(var.initialValue, t, type.qualifier);
                 if(initialValue->isConstant()) {
                     global->setInitialValue(initialValue->as<ConstantValue>());
-                    ctx.addConstant(global, initialValue);
+                    if(type.qualifier.isConst)
+                        ctx.addConstant(global, initialValue);
                 } else
                     DiagnosticsContext::get()
                         .attach<Reason>("cannot initialize a global scalar with a non-constant")
@@ -1499,6 +1503,7 @@ QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
 #endif
     ctx.pushLoc(mLocation);
     const auto ret = emit(ctx);
+    assert(!ret.value->getType()->isBoolean());
     ctx.popLoc();
     return ret;
 }

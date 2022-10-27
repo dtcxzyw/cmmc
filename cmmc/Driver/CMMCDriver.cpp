@@ -89,11 +89,11 @@ static int runIRPipeline(Module& module, const std::string& base) {
     }
 
     if(auto& input = executeInput.get(false); !input.empty()) {
-        std::ifstream in{ input };
+        InputStream in{ input };
         const auto path = getOutputPath(base + ".out");
         reportDebug() << "simulation << " << input << " >> " << path << std::endl;
-        std::ofstream out{ path };
-        Interpreter interpreter{ 600'000'000'000ULL, 2ULL << 30, 1024 };
+        OutputStream out{ path };
+        Interpreter interpreter{ 20'000'000'000ULL, 2ULL << 30, 1024 };
         Function* func;
         for(auto global : module.globals())
             if(global->isFunction() && global->getSymbol() == "main") {

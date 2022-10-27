@@ -26,9 +26,11 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cstdint>
 #include <deque>
+#include <ios>
 #include <iostream>
 #include <map>
 #include <type_traits>
@@ -37,6 +39,12 @@
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
+
+static Flag step;
+
+CMMC_INIT_OPTIONS_BEGIN
+step.setName("step", 'S').setDesc("run interpreter by step");
+CMMC_INIT_OPTIONS_END
 
 enum class ByteState : uint8_t { Read = 1 << 0, Write = 1 << 1, None = 0 };
 
@@ -240,7 +248,7 @@ public:
             return T{};
         }
 
-        const auto size = sizeof(T);
+        constexpr auto size = sizeof(T);
         if constexpr(std::is_integral_v<T>) {
             static_assert(sizeof(uintmax_t) >= 8);
             uintmax_t val = 0;
@@ -250,7 +258,7 @@ public:
                 base[idx] = load(ptr + idx);
             return static_cast<T>(val);
         } else if constexpr(std::is_floating_point_v<T>) {
-            std::byte storage[sizeof(double)];
+            alignas(alignof(double)) std::byte storage[sizeof(double)];
             for(uint32_t idx = 0; idx < size; ++idx)
                 storage[idx] = load(ptr + idx);
             return *reinterpret_cast<T*>(storage);
@@ -333,7 +341,7 @@ public:
             for(uint32_t idx = 0; idx < size; ++idx)
                 store(ptr + idx, base[idx]);
         } else if constexpr(std::is_floating_point_v<T>) {
-            std::byte storage[sizeof(double)];
+            alignas(alignof(double)) std::byte storage[sizeof(double)];
             *reinterpret_cast<T*>(storage) = value;
 
             for(uint32_t idx = 0; idx < size; ++idx)
@@ -404,7 +412,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         entry.execIter = entry.block->instructions().cbegin();
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
             entry.operands.emplace(entry.block->getArg(idx), arguments[idx]);
-        if constexpr(Config::debug) {
+        if(step.get()) {
+            func.dump(std::cerr);
             entry.block->dump(std::cerr);
         }
 
@@ -477,7 +486,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
         const auto addValue = [&](Instruction* inst, ConstantValue* val) {
             currentExecCtx.operands.emplace(inst, val);
-            if constexpr(Config::debug) {
+            if(step.get()) {
                 if(inst->getType()->isInteger() || inst->getType()->isFloatingPoint()) {
                     auto& out = std::cerr;
                     inst->dump(out);
@@ -555,7 +564,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     currentExecCtx.operands[target->getArg(idx)] = operands[idx];
                 currentExecCtx.block = target;
                 currentExecCtx.execIter = target->instructions().cbegin();
-                if constexpr(Config::debug) {
+                if(step.get()) {
                     currentExecCtx.block->dump(std::cerr);
                 }
                 break;
@@ -787,67 +796,69 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             const auto symbol = callee->getSymbol().prefix();
                             if(symbol == "read"sv || symbol == "getint"sv) {
                                 int x;
-                                ioCtx.stdinStream >> x;
+                                ioCtx.stdinStream.get("%d", x);
                                 addInt(x);
                             } else if(symbol == "write"sv || symbol == "putint"sv) {
-                                ioCtx.stdoutStream << getInt(0);
+                                const auto x = static_cast<int>(getInt(0));
+                                ioCtx.stdoutStream.put("%d", x);
                             } else if(symbol == "getch"sv) {
-                                char ch;
-                                ioCtx.stdinStream >> ch;
+                                int ch;
+                                ioCtx.stdinStream.get("%c", ch);
                                 addInt(ch);
                             } else if(symbol == "putch"sv) {
-                                ioCtx.stdoutStream << static_cast<char>(getInt(0));
+                                const auto ch = static_cast<int>(getInt(0));
+                                ioCtx.stdoutStream.put("%c", ch);
                             } else if(symbol == "getarray"sv) {
                                 int size;
-                                ioCtx.stdinStream >> size;
+                                ioCtx.stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
                                     int val;
-                                    ioCtx.stdinStream >> val;
+                                    ioCtx.stdinStream.get("%d", val);
                                     memCtx.storeValue(ptr + idx * sizeof(int), val);
                                 }
 
                                 addUInt(size);
                             } else if(symbol == "putarray"sv) {
-                                const auto size = getUInt(0);
+                                const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
-                                ioCtx.stdoutStream << size << ':';
-                                for(size_t idx = 0; idx < size; ++idx) {
+                                ioCtx.stdoutStream.put("%d:", size);
+                                for(int idx = 0; idx < size; ++idx) {
                                     const auto val = memCtx.loadValue<int>(ptr + idx * sizeof(int));
-                                    ioCtx.stdoutStream << ' ' << val;
+                                    ioCtx.stdoutStream.put(" %d", val);
                                 }
-                                ioCtx.stdoutStream << '\n';
+                                ioCtx.stdoutStream.put("\n");
                             } else if(symbol == "getfloat"sv) {
                                 float val;
-                                ioCtx.stdinStream >> val;
+                                ioCtx.stdinStream.get("%a", val);
                                 addFP(val);
                             } else if(symbol == "putfloat"sv) {
                                 const auto val = static_cast<float>(getFP(0));
-                                ioCtx.stdoutStream << std::hexfloat << val;
+                                ioCtx.stdoutStream.put("%a", val);
                             } else if(symbol == "getfarray"sv) {
                                 int size;
-                                ioCtx.stdinStream >> size;
+                                ioCtx.stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
                                     float val;
-                                    ioCtx.stdinStream >> val;
+                                    ioCtx.stdinStream.get("%a", val);
                                     memCtx.storeValue(ptr + idx * sizeof(float), val);
                                 }
 
                                 addUInt(size);
                             } else if(symbol == "putfarray"sv) {
-                                const auto size = getUInt(0);
+                                const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
-                                ioCtx.stdoutStream << size << ':';
-                                for(size_t idx = 0; idx < size; ++idx) {
+                                ioCtx.stdoutStream.put("%d:", size);
+                                for(int idx = 0; idx < size; ++idx) {
                                     const auto val = memCtx.loadValue<float>(ptr + idx * sizeof(float));
-                                    ioCtx.stdoutStream << ' ' << std::hexfloat << val;
+                                    ioCtx.stdoutStream.put(" %a", val);
                                 }
-                                ioCtx.stdoutStream << '\n';
+                                ioCtx.stdoutStream.put("\n");
                             } else if(symbol == "starttime"sv) {
                                 // ignore
                             } else if(symbol == "stoptime"sv) {
@@ -863,7 +874,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 blockCtx.operands[blockCtx.block->getArg(idx)] = operands[idx];
 
                             blockCtx.execIter = blockCtx.block->instructions().cbegin();
-                            if constexpr(Config::debug) {
+                            if(step.get()) {
+                                callee->dump(std::cerr);
                                 blockCtx.block->dump(std::cerr);
                             }
                             execCtx.push_back(std::move(blockCtx));
@@ -889,6 +901,22 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
         }
     }
+}
+
+OutputStream::OutputStream(const std::string& path) {
+    mFile = fopen(path.c_str(), "w");
+}
+
+OutputStream::~OutputStream() {
+    fclose(mFile);
+}
+
+InputStream::InputStream(const std::string& path) {
+    mFile = fopen(path.c_str(), "r");
+}
+
+InputStream::~InputStream() {
+    fclose(mFile);
 }
 
 CMMC_NAMESPACE_END

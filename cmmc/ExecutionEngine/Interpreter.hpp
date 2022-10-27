@@ -13,11 +13,11 @@
 */
 
 #pragma once
+#include "cmmc/Config.hpp"
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
-#include <fstream>
+#include <cstdio>
 #include <memory>
-#include <ostream>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -34,9 +34,47 @@ enum class SimulationFailReason {
     Unreachable
 };
 
+// NOTE: don't use std::iostream since it doesn't support hexfloat parsing in libc++
+
+class InputStream final {
+    FILE* mFile;
+
+public:
+    InputStream(const std::string& path);
+    InputStream(const InputStream&) = delete;
+    InputStream(InputStream&&) = delete;
+    InputStream& operator=(const InputStream&) = delete;
+    InputStream& operator=(InputStream&&) = delete;
+    ~InputStream();
+
+    template <typename... T>
+    void get(const char* fmt, T&... args) {
+        int ret = std::fscanf(mFile, fmt, &args...);
+        CMMC_UNUSED(ret);
+    }
+};
+
+class OutputStream final {
+    FILE* mFile;
+
+public:
+    OutputStream(const std::string& path);
+    OutputStream(const OutputStream&) = delete;
+    OutputStream(OutputStream&&) = delete;
+    OutputStream& operator=(const OutputStream&) = delete;
+    OutputStream& operator=(OutputStream&&) = delete;
+    ~OutputStream();
+
+    template <typename... T>
+    void put(const char* fmt, T... args) {
+        int ret = std::fprintf(mFile, fmt, args...);
+        CMMC_UNUSED(ret);
+    }
+};
+
 struct SimulationIOContext final {
-    std::istream& stdinStream;
-    std::ostream& stdoutStream;
+    InputStream& stdinStream;
+    OutputStream& stdoutStream;
 };
 
 class Interpreter final {

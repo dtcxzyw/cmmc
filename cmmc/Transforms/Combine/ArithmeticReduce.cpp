@@ -29,6 +29,8 @@
 
 CMMC_NAMESPACE_BEGIN
 
+// TODO: fuse sext/zext/trunc
+
 class ArithmeticReduce final : public TransformPass<Function> {
     bool runOnBlock(Block& block) const {
         return reduceBlock(block, [](Instruction* inst) -> Value* {

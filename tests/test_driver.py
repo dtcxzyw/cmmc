@@ -108,7 +108,7 @@ def sysy_test(src: str, opt=True):
 
     out = subprocess.run(args, capture_output=True, text=True)
     output = out.stdout
-    if len(output) != 0:
+    if len(output) != 0 and output[-1] != '\n':
         output += '\n'
     output += str(out.returncode) + '\n'
     output_file = src[:-3] + '.out'

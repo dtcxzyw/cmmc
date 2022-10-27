@@ -94,6 +94,7 @@ public:
     Module* getModule() const noexcept {
         return mModule;
     }
+    Value* booleanToInt(Value* value);
     Value* convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
     std::pair<Value*, Qualifier> getRValue(const QualifiedValue& value);
     std::pair<Value*, Qualifier> getRValue(Expr* expr);
