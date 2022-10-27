@@ -12,15 +12,24 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <iostream>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN
+
+static Flag debugTransform;
+
+CMMC_INIT_OPTIONS_BEGIN
+debugTransform.setName("debug-transform", 'd').setDesc("print out transform pass result");
+CMMC_INIT_OPTIONS_END
 
 template <>
 TransformPass<Function>::~TransformPass() {}
@@ -37,16 +46,17 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
             }
         } else {
             Stage stage{ pass->name() };
-            if constexpr(Config::debug) {
+            if(debugTransform.get()) {
                 std::cerr << pass->name() << std::endl;
             }
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
                 modified = true;
 
-                if constexpr(Config::debug)
+                if(debugTransform.get())
                     item.dump(std::cerr);
-                assert(item.verify(std::cerr));
+                if(!item.verify(std::cerr))
+                    DiagnosticsContext::get().attach<ModuleAttachment>("module", &item).reportFatal();
             }
         }
     }
@@ -71,8 +81,9 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
             analysis.invalidateModule();
         modified = true;
     }
-    if(!stopEarly)
-        reportWarning() << "partial optimization" << std::endl;
+    // if(!stopEarly)
+    //     reportWarning() << "partial optimization" << std::endl;
+    CMMC_UNUSED(stopEarly);
     return modified;
 }
 
@@ -132,11 +143,11 @@ public:
                 if(func.blocks().empty())
                     continue;
                 Stage stage{ mPass->name() };
-                if constexpr(Config::debug) {
+                if(debugTransform.get()) {
                     std::cerr << mPass->name() << " " << func.getSymbol() << std::endl;
                 }
                 if(mPass->run(func, analysis)) {
-                    if constexpr(Config::debug) {
+                    if(debugTransform.get()) {
                         func.dump(std::cerr);
                     }
                     analysis.invalidateFunc(func);
@@ -145,13 +156,14 @@ public:
                 }
             }
         }
-        if constexpr(Config::debug) {
+        if(debugTransform.get()) {
             for(auto global : module.globals()) {
                 if(global->isFunction()) {
                     auto& func = *global->as<Function>();
                     if(func.blocks().empty())
                         continue;
-                    assert(func.verify(std::cerr));
+                    if(!func.verify(std::cerr))
+                        DiagnosticsContext::get().attach<FuncAttachment>("function", &func).reportFatal();
                 }
             }
         }

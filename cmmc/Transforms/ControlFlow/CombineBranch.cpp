@@ -45,7 +45,8 @@ CMMC_NAMESPACE_BEGIN
 
 class CombineBranch final : public TransformPass<Function> {
     bool isForwardBlock(Block& block) const {
-        return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch;
+        return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch &&
+            block.getTerminator()->as<ConditionalBranchInst>()->getTrueTarget().getTarget() != &block;
     }
 
     void foldForward(ConditionalBranchInst* branch, BranchTarget& target) const {

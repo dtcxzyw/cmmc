@@ -33,6 +33,7 @@
 #include <deque>
 #include <ios>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <type_traits>
 #include <unordered_map>
@@ -438,6 +439,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             return *fpVal;
         } else if(auto offset = dynamic_cast<ConstantOffset*>(val)) {
             return offset;
+        } else if(auto undefined = dynamic_cast<UndefinedValue*>(val)) {
+            const auto type = undefined->getType();
+            if(type->isInteger()) {
+                return ConstantInteger{ type, 0x7CCC'CCCC'CCCC'CCCCLL };
+            } else if(type->isFloatingPoint()) {
+                return ConstantFloatingPoint{ type, std::numeric_limits<double>::quiet_NaN() };
+            } else
+                reportUnreachable();
         } else
             reportUnreachable();
     };
@@ -970,6 +979,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
 OutputStream::OutputStream(const std::string& path) {
     mFile = fopen(path.c_str(), "w");
+    if(!mFile)
+        DiagnosticsContext::get().attach<Reason>("Failed to open output file").reportFatal();
 }
 
 OutputStream::~OutputStream() {
@@ -978,6 +989,8 @@ OutputStream::~OutputStream() {
 
 InputStream::InputStream(const std::string& path) {
     mFile = fopen(path.c_str(), "r");
+    if(!mFile)
+        DiagnosticsContext::get().attach<Reason>("Failed to open input file").reportFatal();
 }
 
 InputStream::~InputStream() {

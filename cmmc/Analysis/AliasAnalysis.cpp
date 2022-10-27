@@ -57,6 +57,9 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
             reportUnreachable();
         }
     }
+    if(p1 == p2)
+        return false;
+
     auto& attr1 = mPointerAttributes.find(p1)->second;
     auto& attr2 = mPointerAttributes.find(p2)->second;
     for(auto attrX : attr1)

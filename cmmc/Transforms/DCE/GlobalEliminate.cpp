@@ -81,7 +81,7 @@ public:
         auto& globals = mod.globals();
         globals.erase(std::remove_if(globals.begin(), globals.end(), [&](GlobalValue* global) { return unused.count(global); }),
                       globals.end());
-        return true;
+        return !unused.empty();
     }
 
     PassType type() const noexcept override {

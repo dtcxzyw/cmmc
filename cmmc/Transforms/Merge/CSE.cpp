@@ -63,7 +63,9 @@ class SimpleCSE final : public TransformPass<Function> {
                     [[fallthrough]];
                 case InstructionID::Alloc:
                     [[fallthrough]];
-                case InstructionID::Free: {
+                case InstructionID::Free:
+                    [[fallthrough]];
+                case InstructionID::Load: {
                     valid = false;
                     break;
                 }

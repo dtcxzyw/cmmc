@@ -18,6 +18,7 @@
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <ostream>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -38,10 +39,23 @@ void Module::dump(std::ostream& out) const {
 }
 
 bool Module::verify(std::ostream& out) const {
+    std::unordered_set<Value*> values{ mGlobals.begin(), mGlobals.end() };
+
     for(auto value : mGlobals) {
-        if(auto func = dynamic_cast<Function*>(value))
+        if(auto func = dynamic_cast<Function*>(value)) {
             if(!func->verify(out))
                 return false;
+            for(auto block : func->blocks()) {
+                for(auto inst : block->instructions()) {
+                    for(auto operand : inst->operands())
+                        if(operand->isGlobal() && !values.count(operand)) {
+                            out << "dangling reference to global ";
+                            operand->dumpAsOperand(out);
+                            return false;
+                        }
+                }
+            }
+        }
     }
     return true;
 }

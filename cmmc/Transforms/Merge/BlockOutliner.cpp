@@ -89,6 +89,9 @@ public:
         // block-level merge
         std::vector<Block*> blocks;
         for(auto block : func.blocks()) {
+            if(block == func.entryBlock())
+                continue;
+
             bool unique = true;
             for(auto rhs : blocks)
                 if(isEqual(block, rhs)) {

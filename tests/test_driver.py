@@ -4,9 +4,32 @@ import os
 import sys
 import time
 import subprocess
+import json
 
 binary_path = sys.argv[1]
 tests_path = sys.argv[2]
+
+# 10/27/2022
+baseline = {
+    "inst": 207616174,
+    "branch": 18005070,
+    "call": 15663,
+    "load": 10519398,
+    "store": 31260338,
+    "load_bytes": 42168672,
+    "store_bytes": 179166224
+}
+
+summary = {}
+
+
+def parse_perf(result):
+    try:
+        perf = json.loads(result)
+        for key in baseline.keys():
+            summary[key] = summary.get(key, 0) + perf[key]
+    except:
+        pass
 
 
 def spl_parse(src):
@@ -118,7 +141,10 @@ def sysy_test(src: str, opt=True):
         for line in f.readlines():
             standard_answer += line
     # print(standard_answer.encode('utf-8'))
-    return output == standard_answer
+    if output == standard_answer:
+        parse_perf(out.stderr)
+        return True
+    return False
 
 
 def sysy_test_noopt(src: str):
@@ -135,14 +161,16 @@ def test(name, path, filter, tester):
                 test_set.append(r+'/'+f)
     test_set.sort(key=lambda x: x)
 
-    print("Testing...", end='')
     cnt = 0
     fail_set = []
     for src in test_set:
         cnt += 1
-        print("\rTesting... {}/{}".format(cnt, len(test_set)), end='')
+        print("Testing... {}/{} {}".format(cnt, len(test_set), src), end='')
         sys.stdout.flush()
-        if not tester(src):
+        if tester(src):
+            print(" Passed")
+        else:
+            print(" Failed")
             fail_set.append(src)
 
     print("\r")
@@ -178,10 +206,10 @@ res.append(test("SPL TAC->IR project4", tests_path +
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +
 #           "/SysY2022/functional", ".sy", sysy_opt))
-res.append(test("SysY semantic & test functional", tests_path +
-           "/SysY2022/functional", ".sy", sysy_test_noopt))
-# res.append(test("SysY opt & test functional", tests_path +
-#           "/SysY2022/functional", ".sy", sysy_test))
+# res.append(test("SysY o & test functional", tests_path +
+#           "/SysY2022/functional", ".sy", sysy_test_noopt))
+res.append(test("SysY opt & test functional", tests_path +
+           "/SysY2022/functional", ".sy", sysy_test))
 # res.append(test("SysY opt hidden_functional", tests_path +
 #           "/SysY2022/hidden_functional", ".sy", sysy_opt))
 # res.append(test("SysY opt performance", tests_path +
@@ -201,3 +229,8 @@ for t, f in res:
 print("Passed", total_tests-failed_tests,
       "Failed", failed_tests, "Total", total_tests)
 print("Total time: ", end-start)
+
+print("\nPerformance metrics:")
+for key in summary.keys():
+    print(key, ":", summary[key], "baseline =", baseline[key],
+          "ratio = {:.3f}".format(summary[key] / baseline[key]))

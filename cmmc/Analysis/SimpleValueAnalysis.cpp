@@ -131,9 +131,7 @@ void SimpleValueAnalysis::next(Instruction* inst) {
 
     switch(inst->getInstID()) {
         case InstructionID::Load: {
-            // TODO: better strategy?
-            if(inst->getType()->isArray())
-                break;
+            assert(!inst->getType()->isArray());
             const auto addr = inst->getOperand(0);
             const auto base = mBasePointer.find(addr);
             if(base != mBasePointer.cend())
