@@ -164,6 +164,9 @@ public:
         if(var->initialValue()) {
             // initialize with initialValue
             storeValue(ptr + globalOffset, var->initialValue(), var->initialValue()->getType());
+        } else {
+            // initialize with zero
+            memReset(ptr + globalOffset, size, std::byte{ 0 });
         }
         if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))
             removeTag(mGlobalStorage, ptr, size, ByteState::Write);
