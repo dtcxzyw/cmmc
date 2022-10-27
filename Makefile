@@ -14,7 +14,8 @@ LEX = flex
 YACC = bison
 
 DIR_BUILD := ./build
-BIN := ./bin/splc
+BIN := ./bin/cmmc
+SPLC_SHELL := ./bin/splc
 
 CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath ./) -Wextra -Wall -Werror -Wno-format-security -MD
 LDFLAGS = $(ADDFLAGS)
@@ -24,7 +25,7 @@ CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wild
 OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 
 .PHONY: all
-all: splc
+all: splc cmmc
 
 $(DIR_BUILD)/generated/Spl/ParserImpl.hpp: cmmc/Frontend/ParserSpl.yy
 	mkdir -p $(dir $@)
@@ -58,7 +59,7 @@ $(BIN): $(OBJS) $(DIR_BUILD)/objs/SplSupport.o $(DIR_BUILD)/objs/SysYSupport.o
 	mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
-.PHONY: clean bear debug splc
+.PHONY: clean bear debug cmmc
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear2: clean # make clangd happy
@@ -70,8 +71,11 @@ bear3: clean # make clangd happy
 -include $(OBJS:.o=.d)
 debug: $(BIN)
 	gdb $(BIN)
-splc: $(BIN)
+cmmc: $(BIN)
+splc: $(BIN) # Project 1
+	echo "\$$(dirname \$$0)/cmmc -s -a -o /dev/stdout \$$1" > $(SPLC_SHELL)
+	chmod +x $(SPLC_SHELL)
 
 .PHONY: test
-test: splc
+test: cmmc
 	python3 ./tests/test_driver.py $(BIN) ./tests

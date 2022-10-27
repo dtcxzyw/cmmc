@@ -154,7 +154,7 @@ int mainImpl(int argc, char** argv) {
     }
 
     if(argc == start) {
-        reportError() << "no input files" << std::endl;
+        reportError() << "no input file" << std::endl;
         return EXIT_FAILURE;
     }
 
