@@ -36,6 +36,11 @@ protected:
 
 public:
     explicit ConstantValue(const Type* type) : Value{ type } {}
+    ConstantValue(const ConstantValue&) = default;
+    ConstantValue(ConstantValue&&) = default;
+    ConstantValue& operator=(const ConstantValue&) = default;
+    ConstantValue& operator=(ConstantValue&&) = default;
+
     bool isConstant() const noexcept override {
         return true;
     }

@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cstdio>

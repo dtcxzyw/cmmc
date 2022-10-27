@@ -1503,7 +1503,7 @@ QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
 #endif
     ctx.pushLoc(mLocation);
     const auto ret = emit(ctx);
-    assert(!ret.value->getType()->isBoolean());
+    assert(!ret.value || !ret.value->getType()->isBoolean());
     ctx.popLoc();
     return ret;
 }

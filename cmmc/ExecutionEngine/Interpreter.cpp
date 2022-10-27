@@ -26,6 +26,7 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cstdint>
@@ -36,6 +37,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
+#include <variant>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -71,6 +73,9 @@ constexpr ByteState operator~(ByteState x) {
 constexpr bool hasTag(ByteState provided, ByteState required) {
     return (provided & required) == required;
 }
+
+using OperandStorage =
+    std::variant<ConstantInteger, ConstantFloatingPoint, ConstantOffset*, uintptr_t, Function*, std::monostate>;
 
 // Byte-level simulation
 class MemoryContext final {
@@ -205,11 +210,11 @@ public:
         }
     }
 
-    ConstantValue* loadValue(uintptr_t ptr, const Type* type) {
+    OperandStorage loadValue(uintptr_t ptr, const Type* type) {
         const auto alignment = type->getAlignment(mDataLayout);
         if(ptr % alignment != 0) {
             mHasMemoryError = true;
-            return nullptr;
+            return std::monostate{};
         }
 
         if(type->isInteger()) {
@@ -219,7 +224,7 @@ public:
             const auto size = type->getFixedSize();
             for(uint32_t idx = 0; idx < size; ++idx)
                 base[idx] = load(ptr + idx);
-            return make<ConstantInteger>(type, static_cast<intmax_t>(val));
+            return ConstantInteger{ type, static_cast<intmax_t>(val) };
         } else if(type->isFloatingPoint()) {
             std::byte storage[sizeof(double)];
             const auto size = type->getFixedSize();
@@ -231,16 +236,15 @@ public:
             } else {
                 val = *reinterpret_cast<double*>(storage);
             }
-            return make<ConstantFloatingPoint>(type, val);
+            return ConstantFloatingPoint{ type, val };
         } else if(type->isPointer()) {
             uintptr_t val;
             const auto base = reinterpret_cast<std::byte*>(&val);
             for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
                 base[idx] = load(ptr + idx);
-            return reinterpret_cast<ConstantValue*>(val);
+            return val;
         } else
             reportNotImplemented();
-        return nullptr;
     }
 
     template <typename T>
@@ -323,6 +327,37 @@ public:
             reportNotImplemented();
     }
 
+    void storeValue(uintptr_t ptr, OperandStorage& value, const Type* type) {
+        dispatch(
+            value, [&] { reportUnreachable(); },  //
+            [&](const ConstantInteger& x) {
+                const uintmax_t val = x.getZeroExtended();
+                const auto base = reinterpret_cast<const std::byte*>(&val);
+                const auto size = type->getFixedSize();
+                for(uint32_t idx = 0; idx < size; ++idx)
+                    store(ptr + idx, base[idx]);
+            },
+            [&](const ConstantFloatingPoint& x) {
+                const auto val = x.getValue();
+                std::byte storage[sizeof(double)];
+                const auto size = type->getFixedSize();
+                if(size == sizeof(float)) {
+                    *reinterpret_cast<float*>(storage) = static_cast<float>(val);
+                } else {
+                    *reinterpret_cast<double*>(storage) = val;
+                }
+
+                for(uint32_t idx = 0; idx < size; ++idx)
+                    store(ptr + idx, storage[idx]);
+            },
+            [&](uintptr_t val) {
+                const auto base = reinterpret_cast<const std::byte*>(&val);
+                for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
+                    store(ptr + idx, base[idx]);
+                ;
+            });
+    }
+
     template <typename T>
     struct FalseType final {
         static constexpr bool value = false;
@@ -396,10 +431,32 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 .attach<TypeAttachment>("provided", arguments[idx]->getType())
                 .reportFatal();
 
+    const auto fromConstant = [](ConstantValue* val) -> OperandStorage {
+        if(auto intVal = dynamic_cast<ConstantInteger*>(val)) {
+            return *intVal;
+        } else if(auto fpVal = dynamic_cast<ConstantFloatingPoint*>(val)) {
+            return *fpVal;
+        } else if(auto offset = dynamic_cast<ConstantOffset*>(val)) {
+            return offset;
+        } else
+            reportUnreachable();
+    };
+
+    const auto toConstant = [](const OperandStorage& val) -> ConstantValue* {
+        ConstantValue* ret = nullptr;
+        dispatch(
+            val, [&] { reportUnreachable(); },                                              //
+            [&](const ConstantInteger& x) { ret = make<ConstantInteger>(x); },              //
+            [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },  //
+            [&](ConstantOffset* x) { ret = x; }                                             //
+        );
+        return ret;
+    };
+
     struct BlockContext final {
         Instruction* caller;
         Block* block;
-        std::unordered_map<Value*, ConstantValue*> operands;
+        std::unordered_map<Value*, OperandStorage> operands;
         List<Instruction*>::const_iterator execIter;
         std::unordered_set<uintptr_t> stackAllocs;
     };
@@ -414,7 +471,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         entry.block = func.entryBlock();
         entry.execIter = entry.block->instructions().cbegin();
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
-            entry.operands.emplace(entry.block->getArg(idx), arguments[idx]);
+            entry.operands.emplace(entry.block->getArg(idx), fromConstant(arguments[idx]));
         if(step.get()) {
             func.dump(std::cerr);
             entry.block->dump(std::cerr);
@@ -446,6 +503,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         out << "\"store_bytes\": " << memCtx.getTotalStore() << "}" << std::endl;
     };
 
+    std::vector<OperandStorage> operands;
     while(true) {
         const auto current = Clock::now();
         if(std::chrono::duration_cast<std::chrono::nanoseconds>(current - start).count() >= static_cast<int64_t>(mTimeBudget))
@@ -464,16 +522,17 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         ++currentExecCtx.execIter;
         ++instructionCount;
 
-        std::vector<ConstantValue*> operands;
+        operands.clear();
+        operands.reserve(inst->operands().size());
+
         for(auto operand : inst->operands()) {
             if(operand->isConstant())
-                operands.push_back(operand->as<ConstantValue>());
+                operands.push_back(fromConstant(operand->as<ConstantValue>()));
             else if(operand->isGlobal()) {
                 if(operand->getType()->isFunction()) {
-                    operands.push_back(reinterpret_cast<ConstantValue*>(operand));
+                    operands.push_back(operand->as<Function>());
                 } else {
-                    operands.push_back(
-                        reinterpret_cast<ConstantValue*>(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>())));
+                    operands.push_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
                 }
             } else if(operand->getBlock()) {
                 assert(currentExecCtx.operands.count(operand));
@@ -482,32 +541,35 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 reportUnreachable();
         }
 
-        const auto getInt = [&](uint32_t idx) { return operands[idx]->as<ConstantInteger>()->getSignExtended(); };
-        const auto getUInt = [&](uint32_t idx) { return operands[idx]->as<ConstantInteger>()->getZeroExtended(); };
-        const auto getPtr = [&](uint32_t idx) { return reinterpret_cast<uintptr_t>(operands[idx]); };
-        const auto getFP = [&](uint32_t idx) { return operands[idx]->as<ConstantFloatingPoint>()->getValue(); };
+        const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
+        const auto getUInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getZeroExtended(); };
+        const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
+        const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
 
-        const auto addValue = [&](Instruction* inst, ConstantValue* val) {
+        const auto addValue = [&](Instruction* inst, OperandStorage val) {
             currentExecCtx.operands.emplace(inst, val);
             if(step.get()) {
-                if(inst->getType()->isInteger() || inst->getType()->isFloatingPoint()) {
-                    auto& out = std::cerr;
-                    inst->dump(out);
-                    out << " -> ";
-                    val->dump(out);
-                    out << std::endl;
-                }
+                auto& out = std::cerr;
+                inst->dump(out);
+                out << " -> ";
+                dispatch(
+                    val, [&] { out << "unknown"; },                                //
+                    [](const ConstantInteger& x) { out << x.getSignExtended(); },  //
+                    [](const ConstantFloatingPoint& x) { out << x.getValue(); },   //
+                    [](const ConstantOffset* x) { x->dump(out); },                 //
+                    [](const Function* x) { x->dumpAsOperand(out); },              //
+                    [](uintptr_t x) { out << "ptr " << std::hex << x; }            //
+                );
+                out << std::endl;
             }
         };
-        const auto addInt = [&](intmax_t val) { addValue(inst, make<ConstantInteger>(inst->getType(), val)); };
+        const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst->getType(), val }); };
         const auto addUInt = [&](uintmax_t val) {
-            addValue(inst, make<ConstantInteger>(inst->getType(), static_cast<intmax_t>(val)));
+            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val) });
         };
-        const auto addBoolean = [&](bool val) {
-            addValue(inst, make<ConstantInteger>(inst->getType(), static_cast<intmax_t>(val)));
-        };
-        const auto addPtr = [&](uintptr_t val) { addValue(inst, reinterpret_cast<ConstantValue*>(val)); };
-        const auto addFP = [&](double val) { addValue(inst, make<ConstantFloatingPoint>(inst->getType(), val)); };
+        const auto addBoolean = [&](bool val) { addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val) }); };
+        const auto addPtr = [&](uintptr_t val) { addValue(inst, val); };
+        const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst->getType(), val }); };
 
         const auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
             switch(cmp) {
@@ -536,7 +598,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 execCtx.pop_back();
                 if(execCtx.empty()) {
                     reportStatistics();
-                    return operands.empty() ? nullptr : operands[0];
+                    return operands.empty() ? nullptr : toConstant(operands[0]);
                 } else if(!operands.empty()) {
                     execCtx.back().operands.emplace(caller, operands[0]);
                 }
@@ -564,7 +626,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                 currentExecCtx.operands.clear();
                 for(uint32_t idx = 0; idx < target->args().size(); ++idx)
-                    currentExecCtx.operands[target->getArg(idx)] = operands[idx];
+                    currentExecCtx.operands.emplace(target->getArg(idx), operands[idx]);
                 currentExecCtx.block = target;
                 currentExecCtx.execIter = target->instructions().cbegin();
                 if(step.get()) {
@@ -787,7 +849,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 if(execCtx.size() >= mMaxRecursiveDepth)
                     return SimulationFailReason::ExceedMaxRecursiveDepth;
 
-                const auto callee = reinterpret_cast<Function*>(operands.back());
+                const auto callee = std::get<Function*>(operands.back());
                 operands.pop_back();
 
                 switch(callee->getIntrinsic()) {
@@ -874,7 +936,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             blockCtx.block = callee->entryBlock();
 
                             for(uint32_t idx = 0; idx < blockCtx.block->args().size(); ++idx)
-                                blockCtx.operands[blockCtx.block->getArg(idx)] = operands[idx];
+                                blockCtx.operands.emplace(blockCtx.block->getArg(idx), operands[idx]);
 
                             blockCtx.execIter = blockCtx.block->instructions().cbegin();
                             if(step.get()) {

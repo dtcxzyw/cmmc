@@ -30,10 +30,10 @@ public:
     static constexpr auto arenaSource = Arena::Source::IR;
 
     explicit Value(const Type* type);
-    Value(const Value&) = delete;
-    Value(Value&&) = delete;
-    Value& operator=(const Value&) = delete;
-    Value& operator=(Value&&) = delete;
+    Value(const Value&) = default;
+    Value(Value&&) = default;
+    Value& operator=(const Value&) = default;
+    Value& operator=(Value&&) = default;
     virtual ~Value() = default;
 
     virtual void dump(std::ostream& out) const = 0;
