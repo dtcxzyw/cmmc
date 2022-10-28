@@ -31,7 +31,7 @@ Program (1)
                   Stmt (4)
                     Exp (4)
                       Exp (4)
-                        ID: putint
+                        ID: write
                       LP
                       Args (4)
                         Exp (4)
