@@ -164,4 +164,85 @@ SourceLocation castLoc(const std::pair<uint32_t, yy::location>& location) {
     return { static_cast<uint32_t>(pos.line), static_cast<uint32_t>(pos.column) };
 }
 
+DriverImpl::DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode,
+                       std::shared_ptr<Arena> arena)
+    : mFile{ file }, mLang{ lang }, mRecordHierarchy{ recordHierarchy },  //
+      mStrictMode{ strictMode }, mArena{ std::move(arena) } {
+    mLocation.initialize(&mFile);
+}
+DriverImpl::~DriverImpl() {
+    mDefs = {};
+    mHierarchyTree = {};
+}
+
+void DriverImpl::markEnd() noexcept {
+    mEnd = true;
+}
+void DriverImpl::addFunctionDef(FunctionDefinition def) {
+    mDefs.push_back(std::move(def));
+}
+void DriverImpl::addGlobalDef(const TypeRef& typeDef, const VarList& varList) {
+    for(auto& var : varList)
+        mDefs.push_back(GlobalVarDefinition{ typeDef, var });
+}
+void DriverImpl::addOpaqueType(const TypeRef&) {
+    // TODO
+}
+void DriverImpl::addStructType(String typeName, VarDefList list) {
+    mDefs.push_back(StructDefinition{ std::move(typeName), std::move(list) });
+}
+yy::location& DriverImpl::location() noexcept {
+    return mLocation;
+}
+bool DriverImpl::complete() const noexcept {
+    return mEnd && !mError;
+}
+
+bool DriverImpl::shouldRecordHierarchy() const noexcept {
+    return mRecordHierarchy;
+}
+bool DriverImpl::checkExtension() noexcept {
+    return !mStrictMode;
+}
+
+Hierarchy& DriverImpl::hierarchy(ChildRef ref) {
+    return mHierarchyTree[ref.pos];
+}
+
+uint32_t DriverImpl::record(Deque<ChildRef> children, Hierarchy::Desc desc) {
+    assert(shouldRecordHierarchy());
+    const auto index = static_cast<uint32_t>(mHierarchyTree.size());
+    mHierarchyTree.push_back(Hierarchy{ std::move(desc), std::move(children) });
+    return index;
+}
+
+static std::string convert(const char* str) {
+    std::string res;
+    while(auto ch = *str) {
+        if(ch > '\x20' && ch < '\x7F') {
+            res += ch;
+        } else {
+            const uint8_t val = ch;
+            constexpr auto lut = "0123456789ABCDEF";
+            res += "\\x";
+            res += lut[val / 16];
+            res += lut[val % 16];
+        }
+        ++str;
+    }
+    return res;
+}
+
+void DriverImpl::reportLexerError(const char* reason, const char* str) {
+    if(mStrictMode)
+        reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << convert(str) << std::endl;
+    else
+        reportError() << "Lexer error" << mLocation.begin << ": " << reason << " <" << convert(str) << ">" << std::endl;
+    mError = true;
+}
+void DriverImpl::reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {
+    reportError() << "Error type B at Line " << location.second.begin.line << ": " << str << std::endl;
+    mError = true;
+}
+
 CMMC_NAMESPACE_END

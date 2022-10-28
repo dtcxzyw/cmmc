@@ -1,0 +1,136 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: main
+        LP
+        RP
+      CompSt (1)
+        LC
+        DefList (2)
+          Def (2)
+            Specifier (2)
+              TYPE: int
+            DecList (2)
+              Dec (2)
+                VarDec (2)
+                  ID: sum
+                ASSIGN
+                Exp (2)
+                  INT: 0
+              COMMA
+              DecList (2)
+                Dec (2)
+                  VarDec (2)
+                    ID: i
+                COMMA
+                DecList (2)
+                  Dec (2)
+                    VarDec (2)
+                      ID: x
+                  COMMA
+                  DecList (2)
+                    Dec (2)
+                      VarDec (2)
+                        ID: y
+            SEMI
+        StmtList (3)
+          Stmt (3)
+            FOR
+            LP
+            Stmt (3)
+              Exp (3)
+                Exp (3)
+                  ID: i
+                ASSIGN
+                Exp (3)
+                  INT: 0
+              SEMI
+            ForOptional (3)
+              Exp (3)
+                Exp (3)
+                  ID: i
+                LT
+                Exp (3)
+                  INT: 100
+            SEMI
+            ForOptional (3)
+              Exp (3)
+                INC
+                Exp (3)
+                  ID: i
+            RP
+            Stmt (4)
+              Exp (4)
+                Exp (4)
+                  ID: sum
+                PLUS_ASSIGN
+                Exp (4)
+                  ID: i
+              SEMI
+          StmtList (5)
+            Stmt (5)
+              Exp (5)
+                Exp (5)
+                  ID: x
+                ASSIGN
+                Exp (5)
+                  INT: 1
+              SEMI
+            StmtList (6)
+              Stmt (6)
+                Exp (6)
+                  Exp (6)
+                    ID: y
+                  ASSIGN
+                  Exp (6)
+                    INT: 2
+                SEMI
+              StmtList (7)
+                Stmt (7)
+                  Exp (7)
+                    Exp (7)
+                      ID: sum
+                    PLUS_ASSIGN
+                    Exp (7)
+                      Exp (7)
+                        INC
+                        Exp (7)
+                          ID: x
+                      PLUS
+                      Exp (7)
+                        Exp (7)
+                          ID: y
+                        DEC
+                  SEMI
+                StmtList (8)
+                  Stmt (8)
+                    Exp (8)
+                      Exp (8)
+                        ID: sum
+                      PLUS_ASSIGN
+                      Exp (8)
+                        Exp (8)
+                          Exp (8)
+                            LP
+                            Exp (8)
+                              INC
+                              Exp (8)
+                                ID: x
+                            RP
+                          DEC
+                        MUL
+                        Exp (8)
+                          INC
+                          Exp (8)
+                            ID: y
+                    SEMI
+                  StmtList (9)
+                    Stmt (9)
+                      RETURN
+                      Exp (9)
+                        ID: sum
+                      SEMI
+        RC

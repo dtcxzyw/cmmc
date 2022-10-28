@@ -114,71 +114,27 @@ class DriverImpl final {
     Deque<Hierarchy> mHierarchyTree;
 
 public:
-    DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
-        : mFile{ file }, mLang{ lang }, mRecordHierarchy{ recordHierarchy },  //
-          mStrictMode{ strictMode }, mArena{ std::move(arena) } {
-        mLocation.initialize(&mFile);
-    }
-    ~DriverImpl() {
-        mDefs = {};
-        mHierarchyTree = {};
-    }
+    DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena);
+    ~DriverImpl();
 
-    void markEnd() noexcept {
-        mEnd = true;
-    }
-    void addFunctionDef(FunctionDefinition def) {
-        mDefs.push_back(std::move(def));
-    }
-    void addGlobalDef(const TypeRef& typeDef, const VarList& varList) {
-        for(auto& var : varList)
-            mDefs.push_back(GlobalVarDefinition{ typeDef, var });
-    }
-    void addOpaqueType(const TypeRef&) {
-        // TODO
-    }
-    void addStructType(String typeName, VarDefList list) {
-        mDefs.push_back(StructDefinition{ std::move(typeName), std::move(list) });
-    }
-    yy::location& location() noexcept {
-        return mLocation;
-    }
-    bool complete() const noexcept {
-        return mEnd && !mError;
-    }
+    void markEnd() noexcept;
+    void addFunctionDef(FunctionDefinition def);
+    void addGlobalDef(const TypeRef& typeDef, const VarList& varList);
+    void addOpaqueType(const TypeRef&);
+    void addStructType(String typeName, VarDefList list);
+    yy::location& location() noexcept;
+    bool complete() const noexcept;
+    bool shouldRecordHierarchy() const noexcept;
+    bool checkExtension() noexcept;
 
-    bool shouldRecordHierarchy() const noexcept {
-        return mRecordHierarchy;
-    }
-    bool checkExtension() noexcept {
-        return !mStrictMode;
-    }
-
-    Hierarchy& hierarchy(ChildRef ref) {
-        return mHierarchyTree[ref.pos];
-    }
-
-    uint32_t record(Deque<ChildRef> children, Hierarchy::Desc desc) {
-        assert(shouldRecordHierarchy());
-        const auto index = static_cast<uint32_t>(mHierarchyTree.size());
-        mHierarchyTree.push_back(Hierarchy{ std::move(desc), std::move(children) });
-        return index;
-    }
+    Hierarchy& hierarchy(ChildRef ref);
+    uint32_t record(Deque<ChildRef> children, Hierarchy::Desc desc);
 
     void emit(Module& module);
     void dump(std::ostream& out);
 
-    void reportLexerError(const char* reason, const char* str) {
-        if(mStrictMode)
-            reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << str << std::endl;
-        else
-            reportError() << "Lexer error" << mLocation.begin << ": " << reason << " <" << str << ">" << std::endl;
-        mError = true;
-    }
-    void reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {
-        reportError() << "Error type B at Line " << location.second.begin.line << ": " << str << std::endl;
-        mError = true;
-    }
+    void reportLexerError(const char* reason, const char* str);
+    void reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str);
 };
 
 void generateScope(ExprPack& result, VarDefList list, const ExprPack& src);

@@ -32,9 +32,11 @@ def parse_perf(result):
         pass
 
 
-def spl_parse(src):
-    out = subprocess.run(args=[binary_path, '-s', '-a', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+def spl_parse(src, strict=True):
+    args = [binary_path, '-a', '-o', '/dev/stdout', src]
+    if strict:
+        args.insert(-1, '-s')
+    out = subprocess.run(args, capture_output=True, text=True)
     ref_content = ""
     ref = src[:-4]+".out"
     with open(ref, mode="r", encoding="utf-8") as f:
@@ -46,6 +48,10 @@ def spl_parse(src):
     elif out.returncode != 0 and is_error:
         return ref_content == out.stderr
     return False
+
+
+def spl_parse_ext(src):
+    return spl_parse(src, strict=False)
 
 
 def spl_semantic(src):
@@ -191,7 +197,12 @@ def test(name, path, filter, tester):
 
 res = []
 start = time.perf_counter()
-res.append(test("SPL parse", tests_path+"/Parse", ".spl", spl_parse))
+res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
+res.append(test("SPL parse project1 extra", tests_path +
+           "/Project1/test-ex", ".spl", spl_parse_ext))
+res.append(test("SPL parse project1 self", tests_path +
+           "/Project1/test", ".spl", spl_parse))
+
 res.append(test("SPL semantic & opt", tests_path +
            "/Semantic", ".spl", spl_semantic))
 res.append(test("SPL SPL->TAC sample", tests_path +

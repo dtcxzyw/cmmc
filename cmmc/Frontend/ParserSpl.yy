@@ -48,19 +48,22 @@
 // Aggregate Keywords
 %token STRUCT UNION
 // Unary/Binary Operators
+%token INC DEC
 %token PLUS MINUS MUL DIV REM
 %token NOT BNOT AND BAND OR BOR XOR
 %token LT GT LE GE EQ NE
 %token ASSIGN
+// Compound assignments
+%token PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN
 // Miscellaneous
 // . ; , #
-%token DOT SEMI COMMA SHARP
+%token DOT SEMI COMMA SHARP QUEST COLON
 // ( ) [ ] { }
 %token LP RP LB RB LC RC
 %token ERR
 
 %left COMMA
-%right ASSIGN
+%right ASSIGN SELECT QUEST COLON PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN
 %left OR
 %left AND
 %left BOR
@@ -70,8 +73,8 @@
 %left LT LE GT GE
 %left PLUS MINUS
 %left MUL DIV REM
-%right UMINUS BNOT NOT
-%left LB LP DOT
+%right UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC
+%left LB LP DOT SUFFIX_INC SUFFIX_DEC
 %precedence ERR
 %precedence FAKE_ERR
 %precedence NORMAL
@@ -98,6 +101,7 @@
 %type <VarDef> Def;
 %type <VarList> DecList;
 %type <NamedVar> Dec;
+%type <Expr*> ForOptional;
 
 %start Program;
 
@@ -124,6 +128,7 @@ Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$
 StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 | STRUCT ID LC DefList error %prec FAKE_ERR { CMMC_MISS_RC(@$); }
+| STRUCT TYPE error { CMMC_BAD_STRUCT(@$); }
 ;
 /* declarator */
 VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
@@ -154,12 +159,20 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | IF LP Exp RP Stmt %prec THEN { $$ = CMMC_IF(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
 | IF LP Exp RP Stmt ELSE Stmt { $$ = CMMC_IF_ELSE(@1, $3, $5, $7); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
 | WHILE LP Exp RP Stmt { $$ = CMMC_WHILE(@1, $3, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5); }
+| DO Stmt WHILE LP Exp RP SEMI { CMMC_NEED_EXTENSION(@$, DoWhile); $$ = CMMC_DO_WHILE(@1, $2, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
+| BREAK SEMI { CMMC_NEED_EXTENSION(@$, Break); $$ = CMMC_BREAK(@1); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| CONTINUE SEMI { CMMC_NEED_EXTENSION(@$, Continue); $$ = CMMC_CONTINUE(@1); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+| FOR LP Stmt ForOptional SEMI ForOptional RP Stmt { CMMC_NEED_EXTENSION(@$, ForLoop); $$ = CMMC_FOR_LOOP(@1, $3, $4, $6, $8); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7, @8); }
 | Exp error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
 | RETURN Exp error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
 | RETURN error %prec FAKE_ERR { CMMC_MISS_SEMI(@$); }
 | IF LP Exp error Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 | IF LP Exp error Stmt ELSE Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 | WHILE LP Exp error Stmt %prec FAKE_ERR { CMMC_MISS_RP(@$); }
+| SEMI { CMMC_NEED_EXTENSION(@$, EmptyStmt); $$ = CMMC_EMPTY_STMT(@1); CMMC_NONTERMINAL(@$, Stmt, @1); }
+;
+ForOptional: Exp { $$ = $1; CMMC_NONTERMINAL(@$, ForOptional, @1); }
+| %empty { $$ = nullptr; CMMC_EMPTY(@$, ForOptional); }
 ;
 /* local definition */
 DefList: Def DefList %prec NORMAL { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, DefList, @1, @2); }
@@ -177,6 +190,15 @@ Dec: VarDec { $$ = $1; CMMC_NONTERMINAL(@$, Dec, @1); }
 ;
 /* Expression */
 Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp PLUS_ASSIGN Exp { CMMC_NEED_EXTENSION(@$, CompoundAssign); $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Add, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MINUS_ASSIGN Exp { CMMC_NEED_EXTENSION(@$, CompoundAssign); $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Sub, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp MUL_ASSIGN Exp { CMMC_NEED_EXTENSION(@$, CompoundAssign); $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Mul, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp DIV_ASSIGN Exp { CMMC_NEED_EXTENSION(@$, CompoundAssign); $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Div, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| INC Exp %prec PREFIX_INC { CMMC_NEED_EXTENSION(@$, IncDec); $$ = CMMC_SELF_INCDEC_OP(@1, PrefixInc, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| DEC Exp %prec PREFIX_DEC { CMMC_NEED_EXTENSION(@$, IncDec); $$ = CMMC_SELF_INCDEC_OP(@1, PrefixDec, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| Exp INC %prec SUFFIX_INC { CMMC_NEED_EXTENSION(@$, IncDec); $$ = CMMC_SELF_INCDEC_OP(@2, SuffixInc, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| Exp DEC %prec SUFFIX_DEC { CMMC_NEED_EXTENSION(@$, IncDec); $$ = CMMC_SELF_INCDEC_OP(@2, SuffixDec, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
+| Exp QUEST Exp COLON Exp %prec SELECT { CMMC_NEED_EXTENSION(@$, Select); $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4, @5); }
 | Exp AND Exp { $$ = CMMC_BINARY_OP(@2, LogicalAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp OR Exp { $$ = CMMC_BINARY_OP(@2, LogicalOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LT Exp { $$ = CMMC_BINARY_OP(@2, LessThan, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }

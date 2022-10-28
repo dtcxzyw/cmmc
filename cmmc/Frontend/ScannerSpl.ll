@@ -29,6 +29,9 @@
   auto emitType = [&]{
     String val = String::get(yytext); return Parser::make_TYPE(val, {CMMC_RECORD(TYPE, val), loc});
   };
+  auto emitID = [&] {
+    String val = String::get(yytext); return Parser::make_ID(val, {CMMC_RECORD(ID, val), loc});
+  };
 %}
 [ \t]+ loc.step ();
 [\n]+ loc.lines (yyleng); loc.step ();
@@ -70,18 +73,24 @@
 "if" { CMMC_TERMINAL(IF); }
 "else" { CMMC_TERMINAL(ELSE); }
 "while" { CMMC_TERMINAL(WHILE); }
-"do" { CMMC_TERMINAL(DO); }
-"for" { CMMC_TERMINAL(FOR); }
-"continue" { CMMC_TERMINAL(CONTINUE); }
-"break" { CMMC_TERMINAL(BREAK); }
+"do" { if(driver.checkExtension()) { CMMC_TERMINAL(DO); } else { return emitID(); } }
+"for" { if(driver.checkExtension()) { CMMC_TERMINAL(FOR); } else { return emitID(); } }
+"continue" { if(driver.checkExtension()) { CMMC_TERMINAL(CONTINUE); } else { return emitID(); } }
+"break" { if(driver.checkExtension()) { CMMC_TERMINAL(BREAK); } else { return emitID(); } }
 "return" { CMMC_TERMINAL(RETURN); }
-"goto" { CMMC_TERMINAL(GOTO); }
-"switch" { CMMC_TERMINAL(SWITCH); }
-"case" { CMMC_TERMINAL(CASE); }
+"goto" { if(driver.checkExtension()) { CMMC_TERMINAL(GOTO); } else { return emitID(); } }
+"switch" { if(driver.checkExtension()) { CMMC_TERMINAL(SWITCH); } else { return emitID(); } }
+"case" { if(driver.checkExtension()) { CMMC_TERMINAL(CASE); } else { return emitID(); } }
 
 "struct" { CMMC_TERMINAL(STRUCT); }
-"union" { CMMC_TERMINAL(UNION); }
+"union" { if(driver.checkExtension()) { CMMC_TERMINAL(UNION); } else { return emitID(); } }
 
+"+=" { if(driver.checkExtension()) { CMMC_TERMINAL(PLUS_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
+"-=" { if(driver.checkExtension()) { CMMC_TERMINAL(MINUS_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
+"*=" { if(driver.checkExtension()) { CMMC_TERMINAL(MUL_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
+"/=" { if(driver.checkExtension()) { CMMC_TERMINAL(DIV_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
+"++" { if(driver.checkExtension()) { CMMC_TERMINAL(INC); } else { CMMC_LEXER_ERROR(yytext); } }
+"--" { if(driver.checkExtension()) { CMMC_TERMINAL(DEC); } else { CMMC_LEXER_ERROR(yytext); }}
 "+" { CMMC_TERMINAL(PLUS); }
 "-" { CMMC_TERMINAL(MINUS); }
 "*" { CMMC_TERMINAL(MUL); }
@@ -105,7 +114,9 @@
 "." { CMMC_TERMINAL(DOT); }
 ";" { CMMC_TERMINAL(SEMI); }
 "," { CMMC_TERMINAL(COMMA); }
-"#" { CMMC_TERMINAL(SHARP); }
+"#" { if(driver.checkExtension()) { CMMC_TERMINAL(SHARP); } else { CMMC_LEXER_ERROR(yytext); } }
+"?" { if(driver.checkExtension()) { CMMC_TERMINAL(QUEST); } else { CMMC_LEXER_ERROR(yytext); } }
+":" { if(driver.checkExtension()) { CMMC_TERMINAL(COLON); } else { CMMC_LEXER_ERROR(yytext); } }
 
 "(" { CMMC_TERMINAL(LP); }
 ")" { CMMC_TERMINAL(RP); }
@@ -120,7 +131,7 @@
 "0"[xX][0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 0|([1-9][0-9]*) { uintmax_t val = strtoull(yytext, NULL, 10); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
 (0|([1-9][0-9]*))"."[0-9]+ { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
-[a-zA-Z_][a-zA-Z_0-9]* { String val = String::get(yytext); return Parser::make_ID(val, {CMMC_RECORD(ID, val), loc}); }
+[a-zA-Z_][a-zA-Z_0-9]* { return emitID(); }
 "'"."'" { char ch = yytext[1]; return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 "'\\x"[0-9a-fA-F][0-9a-fA-F]"'" { char ch = strtol(yytext+3, NULL, 16); return Parser::make_CHAR(ch, {CMMC_RECORD(CHAR, ch), loc}); }
 

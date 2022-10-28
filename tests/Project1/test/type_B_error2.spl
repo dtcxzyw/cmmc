@@ -1,0 +1,14 @@
+struct foo3 {
+    int z;
+};
+struct foo {
+    struct foo2 {
+        struct foo3 x;
+    } y;
+};
+int main() {
+    struct foo a;
+    a.y.x.z.0 = 0;
+    a.y.x.z;0.0 == 0;
+    return a.y.x.z;
+}

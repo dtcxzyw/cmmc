@@ -72,6 +72,7 @@
 #define CMMC_MISS_RC(LOC) driver.reportParserError((LOC), "Missing closing curly bracket '}'")
 #define CMMC_MISS_SEMI(LOC) driver.reportParserError((LOC), "Missing semicolon ';'")
 #define CMMC_MISS_SPECIFIER(LOC) driver.reportParserError((LOC), "Missing specifier")
+#define CMMC_BAD_STRUCT(LOC) driver.reportParserError((LOC), "Prefix 'struct' is not allowed to be used for built-in types")
 #define CMMC_NEED_EXTENSION(LOC, EXT) \
     if(!driver.checkExtension())      \
     driver.reportParserError((LOC), #EXT " is not allowed in strict spl mode")

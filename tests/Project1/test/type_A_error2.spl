@@ -1,0 +1,4 @@
+int main() {
+    float x = 0x123p+3;
+    return 0;
+}
