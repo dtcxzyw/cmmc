@@ -1,4 +1,8 @@
 int main() {
+    int y = 0123;
+    float z = 1e-3;
+    float w = .0;
+    float d = 0.;
     float x = 0x123p+3;
     return 0;
 }

@@ -1,1 +1,10 @@
-Error type A at Line 2: unknown lexeme 0x123p
+Error type A at Line 2: unknown lexeme 0123
+Error type A at Line 3: unknown lexeme 1e
+Error type B at Line 1: Missing semicolon ';'
+Error type B at Line 4: Missing specifier
+Error type B at Line 5: Missing semicolon ';'
+Error type B at Line 5: Missing specifier
+Error type B at Line 6: Missing semicolon ';'
+Error type A at Line 6: unknown lexeme 0x123p
+Error type B at Line 6: Missing specifier
+Error type B at Line 7: Missing specifier
