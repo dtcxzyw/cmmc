@@ -90,17 +90,17 @@
 "*=" { if(driver.checkExtension()) { CMMC_TERMINAL(MUL_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
 "/=" { if(driver.checkExtension()) { CMMC_TERMINAL(DIV_ASSIGN); } else { CMMC_LEXER_ERROR(yytext); } }
 "++" { if(driver.checkExtension()) { CMMC_TERMINAL(INC); } else { CMMC_LEXER_ERROR(yytext); } }
-"--" { if(driver.checkExtension()) { CMMC_TERMINAL(DEC); } else { CMMC_LEXER_ERROR(yytext); }}
+"--" { if(driver.checkExtension()) { CMMC_TERMINAL(DEC); } else { CMMC_LEXER_ERROR(yytext); } }
 "+" { CMMC_TERMINAL(PLUS); }
 "-" { CMMC_TERMINAL(MINUS); }
 "*" { CMMC_TERMINAL(MUL); }
 "/" { CMMC_TERMINAL(DIV); }
-"%" { CMMC_TERMINAL(REM); }
+"%" { if(driver.checkExtension()) { CMMC_TERMINAL(REM); } else { CMMC_LEXER_ERROR(yytext); } }
 "!" { CMMC_TERMINAL(NOT); }
-"~" { CMMC_TERMINAL(BNOT); }
+"~" { if(driver.checkExtension()) { CMMC_TERMINAL(BNOT);} else { CMMC_LEXER_ERROR(yytext); } }
 "&&" { CMMC_TERMINAL(AND); }
 "&" { if(driver.checkExtension()) { CMMC_TERMINAL(BAND); } else { CMMC_LEXER_ERROR(yytext); } }
-"^" { CMMC_TERMINAL(XOR); }
+"^" { if(driver.checkExtension()) { CMMC_TERMINAL(XOR); } else { CMMC_LEXER_ERROR(yytext); } }
 "||" { CMMC_TERMINAL(OR); }
 "|" { if(driver.checkExtension()) { CMMC_TERMINAL(BOR); } else { CMMC_LEXER_ERROR(yytext); } }
 "<" { CMMC_TERMINAL(LT); }
