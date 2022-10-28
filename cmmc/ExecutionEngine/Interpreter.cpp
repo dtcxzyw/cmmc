@@ -562,12 +562,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 inst->dump(out);
                 out << " -> ";
                 dispatch(
-                    val, [&] { out << "unknown"; },                                //
-                    [](const ConstantInteger& x) { out << x.getSignExtended(); },  //
-                    [](const ConstantFloatingPoint& x) { out << x.getValue(); },   //
-                    [](const ConstantOffset* x) { x->dump(out); },                 //
-                    [](const Function* x) { x->dumpAsOperand(out); },              //
-                    [](uintptr_t x) { out << "ptr " << std::hex << x; }            //
+                    val, [&] { out << "unknown"; },                                 //
+                    [&](const ConstantInteger& x) { out << x.getSignExtended(); },  //
+                    [&](const ConstantFloatingPoint& x) { out << x.getValue(); },   //
+                    [&](const ConstantOffset* x) { x->dump(out); },                 //
+                    [&](const Function* x) { x->dumpAsOperand(out); },              //
+                    [&](uintptr_t x) { out << "ptr " << std::hex << x; }            //
                 );
                 out << std::endl;
             }
