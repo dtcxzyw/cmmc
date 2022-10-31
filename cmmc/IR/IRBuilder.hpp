@@ -63,6 +63,10 @@ public:
         mInsertPoint = insertPoint;
     }
 
+    auto getInsertPoint() const noexcept {
+        return mInsertPoint;
+    }
+
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
         auto inst = make<T>(std::forward<Args>(args)...);

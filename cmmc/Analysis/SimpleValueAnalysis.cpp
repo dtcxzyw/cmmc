@@ -102,20 +102,27 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         for(auto key : outdated)
             lastValue.erase(key);
     };
+    const auto replace = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr, Value* val, bool forceReplace) {
+        auto& ref = lastValue[addr];
+        if(!forceReplace && ref)
+            return;
 
-    const auto update = [&](Value* base, Value* addr, Value* val) {
+        ref = val;
+    };
+
+    const auto update = [&](Value* base, Value* addr, Value* val, bool forceReplace) {
         if(base == nullptr) {
             for(auto& [rhsBase, values] : mLastValue) {
                 if(rhsBase != nullptr && mAliasSet.isDistinct(rhsBase, addr))
                     continue;
                 invalidate(values, addr);
             }
-            mLastValue[nullptr][addr] = val;
+            replace(mLastValue[nullptr], addr, val, forceReplace);
         } else {
             auto& lastValue = mLastValue[base];
             invalidate(lastValue, addr);
             invalidate(mLastValue[nullptr], addr);
-            lastValue[addr] = val;
+            replace(lastValue, addr, val, forceReplace);
         }
     };
 
@@ -136,17 +143,16 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             const auto addr = inst->getOperand(0);
             const auto base = mBasePointer.find(addr);
             if(base != mBasePointer.cend())
-                update(base->second, addr, inst);
+                update(base->second, addr, inst, false);
 
-            if(inst->getType()->isPointer()) {
+            if(inst->getType()->isPointer())
                 mBasePointer.emplace(inst, nullptr);
-            }
         } break;
         case InstructionID::Store: {
             const auto addr = inst->getOperand(0);
             const auto base = mBasePointer.find(addr);
             if(base != mBasePointer.cend())
-                update(base->second, addr, inst->getOperand(1));
+                update(base->second, addr, inst->getOperand(1), true);
             else
                 mLastValue.clear();  // discard all cached values
         } break;

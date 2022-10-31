@@ -53,7 +53,7 @@ class ConstantPropagation final : public TransformPass<Function> {
             auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
 
             for(auto operand : inst->operands())
-                if(!operand->isConstant())
+                if(!operand->isConstant() && !replace.count(operand))
                     return nullptr;
 
             if(inst->isIntegerOp()) {

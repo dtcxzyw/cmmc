@@ -30,15 +30,20 @@ struct MatchContext final {
 
     explicit MatchContext(ValueType* value, std::unordered_map<Value*, Value*>* replace) : value{ value }, replace{ replace } {};
 
+    Value* getReplaced(Value* val) const {
+        if(replace) {
+            if(auto iter = replace->find(val); iter != replace->cend()) {
+                return iter->second;
+            }
+        }
+        return val;
+    }
+
     template <typename T = ValueType>
     MatchContext<Value> getOperand(uint32_t idx) const {
         if constexpr(std::is_base_of_v<Instruction, T>) {
-            auto val = value->getOperand(idx);
-            if(replace) {
-                if(auto iter = replace->find(value); iter != replace->cend())
-                    val = iter->second;
-            }
-            return MatchContext<Value>{ val, replace };
+            const auto val = value->getOperand(idx);
+            return MatchContext<Value>{ getReplaced(val), replace };
         } else {
             static_assert(staticAssertionFail<T>, "Unsupported operation");
         }
@@ -62,7 +67,7 @@ class AnyMatcher {
 public:
     explicit AnyMatcher(Value*& value) noexcept : mValue{ value } {}
     bool operator()(const MatchContext<Value>& ctx) const noexcept {
-        mValue = ctx.value;
+        mValue = ctx.getReplaced(ctx.value);
         return true;
     }
 };

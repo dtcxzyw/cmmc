@@ -33,6 +33,7 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
         if(auto value = reducer(inst, builder, replace)) {
             replace.emplace(inst, value);
         }
+        iter = builder.getInsertPoint();
     }
     const auto newSize = block.instructions().size();
     auto modified = newSize != oldSize;
