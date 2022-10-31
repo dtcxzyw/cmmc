@@ -15,13 +15,14 @@
 #pragma once
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <functional>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
-using BlockReducer = std::function<Value*(Instruction* inst, std::unordered_map<Value*, Value*>& replace)>;
+using BlockReducer = std::function<Value*(Instruction* inst, IRBuilder& builder, std::unordered_map<Value*, Value*>& replace)>;
 bool reduceBlock(Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix

@@ -44,7 +44,7 @@ class ConstantPropagation final : public TransformPass<Function> {
     }
 
     bool runOnBlock(Block& block) const {
-        return reduceBlock(block, [](Instruction* inst, std::unordered_map<Value*, Value*>& replace) -> Value* {
+        return reduceBlock(block, [](Instruction* inst, IRBuilder&, std::unordered_map<Value*, Value*>& replace) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;

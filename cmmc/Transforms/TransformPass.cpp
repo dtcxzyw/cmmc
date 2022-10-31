@@ -113,7 +113,6 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // Constant
             "ConstantMerge",          //
             "SimpleCSE",              //
-            "CombineFma",             //
             "GEPCombine",             //
             "NoSideEffectEliminate",  // clean up
             // Arithmetic
@@ -131,8 +130,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "LoadReduce",             //
             "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
-            "BlockMerge",             //
-            "BlockEliminate",         // clean up
+            // Outline
+            "BlockOutliner",   //
+            "BlockMerge",      //
+            "BlockEliminate",  // clean up
             // Postprocess
             "NoReturnCallEliminate",  //
             "FreeEliminate",          //
@@ -147,8 +148,9 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({
-                "FuncInlining",       //
-                "SmallBlockInlining"  //
+                "FuncInlining",        //
+                "SmallBlockInlining",  //
+                "CombineFma",          //
             }))
             root->addPass(pass);
     }

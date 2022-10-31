@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/IR/Instruction.hpp"
 #include <cassert>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -27,6 +28,7 @@ CMMC_NAMESPACE_BEGIN
 class IRBuilder {
     Function* mCurrentFunction;
     Block* mCurrentBlock;
+    List<Instruction*>::iterator mInsertPoint;
 
     const Type* mIndexType;
     Value *mTrueValue, *mFalseValue, *mZeroIndex;
@@ -52,13 +54,21 @@ public:
     void setCurrentBlock(Block* block) {
         mCurrentFunction = block ? block->getFunction() : nullptr;
         mCurrentBlock = block;
+        if(block)
+            mInsertPoint = mCurrentBlock->instructions().end();
+    }
+    void setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint) {
+        assert(block);
+        setCurrentBlock(block);
+        mInsertPoint = insertPoint;
     }
 
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
         auto inst = make<T>(std::forward<Args>(args)...);
         auto block = getCurrentBlock();
-        block->instructions().push_back(inst);
+        auto iter = block->instructions().insert(mInsertPoint, inst);
+        mInsertPoint = std::next(iter);
         inst->setBlock(block);
         return inst;
     }

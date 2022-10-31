@@ -23,20 +23,19 @@ CMMC_NAMESPACE_BEGIN
 
 bool reduceBlock(Block& block, BlockReducer reducer) {
     auto& insts = block.instructions();
-    bool modified = false;
+
     std::unordered_map<Value*, Value*> replace;
+    const auto oldSize = block.instructions().size();
+    IRBuilder builder;
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         const auto inst = *iter;
-        if(auto value = reducer(inst, replace)) {
-            if(value->isInstruction() && value->getBlock() != &block) {  // new instruction
-                auto newInst = value->as<Instruction>();
-                newInst->setBlock(&block);
-                iter = insts.insert(std::next(iter), newInst);
-                modified = true;
-            }
+        builder.setInsertPoint(&block, iter);
+        if(auto value = reducer(inst, builder, replace)) {
             replace.emplace(inst, value);
         }
     }
+    const auto newSize = block.instructions().size();
+    auto modified = newSize != oldSize;
     modified |= replaceOperands(block, replace);
     return modified;
 }
