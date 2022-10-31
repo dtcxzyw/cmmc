@@ -87,8 +87,7 @@ Program (1)
                   ID: n
                 ASSIGN
                 Exp (7)
-                  Exp (7)
-                    ID: read
+                  ID: read
                   LP
                   RP
               SEMI
@@ -122,8 +121,7 @@ Program (1)
                               ID: a
                             ASSIGN
                             Exp (10)
-                              Exp (10)
-                                ID: read
+                              ID: read
                               LP
                               RP
                           SEMI
@@ -3212,8 +3210,7 @@ Program (1)
                           StmtList (210)
                             Stmt (210)
                               Exp (210)
-                                Exp (210)
-                                  ID: write
+                                ID: write
                                 LP
                                 Args (210)
                                   Exp (210)

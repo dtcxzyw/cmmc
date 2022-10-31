@@ -1,0 +1,11 @@
+int test_1_1()
+{
+	int i = 0;
+    char c = ?;
+    int a = 0xrgb;
+    d = 6;
+    float f = 3.25;
+    if(i < 2) {
+        return 1;
+    }
+}

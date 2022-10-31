@@ -1,0 +1,24 @@
+struct node{
+    int child;
+    int level;
+}
+int func1(int a){
+    int b[10];
+    b[0] = 1;
+    b[b[0]] = 2;
+    b[2 = 3;
+    while (a == b[1]
+        b[0] = a;  
+    return b[0];
+}
+int func2(int a, int b)
+{
+  a = func(b);
+  if (a > b)
+  {
+    return a;
+  }
+  else
+  {
+    return b; 
+}

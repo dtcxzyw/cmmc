@@ -1,0 +1,146 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: test_1_r15
+        LP
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: a
+              COMMA
+              DecList (3)
+                Dec (3)
+                  VarDec (3)
+                    ID: b
+                COMMA
+                DecList (3)
+                  Dec (3)
+                    VarDec (3)
+                      ID: c
+                  COMMA
+                  DecList (3)
+                    Dec (3)
+                      VarDec (3)
+                        ID: d
+                      ASSIGN
+                      Exp (3)
+                        INT: 1
+            SEMI
+        StmtList (4)
+          Stmt (4)
+            WHILE
+            LP
+            Exp (4)
+              Exp (4)
+                ID: a
+              GT
+              Exp (4)
+                INT: 0
+            RP
+            Stmt (4)
+              CompSt (4)
+                LC
+                StmtList (5)
+                  Stmt (5)
+                    IF
+                    LP
+                    Exp (5)
+                      Exp (5)
+                        ID: b
+                      GT
+                      Exp (5)
+                        INT: 0
+                    RP
+                    Stmt (5)
+                      CompSt (5)
+                        LC
+                        StmtList (6)
+                          Stmt (6)
+                            IF
+                            LP
+                            Exp (6)
+                              Exp (6)
+                                ID: c
+                              GT
+                              Exp (6)
+                                INT: 0
+                            RP
+                            Stmt (6)
+                              CompSt (6)
+                                LC
+                                StmtList (7)
+                                  Stmt (7)
+                                    IF
+                                    LP
+                                    Exp (7)
+                                      Exp (7)
+                                        ID: d
+                                      GT
+                                      Exp (7)
+                                        INT: 0
+                                    RP
+                                    Stmt (7)
+                                      CompSt (7)
+                                        LC
+                                        StmtList (8)
+                                          Stmt (8)
+                                            Exp (8)
+                                              Exp (8)
+                                                ID: d
+                                              ASSIGN
+                                              Exp (8)
+                                                MINUS
+                                                Exp (8)
+                                                  INT: 1
+                                            SEMI
+                                        RC
+                                RC
+                            ELSE
+                            Stmt (10)
+                              CompSt (10)
+                                LC
+                                StmtList (11)
+                                  Stmt (11)
+                                    Exp (11)
+                                      Exp (11)
+                                        ID: c
+                                      ASSIGN
+                                      Exp (11)
+                                        INT: 9
+                                    SEMI
+                                RC
+                        RC
+                    ELSE
+                    Stmt (13)
+                      CompSt (13)
+                        LC
+                        StmtList (14)
+                          Stmt (14)
+                            Exp (14)
+                              Exp (14)
+                                ID: a
+                              ASSIGN
+                              Exp (14)
+                                ID: b
+                            SEMI
+                        RC
+                RC
+          StmtList (17)
+            Stmt (17)
+              RETURN
+              Exp (17)
+                MINUS
+                Exp (17)
+                  INT: 1
+              SEMI
+        RC

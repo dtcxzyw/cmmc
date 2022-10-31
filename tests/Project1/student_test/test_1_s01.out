@@ -1,0 +1,167 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        StructSpecifier (1)
+          STRUCT
+          ID: friends
+      SEMI
+    ExtDefList (2)
+      ExtDef (2)
+        Specifier (2)
+          TYPE: int
+        FunDec (2)
+          ID: main
+          LP
+          RP
+        CompSt (3)
+          LC
+          DefList (4)
+            Def (4)
+              Specifier (4)
+                TYPE: int
+              DecList (4)
+                Dec (4)
+                  VarDec (4)
+                    ID: chandler
+                COMMA
+                DecList (4)
+                  Dec (4)
+                    VarDec (4)
+                      ID: is
+                  COMMA
+                  DecList (4)
+                    Dec (4)
+                      VarDec (4)
+                        ID: a
+                    COMMA
+                    DecList (4)
+                      Dec (4)
+                        VarDec (4)
+                          ID: girl
+                        ASSIGN
+                        Exp (4)
+                          Exp (4)
+                            Exp (4)
+                              ID: s
+                            MUL
+                            Exp (4)
+                              INT: 5
+                          PLUS
+                          Exp (4)
+                            Exp (4)
+                              ID: e
+                            MUL
+                            Exp (4)
+                              INT: 9
+              SEMI
+          StmtList (5)
+            Stmt (5)
+              Exp (5)
+                ID: a
+                LP
+                Args (5)
+                  Exp (5)
+                    Exp (5)
+                      ID: i
+                    ASSIGN
+                    Exp (5)
+                      INT: 2
+                  COMMA
+                  Args (5)
+                    Exp (5)
+                      INT: 233
+                    COMMA
+                    Args (5)
+                      Exp (5)
+                        Exp (5)
+                          INT: 33
+                        NE
+                        Exp (5)
+                          INT: 1
+                      COMMA
+                      Args (5)
+                        Exp (5)
+                          Exp (5)
+                            Exp (5)
+                              ID: ii
+                            NE
+                            Exp (5)
+                              Exp (5)
+                                INT: 9
+                              MUL
+                              Exp (5)
+                                ID: j
+                          OR
+                          Exp (5)
+                            MINUS
+                            Exp (5)
+                              FLOAT: 0.001
+                RP
+              SEMI
+            StmtList (6)
+              Stmt (6)
+                Exp (6)
+                  ID: putchar
+                  LP
+                  Args (6)
+                    Exp (6)
+                      Exp (6)
+                        INT: 1
+                      ASSIGN
+                      Exp (6)
+                        INT: 25678
+                  RP
+                SEMI
+          RC
+      ExtDefList (9)
+        ExtDef (9)
+          Specifier (9)
+            TYPE: int
+          FunDec (9)
+            ID: t
+            LP
+            RP
+          CompSt (9)
+            LC
+            DefList (10)
+              Def (10)
+                Specifier (10)
+                  TYPE: int
+                DecList (10)
+                  Dec (10)
+                    VarDec (10)
+                      ID: a
+                    ASSIGN
+                    Exp (10)
+                      Exp (10)
+                        Exp (10)
+                          Exp (10)
+                            INT: 1
+                          PLUS
+                          Exp (10)
+                            Exp (10)
+                              INT: 2
+                            MUL
+                            Exp (10)
+                              INT: 7
+                        PLUS
+                        Exp (10)
+                          INT: 3
+                      GT
+                      Exp (10)
+                        Exp (10)
+                          Exp (10)
+                            INT: 1
+                          PLUS
+                          Exp (10)
+                            Exp (10)
+                              INT: 2
+                            MUL
+                            Exp (10)
+                              INT: 7
+                        PLUS
+                        Exp (10)
+                          INT: 3
+                SEMI
+            RC

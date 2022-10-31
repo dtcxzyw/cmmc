@@ -52,8 +52,7 @@ Program (1)
             RP
             Stmt (4)
               Exp (4)
-                Exp (4)
-                  ID: write
+                ID: write
                 LP
                 Args (4)
                   Exp (4)

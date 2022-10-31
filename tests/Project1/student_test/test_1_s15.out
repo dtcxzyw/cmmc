@@ -1,0 +1,77 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: test_12011543_5
+        LP
+        VarList (1)
+          ParamDec (1)
+            Specifier (1)
+              TYPE: int
+            VarDec (1)
+              ID: n
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: res
+                ASSIGN
+                Exp (3)
+                  INT: 1
+            SEMI
+        StmtList (4)
+          Stmt (4)
+            WHILE
+            LP
+            Exp (4)
+              Exp (4)
+                ID: n
+              GT
+              Exp (4)
+                INT: 0
+            RP
+            Stmt (5)
+              CompSt (5)
+                LC
+                StmtList (6)
+                  Stmt (6)
+                    Exp (6)
+                      Exp (6)
+                        ID: res
+                      ASSIGN
+                      Exp (6)
+                        Exp (6)
+                          ID: res
+                        MUL
+                        Exp (6)
+                          ID: n
+                    SEMI
+                  StmtList (7)
+                    Stmt (7)
+                      Exp (7)
+                        Exp (7)
+                          ID: n
+                        ASSIGN
+                        Exp (7)
+                          Exp (7)
+                            ID: n
+                          MINUS
+                          Exp (7)
+                            INT: 1
+                      SEMI
+                RC
+          StmtList (9)
+            Stmt (9)
+              RETURN
+              Exp (9)
+                ID: res
+              SEMI
+        RC

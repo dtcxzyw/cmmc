@@ -1,0 +1,115 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: char
+      FunDec (1)
+        ID: abaaba
+        LP
+        VarList (1)
+          ParamDec (1)
+            Specifier (1)
+              TYPE: int
+            VarDec (1)
+              ID: times
+        RP
+      CompSt (1)
+        LC
+        StmtList (2)
+          Stmt (2)
+            CompSt (2)
+              LC
+              DefList (3)
+                Def (3)
+                  Specifier (3)
+                    TYPE: int
+                  DecList (3)
+                    Dec (3)
+                      VarDec (3)
+                        ID: i
+                      ASSIGN
+                      Exp (3)
+                        INT: 1
+                  SEMI
+              StmtList (4)
+                Stmt (4)
+                  Exp (4)
+                    Exp (4)
+                      ID: i
+                    ASSIGN
+                    Exp (4)
+                      INT: 2
+                  SEMI
+              RC
+          StmtList (6)
+            Stmt (6)
+              CompSt (6)
+                LC
+                DefList (7)
+                  Def (7)
+                    Specifier (7)
+                      TYPE: int
+                    DecList (7)
+                      Dec (7)
+                        VarDec (7)
+                          ID: i
+                        ASSIGN
+                        Exp (7)
+                          INT: 2
+                    SEMI
+                StmtList (8)
+                  Stmt (8)
+                    Exp (8)
+                      Exp (8)
+                        ID: i
+                      ASSIGN
+                      Exp (8)
+                        INT: 3
+                    SEMI
+                RC
+        RC
+    ExtDefList (12)
+      ExtDef (12)
+        Specifier (12)
+          TYPE: char
+        FunDec (12)
+          ID: sleeeeeeeep
+          LP
+          RP
+        CompSt (12)
+          LC
+          StmtList (13)
+            Stmt (13)
+              CompSt (13)
+                LC
+                DefList (14)
+                  Def (14)
+                    Specifier (14)
+                      TYPE: int
+                    DecList (14)
+                      Dec (14)
+                        VarDec (14)
+                          ID: i
+                        ASSIGN
+                        Exp (14)
+                          INT: 1
+                    SEMI
+                StmtList (15)
+                  Stmt (15)
+                    CompSt (15)
+                      LC
+                      DefList (16)
+                        Def (16)
+                          Specifier (16)
+                            TYPE: int
+                          DecList (16)
+                            Dec (16)
+                              VarDec (16)
+                                ID: i
+                              ASSIGN
+                              Exp (16)
+                                INT: 2
+                          SEMI
+                      RC
+                RC
+          RC

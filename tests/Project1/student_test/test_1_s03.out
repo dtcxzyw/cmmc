@@ -1,0 +1,78 @@
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: char
+      FunDec (1)
+        ID: b
+        LP
+        RP
+      CompSt (1)
+        LC
+        StmtList (2)
+          Stmt (2)
+            RETURN
+            Exp (2)
+              ID: b
+              LP
+              RP
+            SEMI
+        RC
+    ExtDefList (4)
+      ExtDef (4)
+        Specifier (4)
+          TYPE: int
+        FunDec (4)
+          ID: main
+          LP
+          RP
+        CompSt (4)
+          LC
+          StmtList (5)
+            Stmt (5)
+              Exp (5)
+                Exp (5)
+                  Exp (5)
+                    INT: 1
+                  PLUS
+                  Exp (5)
+                    INT: 2
+                ASSIGN
+                Exp (5)
+                  INT: 3
+              SEMI
+            StmtList (6)
+              Stmt (6)
+                Exp (6)
+                  Exp (6)
+                    INT: 3
+                  EQ
+                  Exp (6)
+                    Exp (6)
+                      INT: 1
+                    PLUS
+                    Exp (6)
+                      INT: 2
+                SEMI
+              StmtList (7)
+                Stmt (7)
+                  Exp (7)
+                    Exp (7)
+                      ID: a
+                    LB
+                    Exp (7)
+                      INT: 10
+                    RB
+                  SEMI
+                StmtList (8)
+                  Stmt (8)
+                    Exp (8)
+                      Exp (8)
+                        ID: b
+                        LP
+                        RP
+                      ASSIGN
+                      Exp (8)
+                        ID: c
+                    SEMI
+          RC

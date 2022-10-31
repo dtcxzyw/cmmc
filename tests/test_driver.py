@@ -202,6 +202,8 @@ res.append(test("SPL parse project1 extra", tests_path +
            "/Project1/test-ex", ".spl", spl_parse_ext))
 res.append(test("SPL parse project1 self", tests_path +
            "/Project1/test", ".spl", spl_parse))
+res.append(test("SPL parse project1 student", tests_path +
+                "/Project1/student_test", ".spl", spl_parse))
 
 res.append(test("SPL semantic & opt", tests_path +
            "/Semantic", ".spl", spl_semantic))

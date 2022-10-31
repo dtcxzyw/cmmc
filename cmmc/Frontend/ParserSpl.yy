@@ -113,8 +113,8 @@ ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 ExtDef: Specifier ExtDecList SEMI { driver.addGlobalDef($1, $2); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 | Specifier SEMI { driver.addOpaqueType($1); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 | Specifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({$2, $3}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
-| Specifier ExtDecList error { CMMC_MISS_SEMI(@$); }
-| Specifier error { CMMC_MISS_SEMI(@$); }
+| Specifier ExtDecList error { CMMC_MISS_SEMI(@3); }
+| Specifier error { CMMC_MISS_SEMI(@2); }
 | error ExtDecList SEMI { CMMC_MISS_SPECIFIER(@2); }
 | error SEMI { CMMC_MISS_SPECIFIER(@2); }
 ;
@@ -219,8 +219,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | BNOT Exp { CMMC_NEED_EXTENSION(@$, BitwiseNot); $$ = CMMC_UNARY_OP(@1, BitwiseNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
-| Exp LP Args RP { $$ = CMMC_CALL(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
-| Exp LP RP { $$ = CMMC_CALL(@2, $1, ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| ID LP Args RP { $$ = CMMC_CALL(@2, CMMC_ID(@1, $1), $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
+| ID LP RP { $$ = CMMC_CALL(@2, CMMC_ID(@1, $1), ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { $$ = CMMC_STRUCT_INDEX(@3, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | ID { $$ = CMMC_ID(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
@@ -228,8 +228,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | LP Exp error { CMMC_MISS_RP(@$); }
-| Exp LP Args error { CMMC_MISS_RP(@$); }
-| Exp LP error { CMMC_MISS_RP(@$); }
+| ID LP Args error { CMMC_MISS_RP(@$); }
+| ID LP error { CMMC_MISS_RP(@$); }
 | Exp LB Exp error { CMMC_MISS_RB(@$); }
 | Exp ERR Exp error {}
 | ERR error {}

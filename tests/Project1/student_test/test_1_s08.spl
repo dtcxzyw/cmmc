@@ -1,0 +1,12 @@
+int t02_12012919() 
+{
+    int a = 0xff;
+    while(a < 10{
+        a = a * 2;
+    }
+    
+    if (a != 'a'{
+        return 3;
+    }
+    return a;
+}

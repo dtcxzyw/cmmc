@@ -1,0 +1,72 @@
+int main() {
+
+  int n, m, c, d, first[10][10], second[10][10], sum[10][10], diff[10][10];
+  m = input();
+  n = input();
+
+  c = 0;
+  while (c < m) {
+    d = 0;
+    while (d < n) {
+      first[c][d] = input();
+      d = d + 1;
+    }
+    c = c + 1;
+  }
+  c = 0;
+  while (c < m) {
+    d = 0;
+    while (d < n) {
+      second[c][d] = input();
+      d = d + 1;
+    }
+    c = c + 1;
+  }
+
+  c = 0;
+  while (c < m) {
+    d = 0;
+    while (d < n) {
+      print(first[c][d]);
+      d = d + 1;
+    }
+    print();
+    c = c + 1;
+  }
+
+  c = 0;
+  while ((c = c + 1) < m) {
+    d = 0;
+    while (d < n) {
+      print(second[c][d]);
+      d = d + 1;
+    }
+    print();
+    c = c + 1;
+  }
+  printf();
+
+  c = 0;
+  while ((c = c + 1) < m) {
+    d = 0;
+    while (d < n) {
+      sum[c][d] = first[c][d] + second[c][d];
+      d = d + 1;
+    }
+    print();
+    c = c + 1;
+  }
+
+  printf();
+  c = 0;
+  while ((c = c + 1) < m) {
+    d = 0;
+    while (d < n) {
+      print(sum[c][d]);
+      d = d + 1;
+    }
+    print();
+    c = c + 1;
+  }
+  return 0;
+}

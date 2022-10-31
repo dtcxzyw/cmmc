@@ -1,0 +1,18 @@
+int test_1_r15()
+{
+  int a, b, c, d=1;
+  while(a>0){
+    if(b>0){
+        if(c>0){
+            if(d>0){
+                d = -1;
+            }
+        }else{
+            c = 9;
+        }
+    }else{
+        a = b;
+    }
+  }
+  return -1;
+}

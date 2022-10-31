@@ -1,0 +1,5 @@
+Error type A at Line 2: unknown lexeme 0a
+Error type A at Line 3: unknown lexeme @
+Error type A at Line 4: unknown lexeme |
+Error type A at Line 5: unknown lexeme 00
+Error type B at Line 5: Missing semicolon ';'
