@@ -1254,7 +1254,8 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     for(auto [offset, value] : values) {
         const auto val = ctx.getRValue(value, scalarType, dstQualifier);
         if(val->isConstant()) {
-            if(cint_(0)(val) || cfp_(0.0)(val))
+            MatchContext<Value> matchCtx{ val, nullptr };
+            if(cint_(0)(matchCtx) || cfp_(0.0)(matchCtx))
                 continue;  // use zero initialization
         }
         const auto dst = zeroTo(offset);

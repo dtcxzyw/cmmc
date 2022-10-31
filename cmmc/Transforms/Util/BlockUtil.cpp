@@ -27,7 +27,7 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
     std::unordered_map<Value*, Value*> replace;
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         const auto inst = *iter;
-        if(auto value = reducer(inst)) {
+        if(auto value = reducer(inst, replace)) {
             if(value->isInstruction() && value->getBlock() != &block) {  // new instruction
                 auto newInst = value->as<Instruction>();
                 newInst->setBlock(&block);

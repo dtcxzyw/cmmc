@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Module.hpp"
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -104,27 +105,57 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     auto& passesSource = PassRegistry::get();
 
     auto basic = std::make_shared<PassManager>();
-    for(auto& pass : passesSource.collect(PassType::AttributeInference))
+    for(auto& pass : passesSource.collect({
+            // Preprocess
+            "FunctionAttrInfer",      //
+            "BlockSort",              //
+            "NoSideEffectEliminate",  // clean up
+            // Constant
+            "ConstantMerge",          //
+            "SimpleCSE",              //
+            "CombineFma",             //
+            "GEPCombine",             //
+            "NoSideEffectEliminate",  // clean up
+            // Arithmetic
+            "ConstantPropagation",    //
+            "ArithmeticReduce",       //
+            "NoSideEffectEliminate",  // clean up
+            // Control flow
+            "MergeBranch",        //
+            "SimplyBranch",       //
+            "CombineBranch",      //
+            "BlockMerge",         //
+            "BlockEliminate",     // clean up
+            "BlockArgEliminate",  // clean up
+            // Load/Store
+            "LoadReduce",             //
+            "StoreEliminate",         //
+            "NoSideEffectEliminate",  // clean up
+            "BlockMerge",             //
+            "BlockEliminate",         // clean up
+            // Postprocess
+            "NoReturnCallEliminate",  //
+            "FreeEliminate",          //
+            "NoSideEffectEliminate",  // clean up
+            "GlobalEliminate"         //
+        }))
         basic->addPass(pass);
-    for(auto& pass : passesSource.collect(PassType::SideEffectEquality))
-        basic->addPass(pass);
-    if(level >= OptimizationLevel::O2) {
-        for(auto& pass : passesSource.collect(PassType::TargetSpecific))
-            basic->addPass(pass);
-    }
 
-    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 512);
+    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 64);
 
     root->addPass(iter);  // pre optimization
 
     if(level >= OptimizationLevel::O3) {
-        for(auto& pass : passesSource.collect(PassType::Expensive))
+        for(auto pass : passesSource.collect({
+                "FuncInlining",       //
+                "SmallBlockInlining"  //
+            }))
             root->addPass(pass);
     }
 
     root->addPass(iter);  // post optimization
 
-    for(auto& pass : passesSource.collect(PassType::Postprocess))
+    for(auto& pass : passesSource.collect({ "UninitializedCheck" }))
         root->addPass(pass);
     return root;
 }
@@ -176,19 +207,29 @@ public:
         return true;
     }
     std::string_view name() const noexcept override {
-        using namespace std::string_view_literals;
-        return "FunctioFunctionPassWrappernAttrInfer"sv;
+        return mPass->name();
     }
 };
 
 void PassRegistry::registerPass(std::shared_ptr<TransformPass<Module>> pass) {
-    mPasses[static_cast<uint32_t>(pass->type())].push_back(std::move(pass));
+    auto name = pass->name();
+    mPasses.emplace(name, std::move(pass));
 }
 void PassRegistry::registerPass(std::shared_ptr<TransformPass<Function>> pass) {
-    mPasses[static_cast<uint32_t>(pass->type())].push_back(std::make_shared<FunctionPassWrapper>(std::move(pass)));
+    auto name = pass->name();
+    mPasses.emplace(name, std::make_shared<FunctionPassWrapper>(std::move(pass)));
 }
-const std::vector<std::shared_ptr<TransformPass<Module>>>& PassRegistry::collect(PassType type) const {
-    return mPasses[static_cast<uint32_t>(type)];
+std::vector<std::shared_ptr<TransformPass<Module>>> PassRegistry::collect(std::initializer_list<std::string_view> list) const {
+    std::vector<std::shared_ptr<TransformPass<Module>>> ret;
+    ret.reserve(list.size());
+    for(auto name : list) {
+        if(auto iter = mPasses.find(name); iter != mPasses.cend()) {
+            ret.push_back(iter->second);
+        } else {
+            DiagnosticsContext::get().attach<Reason>("invalid pass name").reportFatal();
+        }
+    }
+    return ret;
 }
 
 PassRegistry& PassRegistry::get() {

@@ -44,7 +44,7 @@ class ConstantPropagation final : public TransformPass<Function> {
     }
 
     bool runOnBlock(Block& block) const {
-        return reduceBlock(block, [](Instruction* inst) -> Value* {
+        return reduceBlock(block, [](Instruction* inst, std::unordered_map<Value*, Value*>& replace) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
@@ -52,51 +52,57 @@ class ConstantPropagation final : public TransformPass<Function> {
             auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
             auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
 
+            for(auto operand : inst->operands())
+                if(!operand->isConstant())
+                    return nullptr;
+
             if(inst->isIntegerOp()) {
-                if(not_(int_(i1))(inst))
+                MatchContext<Value> matchCtx{ inst, &replace };
+                if(not_(int_(i1))(matchCtx))
                     return makeInt(inst, !i1);
-                if(neg(int_(i1))(inst))
+                if(neg(int_(i1))(matchCtx))
                     return makeInt(inst, -i1);
-                if(add(int_(i1), int_(i2))(inst))
+                if(add(int_(i1), int_(i2))(matchCtx))
                     return makeInt(inst, i1 + i2);
-                if(sub(int_(i1), int_(i2))(inst))
+                if(sub(int_(i1), int_(i2))(matchCtx))
                     return makeInt(inst, i1 - i2);
-                if(mul(int_(i1), int_(i2))(inst))
+                if(mul(int_(i1), int_(i2))(matchCtx))
                     return makeInt(inst, i1 * i2);
-                if(sdiv(int_(i1), int_(i2))(inst) && i2)
+                if(sdiv(int_(i1), int_(i2))(matchCtx) && i2)
                     return makeInt(inst, i1 / i2);
-                if(udiv(uint_(u1), uint_(u2))(inst) && u2)
+                if(udiv(uint_(u1), uint_(u2))(matchCtx) && u2)
                     return makeInt(inst, u1 / u2);
-                if(srem(int_(i1), int_(i2))(inst) && i2)
+                if(srem(int_(i1), int_(i2))(matchCtx) && i2)
                     return makeInt(inst, i1 % i2);
-                if(urem(uint_(u1), uint_(u2))(inst) && u2)
+                if(urem(uint_(u1), uint_(u2))(matchCtx) && u2)
                     return makeInt(inst, u1 % u2);
-                if(shl(uint_(u1), uint_(u2))(inst))
+                if(shl(uint_(u1), uint_(u2))(matchCtx))
                     return makeInt(inst, u1 << u2);
-                if(lshr(uint_(u1), uint_(u2))(inst))
+                if(lshr(uint_(u1), uint_(u2))(matchCtx))
                     return makeInt(inst, u1 >> u2);
-                if(ashr(int_(i1), uint_(u2))(inst))
+                if(ashr(int_(i1), uint_(u2))(matchCtx))
                     return makeInt(inst, i1 >> u2);
-                if(and_(uint_(u1), uint_(u2))(inst))
+                if(and_(uint_(u1), uint_(u2))(matchCtx))
                     return makeInt(inst, u1 & u2);
-                if(or_(uint_(u1), uint_(u2))(inst))
+                if(or_(uint_(u1), uint_(u2))(matchCtx))
                     return makeInt(inst, u1 | u2);
-                if(xor_(uint_(u1), uint_(u2))(inst))
+                if(xor_(uint_(u1), uint_(u2))(matchCtx))
                     return makeInt(inst, u1 ^ u2);
             } else if(inst->isFloatingPointOp()) {
+                MatchContext<Value> matchCtx{ inst, &replace };
                 double f3;
 
-                if(fneg(fp_(f1))(inst))
+                if(fneg(fp_(f1))(matchCtx))
                     return makeFP(inst, -f1);
-                if(fadd(fp_(f1), fp_(f2))(inst))
+                if(fadd(fp_(f1), fp_(f2))(matchCtx))
                     return makeFP(inst, f1 + f2);
-                if(fsub(fp_(f1), fp_(f2))(inst))
+                if(fsub(fp_(f1), fp_(f2))(matchCtx))
                     return makeFP(inst, f1 - f2);
-                if(fmul(fp_(f1), fp_(f2))(inst))
+                if(fmul(fp_(f1), fp_(f2))(matchCtx))
                     return makeFP(inst, f1 * f2);
-                if(fdiv(fp_(f1), fp_(f2))(inst))
+                if(fdiv(fp_(f1), fp_(f2))(matchCtx))
                     return makeFP(inst, f1 / f2);
-                if(fma_(fp_(f1), fp_(f2), fp_(f3))(inst))
+                if(fma_(fp_(f1), fp_(f2), fp_(f3))(matchCtx))
                     return makeFP(inst, fma(f1, f2, f3));
             } else if(inst->isCompareOp()) {
                 auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
@@ -118,34 +124,37 @@ class ConstantPropagation final : public TransformPass<Function> {
                 };
                 auto makeBool = [&](Instruction* inst, bool val) { return make<ConstantInteger>(inst->getType(), val); };
 
-                if(scmp(cmp, int_(i1), int_(i2))(inst))
+                MatchContext<Value> matchCtx{ inst, &replace };
+                if(scmp(cmp, int_(i1), int_(i2))(matchCtx))
                     return makeBool(inst, doCompare(cmp, i1, i2));
-                if(ucmp(cmp, uint_(u1), uint_(u2))(inst))
+                if(ucmp(cmp, uint_(u1), uint_(u2))(matchCtx))
                     return makeBool(inst, doCompare(cmp, u1, u2));
-                if(fcmp(cmp, fp_(f1), fp_(f2))(inst))
+                if(fcmp(cmp, fp_(f1), fp_(f2))(matchCtx))
                     return makeBool(inst, doCompare(cmp, f1, f2));
             } else if(inst->isConvertOp()) {
                 uintmax_t uval;
                 intmax_t sval;
                 double fval;
                 const auto val = inst->getOperand(0);
+                MatchContext<Value> matchCtx{ val, &replace };
+
                 switch(inst->getInstID()) {
                     case InstructionID::SExt: {
-                        if(int_(sval)(val))
+                        if(int_(sval)(matchCtx))
                             return makeInt(inst, sval);
                         break;
                     }
                     case InstructionID::ZExt:
                         [[fallthrough]];
                     case InstructionID::Trunc: {
-                        if(uint_(uval)(val))
+                        if(uint_(uval)(matchCtx))
                             return makeInt(inst, static_cast<intmax_t>(uval));
                         break;
                     }
                     case InstructionID::F2U:
                         [[fallthrough]];
                     case InstructionID::F2S: {
-                        if(fp_(fval)(val))
+                        if(fp_(fval)(matchCtx))
                             return makeInt(inst,
                                            inst->getInstID() == InstructionID::F2S ?
                                                static_cast<intmax_t>(fval) :
@@ -153,17 +162,17 @@ class ConstantPropagation final : public TransformPass<Function> {
                         break;
                     }
                     case InstructionID::U2F: {
-                        if(uint_(uval)(val))
+                        if(uint_(uval)(matchCtx))
                             return makeFP(inst, static_cast<double>(uval));
                         break;
                     }
                     case InstructionID::S2F: {
-                        if(int_(sval)(val))
+                        if(int_(sval)(matchCtx))
                             return makeFP(inst, static_cast<double>(sval));
                         break;
                     }
                     case InstructionID::FCast: {
-                        if(fp_(fval)(val))
+                        if(fp_(fval)(matchCtx))
                             return makeFP(inst, fval);
                         break;
                     }
@@ -171,17 +180,15 @@ class ConstantPropagation final : public TransformPass<Function> {
                         break;
                 }
             } else {
-                // select cval?a:b -> a/b
-                Value *v1, *v2;
-                if(select(uint_(u1), any(v1), any(v2))(inst)) {
-                    return u1 ? v1 : v2;
-                }
+                MatchContext<Value> matchCtx{ inst, &replace };
+
+                Value* v1;
                 // select c?a:a -> a
-                if(select(any(v1), uint_(u1), uint_(u2))(inst) && u1 == u2) {
+                if(select(any(v1), uint_(u1), uint_(u2))(matchCtx) && u1 == u2) {
                     return inst->getOperand(1);
                 }
                 // select c?a:a -> a
-                if(select(any(v1), fp_(f1), fp_(f2))(inst) && f1 == f2) {
+                if(select(any(v1), fp_(f1), fp_(f2))(matchCtx) && f1 == f2) {
                     return inst->getOperand(1);
                 }
             }

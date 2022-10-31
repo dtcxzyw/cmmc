@@ -66,8 +66,9 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
             if(!arr)
                 return nullptr;
             const auto operand = inst->getOperand(index);
+            MatchContext<Value> matchCtx{ operand, nullptr };
             uintmax_t idx;
-            if(uint_(idx)(operand)) {
+            if(uint_(idx)(matchCtx)) {
                 auto& values = arr->values();
                 if(idx < values.size()) {
                     return extractConstant(values[idx], inst, index + 1);
@@ -168,7 +169,8 @@ void SimpleValueAnalysis::next(Instruction* inst) {
                 mBasePointer.emplace(inst, iter->second);
             else
                 mBasePointer.emplace(inst, nullptr);
-            if(inst->getType()->as<PointerType>()->getPointee()->isPrimitive() && cuint_(0)(inst->getOperand(0))) {
+            MatchContext<Value> matchCtx{ inst->getOperand(0), nullptr };
+            if(inst->getType()->as<PointerType>()->getPointee()->isPrimitive() && cuint_(0)(matchCtx)) {
                 if(const auto globalVar = dynamic_cast<GlobalVariable*>(root);
                    globalVar && globalVar->attr().hasAttr(GlobalVariableAttribute::ReadOnly)) {
                     const auto initialValue = globalVar->initialValue();

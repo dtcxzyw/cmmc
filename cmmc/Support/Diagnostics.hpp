@@ -86,4 +86,7 @@ std::ostream& reportDebug();
 [[noreturn]] void reportUnreachable();
 [[noreturn]] void reportNotImplemented();
 
+template <typename T>
+static constexpr bool staticAssertionFail = false;
+
 CMMC_NAMESPACE_END

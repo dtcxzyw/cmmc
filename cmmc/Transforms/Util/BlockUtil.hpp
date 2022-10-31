@@ -21,7 +21,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-using BlockReducer = std::function<Value*(Instruction* inst)>;
+using BlockReducer = std::function<Value*(Instruction* inst, std::unordered_map<Value*, Value*>& replace)>;
 bool reduceBlock(Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix

@@ -17,6 +17,7 @@
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <initializer_list>
 #include <memory>
 #include <string_view>
 
@@ -28,7 +29,6 @@ enum class PassType {
     TargetSpecific,      // target-specific optimizations (may cause binary bloat), -O2
     Expensive,           // take a much longer compile time, -O3
     Postprocess,         // post processing (verification, etc.)
-    Max
 };
 
 // **Stateless** Transform Pass
@@ -76,12 +76,12 @@ public:
 };
 
 class PassRegistry final {
-    std::vector<std::shared_ptr<TransformPass<Module>>> mPasses[static_cast<uint32_t>(PassType::Max)];
+    std::unordered_map<std::string_view, std::shared_ptr<TransformPass<Module>>> mPasses;
 
 public:
     void registerPass(std::shared_ptr<TransformPass<Module>> pass);
     void registerPass(std::shared_ptr<TransformPass<Function>> pass);
-    const std::vector<std::shared_ptr<TransformPass<Module>>>& collect(PassType type) const;
+    std::vector<std::shared_ptr<TransformPass<Module>>> collect(std::initializer_list<std::string_view> list) const;
 
     static PassRegistry& get();
 };

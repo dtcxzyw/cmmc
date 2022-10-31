@@ -244,4 +244,4 @@ print("Total time: ", end-start)
 print("\nPerformance metrics:")
 for key in summary.keys():
     print(key, ":", summary[key], "baseline =", baseline[key],
-          "ratio = {:.3f}".format(summary[key] / baseline[key]))
+          "ratio = {:.8f}".format(summary[key] / baseline[key]))

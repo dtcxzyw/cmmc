@@ -16,17 +16,41 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <type_traits>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
+
+template <typename ValueType>
+struct MatchContext final {
+    ValueType* value;
+    std::unordered_map<Value*, Value*>* replace;
+
+    explicit MatchContext(ValueType* value, std::unordered_map<Value*, Value*>* replace) : value{ value }, replace{ replace } {};
+
+    template <typename T = ValueType>
+    MatchContext<Value> getOperand(uint32_t idx) const {
+        if constexpr(std::is_base_of_v<Instruction, T>) {
+            auto val = value->getOperand(idx);
+            if(replace) {
+                if(auto iter = replace->find(value); iter != replace->cend())
+                    val = iter->second;
+            }
+            return MatchContext<Value>{ val, replace };
+        } else {
+            static_assert(staticAssertionFail<T>, "Unsupported operation");
+        }
+    }
+};
 
 template <typename T, typename Derived>
 class GenericMatcher {
 public:
-    bool operator()(Value* value) const noexcept {
-        if(auto val = dynamic_cast<T*>(value)) {
-            return (static_cast<const Derived*>(this))->handle(val);
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        if(auto val = dynamic_cast<T*>(ctx.value)) {
+            return (static_cast<const Derived*>(this))->handle(MatchContext<T>{ val, ctx.replace });
         }
         return false;
     }
@@ -37,8 +61,8 @@ class AnyMatcher {
 
 public:
     explicit AnyMatcher(Value*& value) noexcept : mValue{ value } {}
-    bool operator()(Value* val) const noexcept {
-        mValue = val;
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        mValue = ctx.value;
         return true;
     }
 };
@@ -54,11 +78,11 @@ class ConstantIntegerMatcher final : public GenericMatcher<ConstantInteger, Cons
 
 public:
     explicit ConstantIntegerMatcher(Value& val) noexcept : mVal{ val } {}
-    bool handle(ConstantInteger* value) const noexcept {
+    bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
         if constexpr(IsSigned)
-            mVal = value->getSignExtended();
+            mVal = ctx.value->getSignExtended();
         else
-            mVal = value->getZeroExtended();
+            mVal = ctx.value->getZeroExtended();
 
         return true;
     }
@@ -71,11 +95,11 @@ class ConstantIntegerValueMatcher final : public GenericMatcher<ConstantInteger,
 
 public:
     constexpr explicit ConstantIntegerValueMatcher(Value val) noexcept : mVal{ val } {}
-    bool handle(ConstantInteger* value) const noexcept {
+    bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
         if constexpr(IsSigned)
-            return mVal == value->getSignExtended();
+            return mVal == ctx.value->getSignExtended();
         else
-            return mVal == value->getZeroExtended();
+            return mVal == ctx.value->getZeroExtended();
     }
 };
 
@@ -97,8 +121,8 @@ class ConstantFloatingPointMatcher final : public GenericMatcher<ConstantFloatin
 
 public:
     explicit ConstantFloatingPointMatcher(double& val) noexcept : mVal{ val } {}
-    bool handle(ConstantFloatingPoint* value) const noexcept {
-        mVal = value->getValue();
+    bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
+        mVal = ctx.value->getValue();
         return true;
     }
 };
@@ -107,8 +131,8 @@ class ConstantFloatingPointValueMatcher final : public GenericMatcher<ConstantFl
 
 public:
     constexpr explicit ConstantFloatingPointValueMatcher(double val) noexcept : mVal{ val } {}
-    bool handle(ConstantFloatingPoint* value) const noexcept {
-        return value->isEqual(mVal);
+    bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
+        return ctx.value->isEqual(mVal);
     }
 };
 
@@ -126,8 +150,8 @@ class UnaryOpMatcher final : public GenericMatcher<UnaryInst, UnaryOpMatcher<Val
 
 public:
     explicit UnaryOpMatcher(InstructionID target, ValMatcher matcher) noexcept : mTarget{ target }, mMatcher{ matcher } {}
-    bool handle(UnaryInst* value) const noexcept {
-        return value->getInstID() == mTarget && mMatcher(value->getOperand(0));
+    bool handle(const MatchContext<UnaryInst>& ctx) const noexcept {
+        return ctx.value->getInstID() == mTarget && mMatcher(ctx.getOperand(0));
     }
 };
 
@@ -155,13 +179,13 @@ class BinaryOpMatcher final : public GenericMatcher<BinaryInst, BinaryOpMatcher<
 public:
     explicit BinaryOpMatcher(InstructionID target, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
-    bool handle(BinaryInst* value) const noexcept {
-        if(value->getInstID() != mTarget)
+    bool handle(const MatchContext<BinaryInst>& ctx) const noexcept {
+        if(ctx.value->getInstID() != mTarget)
             return false;
-        if(mLhsMatcher(value->getOperand(0)) && mRhsMatcher(value->getOperand(1)))
+        if(mLhsMatcher(ctx.getOperand(0)) && mRhsMatcher(ctx.getOperand(1)))
             return true;
         if constexpr(IsCommutative)
-            return mLhsMatcher(value->getOperand(1)) && mRhsMatcher(value->getOperand(0));
+            return mLhsMatcher(ctx.getOperand(1)) && mRhsMatcher(ctx.getOperand(0));
         return false;
     }
 };
@@ -247,13 +271,13 @@ class CompareMatcher final : public GenericMatcher<CompareInst, CompareMatcher<L
 public:
     explicit CompareMatcher(InstructionID target, CompareOp& compare, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mCompare{ compare }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
-    bool handle(CompareInst* value) const noexcept {
-        if(value->getInstID() != mTarget)
+    bool handle(const MatchContext<CompareInst>& ctx) const noexcept {
+        if(ctx.value->getInstID() != mTarget)
             return false;
-        mCompare = value->getOp();
-        if(mLhsMatcher(value->getOperand(0)) && mRhsMatcher(value->getOperand(1)))
+        mCompare = ctx.value->getOp();
+        if(mLhsMatcher(ctx.getOperand(0)) && mRhsMatcher(ctx.getOperand(1)))
             return true;
-        if(mLhsMatcher(value->getOperand(1)) && mRhsMatcher(value->getOperand(0))) {
+        if(mLhsMatcher(ctx.getOperand(1)) && mRhsMatcher(ctx.getOperand(0))) {
             mCompare = getReversedOp(mCompare);
             return true;
         }
@@ -283,12 +307,12 @@ class FMAMatcher final : public GenericMatcher<FMAInst, FMAMatcher<XMatcher, YMa
 
 public:
     explicit FMAMatcher(XMatcher x, YMatcher y, ZMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
-    bool handle(FMAInst* value) const noexcept {
-        if(!mZ(value->getOperand(2)))
+    bool handle(const MatchContext<FMAInst>& ctx) const noexcept {
+        if(!mZ(ctx.getOperand(2)))
             return false;
-        if(mX(value->getOperand(0)) && mY(value->getOperand(1)))
+        if(mX(ctx.getOperand(0)) && mY(ctx.getOperand(1)))
             return true;
-        return mX(value->getOperand(1)) && mY(value->getOperand(0));
+        return mX(ctx.getOperand(1)) && mY(ctx.getOperand(0));
     }
 };
 
@@ -305,8 +329,8 @@ class SelectMatcher final : public GenericMatcher<SelectInst, SelectMatcher<Cond
 
 public:
     explicit SelectMatcher(CondMatcher x, LhsMatcher y, RhsMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
-    bool handle(SelectInst* value) const noexcept {
-        return mX(value->getOperand(0)) && mY(value->getOperand(1)) && mZ(value->getOperand(2));
+    bool handle(const MatchContext<SelectInst>& ctx) const noexcept {
+        return mX(ctx.getOperand(0)) && mY(ctx.getOperand(1)) && mZ(ctx.getOperand(2));
     }
 };
 

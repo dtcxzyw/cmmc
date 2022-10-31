@@ -48,7 +48,8 @@ class GEPCombine final : public TransformPass<Function> {
 
                 if(isConstant) {
                     constantGEP.insert(inst);
-                    if(constantGEP.count(base) && cuint_(0)(operands.front())) {
+                    MatchContext<Value> matchCtx{ operands.front(), nullptr };
+                    if(constantGEP.count(base) && cuint_(0)(matchCtx)) {
                         operands.pop_front();
                         auto baseGEP = base->as<GetElementPtrInst>();
                         const auto& prevOffsets = baseGEP->operands();

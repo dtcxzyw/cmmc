@@ -31,9 +31,10 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= reduceBlock(*block, [](Instruction* inst) -> Value* {
+            modified |= reduceBlock(*block, [](Instruction* inst, std::unordered_map<Value*, Value*>&) -> Value* {
+                MatchContext<Value> matchCtx{ inst, nullptr };
                 Value *v1, *v2, *v3;
-                if(fadd(fmul(any(v1), any(v2)), any(v3))(inst)) {
+                if(fadd(fmul(any(v1), any(v2)), any(v3))(matchCtx)) {
                     return make<FMAInst>(v1, v2, v3);
                 }
                 return nullptr;
