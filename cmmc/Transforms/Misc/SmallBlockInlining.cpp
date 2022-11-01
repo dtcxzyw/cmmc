@@ -72,7 +72,7 @@ public:
             auto& insts = block->instructions();
             insts.pop_back();
 
-            std::unordered_map<Value*, Value*> replace;
+            ReplaceMap replace;
             auto& srcArgs = target.getArgs();
             auto& dstArgs = nextBlock->args();
             for(uint32_t idx = 0; idx < srcArgs.size(); ++idx) {
@@ -90,10 +90,6 @@ public:
             insts.insert(insts.cend(), newInsts.cbegin(), newInsts.cend());
         }
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::Expensive;
     }
 
     std::string_view name() const noexcept override {

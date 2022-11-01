@@ -24,7 +24,7 @@ CMMC_NAMESPACE_BEGIN
 bool reduceBlock(Block& block, BlockReducer reducer) {
     auto& insts = block.instructions();
 
-    std::unordered_map<Value*, Value*> replace;
+    ReplaceMap replace;
     const auto oldSize = block.instructions().size();
     IRBuilder builder;
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
@@ -41,7 +41,7 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
     return modified;
 }
 
-static bool applyReplace(Instruction* inst, std::unordered_map<Value*, Value*>& replace) {
+static bool applyReplace(Instruction* inst, ReplaceMap& replace) {
     bool modified = false;
     if(!inst->isBranch())
         for(auto& operand : inst->operands()) {
@@ -60,7 +60,7 @@ static bool applyReplace(Instruction* inst, std::unordered_map<Value*, Value*>& 
     }
     return modified;
 }
-bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace) {
+bool replaceOperands(Block& block, ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;
@@ -68,7 +68,7 @@ bool replaceOperands(Block& block, std::unordered_map<Value*, Value*>& replace) 
         modified |= applyReplace(inst, replace);
     return modified;
 }
-bool replaceOperands(const std::vector<Instruction*>& insts, std::unordered_map<Value*, Value*>& replace) {
+bool replaceOperands(const std::vector<Instruction*>& insts, ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;

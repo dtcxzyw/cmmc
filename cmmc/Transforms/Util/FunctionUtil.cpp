@@ -96,7 +96,7 @@ void blockArgPropagation(Function& func) {
                 .reportFatal();
         }
 
-        std::unordered_map<Value*, Value*> map;
+        ReplaceMap map;
         for(auto val : req)
             map[val] = block->addArg(val->getType());
 

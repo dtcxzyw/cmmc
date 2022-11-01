@@ -180,10 +180,6 @@ public:
         return modified;
     }
 
-    PassType type() const noexcept override {
-        return PassType::AttributeInference;
-    }
-
     std::string_view name() const noexcept override {
         using namespace std::string_view_literals;
         return "FunctionAttrInfer"sv;

@@ -68,7 +68,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                 value = builder.makeOp<LoadInst>(storeAddr);
             };
 
-            std::unordered_map<Value*, Value*> replace;
+            ReplaceMap replace;
             bool start = block != root;
             std::vector<Instruction*> instructionList{ block->instructions().cbegin(), block->instructions().cend() };
             bool stop = false;
@@ -159,10 +159,6 @@ public:
             modified = true;
         }
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::Expensive;
     }
 
     std::string_view name() const noexcept override {

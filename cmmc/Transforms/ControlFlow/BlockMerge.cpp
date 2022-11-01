@@ -65,7 +65,7 @@ public:
                     const auto& argsA = branch->getTrueTarget().getArgs();
                     const auto& argsB = target->args();
                     assert(argsA.size() == argsB.size());
-                    std::unordered_map<Value*, Value*> replace;
+                    ReplaceMap replace;
                     for(uint32_t idx = 0; idx < argsB.size(); ++idx) {
                         const auto src = argsB[idx];
                         const auto dst = argsA[idx];
@@ -91,10 +91,6 @@ public:
         while(tryMerge())
             modified = true;
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {

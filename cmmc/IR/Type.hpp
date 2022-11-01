@@ -118,7 +118,7 @@ class IntegerType final : public Type {
     uint32_t mBitWidth;
 
 public:
-    IntegerType(uint32_t bitWidth) : mBitWidth{ bitWidth } {}
+    explicit IntegerType(uint32_t bitWidth) : mBitWidth{ bitWidth } {}
     static const IntegerType* get(uint32_t bitWidth);
     static const IntegerType* getBoolean() {
         return get(1);
@@ -143,7 +143,7 @@ class FloatingPointType final : public Type {
     bool mIsFloat;
 
 public:
-    FloatingPointType(bool isFloat) : mIsFloat{ isFloat } {}
+    explicit FloatingPointType(bool isFloat) : mIsFloat{ isFloat } {}
     static const FloatingPointType* get(bool isFloat);
     static const FloatingPointType* getFloat() {
         return get(true);
@@ -198,7 +198,7 @@ class StructType final : public Type {
     Vector<StructField> mFields;
 
 public:
-    StructType(String name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
+    explicit StructType(String name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
     bool isStruct() const noexcept override {
         return true;
     }
@@ -220,7 +220,7 @@ class ArrayType final : public Type {
     uint32_t mElementCount;
 
 public:
-    ArrayType(const Type* elementType, uint32_t elementCount) noexcept
+    explicit ArrayType(const Type* elementType, uint32_t elementCount) noexcept
         : mElementType{ elementType }, mElementCount{ elementCount } {
         assert(!elementType->isVoid());
         assert(elementCount);

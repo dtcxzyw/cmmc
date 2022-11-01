@@ -92,8 +92,21 @@ struct IntegerTypeEqual final {
 };
 
 const IntegerType* IntegerType::get(uint32_t bitWidth) {
-    static FlyWeight<IntegerType, IntegerTypeHasher, IntegerTypeEqual> flyweight;
-    return flyweight.get(bitWidth);
+    static const IntegerType i1{ 1U }, i8{ 8U }, i16{ 16U }, i32{ 32U }, i64{ 64U };
+    switch(bitWidth) {
+        case 1:
+            return &i1;
+        case 8:
+            return &i8;
+        case 16:
+            return &i16;
+        case 32:
+            return &i32;
+        case 64:
+            return &i64;
+        default:
+            reportUnreachable();
+    }
 }
 void IntegerType::dumpName(std::ostream& out) const {
     out << 'i' << mBitWidth;

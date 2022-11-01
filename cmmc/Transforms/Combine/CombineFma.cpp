@@ -31,21 +31,16 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |=
-                reduceBlock(*block, [](Instruction* inst, IRBuilder& builder, std::unordered_map<Value*, Value*>&) -> Value* {
-                    MatchContext<Value> matchCtx{ inst, nullptr };
-                    Value *v1, *v2, *v3;
-                    if(fadd(fmul(any(v1), any(v2)), any(v3))(matchCtx)) {
-                        return builder.makeOp<FMAInst>(v1, v2, v3);
-                    }
-                    return nullptr;
-                });
+            modified |= reduceBlock(*block, [](Instruction* inst, IRBuilder& builder, ReplaceMap&) -> Value* {
+                MatchContext<Value> matchCtx{ inst, nullptr };
+                Value *v1, *v2, *v3;
+                if(fadd(fmul(any(v1), any(v2)), any(v3))(matchCtx)) {
+                    return builder.makeOp<FMAInst>(v1, v2, v3);
+                }
+                return nullptr;
+            });
         }
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {

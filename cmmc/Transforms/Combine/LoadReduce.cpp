@@ -70,7 +70,7 @@ CMMC_NAMESPACE_BEGIN
 
 class LoadReduce final : public TransformPass<Function> {
     bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) const {
-        std::unordered_map<Value*, Value*> replace;
+        ReplaceMap replace;
         for(auto inst : block.instructions()) {
             if(inst->getInstID() == InstructionID::Load)
                 if(auto value = valueAnalysis.getLastValue(inst->getOperand(0)))
@@ -182,13 +182,13 @@ class LoadReduce final : public TransformPass<Function> {
                 indirectBranch->updateTargetArgs(*indirectTarget, indirectArgs);
             }
 
-            std::unordered_map<Value*, Value*> map;
+            ReplaceMap replace;
             for(auto& [inst, vals] : reuseValues) {
                 CMMC_UNUSED(vals);
                 const auto arg = block->addArg(inst->getType());
-                map.emplace(inst, arg);
+                replace.emplace(inst, arg);
             }
-            replaceOperands(*block, map);
+            replaceOperands(*block, replace);
         }
 
         return modified;
@@ -210,10 +210,6 @@ public:
         modified |= runInterBlock(func, analysis, valueAnalysis);
         // TODO: handle cross blockchain reusing, e.g., test_3_r03.spl
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {

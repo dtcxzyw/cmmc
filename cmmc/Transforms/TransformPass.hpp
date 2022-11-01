@@ -23,14 +23,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class PassType {
-    AttributeInference,  // don't change instructions
-    SideEffectEquality,  // don't change side effects when the program executes normally, -O1
-    TargetSpecific,      // target-specific optimizations (may cause binary bloat), -O2
-    Expensive,           // take a much longer compile time, -O3
-    Postprocess,         // post processing (verification, etc.)
-};
-
 // **Stateless** Transform Pass
 
 template <typename Scope>
@@ -42,7 +34,6 @@ public:
     TransformPass& operator=(const TransformPass&) = delete;
 
     virtual bool run(Scope& item, AnalysisPassManager& analysis) const = 0;
-    virtual PassType type() const noexcept = 0;
     virtual std::string_view name() const noexcept = 0;
     virtual bool isWrapper() const noexcept {
         return false;
@@ -68,7 +59,6 @@ class IterationPassWrapper final : public TransformPass<Module> {
 public:
     IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
     bool run(Module& item, AnalysisPassManager& analysis) const override;
-    PassType type() const noexcept override;
     std::string_view name() const noexcept override;
     bool isWrapper() const noexcept override {
         return true;

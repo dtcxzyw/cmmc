@@ -32,7 +32,7 @@ CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
     bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) const {
-        std::unordered_map<Value*, Value*> replace;
+        ReplaceMap replace;
         for(auto arg : block.args()) {
             const auto target = blockArgRef.query(arg);
             if(!target)
@@ -44,7 +44,7 @@ class ConstantPropagation final : public TransformPass<Function> {
     }
 
     bool runOnBlock(Block& block) const {
-        return reduceBlock(block, [](Instruction* inst, IRBuilder&, std::unordered_map<Value*, Value*>& replace) -> Value* {
+        return reduceBlock(block, [](Instruction* inst, IRBuilder&, ReplaceMap& replace) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
@@ -211,10 +211,6 @@ public:
             if(!changed)
                 return modified;
         }
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {

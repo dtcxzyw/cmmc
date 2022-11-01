@@ -48,10 +48,6 @@ class UninitializedCheck final : public TransformPass<Function> {
         return false;
     }
 
-    PassType type() const noexcept override {
-        return PassType::Postprocess;
-    }
-
     std::string_view name() const noexcept override {
         using namespace std::string_view_literals;
         return "UninitializedCheck"sv;

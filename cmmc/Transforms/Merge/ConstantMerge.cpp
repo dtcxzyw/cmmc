@@ -34,7 +34,7 @@ public:
         bool modified = false;
         std::unordered_set<ConstantValue*> visited;
         std::unordered_set<ConstantValue*, ConstantHasher, ConstantEqual> pool;
-        std::unordered_map<Value*, Value*> replace;
+        ReplaceMap replace;
         auto addValue = [&](ConstantValue* value) {
             if(!visited.insert(value).second)
                 return;
@@ -71,10 +71,6 @@ public:
         }
 
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {

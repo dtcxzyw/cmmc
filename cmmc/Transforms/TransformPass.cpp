@@ -87,10 +87,6 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
     return modified;
 }
 
-PassType IterationPassWrapper::type() const noexcept {
-    return PassType::Expensive;
-}
-
 std::string_view IterationPassWrapper::name() const noexcept {
     using namespace std::string_view_literals;
     return "IterationPassWrapper"sv;
@@ -158,14 +154,12 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({
-                /*
-                    "ScalarMem2Reg",          //
-                    "StoreEliminate",         // clean up
-                    "BlockArgEliminate",      // clean up
-                    "FreeEliminate",          // clean up
-                    "NoSideEffectEliminate",  // clean up
-                    */
-                "SmallBlockInlining",  //
+                // "ScalarMem2Reg",          //
+                "StoreEliminate",         // clean up
+                "BlockArgEliminate",      // clean up
+                "FreeEliminate",          // clean up
+                "NoSideEffectEliminate",  // clean up
+                "SmallBlockInlining",     //
             }))
             root->addPass(pass);
     }
@@ -216,9 +210,6 @@ public:
         }
 
         return modified;
-    }
-    PassType type() const noexcept override {
-        return mPass->type();
     }
     bool isWrapper() const noexcept override {
         return true;

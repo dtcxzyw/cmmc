@@ -91,10 +91,6 @@ public:
         return true;
     }
 
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
-    }
-
     std::string_view name() const noexcept override {
         using namespace std::string_view_literals;
         return "FreeEliminate"sv;

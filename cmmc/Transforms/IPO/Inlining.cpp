@@ -55,7 +55,7 @@ class FuncInlining final : public TransformPass<Function> {
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
-        std::unordered_map<Value*, Value*> targetReplace;
+        ReplaceMap targetReplace;
         Block* entryBlock = nullptr;
         for(auto subBlock : callee->blocks()) {
             auto newBlock = subBlock->clone(targetReplace);
@@ -142,10 +142,6 @@ public:
         if(modified)
             blockArgPropagation(func);
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::Expensive;
     }
 
     std::string_view name() const noexcept override {

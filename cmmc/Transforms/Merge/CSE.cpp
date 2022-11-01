@@ -51,7 +51,7 @@ struct InstEqual final {
 class SimpleCSE final : public TransformPass<Function> {
     bool instMerge(Block* block) const {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
-        std::unordered_map<Value*, Value*> replace;
+        ReplaceMap replace;
         for(auto inst : block->instructions()) {
             if(!inst->canbeOperand())
                 continue;
@@ -102,10 +102,6 @@ public:
             modified |= instMerge(block);
         }
         return modified;
-    }
-
-    PassType type() const noexcept override {
-        return PassType::SideEffectEquality;
     }
 
     std::string_view name() const noexcept override {
