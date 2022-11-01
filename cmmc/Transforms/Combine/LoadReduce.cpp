@@ -52,7 +52,6 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
-#include <cmmc/Analysis/FunctionAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>

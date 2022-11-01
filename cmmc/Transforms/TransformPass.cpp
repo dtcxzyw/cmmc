@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Module.hpp"
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
@@ -148,9 +148,24 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({
-                "FuncInlining",        //
+                "FuncInlining",  //
+                "CombineFma",    //
+            }))
+            root->addPass(pass);
+    }
+
+    root->addPass(iter);  // optimization after inlining
+
+    if(level >= OptimizationLevel::O3) {
+        for(auto pass : passesSource.collect({
+                /*
+                    "ScalarMem2Reg",          //
+                    "StoreEliminate",         // clean up
+                    "BlockArgEliminate",      // clean up
+                    "FreeEliminate",          // clean up
+                    "NoSideEffectEliminate",  // clean up
+                    */
                 "SmallBlockInlining",  //
-                "CombineFma",          //
             }))
             root->addPass(pass);
     }

@@ -183,6 +183,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                           builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), b, c),
                                                           a);
                 }
+                // (zext i1 a) != 0 -> a
+                /*
+                if(scmp(cmp, zext(any(v1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual && v1->getType()->isBoolean()) {
+                    return v1;
+                }
+                */
                 return nullptr;
             });
     }

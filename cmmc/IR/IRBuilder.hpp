@@ -13,9 +13,10 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.hpp"
+#include <algorithm>
 #include <cassert>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -62,7 +63,16 @@ public:
         setCurrentBlock(block);
         mInsertPoint = insertPoint;
     }
-
+    void setInsertPoint(Block* block, Instruction* beforeInst) {
+        assert(block);
+        setCurrentBlock(block);
+        assert(beforeInst);
+        mInsertPoint = std::find(block->instructions().begin(), block->instructions().end(), beforeInst);
+        assert(mInsertPoint != block->instructions().cend());
+    }
+    void nextInsertPoint() {
+        ++mInsertPoint;
+    }
     auto getInsertPoint() const noexcept {
         return mInsertPoint;
     }

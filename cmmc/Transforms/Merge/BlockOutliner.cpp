@@ -25,6 +25,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+// TODO: block arg order-agonistic compare
+
 CMMC_NAMESPACE_BEGIN
 
 class BlockOutliner final : public TransformPass<Function> {

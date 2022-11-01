@@ -61,7 +61,10 @@ class BlockArgEliminate final : public TransformPass<Function> {
         }
 
         auto updateArgs = [&](ConditionalBranchInst* branch, BranchTarget& target) {
-            const auto iter = modified.find(target.getTarget());
+            const auto targetBlock = target.getTarget();
+            if(!targetBlock)
+                return;
+            const auto iter = modified.find(targetBlock);
             if(iter == modified.cend())
                 return;
             auto& removed = iter->second;
@@ -70,6 +73,7 @@ class BlockArgEliminate final : public TransformPass<Function> {
             for(auto it = removed.rbegin(); it != removed.rend(); ++it)
                 args.erase(args.cbegin() + *it);
             branch->updateTargetArgs(target, std::move(args));
+            assert(target.getArgs().size() == targetBlock->args().size());
         };
 
         for(auto block : func.blocks()) {
@@ -222,7 +226,7 @@ public:
         // intra-block arg eliminate
         bool modified = runIntra(func);
         // inter-block arg eliminate
-        modified |= runInter(func);
+        // modified |= runInter(func); // FIXME
         return modified;
     }
 

@@ -303,6 +303,28 @@ auto fcmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
     return CompareMatcher{ InstructionID::FCmp, compare, lhs, rhs };
 }
 
+template <typename Matcher>
+class CastMatcher final : public GenericMatcher<CastInst, CastMatcher<Matcher>> {
+    InstructionID mTarget;
+    Matcher mMatcher;
+
+public:
+    explicit CastMatcher(InstructionID target, Matcher matcher) noexcept : mTarget{ target }, mMatcher{ matcher } {}
+    bool handle(const MatchContext<CastInst>& ctx) const noexcept {
+        return (ctx.value->getInstID() == mTarget) && mMatcher(ctx.getOperand(0));
+    }
+};
+
+template <typename Value>
+auto zext(Value value) {
+    return CastMatcher{ InstructionID::ZExt, value };
+}
+
+template <typename Value>
+auto sext(Value value) {
+    return CastMatcher{ InstructionID::SExt, value };
+}
+
 // x*y+z
 template <typename XMatcher, typename YMatcher, typename ZMatcher>
 class FMAMatcher final : public GenericMatcher<FMAInst, FMAMatcher<XMatcher, YMatcher, ZMatcher>> {

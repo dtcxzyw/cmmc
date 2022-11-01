@@ -5,19 +5,20 @@ import sys
 import time
 import subprocess
 import json
+import math
 
 binary_path = sys.argv[1]
 tests_path = sys.argv[2]
 
-# 10/27/2022
+# 11/1/2022
 baseline = {
-    "inst": 207616174,
-    "branch": 18005070,
-    "call": 15663,
-    "load": 10519398,
-    "store": 31260338,
-    "load_bytes": 42168672,
-    "store_bytes": 179166224
+    "inst": 446.0418704797192,
+    "branch": 294.8161874587308,
+    "call": 178.71907990510275,
+    "load": 282.4506863038368,
+    "store": 289.55959848997907,
+    "load_bytes": 360.5351828980488,
+    "store_bytes": 421.3409073483539
 }
 
 summary = {}
@@ -27,7 +28,7 @@ def parse_perf(result):
     try:
         perf = json.loads(result)
         for key in baseline.keys():
-            summary[key] = summary.get(key, 0) + perf[key]
+            summary[key] = summary.get(key, 0) + math.log(max(1, perf[key]))
     except:
         pass
 
@@ -102,7 +103,9 @@ def sysy_semantic(src):
     return out.returncode == 0
 
 
-white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
+white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3",
+              "calculator"  # FIXME: improve cyclic block arg elimination
+              ]
 
 
 def sysy_opt(src):
@@ -245,5 +248,5 @@ print("Total time: ", end-start)
 
 print("\nPerformance metrics:")
 for key in summary.keys():
-    print(key, ":", summary[key], "baseline =", baseline[key],
-          "ratio = {:.8f}".format(summary[key] / baseline[key]))
+    print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+        summary[key], baseline[key], summary[key] / baseline[key]))
