@@ -154,7 +154,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({
-                // "ScalarMem2Reg",          //
+                "ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up
                 "BlockArgEliminate",      // clean up
                 "FreeEliminate",          // clean up

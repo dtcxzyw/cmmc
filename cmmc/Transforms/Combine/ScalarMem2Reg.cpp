@@ -37,7 +37,7 @@ CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2Reg final : public TransformPass<Function> {
     void applyMem2Reg(Function& func, const AliasAnalysisResult& alias, const BlockArgumentAnalysisResult& blockArgMap,
-                      StackAllocInst* alloc) const {
+                      StackAllocInst* alloc, std::unordered_map<Block*, ReplaceMap>& replaceMap) const {
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
         for(auto block : func.blocks()) {
@@ -68,7 +68,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                 value = builder.makeOp<LoadInst>(storeAddr);
             };
 
-            ReplaceMap replace;
+            auto& replace = replaceMap[block];
             bool start = block != root;
             std::vector<Instruction*> instructionList{ block->instructions().cbegin(), block->instructions().cend() };
             bool stop = false;
@@ -153,12 +153,16 @@ public:
             }
         }
 
-        bool modified = false;
+        if(interested.empty())
+            return false;
+
+        std::unordered_map<Block*, ReplaceMap> replaceMap;
         for(auto alloc : interested) {
-            applyMem2Reg(func, alias, blockArgMap, alloc);
-            modified = true;
+            applyMem2Reg(func, alias, blockArgMap, alloc, replaceMap);
         }
-        return modified;
+        for(auto& [block, replace] : replaceMap)
+            replaceOperands(*block, replace);
+        return true;
     }
 
     std::string_view name() const noexcept override {

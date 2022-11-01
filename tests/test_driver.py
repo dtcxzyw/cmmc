@@ -103,9 +103,7 @@ def sysy_semantic(src):
     return out.returncode == 0
 
 
-white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3",
-              "calculator"  # FIXME: improve cyclic block arg elimination
-              ]
+white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
 
 
 def sysy_opt(src):
