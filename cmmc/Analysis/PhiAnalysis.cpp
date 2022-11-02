@@ -12,7 +12,16 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
+#include "cmmc/IR/Block.hpp"
+#include <algorithm>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PhiAnalysis.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <iostream>
+#include <unordered_set>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -22,9 +31,160 @@ const std::variant<Value*, PhiNode>& PhiAnalysisResult::query(BlockArgument* arg
 }
 
 PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis) {
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(analysis);
+    auto& cfg = analysis.get<CFGAnalysis>(func);
+    auto& dom = analysis.get<DominateAnalysis>(func);
+
     std::unordered_map<BlockArgument*, std::variant<Value*, PhiNode>> ret;
+
+    for(auto block : func.blocks()) {
+        for(uint32_t idx = 0; idx < block->args().size(); ++idx) {
+            const auto arg = block->getArg(idx);
+            PhiNode phiNode;
+            for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
+                const auto provided = predTarget->getArgs()[idx];
+                const auto inst = predBlock->getTerminator()->as<ConditionalBranchInst>();
+                phiNode.push_back(PhiEdge{ predTarget, inst, provided });
+            }
+            ret[arg] = std::move(phiNode);
+        }
+    }
+
+    const auto dumpValueWithBlock = [](Value* value) {
+        if(value->getBlock()) {
+            value->getBlock()->dumpAsTarget(std::cerr);
+            std::cerr << ".";
+        }
+        value->dumpAsOperand(std::cerr);
+    };
+    CMMC_UNUSED(dumpValueWithBlock);
+
+    // merge
+    while(true) {
+        bool modified = false;
+
+        // merge phi node
+        for(auto& [arg, val] : ret) {
+            if(auto phiPtr = std::get_if<PhiNode>(&val)) {
+                auto& phi = *phiPtr;
+                if(phi.empty())
+                    continue;
+
+                auto uniqueVal = phi.front().value;
+                if(uniqueVal->isConstant()) {
+                    const auto uniqueConstVal = uniqueVal->as<ConstantValue>();
+                    for(uint32_t idx = 1; idx < phi.size(); ++idx)
+                        if(!(phi[idx].value->isConstant() && phi[idx].value->as<ConstantValue>()->isEqual(uniqueConstVal))) {
+                            uniqueVal = nullptr;
+                            break;
+                        }
+                } else {
+                    if(std::any_of(phi.begin(), phi.end(), [&](const PhiEdge& edge) { return uniqueVal != edge.value; })) {
+                        uniqueVal = nullptr;
+                    }
+                }
+                if(uniqueVal)
+                    val = uniqueVal;
+            }
+        }
+
+        std::unordered_set<Value*> visited;
+        std::function<bool(Value*, BlockArgument*)> convergeTo = [&](Value* val, BlockArgument* target) {
+            if(val == target)
+                return true;
+            if(visited.count(val))
+                return false;
+            visited.insert(val);
+            if(auto arg = dynamic_cast<BlockArgument*>(val)) {
+                const auto& phi = ret.find(arg)->second;
+                if(auto phiPtr = std::get_if<PhiNode>(&phi)) {
+                    for(auto [from, inst, rhs] : *phiPtr) {
+                        CMMC_UNUSED(from);
+                        CMMC_UNUSED(inst);
+                        if(!rhs)
+                            continue;
+                        if(!convergeTo(rhs, target))
+                            return false;
+                    }
+                    return true;
+                } else {
+                    return convergeTo(std::get<Value*>(phi), target);
+                }
+            }
+            return false;
+        };
+
+        const auto findRoot = [&](BlockArgument* argSrc, BlockArgument* arg) -> Value* {
+            auto block = argSrc->getBlock();
+            bool dominate = dom.dominate(arg->getBlock(), block);
+
+            const auto& val = ret.find(arg)->second;
+            if(auto valPtr = std::get_if<Value*>(&val)) {
+                if(!(*valPtr)->is<BlockArgument>() || dominate)
+                    return *valPtr;
+            }
+
+            visited.clear();
+            if(convergeTo(arg, argSrc))
+                return nullptr;
+
+            return arg;
+        };
+
+        // lifting
+        auto tryLift = [&](BlockArgument* arg, Value*& valRef) {
+            auto oldVal = valRef;
+            if(auto argVal = dynamic_cast<BlockArgument*>(valRef)) {
+                valRef = findRoot(arg, argVal);
+                if(valRef != oldVal)
+                    modified = true;
+            }
+        };
+
+        for(auto& [arg, val] : ret) {
+            if(auto phiPtr = std::get_if<PhiNode>(&val)) {
+                for(auto& [from, inst, valRef] : *phiPtr) {
+                    CMMC_UNUSED(from);
+                    CMMC_UNUSED(inst);
+                    tryLift(arg, valRef);
+                }
+                phiPtr->erase(
+                    std::remove_if(phiPtr->begin(), phiPtr->end(), [](const PhiEdge& edge) { return edge.value == nullptr; }),
+                    phiPtr->end());
+            } else {
+                auto& valRef = std::get<Value*>(val);
+                tryLift(arg, valRef);
+            }
+        }
+
+        if(!modified)
+            break;
+    }
+
+    /*
+    func.dump(std::cerr);
+    func.dumpCFG(std::cerr);
+    for(auto& [arg, val] : ret) {
+        dumpValueWithBlock(arg);
+
+        std::cerr << " -> ";
+        if(auto phiPtr = std::get_if<PhiNode>(&val)) {
+            auto& phi = *phiPtr;
+            for(auto [from, inst, value] : phi) {
+                CMMC_UNUSED(inst);
+                std::cerr << " [";
+                inst->getBlock()->dumpAsTarget(std::cerr);
+                std::cerr << " ";
+                dumpValueWithBlock(value);
+
+                std::cerr << "] ";
+            }
+        } else {
+            const auto value = std::get<Value*>(val);
+            dumpValueWithBlock(value);
+        }
+        std::cerr << std::endl;
+    }*/
+
     return PhiAnalysisResult{ std::move(ret) };
 }
 

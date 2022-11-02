@@ -152,7 +152,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     root->addPass(iter);  // optimization after inlining
 
-    if(level >= OptimizationLevel::O3) {
+    if(level >= OptimizationLevel::O2) {
         for(auto pass : passesSource.collect({
                 "ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up

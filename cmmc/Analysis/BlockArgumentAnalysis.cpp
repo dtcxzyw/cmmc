@@ -14,6 +14,7 @@
 
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/PhiAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
@@ -41,53 +42,15 @@ Value* BlockArgumentAnalysisResult::query(BlockArgument* arg) const {
 }
 
 BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisPassManager& analysis) {
-    const auto& cfg = analysis.get<CFGAnalysis>(func);
-    std::unordered_map<BlockArgument*, std::vector<Value*>> phiMap;
-
-    for(auto block : func.blocks()) {
-        for(uint32_t idx = 0; idx < block->args().size(); ++idx) {
-            auto arg = block->args()[idx];
-            auto& phi = phiMap[arg];
-            for(auto& [predBlock, pred] : cfg.predecessors(block)) {
-                CMMC_UNUSED(predBlock);
-                phi.push_back(pred->getArgs()[idx]);
-            }
+    BlockArgumentAnalysisResult res;
+    auto& phi = analysis.get<PhiAnalysis>(func);
+    for(auto block : func.blocks())
+        for(auto arg : block->args()) {
+            auto& phiVal = phi.query(arg);
+            if(phiVal.index() == 0)
+                res.addMapping(arg, std::get<Value*>(phiVal));
         }
-    }
-
-    while(true) {
-        bool modified = false;
-
-        for(auto& [blockArg, phi] : phiMap) {
-            size_t oldSize = phi.size();
-            phi.erase(std::remove(phi.begin(), phi.end(), blockArg), phi.end());
-            std::sort(phi.begin(), phi.end());
-            phi.erase(std::unique(phi.begin(), phi.end()), phi.end());
-            size_t newSize = phi.size();
-            modified |= (oldSize != newSize);
-            for(auto& val : phi) {
-                if(auto arg = dynamic_cast<BlockArgument*>(val)) {
-                    const auto& rhsPhi = phiMap[arg];
-                    if(rhsPhi.size() == 1) {
-                        val = rhsPhi.front();
-                        modified = true;
-                    }
-                }
-            }
-        }
-
-        if(!modified)
-            break;
-    }
-
-    BlockArgumentAnalysisResult result;
-    for(auto& [blockArg, phi] : phiMap) {
-        if(phi.size() == 1) {
-            result.addMapping(blockArg, phi.front());
-        }
-    }
-
-    return result;
+    return res;
 }
 
 CMMC_NAMESPACE_END
