@@ -55,6 +55,30 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
         value->dumpAsOperand(std::cerr);
     };
     CMMC_UNUSED(dumpValueWithBlock);
+    const auto dumpCurrentSet = [&] {
+        for(auto& [arg, val] : ret) {
+            dumpValueWithBlock(arg);
+
+            std::cerr << " -> ";
+            if(auto phiPtr = std::get_if<PhiNode>(&val)) {
+                auto& phi = *phiPtr;
+                for(auto [from, inst, value] : phi) {
+                    CMMC_UNUSED(inst);
+                    std::cerr << " [";
+                    inst->getBlock()->dumpAsTarget(std::cerr);
+                    std::cerr << " ";
+                    dumpValueWithBlock(value);
+
+                    std::cerr << "] ";
+                }
+            } else {
+                const auto value = std::get<Value*>(val);
+                dumpValueWithBlock(value);
+            }
+            std::cerr << std::endl;
+        }
+    };
+    CMMC_UNUSED(dumpCurrentSet);
 
     // merge
     while(true) {
@@ -95,6 +119,9 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
             if(auto arg = dynamic_cast<BlockArgument*>(val)) {
                 const auto& phi = ret.find(arg)->second;
                 if(auto phiPtr = std::get_if<PhiNode>(&phi)) {
+                    if(phiPtr->empty())  // undetermined
+                        return false;
+
                     for(auto [from, inst, rhs] : *phiPtr) {
                         CMMC_UNUSED(from);
                         CMMC_UNUSED(inst);
@@ -111,28 +138,31 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
             return false;
         };
 
-        const auto findRoot = [&](BlockArgument* argSrc, BlockArgument* arg) -> Value* {
+        const auto findRoot = [&](BlockArgument* argSrc, BlockArgument* arg, bool allowNull) -> Value* {
             auto block = argSrc->getBlock();
             bool dominate = dom.dominate(arg->getBlock(), block);
 
             const auto& val = ret.find(arg)->second;
             if(auto valPtr = std::get_if<Value*>(&val)) {
+                assert(*valPtr);
                 if(!(*valPtr)->is<BlockArgument>() || dominate)
                     return *valPtr;
             }
 
-            visited.clear();
-            if(convergeTo(arg, argSrc))
-                return nullptr;
+            if(allowNull) {
+                visited.clear();
+                if(convergeTo(arg, argSrc))
+                    return nullptr;
+            }
 
             return arg;
         };
 
         // lifting
-        auto tryLift = [&](BlockArgument* arg, Value*& valRef) {
+        auto tryLift = [&](BlockArgument* arg, Value*& valRef, bool allowNull) {
             auto oldVal = valRef;
             if(auto argVal = dynamic_cast<BlockArgument*>(valRef)) {
-                valRef = findRoot(arg, argVal);
+                valRef = findRoot(arg, argVal, allowNull);
                 if(valRef != oldVal)
                     modified = true;
             }
@@ -143,14 +173,14 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
                 for(auto& [from, inst, valRef] : *phiPtr) {
                     CMMC_UNUSED(from);
                     CMMC_UNUSED(inst);
-                    tryLift(arg, valRef);
+                    tryLift(arg, valRef, true);
                 }
                 phiPtr->erase(
                     std::remove_if(phiPtr->begin(), phiPtr->end(), [](const PhiEdge& edge) { return edge.value == nullptr; }),
                     phiPtr->end());
             } else {
                 auto& valRef = std::get<Value*>(val);
-                tryLift(arg, valRef);
+                tryLift(arg, valRef, false);
             }
         }
 
@@ -161,27 +191,8 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
     /*
     func.dump(std::cerr);
     func.dumpCFG(std::cerr);
-    for(auto& [arg, val] : ret) {
-        dumpValueWithBlock(arg);
-
-        std::cerr << " -> ";
-        if(auto phiPtr = std::get_if<PhiNode>(&val)) {
-            auto& phi = *phiPtr;
-            for(auto [from, inst, value] : phi) {
-                CMMC_UNUSED(inst);
-                std::cerr << " [";
-                inst->getBlock()->dumpAsTarget(std::cerr);
-                std::cerr << " ";
-                dumpValueWithBlock(value);
-
-                std::cerr << "] ";
-            }
-        } else {
-            const auto value = std::get<Value*>(val);
-            dumpValueWithBlock(value);
-        }
-        std::cerr << std::endl;
-    }*/
+    dumpCurrentSet();
+    */
 
     return PhiAnalysisResult{ std::move(ret) };
 }

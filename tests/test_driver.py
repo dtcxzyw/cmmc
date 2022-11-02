@@ -10,15 +10,15 @@ import math
 binary_path = sys.argv[1]
 tests_path = sys.argv[2]
 
-# 11/1/2022
+# 10/27/2022
 baseline = {
-    "inst": 446.0418704797192,
-    "branch": 294.8161874587308,
-    "call": 178.71907990510275,
-    "load": 282.4506863038368,
-    "store": 289.55959848997907,
-    "load_bytes": 360.5351828980488,
-    "store_bytes": 421.3409073483539
+    "inst": 207616174,
+    "branch": 18005070,
+    "call": 15663,
+    "load": 10519398,
+    "store": 31260338,
+    "load_bytes": 42168672,
+    "store_bytes": 179166224
 }
 
 summary = {}
@@ -28,7 +28,7 @@ def parse_perf(result):
     try:
         perf = json.loads(result)
         for key in baseline.keys():
-            summary[key] = summary.get(key, 0) + math.log(max(1, perf[key]))
+            summary[key] = summary.get(key, 0) + perf[key]
     except:
         pass
 

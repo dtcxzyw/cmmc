@@ -130,6 +130,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "BlockOutliner",   //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
+            // Code Move
+            // "CodeMove",  //
             // Postprocess
             "NoReturnCallEliminate",  //
             "FreeEliminate",          //
@@ -170,6 +172,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     for(auto& pass : passesSource.collect({ "UninitializedCheck" }))
         root->addPass(pass);
     */
+    if(debugTransform.get()) {
+        for(auto& pass : passesSource.collect({ "DumpCFG" }))
+            root->addPass(pass);
+    }
     return root;
 }
 

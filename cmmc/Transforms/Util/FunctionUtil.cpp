@@ -90,8 +90,9 @@ void blockArgPropagation(Function& func) {
         auto& req = blockCtx.req;
         if(block == blocks.front() && !req.empty()) {
             DiagnosticsContext::get()
-                .attach<Reason>("Bad dominant tree")
-                .attach<CFGAttachment>("func CFG: ", &func)
+                .attach<Reason>("Bad dominator tree")
+                .attach<FuncAttachment>("func", &func)
+                .attach<CFGAttachment>("func CFG", &func)
                 .attach<ValueAttachment>("example", *req.cbegin())
                 .reportFatal();
         }

@@ -147,6 +147,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(any(v1), any(v2), any(v3))(matchCtx) && v2 == v3) {
                 return v2;
             }
+            uintmax_t u1;
+            if(select(uint_(u1), any(v2), any(v3))(matchCtx)) {
+                return u1 ? v2 : v3;
+            }
             // a + a -> 2 * a
             if(add(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(), make<ConstantInteger>(v1->getType(), 2),
