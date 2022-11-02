@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <functional>

@@ -47,8 +47,11 @@ BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisP
     for(auto block : func.blocks())
         for(auto arg : block->args()) {
             auto& phiVal = phi.query(arg);
-            if(phiVal.index() == 0)
-                res.addMapping(arg, std::get<Value*>(phiVal));
+            if(phiVal.index() == 0) {
+                const auto val = std::get<Value*>(phiVal);
+                if(val)
+                    res.addMapping(arg, val);
+            }
         }
     return res;
 }

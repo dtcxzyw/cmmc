@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Block.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>

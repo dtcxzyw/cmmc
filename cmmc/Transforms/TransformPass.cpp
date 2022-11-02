@@ -166,8 +166,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     root->addPass(iter);  // post optimization
 
+    /*
     for(auto& pass : passesSource.collect({ "UninitializedCheck" }))
         root->addPass(pass);
+    */
     return root;
 }
 
