@@ -44,20 +44,31 @@ Flag strictMode;
 IntegerOpt optimizationLevel;
 extern StringOpt target;
 static StringOpt outputPath;
-static StringOpt executeInput;
+StringOpt executeInput;
 static Flag grammarCheck;
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
 help.setName("help", 'h').setDesc("print help information");
-emitAST.setName("emitAST", 'a');
-emitIR.setName("emitIR", 'i');
+emitAST.setName("emitAST", 'a').setDesc("emit AST");
+emitIR.setName("emitIR", 'i').setDesc("emit IR");
 strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
 optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
-grammarCheck.setName("grammar-check", 'g').setDesc("Only check grammar");
-executeInput.setName("execute-input", 'e').setDesc("Execute with built-in interpreter");
+grammarCheck.setName("grammar-check", 'g').setDesc("only check grammar");
+executeInput.setName("execute-input", 'e').setDesc("execute with built-in interpreter");
 CMMC_INIT_OPTIONS_END
+
+std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
+    Interpreter interpreter{ 60'000'000'000ULL, 2ULL << 30, 1024 };
+    Function* func;
+    for(auto global : module.globals())
+        if(global->isFunction() && global->getSymbol() == "main") {
+            func = global->as<Function>();
+            break;
+        }
+    return interpreter.execute(module, *func, {}, ctx);
+}
 
 CMMC_NAMESPACE_END
 
@@ -93,15 +104,8 @@ static int runIRPipeline(Module& module, const std::string& base) {
         const auto path = getOutputPath(base + ".out");
         reportDebug() << "simulation << " << input << " >> " << path << std::endl;
         OutputStream out{ path };
-        Interpreter interpreter{ 60'000'000'000ULL, 2ULL << 30, 1024 };
-        Function* func;
-        for(auto global : module.globals())
-            if(global->isFunction() && global->getSymbol() == "main") {
-                func = global->as<Function>();
-                break;
-            }
         SimulationIOContext ctx{ in, out };
-        const auto ret = interpreter.execute(module, *func, {}, ctx);
+        const auto ret = runMain(module, ctx);
         return std::visit(
             [](auto ret) -> int {
                 if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {

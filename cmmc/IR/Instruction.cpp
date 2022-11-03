@@ -579,4 +579,29 @@ bool ReturnInst::verify(std::ostream& out) const {
     }
 }
 
+bool Instruction::isEqual(const Instruction* rhs) const {
+    if(getInstID() != rhs->getInstID())
+        return false;
+    if(!getType()->isSame(rhs->getType()))
+        return false;
+    return true;
+}
+
+bool CompareInst::isEqual(const Instruction* rhs) const {
+    if(!Instruction::isEqual(rhs))
+        return false;
+    const auto rhsCompare = rhs->as<CompareInst>();
+    return mCompare == rhsCompare->mCompare;
+}
+
+bool ConditionalBranchInst::isEqual(const Instruction* rhs) const {
+    if(!Instruction::isEqual(rhs))
+        return false;
+    const auto rhsBranch = rhs->as<ConditionalBranchInst>();
+    return mTrueTarget.getTarget() == rhsBranch->mTrueTarget.getTarget() &&
+        mTrueTarget.getArgs().size() == rhsBranch->mTrueTarget.getArgs().size() &&
+        mFalseTarget.getTarget() == rhsBranch->mFalseTarget.getTarget() &&
+        mFalseTarget.getArgs().size() == rhsBranch->mFalseTarget.getArgs().size();
+}
+
 CMMC_NAMESPACE_END

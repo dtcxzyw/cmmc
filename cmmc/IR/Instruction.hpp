@@ -169,6 +169,7 @@ public:
     bool canbeOperand() const noexcept;
 
     virtual Instruction* clone() const = 0;
+    virtual bool isEqual(const Instruction* rhs) const;  // only check metadata
 };
 
 class BinaryInst final : public Instruction {
@@ -209,6 +210,7 @@ public:
         : Instruction{ instID, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
+    bool isEqual(const Instruction* rhs) const override;
     CompareOp getOp() const noexcept {
         return mCompare;
     }
@@ -286,6 +288,7 @@ public:
     void updateTargetArgs(BranchTarget& target, Vector<Value*> args);
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
+    bool isEqual(const Instruction* rhs) const override;
 
     const BranchTarget& getTrueTarget() const noexcept {
         return mTrueTarget;

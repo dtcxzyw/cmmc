@@ -119,7 +119,6 @@ def sysy_opt(src):
     return out.returncode == 0
 
 
-# TODO: collect metrics
 def sysy_test(src: str, opt=True):
     input_file = src[:-3] + '.in'
     if not os.path.exists(input_file):
@@ -246,5 +245,5 @@ print("Total time: ", end-start)
 
 print("\nPerformance metrics:")
 for key in summary.keys():
-    print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+    print(key, "= {} baseline = {} ratio = {:.3f}".format(
         summary[key], baseline[key], summary[key] / baseline[key]))

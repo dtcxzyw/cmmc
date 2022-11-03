@@ -53,9 +53,7 @@ class BlockOutliner final : public TransformPass<Function> {
             const auto lhsInst = *lhsIter;
             const auto rhsInst = *rhsIter;
 
-            if(lhsInst->getInstID() != rhsInst->getInstID())
-                return false;
-            if(!lhsInst->getType()->isSame(rhsInst->getType()))
+            if(!lhsInst->isEqual(rhsInst))
                 return false;
 
             if(lhsInst->operands().size() != rhsInst->operands().size())
@@ -71,15 +69,6 @@ class BlockOutliner final : public TransformPass<Function> {
                 }
             }
             allocOperand(lhsInst, rhsInst);
-        }
-
-        if(lhs->getTerminator()->isBranch()) {
-            auto lhsTerminator = lhs->getTerminator()->as<ConditionalBranchInst>();
-            auto rhsTerminator = rhs->getTerminator()->as<ConditionalBranchInst>();
-            if(lhsTerminator->getTrueTarget().getTarget() != rhsTerminator->getTrueTarget().getTarget())
-                return false;
-            if(lhsTerminator->getFalseTarget().getTarget() != rhsTerminator->getFalseTarget().getTarget())
-                return false;
         }
 
         return true;

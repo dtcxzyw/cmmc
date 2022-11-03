@@ -193,11 +193,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                   make<ConstantInteger>(inst->getType(), static_cast<intmax_t>(c - 1)));
             }
 
-            // (zext i1 a) != 0 -> a // FIXME
-            /*
+            // (zext i1 a) != 0 -> a
             if(scmp(cmp, zext(any(v1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual && v1->getType()->isBoolean()) {
                 return v1;
-            }*/
+            }
 
             return nullptr;
         });

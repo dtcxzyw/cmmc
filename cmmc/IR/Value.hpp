@@ -64,6 +64,14 @@ public:
     }
 
     template <typename T>
+    const T* as() const {
+        static_assert(std::is_base_of_v<Value, T>);
+        const auto ptr = dynamic_cast<const T*>(this);
+        assert(ptr);
+        return ptr;
+    }
+
+    template <typename T>
     bool is() const {
         static_assert(std::is_base_of_v<Value, T>);
         return dynamic_cast<const T*>(this);

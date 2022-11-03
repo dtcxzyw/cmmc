@@ -12,29 +12,105 @@
     limitations under the License.
 */
 
+#include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <fstream>
 #include <iostream>
+#include <limits>
 #include <memory>
+#include <string>
 
 CMMC_NAMESPACE_BEGIN
 
 static Flag debugTransform;
+static StringOpt referenceOutput;
+extern StringOpt executeInput;
+static IntegerOpt skipCount;
+
+static uint32_t runCount = 0;
 
 CMMC_INIT_OPTIONS_BEGIN
-debugTransform.setName("debug-transform", 'd').setDesc("print out transform pass result");
+debugTransform.setName("debug-transform", 'd').setDesc("print transform pass result step by step");
+referenceOutput.setName("reference-output", 'R').setDesc("reference output for debugging");
+skipCount.withDefault(0)
+    .setName("skip-transform-count", 'T')
+    .setDesc("skip the correctness check for the first N transform runs");
 CMMC_INIT_OPTIONS_END
 
 template <>
 TransformPass<Function>::~TransformPass() {}
 template <>
 TransformPass<Module>::~TransformPass() {}
+
+std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx);
+static std::string loadString(const std::string& input) {
+    std::string str;
+    std::ifstream in{ input, std::ios::binary | std::ios::in };
+    in.seekg(0, std::ios::end);
+    const size_t size = in.tellg();
+    in.seekg(0, std::ios::beg);
+    str.resize(size);
+    in.read(str.data(), size);
+    return str;
+}
+static void verifyModuleExec(Module& module) {
+    const auto tempOutput = "/tmp/cmmcsim";
+    int retCode = 0;
+
+    {
+        auto ref = referenceOutput.get(false);
+        if(ref.empty())
+            return;
+
+        std::cerr << "verify round " << (++runCount);
+        if(runCount <= skipCount.get()) {
+            std::cerr << " skipped" << std::endl;
+            return;
+        }
+
+        InputStream in{ executeInput.get() };
+        OutputStream out{ tempOutput };
+        SimulationIOContext ctx{ in, out };
+        const auto ret = runMain(module, ctx);
+        std::visit(
+            [&](auto ret) {
+                if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
+                    if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
+                        retCode = val->getSignExtended();
+                    } else {
+                        std::cerr << " failed" << std::endl;
+                        DiagnosticsContext::get().attach<Reason>("main should return a integer").reportFatal();
+                    }
+                } else {
+                    std::cerr << " failed" << std::endl;
+                    DiagnosticsContext::get().attach<Reason>(enumName(ret)).reportFatal();
+                }
+            },
+            ret);
+    }
+
+    auto answer = loadString(tempOutput);
+    if(!answer.empty() && answer.back() != '\n')
+        answer.push_back('\n');
+    answer += std::to_string(retCode);
+    answer += '\n';
+    const auto standandAnswer = loadString(referenceOutput.get());
+
+    if(answer == standandAnswer) {
+        std::cerr << " passed" << std::endl;
+    } else {
+        std::cerr << " failed" << std::endl;
+        DiagnosticsContext::get().attach<Reason>("output mismatch").reportFatal();
+    }
+}
 
 bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
@@ -57,6 +133,9 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
                     item.dump(std::cerr);
                 if(!item.verify(std::cerr))
                     DiagnosticsContext::get().attach<ModuleAttachment>("module", &item).reportFatal();
+            }
+            if(debugTransform.get()) {
+                verifyModuleExec(item);
             }
         }
     }
@@ -202,6 +281,10 @@ public:
                     analysis.invalidateFunc(func);
                     modified = true;
                     assert(func.verify(std::cerr));
+                }
+
+                if(debugTransform.get()) {
+                    verifyModuleExec(module);
                 }
             }
         }

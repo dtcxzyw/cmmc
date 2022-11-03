@@ -38,9 +38,7 @@ struct InstHasher final {
 
 struct InstEqual final {
     bool operator()(const Instruction* lhs, const Instruction* rhs) const {
-        if(lhs->getInstID() != rhs->getInstID())
-            return false;
-        if(!lhs->getType()->isSame(rhs->getType()))
+        if(!lhs->isEqual(rhs))
             return false;
         auto& lhsOperands = lhs->operands();
         auto& rhsOperands = rhs->operands();

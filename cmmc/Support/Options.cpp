@@ -101,6 +101,7 @@ StringOpt& StringOpt::withDefault(std::string value) {
 }
 
 void StringOpt::handle(const char* str) {
+    mHasValue = true;
     mStr = str;
 }
 

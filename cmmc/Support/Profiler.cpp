@@ -27,7 +27,7 @@ CMMC_NAMESPACE_BEGIN
 Flag enableProfiling;
 
 CMMC_INIT_OPTIONS_BEGIN
-enableProfiling.setName("profile", 'p').setDesc("Enable builtin profiling");
+enableProfiling.setName("profile", 'p').setDesc("enable built-in profiling");
 CMMC_INIT_OPTIONS_END
 
 Stage::Stage(const std::string_view& name) : Stage{ std::string{ name } } {}
