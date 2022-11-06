@@ -41,7 +41,7 @@ bool reduceBlock(Block& block, BlockReducer reducer) {
     return modified;
 }
 
-static bool applyReplace(Instruction* inst, ReplaceMap& replace) {
+static bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
     bool modified = false;
     if(!inst->isBranch())
         for(auto& operand : inst->operands()) {
@@ -60,7 +60,7 @@ static bool applyReplace(Instruction* inst, ReplaceMap& replace) {
     }
     return modified;
 }
-bool replaceOperands(Block& block, ReplaceMap& replace) {
+bool replaceOperands(Block& block, const ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;
@@ -68,7 +68,7 @@ bool replaceOperands(Block& block, ReplaceMap& replace) {
         modified |= applyReplace(inst, replace);
     return modified;
 }
-bool replaceOperands(const std::vector<Instruction*>& insts, ReplaceMap& replace) {
+bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;

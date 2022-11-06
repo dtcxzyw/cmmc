@@ -14,6 +14,7 @@
 
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <iostream>
 
@@ -118,9 +119,16 @@ void DriverImpl::emit(Module& module) {
     }
     if(hideSymbol.get()) {
         using namespace std::string_view_literals;
-        for(auto global : module.globals())
-            if(global->getSymbol() != "main"sv)
+        for(auto global : module.globals()) {
+            if(auto func = dynamic_cast<Function*>(global)) {
+                if(func->getSymbol() != "main"sv)
+                    func->setLinkage(Linkage::Internal);
+                else {
+                    func->attr().addAttr(FunctionAttribute::Entry);
+                }
+            } else
                 global->setLinkage(Linkage::Internal);
+        }
     }
     assert(module.verify(std::cerr));
 }

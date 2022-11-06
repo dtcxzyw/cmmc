@@ -28,8 +28,8 @@ bool reduceBlock(Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
-bool replaceOperands(Block& block, ReplaceMap& replace);
-bool replaceOperands(const std::vector<Instruction*>& insts, ReplaceMap& replace);
+bool replaceOperands(Block& block, const ReplaceMap& replace);
+bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& func, BranchTarget& target);
 
 template <typename Callable>

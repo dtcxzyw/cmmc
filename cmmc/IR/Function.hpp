@@ -27,7 +27,8 @@ enum class FunctionAttribute {
     Stateless = 1 << 3,
     NoAlias = 1 << 4,
     NoReturn = 1 << 5,
-    NoRecurse = 1 << 6
+    NoRecurse = 1 << 6,
+    Entry = 1 << 7
 };
 
 enum class CallingConvention { C, Fast };

@@ -223,6 +223,11 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     root->addPass(iter);  // pre optimization
 
+    if(level >= OptimizationLevel::O2) {
+        for(auto pass : passesSource.collect({ "GlobalScalar2Local" }))
+            root->addPass(pass);
+    }
+
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({
                 "FuncInlining",  //

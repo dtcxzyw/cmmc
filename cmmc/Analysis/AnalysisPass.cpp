@@ -35,6 +35,7 @@ void AnalysisPassManager::invalidateFunc(Function& func) {
 }
 void AnalysisPassManager::invalidateModule() {
     mModuleLevelAnalysis.clear();
+    mFuncLevelAnalysis.clear();
 }
 
 CMMC_NAMESPACE_END

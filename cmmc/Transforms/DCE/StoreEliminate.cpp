@@ -20,6 +20,7 @@
 // int* a = alloc int;
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -29,6 +30,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_set>
 #include <vector>
 
@@ -38,7 +40,7 @@ class StoreEliminate final : public TransformPass<Function> {
     // FIXME: 'return after global store'
     static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet,
                             const PointerAddressSpaceAnalysisResult& addressSpace, Instruction* store,
-                            std::unordered_set<Block*>& visited) {
+                            std::unordered_set<Block*>& visited, const BlockArgumentAnalysisResult& blockArgMap) {
         if(!store) {
             if(visited.count(&block))
                 return true;
@@ -52,10 +54,10 @@ class StoreEliminate final : public TransformPass<Function> {
                     const auto branch = inst->as<ConditionalBranchInst>();
                     const auto& trueTarget = branch->getTrueTarget();
                     const auto& falseTarget = branch->getFalseTarget();
-                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, addressSpace, nullptr, visited))
+                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, addressSpace, nullptr, visited, blockArgMap))
                         return false;
                     if(falseTarget.getTarget() &&
-                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, addressSpace, nullptr, visited))
+                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, addressSpace, nullptr, visited, blockArgMap))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
@@ -65,7 +67,7 @@ class StoreEliminate final : public TransformPass<Function> {
                     } else
                         return false;
                 } else if(inst->getInstID() == InstructionID::Store) {
-                    const auto storeAddr = inst->getOperand(0);
+                    const auto storeAddr = blockArgMap.queryRoot(inst->getOperand(0));
                     const auto storeValue = inst->getOperand(1);
 
                     if(storeValue->getType()->isPointer() && !aliasSet.isDistinct(addr, storeValue))
@@ -97,15 +99,16 @@ class StoreEliminate final : public TransformPass<Function> {
     }
 
     static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet,
-                           const PointerAddressSpaceAnalysisResult& addressSpace) {
+                           const PointerAddressSpaceAnalysisResult& addressSpace,
+                           const BlockArgumentAnalysisResult& blockArgMap) {
         auto& insts = block.instructions();
         const auto size = insts.size();
         insts.remove_if([&](Instruction* inst) {
             if(inst->getInstID() != InstructionID::Store)
                 return false;
-            const auto addr = inst->getOperand(0);
+            const auto addr = blockArgMap.queryRoot(inst->getOperand(0));
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited);
+            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited, blockArgMap);
         });
         return insts.size() != size;
     }
@@ -114,9 +117,10 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
         auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
+        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet, addressSpace);
+            modified |= runOnBlock(*block, aliasSet, addressSpace, blockArgMap);
         }
         return modified;
     }

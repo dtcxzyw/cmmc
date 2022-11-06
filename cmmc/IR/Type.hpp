@@ -175,7 +175,7 @@ public:
     const Type* getRetType() const noexcept {
         return mRetType;
     }
-    const Vector<const Type*> getArgTypes() const noexcept {
+    const Vector<const Type*>& getArgTypes() const noexcept {
         return mArgTypes;
     }
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
