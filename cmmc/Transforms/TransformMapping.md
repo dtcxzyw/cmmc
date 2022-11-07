@@ -1,14 +1,12 @@
 # LLVM
 + [ ] adce
 + [x] always-inline -> Inlining
-+ [ ] argpromotion
++ [x] argpromotion -> Inlining & ScalarMem2Reg
 + [ ] bb-vectorize
-+ [ ] block-placement
 + [ ] break-crit-edges
 + [x] constmerge -> ConstantMerge
 + [x] dce -> NoSideEffectEliminate
-+ [ ] deadargelim
-+ [ ] deadtypeelim
++ [x] deadargelim -> Inlining & BlockArgEliminate
 + [x] die -> NoSideEffectEliminate
 + [x] dse -> StoreEliminate
 + [x] function-attrs -> FunctionAttrInfer
@@ -20,7 +18,7 @@
 + [x] instcombine -> AtithmeticReduce
 + [ ] aggressive-instcombine
 + [x] internalize -> -H
-+ [ ] ipsccp
++ [x] ipsccp -> Inlining & sccp
 + [ ] jump-threading
 + [ ] lcssa
 + [ ] licm
@@ -39,10 +37,10 @@
 + [ ] reassociate
 + [ ] reg2mem
 + [ ] sroa
-+ [ ] sccp
-+ [x] simplifycfg -> BlockEliminate, BlockMerge
++ [x] sccp -> ConstantPropagation & SimplifyBranch 
++ [x] simplifycfg -> BlockEliminate & BlockMerge
 + [ ] sink
-+ [ ] tailcallelim
++ [x] tailcallelim -> TailCallEliminate
 
 # MLIR
 + [x] control-flow-sink -> sink

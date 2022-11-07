@@ -281,6 +281,10 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
         const auto block = target.getTarget();
         if(!block)
             return true;
+        if(block == getBlock()->getFunction()->entryBlock()) {
+            out << "Cannot branch to entry block" << std::endl;
+            return false;
+        }
         auto& args1 = target.getArgs();
         auto& args2 = block->args();
         if(args1.size() != args2.size()) {

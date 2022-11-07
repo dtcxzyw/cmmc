@@ -31,7 +31,6 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
-#include <iostream>
 #include <unordered_set>
 #include <vector>
 

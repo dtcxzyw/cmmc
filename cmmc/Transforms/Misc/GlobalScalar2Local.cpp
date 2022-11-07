@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/ConstantValue.hpp"
 #include <algorithm>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>

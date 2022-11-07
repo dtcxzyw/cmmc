@@ -195,6 +195,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "ArithmeticReduce",       //
             "NoSideEffectEliminate",  // clean up
             // Control flow
+            "TailCallEliminate",  //
             "MergeBranch",        //
             "SimplyBranch",       //
             "CombineBranch",      //

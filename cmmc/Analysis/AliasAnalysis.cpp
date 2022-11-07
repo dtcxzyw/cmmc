@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
