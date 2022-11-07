@@ -328,35 +328,35 @@ public:
             reportNotImplemented();
     }
 
-    void storeValue(uintptr_t ptr, OperandStorage& value, const Type* type) {
-        dispatch(
-            value, [&] { reportUnreachable(); },  //
-            [&](const ConstantInteger& x) {
-                const uintmax_t val = x.getZeroExtended();
-                const auto base = reinterpret_cast<const std::byte*>(&val);
-                const auto size = type->getFixedSize();
-                for(uint32_t idx = 0; idx < size; ++idx)
-                    store(ptr + idx, base[idx]);
-            },
-            [&](const ConstantFloatingPoint& x) {
-                const auto val = x.getValue();
-                std::byte storage[sizeof(double)];
-                const auto size = type->getFixedSize();
-                if(size == sizeof(float)) {
-                    *reinterpret_cast<float*>(storage) = static_cast<float>(val);
-                } else {
-                    *reinterpret_cast<double*>(storage) = val;
-                }
+    void storeValue(uintptr_t ptr, const OperandStorage& value, const Type* type) {
+        std::visit(Overload{ [&](auto&&) { reportUnreachable(); },  //
+                             [&](const ConstantInteger& x) {
+                                 const uintmax_t val = x.getZeroExtended();
+                                 const auto base = reinterpret_cast<const std::byte*>(&val);
+                                 const auto size = type->getFixedSize();
+                                 for(uint32_t idx = 0; idx < size; ++idx)
+                                     store(ptr + idx, base[idx]);
+                             },
+                             [&](const ConstantFloatingPoint& x) {
+                                 const auto val = x.getValue();
+                                 std::byte storage[sizeof(double)];
+                                 const auto size = type->getFixedSize();
+                                 if(size == sizeof(float)) {
+                                     *reinterpret_cast<float*>(storage) = static_cast<float>(val);
+                                 } else {
+                                     *reinterpret_cast<double*>(storage) = val;
+                                 }
 
-                for(uint32_t idx = 0; idx < size; ++idx)
-                    store(ptr + idx, storage[idx]);
-            },
-            [&](uintptr_t val) {
-                const auto base = reinterpret_cast<const std::byte*>(&val);
-                for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
-                    store(ptr + idx, base[idx]);
-                ;
-            });
+                                 for(uint32_t idx = 0; idx < size; ++idx)
+                                     store(ptr + idx, storage[idx]);
+                             },
+                             [&](uintptr_t val) {
+                                 const auto base = reinterpret_cast<const std::byte*>(&val);
+                                 for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
+                                     store(ptr + idx, base[idx]);
+                                 ;
+                             } },
+                   value);
     }
 
     template <typename T>
@@ -453,12 +453,13 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
     const auto toConstant = [](const OperandStorage& val) -> ConstantValue* {
         ConstantValue* ret = nullptr;
-        dispatch(
-            val, [&] { reportUnreachable(); },                                              //
-            [&](const ConstantInteger& x) { ret = make<ConstantInteger>(x); },              //
-            [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },  //
-            [&](ConstantOffset* x) { ret = x; }                                             //
-        );
+        std::visit(Overload{
+                       [&](auto&&) { reportUnreachable(); },                                           //
+                       [&](const ConstantInteger& x) { ret = make<ConstantInteger>(x); },              //
+                       [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },  //
+                       [&](ConstantOffset* x) { ret = x; }                                             //
+                   },
+                   val);
         return ret;
     };
 
@@ -555,20 +556,19 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
         const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
 
-        const auto addValue = [&](Instruction* inst, OperandStorage val) {
+        const auto addValue = [&](Instruction* inst, const OperandStorage& val) {
             currentExecCtx.operands.emplace(inst, val);
             if(step.get()) {
                 auto& out = std::cerr;
                 inst->dump(out);
                 out << " -> ";
-                dispatch(
-                    val, [&] { out << "unknown"; },                                   //
-                    [&](const ConstantInteger& x) { x.dump(out); },                   //
-                    [&](const ConstantFloatingPoint& x) { x.dump(out); },             //
-                    [&](const ConstantOffset* x) { x->dump(out); },                   //
-                    [&](const Function* x) { x->dumpAsOperand(out); },                //
-                    [&](uintptr_t x) { out << "ptr " << std::hex << x << std::dec; }  //
-                );
+                std::visit(Overload{ [&](auto&&) { out << "unknown"; },                                   //
+                                     [&](const ConstantInteger& x) { x.dump(out); },                      //
+                                     [&](const ConstantFloatingPoint& x) { x.dump(out); },                //
+                                     [&](const ConstantOffset* x) { x->dump(out); },                      //
+                                     [&](const Function* x) { x->dumpAsOperand(out); },                   //
+                                     [&](uintptr_t x) { out << "ptr " << std::hex << x << std::dec; } },  //
+                           val);
                 out << std::endl;
             }
         };

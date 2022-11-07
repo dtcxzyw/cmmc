@@ -144,122 +144,121 @@ void loadTAC(Module& module, const std::string& path) {
     for(uint32_t k = 0; k < seq.size(); ++k) {
         auto& inst = seq[k];
 
-        dispatch(
-            inst,
-            [&] {
-                if(std::holds_alternative<TACGoto>(inst) || std::holds_alternative<TACConditionalGoto>(inst)) {
-                    const auto nextBlock = builder.addBlock();
-                    postTerminator.emplace_back(&inst, builder.getCurrentBlock(), nextBlock);
-                    builder.setCurrentBlock(nextBlock);
-                } else
-                    reportUnreachable();
-            },
-            [&](const TACLabel& label) {
-                const auto nextBlock = builder.addBlock();
-                builder.makeOp<ConditionalBranchInst>(BranchTarget{ nextBlock });
-                builder.setCurrentBlock(nextBlock);
-                blockMap.emplace(std::get<int>(label.label.val), nextBlock);
-            },
-            [&](const TACFunctionDecl& function) {
-                fixFunction();
+        std::visit(Overload{ [&](auto&&) {
+                                if(std::holds_alternative<TACGoto>(inst) || std::holds_alternative<TACConditionalGoto>(inst)) {
+                                    const auto nextBlock = builder.addBlock();
+                                    postTerminator.emplace_back(&inst, builder.getCurrentBlock(), nextBlock);
+                                    builder.setCurrentBlock(nextBlock);
+                                } else
+                                    reportUnreachable();
+                            },
+                             [&](const TACLabel& label) {
+                                 const auto nextBlock = builder.addBlock();
+                                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ nextBlock });
+                                 builder.setCurrentBlock(nextBlock);
+                                 blockMap.emplace(std::get<int>(label.label.val), nextBlock);
+                             },
+                             [&](const TACFunctionDecl& function) {
+                                 fixFunction();
 
-                std::vector<String> argNames;
-                Vector<const Type*> args;
+                                 std::vector<String> argNames;
+                                 Vector<const Type*> args;
 
-                uint32_t idx = k + 1;
-                for(; idx < seq.size() && std::holds_alternative<TACParam>(seq[idx]); ++idx) {
-                    auto& arg = std::get<TACParam>(seq[idx]);
-                    assert(arg.name.kind == TACOperandType::Variable);
-                    auto name = std::get<String>(arg.name.val);
-                    argNames.push_back(name);
-                    args.push_back(i32);
-                }
-                k = idx - 1;
+                                 uint32_t idx = k + 1;
+                                 for(; idx < seq.size() && std::holds_alternative<TACParam>(seq[idx]); ++idx) {
+                                     auto& arg = std::get<TACParam>(seq[idx]);
+                                     assert(arg.name.kind == TACOperandType::Variable);
+                                     auto name = std::get<String>(arg.name.val);
+                                     argNames.push_back(name);
+                                     args.push_back(i32);
+                                 }
+                                 k = idx - 1;
 
-                auto funcType = make<FunctionType>(i32, args);
-                auto func = make<Function>(function.symbol, funcType);
-                module.add(func);
-                callables.emplace(function.symbol, func);
+                                 auto funcType = make<FunctionType>(i32, args);
+                                 auto func = make<Function>(function.symbol, funcType);
+                                 module.add(func);
+                                 callables.emplace(function.symbol, func);
 
-                builder.setCurrentFunction(func);
-                auto entryBlock = builder.addBlock();
-                builder.setCurrentBlock(entryBlock);
-                entryBlock->setLabel(String::get("entry"));
+                                 builder.setCurrentFunction(func);
+                                 auto entryBlock = builder.addBlock();
+                                 builder.setCurrentBlock(entryBlock);
+                                 entryBlock->setLabel(String::get("entry"));
 
-                idx = 0;
-                for(auto arg : args) {
-                    const auto val = entryBlock->addArg(arg);
-                    const auto storage = builder.makeOp<StackAllocInst>(val->getType());
-                    builder.makeOp<StoreInst>(storage, val);
-                    identifierMap.emplace(argNames[idx], storage);
-                    ++idx;
-                }
+                                 idx = 0;
+                                 for(auto arg : args) {
+                                     const auto val = entryBlock->addArg(arg);
+                                     const auto storage = builder.makeOp<StackAllocInst>(val->getType());
+                                     builder.makeOp<StoreInst>(storage, val);
+                                     identifierMap.emplace(argNames[idx], storage);
+                                     ++idx;
+                                 }
 
-                const auto codeBlock = builder.addBlock();
-                builder.setCurrentBlock(entryBlock);
-                builder.makeOp<ConditionalBranchInst>(BranchTarget{ codeBlock });
-                builder.setCurrentBlock(codeBlock);
-            },
-            [&](const TACAssign& assign) {
-                const auto lvalue = getLValue(assign.lhs, false);
-                const auto rvalue = getRValue(assign.rhs);
-                builder.makeOp<StoreInst>(lvalue, rvalue);
-            },
-            [&](const TACBinary& binary) {
-                const auto dest = getLValue(binary.result, false);
-                const auto lhsVal = getRValue(binary.lhs);
-                const auto rhsVal = getRValue(binary.rhs);
-                const auto res = builder.makeOp<BinaryInst>(binary.instruction, i32, lhsVal, rhsVal);
-                builder.makeOp<StoreInst>(dest, res);
-            },
-            [&](const TACAddr& addr) {
-                const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(addr.rhs, true), i32);
-                const auto base = getLValue(addr.lhs, false);
-                builder.makeOp<StoreInst>(base, ptr);
-            },
-            [&](const TACFetch& fetch) {
-                const auto ptr = builder.makeOp<IntToPtrInst>(getRValue(fetch.rhsAddr), i32ptr);
-                const auto base = getLValue(fetch.lhs, false);
-                builder.makeOp<StoreInst>(base, builder.makeOp<LoadInst>(ptr));
-            },
-            [&](const TACDeref& deref) {
-                const auto val = getRValue(deref.rhs);
-                const auto base = getRValue(deref.lhsAddr);
-                const auto ptr = builder.makeOp<IntToPtrInst>(base, i32ptr);
-                builder.makeOp<StoreInst>(ptr, val);
-            },
-            [&](const TACReturn& ret) {
-                builder.makeOp<ReturnInst>(getRValue(ret.val));
-                const auto nextBlock = builder.addBlock();
-                builder.setCurrentBlock(nextBlock);
-            },
-            [&](const TACLocalDecl& dec) {
-                const auto size = static_cast<uint32_t>(dec.size);
-                assert(size % 4 == 0);
-                const auto type = make<ArrayType>(i32, size / 4);
-                const auto ptr = builder.makeOp<StackAllocInst>(type);
-                identifierMap.emplace(std::get<String>(dec.var.val), ptr);
-            },
-            [&](const TACArg& arg) { paramStack.push_back(getRValue(arg.val)); },
-            [&](const TACCall& call) {
-                const auto func = callables.find(call.callee);
-                if(func == callables.cend())
-                    DiagnosticsContext::get().attach<Reason>("missing function").reportFatal();
-                const auto ret = builder.makeOp<FunctionCallInst>(func->second, paramStack);
-                paramStack.clear();
-                const auto dst = getLValue(call.ret, false);
-                builder.makeOp<StoreInst>(dst, ret);
-            },
-            [&](const TACRead& readInst) {
-                const auto dst = getLValue(readInst.var, false);
-                const auto ret = builder.makeOp<FunctionCallInst>(read, Vector<Value*>{});
-                builder.makeOp<StoreInst>(dst, ret);
-            },
-            [&](const TACWrite& writeInst) {
-                const auto val = getRValue(writeInst.val);
-                builder.makeOp<FunctionCallInst>(write, Vector<Value*>{ val });
-            },
-            [&](std::monostate) {});
+                                 const auto codeBlock = builder.addBlock();
+                                 builder.setCurrentBlock(entryBlock);
+                                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ codeBlock });
+                                 builder.setCurrentBlock(codeBlock);
+                             },
+                             [&](const TACAssign& assign) {
+                                 const auto lvalue = getLValue(assign.lhs, false);
+                                 const auto rvalue = getRValue(assign.rhs);
+                                 builder.makeOp<StoreInst>(lvalue, rvalue);
+                             },
+                             [&](const TACBinary& binary) {
+                                 const auto dest = getLValue(binary.result, false);
+                                 const auto lhsVal = getRValue(binary.lhs);
+                                 const auto rhsVal = getRValue(binary.rhs);
+                                 const auto res = builder.makeOp<BinaryInst>(binary.instruction, i32, lhsVal, rhsVal);
+                                 builder.makeOp<StoreInst>(dest, res);
+                             },
+                             [&](const TACAddr& addr) {
+                                 const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(addr.rhs, true), i32);
+                                 const auto base = getLValue(addr.lhs, false);
+                                 builder.makeOp<StoreInst>(base, ptr);
+                             },
+                             [&](const TACFetch& fetch) {
+                                 const auto ptr = builder.makeOp<IntToPtrInst>(getRValue(fetch.rhsAddr), i32ptr);
+                                 const auto base = getLValue(fetch.lhs, false);
+                                 builder.makeOp<StoreInst>(base, builder.makeOp<LoadInst>(ptr));
+                             },
+                             [&](const TACDeref& deref) {
+                                 const auto val = getRValue(deref.rhs);
+                                 const auto base = getRValue(deref.lhsAddr);
+                                 const auto ptr = builder.makeOp<IntToPtrInst>(base, i32ptr);
+                                 builder.makeOp<StoreInst>(ptr, val);
+                             },
+                             [&](const TACReturn& ret) {
+                                 builder.makeOp<ReturnInst>(getRValue(ret.val));
+                                 const auto nextBlock = builder.addBlock();
+                                 builder.setCurrentBlock(nextBlock);
+                             },
+                             [&](const TACLocalDecl& dec) {
+                                 const auto size = static_cast<uint32_t>(dec.size);
+                                 assert(size % 4 == 0);
+                                 const auto type = make<ArrayType>(i32, size / 4);
+                                 const auto ptr = builder.makeOp<StackAllocInst>(type);
+                                 identifierMap.emplace(std::get<String>(dec.var.val), ptr);
+                             },
+                             [&](const TACArg& arg) { paramStack.push_back(getRValue(arg.val)); },
+                             [&](const TACCall& call) {
+                                 const auto func = callables.find(call.callee);
+                                 if(func == callables.cend())
+                                     DiagnosticsContext::get().attach<Reason>("missing function").reportFatal();
+                                 const auto ret = builder.makeOp<FunctionCallInst>(func->second, paramStack);
+                                 paramStack.clear();
+                                 const auto dst = getLValue(call.ret, false);
+                                 builder.makeOp<StoreInst>(dst, ret);
+                             },
+                             [&](const TACRead& readInst) {
+                                 const auto dst = getLValue(readInst.var, false);
+                                 const auto ret = builder.makeOp<FunctionCallInst>(read, Vector<Value*>{});
+                                 builder.makeOp<StoreInst>(dst, ret);
+                             },
+                             [&](const TACWrite& writeInst) {
+                                 const auto val = getRValue(writeInst.val);
+                                 builder.makeOp<FunctionCallInst>(write, Vector<Value*>{ val });
+                             },
+                             [&](std::monostate) {} },
+                   inst);
     }
 
     fixFunction();

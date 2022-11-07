@@ -32,17 +32,17 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     const auto& cfg = analysis.get<CFGAnalysis>(func);
 
     std::unordered_set<Block*> visited;
-    std::function<void(Block*)> color = [&](Block* block) {
+    auto color = [&](auto&& self, Block* block) {
         if(visited.count(block))
             return;
         visited.insert(block);
         for(auto [succBlock, succTarget] : cfg.successors(block)) {
             CMMC_UNUSED(succTarget);
-            color(succBlock);
+            self(self, succBlock);
         }
     };
 
-    color(func.entryBlock());
+    color(color, func.entryBlock());
     std::unordered_set<Block*> reachable;
     reachable.swap(visited);
 
@@ -50,7 +50,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
 
     for(auto block : func.blocks()) {
         visited = { block };
-        color(func.entryBlock());
+        color(color, func.entryBlock());
 
         auto& set = ret[block];
 

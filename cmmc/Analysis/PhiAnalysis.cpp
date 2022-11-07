@@ -110,7 +110,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
         }
 
         std::unordered_set<Value*> visited;
-        std::function<bool(Value*, BlockArgument*)> convergeTo = [&](Value* val, BlockArgument* target) {
+        auto convergeTo = [&](auto&& self, Value* val, BlockArgument* target) {
             if(val == target)
                 return true;
             if(visited.count(val))
@@ -127,12 +127,12 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
                         CMMC_UNUSED(inst);
                         if(!rhs)
                             continue;
-                        if(!convergeTo(rhs, target))
+                        if(!self(self, rhs, target))
                             return false;
                     }
                     return true;
                 } else {
-                    return convergeTo(std::get<Value*>(phi), target);
+                    return self(self, std::get<Value*>(phi), target);
                 }
             }
             return false;
@@ -151,7 +151,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
 
             if(allowNull) {
                 visited.clear();
-                if(convergeTo(arg, argSrc))
+                if(convergeTo(convergeTo, arg, argSrc))
                     return nullptr;
             }
 
