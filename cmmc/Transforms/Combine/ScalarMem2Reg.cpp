@@ -15,6 +15,7 @@
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -37,7 +38,8 @@ CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2Reg final : public TransformPass<Function> {
     void applyMem2Reg(Function& func, const AliasAnalysisResult& alias, const BlockArgumentAnalysisResult& blockArgMap,
-                      StackAllocInst* alloc, std::unordered_map<Block*, ReplaceMap>& replaceMap) const {
+                      StackAllocInst* alloc, std::unordered_map<Block*, ReplaceMap>& replaceMap,
+                      const StackAddressLeakAnalysisResult& leak) const {
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
         for(auto block : func.blocks()) {
@@ -90,16 +92,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                             }
                         } break;
                         case InstructionID::Call: {
-                            const auto callee = inst->operands().back();
-                            bool modified = true;
-                            // TODO: check address leak
-                            if(auto func = dynamic_cast<Function*>(callee)) {
-                                if(func->attr().hasAttr(FunctionAttribute::NoMemoryWrite)) {
-                                    modified = false;
-                                }
-                            }
-
-                            if(modified)
+                            if(leak.mayModify(inst, alloc))
                                 update(inst, true);
                         } break;
                         case InstructionID::Free: {
@@ -140,6 +133,7 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
+        const auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
 
         std::vector<StackAllocInst*> interested;
         for(auto block : func.blocks()) {
@@ -158,7 +152,7 @@ public:
 
         std::unordered_map<Block*, ReplaceMap> replaceMap;
         for(auto alloc : interested) {
-            applyMem2Reg(func, alias, blockArgMap, alloc, replaceMap);
+            applyMem2Reg(func, alias, blockArgMap, alloc, replaceMap, leak);
         }
         for(auto& [block, replace] : replaceMap)
             replaceOperands(*block, replace);

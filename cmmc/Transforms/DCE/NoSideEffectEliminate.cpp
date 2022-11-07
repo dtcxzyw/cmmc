@@ -30,34 +30,37 @@
 CMMC_NAMESPACE_BEGIN
 
 class NoSideEffectEliminate final : public TransformPass<Function> {
-public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool eliminateBlock(Block* block) const {
         std::unordered_set<Instruction*> used;
         std::queue<Instruction*> q;
         // collect side effect sinks (terminators/stores/funcs)
 
-        for(auto block : func.blocks()) {
-            const auto terminator = block->getTerminator();
-            used.insert(terminator);
-            q.push(terminator);
-        }
-
-        for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                const auto instID = inst->getInstID();
-                if(instID == InstructionID::Store || instID == InstructionID::Free) {
-                    used.insert(inst);
-                    q.push(inst);
-                } else if(instID == InstructionID::Call) {
-                    const auto callee = inst->getOperand(inst->operands().size() - 1);
-                    if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
-                        continue;
-                    used.insert(inst);
-                    q.push(inst);
-                }
+        for(auto inst : block->instructions()) {
+            const auto instID = inst->getInstID();
+            if(inst->isTerminator() || instID == InstructionID::Store || instID == InstructionID::Free) {
+                used.insert(inst);
+                q.push(inst);
+            } else if(instID == InstructionID::Call) {
+                const auto callee = inst->getOperand(inst->operands().size() - 1);
+                if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
+                    continue;
+                used.insert(inst);
+                q.push(inst);
             }
         }
-
+        for(auto inst : block->instructions()) {
+            const auto instID = inst->getInstID();
+            if(instID == InstructionID::Store || instID == InstructionID::Free) {
+                used.insert(inst);
+                q.push(inst);
+            } else if(instID == InstructionID::Call) {
+                const auto callee = inst->getOperand(inst->operands().size() - 1);
+                if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
+                    continue;
+                used.insert(inst);
+                q.push(inst);
+            }
+        }
         // back-propagation
         while(!q.empty()) {
             const auto u = q.front();
@@ -71,13 +74,19 @@ public:
             }
         }
 
-        bool modified = false;
+        auto& insts = block->instructions();
+        if(insts.size() == used.size())
+            return false;
+        insts.remove_if([&](auto inst) { return !used.count(inst); });
+        return true;
+    }
 
+public:
+    bool run(Function& func, AnalysisPassManager&) const override {
+        bool modified = false;
         for(auto block : func.blocks()) {
-            auto& insts = block->instructions();
-            const auto oldSize = insts.size();
-            insts.remove_if([&](auto inst) { return !used.count(inst); });
-            modified |= oldSize != insts.size();
+            while(eliminateBlock(block))
+                modified = true;
         }
 
         return modified;

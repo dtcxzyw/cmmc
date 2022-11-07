@@ -13,6 +13,7 @@
 */
 
 // Simple Common Subexpression Extraction
+// TODO: Global Value Numbering
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Block.hpp>
