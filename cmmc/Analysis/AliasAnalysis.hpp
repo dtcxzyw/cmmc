@@ -32,6 +32,9 @@ public:
     const std::vector<uint32_t>& inheritFrom(Value* value) const;
     void appendAttr(Value* p, const std::vector<uint32_t>& newAttrs);
     void appendAttr(Value* p, uint32_t newAttr);
+    const std::unordered_map<Value*, std::vector<uint32_t>>& pointerAttrs() const noexcept {
+        return mPointerAttributes;
+    }
 };
 
 class AliasAnalysis final : public FuncAnalysisPassWrapper<AliasAnalysis, AliasAnalysisResult> {

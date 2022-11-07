@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
@@ -19,6 +20,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <unordered_map>
 #include <unordered_set>
@@ -216,6 +218,21 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
 
     result.addDistinctGroup(std::move(globalGroup));
     result.addDistinctGroup(std::move(stackGroup));
+
+    /*
+    func.dump(std::cerr);
+    for(auto& [ptr1, attr1] : result.pointerAttrs()) {
+        ptr1->dump(std::cerr);
+        std::cerr << " :";
+        for(auto& [ptr2, attr2] : result.pointerAttrs()) {
+            ptr2->dumpAsOperand(std::cerr);
+            std::cerr << "[";
+            std::cerr << result.isDistinct(ptr1, ptr2);
+            std::cerr << "] ";
+        }
+        std::cerr << std::endl;
+    }
+    */
 
     return result;
 }

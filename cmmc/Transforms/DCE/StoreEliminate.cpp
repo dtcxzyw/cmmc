@@ -95,10 +95,10 @@ class StoreEliminate final : public TransformPass<Function> {
                     }
                 } else if(inst->isTerminator()) {
                     return addressSpace.mustBe(addr, AddressSpace::InternalStack);
-                } else {
-                    for(auto operand : inst->operands())
-                        if(operand->getType()->isPointer() && !aliasSet.isDistinct(addr, operand))
-                            return false;
+                } else if(inst->getInstID() == InstructionID::Load) {
+                    const auto loadAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                    if(loadAddr->getType()->isPointer() && !aliasSet.isDistinct(addr, loadAddr))
+                        return false;
                 }
             } else if(inst == store) {
                 isAfterStore = true;

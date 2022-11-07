@@ -12,7 +12,9 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/ConstantValue.hpp"
 #include <algorithm>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
@@ -35,6 +37,31 @@ CMMC_NAMESPACE_BEGIN
 
 // FIXME: support multiple exported functions
 class GlobalScalar2Local final : public TransformPass<Module> {
+    static constexpr size_t maxSize = 1024;
+
+    void initializeArray(IRBuilder& builder, Value* storage, const ArrayType* type, Value* value, Value* zeroScalar) const {
+        const auto subType = type->getElementType();
+        const auto subCount = type->getElementCount();
+        const auto valueArray = dynamic_cast<ConstantArray*>(value);
+
+        for(uint32_t idx = 0; idx < subCount; ++idx) {
+            const auto addr = builder.makeOp<GetElementPtrInst>(
+                storage,
+                Vector<Value*>{ builder.getZeroIndex(),
+                                make<ConstantInteger>(builder.getIndexType(), static_cast<intmax_t>(idx)) });
+            Value* subValue = nullptr;
+            if(valueArray && idx < valueArray->values().size())
+                subValue = valueArray->values()[idx];
+            if(subType->isArray()) {
+                initializeArray(builder, addr, subType->as<ArrayType>(), subValue, zeroScalar);
+            } else {
+                if(!subValue)
+                    subValue = zeroScalar;
+                builder.makeOp<StoreInst>(addr, subValue);
+            }
+        }
+    }
+
 public:
     bool run(Module& mod, AnalysisPassManager&) const override {
         Function* exportedFunc = nullptr;
@@ -60,7 +87,10 @@ public:
                 if(var->getLinkage() == Linkage::Global)
                     continue;
 
-                if(var->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
+                const auto pointeeType = var->getType()->as<PointerType>()->getPointee();
+                if(pointeeType->isPrimitive() ||
+                   (pointeeType->isArray() && pointeeType->as<ArrayType>()->getScalarType()->isPrimitive() &&
+                    pointeeType->getSize(mod.getTarget().getDataLayout()) <= maxSize)) {
                     globalVars.push_back(var);
                 }
             }
@@ -98,13 +128,28 @@ public:
 
         std::unordered_map<Function*, std::unordered_map<Value*, Value*>> mapping;
 
+        const auto getZeroScalar = [](const Type* type) -> Value* {
+            const auto scalarType = type->as<ArrayType>()->getScalarType();
+            if(scalarType->isInteger()) {
+                return make<ConstantInteger>(scalarType, 0);
+            } else if(scalarType->isFloatingPoint()) {
+                return make<ConstantFloatingPoint>(scalarType, 0.0);
+            } else
+                reportNotImplemented();
+        };
+
         {
             auto& mainMapping = mapping[exportedFunc];
             for(auto var : globalVars) {
                 const auto type = var->getType()->as<PointerType>()->getPointee();
                 const auto alloc = builder.makeOp<StackAllocInst>(type);
                 if(auto val = var->initialValue()) {
-                    builder.makeOp<StoreInst>(alloc, val);
+                    if(auto valArray = dynamic_cast<ConstantArray*>(val)) {
+                        initializeArray(builder, alloc, type->as<ArrayType>(), valArray, getZeroScalar(type));
+                    } else
+                        builder.makeOp<StoreInst>(alloc, val);
+                } else if(type->isArray()) {
+                    initializeArray(builder, alloc, type->as<ArrayType>(), nullptr, getZeroScalar(type));
                 }
                 mainMapping.emplace(var, alloc);
             }
