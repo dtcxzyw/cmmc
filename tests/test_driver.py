@@ -123,7 +123,7 @@ def sysy_test(src: str, opt=True):
     input_file = src[:-3] + '.in'
     if not os.path.exists(input_file):
         input_file = "/dev/null"
-    args = [binary_path, '-t', 'riscv', '-H', '-o',
+    args = [binary_path, '-t', 'sim', '-H', '-o',
             '/dev/stdout', '-e', input_file, src]
 
     if not opt:
@@ -225,8 +225,8 @@ res.append(test("SysY opt & test functional", tests_path +
            "/SysY2022/functional", ".sy", sysy_test))
 # res.append(test("SysY opt hidden_functional", tests_path +
 #           "/SysY2022/hidden_functional", ".sy", sysy_opt))
-# res.append(test("SysY opt performance", tests_path +
-#                "/SysY2022/performance", ".sy", sysy_opt))
+res.append(test("SysY opt performance", tests_path +
+                "/SysY2022/performance", ".sy", sysy_opt))
 res.append(test("SysY opt final_performance", tests_path +
                 "/SysY2022/final_performance", ".sy", sysy_opt))
 res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))

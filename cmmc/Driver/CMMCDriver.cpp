@@ -176,23 +176,26 @@ int mainImpl(int argc, char** argv) {
 
         if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - 4);
-            Driver driver{ path, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY, emitAST.get(), strictMode.get() };
-
-            if(grammarCheck.get())
-                return EXIT_SUCCESS;
-
-            if(emitAST.get()) {
-                const auto path = getOutputPath(base + ".ast");
-                reportDebug() << "emitAST >> " << path << std::endl;
-                std::ofstream out{ path };
-                driver.dump(out);
-                return EXIT_SUCCESS;
-            }
-
             Module module;
             const auto target = TargetRegistry::get().selectTarget();
             module.setTarget(target.get());
-            driver.emit(module);
+
+            {
+                Driver driver{ path, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY, emitAST.get(), strictMode.get() };
+
+                if(grammarCheck.get())
+                    return EXIT_SUCCESS;
+
+                if(emitAST.get()) {
+                    const auto path = getOutputPath(base + ".ast");
+                    reportDebug() << "emitAST >> " << path << std::endl;
+                    std::ofstream out{ path };
+                    driver.dump(out);
+                    return EXIT_SUCCESS;
+                }
+
+                driver.emit(module);
+            }
 
             return runIRPipeline(module, base);
         } else if(endswith(path, ".ir"sv)) {

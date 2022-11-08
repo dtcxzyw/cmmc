@@ -19,6 +19,7 @@
 // ==>
 // int* a = alloc int;
 
+#include "cmmc/Config.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
@@ -31,6 +32,8 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -121,13 +124,60 @@ class StoreEliminate final : public TransformPass<Function> {
         return insts.size() != size;
     }
 
+    // TODO: cross-block store only
+    bool removeStoreOnlyAlloca(Function& func) const {
+        std::unordered_map<Value*, std::vector<Instruction*>> interested;
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Store || inst->getInstID() == InstructionID::Free) {
+                    auto storeAddr = inst->getOperand(0);
+                    if(auto alloca = dynamic_cast<StackAllocInst*>(storeAddr)) {
+                        interested[alloca].push_back(inst);
+                    }
+                }
+            }
+        }
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Store) {
+                    if(inst->getOperand(1)->getType()->isPointer())
+                        interested.erase(inst->getOperand(1));
+                } else if(inst->getInstID() != InstructionID::Free) {
+                    for(auto operand : inst->operands())
+                        if(operand->getType()->isPointer())
+                            interested.erase(operand);
+                }
+            }
+        }
+
+        if(interested.empty())
+            return false;
+        std::unordered_map<Block*, std::unordered_set<Value*>> deletedInstructions;
+
+        for(auto& [alloca, deletedInsts] : interested) {
+            auto& insts = deletedInstructions[alloca->getBlock()];
+            insts.insert(alloca);
+            for(auto inst : deletedInsts)
+                insts.insert(inst);
+            std::vector<Instruction*> empty;
+            deletedInsts.swap(empty);
+        }
+
+        for(auto& [block, insts] : deletedInstructions) {
+            auto& instsRef = insts;
+            block->instructions().remove_if([&](Instruction* inst) { return instsRef.count(inst); });
+        }
+        return true;
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
         auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
         auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
-        bool modified = false;
+
+        bool modified = removeStoreOnlyAlloca(func);
         for(auto block : func.blocks()) {
             modified |= runOnBlock(*block, aliasSet, addressSpace, blockArgMap, leak);
         }

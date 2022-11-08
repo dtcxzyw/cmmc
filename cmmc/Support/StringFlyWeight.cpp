@@ -41,6 +41,7 @@ class StringManager final {
             mStorage.push_back(mCurrentPtr);
             base = mCurrentPtr;
             mCurrentOffset = size;
+            mCurrentEnd = allocatedSize;
         }
         memcpy(base, src.data(), src.size());
         return { base, src.size() };

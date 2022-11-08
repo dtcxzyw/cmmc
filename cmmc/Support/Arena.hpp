@@ -27,7 +27,6 @@
 CMMC_NAMESPACE_BEGIN
 
 class Arena final {
-    static constexpr size_t blockSize = 4096;
     std::vector<void*> mBlocks;
     std::unordered_set<void*> mLargeBlocks;
 

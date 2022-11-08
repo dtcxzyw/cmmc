@@ -19,6 +19,8 @@
 
 CMMC_NAMESPACE_BEGIN
 
+static constexpr size_t blockSize = 32 * 4096;
+
 Arena::Arena() : mBlockPtr{ 0 }, mBlockEndPtr{ 0 } {}
 Arena::Arena(Arena::Source src) : Arena{} {
     Arena::setArena(src, this);
@@ -30,9 +32,8 @@ Arena::~Arena() {
         free(ptr);
 }
 
-static uintptr_t alloc(uintptr_t ptr, uintptr_t size, uintptr_t alignment) {
-    const auto aligned = (ptr + alignment - 1) / alignment * alignment;
-    return aligned + size;
+static uintptr_t alloc(uintptr_t ptr, uintptr_t alignment) {
+    return (ptr + alignment - 1) / alignment * alignment;
 }
 
 void* Arena::allocate(size_t size, size_t alignment) {
@@ -40,7 +41,7 @@ void* Arena::allocate(size_t size, size_t alignment) {
     if(size >= blockSize) {
         ptr = std::aligned_alloc(alignment, size);
         mLargeBlocks.insert(ptr);
-    } else if(auto allocated = alloc(mBlockPtr, size, alignment); allocated >= mBlockPtr) {
+    } else if(auto allocated = alloc(mBlockPtr, alignment); allocated + size > mBlockEndPtr) {
         ptr = std::aligned_alloc(alignment, blockSize);
         mBlocks.push_back(ptr);
 
@@ -50,7 +51,7 @@ void* Arena::allocate(size_t size, size_t alignment) {
             mBlockEndPtr = reinterpret_cast<uintptr_t>(ptr) + blockSize;
         }
     } else {
-        mBlockPtr = allocated;
+        mBlockPtr = allocated + size;
         ptr = reinterpret_cast<void*>(allocated);
     }
     return ptr;
