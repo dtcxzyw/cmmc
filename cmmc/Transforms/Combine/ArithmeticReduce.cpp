@@ -17,7 +17,6 @@
 // a == a -> 1
 // etc.
 
-#include "cmmc/IR/Type.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>

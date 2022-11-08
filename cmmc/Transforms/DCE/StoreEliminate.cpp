@@ -19,7 +19,6 @@
 // ==>
 // int* a = alloc int;
 
-#include "cmmc/Config.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>

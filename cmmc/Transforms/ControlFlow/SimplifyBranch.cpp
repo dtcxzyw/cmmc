@@ -41,7 +41,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class SimplyBranch final : public TransformPass<Function> {
+class SimplifyBranch final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
@@ -69,10 +69,10 @@ public:
 
     std::string_view name() const noexcept override {
         using namespace std::string_view_literals;
-        return "SimplyBranch"sv;
+        return "SimplifyBranch"sv;
     }
 };
 
-CMMC_TRANSFORM_PASS(SimplyBranch);
+CMMC_TRANSFORM_PASS(SimplifyBranch);
 
 CMMC_NAMESPACE_END

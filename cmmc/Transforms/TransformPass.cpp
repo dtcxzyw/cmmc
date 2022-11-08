@@ -179,6 +179,27 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     auto& passesSource = PassRegistry::get();
 
+    // preprocess to improve transform performance
+    for(auto& pass : passesSource.collect({
+            "BlockSort",              //
+            "NoSideEffectEliminate",  // clean up
+            "ConstantMerge",          //
+            "SimpleCSE",              //
+            "GEPCombine",             //
+            "NoSideEffectEliminate",  // clean up
+            "ArithmeticReduce",       //
+            "NoSideEffectEliminate",  // clean up
+            "MergeBranch",            //
+            "SimplifyBranch",         //
+            "CombineBranch",          //
+            "BlockMerge",             //
+            "BlockEliminate",         // clean up
+            "BlockArgEliminate",      // clean up
+            "NoSideEffectEliminate",  // clean up
+            "GlobalEliminate"         //
+        }))
+        root->addPass(pass);
+
     auto basic = std::make_shared<PassManager>();
     for(auto& pass : passesSource.collect({
             // Preprocess
@@ -197,7 +218,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // Control flow
             "TailCallEliminate",  //
             "MergeBranch",        //
-            "SimplyBranch",       //
+            "SimplifyBranch",     //
             "CombineBranch",      //
             "BlockMerge",         //
             "BlockEliminate",     // clean up
