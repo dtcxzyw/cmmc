@@ -52,6 +52,12 @@ class ConstantPropagation final : public TransformPass<Function> {
             auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
             auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
 
+            // TODO: handle select?
+            // c = select x a b
+            // d = add c 1
+            // ->
+            // d = select x a+1 b+1
+
             for(auto operand : inst->operands())
                 if(!operand->isConstant() && !replace.count(operand))
                     return nullptr;

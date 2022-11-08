@@ -53,11 +53,15 @@ class ScalarMem2Reg final : public TransformPass<Function> {
         const auto root = alloc->getBlock();
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
         const auto undef = make<UndefinedValue>(valueType);
+        if(valueType->isPointer())
+            const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});
 
         for(auto [block, addr] : todo) {
             Value* value = nullptr;
             if(block != root) {
                 value = block->addArg(valueType);
+                if(value->getType()->isPointer())
+                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});
             } else {
                 value = undef;
             }
@@ -68,6 +72,8 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                 if(after)
                     builder.nextInsertPoint();
                 value = builder.makeOp<LoadInst>(storeAddr);
+                if(value->getType()->isPointer())
+                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});
             };
 
             auto& replace = replaceMap[block];

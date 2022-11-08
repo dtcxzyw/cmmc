@@ -143,6 +143,7 @@ public:
             for(auto var : globalVars) {
                 const auto type = var->getType()->as<PointerType>()->getPointee();
                 const auto alloc = builder.makeOp<StackAllocInst>(type);
+                alloc->setLabel(var->getSymbol());
                 if(auto val = var->initialValue()) {
                     if(auto valArray = dynamic_cast<ConstantArray*>(val)) {
                         initializeArray(builder, alloc, type->as<ArrayType>(), valArray, getZeroScalar(type));

@@ -1,0 +1,15 @@
+int main() {
+    int x[10000];
+    int a = getint();
+    x[a] = getint();
+    int b = a + 1;
+    x[b] = getint();
+    if(x[a] < x[b]) {
+        int tmp = x[a];
+        x[a] = x[b];
+        x[a] = tmp;
+    }
+    putint(x[a]);
+    putint(x[b]);
+    return 0;
+}

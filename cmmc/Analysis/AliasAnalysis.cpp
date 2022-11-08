@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
+#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
@@ -48,13 +50,13 @@ void AliasAnalysisResult::addValue(Value* p, std::vector<uint32_t> attrs) {
 bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     if constexpr(Config::debug) {
         if(!mPointerAttributes.count(p1)) {
-            p1->dump(reportError() << "undefined pointer ");
             p1->getBlock()->dump(reportError());
+            p1->dump(reportError() << "undefined pointer ");
             reportUnreachable();
         }
         if(!mPointerAttributes.count(p2)) {
-            p2->dump(reportError() << "undefined pointer ");
             p2->getBlock()->dump(reportError());
+            p2->dump(reportError() << "undefined pointer ");
             reportUnreachable();
         }
     }
@@ -79,25 +81,32 @@ const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const 
     assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.find(ptr)->second;
 }
-void AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newAttrs) {
+bool AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newAttrs) {
+    if(newAttrs.empty())
+        return false;
     assert(mPointerAttributes.count(p));
     auto& attrs = mPointerAttributes.find(p)->second;
+    const auto oldSize = attrs.size();
     attrs.insert(attrs.cend(), newAttrs.cbegin(), newAttrs.cend());
     std::sort(attrs.begin(), attrs.end());
     attrs.erase(std::unique(attrs.begin(), attrs.end()), attrs.end());
+    return oldSize != attrs.size();
 }
-void AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
+bool AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
     assert(mPointerAttributes.count(p));
     auto& attrs = mPointerAttributes.find(p)->second;
-    attrs.push_back(newAttr);
+    if(std::find(attrs.cbegin(), attrs.cend(), newAttr) == attrs.cend()) {
+        attrs.push_back(newAttr);
+        return true;
+    }
+    return false;
 }
 
-static void divide(const std::vector<GetElementPtrInst*>& gepList, uint32_t& allocateID, AliasAnalysisResult& result,
-                   uint32_t idx) {
+static void divide(const std::vector<Instruction*>& gepList, uint32_t& allocateID, AliasAnalysisResult& result, uint32_t idx) {
     if(gepList.size() <= 1)
         return;
 
-    std::unordered_map<ConstantValue*, std::vector<GetElementPtrInst*>, ConstantHasher, ConstantEqual> clusters;
+    std::unordered_map<ConstantValue*, std::vector<Instruction*>, ConstantHasher, ConstantEqual> clusters;
     for(auto gep : gepList) {
         if(gep->operands().size() <= idx + 1)
             continue;
@@ -126,6 +135,8 @@ static void divide(const std::vector<GetElementPtrInst*>& gepList, uint32_t& all
 }
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
+    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+
     AliasAnalysisResult result;
     uint32_t allocateID = 0;
     const auto globalID = ++allocateID;
@@ -135,7 +146,27 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     std::unordered_set<Value*> globals;
     std::unordered_set<uint32_t> globalGroup;
     std::unordered_set<uint32_t> stackGroup;
-    std::vector<GetElementPtrInst*> geps;
+    std::vector<Instruction*> geps;
+
+    struct InheritEdge final {
+        Value* dst;
+        Value* src1;
+        Value* src2;
+
+        InheritEdge(Value* dst, Value* src1, Value* src2 = nullptr) : dst{ dst }, src1{ src1 }, src2{ src2 } {}
+        bool operator==(const InheritEdge& rhs) const noexcept {
+            return dst == rhs.dst && src1 == rhs.src1 && src2 == rhs.src2;
+        }
+    };
+
+    struct EdgeHasher final {
+        size_t operator()(const InheritEdge& edge) const {
+            std::hash<Value*> hasher;
+            return (hasher(edge.dst) * 10007) ^ (hasher(edge.src1) * 131) ^ hasher(edge.src2);
+        }
+    };
+
+    std::unordered_set<InheritEdge, EdgeHasher> inheritGraph;
 
     for(auto block : func.blocks()) {
         const auto argID = ++allocateID;
@@ -164,24 +195,20 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::GetElementPtr: {
-                    const auto& src = result.inheritFrom(inst->operands().back());
-                    result.addValue(inst, src);
-                    geps.push_back(inst->as<GetElementPtrInst>());
+                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->operands().back()));
+                    result.addValue(inst, {});
+                    geps.push_back(inst);
                     break;
                 }
                 case InstructionID::PtrCast: {
-                    const auto& src = result.inheritFrom(inst->getOperand(0));
-                    result.addValue(inst, src);
+                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->getOperand(0)));
+                    result.addValue(inst, {});
                     break;
                 }
                 case InstructionID::Select: {
-                    auto lhs = result.inheritFrom(inst->getOperand(1));
-                    std::sort(lhs.begin(), lhs.end());
-                    auto rhs = result.inheritFrom(inst->getOperand(2));
-                    std::sort(rhs.begin(), rhs.end());
-                    std::vector<uint32_t> intersection;
-                    std::set_intersection(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend(), std::back_inserter(intersection));
-                    result.addValue(inst, std::move(intersection));
+                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->getOperand(1)),
+                                         blockArgMap.queryRoot(inst->getOperand(2)));
+                    result.addValue(inst, {});
                     break;
                 }
                 case InstructionID::IntToPtr:
@@ -199,24 +226,47 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         }
     }
 
-    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
     for(auto [arg, val] : blockArgMap.map()) {
         if(arg->getType()->isPointer()) {
-            result.appendAttr(arg, result.inheritFrom(val));
+            inheritGraph.emplace(arg, val);
         }
     }
 
     // geps
-    std::unordered_map<Value*, std::vector<GetElementPtrInst*>> clusters;
+    // FIXME: fix gep alias
+    CMMC_UNUSED(geps);
+    /*
+    std::unordered_map<Value*, std::vector<Instruction*>> clusters;
     for(auto gep : geps)
         clusters[blockArgMap.queryRoot(gep->operands().back())].push_back(gep);
     for(auto& [base, gepList] : clusters) {
         CMMC_UNUSED(base);
         divide(gepList, allocateID, result, 0);
     }
+    */
 
     result.addDistinctGroup(std::move(globalGroup));
     result.addDistinctGroup(std::move(stackGroup));
+
+    // inherit relation propagation
+    while(true) {
+        bool modified = false;
+        for(auto [dst, src1, src2] : inheritGraph) {
+            if(src2) {
+                auto lhs = result.inheritFrom(src1);
+                std::sort(lhs.begin(), lhs.end());
+                auto rhs = result.inheritFrom(src2);
+                std::sort(rhs.begin(), rhs.end());
+                std::vector<uint32_t> intersection;
+                std::set_intersection(lhs.cbegin(), lhs.cend(), rhs.cbegin(), rhs.cend(), std::back_inserter(intersection));
+                modified |= result.appendAttr(dst, intersection);
+            } else {
+                modified |= result.appendAttr(dst, result.inheritFrom(src1));
+            }
+        }
+        if(!modified)
+            break;
+    }
 
     /*
     func.dump(std::cerr);

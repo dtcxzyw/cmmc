@@ -1,0 +1,8 @@
+int main() {
+    int a = getint();
+    int b = getint();
+    if(getint())
+        return a * b;
+    else
+        return a * b + 1;
+}

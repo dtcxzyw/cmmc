@@ -751,7 +751,11 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
     for(auto& [name, arraySize, initExpr] : mVars) {
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
-        local->setLabel(name);
+        constexpr size_t maxLen = 16;
+        if(name.prefix().size() <= maxLen)
+            local->setLabel(name);
+        else
+            local->setLabel(String::get(name.prefix().substr(0, maxLen)));
 
         if(initExpr) {
             if(type->isArray()) {

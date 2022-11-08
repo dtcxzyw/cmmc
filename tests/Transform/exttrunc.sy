@@ -1,0 +1,10 @@
+int main() {
+    int x = getint();
+    int y = getch();
+    char z = y;
+    char w = x;
+    int a = w;
+    char b = a;
+    int c = z;
+    return b + c;
+}

@@ -1,0 +1,5 @@
+int main() {
+    int a = getint();
+    putint(1 + (2 + a + 2) + (1 + a));
+    return 0;
+}

@@ -1,0 +1,13 @@
+int main() {
+    int x = 4;
+    if(getint()) {
+        x = 3;
+    }
+    if(x < 4) {
+        putint(getint());
+    }
+    else {
+        putint(0);
+    }
+    return 0;
+}

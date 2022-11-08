@@ -31,7 +31,7 @@
 + [ ] loop-unswitch
 + [x] mem2reg -> ScalarMem2Reg
 + [ ] memcpyopt
-+ [ ] mergefunc
++ [x] mergefunc -> Inlining & BlockOutliner
 + [ ] mergereturn
 + [ ] partial-inliner
 + [ ] reassociate
