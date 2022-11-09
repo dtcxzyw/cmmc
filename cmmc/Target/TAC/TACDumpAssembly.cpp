@@ -13,161 +13,231 @@
 */
 
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-static void printConstant(std::ostream& out, uint64_t metadata) {
-    out << '#' << static_cast<int64_t>(metadata);
-}
-
-static void printOperand(std::ostream& out, const MachineInst& inst, uint32_t idx) {
-    if(idx == 0 && inst.hasAttr(TACInstAttr::WithImm0)) {
-        printConstant(out, inst.getImm(0));
-        return;
+static void printOperand(std::ostream& out, const Operand& operand) {
+    if(operand.addressSpace == AddressSpace::GPR)
+        out << 'v' << operand.id;
+    else if(operand.addressSpace == AddressSpace::stack)
+        out << 'x' << operand.id;
+    else if(operand.addressSpace == AddressSpace::constant) {
+        out << '#';  // TODO: query from constant pool
     }
-
-    if(idx == 1 && inst.hasAttr(TACInstAttr::WithImm1)) {
-        printConstant(out, inst.getImm(1));
-        return;
-    }
-
-    auto reg = inst.getReg(idx);
-    out << 'v' << reg;
 }
 
-static void printResult(std::ostream& out, const MachineInst& inst, uint32_t fusedIdx) {
-    auto reg = inst.getWriteReg();
-    if(reg)
-        out << 'v' << reg;
-    else
-        printOperand(out, inst, fusedIdx);
-}
-
-static void emitBinary(std::ostream& out, const MachineInst& inst, std::string_view op) {
-    printResult(out, inst, 2);
-    out << " := ";
-    printOperand(out, inst, 0);
-    out << ' ' << op << ' ';
-    printOperand(out, inst, 1);
-    out << std::endl;
-}
-
-static std::string_view getCompareOp(const MachineInst& inst) {
-    switch(static_cast<TACInstAttr>(inst.getAttr() & static_cast<uint32_t>(TACInstAttr::CmpMask))) {
-        case TACInstAttr::CmpEqual:
+static std::string_view getCompareOp(CompareOp compare) {
+    switch(compare) {
+        case CompareOp::Equal:
             return "==";
-        case TACInstAttr::CmpNotEqual:
+        case CompareOp::NotEqual:
             return "!=";
-        case TACInstAttr::CmpLessThan:
+        case CompareOp::LessThan:
             return "<";
-        case TACInstAttr::CmpLessEqual:
+        case CompareOp::LessEqual:
             return "<=";
-        case TACInstAttr::CmpGreaterThan:
+        case CompareOp::GreaterThan:
             return ">";
-        case TACInstAttr::CmpGreaterEqual:
+        case CompareOp::GreaterEqual:
             return ">=";
         default:
             reportUnreachable();
     }
 }
 
-void TACTarget::emitAssembly(MachineModule& module, std::ostream& out) const {
-    LabelAllocator allocator;
-    using namespace std::string_literals;
-    constexpr uint32_t invalidIdx = std::numeric_limits<uint32_t>::max();
+static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func) {
+    out << "FUNCTION " << symbol << " :" << std::endl;
 
-    for(auto symbol : module.symbols()) {
-        if(auto func = dynamic_cast<MachineFunction*>(symbol)) {
-            out << "FUNCTION " << func->getSymbol() << " :" << std::endl;
-            std::unordered_map<MachineBasicBlock*, String> labelMap;
+    {
+        const auto params = func.parameters();
+        for(uint32_t idx = 0; idx < params; ++idx) {
+            out << "PARAM a" << idx << std::endl;
+        }
+    }
 
-            String labelBase = String::get("label");
-            for(auto block : func->basicblocks) {
-                const auto label = allocator.allocate(labelBase);
-                labelMap[block] = label;
-            }
+    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    {
+        LabelAllocator allocator;
+        String labelBase = String::get("label");
+        for(auto& block : func.blocks()) {
+            const auto label = allocator.allocate(labelBase);
+            labelMap[&block] = label;
+        }
+    }
 
-            for(auto block : func->basicblocks) {
-                const auto& label = labelMap[block];
-                out << "LABEL " << label << " :" << std::endl;
+    for(auto& block : func.blocks()) {
+        const auto& label = labelMap[&block];
+        out << "LABEL " << label << " :" << std::endl;
 
-                for(auto& inst : block->instructions) {
-                    switch(inst.getInstID<TACInst>()) {
-                        case TACInst::Add: {
-                            emitBinary(out, inst, "+");
-                            break;
-                        }
-                        case TACInst::Sub: {
-                            emitBinary(out, inst, "-");
-                            break;
-                        }
-                        case TACInst::Mul: {
-                            emitBinary(out, inst, "*");
-                            break;
-                        }
-                        case TACInst::Div: {
-                            emitBinary(out, inst, "/");
-                            break;
-                        }
-                        case TACInst::Branch: {
-                            out << "GOTO ";
-                            auto target = reinterpret_cast<MachineBasicBlock*>(inst.getImm(0));
-                            out << labelMap.find(target)->second << std::endl;
-                            break;
-                        }
-                        case TACInst::BranchCompare: {
-                            out << "IF ";
-                            printOperand(out, inst, 0);
-                            out << ' ' << getCompareOp(inst) << ' ';
-                            printOperand(out, inst, 1);
-                            out << " GOTO ";
-                            auto target = reinterpret_cast<MachineBasicBlock*>(inst.getImm(2));
-                            out << labelMap.find(target)->second << std::endl;
-                            break;
-                        }
-                        case TACInst::Return: {
-                            out << "RETURN ";
-                            printOperand(out, inst, 0);
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::Write: {
-                            out << "WRITE ";
-                            printOperand(out, inst, 0);
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::Read: {
-                            out << "READ ";
-                            printResult(out, inst, invalidIdx);  // cannot be fused
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::PushArg: {
-                            out << "ARG ";
-                            printOperand(out, inst, 0);
-                            out << std::endl;
-                            break;
-                        }
-                        case TACInst::Call: {
-                            printResult(out, inst, 0);
-                            out << " := CALL " << std::get<Global>(inst.getAddr().base).symbol->getSymbol() << std::endl;
-                            break;
-                        }
-                        default: {
-                            reportError() << "Unsupported inst " << enumName(inst.getInstID<TACInst>()) << std::endl;
-                            reportUnreachable();
-                        }
-                    }
-                }
-            }
+        for(auto& inst : block.instructions()) {
+            std::visit(Overload{ [&](const CopyMInst& copy) {
+                                    auto valid = [&] {
+                                        if(copy.src.addressSpace == AddressSpace::GPR) {
+                                            // copy
+                                            if(copy.dst.addressSpace == AddressSpace::GPR) {
+                                                return true;
+                                            }
+                                            // fetch
+                                            else if(copy.dst.addressSpace == AddressSpace::stack) {
+                                                return true;
+                                            }
+                                        }
+                                        // deref
+                                        else if(copy.src.addressSpace == AddressSpace::stack) {
+                                            if(copy.dst.addressSpace == AddressSpace::GPR) {
+                                                return true;
+                                            }
+                                        } else
+                                            return false;
+                                    };
+                                    if(valid()) {
+                                        if(copy.dst.addressSpace == AddressSpace::stack)
+                                            out << '*';
+                                        printOperand(out, copy.dst);
+                                        out << " := ";
+
+                                        if(copy.src.addressSpace == AddressSpace::stack)
+                                            out << '*';
+                                        printOperand(out, copy.src);
+                                    }
+                                },
+                                 [&](const ConstantMInst& constant) {
+                                     if(constant.dst.addressSpace == AddressSpace::stack)
+                                         out << '*';
+                                     printOperand(out, constant.dst);
+                                     out << " := #" << std::get<intmax_t>(constant.constant);
+                                 },
+                                 [&](const UnaryArithmeticMIInst& unary) {
+                                     if(unary.instID == GMIRInstID::Neg) {
+                                         printOperand(out, unary.dst);
+                                         out << " := #0 - ";
+                                         printOperand(out, unary.src);
+                                     } else
+                                         reportUnreachable();
+                                 },
+                                 [&](const BinaryArithmeticMIInst& binary) {
+                                     char op;
+                                     switch(binary.instID) {
+                                         case GMIRInstID::Add:
+                                             op = '+';
+                                             break;
+                                         case GMIRInstID::Sub:
+                                             op = '-';
+                                             break;
+                                         case GMIRInstID::Mul:
+                                             op = '*';
+                                             break;
+                                         case GMIRInstID::SDiv:
+                                             op = '/';
+                                             break;
+                                         default:
+                                             reportUnreachable();
+                                     }
+
+                                     printOperand(out, binary.dst);
+                                     out << " := ";
+                                     printOperand(out, binary.lhs);
+                                     out << ' ' << op << ' ';
+                                     printOperand(out, binary.rhs);
+                                 },
+                                 [&](const BranchMInst& branch) { out << "GOTO " << labelMap.find(branch.targetBlock)->second; },
+                                 [&](const BranchCompareMInst& branch) {
+                                     out << "IF ";
+                                     printOperand(out, branch.lhs);
+                                     out << ' ' << getCompareOp(branch.compareOp) << ' ';
+                                     printOperand(out, branch.rhs);
+                                     out << " GOTO ";
+                                     out << labelMap.find(branch.targetBlock)->second;
+                                 },
+                                 [&](const CallMInst& call) {
+                                     out << "CALL ";
+                                     out << std::get<GMIRSymbol*>(call.function)->symbol;
+                                 },
+                                 [&](const RetMInst& ret) {
+                                     out << "RETURN ";
+                                     printOperand(out, ret.retVal);
+                                 },
+                                 [&](const ControlFlowIntrinsicMInst& inst) {
+                                     const auto id = static_cast<TACIntrinsic>(inst.intrinsicID);
+                                     if(id == TACIntrinsic::PushArg) {
+                                         out << "ARG ";
+                                         printOperand(out, inst.src);
+                                     } else if(id == TACIntrinsic::Read) {
+                                         out << "READ ";
+                                         printOperand(out, inst.dst);
+                                     } else if(id == TACIntrinsic::Write) {
+                                         out << "WRITE ";
+                                         printOperand(out, inst.src);
+                                     } else
+                                         reportUnreachable();
+                                 },
+                                 [](auto&&) { reportUnreachable(); } },
+                       inst);
 
             out << std::endl;
-        } else
-            reportNotImplemented();
+        }
+    }
+
+    /*
+    switch(inst.getInstID<TACInst>()) {
+        case TACInst::Return: {
+            out << "RETURN ";
+            printOperand(out, inst, 0);
+            out << std::endl;
+            break;
+        }
+        case TACInst::Write: {
+            out << "WRITE ";
+            printOperand(out, inst, 0);
+            out << std::endl;
+            break;
+        }
+        case TACInst::Read: {
+            out << "READ ";
+            printResult(out, inst);
+            out << std::endl;
+            break;
+        }
+        case TACInst::PushArg: {
+            out << "ARG ";
+            printOperand(out, inst, 0);
+            out << std::endl;
+            break;
+        }
+        case TACInst::Call: {
+            printResult(out, inst);
+            out << " := CALL " << std::get<Global>(inst.getAddr().base).symbol->getSymbol() << std::endl;
+            break;
+        }
+        case TACInst::Decl: {
+            out << "DEC " << std::endl;  // FIXME
+            break;
+        }
+        default: {
+            reportError() << "Unsupported inst " << enumName(inst.getInstID<TACInst>()) << std::endl;
+            reportUnreachable();
+        }
+    }
+    }
+    }
+    */
+
+    out << std::endl;
+}
+
+void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
+    LabelAllocator allocator;
+    using namespace std::string_literals;
+
+    for(auto& symbol : module.symbols) {
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func); },
+                             [](auto&&) { reportUnreachable(); } },
+                   symbol.def);
     }
 }
 

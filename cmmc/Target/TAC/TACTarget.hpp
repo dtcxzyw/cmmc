@@ -18,42 +18,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class TACInstAttr : uint32_t {
-    WithImm0 = 1 << 0,
-    WithImm1 = 1 << 1,
-    WithImm2 = 1 << 2,
-
-    CompareEqual = 1 << 3,
-    CompareLess = 1 << 4,
-    CompareReverse = 1 << 5,
-
-    CmpEqual = CompareEqual,
-    CmpNotEqual = CompareEqual | CompareReverse,
-    CmpLessThan = CompareLess,
-    CmpLessEqual = CompareLess | CompareEqual,
-    CmpGreaterThan = CmpLessEqual | CompareReverse,
-    CmpGreaterEqual = CmpLessThan | CompareReverse,
-    CmpMask = CompareEqual | CompareLess | CompareReverse
-};
-
-enum class TACInst : uint32_t {
-    Read,
-    Write,
-    Return,
-    Add,
-    Sub,
-    Mul,
-    Div,
-    PushArg,
-    Call,
-    Branch,
-    BranchCompare,
-    Address,
-    Fetch,
-    Deref,
-    Assign,
-    Decl
-};
+enum class TACIntrinsic { Read, Write, PushArg };
 
 class TACDataLayout final : public DataLayout {
 public:
@@ -72,30 +37,19 @@ public:
 };
 
 class TACInstInfo final : public TargetInstInfo {
-    void emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const;
     void emitBranch(const BranchTarget& target, LoweringContext& ctx) const;
 
 public:
-    const TargetInstClass& getInstClass(uint32_t instID) const override;
-    bool hasSideEffect(MachineInst& inst) const noexcept override;
-    bool isTerminator(MachineInst& inst) const noexcept override;
-    bool isSupportedInstruction(InstructionID inst) const noexcept override;
-    Register emitConstant(ConstantValue* value, LoweringContext& ctx) const override;
-    void emit(Instruction* inst, LoweringContext& ctx) const override;
 };
 
 class TACFrameInfo final : public TargetFrameInfo {
 public:
-    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
-                                                      CallingConvention cc) const override;
-    void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
-                      TargetRegisterUsage& usage) const override;
 };
 
 class TACSubTarget final : public SimpleSubTarget {
 public:
-    void peepholeOpt(MachineModule& module) const override;
-    void postPeepholeOpt(MachineModule& module) const override;
+    void peepholeOpt(GMIRFunction& func) const override;
+    void postPeepholeOpt(GMIRFunction& func) const override;
 };
 
 class TACTarget final : public Target {
@@ -119,7 +73,7 @@ public:
         return mSubTarget;
     }
 
-    void emitAssembly(MachineModule& module, std::ostream& out) const override;
+    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 
 CMMC_NAMESPACE_END

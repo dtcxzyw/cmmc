@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/MachineInst.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN

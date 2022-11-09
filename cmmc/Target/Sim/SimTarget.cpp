@@ -14,8 +14,6 @@
 
 // Only be used by interpreter
 
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -28,12 +26,6 @@ extern StringOpt targetMachine;
 
 class SimFrameInfo final : public TargetFrameInfo {
 public:
-    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const override {
-        reportUnreachable();
-    }
-    void emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const override {
-        reportUnreachable();
-    }
 };
 
 class SimDataLayout final : public DataLayout {
@@ -73,7 +65,7 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    void emitAssembly(MachineModule&, std::ostream&) const override {
+    void emitAssembly(GMIRModule&, std::ostream&) const override {
         reportUnreachable();
     }
 };

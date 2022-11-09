@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -42,34 +40,10 @@ public:
 
 class RISCVInstInfo final : public TargetInstInfo {
 public:
-    const TargetInstClass& getInstClass(uint32_t) const override {
-        reportNotImplemented();
-    }
-    bool isSupportedInstruction(InstructionID) const noexcept override {
-        reportNotImplemented();
-    }
-    bool hasSideEffect(MachineInst&) const noexcept override {
-        reportNotImplemented();
-    }
-    bool isTerminator(MachineInst&) const noexcept override {
-        reportNotImplemented();
-    }
-    void emit(Instruction*, LoweringContext&) const override {
-        reportNotImplemented();
-    }
-    Register emitConstant(ConstantValue*, LoweringContext&) const override {
-        reportNotImplemented();
-    }
 };
 
 class RISCVFrameInfo final : public TargetFrameInfo {
 public:
-    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const override {
-        reportNotImplemented();
-    }
-    void emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const override {
-        reportNotImplemented();
-    }
 };
 
 // RISC-V lp32d
@@ -98,12 +72,12 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    void emitAssembly(MachineModule& module, std::ostream& out) const override;
+    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("riscv", RISCVTarget);
 
-void RISCVTarget::emitAssembly(MachineModule&, std::ostream&) const {
+void RISCVTarget::emitAssembly(GMIRModule&, std::ostream&) const {
     reportNotImplemented();
 }
 

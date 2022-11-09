@@ -20,7 +20,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void allocateStackObjects(MachineFunction& func, const Target& target) {
+void allocateStackObjects(GMIRFunction& func, const Target& target) {
     CMMC_UNUSED(func);
     CMMC_UNUSED(target);
 }

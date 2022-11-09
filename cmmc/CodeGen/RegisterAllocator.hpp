@@ -13,8 +13,11 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/MachineModule.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cstdint>
+#include <memory>
+#include <string_view>
+#include <unordered_map>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -46,7 +49,8 @@ public:
 };
 
 class Function;
-using RegisterAllocFunc = void (*)(MachineFunction& mfunc, Function& func, const Target& target);
+class Target;
+using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, Function& func, const Target& target);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -64,6 +68,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(MachineFunction& mfunc, Function& func, const Target& target);
+void assignRegisters(GMIRFunction& mfunc, Function& func, const Target& target);
 
 CMMC_NAMESPACE_END

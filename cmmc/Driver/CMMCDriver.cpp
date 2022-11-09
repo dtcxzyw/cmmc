@@ -131,7 +131,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
     assert(machineModule->verify());
     {
         Stage stage{ "dump ASM" };
-        machineModule->getTarget().emitAssembly(*machineModule, out);
+        machineModule->target->emitAssembly(*machineModule, out);
     }
 
     return EXIT_SUCCESS;

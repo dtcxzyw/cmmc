@@ -13,9 +13,6 @@
 */
 
 #include <cmmc/CodeGen/Lowering.hpp>
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
-#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
@@ -34,10 +31,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool TACInstInfo::isSupportedInstruction(InstructionID instID) const noexcept {
-    return !(InstructionID::FloatingPointOpBegin < instID && instID < InstructionID::FloatingPointOpEnd);
-}
-
+/*
 void TACInstInfo::emitBinaryOp(TACInst instID, Instruction* inst, LoweringContext& ctx) const {
     const auto ret = ctx.newReg();
     const auto lhs = ctx.mapOperand(inst->getOperand(0));
@@ -60,15 +54,15 @@ void TACInstInfo::emitBranch(const BranchTarget& target, LoweringContext& ctx) c
 }
 
 Register TACInstInfo::emitConstant(ConstantValue* value, LoweringContext& ctx) const {
-    const auto reg = ctx.newReg();
     if(value->getType()->isInteger()) {
+        const auto reg = ctx.newReg();
         ctx.emitInst(TACInst::Assign)
             .setWriteReg(reg)
             .setImm(0, static_cast<int64_t>(value->as<ConstantInteger>()->getSignExtended()))
             .addAttr(TACInstAttr::WithImm0);
         return reg;
     }
-    reportNotImplemented();
+    reportUnreachable();
 }
 
 void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
@@ -138,43 +132,15 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             const auto branchInst = inst->as<ConditionalBranchInst>();
             const auto falsePrepareblock = ctx.addBlockAfter();
 
-            // bnez %cond, false_label
-            const auto flag = ctx.mapOperand(inst->getOperand(0));
-            ctx.emitInst(TACInst::BranchCompare)
-                .setReg(0, flag)
-                .setImm(1, 0)
-                .addAttr(TACInstAttr::WithImm1)
-                .addAttr(TACInstAttr::CmpNotEqual)
-                .setImm(2, reinterpret_cast<uint64_t>(falsePrepareblock));
-            ctx.addLink(falsePrepareblock);
-            emitBranch(branchInst->getTrueTarget(), ctx);
+            const auto flag = inst->getOperand(0);
+            if(!flag->is<CompareInst>())
+                reportUnreachable();
+            const auto cmpInst = flag->as<CompareInst>();
+            const auto lhs = ctx.mapOperand(cmpInst->getOperand(0));
+            const auto rhs = ctx.mapOperand(cmpInst->getOperand(1));
+            auto& minst = ctx.emitInst(TACInst::BranchCompare).setReg(0, lhs).setReg(1, rhs);
 
-            ctx.setCurrentBasicBlock(falsePrepareblock);
-            emitBranch(branchInst->getFalseTarget(), ctx);
-            break;
-        }
-        case InstructionID::Load: {
-            const auto reg = ctx.newReg();
-            const auto addr = ctx.mapAddress(inst->getOperand(0));
-            ctx.emitInst(TACInst::Fetch).setAddr(addr).setWriteReg(reg);
-            ctx.addOperand(inst, reg);
-            break;
-        }
-        case InstructionID::Store: {
-            const auto addr = ctx.mapAddress(inst->getOperand(0));
-            const auto val = ctx.mapOperand(inst->getOperand(1));
-            ctx.emitInst(TACInst::Deref).setAddr(addr).setReg(1, val);
-            break;
-        }
-        case InstructionID::SCmp:
-        case InstructionID::UCmp: {
-            const auto reg = ctx.newReg();
-            const auto lhs = ctx.mapOperand(inst->getOperand(0));
-            const auto rhs = ctx.mapOperand(inst->getOperand(1));
-            auto& minst = ctx.emitInst(TACInst::BranchCompare).setReg(0, lhs).setReg(1, rhs).setWriteReg(reg);  // FIXME
-
-            const auto op = inst->as<CompareInst>()->getOp();
-
+            const auto op = cmpInst->getOp();
             switch(op) {
                 case CompareOp::Equal:
                     minst.addAttr(TACInstAttr::CmpEqual);
@@ -197,17 +163,32 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
                 default:
                     reportUnreachable();
             }
+            // bnez %cond, false_label
+            minst.setImm(2, reinterpret_cast<uint64_t>(falsePrepareblock));
+            ctx.addLink(falsePrepareblock);
+            emitBranch(branchInst->getTrueTarget(), ctx);
 
-            ctx.addOperand(inst, reg);
+            ctx.setCurrentBasicBlock(falsePrepareblock);
+            emitBranch(branchInst->getFalseTarget(), ctx);
             break;
         }
-        case InstructionID::Alloc: {
+        case InstructionID::Load: {
             const auto reg = ctx.newReg();
-            // const auto addr = ctx.mapAddress(inst);
-            // ctx.emitInst(TACInst::LoadAddress).setAddr(addr).setWriteReg(reg);
+            const auto addr = ctx.mapAddress(inst->getOperand(0));
+            ctx.emitInst(TACInst::Fetch).setAddr(addr).setWriteReg(reg);
             ctx.addOperand(inst, reg);
             break;
         }
+        case InstructionID::Store: {
+            const auto addr = ctx.mapAddress(inst->getOperand(0));
+            const auto val = ctx.mapOperand(inst->getOperand(1));
+            ctx.emitInst(TACInst::Deref).setAddr(addr).setReg(1, val);
+            break;
+        }
+        case InstructionID::SCmp:  // Fused with branchCompare
+            break;
+        case InstructionID::Alloc:  // Handled before lowering
+            break;
         case InstructionID::Neg: {
             const auto reg = ctx.newReg();
             const auto val = ctx.mapOperand(inst->getOperand(0));
@@ -220,6 +201,6 @@ void TACInstInfo::emit(Instruction* inst, LoweringContext& ctx) const {
             reportNotImplemented();
         }
     }
-}
+}*/
 
 CMMC_NAMESPACE_END

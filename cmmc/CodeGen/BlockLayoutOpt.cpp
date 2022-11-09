@@ -156,29 +156,27 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_
     seq = std::move(pop[0].first);
 }
 
-void optimizeBlockLayout(MachineFunction& func, const Target& target) {
+void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(target);
+    CMMC_UNUSED(solveGA);
+    CMMC_UNUSED(solveBruteForce);
+
+    /*
     const auto& info = target.getTargetInstInfo();
-    for(auto block : func.basicblocks) {
-        if(block->instructions.empty() || !info.isTerminator(block->instructions.back())) {
-            DiagnosticsContext::get()
-                .attach<Reason>("A valid machine basic block must end with explicit terminator")
-                //.attach<BlockAttachment>("related block", block)
-                .reportFatal();
-        }
-    }
     // eliminate blocks with single unconditional branch
 
     // build graph
     std::vector<uint32_t> weights;
     std::vector<std::pair<uint32_t, uint32_t>> edges;
-    std::unordered_map<MachineBasicBlock*, uint32_t> idxMap;
+    std::unordered_map<GMIRBasicBlock*, uint32_t> idxMap;
     uint32_t idx = 0;
-    for(auto block : func.basicblocks) {
-        idxMap[block] = idx++;
-        weights.emplace_back(block->instructions.size());  // estimated code size
+    for(auto& block : func.blocks()) {
+        idxMap[&block] = idx++;
+        weights.emplace_back(block.instructions().size());  // estimated code size
     }
     idx = 0;
-    for(auto block : func.basicblocks) {
+    for(auto& block : func.blocks()) {
         const auto blockIdx = idx++;
         for(auto successor : block->successors) {
             auto& pre = successor->predecessors;
@@ -190,7 +188,7 @@ void optimizeBlockLayout(MachineFunction& func, const Target& target) {
     }
 
     // sort graph
-    BlockSeq seq(func.basicblocks.size());
+    BlockSeq seq(func.blocks().size());
     std::iota(seq.begin(), seq.end(), 0U);
 
     const auto bufferSize = target.getSubTarget().getOpBufferSize();
@@ -199,11 +197,14 @@ void optimizeBlockLayout(MachineFunction& func, const Target& target) {
     } else {
         solveGA(seq, edges, weights, bufferSize);
     }
+    */
 
-    Vector<MachineBasicBlock*> newBlock(seq.size());
+    /* FIXME: apply changes
+    Vector<GMIRBasicBlock*> newBlock(seq.size());
     for(uint32_t idx = 0; idx < newBlock.size(); ++idx)
         newBlock[idx] = func.basicblocks[seq[idx]];
     func.basicblocks = std::move(newBlock);
+    */
 
     // eliminate 'goto next block' and merge blocks
     // TODO

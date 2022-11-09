@@ -14,11 +14,10 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
-#include <cmmc/CodeGen/Register.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/SubTarget.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
+#include <cmmc/CodeGen/TargetInstInfo.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -36,7 +35,7 @@ public:
     virtual const TargetInstInfo& getTargetInstInfo() const noexcept = 0;
     virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
-    virtual void emitAssembly(MachineModule& module, std::ostream& out) const = 0;
+    virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

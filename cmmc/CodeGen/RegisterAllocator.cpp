@@ -40,7 +40,7 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
     return instance;
 }
 
-void assignRegisters(MachineFunction& mfunc, Function& func, const Target& target) {
+void assignRegisters(GMIRFunction& mfunc, Function& func, const Target& target) {
     RegisterAllocatorRegistry::get().selectMethod()(mfunc, func, target);
 }
 

@@ -12,16 +12,13 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
-#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-void TACSubTarget::peepholeOpt(MachineModule&) const {}
+void TACSubTarget::peepholeOpt(GMIRFunction&) const {}
 
-void TACSubTarget::postPeepholeOpt(MachineModule&) const {}
+void TACSubTarget::postPeepholeOpt(GMIRFunction&) const {}
 
 CMMC_NAMESPACE_END

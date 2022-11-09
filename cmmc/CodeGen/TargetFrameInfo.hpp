@@ -14,8 +14,6 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -28,11 +26,13 @@ public:
     virtual bool shouldPassByRegister(const Type* type, const DataLayout&) const {
         return type->isPrimitive();
     }
-    virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock* block, FunctionType* func,
+    /*
+    virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(GMIRBasicBlock* block, FunctionType* func,
                                                               CallingConvention cc) const = 0;
     virtual void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
                               TargetRegisterUsage& usage) const = 0;
     // virtual void fixCall(List<MachineInst>& block, FunctionType* func, CallingConvention cc) const = 0;
+    */
     virtual ~TargetFrameInfo() = default;
 };
 

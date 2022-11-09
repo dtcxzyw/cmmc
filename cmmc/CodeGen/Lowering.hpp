@@ -14,49 +14,67 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
-#include <cmmc/CodeGen/Register.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/TargetFrameInfo.hpp>
+#include <cmmc/CodeGen/TargetInstInfo.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
 class LoweringContext final {
-    MachineModule& mModule;
+    GMIRModule& mModule;
     const TargetInstInfo& mTargetInstInfo;
-    std::unordered_map<Block*, MachineBasicBlock*>& mBlockMap;
-    std::unordered_map<BlockArgument*, Register>& mBlockArgs;
-    std::unordered_map<Value*, Register>& mValueMap;
-    std::unordered_map<Value*, Address>& mAddressMap;
-    uint32_t& mAllocateBase;
-    MachineBasicBlock* mCurrentBasicBlock;
+    std::unordered_map<Block*, GMIRBasicBlock*>& mBlockMap;
+    std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
+    std::unordered_map<Value*, Operand>& mValueMap;
+    GMIRBasicBlock* mCurrentBasicBlock;
 
 public:
-    LoweringContext(MachineModule& module, std::unordered_map<Block*, MachineBasicBlock*>& blockMap,
-                    std::unordered_map<BlockArgument*, Register>& blockArgs, std::unordered_map<Value*, Register>& valueMap,
-                    std::unordered_map<Value*, Address>& addressMap, uint32_t& allocateBase);
-    Register newReg() noexcept;
-    MachineModule& getModule() const noexcept;
-    MachineBasicBlock* mapBlock(Block* block) const;
-    Register mapBlockArg(BlockArgument* arg) const;
-    Register mapOperand(Value* operand);
-    Address mapAddress(Value* address);
-    MachineSymbol* mapGlobal(GlobalValue* global) const;
-    void setCurrentBasicBlock(MachineBasicBlock* block) noexcept;
-    MachineBasicBlock* addBlockAfter();
+    LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
+                    std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap);
+    Operand newReg(uint32_t addressSpace) noexcept;
+    GMIRModule& getModule() const noexcept;
+    GMIRBasicBlock* mapBlock(Block* block) const;
+    Operand mapBlockArg(BlockArgument* arg) const;
+    Operand mapOperand(Value* operand);
+    GMIRSymbol* mapGlobal(GlobalValue* global) const;
+    void setCurrentBasicBlock(GMIRBasicBlock* block) noexcept;
+    GMIRBasicBlock* addBlockAfter();
 
     template <typename Inst>
-    MachineInst& emitInst(Inst instID) {
-        return mCurrentBasicBlock->instructions.emplace_back(instID);
+    GMIRInst& emitInst(Inst instID) {
+        return mCurrentBasicBlock->instructions().emplace_back(instID);
     }
-    void addAddress(Value* value, Address address);
-    void addOperand(Value* value, Register reg);
-    void addLink(MachineBasicBlock* successor);
+    void addOperand(Value* value, Operand reg);
+    void addLink(GMIRBasicBlock* successor);
+};
+
+class LoweringVisitor {
+public:
+    void lowerInst(Instruction* inst, LoweringContext& ctx) const;
+    virtual void lower(BinaryInst* inst, LoweringContext& ctx) const;
+    virtual void lower(CompareInst* inst, LoweringContext& ctx) const;
+    virtual void lower(UnaryInst* inst, LoweringContext& ctx) const;
+    virtual void lower(CastInst* inst, LoweringContext& ctx) const;
+    virtual void lower(LoadInst* inst, LoweringContext& ctx) const;
+    virtual void lower(StoreInst* inst, LoweringContext& ctx) const;
+    virtual void lower(ConditionalBranchInst* inst, LoweringContext& ctx) const;
+    virtual void lower(ReturnInst* inst, LoweringContext& ctx) const;
+    virtual void lower(UnreachableInst* inst, LoweringContext& ctx) const;
+    virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const;
+    virtual void lower(SelectInst* inst, LoweringContext& ctx) const;
+    virtual void lower(StackAllocInst* inst, LoweringContext& ctx) const;
+    virtual void lower(FMAInst* inst, LoweringContext& ctx) const;
+    virtual void lower(GetElementPtrInst* inst, LoweringContext& ctx) const;
+    virtual void lower(PtrCastInst* inst, LoweringContext& ctx) const;
+    virtual void lower(PtrToIntInst* inst, LoweringContext& ctx) const;
+    virtual void lower(IntToPtrInst* inst, LoweringContext& ctx) const;
 };
 
 class Module;
-std::unique_ptr<MachineModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis);
+std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis);
 
 CMMC_NAMESPACE_END

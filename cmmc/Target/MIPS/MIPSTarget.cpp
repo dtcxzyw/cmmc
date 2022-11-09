@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/Register.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -42,25 +40,6 @@ public:
 
 class MIPSInstInfo final : public TargetInstInfo {
 public:
-    const TargetInstClass& getInstClass(uint32_t) const override {
-        reportNotImplemented();
-    }
-    bool hasSideEffect(MachineInst&) const noexcept override {
-        reportNotImplemented();
-    }
-    bool isTerminator(MachineInst&) const noexcept override {
-        reportNotImplemented();
-    }
-    bool isSupportedInstruction(InstructionID) const noexcept override {
-        reportNotImplemented();
-    }
-    void emit(Instruction*, LoweringContext&) const override {
-        reportNotImplemented();
-    }
-    Register emitConstant(ConstantValue*, LoweringContext&) const override {
-        reportNotImplemented();
-    }
-
     /*
     const char* getTextualName(uint32_t idx) const noexcept {
         constexpr const char* name[] = {
@@ -80,12 +59,6 @@ public:
 
 class MIPSFrameInfo final : public TargetFrameInfo {
 public:
-    std::unique_ptr<TargetRegisterUsage> emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const override {
-        reportNotImplemented();
-    }
-    void emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const override {
-        reportNotImplemented();
-    }
 };
 
 // MIPS o32
@@ -114,11 +87,11 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    void emitAssembly(MachineModule& module, std::ostream& out) const override;
+    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("mips", MIPSTarget);
 
-void MIPSTarget::emitAssembly(MachineModule&, std::ostream&) const {}
+void MIPSTarget::emitAssembly(GMIRModule&, std::ostream&) const {}
 
 CMMC_NAMESPACE_END

@@ -13,9 +13,7 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/MachineInst.hpp>
-#include <cmmc/CodeGen/MachineModule.hpp>
-#include <cmmc/CodeGen/Register.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -27,19 +25,19 @@ public:
         return 32;
     }
     // TODO: register renaming?
-    virtual uint32_t getLatency(const MachineInst* inst) const = 0;
-    virtual void peepholeOpt(MachineModule& module) const {
-        CMMC_UNUSED(module);
+    virtual uint32_t getLatency(const GMIRInst& inst) const = 0;
+    virtual void peepholeOpt(GMIRFunction& func) const {
+        CMMC_UNUSED(func);
     }
-    virtual void postPeepholeOpt(MachineModule& module) const {
-        CMMC_UNUSED(module);
+    virtual void postPeepholeOpt(GMIRFunction& func) const {
+        CMMC_UNUSED(func);
     }
 };
 
 class SimpleSubTarget : public SubTarget {
 public:
     uint32_t issueWidth() const noexcept final;
-    uint32_t getLatency(const MachineInst* inst) const final;
+    uint32_t getLatency(const GMIRInst& inst) const final;
 };
 
 CMMC_NAMESPACE_END

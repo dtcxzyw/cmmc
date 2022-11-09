@@ -20,7 +20,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void schedule(MachineFunction& func, const Target& target) {
+void schedule(GMIRFunction& func, const Target& target) {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(target);
+    /*
     std::unordered_map<Register, std::vector<MachineInst*>> writers;
     std::unordered_set<Register> used;
     std::unordered_set<MachineInst*> usedInst;
@@ -68,6 +71,7 @@ void schedule(MachineFunction& func, const Target& target) {
     }
 
     // TODO: schedule by port utilization estimation
+    */
 }
 
 CMMC_NAMESPACE_END

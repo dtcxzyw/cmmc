@@ -20,54 +20,9 @@ CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
-const TargetInstClass& TACInstInfo::getInstClass(uint32_t) const {
-    reportNotImplemented();
-}
-bool TACInstInfo::isTerminator(MachineInst& inst) const noexcept {
-    switch(inst.getInstID<TACInst>()) {
-        case TACInst::Branch:
-            [[fallthrough]];
-        case TACInst::BranchCompare:
-            [[fallthrough]];
-        case TACInst::Return:
-            return true;
-        default:
-            return false;
-    }
-}
-bool TACInstInfo::hasSideEffect(MachineInst& inst) const noexcept {
-    switch(inst.getInstID<TACInst>()) {
-        case TACInst::Branch:
-            [[fallthrough]];
-        case TACInst::BranchCompare:
-            [[fallthrough]];
-        case TACInst::Return:
-            [[fallthrough]];
-        case TACInst::Call:
-            [[fallthrough]];
-        case TACInst::PushArg:
-            [[fallthrough]];
-        case TACInst::Write:
-            [[fallthrough]];
-        case TACInst::Read:
-            return true;
-        // TODO: more instructions
-        default: {
-            return false;
-        }
-    }
-}
-
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
-}
-
-std::unique_ptr<TargetRegisterUsage> TACFrameInfo::emitPrologue(MachineBasicBlock*, FunctionType*, CallingConvention) const {
-    reportNotImplemented();
-}
-void TACFrameInfo::emitEpilogue(MachineBasicBlock*, FunctionType*, CallingConvention, TargetRegisterUsage&) const {
-    reportNotImplemented();
 }
 
 CMMC_TARGET("tac", TACTarget);

@@ -13,23 +13,19 @@
 */
 
 #pragma once
-#include <cmmc/Config.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
-#include <limits>
-#include <vector>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-using Register = uint32_t;
+class LoweringContext;
 
-constexpr Register makeVirtualRegister(uint32_t id) {
-    return 0xf0000000 | id;
-}
-
-constexpr bool isVirtualRegister(Register reg) {
-    return reg & 0xf0000000;
-}
-
-constexpr auto invalidReg = std::numeric_limits<Register>::max();
+class TargetInstInfo {
+public:
+    virtual ~TargetInstInfo() = default;
+};
 
 CMMC_NAMESPACE_END

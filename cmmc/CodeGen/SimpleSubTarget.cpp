@@ -19,7 +19,7 @@ CMMC_NAMESPACE_BEGIN
 uint32_t SimpleSubTarget::issueWidth() const noexcept {
     return 1;
 }
-uint32_t SimpleSubTarget::getLatency(const MachineInst*) const {
+uint32_t SimpleSubTarget::getLatency(const GMIRInst&) const {
     return 0;
 }
 
