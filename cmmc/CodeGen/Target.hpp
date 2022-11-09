@@ -15,9 +15,9 @@
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/SubTarget.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
-#include <cmmc/CodeGen/TargetInstInfo.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -32,7 +32,7 @@ public:
     virtual ~Target() = default;
 
     virtual const DataLayout& getDataLayout() const noexcept = 0;
-    virtual const TargetInstInfo& getTargetInstInfo() const noexcept = 0;
+    virtual const LoweringVisitor& getTargetLoweringVisitor() const noexcept = 0;
     virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;

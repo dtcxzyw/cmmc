@@ -12,20 +12,25 @@
     limitations under the License.
 */
 
-#pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
-#include <cmmc/IR/ConstantValue.hpp>
-#include <cmmc/IR/Instruction.hpp>
-#include <cstdint>
-#include <variant>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Target/TAC/TACTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-class LoweringContext;
+Operand TACLoweringVisitor::getZero() const {
+    reportNotImplemented();
+}
 
-class TargetInstInfo {
-public:
-    virtual ~TargetInstInfo() = default;
-};
+void TACLoweringVisitor::lower(ReturnInst* inst, LoweringContext& ctx) const {
+    ctx.emitInst<RetMInst>(inst->operands().empty() ? getZero() : ctx.mapOperand(inst->getOperand(0)));
+}
+void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(ctx);
+    reportNotImplemented();
+}
+void TACLoweringVisitor::lower(FMAInst*, LoweringContext&) const {
+    DiagnosticsContext::get().attach<Reason>("FMA is not supported by TAC").reportFatal();
+}
 
 CMMC_NAMESPACE_END

@@ -56,8 +56,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetInstInfo& getTargetInstInfo() const noexcept override {
-        reportUnreachable();
+    const LoweringVisitor& getTargetLoweringVisitor() const noexcept override {
+        reportNotImplemented();
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         return mFrameInfo;

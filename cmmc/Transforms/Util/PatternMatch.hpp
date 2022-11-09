@@ -161,11 +161,6 @@ public:
 };
 
 template <typename T>
-auto not_(T value) noexcept {
-    return UnaryOpMatcher{ InstructionID::Not, value };
-}
-
-template <typename T>
 auto neg(T value) noexcept {
     return UnaryOpMatcher{ InstructionID::Neg, value };
 }
@@ -247,6 +242,11 @@ auto or_(Lhs lhs, Rhs rhs) {
 template <typename Lhs, typename Rhs>
 auto xor_(Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Xor, lhs, rhs };
+}
+
+template <typename T>
+auto not_(T value) noexcept {
+    return xor_(value, cint_(-1));
 }
 
 template <typename Lhs, typename Rhs>

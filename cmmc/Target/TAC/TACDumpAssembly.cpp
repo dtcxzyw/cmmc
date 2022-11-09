@@ -22,11 +22,11 @@
 CMMC_NAMESPACE_BEGIN
 
 static void printOperand(std::ostream& out, const Operand& operand) {
-    if(operand.addressSpace == AddressSpace::GPR)
+    if(operand.addressSpace == TACAddressSpace::GPR)
         out << 'v' << operand.id;
-    else if(operand.addressSpace == AddressSpace::stack)
+    else if(operand.addressSpace == TACAddressSpace::stack)
         out << 'x' << operand.id;
-    else if(operand.addressSpace == AddressSpace::constant) {
+    else if(operand.addressSpace == TACAddressSpace::constant) {
         out << '#';  // TODO: query from constant pool
     }
 }
@@ -76,24 +76,25 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
 
         for(auto& inst : block.instructions()) {
             std::visit(Overload{ [&](const CopyMInst& copy) {
+                                    // TODO: indirect
                                     auto valid = [&] {
-                                        if(copy.src.addressSpace == AddressSpace::GPR) {
+                                        if(copy.src.addressSpace == TACAddressSpace::GPR) {
                                             // copy
-                                            if(copy.dst.addressSpace == AddressSpace::GPR) {
+                                            if(copy.dst.addressSpace == TACAddressSpace::GPR) {
                                                 return true;
                                             }
                                             // fetch
-                                            else if(copy.dst.addressSpace == AddressSpace::stack) {
+                                            else if(copy.dst.addressSpace == TACAddressSpace::stack) {
                                                 return true;
                                             }
                                         }
                                         // deref
-                                        else if(copy.src.addressSpace == AddressSpace::stack) {
-                                            if(copy.dst.addressSpace == AddressSpace::GPR) {
+                                        else if(copy.src.addressSpace == TACAddressSpace::stack) {
+                                            if(copy.dst.addressSpace == TACAddressSpace::GPR) {
                                                 return true;
                                             }
-                                        } else
-                                            return false;
+                                        }
+                                        return false;
                                     };
                                     if(valid()) {
                                         if(copy.dst.addressSpace == AddressSpace::stack)
@@ -155,7 +156,8 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      out << labelMap.find(branch.targetBlock)->second;
                                  },
                                  [&](const CallMInst& call) {
-                                     out << "CALL ";
+                                     printOperand(out, call.dst);
+                                     out << " := CALL ";
                                      out << std::get<GMIRSymbol*>(call.function)->symbol;
                                  },
                                  [&](const RetMInst& ret) {
@@ -182,51 +184,6 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
             out << std::endl;
         }
     }
-
-    /*
-    switch(inst.getInstID<TACInst>()) {
-        case TACInst::Return: {
-            out << "RETURN ";
-            printOperand(out, inst, 0);
-            out << std::endl;
-            break;
-        }
-        case TACInst::Write: {
-            out << "WRITE ";
-            printOperand(out, inst, 0);
-            out << std::endl;
-            break;
-        }
-        case TACInst::Read: {
-            out << "READ ";
-            printResult(out, inst);
-            out << std::endl;
-            break;
-        }
-        case TACInst::PushArg: {
-            out << "ARG ";
-            printOperand(out, inst, 0);
-            out << std::endl;
-            break;
-        }
-        case TACInst::Call: {
-            printResult(out, inst);
-            out << " := CALL " << std::get<Global>(inst.getAddr().base).symbol->getSymbol() << std::endl;
-            break;
-        }
-        case TACInst::Decl: {
-            out << "DEC " << std::endl;  // FIXME
-            break;
-        }
-        default: {
-            reportError() << "Unsupported inst " << enumName(inst.getInstID<TACInst>()) << std::endl;
-            reportUnreachable();
-        }
-    }
-    }
-    }
-    */
-
     out << std::endl;
 }
 

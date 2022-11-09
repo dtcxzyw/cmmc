@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <array>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
@@ -25,13 +26,11 @@ class GMIRBasicBlock;
 class GMIRFunction;
 struct GMIRSymbol;
 
-struct AddressSpace final {
+struct AddressSpace {
     static constexpr uint32_t virtualReg = 0;
     static constexpr uint32_t constant = 1;
-    static constexpr uint32_t GPR = 2;
-    static constexpr uint32_t FPR = 3;
-    static constexpr uint32_t stack = 4;
-    static constexpr uint32_t custom = 5;
+    static constexpr uint32_t stack = 2;
+    static constexpr uint32_t custom = 3;
 };
 
 enum class GMIRInstID {
@@ -53,6 +52,7 @@ enum class GMIRInstID {
     FSub,
     FMul,
     FDiv,
+    FNeg,
     SCmp,
     UCmp,
     FCmp,
@@ -62,8 +62,6 @@ enum class GMIRInstID {
     Shl,
     AShr,
     LShr,
-    SExt,
-    ZExt,
     ArithIntrinsic,
     // ControlFlow
     Branch,
@@ -87,8 +85,10 @@ static constexpr Operand unusedOperand{ std::numeric_limits<uint32_t>::max(), st
 
 struct CopyMInst final {
     Operand src;
+    bool indirectSrc;
     uint32_t srcOffset;
     Operand dst;
+    bool indirectDst;
     uint32_t dstOffset;
 };
 
@@ -129,12 +129,17 @@ struct ArithmeticIntrinsicMInst final {
     Operand dst;
 };
 
+struct CompareMInst final {
+    GMIRInstID instID;
+    CompareOp compareOp;
+    Operand lhs, rhs, dst;
+};
+
 struct BranchMInst final {
     GMIRBasicBlock* targetBlock;
 };
 
 struct BranchCompareMInst final {
-    uint32_t srcAddressSpace;
     Operand lhs, rhs;
     CompareOp compareOp;
     GMIRBasicBlock* targetBlock;
@@ -142,6 +147,7 @@ struct BranchCompareMInst final {
 
 struct CallMInst final {
     std::variant<Operand, GMIRSymbol*> function;
+    Operand dst;
 };
 
 struct UnreachableMInst final {};
@@ -156,8 +162,8 @@ struct ControlFlowIntrinsicMInst final {
 };
 
 using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMIInst,
-                              BinaryArithmeticMIInst, ArithmeticIntrinsicMInst, BranchMInst, BranchCompareMInst, CallMInst,
-                              UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
+                              BinaryArithmeticMIInst, ArithmeticIntrinsicMInst, CompareMInst, BranchMInst, BranchCompareMInst,
+                              CallMInst, UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
 
 class GMIRBasicBlock final {
     GMIRFunction* mFunction;

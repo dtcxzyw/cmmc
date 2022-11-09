@@ -14,11 +14,16 @@
 
 // TAC Virtual Target
 #pragma once
+#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 enum class TACIntrinsic { Read, Write, PushArg };
+struct TACAddressSpace final : public AddressSpace {
+    static constexpr uint32_t GPR = 3;
+};
 
 class TACDataLayout final : public DataLayout {
 public:
@@ -36,14 +41,17 @@ public:
     }
 };
 
-class TACInstInfo final : public TargetInstInfo {
-    void emitBranch(const BranchTarget& target, LoweringContext& ctx) const;
-
+class TACFrameInfo final : public TargetFrameInfo {
 public:
 };
 
-class TACFrameInfo final : public TargetFrameInfo {
+class TACLoweringVisitor final : public LoweringVisitor {
 public:
+    Operand getZero() const override;
+
+    void lower(ReturnInst* inst, LoweringContext& ctx) const override;
+    void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
+    void lower(FMAInst* inst, LoweringContext& ctx) const override;
 };
 
 class TACSubTarget final : public SimpleSubTarget {
@@ -55,7 +63,7 @@ public:
 class TACTarget final : public Target {
     TACSubTarget mSubTarget;
     TACDataLayout mDataLayout;
-    TACInstInfo mInstInfo;
+    TACLoweringVisitor mLowerVisitor;
     TACFrameInfo mFrameInfo;
 
 public:
@@ -63,8 +71,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetInstInfo& getTargetInstInfo() const noexcept override {
-        return mInstInfo;
+    const TACLoweringVisitor& getTargetLoweringVisitor() const noexcept override {
+        return mLowerVisitor;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         return mFrameInfo;

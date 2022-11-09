@@ -711,10 +711,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addUInt(getUInt(0) | getUInt(1));
                 break;
             }
-            case InstructionID::Not: {
-                addUInt(~getUInt(0));
-                break;
-            }
             case InstructionID::Xor: {
                 addUInt(getUInt(0) ^ getUInt(1));
                 break;

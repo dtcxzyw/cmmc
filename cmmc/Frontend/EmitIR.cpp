@@ -222,8 +222,6 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
             case OperatorID::NotEqual:
                 return isSigned ? InstructionID::SCmp : InstructionID::UCmp;
 
-            case OperatorID::BitwiseNot:
-                return InstructionID::Not;
             case OperatorID::BitwiseAnd:
                 return InstructionID::And;
             case OperatorID::BitwiseOr:
@@ -491,7 +489,8 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {});
-            return QualifiedValue{ ctx.booleanToInt(ctx.makeOp<UnaryInst>(InstructionID::Not, value->getType(), value)) };
+            return QualifiedValue{ ctx.booleanToInt(ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
+                                                                           make<ConstantInteger>(value->getType(), 1))) };
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())

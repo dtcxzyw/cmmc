@@ -38,10 +38,6 @@ public:
     }
 };
 
-class RISCVInstInfo final : public TargetInstInfo {
-public:
-};
-
 class RISCVFrameInfo final : public TargetFrameInfo {
 public:
 };
@@ -50,7 +46,6 @@ public:
 class RISCVTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     RISCVDataLayout mDataLayout;
-    RISCVInstInfo mInstInfo;
     RISCVFrameInfo mFrameInfo;
 
 public:
@@ -63,8 +58,8 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TargetInstInfo& getTargetInstInfo() const noexcept override {
-        return mInstInfo;
+    const LoweringVisitor& getTargetLoweringVisitor() const noexcept override {
+        reportNotImplemented();
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
         return mFrameInfo;

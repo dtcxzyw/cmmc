@@ -16,7 +16,6 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
-#include <cmmc/CodeGen/TargetInstInfo.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -26,7 +25,6 @@ CMMC_NAMESPACE_BEGIN
 
 class LoweringContext final {
     GMIRModule& mModule;
-    const TargetInstInfo& mTargetInstInfo;
     std::unordered_map<Block*, GMIRBasicBlock*>& mBlockMap;
     std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
     std::unordered_map<Value*, Operand>& mValueMap;
@@ -44,16 +42,21 @@ public:
     void setCurrentBasicBlock(GMIRBasicBlock* block) noexcept;
     GMIRBasicBlock* addBlockAfter();
 
-    template <typename Inst>
-    GMIRInst& emitInst(Inst instID) {
-        return mCurrentBasicBlock->instructions().emplace_back(instID);
+    template <typename Inst, typename... Args>
+    void emitInst(Args&&... args) {
+        mCurrentBasicBlock->instructions().emplace_back(Inst{ std::forward<Args>(args)... });
     }
     void addOperand(Value* value, Operand reg);
-    void addLink(GMIRBasicBlock* successor);
 };
 
 class LoweringVisitor {
 public:
+    virtual ~LoweringVisitor() = default;
+    virtual Operand getZero() const = 0;
+    virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
+    virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
+    virtual void lower(FMAInst* inst, LoweringContext& ctx) const = 0;
+
     void lowerInst(Instruction* inst, LoweringContext& ctx) const;
     virtual void lower(BinaryInst* inst, LoweringContext& ctx) const;
     virtual void lower(CompareInst* inst, LoweringContext& ctx) const;
@@ -62,12 +65,9 @@ public:
     virtual void lower(LoadInst* inst, LoweringContext& ctx) const;
     virtual void lower(StoreInst* inst, LoweringContext& ctx) const;
     virtual void lower(ConditionalBranchInst* inst, LoweringContext& ctx) const;
-    virtual void lower(ReturnInst* inst, LoweringContext& ctx) const;
     virtual void lower(UnreachableInst* inst, LoweringContext& ctx) const;
-    virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const;
     virtual void lower(SelectInst* inst, LoweringContext& ctx) const;
     virtual void lower(StackAllocInst* inst, LoweringContext& ctx) const;
-    virtual void lower(FMAInst* inst, LoweringContext& ctx) const;
     virtual void lower(GetElementPtrInst* inst, LoweringContext& ctx) const;
     virtual void lower(PtrCastInst* inst, LoweringContext& ctx) const;
     virtual void lower(PtrToIntInst* inst, LoweringContext& ctx) const;

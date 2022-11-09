@@ -105,8 +105,6 @@ static const char* getInstName(InstructionID instID) {
             return "and";
         case InstructionID::Or:
             return "or";
-        case InstructionID::Not:
-            return "not";
         case InstructionID::Xor:
             return "xor";
         case InstructionID::Shl:
