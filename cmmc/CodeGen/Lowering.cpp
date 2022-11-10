@@ -30,19 +30,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Operand VirtualRegPool::allocate(const Type* type) {
-    const auto id = static_cast<uint32_t>(mAllocations.size());
-    mAllocations.push_back({ type, nullptr });
-    return Operand{ mAddressSpace, id };
-}
-const Type* VirtualRegPool::getType(const Operand& operand) const {
-    assert(operand.addressSpace == mAddressSpace);
-    return mAllocations[operand.id].first;
-}
-void*& VirtualRegPool::getMetadata(const Operand& operand) {
-    assert(operand.addressSpace == mAddressSpace);
-    return mAllocations[operand.id].second;
-}
 Operand LoweringContext::getZero(const Type* type) {
     const auto iter = mZeros.find(type);
     if(iter != mZeros.cend())
@@ -76,12 +63,17 @@ Operand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
     if(iter != mValueMap.cend())
         return iter->second;
+    if(operand->isGlobal()) {
+        // la
+        reportNotImplemented();
+    }
     if(!operand->isConstant()) {
         operand->dump(reportError() << "undefined operand ");
         reportUnreachable();
     }
-    // const auto reg = mTargetInstInfo.emitConstant(operand->as<ConstantValue>(), *this);
-    Operand reg;
+    auto& pool = getAllocationPool(AddressSpace::Constant);
+    const auto reg = pool.allocate(operand->getType());
+    pool.getMetadata(reg) = operand;
     mValueMap.emplace(operand, reg);
     return reg;
 }
@@ -171,7 +163,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap);
+        std::cerr << ".global " << symbol->symbol;
         dumpFunc(mfunc);
+        std::cerr << "================" << std::endl;
         // Stage 2: legalize
         // TODO: types/ops/constants
         // Stage 3: fuse copy

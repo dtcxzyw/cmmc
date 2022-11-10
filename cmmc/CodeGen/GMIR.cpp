@@ -24,7 +24,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                           const std::unordered_map<const GMIRBasicBlock*, String>& blockMap) const {
     auto& loweringVisitor = target.getTargetLoweringVisitor();
     auto dumpOperand = [&](const Operand& operand) { out << loweringVisitor.getOperand(operand); };
-    auto dumpTarget = [&](GMIRBasicBlock* target) { out << blockMap.find(target)->second; };
+    auto dumpTarget = [&](const GMIRBasicBlock* target) { out << blockMap.find(target)->second; };
     auto dumpCompare = [&](GMIRInstID instID, CompareOp compareOp) {
         if(instID == GMIRInstID::FCmp)
             out << 'f';
@@ -52,6 +52,9 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
         if(instID == GMIRInstID::UCmp)
             out << 'u';
     };
+
+    dumpTarget(this);
+    out << ":\n";
 
     for(auto& inst : mInstructions) {
         std::visit(Overload{ [&](const CopyMInst& inst) {
@@ -204,6 +207,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  } else {
                                      out << "call ";
                                      dumpOperand(inst.dst);
+                                     out << ' ';
                                  }
                                  std::visit(Overload{ [&](const Operand& operand) { dumpOperand(operand); },
                                                       [&](const GMIRSymbol* symbol) { out << symbol->symbol; } },
@@ -253,6 +257,20 @@ void GMIRSymbol::dump(std::ostream& out, const Target& target) const {
 void GMIRModule::dump(std::ostream& out) const {
     for(auto& symbol : symbols)
         symbol.dump(out, target);
+}
+
+Operand VirtualRegPool::allocate(const Type* type) {
+    const auto id = static_cast<uint32_t>(mAllocations.size());
+    mAllocations.push_back({ type, nullptr });
+    return Operand{ mAddressSpace, id };
+}
+const Type* VirtualRegPool::getType(const Operand& operand) const {
+    assert(operand.addressSpace == mAddressSpace);
+    return mAllocations[operand.id].first;
+}
+void*& VirtualRegPool::getMetadata(const Operand& operand) {
+    assert(operand.addressSpace == mAddressSpace);
+    return mAllocations[operand.id].second;
 }
 
 CMMC_NAMESPACE_END

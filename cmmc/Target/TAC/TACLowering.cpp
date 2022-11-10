@@ -66,7 +66,7 @@ void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) con
                 ctx.addOperand(inst, reg);
             } else if(func->getSymbol().prefix() == "write") {
                 assert(inst->operands().size() == 2 && inst->getOperand(0)->getType()->isSame(IntegerType::get(32)));
-                ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::Read),
+                ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::Write),
                                                         ctx.mapOperand(inst->getOperand(0)), unusedOperand);
             }
         } else {

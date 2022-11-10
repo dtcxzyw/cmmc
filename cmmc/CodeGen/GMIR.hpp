@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/Lowering.hpp"
 #include <array>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -192,6 +191,22 @@ public:
         return mInstructions;
     }
     void dump(std::ostream& out, const Target& target, const std::unordered_map<const GMIRBasicBlock*, String>& blockMap) const;
+};
+
+class VirtualRegPool final {
+    uint32_t mAddressSpace;
+    std::vector<std::pair<const Type*, void*>> mAllocations;
+
+public:
+    explicit VirtualRegPool(uint32_t addressSpace) : mAddressSpace{ addressSpace } {}
+    Operand allocate(const Type* type);
+    void*& getMetadata(const Operand& operand);
+    const Type* getType(const Operand& operand) const;
+};
+
+struct TemporaryPools final {
+    VirtualRegPool pools[AddressSpace::Custom]{ VirtualRegPool{ AddressSpace::VirtualReg },
+                                                VirtualRegPool{ AddressSpace::Constant }, VirtualRegPool{ AddressSpace::Stack } };
 };
 
 class GMIRFunction final {
