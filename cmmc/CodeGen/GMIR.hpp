@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/CodeGen/Lowering.hpp"
 #include <array>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -195,10 +196,14 @@ public:
 
 class GMIRFunction final {
     uint32_t mUsedParameters;
+    TemporaryPools mPools;
     std::list<GMIRBasicBlock> mBasicBlocks;
 
 public:
     explicit GMIRFunction(uint32_t usedParameters) : mUsedParameters{ usedParameters } {}
+    TemporaryPools& pools() noexcept {
+        return mPools;
+    }
     uint32_t parameters() const noexcept {
         return mUsedParameters;
     }

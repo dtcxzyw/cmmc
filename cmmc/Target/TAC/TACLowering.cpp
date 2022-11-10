@@ -12,14 +12,14 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/GMIR.hpp"
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-Operand TACLoweringVisitor::getZero() const {
-    reportNotImplemented();
+Operand TACLoweringVisitor::getZeroImpl(LoweringContext& ctx, const Type* type) const {
+    return ctx.getAllocationPool(AddressSpace::Constant).allocate(type);
 }
 TACLoweringVisitor::TACLoweringVisitor()
     : mUnused{ String::get("unused") }, mGPR{ String::get("v") }, mConstant{ String::get("c") }, mStack{ String::get("m") },
@@ -53,7 +53,7 @@ std::string_view TACLoweringVisitor::getIntrinsicName(uint32_t intrinsicID) cons
     }
 }
 void TACLoweringVisitor::lower(ReturnInst* inst, LoweringContext& ctx) const {
-    ctx.emitInst<RetMInst>(inst->operands().empty() ? getZero() : ctx.mapOperand(inst->getOperand(0)));
+    ctx.emitInst<RetMInst>(inst->operands().empty() ? ctx.getZero(IntegerType::get(32)) : ctx.mapOperand(inst->getOperand(0)));
 }
 void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) const {
     auto callee = inst->operands().back();
@@ -61,7 +61,7 @@ void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) con
         if(func->blocks().empty()) {
             if(func->getSymbol().prefix() == "read") {
                 assert(inst->operands().size() == 1 && inst->getType()->isSame(IntegerType::get(32)));
-                const auto reg = ctx.newReg(TACAddressSpace::VirtualReg);
+                const auto reg = ctx.getAllocationPool(TACAddressSpace::VirtualReg).allocate(inst->getType());
                 ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::Read), unusedOperand, reg);
                 ctx.addOperand(inst, reg);
             } else if(func->getSymbol().prefix() == "write") {
@@ -76,7 +76,7 @@ void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) con
                 ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::PushArg), ctx.mapOperand(arg),
                                                         unusedOperand);
             }
-            const auto reg = ctx.newReg(TACAddressSpace::VirtualReg);
+            const auto reg = ctx.getAllocationPool(TACAddressSpace::VirtualReg).allocate(inst->getType());
             ctx.emitInst<CallMInst>(global, reg);
             ctx.addOperand(inst, reg);
         }

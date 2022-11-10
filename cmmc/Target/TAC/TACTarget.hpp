@@ -50,7 +50,7 @@ class TACLoweringVisitor final : public LoweringVisitor {
 
 public:
     TACLoweringVisitor();
-    Operand getZero() const override;
+    Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
     String getOperand(const Operand& operand) const override;
     std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;

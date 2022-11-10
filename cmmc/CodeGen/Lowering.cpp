@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/GlobalValue.hpp"
+#include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -20,6 +20,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -29,16 +30,37 @@
 
 CMMC_NAMESPACE_BEGIN
 
+Operand VirtualRegPool::allocate(const Type* type) {
+    const auto id = static_cast<uint32_t>(mAllocations.size());
+    mAllocations.push_back({ type, nullptr });
+    return Operand{ mAddressSpace, id };
+}
+const Type* VirtualRegPool::getType(const Operand& operand) const {
+    assert(operand.addressSpace == mAddressSpace);
+    return mAllocations[operand.id].first;
+}
+void*& VirtualRegPool::getMetadata(const Operand& operand) {
+    assert(operand.addressSpace == mAddressSpace);
+    return mAllocations[operand.id].second;
+}
+Operand LoweringContext::getZero(const Type* type) {
+    const auto iter = mZeros.find(type);
+    if(iter != mZeros.cend())
+        return iter->second;
+    const auto zero = mModule.target.getTargetLoweringVisitor().getZeroImpl(*this, type);
+    return mZeros.emplace(type, zero).first->second;
+}
+
 LoweringContext::LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
                                  std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
                                  std::unordered_map<BlockArgument*, Operand>& blockArgs,
-                                 std::unordered_map<Value*, Operand>& valueMap)
-    : mModule{ module }, mBlockMap{ blockMap }, mGlobalMap{ globalMap }, mBlockArgs{ blockArgs }, mValueMap{ valueMap },
-      mCurrentBasicBlock{ nullptr } {}
-Operand LoweringContext::newReg(uint32_t addressSpace) noexcept {
-    // return makeVirtualRegister(++mAllocateBase);
-    CMMC_UNUSED(addressSpace);
-    reportUnreachable();
+                                 std::unordered_map<Value*, Operand>& valueMap, TemporaryPools& pools)
+    : mModule{ module }, mBlockMap{ blockMap }, mGlobalMap{ globalMap },
+      mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mPools{ pools }, mCurrentBasicBlock{ nullptr } {}
+
+VirtualRegPool& LoweringContext::getAllocationPool(uint32_t addressSpace) noexcept {
+    assert(addressSpace < std::size(mPools.pools));
+    return mPools.pools[addressSpace];
 }
 GMIRModule& LoweringContext::getModule() const noexcept {
     return mModule;
@@ -85,8 +107,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Operand> blockArgMap;
     std::unordered_map<Value*, Operand> valueMap;
-
-    uint32_t allocateBase = 0;
+    LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgMap, valueMap, mfunc.pools() };
 
     for(auto block : func->blocks()) {
         mfunc.blocks().push_back(GMIRBasicBlock{ &mfunc });
@@ -94,20 +115,19 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         blockMap.emplace(block, mblock);
 
         for(auto arg : block->args()) {
-            const auto reg = allocateBase++;
-            blockArgMap[arg] = Operand{ reg, 0 };
-            valueMap[arg] = Operand{ reg, 0 };
+            const auto reg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(arg->getType());
+            blockArgMap[arg] = reg;
+            valueMap[arg] = reg;
         }
     }
 
     auto& target = machineModule.target;
 
-    LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgMap, valueMap };
     auto& visitor = target.getTargetLoweringVisitor();
 
     for(auto block : func->blocks()) {
         auto mblock = blockMap[block];
-        CMMC_UNUSED(mblock);
+        ctx.setCurrentBasicBlock(mblock);
         for(auto inst : block->instructions()) {
             visitor.lowerInst(inst, ctx);
         }
@@ -152,8 +172,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap);
         dumpFunc(mfunc);
-        // Stage 2: legalize constants
-        // TODO
+        // Stage 2: legalize
+        // TODO: types/ops/constants
         // Stage 3: fuse copy
         // TODO
         // Stage 4: fuse cmp & branch
@@ -174,7 +194,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
         optimizeBlockLayout(mfunc, target);
     }
     // Stage 11: global code layout opt
-    // TODO
+    // TODO: merge functions
 }
 
 std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis) {
@@ -340,7 +360,7 @@ void LoweringVisitor::lower(BinaryInst* inst, LoweringContext& ctx) const {
                 reportUnreachable();
         }
     }();
-    const auto ret = ctx.newReg(AddressSpace::VirtualReg);
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<BinaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
@@ -358,7 +378,7 @@ void LoweringVisitor::lower(CompareInst* inst, LoweringContext& ctx) const {
         }
     }();
 
-    const auto ret = ctx.newReg(AddressSpace::VirtualReg);
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<CompareMInst>(id, inst->getOp(), ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
@@ -374,7 +394,7 @@ void LoweringVisitor::lower(UnaryInst* inst, LoweringContext& ctx) const {
         }
     }();
 
-    const auto ret = ctx.newReg(AddressSpace::VirtualReg);
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<UnaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
     ctx.addOperand(inst, ret);
 }
@@ -384,7 +404,7 @@ void LoweringVisitor::lower(CastInst* inst, LoweringContext& ctx) const {
     reportNotImplemented();
 }
 void LoweringVisitor::lower(LoadInst* inst, LoweringContext& ctx) const {
-    const auto ret = ctx.newReg(AddressSpace::VirtualReg);
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0);
     ctx.addOperand(inst, ret);
 }
@@ -402,7 +422,6 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
 }
-
 void LoweringVisitor::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
     if(inst->getInstID() == InstructionID::Branch) {
         emitBranch(inst->getTrueTarget(), ctx);
@@ -410,7 +429,8 @@ void LoweringVisitor::lower(ConditionalBranchInst* inst, LoweringContext& ctx) c
         const auto cond = ctx.mapOperand(inst->getOperand(0));
         // bnez %cond, false_label
         const auto falsePrepareBlock = ctx.addBlockAfter();
-        ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, cond, getZero(), CompareOp::NotEqual, falsePrepareBlock);
+        ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, cond, ctx.getZero(IntegerType::get(1)), CompareOp::NotEqual,
+                                         falsePrepareBlock);
         emitBranch(inst->getTrueTarget(), ctx);
 
         ctx.setCurrentBasicBlock(falsePrepareBlock);
@@ -427,15 +447,18 @@ void LoweringVisitor::lower(SelectInst* inst, LoweringContext& ctx) const {
     // beqz x BB
     // c = y;
     // BB:
-    const auto ret = ctx.newReg(AddressSpace::VirtualReg);
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0);
     const auto target = ctx.addBlockAfter();
-    ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), getZero(), CompareOp::Equal, target);
+    ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
+                                     CompareOp::Equal, target);
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0);
     ctx.setCurrentBasicBlock(target);
+    ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(StackAllocInst*, LoweringContext&) const {
-    reportNotImplemented();
+void LoweringVisitor::lower(StackAllocInst* inst, LoweringContext& ctx) const {
+    const auto addr = ctx.getAllocationPool(AddressSpace::Stack).allocate(inst->getType());
+    ctx.addOperand(inst, addr);
 }
 void LoweringVisitor::lower(GetElementPtrInst*, LoweringContext&) const {
     reportNotImplemented();

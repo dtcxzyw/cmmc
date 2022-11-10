@@ -13,17 +13,36 @@
 */
 
 #pragma once
-#include "cmmc/Support/StringFlyWeight.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
+#include <cstdint>
 #include <string_view>
+#include <unordered_map>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
+
+class VirtualRegPool final {
+    uint32_t mAddressSpace;
+    std::vector<std::pair<const Type*, void*>> mAllocations;
+
+public:
+    explicit VirtualRegPool(uint32_t addressSpace) : mAddressSpace{ addressSpace } {}
+    Operand allocate(const Type* type);
+    void*& getMetadata(const Operand& operand);
+    const Type* getType(const Operand& operand) const;
+};
+
+struct TemporaryPools final {
+    VirtualRegPool pools[AddressSpace::Custom]{ VirtualRegPool{ AddressSpace::VirtualReg },
+                                                VirtualRegPool{ AddressSpace::Constant }, VirtualRegPool{ AddressSpace::Stack } };
+};
 
 class LoweringContext final {
     GMIRModule& mModule;
@@ -31,13 +50,17 @@ class LoweringContext final {
     std::unordered_map<GlobalValue*, GMIRSymbol*>& mGlobalMap;
     std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
     std::unordered_map<Value*, Operand>& mValueMap;
+
+    TemporaryPools& mPools;
     GMIRBasicBlock* mCurrentBasicBlock;
+    std::unordered_map<const Type*, Operand> mZeros;
 
 public:
     LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
                     std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
-                    std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap);
-    Operand newReg(uint32_t addressSpace) noexcept;
+                    std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap,
+                    TemporaryPools& pools);
+    VirtualRegPool& getAllocationPool(uint32_t addressSpace) noexcept;
     GMIRModule& getModule() const noexcept;
     GMIRBasicBlock* mapBlock(Block* block) const;
     Operand mapBlockArg(BlockArgument* arg) const;
@@ -51,12 +74,13 @@ public:
         mCurrentBasicBlock->instructions().emplace_back(Inst{ std::forward<Args>(args)... });
     }
     void addOperand(Value* value, Operand reg);
+    Operand getZero(const Type* type);
 };
 
 class LoweringVisitor {
 public:
     virtual ~LoweringVisitor() = default;
-    virtual Operand getZero() const = 0;
+    virtual Operand getZeroImpl(LoweringContext& ctx, const Type* type) const = 0;
     virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
     virtual String getOperand(const Operand& operand) const = 0;
     virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
