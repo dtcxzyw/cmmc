@@ -24,9 +24,9 @@ CMMC_NAMESPACE_BEGIN
 static void printOperand(std::ostream& out, const Operand& operand) {
     if(operand.addressSpace == TACAddressSpace::GPR)
         out << 'v' << operand.id;
-    else if(operand.addressSpace == TACAddressSpace::stack)
+    else if(operand.addressSpace == TACAddressSpace::Stack)
         out << 'x' << operand.id;
-    else if(operand.addressSpace == TACAddressSpace::constant) {
+    else if(operand.addressSpace == TACAddressSpace::Constant) {
         out << '#';  // TODO: query from constant pool
     }
 }
@@ -84,12 +84,12 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                                 return true;
                                             }
                                             // fetch
-                                            else if(copy.dst.addressSpace == TACAddressSpace::stack) {
+                                            else if(copy.dst.addressSpace == TACAddressSpace::Stack) {
                                                 return true;
                                             }
                                         }
                                         // deref
-                                        else if(copy.src.addressSpace == TACAddressSpace::stack) {
+                                        else if(copy.src.addressSpace == TACAddressSpace::Stack) {
                                             if(copy.dst.addressSpace == TACAddressSpace::GPR) {
                                                 return true;
                                             }
@@ -97,18 +97,18 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         return false;
                                     };
                                     if(valid()) {
-                                        if(copy.dst.addressSpace == AddressSpace::stack)
+                                        if(copy.dst.addressSpace == AddressSpace::Stack)
                                             out << '*';
                                         printOperand(out, copy.dst);
                                         out << " := ";
 
-                                        if(copy.src.addressSpace == AddressSpace::stack)
+                                        if(copy.src.addressSpace == AddressSpace::Stack)
                                             out << '*';
                                         printOperand(out, copy.src);
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
-                                     if(constant.dst.addressSpace == AddressSpace::stack)
+                                     if(constant.dst.addressSpace == AddressSpace::Stack)
                                          out << '*';
                                      printOperand(out, constant.dst);
                                      out << " := #" << std::get<intmax_t>(constant.constant);
@@ -158,7 +158,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                  [&](const CallMInst& call) {
                                      printOperand(out, call.dst);
                                      out << " := CALL ";
-                                     out << std::get<GMIRSymbol*>(call.function)->symbol;
+                                     out << std::get<GMIRSymbol*>(call.callee)->symbol;
                                  },
                                  [&](const RetMInst& ret) {
                                      out << "RETURN ";

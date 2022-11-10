@@ -13,12 +13,14 @@
 */
 
 #pragma once
+#include "cmmc/Support/StringFlyWeight.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <string_view>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -26,12 +28,14 @@ CMMC_NAMESPACE_BEGIN
 class LoweringContext final {
     GMIRModule& mModule;
     std::unordered_map<Block*, GMIRBasicBlock*>& mBlockMap;
+    std::unordered_map<GlobalValue*, GMIRSymbol*>& mGlobalMap;
     std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
     std::unordered_map<Value*, Operand>& mValueMap;
     GMIRBasicBlock* mCurrentBasicBlock;
 
 public:
     LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
+                    std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
                     std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap);
     Operand newReg(uint32_t addressSpace) noexcept;
     GMIRModule& getModule() const noexcept;
@@ -53,6 +57,8 @@ class LoweringVisitor {
 public:
     virtual ~LoweringVisitor() = default;
     virtual Operand getZero() const = 0;
+    virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
+    virtual String getOperand(const Operand& operand) const = 0;
     virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FMAInst* inst, LoweringContext& ctx) const = 0;

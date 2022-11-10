@@ -18,6 +18,8 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <limits>
+#include <ostream>
+#include <unordered_map>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -25,12 +27,14 @@ CMMC_NAMESPACE_BEGIN
 class GMIRBasicBlock;
 class GMIRFunction;
 struct GMIRSymbol;
+class Target;
 
+// TODO: recompute?
 struct AddressSpace {
-    static constexpr uint32_t virtualReg = 0;
-    static constexpr uint32_t constant = 1;
-    static constexpr uint32_t stack = 2;
-    static constexpr uint32_t custom = 3;
+    static constexpr uint32_t VirtualReg = 0;
+    static constexpr uint32_t Constant = 1;
+    static constexpr uint32_t Stack = 2;
+    static constexpr uint32_t Custom = 3;
 };
 
 enum class GMIRInstID {
@@ -79,6 +83,9 @@ struct Operand final {
     bool operator==(const Operand& rhs) const noexcept {
         return addressSpace == rhs.addressSpace && id == rhs.id;
     }
+    bool operator!=(const Operand& rhs) const noexcept {
+        return addressSpace != rhs.addressSpace || id != rhs.id;
+    }
 };
 
 static constexpr Operand unusedOperand{ std::numeric_limits<uint32_t>::max(), std::numeric_limits<uint32_t>::max() };
@@ -86,10 +93,10 @@ static constexpr Operand unusedOperand{ std::numeric_limits<uint32_t>::max(), st
 struct CopyMInst final {
     Operand src;
     bool indirectSrc;
-    uint32_t srcOffset;
+    int32_t srcOffset;
     Operand dst;
     bool indirectDst;
-    uint32_t dstOffset;
+    int32_t dstOffset;
 };
 
 struct ConstantMInst final {
@@ -99,7 +106,7 @@ struct ConstantMInst final {
 
 struct GlobalAddressMInst final {
     Operand dst;
-    GMIRSymbol* constant;
+    GMIRSymbol* global;
 };
 
 /*
@@ -124,7 +131,7 @@ struct BinaryArithmeticMIInst final {
 };
 
 struct ArithmeticIntrinsicMInst final {
-    uint32_t mIntrinsicID;
+    uint32_t intrinsicID;
     std::array<Operand, 3> src;
     Operand dst;
 };
@@ -140,13 +147,14 @@ struct BranchMInst final {
 };
 
 struct BranchCompareMInst final {
+    GMIRInstID instID;
     Operand lhs, rhs;
     CompareOp compareOp;
     GMIRBasicBlock* targetBlock;
 };
 
 struct CallMInst final {
-    std::variant<Operand, GMIRSymbol*> function;
+    std::variant<Operand, GMIRSymbol*> callee;
     Operand dst;
 };
 
@@ -156,6 +164,8 @@ struct RetMInst final {
     Operand retVal;
 };
 
+// TODO: more clear semantic?
+// NOTICE: cannot modify PC
 struct ControlFlowIntrinsicMInst final {
     uint32_t intrinsicID;
     Operand src, dst;
@@ -180,6 +190,7 @@ public:
     const std::list<GMIRInst>& instructions() const noexcept {
         return mInstructions;
     }
+    void dump(std::ostream& out, const Target& target, const std::unordered_map<const GMIRBasicBlock*, String>& blockMap) const;
 };
 
 class GMIRFunction final {
@@ -197,27 +208,39 @@ public:
     const std::list<GMIRBasicBlock>& blocks() const noexcept {
         return mBasicBlocks;
     }
+
+    void dump(std::ostream& out, const Target& target) const;
 };
 
-class GMIRZeroStorage final {};
+class GMIRZeroStorage final {
+public:
+    void dump(std::ostream& out, const Target& target) const;
+};
 
-class GMIRStringStorage final {};
+class GMIRStringStorage final {
+public:
+    void dump(std::ostream& out, const Target& target) const;
+};
 
-class GMIRDataStorage final {};
+class GMIRDataStorage final {
+public:
+    void dump(std::ostream& out, const Target& target) const;
+};
 
 struct GMIRSymbol final {
     String symbol;
     Linkage linkage;
     std::variant<GMIRFunction, GMIRZeroStorage, GMIRStringStorage, GMIRDataStorage, std::monostate> def;
+
+    void dump(std::ostream& out, const Target& target) const;
 };
 
-class Target;
-
 struct GMIRModule final {
-    const Target* target;
+    const Target& target;
     std::list<GMIRSymbol> symbols;
 
-    explicit GMIRModule(const Target* target) : target{ target } {}
+    explicit GMIRModule(const Target& target) : target{ target } {}
+    void dump(std::ostream& out) const;
 };
 
 CMMC_NAMESPACE_END

@@ -164,7 +164,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
 
     /*
     const auto& info = target.getTargetInstInfo();
-    // eliminate blocks with single unconditional branch
+    // make sure that all blocks end with exactly single unconditional branch
 
     // build graph
     std::vector<uint32_t> weights;

@@ -22,7 +22,7 @@ CMMC_NAMESPACE_BEGIN
 
 enum class TACIntrinsic { Read, Write, PushArg };
 struct TACAddressSpace final : public AddressSpace {
-    static constexpr uint32_t GPR = 3;
+    static constexpr uint32_t GPR = Custom + 0;
 };
 
 class TACDataLayout final : public DataLayout {
@@ -46,9 +46,13 @@ public:
 };
 
 class TACLoweringVisitor final : public LoweringVisitor {
-public:
-    Operand getZero() const override;
+    String mUnused, mGPR, mConstant, mStack, mVReg;
 
+public:
+    TACLoweringVisitor();
+    Operand getZero() const override;
+    String getOperand(const Operand& operand) const override;
+    std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
