@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -38,12 +39,13 @@ class LoweringContext final {
     TemporaryPools& mPools;
     GMIRBasicBlock* mCurrentBasicBlock;
     std::unordered_map<const Type*, Operand> mZeros;
+    const BlockArgumentAnalysisResult& mBlockArgMap;
 
 public:
     LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
                     std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
                     std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap,
-                    TemporaryPools& pools);
+                    TemporaryPools& pools, const BlockArgumentAnalysisResult& blockArgMap);
     VirtualRegPool& getAllocationPool(uint32_t addressSpace) noexcept;
     GMIRModule& getModule() const noexcept;
     GMIRBasicBlock* mapBlock(Block* block) const;
@@ -59,6 +61,7 @@ public:
     }
     void addOperand(Value* value, Operand reg);
     Operand getZero(const Type* type);
+    Value* queryRoot(Value* val) const;
 };
 
 class LoweringVisitor {

@@ -13,13 +13,20 @@
 */
 
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
 Operand TACLoweringVisitor::getZeroImpl(LoweringContext& ctx, const Type* type) const {
-    return ctx.getAllocationPool(AddressSpace::Constant).allocate(type);
+    auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
+    auto zero = pool.allocate(type);
+    if(type->isInteger())
+        pool.getMetadata(zero) = make<ConstantInteger>(type, 0);
+    else
+        reportUnreachable();
+    return zero;
 }
 TACLoweringVisitor::TACLoweringVisitor()
     : mUnused{ String::get("unused") }, mGPR{ String::get("v") }, mConstant{ String::get("c") }, mStack{ String::get("m") },

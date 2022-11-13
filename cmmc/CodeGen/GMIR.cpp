@@ -14,6 +14,7 @@
 
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
@@ -21,9 +22,18 @@
 
 CMMC_NAMESPACE_BEGIN
 void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
-                          const std::unordered_map<const GMIRBasicBlock*, String>& blockMap) const {
+                          const std::unordered_map<const GMIRBasicBlock*, String>& blockMap, const TemporaryPools& pools) const {
     auto& loweringVisitor = target.getTargetLoweringVisitor();
-    auto dumpOperand = [&](const Operand& operand) { out << loweringVisitor.getOperand(operand); };
+    auto dumpOperand = [&](const Operand& operand) {
+        out << loweringVisitor.getOperand(operand);
+        if(operand.addressSpace == AddressSpace::Constant) {
+            out << '[';
+            const auto cv = static_cast<ConstantValue*>(pools.pools[AddressSpace::Constant].getMetadata(operand));
+            assert(cv->isConstant());
+            cv->dumpAsOperand(out);
+            out << ']';
+        }
+    };
     auto dumpTarget = [&](const GMIRBasicBlock* target) { out << blockMap.find(target)->second; };
     auto dumpCompare = [&](GMIRInstID instID, CompareOp compareOp) {
         if(instID == GMIRInstID::FCmp)
@@ -238,8 +248,11 @@ void GMIRFunction::dump(std::ostream& out, const Target& target) const {
     for(auto& block : mBasicBlocks)
         blockMap[&block] = base.withID(idx++);
     out << " # Function" << std::endl;
+    auto& visitor = target.getTargetLoweringVisitor();
+    for(auto& param : mParameters)
+        out << "Param " << visitor.getOperand(param) << std::endl;
     for(auto& block : mBasicBlocks)
-        block.dump(out, target, blockMap);
+        block.dump(out, target, blockMap, mPools);
 }
 void GMIRZeroStorage::dump(std::ostream&, const Target&) const {
     reportNotImplemented();
@@ -269,6 +282,10 @@ const Type* VirtualRegPool::getType(const Operand& operand) const {
     return mAllocations[operand.id].first;
 }
 void*& VirtualRegPool::getMetadata(const Operand& operand) {
+    assert(operand.addressSpace == mAddressSpace);
+    return mAllocations[operand.id].second;
+}
+void* VirtualRegPool::getMetadata(const Operand& operand) const {
     assert(operand.addressSpace == mAddressSpace);
     return mAllocations[operand.id].second;
 }

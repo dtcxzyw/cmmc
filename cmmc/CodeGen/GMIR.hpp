@@ -28,6 +28,7 @@ class GMIRBasicBlock;
 class GMIRFunction;
 struct GMIRSymbol;
 class Target;
+struct TemporaryPools;
 
 // TODO: recompute?
 struct AddressSpace {
@@ -76,7 +77,7 @@ enum class GMIRInstID {
     ControlFlowIntrinsic
 };
 
-struct Operand final {
+struct alignas(uint64_t) Operand final {
     uint32_t addressSpace;
     uint32_t id;
 
@@ -85,6 +86,12 @@ struct Operand final {
     }
     bool operator!=(const Operand& rhs) const noexcept {
         return addressSpace != rhs.addressSpace || id != rhs.id;
+    }
+};
+
+struct OperandHasher final {
+    size_t operator()(const Operand& val) const {
+        return std::hash<uint64_t>{}(*reinterpret_cast<const uint64_t*>(&val));
     }
 };
 
@@ -190,7 +197,8 @@ public:
     const std::list<GMIRInst>& instructions() const noexcept {
         return mInstructions;
     }
-    void dump(std::ostream& out, const Target& target, const std::unordered_map<const GMIRBasicBlock*, String>& blockMap) const;
+    void dump(std::ostream& out, const Target& target, const std::unordered_map<const GMIRBasicBlock*, String>& blockMap,
+              const TemporaryPools& pools) const;
 };
 
 class VirtualRegPool final {
@@ -201,6 +209,7 @@ public:
     explicit VirtualRegPool(uint32_t addressSpace) : mAddressSpace{ addressSpace } {}
     Operand allocate(const Type* type);
     void*& getMetadata(const Operand& operand);
+    void* getMetadata(const Operand& operand) const;
     const Type* getType(const Operand& operand) const;
 };
 
@@ -210,17 +219,19 @@ struct TemporaryPools final {
 };
 
 class GMIRFunction final {
-    uint32_t mUsedParameters;
+    std::vector<Operand> mParameters;
     TemporaryPools mPools;
     std::list<GMIRBasicBlock> mBasicBlocks;
 
 public:
-    explicit GMIRFunction(uint32_t usedParameters) : mUsedParameters{ usedParameters } {}
     TemporaryPools& pools() noexcept {
         return mPools;
     }
-    uint32_t parameters() const noexcept {
-        return mUsedParameters;
+    std::vector<Operand>& parameters() noexcept {
+        return mParameters;
+    }
+    const std::vector<Operand>& parameters() const noexcept {
+        return mParameters;
     }
     std::list<GMIRBasicBlock>& blocks() noexcept {
         return mBasicBlocks;

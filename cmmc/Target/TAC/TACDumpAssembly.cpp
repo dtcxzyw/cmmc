@@ -54,9 +54,9 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
     out << "FUNCTION " << symbol << " :" << std::endl;
 
     {
-        const auto params = func.parameters();
-        for(uint32_t idx = 0; idx < params; ++idx) {
-            out << "PARAM a" << idx << std::endl;
+        auto& params = func.parameters();
+        for(auto param : params) {
+            out << "PARAM v" << param.id << std::endl;
         }
     }
 
