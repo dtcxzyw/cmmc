@@ -13,81 +13,21 @@
 */
 
 #include <cmmc/CodeGen/Target.hpp>
-#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
-#include <cmmc/Target/MIPS/MIPSInst.hpp>
+#include <cmmc/Target/MIPS/MIPSTarget.hpp>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
-class MIPSDataLayout final : public DataLayout {
-public:
-    Endian getEndian() const noexcept override {
-        return Endian::Little;
-    }
-    size_t getBuiltinAlignment(const Type* type) const noexcept override {
-        assert(type->isPrimitive());
-        if(type->isPointer())
-            return getPointerSize();
-        return type->getFixedSize();
-    }
-    size_t getPointerSize() const noexcept override {
-        return 4;
-    }
-};
-
-/*
-const char* getTextualName(uint32_t idx) const noexcept {
-    constexpr const char* name[] = {
-        "zero", "at",  "v0",  "v1",  "a0",  "a1",  "a2",  "a3",   //
-        "t0",   "t1",  "t2",  "t3",  "t4",  "t5",  "t6",  "t7",   //
-        "s0",   "s1",  "s2",  "s3",  "s4",  "s5",  "s6",  "s7",   //
-        "t8",   "t9",  "k0",  "k1",  "gp",  "sp",  "fp",  "ra",   //
-        "f0",   "f1",  "f2",  "f3",  "f4",  "f5",  "f6",  "f7",   //
-        "f8",   "f9",  "f10", "f11", "f12", "f13", "f14", "f15",  //
-        "f16",  "f17", "f18", "f19", "f20", "f21", "f22", "f23",  //
-        "f24",  "f25", "f26", "f27", "f28", "f29", "f30", "f31"   //
-    };
-    return name[idx];
+MIPSTarget::MIPSTarget() {
+    if(targetMachine.get() == "emulator")
+        mSubTarget = std::make_unique<SimpleSubTarget>();
+    else
+        DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
-*/
-
-class MIPSFrameInfo final : public TargetFrameInfo {
-public:
-};
-
-// MIPS o32
-class MIPSTarget final : public Target {
-    std::unique_ptr<SubTarget> mSubTarget;
-    MIPSDataLayout mDataLayout;
-    MIPSFrameInfo mFrameInfo;
-
-public:
-    explicit MIPSTarget() {
-        if(targetMachine.get() == "emulator")
-            mSubTarget = std::make_unique<SimpleSubTarget>();
-        else
-            DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
-    }
-    const DataLayout& getDataLayout() const noexcept override {
-        return mDataLayout;
-    }
-    const LoweringInfo& getTargetLoweringInfo() const noexcept override {
-        reportNotImplemented();
-    }
-    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        return mFrameInfo;
-    }
-    const SubTarget& getSubTarget() const noexcept override {
-        return *mSubTarget;
-    }
-    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
-};
 
 CMMC_TARGET("mips", MIPSTarget);
-
-void MIPSTarget::emitAssembly(GMIRModule&, std::ostream&) const {}
 
 CMMC_NAMESPACE_END
