@@ -17,10 +17,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
+// local register allocator
+
 static void simpleAllocate(GMIRFunction& mfunc, Function& func, const Target& target) {
-    // auto& frameInfo = target.getTargetFrameInfo();
-    // auto usage =
-    //    frameInfo.emitPrologue(mfunc.basicblocks.front(), func.getType()->as<FunctionType>(), func.getCallingConvention());
     CMMC_UNUSED(mfunc);
     CMMC_UNUSED(func);
     CMMC_UNUSED(target);

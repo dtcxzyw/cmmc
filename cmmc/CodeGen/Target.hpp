@@ -32,7 +32,7 @@ public:
     virtual ~Target() = default;
 
     virtual const DataLayout& getDataLayout() const noexcept = 0;
-    virtual const LoweringVisitor& getTargetLoweringVisitor() const noexcept = 0;
+    virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
     virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;

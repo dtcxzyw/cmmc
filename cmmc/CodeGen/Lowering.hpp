@@ -64,9 +64,9 @@ public:
     Value* queryRoot(Value* val) const;
 };
 
-class LoweringVisitor {
+class LoweringInfo {
 public:
-    virtual ~LoweringVisitor() = default;
+    virtual ~LoweringInfo() = default;
     virtual Operand getZeroImpl(LoweringContext& ctx, const Type* type) const = 0;
     virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
     virtual String getOperand(const Operand& operand) const = 0;

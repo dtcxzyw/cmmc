@@ -97,18 +97,18 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         return false;
                                     };
                                     if(valid()) {
-                                        if(copy.dst.addressSpace == AddressSpace::Stack)
+                                        if(copy.dst.addressSpace == TACAddressSpace::Stack)
                                             out << '*';
                                         printOperand(out, copy.dst);
                                         out << " := ";
 
-                                        if(copy.src.addressSpace == AddressSpace::Stack)
+                                        if(copy.src.addressSpace == TACAddressSpace::Stack)
                                             out << '*';
                                         printOperand(out, copy.src);
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
-                                     if(constant.dst.addressSpace == AddressSpace::Stack)
+                                     if(constant.dst.addressSpace == TACAddressSpace::Stack)
                                          out << '*';
                                      printOperand(out, constant.dst);
                                      out << " := #" << std::get<intmax_t>(constant.constant);

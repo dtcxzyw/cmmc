@@ -30,7 +30,6 @@ struct GMIRSymbol;
 class Target;
 struct TemporaryPools;
 
-// TODO: recompute?
 struct AddressSpace {
     static constexpr uint32_t VirtualReg = 0;
     static constexpr uint32_t Constant = 1;

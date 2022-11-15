@@ -38,7 +38,7 @@ Operand LoweringContext::getZero(const Type* type) {
     const auto iter = mZeros.find(type);
     if(iter != mZeros.cend())
         return iter->second;
-    const auto zero = mModule.target.getTargetLoweringVisitor().getZeroImpl(*this, type);
+    const auto zero = mModule.target.getTargetLoweringInfo().getZeroImpl(*this, type);
     return mZeros.emplace(type, zero).first->second;
 }
 
@@ -132,13 +132,13 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
 
     auto& target = machineModule.target;
 
-    auto& visitor = target.getTargetLoweringVisitor();
+    auto& info = target.getTargetLoweringInfo();
 
     for(auto block : func->blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
         for(auto inst : block->instructions()) {
-            visitor.lowerInst(inst, ctx);
+            info.lowerInst(inst, ctx);
         }
     }
 }
@@ -272,22 +272,23 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
         // TODO: types/ops/constants/calls
         // Stage 3: peephole opt
         subTarget.peepholeOpt(mfunc);
-        // Stage 4: basic-block-level DAG scheduling
+        // Stage 4: pre-RA scheduling
+        // TODO: recompute to reduce register pressure
         schedule(mfunc, target);
         // Stage 5: register allocation
+        assignRegisters(mfunc, *func, target);  // vr -> GPR/FPR/Stack, clean up self-assign insts
         std::cerr << ".global " << symbol->symbol;
         dumpFunc(mfunc);
         std::cerr << "================" << std::endl;
-        assignRegisters(mfunc, *func, target);  // vr -> GPR/FPR/Stack, clean up self-assign insts
         // Stage 6: legalize stack objects
         allocateStackObjects(mfunc, target);  // stack -> sp
-        // Stage 7: post scheduling
+        // Stage 7: post-RA scheduling
         schedule(mfunc, target);
         // Stage 8: post peephole opt
         subTarget.postPeepholeOpt(mfunc);
         // Stage 9: code layout opt
         optimizeBlockLayout(mfunc, target);
-        // Stage 10: remove unreachable block/unused label
+        // Stage 10: remove unreachable block/continuous goto/unused label
         // TODO
     }
     // Stage 11: global code layout opt
@@ -304,7 +305,7 @@ std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassMan
     return machineModule;
 }
 
-void LoweringVisitor::lowerInst(Instruction* inst, LoweringContext& ctx) const {
+void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
     switch(inst->getInstID()) {
         case InstructionID::Add:
             [[fallthrough]];
@@ -416,7 +417,7 @@ void LoweringVisitor::lowerInst(Instruction* inst, LoweringContext& ctx) const {
             reportUnreachable();
     }
 }
-void LoweringVisitor::lower(BinaryInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::Add:
@@ -461,7 +462,7 @@ void LoweringVisitor::lower(BinaryInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<BinaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(CompareInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::FCmp:
@@ -479,7 +480,7 @@ void LoweringVisitor::lower(CompareInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CompareMInst>(id, inst->getOp(), ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(UnaryInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::Neg:
@@ -495,17 +496,17 @@ void LoweringVisitor::lower(UnaryInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<UnaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(CastInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
     CMMC_UNUSED(inst);
     CMMC_UNUSED(ctx);
     reportNotImplemented();
 }
-void LoweringVisitor::lower(LoadInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0);
     ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(StoreInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0);
 }
 static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
@@ -519,7 +520,7 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
 }
-void LoweringVisitor::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
     const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
         // bnez %cond, false_label
         const auto falsePrepareBlock = ctx.addBlockAfter();
@@ -551,10 +552,10 @@ void LoweringVisitor::lower(ConditionalBranchInst* inst, LoweringContext& ctx) c
         emitCondBranch(cond, ctx.getZero(IntegerType::get(1)), GMIRInstID::SCmp, CompareOp::NotEqual);
     }
 }
-void LoweringVisitor::lower(UnreachableInst*, LoweringContext& ctx) const {
+void LoweringInfo::lower(UnreachableInst*, LoweringContext& ctx) const {
     ctx.emitInst<UnreachableMInst>();
 }
-void LoweringVisitor::lower(SelectInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     // c = x ? y : z;
     // ->
     // c = z;
@@ -570,20 +571,22 @@ void LoweringVisitor::lower(SelectInst* inst, LoweringContext& ctx) const {
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);
 }
-void LoweringVisitor::lower(StackAllocInst* inst, LoweringContext& ctx) const {
-    const auto addr = ctx.getAllocationPool(AddressSpace::Stack).allocate(inst->getType());
+void LoweringInfo::lower(StackAllocInst* inst, LoweringContext& ctx) const {
+    auto& pool = ctx.getAllocationPool(AddressSpace::Stack);
+    const auto addr = pool.allocate(inst->getType());
+    pool.getMetadata(addr) = inst;
     ctx.addOperand(inst, addr);
 }
-void LoweringVisitor::lower(GetElementPtrInst*, LoweringContext&) const {
+void LoweringInfo::lower(GetElementPtrInst*, LoweringContext&) const {
     reportNotImplemented();
 }
-void LoweringVisitor::lower(PtrCastInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(PtrCastInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
-void LoweringVisitor::lower(PtrToIntInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(PtrToIntInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
-void LoweringVisitor::lower(IntToPtrInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(IntToPtrInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
 

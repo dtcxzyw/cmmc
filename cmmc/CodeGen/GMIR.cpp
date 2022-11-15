@@ -23,9 +23,9 @@
 CMMC_NAMESPACE_BEGIN
 void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                           const std::unordered_map<const GMIRBasicBlock*, String>& blockMap, const TemporaryPools& pools) const {
-    auto& loweringVisitor = target.getTargetLoweringVisitor();
+    auto& loweringInfo = target.getTargetLoweringInfo();
     auto dumpOperand = [&](const Operand& operand) {
-        out << loweringVisitor.getOperand(operand);
+        out << loweringInfo.getOperand(operand);
         if(operand.addressSpace == AddressSpace::Constant) {
             out << '[';
             const auto cv = static_cast<ConstantValue*>(pools.pools[AddressSpace::Constant].getMetadata(operand));
@@ -178,7 +178,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  dumpOperand(inst.rhs);
                              },
                              [&](const ArithmeticIntrinsicMInst& inst) {
-                                 out << "ISA." << loweringVisitor.getIntrinsicName(inst.intrinsicID) << ' ';
+                                 out << "ISA." << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
                                  dumpOperand(inst.dst);
                                  for(auto& op : inst.src)
                                      if(op == unusedOperand) {
@@ -232,7 +232,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  }
                              },
                              [&](const ControlFlowIntrinsicMInst& inst) {
-                                 out << "ISA." << loweringVisitor.getIntrinsicName(inst.intrinsicID) << ' ';
+                                 out << "ISA." << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
                                  dumpOperand(inst.dst);
                                  out << ' ';
                                  dumpOperand(inst.src);
@@ -248,9 +248,9 @@ void GMIRFunction::dump(std::ostream& out, const Target& target) const {
     for(auto& block : mBasicBlocks)
         blockMap[&block] = base.withID(idx++);
     out << " # Function" << std::endl;
-    auto& visitor = target.getTargetLoweringVisitor();
+    auto& info = target.getTargetLoweringInfo();
     for(auto& param : mParameters)
-        out << "Param " << visitor.getOperand(param) << std::endl;
+        out << "Param " << info.getOperand(param) << std::endl;
     for(auto& block : mBasicBlocks)
         block.dump(out, target, blockMap, mPools);
 }

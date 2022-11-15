@@ -45,11 +45,11 @@ class TACFrameInfo final : public TargetFrameInfo {
 public:
 };
 
-class TACLoweringVisitor final : public LoweringVisitor {
+class TACLoweringInfo final : public LoweringInfo {
     String mUnused, mGPR, mConstant, mStack, mVReg;
 
 public:
-    TACLoweringVisitor();
+    TACLoweringInfo();
     Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
     String getOperand(const Operand& operand) const override;
     std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
@@ -67,7 +67,7 @@ public:
 class TACTarget final : public Target {
     TACSubTarget mSubTarget;
     TACDataLayout mDataLayout;
-    TACLoweringVisitor mLowerVisitor;
+    TACLoweringInfo mLowerVisitor;
     TACFrameInfo mFrameInfo;
 
 public:
@@ -75,7 +75,7 @@ public:
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TACLoweringVisitor& getTargetLoweringVisitor() const noexcept override {
+    const TACLoweringInfo& getTargetLoweringInfo() const noexcept override {
         return mLowerVisitor;
     }
     const TargetFrameInfo& getTargetFrameInfo() const noexcept override {

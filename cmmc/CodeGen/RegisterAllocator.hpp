@@ -22,30 +22,16 @@
 
 CMMC_NAMESPACE_BEGIN
 
-struct TargetVirtualRegisterInStack final {
-    std::unordered_map<uint32_t, std::vector<bool>> allocatedMap;
-
-    void markUsed(uint32_t bytes, uint32_t idx);
-    void markDiscarded(uint32_t bytes, uint32_t idx);
-    uint32_t getFreeRegister(uint32_t bytes, uint32_t src);
-};
-
 class TargetRegisterUsage {
-    TargetVirtualRegisterInStack mStack;
-
 public:
     virtual ~TargetRegisterUsage() = default;
     virtual uint32_t classCount() const noexcept = 0;
-    virtual void emitMigration(uint32_t src, uint32_t srcIdx, uint32_t dst, uint32_t dstIdx) const = 0;
     virtual void estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
-    virtual void markUsed(uint32_t src, uint32_t idx) = 0;
-    virtual void markDiscarded(uint32_t src, uint32_t idx) = 0;
-    virtual uint32_t getFreeRegister(uint32_t src) = 0;
-    TargetVirtualRegisterInStack& getStack() noexcept {
-        return mStack;
-    }
+    virtual void markAsUsed(const Operand& operand) = 0;
+    virtual void markAsDiscarded(const Operand& operand) = 0;
+    virtual Operand getFreeRegister(uint32_t src) = 0;
 
-    virtual std::unique_ptr<TargetRegisterUsage> clone() const = 0;
+    virtual std::unique_ptr<TargetRegisterUsage> merge(const TargetRegisterUsage& rhs) const = 0;
 };
 
 class Function;

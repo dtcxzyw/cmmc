@@ -19,7 +19,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Operand TACLoweringVisitor::getZeroImpl(LoweringContext& ctx, const Type* type) const {
+Operand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zero = pool.allocate(type);
     if(type->isInteger())
@@ -28,10 +28,10 @@ Operand TACLoweringVisitor::getZeroImpl(LoweringContext& ctx, const Type* type) 
         reportUnreachable();
     return zero;
 }
-TACLoweringVisitor::TACLoweringVisitor()
+TACLoweringInfo::TACLoweringInfo()
     : mUnused{ String::get("unused") }, mGPR{ String::get("v") }, mConstant{ String::get("c") }, mStack{ String::get("m") },
       mVReg{ String::get("vr") } {}
-String TACLoweringVisitor::getOperand(const Operand& operand) const {
+String TACLoweringInfo::getOperand(const Operand& operand) const {
     if(operand == unusedOperand)
         return mUnused;
     switch(operand.addressSpace) {
@@ -47,7 +47,7 @@ String TACLoweringVisitor::getOperand(const Operand& operand) const {
             reportUnreachable();
     }
 }
-std::string_view TACLoweringVisitor::getIntrinsicName(uint32_t intrinsicID) const {
+std::string_view TACLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
     switch(static_cast<TACIntrinsic>(intrinsicID)) {
         case TACIntrinsic::Read:
             return "read";
@@ -59,10 +59,10 @@ std::string_view TACLoweringVisitor::getIntrinsicName(uint32_t intrinsicID) cons
             reportUnreachable();
     }
 }
-void TACLoweringVisitor::lower(ReturnInst* inst, LoweringContext& ctx) const {
+void TACLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<RetMInst>(inst->operands().empty() ? ctx.getZero(IntegerType::get(32)) : ctx.mapOperand(inst->getOperand(0)));
 }
-void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) const {
+void TACLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const {
     auto callee = inst->operands().back();
     if(auto func = dynamic_cast<Function*>(callee)) {
         if(func->blocks().empty()) {
@@ -90,7 +90,7 @@ void TACLoweringVisitor::lower(FunctionCallInst* inst, LoweringContext& ctx) con
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
-void TACLoweringVisitor::lower(FMAInst*, LoweringContext&) const {
+void TACLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     DiagnosticsContext::get().attach<Reason>("FMA is not supported by TAC").reportFatal();
 }
 
