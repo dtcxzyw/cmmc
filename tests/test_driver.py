@@ -65,11 +65,13 @@ def spl_semantic(src):
             ref_content += line
     is_error = ref_content != ""
     if out.returncode == 0 and not is_error:
-        return True
-    elif out.returncode != 0 and is_error:
-        if len(out.stdout) == 0 and len(out.stderr) == 0:
+        if len(out.stdout) == 0 or len(out.stderr) != 0:
             return False
         return True
+    elif out.returncode != 0 and is_error:
+        if len(out.stdout) != 0:
+            return False
+        return ref_content == out.stderr
     return False
 
 

@@ -45,6 +45,11 @@ public:
         select<T>().pop_back();
     }
 
+    template <typename T>
+    auto& current() {
+        return select<T>().back();
+    }
+
     template <typename T, typename... Args>
     [[nodiscard]] DiagnosticsContext& attach(Args&&... args) {
         mAttachments.push_back([payload = T{ std::forward<Args>(args)... }](std::ostream& out) { out << payload; });

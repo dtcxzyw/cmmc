@@ -125,19 +125,19 @@ ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
 Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType($2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(castLoc(@1), $2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { $2, TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 | STRUCT ID LC DefList error %prec FAKE_ERR { CMMC_MISS_RC(@$); }
 | STRUCT TYPE error { CMMC_BAD_STRUCT(@$); }
 ;
 /* declarator */
-VarDec: ID { $$ = { $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
+VarDec: ID { $$ = { castLoc(@1), $1, ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
 | VarDec LB INT RB { $$ = $1; $$.arraySize.push_back(CMMC_INT(@3, $3, 32U, true)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
 | VarDec LB INT error %prec FAKE_ERR { CMMC_MISS_RB(@$); }
 | ERR {}
 ;
-FunDec: ID LP VarList RP { $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
-| ID LP RP { $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
+FunDec: ID LP VarList RP { $$.loc = castLoc(@1); $$.symbol = $1; $$.args = $3; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
+| ID LP RP { $$.loc = castLoc(@1); $$.symbol = $1; CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
 | ID LP VarList error %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 | ID LP error %prec FAKE_ERR { CMMC_MISS_RP(@$); }
 ;
@@ -219,8 +219,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | MINUS Exp %prec UMINUS { $$ = CMMC_UNARY_OP(@1, Neg, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | NOT Exp { $$ = CMMC_UNARY_OP(@1, LogicalNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
 | BNOT Exp { CMMC_NEED_EXTENSION(@$, BitwiseNot); $$ = CMMC_UNARY_OP(@1, BitwiseNot, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2); }
-| ID LP Args RP { $$ = CMMC_CALL(@2, CMMC_ID(@1, $1), $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
-| ID LP RP { $$ = CMMC_CALL(@2, CMMC_ID(@1, $1), ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| ID LP Args RP { $$ = CMMC_CALL(@2, CMMC_FUNC_ID(@1, $1), $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
+| ID LP RP { $$ = CMMC_CALL(@2, CMMC_FUNC_ID(@1, $1), ExprPack{}); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { $$ = CMMC_STRUCT_INDEX(@3, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | ID { $$ = CMMC_ID(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }

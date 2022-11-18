@@ -121,7 +121,7 @@ public:
     void addFunctionDef(FunctionDefinition def);
     void addGlobalDef(const TypeRef& typeDef, const VarList& varList);
     void addOpaqueType(const TypeRef&);
-    void addStructType(String typeName, VarDefList list);
+    void addStructType(const SourceLocation& loc, String typeName, VarDefList list);
     yy::location& location() noexcept;
     bool complete() const noexcept;
     bool shouldRecordHierarchy() const noexcept;

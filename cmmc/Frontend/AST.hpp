@@ -49,6 +49,7 @@ struct QualifiedType final {
 };
 
 struct NamedVar final {
+    SourceLocation loc;
     String name;
     ArraySize arraySize;
     Expr* initialValue;
@@ -83,6 +84,7 @@ struct FunctionDeclaration final {
 };
 
 struct StructDefinition final {
+    SourceLocation location;
     String name;
     VarDefList list;
 
@@ -291,9 +293,11 @@ public:
 
 class IdentifierExpr final : public Expr {
     String mIdentifier;
+    IdentifierUsageHint mUsageHint;
 
 public:
-    IdentifierExpr(const SourceLocation& location, const String& str) : Expr{ location }, mIdentifier{ str } {}
+    IdentifierExpr(const SourceLocation& location, const String& str, IdentifierUsageHint usageHint)
+        : Expr{ location }, mIdentifier{ str }, mUsageHint{ usageHint } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 

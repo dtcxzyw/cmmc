@@ -120,16 +120,16 @@ QualifiedSpecifier: Specifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, Qualifi
 Specifier: TYPE { $$ = { std::move($1), TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(castLoc(@1), std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
 | STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
-VarDec: ID { $$ = { std::move($1), ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
+VarDec: ID { $$ = { castLoc(@1), std::move($1), ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
 | VarDec LB Exp RB { $$ = std::move($1); $$.arraySize.push_back(std::move($3)); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3, @4); }
 | VarDec LB RB { $$ = std::move($1); $$.arraySize.push_back(nullptr); CMMC_NONTERMINAL(@$, VarDec, @1, @2, @3); }
 ;
-FunDec: ID LP VarList RP { $$.symbol = std::move($1); $$.args = std::move($3); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
-| ID LP RP { $$.symbol = std::move($1); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
+FunDec: ID LP VarList RP { $$.loc = castLoc(@1); $$.symbol = std::move($1); $$.args = std::move($3); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3, @4); }
+| ID LP RP { $$.loc = castLoc(@1); $$.symbol = std::move($1); CMMC_NONTERMINAL(@$, FunDec, @1, @2, @3); }
 ;
 VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, VarList, @1, @2, @3); }
 | ParamDec { $$ = { std::move($1) }; CMMC_NONTERMINAL(@$, VarList, @1); }

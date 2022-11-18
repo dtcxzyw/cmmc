@@ -30,6 +30,8 @@
 
 CMMC_NAMESPACE_BEGIN
 
+enum class IdentifierUsageHint { Unknown, Function };
+
 class Expr;
 enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
@@ -73,6 +75,9 @@ struct FunctionCallInfo final {
     Qualifier retQualifier;
 };
 
+enum class ConversionUsage { Assignment, Condition, FunctionCall, Initialization, Index, Size, ReturnValue, Implicit };
+enum class AsLValueUsage { Assignment, GetAddress, SelfIncDec };
+
 class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
@@ -95,18 +100,18 @@ public:
         return mModule;
     }
     Value* booleanToInt(Value* value);
-    Value* convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier);
+    Value* convertTo(Value* value, const Type* type, Qualifier srcQualifier, Qualifier dstQualifier, ConversionUsage usage);
     std::pair<Value*, Qualifier> getRValue(const QualifiedValue& value);
     std::pair<Value*, Qualifier> getRValue(Expr* expr);
-    Value* getRValue(Expr* expr, const Type* type, Qualifier dstQualifier);
-    std::pair<Value*, Qualifier> getLValue(Expr* expr);
-    Value* getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier);
+    Value* getRValue(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage);
+    std::pair<Value*, Qualifier> getLValue(Expr* expr, AsLValueUsage usage);
+    Value* getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage);
     void pushScope();
     void popScope();
     void addIdentifier(String identifier, QualifiedValue value);
     void addIdentifier(String identifier, const StructType* type);
     void addConstant(Value* address, Value* val);
-    QualifiedValue lookupIdentifier(const String& identifier);
+    QualifiedValue lookupIdentifier(const String& identifier, IdentifierUsageHint hint);
     const Type* getType(const String& type, TypeLookupSpace space, const ArraySize& arraySize);
 
     void addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info);

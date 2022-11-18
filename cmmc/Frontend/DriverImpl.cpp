@@ -196,8 +196,8 @@ void DriverImpl::addGlobalDef(const TypeRef& typeDef, const VarList& varList) {
 void DriverImpl::addOpaqueType(const TypeRef&) {
     // TODO
 }
-void DriverImpl::addStructType(String typeName, VarDefList list) {
-    mDefs.push_back(StructDefinition{ std::move(typeName), std::move(list) });
+void DriverImpl::addStructType(const SourceLocation& loc, String typeName, VarDefList list) {
+    mDefs.push_back(StructDefinition{ loc, std::move(typeName), std::move(list) });
 }
 yy::location& DriverImpl::location() noexcept {
     return mLocation;
