@@ -211,18 +211,13 @@ size_t StructType::getAlignment(const DataLayout& dataLayout) const noexcept {
         maxAlignment = std::max(maxAlignment, field.type->getAlignment(dataLayout));
     return maxAlignment;
 }
-struct InvalidField final {
-    String structName;
-    String fieldName;
-    friend void operator<<(std::ostream& out, const InvalidField& field) {
-        out << "invalid field \"" << field.fieldName << "\" for struct " << field.structName << std::endl;
-    }
-};
+
 ConstantOffset* StructType::getOffset(const String& fieldName) const {
     for(uint32_t idx = 0; idx < mFields.size(); ++idx)
         if(mFields[idx].fieldName == fieldName)
             return make<ConstantOffset>(this, idx);
-    DiagnosticsContext::get().attach<InvalidField>(mName, fieldName).reportFatal();
+
+    return nullptr;
 }
 struct InvalidOffset final {
     const StructType* thisStruct;
@@ -288,6 +283,23 @@ const Type* ArrayType::getScalarType() const noexcept {
     if(mElementType->isArray())
         return mElementType->as<ArrayType>()->getScalarType();
     return mElementType;
+}
+
+bool InvalidType::isSame(const Type* rhs) const {
+    return rhs->isInvalid();
+}
+void InvalidType::dumpName(std::ostream& out) const {
+    out << "???";
+}
+const InvalidType* InvalidType::get() {
+    static const InvalidType invalid;
+    return &invalid;
+}
+size_t InvalidType::getSize(const DataLayout&) const noexcept {
+    reportUnreachable();
+}
+size_t InvalidType::getAlignment(const DataLayout&) const noexcept {
+    reportUnreachable();
 }
 
 CMMC_NAMESPACE_END

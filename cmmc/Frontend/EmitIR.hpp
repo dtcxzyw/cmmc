@@ -92,10 +92,26 @@ class EmitContext final : public IRBuilder {
     const Type* mInteger;
     const Type* mFloat;
     const Type* mChar;
+    bool mIsInvalid = false;
+    Value *mInvalid, *mInvalidPtr;
 
 public:
     explicit EmitContext(Module* module);
 
+    void markInvalid() noexcept {
+        mIsInvalid = true;
+    }
+    Value* getInvalidLValue() noexcept {
+        mIsInvalid = true;
+        return mInvalidPtr;
+    }
+    Value* getInvalidRValue() noexcept {
+        mIsInvalid = true;
+        return mInvalid;
+    }
+    bool invalid() const noexcept {
+        return mIsInvalid;
+    }
     Module* getModule() const noexcept {
         return mModule;
     }

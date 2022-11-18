@@ -48,6 +48,9 @@ public:
     virtual bool isConstant() const noexcept {
         return false;
     }
+    virtual bool isUndefined() const noexcept {
+        return false;
+    }
     virtual bool isInstruction() const noexcept {
         return false;
     }

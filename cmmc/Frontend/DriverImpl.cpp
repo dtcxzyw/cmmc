@@ -16,6 +16,7 @@
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cstdlib>
 #include <iostream>
 
 namespace std {  // NOTICE: we need ADL
@@ -117,6 +118,12 @@ void DriverImpl::emit(Module& module) {
     for(auto& def : mDefs) {
         std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
     }
+
+    // Check invalid values
+    if(ctx.invalid() && mStrictMode) {
+        std::exit(EXIT_FAILURE);
+    }
+
     if(hideSymbol.get()) {
         using namespace std::string_view_literals;
         for(auto global : module.globals()) {

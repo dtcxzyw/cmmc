@@ -67,6 +67,9 @@ public:
     virtual bool isFunction() const noexcept {
         return false;
     }
+    virtual bool isInvalid() const noexcept {
+        return false;
+    }
     bool isPrimitive() const noexcept {
         return !isArray() && !isStruct();
     }
@@ -92,6 +95,18 @@ public:
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static const VoidType* get();
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+};
+
+class InvalidType final : public Type {
+public:
+    bool isInvalid() const noexcept override {
+        return true;
+    }
+    bool isSame(const Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
+    static const InvalidType* get();
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
@@ -209,6 +224,9 @@ public:
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
     const Vector<StructField>& fields() const noexcept {
         return mFields;
+    }
+    String name() const noexcept {
+        return mName;
     }
     ConstantOffset* getOffset(const String& fieldName) const;
     const Type* getFieldType(const ConstantOffset* offset) const;

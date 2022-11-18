@@ -125,6 +125,9 @@ public:
     explicit UndefinedValue(const Type* type) : ConstantValue{ type } {
         assert(!type->isVoid());
     }
+    bool isUndefined() const noexcept override {
+        return true;
+    }
     void dump(std::ostream& out) const override;
     bool isEqual(ConstantValue* rhs) const override;
     size_t hash() const override;

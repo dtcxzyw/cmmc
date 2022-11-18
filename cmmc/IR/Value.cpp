@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/FlyWeight.hpp>
 #include <cmmc/Support/Options.hpp>
 
 CMMC_NAMESPACE_BEGIN
