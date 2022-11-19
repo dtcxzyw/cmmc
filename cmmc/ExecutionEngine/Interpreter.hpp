@@ -30,7 +30,8 @@ enum class SimulationFailReason {
     UnknownError,             //
     UnsupportedTarget,        //
     Undefined,                //
-    Unreachable
+    Unreachable,              //
+    NoEntry
 };
 
 // NOTE: don't use std::iostream since it doesn't support hexfloat parsing in libc++

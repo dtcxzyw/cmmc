@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#ifdef CMMC_THREADING
 #include <cmmc/Support/Threading.hpp>
 #include <cstdint>
 #include <functional>
@@ -100,3 +101,4 @@ Scheduler& Scheduler::get() {
 }
 
 CMMC_NAMESPACE_END
+#endif

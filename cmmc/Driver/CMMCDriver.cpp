@@ -61,13 +61,15 @@ CMMC_INIT_OPTIONS_END
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
     Interpreter interpreter{ 60'000'000'000ULL, 2ULL << 30, 1024 };
-    Function* func;
+    Function* func = nullptr;
     for(auto global : module.globals())
         if(global->isFunction() && global->getSymbol() == "main") {
             func = global->as<Function>();
             break;
         }
-    return interpreter.execute(module, *func, {}, ctx);
+    if(func)
+        return interpreter.execute(module, *func, {}, ctx);
+    return SimulationFailReason::NoEntry;
 }
 
 CMMC_NAMESPACE_END

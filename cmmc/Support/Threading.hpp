@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#ifdef CMMC_THREADING
 #include <atomic>
 #include <cmmc/Config.hpp>
 #include <cstdint>
@@ -72,3 +73,4 @@ public:
 };
 
 CMMC_NAMESPACE_END
+#endif

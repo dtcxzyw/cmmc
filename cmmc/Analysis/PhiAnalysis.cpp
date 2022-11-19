@@ -63,6 +63,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
             if(auto phiPtr = std::get_if<PhiNode>(&val)) {
                 auto& phi = *phiPtr;
                 for(auto [from, inst, value] : phi) {
+                    CMMC_UNUSED(from);
                     CMMC_UNUSED(inst);
                     std::cerr << " [";
                     inst->getBlock()->dumpAsTarget(std::cerr);
@@ -86,6 +87,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
 
         // merge phi node
         for(auto& [arg, val] : ret) {
+            CMMC_UNUSED(arg);
             if(auto phiPtr = std::get_if<PhiNode>(&val)) {
                 auto& phi = *phiPtr;
                 if(phi.empty())

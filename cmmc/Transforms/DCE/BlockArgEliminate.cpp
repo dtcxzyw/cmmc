@@ -129,6 +129,7 @@ public:
             todo.pop();
             auto block = arg->getBlock();
             for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
+                CMMC_UNUSED(predBlock);
                 const auto src = predTarget->getOperand(arg);
                 if(auto srcArg = dynamic_cast<BlockArgument*>(src)) {
                     if(usedArgs.insert(srcArg).second)
