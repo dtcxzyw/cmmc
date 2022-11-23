@@ -24,11 +24,18 @@
 CMMC_NAMESPACE_BEGIN
 
 class DominateAnalysisResult final {
-    std::unordered_map<Block*, std::unordered_set<Block*>> mDomSet;
+    Block* mEntry;
+    std::unordered_map<Block*, std::unordered_set<Block*>> mDomTree;
+    std::unordered_map<Block*, size_t> mDDep;
+    std::unordered_map<Block*, std::vector<Block*>> mDFa;
 
 public:
-    explicit DominateAnalysisResult(std::unordered_map<Block*, std::unordered_set<Block*>> domSet)
-        : mDomSet{ std::move(domSet) } {}
+    explicit DominateAnalysisResult(
+            std::tuple<Block*, std::unordered_map<Block*, std::unordered_set<Block*>>,
+            std::unordered_map<Block*, size_t>, std::unordered_map<Block*, std::vector<Block*>>>
+            dtree
+        ) : mEntry(std::move(std::get<0>(dtree))), mDomTree(std::move(std::get<1>(dtree))),
+            mDDep(std::move(std::get<2>(dtree))), mDFa(std::move(std::get<3>(dtree))) {}
     // a dominates b
     bool dominate(Block* a, Block* b) const;
 };
