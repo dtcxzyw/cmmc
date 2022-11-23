@@ -159,6 +159,18 @@ def sysy_test_noopt(src: str):
     return sysy_test(src, opt=False)
 
 
+def spl_ref(src):
+    subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
+                         src+".ir", src], stderr=subprocess.DEVNULL)
+    return True
+
+
+def sysy_ref(src):
+    subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-H', '-o',
+                         src+".ir", src], stderr=subprocess.DEVNULL)
+    return True
+
+
 skip_list = ["29_long_line.sy"]  # FIXME: speed up PHI analysis
 
 
@@ -168,7 +180,7 @@ def test(name, path, filter, tester):
     test_set = []
     for r, ds, fs in os.walk(path):
         for f in fs:
-            if f.endswith(filter):
+            if f.endswith(filter) and not f.endswith(".spl.ir") and not f.endswith(".sy.ir"):
                 skip = False
                 for name in skip_list:
                     if name in f:
@@ -242,6 +254,10 @@ res.append(test("SysY opt final_performance", tests_path +
                 "/SysY2022/final_performance", ".sy", sysy_opt))
 res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
 res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
+
+test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+
 end = time.perf_counter()
 
 total_tests = 0

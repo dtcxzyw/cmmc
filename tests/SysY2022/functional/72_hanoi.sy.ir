@@ -1,0 +1,41 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @hanoi(i32, i32, i32, i32) -> void { NoMemoryRead NoMemoryWrite } {
+^dummy_entry(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    ubr [ ^entry i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
+^entry(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i1 %0 = scmp eq i32 %arg, i32 1;
+    cbr i1 %0, [ ^entry1 i32 %arg1, i32 %arg3 ], [ ^indirect i32 %arg2, i32 %arg3, i32 %arg1, i32 %arg ];
+^indirect(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i32 %0 = sub i32 %arg3, i32 1;
+    call (i32, i32, i32, i32) -> void @hanoi(i32 %0, i32 %arg2, i32 %arg1, i32 %arg);
+    call (i32) -> void @putint(i32 %arg2);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 %arg1);
+    call (i32) -> void @putch(i32 44);
+    call (i32) -> void @putch(i32 32);
+    ubr [ ^entry i32 %0, i32 %arg, i32 %arg2, i32 %arg1 ];
+^entry1(i32 %arg, i32 %arg1):
+    call (i32) -> void @putint(i32 %arg);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 %arg1);
+    call (i32) -> void @putch(i32 44);
+    call (i32) -> void @putch(i32 32);
+    ret;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp gt i32 %0, i32 0;
+    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b ];
+^while.body(i32 %arg):
+    i32 %0 = call () -> i32 @getint();
+    call (i32, i32, i32, i32) -> void @hanoi(i32 %0, i32 1, i32 2, i32 3);
+    call (i32) -> void @putch(i32 10);
+    i32 %1 = sub i32 %arg, i32 1;
+    i1 %2 = scmp gt i32 %1, i32 0;
+    cbr i1 %2, [ ^while.body i32 %1 ], [ ^b ];
+^b():
+    ret i32 0;
+}

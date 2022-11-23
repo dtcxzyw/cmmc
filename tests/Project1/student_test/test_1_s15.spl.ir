@@ -1,0 +1,14 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @test_12011543_5(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i1 %0 = scmp gt i32 %arg, i32 0;
+    cbr i1 %0, [ ^while.body i32 %arg, i32 1 ], [ ^b i32 1 ];
+^while.body(i32 %arg, i32 %arg1):
+    i32 %0 = mul i32 %arg1, i32 %arg;
+    i32 %1 = sub i32 %arg, i32 1;
+    i1 %2 = scmp gt i32 %1, i32 0;
+    cbr i1 %2, [ ^while.body i32 %1, i32 %0 ], [ ^b i32 %0 ];
+^b(i32 %arg):
+    ret i32 %arg;
+}

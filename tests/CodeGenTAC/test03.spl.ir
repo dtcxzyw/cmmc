@@ -1,0 +1,28 @@
+struct Operands {i32 o1, i32 o2};
+
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @add(struct Operands*) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+^entry(struct Operands* %arg):
+    struct Operands* %temp = alloc struct Operands;
+    struct Operands %0 = load struct Operands* %arg;
+    store struct Operands* %temp with struct Operands %0;
+    i32* %1 = getelementptr &(struct Operands* %temp)[i32 0].o1;
+    i32 %2 = load i32* %1;
+    i32* %3 = getelementptr &(struct Operands* %temp)[i32 0].o2;
+    i32 %4 = load i32* %3;
+    i32 %5 = add i32 %2, i32 %4;
+    ret i32 %5;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    struct Operands* %temp = alloc struct Operands;
+    store struct Operands* %temp with struct Operands undef;
+    i32* %0 = getelementptr &(struct Operands* %temp)[i32 0].o1;
+    i32 %1 = load i32* %0;
+    i32* %2 = getelementptr &(struct Operands* %temp)[i32 0].o2;
+    i32 %3 = load i32* %2;
+    i32 %4 = add i32 %1, i32 %3;
+    call (i32) -> void @write(i32 %4);
+    ret i32 0;
+}

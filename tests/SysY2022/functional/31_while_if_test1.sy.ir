@@ -1,0 +1,26 @@
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry():
+    ubr [ ^while.body i32 0 ];
+^while.body(i32 %arg):
+    i1 %0 = scmp eq i32 %arg, i32 5;
+    cbr i1 %0, [ ^if.then i32 %arg ], [ ^indirect i32 %arg, i32 %arg ];
+^if.then(i32 %arg):
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 100;
+    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b i32 25 ];
+^indirect(i32 %arg, i32 %arg1):
+    i1 %0 = scmp eq i32 %arg, i32 10;
+    cbr i1 %0, [ ^if.then1 i32 %arg1 ], [ ^if.else i32 %arg1 ];
+^if.then1(i32 %arg):
+    i32 %0 = add i32 %arg, i32 1;
+    ubr [ ^while.header i32 %0, i32 %0, i32 42 ];
+^if.else(i32 %arg):
+    i32 %0 = mul i32 %arg, i32 2;
+    i32 %1 = add i32 %arg, i32 1;
+    ubr [ ^while.header i32 %1, i32 %1, i32 %0 ];
+^b(i32 %arg):
+    ret i32 %arg;
+^while.header(i32 %arg, i32 %arg1, i32 %arg2):
+    i1 %0 = scmp lt i32 %arg, i32 100;
+    cbr i1 %0, [ ^while.body i32 %arg1 ], [ ^b i32 %arg2 ];
+}

@@ -1,0 +1,25 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @hanoi(i32, i32, i32, i32) -> i32 { NoMemoryRead NoMemoryWrite } {
+^entry(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i1 %0 = scmp eq i32 %arg, i32 1;
+    cbr i1 %0, [ ^indirect i32 %arg3, i32 %arg1 ], [ ^indirect1 i32 %arg2, i32 %arg3, i32 %arg1, i32 %arg ];
+^indirect(i32 %arg, i32 %arg1):
+    i32 %0 = mul i32 %arg1, i32 1000000;
+    i32 %1 = add i32 %0, i32 %arg;
+    call (i32) -> void @write(i32 %1);
+    ret i32 0;
+^indirect1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i32 %0 = sub i32 %arg3, i32 1;
+    i32 %1 = call (i32, i32, i32, i32) -> i32 @hanoi(i32 %0, i32 %arg2, i32 %arg1, i32 %arg);
+    i32 %2 = mul i32 %arg2, i32 1000000;
+    i32 %3 = add i32 %2, i32 %arg1;
+    call (i32) -> void @write(i32 %3);
+    i32 %4 = call (i32, i32, i32, i32) -> i32 @hanoi(i32 %0, i32 %arg, i32 %arg2, i32 %arg1);
+    ret i32 0;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call (i32, i32, i32, i32) -> i32 @hanoi(i32 3, i32 1, i32 2, i32 3);
+    ret i32 0;
+}

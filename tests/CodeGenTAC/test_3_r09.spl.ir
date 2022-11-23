@@ -1,0 +1,174 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @mod(i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg, i32 %arg1):
+    i32 %0 = sdiv i32 %arg, i32 %arg1;
+    i32 %1 = mul i32 %0, i32 %arg1;
+    i32 %2 = sub i32 %arg, i32 %1;
+    ret i32 %2;
+}
+func @power(i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg1, i32 1;
+    i32 %1 = sub i32 %0, i32 %arg1;
+    i1 %2 = scmp gt i32 %arg1, i32 0;
+    cbr i1 %2, [ ^while.body i32 %arg, i32 %arg1, i32 %1 ], [ ^b i32 %1 ];
+^while.body(i32 %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = mul i32 %arg2, i32 %arg;
+    i32 %1 = mul i32 2, i32 %arg1;
+    i32 %2 = sub i32 %1, i32 %arg1;
+    i32 %3 = sub i32 %2, i32 1;
+    i1 %4 = scmp gt i32 %3, i32 0;
+    cbr i1 %4, [ ^while.body i32 %arg, i32 %3, i32 %0 ], [ ^b i32 %0 ];
+^b(i32 %arg):
+    ret i32 %arg;
+}
+func @getNumDigits(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i1 %0 = scmp lt i32 %arg, i32 0;
+    cbr i1 %0, [ ^if.then ], [ ^while.header i32 %arg, i32 %arg ];
+^while.header(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg, i32 0;
+    cbr i1 %0, [ ^while.body i32 %arg1, i32 0 ], [ ^b i32 0 ];
+^if.then():
+    ret i32 -1;
+^while.body(i32 %arg, i32 %arg1):
+    i32 %0 = sdiv i32 %arg, i32 10;
+    i32 %1 = add i32 %arg1, i32 1;
+    i1 %2 = scmp gt i32 %0, i32 0;
+    cbr i1 %2, [ ^while.body i32 %0, i32 %1 ], [ ^b i32 %1 ];
+^b(i32 %arg):
+    ret i32 %arg;
+}
+func @isNarcissistic(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i1 %0 = scmp lt i32 %arg, i32 0;
+    cbr i1 %0, [ ^entry1 i32 -1, i32 %arg, i32 %arg ], [ ^while.header i32 %arg, i32 %arg, i32 %arg, i32 %arg ];
+^entry1(i32 %arg, i32 %arg1, i32 %arg2):
+    i1 %0 = scmp gt i32 %arg1, i32 0;
+    cbr i1 %0, [ ^while.body i32 %arg2, i32 %arg, i32 0, i32 %arg1 ], [ ^b i32 %arg2, i32 0 ];
+^while.header(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i1 %0 = scmp gt i32 %arg, i32 0;
+    cbr i1 %0, [ ^while.body1 i32 %arg1, i32 %arg2, i32 %arg3, i32 0 ], [ ^entry1 i32 0, i32 %arg1, i32 %arg2 ];
+^while.body(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i32 %0 = sdiv i32 %arg3, i32 10;
+    i32 %1 = mul i32 %0, i32 10;
+    i32 %2 = sub i32 %arg3, i32 %1;
+    i32 %3 = sub i32 %arg3, i32 %2;
+    i32 %4 = sdiv i32 %3, i32 10;
+    i32 %5 = add i32 %arg1, i32 1;
+    i32 %6 = sub i32 %5, i32 %arg1;
+    i1 %7 = scmp gt i32 %arg1, i32 0;
+    cbr i1 %7, [ ^while.body2 i32 %arg2, i32 %4, i32 %arg, i32 %arg1, i32 %4, i32 %2, i32 %arg1, i32 %6 ], [ ^b1 i32 %arg2, i32 %4, i32 %arg, i32 %arg1, i32 %4, i32 %6 ];
+^while.body1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i32 %0 = sdiv i32 %arg2, i32 10;
+    i32 %1 = add i32 %arg3, i32 1;
+    i1 %2 = scmp gt i32 %0, i32 0;
+    cbr i1 %2, [ ^while.body1 i32 %arg, i32 %arg1, i32 %0, i32 %1 ], [ ^entry1 i32 %1, i32 %arg, i32 %arg1 ];
+^b(i32 %arg, i32 %arg1):
+    i1 %0 = scmp eq i32 %arg1, i32 %arg;
+    cbr i1 %0, [ ^if.then ], [ ^if.else ];
+^while.body2(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
+    i32 %0 = mul i32 %arg7, i32 %arg5;
+    i32 %1 = mul i32 2, i32 %arg6;
+    i32 %2 = sub i32 %1, i32 %arg6;
+    i32 %3 = sub i32 %2, i32 1;
+    i1 %4 = scmp gt i32 %3, i32 0;
+    cbr i1 %4, [ ^while.body2 i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %3, i32 %0 ], [ ^b1 i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %0 ];
+^b1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
+    i32 %0 = add i32 %arg, i32 %arg5;
+    i1 %1 = scmp gt i32 %arg1, i32 0;
+    cbr i1 %1, [ ^while.body i32 %arg2, i32 %arg3, i32 %0, i32 %arg4 ], [ ^b i32 %arg2, i32 %0 ];
+^if.then():
+    ret i32 1;
+^if.else():
+    ret i32 0;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32* %count = alloc i32;
+    store i32* %count with i32 0;
+    i32* %i = alloc i32;
+    store i32* %i with i32 300;
+    ubr [ ^while.body i32* %count, i32* %i, i32 300 ];
+^while.body(i32* %arg, i32* %arg1, i32 %arg2):
+    i32* %numDigits4 = alloc i32;
+    i32* %number3 = alloc i32;
+    store i32* %number3 with i32 %arg2;
+    i32* %ret3 = alloc i32;
+    store i32* %ret3 with i32 0;
+    i1 %0 = scmp lt i32 %arg2, i32 0;
+    cbr i1 %0, [ ^entry1 i32 -1, i32 %arg2, i32* %numDigits4, i32 %arg2, i32* %arg1, i32* %arg, i32 %arg2 ], [ ^while.header i32* %ret3, i32* %number3, i32 %arg2, i32 %arg2, i32* %numDigits4, i32 %arg2, i32* %arg1, i32* %arg, i32 %arg2, i32 %arg2 ];
+^entry1(i32 %arg, i32 %arg1, i32* %arg2, i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6):
+    store i32* %arg2 with i32 %arg;
+    i32* %sum4 = alloc i32;
+    store i32* %sum4 with i32 0;
+    i32* %n4 = alloc i32;
+    store i32* %n4 with i32 %arg1;
+    i1 %0 = scmp gt i32 %arg1, i32 0;
+    cbr i1 %0, [ ^while.body1 i32* %sum4, i32* %n4, i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg, i32 0, i32 %arg1 ], [ ^b i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 0 ];
+^while.header(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9):
+    i1 %0 = scmp gt i32 %arg2, i32 0;
+    cbr i1 %0, [ ^while.body2 i32* %arg, i32* %arg1, i32* %arg4, i32 %arg3, i32* %arg7, i32* %arg6, i32 %arg5, i32 %arg8, i32 %arg9, i32 0 ], [ ^entry1 i32 0, i32 %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8 ];
+^while.body1(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
+    i32 %0 = sdiv i32 %arg8, i32 10;
+    i32 %1 = mul i32 %0, i32 10;
+    i32 %2 = sub i32 %arg8, i32 %1;
+    i32 %3 = sub i32 %arg8, i32 %2;
+    i32 %4 = sdiv i32 %3, i32 10;
+    store i32* %arg1 with i32 %4;
+    i32* %p1 = alloc i32;
+    store i32* %p1 with i32 %arg6;
+    i32* %ret1 = alloc i32;
+    i32 %5 = add i32 %arg6, i32 1;
+    i32 %6 = sub i32 %5, i32 %arg6;
+    store i32* %ret1 with i32 %6;
+    i1 %7 = scmp gt i32 %arg6, i32 0;
+    cbr i1 %7, [ ^while.body3 i32* %p1, i32* %ret1, i32 %arg7, i32* %arg, i32* %arg1, i32 %4, i32* %arg4, i32* %arg3, i32 %arg2, i32 %arg5, i32 %arg6, i32 %4, i32 %2, i32 %arg6, i32 %6 ], [ ^b1 i32 %arg7, i32* %arg, i32* %arg1, i32 %4, i32* %arg4, i32* %arg3, i32 %arg2, i32 %arg5, i32 %arg6, i32 %4, i32 %6 ];
+^while.body2(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
+    i32 %0 = sdiv i32 %arg8, i32 10;
+    store i32* %arg1 with i32 %0;
+    i32 %1 = add i32 %arg9, i32 1;
+    store i32* %arg with i32 %1;
+    i1 %2 = scmp gt i32 %0, i32 0;
+    cbr i1 %2, [ ^while.body2 i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %0, i32 %1 ], [ ^entry1 i32 %1, i32 %arg3, i32* %arg2, i32 %arg6, i32* %arg5, i32* %arg4, i32 %arg7 ];
+^b(i32 %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
+    i1 %0 = scmp eq i32 %arg4, i32 %arg3;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = scmp eq i32 %1, i32 1;
+    cbr i1 %2, [ ^indirect i32* %arg2, i32* %arg1, i32 %arg, i32 %arg ], [ ^b2 i32* %arg2, i32* %arg1, i32 %arg ];
+^while.body3(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %arg14):
+    i32 %0 = mul i32 %arg14, i32 %arg12;
+    store i32* %arg1 with i32 %0;
+    i32 %1 = mul i32 2, i32 %arg13;
+    i32 %2 = sub i32 %1, i32 %arg13;
+    i32 %3 = sub i32 %2, i32 1;
+    store i32* %arg with i32 %3;
+    i1 %4 = scmp gt i32 %3, i32 0;
+    cbr i1 %4, [ ^while.body3 i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %3, i32 %0 ], [ ^b1 i32 %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %0 ];
+^indirect(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
+    call (i32) -> void @write(i32 %arg2);
+    i32 %0 = load i32* %arg;
+    i32 %1 = add i32 %0, i32 1;
+    store i32* %arg with i32 %1;
+    i32 %2 = add i32 %arg3, i32 1;
+    store i32* %arg1 with i32 %2;
+    i1 %3 = scmp lt i32 %2, i32 500;
+    cbr i1 %3, [ ^while.body i32* %arg, i32* %arg1, i32 %2 ], [ ^b3 i32 %1 ];
+^b1(i32 %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
+    i32 %0 = add i32 %arg, i32 %arg10;
+    store i32* %arg1 with i32 %0;
+    i1 %1 = scmp gt i32 %arg3, i32 0;
+    cbr i1 %1, [ ^while.body1 i32* %arg1, i32* %arg2, i32 %arg6, i32* %arg5, i32* %arg4, i32 %arg7, i32 %arg8, i32 %0, i32 %arg9 ], [ ^b i32 %arg6, i32* %arg5, i32* %arg4, i32 %arg7, i32 %0 ];
+^b2(i32* %arg, i32* %arg1, i32 %arg2):
+    i32 %0 = add i32 %arg2, i32 1;
+    store i32* %arg1 with i32 %0;
+    i1 %1 = scmp lt i32 %0, i32 500;
+    cbr i1 %1, [ ^while.body i32* %arg, i32* %arg1, i32 %0 ], [ ^indirect1 i32* %arg ];
+^indirect1(i32* %arg):
+    i32 %0 = load i32* %arg;
+    ubr [ ^b3 i32 %0 ];
+^b3(i32 %arg):
+    call (i32) -> void @write(i32 %arg);
+    ret i32 %arg;
+}

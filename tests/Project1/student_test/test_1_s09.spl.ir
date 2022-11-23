@@ -1,0 +1,10 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @abaaba(i32) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+^entry(i32 %arg):
+    unreachable;
+}
+func @sleeeeeeeep() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+^entry():
+    unreachable;
+}

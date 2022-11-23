@@ -1,0 +1,66 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @fibFP(f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+^entry(f32 %arg):
+    i1 %0 = fcmp lt f32 %arg, f32 2;
+    cbr i1 %0, [ ^if.then ], [ ^indirect f32 %arg ];
+^if.then():
+    ret f32 1;
+^indirect(f32 %arg):
+    f32 %0 = fsub f32 %arg, f32 2;
+    f32 %1 = call (f32) -> f32 @fibFP(f32 %0);
+    f32 %2 = fsub f32 %arg, f32 1;
+    f32 %3 = call (f32) -> f32 @fibFP(f32 %2);
+    f32 %4 = fadd f32 %1, f32 %3;
+    ret f32 %4;
+}
+internal func @takFP(f32, f32, f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+^dummy_entry(f32 %arg, f32 %arg1, f32 %arg2):
+    i1 %0 = fcmp lt f32 %arg1, f32 %arg;
+    cbr i1 %0, [ ^indirect f32 %arg2, f32 %arg1, f32 %arg ], [ ^indirect1 f32 %arg2 ];
+^indirect(f32 %arg, f32 %arg1, f32 %arg2):
+    f32 %0 = fsub f32 %arg2, f32 1;
+    f32 %1 = call (f32, f32, f32) -> f32 @takFP(f32 %0, f32 %arg1, f32 %arg);
+    f32 %2 = fsub f32 %arg1, f32 1;
+    f32 %3 = call (f32, f32, f32) -> f32 @takFP(f32 %2, f32 %arg, f32 %arg2);
+    f32 %4 = fsub f32 %arg, f32 1;
+    f32 %5 = call (f32, f32, f32) -> f32 @takFP(f32 %4, f32 %arg2, f32 %arg1);
+    i1 %6 = fcmp lt f32 %3, f32 %1;
+    cbr i1 %6, [ ^indirect f32 %5, f32 %3, f32 %1 ], [ ^indirect1 f32 %5 ];
+^indirect1(f32 %arg):
+    ret f32 %arg;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @starttime(i32 19);
+    i32 %0 = call () -> i32 @getint();
+    f32 %1 = call () -> f32 @getfloat();
+    f32 %2 = call () -> f32 @getfloat();
+    f32 %3 = call () -> f32 @getfloat();
+    f32 %4 = s2f i32 %0 to f32;
+    f32 %5 = fadd f32 28, f32 %4;
+    f32 %6 = call (f32) -> f32 @fibFP(f32 %5);
+    f32 %7 = call (f32, f32, f32) -> f32 @takFP(f32 %1, f32 %2, f32 %3);
+    i1 %8 = fcmp eq f32 %6, f32 6.3246e+07;
+    cbr i1 %8, [ ^if.then f32 %7 ], [ ^if.else f32 %7 ];
+^if.then(f32 %arg):
+    call (i32) -> void @putch(i32 112);
+    i1 %0 = fcmp eq f32 %arg, f32 2;
+    cbr i1 %0, [ ^if.then1 ], [ ^if.else1 ];
+^if.else(f32 %arg):
+    call (i32) -> void @putint(i32 1);
+    i1 %0 = fcmp eq f32 %arg, f32 2;
+    cbr i1 %0, [ ^if.then1 ], [ ^if.else1 ];
+^if.then1():
+    call (i32) -> void @putch(i32 112);
+    call (i32) -> void @stoptime(i32 40);
+    ret i32 0;
+^if.else1():
+    call (i32) -> void @putint(i32 1);
+    call (i32) -> void @stoptime(i32 40);
+    ret i32 0;
+}

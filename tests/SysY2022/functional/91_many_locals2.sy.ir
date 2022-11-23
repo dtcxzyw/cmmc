@@ -1,0 +1,48 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp eq i32 %0, i32 5;
+    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b i32 %0 ];
+^while.body(i32 %arg):
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp eq i32 %0, i32 5;
+    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b i32 %0 ];
+^b(i32 %arg):
+    call (i32) -> void @putint(i32 0);
+    call (i32) -> void @putint(i32 1);
+    call (i32) -> void @putint(i32 2);
+    call (i32) -> void @putint(i32 3);
+    call (i32) -> void @putint(i32 4);
+    call (i32) -> void @putint(i32 5);
+    call (i32) -> void @putint(i32 6);
+    call (i32) -> void @putint(i32 7);
+    call (i32) -> void @putint(i32 8);
+    call (i32) -> void @putint(i32 9);
+    call (i32) -> void @putint(i32 10);
+    call (i32) -> void @putint(i32 11);
+    call (i32) -> void @putint(i32 12);
+    call (i32) -> void @putint(i32 13);
+    call (i32) -> void @putint(i32 14);
+    call (i32) -> void @putint(i32 15);
+    call (i32) -> void @putint(i32 16);
+    call (i32) -> void @putint(i32 17);
+    call (i32) -> void @putint(i32 18);
+    call (i32) -> void @putint(i32 19);
+    call (i32) -> void @putint(i32 20);
+    call (i32) -> void @putint(i32 21);
+    call (i32) -> void @putint(i32 22);
+    call (i32) -> void @putint(i32 23);
+    call (i32) -> void @putint(i32 24);
+    call (i32) -> void @putint(i32 25);
+    call (i32) -> void @putint(i32 26);
+    call (i32) -> void @putint(i32 27);
+    call (i32) -> void @putint(i32 28);
+    call (i32) -> void @putint(i32 29);
+    call (i32) -> void @putch(i32 10);
+    call (i32) -> void @putint(i32 %arg);
+    call (i32) -> void @putch(i32 10);
+    ret i32 25;
+}

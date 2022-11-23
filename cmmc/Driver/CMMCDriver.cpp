@@ -60,7 +60,7 @@ executeInput.setName("execute-input", 'e').setDesc("execute with built-in interp
 CMMC_INIT_OPTIONS_END
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
-    Interpreter interpreter{ 60'000'000'000ULL, 2ULL << 30, 1024 };
+    Interpreter interpreter{ 120'000'000'000ULL, 2ULL << 30, 1024 };
     Function* func = nullptr;
     for(auto global : module.globals())
         if(global->isFunction() && global->getSymbol() == "main") {

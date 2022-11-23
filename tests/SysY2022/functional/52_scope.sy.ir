@@ -1,0 +1,12 @@
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    ubr [ ^b i32 0 ];
+^b(i32 %arg):
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 100;
+    cbr i1 %1, [ ^b i32 %0 ], [ ^if.then ];
+^if.then():
+    call (i32) -> void @putint(i32 1);
+    ret i32 0;
+}

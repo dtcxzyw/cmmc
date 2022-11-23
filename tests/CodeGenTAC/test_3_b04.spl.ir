@@ -1,0 +1,10 @@
+struct Student {i32 ID, i32 score};
+
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @write(i32 2);
+    call (i32) -> void @write(i32 70);
+    ret i32 0;
+}

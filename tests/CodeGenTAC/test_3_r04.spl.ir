@@ -1,0 +1,23 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @sqr(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i32 %0 = mul i32 %arg, i32 %arg;
+    ret i32 %0;
+}
+func @cbc(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i32 %0 = mul i32 %arg, i32 %arg;
+    i32 %1 = mul i32 %0, i32 %arg;
+    ret i32 %1;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @read();
+    call (i32) -> void @write(i32 %0);
+    i32 %1 = mul i32 %0, i32 %0;
+    call (i32) -> void @write(i32 %1);
+    i32 %2 = mul i32 %1, i32 %0;
+    call (i32) -> void @write(i32 %2);
+    ret i32 0;
+}

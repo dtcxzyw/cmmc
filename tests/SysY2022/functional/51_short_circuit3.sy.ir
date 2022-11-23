@@ -1,0 +1,27 @@
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @putint(i32 0);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 3);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 0);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 3);
+    call (i32) -> void @putch(i32 10);
+    call (i32) -> void @putint(i32 3);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 3);
+    call (i32) -> void @putch(i32 10);
+    call (i32) -> void @putch(i32 65);
+    call (i32) -> void @putch(i32 68);
+    call (i32) -> void @putch(i32 70);
+    call (i32) -> void @putch(i32 10);
+    call (i32) -> void @putch(i32 67);
+    call (i32) -> void @putch(i32 73);
+    call (i32) -> void @putch(i32 74);
+    call (i32) -> void @putch(i32 75);
+    call (i32) -> void @putch(i32 10);
+    ret i32 0;
+}

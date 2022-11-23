@@ -1,0 +1,6 @@
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @putint(i32 4);
+    ret i32 0;
+}

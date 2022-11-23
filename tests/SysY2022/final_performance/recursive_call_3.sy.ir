@@ -1,0 +1,34 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @func(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+^entry(f32 %arg, i32 %arg1):
+    i1 %0 = scmp lt i32 %arg1, i32 0;
+    cbr i1 %0, [ ^if.then ], [ ^indirect f32 %arg, i32 %arg1 ];
+^if.then():
+    ret f32 0;
+^indirect(f32 %arg, i32 %arg1):
+    i32 %0 = sub i32 %arg1, i32 1;
+    f32 %1 = call (f32, i32) -> f32 @func(f32 %arg, i32 %0);
+    f32 %2 = fadd f32 %arg, f32 %1;
+    f32 %3 = call (f32, i32) -> f32 @func(f32 %2, i32 %0);
+    f32 %4 = fsub f32 %2, f32 %3;
+    ret f32 %4;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @starttime(i32 21);
+    i32 %0 = call () -> i32 @getint();
+    f32 %1 = call (f32, i32) -> f32 @func(f32 1.001, i32 %0);
+    f32 %2 = fsub f32 %1, f32 1.001;
+    i1 %3 = fcmp eq f32 %2, f32 0;
+    cbr i1 %3, [ ^if.then ], [ ^b ];
+^if.then():
+    call (i32) -> void @putch(i32 112);
+    call (i32) -> void @stoptime(i32 32);
+    ret i32 0;
+^b():
+    call (i32) -> void @stoptime(i32 32);
+    ret i32 0;
+}

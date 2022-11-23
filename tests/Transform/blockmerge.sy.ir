@@ -1,0 +1,8 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp neq i32 %0, i32 0;
+    i32 %2 = select i1 %1 ? i32 4 : i32 0;
+    ret i32 %2;
+}

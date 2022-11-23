@@ -1,0 +1,33 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    call (i32) -> void @starttime(i32 1016);
+    i1 %1 = scmp lt i32 0, i32 %0;
+    cbr i1 %1, [ ^while.body i32 %0, i32 0, i32 0, i32 0, i32 0 ], [ ^b i32 0 ];
+^while.body(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
+    i32 %0 = mul i32 %arg2, i32 2;
+    i32 %1 = sdiv i32 %0, i32 2;
+    i32 %2 = mul i32 1000, i32 %1;
+    i32 %3 = sdiv i32 %2, i32 1000;
+    i32 %4 = add i32 %arg3, i32 %3;
+    i32 %5 = add i32 %arg4, i32 1;
+    i1 %6 = scmp lt i32 %5, i32 300;
+    cbr i1 %6, [ ^while.body i32 %arg, i32 %arg1, i32 %arg2, i32 %4, i32 %5 ], [ ^b1 i32 %arg, i32 %arg1, i32 %arg2, i32 %4 ];
+^b(i32 %arg):
+    call (i32) -> void @stoptime(i32 1031);
+    call (i32) -> void @putint(i32 %arg);
+    call (i32) -> void @putch(i32 10);
+    ret i32 0;
+^b1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i32 %0 = sdiv i32 %arg3, i32 300;
+    i32 %1 = add i32 %arg1, i32 %0;
+    i32 %2 = srem i32 %1, i32 2147385347;
+    i32 %3 = add i32 %arg2, i32 1;
+    i1 %4 = scmp lt i32 %3, i32 %arg;
+    cbr i1 %4, [ ^while.body i32 %arg, i32 %2, i32 %3, i32 0, i32 0 ], [ ^b i32 %2 ];
+}

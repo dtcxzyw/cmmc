@@ -1,0 +1,14 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i32 %1 = call () -> i32 @getint();
+    i1 %2 = scmp eq i32 %0, i32 %1;
+    cbr i1 %2, [ ^indirect i32 %0 ], [ ^b ];
+^indirect(i32 %arg):
+    i1 %0 = scmp neq i32 %arg, i32 3;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+^b():
+    ret i32 0;
+}

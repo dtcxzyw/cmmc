@@ -1,0 +1,10 @@
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry():
+    ubr [ ^indirect i32 7, i32 11 ];
+^indirect(i32 %arg, i32 %arg1):
+    i32 %0 = srem i32 %arg, i32 %arg1;
+    i1 %1 = scmp neq i32 %0, i32 0;
+    cbr i1 %1, [ ^indirect i32 %arg1, i32 %0 ], [ ^entry1 i32 %arg1 ];
+^entry1(i32 %arg):
+    ret i32 %arg;
+}

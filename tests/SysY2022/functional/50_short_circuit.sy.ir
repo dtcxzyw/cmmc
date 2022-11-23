@@ -1,0 +1,53 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp gt i32 %0, i32 10;
+    cbr i1 %1, [ ^indirect i32 %0 ], [ ^b ];
+^indirect(i32 %arg):
+    call (i32) -> void @putint(i32 %arg);
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp gt i32 %0, i32 11;
+    cbr i1 %1, [ ^entry1 i32 %0, i32 %arg ], [ ^b1 i32 %arg ];
+^b():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp gt i32 %0, i32 11;
+    cbr i1 %1, [ ^entry1 i32 %0, i32 0 ], [ ^b1 i32 0 ];
+^entry1(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg1, i32 %arg;
+    call (i32) -> void @putint(i32 %0);
+    i32 %1 = call () -> i32 @getint();
+    i1 %2 = scmp le i32 %1, i32 99;
+    cbr i1 %2, [ ^b2 i32 %0 ], [ ^entry2 i32 %1, i32 %0 ];
+^b1(i32 %arg):
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp le i32 %0, i32 99;
+    cbr i1 %1, [ ^b2 i32 %arg ], [ ^entry2 i32 %0, i32 %arg ];
+^b2(i32 %arg):
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp le i32 %0, i32 100;
+    cbr i1 %1, [ ^entry4 i32 %arg ], [ ^entry3 i32 %0, i32 %arg ];
+^entry2(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg1, i32 %arg;
+    call (i32) -> void @putint(i32 %0);
+    i32 %1 = call () -> i32 @getint();
+    i1 %2 = scmp le i32 %1, i32 100;
+    cbr i1 %2, [ ^entry4 i32 %0 ], [ ^entry3 i32 %1, i32 %0 ];
+^entry3(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg1, i32 %arg;
+    call (i32) -> void @putint(i32 %0);
+    ubr [ ^entry4 i32 %0 ];
+^entry4(i32 %arg):
+    i32 %0 = add i32 %arg, i32 99;
+    call (i32) -> void @putint(i32 %0);
+    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %2 = xor i1 %1, i1 true;
+    cbr i1 %2, [ ^entry5 i32 %0 ], [ ^b3 ];
+^entry5(i32 %arg):
+    i32 %0 = add i32 %arg, i32 100;
+    call (i32) -> void @putint(i32 %0);
+    ret i32 0;
+^b3():
+    ret i32 0;
+}

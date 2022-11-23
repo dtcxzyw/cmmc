@@ -1,0 +1,74 @@
+struct Worker {i32 id, i32 salary, i32 group};
+struct Group {i32 group_id, [10 * struct Worker] workers, i32 avg_salary};
+
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @calculate_avg(struct Group*) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+^entry(struct Group* %arg):
+    struct Group* %g = alloc struct Group;
+    struct Group %0 = load struct Group* %arg;
+    store struct Group* %g with struct Group %0;
+    ubr [ ^while.body struct Group* %g, i32 0, i32 0 ];
+^while.body(struct Group* %arg, i32 %arg1, i32 %arg2):
+    [10 * struct Worker]* %0 = getelementptr &(struct Group* %arg)[i32 0].workers;
+    struct Worker* %1 = getelementptr &([10 * struct Worker]* %0)[i32 0][i32 %arg2];
+    i32* %2 = getelementptr &(struct Worker* %1)[i32 0].salary;
+    i32 %3 = load i32* %2;
+    i32 %4 = add i32 %arg1, i32 %3;
+    i32 %5 = add i32 %arg2, i32 1;
+    i1 %6 = scmp lt i32 %5, i32 10;
+    cbr i1 %6, [ ^while.body struct Group* %arg, i32 %4, i32 %5 ], [ ^b i32 %4 ];
+^b(i32 %arg):
+    i32 %0 = sdiv i32 %arg, i32 10;
+    ret i32 %0;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    [5 * struct Group]* %company = alloc [5 * struct Group];
+    ubr [ ^while.body [5 * struct Group]* %company, i32 0, i32 0 ];
+^while.body([5 * struct Group]* %arg, i32 %arg1, i32 %arg2):
+    struct Group* %0 = getelementptr &([5 * struct Group]* %arg)[i32 0][i32 %arg1];
+    i32* %1 = getelementptr &(struct Group* %0)[i32 0].group_id;
+    store i32* %1 with i32 %arg1;
+    ubr [ ^while.body1 [5 * struct Group]* %arg, i32 %arg1, i32 0, i32 %arg2 ];
+^while.body1([5 * struct Group]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    struct Group* %0 = getelementptr &([5 * struct Group]* %arg)[i32 0][i32 %arg1];
+    [10 * struct Worker]* %1 = getelementptr &(struct Group* %0)[i32 0].workers;
+    struct Worker* %2 = getelementptr &([10 * struct Worker]* %1)[i32 0][i32 %arg2];
+    i32* %3 = getelementptr &(struct Worker* %2)[i32 0].salary;
+    i32 %4 = mul i32 %arg1, i32 100;
+    i32 %5 = add i32 %4, i32 3000;
+    i32 %6 = mul i32 %arg2, i32 150;
+    i32 %7 = add i32 %5, i32 %6;
+    store i32* %3 with i32 %7;
+    i32 %8 = add i32 %arg2, i32 1;
+    i1 %9 = scmp lt i32 %8, i32 10;
+    cbr i1 %9, [ ^while.body1 [5 * struct Group]* %arg, i32 %arg1, i32 %8, i32 %arg3 ], [ ^b [5 * struct Group]* %arg, i32 %arg1, i32 %arg3 ];
+^b([5 * struct Group]* %arg, i32 %arg1, i32 %arg2):
+    struct Group* %0 = getelementptr &([5 * struct Group]* %arg)[i32 0][i32 %arg1];
+    i32* %1 = getelementptr &(struct Group* %0)[i32 0].avg_salary;
+    struct Group* %g = alloc struct Group;
+    struct Group %2 = load struct Group* %0;
+    store struct Group* %g with struct Group %2;
+    ubr [ ^while.body2 struct Group* %g, i32* %1, i32 %arg1, [5 * struct Group]* %arg, i32 %arg2, i32 0, i32 0 ];
+^while.body2(struct Group* %arg, i32* %arg1, i32 %arg2, [5 * struct Group]* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
+    [10 * struct Worker]* %0 = getelementptr &(struct Group* %arg)[i32 0].workers;
+    struct Worker* %1 = getelementptr &([10 * struct Worker]* %0)[i32 0][i32 %arg6];
+    i32* %2 = getelementptr &(struct Worker* %1)[i32 0].salary;
+    i32 %3 = load i32* %2;
+    i32 %4 = add i32 %arg5, i32 %3;
+    i32 %5 = add i32 %arg6, i32 1;
+    i1 %6 = scmp lt i32 %5, i32 10;
+    cbr i1 %6, [ ^while.body2 struct Group* %arg, i32* %arg1, i32 %arg2, [5 * struct Group]* %arg3, i32 %arg4, i32 %4, i32 %5 ], [ ^b1 i32* %arg1, i32 %arg2, [5 * struct Group]* %arg3, i32 %arg4, i32 %4 ];
+^b1(i32* %arg, i32 %arg1, [5 * struct Group]* %arg2, i32 %arg3, i32 %arg4):
+    i32 %0 = sdiv i32 %arg4, i32 10;
+    store i32* %arg with i32 %0;
+    i32 %1 = add i32 %arg3, i32 %0;
+    i32 %2 = add i32 %arg1, i32 1;
+    i1 %3 = scmp lt i32 %2, i32 5;
+    cbr i1 %3, [ ^while.body [5 * struct Group]* %arg2, i32 %2, i32 %1 ], [ ^b2 i32 %1 ];
+^b2(i32 %arg):
+    i32 %0 = sdiv i32 %arg, i32 5;
+    call (i32) -> void @write(i32 %0);
+    ret i32 0;
+}

@@ -1,0 +1,29 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    [100 * i32]* %arr = alloc [100 * i32];
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp neq i32 %0, i32 0;
+    cbr i1 %1, [ ^while.body [100 * i32]* %arr, i32 0 ], [ ^indirect [100 * i32]* %arr, i32 0 ];
+^while.body([100 * i32]* %arg, i32 %arg1):
+    i32* %0 = getelementptr &([100 * i32]* %arg)[i32 0][i32 %arg1];
+    i32 %1 = call () -> i32 @getint();
+    store i32* %0 with i32 %1;
+    i32 %2 = add i32 %arg1, i32 1;
+    i32 %3 = call () -> i32 @getint();
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4, [ ^while.body [100 * i32]* %arg, i32 %2 ], [ ^indirect [100 * i32]* %arg, i32 %2 ];
+^indirect([100 * i32]* %arg, i32 %arg1):
+    i1 %0 = scmp neq i32 %arg1, i32 0;
+    cbr i1 %0, [ ^while.body1 [100 * i32]* %arg, i32 %arg1, i32 0 ], [ ^b i32 0 ];
+^while.body1([100 * i32]* %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = sub i32 %arg1, i32 1;
+    i32* %1 = getelementptr &([100 * i32]* %arg)[i32 0][i32 %0];
+    i32 %2 = load i32* %1;
+    i32 %3 = add i32 %arg2, i32 %2;
+    i1 %4 = scmp neq i32 %0, i32 0;
+    cbr i1 %4, [ ^while.body1 [100 * i32]* %arg, i32 %0, i32 %3 ], [ ^b i32 %3 ];
+^b(i32 %arg):
+    i32 %0 = srem i32 %arg, i32 79;
+    ret i32 %0;
+}

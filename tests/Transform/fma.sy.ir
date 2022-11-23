@@ -1,0 +1,10 @@
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    f32 %0 = call () -> f32 @getfloat();
+    f32 %1 = call () -> f32 @getfloat();
+    f32 %2 = call () -> f32 @getfloat();
+    f32 %3 = ffma f32 %1, f32 %2, f32 %0;
+    i32 %4 = f2s f32 %3 to i32;
+    ret i32 %4;
+}

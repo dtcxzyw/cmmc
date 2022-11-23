@@ -1,0 +1,17 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp neq i32 %0, i32 0;
+    i32 %2 = select i1 %1 ? i32 3 : i32 4;
+    i1 %3 = scmp lt i32 %2, i32 4;
+    cbr i1 %3, [ ^if.then ], [ ^if.else ];
+^if.then():
+    i32 %0 = call () -> i32 @getint();
+    call (i32) -> void @putint(i32 %0);
+    ret i32 0;
+^if.else():
+    call (i32) -> void @putint(i32 0);
+    ret i32 0;
+}

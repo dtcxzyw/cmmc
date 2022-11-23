@@ -1,0 +1,13 @@
+internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    call (i32) -> void @putint(i32 0);
+    ubr [ ^dowhile.body i32 1 ];
+^dowhile.body(i32 %arg):
+    call (i32) -> void @putint(i32 %arg);
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 10;
+    cbr i1 %1, [ ^dowhile.body i32 %0 ], [ ^indirect i32 %0 ];
+^indirect(i32 %arg):
+    ret i32 %arg;
+}
