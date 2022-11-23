@@ -47,10 +47,11 @@ class DominateAnalysisResult final {
 public:
     explicit DominateAnalysisResult(std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap, std::vector<DomTreeNode> domTree);
 
-    const std::vector<Block*>& blocks() {
+    DomTreeNode::NodeIndex getIndex(Block* block) const;
+    const std::vector<Block*>& blocks() const {
         return mOrder;
     }
-    const std::vector<Block*>& reversedBlocks() {
+    const std::vector<Block*>& reversedBlocks() const {
         return mReservedOrder;
     }
 

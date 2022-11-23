@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -47,6 +48,7 @@ bool PointerAddressSpaceAnalysisResult::mustBe(Value* ptr, AddressSpace space) c
 
 PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
+    auto& dom = analysis.get<DominateAnalysis>(func);
     PointerAddressSpaceAnalysisResult result;
 
     while(true) {
@@ -58,7 +60,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                 modified = true;
             }
         };
-        for(auto block : func.blocks()) {
+        for(auto block : dom.blocks()) {
             for(auto arg : block->args()) {
                 if(!arg->getType()->isPointer() || result.isTagged(arg))
                     continue;

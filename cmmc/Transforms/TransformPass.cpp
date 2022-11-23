@@ -293,6 +293,7 @@ public:
     bool run(Module& module, AnalysisPassManager& analysis) const override {
         bool modified = false;
         for(auto global : module.globals()) {
+            // TODO: run in top order of call graph
             if(global->isFunction()) {
                 auto& func = *global->as<Function>();
                 if(func.blocks().empty())

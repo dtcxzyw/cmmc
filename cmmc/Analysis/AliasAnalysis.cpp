@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -134,6 +135,7 @@ static void divide(const std::vector<Instruction*>& gepList, uint32_t& allocateI
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+    auto& dom = analysis.get<DominateAnalysis>(func);
 
     AliasAnalysisResult result;
     uint32_t allocateID = 0;
@@ -166,7 +168,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
 
     std::unordered_set<InheritEdge, EdgeHasher> inheritGraph;
 
-    for(auto block : func.blocks()) {
+    for(auto block : dom.blocks()) {
         const auto argID = ++allocateID;
         for(auto arg : block->args())
             if(arg->getType()->isPointer())

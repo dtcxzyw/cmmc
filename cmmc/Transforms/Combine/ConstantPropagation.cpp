@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -206,10 +207,11 @@ class ConstantPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
         while(true) {
             bool changed = false;
-            for(auto block : func.blocks()) {
+            for(auto block : dom.blocks()) {
                 modified |= reduceConstantBlockArgs(*block, blockArgRef);
                 modified |= runOnBlock(*block);
             }

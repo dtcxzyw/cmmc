@@ -35,6 +35,13 @@ DominateAnalysisResult::DominateAnalysisResult(std::unordered_map<Block*, DomTre
     std::reverse_copy(mOrder.cbegin(), mOrder.cend(), mReservedOrder.begin());
 }
 
+DomTreeNode::NodeIndex DominateAnalysisResult::getIndex(Block* block) const {
+    const auto iter = mDomTreeInvMap.find(block);
+    if(iter != mDomTreeInvMap.cend())
+        return iter->second;
+    return std::numeric_limits<DomTreeNode::NodeIndex>::max();
+}
+
 Block* DominateAnalysisResult::lca(Block* a, Block* b) const {
     const auto lhs = mDomTreeInvMap.find(a);
     const auto rhs = mDomTreeInvMap.find(b);
@@ -70,7 +77,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     const auto& cfg = analysis.get<CFGAnalysis>(func);
     Block* entryBlk = func.entryBlock();
 
-    uint32_t cnt = 0;
+    DomTreeNode::NodeIndex cnt = 0;
     std::unordered_map<Block*, std::unordered_set<Block*>> e, g, tree;
     std::unordered_map<Block*, Block*> fa;
     std::unordered_map<Block*, uint32_t> dfn;
@@ -147,15 +154,15 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     for(auto [u, v] : idom)
         children[v].push_back(u);
 
-    std::unordered_map<Block*, uint32_t> invMap;
+    std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap;
     std::vector<DomTreeNode> domTree;
     domTree.resize(dfn.size());
 
     cnt = 0;
-    constexpr auto invalidNode = std::numeric_limits<uint32_t>::max();
+    constexpr auto invalidNode = std::numeric_limits<DomTreeNode::NodeIndex>::max();
 
-    auto dfs = [&](auto&& self, Block* curBlock, uint32_t p) -> uint32_t {
-        uint32_t u = cnt++;
+    auto dfs = [&](auto&& self, Block* curBlock, DomTreeNode::NodeIndex p) -> DomTreeNode::NodeIndex {
+        const auto u = cnt++;
         invMap[curBlock] = u;
         auto& node = domTree[u];
         node.block = curBlock;
@@ -163,7 +170,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
         node.ancestor[0] = p;
         node.size = 1;
 
-        for(size_t i = 1; i <= DomTreeNode::maxDepth; i++) {
+        for(uint32_t i = 1; i <= DomTreeNode::maxDepth; i++) {
             const auto v = domTree[u].ancestor[i - 1];
             domTree[u].ancestor[i] = (v == invalidNode ? invalidNode : domTree[v].ancestor[i - 1]);
         }
