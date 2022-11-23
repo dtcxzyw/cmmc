@@ -20,23 +20,42 @@
 #include <limits>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
+struct DomTreeNode final {
+    static constexpr uint32_t maxDepth = 20;
+    using NodeIndex = uint32_t;
+
+    NodeIndex ancestor[maxDepth + 1];
+    Block* block;
+
+    NodeIndex depth;
+    NodeIndex size;  // inclusive
+
+    NodeIndex parent() const noexcept {
+        return ancestor[0];
+    }
+};
+
 class DominateAnalysisResult final {
-    Block* mEntry;
-    std::unordered_map<Block*, std::unordered_set<Block*>> mDomTree;
-    std::unordered_map<Block*, size_t> mDDep;
-    std::unordered_map<Block*, std::vector<Block*>> mDFa;
+    std::unordered_map<Block*, DomTreeNode::NodeIndex> mDomTreeInvMap;
+    std::vector<DomTreeNode> mDomTree;
+    std::vector<Block*> mOrder, mReservedOrder;
 
 public:
-    explicit DominateAnalysisResult(
-            std::tuple<Block*, std::unordered_map<Block*, std::unordered_set<Block*>>,
-            std::unordered_map<Block*, size_t>, std::unordered_map<Block*, std::vector<Block*>>>
-            dtree
-        ) : mEntry(std::move(std::get<0>(dtree))), mDomTree(std::move(std::get<1>(dtree))),
-            mDDep(std::move(std::get<2>(dtree))), mDFa(std::move(std::get<3>(dtree))) {}
-    // a dominates b
+    explicit DominateAnalysisResult(std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap, std::vector<DomTreeNode> domTree);
+
+    const std::vector<Block*>& blocks() {
+        return mOrder;
+    }
+    const std::vector<Block*>& reversedBlocks() {
+        return mReservedOrder;
+    }
+
+    Block* lca(Block* a, Block* b) const;
+    // a dominates b?
     bool dominate(Block* a, Block* b) const;
 };
 

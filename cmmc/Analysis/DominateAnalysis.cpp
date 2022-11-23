@@ -12,57 +12,78 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
+#include <algorithm>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cstdint>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <unordered_map>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
-// TODO: Verify implementation, consider Tarjan LCA.
-bool DominateAnalysisResult::dominate(Block* a, Block* b) const {
-    auto lca = [&](Block* x, Block* y) {
-        if(mDDep.at(x) > mDDep.at(y)) std::swap(x, y);
-        size_t diff = mDDep.at(y) - mDDep.at(x);
-        for(size_t i = 0; diff > 0; i++, diff>>=1)
-            if(diff & 1) y = mDFa.at(y)[i];
-        if(x != y) {
-            for(size_t i = 30; i > 0 && x != y; i--)
-                if(mDFa.at(x)[i] != mDFa.at(y)[i])
-                    x = mDFa.at(x)[i], y = mDFa.at(y)[i];
-            x = mDFa.at(x)[0];
-        }
-        return x;
-    };
+DominateAnalysisResult::DominateAnalysisResult(std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap,
+                                               std::vector<DomTreeNode> domTree)
+    : mDomTreeInvMap{ std::move(invMap) }, mDomTree{ std::move(domTree) } {
+    mOrder.reserve(mDomTree.size());
+    for(auto& node : mDomTree)
+        mOrder.push_back(node.block);
 
-    return
-    !(mDDep.count(a) && mDDep.count(b)) ? false
-    : a == b ? false
-    : mDomTree.find(a)->second.count(b) ? true
-    : lca(a, b) == a;
+    mReservedOrder.reserve(mDomTree.size());
+    std::reverse_copy(mOrder.cbegin(), mOrder.cend(), mReservedOrder.begin());
+}
+
+Block* DominateAnalysisResult::lca(Block* a, Block* b) const {
+    const auto lhs = mDomTreeInvMap.find(a);
+    const auto rhs = mDomTreeInvMap.find(b);
+    if(lhs == mDomTreeInvMap.cend() || rhs == mDomTreeInvMap.cend())
+        return nullptr;
+    auto u = lhs->second, v = rhs->second;
+    if(mDomTree[u].depth > mDomTree[v].depth)
+        std::swap(u, v);
+    auto diff = mDomTree[v].depth - mDomTree[u].depth;
+    for(uint32_t i = 0; diff; ++i, diff >>= 1)
+        if(diff & 1)
+            v = mDomTree[v].ancestor[i];
+    if(u != v) {
+        for(auto i = DomTreeNode::maxDepth; i && u != v; --i)
+            if(auto pu = mDomTree[u].ancestor[i], pv = mDomTree[v].ancestor[i]; pu != pv)
+                u = pu, v = pv;
+        u = mDomTree[u].parent();
+    }
+
+    return mDomTree[u].block;
+}
+
+bool DominateAnalysisResult::dominate(Block* a, Block* b) const {
+    const auto lhs = mDomTreeInvMap.find(a);
+    const auto rhs = mDomTreeInvMap.find(b);
+    if(lhs == mDomTreeInvMap.cend() || rhs == mDomTreeInvMap.cend())
+        return false;
+    const auto u = lhs->second, v = rhs->second;
+    return u <= v && v < u + mDomTree[u].size;
 }
 
 DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     const auto& cfg = analysis.get<CFGAnalysis>(func);
     Block* entryBlk = func.entryBlock();
 
-    size_t cnt = 1;
+    uint32_t cnt = 0;
     std::unordered_map<Block*, std::unordered_set<Block*>> e, g, tree;
     std::unordered_map<Block*, Block*> fa;
-    std::unordered_map<Block*, size_t> dfn;
+    std::unordered_map<Block*, uint32_t> dfn;
     std::vector<Block*> dfseq;
     std::unordered_map<Block*, Block*> f;
 
-    auto color = [&](auto&& self, Block* cur, Block* prev) {
+    auto color = [&](auto&& self, Block* cur, Block* parent) {
         assert(cur != nullptr);
         if(dfn.count(cur))
             return;
-        if(prev != nullptr)
-            tree[prev].insert(cur), fa[cur] = prev;
-        dfn[cur] = cnt++;
+        if(parent != nullptr)
+            tree[parent].insert(cur), fa[cur] = parent;
+        dfn[cur] = ++cnt;
         dfseq.push_back(cur);
         for(auto [succBlk, succTgt] : cfg.successors(cur)) {
             CMMC_UNUSED(succTgt);
@@ -74,8 +95,9 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     color(color, entryBlk, nullptr);
 
     std::unordered_map<Block*, Block*> ran, idom, sdom;
-    auto merge = [&](auto&& self, Block* blk){
-        if(f[blk] == blk) return blk;
+    auto merge = [&](auto&& self, Block* blk) {
+        if(f[blk] == blk)
+            return blk;
         Block* res = self(self, f[blk]);
         if(dfn[sdom[ran[f[blk]]]] < dfn[sdom[ran[blk]]])
             ran[blk] = ran[f[blk]];
@@ -84,7 +106,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
 
     std::unordered_map<Block*, std::vector<Block*>> tr;
 
-    for(auto [tblk, dfno] : dfn){
+    for(auto [tblk, dfno] : dfn) {
         CMMC_UNUSED(dfno);
         sdom[tblk] = tblk;
         f[tblk] = ran[tblk] = tblk;
@@ -92,9 +114,11 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
 
     for(auto it = dfseq.rbegin(); it != dfseq.rend(); it++) {
         Block* blk = *it;
-        if(blk == entryBlk) continue;
-        for(Block* fablk : g[blk]){
-            if(!dfn.count(fablk)) continue;
+        if(blk == entryBlk)
+            continue;
+        for(Block* fablk : g[blk]) {
+            if(!dfn.count(fablk))
+                continue;
             merge(merge, fablk);
             if(dfn[sdom[ran[fablk]]] < dfn[sdom[blk]])
                 sdom[blk] = sdom[ran[fablk]];
@@ -104,46 +128,55 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
         blk = fa[blk];
         for(Block* tblk : tr[blk]) {
             merge(merge, tblk);
-            if(blk == sdom[ran[tblk]]) idom[tblk] = blk;
-            else idom[tblk] = ran[tblk];
+            if(blk == sdom[ran[tblk]])
+                idom[tblk] = blk;
+            else
+                idom[tblk] = ran[tblk];
         }
         tr[blk].clear();
     }
     for(Block* blk : dfseq) {
-        if(blk == entryBlk) continue;
+        if(blk == entryBlk)
+            continue;
         if(idom[blk] != sdom[blk])
             idom[blk] = idom[idom[blk]];
     }
 
-    std::unordered_map<Block*, std::unordered_set<Block*>> dtree;
+    std::unordered_map<Block*, std::vector<Block*>> children;
 
-    for(auto [u, v] : idom) {
-        dtree[v].insert(u);
-    }
+    for(auto [u, v] : idom)
+        children[v].push_back(u);
 
-    std::unordered_set<Block*> dVisited;
-    std::unordered_map<Block*, size_t> dDep;
-    std::unordered_map<Block*, std::vector<Block*>> dFa;
-    dDep[entryBlk] = 0;
-    dFa[entryBlk] = { entryBlk };
-    for(size_t i = 1; i < 31; i++)
-        dFa[entryBlk].push_back(dFa[dFa[entryBlk][i-1]][i-1]);
+    std::unordered_map<Block*, uint32_t> invMap;
+    std::vector<DomTreeNode> domTree;
+    domTree.resize(dfn.size());
 
-    auto dColor = [&](auto&& self, Block* cur, Block* prev) {
-        if(dVisited.count(cur))
-            return;
-        if (prev != nullptr) {
-            dFa[cur].push_back(prev);
-            for(size_t i = 1; i < 31; i++)
-                dFa[cur].push_back(dFa[dFa[cur][i-1]][i-1]);
-            dDep[cur] = dDep[prev] + 1;
+    cnt = 0;
+    constexpr auto invalidNode = std::numeric_limits<uint32_t>::max();
+
+    auto dfs = [&](auto&& self, Block* curBlock, uint32_t p) -> uint32_t {
+        uint32_t u = cnt++;
+        invMap[curBlock] = u;
+        auto& node = domTree[u];
+        node.block = curBlock;
+        node.depth = (p == invalidNode ? 0 : domTree[p].depth + 1);
+        node.ancestor[0] = p;
+        node.size = 1;
+
+        for(size_t i = 1; i <= DomTreeNode::maxDepth; i++) {
+            const auto v = domTree[u].ancestor[i - 1];
+            domTree[u].ancestor[i] = (v == invalidNode ? invalidNode : domTree[v].ancestor[i - 1]);
         }
-        for(auto v : dtree[cur]) {
-            self(self, v, cur);
-        }
+
+        if(auto iter = children.find(curBlock); iter != children.cend())
+            for(auto v : iter->second) {
+                const auto child = self(self, v, u);
+                node.size += domTree[child].size;
+            }
+        return u;
     };
 
-    dColor(dColor, entryBlk, nullptr);
+    dfs(dfs, entryBlk, invalidNode);
 
     /*
     func.dump(std::cerr);
@@ -157,7 +190,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
         std::cerr << std::endl;
     }*/
 
-    return DominateAnalysisResult{ std::tuple{entryBlk, dtree, dDep, dFa} };
+    return DominateAnalysisResult{ std::move(invMap), std::move(domTree) };
 }
 
 CMMC_NAMESPACE_END
