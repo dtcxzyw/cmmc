@@ -78,8 +78,10 @@ splc_project1: $(BIN) # Project 1
 	echo "\$$(dirname \$$0)/cmmc -a -o /dev/stdout \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
 splc: $(BIN) # Project 2
-	echo "\$$(dirname \$$0)/cmmc -s -i -o /dev/null \$$1" > $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc -s -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)_ex
+	chmod +x $(SPLC_SHELL)_ex
 
 .PHONY: test
 test: cmmc

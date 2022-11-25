@@ -1,0 +1,46 @@
+struct foo3 {};
+struct foo {
+    int c;
+    int d[10];
+    struct foo2 {
+        int x;
+        int y;
+    } w;
+    struct foo3 a,b[2];
+};
+struct looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogstruct {
+    int looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogfield;
+};
+
+int test(int x[2]) {
+    return x[1];
+}
+struct foo test1(struct foo x[3]) {
+    return x[-0];
+}
+int test2(int x) {
+    return x - 1;
+}
+int test3(struct foo2 x) {
+    return x.x;
+}
+struct foo www[10];
+int loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogfunc(int loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogparam) {}
+int main() {
+    int x;
+    int y;
+    int z[2];
+    struct foo w;
+    struct foo c[3];
+    int loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogvar;
+
+    x = test(z);
+    w.c = (((z[0]))) = (((x))) = test2(test2(test(z)));
+    (((c[(x + z[0])]))) = test1(c);
+    (((c)[(c[0]).d[0]]).w).x = 10;
+    y = (z[0] = z[1]);
+    y = y = y;
+    y = test3(c[0].w);
+
+    return 0;
+}

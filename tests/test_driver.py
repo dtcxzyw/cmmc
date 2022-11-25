@@ -55,9 +55,12 @@ def spl_parse_ext(src):
     return spl_parse(src, strict=False)
 
 
-def spl_semantic(src):
-    out = subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+def spl_semantic(src, strict=True):
+    args = [binary_path,  '-i', '-t', 'tac', '-o', '/dev/stdout', src]
+    if strict:
+        args.insert(-1, '-s')
+    out = subprocess.run(args, capture_output=True, text=True)
+
     ref_content = ""
     ref = src[:-4]+".out"
     with open(ref, mode="r", encoding="utf-8") as f:
@@ -73,6 +76,10 @@ def spl_semantic(src):
             return False
         return ref_content == out.stderr
     return False
+
+
+def spl_semantic_ext(src):
+    return spl_semantic(src, False)
 
 
 def spl_semantic_noref(src):
@@ -160,7 +167,7 @@ def sysy_test_noopt(src: str):
 
 
 def spl_ref(src):
-    subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
+    subprocess.run(args=[binary_path, '-i', '-t', 'tac', '-o',
                          src+".ir", src], stderr=subprocess.DEVNULL)
     return True
 
@@ -230,6 +237,11 @@ res.append(test("SPL parse project1 student", tests_path +
 
 res.append(test("SPL semantic & opt", tests_path +
            "/Semantic", ".spl", spl_semantic))
+res.append(test("SPL parse project2 extra", tests_path +
+           "/Project2/test-ex", ".spl", spl_semantic_ext))
+res.append(test("SPL parse project2 self", tests_path +
+           "/Project2/test", ".spl", spl_semantic))
+
 res.append(test("SPL SPL->TAC sample", tests_path +
            "/TAC2MIPS", ".spl", spl_semantic_noref))
 res.append(test("SPL TAC->IR project3", tests_path +

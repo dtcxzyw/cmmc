@@ -416,6 +416,7 @@ const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& i
                 cur = cur->as<PointerType>()->getPointee();
             } else {
                 DiagnosticsContext::get()
+                    .attach<Reason>("GEP fatal")
                     .attach<TypeAttachment>("cur type", cur)
                     .attach<ValueAttachment>("index", idx)
                     .reportFatal();

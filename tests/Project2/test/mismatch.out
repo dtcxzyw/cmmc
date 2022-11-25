@@ -1,0 +1,13 @@
+Error type 8 at Line 14: incompatiable return type
+Error type 5 at Line 18: unmatching type on both sides of assignment
+Error type 9 at Line 22: invalid argument number for foo, expect 1, got 0
+Error type 9 at Line 23: unmatching type for function call
+Error type 5 at Line 24: unmatching type on both sides of assignment
+Error type 9 at Line 25: unmatching type for function call
+Error type 12 at Line 26: indexing by non-integer
+Error type 12 at Line 27: indexing by non-integer
+Error type 9 at Line 28: unmatching type for function call
+Error type 9 at Line 29: unmatching type for function call
+Error type 6 at Line 30: left side in assignment is rvalue
+Error type 11 at Line 31: invoking non-function variable: x
+Error type 4294967295 at Line 32: unmatching type for cmmc::ConversionUsage::Condition

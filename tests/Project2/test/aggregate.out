@@ -1,0 +1,23 @@
+Error type 4294967295 at Line 3: initial values of struct fields are not allowed
+Error type 5 at Line 6: unmatching type on both sides of assignment
+Error type 5 at Line 7: unmatching type on both sides of assignment
+Error type 5 at Line 8: unmatching type on both sides of assignment
+Error type 4294967295 at Line 15: invalid array size
+Error type 7 at Line 21: binary operation on non-number variables
+Error type 5 at Line 21: unmatching type on both sides of assignment
+Error type 6 at Line 23: left side in assignment is rvalue
+Error type 7 at Line 24: binary operation on non-number variables
+Error type 5 at Line 24: unmatching type on both sides of assignment
+Error type 7 at Line 25: binary operation on non-number variables
+Error type 5 at Line 25: unmatching type on both sides of assignment
+Error type 7 at Line 26: binary operation on non-number variables
+Error type 5 at Line 26: unmatching type on both sides of assignment
+Error type 7 at Line 27: binary operation on non-number variables
+Error type 5 at Line 27: unmatching type on both sides of assignment
+Error type 5 at Line 28: unmatching type on both sides of assignment
+Error type 5 at Line 29: unmatching type on both sides of assignment
+Error type 5 at Line 30: unmatching type on both sides of assignment
+Error type 5 at Line 31: unmatching type on both sides of assignment
+Error type 12 at Line 32: indexing by non-integer
+Error type 10 at Line 32: indexing on non-array variable
+Error type 5 at Line 32: unmatching type on both sides of assignment

@@ -58,6 +58,8 @@ template <typename Callable>
     ctx.markInvalid();
     if(type->isInvalid())
         return ctx.getInvalidRValue();
+    else if(type->isVoid())
+        return nullptr;
     else
         return make<UndefinedValue>(type);
 }
@@ -130,13 +132,13 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
             ctx.makeOp<StoreInst>(memArg, arg);
             ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
         } else {
+            const auto argType = arg->getType()->as<PointerType>()->getPointee();
             // passing by pointer
-            if(arg->getType()->isArray()) {
+            if(argType->isArray()) {
                 ctx.addIdentifier(name, { arg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
             } else {
                 // create a copy
-                const auto type = arg->getType()->as<PointerType>()->getPointee();
-                const auto memArg = ctx.makeOp<StackAllocInst>(type);
+                const auto memArg = ctx.makeOp<StackAllocInst>(argType);
                 memArg->setLabel(name);
                 ctx.makeOp<StoreInst>(memArg, ctx.makeOp<LoadInst>(arg));
                 ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
@@ -341,8 +343,11 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
                                        const Qualifier& rhsQualifier, OperatorID op) {
     auto lt = lhs->getType();
     auto rt = rhs->getType();
+
     if(!lt->isPrimitive() || !rt->isPrimitive()) {
         if(strictMode.get()) {
+            if(lt->isInvalid() || rt->isInvalid())
+                return QualifiedValue{ ctx.getInvalidRValue() };
             return QualifiedValue{
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
                                [](std::ostream& out) { out << "binary operation on non-number variables"; }),
@@ -351,7 +356,15 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
             DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
     }
 
-    assert(!lt->isPointer() && !rt->isPointer());
+    if(lt->isPointer() || rt->isPointer()) {
+        if(strictMode.get()) {
+            return QualifiedValue{
+                reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
+                               [](std::ostream& out) { out << "binary operation on non-number variables"; }),
+            };
+        } else
+            DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
+    }
 
     auto selectTargetType = [&](const Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
         if(lt->getFixedSize() != rt->getFixedSize()) {
@@ -437,7 +450,9 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
             ctx.makeOp<StoreInst>(lhs, rhs);
         }
 
-        return { lhs, ValueQualifier::AsLValue, dstQualifier };
+        // NOTICE: return rvalue in C-like language!!!
+        // return { lhs, ValueQualifier::AsLValue, dstQualifier };
+        return { rhs, ValueQualifier::AsRValue, dstQualifier };
     }
 
     // short circut logical op
@@ -655,19 +670,23 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     }
 
     // TODO: va_args
-    auto& argTypes = callee->getType()->as<FunctionType>()->getArgTypes();
-    if(argTypes.size() != argExprs.size()) {
+    const auto funcType = callee->getType()->as<FunctionType>();
+    if(info.argQualifiers.size() != argExprs.size()) {
+        const auto retType = (info.passingRetValByPointer ? funcType->getArgTypes().back()->as<PointerType>()->getPointee() :
+                                                            funcType->getRetType());
         if(strictMode.get()) {
-            return QualifiedValue{ reportSplError(
-                ctx, callee->getType()->as<FunctionType>()->getRetType(), 9U, location(), [&](std::ostream& out) {
-                    out << "invalid argument number for compare, expect " << argTypes.size() << ", got " << argExprs.size();
-                }) };
+            return QualifiedValue{ reportSplError(ctx, retType, 9U, location(),
+                                                  [&, symbol = callee->as<Function>()->getSymbol()](std::ostream& out) {
+                                                      out << "invalid argument number for " << symbol << ", expect "
+                                                          << info.argQualifiers.size() << ", got " << argExprs.size();
+                                                  }) };
         } else
             DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
     }
 
     Vector<Value*> args;
     args.reserve(argExprs.size());
+    auto& argTypes = funcType->getArgTypes();
     for(uint32_t idx = 0; idx < argExprs.size(); ++idx) {
         const auto arg = argExprs[idx];
         const auto destType = argTypes[idx];
@@ -696,10 +715,14 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
 
     if(info.passingRetValByPointer) {
         const auto ret = func->entryBlock()->args().back();
-        const auto retType = ret->getType();
+        const auto retType = ret->getType()->as<PointerType>()->getPointee();
         const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier, ConversionUsage::ReturnValue);
-        ctx.makeOp<StoreInst>(ret, retVal);
-        ctx.makeOp<ReturnInst>();
+        if(retVal->isUndefined() || retVal->getType()->isInvalid()) {
+            ctx.makeOp<UnreachableInst>();
+        } else {
+            ctx.makeOp<StoreInst>(ret, retVal);
+            ctx.makeOp<ReturnInst>();
+        }
     } else {
         auto type = func->getType()->as<FunctionType>();
         auto retType = type->getRetType();
@@ -711,7 +734,11 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
             if(!mReturnValue)
                 DiagnosticsContext::get().attach<Reason>("the function should return a value").reportFatal();
             const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier, ConversionUsage::ReturnValue);
-            ctx.makeOp<ReturnInst>(retVal);
+            if(retVal->isUndefined() || retVal->getType()->isInvalid()) {
+                ctx.makeOp<UnreachableInst>();
+            } else {
+                ctx.makeOp<ReturnInst>(retVal);
+            }
         }
     }
 
@@ -855,6 +882,16 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
     const auto [base, valueQualifier, qualifier] = mBase->emitWithLoc(ctx);
     const auto idx = ctx.getRValue(mIndex, ctx.getIndexType(), Qualifier::getUnsigned(), ConversionUsage::Index);
 
+    if(!base->getType()->isPointer()) {
+        if(strictMode.get()) {
+            return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
+                                                  [](std::ostream& out) { out << "indexing on non-array variable"; }),
+                                   ValueQualifier::AsLValue, qualifier };
+        } else {
+            DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
+        }
+    }
+
     if(valueQualifier == ValueQualifier::AsLValue) {
         if(base->getType()->as<PointerType>()->getPointee()->isArray()) {
             // int a[10];
@@ -883,6 +920,7 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
         return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx }), ValueQualifier::AsLValue, qualifier };
     }
 }
+
 struct InvalidField final {
     String structName;
     String fieldName;
@@ -922,18 +960,23 @@ Value* EmitContext::booleanToInt(Value* value) {
 }
 
 [[nodiscard]] static Value* reportConversionErrorSpl(EmitContext& ctx, const Type* type, ConversionUsage usage) {
-    if(usage == ConversionUsage::Assignment) {
-        return reportSplError(ctx, type, 5U, DiagnosticsContext::get().current<SourceLocation>(),
-                              [](std::ostream& out) { out << "unmatching type on both sides of assignment"; });
-    } else if(usage == ConversionUsage::ReturnValue) {
-        return reportSplError(ctx, type, 8U, DiagnosticsContext::get().current<SourceLocation>(),
-                              [](std::ostream& out) { out << "incompatiable return type"; });
-    } else if(usage == ConversionUsage::Index) {
-        return reportSplError(ctx, type, 12U, DiagnosticsContext::get().current<SourceLocation>(),
-                              [](std::ostream& out) { out << "indexing by non-integer"; });
-    } else {
-        return reportSplError(ctx, type, -1, DiagnosticsContext::get().current<SourceLocation>(),
-                              [&](std::ostream& out) { out << "unmatching type for " << enumName(usage); });
+    switch(usage) {
+        case ConversionUsage::Assignment:
+        case ConversionUsage::Initialization:
+            return reportSplError(ctx, type, 5U, DiagnosticsContext::get().current<SourceLocation>(),
+                                  [](std::ostream& out) { out << "unmatching type on both sides of assignment"; });
+        case ConversionUsage::ReturnValue:
+            return reportSplError(ctx, type, 8U, DiagnosticsContext::get().current<SourceLocation>(),
+                                  [](std::ostream& out) { out << "incompatiable return type"; });
+        case ConversionUsage::Index:
+            return reportSplError(ctx, type, 12U, DiagnosticsContext::get().current<SourceLocation>(),
+                                  [](std::ostream& out) { out << "indexing by non-integer"; });
+        case ConversionUsage::FunctionCall:
+            return reportSplError(ctx, type, 9U, DiagnosticsContext::get().current<SourceLocation>(),
+                                  [](std::ostream& out) { out << "unmatching type for function call"; });
+        default:
+            return reportSplError(ctx, type, -1, DiagnosticsContext::get().current<SourceLocation>(),
+                                  [&](std::ostream& out) { out << "unmatching type for " << enumName(usage); });
     }
 }
 
@@ -971,10 +1014,15 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
         if(srcType->isInteger()) {
             return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, make<ConstantInteger>(srcType, 0));
         } else if(srcType->isFloatingPoint()) {
+            if(strictMode.get())
+                return reportConversionErrorSpl(*this, type, usage);  // implicit f2b is not allowed
             return makeOp<CompareInst>(InstructionID::FCmp, CompareOp::NotEqual, value,
                                        make<ConstantFloatingPoint>(srcType, 0.0));
         }
     } else if(srcType->isInteger() && type->isInteger()) {
+        if(strictMode.get())
+            return reportConversionErrorSpl(*this, type, usage);  // implicit sext/trunc is not allowed
+
         if(value->isConstant() && !value->isUndefined()) {
             const auto cint = value->as<ConstantInteger>();
             return make<ConstantInteger>(
@@ -1007,6 +1055,9 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
         }
         id = dstQualifier.isSigned ? InstructionID::F2S : InstructionID::F2U;
     } else if(srcType->isFloatingPoint() && type->isFloatingPoint()) {
+        if(strictMode.get())
+            return reportConversionErrorSpl(*this, type, usage);  // implicit F2F is not allowed
+
         if(value->isConstant() && !value->isUndefined()) {
             const auto cfp = value->as<ConstantFloatingPoint>()->getValue();
             return make<ConstantFloatingPoint>(type, cfp);
@@ -1095,7 +1146,7 @@ void EmitContext::popScope() {
     mScopes.pop_back();
 }
 
-// TODO: last definition?
+// TODO: report last definition?
 struct RedefinedIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const RedefinedIdentifier& err) {
@@ -1178,8 +1229,18 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
             ret = iter->second;
     }
 
-    if(!ret)
-        reportNotImplemented();
+    if(!ret) {
+        if(strictMode.get()) {
+            const auto ret = reportSplError(
+                *this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
+                [&](std::ostream& out) { out << "undefined type [scope = " << enumName(space) << "] named " << type; });
+            CMMC_UNUSED(ret);
+            return InvalidType::get();
+        } else {
+            // TODO: report undefined type
+            DiagnosticsContext::get().attach<Reason>("Undefined type").reportFatal();
+        }
+    }
 
     if(!arraySize.empty()) {
         if(ret->isVoid())
@@ -1204,8 +1265,16 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
                     const auto val = constantSize->as<ConstantInteger>();
                     const auto size = val->getZeroExtended();
 
-                    if(size <= 0)
-                        DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
+                    if(size <= 0) {
+                        if(strictMode.get()) {
+                            const auto ret =
+                                reportSplError(*this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
+                                               [](std::ostream& out) { out << "invalid array size"; });
+                            CMMC_UNUSED(ret);
+                            return make<ArrayType>(InvalidType::get(), 1U);
+                        } else
+                            DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
+                    }
                     if(size >= (1U << 30))
                         DiagnosticsContext::get().attach<Reason>("array is too large").reportFatal();
 
@@ -1519,9 +1588,16 @@ void StructDefinition::emit(EmitContext& ctx) const {
     for(auto& item : list) {
         for(auto& subItem : item.var) {
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);
-            fields.push_back(StructField{ SourceLocation{}, type, subItem.name });
-            if(subItem.initialValue)
-                DiagnosticsContext::get().attach<Reason>("initial values of struct fields is not allowed").reportFatal();
+            fields.push_back(StructField{ subItem.loc, type, subItem.name });
+            if(subItem.initialValue) {
+                if(strictMode.get()) {
+                    const auto ret = reportSplError(ctx, InvalidType::get(), -1, subItem.loc, [](std::ostream& out) {
+                        out << "initial values of struct fields are not allowed";
+                    });
+                    CMMC_UNUSED(ret);
+                } else
+                    DiagnosticsContext::get().attach<Reason>("initial values of struct fields are not allowed").reportFatal();
+            }
         }
     }
     auto type = make<StructType>(name, std::move(fields));

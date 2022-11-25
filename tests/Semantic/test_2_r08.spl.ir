@@ -1,0 +1,54 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @compare1(i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg, i32 %arg1;
+    cbr i1 %0, [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
+^indirect(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg1, i32 %arg;
+    cbr i1 %0, [ ^if.then1 ], [ ^if.else ];
+^if.then():
+    ret i32 1;
+^if.then1():
+    ret i32 -1;
+^if.else():
+    ret i32 0;
+}
+func @compare2(i32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg1, i32 %arg;
+    cbr i1 %0, [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
+^indirect(i32 %arg, i32 %arg1):
+    i1 %0 = scmp eq i32 %arg1, i32 %arg;
+    cbr i1 %0, [ ^if.then1 ], [ ^b ];
+^if.then():
+    ret f32 -1;
+^if.then1():
+    ret f32 0;
+^b():
+    ret f32 1;
+}
+func @test_2_r08(i32, i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg, i32 %arg1, i32 %arg2):
+    i1 %0 = scmp eq i32 %arg, i32 0;
+    cbr i1 %0, [ ^entry1 i32 %arg1, i32 %arg2 ], [ ^entry2 i32 %arg1, i32 %arg2 ];
+^entry1(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg, i32 %arg1;
+    cbr i1 %0, [ ^indirect ], [ ^indirect1 i32 %arg, i32 %arg1 ];
+^entry2(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg1, i32 %arg;
+    cbr i1 %0, [ ^indirect2 ], [ ^indirect3 i32 %arg, i32 %arg1 ];
+^indirect():
+    ret i32 1;
+^indirect1(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg1, i32 %arg;
+    i32 %1 = select i1 %0 ? i32 -1 : i32 0;
+    ret i32 %1;
+^indirect2():
+    ret i32 -1;
+^indirect3(i32 %arg, i32 %arg1):
+    i1 %0 = scmp eq i32 %arg1, i32 %arg;
+    f32 %1 = select i1 %0 ? f32 0 : f32 1;
+    i32 %2 = f2s f32 %1 to i32;
+    ret i32 %2;
+}

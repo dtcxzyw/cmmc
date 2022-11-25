@@ -1,0 +1,38 @@
+struct test2 {
+    int x;
+};
+int foo(int x) {
+    return 1;
+}
+int foo2(int x[2]) {
+    return x[0];
+}
+struct test2 foo3(struct test2 x[2]) {
+    return x[0];
+}
+int foo4(int x) {
+    return 1.0;
+}
+int main() {
+    int x = 0;
+    float y1 = foo(1);
+    float y;
+    int z[10];
+
+    foo();
+    foo(y);
+    y = -foo(x);
+    foo('x');
+    z[y] = z[x] + 
+    z['x'];
+    foo2(z);
+    foo3(z);
+    (x = x) = x;
+    x(10);
+    if(0.0) {
+        if(0) {
+        }
+    }    
+
+    return 0;
+}

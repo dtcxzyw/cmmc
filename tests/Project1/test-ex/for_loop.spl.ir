@@ -1,0 +1,20 @@
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry():
+    ubr [ ^for.body i32 0 ];
+^for.body(i32 %arg):
+    call (i32) -> void @write(i32 %arg);
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 10;
+    cbr i1 %1, [ ^for.body i32 %0 ], [ ^for.body1 i32 0 ];
+^for.body1(i32 %arg):
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp eq i32 %0, i32 5;
+    cbr i1 %1, [ ^for.body1 i32 %0 ], [ ^indirect i32 %0, i32 %0 ];
+^indirect(i32 %arg, i32 %arg1):
+    i1 %0 = scmp ge i32 %arg, i32 10;
+    cbr i1 %0, [ ^b i32 %arg1 ], [ ^for.body1 i32 %arg ];
+^b(i32 %arg):
+    ret i32 %arg;
+}

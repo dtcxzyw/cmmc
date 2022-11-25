@@ -1,0 +1,43 @@
+struct foo3 {};
+struct foo2 {i32 x, i32 y};
+struct foo {i32 c, [10 * i32] d, struct foo2 w, struct foo3 a, [2 * struct foo3] b};
+struct looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogstruct {i32 looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogfield};
+
+func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
+func @test([2 * i32]*) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+^entry([2 * i32]* %arg):
+    i32* %0 = getelementptr &([2 * i32]* %arg)[i32 0][i32 1];
+    i32 %1 = load i32* %0;
+    ret i32 %1;
+}
+func @test1([3 * struct foo]*, struct foo*) -> void { NoRecurse } {
+^entry([3 * struct foo]* %arg, struct foo* %arg1):
+    struct foo* %0 = getelementptr &([3 * struct foo]* %arg)[i32 0][i32 0];
+    struct foo %1 = load struct foo* %0;
+    store struct foo* %arg1 with struct foo %1;
+    ret;
+}
+func @test2(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry(i32 %arg):
+    i32 %0 = sub i32 %arg, i32 1;
+    ret i32 %0;
+}
+func @test3(struct foo2*) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+^entry(struct foo2* %arg):
+    struct foo2* %x = alloc struct foo2;
+    struct foo2 %0 = load struct foo2* %arg;
+    store struct foo2* %x with struct foo2 %0;
+    i32* %1 = getelementptr &(struct foo2* %x)[i32 0].x;
+    i32 %2 = load i32* %1;
+    ret i32 %2;
+}
+[10 * struct foo]* @www;
+func @loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogfunc(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+^entry(i32 %arg):
+    unreachable;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry():
+    ret i32 0;
+}

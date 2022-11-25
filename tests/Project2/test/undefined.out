@@ -1,0 +1,14 @@
+Error type 4294967295 at Line 1: undefined type [scope = cmmc::TypeLookupSpace::Struct] named c
+Error type 4294967295 at Line 2: undefined type [scope = cmmc::TypeLookupSpace::Struct] named hahaha
+Error type 4294967295 at Line 5: undefined type [scope = cmmc::TypeLookupSpace::Struct] named y
+Error type 1 at Line 6: undefined variable: x
+Error type 5 at Line 6: unmatching type on both sides of assignment
+Error type 2 at Line 7: undefined function: foo
+Error type 1 at Line 8: undefined variable: z
+Error type 1 at Line 8: undefined variable: w
+Error type 10 at Line 8: indexing on non-array variable
+Error type 1 at Line 8: undefined variable: w
+Error type 1 at Line 8: undefined variable: x
+Error type 10 at Line 8: indexing on non-array variable
+Error type 14 at Line 9: no such member: c
+Error type 5 at Line 9: unmatching type on both sides of assignment

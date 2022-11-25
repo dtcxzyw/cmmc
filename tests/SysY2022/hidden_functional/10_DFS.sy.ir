@@ -209,7 +209,7 @@ func @main() -> i32 { NoRecurse } {
     i32* %f = alloc i32;
     store i32* %f with i32 0;
     i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1, [ ^while.body7 i32* %x1, i32* %f, i32* %ch, i32* %x, i32* %arg3, i32* %arg, i32* %arg2, i32* %arg1, i32 %0 ], [ ^b12 i32* %f, i32* %x1, i32* %ch, i32* %arg1, i32* %arg2, i32* %arg, i32* %arg3, i32* %x, i32 %0 ];
+    cbr i1 %1, [ ^while.body7 i32* %x1, i32* %f, i32* %ch, i32* %x, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %0 ], [ ^b12 i32* %f, i32* %x1, i32* %ch, i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %x, i32 %0 ];
 ^if.else2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
     i32* %x = alloc i32;
     i32* %ch = alloc i32;
@@ -330,7 +330,7 @@ func @main() -> i32 { NoRecurse } {
     i32* %f = alloc i32;
     store i32* %f with i32 0;
     i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1, [ ^while.body11 i32* %x, i32* %f, i32* %ch, i32* %y, i32* %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg5, i32 %0 ], [ ^b20 i32* %f, i32* %x, i32* %ch, i32* %arg5, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %y, i32 %0 ];
+    cbr i1 %1, [ ^while.body11 i32* %x, i32* %f, i32* %ch, i32* %y, i32* %arg2, i32* %arg4, i32* %arg3, i32* %arg5, i32* %arg1, i32 %0 ], [ ^b20 i32* %f, i32* %x, i32* %ch, i32* %arg1, i32* %arg5, i32* %arg3, i32* %arg4, i32* %arg2, i32* %y, i32 %0 ];
 ^if.else5(i32 %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5):
     store i32* %arg5 with i32 %arg;
     i32* %ch = alloc i32;
@@ -410,13 +410,13 @@ func @main() -> i32 { NoRecurse } {
     store i32* %arg1 with i32 %1;
     i32* %i = alloc i32;
     store i32* %i with i32 1;
-    ubr [ ^while.header i32* %i, i32* %arg2, i32* %arg5, i32* %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg6 ];
+    ubr [ ^while.header i32* %i, i32* %arg3, i32* %arg6, i32* %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg5 ];
 ^if.else6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6):
     i32 %0 = load i32* %arg;
     store i32* %arg1 with i32 %0;
     i32* %i = alloc i32;
     store i32* %i with i32 1;
-    ubr [ ^while.header i32* %i, i32* %arg2, i32* %arg5, i32* %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg6 ];
+    ubr [ ^while.header i32* %i, i32* %arg3, i32* %arg6, i32* %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg5 ];
 ^if.then13(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5):
     i32 %0 = load i32* %arg;
     i32 %1 = neg i32 %0;
@@ -489,7 +489,7 @@ func @main() -> i32 { NoRecurse } {
     free i32* %arg;
     i32 %0 = load i32* %arg1;
     i32 %1 = load i32* %arg2;
-    i32 %2 = call (i32, i32, i32*, i32*, i32*) -> i32 @same(i32 %0, i32 %1, i32* %arg3, i32* %arg5, i32* %arg6);
+    i32 %2 = call (i32, i32, i32*, i32*, i32*) -> i32 @same(i32 %0, i32 %1, i32* %arg4, i32* %arg5, i32* %arg3);
     call (i32) -> void @putint(i32 %2);
     call (i32) -> void @putch(i32 10);
     free i32* %arg2;
@@ -497,7 +497,7 @@ func @main() -> i32 { NoRecurse } {
     i32 %3 = load i32* %arg5;
     i32 %4 = sub i32 %3, i32 1;
     store i32* %arg5 with i32 %4;
-    free i32* %arg4;
+    free i32* %arg6;
     i1 %5 = scmp neq i32 %4, i32 0;
-    cbr i1 %5, [ ^while.body5 i32* %arg3, i32* %arg5, i32* %arg6 ], [ ^b9 ];
+    cbr i1 %5, [ ^while.body5 i32* %arg4, i32* %arg5, i32* %arg3 ], [ ^b9 ];
 }

@@ -1,0 +1,35 @@
+struct empty {};
+struct foo {int c;};
+struct foo2 {int c = 10;};
+int test(int w[1]) {
+    w[0] = w[0];
+    w = w;
+    w[0] = w;
+    w = w[0];
+    return w[0];
+}
+int main() {
+    struct empty x;
+    struct empty y[1];
+    struct foo c;
+    int z[0];
+    int w[1];
+    int b;
+    
+    test(w);
+    w[-1] = 10;
+    b = w + 10;
+    b = w[0] + 10;
+    (w[1] + c.c) = w[3];
+    b = z + 10;
+    b = x + 10;
+    x = x + x;
+    x = x + b;
+    x = b + b;
+    y = x;
+    y = b;
+    y = c;
+    (0[w]) = 10;
+
+    return 0;
+}
