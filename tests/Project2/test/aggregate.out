@@ -21,3 +21,4 @@ Error type 5 at Line 31: unmatching type on both sides of assignment
 Error type 12 at Line 32: indexing by non-integer
 Error type 10 at Line 32: indexing on non-array variable
 Error type 5 at Line 32: unmatching type on both sides of assignment
+Error type 6 at Line 33: left side in assignment is rvalue

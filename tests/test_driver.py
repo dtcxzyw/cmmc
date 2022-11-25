@@ -267,8 +267,8 @@ res.append(test("SysY opt final_performance", tests_path +
 res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
 res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
 
-test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
-test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+#test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+#test("Reference Spl", tests_path + "/", ".spl", spl_ref)
 
 end = time.perf_counter()
 

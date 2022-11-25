@@ -41,6 +41,8 @@ int main() {
     y = (z[0] = z[1]);
     y = y = y;
     y = test3(c[0].w);
+    if(y=0) y = 0;
+    if(!(0.0 == 0.0)) z[0] = 0;
 
     return 0;
 }

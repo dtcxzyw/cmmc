@@ -30,6 +30,7 @@ int main() {
     y = b;
     y = c;
     (0[w]) = 10;
+    test(w) = 10;
 
     return 0;
 }
