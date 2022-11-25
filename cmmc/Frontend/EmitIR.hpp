@@ -63,7 +63,7 @@ struct QualifiedValue final {
 };
 
 struct Scope final {
-    std::unordered_map<String, QualifiedValue, StringHasher> variables;
+    std::unordered_set<String, StringHasher> variables;
 };
 
 CMMC_ARENA_TRAIT(Scope, AST);
@@ -81,8 +81,7 @@ enum class AsLValueUsage { Assignment, GetAddress, SelfIncDec };
 class EmitContext final : public IRBuilder {
     Module* mModule;
     std::deque<Scope> mScopes;
-
-    std::unordered_map<String, QualifiedValue, StringHasher> uniqueVariables;  // TODO: QualifiedValue stack
+    std::unordered_map<String, std::deque<QualifiedValue>, StringHasher> mVariables;
 
     std::deque<std::pair<Block*, Block*>> mTerminatorTarget;
     std::unordered_map<String, const StructType*, StringHasher> mStructTypes;

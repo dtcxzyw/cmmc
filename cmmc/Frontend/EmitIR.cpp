@@ -1135,13 +1135,16 @@ void EmitContext::pushScope() {
 }
 void EmitContext::popScope() {
     assert(!mScopes.empty());
-    for(auto& [symbol, val] : mScopes.back().variables) {
-        if(auto iter = uniqueVariables.find(symbol); iter != uniqueVariables.cend())
-            uniqueVariables.erase(iter);
-        mConstantBinding.erase(val.value);
-        if(auto alloc = dynamic_cast<StackAllocInst*>(val.value)) {
-            makeOp<StackFreeInst>(alloc);
-        }
+    for(auto& symbol : mScopes.back().variables) {
+        if(auto iter = mVariables.find(symbol); iter != mVariables.cend()) {
+            const auto value = iter->second.back().value;
+            iter->second.pop_back();
+            mConstantBinding.erase(value);
+            if(auto alloc = dynamic_cast<StackAllocInst*>(value)) {
+                makeOp<StackFreeInst>(alloc);
+            }
+        } else
+            reportUnreachable();
     }
     mScopes.pop_back();
 }
@@ -1163,15 +1166,13 @@ void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
                 *this, InvalidType::get(), func ? 4U : 3U, DiagnosticsContext::get().current<SourceLocation>(),
                 [&](std::ostream& out) { out << "redefine " << (func ? "function" : "variable") << ": " << identifier; });
             CMMC_UNUSED(val);
+            return;
         } else {
             DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
         }
     }
-    scope.variables.emplace(identifier, value);
-    if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend())
-        iter->second.value = nullptr;
-    else
-        uniqueVariables.emplace(identifier, value);
+    scope.variables.emplace(identifier);
+    mVariables[identifier].push_back(value);
 }
 struct UndefinedIdentifier final {
     String identifier;
@@ -1181,12 +1182,8 @@ struct UndefinedIdentifier final {
 };
 QualifiedValue EmitContext::lookupIdentifier(const String& identifier, IdentifierUsageHint hint) {
     assert(!mScopes.empty());
-    if(auto iter = uniqueVariables.find(identifier); iter != uniqueVariables.cend() && iter->second.value)
-        return iter->second;
-
-    for(auto iter = mScopes.crbegin(); iter != mScopes.crend(); ++iter)
-        if(auto it = iter->variables.find(identifier); it != iter->variables.cend())
-            return it->second;
+    if(auto iter = mVariables.find(identifier); iter != mVariables.cend())
+        return iter->second.back();
 
     if(strictMode.get()) {
         return QualifiedValue{ reportSplError(*this, PointerType::get(InvalidType::get()),
@@ -1293,6 +1290,7 @@ void EmitContext::addIdentifier(String identifier, const StructType* type) {
             const auto val = reportSplError(*this, InvalidType::get(), 15U, DiagnosticsContext::get().current<SourceLocation>(),
                                             [&](std::ostream& out) { out << "redefine struct: " << identifier; });
             CMMC_UNUSED(val);
+            return;
         } else {
             DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
         }
