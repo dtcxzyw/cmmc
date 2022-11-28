@@ -1,0 +1,31 @@
+int fx[9];
+int fy[9];
+
+int bx, by, mx, my;
+int f[40][40];
+int s[40][40];
+int main(){
+    int i, j;
+    bx = bx + 2; 
+    by = by + 2; 
+    mx = mx + 2; 
+    my = my + 2;
+    f[2][1] = 1;
+    s[mx][my] = 1;
+    while (i <= 8) {
+        i = i + 1;
+        s[mx + fx[i]][my + fy[i]] = 1;
+    }
+    i= 2;
+    while (i <= bx) {
+        i = i + 1;
+        j = 2;
+        while (j < by) {
+            j = j + 1;
+            if(!s[i][j]) {
+                f[i][j][i] = f[i - 1][j] + f[i][j - 1];
+            }
+        }
+    }
+    return 0;
+} 

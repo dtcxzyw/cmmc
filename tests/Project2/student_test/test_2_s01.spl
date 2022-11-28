@@ -1,0 +1,11 @@
+float fun0() {
+    return 0;
+}
+int fun1(int a) {
+    return 1;
+}
+int main() {
+    int a = 1;
+    float b;
+    b = fun1(fun0(fun1(a)), fun1(b));
+}

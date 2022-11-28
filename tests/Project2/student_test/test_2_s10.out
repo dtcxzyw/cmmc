@@ -1,0 +1,4 @@
+Error type 9 at line 9: function foo is called with mismatched args
+Error type 9 at line 10: function foo is called with mismatched args
+Error type 9 at line 11: function foo is called with mismatched args
+Error type 11 at line 13: applying function invocation operator on non-function identifier {a}

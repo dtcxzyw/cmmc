@@ -1,0 +1,7 @@
+Error type 15 at Line 5: redefine the same structure type ST
+Error type 14 at Line 14: accessing an undefined structure member integer
+Error type 5 at Line 14: unmatching types appear at both sides of the assignment operator, one of them is null
+Error type 5 at Line 15: unmatching types appear at both sides of the assignment operator, float are expected but actually int
+Error type 5 at Line 17: unmatching types appear at both sides of the assignment operator, char are expected but actually int
+Error type 14 at Line 19: accessing an undefined structure member unknown_word
+Error type 5 at Line 19: unmatching types appear at both sides of the assignment operator, one of them is null

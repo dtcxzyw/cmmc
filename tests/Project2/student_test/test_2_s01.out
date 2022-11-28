@@ -1,0 +1,3 @@
+Error type 8 at Line 2: incompatiable return type
+Error type 9 at Line 10: invalid argument number for fun1, expect 1, got 2
+Error type 5 at Line 10: unmatching type on both sides of assignment

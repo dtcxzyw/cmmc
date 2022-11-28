@@ -1,0 +1,14 @@
+int foo(int number, float f)
+{
+    return 555;
+}
+
+int main()
+{
+    int a = foo(1, 114.514);
+    int b = foo(114.514, 1);
+    int e = foo(1, 114514);
+    int c = foo(1);
+
+    int d = a();
+}

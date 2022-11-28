@@ -1,0 +1,16 @@
+Error type 4 at Line 29: redefine function: function
+Error type 3 at Line 38: redefine variable: wow5Def
+Error type 1 at Line 39: undefined variable: wow6
+Error type 2 at Line 40: undefined function: otherfunction
+Error type 5 at Line 41: unmatching type on both sides of assignment
+Error type 6 at Line 42: left side in assignment is rvalue
+Error type 7 at Line 43: binary operation on non-number variables
+Error type 5 at Line 43: unmatching type on both sides of assignment
+Error type 9 at Line 44: invalid argument number for function, expect 0, got 5
+Error type 10 at Line 45: indexing on non-array variable
+Error type 5 at Line 45: unmatching type on both sides of assignment
+Error type 2 at Line 46: undefined function: a8
+Error type 5 at Line 46: unmatching type on both sides of assignment
+Error type 12 at Line 47: indexing by non-integer
+Error type 5 at Line 47: unmatching type on both sides of assignment
+Error type 8 at Line 48: incompatiable return type

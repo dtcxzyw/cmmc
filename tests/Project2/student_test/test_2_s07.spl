@@ -1,0 +1,6 @@
+int test_4(){
+    int redefined1, definde, redefined1, redefined2, error_type = 'c', array[2];
+    int redefined2;
+    definde = 1;
+    array[0] = 1;
+}

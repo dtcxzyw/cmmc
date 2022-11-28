@@ -1,0 +1,21 @@
+struct ST{
+    int integer;
+};
+
+struct ST{
+    int integer2;
+    float float_num;
+    char characters[32];
+};
+
+int test_2(){
+    struct ST st; 
+
+    st.integer = 2.0;
+    st.float_num = 20;
+    st.characters[1] = 'a';
+    st.characters[st.integer2] = 1;
+
+    st.unknown_word = 't';
+    return 0;
+}

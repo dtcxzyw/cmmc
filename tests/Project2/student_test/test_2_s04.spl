@@ -1,0 +1,26 @@
+int sum(int x, int y){
+    return x+y;
+}
+
+struct node1{
+    int a[4][3];
+    float b;
+    float c;
+};
+
+struct node2{
+    int value[3];
+    struct node1 next;
+};
+
+int test()
+{
+  int x1 = 5;
+  int x4 = sum(x1,x1,x1);
+  struct node1 n1;
+  struct node2 n2;
+  n2.value[0] = 1;
+  n2.next.a[0] = 1;
+  n1.a[0][0] = x1;
+  return 0;
+}

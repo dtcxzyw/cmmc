@@ -1,0 +1,11 @@
+struct tree
+{
+  int height;
+};
+int test_01()
+{
+  struct tree t;
+  char c;
+  t.name = c;
+  return 0;
+}

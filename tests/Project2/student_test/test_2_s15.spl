@@ -1,0 +1,24 @@
+struct DingZhen{
+    int horse;
+    float LiTang;
+};
+float hello(){
+    int b = 1;
+    if(b == 1){
+        return 1.1;
+    }else {
+        return 2;
+    }
+}
+float hello(){
+    return 2.2;
+}
+int main(){
+    struct DingZhen ZhenZhu;
+    int a;
+    int c[5];
+    ZhenZhu.horse = 15;
+    ZhenZhu.province = SiChuan;
+    a.horse = 22;
+    513 = c[2];
+}

@@ -1,0 +1,19 @@
+struct x {float c;};
+struct x {int c;};
+struct y {
+    struct y {} x;
+};
+int main() {
+    int c;
+    int c;
+    return 0;
+}
+int foo(int x, int x) {
+    return 0;
+}
+int foo2(int x, int x[2]) {
+    return 0;
+}
+int main() {
+    return -1;
+}

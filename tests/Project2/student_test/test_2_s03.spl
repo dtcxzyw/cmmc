@@ -1,0 +1,49 @@
+struct wow1
+{
+    int a1;
+    float array1[1];
+};
+struct wow2
+{
+    int a2;
+    float array2[2];
+}a3;
+struct wow3
+{
+    int a4;
+    float array3[3];
+}a5;
+struct wow4
+{
+    int a6;
+    float array4[4];
+}a7[1];
+struct wow5
+{
+    int a8;
+    float array5[4];
+}a9,a10[1];
+int function(){
+    return 0;
+}
+float function(){
+    return 1.0;
+}
+int mainFunction(){
+    struct wow1 wow1Def;
+    struct wow2 wow2Def;
+    struct wow3 wow3Def;
+    struct wow4 wow4Def;
+    struct wow5 wow5Def;
+    struct wow5 wow5Def;
+    wow6;
+    otherfunction();
+    wow3Def = wow4Def;
+    function() = 1;
+    wow3Def = wow4Def + wow5Def;
+    function(1,2,3,4,5);
+    a10[0].array5[2][2] =  1;
+    a7[0] = a8();
+    a10[a7[0]] = 2;
+    return wow1Def;
+}

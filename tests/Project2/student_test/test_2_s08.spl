@@ -1,0 +1,6 @@
+int test()
+{
+  int a;
+  int a[5];
+  a[5] = a;
+}

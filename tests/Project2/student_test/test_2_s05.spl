@@ -1,0 +1,21 @@
+struct x
+{
+  int to[100][100];
+};
+struct c
+{
+  struct x luck;
+};
+struct d
+{
+  int leg;
+};
+int test_3()
+{
+  int you = 1;
+  int a = 2;
+  struct d best[100];
+  struct c good;
+  good.luck.to[you][best[a].leg] = 1.0;
+  return 0;
+}

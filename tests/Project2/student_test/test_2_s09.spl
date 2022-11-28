@@ -1,0 +1,8 @@
+struct node {
+    struct node value;
+    struct node children[10];
+};
+
+int test_5(int a, int b){
+    return a + b;
+}
