@@ -1585,6 +1585,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
     Vector<StructField> fields;
     for(auto& item : list) {
         for(auto& subItem : item.var) {
+            ctx.pushLoc(subItem.loc);
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);
             fields.push_back(StructField{ subItem.loc, type, subItem.name });
             if(subItem.initialValue) {
@@ -1596,6 +1597,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
                 } else
                     DiagnosticsContext::get().attach<Reason>("initial values of struct fields are not allowed").reportFatal();
             }
+            ctx.popLoc();
         }
     }
     auto type = make<StructType>(name, std::move(fields));

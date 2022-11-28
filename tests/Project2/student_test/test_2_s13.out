@@ -1,7 +1,13 @@
-Error type 15 at Line 5: redefine the same structure type ST
-Error type 14 at Line 14: accessing an undefined structure member integer
-Error type 5 at Line 14: unmatching types appear at both sides of the assignment operator, one of them is null
-Error type 5 at Line 15: unmatching types appear at both sides of the assignment operator, float are expected but actually int
-Error type 5 at Line 17: unmatching types appear at both sides of the assignment operator, char are expected but actually int
-Error type 14 at Line 19: accessing an undefined structure member unknown_word
-Error type 5 at Line 19: unmatching types appear at both sides of the assignment operator, one of them is null
+Error type 15 at Line 5: redefine struct: ST
+Error type 5 at Line 14: unmatching type on both sides of assignment
+Error type 14 at Line 15: no such member: float_num
+Error type 5 at Line 15: unmatching type on both sides of assignment
+Error type 14 at Line 16: no such member: characters
+Error type 10 at Line 16: indexing on non-array variable
+Error type 5 at Line 16: unmatching type on both sides of assignment
+Error type 14 at Line 17: no such member: characters
+Error type 14 at Line 17: no such member: integer2
+Error type 10 at Line 17: indexing on non-array variable
+Error type 5 at Line 17: unmatching type on both sides of assignment
+Error type 14 at Line 19: no such member: unknown_word
+Error type 5 at Line 19: unmatching type on both sides of assignment

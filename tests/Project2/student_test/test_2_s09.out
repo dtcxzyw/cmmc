@@ -1,2 +1,2 @@
-Error type 16 at Line 2: struct node haven't define
-Error type 16 at Line 3: struct node haven't define
+Error type 4294967295 at Line 2: undefined type [scope = cmmc::TypeLookupSpace::Struct] named node
+Error type 4294967295 at Line 3: undefined type [scope = cmmc::TypeLookupSpace::Struct] named node

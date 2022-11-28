@@ -1,1 +1,2 @@
-Error type 10 at Line 26: applying indexing operator ([...]) on non-array type variable
+Error type 10 at Line 26: indexing on non-array variable
+Error type 5 at Line 26: unmatching type on both sides of assignment
