@@ -243,7 +243,6 @@ res.append(test("SPL parse project2 self", tests_path +
            "/Project2/test", ".spl", spl_semantic))
 res.append(test("SPL parse project2 student", tests_path +
                 "/Project2/student_test", ".spl", spl_semantic))
-exit(0)
 
 res.append(test("SPL SPL->TAC sample", tests_path +
            "/TAC2MIPS", ".spl", spl_semantic_noref))
