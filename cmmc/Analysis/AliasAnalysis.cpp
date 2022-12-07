@@ -101,7 +101,8 @@ bool AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
     return false;
 }
 
-static void divide(const std::vector<Instruction*>& gepList, uint32_t& allocateID, AliasAnalysisResult& result, uint32_t idx) {
+[[maybe_unused]] static void divide(const std::vector<Instruction*>& gepList, uint32_t& allocateID, AliasAnalysisResult& result,
+                                    uint32_t idx) {
     if(gepList.size() <= 1)
         return;
 
@@ -132,6 +133,61 @@ static void divide(const std::vector<Instruction*>& gepList, uint32_t& allocateI
         divide(gepList, allocateID, result, idx + 1);
     }
 }
+
+struct TypePair final {
+    const Type* lhs;
+    const Type* rhs;
+
+    TypePair(const Type* lhs, const Type* rhs) noexcept : lhs{ lhs }, rhs{ rhs } {
+        if(lhs < rhs)
+            std::swap(lhs, rhs);
+    }
+    bool operator==(const TypePair& rhs) const noexcept {
+        return this->lhs == rhs.lhs && this->rhs == rhs.rhs;
+    }
+};
+
+struct TypePairHasher final {
+    size_t operator()(const TypePair& val) const noexcept {
+        const std::hash<const Type*> hasher;
+        return hasher(val.lhs) ^ hasher(val.rhs);
+    }
+};
+
+class TBAAQuery final {
+    std::unordered_map<TypePair, bool, TypePairHasher> mCachedResult;
+
+    // a includes b?
+    bool includes(const Type* a, const Type* b) const {
+        if(a->isSame(b))
+            return true;
+        if(a->isPrimitive()) {
+            return false;
+        } else if(a->isArray()) {
+            const auto array = a->as<ArrayType>();
+            const auto next = b->isArray() ? array->getElementType() : array->getScalarType();
+            return includes(next, b);
+        } else if(a->isStruct()) {
+            const auto structure = a->as<StructType>();
+            for(auto& field : structure->fields())
+                if(includes(field.type, b))
+                    return true;
+            return false;
+        } else
+            reportUnreachable();
+    }
+
+public:
+    bool isDistinct(const Type* lhs, const Type* rhs) {
+        assert(lhs != rhs);
+        TypePair pair{ lhs, rhs };
+        if(auto iter = mCachedResult.find(pair); iter != mCachedResult.cend())
+            return iter->second;
+        const auto res = !includes(lhs, rhs) && !includes(rhs, lhs);
+        mCachedResult.emplace(pair, res);
+        return res;
+    }
+};
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
@@ -229,6 +285,34 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     for(auto [arg, val] : blockArgMap.map()) {
         if(arg->getType()->isPointer()) {
             inheritGraph.emplace(arg, val);
+        }
+    }
+
+    // TBAA
+    {
+        std::unordered_map<const Type*, uint32_t> types;
+        TBAAQuery query;
+        for(auto& [val, attrs] : result.pointerAttrs()) {
+            CMMC_UNUSED(attrs);
+            const auto type = val->getType();
+            assert(type->isPointer());
+            types.emplace(type, ++allocateID);
+        }
+        for(auto i = types.cbegin(); i != types.cend(); ++i) {
+            const auto t1 = i->first->as<PointerType>()->getPointee();
+            for(auto j = std::next(i); j != types.cend(); ++j) {
+                const auto t2 = j->first->as<PointerType>()->getPointee();
+                if(query.isDistinct(t1, t2)) {
+                    result.addPair(i->second, j->second);
+                }
+            }
+        }
+        for(auto& [val, attrs] : result.pointerAttrs()) {
+            CMMC_UNUSED(attrs);
+            const auto type = val->getType();
+            assert(type->isPointer());
+            const auto attr = types.at(type);
+            result.appendAttr(val, attr);
         }
     }
 
