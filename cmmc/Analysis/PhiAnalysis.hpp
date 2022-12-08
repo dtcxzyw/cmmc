@@ -23,13 +23,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-struct PhiEdge final {
-    BranchTarget* from;
-    ConditionalBranchInst* branch;
-    Value* value;
-};
-
-using PhiNode = std::vector<PhiEdge>;
+using PhiNode = std::vector<Value*>;
 
 class PhiAnalysisResult final {
     std::unordered_map<BlockArgument*, std::variant<Value*, PhiNode>> mPhiNodes;

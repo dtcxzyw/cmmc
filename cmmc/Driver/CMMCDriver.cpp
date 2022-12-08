@@ -177,7 +177,7 @@ int mainImpl(int argc, char** argv) {
         bool isSysY = endswith(path, ".sy"sv);
 
         if(isSpl || isSysY) {
-            const auto base = path.substr(0, path.size() - 4);
+            const auto base = path.substr(0, path.size() - (isSpl ? 4 : 3));
             Module module;
             const auto target = TargetRegistry::get().selectTarget();
             module.setTarget(target.get());

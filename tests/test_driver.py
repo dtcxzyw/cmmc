@@ -6,7 +6,7 @@ import time
 import subprocess
 import json
 
-gcc_ref_flags = "-O3 -march=host -funroll-loops -fwhole-program"
+gcc_ref_flags = "-O3 -march=native -funroll-loops -fwhole-program"
 binary_path = sys.argv[1]
 tests_path = sys.argv[2]
 
