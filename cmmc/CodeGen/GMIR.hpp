@@ -185,6 +185,10 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicM
 
 class GMIRBasicBlock final {
     GMIRFunction* mFunction;
+
+    std::vector<Operand> mParameters;
+    std::vector<Operand> mReserved;
+
     std::list<GMIRInst> mInstructions;
 
 public:

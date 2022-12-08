@@ -298,15 +298,25 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
             assert(type->isPointer());
             types.emplace(type, ++allocateID);
         }
+
+        const auto i8 = IntegerType::get(8);  // ignore char*
+
         for(auto i = types.cbegin(); i != types.cend(); ++i) {
             const auto t1 = i->first->as<PointerType>()->getPointee();
+            if(t1->isSame(i8))
+                continue;
+
             for(auto j = std::next(i); j != types.cend(); ++j) {
                 const auto t2 = j->first->as<PointerType>()->getPointee();
+                if(t2->isSame(i8))
+                    continue;
+
                 if(query.isDistinct(t1, t2)) {
                     result.addPair(i->second, j->second);
                 }
             }
         }
+
         for(auto& [val, attrs] : result.pointerAttrs()) {
             CMMC_UNUSED(attrs);
             const auto type = val->getType();

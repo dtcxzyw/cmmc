@@ -280,6 +280,11 @@ public:
             store(ptr + idx, byte);
     }
 
+    void memCopy(uintptr_t dest, uintptr_t src, size_t size) {
+        for(size_t idx = 0; idx < size; ++idx)
+            store(dest + idx, load(src + idx));
+    }
+
     void storeValue(uintptr_t ptr, ConstantValue* value, const Type* type) {
         const auto alignment = type->getAlignment(mDataLayout);
         if(ptr % alignment != 0) {
@@ -958,6 +963,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         const auto size = getUInt(2);
                         memCtx.memReset(ptr, size, static_cast<std::byte>(byte));
                         addPtr(ptr);
+                        break;
+                    }
+                    case Intrinsic::memcpy: {
+                        const auto dest = getPtr(0);
+                        const auto src = getPtr(1);
+                        const auto size = getUInt(2);
+                        memCtx.memCopy(dest, src, size);
+                        addPtr(dest);
                         break;
                     }
                     default:

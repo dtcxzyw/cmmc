@@ -5,8 +5,8 @@ import sys
 import time
 import subprocess
 import json
-import math
 
+gcc_ref_flags = "-O3 -march=host -funroll-loops -fwhole-program"
 binary_path = sys.argv[1]
 tests_path = sys.argv[2]
 

@@ -607,4 +607,30 @@ bool ConditionalBranchInst::isEqual(const Instruction* rhs) const {
         mFalseTarget.getArgs().size() == rhsBranch->mFalseTarget.getArgs().size();
 }
 
+bool LoadInst::verify(std::ostream& out) const {
+    if(!getType()->isPrimitive()) {
+        out << "Cannot load non-primitive values";
+        return false;
+    }
+    return true;
+}
+bool StoreInst::verify(std::ostream& out) const {
+    if(!getOperand(0)->getType()->isPointer()) {
+        out << "The destination must be a pointer" << std::endl;
+        return false;
+    }
+    if(!getOperand(0)->getType()->as<PointerType>()->getPointee()->isSame(getOperand(1)->getType())) {
+        out << "Type mismatch [Destination = ";
+        getOperand(0)->getType()->dump(out);
+        out << ", Value = ";
+        getOperand(1)->getType()->dump(out);
+        out << "]" << std::endl;
+        return false;
+    }
+    if(!getOperand(1)->getType()->isPrimitive()) {
+        out << "Cannot store non-primitive values";
+        return false;
+    }
+    return true;
+}
 CMMC_NAMESPACE_END

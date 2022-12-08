@@ -1,0 +1,69 @@
+struct foo {
+    int a;
+    int b[1024];
+    struct bar {
+        int x;
+    } c[2];
+} global;
+struct foo global_array[10];
+
+// rvo
+struct foo func_struct_ret() {
+    struct foo x;
+    x.a = 10;
+    x.b[10] = 20;
+    x.c[0].x = 20;
+    return x;
+}
+
+void func_struct_array_param(struct foo param[]) {
+    param[0].a = 10;
+}
+
+// nocopy
+int func_struct_param(struct foo param) {
+    param.a = 10;
+    return param.a + param.b[0];
+}
+
+// nocopy
+int func_struct_param2(struct bar param) {
+    param.x = 0;
+    return param.x;
+}
+
+int main() {
+    struct foo local;
+    struct foo local_array[10];
+
+    local = global;
+    global = local;
+    local = local;
+    global = global;
+    local_array[0] = local;
+    local = local_array[0];
+    global_array[0] = local;
+    global_array[0] = global;
+    global = global_array[0];
+    local = global_array[0];
+
+    local = func_struct_ret();
+    global = func_struct_ret();
+    
+    func_struct_array_param(global_array);
+    func_struct_array_param(local_array);
+    
+    int res = 0;
+    res+=func_struct_param(local);
+    res+=func_struct_param(global_array[0]);
+    res+=func_struct_param2(local.c[0]);
+    res+=func_struct_param2(global_array[0].c[1]);
+
+    struct bar sub;
+    sub.x = 1;
+
+    local.c[1] = sub;
+    res+=sub.x;
+
+    return res;
+}

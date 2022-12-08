@@ -236,6 +236,7 @@ public:
         : Instruction{ InstructionID::Load, address->getType()->as<PointerType>()->getPointee(), { address } } {}
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
+    bool verify(std::ostream& out) const override;
 };
 
 class StoreInst final : public Instruction {
@@ -245,6 +246,7 @@ public:
     }
     void dump(std::ostream& out) const override;
     Instruction* clone() const override;
+    bool verify(std::ostream& out) const override;
 };
 
 class BlockArgument;

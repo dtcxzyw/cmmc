@@ -121,6 +121,7 @@ public:
     Value* getRValue(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage);
     std::pair<Value*, Qualifier> getLValue(Expr* expr, AsLValueUsage usage);
     Value* getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage);
+    void copyStruct(Value* dest, Value* src);
     void pushScope();
     void popScope();
     void addIdentifier(String identifier, QualifiedValue value);

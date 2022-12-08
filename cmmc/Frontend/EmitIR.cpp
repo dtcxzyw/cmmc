@@ -85,14 +85,14 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
             argTypes.push_back(type);
             info.passingArgsByPointer.push_back(false);
         } else {
-            argTypes.push_back(make<PointerType>(type));
+            argTypes.push_back(PointerType::get(type));
             info.passingArgsByPointer.push_back(true);
         }
         info.argQualifiers.push_back(arg.type.qualifier);
     }
 
     if(!ret->isVoid() && !targetFrameInfo.shouldPassByRegister(ret, dataLayout)) {
-        argTypes.push_back(make<PointerType>(ret));
+        argTypes.push_back(PointerType::get(ret));
         ret = VoidType::get();
         info.passingRetValByPointer = true;
     }
@@ -140,7 +140,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
                 // create a copy
                 const auto memArg = ctx.makeOp<StackAllocInst>(argType);
                 memArg->setLabel(name);
-                ctx.makeOp<StoreInst>(memArg, ctx.makeOp<LoadInst>(arg));
+                ctx.copyStruct(memArg, arg);
                 ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
             }
         }
@@ -441,13 +441,17 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         auto [lhs, dstQualifier] = ctx.getLValue(mLhs, AsLValueUsage::Assignment);
         if(dstQualifier.isConst)
             DiagnosticsContext::get().attach<Reason>("require a mutable lvalue").reportFatal();
-        auto rhs =
-            ctx.getRValue(mRhs, lhs->getType()->as<PointerType>()->getPointee(), dstQualifier, ConversionUsage::Assignment);
+        const auto assignType = lhs->getType()->as<PointerType>()->getPointee();
+
+        auto rhs = ctx.getRValue(mRhs, assignType, dstQualifier, ConversionUsage::Assignment);
         if(!(rhs->isUndefined() || rhs->getType()->isInvalid())) {
             if(rhs->getType()->isArray())
                 DiagnosticsContext::get().attach<Reason>("cannot assign an array").reportFatal();
 
-            ctx.makeOp<StoreInst>(lhs, rhs);
+            if(assignType->isStruct()) {
+                ctx.copyStruct(lhs, rhs);
+            } else
+                ctx.makeOp<StoreInst>(lhs, rhs);
         }
 
         // NOTICE: return rvalue in C-like language!!!
@@ -704,7 +708,8 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         const auto storage = ctx.makeOp<StackAllocInst>(retType);
         args.push_back(storage);
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
-        return QualifiedValue{ ctx.makeOp<LoadInst>(storage) };
+        // TODO: RVO
+        return QualifiedValue{ storage, ValueQualifier::AsLValue, Qualifier{ true } };
     } else
         return QualifiedValue{ ctx.makeOp<FunctionCallInst>(callee, std::move(args)) };
 }
@@ -720,7 +725,10 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
         if(retVal->isUndefined() || retVal->getType()->isInvalid()) {
             ctx.makeOp<UnreachableInst>();
         } else {
-            ctx.makeOp<StoreInst>(ret, retVal);
+            if(retType->isStruct())
+                ctx.copyStruct(ret, retVal);
+            else
+                ctx.makeOp<StoreInst>(ret, retVal);
             ctx.makeOp<ReturnInst>();
         }
     } else {
@@ -1087,7 +1095,10 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
 }
 Value* EmitContext::getRValue(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage) {
     const auto [val, valQualifier] = getRValue(expr);
-    return convertTo(val, type, valQualifier, dstQualifier, usage);
+    if(type->isStruct())
+        return convertTo(val, PointerType::get(type), valQualifier, Qualifier{ true }, usage);
+    else
+        return convertTo(val, type, valQualifier, dstQualifier, usage);
 }
 std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage usage) {
     const auto [val, valQualifier, qualifier] = expr->emitWithLoc(*this);
@@ -1105,7 +1116,6 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage us
                          *this, PointerType::get(val->getType()), -1, DiagnosticsContext::get().current<SourceLocation>(),
                          [&](std::ostream& out) { out << "cannot convert a rvalue to a lvalue for " << enumName(usage); }),
                      qualifier };
-            ;
         }
     } else
         DiagnosticsContext::get().attach<Reason>("cannot convert a rvalue to a lvalue").reportFatal();
@@ -1252,7 +1262,7 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
             if(expr == nullptr) {
                 unknownSize = true;
-                ret = make<PointerType>(ret);
+                ret = PointerType::get(ret);
                 // TODO: add const qualifier
                 // int[] -> int* const
             } else {
@@ -1465,7 +1475,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
 
     const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
     const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
-    const auto i8ptr = make<PointerType>(IntegerType::get(8U));
+    const auto i8ptr = PointerType::get(IntegerType::get(8U));
     const auto zeroByte = make<ConstantInteger>(IntegerType::get(32), 0);
     const auto scalarSize = scalarType->getSize(dataLayout);
 
@@ -1617,8 +1627,13 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
         case Intrinsic::none:
             reportUnreachable();
         case Intrinsic::memset: {
-            const auto ptr = make<PointerType>(IntegerType::get(8));
+            const auto ptr = PointerType::get(IntegerType::get(8));
             funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, IntegerType::get(32), getIndexType() });
+            break;
+        }
+        case Intrinsic::memcpy: {
+            const auto ptr = PointerType::get(IntegerType::get(8));
+            funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, ptr, getIndexType() });
             break;
         }
         default:
@@ -1630,7 +1645,11 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
         case Intrinsic::none:
             reportUnreachable();
         case Intrinsic::memset: {
+            // TODO: more precise information
             func->attr().addAttr(FunctionAttribute::NoMemoryRead);
+            break;
+        }
+        case Intrinsic::memcpy: {
             break;
         }
         default:
@@ -1682,9 +1701,12 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value)
     if(valQualifier == ValueQualifier::AsLValue) {
         if(auto iter = mConstantBinding.find(val); iter != mConstantBinding.cend())
             return { iter->second, qualifier };
-        if(val->getType()->as<PointerType>()->getPointee()->isArray())
+        const auto pointee = val->getType()->as<PointerType>()->getPointee();
+        if(pointee->isArray())
             return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
                      qualifier };  // decay to pointer
+        else if(pointee->isStruct())
+            return { val, qualifier };  // only pass pointer
         else
             return { makeOp<LoadInst>(val), qualifier };
     }
@@ -1774,6 +1796,19 @@ void EmitContext::pushLoc(const SourceLocation& loc) {
 }
 void EmitContext::popLoc() {
     DiagnosticsContext::get().pop<SourceLocation>();
+}
+
+void EmitContext::copyStruct(Value* dest, Value* src) {
+    assert(src->getType()->isPointer() && dest->getType()->isPointer());
+    assert(src->getType()->isSame(dest->getType()));
+    const auto structType = src->getType()->as<PointerType>()->getPointee();
+    assert(structType->isStruct());
+    const auto memcpyFunc = getIntrinsic(Intrinsic::memcpy);
+    const auto ptr = PointerType::get(IntegerType::get(8));
+    const auto& dataLayout = mModule->getTarget().getDataLayout();
+    const Vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
+                                  make<ConstantInteger>(getIndexType(), static_cast<int64_t>(structType->getSize(dataLayout))) };
+    makeOp<FunctionCallInst>(memcpyFunc, args);
 }
 
 CMMC_NAMESPACE_END

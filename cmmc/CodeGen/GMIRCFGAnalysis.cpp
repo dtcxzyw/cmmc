@@ -14,6 +14,7 @@
 
 #include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <iostream>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
