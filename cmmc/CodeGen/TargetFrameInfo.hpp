@@ -23,9 +23,6 @@ CMMC_NAMESPACE_BEGIN
 
 class TargetFrameInfo {
 public:
-    virtual bool shouldPassByRegister(const Type* type, const DataLayout&) const {
-        return type->isPrimitive();
-    }
     virtual ~TargetFrameInfo() = default;
 };
 

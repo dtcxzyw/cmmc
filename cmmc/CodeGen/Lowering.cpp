@@ -142,6 +142,11 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         }
     }
 
+    if constexpr(Config::debug) {
+        func->dump(std::cerr);
+        std::cerr << std::endl;
+        mfunc.dump(std::cerr, target);
+    }
     assert(mfunc.verify(std::cerr, true));
 }
 
@@ -533,12 +538,19 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
 }
 void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
     const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
-        // bnez %cond, false_label
-        const auto falsePrepareBlock = ctx.addBlockAfter();
-        ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, falsePrepareBlock);
+        // bnez %cond, else_label
+        // then_label:
+        // ...
+        // else_label:
+        // ...
+        //
+        const auto thenPrepareBlock = ctx.addBlockAfter();
+        const auto elsePrepareBlock = ctx.addBlockAfter();
+        ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, elsePrepareBlock);
+        ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), ctx);
 
-        ctx.setCurrentBasicBlock(falsePrepareBlock);
+        ctx.setCurrentBasicBlock(elsePrepareBlock);
         emitBranch(inst->getFalseTarget(), ctx);
     };
     if(inst->getInstID() == InstructionID::Branch) {
@@ -570,14 +582,17 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     // c = x ? y : z;
     // ->
     // c = z;
-    // beqz x BB
+    // beqz x BB2
+    // BB1:
     // c = y;
-    // BB:
+    // BB2:
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0);
+    const auto next = ctx.addBlockAfter();
     const auto target = ctx.addBlockAfter();
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
                                      CompareOp::Equal, target);
+    ctx.setCurrentBasicBlock(next);
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0);
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);

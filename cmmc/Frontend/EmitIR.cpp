@@ -72,16 +72,13 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
     if(ret->isArray())
         DiagnosticsContext::get().attach<Reason>("returning an array is not allowed").reportFatal();
 
-    const auto& target = ctx.getModule()->getTarget();
-    const auto& targetFrameInfo = target.getTargetFrameInfo();
-    const auto& dataLayout = target.getDataLayout();
     Vector<const Type*> argTypes;
     for(auto& arg : args) {
         assert(!arg.var.initialValue);
         const auto type = ctx.getType(arg.type.typeIdentifier, arg.type.space, arg.var.arraySize);
         if(type->isVoid())
             DiagnosticsContext::get().attach<Reason>("the type of argument cannot be void").reportFatal();
-        if(!type->isArray() && targetFrameInfo.shouldPassByRegister(type, dataLayout)) {
+        if(type->isPrimitive()) {
             argTypes.push_back(type);
             info.passingArgsByPointer.push_back(false);
         } else {
@@ -91,7 +88,7 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
         info.argQualifiers.push_back(arg.type.qualifier);
     }
 
-    if(!ret->isVoid() && !targetFrameInfo.shouldPassByRegister(ret, dataLayout)) {
+    if(!ret->isVoid() && !ret->isPrimitive()) {
         argTypes.push_back(PointerType::get(ret));
         ret = VoidType::get();
         info.passingRetValByPointer = true;

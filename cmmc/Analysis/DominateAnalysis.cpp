@@ -35,11 +35,21 @@ DominateAnalysisResult::DominateAnalysisResult(std::unordered_map<Block*, DomTre
     std::reverse_copy(mOrder.cbegin(), mOrder.cend(), mReservedOrder.begin());
 }
 
+const Block* DominateAnalysisResult::parent(Block* node) const {
+    const auto idx = getIndex(node);
+    if(idx == DomTreeNode::invalidNode)
+        return nullptr;
+    const auto parentidx = mDomTree[idx].parent();
+    if(parentidx == DomTreeNode::invalidNode)
+        return nullptr;
+    return mDomTree[parentidx].block;
+}
+
 DomTreeNode::NodeIndex DominateAnalysisResult::getIndex(Block* block) const {
     const auto iter = mDomTreeInvMap.find(block);
     if(iter != mDomTreeInvMap.cend())
         return iter->second;
-    return std::numeric_limits<DomTreeNode::NodeIndex>::max();
+    return DomTreeNode::invalidNode;
 }
 
 Block* DominateAnalysisResult::lca(Block* a, Block* b) const {
@@ -159,7 +169,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     domTree.resize(dfn.size());
 
     cnt = 0;
-    constexpr auto invalidNode = std::numeric_limits<DomTreeNode::NodeIndex>::max();
+    constexpr auto invalidNode = DomTreeNode::invalidNode;
 
     auto dfs = [&](auto&& self, Block* curBlock, DomTreeNode::NodeIndex p) -> DomTreeNode::NodeIndex {
         const auto u = cnt++;

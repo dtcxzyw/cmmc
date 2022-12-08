@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include "cmmc/IR/Block.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cstdint>
 #include <vector>
 

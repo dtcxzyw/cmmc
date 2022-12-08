@@ -21,7 +21,9 @@
 #include <ostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -186,8 +188,7 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicM
 class GMIRBasicBlock final {
     GMIRFunction* mFunction;
 
-    std::vector<Operand> mParameters;
-    std::vector<Operand> mReserved;
+    std::unordered_set<Operand, OperandHasher> mKeepingVregs, mUsedStackObjects;
 
     std::list<GMIRInst> mInstructions;
 
@@ -198,6 +199,12 @@ public:
     }
     std::list<GMIRInst>& instructions() noexcept {
         return mInstructions;
+    }
+    auto& keepingVregs() noexcept {
+        return mKeepingVregs;
+    }
+    auto& usedStackObjects() noexcept {
+        return mUsedStackObjects;
     }
     const std::list<GMIRInst>& instructions() const noexcept {
         return mInstructions;

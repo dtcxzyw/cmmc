@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -22,6 +21,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <functional>
 #include <memory>
 #include <string_view>

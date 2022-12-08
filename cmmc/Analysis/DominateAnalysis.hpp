@@ -27,6 +27,7 @@ CMMC_NAMESPACE_BEGIN
 struct DomTreeNode final {
     static constexpr uint32_t maxDepth = 20;
     using NodeIndex = uint32_t;
+    static constexpr auto invalidNode = std::numeric_limits<NodeIndex>::max();
 
     NodeIndex ancestor[maxDepth + 1];
     Block* block;
@@ -48,6 +49,7 @@ public:
     explicit DominateAnalysisResult(std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap, std::vector<DomTreeNode> domTree);
 
     DomTreeNode::NodeIndex getIndex(Block* block) const;
+    const Block* parent(Block* node) const;
     const std::vector<Block*>& blocks() const {
         return mOrder;
     }

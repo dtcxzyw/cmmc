@@ -65,7 +65,17 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
     };
 
     dumpTarget(this);
-    out << ":\n";
+    out << ": ";
+
+    if(!mUsedStackObjects.empty()) {
+        out << "# used stack objects:";
+        for(auto used : mUsedStackObjects) {
+            out << ' ';
+            dumpOperand(used);
+        }
+    }
+
+    out << std::endl;
 
     for(auto& inst : mInstructions) {
         std::visit(Overload{ [&](const CopyMInst& inst) {
@@ -241,6 +251,13 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                    inst);
         out << std::endl;
     }
+
+    if(!mKeepingVregs.empty()) {
+        out << "# keeping vregs:";
+        for(auto& vreg : mKeepingVregs)
+            dumpOperand(vreg);
+        out << std::endl;
+    }
 }
 void GMIRFunction::dump(std::ostream& out, const Target& target) const {
     int32_t idx = 0;
@@ -316,7 +333,7 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
         }
     }
 
-    return false;
+    return true;
 }
 
 bool GMIRFunction::verify(std::ostream& err, bool checkTerminator) const {
