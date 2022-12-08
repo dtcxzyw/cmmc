@@ -178,7 +178,7 @@ def sysy_ref(src):
     return True
 
 
-skip_list = ["29_long_line.sy"]  # FIXME: speed up PHI analysis
+skip_list = []
 
 
 def test(name, path, filter, tester):

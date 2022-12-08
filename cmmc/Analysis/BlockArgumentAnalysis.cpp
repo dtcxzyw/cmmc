@@ -19,6 +19,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -47,7 +48,7 @@ BlockArgumentAnalysisResult BlockArgumentAnalysis::run(Function& func, AnalysisP
     for(auto block : func.blocks())
         for(auto arg : block->args()) {
             auto& phiVal = phi.query(arg);
-            if(phiVal.index() == 0) {
+            if(std::holds_alternative<Value*>(phiVal)) {
                 const auto val = std::get<Value*>(phiVal);
                 if(val)
                     res.addMapping(arg, val);

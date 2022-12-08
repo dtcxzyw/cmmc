@@ -31,6 +31,7 @@ enum class SimulationFailReason {
     UnsupportedTarget,        //
     Undefined,                //
     Unreachable,              //
+    EnterNoreturnFunc,        //
     NoEntry
 };
 

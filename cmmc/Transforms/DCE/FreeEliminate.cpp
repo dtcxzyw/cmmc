@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+// TODO: use MinimizeStackObjectLifetime instead of FreeEliminate
 // eliminate useless lifetime annotation of stack allocations
 // NOTICE: Using by free is a weak reference
 

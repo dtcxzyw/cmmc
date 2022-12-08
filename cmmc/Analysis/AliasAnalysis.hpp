@@ -23,6 +23,7 @@ class AliasAnalysisResult final {
     std::unordered_set<uint64_t> mDistinctPairs;
     std::vector<std::unordered_set<uint32_t>> mDistinctGroups;
     std::unordered_map<Value*, std::vector<uint32_t>> mPointerAttributes;
+    std::vector<uint32_t> mEmpty;
 
 public:
     void addPair(uint32_t attr1, uint32_t attr2);

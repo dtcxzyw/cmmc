@@ -306,7 +306,7 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
             const auto rhsValue = rhs->as<ConstantFloatingPoint>()->getValue();
             const auto res = evaluateOp(op, lhsValue, rhsValue);
 
-            if(res.index() != 0)
+            if(std::holds_alternative<double>(res))
                 return make<ConstantFloatingPoint>(lhs->getType(), std::get<double>(res));
         } else {
             if(isSigned) {
@@ -314,14 +314,14 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
                 const auto rhsValue = rhs->as<ConstantInteger>()->getSignExtended();
                 const auto res = evaluateOp(op, lhsValue, rhsValue);
 
-                if(res.index() != 0)
+                if(std::holds_alternative<intmax_t>(res))
                     return make<ConstantInteger>(lhs->getType(), std::get<intmax_t>(res));
             } else {
                 const auto lhsValue = lhs->as<ConstantInteger>()->getZeroExtended();
                 const auto rhsValue = rhs->as<ConstantInteger>()->getZeroExtended();
                 const auto res = evaluateOp(op, lhsValue, rhsValue);
 
-                if(res.index() != 0)
+                if(std::holds_alternative<uintmax_t>(res))
                     return make<ConstantInteger>(lhs->getType(), static_cast<intmax_t>(std::get<uintmax_t>(res)));
             }
         }
@@ -516,13 +516,13 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
             const auto val = value->as<ConstantFloatingPoint>()->getValue();
             const auto res = evaluateOp(mOp, val);
 
-            if(res.index() != 0)
+            if(std::holds_alternative<double>(res))
                 return QualifiedValue{ make<ConstantFloatingPoint>(value->getType(), std::get<double>(res)) };
         } else {
             const auto val = value->as<ConstantInteger>()->getSignExtended();
             const auto res = evaluateOp(mOp, val);
 
-            if(res.index() != 0)
+            if(std::holds_alternative<intmax_t>(res))
                 return QualifiedValue{ make<ConstantInteger>(value->getType(), std::get<intmax_t>(res)) };
         }
     }

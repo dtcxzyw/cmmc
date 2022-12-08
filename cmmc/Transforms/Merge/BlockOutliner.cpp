@@ -78,20 +78,22 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_map<Block*, Block*> replace;
         // block-level merge
-        std::vector<Block*> blocks;
+        std::unordered_map<uint32_t, std::vector<Block*>> blocks;
         for(auto block : func.blocks()) {
             if(block == func.entryBlock())
                 continue;
+            const auto key = block->instructions().size();
+            auto& blockGroup = blocks[key];
 
             bool unique = true;
-            for(auto rhs : blocks)
+            for(auto rhs : blockGroup)
                 if(isEqual(block, rhs)) {
                     replace.emplace(block, rhs);
                     unique = false;
                     break;
                 }
             if(unique)
-                blocks.push_back(block);
+                blockGroup.push_back(block);
         }
         bool modified = false;
         for(auto block : func.blocks()) {

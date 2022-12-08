@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <chrono>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -152,6 +153,9 @@ IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasse
 bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
     bool stopEarly = false;
+    using namespace std::literals;
+    constexpr auto timeout = 10s;
+    const auto deadline = Clock::now() + timeout;
     for(uint32_t i = 0; i < mMaxIterations; ++i) {
         if(!mSubPasses->run(item, analysis)) {
             stopEarly = true;
@@ -159,6 +163,9 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
         } else
             analysis.invalidateModule();
         modified = true;
+        const auto now = Clock::now();
+        if(now > deadline)
+            break;
     }
     // if(!stopEarly)
     //     reportWarning() << "partial optimization" << std::endl;
@@ -235,7 +242,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // "CodeMove",  //
             // Postprocess
             "NoReturnCallEliminate",  //
-            "FreeEliminate",          //
+            //"FreeEliminate",          //
             "NoSideEffectEliminate",  // clean up
             "GlobalEliminate"         //
         }))
@@ -262,10 +269,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(auto pass : passesSource.collect({
-                "ScalarMem2Reg",          //
-                "StoreEliminate",         // clean up
-                "BlockArgEliminate",      // clean up
-                "FreeEliminate",          // clean up
+                "ScalarMem2Reg",      //
+                "StoreEliminate",     // clean up
+                "BlockArgEliminate",  // clean up
+                //"FreeEliminate",          // clean up
                 "NoSideEffectEliminate",  // clean up
                 "SmallBlockInlining",     //
             }))

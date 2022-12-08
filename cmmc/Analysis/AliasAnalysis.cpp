@@ -77,6 +77,9 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     return false;
 }
 const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const {
+    if(ptr->isConstant()) {
+        return mEmpty;  // undefined/hardcoded pointer
+    }
     assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.find(ptr)->second;
 }

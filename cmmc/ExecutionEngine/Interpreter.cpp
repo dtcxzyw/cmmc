@@ -410,6 +410,9 @@ Interpreter::Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiv
 std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& module, Function& func,
                                                                         const std::vector<ConstantValue*>& arguments,
                                                                         SimulationIOContext& ioCtx) const {
+    if(func.attr().hasAttr(FunctionAttribute::NoReturn))
+        return SimulationFailReason::EnterNoreturnFunc;
+
     const auto& target = module.getTarget();
     const auto& dataLayout = target.getDataLayout();
     static_assert(sizeof(uintptr_t) == 8);
@@ -860,6 +863,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     return SimulationFailReason::ExceedMaxRecursiveDepth;
 
                 const auto callee = std::get<Function*>(operands.back());
+                if(callee->attr().hasAttr(FunctionAttribute::NoReturn))
+                    return SimulationFailReason::EnterNoreturnFunc;
                 operands.pop_back();
 
                 switch(callee->getIntrinsic()) {
