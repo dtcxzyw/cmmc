@@ -809,16 +809,19 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 const auto ptr = memCtx.stackPush(type->getSize(dataLayout), type->getAlignment(dataLayout));
                 addPtr(ptr);
                 currentExecCtx.stackAllocs.insert(ptr);
+                --instructionCount;
                 break;
             }
             case InstructionID::Free: {
                 const auto ptr = getPtr(0);
                 if(currentExecCtx.stackAllocs.erase(ptr))
                     memCtx.stackPop(ptr);
+                --instructionCount;
                 break;
             }
             case InstructionID::GetElementPtr: {
                 auto basePtr = getPtr(operands.size() - 1);
+                const auto oldPtr = basePtr;
                 auto baseType = inst->operands().back()->getType();
                 for(uint32_t idx = 0; idx + 1 < operands.size(); ++idx) {
                     const auto operand = inst->getOperand(idx);
@@ -839,18 +842,23 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 }
 
                 addPtr(basePtr);
+                if(oldPtr == basePtr)
+                    --instructionCount;
                 break;
             }
             case InstructionID::PtrCast: {
                 addValue(inst, operands[0]);
+                --instructionCount;
                 break;
             }
             case InstructionID::PtrToInt: {
                 addUInt(getPtr(0));
+                --instructionCount;
                 break;
             }
             case InstructionID::IntToPtr: {
                 addPtr(getUInt(0));
+                --instructionCount;
                 break;
             }
             case InstructionID::Select: {
