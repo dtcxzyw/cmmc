@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/MIPS/MIPSTarget.hpp>
 #include <memory>
@@ -21,12 +22,31 @@ CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
+class MIPSSimpleSubTarget final : public SimpleSubTarget {
+public:
+    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
+        switch(addressSpace) {
+            case MIPSAddressSpace::FPR_D:
+                return 16;
+            case MIPSAddressSpace::FPR_S:
+                return 32;
+            case MIPSAddressSpace::GPR:
+                return 30;
+            default:
+                reportUnreachable();
+        }
+    }
+};
+
 MIPSTarget::MIPSTarget() {
     if(targetMachine.get() == "emulator")
-        mSubTarget = std::make_unique<SimpleSubTarget>();
+        mSubTarget = std::make_unique<MIPSSimpleSubTarget>();
     else
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
+
+void MIPSTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
+void MIPSTarget::legalizeFunc(GMIRFunction&) const {}
 
 CMMC_TARGET("mips", MIPSTarget);
 

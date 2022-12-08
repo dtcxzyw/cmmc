@@ -12,66 +12,26 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
+#include <cmmc/CodeGen/SubTarget.hpp>
 #include <cmmc/CodeGen/Target.hpp>
-#include <queue>
-#include <unordered_map>
-#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-void schedule(GMIRFunction& func, const Target& target) {
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(target);
-    /*
-    std::unordered_map<Register, std::vector<MachineInst*>> writers;
-    std::unordered_set<Register> used;
-    std::unordered_set<MachineInst*> usedInst;
-    std::queue<MachineInst*> q;
+// static void scheduleBlock() {}
 
-    auto& instInfo = target.getTargetInstInfo();
+void schedule(GMIRFunction& func, const Target& target, bool preRA) {
+    CMMC_UNUSED(preRA);
 
-    for(auto block : func.basicblocks) {
-        for(auto& inst : block->instructions) {
-            if(instInfo.hasSideEffect(inst))
-                q.push(&inst);
+    return;
+    const auto& subTarget = target.getSubTarget();
+    CMMC_UNUSED(subTarget);
+    const auto cfg = calcGMIRCFG(func);
 
-            if(const auto reg = inst.getWriteReg(); reg != invalidReg)
-                writers[reg].push_back(&inst);
-        }
+    for(auto& block : func.blocks()) {
+        assert(block.verify(std::cerr));
+        CMMC_UNUSED(block);
     }
-
-    while(!q.empty()) {
-        const auto inst = q.front();
-        usedInst.insert(inst);
-        q.pop();
-
-        const auto addRef = [&](Register reg) {
-            if(used.insert(reg).second) {
-                assert(writers.count(reg));
-                for(auto writer : writers[reg])
-                    q.push(writer);
-            }
-        };
-
-        for(uint32_t idx = 0; idx < MachineInst::regSize; ++idx) {
-            if(const auto reg = inst->getReg(idx); reg != invalidReg) {
-                addRef(reg);
-            }
-        }
-
-        const auto& addr = inst->getAddr();
-        if(auto regAddr = std::get_if<RegBase>(&addr.base))
-            addRef(regAddr->reg);
-    }
-
-    for(auto block : func.basicblocks) {
-        auto& insts = block->instructions;
-        insts.remove_if([&](auto& inst) { return !usedInst.count(&inst); });
-    }
-
-    // TODO: schedule by port utilization estimation
-    */
 }
 
 CMMC_NAMESPACE_END

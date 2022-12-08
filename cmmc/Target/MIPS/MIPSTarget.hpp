@@ -68,6 +68,8 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
+    void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void legalizeFunc(GMIRFunction& func) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 

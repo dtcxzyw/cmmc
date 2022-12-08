@@ -40,8 +40,8 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
     return instance;
 }
 
-void assignRegisters(GMIRFunction& mfunc, Function& func, const Target& target) {
-    RegisterAllocatorRegistry::get().selectMethod()(mfunc, func, target);
+void assignRegisters(GMIRFunction& mfunc, const Target& target) {
+    RegisterAllocatorRegistry::get().selectMethod()(mfunc, target);
 }
 
 CMMC_NAMESPACE_END

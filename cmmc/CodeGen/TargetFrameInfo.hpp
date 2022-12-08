@@ -26,13 +26,6 @@ public:
     virtual bool shouldPassByRegister(const Type* type, const DataLayout&) const {
         return type->isPrimitive();
     }
-    /*
-    virtual std::unique_ptr<TargetRegisterUsage> emitPrologue(GMIRBasicBlock* block, FunctionType* func,
-                                                              CallingConvention cc) const = 0;
-    virtual void emitEpilogue(MachineBasicBlock* block, FunctionType* func, CallingConvention cc,
-                              TargetRegisterUsage& usage) const = 0;
-    // virtual void fixCall(List<MachineInst>& block, FunctionType* func, CallingConvention cc) const = 0;
-    */
     virtual ~TargetFrameInfo() = default;
 };
 

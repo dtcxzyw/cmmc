@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <limits>
 #include <ostream>
+#include <string>
 #include <unordered_map>
 #include <variant>
 
@@ -199,6 +200,7 @@ public:
     }
     void dump(std::ostream& out, const Target& target, const std::unordered_map<const GMIRBasicBlock*, String>& blockMap,
               const TemporaryPools& pools) const;
+    bool verify(std::ostream& err, bool checkTerminator) const;
 };
 
 class VirtualRegPool final {
@@ -241,6 +243,7 @@ public:
     }
 
     void dump(std::ostream& out, const Target& target) const;
+    bool verify(std::ostream& err, bool checkTerminator) const;
 };
 
 class GMIRZeroStorage final {

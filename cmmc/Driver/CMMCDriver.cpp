@@ -129,7 +129,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
 
     std::ofstream out{ path };
     AnalysisPassManager analysis{ &module };
-    const auto machineModule = lowerToMachineModule(module, analysis);
+    const auto machineModule = lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
     // assert(machineModule->verify());
     {
         Stage stage{ "dump ASM" };

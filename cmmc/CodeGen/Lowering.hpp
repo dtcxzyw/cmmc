@@ -21,6 +21,7 @@
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdint>
 #include <string_view>
 #include <unordered_map>
@@ -92,6 +93,6 @@ public:
 };
 
 class Module;
-std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis);
+std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel);
 
 CMMC_NAMESPACE_END

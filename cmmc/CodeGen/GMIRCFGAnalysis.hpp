@@ -13,28 +13,29 @@
 */
 
 #pragma once
+#include "cmmc/IR/Block.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cstdint>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-struct LiveRange final {
-    std::unordered_map<const GMIRBasicBlock*, std::pair<GMIRInst*, GMIRInst*>> segments;
+struct GMIRBlockCFGInfo final {
+    std::vector<const GMIRBasicBlock*> predecessors;
+    std::vector<const GMIRBasicBlock*> successors;
 };
 
-class LiveRangeAnalysisResult final {
-    std::unordered_map<uint32_t, LiveRange> mInfo;
+class GMIRCFGAnalysisResult final {
+    std::unordered_map<const GMIRBasicBlock*, GMIRBlockCFGInfo> mInfo;
 
 public:
-    std::unordered_map<uint32_t, LiveRange>& storage() {
+    std::unordered_map<const GMIRBasicBlock*, GMIRBlockCFGInfo>& storage() {
         return mInfo;
     }
-    const LiveRange& query(uint32_t idx) const {
-        return mInfo.at(idx);
-    }
+    const std::vector<const GMIRBasicBlock*>& predecessors(const GMIRBasicBlock* block) const;
+    const std::vector<const GMIRBasicBlock*>& successors(const GMIRBasicBlock* block) const;
 };
 
-LiveRangeAnalysisResult calcLiveRange(const GMIRFunction& func);
+GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func);
 
 CMMC_NAMESPACE_END

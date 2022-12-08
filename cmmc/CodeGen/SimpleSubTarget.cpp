@@ -19,8 +19,14 @@ CMMC_NAMESPACE_BEGIN
 uint32_t SimpleSubTarget::issueWidth() const noexcept {
     return 1;
 }
-uint32_t SimpleSubTarget::getLatency(const GMIRInst&) const {
+uint32_t SimpleSubTarget::microOpBufferSize() const noexcept {
+    return 0;  // in-order
+}
+uint32_t SimpleSubTarget::mispredictPenalty() const noexcept {
     return 0;
+}
+uint32_t SimpleSubTarget::estimateMigrationCost(uint32_t src, uint32_t dst) const {
+    return src == dst ? 0U : 1U;
 }
 
 CMMC_NAMESPACE_END

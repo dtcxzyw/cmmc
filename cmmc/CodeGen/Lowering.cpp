@@ -141,10 +141,12 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
             info.lowerInst(inst, ctx);
         }
     }
+
+    assert(mfunc.verify(std::cerr, true));
 }
 
 void optimizeBlockLayout(GMIRFunction& func, const Target& target);
-void schedule(GMIRFunction& func, const Target& target);
+void schedule(GMIRFunction& func, const Target& target, bool preRA);
 void allocateStackObjects(GMIRFunction& func, const Target& target);
 
 static void removeUnusedInsts(GMIRFunction& func) {
@@ -234,7 +236,10 @@ static void removeUnusedInsts(GMIRFunction& func) {
         block.instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
 }
 
-static void lowerToMachineModule(GMIRModule& machineModule, const Module& module, AnalysisPassManager& analysis) {
+void simplifyCFG(GMIRFunction& func);
+
+static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
+                                 OptimizationLevel optLevel) {
     auto& symbols = machineModule.symbols;
 
     std::unordered_map<GlobalValue*, GMIRSymbol*> globalMap;
@@ -256,6 +261,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
     auto& target = module.getTarget();
     auto& subTarget = target.getSubTarget();
 
+    target.legalizeModuleBeforeCodeGen(module, analysis);
+    analysis.invalidateModule();
+
     auto dumpFunc = [&](const GMIRFunction& func) { func.dump(std::cerr, target); };
     CMMC_UNUSED(dumpFunc);
 
@@ -267,41 +275,44 @@ static void lowerToMachineModule(GMIRModule& machineModule, const Module& module
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
         // Stage 2: clean up unused insts
-        removeUnusedInsts(mfunc);
-        // Stage 2: legalize
-        // TODO: types/ops/constants/calls
-        // Stage 3: peephole opt
-        subTarget.peepholeOpt(mfunc);
-        // Stage 4: pre-RA scheduling
-        // TODO: recompute to reduce register pressure
-        schedule(mfunc, target);
-        // Stage 5: register allocation
-        assignRegisters(mfunc, *func, target);  // vr -> GPR/FPR/Stack, clean up self-assign insts
+        if(optLevel >= OptimizationLevel::O1)
+            removeUnusedInsts(mfunc);
+        // Stage 3: legalize
+        target.legalizeFunc(mfunc);
+        // Stage 4: peephole opt
+        if(optLevel >= OptimizationLevel::O1)
+            subTarget.peepholeOpt(mfunc);
+        // Stage 5: pre-RA scheduling, minimize register pressure
+        if(optLevel >= OptimizationLevel::O2)
+            schedule(mfunc, target, true);
+        // Stage 6: register allocation
+        assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
         std::cerr << ".global " << symbol->symbol;
         dumpFunc(mfunc);
         std::cerr << "================" << std::endl;
-        // Stage 6: legalize stack objects
-        allocateStackObjects(mfunc, target);  // stack -> sp
-        // Stage 7: post-RA scheduling
-        schedule(mfunc, target);
-        // Stage 8: post peephole opt
-        subTarget.postPeepholeOpt(mfunc);
-        // Stage 9: code layout opt
-        optimizeBlockLayout(mfunc, target);
-        // Stage 10: remove unreachable block/continuous goto/unused label
-        // TODO
+        // Stage 7: legalize stack objects, stack -> sp
+        allocateStackObjects(mfunc, target);
+        // Stage 8: post-RA scheduling, minimize latency
+        if(optLevel >= OptimizationLevel::O3)
+            schedule(mfunc, target, false);
+        // Stage 9: post peephole opt
+        if(optLevel >= OptimizationLevel::O1)
+            subTarget.postPeepholeOpt(mfunc);
+        // Stage 10: code layout opt
+        if(optLevel >= OptimizationLevel::O2)
+            optimizeBlockLayout(mfunc, target);
+        // Stage 11: remove unreachable block/continuous goto/unused label
+        if(optLevel >= OptimizationLevel::O1)
+            simplifyCFG(mfunc);
     }
-    // Stage 11: global code layout opt
-    // TODO: merge functions
 }
 
-std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis) {
+std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
     Stage stage{ "lower to MIR" };
 
     auto& target = module.getTarget();
     auto machineModule = std::make_unique<GMIRModule>(target);
-    lowerToMachineModule(*machineModule, module, analysis);
-    // assert(machineModule->verify());
+    lowerToMachineModule(*machineModule, module, analysis, optLevel);
     return machineModule;
 }
 

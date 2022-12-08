@@ -14,6 +14,8 @@
 
 #pragma once
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/RegisterAllocator.hpp>
+#include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -21,15 +23,15 @@ class SubTarget {
 public:
     virtual ~SubTarget() = default;
     virtual uint32_t issueWidth() const noexcept = 0;
-    virtual uint32_t getOpBufferSize() const noexcept {
-        return 32;
-    }
-    // TODO: register renaming?
-    virtual uint32_t getLatency(const GMIRInst& inst) const = 0;
+    virtual uint32_t mispredictPenalty() const noexcept = 0;
+    virtual uint32_t microOpBufferSize() const noexcept = 0;
+    virtual uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const = 0;
+    virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
     virtual void peepholeOpt(GMIRFunction& func) const {
         CMMC_UNUSED(func);
     }
     virtual void postPeepholeOpt(GMIRFunction& func) const {
+        // rename regs
         CMMC_UNUSED(func);
     }
 };
@@ -37,7 +39,9 @@ public:
 class SimpleSubTarget : public SubTarget {
 public:
     uint32_t issueWidth() const noexcept final;
-    uint32_t getLatency(const GMIRInst& inst) const final;
+    uint32_t microOpBufferSize() const noexcept final;
+    uint32_t mispredictPenalty() const noexcept final;
+    uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const final;
 };
 
 CMMC_NAMESPACE_END

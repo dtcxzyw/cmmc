@@ -18,6 +18,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
+#include <type_traits>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -288,6 +289,41 @@ void*& VirtualRegPool::getMetadata(const Operand& operand) {
 void* VirtualRegPool::getMetadata(const Operand& operand) const {
     assert(operand.addressSpace == mAddressSpace);
     return mAllocations[operand.id].second;
+}
+bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
+    if(checkTerminator) {
+        for(auto& inst : mInstructions) {
+            const auto ret = std::visit(
+                [&err, end = &inst == &mInstructions.back()](auto& inst) -> bool {
+                    using T = std::decay_t<decltype(inst)>;
+                    if constexpr(std::is_same_v<T, RetMInst> || std::is_same_v<T, UnreachableMInst> ||
+                                 std::is_same_v<T, BranchCompareMInst> || std::is_same_v<T, BranchMInst>) {
+                        if(!end) {
+                            err << "The terminator must be at the end of the basic block." << std::endl;
+                            return false;
+                        }
+                    } else {
+                        if(end) {
+                            err << "The basic block must end up with a terminator." << std::endl;
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                inst);
+            if(!ret)
+                return false;
+        }
+    }
+
+    return false;
+}
+
+bool GMIRFunction::verify(std::ostream& err, bool checkTerminator) const {
+    for(auto& block : mBasicBlocks)
+        if(!block.verify(err, checkTerminator))
+            return false;
+    return true;
 }
 
 CMMC_NAMESPACE_END

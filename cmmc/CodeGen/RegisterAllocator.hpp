@@ -30,13 +30,21 @@ public:
     virtual void markAsUsed(const Operand& operand) = 0;
     virtual void markAsDiscarded(const Operand& operand) = 0;
     virtual Operand getFreeRegister(uint32_t src) = 0;
+    virtual void markAllUsed() = 0;
 
-    virtual std::unique_ptr<TargetRegisterUsage> merge(const TargetRegisterUsage& rhs) const = 0;
+    virtual std::unique_ptr<TargetRegisterUsage> clone() const = 0;
+    virtual void merge(const TargetRegisterUsage& src) = 0;
 };
 
-class Function;
+class RegisterSchedule final {
+    std::unique_ptr<TargetRegisterUsage> mUsage;
+    std::unordered_map<uint32_t, Operand> mRegisterMap;
+
+public:
+};
+
 class Target;
-using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, Function& func, const Target& target);
+using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, const Target& target);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -54,6 +62,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(GMIRFunction& mfunc, Function& func, const Target& target);
+void assignRegisters(GMIRFunction& mfunc, const Target& target);
 
 CMMC_NAMESPACE_END

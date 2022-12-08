@@ -38,6 +38,16 @@ public:
     }
 };
 
+class RISCVSimpleSubTarget final : public SimpleSubTarget {
+public:
+    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
+        switch(addressSpace) {
+            default:
+                reportUnreachable();
+        }
+    }
+};
+
 class RISCVFrameInfo final : public TargetFrameInfo {
 public:
 };
@@ -51,7 +61,7 @@ class RISCVTarget final : public Target {
 public:
     explicit RISCVTarget() {
         if(targetMachine.get() == "emulator")
-            mSubTarget = std::make_unique<SimpleSubTarget>();
+            mSubTarget = std::make_unique<RISCVSimpleSubTarget>();
         else
             DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
     }
@@ -67,10 +77,16 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
+
+    void legalizeFunc(GMIRFunction& func) const override;
+    void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 
 CMMC_TARGET("riscv", RISCVTarget);
+
+void RISCVTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
+void RISCVTarget::legalizeFunc(GMIRFunction&) const {}
 
 void RISCVTarget::emitAssembly(GMIRModule&, std::ostream&) const {
     reportNotImplemented();

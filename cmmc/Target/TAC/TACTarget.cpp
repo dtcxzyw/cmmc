@@ -15,15 +15,24 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <limits>
 
 CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
+uint32_t TACSubTarget::getPhysicalRegisterCount(uint32_t) const {
+    return std::numeric_limits<uint32_t>::max();
+}
+
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
+void TACTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {
+    // TODO: lowering memset/memcpy
+}
+void TACTarget::legalizeFunc(GMIRFunction&) const {}
 
 CMMC_TARGET("tac", TACTarget);
 

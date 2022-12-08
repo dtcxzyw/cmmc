@@ -60,6 +60,7 @@ public:
 
 class TACSubTarget final : public SimpleSubTarget {
 public:
+    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
     void peepholeOpt(GMIRFunction& func) const override;
     void postPeepholeOpt(GMIRFunction& func) const override;
 };
@@ -85,6 +86,8 @@ public:
         return mSubTarget;
     }
 
+    void legalizeFunc(GMIRFunction& func) const override;
+    void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 

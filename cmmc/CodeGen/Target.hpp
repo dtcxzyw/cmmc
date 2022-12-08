@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -35,6 +36,11 @@ public:
     virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
     virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
+    virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const {
+        reportNotImplemented();
+    }
+    virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
+    virtual void legalizeFunc(GMIRFunction& func) const = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;
 };
 

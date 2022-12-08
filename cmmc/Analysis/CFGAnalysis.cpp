@@ -43,6 +43,7 @@ CFGAnalysisResult CFGAnalysis::run(Function& func, AnalysisPassManager&) {
             }
         }
     }
+    assert(storage[func.entryBlock()].predecessors.empty());
     return result;
 }
 

@@ -44,6 +44,13 @@ public:
     }
 };
 
+class SimSubTarget final : public SimpleSubTarget {
+public:
+    uint32_t getPhysicalRegisterCount(uint32_t) const override {
+        reportUnreachable();
+    }
+};
+
 class SimTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     SimDataLayout mDataLayout;
@@ -51,7 +58,7 @@ class SimTarget final : public Target {
 
 public:
     explicit SimTarget() {
-        mSubTarget = std::make_unique<SimpleSubTarget>();
+        mSubTarget = std::make_unique<SimSubTarget>();
     }
     const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
@@ -64,6 +71,13 @@ public:
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
+    }
+
+    void legalizeFunc(GMIRFunction&) const override {
+        reportUnreachable();
+    }
+    void legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const override {
+        reportUnreachable();
     }
     void emitAssembly(GMIRModule&, std::ostream&) const override {
         reportUnreachable();

@@ -12,29 +12,13 @@
     limitations under the License.
 */
 
-#pragma once
+#include <cassert>
 #include <cmmc/CodeGen/GMIR.hpp>
-#include <cstdint>
-#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-struct LiveRange final {
-    std::unordered_map<const GMIRBasicBlock*, std::pair<GMIRInst*, GMIRInst*>> segments;
-};
-
-class LiveRangeAnalysisResult final {
-    std::unordered_map<uint32_t, LiveRange> mInfo;
-
-public:
-    std::unordered_map<uint32_t, LiveRange>& storage() {
-        return mInfo;
-    }
-    const LiveRange& query(uint32_t idx) const {
-        return mInfo.at(idx);
-    }
-};
-
-LiveRangeAnalysisResult calcLiveRange(const GMIRFunction& func);
+void simplifyCFG(GMIRFunction& func) {
+    CMMC_UNUSED(func);
+}
 
 CMMC_NAMESPACE_END
