@@ -1,6 +1,6 @@
 BUILD_TYPE = Release
-OPTFLAGS = -O3 -flto -DNDEBUG
-DBGFLAGS = -fsanitize=address,undefined -O0 -fno-omit-frame-pointer -ggdb
+OPTFLAGS = -O3 -flto -DNDEBUG -s -march=native -funroll-loops
+DBGFLAGS = -fsanitize=address,undefined -O0 -fno-omit-frame-pointer -ggdb -g
 ADDFLAGS = 
 
 ifeq ($(BUILD_TYPE), Debug)
@@ -17,7 +17,7 @@ DIR_BUILD := ./build
 BIN := ./bin/cmmc
 SPLC_SHELL := ./bin/splc
 
-CXXFLAGS = -std=c++17 -g $(ADDFLAGS) -I $(abspath ./) -Wextra -Wall -Werror -Wno-format-security -MD -pthread
+CXXFLAGS = -std=c++17 $(ADDFLAGS) -I $(abspath ./) -Wextra -Wall -Werror -Wno-format-security -MD -pthread
 LDFLAGS = $(CXXFLAGS)
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)
