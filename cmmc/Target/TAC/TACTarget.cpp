@@ -12,7 +12,9 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 #include <limits>
@@ -45,6 +47,16 @@ void TACTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const
     // TODO: lowering memset/memcpy
 }
 void TACTarget::legalizeFunc(GMIRFunction&) const {}
+bool TACTarget::builtinRA(GMIRFunction& mfunc) const {
+    forEachOperands(mfunc, [](Operand& op) {
+        if(op == unusedOperand)
+            return;
+        if(op.addressSpace == AddressSpace::VirtualReg)
+            op.addressSpace = AddressSpace::Custom;
+    });
+
+    return true;
+}
 
 CMMC_TARGET("tac", TACTarget);
 

@@ -86,6 +86,7 @@ public:
     std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         return std::make_unique<TACRegisterUsage>();
     }
+    bool builtinRA(GMIRFunction& mfunc) const override;
     const SubTarget& getSubTarget() const noexcept override {
         return mSubTarget;
     }

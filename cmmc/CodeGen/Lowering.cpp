@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/Transforms/TransformPass.hpp"
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -169,100 +169,6 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     assert(mfunc.verify(std::cerr, true));
 }
 
-void optimizeBlockLayout(GMIRFunction& func, const Target& target);
-void schedule(GMIRFunction& func, const Target& target, bool preRA);
-void allocateStackObjects(GMIRFunction& func, const Target& target);
-
-static void removeUnusedInsts(GMIRFunction& func) {
-    std::unordered_map<Operand, std::vector<GMIRInst*>, OperandHasher> writers;
-    std::queue<GMIRInst*> q;
-
-    for(auto& block : func.blocks())
-        for(auto& inst : block->instructions()) {
-            std::visit(Overload{
-                           [&](const ControlFlowIntrinsicMInst&) { q.push(&inst); },  //
-                           [&](const CopyMInst& instRef) {
-                               // store
-                               if(instRef.indirectDst)
-                                   q.push(&inst);
-                               else if(instRef.dst.addressSpace == AddressSpace::VirtualReg) {  // load/move
-                                   writers[instRef.dst].push_back(&inst);
-                               }
-                           },                                                  //
-                           [&](const BranchCompareMInst&) { q.push(&inst); },  //
-                           [&](const RetMInst&) { q.push(&inst); },            //
-                           [&](const UnreachableMInst&) {},                    //
-                           [&](const BranchMInst&) {},                         //
-                           [&](const CallMInst&) {},                           //
-                           [&](const auto& instRef) {
-                               if(instRef.dst.addressSpace == AddressSpace::VirtualReg) {
-                                   writers[instRef.dst].push_back(&inst);
-                               }
-                           },
-                       },
-                       inst);
-        }
-
-    while(!q.empty()) {
-        auto& inst = *q.front();
-        q.pop();
-
-        auto popSrc = [&](const Operand& operand) {
-            if(operand.addressSpace != AddressSpace::VirtualReg)
-                return;
-            if(auto iter = writers.find(operand); iter != writers.cend()) {
-                for(auto inst : iter->second)
-                    q.push(inst);
-                writers.erase(iter);
-            }
-        };
-
-        std::visit(Overload{
-                       [&](const ControlFlowIntrinsicMInst& inst) { popSrc(inst.src); },  //
-                       [&](const CopyMInst& inst) {
-                           popSrc(inst.src);
-                           if(inst.indirectDst)
-                               popSrc(inst.dst);
-                       },
-                       [&](const BranchCompareMInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },                                                   //
-                       [&](const RetMInst& inst) { popSrc(inst.retVal); },  //
-                       [&](const UnreachableMInst&) {},                     //
-                       [&](const BranchMInst&) {},
-                       [&](const ConstantMInst&) {},
-                       [&](const BinaryArithmeticMIInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },
-                       [&](const CompareMInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },
-                       [&](const ArithmeticIntrinsicMInst& inst) {
-                           for(auto op : inst.src)
-                               popSrc(op);
-                       },
-                       [&](const CallMInst&) {},
-                       [&](const auto& inst) { popSrc(inst.src); },
-                   },
-                   inst);
-    }
-    std::unordered_set<GMIRInst*> remove;
-    for(auto& [op, writerList] : writers) {
-        CMMC_UNUSED(op);
-        for(auto writer : writerList)
-            remove.insert(writer);
-    }
-
-    for(auto& block : func.blocks())
-        block->instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
-}
-
-void simplifyCFG(GMIRFunction& func);
-void registerCoalescing(GMIRFunction& func);
-
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
                                  OptimizationLevel optLevel) {
     auto& symbols = machineModule.symbols;
@@ -314,7 +220,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1)
             registerCoalescing(mfunc);
         // Stage 7: register allocation
-        assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
+        if(!target.builtinRA(mfunc))
+            assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
         // Stage 8: legalize stack objects, stack -> sp
         allocateStackObjects(mfunc, target);
         // Stage 9: post-RA scheduling, minimize latency

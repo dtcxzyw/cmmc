@@ -21,7 +21,7 @@ CMMC_NAMESPACE_BEGIN
 StringOpt regAllocMethod;
 
 CMMC_INIT_OPTIONS_BEGIN
-regAllocMethod.withDefault("simple").setName("register-alloc", 'r').setDesc("method for register allocation");
+regAllocMethod.withDefault("greedy").setName("register-alloc", 'r').setDesc("method for register allocation");
 CMMC_INIT_OPTIONS_END
 
 void RegisterAllocatorRegistry::addMethod(std::string_view name, RegisterAllocFunc func) {

@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -119,69 +120,15 @@ void registerCoalescing(GMIRFunction& func) {
         const auto key = realColor[col[op]];
         mapOperand.emplace(op, getOperand(key, pool.getType(Operand{ AddressSpace::VirtualReg, op })));
     }
-    const auto setOperand = [&](Operand& op) {
+
+    forEachOperands(func, [&](Operand& op) {
         if(op.addressSpace == AddressSpace::VirtualReg) {
             if(const auto iter = mapOperand.find(op.id); iter != mapOperand.cend())
                 op.id = iter->second;
         }
-    };
+    });
 
-    for(auto& param : func.parameters())
-        setOperand(param);
-
-    for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
-            std::visit(Overload{ [&](CopyMInst& inst) {
-                                    setOperand(inst.src);
-                                    setOperand(inst.dst);
-                                },
-                                 [&](ConstantMInst& inst) { setOperand(inst.dst); },
-                                 [&](GlobalAddressMInst& inst) { setOperand(inst.dst); },
-                                 [&](UnaryArithmeticMIInst& inst) {
-                                     setOperand(inst.src);
-                                     setOperand(inst.dst);
-                                 },
-                                 [&](BinaryArithmeticMIInst& inst) {
-                                     setOperand(inst.lhs);
-                                     setOperand(inst.rhs);
-                                     setOperand(inst.dst);
-                                 },
-                                 [&](ArithmeticIntrinsicMInst& inst) {
-                                     for(auto& op : inst.src)
-                                         setOperand(op);
-                                     setOperand(inst.dst);
-                                 },
-                                 [&](CompareMInst& inst) {
-                                     setOperand(inst.lhs);
-                                     setOperand(inst.rhs);
-                                     setOperand(inst.dst);
-                                 },
-                                 [&](BranchCompareMInst& inst) {
-                                     setOperand(inst.lhs);
-                                     setOperand(inst.rhs);
-                                 },
-                                 [&](CallMInst& inst) { setOperand(inst.dst); }, [&](RetMInst& inst) { setOperand(inst.retVal); },
-                                 [&](ControlFlowIntrinsicMInst& inst) {
-                                     setOperand(inst.src);
-                                     setOperand(inst.dst);
-                                 },
-                                 [](auto&) {} },
-                       inst);
-        }
-
-        // remove self-copy
-        block->instructions().remove_if([&](const auto& inst) {
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                const auto& copy = std::get<CopyMInst>(inst);
-                if(copy.indirectDst || copy.indirectSrc)
-                    return false;
-                if(copy.dst.addressSpace == AddressSpace::VirtualReg && copy.src.addressSpace == AddressSpace::VirtualReg) {
-                    if(copy.dst.id == copy.src.id)
-                        return true;
-                }
-            }
-            return false;
-        });
-    }
+    removeIdentityCopies(func);
 }
+
 CMMC_NAMESPACE_END

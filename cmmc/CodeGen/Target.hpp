@@ -34,6 +34,10 @@ public:
     virtual const DataLayout& getDataLayout() const noexcept = 0;
     virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
+    virtual bool builtinRA(GMIRFunction& mfunc) const {
+        CMMC_UNUSED(mfunc);
+        return false;
+    }
     virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
     virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
     virtual void legalizeFunc(GMIRFunction& func) const = 0;
