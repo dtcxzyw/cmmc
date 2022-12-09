@@ -14,6 +14,7 @@
 
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -30,6 +31,7 @@
 #include <iostream>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -95,6 +97,7 @@ GMIRBasicBlock* LoweringContext::addBlockAfter() {
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return &block == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
     const auto ret = blocks.insert(std::next(iter), GMIRBasicBlock{ mCurrentBasicBlock->getFunction() });
+    ret->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
     return &*ret;
 }
 void LoweringContext::addOperand(Value* value, Operand reg) {
@@ -107,6 +110,7 @@ Value* LoweringContext::queryRoot(Value* val) const {
 static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
                                    std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(*func);
+    auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
     std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Operand> blockArgs;
     std::unordered_map<Value*, Operand> valueMap;
@@ -121,6 +125,15 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
             const auto reg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(arg->getType());
             blockArgs[arg] = reg;
             valueMap[arg] = reg;
+        }
+
+        for(auto inst : block->instructions()) {
+            if(inst->getInstID() == InstructionID::Alloc) {
+                auto& pool = ctx.getAllocationPool(AddressSpace::Stack);
+                const auto addr = pool.allocate(inst->getType()->as<PointerType>()->getPointee());
+                pool.getMetadata(addr) = inst;
+                ctx.addOperand(inst, addr);
+            }
         }
     }
 
@@ -137,6 +150,9 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     for(auto block : func->blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
+        const auto& stackUsage = stackLifetime.getUsedAllocas(block);
+        for(auto alloca : stackUsage)
+            mblock->usedStackObjects().insert(ctx.mapOperand(alloca));
         for(auto inst : block->instructions()) {
             info.lowerInst(inst, ctx);
         }
@@ -407,8 +423,7 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
             lower(inst->as<CastInst>(), ctx);
             break;
         case InstructionID::Alloc:
-            lower(inst->as<StackAllocInst>(), ctx);
-            break;
+            [[fallthrough]];
         case InstructionID::Free:
             break;
         case InstructionID::GetElementPtr:
@@ -529,9 +544,12 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
+    auto& keepingVregs = ctx.getCurrentBasicBlock()->keepingVregs();
     for(size_t idx = 0; idx < dst.size(); ++idx) {
         const auto arg = ctx.mapOperand(src[idx]);
-        ctx.emitInst<CopyMInst>(arg, false, 0, ctx.mapBlockArg(dst[idx]), false, 0);
+        const auto dstArg = ctx.mapBlockArg(dst[idx]);
+        ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0);
+        keepingVregs.insert(dstArg);
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
@@ -547,6 +565,14 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
         const auto thenPrepareBlock = ctx.addBlockAfter();
         const auto elsePrepareBlock = ctx.addBlockAfter();
         ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, elsePrepareBlock);
+        auto& keepingVregs = ctx.getCurrentBasicBlock()->keepingVregs();
+        const auto keep = [&](const BranchTarget& target) {
+            for(auto arg : target.getArgs())
+                keepingVregs.insert(ctx.mapOperand(arg));
+        };
+        keep(inst->getTrueTarget());
+        keep(inst->getFalseTarget());
+
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), ctx);
 
@@ -585,23 +611,42 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     // beqz x BB2
     // BB1:
     // c = y;
+    // b BB2
     // BB2:
+    // ...
+
+    // TODO: select -> control flow before lowering
+
+    std::unordered_set<Operand, OperandHasher> accessible;
+    const auto block = inst->getBlock();
+    for(auto arg : block->args())
+        accessible.insert(ctx.mapBlockArg(arg));
+    for(auto before : block->instructions()) {
+        if(before == inst)
+            break;
+        if(!before->canbeOperand())
+            continue;
+
+        const auto operand = ctx.mapOperand(before);
+        accessible.insert(operand);
+    }
+
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+    accessible.insert(ret);
+
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0);
     const auto next = ctx.addBlockAfter();
     const auto target = ctx.addBlockAfter();
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
                                      CompareOp::Equal, target);
+    ctx.getCurrentBasicBlock()->keepingVregs() = accessible;
     ctx.setCurrentBasicBlock(next);
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0);
+    ctx.emitInst<BranchMInst>(target);
+    next->keepingVregs() = accessible;
+
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);
-}
-void LoweringInfo::lower(StackAllocInst* inst, LoweringContext& ctx) const {
-    auto& pool = ctx.getAllocationPool(AddressSpace::Stack);
-    const auto addr = pool.allocate(inst->getType());
-    pool.getMetadata(addr) = inst;
-    ctx.addOperand(inst, addr);
 }
 void LoweringInfo::lower(GetElementPtrInst*, LoweringContext&) const {
     reportNotImplemented();

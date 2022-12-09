@@ -54,6 +54,9 @@ public:
     Operand mapOperand(Value* operand);
     GMIRSymbol* mapGlobal(GlobalValue* global) const;
     void setCurrentBasicBlock(GMIRBasicBlock* block) noexcept;
+    GMIRBasicBlock* getCurrentBasicBlock() const noexcept {
+        return mCurrentBasicBlock;
+    }
     GMIRBasicBlock* addBlockAfter();
 
     template <typename Inst, typename... Args>
@@ -85,7 +88,6 @@ public:
     virtual void lower(ConditionalBranchInst* inst, LoweringContext& ctx) const;
     virtual void lower(UnreachableInst* inst, LoweringContext& ctx) const;
     virtual void lower(SelectInst* inst, LoweringContext& ctx) const;
-    virtual void lower(StackAllocInst* inst, LoweringContext& ctx) const;
     virtual void lower(GetElementPtrInst* inst, LoweringContext& ctx) const;
     virtual void lower(PtrCastInst* inst, LoweringContext& ctx) const;
     virtual void lower(PtrToIntInst* inst, LoweringContext& ctx) const;
