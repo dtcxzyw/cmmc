@@ -31,6 +31,11 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
     auto& map = result.storage();
     auto& blocks = func.blocks();
 
+    for(auto& block : blocks) {
+        auto& ref = map[block.get()];
+        CMMC_UNUSED(ref);
+    }
+
     const auto connect = [&](const GMIRBasicBlock* src, const GMIRBasicBlock* dst) {
         map[src].successors.push_back(dst);
         map[dst].predecessors.push_back(src);

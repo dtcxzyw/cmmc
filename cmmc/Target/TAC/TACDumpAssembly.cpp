@@ -42,27 +42,14 @@ static std::string_view getCompareOp(CompareOp compare) {
     }
 }
 
-static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func) {
+static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func,
+                     std::unordered_map<const GMIRBasicBlock*, String>& labelMap) {
     out << "FUNCTION " << symbol << " :" << std::endl;
 
     {
         auto& params = func.parameters();
         for(auto param : params) {
             out << "PARAM v" << param.id << std::endl;
-        }
-    }
-
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
-    {
-        LabelAllocator allocator;
-        String labelBase = String::get("label");
-        for(auto& block : func.blocks()) {
-            // entry block cannot be branch target
-            if(&block == &func.blocks().front())
-                continue;
-
-            const auto label = allocator.allocate(labelBase);
-            labelMap[block.get()] = label;
         }
     }
 
@@ -114,7 +101,8 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         if(copy.src.addressSpace == TACAddressSpace::Stack)
                                             out << '*';
                                         printOperand(copy.src);
-                                    }
+                                    } else
+                                        reportUnreachable();
                                 },
                                  [&](const ConstantMInst& constant) {
                                      if(constant.dst.addressSpace == TACAddressSpace::Stack)
@@ -200,8 +188,29 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
     LabelAllocator allocator;
     using namespace std::string_literals;
 
+    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    {
+        LabelAllocator allocator;
+        String labelBase = String::get("label");
+        for(auto& symbol : module.symbols) {
+            std::visit(Overload{ [&](const GMIRFunction& func) {
+                                    for(auto& block : func.blocks()) {
+                                        const auto label = allocator.allocate(labelBase);
+
+                                        // entry block cannot be branch target
+                                        if(&block == &func.blocks().front())
+                                            continue;
+
+                                        labelMap[block.get()] = label;
+                                    }
+                                },
+                                 [](const auto&) {} },
+                       symbol.def);
+        }
+    }
+
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func); },
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap); },
                              [](const auto&) { reportUnreachable(); } },
                    symbol.def);
     }

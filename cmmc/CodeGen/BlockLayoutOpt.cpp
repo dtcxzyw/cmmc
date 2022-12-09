@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/GMIR.hpp"
 #include <algorithm>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>

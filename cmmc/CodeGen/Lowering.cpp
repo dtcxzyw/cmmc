@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Transforms/TransformPass.hpp"
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
@@ -260,6 +261,7 @@ static void removeUnusedInsts(GMIRFunction& func) {
 }
 
 void simplifyCFG(GMIRFunction& func);
+void registerCoalescing(GMIRFunction& func);
 
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
                                  OptimizationLevel optLevel) {
@@ -308,20 +310,23 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 5: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2)
             schedule(mfunc, target, true);
-        // Stage 6: register allocation
+        // Stage 6: register coalescing
+        if(optLevel >= OptimizationLevel::O1)
+            registerCoalescing(mfunc);
+        // Stage 7: register allocation
         assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
-        // Stage 7: legalize stack objects, stack -> sp
+        // Stage 8: legalize stack objects, stack -> sp
         allocateStackObjects(mfunc, target);
-        // Stage 8: post-RA scheduling, minimize latency
+        // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3)
             schedule(mfunc, target, false);
-        // Stage 9: post peephole opt
+        // Stage 10: post peephole opt
         if(optLevel >= OptimizationLevel::O1)
             subTarget.postPeepholeOpt(mfunc);
-        // Stage 10: code layout opt
+        // Stage 11: code layout opt
         if(optLevel >= OptimizationLevel::O2)
             optimizeBlockLayout(mfunc, target);
-        // Stage 11: remove unreachable block/continuous goto/unused label
+        // Stage 12: remove unreachable block/continuous goto/unused label
         if(optLevel >= OptimizationLevel::O1)
             simplifyCFG(mfunc);
     }

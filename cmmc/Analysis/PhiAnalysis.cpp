@@ -17,6 +17,7 @@
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PhiAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/Support/Graph.hpp>
 #include <iostream>
 #include <queue>
 #include <unordered_map>
@@ -33,7 +34,6 @@ const std::variant<Value*, PhiNode>& PhiAnalysisResult::query(BlockArgument* arg
 PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& cfg = analysis.get<CFGAnalysis>(func);
 
-    using NodeIndex = uint32_t;
     NodeIndex nodeID = 0;
     std::unordered_map<Value*, NodeIndex> nodeMap;
     const auto allocateID = [&](Value* val) {
@@ -54,7 +54,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
 
     const auto size = nodeID;
 
-    std::vector<std::vector<NodeIndex>> graph(size);
+    Graph graph(size);
 
     for(auto block : func.blocks()) {
         for(uint32_t idx = 0; idx < block->args().size(); ++idx) {
@@ -69,38 +69,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
     }
 
     // build SCC
-
-    std::vector<NodeIndex> dfn(size), low(size), st(size), col(size);
-    NodeIndex top = 0, ccnt = 0, icnt = 0;
-    std::vector<bool> flag(size);
-    const auto DFS = [&](auto&& self, NodeIndex u) -> void {
-        dfn[u] = low[u] = ++icnt;
-        flag[u] = true;
-        st[top++] = u;
-        for(auto v : graph[u]) {
-            if(dfn[v]) {
-                if(flag[v])
-                    low[u] = std::min(low[u], dfn[v]);
-            } else {
-                self(self, v);
-                low[u] = std::min(low[u], low[v]);
-            }
-        }
-        if(dfn[u] == low[u]) {
-            NodeIndex c = ccnt++, v;
-            do {
-                v = st[--top];
-                flag[v] = false;
-                col[v] = c;
-            } while(u != v);
-        }
-    };
-
-    for(NodeIndex i = 0; i < size; ++i)
-        if(!dfn[i])
-            DFS(DFS, i);
-    dfn = low = st = {};
-    flag = {};
+    const auto [ccnt, col] = calcSCC(graph);
 
     // build DAG
     std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
