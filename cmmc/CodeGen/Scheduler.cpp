@@ -30,7 +30,7 @@ void schedule(GMIRFunction& func, const Target& target, bool preRA) {
     const auto cfg = calcGMIRCFG(func);
 
     for(auto& block : func.blocks()) {
-        assert(block.verify(std::cerr, true));
+        assert(block->verify(std::cerr, true));
         CMMC_UNUSED(block);
     }
 }

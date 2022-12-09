@@ -27,8 +27,7 @@
 CMMC_NAMESPACE_BEGIN
 
 const std::variant<Value*, PhiNode>& PhiAnalysisResult::query(BlockArgument* arg) const {
-    assert(mPhiNodes.count(arg));
-    return mPhiNodes.find(arg)->second;
+    return mPhiNodes.at(arg);
 }
 
 PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis) {

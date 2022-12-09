@@ -99,7 +99,7 @@ public:
 
                 for(auto& operand : inst->operands()) {
                     if(operand->isInstruction()) {
-                        updateTargetBlock(moveTargetSet.find(operand)->second);
+                        updateTargetBlock(moveTargetSet.at(operand));
                     } else {
                         const auto dest = blockArgMap.queryRoot(operand);
                         operand = dest;

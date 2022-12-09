@@ -17,7 +17,6 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/SubTarget.hpp>
-#include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -34,11 +33,8 @@ public:
 
     virtual const DataLayout& getDataLayout() const noexcept = 0;
     virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
-    virtual const TargetFrameInfo& getTargetFrameInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
-    virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const {
-        reportNotImplemented();
-    }
+    virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
     virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
     virtual void legalizeFunc(GMIRFunction& func) const = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;

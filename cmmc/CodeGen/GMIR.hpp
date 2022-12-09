@@ -18,6 +18,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <unordered_map>
@@ -153,14 +154,14 @@ struct CompareMInst final {
 };
 
 struct BranchMInst final {
-    GMIRBasicBlock* targetBlock;
+    const GMIRBasicBlock* targetBlock;
 };
 
 struct BranchCompareMInst final {
     GMIRInstID instID;
     Operand lhs, rhs;
     CompareOp compareOp;
-    GMIRBasicBlock* targetBlock;
+    const GMIRBasicBlock* targetBlock;
 };
 
 struct CallMInst final {
@@ -188,7 +189,7 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicM
 class GMIRBasicBlock final {
     GMIRFunction* mFunction;
 
-    std::unordered_set<Operand, OperandHasher> mKeepingVregs, mUsedStackObjects;
+    std::unordered_set<Operand, OperandHasher> mUsedStackObjects;
 
     std::list<GMIRInst> mInstructions;
 
@@ -199,9 +200,6 @@ public:
     }
     std::list<GMIRInst>& instructions() noexcept {
         return mInstructions;
-    }
-    auto& keepingVregs() noexcept {
-        return mKeepingVregs;
     }
     auto& usedStackObjects() noexcept {
         return mUsedStackObjects;
@@ -234,10 +232,13 @@ struct TemporaryPools final {
 class GMIRFunction final {
     std::vector<Operand> mParameters;
     TemporaryPools mPools;
-    std::list<GMIRBasicBlock> mBasicBlocks;
+    std::list<std::unique_ptr<GMIRBasicBlock>> mBasicBlocks;
 
 public:
     TemporaryPools& pools() noexcept {
+        return mPools;
+    }
+    const TemporaryPools& pools() const noexcept {
         return mPools;
     }
     std::vector<Operand>& parameters() noexcept {
@@ -246,10 +247,10 @@ public:
     const std::vector<Operand>& parameters() const noexcept {
         return mParameters;
     }
-    std::list<GMIRBasicBlock>& blocks() noexcept {
+    auto& blocks() noexcept {
         return mBasicBlocks;
     }
-    const std::list<GMIRBasicBlock>& blocks() const noexcept {
+    const auto& blocks() const noexcept {
         return mBasicBlocks;
     }
 

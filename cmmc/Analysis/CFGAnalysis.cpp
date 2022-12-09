@@ -17,12 +17,10 @@
 CMMC_NAMESPACE_BEGIN
 
 const std::vector<std::pair<Block*, BranchTarget*>>& CFGAnalysisResult::predecessors(Block* block) const {
-    assert(mInfo.count(block));
-    return mInfo.find(block)->second.predecessors;
+    return mInfo.at(block).predecessors;
 }
 const std::vector<std::pair<Block*, BranchTarget*>>& CFGAnalysisResult::successors(Block* block) const {
-    assert(mInfo.count(block));
-    return mInfo.find(block)->second.successors;
+    return mInfo.at(block).successors;
 }
 
 CFGAnalysisResult CFGAnalysis::run(Function& func, AnalysisPassManager&) {

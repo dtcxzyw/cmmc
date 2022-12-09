@@ -44,15 +44,10 @@ public:
     }
 };
 
-class MIPSFrameInfo final : public TargetFrameInfo {
-public:
-};
-
 // MIPS o32
 class MIPSTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     MIPSDataLayout mDataLayout;
-    MIPSFrameInfo mFrameInfo;
 
 public:
     explicit MIPSTarget();
@@ -62,8 +57,8 @@ public:
     const LoweringInfo& getTargetLoweringInfo() const noexcept override {
         reportNotImplemented();
     }
-    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        return mFrameInfo;
+    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+        reportNotImplemented();
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;

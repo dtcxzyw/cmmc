@@ -16,6 +16,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 #include <limits>
+#include <memory>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -25,6 +26,17 @@ uint32_t TACSubTarget::getPhysicalRegisterCount(uint32_t) const {
     return std::numeric_limits<uint32_t>::max();
 }
 
+uint32_t TACRegisterUsage::classCount() const noexcept {
+    return 1;
+}
+uint32_t TACRegisterUsage::estimateMigrationCost(uint32_t src, uint32_t dst) const {
+    return src == dst ? 0U : 1U;
+}
+uint32_t TACRegisterUsage::getAvailableRegisters(uint32_t src) const noexcept {
+    CMMC_UNUSED(src);
+    assert(src == TACAddressSpace::GPR);
+    return std::numeric_limits<uint32_t>::max();
+}
 TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();

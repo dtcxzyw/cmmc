@@ -115,7 +115,7 @@ void blockArgPropagation(Function& func) {
                 auto args = target.getArgs();
                 for(auto val : targetReq) {
                     assert(val->getBlock() == block || map.count(val));
-                    const auto operand = val->getBlock() == block ? val : map.find(val)->second;
+                    const auto operand = val->getBlock() == block ? val : map.at(val);
                     args.push_back(operand);
                 }
                 inst->updateTargetArgs(target, std::move(args));

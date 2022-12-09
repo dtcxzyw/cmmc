@@ -61,11 +61,11 @@ GMIRModule& LoweringContext::getModule() const noexcept {
 }
 GMIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
     assert(mBlockMap.count(block));
-    return mBlockMap.find(block)->second;
+    return mBlockMap.at(block);
 }
 Operand LoweringContext::mapBlockArg(BlockArgument* arg) const {
-    // TODO: use blockArgMap?
-    return mBlockArgs.find(arg)->second;
+    // NOTICE: don't use blockArgMap to get better RA scheme
+    return mBlockArgs.at(arg);
 }
 Operand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
@@ -89,16 +89,15 @@ void LoweringContext::setCurrentBasicBlock(GMIRBasicBlock* block) noexcept {
     mCurrentBasicBlock = block;
 }
 GMIRSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
-    assert(mGlobalMap.count(global));
-    return mGlobalMap.find(global)->second;
+    return mGlobalMap.at(global);
 }
 GMIRBasicBlock* LoweringContext::addBlockAfter() {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
-    auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return &block == mCurrentBasicBlock; });
+    auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
-    const auto ret = blocks.insert(std::next(iter), GMIRBasicBlock{ mCurrentBasicBlock->getFunction() });
-    ret->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
-    return &*ret;
+    const auto ret = blocks.insert(std::next(iter), std::make_unique<GMIRBasicBlock>(mCurrentBasicBlock->getFunction()));
+    (*ret)->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
+    return ret->get();
 }
 void LoweringContext::addOperand(Value* value, Operand reg) {
     mValueMap.emplace(value, reg);
@@ -117,8 +116,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgs, valueMap, mfunc.pools(), blockArgMap };
 
     for(auto block : func->blocks()) {
-        mfunc.blocks().push_back(GMIRBasicBlock{ &mfunc });
-        auto mblock = &mfunc.blocks().back();
+        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc));
+        auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
         for(auto arg : block->args()) {
@@ -158,11 +157,14 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         }
     }
 
+    /*
     if constexpr(Config::debug) {
         func->dump(std::cerr);
         std::cerr << std::endl;
         mfunc.dump(std::cerr, target);
     }
+    */
+
     assert(mfunc.verify(std::cerr, true));
 }
 
@@ -175,7 +177,7 @@ static void removeUnusedInsts(GMIRFunction& func) {
     std::queue<GMIRInst*> q;
 
     for(auto& block : func.blocks())
-        for(auto& inst : block.instructions()) {
+        for(auto& inst : block->instructions()) {
             std::visit(Overload{
                            [&](const ControlFlowIntrinsicMInst&) { q.push(&inst); },  //
                            [&](const CopyMInst& instRef) {
@@ -254,7 +256,7 @@ static void removeUnusedInsts(GMIRFunction& func) {
     }
 
     for(auto& block : func.blocks())
-        block.instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
+        block->instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
 }
 
 void simplifyCFG(GMIRFunction& func);
@@ -308,9 +310,6 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             schedule(mfunc, target, true);
         // Stage 6: register allocation
         assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
-        std::cerr << ".global " << symbol->symbol;
-        dumpFunc(mfunc);
-        std::cerr << "================" << std::endl;
         // Stage 7: legalize stack objects, stack -> sp
         allocateStackObjects(mfunc, target);
         // Stage 8: post-RA scheduling, minimize latency
@@ -544,34 +543,31 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
-    auto& keepingVregs = ctx.getCurrentBasicBlock()->keepingVregs();
     for(size_t idx = 0; idx < dst.size(); ++idx) {
         const auto arg = ctx.mapOperand(src[idx]);
         const auto dstArg = ctx.mapBlockArg(dst[idx]);
         ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0);
-        keepingVregs.insert(dstArg);
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
 }
 void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
     const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
-        // bnez %cond, else_label
+        // beqz %cond, else_label
         // then_label:
         // ...
         // else_label:
         // ...
         //
+
+        const auto curBlock = ctx.getCurrentBasicBlock();
+
         const auto thenPrepareBlock = ctx.addBlockAfter();
+        ctx.setCurrentBasicBlock(thenPrepareBlock);
         const auto elsePrepareBlock = ctx.addBlockAfter();
+        ctx.setCurrentBasicBlock(curBlock);
+
         ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, elsePrepareBlock);
-        auto& keepingVregs = ctx.getCurrentBasicBlock()->keepingVregs();
-        const auto keep = [&](const BranchTarget& target) {
-            for(auto arg : target.getArgs())
-                keepingVregs.insert(ctx.mapOperand(arg));
-        };
-        keep(inst->getTrueTarget());
-        keep(inst->getFalseTarget());
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), ctx);
@@ -594,11 +590,31 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
                     reportUnreachable();
             }
         }();
-        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id, condInst->getOp());
+
+        const auto getInvertedOp = [](CompareOp op) {
+            switch(op) {
+                case CompareOp::LessThan:
+                    return CompareOp::GreaterEqual;
+                case CompareOp::LessEqual:
+                    return CompareOp::GreaterThan;
+                case CompareOp::GreaterThan:
+                    return CompareOp::LessEqual;
+                case CompareOp::GreaterEqual:
+                    return CompareOp::LessThan;
+                case CompareOp::Equal:
+                    return CompareOp::NotEqual;
+                case CompareOp::NotEqual:
+                    return CompareOp::Equal;
+            }
+            reportUnreachable();
+        };
+
+        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                       getInvertedOp(condInst->getOp()));
     } else {
-        // bnez %cond, false_label
+        // beqz %cond, false_label
         const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, ctx.getZero(IntegerType::get(1)), GMIRInstID::SCmp, CompareOp::NotEqual);
+        emitCondBranch(cond, ctx.getZero(IntegerType::get(1)), GMIRInstID::SCmp, CompareOp::Equal);
     }
 }
 void LoweringInfo::lower(UnreachableInst*, LoweringContext& ctx) const {
@@ -615,35 +631,20 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     // BB2:
     // ...
 
-    // TODO: select -> control flow before lowering
-
-    std::unordered_set<Operand, OperandHasher> accessible;
-    const auto block = inst->getBlock();
-    for(auto arg : block->args())
-        accessible.insert(ctx.mapBlockArg(arg));
-    for(auto before : block->instructions()) {
-        if(before == inst)
-            break;
-        if(!before->canbeOperand())
-            continue;
-
-        const auto operand = ctx.mapOperand(before);
-        accessible.insert(operand);
-    }
-
+    const auto curBlock = ctx.getCurrentBasicBlock();
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    accessible.insert(ret);
 
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0);
     const auto next = ctx.addBlockAfter();
+    ctx.setCurrentBasicBlock(next);
     const auto target = ctx.addBlockAfter();
+
+    ctx.setCurrentBasicBlock(curBlock);
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
                                      CompareOp::Equal, target);
-    ctx.getCurrentBasicBlock()->keepingVregs() = accessible;
     ctx.setCurrentBasicBlock(next);
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0);
     ctx.emitInst<BranchMInst>(target);
-    next->keepingVregs() = accessible;
 
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);

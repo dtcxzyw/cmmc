@@ -35,7 +35,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
             out << ']';
         }
     };
-    auto dumpTarget = [&](const GMIRBasicBlock* target) { out << blockMap.find(target)->second; };
+    auto dumpTarget = [&](const GMIRBasicBlock* target) { out << blockMap.at(target); };
     auto dumpCompare = [&](GMIRInstID instID, CompareOp compareOp) {
         if(instID == GMIRInstID::FCmp)
             out << 'f';
@@ -251,26 +251,19 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                    inst);
         out << std::endl;
     }
-
-    if(!mKeepingVregs.empty()) {
-        out << "# keeping vregs:";
-        for(auto& vreg : mKeepingVregs)
-            dumpOperand(vreg);
-        out << std::endl;
-    }
 }
 void GMIRFunction::dump(std::ostream& out, const Target& target) const {
     int32_t idx = 0;
     auto base = String::get("b");
     std::unordered_map<const GMIRBasicBlock*, String> blockMap;
     for(auto& block : mBasicBlocks)
-        blockMap[&block] = base.withID(idx++);
+        blockMap[block.get()] = base.withID(idx++);
     out << " # Function" << std::endl;
     auto& info = target.getTargetLoweringInfo();
     for(auto& param : mParameters)
         out << "Param " << info.getOperand(param) << std::endl;
     for(auto& block : mBasicBlocks)
-        block.dump(out, target, blockMap, mPools);
+        block->dump(out, target, blockMap, mPools);
 }
 void GMIRZeroStorage::dump(std::ostream&, const Target&) const {
     reportNotImplemented();
@@ -338,7 +331,7 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
 
 bool GMIRFunction::verify(std::ostream& err, bool checkTerminator) const {
     for(auto& block : mBasicBlocks)
-        if(!block.verify(err, checkTerminator))
+        if(!block->verify(err, checkTerminator))
             return false;
     return true;
 }

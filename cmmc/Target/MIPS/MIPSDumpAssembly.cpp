@@ -53,10 +53,10 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func,
                      const std::unordered_map<const GMIRBasicBlock*, String>& labelMap,
                      const std::unordered_map<const GMIRSymbol*, String>& symbolMap) {
     for(auto& block : func.blocks()) {
-        const auto& label = labelMap.find(&block)->second;
+        const auto& label = labelMap.at(block.get());
         out << label << ":" << std::endl;
 
-        for(auto& inst : block.instructions()) {
+        for(auto& inst : block->instructions()) {
             std::visit(Overload{ [&](const CopyMInst& copy) {
                                     if(copy.indirectSrc) {
                                         // load
@@ -91,7 +91,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func,
                                      reportNotImplemented();
                                  },
                                  [&](const BranchMInst& branch) {
-                                     out << "j " << labelMap.find(branch.targetBlock)->second << std::endl;
+                                     out << "j " << labelMap.at(branch.targetBlock) << std::endl;
                                      out << "nop";
                                  },
                                  [&](const BranchCompareMInst& branch) {

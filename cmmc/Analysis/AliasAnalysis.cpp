@@ -62,8 +62,8 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     if(p1 == p2)
         return false;
 
-    auto& attr1 = mPointerAttributes.find(p1)->second;
-    auto& attr2 = mPointerAttributes.find(p2)->second;
+    auto& attr1 = mPointerAttributes.at(p1);
+    auto& attr2 = mPointerAttributes.at(p2);
     for(auto attrX : attr1)
         for(auto attrY : attr2) {
             if(attrX == attrY)
@@ -81,13 +81,13 @@ const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const 
         return mEmpty;  // undefined/hardcoded pointer
     }
     assert(mPointerAttributes.count(ptr));
-    return mPointerAttributes.find(ptr)->second;
+    return mPointerAttributes.at(ptr);
 }
 bool AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newAttrs) {
     if(newAttrs.empty())
         return false;
     assert(mPointerAttributes.count(p));
-    auto& attrs = mPointerAttributes.find(p)->second;
+    auto& attrs = mPointerAttributes.at(p);
     const auto oldSize = attrs.size();
     attrs.insert(attrs.cend(), newAttrs.cbegin(), newAttrs.cend());
     std::sort(attrs.begin(), attrs.end());
@@ -96,7 +96,7 @@ bool AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newA
 }
 bool AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
     assert(mPointerAttributes.count(p));
-    auto& attrs = mPointerAttributes.find(p)->second;
+    auto& attrs = mPointerAttributes.at(p);
     if(std::find(attrs.cbegin(), attrs.cend(), newAttr) == attrs.cend()) {
         attrs.push_back(newAttr);
         return true;

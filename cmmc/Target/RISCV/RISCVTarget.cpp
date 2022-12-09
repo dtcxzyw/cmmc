@@ -48,15 +48,10 @@ public:
     }
 };
 
-class RISCVFrameInfo final : public TargetFrameInfo {
-public:
-};
-
 // RISC-V lp32d
 class RISCVTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     RISCVDataLayout mDataLayout;
-    RISCVFrameInfo mFrameInfo;
 
 public:
     explicit RISCVTarget() {
@@ -71,8 +66,8 @@ public:
     const LoweringInfo& getTargetLoweringInfo() const noexcept override {
         reportNotImplemented();
     }
-    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        return mFrameInfo;
+    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+        reportNotImplemented();
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;

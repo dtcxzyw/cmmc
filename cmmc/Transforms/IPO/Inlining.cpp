@@ -94,11 +94,11 @@ class FuncInlining final : public TransformPass<Function> {
                 case InstructionID::ConditionalBranch: {
                     auto branch = terminator->as<ConditionalBranchInst>();
                     auto& trueTarget = branch->getTrueTarget();
-                    trueTarget.resetTarget(replace.find(trueTarget.getTarget())->second);
+                    trueTarget.resetTarget(replace.at(trueTarget.getTarget()));
 
                     auto& falseTarget = branch->getFalseTarget();
                     if(falseTarget.getTarget())
-                        falseTarget.resetTarget(replace.find(falseTarget.getTarget())->second);
+                        falseTarget.resetTarget(replace.at(falseTarget.getTarget()));
                     break;
                 }
                 default:

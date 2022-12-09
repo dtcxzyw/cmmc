@@ -17,6 +17,8 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <memory>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -41,10 +43,6 @@ public:
     }
 };
 
-class TACFrameInfo final : public TargetFrameInfo {
-public:
-};
-
 class TACLoweringInfo final : public LoweringInfo {
     String mUnused, mGPR, mConstant, mStack, mVReg;
 
@@ -65,11 +63,17 @@ public:
     void postPeepholeOpt(GMIRFunction& func) const override;
 };
 
+class TACRegisterUsage final : public TargetRegisterUsage {
+public:
+    uint32_t classCount() const noexcept override;
+    uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const override;
+    uint32_t getAvailableRegisters(uint32_t src) const noexcept override;
+};
+
 class TACTarget final : public Target {
     TACSubTarget mSubTarget;
     TACDataLayout mDataLayout;
     TACLoweringInfo mLowerVisitor;
-    TACFrameInfo mFrameInfo;
 
 public:
     explicit TACTarget();
@@ -79,8 +83,8 @@ public:
     const TACLoweringInfo& getTargetLoweringInfo() const noexcept override {
         return mLowerVisitor;
     }
-    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        return mFrameInfo;
+    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+        return std::make_unique<TACRegisterUsage>();
     }
     const SubTarget& getSubTarget() const noexcept override {
         return mSubTarget;

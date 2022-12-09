@@ -17,7 +17,7 @@
 CMMC_NAMESPACE_BEGIN
 
 const IntegerRange& IntegerRangeAnalysisResult::query(Value* val) const {
-    return mRanges.find(val)->second;
+    return mRanges.at(val);
 }
 
 IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPassManager& analysis) {

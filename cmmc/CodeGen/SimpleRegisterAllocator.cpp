@@ -16,26 +16,61 @@
 #include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Dispatch.hpp>
 #include <memory>
+#include <unordered_map>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-// local register allocator (save all keeping vregs into stacks)
-
 static void simpleAllocate(GMIRFunction& mfunc, const Target& target) {
-    const auto cfg = calcGMIRCFG(mfunc);
-
-    std::unordered_map<const GMIRBasicBlock*, std::unique_ptr<TargetRegisterUsage>> schedules;
-    // TODO: better order
+    // const auto cfg = calcGMIRCFG(mfunc);
+    CMMC_UNUSED(target);
+    const auto setOperand = [](Operand& op) {
+        if(op == unusedOperand)
+            return;
+        if(op.addressSpace == AddressSpace::VirtualReg)
+            op.addressSpace = AddressSpace::Custom;
+    };
     for(auto& block : mfunc.blocks()) {
-        auto usage = target.newRegisterUsage();
-
-        std::vector<GMIRInst*> todo{ block.instructions().size() };
-        for(auto& inst : block.instructions())
-            todo.push_back(&inst);
-
-        // for(auto inst : todo) {
-        //}
+        for(auto& inst : block->instructions()) {
+            std::visit(Overload{ [&](CopyMInst& inst) {
+                                    setOperand(inst.src);
+                                    setOperand(inst.dst);
+                                },
+                                 [&](ConstantMInst& inst) { setOperand(inst.dst); },
+                                 [&](GlobalAddressMInst& inst) { setOperand(inst.dst); },
+                                 [&](UnaryArithmeticMIInst& inst) {
+                                     setOperand(inst.src);
+                                     setOperand(inst.dst);
+                                 },
+                                 [&](BinaryArithmeticMIInst& inst) {
+                                     setOperand(inst.lhs);
+                                     setOperand(inst.rhs);
+                                     setOperand(inst.dst);
+                                 },
+                                 [&](ArithmeticIntrinsicMInst& inst) {
+                                     for(auto& op : inst.src)
+                                         setOperand(op);
+                                     setOperand(inst.dst);
+                                 },
+                                 [&](CompareMInst& inst) {
+                                     setOperand(inst.lhs);
+                                     setOperand(inst.rhs);
+                                     setOperand(inst.dst);
+                                 },
+                                 [&](BranchCompareMInst& inst) {
+                                     setOperand(inst.lhs);
+                                     setOperand(inst.rhs);
+                                 },
+                                 [&](CallMInst& inst) { setOperand(inst.dst); }, [&](RetMInst& inst) { setOperand(inst.retVal); },
+                                 [&](ControlFlowIntrinsicMInst& inst) {
+                                     setOperand(inst.src);
+                                     setOperand(inst.dst);
+                                 },
+                                 [](auto&) {} },
+                       inst);
+        }
     }
 }
 

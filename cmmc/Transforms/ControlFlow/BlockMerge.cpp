@@ -59,7 +59,7 @@ public:
                 const auto branch = inst->as<ConditionalBranchInst>();
                 const auto target = branch->getTrueTarget().getTarget();
                 assert(blockRef[target] >= 1);
-                if(blockRef.find(target)->second == 1) {
+                if(blockRef.at(target) == 1) {
                     auto& instsA = block->instructions();
 
                     const auto& argsA = branch->getTrueTarget().getArgs();

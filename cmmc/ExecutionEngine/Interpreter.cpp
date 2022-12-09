@@ -554,7 +554,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 }
             } else if(operand->getBlock()) {
                 assert(currentExecCtx.operands.count(operand));
-                operands.push_back(currentExecCtx.operands.find(operand)->second);
+                operands.push_back(currentExecCtx.operands.at(operand));
             } else
                 reportUnreachable();
         }

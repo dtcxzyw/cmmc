@@ -127,7 +127,7 @@ class LoadReduce final : public TransformPass<Function> {
 
             std::unordered_map<Instruction*, std::unordered_map<BranchTarget*, Value*>> reuseValues;
             for(auto [pred, target] : predecessors) {
-                const auto& lut = valueAnalysis.find(pred)->second;
+                const auto& lut = valueAnalysis.at(pred);
                 for(auto inst : loadInsts) {
                     auto ptr = inst->getOperand(0);
                     if(const auto arg = dynamic_cast<BlockArgument*>(ptr))

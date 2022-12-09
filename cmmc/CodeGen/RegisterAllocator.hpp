@@ -26,21 +26,8 @@ class TargetRegisterUsage {
 public:
     virtual ~TargetRegisterUsage() = default;
     virtual uint32_t classCount() const noexcept = 0;
-    virtual void estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
-    virtual void markAsUsed(const Operand& operand) = 0;
-    virtual void markAsDiscarded(const Operand& operand) = 0;
-    virtual Operand getFreeRegister(uint32_t src) = 0;
-    virtual void markAllUsed() = 0;
-
-    virtual std::unique_ptr<TargetRegisterUsage> clone() const = 0;
-    virtual void merge(const TargetRegisterUsage& src) = 0;
-};
-
-class RegisterSchedule final {
-    std::unique_ptr<TargetRegisterUsage> mUsage;
-    std::unordered_map<uint32_t, Operand> mRegisterMap;
-
-public:
+    virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
+    virtual uint32_t getAvailableRegisters(uint32_t src) const noexcept = 0;
 };
 
 class Target;

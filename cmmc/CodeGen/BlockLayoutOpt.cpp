@@ -12,23 +12,28 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/GMIR.hpp"
 #include <algorithm>
+#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <numeric>
 #include <random>
 #include <unordered_map>
+#include <variant>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-using BlockSeq = std::vector<uint32_t>;
+using NodeIndex = uint32_t;
+using BlockSeq = std::vector<NodeIndex>;
 using CostT = double;
 
-static CostT evalCost(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
+static CostT evalCost(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
                       const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     assert(seq[0] == 0);
     for(uint32_t idx = 0; idx < seq.size(); ++idx)
@@ -62,9 +67,9 @@ static CostT evalCost(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::v
     return cost + 1.0 / (1.0 + exp(-static_cast<double>(totalJumpSize)));
 }
 
-static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
+static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
                             const std::vector<uint32_t>& weights, uint32_t bufferSize) {
-    std::vector<uint32_t> invMap(seq.size());
+    std::vector<NodeIndex> invMap(seq.size());
     BlockSeq best;
     CostT bestCost = 1e10;
     do {
@@ -77,8 +82,9 @@ static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<uint32_t,
     seq = std::move(best);
 }
 
-static uint32_t localSearch(BlockSeq& seq, std::vector<uint32_t>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                            const std::vector<uint32_t>& weights, uint32_t bufferSize, std::mt19937_64& urbg) {
+static uint32_t localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap,
+                            const std::vector<std::pair<uint32_t, uint32_t>>& edges, const std::vector<uint32_t>& weights,
+                            uint32_t bufferSize, std::mt19937_64& urbg) {
     constexpr uint32_t mutateCount = 20;
     BlockSeq best = seq;
     CostT bestCost = evalCost(seq, invMap, edges, weights, bufferSize);
@@ -105,15 +111,15 @@ static uint32_t localSearch(BlockSeq& seq, std::vector<uint32_t>& invMap, const 
     return bestCost;
 }
 
-static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_t>>& edges, const std::vector<uint32_t>& weights,
-                    uint32_t bufferSize) {
+static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
+                    const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     std::random_device entropySrc;
     std::mt19937_64 urbg(entropySrc());
 
     constexpr uint32_t popSize = 20;
     constexpr uint32_t crossCount = 20;
     constexpr uint32_t iteration = 100;
-    std::vector<uint32_t> invMap(seq.size());
+    std::vector<NodeIndex> invMap(seq.size());
     std::vector<std::pair<BlockSeq, CostT>> pop;
     for(uint32_t k = 0; k < popSize; ++k) {
         const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
@@ -157,33 +163,25 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<uint32_t, uint32_
 }
 
 void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(target);
-    CMMC_UNUSED(solveGA);
-    CMMC_UNUSED(solveBruteForce);
-
-    /*
-    const auto& info = target.getTargetInstInfo();
-    // make sure that all blocks end with exactly single unconditional branch
+    const auto& cfg = calcGMIRCFG(func);
+    const auto& subTarget = target.getSubTarget();
+    CMMC_UNUSED(subTarget);
 
     // build graph
     std::vector<uint32_t> weights;
     std::vector<std::pair<uint32_t, uint32_t>> edges;
-    std::unordered_map<GMIRBasicBlock*, uint32_t> idxMap;
+    std::unordered_map<const GMIRBasicBlock*, uint32_t> idxMap;
     uint32_t idx = 0;
     for(auto& block : func.blocks()) {
-        idxMap[&block] = idx++;
-        weights.emplace_back(block.instructions().size());  // estimated code size
+        idxMap[block.get()] = idx++;
+        weights.emplace_back(block->instructions().size());  // estimated code size
     }
     idx = 0;
     for(auto& block : func.blocks()) {
         const auto blockIdx = idx++;
-        for(auto successor : block->successors) {
-            auto& pre = successor->predecessors;
-            assert(std::find(pre.cbegin(), pre.cend(), block) != pre.cend());
-            CMMC_UNUSED(pre);
+        for(auto successor : cfg.successors(block.get())) {
             assert(idxMap.count(successor));
-            edges.emplace_back(blockIdx, idxMap.find(successor)->second);
+            edges.emplace_back(blockIdx, idxMap.at(successor));
         }
     }
 
@@ -191,23 +189,48 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     BlockSeq seq(func.blocks().size());
     std::iota(seq.begin(), seq.end(), 0U);
 
-    const auto bufferSize = target.getSubTarget().getOpBufferSize();
+    const auto bufferSize = subTarget.microOpBufferSize();
     if(seq.size() <= 10) {
         solveBruteForce(seq, edges, weights, bufferSize);
     } else {
         solveGA(seq, edges, weights, bufferSize);
     }
-    */
 
-    /* FIXME: apply changes
-    Vector<GMIRBasicBlock*> newBlock(seq.size());
+    // apply changes
+    std::vector<std::unique_ptr<GMIRBasicBlock>> newBlock;
+    newBlock.reserve(seq.size());
+    for(auto& block : func.blocks()) {
+        newBlock.emplace_back(std::move(block));
+    }
+
+    func.blocks().clear();
     for(uint32_t idx = 0; idx < newBlock.size(); ++idx)
-        newBlock[idx] = func.basicblocks[seq[idx]];
-    func.basicblocks = std::move(newBlock);
-    */
+        func.blocks().emplace_back(std::move(newBlock[seq[idx]]));
 
-    // eliminate 'goto next block' and merge blocks
-    // TODO
+    for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
+        auto& block = *iter;
+        const auto nextIter = std::next(iter);
+
+        const auto& terminator = block->instructions().back();
+        const auto ensureNext = [&](const GMIRBasicBlock* next) {
+            if(nextIter == func.blocks().cend() || nextIter->get() != next) {
+                auto newBlock = std::make_unique<GMIRBasicBlock>(&func);
+                newBlock->instructions().push_back(BranchMInst{ next });
+                newBlock->usedStackObjects() = block->usedStackObjects();
+                iter = func.blocks().insert(nextIter, std::move(newBlock));
+            }
+        };
+
+        if(std::holds_alternative<BranchCompareMInst>(terminator)) {
+            auto& target = std::get<BranchCompareMInst>(terminator);
+            const auto& successors = cfg.successors(block.get());
+            assert(successors.size() == 2);
+            if(target.targetBlock == successors[0]) {
+                ensureNext(successors[1]);
+            } else
+                ensureNext(successors[0]);
+        }
+    }
 }
 
 CMMC_NAMESPACE_END

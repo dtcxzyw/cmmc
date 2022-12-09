@@ -62,7 +62,7 @@ class BlockOutliner final : public TransformPass<Function> {
                 const auto lhsOperand = lhsInst->getOperand(idx);
                 const auto rhsOperand = rhsInst->getOperand(idx);
                 if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
-                    if(lhsOperands.find(lhsOperand)->second != rhsOperands.find(rhsOperand)->second)
+                    if(lhsOperands.at(lhsOperand) != rhsOperands.at(rhsOperand))
                         return false;
                 } else if(lhsOperand != rhsOperand) {  // globals/constants
                     return false;

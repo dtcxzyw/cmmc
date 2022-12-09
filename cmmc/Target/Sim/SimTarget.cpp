@@ -24,10 +24,6 @@ CMMC_NAMESPACE_BEGIN
 
 extern StringOpt targetMachine;
 
-class SimFrameInfo final : public TargetFrameInfo {
-public:
-};
-
 class SimDataLayout final : public DataLayout {
 public:
     Endian getEndian() const noexcept override {
@@ -54,7 +50,6 @@ public:
 class SimTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     SimDataLayout mDataLayout;
-    SimFrameInfo mFrameInfo;
 
 public:
     explicit SimTarget() {
@@ -64,10 +59,10 @@ public:
         return mDataLayout;
     }
     const LoweringInfo& getTargetLoweringInfo() const noexcept override {
-        reportNotImplemented();
+        reportUnreachable();
     }
-    const TargetFrameInfo& getTargetFrameInfo() const noexcept override {
-        return mFrameInfo;
+    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+        reportUnreachable();
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;

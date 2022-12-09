@@ -14,7 +14,6 @@
 
 #include <cassert>
 #include <cmmc/CodeGen/Target.hpp>
-#include <cmmc/CodeGen/TargetFrameInfo.hpp>
 #include <cmmc/Frontend/AST.hpp>
 #include <cmmc/Frontend/EmitIR.hpp>
 #include <cmmc/Frontend/SourceLocation.hpp>

@@ -29,8 +29,7 @@ bool PointerAddressSpaceAnalysisResult::isTagged(Value* ptr) const {
     return mMappings.count(ptr);
 }
 AddressSpace PointerAddressSpaceAnalysisResult::getAddressSpace(Value* ptr) const {
-    assert(mMappings.count(ptr));
-    return mMappings.find(ptr)->second;
+    return mMappings.at(ptr);
 }
 bool PointerAddressSpaceAnalysisResult::mayBe(Value* ptr, AddressSpace space) const {
     const auto iter = mMappings.find(ptr);

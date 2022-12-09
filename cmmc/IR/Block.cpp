@@ -163,7 +163,7 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
             for(auto& operand : newInst->operands()) {
                 if(operand->getBlock()) {
                     assert(replace.count(operand));
-                    const auto newOperand = replace.find(operand)->second;
+                    const auto newOperand = replace.at(operand);
                     operand = newOperand;
                 }
             }
@@ -171,7 +171,7 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
             for(auto& operand : newInst->operands()) {
                 if(auto srcBlock = operand->getBlock(); srcBlock == this) {
                     assert(replace.count(operand));
-                    const auto newOperand = replace.find(operand)->second;
+                    const auto newOperand = replace.at(operand);
                     newInst->replaceOperand(operand, newOperand);
                 }
             }

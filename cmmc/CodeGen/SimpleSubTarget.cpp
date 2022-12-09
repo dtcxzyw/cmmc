@@ -23,7 +23,7 @@ uint32_t SimpleSubTarget::microOpBufferSize() const noexcept {
     return 0;  // in-order
 }
 uint32_t SimpleSubTarget::mispredictPenalty() const noexcept {
-    return 0;
+    return 100;
 }
 uint32_t SimpleSubTarget::estimateMigrationCost(uint32_t src, uint32_t dst) const {
     return src == dst ? 0U : 1U;

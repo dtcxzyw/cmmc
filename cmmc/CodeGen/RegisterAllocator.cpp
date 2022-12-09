@@ -42,6 +42,7 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
 
 void assignRegisters(GMIRFunction& mfunc, const Target& target) {
     RegisterAllocatorRegistry::get().selectMethod()(mfunc, target);
+    // TODO: verify
 }
 
 CMMC_NAMESPACE_END
