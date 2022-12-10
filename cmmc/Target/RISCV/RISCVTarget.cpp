@@ -46,6 +46,9 @@ public:
                 reportUnreachable();
         }
     }
+    bool inlineMemOp(size_t size) const override {
+        return size <= 256;
+    }
 };
 
 // RISC-V lp32d

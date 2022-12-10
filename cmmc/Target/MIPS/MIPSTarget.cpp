@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -35,6 +36,9 @@ public:
             default:
                 reportUnreachable();
         }
+    }
+    bool inlineMemOp(size_t size) const override {
+        return size <= 256;
     }
 };
 

@@ -14,6 +14,7 @@
 
 // TAC Virtual Target
 #pragma once
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -61,6 +62,10 @@ public:
     uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
     void peepholeOpt(GMIRFunction& func) const override;
     void postPeepholeOpt(GMIRFunction& func) const override;
+    bool inlineMemOp(size_t size) const override {
+        CMMC_UNUSED(size);
+        return true;
+    }
 };
 
 class TACRegisterUsage final : public TargetRegisterUsage {

@@ -162,6 +162,9 @@ public:
         const auto iter = mGlobalAlloc.find(var);
         if(iter != mGlobalAlloc.cend())
             return iter->second;
+
+        const auto oldStoreFootprint = mStoreMemFootprint;
+
         const auto storageType = var->getType()->as<PointerType>()->getPointee();
         const auto alignment = storageType->getAlignment(mDataLayout);
         const auto size = storageType->getSize(mDataLayout);
@@ -177,6 +180,9 @@ public:
         if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))
             removeTag(mGlobalStorage, ptr, size, ByteState::Write);
         mGlobalAlloc.emplace(var, ptr + globalOffset);
+
+        mStoreMemFootprint = oldStoreFootprint;  // rollback counters
+
         return ptr + globalOffset;
     }
     uintptr_t stackPush(size_t size, size_t alignment) {

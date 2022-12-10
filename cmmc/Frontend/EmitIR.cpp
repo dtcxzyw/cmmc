@@ -1481,9 +1481,9 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         if(lastNotAssigned == offset)
             return end;
         const auto totalSize = static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned));
-        constexpr intmax_t inlineMemsetThreshold = 256;
+        const auto& subTarget = ctx.getModule()->getTarget().getSubTarget();
 
-        if(totalSize <= inlineMemsetThreshold) {
+        if(subTarget.inlineMemOp(totalSize)) {
             while(lastNotAssigned != offset) {
                 ctx.makeOp<StoreInst>(getAddress(lastNotAssigned), zero);
                 ++lastNotAssigned;
@@ -1491,8 +1491,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         } else {
             const auto beg = getAddress(lastNotAssigned);
             const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
-            const auto size =
-                make<ConstantInteger>(ctx.getIndexType(), static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned)));
+            const auto size = make<ConstantInteger>(ctx.getIndexType(), totalSize);
             ctx.makeOp<FunctionCallInst>(memsetFunc,
                                          Vector<Value*>{
                                              ptr,
@@ -1799,12 +1798,45 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
     assert(src->getType()->isSame(dest->getType()));
     const auto structType = src->getType()->as<PointerType>()->getPointee();
     assert(structType->isStruct());
-    const auto memcpyFunc = getIntrinsic(Intrinsic::memcpy);
-    const auto ptr = PointerType::get(IntegerType::get(8));
-    const auto& dataLayout = mModule->getTarget().getDataLayout();
-    const Vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
-                                  make<ConstantInteger>(getIndexType(), static_cast<int64_t>(structType->getSize(dataLayout))) };
-    makeOp<FunctionCallInst>(memcpyFunc, args);
+    const auto& target = mModule->getTarget();
+    const auto& dataLayout = target.getDataLayout();
+    const auto& subTarget = target.getSubTarget();
+
+    const auto size = structType->getSize(dataLayout);
+    if(subTarget.inlineMemOp(size)) {
+        auto recursiveCopy = [&](auto&& self, Value* dstPtr, Value* srcPtr) -> void {
+            const auto type = dstPtr->getType()->as<PointerType>()->getPointee();
+            if(type->isPrimitive()) {
+                makeOp<StoreInst>(dstPtr, makeOp<LoadInst>(srcPtr));
+            } else if(type->isArray()) {
+                const auto arr = type->as<ArrayType>();
+                for(uint32_t idx = 0; idx < arr->getElementCount(); ++idx) {
+                    Vector<Value*> offset{ getZeroIndex(), make<ConstantInteger>(getIndexType(), idx) };
+                    const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
+                    const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
+                    self(self, subDst, subSrc);
+                }
+            } else if(type->isStruct()) {
+                const auto structType = type->as<StructType>();
+                for(auto& field : structType->fields()) {
+                    // TODO: get offset from field idx
+                    Vector<Value*> offset{ getZeroIndex(), structType->getOffset(field.fieldName) };
+                    const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
+                    const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
+                    self(self, subDst, subSrc);
+                }
+            } else
+                reportUnreachable();
+        };
+        recursiveCopy(recursiveCopy, dest, src);
+    } else {
+        const auto memcpyFunc = getIntrinsic(Intrinsic::memcpy);
+        const auto ptr = PointerType::get(IntegerType::get(8));
+
+        const Vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
+                                      make<ConstantInteger>(getIndexType(), static_cast<intmax_t>(size)) };
+        makeOp<FunctionCallInst>(memcpyFunc, args);
+    }
 }
 
 CMMC_NAMESPACE_END

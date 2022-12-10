@@ -91,6 +91,8 @@ def spl_semantic_noref(src):
 def spl_codegen_tac(src):
     out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-o',
                                '/dev/null', src], capture_output=True, text=True)
+    # TODO: check
+    # TODO: tests
     return out.returncode == 0
 
 
@@ -107,7 +109,7 @@ def sysy_parse(src):
 
 
 def sysy_semantic(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-O', '0', '-o',
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'sim', '-O', '0', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -116,7 +118,7 @@ white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
 
 
 def sysy_opt(src):
-    args = [binary_path, '-i', '-t', 'riscv', '-H', '-o',
+    args = [binary_path, '-i', '-t', 'sim', '-H', '-o',
             '/dev/stdout', src]
 
     for key in white_list:
@@ -173,7 +175,7 @@ def spl_ref(src):
 
 
 def sysy_ref(src):
-    subprocess.run(args=[binary_path, '-i', '-t', 'riscv', '-H', '-o',
+    subprocess.run(args=[binary_path, '-i', '-t', 'sim', '-H', '-o',
                          src+".ir", src], stderr=subprocess.DEVNULL)
     return True
 
@@ -250,8 +252,8 @@ res.append(test("SPL TAC->IR project3", tests_path +
            "/CodeGenTAC", ".ir", spl_tac2ir))
 res.append(test("SPL TAC->IR project4", tests_path +
            "/TAC2MIPS", ".ir", spl_tac2ir))
-# res.append(test("SPL codegen TAC", tests_path +
-#           "/CodeGenTAC", ".spl", spl_codegen_tac))
+res.append(test("SPL codegen TAC", tests_path +
+           "/CodeGenTAC", ".spl", spl_codegen_tac))
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +

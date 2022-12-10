@@ -45,6 +45,9 @@ public:
     uint32_t getPhysicalRegisterCount(uint32_t) const override {
         reportUnreachable();
     }
+    bool inlineMemOp(size_t size) const override {
+        return size <= 256;
+    }
 };
 
 class SimTarget final : public Target {

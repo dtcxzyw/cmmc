@@ -201,7 +201,7 @@ size_t StructType::getSize(const DataLayout& dataLayout) const noexcept {
     for(auto& field : mFields) {
         const auto size = field.type->getSize(dataLayout);
         const auto alignment = field.type->getAlignment(dataLayout);
-        offset = ((offset + alignment - 1) / alignment + 1) * alignment + size;
+        offset = ((offset + alignment - 1) / alignment) * alignment + size;
     }
     return offset;
 }
@@ -246,7 +246,7 @@ size_t StructType::getFieldOffset(const ConstantOffset* offset, const DataLayout
     for(auto& field : mFields) {
         const auto size = field.type->getSize(dataLayout);
         const auto alignment = field.type->getAlignment(dataLayout);
-        offsetBytes = ((offsetBytes + alignment - 1) / alignment + 1) * alignment;
+        offsetBytes = ((offsetBytes + alignment - 1) / alignment) * alignment;
         if(idx == offset->index()) {
             return offsetBytes;
         }
