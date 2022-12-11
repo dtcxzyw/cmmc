@@ -89,8 +89,8 @@ def spl_semantic_noref(src):
 
 
 def spl_codegen_tac(src):
-    out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-o',
-                               '/dev/null', src], capture_output=True, text=True)
+    out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-H', '-o',
+                               '/dev/stdout', src], capture_output=True, text=True)
     # TODO: check
     # TODO: tests
     return out.returncode == 0
@@ -254,6 +254,7 @@ res.append(test("SPL TAC->IR project4", tests_path +
            "/TAC2MIPS", ".ir", spl_tac2ir))
 res.append(test("SPL codegen TAC", tests_path +
            "/CodeGenTAC", ".spl", spl_codegen_tac))
+
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +

@@ -110,7 +110,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  dumpOperand(inst.dst);
                                  out << ' ' << inst.global->symbol;
                              },
-                             [&](const UnaryArithmeticMIInst& inst) {
+                             [&](const UnaryArithmeticMInst& inst) {
                                  switch(inst.instID) {
                                      case GMIRInstID::Neg:
                                          out << "neg ";
@@ -125,7 +125,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  out << ' ';
                                  dumpOperand(inst.src);
                              },
-                             [&](const BinaryArithmeticMIInst& inst) {
+                             [&](const BinaryArithmeticMInst& inst) {
                                  switch(inst.instID) {
                                      case GMIRInstID::Add:
                                          out << "add ";

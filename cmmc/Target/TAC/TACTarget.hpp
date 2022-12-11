@@ -95,9 +95,10 @@ public:
     const SubTarget& getSubTarget() const noexcept override {
         return mSubTarget;
     }
-
+    bool isNativeSupported(InstructionID inst) const noexcept override;
     void legalizeFunc(GMIRFunction& func) const override;
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 

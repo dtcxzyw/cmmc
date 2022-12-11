@@ -13,6 +13,8 @@
 */
 
 #pragma once
+#include "cmmc/Analysis/AnalysisPass.hpp"
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -40,6 +42,11 @@ public:
     }
     virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
     virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
+    virtual void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const = 0;
+    virtual bool isNativeSupported(InstructionID inst) const noexcept {
+        CMMC_UNUSED(inst);
+        return true;
+    }
     virtual void legalizeFunc(GMIRFunction& func) const = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;
 };

@@ -40,6 +40,7 @@ void Function::dump(std::ostream& out) const {
         HANDLE_ATTR(NoAlias);
         HANDLE_ATTR(NoReturn);
         HANDLE_ATTR(NoRecurse);
+        HANDLE_ATTR(Entry);
 
 #undef HANDLE_ATTR
         out << "}";

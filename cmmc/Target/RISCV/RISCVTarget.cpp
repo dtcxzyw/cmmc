@@ -78,6 +78,10 @@ public:
 
     void legalizeFunc(GMIRFunction& func) const override;
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(analysis);
+    }
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };
 

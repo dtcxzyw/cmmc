@@ -24,6 +24,7 @@
 //     return c;
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -37,7 +38,10 @@ CMMC_NAMESPACE_BEGIN
 
 class MergeBranch final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        if(!analysis.module().getTarget().isNativeSupported(InstructionID::Select))
+            return false;
+
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();

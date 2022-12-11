@@ -122,6 +122,10 @@ public:
 
     void invalidateFunc(Function& func);
     void invalidateModule();
+
+    Module& module() const {
+        return *mModule;
+    }
 };
 
 CMMC_NAMESPACE_END

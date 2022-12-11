@@ -82,11 +82,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func,
                                      CMMC_UNUSED(constant);
                                      reportNotImplemented();
                                  },
-                                 [&](const UnaryArithmeticMIInst& unary) {
+                                 [&](const UnaryArithmeticMInst& unary) {
                                      CMMC_UNUSED(unary);
                                      reportNotImplemented();
                                  },
-                                 [&](const BinaryArithmeticMIInst& binary) {
+                                 [&](const BinaryArithmeticMInst& binary) {
                                      CMMC_UNUSED(binary);
                                      reportNotImplemented();
                                  },

@@ -429,6 +429,46 @@ const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& i
     return cur;
 }
 
+std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gatherOffsets(const DataLayout& dataLayout) const {
+    size_t constantOffset = 0;
+    std::vector<std::pair<size_t, Value*>> offsets;
+    const auto addOffset = [&](size_t offset, Value* index) {
+        if(index->isConstant()) {
+            constantOffset += offset * index->as<ConstantInteger>()->getZeroExtended();
+        } else {
+            offsets.emplace_back(offset, index);
+        }
+    };
+
+    const Type* cur = operands().back()->getType();
+    for(auto& idx : operands()) {
+        if(&idx == &operands().back())
+            break;
+
+        if(idx->getType()->isInteger()) {
+            if(cur->isArray()) {
+                cur = cur->as<ArrayType>()->getElementType();
+            } else if(cur->isPointer()) {
+                cur = cur->as<PointerType>()->getPointee();
+            } else {
+                DiagnosticsContext::get()
+                    .attach<Reason>("GEP fatal")
+                    .attach<TypeAttachment>("cur type", cur)
+                    .attach<ValueAttachment>("index", idx)
+                    .reportFatal();
+            }
+
+            addOffset(cur->getSize(dataLayout), idx);
+        } else if(auto offset = idx->as<ConstantOffset>(); offset) {
+            const auto structType = cur->as<StructType>();
+            constantOffset += structType->getFieldOffset(offset, dataLayout);
+            cur = structType->getFieldType(offset);
+        } else
+            reportUnreachable();
+    }
+    return { constantOffset, std::move(offsets) };
+}
+
 void GetElementPtrInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     const auto base = operands().back();

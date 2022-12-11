@@ -251,6 +251,7 @@ size_t StructType::getFieldOffset(const ConstantOffset* offset, const DataLayout
             return offsetBytes;
         }
         offsetBytes += size;
+        ++idx;
     }
     reportUnreachable();
 }

@@ -64,6 +64,10 @@ public:
         return *mSubTarget;
     }
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(analysis);
+    }
     void legalizeFunc(GMIRFunction& func) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
 };

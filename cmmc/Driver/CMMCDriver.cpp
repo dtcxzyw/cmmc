@@ -83,10 +83,14 @@ static int runIRPipeline(Module& module, const std::string& base) {
     if(!module.verify(std::cerr)) {
         DiagnosticsContext::get().attach<Reason>("Invalid IR").reportFatal();
     }
+    AnalysisPassManager analysis{ &module };
+    const auto& target = module.getTarget();
+    target.legalizeModuleBeforeOpt(module, analysis);
+    analysis.invalidateModule();
+
     {
         Stage stage{ "optimize IR" };
         const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
-        AnalysisPassManager analysis{ &module };
         opt->run(module, analysis);
     }
     if(!module.verify(std::cerr)) {
@@ -128,12 +132,11 @@ static int runIRPipeline(Module& module, const std::string& base) {
     reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 
     std::ofstream out{ path };
-    AnalysisPassManager analysis{ &module };
     const auto machineModule = lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
     // assert(machineModule->verify());
     {
         Stage stage{ "dump ASM" };
-        machineModule->target.emitAssembly(*machineModule, out);
+        target.emitAssembly(*machineModule, out);
     }
 
     return EXIT_SUCCESS;

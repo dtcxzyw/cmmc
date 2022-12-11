@@ -14,6 +14,7 @@
 
 // Only be used by interpreter
 
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -76,6 +77,10 @@ public:
     }
     void legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const override {
         reportUnreachable();
+    }
+    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(analysis);
     }
     void emitAssembly(GMIRModule&, std::ostream&) const override {
         reportUnreachable();

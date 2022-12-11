@@ -77,7 +77,7 @@ void removeUnusedInsts(GMIRFunction& func) {
                        [&](const UnreachableMInst&) {},                     //
                        [&](const BranchMInst&) {},
                        [&](const ConstantMInst&) {},
-                       [&](const BinaryArithmeticMIInst& inst) {
+                       [&](const BinaryArithmeticMInst& inst) {
                            popSrc(inst.lhs);
                            popSrc(inst.rhs);
                        },
@@ -117,11 +117,11 @@ void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>&
                                 },
                                  [&](ConstantMInst& inst) { functor(inst.dst); },
                                  [&](GlobalAddressMInst& inst) { functor(inst.dst); },
-                                 [&](UnaryArithmeticMIInst& inst) {
+                                 [&](UnaryArithmeticMInst& inst) {
                                      functor(inst.src);
                                      functor(inst.dst);
                                  },
-                                 [&](BinaryArithmeticMIInst& inst) {
+                                 [&](BinaryArithmeticMInst& inst) {
                                      functor(inst.lhs);
                                      functor(inst.rhs);
                                      functor(inst.dst);

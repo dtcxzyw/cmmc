@@ -21,6 +21,7 @@
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -28,6 +29,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cstdint>
 #include <deque>
 #include <iostream>
 #include <queue>
@@ -240,11 +242,12 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
 }
 
 std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
-    Stage stage{ "lower to MIR" };
+    Stage stage{ "lower to GMIR" };
 
     auto& target = module.getTarget();
     auto machineModule = std::make_unique<GMIRModule>(target);
     lowerToMachineModule(*machineModule, module, analysis, optLevel);
+    // machineModule->dump(std::cerr);
     return machineModule;
 }
 
@@ -401,7 +404,7 @@ void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
         }
     }();
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<BinaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
+    ctx.emitInst<BinaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
 void LoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
@@ -435,13 +438,38 @@ void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
     }();
 
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<UnaryArithmeticMIInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
+    ctx.emitInst<UnaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
     ctx.addOperand(inst, ret);
 }
 void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(ctx);
-    reportNotImplemented();
+    const auto src = ctx.mapOperand(inst->getOperand(0));
+    const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+    const auto op = [&]() -> GMIRInstID {
+        switch(inst->getInstID()) {
+            case InstructionID::SExt:
+                [[fallthrough]];
+            case InstructionID::ZExt:
+                [[fallthrough]];
+            case InstructionID::Trunc:
+                [[fallthrough]];
+            case InstructionID::Bitcast:
+                [[fallthrough]];
+                // TODO: use copy
+            case InstructionID::F2U:
+                [[fallthrough]];
+            case InstructionID::F2S:
+                [[fallthrough]];
+            case InstructionID::U2F:
+                [[fallthrough]];
+            case InstructionID::S2F:
+                [[fallthrough]];
+            case InstructionID::FCast:
+                reportNotImplemented();
+            default:
+                reportUnreachable();
+        }
+    }();
+    ctx.emitInst<UnaryArithmeticMInst>(op, src, dst);
 }
 void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
@@ -561,8 +589,30 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(GetElementPtrInst*, LoweringContext&) const {
-    reportNotImplemented();
+void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
+    const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getModule().target.getDataLayout());
+    auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
+    auto& constant = ctx.getAllocationPool(AddressSpace::VirtualReg);
+    const auto indexType = inst->operands().front()->getType();  // must be index type
+    auto ptr = vreg.allocate(indexType);
+    const auto base = ctx.mapOperand(inst->operands().back());
+
+    if(constantOffset != 0) {
+        const auto baseOffset = constant.allocate(indexType);
+        constant.getMetadata(baseOffset) = make<ConstantInteger>(indexType, static_cast<intmax_t>(constantOffset));
+        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, base, baseOffset, ptr);
+    } else {
+        ctx.emitInst<CopyMInst>(base, false, 0, ptr, false, 0);
+    }
+    for(auto [size, index] : offsets) {
+        const auto idx = ctx.mapOperand(index);
+        const auto off = vreg.allocate(indexType);
+        const auto sizeConstant = constant.allocate(indexType);
+        constant.getMetadata(sizeConstant) = make<ConstantInteger>(indexType, static_cast<intmax_t>(size));
+        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Mul, idx, sizeConstant, off);
+        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, ptr, off, ptr);
+    }
+    ctx.addOperand(inst, ptr);
 }
 void LoweringInfo::lower(PtrCastInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));

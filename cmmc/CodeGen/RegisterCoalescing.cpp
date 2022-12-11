@@ -117,7 +117,7 @@ void registerCoalescing(GMIRFunction& func) {
     };
 
     for(auto [op, idx] : nodeMap) {
-        const auto key = realColor[col[op]];
+        const auto key = realColor[col[idx]];
         mapOperand.emplace(op, getOperand(key, pool.getType(Operand{ AddressSpace::VirtualReg, op })));
     }
 

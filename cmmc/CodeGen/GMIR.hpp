@@ -131,12 +131,12 @@ struct AddressSpaceIntrinsicMInst final {
 };
 */
 
-struct UnaryArithmeticMIInst final {
+struct UnaryArithmeticMInst final {
     GMIRInstID instID;
     Operand src, dst;
 };
 
-struct BinaryArithmeticMIInst final {
+struct BinaryArithmeticMInst final {
     GMIRInstID instID;
     Operand lhs, rhs, dst;
 };
@@ -182,8 +182,8 @@ struct ControlFlowIntrinsicMInst final {
     Operand src, dst;
 };
 
-using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMIInst,
-                              BinaryArithmeticMIInst, ArithmeticIntrinsicMInst, CompareMInst, BranchMInst, BranchCompareMInst,
+using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMInst,
+                              BinaryArithmeticMInst, ArithmeticIntrinsicMInst, CompareMInst, BranchMInst, BranchCompareMInst,
                               CallMInst, UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
 
 class GMIRBasicBlock final {
@@ -222,6 +222,9 @@ public:
     void*& getMetadata(const Operand& operand);
     void* getMetadata(const Operand& operand) const;
     const Type* getType(const Operand& operand) const;
+    const std::vector<std::pair<const Type*, void*>>& storage() const {
+        return mAllocations;
+    }
 };
 
 struct TemporaryPools final {

@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cassert>
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
@@ -384,6 +385,7 @@ public:
         list.push_back(base);
     }
     void dump(std::ostream& out) const override;
+    std::pair<size_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
     Instruction* clone() const override;
 };
 

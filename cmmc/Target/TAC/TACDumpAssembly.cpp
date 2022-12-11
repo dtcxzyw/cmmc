@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -19,6 +20,7 @@
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <iostream>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -43,7 +45,7 @@ static std::string_view getCompareOp(CompareOp compare) {
 }
 
 static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func,
-                     std::unordered_map<const GMIRBasicBlock*, String>& labelMap) {
+                     std::unordered_map<const GMIRBasicBlock*, String>& labelMap, const DataLayout& dataLayout) {
     out << "FUNCTION " << symbol << " :" << std::endl;
 
     {
@@ -57,12 +59,24 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         if(operand.addressSpace == TACAddressSpace::GPR)
             out << 'v' << operand.id;
         else if(operand.addressSpace == TACAddressSpace::Stack)
-            out << 'x' << operand.id;
+            out << "&x" << operand.id;
         else if(operand.addressSpace == TACAddressSpace::Constant) {
             out << '#';
-            static_cast<ConstantInteger*>(func.pools().pools[TACAddressSpace::Constant].getMetadata(operand))->dump(out);
+            const auto metadata = static_cast<ConstantValue*>(func.pools().pools[TACAddressSpace::Constant].getMetadata(operand));
+            if(metadata->isUndefined())
+                out << '0';
+            else
+                metadata->dump(out);
         }
     };
+
+    {
+        const auto& allocas = func.pools().pools[TACAddressSpace::Stack].storage();
+        for(uint32_t idx = 0; idx < allocas.size(); ++idx) {
+            const auto alloc = allocas[idx];
+            out << "DEC x" << idx << " " << alloc.first->getSize(dataLayout) << std::endl;
+        }
+    }
 
     for(auto& block : func.blocks()) {
         const auto& label = labelMap[block.get()];
@@ -74,31 +88,22 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
             std::visit(Overload{ [&](const CopyMInst& copy) {
                                     // TODO: indirect
                                     auto valid = [&] {
-                                        if(copy.src.addressSpace == TACAddressSpace::GPR) {
-                                            // copy
-                                            if(copy.dst.addressSpace == TACAddressSpace::GPR) {
-                                                return true;
-                                            }
-                                            // fetch
-                                            else if(copy.dst.addressSpace == TACAddressSpace::Stack) {
-                                                return true;
-                                            }
-                                        }
-                                        // deref
-                                        else if(copy.src.addressSpace == TACAddressSpace::Stack) {
-                                            if(copy.dst.addressSpace == TACAddressSpace::GPR) {
-                                                return true;
-                                            }
+                                        if(!copy.indirectSrc) {
+                                            // copy or fetch
+                                            return true;
+                                        } else if(!copy.indirectDst) {
+                                            // deref
+                                            return true;
                                         }
                                         return false;
                                     };
                                     if(valid()) {
-                                        if(copy.dst.addressSpace == TACAddressSpace::Stack)
+                                        if(copy.indirectDst)
                                             out << '*';
                                         printOperand(copy.dst);
                                         out << " := ";
 
-                                        if(copy.src.addressSpace == TACAddressSpace::Stack)
+                                        if(copy.indirectSrc)
                                             out << '*';
                                         printOperand(copy.src);
                                     } else
@@ -110,7 +115,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      printOperand(constant.dst);
                                      out << " := #" << std::get<intmax_t>(constant.constant);
                                  },
-                                 [&](const UnaryArithmeticMIInst& unary) {
+                                 [&](const UnaryArithmeticMInst& unary) {
                                      if(unary.instID == GMIRInstID::Neg) {
                                          printOperand(unary.dst);
                                          out << " := #0 - ";
@@ -118,7 +123,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      } else
                                          reportUnreachable();
                                  },
-                                 [&](const BinaryArithmeticMIInst& binary) {
+                                 [&](const BinaryArithmeticMInst& binary) {
                                      char op;
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
@@ -209,8 +214,10 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
         }
     }
 
+    const auto& dataLayout = module.target.getDataLayout();
+
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap); },
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap, dataLayout); },
                              [](const auto&) { reportUnreachable(); } },
                    symbol.def);
     }

@@ -12,6 +12,10 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
+#include "cmmc/IR/Function.hpp"
+#include "cmmc/IR/Instruction.hpp"
+#include "cmmc/Transforms/Compatibility/Compatibility.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -56,6 +60,68 @@ bool TACTarget::builtinRA(GMIRFunction& mfunc) const {
     });
 
     return true;
+}
+bool TACTarget::isNativeSupported(InstructionID inst) const noexcept {
+    switch(inst) {
+        case InstructionID::UDiv:
+            [[fallthrough]];
+        case InstructionID::URem:
+            [[fallthrough]];
+        case InstructionID::Neg:
+            [[fallthrough]];
+        case InstructionID::And:
+            [[fallthrough]];
+        case InstructionID::Or:
+            [[fallthrough]];
+        case InstructionID::Not:
+            [[fallthrough]];
+        case InstructionID::Xor:
+            [[fallthrough]];
+        case InstructionID::Shl:
+            [[fallthrough]];
+        case InstructionID::LShr:
+            [[fallthrough]];
+        case InstructionID::AShr:
+            [[fallthrough]];
+        case InstructionID::FAdd:
+            [[fallthrough]];
+        case InstructionID::FSub:
+            [[fallthrough]];
+        case InstructionID::FMul:
+            [[fallthrough]];
+        case InstructionID::FDiv:
+            [[fallthrough]];
+        case InstructionID::FNeg:
+            [[fallthrough]];
+        case InstructionID::FFma:
+            [[fallthrough]];
+        case InstructionID::SExt:
+            [[fallthrough]];
+        case InstructionID::ZExt:
+            [[fallthrough]];
+        case InstructionID::Trunc:
+            [[fallthrough]];
+        case InstructionID::Bitcast:
+            [[fallthrough]];
+        case InstructionID::F2U:
+            [[fallthrough]];
+        case InstructionID::F2S:
+            [[fallthrough]];
+        case InstructionID::U2F:
+            [[fallthrough]];
+        case InstructionID::S2F:
+            [[fallthrough]];
+        case InstructionID::FCast:
+            [[fallthrough]];
+        case InstructionID::Select:
+            return false;
+        default:
+            return true;
+    }
+}
+void TACTarget::legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const {
+    CMMC_UNUSED(module);
+    CMMC_UNUSED(analysis);
 }
 
 CMMC_TARGET("tac", TACTarget);
