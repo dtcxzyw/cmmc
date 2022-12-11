@@ -219,8 +219,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O2)
             schedule(mfunc, target, true);
         // Stage 6: register coalescing
-        if(optLevel >= OptimizationLevel::O1)
+        /* //FIXME
+        if(optLevel >= OptimizationLevel::O1) {
             registerCoalescing(mfunc);
+        }
+        */
         // Stage 7: register allocation
         if(!target.builtinRA(mfunc))
             assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
@@ -233,11 +236,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1)
             subTarget.postPeepholeOpt(mfunc);
         // Stage 11: code layout opt
-        if(optLevel >= OptimizationLevel::O2)
-            optimizeBlockLayout(mfunc, target);
+        // if(optLevel >= OptimizationLevel::O2)
+        //    optimizeBlockLayout(mfunc, target);
         // Stage 12: remove unreachable block/continuous goto/unused label
-        if(optLevel >= OptimizationLevel::O1)
-            simplifyCFG(mfunc);
+        // if(optLevel >= OptimizationLevel::O1)
+        //    simplifyCFG(mfunc);
     }
 }
 
@@ -592,7 +595,7 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
 void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getModule().target.getDataLayout());
     auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
-    auto& constant = ctx.getAllocationPool(AddressSpace::VirtualReg);
+    auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
     const auto indexType = inst->operands().front()->getType();  // must be index type
     auto ptr = vreg.allocate(indexType);
     const auto base = ctx.mapOperand(inst->operands().back());

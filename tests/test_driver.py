@@ -5,6 +5,7 @@ import sys
 import time
 import subprocess
 import json
+import CodeGenTAC.irsim_quiet as irsim
 
 gcc_ref_flags = "-O3 -march=native -funroll-loops -fwhole-program"
 binary_path = sys.argv[1]
@@ -91,13 +92,28 @@ def spl_semantic_noref(src):
 def spl_codegen_tac(src):
     out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-H', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
-    # TODO: check
-    # TODO: tests
-    return out.returncode == 0
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+    ir = out.stdout
+    if not irsim.check(ir):
+        return False
+    name = os.path.basename(src)
+    if name in irsim.test_generators:
+        for inputs, answer in irsim.test_generators[name]():
+            ret = irsim.exec(ir, inputs.copy())
+            if ret == None:
+                return False
+            if answer != ret[1]:
+                print("\ninput", inputs, "answer", answer, "output", ret[1])
+                return False
+    else:
+        print("\nWarning: no test cases for", src)
+
+    return True
 
 
 def spl_tac2ir(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'tac', '-o',
+    out = subprocess.run(args=[binary_path, '-i', '-t', 'mips', '-o',
                                '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -254,7 +270,7 @@ res.append(test("SPL TAC->IR project4", tests_path +
            "/TAC2MIPS", ".ir", spl_tac2ir))
 res.append(test("SPL codegen TAC", tests_path +
            "/CodeGenTAC", ".spl", spl_codegen_tac))
-
+exit()
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +

@@ -2,3 +2,4 @@ build
 bin
 .vscode
 .cache
+__pycache__

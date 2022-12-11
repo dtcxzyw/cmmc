@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -21,6 +22,7 @@
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 #include <iostream>
+#include <unordered_map>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -44,22 +46,27 @@ static std::string_view getCompareOp(CompareOp compare) {
     }
 }
 
-static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func,
-                     std::unordered_map<const GMIRBasicBlock*, String>& labelMap, const DataLayout& dataLayout) {
+struct FunctionNameMap final {
+    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    std::unordered_map<uint32_t, uint32_t> gprMap, stackMap;
+};
+
+static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func, const DataLayout& dataLayout,
+                     const FunctionNameMap& map) {
     out << "FUNCTION " << symbol << " :" << std::endl;
 
     {
         auto& params = func.parameters();
         for(auto param : params) {
-            out << "PARAM v" << param.id << std::endl;
+            out << "PARAM v" << map.gprMap.at(param.id) << std::endl;
         }
     }
 
     const auto printOperand = [&](const Operand& operand) {
         if(operand.addressSpace == TACAddressSpace::GPR)
-            out << 'v' << operand.id;
+            out << 'v' << map.gprMap.at(operand.id);
         else if(operand.addressSpace == TACAddressSpace::Stack)
-            out << "&x" << operand.id;
+            out << "&x" << map.stackMap.at(operand.id);
         else if(operand.addressSpace == TACAddressSpace::Constant) {
             out << '#';
             const auto metadata = static_cast<ConstantValue*>(func.pools().pools[TACAddressSpace::Constant].getMetadata(operand));
@@ -74,19 +81,18 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         const auto& allocas = func.pools().pools[TACAddressSpace::Stack].storage();
         for(uint32_t idx = 0; idx < allocas.size(); ++idx) {
             const auto alloc = allocas[idx];
-            out << "DEC x" << idx << " " << alloc.first->getSize(dataLayout) << std::endl;
+            out << "DEC x" << map.stackMap.at(idx) << " " << alloc.first->getSize(dataLayout) << std::endl;
         }
     }
 
     for(auto& block : func.blocks()) {
-        const auto& label = labelMap[block.get()];
-
-        if(&block != &func.blocks().front())
+        if(&block != &func.blocks().front()) {
+            const auto& label = map.labelMap.at(block.get());
             out << "LABEL " << label << " :" << std::endl;
+        }
 
         for(auto& inst : block->instructions()) {
             std::visit(Overload{ [&](const CopyMInst& copy) {
-                                    // TODO: indirect
                                     auto valid = [&] {
                                         if(!copy.indirectSrc) {
                                             // copy or fetch
@@ -148,14 +154,14 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      out << ' ' << op << ' ';
                                      printOperand(binary.rhs);
                                  },
-                                 [&](const BranchMInst& branch) { out << "GOTO " << labelMap.at(branch.targetBlock); },
+                                 [&](const BranchMInst& branch) { out << "GOTO " << map.labelMap.at(branch.targetBlock); },
                                  [&](const BranchCompareMInst& branch) {
                                      out << "IF ";
                                      printOperand(branch.lhs);
                                      out << ' ' << getCompareOp(branch.compareOp) << ' ';
                                      printOperand(branch.rhs);
                                      out << " GOTO ";
-                                     out << labelMap.at(branch.targetBlock);
+                                     out << map.labelMap.at(branch.targetBlock);
                                  },
                                  [&](const CallMInst& call) {
                                      printOperand(call.dst);
@@ -190,26 +196,48 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
 }
 
 void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
-    LabelAllocator allocator;
     using namespace std::string_literals;
 
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    std::unordered_map<const GMIRFunction*, FunctionNameMap> map;
+
     {
         LabelAllocator allocator;
+        const auto tryAllocate = [](std::unordered_map<uint32_t, uint32_t>& map, uint32_t id, uint32_t& count) {
+            if(!map.count(id))
+                map.emplace(id, count++);
+        };
+        uint32_t gprAllocateID = 0, stackAllocateID = 0;
         String labelBase = String::get("label");
         for(auto& symbol : module.symbols) {
-            std::visit(Overload{ [&](const GMIRFunction& func) {
-                                    for(auto& block : func.blocks()) {
-                                        const auto label = allocator.allocate(labelBase);
+            std::visit(Overload{ [&](GMIRFunction& func) {
+                                    auto& ref = map[&func];
+                                    {
+                                        auto& labelMap = ref.labelMap;
+                                        for(auto& block : func.blocks()) {
+                                            const auto label = allocator.allocate(labelBase);
 
-                                        // entry block cannot be branch target
-                                        if(&block == &func.blocks().front())
-                                            continue;
+                                            // entry block cannot be branch target
+                                            if(&block == &func.blocks().front())
+                                                continue;
 
-                                        labelMap[block.get()] = label;
+                                            labelMap[block.get()] = label;
+                                        }
                                     }
+
+                                    {
+                                        const auto& allocas = func.pools().pools[TACAddressSpace::Stack].storage();
+                                        for(uint32_t idx = 0; idx < allocas.size(); ++idx) {
+                                            tryAllocate(ref.stackMap, idx, stackAllocateID);
+                                        }
+                                    }
+
+                                    forEachOperands(func, [&](const Operand& operand) {
+                                        if(operand.addressSpace == TACAddressSpace::GPR) {
+                                            tryAllocate(ref.gprMap, operand.id, gprAllocateID);
+                                        }
+                                    });
                                 },
-                                 [](const auto&) {} },
+                                 [](auto&) { reportUnreachable(); } },
                        symbol.def);
         }
     }
@@ -217,7 +245,7 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
     const auto& dataLayout = module.target.getDataLayout();
 
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap, dataLayout); },
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, map.at(&func)); },
                              [](const auto&) { reportUnreachable(); } },
                    symbol.def);
     }

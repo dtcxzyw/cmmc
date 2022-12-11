@@ -2,6 +2,10 @@ from __future__ import division
 import operator
 import re
 from typing import List
+import random
+import calendar
+import math
+import traceback
 
 
 class IRSyntaxError(Exception):
@@ -41,8 +45,12 @@ class IRSimModel:
         self.currentFunction = None
         self.callStack = list()
         self.argumentStack = list()
+        self.debug = False
 
     def load_ir_file(self, ir: str):
+        if self.debug:
+            print(ir)
+
         lineno = 0
         for line in ir.splitlines():
             inst = re.sub('\\s+', ' ', line.strip())
@@ -72,6 +80,11 @@ class IRSimModel:
                 break
             code = self.codeList[self.ip]
             error_code = self.execute_code(code)
+            if self.debug:
+                for key in self.variableDict.keys():
+                    print('{}: {}'.format(key, self.get_value(key)), end=' ')
+                print("")
+
             if error_code > 0:
                 break
             self.ip += 1
@@ -257,6 +270,8 @@ class IRSimModel:
                 else:
                     if code[0] == 'GOTO':
                         self.ip = self.labelDict[code[1]]
+                        if self.debug:
+                            print('GOTO', code[1])
                     else:
                         if code[0] == 'IF':
                             value1 = self.get_value(code[1])
@@ -269,6 +284,11 @@ class IRSimModel:
                                       '==': operator.eq}.get(code[2])(value1, value2)
                             if result:
                                 self.ip = self.labelDict[code[4]]
+                                if self.debug:
+                                    print('GOTO', code[4])
+                            else:
+                                if self.debug:
+                                    print('FALLTHROUGH')
                         else:
                             if code[0] == 'MOV':
                                 value = self.get_value(code[2])
@@ -303,6 +323,9 @@ class IRSimModel:
                                         self.offset = stackItem[3]
                                         addr = self.variableDict[stackItem[1]][0] // 4
                                         self.memory[addr] = returnValue
+
+                                        if self.debug:
+                                            print("RETURN", returnValue)
                                     else:
                                         if code[0] == 'CALL':
                                             oldAddrs = dict()
@@ -315,6 +338,10 @@ class IRSimModel:
                                             self.callStack.append(
                                                 (self.ip, code[1], oldAddrs, oldOffset))
                                             self.ip = self.labelDict[code[2]]
+
+                                            if self.debug:
+                                                print(
+                                                    'CALL', code[2], 'with', self.argumentStack)
                                         else:
                                             if code[0] == 'ARG':
                                                 self.argumentStack.append(
@@ -325,6 +352,7 @@ class IRSimModel:
                                                     self.memory[addr] = self.argumentStack.pop(
                                                     )
         except IndexError:
+            # print(traceback.format_exc())
             return 2
         else:
             return 0
@@ -345,7 +373,7 @@ class IRSimController:
         return [self.model.run(), self.output]
 
     def read_int(self, var):
-        val = self.inputs.pop()
+        val = self.inputs.pop(0)
         return (val, True)
 
     def write_int(self, val):
@@ -353,12 +381,24 @@ class IRSimController:
 
 
 def exec(ir: str, inputs: List[int]) -> List[int]:
+    src = inputs.copy()
     try:
         irsim = IRSimController(ir, inputs)
         return irsim.run()
     except Exception as e:
+        print(src)
         print(e)
         return None
+
+
+def check(ir: str) -> bool:
+    try:
+        model = IRSimModel(None)
+        model.load_ir_file(ir)
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
 
 if __name__ == "__main__":
@@ -378,3 +418,171 @@ WRITE #0
 RETURN #0
 """
     print(exec(ir, inputs=[10]))
+
+
+def testgen_test_01():
+    return [([1], [1]), ([0], [0]), ([-1], [-1]), ([10], [1]), ([-10], [-1])]
+
+
+def testgen_test_02():
+    ret = [([-1], [1]), ([0], [1]), ([1], [1])]
+    res = 1
+    for idx in range(2, 20):
+        res *= idx
+        ret.append(([idx], [res]))
+    return ret
+
+
+def testgen_test_03():
+    return [([], [3])]
+
+
+def testgen_test_04():
+    return [([], [1, 3])]
+
+
+def Joseph(n: int, m: int):
+    people = [0] * 100
+    res = []
+    i = 1
+    j = k = num = 0
+    while i <= n:
+        people[i] = 1
+        i = i + 1
+
+    i = 1
+    while (i <= n):
+        if people[i] == 1:
+            j = j + people[i]
+            if j == m:
+                res.append(i)
+                j = 0
+                people[i] = 0
+                k = k + 1
+
+            if k == n:
+                num = i
+                return res
+
+        if i == n:
+            i = 0
+        i = i + 1
+    return res
+
+
+def testgen_test_3_b01():
+    res = []
+    for a in range(1, 20):
+        for b in range(1, 20):
+            res.append(([a, b], Joseph(a, b)))
+    return res
+
+
+def testgen_test_3_b02():
+    res = []
+    for i in range(100):
+        inputs = []
+        for _ in range(8):
+            inputs.append(random.randint(-100, 100))
+        outputs = inputs.copy()
+        outputs.sort()
+        res.append((inputs, outputs))
+
+    return res
+
+
+def testgen_test_3_b03():
+    return [([], [3875])]
+
+
+def testgen_test_3_b04():
+    return [([], [2, 70])]
+
+
+def testgen_test_3_r01():
+    return [([], [175, 36, 103])]
+
+
+def testgen_test_3_r02():
+    res = []
+    for year in [2000, 2100, 2012, 2010]:
+        leap = calendar.isleap(year)
+        res.append(([year, 1], [31]))
+        res.append(([year, 2], [29 if leap else 28]))
+        res.append(([year, 4], [30]))
+
+    return res
+
+
+def testgen_test_3_r03():
+    return [([], [2, 3, 5, 7, 11, 13, 17, 19, 23, 29])]
+
+
+def testgen_test_3_r04():
+    res = []
+    for i in range(-100, 100):
+        res.append(([i], [i, i*i, i*i*i]))
+    return res
+
+
+def testgen_test_3_r05():
+    res = [([-1], [0])]
+    arr = [0, 1]
+    for i in range(50):
+        arr.append(arr[i] + arr[i+1])
+    for idx, val in enumerate(arr):
+        res.append(([idx], [val]))
+    return res
+
+
+def testgen_test_3_r06():
+    return [([], [1000003, 1000002, 3000002, 1000003, 2000001, 2000003, 1000003])]
+
+
+def testgen_test_3_r07():
+    res = []
+    for i in range(1, 50):
+        for j in range(1, 50):
+            res.append(([i, j], [math.gcd(i, j), math.gcd(i, j)]))
+    return res
+
+
+def testgen_test_3_r08():
+    res = [([-1], [-1])]
+    for i in range(1000):
+        j = i
+        digit_sum = 0
+        while j != 0:
+            digit_sum += j % 10
+            j = j // 10
+        res.append(([i], [digit_sum]))
+    return res
+
+
+def testgen_test_3_r09():
+    return [([], [370, 371, 407, 3])]
+
+
+def testgen_test_3_r10():
+    return testgen_test_01()
+
+
+test_generators = {"test01.spl": testgen_test_01,
+                   "test02.spl": testgen_test_02,
+                   "test03.spl": testgen_test_03,
+                   "test04.spl": testgen_test_04,
+                   "test_3_b01.spl": testgen_test_3_b01,
+                   "test_3_b02.spl": testgen_test_3_b02,
+                   "test_3_b03.spl": testgen_test_3_b03,
+                   "test_3_b04.spl": testgen_test_3_b04,
+                   "test_3_r01.spl": testgen_test_3_r01,
+                   "test_3_r02.spl": testgen_test_3_r02,
+                   "test_3_r03.spl": testgen_test_3_r03,
+                   "test_3_r04.spl": testgen_test_3_r04,
+                   "test_3_r05.spl": testgen_test_3_r05,
+                   "test_3_r06.spl": testgen_test_3_r06,
+                   "test_3_r07.spl": testgen_test_3_r07,
+                   "test_3_r08.spl": testgen_test_3_r08,
+                   "test_3_r09.spl": testgen_test_3_r09,
+                   "test_3_r10.spl": testgen_test_3_r10,
+                   }

@@ -27,6 +27,43 @@ static bool removeUnreachableBlocks(GMIRFunction& func) {
     return false;
 }
 
+static bool removeUnusedLabels(GMIRFunction& func) {
+    std::unordered_set<const GMIRBasicBlock*> usedLabels;
+    usedLabels.insert(func.blocks().front().get());
+
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
+                                 [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
+                       inst);
+        }
+    }
+
+    if(usedLabels.size() == func.blocks().size())
+        return false;
+
+    GMIRBasicBlock* lastAvailable = nullptr;
+
+    for(auto& block : func.blocks()) {
+        if(usedLabels.count(block.get())) {
+            lastAvailable = block.get();
+        } else {
+            for(auto& inst : block->instructions()) {
+                std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
+                                     [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
+                           inst);
+            }
+            lastAvailable->instructions().insert(lastAvailable->instructions().cend(), block->instructions().cbegin(),
+                                                 block->instructions().cend());
+            lastAvailable->usedStackObjects().merge(block->usedStackObjects());
+        }
+    }
+
+    func.blocks().remove_if([&](const auto& block) { return !usedLabels.count(block.get()); });
+
+    return true;
+}
+
 static bool removeGotoNext(GMIRFunction& func) {
     bool modified = false;
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
@@ -96,6 +133,7 @@ void simplifyCFG(GMIRFunction& func) {
         modified |= removeGotoNext(func);
         // modified |= redirectGoto(func);
         modified |= removeEmptyBlocks(func);
+        modified |= removeUnusedLabels(func);
 
         if(!modified)
             return;

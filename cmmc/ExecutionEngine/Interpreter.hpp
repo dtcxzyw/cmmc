@@ -71,6 +71,11 @@ public:
         int ret = std::fprintf(mFile, fmt, args...);
         CMMC_UNUSED(ret);
     }
+
+    void putch(int ch) {
+        int ret = std::fputc(ch, mFile);
+        CMMC_UNUSED(ret);
+    }
 };
 
 struct SimulationIOContext final {
