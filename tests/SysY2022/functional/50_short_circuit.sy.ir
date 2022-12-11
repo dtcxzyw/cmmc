@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp gt i32 %0, i32 10;

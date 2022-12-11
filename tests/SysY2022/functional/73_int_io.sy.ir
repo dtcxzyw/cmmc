@@ -1,114 +1,93 @@
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
-    i32* %n = alloc i32;
-    i32* %sum = alloc i32;
-    i32* %c = alloc i32;
     i32 %0 = call () -> i32 @getch();
     i32 %1 = sub i32 %0, i32 48;
-    store i32* %c with i32 %1;
     i1 %2 = scmp lt i32 %1, i32 0;
-    cbr i1 %2, [ ^while.body i32* %sum, i32* %c, i32* %n ], [ ^indirect i32* %sum, i32* %c, i32 %1, i32* %n, i32 %1 ];
-^while.body(i32* %arg, i32* %arg1, i32* %arg2):
+    cbr i1 %2, [ ^while.body ], [ ^indirect i32 %1, i32 %1 ];
+^while.body():
     i32 %0 = call () -> i32 @getch();
     i32 %1 = sub i32 %0, i32 48;
-    store i32* %arg1 with i32 %1;
     i1 %2 = scmp lt i32 %1, i32 0;
-    cbr i1 %2, [ ^while.body i32* %arg, i32* %arg1, i32* %arg2 ], [ ^indirect i32* %arg, i32* %arg1, i32 %1, i32* %arg2, i32 %1 ];
-^indirect(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg2, i32 9;
-    cbr i1 %0, [ ^while.body i32* %arg, i32* %arg1, i32* %arg3 ], [ ^b i32* %arg, i32* %arg1, i32* %arg3, i32 %arg4 ];
-^b(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3):
-    store i32* %arg with i32 %arg3;
+    cbr i1 %2, [ ^while.body ], [ ^indirect i32 %1, i32 %1 ];
+^indirect(i32 %arg, i32 %arg1):
+    i1 %0 = scmp gt i32 %arg, i32 9;
+    cbr i1 %0, [ ^while.body ], [ ^b i32 %arg1 ];
+^b(i32 %arg):
     i32 %0 = call () -> i32 @getch();
     i32 %1 = sub i32 %0, i32 48;
-    store i32* %arg1 with i32 %1;
     i1 %2 = scmp ge i32 %1, i32 0;
-    cbr i1 %2, [ ^indirect1 i32* %arg, i32* %arg1, i32 %1, i32* %arg2, i32 %arg3, i32 %1 ], [ ^b1 i32* %arg2, i32 %arg3 ];
-^indirect1(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
-    i1 %0 = scmp le i32 %arg2, i32 9;
-    cbr i1 %0, [ ^if.then i32* %arg1, i32* %arg, i32* %arg3, i32 %arg4, i32 %arg5 ], [ ^b1 i32* %arg3, i32 %arg4 ];
-^b1(i32* %arg, i32 %arg1):
-    store i32* %arg with i32 %arg1;
-    i1 %0 = scmp gt i32 %arg1, i32 0;
-    cbr i1 %0, [ ^entry1 i32* %arg ], [ ^b2 ];
-^if.then(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
-    i32 %0 = mul i32 %arg3, i32 10;
-    i32 %1 = add i32 %0, i32 %arg4;
-    store i32* %arg1 with i32 %1;
+    cbr i1 %2, [ ^indirect1 i32 %1, i32 %arg, i32 %1 ], [ ^b1 i32 %arg ];
+^indirect1(i32 %arg, i32 %arg1, i32 %arg2):
+    i1 %0 = scmp le i32 %arg, i32 9;
+    cbr i1 %0, [ ^if.then i32 %arg1, i32 %arg2 ], [ ^b1 i32 %arg1 ];
+^b1(i32 %arg):
+    i1 %0 = scmp gt i32 %arg, i32 0;
+    cbr i1 %0, [ ^entry1 i32 %arg ], [ ^b2 ];
+^if.then(i32 %arg, i32 %arg1):
+    i32 %0 = mul i32 %arg, i32 10;
+    i32 %1 = add i32 %0, i32 %arg1;
     i32 %2 = call () -> i32 @getch();
     i32 %3 = sub i32 %2, i32 48;
-    store i32* %arg with i32 %3;
     i1 %4 = scmp ge i32 %3, i32 0;
-    cbr i1 %4, [ ^indirect1 i32* %arg1, i32* %arg, i32 %3, i32* %arg2, i32 %1, i32 %3 ], [ ^b1 i32* %arg2, i32 %1 ];
-^entry1(i32* %arg):
-    i32* %sum = alloc i32;
-    i32* %c = alloc i32;
+    cbr i1 %4, [ ^indirect1 i32 %3, i32 %1, i32 %3 ], [ ^b1 i32 %1 ];
+^entry1(i32 %arg):
     i32 %0 = call () -> i32 @getch();
     i32 %1 = sub i32 %0, i32 48;
-    store i32* %c with i32 %1;
     i1 %2 = scmp lt i32 %1, i32 0;
-    cbr i1 %2, [ ^while.body1 i32* %sum, i32* %c, i32* %arg ], [ ^indirect2 i32* %sum, i32* %c, i32 %1, i32* %arg, i32 %1 ];
+    cbr i1 %2, [ ^entry1 i32 %arg ], [ ^indirect2 i32 %1, i32 %arg, i32 %1 ];
 ^b2():
     ret i32 0;
-^while.body1(i32* %arg, i32* %arg1, i32* %arg2):
+^indirect2(i32 %arg, i32 %arg1, i32 %arg2):
+    i1 %0 = scmp gt i32 %arg, i32 9;
+    cbr i1 %0, [ ^entry1 i32 %arg1 ], [ ^b3 i32 %arg1, i32 %arg2 ];
+^b3(i32 %arg, i32 %arg1):
     i32 %0 = call () -> i32 @getch();
     i32 %1 = sub i32 %0, i32 48;
-    store i32* %arg1 with i32 %1;
-    i1 %2 = scmp lt i32 %1, i32 0;
-    cbr i1 %2, [ ^while.body1 i32* %arg, i32* %arg1, i32* %arg2 ], [ ^indirect2 i32* %arg, i32* %arg1, i32 %1, i32* %arg2, i32 %1 ];
-^indirect2(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg2, i32 9;
-    cbr i1 %0, [ ^while.body1 i32* %arg, i32* %arg1, i32* %arg3 ], [ ^b3 i32* %arg, i32* %arg1, i32* %arg3, i32 %arg4 ];
-^b3(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3):
-    store i32* %arg with i32 %arg3;
-    i32 %0 = call () -> i32 @getch();
-    i32 %1 = sub i32 %0, i32 48;
-    store i32* %arg1 with i32 %1;
     i1 %2 = scmp ge i32 %1, i32 0;
-    cbr i1 %2, [ ^indirect3 i32* %arg, i32* %arg1, i32 %1, i32* %arg2, i32 %arg3, i32 %1 ], [ ^b4 i32* %arg2, i32 %arg3 ];
-^indirect3(i32* %arg, i32* %arg1, i32 %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
-    i1 %0 = scmp le i32 %arg2, i32 9;
-    cbr i1 %0, [ ^if.then1 i32* %arg1, i32* %arg, i32* %arg3, i32 %arg4, i32 %arg5 ], [ ^b4 i32* %arg3, i32 %arg4 ];
-^b4(i32* %arg, i32 %arg1):
+    cbr i1 %2, [ ^indirect3 i32 %1, i32 %arg, i32 %arg1, i32 %1 ], [ ^b4 i32 %arg, i32 %arg1 ];
+^indirect3(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
+    i1 %0 = scmp le i32 %arg, i32 9;
+    cbr i1 %0, [ ^if.then1 i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b4 i32 %arg1, i32 %arg2 ];
+^b4(i32 %arg, i32 %arg1):
+    i32* %a = alloc i32;
     [16 * i32]* %b = alloc [16 * i32];
+    i32* %i = alloc i32;
     i1 %0 = scmp gt i32 %arg1, i32 0;
-    cbr i1 %0, [ ^while.body2 [16 * i32]* %b, i32* %arg, i32 %arg1, i32 0 ], [ ^indirect4 [16 * i32]* %b, i32* %arg, i32 0 ];
-^if.then1(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
-    i32 %0 = mul i32 %arg3, i32 10;
-    i32 %1 = add i32 %0, i32 %arg4;
-    store i32* %arg1 with i32 %1;
+    cbr i1 %0, [ ^while.body1 i32* %a, [16 * i32]* %b, i32* %i, i32 %arg, i32 %arg1, i32 0 ], [ ^indirect4 i32* %a, [16 * i32]* %b, i32* %i, i32 %arg, i32 0 ];
+^if.then1(i32 %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = mul i32 %arg1, i32 10;
+    i32 %1 = add i32 %0, i32 %arg2;
     i32 %2 = call () -> i32 @getch();
     i32 %3 = sub i32 %2, i32 48;
-    store i32* %arg with i32 %3;
     i1 %4 = scmp ge i32 %3, i32 0;
-    cbr i1 %4, [ ^indirect3 i32* %arg1, i32* %arg, i32 %3, i32* %arg2, i32 %1, i32 %3 ], [ ^b4 i32* %arg2, i32 %1 ];
-^while.body2([16 * i32]* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg3];
-    i32 %1 = srem i32 %arg2, i32 10;
+    cbr i1 %4, [ ^indirect3 i32 %3, i32 %arg, i32 %1, i32 %3 ], [ ^b4 i32 %arg, i32 %1 ];
+^while.body1(i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
+    i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg5];
+    i32 %1 = srem i32 %arg4, i32 10;
     i32 %2 = add i32 %1, i32 48;
     store i32* %0 with i32 %2;
-    i32 %3 = sdiv i32 %arg2, i32 10;
-    i32 %4 = add i32 %arg3, i32 1;
+    i32 %3 = sdiv i32 %arg4, i32 10;
+    i32 %4 = add i32 %arg5, i32 1;
     i1 %5 = scmp gt i32 %3, i32 0;
-    cbr i1 %5, [ ^while.body2 [16 * i32]* %arg, i32* %arg1, i32 %3, i32 %4 ], [ ^indirect4 [16 * i32]* %arg, i32* %arg1, i32 %4 ];
-^indirect4([16 * i32]* %arg, i32* %arg1, i32 %arg2):
-    i1 %0 = scmp gt i32 %arg2, i32 0;
-    cbr i1 %0, [ ^while.body3 [16 * i32]* %arg, i32* %arg1, i32 %arg2 ], [ ^b5 [16 * i32]* %arg, i32* %arg1 ];
-^while.body3([16 * i32]* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = sub i32 %arg2, i32 1;
-    i32* %1 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %0];
+    cbr i1 %5, [ ^while.body1 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %3, i32 %4 ], [ ^indirect4 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %4 ];
+^indirect4(i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
+    i1 %0 = scmp gt i32 %arg4, i32 0;
+    cbr i1 %0, [ ^while.body2 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4 ], [ ^b5 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3 ];
+^while.body2(i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
+    i32 %0 = sub i32 %arg4, i32 1;
+    i32* %1 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %0];
     i32 %2 = load i32* %1;
     call (i32) -> void @putch(i32 %2);
     i1 %3 = scmp gt i32 %0, i32 0;
-    cbr i1 %3, [ ^while.body3 [16 * i32]* %arg, i32* %arg1, i32 %0 ], [ ^b5 [16 * i32]* %arg, i32* %arg1 ];
-^b5([16 * i32]* %arg, i32* %arg1):
-    free [16 * i32]* %arg;
+    cbr i1 %3, [ ^while.body2 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %0 ], [ ^b5 i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3 ];
+^b5(i32* %arg, [16 * i32]* %arg1, i32* %arg2, i32 %arg3):
+    free i32* %arg2;
+    free [16 * i32]* %arg1;
+    free i32* %arg;
     call (i32) -> void @putch(i32 10);
-    i32 %0 = load i32* %arg1;
-    i32 %1 = sub i32 %0, i32 1;
-    store i32* %arg1 with i32 %1;
-    i1 %2 = scmp gt i32 %1, i32 0;
-    cbr i1 %2, [ ^entry1 i32* %arg1 ], [ ^b2 ];
+    i32 %0 = sub i32 %arg3, i32 1;
+    i1 %1 = scmp gt i32 %0, i32 0;
+    cbr i1 %1, [ ^entry1 i32 %0 ], [ ^b2 ];
 }

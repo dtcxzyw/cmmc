@@ -1,4 +1,4 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
 ^entry():
     ubr [ ^while.body i32 5, i32 7 ];
 ^while.body(i32 %arg, i32 %arg1):

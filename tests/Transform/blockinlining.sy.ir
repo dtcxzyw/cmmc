@@ -11,7 +11,7 @@ internal func @fac(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
     i32 %2 = mul i32 %arg, i32 %1;
     ret i32 %2;
 }
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call (i32) -> i32 @fac(i32 %0);

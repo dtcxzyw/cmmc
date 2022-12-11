@@ -1,5 +1,5 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp neq i32 %0, i32 0;
@@ -17,12 +17,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^if.then():
     ret i32 1;
 ^if.then1():
+    i32* %x = alloc i32;
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
-    i32 %2 = call () -> i32 @getint();
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3, [ ^while.body ], [ ^b ];
+    i1 %2 = scmp neq i32 %1, i32 0;
+    cbr i1 %2, [ ^while.header ], [ ^b1 i32* %x ];
 ^while.header():
+    i32 %0 = call () -> i32 @getint();
+    i1 %1 = scmp neq i32 %0, i32 0;
+    cbr i1 %1, [ ^while.body ], [ ^b ];
+^b1(i32* %arg):
+    free i32* %arg;
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp neq i32 %0, i32 0;
     cbr i1 %1, [ ^while.body ], [ ^b ];

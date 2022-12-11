@@ -34,21 +34,19 @@ func @test_2_r08(i32, i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect
     cbr i1 %0, [ ^entry1 i32 %arg1, i32 %arg2 ], [ ^entry2 i32 %arg1, i32 %arg2 ];
 ^entry1(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg, i32 %arg1;
-    cbr i1 %0, [ ^indirect ], [ ^indirect1 i32 %arg, i32 %arg1 ];
+    cbr i1 %0, [ ^indirect2 i32 1 ], [ ^indirect i32 %arg, i32 %arg1 ];
 ^entry2(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^indirect2 ], [ ^indirect3 i32 %arg, i32 %arg1 ];
-^indirect():
-    ret i32 1;
-^indirect1(i32 %arg, i32 %arg1):
+    cbr i1 %0, [ ^indirect3 f32 -1 ], [ ^indirect1 i32 %arg, i32 %arg1 ];
+^indirect(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    i32 %1 = select i1 %0 ? i32 -1 : i32 0;
-    ret i32 %1;
-^indirect2():
-    ret i32 -1;
-^indirect3(i32 %arg, i32 %arg1):
+    cbr i1 %0, [ ^indirect2 i32 -1 ], [ ^indirect2 i32 0 ];
+^indirect1(i32 %arg, i32 %arg1):
     i1 %0 = scmp eq i32 %arg1, i32 %arg;
-    f32 %1 = select i1 %0 ? f32 0 : f32 1;
-    i32 %2 = f2s f32 %1 to i32;
-    ret i32 %2;
+    cbr i1 %0, [ ^indirect3 f32 0 ], [ ^indirect3 f32 1 ];
+^indirect2(i32 %arg):
+    ret i32 %arg;
+^indirect3(f32 %arg):
+    i32 %0 = f2s f32 %arg to i32;
+    ret i32 %0;
 }

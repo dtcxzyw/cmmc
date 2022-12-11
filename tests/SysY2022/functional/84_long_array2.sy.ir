@@ -1,7 +1,7 @@
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [4096 * i32]* @a;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     [4 * [1024 * i32]]* %b = alloc [4 * [1024 * i32]];
     i32* %0 = getelementptr &([4 * [1024 * i32]]* %b)[i32 0][i32 0][i32 0];

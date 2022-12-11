@@ -76,18 +76,14 @@ internal func @fft(i32*, i32, i32, i32, i32*) -> i32 {
     cbr i1 %1, [ ^indirect1 i32* %arg, i32* %arg2, i32** %arg1, i32* %arg3, i32* %arg4, i32 %arg10, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ], [ ^indirect2 i32* %arg, i32** %arg1, i32* %arg3, i32* %arg4, i32* %arg2, i32 %arg10, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^indirect(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32** %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([2097152 * i32]* @temp)[i32 0][i32 0];
-    i32** %dst = alloc i32*;
-    store i32** %dst with i32* %arg7;
     i32* %dst_pos = alloc i32;
     store i32* %dst_pos with i32 %arg8;
-    i32** %src = alloc i32*;
-    store i32** %src with i32* %0;
     i32* %len = alloc i32;
     store i32* %len with i32 %arg5;
     i32* %i = alloc i32;
     store i32* %i with i32 0;
     i1 %1 = scmp lt i32 0, i32 %arg5;
-    cbr i1 %1, [ ^while.body1 i32* %len, i32** %src, i32** %dst, i32* %i, i32* %dst_pos, i32** %arg4, i32* %arg3, i32* %arg1, i32* %arg, i32* %arg6, i32* %arg2, i32* %arg7, i32 %arg8, i32* %0, i32 0 ], [ ^b1 i32** %arg4, i32* %arg3, i32* %arg1, i32* %arg, i32* %arg6, i32* %arg2, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
+    cbr i1 %1, [ ^while.body1 i32* %len, i32* %i, i32* %dst_pos, i32** %arg4, i32* %arg6, i32* %arg3, i32* %arg1, i32* %arg, i32* %arg2, i32* %arg7, i32* %arg7, i32 %arg8, i32* %0, i32 0 ], [ ^b1 i32** %arg4, i32* %arg6, i32* %arg3, i32* %arg1, i32* %arg, i32* %arg2, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^indirect1(i32* %arg, i32* %arg1, i32** %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32 %0 = sdiv i32 %arg5, i32 2;
     i32* %1 = getelementptr &([2097152 * i32]* @temp)[i32 0][i32 %0];
@@ -110,57 +106,54 @@ internal func @fft(i32*, i32, i32, i32, i32*) -> i32 {
     i32 %7 = add i32 %arg11, i32 1;
     store i32* %arg3 with i32 %7;
     ubr [ ^while.header i32* %arg, i32** %arg1, i32* %arg4, i32* %arg2, i32* %arg3, i32 %7, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %7 ];
-^while.body1(i32* %arg, i32** %arg1, i32** %arg2, i32* %arg3, i32* %arg4, i32** %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32* %arg10, i32* %arg11, i32 %arg12, i32* %arg13, i32 %arg14):
-    i32 %0 = add i32 %arg12, i32 %arg14;
-    i32* %1 = getelementptr &(i32* %arg11)[i32 %0];
-    i32* %2 = getelementptr &(i32* %arg13)[i32 %arg14];
+^while.body1(i32* %arg, i32* %arg1, i32* %arg2, i32** %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32* %arg10, i32 %arg11, i32* %arg12, i32 %arg13):
+    i32 %0 = add i32 %arg11, i32 %arg13;
+    i32* %1 = getelementptr &(i32* %arg10)[i32 %0];
+    i32* %2 = getelementptr &(i32* %arg12)[i32 %arg13];
     i32 %3 = load i32* %2;
     store i32* %1 with i32 %3;
     i32 %4 = load i32* %arg;
-    i32* %5 = load i32** %arg1;
-    i32 %6 = load i32* %arg4;
-    i32* %7 = load i32** %arg2;
-    i32 %8 = load i32* %arg8;
-    i32 %9 = load i32* %arg7;
-    i32 %10 = load i32* %arg6;
-    i32* %11 = load i32** %arg5;
-    i32 %12 = add i32 %arg14, i32 1;
-    store i32* %arg3 with i32 %12;
-    i1 %13 = scmp lt i32 %12, i32 %4;
-    cbr i1 %13, [ ^while.body1 i32* %arg, i32** %arg1, i32** %arg2, i32* %arg3, i32* %arg4, i32** %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32* %arg10, i32* %7, i32 %6, i32* %5, i32 %12 ], [ ^b1 i32** %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32* %arg10, i32* %11, i32 %10, i32 %9, i32 %8 ];
+    i32 %5 = load i32* %arg2;
+    i32 %6 = load i32* %arg7;
+    i32 %7 = load i32* %arg6;
+    i32 %8 = load i32* %arg5;
+    i32 %9 = add i32 %arg13, i32 1;
+    store i32* %arg1 with i32 %9;
+    i1 %10 = scmp lt i32 %9, i32 %4;
+    cbr i1 %10, [ ^while.body1 i32* %arg, i32* %arg1, i32* %arg2, i32** %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32* %arg10, i32 %5, i32* %arg12, i32 %9 ], [ ^b1 i32** %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32* %arg8, i32* %arg9, i32 %8, i32 %7, i32 %6 ];
 ^b1(i32** %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32 %0 = sdiv i32 %arg8, i32 2;
-    i32 %1 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg9, i32 %arg9, i32* %arg4);
-    i32 %2 = call (i32*, i32, i32, i32, i32*) -> i32 @fft(i32* %arg6, i32 %arg7, i32 %0, i32 %1, i32* %arg4);
-    i32 %3 = load i32* %arg3;
-    i32 %4 = load i32* %arg2;
-    i32 %5 = load i32* %arg1;
+    i32 %1 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg9, i32 %arg9, i32* %arg1);
+    i32 %2 = call (i32*, i32, i32, i32, i32*) -> i32 @fft(i32* %arg6, i32 %arg7, i32 %0, i32 %1, i32* %arg1);
+    i32 %3 = load i32* %arg4;
+    i32 %4 = load i32* %arg3;
+    i32 %5 = load i32* %arg2;
     i32* %6 = load i32** %arg;
     i32 %7 = sdiv i32 %4, i32 2;
     i32 %8 = add i32 %5, i32 %7;
-    i32 %9 = call (i32, i32, i32*) -> i32 @multiply(i32 %3, i32 %3, i32* %arg4);
-    i32 %10 = call (i32*, i32, i32, i32, i32*) -> i32 @fft(i32* %6, i32 %8, i32 %7, i32 %9, i32* %arg4);
-    i32 %11 = load i32* %arg2;
-    i32 %12 = load i32* %arg1;
+    i32 %9 = call (i32, i32, i32*) -> i32 @multiply(i32 %3, i32 %3, i32* %arg1);
+    i32 %10 = call (i32*, i32, i32, i32, i32*) -> i32 @fft(i32* %6, i32 %8, i32 %7, i32 %9, i32* %arg1);
+    i32 %11 = load i32* %arg3;
+    i32 %12 = load i32* %arg2;
     i32* %13 = load i32** %arg;
     store i32* %arg5 with i32 0;
     i32* %wn = alloc i32;
     store i32* %wn with i32 1;
     i32 %14 = sdiv i32 %11, i32 2;
     i1 %15 = scmp lt i32 0, i32 %14;
-    cbr i1 %15, [ ^while.body2 i32* %arg3, i32* %wn, i32* %arg2, i32** %arg, i32* %arg5, i32* %arg1, i32* %arg4, i32* %13, i32 %12, i32 %11, i32 0, i32 1 ], [ ^b2 ];
+    cbr i1 %15, [ ^while.body2 i32* %arg4, i32* %wn, i32* %arg3, i32* %arg5, i32* %arg2, i32* %arg1, i32* %13, i32 %12, i32 %11, i32 0, i32 1 ], [ ^b2 ];
 ^while.header(i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i1 %0 = scmp lt i32 %arg5, i32 %arg9;
     cbr i1 %0, [ ^while.body i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ], [ ^indirect i32* %arg, i32* %arg2, i32* %arg4, i32* %arg3, i32** %arg1, i32 %arg9, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
-^while.body2(i32* %arg, i32* %arg1, i32* %arg2, i32** %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
-    i32 %0 = add i32 %arg8, i32 %arg10;
-    i32* %1 = getelementptr &(i32* %arg7)[i32 %0];
+^while.body2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
+    i32 %0 = add i32 %arg7, i32 %arg9;
+    i32* %1 = getelementptr &(i32* %arg6)[i32 %0];
     i32 %2 = load i32* %1;
-    i32 %3 = sdiv i32 %arg9, i32 2;
+    i32 %3 = sdiv i32 %arg8, i32 2;
     i32 %4 = add i32 %0, i32 %3;
-    i32* %5 = getelementptr &(i32* %arg7)[i32 %4];
+    i32* %5 = getelementptr &(i32* %arg6)[i32 %4];
     i32 %6 = load i32* %5;
-    i32 %7 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg11, i32 %6, i32* %arg6);
+    i32 %7 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg10, i32 %6, i32* %arg5);
     i32 %8 = add i32 %2, i32 %7;
     i32 %9 = srem i32 %8, i32 998244353;
     store i32* %1 with i32 %9;
@@ -170,18 +163,17 @@ internal func @fft(i32*, i32, i32, i32, i32*) -> i32 {
     store i32* %5 with i32 %12;
     i32 %13 = load i32* %arg;
     i32 %14 = load i32* %arg2;
-    i32 %15 = load i32* %arg5;
-    i32* %16 = load i32** %arg3;
-    i32 %17 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg11, i32 %13, i32* %arg6);
-    store i32* %arg1 with i32 %17;
-    i32 %18 = add i32 %arg10, i32 1;
-    store i32* %arg4 with i32 %18;
-    i1 %19 = scmp lt i32 %18, i32 %3;
-    cbr i1 %19, [ ^while.body2 i32* %arg, i32* %arg1, i32* %arg2, i32** %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %16, i32 %15, i32 %14, i32 %18, i32 %17 ], [ ^b2 ];
+    i32 %15 = load i32* %arg4;
+    i32 %16 = call (i32, i32, i32*) -> i32 @multiply(i32 %arg10, i32 %13, i32* %arg5);
+    store i32* %arg1 with i32 %16;
+    i32 %17 = add i32 %arg9, i32 1;
+    store i32* %arg3 with i32 %17;
+    i1 %18 = scmp lt i32 %17, i32 %3;
+    cbr i1 %18, [ ^while.body2 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32 %15, i32 %14, i32 %17, i32 %16 ], [ ^b2 ];
 ^b2():
     ret i32 0;
 }
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32* %d = alloc i32;
     i32* %n = alloc i32;

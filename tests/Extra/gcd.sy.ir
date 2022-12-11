@@ -1,4 +1,4 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
 ^entry():
     ubr [ ^indirect i32 7, i32 11 ];
 ^indirect(i32 %arg, i32 %arg1):

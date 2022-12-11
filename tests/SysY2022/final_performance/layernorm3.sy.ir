@@ -3,218 +3,158 @@ internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [1000 * [1000 * f32]]* @a;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32* %n = alloc i32;
     i32* %i = alloc i32;
-    i32* %j = alloc i32;
-    i32* %k = alloc i32;
     f32* %sum = alloc f32;
     store f32* %sum with f32 0;
     store i32* %i with i32 0;
-    ubr [ ^while.body i32* %k, f32* %sum, i32* %j, i32* %n, i32* %i, i32 0 ];
-^while.body(i32* %arg, f32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5):
-    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg5];
+    ubr [ ^while.body f32* %sum, i32* %n, i32* %i, i32 0 ];
+^while.body(f32* %arg, i32* %arg1, i32* %arg2, i32 %arg3):
+    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg3];
     f32* %1 = getelementptr &([1000 * f32]* %0)[i32 0][i32 0];
     i32 %2 = call (f32*) -> i32 @getfarray(f32* %1);
-    i32 %3 = load i32* %arg4;
-    store i32* %arg3 with i32 %2;
-    i1 %4 = scmp neq i32 %2, i32 1000;
-    cbr i1 %4, [ ^indirect i32 %2 ], [ ^b i32* %arg3, i32* %arg2, f32* %arg1, i32* %arg, i32* %arg4, i32 %3 ];
-^b(i32* %arg, i32* %arg1, f32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5):
-    i32 %0 = add i32 %arg5, i32 1;
-    store i32* %arg4 with i32 %0;
+    f32 %3 = load f32* %arg;
+    i32 %4 = load i32* %arg2;
+    store i32* %arg1 with i32 %2;
+    i1 %5 = scmp neq i32 %2, i32 1000;
+    cbr i1 %5, [ ^indirect i32 %2 ], [ ^b i32* %arg1, f32* %arg, i32* %arg2, i32 %4, f32 %3 ];
+^b(i32* %arg, f32* %arg1, i32* %arg2, i32 %arg3, f32 %arg4):
+    i32 %0 = add i32 %arg3, i32 1;
+    store i32* %arg2 with i32 %0;
     i1 %1 = scmp lt i32 %0, i32 1000;
-    cbr i1 %1, [ ^while.body i32* %arg3, f32* %arg2, i32* %arg1, i32* %arg, i32* %arg4, i32 %0 ], [ ^b1 i32* %arg1, f32* %arg2, i32* %arg4, i32* %arg3 ];
+    cbr i1 %1, [ ^while.body f32* %arg1, i32* %arg, i32* %arg2, i32 %0 ], [ ^b1 f32 %arg4 ];
 ^indirect(i32 %arg):
     ret i32 %arg;
-^b1(i32* %arg, f32* %arg1, i32* %arg2, i32* %arg3):
+^b1(f32 %arg):
     call (i32) -> void @starttime(i32 42);
-    store i32* %arg3 with i32 0;
-    ubr [ ^while.body1 i32* %arg, f32* %arg1, i32* %arg3, i32* %arg2 ];
-^while.body1(i32* %arg, f32* %arg1, i32* %arg2, i32* %arg3):
+    ubr [ ^while.body1 i32 0, f32 %arg ];
+^while.body1(i32 %arg, f32 %arg1):
     [1000 * f32]* %mean = alloc [1000 * f32];
-    store i32* %arg3 with i32 0;
-    ubr [ ^while.body2 f32* %arg1, i32* %arg2, [1000 * f32]* %mean, i32* %arg3, i32* %arg ];
-^while.body2(f32* %arg, i32* %arg1, [1000 * f32]* %arg2, i32* %arg3, i32* %arg4):
-    store i32* %arg4 with i32 0;
-    i32 %0 = load i32* %arg3;
-    f32* %1 = getelementptr &([1000 * f32]* %arg2)[i32 0][i32 %0];
-    store f32* %1 with f32 0;
-    ubr [ ^while.body3 f32* %arg, i32* %arg1, i32* %arg4, [1000 * f32]* %arg2, i32* %arg3, i32 0, i32 %0 ];
-^while.body3(f32* %arg, i32* %arg1, i32* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32 %arg5, i32 %arg6):
-    f32* %0 = getelementptr &([1000 * f32]* %arg3)[i32 0][i32 %arg6];
+    ubr [ ^while.body2 [1000 * f32]* %mean, i32 0, i32 %arg, f32 %arg1 ];
+^while.body2([1000 * f32]* %arg, i32 %arg1, i32 %arg2, f32 %arg3):
+    f32* %0 = getelementptr &([1000 * f32]* %arg)[i32 0][i32 %arg1];
+    store f32* %0 with f32 0;
+    ubr [ ^while.body3 [1000 * f32]* %arg, i32 %arg1, i32 0, i32 %arg2, f32 %arg3 ];
+^while.body3([1000 * f32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, f32 %arg4):
+    f32* %0 = getelementptr &([1000 * f32]* %arg)[i32 0][i32 %arg1];
     f32 %1 = load f32* %0;
-    [1000 * f32]* %2 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg6];
-    f32* %3 = getelementptr &([1000 * f32]* %2)[i32 0][i32 %arg5];
+    [1000 * f32]* %2 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg1];
+    f32* %3 = getelementptr &([1000 * f32]* %2)[i32 0][i32 %arg2];
     f32 %4 = load f32* %3;
     f32 %5 = fadd f32 %1, f32 %4;
     store f32* %0 with f32 %5;
-    i32 %6 = add i32 %arg5, i32 1;
-    store i32* %arg2 with i32 %6;
+    i32 %6 = add i32 %arg2, i32 1;
     i1 %7 = scmp lt i32 %6, i32 1000;
-    cbr i1 %7, [ ^while.body3 f32* %arg, i32* %arg1, i32* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32 %6, i32 %arg6 ], [ ^b2 i32* %arg2, f32* %arg, i32* %arg1, [1000 * f32]* %arg3, i32* %arg4 ];
-^b2(i32* %arg, f32* %arg1, i32* %arg2, [1000 * f32]* %arg3, i32* %arg4):
-    i32 %0 = load i32* %arg4;
-    f32* %1 = getelementptr &([1000 * f32]* %arg3)[i32 0][i32 %0];
-    f32 %2 = load f32* %1;
-    f32 %3 = fdiv f32 %2, f32 1000;
-    store f32* %1 with f32 %3;
-    i32 %4 = add i32 %0, i32 1;
-    store i32* %arg4 with i32 %4;
-    i1 %5 = scmp lt i32 %4, i32 1000;
-    cbr i1 %5, [ ^while.body2 f32* %arg1, i32* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg ], [ ^b3 [1000 * f32]* %arg3, i32* %arg, f32* %arg1, i32* %arg2, i32* %arg4 ];
-^b3([1000 * f32]* %arg, i32* %arg1, f32* %arg2, i32* %arg3, i32* %arg4):
-    [1000 * f32]* %var = alloc [1000 * f32];
-    store i32* %arg4 with i32 0;
-    ubr [ ^while.body4 f32* %arg2, i32* %arg3, [1000 * f32]* %arg, [1000 * f32]* %var, i32* %arg4, i32* %arg1 ];
-^while.body4(f32* %arg, i32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg5):
-    store i32* %arg5 with i32 0;
-    i32 %0 = load i32* %arg4;
-    f32* %1 = getelementptr &([1000 * f32]* %arg3)[i32 0][i32 %0];
-    store f32* %1 with f32 0;
-    ubr [ ^while.body5 f32* %arg, i32* %arg1, [1000 * f32]* %arg2, i32* %arg5, [1000 * f32]* %arg3, i32* %arg4, i32 0, i32 %0 ];
-^while.body5(f32* %arg, i32* %arg1, [1000 * f32]* %arg2, i32* %arg3, [1000 * f32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7):
-    f32* %0 = getelementptr &([1000 * f32]* %arg4)[i32 0][i32 %arg7];
+    cbr i1 %7, [ ^while.body3 [1000 * f32]* %arg, i32 %arg1, i32 %6, i32 %arg3, f32 %arg4 ], [ ^b2 [1000 * f32]* %arg, i32 %arg1, i32 %arg3, f32 %arg4 ];
+^b2([1000 * f32]* %arg, i32 %arg1, i32 %arg2, f32 %arg3):
+    f32* %0 = getelementptr &([1000 * f32]* %arg)[i32 0][i32 %arg1];
     f32 %1 = load f32* %0;
-    [1000 * f32]* %2 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg7];
-    f32* %3 = getelementptr &([1000 * f32]* %2)[i32 0][i32 %arg6];
+    f32 %2 = fdiv f32 %1, f32 1000;
+    store f32* %0 with f32 %2;
+    i32 %3 = add i32 %arg1, i32 1;
+    i1 %4 = scmp lt i32 %3, i32 1000;
+    cbr i1 %4, [ ^while.body2 [1000 * f32]* %arg, i32 %3, i32 %arg2, f32 %arg3 ], [ ^b3 [1000 * f32]* %arg, i32 %arg2, f32 %arg3 ];
+^b3([1000 * f32]* %arg, i32 %arg1, f32 %arg2):
+    [1000 * f32]* %var = alloc [1000 * f32];
+    ubr [ ^while.body4 [1000 * f32]* %arg, [1000 * f32]* %var, i32 0, i32 %arg1, f32 %arg2 ];
+^while.body4([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg3, f32 %arg4):
+    f32* %0 = getelementptr &([1000 * f32]* %arg1)[i32 0][i32 %arg2];
+    store f32* %0 with f32 0;
+    ubr [ ^while.body5 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 0, i32 %arg3, f32 %arg4 ];
+^while.body5([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, f32 %arg5):
+    f32* %0 = getelementptr &([1000 * f32]* %arg1)[i32 0][i32 %arg2];
+    f32 %1 = load f32* %0;
+    [1000 * f32]* %2 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg2];
+    f32* %3 = getelementptr &([1000 * f32]* %2)[i32 0][i32 %arg3];
     f32 %4 = load f32* %3;
-    f32* %5 = getelementptr &([1000 * f32]* %arg2)[i32 0][i32 %arg7];
+    f32* %5 = getelementptr &([1000 * f32]* %arg)[i32 0][i32 %arg2];
     f32 %6 = load f32* %5;
     f32 %7 = fsub f32 %4, f32 %6;
     f32 %8 = ffma f32 %7, f32 %7, f32 %1;
     store f32* %0 with f32 %8;
-    i32 %9 = add i32 %arg6, i32 1;
-    store i32* %arg3 with i32 %9;
+    i32 %9 = add i32 %arg3, i32 1;
     i1 %10 = scmp lt i32 %9, i32 1000;
-    cbr i1 %10, [ ^while.body5 f32* %arg, i32* %arg1, [1000 * f32]* %arg2, i32* %arg3, [1000 * f32]* %arg4, i32* %arg5, i32 %9, i32 %arg7 ], [ ^b4 [1000 * f32]* %arg2, i32* %arg3, f32* %arg, i32* %arg1, [1000 * f32]* %arg4, i32* %arg5 ];
-^b4([1000 * f32]* %arg, i32* %arg1, f32* %arg2, i32* %arg3, [1000 * f32]* %arg4, i32* %arg5):
-    i32 %0 = load i32* %arg5;
-    f32* %1 = getelementptr &([1000 * f32]* %arg4)[i32 0][i32 %0];
-    f32 %2 = load f32* %1;
-    f32 %3 = fdiv f32 %2, f32 1000;
-    f32 %4 = fadd f32 %3, f32 0.01;
-    f32* %x = alloc f32;
-    store f32* %x with f32 %4;
-    f32* %start = alloc f32;
-    store f32* %start with f32 0;
-    f32* %end = alloc f32;
-    store f32* %end with f32 %4;
-    f32* %mid = alloc f32;
-    f32 %5 = fdiv f32 %4, f32 2;
-    store f32* %mid with f32 %5;
-    f32 %6 = fmul f32 %5, f32 %5;
-    f32 %7 = fsub f32 %6, f32 %4;
-    i1 %8 = fcmp lt f32 %7, f32 0;
-    cbr i1 %8, [ ^indirect1 f32 %7, f32* %mid, f32* %x, f32* %start, f32* %end, [1000 * f32]* %arg, [1000 * f32]* %arg4, i32* %arg1, f32* %arg2, i32* %arg3, i32 %0, i32* %arg5, f32* %1 ], [ ^while.header f32 %7, f32* %mid, f32* %x, f32* %start, f32* %end, [1000 * f32]* %arg, [1000 * f32]* %arg4, i32* %arg1, f32* %arg2, i32* %arg3, i32 %0, i32* %arg5, f32* %1 ];
-^indirect1(f32 %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32* %arg4, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12):
+    cbr i1 %10, [ ^while.body5 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %9, i32 %arg4, f32 %arg5 ], [ ^b4 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg4, f32 %arg5 ];
+^b4([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg3, f32 %arg4):
+    f32* %0 = getelementptr &([1000 * f32]* %arg1)[i32 0][i32 %arg2];
+    f32 %1 = load f32* %0;
+    f32 %2 = fdiv f32 %1, f32 1000;
+    f32 %3 = fadd f32 %2, f32 0.01;
+    f32 %4 = fdiv f32 %3, f32 2;
+    f32 %5 = fmul f32 %4, f32 %4;
+    f32 %6 = fsub f32 %5, f32 %3;
+    i1 %7 = fcmp lt f32 %6, f32 0;
+    cbr i1 %7, [ ^indirect1 f32 %6, [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, f32* %0, i32 %arg3, f32 %arg4, f32 %3, f32 0, f32 %3, f32 %4 ], [ ^while.header f32 %6, [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, f32* %0, i32 %arg3, f32 %arg4, f32 %3, f32 0, f32 %3, f32 %4 ];
+^indirect1(f32 %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
     f32 %0 = fneg f32 %arg;
     i1 %1 = fcmp gt f32 %0, f32 0.001;
-    cbr i1 %1, [ ^while.body6 f32* %arg4, f32* %arg3, f32* %arg2, f32* %arg1, f32* %arg12, i32* %arg11, i32 %arg10, i32* %arg9, f32* %arg8, i32* %arg7, [1000 * f32]* %arg6, [1000 * f32]* %arg5 ], [ ^b5 f32* %arg1, f32* %arg12, i32* %arg11, i32 %arg10, i32* %arg9, f32* %arg8, i32* %arg7, [1000 * f32]* %arg6, [1000 * f32]* %arg5 ];
-^while.header(f32 %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32* %arg4, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12):
+    cbr i1 %1, [ ^while.body6 f32* %arg4, i32 %arg3, [1000 * f32]* %arg2, [1000 * f32]* %arg1, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10 ], [ ^b5 f32* %arg4, i32 %arg3, [1000 * f32]* %arg2, [1000 * f32]* %arg1, i32 %arg5, f32 %arg6, f32 %arg10 ];
+^while.header(f32 %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
     i1 %0 = fcmp gt f32 %arg, f32 0.001;
-    cbr i1 %0, [ ^while.body6 f32* %arg4, f32* %arg3, f32* %arg2, f32* %arg1, f32* %arg12, i32* %arg11, i32 %arg10, i32* %arg9, f32* %arg8, i32* %arg7, [1000 * f32]* %arg6, [1000 * f32]* %arg5 ], [ ^b5 f32* %arg1, f32* %arg12, i32* %arg11, i32 %arg10, i32* %arg9, f32* %arg8, i32* %arg7, [1000 * f32]* %arg6, [1000 * f32]* %arg5 ];
-^while.body6(f32* %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32* %arg4, i32* %arg5, i32 %arg6, i32* %arg7, f32* %arg8, i32* %arg9, [1000 * f32]* %arg10, [1000 * f32]* %arg11):
-    f32 %0 = load f32* %arg3;
-    f32 %1 = fmul f32 %0, f32 %0;
-    f32 %2 = load f32* %arg2;
-    i1 %3 = fcmp gt f32 %1, f32 %2;
-    cbr i1 %3, [ ^indirect2 f32* %arg2, f32* %arg1, f32* %arg, f32* %arg3, f32 %0, [1000 * f32]* %arg11, [1000 * f32]* %arg10, i32* %arg9, f32* %arg8, i32* %arg7, i32 %arg6, i32* %arg5, f32* %arg4 ], [ ^indirect3 f32* %arg2, f32* %arg, f32* %arg1, f32* %arg3, f32 %0, [1000 * f32]* %arg11, [1000 * f32]* %arg10, i32* %arg9, f32* %arg8, i32* %arg7, i32 %arg6, i32* %arg5, f32* %arg4 ];
-^b5(f32* %arg, f32* %arg1, i32* %arg2, i32 %arg3, i32* %arg4, f32* %arg5, i32* %arg6, [1000 * f32]* %arg7, [1000 * f32]* %arg8):
-    f32 %0 = load f32* %arg;
-    store f32* %arg1 with f32 %0;
-    i32 %1 = add i32 %arg3, i32 1;
-    store i32* %arg2 with i32 %1;
-    i1 %2 = scmp lt i32 %1, i32 1000;
-    cbr i1 %2, [ ^while.body4 f32* %arg5, i32* %arg4, [1000 * f32]* %arg8, [1000 * f32]* %arg7, i32* %arg2, i32* %arg6 ], [ ^b6 f32* %arg5, [1000 * f32]* %arg7, [1000 * f32]* %arg8, i32* %arg6, i32* %arg4, i32* %arg2 ];
-^indirect2(f32* %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32 %arg4, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12):
-    store f32* %arg2 with f32 %arg4;
-    f32 %0 = load f32* %arg1;
-    f32 %1 = fadd f32 %arg4, f32 %0;
-    f32 %2 = fdiv f32 %1, f32 2;
-    store f32* %arg3 with f32 %2;
-    f32 %3 = load f32* %arg;
-    ubr [ ^while.header1 f32* %arg1, f32* %arg2, f32* %arg, f32* %arg3, f32 %3, f32 %2, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12 ];
-^indirect3(f32* %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32 %arg4, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12):
-    store f32* %arg2 with f32 %arg4;
-    f32 %0 = load f32* %arg1;
-    f32 %1 = fadd f32 %arg4, f32 %0;
-    f32 %2 = fdiv f32 %1, f32 2;
-    store f32* %arg3 with f32 %2;
-    f32 %3 = load f32* %arg;
-    ubr [ ^while.header1 f32* %arg2, f32* %arg1, f32* %arg, f32* %arg3, f32 %3, f32 %2, [1000 * f32]* %arg5, [1000 * f32]* %arg6, i32* %arg7, f32* %arg8, i32* %arg9, i32 %arg10, i32* %arg11, f32* %arg12 ];
-^b6(f32* %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32* %arg3, i32* %arg4, i32* %arg5):
-    store i32* %arg5 with i32 0;
-    ubr [ ^while.body7 i32* %arg4, f32* %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32* %arg5, i32* %arg3 ];
-^while.body7(i32* %arg, f32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg5):
-    store i32* %arg5 with i32 0;
-    i32 %0 = load i32* %arg4;
-    ubr [ ^while.body8 i32* %arg, f32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg5, i32* %arg4, i32 %0, i32 0 ];
-^while.header1(f32* %arg, f32* %arg1, f32* %arg2, f32* %arg3, f32 %arg4, f32 %arg5, [1000 * f32]* %arg6, [1000 * f32]* %arg7, i32* %arg8, f32* %arg9, i32* %arg10, i32 %arg11, i32* %arg12, f32* %arg13):
-    f32 %0 = fmul f32 %arg5, f32 %arg5;
-    f32 %1 = fsub f32 %0, f32 %arg4;
-    i1 %2 = fcmp lt f32 %1, f32 0;
-    cbr i1 %2, [ ^indirect1 f32 %1, f32* %arg3, f32* %arg2, f32* %arg, f32* %arg1, [1000 * f32]* %arg6, [1000 * f32]* %arg7, i32* %arg8, f32* %arg9, i32* %arg10, i32 %arg11, i32* %arg12, f32* %arg13 ], [ ^while.header f32 %1, f32* %arg3, f32* %arg2, f32* %arg, f32* %arg1, [1000 * f32]* %arg6, [1000 * f32]* %arg7, i32* %arg8, f32* %arg9, i32* %arg10, i32 %arg11, i32* %arg12, f32* %arg13 ];
-^while.body8(i32* %arg, f32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7):
-    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg6];
-    f32* %1 = getelementptr &([1000 * f32]* %0)[i32 0][i32 %arg7];
+    cbr i1 %0, [ ^while.body6 f32* %arg4, i32 %arg3, [1000 * f32]* %arg2, [1000 * f32]* %arg1, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10 ], [ ^b5 f32* %arg4, i32 %arg3, [1000 * f32]* %arg2, [1000 * f32]* %arg1, i32 %arg5, f32 %arg6, f32 %arg10 ];
+^while.body6(f32* %arg, i32 %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9):
+    f32 %0 = fmul f32 %arg9, f32 %arg9;
+    i1 %1 = fcmp gt f32 %0, f32 %arg6;
+    cbr i1 %1, [ ^indirect2 f32 %arg9, [1000 * f32]* %arg3, [1000 * f32]* %arg2, i32 %arg1, f32* %arg, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7 ], [ ^indirect3 f32 %arg9, [1000 * f32]* %arg3, [1000 * f32]* %arg2, i32 %arg1, f32* %arg, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg8 ];
+^b5(f32* %arg, i32 %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 %arg4, f32 %arg5, f32 %arg6):
+    store f32* %arg with f32 %arg6;
+    i32 %0 = add i32 %arg1, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 1000;
+    cbr i1 %1, [ ^while.body4 [1000 * f32]* %arg3, [1000 * f32]* %arg2, i32 %0, i32 %arg4, f32 %arg5 ], [ ^while.body7 [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 0, i32 0, i32 %arg4, f32 %arg5 ];
+^indirect2(f32 %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8):
+    f32 %0 = fadd f32 %arg, f32 %arg8;
+    f32 %1 = fdiv f32 %0, f32 2;
+    ubr [ ^while.header1 f32 %arg7, f32 %1, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg, f32 %1 ];
+^indirect3(f32 %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8):
+    f32 %0 = fadd f32 %arg, f32 %arg8;
+    f32 %1 = fdiv f32 %0, f32 2;
+    ubr [ ^while.header1 f32 %arg7, f32 %1, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32 %arg3, f32* %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg, f32 %arg8, f32 %1 ];
+^while.body7([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, f32 %arg5):
+    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg2];
+    f32* %1 = getelementptr &([1000 * f32]* %0)[i32 0][i32 %arg3];
     f32 %2 = load f32* %1;
-    f32* %3 = getelementptr &([1000 * f32]* %arg3)[i32 0][i32 %arg6];
+    f32* %3 = getelementptr &([1000 * f32]* %arg1)[i32 0][i32 %arg2];
     f32 %4 = load f32* %3;
     f32 %5 = fsub f32 %2, f32 %4;
-    f32* %6 = getelementptr &([1000 * f32]* %arg2)[i32 0][i32 %arg6];
+    f32* %6 = getelementptr &([1000 * f32]* %arg)[i32 0][i32 %arg2];
     f32 %7 = load f32* %6;
     f32 %8 = fdiv f32 %5, f32 %7;
     store f32* %1 with f32 %8;
-    f32 %9 = load f32* %arg1;
-    f32 %10 = fadd f32 %9, f32 %8;
-    store f32* %arg1 with f32 %10;
-    i32 %11 = add i32 %arg7, i32 1;
-    store i32* %arg4 with i32 %11;
-    i1 %12 = scmp lt i32 %11, i32 1000;
-    cbr i1 %12, [ ^while.body8 i32* %arg, f32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %11 ], [ ^b7 f32* %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32* %arg4, i32* %arg, i32* %arg5 ];
-^b7(f32* %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32* %arg3, i32* %arg4, i32* %arg5):
-    i32 %0 = load i32* %arg5;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* %arg5 with i32 %1;
-    i1 %2 = scmp lt i32 %1, i32 1000;
-    cbr i1 %2, [ ^while.body7 i32* %arg4, f32* %arg, [1000 * f32]* %arg1, [1000 * f32]* %arg2, i32* %arg5, i32* %arg3 ], [ ^b8 i32* %arg3, f32* %arg, i32* %arg5, [1000 * f32]* %arg2, [1000 * f32]* %arg1, i32* %arg4 ];
-^b8(i32* %arg, f32* %arg1, i32* %arg2, [1000 * f32]* %arg3, [1000 * f32]* %arg4, i32* %arg5):
-    i32 %0 = load i32* %arg5;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* %arg5 with i32 %1;
-    free [1000 * f32]* %arg4;
-    free [1000 * f32]* %arg3;
-    i1 %2 = scmp lt i32 %1, i32 100;
-    cbr i1 %2, [ ^while.body1 i32* %arg, f32* %arg1, i32* %arg5, i32* %arg2 ], [ ^b9 f32* %arg1, i32* %arg, i32* %arg2 ];
-^b9(f32* %arg, i32* %arg1, i32* %arg2):
-    store i32* %arg2 with i32 0;
-    ubr [ ^while.body9 i32* %arg2, f32* %arg, i32* %arg1 ];
-^while.body9(i32* %arg, f32* %arg1, i32* %arg2):
-    store i32* %arg2 with i32 0;
-    f32 %0 = load f32* %arg1;
-    i32 %1 = load i32* %arg;
-    ubr [ ^while.body10 i32* %arg2, i32* %arg, f32* %arg1, i32 %1, f32 %0, i32 0 ];
-^while.body10(i32* %arg, i32* %arg1, f32* %arg2, i32 %arg3, f32 %arg4, i32 %arg5):
-    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg3];
-    f32* %1 = getelementptr &([1000 * f32]* %0)[i32 0][i32 %arg5];
+    f32 %9 = fadd f32 %arg5, f32 %8;
+    i32 %10 = add i32 %arg3, i32 1;
+    i1 %11 = scmp lt i32 %10, i32 1000;
+    cbr i1 %11, [ ^while.body7 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %10, i32 %arg4, f32 %9 ], [ ^b6 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg4, f32 %9 ];
+^while.header1(f32 %arg, f32 %arg1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 %arg4, f32* %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11):
+    f32 %0 = fmul f32 %arg1, f32 %arg1;
+    f32 %1 = fsub f32 %0, f32 %arg;
+    i1 %2 = fcmp lt f32 %1, f32 0;
+    cbr i1 %2, [ ^indirect1 f32 %1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 %arg4, f32* %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11 ], [ ^while.header f32 %1, [1000 * f32]* %arg2, [1000 * f32]* %arg3, i32 %arg4, f32* %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11 ];
+^b6([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, i32 %arg3, f32 %arg4):
+    i32 %0 = add i32 %arg2, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 1000;
+    cbr i1 %1, [ ^while.body7 [1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %0, i32 0, i32 %arg3, f32 %arg4 ], [ ^b7 [1000 * f32]* %arg1, [1000 * f32]* %arg, i32 %arg3, f32 %arg4 ];
+^b7([1000 * f32]* %arg, [1000 * f32]* %arg1, i32 %arg2, f32 %arg3):
+    i32 %0 = add i32 %arg2, i32 1;
+    free [1000 * f32]* %arg1;
+    free [1000 * f32]* %arg;
+    i1 %1 = scmp lt i32 %0, i32 100;
+    cbr i1 %1, [ ^while.body1 i32 %0, f32 %arg3 ], [ ^while.body8 i32 0, i32 0, f32 %arg3 ];
+^while.body8(i32 %arg, i32 %arg1, f32 %arg2):
+    [1000 * f32]* %0 = getelementptr &([1000 * [1000 * f32]]* @a)[i32 0][i32 %arg];
+    f32* %1 = getelementptr &([1000 * f32]* %0)[i32 0][i32 %arg1];
     f32 %2 = load f32* %1;
-    f32 %3 = fadd f32 %arg4, f32 %2;
-    store f32* %arg2 with f32 %3;
-    i32 %4 = add i32 %arg5, i32 1;
-    store i32* %arg with i32 %4;
+    f32 %3 = fadd f32 %arg2, f32 %2;
+    i32 %4 = add i32 %arg1, i32 1;
     i1 %5 = scmp lt i32 %4, i32 1000;
-    cbr i1 %5, [ ^while.body10 i32* %arg, i32* %arg1, f32* %arg2, i32 %arg3, f32 %3, i32 %4 ], [ ^b10 f32* %arg2, i32* %arg, i32* %arg1 ];
-^b10(f32* %arg, i32* %arg1, i32* %arg2):
-    i32 %0 = load i32* %arg2;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* %arg2 with i32 %1;
-    i1 %2 = scmp lt i32 %1, i32 1000;
-    cbr i1 %2, [ ^while.body9 i32* %arg2, f32* %arg, i32* %arg1 ], [ ^b11 f32* %arg ];
-^b11(f32* %arg):
+    cbr i1 %5, [ ^while.body8 i32 %arg, i32 %4, f32 %3 ], [ ^b8 i32 %arg, f32 %3 ];
+^b8(i32 %arg, f32 %arg1):
+    i32 %0 = add i32 %arg, i32 1;
+    i1 %1 = scmp lt i32 %0, i32 1000;
+    cbr i1 %1, [ ^while.body8 i32 %0, i32 0, f32 %arg1 ], [ ^b9 f32 %arg1 ];
+^b9(f32 %arg):
     call (i32) -> void @stoptime(i32 95);
-    f32 %0 = load f32* %arg;
-    call (f32) -> void @putfloat(f32 %0);
+    call (f32) -> void @putfloat(f32 %arg);
     ret i32 0;
 }

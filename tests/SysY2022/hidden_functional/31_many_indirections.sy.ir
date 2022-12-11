@@ -1,19 +1,23 @@
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [20 * [100 * i32]]* @array;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
-    ubr [ ^while.body i32 0, i32 0 ];
-^while.body(i32 %arg, i32 %arg1):
-    [100 * i32]* %0 = getelementptr &([20 * [100 * i32]]* @array)[i32 0][i32 %arg];
-    i32* %1 = getelementptr &([100 * i32]* %0)[i32 0][i32 %arg1];
-    store i32* %1 with i32 %arg1;
-    i32 %2 = add i32 %arg1, i32 1;
+    ubr [ ^while.body i32 0 ];
+^while.body(i32 %arg):
+    i32* %j = alloc i32;
+    ubr [ ^while.body1 i32* %j, i32 %arg, i32 0 ];
+^while.body1(i32* %arg, i32 %arg1, i32 %arg2):
+    [100 * i32]* %0 = getelementptr &([20 * [100 * i32]]* @array)[i32 0][i32 %arg1];
+    i32* %1 = getelementptr &([100 * i32]* %0)[i32 0][i32 %arg2];
+    store i32* %1 with i32 %arg2;
+    i32 %2 = add i32 %arg2, i32 1;
     i1 %3 = scmp lt i32 %2, i32 100;
-    cbr i1 %3, [ ^while.body i32 %arg, i32 %2 ], [ ^b i32 %arg ];
-^b(i32 %arg):
-    i32 %0 = add i32 %arg, i32 1;
+    cbr i1 %3, [ ^while.body1 i32* %arg, i32 %arg1, i32 %2 ], [ ^b i32* %arg, i32 %arg1 ];
+^b(i32* %arg, i32 %arg1):
+    i32 %0 = add i32 %arg1, i32 1;
+    free i32* %arg;
     i1 %1 = scmp lt i32 %0, i32 20;
-    cbr i1 %1, [ ^while.body i32 %0, i32 0 ], [ ^b1 ];
+    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b1 ];
 ^b1():
     [100 * i32]* %0 = getelementptr &([20 * [100 * i32]]* @array)[i32 0][i32 0];
     [100 * i32]* %1 = getelementptr &([20 * [100 * i32]]* @array)[i32 0][i32 1];

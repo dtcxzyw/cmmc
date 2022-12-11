@@ -16,7 +16,7 @@ internal func @func(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     f32 %4 = fsub f32 %2, f32 %3;
     ret f32 %4;
 }
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     call (i32) -> void @starttime(i32 21);
     i32 %0 = call () -> i32 @getint();

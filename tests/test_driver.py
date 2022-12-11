@@ -270,7 +270,6 @@ res.append(test("SPL TAC->IR project4", tests_path +
            "/TAC2MIPS", ".ir", spl_tac2ir))
 res.append(test("SPL codegen TAC", tests_path +
            "/CodeGenTAC", ".spl", spl_codegen_tac))
-exit()
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +
@@ -307,3 +306,5 @@ print("\nPerformance metrics:")
 for key in summary.keys():
     print(key, "= {} baseline = {} ratio = {:.3f}".format(
         summary[key], baseline[key], summary[key] / baseline[key]))
+
+exit(0 if failed_tests == 0 else -1)

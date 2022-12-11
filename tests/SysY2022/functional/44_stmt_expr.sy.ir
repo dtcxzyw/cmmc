@@ -1,5 +1,5 @@
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     ubr [ ^while.body i32 1, i32 0 ];
 ^while.body(i32 %arg, i32 %arg1):

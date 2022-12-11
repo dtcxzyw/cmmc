@@ -4,7 +4,7 @@ internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfarray(i32, f32*) -> void { NoMemoryWrite };
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     call (i32) -> void @putch(i32 111);
     call (i32) -> void @putch(i32 107);

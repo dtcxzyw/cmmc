@@ -1,4 +1,4 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
 ^entry():
     [6 * i32]* %arr = alloc [6 * i32];
     i32* %0 = getelementptr &([6 * i32]* %arr)[i32 0][i32 0];

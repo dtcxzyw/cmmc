@@ -12,7 +12,7 @@ internal [10000000 * i32]* @keys;
 internal [10000000 * i32]* @values;
 internal [10000000 * i32]* @requests;
 internal [10000000 * i32]* @ans;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32* %hashmod = alloc i32;
     i32* %cnt = alloc i32;

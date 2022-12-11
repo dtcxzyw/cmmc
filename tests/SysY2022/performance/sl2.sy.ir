@@ -4,7 +4,7 @@ internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [600 * [600 * [600 * i32]]]* @x;
 internal [600 * [600 * [600 * i32]]]* @y;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();

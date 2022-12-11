@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -120,8 +121,11 @@ void DriverImpl::emit(Module& module) {
     }
 
     // Check invalid values
-    if(ctx.invalid() && mStrictMode) {
-        std::exit(EXIT_FAILURE);
+    if(ctx.invalid()) {
+        if(!mStrictMode)
+            DiagnosticsContext::get().attach<Reason>("Failed to generate IR").reportFatal();
+        else
+            std::exit(EXIT_FAILURE);
     }
 
     if(hideSymbol.get()) {

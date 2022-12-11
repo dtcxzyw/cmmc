@@ -17,6 +17,5 @@ func @test_1_r15() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless No
     cbr i1 %0, [ ^while.body i32 %arg, i32 %arg1 ], [ ^b ];
 ^if.then1(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 0;
-    i32 %1 = select i1 %0 ? i32 -1 : i32 %arg1;
-    ubr [ ^indirect i32 %arg, i32 %1 ];
+    cbr i1 %0, [ ^indirect i32 %arg, i32 -1 ], [ ^indirect i32 %arg, i32 %arg1 ];
 }

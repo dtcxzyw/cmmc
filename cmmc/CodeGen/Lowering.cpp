@@ -236,11 +236,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1)
             subTarget.postPeepholeOpt(mfunc);
         // Stage 11: code layout opt
-        // if(optLevel >= OptimizationLevel::O2)
-        //    optimizeBlockLayout(mfunc, target);
+        if(optLevel >= OptimizationLevel::O2)
+            optimizeBlockLayout(mfunc, target);
         // Stage 12: remove unreachable block/continuous goto/unused label
-        // if(optLevel >= OptimizationLevel::O1)
-        //    simplifyCFG(mfunc);
+        if(optLevel >= OptimizationLevel::O1)
+            simplifyCFG(mfunc);
     }
 }
 

@@ -18,7 +18,7 @@ internal func @find(i32) -> i32 {
     i32 %4 = load i32* %3;
     ret i32 %4;
 }
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();

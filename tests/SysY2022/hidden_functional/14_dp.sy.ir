@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal [1005 * [2 * i32]]* @t = [[0]];
 internal [1005 * [35 * i32]]* @dp = [[0]];
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();

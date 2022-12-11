@@ -4,7 +4,7 @@ internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal [1048576 * i32]* @image_in;
 internal [1048576 * i32]* @image_out;
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32* %0 = getelementptr &([1048576 * i32]* @image_in)[i32 0][i32 0];
     i32 %1 = call (i32*) -> i32 @getarray(i32* %0);

@@ -1,5 +1,5 @@
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     [20 * i32]* %mult1 = alloc [20 * i32];
     i32* %0 = getelementptr &([20 * i32]* %mult1)[i32 0][i32 0];
@@ -166,23 +166,23 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     store i32* %78 with i32 0;
     i32* %79 = getelementptr &([40 * i32]* %result)[i32 0][i32 39];
     store i32* %79 with i32 0;
-    ubr [ ^while.body [25 * i32]* %c2, [40 * i32]* %result, [20 * i32]* %mult1, [25 * i32]* %c1, [20 * i32]* %mult2, i32 0 ];
-^while.body([25 * i32]* %arg, [40 * i32]* %arg1, [20 * i32]* %arg2, [25 * i32]* %arg3, [20 * i32]* %arg4, i32 %arg5):
-    i32* %0 = getelementptr &([25 * i32]* %arg3)[i32 0][i32 %arg5];
-    i32* %1 = getelementptr &([20 * i32]* %arg2)[i32 0][i32 %arg5];
+    ubr [ ^while.body [20 * i32]* %mult2, [25 * i32]* %c2, [40 * i32]* %result, [20 * i32]* %mult1, [25 * i32]* %c1, i32 0 ];
+^while.body([20 * i32]* %arg, [25 * i32]* %arg1, [40 * i32]* %arg2, [20 * i32]* %arg3, [25 * i32]* %arg4, i32 %arg5):
+    i32* %0 = getelementptr &([25 * i32]* %arg4)[i32 0][i32 %arg5];
+    i32* %1 = getelementptr &([20 * i32]* %arg3)[i32 0][i32 %arg5];
     i32 %2 = load i32* %1;
     store i32* %0 with i32 %2;
     i32 %3 = add i32 %arg5, i32 1;
     i1 %4 = scmp lt i32 %3, i32 20;
-    cbr i1 %4, [ ^while.body [25 * i32]* %arg, [40 * i32]* %arg1, [20 * i32]* %arg2, [25 * i32]* %arg3, [20 * i32]* %arg4, i32 %3 ], [ ^while.body1 [25 * i32]* %arg3, [40 * i32]* %arg1, [25 * i32]* %arg, [20 * i32]* %arg4, i32 0 ];
-^while.body1([25 * i32]* %arg, [40 * i32]* %arg1, [25 * i32]* %arg2, [20 * i32]* %arg3, i32 %arg4):
-    i32* %0 = getelementptr &([25 * i32]* %arg2)[i32 0][i32 %arg4];
-    i32* %1 = getelementptr &([20 * i32]* %arg3)[i32 0][i32 %arg4];
+    cbr i1 %4, [ ^while.body [20 * i32]* %arg, [25 * i32]* %arg1, [40 * i32]* %arg2, [20 * i32]* %arg3, [25 * i32]* %arg4, i32 %3 ], [ ^while.body1 [25 * i32]* %arg4, [40 * i32]* %arg2, [20 * i32]* %arg, [25 * i32]* %arg1, i32 0 ];
+^while.body1([25 * i32]* %arg, [40 * i32]* %arg1, [20 * i32]* %arg2, [25 * i32]* %arg3, i32 %arg4):
+    i32* %0 = getelementptr &([25 * i32]* %arg3)[i32 0][i32 %arg4];
+    i32* %1 = getelementptr &([20 * i32]* %arg2)[i32 0][i32 %arg4];
     i32 %2 = load i32* %1;
     store i32* %0 with i32 %2;
     i32 %3 = add i32 %arg4, i32 1;
     i1 %4 = scmp lt i32 %3, i32 20;
-    cbr i1 %4, [ ^while.body1 [25 * i32]* %arg, [40 * i32]* %arg1, [25 * i32]* %arg2, [20 * i32]* %arg3, i32 %3 ], [ ^while.body2 [25 * i32]* %arg, [25 * i32]* %arg2, [40 * i32]* %arg1, i32 0 ];
+    cbr i1 %4, [ ^while.body1 [25 * i32]* %arg, [40 * i32]* %arg1, [20 * i32]* %arg2, [25 * i32]* %arg3, i32 %3 ], [ ^while.body2 [25 * i32]* %arg, [25 * i32]* %arg3, [40 * i32]* %arg1, i32 0 ];
 ^while.body2([25 * i32]* %arg, [25 * i32]* %arg1, [40 * i32]* %arg2, i32 %arg3):
     i32* %0 = getelementptr &([40 * i32]* %arg2)[i32 0][i32 %arg3];
     store i32* %0 with i32 0;

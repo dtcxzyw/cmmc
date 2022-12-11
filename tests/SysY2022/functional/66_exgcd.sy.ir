@@ -10,10 +10,10 @@ internal func @exgcd(i32, i32, i32*, i32*) -> i32 {
     i32** %y = alloc i32*;
     store i32** %y with i32* %arg3;
     i1 %0 = scmp eq i32 %arg1, i32 0;
-    cbr i1 %0, [ ^indirect i32* %arg2, i32* %arg3, i32 %arg ], [ ^indirect1 i32** %y, i32** %x, i32* %a, i32* %b, i32* %arg3, i32* %arg2, i32 %arg, i32 %arg1 ];
+    cbr i1 %0, [ ^indirect i32* %arg3, i32* %arg2, i32 %arg ], [ ^indirect1 i32** %y, i32** %x, i32* %a, i32* %b, i32* %arg3, i32* %arg2, i32 %arg, i32 %arg1 ];
 ^indirect(i32* %arg, i32* %arg1, i32 %arg2):
-    store i32* %arg with i32 1;
-    store i32* %arg1 with i32 0;
+    store i32* %arg1 with i32 1;
+    store i32* %arg with i32 0;
     ret i32 %arg2;
 ^indirect1(i32** %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7):
     i32 %0 = srem i32 %arg6, i32 %arg7;
@@ -26,13 +26,12 @@ internal func @exgcd(i32, i32, i32*, i32*) -> i32 {
     i32 %6 = load i32* %arg3;
     i32 %7 = load i32* %arg2;
     i32 %8 = sdiv i32 %7, i32 %6;
-    i32 %9 = load i32* %2;
-    i32 %10 = mul i32 %8, i32 %9;
-    i32 %11 = sub i32 %4, i32 %10;
-    store i32* %2 with i32 %11;
+    i32 %9 = mul i32 %8, i32 %5;
+    i32 %10 = sub i32 %4, i32 %9;
+    store i32* %2 with i32 %10;
     ret i32 %1;
 }
-func @main() -> i32 { NoRecurse } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     i32* %b = alloc i32;
     store i32* %b with i32 15;

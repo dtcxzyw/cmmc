@@ -34,7 +34,7 @@ internal func @takFP(f32, f32, f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEf
 ^indirect1(f32 %arg):
     ret f32 %arg;
 }
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     call (i32) -> void @starttime(i32 19);
     i32 %0 = call () -> i32 @getint();
