@@ -6,9 +6,11 @@ import time
 import subprocess
 import json
 import CodeGenTAC.irsim_quiet as irsim
+import platform
 
-gcc_ref_flags = "-O3 -march=native -funroll-loops -fwhole-program"
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
 binary_path = sys.argv[1]
+binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 
 # 10/27/2022
@@ -25,6 +27,8 @@ baseline = {
 summary = {}
 tac_inst_count = 0
 tac_inst_count_ref = 4490137
+total_perf_gcc_ref = 0
+total_perf_self = 0
 
 
 def parse_perf(result):
@@ -200,6 +204,56 @@ def sysy_ref(src):
     return True
 
 
+def sysy_gcc(src):
+    runtime = tests_path + "/SysY2022/sylib.c"
+    header = tests_path + "/SysY2022/sylib.h"
+    rel = os.path.relpath(src[:-3], tests_path)
+    output = os.path.join(binary_dir, rel)
+    output_path = os.path.dirname(output)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    command = gcc_ref_command + \
+        ' -o {} -include {} {} {}'.format(output, header, runtime, src)
+    if os.system(command) != 0:
+        return False
+
+    inputs = src[:-3]+".in"
+    out = None
+    if os.path.exists(inputs):
+        with open(inputs, 'r', encoding='utf-8') as input_file:
+            out = subprocess.run([output], stdin=input_file,
+                                 capture_output=True, text=True)
+    else:
+        out = subprocess.run([output], capture_output=True, text=True)
+
+    output = out.stdout
+    if len(output) != 0 and output[-1] != '\n':
+        output += '\n'
+    output += str(out.returncode) + '\n'
+    output_file = src[:-3] + '.out'
+    # print(output.encode('utf-8'))
+    standard_answer = ''
+    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
+        for line in f.readlines():
+            standard_answer += line
+    if not standard_answer.endswith('\n'):
+        standard_answer += '\n'
+
+    # print(standard_answer.encode('utf-8'))
+    if output != standard_answer:
+        return False
+
+    for line in out.stderr.splitlines():
+        if line.startswith('TOTAL:'):
+            perf = line[7:].split('-')
+            used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
+                60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
+            global total_perf_gcc_ref
+            total_perf_gcc_ref += used
+
+    return True
+
+
 skip_list = []
 
 
@@ -249,6 +303,10 @@ def test(name, path, filter, tester):
 
 res = []
 start = time.perf_counter()
+res.append(test("SysY gcc performance", tests_path +
+                "/SysY2022/performance", ".sy", sysy_gcc))
+res.append(test("SysY gcc final_performance", tests_path +
+                "/SysY2022/final_performance", ".sy", sysy_gcc))
 res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
 res.append(test("SPL parse project1 extra", tests_path +
            "/Project1/test-ex", ".spl", spl_parse_ext))
@@ -313,5 +371,11 @@ summary['tac_inst_count'] = tac_inst_count
 for key in summary.keys():
     print(key, "= {} baseline = {} ratio = {:.3f}".format(
         summary[key], baseline[key], summary[key] / baseline[key]))
+
+print('Platform: ', platform.platform())
+print("gcc: {:.3f}s with command '{}'".format(
+    total_perf_gcc_ref, gcc_ref_command))
+print("cmmc: {:.3f}s -> {:.2f}x".format(total_perf_self,
+      total_perf_self/total_perf_gcc_ref))
 
 exit(0 if failed_tests == 0 else -1)
