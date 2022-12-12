@@ -113,8 +113,10 @@ static uint32_t localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap,
 
 static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
                     const std::vector<uint32_t>& weights, uint32_t bufferSize) {
-    std::random_device entropySrc;
-    std::mt19937_64 urbg(entropySrc());
+    // std::random_device entropySrc;
+    // std::mt19937_64 urbg(entropySrc());
+    // deterministic mutation for testing
+    std::mt19937_64 urbg(998244353ULL);
 
     constexpr uint32_t popSize = 20;
     constexpr uint32_t crossCount = 20;

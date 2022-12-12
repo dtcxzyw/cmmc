@@ -67,7 +67,6 @@ GMIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
     return mBlockMap.at(block);
 }
 Operand LoweringContext::mapBlockArg(BlockArgument* arg) const {
-    // NOTICE: don't use blockArgMap to get better RA scheme
     return mBlockArgs.at(arg);
 }
 Operand LoweringContext::mapOperand(Value* operand) {
@@ -234,7 +233,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(!target.builtinRA(mfunc))
             assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
         // Stage 8: legalize stack objects, stack -> sp
-        allocateStackObjects(mfunc, target);
+        if(!target.builtinSA(mfunc))
+            allocateStackObjects(mfunc, target);
         // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3)
             schedule(mfunc, target, false);

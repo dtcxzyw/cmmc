@@ -26,6 +26,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target);
 
 void removeUnusedInsts(GMIRFunction& func);
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
+void forEachSrcOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
 void removeIdentityCopies(GMIRFunction& func);
 
 CMMC_NAMESPACE_END

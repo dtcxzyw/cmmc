@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>

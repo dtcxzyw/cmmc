@@ -14,7 +14,6 @@
 
 // TAC Virtual Target
 #pragma once
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -92,6 +91,7 @@ public:
         return std::make_unique<TACRegisterUsage>();
     }
     bool builtinRA(GMIRFunction& mfunc) const override;
+    bool builtinSA(GMIRFunction& mfunc) const override;
     const SubTarget& getSubTarget() const noexcept override {
         return mSubTarget;
     }

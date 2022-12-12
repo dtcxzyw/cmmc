@@ -12,11 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/Instruction.hpp"
-#include "cmmc/Transforms/Compatibility/Compatibility.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -51,6 +49,10 @@ void TACTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const
     // TODO: lowering memset/memcpy
 }
 void TACTarget::legalizeFunc(GMIRFunction&) const {}
+bool TACTarget::builtinSA(GMIRFunction& mfunc) const {
+    CMMC_UNUSED(mfunc);
+    return true;
+}
 bool TACTarget::builtinRA(GMIRFunction& mfunc) const {
     forEachOperands(mfunc, [](Operand& op) {
         if(op == unusedOperand)

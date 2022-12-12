@@ -23,6 +23,8 @@ baseline = {
 }
 
 summary = {}
+tac_inst_count = 0
+tac_inst_count_ref = 4490137
 
 
 def parse_perf(result):
@@ -106,6 +108,8 @@ def spl_codegen_tac(src):
             if answer != ret[1]:
                 print("\ninput", inputs, "answer", answer, "output", ret[1])
                 return False
+            global tac_inst_count
+            tac_inst_count += ret[0]
     else:
         print("\nWarning: no test cases for", src)
 
@@ -303,6 +307,9 @@ print("Passed", total_tests-failed_tests,
 print("Total time: ", end-start)
 
 print("\nPerformance metrics:")
+baseline['tac_inst_count'] = tac_inst_count_ref
+summary['tac_inst_count'] = tac_inst_count
+
 for key in summary.keys():
     print(key, "= {} baseline = {} ratio = {:.3f}".format(
         summary[key], baseline[key], summary[key] / baseline[key]))

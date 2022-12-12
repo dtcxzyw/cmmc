@@ -13,8 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Analysis/AnalysisPass.hpp"
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -37,6 +35,10 @@ public:
     virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
     virtual const SubTarget& getSubTarget() const noexcept = 0;
     virtual bool builtinRA(GMIRFunction& mfunc) const {
+        CMMC_UNUSED(mfunc);
+        return false;
+    }
+    virtual bool builtinSA(GMIRFunction& mfunc) const {
         CMMC_UNUSED(mfunc);
         return false;
     }

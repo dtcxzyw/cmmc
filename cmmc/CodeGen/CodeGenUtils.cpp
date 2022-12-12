@@ -13,8 +13,10 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -146,6 +148,34 @@ void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>&
                                      functor(inst.dst);
                                  },
                                  [](auto&) {} },
+                       inst);
+        }
+    }
+}
+
+void forEachSrcOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            std::visit(Overload{ [&](CopyMInst& inst) { functor(inst.src); },
+                                 [&](UnaryArithmeticMInst& inst) { functor(inst.src); },
+                                 [&](BinaryArithmeticMInst& inst) {
+                                     functor(inst.lhs);
+                                     functor(inst.rhs);
+                                 },
+                                 [&](ArithmeticIntrinsicMInst& inst) {
+                                     for(auto& op : inst.src)
+                                         functor(op);
+                                 },
+                                 [&](CompareMInst& inst) {
+                                     functor(inst.lhs);
+                                     functor(inst.rhs);
+                                 },
+                                 [&](BranchCompareMInst& inst) {
+                                     functor(inst.lhs);
+                                     functor(inst.rhs);
+                                 },
+                                 [&](RetMInst& inst) { functor(inst.retVal); },
+                                 [&](ControlFlowIntrinsicMInst& inst) { functor(inst.src); }, [](auto&) {} },
                        inst);
         }
     }

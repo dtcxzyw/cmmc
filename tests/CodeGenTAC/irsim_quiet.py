@@ -480,10 +480,11 @@ def testgen_test_3_b01():
 
 def testgen_test_3_b02():
     res = []
+    rng = random.Random(114514)
     for i in range(100):
         inputs = []
         for _ in range(8):
-            inputs.append(random.randint(-100, 100))
+            inputs.append(rng.randint(-100, 100))
         outputs = inputs.copy()
         outputs.sort()
         res.append((inputs, outputs))

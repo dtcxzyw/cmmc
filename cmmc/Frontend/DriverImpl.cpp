@@ -12,10 +12,10 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdlib>
 #include <iostream>
