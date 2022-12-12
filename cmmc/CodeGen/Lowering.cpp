@@ -118,22 +118,28 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     std::unordered_map<Value*, Operand> valueMap;
     LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgs, valueMap, mfunc.pools(), blockArgMap };
 
+    auto& vregPool = ctx.getAllocationPool(AddressSpace::VirtualReg);
+    auto& stackPool = ctx.getAllocationPool(AddressSpace::Stack);
+
     for(auto block : func->blocks()) {
         mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc));
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
         for(auto arg : block->args()) {
-            const auto reg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(arg->getType());
+            const auto reg = vregPool.allocate(arg->getType());
             blockArgs[arg] = reg;
             valueMap[arg] = reg;
         }
 
+        ctx.setCurrentBasicBlock(mblock);
         for(auto inst : block->instructions()) {
             if(inst->getInstID() == InstructionID::Alloc) {
-                auto& pool = ctx.getAllocationPool(AddressSpace::Stack);
-                const auto addr = pool.allocate(inst->getType()->as<PointerType>()->getPointee());
-                pool.getMetadata(addr) = inst;
+                const auto type = inst->getType()->as<PointerType>()->getPointee();
+                const auto storage = stackPool.allocate(type);
+                stackPool.getMetadata(storage) = inst;
+                const auto addr = vregPool.allocate(type);
+                ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0);
                 ctx.addOperand(inst, addr);
             }
         }
