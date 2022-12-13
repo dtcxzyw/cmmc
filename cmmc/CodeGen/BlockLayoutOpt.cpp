@@ -82,13 +82,10 @@ static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<NodeIndex
     seq = std::move(best);
 }
 
-static uint32_t localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap,
-                            const std::vector<std::pair<uint32_t, uint32_t>>& edges, const std::vector<uint32_t>& weights,
-                            uint32_t bufferSize, std::mt19937_64& urbg) {
-    constexpr uint32_t mutateCount = 20;
-    BlockSeq best = seq;
+static CostT localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
+                         const std::vector<uint32_t>& weights, uint32_t bufferSize, std::mt19937_64& urbg) {
+    constexpr uint32_t mutateCount = 100;
     CostT bestCost = evalCost(seq, invMap, edges, weights, bufferSize);
-    CostT lastCost = bestCost;
     std::uniform_int_distribution<uint32_t> selector{ 1, static_cast<uint32_t>(seq.size()) - 1 };
     for(uint32_t idx = 0; idx < mutateCount; ++idx) {
         const auto p1 = selector(urbg);
@@ -97,17 +94,11 @@ static uint32_t localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap,
             continue;
         std::swap(seq[p1], seq[p2]);
         const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
-        if(cost < bestCost) {
+        if(cost < bestCost)
             bestCost = cost;
-            best = seq;
-        }
-
-        if(cost < lastCost)  // accept the mutation
-            lastCost = cost;
         else
             std::swap(seq[p1], seq[p2]);
     }
-    seq = std::move(best);
     return bestCost;
 }
 
@@ -119,8 +110,8 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIn
     std::mt19937_64 urbg(998244353ULL);
 
     constexpr uint32_t popSize = 20;
-    constexpr uint32_t crossCount = 20;
-    constexpr uint32_t iteration = 100;
+    constexpr uint32_t crossCount = 5;
+    constexpr uint32_t iteration = 400;
     std::vector<NodeIndex> invMap(seq.size());
     std::vector<std::pair<BlockSeq, CostT>> pop;
     for(uint32_t k = 0; k < popSize; ++k) {
@@ -165,6 +156,9 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIn
 }
 
 void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
+    if(func.blocks().size() <= 2)
+        return;
+
     const auto& cfg = calcGMIRCFG(func);
     const auto& subTarget = target.getSubTarget();
     CMMC_UNUSED(subTarget);

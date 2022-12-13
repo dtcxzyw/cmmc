@@ -301,56 +301,67 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
+test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
+generate_ref = False
+
 res = []
 start = time.perf_counter()
-res.append(test("SysY gcc performance", tests_path +
-                "/SysY2022/performance", ".sy", sysy_gcc))
-res.append(test("SysY gcc final_performance", tests_path +
-                "/SysY2022/final_performance", ".sy", sysy_gcc))
-res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
-res.append(test("SPL parse project1 extra", tests_path +
-           "/Project1/test-ex", ".spl", spl_parse_ext))
-res.append(test("SPL parse project1 self", tests_path +
-           "/Project1/test", ".spl", spl_parse))
-res.append(test("SPL parse project1 student", tests_path +
-                "/Project1/student_test", ".spl", spl_parse))
 
-res.append(test("SPL semantic & opt", tests_path +
-           "/Semantic", ".spl", spl_semantic))
-res.append(test("SPL parse project2 extra", tests_path +
-           "/Project2/test-ex", ".spl", spl_semantic_ext))
-res.append(test("SPL parse project2 self", tests_path +
-           "/Project2/test", ".spl", spl_semantic))
-res.append(test("SPL parse project2 student", tests_path +
-                "/Project2/student_test", ".spl", spl_semantic))
+if "gcc" in test_cases:
+    res.append(test("SysY gcc performance", tests_path +
+                    "/SysY2022/performance", ".sy", sysy_gcc))
+    res.append(test("SysY gcc final_performance", tests_path +
+                    "/SysY2022/final_performance", ".sy", sysy_gcc))
 
-res.append(test("SPL SPL->TAC sample", tests_path +
-           "/TAC2MIPS", ".spl", spl_semantic_noref))
-res.append(test("SPL TAC->IR project3", tests_path +
-           "/CodeGenTAC", ".ir", spl_tac2ir))
-res.append(test("SPL TAC->IR project4", tests_path +
-           "/TAC2MIPS", ".ir", spl_tac2ir))
-res.append(test("SPL codegen TAC", tests_path +
-           "/CodeGenTAC", ".spl", spl_codegen_tac))
+if "parse" in test_cases:
+    res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
+    res.append(test("SPL parse project1 extra", tests_path +
+                    "/Project1/test-ex", ".spl", spl_parse_ext))
+    res.append(test("SPL parse project1 self", tests_path +
+                    "/Project1/test", ".spl", spl_parse))
+    res.append(test("SPL parse project1 student", tests_path +
+                    "/Project1/student_test", ".spl", spl_parse))
+
+if "semantic" in test_cases:
+    res.append(test("SPL semantic & opt", tests_path +
+                    "/Semantic", ".spl", spl_semantic))
+    res.append(test("SPL parse project2 extra", tests_path +
+                    "/Project2/test-ex", ".spl", spl_semantic_ext))
+    res.append(test("SPL parse project2 self", tests_path +
+                    "/Project2/test", ".spl", spl_semantic))
+    res.append(test("SPL parse project2 student", tests_path +
+                    "/Project2/student_test", ".spl", spl_semantic))
+
+if "tac" in test_cases:
+    res.append(test("SPL SPL->TAC sample", tests_path +
+                    "/TAC2MIPS", ".spl", spl_semantic_noref))
+    res.append(test("SPL codegen TAC", tests_path +
+                    "/CodeGenTAC", ".spl", spl_codegen_tac))
+    res.append(test("SPL TAC->IR project3", tests_path +
+                    "/CodeGenTAC", ".ir", spl_tac2ir))
+    res.append(test("SPL TAC->IR project4", tests_path +
+                    "/TAC2MIPS", ".ir", spl_tac2ir))
 # res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
 # res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
 # res.append(test("SysY opt functional", tests_path +
 #           "/SysY2022/functional", ".sy", sysy_opt))
 # res.append(test("SysY o & test functional", tests_path +
 #           "/SysY2022/functional", ".sy", sysy_test_noopt))
-res.append(test("SysY opt & test functional", tests_path +
-           "/SysY2022/functional", ".sy", sysy_test))
-res.append(test("SysY opt hidden_functional", tests_path +
-           "/SysY2022/hidden_functional", ".sy", sysy_opt))
-res.append(test("SysY opt performance", tests_path +
-                "/SysY2022/performance", ".sy", sysy_opt))
-res.append(test("SysY opt final_performance", tests_path +
-                "/SysY2022/final_performance", ".sy", sysy_opt))
-res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
-res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
+if "opt" in test_cases:
+    res.append(test("SysY opt & test functional", tests_path +
+                    "/SysY2022/functional", ".sy", sysy_test))
+    res.append(test("SysY opt hidden_functional", tests_path +
+                    "/SysY2022/hidden_functional", ".sy", sysy_opt))
+    res.append(test("SysY opt performance", tests_path +
+                    "/SysY2022/performance", ".sy", sysy_opt))
+    res.append(test("SysY opt final_performance", tests_path +
+                    "/SysY2022/final_performance", ".sy", sysy_opt))
+    res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
+    res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
 
-#test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
-#test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+if generate_ref:
+    test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+    test("Reference Spl", tests_path + "/", ".spl", spl_ref)
 
 end = time.perf_counter()
 
@@ -372,10 +383,11 @@ for key in summary.keys():
     print(key, "= {} baseline = {} ratio = {:.3f}".format(
         summary[key], baseline[key], summary[key] / baseline[key]))
 
-print('Platform: ', platform.platform())
-print("gcc: {:.3f}s with command '{}'".format(
-    total_perf_gcc_ref, gcc_ref_command))
-print("cmmc: {:.3f}s -> {:.2f}x".format(total_perf_self,
-      total_perf_self/total_perf_gcc_ref))
+if "gcc" in test_cases:
+    print('Platform: ', platform.platform())
+    print("gcc: {:.3f}s with command '{}'".format(
+        total_perf_gcc_ref, gcc_ref_command))
+    print("cmmc: {:.3f}s -> {:.2f}x".format(total_perf_self,
+                                            total_perf_self/total_perf_gcc_ref))
 
 exit(0 if failed_tests == 0 else -1)
