@@ -64,6 +64,9 @@ public:
     virtual bool isArray() const noexcept {
         return false;
     }
+    virtual bool isStackStorage() const noexcept {
+        return false;
+    }
     virtual bool isFunction() const noexcept {
         return false;
     }
@@ -258,6 +261,22 @@ public:
     }
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
+    size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+};
+
+// Only used by CodeGen
+class StackStorageType final : public Type {
+    size_t mSize, mAlignment;
+
+public:
+    explicit StackStorageType(size_t size, size_t alignment) : mSize{ size }, mAlignment{ alignment } {}
+    bool isStackStorage() const noexcept override {
+        return true;
+    }
+    bool isSame(const Type* rhs) const override;
+    void dumpName(std::ostream& out) const override;
+    size_t getFixedSize() const noexcept override;
     size_t getSize(const DataLayout& dataLayout) const noexcept override;
     size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };

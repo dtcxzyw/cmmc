@@ -108,6 +108,13 @@ struct CopyMInst final {
     Operand dst;
     bool indirectDst;
     int32_t dstOffset;
+    uint32_t size;
+    bool signExtend;
+
+    CopyMInst(Operand src, bool indirectSrc, int32_t srcOffset, Operand dst, bool indirectDst, int32_t dstOffset, uint32_t size,
+              bool signExtend)
+        : src{ src }, indirectSrc{ indirectSrc }, srcOffset{ srcOffset }, dst{ dst },
+          indirectDst{ indirectDst }, dstOffset{ dstOffset }, size{ size }, signExtend{ signExtend } {}
 };
 
 struct ConstantMInst final {
@@ -187,14 +194,16 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicM
                               CallMInst, UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
 
 class GMIRBasicBlock final {
+    String mLabel;
     GMIRFunction* mFunction;
-
     std::unordered_set<Operand, OperandHasher> mUsedStackObjects;
-
     std::list<GMIRInst> mInstructions;
 
 public:
-    explicit GMIRBasicBlock(GMIRFunction* function) : mFunction{ function } {}
+    explicit GMIRBasicBlock(const String& label, GMIRFunction* function) : mLabel{ label }, mFunction{ function } {}
+    const String& label() const noexcept {
+        return mLabel;
+    }
     GMIRFunction* getFunction() const noexcept {
         return mFunction;
     }

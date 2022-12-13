@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <memory>
 #include <unordered_set>
 
@@ -48,6 +49,7 @@ class TACLoweringInfo final : public LoweringInfo {
 
 public:
     TACLoweringInfo();
+    void emitPrologue(LoweringContext&, Function*) const override {}
     Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
     String getOperand(const Operand& operand) const override;
     std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
@@ -67,13 +69,6 @@ public:
     }
 };
 
-class TACRegisterUsage final : public TargetRegisterUsage {
-public:
-    uint32_t classCount() const noexcept override;
-    uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const override;
-    uint32_t getAvailableRegisters(uint32_t src) const noexcept override;
-};
-
 class TACTarget final : public Target {
     TACSubTarget mSubTarget;
     TACDataLayout mDataLayout;
@@ -88,7 +83,7 @@ public:
         return mLowerVisitor;
     }
     std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
-        return std::make_unique<TACRegisterUsage>();
+        reportUnreachable();
     }
     bool builtinRA(GMIRFunction& mfunc) const override;
     bool builtinSA(GMIRFunction& mfunc) const override;
@@ -100,6 +95,24 @@ public:
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    Operand getStackPointer() const noexcept override {
+        reportUnreachable();
+    }
+    Operand getReturnAddress() const noexcept override {
+        reportUnreachable();
+    }
+    size_t getStackPointerAlignment() const noexcept override {
+        reportUnreachable();
+    }
+    bool isCallerSaved(const Operand&) const noexcept override {
+        reportUnreachable();
+    }
+    bool isCalleeSaved(const Operand&) const noexcept override {
+        reportUnreachable();
+    }
+    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+        reportUnreachable();
+    }
 };
 
 CMMC_NAMESPACE_END

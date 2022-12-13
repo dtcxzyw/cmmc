@@ -84,6 +84,24 @@ public:
     void emitAssembly(GMIRModule&, std::ostream&) const override {
         reportUnreachable();
     }
+    Operand getStackPointer() const noexcept override {
+        reportUnreachable();
+    }
+    Operand getReturnAddress() const noexcept override {
+        reportUnreachable();
+    }
+    size_t getStackPointerAlignment() const noexcept override {
+        reportUnreachable();
+    }
+    bool isCallerSaved(const Operand&) const noexcept override {
+        reportUnreachable();
+    }
+    bool isCalleeSaved(const Operand&) const noexcept override {
+        reportUnreachable();
+    }
+    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+        reportUnreachable();
+    }
 };
 
 CMMC_TARGET("sim", SimTarget);

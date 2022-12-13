@@ -87,15 +87,15 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                 } else if(inst.indirectSrc && !inst.indirectDst) {
                                     out << "load ";
                                     dumpOperand(inst.dst);
-                                    out << ' ';
+                                    out << ' ' << inst.srcOffset << '(';
                                     dumpOperand(inst.src);
-                                    out << '(' << inst.srcOffset << ')';
+                                    out << ')';
                                 } else if(inst.indirectDst && !inst.indirectSrc) {
                                     out << "store ";
                                     dumpOperand(inst.src);
-                                    out << ' ';
+                                    out << ' ' << inst.dstOffset << '(';
                                     dumpOperand(inst.dst);
-                                    out << '(' << inst.dstOffset << ')';
+                                    out << ')';
                                 } else
                                     reportUnreachable();
                             },

@@ -210,7 +210,8 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         const auto& terminator = block->instructions().back();
         const auto ensureNext = [&](const GMIRBasicBlock* next) {
             if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                auto newBlock = std::make_unique<GMIRBasicBlock>(&func);
+                const auto newLabel = String::get((std::string{ block->label().prefix() } + ".next").c_str());
+                auto newBlock = std::make_unique<GMIRBasicBlock>(newLabel, &func);
                 newBlock->instructions().push_back(BranchMInst{ next });
                 newBlock->usedStackObjects() = block->usedStackObjects();
                 iter = func.blocks().insert(nextIter, std::move(newBlock));

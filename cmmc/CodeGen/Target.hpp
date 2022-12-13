@@ -51,6 +51,14 @@ public:
     }
     virtual void legalizeFunc(GMIRFunction& func) const = 0;
     virtual void emitAssembly(GMIRModule& module, std::ostream& out) const = 0;
+
+    // TODO: move to frame info
+    virtual Operand getStackPointer() const noexcept = 0;
+    virtual Operand getReturnAddress() const noexcept = 0;
+    virtual bool isCallerSaved(const Operand& op) const noexcept = 0;
+    virtual bool isCalleeSaved(const Operand&) const noexcept = 0;
+    virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
+    virtual size_t getStackPointerAlignment() const noexcept = 0;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

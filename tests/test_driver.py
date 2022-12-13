@@ -9,6 +9,7 @@ import CodeGenTAC.irsim_quiet as irsim
 import platform
 
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
+spim_command = "spim -file "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
@@ -117,6 +118,14 @@ def spl_codegen_tac(src):
     else:
         print("\nWarning: no test cases for", src)
 
+    return True
+
+
+def spl_codegen_mips(src):
+    out = subprocess.run(args=[binary_path, '-s', '-t', 'mips', '-H', '-o',
+                               '/dev/stdout', src], capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
     return True
 
 
@@ -341,12 +350,13 @@ if "tac" in test_cases:
                     "/CodeGenTAC", ".ir", spl_tac2ir))
     res.append(test("SPL TAC->IR project4", tests_path +
                     "/TAC2MIPS", ".ir", spl_tac2ir))
-# res.append(test("SysY parse", tests_path+"/SysY2022", ".sy", sysy_parse))
-# res.append(test("SysY semantic", tests_path+"/SysY2022", ".sy", sysy_semantic))
-# res.append(test("SysY opt functional", tests_path +
-#           "/SysY2022/functional", ".sy", sysy_opt))
-# res.append(test("SysY o & test functional", tests_path +
-#           "/SysY2022/functional", ".sy", sysy_test_noopt))
+
+if "codegen" in test_cases:
+    res.append(test("SPL SPL->MIPS project4", tests_path +
+               "/TAC2MIPS", ".spl", spl_codegen_mips))
+    # TODO: IR->MIPS
+
+
 if "opt" in test_cases:
     res.append(test("SysY opt & test functional", tests_path +
                     "/SysY2022/functional", ".sy", sysy_test))

@@ -83,6 +83,24 @@ public:
         CMMC_UNUSED(analysis);
     }
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    Operand getStackPointer() const noexcept override {
+        reportNotImplemented();
+    }
+    Operand getReturnAddress() const noexcept override {
+        reportNotImplemented();
+    }
+    size_t getStackPointerAlignment() const noexcept override {
+        reportNotImplemented();
+    }
+    bool isCallerSaved(const Operand&) const noexcept override {
+        reportNotImplemented();
+    }
+    bool isCalleeSaved(const Operand&) const noexcept override {
+        reportNotImplemented();
+    }
+    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+        reportNotImplemented();
+    }
 };
 
 CMMC_TARGET("riscv", RISCVTarget);

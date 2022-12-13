@@ -25,10 +25,22 @@ CMMC_NAMESPACE_BEGIN
 class TargetRegisterUsage {
 public:
     virtual ~TargetRegisterUsage() = default;
-    virtual uint32_t classCount() const noexcept = 0;
-    virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
-    virtual uint32_t getAvailableRegisters(uint32_t src) const noexcept = 0;
+    // virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
+    virtual void markAsUsed(const Operand& operand) = 0;
+    virtual void markAsDiscarded(const Operand& operand) = 0;
+    virtual Operand getFreeRegister(uint32_t src) = 0;
+    virtual uint32_t getRegisterClass(const Type* type) const = 0;
 };
+
+inline void setUsed(uint32_t& val, uint32_t idx) {
+    assert(!(val & (1U << idx)));
+    val |= (1U << idx);
+}
+
+inline void setDiscarded(uint32_t& val, uint32_t idx) {
+    assert(val & (1U << idx));
+    val &= ~(1U << idx);
+}
 
 class Target;
 using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, const Target& target);

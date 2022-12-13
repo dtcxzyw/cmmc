@@ -12,18 +12,26 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/MIPS/MIPSTarget.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstdint>
 #include <ostream>
 #include <unordered_map>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
-[[maybe_unused]] static constexpr auto spimRuntime = R"(read:
+static constexpr auto spimRuntimeData = R"(_prompt: .asciiz "Enter an integer:"
+_ret: .asciiz "\n")";
+static constexpr auto spimRuntimeText = R"(read:
     li $v0, 4
     la $a0, _prompt
     syscall
@@ -50,7 +58,7 @@ const char* getMIPSTextualName(uint32_t idx) noexcept {
     return name[idx];
 }
 
-static void printOperand(std::ostream& out, const Operand& operand) {
+static void printOperand(std::ostream& out, const Operand& operand, const VirtualRegPool& constantPool) {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::GPR:
             out << "$" << getMIPSTextualName(operand.id);
@@ -61,96 +69,270 @@ static void printOperand(std::ostream& out, const Operand& operand) {
         case MIPSAddressSpace::FPR_D:
             out << "$f" << operand.id * 2;
             break;
+        case MIPSAddressSpace::Constant: {
+            const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
+            if(metadata->isUndefined())
+                out << '0';
+            else
+                metadata->dump(out);
+        } break;
         default:
             reportUnreachable();
     }
 }
 
-static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func,
-                     const std::unordered_map<const GMIRBasicBlock*, String>& labelMap,
-                     const std::unordered_map<const GMIRSymbol*, String>& symbolMap) {
-    out << symbol << ":" << std::endl;
+static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap,
+                     LabelAllocator& allocator, bool hasDelaySlot) {
+    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    auto baseName = String::get(".BB");
+    for(auto& block : func.blocks())
+        labelMap.emplace(block.get(), allocator.allocate(baseName));
+
+    auto& constantPool = func.pools().pools[MIPSAddressSpace::Constant];
+    const auto dumpOperand = [&](const Operand& operand) { printOperand(out, operand, constantPool); };
 
     for(auto& block : func.blocks()) {
         const auto& label = labelMap.at(block.get());
-        out << label << ":" << std::endl;
+        if(&block != &func.blocks().front())
+            out << label << ":" << std::endl;
+
+        const auto delaySlot = [&] {
+            if(hasDelaySlot)
+                out << "\n    nop";
+        };
+        const auto isZero = [&](const Operand& op) {
+            if(op.addressSpace == MIPSAddressSpace::Constant) {
+                const auto value = static_cast<ConstantValue*>(constantPool.getMetadata(op));
+                MatchContext<Value> matchCtx{ value, nullptr };
+                return cint_(0)(matchCtx);
+            }
+            return false;
+        };
+        const auto dumpCompare = [&](CompareOp compareOp) {
+            switch(compareOp) {
+                case CompareOp::LessThan:
+                    out << "lt";
+                    break;
+                case CompareOp::LessEqual:
+                    out << "le";
+                    break;
+                case CompareOp::GreaterThan:
+                    out << "gt";
+                    break;
+                case CompareOp::GreaterEqual:
+                    out << "ge";
+                    break;
+                case CompareOp::Equal:
+                    out << "eq";
+                    break;
+                case CompareOp::NotEqual:
+                    out << "ne";
+                    break;
+                default:
+                    reportUnreachable();
+            }
+        };
 
         for(auto& inst : block->instructions()) {
+            out << "    ";
             std::visit(Overload{ [&](const CopyMInst& copy) {
-                                    if(copy.indirectSrc) {
+                                    if(copy.indirectSrc && !copy.indirectDst) {
                                         // load
-                                        if(copy.dst.addressSpace == MIPSAddressSpace::GPR) {
-                                            // TODO: lb/lbu/lw/lh/lhu
-                                        } else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S) {
-                                        } else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_D) {
-                                        }
+                                        if(copy.size == 4)
+                                            out << "lw ";
+                                        else if(copy.size == 1)
+                                            out << "lb ";
+                                        else
+                                            reportUnreachable();
 
-                                        out << "nop";
-                                    } else if(copy.indirectDst) {
+                                        dumpOperand(copy.dst);
+                                        out << ", " << copy.srcOffset << '(';
+                                        dumpOperand(copy.src);
+                                        out << ')';
+
+                                        delaySlot();
+                                    } else if(copy.indirectDst && !copy.indirectSrc) {
                                         // store
-                                        reportNotImplemented();
-
-                                        out << "nop";
+                                        if(copy.size == 4)
+                                            out << "sw ";
+                                        else if(copy.size == 1)
+                                            out << "sb ";
+                                        else
+                                            reportUnreachable();
+                                        dumpOperand(copy.src);
+                                        out << ", " << copy.dstOffset << '(';
+                                        dumpOperand(copy.dst);
+                                        out << ')';
                                     } else {
-                                        // mov
-                                        reportNotImplemented();
+                                        if(copy.size == 4) {
+                                            // move
+                                            if(copy.src.addressSpace == MIPSAddressSpace::GPR)
+                                                out << "move ";
+                                            else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
+                                                out << "li ";
+                                            else
+                                                reportNotImplemented();
+
+                                            dumpOperand(copy.dst);
+                                            out << ", ";
+                                            dumpOperand(copy.src);
+                                        } else
+                                            reportUnreachable();
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
                                      out << "li ";
-                                     CMMC_UNUSED(constant);
-                                     reportNotImplemented();
+                                     dumpOperand(constant.dst);
+                                     out << ", ";
+                                     std::visit([&](auto x) { out << x; }, constant.constant);
                                  },
-                                 [&](const UnaryArithmeticMInst& unary) {
-                                     CMMC_UNUSED(unary);
-                                     reportNotImplemented();
-                                 },
+                                 [&](const UnaryArithmeticMInst&) { reportUnreachable(); },
                                  [&](const BinaryArithmeticMInst& binary) {
-                                     CMMC_UNUSED(binary);
-                                     reportNotImplemented();
+                                     switch(binary.instID) {
+                                         case GMIRInstID::Add:
+                                             out << "add";
+                                             break;
+                                         case GMIRInstID::Sub:
+                                             out << "sub";
+                                             break;
+                                         case GMIRInstID::Mul:
+                                             [[fallthrough]];
+                                         case GMIRInstID::SDiv:
+                                             [[fallthrough]];
+                                         case GMIRInstID::UDiv:
+                                             [[fallthrough]];
+                                         case GMIRInstID::SRem:
+                                             [[fallthrough]];
+                                         case GMIRInstID::URem:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FAdd:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FSub:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FMul:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FDiv:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FNeg:
+                                             [[fallthrough]];
+                                         case GMIRInstID::SCmp:
+                                             [[fallthrough]];
+                                         case GMIRInstID::UCmp:
+                                             [[fallthrough]];
+                                         case GMIRInstID::FCmp:
+                                             reportNotImplemented();
+                                         case GMIRInstID::And:
+                                             out << "and";
+                                             break;
+                                         case GMIRInstID::Or:
+                                             out << "or";
+                                             break;
+                                         case GMIRInstID::Shl:
+                                             [[fallthrough]];
+                                         case GMIRInstID::AShr:
+                                             [[fallthrough]];
+                                         case GMIRInstID::LShr:
+                                             reportNotImplemented();
+                                         default:
+                                             reportUnreachable();
+                                     };
+                                     if(binary.rhs.addressSpace == MIPSAddressSpace::Constant) {
+                                         out << 'i';
+                                     }
+                                     // no overflow handling
+                                     if(binary.instID == GMIRInstID::Add || binary.instID == GMIRInstID::Sub) {
+                                         out << 'u';
+                                     }
+                                     out << ' ';
+                                     dumpOperand(binary.dst);
+                                     out << ", ";
+                                     dumpOperand(binary.lhs);
+                                     out << ", ";
+                                     dumpOperand(binary.rhs);
                                  },
                                  [&](const BranchMInst& branch) {
-                                     out << "j " << labelMap.at(branch.targetBlock) << std::endl;
-                                     out << "nop";
+                                     out << "b " << labelMap.at(branch.targetBlock);
+                                     delaySlot();
                                  },
                                  [&](const BranchCompareMInst& branch) {
-                                     CMMC_UNUSED(branch);
-                                     reportNotImplemented();
-                                     out << "nop";
+                                     out << 'b';
+                                     dumpCompare(branch.compareOp);
+                                     if(branch.lhs.addressSpace == MIPSAddressSpace::GPR && isZero(branch.rhs)) {
+                                         out << "z ";
+                                         dumpOperand(branch.lhs);
+                                     } else if(branch.lhs.addressSpace == MIPSAddressSpace::GPR &&
+                                               branch.rhs.addressSpace == MIPSAddressSpace::GPR) {
+                                         out << ' ';
+                                         dumpOperand(branch.lhs);
+                                         out << ", ";
+                                         dumpOperand(branch.rhs);
+                                     } else
+                                         reportNotImplemented();  // TODO: fp cmp
+
+                                     out << ", " << labelMap.at(branch.targetBlock);
+                                     delaySlot();
                                  },
                                  [&](const CallMInst& call) {
                                      if(auto dst = std::get_if<Operand>(&call.callee)) {
                                          out << "jalr ";
-                                         printOperand(out, *dst);
+                                         dumpOperand(*dst);
                                      } else {
                                          out << "jal " << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
                                      }
-                                     out << std::endl << "nop";
+                                     delaySlot();
                                  },
                                  [&](const RetMInst&) {
-                                     out << "jr $ra" << std::endl;
-                                     out << "nop";
+                                     out << "jr $ra";
+                                     delaySlot();
                                  },
-                                 [&](const ControlFlowIntrinsicMInst&) { reportNotImplemented(); },
-                                 [](auto&&) { reportUnreachable(); } },
+                                 [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
+                                 [](const auto&) { reportUnreachable(); } },
                        inst);
 
-            out << std::endl;
+            out << "\n";
         }
     }
     out << std::endl;
 }
 
+extern StringOpt targetMachine;
+
 void MIPSTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
     LabelAllocator allocator;
     using namespace std::string_literals;
 
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
     std::unordered_map<const GMIRSymbol*, String> symbolMap;
 
+    for(auto& symbol : module.symbols)
+        symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
+
+    bool hasDelaySlot = false, hasSpimRuntime = false;
+    if(targetMachine.get() == "emulator") {
+        hasSpimRuntime = true;
+    } else {
+        hasDelaySlot = true;
+    }
+
+    out << ".data" << std::endl;
+    if(hasSpimRuntime) {
+        out << spimRuntimeData << std::endl;
+    }
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap, symbolMap); },
-                             [](auto&&) { reportUnreachable(); } },
+        std::visit(Overload{ [&](const GMIRDataStorage&) { reportNotImplemented(); }, [](const auto&) {} }, symbol.def);
+    }
+
+    out << ".text" << std::endl;
+    if(hasSpimRuntime) {
+        out << spimRuntimeText << std::endl;
+    }
+    for(auto& symbol : module.symbols) {
+        std::visit(Overload{ [&](const GMIRFunction& func) {
+                                if(symbol.linkage == Linkage::Global)
+                                    out << ".globl " << symbol.symbol << std::endl;
+                                out << symbol.symbol << ':' << std::endl;
+                                emitFunc(out, func, symbolMap, allocator, hasDelaySlot);
+                            },
+                             [](const auto&) {} },
                    symbol.def);
     }
 }

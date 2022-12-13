@@ -98,7 +98,10 @@ GMIRBasicBlock* LoweringContext::addBlockAfter() {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
-    const auto ret = blocks.insert(std::next(iter), std::make_unique<GMIRBasicBlock>(mCurrentBasicBlock->getFunction()));
+    const auto ret = blocks.insert(
+        std::next(iter),
+        std::make_unique<GMIRBasicBlock>(String::get((std::string{ mCurrentBasicBlock->label().prefix() } + ".next").c_str()),
+                                         mCurrentBasicBlock->getFunction()));
     (*ret)->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
     return ret->get();
 }
@@ -120,9 +123,12 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
 
     auto& vregPool = ctx.getAllocationPool(AddressSpace::VirtualReg);
     auto& stackPool = ctx.getAllocationPool(AddressSpace::Stack);
+    auto& target = machineModule.target;
+    auto& dataLayout = target.getDataLayout();
+    auto& info = target.getTargetLoweringInfo();
 
     for(auto block : func->blocks()) {
-        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc));
+        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(block->getLabel(), &mfunc));
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
@@ -139,7 +145,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
                 const auto storage = stackPool.allocate(type);
                 stackPool.getMetadata(storage) = inst;
                 const auto addr = vregPool.allocate(type);
-                ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0);
+                ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()),
+                                        false);
                 ctx.addOperand(inst, addr);
             }
         }
@@ -149,11 +156,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         auto& parameters = mfunc.parameters();
         for(auto arg : func->entryBlock()->args())
             parameters.push_back(blockArgs[arg]);
+        info.emitPrologue(ctx, func);
     }
-
-    auto& target = machineModule.target;
-
-    auto& info = target.getTargetLoweringInfo();
 
     for(auto block : func->blocks()) {
         auto mblock = blockMap[block];
@@ -499,20 +503,26 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
 }
 void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0);
+    const auto size = inst->getType()->getSize(ctx.getModule().target.getDataLayout());
+    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0, static_cast<uint32_t>(size), false);
     ctx.addOperand(inst, ret);
 }
 void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0);
+    const auto val = inst->getOperand(1);
+    const auto size = val->getType()->getSize(ctx.getModule().target.getDataLayout());
+    ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
+                            static_cast<uint32_t>(size), false);
 }
 static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
+    auto& dataLayout = ctx.getModule().target.getDataLayout();
     for(size_t idx = 0; idx < dst.size(); ++idx) {
         const auto arg = ctx.mapOperand(src[idx]);
         const auto dstArg = ctx.mapBlockArg(dst[idx]);
-        ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0);
+        const auto size = src[idx]->getType()->getSize(dataLayout);
+        ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
@@ -599,8 +609,9 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
 
     const auto curBlock = ctx.getCurrentBasicBlock();
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+    const auto size = static_cast<uint32_t>(inst->getType()->getSize(ctx.getModule().target.getDataLayout()));
 
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0);
+    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0, size, false);
     const auto next = ctx.addBlockAfter();
     ctx.setCurrentBasicBlock(next);
     const auto target = ctx.addBlockAfter();
@@ -609,7 +620,7 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
                                      CompareOp::Equal, target);
     ctx.setCurrentBasicBlock(next);
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0);
+    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0, size, false);
     ctx.emitInst<BranchMInst>(target);
 
     ctx.setCurrentBasicBlock(target);
@@ -628,7 +639,8 @@ void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
         constant.getMetadata(baseOffset) = make<ConstantInteger>(indexType, static_cast<intmax_t>(constantOffset));
         ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, base, baseOffset, ptr);
     } else {
-        ctx.emitInst<CopyMInst>(base, false, 0, ptr, false, 0);
+        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        ctx.emitInst<CopyMInst>(base, false, 0, ptr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()), false);
     }
     for(auto [size, index] : offsets) {
         const auto idx = ctx.mapOperand(index);

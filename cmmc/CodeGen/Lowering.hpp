@@ -13,6 +13,8 @@
 */
 
 #pragma once
+#include "cmmc/IR/Function.hpp"
+#include "cmmc/IR/Type.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
@@ -70,6 +72,7 @@ public:
 class LoweringInfo {
 public:
     virtual ~LoweringInfo() = default;
+    virtual void emitPrologue(LoweringContext& ctx, Function* func) const = 0;
     virtual Operand getZeroImpl(LoweringContext& ctx, const Type* type) const = 0;
     virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
     virtual String getOperand(const Operand& operand) const = 0;

@@ -19,17 +19,20 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cstdint>
 #include <memory>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <variant>
+#include <vector>
 
 // Local RA, without live range analysis
 
 CMMC_NAMESPACE_BEGIN
 
 static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
-    CMMC_UNUSED(target);
+    auto& dataLayout = target.getDataLayout();
 
     struct VirtualRegUseInfo final {
         std::unordered_set<GMIRBasicBlock*> uses;
@@ -67,9 +70,18 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
     }
 
     for(auto& block : mfunc.blocks()) {
+        auto& usedStackObjects = block->usedStackObjects();
+        for(auto [v, s] : stackMap) {
+            CMMC_UNUSED(v);
+            usedStackObjects.insert(s);
+        }
+
         std::unordered_map<Operand, Operand, OperandHasher> localStackMap;
         std::unordered_map<Operand, std::vector<Operand>, OperandHasher> currentMap;
-        std::unordered_map<Operand, Operand, OperandHasher> currentAlloc;
+        std::unordered_map<Operand, Operand, OperandHasher> physMap;
+        std::unordered_map<uint32_t, std::queue<uint32_t>> allocationQueue;
+
+        const auto usage = target.newRegisterUsage();
 
         const auto getStackStorage = [&](const Operand& op) {
             if(const auto iter = localStackMap.find(op); iter != localStackMap.cend()) {
@@ -79,19 +91,68 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
             if(const auto iter = stackMap.find(op); iter != stackMap.cend()) {
                 return ref = iter->second;
             }
-            return ref = stack.allocate(vreg.getType(op));
+            const auto storage = stack.allocate(vreg.getType(op));
+            usedStackObjects.insert(storage);
+            return ref = storage;
         };
-        const auto getDataMap = [&](Operand& op) -> std::vector<Operand>& {
+        const auto getDataMap = [&](const Operand& op) -> std::vector<Operand>& {
             auto& map = currentMap[op];
             if(map.empty())
                 map.push_back(getStackStorage(op));
             return map;
         };
-        const auto getFreeReg = []() -> Operand { reportNotImplemented(); };
 
         auto& instructions = block->instructions();
+
+        std::unordered_set<Operand, OperandHasher> dirtyVRegs;
+
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
+
+            const auto evictVReg = [&](const Operand& operand) {
+                assert(operand.addressSpace == AddressSpace::VirtualReg);
+                const auto& map = getDataMap(operand);
+                Operand physReg = unusedOperand;
+                for(auto& reg : map) {
+                    if(reg.addressSpace == AddressSpace::Stack) {
+                        return;
+                    } else
+                        physReg = reg;
+                }
+                assert(physReg != unusedOperand);
+                const auto stackStorage = getStackStorage(operand);
+                const auto size = vreg.getType(operand)->getSize(dataLayout);
+                instructions.insert(iter,
+                                    CopyMInst{ physReg, false, 0U, stackStorage, true, 0U, static_cast<uint32_t>(size), false });
+            };
+            /*
+            const auto evictPhysReg = [&](const Operand& operand) {
+                assert(operand.addressSpace >= AddressSpace::Custom);
+                if(const auto iter = physMap.find(operand); iter != physMap.cend())
+                    evictVReg(iter->second);
+            };*/
+
+            const auto getFreeReg = [&](const Operand& operand) -> Operand {
+                const auto type = vreg.getType(operand);
+                const auto regClass = usage->getRegisterClass(type);
+                auto& q = allocationQueue[regClass];
+                Operand physReg;
+                if(auto reg = usage->getFreeRegister(regClass); reg != unusedOperand) {
+                    physReg = reg;
+                } else {
+                    // evict
+                    physReg = Operand{ regClass, q.front() };
+                    q.pop();
+                    usage->markAsDiscarded(physReg);
+                    if(auto iter = physMap.find(physReg); iter != physMap.cend())
+                        evictVReg(iter->second);
+                }
+
+                q.push(physReg.id);
+                physMap[physReg] = operand;
+                usage->markAsUsed(physReg);
+                return physReg;
+            };
 
             const auto use = [&](Operand& op) {
                 if(op.addressSpace != AddressSpace::VirtualReg)
@@ -109,14 +170,13 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                 }
                 // load from stack
                 assert(stackStorage != unusedOperand);
-                const auto reg = getFreeReg();
-                instructions.insert(next, CopyMInst{ stackStorage, true, 0U, reg, false, 0U });
+                const auto reg = getFreeReg(op);
+                const auto size = vreg.getType(op)->getSize(dataLayout);
+                instructions.insert(iter,
+                                    CopyMInst{ stackStorage, true, 0U, reg, false, 0U, static_cast<uint32_t>(size), false });
                 map.push_back(reg);
-                currentAlloc[reg] = op;
                 op = reg;
             };
-
-            std::unordered_set<Operand, OperandHasher> dirtyVRegs;
 
             const auto def = [&](Operand& op) {
                 if(op.addressSpace != AddressSpace::VirtualReg)
@@ -135,29 +195,15 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                     } else
                         stackStorage = reg;
                 }
-                const auto reg = getFreeReg();
+                const auto reg = getFreeReg(op);
                 map = { reg };
-                currentAlloc[reg] = op;
                 op = reg;
             };
 
             const auto beforeBranch = [&]() {
                 // write back into stack slots before branch
                 for(auto dirty : dirtyVRegs) {
-                    const auto& map = getDataMap(dirty);
-                    bool hasWriteBack = false;
-                    Operand physReg = unusedOperand;
-                    for(auto& reg : map) {
-                        if(reg.addressSpace == AddressSpace::Stack) {
-                            hasWriteBack = true;
-                            break;
-                        } else
-                            physReg = reg;
-                    }
-                    if(!hasWriteBack) {
-                        const auto stackStorage = getStackStorage(dirty);
-                        instructions.insert(iter, CopyMInst{ physReg, false, 0U, stackStorage, true, 0U });
-                    }
+                    evictVReg(dirty);
                 }
             };
 
@@ -193,7 +239,17 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                                      use(inst.rhs);
                                      beforeBranch();
                                  },
-                                 [&](BranchMInst&) { beforeBranch(); }, [&](CallMInst& inst) { def(inst.dst); },
+                                 [&](BranchMInst&) { beforeBranch(); },
+                                 [&](CallMInst& inst) {
+                                     // TODO: move to PEI pass
+                                     // caller saved
+                                     for(auto& [p, v] : physMap) {
+                                         if(target.isCallerSaved(p))
+                                             evictVReg(v);
+                                     }
+
+                                     def(inst.dst);
+                                 },
                                  [&](RetMInst& inst) { use(inst.retVal); },
                                  [&](ControlFlowIntrinsicMInst& inst) {
                                      use(inst.src);
@@ -203,6 +259,46 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                        *iter);
 
             iter = next;
+        }
+    }
+
+    // callee saved
+    std::unordered_map<Operand, Operand, OperandHasher> overwrited;
+    for(auto& block : mfunc.blocks())
+        forEachDefOperands(*block, [&](const Operand& op) {
+            if(op == unusedOperand)
+                return;
+            if(op.addressSpace >= AddressSpace::Custom && target.isCalleeSaved(op)) {
+                if(!overwrited.count(op)) {
+                    const auto storage = stack.allocate(IntegerType::get(target.getRegisterBitWidth(op.addressSpace)));
+                    overwrited.emplace(op, storage);
+                }
+            }
+        });
+
+    for(auto& block : mfunc.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto [p, s] : overwrited) {
+            CMMC_UNUSED(p);
+            block->usedStackObjects().insert(s);
+        }
+
+        if(&block == &mfunc.blocks().front()) {
+            // backup
+            for(auto [p, s] : overwrited) {
+                const auto size = target.getRegisterBitWidth(p.addressSpace);
+                instructions.push_front(CopyMInst{ p, false, 0, s, true, 0, static_cast<uint32_t>(size), false });
+            }
+        } else {
+            // restore
+            auto& terminator = instructions.back();
+            if(std::holds_alternative<RetMInst>(terminator)) {
+                const auto pos = std::prev(instructions.end());
+                for(auto [p, s] : overwrited) {
+                    const auto size = target.getRegisterBitWidth(p.addressSpace);
+                    instructions.insert(pos, CopyMInst{ s, true, 0, p, false, 0, static_cast<uint32_t>(size), false });
+                }
+            }
         }
     }
 }

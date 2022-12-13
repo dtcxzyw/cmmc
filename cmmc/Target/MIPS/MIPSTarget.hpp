@@ -12,12 +12,12 @@
     limitations under the License.
 */
 
-// TAC Virtual Target
 #pragma once
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <memory>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -50,12 +50,24 @@ class MIPSLoweringInfo final : public LoweringInfo {
 
 public:
     MIPSLoweringInfo();
+    void emitPrologue(LoweringContext& ctx, Function* func) const override;
     Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
     String getOperand(const Operand& operand) const override;
     std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
+};
+
+class MIPSRegisterUsage final : public TargetRegisterUsage {
+    uint32_t mGPR, mFPR;
+
+public:
+    MIPSRegisterUsage();
+    void markAsUsed(const Operand& operand) override;
+    void markAsDiscarded(const Operand& operand) override;
+    Operand getFreeRegister(uint32_t src) override;
+    uint32_t getRegisterClass(const Type* type) const override;
 };
 
 // MIPS o32
@@ -73,7 +85,7 @@ public:
         return mLoweringInfo;
     }
     std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
-        reportNotImplemented();
+        return std::make_unique<MIPSRegisterUsage>();
     }
     const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
@@ -85,6 +97,20 @@ public:
     }
     void legalizeFunc(GMIRFunction& func) const override;
     void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    Operand getStackPointer() const noexcept override {
+        return Operand{ MIPSAddressSpace::GPR, 29 };  // sp
+    }
+    Operand getReturnAddress() const noexcept override {
+        return Operand{ MIPSAddressSpace::GPR, 31 };  // ra
+    }
+    size_t getStackPointerAlignment() const noexcept override {
+        return 8U;  // 8-byte aligned
+    }
+    bool isCalleeSaved(const Operand& op) const noexcept override;
+    bool isCallerSaved(const Operand& op) const noexcept override;
+    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+        return 32U;
+    }
 };
 
 CMMC_NAMESPACE_END
