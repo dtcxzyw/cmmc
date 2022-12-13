@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
 #include <unordered_map>
