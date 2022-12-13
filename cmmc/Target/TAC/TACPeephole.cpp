@@ -69,7 +69,7 @@ void TACSubTarget::peepholeOpt(GMIRFunction& func) const {
             return;
 
         bool modified = false;
-        forEachSrcOperands(func, [&](Operand& operand) {
+        forEachUseOperands(func, [&](Operand& operand) {
             if(const auto iter = replace.find(operand); iter != replace.cend()) {
                 operand = iter->second;
                 modified = true;

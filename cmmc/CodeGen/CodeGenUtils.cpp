@@ -110,74 +110,86 @@ void removeUnusedInsts(GMIRFunction& func) {
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
     for(auto& param : func.parameters())
         functor(param);
+    for(auto& block : func.blocks())
+        forEachOperands(*block, functor);
+}
 
-    for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
-            std::visit(Overload{ [&](CopyMInst& inst) {
-                                    functor(inst.src);
-                                    functor(inst.dst);
-                                },
-                                 [&](ConstantMInst& inst) { functor(inst.dst); },
-                                 [&](GlobalAddressMInst& inst) { functor(inst.dst); },
-                                 [&](UnaryArithmeticMInst& inst) {
-                                     functor(inst.src);
-                                     functor(inst.dst);
-                                 },
-                                 [&](BinaryArithmeticMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                     functor(inst.dst);
-                                 },
-                                 [&](ArithmeticIntrinsicMInst& inst) {
-                                     for(auto& op : inst.src)
-                                         functor(op);
-                                     functor(inst.dst);
-                                 },
-                                 [&](CompareMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                     functor(inst.dst);
-                                 },
-                                 [&](BranchCompareMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                 },
-                                 [&](CallMInst& inst) { functor(inst.dst); }, [&](RetMInst& inst) { functor(inst.retVal); },
-                                 [&](ControlFlowIntrinsicMInst& inst) {
-                                     functor(inst.src);
-                                     functor(inst.dst);
-                                 },
-                                 [](auto&) {} },
-                       inst);
-        }
+void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        std::visit(Overload{ [&](CopyMInst& inst) {
+                                functor(inst.src);
+                                functor(inst.dst);
+                            },
+                             [&](ConstantMInst& inst) { functor(inst.dst); },
+                             [&](GlobalAddressMInst& inst) { functor(inst.dst); },
+                             [&](UnaryArithmeticMInst& inst) {
+                                 functor(inst.src);
+                                 functor(inst.dst);
+                             },
+                             [&](BinaryArithmeticMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                                 functor(inst.dst);
+                             },
+                             [&](ArithmeticIntrinsicMInst& inst) {
+                                 for(auto& op : inst.src)
+                                     functor(op);
+                                 functor(inst.dst);
+                             },
+                             [&](CompareMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                                 functor(inst.dst);
+                             },
+                             [&](BranchCompareMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                             },
+                             [&](CallMInst& inst) { functor(inst.dst); }, [&](RetMInst& inst) { functor(inst.retVal); },
+                             [&](ControlFlowIntrinsicMInst& inst) {
+                                 functor(inst.src);
+                                 functor(inst.dst);
+                             },
+                             [](auto&) {} },
+                   inst);
     }
 }
 
-void forEachSrcOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
-    for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
-            std::visit(Overload{ [&](CopyMInst& inst) { functor(inst.src); },
-                                 [&](UnaryArithmeticMInst& inst) { functor(inst.src); },
-                                 [&](BinaryArithmeticMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                 },
-                                 [&](ArithmeticIntrinsicMInst& inst) {
-                                     for(auto& op : inst.src)
-                                         functor(op);
-                                 },
-                                 [&](CompareMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                 },
-                                 [&](BranchCompareMInst& inst) {
-                                     functor(inst.lhs);
-                                     functor(inst.rhs);
-                                 },
-                                 [&](RetMInst& inst) { functor(inst.retVal); },
-                                 [&](ControlFlowIntrinsicMInst& inst) { functor(inst.src); }, [](auto&) {} },
-                       inst);
-        }
+void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
+                             [&](auto& inst) { functor(inst.dst); } },
+                   inst);
+    }
+}
+
+void forEachUseOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
+    for(auto& block : func.blocks())
+        forEachUseOperands(*block, functor);
+}
+
+void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        std::visit(Overload{ [&](CopyMInst& inst) { functor(inst.src); }, [&](UnaryArithmeticMInst& inst) { functor(inst.src); },
+                             [&](BinaryArithmeticMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                             },
+                             [&](ArithmeticIntrinsicMInst& inst) {
+                                 for(auto& op : inst.src)
+                                     functor(op);
+                             },
+                             [&](CompareMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                             },
+                             [&](BranchCompareMInst& inst) {
+                                 functor(inst.lhs);
+                                 functor(inst.rhs);
+                             },
+                             [&](RetMInst& inst) { functor(inst.retVal); },
+                             [&](ControlFlowIntrinsicMInst& inst) { functor(inst.src); }, [](auto&) {} },
+                   inst);
     }
 }
 

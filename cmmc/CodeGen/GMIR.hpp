@@ -262,7 +262,10 @@ public:
 };
 
 class GMIRZeroStorage final {
+    size_t mSize;
+
 public:
+    explicit GMIRZeroStorage(size_t size) : mSize{ size } {}
     void dump(std::ostream& out, const Target& target) const;
 };
 
@@ -272,6 +275,9 @@ public:
 };
 
 class GMIRDataStorage final {
+
+    bool mReadOnly;
+
 public:
     void dump(std::ostream& out, const Target& target) const;
 };

@@ -23,7 +23,24 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static const char* getTextualName(uint32_t idx) noexcept {
+[[maybe_unused]] static constexpr auto spimRuntime = R"(read:
+    li $v0, 4
+    la $a0, _prompt
+    syscall
+    li $v0, 5
+    syscall
+    jr $ra
+write:
+    li $v0, 1
+    syscall
+    li $v0, 4
+    la $a0, _ret
+    syscall
+    move $v0, $0
+    jr $ra
+)";
+
+const char* getMIPSTextualName(uint32_t idx) noexcept {
     constexpr const char* name[] = {
         "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3",  //
         "t0",   "t1", "t2", "t3", "t4", "t5", "t6", "t7",  //
@@ -36,7 +53,7 @@ static const char* getTextualName(uint32_t idx) noexcept {
 static void printOperand(std::ostream& out, const Operand& operand) {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::GPR:
-            out << "$" << getTextualName(operand.id);
+            out << "$" << getMIPSTextualName(operand.id);
             break;
         case MIPSAddressSpace::FPR_S:
             out << "$f" << operand.id;
@@ -49,9 +66,11 @@ static void printOperand(std::ostream& out, const Operand& operand) {
     }
 }
 
-static void emitFunc(std::ostream& out, const GMIRFunction& func,
+static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func,
                      const std::unordered_map<const GMIRBasicBlock*, String>& labelMap,
                      const std::unordered_map<const GMIRSymbol*, String>& symbolMap) {
+    out << symbol << ":" << std::endl;
+
     for(auto& block : func.blocks()) {
         const auto& label = labelMap.at(block.get());
         out << label << ":" << std::endl;
@@ -130,7 +149,7 @@ void MIPSTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
     std::unordered_map<const GMIRSymbol*, String> symbolMap;
 
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, func, labelMap, symbolMap); },
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, labelMap, symbolMap); },
                              [](auto&&) { reportUnreachable(); } },
                    symbol.def);
     }

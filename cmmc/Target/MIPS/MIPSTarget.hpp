@@ -21,11 +21,12 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class MIPSIntrinsic {};
+enum class MIPSIntrinsic { Fma, ConditionalMove };
 struct MIPSAddressSpace final : public AddressSpace {
     static constexpr uint32_t GPR = Custom + 0;
     static constexpr uint32_t FPR_S = Custom + 1;
     static constexpr uint32_t FPR_D = Custom + 2;
+    static constexpr uint32_t HILO = Custom + 3;
 };
 
 class MIPSDataLayout final : public DataLayout {
@@ -44,10 +45,24 @@ public:
     }
 };
 
+class MIPSLoweringInfo final : public LoweringInfo {
+    String mUnused, mConstant, mStack, mVReg, mHi, mLo, mFPR;
+
+public:
+    MIPSLoweringInfo();
+    Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
+    String getOperand(const Operand& operand) const override;
+    std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
+    void lower(ReturnInst* inst, LoweringContext& ctx) const override;
+    void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
+    void lower(FMAInst* inst, LoweringContext& ctx) const override;
+};
+
 // MIPS o32
 class MIPSTarget final : public Target {
     std::unique_ptr<SubTarget> mSubTarget;
     MIPSDataLayout mDataLayout;
+    MIPSLoweringInfo mLoweringInfo;
 
 public:
     explicit MIPSTarget();
@@ -55,7 +70,7 @@ public:
         return mDataLayout;
     }
     const LoweringInfo& getTargetLoweringInfo() const noexcept override {
-        reportNotImplemented();
+        return mLoweringInfo;
     }
     std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         reportNotImplemented();

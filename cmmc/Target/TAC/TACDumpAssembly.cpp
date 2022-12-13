@@ -237,7 +237,7 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
                                         }
                                     });
                                 },
-                                 [](auto&) { reportUnreachable(); } },
+                                 [](std::monostate&) {}, [](auto&) { reportUnreachable(); } },
                        symbol.def);
         }
     }
@@ -246,7 +246,7 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
 
     for(auto& symbol : module.symbols) {
         std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, map.at(&func)); },
-                             [](const auto&) { reportUnreachable(); } },
+                             [](const auto&) { reportUnreachable(); }, [](const std::monostate&) {} },
                    symbol.def);
     }
 }

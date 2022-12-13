@@ -12,7 +12,9 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/MIPS/MIPSTarget.hpp>
@@ -52,5 +54,67 @@ void MIPSTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) cons
 void MIPSTarget::legalizeFunc(GMIRFunction&) const {}
 
 CMMC_TARGET("mips", MIPSTarget);
+
+const char* getMIPSTextualName(uint32_t idx) noexcept;
+MIPSLoweringInfo::MIPSLoweringInfo()
+    : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("s") }, mVReg{ String::get("vr") },
+      mHi{ String::get("hi") }, mLo{ String::get("lo") }, mFPR{ String::get("f") } {}
+Operand MIPSLoweringInfo::getZeroImpl(LoweringContext&, const Type* type) const {
+    if(type->isInteger()) {
+        return Operand{ MIPSAddressSpace::GPR, 0 };  //$zero
+    }
+    reportNotImplemented();
+}
+String MIPSLoweringInfo::getOperand(const Operand& operand) const {
+    switch(operand.addressSpace) {
+        case MIPSAddressSpace::GPR:
+            return String::get(getMIPSTextualName(operand.id));
+        case MIPSAddressSpace::FPR_S:
+            return mFPR.withID(operand.id);
+        case MIPSAddressSpace::FPR_D:
+            return mFPR.withID(operand.id * 2);
+        case MIPSAddressSpace::HILO:
+            return (operand.id == 0 ? mHi : mLo);
+        default:
+            return mUnused;
+    }
+}
+std::string_view MIPSLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
+    switch(static_cast<MIPSIntrinsic>(intrinsicID)) {
+        case MIPSIntrinsic::Fma:
+            return "fma";
+        case MIPSIntrinsic::ConditionalMove:
+            return "cmov";
+        default:
+            reportUnreachable();
+    }
+}
+void MIPSLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
+    // TODO: set return value
+    CMMC_UNUSED(inst);
+    ctx.emitInst<RetMInst>(unusedOperand);
+}
+void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const {
+    // TODO: set parameters
+    auto callee = inst->operands().back();
+    if(auto func = dynamic_cast<Function*>(callee)) {
+        const auto global = ctx.mapGlobal(func);
+        // TODO: push args
+        ctx.emitInst<CallMInst>(global, unusedOperand);
+        const auto ret = inst->getType();
+        if(ret->isVoid()) {
+            return;
+        } else if(ret->isFloatingPoint()) {
+            ctx.addOperand(inst, Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U });
+        } else {
+            assert(ret->getFixedSize() == 4);
+            ctx.addOperand(inst, Operand{ MIPSAddressSpace::GPR, 2U });
+        }
+    } else
+        DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
+}
+void MIPSLoweringInfo::lower(FMAInst*, LoweringContext&) const {
+    reportNotImplemented();
+}
 
 CMMC_NAMESPACE_END

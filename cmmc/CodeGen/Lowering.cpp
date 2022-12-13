@@ -24,6 +24,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -179,21 +180,35 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
                                  OptimizationLevel optLevel) {
     auto& symbols = machineModule.symbols;
+    const auto& dataLayout = module.getTarget().getDataLayout();
 
     std::unordered_map<GlobalValue*, GMIRSymbol*> globalMap;
 
     for(auto global : module.globals()) {
+        // TODO: alignment
         if(global->isFunction()) {
             auto func = global->as<Function>();
             if(func->blocks().empty()) {
-                // TODO: external func
+                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), std::monostate{} });
             } else {
                 symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), GMIRFunction{} });
-                globalMap.emplace(func, &symbols.back());
             }
         } else {
-            reportNotImplemented();
+            const auto var = global->as<GlobalVariable>();
+            const auto type = var->getType()->as<PointerType>()->getPointee();
+            if(auto initialValue = var->initialValue()) {
+                const auto readOnly = var->attr().hasAttr(GlobalVariableAttribute::ReadOnly);
+                CMMC_UNUSED(readOnly);
+                CMMC_UNUSED(initialValue);
+                reportNotImplemented();
+                // TODO: initialize globals
+            } else {
+                // bss
+                symbols.emplace_back(
+                    GMIRSymbol{ global->getSymbol(), global->getLinkage(), GMIRZeroStorage{ type->getSize(dataLayout) } });
+            }
         }
+        globalMap.emplace(global, &symbols.back());
     }
 
     auto& target = module.getTarget();
@@ -209,6 +224,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(!gv->isFunction())
             continue;
         auto func = gv->as<Function>();
+        if(func->blocks().empty())  // external
+            continue;
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
