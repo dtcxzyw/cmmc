@@ -156,6 +156,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         auto& parameters = mfunc.parameters();
         for(auto arg : func->entryBlock()->args())
             parameters.push_back(blockArgs[arg]);
+        ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
         info.emitPrologue(ctx, func);
     }
 

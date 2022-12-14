@@ -9,7 +9,6 @@ import CodeGenTAC.irsim_quiet as irsim
 import platform
 
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
-spim_command = "spim -file "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
@@ -121,11 +120,55 @@ def spl_codegen_tac(src):
     return True
 
 
+def test_gen_fact():
+    ret = [([-1], [1]), ([0], [1]), ([1], [1])]
+    res = 1
+    for idx in range(2, 12):
+        res *= idx
+        ret.append(([idx], [res]))
+    return ret
+
+
+def test_gen_hanoi():
+    return [([], [10003, 10002, 30002, 10003, 20001, 20003, 10003])]
+
+
+def test_gen_sign():
+    return irsim.testgen_test_01()
+
+
+def test_gen_arith():
+    return [([], [19])]
+
+
+spl_test_generators = {
+    'test_4_fact.spl': test_gen_fact,
+    'test_4_r01.spl': test_gen_hanoi,
+    'test_4_r02.spl': test_gen_sign,
+    'test_4_r03.spl': test_gen_arith,
+}
+
+
 def spl_codegen_mips(src):
+    name = os.path.basename(src)
+    tmp_out = os.path.join(binary_dir, 'tmp.S')
     out = subprocess.run(args=[binary_path, '-s', '-t', 'mips', '-H', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+                               tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
+    spl_test_cases = spl_test_generators[name]()
+    for inputs, answer in spl_test_cases:
+        out_spim = subprocess.run(
+            args=['spim', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
+        out = out_spim.stdout.splitlines()[5:]
+        res = []
+        for v in out:
+            v = v.removeprefix('Enter an integer:')
+            res.append(int(v))
+        if res != answer:
+            print("\ninput", inputs, "answer", answer, "output", res)
+            return False
+
     return True
 
 

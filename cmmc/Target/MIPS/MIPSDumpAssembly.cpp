@@ -15,6 +15,7 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/EnumName.hpp>
@@ -27,11 +28,18 @@
 #include <unordered_map>
 #include <variant>
 
+// TODO: remove pseudo instructions
+
 CMMC_NAMESPACE_BEGIN
 
 static constexpr auto spimRuntimeData = R"(_prompt: .asciiz "Enter an integer:"
 _ret: .asciiz "\n")";
-static constexpr auto spimRuntimeText = R"(read:
+static constexpr auto spimRuntimeText = R"(_entry:
+    jal main
+    move $a0, $v0
+    li $v0, 17
+    syscall
+read:
     li $v0, 4
     la $a0, _prompt
     syscall
@@ -60,6 +68,13 @@ const char* getMIPSTextualName(uint32_t idx) noexcept {
 
 static void printOperand(std::ostream& out, const Operand& operand, const VirtualRegPool& constantPool) {
     switch(operand.addressSpace) {
+        case MIPSAddressSpace::Constant: {
+            const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
+            if(metadata->isUndefined())
+                out << '0';
+            else
+                metadata->dump(out);
+        } break;
         case MIPSAddressSpace::GPR:
             out << "$" << getMIPSTextualName(operand.id);
             break;
@@ -69,13 +84,6 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
         case MIPSAddressSpace::FPR_D:
             out << "$f" << operand.id * 2;
             break;
-        case MIPSAddressSpace::Constant: {
-            const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
-            if(metadata->isUndefined())
-                out << '0';
-            else
-                metadata->dump(out);
-        } break;
         default:
             reportUnreachable();
     }
@@ -165,17 +173,28 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         out << ')';
                                     } else {
                                         if(copy.size == 4) {
-                                            // move
-                                            if(copy.src.addressSpace == MIPSAddressSpace::GPR)
-                                                out << "move ";
-                                            else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
-                                                out << "li ";
-                                            else
-                                                reportNotImplemented();
+                                            // mfacc
+                                            if(copy.src.addressSpace == MIPSAddressSpace::HILO) {
+                                                out << "mf" << (copy.src.id == 0 ? "hi" : "lo") << ' ';
+                                                dumpOperand(copy.dst);
+                                            }
+                                            // mtacc
+                                            else if(copy.dst.addressSpace == MIPSAddressSpace::HILO) {
+                                                out << "mt" << (copy.dst.id == 0 ? "hi" : "lo") << ' ';
+                                                dumpOperand(copy.src);
+                                            } else {
+                                                // move
+                                                if(copy.src.addressSpace == MIPSAddressSpace::GPR)
+                                                    out << "move ";
+                                                else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
+                                                    out << "li ";
+                                                else
+                                                    reportNotImplemented();
 
-                                            dumpOperand(copy.dst);
-                                            out << ", ";
-                                            dumpOperand(copy.src);
+                                                dumpOperand(copy.dst);
+                                                out << ", ";
+                                                dumpOperand(copy.src);
+                                            }
                                         } else
                                             reportUnreachable();
                                     }
@@ -196,15 +215,18 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << "sub";
                                              break;
                                          case GMIRInstID::Mul:
-                                             [[fallthrough]];
+                                             out << "mult";
+                                             break;
                                          case GMIRInstID::SDiv:
                                              [[fallthrough]];
+                                         case GMIRInstID::SRem:
+                                             out << "div";
+                                             break;
                                          case GMIRInstID::UDiv:
                                              [[fallthrough]];
-                                         case GMIRInstID::SRem:
-                                             [[fallthrough]];
                                          case GMIRInstID::URem:
-                                             [[fallthrough]];
+                                             out << "divu";
+                                             break;
                                          case GMIRInstID::FAdd:
                                              [[fallthrough]];
                                          case GMIRInstID::FSub:
@@ -214,12 +236,6 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          case GMIRInstID::FDiv:
                                              [[fallthrough]];
                                          case GMIRInstID::FNeg:
-                                             [[fallthrough]];
-                                         case GMIRInstID::SCmp:
-                                             [[fallthrough]];
-                                         case GMIRInstID::UCmp:
-                                             [[fallthrough]];
-                                         case GMIRInstID::FCmp:
                                              reportNotImplemented();
                                          case GMIRInstID::And:
                                              out << "and";
@@ -244,8 +260,14 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << 'u';
                                      }
                                      out << ' ';
-                                     dumpOperand(binary.dst);
-                                     out << ", ";
+                                     if(binary.instID != GMIRInstID::Mul && binary.instID != GMIRInstID::SDiv &&
+                                        binary.instID != GMIRInstID::UDiv && binary.instID != GMIRInstID::SRem &&
+                                        binary.instID != GMIRInstID::URem) {
+                                         dumpOperand(binary.dst);
+                                         out << ", ";
+                                     } else {
+                                         assert(binary.dst == unusedOperand);
+                                     }
                                      dumpOperand(binary.lhs);
                                      out << ", ";
                                      dumpOperand(binary.rhs);
@@ -271,6 +293,19 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
 
                                      out << ", " << labelMap.at(branch.targetBlock);
                                      delaySlot();
+                                 },
+                                 [&](const CompareMInst& cmp) {
+                                     out << 's';
+                                     dumpCompare(cmp.compareOp);
+                                     if(cmp.instID == GMIRInstID::SCmp) {
+                                         out << ' ';
+                                         dumpOperand(cmp.dst);
+                                         out << ", ";
+                                         dumpOperand(cmp.lhs);
+                                         out << ", ";
+                                         dumpOperand(cmp.rhs);
+                                     } else
+                                         reportNotImplemented();  // TODO: fp cmp
                                  },
                                  [&](const CallMInst& call) {
                                      if(auto dst = std::get_if<Operand>(&call.callee)) {

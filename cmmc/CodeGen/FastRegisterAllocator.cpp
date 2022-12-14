@@ -111,19 +111,22 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
 
             const auto evictVReg = [&](const Operand& operand) {
                 assert(operand.addressSpace == AddressSpace::VirtualReg);
-                const auto& map = getDataMap(operand);
+                auto& map = getDataMap(operand);
                 Operand physReg = unusedOperand;
                 for(auto& reg : map) {
                     if(reg.addressSpace == AddressSpace::Stack) {
+                        map = { reg };
                         return;
                     } else
                         physReg = reg;
                 }
                 assert(physReg != unusedOperand);
+                physMap.erase(physReg);
                 const auto stackStorage = getStackStorage(operand);
                 const auto size = vreg.getType(operand)->getSize(dataLayout);
                 instructions.insert(iter,
                                     CopyMInst{ physReg, false, 0U, stackStorage, true, 0U, static_cast<uint32_t>(size), false });
+                map = { stackStorage };
             };
             /*
             const auto evictPhysReg = [&](const Operand& operand) {
@@ -243,10 +246,13 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                                  [&](CallMInst& inst) {
                                      // TODO: move to PEI pass
                                      // caller saved
+                                     std::vector<Operand> savedVRegs;
                                      for(auto& [p, v] : physMap) {
                                          if(target.isCallerSaved(p))
-                                             evictVReg(v);
+                                             savedVRegs.push_back(v);
                                      }
+                                     for(auto v : savedVRegs)
+                                         evictVReg(v);
 
                                      def(inst.dst);
                                  },
@@ -286,7 +292,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
         if(&block == &mfunc.blocks().front()) {
             // backup
             for(auto [p, s] : overwrited) {
-                const auto size = target.getRegisterBitWidth(p.addressSpace);
+                const auto size = target.getRegisterBitWidth(p.addressSpace) / 8U;
                 instructions.push_front(CopyMInst{ p, false, 0, s, true, 0, static_cast<uint32_t>(size), false });
             }
         } else {
@@ -295,7 +301,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
             if(std::holds_alternative<RetMInst>(terminator)) {
                 const auto pos = std::prev(instructions.end());
                 for(auto [p, s] : overwrited) {
-                    const auto size = target.getRegisterBitWidth(p.addressSpace);
+                    const auto size = target.getRegisterBitWidth(p.addressSpace) / 8U;
                     instructions.insert(pos, CopyMInst{ s, true, 0, p, false, 0, static_cast<uint32_t>(size), false });
                 }
             }

@@ -34,6 +34,8 @@ CMMC_NAMESPACE_BEGIN
 
 constexpr Operand v0{ MIPSAddressSpace::GPR, 2U };
 constexpr Operand sp{ MIPSAddressSpace::GPR, 29U };
+constexpr Operand hi{ MIPSAddressSpace::HILO, 0U };
+constexpr Operand lo{ MIPSAddressSpace::HILO, 1U };
 
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
@@ -102,7 +104,8 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                                     }
 
                                     tryReplace(inst.lhs, false);
-                                    tryReplace(inst.rhs, commutative);
+                                    if(!commutative)
+                                        tryReplace(inst.rhs, false);
                                 },
                                  [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src, false); },
                                  [&](BranchCompareMInst& inst) {
@@ -114,6 +117,26 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                                  },
                                  [](auto&) {} },
                        *iter);
+
+            iter = next;
+        }
+    }
+
+    // replace imul/div/rem
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            const auto next = std::next(iter);
+
+            if(std::holds_alternative<BinaryArithmeticMInst>(*iter)) {
+                auto& binary = std::get<BinaryArithmeticMInst>(*iter);
+                if(binary.instID == GMIRInstID::Mul || binary.instID == GMIRInstID::SDiv || binary.instID == GMIRInstID::UDiv ||
+                   binary.instID == GMIRInstID::SRem || binary.instID == GMIRInstID::URem) {
+                    const auto result = (binary.instID == GMIRInstID::SRem || binary.instID == GMIRInstID::URem) ? hi : lo;
+                    instructions.insert(next, CopyMInst{ result, false, 0, binary.dst, false, 0, sizeof(uint32_t), false });
+                    binary.dst = unusedOperand;
+                }
+            }
 
             iter = next;
         }
@@ -230,11 +253,19 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         const auto ret = inst->getType();
         if(ret->isVoid()) {
             return;
-        } else if(ret->isFloatingPoint()) {
-            ctx.addOperand(inst, Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U });
         } else {
-            assert(ret->getFixedSize() == 4);
-            ctx.addOperand(inst, v0);
+            const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
+            Operand val = unusedOperand;
+            if(ret->isFloatingPoint()) {
+                // $f0
+                val = Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U };
+            } else {
+                assert(ret->getFixedSize() == 4);
+                val = v0;
+            }
+
+            ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
+            ctx.addOperand(inst, retReg);
         }
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();

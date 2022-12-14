@@ -18,22 +18,24 @@
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
 #include <unordered_map>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
 void removeUnusedInsts(GMIRFunction& func) {
     std::unordered_map<Operand, std::vector<GMIRInst*>, OperandHasher> writers;
     std::queue<GMIRInst*> q;
+    const auto hasCustomReg = [](const Operand& op) { return op.addressSpace >= AddressSpace::Custom; };
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
             std::visit(Overload{
                            [&](const ControlFlowIntrinsicMInst&) { q.push(&inst); },  //
                            [&](const CopyMInst& instRef) {
-                               // store
-                               if(instRef.indirectDst)
+                               // store/special
+                               if(instRef.indirectDst || hasCustomReg(instRef.src) || hasCustomReg(instRef.dst))
                                    q.push(&inst);
-                               else if(instRef.dst.addressSpace == AddressSpace::VirtualReg) {  // load/move
+                               else {  // load/move
                                    writers[instRef.dst].push_back(&inst);
                                }
                            },                                                  //
@@ -42,11 +44,7 @@ void removeUnusedInsts(GMIRFunction& func) {
                            [&](const UnreachableMInst&) {},                    //
                            [&](const BranchMInst&) {},                         //
                            [&](const CallMInst&) {},                           //
-                           [&](const auto& instRef) {
-                               if(instRef.dst.addressSpace == AddressSpace::VirtualReg) {
-                                   writers[instRef.dst].push_back(&inst);
-                               }
-                           },
+                           [&](const auto& instRef) { writers[instRef.dst].push_back(&inst); },
                        },
                        inst);
         }
@@ -56,8 +54,6 @@ void removeUnusedInsts(GMIRFunction& func) {
         q.pop();
 
         auto popSrc = [&](const Operand& operand) {
-            if(operand.addressSpace != AddressSpace::VirtualReg)
-                return;
             if(auto iter = writers.find(operand); iter != writers.cend()) {
                 for(auto inst : iter->second)
                     q.push(inst);
@@ -99,9 +95,12 @@ void removeUnusedInsts(GMIRFunction& func) {
     }
     std::unordered_set<GMIRInst*> remove;
     for(auto& [op, writerList] : writers) {
-        CMMC_UNUSED(op);
-        for(auto writer : writerList)
+        if(op.addressSpace != AddressSpace::VirtualReg)
+            continue;
+
+        for(auto writer : writerList) {
             remove.insert(writer);
+        }
     }
 
     for(auto& block : func.blocks())
