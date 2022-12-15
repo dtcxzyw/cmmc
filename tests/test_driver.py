@@ -41,9 +41,9 @@ def parse_perf(result):
 
 
 def spl_parse(src, strict=True):
-    args = [binary_path, '-a', '-o', '/dev/stdout', src]
+    args = [binary_path, '--emitAST', '-o', '/dev/stdout', src]
     if strict:
-        args.insert(-1, '-s')
+        args.insert(-1, '--strict')
     out = subprocess.run(args, capture_output=True, text=True)
     ref_content = ""
     ref = src[:-4]+".out"
@@ -63,9 +63,9 @@ def spl_parse_ext(src):
 
 
 def spl_semantic(src, strict=True):
-    args = [binary_path,  '-i', '-t', 'tac', '-o', '/dev/stdout', src]
+    args = [binary_path,  '--emitIR', '-t', 'tac', '-o', '/dev/stdout', src]
     if strict:
-        args.insert(-1, '-s')
+        args.insert(-1, '--strict')
     out = subprocess.run(args, capture_output=True, text=True)
 
     ref_content = ""
@@ -90,13 +90,13 @@ def spl_semantic_ext(src):
 
 
 def spl_semantic_noref(src):
-    out = subprocess.run(args=[binary_path, '-s', '-i', '-t', 'tac', '-o',
+    out = subprocess.run(args=[binary_path, '--strict', '--emitIR', '-t', 'tac', '-o',
                                '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
 
 def spl_codegen_tac(src):
-    out = subprocess.run(args=[binary_path, '-s', '-t', 'tac', '-H', '-o',
+    out = subprocess.run(args=[binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -152,7 +152,7 @@ spl_test_generators = {
 def spl_codegen_mips(src):
     name = os.path.basename(src)
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-s', '-t', 'mips', '-H', '-o',
+    out = subprocess.run(args=[binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -173,19 +173,19 @@ def spl_codegen_mips(src):
 
 
 def spl_tac2ir(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'mips', '-o',
+    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'mips', '-o',
                                '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
 
 def sysy_parse(src):
     out = subprocess.run(
-        args=[binary_path, '-g', src], capture_output=True, text=True)
+        args=[binary_path, '--grammar-check', src], capture_output=True, text=True)
     return out.returncode == 0
 
 
 def sysy_semantic(src):
-    out = subprocess.run(args=[binary_path, '-i', '-t', 'sim', '-O', '0', '-o',
+    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '-O', '0', '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -194,12 +194,12 @@ white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
 
 
 def sysy_opt(src):
-    args = [binary_path, '-i', '-t', 'sim', '-H', '-o',
+    args = [binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
             '/dev/stdout', src]
 
     for key in white_list:
         if key in src:
-            args.insert(-1, '-U')
+            args.insert(-1, '--do-not-check-uninitialized-value')
             break
 
     out = subprocess.run(args, capture_output=True, text=True)
@@ -210,7 +210,7 @@ def sysy_test(src: str, opt=True):
     input_file = src[:-3] + '.in'
     if not os.path.exists(input_file):
         input_file = "/dev/null"
-    args = [binary_path, '-t', 'sim', '-H', '-o',
+    args = [binary_path, '-t', 'sim', '--hide-symbol', '-o',
             '/dev/stdout', '-e', input_file, src]
 
     if not opt:
@@ -219,7 +219,7 @@ def sysy_test(src: str, opt=True):
 
     for key in white_list:
         if key in src:
-            args.insert(-1, '-U')
+            args.insert(-1, '--do-not-check-uninitialized-value')
             break
 
     out = subprocess.run(args, capture_output=True, text=True)
@@ -245,13 +245,13 @@ def sysy_test_noopt(src: str):
 
 
 def spl_ref(src):
-    subprocess.run(args=[binary_path, '-i', '-t', 'tac', '-o',
+    subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-o',
                          src+".ir", src], stderr=subprocess.DEVNULL)
     return True
 
 
 def sysy_ref(src):
-    subprocess.run(args=[binary_path, '-i', '-t', 'sim', '-H', '-o',
+    subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
                          src+".ir", src], stderr=subprocess.DEVNULL)
     return True
 

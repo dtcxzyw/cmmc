@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <getopt.h>
+#include <ios>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -57,23 +58,23 @@ option OptionBase::getOption() const {
 }
 void OptionBase::printHelp() {
     auto& out = reportInfo();
-    auto printArg = [&] {
+    auto printArg = [&](char sep) {
         if(mType == ArgType::Required)
-            out << "ARG";
+            out << sep << "ARG";
         else if(mType == ArgType::Optional)
-            out << "[ARG]";
+            out << sep << "[ARG]";
     };
-    out << "--" << mName << '=';
-    printArg();
+    out << "--" << mName;
+    printArg('=');
     if(mShortName) {
-        out << "|-" << mShortName << ' ';
-        printArg();
+        out << "|-" << mShortName;
+        printArg(' ');
     }
-    out << " " << mDesc;
+    out << ' ' << mDesc;
     if(mType == ArgType::Optional) {
         out << " (default = ";
         printDefault(out);
-        out << ")";
+        out << ')';
     }
     out << std::endl;
 }
@@ -158,7 +159,7 @@ OptionBase::OptionBase() : mName{ "" }, mShortName{ 0 }, mDesc{ "no desc" }, mTy
 }
 
 void Flag::printDefault(std::ostream& out) const {
-    out << mFlag;
+    out << (mFlag ? "on" : "off");
 }
 void StringOpt::printDefault(std::ostream& out) const {
     out << mStr;

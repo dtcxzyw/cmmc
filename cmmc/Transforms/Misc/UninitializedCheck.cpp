@@ -23,15 +23,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag nocheckUninitialized;
+static Flag doNotCheckUninitialized;
 
 CMMC_INIT_OPTIONS_BEGIN
-nocheckUninitialized.setName("no-check-uninitialized-value", 'U').setDesc("don't check uninitialized values");
+doNotCheckUninitialized.setName("do-not-check-uninitialized-value", 'U').setDesc("don't check uninitialized values");
 CMMC_INIT_OPTIONS_END
 
 class UninitializedCheck final : public TransformPass<Function> {
     bool run(Function& func, AnalysisPassManager&) const override {
-        if(nocheckUninitialized.get())
+        if(doNotCheckUninitialized.get())
             return false;
 
         for(auto block : func.blocks()) {
