@@ -516,15 +516,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
     auto reportStatistics = [&] {
         auto& out = std::cerr;
         const auto end = Clock::now();
-        out << "{";
-        out << "\"time\": " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() << ",";
-        out << "\"inst\": " << instructionCount << ",";
-        out << "\"branch\": " << branchCount << ",";
-        out << "\"call\": " << callCount << ",";
-        out << "\"load\": " << loadCount << ",";
-        out << "\"store\": " << storeCount << ",";
-        out << "\"load_bytes\": " << memCtx.getTotalLoad() << ",";
-        out << "\"store_bytes\": " << memCtx.getTotalStore() << "}" << std::endl;
+        out << "{\"time\": "sv << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        out << ",\"inst\": "sv << instructionCount;
+        out << ",\"branch\": "sv << branchCount;
+        out << ",\"call\": "sv << callCount;
+        out << ",\"load\": "sv << loadCount;
+        out << ",\"store\": "sv << storeCount;
+        out << ",\"load_bytes\": "sv << memCtx.getTotalLoad();
+        out << ",\"store_bytes\": "sv << memCtx.getTotalStore() << '}' << std::endl;
     };
 
     std::vector<OperandStorage> operands;
@@ -575,15 +574,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             if(step.get()) {
                 auto& out = std::cerr;
                 inst->dump(out);
-                out << " -> ";
-                std::visit(Overload{ [&](auto&&) { out << "unknown"; },                                   //
-                                     [&](const ConstantInteger& x) { x.dump(out); },                      //
-                                     [&](const ConstantFloatingPoint& x) { x.dump(out); },                //
-                                     [&](const ConstantOffset* x) { x->dump(out); },                      //
-                                     [&](const Function* x) { x->dumpAsOperand(out); },                   //
-                                     [&](uintptr_t x) { out << "ptr " << std::hex << x << std::dec; } },  //
+                out << " -> "sv;
+                std::visit(Overload{ [&](auto&&) { out << "unknown"sv; },                                   //
+                                     [&](const ConstantInteger& x) { x.dump(out); },                        //
+                                     [&](const ConstantFloatingPoint& x) { x.dump(out); },                  //
+                                     [&](const ConstantOffset* x) { x->dump(out); },                        //
+                                     [&](const Function* x) { x->dumpAsOperand(out); },                     //
+                                     [&](uintptr_t x) { out << "ptr "sv << std::hex << x << std::dec; } },  //
                            val);
-                out << std::endl;
+                out << '\n';
             }
         };
         const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst->getType(), val }); };

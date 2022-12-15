@@ -71,9 +71,9 @@ static void verifyModuleExec(Module& module) {
         if(ref.empty())
             return;
 
-        std::cerr << "verify round " << (++runCount);
+        std::cerr << "verify round "sv << (++runCount);
         if(runCount <= skipCount.get()) {
-            std::cerr << " skipped" << std::endl;
+            std::cerr << " skipped"sv << std::endl;
             return;
         }
 
@@ -87,11 +87,11 @@ static void verifyModuleExec(Module& module) {
                     if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
                         retCode = val->getSignExtended();
                     } else {
-                        std::cerr << " failed" << std::endl;
+                        std::cerr << " failed"sv << std::endl;
                         DiagnosticsContext::get().attach<Reason>("main should return a integer").reportFatal();
                     }
                 } else {
-                    std::cerr << " failed" << std::endl;
+                    std::cerr << " failed"sv << std::endl;
                     DiagnosticsContext::get().attach<Reason>(enumName(ret)).reportFatal();
                 }
             },
@@ -106,9 +106,9 @@ static void verifyModuleExec(Module& module) {
     const auto standandAnswer = loadString(referenceOutput.get());
 
     if(answer == standandAnswer) {
-        std::cerr << " passed" << std::endl;
+        std::cerr << " passed"sv << std::endl;
     } else {
-        std::cerr << " failed" << std::endl;
+        std::cerr << " failed"sv << std::endl;
         DiagnosticsContext::get().attach<Reason>("output mismatch").reportFatal();
     }
 }
@@ -307,7 +307,7 @@ public:
                     continue;
                 Stage stage{ mPass->name() };
                 if(debugTransform.get()) {
-                    std::cerr << mPass->name() << " " << func.getSymbol() << std::endl;
+                    std::cerr << mPass->name() << ' ' << func.getSymbol() << std::endl;
                 }
                 if(mPass->run(func, analysis)) {
                     if(debugTransform.get()) {

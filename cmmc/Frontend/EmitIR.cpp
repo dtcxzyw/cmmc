@@ -51,7 +51,7 @@ extern Flag strictMode;
 template <typename Callable>
 [[nodiscard]] static Value* reportSplError(EmitContext& ctx, const Type* type, uint32_t typeID, const SourceLocation& loc,
                                            Callable&& callable) {
-    std::cerr << "Error type " << typeID << " at Line " << loc.line << ": ";
+    std::cerr << "Error type "sv << typeID << " at Line "sv << loc.line << ": "sv;
     std::invoke(std::forward<Callable>(callable), std::cerr);
     std::cerr << std::endl;
     ctx.markInvalid();
@@ -346,7 +346,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
                 return QualifiedValue{ ctx.getInvalidRValue() };
             return QualifiedValue{
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
-                               [](std::ostream& out) { out << "binary operation on non-number variables"; }),
+                               [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
             };
         } else
             DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
@@ -356,7 +356,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
         if(strictMode.get()) {
             return QualifiedValue{
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
-                               [](std::ostream& out) { out << "binary operation on non-number variables"; }),
+                               [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
             };
         } else
             DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
@@ -564,7 +564,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     const auto type = ptr->getType()->as<PointerType>()->getPointee();
     const auto val = ctx.makeOp<LoadInst>(ptr);
     if(type->isBoolean()) {
-        reportWarning() << "Apply self increment/decrement operator to a boolean" << std::endl;
+        reportWarning() << "Apply self increment/decrement operator to a boolean"sv << std::endl;
     }
     InstructionID instID;
     Value* rhs;
@@ -642,14 +642,14 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         if(strictMode.get()) {
             return QualifiedValue{ reportSplError(ctx, InvalidType::get(), 11U, location(),
                                                   [&, calleeVar = callee](std::ostream& out) mutable {
-                                                      out << "invoking non-function variable";
+                                                      out << "invoking non-function variable"sv;
                                                       if(calleeVar->is<LoadInst>())
                                                           calleeVar = calleeVar->as<LoadInst>()->getOperand(0);
 
                                                       if(calleeVar->isGlobal()) {
-                                                          out << ": " << calleeVar->as<GlobalValue>()->getSymbol();
+                                                          out << ": "sv << calleeVar->as<GlobalValue>()->getSymbol();
                                                       } else if(calleeVar->is<StackAllocInst>()) {
-                                                          out << ": " << calleeVar->as<StackAllocInst>()->getLabel();
+                                                          out << ": "sv << calleeVar->as<StackAllocInst>()->getLabel();
                                                       }
                                                   }) };
         } else
@@ -677,8 +677,8 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         if(strictMode.get()) {
             return QualifiedValue{ reportSplError(ctx, retType, 9U, location(),
                                                   [&, symbol = callee->as<Function>()->getSymbol()](std::ostream& out) {
-                                                      out << "invalid argument number for " << symbol << ", expect "
-                                                          << info.argQualifiers.size() << ", got " << argExprs.size();
+                                                      out << "invalid argument number for "sv << symbol << ", expect "sv
+                                                          << info.argQualifiers.size() << ", got "sv << argExprs.size();
                                                   }) };
         } else
             DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
@@ -889,7 +889,7 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
     if(!base->getType()->isPointer()) {
         if(strictMode.get()) {
             return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
-                                                  [](std::ostream& out) { out << "indexing on non-array variable"; }),
+                                                  [](std::ostream& out) { out << "indexing on non-array variable"sv; }),
                                    ValueQualifier::AsLValue, qualifier };
         } else {
             DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
@@ -913,7 +913,7 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
         } else {
             if(strictMode.get()) {
                 return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
-                                                      [](std::ostream& out) { out << "indexing on non-array variable"; }),
+                                                      [](std::ostream& out) { out << "indexing on non-array variable"sv; }),
                                        ValueQualifier::AsLValue, qualifier };
             } else
                 DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
@@ -929,7 +929,7 @@ struct InvalidField final {
     String structName;
     String fieldName;
     friend void operator<<(std::ostream& out, const InvalidField& field) {
-        out << "invalid field \"" << field.fieldName << "\" for struct " << field.structName << std::endl;
+        out << "invalid field \""sv << field.fieldName << "\" for struct "sv << field.structName << std::endl;
     }
 };
 
@@ -968,19 +968,19 @@ Value* EmitContext::booleanToInt(Value* value) {
         case ConversionUsage::Assignment:
         case ConversionUsage::Initialization:
             return reportSplError(ctx, type, 5U, DiagnosticsContext::get().current<SourceLocation>(),
-                                  [](std::ostream& out) { out << "unmatching type on both sides of assignment"; });
+                                  [](std::ostream& out) { out << "unmatching type on both sides of assignment"sv; });
         case ConversionUsage::ReturnValue:
             return reportSplError(ctx, type, 8U, DiagnosticsContext::get().current<SourceLocation>(),
-                                  [](std::ostream& out) { out << "incompatiable return type"; });
+                                  [](std::ostream& out) { out << "incompatiable return type"sv; });
         case ConversionUsage::Index:
             return reportSplError(ctx, type, 12U, DiagnosticsContext::get().current<SourceLocation>(),
-                                  [](std::ostream& out) { out << "indexing by non-integer"; });
+                                  [](std::ostream& out) { out << "indexing by non-integer"sv; });
         case ConversionUsage::FunctionCall:
             return reportSplError(ctx, type, 9U, DiagnosticsContext::get().current<SourceLocation>(),
-                                  [](std::ostream& out) { out << "unmatching type for function call"; });
+                                  [](std::ostream& out) { out << "unmatching type for function call"sv; });
         default:
             return reportSplError(ctx, type, -1, DiagnosticsContext::get().current<SourceLocation>(),
-                                  [&](std::ostream& out) { out << "unmatching type for " << enumName(usage); });
+                                  [&](std::ostream& out) { out << "unmatching type for "sv << enumName(usage); });
     }
 }
 
@@ -1075,8 +1075,8 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
             return reportConversionErrorSpl(*this, type, usage);
         else {
             auto& err = reportError();
-            srcType->dump(err << "from ");
-            type->dump(err << " to ");
+            srcType->dump(err << "from "sv);
+            type->dump(err << " to "sv);
             DiagnosticsContext::get()
                 .attach<Reason>("cannot convert scalar value")
                 .attach<TypeAttachment>("from", srcType)
@@ -1105,12 +1105,12 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage us
         if(usage == AsLValueUsage::Assignment)
             return { reportSplError(*this, PointerType::get(val->getType()), 6U,
                                     DiagnosticsContext::get().current<SourceLocation>(),
-                                    [](std::ostream& out) { out << "left side in assignment is rvalue"; }),
+                                    [](std::ostream& out) { out << "left side in assignment is rvalue"sv; }),
                      qualifier };
         else {
             return { reportSplError(
                          *this, PointerType::get(val->getType()), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                         [&](std::ostream& out) { out << "cannot convert a rvalue to a lvalue for " << enumName(usage); }),
+                         [&](std::ostream& out) { out << "cannot convert a rvalue to a lvalue for "sv << enumName(usage); }),
                      qualifier };
         }
     } else
@@ -1159,7 +1159,7 @@ void EmitContext::popScope() {
 struct RedefinedIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const RedefinedIdentifier& err) {
-        out << "Redefined identifier \"" << err.identifier << '"' << std::endl;
+        out << "Redefined identifier \""sv << err.identifier << '"' << std::endl;
     }
 };
 void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
@@ -1170,7 +1170,7 @@ void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
             const auto func = value.value->is<Function>();
             const auto val = reportSplError(
                 *this, InvalidType::get(), func ? 4U : 3U, DiagnosticsContext::get().current<SourceLocation>(),
-                [&](std::ostream& out) { out << "redefine " << (func ? "function" : "variable") << ": " << identifier; });
+                [&](std::ostream& out) { out << "redefine "sv << (func ? "function"sv : "variable"sv) << ": "sv << identifier; });
             CMMC_UNUSED(val);
             return;
         } else {
@@ -1183,7 +1183,7 @@ void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
 struct UndefinedIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const UndefinedIdentifier& err) {
-        out << "Undefined identifier \"" << err.identifier << '"' << std::endl;
+        out << "Undefined identifier \""sv << err.identifier << '"' << std::endl;
     }
 };
 QualifiedValue EmitContext::lookupIdentifier(const String& identifier, IdentifierUsageHint hint) {
@@ -1196,9 +1196,9 @@ QualifiedValue EmitContext::lookupIdentifier(const String& identifier, Identifie
                                               hint == IdentifierUsageHint::Function ? 2U : 1U,
                                               DiagnosticsContext::get().current<SourceLocation>(),
                                               [&](std::ostream& out) {
-                                                  out << "undefined "
-                                                      << (hint == IdentifierUsageHint::Function ? "function" : "variable") << ": "
-                                                      << identifier;
+                                                  out << "undefined "sv
+                                                      << (hint == IdentifierUsageHint::Function ? "function"sv : "variable"sv)
+                                                      << ": "sv << identifier;
                                               }),
                                ValueQualifier::AsLValue, Qualifier{} };
     } else
@@ -1236,7 +1236,7 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
         if(strictMode.get()) {
             const auto ret = reportSplError(
                 *this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                [&](std::ostream& out) { out << "undefined type [scope = " << enumName(space) << "] named " << type; });
+                [&](std::ostream& out) { out << "undefined type [scope = "sv << enumName(space) << "] named "sv << type; });
             CMMC_UNUSED(ret);
             return InvalidType::get();
         } else {
@@ -1272,7 +1272,7 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
                         if(strictMode.get()) {
                             const auto ret =
                                 reportSplError(*this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                                               [](std::ostream& out) { out << "invalid array size"; });
+                                               [](std::ostream& out) { out << "invalid array size"sv; });
                             CMMC_UNUSED(ret);
                             return make<ArrayType>(InvalidType::get(), 1U);
                         } else
@@ -1294,7 +1294,7 @@ void EmitContext::addIdentifier(String identifier, const StructType* type) {
     if(mStructTypes.count(identifier)) {
         if(strictMode.get()) {
             const auto val = reportSplError(*this, InvalidType::get(), 15U, DiagnosticsContext::get().current<SourceLocation>(),
-                                            [&](std::ostream& out) { out << "redefine struct: " << identifier; });
+                                            [&](std::ostream& out) { out << "redefine struct: "sv << identifier; });
             CMMC_UNUSED(val);
             return;
         } else {
@@ -1596,7 +1596,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
             if(subItem.initialValue) {
                 if(strictMode.get()) {
                     const auto ret = reportSplError(ctx, InvalidType::get(), -1, subItem.loc, [](std::ostream& out) {
-                        out << "initial values of struct fields are not allowed";
+                        out << "initial values of struct fields are not allowed"sv;
                     });
                     CMMC_UNUSED(ret);
                 } else

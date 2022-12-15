@@ -64,12 +64,12 @@ class CombineBranch final : public TransformPass<Function> {
                 const auto pos = iter - args2.cbegin();
                 arg = args1[pos];
             } else {
-                reportError() << "Bad block argument when forwarding" << std::endl;
-                reportError() << "BlockA:" << std::endl;
+                reportError() << "Bad block argument when forwarding"sv << std::endl;
+                reportError() << "BlockA:"sv << std::endl;
                 branch->getBlock()->dump(std::cerr);
-                reportError() << "BlockB:" << std::endl;
+                reportError() << "BlockB:"sv << std::endl;
                 target.getTarget()->dump(std::cerr);
-                arg->dump(reportError() << "arg ");
+                arg->dump(reportError() << "arg "sv);
                 reportUnreachable();
             }
         }

@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/CodeGen/DataLayout.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
@@ -33,6 +34,7 @@ CMMC_NAMESPACE_BEGIN
 
 class LoweringContext final {
     GMIRModule& mModule;
+    const DataLayout& mDataLayout;
     std::unordered_map<Block*, GMIRBasicBlock*>& mBlockMap;
     std::unordered_map<GlobalValue*, GMIRSymbol*>& mGlobalMap;
     std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
@@ -48,6 +50,9 @@ public:
                     std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
                     std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap,
                     TemporaryPools& pools, const BlockArgumentAnalysisResult& blockArgMap);
+    const DataLayout& getDataLayout() const noexcept {
+        return mDataLayout;
+    }
     VirtualRegPool& getAllocationPool(uint32_t addressSpace) noexcept;
     GMIRModule& getModule() const noexcept;
     GMIRBasicBlock* mapBlock(Block* block) const;

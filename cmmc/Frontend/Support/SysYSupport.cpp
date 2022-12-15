@@ -35,7 +35,7 @@ bool parseSysY(DriverImpl& driver, const std::string& file) {
     // yy_flex_debug = 1;
     yyin = fopen(file.c_str(), "r");
     if(!yyin) {
-        reportError() << "Failed to open the source file " << file << std::endl;
+        reportError() << "Failed to open the source file "sv << file << std::endl;
         std::abort();
     }
     SysY::parser parser{ driver };

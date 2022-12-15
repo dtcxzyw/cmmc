@@ -32,7 +32,7 @@ void ConstantFloatingPoint::dump(std::ostream& out) const {
 }
 
 void UndefinedValue::dump(std::ostream& out) const {
-    out << "undef";
+    out << "undef"sv;
 }
 
 intmax_t ConstantInteger::getSignExtended() const noexcept {
@@ -73,7 +73,7 @@ void ConstantArray::dump(std::ostream& out) const {
     bool isFirst = true;
     for(auto val : mValues) {
         if(!isFirst)
-            out << ", ";
+            out << ", "sv;
         else
             isFirst = false;
         val->dump(out);

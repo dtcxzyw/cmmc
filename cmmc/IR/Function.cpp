@@ -24,14 +24,14 @@ CMMC_NAMESPACE_BEGIN
 
 void Function::dump(std::ostream& out) const {
     if(getLinkage() == Linkage::Internal)
-        out << "internal ";
-    out << "func @" << getSymbol();
+        out << "internal "sv;
+    out << "func @"sv << getSymbol();
     getType()->dump(out);
     if(!mAttr.empty()) {
-        out << " { ";
+        out << " { "sv;
 #define HANDLE_ATTR(NAME)                      \
     if(mAttr.hasAttr(FunctionAttribute::NAME)) \
-    out << #NAME " "
+    out << #NAME " "sv
 
         HANDLE_ATTR(NoMemoryRead);
         HANDLE_ATTR(NoMemoryWrite);
@@ -43,23 +43,23 @@ void Function::dump(std::ostream& out) const {
         HANDLE_ATTR(Entry);
 
 #undef HANDLE_ATTR
-        out << "}";
+        out << "}"sv;
     }
 
     // TODO: print CC
 
     if(mBlocks.empty()) {  // decl only
-        out << ';' << std::endl;
+        out << ";\n"sv;
         return;
     }
 
     LabelAllocator allocator;
     for(auto block : mBlocks)
         block->setLabel(allocator.allocate(block->getLabel()));
-    out << " {" << std::endl;
+    out << " {\n"sv;
     for(auto block : mBlocks)
         block->dump(out);
-    out << '}' << std::endl;
+    out << "}\n"sv;
 }
 
 bool Function::verify(std::ostream& out) const {
@@ -67,12 +67,12 @@ bool Function::verify(std::ostream& out) const {
     std::unordered_set<Block*> blocks;
     for(auto block : mBlocks) {
         if(block->getFunction() != this) {
-            out << "bad ownership" << std::endl;
+            out << "bad ownership"sv << std::endl;
             return false;
         }
         for(auto inst : block->instructions())
             if(!set.insert(inst).second) {
-                out << "unexpected copy of instruction " << inst << std::endl;
+                out << "unexpected copy of instruction "sv << inst << std::endl;
                 inst->dump(out);
                 return false;
             }
@@ -85,12 +85,12 @@ bool Function::verify(std::ostream& out) const {
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
             if(!blocks.count(trueTarget.getTarget())) {
-                out << "invalid use of deleted block ^" << trueTarget.getTarget()->getLabel() << std::endl;
+                out << "invalid use of deleted block ^"sv << trueTarget.getTarget()->getLabel() << std::endl;
                 terminator->dump(out);
                 return false;
             }
             if(falseTarget.getTarget() && !blocks.count(falseTarget.getTarget())) {
-                out << "invalid use of deleted block ^" << falseTarget.getTarget()->getLabel() << std::endl;
+                out << "invalid use of deleted block ^"sv << falseTarget.getTarget()->getLabel() << std::endl;
                 terminator->dump(out);
                 return false;
             }
@@ -102,7 +102,7 @@ bool Function::verify(std::ostream& out) const {
 }
 
 void Function::dumpCFG(std::ostream& out) const {
-    out << "digraph " << getSymbol() << '{' << std::endl;
+    out << "digraph "sv << getSymbol() << '{' << std::endl;
     std::unordered_map<Block*, std::string> ids;
     uint32_t id = 0;
 
@@ -132,8 +132,8 @@ void Function::dumpCFG(std::ostream& out) const {
         if(block == entryBlock())
             shape = "diamond"sv;
 
-        out << ids[block] << " [shape = " << shape << ", color = " << color << ", label = \"" << block->getLabel() << "\"];"
-            << std::endl;
+        out << ids[block] << " [shape = "sv << shape << ", color = "sv << color << ", label = \""sv << block->getLabel()
+            << "\"];"sv << std::endl;
     }
 
     for(auto block : mBlocks) {
@@ -141,14 +141,14 @@ void Function::dumpCFG(std::ostream& out) const {
         if(terminator->isBranch()) {
             auto branch = terminator->as<ConditionalBranchInst>();
             auto& trueTarget = branch->getTrueTarget();
-            out << ids[block] << "->" << ids[trueTarget.getTarget()] << ';' << std::endl;
+            out << ids[block] << "->"sv << ids[trueTarget.getTarget()] << ';' << std::endl;
             auto& falseTarget = branch->getFalseTarget();
             if(falseTarget.getTarget())
-                out << ids[block] << "->" << ids[falseTarget.getTarget()] << ';' << std::endl;
+                out << ids[block] << "->"sv << ids[falseTarget.getTarget()] << ';' << std::endl;
         }
     }
 
-    out << "}" << std::endl;
+    out << "}\n"sv;
 }
 
 CMMC_NAMESPACE_END

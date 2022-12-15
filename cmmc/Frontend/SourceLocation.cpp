@@ -17,7 +17,7 @@
 CMMC_NAMESPACE_BEGIN
 
 void operator<<(std::ostream& out, const SourceLocation& loc) {
-    out << "line: " << loc.line << " col: " << loc.column << std::endl;
+    out << "line: "sv << loc.line << " col: "sv << loc.column << std::endl;
     // TODO: show source code
 }
 

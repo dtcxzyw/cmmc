@@ -27,11 +27,11 @@ struct Attachment final {
     std::string_view desc;
     const T* val;
     friend void operator<<(std::ostream& out, const Attachment<T>& attachment) {
-        out << attachment.desc << ": ";
+        out << attachment.desc << ": "sv;
         if(attachment.val)
             attachment.val->dump(out);
         else
-            out << " invalid";
+            out << " invalid"sv;
         out << std::endl;
     }
 };
@@ -46,11 +46,11 @@ struct CFGAttachment final {
     std::string_view desc;
     const Function* val;
     friend void operator<<(std::ostream& out, const CFGAttachment& attachment) {
-        out << attachment.desc << ": ";
+        out << attachment.desc << ": "sv;
         if(attachment.val)
             attachment.val->dumpCFG(out);
         else
-            out << " invalid";
+            out << " invalid"sv;
         out << std::endl;
     }
 };

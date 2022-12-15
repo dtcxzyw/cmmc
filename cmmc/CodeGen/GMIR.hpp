@@ -278,23 +278,21 @@ public:
     void dump(std::ostream& out, const Target& target) const;
 };
 
-class GMIRStringStorage final {
-public:
-    void dump(std::ostream& out, const Target& target) const;
-};
-
 class GMIRDataStorage final {
-
-    bool mReadOnly;
-
 public:
+    using Storage = std::vector<std::variant<std::byte, uint32_t, size_t>>;
+    // byte, word, zero
+    Storage data;
+    bool readOnly;
+
     void dump(std::ostream& out, const Target& target) const;
 };
 
 struct GMIRSymbol final {
     String symbol;
     Linkage linkage;
-    std::variant<GMIRFunction, GMIRZeroStorage, GMIRStringStorage, GMIRDataStorage, std::monostate> def;
+    size_t alignment;
+    std::variant<GMIRFunction, GMIRZeroStorage, GMIRDataStorage, std::monostate> def;
 
     void dump(std::ostream& out, const Target& target) const;
 };

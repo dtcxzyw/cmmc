@@ -50,12 +50,12 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     if constexpr(Config::debug) {
         if(!mPointerAttributes.count(p1)) {
             p1->getBlock()->dump(reportError());
-            p1->dump(reportError() << "undefined pointer ");
+            p1->dump(reportError() << "undefined pointer "sv);
             reportUnreachable();
         }
         if(!mPointerAttributes.count(p2)) {
             p2->getBlock()->dump(reportError());
-            p2->dump(reportError() << "undefined pointer ");
+            p2->dump(reportError() << "undefined pointer "sv);
             reportUnreachable();
         }
     }
@@ -369,14 +369,14 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     func.dump(std::cerr);
     for(auto& [ptr1, attr1] : result.pointerAttrs()) {
         ptr1->dump(std::cerr);
-        std::cerr << " :";
+        std::cerr << " :"sv;
         for(auto& [ptr2, attr2] : result.pointerAttrs()) {
             ptr2->dumpAsOperand(std::cerr);
-            std::cerr << "[";
+            std::cerr << '[';
             std::cerr << result.isDistinct(ptr1, ptr2);
-            std::cerr << "] ";
+            std::cerr << "] "sv;
         }
-        std::cerr << std::endl;
+        std::cerr << '\n';
     }
     */
 

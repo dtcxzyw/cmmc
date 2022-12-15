@@ -148,23 +148,23 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
 
     // map result
     /*
-    std::cerr << "groups: " << std::endl;
+    std::cerr << "groups: \n"sv;
     for(NodeIndex i = 0; i < ccnt; ++i) {
-        std::cerr << "group " << i << ":";
+        std::cerr << "group "sv << i << ':';
         for(NodeIndex j = 0; j < size; ++j) {
             if(col[j] == i) {
-                std::cerr << " ";
+                std::cerr << ' ';
                 invMap[j]->dumpAsOperand(std::cerr);
             }
         }
-        std::cerr << "->";
+        std::cerr << "->"sv;
         for(auto v : phiNodes[i]) {
             std::cerr << ' ';
             v->dumpAsOperand(std::cerr);
         }
-        std::cerr << std::endl;
+        std::cerr << '\n';
     }
-    std::cerr << std::endl;
+    std::cerr << '\n';
     */
 
     std::unordered_map<BlockArgument*, std::variant<Value*, PhiNode>> ret;

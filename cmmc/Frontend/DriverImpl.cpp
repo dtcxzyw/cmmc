@@ -146,12 +146,12 @@ void DriverImpl::emit(Module& module) {
 
 void DriverImpl::dump(std::ostream& out) {
     if(!mRecordHierarchy) {
-        reportError() << "please enable recordHierarchy" << std::endl;
+        reportError() << "please enable recordHierarchy"sv << std::endl;
         std::abort();
     }
 
     if(!mEnd) {
-        reportError() << "invalid program" << std::endl;
+        reportError() << "invalid program"sv << std::endl;
         std::abort();
     }
 
@@ -254,13 +254,14 @@ static std::string convert(const char* str) {
 
 void DriverImpl::reportLexerError(const char* reason, const char* str) {
     if(mStrictMode)
-        reportError() << "Error type A at Line " << mLocation.begin.line << ": " << reason << " " << convert(str) << std::endl;
+        reportError() << "Error type A at Line "sv << mLocation.begin.line << ": "sv << reason << ' ' << convert(str)
+                      << std::endl;
     else
-        reportError() << "Lexer error" << mLocation.begin << ": " << reason << " <" << convert(str) << ">" << std::endl;
+        reportError() << "Lexer error"sv << mLocation.begin << ": "sv << reason << " <"sv << convert(str) << '>' << std::endl;
     mError = true;
 }
 void DriverImpl::reportParserError(const std::pair<uint32_t, yy::location>& location, const char* str) {
-    reportError() << "Error type B at Line " << location.second.begin.line << ": " << str << std::endl;
+    reportError() << "Error type B at Line "sv << location.second.begin.line << ": "sv << str << std::endl;
     mError = true;
 }
 

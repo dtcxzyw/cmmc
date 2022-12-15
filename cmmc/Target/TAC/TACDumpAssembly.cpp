@@ -53,12 +53,12 @@ struct FunctionNameMap final {
 
 static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func, const DataLayout& dataLayout,
                      const FunctionNameMap& map) {
-    out << "FUNCTION " << symbol << " :" << std::endl;
+    out << "FUNCTION "sv << symbol << " :\n"sv;
 
     {
         auto& params = func.parameters();
         for(auto param : params) {
-            out << "PARAM v" << map.gprMap.at(param.id) << std::endl;
+            out << "PARAM v"sv << map.gprMap.at(param.id) << '\n';
         }
     }
 
@@ -66,7 +66,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         if(operand.addressSpace == TACAddressSpace::GPR)
             out << 'v' << map.gprMap.at(operand.id);
         else if(operand.addressSpace == TACAddressSpace::Stack)
-            out << "&x" << map.stackMap.at(operand.id);
+            out << "&x"sv << map.stackMap.at(operand.id);
         else if(operand.addressSpace == TACAddressSpace::Constant) {
             out << '#';
             const auto metadata = static_cast<ConstantValue*>(func.pools().pools[TACAddressSpace::Constant].getMetadata(operand));
@@ -81,14 +81,14 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         const auto& allocas = func.pools().pools[TACAddressSpace::Stack].storage();
         for(uint32_t idx = 0; idx < allocas.size(); ++idx) {
             const auto alloc = allocas[idx];
-            out << "DEC x" << map.stackMap.at(idx) << " " << alloc.first->getSize(dataLayout) << std::endl;
+            out << "DEC x"sv << map.stackMap.at(idx) << ' ' << alloc.first->getSize(dataLayout) << '\n';
         }
     }
 
     for(auto& block : func.blocks()) {
         if(&block != &func.blocks().front()) {
             const auto& label = map.labelMap.at(block.get());
-            out << "LABEL " << label << " :" << std::endl;
+            out << "LABEL "sv << label << " :\n"sv;
         }
 
         for(auto& inst : block->instructions()) {
@@ -107,7 +107,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         if(copy.indirectDst)
                                             out << '*';
                                         printOperand(copy.dst);
-                                        out << " := ";
+                                        out << " := "sv;
 
                                         if(copy.indirectSrc)
                                             out << '*';
@@ -119,12 +119,12 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      if(constant.dst.addressSpace == TACAddressSpace::Stack)
                                          out << '*';
                                      printOperand(constant.dst);
-                                     out << " := #" << std::get<intmax_t>(constant.constant);
+                                     out << " := #"sv << std::get<intmax_t>(constant.constant);
                                  },
                                  [&](const UnaryArithmeticMInst& unary) {
                                      if(unary.instID == GMIRInstID::Neg) {
                                          printOperand(unary.dst);
-                                         out << " := #0 - ";
+                                         out << " := #0 - "sv;
                                          printOperand(unary.src);
                                      } else
                                          reportUnreachable();
@@ -149,39 +149,39 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      }
 
                                      printOperand(binary.dst);
-                                     out << " := ";
+                                     out << " := "sv;
                                      printOperand(binary.lhs);
                                      out << ' ' << op << ' ';
                                      printOperand(binary.rhs);
                                  },
-                                 [&](const BranchMInst& branch) { out << "GOTO " << map.labelMap.at(branch.targetBlock); },
+                                 [&](const BranchMInst& branch) { out << "GOTO "sv << map.labelMap.at(branch.targetBlock); },
                                  [&](const BranchCompareMInst& branch) {
-                                     out << "IF ";
+                                     out << "IF "sv;
                                      printOperand(branch.lhs);
                                      out << ' ' << getCompareOp(branch.compareOp) << ' ';
                                      printOperand(branch.rhs);
-                                     out << " GOTO ";
+                                     out << " GOTO "sv;
                                      out << map.labelMap.at(branch.targetBlock);
                                  },
                                  [&](const CallMInst& call) {
                                      printOperand(call.dst);
-                                     out << " := CALL ";
+                                     out << " := CALL "sv;
                                      out << std::get<GMIRSymbol*>(call.callee)->symbol;
                                  },
                                  [&](const RetMInst& ret) {
-                                     out << "RETURN ";
+                                     out << "RETURN "sv;
                                      printOperand(ret.retVal);
                                  },
                                  [&](const ControlFlowIntrinsicMInst& inst) {
                                      const auto id = static_cast<TACIntrinsic>(inst.intrinsicID);
                                      if(id == TACIntrinsic::PushArg) {
-                                         out << "ARG ";
+                                         out << "ARG "sv;
                                          printOperand(inst.src);
                                      } else if(id == TACIntrinsic::Read) {
-                                         out << "READ ";
+                                         out << "READ "sv;
                                          printOperand(inst.dst);
                                      } else if(id == TACIntrinsic::Write) {
-                                         out << "WRITE ";
+                                         out << "WRITE "sv;
                                          printOperand(inst.src);
                                      } else
                                          reportUnreachable();
@@ -189,10 +189,10 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                  [](const auto&) { reportUnreachable(); } },
                        inst);
 
-            out << std::endl;
+            out << '\n';
         }
     }
-    out << std::endl;
+    out << '\n';
 }
 
 void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
@@ -207,7 +207,7 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
                 map.emplace(id, count++);
         };
         uint32_t gprAllocateID = 0, stackAllocateID = 0;
-        String labelBase = String::get("label");
+        String labelBase = String::get("label"sv);
         for(auto& symbol : module.symbols) {
             std::visit(Overload{ [&](GMIRFunction& func) {
                                     auto& ref = map[&func];

@@ -37,7 +37,7 @@ void Driver::parse(const std::string& file, FrontEndLang lang, bool recordHierar
     const auto parseImpl = lang == FrontEndLang::Spl ? parseSpl : parseSysY;
     if(!parseImpl(*mImpl, file) || !mImpl->complete()) {
         if(!strictMode) {
-            reportError() << "Failed to parse" << std::endl;
+            reportError() << "Failed to parse"sv << std::endl;
             std::abort();
         } else
             std::exit(EXIT_FAILURE);

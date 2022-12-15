@@ -56,8 +56,8 @@ write:
     jr $ra
 )";
 
-const char* getMIPSTextualName(uint32_t idx) noexcept {
-    constexpr const char* name[] = {
+std::string_view getMIPSTextualName(uint32_t idx) noexcept {
+    constexpr std::string_view name[] = {
         "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3",  //
         "t0",   "t1", "t2", "t3", "t4", "t5", "t6", "t7",  //
         "s0",   "s1", "s2", "s3", "s4", "s5", "s6", "s7",  //
@@ -76,13 +76,13 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
                 metadata->dump(out);
         } break;
         case MIPSAddressSpace::GPR:
-            out << "$" << getMIPSTextualName(operand.id);
+            out << '$' << getMIPSTextualName(operand.id);
             break;
         case MIPSAddressSpace::FPR_S:
-            out << "$f" << operand.id;
+            out << "$f"sv << operand.id;
             break;
         case MIPSAddressSpace::FPR_D:
-            out << "$f" << operand.id * 2;
+            out << "$f"sv << operand.id * 2;
             break;
         default:
             reportUnreachable();
@@ -92,7 +92,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
 static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap,
                      LabelAllocator& allocator, bool hasDelaySlot) {
     std::unordered_map<const GMIRBasicBlock*, String> labelMap;
-    auto baseName = String::get(".BB");
+    auto baseName = String::get(".BB"sv);
     for(auto& block : func.blocks())
         labelMap.emplace(block.get(), allocator.allocate(baseName));
 
@@ -102,11 +102,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
     for(auto& block : func.blocks()) {
         const auto& label = labelMap.at(block.get());
         if(&block != &func.blocks().front())
-            out << label << ":" << std::endl;
+            out << label << ":\n"sv;
 
         const auto delaySlot = [&] {
             if(hasDelaySlot)
-                out << "\n    nop";
+                out << "\n    nop"sv;
         };
         const auto isZero = [&](const Operand& op) {
             if(op.addressSpace == MIPSAddressSpace::Constant) {
@@ -119,22 +119,22 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
         const auto dumpCompare = [&](CompareOp compareOp) {
             switch(compareOp) {
                 case CompareOp::LessThan:
-                    out << "lt";
+                    out << "lt"sv;
                     break;
                 case CompareOp::LessEqual:
-                    out << "le";
+                    out << "le"sv;
                     break;
                 case CompareOp::GreaterThan:
-                    out << "gt";
+                    out << "gt"sv;
                     break;
                 case CompareOp::GreaterEqual:
-                    out << "ge";
+                    out << "ge"sv;
                     break;
                 case CompareOp::Equal:
-                    out << "eq";
+                    out << "eq"sv;
                     break;
                 case CompareOp::NotEqual:
-                    out << "ne";
+                    out << "ne"sv;
                     break;
                 default:
                     reportUnreachable();
@@ -142,19 +142,19 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
         };
 
         for(auto& inst : block->instructions()) {
-            out << "    ";
+            out << "    "sv;
             std::visit(Overload{ [&](const CopyMInst& copy) {
                                     if(copy.indirectSrc && !copy.indirectDst) {
                                         // load
                                         if(copy.size == 4)
-                                            out << "lw ";
+                                            out << "lw "sv;
                                         else if(copy.size == 1)
-                                            out << "lb ";
+                                            out << "lb "sv;
                                         else
                                             reportUnreachable();
 
                                         dumpOperand(copy.dst);
-                                        out << ", " << copy.srcOffset << '(';
+                                        out << ", "sv << copy.srcOffset << '(';
                                         dumpOperand(copy.src);
                                         out << ')';
 
@@ -162,37 +162,37 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                     } else if(copy.indirectDst && !copy.indirectSrc) {
                                         // store
                                         if(copy.size == 4)
-                                            out << "sw ";
+                                            out << "sw "sv;
                                         else if(copy.size == 1)
-                                            out << "sb ";
+                                            out << "sb "sv;
                                         else
                                             reportUnreachable();
                                         dumpOperand(copy.src);
-                                        out << ", " << copy.dstOffset << '(';
+                                        out << ", "sv << copy.dstOffset << '(';
                                         dumpOperand(copy.dst);
                                         out << ')';
                                     } else {
                                         if(copy.size == 4) {
                                             // mfacc
                                             if(copy.src.addressSpace == MIPSAddressSpace::HILO) {
-                                                out << "mf" << (copy.src.id == 0 ? "hi" : "lo") << ' ';
+                                                out << "mf"sv << (copy.src.id == 0 ? "hi"sv : "lo"sv) << ' ';
                                                 dumpOperand(copy.dst);
                                             }
                                             // mtacc
                                             else if(copy.dst.addressSpace == MIPSAddressSpace::HILO) {
-                                                out << "mt" << (copy.dst.id == 0 ? "hi" : "lo") << ' ';
+                                                out << "mt"sv << (copy.dst.id == 0 ? "hi"sv : "lo"sv) << ' ';
                                                 dumpOperand(copy.src);
                                             } else {
                                                 // move
                                                 if(copy.src.addressSpace == MIPSAddressSpace::GPR)
-                                                    out << "move ";
+                                                    out << "move "sv;
                                                 else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
-                                                    out << "li ";
+                                                    out << "li "sv;
                                                 else
                                                     reportNotImplemented();
 
                                                 dumpOperand(copy.dst);
-                                                out << ", ";
+                                                out << ", "sv;
                                                 dumpOperand(copy.src);
                                             }
                                         } else
@@ -200,32 +200,32 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
-                                     out << "li ";
+                                     out << "li "sv;
                                      dumpOperand(constant.dst);
-                                     out << ", ";
+                                     out << ", "sv;
                                      std::visit([&](auto x) { out << x; }, constant.constant);
                                  },
                                  [&](const UnaryArithmeticMInst&) { reportUnreachable(); },
                                  [&](const BinaryArithmeticMInst& binary) {
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
-                                             out << "add";
+                                             out << "add"sv;
                                              break;
                                          case GMIRInstID::Sub:
-                                             out << "sub";
+                                             out << "sub"sv;
                                              break;
                                          case GMIRInstID::Mul:
-                                             out << "mult";
+                                             out << "mult"sv;
                                              break;
                                          case GMIRInstID::SDiv:
                                              [[fallthrough]];
                                          case GMIRInstID::SRem:
-                                             out << "div";
+                                             out << "div"sv;
                                              break;
                                          case GMIRInstID::UDiv:
                                              [[fallthrough]];
                                          case GMIRInstID::URem:
-                                             out << "divu";
+                                             out << "divu"sv;
                                              break;
                                          case GMIRInstID::FAdd:
                                              [[fallthrough]];
@@ -238,10 +238,10 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          case GMIRInstID::FNeg:
                                              reportNotImplemented();
                                          case GMIRInstID::And:
-                                             out << "and";
+                                             out << "and"sv;
                                              break;
                                          case GMIRInstID::Or:
-                                             out << "or";
+                                             out << "or"sv;
                                              break;
                                          case GMIRInstID::Shl:
                                              [[fallthrough]];
@@ -264,34 +264,34 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         binary.instID != GMIRInstID::UDiv && binary.instID != GMIRInstID::SRem &&
                                         binary.instID != GMIRInstID::URem) {
                                          dumpOperand(binary.dst);
-                                         out << ", ";
+                                         out << ", "sv;
                                      } else {
                                          assert(binary.dst == unusedOperand);
                                      }
                                      dumpOperand(binary.lhs);
-                                     out << ", ";
+                                     out << ", "sv;
                                      dumpOperand(binary.rhs);
                                  },
                                  [&](const BranchMInst& branch) {
-                                     out << "b " << labelMap.at(branch.targetBlock);
+                                     out << "b "sv << labelMap.at(branch.targetBlock);
                                      delaySlot();
                                  },
                                  [&](const BranchCompareMInst& branch) {
                                      out << 'b';
                                      dumpCompare(branch.compareOp);
                                      if(branch.lhs.addressSpace == MIPSAddressSpace::GPR && isZero(branch.rhs)) {
-                                         out << "z ";
+                                         out << "z "sv;
                                          dumpOperand(branch.lhs);
                                      } else if(branch.lhs.addressSpace == MIPSAddressSpace::GPR &&
                                                branch.rhs.addressSpace == MIPSAddressSpace::GPR) {
                                          out << ' ';
                                          dumpOperand(branch.lhs);
-                                         out << ", ";
+                                         out << ", "sv;
                                          dumpOperand(branch.rhs);
                                      } else
                                          reportNotImplemented();  // TODO: fp cmp
 
-                                     out << ", " << labelMap.at(branch.targetBlock);
+                                     out << ", "sv << labelMap.at(branch.targetBlock);
                                      delaySlot();
                                  },
                                  [&](const CompareMInst& cmp) {
@@ -300,34 +300,34 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      if(cmp.instID == GMIRInstID::SCmp) {
                                          out << ' ';
                                          dumpOperand(cmp.dst);
-                                         out << ", ";
+                                         out << ", "sv;
                                          dumpOperand(cmp.lhs);
-                                         out << ", ";
+                                         out << ", "sv;
                                          dumpOperand(cmp.rhs);
                                      } else
                                          reportNotImplemented();  // TODO: fp cmp
                                  },
                                  [&](const CallMInst& call) {
                                      if(auto dst = std::get_if<Operand>(&call.callee)) {
-                                         out << "jalr ";
+                                         out << "jalr "sv;
                                          dumpOperand(*dst);
                                      } else {
-                                         out << "jal " << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
+                                         out << "jal "sv << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
                                      }
                                      delaySlot();
                                  },
                                  [&](const RetMInst&) {
-                                     out << "jr $ra";
+                                     out << "jr $ra"sv;
                                      delaySlot();
                                  },
                                  [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
                                  [](const auto&) { reportUnreachable(); } },
                        inst);
 
-            out << "\n";
+            out << '\n';
         }
     }
-    out << std::endl;
+    out << '\n';
 }
 
 extern StringOpt targetMachine;
@@ -348,23 +348,37 @@ void MIPSTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
         hasDelaySlot = true;
     }
 
-    out << ".data" << std::endl;
+    // TODO: rodata/bss
+
+    out << ".data\n"sv;
     if(hasSpimRuntime) {
-        out << spimRuntimeData << std::endl;
+        out << spimRuntimeData << '\n';
     }
+    const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
+        if(symbol.linkage == Linkage::Global)
+            out << ".globl "sv << symbol.symbol << '\n';
+        out << symbol.symbol << ":\n"sv;
+    };
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRDataStorage&) { reportNotImplemented(); }, [](const auto&) {} }, symbol.def);
+        std::visit(Overload{ [&](const GMIRDataStorage& data) {
+                                dumpSymbol(symbol);
+                                data.dump(out, *this);
+                            },
+                             [&](const GMIRZeroStorage& data) {
+                                 dumpSymbol(symbol);
+                                 data.dump(out, *this);
+                             },
+                             [](const auto&) {} },
+                   symbol.def);
     }
 
-    out << ".text" << std::endl;
+    out << ".text\n"sv;
     if(hasSpimRuntime) {
-        out << spimRuntimeText << std::endl;
+        out << spimRuntimeText << '\n';
     }
     for(auto& symbol : module.symbols) {
         std::visit(Overload{ [&](const GMIRFunction& func) {
-                                if(symbol.linkage == Linkage::Global)
-                                    out << ".globl " << symbol.symbol << std::endl;
-                                out << symbol.symbol << ':' << std::endl;
+                                dumpSymbol(symbol);
                                 emitFunc(out, func, symbolMap, allocator, hasDelaySlot);
                             },
                              [](const auto&) {} },

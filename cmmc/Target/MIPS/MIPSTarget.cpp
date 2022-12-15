@@ -145,7 +145,7 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
 
 CMMC_TARGET("mips", MIPSTarget);
 
-const char* getMIPSTextualName(uint32_t idx) noexcept;
+std::string_view getMIPSTextualName(uint32_t idx) noexcept;
 MIPSLoweringInfo::MIPSLoweringInfo()
     : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("m") }, mVReg{ String::get("vr") },
       mHi{ String::get("hi") }, mLo{ String::get("lo") }, mFPR{ String::get("f") } {}
@@ -191,7 +191,7 @@ std::string_view MIPSLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const 
 void MIPSLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
     if(!inst->operands().empty()) {
         const auto val = inst->operands().front();
-        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        const auto& dataLayout = ctx.getDataLayout();
         // TODO: floating-point return value
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 4) {
@@ -209,7 +209,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             reportNotImplemented();
 
         const auto global = ctx.mapGlobal(func);
-        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        const auto& dataLayout = ctx.getDataLayout();
 
         size_t offset = 0U;
         std::vector<size_t> offsets;
@@ -349,7 +349,7 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
     size_t offset = 0U;
     std::vector<size_t> offsets;
     offsets.reserve(args.size());
-    const auto& dataLayout = ctx.getModule().target.getDataLayout();
+    const auto& dataLayout = ctx.getDataLayout();
 
     for(auto arg : args) {
         const auto size = arg->getType()->getSize(dataLayout);

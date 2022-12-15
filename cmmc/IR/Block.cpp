@@ -31,7 +31,7 @@ void BlockArgument::dump(std::ostream& out) const {
 void BlockArgument::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
     getType()->dumpName(out);
-    out << " %" << mLabel;
+    out << " %"sv << mLabel;
 }
 
 void BlockArgument::setLabel(String label) {
@@ -52,16 +52,16 @@ void Block::dump(std::ostream& out) const {
     bool isFirst = true;
     for(auto arg : mArgs) {
         if(!isFirst)
-            out << ", ";
+            out << ", "sv;
         else
             isFirst = false;
         arg->dump(out);
     }
-    out << "):" << std::endl;
+    out << "):\n"sv;
     for(auto inst : mInstructions) {
-        out << "    ";
+        out << "    "sv;
         inst->dump(out);
-        out << ';' << std::endl;
+        out << ";\n"sv;
     }
 }
 
@@ -69,21 +69,21 @@ bool Block::verify(std::ostream& out) const {
     // terminator
 
     if(mInstructions.empty() || !mInstructions.back()->isTerminator()) {
-        out << "require a terminator";
+        out << "require a terminator"sv;
         return false;
     }
 
     // ownership
     for(auto arg : mArgs)
         if(arg->getBlock() != this) {
-            out << "bad ownership";
+            out << "bad ownership"sv;
             arg->dump(out);
             return false;
         }
 
     for(auto inst : mInstructions)
         if(inst->getBlock() != this) {
-            out << "bad ownership";
+            out << "bad ownership"sv;
             inst->dump(out);
             return false;
         }
@@ -95,17 +95,17 @@ bool Block::verify(std::ostream& out) const {
     }
     for(auto inst : mInstructions) {
         if(inst->isTerminator() && inst != mInstructions.back()) {
-            out << "the terminator must be in the end of a block" << std::endl;
+            out << "the terminator must be in the end of a block"sv << std::endl;
             return false;
         }
         for(auto operand : inst->operands()) {
             if(!operand->isConstant() && !operand->isGlobal()) {
                 if(!definedValue.count(operand)) {
-                    out << "bad instruction order" << std::endl;
+                    out << "bad instruction order"sv << std::endl;
                     dump(out);
-                    out << "this operand is required: " << std::endl;
+                    out << "this operand is required: "sv << std::endl;
                     operand->dump(out);
-                    out << std::endl << "user: " << std::endl;
+                    out << std::endl << "user: "sv << std::endl;
                     inst->dump(out);
                     out << std::endl;
                     return false;

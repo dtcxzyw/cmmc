@@ -53,8 +53,10 @@ LoweringContext::LoweringContext(GMIRModule& module, std::unordered_map<Block*, 
                                  std::unordered_map<BlockArgument*, Operand>& blockArgs,
                                  std::unordered_map<Value*, Operand>& valueMap, TemporaryPools& pools,
                                  const BlockArgumentAnalysisResult& blockArgMap)
-    : mModule{ module }, mBlockMap{ blockMap }, mGlobalMap{ globalMap }, mBlockArgs{ blockArgs }, mValueMap{ valueMap },
-      mPools{ pools }, mCurrentBasicBlock{ nullptr }, mBlockArgMap{ blockArgMap } {}
+    : mModule{ module }, mDataLayout{ module.target.getDataLayout() }, mBlockMap{ blockMap }, mGlobalMap{ globalMap },
+      mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mPools{ pools }, mCurrentBasicBlock{ nullptr }, mBlockArgMap{
+          blockArgMap
+      } {}
 
 VirtualRegPool& LoweringContext::getAllocationPool(uint32_t addressSpace) noexcept {
     assert(addressSpace < std::size(mPools.pools));
@@ -79,7 +81,7 @@ Operand LoweringContext::mapOperand(Value* operand) {
         reportNotImplemented();
     }
     if(!operand->isConstant()) {
-        operand->dump(reportError() << "undefined operand ");
+        operand->dump(reportError() << "undefined operand "sv);
         reportUnreachable();
     }
     auto& pool = getAllocationPool(AddressSpace::Constant);
@@ -174,7 +176,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     /*
     if constexpr(Config::debug) {
         func->dump(std::cerr);
-        std::cerr << std::endl;
+        std::cerr << '\n';
         mfunc.dump(std::cerr, target);
     }
     */
@@ -190,27 +192,55 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     std::unordered_map<GlobalValue*, GMIRSymbol*> globalMap;
 
     for(auto global : module.globals()) {
-        // TODO: alignment
         if(global->isFunction()) {
             auto func = global->as<Function>();
             if(func->blocks().empty()) {
-                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), std::monostate{} });
+                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), 1U, std::monostate{} });
             } else {
-                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), GMIRFunction{} });
+                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), 1U, GMIRFunction{} });
             }
         } else {
             const auto var = global->as<GlobalVariable>();
             const auto type = var->getType()->as<PointerType>()->getPointee();
+            const auto alignment = type->getAlignment(dataLayout);
+            const auto size = type->getSize(dataLayout);
             if(auto initialValue = var->initialValue()) {
                 const auto readOnly = var->attr().hasAttr(GlobalVariableAttribute::ReadOnly);
-                CMMC_UNUSED(readOnly);
-                CMMC_UNUSED(initialValue);
-                reportNotImplemented();
-                // TODO: initialize globals
+                GMIRDataStorage::Storage data;
+
+                const auto expand = [&](auto&& self, Value* val) -> void {
+                    const auto type = val->getType();
+                    if(type->isArray()) {
+                        const auto arrayType = type->as<ArrayType>();
+                        const auto& values = val->as<ConstantArray>()->values();
+                        for(auto sub : values) {
+                            self(self, sub);
+                        }
+                        const auto remCount = arrayType->getElementCount() - values.size();
+                        if(remCount) {
+                            const auto remSize = arrayType->getElementType()->getSize(dataLayout) * remCount;
+                            // zero
+                            data.push_back(static_cast<size_t>(remSize));
+                        }
+                    } else if(type->isInteger()) {
+                        const auto value = val->as<ConstantInteger>()->getZeroExtended();
+                        if(type->getFixedSize() == sizeof(uint32_t)) {
+                            data.push_back(static_cast<uint32_t>(value));
+                        } else if(type->getFixedSize() == sizeof(uint8_t)) {
+                            data.push_back(static_cast<std::byte>(value));
+                        } else
+                            reportNotImplemented();
+                    } else
+                        reportNotImplemented();
+                };
+                expand(expand, initialValue);
+
+                // data/rodata
+                symbols.emplace_back(GMIRSymbol{ global->getSymbol(), global->getLinkage(), alignment,
+                                                 GMIRDataStorage{ std::move(data), readOnly } });
             } else {
                 // bss
-                symbols.emplace_back(
-                    GMIRSymbol{ global->getSymbol(), global->getLinkage(), GMIRZeroStorage{ type->getSize(dataLayout) } });
+                symbols.emplace_back(GMIRSymbol{ global->getSymbol(), global->getLinkage(), alignment, GMIRZeroStorage{ size } });
             }
         }
         globalMap.emplace(global, &symbols.back());
@@ -504,13 +534,13 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
 }
 void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto size = inst->getType()->getSize(ctx.getModule().target.getDataLayout());
+    const auto size = inst->getType()->getSize(ctx.getDataLayout());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0, static_cast<uint32_t>(size), false);
     ctx.addOperand(inst, ret);
 }
 void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
     const auto val = inst->getOperand(1);
-    const auto size = val->getType()->getSize(ctx.getModule().target.getDataLayout());
+    const auto size = val->getType()->getSize(ctx.getDataLayout());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
                             static_cast<uint32_t>(size), false);
 }
@@ -518,7 +548,7 @@ static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
-    auto& dataLayout = ctx.getModule().target.getDataLayout();
+    auto& dataLayout = ctx.getDataLayout();
     for(size_t idx = 0; idx < dst.size(); ++idx) {
         const auto arg = ctx.mapOperand(src[idx]);
         const auto dstArg = ctx.mapBlockArg(dst[idx]);
@@ -610,7 +640,7 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
 
     const auto curBlock = ctx.getCurrentBasicBlock();
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto size = static_cast<uint32_t>(inst->getType()->getSize(ctx.getModule().target.getDataLayout()));
+    const auto size = static_cast<uint32_t>(inst->getType()->getSize(ctx.getDataLayout()));
 
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0, size, false);
     const auto next = ctx.addBlockAfter();
@@ -628,7 +658,7 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ret);
 }
 void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
-    const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getModule().target.getDataLayout());
+    const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
     auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
     const auto indexType = inst->operands().front()->getType();  // must be index type
@@ -640,7 +670,7 @@ void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
         constant.getMetadata(baseOffset) = make<ConstantInteger>(indexType, static_cast<intmax_t>(constantOffset));
         ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, base, baseOffset, ptr);
     } else {
-        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        const auto& dataLayout = ctx.getDataLayout();
         ctx.emitInst<CopyMInst>(base, false, 0, ptr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()), false);
     }
     for(auto [size, index] : offsets) {

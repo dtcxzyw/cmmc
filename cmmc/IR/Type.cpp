@@ -32,7 +32,7 @@ const VoidType* VoidType::get() {
     return &type;
 }
 void VoidType::dumpName(std::ostream& out) const {
-    out << "void";
+    out << "void"sv;
 }
 size_t VoidType::getSize(const DataLayout&) const noexcept {
     reportUnreachable();
@@ -160,12 +160,12 @@ void FunctionType::dumpName(std::ostream& out) const {
     bool isFirst = true;
     for(auto arg : mArgTypes) {
         if(!isFirst) {
-            out << ", ";
+            out << ", "sv;
         } else
             isFirst = false;
         arg->dumpName(out);
     }
-    out << ") -> ";
+    out << ") -> "sv;
     mRetType->dumpName(out);
 }
 size_t FunctionType::getSize(const DataLayout&) const noexcept {
@@ -176,19 +176,19 @@ size_t FunctionType::getAlignment(const DataLayout&) const noexcept {
 }
 
 void StructType::dump(std::ostream& out) const {
-    out << "struct " << mName;
-    out << " {";
+    out << "struct "sv << mName;
+    out << " {"sv;
     bool isFirst = true;
     for(auto& field : mFields) {
         if(!isFirst) {
-            out << ", ";
+            out << ", "sv;
         } else
             isFirst = false;
 
         field.type->dumpName(out);
         out << ' ' << field.fieldName;
     }
-    out << "};" << std::endl;
+    out << "};\n";
 }
 void StructType::dumpName(std::ostream& out) const {
     out << "struct " << mName;
@@ -223,11 +223,11 @@ struct InvalidOffset final {
     const StructType* thisStruct;
     const ConstantOffset* offset;
     friend void operator<<(std::ostream& out, const InvalidOffset& offset) {
-        out << "mismatched struct offset:" << std::endl;
-        out << "base's struct: ";
+        out << "mismatched struct offset:"sv << std::endl;
+        out << "base's struct: "sv;
         offset.thisStruct->dump(out);
         out << std::endl;
-        out << "offset's struct: ";
+        out << "offset's struct: "sv;
         offset.offset->base()->dump(out);
         out << std::endl;
     }
@@ -256,7 +256,7 @@ size_t StructType::getFieldOffset(const ConstantOffset* offset, const DataLayout
     reportUnreachable();
 }
 void ArrayType::dumpName(std::ostream& out) const {
-    out << '[' << mElementCount << " * ";
+    out << '[' << mElementCount << " * "sv;
     mElementType->dumpName(out);
     out << ']';
 }
@@ -290,7 +290,7 @@ bool InvalidType::isSame(const Type* rhs) const {
     return rhs->isInvalid();
 }
 void InvalidType::dumpName(std::ostream& out) const {
-    out << "???";
+    out << "???"sv;
 }
 const InvalidType* InvalidType::get() {
     static const InvalidType invalid;
@@ -307,7 +307,7 @@ bool StackStorageType::isSame(const Type*) const {
     reportUnreachable();
 }
 void StackStorageType::dumpName(std::ostream& out) const {
-    out << "storage[" << mSize << ']';
+    out << "storage["sv << mSize << ']';
 }
 size_t StackStorageType::getFixedSize() const noexcept {
     return mSize;

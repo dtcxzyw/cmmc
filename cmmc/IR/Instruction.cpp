@@ -21,13 +21,15 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <ostream>
+#include <string>
+#include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
 void Instruction::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
     getType()->dumpName(out);
-    out << " %" << mLabel;
+    out << " %"sv << mLabel;
 }
 
 bool Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
@@ -55,14 +57,14 @@ bool Instruction::verify(std::ostream& out) const {
     // cross block reference
     for(auto operand : operands())
         if(auto block = operand->getBlock(); block && block != getBlock()) {
-            out << "cross block reference" << std::endl;
-            out << "user: ";
+            out << "cross block reference"sv << std::endl;
+            out << "user: "sv;
             dump(out);
-            out << std::endl << "current block: " << getBlock()->getLabel() << std::endl;
+            out << std::endl << "current block: "sv << getBlock()->getLabel() << std::endl;
             getBlock()->dump(out);
-            out << "used block: " << block->getLabel() << std::endl;
+            out << "used block: "sv << block->getLabel() << std::endl;
             block->dump(out);
-            out << "used operand: " << std::endl;
+            out << "used operand: "sv << std::endl;
             operand->dump(out);
             out << std::endl;
             return false;
@@ -71,98 +73,98 @@ bool Instruction::verify(std::ostream& out) const {
     return true;
 }
 
-static const char* getInstName(InstructionID instID) {
+static std::string_view getInstName(InstructionID instID) {
     switch(instID) {
         case InstructionID::Ret:
-            return "ret";
+            return "ret"sv;
         case InstructionID::Branch:
-            return "ubr";
+            return "ubr"sv;
         case InstructionID::ConditionalBranch:
-            return "cbr";
+            return "cbr"sv;
         case InstructionID::Unreachable:
-            return "unreachable";
+            return "unreachable"sv;
         case InstructionID::Load:
-            return "load";
+            return "load"sv;
         case InstructionID::Store:
-            return "store";
+            return "store"sv;
         case InstructionID::Add:
-            return "add";
+            return "add"sv;
         case InstructionID::Sub:
-            return "sub";
+            return "sub"sv;
         case InstructionID::Mul:
-            return "mul";
+            return "mul"sv;
         case InstructionID::SDiv:
-            return "sdiv";
+            return "sdiv"sv;
         case InstructionID::UDiv:
-            return "udiv";
+            return "udiv"sv;
         case InstructionID::SRem:
-            return "srem";
+            return "srem"sv;
         case InstructionID::URem:
-            return "urem";
+            return "urem"sv;
         case InstructionID::Neg:
-            return "neg";
+            return "neg"sv;
         case InstructionID::And:
-            return "and";
+            return "and"sv;
         case InstructionID::Or:
-            return "or";
+            return "or"sv;
         case InstructionID::Xor:
-            return "xor";
+            return "xor"sv;
         case InstructionID::Shl:
-            return "shl";
+            return "shl"sv;
         case InstructionID::LShr:
-            return "lshr";
+            return "lshr"sv;
         case InstructionID::AShr:
-            return "ashr";
+            return "ashr"sv;
         case InstructionID::FAdd:
-            return "fadd";
+            return "fadd"sv;
         case InstructionID::FSub:
-            return "fsub";
+            return "fsub"sv;
         case InstructionID::FMul:
-            return "fmul";
+            return "fmul"sv;
         case InstructionID::FDiv:
-            return "fdiv";
+            return "fdiv"sv;
         case InstructionID::FNeg:
-            return "fneg";
+            return "fneg"sv;
         case InstructionID::FFma:
-            return "ffma";
+            return "ffma"sv;
         case InstructionID::SCmp:
-            return "scmp";
+            return "scmp"sv;
         case InstructionID::UCmp:
-            return "ucmp";
+            return "ucmp"sv;
         case InstructionID::FCmp:
-            return "fcmp";
+            return "fcmp"sv;
         case InstructionID::SExt:
-            return "sext";
+            return "sext"sv;
         case InstructionID::ZExt:
-            return "zext";
+            return "zext"sv;
         case InstructionID::Trunc:
-            return "trunc";
+            return "trunc"sv;
         case InstructionID::Bitcast:
-            return "bitcast";
+            return "bitcast"sv;
         case InstructionID::F2U:
-            return "f2u";
+            return "f2u"sv;
         case InstructionID::F2S:
-            return "f2s";
+            return "f2s"sv;
         case InstructionID::U2F:
-            return "u2f";
+            return "u2f"sv;
         case InstructionID::S2F:
-            return "s2f";
+            return "s2f"sv;
         case InstructionID::Alloc:
-            return "alloc";
+            return "alloc"sv;
         case InstructionID::Free:
-            return "free";
+            return "free"sv;
         case InstructionID::GetElementPtr:
-            return "getelementptr";
+            return "getelementptr"sv;
         case InstructionID::PtrCast:
-            return "ptrcast";
+            return "ptrcast"sv;
         case InstructionID::PtrToInt:
-            return "ptrtoint";
+            return "ptrtoint"sv;
         case InstructionID::IntToPtr:
-            return "inttoptr";
+            return "inttoptr"sv;
         case InstructionID::Select:
-            return "select";
+            return "select"sv;
         case InstructionID::Call:
-            return "call";
+            return "call"sv;
         default:
             reportUnreachable();
     }
@@ -171,13 +173,13 @@ static const char* getInstName(InstructionID instID) {
 void Instruction::dumpWithNoOperand(std::ostream& out) const {
     if(!getType()->isVoid()) {
         dumpAsOperand(out);
-        out << " = ";
+        out << " = "sv;
     }
     out << getInstName(getInstID());
 }
 void Instruction::dumpBinary(std::ostream& out) const {
     dumpUnary(out);
-    out << ", ";
+    out << ", "sv;
     getOperand(1)->dumpAsOperand(out);
 }
 void Instruction::dumpUnary(std::ostream& out) const {
@@ -190,20 +192,20 @@ void BinaryInst::dump(std::ostream& out) const {
     dumpBinary(out);
 }
 
-static const char* getCompareName(CompareOp op) {
+static std::string_view getCompareName(CompareOp op) {
     switch(op) {
         case CompareOp::LessThan:
-            return "lt";
+            return "lt"sv;
         case CompareOp::LessEqual:
-            return "le";
+            return "le"sv;
         case CompareOp::GreaterThan:
-            return "gt";
+            return "gt"sv;
         case CompareOp::GreaterEqual:
-            return "ge";
+            return "ge"sv;
         case CompareOp::Equal:
-            return "eq";
+            return "eq"sv;
         case CompareOp::NotEqual:
-            return "neq";
+            return "neq"sv;
         default:
             reportUnreachable();
     }
@@ -211,9 +213,9 @@ static const char* getCompareName(CompareOp op) {
 
 void CompareInst::dump(std::ostream& out) const {
     dumpAsOperand(out);
-    out << " = " << getInstName(getInstID()) << ' ' << getCompareName(mCompare) << ' ';
+    out << " = "sv << getInstName(getInstID()) << ' ' << getCompareName(mCompare) << ' ';
     getOperand(0)->dumpAsOperand(out);
-    out << ", ";
+    out << ", "sv;
     getOperand(1)->dumpAsOperand(out);
 }
 
@@ -225,7 +227,7 @@ void CastInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
-    out << " to ";
+    out << " to "sv;
     getType()->dumpName(out);
 }
 
@@ -237,7 +239,7 @@ void StoreInst::dump(std::ostream& out) const {
     out << getInstName(getInstID());
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
-    out << " with ";
+    out << " with "sv;
     getOperand(1)->dumpAsOperand(out);
 }
 
@@ -248,7 +250,7 @@ void BranchTarget::dump(std::ostream& out) const {
         bool isFirst = true;
         for(auto arg : mArgs) {
             if(!isFirst)
-                out << ", ";
+                out << ", "sv;
             else
                 isFirst = false;
             arg->dumpAsOperand(out);
@@ -259,16 +261,16 @@ void BranchTarget::dump(std::ostream& out) const {
 void ConditionalBranchInst::dump(std::ostream& out) const {
     out << getInstName(getInstID()) << ' ';
     if(getInstID() == InstructionID::Branch) {
-        out << "[ ";
+        out << "[ "sv;
         mTrueTarget.dump(out);
-        out << " ]";
+        out << " ]"sv;
     } else {
         getOperand(0)->dumpAsOperand(out);
-        out << ", [ ";
+        out << ", [ "sv;
         mTrueTarget.dump(out);
-        out << " ], [ ";
+        out << " ], [ "sv;
         mFalseTarget.dump(out);
-        out << " ]";
+        out << " ]"sv;
     }
 }
 
@@ -280,28 +282,28 @@ bool ConditionalBranchInst::verify(std::ostream& out) const {
         if(!block)
             return true;
         if(block == getBlock()->getFunction()->entryBlock()) {
-            out << "Cannot branch to entry block" << std::endl;
+            out << "Cannot branch to entry block"sv << std::endl;
             return false;
         }
         auto& args1 = target.getArgs();
         auto& args2 = block->args();
         if(args1.size() != args2.size()) {
-            out << "The counts of block arguments mismatch." << std::endl;
-            out << "Source block: " << getBlock()->getLabel() << " provided " << args1.size() << std::endl;
-            out << "Dest block: " << block->getLabel() << " required " << args2.size() << std::endl;
+            out << "The counts of block arguments mismatch."sv << std::endl;
+            out << "Source block: "sv << getBlock()->getLabel() << " provided "sv << args1.size() << std::endl;
+            out << "Dest block: "sv << block->getLabel() << " required "sv << args2.size() << std::endl;
             return false;
         }
         for(uint32_t idx = 0; idx < args1.size(); ++idx) {
             const auto t1 = args1[idx];
             const auto t2 = args2[idx];
             if(!t1->getType()->isSame(t2->getType())) {
-                out << "The types of block arguments mismatch." << std::endl;
-                out << "Source block: " << getBlock()->getLabel() << std::endl;
-                out << "Dest block: " << block->getLabel() << std::endl;
-                out << "Index: " << idx << std::endl;
-                out << "Source type: ";
+                out << "The types of block arguments mismatch."sv << std::endl;
+                out << "Source block: "sv << getBlock()->getLabel() << std::endl;
+                out << "Dest block: "sv << block->getLabel() << std::endl;
+                out << "Index: "sv << idx << std::endl;
+                out << "Source type: "sv;
                 t1->getType()->dump(out);
-                out << std::endl << "Dest type: ";
+                out << std::endl << "Dest type: "sv;
                 t2->getType()->dump(out);
                 out << std::endl;
                 return false;
@@ -371,7 +373,7 @@ void FunctionCallInst::dump(std::ostream& out) const {
         if(cnt == size)
             break;
         if(cnt != 0) {
-            out << ", ";
+            out << ", "sv;
         }
         ++cnt;
         arg->dumpAsOperand(out);
@@ -383,9 +385,9 @@ void SelectInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
-    out << " ? ";
+    out << " ? "sv;
     getOperand(1)->dumpAsOperand(out);
-    out << " : ";
+    out << " : "sv;
     getOperand(2)->dumpAsOperand(out);
 }
 
@@ -401,7 +403,7 @@ void StackFreeInst::dump(std::ostream& out) const {
 
 void FMAInst::dump(std::ostream& out) const {
     dumpBinary(out);
-    out << ", ";
+    out << ", "sv;
     getOperand(2)->dumpAsOperand(out);
 }
 
@@ -472,7 +474,7 @@ std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gat
 void GetElementPtrInst::dump(std::ostream& out) const {
     dumpWithNoOperand(out);
     const auto base = operands().back();
-    out << " &(";
+    out << " &("sv;
     base->dumpAsOperand(out);
     out << ')';
     for(auto idx : operands()) {
@@ -491,7 +493,7 @@ void GetElementPtrInst::dump(std::ostream& out) const {
 
 void PtrCastInst::dump(std::ostream& out) const {
     dumpUnary(out);
-    out << " to ";
+    out << " to "sv;
     getType()->dump(out);
 }
 
@@ -576,7 +578,7 @@ Instruction* PtrCastInst::clone() const {
 
 void PtrToIntInst::dump(std::ostream& out) const {
     dumpUnary(out);
-    out << " to ";
+    out << " to "sv;
     getType()->dump(out);
 }
 Instruction* PtrToIntInst::clone() const {
@@ -584,8 +586,9 @@ Instruction* PtrToIntInst::clone() const {
 }
 
 void IntToPtrInst::dump(std::ostream& out) const {
+    // TODO: dump cast
     dumpUnary(out);
-    out << " to ";
+    out << " to "sv;
     getType()->dump(out);
 }
 Instruction* IntToPtrInst::clone() const {
@@ -610,14 +613,14 @@ bool ReturnInst::verify(std::ostream& out) const {
         if(operands().empty())
             return true;
         else {
-            out << "should return void" << std::endl;
+            out << "should return void"sv << std::endl;
             return false;
         }
     } else {
         if(operands().size() == 1 && getOperand(0)->getType()->isSame(ret)) {
             return true;
         }
-        out << "return type mismatch" << std::endl;
+        out << "return type mismatch"sv << std::endl;
         return false;
     }
 }
@@ -649,26 +652,26 @@ bool ConditionalBranchInst::isEqual(const Instruction* rhs) const {
 
 bool LoadInst::verify(std::ostream& out) const {
     if(!getType()->isPrimitive()) {
-        out << "Cannot load non-primitive values";
+        out << "Cannot load non-primitive values"sv;
         return false;
     }
     return true;
 }
 bool StoreInst::verify(std::ostream& out) const {
     if(!getOperand(0)->getType()->isPointer()) {
-        out << "The destination must be a pointer" << std::endl;
+        out << "The destination must be a pointer"sv << std::endl;
         return false;
     }
     if(!getOperand(0)->getType()->as<PointerType>()->getPointee()->isSame(getOperand(1)->getType())) {
-        out << "Type mismatch [Destination = ";
+        out << "Type mismatch [Destination = "sv;
         getOperand(0)->getType()->dump(out);
-        out << ", Value = ";
+        out << ", Value = "sv;
         getOperand(1)->getType()->dump(out);
-        out << "]" << std::endl;
+        out << ']' << std::endl;
         return false;
     }
     if(!getOperand(1)->getType()->isPrimitive()) {
-        out << "Cannot store non-primitive values";
+        out << "Cannot store non-primitive values"sv;
         return false;
     }
     return true;

@@ -99,7 +99,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
 
     if(emitIR.get()) {
         const auto path = getOutputPath(base + ".ir2");
-        reportDebug() << "emitIR >> " << path << std::endl;
+        reportDebug() << "emitIR >> "sv << path << std::endl;
         std::ofstream out{ path };
         module.dump(out);
         return EXIT_SUCCESS;
@@ -108,7 +108,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
     if(auto& input = executeInput.get(false); !input.empty()) {
         InputStream in{ input };
         const auto path = getOutputPath(base + ".out");
-        reportDebug() << "simulation << " << input << " >> " << path << std::endl;
+        reportDebug() << "simulation << "sv << input << " >> "sv << path << std::endl;
         OutputStream out{ path };
         SimulationIOContext ctx{ in, out };
         const auto ret = runMain(module, ctx);
@@ -153,7 +153,7 @@ int mainImpl(int argc, char** argv) {
 
     if(version.get()) {
         reportInfo() << "CMMC " CMMC_VERSION << std::endl;
-        reportInfo() << "Build time: " << __TIME__ << " " << __DATE__ << std::endl;
+        reportInfo() << "Build time: " __TIME__ " " __DATE__ << std::endl;
         return EXIT_SUCCESS;
     }
 
@@ -163,12 +163,12 @@ int mainImpl(int argc, char** argv) {
     }
 
     if(argc == start) {
-        reportError() << "no input file" << std::endl;
+        reportError() << "no input file"sv << std::endl;
         return EXIT_FAILURE;
     }
 
     if(argc - start != 1) {
-        reportError() << "only one input file is accepted" << std::endl;
+        reportError() << "only one input file is accepted"sv << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -193,7 +193,7 @@ int mainImpl(int argc, char** argv) {
 
                 if(emitAST.get()) {
                     const auto path = getOutputPath(base + ".ast");
-                    reportDebug() << "emitAST >> " << path << std::endl;
+                    reportDebug() << "emitAST >> "sv << path << std::endl;
                     std::ofstream out{ path };
                     driver.dump(out);
                     return EXIT_SUCCESS;
@@ -212,12 +212,12 @@ int mainImpl(int argc, char** argv) {
             return runIRPipeline(module, base);
         }
 
-        reportError() << "Unrecognized input" << std::endl;
+        reportError() << "Unrecognized input"sv << std::endl;
         return EXIT_FAILURE;
     } catch(const std::exception& ex) {
-        std::cerr << "Unexpected exception: " << ex.what() << std::endl;
+        std::cerr << "Unexpected exception: "sv << ex.what() << std::endl;
     } catch(...) {
-        std::cerr << "Unknown error" << std::endl;
+        std::cerr << "Unknown error"sv << std::endl;
     }
     return EXIT_FAILURE;
 }

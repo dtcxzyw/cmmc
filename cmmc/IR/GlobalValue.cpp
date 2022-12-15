@@ -19,7 +19,7 @@ CMMC_NAMESPACE_BEGIN
 void GlobalValue::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
     getType()->dumpName(out);
-    out << " @" << mSymbol;
+    out << " @"sv << mSymbol;
 }
 
 CMMC_NAMESPACE_END

@@ -64,11 +64,11 @@ struct Hierarchy final {
 
     template <typename T>
     static void print(std::ostream& out, const char* name, uint32_t, const T& metadata) {
-        out << name << ": " << metadata << std::endl;
+        out << name << ": "sv << metadata << '\n';
     }
 
     static void print(std::ostream& out, const char* name, uint32_t, const char metadata) {
-        out << name << ": '";
+        out << name << ": '"sv;
         if(std::isprint(metadata))
             out << metadata;
         else {
@@ -76,17 +76,17 @@ struct Hierarchy final {
             const uint8_t val = metadata;
             const auto p1 = lut[val / 16];
             const auto p2 = lut[val % 16];
-            out << "\\x" << p1 << p2;
+            out << "\\x"sv << p1 << p2;
         }
-        out << '\'' << std::endl;
+        out << "\'\n"sv;
     }
 
     static void print(std::ostream& out, const char* name, uint32_t, std::monostate) {
-        out << name << std::endl;
+        out << name << '\n';
     }
 
     static void print(std::ostream& out, const char* name, uint32_t line, NonTerminal) {
-        out << name << " (" << line << ')' << std::endl;
+        out << name << " ("sv << line << ")\n"sv;
     }
 
     [[noreturn]] static void print(std::ostream&, const char*, uint32_t, Empty) {

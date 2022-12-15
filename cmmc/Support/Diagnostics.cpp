@@ -33,25 +33,25 @@ CMMC_INIT_OPTIONS_END
 static std::ofstream null{ "/dev/null" };
 
 std::ostream& reportInfo() {
-    return std::cout << "[INFO] ";
+    return std::cout << "[INFO] "sv;
 }
 std::ostream& reportWarning() {
-    return (warning.get() ? std::cerr : null) << "[WARNING] ";
+    return (warning.get() ? std::cerr : null) << "[WARNING] "sv;
 }
 std::ostream& reportError() {
     if(strictMode.get())
         return std::cerr;
-    return std::cerr << "[ERROR] ";
+    return std::cerr << "[ERROR] "sv;
 }
 std::ostream& reportDebug() {
-    return (verbose.get() ? std::cerr : null) << "[DEBUG] ";
+    return (verbose.get() ? std::cerr : null) << "[DEBUG] "sv;
 }
 [[noreturn]] void reportUnreachable() {
-    std::cerr << "Unreachable code" << std::endl;
+    std::cerr << "Unreachable code"sv << std::endl;
     __builtin_trap();
 }
 [[noreturn]] void reportNotImplemented() {
-    std::cerr << "Not implemented feature" << std::endl;
+    std::cerr << "Not implemented feature"sv << std::endl;
     __builtin_trap();
 }
 
@@ -74,7 +74,7 @@ Optional(const std::deque<T>&) -> Optional<T>;
     auto& out = std::cerr;
     for(auto& func : mAttachments)
         func(out);
-    out << "Context: " << std::endl;
+    out << "Context: "sv << std::endl;
     std::apply([&](auto&... args) { (out << ... << Optional{ args }); }, mContext);
     out << std::flush;
     __builtin_trap();

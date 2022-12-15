@@ -117,7 +117,7 @@ void ARMTarget::legalizeFunc(GMIRFunction& func) const {
 
 CMMC_TARGET("arm", ARMTarget);
 
-const char* getARMTextualName(uint32_t idx) noexcept;
+std::string_view getARMTextualName(uint32_t idx) noexcept;
 ARMLoweringInfo::ARMLoweringInfo()
     : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("m") }, mVReg{ String::get("vr") },
       mFPR{ String::get("f") } {}
@@ -159,7 +159,7 @@ std::string_view ARMLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
 void ARMLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
     if(!inst->operands().empty()) {
         const auto val = inst->operands().front();
-        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        const auto& dataLayout = ctx.getDataLayout();
         // TODO: floating-point return value
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 4) {
@@ -177,7 +177,7 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
             reportNotImplemented();
 
         const auto global = ctx.mapGlobal(func);
-        const auto& dataLayout = ctx.getModule().target.getDataLayout();
+        const auto& dataLayout = ctx.getDataLayout();
 
         size_t offset = 0U;
         std::vector<size_t> offsets;
@@ -317,7 +317,7 @@ void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
     size_t offset = 0U;
     std::vector<size_t> offsets;
     offsets.reserve(args.size());
-    const auto& dataLayout = ctx.getModule().target.getDataLayout();
+    const auto& dataLayout = ctx.getDataLayout();
 
     for(auto arg : args) {
         const auto size = arg->getType()->getSize(dataLayout);

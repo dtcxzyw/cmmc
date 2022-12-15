@@ -31,7 +31,7 @@ void Module::dump(std::ostream& out) const {
         for(auto type : mTypes)
             type->dump(out);
 
-        out << std::endl;
+        out << '\n';
     }
 
     for(auto value : mGlobals)
@@ -49,7 +49,7 @@ bool Module::verify(std::ostream& out) const {
                 for(auto inst : block->instructions()) {
                     for(auto operand : inst->operands())
                         if(operand->isGlobal() && !values.count(operand)) {
-                            out << "dangling reference to global ";
+                            out << "dangling reference to global "sv;
                             operand->dumpAsOperand(out);
                             return false;
                         }

@@ -60,19 +60,19 @@ void OptionBase::printHelp() {
     auto& out = reportInfo();
     auto printArg = [&](char sep) {
         if(mType == ArgType::Required)
-            out << sep << "ARG";
+            out << sep << "ARG"sv;
         else if(mType == ArgType::Optional)
-            out << sep << "[ARG]";
+            out << sep << "[ARG]"sv;
     };
-    out << "--" << mName;
+    out << "--"sv << mName;
     printArg('=');
     if(mShortName) {
-        out << "|-" << mShortName;
+        out << "|-"sv << mShortName;
         printArg(' ');
     }
     out << ' ' << mDesc;
     if(mType == ArgType::Optional) {
-        out << " (default = ";
+        out << " (default = "sv;
         printDefault(out);
         out << ')';
     }
@@ -180,7 +180,7 @@ void printHelpInfo() {
     auto& opts = OptionStorage::get().options;
     std::sort(opts.begin(), opts.end(), [](auto lhs, auto rhs) { return lhs->getName() < rhs->getName(); });
 
-    reportInfo() << "Usage: CMMC [Options] Input" << std::endl;
+    reportInfo() << "Usage: CMMC [Options] Input"sv << std::endl;
     for(auto opt : opts)
         opt->printHelp();
 }
@@ -189,7 +189,7 @@ struct RequiredArgument final {
     std::string_view name;
     std::string_view type;
     friend void operator<<(std::ostream& out, const RequiredArgument& req) {
-        out << "option " << req.name << " [" << req.type << "] is required" << std::endl;
+        out << "option "sv << req.name << " ["sv << req.type << "] is required"sv << std::endl;
     }
 };
 

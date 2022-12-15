@@ -229,5 +229,5 @@ Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, 
 ;
 %%
 void SysY::parser::error(const location_type& l, const std::string& m) {
-    reportError() << l << ": " << m << '\n';
+    reportError() << l << ": "sv << m << '\n';
 }

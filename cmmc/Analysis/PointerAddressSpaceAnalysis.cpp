@@ -109,7 +109,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                         break;
                     }
                     default: {
-                        inst->dump(reportError() << "unimplemented inst ");
+                        inst->dump(reportError() << "unimplemented inst "sv);
                         reportNotImplemented();
                     }
                 }

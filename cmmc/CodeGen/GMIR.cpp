@@ -17,6 +17,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <type_traits>
 #include <variant>
@@ -42,22 +43,22 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
         out << 's';
         switch(compareOp) {
             case CompareOp::LessThan:
-                out << "lt";
+                out << "lt"sv;
                 break;
             case CompareOp::LessEqual:
-                out << "le";
+                out << "le"sv;
                 break;
             case CompareOp::GreaterThan:
-                out << "gt";
+                out << "gt"sv;
                 break;
             case CompareOp::GreaterEqual:
-                out << "ge";
+                out << "ge"sv;
                 break;
             case CompareOp::Equal:
-                out << "eq";
+                out << "eq"sv;
                 break;
             case CompareOp::NotEqual:
-                out << "ne";
+                out << "ne"sv;
                 break;
         }
         if(instID == GMIRInstID::UCmp)
@@ -65,33 +66,33 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
     };
 
     dumpTarget(this);
-    out << ": ";
+    out << ": "sv;
 
     if(!mUsedStackObjects.empty()) {
-        out << "# used stack objects:";
+        out << "# used stack objects:"sv;
         for(auto used : mUsedStackObjects) {
             out << ' ';
             dumpOperand(used);
         }
     }
 
-    out << std::endl;
+    out << '\n';
 
     for(auto& inst : mInstructions) {
         std::visit(Overload{ [&](const CopyMInst& inst) {
                                 if(!inst.indirectSrc && !inst.indirectDst) {
-                                    out << "mov ";
+                                    out << "mov "sv;
                                     dumpOperand(inst.dst);
                                     out << ' ';
                                     dumpOperand(inst.src);
                                 } else if(inst.indirectSrc && !inst.indirectDst) {
-                                    out << "load ";
+                                    out << "load "sv;
                                     dumpOperand(inst.dst);
                                     out << ' ' << inst.srcOffset << '(';
                                     dumpOperand(inst.src);
                                     out << ')';
                                 } else if(inst.indirectDst && !inst.indirectSrc) {
-                                    out << "store ";
+                                    out << "store "sv;
                                     dumpOperand(inst.src);
                                     out << ' ' << inst.dstOffset << '(';
                                     dumpOperand(inst.dst);
@@ -100,23 +101,23 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                     reportUnreachable();
                             },
                              [&](const ConstantMInst& inst) {
-                                 out << "li ";
+                                 out << "li "sv;
                                  dumpOperand(inst.dst);
                                  out << ' ';
                                  std::visit([&](auto x) { out << x; }, inst.constant);
                              },
                              [&](const GlobalAddressMInst& inst) {
-                                 out << "la ";
+                                 out << "la "sv;
                                  dumpOperand(inst.dst);
                                  out << ' ' << inst.global->symbol;
                              },
                              [&](const UnaryArithmeticMInst& inst) {
                                  switch(inst.instID) {
                                      case GMIRInstID::Neg:
-                                         out << "neg ";
+                                         out << "neg "sv;
                                          break;
                                      case GMIRInstID::FNeg:
-                                         out << "fneg ";
+                                         out << "fneg "sv;
                                          break;
                                      default:
                                          reportUnreachable();
@@ -128,55 +129,55 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                              [&](const BinaryArithmeticMInst& inst) {
                                  switch(inst.instID) {
                                      case GMIRInstID::Add:
-                                         out << "add ";
+                                         out << "add "sv;
                                          break;
                                      case GMIRInstID::Sub:
-                                         out << "sub ";
+                                         out << "sub "sv;
                                          break;
                                      case GMIRInstID::Mul:
-                                         out << "mul ";
+                                         out << "mul "sv;
                                          break;
                                      case GMIRInstID::SDiv:
-                                         out << "div ";
+                                         out << "div "sv;
                                          break;
                                      case GMIRInstID::UDiv:
-                                         out << "divu ";
+                                         out << "divu "sv;
                                          break;
                                      case GMIRInstID::SRem:
-                                         out << "rem ";
+                                         out << "rem "sv;
                                          break;
                                      case GMIRInstID::URem:
-                                         out << "remu ";
+                                         out << "remu "sv;
                                          break;
                                      case GMIRInstID::FAdd:
-                                         out << "fadd ";
+                                         out << "fadd "sv;
                                          break;
                                      case GMIRInstID::FSub:
-                                         out << "fsub ";
+                                         out << "fsub "sv;
                                          break;
                                      case GMIRInstID::FMul:
-                                         out << "fmul ";
+                                         out << "fmul "sv;
                                          break;
                                      case GMIRInstID::FDiv:
-                                         out << "fdiv ";
+                                         out << "fdiv "sv;
                                          break;
                                      case GMIRInstID::And:
-                                         out << "and ";
+                                         out << "and "sv;
                                          break;
                                      case GMIRInstID::Or:
-                                         out << "or ";
+                                         out << "or "sv;
                                          break;
                                      case GMIRInstID::Xor:
-                                         out << "xor ";
+                                         out << "xor "sv;
                                          break;
                                      case GMIRInstID::Shl:
-                                         out << "shl ";
+                                         out << "shl "sv;
                                          break;
                                      case GMIRInstID::AShr:
-                                         out << "ashr ";
+                                         out << "ashr "sv;
                                          break;
                                      case GMIRInstID::LShr:
-                                         out << "lshr ";
+                                         out << "lshr "sv;
                                          break;
                                      default:
                                          reportUnreachable();
@@ -189,7 +190,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  dumpOperand(inst.rhs);
                              },
                              [&](const ArithmeticIntrinsicMInst& inst) {
-                                 out << "ISA." << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
+                                 out << "ISA."sv << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
                                  dumpOperand(inst.dst);
                                  for(auto& op : inst.src)
                                      if(op == unusedOperand) {
@@ -209,11 +210,11 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  dumpOperand(inst.rhs);
                              },
                              [&](const BranchMInst& inst) {
-                                 out << "j ";
+                                 out << "b "sv;
                                  dumpTarget(inst.targetBlock);
                              },
                              [&](const BranchCompareMInst& inst) {
-                                 out << "b";
+                                 out << 'b';
                                  dumpCompare(inst.instID, inst.compareOp);
                                  out << ' ';
                                  dumpOperand(inst.lhs);
@@ -224,9 +225,9 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                              },
                              [&](const CallMInst& inst) {
                                  if(inst.dst == unusedOperand) {
-                                     out << "jalr ";
+                                     out << "jalr "sv;
                                  } else {
-                                     out << "call ";
+                                     out << "call "sv;
                                      dumpOperand(inst.dst);
                                      out << ' ';
                                  }
@@ -234,48 +235,49 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                                       [&](const GMIRSymbol* symbol) { out << symbol->symbol; } },
                                             inst.callee);
                              },
-                             [&](const UnreachableMInst&) { out << "unreachable"; },
+                             [&](const UnreachableMInst&) { out << "unreachable"sv; },
                              [&](const RetMInst& inst) {
-                                 out << "ret";
+                                 out << "ret"sv;
                                  if(inst.retVal != unusedOperand) {
                                      out << ' ';
                                      dumpOperand(inst.retVal);
                                  }
                              },
                              [&](const ControlFlowIntrinsicMInst& inst) {
-                                 out << "ISA." << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
+                                 out << "ISA."sv << loweringInfo.getIntrinsicName(inst.intrinsicID) << ' ';
                                  dumpOperand(inst.dst);
                                  out << ' ';
                                  dumpOperand(inst.src);
                              } },
                    inst);
-        out << std::endl;
+        out << '\n';
     }
 }
 void GMIRFunction::dump(std::ostream& out, const Target& target) const {
     int32_t idx = 0;
-    auto base = String::get("b");
+    auto base = String::get("b"sv);
     std::unordered_map<const GMIRBasicBlock*, String> blockMap;
     for(auto& block : mBasicBlocks)
         blockMap[block.get()] = base.withID(idx++);
-    out << " # Function" << std::endl;
+    out << " # Function\n"sv;
     auto& info = target.getTargetLoweringInfo();
     for(auto& param : mParameters)
-        out << "Param " << info.getOperand(param) << std::endl;
+        out << "Param "sv << info.getOperand(param) << '\n';
     for(auto& block : mBasicBlocks)
         block->dump(out, target, blockMap, mPools);
 }
-void GMIRZeroStorage::dump(std::ostream&, const Target&) const {
-    reportNotImplemented();
+void GMIRZeroStorage::dump(std::ostream& out, const Target&) const {
+    out << "\t.zero\t" << mSize << '\n';
 }
-void GMIRStringStorage::dump(std::ostream&, const Target&) const {
-    reportNotImplemented();
-}
-void GMIRDataStorage::dump(std::ostream&, const Target&) const {
-    reportNotImplemented();
+void GMIRDataStorage::dump(std::ostream& out, const Target&) const {
+    for(const auto& val : data)
+        std::visit(Overload{ [&](const uint32_t word) { out << "\t.word\t" << word << '\n'; },
+                             [&](const size_t size) { out << "\t.zero\t" << size << '\n'; },
+                             [&](const std::byte byte) { out << "\t.byte\t" << static_cast<uint32_t>(byte) << '\n'; } },
+                   val);
 }
 void GMIRSymbol::dump(std::ostream& out, const Target& target) const {
-    out << (linkage == Linkage::Global ? ".global " : ".internal ") << symbol;
+    out << (linkage == Linkage::Global ? ".global "sv : ".internal "sv) << symbol;
     std::visit(Overload{ [](std::monostate) {}, [&](auto&& x) { x.dump(out, target); } }, def);
 }
 void GMIRModule::dump(std::ostream& out) const {
@@ -309,12 +311,12 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
                     if constexpr(std::is_same_v<T, RetMInst> || std::is_same_v<T, UnreachableMInst> ||
                                  std::is_same_v<T, BranchCompareMInst> || std::is_same_v<T, BranchMInst>) {
                         if(!end) {
-                            err << "The terminator must be at the end of the basic block." << std::endl;
+                            err << "The terminator must be at the end of the basic block."sv << std::endl;
                             return false;
                         }
                     } else {
                         if(end) {
-                            err << "The basic block must end up with a terminator." << std::endl;
+                            err << "The basic block must end up with a terminator."sv << std::endl;
                             return false;
                         }
                     }

@@ -19,27 +19,27 @@ CMMC_NAMESPACE_BEGIN
 
 void GlobalVariable::dump(std::ostream& out) const {
     if(getLinkage() == Linkage::Internal)
-        out << "internal ";
+        out << "internal "sv;
     getType()->as<PointerType>()->dump(out);
-    out << " @" << getSymbol();
+    out << " @"sv << getSymbol();
     if(!mAttr.empty()) {
-        out << " { ";
+        out << " { "sv;
 #define HANDLE_ATTR(NAME)                            \
     if(mAttr.hasAttr(GlobalVariableAttribute::NAME)) \
-    out << #NAME " "
+    out << #NAME " "sv
 
         HANDLE_ATTR(ReadOnly);
 
 #undef HANDLE_ATTR
-        out << "}";
+        out << '}';
     }
 
     if(mStaticInitializedValue) {
-        out << " = ";
+        out << " = "sv;
         mStaticInitializedValue->dump(out);
     }
 
-    out << ";" << std::endl;
+    out << ";\n"sv;
 }
 
 CMMC_NAMESPACE_END

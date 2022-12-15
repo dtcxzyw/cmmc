@@ -63,9 +63,9 @@ void StageStorage::printNested(uint32_t depth, double total) const {
         const auto duraiton = static_cast<double>(stage->duration().count());
         constexpr auto ratio = static_cast<double>(Clock::period::num) / static_cast<double>(Clock::period::den);
         for(uint32_t idx = 0; idx < depth; ++idx)
-            std::cerr << "    ";
-        std::cerr << *name << ' ' << (duraiton * ratio * 1000.0) << " ms " << count << ' ' << (duraiton / self * 100.0) << "% "
-                  << (duraiton / total * 100.0) << "% " << std::endl;
+            std::cerr << "    "sv;
+        std::cerr << *name << ' ' << (duraiton * ratio * 1000.0) << " ms "sv << count << ' ' << (duraiton / self * 100.0)
+                  << "% "sv << (duraiton / total * 100.0) << "% "sv << std::endl;
         stage->printNested(depth + 1, total);
     }
 }
@@ -95,11 +95,11 @@ void Profiler::printStatistics() {
             reportUnreachable();
         std::cerr.precision(2);
         std::cerr << std::fixed;
-        std::cerr << "===================== PERFORMANCE PROFILING RESULT =====================" << std::endl;
+        std::cerr << "===================== PERFORMANCE PROFILING RESULT ====================="sv << std::endl;
         constexpr auto ratio = static_cast<double>(Clock::period::num) / static_cast<double>(Clock::period::den);
-        std::cerr << "Total used: " << (mRootStage.duration().count() * ratio * 1000.0) << " ms" << std::endl;
+        std::cerr << "Total used: "sv << (mRootStage.duration().count() * ratio * 1000.0) << " ms"sv << std::endl;
         mRootStage.printNested(0, static_cast<double>(mRootStage.duration().count()));
-        std::cerr << "========================================================================" << std::endl;
+        std::cerr << "========================================================================"sv << std::endl;
     }
 }
 
