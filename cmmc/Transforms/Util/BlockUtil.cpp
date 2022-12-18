@@ -116,4 +116,35 @@ std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& f
     return { inst, &inst->getTrueTarget() };
 }
 
+bool isNoSideEffectExpr(const Instruction& inst) {
+    if(!inst.canbeOperand())
+        return false;
+    if(inst.isTerminator())
+        return false;
+    switch(inst.getInstID()) {
+        case InstructionID::Store:
+            [[fallthrough]];
+        case InstructionID::Alloc:
+            [[fallthrough]];
+        case InstructionID::Free:
+            [[fallthrough]];
+        case InstructionID::Load: {
+            return false;
+        }
+        case InstructionID::Call: {
+            const auto callee = inst.operands().back();
+            if(auto func = dynamic_cast<Function*>(callee)) {
+                auto& attr = func->attr();
+                return attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless);
+            } else {
+                return false;
+            }
+        }
+        default:
+            break;
+    }
+
+    return true;
+}
+
 CMMC_NAMESPACE_END

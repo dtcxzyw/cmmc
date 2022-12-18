@@ -103,6 +103,7 @@ def spl_codegen_tac(src):
     ir = out.stdout
     if not irsim.check(ir):
         return False
+    print('', ir.count('\n'), end='')
     name = os.path.basename(src)
     if name in irsim.test_generators:
         for inputs, answer in irsim.test_generators[name]():

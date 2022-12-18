@@ -19,7 +19,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <iostream>
 
 CMMC_NAMESPACE_BEGIN
 

@@ -199,7 +199,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // select x 1 0 -> zext x
-            if(select(any(v1), cint_(1), cint_(0))(matchCtx)) {
+            if(select(any(v1), cuint_(1), cuint_(0))(matchCtx)) {
                 if(inst->getType()->isBoolean()) {
                     return v1;
                 } else {

@@ -249,7 +249,15 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
         }))
         basic->addPass(pass);
 
-    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 64);
+    if(level >= OptimizationLevel::O2) {
+        for(auto pass : passesSource.collect({
+                "GVN",                    //
+                "NoSideEffectEliminate",  // clean up
+            }))
+            basic->addPass(pass);
+    }
+
+    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 1024);
 
     root->addPass(iter);  // pre optimization
 

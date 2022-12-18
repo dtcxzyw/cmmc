@@ -13,7 +13,6 @@
 */
 
 // Simple Common Subexpression Extraction
-// TODO: Global Value Numbering
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -52,37 +51,7 @@ class SimpleCSE final : public TransformPass<Function> {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
         ReplaceMap replace;
         for(auto inst : block->instructions()) {
-            if(!inst->canbeOperand())
-                continue;
-            if(inst->isTerminator())
-                continue;
-            bool valid = true;
-            switch(inst->getInstID()) {
-                case InstructionID::Store:
-                    [[fallthrough]];
-                case InstructionID::Alloc:
-                    [[fallthrough]];
-                case InstructionID::Free:
-                    [[fallthrough]];
-                case InstructionID::Load: {
-                    valid = false;
-                    break;
-                }
-                case InstructionID::Call: {
-                    const auto callee = inst->operands().back();
-                    if(auto func = dynamic_cast<Function*>(callee)) {
-                        auto& attr = func->attr();
-                        valid = attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless);
-                    } else {
-                        valid = false;
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-
-            if(!valid)
+            if(!isNoSideEffectExpr(*inst))
                 continue;
 
             if(auto [iter, res] = lut.insert(inst); !res) {

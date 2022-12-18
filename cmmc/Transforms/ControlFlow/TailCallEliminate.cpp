@@ -25,7 +25,6 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
-#include <iostream>
 #include <unordered_map>
 #include <vector>
 
