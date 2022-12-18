@@ -175,7 +175,6 @@ int mainImpl(int argc, char** argv) {
     try {
         std::string path = argv[start];
 
-        using namespace std::string_view_literals;
         bool isSpl = endswith(path, ".spl"sv);
         bool isSysY = endswith(path, ".sy"sv);
 

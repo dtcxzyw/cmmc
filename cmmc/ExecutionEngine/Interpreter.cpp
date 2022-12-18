@@ -365,7 +365,6 @@ public:
                                  const auto base = reinterpret_cast<const std::byte*>(&val);
                                  for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
                                      store(ptr + idx, base[idx]);
-                                 ;
                              } },
                    value);
     }
@@ -883,7 +882,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 switch(callee->getIntrinsic()) {
                     case Intrinsic::none: {
                         if(callee->blocks().empty()) {
-                            using namespace std::string_view_literals;
 
                             // runtime func
                             const auto symbol = callee->getSymbol().prefix();

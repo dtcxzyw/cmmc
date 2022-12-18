@@ -174,7 +174,7 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
 }
 
 std::string_view IterationPassWrapper::name() const noexcept {
-    using namespace std::string_view_literals;
+    ;
     return "IterationPassWrapper"sv;
 }
 
@@ -211,6 +211,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     for(auto& pass : passesSource.collect({
             // Preprocess
             "FunctionAttrInfer",      //
+            "GlobalVarAttrInfer",     //
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             // Constant
@@ -281,10 +282,13 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     root->addPass(iter);  // post optimization
 
-    /*
-    for(auto& pass : passesSource.collect({ "UninitializedCheck" }))
+    // final cleanup
+    for(auto pass : passesSource.collect({
+            "UnusedTypeEliminate",
+            //"UninitializedCheck"
+        }))
         root->addPass(pass);
-    */
+
     if(debugTransform.get()) {
         for(auto& pass : passesSource.collect({ "DumpCFG" }))
             root->addPass(pass);

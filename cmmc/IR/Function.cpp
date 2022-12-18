@@ -106,7 +106,7 @@ void Function::dumpCFG(std::ostream& out) const {
     std::unordered_map<Block*, std::string> ids;
     uint32_t id = 0;
 
-    using namespace std::string_view_literals;
+    ;
 
     for(auto block : mBlocks) {
         ids[block] = "b" + std::to_string(++id);

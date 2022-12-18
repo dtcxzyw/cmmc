@@ -129,7 +129,6 @@ void DriverImpl::emit(Module& module) {
     }
 
     if(hideSymbol.get()) {
-        using namespace std::string_view_literals;
         for(auto global : module.globals()) {
             if(auto func = dynamic_cast<Function*>(global)) {
                 if(func->getSymbol() != "main"sv)

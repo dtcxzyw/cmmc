@@ -49,7 +49,6 @@ class UninitializedCheck final : public TransformPass<Function> {
     }
 
     std::string_view name() const noexcept override {
-        using namespace std::string_view_literals;
         return "UninitializedCheck"sv;
     }
 };

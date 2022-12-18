@@ -206,7 +206,6 @@ public:
     }
 
     std::string_view name() const noexcept override {
-        using namespace std::string_view_literals;
         return "GlobalScalar2Local"sv;
     }
 };

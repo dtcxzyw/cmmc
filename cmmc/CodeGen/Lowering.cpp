@@ -66,7 +66,6 @@ GMIRModule& LoweringContext::getModule() const noexcept {
     return mModule;
 }
 GMIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
-    assert(mBlockMap.count(block));
     return mBlockMap.at(block);
 }
 Operand LoweringContext::mapBlockArg(BlockArgument* arg) const {

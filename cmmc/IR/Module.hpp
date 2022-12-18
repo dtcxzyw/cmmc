@@ -50,6 +50,12 @@ public:
     auto& globals() const noexcept {
         return mGlobals;
     }
+    auto& types() noexcept {
+        return mTypes;
+    }
+    auto& types() const noexcept {
+        return mTypes;
+    }
 
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;

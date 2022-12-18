@@ -227,6 +227,14 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     };
 
     std::unordered_set<InheritEdge, EdgeHasher> inheritGraph;
+    for(auto global : analysis.module().globals()) {
+        if(!global->isFunction()) {
+            globals.insert(global);
+            const auto id = ++allocateID;
+            result.addValue(global, { globalID, id });
+            globalGroup.insert(id);
+        }
+    }
 
     for(auto block : dom.blocks()) {
         const auto argID = ++allocateID;
@@ -235,14 +243,6 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                 result.addValue(arg, { argID });
 
         for(auto inst : block->instructions()) {
-            for(auto operand : inst->operands())
-                if(operand->isGlobal() && operand->getType()->isPointer())
-                    if(globals.insert(operand).second) {
-                        const auto id = ++allocateID;
-                        result.addValue(operand, { globalID, id });
-                        globalGroup.insert(id);
-                    }
-
             if(!inst->getType()->isPointer())
                 continue;
 

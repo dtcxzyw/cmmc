@@ -23,3 +23,5 @@
 // char b = (val >> 16) & 255;
 // char c = (val >> 8) & 255;
 // char d = val & 255;
+
+// TODO: move to CodeGen
