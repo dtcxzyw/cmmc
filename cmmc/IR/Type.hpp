@@ -76,6 +76,9 @@ public:
     bool isPrimitive() const noexcept {
         return !isArray() && !isStruct() && !isInvalid();
     }
+    bool isAggregate() const noexcept {
+        return isArray() || isStruct();
+    }
     virtual size_t getFixedSize() const noexcept {
         return 0;
     }

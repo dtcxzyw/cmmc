@@ -19,45 +19,66 @@
 // [1 x i32]* %a = getelementptr &([1 * [1 * i32]]* %x)[i32 0][i32 0];
 // i32* %b = getelementptr &([1 * [1 * i32]]* %x)[i32 0][i32 0][i32 0];
 
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <iostream>
 #include <queue>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
 class GEPCombine final : public TransformPass<Function> {
-    bool runBlock(Block& block) const noexcept {
-        std::unordered_set<Value*> constantGEP;
+    void gatherBlock(Block& block, std::unordered_set<Value*>& constantGEP) const {
+        for(auto inst : block.instructions()) {
+            if(inst->getInstID() != InstructionID::GetElementPtr)
+                continue;
+
+            bool isConstant = true;
+            auto& operands = inst->operands();
+            auto base = operands.back();
+            for(auto operand : operands) {
+                if(operand == base)
+                    break;
+                if(!operand->isConstant()) {
+                    isConstant = false;
+                    break;
+                }
+            }
+
+            if(!isConstant)
+                continue;
+            constantGEP.insert(inst);
+        }
+    }
+    bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP,
+                  const BlockArgumentAnalysisResult& blockArgMap) const {
         bool modified = false;
         for(auto inst : block.instructions()) {
-            if(inst->getInstID() == InstructionID::GetElementPtr) {
-                bool isConstant = true;
-                auto& operands = inst->operands();
-                auto base = operands.back();
-                for(auto operand : operands) {
-                    if(operand == base)
-                        break;
-                    if(!operand->isConstant()) {
-                        isConstant = false;
-                        break;
-                    }
-                }
+            if(inst->getInstID() != InstructionID::GetElementPtr)
+                continue;
 
-                if(isConstant) {
-                    constantGEP.insert(inst);
-                    MatchContext<Value> matchCtx{ operands.front(), nullptr };
-                    if(constantGEP.count(base) && cuint_(0)(matchCtx)) {
-                        operands.pop_front();
-                        auto baseGEP = base->as<GetElementPtrInst>();
-                        const auto& prevOffsets = baseGEP->operands();
-                        operands.insert(operands.begin(), prevOffsets.begin(), std::prev(prevOffsets.end()));  // insert offsets
-                        operands.back() = prevOffsets.back();                                                  // replace base
-                        modified = true;
-                    }
-                }
+            const auto base = blockArgMap.queryRoot(inst->operands().back());
+            if(!constantGEP.count(base))
+                continue;
+
+            const auto baseGEP = base->as<GetElementPtrInst>();
+            auto& operands = inst->operands();
+            if(cuint_(0)(MatchContext<Value>{ operands.front(), nullptr })) {
+                operands.pop_front();
+                const auto& prevOffsets = baseGEP->operands();
+                operands.insert(operands.begin(), prevOffsets.begin(), std::prev(prevOffsets.end()));  // insert offsets
+                operands.back() = prevOffsets.back();                                                  // replace base
+                modified = true;
+            } else if(cuint_(0)(MatchContext<Value>{ baseGEP->getOperand(baseGEP->operands().size() - 2), nullptr })) {
+                const auto& prevOffsets = baseGEP->operands();
+                operands.insert(operands.begin(), prevOffsets.begin(),
+                                std::prev(std::prev(prevOffsets.end())));  // insert offsets
+                operands.back() = prevOffsets.back();                      // replace base
+                modified = true;
             }
         }
 
@@ -65,10 +86,21 @@ class GEPCombine final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+        std::unordered_set<Value*> constantGEP;
+        for(auto block : func.blocks())
+            gatherBlock(*block, constantGEP);
+
+        if(constantGEP.empty())
+            return false;
+
         bool modified = false;
         for(auto block : func.blocks())
-            modified |= runBlock(*block);
+            modified |= runBlock(*block, constantGEP, blockArgMap);
+        if(modified)
+            blockArgPropagation(func);
+
         return modified;
     }
 

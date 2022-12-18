@@ -81,7 +81,6 @@ const std::vector<uint32_t>& AliasAnalysisResult::inheritFrom(Value* ptr) const 
     if(ptr->isConstant()) {
         return mEmpty;  // undefined/hardcoded pointer
     }
-    assert(mPointerAttributes.count(ptr));
     return mPointerAttributes.at(ptr);
 }
 bool AliasAnalysisResult::appendAttr(Value* p, const std::vector<uint32_t>& newAttrs) {
@@ -236,7 +235,11 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         }
     }
 
+    std::unordered_set<Block*> reachableBlocks;
+
     for(auto block : dom.blocks()) {
+        reachableBlocks.insert(block);
+
         const auto argID = ++allocateID;
         for(auto arg : block->args())
             if(arg->getType()->isPointer())
@@ -299,8 +302,22 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         }
     }
 
+    // unreachable
+    for(auto block : func.blocks()) {
+        if(reachableBlocks.count(block))
+            continue;
+        for(auto arg : block->args())
+            if(arg->getType()->isPointer())
+                result.addValue(arg, {});
+        for(auto inst : block->instructions()) {
+            if(!inst->getType()->isPointer())
+                continue;
+            result.addValue(inst, {});
+        }
+    }
+
     for(auto [arg, val] : blockArgMap.map()) {
-        if(arg->getType()->isPointer()) {
+        if(arg->getType()->isPointer() && reachableBlocks.count(arg->getBlock())) {
             inheritGraph.emplace(arg, val);
         }
     }

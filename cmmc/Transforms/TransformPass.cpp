@@ -192,7 +192,6 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "NoSideEffectEliminate",  // clean up
             "ConstantMerge",          //
             "SimpleCSE",              //
-            "GEPCombine",             //
             "NoSideEffectEliminate",  // clean up
             "ArithmeticReduce",       //
             "NoSideEffectEliminate",  // clean up
@@ -245,7 +244,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "NoReturnCallEliminate",  //
             //"FreeEliminate",          //
             "NoSideEffectEliminate",  // clean up
-            "GlobalEliminate"         //
+            "GlobalEliminate",        //
+            "UndefPropagation"        //
         }))
         basic->addPass(pass);
 

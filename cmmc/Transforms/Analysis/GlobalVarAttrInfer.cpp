@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
