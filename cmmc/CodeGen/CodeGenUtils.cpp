@@ -210,4 +210,52 @@ void removeIdentityCopies(GMIRFunction& func) {
     }
 }
 
+void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& data,
+                  const std::function<void()>& text,
+                  const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
+                                           LabelAllocator&)>& functionDumper) {
+    LabelAllocator allocator;
+    using namespace std::string_literals;
+
+    std::unordered_map<const GMIRSymbol*, String> symbolMap;
+
+    for(auto& symbol : module.symbols)
+        symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
+
+    auto& target = module.target;
+    // TODO: rodata/bss
+
+    out << ".data\n"sv;
+    data();
+    const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
+        if(symbol.linkage == Linkage::Global)
+            out << ".globl "sv << symbol.symbol << '\n';
+        out << ".align " << symbol.alignment << std::endl;
+        out << symbol.symbol << ":\n"sv;
+    };
+    for(auto& symbol : module.symbols) {
+        std::visit(Overload{ [&](const GMIRDataStorage& data) {
+                                dumpSymbol(symbol);
+                                data.dump(out, target);
+                            },
+                             [&](const GMIRZeroStorage& data) {
+                                 dumpSymbol(symbol);
+                                 data.dump(out, target);
+                             },
+                             [](const auto&) {} },
+                   symbol.def);
+    }
+
+    out << ".text\n"sv;
+    text();
+    for(auto& symbol : module.symbols) {
+        std::visit(Overload{ [&](const GMIRFunction& func) {
+                                dumpSymbol(symbol);
+                                functionDumper(func, symbolMap, allocator);
+                            },
+                             [](const auto&) {} },
+                   symbol.def);
+    }
+}
+
 CMMC_NAMESPACE_END

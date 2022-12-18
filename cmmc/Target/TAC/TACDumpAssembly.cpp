@@ -195,7 +195,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
     out << '\n';
 }
 
-void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
+void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
     using namespace std::string_literals;
 
     std::unordered_map<const GMIRFunction*, FunctionNameMap> map;
@@ -209,7 +209,7 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
         uint32_t gprAllocateID = 0, stackAllocateID = 0;
         String labelBase = String::get("label"sv);
         for(auto& symbol : module.symbols) {
-            std::visit(Overload{ [&](GMIRFunction& func) {
+            std::visit(Overload{ [&](const GMIRFunction& func) {
                                     auto& ref = map[&func];
                                     {
                                         auto& labelMap = ref.labelMap;
@@ -231,13 +231,13 @@ void TACTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
                                         }
                                     }
 
-                                    forEachOperands(func, [&](const Operand& operand) {
+                                    forEachOperands(const_cast<GMIRFunction&>(func), [&](const Operand& operand) {
                                         if(operand.addressSpace == TACAddressSpace::GPR) {
                                             tryAllocate(ref.gprMap, operand.id, gprAllocateID);
                                         }
                                     });
                                 },
-                                 [](std::monostate&) {}, [](auto&) { reportUnreachable(); } },
+                                 [](const std::monostate&) {}, [](const auto&) { reportUnreachable(); } },
                        symbol.def);
         }
     }

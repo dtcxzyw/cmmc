@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Transforms/Util/PatternMatch.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
@@ -254,7 +255,20 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::GetElementPtr: {
-                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->operands().back()));
+                    auto cur = inst;
+                    while(true) {
+                        const auto base = blockArgMap.queryRoot(cur->operands().back());
+                        MatchContext<Value> matchCtx{ cur->getOperand(0), nullptr };
+                        if(inst->operands().size() >= 2 && cuint_(0)(matchCtx)) {
+                            inheritGraph.emplace(inst, base);
+                            break;
+                        } else {
+                            if(base->is<GetElementPtrInst>()) {
+                                cur = base->as<Instruction>();
+                            } else
+                                break;
+                        }
+                    }
                     result.addValue(inst, {});
                     geps.push_back(inst);
                     break;
@@ -330,9 +344,6 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     }
 
     // geps
-    // FIXME: fix gep alias
-    CMMC_UNUSED(geps);
-    /*
     std::unordered_map<Value*, std::vector<Instruction*>> clusters;
     for(auto gep : geps)
         clusters[blockArgMap.queryRoot(gep->operands().back())].push_back(gep);
@@ -340,7 +351,6 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         CMMC_UNUSED(base);
         divide(gepList, allocateID, result, 0);
     }
-    */
 
     result.addDistinctGroup(std::move(globalGroup));
     result.addDistinctGroup(std::move(stackGroup));

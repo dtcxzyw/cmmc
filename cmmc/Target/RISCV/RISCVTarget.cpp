@@ -34,7 +34,10 @@ public:
         return type->getFixedSize();
     }
     size_t getPointerSize() const noexcept override {
-        return 8;
+        return 4;
+    }
+    size_t getCodeAlignment() const noexcept override {
+        return 4;
     }
 };
 
@@ -82,7 +85,7 @@ public:
         CMMC_UNUSED(module);
         CMMC_UNUSED(analysis);
     }
-    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
     Operand getStackPointer() const noexcept override {
         reportNotImplemented();
     }
@@ -108,7 +111,7 @@ CMMC_TARGET("riscv", RISCVTarget);
 void RISCVTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
 void RISCVTarget::legalizeFunc(GMIRFunction&) const {}
 
-void RISCVTarget::emitAssembly(GMIRModule&, std::ostream&) const {
+void RISCVTarget::emitAssembly(const GMIRModule&, std::ostream&) const {
     reportNotImplemented();
 }
 

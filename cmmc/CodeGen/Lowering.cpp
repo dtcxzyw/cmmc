@@ -195,9 +195,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(global->isFunction()) {
             auto func = global->as<Function>();
             if(func->blocks().empty()) {
-                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), 1U, std::monostate{} });
+                symbols.push_back(
+                    GMIRSymbol{ func->getSymbol(), func->getLinkage(), dataLayout.getCodeAlignment(), std::monostate{} });
             } else {
-                symbols.push_back(GMIRSymbol{ func->getSymbol(), func->getLinkage(), 1U, GMIRFunction{} });
+                symbols.push_back(
+                    GMIRSymbol{ func->getSymbol(), func->getLinkage(), dataLayout.getCodeAlignment(), GMIRFunction{} });
             }
         } else {
             const auto var = global->as<GlobalVariable>();

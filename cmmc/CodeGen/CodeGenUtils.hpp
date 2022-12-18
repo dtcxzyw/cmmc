@@ -14,7 +14,9 @@
 
 #pragma once
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <functional>
+#include <ostream>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -31,5 +33,10 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
 void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void removeIdentityCopies(GMIRFunction& func);
+
+void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& data,
+                  const std::function<void()>& text,
+                  const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
+                                           LabelAllocator&)>& functionDumper);
 
 CMMC_NAMESPACE_END

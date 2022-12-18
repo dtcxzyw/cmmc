@@ -43,6 +43,9 @@ public:
     size_t getPointerSize() const noexcept override {
         return 4;
     }
+    size_t getCodeAlignment() const noexcept override {
+        return 4;
+    }
 };
 
 class MIPSLoweringInfo final : public LoweringInfo {
@@ -96,7 +99,7 @@ public:
         CMMC_UNUSED(analysis);
     }
     void legalizeFunc(GMIRFunction& func) const override;
-    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
     Operand getStackPointer() const noexcept override {
         return Operand{ MIPSAddressSpace::GPR, 29 };  // sp
     }

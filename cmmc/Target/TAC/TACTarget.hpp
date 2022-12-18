@@ -42,6 +42,9 @@ public:
     size_t getPointerSize() const noexcept override {
         return 4;
     }
+    size_t getCodeAlignment() const noexcept override {
+        return 4;
+    }
 };
 
 class TACLoweringInfo final : public LoweringInfo {
@@ -94,7 +97,7 @@ public:
     void legalizeFunc(GMIRFunction& func) const override;
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
-    void emitAssembly(GMIRModule& module, std::ostream& out) const override;
+    void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
     Operand getStackPointer() const noexcept override {
         reportUnreachable();
     }

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
@@ -271,43 +272,12 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
 
 extern StringOpt targetMachine;
 
-void ARMTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
-    LabelAllocator allocator;
-    using namespace std::string_literals;
-
-    std::unordered_map<const GMIRSymbol*, String> symbolMap;
-
-    for(auto& symbol : module.symbols)
-        symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
-    const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
-        if(symbol.linkage == Linkage::Global)
-            out << ".globl "sv << symbol.symbol << '\n';
-        out << symbol.symbol << ":\n"sv;
-    };
-
-    out << ".data\n"sv;
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRDataStorage& data) {
-                                dumpSymbol(symbol);
-                                data.dump(out, *this);
-                            },
-                             [&](const GMIRZeroStorage& data) {
-                                 dumpSymbol(symbol);
-                                 data.dump(out, *this);
-                             },
-                             [](const auto&) {} },
-                   symbol.def);
-    }
-
-    out << ".text\n"sv;
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) {
-                                dumpSymbol(symbol);
-                                emitFunc(out, func, symbolMap, allocator);
-                            },
-                             [](const auto&) {} },
-                   symbol.def);
-    }
+void ARMTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
+    dumpAssembly(
+        out, module, [] {}, [] {},
+        [&](const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap, LabelAllocator& allocator) {
+            emitFunc(out, func, symbolMap, allocator);
+        });
 }
 
 CMMC_NAMESPACE_END

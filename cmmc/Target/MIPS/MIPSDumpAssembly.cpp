@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
@@ -332,15 +333,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
 
 extern StringOpt targetMachine;
 
-void MIPSTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
-    LabelAllocator allocator;
-    using namespace std::string_literals;
-
-    std::unordered_map<const GMIRSymbol*, String> symbolMap;
-
-    for(auto& symbol : module.symbols)
-        symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
-
+void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
     bool hasDelaySlot = false, hasSpimRuntime = false;
     if(targetMachine.get() == "emulator") {
         hasSpimRuntime = true;
@@ -348,42 +341,21 @@ void MIPSTarget::emitAssembly(GMIRModule& module, std::ostream& out) const {
         hasDelaySlot = true;
     }
 
-    // TODO: rodata/bss
-
-    out << ".data\n"sv;
-    if(hasSpimRuntime) {
-        out << spimRuntimeData << '\n';
-    }
-    const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
-        if(symbol.linkage == Linkage::Global)
-            out << ".globl "sv << symbol.symbol << '\n';
-        out << symbol.symbol << ":\n"sv;
-    };
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRDataStorage& data) {
-                                dumpSymbol(symbol);
-                                data.dump(out, *this);
-                            },
-                             [&](const GMIRZeroStorage& data) {
-                                 dumpSymbol(symbol);
-                                 data.dump(out, *this);
-                             },
-                             [](const auto&) {} },
-                   symbol.def);
-    }
-
-    out << ".text\n"sv;
-    if(hasSpimRuntime) {
-        out << spimRuntimeText << '\n';
-    }
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) {
-                                dumpSymbol(symbol);
-                                emitFunc(out, func, symbolMap, allocator, hasDelaySlot);
-                            },
-                             [](const auto&) {} },
-                   symbol.def);
-    }
+    dumpAssembly(
+        out, module,
+        [&] {
+            if(hasSpimRuntime) {
+                out << spimRuntimeData << '\n';
+            }
+        },
+        [&] {
+            if(hasSpimRuntime) {
+                out << spimRuntimeText << '\n';
+            }
+        },
+        [&](const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap, LabelAllocator& allocator) {
+            emitFunc(out, func, symbolMap, allocator, hasDelaySlot);
+        });
 }
 
 CMMC_NAMESPACE_END

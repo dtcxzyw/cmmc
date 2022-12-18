@@ -38,6 +38,9 @@ public:
     size_t getPointerSize() const noexcept override {
         return sizeof(uintptr_t);
     }
+    size_t getCodeAlignment() const noexcept override {
+        reportUnreachable();
+    }
 };
 
 class SimSubTarget final : public SimpleSubTarget {
@@ -81,7 +84,7 @@ public:
         CMMC_UNUSED(module);
         CMMC_UNUSED(analysis);
     }
-    void emitAssembly(GMIRModule&, std::ostream&) const override {
+    void emitAssembly(const GMIRModule&, std::ostream&) const override {
         reportUnreachable();
     }
     Operand getStackPointer() const noexcept override {
