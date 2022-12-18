@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/DataLayout.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>

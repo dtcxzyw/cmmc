@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Transforms/Util/PatternMatch.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
@@ -20,6 +19,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
