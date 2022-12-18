@@ -2,20 +2,15 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
 ^entry():
     ubr [ ^while.body i32 4 ];
 ^while.body(i32 %arg):
-    i32* %d = alloc i32;
     i1 %0 = scmp lt i32 %arg, i32 100;
-    cbr i1 %0, [ ^indirect i32* %d, i32 %arg ], [ ^b i32* %d, i32 %arg, i32 %arg ];
-^indirect(i32* %arg, i32 %arg1):
-    i32 %0 = add i32 %arg1, i32 42;
+    cbr i1 %0, [ ^indirect i32 %arg ], [ ^b i32 %arg, i32 %arg ];
+^indirect(i32 %arg):
+    i32 %0 = add i32 %arg, i32 42;
     i1 %1 = scmp gt i32 %0, i32 99;
-    cbr i1 %1, [ ^if.then i32* %arg ], [ ^b i32* %arg, i32 %0, i32 %0 ];
-^b(i32* %arg, i32 %arg1, i32 %arg2):
-    free i32* %arg;
-    i1 %0 = scmp lt i32 %arg1, i32 75;
-    cbr i1 %0, [ ^while.body i32 %arg2 ], [ ^b1 i32 %arg2 ];
-^if.then(i32* %arg):
-    free i32* %arg;
-    ubr [ ^b1 i32 168 ];
+    cbr i1 %1, [ ^b1 i32 168 ], [ ^b i32 %0, i32 %0 ];
+^b(i32 %arg, i32 %arg1):
+    i1 %0 = scmp lt i32 %arg, i32 75;
+    cbr i1 %0, [ ^while.body i32 %arg1 ], [ ^b1 i32 %arg1 ];
 ^b1(i32 %arg):
     ret i32 %arg;
 }

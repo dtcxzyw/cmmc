@@ -29,6 +29,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -154,6 +155,9 @@ public:
 
         bool modified = false;
         ReplaceMap replace;
+        std::vector<Value*> operandMap(allocateID);
+        for(auto [key, val] : valueNumber)
+            operandMap[val] = key;
 
         for(uint32_t id = 0; id < allocateID; ++id) {
             const auto iter = instructions.find(id);
@@ -163,6 +167,7 @@ public:
             const auto& sameInstructions = iter->second;
 
             if(sameInstructions.size() == 1) {
+                operandMap[id] = sameInstructions.front();
                 continue;
             }
 
@@ -183,11 +188,22 @@ public:
                 }
             }
 
-            // FIXME: move to LICM
             // hoisting
             if(replaceInst == nullptr) {
-                continue;
+                /*
+                const auto inst = sameInstructions.front()->clone();
+                for(auto& operand : inst->operands())
+                    operand = operandMap[getNumber(operand)];
+                auto& instructions = block->instructions();
+                inst->setBlock(block);
+                instructions.insert(std::prev(instructions.cend()), inst);
+                replaceInst = inst;
+                */
+                // TODO: better strategy
+                continue;  // disable hoisting
             }
+
+            operandMap[id] = replaceInst;
 
             for(auto inst : sameInstructions) {
                 if(replaceInst != inst) {

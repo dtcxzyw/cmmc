@@ -13,19 +13,19 @@ internal func @maxCliques(i32, i32, [30 * i32]*, i32*, i32*) -> i32 {
     i32* %i = alloc i32;
     store i32* %i with i32 1;
     i1 %2 = scmp lt i32 1, i32 %1;
-    cbr i1 %2, [ ^while.body1 i32* %i, [30 * i32]* %arg2, i32 %arg5, i32* %arg, i32 %arg3, i32* %arg1, [30 * i32]* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %1, i32 1 ], [ ^while.body2 i32 1, i32 %arg5, i32* %arg, i32 %arg3, i32* %arg1, [30 * i32]* %arg2, i32 %arg3, i32 %arg4, i32 %arg5 ];
+    cbr i1 %2, [ ^while.body1 i32* %i, [30 * i32]* %arg2, i32 %arg5, [30 * i32]* %arg2, i32* %arg1, i32* %arg, i32 %arg3, i32 %arg3, i32 %arg4, i32 %arg5, i32 %1, i32 1, i32 %1 ], [ ^while.body2 i32 1, i32 %arg5, [30 * i32]* %arg2, i32* %arg1, i32* %arg, i32 %arg3, i32 %arg3, i32 %arg4, i32 %arg5, i32 %1 ];
 ^b(i32 %arg):
     ret i32 %arg;
-^while.body1(i32* %arg, [30 * i32]* %arg1, i32 %arg2, i32* %arg3, i32 %arg4, i32* %arg5, [30 * i32]* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
+^while.body1(i32* %arg, [30 * i32]* %arg1, i32 %arg2, [30 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12):
     i32* %j = alloc i32;
     i32 %0 = add i32 %arg11, i32 1;
     store i32* %j with i32 %0;
     i1 %1 = scmp lt i32 %0, i32 %arg10;
-    cbr i1 %1, [ ^while.body3 i32* %j, i32* %arg, [30 * i32]* %arg1, i32 %arg2, i32* %arg3, i32 %arg4, i32* %arg5, [30 * i32]* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %0 ], [ ^indirect1 i32* %j, i32* %arg, i32 %arg10, [30 * i32]* %arg1, i32 %arg2, i32* %arg3, i32 %arg4, i32* %arg5, [30 * i32]* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
-^while.body2(i32 %arg, i32 %arg1, i32* %arg2, i32 %arg3, i32* %arg4, [30 * i32]* %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
+    cbr i1 %1, [ ^while.body3 i32* %j, i32* %arg, [30 * i32]* %arg1, i32 %arg2, [30 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %0, i32 %arg12 ], [ ^indirect1 i32* %arg, i32 %arg10, [30 * i32]* %arg1, i32 %arg2, [30 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12 ];
+^while.body2(i32 %arg, i32 %arg1, [30 * i32]* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i1 %0 = scmp neq i32 %arg, i32 0;
-    cbr i1 %0, [ ^indirect i32 %arg3, i32* %arg2, i32* %arg4, [30 * i32]* %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ], [ ^b1 i32 %arg1, i32* %arg2, [30 * i32]* %arg5, i32* %arg4, i32 %arg6, i32 %arg7 ];
-^while.body3(i32* %arg, i32* %arg1, [30 * i32]* %arg2, i32 %arg3, i32* %arg4, i32 %arg5, i32* %arg6, [30 * i32]* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13):
+    cbr i1 %0, [ ^indirect i32 %arg5, i32* %arg4, i32* %arg3, [30 * i32]* %arg2, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b1 i32 %arg1, i32* %arg4, [30 * i32]* %arg2, i32* %arg3, i32 %arg6, i32 %arg7 ];
+^while.body3(i32* %arg, i32* %arg1, [30 * i32]* %arg2, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %arg14):
     i32* %0 = getelementptr &([30 * i32]* %arg2)[i32 0][i32 %arg12];
     i32 %1 = load i32* %0;
     [30 * i32]* %2 = getelementptr &([30 * [30 * i32]]* @graph)[i32 0][i32 %1];
@@ -34,47 +34,38 @@ internal func @maxCliques(i32, i32, [30 * i32]*, i32*, i32*) -> i32 {
     i32* %5 = getelementptr &([30 * i32]* %2)[i32 0][i32 %4];
     i32 %6 = load i32* %5;
     i1 %7 = scmp eq i32 %6, i32 0;
-    cbr i1 %7, [ ^while.body2 i32 0, i32 %arg3, i32* %arg4, i32 %arg5, i32* %arg6, [30 * i32]* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ], [ ^indirect2 i32* %arg1, i32* %arg, i32 %arg13, [30 * i32]* %arg2, i32 %arg3, i32* %arg4, i32 %arg5, i32* %arg6, [30 * i32]* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12 ];
-^indirect(i32 %arg, i32* %arg1, i32* %arg2, [30 * i32]* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
+    cbr i1 %7, [ ^while.body2 i32 0, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg14 ], [ ^indirect2 i32* %arg1, i32* %arg, i32 %arg13, [30 * i32]* %arg2, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg14 ];
+^indirect(i32 %arg, i32* %arg1, i32* %arg2, [30 * i32]* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i1 %0 = scmp gt i32 %arg, i32 %arg5;
-    cbr i1 %0, [ ^if.then [30 * i32]* %arg3, i32* %arg2, i32* %arg1, i32 %arg4, i32 %arg6 ], [ ^indirect3 [30 * i32]* %arg3, i32* %arg2, i32* %arg1, i32 %arg4, i32 %arg5, i32 %arg6 ];
-^indirect1(i32* %arg, i32* %arg1, i32 %arg2, [30 * i32]* %arg3, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13):
-    i32 %0 = add i32 %arg13, i32 1;
-    store i32* %arg1 with i32 %0;
-    free i32* %arg;
-    i1 %1 = scmp lt i32 %0, i32 %arg2;
-    cbr i1 %1, [ ^while.body1 i32* %arg1, [30 * i32]* %arg3, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %0 ], [ ^while.body2 i32 1, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
+    cbr i1 %0, [ ^if.then [30 * i32]* %arg3, i32* %arg2, i32* %arg1, i32 %arg4, i32 %arg6, i32 %arg7 ], [ ^indirect3 [30 * i32]* %arg3, i32* %arg2, i32* %arg1, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ];
+^indirect1(i32* %arg, i32 %arg1, [30 * i32]* %arg2, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13):
+    i32 %0 = add i32 %arg12, i32 1;
+    store i32* %arg with i32 %0;
+    i1 %1 = scmp lt i32 %0, i32 %arg1;
+    cbr i1 %1, [ ^while.body1 i32* %arg, [30 * i32]* %arg2, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %0, i32 %arg13 ], [ ^while.body2 i32 1, i32 %arg3, [30 * i32]* %arg4, i32* %arg5, i32* %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg13 ];
 ^b1(i32 %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
     i32 %0 = add i32 %arg, i32 1;
     i32 %1 = load i32* %arg3;
     i1 %2 = scmp le i32 %0, i32 %1;
     cbr i1 %2, [ ^while.body i32* %arg1, i32* %arg3, [30 * i32]* %arg2, i32 %arg4, i32 %arg5, i32 %0 ], [ ^b i32 %arg5 ];
-^if.then([30 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
-    i32* %tmp = alloc i32;
-    i32 %0 = add i32 %arg3, i32 1;
-    i32 %1 = call (i32, i32, [30 * i32]*, i32*, i32*) -> i32 @maxCliques(i32 %arg4, i32 %0, [30 * i32]* %arg, i32* %arg1, i32* %arg2);
-    i1 %2 = scmp gt i32 %1, i32 %arg3;
-    cbr i1 %2, [ ^indirect4 i32* %tmp, i32 %1, i32* %arg2, [30 * i32]* %arg, i32* %arg1, i32 %arg3, i32 %arg4 ], [ ^b2 i32* %tmp, [30 * i32]* %arg, i32* %arg2, i32* %arg1, i32 %arg3, i32 %arg3, i32 %arg4 ];
-^indirect2(i32* %arg, i32* %arg1, i32 %arg2, [30 * i32]* %arg3, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13):
+^if.then([30 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
+    i32 %0 = call (i32, i32, [30 * i32]*, i32*, i32*) -> i32 @maxCliques(i32 %arg4, i32 %arg5, [30 * i32]* %arg, i32* %arg1, i32* %arg2);
+    i1 %1 = scmp gt i32 %0, i32 %arg3;
+    cbr i1 %1, [ ^b1 i32 %arg4, i32* %arg2, [30 * i32]* %arg, i32* %arg1, i32 %arg3, i32 %0 ], [ ^b2 [30 * i32]* %arg, i32* %arg2, i32* %arg1, i32 %arg3, i32 %arg3, i32 %arg4 ];
+^indirect2(i32* %arg, i32* %arg1, i32 %arg2, [30 * i32]* %arg3, i32 %arg4, [30 * i32]* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %arg14):
     i32 %0 = add i32 %arg2, i32 1;
     store i32* %arg1 with i32 %0;
     i1 %1 = scmp lt i32 %0, i32 %arg12;
-    cbr i1 %1, [ ^while.body3 i32* %arg1, i32* %arg, [30 * i32]* %arg3, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %0 ], [ ^indirect1 i32* %arg1, i32* %arg, i32 %arg12, [30 * i32]* %arg3, i32 %arg4, i32* %arg5, i32 %arg6, i32* %arg7, [30 * i32]* %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13 ];
-^indirect3([30 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i32* %tmp = alloc i32;
-    i32 %0 = add i32 %arg3, i32 1;
-    i32 %1 = call (i32, i32, [30 * i32]*, i32*, i32*) -> i32 @maxCliques(i32 %arg5, i32 %0, [30 * i32]* %arg, i32* %arg1, i32* %arg2);
-    i1 %2 = scmp gt i32 %1, i32 %arg4;
-    cbr i1 %2, [ ^indirect4 i32* %tmp, i32 %1, i32* %arg2, [30 * i32]* %arg, i32* %arg1, i32 %arg3, i32 %arg5 ], [ ^b2 i32* %tmp, [30 * i32]* %arg, i32* %arg2, i32* %arg1, i32 %arg3, i32 %arg4, i32 %arg5 ];
-^indirect4(i32* %arg, i32 %arg1, i32* %arg2, [30 * i32]* %arg3, i32* %arg4, i32 %arg5, i32 %arg6):
-    free i32* %arg;
-    ubr [ ^b1 i32 %arg6, i32* %arg2, [30 * i32]* %arg3, i32* %arg4, i32 %arg5, i32 %arg1 ];
-^b2(i32* %arg, [30 * i32]* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
-    free i32* %arg;
-    i32 %0 = add i32 %arg6, i32 1;
-    i32 %1 = load i32* %arg3;
+    cbr i1 %1, [ ^while.body3 i32* %arg1, i32* %arg, [30 * i32]* %arg3, i32 %arg4, [30 * i32]* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %0, i32 %arg14 ], [ ^indirect1 i32* %arg, i32 %arg12, [30 * i32]* %arg3, i32 %arg4, [30 * i32]* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12, i32 %arg13, i32 %arg14 ];
+^indirect3([30 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
+    i32 %0 = call (i32, i32, [30 * i32]*, i32*, i32*) -> i32 @maxCliques(i32 %arg5, i32 %arg6, [30 * i32]* %arg, i32* %arg1, i32* %arg2);
+    i1 %1 = scmp gt i32 %0, i32 %arg4;
+    cbr i1 %1, [ ^b1 i32 %arg5, i32* %arg2, [30 * i32]* %arg, i32* %arg1, i32 %arg3, i32 %0 ], [ ^b2 [30 * i32]* %arg, i32* %arg2, i32* %arg1, i32 %arg3, i32 %arg4, i32 %arg5 ];
+^b2([30 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
+    i32 %0 = add i32 %arg5, i32 1;
+    i32 %1 = load i32* %arg2;
     i1 %2 = scmp le i32 %0, i32 %1;
-    cbr i1 %2, [ ^while.body i32* %arg2, i32* %arg3, [30 * i32]* %arg1, i32 %arg4, i32 %arg5, i32 %0 ], [ ^b i32 %arg5 ];
+    cbr i1 %2, [ ^while.body i32* %arg1, i32* %arg2, [30 * i32]* %arg, i32 %arg3, i32 %arg4, i32 %0 ], [ ^b i32 %arg4 ];
 }
 func @main() -> i32 { NoRecurse Entry } {
 ^entry():
@@ -147,8 +138,8 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %m with i32 %31;
     [600 * [2 * i32]]* %edges = alloc [600 * [2 * i32]];
     i1 %32 = scmp lt i32 0, i32 %31;
-    cbr i1 %32, [ ^while.body [600 * [2 * i32]]* %edges, i32* %n, [30 * i32]* %store, i32* %m, i32 %31, i32 0 ], [ ^b [600 * [2 * i32]]* %edges, i32* %m, i32* %n, [30 * i32]* %store, i32 %31 ];
-^while.body([600 * [2 * i32]]* %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
+    cbr i1 %32, [ ^while.body [600 * [2 * i32]]* %edges, i32* %n, [30 * i32]* %store, i32* %m, i32 %31, i32 0, i1 %32 ], [ ^b [600 * [2 * i32]]* %edges, i32* %m, i32* %n, [30 * i32]* %store, i32 %31, i1 %32 ];
+^while.body([600 * [2 * i32]]* %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i1 %arg6):
     [2 * i32]* %0 = getelementptr &([600 * [2 * i32]]* %arg)[i32 0][i32 %arg5];
     i32* %1 = getelementptr &([2 * i32]* %0)[i32 0][i32 0];
     i32 %2 = call () -> i32 @getint();
@@ -158,10 +149,9 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %3 with i32 %4;
     i32 %5 = add i32 %arg5, i32 1;
     i1 %6 = scmp lt i32 %5, i32 %arg4;
-    cbr i1 %6, [ ^while.body [600 * [2 * i32]]* %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %5 ], [ ^b [600 * [2 * i32]]* %arg, i32* %arg3, i32* %arg1, [30 * i32]* %arg2, i32 %arg4 ];
-^b([600 * [2 * i32]]* %arg, i32* %arg1, i32* %arg2, [30 * i32]* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 0, i32 %arg4;
-    cbr i1 %0, [ ^while.body1 [600 * [2 * i32]]* %arg, i32* %arg2, [30 * i32]* %arg3, i32* %arg1, i32 %arg4, i32 0 ], [ ^b1 i32* %arg1, i32* %arg2, [30 * i32]* %arg3 ];
+    cbr i1 %6, [ ^while.body [600 * [2 * i32]]* %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %5, i1 %arg6 ], [ ^b [600 * [2 * i32]]* %arg, i32* %arg3, i32* %arg1, [30 * i32]* %arg2, i32 %arg4, i1 %arg6 ];
+^b([600 * [2 * i32]]* %arg, i32* %arg1, i32* %arg2, [30 * i32]* %arg3, i32 %arg4, i1 %arg5):
+    cbr i1 %arg5, [ ^while.body1 [600 * [2 * i32]]* %arg, i32* %arg2, [30 * i32]* %arg3, i32* %arg1, i32 %arg4, i32 0 ], [ ^b1 i32* %arg1, i32* %arg2, [30 * i32]* %arg3 ];
 ^while.body1([600 * [2 * i32]]* %arg, i32* %arg1, [30 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
     [2 * i32]* %0 = getelementptr &([600 * [2 * i32]]* %arg)[i32 0][i32 %arg5];
     i32* %1 = getelementptr &([2 * i32]* %0)[i32 0][i32 0];

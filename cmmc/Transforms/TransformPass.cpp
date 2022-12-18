@@ -242,7 +242,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // "CodeMove",  //
             // Postprocess
             "NoReturnCallEliminate",  //
-            //"FreeEliminate",          //
+            "FreeEliminate",          //
             "NoSideEffectEliminate",  // clean up
             "GlobalEliminate",        //
             "UndefPropagation"        //
@@ -278,10 +278,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(auto pass : passesSource.collect({
-                "ScalarMem2Reg",      //
-                "StoreEliminate",     // clean up
-                "BlockArgEliminate",  // clean up
-                //"FreeEliminate",          // clean up
+                "ScalarMem2Reg",          //
+                "StoreEliminate",         // clean up
+                "BlockArgEliminate",      // clean up
+                "FreeEliminate",          // clean up
                 "NoSideEffectEliminate",  // clean up
                 "SmallBlockInlining",     //
             }))

@@ -3,20 +3,18 @@ internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
-    i32* %i = alloc i32;
     i1 %1 = scmp lt i32 0, i32 %0;
-    cbr i1 %1, [ ^for.body i32* %i, i32 %0, i32 0, i32 0 ], [ ^b i32* %i, i32 0 ];
-^for.body(i32* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = mul i32 %arg3, i32 %arg3;
-    i32 %1 = add i32 %arg2, i32 %0;
-    i32 %2 = mul i32 %arg1, i32 %arg1;
-    i32 %3 = mul i32 %2, i32 %arg1;
+    cbr i1 %1, [ ^for.body i32 %0, i32 0, i32 0 ], [ ^b i32 0 ];
+^for.body(i32 %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = mul i32 %arg2, i32 %arg2;
+    i32 %1 = add i32 %arg1, i32 %0;
+    i32 %2 = mul i32 %arg, i32 %arg;
+    i32 %3 = mul i32 %2, i32 %arg;
     i32 %4 = add i32 %1, i32 %3;
-    i32 %5 = add i32 %arg3, i32 1;
-    i1 %6 = scmp lt i32 %5, i32 %arg1;
-    cbr i1 %6, [ ^for.body i32* %arg, i32 %arg1, i32 %4, i32 %5 ], [ ^b i32* %arg, i32 %4 ];
-^b(i32* %arg, i32 %arg1):
-    free i32* %arg;
-    call (i32) -> void @putint(i32 %arg1);
+    i32 %5 = add i32 %arg2, i32 1;
+    i1 %6 = scmp lt i32 %5, i32 %arg;
+    cbr i1 %6, [ ^for.body i32 %arg, i32 %4, i32 %5 ], [ ^b i32 %4 ];
+^b(i32 %arg):
+    call (i32) -> void @putint(i32 %arg);
     ret i32 0;
 }

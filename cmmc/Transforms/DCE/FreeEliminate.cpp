@@ -68,19 +68,40 @@ class FreeEliminate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+        constexpr uint32_t strongThreshold = 8U;
+        const auto strongCheck = func.blocks().size() <= strongThreshold;
 
-        std::unordered_set<Instruction*> removeList;
+        std::unordered_set<Value*> removeList;
         for(auto block : func.blocks()) {
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Free) {
                     const auto ptr = blockArgMap.queryRoot(inst->getOperand(0));
                     if(auto alloc = dynamic_cast<StackAllocInst*>(ptr)) {
                         std::unordered_set<Value*> visited;
-                        if(!isUsed(alloc, alloc->getBlock(), visited)) {
+                        if(!strongCheck || !isUsed(alloc, alloc->getBlock(), visited)) {
                             removeList.insert(inst);
                         }
                     }
                 }
+            }
+        }
+
+        if(!strongCheck) {
+            // weaker strategy: only counts explicit uses for performance
+            for(auto block : func.blocks()) {
+                for(auto inst : block->instructions()) {
+                    if(inst->isTerminator() || inst->getInstID() == InstructionID::Free)
+                        continue;
+                    for(auto operand : inst->operands()) {
+                        if(operand->getType()->isPointer()) {
+                            const auto base = blockArgMap.queryRoot(operand);
+                            removeList.erase(base);
+                        }
+                    }
+                }
+
+                if(removeList.empty())
+                    return false;
             }
         }
 

@@ -9,8 +9,8 @@ internal func @QuickSort(i32*, i32, i32, i32*) -> i32 {
     i32* %high = alloc i32;
     store i32* %high with i32 %arg2;
     i1 %0 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %0, [ ^indirect i32** %arr, i32* %high, i32* %low, i32* %arg, i32 %arg2, i32 %arg1, i32* %arg3, i32* %arg ], [ ^b ];
-^indirect(i32** %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32* %arg6, i32* %arg7):
+    cbr i1 %0, [ ^indirect i32** %arr, i32* %high, i32* %low, i32* %arg, i32 %arg2, i32 %arg1, i32* %arg3, i32* %arg, i1 %0 ], [ ^b ];
+^indirect(i32** %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32* %arg6, i32* %arg7, i1 %arg8):
     i32* %i = alloc i32;
     store i32* %i with i32 %arg5;
     i32* %j = alloc i32;
@@ -19,27 +19,23 @@ internal func @QuickSort(i32*, i32, i32, i32*) -> i32 {
     i32* %0 = getelementptr &(i32* %arg3)[i32 %arg5];
     i32 %1 = load i32* %0;
     store i32* %k with i32 %1;
-    i1 %2 = scmp lt i32 %arg5, i32 %arg4;
-    cbr i1 %2, [ ^indirect1 i32* %arg2, i32** %arg, i32* %arg1, i32* %k, i32* %j, i32* %i, i32* %arg6, i32* %arg7, i32 %arg5, i32 %arg4, i32 %1 ], [ ^b1 i32* %j, i32* %arg2, i32* %arg1, i32* %k, i32** %arg, i32* %i, i32* %arg6, i32* %arg7, i32 %arg5, i32 %1 ];
+    cbr i1 %arg8, [ ^indirect1 i32* %arg2, i32** %arg, i32* %arg1, i32* %k, i32* %j, i32* %i, i32* %arg6, i32* %arg7, i32 %arg5, i32 %arg4, i32 %1 ], [ ^b1 i32* %arg2, i32* %arg1, i32** %arg, i32* %i, i32* %arg6, i32* %arg7, i32 %arg5, i32 %1 ];
 ^b():
     ret i32 0;
 ^indirect1(i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i1 %0 = scmp lt i32 %arg8, i32 %arg9;
     cbr i1 %0, [ ^b2 i32* %arg, i32* %arg5, i32* %arg2, i32* %arg3, i32** %arg1, i32* %arg4, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ], [ ^b3 i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
-^b1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32** %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9):
-    i32* %0 = getelementptr &(i32* %arg7)[i32 %arg8];
-    store i32* %0 with i32 %arg9;
-    i32 %1 = load i32* %arg1;
-    i32 %2 = sub i32 %arg8, i32 1;
-    i32 %3 = call (i32*, i32, i32, i32*) -> i32 @QuickSort(i32* %arg7, i32 %1, i32 %2, i32* %arg6);
-    i32 %4 = load i32* %arg5;
-    i32 %5 = load i32* %arg2;
-    i32* %6 = load i32** %arg4;
+^b1(i32* %arg, i32* %arg1, i32** %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7):
+    i32* %0 = getelementptr &(i32* %arg5)[i32 %arg6];
+    store i32* %0 with i32 %arg7;
+    i32 %1 = load i32* %arg;
+    i32 %2 = sub i32 %arg6, i32 1;
+    i32 %3 = call (i32*, i32, i32, i32*) -> i32 @QuickSort(i32* %arg5, i32 %1, i32 %2, i32* %arg4);
+    i32 %4 = load i32* %arg3;
+    i32 %5 = load i32* %arg1;
+    i32* %6 = load i32** %arg2;
     i32 %7 = add i32 %4, i32 1;
-    i32 %8 = call (i32*, i32, i32, i32*) -> i32 @QuickSort(i32* %6, i32 %7, i32 %5, i32* %arg6);
-    free i32* %arg3;
-    free i32* %arg;
-    free i32* %arg5;
+    i32 %8 = call (i32*, i32, i32, i32*) -> i32 @QuickSort(i32* %6, i32 %7, i32 %5, i32* %arg4);
     ret i32 0;
 ^b2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32** %arg4, i32* %arg5, i32* %arg6, i32* %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &(i32* %arg7)[i32 %arg9];
@@ -91,10 +87,10 @@ internal func @QuickSort(i32*, i32, i32, i32*) -> i32 {
     i32 %5 = sub i32 %arg7, i32 1;
     store i32* %arg5 with i32 %5;
     i1 %6 = scmp lt i32 %arg6, i32 %5;
-    cbr i1 %6, [ ^indirect1 i32* %arg, i32** %arg4, i32* %arg1, i32* %arg2, i32* %arg5, i32* %arg3, i32* %arg8, i32* %arg9, i32 %4, i32 %5, i32 %3 ], [ ^b1 i32* %arg5, i32* %arg, i32* %arg1, i32* %arg2, i32** %arg4, i32* %arg3, i32* %arg8, i32* %arg9, i32 %4, i32 %3 ];
+    cbr i1 %6, [ ^indirect1 i32* %arg, i32** %arg4, i32* %arg1, i32* %arg2, i32* %arg5, i32* %arg3, i32* %arg8, i32* %arg9, i32 %4, i32 %5, i32 %3 ], [ ^b1 i32* %arg, i32* %arg1, i32** %arg4, i32* %arg3, i32* %arg8, i32* %arg9, i32 %4, i32 %3 ];
 ^while.header1(i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32* %arg8, i32* %arg9, i32 %arg10, i32 %arg11, i32 %arg12):
     i1 %0 = scmp lt i32 %arg7, i32 %arg6;
-    cbr i1 %0, [ ^indirect1 i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg8, i32* %arg9, i32 %arg10, i32 %arg11, i32 %arg12 ], [ ^b1 i32* %arg4, i32* %arg, i32* %arg2, i32* %arg3, i32** %arg1, i32* %arg5, i32* %arg8, i32* %arg9, i32 %arg10, i32 %arg12 ];
+    cbr i1 %0, [ ^indirect1 i32* %arg, i32** %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32* %arg8, i32* %arg9, i32 %arg10, i32 %arg11, i32 %arg12 ], [ ^b1 i32* %arg, i32* %arg2, i32** %arg1, i32* %arg5, i32* %arg8, i32* %arg9, i32 %arg10, i32 %arg12 ];
 }
 func @main() -> i32 { NoRecurse Entry } {
 ^entry():

@@ -14,13 +14,9 @@ internal func @find_minimum(i32, i32*) -> i32 { NoMemoryWrite NoSideEffect NoRec
     i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     i1 %2 = scmp neq i32 %1, i32 -1;
-    cbr i1 %2, [ ^if.then1 i32 %arg1 ], [ ^b i32 %arg1 ];
+    cbr i1 %2, [ ^entry i32 %1 ], [ ^b i32 %arg1 ];
 ^if.then():
     ret i32 -1;
-^if.then1(i32 %arg):
-    i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
-    i32 %1 = load i32* %0;
-    ubr [ ^entry i32 %1 ];
 ^b(i32 %arg):
     ret i32 %arg;
 }
@@ -65,91 +61,84 @@ internal func @delete(i32, i32, i32*) -> i32 {
     i32* %0 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     i1 %2 = scmp gt i32 %arg1, i32 %1;
-    cbr i1 %2, [ ^if.then1 i32* %arg2, i32 %arg3, i32 %arg4 ], [ ^if.else i32* %arg2, i32 %arg3, i32 %arg4 ];
+    cbr i1 %2, [ ^if.then1 i32* %arg2, i32 %arg3, i32 %arg4 ], [ ^indirect1 i32* %arg2, i32 %arg3, i32 %arg4, i32* %0, i32 %1 ];
 ^if.then():
     ret i32 -1;
-^if.else(i32* %arg, i32 %arg1, i32 %arg2):
-    i32* %0 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %arg1];
-    i32 %1 = load i32* %0;
-    i1 %2 = scmp lt i32 %arg2, i32 %1;
-    cbr i1 %2, [ ^indirect2 i32 %arg2, i32 %arg1, i32* %arg, i32 %arg1 ], [ ^indirect1 i32 %arg1, i32* %arg, i32 %arg1 ];
+^indirect1(i32* %arg, i32 %arg1, i32 %arg2, i32* %arg3, i32 %arg4):
+    i1 %0 = scmp lt i32 %arg2, i32 %arg4;
+    cbr i1 %0, [ ^indirect3 i32 %arg2, i32 %arg1, i32* %arg, i32 %arg1 ], [ ^indirect2 i32 %arg1, i32* %arg, i32 %arg1, i32* %arg3 ];
 ^if.then1(i32* %arg, i32 %arg1, i32 %arg2):
     i32* %0 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i32 %2 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %arg2, i32* %arg);
     store i32* %0 with i32 %2;
     ret i32 %arg1;
-^indirect1(i32 %arg, i32* %arg1, i32 %arg2):
+^indirect2(i32 %arg, i32* %arg1, i32 %arg2, i32* %arg3):
     i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     i1 %2 = scmp eq i32 %1, i32 -1;
-    cbr i1 %2, [ ^b i32* %arg1, i32 %arg2 ], [ ^if.else1 i32* %arg1, i32 %arg2 ];
-^indirect2(i32 %arg, i32 %arg1, i32* %arg2, i32 %arg3):
+    cbr i1 %2, [ ^b i32* %arg1, i32 %arg2, i32* %arg3 ], [ ^if.else i32* %arg1, i32 %arg2, i32* %arg3 ];
+^indirect3(i32 %arg, i32 %arg1, i32* %arg2, i32 %arg3):
     i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i32 %2 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %arg, i32* %arg2);
     store i32* %0 with i32 %2;
     ret i32 %arg3;
-^b(i32* %arg, i32 %arg1):
+^b(i32* %arg, i32 %arg1, i32* %arg2):
     i32* %0 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i1 %2 = scmp eq i32 %1, i32 -1;
-    cbr i1 %2, [ ^if.then ], [ ^if.else1 i32* %arg, i32 %arg1 ];
-^if.else1(i32* %arg, i32 %arg1):
+    cbr i1 %2, [ ^if.then ], [ ^if.else i32* %arg, i32 %arg1, i32* %arg2 ];
+^if.else(i32* %arg, i32 %arg1, i32* %arg2):
     i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i1 %2 = scmp eq i32 %1, i32 -1;
-    cbr i1 %2, [ ^if.then2 i32 %arg1 ], [ ^indirect3 i32 %arg1, i32* %arg, i32 %arg1 ];
+    cbr i1 %2, [ ^if.then2 i32 %arg1 ], [ ^indirect4 i32 %arg1, i32* %arg, i32 %arg1, i32* %arg2 ];
 ^if.then2(i32 %arg):
     i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     i1 %2 = scmp eq i32 %1, i32 -1;
-    cbr i1 %2, [ ^indirect4 i32 %arg ], [ ^indirect5 i32 %arg ];
-^indirect3(i32 %arg, i32* %arg1, i32 %arg2):
+    cbr i1 %2, [ ^indirect5 i32 %arg ], [ ^indirect6 i32 %1 ];
+^indirect4(i32 %arg, i32* %arg1, i32 %arg2, i32* %arg3):
     i32* %0 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     i1 %2 = scmp eq i32 %1, i32 -1;
-    cbr i1 %2, [ ^if.then2 i32 %arg2 ], [ ^if.else2 i32* %arg1, i32 %arg2 ];
-^indirect4(i32 %arg):
+    cbr i1 %2, [ ^if.then2 i32 %arg2 ], [ ^if.else1 i32* %arg1, i32 %arg2, i32* %arg3 ];
+^indirect5(i32 %arg):
     i32* %0 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
     ret i32 %1;
-^indirect5(i32 %arg):
-    i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
-    i32 %1 = load i32* %0;
-    ret i32 %1;
-^if.else2(i32* %arg, i32 %arg1):
+^indirect6(i32 %arg):
+    ret i32 %arg;
+^if.else1(i32* %arg, i32 %arg1, i32* %arg2):
     i32* %0 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i32 %2 = call (i32, i32*) -> i32 @find_minimum(i32 %1, i32* %arg);
-    i32* %3 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %arg1];
-    i32* %4 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %2];
-    i32 %5 = load i32* %4;
-    store i32* %3 with i32 %5;
-    i32 %6 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %5, i32* %arg);
-    store i32* %0 with i32 %6;
+    i32* %3 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %2];
+    i32 %4 = load i32* %3;
+    store i32* %arg2 with i32 %4;
+    i32 %5 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %4, i32* %arg);
+    store i32* %0 with i32 %5;
     ret i32 %arg1;
 }
 internal func @inorder(i32, i32*) -> void { NoMemoryWrite } {
+^dummy_entry(i32 %arg, i32* %arg1):
+    ubr [ ^entry i32 %arg, i32* %arg1 ];
 ^entry(i32 %arg, i32* %arg1):
-    i32* %root = alloc i32;
     i1 %0 = scmp neq i32 %arg, i32 -1;
-    cbr i1 %0, [ ^indirect i32* %root, i32 %arg, i32* %arg1 ], [ ^b i32* %root ];
-^indirect(i32* %arg, i32 %arg1, i32* %arg2):
-    i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg1];
+    cbr i1 %0, [ ^indirect i32 %arg, i32* %arg1 ], [ ^b ];
+^indirect(i32 %arg, i32* %arg1):
+    i32* %0 = getelementptr &([10000 * i32]* @left_child)[i32 0][i32 %arg];
     i32 %1 = load i32* %0;
-    call (i32, i32*) -> void @inorder(i32 %1, i32* %arg2);
-    i32* %2 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %arg1];
+    call (i32, i32*) -> void @inorder(i32 %1, i32* %arg1);
+    i32* %2 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %arg];
     i32 %3 = load i32* %2;
     call (i32) -> void @putint(i32 %3);
     call (i32) -> void @putch(i32 32);
-    i32* %4 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg1];
+    i32* %4 = getelementptr &([10000 * i32]* @right_child)[i32 0][i32 %arg];
     i32 %5 = load i32* %4;
-    call (i32, i32*) -> void @inorder(i32 %5, i32* %arg2);
-    free i32* %arg;
-    ret;
-^b(i32* %arg):
-    free i32* %arg;
+    ubr [ ^entry i32 %5, i32* %arg1 ];
+^b():
     ret;
 }
 func @main() -> i32 { NoRecurse Entry } {

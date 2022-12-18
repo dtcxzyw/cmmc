@@ -12,18 +12,16 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %5 = call () -> i32 @getint();
     store i32* %4 with i32 %5;
     i1 %6 = scmp lt i32 %2, i32 %5;
-    cbr i1 %6, [ ^indirect [10000 * i32]* %x, i32 %0, i32 %3, i32 %0 ], [ ^b [10000 * i32]* %x, i32 %3, i32 %0 ];
-^indirect([10000 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32* %0 = getelementptr &([10000 * i32]* %arg)[i32 0][i32 %arg1];
-    i32 %1 = load i32* %0;
-    store i32* %0 with i32 %1;
-    ubr [ ^b [10000 * i32]* %arg, i32 %arg2, i32 %arg3 ];
-^b([10000 * i32]* %arg, i32 %arg1, i32 %arg2):
-    i32* %0 = getelementptr &([10000 * i32]* %arg)[i32 0][i32 %arg2];
-    i32 %1 = load i32* %0;
+    cbr i1 %6, [ ^indirect i32* %1, i32 %2, i32* %1, i32* %4 ], [ ^b i32 %5, i32 %2 ];
+^indirect(i32* %arg, i32 %arg1, i32* %arg2, i32* %arg3):
+    store i32* %arg with i32 %arg1;
+    i32 %0 = load i32* %arg2;
+    i32 %1 = load i32* %arg3;
+    call (i32) -> void @putint(i32 %0);
     call (i32) -> void @putint(i32 %1);
-    i32* %2 = getelementptr &([10000 * i32]* %arg)[i32 0][i32 %arg1];
-    i32 %3 = load i32* %2;
-    call (i32) -> void @putint(i32 %3);
+    ret i32 0;
+^b(i32 %arg, i32 %arg1):
+    call (i32) -> void @putint(i32 %arg1);
+    call (i32) -> void @putint(i32 %arg);
     ret i32 0;
 }

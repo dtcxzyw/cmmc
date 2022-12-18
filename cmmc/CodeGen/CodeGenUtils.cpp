@@ -200,10 +200,8 @@ void removeIdentityCopies(GMIRFunction& func) {
                 const auto& copy = std::get<CopyMInst>(inst);
                 if(copy.indirectDst || copy.indirectSrc)
                     return false;
-                if(copy.dst.addressSpace == AddressSpace::VirtualReg && copy.src.addressSpace == AddressSpace::VirtualReg) {
-                    if(copy.dst.id == copy.src.id)
-                        return true;
-                }
+                if(copy.dst.id == copy.src.id)
+                    return true;
             }
             return false;
         });

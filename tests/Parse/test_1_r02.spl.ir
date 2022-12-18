@@ -1,5 +1,3 @@
-struct my_struct {i32 code, i8 data};
-
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
 i32* @global;

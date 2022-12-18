@@ -1,0 +1,396 @@
+FUNCTION Swap :
+PARAM v0
+PARAM v1
+PARAM v2
+v3 := v0
+v4 := v1 * #4
+v3 := v3 + v4
+v5 := *v3
+v6 := v0
+v7 := v2 * #4
+v6 := v6 + v7
+v8 := *v6
+*v3 := v8
+*v6 := v5
+RETURN #0
+
+FUNCTION Partition :
+PARAM v9
+PARAM v10
+PARAM v11
+v12 := v9
+v13 := v10 * #4
+v12 := v12 + v13
+v14 := *v12
+IF v10 >= v11 GOTO label5
+v15 := v9
+v16 := v10
+v17 := v11
+v18 := v14
+GOTO label18
+LABEL label2 :
+v19 := v15
+v20 := v16
+v21 := v17
+v22 := v18
+LABEL label3 :
+v23 := v19
+v24 := v21 * #4
+v23 := v23 + v24
+v25 := *v23
+IF v25 < v22 GOTO label10
+v26 := v21 - #1
+IF v20 >= v26 GOTO label4
+GOTO label15
+LABEL label4 :
+v27 := v19
+v28 := v20
+v29 := v26
+v30 := v22
+GOTO label11
+LABEL label5 :
+v31 := v10
+GOTO label9
+LABEL label6 :
+v33 := v32
+v35 := v34
+v37 := v36
+v39 := v38
+LABEL label7 :
+v40 := v33
+v41 := v35 * #4
+v40 := v40 + v41
+v42 := *v40
+v43 := v33
+v44 := v37 * #4
+v43 := v43 + v44
+v45 := *v43
+*v40 := v45
+*v43 := v42
+IF v35 >= v37 GOTO label8
+GOTO label17
+LABEL label8 :
+v31 := v35
+LABEL label9 :
+RETURN v31
+LABEL label10 :
+v27 := v19
+v28 := v20
+v29 := v21
+v30 := v22
+LABEL label11 :
+v46 := v27
+v47 := v28 * #4
+v46 := v46 + v47
+v48 := *v46
+v49 := v27
+v50 := v29 * #4
+v49 := v49 + v50
+v51 := *v49
+*v46 := v51
+*v49 := v48
+IF v28 >= v29 GOTO label12
+GOTO label13
+LABEL label12 :
+v33 := v27
+v35 := v28
+v37 := v29
+v39 := v30
+GOTO label7
+LABEL label13 :
+v32 := v27
+v52 := v28
+v36 := v29
+v38 := v30
+LABEL label14 :
+v53 := v32
+v54 := v52 * #4
+v53 := v53 + v54
+v55 := *v53
+IF v55 > v38 GOTO label16
+v34 := v52 + #1
+IF v34 >= v36 GOTO label6
+v32 := v32
+v52 := v34
+v36 := v36
+v38 := v38
+GOTO label14
+LABEL label15 :
+v19 := v19
+v20 := v20
+v21 := v26
+v22 := v22
+GOTO label3
+LABEL label16 :
+v33 := v32
+v35 := v52
+v37 := v36
+v39 := v38
+GOTO label7
+LABEL label17 :
+v15 := v33
+v16 := v35
+v17 := v37
+v18 := v39
+LABEL label18 :
+IF v16 >= v17 GOTO label19
+GOTO label2
+LABEL label19 :
+v27 := v15
+v28 := v16
+v29 := v17
+v30 := v18
+GOTO label11
+
+FUNCTION QuickSort :
+PARAM v56
+PARAM v57
+PARAM v58
+DEC x0 4
+DEC x1 4
+DEC x2 4
+IF v57 >= v58 GOTO label21
+GOTO label24
+LABEL label21 :
+RETURN #0
+LABEL label22 :
+v60 := v59
+v62 := v61
+v64 := v63
+v66 := v65
+v68 := v67
+v70 := v69
+v72 := v71
+v74 := v73
+v76 := v75
+GOTO label38
+LABEL label23 :
+v77 := v62
+v78 := v60
+v79 := v64
+v80 := v66
+v81 := v68
+v82 := v70
+v83 := v72
+v85 := v84
+v87 := v86
+v89 := v88
+GOTO label25
+LABEL label24 :
+v90 := &x0
+v91 := &x1
+v92 := &x2
+*v90 := v57
+*v91 := v58
+v93 := v56
+v94 := v57 * #4
+v93 := v93 + v94
+v95 := *v93
+*v92 := v95
+IF v57 >= v58 GOTO label31
+v77 := v56
+v78 := &x2
+v79 := &x1
+v80 := &x0
+v81 := v56
+v82 := v57
+v83 := v58
+v85 := v57
+v87 := v58
+v89 := v95
+LABEL label25 :
+IF v85 >= v87 GOTO label26
+GOTO label36
+LABEL label26 :
+v96 := v78
+v97 := v77
+v98 := v79
+v99 := v80
+v100 := v81
+v101 := v82
+v102 := v83
+v103 := v85
+v104 := v87
+LABEL label27 :
+v105 := v97
+v106 := v103 * #4
+v105 := v105 + v106
+v107 := *v105
+v108 := v97
+v109 := v104 * #4
+v108 := v108 + v109
+v110 := *v108
+*v105 := v110
+*v108 := v107
+v111 := *v96
+v112 := *v98
+v113 := *v99
+IF v103 >= v104 GOTO label37
+v63 := v98
+v59 := v96
+v61 := v97
+v65 := v99
+v67 := v100
+v69 := v101
+v71 := v102
+v73 := v113
+v75 := v112
+v114 := v111
+LABEL label28 :
+v115 := v61
+v116 := v73 * #4
+v115 := v115 + v116
+v117 := *v115
+IF v117 > v114 GOTO label22
+v118 := v65
+v119 := v73 + #1
+*v118 := v119
+IF v119 >= v75 GOTO label40
+v73 := v119
+GOTO label28
+LABEL label29 :
+v121 := v120
+v123 := v122 - #1
+*v121 := v123
+IF v124 >= v123 GOTO label30
+GOTO label33
+LABEL label30 :
+v96 := v125
+v97 := v126
+v98 := v120
+v99 := v127
+v100 := v128
+v101 := v129
+v102 := v130
+v103 := v124
+v104 := v123
+GOTO label27
+LABEL label31 :
+v131 := v56
+v132 := v57
+v133 := v58
+v134 := v57
+LABEL label32 :
+v135 := v134 - #1
+ARG v135
+ARG v132
+ARG v131
+v136 := CALL QuickSort
+v137 := v134 + #1
+ARG v133
+ARG v137
+ARG v131
+v138 := CALL QuickSort
+RETURN #0
+LABEL label33 :
+v122 := v123
+LABEL label34 :
+v139 := v126
+v140 := v122 * #4
+v139 := v139 + v140
+v141 := *v139
+IF v141 < v142 GOTO label35
+GOTO label29
+LABEL label35 :
+v96 := v125
+v97 := v126
+v98 := v120
+v99 := v127
+v100 := v128
+v101 := v129
+v102 := v130
+v103 := v124
+v104 := v122
+GOTO label27
+LABEL label36 :
+v127 := v80
+v125 := v78
+v126 := v77
+v120 := v79
+v128 := v81
+v129 := v82
+v130 := v83
+v124 := v85
+v122 := v87
+v142 := v89
+GOTO label34
+LABEL label37 :
+v60 := v96
+v62 := v97
+v64 := v98
+v66 := v99
+v68 := v100
+v70 := v101
+v72 := v102
+v74 := v113
+v76 := v112
+LABEL label38 :
+v143 := v62
+v144 := v74 * #4
+v143 := v143 + v144
+v145 := *v143
+v146 := v62
+v147 := v76 * #4
+v146 := v146 + v147
+v148 := *v146
+*v143 := v148
+*v146 := v145
+v88 := *v60
+v86 := *v64
+v84 := *v66
+IF v74 >= v76 GOTO label39
+GOTO label23
+LABEL label39 :
+v131 := v68
+v132 := v70
+v133 := v72
+v134 := v84
+GOTO label32
+LABEL label40 :
+v60 := v59
+v62 := v61
+v64 := v63
+v66 := v65
+v68 := v67
+v70 := v69
+v72 := v71
+v74 := v119
+v76 := v75
+GOTO label38
+
+FUNCTION main :
+DEC x3 32
+v149 := &x3
+v150 := #0
+LABEL label42 :
+v151 := v149
+v152 := v150 * #4
+v151 := v151 + v152
+READ v153
+*v151 := v153
+v154 := v150 + #1
+IF v154 >= #8 GOTO label43
+v149 := v149
+v150 := v154
+GOTO label42
+LABEL label43 :
+ARG #7
+ARG #0
+ARG v149
+v155 := CALL QuickSort
+v156 := v149
+v157 := #0
+LABEL label44 :
+v158 := v156
+v159 := v157 * #4
+v158 := v158 + v159
+v160 := *v158
+WRITE v160
+v161 := v157 + #1
+IF v161 >= #8 GOTO label45
+v156 := v156
+v157 := v161
+GOTO label44
+LABEL label45 :
+RETURN #0
+

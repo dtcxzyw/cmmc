@@ -2,23 +2,17 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @reverse(i32) -> void { NoMemoryRead NoMemoryWrite } {
 ^entry(i32 %arg):
-    i32* %n = alloc i32;
-    i32* %next = alloc i32;
     i1 %0 = scmp le i32 %arg, i32 1;
-    cbr i1 %0, [ ^if.then i32* %n, i32* %next ], [ ^indirect i32* %n, i32* %next, i32 %arg ];
-^if.then(i32* %arg, i32* %arg1):
+    cbr i1 %0, [ ^if.then ], [ ^indirect i32 %arg ];
+^if.then():
     i32 %0 = call () -> i32 @getint();
     call (i32) -> void @putint(i32 %0);
-    free i32* %arg1;
-    free i32* %arg;
     ret;
-^indirect(i32* %arg, i32* %arg1, i32 %arg2):
+^indirect(i32 %arg):
     i32 %0 = call () -> i32 @getint();
-    i32 %1 = sub i32 %arg2, i32 1;
+    i32 %1 = sub i32 %arg, i32 1;
     call (i32) -> void @reverse(i32 %1);
     call (i32) -> void @putint(i32 %0);
-    free i32* %arg1;
-    free i32* %arg;
     ret;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {

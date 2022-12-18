@@ -1,0 +1,5 @@
+FUNCTION main :
+WRITE #2
+WRITE #70
+RETURN #0
+

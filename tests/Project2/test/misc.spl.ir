@@ -1,7 +1,6 @@
 struct foo3 {};
 struct foo2 {i32 x, i32 y};
 struct foo {i32 c, [10 * i32] d, struct foo2 w, struct foo3 a, [2 * struct foo3] b};
-struct looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogstruct {i32 looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooogfield};
 
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 func @write(i32) -> void { NoMemoryRead NoMemoryWrite };

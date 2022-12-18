@@ -80,6 +80,8 @@ void TACSubTarget::peepholeOpt(GMIRFunction& func) const {
         } else
             break;
     }
+
+    removeIdentityCopies(func);
 }
 
 void TACSubTarget::postPeepholeOpt(GMIRFunction&) const {}

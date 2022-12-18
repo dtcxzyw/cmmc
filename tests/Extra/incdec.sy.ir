@@ -1,14 +1,12 @@
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
 ^entry():
-    i32* %i = alloc i32;
-    ubr [ ^for.body i32* %i, i32 0, i32 0 ];
-^for.body(i32* %arg, i32 %arg1, i32 %arg2):
-    i32 %0 = add i32 %arg1, i32 %arg2;
-    i32 %1 = add i32 %arg2, i32 1;
+    ubr [ ^for.body i32 0, i32 0 ];
+^for.body(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg, i32 %arg1;
+    i32 %1 = add i32 %arg1, i32 1;
     i1 %2 = scmp lt i32 %1, i32 100;
-    cbr i1 %2, [ ^for.body i32* %arg, i32 %0, i32 %1 ], [ ^b i32* %arg, i32 %0 ];
-^b(i32* %arg, i32 %arg1):
-    free i32* %arg;
-    i32 %0 = add i32 %arg1, i32 10;
+    cbr i1 %2, [ ^for.body i32 %0, i32 %1 ], [ ^b i32 %0 ];
+^b(i32 %arg):
+    i32 %0 = add i32 %arg, i32 10;
     ret i32 %0;
 }

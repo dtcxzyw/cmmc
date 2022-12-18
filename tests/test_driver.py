@@ -251,6 +251,18 @@ def spl_ref(src):
     return True
 
 
+def spl_tac_ref(src):
+    subprocess.run(args=[binary_path, '-t', 'tac', '-o',
+                         src+".tacir", src], stderr=subprocess.DEVNULL)
+    return True
+
+
+def spl_mips_ref(src):
+    subprocess.run(args=[binary_path, '-t', 'mips', '-o',
+                         src+".S", src], stderr=subprocess.DEVNULL)
+    return True
+
+
 def sysy_ref(src):
     subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
                          src+".ir", src], stderr=subprocess.DEVNULL)
@@ -416,6 +428,8 @@ if "opt" in test_cases:
 if generate_ref:
     test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
     test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+    test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
+    test("Reference Spl->MIPS", tests_path + "/TAC2MIPS", ".spl", spl_mips_ref)
 
 end = time.perf_counter()
 
