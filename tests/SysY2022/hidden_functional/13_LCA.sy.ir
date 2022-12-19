@@ -237,10 +237,10 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %0, [ ^b17 i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 0, i32 %arg5 ], [ ^b18 i32* %arg2, i32 %arg3, i32 0, i32 %arg5 ];
 ^b16(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i1 %0 = scmp neq i32 %arg8, i32 0;
-    cbr i1 %0, [ ^if.then6 i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ], [ ^entry5 i32 %arg7, i32* %arg2, i32* %arg3, i32* %arg1, i32* %arg, i32 %arg4, i32 %arg5, i32 %arg6 ];
+    cbr i1 %0, [ ^if.then6 i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ], [ ^entry5 i32 %arg7, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %arg4, i32 %arg5, i32 %arg6 ];
 ^if.then6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i32 %0 = neg i32 %arg7;
-    ubr [ ^entry5 i32 %0, i32* %arg1, i32* %arg, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ];
+    ubr [ ^entry5 i32 %0, i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ];
 ^while.body7(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32 %0 = mul i32 %arg10, i32 10;
     i32 %1 = add i32 %0, i32 %arg9;
@@ -333,10 +333,10 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %0, [ ^b25 i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 0, i32 %arg6 ], [ ^b26 i32* %arg2, i32 %arg3, i32 %arg4, i32 0, i32 %arg6 ];
 ^b24(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i1 %0 = scmp neq i32 %arg9, i32 0;
-    cbr i1 %0, [ ^if.then10 i32 %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ], [ ^entry7 i32 %arg4, i32 %arg8, i32* %arg1, i32* %arg, i32* %arg3, i32* %arg1, i32* %arg2, i32 %arg5, i32 %arg6, i32 %arg7 ];
+    cbr i1 %0, [ ^if.then10 i32 %arg4, i32* %arg3, i32* %arg2, i32* %arg1, i32* %arg, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ], [ ^entry7 i32 %arg4, i32 %arg8, i32* %arg1, i32* %arg, i32* %arg2, i32* %arg1, i32* %arg3, i32 %arg5, i32 %arg6, i32 %arg7 ];
 ^if.then10(i32 %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32 %0 = neg i32 %arg8;
-    ubr [ ^entry7 i32 %arg, i32 %0, i32* %arg3, i32* %arg4, i32* %arg1, i32* %arg3, i32* %arg2, i32 %arg5, i32 %arg6, i32 %arg7 ];
+    ubr [ ^entry7 i32 %arg, i32 %0, i32* %arg3, i32* %arg4, i32* %arg2, i32* %arg3, i32* %arg1, i32 %arg5, i32 %arg6, i32 %arg7 ];
 ^while.body11(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32 %arg12):
     i32 %0 = mul i32 %arg11, i32 10;
     i32 %1 = add i32 %0, i32 %arg10;
@@ -458,14 +458,15 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %4 = getelementptr &([20 * i32]* %3)[i32 0][i32 %arg7];
     i32 %5 = load i32* %4;
     i1 %6 = scmp neq i32 %2, i32 %5;
-    cbr i1 %6, [ ^indirect11 i32* %arg, i32* %arg1, i32* %arg2, i32 %arg7, i32 %5, i32 %2, i32* %arg3, i32 %arg4 ], [ ^b29 i32* %arg, i32* %arg2, i32* %arg1, i32 %arg7, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ];
-^indirect11(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32* %arg6, i32 %arg7):
-    store i32* %arg2 with i32 %arg5;
-    store i32* %arg with i32 %arg4;
-    i32 %0 = sub i32 %arg3, i32 1;
-    store i32* %arg1 with i32 %0;
-    i1 %1 = scmp ge i32 %0, i32 0;
-    cbr i1 %1, [ ^while.body13 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg6, i32 %arg7, i32 %arg5, i32 %arg4, i32 %0 ], [ ^b30 i32* %arg6, i32 %arg7, i32 %arg5 ];
+    cbr i1 %6, [ ^indirect11 i32* %arg, i32* %arg1, i32* %arg2, i32* %1, i32 %arg7, i32 %5, i32* %arg3, i32 %arg4 ], [ ^b29 i32* %arg, i32* %arg2, i32* %arg1, i32 %arg7, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ];
+^indirect11(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32* %arg6, i32 %arg7):
+    i32 %0 = load i32* %arg3;
+    store i32* %arg2 with i32 %0;
+    store i32* %arg with i32 %arg5;
+    i32 %1 = sub i32 %arg4, i32 1;
+    store i32* %arg1 with i32 %1;
+    i1 %2 = scmp ge i32 %1, i32 0;
+    cbr i1 %2, [ ^while.body13 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg6, i32 %arg7, i32 %0, i32 %arg5, i32 %1 ], [ ^b30 i32* %arg6, i32 %arg7, i32 %0 ];
 ^b29(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i32 %0 = sub i32 %arg3, i32 1;
     store i32* %arg2 with i32 %0;

@@ -53,7 +53,7 @@ fact:
     jal fact
     move $t3, $v0
     lw $t4, 12($sp)
-    mult $t4, $t3
+    mult $t3, $t4
     mflo $t5
     move $v0, $t5
     lw $ra, 0($sp)

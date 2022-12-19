@@ -3,6 +3,7 @@
 + [x] always-inline -> Inlining
 + [x] argpromotion -> Inlining & ScalarMem2Reg
 + [ ] bb-vectorize
++ [x] block-placement -> BlockLayout
 + [ ] break-crit-edges
 + [x] constmerge -> ConstantMerge
 + [x] dce -> NoSideEffectEliminate
@@ -12,10 +13,10 @@
 + [x] function-attrs -> FunctionAttrInfer
 + [x] globldce -> GlobalEliminate
 + [ ] globalopt
-+ [ ] gvn
++ [x] gvn
 + [ ] indvars
 + [x] inline -> Inlining
-+ [x] instcombine -> AtithmeticReduce
++ [x] instcombine -> ArithmeticReduce
 + [ ] aggressive-instcombine
 + [x] internalize -> -H
 + [x] ipsccp -> Inlining & sccp
@@ -26,16 +27,14 @@
 + [ ] loop-reduce
 + [ ] loop-rotate
 + [ ] loop-simplify
-+ [ ] loop-unroll
++ [x] loop-unroll
 + [ ] loop-unroll-and-jam
 + [ ] loop-unswitch
 + [x] mem2reg -> ScalarMem2Reg
 + [ ] memcpyopt
 + [x] mergefunc -> Inlining & BlockOutliner
-+ [ ] mergereturn
-+ [ ] partial-inliner
++ [x] partial-inliner -> Inlining
 + [ ] reassociate
-+ [ ] reg2mem
 + [ ] sroa
 + [x] sccp -> ConstantPropagation & SimplifyBranch 
 + [x] simplifycfg -> BlockEliminate & BlockMerge

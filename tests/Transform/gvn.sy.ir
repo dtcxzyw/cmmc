@@ -7,10 +7,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %3 = scmp neq i32 %2, i32 0;
     cbr i1 %3, [ ^indirect i32 %1, i32 %0 ], [ ^indirect1 i32 %1, i32 %0 ];
 ^indirect(i32 %arg, i32 %arg1):
-    i32 %0 = mul i32 %arg1, i32 %arg;
+    i32 %0 = mul i32 %arg, i32 %arg1;
     ret i32 %0;
 ^indirect1(i32 %arg, i32 %arg1):
-    i32 %0 = mul i32 %arg1, i32 %arg;
+    i32 %0 = mul i32 %arg, i32 %arg1;
     i32 %1 = add i32 %0, i32 1;
     ret i32 %1;
 }

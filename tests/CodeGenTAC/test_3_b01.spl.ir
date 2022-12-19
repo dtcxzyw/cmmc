@@ -70,7 +70,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry1():
     ret i32 0;
 ^indirect([100 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i1 %arg7):
-    i32 %0 = add i32 %arg5, i32 %arg1;
+    i32 %0 = add i32 %arg1, i32 %arg5;
     i1 %1 = scmp eq i32 %0, i32 %arg3;
     cbr i1 %1, [ ^if.then [100 * i32]* %arg, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg6, i1 %arg7 ], [ ^indirect2 [100 * i32]* %arg, i32 %arg2, i32 %arg3, i32 %arg4, i32 %0, i32 %arg6, i1 %arg7 ];
 ^indirect1([100 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i1 %arg7):

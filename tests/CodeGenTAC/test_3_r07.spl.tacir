@@ -2,7 +2,7 @@ FUNCTION gcd1 :
 PARAM v0
 PARAM v1
 v2 := v0 / v1
-v3 := v2 * v1
+v3 := v1 * v2
 v4 := v0 - v3
 IF v4 == #0 GOTO label1
 GOTO label4
@@ -18,7 +18,7 @@ v7 := v1
 v6 := v4
 LABEL label5 :
 v8 := v7 / v6
-v9 := v8 * v6
+v9 := v6 * v8
 v10 := v7 - v9
 IF v10 == #0 GOTO label3
 v7 := v6
@@ -48,7 +48,7 @@ v17 := v11
 v18 := v12
 LABEL label8 :
 v19 := v18 / v17
-v20 := v19 * v17
+v20 := v17 * v19
 v21 := v18 - v20
 *v15 := v21
 IF v21 != #0 GOTO label9
@@ -65,7 +65,7 @@ FUNCTION main :
 READ v25
 READ v26
 v27 := v25 / v26
-v28 := v27 * v26
+v28 := v26 * v27
 v29 := v25 - v28
 IF v29 == #0 GOTO label11
 GOTO label14

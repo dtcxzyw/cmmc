@@ -2,7 +2,7 @@ FUNCTION mod :
 PARAM v0
 PARAM v1
 v2 := v0 / v1
-v3 := v2 * v1
+v3 := v1 * v2
 v4 := v0 - v3
 RETURN v4
 
@@ -25,8 +25,8 @@ v11 := v5
 v12 := v6
 v13 := v8
 LABEL label6 :
-v10 := v13 * v11
-v14 := #2 * v12
+v10 := v11 * v13
+v14 := v12 * #2
 v15 := v14 - v12
 v16 := v15 - #1
 IF v16 <= #0 GOTO label4
@@ -153,8 +153,8 @@ v46 := v53
 v48 := v36
 v50 := v57
 LABEL label30 :
-v49 := v50 * v46
-v63 := #2 * v48
+v49 := v46 * v50
+v63 := v48 * #2
 v64 := v63 - v48
 v47 := v64 - #1
 IF v47 <= #0 GOTO label31
@@ -233,8 +233,8 @@ v95 := v94
 v96 := v75
 v98 := v97
 LABEL label44 :
-v99 := v98 * v95
-v100 := #2 * v96
+v99 := v95 * v98
+v100 := v96 * #2
 v101 := v100 - v96
 v102 := v101 - #1
 IF v102 <= #0 GOTO label45

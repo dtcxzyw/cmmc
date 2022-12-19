@@ -7,7 +7,7 @@ internal func @merge_sort(i32, i32, [2 * [100 * i32]]*) -> void {
     cbr i1 %1, [ ^if.then ], [ ^indirect i32 %arg1, i32 %arg, [2 * [100 * i32]]* %arg2, i32 %arg, i32 %arg1 ];
 ^indirect(i32 %arg, i32 %arg1, [2 * [100 * i32]]* %arg2, i32 %arg3, i32 %arg4):
     i32* %mid = alloc i32;
-    i32 %0 = add i32 %arg1, i32 %arg;
+    i32 %0 = add i32 %arg, i32 %arg1;
     i32 %1 = sdiv i32 %0, i32 2;
     store i32* %mid with i32 %1;
     call (i32, i32, [2 * [100 * i32]]*) -> void @merge_sort(i32 %arg1, i32 %1, [2 * [100 * i32]]* %arg2);
@@ -34,7 +34,7 @@ internal func @merge_sort(i32, i32, [2 * [100 * i32]]*) -> void {
     i32* %2 = getelementptr &([2 * [100 * i32]]* %arg4)[i32 0][i32 0][i32 %arg8];
     i32 %3 = load i32* %2;
     i1 %4 = scmp lt i32 %1, i32 %3;
-    cbr i1 %4, [ ^indirect3 i32* %arg2, i32* %arg1, i32* %arg3, i32* %arg, i32 %arg7, i32 %1, [2 * [100 * i32]]* %arg4, i32 %arg5, i32 %arg6, i32 %arg9 ], [ ^indirect4 i32* %arg1, i32* %arg3, i32* %arg2, i32* %arg, i32 %arg8, i32 %3, i32 %arg7, [2 * [100 * i32]]* %arg4, i32 %arg5, i32 %arg6, i32 %arg9 ];
+    cbr i1 %4, [ ^indirect3 i32* %arg2, i32* %arg1, i32* %arg3, i32* %arg, i32 %arg7, i32* %0, [2 * [100 * i32]]* %arg4, i32 %arg5, i32 %arg6, i32 %arg9 ], [ ^indirect4 i32* %arg1, i32* %arg3, i32* %arg2, i32* %arg, i32 %arg8, i32 %3, i32 %arg7, [2 * [100 * i32]]* %arg4, i32 %arg5, i32 %arg6, i32 %arg9 ];
 ^while.body1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, [2 * [100 * i32]]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32* %0 = getelementptr &([2 * [100 * i32]]* %arg4)[i32 0][i32 1][i32 %arg8];
     i32* %1 = getelementptr &([2 * [100 * i32]]* %arg4)[i32 0][i32 0][i32 %arg7];
@@ -51,16 +51,17 @@ internal func @merge_sort(i32, i32, [2 * [100 * i32]]*) -> void {
 ^indirect2(i32* %arg, i32* %arg1, [2 * [100 * i32]]* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
     i1 %0 = scmp lt i32 %arg5, i32 %arg4;
     cbr i1 %0, [ ^while.body2 i32* %arg1, i32* %arg, [2 * [100 * i32]]* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ], [ ^indirect5 i32 %arg4, [2 * [100 * i32]]* %arg2, i32 %arg3, i32 %arg4 ];
-^indirect3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, [2 * [100 * i32]]* %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
+^indirect3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32* %arg5, [2 * [100 * i32]]* %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([2 * [100 * i32]]* %arg6)[i32 0][i32 1][i32 %arg9];
-    store i32* %0 with i32 %arg5;
-    i32 %1 = load i32* %arg;
-    i32 %2 = load i32* %arg1;
-    i32 %3 = add i32 %arg4, i32 1;
-    store i32* %arg2 with i32 %3;
-    i32 %4 = add i32 %arg9, i32 1;
-    store i32* %arg3 with i32 %4;
-    ubr [ ^while.header i32* %arg, i32* %arg3, i32* %arg1, i32* %arg2, i32 %2, i32 %3, [2 * [100 * i32]]* %arg6, i32 %arg7, i32 %arg8, i32 %2, i32 %3, i32 %1, i32 %4 ];
+    i32 %1 = load i32* %arg5;
+    store i32* %0 with i32 %1;
+    i32 %2 = load i32* %arg;
+    i32 %3 = load i32* %arg1;
+    i32 %4 = add i32 %arg4, i32 1;
+    store i32* %arg2 with i32 %4;
+    i32 %5 = add i32 %arg9, i32 1;
+    store i32* %arg3 with i32 %5;
+    ubr [ ^while.header i32* %arg, i32* %arg3, i32* %arg1, i32* %arg2, i32 %3, i32 %4, [2 * [100 * i32]]* %arg6, i32 %arg7, i32 %arg8, i32 %3, i32 %4, i32 %2, i32 %5 ];
 ^indirect4(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, [2 * [100 * i32]]* %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([2 * [100 * i32]]* %arg7)[i32 0][i32 1][i32 %arg10];
     store i32* %0 with i32 %arg5;

@@ -2,7 +2,7 @@ FUNCTION mod :
 PARAM v0
 PARAM v1
 v2 := v0 / v1
-v3 := v2 * v1
+v3 := v1 * v2
 v4 := v0 - v3
 RETURN v4
 
@@ -16,7 +16,7 @@ v7 := v6 * #10
 v8 := v5 - v7
 ARG v6
 v9 := CALL DigitSum
-v10 := v8 + v9
+v10 := v9 + v8
 RETURN v10
 
 FUNCTION main :

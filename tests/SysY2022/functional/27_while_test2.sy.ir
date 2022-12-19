@@ -22,9 +22,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     i1 %1 = scmp lt i32 %arg2, i32 10;
     cbr i1 %1, [ ^indirect i32 %arg2, i32 %arg1, i32 %0, i32 %arg3 ], [ ^indirect1 i32 %arg2, i32 %arg1, i32 %0, i32 %arg3 ];
 ^b(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = add i32 %arg1, i32 %arg3;
-    i32 %1 = add i32 %arg, i32 %0;
-    i32 %2 = add i32 %1, i32 %arg2;
+    i32 %0 = add i32 %arg, i32 %arg1;
+    i32 %1 = add i32 %0, i32 %arg2;
+    i32 %2 = add i32 %1, i32 %arg3;
     ret i32 %2;
 ^while.body1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32 %0 = add i32 %arg3, i32 3;

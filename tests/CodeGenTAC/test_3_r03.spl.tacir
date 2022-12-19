@@ -35,7 +35,7 @@ v3 := v5
 v4 := v4
 LABEL label7 :
 v10 := v1 / v3
-v11 := v10 * v3
+v11 := v3 * v10
 IF v1 != v11 GOTO label8
 GOTO label5
 LABEL label8 :

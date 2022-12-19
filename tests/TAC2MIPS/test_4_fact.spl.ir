@@ -9,7 +9,7 @@ func @fact(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^indirect1(i32 %arg):
     i32 %0 = sub i32 %arg, i32 1;
     i32 %1 = call (i32) -> i32 @fact(i32 %0);
-    i32 %2 = mul i32 %arg, i32 %1;
+    i32 %2 = mul i32 %1, i32 %arg;
     ret i32 %2;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {

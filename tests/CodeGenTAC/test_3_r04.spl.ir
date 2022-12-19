@@ -8,7 +8,7 @@ func @sqr(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecu
 func @cbc(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry(i32 %arg):
     i32 %0 = mul i32 %arg, i32 %arg;
-    i32 %1 = mul i32 %0, i32 %arg;
+    i32 %1 = mul i32 %arg, i32 %0;
     ret i32 %1;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
@@ -17,7 +17,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     call (i32) -> void @write(i32 %0);
     i32 %1 = mul i32 %0, i32 %0;
     call (i32) -> void @write(i32 %1);
-    i32 %2 = mul i32 %1, i32 %0;
+    i32 %2 = mul i32 %0, i32 %1;
     call (i32) -> void @write(i32 %2);
     ret i32 0;
 }

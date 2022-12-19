@@ -55,7 +55,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b1 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ];
 ^b2([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
     i1 %0 = scmp neq i32 %arg1, i32 0;
@@ -107,12 +107,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then2([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b7 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then3([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b8 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^while.header(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
     i1 %0 = scmp gt i32 %arg, i32 0;
@@ -223,22 +223,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then10(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b18 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then11(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b20 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then12(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b21 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then13(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b22 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b17([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32 %0 = srem i32 %arg4, i32 2;
@@ -286,7 +286,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then14([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b19 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
 ^while.body10([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32 %0 = srem i32 %arg3, i32 2;
@@ -381,27 +381,27 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then16([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b29 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then17([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b31 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
 ^if.then18([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b33 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then19([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b34 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then20([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b35 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^b36([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
     i32 %0 = mul i32 %arg1, i32 2;
@@ -481,12 +481,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then22([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b44 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then23([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b45 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b47([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32 %0 = srem i32 %arg4, i32 2;
@@ -551,22 +551,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then24([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b51 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then25([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b54 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then26([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b55 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^if.then27([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b57 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ];
 ^indirect9(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
     i32 %0 = sdiv i32 %arg, i32 2;
@@ -622,12 +622,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then30([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b61 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then31([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b64 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^while.body23([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32 %0 = srem i32 %arg3, i32 2;
@@ -721,22 +721,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then38(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b74 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^if.then39(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b75 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^if.then40(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b76 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^if.then41(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b77 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^b74(i32 %arg, i32 %arg1, [16 * i32]* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32 %0 = sdiv i32 %arg4, i32 2;
@@ -855,17 +855,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then46(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b83 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^if.then47(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b86 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^if.then48(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b87 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^b80([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32 %0 = srem i32 %arg4, i32 2;
@@ -874,7 +874,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then49(i32 %arg, [16 * i32]* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11):
     i32* %0 = getelementptr &([16 * i32]* %arg1)[i32 0][i32 %arg3];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg2;
     ubr [ ^b90 i32 %arg3, i32 %arg, [16 * i32]* %arg1, i32 %2, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11 ];
 ^b81([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32 %0 = srem i32 %arg4, i32 2;
@@ -945,22 +945,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then50([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b84 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then51([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b88 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then52([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b89 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then53([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b91 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b92([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i32 %0 = mul i32 %arg1, i32 2;
@@ -1049,17 +1049,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then54([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b99 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then55([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b101 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then56([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b102 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b104([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32 %0 = srem i32 %arg4, i32 2;
@@ -1068,7 +1068,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then57([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b103 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b105([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i32 %0 = mul i32 %arg1, i32 2;
@@ -1121,22 +1121,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then58([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b110 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then59([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b113 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then60([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b114 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then61([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b115 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b116([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i1 %0 = scmp neq i32 %arg1, i32 0;
@@ -1209,22 +1209,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then62([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b123 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then63([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b125 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then64([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b126 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^if.then65([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10):
     i32* %0 = getelementptr &([16 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg1, i32 %1;
+    i32 %2 = add i32 %1, i32 %arg1;
     ubr [ ^b127 i32 %arg2, [16 * i32]* %arg, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10 ];
 ^b128([16 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
     i1 %0 = scmp neq i32 %arg1, i32 0;

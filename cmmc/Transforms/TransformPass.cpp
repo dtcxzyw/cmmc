@@ -291,6 +291,17 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             root->addPass(pass);
     }
 
+    root->addPass(iter);  // middle optimization
+
+    if(level >= OptimizationLevel::O3) {
+        for(auto pass : passesSource.collect({
+                "Reassociate",            //
+                "ConstantPropagation",    //
+                "NoSideEffectEliminate",  // clean up
+            }))
+            root->addPass(pass);
+    }
+
     root->addPass(iter);  // post optimization
 
     // final cleanup

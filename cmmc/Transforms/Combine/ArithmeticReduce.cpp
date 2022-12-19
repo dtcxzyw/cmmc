@@ -213,7 +213,6 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return inst->operands().back();
             }
 
-            // TODO: reassociate
             intmax_t i1, i2;
             // add (add x c1) c2 -> add x c1+c2
             if(add(add(any(v1), int_(i1)), int_(i2))(matchCtx))
@@ -228,12 +227,25 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(sub(add(any(v1), int_(i1)), int_(i2))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeInt(i1 - i2));
 
-            // add c x -> add x c
-            if(inst->getInstID() == InstructionID::Add && inst->getOperand(0)->isConstant() &&
-               !inst->getOperand(1)->isConstant()) {
-                auto& operands = inst->operands();
-                std::swap(operands[0], operands[1]);
-                modified = true;
+            // commutative c x -> commutative x c
+            switch(inst->getInstID()) {
+                case InstructionID::Add:
+                    [[fallthrough]];
+                case InstructionID::Mul:
+                    [[fallthrough]];
+                case InstructionID::Or:
+                    [[fallthrough]];
+                case InstructionID::Xor:
+                    [[fallthrough]];
+                case InstructionID::And: {
+                    if(inst->getOperand(0)->isConstant() && !inst->getOperand(1)->isConstant()) {
+                        auto& operands = inst->operands();
+                        std::swap(operands[0], operands[1]);
+                        modified = true;
+                    }
+                } break;
+                default:
+                    break;
             }
 
             return nullptr;

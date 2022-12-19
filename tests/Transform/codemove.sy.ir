@@ -4,14 +4,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
-    ubr [ ^for.body i32 %0, i32 %1, i32 0, i32 0 ];
-^for.body(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = add i32 %arg, i32 %arg1;
-    i32 %1 = add i32 %arg2, i32 %0;
-    i32 %2 = add i32 %arg3, i32 1;
-    i1 %3 = scmp lt i32 %2, i32 10;
-    cbr i1 %3, [ ^for.body i32 %arg, i32 %arg1, i32 %1, i32 %2 ], [ ^b i32 %1 ];
-^b(i32 %arg):
-    call (i32) -> void @putint(i32 %arg);
+    i32 %2 = add i32 %0, i32 %1;
+    i32 %3 = mul i32 %2, i32 10;
+    call (i32) -> void @putint(i32 %3);
     ret i32 0;
 }

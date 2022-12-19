@@ -186,7 +186,7 @@ v63 := v59 * #4
 v62 := v62 + v63
 v64 := *v62
 IF v64 != #1 GOTO label31
-v65 := v60 + v64
+v65 := v64 + v60
 IF v65 != v58 GOTO label36
 GOTO label34
 LABEL label31 :

@@ -6,7 +6,7 @@ RETURN v1
 FUNCTION cbc :
 PARAM v2
 v3 := v2 * v2
-v4 := v3 * v2
+v4 := v2 * v3
 RETURN v4
 
 FUNCTION main :
@@ -14,7 +14,7 @@ READ v5
 WRITE v5
 v6 := v5 * v5
 WRITE v6
-v7 := v6 * v5
+v7 := v5 * v6
 WRITE v7
 RETURN #0
 

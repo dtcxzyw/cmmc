@@ -3,6 +3,6 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
-    i32 %2 = add i32 %1, i32 %0;
+    i32 %2 = add i32 %0, i32 %1;
     ret i32 %2;
 }

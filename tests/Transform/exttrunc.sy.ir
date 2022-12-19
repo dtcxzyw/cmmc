@@ -10,6 +10,6 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i8 %5 = trunc i32 %4 to i8;
     i32 %6 = sext i8 %2 to i32;
     i32 %7 = sext i8 %5 to i32;
-    i32 %8 = add i32 %7, i32 %6;
+    i32 %8 = add i32 %6, i32 %7;
     ret i32 %8;
 }

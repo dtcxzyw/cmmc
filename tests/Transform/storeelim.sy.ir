@@ -9,7 +9,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %4, [ ^indirect i32 %2 ], [ ^b i32 %2 ];
 ^indirect(i32 %arg):
     i32 %0 = call () -> i32 @getint();
-    i32 %1 = add i32 %arg, i32 %0;
+    i32 %1 = add i32 %0, i32 %arg;
     ret i32 %1;
 ^b(i32 %arg):
     ret i32 %arg;

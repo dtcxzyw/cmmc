@@ -218,6 +218,10 @@ template <typename Lhs, typename Rhs>
 auto urem(Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::URem, lhs, rhs };
 }
+template <typename Lhs, typename Rhs>
+auto commutative(InstructionID id, Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ id, lhs, rhs };
+}
 
 template <typename Lhs, typename Rhs>
 auto shl(Lhs lhs, Rhs rhs) {

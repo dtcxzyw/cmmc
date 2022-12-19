@@ -259,7 +259,7 @@ func @main() -> i32 { NoRecurse Entry } {
 ^indirect(i32 %arg, i32 %arg1, [110 * i32]* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32* %arg11):
     i32 %0 = sub i32 %arg1, i32 1;
     i32 %1 = mul i32 %arg5, i32 %0;
-    i32 %2 = add i32 %1, i32 %arg;
+    i32 %2 = add i32 %arg, i32 %1;
     i32* %3 = getelementptr &([110 * i32]* %arg2)[i32 0][i32 %2];
     store i32* %3 with i32 %2;
     i1 %4 = scmp eq i32 %arg1, i32 1;
@@ -348,9 +348,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %1 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 %arg8, [110 * i32]* %arg1, i32* %arg);
     i32 %2 = load i32* %arg;
     i1 %3 = scmp neq i32 %0, i32 %1;
-    cbr i1 %3, [ ^indirect7 i32 %1, i32 %0, [110 * i32]* %arg1, [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg9 ], [ ^b9 [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg9 ];
+    cbr i1 %3, [ ^indirect7 i32 %1, i32 %0, [110 * i32]* %arg1, i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg9 ], [ ^b9 [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg9 ];
 ^indirect6(i32 %arg, i32* %arg1, [110 * i32]* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10):
-    i32 %0 = add i32 %arg9, i32 %arg;
+    i32 %0 = add i32 %arg, i32 %arg9;
     i32* %1 = getelementptr &([110 * i32]* %arg2)[i32 0][i32 %0];
     i32 %2 = load i32* %1;
     i1 %3 = scmp neq i32 %2, i32 -1;
@@ -358,18 +358,18 @@ func @main() -> i32 { NoRecurse Entry } {
 ^b10(i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9):
     i1 %0 = scmp gt i32 %arg5, i32 1;
     cbr i1 %0, [ ^b11 [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9 ], [ ^b12 i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg6, i32 %arg7, i32* %arg9 ];
-^indirect7(i32 %arg, i32 %arg1, [110 * i32]* %arg2, [110 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12):
+^indirect7(i32 %arg, i32 %arg1, [110 * i32]* %arg2, i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12):
     i32* %0 = getelementptr &([110 * i32]* %arg2)[i32 0][i32 %arg1];
     store i32* %0 with i32 %arg;
     i1 %1 = scmp lt i32 %arg8, i32 %arg6;
-    cbr i1 %1, [ ^indirect6 i32 %arg6, i32* %arg4, [110 * i32]* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ], [ ^b10 i32* %arg4, [110 * i32]* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ];
+    cbr i1 %1, [ ^indirect6 i32 %arg6, i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ], [ ^b10 i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ];
 ^if.then4([110 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9):
-    i32 %0 = add i32 %arg8, i32 %arg3;
+    i32 %0 = add i32 %arg3, i32 %arg8;
     i32 %1 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 %arg8, [110 * i32]* %arg, i32* %arg1);
     i32 %2 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 %0, [110 * i32]* %arg, i32* %arg1);
     i32 %3 = load i32* %arg1;
     i1 %4 = scmp neq i32 %1, i32 %2;
-    cbr i1 %4, [ ^indirect8 i32 %2, i32 %1, [110 * i32]* %arg, i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9 ], [ ^b10 i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9 ];
+    cbr i1 %4, [ ^indirect8 i32 %2, i32 %1, [110 * i32]* %arg, [110 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9 ], [ ^b10 i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32* %arg9 ];
 ^b11([110 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg8):
     i32 %0 = sub i32 %arg7, i32 %arg3;
     i32* %1 = getelementptr &([110 * i32]* %arg)[i32 0][i32 %0];
@@ -380,28 +380,28 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %0 = load i32* %arg2;
     i1 %1 = scmp neq i32 %0, i32 -1;
     cbr i1 %1, [ ^b13 i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg7 ], [ ^indirect1 [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg7 ];
-^indirect8(i32 %arg, i32 %arg1, [110 * i32]* %arg2, i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12):
+^indirect8(i32 %arg, i32 %arg1, [110 * i32]* %arg2, [110 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12):
     i32* %0 = getelementptr &([110 * i32]* %arg2)[i32 0][i32 %arg1];
     store i32* %0 with i32 %arg;
     i1 %1 = scmp gt i32 %arg8, i32 1;
-    cbr i1 %1, [ ^b11 [110 * i32]* %arg4, i32* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ], [ ^b12 i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg9, i32 %arg10, i32* %arg12 ];
+    cbr i1 %1, [ ^b11 [110 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg9, i32 %arg10, i32 %arg11, i32* %arg12 ], [ ^b12 i32* %arg4, [110 * i32]* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg9, i32 %arg10, i32* %arg12 ];
 ^if.then5([110 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32* %arg8):
     i32 %0 = sub i32 %arg7, i32 %arg3;
     i32 %1 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 %arg7, [110 * i32]* %arg, i32* %arg1);
     i32 %2 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 %0, [110 * i32]* %arg, i32* %arg1);
     i32 %3 = load i32* %arg1;
     i1 %4 = scmp neq i32 %1, i32 %2;
-    cbr i1 %4, [ ^indirect9 i32 %2, i32 %1, [110 * i32]* %arg, [110 * i32]* %arg, i32* %arg1, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg8 ], [ ^b12 i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg8 ];
+    cbr i1 %4, [ ^indirect9 i32 %2, i32 %1, [110 * i32]* %arg, i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg8 ], [ ^b12 i32* %arg1, [110 * i32]* %arg, i32* %arg2, i32 %3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg8 ];
 ^b13(i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg7):
     i32 %0 = load i32* %arg7;
     i1 %1 = scmp neq i32 %0, i32 -1;
     cbr i1 %1, [ ^b14 i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg7 ], [ ^indirect1 [110 * i32]* %arg1, i32* %arg, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32* %arg7 ];
-^indirect9(i32 %arg, i32 %arg1, [110 * i32]* %arg2, [110 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10):
+^indirect9(i32 %arg, i32 %arg1, [110 * i32]* %arg2, i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10):
     i32* %0 = getelementptr &([110 * i32]* %arg2)[i32 0][i32 %arg1];
     store i32* %0 with i32 %arg;
     i32 %1 = load i32* %arg5;
     i1 %2 = scmp neq i32 %1, i32 -1;
-    cbr i1 %2, [ ^b13 i32* %arg4, [110 * i32]* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10 ], [ ^indirect1 [110 * i32]* %arg3, i32* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10 ];
+    cbr i1 %2, [ ^b13 i32* %arg3, [110 * i32]* %arg4, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10 ], [ ^indirect1 [110 * i32]* %arg4, i32* %arg3, i32* %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9, i32* %arg10 ];
 ^b14(i32* %arg, [110 * i32]* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5, i32* %arg6):
     i32 %0 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 0, [110 * i32]* %arg1, i32* %arg);
     i32 %1 = call (i32, [110 * i32]*, i32*) -> i32 @findfa(i32 17, [110 * i32]* %arg1, i32* %arg);

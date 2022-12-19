@@ -1,26 +1,4 @@
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
 ^entry():
-    [6 * i32]* %arr = alloc [6 * i32];
-    i32* %0 = getelementptr &([6 * i32]* %arr)[i32 0][i32 0];
-    store i32* %0 with i32 1;
-    i32* %1 = getelementptr &([6 * i32]* %arr)[i32 0][i32 1];
-    store i32* %1 with i32 2;
-    i32* %2 = getelementptr &([6 * i32]* %arr)[i32 0][i32 2];
-    store i32* %2 with i32 33;
-    i32* %3 = getelementptr &([6 * i32]* %arr)[i32 0][i32 3];
-    store i32* %3 with i32 4;
-    i32* %4 = getelementptr &([6 * i32]* %arr)[i32 0][i32 4];
-    store i32* %4 with i32 5;
-    i32* %5 = getelementptr &([6 * i32]* %arr)[i32 0][i32 5];
-    store i32* %5 with i32 6;
-    ubr [ ^while.body [6 * i32]* %arr, i32 0, i32 0 ];
-^while.body([6 * i32]* %arg, i32 %arg1, i32 %arg2):
-    i32* %0 = getelementptr &([6 * i32]* %arg)[i32 0][i32 %arg1];
-    i32 %1 = load i32* %0;
-    i32 %2 = add i32 %arg2, i32 %1;
-    i32 %3 = add i32 %arg1, i32 1;
-    i1 %4 = scmp lt i32 %3, i32 6;
-    cbr i1 %4, [ ^while.body [6 * i32]* %arg, i32 %3, i32 %2 ], [ ^b i32 %2 ];
-^b(i32 %arg):
-    ret i32 %arg;
+    ret i32 51;
 }

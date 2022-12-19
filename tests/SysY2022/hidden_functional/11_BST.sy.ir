@@ -117,8 +117,9 @@ internal func @delete(i32, i32, i32*) -> i32 {
     i32* %3 = getelementptr &([10000 * i32]* @value)[i32 0][i32 %2];
     i32 %4 = load i32* %3;
     store i32* %arg2 with i32 %4;
-    i32 %5 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %4, i32* %arg);
-    store i32* %0 with i32 %5;
+    i32 %5 = load i32* %3;
+    i32 %6 = call (i32, i32, i32*) -> i32 @delete(i32 %1, i32 %5, i32* %arg);
+    store i32* %0 with i32 %6;
     ret i32 %arg1;
 }
 internal func @inorder(i32, i32*) -> void { NoMemoryWrite } {

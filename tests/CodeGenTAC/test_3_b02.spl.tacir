@@ -225,7 +225,7 @@ v110 := *v108
 v111 := *v96
 v112 := *v98
 v113 := *v99
-IF v103 >= v104 GOTO label37
+IF v113 >= v112 GOTO label37
 v63 := v98
 v59 := v96
 v61 := v97
@@ -338,7 +338,7 @@ v148 := *v146
 v88 := *v60
 v86 := *v64
 v84 := *v66
-IF v74 >= v76 GOTO label39
+IF v84 >= v86 GOTO label39
 GOTO label23
 LABEL label39 :
 v131 := v68
@@ -361,36 +361,48 @@ GOTO label38
 FUNCTION main :
 DEC x3 32
 v149 := &x3
-v150 := #0
-LABEL label42 :
-v151 := v149
-v152 := v150 * #4
-v151 := v151 + v152
-READ v153
-*v151 := v153
-v154 := v150 + #1
-IF v154 >= #8 GOTO label43
-v149 := v149
-v150 := v154
-GOTO label42
-LABEL label43 :
+READ v150
+*v149 := v150
+v151 := &x3 + #4
+READ v152
+*v151 := v152
+v153 := &x3 + #8
+READ v154
+*v153 := v154
+v155 := &x3 + #12
+READ v156
+*v155 := v156
+v157 := &x3 + #16
+READ v158
+*v157 := v158
+v159 := &x3 + #20
+READ v160
+*v159 := v160
+v161 := &x3 + #24
+READ v162
+*v161 := v162
+v163 := &x3 + #28
+READ v164
+*v163 := v164
 ARG #7
 ARG #0
-ARG v149
-v155 := CALL QuickSort
-v156 := v149
-v157 := #0
-LABEL label44 :
-v158 := v156
-v159 := v157 * #4
-v158 := v158 + v159
-v160 := *v158
-WRITE v160
-v161 := v157 + #1
-IF v161 >= #8 GOTO label45
-v156 := v156
-v157 := v161
-GOTO label44
-LABEL label45 :
+ARG &x3
+v165 := CALL QuickSort
+v166 := *&x3
+WRITE v166
+v167 := *v151
+WRITE v167
+v168 := *v153
+WRITE v168
+v169 := *v155
+WRITE v169
+v170 := *v157
+WRITE v170
+v171 := *v159
+WRITE v171
+v172 := *v161
+WRITE v172
+v173 := *v163
+WRITE v173
 RETURN #0
 
