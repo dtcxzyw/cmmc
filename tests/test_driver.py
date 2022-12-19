@@ -367,7 +367,7 @@ def test(name, path, filter, tester):
 
 
 test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
-generate_ref = True
+generate_ref = False
 
 if generate_ref:
     test_cases = []
