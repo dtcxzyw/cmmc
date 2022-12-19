@@ -13,9 +13,9 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 
 CMMC_NAMESPACE_BEGIN
@@ -25,14 +25,14 @@ struct Loop final {
     Block* latch;
 
     Value* inductionVar;  // header's arg
+    Value* next;
+    // [initial, bound)
     Value* initial;
-    Value* step;
     Value* bound;
-    CompareOp cmp;
 };
 
-class LoopAnalysisResult final {
-public:
+struct LoopAnalysisResult final {
+    std::vector<Loop> loops;
 };
 
 class LoopAnalysis final : public FuncAnalysisPassWrapper<LoopAnalysis, LoopAnalysisResult> {

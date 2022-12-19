@@ -85,12 +85,16 @@ bool Function::verify(std::ostream& out) const {
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
             if(!blocks.count(trueTarget.getTarget())) {
-                out << "invalid use of deleted block ^"sv << trueTarget.getTarget()->getLabel() << std::endl;
+                out << "invalid use of deleted block "sv;
+                trueTarget.getTarget()->dumpAsTarget(out);
+                out << std::endl;
                 terminator->dump(out);
                 return false;
             }
             if(falseTarget.getTarget() && !blocks.count(falseTarget.getTarget())) {
-                out << "invalid use of deleted block ^"sv << falseTarget.getTarget()->getLabel() << std::endl;
+                out << "invalid use of deleted block "sv;
+                falseTarget.getTarget()->dumpAsTarget(out);
+                out << std::endl;
                 terminator->dump(out);
                 return false;
             }

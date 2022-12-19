@@ -92,15 +92,27 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
 }
 
 void SimpleValueAnalysis::next(Instruction* inst) {
+    // inst->dump(std::cerr);
+    // std::cerr << std::endl;
+
     const auto invalidate = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr) {
         std::vector<Value*> outdated;
         for(auto [ptr, val] : lastValue) {
             CMMC_UNUSED(val);
             if(ptr != addr && !mAliasSet.isDistinct(ptr, addr))
-                outdated.push_back(val);
+                outdated.push_back(ptr);
         }
-        for(auto key : outdated)
+        for(auto key : outdated) {
+            /*
+            std::cerr << "invalidate ";
+            key->dumpAsOperand(std::cerr);
+            std::cerr << " -> ";
+            if(lastValue[key])
+                lastValue[key]->dumpAsOperand(std::cerr);
+            std::cerr << std::endl;
+            */
             lastValue.erase(key);
+        }
     };
     const auto replace = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr, Value* val, bool forceReplace) {
         auto& ref = lastValue[addr];

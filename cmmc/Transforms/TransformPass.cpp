@@ -165,11 +165,10 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
         modified = true;
         const auto now = Clock::now();
         if(now > deadline)
-            break;
+            return modified;
     }
-    // if(!stopEarly)
-    //     reportWarning() << "partial optimization" << std::endl;
-    CMMC_UNUSED(stopEarly);
+    if(!stopEarly)
+        DiagnosticsContext::get().attach<Reason>("partial optimization").reportFatal();
     return modified;
 }
 
@@ -222,6 +221,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "ConstantPropagation",    //
             "ArithmeticReduce",       //
             "NoSideEffectEliminate",  // clean up
+            // Loop
+            "LoopEliminate",  //
             // Control flow
             "TailCallEliminate",  //
             "MergeBranch",        //
@@ -253,6 +254,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
         for(auto pass : passesSource.collect({
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
+                "LoopUnroll",             //
+                // TODO: clean up
             }))
             basic->addPass(pass);
     }
