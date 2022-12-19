@@ -13,8 +13,11 @@
 */
 
 #pragma once
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Module.hpp>
 
 CMMC_NAMESPACE_BEGIN
+
+void canonicalizeBranchCompare(Function& func, AnalysisPassManager& analysis);
 
 CMMC_NAMESPACE_END

@@ -49,15 +49,17 @@ public:
                 continue;
             if(!loop.initial->isConstant())
                 continue;
+            if(loop.step <= 0)
+                continue;
             const auto initial = loop.initial->as<ConstantInteger>()->getSignExtended();
             const auto bound = loop.bound->as<ConstantInteger>()->getSignExtended();
-            if(initial + 1 >= bound)
-                continue;
-            const auto size = bound - initial;
+            if(initial + loop.step >= bound)
+                continue;  // handled by loop elimination
+            const auto size = (bound - initial) / loop.step;
             assert(size >= 0);
 
             auto epilogueSize = size > maxUnrollSize ? size % maxUnrollSize : size;
-            const auto epilogueStart = bound - epilogueSize;
+            const auto epilogueStart = initial + (size - epilogueSize) * loop.step;
             assert(epilogueStart != initial || epilogueSize > 0);
 
             modified = true;
@@ -78,7 +80,7 @@ public:
                 retarget(block);
                 prev = block;
             };
-            const auto startValue = make<ConstantInteger>(loop.bound->getType(), epilogueStart);
+            const auto startValue = ConstantInteger::get(loop.bound->getType(), epilogueStart);
             if(epilogueStart != initial) {
                 // super blocks
                 Block* head;

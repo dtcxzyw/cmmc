@@ -37,10 +37,12 @@ public:
                 continue;
             if(!loop.initial->isConstant())
                 continue;
+            if(loop.step <= 0)
+                continue;
             const auto initial = loop.initial->as<ConstantInteger>()->getSignExtended();
             const auto bound = loop.bound->as<ConstantInteger>()->getSignExtended();
             // execute at most once
-            if(initial + 1 >= bound) {
+            if(initial + loop.step >= bound) {
                 // remove backedge
                 modified = true;
                 const auto terminator = loop.latch->getTerminator()->as<ConditionalBranchInst>();

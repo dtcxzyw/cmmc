@@ -25,7 +25,7 @@
 CMMC_NAMESPACE_BEGIN
 
 // only detect the following patterns (Canonical Form):
-// for(int i = initial; i < cond; ++i)
+// for(int i = initial; i < cond; i += step)
 //     body
 
 LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analysis) {
@@ -51,7 +51,8 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         auto bound = cmp->getOperand(1);
 
         Value* indvar;
-        if(!add(any(indvar), cuint_(1))(MatchContext<Value>{ next, nullptr })) {
+        intmax_t step;
+        if(!add(any(indvar), int_(step))(MatchContext<Value>{ next, nullptr })) {
             continue;
         }
 
@@ -108,7 +109,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!int_(initialValue)(MatchContext<Value>{ initial, nullptr }))
             continue;
 
-        loops.push_back({ header, block, indvar, next, initial, bound });
+        loops.push_back({ header, block, indvar, next, initial, bound, step });
     }
 
     /*

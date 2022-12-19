@@ -48,7 +48,7 @@ class GlobalScalar2Local final : public TransformPass<Module> {
             const auto addr = builder.makeOp<GetElementPtrInst>(
                 storage,
                 Vector<Value*>{ builder.getZeroIndex(),
-                                make<ConstantInteger>(builder.getIndexType(), static_cast<intmax_t>(idx)) });
+                                ConstantInteger::get(builder.getIndexType(), static_cast<intmax_t>(idx)) });
             Value* subValue = nullptr;
             if(valueArray && idx < valueArray->values().size())
                 subValue = valueArray->values()[idx];
@@ -131,7 +131,7 @@ public:
         const auto getZeroScalar = [](const Type* type) -> Value* {
             const auto scalarType = type->as<ArrayType>()->getScalarType();
             if(scalarType->isInteger()) {
-                return make<ConstantInteger>(scalarType, 0);
+                return ConstantInteger::get(scalarType, 0);
             } else if(scalarType->isFloatingPoint()) {
                 return make<ConstantFloatingPoint>(scalarType, 0.0);
             } else

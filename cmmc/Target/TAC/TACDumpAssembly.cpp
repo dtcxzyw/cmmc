@@ -73,7 +73,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
             if(metadata->isUndefined())
                 out << '0';
             else
-                metadata->dump(out);
+                out << metadata->as<ConstantInteger>()->getSignExtended();
         }
     };
 

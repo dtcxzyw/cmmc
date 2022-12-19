@@ -29,6 +29,7 @@ struct Loop final {
     // [initial, bound)
     Value* initial;
     Value* bound;
+    intmax_t step;
 };
 
 struct LoopAnalysisResult final {

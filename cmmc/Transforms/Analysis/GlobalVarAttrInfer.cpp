@@ -38,6 +38,9 @@ public:
             }
         }
 
+        if(todo.empty())
+            return false;
+
         for(auto global : module.globals()) {
             if(!global->isFunction())
                 continue;
@@ -74,7 +77,7 @@ public:
         for(auto gv : todo)
             gv->attr().addAttr(GlobalVariableAttribute::ReadOnly);
 
-        return true;
+        return !todo.empty();
     }
 
     std::string_view name() const noexcept override {

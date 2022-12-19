@@ -41,7 +41,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class SimplifyBranch final : public TransformPass<Function> {
+class SimplifyPartialUnreachableBranch final : public TransformPass<Function> {
+    bool isUnreachableBlock(Block* block) const {
+        return block->instructions().size() == 1 && block->getTerminator()->getInstID() == InstructionID::Unreachable;
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
@@ -49,17 +53,16 @@ public:
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            const auto cond = terminator->getOperand(0);
-            MatchContext<Value> matchCtx{ cond, nullptr };
-            uintmax_t constCond;
-            if(!uint_(constCond)(matchCtx))
-                continue;
             auto branch = terminator->as<ConditionalBranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
+            const auto trueUnreachable = isUnreachableBlock(trueTarget.getTarget());
+            const auto falseUnreachable = isUnreachableBlock(falseTarget.getTarget());
+            if(!trueUnreachable && !falseUnreachable)
+                continue;
             auto& insts = block->instructions();
             insts.pop_back();
-            const auto inst = make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget);
+            const auto inst = make<ConditionalBranchInst>(falseUnreachable ? trueTarget : falseTarget);
             inst->setBlock(block);
             insts.push_back(inst);
             modified = true;
@@ -68,10 +71,10 @@ public:
     }
 
     std::string_view name() const noexcept override {
-        return "SimplifyBranch"sv;
+        return "SimplifyPartialUnreachableBranch"sv;
     }
 };
 
-CMMC_TRANSFORM_PASS(SimplifyBranch);
+CMMC_TRANSFORM_PASS(SimplifyPartialUnreachableBranch);
 
 CMMC_NAMESPACE_END

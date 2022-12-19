@@ -17,6 +17,7 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -75,6 +76,7 @@ public:
 
         const auto& dom = analysis.get<DominateAnalysis>(func);
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+        auto& target = analysis.module().getTarget();
 
         uint32_t allocateID = 0;
         std::unordered_map<Value*, uint32_t> valueNumber;
@@ -204,6 +206,10 @@ public:
             }
 
             operandMap[id] = replaceInst;
+
+            // Don't do GVN for comparison instructions if targeting TAC
+            if(!target.isNativeSupported(replaceInst->getInstID()))
+                continue;
 
             for(auto inst : sameInstructions) {
                 if(replaceInst != inst) {

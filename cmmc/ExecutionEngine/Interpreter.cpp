@@ -231,7 +231,7 @@ public:
             const auto size = type->getFixedSize();
             for(uint32_t idx = 0; idx < size; ++idx)
                 base[idx] = load(ptr + idx);
-            return ConstantInteger{ type, static_cast<intmax_t>(val) };
+            return ConstantInteger{ type, static_cast<intmax_t>(val), ExplicitConstruct{} };
         } else if(type->isFloatingPoint()) {
             std::byte storage[sizeof(double)];
             const auto size = type->getFixedSize();
@@ -455,7 +455,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         } else if(auto undefined = dynamic_cast<UndefinedValue*>(val)) {
             const auto type = undefined->getType();
             if(type->isInteger()) {
-                return ConstantInteger{ type, 0x7CCC'CCCC'CCCC'CCCCLL };
+                return ConstantInteger{ type, 0x7CCC'CCCC'CCCC'CCCCLL, ExplicitConstruct{} };
             } else if(type->isFloatingPoint()) {
                 return ConstantFloatingPoint{ type, std::numeric_limits<double>::quiet_NaN() };
             } else
@@ -467,10 +467,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
     const auto toConstant = [](const OperandStorage& val) -> ConstantValue* {
         ConstantValue* ret = nullptr;
         std::visit(Overload{
-                       [&](auto&&) { reportUnreachable(); },                                           //
-                       [&](const ConstantInteger& x) { ret = make<ConstantInteger>(x); },              //
-                       [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },  //
-                       [&](ConstantOffset* x) { ret = x; }                                             //
+                       [&](auto&&) { reportUnreachable(); },                                                             //
+                       [&](const ConstantInteger& x) { ret = ConstantInteger::get(x.getType(), x.getSignExtended()); },  //
+                       [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },                    //
+                       [&](ConstantOffset* x) { ret = x; }                                                               //
                    },
                    val);
         return ret;
@@ -584,11 +584,13 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 out << '\n';
             }
         };
-        const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst->getType(), val }); };
+        const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst->getType(), val, ExplicitConstruct{} }); };
         const auto addUInt = [&](uintmax_t val) {
-            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val) });
+            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
         };
-        const auto addBoolean = [&](bool val) { addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val) }); };
+        const auto addBoolean = [&](bool val) {
+            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
+        };
         const auto addPtr = [&](uintptr_t val) { addValue(inst, val); };
         const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst->getType(), val }); };
 

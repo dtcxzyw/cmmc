@@ -60,19 +60,24 @@ struct ConstantEqual final {
     }
 };
 
+struct ExplicitConstruct {};
+
 class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
+    ConstantInteger(const Type* type, intmax_t value);
 
 public:
-    ConstantInteger(const Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
-        assert(type->isInteger());
-    }
+    explicit ConstantInteger(const Type* type, intmax_t value, ExplicitConstruct) : ConstantInteger{ type, value } {}
     void dump(std::ostream& out) const override;
 
     uintmax_t getZeroExtended() const noexcept;
     intmax_t getSignExtended() const noexcept;
     bool isEqual(ConstantValue* rhs) const override;
     size_t hash() const override;
+
+    static ConstantValue* getTrue() noexcept;
+    static ConstantValue* getFalse() noexcept;
+    static ConstantValue* get(const Type* type, intmax_t value);
 };
 
 class ConstantFloatingPoint final : public ConstantValue {

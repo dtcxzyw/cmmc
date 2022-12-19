@@ -34,7 +34,7 @@
 + [ ] memcpyopt
 + [x] mergefunc -> Inlining & BlockOutliner
 + [x] partial-inliner -> Inlining
-+ [ ] reassociate
++ [x] reassociate
 + [ ] sroa
 + [x] sccp -> ConstantPropagation & SimplifyBranch 
 + [x] simplifycfg -> BlockEliminate & BlockMerge

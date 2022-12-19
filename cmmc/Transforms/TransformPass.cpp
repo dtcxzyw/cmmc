@@ -130,8 +130,10 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
                 analysis.invalidateModule();
                 modified = true;
 
-                if(debugTransform.get())
+                if(debugTransform.get()) {
+                    std::cerr << "\tmodified" << std::endl;
                     item.dump(std::cerr);
+                }
                 if(!item.verify(std::cerr))
                     DiagnosticsContext::get().attach<ModuleAttachment>("module", &item).reportFatal();
             }
@@ -173,7 +175,6 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
 }
 
 std::string_view IterationPassWrapper::name() const noexcept {
-    ;
     return "IterationPassWrapper"sv;
 }
 
@@ -213,10 +214,11 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             // Constant
-            "ConstantMerge",          //
-            "SimpleCSE",              //
-            "GEPCombine",             //
-            "NoSideEffectEliminate",  // clean up
+            "ConstantMerge",           //
+            "ConditionalPropagation",  //
+            "SimpleCSE",               //
+            "GEPCombine",              //
+            "NoSideEffectEliminate",   // clean up
             // Arithmetic
             "ConstantPropagation",    //
             "ArithmeticReduce",       //
@@ -256,6 +258,17 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
                 // TODO: clean up
+            }))
+            basic->addPass(pass);
+    }
+
+    if(level >= OptimizationLevel::O3) {
+        // Assuming that all functions are terminated with return instructions normally.
+        for(auto pass : passesSource.collect({
+                "InfiniteEliminate",                 //
+                "UnreachableEliminate",              //
+                "SimplifyPartialUnreachableBranch",  //
+                "BlockEliminate",                    // clean up
             }))
             basic->addPass(pass);
     }
@@ -337,6 +350,7 @@ public:
                 }
                 if(mPass->run(func, analysis)) {
                     if(debugTransform.get()) {
+                        std::cerr << "\tmodified" << std::endl;
                         func.dump(std::cerr);
                     }
                     analysis.invalidateFunc(func);

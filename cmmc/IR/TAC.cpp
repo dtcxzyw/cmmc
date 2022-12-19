@@ -100,7 +100,7 @@ void loadTAC(Module& module, const std::string& path) {
                 return builder.makeOp<PtrToIntInst>(addr, i32);
             }
             case TACOperandType::Constant:
-                return make<ConstantInteger>(i32, std::get<int>(operand.val));
+                return ConstantInteger::get(i32, std::get<int>(operand.val));
             default:
                 reportUnreachable();
         }

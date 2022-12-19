@@ -50,7 +50,7 @@ class ConstantPropagation final : public TransformPass<Function> {
             uintmax_t u1, u2;
             double f1, f2;
             CompareOp cmp;
-            auto makeInt = [&](Instruction* inst, intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
+            auto makeInt = [&](Instruction* inst, intmax_t val) { return ConstantInteger::get(inst->getType(), val); };
             auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
 
             // TODO: handle select?
@@ -129,7 +129,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                     }
                     reportUnreachable();
                 };
-                auto makeBool = [&](Instruction* inst, bool val) { return make<ConstantInteger>(inst->getType(), val); };
+                auto makeBool = [&](Instruction* inst, bool val) { return ConstantInteger::get(inst->getType(), val); };
 
                 MatchContext<Value> matchCtx{ inst, &replace };
                 if(scmp(cmp, int_(i1), int_(i2))(matchCtx))

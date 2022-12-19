@@ -82,7 +82,7 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
     } else {
         const auto pointee = inst->getType()->as<PointerType>()->getPointee();
         if(pointee->isInteger()) {
-            return make<ConstantInteger>(pointee, 0);
+            return ConstantInteger::get(pointee, 0);
         } else if(pointee->isFloatingPoint()) {
             return make<ConstantFloatingPoint>(pointee, 0.0);
         } else {

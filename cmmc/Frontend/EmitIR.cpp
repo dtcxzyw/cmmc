@@ -314,14 +314,14 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
                 const auto res = evaluateOp(op, lhsValue, rhsValue);
 
                 if(std::holds_alternative<intmax_t>(res))
-                    return make<ConstantInteger>(lhs->getType(), std::get<intmax_t>(res));
+                    return ConstantInteger::get(lhs->getType(), std::get<intmax_t>(res));
             } else {
                 const auto lhsValue = lhs->as<ConstantInteger>()->getZeroExtended();
                 const auto rhsValue = rhs->as<ConstantInteger>()->getZeroExtended();
                 const auto res = evaluateOp(op, lhsValue, rhsValue);
 
                 if(std::holds_alternative<uintmax_t>(res))
-                    return make<ConstantInteger>(lhs->getType(), static_cast<intmax_t>(std::get<uintmax_t>(res)));
+                    return ConstantInteger::get(lhs->getType(), static_cast<intmax_t>(std::get<uintmax_t>(res)));
             }
         }
     }
@@ -522,7 +522,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
             const auto res = evaluateOp(mOp, val);
 
             if(std::holds_alternative<intmax_t>(res))
-                return QualifiedValue{ make<ConstantInteger>(value->getType(), std::get<intmax_t>(res)) };
+                return QualifiedValue{ ConstantInteger::get(value->getType(), std::get<intmax_t>(res)) };
         }
     }
 
@@ -533,7 +533,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
                 return QualifiedValue{ ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
-                                                              make<ConstantInteger>(value->getType(), -1)) };
+                                                              ConstantInteger::get(value->getType(), -1)) };
             }
             DiagnosticsContext::get()
                 .attach<Reason>("bitwise not is only allowed for integer types")
@@ -542,8 +542,8 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         }
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {}, ConversionUsage::Condition);
-            return QualifiedValue{ ctx.booleanToInt(ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
-                                                                           make<ConstantInteger>(value->getType(), 1))) };
+            return QualifiedValue{ ctx.booleanToInt(
+                ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value, ConstantInteger::get(value->getType(), 1))) };
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
@@ -569,7 +569,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     InstructionID instID;
     Value* rhs;
     if(type->isInteger()) {
-        rhs = make<ConstantInteger>(val->getType(), 1);
+        rhs = ConstantInteger::get(val->getType(), 1);
         instID = ((mOp == OperatorID::PrefixInc || mOp == OperatorID::SuffixInc) ? InstructionID::Add : InstructionID::Sub);
     } else if(type->isFloatingPoint()) {
         rhs = make<ConstantFloatingPoint>(val->getType(), 1.0);
@@ -598,7 +598,7 @@ QualifiedValue DerefExpr::emit(EmitContext& ctx) const {
 
 QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
     // TODO: signed/unsigned?
-    return QualifiedValue{ make<ConstantInteger>(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),
+    return QualifiedValue{ ConstantInteger::get(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),
                            ValueQualifier::AsRValue, Qualifier::getSigned() };
 }
 
@@ -622,7 +622,7 @@ GlobalVariable* ConstantStringExpr::emitGlobal(String symbol, uint32_t size, Emi
         DiagnosticsContext::get().attach<Reason>("the array size is too small").reportFatal();
 
     for(uint32_t idx = 0; idx < count; ++idx) {
-        elements.push_back(make<ConstantInteger>(i8, static_cast<intmax_t>(str[idx])));
+        elements.push_back(ConstantInteger::get(i8, static_cast<intmax_t>(str[idx])));
     }
     const auto type = make<ArrayType>(i8, size == std::numeric_limits<uint32_t>::max() ? static_cast<uint32_t>(count + 1) : size);
     const auto global = make<GlobalVariable>(symbol, type);
@@ -1016,7 +1016,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
     InstructionID id = InstructionID::None;
     if(type->isBoolean()) {
         if(srcType->isInteger()) {
-            return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, make<ConstantInteger>(srcType, 0));
+            return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, ConstantInteger::get(srcType, 0));
         } else if(srcType->isFloatingPoint()) {
             if(strictMode.get())
                 return reportConversionErrorSpl(*this, type, usage);  // implicit f2b is not allowed
@@ -1029,7 +1029,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
 
         if(value->isConstant() && !value->isUndefined()) {
             const auto cint = value->as<ConstantInteger>();
-            return make<ConstantInteger>(
+            return ConstantInteger::get(
                 type, srcQualifier.isSigned ? cint->getSignExtended() : static_cast<intmax_t>(cint->getZeroExtended()));
         }
 
@@ -1054,7 +1054,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
 
         if(value->isConstant() && !value->isUndefined()) {
             const auto cfp = value->as<ConstantFloatingPoint>()->getValue();
-            return make<ConstantInteger>(
+            return ConstantInteger::get(
                 type, dstQualifier.isSigned ? static_cast<intmax_t>(cfp) : static_cast<intmax_t>(static_cast<uintmax_t>(cfp)));
         }
         id = dstQualifier.isSigned ? InstructionID::F2S : InstructionID::F2U;
@@ -1448,7 +1448,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     const auto scalarType = type->getScalarType();
     ConstantValue* zero = nullptr;
     if(scalarType->isInteger())
-        zero = make<ConstantInteger>(scalarType, 0);
+        zero = ConstantInteger::get(scalarType, 0);
     else if(scalarType->isFloatingPoint())
         zero = make<ConstantFloatingPoint>(scalarType, 0.0);
     else
@@ -1460,7 +1460,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         indices.reserve(sizes.size());
 
         for(auto siz : sizes) {
-            indices.push_back(make<ConstantInteger>(ctx.getIndexType(), offset / siz));
+            indices.push_back(ConstantInteger::get(ctx.getIndexType(), offset / siz));
             offset %= siz;
         }
 
@@ -1472,7 +1472,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
     const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
     const auto i8ptr = PointerType::get(IntegerType::get(8U));
-    const auto zeroByte = make<ConstantInteger>(IntegerType::get(32), 0);
+    const auto zeroByte = ConstantInteger::get(IntegerType::get(32), 0);
     const auto scalarSize = scalarType->getSize(dataLayout);
 
     uint32_t lastNotAssigned = 0;
@@ -1491,7 +1491,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         } else {
             const auto beg = getAddress(lastNotAssigned);
             const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
-            const auto size = make<ConstantInteger>(ctx.getIndexType(), totalSize);
+            const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize);
             ctx.makeOp<FunctionCallInst>(memsetFunc,
                                          Vector<Value*>{
                                              ptr,
@@ -1811,7 +1811,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
             } else if(type->isArray()) {
                 const auto arr = type->as<ArrayType>();
                 for(uint32_t idx = 0; idx < arr->getElementCount(); ++idx) {
-                    Vector<Value*> offset{ getZeroIndex(), make<ConstantInteger>(getIndexType(), idx) };
+                    Vector<Value*> offset{ getZeroIndex(), ConstantInteger::get(getIndexType(), idx) };
                     const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
                     const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
                     self(self, subDst, subSrc);
@@ -1834,7 +1834,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
         const auto ptr = PointerType::get(IntegerType::get(8));
 
         const Vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
-                                      make<ConstantInteger>(getIndexType(), static_cast<intmax_t>(size)) };
+                                      ConstantInteger::get(getIndexType(), static_cast<intmax_t>(size)) };
         makeOp<FunctionCallInst>(memcpyFunc, args);
     }
 }

@@ -203,6 +203,25 @@ constexpr auto getReversedOp(CompareOp op) {
     return static_cast<CompareOp>(-1);
 }
 
+constexpr auto getInvertedOp(CompareOp op) {
+    switch(op) {
+        case CompareOp::LessThan:
+            return CompareOp::GreaterEqual;
+        case CompareOp::LessEqual:
+            return CompareOp::GreaterThan;
+        case CompareOp::GreaterThan:
+            return CompareOp::LessEqual;
+        case CompareOp::GreaterEqual:
+            return CompareOp::LessThan;
+        case CompareOp::Equal:
+            return CompareOp::NotEqual;
+        case CompareOp::NotEqual:
+            return CompareOp::Equal;
+    }
+    // unreachable
+    return static_cast<CompareOp>(-1);
+}
+
 class CompareInst final : public Instruction {
     CompareOp mCompare;
 

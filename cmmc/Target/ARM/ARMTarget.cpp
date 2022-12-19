@@ -125,7 +125,7 @@ Operand ARMLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zero = pool.allocate(type);
     if(type->isInteger())
-        pool.getMetadata(zero) = make<ConstantInteger>(type, 0);
+        pool.getMetadata(zero) = ConstantInteger::get(type, 0);
     else
         reportUnreachable();
     return zero;

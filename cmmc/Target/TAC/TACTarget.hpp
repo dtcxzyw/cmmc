@@ -14,6 +14,7 @@
 
 // TAC Virtual Target
 #pragma once
+#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -59,6 +60,7 @@ public:
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
+    void lower(CompareInst* inst, LoweringContext& ctx) const override;
 };
 
 class TACSubTarget final : public SimpleSubTarget {

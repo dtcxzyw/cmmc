@@ -37,7 +37,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
         const auto ret = reduceBlock(block, [&](Instruction* inst, IRBuilder& builder, ReplaceMap& replace) -> Value* {
             MatchContext<Value> matchCtx{ inst, &replace };
 
-            auto makeInt = [inst](intmax_t val) { return make<ConstantInteger>(inst->getType(), val); };
+            auto makeInt = [inst](intmax_t val) { return ConstantInteger::get(inst->getType(), val); };
 
             Value *v1, *v2, *v3, *v4;
             // a + 0 -> a
@@ -82,7 +82,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return make<ConstantFloatingPoint>(inst->getType(), 0.0);
             // a / a -> 1
             if((sdiv(any(v1), any(v2))(matchCtx) || udiv(any(v1), any(v2))(matchCtx)) && v1 == v2)
-                return make<ConstantInteger>(inst->getType(), 1);
+                return ConstantInteger::get(inst->getType(), 1);
             if(fdiv(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return make<ConstantFloatingPoint>(inst->getType(), 1.0);
             // a / 1 -> a

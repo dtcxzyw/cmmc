@@ -19,11 +19,10 @@
 CMMC_NAMESPACE_BEGIN
 
 IRBuilder::IRBuilder() : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {
-    const auto boolean = IntegerType::getBoolean();
-    mTrueValue = make<ConstantInteger>(boolean, 1);
-    mFalseValue = make<ConstantInteger>(boolean, 0);
+    mTrueValue = ConstantInteger::getTrue();
+    mFalseValue = ConstantInteger::getFalse();
     mIndexType = IntegerType::get(32U);  // TODO: size_t, get from target
-    mZeroIndex = make<ConstantInteger>(mIndexType, 0);
+    mZeroIndex = ConstantInteger::get(mIndexType, 0);
 }
 Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
     auto block = make<Block>(mCurrentFunction);

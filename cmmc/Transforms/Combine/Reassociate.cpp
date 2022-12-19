@@ -101,7 +101,7 @@ class Reassociate final : public TransformPass<Function> {
                             reduce(v);
                         else {
                             reduce(builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(), v,
-                                                              make<ConstantInteger>(inst->getType(), static_cast<intmax_t>(c))));
+                                                              ConstantInteger::get(inst->getType(), static_cast<intmax_t>(c))));
                         }
                     }
                 } break;
@@ -128,7 +128,7 @@ class Reassociate final : public TransformPass<Function> {
                             reduce(v);
                     }
                     if(reduction == nullptr)
-                        reduction = make<ConstantInteger>(inst->getType(), 0);
+                        reduction = ConstantInteger::get(inst->getType(), 0);
                 } break;
                 default:
                     reportUnreachable();

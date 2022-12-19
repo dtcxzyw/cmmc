@@ -599,24 +599,6 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
             }
         }();
 
-        const auto getInvertedOp = [](CompareOp op) {
-            switch(op) {
-                case CompareOp::LessThan:
-                    return CompareOp::GreaterEqual;
-                case CompareOp::LessEqual:
-                    return CompareOp::GreaterThan;
-                case CompareOp::GreaterThan:
-                    return CompareOp::LessEqual;
-                case CompareOp::GreaterEqual:
-                    return CompareOp::LessThan;
-                case CompareOp::Equal:
-                    return CompareOp::NotEqual;
-                case CompareOp::NotEqual:
-                    return CompareOp::Equal;
-            }
-            reportUnreachable();
-        };
-
         emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
                        getInvertedOp(condInst->getOp()));
     } else {
@@ -668,7 +650,7 @@ void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
 
     if(constantOffset != 0) {
         const auto baseOffset = constant.allocate(indexType);
-        constant.getMetadata(baseOffset) = make<ConstantInteger>(indexType, static_cast<intmax_t>(constantOffset));
+        constant.getMetadata(baseOffset) = ConstantInteger::get(indexType, static_cast<intmax_t>(constantOffset));
         ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, base, baseOffset, ptr);
     } else {
         const auto& dataLayout = ctx.getDataLayout();
@@ -678,7 +660,7 @@ void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
         const auto idx = ctx.mapOperand(index);
         const auto off = vreg.allocate(indexType);
         const auto sizeConstant = constant.allocate(indexType);
-        constant.getMetadata(sizeConstant) = make<ConstantInteger>(indexType, static_cast<intmax_t>(size));
+        constant.getMetadata(sizeConstant) = ConstantInteger::get(indexType, static_cast<intmax_t>(size));
         ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Mul, idx, sizeConstant, off);
         ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, ptr, off, ptr);
     }

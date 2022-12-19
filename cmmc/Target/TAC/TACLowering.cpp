@@ -13,7 +13,9 @@
 */
 
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 
@@ -23,7 +25,7 @@ Operand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zero = pool.allocate(type);
     if(type->isInteger())
-        pool.getMetadata(zero) = make<ConstantInteger>(type, 0);
+        pool.getMetadata(zero) = ConstantInteger::get(type, 0);
     else
         reportUnreachable();
     return zero;
@@ -93,6 +95,54 @@ void TACLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
 }
 void TACLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     DiagnosticsContext::get().attach<Reason>("FMA is not supported by TAC").reportFatal();
+}
+void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
+    bool onlyUsedByCondition = true, start = false;
+    for(auto rhs : inst->getBlock()->instructions()) {
+        if(start && rhs->hasOperand(inst)) {
+            if(rhs->getInstID() == InstructionID::ConditionalBranch) {
+                if(rhs->getOperand(0) == inst) {
+                    bool valid = true;
+                    for(uint32_t idx = 1; idx < rhs->operands().size(); ++idx)
+                        if(rhs->getOperand(idx) == inst) {
+                            valid = false;
+                            break;
+                        }
+                    if(valid)
+                        continue;
+                }
+            }
+
+            onlyUsedByCondition = false;
+            break;
+        }
+        if(rhs == inst)
+            start = true;
+    }
+
+    if(onlyUsedByCondition) {
+        LoweringInfo::lower(inst, ctx);
+        return;
+    }
+
+    if(inst->getInstID() != InstructionID::SCmp)
+        reportUnreachable();
+
+    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+    const auto trueBlock = ctx.addBlockAfter();
+    const auto falseBlock = ctx.addBlockAfter();
+    const auto nextBlock = ctx.addBlockAfter();
+    ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)),
+                                     getInvertedOp(inst->getOp()), falseBlock);
+    ctx.setCurrentBasicBlock(trueBlock);
+    ctx.emitInst<ConstantMInst>(ret, 1);
+    ctx.emitInst<BranchMInst>(nextBlock);
+    ctx.setCurrentBasicBlock(falseBlock);
+    ctx.emitInst<ConstantMInst>(ret, 0);
+    ctx.emitInst<BranchMInst>(nextBlock);
+
+    ctx.addOperand(inst, ret);
+    ctx.setCurrentBasicBlock(nextBlock);
 }
 
 CMMC_NAMESPACE_END

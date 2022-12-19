@@ -98,9 +98,9 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     auto& constantPool = func.pools().pools[AddressSpace::Constant];
     const auto sizeType = IntegerType::get(dataLayout.getPointerSize() * 4);
     const auto offset = constantPool.allocate(sizeType);
-    constantPool.getMetadata(offset) = make<ConstantInteger>(sizeType, static_cast<intmax_t>(allocationBase));
+    constantPool.getMetadata(offset) = ConstantInteger::get(sizeType, static_cast<intmax_t>(allocationBase));
     const auto revOffset = constantPool.allocate(sizeType);
-    constantPool.getMetadata(revOffset) = make<ConstantInteger>(sizeType, -static_cast<intmax_t>(allocationBase));
+    constantPool.getMetadata(revOffset) = ConstantInteger::get(sizeType, -static_cast<intmax_t>(allocationBase));
 
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();

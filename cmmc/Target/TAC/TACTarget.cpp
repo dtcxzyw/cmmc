@@ -19,6 +19,7 @@
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <cmmc/Transforms/Compatibility/Compatibility.hpp>
 #include <limits>
 #include <memory>
 
@@ -34,8 +35,16 @@ TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
-void TACTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {
+void TACTarget::legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
     // TODO: lowering memset/memcpy
+    for(auto global : module.globals()) {
+        if(global->isFunction()) {
+            const auto func = global->as<Function>();
+            if(func->blocks().empty())
+                continue;
+            canonicalizeBranchCompare(*func, analysis);
+        }
+    }
 }
 void TACTarget::legalizeFunc(GMIRFunction&) const {}
 bool TACTarget::builtinSA(GMIRFunction& mfunc) const {
@@ -105,6 +114,12 @@ bool TACTarget::isNativeSupported(InstructionID inst) const noexcept {
         case InstructionID::FCast:
             [[fallthrough]];
         case InstructionID::Select:
+            [[fallthrough]];
+        case InstructionID::SCmp:
+            [[fallthrough]];
+        case InstructionID::UCmp:
+            [[fallthrough]];
+        case InstructionID::FCmp:
             return false;
         default:
             return true;
