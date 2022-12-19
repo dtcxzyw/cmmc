@@ -1,5 +1,5 @@
 # LLVM
-+ [ ] adce
++ [x] adce -> SimplifyPartialUnreachableBranch & InfiniteEliminate & UnreachableEliminate & ConditionalPropagation
 + [x] always-inline -> Inlining
 + [x] argpromotion -> Inlining & ScalarMem2Reg
 + [ ] bb-vectorize
@@ -18,7 +18,7 @@
 + [x] inline -> Inlining
 + [x] instcombine -> ArithmeticReduce
 + [ ] aggressive-instcombine
-+ [x] internalize -> -H
++ [x] internalize -> --hide-symbol
 + [x] ipsccp -> Inlining & sccp
 + [ ] jump-threading
 + [ ] lcssa
@@ -36,7 +36,7 @@
 + [x] partial-inliner -> Inlining
 + [x] reassociate
 + [ ] sroa
-+ [x] sccp -> ConstantPropagation & SimplifyBranch 
++ [x] sccp -> ConstantPropagation & SimplifyBranch & ConditionalPropagation
 + [x] simplifycfg -> BlockEliminate & BlockMerge
 + [ ] sink
 + [x] tailcallelim -> TailCallEliminate
