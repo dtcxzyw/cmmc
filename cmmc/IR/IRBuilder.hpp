@@ -53,6 +53,8 @@ public:
         return mCurrentBlock;
     }
     void setCurrentBlock(Block* block) {
+        if(mCurrentBlock == block)
+            return;
         mCurrentFunction = block ? block->getFunction() : nullptr;
         mCurrentBlock = block;
         if(block)

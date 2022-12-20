@@ -79,10 +79,6 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
                 continue;
         }
 
-        intmax_t boundValue;
-        if(!int_(boundValue)(MatchContext<Value>{ bound, nullptr }))
-            continue;
-
         const auto& indvarPrev = phiMap.query(indvar->as<BlockArgument>());
         Value* initial = nullptr;
         if(std::holds_alternative<PhiNode>(indvarPrev)) {
@@ -105,11 +101,16 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         } else
             continue;
         assert(initial);
-        intmax_t initialValue;
-        if(!int_(initialValue)(MatchContext<Value>{ initial, nullptr }))
-            continue;
 
         if(cmp->getOp() == CompareOp::NotEqual) {
+            intmax_t boundValue;
+            if(!int_(boundValue)(MatchContext<Value>{ bound, nullptr }))
+                continue;
+
+            intmax_t initialValue;
+            if(!int_(initialValue)(MatchContext<Value>{ initial, nullptr }))
+                continue;
+
             if((boundValue - initialValue) % step)
                 continue;
             if(step > 0 && (initialValue > boundValue))
@@ -145,8 +146,9 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         loop.initial->dumpAsOperand(std::cerr);
         std::cerr << "\nbound: ";
         loop.bound->dumpAsOperand(std::cerr);
-        std::cerr << '\n';
-    }*/
+        std::cerr << "\nstep: " << loop.step << '\n';
+    }
+    */
 
     return { std::move(loops) };
 }

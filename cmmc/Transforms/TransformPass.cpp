@@ -258,7 +258,11 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
-                // TODO: clean up
+                "DynamicLoopUnroll",      //
+                "BlockMerge",             // clean up
+                "BlockEliminate",         // clean up
+                "LoopGEPCombine",         //
+                "NoSideEffectEliminate",  // clean up
             }))
             basic->addPass(pass);
     }

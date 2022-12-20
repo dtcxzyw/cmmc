@@ -839,7 +839,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             baseType = baseType->as<ArrayType>()->getElementType();
                         } else
                             reportUnreachable();
-                        basePtr += getUInt(idx) * baseType->getSize(dataLayout);
+                        basePtr += getInt(idx) * baseType->getSize(dataLayout);
                     } else if(auto offset = dynamic_cast<ConstantOffset*>(operand)) {
                         const auto structType = baseType->as<StructType>();
                         baseType = structType->getFieldType(offset);

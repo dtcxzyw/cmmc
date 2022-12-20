@@ -258,21 +258,33 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::GetElementPtr: {
+                    std::vector<uint32_t> attrs;
                     auto cur = inst;
                     while(true) {
                         const auto base = blockArgMap.queryRoot(cur->operands().back());
                         MatchContext<Value> matchCtx{ cur->getOperand(0), nullptr };
-                        if(inst->operands().size() >= 2 && cuint_(0)(matchCtx)) {
+                        if(cuint_(0)(matchCtx)) {
                             inheritGraph.emplace(inst, base);
                             break;
                         } else {
+                            if(cur == inst) {
+                                // add distinct pair
+                                intmax_t offset;
+                                if(int_(offset)(matchCtx) && offset != 0) {
+                                    const auto a1 = ++allocateID;
+                                    const auto a2 = ++allocateID;
+                                    result.addPair(a1, a2);
+                                    attrs.push_back(a1);
+                                    result.appendAttr(cur->operands().back(), a2);
+                                }
+                            }
                             if(base->is<GetElementPtrInst>()) {
                                 cur = base->as<Instruction>();
                             } else
                                 break;
                         }
                     }
-                    result.addValue(inst, {});
+                    result.addValue(inst, std::move(attrs));
                     geps.push_back(inst);
                     break;
                 }

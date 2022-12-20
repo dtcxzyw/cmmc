@@ -58,7 +58,7 @@ class GEPCombine final : public TransformPass<Function> {
                   const BlockArgumentAnalysisResult& blockArgMap) const {
         bool modified = false;
         for(auto inst : block.instructions()) {
-            if(inst->getInstID() != InstructionID::GetElementPtr)
+            if(!constantGEP.count(inst))
                 continue;
 
             const auto base = blockArgMap.queryRoot(inst->operands().back());
