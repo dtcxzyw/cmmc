@@ -33,9 +33,9 @@ public:
             if(loop.header != loop.latch)
                 continue;
             // TODO: dynamic loops
-            if(!loop.bound->isConstant())
+            if(!loop.bound->is<ConstantInteger>())
                 continue;
-            if(!loop.initial->isConstant())
+            if(!loop.initial->is<ConstantInteger>())
                 continue;
             const auto initial = loop.initial->as<ConstantInteger>()->getSignExtended();
             const auto bound = loop.bound->as<ConstantInteger>()->getSignExtended();

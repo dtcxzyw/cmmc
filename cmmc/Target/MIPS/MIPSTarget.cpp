@@ -319,6 +319,14 @@ Operand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
     const auto freeBits = ~x;
     if(freeBits == 0)
         return unusedOperand;
+    // prefer caller-saved registers
+    // $t0-$t9
+    for(uint32_t idx = 8; idx < 16; ++idx)
+        if(freeBits & (1U << idx))
+            return { src, idx };
+    for(uint32_t idx = 24; idx < 26; ++idx)
+        if(freeBits & (1U << idx))
+            return { src, idx };
     return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
 }
 uint32_t MIPSRegisterUsage::getRegisterClass(const Type* type) const {

@@ -48,19 +48,6 @@ public:
             if(loop.bound->isConstant() && loop.initial->isConstant())
                 continue;
 
-            constexpr auto header = "super.header"sv;
-            {
-                bool optimized = false;
-                for(auto [prev, prevTarget] : cfg.predecessors(loop.latch)) {
-                    if(prev->getLabel().prefix() == header) {
-                        optimized = true;
-                        break;
-                    }
-                }
-                if(optimized)
-                    continue;
-            }
-
             const auto terminator = loop.latch->getTerminator();
             const auto cond = terminator->getOperand(0);
 
@@ -109,6 +96,8 @@ public:
                 }
                 assert(indvar);
                 assert(bound->isConstant() || bound->getBlock() == head);
+
+                constexpr auto header = "super.header"sv;
                 head->setLabel(String::get(header));
                 insertedBlocks.push_back(head);
                 for(auto [block, target] : cfg.predecessors(loop.latch)) {

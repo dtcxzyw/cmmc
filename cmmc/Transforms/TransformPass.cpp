@@ -258,7 +258,6 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
-                "DynamicLoopUnroll",      //
                 "BlockMerge",             // clean up
                 "BlockEliminate",         // clean up
                 "LoopGEPCombine",         //
@@ -307,9 +306,18 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "SmallBlockInlining",     //
             }))
             root->addPass(pass);
+        root->addPass(iter);  // middle-1 optimization
     }
 
-    root->addPass(iter);  // middle optimization
+    if(level >= OptimizationLevel::O3) {
+        for(auto pass : passesSource.collect({
+                "DynamicLoopUnroll",  //
+                "BlockMerge",         // clean up
+                "BlockEliminate",     // clean up
+            }))
+            root->addPass(pass);
+        root->addPass(iter);  // middle-2 optimization
+    }
 
     if(level >= OptimizationLevel::O3) {
         for(auto pass : passesSource.collect({

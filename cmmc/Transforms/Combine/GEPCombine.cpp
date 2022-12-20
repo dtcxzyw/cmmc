@@ -21,10 +21,12 @@
 
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstdint>
 #include <iostream>
 #include <queue>
 #include <unordered_set>
@@ -67,18 +69,30 @@ class GEPCombine final : public TransformPass<Function> {
 
             const auto baseGEP = base->as<GetElementPtrInst>();
             auto& operands = inst->operands();
-            if(cuint_(0)(MatchContext<Value>{ operands.front(), nullptr })) {
+            MatchContext<Value> matchFront{ operands.front(), nullptr };
+            MatchContext<Value> matchBack{ baseGEP->getOperand(baseGEP->operands().size() - 2), nullptr };
+            if(cuint_(0)(matchFront)) {
                 operands.pop_front();
                 const auto& prevOffsets = baseGEP->operands();
                 operands.insert(operands.begin(), prevOffsets.begin(), std::prev(prevOffsets.end()));  // insert offsets
                 operands.back() = prevOffsets.back();                                                  // replace base
                 modified = true;
-            } else if(cuint_(0)(MatchContext<Value>{ baseGEP->getOperand(baseGEP->operands().size() - 2), nullptr })) {
+            } else if(cuint_(0)(matchBack)) {
                 const auto& prevOffsets = baseGEP->operands();
                 operands.insert(operands.begin(), prevOffsets.begin(),
                                 std::prev(std::prev(prevOffsets.end())));  // insert offsets
                 operands.back() = prevOffsets.back();                      // replace base
                 modified = true;
+            } else {
+                intmax_t offset1, offset2;
+                if(int_(offset1)(matchFront) && int_(offset2)(matchBack)) {
+                    operands.front() = ConstantInteger::get(operands.front()->getType(), offset1 + offset2);
+                    const auto& prevOffsets = baseGEP->operands();
+                    operands.insert(operands.begin(), prevOffsets.begin(),
+                                    std::prev(std::prev(prevOffsets.end())));  // insert offsets
+                    operands.back() = prevOffsets.back();                      // replace base
+                    modified = true;
+                }
             }
         }
 
