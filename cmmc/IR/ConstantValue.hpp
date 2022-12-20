@@ -75,9 +75,9 @@ public:
     bool isEqual(ConstantValue* rhs) const override;
     size_t hash() const override;
 
-    static ConstantValue* getTrue() noexcept;
-    static ConstantValue* getFalse() noexcept;
-    static ConstantValue* get(const Type* type, intmax_t value);
+    static ConstantInteger* getTrue() noexcept;
+    static ConstantInteger* getFalse() noexcept;
+    static ConstantInteger* get(const Type* type, intmax_t value);
 };
 
 class ConstantFloatingPoint final : public ConstantValue {

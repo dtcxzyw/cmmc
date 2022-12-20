@@ -49,18 +49,18 @@ uintmax_t ConstantInteger::getZeroExtended() const noexcept {
     return static_cast<uintmax_t>(mValue) & mask;
 }
 
-ConstantValue* ConstantInteger::getTrue() noexcept {
+ConstantInteger* ConstantInteger::getTrue() noexcept {
     static ConstantInteger trueValue{ IntegerType::getBoolean(), 1 };
     return &trueValue;
 }
-ConstantValue* ConstantInteger::getFalse() noexcept {
+ConstantInteger* ConstantInteger::getFalse() noexcept {
     static ConstantInteger falseValue{ IntegerType::getBoolean(), 0 };
     return &falseValue;
 }
 ConstantInteger::ConstantInteger(const Type* type, intmax_t value) : ConstantValue{ type }, mValue{ value } {
     assert(type->isInteger());
 }
-ConstantValue* ConstantInteger::get(const Type* type, intmax_t value) {
+ConstantInteger* ConstantInteger::get(const Type* type, intmax_t value) {
     if(type->isBoolean())
         return (value & 1) ? getTrue() : getFalse();
     return make<ConstantInteger>(type, value, ExplicitConstruct{});

@@ -14,10 +14,10 @@
 
 // TAC Virtual Target
 #pragma once
-#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <memory>
 #include <unordered_set>

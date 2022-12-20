@@ -224,7 +224,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "ArithmeticReduce",       //
             "NoSideEffectEliminate",  // clean up
             // Loop
-            "LoopEliminate",  //
+            "LoopCanonicalize",  //
+            "LoopEliminate",     //
             // Control flow
             "TailCallEliminate",  //
             "MergeBranch",        //

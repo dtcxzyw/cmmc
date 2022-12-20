@@ -49,11 +49,9 @@ public:
                 continue;
             if(!loop.initial->isConstant())
                 continue;
-            if(loop.step <= 0)
-                continue;
             const auto initial = loop.initial->as<ConstantInteger>()->getSignExtended();
             const auto bound = loop.bound->as<ConstantInteger>()->getSignExtended();
-            if(initial + loop.step >= bound)
+            if((loop.step > 0 && initial + loop.step >= bound) || ((loop.step < 0 && initial + loop.step <= bound)))
                 continue;  // handled by loop elimination
             const auto size = (bound - initial) / loop.step;
             assert(size >= 0);

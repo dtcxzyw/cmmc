@@ -248,6 +248,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     break;
             }
 
+            // a - c -> a + (-c)
+            if(sub(any(v1), int_(i1))(matchCtx) && !v1->isConstant())
+                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeInt(-i1));
+
             return nullptr;
         });
         return ret || modified;

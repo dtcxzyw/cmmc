@@ -25,7 +25,7 @@
 CMMC_NAMESPACE_BEGIN
 
 // only detect the following patterns (Canonical Form):
-// for(int i = initial; i < cond; i += step)
+// for(int i = initial; i </> cond; i += step) (step != 0)
 //     body
 
 LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analysis) {
@@ -43,8 +43,6 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!cond->is<CompareInst>())
             continue;
         const auto cmp = cond->as<CompareInst>();
-        if(cmp->getOp() != CompareOp::LessThan)
-            continue;
         if(cmp->getInstID() != InstructionID::SCmp)
             continue;
         const auto next = cmp->getOperand(0);
@@ -55,11 +53,13 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!add(any(indvar), int_(step))(MatchContext<Value>{ next, nullptr })) {
             continue;
         }
+        if(step == 0)
+            continue;
 
         // backedge
         const auto& trueTarget = branch->getTrueTarget();
         const auto header = trueTarget.getTarget();
-        if(header != dom.lca(header, block))
+        if(!dom.dominate(header, block))
             continue;
 
         // TODO: handle phi nodes
@@ -107,6 +107,24 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         assert(initial);
         intmax_t initialValue;
         if(!int_(initialValue)(MatchContext<Value>{ initial, nullptr }))
+            continue;
+
+        if(cmp->getOp() == CompareOp::NotEqual) {
+            if((boundValue - initialValue) % step)
+                continue;
+            if(step > 0 && (initialValue > boundValue))
+                continue;
+            if(step < 0 && (initialValue < boundValue))
+                continue;
+        } else if(cmp->getOp() == CompareOp::LessThan) {
+            // increment
+            if(step <= 0)
+                continue;
+        } else if(cmp->getOp() == CompareOp::GreaterThan) {
+            // decrement
+            if(step >= 0)
+                continue;
+        } else
             continue;
 
         loops.push_back({ header, block, indvar, next, initial, bound, step });

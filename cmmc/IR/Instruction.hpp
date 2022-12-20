@@ -234,6 +234,9 @@ public:
     CompareOp getOp() const noexcept {
         return mCompare;
     }
+    void setOp(CompareOp op) noexcept {
+        mCompare = op;
+    }
 };
 
 class UnaryInst final : public Instruction {
