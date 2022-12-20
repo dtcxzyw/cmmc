@@ -22,7 +22,7 @@ jobs:
       run: sudo apt install spim
     
     - name: Build
-      run: make -j
+      run: make -j2
 
     - name: Test
       run: make test
