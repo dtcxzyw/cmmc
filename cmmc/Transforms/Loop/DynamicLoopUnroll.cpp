@@ -20,6 +20,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
@@ -27,7 +28,7 @@
 #include <iostream>
 #include <new>
 
-constexpr uint32_t maxUnrollBlockSize = 16U;
+constexpr uint32_t unrollBlockSize = 16U;
 constexpr uint32_t maxBodySize = 64U;
 
 CMMC_NAMESPACE_BEGIN
@@ -108,7 +109,7 @@ public:
                 IRBuilder builder{ head };
                 const auto batchEnd =
                     builder.makeOp<BinaryInst>(InstructionID::Add, indvar->getType(), indvar,
-                                               ConstantInteger::get(indvar->getType(), loop.step * (maxUnrollBlockSize - 1)));
+                                               ConstantInteger::get(indvar->getType(), loop.step * (unrollBlockSize - 1)));
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
                 head->instructions().push_back(batchCond);
@@ -117,16 +118,28 @@ public:
                 batchCond->setBlock(head);
                 builder.setInsertPoint(head, head->instructions().end());
                 Vector<Value*> args{ head->args().cbegin(), head->args().cend() };
-                builder.makeOp<ConditionalBranchInst>(batchCond, BranchTarget{ loop.latch, args },
+
+                constexpr auto exitProb =
+                    1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(unrollBlockSize));
+                builder.makeOp<ConditionalBranchInst>(batchCond, 1.0 - exitProb, BranchTarget{ loop.latch, args },
                                                       BranchTarget{ loop.latch, args });
                 prev = head;
             }
 
-            for(uint32_t idx = 0; idx < maxUnrollBlockSize; ++idx)
+            for(uint32_t idx = 0; idx < unrollBlockSize; ++idx)
                 append(idx != 0);
 
             // reset terminator
-            prev->getTerminator()->as<ConditionalBranchInst>()->getTrueTarget().resetTarget(head);
+            {
+                const auto superBlockTerminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                superBlockTerminator->getTrueTarget().resetTarget(head);
+                constexpr auto exitProb = 1.0 /
+                    static_cast<double>(unrollBlockSize)  // the trip count is divided by unrollBlockSize
+                    / (static_cast<double>(estimatedLoopTripCount) /
+                       static_cast<double>(unrollBlockSize))  // number of super blocks
+                    ;
+                superBlockTerminator->updateBranchProb(1.0 - exitProb);
+            }
 
             auto& blocks = func.blocks();
             const auto iter = std::find(blocks.cbegin(), blocks.cend(), loop.latch);

@@ -31,6 +31,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
@@ -464,9 +465,11 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         auto newBlock = ctx.addBlock(IntegerType::getBoolean());
 
         if(mOp == OperatorID::LogicalAnd) {
-            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ rhsBlock }, BranchTarget{ newBlock, ctx.getFalse() });
+            ctx.makeOp<ConditionalBranchInst>(lhs, defaultShortCircuitProb, BranchTarget{ rhsBlock },
+                                              BranchTarget{ newBlock, ctx.getFalse() });
         } else {
-            ctx.makeOp<ConditionalBranchInst>(lhs, BranchTarget{ newBlock, ctx.getTrue() }, BranchTarget{ rhsBlock });
+            ctx.makeOp<ConditionalBranchInst>(lhs, defaultShortCircuitProb, BranchTarget{ newBlock, ctx.getTrue() },
+                                              BranchTarget{ rhsBlock });
         }
 
         ctx.setCurrentBlock(rhsBlock);
@@ -767,14 +770,14 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
         elseBlock->setLabel(String::get("if.else"));
 
         ctx.setCurrentBlock(oldBlock);
-        ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+        ctx.makeOp<ConditionalBranchInst>(pred, defaultIfThenProb, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
 
         ctx.setCurrentBlock(elseBlock);
         mElseBlock->emitWithLoc(ctx);
         ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
     } else {
         ctx.setCurrentBlock(oldBlock);
-        ctx.makeOp<ConditionalBranchInst>(pred, BranchTarget{ ifBlock }, BranchTarget{ newBlock });
+        ctx.makeOp<ConditionalBranchInst>(pred, defaultIfThenProb, BranchTarget{ ifBlock }, BranchTarget{ newBlock });
     }
 
     ctx.setCurrentBlock(newBlock);
@@ -805,7 +808,7 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     whileBody->setLabel(String::get("while.body"));
     auto newBlock = ctx.addBlock();
 
-    ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ whileBody }, BranchTarget{ newBlock });
+    ctx.makeOp<ConditionalBranchInst>(val, defaultLoopProb, BranchTarget{ whileBody }, BranchTarget{ newBlock });
 
     ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
@@ -835,7 +838,7 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
 
     ctx.setCurrentBlock(header);
     auto val = ctx.getRValue(mCondition, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
-    ctx.makeOp<ConditionalBranchInst>(val, BranchTarget{ body }, BranchTarget{ next });
+    ctx.makeOp<ConditionalBranchInst>(val, defaultLoopProb, BranchTarget{ body }, BranchTarget{ next });
     ctx.setCurrentBlock(next);
 
     return QualifiedValue{};
@@ -1669,8 +1672,8 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(header);
     if(mCondition)
         ctx.makeOp<ConditionalBranchInst>(
-            ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition), BranchTarget{ body },
-            BranchTarget{ next });
+            ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition), defaultLoopProb,
+            BranchTarget{ body }, BranchTarget{ next });
     else
         ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
 
@@ -1714,7 +1717,7 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     rhsBlock->setLabel(String::get("rhsBlock"));
 
     const auto condition = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition);
-    ctx.makeOp<ConditionalBranchInst>(condition, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });
+    ctx.makeOp<ConditionalBranchInst>(condition, defaultSelectProb, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });
 
     ctx.setCurrentBlock(lhsBlock);
     const auto lhs = mLhs->emitWithLoc(ctx);

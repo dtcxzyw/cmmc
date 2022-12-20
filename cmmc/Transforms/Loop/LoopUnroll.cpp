@@ -99,6 +99,10 @@ public:
                 // reset terminator
                 terminator->getTrueTarget().resetTarget(head);
                 terminator->getOperand(0)->as<CompareInst>()->replaceOperand(loop.bound, startValue);
+
+                const auto tripCount = (size - epilogueSize) / maxUnrollBlockSize;
+                const auto exitProb = 1.0 / tripCount;
+                terminator->updateBranchProb(1.0 - exitProb);
             }
             bool keepOldBlock = false;
             if(epilogueSize) {

@@ -266,7 +266,9 @@ void ConditionalBranchInst::dump(std::ostream& out) const {
         out << " ]"sv;
     } else {
         getOperand(0)->dumpAsOperand(out);
-        out << ", [ "sv;
+        const auto prec = out.precision(2);
+        out << "(prob = " << mBranchProb << "), [ "sv;
+        out.precision(prec);
         mTrueTarget.dump(out);
         out << " ], [ "sv;
         mFalseTarget.dump(out);
@@ -277,6 +279,10 @@ void ConditionalBranchInst::dump(std::ostream& out) const {
 bool ConditionalBranchInst::verify(std::ostream& out) const {
     if(!Instruction::verify(out))
         return false;
+    if(mBranchProb < 0.0 || mBranchProb > 1.0) {
+        out << "invalid branch prob = " << mBranchProb << std::endl;
+        return false;
+    }
     auto verifyTarget = [&](const BranchTarget& target) {
         const auto block = target.getTarget();
         if(!block)
@@ -321,16 +327,21 @@ void BranchTarget::replaceOperand(Value* oldOperand, Value* newOperand) {
 }
 
 ConditionalBranchInst::ConditionalBranchInst(BranchTarget target)
-    : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr } {
+    : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr },
+      mBranchProb{ 0.0 } {
     operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
 }
-ConditionalBranchInst::ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget)
+ConditionalBranchInst::ConditionalBranchInst(Value* condition, double branchProb, BranchTarget trueTarget,
+                                             BranchTarget falseTarget)
     : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ std::move(trueTarget) },
-      mFalseTarget{ std::move(falseTarget) } {
+      mFalseTarget{ std::move(falseTarget) }, mBranchProb{ branchProb } {
     operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
     operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
 }
-
+void ConditionalBranchInst::updateBranchProb(double branchProb) {
+    assert(getInstID() == InstructionID::Branch);
+    mBranchProb = branchProb;
+}
 bool ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {
     bool ret = Instruction::replaceOperand(oldOperand, newOperand);
     mTrueTarget.replaceOperand(oldOperand, newOperand);
@@ -524,7 +535,7 @@ Instruction* StoreInst::clone() const {
 Instruction* ConditionalBranchInst::clone() const {
     if(getInstID() == InstructionID::Branch)
         return make<ConditionalBranchInst>(getTrueTarget());
-    return make<ConditionalBranchInst>(getOperand(0), getTrueTarget(), getFalseTarget());
+    return make<ConditionalBranchInst>(getOperand(0), mBranchProb, getTrueTarget(), getFalseTarget());
 }
 
 Instruction* ReturnInst::clone() const {

@@ -14,11 +14,14 @@
 
 #include <algorithm>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
@@ -28,21 +31,29 @@
 // Only processing inter-block code moving
 // Intra-block code moving will be handled at the code generation stage.
 
-// FIXME: trade-off between re-calculation and register pressure
-// Solution: only move out of loops
+// FIXME: ./tests/SysY2022/hidden_functional/19_search.sy
 
 CMMC_NAMESPACE_BEGIN
 
 class CodeMove final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& blockTripCount = analysis.get<BlockTripCountEstimation>(func);
+        if(!blockTripCount.isAvailable())
+            return false;
+
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& dom = analysis.get<DominateAnalysis>(func);
 
         bool modified = false;
+        auto& target = analysis.module().getTarget();
 
         for(auto block : func.blocks()) {
             if(block == func.entryBlock())
+                continue;
+
+            const auto freq = blockTripCount.query(block);
+            if(freq < coldBlockThreshold)
                 continue;
 
             std::vector<Instruction*> moveOut;
@@ -61,6 +72,10 @@ public:
                     } else
                         continue;
                 }
+
+                // don't touch not natively supported instructions as GVN does
+                if(!target.isNativeSupported(inst->getInstID()))
+                    continue;
 
                 bool canMove = true;
                 for(auto operand : inst->operands()) {
@@ -97,14 +112,34 @@ public:
                     }
                 };
 
-                for(auto& operand : inst->operands()) {
+                bool valid = true;
+                for(auto operand : inst->operands()) {
                     if(operand->isInstruction()) {
-                        updateTargetBlock(moveTargetSet.at(operand));
+                        if(auto iter = moveTargetSet.find(operand); iter != moveTargetSet.cend())
+                            updateTargetBlock(iter->second);
+                        else {
+                            valid = false;
+                            break;
+                        }
                     } else {
                         const auto dest = blockArgMap.queryRoot(operand);
-                        operand = dest;
                         if(auto destBlock = dest->getBlock(); destBlock != nullptr)
                             updateTargetBlock(destBlock);
+                    }
+                }
+
+                assert(targetBlock != block);
+
+                if(!valid)
+                    continue;
+
+                if(blockTripCount.query(targetBlock) + significantBlockTripCountDifference >= freq)
+                    continue;
+
+                for(auto& operand : inst->operands()) {
+                    if(!operand->isInstruction()) {
+                        const auto dest = blockArgMap.queryRoot(operand);
+                        operand = dest;
                     }
                 }
 

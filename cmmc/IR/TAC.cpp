@@ -121,7 +121,8 @@ void loadTAC(Module& module, const std::string& path) {
                 const auto ret =
                     builder.makeOp<CompareInst>(InstructionID::SCmp, branch.cmp, getRValue(branch.lhs), getRValue(branch.rhs));
                 const auto targetBlock = blockMap.find(std::get<int>(branch.label.val))->second;
-                builder.makeOp<ConditionalBranchInst>(ret, BranchTarget{ targetBlock }, BranchTarget{ next });
+                constexpr auto defaultGotoProb = 0.3;  // prefer fallthrough
+                builder.makeOp<ConditionalBranchInst>(ret, defaultGotoProb, BranchTarget{ targetBlock }, BranchTarget{ next });
             } else {
                 reportUnreachable();
             }

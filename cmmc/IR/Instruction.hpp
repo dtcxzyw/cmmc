@@ -304,11 +304,16 @@ public:
 
 class ConditionalBranchInst final : public Instruction {
     BranchTarget mTrueTarget, mFalseTarget;
+    double mBranchProb;
 
 public:
     explicit ConditionalBranchInst(BranchTarget target);
-    explicit ConditionalBranchInst(Value* condition, BranchTarget trueTarget, BranchTarget falseTarget);
+    explicit ConditionalBranchInst(Value* condition, double branchProb, BranchTarget trueTarget, BranchTarget falseTarget);
 
+    void updateBranchProb(double branchProb);
+    double getBranchProb() const noexcept {
+        return mBranchProb;
+    }
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void updateTargetArgs(BranchTarget& target, Vector<Value*> args);
     void dump(std::ostream& out) const override;
