@@ -33,7 +33,7 @@ public:
     bool run(Module& module, AnalysisPassManager&) const override {
         bool modified = false;
         std::unordered_set<ConstantValue*> visited;
-        std::unordered_set<ConstantValue*, ConstantHasher, ConstantEqual> pool;
+        std::unordered_set<ConstantValue*, ConstantHasher, ConstantStrongEqual> pool;
         ReplaceMap replace;
         auto addValue = [&](ConstantValue* value) {
             if(!visited.insert(value).second)

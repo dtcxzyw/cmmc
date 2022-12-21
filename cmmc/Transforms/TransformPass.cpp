@@ -222,6 +222,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // Arithmetic
             "ConstantPropagation",    //
             "ArithmeticReduce",       //
+            "ExtGEPCombine",          //
             "NoSideEffectEliminate",  // clean up
             // Loop
             "LoopCanonicalize",   //

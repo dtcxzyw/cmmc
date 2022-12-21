@@ -27,8 +27,6 @@ protected:
         if(this == rhs)
             return true;
         if(auto rhsValue = dynamic_cast<T*>(rhs)) {
-            if(!this->getType()->isSame(rhs->getType()))
-                return false;
             return callable(rhsValue);
         }
         return false;
@@ -54,9 +52,15 @@ struct ConstantHasher final {
     }
 };
 
-struct ConstantEqual final {
+struct ConstantWeakEqual final {
     bool operator()(ConstantValue* lhs, ConstantValue* rhs) const {
         return lhs->isEqual(rhs);
+    }
+};
+
+struct ConstantStrongEqual final {
+    bool operator()(ConstantValue* lhs, ConstantValue* rhs) const {
+        return lhs->getType()->isSame(rhs->getType()) && lhs->isEqual(rhs);
     }
 };
 

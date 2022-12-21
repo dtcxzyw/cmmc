@@ -109,7 +109,7 @@ bool AliasAnalysisResult::appendAttr(Value* p, uint32_t newAttr) {
     if(gepList.size() <= 1)
         return;
 
-    std::unordered_map<ConstantValue*, std::vector<Instruction*>, ConstantHasher, ConstantEqual> clusters;
+    std::unordered_map<ConstantValue*, std::vector<Instruction*>, ConstantHasher, ConstantWeakEqual> clusters;
     for(auto gep : gepList) {
         if(gep->operands().size() <= idx + 1)
             continue;

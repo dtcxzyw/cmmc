@@ -147,7 +147,7 @@ size_t UndefinedValue::hash() const {
     return 0;
 }
 bool UndefinedValue::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<UndefinedValue>(rhs, [](UndefinedValue*) { return true; });
+    return isEqualImpl<UndefinedValue>(rhs, [](UndefinedValue*) { return false; });
 }
 
 CMMC_NAMESPACE_END
