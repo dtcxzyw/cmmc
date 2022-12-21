@@ -20,6 +20,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdlib>
@@ -28,8 +29,6 @@
 
 constexpr uint32_t maxUnrollBlockSize = 16U;
 constexpr uint32_t maxUnrollSize = 64U;
-constexpr uint32_t maxBodySize = 64U;
-
 CMMC_NAMESPACE_BEGIN
 
 class LoopUnroll final : public TransformPass<Function> {
@@ -42,7 +41,7 @@ public:
             // innermost loop
             if(loop.header != loop.latch)
                 continue;
-            if(loop.header->instructions().size() > maxBodySize)
+            if(loop.header->instructions().size() > maxUnrollBodySize)
                 continue;
             if(!loop.bound->is<ConstantInteger>())
                 continue;

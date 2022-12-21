@@ -29,7 +29,6 @@
 #include <new>
 
 constexpr uint32_t unrollBlockSize = 16U;
-constexpr uint32_t maxBodySize = 64U;
 
 CMMC_NAMESPACE_BEGIN
 
@@ -43,7 +42,7 @@ public:
             // innermost loop
             if(loop.header != loop.latch)
                 continue;
-            if(loop.header->instructions().size() > maxBodySize)
+            if(loop.header->instructions().size() > maxUnrollBodySize)
                 continue;
             // handled by static loop unroll
             if(loop.bound->isConstant() && loop.initial->isConstant())

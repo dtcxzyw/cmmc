@@ -31,8 +31,6 @@
 // Only processing inter-block code moving
 // Intra-block code moving will be handled at the code generation stage.
 
-// FIXME: ./tests/SysY2022/hidden_functional/19_search.sy
-
 CMMC_NAMESPACE_BEGIN
 
 class CodeMove final : public TransformPass<Function> {

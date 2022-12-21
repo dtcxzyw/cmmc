@@ -26,5 +26,6 @@ constexpr double defaultLoopProb =
     static_cast<double>(estimatedLoopTripCount) / (static_cast<double>(estimatedLoopTripCount) + 1.0);
 constexpr double coldBlockThreshold = 0.05;
 constexpr double significantBlockTripCountDifference = 0.05;
+constexpr uint32_t maxUnrollBodySize = 32U;
 
 CMMC_NAMESPACE_END
