@@ -25,41 +25,35 @@ write:
 .globl fact
 .align 4
 fact:
-    addi sp, sp, -56
+    addi sp, sp, -40
     sd ra, 0(sp)
-    sd s0, 8(sp)
-    sd s1, 16(sp)
     mv t0, a0
     li t1, 1
-    sw t0, 36(sp)
+    sw t0, 20(sp)
     bne t0, t1, .BB1
-    lw t0, 36(sp)
+    lw t0, 20(sp)
     mv t1, t0
-    sw t1, 32(sp)
-    lw t0, 32(sp)
+    sw t1, 16(sp)
+    lw t0, 16(sp)
     mv a0, t0
-    ld s1, 16(sp)
-    ld s0, 8(sp)
     ld ra, 0(sp)
-    addi sp, sp, 56
+    addi sp, sp, 40
     ret
 .BB1:
-    lw t0, 36(sp)
+    lw t0, 20(sp)
     mv t1, t0
-    sw t1, 28(sp)
-    lw t0, 28(sp)
+    sw t1, 12(sp)
+    lw t0, 12(sp)
     addi t1, t0, -1
     mv a0, t1
-    sw t1, 48(sp)
+    sw t1, 32(sp)
     call fact
     mv t2, a0
-    lw s0, 28(sp)
-    mul s1, t2, s0
-    mv a0, s1
-    ld s1, 16(sp)
-    ld s0, 8(sp)
+    lw t3, 12(sp)
+    mul t4, t2, t3
+    mv a0, t4
     ld ra, 0(sp)
-    addi sp, sp, 56
+    addi sp, sp, 40
     ret
 
 .globl main

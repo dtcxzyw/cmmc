@@ -62,7 +62,7 @@ RISCVTarget::RISCVTarget() {
     if(targetMachine.get() == "emulator")
         mSubTarget = std::make_unique<RISCVSimpleSubTarget>();
     else
-    DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
+        DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
 
 void RISCVTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
@@ -298,6 +298,14 @@ Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
     const auto freeBits = ~x;
     if(freeBits == 0)
         return unusedOperand;
+    // prefer caller-saved registers
+    // $t0-$t6
+    for(uint32_t idx = 5; idx < 8; ++idx)
+        if(freeBits & (1U << idx))
+            return { src, idx };
+    for(uint32_t idx = 28; idx < 32; ++idx)
+        if(freeBits & (1U << idx))
+            return { src, idx };
     return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
 }
 uint32_t RISCVRegisterUsage::getRegisterClass(const Type* type) const {
