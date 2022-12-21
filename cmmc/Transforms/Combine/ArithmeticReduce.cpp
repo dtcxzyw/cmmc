@@ -32,9 +32,9 @@ CMMC_NAMESPACE_BEGIN
 // TODO: fuse sext/zext/trunc
 
 class ArithmeticReduce final : public TransformPass<Function> {
-    bool runOnBlock(Block& block) const {
+    bool runOnBlock(IRBuilder& builder, Block& block) const {
         bool modified = false;
-        const auto ret = reduceBlock(block, [&](Instruction* inst, IRBuilder& builder, ReplaceMap& replace) -> Value* {
+        const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap& replace) -> Value* {
             MatchContext<Value> matchCtx{ inst, &replace };
 
             auto makeInt = [inst](intmax_t val) { return ConstantInteger::get(inst->getType(), val); };
@@ -258,10 +258,13 @@ class ArithmeticReduce final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
+
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block);
+            modified |= runOnBlock(builder, *block);
         }
         return modified;
     }

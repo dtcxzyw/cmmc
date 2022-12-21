@@ -94,7 +94,7 @@ class StoreEliminate final : public TransformPass<Function> {
                         break;  // end of lifetime
                     }
                 } else if(inst->isTerminator()) {
-                    return addressSpace.mustBe(addr, AddressSpace::InternalStack);
+                    return addressSpace.mustBe(addr, AddressSpaceType::InternalStack);
                 } else if(inst->getInstID() == InstructionID::Load) {
                     const auto loadAddr = blockArgMap.queryRoot(inst->getOperand(0));
                     if(loadAddr->getType()->isPointer() && !aliasSet.isDistinct(addr, loadAddr))

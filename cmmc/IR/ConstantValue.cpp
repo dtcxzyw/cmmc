@@ -63,6 +63,17 @@ ConstantInteger::ConstantInteger(const Type* type, intmax_t value) : ConstantVal
 ConstantInteger* ConstantInteger::get(const Type* type, intmax_t value) {
     if(type->isBoolean())
         return (value & 1) ? getTrue() : getFalse();
+    if(value == 0) {
+        static ConstantInteger i8Zero{ IntegerType::get(8), 0 };
+        static ConstantInteger i32Zero{ IntegerType::get(32), 0 };
+        static ConstantInteger i64Zero{ IntegerType::get(64), 0 };
+        if(type == i32Zero.getType())
+            return &i32Zero;
+        if(type == i64Zero.getType())
+            return &i64Zero;
+        if(type == i8Zero.getType())
+            return &i8Zero;
+    }
     return make<ConstantInteger>(type, value, ExplicitConstruct{});
 }
 

@@ -32,7 +32,8 @@ CMMC_NAMESPACE_BEGIN
 
 class TailCallEliminate final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
         // requirement: no alloc
         // TODO: hoist allocas
         for(auto block : func.blocks()) {
@@ -69,7 +70,7 @@ public:
         if(redirect.empty())
             return false;
 
-        IRBuilder builder;
+        IRBuilder builder{ target };
         auto entry = func.entryBlock();
 
         // add dummy entry

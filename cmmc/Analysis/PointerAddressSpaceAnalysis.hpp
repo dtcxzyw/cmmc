@@ -20,17 +20,17 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class AddressSpace { InternalStack = 1 << 0 };
+enum class AddressSpaceType { InternalStack = 1 << 0 };
 
 class PointerAddressSpaceAnalysisResult final {
-    std::unordered_map<Value*, AddressSpace> mMappings;
+    std::unordered_map<Value*, AddressSpaceType> mMappings;
 
 public:
-    void addTag(Value* ptr, AddressSpace space);
+    void addTag(Value* ptr, AddressSpaceType space);
     bool isTagged(Value* ptr) const;
-    AddressSpace getAddressSpace(Value* ptr) const;
-    bool mayBe(Value* ptr, AddressSpace space) const;
-    bool mustBe(Value* ptr, AddressSpace space) const;
+    AddressSpaceType getAddressSpace(Value* ptr) const;
+    bool mayBe(Value* ptr, AddressSpaceType space) const;
+    bool mustBe(Value* ptr, AddressSpaceType space) const;
 };
 
 class PointerAddressSpaceAnalysis final

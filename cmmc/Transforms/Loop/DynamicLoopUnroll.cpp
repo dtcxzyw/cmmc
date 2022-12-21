@@ -37,6 +37,8 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& target = analysis.module().getTarget();
+
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
             // innermost loop
@@ -66,7 +68,7 @@ public:
                 auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
                 if(nocheck) {
                     prev->instructions().pop_back();
-                    IRBuilder builder{ prev };
+                    IRBuilder builder{ target, prev };
                     terminator = builder.makeOp<ConditionalBranchInst>(terminator->getTrueTarget());
                 }
                 terminator->getTrueTarget().resetTarget(block);
@@ -105,7 +107,7 @@ public:
                         target->resetTarget(head);
                 }
 
-                IRBuilder builder{ head };
+                IRBuilder builder{ target, head };
                 const auto batchEnd =
                     builder.makeOp<BinaryInst>(InstructionID::Add, indvar->getType(), indvar,
                                                ConstantInteger::get(indvar->getType(), loop.step * (unrollBlockSize - 1)));

@@ -27,6 +27,7 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         bool modified = false;
         auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+        const auto& target = analysis.module().getTarget();
 
         for(auto block : func.blocks()) {
             ReplaceMap replace;
@@ -34,7 +35,7 @@ public:
                 if(inst->getInstID() == InstructionID::ConditionalBranch &&
                    blockArgMap.queryRoot(inst->getOperand(0))->isUndefined()) {
                     block->instructions().pop_back();
-                    IRBuilder builder{ block };
+                    IRBuilder builder{ target, block };
                     builder.makeOp<UnreachableInst>();
                     modified = true;
                     break;

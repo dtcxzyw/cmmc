@@ -52,7 +52,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
                     break;
                 case InstructionID::Store:
                     if(auto storeValue = inst->getOperand(1);
-                       storeValue->getType()->isPointer() && address.mayBe(storeValue, AddressSpace::InternalStack)) {
+                       storeValue->getType()->isPointer() && address.mayBe(storeValue, AddressSpaceType::InternalStack)) {
                         unknownLeak = true;
                     }
                     break;
@@ -74,7 +74,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
                     if(allocInst->getInstID() == InstructionID::Alloc) {
                         modifyingCalls[allocInst].insert(call);
                     } else {
-                        if(address.mayBe(allocInst, AddressSpace::InternalStack)) {
+                        if(address.mayBe(allocInst, AddressSpaceType::InternalStack)) {
                             unknownLeak = true;
                             break;
                         }

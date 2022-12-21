@@ -35,49 +35,17 @@ class IRBuilder {
     Value *mTrueValue, *mFalseValue, *mZeroIndex;
 
 public:
-    IRBuilder();
-    explicit IRBuilder(Block* block) : IRBuilder{} {
-        setCurrentBlock(block);
-    }
+    explicit IRBuilder(const Target& target);
+    IRBuilder(const Target& target, Block* block);
 
-    Function* getCurrentFunction() const noexcept {
-        return mCurrentFunction;
-    }
-    void setCurrentFunction(Function* func) noexcept {
-        mCurrentFunction = func;
-        mCurrentBlock = nullptr;
-    }
-    Block* getCurrentBlock() const {
-        if(!mCurrentBlock)
-            DiagnosticsContext::get().attach<Reason>("Dynamic initialization of global variable is not allowed").reportFatal();
-        return mCurrentBlock;
-    }
-    void setCurrentBlock(Block* block) {
-        if(mCurrentBlock == block)
-            return;
-        mCurrentFunction = block ? block->getFunction() : nullptr;
-        mCurrentBlock = block;
-        if(block)
-            mInsertPoint = mCurrentBlock->instructions().end();
-    }
-    void setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint) {
-        assert(block);
-        setCurrentBlock(block);
-        mInsertPoint = insertPoint;
-    }
-    void setInsertPoint(Block* block, Instruction* beforeInst) {
-        assert(block);
-        setCurrentBlock(block);
-        assert(beforeInst);
-        mInsertPoint = std::find(block->instructions().begin(), block->instructions().end(), beforeInst);
-        assert(mInsertPoint != block->instructions().cend());
-    }
-    void nextInsertPoint() {
-        ++mInsertPoint;
-    }
-    auto getInsertPoint() const noexcept {
-        return mInsertPoint;
-    }
+    Function* getCurrentFunction() const noexcept;
+    void setCurrentFunction(Function* func) noexcept;
+    Block* getCurrentBlock() const;
+    void setCurrentBlock(Block* block);
+    void setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint);
+    void setInsertPoint(Block* block, Instruction* beforeInst);
+    void nextInsertPoint();
+    List<Instruction*>::iterator getInsertPoint() const noexcept;
 
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
@@ -96,18 +64,10 @@ public:
         return addBlock({ types... });
     }
 
-    Value* getTrue() const noexcept {
-        return mTrueValue;
-    }
-    Value* getFalse() const noexcept {
-        return mFalseValue;
-    }
-    Value* getZeroIndex() const noexcept {
-        return mZeroIndex;
-    }
-    const Type* getIndexType() const noexcept {
-        return mIndexType;
-    }
+    Value* getTrue() const noexcept;
+    Value* getFalse() const noexcept;
+    Value* getZeroIndex() const noexcept;
+    const Type* getIndexType() const noexcept;
 };
 
 CMMC_NAMESPACE_END

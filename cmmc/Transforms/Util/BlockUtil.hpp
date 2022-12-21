@@ -23,14 +23,14 @@
 CMMC_NAMESPACE_BEGIN
 
 using ReplaceMap = std::unordered_map<Value*, Value*>;
-using BlockReducer = std::function<Value*(Instruction* inst, IRBuilder& builder, ReplaceMap& replace)>;
-bool reduceBlock(Block& block, BlockReducer reducer);
+using BlockReducer = std::function<Value*(Instruction* inst, ReplaceMap& replace)>;
+bool reduceBlock(IRBuilder& builder, Block& block, BlockReducer reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
 bool replaceOperands(Block& block, const ReplaceMap& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
-std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& func, BranchTarget& target);
+std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target);
 bool isNoSideEffectExpr(const Instruction& inst);
 
 template <typename Callable>

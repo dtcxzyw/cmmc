@@ -21,24 +21,24 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void PointerAddressSpaceAnalysisResult::addTag(Value* ptr, AddressSpace space) {
+void PointerAddressSpaceAnalysisResult::addTag(Value* ptr, AddressSpaceType space) {
     assert(!isTagged(ptr));
     mMappings.emplace(ptr, space);
 }
 bool PointerAddressSpaceAnalysisResult::isTagged(Value* ptr) const {
     return mMappings.count(ptr);
 }
-AddressSpace PointerAddressSpaceAnalysisResult::getAddressSpace(Value* ptr) const {
+AddressSpaceType PointerAddressSpaceAnalysisResult::getAddressSpace(Value* ptr) const {
     return mMappings.at(ptr);
 }
-bool PointerAddressSpaceAnalysisResult::mayBe(Value* ptr, AddressSpace space) const {
+bool PointerAddressSpaceAnalysisResult::mayBe(Value* ptr, AddressSpaceType space) const {
     const auto iter = mMappings.find(ptr);
     if(iter != mMappings.cend()) {
         return static_cast<uint32_t>(iter->second) & static_cast<uint32_t>(space);
     }
     return true;
 }
-bool PointerAddressSpaceAnalysisResult::mustBe(Value* ptr, AddressSpace space) const {
+bool PointerAddressSpaceAnalysisResult::mustBe(Value* ptr, AddressSpaceType space) const {
     const auto iter = mMappings.find(ptr);
     if(iter != mMappings.cend())
         return iter->second == space;
@@ -93,7 +93,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                         break;
                     }
                     case InstructionID::Alloc: {
-                        result.addTag(inst, AddressSpace::InternalStack);
+                        result.addTag(inst, AddressSpaceType::InternalStack);
                         break;
                     }
                     case InstructionID::GetElementPtr: {

@@ -37,9 +37,9 @@
 CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2Reg final : public TransformPass<Function> {
-    void applyMem2Reg(Function& func, const AliasAnalysisResult& alias, const BlockArgumentAnalysisResult& blockArgMap,
-                      StackAllocInst* alloc, std::unordered_map<Block*, ReplaceMap>& replaceMap,
-                      const StackAddressLeakAnalysisResult& leak) const {
+    void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias,
+                      const BlockArgumentAnalysisResult& blockArgMap, StackAllocInst* alloc,
+                      std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak) const {
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
         for(auto block : func.blocks()) {
@@ -67,7 +67,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
             }
 
             const auto update = [&, insertBlock = block, storeAddr = addr](Instruction* pos, bool after) {
-                IRBuilder builder;
                 builder.setInsertPoint(insertBlock, pos);
                 if(after)
                     builder.nextInsertPoint();
@@ -157,8 +156,9 @@ public:
             return false;
 
         std::unordered_map<Block*, ReplaceMap> replaceMap;
+        IRBuilder builder{ analysis.module().getTarget() };
         for(auto alloc : interested) {
-            applyMem2Reg(func, alias, blockArgMap, alloc, replaceMap, leak);
+            applyMem2Reg(builder, func, alias, blockArgMap, alloc, replaceMap, leak);
         }
         for(auto& [block, replace] : replaceMap)
             replaceOperands(*block, replace);

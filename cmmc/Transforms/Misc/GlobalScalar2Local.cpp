@@ -63,7 +63,7 @@ class GlobalScalar2Local final : public TransformPass<Module> {
     }
 
 public:
-    bool run(Module& mod, AnalysisPassManager&) const override {
+    bool run(Module& mod, AnalysisPassManager& analysis) const override {
         Function* exportedFunc = nullptr;
         std::vector<GlobalVariable*> globalVars;
         std::vector<Function*> funcs;
@@ -123,7 +123,8 @@ public:
         if(globalVars.empty())
             return false;
 
-        IRBuilder builder;
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
         builder.setInsertPoint(exportedFunc->entryBlock(), exportedFunc->entryBlock()->instructions().begin());
 
         std::unordered_map<Function*, std::unordered_map<Value*, Value*>> mapping;

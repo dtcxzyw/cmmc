@@ -49,7 +49,7 @@ public:
                         switch(inst->getInstID()) {
                             case InstructionID::Load: {
                                 const auto addr = inst->getOperand(0);
-                                if(addressSpace.mustBe(addr, AddressSpace::InternalStack))
+                                if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;
                                 return true;
                             }
@@ -85,7 +85,7 @@ public:
                         switch(inst->getInstID()) {
                             case InstructionID::Store: {
                                 const auto addr = inst->getOperand(0);
-                                if(addressSpace.mustBe(addr, AddressSpace::InternalStack))
+                                if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;
                                 return true;
                             }

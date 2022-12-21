@@ -25,10 +25,10 @@
 
 CMMC_NAMESPACE_BEGIN
 class Reassociate final : public TransformPass<Function> {
-    bool runOnBlock(Block& block) const {
+    bool runOnBlock(IRBuilder& builder, Block& block) const {
         std::unordered_map<Value*, std::vector<std::pair<uint32_t, Value*>>> map;
 
-        const auto ret = reduceBlock(block, [&](Instruction* inst, IRBuilder& builder, ReplaceMap&) -> Value* {
+        const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap&) -> Value* {
             switch(inst->getInstID()) {
                 case InstructionID::Add:
                     [[fallthrough]];
@@ -141,10 +141,13 @@ class Reassociate final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
+
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block);
+            modified |= runOnBlock(builder, *block);
         }
         return modified;
     }

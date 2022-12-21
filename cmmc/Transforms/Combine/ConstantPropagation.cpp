@@ -44,8 +44,8 @@ class ConstantPropagation final : public TransformPass<Function> {
         return replaceOperands(block, replace);
     }
 
-    bool runOnBlock(Block& block) const {
-        return reduceBlock(block, [](Instruction* inst, IRBuilder&, ReplaceMap& replace) -> Value* {
+    bool runOnBlock(IRBuilder& builder, Block& block) const {
+        return reduceBlock(builder, block, [](Instruction* inst, ReplaceMap& replace) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
@@ -208,12 +208,15 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
+
         bool modified = false;
         while(true) {
             bool changed = false;
             for(auto block : dom.blocks()) {
                 modified |= reduceConstantBlockArgs(*block, blockArgRef);
-                modified |= runOnBlock(*block);
+                modified |= runOnBlock(builder, *block);
             }
             modified |= changed;
             if(!changed)

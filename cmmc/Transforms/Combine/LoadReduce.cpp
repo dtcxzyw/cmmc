@@ -86,6 +86,7 @@ class LoadReduce final : public TransformPass<Function> {
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
+        const auto& module = analysis.module();
 
         bool modified = false;
         std::vector<Block*> blocks{ func.blocks().begin(), func.blocks().end() };
@@ -158,7 +159,7 @@ class LoadReduce final : public TransformPass<Function> {
 
             for(auto [pred, target] : predecessors) {
                 const auto branch = pred->getTerminator()->as<ConditionalBranchInst>();
-                const auto [indirectBranch, indirectTarget] = createIndirectBlock(func, *target);
+                const auto [indirectBranch, indirectTarget] = createIndirectBlock(module, func, *target);
                 const auto indirectBlock = indirectBranch->getBlock();
                 auto args = target->getArgs();
                 auto indirectArgs = indirectTarget->getArgs();

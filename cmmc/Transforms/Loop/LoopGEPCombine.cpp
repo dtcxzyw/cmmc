@@ -37,7 +37,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LoopGEPCombine final : public TransformPass<Function> {
-    bool runBlock(Block& block) const {
+    bool runBlock(IRBuilder& builder, Block& block) const {
         std::unordered_map<size_t, std::vector<std::vector<Instruction*>>> continuousGEP;
 
         for(auto inst : block.instructions()) {
@@ -116,7 +116,7 @@ class LoopGEPCombine final : public TransformPass<Function> {
         if(todo.empty())
             return false;
 
-        IRBuilder builder{ &block };
+        builder.setCurrentBlock(&block);
 
         ReplaceMap replace;
         for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
@@ -135,10 +135,13 @@ class LoopGEPCombine final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
+
         bool modified = false;
         for(auto block : func.blocks())
-            modified |= runBlock(*block);
+            modified |= runBlock(builder, *block);
 
         return modified;
     }

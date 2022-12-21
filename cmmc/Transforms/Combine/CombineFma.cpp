@@ -28,10 +28,13 @@ CMMC_NAMESPACE_BEGIN
 
 class CombineFma final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
+        IRBuilder builder{ target };
+
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= reduceBlock(*block, [](Instruction* inst, IRBuilder& builder, ReplaceMap&) -> Value* {
+            modified |= reduceBlock(builder, *block, [&](Instruction* inst, ReplaceMap&) -> Value* {
                 MatchContext<Value> matchCtx{ inst, nullptr };
                 Value *v1, *v2, *v3;
                 if(fadd(fmul(any(v1), any(v2)), any(v3))(matchCtx)) {

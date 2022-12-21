@@ -36,6 +36,8 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& target = analysis.module().getTarget();
+
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
             // innermost loop
@@ -65,7 +67,7 @@ public:
             const auto retarget = [&](Block* block) {
                 auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
                 prev->instructions().pop_back();
-                IRBuilder builder{ prev };
+                IRBuilder builder{ target, prev };
                 terminator = builder.makeOp<ConditionalBranchInst>(terminator->getTrueTarget());
                 terminator->getTrueTarget().resetTarget(block);
             };
@@ -135,7 +137,7 @@ public:
                 {
                     const auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
                     prev->instructions().pop_back();
-                    IRBuilder builder{ prev };
+                    IRBuilder builder{ target, prev };
                     builder.makeOp<ConditionalBranchInst>(terminator->getFalseTarget());
                 }
 

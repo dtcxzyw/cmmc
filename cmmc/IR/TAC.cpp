@@ -56,7 +56,7 @@ void loadTAC(Module& module, const std::string& path) {
 
     const auto seq = readTACSeq(in);
 
-    IRBuilder builder;
+    IRBuilder builder{ module.getTarget() };
     std::unordered_map<String, Function*, StringHasher> callables;
 
     std::unordered_map<String, Value*, StringHasher> identifierMap;

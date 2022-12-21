@@ -14,6 +14,7 @@
 
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iterator>
 #include <unordered_map>
@@ -21,16 +22,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool reduceBlock(Block& block, BlockReducer reducer) {
+bool reduceBlock(IRBuilder& builder, Block& block, BlockReducer reducer) {
     auto& insts = block.instructions();
 
     ReplaceMap replace;
     const auto oldSize = block.instructions().size();
-    IRBuilder builder;
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         const auto inst = *iter;
         builder.setInsertPoint(&block, iter);
-        if(auto value = reducer(inst, builder, replace)) {
+        if(auto value = reducer(inst, replace)) {
             replace.emplace(inst, value);
         }
         iter = builder.getInsertPoint();
@@ -102,8 +102,8 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
     return nextBlock;
 }
 
-std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(Function& func, BranchTarget& target) {
-    IRBuilder builder;
+std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target) {
+    IRBuilder builder{ module.getTarget() };
     builder.setCurrentFunction(&func);
     const auto block = builder.addBlock();
     builder.setCurrentBlock(block);

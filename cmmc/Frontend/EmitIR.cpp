@@ -1211,7 +1211,7 @@ void EmitContext::addConstant(Value* address, Value* val) {
     if(!val->isUndefined())
         mConstantBinding.emplace(address, val);
 }
-EmitContext::EmitContext(Module* module) : mModule{ module } {
+EmitContext::EmitContext(Module* module) : IRBuilder{ module->getTarget() }, mModule{ module } {
     mInteger = make<IntegerType>(32U);
     mFloat = make<FloatingPointType>(true);
     mChar = make<IntegerType>(8U);

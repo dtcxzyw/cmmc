@@ -27,6 +27,7 @@ class InfiniteEliminate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& target = analysis.module().getTarget();
 
         std::queue<Block*> q;
         std::unordered_set<Block*> visit;
@@ -62,7 +63,7 @@ public:
             if(terminator->getInstID() != InstructionID::Unreachable) {
                 modified = true;
                 block->instructions().pop_back();
-                IRBuilder builder{ block };
+                IRBuilder builder{ target, block };
                 builder.makeOp<UnreachableInst>();
             }
         }

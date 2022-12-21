@@ -39,7 +39,8 @@ CMMC_NAMESPACE_BEGIN
 class MergeBranch final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        if(!analysis.module().getTarget().isNativeSupported(InstructionID::Select))
+        auto& target = analysis.module().getTarget();
+        if(!target.isNativeSupported(InstructionID::Select))
             return false;
 
         bool modified = false;
@@ -57,21 +58,20 @@ public:
             auto& insts = block->instructions();
             insts.pop_back();
 
-            const auto target = trueTarget.getTarget();
+            const auto targetBlock = trueTarget.getTarget();
             const auto& trueArgs = trueTarget.getArgs();
             const auto& falseArgs = falseTarget.getArgs();
 
-            IRBuilder builder;
-            builder.setCurrentBlock(block);
+            IRBuilder builder{ target, block };
 
             Vector<Value*> args;
-            args.reserve(target->args().size());
-            for(size_t idx = 0; idx < target->args().size(); ++idx) {
+            args.reserve(targetBlock->args().size());
+            for(size_t idx = 0; idx < targetBlock->args().size(); ++idx) {
                 const auto val = builder.makeOp<SelectInst>(cond, trueArgs[idx], falseArgs[idx]);
                 args.push_back(val);
             }
 
-            builder.makeOp<ConditionalBranchInst>(BranchTarget{ target, std::move(args) });
+            builder.makeOp<ConditionalBranchInst>(BranchTarget{ targetBlock, std::move(args) });
             modified = true;
         }
         return modified;
