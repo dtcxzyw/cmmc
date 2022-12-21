@@ -19,7 +19,17 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim
+      run: |
+        sudo apt install openjdk-17-jre-headless
+        sudo apt install spim
+        mkdir -p $PWD/opt
+        wget https://github.com/TheThirdOne/rars/releases/download/continuous/rars_27a7c1f.jar -O $PWD/opt/rars.jar
+        cat > $PWD/opt/rars << EOF
+        #!/bin/sh
+        java -jar $PWD/opt/rars.jar "\$@"
+        EOF
+        chmod +x $PWD/opt/rars
+        export PATH="$PATH:$PWD/opt"
     
     - name: Build
       run: make -j2
