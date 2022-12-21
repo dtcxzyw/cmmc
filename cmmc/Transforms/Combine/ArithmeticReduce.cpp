@@ -38,6 +38,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             MatchContext<Value> matchCtx{ inst, &replace };
 
             auto makeInt = [inst](intmax_t val) { return ConstantInteger::get(inst->getType(), val); };
+            auto makeNot = [&](Value* val) {
+                return builder.makeOp<BinaryInst>(InstructionID::Xor, val->getType(), val, builder.getTrue());
+            };
 
             Value *v1, *v2, *v3, *v4;
             // a + 0 -> a
@@ -194,7 +197,28 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // (zext i1 a) != 0 -> a
-            if(scmp(cmp, zext(any(v1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual && v1->getType()->isBoolean()) {
+            // (zext i1 a) == 1 -> a
+            if(scmp(cmp, zext(any(v1)), uint_(c))(matchCtx) && v1->getType()->isBoolean()) {
+                if(cmp == CompareOp::Equal) {
+                    if(c == 0) {
+                        return makeNot(v1);
+                    } else if(c == 1) {
+                        return v1;
+                    } else {
+                        return builder.getTrue();
+                    }
+                } else if(cmp == CompareOp::NotEqual) {
+                    if(c == 0) {
+                        return v1;
+                    } else if(c == 1) {
+                        return makeNot(v1);
+                    } else {
+                        return builder.getTrue();
+                    }
+                }
+            }
+
+            if(scmp(cmp, zext(any(v1)), cuint_(1))(matchCtx) && cmp == CompareOp::Equal && v1->getType()->isBoolean()) {
                 return v1;
             }
 
@@ -251,6 +275,25 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // a - c -> a + (-c)
             if(sub(any(v1), int_(i1))(matchCtx) && !v1->isConstant())
                 return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeInt(-i1));
+
+            // select cond, x, x + 1
+            // ->
+            // sub x + 1, (zext cond)
+            if((select(any(v1), int_(i1), int_(i2))(matchCtx) && i1 + 1 == i2) ||
+               (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3)) {
+                auto val = v1;
+                const auto base = inst->getOperand(2);
+                const auto targetType = base->getType();
+                if(!targetType->isBoolean())
+                    val = builder.makeOp<CastInst>(InstructionID::ZExt, targetType, val);
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, targetType, base, val);
+            }
+
+            // not cmp
+            if(xor_(capture(xcmp(cmp, any(v1), any(v2)), v3), cuint_(1))(matchCtx)) {
+                const auto cmpInst = v3->as<CompareInst>();
+                return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
+            }
 
             return nullptr;
         });

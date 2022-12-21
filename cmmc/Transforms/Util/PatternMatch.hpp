@@ -281,7 +281,7 @@ public:
     explicit CompareMatcher(InstructionID target, CompareOp& compare, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mCompare{ compare }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
     bool handle(const MatchContext<CompareInst>& ctx) const noexcept {
-        if(ctx.value->getInstID() != mTarget)
+        if(mTarget != InstructionID::None && ctx.value->getInstID() != mTarget)
             return false;
         mCompare = ctx.value->getOp();
         if(mLhsMatcher(ctx.getOperand(0)) && mRhsMatcher(ctx.getOperand(1)))
@@ -305,6 +305,10 @@ auto ucmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
 template <typename Lhs, typename Rhs>
 auto fcmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
     return CompareMatcher{ InstructionID::FCmp, compare, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto xcmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
+    return CompareMatcher{ InstructionID::None, compare, lhs, rhs };
 }
 
 template <typename Matcher>
@@ -368,6 +372,27 @@ public:
 template <typename X, typename Y, typename Z>
 auto select(X x, Y y, Z z) {
     return SelectMatcher{ x, y, z };
+}
+
+template <typename Matcher>
+class CaptureMatcher {
+    Matcher mMatcher;
+    Value*& mValue;
+
+public:
+    explicit CaptureMatcher(Matcher matcher, Value*& value) noexcept : mMatcher{ matcher }, mValue{ value } {}
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        if(mMatcher(ctx)) {
+            mValue = ctx.getReplaced(ctx.value);
+            return true;
+        }
+        return false;
+    }
+};
+
+template <typename Matcher>
+auto capture(Matcher m, Value*& val) {
+    return CaptureMatcher{ m, val };
 }
 
 CMMC_NAMESPACE_END

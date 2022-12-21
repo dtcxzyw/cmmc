@@ -247,6 +247,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // Code Move
             "CodeMove",  //
             //"CodeSink", //
+            // MemoryOp
+            "MemoryIntrinsicOpt",  //
             // Postprocess
             "NoReturnCallEliminate",  //
             "FreeEliminate",          //
@@ -330,6 +332,11 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             }))
             root->addPass(pass);
     }
+
+    for(auto pass : passesSource.collect({
+            "FreeCleanup",  //
+        }))
+        root->addPass(pass);
 
     root->addPass(iter);  // post optimization
 

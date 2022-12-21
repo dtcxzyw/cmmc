@@ -242,8 +242,14 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
 
         const auto argID = ++allocateID;
         for(auto arg : block->args())
-            if(arg->getType()->isPointer())
+            if(arg->getType()->isPointer()) {
+                // TODO: use phi analysis
+                const auto root = blockArgMap.query(arg);
+                if(root)
+                    inheritGraph.emplace(arg, root);
+
                 result.addValue(arg, { argID });
+            }
 
         for(auto inst : block->instructions()) {
             if(!inst->getType()->isPointer())

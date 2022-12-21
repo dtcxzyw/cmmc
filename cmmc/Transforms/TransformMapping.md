@@ -54,3 +54,13 @@
 + [ ] buffer-hoisting
 + [ ] buffer-loop-hoisting
 + [ ] scf-for-loop-peeling
+
+# TODO
+## Arithmetic (TODO: rounding mode for signed integer division?)
++ [ ] mul x, 2^k -> shl x, k (final)
++ [ ] div x, 2^k -> shr x, k
++ [ ] rem x, 2^k -> and x, 2^k-1
++ [ ] div x, c -> mul x, magic
++ [ ] div/rem x, y -> x - y * (x // y)
++ [ ] x >> c1 >> c2 -> x >> (c1 + c2)
++ [ ] x << c1 << c2 -> x << (c1 + c2)
