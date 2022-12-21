@@ -16,14 +16,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
-const void* AnalysisPassManager::getPassResult(Function& func, void* id) {
+const void* AnalysisPassManager::getPassResult(Function& func, const void* id) {
     auto& map = mFuncLevelAnalysis[&func];
     auto& pass = map[id];
     if(!pass)
         pass = mFuncAnalysisBuilder[id]();
     return pass->getPassResult(func, *this);
 }
-const void* AnalysisPassManager::getPassResult(void* id) {
+const void* AnalysisPassManager::getPassResult(const void* id) {
     auto& pass = mModuleLevelAnalysis[id];
     if(!pass)
         pass = mModuleAnalysisBuilder[id]();

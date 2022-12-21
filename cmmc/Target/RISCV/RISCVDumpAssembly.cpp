@@ -56,8 +56,8 @@ write:
     ret
 )";
 
-
 std::string_view getRISCVTextualName(uint32_t idx) noexcept {
+    // NOLINTNEXTLINE
     constexpr std::string_view name[] = {
         "zero", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",  //
         "s0",   "s1", "a0",  "a1",  "a2", "a3", "a4", "a5",  //
@@ -261,9 +261,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      out << ", "sv;
                                      dumpOperand(binary.rhs);
                                  },
-                                 [&](const BranchMInst& branch) {
-                                     out << "j "sv << labelMap.at(branch.targetBlock);
-                                 },
+                                 [&](const BranchMInst& branch) { out << "j "sv << labelMap.at(branch.targetBlock); },
                                  [&](const BranchCompareMInst& branch) {
                                      out << 'b';
                                      dumpCompare(branch.compareOp);
@@ -312,9 +310,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << "call "sv << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
                                      }
                                  },
-                                 [&](const RetMInst&) {
-                                     out << "ret"sv;
-                                 },
+                                 [&](const RetMInst&) { out << "ret"sv; },
                                  [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
                                  [](const auto&) { reportUnreachable(); } },
                        inst);
@@ -325,10 +321,10 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
     out << '\n';
 }
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 void RISCVTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
-bool hasEmuRuntime = false;
+    bool hasEmuRuntime = false;
     if(targetMachine.get() == "emulator") {
         hasEmuRuntime = true;
     }

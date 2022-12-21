@@ -166,18 +166,20 @@ class TBAAQuery final {
             return true;
         if(a->isPrimitive()) {
             return false;
-        } else if(a->isArray()) {
+        }
+        if(a->isArray()) {
             const auto array = a->as<ArrayType>();
             const auto next = b->isArray() ? array->getElementType() : array->getScalarType();
             return includes(next, b);
-        } else if(a->isStruct()) {
+        }
+        if(a->isStruct()) {
             const auto structure = a->as<StructType>();
             for(auto& field : structure->fields())
                 if(includes(field.type, b))
                     return true;
             return false;
-        } else
-            reportUnreachable();
+        }
+        reportUnreachable();
     }
 
 public:
@@ -273,23 +275,22 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                         if(cuint_(0)(matchCtx)) {
                             inheritGraph.emplace(inst, base);
                             break;
-                        } else {
-                            if(cur == inst) {
-                                // add distinct pair
-                                intmax_t offset;
-                                if(int_(offset)(matchCtx) && offset != 0) {
-                                    const auto a1 = ++allocateID;
-                                    const auto a2 = ++allocateID;
-                                    result.addPair(a1, a2);
-                                    attrs.push_back(a1);
-                                    result.appendAttr(cur->operands().back(), a2);
-                                }
-                            }
-                            if(base->is<GetElementPtrInst>()) {
-                                cur = base->as<Instruction>();
-                            } else
-                                break;
                         }
+                        if(cur == inst) {
+                            // add distinct pair
+                            intmax_t offset;
+                            if(int_(offset)(matchCtx) && offset != 0) {
+                                const auto a1 = ++allocateID;
+                                const auto a2 = ++allocateID;
+                                result.addPair(a1, a2);
+                                attrs.push_back(a1);
+                                result.appendAttr(cur->operands().back(), a2);
+                            }
+                        }
+                        if(base->is<GetElementPtrInst>()) {
+                            cur = base->as<Instruction>();
+                        } else
+                            break;
                     }
                     result.addValue(inst, std::move(attrs));
                     geps.push_back(inst);

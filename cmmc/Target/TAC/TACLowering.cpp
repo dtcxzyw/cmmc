@@ -38,13 +38,13 @@ String TACLoweringInfo::getOperand(const Operand& operand) const {
         return mUnused;
     switch(operand.addressSpace) {
         case TACAddressSpace::Constant:
-            return mConstant.withID(operand.id);
+            return mConstant.withID(static_cast<int32_t>(operand.id));
         case TACAddressSpace::Stack:
-            return mStack.withID(operand.id);
+            return mStack.withID(static_cast<int32_t>(operand.id));
         case TACAddressSpace::VirtualReg:
-            return mVReg.withID(operand.id);
+            return mVReg.withID(static_cast<int32_t>(operand.id));
         case TACAddressSpace::GPR:
-            return mGPR.withID(operand.id);
+            return mGPR.withID(static_cast<int32_t>(operand.id));
         default:
             reportUnreachable();
     }
@@ -81,8 +81,8 @@ void TACLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
         } else {
             const auto global = ctx.mapGlobal(func);
             // NOTICE: push args in reversed order
-            for(int32_t idx = static_cast<int32_t>(inst->operands().size() - 2); idx >= 0; --idx) {
-                const auto arg = inst->getOperand(idx);
+            for(auto idx = static_cast<int32_t>(inst->operands().size() - 2); idx >= 0; --idx) {
+                const auto arg = inst->getOperand(static_cast<uint32_t>(idx));
                 ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::PushArg), ctx.mapOperand(arg),
                                                         unusedOperand);
             }

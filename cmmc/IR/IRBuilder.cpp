@@ -19,13 +19,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-IRBuilder::IRBuilder(const Target& target) : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {
-    mTrueValue = ConstantInteger::getTrue();
-    mFalseValue = ConstantInteger::getFalse();
-    const auto& dataLayout = target.getDataLayout();
-    mIndexType = IntegerType::get(static_cast<uint32_t>(dataLayout.getPointerSize() * 8));
-    mZeroIndex = ConstantInteger::get(mIndexType, 0);
-}
+IRBuilder::IRBuilder(const Target& target)
+    : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr }, mIndexType{ IntegerType::get(static_cast<uint32_t>(
+                                                                 target.getDataLayout().getPointerSize() * 8)) },
+      mTrueValue{ ConstantInteger::getTrue() }, mFalseValue{ ConstantInteger::getFalse() }, mZeroIndex{ ConstantInteger::get(
+                                                                                                mIndexType, 0) } {}
 Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
     auto block = make<Block>(mCurrentFunction);
     for(auto type : types)

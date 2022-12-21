@@ -24,7 +24,7 @@ CMMC_NAMESPACE_BEGIN
 Driver::Driver(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode) {
     parse(file, lang, recordHierarchy, strictMode);
 }
-Driver::~Driver() {}
+Driver::~Driver() = default;
 
 bool parseSpl(DriverImpl& driver, const std::string& file);
 bool parseSysY(DriverImpl& driver, const std::string& file);

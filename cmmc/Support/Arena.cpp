@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <array>
 #include <cmmc/Support/Arena.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -19,7 +20,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static constexpr size_t blockSize = 32 * 4096;
+static constexpr size_t blockSize = 32ULL * 4096ULL;
 
 Arena::Arena() : mBlockPtr{ 0 }, mBlockEndPtr{ 0 } {}
 Arena::Arena(Arena::Source src) : Arena{} {
@@ -27,9 +28,9 @@ Arena::Arena(Arena::Source src) : Arena{} {
 }
 Arena::~Arena() {
     for(auto ptr : mBlocks)
-        free(ptr);
+        free(ptr);  // NOLINT
     for(auto ptr : mLargeBlocks)
-        free(ptr);
+        free(ptr);  // NOLINT
 }
 
 static uintptr_t alloc(uintptr_t ptr, uintptr_t alignment) {
@@ -39,10 +40,10 @@ static uintptr_t alloc(uintptr_t ptr, uintptr_t alignment) {
 void* Arena::allocate(size_t size, size_t alignment) {
     void* ptr = nullptr;
     if(size >= blockSize) {
-        ptr = std::aligned_alloc(alignment, size);
+        ptr = std::aligned_alloc(alignment, size);  // NOLINT
         mLargeBlocks.insert(ptr);
     } else if(auto allocated = alloc(mBlockPtr, alignment); allocated + size > mBlockEndPtr) {
-        ptr = std::aligned_alloc(alignment, blockSize);
+        ptr = std::aligned_alloc(alignment, blockSize);  // NOLINT
         mBlocks.push_back(ptr);
 
         // keep larger block
@@ -52,19 +53,19 @@ void* Arena::allocate(size_t size, size_t alignment) {
         }
     } else {
         mBlockPtr = allocated + size;
-        ptr = reinterpret_cast<void*>(allocated);
+        ptr = reinterpret_cast<void*>(allocated);  // NOLINT
     }
     return ptr;
 }
 void Arena::deallocate(void* p, size_t size) {
     if(size >= blockSize) {
-        free(p);
+        free(p);  // NOLINT
         mLargeBlocks.erase(p);
     }
 }
 
 static Arena*& getArena(Arena::Source source) {
-    static Arena* arena[static_cast<size_t>(Arena::Source::Max)] = {};
+    static std::array<Arena*, static_cast<size_t>(Arena::Source::Max)> arena;
     return arena[static_cast<size_t>(source)];
 }
 

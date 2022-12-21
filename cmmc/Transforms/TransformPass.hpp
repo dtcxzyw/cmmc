@@ -34,8 +34,8 @@ public:
     TransformPass& operator=(const TransformPass&) = delete;
 
     virtual bool run(Scope& item, AnalysisPassManager& analysis) const = 0;
-    virtual std::string_view name() const noexcept = 0;
-    virtual bool isWrapper() const noexcept {
+    [[nodiscard]] virtual std::string_view name() const noexcept = 0;
+    [[nodiscard]] virtual bool isWrapper() const noexcept {
         return false;
     }
 };
@@ -59,8 +59,8 @@ class IterationPassWrapper final : public TransformPass<Module> {
 public:
     IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
     bool run(Module& item, AnalysisPassManager& analysis) const override;
-    std::string_view name() const noexcept override;
-    bool isWrapper() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override;
+    [[nodiscard]] bool isWrapper() const noexcept override {
         return true;
     }
 };
@@ -76,8 +76,9 @@ public:
     static PassRegistry& get();
 };
 
+// NOLINTNEXTLINE
 #define CMMC_TRANSFORM_PASS(CLASS)                                   \
-    static int __pass_##CLASS = [] {                                 \
+    static const int __pass_##CLASS = [] {                           \
         PassRegistry::get().registerPass(std::make_shared<CLASS>()); \
         return 0;                                                    \
     }()

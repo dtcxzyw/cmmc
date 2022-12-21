@@ -37,49 +37,49 @@ public:
     virtual ~Type() = default;
 
     template <typename T>
-    const T* as() const {
+    [[nodiscard]] const T* as() const {
         const auto ptr = dynamic_cast<const T*>(this);
         assert(ptr);
         return ptr;
     }
 
-    virtual bool isVoid() const noexcept {
+    [[nodiscard]] virtual bool isVoid() const noexcept {
         return false;
     }
-    virtual bool isPointer() const noexcept {
+    [[nodiscard]] virtual bool isPointer() const noexcept {
         return false;
     }
-    virtual bool isInteger() const noexcept {
+    [[nodiscard]] virtual bool isInteger() const noexcept {
         return false;
     }
-    virtual bool isBoolean() const noexcept {
+    [[nodiscard]] virtual bool isBoolean() const noexcept {
         return false;
     }
-    virtual bool isFloatingPoint() const noexcept {
+    [[nodiscard]] virtual bool isFloatingPoint() const noexcept {
         return false;
     }
-    virtual bool isStruct() const noexcept {
+    [[nodiscard]] virtual bool isStruct() const noexcept {
         return false;
     }
-    virtual bool isArray() const noexcept {
+    [[nodiscard]] virtual bool isArray() const noexcept {
         return false;
     }
-    virtual bool isStackStorage() const noexcept {
+    [[nodiscard]] virtual bool isStackStorage() const noexcept {
         return false;
     }
-    virtual bool isFunction() const noexcept {
+    [[nodiscard]] virtual bool isFunction() const noexcept {
         return false;
     }
-    virtual bool isInvalid() const noexcept {
+    [[nodiscard]] virtual bool isInvalid() const noexcept {
         return false;
     }
-    bool isPrimitive() const noexcept {
+    [[nodiscard]] bool isPrimitive() const noexcept {
         return !isArray() && !isStruct() && !isInvalid();
     }
-    bool isAggregate() const noexcept {
+    [[nodiscard]] bool isAggregate() const noexcept {
         return isArray() || isStruct();
     }
-    virtual size_t getFixedSize() const noexcept {
+    [[nodiscard]] virtual size_t getFixedSize() const noexcept {
         return 0;
     }
 
@@ -88,33 +88,33 @@ public:
         dumpName(out);
     }
     virtual void dumpName(std::ostream& out) const = 0;
-    virtual size_t getSize(const DataLayout& dataLayout) const noexcept = 0;
-    virtual size_t getAlignment(const DataLayout& dataLayout) const noexcept = 0;
+    [[nodiscard]] virtual size_t getSize(const DataLayout& dataLayout) const noexcept = 0;
+    [[nodiscard]] virtual size_t getAlignment(const DataLayout& dataLayout) const noexcept = 0;
 };
 CMMC_ARENA_TRAIT(Type, IR);
 
 class VoidType final : public Type {
 public:
-    bool isVoid() const noexcept override {
+    [[nodiscard]] bool isVoid() const noexcept override {
         return true;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static const VoidType* get();
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class InvalidType final : public Type {
 public:
-    bool isInvalid() const noexcept override {
+    [[nodiscard]] bool isInvalid() const noexcept override {
         return true;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static const InvalidType* get();
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class PointerType final : public Type {
@@ -122,17 +122,17 @@ class PointerType final : public Type {
 
 public:
     explicit PointerType(const Type* pointee) : mPointee{ pointee } {}
-    bool isPointer() const noexcept override {
+    [[nodiscard]] bool isPointer() const noexcept override {
         return true;
     }
-    const Type* getPointee() const noexcept {
+    [[nodiscard]] const Type* getPointee() const noexcept {
         return mPointee;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
     static const PointerType* get(const Type* pointee);
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class IntegerType final : public Type {
@@ -144,20 +144,20 @@ public:
     static const IntegerType* getBoolean() {
         return get(1);
     }
-    bool isInteger() const noexcept override {
+    [[nodiscard]] bool isInteger() const noexcept override {
         return true;
     }
-    bool isBoolean() const noexcept override {
+    [[nodiscard]] bool isBoolean() const noexcept override {
         return mBitWidth == 1;
     }
-    uint32_t getBitwidth() const noexcept {
+    [[nodiscard]] uint32_t getBitwidth() const noexcept {
         return mBitWidth;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
-    size_t getFixedSize() const noexcept override;
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getFixedSize() const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class FloatingPointType final : public Type {
@@ -172,14 +172,14 @@ public:
     static const FloatingPointType* getDouble() {
         return get(false);
     }
-    bool isFloatingPoint() const noexcept override {
+    [[nodiscard]] bool isFloatingPoint() const noexcept override {
         return true;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
-    size_t getFixedSize() const noexcept override;
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getFixedSize() const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 class FunctionType final : public Type {
@@ -188,19 +188,19 @@ class FunctionType final : public Type {
     // bool isVarArg
 public:
     FunctionType(const Type* retType, Vector<const Type*> argTypes) : mRetType{ retType }, mArgTypes{ std::move(argTypes) } {}
-    bool isFunction() const noexcept override {
+    [[nodiscard]] bool isFunction() const noexcept override {
         return true;
     }
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
-    const Type* getRetType() const noexcept {
+    [[nodiscard]] const Type* getRetType() const noexcept {
         return mRetType;
     }
-    const Vector<const Type*>& getArgTypes() const noexcept {
+    [[nodiscard]] const Vector<const Type*>& getArgTypes() const noexcept {
         return mArgTypes;
     }
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 struct StructField final {
@@ -219,22 +219,22 @@ class StructType final : public Type {
     Vector<StructField> mFields;
 
 public:
-    explicit StructType(String name, Vector<StructField> fields) : mName{ std::move(name) }, mFields{ std::move(fields) } {}
-    bool isStruct() const noexcept override {
+    explicit StructType(String name, Vector<StructField> fields) : mName{ name }, mFields{ std::move(fields) } {}
+    [[nodiscard]] bool isStruct() const noexcept override {
         return true;
     }
     void dump(std::ostream& out) const override;
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
-    const Vector<StructField>& fields() const noexcept {
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] const Vector<StructField>& fields() const noexcept {
         return mFields;
     }
-    String name() const noexcept {
+    [[nodiscard]] String name() const noexcept {
         return mName;
     }
-    ConstantOffset* getOffset(const String& fieldName) const;
+    [[nodiscard]] ConstantOffset* getOffset(const String& fieldName) const;
     const Type* getFieldType(const ConstantOffset* offset) const;
     size_t getFieldOffset(const ConstantOffset* offset, const DataLayout& dataLayout) const;
 };
@@ -250,22 +250,22 @@ public:
         assert(elementCount);
     }
 
-    const Type* getElementType() const noexcept {
+    [[nodiscard]] const Type* getElementType() const noexcept {
         return mElementType;
     }
-    uint32_t getElementCount() const noexcept {
+    [[nodiscard]] uint32_t getElementCount() const noexcept {
         return mElementCount;
     }
-    uint32_t getScalarCount() const noexcept;
-    const Type* getScalarType() const noexcept;
+    [[nodiscard]] uint32_t getScalarCount() const noexcept;
+    [[nodiscard]] const Type* getScalarType() const noexcept;
 
-    bool isArray() const noexcept override {
+    [[nodiscard]] bool isArray() const noexcept override {
         return true;
     }
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 // Only used by CodeGen
@@ -274,14 +274,14 @@ class StackStorageType final : public Type {
 
 public:
     explicit StackStorageType(size_t size, size_t alignment) : mSize{ size }, mAlignment{ alignment } {}
-    bool isStackStorage() const noexcept override {
+    [[nodiscard]] bool isStackStorage() const noexcept override {
         return true;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
-    size_t getFixedSize() const noexcept override;
-    size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getFixedSize() const noexcept override;
+    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
+    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
 CMMC_NAMESPACE_END

@@ -32,7 +32,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
-    bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) const {
+    static bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) {
         ReplaceMap replace;
         for(auto arg : block.args()) {
             const auto target = blockArgRef.query(arg);
@@ -44,7 +44,7 @@ class ConstantPropagation final : public TransformPass<Function> {
         return replaceOperands(block, replace);
     }
 
-    bool runOnBlock(IRBuilder& builder, Block& block) const {
+    static bool runOnBlock(IRBuilder& builder, Block& block) {
         return reduceBlock(builder, block, [](Instruction* inst, ReplaceMap& replace) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
@@ -52,6 +52,9 @@ class ConstantPropagation final : public TransformPass<Function> {
             CompareOp cmp;
             auto makeInt = [&](Instruction* mappedInst, intmax_t val) {
                 return ConstantInteger::get(mappedInst->getType(), val);
+            };
+            auto makeUInt = [&](Instruction* mappedInst, uintmax_t val) {
+                return makeInt(mappedInst, static_cast<intmax_t>(val));
             };
             auto makeFP = [&](Instruction* mappedInst, double val) {
                 return make<ConstantFloatingPoint>(mappedInst->getType(), val);
@@ -82,23 +85,23 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(sdiv(int_(i1), int_(i2))(matchCtx) && i2)
                     return makeInt(inst, i1 / i2);
                 if(udiv(uint_(u1), uint_(u2))(matchCtx) && u2)
-                    return makeInt(inst, u1 / u2);
+                    return makeUInt(inst, u1 / u2);
                 if(srem(int_(i1), int_(i2))(matchCtx) && i2)
                     return makeInt(inst, i1 % i2);
                 if(urem(uint_(u1), uint_(u2))(matchCtx) && u2)
-                    return makeInt(inst, u1 % u2);
+                    return makeUInt(inst, u1 % u2);
                 if(shl(uint_(u1), uint_(u2))(matchCtx))
-                    return makeInt(inst, u1 << u2);
+                    return makeUInt(inst, u1 << u2);
                 if(lshr(uint_(u1), uint_(u2))(matchCtx))
-                    return makeInt(inst, u1 >> u2);
+                    return makeUInt(inst, u1 >> u2);
                 if(ashr(int_(i1), uint_(u2))(matchCtx))
                     return makeInt(inst, i1 >> u2);
                 if(and_(uint_(u1), uint_(u2))(matchCtx))
-                    return makeInt(inst, u1 & u2);
+                    return makeUInt(inst, u1 & u2);
                 if(or_(uint_(u1), uint_(u2))(matchCtx))
-                    return makeInt(inst, u1 | u2);
+                    return makeUInt(inst, u1 | u2);
                 if(xor_(uint_(u1), uint_(u2))(matchCtx))
-                    return makeInt(inst, u1 ^ u2);
+                    return makeUInt(inst, u1 ^ u2);
             } else if(inst->isFloatingPointOp()) {
                 MatchContext<Value> matchCtx{ inst, &replace };
                 double f3;
@@ -230,7 +233,7 @@ public:
         }
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "ConstantPropagation"sv;
     }
 };

@@ -66,7 +66,8 @@ Block* DominateAnalysisResult::lca(Block* a, Block* b) const {
             v = mDomTree[v].ancestor[i];
     if(u != v) {
         for(int32_t i = DomTreeNode::maxDepth; i >= 0 && u != v; --i)
-            if(auto pu = mDomTree[u].ancestor[i], pv = mDomTree[v].ancestor[i]; pu != pv)
+            if(auto pu = mDomTree[u].ancestor[static_cast<uint32_t>(i)], pv = mDomTree[v].ancestor[static_cast<uint32_t>(i)];
+               pu != pv)
                 u = pu, v = pv;
         u = mDomTree[u].parent();
     }

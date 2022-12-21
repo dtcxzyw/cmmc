@@ -42,11 +42,11 @@ public:
     OptionBase& setDesc(const char* desc);
     virtual void printDefault(std::ostream& out) const = 0;
     virtual void handle(const char* str) = 0;
-    option getOption() const;
-    char getShortName() const noexcept {
+    [[nodiscard]] option getOption() const;
+    [[nodiscard]] char getShortName() const noexcept {
         return mShortName;
     }
-    std::string_view getName() const noexcept {
+    [[nodiscard]] std::string_view getName() const noexcept {
         return mName;
     }
     void printHelp();
@@ -60,7 +60,7 @@ public:
     Flag& withDefault(bool flag);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
-    bool get() const noexcept {
+    [[nodiscard]] bool get() const noexcept {
         return mFlag;
     }
 };
@@ -74,7 +74,7 @@ public:
     StringOpt& withDefault(std::string value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
-    const std::string& get(bool required = true) const noexcept;
+    [[nodiscard]] const std::string& get(bool required = true) const noexcept;
 };
 
 class IntegerOpt final : public OptionBase {
@@ -86,13 +86,13 @@ public:
     IntegerOpt& withDefault(uint32_t value);
     void printDefault(std::ostream& out) const override;
     void handle(const char* str) override;
-    uint32_t get(bool required = true) const noexcept;
+    [[nodiscard]] uint32_t get(bool required = true) const noexcept;
 };
 
 int parseCommands(int argc, char** argv);
 void printHelpInfo();
 
-#define CMMC_INIT_OPTIONS_BEGIN [[maybe_unused]] static int __placeholder = ([] {
+#define CMMC_INIT_OPTIONS_BEGIN [[maybe_unused]] static const int __placeholder = ([] {
 #define CMMC_INIT_OPTIONS_END \
     }                         \
     (), 0);

@@ -80,7 +80,7 @@ struct UnrecognizedInput final {
     std::string_view value;
 
     friend void operator<<(std::ostream& out, const UnrecognizedInput& err) {
-        out << "Unrecognized "sv << err.type << " \""sv << err.value << '"' << std::endl;
+        out << "Unrecognized "sv << err.type << R"( ")" << err.value << '"' << std::endl;
     }
 };
 

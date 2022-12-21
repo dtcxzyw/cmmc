@@ -20,7 +20,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Flag uniqueLabel;
+Flag uniqueLabel;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 uniqueLabel.setName("uniqueid", 'u').setDesc("generate global unique label prefix");

@@ -133,10 +133,11 @@ public:
             const auto scalarType = type->as<ArrayType>()->getScalarType();
             if(scalarType->isInteger()) {
                 return ConstantInteger::get(scalarType, 0);
-            } else if(scalarType->isFloatingPoint()) {
+            }
+            if(scalarType->isFloatingPoint()) {
                 return make<ConstantFloatingPoint>(scalarType, 0.0);
-            } else
-                reportNotImplemented();
+            }
+            reportNotImplemented();
         };
 
         {
@@ -161,6 +162,7 @@ public:
         for(auto func : funcs) {
             {
                 const auto funcType = func->getType()->as<FunctionType>();
+                // NOLINTNEXTLINE
                 auto& args = const_cast<Vector<const Type*>&>(funcType->getArgTypes());
                 for(auto var : globalVars) {
                     args.push_back(var->getType());
@@ -206,7 +208,7 @@ public:
         return true;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "GlobalScalar2Local"sv;
     }
 };

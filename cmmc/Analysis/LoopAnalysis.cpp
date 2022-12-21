@@ -53,12 +53,15 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!add(any(indvar), int_(step))(MatchContext<Value>{ next, nullptr })) {
             continue;
         }
-        if(step == 0)
+
+        // TODO: suppress this warning
+        if(step == 0)  // NOLINT(clang-analyzer-core.UndefinedBinaryOperatorResult)
             continue;
 
         // backedge
         const auto& trueTarget = branch->getTrueTarget();
         const auto header = trueTarget.getTarget();
+        assert(header);
         if(!dom.dominate(header, block))
             continue;
 
@@ -90,7 +93,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
             for(auto val : phiNode) {
                 if(val == next)
                     continue;
-                else if(initial == nullptr) {
+                if(initial == nullptr) {
                     initial = val;
                 } else {
                     invalid = true;

@@ -21,16 +21,16 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag verbose;
-static Flag warning;
-extern Flag strictMode;
+static Flag verbose;     // NOLINT
+static Flag warning;     // NOLINT
+extern Flag strictMode;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 verbose.setName("verbose", 'V').setDesc("print debug messages");
 warning.withDefault(true).setName("warning", 'w').setDesc("print warning messages");
 CMMC_INIT_OPTIONS_END
 
-static std::ofstream null{ "/dev/null" };
+static std::ofstream null{ "/dev/null" };  // NOLINT
 
 std::ostream& reportInfo() {
     return std::cout << "[INFO] "sv;

@@ -15,7 +15,7 @@
 #include <cmmc/Frontend/DriverImpl.hpp>
 
 namespace Spl {
-    using yy::location;
+    using yy::location;  // NOLINT
 }
 
 #include <Spl/ParserDecl.hpp>
@@ -33,7 +33,7 @@ CMMC_NAMESPACE_BEGIN
 
 bool parseSpl(DriverImpl& driver, const std::string& file) {
     // yy_flex_debug = 1;
-    yyin = fopen(file.c_str(), "r");
+    yyin = fopen(file.c_str(), "r");  // NOLINT
     if(!yyin) {
         reportError() << "Failed to open the source file "sv << file << std::endl;
         std::abort();
@@ -42,7 +42,7 @@ bool parseSpl(DriverImpl& driver, const std::string& file) {
     // parser.set_debug_level(10);
     // parser.set_debug_stream(std::cerr);
     bool ret = parser.parse() == 0;
-    fclose(yyin);
+    fclose(yyin);  // NOLINT
     return ret;
 }
 

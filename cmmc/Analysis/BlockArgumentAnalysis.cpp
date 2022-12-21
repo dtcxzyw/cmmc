@@ -24,14 +24,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Value* BlockArgumentAnalysisResult::queryRoot(Value* arg) const {
-    assert(arg);
-    if(auto blockArg = dynamic_cast<BlockArgument*>(arg)) {
+Value* BlockArgumentAnalysisResult::queryRoot(Value* val) const {
+    assert(val);
+    if(auto blockArg = dynamic_cast<BlockArgument*>(val)) {
         const auto iter = mMappings.find(blockArg);
         if(iter != mMappings.cend())
             return iter->second;
     }
-    return arg;
+    return val;
 }
 void BlockArgumentAnalysisResult::addMapping(BlockArgument* arg, Value* val) {
     assert(arg && val);

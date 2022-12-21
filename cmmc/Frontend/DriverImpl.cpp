@@ -19,7 +19,9 @@
 #include <cmmc/Support/Options.hpp>
 #include <cstdlib>
 #include <iostream>
+#include <utility>
 
+// NOLINTNEXTLINE
 namespace std {  // NOTICE: we need ADL
     std::ostream& operator<<(std::ostream& out, const std::pair<uint32_t, yy::location>& loc) {
         return out << loc.second;
@@ -28,7 +30,7 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag hideSymbol;
+static Flag hideSymbol;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 hideSymbol.setName("hide-symbol", 'H').setDesc("only make main function public");
@@ -36,11 +38,11 @@ CMMC_INIT_OPTIONS_END
 
 void generateScope(ExprPack& result, VarDefList list, const ExprPack& src) {
     for(auto& var : list)
-        result.push_back(make<LocalVarDefExpr>(var.loc, std::move(var.type), std::move(var.var)));
+        result.push_back(make<LocalVarDefExpr>(var.loc, var.type, std::move(var.var)));
     result.insert(result.cend(), src.cbegin(), src.cend());
 }
 Expr* generateDef(VarDef def) {
-    return make<LocalVarDefExpr>(def.loc, std::move(def.type), std::move(def.var));
+    return make<LocalVarDefExpr>(def.loc, def.type, std::move(def.var));
 }
 
 static void emitSplRuntime(Module& module, EmitContext& ctx) {
@@ -182,9 +184,8 @@ SourceLocation castLoc(const std::pair<uint32_t, yy::location>& location) {
     return { static_cast<uint32_t>(pos.line), static_cast<uint32_t>(pos.column) };
 }
 
-DriverImpl::DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode,
-                       std::shared_ptr<Arena> arena)
-    : mFile{ file }, mLang{ lang }, mRecordHierarchy{ recordHierarchy },  //
+DriverImpl::DriverImpl(std::string file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena)
+    : mFile{ std::move(file) }, mLang{ lang }, mRecordHierarchy{ recordHierarchy },  //
       mStrictMode{ strictMode }, mArena{ std::move(arena) } {
     mLocation.initialize(&mFile);
 }
@@ -207,7 +208,7 @@ void DriverImpl::addOpaqueType(const TypeRef&) {
     // TODO
 }
 void DriverImpl::addStructType(const SourceLocation& loc, String typeName, VarDefList list) {
-    mDefs.push_back(StructDefinition{ loc, std::move(typeName), std::move(list) });
+    mDefs.push_back(StructDefinition{ loc, typeName, std::move(list) });
 }
 yy::location& DriverImpl::location() noexcept {
     return mLocation;
@@ -219,7 +220,7 @@ bool DriverImpl::complete() const noexcept {
 bool DriverImpl::shouldRecordHierarchy() const noexcept {
     return mRecordHierarchy;
 }
-bool DriverImpl::checkExtension() noexcept {
+bool DriverImpl::checkExtension() const noexcept {
     return !mStrictMode;
 }
 
@@ -230,7 +231,7 @@ Hierarchy& DriverImpl::hierarchy(ChildRef ref) {
 uint32_t DriverImpl::record(Deque<ChildRef> children, Hierarchy::Desc desc) {
     assert(shouldRecordHierarchy());
     const auto index = static_cast<uint32_t>(mHierarchyTree.size());
-    mHierarchyTree.push_back(Hierarchy{ std::move(desc), std::move(children) });
+    mHierarchyTree.push_back(Hierarchy{ desc, std::move(children) });
     return index;
 }
 
@@ -240,7 +241,7 @@ static std::string convert(const char* str) {
         if(ch > '\x20' && ch < '\x7F') {
             res += ch;
         } else {
-            const uint8_t val = ch;
+            const auto val = static_cast<uint8_t>(ch);
             constexpr auto lut = "0123456789ABCDEF";
             res += "\\x";
             res += lut[val / 16];

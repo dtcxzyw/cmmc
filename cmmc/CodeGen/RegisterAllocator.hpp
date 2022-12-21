@@ -55,8 +55,9 @@ public:
     static RegisterAllocatorRegistry& get();
 };
 
+// NOLINTNEXTLINE
 #define CMMC_REGISTER_ALLOCATOR(NAME, FUNC)                     \
-    static int __allocator = [] {                               \
+    static const int __allocator = [] {                         \
         RegisterAllocatorRegistry::get().addMethod(NAME, FUNC); \
         return 0;                                               \
     }();

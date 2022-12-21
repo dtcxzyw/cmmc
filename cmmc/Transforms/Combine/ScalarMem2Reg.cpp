@@ -37,9 +37,9 @@
 CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2Reg final : public TransformPass<Function> {
-    void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias,
-                      const BlockArgumentAnalysisResult& blockArgMap, StackAllocInst* alloc,
-                      std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak) const {
+    static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias,
+                             const BlockArgumentAnalysisResult& blockArgMap, StackAllocInst* alloc,
+                             std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak) {
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
         for(auto block : func.blocks()) {
@@ -54,14 +54,14 @@ class ScalarMem2Reg final : public TransformPass<Function> {
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
         const auto undef = make<UndefinedValue>(valueType);
         if(valueType->isPointer())
-            const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});
+            const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});  // NOLINT
 
         for(auto [block, addr] : todo) {
             Value* value = nullptr;
             if(block != root) {
                 value = block->addArg(valueType);
                 if(value->getType()->isPointer())
-                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});
+                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             } else {
                 value = undef;
             }
@@ -72,7 +72,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     builder.nextInsertPoint();
                 value = builder.makeOp<LoadInst>(storeAddr);
                 if(value->getType()->isPointer())
-                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});
+                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             };
 
             auto& replace = replaceMap[block];
@@ -165,7 +165,7 @@ public:
         return true;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "ScalarMem2Reg"sv;
     }
 };

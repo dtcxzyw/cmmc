@@ -30,7 +30,7 @@ public:
     void addDistinctGroup(std::unordered_set<uint32_t> group);
     void addValue(Value* p, std::vector<uint32_t> attrs);
     bool isDistinct(Value* p1, Value* p2) const;
-    const std::vector<uint32_t>& inheritFrom(Value* value) const;
+    const std::vector<uint32_t>& inheritFrom(Value* ptr) const;
     bool appendAttr(Value* p, const std::vector<uint32_t>& newAttrs);
     bool appendAttr(Value* p, uint32_t newAttr);
     const std::unordered_map<Value*, std::vector<uint32_t>>& pointerAttrs() const noexcept {

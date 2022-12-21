@@ -123,7 +123,7 @@ public:
     Expr& operator=(Expr&&) = delete;
     virtual ~Expr() = default;
     QualifiedValue emitWithLoc(EmitContext& ctx) const;
-    const SourceLocation& location() const noexcept {
+    [[nodiscard]] const SourceLocation& location() const noexcept {
         return mLocation;
     }
 };
@@ -287,7 +287,7 @@ class IfElseExpr final : public Expr {
 
 public:
     IfElseExpr(const SourceLocation& location, Expr* pred, Expr* ifPart, Expr* elsePart) noexcept
-        : Expr{ location }, mPredicate{ pred }, mThenBlock{ std::move(ifPart) }, mElseBlock{ std::move(elsePart) } {}
+        : Expr{ location }, mPredicate{ pred }, mThenBlock{ ifPart }, mElseBlock{ elsePart } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
@@ -324,7 +324,7 @@ class LocalVarDefExpr final : public Expr {
 
 public:
     LocalVarDefExpr(const SourceLocation& location, TypeRef type, Deque<NamedVar> vars)
-        : Expr{ location }, mType{ std::move(type) }, mVars{ std::move(vars) } {}
+        : Expr{ location }, mType{ type }, mVars{ std::move(vars) } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 

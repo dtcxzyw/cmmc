@@ -29,13 +29,13 @@ struct DomTreeNode final {
     using NodeIndex = uint32_t;
     static constexpr auto invalidNode = std::numeric_limits<NodeIndex>::max();
 
-    NodeIndex ancestor[maxDepth + 1];
+    std::array<NodeIndex, maxDepth + 1> ancestor;
     Block* block;
 
     NodeIndex depth;
     NodeIndex size;  // inclusive
 
-    NodeIndex parent() const noexcept {
+    [[nodiscard]] NodeIndex parent() const noexcept {
         return ancestor[0];
     }
 };

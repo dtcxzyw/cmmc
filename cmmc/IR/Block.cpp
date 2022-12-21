@@ -24,7 +24,7 @@
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
-extern Flag uniqueLabel;
+extern Flag uniqueLabel;  // NOLINT
 
 void BlockArgument::dump(std::ostream& out) const {
     dumpAsOperand(out);
@@ -37,7 +37,7 @@ void BlockArgument::dumpAsOperand(std::ostream& out) const {
 }
 
 void BlockArgument::setLabel(String label) {
-    mLabel = std::move(label);
+    mLabel = label;
 }
 
 void Block::dump(std::ostream& out) const {

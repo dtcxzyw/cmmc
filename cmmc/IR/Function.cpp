@@ -29,6 +29,7 @@ void Function::dump(std::ostream& out) const {
     getType()->dump(out);
     if(!mAttr.empty()) {
         out << " { "sv;
+        // NOLINTNEXTLINE
 #define HANDLE_ATTR(NAME)                      \
     if(mAttr.hasAttr(FunctionAttribute::NAME)) \
     out << #NAME " "sv
@@ -136,8 +137,8 @@ void Function::dumpCFG(std::ostream& out) const {
         if(block == entryBlock())
             shape = "diamond"sv;
 
-        out << ids[block] << " [shape = "sv << shape << ", color = "sv << color << ", label = \""sv << block->getLabel()
-            << "\"];"sv << std::endl;
+        out << ids[block] << " [shape = "sv << shape << ", color = "sv << color << R"(, label = ")" << block->getLabel()
+            << R"("];)" << std::endl;
     }
 
     for(auto block : mBlocks) {

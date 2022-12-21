@@ -22,11 +22,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 class SimDataLayout final : public DataLayout {
 public:
-    Endian getEndian() const noexcept override {
+    [[nodiscard]] Endian getEndian() const noexcept override {
         return Endian::Little;
     }
     size_t getBuiltinAlignment(const Type* type) const noexcept override {
@@ -35,20 +35,20 @@ public:
             return getPointerSize();
         return type->getFixedSize();
     }
-    size_t getPointerSize() const noexcept override {
+    [[nodiscard]] size_t getPointerSize() const noexcept override {
         return sizeof(uintptr_t);
     }
-    size_t getCodeAlignment() const noexcept override {
+    [[nodiscard]] size_t getCodeAlignment() const noexcept override {
         reportUnreachable();
     }
 };
 
 class SimSubTarget final : public SimpleSubTarget {
 public:
-    uint32_t getPhysicalRegisterCount(uint32_t) const override {
+    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t) const override {
         reportUnreachable();
     }
-    bool inlineMemOp(size_t size) const override {
+    [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
 };
@@ -61,16 +61,16 @@ public:
     explicit SimTarget() {
         mSubTarget = std::make_unique<SimSubTarget>();
     }
-    const DataLayout& getDataLayout() const noexcept override {
+    [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const LoweringInfo& getTargetLoweringInfo() const noexcept override {
+    [[nodiscard]] const LoweringInfo& getTargetLoweringInfo() const noexcept override {
         reportUnreachable();
     }
-    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+    [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         reportUnreachable();
     }
-    const SubTarget& getSubTarget() const noexcept override {
+    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
 
@@ -87,22 +87,22 @@ public:
     void emitAssembly(const GMIRModule&, std::ostream&) const override {
         reportUnreachable();
     }
-    Operand getStackPointer() const noexcept override {
+    [[nodiscard]] Operand getStackPointer() const noexcept override {
         reportUnreachable();
     }
-    Operand getReturnAddress() const noexcept override {
+    [[nodiscard]] Operand getReturnAddress() const noexcept override {
         reportUnreachable();
     }
-    size_t getStackPointerAlignment() const noexcept override {
+    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         reportUnreachable();
     }
-    bool isCallerSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
         reportUnreachable();
     }
-    bool isCalleeSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
         reportUnreachable();
     }
-    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+    [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
         reportUnreachable();
     }
 };

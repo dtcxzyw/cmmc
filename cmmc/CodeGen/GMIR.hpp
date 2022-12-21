@@ -36,10 +36,10 @@ struct TemporaryPools;
 
 // TODO: global space?
 struct AddressSpace {
-    static constexpr uint32_t VirtualReg = 0;
-    static constexpr uint32_t Constant = 1;
-    static constexpr uint32_t Stack = 2;
-    static constexpr uint32_t Custom = 3;
+    static constexpr uint32_t VirtualReg = 0;  // NOLINT
+    static constexpr uint32_t Constant = 1;    // NOLINT
+    static constexpr uint32_t Stack = 2;       // NOLINT
+    static constexpr uint32_t Custom = 3;      // NOLINT
 };
 
 enum class GMIRInstID {
@@ -224,16 +224,17 @@ public:
     explicit VirtualRegPool(uint32_t addressSpace) : mAddressSpace{ addressSpace } {}
     Operand allocate(const Type* type);
     void*& getMetadata(const Operand& operand);
-    void* getMetadata(const Operand& operand) const;
-    const Type* getType(const Operand& operand) const;
-    const std::vector<std::pair<const Type*, void*>>& storage() const {
+    [[nodiscard]] void* getMetadata(const Operand& operand) const;
+    [[nodiscard]] const Type* getType(const Operand& operand) const;
+    [[nodiscard]] const std::vector<std::pair<const Type*, void*>>& storage() const {
         return mAllocations;
     }
 };
 
 struct TemporaryPools final {
-    VirtualRegPool pools[AddressSpace::Custom]{ VirtualRegPool{ AddressSpace::VirtualReg },
-                                                VirtualRegPool{ AddressSpace::Constant }, VirtualRegPool{ AddressSpace::Stack } };
+    std::array<VirtualRegPool, AddressSpace::Custom> pools{ VirtualRegPool{ AddressSpace::VirtualReg },
+                                                            VirtualRegPool{ AddressSpace::Constant },
+                                                            VirtualRegPool{ AddressSpace::Stack } };
 };
 
 class GMIRFunction final {
@@ -245,19 +246,19 @@ public:
     TemporaryPools& pools() noexcept {
         return mPools;
     }
-    const TemporaryPools& pools() const noexcept {
+    [[nodiscard]] const TemporaryPools& pools() const noexcept {
         return mPools;
     }
     std::vector<Operand>& parameters() noexcept {
         return mParameters;
     }
-    const std::vector<Operand>& parameters() const noexcept {
+    [[nodiscard]] const std::vector<Operand>& parameters() const noexcept {
         return mParameters;
     }
     auto& blocks() noexcept {
         return mBasicBlocks;
     }
-    const auto& blocks() const noexcept {
+    [[nodiscard]] const auto& blocks() const noexcept {
         return mBasicBlocks;
     }
 

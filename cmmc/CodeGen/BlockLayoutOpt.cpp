@@ -107,7 +107,7 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIn
     // std::random_device entropySrc;
     // std::mt19937_64 urbg(entropySrc());
     // deterministic mutation for testing
-    std::mt19937_64 urbg(998244353ULL);
+    std::mt19937_64 urbg(998244353ULL);  // NOLINT(cert-msc51-cpp, cert-msc32-c)
 
     constexpr uint32_t popSize = 20;
     constexpr uint32_t crossCount = 5;
@@ -212,7 +212,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
             if(nextIter == func.blocks().cend() || nextIter->get() != next) {
                 const auto newLabel = String::get((std::string{ block->label().prefix() } + ".next").c_str());
                 auto newBlock = std::make_unique<GMIRBasicBlock>(newLabel, &func);
-                newBlock->instructions().push_back(BranchMInst{ next });
+                newBlock->instructions().emplace_back(BranchMInst{ next });
                 newBlock->usedStackObjects() = block->usedStackObjects();
                 iter = func.blocks().insert(nextIter, std::move(newBlock));
             }

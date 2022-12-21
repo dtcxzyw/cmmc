@@ -37,12 +37,12 @@ public:
 template <typename Pass, typename PassResult>
 class FuncAnalysisPassWrapper : public AnalysisPass<Function> {
     std::optional<PassResult> mResult;
-    inline static int id;
+    inline static const int id{};
 
 public:
     using Result = PassResult;
 
-    static void* getID() {
+    static const void* getID() {
         return &id;
     }
     void invalidate() override {
@@ -59,12 +59,12 @@ public:
 template <typename Pass, typename PassResult>
 class ModuleAnalysisPassWrapper : public AnalysisPass<Module> {
     std::optional<PassResult> mResult;
-    inline static int id;
+    inline static const int id{};
 
 public:
     using Result = PassResult;
 
-    static void* getID() {
+    static const void* getID() {
         return &id;
     }
     void invalidate() override {
@@ -79,13 +79,13 @@ public:
 
 class AnalysisPassManager final {
     Module* mModule;
-    std::unordered_map<Function*, std::unordered_map<void*, std::unique_ptr<AnalysisPass<Function>>>> mFuncLevelAnalysis;
-    std::unordered_map<void*, std::unique_ptr<AnalysisPass<Module>>> mModuleLevelAnalysis;
-    std::unordered_map<void*, std::function<std::unique_ptr<AnalysisPass<Function>>()>> mFuncAnalysisBuilder;
-    std::unordered_map<void*, std::function<std::unique_ptr<AnalysisPass<Module>>()>> mModuleAnalysisBuilder;
+    std::unordered_map<Function*, std::unordered_map<const void*, std::unique_ptr<AnalysisPass<Function>>>> mFuncLevelAnalysis;
+    std::unordered_map<const void*, std::unique_ptr<AnalysisPass<Module>>> mModuleLevelAnalysis;
+    std::unordered_map<const void*, std::function<std::unique_ptr<AnalysisPass<Function>>()>> mFuncAnalysisBuilder;
+    std::unordered_map<const void*, std::function<std::unique_ptr<AnalysisPass<Module>>()>> mModuleAnalysisBuilder;
 
-    const void* getPassResult(Function& func, void* id);
-    const void* getPassResult(void* id);
+    const void* getPassResult(Function& func, const void* id);
+    const void* getPassResult(const void* id);
 
     template <typename Pass>
     void registerModulePass() {

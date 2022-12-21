@@ -26,12 +26,12 @@ CMMC_NAMESPACE_BEGIN
 
 enum class TACIntrinsic { Read, Write, PushArg };
 struct TACAddressSpace final : public AddressSpace {
-    static constexpr uint32_t GPR = Custom + 0;
+    static constexpr uint32_t GPR = Custom + 0;  // NOLINT
 };
 
 class TACDataLayout final : public DataLayout {
 public:
-    Endian getEndian() const noexcept override {
+    [[nodiscard]] Endian getEndian() const noexcept override {
         return Endian::Little;
     }
     size_t getBuiltinAlignment(const Type* type) const noexcept override {
@@ -40,10 +40,10 @@ public:
             return getPointerSize();
         return type->getFixedSize();
     }
-    size_t getPointerSize() const noexcept override {
+    [[nodiscard]] size_t getPointerSize() const noexcept override {
         return 4;
     }
-    size_t getCodeAlignment() const noexcept override {
+    [[nodiscard]] size_t getCodeAlignment() const noexcept override {
         return 4;
     }
 };
@@ -55,8 +55,8 @@ public:
     TACLoweringInfo();
     void emitPrologue(LoweringContext&, Function*) const override {}
     Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
-    String getOperand(const Operand& operand) const override;
-    std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
+    [[nodiscard]] String getOperand(const Operand& operand) const override;
+    [[nodiscard]] std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
@@ -65,10 +65,10 @@ public:
 
 class TACSubTarget final : public SimpleSubTarget {
 public:
-    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
+    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
     void peepholeOpt(GMIRFunction& func) const override;
     void postPeepholeOpt(GMIRFunction& func) const override;
-    bool inlineMemOp(size_t size) const override {
+    [[nodiscard]] bool inlineMemOp(size_t size) const override {
         CMMC_UNUSED(size);
         return true;
     }
@@ -81,41 +81,41 @@ class TACTarget final : public Target {
 
 public:
     explicit TACTarget();
-    const DataLayout& getDataLayout() const noexcept override {
+    [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const TACLoweringInfo& getTargetLoweringInfo() const noexcept override {
+    [[nodiscard]] const TACLoweringInfo& getTargetLoweringInfo() const noexcept override {
         return mLowerVisitor;
     }
-    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+    [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         reportUnreachable();
     }
     bool builtinRA(GMIRFunction& mfunc) const override;
     bool builtinSA(GMIRFunction& mfunc) const override;
-    const SubTarget& getSubTarget() const noexcept override {
+    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
         return mSubTarget;
     }
-    bool isNativeSupported(InstructionID inst) const noexcept override;
+    [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override;
     void legalizeFunc(GMIRFunction& func) const override;
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
-    Operand getStackPointer() const noexcept override {
+    [[nodiscard]] Operand getStackPointer() const noexcept override {
         reportUnreachable();
     }
-    Operand getReturnAddress() const noexcept override {
+    [[nodiscard]] Operand getReturnAddress() const noexcept override {
         reportUnreachable();
     }
-    size_t getStackPointerAlignment() const noexcept override {
+    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         reportUnreachable();
     }
-    bool isCallerSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
         reportUnreachable();
     }
-    bool isCalleeSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
         reportUnreachable();
     }
-    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+    [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
         reportUnreachable();
     }
 };

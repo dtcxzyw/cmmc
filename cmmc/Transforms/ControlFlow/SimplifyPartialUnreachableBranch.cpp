@@ -42,7 +42,8 @@
 CMMC_NAMESPACE_BEGIN
 
 class SimplifyPartialUnreachableBranch final : public TransformPass<Function> {
-    bool isUnreachableBlock(Block* block) const {
+    // TODO: treat target with undefined arguments as unreachable path
+    static bool isUnreachableBlock(Block* block) {
         return block->instructions().size() == 1 && block->getTerminator()->getInstID() == InstructionID::Unreachable;
     }
 
@@ -70,7 +71,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "SimplifyPartialUnreachableBranch"sv;
     }
 };

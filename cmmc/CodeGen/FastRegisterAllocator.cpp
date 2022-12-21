@@ -117,8 +117,8 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                     if(reg.addressSpace == AddressSpace::Stack) {
                         map = { reg };
                         return;
-                    } else
-                        physReg = reg;
+                    }
+                    physReg = reg;
                 }
                 assert(physReg != unusedOperand);
                 physMap.erase(physReg);
@@ -168,8 +168,8 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                         // loaded
                         op = reg;
                         return;
-                    } else
-                        stackStorage = reg;
+                    }
+                    stackStorage = reg;
                 }
                 // load from stack
                 assert(stackStorage != unusedOperand);
@@ -195,8 +195,8 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                         op = reg;
                         map = { reg };  // mark other storage dirty
                         return;
-                    } else
-                        stackStorage = reg;
+                    }
+                    stackStorage = reg;
                 }
                 const auto reg = getFreeReg(op);
                 map = { reg };

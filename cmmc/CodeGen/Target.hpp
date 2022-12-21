@@ -31,9 +31,9 @@ class Target {
 public:
     virtual ~Target() = default;
 
-    virtual const DataLayout& getDataLayout() const noexcept = 0;
-    virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
-    virtual const SubTarget& getSubTarget() const noexcept = 0;
+    [[nodiscard]] virtual const DataLayout& getDataLayout() const noexcept = 0;
+    [[nodiscard]] virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
+    [[nodiscard]] virtual const SubTarget& getSubTarget() const noexcept = 0;
     virtual bool builtinRA(GMIRFunction& mfunc) const {
         CMMC_UNUSED(mfunc);
         return false;
@@ -42,10 +42,10 @@ public:
         CMMC_UNUSED(mfunc);
         return false;
     }
-    virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
+    [[nodiscard]] virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
     virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
     virtual void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const = 0;
-    virtual bool isNativeSupported(InstructionID inst) const noexcept {
+    [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept {
         CMMC_UNUSED(inst);
         return true;
     }
@@ -53,12 +53,12 @@ public:
     virtual void emitAssembly(const GMIRModule& module, std::ostream& out) const = 0;
 
     // TODO: move to frame info
-    virtual Operand getStackPointer() const noexcept = 0;
-    virtual Operand getReturnAddress() const noexcept = 0;
-    virtual bool isCallerSaved(const Operand& op) const noexcept = 0;
-    virtual bool isCalleeSaved(const Operand&) const noexcept = 0;
-    virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
-    virtual size_t getStackPointerAlignment() const noexcept = 0;
+    [[nodiscard]] virtual Operand getStackPointer() const noexcept = 0;
+    [[nodiscard]] virtual Operand getReturnAddress() const noexcept = 0;
+    [[nodiscard]] virtual bool isCallerSaved(const Operand& op) const noexcept = 0;
+    [[nodiscard]] virtual bool isCalleeSaved(const Operand&) const noexcept = 0;
+    [[nodiscard]] virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
+    [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept = 0;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;
@@ -68,13 +68,14 @@ class TargetRegistry final {
 
 public:
     void addTarget(const TargetBuilder& targetBuilder);
-    std::unique_ptr<Target> selectTarget() const;
+    [[nodiscard]] std::unique_ptr<Target> selectTarget() const;
 
     static TargetRegistry& get();
 };
 
+// NOLINTNEXTLINE
 #define CMMC_TARGET(NAME, CLASS)                                                             \
-    static int __target = [] {                                                               \
+    static const int __target = [] {                                                         \
         TargetRegistry::get().addTarget({ NAME, [] { return std::make_unique<CLASS>(); } }); \
         return 0;                                                                            \
     }();

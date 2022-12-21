@@ -84,7 +84,7 @@ public:
         return !unused.empty();
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "GlobalEliminate"sv;
     }
 };

@@ -169,10 +169,10 @@ void IntegerOpt::printDefault(std::ostream& out) const {
 }
 
 Flag::Flag() : mFlag{ false } {}
-StringOpt::StringOpt() : mStr{ "" } {
+StringOpt::StringOpt() {
     requireArg();
 }
-IntegerOpt::IntegerOpt() : mValue{ 0 } {
+IntegerOpt::IntegerOpt() {
     requireArg();
 }
 

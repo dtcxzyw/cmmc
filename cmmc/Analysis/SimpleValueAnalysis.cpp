@@ -61,34 +61,31 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
     if(initialValue) {
         if(index + 1 >= inst->operands().size()) {
             return initialValue;
-        } else {
-            auto arr = dynamic_cast<ConstantArray*>(initialValue);
-            if(!arr)
-                return nullptr;
-            const auto operand = inst->getOperand(index);
-            MatchContext<Value> matchCtx{ operand, nullptr };
-            uintmax_t idx;
-            if(uint_(idx)(matchCtx)) {
-                auto& values = arr->values();
-                if(idx < values.size()) {
-                    return extractConstant(values[idx], inst, index + 1);
-                } else {
-                    return extractConstant(nullptr, inst, index + 1);
-                }
-            } else {
-                return nullptr;
+        }
+        auto arr = dynamic_cast<ConstantArray*>(initialValue);
+        if(!arr)
+            return nullptr;
+        const auto operand = inst->getOperand(index);
+        MatchContext<Value> matchCtx{ operand, nullptr };
+        uintmax_t idx;
+        if(uint_(idx)(matchCtx)) {
+            auto& values = arr->values();
+            if(idx < values.size()) {
+                return extractConstant(values[idx], inst, index + 1);
             }
+            return extractConstant(nullptr, inst, index + 1);
         }
-    } else {
-        const auto pointee = inst->getType()->as<PointerType>()->getPointee();
-        if(pointee->isInteger()) {
-            return ConstantInteger::get(pointee, 0);
-        } else if(pointee->isFloatingPoint()) {
-            return make<ConstantFloatingPoint>(pointee, 0.0);
-        } else {
-            reportUnreachable();
-        }
+        return nullptr;
     }
+
+    const auto pointee = inst->getType()->as<PointerType>()->getPointee();
+    if(pointee->isInteger()) {
+        return ConstantInteger::get(pointee, 0);
+    }
+    if(pointee->isFloatingPoint()) {
+        return make<ConstantFloatingPoint>(pointee, 0.0);
+    }
+    reportUnreachable();
 }
 
 void SimpleValueAnalysis::next(Instruction* inst) {

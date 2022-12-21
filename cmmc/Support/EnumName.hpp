@@ -50,11 +50,10 @@ namespace impl {
             if CMMC_ENUM_CONSTEXPR(name[0] == '(') {
                 CMMC_UNUSED(val);
                 return "Unknown";
-            } else {
-                if(val == Value)
-                    return name;
-                return enumName<Enum, static_cast<Enum>(static_cast<uint32_t>(Value) + 1)>(val);
             }
+            if(val == Value)
+                return name;
+            return enumName<Enum, static_cast<Enum>(static_cast<uint32_t>(Value) + 1)>(val);
         }
     }
 }  // namespace impl

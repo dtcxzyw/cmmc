@@ -47,7 +47,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern Flag strictMode;
+extern Flag strictMode;  // NOLINT
 
 template <typename Callable>
 [[nodiscard]] static Value* reportSplError(EmitContext& ctx, const Type* type, uint32_t typeID, const SourceLocation& loc,
@@ -58,10 +58,9 @@ template <typename Callable>
     ctx.markInvalid();
     if(type->isInvalid())
         return ctx.getInvalidRValue();
-    else if(type->isVoid())
+    if(type->isVoid())
         return nullptr;
-    else
-        return make<UndefinedValue>(type);
+    return make<UndefinedValue>(type);
 }
 
 std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignature(EmitContext& ctx) const {
@@ -101,7 +100,7 @@ bool sortBlocks(Function& func);
 
 void FunctionDefinition::emit(EmitContext& ctx) const {
     Stage stage{ "emit function" };
-    ctx.pushLoc(decl.loc);
+    EmitContext::pushLoc(decl.loc);
 
     auto module = ctx.getModule();
     auto [info, funcType] = decl.getSignature(ctx);
@@ -185,7 +184,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         assert(func->verify(reportDebug()));
     }
 
-    ctx.popLoc();
+    EmitContext::popLoc();
 }
 
 static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPoint) {
@@ -331,9 +330,8 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
 
     if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
         return ctx.booleanToInt(ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs));
-    } else {
-        return ctx.makeOp<BinaryInst>(inst, lhs->getType(), lhs, rhs);
     }
+    return ctx.makeOp<BinaryInst>(inst, lhs->getType(), lhs, rhs);
 }
 
 static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Qualifier& lhsQualifier, Value* rhs,
@@ -349,8 +347,8 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
                                [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
             };
-        } else
-            DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
+        }
+        DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
     }
 
     if(lt->isPointer() || rt->isPointer()) {
@@ -359,8 +357,8 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
                                [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
             };
-        } else
-            DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
+        }
+        DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
     }
 
     auto selectTargetType = [&](const Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
@@ -369,7 +367,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
             targetQualifier = (target == lt ? lhsQ : rhsQ);
         } else {
             target = lt;
-            targetQualifier = lhsQ.isSigned ? rhsQ : rhsQ;  // signed op unsigned -> unsigned
+            targetQualifier = lhsQ.isSigned ? rhsQ : lhsQ;  // signed op unsigned -> unsigned
         }
     };
 
@@ -585,9 +583,8 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<StoreInst>(ptr, newVal);
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
         return QualifiedValue{ ptr, ValueQualifier::AsLValue, qualifier };
-    } else {
-        return QualifiedValue{ val, ValueQualifier::AsRValue, qualifier };
     }
+    return QualifiedValue{ val, ValueQualifier::AsRValue, qualifier };
 }
 
 QualifiedValue AddressExpr::emit(EmitContext& ctx) const {
@@ -655,8 +652,8 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
                                                           out << ": "sv << calleeVar->as<StackAllocInst>()->getLabel();
                                                       }
                                                   }) };
-        } else
-            DiagnosticsContext::get().attach<Reason>("cannot call uninvokable").reportFatal();
+        }
+        DiagnosticsContext::get().attach<Reason>("cannot call uninvokable").reportFatal();
     }
     const auto& info = ctx.getFunctionCallInfo(callee->getType()->as<FunctionType>());
 
@@ -683,8 +680,8 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
                                                       out << "invalid argument number for "sv << symbol << ", expect "sv
                                                           << info.argQualifiers.size() << ", got "sv << argExprs.size();
                                                   }) };
-        } else
-            DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
+        }
+        DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
     }
 
     Vector<Value*> args;
@@ -709,8 +706,8 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
         // TODO: RVO
         return QualifiedValue{ storage, ValueQualifier::AsLValue, Qualifier{ true } };
-    } else
-        return QualifiedValue{ ctx.makeOp<FunctionCallInst>(callee, std::move(args)) };
+    }
+    return QualifiedValue{ ctx.makeOp<FunctionCallInst>(callee, std::move(args)) };
 }
 
 QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
@@ -846,7 +843,7 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
 
 QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
     for(auto& [loc, name, arraySize, initExpr] : mVars) {
-        ctx.pushLoc(loc);
+        EmitContext::pushLoc(loc);
 
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.makeOp<StackAllocInst>(type);
@@ -879,7 +876,7 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
 
         ctx.addIdentifier(name, { local, ValueQualifier::AsLValue, mType.qualifier });
 
-        ctx.popLoc();
+        EmitContext::popLoc();
     }
 
     return QualifiedValue{};
@@ -894,9 +891,8 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
             return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
                                                   [](std::ostream& out) { out << "indexing on non-array variable"sv; }),
                                    ValueQualifier::AsLValue, qualifier };
-        } else {
-            DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
         }
+        DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
     }
 
     if(valueQualifier == ValueQualifier::AsLValue) {
@@ -908,19 +904,20 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
             }
             return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), idx }), ValueQualifier::AsLValue,
                      qualifier };
-        } else if(base->getType()->as<PointerType>()->getPointee()->isPointer()) {
+        }
+        if(base->getType()->as<PointerType>()->getPointee()->isPointer()) {
             // int a[];
             // a[i];
             const auto addr = ctx.makeOp<LoadInst>(base);
             return { ctx.makeOp<GetElementPtrInst>(addr, Vector<Value*>{ idx }), ValueQualifier::AsLValue, qualifier };
-        } else {
-            if(strictMode.get()) {
-                return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
-                                                      [](std::ostream& out) { out << "indexing on non-array variable"sv; }),
-                                       ValueQualifier::AsLValue, qualifier };
-            } else
-                DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
         }
+        if(strictMode.get()) {
+            return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
+                                                  [](std::ostream& out) { out << "indexing on non-array variable"sv; }),
+                                   ValueQualifier::AsLValue, qualifier };
+        }
+        DiagnosticsContext::get().attach<Reason>("Non-indexable variable").reportFatal();
+
     } else {
         // int* a;
         // a[i];
@@ -932,7 +929,7 @@ struct InvalidField final {
     String structName;
     String fieldName;
     friend void operator<<(std::ostream& out, const InvalidField& field) {
-        out << "invalid field \""sv << field.fieldName << "\" for struct "sv << field.structName << std::endl;
+        out << R"(invalid field ")" << field.fieldName << R"(" for struct )" << field.structName << std::endl;
     }
 };
 
@@ -945,8 +942,8 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
             return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 13U, location(),
                                                   [&](std::ostream& out) { out << "accessing with non-struct variable"; }),
                                    ValueQualifier::AsLValue, qualifier };
-        } else
-            DiagnosticsContext::get().attach<Reason>("cannot index a non-struct value").reportFatal();
+        }
+        DiagnosticsContext::get().attach<Reason>("cannot index a non-struct value").reportFatal();
     }
     auto structType = type->as<StructType>();
     const auto offset = structType->getOffset(mField);
@@ -955,8 +952,8 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
             return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 14U, location(),
                                                   [&](std::ostream& out) { out << "no such member: " << mField; }),
                                    ValueQualifier::AsLValue, qualifier };
-        } else
-            DiagnosticsContext::get().attach<InvalidField>(structType->name(), mField).reportFatal();
+        }
+        DiagnosticsContext::get().attach<InvalidField>(structType->name(), mField).reportFatal();
     }
     const auto ptr = ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), offset });
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
@@ -982,7 +979,8 @@ Value* EmitContext::booleanToInt(Value* value) {
             return reportSplError(ctx, type, 9U, DiagnosticsContext::get().current<SourceLocation>(),
                                   [](std::ostream& out) { out << "unmatching type for function call"sv; });
         default:
-            return reportSplError(ctx, type, -1, DiagnosticsContext::get().current<SourceLocation>(),
+            return reportSplError(ctx, type, std::numeric_limits<uint32_t>::max(),
+                                  DiagnosticsContext::get().current<SourceLocation>(),
                                   [&](std::ostream& out) { out << "unmatching type for "sv << enumName(usage); });
     }
 }
@@ -1008,19 +1006,18 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
                 base = makeOp<GetElementPtrInst>(base, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
             }
             return base;
-        } else {
-            if(strictMode.get())
-                return reportConversionErrorSpl(*this, type, usage);
-            else
-                DiagnosticsContext::get().attach<Reason>("unsupported pointer conversion").reportFatal();
         }
+        if(strictMode.get())
+            return reportConversionErrorSpl(*this, type, usage);
+        DiagnosticsContext::get().attach<Reason>("unsupported pointer conversion").reportFatal();
     }
 
     InstructionID id = InstructionID::None;
     if(type->isBoolean()) {
         if(srcType->isInteger()) {
             return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, ConstantInteger::get(srcType, 0));
-        } else if(srcType->isFloatingPoint()) {
+        }
+        if(srcType->isFloatingPoint()) {
             if(strictMode.get())
                 return reportConversionErrorSpl(*this, type, usage);  // implicit f2b is not allowed
             return makeOp<CompareInst>(InstructionID::FCmp, CompareOp::NotEqual, value,
@@ -1076,16 +1073,14 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
     if(id == InstructionID::None) {
         if(strictMode.get())
             return reportConversionErrorSpl(*this, type, usage);
-        else {
-            auto& err = reportError();
-            srcType->dump(err << "from "sv);
-            type->dump(err << " to "sv);
-            DiagnosticsContext::get()
-                .attach<Reason>("cannot convert scalar value")
-                .attach<TypeAttachment>("from", srcType)
-                .attach<TypeAttachment>("to", type)
-                .reportFatal();
-        }
+        auto& err = reportError();
+        srcType->dump(err << "from "sv);
+        type->dump(err << " to "sv);
+        DiagnosticsContext::get()
+            .attach<Reason>("cannot convert scalar value")
+            .attach<TypeAttachment>("from", srcType)
+            .attach<TypeAttachment>("to", type)
+            .reportFatal();
     }
     return makeOp<CastInst>(id, type, value);
 }
@@ -1096,8 +1091,7 @@ Value* EmitContext::getRValue(Expr* expr, const Type* type, Qualifier dstQualifi
     const auto [val, valQualifier] = getRValue(expr);
     if(type->isStruct())
         return convertTo(val, PointerType::get(type), valQualifier, Qualifier{ true }, usage);
-    else
-        return convertTo(val, type, valQualifier, dstQualifier, usage);
+    return convertTo(val, type, valQualifier, dstQualifier, usage);
 }
 std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage usage) {
     const auto [val, valQualifier, qualifier] = expr->emitWithLoc(*this);
@@ -1110,14 +1104,13 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage us
                                     DiagnosticsContext::get().current<SourceLocation>(),
                                     [](std::ostream& out) { out << "left side in assignment is rvalue"sv; }),
                      qualifier };
-        else {
-            return { reportSplError(
-                         *this, PointerType::get(val->getType()), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                         [&](std::ostream& out) { out << "cannot convert a rvalue to a lvalue for "sv << enumName(usage); }),
-                     qualifier };
-        }
-    } else
-        DiagnosticsContext::get().attach<Reason>("cannot convert a rvalue to a lvalue").reportFatal();
+        return { reportSplError(
+                     *this, PointerType::get(val->getType()), std::numeric_limits<uint32_t>::max(),
+                     DiagnosticsContext::get().current<SourceLocation>(),
+                     [&](std::ostream& out) { out << "cannot convert a rvalue to a lvalue for "sv << enumName(usage); }),
+                 qualifier };
+    }
+    DiagnosticsContext::get().attach<Reason>("cannot convert a rvalue to a lvalue").reportFatal();
 }
 Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage) {
     const auto createFromRValue = [&](Value* rvalue, Qualifier srcQualifier) -> Value* {
@@ -1135,9 +1128,8 @@ Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQu
         assert(val->getType()->isPointer());
         const auto rvalue = makeOp<LoadInst>(val);
         return createFromRValue(rvalue, qualifier);
-    } else {
-        return createFromRValue(val, qualifier);
     }
+    return createFromRValue(val, qualifier);
 }
 void EmitContext::pushScope() {
     mScopes.push_back({});
@@ -1162,7 +1154,7 @@ void EmitContext::popScope() {
 struct RedefinedIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const RedefinedIdentifier& err) {
-        out << "Redefined identifier \""sv << err.identifier << '"' << std::endl;
+        out << R"(Redefined identifier ")" << err.identifier << '"' << std::endl;
     }
 };
 void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
@@ -1176,9 +1168,8 @@ void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
                 [&](std::ostream& out) { out << "redefine "sv << (func ? "function"sv : "variable"sv) << ": "sv << identifier; });
             CMMC_UNUSED(val);
             return;
-        } else {
-            DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
         }
+        DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
     }
     scope.variables.emplace(identifier);
     mVariables[identifier].push_back(value);
@@ -1186,7 +1177,7 @@ void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
 struct UndefinedIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const UndefinedIdentifier& err) {
-        out << "Undefined identifier \""sv << err.identifier << '"' << std::endl;
+        out << R"(Undefined identifier ")" << err.identifier << '"' << std::endl;
     }
 };
 QualifiedValue EmitContext::lookupIdentifier(const String& identifier, IdentifierUsageHint hint) {
@@ -1204,8 +1195,8 @@ QualifiedValue EmitContext::lookupIdentifier(const String& identifier, Identifie
                                                       << ": "sv << identifier;
                                               }),
                                ValueQualifier::AsLValue, Qualifier{} };
-    } else
-        DiagnosticsContext::get().attach<UndefinedIdentifier>(identifier).reportFatal();
+    }
+    DiagnosticsContext::get().attach<UndefinedIdentifier>(identifier).reportFatal();
 }
 void EmitContext::addConstant(Value* address, Value* val) {
     if(!val->isUndefined())
@@ -1237,15 +1228,15 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
     if(!ret) {
         if(strictMode.get()) {
-            const auto retValue = reportSplError(
-                *this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                [&](std::ostream& out) { out << "undefined type [scope = "sv << enumName(space) << "] named "sv << type; });
+            const auto retValue = reportSplError(*this, InvalidType::get(), std::numeric_limits<uint32_t>::max(),
+                                                 DiagnosticsContext::get().current<SourceLocation>(), [&](std::ostream& out) {
+                                                     out << "undefined type [scope = "sv << enumName(space) << "] named "sv
+                                                         << type;
+                                                 });
             CMMC_UNUSED(retValue);
             return InvalidType::get();
-        } else {
-            // TODO: report undefined type
-            DiagnosticsContext::get().attach<Reason>("Undefined type").reportFatal();
-        }
+        }  // TODO: report undefined type
+        DiagnosticsContext::get().attach<Reason>("Undefined type").reportFatal();
     }
 
     if(!arraySize.empty()) {
@@ -1273,13 +1264,13 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
                     if(size <= 0) {
                         if(strictMode.get()) {
-                            const auto retValue =
-                                reportSplError(*this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
-                                               [](std::ostream& out) { out << "invalid array size"sv; });
+                            const auto retValue = reportSplError(*this, InvalidType::get(), std::numeric_limits<uint32_t>::max(),
+                                                                 DiagnosticsContext::get().current<SourceLocation>(),
+                                                                 [](std::ostream& out) { out << "invalid array size"sv; });
                             CMMC_UNUSED(retValue);
                             return make<ArrayType>(InvalidType::get(), 1U);
-                        } else
-                            DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
+                        }
+                        DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
                     }
                     if(size >= (1U << 30))
                         DiagnosticsContext::get().attach<Reason>("array is too large").reportFatal();
@@ -1300,11 +1291,10 @@ void EmitContext::addIdentifier(String identifier, const StructType* type) {
                                             [&](std::ostream& out) { out << "redefine struct: "sv << identifier; });
             CMMC_UNUSED(val);
             return;
-        } else {
-            DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
         }
+        DiagnosticsContext::get().attach<RedefinedIdentifier>(identifier).reportFatal();
     }
-    mStructTypes.emplace(std::move(identifier), type);
+    mStructTypes.emplace(identifier, type);
 }
 
 void EmitContext::addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info) {
@@ -1390,7 +1380,7 @@ static std::vector<uint32_t> calculateArrayScalarSizes(const ArrayType* type) {
             break;
         }
     }
-    for(uint32_t idx = static_cast<uint32_t>(sizes.size() - 1); idx >= 1; --idx)
+    for(auto idx = static_cast<uint32_t>(sizes.size() - 1); idx >= 1; --idx)
         sizes[idx - 1] *= sizes[idx];
     return sizes;
 }
@@ -1486,7 +1476,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         const auto totalSize = static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned));
         const auto& subTarget = ctx.getModule()->getTarget().getSubTarget();
 
-        if(subTarget.inlineMemOp(totalSize)) {
+        if(subTarget.inlineMemOp(static_cast<size_t>(totalSize))) {
             while(lastNotAssigned != offset) {
                 ctx.makeOp<StoreInst>(getAddress(lastNotAssigned), zero);
                 ++lastNotAssigned;
@@ -1588,31 +1578,31 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 
 void StructDefinition::emit(EmitContext& ctx) const {
     Stage stage{ "emit struct" };
-    ctx.pushLoc(location);
+    EmitContext::pushLoc(location);
 
     Vector<StructField> fields;
     for(auto& item : list) {
         for(auto& subItem : item.var) {
-            ctx.pushLoc(subItem.loc);
+            EmitContext::pushLoc(subItem.loc);
             const auto type = ctx.getType(item.type.typeIdentifier, item.type.space, subItem.arraySize);
             fields.push_back(StructField{ subItem.loc, type, subItem.name });
             if(subItem.initialValue) {
                 if(strictMode.get()) {
-                    const auto ret = reportSplError(ctx, InvalidType::get(), -1, subItem.loc, [](std::ostream& out) {
-                        out << "initial values of struct fields are not allowed"sv;
-                    });
+                    const auto ret =
+                        reportSplError(ctx, InvalidType::get(), std::numeric_limits<uint32_t>::max(), subItem.loc,
+                                       [](std::ostream& out) { out << "initial values of struct fields are not allowed"sv; });
                     CMMC_UNUSED(ret);
                 } else
                     DiagnosticsContext::get().attach<Reason>("initial values of struct fields are not allowed").reportFatal();
             }
-            ctx.popLoc();
+            EmitContext::popLoc();
         }
     }
     auto type = make<StructType>(name, std::move(fields));
     ctx.addIdentifier(name, type);
     ctx.getModule()->add(type);
 
-    ctx.popLoc();
+    EmitContext::popLoc();
 }
 
 Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
@@ -1703,10 +1693,9 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value)
         if(pointee->isArray())
             return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
                      qualifier };  // decay to pointer
-        else if(pointee->isStruct())
+        if(pointee->isStruct())
             return { val, qualifier };  // only pass pointer
-        else
-            return { makeOp<LoadInst>(val), qualifier };
+        return { makeOp<LoadInst>(val), qualifier };
     }
     return { val, qualifier };
 }
@@ -1782,10 +1771,10 @@ QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
         mEmitted = true;
     }
 #endif
-    ctx.pushLoc(mLocation);
+    EmitContext::pushLoc(mLocation);
     const auto ret = emit(ctx);
     assert(!ret.value || !ret.value->getType()->isBoolean());
-    ctx.popLoc();
+    EmitContext::popLoc();
     return ret;
 }
 

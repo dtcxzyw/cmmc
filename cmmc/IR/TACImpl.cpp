@@ -49,14 +49,15 @@ static void split(std::string_view line, std::array<std::string_view, 6>& tokens
 
 static TACOperand parseTACOperand(const std::string_view tk) {
     if(tk[0] == '#') {
-        return { TACOperandType::Constant, atoi(tk.substr(1).data()) };
-    } else if(tk[0] == '&') {
-        return { TACOperandType::Pointer, String::get(tk.substr(1)) };
-    } else if(tk.size() > 5 && tk.substr(0, 5) == "label") {
-        return { TACOperandType::Label, atoi(tk.substr(5).data()) };
-    } else {
-        return { TACOperandType::Variable, String::get(tk) };
+        return { TACOperandType::Constant, static_cast<int>(strtol(tk.substr(1).data(), nullptr, 10)) };
     }
+    if(tk[0] == '&') {
+        return { TACOperandType::Pointer, String::get(tk.substr(1)) };
+    }
+    if(tk.size() > 5 && tk.substr(0, 5) == "label") {
+        return { TACOperandType::Label, static_cast<int>(strtol(tk.substr(5).data(), nullptr, 10)) };
+    }
+    return { TACOperandType::Variable, String::get(tk) };
 }
 
 static TACInstStorage parseTACLine(std::string_view line) {
@@ -72,53 +73,53 @@ static TACInstStorage parseTACLine(std::string_view line) {
         case 2: {
             const auto key = tokens[0];
             t1 = parseTACOperand(tokens[1]);
-            if(key == "GOTO")
+            if(key == "GOTO"sv)
                 return TACGoto{ t1 };
-            else if(key == "RETURN")
+            if(key == "RETURN"sv)
                 return TACReturn{ t1 };
-            else if(key == "ARG")
+            if(key == "ARG"sv)
                 return TACArg{ t1 };
-            else if(key == "PARAM")
+            if(key == "PARAM"sv)
                 return TACParam{ t1 };
-            else if(key == "READ")
+            if(key == "READ"sv)
                 return TACRead{ t1 };
-            else if(key == "WRITE")
+            if(key == "WRITE"sv)
                 return TACWrite{ t1 };
-            else
-                reportUnreachable();
+            reportUnreachable();
         }
         case 3: {
             const auto key = tokens[0];
 
-            if(key == "LABEL") {
+            if(key == "LABEL"sv) {
                 t1 = parseTACOperand(tokens[1]);
                 return TACLabel{ t1 };
-            } else if(key == "FUNCTION") {
-                return TACFunctionDecl{ String::get(tokens[1]) };
-            } else if(key == "DEC") {
-                t1 = { TACOperandType::Pointer, String::get(tokens[1]) };
-                const auto i = atoi(tokens[2].data());
-                return TACLocalDecl{ t1, static_cast<uint32_t>(i) };
-            } else {
-                if(tokens[0][0] == '*') {
-                    t1 = parseTACOperand(tokens[0].substr(1));
-                    t2 = parseTACOperand(tokens[2]);
-                    return TACDeref{ t1, t2 };
-                } else if(tokens[2][0] == '*') {
-                    t1 = parseTACOperand(tokens[0]);
-                    t2 = parseTACOperand(tokens[2].substr(1));
-                    return TACFetch{ t1, t2 };
-                } else if(tokens[2][0] == '&') {
-                    t1 = parseTACOperand(tokens[0]);
-                    t2 = parseTACOperand(tokens[2]);
-                    return TACAddr{ t1, t2 };
-                } else {
-                    t1 = parseTACOperand(tokens[0]);
-                    t2 = parseTACOperand(tokens[2]);
-                    return TACAssign{ t1, t2 };
-                }
-                reportUnreachable();
             }
+            if(key == "FUNCTION"sv) {
+                return TACFunctionDecl{ String::get(tokens[1]) };
+            }
+            if(key == "DEC"sv) {
+                t1 = { TACOperandType::Pointer, String::get(tokens[1]) };
+                const auto i = static_cast<int>(strtol(tokens[2].data(), nullptr, 10));
+                return TACLocalDecl{ t1, static_cast<uint32_t>(i) };
+            }
+            if(tokens[0][0] == '*') {
+                t1 = parseTACOperand(tokens[0].substr(1));
+                t2 = parseTACOperand(tokens[2]);
+                return TACDeref{ t1, t2 };
+            }
+            if(tokens[2][0] == '*') {
+                t1 = parseTACOperand(tokens[0]);
+                t2 = parseTACOperand(tokens[2].substr(1));
+                return TACFetch{ t1, t2 };
+            }
+            if(tokens[2][0] == '&') {
+                t1 = parseTACOperand(tokens[0]);
+                t2 = parseTACOperand(tokens[2]);
+                return TACAddr{ t1, t2 };
+            }
+            t1 = parseTACOperand(tokens[0]);
+            t2 = parseTACOperand(tokens[2]);
+            return TACAssign{ t1, t2 };
         }
         case 4: {
             t1 = parseTACOperand(tokens[0]);
@@ -153,17 +154,17 @@ static TACInstStorage parseTACLine(std::string_view line) {
             t3 = parseTACOperand(tokens[5]);
 
             TACConditionalGoto inst{ CompareOp::Equal, t1, t2, t3 };
-            if(tokens[2] == "<")
+            if(tokens[2] == "<"sv)
                 inst.cmp = CompareOp::LessThan;
-            else if(tokens[2] == ">")
+            else if(tokens[2] == ">"sv)
                 inst.cmp = CompareOp::GreaterThan;
-            else if(tokens[2] == "<=")
+            else if(tokens[2] == "<="sv)
                 inst.cmp = CompareOp::LessEqual;
-            else if(tokens[2] == ">=")
+            else if(tokens[2] == ">="sv)
                 inst.cmp = CompareOp::GreaterEqual;
-            else if(tokens[2] == "!=")
+            else if(tokens[2] == "!="sv)
                 inst.cmp = CompareOp::NotEqual;
-            else if(tokens[2] == "==")
+            else if(tokens[2] == "=="sv)
                 inst.cmp = CompareOp::Equal;
             else
                 reportUnreachable();

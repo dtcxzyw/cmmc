@@ -36,16 +36,16 @@ using namespace cmmc;
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag version;
-static Flag help;
-static Flag emitAST;
-static Flag emitIR;
-Flag strictMode;
-IntegerOpt optimizationLevel;
-extern StringOpt target;
-static StringOpt outputPath;
-StringOpt executeInput;
-static Flag grammarCheck;
+static Flag version;           // NOLINT
+static Flag help;              // NOLINT
+static Flag emitAST;           // NOLINT
+static Flag emitIR;            // NOLINT
+Flag strictMode;               // NOLINT
+IntegerOpt optimizationLevel;  // NOLINT
+extern StringOpt targetName;   // NOLINT
+static StringOpt outputPath;   // NOLINT
+StringOpt executeInput;        // NOLINT
+static Flag grammarCheck;      // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
@@ -127,7 +127,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
             retVal);
     }
 
-    const auto emitTAC = (::target.get() == "tac");
+    const auto emitTAC = (::targetName.get() == "tac");
     const auto path = getOutputPath(base + (emitTAC ? ".ir" : ".s"));
     reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 
@@ -173,7 +173,7 @@ int mainImpl(int argc, char** argv) {
     }
 
     try {
-        std::string path = argv[start];
+        std::string path = argv[start];  // NOLINT
 
         bool isSpl = endswith(path, ".spl"sv);
         bool isSysY = endswith(path, ".sy"sv);
@@ -191,9 +191,9 @@ int mainImpl(int argc, char** argv) {
                     return EXIT_SUCCESS;
 
                 if(emitAST.get()) {
-                    const auto outputPath = getOutputPath(base + ".ast");
-                    reportDebug() << "emitAST >> "sv << outputPath << std::endl;
-                    std::ofstream out{ outputPath };
+                    const auto outputFilePath = getOutputPath(base + ".ast");
+                    reportDebug() << "emitAST >> "sv << outputFilePath << std::endl;
+                    std::ofstream out{ outputFilePath };
                     driver.dump(out);
                     return EXIT_SUCCESS;
                 }
@@ -202,7 +202,8 @@ int mainImpl(int argc, char** argv) {
             }
 
             return runIRPipeline(module, base);
-        } else if(endswith(path, ".ir"sv)) {
+        }
+        if(endswith(path, ".ir"sv)) {
             Module module;
             const auto target = TargetRegistry::get().selectTarget();
             module.setTarget(target.get());

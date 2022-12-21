@@ -107,12 +107,13 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
             sum -= mat(i, j) * c[j];
         c[i] = sum;
     }
-    for(int32_t i = static_cast<int32_t>(n - 1); i >= 0; --i) {
-        auto sum = c[i];
-        for(uint32_t j = i + 1; j < n; ++j)
-            sum -= mat(i, j) * d[j];
+    for(auto i = static_cast<int32_t>(n - 1); i >= 0; --i) {
+        const auto ui = static_cast<uint32_t>(i);
+        auto sum = c[ui];
+        for(uint32_t j = ui + 1; j < n; ++j)
+            sum -= mat(ui, j) * d[j];
 
-        d[i] = sum / mat(i, i);
+        d[ui] = sum / mat(ui, ui);
     }
 
     /*

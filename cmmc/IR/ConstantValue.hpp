@@ -39,11 +39,11 @@ public:
     ConstantValue& operator=(const ConstantValue&) = default;
     ConstantValue& operator=(ConstantValue&&) = default;
 
-    bool isConstant() const noexcept override {
+    [[nodiscard]] bool isConstant() const noexcept override {
         return true;
     }
     virtual bool isEqual(ConstantValue* rhs) const = 0;
-    virtual size_t hash() const = 0;
+    [[nodiscard]] virtual size_t hash() const = 0;
 };
 
 struct ConstantHasher final {
@@ -74,10 +74,10 @@ public:
     explicit ConstantInteger(const Type* type, intmax_t value, ExplicitConstruct) : ConstantInteger{ type, value } {}
     void dump(std::ostream& out) const override;
 
-    uintmax_t getZeroExtended() const noexcept;
-    intmax_t getSignExtended() const noexcept;
+    [[nodiscard]] uintmax_t getZeroExtended() const noexcept;
+    [[nodiscard]] intmax_t getSignExtended() const noexcept;
     bool isEqual(ConstantValue* rhs) const override;
-    size_t hash() const override;
+    [[nodiscard]] size_t hash() const override;
 
     static ConstantInteger* getTrue() noexcept;
     static ConstantInteger* getFalse() noexcept;
@@ -92,10 +92,10 @@ public:
         assert(type->isFloatingPoint());
     }
     void dump(std::ostream& out) const override;
-    double getValue() const noexcept;
-    bool isEqual(double val) const noexcept;
+    [[nodiscard]] double getValue() const noexcept;
+    [[nodiscard]] bool isEqual(double val) const noexcept;
     bool isEqual(ConstantValue* rhs) const override;
-    size_t hash() const override;
+    [[nodiscard]] size_t hash() const override;
 };
 
 class ConstantOffset final : public ConstantValue {
@@ -105,15 +105,15 @@ class ConstantOffset final : public ConstantValue {
 public:
     ConstantOffset(const StructType* base, uint32_t index) : ConstantValue{ VoidType::get() }, mBase{ base }, mIndex{ index } {}
     void dump(std::ostream& out) const override;
-    const StructType* base() const noexcept {
+    [[nodiscard]] const StructType* base() const noexcept {
         return mBase;
     }
-    uint32_t index() const noexcept {
+    [[nodiscard]] uint32_t index() const noexcept {
         return mIndex;
     }
-    String getName() const;
+    [[nodiscard]] String getName() const;
     bool isEqual(ConstantValue* rhs) const override;
-    size_t hash() const override;
+    [[nodiscard]] size_t hash() const override;
 };
 
 class ConstantArray final : public ConstantValue {
@@ -122,11 +122,11 @@ class ConstantArray final : public ConstantValue {
 public:
     ConstantArray(const ArrayType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
     void dump(std::ostream& out) const override;
-    const Vector<ConstantValue*>& values() const noexcept {
+    [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
     bool isEqual(ConstantValue* rhs) const override;
-    size_t hash() const override;
+    [[nodiscard]] size_t hash() const override;
 };
 
 class UndefinedValue final : public ConstantValue {
@@ -134,12 +134,12 @@ public:
     explicit UndefinedValue(const Type* type) : ConstantValue{ type } {
         assert(!type->isVoid());
     }
-    bool isUndefined() const noexcept override {
+    [[nodiscard]] bool isUndefined() const noexcept override {
         return true;
     }
     void dump(std::ostream& out) const override;
     bool isEqual(ConstantValue* rhs) const override;
-    size_t hash() const override;
+    [[nodiscard]] size_t hash() const override;
 };
 
 CMMC_NAMESPACE_END

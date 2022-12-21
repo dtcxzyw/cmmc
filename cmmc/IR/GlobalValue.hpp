@@ -22,21 +22,21 @@ enum class Linkage { Global, Internal };
 
 class GlobalValue : public Value {
     String mSymbol;
-    Linkage mLinkage;
+    Linkage mLinkage{ Linkage::Global };
 
 public:
-    GlobalValue(String symbol, const Type* type) : Value{ type }, mSymbol{ std::move(symbol) }, mLinkage{ Linkage::Global } {}
-    const String& getSymbol() const noexcept {
+    GlobalValue(String symbol, const Type* type) : Value{ type }, mSymbol{ symbol } {}
+    [[nodiscard]] const String& getSymbol() const noexcept {
         return mSymbol;
     }
     void dumpAsOperand(std::ostream& out) const final;
-    bool isGlobal() const noexcept final {
+    [[nodiscard]] bool isGlobal() const noexcept final {
         return true;
     }
-    virtual bool isFunction() const noexcept {
+    [[nodiscard]] virtual bool isFunction() const noexcept {
         return false;
     }
-    Linkage getLinkage() const noexcept {
+    [[nodiscard]] Linkage getLinkage() const noexcept {
         return mLinkage;
     }
     void setLinkage(Linkage linkage) noexcept {

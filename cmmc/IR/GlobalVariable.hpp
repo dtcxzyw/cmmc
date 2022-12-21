@@ -24,16 +24,15 @@ CMMC_NAMESPACE_BEGIN
 enum class GlobalVariableAttribute { ReadOnly = 1 << 0 };
 
 class GlobalVariable final : public GlobalValue {
-    ConstantValue* mStaticInitializedValue;
+    ConstantValue* mStaticInitializedValue{ nullptr };
     Attribute<GlobalVariableAttribute> mAttr;
 
 public:
-    GlobalVariable(String symbol, const Type* type)
-        : GlobalValue{ symbol, PointerType::get(type) }, mStaticInitializedValue{ nullptr } {}
+    GlobalVariable(String symbol, const Type* type) : GlobalValue{ symbol, PointerType::get(type) } {}
     void setInitialValue(ConstantValue* value) noexcept {
         mStaticInitializedValue = value;
     }
-    ConstantValue* initialValue() const noexcept {
+    [[nodiscard]] ConstantValue* initialValue() const noexcept {
         return mStaticInitializedValue;
     }
     void dump(std::ostream& out) const override;

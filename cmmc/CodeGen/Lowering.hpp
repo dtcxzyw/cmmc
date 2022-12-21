@@ -41,7 +41,7 @@ class LoweringContext final {
     std::unordered_map<Value*, Operand>& mValueMap;
 
     TemporaryPools& mPools;
-    GMIRBasicBlock* mCurrentBasicBlock;
+    GMIRBasicBlock* mCurrentBasicBlock = nullptr;
     std::unordered_map<const Type*, Operand> mZeros;
     const BlockArgumentAnalysisResult& mBlockArgMap;
 
@@ -79,8 +79,8 @@ public:
     virtual ~LoweringInfo() = default;
     virtual void emitPrologue(LoweringContext& ctx, Function* func) const = 0;
     virtual Operand getZeroImpl(LoweringContext& ctx, const Type* type) const = 0;
-    virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
-    virtual String getOperand(const Operand& operand) const = 0;
+    [[nodiscard]] virtual std::string_view getIntrinsicName(uint32_t intrinsicID) const = 0;
+    [[nodiscard]] virtual String getOperand(const Operand& operand) const = 0;
     virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FMAInst* inst, LoweringContext& ctx) const = 0;

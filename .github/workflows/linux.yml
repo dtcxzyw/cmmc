@@ -21,19 +21,11 @@ jobs:
     - name: Env
       run: sudo apt install spim bear
     
+    - name: Format
+      run: make format-check
+
     - name: Build
       run: make bear3
 
     - name: Test
       run: make test
-
-    - name: Lint
-      uses: cpp-linter/cpp-linter-action@v2
-      id: linter
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        style: file
-        extensions: 'cpp,hpp'
-        version: '14'
-        files-changed-only: false

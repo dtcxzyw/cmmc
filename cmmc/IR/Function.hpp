@@ -38,13 +38,13 @@ enum class Intrinsic { none, memset, memcpy, memmove };
 class Function final : public GlobalValue {
     List<Block*> mBlocks;
     Attribute<FunctionAttribute> mAttr;
-    CallingConvention mCallingConvention;
+    CallingConvention mCallingConvention{ CallingConvention::C };
     Intrinsic mIntrinsic;
 
 public:
     Function(String symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
-        : GlobalValue{ symbol, type }, mCallingConvention{ CallingConvention::C }, mIntrinsic{ intrinsic } {}
-    Block* entryBlock() const noexcept {
+        : GlobalValue{ symbol, type }, mIntrinsic{ intrinsic } {}
+    [[nodiscard]] Block* entryBlock() const noexcept {
         return mBlocks.front();
     }
     List<Block*>& blocks() noexcept {
@@ -53,16 +53,16 @@ public:
     void dump(std::ostream& out) const override;
     void dumpCFG(std::ostream& out) const;
     bool verify(std::ostream& out) const;
-    bool isFunction() const noexcept override {
+    [[nodiscard]] bool isFunction() const noexcept override {
         return true;
     }
-    CallingConvention getCallingConvention() const noexcept {
+    [[nodiscard]] CallingConvention getCallingConvention() const noexcept {
         return mCallingConvention;
     }
     auto& attr() noexcept {
         return mAttr;
     }
-    Intrinsic getIntrinsic() const noexcept {
+    [[nodiscard]] Intrinsic getIntrinsic() const noexcept {
         return mIntrinsic;
     }
 };

@@ -61,7 +61,7 @@ public:
         return blocks.size() != oldSize;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "BlockEliminate"sv;
     }
 };

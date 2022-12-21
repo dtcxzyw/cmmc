@@ -22,7 +22,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool reduceBlock(IRBuilder& builder, Block& block, BlockReducer reducer) {
+bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) {
     auto& insts = block.instructions();
 
     ReplaceMap replace;
@@ -136,9 +136,8 @@ bool isNoSideEffectExpr(const Instruction& inst) {
             if(auto func = dynamic_cast<Function*>(callee)) {
                 auto& attr = func->attr();
                 return attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless);
-            } else {
-                return false;
             }
+            return false;
         }
         default:
             break;

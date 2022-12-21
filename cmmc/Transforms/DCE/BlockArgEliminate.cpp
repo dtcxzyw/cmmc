@@ -53,7 +53,7 @@ CMMC_NAMESPACE_BEGIN
 
 class BlockArgEliminate final : public TransformPass<Function> {
     // Remove unused block arguments
-    void applyRemoval(Function& func, std::unordered_map<Block*, std::vector<uint32_t>>& modified) const {
+    static void applyRemoval(Function& func, std::unordered_map<Block*, std::vector<uint32_t>>& modified) {
         for(auto& [block, removed] : modified) {
             auto& args = block->args();
             assert(std::is_sorted(removed.begin(), removed.end()));
@@ -160,7 +160,7 @@ public:
         return isModified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "BlockArgEliminate"sv;
     }
 };

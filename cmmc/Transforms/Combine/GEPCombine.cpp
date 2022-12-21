@@ -34,7 +34,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class GEPCombine final : public TransformPass<Function> {
-    void gatherBlock(Block& block, std::unordered_set<Value*>& constantGEP) const {
+    static void gatherBlock(Block& block, std::unordered_set<Value*>& constantGEP) {
         for(auto inst : block.instructions()) {
             if(inst->getInstID() != InstructionID::GetElementPtr)
                 continue;
@@ -56,8 +56,8 @@ class GEPCombine final : public TransformPass<Function> {
             constantGEP.insert(inst);
         }
     }
-    bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP,
-                  const BlockArgumentAnalysisResult& blockArgMap) const {
+    static bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP,
+                         const BlockArgumentAnalysisResult& blockArgMap) {
         bool modified = false;
         for(auto inst : block.instructions()) {
             if(!constantGEP.count(inst))
@@ -118,7 +118,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "GEPCombine"sv;
     }
 };

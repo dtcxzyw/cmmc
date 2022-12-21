@@ -30,7 +30,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class BlockOutliner final : public TransformPass<Function> {
-    bool isEqual(Block* lhs, Block* rhs) const {
+    static bool isEqual(Block* lhs, Block* rhs) {
         auto& lhsArgs = lhs->args();
         auto& rhsArgs = rhs->args();
         if(lhsArgs.size() != rhsArgs.size())
@@ -115,7 +115,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "BlockOutliner"sv;
     }
 };

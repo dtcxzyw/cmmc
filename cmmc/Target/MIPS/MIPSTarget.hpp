@@ -23,15 +23,15 @@ CMMC_NAMESPACE_BEGIN
 
 enum class MIPSIntrinsic { Fma, ConditionalMove };
 struct MIPSAddressSpace final : public AddressSpace {
-    static constexpr uint32_t GPR = Custom + 0;
-    static constexpr uint32_t FPR_S = Custom + 1;
-    static constexpr uint32_t FPR_D = Custom + 2;
-    static constexpr uint32_t HILO = Custom + 3;
+    static constexpr uint32_t GPR = Custom + 0;    // NOLINT
+    static constexpr uint32_t FPR_S = Custom + 1;  // NOLINT
+    static constexpr uint32_t FPR_D = Custom + 2;  // NOLINT
+    static constexpr uint32_t HILO = Custom + 3;   // NOLINT
 };
 
 class MIPSDataLayout final : public DataLayout {
 public:
-    Endian getEndian() const noexcept override {
+    [[nodiscard]] Endian getEndian() const noexcept override {
         return Endian::Little;
     }
     size_t getBuiltinAlignment(const Type* type) const noexcept override {
@@ -40,10 +40,10 @@ public:
             return getPointerSize();
         return type->getFixedSize();
     }
-    size_t getPointerSize() const noexcept override {
+    [[nodiscard]] size_t getPointerSize() const noexcept override {
         return 4;
     }
-    size_t getCodeAlignment() const noexcept override {
+    [[nodiscard]] size_t getCodeAlignment() const noexcept override {
         return 4;
     }
 };
@@ -55,8 +55,8 @@ public:
     MIPSLoweringInfo();
     void emitPrologue(LoweringContext& ctx, Function* func) const override;
     Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
-    String getOperand(const Operand& operand) const override;
-    std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
+    [[nodiscard]] String getOperand(const Operand& operand) const override;
+    [[nodiscard]] std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
@@ -81,16 +81,16 @@ class MIPSTarget final : public Target {
 
 public:
     explicit MIPSTarget();
-    const DataLayout& getDataLayout() const noexcept override {
+    [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    const LoweringInfo& getTargetLoweringInfo() const noexcept override {
+    [[nodiscard]] const LoweringInfo& getTargetLoweringInfo() const noexcept override {
         return mLoweringInfo;
     }
-    std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
+    [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         return std::make_unique<MIPSRegisterUsage>();
     }
-    const SubTarget& getSubTarget() const noexcept override {
+    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
@@ -100,18 +100,18 @@ public:
     }
     void legalizeFunc(GMIRFunction& func) const override;
     void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
-    Operand getStackPointer() const noexcept override {
+    [[nodiscard]] Operand getStackPointer() const noexcept override {
         return Operand{ MIPSAddressSpace::GPR, 29 };  // sp
     }
-    Operand getReturnAddress() const noexcept override {
+    [[nodiscard]] Operand getReturnAddress() const noexcept override {
         return Operand{ MIPSAddressSpace::GPR, 31 };  // ra
     }
-    size_t getStackPointerAlignment() const noexcept override {
+    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         return 8U;  // 8-byte aligned
     }
-    bool isCalleeSaved(const Operand& op) const noexcept override;
-    bool isCallerSaved(const Operand& op) const noexcept override;
-    uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
+    [[nodiscard]] bool isCalleeSaved(const Operand& op) const noexcept override;
+    [[nodiscard]] bool isCallerSaved(const Operand& op) const noexcept override;
+    [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
         return 32U;
     }
 };

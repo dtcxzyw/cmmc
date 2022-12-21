@@ -99,7 +99,7 @@ public:
         return true;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "TailCallEliminate"sv;
     }
 };

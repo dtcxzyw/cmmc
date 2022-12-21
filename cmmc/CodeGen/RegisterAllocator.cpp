@@ -18,7 +18,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-StringOpt regAllocMethod;
+StringOpt regAllocMethod;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 regAllocMethod.withDefault("fast").setName("register-alloc", 'r').setDesc("method for register allocation");
@@ -29,7 +29,7 @@ void RegisterAllocatorRegistry::addMethod(std::string_view name, RegisterAllocFu
 }
 
 RegisterAllocFunc RegisterAllocatorRegistry::selectMethod() const {
-    const auto value = regAllocMethod.get();
+    const auto& value = regAllocMethod.get();
     if(auto iter = mMethods.find(value); iter != mMethods.cend())
         return iter->second;
     DiagnosticsContext::get().attach<UnrecognizedInput>("register allocation method", value).reportFatal();

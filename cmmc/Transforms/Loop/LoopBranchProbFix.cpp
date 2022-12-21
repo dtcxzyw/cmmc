@@ -34,6 +34,7 @@ public:
                 continue;
             const auto initial = loop.initial->as<ConstantInteger>()->getSignExtended();
             const auto bound = loop.bound->as<ConstantInteger>()->getSignExtended();
+            assert(loop.step);
             if((loop.step > 0 && initial + loop.step >= bound) || ((loop.step < 0 && initial + loop.step <= bound)))
                 continue;  // handled by loop elimination
             const auto size = (bound - initial) / loop.step;
@@ -50,7 +51,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "LoopBranchProbFix"sv;
     }
 };

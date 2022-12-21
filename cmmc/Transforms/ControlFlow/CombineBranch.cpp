@@ -44,12 +44,12 @@
 CMMC_NAMESPACE_BEGIN
 
 class CombineBranch final : public TransformPass<Function> {
-    bool isForwardBlock(Block& block) const {
+    static bool isForwardBlock(Block& block) {
         return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch &&
             block.getTerminator()->as<ConditionalBranchInst>()->getTrueTarget().getTarget() != &block;
     }
 
-    void foldForward(ConditionalBranchInst* branch, BranchTarget& target) const {
+    static void foldForward(ConditionalBranchInst* branch, BranchTarget& target) {
         const auto nextBranch = target.getTarget()->getTerminator()->as<ConditionalBranchInst>();
         const auto& nextTarget = nextBranch->getTrueTarget();
         const auto& args1 = target.getArgs();
@@ -106,7 +106,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "CombineBranch"sv;
     }
 };

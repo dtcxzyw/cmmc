@@ -55,10 +55,10 @@
 namespace yy {
 
     /// A point in a source file.
-    class position {
+    class position {  // NOLINT
     public:
         /// Type for line and column numbers.
-        typedef int counter_type;
+        typedef int counter_type;  // NOLINT
 
         /// Construct a position.
         explicit position(std::string* f = YY_NULLPTR, counter_type l = 1, counter_type c = 1)
@@ -96,7 +96,7 @@ namespace yy {
 
     private:
         /// Compute max (min, lhs+rhs).
-        static counter_type add_(counter_type lhs, counter_type rhs, counter_type min) {
+        static counter_type add_(counter_type lhs, counter_type rhs, counter_type min) {  // NOLINT
             return lhs + rhs < min ? min : lhs + rhs;
         }
     };
@@ -145,10 +145,10 @@ namespace yy {
     }
 
     /// Two points in a source file.
-    class location {
+    class location {  // NOLINT
     public:
         /// Type for line and column numbers.
-        typedef position::counter_type counter_type;
+        typedef position::counter_type counter_type;  // NOLINT
 
         /// Construct a location from \a b to \a e.
         location(const position& b, const position& e) : begin(b), end(e) {}
@@ -167,7 +167,7 @@ namespace yy {
 
         /** \name Line and Column related manipulators
          ** \{ */
-    public:
+    public:  // NOLINT
         /// Reset initial location to final location.
         void step() {
             begin = end;
@@ -184,7 +184,7 @@ namespace yy {
         }
         /** \} */
 
-    public:
+    public:  // NOLINT
         /// Beginning of the located region.
         position begin;
         /// End of the located region.
@@ -241,7 +241,7 @@ namespace yy {
      */
     template <typename YYChar>
     std::basic_ostream<YYChar>& operator<<(std::basic_ostream<YYChar>& ostr, const location& loc) {
-        location::counter_type end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;
+        location::counter_type end_col = 0 < loc.end.column ? loc.end.column - 1 : 0;  // NOLINT
         ostr << loc.begin;
         if(loc.end.filename && (!loc.begin.filename || *loc.begin.filename != *loc.end.filename))
             ostr << '-' << loc.end.filename << ':' << loc.end.line << '.' << end_col;

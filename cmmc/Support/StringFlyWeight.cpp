@@ -37,7 +37,7 @@ class StringManager final {
             mCurrentOffset += size;
         } else {
             const auto allocatedSize = std::max(size, blockSize);
-            mCurrentPtr = static_cast<char*>(malloc(allocatedSize));
+            mCurrentPtr = static_cast<char*>(malloc(allocatedSize));  // NOLINT
             mStorage.push_back(mCurrentPtr);
             base = mCurrentPtr;
             mCurrentOffset = size;
@@ -59,7 +59,7 @@ public:
 
     ~StringManager() {
         for(auto storage : mStorage)
-            free(storage);
+            free(storage);  // NOLINT
     }
 
     static StringManager& get() {

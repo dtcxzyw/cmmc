@@ -25,7 +25,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 uint32_t TACSubTarget::getPhysicalRegisterCount(uint32_t) const {
     return std::numeric_limits<uint32_t>::max();

@@ -39,7 +39,8 @@ public:
                     builder.makeOp<UnreachableInst>();
                     modified = true;
                     break;
-                } else if(inst->getInstID() != InstructionID::Call && inst->canbeOperand()) {
+                }
+                if(inst->getInstID() != InstructionID::Call && inst->canbeOperand()) {
                     bool hasUndef = false;
                     for(auto operand : inst->operands()) {
                         if(blockArgMap.queryRoot(operand)->isUndefined()) {
@@ -59,7 +60,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "UndefPropagation"sv;
     }
 };

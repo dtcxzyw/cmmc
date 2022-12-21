@@ -53,6 +53,7 @@ static bool removeUnusedLabels(GMIRFunction& func) {
                                      [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
                            instruction);
             }
+            assert(lastAvailable);
             lastAvailable->instructions().insert(lastAvailable->instructions().cend(), block->instructions().cbegin(),
                                                  block->instructions().cend());
             lastAvailable->usedStackObjects().merge(block->usedStackObjects());

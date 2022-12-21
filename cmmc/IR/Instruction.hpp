@@ -109,22 +109,22 @@ public:
     Instruction(InstructionID instID, const Type* valueType, Deque<Value*> operands)
         : Value{ valueType }, mInstID{ instID }, mOperands{ std::move(operands) } {}
 
-    InstructionID getInstID() const noexcept {
+    [[nodiscard]] InstructionID getInstID() const noexcept {
         return mInstID;
     }
     void setBlock(Block* block) noexcept {
         mBlock = block;
     }
-    Block* getBlock() const noexcept final {
+    [[nodiscard]] Block* getBlock() const noexcept final {
         return mBlock;
     }
     Deque<Value*>& operands() noexcept {
         return mOperands;
     }
-    const Deque<Value*>& operands() const noexcept {
+    [[nodiscard]] const Deque<Value*>& operands() const noexcept {
         return mOperands;
     }
-    Value* getOperand(uint32_t idx) const noexcept {
+    [[nodiscard]] Value* getOperand(uint32_t idx) const noexcept {
         return mOperands[idx];
     }
 
@@ -132,24 +132,24 @@ public:
     bool hasOperand(Value* operand) const noexcept;
 
     void setLabel(String label) {
-        mLabel = std::move(label);
+        mLabel = label;
     }
-    const String& getLabel() const noexcept {
+    [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
-    bool isInstruction() const noexcept final {
+    [[nodiscard]] bool isInstruction() const noexcept final {
         return true;
     }
 
     virtual bool verify(std::ostream& out) const;
 
-    virtual void dump(std::ostream& out) const = 0;
     void dumpAsOperand(std::ostream& out) const final;
 
     void dumpWithNoOperand(std::ostream& out) const;
     void dumpBinary(std::ostream& out) const;
     void dumpUnary(std::ostream& out) const;
 
+    // NOLINTNEXTLINE
 #define CMMC_GET_INST_CATEGORY(KIND)                                                       \
     bool is##KIND() const noexcept {                                                       \
         return InstructionID::KIND##Begin < mInstID && mInstID < InstructionID::KIND##End; \
@@ -164,12 +164,12 @@ public:
 
 #undef CMMC_GET_INST_CATEGORY
 
-    bool isBranch() const noexcept {
+    [[nodiscard]] bool isBranch() const noexcept {
         return mInstID == InstructionID::Branch || mInstID == InstructionID::ConditionalBranch;
     }
-    bool canbeOperand() const noexcept;
+    [[nodiscard]] bool canbeOperand() const noexcept;
 
-    virtual Instruction* clone() const = 0;
+    [[nodiscard]] virtual Instruction* clone() const = 0;
     virtual bool isEqual(const Instruction* rhs) const;  // only check metadata
 };
 
@@ -178,7 +178,7 @@ public:
     BinaryInst(InstructionID instID, const Type* valueType, Value* lhs, Value* rhs)
         : Instruction{ instID, valueType, { lhs, rhs } } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
@@ -229,9 +229,9 @@ public:
     CompareInst(InstructionID instID, CompareOp compare, Value* lhs, Value* rhs)
         : Instruction{ instID, IntegerType::getBoolean(), { lhs, rhs } }, mCompare{ compare } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
     bool isEqual(const Instruction* rhs) const override;
-    CompareOp getOp() const noexcept {
+    [[nodiscard]] CompareOp getOp() const noexcept {
         return mCompare;
     }
     void setOp(CompareOp op) noexcept {
@@ -243,14 +243,14 @@ class UnaryInst final : public Instruction {
 public:
     UnaryInst(InstructionID instID, const Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class CastInst final : public Instruction {
 public:
     CastInst(InstructionID instID, const Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class LoadInst final : public Instruction {
@@ -258,7 +258,7 @@ public:
     explicit LoadInst(Value* address)
         : Instruction{ InstructionID::Load, address->getType()->as<PointerType>()->getPointee(), { address } } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
     bool verify(std::ostream& out) const override;
 };
 
@@ -268,14 +268,14 @@ public:
         assert(address->getType()->as<PointerType>()->getPointee()->isSame(value->getType()));
     }
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
     bool verify(std::ostream& out) const override;
 };
 
 class BlockArgument;
 
 class BranchTarget final {
-    Block* mTarget;
+    Block* mTarget{ nullptr };
     Vector<Value*> mArgs;
 
     friend class ConditionalBranchInst;
@@ -284,17 +284,17 @@ class BranchTarget final {
     }
 
 public:
-    BranchTarget() noexcept : mTarget{ nullptr } {}
+    BranchTarget() noexcept = default;
     template <typename... Args>
-    explicit BranchTarget(Block* target, Args... args) : mTarget{ target }, mArgs{ args... } {}
+    explicit BranchTarget(Block* target, Args&&... args) : mTarget{ target }, mArgs{ std::forward<Args>(args)... } {}
 
     void resetTarget(Block* target) noexcept {
         mTarget = target;
     }
-    Block* getTarget() const noexcept {
+    [[nodiscard]] Block* getTarget() const noexcept {
         return mTarget;
     }
-    const Vector<Value*>& getArgs() const noexcept {
+    [[nodiscard]] const Vector<Value*>& getArgs() const noexcept {
         return mArgs;
     }
     void dump(std::ostream& out) const;
@@ -311,7 +311,7 @@ public:
     explicit ConditionalBranchInst(Value* condition, double branchProb, BranchTarget trueTarget, BranchTarget falseTarget);
 
     void updateBranchProb(double branchProb);
-    double getBranchProb() const noexcept {
+    [[nodiscard]] double getBranchProb() const noexcept {
         return mBranchProb;
     }
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
@@ -320,10 +320,10 @@ public:
     bool verify(std::ostream& out) const override;
     bool isEqual(const Instruction* rhs) const override;
 
-    const BranchTarget& getTrueTarget() const noexcept {
+    [[nodiscard]] const BranchTarget& getTrueTarget() const noexcept {
         return mTrueTarget;
     }
-    const BranchTarget& getFalseTarget() const noexcept {
+    [[nodiscard]] const BranchTarget& getFalseTarget() const noexcept {
         return mFalseTarget;
     }
     BranchTarget& getTrueTarget() noexcept {
@@ -332,7 +332,7 @@ public:
     BranchTarget& getFalseTarget() noexcept {
         return mFalseTarget;
     }
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class ReturnInst final : public Instruction {
@@ -343,14 +343,14 @@ public:
     }
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class UnreachableInst final : public Instruction {
 public:
     explicit UnreachableInst() : Instruction{ InstructionID::Unreachable, VoidType::get(), {} } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class FunctionCallInst final : public Instruction {
@@ -362,7 +362,7 @@ public:
         list.push_back(callee);
     }
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class SelectInst final : public Instruction {
@@ -373,7 +373,7 @@ public:
     }
 
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class StackAllocInst final : public Instruction {
@@ -382,7 +382,7 @@ public:
     explicit StackAllocInst(const Type* type) : Instruction{ InstructionID::Alloc, PointerType::get(type), {} } {}
 
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class StackFreeInst final : public Instruction {
@@ -392,14 +392,14 @@ public:
     }
 
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class FMAInst final : public Instruction {
 public:
     explicit FMAInst(Value* x, Value* y, Value* z) : Instruction{ InstructionID::FFma, x->getType(), { x, y, z } } {}
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class GetElementPtrInst final : public Instruction {
@@ -412,8 +412,8 @@ public:
         list.push_back(base);
     }
     void dump(std::ostream& out) const override;
-    std::pair<size_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
-    Instruction* clone() const override;
+    [[nodiscard]] std::pair<size_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class PtrCastInst final : public Instruction {
@@ -423,7 +423,7 @@ public:
         assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class PtrToIntInst final : public Instruction {
@@ -433,7 +433,7 @@ public:
         assert(targetType->isInteger());
     }
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 class IntToPtrInst final : public Instruction {
@@ -443,7 +443,7 @@ public:
         assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;
-    Instruction* clone() const override;
+    [[nodiscard]] Instruction* clone() const override;
 };
 
 CMMC_NAMESPACE_END

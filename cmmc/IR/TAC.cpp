@@ -35,7 +35,7 @@ CMMC_NAMESPACE_BEGIN
 struct UndefinedTACIdentifier final {
     String identifier;
     friend void operator<<(std::ostream& out, const UndefinedTACIdentifier& err) {
-        out << "Undefined identifier \""sv << err.identifier << '"' << std::endl;
+        out << R"(Undefined identifier ")" << err.identifier << '"' << std::endl;
     }
 };
 

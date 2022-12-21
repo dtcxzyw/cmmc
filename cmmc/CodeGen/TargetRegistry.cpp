@@ -27,23 +27,23 @@ void TargetRegistry::addTarget(const TargetBuilder& targetBuilder) {
     mTargets.emplace_back(targetBuilder);
 }
 
-StringOpt target;
-StringOpt targetMachine;
+StringOpt targetName;     // NOLINT
+StringOpt targetMachine;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
-target.withDefault("mips").setName("target", 't').setDesc("target ISA");
+targetName.withDefault("mips").setName("target", 't').setDesc("target ISA");
 targetMachine.withDefault("emulator").setName("machine", 'm').setDesc("target machine");
 CMMC_INIT_OPTIONS_END
 
 std::unique_ptr<Target> TargetRegistry::selectTarget() const {
-    const auto& targetName = target.get();
+    const auto& target = targetName.get();
     for(auto& builder : mTargets) {
-        if(builder.first == targetName) {
+        if(builder.first == target) {
             return builder.second();
         }
     }
 
-    DiagnosticsContext::get().attach<UnrecognizedInput>("target", targetName).reportFatal();
+    DiagnosticsContext::get().attach<UnrecognizedInput>("target", target).reportFatal();
 }
 
 CMMC_NAMESPACE_END

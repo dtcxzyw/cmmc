@@ -30,7 +30,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class NoSideEffectEliminate final : public TransformPass<Function> {
-    bool eliminateBlock(Block* block) const {
+    static bool eliminateBlock(Block* block) {
         std::unordered_set<Instruction*> used;
         std::queue<Instruction*> q;
         // collect side effect sinks (terminators/stores/funcs)
@@ -92,7 +92,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "NoSideEffectEliminate"sv;
     }
 };

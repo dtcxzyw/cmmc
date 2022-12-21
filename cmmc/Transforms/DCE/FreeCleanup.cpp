@@ -34,15 +34,15 @@ public:
                 if(inst->getInstID() == InstructionID::Free) {
                     modified = true;
                     return true;
-                } else
-                    return false;
+                }
+                return false;
             });
         }
 
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "FreeCleanup"sv;
     }
 };

@@ -37,11 +37,11 @@ constexpr Operand sp{ RISCVAddressSpace::GPR, 2U };
 
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 class RISCVSimpleSubTarget final : public SimpleSubTarget {
 public:
-    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
+    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
         switch(addressSpace) {
             case RISCVAddressSpace::FPR_D:
                 return 32;
@@ -53,7 +53,7 @@ public:
                 reportUnreachable();
         }
     }
-    bool inlineMemOp(size_t size) const override {
+    [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
 };
@@ -139,17 +139,17 @@ Operand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) c
 String RISCVLoweringInfo::getOperand(const Operand& operand) const {
     switch(operand.addressSpace) {
         case RISCVAddressSpace::Constant:
-            return mConstant.withID(operand.id);
+            return mConstant.withID(static_cast<int32_t>(operand.id));
         case RISCVAddressSpace::Stack:
-            return mStack.withID(operand.id);
+            return mStack.withID(static_cast<int32_t>(operand.id));
         case RISCVAddressSpace::VirtualReg:
-            return mVReg.withID(operand.id);
+            return mVReg.withID(static_cast<int32_t>(operand.id));
         case RISCVAddressSpace::GPR:
             return String::get(getRISCVTextualName(operand.id));
         case RISCVAddressSpace::FPR_S:
-            return mFPR.withID(operand.id);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         case RISCVAddressSpace::FPR_D:
-            return mFPR.withID(operand.id);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         default:
             return mUnused;
     }
@@ -227,20 +227,20 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
         const auto ret = inst->getType();
         if(ret->isVoid()) {
             return;
-        } else {
-            const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
-            Operand val = unusedOperand;
-            if(ret->isFloatingPoint()) {
-                // $f0
-                val = Operand{ ret->getFixedSize() == 4 ? RISCVAddressSpace::FPR_S : RISCVAddressSpace::FPR_D, 0U };
-            } else {
-                assert(ret->getFixedSize() == 4);
-                val = a0;
-            }
-
-            ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
-            ctx.addOperand(inst, retReg);
         }
+        const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
+        Operand val = unusedOperand;
+        if(ret->isFloatingPoint()) {
+            // $f0
+            val = Operand{ ret->getFixedSize() == 4 ? RISCVAddressSpace::FPR_S : RISCVAddressSpace::FPR_D, 0U };
+        } else {
+            assert(ret->getFixedSize() == 4);
+            val = a0;
+        }
+
+        ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
+        ctx.addOperand(inst, retReg);
+
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
@@ -311,23 +311,22 @@ Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
 uint32_t RISCVRegisterUsage::getRegisterClass(const Type* type) const {
     if(type->isFloatingPoint()) {
         return RISCVAddressSpace::FPR_D;
-    } else {
-        return RISCVAddressSpace::GPR;
     }
+    return RISCVAddressSpace::GPR;
 }
 bool RISCVTarget::isCallerSaved(const Operand& op) const noexcept {
     if(op.addressSpace == RISCVAddressSpace::GPR) {
         // $t0-$t6
         return (5 <= op.id && op.id <= 7) || (28 <= op.id && op.id <= 31);
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 bool RISCVTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == RISCVAddressSpace::GPR) {
         // $s0-$s11
         return (8 <= op.id && op.id <= 9) || (18 <= op.id && op.id <= 27);
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 
 void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {

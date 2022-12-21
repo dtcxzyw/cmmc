@@ -22,12 +22,12 @@ CMMC_NAMESPACE_BEGIN
 class SubTarget {
 public:
     virtual ~SubTarget() = default;
-    virtual uint32_t issueWidth() const noexcept = 0;
-    virtual uint32_t mispredictPenalty() const noexcept = 0;
-    virtual uint32_t microOpBufferSize() const noexcept = 0;
-    virtual uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const = 0;
-    virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
-    virtual bool inlineMemOp(size_t size) const = 0;
+    [[nodiscard]] virtual uint32_t issueWidth() const noexcept = 0;
+    [[nodiscard]] virtual uint32_t mispredictPenalty() const noexcept = 0;
+    [[nodiscard]] virtual uint32_t microOpBufferSize() const noexcept = 0;
+    [[nodiscard]] virtual uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const = 0;
+    [[nodiscard]] virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
+    [[nodiscard]] virtual bool inlineMemOp(size_t size) const = 0;
     virtual void peepholeOpt(GMIRFunction& func) const {
         CMMC_UNUSED(func);
     }
@@ -39,10 +39,10 @@ public:
 
 class SimpleSubTarget : public SubTarget {
 public:
-    uint32_t issueWidth() const noexcept final;
-    uint32_t microOpBufferSize() const noexcept final;
-    uint32_t mispredictPenalty() const noexcept final;
-    uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const final;
+    [[nodiscard]] uint32_t issueWidth() const noexcept final;
+    [[nodiscard]] uint32_t microOpBufferSize() const noexcept final;
+    [[nodiscard]] uint32_t mispredictPenalty() const noexcept final;
+    [[nodiscard]] uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const final;
 };
 
 CMMC_NAMESPACE_END

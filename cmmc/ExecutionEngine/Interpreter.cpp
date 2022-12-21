@@ -43,7 +43,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag step;
+static Flag step;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 step.setName("step", 'S').setDesc("run interpreter by step");
@@ -99,12 +99,12 @@ class MemoryContext final {
     size_t mLoadMemFootprint = 0;
     size_t mStoreMemFootprint = 0;
 
-    void extendTo(std::vector<ByteStorage>& storage, size_t size) {
+    static void extendTo(std::vector<ByteStorage>& storage, size_t size) {
         storage.reserve(size);
         while(storage.size() < size)
             storage.push_back(invalidByteStorage);
     }
-    uintptr_t paddingTo(std::vector<ByteStorage>& storage, size_t base, size_t alignment) {
+    static uintptr_t paddingTo(std::vector<ByteStorage>& storage, size_t base, size_t alignment) {
         const auto pos = (base / alignment + 1) * alignment;
         extendTo(storage, pos);
         for(size_t idx = base; idx != pos; ++idx) {
@@ -112,13 +112,13 @@ class MemoryContext final {
         }
         return pos;
     }
-    void setTag(std::vector<ByteStorage>& storage, size_t base, size_t size, ByteState tag) {
+    static void setTag(std::vector<ByteStorage>& storage, size_t base, size_t size, ByteState tag) {
         extendTo(storage, base + size);
         for(size_t idx = 0; idx != size; ++idx)
             storage[base + idx].first = tag;
     }
 
-    void removeTag(std::vector<ByteStorage>& storage, size_t base, size_t size, ByteState tag) {
+    static void removeTag(std::vector<ByteStorage>& storage, size_t base, size_t size, ByteState tag) {
         extendTo(storage, base + size);
         for(size_t idx = 0; idx != size; ++idx)
             storage[base + idx].first &= ~tag;
@@ -205,16 +205,14 @@ public:
     std::byte load(uintptr_t ptr) {
         if(ptr >= globalOffset)
             return load(mGlobalStorage, ptr - globalOffset);
-        else {
-            return load(mStackStorage, ptr - stackOffset);
-        }
+
+        return load(mStackStorage, ptr - stackOffset);
     }
     void store(uintptr_t ptr, std::byte val) {
         if(ptr >= globalOffset)
             return store(mGlobalStorage, ptr - globalOffset, val);
-        else {
-            return store(mStackStorage, ptr - stackOffset, val);
-        }
+
+        return store(mStackStorage, ptr - stackOffset, val);
     }
 
     OperandStorage loadValue(uintptr_t ptr, const Type* type) {
@@ -232,26 +230,28 @@ public:
             for(uint32_t idx = 0; idx < size; ++idx)
                 base[idx] = load(ptr + idx);
             return ConstantInteger{ type, static_cast<intmax_t>(val), ExplicitConstruct{} };
-        } else if(type->isFloatingPoint()) {
-            std::byte storage[sizeof(double)];
+        }
+        if(type->isFloatingPoint()) {
+            alignas(alignof(double)) std::array<std::byte, sizeof(double)> storage;
             const auto size = type->getFixedSize();
             for(uint32_t idx = 0; idx < size; ++idx)
                 storage[idx] = load(ptr + idx);
             double val = 0.0;
             if(size == sizeof(float)) {
-                val = *reinterpret_cast<float*>(storage);
+                val = *reinterpret_cast<float*>(storage.data());
             } else {
-                val = *reinterpret_cast<double*>(storage);
+                val = *reinterpret_cast<double*>(storage.data());
             }
             return ConstantFloatingPoint{ type, val };
-        } else if(type->isPointer()) {
+        }
+        if(type->isPointer()) {
             uintptr_t val;
             const auto base = reinterpret_cast<std::byte*>(&val);
             for(uint32_t idx = 0; idx < sizeof(uintptr_t); ++idx)
                 base[idx] = load(ptr + idx);
             return val;
-        } else
-            reportNotImplemented();
+        }
+        reportNotImplemented();
     }
 
     template <typename T>
@@ -272,10 +272,10 @@ public:
                 base[idx] = load(ptr + idx);
             return static_cast<T>(val);
         } else if constexpr(std::is_floating_point_v<T>) {
-            alignas(alignof(double)) std::byte storage[sizeof(double)];
+            alignas(alignof(double)) std::array<std::byte, sizeof(double)> storage;
             for(uint32_t idx = 0; idx < size; ++idx)
                 storage[idx] = load(ptr + idx);
-            return *reinterpret_cast<T*>(storage);
+            return *reinterpret_cast<T*>(storage.data());
         } else {
             static_assert(FalseType<T>::value, "unsupported type");
         }
@@ -307,12 +307,12 @@ public:
                 store(ptr + idx, base[idx]);
         } else if(type->isFloatingPoint()) {
             const double val = value->as<ConstantFloatingPoint>()->getValue();
-            std::byte storage[sizeof(double)];
+            alignas(alignof(double)) std::array<std::byte, sizeof(double)> storage;
             const auto size = type->getFixedSize();
             if(size == sizeof(float)) {
-                *reinterpret_cast<float*>(storage) = static_cast<float>(val);
+                *reinterpret_cast<float*>(storage.data()) = static_cast<float>(val);
             } else {
-                *reinterpret_cast<double*>(storage) = val;
+                *reinterpret_cast<double*>(storage.data()) = val;
             }
 
             for(uint32_t idx = 0; idx < size; ++idx)
@@ -350,12 +350,12 @@ public:
                              },
                              [&](const ConstantFloatingPoint& x) {
                                  const auto val = x.getValue();
-                                 std::byte storage[sizeof(double)];
+                                 alignas(alignof(double)) std::array<std::byte, sizeof(double)> storage;
                                  const auto size = type->getFixedSize();
                                  if(size == sizeof(float)) {
-                                     *reinterpret_cast<float*>(storage) = static_cast<float>(val);
+                                     *reinterpret_cast<float*>(storage.data()) = static_cast<float>(val);
                                  } else {
-                                     *reinterpret_cast<double*>(storage) = val;
+                                     *reinterpret_cast<double*>(storage.data()) = val;
                                  }
 
                                  for(uint32_t idx = 0; idx < size; ++idx)
@@ -385,13 +385,13 @@ public:
         const auto size = sizeof(T);
         if constexpr(std::is_integral_v<T>) {
             static_assert(sizeof(uintmax_t) >= 8);
-            const uintmax_t val = value;
+            const auto val = static_cast<uintmax_t>(value);
             const auto base = reinterpret_cast<const std::byte*>(&val);
             for(uint32_t idx = 0; idx < size; ++idx)
                 store(ptr + idx, base[idx]);
         } else if constexpr(std::is_floating_point_v<T>) {
-            alignas(alignof(double)) std::byte storage[sizeof(double)];
-            *reinterpret_cast<T*>(storage) = value;
+            alignas(alignof(double)) std::array<std::byte, sizeof(double)> storage;
+            *reinterpret_cast<T*>(storage.data()) = value;
 
             for(uint32_t idx = 0; idx < size; ++idx)
                 store(ptr + idx, storage[idx]);
@@ -449,18 +449,22 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
     const auto fromConstant = [](ConstantValue* val) -> OperandStorage {
         if(auto intVal = dynamic_cast<ConstantInteger*>(val)) {
             return *intVal;
-        } else if(auto fpVal = dynamic_cast<ConstantFloatingPoint*>(val)) {
+        }
+        if(auto fpVal = dynamic_cast<ConstantFloatingPoint*>(val)) {
             return *fpVal;
-        } else if(auto offset = dynamic_cast<ConstantOffset*>(val)) {
+        }
+        if(auto offset = dynamic_cast<ConstantOffset*>(val)) {
             return offset;
-        } else if(auto undefined = dynamic_cast<UndefinedValue*>(val)) {
+        }
+        if(auto undefined = dynamic_cast<UndefinedValue*>(val)) {
             const auto type = undefined->getType();
             if(type->isInteger()) {
                 return ConstantInteger{ type, 0x7CCC'CCCC'CCCC'CCCCLL, ExplicitConstruct{} };
-            } else if(type->isFloatingPoint()) {
+            }
+            if(type->isFloatingPoint()) {
                 return ConstantFloatingPoint{ type, std::numeric_limits<double>::quiet_NaN() };
-            } else
-                reportUnreachable();
+            }
+            reportUnreachable();
         } else
             reportUnreachable();
     };
@@ -516,14 +520,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
     auto reportStatistics = [&] {
         auto& out = std::cerr;
         const auto end = Clock::now();
-        out << "{\"time\": "sv << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-        out << ",\"inst\": "sv << instructionCount;
-        out << ",\"branch\": "sv << branchCount;
-        out << ",\"call\": "sv << callCount;
-        out << ",\"load\": "sv << loadCount;
-        out << ",\"store\": "sv << storeCount;
-        out << ",\"load_bytes\": "sv << memCtx.getTotalLoad();
-        out << ",\"store_bytes\": "sv << memCtx.getTotalStore() << '}' << std::endl;
+        out << R"({"time": )" << std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        out << R"(,"inst": )" << instructionCount;
+        out << R"(,"branch": )" << branchCount;
+        out << R"(,"call": )" << callCount;
+        out << R"(,"load": )" << loadCount;
+        out << R"(,"store": )" << storeCount;
+        out << R"(,"load_bytes": )" << memCtx.getTotalLoad();
+        out << R"(,"store_bytes": )" << memCtx.getTotalStore() << '}' << std::endl;
     };
 
     std::vector<OperandStorage> operands;
@@ -553,9 +557,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 operands.push_back(fromConstant(operand->as<ConstantValue>()));
             else if(operand->isGlobal()) {
                 if(operand->getType()->isFunction()) {
-                    operands.push_back(operand->as<Function>());
+                    operands.emplace_back(operand->as<Function>());
                 } else {
-                    operands.push_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
+                    operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
                 }
             } else if(operand->getBlock()) {
                 assert(currentExecCtx.operands.count(operand));
@@ -623,7 +627,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 if(execCtx.empty()) {
                     reportStatistics();
                     return operands.empty() ? nullptr : toConstant(operands[0]);
-                } else if(!operands.empty()) {
+                }
+                if(!operands.empty()) {
                     execCtx.back().operands.emplace(caller, operands[0]);
                 }
 
@@ -641,11 +646,11 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 } else if(getUInt(0)) {
                     targetBlock = branch->getTrueTarget().getTarget();
                     operands.erase(operands.begin());
-                    operands.erase(operands.begin() + targetBlock->args().size(), operands.end());
+                    operands.erase(operands.begin() + static_cast<intptr_t>(targetBlock->args().size()), operands.end());
                 } else {
                     targetBlock = branch->getFalseTarget().getTarget();
                     operands.erase(operands.begin());
-                    operands.erase(operands.begin(), operands.end() - targetBlock->args().size());
+                    operands.erase(operands.begin(), operands.end() - static_cast<intptr_t>(targetBlock->args().size()));
                 }
 
                 currentExecCtx.operands.clear();
@@ -842,7 +847,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             baseType = baseType->as<ArrayType>()->getElementType();
                         } else
                             reportUnreachable();
-                        basePtr += getInt(idx) * baseType->getSize(dataLayout);
+                        basePtr += static_cast<uintptr_t>(getInt(idx)) * baseType->getSize(dataLayout);
                     } else if(auto offset = dynamic_cast<ConstantOffset*>(operand)) {
                         const auto structType = baseType->as<StructType>();
                         baseType = structType->getFieldType(offset);
@@ -914,17 +919,17 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 for(int idx = 0; idx < size; ++idx) {
                                     int val;
                                     ioCtx.stdinStream.get("%d", val);
-                                    memCtx.storeValue(ptr + idx * sizeof(int), val);
+                                    memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(int), val);
                                 }
 
-                                addUInt(size);
+                                addUInt(static_cast<uintmax_t>(size));
                             } else if(symbol == "putarray"sv) {
                                 const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
                                 ioCtx.stdoutStream.put("%d:", size);
                                 for(int idx = 0; idx < size; ++idx) {
-                                    const auto val = memCtx.loadValue<int>(ptr + idx * sizeof(int));
+                                    const auto val = memCtx.loadValue<int>(ptr + static_cast<uint32_t>(idx) * sizeof(int));
                                     ioCtx.stdoutStream.put(" %d", val);
                                 }
                                 ioCtx.stdoutStream.put("\n");
@@ -943,17 +948,17 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 for(int idx = 0; idx < size; ++idx) {
                                     float val;
                                     ioCtx.stdinStream.get("%a", val);
-                                    memCtx.storeValue(ptr + idx * sizeof(float), val);
+                                    memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(float), val);
                                 }
 
-                                addUInt(size);
+                                addUInt(static_cast<uintmax_t>(size));
                             } else if(symbol == "putfarray"sv) {
                                 const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
                                 ioCtx.stdoutStream.put("%d:", size);
                                 for(int idx = 0; idx < size; ++idx) {
-                                    const auto val = memCtx.loadValue<float>(ptr + idx * sizeof(float));
+                                    const auto val = memCtx.loadValue<float>(ptr + static_cast<uint32_t>(idx) * sizeof(float));
                                     ioCtx.stdoutStream.put(" %a", val);
                                 }
                                 ioCtx.stdoutStream.put("\n");
@@ -1010,23 +1015,23 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 }
 
 OutputStream::OutputStream(const std::string& path) {
-    mFile = fopen(path.c_str(), "w");
+    mFile = fopen(path.c_str(), "w");  // NOLINT
     if(!mFile)
         DiagnosticsContext::get().attach<Reason>("Failed to open output file").reportFatal();
 }
 
 OutputStream::~OutputStream() {
-    fclose(mFile);
+    fclose(mFile);  // NOLINT
 }
 
 InputStream::InputStream(const std::string& path) {
-    mFile = fopen(path.c_str(), "r");
+    mFile = fopen(path.c_str(), "r");  // NOLINT
     if(!mFile)
         DiagnosticsContext::get().attach<Reason>("Failed to open input file").reportFatal();
 }
 
 InputStream::~InputStream() {
-    fclose(mFile);
+    fclose(mFile);  // NOLINT
 }
 
 CMMC_NAMESPACE_END

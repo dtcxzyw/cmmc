@@ -54,6 +54,7 @@ constexpr Arena::Source getArenaSource(ArenaSourceTrait<T*>) {
     return getArenaSource(ArenaSourceTrait<T>{});
 }
 
+// NOLINTNEXTLINE
 #define CMMC_ARENA_TRAIT(TYPE, SOURCE)                               \
     constexpr Arena::Source getArenaSource(ArenaSourceTrait<TYPE>) { \
         return Arena::Source::SOURCE;                                \
@@ -68,7 +69,7 @@ template <typename T, typename... Args>
 T* make(Args&&... args) {
     const auto arena = Arena::get(getArenaSource(ArenaSourceTrait<T>{}));
     auto ptr = arena->allocate(sizeof(T), alignof(T));
-    return new(ptr) T{ std::forward<Args>(args)... };
+    return new(ptr) T{ std::forward<Args>(args)... };  // NOLINT
 }
 
 template <Arena::Source source>
@@ -88,6 +89,7 @@ public:
         using value_type = T;
 
         [[nodiscard]] constexpr T* allocate(size_t n) {
+            // NOLINTNEXTLINE(bugprone-sizeof-expression)
             return static_cast<T*>(mArena->allocate(n * sizeof(T), alignof(T)));
         }
         void deallocate(T* p, size_t n) {

@@ -31,7 +31,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class ExtGEPCombine final : public TransformPass<Function> {
-    bool runBlock(Block& block, const BlockArgumentAnalysisResult& blockArgMap, const Type* indexType) const {
+    static bool runBlock(Block& block, const BlockArgumentAnalysisResult& blockArgMap, const Type* indexType) {
         bool modified = false;
         for(auto inst : block.instructions()) {
             if(inst->getInstID() != InstructionID::GetElementPtr)
@@ -41,7 +41,7 @@ class ExtGEPCombine final : public TransformPass<Function> {
                 if(operand->getType()->isInteger()) {
                     Value* idx;
                     if(sext(any(idx))(MatchContext<Value>{ blockArgMap.queryRoot(operand), nullptr })) {
-                        operand = idx;
+                        operand = idx;  // NOLINT(clang-analyzer-core.uninitialized.Assign)
                         modified = true;
                     }
                     intmax_t val;
@@ -73,7 +73,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "ExtGEPCombine"sv;
     }
 };

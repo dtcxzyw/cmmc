@@ -23,7 +23,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag doNotCheckUninitialized;
+static Flag doNotCheckUninitialized;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 doNotCheckUninitialized.setName("do-not-check-uninitialized-value", 'U').setDesc("don't check uninitialized values");
@@ -48,7 +48,7 @@ class UninitializedCheck final : public TransformPass<Function> {
         return false;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "UninitializedCheck"sv;
     }
 };

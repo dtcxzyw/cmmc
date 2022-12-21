@@ -36,11 +36,11 @@ constexpr Operand sp{ ARMAddressSpace::GPR, 13U };
 
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 class ARMSimpleSubTarget final : public SimpleSubTarget {
 public:
-    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
+    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
         switch(addressSpace) {
             case ARMAddressSpace::GPR:
                 return 13;
@@ -48,7 +48,7 @@ public:
                 reportUnreachable();
         }
     }
-    bool inlineMemOp(size_t size) const override {
+    [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
 };
@@ -133,17 +133,17 @@ Operand ARMLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
 String ARMLoweringInfo::getOperand(const Operand& operand) const {
     switch(operand.addressSpace) {
         case ARMAddressSpace::Constant:
-            return mConstant.withID(operand.id);
+            return mConstant.withID(static_cast<int32_t>(operand.id));
         case ARMAddressSpace::Stack:
-            return mStack.withID(operand.id);
+            return mStack.withID(static_cast<int32_t>(operand.id));
         case ARMAddressSpace::VirtualReg:
-            return mVReg.withID(operand.id);
+            return mVReg.withID(static_cast<int32_t>(operand.id));
         case ARMAddressSpace::GPR:
             return String::get(getARMTextualName(operand.id));
         case ARMAddressSpace::FPR_S:
-            return mFPR.withID(operand.id);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         case ARMAddressSpace::FPR_D:
-            return mFPR.withID(operand.id * 2);
+            return mFPR.withID(static_cast<int32_t>(operand.id) * 2);
         default:
             return mUnused;
     }
@@ -221,20 +221,20 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto ret = inst->getType();
         if(ret->isVoid()) {
             return;
-        } else {
-            const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
-            Operand val = unusedOperand;
-            if(ret->isFloatingPoint()) {
-                // $f0
-                val = Operand{ ret->getFixedSize() == 4 ? ARMAddressSpace::FPR_S : ARMAddressSpace::FPR_D, 0U };
-            } else {
-                assert(ret->getFixedSize() == 4);
-                // val = v0;
-            }
-
-            ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
-            ctx.addOperand(inst, retReg);
         }
+        const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
+        Operand val = unusedOperand;
+        if(ret->isFloatingPoint()) {
+            // $f0
+            val = Operand{ ret->getFixedSize() == 4 ? ARMAddressSpace::FPR_S : ARMAddressSpace::FPR_D, 0U };
+        } else {
+            assert(ret->getFixedSize() == 4);
+            // val = v0;
+        }
+
+        ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
+        ctx.addOperand(inst, retReg);
+
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
@@ -293,23 +293,22 @@ uint32_t ARMRegisterUsage::getRegisterClass(const Type* type) const {
     if(type->isFloatingPoint()) {
         // TODO: double
         return ARMAddressSpace::FPR_S;
-    } else {
-        return ARMAddressSpace::GPR;
     }
+    return ARMAddressSpace::GPR;
 }
 bool ARMTarget::isCallerSaved(const Operand& op) const noexcept {
     if(op.addressSpace == ARMAddressSpace::GPR) {
         // $t0-$t9
         return (8 <= op.id && op.id <= 15) || (24 <= op.id && op.id <= 25);
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 bool ARMTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == ARMAddressSpace::GPR) {
         // $s0-$s7
         return 16 <= op.id && op.id <= 23;
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 
 void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {

@@ -42,14 +42,14 @@ intmax_t ConstantInteger::getSignExtended() const noexcept {
         return mValue;
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
     const auto low = static_cast<uintmax_t>(mValue) & mask;
-    const auto high = (mValue & (1ULL << (bits - 1))) ? ~mask : 0;
-    return high | low;
+    const auto high = (static_cast<uintmax_t>(mValue) & (1ULL << (bits - 1))) ? ~mask : 0;
+    return static_cast<intmax_t>(high | low);
 }
 
 uintmax_t ConstantInteger::getZeroExtended() const noexcept {
     const auto bits = getType()->as<IntegerType>()->getBitwidth();
     if(bits == std::numeric_limits<uintmax_t>::digits)
-        return mValue;
+        return static_cast<uintmax_t>(mValue);
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
     return static_cast<uintmax_t>(mValue) & mask;
 }

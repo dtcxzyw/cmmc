@@ -58,6 +58,7 @@ write:
 )";
 
 std::string_view getMIPSTextualName(uint32_t idx) noexcept {
+    // NOLINTNEXTLINE
     constexpr std::string_view name[] = {
         "zero", "at", "v0", "v1", "a0", "a1", "a2", "a3",  //
         "t0",   "t1", "t2", "t3", "t4", "t5", "t6", "t7",  //
@@ -331,7 +332,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
     out << '\n';
 }
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
     bool hasDelaySlot = false, hasSpimRuntime = false;

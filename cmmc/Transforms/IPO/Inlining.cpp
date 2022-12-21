@@ -43,12 +43,12 @@
 CMMC_NAMESPACE_BEGIN
 
 class FuncInlining final : public TransformPass<Function> {
-    bool shouldInline(Function& func) const {
+    static bool shouldInline(Function& func) {
         // TODO: use better heuristic?
         return func.attr().hasAttr(FunctionAttribute::NoRecurse);
     }
 
-    void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) const {
+    static void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
         const auto callRet = *call;
@@ -115,7 +115,7 @@ class FuncInlining final : public TransformPass<Function> {
         }
     }
 
-    bool tryInline(Function& func) const {
+    static bool tryInline(Function& func) {
         for(auto block : func.blocks()) {
             auto& insts = block->instructions();
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
@@ -144,7 +144,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "FuncInlining"sv;
     }
 };

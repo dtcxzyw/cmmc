@@ -287,7 +287,7 @@ void GMIRModule::dump(std::ostream& out) const {
 
 Operand VirtualRegPool::allocate(const Type* type) {
     const auto id = static_cast<uint32_t>(mAllocations.size());
-    mAllocations.push_back({ type, nullptr });
+    mAllocations.emplace_back(type, nullptr);
     return Operand{ mAddressSpace, id };
 }
 const Type* VirtualRegPool::getType(const Operand& operand) const {

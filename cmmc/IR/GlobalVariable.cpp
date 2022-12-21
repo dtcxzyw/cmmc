@@ -24,6 +24,7 @@ void GlobalVariable::dump(std::ostream& out) const {
     out << " @"sv << getSymbol();
     if(!mAttr.empty()) {
         out << " { "sv;
+        // NOLINTNEXTLINE
 #define HANDLE_ATTR(NAME)                            \
     if(mAttr.hasAttr(GlobalVariableAttribute::NAME)) \
     out << #NAME " "sv

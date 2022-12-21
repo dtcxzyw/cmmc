@@ -21,7 +21,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LabelAllocator final {
-    std::unordered_map<String, uint32_t, StringHasher> mBase;
+    std::unordered_map<String, int32_t, StringHasher> mBase;
 
 public:
     String allocate(const String& base);

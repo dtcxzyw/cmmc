@@ -39,11 +39,11 @@ constexpr Operand lo{ MIPSAddressSpace::HILO, 1U };
 
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 class MIPSSimpleSubTarget final : public SimpleSubTarget {
 public:
-    uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
+    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override {
         switch(addressSpace) {
             case MIPSAddressSpace::FPR_D:
                 return 16;
@@ -55,7 +55,7 @@ public:
                 reportUnreachable();
         }
     }
-    bool inlineMemOp(size_t size) const override {
+    [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
 };
@@ -161,17 +161,17 @@ Operand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) co
 String MIPSLoweringInfo::getOperand(const Operand& operand) const {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::Constant:
-            return mConstant.withID(operand.id);
+            return mConstant.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::Stack:
-            return mStack.withID(operand.id);
+            return mStack.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::VirtualReg:
-            return mVReg.withID(operand.id);
+            return mVReg.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::GPR:
             return String::get(getMIPSTextualName(operand.id));
         case MIPSAddressSpace::FPR_S:
-            return mFPR.withID(operand.id);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::FPR_D:
-            return mFPR.withID(operand.id * 2);
+            return mFPR.withID(static_cast<int32_t>(operand.id) * 2);
         case MIPSAddressSpace::HILO:
             return (operand.id == 0 ? mHi : mLo);
         default:
@@ -253,20 +253,20 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         const auto ret = inst->getType();
         if(ret->isVoid()) {
             return;
-        } else {
-            const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
-            Operand val = unusedOperand;
-            if(ret->isFloatingPoint()) {
-                // $f0
-                val = Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U };
-            } else {
-                assert(ret->getFixedSize() == 4);
-                val = v0;
-            }
-
-            ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
-            ctx.addOperand(inst, retReg);
         }
+        const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
+        Operand val = unusedOperand;
+        if(ret->isFloatingPoint()) {
+            // $f0
+            val = Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U };
+        } else {
+            assert(ret->getFixedSize() == 4);
+            val = v0;
+        }
+
+        ctx.emitInst<CopyMInst>(val, false, 0, retReg, false, 0, static_cast<uint32_t>(ret->getSize(dataLayout)), false);
+        ctx.addOperand(inst, retReg);
+
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
@@ -333,23 +333,22 @@ uint32_t MIPSRegisterUsage::getRegisterClass(const Type* type) const {
     if(type->isFloatingPoint()) {
         // TODO: double
         return MIPSAddressSpace::FPR_S;
-    } else {
-        return MIPSAddressSpace::GPR;
     }
+    return MIPSAddressSpace::GPR;
 }
 bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
         // $t0-$t9
         return (8 <= op.id && op.id <= 15) || (24 <= op.id && op.id <= 25);
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
         // $s0-$s7
         return 16 <= op.id && op.id <= 23;
-    } else
-        reportNotImplemented();
+    }
+    reportNotImplemented();
 }
 
 void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {

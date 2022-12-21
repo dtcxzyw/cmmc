@@ -32,10 +32,10 @@ public:
     void dump(std::ostream& out) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String label);
-    const String& getLabel() const noexcept {
+    [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
-    Block* getBlock() const noexcept override {
+    [[nodiscard]] Block* getBlock() const noexcept override {
         return mBlock;
     }
 };
@@ -51,18 +51,18 @@ public:
     void dump(std::ostream& out) const;
     bool verify(std::ostream& out) const;
 
-    Instruction* getTerminator() const noexcept {
+    [[nodiscard]] Instruction* getTerminator() const noexcept {
         return mInstructions.back();
     }
 
-    const String& getLabel() const noexcept {
+    [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
     void setLabel(String label) {
-        mLabel = std::move(label);
+        mLabel = label;
     }
 
-    const Deque<BlockArgument*>& args() const noexcept {
+    [[nodiscard]] const Deque<BlockArgument*>& args() const noexcept {
         return mArgs;
     }
     BlockArgument* addArg(const Type* type);
@@ -72,7 +72,7 @@ public:
     List<Instruction*>& instructions() noexcept {
         return mInstructions;
     }
-    Function* getFunction() const noexcept {
+    [[nodiscard]] Function* getFunction() const noexcept {
         return mFunction;
     }
     void setFunction(Function* func) noexcept {

@@ -26,9 +26,9 @@ class String final {
     int32_t mId;
 
 public:
-    String() : mStorage{ "" }, mStringHash{ std::hash<std::string_view>{}("") }, mId{ -1 } {}
+    String() : mStringHash{ std::hash<std::string_view>{}(mStorage) }, mId{ -1 } {}
     String(const std::string_view& storage, size_t hashValue, int32_t id);
-    size_t hash() const;
+    [[nodiscard]] size_t hash() const;
     bool operator==(const String& rhs) const noexcept;
     bool operator==(const std::string_view& rhs) const noexcept;
     bool operator!=(const String& rhs) const noexcept {
@@ -38,9 +38,9 @@ public:
         return !(*this == rhs);
     }
 
-    String withoutID() const noexcept;
-    String withID(int32_t id) const noexcept;
-    const std::string_view& prefix() const noexcept {
+    [[nodiscard]] String withoutID() const noexcept;
+    [[nodiscard]] String withID(int32_t id) const noexcept;
+    [[nodiscard]] const std::string_view& prefix() const noexcept {
         return mStorage;
     }
 

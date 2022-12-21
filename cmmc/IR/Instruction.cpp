@@ -623,17 +623,14 @@ bool ReturnInst::verify(std::ostream& out) const {
     if(ret->isVoid()) {
         if(operands().empty())
             return true;
-        else {
-            out << "should return void"sv << std::endl;
-            return false;
-        }
-    } else {
-        if(operands().size() == 1 && getOperand(0)->getType()->isSame(ret)) {
-            return true;
-        }
-        out << "return type mismatch"sv << std::endl;
+        out << "should return void"sv << std::endl;
         return false;
     }
+    if(operands().size() == 1 && getOperand(0)->getType()->isSame(ret)) {
+        return true;
+    }
+    out << "return type mismatch"sv << std::endl;
+    return false;
 }
 
 bool Instruction::isEqual(const Instruction* rhs) const {

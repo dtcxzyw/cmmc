@@ -54,7 +54,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "LoopEliminate"sv;
     }
 };

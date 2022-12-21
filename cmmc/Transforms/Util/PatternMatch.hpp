@@ -41,7 +41,7 @@ struct MatchContext final {
     }
 
     template <typename T = ValueType>
-    MatchContext<Value> getOperand(uint32_t idx) const {
+    [[nodiscard]] MatchContext<Value> getOperand(uint32_t idx) const {
         if constexpr(std::is_base_of_v<Instruction, T>) {
             const auto val = value->getOperand(idx);
             return MatchContext<Value>{ getReplaced(val), replace };
@@ -84,7 +84,7 @@ class ConstantIntegerMatcher final : public GenericMatcher<ConstantInteger, Cons
 
 public:
     explicit ConstantIntegerMatcher(Value& val) noexcept : mVal{ val } {}
-    bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
         if constexpr(IsSigned)
             mVal = ctx.value->getSignExtended();
         else
@@ -101,7 +101,7 @@ class ConstantIntegerValueMatcher final : public GenericMatcher<ConstantInteger,
 
 public:
     constexpr explicit ConstantIntegerValueMatcher(Value val) noexcept : mVal{ val } {}
-    bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<ConstantInteger>& ctx) const noexcept {
         if constexpr(IsSigned)
             return mVal == ctx.value->getSignExtended();
         else
@@ -109,15 +109,19 @@ public:
     }
 };
 
+// NOLINTNEXTLINE
 inline auto int_(intmax_t& val) noexcept {
     return ConstantIntegerMatcher<true>{ val };
 }
+// NOLINTNEXTLINE
 inline auto uint_(uintmax_t& val) noexcept {
     return ConstantIntegerMatcher<false>{ val };
 }
+// NOLINTNEXTLINE
 constexpr auto cint_(intmax_t val) noexcept {
     return ConstantIntegerValueMatcher<true>{ val };
 }
+// NOLINTNEXTLINE
 constexpr auto cuint_(uintmax_t val) noexcept {
     return ConstantIntegerValueMatcher<false>{ val };
 }
@@ -127,7 +131,7 @@ class ConstantFloatingPointMatcher final : public GenericMatcher<ConstantFloatin
 
 public:
     explicit ConstantFloatingPointMatcher(double& val) noexcept : mVal{ val } {}
-    bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
         mVal = ctx.value->getValue();
         return true;
     }
@@ -137,14 +141,16 @@ class ConstantFloatingPointValueMatcher final : public GenericMatcher<ConstantFl
 
 public:
     constexpr explicit ConstantFloatingPointValueMatcher(double val) noexcept : mVal{ val } {}
-    bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<ConstantFloatingPoint>& ctx) const noexcept {
         return ctx.value->isEqual(mVal);
     }
 };
 
+// NOLINTNEXTLINE
 inline auto fp_(double& val) noexcept {
     return ConstantFloatingPointMatcher{ val };
 }
+// NOLINTNEXTLINE
 constexpr auto cfp_(double val) noexcept {
     return ConstantFloatingPointValueMatcher{ val };
 }
@@ -156,7 +162,7 @@ class UnaryOpMatcher final : public GenericMatcher<UnaryInst, UnaryOpMatcher<Val
 
 public:
     explicit UnaryOpMatcher(InstructionID target, ValMatcher matcher) noexcept : mTarget{ target }, mMatcher{ matcher } {}
-    bool handle(const MatchContext<UnaryInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<UnaryInst>& ctx) const noexcept {
         return ctx.value->getInstID() == mTarget && mMatcher(ctx.getOperand(0));
     }
 };
@@ -180,7 +186,7 @@ class BinaryOpMatcher final : public GenericMatcher<BinaryInst, BinaryOpMatcher<
 public:
     explicit BinaryOpMatcher(InstructionID target, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
-    bool handle(const MatchContext<BinaryInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<BinaryInst>& ctx) const noexcept {
         if(ctx.value->getInstID() != mTarget)
             return false;
         if(mLhsMatcher(ctx.getOperand(0)) && mRhsMatcher(ctx.getOperand(1)))
@@ -237,20 +243,20 @@ auto lshr(Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::LShr, lhs, rhs };
 }
 template <typename Lhs, typename Rhs>
-auto and_(Lhs lhs, Rhs rhs) {
+auto and_(Lhs lhs, Rhs rhs) {  // NOLINT
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::And, lhs, rhs };
 }
 template <typename Lhs, typename Rhs>
-auto or_(Lhs lhs, Rhs rhs) {
+auto or_(Lhs lhs, Rhs rhs) {  // NOLINT
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Or, lhs, rhs };
 }
 template <typename Lhs, typename Rhs>
-auto xor_(Lhs lhs, Rhs rhs) {
+auto xor_(Lhs lhs, Rhs rhs) {  // NOLINT
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Xor, lhs, rhs };
 }
 
 template <typename T>
-auto not_(T value) noexcept {
+auto not_(T value) noexcept {  // NOLINT
     return xor_(value, cint_(-1));
 }
 
@@ -281,7 +287,7 @@ class CompareMatcher final : public GenericMatcher<CompareInst, CompareMatcher<L
 public:
     explicit CompareMatcher(InstructionID target, CompareOp& compare, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mCompare{ compare }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
-    bool handle(const MatchContext<CompareInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<CompareInst>& ctx) const noexcept {
         if(mTarget != InstructionID::None && ctx.value->getInstID() != mTarget)
             return false;
         mCompare = ctx.value->getOp();
@@ -319,7 +325,7 @@ class CastMatcher final : public GenericMatcher<CastInst, CastMatcher<Matcher>> 
 
 public:
     explicit CastMatcher(InstructionID target, Matcher matcher) noexcept : mTarget{ target }, mMatcher{ matcher } {}
-    bool handle(const MatchContext<CastInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<CastInst>& ctx) const noexcept {
         return (ctx.value->getInstID() == mTarget) && mMatcher(ctx.getOperand(0));
     }
 };
@@ -343,7 +349,7 @@ class FMAMatcher final : public GenericMatcher<FMAInst, FMAMatcher<XMatcher, YMa
 
 public:
     explicit FMAMatcher(XMatcher x, YMatcher y, ZMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
-    bool handle(const MatchContext<FMAInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<FMAInst>& ctx) const noexcept {
         if(!mZ(ctx.getOperand(2)))
             return false;
         if(mX(ctx.getOperand(0)) && mY(ctx.getOperand(1)))
@@ -353,7 +359,7 @@ public:
 };
 
 template <typename X, typename Y, typename Z>
-auto fma_(X x, Y y, Z z) {
+auto fma_(X x, Y y, Z z) {  // NOLINT
     return FMAMatcher{ x, y, z };
 }
 
@@ -365,7 +371,7 @@ class SelectMatcher final : public GenericMatcher<SelectInst, SelectMatcher<Cond
 
 public:
     explicit SelectMatcher(CondMatcher x, LhsMatcher y, RhsMatcher z) noexcept : mX{ x }, mY{ y }, mZ{ z } {}
-    bool handle(const MatchContext<SelectInst>& ctx) const noexcept {
+    [[nodiscard]] bool handle(const MatchContext<SelectInst>& ctx) const noexcept {
         return mX(ctx.getOperand(0)) && mY(ctx.getOperand(1)) && mZ(ctx.getOperand(2));
     }
 };

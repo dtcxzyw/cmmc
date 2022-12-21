@@ -38,14 +38,14 @@ public:
     explicit IRBuilder(const Target& target);
     IRBuilder(const Target& target, Block* block);
 
-    Function* getCurrentFunction() const noexcept;
+    [[nodiscard]] Function* getCurrentFunction() const noexcept;
     void setCurrentFunction(Function* func) noexcept;
-    Block* getCurrentBlock() const;
+    [[nodiscard]] Block* getCurrentBlock() const;
     void setCurrentBlock(Block* block);
     void setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint);
     void setInsertPoint(Block* block, Instruction* beforeInst);
     void nextInsertPoint();
-    List<Instruction*>::iterator getInsertPoint() const noexcept;
+    [[nodiscard]] List<Instruction*>::iterator getInsertPoint() const noexcept;
 
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
@@ -64,10 +64,10 @@ public:
         return addBlock({ types... });
     }
 
-    Value* getTrue() const noexcept;
-    Value* getFalse() const noexcept;
-    Value* getZeroIndex() const noexcept;
-    const Type* getIndexType() const noexcept;
+    [[nodiscard]] Value* getTrue() const noexcept;
+    [[nodiscard]] Value* getFalse() const noexcept;
+    [[nodiscard]] Value* getZeroIndex() const noexcept;
+    [[nodiscard]] const Type* getIndexType() const noexcept;
 };
 
 CMMC_NAMESPACE_END

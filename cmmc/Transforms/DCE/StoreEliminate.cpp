@@ -123,7 +123,7 @@ class StoreEliminate final : public TransformPass<Function> {
     }
 
     // TODO: cross-block store only
-    bool removeStoreOnlyAlloca(Function& func) const {
+    static bool removeStoreOnlyAlloca(Function& func) {
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
         for(auto block : func.blocks()) {
             for(auto inst : block->instructions()) {
@@ -182,7 +182,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "StoreEliminate"sv;
     }
 };

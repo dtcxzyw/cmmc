@@ -24,7 +24,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Flag enableProfiling;
+Flag enableProfiling;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 enableProfiling.setName("profile", 'p').setDesc("enable built-in profiling");

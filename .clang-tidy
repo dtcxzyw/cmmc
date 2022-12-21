@@ -1,0 +1,51 @@
+Checks: >
+  -*,bugprone-*,cert-*,clang-analyzer-*,cppcoreguidelines-*,misc-*,modernize-*,performance-*,portability-*,readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -readability-braces-around-statements,
+  -readability-magic-numbers,
+  -readability-implicit-bool-conversion,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -misc-no-recursion,
+  -readability-qualified-auto,
+  -misc-non-private-member-variables-in-classes,
+  -readability-use-anyofallof,
+  -readability-function-cognitive-complexity,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-init-variables,
+  -bugprone-branch-clone,
+  -cppcoreguidelines-special-member-functions,
+  -readability-named-parameter,
+  -readability-isolate-declaration,
+  -cppcoreguidelines-pro-bounds-*,
+  -cppcoreguidelines-pro-type-member-init,
+  -cert-err58-cpp,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-macro-usage,
+  -modernize-use-default-member-init,
+  -clang-analyzer-core.CallAndMessage,
+  -clang-analyzer-core.DivideZero,
+  -clang-analyzer-core.UndefinedBinaryOperatorResult
+WarningsAsErrors: '*'
+CheckOptions:
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.EnumCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           camelBack
+  - key:             readability-identifier-naming.PrivateMemberCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.PrivateMemberPrefix
+    value:           'm'  
+  - key:             readability-identifier-naming.MethodCase
+    value:           camelBack
+  - key:             readability-identifier-naming.ParameterCase
+    value:           camelBack
+  - key:             readability-identifier-naming.UnionCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.VariableCase
+    value:           camelBack
+  - key:             readability-identifier-naming.PublicMemberCase
+    value:           camelBack

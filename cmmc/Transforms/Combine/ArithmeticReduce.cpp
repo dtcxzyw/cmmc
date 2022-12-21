@@ -32,7 +32,7 @@ CMMC_NAMESPACE_BEGIN
 // TODO: fuse sext/zext/trunc
 
 class ArithmeticReduce final : public TransformPass<Function> {
-    bool runOnBlock(IRBuilder& builder, Block& block) const {
+    static bool runOnBlock(IRBuilder& builder, Block& block) {
         bool modified = false;
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap& replace) -> Value* {
             MatchContext<Value> matchCtx{ inst, &replace };
@@ -202,19 +202,20 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 if(cmp == CompareOp::Equal) {
                     if(c == 0) {
                         return makeNot(v1);
-                    } else if(c == 1) {
-                        return v1;
-                    } else {
-                        return builder.getTrue();
                     }
-                } else if(cmp == CompareOp::NotEqual) {
+                    if(c == 1) {
+                        return v1;
+                    }
+                    return builder.getTrue();
+                }
+                if(cmp == CompareOp::NotEqual) {
                     if(c == 0) {
                         return v1;
-                    } else if(c == 1) {
-                        return makeNot(v1);
-                    } else {
-                        return builder.getTrue();
                     }
+                    if(c == 1) {
+                        return makeNot(v1);
+                    }
+                    return builder.getTrue();
                 }
             }
 
@@ -226,9 +227,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(any(v1), cuint_(1), cuint_(0))(matchCtx)) {
                 if(inst->getType()->isBoolean()) {
                     return v1;
-                } else {
-                    return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
                 }
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
             }
 
             // gep x 0 -> x
@@ -312,7 +312,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "ArithmeticReduce"sv;
     }
 };

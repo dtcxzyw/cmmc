@@ -24,7 +24,7 @@ CMMC_NAMESPACE_BEGIN
 
 using ReplaceMap = std::unordered_map<Value*, Value*>;
 using BlockReducer = std::function<Value*(Instruction* inst, ReplaceMap& replace)>;
-bool reduceBlock(IRBuilder& builder, Block& block, BlockReducer reducer);
+bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);

@@ -37,7 +37,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LoopGEPCombine final : public TransformPass<Function> {
-    bool runBlock(IRBuilder& builder, Block& block) const {
+    static bool runBlock(IRBuilder& builder, Block& block) {
         std::unordered_map<size_t, std::vector<std::vector<Instruction*>>> continuousGEP;
 
         for(auto inst : block.instructions()) {
@@ -100,8 +100,9 @@ class LoopGEPCombine final : public TransformPass<Function> {
                         if(add(any(base1), int_(offset1))(matchCtx) && base1 == prevLast) {
                             todo.emplace(gep, OffsetPair{ prev, offset1 });
                             break;
-                        } else if(add(any(base1), int_(offset1))(matchCtx) &&
-                                  add(any(base2), int_(offset2))(MatchContext<Value>{ prevLast, nullptr }) && base1 == base2) {
+                        }
+                        if(add(any(base1), int_(offset1))(matchCtx) &&
+                           add(any(base2), int_(offset2))(MatchContext<Value>{ prevLast, nullptr }) && base1 == base2) {
                             todo.emplace(gep, OffsetPair{ prev, offset1 - offset2 });
                             break;
                         }
@@ -146,7 +147,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "LoopGEPCombine"sv;
     }
 };

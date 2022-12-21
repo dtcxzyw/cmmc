@@ -16,12 +16,14 @@
 #include <string_view>
 using namespace std::string_view_literals;
 
+// NOLINTNEXTLINE
 #define MAKE_VERSION(MAJOR, MINOR, PATCH) #MAJOR "." #MINOR "." #PATCH
 #define CMMC_VERSION MAKE_VERSION(0, 1, 0)
 
 #define CMMC_NAMESPACE_BEGIN namespace cmmc {
 #define CMMC_NAMESPACE_END }
 
+// NOLINTNEXTLINE
 #define CMMC_UNUSED(VAR) (void)(VAR)
 
 #ifndef __GNUC__

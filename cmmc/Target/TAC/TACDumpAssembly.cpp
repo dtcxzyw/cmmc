@@ -97,7 +97,8 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         if(!copy.indirectSrc) {
                                             // copy or fetch
                                             return true;
-                                        } else if(!copy.indirectDst) {
+                                        }
+                                        if(!copy.indirectDst) {
                                             // deref
                                             return true;
                                         }
@@ -231,6 +232,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
                                         }
                                     }
 
+                                    // NOLINTNEXTLINE
                                     forEachOperands(const_cast<GMIRFunction&>(func), [&](const Operand& operand) {
                                         if(operand.addressSpace == TACAddressSpace::GPR) {
                                             tryAllocate(ref.gprMap, operand.id, gprAllocateID);

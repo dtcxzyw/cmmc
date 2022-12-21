@@ -30,7 +30,7 @@ struct IntegerRange final {
     uintmax_t maxUnsignedValue, minUnsignedValue;
     uintmax_t maxSignedValue, minSignedValue;
 
-    bool isNonNegative() const noexcept;
+    [[nodiscard]] bool isNonNegative() const noexcept;
 };
 
 class IntegerRangeAnalysisResult final {

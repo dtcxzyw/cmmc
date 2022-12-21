@@ -39,7 +39,8 @@ public:
                 return;
             if(type->isInteger() || type->isFloatingPoint() || type->isVoid()) {
                 return;
-            } else if(type->isStruct()) {
+            }
+            if(type->isStruct()) {
                 types.erase(type);
                 for(auto& field : type->as<StructType>()->fields())
                     self(self, field.type);
@@ -81,7 +82,7 @@ public:
         return true;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "UnusedTypeEliminate"sv;
     }
 };

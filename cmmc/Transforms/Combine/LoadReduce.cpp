@@ -69,7 +69,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LoadReduce final : public TransformPass<Function> {
-    bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) const {
+    static bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) {
         ReplaceMap replace;
         for(auto inst : block.instructions()) {
             if(inst->getInstID() == InstructionID::Load)
@@ -81,8 +81,8 @@ class LoadReduce final : public TransformPass<Function> {
         return replaceOperands(block, replace);
     }
 
-    bool runInterBlock(Function& func, AnalysisPassManager& analysis,
-                       std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis) const {
+    static bool runInterBlock(Function& func, AnalysisPassManager& analysis,
+                              std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis) {
         const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
@@ -213,7 +213,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "LoadReduce"sv;
     }
 };

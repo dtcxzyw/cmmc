@@ -29,6 +29,7 @@
 #include <string_view>
 #include <variant>
 
+// NOLINTNEXTLINE
 namespace std {  // NOTICE: we need ADL
     std::ostream& operator<<(std::ostream& out, const std::pair<uint32_t, yy::location>& loc);
 }  // namespace std
@@ -76,7 +77,7 @@ struct Hierarchy final {
             const uint8_t val = metadata;
             const auto p1 = lut[val / 16];
             const auto p2 = lut[val % 16];
-            out << "\\x"sv << p1 << p2;
+            out << R"(\x)" << p1 << p2;
         }
         out << "\'\n"sv;
     }
@@ -114,7 +115,7 @@ class DriverImpl final {
     Deque<Hierarchy> mHierarchyTree;
 
 public:
-    DriverImpl(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena);
+    DriverImpl(std::string file, FrontEndLang lang, bool recordHierarchy, bool strictMode, std::shared_ptr<Arena> arena);
     ~DriverImpl();
 
     void markEnd() noexcept;
@@ -123,9 +124,9 @@ public:
     void addOpaqueType(const TypeRef&);
     void addStructType(const SourceLocation& loc, String typeName, VarDefList list);
     yy::location& location() noexcept;
-    bool complete() const noexcept;
-    bool shouldRecordHierarchy() const noexcept;
-    bool checkExtension() noexcept;
+    [[nodiscard]] bool complete() const noexcept;
+    [[nodiscard]] bool shouldRecordHierarchy() const noexcept;
+    [[nodiscard]] bool checkExtension() const noexcept;
 
     Hierarchy& hierarchy(ChildRef ref);
     uint32_t record(Deque<ChildRef> children, Hierarchy::Desc desc);

@@ -23,6 +23,7 @@ CXXFLAGS = -std=c++17 $(ADDFLAGS) -I $(abspath ./) -MD -pthread
 LDFLAGS = $(CXXFLAGS)
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)
+ALLSRCS := $(CXXSRCS) $(wildcard cmmc/**/*.hpp) $(wildcard cmmc/Transforms/**/*.hpp) $(wildcard cmmc/Target/**/*.hpp)
 
 OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 
@@ -61,7 +62,7 @@ $(BIN): $(OBJS) $(DIR_BUILD)/objs/SplSupport.o $(DIR_BUILD)/objs/SysYSupport.o
 	mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) -o $@ $^
 
-.PHONY: clean bear debug cmmc
+.PHONY: clean bear2 bear3 debug cmmc
 clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear2: clean # make clangd happy
@@ -88,3 +89,13 @@ splc: $(BIN) # Project 2
 .PHONY: test
 test: cmmc
 	python3 ./tests/test_driver.py $(BIN) ./tests
+
+.PHONY: format-check format lint iwyu
+format-check:
+	clang-format --Werror --dry-run -style=file $(ALLSRCS)
+format:
+	clang-format -style=file -i $(ALLSRCS)
+lint: cmmc
+	clang-tidy --config-file=.clang-tidy -p ./build -header-filter=.*cmmc.* $(ALLSRCS) >./build/clang_tidy_result.log
+iwyu: cmmc
+	iwyu_tool -j 16 -p ./build

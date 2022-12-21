@@ -16,6 +16,7 @@
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 
+// NOLINTNEXT
 #define YYLLOC_DEFAULT(CURRENT, RHS, N)                                                  \
     do                                                                                   \
         if(N) {                                                                          \

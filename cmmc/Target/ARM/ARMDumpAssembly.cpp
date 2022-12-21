@@ -34,6 +34,7 @@
 CMMC_NAMESPACE_BEGIN
 
 std::string_view getARMTextualName(uint32_t idx) noexcept {
+    // NOLINTNEXTLINE
     constexpr std::string_view name[] = {
         "a1", "a2", "a3", "a4", "v1", "v2", "v3", "v4",  //
         "v5", "v6", "v7", "v8", "ip", "sp", "lr", "pc",  //
@@ -270,7 +271,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
     out << '\n';
 }
 
-extern StringOpt targetMachine;
+extern StringOpt targetMachine;  // NOLINT
 
 void ARMTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
     dumpAssembly(

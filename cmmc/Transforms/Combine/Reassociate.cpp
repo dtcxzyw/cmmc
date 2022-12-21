@@ -25,7 +25,7 @@
 
 CMMC_NAMESPACE_BEGIN
 class Reassociate final : public TransformPass<Function> {
-    bool runOnBlock(IRBuilder& builder, Block& block) const {
+    static bool runOnBlock(IRBuilder& builder, Block& block) {
         std::unordered_map<Value*, std::vector<std::pair<uint32_t, Value*>>> map;
 
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap&) -> Value* {
@@ -152,7 +152,7 @@ public:
         return modified;
     }
 
-    std::string_view name() const noexcept override {
+    [[nodiscard]] std::string_view name() const noexcept override {
         return "Reassociate"sv;
     }
 };

@@ -21,7 +21,7 @@ std::pair<NodeIndex, std::vector<NodeIndex>> calcSCC(const Graph& graph) {
     std::vector<NodeIndex> dfn(size), low(size), st(size), col(size);
     NodeIndex top = 0, ccnt = 0, icnt = 0;
     std::vector<bool> flag(size);
-    const auto DFS = [&](auto&& self, NodeIndex u) -> void {
+    const auto dfs = [&](auto&& self, NodeIndex u) -> void {
         dfn[u] = low[u] = ++icnt;
         flag[u] = true;
         st[top++] = u;
@@ -46,7 +46,7 @@ std::pair<NodeIndex, std::vector<NodeIndex>> calcSCC(const Graph& graph) {
 
     for(NodeIndex i = 0; i < size; ++i)
         if(!dfn[i])
-            DFS(DFS, i);
+            dfs(dfs, i);
     return { ccnt, std::move(col) };
 }
 

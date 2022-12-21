@@ -139,8 +139,8 @@ public:
     Block* getBreakTarget();
 
     Function* getIntrinsic(Intrinsic intrinsic);
-    void pushLoc(const SourceLocation& loc);
-    void popLoc();
+    static void pushLoc(const SourceLocation& loc);
+    static void popLoc();
 };
 
 CMMC_NAMESPACE_END
