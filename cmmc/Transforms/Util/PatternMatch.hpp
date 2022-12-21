@@ -28,7 +28,8 @@ struct MatchContext final {
     ValueType* value;
     std::unordered_map<Value*, Value*>* replace;
 
-    explicit MatchContext(ValueType* value, std::unordered_map<Value*, Value*>* replace) : value{ value }, replace{ replace } {};
+    explicit MatchContext(ValueType* val, std::unordered_map<Value*, Value*>* replaceMap)
+        : value{ val }, replace{ replaceMap } {};
 
     Value* getReplaced(Value* val) const {
         if(replace) {

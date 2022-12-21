@@ -82,17 +82,17 @@ static void verifyModuleExec(Module& module) {
         SimulationIOContext ctx{ in, out };
         const auto ret = runMain(module, ctx);
         std::visit(
-            [&](auto ret) {
-                if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
-                    if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
-                        retCode = val->getSignExtended();
+            [&](auto retVal) {
+                if constexpr(std::is_same_v<std::decay_t<decltype(retVal)>, ConstantValue*>) {
+                    if(auto val = dynamic_cast<ConstantInteger*>(retVal)) {
+                        retCode = static_cast<int>(val->getSignExtended());
                     } else {
                         std::cerr << " failed"sv << std::endl;
                         DiagnosticsContext::get().attach<Reason>("main should return a integer").reportFatal();
                     }
                 } else {
                     std::cerr << " failed"sv << std::endl;
-                    DiagnosticsContext::get().attach<Reason>(enumName(ret)).reportFatal();
+                    DiagnosticsContext::get().attach<Reason>(enumName(retVal)).reportFatal();
                 }
             },
             ret);

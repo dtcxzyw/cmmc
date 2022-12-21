@@ -23,7 +23,7 @@ IRBuilder::IRBuilder(const Target& target) : mCurrentFunction{ nullptr }, mCurre
     mTrueValue = ConstantInteger::getTrue();
     mFalseValue = ConstantInteger::getFalse();
     const auto& dataLayout = target.getDataLayout();
-    mIndexType = IntegerType::get(dataLayout.getPointerSize() * 8);
+    mIndexType = IntegerType::get(static_cast<uint32_t>(dataLayout.getPointerSize() * 8));
     mZeroIndex = ConstantInteger::get(mIndexType, 0);
 }
 Block* IRBuilder::addBlock(const Vector<const Type*>& types) {

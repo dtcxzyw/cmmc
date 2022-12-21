@@ -117,7 +117,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(entry);
 
     // NOTICE: function arguments must be lvalues
-    for(size_t idx = 0; idx < decl.args.size(); ++idx) {
+    for(uint32_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
         const auto arg = entry->getArg(idx);
         arg->setLabel(name);
@@ -143,7 +143,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
         }
     }
     {
-        Stage stage{ "emit function body" };
+        Stage stage2{ "emit function body" };
         for(auto st : block)
             st->emitWithLoc(ctx);
     }
@@ -152,7 +152,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(nullptr);  // clean up
 
     {
-        Stage stage{ "post fixup" };
+        Stage stage2{ "post fixup" };
         // trim instructions after the first terminator
         const auto retType = funcType->getRetType();
         for(auto funcBlock : func->blocks()) {
@@ -1237,10 +1237,10 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
     if(!ret) {
         if(strictMode.get()) {
-            const auto ret = reportSplError(
+            const auto retValue = reportSplError(
                 *this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
                 [&](std::ostream& out) { out << "undefined type [scope = "sv << enumName(space) << "] named "sv << type; });
-            CMMC_UNUSED(ret);
+            CMMC_UNUSED(retValue);
             return InvalidType::get();
         } else {
             // TODO: report undefined type
@@ -1273,10 +1273,10 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
 
                     if(size <= 0) {
                         if(strictMode.get()) {
-                            const auto ret =
+                            const auto retValue =
                                 reportSplError(*this, InvalidType::get(), -1, DiagnosticsContext::get().current<SourceLocation>(),
                                                [](std::ostream& out) { out << "invalid array size"sv; });
-                            CMMC_UNUSED(ret);
+                            CMMC_UNUSED(retValue);
                             return make<ArrayType>(InvalidType::get(), 1U);
                         } else
                             DiagnosticsContext::get().attach<Reason>("invalid array size").reportFatal();
@@ -1390,7 +1390,7 @@ static std::vector<uint32_t> calculateArrayScalarSizes(const ArrayType* type) {
             break;
         }
     }
-    for(uint32_t idx = sizes.size() - 1; idx >= 1; --idx)
+    for(uint32_t idx = static_cast<uint32_t>(sizes.size() - 1); idx >= 1; --idx)
         sizes[idx - 1] *= sizes[idx];
     return sizes;
 }
@@ -1820,10 +1820,10 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
                     self(self, subDst, subSrc);
                 }
             } else if(type->isStruct()) {
-                const auto structType = type->as<StructType>();
-                for(auto& field : structType->fields()) {
+                const auto curStructType = type->as<StructType>();
+                for(auto& field : curStructType->fields()) {
                     // TODO: get offset from field idx
-                    Vector<Value*> offset{ getZeroIndex(), structType->getOffset(field.fieldName) };
+                    Vector<Value*> offset{ getZeroIndex(), curStructType->getOffset(field.fieldName) };
                     const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
                     const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
                     self(self, subDst, subSrc);

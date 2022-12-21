@@ -70,7 +70,7 @@ class GEPCombine final : public TransformPass<Function> {
             const auto baseGEP = base->as<GetElementPtrInst>();
             auto& operands = inst->operands();
             MatchContext<Value> matchFront{ operands.front(), nullptr };
-            MatchContext<Value> matchBack{ baseGEP->getOperand(baseGEP->operands().size() - 2), nullptr };
+            MatchContext<Value> matchBack{ baseGEP->getOperand(static_cast<uint32_t>(baseGEP->operands().size() - 2)), nullptr };
             if(cuint_(0)(matchFront)) {
                 operands.pop_front();
                 const auto& prevOffsets = baseGEP->operands();

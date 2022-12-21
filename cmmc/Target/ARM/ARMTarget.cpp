@@ -179,7 +179,7 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto global = ctx.mapGlobal(func);
         const auto& dataLayout = ctx.getDataLayout();
 
-        size_t offset = 0U;
+        size_t curOffset = 0U;
         std::vector<size_t> offsets;
         offsets.reserve(inst->operands().size() - 1);
 
@@ -191,14 +191,14 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
             const auto alignment = arg->getType()->getAlignment(dataLayout);
             // TODO: float
 
-            offset = (offset + alignment - 1) / alignment * alignment;
-            offsets.push_back(offset);
-            offset += size;
+            curOffset = (curOffset + alignment - 1) / alignment * alignment;
+            offsets.push_back(curOffset);
+            curOffset += size;
         }
 
         Operand stackStorage = unusedOperand;
-        if(offset > 16U) {
-            stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(offset, 8U));
+        if(curOffset > 16U) {
+            stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(curOffset, 8U));
         }
 
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
@@ -314,7 +314,7 @@ bool ARMTarget::isCalleeSaved(const Operand& op) const noexcept {
 
 void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
     const auto& args = func->entryBlock()->args();
-    size_t offset = 0U;
+    size_t curOffset = 0U;
     std::vector<size_t> offsets;
     offsets.reserve(args.size());
     const auto& dataLayout = ctx.getDataLayout();
@@ -324,9 +324,9 @@ void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
         const auto alignment = arg->getType()->getAlignment(dataLayout);
         // TODO: float
 
-        offset = (offset + alignment - 1) / alignment * alignment;
-        offsets.push_back(offset);
-        offset += size;
+        curOffset = (curOffset + alignment - 1) / alignment * alignment;
+        offsets.push_back(curOffset);
+        curOffset += size;
     }
 
     for(uint32_t idx = 0; idx < args.size(); ++idx) {

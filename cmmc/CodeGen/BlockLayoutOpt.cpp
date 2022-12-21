@@ -193,15 +193,15 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     }
 
     // apply changes
-    std::vector<std::unique_ptr<GMIRBasicBlock>> newBlock;
-    newBlock.reserve(seq.size());
+    std::vector<std::unique_ptr<GMIRBasicBlock>> newBlocks;
+    newBlocks.reserve(seq.size());
     for(auto& block : func.blocks()) {
-        newBlock.emplace_back(std::move(block));
+        newBlocks.emplace_back(std::move(block));
     }
 
     func.blocks().clear();
-    for(uint32_t idx = 0; idx < newBlock.size(); ++idx)
-        func.blocks().emplace_back(std::move(newBlock[seq[idx]]));
+    for(uint32_t i = 0; i < newBlocks.size(); ++i)
+        func.blocks().emplace_back(std::move(newBlocks[seq[i]]));
 
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
         auto& block = *iter;
@@ -219,10 +219,10 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         };
 
         if(std::holds_alternative<BranchCompareMInst>(terminator)) {
-            auto& target = std::get<BranchCompareMInst>(terminator);
+            auto& branchInst = std::get<BranchCompareMInst>(terminator);
             const auto& successors = cfg.successors(block.get());
             assert(successors.size() == 2);
-            if(target.targetBlock == successors[0]) {
+            if(branchInst.targetBlock == successors[0]) {
                 ensureNext(successors[1]);
             } else
                 ensureNext(successors[0]);

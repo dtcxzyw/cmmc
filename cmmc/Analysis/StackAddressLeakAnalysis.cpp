@@ -41,8 +41,8 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
             switch(inst->getInstID()) {
                 case InstructionID::Call: {
                     auto callee = inst->operands().back();
-                    if(auto func = dynamic_cast<Function*>(callee)) {
-                        if(func->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
+                    if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
+                        if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                             break;
                     }
                     calls.push_back(inst);

@@ -91,8 +91,8 @@ class LoopGEPCombine final : public TransformPass<Function> {
                     while(!prevs.empty()) {
                         const auto prev = prevs.front();
 
-                        const auto prevLast = prev->getOperand(prev->operands().size() - 2);
-                        const auto curLast = gep->getOperand(gep->operands().size() - 2);
+                        const auto prevLast = prev->getOperand(static_cast<uint32_t>(prev->operands().size() - 2));
+                        const auto curLast = gep->getOperand(static_cast<uint32_t>(gep->operands().size() - 2));
 
                         MatchContext<Value> matchCtx{ curLast, nullptr };
                         intmax_t offset1, offset2;

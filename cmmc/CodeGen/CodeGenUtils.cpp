@@ -50,7 +50,7 @@ void removeUnusedInsts(GMIRFunction& func) {
         }
 
     while(!q.empty()) {
-        auto& inst = *q.front();
+        auto& instruction = *q.front();
         q.pop();
 
         auto popSrc = [&](const Operand& operand) {
@@ -91,7 +91,7 @@ void removeUnusedInsts(GMIRFunction& func) {
                        [&](const CallMInst&) {},
                        [&](const auto& inst) { popSrc(inst.src); },
                    },
-                   inst);
+                   instruction);
     }
     std::unordered_set<GMIRInst*> remove;
     for(auto& [op, writerList] : writers) {
@@ -115,7 +115,7 @@ void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>&
 }
 
 void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
-    for(auto& inst : block.instructions()) {
+    for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](CopyMInst& inst) {
                                 functor(inst.src);
                                 functor(inst.dst);
@@ -151,15 +151,15 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
                                  functor(inst.dst);
                              },
                              [](auto&) {} },
-                   inst);
+                   instruction);
     }
 }
 
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
-    for(auto& inst : block.instructions()) {
+    for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
                              [&](auto& inst) { functor(inst.dst); } },
-                   inst);
+                   instruction);
     }
 }
 
@@ -169,7 +169,7 @@ void forEachUseOperands(GMIRFunction& func, const std::function<void(Operand& op
 }
 
 void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
-    for(auto& inst : block.instructions()) {
+    for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](CopyMInst& inst) { functor(inst.src); }, [&](UnaryArithmeticMInst& inst) { functor(inst.src); },
                              [&](BinaryArithmeticMInst& inst) {
                                  functor(inst.lhs);
@@ -189,7 +189,7 @@ void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand&
                              },
                              [&](RetMInst& inst) { functor(inst.retVal); },
                              [&](ControlFlowIntrinsicMInst& inst) { functor(inst.src); }, [](auto&) {} },
-                   inst);
+                   instruction);
     }
 }
 
@@ -208,8 +208,8 @@ void removeIdentityCopies(GMIRFunction& func) {
     }
 }
 
-void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& data,
-                  const std::function<void()>& text,
+void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
+                  const std::function<void()>& emitText,
                   const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
                                            LabelAllocator&)>& functionDumper) {
     LabelAllocator allocator;
@@ -224,7 +224,7 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     // TODO: rodata/bss
 
     out << ".data\n"sv;
-    data();
+    emitData();
     const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
         if(symbol.linkage == Linkage::Global)
             out << ".globl "sv << symbol.symbol << '\n';
@@ -245,7 +245,7 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     }
 
     out << ".text\n"sv;
-    text();
+    emitText();
     for(auto& symbol : module.symbols) {
         std::visit(Overload{ [&](const GMIRFunction& func) {
                                 dumpSymbol(symbol);

@@ -57,9 +57,9 @@ struct QualifiedValue final {
     Qualifier qualifier;
 
     explicit QualifiedValue() : value{ nullptr }, valueQualifier{ ValueQualifier::AsRValue } {}
-    explicit QualifiedValue(Value* value) : value{ value }, valueQualifier{ ValueQualifier::AsRValue } {}
-    QualifiedValue(Value* value, ValueQualifier valueQualifier, Qualifier qualifier)
-        : value{ value }, valueQualifier{ valueQualifier }, qualifier{ qualifier } {}
+    explicit QualifiedValue(Value* val) : value{ val }, valueQualifier{ ValueQualifier::AsRValue } {}
+    QualifiedValue(Value* val, ValueQualifier valueQualifierVal, Qualifier qualifierVal)
+        : value{ val }, valueQualifier{ valueQualifierVal }, qualifier{ qualifierVal } {}
 };
 
 struct Scope final {

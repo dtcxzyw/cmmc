@@ -53,10 +53,10 @@ public:
             for(auto block : func.blocks()) {
                 if(deferred.count(block))
                     continue;  // merged
-                const auto inst = block->getTerminator();
-                if(inst->getInstID() != InstructionID::Branch)
+                const auto terminator = block->getTerminator();
+                if(terminator->getInstID() != InstructionID::Branch)
                     continue;
-                const auto branch = inst->as<ConditionalBranchInst>();
+                const auto branch = terminator->as<ConditionalBranchInst>();
                 const auto target = branch->getTrueTarget().getTarget();
                 assert(blockRef[target] >= 1);
                 if(blockRef.at(target) == 1) {

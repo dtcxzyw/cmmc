@@ -36,7 +36,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
             out << ']';
         }
     };
-    auto dumpTarget = [&](const GMIRBasicBlock* target) { out << blockMap.at(target); };
+    auto dumpTarget = [&](const GMIRBasicBlock* targetBlock) { out << blockMap.at(targetBlock); };
     auto dumpCompare = [&](GMIRInstID instID, CompareOp compareOp) {
         if(instID == GMIRInstID::FCmp)
             out << 'f';
@@ -78,7 +78,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
 
     out << '\n';
 
-    for(auto& inst : mInstructions) {
+    for(auto& instruction : mInstructions) {
         std::visit(Overload{ [&](const CopyMInst& inst) {
                                 if(!inst.indirectSrc && !inst.indirectDst) {
                                     out << "mov "sv;
@@ -249,7 +249,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                  out << ' ';
                                  dumpOperand(inst.src);
                              } },
-                   inst);
+                   instruction);
         out << '\n';
     }
 }
@@ -304,9 +304,9 @@ void* VirtualRegPool::getMetadata(const Operand& operand) const {
 }
 bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
     if(checkTerminator) {
-        for(auto& inst : mInstructions) {
+        for(auto& instruction : mInstructions) {
             const auto ret = std::visit(
-                [&err, end = &inst == &mInstructions.back()](auto& inst) -> bool {
+                [&err, end = &instruction == &mInstructions.back()](auto& inst) -> bool {
                     using T = std::decay_t<decltype(inst)>;
                     if constexpr(std::is_same_v<T, RetMInst> || std::is_same_v<T, UnreachableMInst> ||
                                  std::is_same_v<T, BranchCompareMInst> || std::is_same_v<T, BranchMInst>) {
@@ -322,7 +322,7 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
                     }
                     return true;
                 },
-                inst);
+                instruction);
             if(!ret)
                 return false;
         }

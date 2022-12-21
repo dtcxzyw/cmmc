@@ -435,14 +435,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
     MemoryContext memCtx{ mMemBudget, dataLayout };
 
-    const auto type = func.getType()->as<FunctionType>();
-    if(type->getArgTypes().size() != arguments.size())
+    const auto funcType = func.getType()->as<FunctionType>();
+    if(funcType->getArgTypes().size() != arguments.size())
         DiagnosticsContext::get().attach<Reason>("argument count mismatch").reportFatal();
     for(uint32_t idx = 0; idx < arguments.size(); ++idx)
-        if(!type->getArgTypes()[idx]->isSame(arguments[idx]->getType()))
+        if(!funcType->getArgTypes()[idx]->isSame(arguments[idx]->getType()))
             DiagnosticsContext::get()
                 .attach<Reason>("argument type mismatch")
-                .attach<TypeAttachment>("required", type->getArgTypes()[idx])
+                .attach<TypeAttachment>("required", funcType->getArgTypes()[idx])
                 .attach<TypeAttachment>("provided", arguments[idx]->getType())
                 .reportFatal();
 
@@ -569,11 +569,11 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
         const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
 
-        const auto addValue = [&](Instruction* inst, const OperandStorage& val) {
-            currentExecCtx.operands.emplace(inst, val);
+        const auto addValue = [&](Instruction* mappedInst, const OperandStorage& val) {
+            currentExecCtx.operands.emplace(mappedInst, val);
             if(step.get()) {
                 auto& out = std::cerr;
-                inst->dump(out);
+                mappedInst->dump(out);
                 out << " -> "sv;
                 std::visit(Overload{ [&](auto&&) { out << "unknown"sv; },                                   //
                                      [&](const ConstantInteger& x) { x.dump(out); },                        //
@@ -635,24 +635,24 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 ++branchCount;
                 auto branch = inst->as<ConditionalBranchInst>();
 
-                Block* target = nullptr;
+                Block* targetBlock = nullptr;
                 if(inst->getInstID() == InstructionID::Branch) {
-                    target = branch->getTrueTarget().getTarget();
+                    targetBlock = branch->getTrueTarget().getTarget();
                 } else if(getUInt(0)) {
-                    target = branch->getTrueTarget().getTarget();
+                    targetBlock = branch->getTrueTarget().getTarget();
                     operands.erase(operands.begin());
-                    operands.erase(operands.begin() + target->args().size(), operands.end());
+                    operands.erase(operands.begin() + targetBlock->args().size(), operands.end());
                 } else {
-                    target = branch->getFalseTarget().getTarget();
+                    targetBlock = branch->getFalseTarget().getTarget();
                     operands.erase(operands.begin());
-                    operands.erase(operands.begin(), operands.end() - target->args().size());
+                    operands.erase(operands.begin(), operands.end() - targetBlock->args().size());
                 }
 
                 currentExecCtx.operands.clear();
-                for(uint32_t idx = 0; idx < target->args().size(); ++idx)
-                    currentExecCtx.operands.emplace(target->getArg(idx), operands[idx]);
-                currentExecCtx.block = target;
-                currentExecCtx.execIter = target->instructions().cbegin();
+                for(uint32_t idx = 0; idx < targetBlock->args().size(); ++idx)
+                    currentExecCtx.operands.emplace(targetBlock->getArg(idx), operands[idx]);
+                currentExecCtx.block = targetBlock;
+                currentExecCtx.execIter = targetBlock->instructions().cbegin();
                 if(step.get()) {
                     currentExecCtx.block->dump(std::cerr);
                 }
@@ -829,7 +829,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::GetElementPtr: {
-                auto basePtr = getPtr(operands.size() - 1);
+                auto basePtr = getPtr(static_cast<uint32_t>(operands.size() - 1U));
                 const auto oldPtr = basePtr;
                 auto baseType = inst->operands().back()->getType();
                 for(uint32_t idx = 0; idx + 1 < operands.size(); ++idx) {

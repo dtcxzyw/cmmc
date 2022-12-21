@@ -33,8 +33,8 @@ public:
                 const auto callee = inst->operands().back();
                 if(!callee->is<Function>())
                     return false;
-                const auto func = callee->as<Function>();
-                if(func->getIntrinsic() == Intrinsic::memcpy) {
+                const auto calleeFunc = callee->as<Function>();
+                if(calleeFunc->getIntrinsic() == Intrinsic::memcpy) {
                     // memcpy(x, x, size)
                     if(inst->getOperand(0) == inst->getOperand(1)) {
                         return true;

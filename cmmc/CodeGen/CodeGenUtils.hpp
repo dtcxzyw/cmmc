@@ -34,8 +34,8 @@ void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand&
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void removeIdentityCopies(GMIRFunction& func);
 
-void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& data,
-                  const std::function<void()>& text,
+void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
+                  const std::function<void()>& emitText,
                   const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
                                            LabelAllocator&)>& functionDumper);
 

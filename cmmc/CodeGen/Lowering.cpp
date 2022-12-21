@@ -210,9 +210,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                 GMIRDataStorage::Storage data;
 
                 const auto expand = [&](auto&& self, Value* val) -> void {
-                    const auto type = val->getType();
-                    if(type->isArray()) {
-                        const auto arrayType = type->as<ArrayType>();
+                    const auto valType = val->getType();
+                    if(valType->isArray()) {
+                        const auto arrayType = valType->as<ArrayType>();
                         const auto& values = val->as<ConstantArray>()->values();
                         for(auto sub : values) {
                             self(self, sub);
@@ -223,11 +223,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                             // zero
                             data.push_back(static_cast<size_t>(remSize));
                         }
-                    } else if(type->isInteger()) {
+                    } else if(valType->isInteger()) {
                         const auto value = val->as<ConstantInteger>()->getZeroExtended();
-                        if(type->getFixedSize() == sizeof(uint32_t)) {
+                        if(valType->getFixedSize() == sizeof(uint32_t)) {
                             data.push_back(static_cast<uint32_t>(value));
-                        } else if(type->getFixedSize() == sizeof(uint8_t)) {
+                        } else if(valType->getFixedSize() == sizeof(uint8_t)) {
                             data.push_back(static_cast<std::byte>(value));
                         } else
                             reportNotImplemented();

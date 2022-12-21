@@ -17,7 +17,9 @@ DIR_BUILD := ./build
 BIN := ./bin/cmmc
 SPLC_SHELL := ./bin/splc
 
-CXXFLAGS = -std=c++17 $(ADDFLAGS) -I $(abspath ./) -Wextra -Wall -Werror -Wno-format-security -MD -pthread
+WARNFLAGS = -Wextra -Wall -Werror -Wconversion -Wshadow -Wno-format-security
+WARNFLAGS_FOR_GENERATED = -Wextra -Wall -Werror
+CXXFLAGS = -std=c++17 $(ADDFLAGS) -I $(abspath ./) -MD -pthread
 LDFLAGS = $(CXXFLAGS)
 
 CXXSRCS := $(wildcard cmmc/**/*.cpp) $(wildcard cmmc/Transforms/**/*.cpp) $(wildcard cmmc/Target/**/*.cpp)
@@ -37,7 +39,7 @@ $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp: cmmc/Frontend/ScannerSpl.ll $(DIR_BU
 
 $(DIR_BUILD)/objs/SplSupport.o: cmmc/Frontend/Support/SplSupport.cpp $(DIR_BUILD)/generated/Spl/ScannerImpl.hpp $(DIR_BUILD)/generated/Spl/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SplSupport.cpp
+	$(CXX) $(CXXFLAGS) $(WARNFLAGS_FOR_GENERATED) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SplSupport.cpp
 
 $(DIR_BUILD)/generated/SysY/ParserImpl.hpp: cmmc/Frontend/ParserSysY.yy
 	mkdir -p $(dir $@)
@@ -49,11 +51,11 @@ $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp: cmmc/Frontend/ScannerSysY.ll $(DIR_
 
 $(DIR_BUILD)/objs/SysYSupport.o: cmmc/Frontend/Support/SysYSupport.cpp $(DIR_BUILD)/generated/SysY/ScannerImpl.hpp $(DIR_BUILD)/generated/SysY/ParserImpl.hpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SysYSupport.cpp
+	$(CXX) $(CXXFLAGS) $(WARNFLAGS_FOR_GENERATED) -I $(abspath $(DIR_BUILD)/generated/) -c -o $@ cmmc/Frontend/Support/SysYSupport.cpp
 
 $(DIR_BUILD)/objs/%.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(WARNFLAGS) -c -o $@ $<
 
 $(BIN): $(OBJS) $(DIR_BUILD)/objs/SplSupport.o $(DIR_BUILD)/objs/SysYSupport.o
 	mkdir -p $(dir $@)

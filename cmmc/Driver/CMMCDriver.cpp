@@ -111,12 +111,12 @@ static int runIRPipeline(Module& module, const std::string& base) {
         reportDebug() << "simulation << "sv << input << " >> "sv << path << std::endl;
         OutputStream out{ path };
         SimulationIOContext ctx{ in, out };
-        const auto ret = runMain(module, ctx);
+        const auto retVal = runMain(module, ctx);
         return std::visit(
             [](auto ret) -> int {
                 if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
                     if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
-                        return val->getSignExtended();
+                        return static_cast<int>(val->getSignExtended());
                     }
                     return EXIT_FAILURE;
                 } else {
@@ -124,7 +124,7 @@ static int runIRPipeline(Module& module, const std::string& base) {
                     return EXIT_FAILURE;
                 }
             },
-            ret);
+            retVal);
     }
 
     const auto emitTAC = (::target.get() == "tac");
@@ -191,9 +191,9 @@ int mainImpl(int argc, char** argv) {
                     return EXIT_SUCCESS;
 
                 if(emitAST.get()) {
-                    const auto path = getOutputPath(base + ".ast");
-                    reportDebug() << "emitAST >> "sv << path << std::endl;
-                    std::ofstream out{ path };
+                    const auto outputPath = getOutputPath(base + ".ast");
+                    reportDebug() << "emitAST >> "sv << outputPath << std::endl;
+                    std::ofstream out{ outputPath };
                     driver.dump(out);
                     return EXIT_SUCCESS;
                 }

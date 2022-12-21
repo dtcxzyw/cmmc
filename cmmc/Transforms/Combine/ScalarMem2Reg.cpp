@@ -89,10 +89,10 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                                 replace.emplace(inst, value);
                         } break;
                         case InstructionID::Store: {
-                            const auto addr = blockArgMap.queryRoot(inst->getOperand(0));
-                            if(addr == alloc) {
+                            const auto storeAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                            if(storeAddr == alloc) {
                                 value = inst->getOperand(1);
-                            } else if(!alias.isDistinct(addr, alloc)) {
+                            } else if(!alias.isDistinct(storeAddr, alloc)) {
                                 update(inst, true);
                             }
                         } break;

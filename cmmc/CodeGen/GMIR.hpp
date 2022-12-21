@@ -110,11 +110,6 @@ struct CopyMInst final {
     int32_t dstOffset;
     uint32_t size;
     bool signExtend;
-
-    CopyMInst(Operand src, bool indirectSrc, int32_t srcOffset, Operand dst, bool indirectDst, int32_t dstOffset, uint32_t size,
-              bool signExtend)
-        : src{ src }, indirectSrc{ indirectSrc }, srcOffset{ srcOffset }, dst{ dst },
-          indirectDst{ indirectDst }, dstOffset{ dstOffset }, size{ size }, signExtend{ signExtend } {}
 };
 
 struct ConstantMInst final {
@@ -301,7 +296,7 @@ struct GMIRModule final {
     const Target& target;
     std::list<GMIRSymbol> symbols;
 
-    explicit GMIRModule(const Target& target) : target{ target } {}
+    explicit GMIRModule(const Target& targetRef) : target{ targetRef } {}
     void dump(std::ostream& out) const;
 };
 

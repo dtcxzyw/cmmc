@@ -116,8 +116,8 @@ void DriverImpl::emit(Module& module) {
     else if(mLang == FrontEndLang::SysY)
         emitSysYRuntime(module, ctx);
 
-    for(auto& def : mDefs) {
-        std::visit([&ctx](auto& def) { def.emit(ctx); }, def);
+    for(auto& defRef : mDefs) {
+        std::visit([&ctx](auto& def) { def.emit(ctx); }, defRef);
     }
 
     // Check invalid values

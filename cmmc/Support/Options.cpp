@@ -115,7 +115,7 @@ IntegerOpt& IntegerOpt::withDefault(uint32_t value) {
 
 void IntegerOpt::handle(const char* str) {
     mHasValue = true;
-    mValue = strtol(str, nullptr, 10);
+    mValue = static_cast<uint32_t>(strtol(str, nullptr, 10));
 }
 
 int parseCommands(int argc, char** argv) {
@@ -126,7 +126,7 @@ int parseCommands(int argc, char** argv) {
     for(auto opt : storage.options) {
         auto option = opt->getOption();
         options.push_back(option);
-        shortopts.push_back(option.val);
+        shortopts.push_back(static_cast<char>(option.val));
         if(option.has_arg != no_argument)
             shortopts.push_back(':');
     }

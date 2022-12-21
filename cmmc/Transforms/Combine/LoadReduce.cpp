@@ -113,8 +113,8 @@ class LoadReduce final : public TransformPass<Function> {
                     storePointers.push_back(ptr);
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
-                    if(const auto func = dynamic_cast<Function*>(callee)) {
-                        if(func->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
+                    if(const auto calleeFunc = dynamic_cast<Function*>(callee)) {
+                        if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                             continue;
                     }
                     break;  // may store before load

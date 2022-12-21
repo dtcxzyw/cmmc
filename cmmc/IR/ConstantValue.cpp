@@ -118,22 +118,24 @@ size_t ConstantInteger::hash() const {
     return std::hash<intmax_t>{}(getSignExtended());
 }
 bool ConstantInteger::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantInteger>(rhs,
-                                        [&](ConstantInteger* rhs) { return this->getSignExtended() == rhs->getSignExtended(); });
+    return isEqualImpl<ConstantInteger>(
+        rhs, [&](ConstantInteger* rhsVal) { return this->getSignExtended() == rhsVal->getSignExtended(); });
 }
 
 size_t ConstantFloatingPoint::hash() const {
     return std::hash<double>{}(getValue());
 }
 bool ConstantFloatingPoint::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantFloatingPoint>(rhs, [&](ConstantFloatingPoint* rhs) { return getValue() == rhs->getValue(); });
+    return isEqualImpl<ConstantFloatingPoint>(rhs,
+                                              [&](ConstantFloatingPoint* rhsVal) { return getValue() == rhsVal->getValue(); });
 }
 
 size_t ConstantOffset::hash() const {
     return std::hash<uint32_t>{}(mIndex) ^ std::hash<const StructType*>{}(mBase);
 }
 bool ConstantOffset::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantOffset>(rhs, [&](ConstantOffset* rhs) { return mBase == rhs->mBase && mIndex == rhs->mIndex; });
+    return isEqualImpl<ConstantOffset>(
+        rhs, [&](ConstantOffset* rhsVal) { return mBase == rhsVal->mBase && mIndex == rhsVal->mIndex; });
 }
 
 size_t ConstantArray::hash() const {

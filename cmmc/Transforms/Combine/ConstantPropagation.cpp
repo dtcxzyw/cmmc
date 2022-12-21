@@ -50,8 +50,12 @@ class ConstantPropagation final : public TransformPass<Function> {
             uintmax_t u1, u2;
             double f1, f2;
             CompareOp cmp;
-            auto makeInt = [&](Instruction* inst, intmax_t val) { return ConstantInteger::get(inst->getType(), val); };
-            auto makeFP = [&](Instruction* inst, double val) { return make<ConstantFloatingPoint>(inst->getType(), val); };
+            auto makeInt = [&](Instruction* mappedInst, intmax_t val) {
+                return ConstantInteger::get(mappedInst->getType(), val);
+            };
+            auto makeFP = [&](Instruction* mappedInst, double val) {
+                return make<ConstantFloatingPoint>(mappedInst->getType(), val);
+            };
 
             // TODO: handle select?
             // c = select x a b
@@ -112,8 +116,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(matchCtx))
                     return makeFP(inst, fma(f1, f2, f3));
             } else if(inst->isCompareOp()) {
-                auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
-                    switch(cmp) {
+                auto doCompare = [&](CompareOp cmpOp, auto lhs, auto rhs) {
+                    switch(cmpOp) {
                         case CompareOp::LessThan:
                             return lhs < rhs;
                         case CompareOp::LessEqual:
@@ -129,7 +133,9 @@ class ConstantPropagation final : public TransformPass<Function> {
                     }
                     reportUnreachable();
                 };
-                auto makeBool = [&](Instruction* inst, bool val) { return ConstantInteger::get(inst->getType(), val); };
+                auto makeBool = [&](Instruction* mappedInst, bool val) {
+                    return ConstantInteger::get(mappedInst->getType(), val);
+                };
 
                 MatchContext<Value> matchCtx{ inst, &replace };
                 if(scmp(cmp, int_(i1), int_(i2))(matchCtx))

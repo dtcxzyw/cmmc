@@ -141,12 +141,12 @@ struct TypePair final {
     const Type* lhs;
     const Type* rhs;
 
-    TypePair(const Type* lhs, const Type* rhs) noexcept : lhs{ lhs }, rhs{ rhs } {
+    TypePair(const Type* lhsType, const Type* rhsType) noexcept : lhs{ lhsType }, rhs{ rhsType } {
         if(lhs < rhs)
             std::swap(lhs, rhs);
     }
-    bool operator==(const TypePair& rhs) const noexcept {
-        return this->lhs == rhs.lhs && this->rhs == rhs.rhs;
+    bool operator==(const TypePair& rhsPair) const noexcept {
+        return this->lhs == rhsPair.lhs && this->rhs == rhsPair.rhs;
     }
 };
 
@@ -212,7 +212,8 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         Value* src1;
         Value* src2;
 
-        InheritEdge(Value* dst, Value* src1, Value* src2 = nullptr) : dst{ dst }, src1{ src1 }, src2{ src2 } {}
+        InheritEdge(Value* dstVal, Value* src1Val, Value* src2Val = nullptr) noexcept
+            : dst{ dstVal }, src1{ src1Val }, src2{ src2Val } {}
         bool operator==(const InheritEdge& rhs) const noexcept {
             return dst == rhs.dst && src1 == rhs.src1 && src2 == rhs.src2;
         }

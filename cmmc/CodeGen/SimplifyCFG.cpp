@@ -32,10 +32,10 @@ static bool removeUnusedLabels(GMIRFunction& func) {
     usedLabels.insert(func.blocks().front().get());
 
     for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
+        for(auto& instruction : block->instructions()) {
             std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
                                  [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
-                       inst);
+                       instruction);
         }
     }
 
@@ -48,10 +48,10 @@ static bool removeUnusedLabels(GMIRFunction& func) {
         if(usedLabels.count(block.get())) {
             lastAvailable = block.get();
         } else {
-            for(auto& inst : block->instructions()) {
+            for(auto& instruction : block->instructions()) {
                 std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
                                      [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
-                           inst);
+                           instruction);
             }
             lastAvailable->instructions().insert(lastAvailable->instructions().cend(), block->instructions().cbegin(),
                                                  block->instructions().cend());
@@ -109,7 +109,7 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
     }
 
     for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
+        for(auto& instruction : block->instructions()) {
             const auto replaceTarget = [&](const GMIRBasicBlock*& blockRef) {
                 const auto iter = redirects.find(blockRef);
                 if(iter != redirects.cend())
@@ -117,7 +117,7 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
             };
             std::visit(Overload{ [&](BranchMInst& inst) { replaceTarget(inst.targetBlock); },
                                  [&](BranchCompareMInst& inst) { replaceTarget(inst.targetBlock); }, [](auto&&) {} },
-                       inst);
+                       instruction);
         }
     }
 

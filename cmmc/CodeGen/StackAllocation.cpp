@@ -71,9 +71,9 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     const auto replaceStack = [&](Operand& op, int32_t& offset) {
         if(op == sp) {
             // params
-            offset += allocationBase;
+            offset += static_cast<int32_t>(allocationBase);
         } else {
-            offset += usedStackObjects.at(op);
+            offset += static_cast<int32_t>(usedStackObjects.at(op));
             op = sp;
         }
     };
@@ -96,7 +96,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     alignTo(target.getStackPointerAlignment());
 
     auto& constantPool = func.pools().pools[AddressSpace::Constant];
-    const auto sizeType = IntegerType::get(dataLayout.getPointerSize() * 8);
+    const auto sizeType = IntegerType::get(static_cast<uint32_t>(dataLayout.getPointerSize()) * 8U);
     const auto offset = constantPool.allocate(sizeType);
     constantPool.getMetadata(offset) = ConstantInteger::get(sizeType, static_cast<intmax_t>(allocationBase));
     const auto revOffset = constantPool.allocate(sizeType);

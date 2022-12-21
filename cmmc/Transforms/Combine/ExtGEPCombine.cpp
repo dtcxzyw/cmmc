@@ -60,7 +60,8 @@ class ExtGEPCombine final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
-        const auto indexType = IntegerType::get(analysis.module().getTarget().getDataLayout().getPointerSize() * 8);
+        const auto indexType =
+            IntegerType::get(static_cast<uint32_t>(analysis.module().getTarget().getDataLayout().getPointerSize() * 8));
         bool modified = false;
 
         for(auto block : func.blocks())

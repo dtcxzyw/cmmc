@@ -58,7 +58,7 @@ class BlockOutliner final : public TransformPass<Function> {
 
             if(lhsInst->operands().size() != rhsInst->operands().size())
                 return false;
-            for(size_t idx = 0; idx < lhsInst->operands().size(); ++idx) {
+            for(uint32_t idx = 0; idx < lhsInst->operands().size(); ++idx) {
                 const auto lhsOperand = lhsInst->getOperand(idx);
                 const auto rhsOperand = rhsInst->getOperand(idx);
                 if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
@@ -78,7 +78,7 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_map<Block*, Block*> replace;
         // block-level merge
-        std::unordered_map<uint32_t, std::vector<Block*>> blocks;
+        std::unordered_map<size_t, std::vector<Block*>> blocks;
         for(auto block : func.blocks()) {
             if(block == func.entryBlock())
                 continue;

@@ -147,8 +147,8 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                     physReg = Operand{ regClass, q.front() };
                     q.pop();
                     usage->markAsDiscarded(physReg);
-                    if(auto iter = physMap.find(physReg); iter != physMap.cend())
-                        evictVReg(iter->second);
+                    if(auto it = physMap.find(physReg); it != physMap.cend())
+                        evictVReg(it->second);
                 }
 
                 q.push(physReg.id);

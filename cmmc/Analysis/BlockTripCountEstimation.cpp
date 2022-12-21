@@ -76,9 +76,9 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
         uint32_t x = std::numeric_limits<uint32_t>::max();
         double maxv = eps;
         for(uint32_t j = i; j < n; ++j) {
-            const auto p = std::fabs(mat(i, j));
-            if(p > maxv) {
-                maxv = p;
+            const auto pivot = std::fabs(mat(i, j));
+            if(pivot > maxv) {
+                maxv = pivot;
                 x = j;
                 break;
             }
@@ -91,9 +91,9 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
             for(uint32_t j = 0; j < n; ++j)
                 std::swap(mat(i, j), mat(x, j));
         }
-        const auto p = mat(i, i);
+        const auto pivot = mat(i, i);
         for(uint32_t j = i + 1; j < n; ++j) {
-            mat(j, i) /= p;
+            mat(j, i) /= pivot;
             const auto scale = mat(j, i);
             for(uint32_t k = i + 1; k < n; ++k)
                 mat(j, k) -= scale * mat(i, k);
@@ -107,7 +107,7 @@ BlockTripCountEstimationResult BlockTripCountEstimation::run(Function& func, Ana
             sum -= mat(i, j) * c[j];
         c[i] = sum;
     }
-    for(int i = n - 1; i >= 0; --i) {
+    for(int32_t i = static_cast<int32_t>(n - 1); i >= 0; --i) {
         auto sum = c[i];
         for(uint32_t j = i + 1; j < n; ++j)
             sum -= mat(i, j) * d[j];

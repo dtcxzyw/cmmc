@@ -87,8 +87,8 @@ public:
                     ReplaceMap replace;
                     head = loop.header->clone(replace);
                     insertedBlocks.push_back(head);
-                    for(auto [block, target] : cfg.predecessors(loop.latch)) {
-                        target->resetTarget(head);
+                    for(auto [block, branchTarget] : cfg.predecessors(loop.latch)) {
+                        branchTarget->resetTarget(head);
                     }
                     prev = head;
                 }
@@ -102,7 +102,7 @@ public:
                 terminator->getOperand(0)->as<CompareInst>()->replaceOperand(loop.bound, startValue);
 
                 const auto tripCount = (size - epilogueSize) / maxUnrollBlockSize;
-                const auto exitProb = 1.0 / tripCount;
+                const auto exitProb = 1.0 / static_cast<double>(tripCount);
                 terminator->updateBranchProb(1.0 - exitProb);
             }
             bool keepOldBlock = false;

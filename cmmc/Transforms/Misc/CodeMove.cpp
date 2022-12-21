@@ -63,9 +63,9 @@ public:
                     continue;
                 if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
-                    if(auto func = dynamic_cast<Function*>(callee)) {
-                        if(!(func->attr().hasAttr(FunctionAttribute::Stateless) &&
-                             func->attr().hasAttr(FunctionAttribute::NoSideEffect)))
+                    if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
+                        if(!(calleeFunc->attr().hasAttr(FunctionAttribute::Stateless) &&
+                             calleeFunc->attr().hasAttr(FunctionAttribute::NoSideEffect)))
                             continue;
                     } else
                         continue;

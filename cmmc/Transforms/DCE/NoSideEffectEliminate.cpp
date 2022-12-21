@@ -41,7 +41,7 @@ class NoSideEffectEliminate final : public TransformPass<Function> {
                 used.insert(inst);
                 q.push(inst);
             } else if(instID == InstructionID::Call) {
-                const auto callee = inst->getOperand(inst->operands().size() - 1);
+                const auto callee = inst->operands().back();
                 if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
                     continue;
                 used.insert(inst);
@@ -54,7 +54,7 @@ class NoSideEffectEliminate final : public TransformPass<Function> {
                 used.insert(inst);
                 q.push(inst);
             } else if(instID == InstructionID::Call) {
-                const auto callee = inst->getOperand(inst->operands().size() - 1);
+                const auto callee = inst->operands().back();
                 if(auto func = dynamic_cast<Function*>(callee); func->attr().hasAttr(FunctionAttribute::NoSideEffect))
                     continue;
                 used.insert(inst);

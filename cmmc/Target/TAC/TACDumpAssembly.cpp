@@ -172,17 +172,17 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                      out << "RETURN "sv;
                                      printOperand(ret.retVal);
                                  },
-                                 [&](const ControlFlowIntrinsicMInst& inst) {
-                                     const auto id = static_cast<TACIntrinsic>(inst.intrinsicID);
+                                 [&](const ControlFlowIntrinsicMInst& intrinsic) {
+                                     const auto id = static_cast<TACIntrinsic>(intrinsic.intrinsicID);
                                      if(id == TACIntrinsic::PushArg) {
                                          out << "ARG "sv;
-                                         printOperand(inst.src);
+                                         printOperand(intrinsic.src);
                                      } else if(id == TACIntrinsic::Read) {
                                          out << "READ "sv;
-                                         printOperand(inst.dst);
+                                         printOperand(intrinsic.dst);
                                      } else if(id == TACIntrinsic::Write) {
                                          out << "WRITE "sv;
-                                         printOperand(inst.src);
+                                         printOperand(intrinsic.src);
                                      } else
                                          reportUnreachable();
                                  },
@@ -198,7 +198,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
 void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
     using namespace std::string_literals;
 
-    std::unordered_map<const GMIRFunction*, FunctionNameMap> map;
+    std::unordered_map<const GMIRFunction*, FunctionNameMap> funcMap;
 
     {
         LabelAllocator allocator;
@@ -210,7 +210,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
         String labelBase = String::get("label"sv);
         for(auto& symbol : module.symbols) {
             std::visit(Overload{ [&](const GMIRFunction& func) {
-                                    auto& ref = map[&func];
+                                    auto& ref = funcMap[&func];
                                     {
                                         auto& labelMap = ref.labelMap;
                                         for(auto& block : func.blocks()) {
@@ -245,7 +245,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
     const auto& dataLayout = module.target.getDataLayout();
 
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, map.at(&func)); },
+        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, funcMap.at(&func)); },
                              [](const auto&) { reportUnreachable(); }, [](const std::monostate&) {} },
                    symbol.def);
     }

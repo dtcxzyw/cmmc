@@ -65,13 +65,13 @@ public:
 
             Block* prev = loop.latch;
             const auto retarget = [&](Block* block, bool nocheck) {
-                auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                auto prevTerminator = prev->getTerminator()->as<ConditionalBranchInst>();
                 if(nocheck) {
                     prev->instructions().pop_back();
                     IRBuilder builder{ target, prev };
-                    terminator = builder.makeOp<ConditionalBranchInst>(terminator->getTrueTarget());
+                    prevTerminator = builder.makeOp<ConditionalBranchInst>(prevTerminator->getTrueTarget());
                 }
-                terminator->getTrueTarget().resetTarget(block);
+                prevTerminator->getTrueTarget().resetTarget(block);
             };
             const auto append = [&](bool nocheck) {
                 ReplaceMap replace;
@@ -102,9 +102,9 @@ public:
                 constexpr auto header = "super.header"sv;
                 head->setLabel(String::get(header));
                 insertedBlocks.push_back(head);
-                for(auto [block, target] : cfg.predecessors(loop.latch)) {
+                for(auto [block, branchTarget] : cfg.predecessors(loop.latch)) {
                     if(block != loop.latch)
-                        target->resetTarget(head);
+                        branchTarget->resetTarget(head);
                 }
 
                 IRBuilder builder{ target, head };

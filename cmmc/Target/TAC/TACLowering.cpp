@@ -81,7 +81,7 @@ void TACLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
         } else {
             const auto global = ctx.mapGlobal(func);
             // NOTICE: push args in reversed order
-            for(int32_t idx = inst->operands().size() - 2; idx >= 0; --idx) {
+            for(int32_t idx = static_cast<int32_t>(inst->operands().size() - 2); idx >= 0; --idx) {
                 const auto arg = inst->getOperand(idx);
                 ctx.emitInst<ControlFlowIntrinsicMInst>(static_cast<uint32_t>(TACIntrinsic::PushArg), ctx.mapOperand(arg),
                                                         unusedOperand);
