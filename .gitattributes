@@ -1,3 +1,4 @@
 * text eol=lf
 irsim -text
+*.jar -text
 *.in filter=lfs diff=lfs merge=lfs
