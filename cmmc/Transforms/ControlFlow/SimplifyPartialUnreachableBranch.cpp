@@ -42,8 +42,11 @@
 CMMC_NAMESPACE_BEGIN
 
 class SimplifyPartialUnreachableBranch final : public TransformPass<Function> {
-    // TODO: treat target with undefined arguments as unreachable path
-    static bool isUnreachableBlock(Block* block) {
+
+    static bool isUnreachablePath(BranchTarget& target) {
+        const auto block = target.getTarget();
+        if(block == nullptr)
+            return true;
         return block->instructions().size() == 1 && block->getTerminator()->getInstID() == InstructionID::Unreachable;
     }
 
@@ -52,20 +55,30 @@ public:
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
-            if(terminator->getInstID() != InstructionID::ConditionalBranch)
+            if(!terminator->isBranch())
                 continue;
             auto branch = terminator->as<ConditionalBranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
-            const auto trueUnreachable = isUnreachableBlock(trueTarget.getTarget());
-            const auto falseUnreachable = isUnreachableBlock(falseTarget.getTarget());
+            const auto trueUnreachable = isUnreachablePath(trueTarget);
+            const auto falseUnreachable = isUnreachablePath(falseTarget);
             if(!trueUnreachable && !falseUnreachable)
                 continue;
-            auto& insts = block->instructions();
-            insts.pop_back();
-            const auto inst = make<ConditionalBranchInst>(falseUnreachable ? trueTarget : falseTarget);
-            inst->setBlock(block);
-            insts.push_back(inst);
+            if(trueUnreachable != falseUnreachable) {
+                if(terminator->getInstID() == InstructionID::Branch)
+                    continue;
+                auto& insts = block->instructions();
+                insts.pop_back();
+                const auto inst = make<ConditionalBranchInst>(falseUnreachable ? trueTarget : falseTarget);
+                inst->setBlock(block);
+                insts.push_back(inst);
+            } else {
+                auto& insts = block->instructions();
+                insts.pop_back();
+                const auto inst = make<UnreachableInst>();
+                inst->setBlock(block);
+                insts.push_back(inst);
+            }
             modified = true;
         }
         return modified;

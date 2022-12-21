@@ -20,6 +20,8 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 
+// Replace undef with an arbitrary value
+
 CMMC_NAMESPACE_BEGIN
 
 class UndefPropagation final : public TransformPass<Function> {
@@ -34,9 +36,14 @@ public:
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::ConditionalBranch &&
                    blockArgMap.queryRoot(inst->getOperand(0))->isUndefined()) {
+                    const auto terminator = block->getTerminator()->as<ConditionalBranchInst>();
                     block->instructions().pop_back();
                     IRBuilder builder{ target, block };
-                    builder.makeOp<UnreachableInst>();
+                    // builder.makeOp<UnreachableInst>();
+                    const auto& trueTarget = terminator->getTrueTarget();
+                    const auto& falseTarget = terminator->getFalseTarget();
+                    // select a target
+                    builder.makeOp<ConditionalBranchInst>(terminator->getBranchProb() < 0.5 ? trueTarget : falseTarget);
                     modified = true;
                     break;
                 }
@@ -50,7 +57,11 @@ public:
                     }
                     if(!hasUndef)
                         continue;
-                    replace.emplace(inst, make<UndefinedValue>(inst->getType()));
+                    if(inst->getType()->isInteger()) {
+                        replace.emplace(inst, ConstantInteger::get(inst->getType(), 0));
+                    }
+                    // TODO: remove UndefinedValue
+                    // replace.emplace(inst, make<UndefinedValue>(inst->getType()));
                 }
             }
 
