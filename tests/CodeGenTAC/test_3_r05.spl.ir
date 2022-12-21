@@ -4,32 +4,32 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry():
     i32 %0 = call () -> i32 @read();
     i1 %1 = scmp lt i32 %0, i32 1;
-    cbr i1 %1, [ ^if.then ], [ ^indirect i32 %0, i32 %0 ];
+    cbr i1 %1(prob = 0.5), [ ^if.then ], [ ^indirect i32 %0, i32 %0 ];
 ^indirect(i32 %arg, i32 %arg1):
     i1 %0 = scmp eq i32 %arg, i32 1;
-    cbr i1 %0, [ ^if.then1 ], [ ^b i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then1 ], [ ^b i32 %arg1 ];
 ^if.then():
     call (i32) -> void @write(i32 0);
     ret i32 0;
 ^b(i32 %arg):
     i1 %0 = scmp eq i32 %arg, i32 2;
-    cbr i1 %0, [ ^if.then1 ], [ ^if.else i32 %arg ];
+    cbr i1 %0(prob = 0.5), [ ^if.then1 ], [ ^if.else i32 %arg ];
 ^if.then1():
     call (i32) -> void @write(i32 1);
     ret i32 0;
 ^if.else(i32 %arg):
     i1 %0 = scmp gt i32 %arg, i32 2;
-    cbr i1 %0, [ ^if.then2 i32 %arg ], [ ^b1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then2 i32 %arg ], [ ^b1 ];
 ^if.then2(i32 %arg):
-    i1 %0 = scmp le i32 3, i32 %arg;
-    cbr i1 %0, [ ^while.body i32 3, i32 1, i32 1, i32 %arg ], [ ^b2 i32 undef ];
+    i1 %0 = scmp gt i32 %arg, i32 2;
+    cbr i1 %0(prob = 0.97), [ ^while.body i32 3, i32 1, i32 1, i32 %arg ], [ ^b2 i32 undef ];
 ^b1():
     ret i32 0;
 ^while.body(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32 %0 = add i32 %arg1, i32 %arg2;
     i32 %1 = add i32 %arg, i32 1;
     i1 %2 = scmp le i32 %1, i32 %arg3;
-    cbr i1 %2, [ ^while.body i32 %1, i32 %arg2, i32 %0, i32 %arg3 ], [ ^b2 i32 %0 ];
+    cbr i1 %2(prob = 0.97), [ ^while.body i32 %1, i32 %arg2, i32 %0, i32 %arg3 ], [ ^b2 i32 %0 ];
 ^b2(i32 %arg):
     call (i32) -> void @write(i32 %arg);
     ret i32 0;

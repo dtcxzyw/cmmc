@@ -1,0 +1,96 @@
+.data
+_prompt: .asciz "Enter an integer:"
+_ret: .asciz "\n"
+.text
+_entry:
+    call main
+    li a7, 93
+    ecall
+read:
+    li a7, 4
+    la a0, _prompt
+    ecall
+    li a7, 5
+    ecall
+    ret
+write:
+    li a7, 1
+    ecall
+    li a7, 4
+    la a0, _ret
+    ecall
+    mv a0, x0
+    ret
+
+.globl fact
+.align 4
+fact:
+    addi sp, sp, -56
+    sd ra, 0(sp)
+    sd s0, 8(sp)
+    sd s1, 16(sp)
+    mv t0, a0
+    li t1, 1
+    sw t0, 36(sp)
+    bne t0, t1, .BB1
+    lw t0, 36(sp)
+    mv t1, t0
+    sw t1, 32(sp)
+    lw t0, 32(sp)
+    mv a0, t0
+    ld s1, 16(sp)
+    ld s0, 8(sp)
+    ld ra, 0(sp)
+    addi sp, sp, 56
+    ret
+.BB1:
+    lw t0, 36(sp)
+    mv t1, t0
+    sw t1, 28(sp)
+    lw t0, 28(sp)
+    addi t1, t0, -1
+    mv a0, t1
+    sw t1, 48(sp)
+    call fact
+    mv t2, a0
+    lw s0, 28(sp)
+    mul s1, t2, s0
+    mv a0, s1
+    ld s1, 16(sp)
+    ld s0, 8(sp)
+    ld ra, 0(sp)
+    addi sp, sp, 56
+    ret
+
+.globl main
+.align 4
+main:
+    addi sp, sp, -24
+    sd ra, 0(sp)
+    call read
+    mv t0, a0
+    li t1, 1
+    sw t0, 16(sp)
+    ble t0, t1, .BB3
+    lw t0, 16(sp)
+    mv t1, t0
+    sw t1, 12(sp)
+    lw t0, 12(sp)
+    mv a0, t0
+    call fact
+    mv t1, a0
+    mv a0, t1
+    sw t1, 20(sp)
+    call write
+    li a0, 0
+    ld ra, 0(sp)
+    addi sp, sp, 24
+    ret
+.BB3:
+    li a0, 1
+    call write
+    li a0, 0
+    ld ra, 0(sp)
+    addi sp, sp, 24
+    ret
+

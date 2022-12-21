@@ -1,7 +1,7 @@
 internal [5 * [20000 * i32]]* @a;
 func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
 ^entry():
-    i32* %0 = getelementptr &([5 * [20000 * i32]]* @a)[i32 0][i32 4][i32 19999];
+    i32* %0 = getelementptr &([5 * [20000 * i32]]* @a)[i64 0][i64 4][i64 19999];
     store i32* %0 with i32 1;
     ret i32 4000;
 }

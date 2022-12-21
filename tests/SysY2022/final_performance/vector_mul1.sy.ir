@@ -1,6 +1,4 @@
-internal func @starttime(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoReturn NoRecurse Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse Entry } {
 ^entry():
-    call (i32) -> void @starttime(i32 62);
     unreachable;
 }

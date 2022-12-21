@@ -28,7 +28,7 @@ LABEL label6 :
 v10 := v11 * v13
 v14 := v12 * #2
 v15 := v14 - v12
-v16 := v15 - #1
+v16 := v15 + #-1
 IF v16 <= #0 GOTO label4
 v11 := v11
 v12 := v16
@@ -156,7 +156,7 @@ LABEL label30 :
 v49 := v46 * v50
 v63 := v48 * #2
 v64 := v63 - v48
-v47 := v64 - #1
+v47 := v64 + #-1
 IF v47 <= #0 GOTO label31
 GOTO label19
 LABEL label31 :
@@ -236,7 +236,7 @@ LABEL label44 :
 v99 := v95 * v98
 v100 := v96 * #2
 v101 := v100 - v96
-v102 := v101 - #1
+v102 := v101 + #-1
 IF v102 <= #0 GOTO label45
 GOTO label54
 LABEL label45 :

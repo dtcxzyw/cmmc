@@ -5,10 +5,10 @@ internal func @putfloat(f32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @my_pow(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg, i32 %arg1):
     i1 %0 = scmp lt i32 %arg1, i32 0;
-    cbr i1 %0, [ ^indirect1 i32 %arg1, f32 %arg ], [ ^indirect i32 %arg1, f32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^indirect1 i32 %arg1, f32 %arg ], [ ^indirect i32 %arg1, f32 %arg, i32 %arg1 ];
 ^indirect(i32 %arg, f32 %arg1, i32 %arg2):
     i1 %0 = scmp neq i32 %arg, i32 0;
-    cbr i1 %0, [ ^while.body f32 %arg1, i32 %arg2, f32 1 ], [ ^b f32 1 ];
+    cbr i1 %0(prob = 0.97), [ ^while.body f32 %arg1, i32 %arg2, f32 1 ], [ ^b f32 1 ];
 ^indirect1(i32 %arg, f32 %arg1):
     i32 %0 = neg i32 %arg;
     f32 %1 = call (f32, i32) -> f32 @my_pow(f32 %arg1, i32 %0);
@@ -17,7 +17,7 @@ internal func @my_pow(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect
 ^while.body(f32 %arg, i32 %arg1, f32 %arg2):
     i32 %0 = srem i32 %arg1, i32 2;
     i1 %1 = scmp neq i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect2 i32 %arg1, f32 %arg, f32 %arg2 ], [ ^indirect3 i32 %arg1, f32 %arg, f32 %arg2 ];
+    cbr i1 %1(prob = 0.5), [ ^indirect2 i32 %arg1, f32 %arg, f32 %arg2 ], [ ^indirect3 i32 %arg1, f32 %arg, f32 %arg2 ];
 ^b(f32 %arg):
     ret f32 %arg;
 ^indirect2(i32 %arg, f32 %arg1, f32 %arg2):
@@ -31,34 +31,55 @@ internal func @my_pow(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect
     ubr [ ^while.header i32 %1, f32 %0, i32 %1, f32 %arg2 ];
 ^while.header(i32 %arg, f32 %arg1, i32 %arg2, f32 %arg3):
     i1 %0 = scmp neq i32 %arg, i32 0;
-    cbr i1 %0, [ ^while.body f32 %arg1, i32 %arg2, f32 %arg3 ], [ ^b f32 %arg3 ];
+    cbr i1 %0(prob = 0.97), [ ^while.body f32 %arg1, i32 %arg2, f32 %arg3 ], [ ^b f32 %arg3 ];
 }
 internal func @my_sqrt(f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg):
     i1 %0 = fcmp gt f32 %arg, f32 100;
-    cbr i1 %0, [ ^indirect1 f32 %arg ], [ ^indirect f32 %arg, f32 %arg ];
-^indirect(f32 %arg, f32 %arg1):
+    cbr i1 %0(prob = 0.5), [ ^indirect f32 %arg ], [ ^indirect1 f32 %arg, f32 %arg ];
+^indirect(f32 %arg):
+    f32 %0 = fdiv f32 %arg, f32 100;
+    f32 %1 = call (f32) -> f32 @my_sqrt(f32 %0);
+    f32 %2 = fmul f32 10, f32 %1;
+    ret f32 %2;
+^indirect1(f32 %arg, f32 %arg1):
     f32 %0 = fdiv f32 %arg, f32 8;
     f32 %1 = fadd f32 %0, f32 0.5;
     f32 %2 = fmul f32 2, f32 %arg;
     f32 %3 = fadd f32 4, f32 %arg;
     f32 %4 = fdiv f32 %2, f32 %3;
     f32 %5 = fadd f32 %1, f32 %4;
-    ubr [ ^while.body f32 %arg1, f32 %5, i32 10 ];
-^indirect1(f32 %arg):
-    f32 %0 = fdiv f32 %arg, f32 100;
-    f32 %1 = call (f32) -> f32 @my_sqrt(f32 %0);
-    f32 %2 = fmul f32 10, f32 %1;
-    ret f32 %2;
-^while.body(f32 %arg, f32 %arg1, i32 %arg2):
-    f32 %0 = fdiv f32 %arg, f32 %arg1;
-    f32 %1 = fadd f32 %arg1, f32 %0;
-    f32 %2 = fdiv f32 %1, f32 2;
-    i32 %3 = sub i32 %arg2, i32 1;
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4, [ ^while.body f32 %arg, f32 %2, i32 %3 ], [ ^b f32 %2 ];
-^b(f32 %arg):
-    ret f32 %arg;
+    f32 %6 = fdiv f32 %arg1, f32 %5;
+    f32 %7 = fadd f32 %5, f32 %6;
+    f32 %8 = fdiv f32 %7, f32 2;
+    f32 %9 = fdiv f32 %arg1, f32 %8;
+    f32 %10 = fadd f32 %8, f32 %9;
+    f32 %11 = fdiv f32 %10, f32 2;
+    f32 %12 = fdiv f32 %arg1, f32 %11;
+    f32 %13 = fadd f32 %11, f32 %12;
+    f32 %14 = fdiv f32 %13, f32 2;
+    f32 %15 = fdiv f32 %arg1, f32 %14;
+    f32 %16 = fadd f32 %14, f32 %15;
+    f32 %17 = fdiv f32 %16, f32 2;
+    f32 %18 = fdiv f32 %arg1, f32 %17;
+    f32 %19 = fadd f32 %17, f32 %18;
+    f32 %20 = fdiv f32 %19, f32 2;
+    f32 %21 = fdiv f32 %arg1, f32 %20;
+    f32 %22 = fadd f32 %20, f32 %21;
+    f32 %23 = fdiv f32 %22, f32 2;
+    f32 %24 = fdiv f32 %arg1, f32 %23;
+    f32 %25 = fadd f32 %23, f32 %24;
+    f32 %26 = fdiv f32 %25, f32 2;
+    f32 %27 = fdiv f32 %arg1, f32 %26;
+    f32 %28 = fadd f32 %26, f32 %27;
+    f32 %29 = fdiv f32 %28, f32 2;
+    f32 %30 = fdiv f32 %arg1, f32 %29;
+    f32 %31 = fadd f32 %29, f32 %30;
+    f32 %32 = fdiv f32 %31, f32 2;
+    f32 %33 = fdiv f32 %arg1, f32 %32;
+    f32 %34 = fadd f32 %32, f32 %33;
+    f32 %35 = fdiv f32 %34, f32 2;
+    ret f32 %35;
 }
 internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4):
@@ -69,8 +90,8 @@ internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %4 = fdiv f32 %3, f32 2;
     f32 %5 = fadd f32 %arg, f32 %4;
     i1 %6 = scmp eq i32 %arg4, i32 1;
-    cbr i1 %6, [ ^entry1 f32 %arg, f32 %5, f32 %2, f32 %3, f32 %arg3, f32 %arg, f32 %arg2, i32 %arg4, f32 %arg1, f32 %2, i1 %6 ], [ ^indirect i32 %arg4, f32 %arg3, f32 %arg, f32 %arg2, i32 %arg4, f32 %arg1, f32 %2, i1 %6, f32 %arg, f32 %2, f32 %5, f32 %3 ];
-^entry1(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, i32 %arg7, f32 %arg8, f32 %arg9, i1 %arg10):
+    cbr i1 %6(prob = 0.5), [ ^entry1 f32 %arg, f32 %5, f32 %2, f32 %3, f32 %arg3, f32 %arg, f32 %arg2, i32 %arg4, f32 %arg1, f32 %2 ], [ ^indirect i32 %arg4, f32 %arg3, f32 %arg, f32 %arg2, i32 %arg4, f32 %arg1, f32 %2, f32 %arg, f32 %2, f32 %5, f32 %3 ];
+^entry1(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, i32 %arg7, f32 %arg8, f32 %arg9):
     f32 %0 = fdiv f32 1, f32 %arg;
     f32 %1 = fdiv f32 1, f32 %arg1;
     f32 %2 = ffma f32 4, f32 %1, f32 %0;
@@ -78,34 +99,34 @@ internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %4 = fadd f32 %2, f32 %3;
     f32 %5 = fmul f32 %4, f32 %arg3;
     f32 %6 = fdiv f32 %5, f32 6;
-    ubr [ ^entry2 f32 %arg9, f32 %arg8, i32 %arg7, f32 %arg6, f32 %arg9, f32 %arg8, i32 %arg7, f32 %arg5, f32 %arg4, f32 %6, i1 %arg10 ];
-^indirect(i32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, i1 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11):
+    ubr [ ^entry2 f32 %arg9, f32 %arg8, i32 %arg7, f32 %arg6, f32 %arg8, i32 %arg7, f32 %arg9, f32 %arg5, f32 %arg4, f32 %6, i1 true ];
+^indirect(i32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
     i1 %0 = scmp eq i32 %arg, i32 2;
-    cbr i1 %0, [ ^if.then f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg2, f32 %arg1, i1 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11 ], [ ^entry2 f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg2, f32 %arg1, f32 0, i1 %arg7 ];
-^if.then(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
-    f32 %0 = fmul f32 %arg7, f32 %arg7;
+    cbr i1 %0(prob = 0.5), [ ^if.then f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg2, f32 %arg1, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10 ], [ ^entry2 f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg5, i32 %arg4, f32 %arg6, f32 %arg2, f32 %arg1, f32 0, i1 false ];
+^if.then(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9):
+    f32 %0 = fmul f32 %arg6, f32 %arg6;
     f32 %1 = fsub f32 1, f32 %0;
     f32 %2 = call (f32) -> f32 @my_sqrt(f32 %1);
     f32 %3 = fdiv f32 1, f32 %2;
-    f32 %4 = fmul f32 %arg9, f32 %arg9;
+    f32 %4 = fmul f32 %arg8, f32 %arg8;
     f32 %5 = fsub f32 1, f32 %4;
     f32 %6 = call (f32) -> f32 @my_sqrt(f32 %5);
     f32 %7 = fdiv f32 1, f32 %6;
     f32 %8 = ffma f32 4, f32 %7, f32 %3;
-    f32 %9 = fmul f32 %arg8, f32 %arg8;
+    f32 %9 = fmul f32 %arg7, f32 %arg7;
     f32 %10 = fsub f32 1, f32 %9;
     f32 %11 = call (f32) -> f32 @my_sqrt(f32 %10);
     f32 %12 = fdiv f32 1, f32 %11;
     f32 %13 = fadd f32 %8, f32 %12;
-    f32 %14 = fmul f32 %13, f32 %arg10;
+    f32 %14 = fmul f32 %13, f32 %arg9;
     f32 %15 = fdiv f32 %14, f32 6;
-    ubr [ ^entry2 f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg, f32 %arg1, i32 %arg2, f32 %arg4, f32 %arg5, f32 %15, i1 %arg6 ];
-^entry2(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, i1 %arg10):
+    ubr [ ^entry2 f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg1, i32 %arg2, f32 %arg, f32 %arg4, f32 %arg5, f32 %15, i1 false ];
+^entry2(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, i1 %arg10):
     f32 %0 = fsub f32 %arg1, f32 %arg;
     f32 %1 = fdiv f32 %0, f32 2;
     f32 %2 = fadd f32 %arg, f32 %1;
-    cbr i1 %arg10, [ ^entry3 f32 %arg, f32 %2, f32 %arg1, f32 %0, f32 %arg3, f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9 ], [ ^indirect1 i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg, f32 %arg1, f32 %2, f32 %0 ];
-^entry3(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, i32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
+    cbr i1 %arg10(prob = 0.5), [ ^entry3 f32 %arg, f32 %2, f32 %arg1, f32 %0, f32 %arg3, f32 %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9 ], [ ^indirect1 i32 %arg2, f32 %arg3, f32 %arg4, i32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg, f32 %arg1, f32 %2, f32 %0 ];
+^entry3(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
     f32 %0 = fdiv f32 1, f32 %arg;
     f32 %1 = fdiv f32 1, f32 %arg1;
     f32 %2 = ffma f32 4, f32 %1, f32 %0;
@@ -116,15 +137,15 @@ internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %7 = fadd f32 %arg10, f32 %6;
     f32 %8 = fsub f32 %7, f32 %arg9;
     i1 %9 = fcmp gt f32 %8, f32 0;
-    cbr i1 %9, [ ^entry4 f32 %8, f32 %arg8, i32 %arg7, f32 %arg6, f32 %arg5, f32 %6, f32 %arg10, f32 %7, f32 %8, f32 %arg4 ], [ ^indirect2 f32 %8, f32 %arg4, f32 %8, f32 %7, f32 %arg10, f32 %6, f32 %arg5, f32 %arg6, i32 %arg7, f32 %arg8 ];
-^indirect1(i32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11):
+    cbr i1 %9(prob = 0.5), [ ^entry4 f32 %8, f32 %arg8, f32 %arg7, f32 %arg10, i32 %arg6, f32 %arg5, f32 %6, f32 %7, f32 %8, f32 %arg4 ], [ ^indirect2 f32 %8, f32 %arg4, f32 %8, f32 %7, f32 %6, f32 %arg5, i32 %arg6, f32 %arg10, f32 %arg7, f32 %arg8 ];
+^indirect1(i32 %arg, f32 %arg1, f32 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11):
     i1 %0 = scmp eq i32 %arg, i32 2;
-    cbr i1 %0, [ ^if.then1 f32 %arg7, f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg2, f32 %arg1, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11 ], [ ^entry5 f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7 ];
-^entry4(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9):
+    cbr i1 %0(prob = 0.5), [ ^if.then1 f32 %arg7, f32 %arg6, f32 %arg5, f32 %arg4, i32 %arg3, f32 %arg2, f32 %arg1, f32 %arg8, f32 %arg9, f32 %arg10, f32 %arg11 ], [ ^entry5 f32 %arg1, f32 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7 ];
+^entry4(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9):
     f32 %0 = fmul f32 15, f32 %arg9;
     i1 %1 = fcmp le f32 %arg, f32 %0;
-    cbr i1 %1, [ ^indirect3 f32 %arg8, f32 %arg7 ], [ ^indirect4 f32 %arg5, f32 %arg3, i32 %arg2, f32 %arg6, f32 %arg9, f32 %arg4, f32 %arg1 ];
-^if.then1(f32 %arg, f32 %arg1, f32 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
+    cbr i1 %1(prob = 0.5), [ ^indirect3 f32 %arg8, f32 %arg7 ], [ ^indirect4 f32 %arg6, f32 %arg5, i32 %arg4, f32 %arg3, f32 %arg9, f32 %arg2, f32 %arg1 ];
+^if.then1(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, i32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9, f32 %arg10):
     f32 %0 = fmul f32 %arg7, f32 %arg7;
     f32 %1 = fsub f32 1, f32 %0;
     f32 %2 = call (f32) -> f32 @my_sqrt(f32 %1);
@@ -144,16 +165,16 @@ internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %16 = fadd f32 %arg, f32 %15;
     f32 %17 = fsub f32 %16, f32 %arg1;
     i1 %18 = fcmp gt f32 %17, f32 0;
-    cbr i1 %18, [ ^entry4 f32 %17, f32 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, f32 %15, f32 %arg, f32 %16, f32 %17, f32 %arg6 ], [ ^indirect2 f32 %17, f32 %arg6, f32 %17, f32 %16, f32 %arg, f32 %15, f32 %arg5, f32 %arg4, i32 %arg3, f32 %arg2 ];
-^indirect2(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6, f32 %arg7, i32 %arg8, f32 %arg9):
+    cbr i1 %18(prob = 0.5), [ ^entry4 f32 %17, f32 %arg2, f32 %arg3, f32 %arg, i32 %arg4, f32 %arg5, f32 %15, f32 %16, f32 %17, f32 %arg6 ], [ ^indirect2 f32 %17, f32 %arg6, f32 %17, f32 %16, f32 %15, f32 %arg5, i32 %arg4, f32 %arg, f32 %arg3, f32 %arg2 ];
+^indirect2(f32 %arg, f32 %arg1, f32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg8, f32 %arg9):
     f32 %0 = fneg f32 %arg;
     f32 %1 = fmul f32 15, f32 %arg1;
     i1 %2 = fcmp le f32 %0, f32 %1;
-    cbr i1 %2, [ ^indirect3 f32 %arg2, f32 %arg3 ], [ ^indirect4 f32 %arg5, f32 %arg7, i32 %arg8, f32 %arg4, f32 %arg1, f32 %arg6, f32 %arg9 ];
-^entry5(f32 %arg, f32 %arg1, f32 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6):
+    cbr i1 %2(prob = 0.5), [ ^indirect3 f32 %arg2, f32 %arg3 ], [ ^indirect4 f32 %arg4, f32 %arg5, i32 %arg6, f32 %arg7, f32 %arg1, f32 %arg8, f32 %arg9 ];
+^entry5(f32 %arg, f32 %arg1, i32 %arg2, f32 %arg3, f32 %arg4, f32 %arg5, f32 %arg6):
     f32 %0 = fsub f32 %arg6, f32 %arg5;
     i1 %1 = fcmp gt f32 %0, f32 0;
-    cbr i1 %1, [ ^entry4 f32 %0, f32 %arg4, i32 %arg3, f32 %arg2, f32 %arg1, f32 0, f32 %arg6, f32 %arg6, f32 %0, f32 %arg ], [ ^indirect2 f32 %0, f32 %arg, f32 %0, f32 %arg6, f32 %arg6, f32 0, f32 %arg1, f32 %arg2, i32 %arg3, f32 %arg4 ];
+    cbr i1 %1(prob = 0.5), [ ^entry4 f32 %0, f32 %arg4, f32 %arg3, f32 %arg6, i32 %arg2, f32 %arg1, f32 0, f32 %arg6, f32 %0, f32 %arg ], [ ^indirect2 f32 %0, f32 %arg, f32 %0, f32 %arg6, f32 0, f32 %arg1, i32 %arg2, f32 %arg6, f32 %arg3, f32 %arg4 ];
 ^indirect3(f32 %arg, f32 %arg1):
     f32 %0 = fdiv f32 %arg, f32 15;
     f32 %1 = fadd f32 %arg1, f32 %0;
@@ -168,7 +189,7 @@ internal func @asr5(f32, f32, f32, f32, i32) -> f32 { NoMemoryRead NoMemoryWrite
 internal func @eee(f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg):
     i1 %0 = fcmp gt f32 %arg, f32 0.001;
-    cbr i1 %0, [ ^indirect f32 %arg ], [ ^indirect1 f32 %arg ];
+    cbr i1 %0(prob = 0.5), [ ^indirect f32 %arg ], [ ^indirect1 f32 %arg ];
 ^indirect(f32 %arg):
     f32 %0 = fdiv f32 %arg, f32 2;
     f32 %1 = call (f32) -> f32 @eee(f32 %0);
@@ -193,7 +214,7 @@ internal func @eee(f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
 internal func @my_exp(f32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg):
     i1 %0 = fcmp lt f32 %arg, f32 0;
-    cbr i1 %0, [ ^indirect f32 %arg ], [ ^indirect1 f32 %arg ];
+    cbr i1 %0(prob = 0.5), [ ^indirect f32 %arg ], [ ^indirect1 f32 %arg ];
 ^indirect(f32 %arg):
     f32 %0 = fneg f32 %arg;
     f32 %1 = call (f32) -> f32 @my_exp(f32 %0);
@@ -212,12 +233,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp neq i32 %0, i32 0;
-    cbr i1 %1, [ ^while.body i32 %0 ], [ ^b ];
+    cbr i1 %1(prob = 0.97), [ ^while.body i32 %0 ], [ ^b ];
 ^while.body(i32 %arg):
     f32 %0 = call () -> f32 @getfloat();
     f32 %1 = call () -> f32 @getfloat();
     i1 %2 = fcmp gt f32 %0, f32 0;
-    cbr i1 %2, [ ^while.body1 f32 %0, f32 %0, i1 %2, i32 %arg, f32 %0, f32 %1, i1 %2 ], [ ^indirect f32 %0, f32 %0, i1 %2, i32 %arg, f32 %0, f32 %1, i1 %2 ];
+    cbr i1 %2(prob = 0.5), [ ^while.body1 f32 %0, f32 %0, i1 %2, i32 %arg, f32 %0, f32 %1, i1 %2 ], [ ^indirect f32 %0, f32 %0, i1 %2, i32 %arg, f32 %0, f32 %1, i1 %2 ];
 ^b():
     ret i32 0;
 ^indirect(f32 %arg, f32 %arg1, i1 %arg2, i32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6):
@@ -235,7 +256,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %2 = call (f32) -> f32 @my_exp(f32 %arg1);
     call (f32) -> void @putfloat(f32 %2);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %arg2, [ ^entry1 f32 %arg1, i32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6 ], [ ^if.else i32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6 ];
+    cbr i1 %arg2(prob = 0.5), [ ^entry1 f32 %arg1, i32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6 ], [ ^if.else i32 %arg3, f32 %arg4, f32 %arg5, i1 %arg6 ];
 ^entry1(f32 %arg, i32 %arg1, f32 %arg2, f32 %arg3, i1 %arg4):
     f32 %0 = fsub f32 %arg, f32 1;
     f32 %1 = fdiv f32 %0, f32 2;
@@ -249,18 +270,18 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %9 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %arg, f32 1e-08, f32 %8, i32 1);
     call (f32) -> void @putfloat(f32 %9);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %arg4, [ ^b1 i32 %arg1, f32 %arg2, f32 %arg3, i1 %arg4 ], [ ^if.else1 i32 %arg1, f32 %arg2, f32 %arg3, i1 %arg4 ];
+    cbr i1 %arg4(prob = 0.5), [ ^b1 i32 %arg1, f32 %arg2, f32 %arg3, i1 %arg4 ], [ ^if.else1 i32 %arg1, f32 %arg2, f32 %arg3, i1 %arg4 ];
 ^if.else(i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3):
     call (i32) -> void @putch(i32 45);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %arg3, [ ^b1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ], [ ^if.else1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ];
+    cbr i1 %arg3(prob = 0.5), [ ^b1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ], [ ^if.else1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ];
 ^b1(i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3):
     i1 %0 = fcmp gt f32 %arg2, f32 0;
-    cbr i1 %0, [ ^if.then1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ], [ ^if.else1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ], [ ^if.else1 i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3 ];
 ^if.else1(i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3):
     call (i32) -> void @putch(i32 45);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %arg3, [ ^if.then i32 %arg, f32 %arg1, f32 %arg2 ], [ ^if.else2 i32 %arg ];
+    cbr i1 %arg3(prob = 0.5), [ ^if.then i32 %arg, f32 %arg1, f32 %arg2 ], [ ^if.else2 i32 %arg ];
 ^if.then(i32 %arg, f32 %arg1, f32 %arg2):
     f32 %0 = fsub f32 %arg1, f32 1;
     f32 %1 = fdiv f32 %0, f32 2;
@@ -276,8 +297,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %11 = call (f32) -> f32 @my_exp(f32 %10);
     call (f32) -> void @putfloat(f32 %11);
     call (i32) -> void @putch(i32 10);
-    i32 %12 = sub i32 %arg, i32 1;
-    ubr [ ^while.header i32 %12, i32 %12 ];
+    i32 %12 = add i32 %arg, i32 -1;
+    ubr [ ^indirect1 i32 %12, i32 %12 ];
 ^if.then1(i32 %arg, f32 %arg1, f32 %arg2, i1 %arg3):
     f32 %0 = fsub f32 %arg2, f32 1;
     f32 %1 = fdiv f32 %0, f32 2;
@@ -302,13 +323,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %20 = fdiv f32 %9, f32 %19;
     call (f32) -> void @putfloat(f32 %20);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %arg3, [ ^if.then i32 %arg, f32 %arg1, f32 %arg2 ], [ ^if.else2 i32 %arg ];
+    cbr i1 %arg3(prob = 0.5), [ ^if.then i32 %arg, f32 %arg1, f32 %arg2 ], [ ^if.else2 i32 %arg ];
 ^if.else2(i32 %arg):
     call (i32) -> void @putch(i32 45);
     call (i32) -> void @putch(i32 10);
-    i32 %0 = sub i32 %arg, i32 1;
-    ubr [ ^while.header i32 %0, i32 %0 ];
-^while.header(i32 %arg, i32 %arg1):
+    i32 %0 = add i32 %arg, i32 -1;
+    ubr [ ^indirect1 i32 %0, i32 %0 ];
+^indirect1(i32 %arg, i32 %arg1):
     i1 %0 = scmp neq i32 %arg, i32 0;
-    cbr i1 %0, [ ^while.body i32 %arg1 ], [ ^b ];
+    cbr i1 %0(prob = 0.97), [ ^while.body i32 %arg1 ], [ ^b ];
 }

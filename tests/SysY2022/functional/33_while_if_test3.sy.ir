@@ -3,14 +3,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     ubr [ ^while.body i32 4 ];
 ^while.body(i32 %arg):
     i1 %0 = scmp lt i32 %arg, i32 100;
-    cbr i1 %0, [ ^indirect i32 %arg ], [ ^b i32 %arg, i32 %arg ];
+    cbr i1 %0(prob = 0.5), [ ^indirect i32 %arg ], [ ^indirect1 i32 %arg, i32 %arg ];
 ^indirect(i32 %arg):
     i32 %0 = add i32 %arg, i32 42;
     i1 %1 = scmp gt i32 %0, i32 99;
-    cbr i1 %1, [ ^b1 i32 168 ], [ ^b i32 %0, i32 %0 ];
-^b(i32 %arg, i32 %arg1):
+    cbr i1 %1(prob = 0.5), [ ^b i32 168 ], [ ^indirect1 i32 %0, i32 %0 ];
+^indirect1(i32 %arg, i32 %arg1):
     i1 %0 = scmp lt i32 %arg, i32 75;
-    cbr i1 %0, [ ^while.body i32 %arg1 ], [ ^b1 i32 %arg1 ];
-^b1(i32 %arg):
+    cbr i1 %0(prob = 0.97), [ ^while.body i32 %arg1 ], [ ^b i32 %arg1 ];
+^b(i32 %arg):
     ret i32 %arg;
 }

@@ -4,16 +4,16 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry():
     ubr [ ^indirect i32 1 ];
 ^indirect(i32 %arg):
-    i1 %0 = scmp le i32 1, i32 %arg;
-    cbr i1 %0, [ ^indirect1 i32 %arg, i32 0, i32 1, i32 %arg ], [ ^b i32 0, i32 %arg ];
+    i1 %0 = scmp gt i32 %arg, i32 0;
+    cbr i1 %0(prob = 0.97), [ ^indirect1 i32 %arg, i32 0, i32 1, i32 %arg ], [ ^b i32 0, i32 %arg ];
 ^indirect1(i32 %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32 %0 = sdiv i32 %arg, i32 %arg2;
     i32 %1 = mul i32 %arg2, i32 %0;
     i1 %2 = scmp eq i32 %arg, i32 %1;
-    cbr i1 %2, [ ^indirect2 i32 %arg2, i32 %arg1, i32 %arg3 ], [ ^b1 i32 %arg2, i32 %arg1, i32 %arg3 ];
+    cbr i1 %2(prob = 0.5), [ ^indirect2 i32 %arg2, i32 %arg1, i32 %arg3 ], [ ^b1 i32 %arg2, i32 %arg1, i32 %arg3 ];
 ^b(i32 %arg, i32 %arg1):
     i1 %0 = scmp eq i32 %arg, i32 2;
-    cbr i1 %0, [ ^if.then i32 %arg1 ], [ ^indirect3 i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then i32 %arg1 ], [ ^indirect3 i32 %arg1 ];
 ^if.then(i32 %arg):
     call (i32) -> void @write(i32 %arg);
     i32 %0 = add i32 %arg, i32 1;
@@ -22,17 +22,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %0 = add i32 %arg1, i32 1;
     i32 %1 = add i32 %arg, i32 1;
     i1 %2 = scmp le i32 %1, i32 %arg2;
-    cbr i1 %2, [ ^indirect1 i32 %arg2, i32 %0, i32 %1, i32 %arg2 ], [ ^b i32 %0, i32 %arg2 ];
+    cbr i1 %2(prob = 0.97), [ ^indirect1 i32 %arg2, i32 %0, i32 %1, i32 %arg2 ], [ ^b i32 %0, i32 %arg2 ];
 ^indirect3(i32 %arg):
     i32 %0 = add i32 %arg, i32 1;
     ubr [ ^while.header i32 %0, i32 %0 ];
 ^b1(i32 %arg, i32 %arg1, i32 %arg2):
     i32 %0 = add i32 %arg, i32 1;
     i1 %1 = scmp le i32 %0, i32 %arg2;
-    cbr i1 %1, [ ^indirect1 i32 %arg2, i32 %arg1, i32 %0, i32 %arg2 ], [ ^b i32 %arg1, i32 %arg2 ];
+    cbr i1 %1(prob = 0.97), [ ^indirect1 i32 %arg2, i32 %arg1, i32 %0, i32 %arg2 ], [ ^b i32 %arg1, i32 %arg2 ];
 ^while.header(i32 %arg, i32 %arg1):
-    i1 %0 = scmp le i32 %arg, i32 30;
-    cbr i1 %0, [ ^indirect i32 %arg1 ], [ ^b2 ];
+    i1 %0 = scmp lt i32 %arg, i32 31;
+    cbr i1 %0(prob = 0.97), [ ^indirect i32 %arg1 ], [ ^b2 ];
 ^b2():
     ret i32 0;
 }

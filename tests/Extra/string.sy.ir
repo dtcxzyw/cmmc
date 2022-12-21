@@ -1,33 +1,33 @@
 func @main() -> i32 { NoRecurse Entry } {
 ^entry():
     [6 * i8]* %a = alloc [6 * i8];
-    i8* %0 = getelementptr &([6 * i8]* %a)[i32 0][i32 0];
+    i8* %0 = getelementptr &([6 * i8]* %a)[i64 0][i64 0];
     store i8* %0 with i8 72;
-    i8* %1 = getelementptr &([6 * i8]* %a)[i32 0][i32 1];
+    i8* %1 = getelementptr &([6 * i8]* %a)[i64 0][i64 1];
     store i8* %1 with i8 101;
-    i8* %2 = getelementptr &([6 * i8]* %a)[i32 0][i32 2];
+    i8* %2 = getelementptr &([6 * i8]* %a)[i64 0][i64 2];
     store i8* %2 with i8 108;
-    i8* %3 = getelementptr &([6 * i8]* %a)[i32 0][i32 3];
+    i8* %3 = getelementptr &([6 * i8]* %a)[i64 0][i64 3];
     store i8* %3 with i8 108;
-    i8* %4 = getelementptr &([6 * i8]* %a)[i32 0][i32 4];
+    i8* %4 = getelementptr &([6 * i8]* %a)[i64 0][i64 4];
     store i8* %4 with i8 111;
-    i8* %5 = getelementptr &([6 * i8]* %a)[i32 0][i32 5];
+    i8* %5 = getelementptr &([6 * i8]* %a)[i64 0][i64 5];
     store i8* %5 with i8 0;
     [6 * i8]* %cmmc.str.s295471233978816214 = alloc [6 * i8];
-    i8* %6 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 0];
+    i8* %6 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 0];
     store i8* %6 with i8 87;
-    i8* %7 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 1];
+    i8* %7 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 1];
     store i8* %7 with i8 111;
-    i8* %8 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 2];
+    i8* %8 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 2];
     store i8* %8 with i8 114;
-    i8* %9 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 3];
+    i8* %9 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 3];
     store i8* %9 with i8 108;
-    i8* %10 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 4];
+    i8* %10 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 4];
     store i8* %10 with i8 100;
-    i8* %11 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i32 0][i32 5];
+    i8* %11 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 5];
     store i8* %11 with i8 0;
     [512 * i8]* %c = alloc [512 * i8];
-    i8* %12 = getelementptr &([512 * i8]* %c)[i32 0][i32 0];
+    i8* %12 = getelementptr &([512 * i8]* %c)[i64 0][i64 0];
     i8** %a1 = alloc i8*;
     store i8** %a1 with i8* %0;
     i8** %b = alloc i8*;
@@ -38,8 +38,8 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %j with i32 0;
     i32* %i = alloc i32;
     store i32* %i with i32 0;
-    ubr [ ^for.body i8** %b, i8** %a1, i32* %i, i8** %c1, i32* %j, i8* %12, i8* %0, i8* %12, i32 0, i32 0, [512 * i8]* %c ];
-^for.body(i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %arg6, i8* %arg7, i32 %arg8, i32 %arg9, [512 * i8]* %arg10):
+    ubr [ ^for.body i8** %b, i8** %a1, i32* %i, i8** %c1, i32* %j, i8* %12, i8* %0, i8* %12, i32 0, i32 0 ];
+^for.body(i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %arg6, i8* %arg7, i32 %arg8, i32 %arg9):
     i8* %0 = getelementptr &(i8* %arg7)[i32 %arg8];
     i8* %1 = getelementptr &(i8* %arg6)[i32 %arg9];
     i8 %2 = load i8* %1;
@@ -55,8 +55,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i8* %9 = getelementptr &(i8* %6)[i32 %8];
     i8 %10 = load i8* %9;
     i1 %11 = scmp neq i8 %10, i8 0;
-    cbr i1 %11, [ ^for.body i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %6, i8* %5, i32 %7, i32 %8, [512 * i8]* %arg10 ], [ ^b i8** %arg, i8** %arg3, i32* %arg4, i8* %arg5, i8* %5, i32 %7, [512 * i8]* %arg10 ];
-^b(i8** %arg, i8** %arg1, i32* %arg2, i8* %arg3, i8* %arg4, i32 %arg5, [512 * i8]* %arg6):
+    cbr i1 %11(prob = 0.97), [ ^for.body i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %6, i8* %5, i32 %7, i32 %8 ], [ ^b i8** %arg, i8** %arg3, i32* %arg4, i8* %arg5, i8* %5, i32 %7 ];
+^b(i8** %arg, i8** %arg1, i32* %arg2, i8* %arg3, i8* %arg4, i32 %arg5):
     i8* %0 = getelementptr &(i8* %arg4)[i32 %arg5];
     store i8* %0 with i8 32;
     i32 %1 = load i32* %arg2;
@@ -68,8 +68,8 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %i with i32 0;
     i8 %5 = load i8* %3;
     i1 %6 = scmp neq i8 %5, i8 0;
-    cbr i1 %6, [ ^for.body1 i8** %arg, i32* %i, i8** %arg1, i32* %arg2, i8* %arg3, i8* %3, i8* %2, i32 %4, i32 0, [512 * i8]* %arg6 ], [ ^b1 i8* %arg3, i8* %2, i32 %4, [512 * i8]* %arg6 ];
-^for.body1(i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %arg5, i8* %arg6, i32 %arg7, i32 %arg8, [512 * i8]* %arg9):
+    cbr i1 %6(prob = 0.97), [ ^for.body1 i8** %arg, i32* %i, i8** %arg1, i32* %arg2, i8* %arg3, i8* %3, i8* %2, i32 %4, i32 0 ], [ ^b1 i8* %arg3, i8* %2, i32 %4 ];
+^for.body1(i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %arg5, i8* %arg6, i32 %arg7, i32 %arg8):
     i8* %0 = getelementptr &(i8* %arg6)[i32 %arg7];
     i8* %1 = getelementptr &(i8* %arg5)[i32 %arg8];
     i8 %2 = load i8* %1;
@@ -85,24 +85,24 @@ func @main() -> i32 { NoRecurse Entry } {
     i8* %9 = getelementptr &(i8* %6)[i32 %8];
     i8 %10 = load i8* %9;
     i1 %11 = scmp neq i8 %10, i8 0;
-    cbr i1 %11, [ ^for.body1 i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %6, i8* %5, i32 %7, i32 %8, [512 * i8]* %arg9 ], [ ^b1 i8* %arg4, i8* %5, i32 %7, [512 * i8]* %arg9 ];
-^b1(i8* %arg, i8* %arg1, i32 %arg2, [512 * i8]* %arg3):
+    cbr i1 %11(prob = 0.97), [ ^for.body1 i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %6, i8* %5, i32 %7, i32 %8 ], [ ^b1 i8* %arg4, i8* %5, i32 %7 ];
+^b1(i8* %arg, i8* %arg1, i32 %arg2):
     i8* %0 = getelementptr &(i8* %arg1)[i32 %arg2];
     store i8* %0 with i8 0;
     i8 %1 = load i8* %arg;
     i1 %2 = scmp neq i8 %1, i8 0;
-    cbr i1 %2, [ ^for.body2 i32 0, i32 0, [512 * i8]* %arg3 ], [ ^b2 i32 0 ];
-^for.body2(i32 %arg, i32 %arg1, [512 * i8]* %arg2):
-    i32 %0 = mul i32 %arg, i32 131;
-    i8* %1 = getelementptr &([512 * i8]* %arg2)[i32 0][i32 %arg1];
+    cbr i1 %2(prob = 0.97), [ ^for.body2 i8* %arg, i32 0, i32 0 ], [ ^b2 i32 0 ];
+^for.body2(i8* %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = mul i32 %arg1, i32 131;
+    i8* %1 = getelementptr &(i8* %arg)[i32 %arg2];
     i8 %2 = load i8* %1;
     i32 %3 = sext i8 %2 to i32;
     i32 %4 = add i32 %0, i32 %3;
-    i32 %5 = add i32 %arg1, i32 1;
-    i8* %6 = getelementptr &([512 * i8]* %arg2)[i32 0][i32 %5];
+    i32 %5 = add i32 %arg2, i32 1;
+    i8* %6 = getelementptr &(i8* %1)[i64 1];
     i8 %7 = load i8* %6;
     i1 %8 = scmp neq i8 %7, i8 0;
-    cbr i1 %8, [ ^for.body2 i32 %4, i32 %5, [512 * i8]* %arg2 ], [ ^b2 i32 %4 ];
+    cbr i1 %8(prob = 0.97), [ ^for.body2 i8* %arg, i32 %4, i32 %5 ], [ ^b2 i32 %4 ];
 ^b2(i32 %arg):
     ret i32 %arg;
 }

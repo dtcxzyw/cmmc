@@ -1,10 +1,7 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
 func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
 i32* @global;
-func @test_1_r02() -> i32 { NoReturn NoRecurse } {
+func @test_1_r02() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
 ^entry():
-    i32 %0 = load i32* @global;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* @global with i32 %1;
     unreachable;
 }

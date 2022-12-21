@@ -9,7 +9,7 @@ v5 := v4 + v3
 WRITE v5
 RETURN #0
 LABEL label1 :
-v6 := v0 - #1
+v6 := v0 + #-1
 ARG v2
 ARG v3
 ARG v1

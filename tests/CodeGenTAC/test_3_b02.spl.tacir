@@ -39,7 +39,7 @@ v24 := v21 * #4
 v23 := v23 + v24
 v25 := *v23
 IF v25 < v22 GOTO label10
-v26 := v21 - #1
+v26 := v21 + #-1
 IF v20 >= v26 GOTO label4
 GOTO label15
 LABEL label4 :
@@ -250,7 +250,7 @@ v73 := v119
 GOTO label28
 LABEL label29 :
 v121 := v120
-v123 := v122 - #1
+v123 := v122 + #-1
 *v121 := v123
 IF v124 >= v123 GOTO label30
 GOTO label33
@@ -271,7 +271,7 @@ v132 := v57
 v133 := v58
 v134 := v57
 LABEL label32 :
-v135 := v134 - #1
+v135 := v134 + #-1
 ARG v135
 ARG v132
 ARG v131

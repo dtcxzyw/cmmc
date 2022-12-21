@@ -6,11 +6,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %2 = add i32 %0, i32 %1;
     i32 %3 = call () -> i32 @getint();
     i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4, [ ^indirect i32 %2 ], [ ^b i32 %2 ];
+    cbr i1 %4(prob = 0.5), [ ^indirect i32 %2 ], [ ^indirect1 i32 %2 ];
 ^indirect(i32 %arg):
     i32 %0 = call () -> i32 @getint();
     i32 %1 = add i32 %0, i32 %arg;
     ret i32 %1;
-^b(i32 %arg):
+^indirect1(i32 %arg):
     ret i32 %arg;
 }

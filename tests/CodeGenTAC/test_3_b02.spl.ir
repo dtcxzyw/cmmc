@@ -15,17 +15,17 @@ func @Partition([8 * i32]*, i32, i32) -> i32 { NoRecurse } {
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i1 %2 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %2, [ ^indirect [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %1 ], [ ^b i32 %arg1 ];
+    cbr i1 %2(prob = 0.97), [ ^indirect [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %1 ], [ ^b i32 %arg1 ];
 ^indirect([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i1 %0 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %0, [ ^b1 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
+    cbr i1 %0(prob = 0.5), [ ^b1 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
 ^b(i32 %arg):
     ret i32 %arg;
 ^b1([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
     i1 %2 = scmp ge i32 %1, i32 %arg3;
-    cbr i1 %2, [ ^while.body [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
+    cbr i1 %2(prob = 0.97), [ ^while.body [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
 ^b2([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
@@ -34,16 +34,16 @@ func @Partition([8 * i32]*, i32, i32) -> i32 { NoRecurse } {
     store i32* %0 with i32 %3;
     store i32* %2 with i32 %1;
     i1 %4 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %4, [ ^b3 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
+    cbr i1 %4(prob = 0.5), [ ^b3 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
 ^while.body([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = sub i32 %arg2, i32 1;
+    i32 %0 = add i32 %arg2, i32 -1;
     i1 %1 = scmp lt i32 %arg1, i32 %0;
-    cbr i1 %1, [ ^b1 [8 * i32]* %arg, i32 %arg1, i32 %0, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %0, i32 %arg3 ];
+    cbr i1 %1(prob = 0.5), [ ^b1 [8 * i32]* %arg, i32 %arg1, i32 %0, i32 %arg3 ], [ ^b2 [8 * i32]* %arg, i32 %arg1, i32 %0, i32 %arg3 ];
 ^b3([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
     i1 %2 = scmp le i32 %1, i32 %arg3;
-    cbr i1 %2, [ ^while.body1 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
+    cbr i1 %2(prob = 0.97), [ ^while.body1 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ];
 ^b4([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg1];
     i32 %1 = load i32* %0;
@@ -52,17 +52,17 @@ func @Partition([8 * i32]*, i32, i32) -> i32 { NoRecurse } {
     store i32* %0 with i32 %3;
     store i32* %2 with i32 %1;
     i1 %4 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %4, [ ^indirect [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b i32 %arg1 ];
+    cbr i1 %4(prob = 0.97), [ ^indirect [8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3 ], [ ^b i32 %arg1 ];
 ^while.body1([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
     i32 %0 = add i32 %arg1, i32 1;
     i1 %1 = scmp lt i32 %0, i32 %arg2;
-    cbr i1 %1, [ ^b3 [8 * i32]* %arg, i32 %0, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %0, i32 %arg2, i32 %arg3 ];
+    cbr i1 %1(prob = 0.5), [ ^b3 [8 * i32]* %arg, i32 %0, i32 %arg2, i32 %arg3 ], [ ^b4 [8 * i32]* %arg, i32 %0, i32 %arg2, i32 %arg3 ];
 }
 func @QuickSort([8 * i32]*, i32, i32) -> i32 {
 ^entry([8 * i32]* %arg, i32 %arg1, i32 %arg2):
     i1 %0 = scmp lt i32 %arg1, i32 %arg2;
-    cbr i1 %0, [ ^indirect [8 * i32]* %arg, i32 %arg2, i32 %arg1, i32 %arg1, i32 %arg2, i1 %0 ], [ ^b ];
-^indirect([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i1 %arg5):
+    cbr i1 %0(prob = 0.5), [ ^indirect [8 * i32]* %arg, i32 %arg2, i32 %arg1, i32 %arg1, i32 %arg2 ], [ ^b ];
+^indirect([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
     i32* %low = alloc i32;
     store i32* %low with i32 %arg2;
     i32* %high = alloc i32;
@@ -71,14 +71,15 @@ func @QuickSort([8 * i32]*, i32, i32) -> i32 {
     i32* %0 = getelementptr &([8 * i32]* %arg)[i32 0][i32 %arg2];
     i32 %1 = load i32* %0;
     store i32* %base with i32 %1;
-    cbr i1 %arg5, [ ^indirect1 [8 * i32]* %arg, i32* %base, i32* %high, i32* %low, [8 * i32]* %arg, i32 %arg3, i32 %arg4, i32 %arg2, i32 %arg1, i32 %1 ], [ ^b1 [8 * i32]* %arg, i32 %arg3, i32 %arg4, i32 %arg2 ];
+    i1 %2 = scmp lt i32 %arg2, i32 %arg1;
+    cbr i1 %2(prob = 0.97), [ ^indirect1 [8 * i32]* %arg, i32* %base, i32* %high, i32* %low, [8 * i32]* %arg, i32 %arg3, i32 %arg4, i32 %arg2, i32 %arg1, i32 %1 ], [ ^b1 [8 * i32]* %arg, i32 %arg3, i32 %arg4, i32 %arg2 ];
 ^b():
     ret i32 0;
 ^indirect1([8 * i32]* %arg, i32* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i1 %0 = scmp lt i32 %arg7, i32 %arg8;
-    cbr i1 %0, [ ^b2 i32* %arg3, i32* %arg1, [8 * i32]* %arg, i32* %arg2, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b3 i32* %arg1, [8 * i32]* %arg, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
+    cbr i1 %0(prob = 0.5), [ ^b2 i32* %arg3, i32* %arg1, [8 * i32]* %arg, i32* %arg2, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b3 i32* %arg1, [8 * i32]* %arg, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
 ^b1([8 * i32]* %arg, i32 %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = sub i32 %arg3, i32 1;
+    i32 %0 = add i32 %arg3, i32 -1;
     i32 %1 = call ([8 * i32]*, i32, i32) -> i32 @QuickSort([8 * i32]* %arg, i32 %arg1, i32 %0);
     i32 %2 = add i32 %arg3, i32 1;
     i32 %3 = call ([8 * i32]*, i32, i32) -> i32 @QuickSort([8 * i32]* %arg, i32 %2, i32 %arg2);
@@ -87,7 +88,7 @@ func @QuickSort([8 * i32]*, i32, i32) -> i32 {
     i32* %0 = getelementptr &([8 * i32]* %arg2)[i32 0][i32 %arg8];
     i32 %1 = load i32* %0;
     i1 %2 = scmp ge i32 %1, i32 %arg9;
-    cbr i1 %2, [ ^while.body i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b3 i32* %arg1, [8 * i32]* %arg2, i32* %arg3, i32* %arg, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
+    cbr i1 %2(prob = 0.97), [ ^while.body i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b3 i32* %arg1, [8 * i32]* %arg2, i32* %arg3, i32* %arg, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
 ^b3(i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32* %0 = getelementptr &([8 * i32]* %arg1)[i32 0][i32 %arg7];
     i32 %1 = load i32* %0;
@@ -99,17 +100,17 @@ func @QuickSort([8 * i32]*, i32, i32) -> i32 {
     i32 %5 = load i32* %arg2;
     i32 %6 = load i32* %arg3;
     i1 %7 = scmp lt i32 %6, i32 %5;
-    cbr i1 %7, [ ^b4 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5, i32 %4 ], [ ^b5 i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5 ];
+    cbr i1 %7(prob = 0.5), [ ^b4 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5, i32 %4 ], [ ^b5 i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5 ];
 ^while.body(i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
-    i32 %0 = sub i32 %arg8, i32 1;
+    i32 %0 = add i32 %arg8, i32 -1;
     store i32* %arg3 with i32 %0;
     i1 %1 = scmp lt i32 %arg7, i32 %0;
-    cbr i1 %1, [ ^b2 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %0, i32 %arg9 ], [ ^b3 i32* %arg, [8 * i32]* %arg1, i32* %arg3, i32* %arg2, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %0 ];
+    cbr i1 %1(prob = 0.5), [ ^b2 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %0, i32 %arg9 ], [ ^b3 i32* %arg, [8 * i32]* %arg1, i32* %arg3, i32* %arg2, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %0 ];
 ^b4(i32* %arg, i32* %arg1, [8 * i32]* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32* %0 = getelementptr &([8 * i32]* %arg2)[i32 0][i32 %arg7];
     i32 %1 = load i32* %0;
     i1 %2 = scmp le i32 %1, i32 %arg9;
-    cbr i1 %2, [ ^while.body1 i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b5 i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
+    cbr i1 %2(prob = 0.97), [ ^while.body1 i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9 ], [ ^b5 i32* %arg1, [8 * i32]* %arg2, i32* %arg, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8 ];
 ^b5(i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8):
     i32* %0 = getelementptr &([8 * i32]* %arg1)[i32 0][i32 %arg7];
     i32 %1 = load i32* %0;
@@ -121,12 +122,12 @@ func @QuickSort([8 * i32]*, i32, i32) -> i32 {
     i32 %5 = load i32* %arg2;
     i32 %6 = load i32* %arg3;
     i1 %7 = scmp lt i32 %6, i32 %5;
-    cbr i1 %7, [ ^indirect1 [8 * i32]* %arg1, i32* %arg, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5, i32 %4 ], [ ^b1 [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6 ];
+    cbr i1 %7(prob = 0.97), [ ^indirect1 [8 * i32]* %arg1, i32* %arg, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6, i32 %5, i32 %4 ], [ ^b1 [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %6 ];
 ^while.body1(i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %arg7, i32 %arg8, i32 %arg9):
     i32 %0 = add i32 %arg7, i32 1;
     store i32* %arg3 with i32 %0;
     i1 %1 = scmp lt i32 %0, i32 %arg8;
-    cbr i1 %1, [ ^b4 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %0, i32 %arg8, i32 %arg9 ], [ ^b5 i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %0, i32 %arg8 ];
+    cbr i1 %1(prob = 0.5), [ ^b4 i32* %arg2, i32* %arg, [8 * i32]* %arg1, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %0, i32 %arg8, i32 %arg9 ], [ ^b5 i32* %arg, [8 * i32]* %arg1, i32* %arg2, i32* %arg3, [8 * i32]* %arg4, i32 %arg5, i32 %arg6, i32 %0, i32 %arg8 ];
 }
 func @main() -> i32 { NoRecurse } {
 ^entry():

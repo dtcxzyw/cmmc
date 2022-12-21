@@ -5,11 +5,11 @@ internal func @stoptime(i32) -> void { NoMemoryRead NoMemoryWrite };
 internal func @func(f32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry(f32 %arg, i32 %arg1):
     i1 %0 = scmp lt i32 %arg1, i32 0;
-    cbr i1 %0, [ ^if.then ], [ ^indirect f32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then ], [ ^indirect f32 %arg, i32 %arg1 ];
 ^if.then():
     ret f32 0;
 ^indirect(f32 %arg, i32 %arg1):
-    i32 %0 = sub i32 %arg1, i32 1;
+    i32 %0 = add i32 %arg1, i32 -1;
     f32 %1 = call (f32, i32) -> f32 @func(f32 %arg, i32 %0);
     f32 %2 = fadd f32 %arg, f32 %1;
     f32 %3 = call (f32, i32) -> f32 @func(f32 %2, i32 %0);
@@ -23,7 +23,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %1 = call (f32, i32) -> f32 @func(f32 1.001, i32 %0);
     f32 %2 = fsub f32 %1, f32 1.001;
     i1 %3 = fcmp eq f32 %2, f32 0;
-    cbr i1 %3, [ ^if.then ], [ ^b ];
+    cbr i1 %3(prob = 0.5), [ ^if.then ], [ ^b ];
 ^if.then():
     call (i32) -> void @putch(i32 112);
     call (i32) -> void @stoptime(i32 32);

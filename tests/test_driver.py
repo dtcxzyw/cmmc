@@ -298,7 +298,7 @@ def spl_mips_ref(src):
 
 
 def spl_riscv64_ref(src):
-    subprocess.run(args=[binary_path, '-t', 'riscv64', '-o',
+    subprocess.run(args=[binary_path, '-t', 'riscv', '-o',
                          src+".riscv64.S", src], stderr=subprocess.DEVNULL)
     return True
 

@@ -2,13 +2,24 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry():
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp lt i32 0, i32 %0;
-    cbr i1 %1, [ ^for.body i32 %0, i32 0, i32 0 ], [ ^b i32 %0 ];
+    i1 %1 = scmp gt i32 %0, i32 0;
+    cbr i1 %1(prob = 0.97), [ ^super.header i32 %0, i32 0, i32 0 ], [ ^b i32 %0 ];
+^super.header(i32 %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = add i32 %arg2, i32 15;
+    i1 %1 = scmp lt i32 %0, i32 %arg;
+    cbr i1 %1(prob = 0.67), [ ^for.body i32 %arg, i32 %arg1, i32 %arg2 ], [ ^for.body1 i32 %arg, i32 %arg1, i32 %arg2 ];
+^b(i32 %arg):
+    ret i32 %arg;
 ^for.body(i32 %arg, i32 %arg1, i32 %arg2):
+    i32 %0 = add i32 %arg1, i32 120;
+    i32 %1 = mul i32 %arg2, i32 16;
+    i32 %2 = add i32 %0, i32 %1;
+    i32 %3 = add i32 %arg2, i32 16;
+    i1 %4 = scmp lt i32 %3, i32 %arg;
+    cbr i1 %4(prob = 0.97), [ ^super.header i32 %arg, i32 %2, i32 %3 ], [ ^b i32 %arg ];
+^for.body1(i32 %arg, i32 %arg1, i32 %arg2):
     i32 %0 = add i32 %arg1, i32 %arg2;
     i32 %1 = add i32 %arg2, i32 1;
     i1 %2 = scmp lt i32 %1, i32 %arg;
-    cbr i1 %2, [ ^for.body i32 %arg, i32 %0, i32 %1 ], [ ^b i32 %arg ];
-^b(i32 %arg):
-    ret i32 %arg;
+    cbr i1 %2(prob = 0.97), [ ^for.body1 i32 %arg, i32 %0, i32 %1 ], [ ^b i32 %arg ];
 }

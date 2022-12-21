@@ -2,7 +2,7 @@ FUNCTION Joseph :
 PARAM v0
 PARAM v1
 DEC x0 400
-IF #1 > v0 GOTO label1
+IF v0 <= #0 GOTO label1
 GOTO label2
 LABEL label1 :
 v2 := &x0
@@ -31,7 +31,7 @@ v2 := v5
 v3 := v6
 v4 := v7
 LABEL label5 :
-IF #1 > v0 GOTO label6
+IF v3 <= #0 GOTO label6
 GOTO label7
 LABEL label6 :
 GOTO label20
@@ -123,7 +123,7 @@ v24 := v31
 v25 := v35
 v26 := v37
 LABEL label19 :
-IF #1 > v0 GOTO label21
+IF v23 <= #0 GOTO label21
 v12 := v22
 v13 := v23
 v14 := v24
@@ -140,7 +140,7 @@ FUNCTION main :
 DEC x1 400
 READ v44
 READ v45
-IF #1 > v44 GOTO label23
+IF v44 <= #0 GOTO label23
 GOTO label24
 LABEL label23 :
 v46 := &x1
@@ -169,7 +169,7 @@ v46 := v49
 v47 := v50
 v48 := v51
 LABEL label27 :
-IF #1 > v44 GOTO label28
+IF v47 <= #0 GOTO label28
 GOTO label29
 LABEL label28 :
 GOTO label42
@@ -261,7 +261,7 @@ v68 := v75
 v69 := v79
 v70 := v81
 LABEL label41 :
-IF #1 > v44 GOTO label43
+IF v67 <= #0 GOTO label43
 v56 := v66
 v57 := v67
 v58 := v68

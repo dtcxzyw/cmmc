@@ -26,7 +26,7 @@ GOTO label8
 LABEL label7 :
 RETURN #0
 LABEL label8 :
-IF #3 > v0 GOTO label9
+IF v0 <= #2 GOTO label9
 GOTO label1
 LABEL label9 :
 v5 := #0

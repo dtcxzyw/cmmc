@@ -3,7 +3,7 @@ PARAM v0
 IF v0 != #1 GOTO label1
 RETURN v0
 LABEL label1 :
-v1 := v0 - #1
+v1 := v0 + #-1
 ARG v1
 v2 := CALL fact
 v3 := v2 * v0

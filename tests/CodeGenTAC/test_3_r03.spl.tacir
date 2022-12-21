@@ -1,7 +1,7 @@
 FUNCTION main :
 v0 := #1
 LABEL label1 :
-IF #1 > v0 GOTO label4
+IF v0 <= #0 GOTO label4
 v1 := v0
 v2 := #0
 v3 := #1
@@ -55,7 +55,7 @@ v15 := v7 + #1
 v13 := v15
 v14 := v15
 LABEL label12 :
-IF v13 > #30 GOTO label13
+IF v13 >= #31 GOTO label13
 v0 := v14
 GOTO label1
 LABEL label13 :

@@ -3,10 +3,10 @@ func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
 func @compare1(i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg, i32 %arg1;
-    cbr i1 %0, [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
 ^indirect(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^if.then1 ], [ ^if.else ];
+    cbr i1 %0(prob = 0.5), [ ^if.then1 ], [ ^if.else ];
 ^if.then():
     ret i32 1;
 ^if.then1():
@@ -17,10 +17,10 @@ func @compare1(i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
 func @compare2(i32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^if.then ], [ ^indirect i32 %arg, i32 %arg1 ];
 ^indirect(i32 %arg, i32 %arg1):
     i1 %0 = scmp eq i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^if.then1 ], [ ^b ];
+    cbr i1 %0(prob = 0.5), [ ^if.then1 ], [ ^b ];
 ^if.then():
     ret f32 -1;
 ^if.then1():
@@ -31,19 +31,19 @@ func @compare2(i32, i32) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
 func @test_2_r08(i32, i32, i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry(i32 %arg, i32 %arg1, i32 %arg2):
     i1 %0 = scmp eq i32 %arg, i32 0;
-    cbr i1 %0, [ ^entry1 i32 %arg1, i32 %arg2 ], [ ^entry2 i32 %arg1, i32 %arg2 ];
+    cbr i1 %0(prob = 0.5), [ ^entry1 i32 %arg1, i32 %arg2 ], [ ^entry2 i32 %arg1, i32 %arg2 ];
 ^entry1(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg, i32 %arg1;
-    cbr i1 %0, [ ^indirect2 i32 1 ], [ ^indirect i32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^indirect2 i32 1 ], [ ^indirect i32 %arg, i32 %arg1 ];
 ^entry2(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^indirect3 f32 -1 ], [ ^indirect1 i32 %arg, i32 %arg1 ];
+    cbr i1 %0(prob = 0.5), [ ^indirect3 f32 -1 ], [ ^indirect1 i32 %arg, i32 %arg1 ];
 ^indirect(i32 %arg, i32 %arg1):
     i1 %0 = scmp gt i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^indirect2 i32 -1 ], [ ^indirect2 i32 0 ];
+    cbr i1 %0(prob = 0.5), [ ^indirect2 i32 -1 ], [ ^indirect2 i32 0 ];
 ^indirect1(i32 %arg, i32 %arg1):
     i1 %0 = scmp eq i32 %arg1, i32 %arg;
-    cbr i1 %0, [ ^indirect3 f32 0 ], [ ^indirect3 f32 1 ];
+    cbr i1 %0(prob = 0.5), [ ^indirect3 f32 0 ], [ ^indirect3 f32 1 ];
 ^indirect2(i32 %arg):
     ret i32 %arg;
 ^indirect3(f32 %arg):
