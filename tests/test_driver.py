@@ -172,6 +172,31 @@ def spl_codegen_mips(src):
 
     return True
 
+def spl_codegen_riscv64(src):
+    name = os.path.basename(src)
+    tmp_out = os.path.join(binary_dir, 'tmp.S')
+    out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-o',
+                               tmp_out, src], capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+    spl_test_cases = spl_test_generators[name]()
+    for inputs, answer in spl_test_cases:
+        out_rars = subprocess.run(
+            args=['rars', 'nc', 'me', 'rv64', '65536', tmp_out],
+            input='\n'.join(map(lambda x: str(x), inputs)),
+            capture_output=True, text=True
+        )
+        out = out_rars.stdout.splitlines()
+        res = []
+        for v in out:
+            v = v.removeprefix('Enter an integer:')
+            res.append(int(v))
+        if res != answer:
+            print("\ninput", inputs, "answer", answer, "output", res)
+            return False
+
+    return True
+
 
 def spl_tac2ir(src):
     out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'mips', '-o',
@@ -366,7 +391,8 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
+# test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
+test_cases = ["codegen"]
 generate_ref = False
 
 if generate_ref:
@@ -413,6 +439,8 @@ if "tac" in test_cases:
 if "codegen" in test_cases:
     res.append(test("SPL SPL->MIPS project4", tests_path +
                "/TAC2MIPS", ".spl", spl_codegen_mips))
+    res.append(test("SPL SPL->RISCV64 project4", tests_path +
+               "/TAC2MIPS", ".spl", spl_codegen_riscv64))
     # TODO: IR->MIPS
 
 
