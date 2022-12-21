@@ -12,6 +12,8 @@ gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
+rars_path = tests_path + "/TAC2MC/rars.jar"
+assert os.path.exists(rars_path)
 
 # 10/27/2022
 baseline = {
@@ -161,16 +163,22 @@ def spl_codegen_mips(src):
     for inputs, answer in spl_test_cases:
         out_spim = subprocess.run(
             args=['spim', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
-        out = out_spim.stdout.splitlines()[5:]
+        out = out_spim.stdout.splitlines()
         res = []
+        start = False
         for v in out:
-            v = v.removeprefix('Enter an integer:')
-            res.append(int(v))
+            if start:
+                v = v.removeprefix('Enter an integer:')
+                res.append(int(v))
+            elif v.startswith('Loaded:') and 'exceptions.s' in v:
+                start = True
+
         if res != answer:
             print("\ninput", inputs, "answer", answer, "output", res)
             return False
 
     return True
+
 
 def spl_codegen_riscv64(src):
     name = os.path.basename(src)
@@ -182,7 +190,8 @@ def spl_codegen_riscv64(src):
     spl_test_cases = spl_test_generators[name]()
     for inputs, answer in spl_test_cases:
         out_rars = subprocess.run(
-            args=['rars', 'nc', 'me', 'rv64', '65536', tmp_out],
+            args=['java', '-jar', rars_path, 'nc',
+                  'me', 'rv64', '65536', tmp_out],
             input='\n'.join(map(lambda x: str(x), inputs)),
             capture_output=True, text=True
         )
@@ -284,7 +293,13 @@ def spl_tac_ref(src):
 
 def spl_mips_ref(src):
     subprocess.run(args=[binary_path, '-t', 'mips', '-o',
-                         src+".S", src], stderr=subprocess.DEVNULL)
+                         src+".mips32.S", src], stderr=subprocess.DEVNULL)
+    return True
+
+
+def spl_riscv64_ref(src):
+    subprocess.run(args=[binary_path, '-t', 'riscv64', '-o',
+                         src+".riscv64.S", src], stderr=subprocess.DEVNULL)
     return True
 
 
@@ -391,8 +406,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-# test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
-test_cases = ["codegen"]
+test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
 generate_ref = False
 
 if generate_ref:
@@ -428,19 +442,19 @@ if "semantic" in test_cases:
 
 if "tac" in test_cases:
     res.append(test("SPL SPL->TAC sample", tests_path +
-                    "/TAC2MIPS", ".spl", spl_semantic_noref))
+                    "/TAC2MC", ".spl", spl_semantic_noref))
     res.append(test("SPL codegen TAC", tests_path +
                     "/CodeGenTAC", ".spl", spl_codegen_tac))
     res.append(test("SPL TAC->IR project3", tests_path +
                     "/CodeGenTAC", ".ir", spl_tac2ir))
     res.append(test("SPL TAC->IR project4", tests_path +
-                    "/TAC2MIPS", ".ir", spl_tac2ir))
+                    "/TAC2MC", ".ir", spl_tac2ir))
 
 if "codegen" in test_cases:
     res.append(test("SPL SPL->MIPS project4", tests_path +
-               "/TAC2MIPS", ".spl", spl_codegen_mips))
+               "/TAC2MC", ".spl", spl_codegen_mips))
     res.append(test("SPL SPL->RISCV64 project4", tests_path +
-               "/TAC2MIPS", ".spl", spl_codegen_riscv64))
+               "/TAC2MC", ".spl", spl_codegen_riscv64))
     # TODO: IR->MIPS
 
 
@@ -460,7 +474,9 @@ if generate_ref:
     test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
     test("Reference Spl", tests_path + "/", ".spl", spl_ref)
     test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
-    test("Reference Spl->MIPS", tests_path + "/TAC2MIPS", ".spl", spl_mips_ref)
+    test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
+    test("Reference Spl->RISCV64", tests_path +
+         "/TAC2MC", ".spl", spl_riscv64_ref)
 
 end = time.perf_counter()
 
