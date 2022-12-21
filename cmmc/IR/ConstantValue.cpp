@@ -17,6 +17,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <functional>
+#include <limits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -37,14 +38,18 @@ void UndefinedValue::dump(std::ostream& out) const {
 
 intmax_t ConstantInteger::getSignExtended() const noexcept {
     const auto bits = getType()->as<IntegerType>()->getBitwidth();
+    if(bits == std::numeric_limits<uintmax_t>::digits)
+        return mValue;
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
-    const auto low = mValue & mask;
-    const auto high = ((mValue >> (bits - 1)) & 1) ? ~mask : 0;
+    const auto low = static_cast<uintmax_t>(mValue) & mask;
+    const auto high = (mValue & (1ULL << (bits - 1))) ? ~mask : 0;
     return high | low;
 }
 
 uintmax_t ConstantInteger::getZeroExtended() const noexcept {
     const auto bits = getType()->as<IntegerType>()->getBitwidth();
+    if(bits == std::numeric_limits<uintmax_t>::digits)
+        return mValue;
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
     return static_cast<uintmax_t>(mValue) & mask;
 }

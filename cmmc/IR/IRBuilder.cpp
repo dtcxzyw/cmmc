@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -21,10 +22,8 @@ CMMC_NAMESPACE_BEGIN
 IRBuilder::IRBuilder(const Target& target) : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr } {
     mTrueValue = ConstantInteger::getTrue();
     mFalseValue = ConstantInteger::getFalse();
-    // const auto& dataLayout = target.getDataLayout();
-    // mIndexType = IntegerType::get(dataLayout.getPointerSize());
-    CMMC_UNUSED(target);
-    mIndexType = IntegerType::get(32U);
+    const auto& dataLayout = target.getDataLayout();
+    mIndexType = IntegerType::get(dataLayout.getPointerSize() * 8);
     mZeroIndex = ConstantInteger::get(mIndexType, 0);
 }
 Block* IRBuilder::addBlock(const Vector<const Type*>& types) {

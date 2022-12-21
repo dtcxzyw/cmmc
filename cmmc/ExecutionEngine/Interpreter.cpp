@@ -420,15 +420,16 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
     const auto& target = module.getTarget();
     const auto& dataLayout = target.getDataLayout();
-    static_assert(sizeof(uintptr_t) == 8);
 
     {
         const uint16_t endianTest = 0xAABB;
         const auto base = reinterpret_cast<const uint8_t*>(&endianTest);
 
-        if(dataLayout.getPointerSize() != 8 || dataLayout.getEndian() != Endian::Little ||
-           !(base[0] == 0xBB && base[1] == 0xAA)) {
+        if(dataLayout.getPointerSize() != 8 || dataLayout.getEndian() != Endian::Little)
             return SimulationFailReason::UnsupportedTarget;
+
+        if(!(base[0] == 0xBB && base[1] == 0xAA) || sizeof(uintptr_t) != 8) {
+            return SimulationFailReason::UnsupportedHost;
         }
     }
 
@@ -779,12 +780,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             }
             case InstructionID::SExt: {
                 addInt(getInt(0));
+                --instructionCount;
                 break;
             }
             case InstructionID::ZExt:
                 [[fallthrough]];
             case InstructionID::Trunc: {
                 addUInt(getUInt(0));
+                --instructionCount;
                 break;
             }
             case InstructionID::Bitcast: {

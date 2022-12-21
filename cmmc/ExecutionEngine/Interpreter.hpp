@@ -29,6 +29,7 @@ enum class SimulationFailReason {
     DividedByZero,            //
     UnknownError,             //
     UnsupportedTarget,        //
+    UnsupportedHost,          //
     Undefined,                //
     Unreachable,              //
     EnterNoreturnFunc,        //
