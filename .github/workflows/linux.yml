@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v3
@@ -19,10 +19,20 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim
+      run: sudo apt install spim bear
     
     - name: Build
-      run: make -j2
+      run: make bear3
 
     - name: Test
       run: make test
+
+    - name: Lint
+      uses: cpp-linter/cpp-linter-action@v2
+        id: linter
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: file
+          extensions: 'cpp,hpp'
+          version: '14'
