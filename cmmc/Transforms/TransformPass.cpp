@@ -20,14 +20,18 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/EnumName.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <fstream>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <ostream>
 #include <string>
+#include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -39,7 +43,7 @@ static IntegerOpt skipCount;       // NOLINT
 static uint32_t runCount = 0;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
-debugTransform.setName("debug-transform", 'd').setDesc("print transform pass result step by step");
+debugTransform.setName("debug-transform", 'd').setDesc("print transform pass result step-by-step");
 referenceOutput.setName("reference-output", 'R').setDesc("reference output for debugging");
 skipCount.withDefault(0)
     .setName("skip-transform-count", 'T')
@@ -50,6 +54,19 @@ template <>
 TransformPass<Function>::~TransformPass() = default;
 template <>
 TransformPass<Module>::~TransformPass() = default;
+
+template <>
+String TransformPass<Module>::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
+    const auto label = allocator.allocate(String::get("p"));
+    out << label << "[label = " << name() << "];\n";
+    out << prev << " -> " << label << ";\n";
+    return label;
+}
+
+template <>
+String TransformPass<Function>::dump(std::ostream&, String, LabelAllocator&) const {
+    reportUnreachable();
+}
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx);
 static std::string loadString(const std::string& input) {
@@ -149,8 +166,9 @@ void PassManager::addPass(std::shared_ptr<TransformPass<Module>> pass) {
     mPasses.push_back(std::move(pass));
 }
 
-IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations)
-    : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations } {}
+IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations,
+                                           bool treatWarningAsError)
+    : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations }, mTreatWarningAsError{ treatWarningAsError } {}
 
 bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) const {
     bool modified = false;
@@ -169,7 +187,7 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
         if(now > deadline)
             return modified;
     }
-    if(!stopEarly)
+    if(!stopEarly && mTreatWarningAsError)
         DiagnosticsContext::get().attach<Reason>("partial optimization").reportFatal();
     return modified;
 }
@@ -277,12 +295,12 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "InfiniteEliminate",                 //
                 "UnreachableEliminate",              //
                 "SimplifyPartialUnreachableBranch",  //
-                "BlockEliminate",                    // clean up
+                "BlockEliminate",                    // clean u
             }))
             basic->addPass(pass);
     }
 
-    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 1024);
+    auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 1024, true);
 
     root->addPass(iter);  // pre optimization
 
@@ -331,6 +349,21 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "NoSideEffectEliminate",  // clean up
             }))
             root->addPass(pass);
+
+        // TODO: it is a time costuming phase.
+        auto specialization = std::make_shared<PassManager>();
+        for(const auto& pass : passesSource.collect({
+                "BlockArgSpecialization",  //
+                "ConstantPropagation",     // clean up
+                "ArithmeticReduce",        // clean up
+                "SimplifyBranch",          // clean up
+                "CombineBranch",           // clean up
+                "BlockMerge",              // clean up
+                "BlockEliminate",          // clean up
+                "NoSideEffectEliminate",   // clean up
+            }))
+            specialization->addPass(pass);
+        root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 8, false));
     }
 
     for(const auto& pass : passesSource.collect({
@@ -432,6 +465,43 @@ std::vector<std::shared_ptr<TransformPass<Module>>> PassRegistry::collect(std::i
 PassRegistry& PassRegistry::get() {
     static PassRegistry instance;
     return instance;
+}
+
+String PassManager::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
+    for(auto& pass : mPasses)
+        prev = pass->dump(out, prev, allocator);
+    return prev;
+}
+
+String IterationPassWrapper::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
+    const auto clusterName = allocator.allocate(String::get("cluster_")).withDefaultID(0);
+
+    out << "subgraph " << clusterName << " {\n";
+    const auto start = allocator.allocate(String::get("start"));
+    const auto end = allocator.allocate(String::get("end"));
+    out << start << "[color=blue];\n";
+    out << end << "[color=blue];\n";
+    const auto last = mSubPasses->dump(out, start, allocator);
+    out << last << " -> " << end << ";\n";
+    out << end << " -> " << start << "[color=red];\n";
+    out << "}\n";
+    out << prev << " -> " << start << ";\n";
+    return end;
+}
+
+void PassManager::printOptPipeline(OptimizationLevel level) {
+    auto pipeline = get(level);
+
+    LabelAllocator allocator;
+    const auto start = allocator.allocate(String::get("start"));
+    const auto end = allocator.allocate(String::get("end"));
+
+    auto& out = std::cout;
+    out << "digraph {\n";
+    out << start << "[color=green];\n";
+    out << end << "[color=green];\n";
+    const auto last = pipeline->dump(out, start, allocator);
+    out << last << " -> " << end << ";\n}\n";
 }
 
 CMMC_NAMESPACE_END

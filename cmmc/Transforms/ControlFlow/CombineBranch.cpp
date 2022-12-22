@@ -62,7 +62,7 @@ class CombineBranch final : public TransformPass<Function> {
             const auto iter = std::find(args2.cbegin(), args2.cend(), arg);
             if(iter != args2.cend()) {  // only replace block arguments, keep globals/constants
                 const auto pos = iter - args2.cbegin();
-                arg = args1[pos];
+                arg = args1[static_cast<uint32_t>(pos)];
             } else {
                 reportError() << "Bad block argument when forwarding"sv << std::endl;
                 reportError() << "BlockA:"sv << std::endl;

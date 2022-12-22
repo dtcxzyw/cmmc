@@ -95,6 +95,9 @@ String String::withoutID() const noexcept {
 String String::withID(int32_t id) const noexcept {
     return { mStorage, mStringHash, id };
 }
+String String::withDefaultID(int32_t id) const noexcept {
+    return { mStorage, mStringHash, mId == -1 ? id : mId };
+}
 
 std::ostream& operator<<(std::ostream& out, const String& str) {
     out << str.mStorage;

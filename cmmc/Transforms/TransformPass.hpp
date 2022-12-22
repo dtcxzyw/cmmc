@@ -14,11 +14,12 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Config.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <initializer_list>
 #include <memory>
+#include <ostream>
 #include <string_view>
 
 CMMC_NAMESPACE_BEGIN
@@ -34,6 +35,7 @@ public:
     TransformPass& operator=(const TransformPass&) = delete;
 
     virtual bool run(Scope& item, AnalysisPassManager& analysis) const = 0;
+    virtual String dump(std::ostream& out, String prev, LabelAllocator& allocator) const;
     [[nodiscard]] virtual std::string_view name() const noexcept = 0;
     [[nodiscard]] virtual bool isWrapper() const noexcept {
         return false;
@@ -50,19 +52,23 @@ public:
     bool run(Module& item, AnalysisPassManager& analysis) const;
     void addPass(std::shared_ptr<TransformPass<Module>> pass);
     static std::shared_ptr<PassManager> get(OptimizationLevel level);
+    static void printOptPipeline(OptimizationLevel level);
+    String dump(std::ostream& out, String prev, LabelAllocator& allocator) const;
 };
 
 class IterationPassWrapper final : public TransformPass<Module> {
     std::shared_ptr<PassManager> mSubPasses;
     uint32_t mMaxIterations;
+    bool mTreatWarningAsError;
 
 public:
-    IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations);
+    IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations, bool treatWarningAsError);
     bool run(Module& item, AnalysisPassManager& analysis) const override;
     [[nodiscard]] std::string_view name() const noexcept override;
     [[nodiscard]] bool isWrapper() const noexcept override {
         return true;
     }
+    String dump(std::ostream& out, String prev, LabelAllocator& allocator) const override;
 };
 
 class PassRegistry final {

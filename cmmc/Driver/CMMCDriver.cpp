@@ -46,6 +46,7 @@ extern StringOpt targetName;   // NOLINT
 static StringOpt outputPath;   // NOLINT
 StringOpt executeInput;        // NOLINT
 static Flag grammarCheck;      // NOLINT
+static Flag dumpOptPipeline;   // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
@@ -57,6 +58,7 @@ optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level
 outputPath.setName("output", 'o').setDesc("path to the output file");
 grammarCheck.setName("grammar-check", 'g').setDesc("only check grammar");
 executeInput.setName("execute-input", 'e').setDesc("execute with built-in interpreter");
+dumpOptPipeline.setName("dump-opt-pipeline", 'P').setDesc("dump the transform pipeline in dot format");
 CMMC_INIT_OPTIONS_END
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
@@ -159,6 +161,11 @@ int mainImpl(int argc, char** argv) {
 
     if(help.get()) {
         printHelpInfo();
+        return EXIT_SUCCESS;
+    }
+
+    if(dumpOptPipeline.get()) {
+        PassManager::printOptPipeline(static_cast<OptimizationLevel>(optimizationLevel.get()));
         return EXIT_SUCCESS;
     }
 

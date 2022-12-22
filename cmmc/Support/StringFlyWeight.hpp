@@ -40,6 +40,7 @@ public:
 
     [[nodiscard]] String withoutID() const noexcept;
     [[nodiscard]] String withID(int32_t id) const noexcept;
+    [[nodiscard]] String withDefaultID(int32_t id) const noexcept;
     [[nodiscard]] const std::string_view& prefix() const noexcept {
         return mStorage;
     }

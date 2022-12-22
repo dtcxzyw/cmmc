@@ -19,13 +19,13 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim bear
+      run: sudo apt install spim
     
     - name: Format
       run: make format-check
 
     - name: Build
-      run: make bear3
+      run: make -j2
 
     - name: Test
       run: make test

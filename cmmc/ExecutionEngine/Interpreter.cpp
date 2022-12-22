@@ -46,7 +46,7 @@ CMMC_NAMESPACE_BEGIN
 static Flag step;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
-step.setName("step", 'S').setDesc("run interpreter by step");
+step.setName("step", 'S').setDesc("run interpreter step-by-step");
 CMMC_INIT_OPTIONS_END
 
 enum class ByteState : uint8_t { Read = 1 << 0, Write = 1 << 1, None = 0 };
