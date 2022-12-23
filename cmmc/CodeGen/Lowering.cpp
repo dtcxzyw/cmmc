@@ -256,6 +256,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     auto dumpFunc = [&](const GMIRFunction& func) { func.dump(std::cerr, target); };
     CMMC_UNUSED(dumpFunc);
 
+    // TODO: change lowering order to apply IPRA
     for(auto [gv, symbol] : globalMap) {
         if(!gv->isFunction())
             continue;
@@ -301,6 +302,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1)
             simplifyCFG(mfunc);
     }
+
+    // TODO: apply HFSort
 }
 
 std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {

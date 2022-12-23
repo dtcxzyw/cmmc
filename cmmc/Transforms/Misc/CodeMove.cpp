@@ -23,6 +23,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <unordered_set>
@@ -58,18 +59,8 @@ public:
             std::unordered_set<Value*> moveOutSet;
 
             for(auto inst : block->instructions()) {
-                if(inst->isTerminator() || inst->isMemoryOp() || inst->getInstID() == InstructionID::Alloc ||
-                   inst->getInstID() == InstructionID::Free)
+                if(!isNoSideEffectExpr(*inst))
                     continue;
-                if(inst->getInstID() == InstructionID::Call) {
-                    const auto callee = inst->operands().back();
-                    if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
-                        if(!(calleeFunc->attr().hasAttr(FunctionAttribute::Stateless) &&
-                             calleeFunc->attr().hasAttr(FunctionAttribute::NoSideEffect)))
-                            continue;
-                    } else
-                        continue;
-                }
 
                 // don't touch not natively supported instructions as GVN does
                 if(!target.isNativeSupported(inst->getInstID()))
