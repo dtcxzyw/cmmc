@@ -76,7 +76,6 @@ main:
     jal fact
     move $t1, $v0
     move $a0, $t1
-    sw $t1, 20($sp)
     jal write
     li $v0, 0
     lw $ra, 0($sp)

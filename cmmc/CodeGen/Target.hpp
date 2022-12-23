@@ -28,6 +28,8 @@ CMMC_NAMESPACE_BEGIN
 
 class GMIRFunction;
 struct GMIRModule;
+class IPRAUsageCache;
+struct GMIRSymbol;
 
 class Target {
 public:
@@ -61,6 +63,10 @@ public:
     [[nodiscard]] virtual bool isCalleeSaved(const Operand&) const noexcept = 0;
     [[nodiscard]] virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
     [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept = 0;
+    virtual void addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const {
+        CMMC_UNUSED(symbol);
+        CMMC_UNUSED(infoIPRA);
+    }
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

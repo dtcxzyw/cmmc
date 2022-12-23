@@ -3,52 +3,54 @@ READ v0
 READ v1
 v2 := v0 / #100
 v3 := v2 * #100
-IF v0 != v3 GOTO label6
+IF v0 != v3 GOTO label2
 v4 := v0 / #400
 v5 := v4 * #400
-IF v0 != v5 GOTO label4
-v6 := v1
-LABEL label1 :
-IF v6 != #2 GOTO label2
-GOTO label11
-LABEL label2 :
-v7 := v6
+IF v0 != v5 GOTO label1
 GOTO label10
-LABEL label3 :
-GOTO label14
-LABEL label4 :
-v8 := v1
-GOTO label8
-LABEL label5 :
+LABEL label1 :
 v6 := v1
-GOTO label1
-LABEL label6 :
-v9 := v0 / #4
-v10 := v9 * #4
-IF v0 != v10 GOTO label7
-GOTO label5
-LABEL label7 :
-v8 := v1
-LABEL label8 :
-IF v8 != #2 GOTO label9
+GOTO label9
+LABEL label2 :
+v7 := v0 / #4
+v8 := v7 * #4
+IF v0 != v8 GOTO label8
+v9 := v1
+LABEL label3 :
+IF v9 != #2 GOTO label4
 GOTO label12
-LABEL label9 :
-v7 := v8
-LABEL label10 :
-v11 := v7 / #2
+LABEL label4 :
+v10 := v9
+GOTO label6
+LABEL label5 :
+v10 := v6
+LABEL label6 :
+v11 := v10 / #2
 v12 := v11 * #2
-IF v7 != v12 GOTO label3
+IF v10 != v12 GOTO label7
+GOTO label11
+LABEL label7 :
+GOTO label15
+LABEL label8 :
+v6 := v1
+LABEL label9 :
+IF v6 != #2 GOTO label5
 GOTO label13
+LABEL label10 :
+v9 := v1
+GOTO label3
 LABEL label11 :
+GOTO label14
+LABEL label12 :
 WRITE #29
 RETURN #0
-LABEL label12 :
+LABEL label13 :
 WRITE #28
 RETURN #0
-LABEL label13 :
+LABEL label14 :
 WRITE #30
 RETURN #0
-LABEL label14 :
+LABEL label15 :
 WRITE #31
 RETURN #0
 

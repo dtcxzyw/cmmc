@@ -27,120 +27,114 @@ v15 := v9
 v16 := v10
 v17 := v11
 v18 := v14
-GOTO label18
 LABEL label2 :
+IF v16 >= v17 GOTO label3
+GOTO label12
+LABEL label3 :
 v19 := v15
 v20 := v16
 v21 := v17
 v22 := v18
-LABEL label3 :
-v23 := v19
-v24 := v21 * #4
-v23 := v23 + v24
-v25 := *v23
-IF v25 < v22 GOTO label10
-v26 := v21 + #-1
-IF v20 >= v26 GOTO label4
-GOTO label15
+GOTO label8
 LABEL label4 :
-v27 := v19
-v28 := v20
-v29 := v26
-v30 := v22
-GOTO label11
+v19 := v23
+v20 := v24
+v21 := v25
+v22 := v26
+GOTO label8
 LABEL label5 :
-v31 := v10
-GOTO label9
+v27 := v10
 LABEL label6 :
-v33 := v32
-v35 := v34
-v37 := v36
-v39 := v38
+RETURN v27
 LABEL label7 :
-v40 := v33
-v41 := v35 * #4
-v40 := v40 + v41
-v42 := *v40
-v43 := v33
-v44 := v37 * #4
-v43 := v43 + v44
-v45 := *v43
-*v40 := v45
-*v43 := v42
-IF v35 >= v37 GOTO label8
-GOTO label17
+v19 := v23
+v20 := v24
+v21 := v28
+v22 := v26
 LABEL label8 :
-v31 := v35
+v29 := v19
+v30 := v20 * #4
+v29 := v29 + v30
+v31 := *v29
+v32 := v19
+v33 := v21 * #4
+v32 := v32 + v33
+v34 := *v32
+*v29 := v34
+*v32 := v31
+IF v20 >= v21 GOTO label10
+v35 := v19
+v36 := v20
+v37 := v21
+v38 := v22
 LABEL label9 :
-RETURN v31
+v39 := v35
+v40 := v36 * #4
+v39 := v39 + v40
+v41 := *v39
+IF v41 > v38 GOTO label14
+v42 := v36 + #1
+IF v42 >= v37 GOTO label16
+v35 := v35
+v36 := v42
+v37 := v37
+v38 := v38
+GOTO label9
 LABEL label10 :
-v27 := v19
-v28 := v20
-v29 := v21
-v30 := v22
+v43 := v19
+v44 := v20
+v45 := v21
+v46 := v22
+GOTO label15
 LABEL label11 :
-v46 := v27
-v47 := v28 * #4
-v46 := v46 + v47
-v48 := *v46
-v49 := v27
-v50 := v29 * #4
-v49 := v49 + v50
-v51 := *v49
-*v46 := v51
-*v49 := v48
-IF v28 >= v29 GOTO label12
-GOTO label13
+v27 := v44
+GOTO label6
 LABEL label12 :
-v33 := v27
-v35 := v28
-v37 := v29
-v39 := v30
-GOTO label7
+v23 := v15
+v24 := v16
+v25 := v17
+v26 := v18
 LABEL label13 :
-v32 := v27
-v52 := v28
-v36 := v29
-v38 := v30
+v47 := v23
+v48 := v25 * #4
+v47 := v47 + v48
+v49 := *v47
+IF v49 < v26 GOTO label4
+v28 := v25 + #-1
+IF v24 >= v28 GOTO label7
+v23 := v23
+v24 := v24
+v25 := v28
+v26 := v26
+GOTO label13
 LABEL label14 :
-v53 := v32
-v54 := v52 * #4
+v43 := v35
+v44 := v36
+v45 := v37
+v46 := v38
+LABEL label15 :
+v50 := v43
+v51 := v44 * #4
+v50 := v50 + v51
+v52 := *v50
+v53 := v43
+v54 := v45 * #4
 v53 := v53 + v54
 v55 := *v53
-IF v55 > v38 GOTO label16
-v34 := v52 + #1
-IF v34 >= v36 GOTO label6
-v32 := v32
-v52 := v34
-v36 := v36
-v38 := v38
-GOTO label14
-LABEL label15 :
-v19 := v19
-v20 := v20
-v21 := v26
-v22 := v22
-GOTO label3
-LABEL label16 :
-v33 := v32
-v35 := v52
-v37 := v36
-v39 := v38
-GOTO label7
-LABEL label17 :
-v15 := v33
-v16 := v35
-v17 := v37
-v18 := v39
-LABEL label18 :
-IF v16 >= v17 GOTO label19
+*v50 := v55
+*v53 := v52
+IF v44 >= v45 GOTO label11
+v15 := v43
+v16 := v44
+v17 := v45
+v18 := v46
 GOTO label2
-LABEL label19 :
-v27 := v15
-v28 := v16
-v29 := v17
-v30 := v18
-GOTO label11
+LABEL label16 :
+v43 := v35
+v44 := v42
+v45 := v37
+v46 := v38
+GOTO label15
 
 FUNCTION QuickSort :
 PARAM v56
@@ -149,128 +143,151 @@ PARAM v58
 DEC x0 4
 DEC x1 4
 DEC x2 4
-IF v57 >= v58 GOTO label21
+IF v57 >= v58 GOTO label23
+v59 := &x0
+v60 := &x1
+v61 := &x2
+*v59 := v57
+*v60 := v58
+v62 := v56
+v63 := v57 * #4
+v62 := v62 + v63
+v64 := *v62
+*v61 := v64
+IF v57 >= v58 GOTO label28
+v65 := v56
+v66 := &x2
+v67 := &x1
+v68 := &x0
+v69 := v56
+v70 := v57
+v71 := v58
+v72 := v57
+v73 := v58
+v74 := v64
 GOTO label24
-LABEL label21 :
-RETURN #0
-LABEL label22 :
-v60 := v59
-v62 := v61
-v64 := v63
-v66 := v65
-v68 := v67
-v70 := v69
-v72 := v71
-v74 := v73
+LABEL label18 :
 v76 := v75
-GOTO label38
-LABEL label23 :
-v77 := v62
-v78 := v60
-v79 := v64
-v80 := v66
-v81 := v68
-v82 := v70
-v83 := v72
-v85 := v84
-v87 := v86
-v89 := v88
-GOTO label25
-LABEL label24 :
-v90 := &x0
-v91 := &x1
-v92 := &x2
-*v90 := v57
-*v91 := v58
-v93 := v56
-v94 := v57 * #4
+v78 := v77
+v80 := v79
+v82 := v81
+v84 := v83
+v86 := v85
+v88 := v87
+v90 := v89
+v92 := v91
+LABEL label19 :
+v93 := v78
+v94 := v90 * #4
 v93 := v93 + v94
 v95 := *v93
-*v92 := v95
-IF v57 >= v58 GOTO label31
-v77 := v56
-v78 := &x2
-v79 := &x1
-v80 := &x0
-v81 := v56
-v82 := v57
-v83 := v58
-v85 := v57
-v87 := v58
-v89 := v95
-LABEL label25 :
-IF v85 >= v87 GOTO label26
-GOTO label36
-LABEL label26 :
 v96 := v78
-v97 := v77
-v98 := v79
-v99 := v80
-v100 := v81
-v101 := v82
-v102 := v83
-v103 := v85
-v104 := v87
+v97 := v92 * #4
+v96 := v96 + v97
+v98 := *v96
+*v93 := v98
+*v96 := v95
+v99 := *v76
+v100 := *v80
+v101 := *v82
+IF v101 >= v100 GOTO label20
+GOTO label31
+LABEL label20 :
+v102 := v76
+v103 := v78
+v104 := v80
+v105 := v82
+v106 := v84
+v107 := v86
+v108 := v88
+v109 := v101
+v110 := v100
+LABEL label21 :
+v111 := v103
+v112 := v109 * #4
+v111 := v111 + v112
+v113 := *v111
+v114 := v103
+v115 := v110 * #4
+v114 := v114 + v115
+v116 := *v114
+*v111 := v116
+*v114 := v113
+v117 := *v102
+v118 := *v104
+v119 := *v105
+IF v119 >= v118 GOTO label34
+v65 := v103
+v66 := v102
+v67 := v104
+v68 := v105
+v69 := v106
+v70 := v107
+v71 := v108
+v72 := v119
+v73 := v118
+v74 := v117
+GOTO label24
+LABEL label22 :
+v76 := v66
+v78 := v65
+v80 := v67
+v82 := v68
+v84 := v69
+v86 := v70
+v88 := v71
+v90 := v72
+v92 := v73
+GOTO label19
+LABEL label23 :
+RETURN #0
+LABEL label24 :
+IF v72 >= v73 GOTO label22
+v81 := v68
+v75 := v66
+v77 := v65
+v79 := v67
+v83 := v69
+v85 := v70
+v87 := v71
+v89 := v72
+v91 := v73
+v120 := v74
+LABEL label25 :
+v121 := v77
+v122 := v91 * #4
+v121 := v121 + v122
+v123 := *v121
+IF v123 < v120 GOTO label18
+v124 := v79
+v125 := v91 + #-1
+*v124 := v125
+IF v89 >= v125 GOTO label26
+GOTO label30
+LABEL label26 :
+v76 := v75
+v78 := v77
+v80 := v79
+v82 := v81
+v84 := v83
+v86 := v85
+v88 := v87
+v90 := v89
+v92 := v125
+GOTO label19
 LABEL label27 :
-v105 := v97
-v106 := v103 * #4
-v105 := v105 + v106
-v107 := *v105
-v108 := v97
-v109 := v104 * #4
-v108 := v108 + v109
-v110 := *v108
-*v105 := v110
-*v108 := v107
-v111 := *v96
-v112 := *v98
-v113 := *v99
-IF v113 >= v112 GOTO label37
-v63 := v98
-v59 := v96
-v61 := v97
-v65 := v99
-v67 := v100
-v69 := v101
-v71 := v102
-v73 := v113
-v75 := v112
-v114 := v111
+v127 := v126
+v129 := v128 + #1
+*v127 := v129
+IF v129 >= v130 GOTO label35
+v128 := v129
+GOTO label32
 LABEL label28 :
-v115 := v61
-v116 := v73 * #4
-v115 := v115 + v116
-v117 := *v115
-IF v117 > v114 GOTO label22
-v118 := v65
-v119 := v73 + #1
-*v118 := v119
-IF v119 >= v75 GOTO label40
-v73 := v119
-GOTO label28
-LABEL label29 :
-v121 := v120
-v123 := v122 + #-1
-*v121 := v123
-IF v124 >= v123 GOTO label30
-GOTO label33
-LABEL label30 :
-v96 := v125
-v97 := v126
-v98 := v120
-v99 := v127
-v100 := v128
-v101 := v129
-v102 := v130
-v103 := v124
-v104 := v123
-GOTO label27
-LABEL label31 :
 v131 := v56
 v132 := v57
 v133 := v58
 v134 := v57
-LABEL label32 :
+LABEL label29 :
 v135 := v134 + #-1
 ARG v135
 ARG v132
@@ -282,81 +299,55 @@ ARG v137
 ARG v131
 v138 := CALL QuickSort
 RETURN #0
-LABEL label33 :
-v122 := v123
-LABEL label34 :
-v139 := v126
-v140 := v122 * #4
-v139 := v139 + v140
-v141 := *v139
-IF v141 < v142 GOTO label35
-GOTO label29
-LABEL label35 :
-v96 := v125
-v97 := v126
-v98 := v120
-v99 := v127
-v100 := v128
-v101 := v129
-v102 := v130
-v103 := v124
-v104 := v122
-GOTO label27
-LABEL label36 :
-v127 := v80
-v125 := v78
-v126 := v77
-v120 := v79
-v128 := v81
-v129 := v82
-v130 := v83
-v124 := v85
-v122 := v87
-v142 := v89
-GOTO label34
-LABEL label37 :
-v60 := v96
-v62 := v97
-v64 := v98
-v66 := v99
-v68 := v100
-v70 := v101
-v72 := v102
-v74 := v113
-v76 := v112
-LABEL label38 :
-v143 := v62
-v144 := v74 * #4
-v143 := v143 + v144
-v145 := *v143
-v146 := v62
-v147 := v76 * #4
+LABEL label30 :
+v91 := v125
+GOTO label25
+LABEL label31 :
+v139 := v80
+v140 := v76
+v141 := v78
+v126 := v82
+v142 := v84
+v143 := v86
+v144 := v88
+v128 := v101
+v130 := v100
+v145 := v99
+LABEL label32 :
+v146 := v141
+v147 := v128 * #4
 v146 := v146 + v147
 v148 := *v146
-*v143 := v148
-*v146 := v145
-v88 := *v60
-v86 := *v64
-v84 := *v66
-IF v84 >= v86 GOTO label39
-GOTO label23
-LABEL label39 :
-v131 := v68
-v132 := v70
-v133 := v72
-v134 := v84
-GOTO label32
-LABEL label40 :
-v60 := v59
-v62 := v61
-v64 := v63
-v66 := v65
-v68 := v67
-v70 := v69
-v72 := v71
-v74 := v119
-v76 := v75
-GOTO label38
+IF v148 > v145 GOTO label33
+GOTO label27
+LABEL label33 :
+v102 := v140
+v103 := v141
+v104 := v139
+v105 := v126
+v106 := v142
+v107 := v143
+v108 := v144
+v109 := v128
+v110 := v130
+GOTO label21
+LABEL label34 :
+v131 := v106
+v132 := v107
+v133 := v108
+v134 := v119
+GOTO label29
+LABEL label35 :
+v102 := v140
+v103 := v141
+v104 := v139
+v105 := v126
+v106 := v142
+v107 := v143
+v108 := v144
+v109 := v129
+v110 := v130
+GOTO label21
 
 FUNCTION main :
 DEC x3 32

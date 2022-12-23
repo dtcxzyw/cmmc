@@ -43,7 +43,7 @@ void removeUnusedInsts(GMIRFunction& func) {
                            [&](const RetMInst&) { q.push(&inst); },            //
                            [&](const UnreachableMInst&) {},                    //
                            [&](const BranchMInst&) {},                         //
-                           [&](const CallMInst&) {},                           //
+                           [&](const CallMInst&) { q.push(&inst); },           //
                            [&](const auto& instRef) { writers[instRef.dst].push_back(&inst); },
                        },
                        inst);
@@ -88,7 +88,10 @@ void removeUnusedInsts(GMIRFunction& func) {
                            for(auto op : inst.src)
                                popSrc(op);
                        },
-                       [&](const CallMInst&) {},
+                       [&](const CallMInst& inst) {
+                           if(auto* dst = std::get_if<Operand>(&inst.callee))
+                               popSrc(*dst);
+                       },
                        [&](const auto& inst) { popSrc(inst.src); },
                    },
                    instruction);
@@ -145,7 +148,13 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
                                  functor(inst.lhs);
                                  functor(inst.rhs);
                              },
-                             [&](CallMInst& inst) { functor(inst.dst); }, [&](RetMInst& inst) { functor(inst.retVal); },
+                             [&](CallMInst& inst) {
+                                 if(auto* dst = std::get_if<Operand>(&inst.callee))
+                                     functor(*dst);
+
+                                 functor(inst.dst);
+                             },
+                             [&](RetMInst& inst) { functor(inst.retVal); },
                              [&](ControlFlowIntrinsicMInst& inst) {
                                  functor(inst.src);
                                  functor(inst.dst);

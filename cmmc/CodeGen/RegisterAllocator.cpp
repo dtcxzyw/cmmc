@@ -12,7 +12,10 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 
@@ -40,9 +43,31 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
     return instance;
 }
 
-void assignRegisters(GMIRFunction& mfunc, const Target& target) {
-    RegisterAllocatorRegistry::get().selectMethod()(mfunc, target);
+void assignRegisters(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache) {
+    RegisterAllocatorRegistry::get().selectMethod()(mfunc, target, cache);
     // TODO: verify
+}
+
+void IPRAUsageCache::add(const Target& target, GMIRSymbol* symbol, GMIRFunction& func) {
+    IPRAInfo info;
+    for(auto& block : func.blocks()) {
+        forEachDefOperands(*block, [&](Operand& operand) {
+            if(operand.addressSpace <= AddressSpace::Custom || operand == unusedOperand)
+                return;
+            if(target.isCallerSaved(operand)) {
+                info.emplace(operand);
+            }
+        });
+    }
+    mCache.emplace(symbol, std::move(info));
+}
+void IPRAUsageCache::add(GMIRSymbol* symbol, IPRAInfo info) {
+    mCache.emplace(symbol, std::move(info));
+}
+const IPRAInfo* IPRAUsageCache::query(GMIRSymbol* calleeFunc) const {
+    if(auto iter = mCache.find(calleeFunc); iter != mCache.cend())
+        return &iter->second;
+    return nullptr;
 }
 
 CMMC_NAMESPACE_END

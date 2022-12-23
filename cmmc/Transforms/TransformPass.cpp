@@ -13,6 +13,7 @@
 */
 
 #include <chrono>
+#include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -396,29 +397,27 @@ public:
     explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
     bool run(Module& module, AnalysisPassManager& analysis) const override {
         bool modified = false;
-        for(auto global : module.globals()) {
-            // TODO: run in top order of call graph
-            if(global->isFunction()) {
-                auto& func = *global->as<Function>();
-                if(func.blocks().empty())
-                    continue;
-                Stage stage{ mPass->name() };
-                if(debugTransform.get()) {
-                    std::cerr << mPass->name() << ' ' << func.getSymbol() << std::endl;
-                }
-                if(mPass->run(func, analysis)) {
-                    if(debugTransform.get()) {
-                        std::cerr << "\tmodified" << std::endl;
-                        func.dump(std::cerr);
-                    }
-                    analysis.invalidateFunc(func);
-                    modified = true;
-                    assert(func.verify(std::cerr));
-                }
 
+        const auto& funcOrder = analysis.get<CallGraphSCCAnalysis>().getOrder();
+        for(auto func : funcOrder) {
+            if(func->blocks().empty())
+                continue;
+            Stage stage{ mPass->name() };
+            if(debugTransform.get()) {
+                std::cerr << mPass->name() << ' ' << func->getSymbol() << std::endl;
+            }
+            if(mPass->run(*func, analysis)) {
                 if(debugTransform.get()) {
-                    verifyModuleExec(module);
+                    std::cerr << "\tmodified" << std::endl;
+                    func->dump(std::cerr);
                 }
+                analysis.invalidateFunc(*func);
+                modified = true;
+                assert(func->verify(std::cerr));
+            }
+
+            if(debugTransform.get()) {
+                verifyModuleExec(module);
             }
         }
         if(debugTransform.get()) {

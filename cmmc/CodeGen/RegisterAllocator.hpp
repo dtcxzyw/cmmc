@@ -18,6 +18,7 @@
 #include <memory>
 #include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -42,8 +43,19 @@ inline void setDiscarded(uint32_t& val, uint32_t idx) {
     val &= ~(1U << idx);
 }
 
+using IPRAInfo = std::unordered_set<Operand, OperandHasher>;
 class Target;
-using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, const Target& target);
+
+class IPRAUsageCache final {
+    std::unordered_map<GMIRSymbol*, IPRAInfo> mCache;
+
+public:
+    void add(const Target& target, GMIRSymbol* symbol, GMIRFunction& func);
+    void add(GMIRSymbol* symbol, IPRAInfo info);
+    const IPRAInfo* query(GMIRSymbol* calleeFunc) const;
+};
+
+using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -62,6 +74,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(GMIRFunction& mfunc, const Target& target);
+void assignRegisters(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
 
 CMMC_NAMESPACE_END

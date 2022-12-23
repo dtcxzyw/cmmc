@@ -384,4 +384,15 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
     }
 }
 
+void MIPSTarget::addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const {
+    if(targetMachine.get() == "emulator") {
+        const auto symbolName = symbol->symbol;
+        // spl runtime
+        if(symbolName == "read" || symbolName == "write") {
+            IPRAInfo empty;
+            infoIPRA.add(symbol, empty);
+        }
+    }
+}
+
 CMMC_NAMESPACE_END

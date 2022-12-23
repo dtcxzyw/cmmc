@@ -29,10 +29,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static void greedyAllocate(GMIRFunction& mfunc, const Target& target) {
+static void greedyAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& infoIPRA) {
     // const auto cfg = calcGMIRCFG(mfunc);
     CMMC_UNUSED(target);
     CMMC_UNUSED(mfunc);
+    CMMC_UNUSED(infoIPRA);
     reportNotImplemented();
 }
 

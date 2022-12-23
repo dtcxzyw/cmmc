@@ -74,7 +74,6 @@ main:
     call fact
     mv t1, a0
     mv a0, t1
-    sw t1, 20(sp)
     call write
     li a0, 0
     ld ra, 0(sp)

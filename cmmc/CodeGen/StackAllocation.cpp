@@ -26,9 +26,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void allocateStackObjects(GMIRFunction& func, const Target& target) {
+void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall) {
     std::unordered_map<Operand, size_t, OperandHasher> usedStackObjects;
-    size_t allocationBase = 0;  // TODO: parameters
+    size_t allocationBase = 0;
 
     const auto alignTo = [&](size_t alignment) { allocationBase = (allocationBase + alignment - 1) / alignment * alignment; };
 
@@ -50,8 +50,10 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     alignTo(target.getStackPointerAlignment());
     // ra
     const auto raOffset = allocationBase;
-    allocationBase += dataLayout.getPointerSize();
-    alignTo(target.getStackPointerAlignment());
+    if(hasFuncCall) {
+        allocationBase += dataLayout.getPointerSize();
+        alignTo(target.getStackPointerAlignment());
+    }
 
     // locals
     for(auto& block : func.blocks()) {
@@ -67,7 +69,6 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     }
 
     const auto sp = target.getStackPointer();
-    const auto ra = target.getReturnAddress();
     const auto replaceStack = [&](Operand& op, int32_t& offset) {
         if(op == sp) {
             // params
@@ -102,22 +103,27 @@ void allocateStackObjects(GMIRFunction& func, const Target& target) {
     const auto revOffset = constantPool.allocate(sizeType);
     constantPool.getMetadata(revOffset) = ConstantInteger::get(sizeType, -static_cast<intmax_t>(allocationBase));
 
+    const auto ra = target.getReturnAddress();
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
         if(&block == &func.blocks().front()) {
             // sp -= allocationBase
             instructions.push_front(BinaryArithmeticMInst{ GMIRInstID::Add, sp, revOffset, sp });
-            // store $ra
-            instructions.insert(std::next(instructions.cbegin()),
-                                CopyMInst{ ra, false, 0, sp, true, static_cast<int32_t>(raOffset),
-                                           static_cast<uint32_t>(dataLayout.getPointerSize()), false });
+            if(hasFuncCall) {
+                // store $ra
+                instructions.insert(std::next(instructions.cbegin()),
+                                    CopyMInst{ ra, false, 0, sp, true, static_cast<int32_t>(raOffset),
+                                               static_cast<uint32_t>(dataLayout.getPointerSize()), false });
+            }
         }
         const auto& terminator = block->instructions().back();
         if(std::holds_alternative<RetMInst>(terminator)) {
-            // restore $ra
-            instructions.insert(std::prev(instructions.end()),
-                                CopyMInst{ sp, true, static_cast<int32_t>(raOffset), ra, false, 0,
-                                           static_cast<uint32_t>(dataLayout.getPointerSize()), false });
+            if(hasFuncCall) {
+                // restore $ra
+                instructions.insert(std::prev(instructions.end()),
+                                    CopyMInst{ sp, true, static_cast<int32_t>(raOffset), ra, false, 0,
+                                               static_cast<uint32_t>(dataLayout.getPointerSize()), false });
+            }
             // sp += allocationBase
             instructions.insert(std::prev(instructions.end()), BinaryArithmeticMInst{ GMIRInstID::Add, sp, offset, sp });
         }

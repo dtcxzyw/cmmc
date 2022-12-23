@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
+#include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
@@ -261,13 +262,25 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     auto dumpFunc = [&](const GMIRFunction& func) { func.dump(std::cerr, target); };
     CMMC_UNUSED(dumpFunc);
 
-    // TODO: change lowering order to apply IPRA
-    for(auto [gv, symbol] : globalMap) {
-        if(!gv->isFunction())
+    const auto& cgscc = analysis.get<CallGraphSCCAnalysis>();
+    IPRAUsageCache infoIPRA;
+
+    const auto hasCall = [](Function* func) {
+        for(auto block : func->blocks())
+            for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Call)
+                    return true;
+            }
+        return false;
+    };
+
+    for(auto func : cgscc.getOrder()) {
+        const auto symbol = globalMap.at(func);
+        if(func->blocks().empty()) {  // external
+            target.addExternalFuncIPRAInfo(symbol, infoIPRA);
             continue;
-        auto func = gv->as<Function>();
-        if(func->blocks().empty())  // external
-            continue;
+        }
+
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
@@ -289,11 +302,14 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         */
         // Stage 7: register allocation
+        bool useBuiltinRA = false;
         if(!target.builtinRA(mfunc))
-            assignRegisters(mfunc, target);  // vr -> GPR/FPR/Stack
+            assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
+        else
+            useBuiltinRA = true;
         // Stage 8: legalize stack objects, stack -> sp
         if(!target.builtinSA(mfunc))
-            allocateStackObjects(mfunc, target);
+            allocateStackObjects(mfunc, target, hasCall(func));
         // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3)
             schedule(mfunc, target, false);
@@ -306,6 +322,10 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 12: remove unreachable block/continuous goto/unused label
         if(optLevel >= OptimizationLevel::O1)
             simplifyCFG(mfunc);
+
+        // add to IPRA cache
+        if(!useBuiltinRA)
+            infoIPRA.add(target, symbol, mfunc);
     }
 
     // TODO: apply HFSort

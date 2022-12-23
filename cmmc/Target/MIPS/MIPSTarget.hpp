@@ -114,6 +114,7 @@ public:
     [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
         return 32U;
     }
+    void addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const override;
 };
 
 CMMC_NAMESPACE_END

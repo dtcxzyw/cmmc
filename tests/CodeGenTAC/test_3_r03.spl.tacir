@@ -1,63 +1,65 @@
 FUNCTION main :
 v0 := #1
+v1 := #0
+v2 := #2
 LABEL label1 :
-IF v0 <= #0 GOTO label4
-v1 := v0
-v2 := #0
-v3 := #1
-v4 := v0
-GOTO label7
-LABEL label2 :
-v5 := v3 + #1
-IF v5 > v4 GOTO label3
-GOTO label6
-LABEL label3 :
-v6 := v2
+v3 := v1 + #1
+v4 := v0 + #1
+IF v4 > v2 GOTO label7
+v5 := v2
+v6 := v3
 v7 := v4
-GOTO label11
-LABEL label4 :
-v6 := #0
-v7 := v0
-GOTO label11
-LABEL label5 :
-v8 := v2 + #1
-v9 := v3 + #1
-IF v9 > v4 GOTO label10
-v1 := v4
-v2 := v8
-v3 := v9
-v4 := v4
-GOTO label7
-LABEL label6 :
-v1 := v4
-v2 := v2
-v3 := v5
-v4 := v4
-LABEL label7 :
-v10 := v1 / v3
-v11 := v3 * v10
-IF v1 != v11 GOTO label8
+v8 := v2
 GOTO label5
-LABEL label8 :
-GOTO label2
-LABEL label9 :
-v12 := v7 + #1
-v13 := v12
-v14 := v12
-GOTO label12
-LABEL label10 :
-v6 := v8
-v7 := v4
-LABEL label11 :
-IF v6 != #2 GOTO label9
-WRITE v7
-v15 := v7 + #1
-v13 := v15
-v14 := v15
-LABEL label12 :
-IF v13 >= #31 GOTO label13
-v0 := v14
-GOTO label1
-LABEL label13 :
+LABEL label2 :
+v9 := v6
+v10 := v8
+GOTO label10
+LABEL label3 :
 RETURN #0
+LABEL label4 :
+v5 := v11
+v6 := #0
+v7 := #1
+v8 := v11
+LABEL label5 :
+v12 := v5 / v7
+v13 := v7 * v12
+IF v5 != v13 GOTO label6
+GOTO label8
+LABEL label6 :
+v14 := v7 + #1
+IF v14 > v8 GOTO label2
+v5 := v8
+v6 := v6
+v7 := v14
+v8 := v8
+GOTO label5
+LABEL label7 :
+v9 := v3
+v10 := v2
+GOTO label10
+LABEL label8 :
+v0 := v7
+v1 := v6
+v2 := v8
+GOTO label1
+LABEL label9 :
+v9 := #0
+v10 := v11
+LABEL label10 :
+IF v9 != #2 GOTO label11
+WRITE v10
+v15 := v10 + #1
+v16 := v15
+v11 := v15
+GOTO label12
+LABEL label11 :
+v17 := v10 + #1
+v16 := v17
+v11 := v17
+LABEL label12 :
+IF v16 >= #31 GOTO label3
+IF v11 <= #0 GOTO label9
+GOTO label4
 

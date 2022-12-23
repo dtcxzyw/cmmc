@@ -31,7 +31,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
+static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& infoIPRA) {
     auto& dataLayout = target.getDataLayout();
 
     struct VirtualRegUseInfo final {
@@ -247,9 +247,16 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target) {
                                      // TODO: move to PEI pass
                                      // caller saved
                                      std::vector<Operand> savedVRegs;
+                                     const IPRAInfo* calleeUsage = nullptr;
+                                     if(auto symbol = std::get_if<GMIRSymbol*>(&inst.callee)) {
+                                         calleeUsage = infoIPRA.query(*symbol);
+                                     }
                                      for(auto& [p, v] : physMap) {
-                                         if(target.isCallerSaved(p))
+                                         if(target.isCallerSaved(p)) {
+                                             if(calleeUsage && !calleeUsage->count(p))
+                                                 continue;
                                              savedVRegs.push_back(v);
+                                         }
                                      }
                                      for(auto v : savedVRegs)
                                          evictVReg(v);
