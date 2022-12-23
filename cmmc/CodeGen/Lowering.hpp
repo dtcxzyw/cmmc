@@ -63,7 +63,7 @@ public:
     GMIRBasicBlock* getCurrentBasicBlock() const noexcept {
         return mCurrentBasicBlock;
     }
-    GMIRBasicBlock* addBlockAfter();
+    GMIRBasicBlock* addBlockAfter(double blockTripCount);
 
     template <typename Inst, typename... Args>
     void emitInst(Args&&... args) {

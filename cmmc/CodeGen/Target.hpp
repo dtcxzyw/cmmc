@@ -14,7 +14,6 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/SubTarget.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -26,6 +25,9 @@
 #include <string_view>
 
 CMMC_NAMESPACE_BEGIN
+
+class GMIRFunction;
+struct GMIRModule;
 
 class Target {
 public:

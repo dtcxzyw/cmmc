@@ -19,10 +19,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-const std::vector<const GMIRBasicBlock*>& GMIRCFGAnalysisResult::predecessors(const GMIRBasicBlock* block) const {
+const std::vector<GMIRBlockEdge>& GMIRCFGAnalysisResult::predecessors(const GMIRBasicBlock* block) const {
     return mInfo.at(block).predecessors;
 }
-const std::vector<const GMIRBasicBlock*>& GMIRCFGAnalysisResult::successors(const GMIRBasicBlock* block) const {
+const std::vector<GMIRBlockEdge>& GMIRCFGAnalysisResult::successors(const GMIRBasicBlock* block) const {
     return mInfo.at(block).successors;
 }
 
@@ -36,9 +36,9 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
         CMMC_UNUSED(ref);
     }
 
-    const auto connect = [&](const GMIRBasicBlock* src, const GMIRBasicBlock* dst) {
-        map[src].successors.push_back(dst);
-        map[dst].predecessors.push_back(src);
+    const auto connect = [&](const GMIRBasicBlock* src, const GMIRBasicBlock* dst, double freq) {
+        map[src].successors.push_back({ dst, freq });
+        map[dst].predecessors.push_back({ src, freq });
     };
 
     for(auto iter = blocks.cbegin(); iter != blocks.cend(); ++iter) {
@@ -48,14 +48,14 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
         assert(block->verify(std::cerr, true));
         const auto& lastInst = block->instructions().back();
         std::visit(Overload{ [&](const BranchCompareMInst& inst) {
-                                connect(block.get(), inst.targetBlock);
+                                connect(block.get(), inst.targetBlock, inst.branchProb);
                                 if(next != blocks.cend())
-                                    connect(block.get(), next->get());
+                                    connect(block.get(), next->get(), 1.0 - inst.branchProb);
                             },
-                             [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock); },
+                             [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock, 1.0); },
                              [&](const auto&) {
                                  if(next != blocks.cend())
-                                     connect(block.get(), next->get());
+                                     connect(block.get(), next->get(), 1.0);
                              } },
                    lastInst);
     }

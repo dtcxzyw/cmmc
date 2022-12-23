@@ -163,6 +163,7 @@ struct BranchCompareMInst final {
     GMIRInstID instID;
     Operand lhs, rhs;
     CompareOp compareOp;
+    double branchProb;
     const GMIRBasicBlock* targetBlock;
 };
 
@@ -191,16 +192,21 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicM
 class GMIRBasicBlock final {
     String mLabel;
     GMIRFunction* mFunction;
+    double mTripCount;
     std::unordered_set<Operand, OperandHasher> mUsedStackObjects;
     std::list<GMIRInst> mInstructions;
 
 public:
-    explicit GMIRBasicBlock(const String& label, GMIRFunction* function) : mLabel{ label }, mFunction{ function } {}
+    explicit GMIRBasicBlock(const String& label, GMIRFunction* function, double blockTripCount)
+        : mLabel{ label }, mFunction{ function }, mTripCount{ blockTripCount } {}
     const String& label() const noexcept {
         return mLabel;
     }
     GMIRFunction* getFunction() const noexcept {
         return mFunction;
+    }
+    double getTripCount() const noexcept {
+        return mTripCount;
     }
     std::list<GMIRInst>& instructions() noexcept {
         return mInstructions;

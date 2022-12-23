@@ -27,53 +27,64 @@
 #include <variant>
 #include <vector>
 
+// TODO: implement ExtTsp used by LLVM & BOLT
+
 CMMC_NAMESPACE_BEGIN
 
 using NodeIndex = uint32_t;
 using BlockSeq = std::vector<NodeIndex>;
 using CostT = double;
 
-static CostT evalCost(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
-                      const std::vector<uint32_t>& weights, uint32_t bufferSize) {
+struct BranchEdge final {
+    NodeIndex source;
+    NodeIndex target;
+    double prob;
+};
+
+static CostT evalCost(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
+                      const std::vector<double>& freq, const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     assert(seq[0] == 0);
     for(uint32_t idx = 0; idx < seq.size(); ++idx)
         invMap[seq[idx]] = idx;
-    uint32_t cost = 0, totalJumpSize = 0;
+    CostT cost = 0.0, totalJumpSize = 0.0;
 
     // TODO: provided by subtarget
     constexpr uint32_t branchPenalty = 5;
     constexpr uint32_t bufferFlushPenalty = 100;
 
-    for(auto [u, v] : edges) {
-        if(u == v)
-            continue;
+    for(auto [u, v, prob] : edges) {
         auto p1 = invMap[u];
         auto p2 = invMap[v];
+        // const auto w = freq[p1] * prob;
+        CMMC_UNUSED(freq);
+        const auto w = prob;
+
         bool backward = false;
-        if(p1 > p2) {
+        if(p1 >= p2) {
             std::swap(p1, p2);
+            ++p2;
             backward = true;
         }
         uint32_t jumpSize = 0;
         for(uint32_t i = p1 + 1; i < p2; ++i)
-            jumpSize += weights[i];
-        totalJumpSize += jumpSize;
+            jumpSize += weights[seq[i]];
+        totalJumpSize += jumpSize * w;
         if(jumpSize > bufferSize || backward) {
-            cost += bufferFlushPenalty;
+            cost += bufferFlushPenalty * w;
         } else if(jumpSize != 0) {
-            cost += branchPenalty;
+            cost += branchPenalty * w;
         }
     }
-    return cost + 1.0 / (1.0 + exp(-static_cast<double>(totalJumpSize)));
+    return cost + 1.0 / (1.0 + exp(-totalJumpSize));
 }
 
-static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
+static void solveBruteForce(BlockSeq& seq, const std::vector<BranchEdge>& edges, const std::vector<double>& freq,
                             const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     std::vector<NodeIndex> invMap(seq.size());
     BlockSeq best;
     CostT bestCost = 1e10;
     do {
-        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
+        const auto cost = evalCost(seq, invMap, edges, freq, weights, bufferSize);
         if(cost < bestCost) {
             bestCost = cost;
             best = seq;
@@ -82,10 +93,11 @@ static void solveBruteForce(BlockSeq& seq, const std::vector<std::pair<NodeIndex
     seq = std::move(best);
 }
 
-static CostT localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<std::pair<uint32_t, uint32_t>>& edges,
-                         const std::vector<uint32_t>& weights, uint32_t bufferSize, std::mt19937_64& urbg) {
+static CostT localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
+                         const std::vector<double>& freq, const std::vector<uint32_t>& weights, uint32_t bufferSize,
+                         std::mt19937_64& urbg) {
     constexpr uint32_t mutateCount = 100;
-    CostT bestCost = evalCost(seq, invMap, edges, weights, bufferSize);
+    CostT bestCost = evalCost(seq, invMap, edges, freq, weights, bufferSize);
     std::uniform_int_distribution<uint32_t> selector{ 1, static_cast<uint32_t>(seq.size()) - 1 };
     for(uint32_t idx = 0; idx < mutateCount; ++idx) {
         const auto p1 = selector(urbg);
@@ -93,7 +105,7 @@ static CostT localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap, const st
         if(p1 == p2)
             continue;
         std::swap(seq[p1], seq[p2]);
-        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
+        const auto cost = evalCost(seq, invMap, edges, freq, weights, bufferSize);
         if(cost < bestCost)
             bestCost = cost;
         else
@@ -102,7 +114,7 @@ static CostT localSearch(BlockSeq& seq, std::vector<NodeIndex>& invMap, const st
     return bestCost;
 }
 
-static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIndex>>& edges,
+static void solveGA(BlockSeq& seq, const std::vector<BranchEdge>& edges, const std::vector<double>& freq,
                     const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     // std::random_device entropySrc;
     // std::mt19937_64 urbg(entropySrc());
@@ -115,7 +127,7 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIn
     std::vector<NodeIndex> invMap(seq.size());
     std::vector<std::pair<BlockSeq, CostT>> pop;
     for(uint32_t k = 0; k < popSize; ++k) {
-        const auto cost = evalCost(seq, invMap, edges, weights, bufferSize);
+        const auto cost = evalCost(seq, invMap, edges, freq, weights, bufferSize);
         pop.emplace_back(seq, cost);
         std::shuffle(seq.begin() + 1, seq.end(), urbg);
     }
@@ -145,7 +157,7 @@ static void solveGA(BlockSeq& seq, const std::vector<std::pair<NodeIndex, NodeIn
                 if(!used[seq2[idx]])
                     newSeq[freePos++] = seq2[idx];
             }
-            const auto cost = localSearch(newSeq, invMap, edges, weights, bufferSize, urbg);
+            const auto cost = localSearch(newSeq, invMap, edges, freq, weights, bufferSize, urbg);
             pop.emplace_back(std::move(newSeq), cost);
         }
         std::sort(pop.begin(), pop.end(), [](const auto& lhs, const auto& rhs) { return lhs.second < rhs.second; });
@@ -165,7 +177,8 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
 
     // build graph
     std::vector<uint32_t> weights;
-    std::vector<std::pair<uint32_t, uint32_t>> edges;
+    weights.reserve(func.blocks().size());
+    std::vector<BranchEdge> edges;
     std::unordered_map<const GMIRBasicBlock*, uint32_t> idxMap;
     uint32_t idx = 0;
     for(auto& block : func.blocks()) {
@@ -173,11 +186,14 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         weights.emplace_back(block->instructions().size());  // estimated code size
     }
     idx = 0;
+    std::vector<double> freq;
+    freq.reserve(weights.size());
     for(auto& block : func.blocks()) {
         const auto blockIdx = idx++;
-        for(auto successor : cfg.successors(block.get())) {
+        freq.emplace_back(block->getTripCount());
+        for(auto [successor, prob] : cfg.successors(block.get())) {
             assert(idxMap.count(successor));
-            edges.emplace_back(blockIdx, idxMap.at(successor));
+            edges.push_back({ blockIdx, idxMap.at(successor), prob });
         }
     }
 
@@ -187,9 +203,9 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
 
     const auto bufferSize = subTarget.microOpBufferSize();
     if(seq.size() <= 10) {
-        solveBruteForce(seq, edges, weights, bufferSize);
+        solveBruteForce(seq, edges, freq, weights, bufferSize);
     } else {
-        solveGA(seq, edges, weights, bufferSize);
+        solveGA(seq, edges, freq, weights, bufferSize);
     }
 
     // apply changes
@@ -211,7 +227,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         const auto ensureNext = [&](const GMIRBasicBlock* next) {
             if(nextIter == func.blocks().cend() || nextIter->get() != next) {
                 const auto newLabel = String::get((std::string{ block->label().prefix() } + ".next").c_str());
-                auto newBlock = std::make_unique<GMIRBasicBlock>(newLabel, &func);
+                auto newBlock = std::make_unique<GMIRBasicBlock>(newLabel, &func, next->getTripCount());
                 newBlock->instructions().emplace_back(BranchMInst{ next });
                 newBlock->usedStackObjects() = block->usedStackObjects();
                 iter = func.blocks().insert(nextIter, std::move(newBlock));
@@ -222,10 +238,10 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
             auto& branchInst = std::get<BranchCompareMInst>(terminator);
             const auto& successors = cfg.successors(block.get());
             assert(successors.size() == 2);
-            if(branchInst.targetBlock == successors[0]) {
-                ensureNext(successors[1]);
+            if(branchInst.targetBlock == successors[0].block) {
+                ensureNext(successors[1].block);
             } else
-                ensureNext(successors[0]);
+                ensureNext(successors[0].block);
         }
     }
 }

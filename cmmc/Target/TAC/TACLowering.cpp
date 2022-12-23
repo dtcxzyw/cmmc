@@ -18,6 +18,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -129,11 +130,12 @@ void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
         reportUnreachable();
 
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto trueBlock = ctx.addBlockAfter();
-    const auto falseBlock = ctx.addBlockAfter();
-    const auto nextBlock = ctx.addBlockAfter();
+    const auto srcBlock = ctx.getCurrentBasicBlock();
+    const auto trueBlock = ctx.addBlockAfter(srcBlock->getTripCount() * defaultSelectProb);
+    const auto falseBlock = ctx.addBlockAfter(srcBlock->getTripCount() * (1.0 - defaultSelectProb));
+    const auto nextBlock = ctx.addBlockAfter(srcBlock->getTripCount());
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)),
-                                     getInvertedOp(inst->getOp()), falseBlock);
+                                     getInvertedOp(inst->getOp()), defaultSelectProb, falseBlock);
     ctx.setCurrentBasicBlock(trueBlock);
     ctx.emitInst<ConstantMInst>(ret, 1);
     ctx.emitInst<BranchMInst>(nextBlock);

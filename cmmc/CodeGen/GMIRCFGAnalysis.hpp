@@ -20,9 +20,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
+struct GMIRBlockEdge final {
+    const GMIRBasicBlock* block;
+    double freq;
+};
+
 struct GMIRBlockCFGInfo final {
-    std::vector<const GMIRBasicBlock*> predecessors;
-    std::vector<const GMIRBasicBlock*> successors;
+    std::vector<GMIRBlockEdge> predecessors;
+    std::vector<GMIRBlockEdge> successors;
 };
 
 class GMIRCFGAnalysisResult final {
@@ -32,8 +37,8 @@ public:
     std::unordered_map<const GMIRBasicBlock*, GMIRBlockCFGInfo>& storage() {
         return mInfo;
     }
-    const std::vector<const GMIRBasicBlock*>& predecessors(const GMIRBasicBlock* block) const;
-    const std::vector<const GMIRBasicBlock*>& successors(const GMIRBasicBlock* block) const;
+    const std::vector<GMIRBlockEdge>& predecessors(const GMIRBasicBlock* block) const;
+    const std::vector<GMIRBlockEdge>& successors(const GMIRBasicBlock* block) const;
 };
 
 GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func);

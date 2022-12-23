@@ -43,9 +43,11 @@ public:
             const auto prob = 1.0 - 1.0 / static_cast<double>(size);
             const auto branch = loop.latch->getTerminator()->as<ConditionalBranchInst>();
             const auto oldProb = branch->getBranchProb();
-            branch->updateBranchProb(prob);
-            if(std::fabs(oldProb - prob) > 1e-8)
+
+            if(std::fabs(oldProb - prob) > 1e-8) {
+                branch->updateBranchProb(prob);
                 modified = true;
+            }
         }
 
         return modified;

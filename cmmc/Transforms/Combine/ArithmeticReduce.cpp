@@ -30,6 +30,7 @@
 CMMC_NAMESPACE_BEGIN
 
 // TODO: fuse sext/zext/trunc
+// TODO: cross-block matching
 
 class ArithmeticReduce final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block) {
@@ -287,6 +288,17 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 if(!targetType->isBoolean())
                     val = builder.makeOp<CastInst>(InstructionID::ZExt, targetType, val);
                 return builder.makeOp<BinaryInst>(InstructionID::Sub, targetType, base, val);
+            }
+
+            // select (not cond), x, y
+            // ->
+            // select cond, y, x
+            if(select(not_(any(v1)), any(v2), any(v3))(matchCtx)) {
+                auto& operands = inst->operands();
+                operands[0] = v1;
+                std::swap(operands[1], operands[2]);
+                modified = true;
+                return nullptr;
             }
 
             // not cmp

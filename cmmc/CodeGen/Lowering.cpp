@@ -14,6 +14,7 @@
 
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
+#include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
@@ -30,6 +31,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <deque>
 #include <iostream>
@@ -95,14 +97,14 @@ void LoweringContext::setCurrentBasicBlock(GMIRBasicBlock* block) noexcept {
 GMIRSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
     return mGlobalMap.at(global);
 }
-GMIRBasicBlock* LoweringContext::addBlockAfter() {
+GMIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
     const auto ret = blocks.insert(
         std::next(iter),
         std::make_unique<GMIRBasicBlock>(String::get((std::string{ mCurrentBasicBlock->label().prefix() } + ".next").c_str()),
-                                         mCurrentBasicBlock->getFunction()));
+                                         mCurrentBasicBlock->getFunction(), blockTripCount));
     (*ret)->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
     return ret->get();
 }
@@ -117,6 +119,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
                                    std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(*func);
     auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
+    auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
+
     std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Operand> blockArgs;
     std::unordered_map<Value*, Operand> valueMap;
@@ -129,7 +133,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     auto& info = target.getTargetLoweringInfo();
 
     for(auto block : func->blocks()) {
-        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(block->getLabel(), &mfunc));
+        const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
+        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(block->getLabel(), &mfunc, tripCount));
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
@@ -573,12 +578,12 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
 
         const auto curBlock = ctx.getCurrentBasicBlock();
 
-        const auto thenPrepareBlock = ctx.addBlockAfter();
+        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget().getTarget())->getTripCount());
         ctx.setCurrentBasicBlock(thenPrepareBlock);
-        const auto elsePrepareBlock = ctx.addBlockAfter();
+        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget().getTarget())->getTripCount());
         ctx.setCurrentBasicBlock(curBlock);
 
-        ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, elsePrepareBlock);
+        ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, 1.0 - inst->getBranchProb(), elsePrepareBlock);
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), ctx);
@@ -629,13 +634,13 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     const auto size = static_cast<uint32_t>(inst->getType()->getSize(ctx.getDataLayout()));
 
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0, size, false);
-    const auto next = ctx.addBlockAfter();
+    const auto next = ctx.addBlockAfter(curBlock->getTripCount() * defaultSelectProb);
     ctx.setCurrentBasicBlock(next);
-    const auto target = ctx.addBlockAfter();
+    const auto target = ctx.addBlockAfter(curBlock->getTripCount());
 
     ctx.setCurrentBasicBlock(curBlock);
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
-                                     CompareOp::Equal, target);
+                                     CompareOp::Equal, defaultSelectProb, target);
     ctx.setCurrentBasicBlock(next);
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0, size, false);
     ctx.emitInst<BranchMInst>(target);
