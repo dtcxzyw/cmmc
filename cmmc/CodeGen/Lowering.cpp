@@ -328,10 +328,16 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 10: post peephole opt
         if(optLevel >= OptimizationLevel::O1)
             subTarget.postPeepholeOpt(mfunc);
-        // Stage 11: code layout opt
+        // Stage 11: ICF
+        /* TODO: select a better position to apply ICF
+        // Applying ICF before BlockLayoutOpt may hurt the performance (code locality)
+        if(optLevel >= OptimizationLevel::O2)
+            identicalCodeFolding(mfunc);
+        */
+        // Stage 12: code layout opt
         if(optLevel >= OptimizationLevel::O2)
             optimizeBlockLayout(mfunc, target);
-        // Stage 12: remove unreachable block/continuous goto/unused label
+        // Stage 13: remove unreachable block/continuous goto/unused label
         if(optLevel >= OptimizationLevel::O1)
             simplifyCFG(mfunc);
 

@@ -23,8 +23,8 @@ write:
     move $v0, $0
     jr $ra
 
-.globl main
 .align 4
+.globl main
 main:
     addiu $sp, $sp, -16
     sw $ra, 0($sp)
@@ -34,7 +34,7 @@ main:
     blez $t0, .BB1
     li $a0, 1
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 16
     jr $ra
@@ -46,14 +46,14 @@ main:
     bgez $t0, .BB2
     li $a0, -1
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 16
     jr $ra
 .BB2:
-    li $a0, 0
+    move $a0, $zero
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 16
     jr $ra

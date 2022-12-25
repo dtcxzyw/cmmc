@@ -23,14 +23,14 @@ write:
     move $v0, $0
     jr $ra
 
-.globl main
 .align 4
+.globl main
 main:
     addiu $sp, $sp, -8
     sw $ra, 0($sp)
     li $a0, 19
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 8
     jr $ra

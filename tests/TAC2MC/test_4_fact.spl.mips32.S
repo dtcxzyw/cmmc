@@ -23,8 +23,8 @@ write:
     move $v0, $0
     jr $ra
 
-.globl fact
 .align 4
+.globl fact
 fact:
     addiu $sp, $sp, -40
     sw $ra, 0($sp)
@@ -58,8 +58,8 @@ fact:
     addiu $sp, $sp, 40
     jr $ra
 
-.globl main
 .align 4
+.globl main
 main:
     addiu $sp, $sp, -24
     sw $ra, 0($sp)
@@ -77,14 +77,14 @@ main:
     move $t1, $v0
     move $a0, $t1
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 24
     jr $ra
 .BB3:
     li $a0, 1
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 24
     jr $ra

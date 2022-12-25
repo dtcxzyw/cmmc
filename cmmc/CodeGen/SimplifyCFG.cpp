@@ -14,17 +14,119 @@
 
 // Notice: don't use CFGAnalysis since the unique terminator assumption is not true now
 
+#include <algorithm>
 #include <cassert>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <queue>
+#include <unordered_map>
 #include <unordered_set>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-static bool removeUnreachableBlocks(GMIRFunction& func) {
-    CMMC_UNUSED(func);
-    return false;
+bool redirectGoto(GMIRFunction& func) {
+    std::unordered_map<const GMIRBasicBlock*, const GMIRBasicBlock*> redirect;
+    for(auto& block : func.blocks()) {
+        if(block->instructions().size() != 1)
+            continue;
+        const auto& inst = block->instructions().front();
+        if(std::holds_alternative<BranchMInst>(inst)) {
+            auto& branch = std::get<BranchMInst>(inst);
+            redirect.emplace(block.get(), branch.targetBlock);
+        }
+    }
+
+    if(redirect.empty())
+        return false;
+
+    bool modified = false;
+    auto tryReplace = [&](const GMIRBasicBlock*& targetBlock) {
+        if(auto iter = redirect.find(targetBlock); iter != redirect.cend()) {
+            targetBlock = iter->second;
+            modified = true;
+        }
+    };
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            if(std::holds_alternative<BranchMInst>(inst)) {
+                auto& branch = std::get<BranchMInst>(inst);
+                tryReplace(branch.targetBlock);
+            } else if(std::holds_alternative<BranchCompareMInst>(inst)) {
+                auto& branch = std::get<BranchCompareMInst>(inst);
+                tryReplace(branch.targetBlock);
+            }
+        }
+    }
+    return modified;
+}
+
+static bool removeUnreachableCode(GMIRFunction& func) {
+    std::unordered_set<const GMIRBasicBlock*> visit;
+    std::queue<GMIRBasicBlock*> q;
+    std::unordered_map<GMIRBasicBlock*, GMIRBasicBlock*> nextMap;
+    GMIRBasicBlock* prev = nullptr;
+    for(auto& block : func.blocks()) {
+        if(prev)
+            nextMap.emplace(prev, block.get());
+        prev = block.get();
+    }
+    q.push(func.blocks().front().get());
+    visit.emplace(q.front());
+
+    bool modified = false;
+
+    while(!q.empty()) {
+        const auto u = q.front();
+        q.pop();
+
+        const auto touchNext = [&] {
+            const auto next = nextMap.find(u);
+            if(next != nextMap.cend()) {
+                const auto targetBlock = next->second;
+                if(visit.emplace(targetBlock).second) {
+                    q.push(targetBlock);
+                }
+            }
+        };
+
+        auto& instructions = u->instructions();
+        bool stop = false;
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            std::visit(Overload{ [&](const RetMInst&) { stop = true; },
+                                 [&](const BranchMInst& inst) {
+                                     if(visit.emplace(inst.targetBlock).second) {
+                                         q.push(const_cast<GMIRBasicBlock*>(inst.targetBlock));  // NOLINT
+                                     }
+                                     stop = true;
+                                 },
+                                 [&](const BranchCompareMInst& inst) {
+                                     if(visit.emplace(inst.targetBlock).second) {
+                                         q.push(const_cast<GMIRBasicBlock*>(inst.targetBlock));  // NOLINT
+                                     }
+                                 },
+                                 [&](const UnreachableMInst&) { stop = true; }, [](const auto&) {} },
+                       *iter);
+            if(stop) {
+                const auto start = std::next(iter);
+                if(start != instructions.cend()) {
+                    instructions.erase(start, instructions.cend());
+                    modified = true;
+                }
+                break;
+            }
+        }
+
+        if(!stop)
+            touchNext();
+    }
+
+    const auto oldCount = func.blocks().size();
+    func.blocks().remove_if([&](auto& block) { return !visit.count(block.get()); });
+    const auto newCount = func.blocks().size();
+
+    return modified || oldCount != newCount;
 }
 
 static bool removeUnusedLabels(GMIRFunction& func) {
@@ -130,9 +232,9 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
 void simplifyCFG(GMIRFunction& func) {
     while(true) {
         bool modified = false;
-        modified |= removeUnreachableBlocks(func);
+        modified |= removeUnreachableCode(func);
         modified |= removeGotoNext(func);
-        // modified |= redirectGoto(func);
+        modified |= redirectGoto(func);
         modified |= removeEmptyBlocks(func);
         modified |= removeUnusedLabels(func);
 

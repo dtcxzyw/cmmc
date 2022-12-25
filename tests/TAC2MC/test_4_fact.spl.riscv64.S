@@ -22,8 +22,8 @@ write:
     mv a0, x0
     ret
 
-.globl fact
 .align 4
+.globl fact
 fact:
     addi sp, sp, -40
     sd ra, 0(sp)
@@ -56,8 +56,8 @@ fact:
     addi sp, sp, 40
     ret
 
-.globl main
 .align 4
+.globl main
 main:
     addi sp, sp, -24
     sd ra, 0(sp)
@@ -75,14 +75,14 @@ main:
     mv t1, a0
     mv a0, t1
     call write
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 24
     ret
 .BB3:
     li a0, 1
     call write
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 24
     ret

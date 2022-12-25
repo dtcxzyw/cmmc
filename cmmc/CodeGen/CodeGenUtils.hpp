@@ -25,6 +25,7 @@ void registerCoalescing(GMIRFunction& func);
 void optimizeBlockLayout(GMIRFunction& func, const Target& target);
 void schedule(GMIRFunction& func, const Target& target, bool preRA);
 void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall);
+void identicalCodeFolding(GMIRFunction& func);
 
 void removeUnusedInsts(GMIRFunction& func);
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);

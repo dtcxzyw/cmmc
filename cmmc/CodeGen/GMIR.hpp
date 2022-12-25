@@ -115,16 +115,20 @@ struct CopyMInst final {
     int32_t dstOffset;
     uint32_t size;
     bool signExtend;
+
+    bool operator==(const CopyMInst& rhs) const noexcept;
 };
 
 struct ConstantMInst final {
     Operand dst;
     std::variant<intmax_t, double> constant;
+    bool operator==(const ConstantMInst& rhs) const noexcept;
 };
 
 struct GlobalAddressMInst final {
     Operand dst;
     GMIRSymbol* global;
+    bool operator==(const GlobalAddressMInst& rhs) const noexcept;
 };
 
 /*
@@ -141,27 +145,32 @@ struct AddressSpaceIntrinsicMInst final {
 struct UnaryArithmeticMInst final {
     GMIRInstID instID;
     Operand src, dst;
+    bool operator==(const UnaryArithmeticMInst& rhs) const noexcept;
 };
 
 struct BinaryArithmeticMInst final {
     GMIRInstID instID;
     Operand lhs, rhs, dst;
+    bool operator==(const BinaryArithmeticMInst& rhsRef) const noexcept;
 };
 
 struct ArithmeticIntrinsicMInst final {
     uint32_t intrinsicID;
     std::array<Operand, 3> src;
     Operand dst;
+    bool operator==(const ArithmeticIntrinsicMInst& rhs) const noexcept;
 };
 
 struct CompareMInst final {
     GMIRInstID instID;
     CompareOp compareOp;
     Operand lhs, rhs, dst;
+    bool operator==(const CompareMInst& rhsRef) const noexcept;
 };
 
 struct BranchMInst final {
     const GMIRBasicBlock* targetBlock;
+    bool operator==(const BranchMInst& rhs) const noexcept;
 };
 
 struct BranchCompareMInst final {
@@ -170,17 +179,22 @@ struct BranchCompareMInst final {
     CompareOp compareOp;
     double branchProb;
     const GMIRBasicBlock* targetBlock;
+    bool operator==(const BranchCompareMInst& rhsRef) const noexcept;
 };
 
 struct CallMInst final {
     std::variant<Operand, GMIRSymbol*> callee;
     Operand dst;
+    bool operator==(const CallMInst& rhs) const noexcept;
 };
 
-struct UnreachableMInst final {};
+struct UnreachableMInst final {
+    bool operator==(const UnreachableMInst& rhs) const noexcept;
+};
 
 struct RetMInst final {
     Operand retVal;
+    bool operator==(const RetMInst& rhs) const noexcept;
 };
 
 // TODO: more clear semantic?
@@ -188,6 +202,7 @@ struct RetMInst final {
 struct ControlFlowIntrinsicMInst final {
     uint32_t intrinsicID;
     Operand src, dst;
+    bool operator==(const ControlFlowIntrinsicMInst& rhs) const noexcept;
 };
 
 using GMIRInst = std::variant<CopyMInst, ConstantMInst, GlobalAddressMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMInst,

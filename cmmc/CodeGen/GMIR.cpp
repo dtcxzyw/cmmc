@@ -339,4 +339,60 @@ bool GMIRFunction::verify(std::ostream& err, bool checkTerminator) const {
     return true;
 }
 
+bool CopyMInst::operator==(const CopyMInst& rhs) const noexcept {
+    return this->src == rhs.src && this->indirectSrc == rhs.indirectSrc && this->srcOffset == rhs.srcOffset &&
+        this->dst == rhs.dst && this->indirectDst == rhs.indirectDst && this->dstOffset == rhs.dstOffset &&
+        this->size == rhs.size && this->signExtend == rhs.signExtend;
+}
+
+bool ConstantMInst::operator==(const ConstantMInst& rhs) const noexcept {
+    return this->dst == rhs.dst && this->constant == rhs.constant;
+}
+
+bool GlobalAddressMInst::operator==(const GlobalAddressMInst& rhs) const noexcept {
+    return this->dst == rhs.dst && this->global == rhs.global;
+}
+
+bool UnaryArithmeticMInst::operator==(const UnaryArithmeticMInst& rhs) const noexcept {
+    return this->instID == rhs.instID && this->src == rhs.src && this->dst == rhs.dst;
+}
+
+bool BinaryArithmeticMInst::operator==(const BinaryArithmeticMInst& rhsRef) const noexcept {
+    return this->instID == rhsRef.instID && this->lhs == rhsRef.lhs && this->rhs == rhsRef.rhs && this->dst == rhsRef.dst;
+}
+
+bool ArithmeticIntrinsicMInst::operator==(const ArithmeticIntrinsicMInst& rhs) const noexcept {
+    return this->intrinsicID == rhs.intrinsicID && this->src == rhs.src && this->dst == rhs.dst;
+}
+
+bool CompareMInst::operator==(const CompareMInst& rhsRef) const noexcept {
+    return this->instID == rhsRef.instID && this->compareOp == rhsRef.compareOp && this->lhs == rhsRef.lhs &&
+        this->rhs == rhsRef.rhs && this->dst == rhsRef.dst;
+}
+
+bool BranchMInst::operator==(const BranchMInst& rhs) const noexcept {
+    return this->targetBlock == rhs.targetBlock;
+}
+
+bool BranchCompareMInst::operator==(const BranchCompareMInst& rhsRef) const noexcept {
+    return this->instID == rhsRef.instID && this->compareOp == rhsRef.compareOp && this->lhs == rhsRef.lhs &&
+        this->rhs == rhsRef.rhs && this->targetBlock == rhsRef.targetBlock;
+}
+
+bool CallMInst::operator==(const CallMInst& rhs) const noexcept {
+    return this->callee == rhs.callee && this->dst == rhs.dst;
+}
+
+bool UnreachableMInst::operator==(const UnreachableMInst&) const noexcept {
+    return true;
+}
+
+bool RetMInst::operator==(const RetMInst& rhs) const noexcept {
+    return this->retVal == rhs.retVal;
+}
+
+bool ControlFlowIntrinsicMInst::operator==(const ControlFlowIntrinsicMInst& rhs) const noexcept {
+    return this->intrinsicID == rhs.intrinsicID && this->src == rhs.src && this->dst == rhs.dst;
+}
+
 CMMC_NAMESPACE_END

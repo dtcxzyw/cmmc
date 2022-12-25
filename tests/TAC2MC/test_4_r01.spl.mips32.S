@@ -23,8 +23,8 @@ write:
     move $v0, $0
     jr $ra
 
-.globl hanoi
 .align 4
+.globl hanoi
 hanoi:
     addiu $sp, $sp, -104
     sw $ra, 0($sp)
@@ -56,7 +56,7 @@ hanoi:
     addu $t4, $t2, $t3
     move $a0, $t4
     jal write
-    li $v0, 0
+    move $v0, $zero
     lw $s3, 64($sp)
     lw $s2, 20($sp)
     lw $s1, 12($sp)
@@ -108,7 +108,7 @@ hanoi:
     sw $t8, 88($sp)
     jal hanoi
     move $s3, $v0
-    li $v0, 0
+    move $v0, $zero
     lw $s3, 64($sp)
     lw $s2, 20($sp)
     lw $s1, 12($sp)
@@ -117,8 +117,8 @@ hanoi:
     addiu $sp, $sp, 104
     jr $ra
 
-.globl main
 .align 4
+.globl main
 main:
     addiu $sp, $sp, -16
     sw $ra, 0($sp)
@@ -128,7 +128,7 @@ main:
     li $a3, 3
     jal hanoi
     move $t0, $v0
-    li $v0, 0
+    move $v0, $zero
     lw $ra, 0($sp)
     addiu $sp, $sp, 16
     jr $ra

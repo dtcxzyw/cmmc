@@ -22,8 +22,8 @@ write:
     mv a0, x0
     ret
 
-.globl hanoi
 .align 4
+.globl hanoi
 hanoi:
     addi sp, sp, -152
     sd ra, 0(sp)
@@ -57,7 +57,7 @@ hanoi:
     add t4, t2, t3
     mv a0, t4
     call write
-    li a0, 0
+    mv a0, zero
     ld s4, 104(sp)
     ld s3, 96(sp)
     ld s2, 40(sp)
@@ -110,7 +110,7 @@ hanoi:
     sw t6, 136(sp)
     call hanoi
     mv s6, a0
-    li a0, 0
+    mv a0, zero
     ld s4, 104(sp)
     ld s3, 96(sp)
     ld s2, 40(sp)
@@ -122,8 +122,8 @@ hanoi:
     addi sp, sp, 152
     ret
 
-.globl main
 .align 4
+.globl main
 main:
     addi sp, sp, -16
     sd ra, 0(sp)
@@ -133,7 +133,7 @@ main:
     li a3, 3
     call hanoi
     mv t0, a0
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 16
     ret

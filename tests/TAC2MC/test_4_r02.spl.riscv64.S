@@ -22,8 +22,8 @@ write:
     mv a0, x0
     ret
 
-.globl main
 .align 4
+.globl main
 main:
     addi sp, sp, -16
     sd ra, 0(sp)
@@ -33,7 +33,7 @@ main:
     blez t0, .BB1
     li a0, 1
     call write
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 16
     ret
@@ -45,14 +45,14 @@ main:
     bgez t0, .BB2
     li a0, -1
     call write
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 16
     ret
 .BB2:
-    li a0, 0
+    mv a0, zero
     call write
-    li a0, 0
+    mv a0, zero
     ld ra, 0(sp)
     addi sp, sp, 16
     ret
