@@ -64,8 +64,6 @@ struct ConstantStrongEqual final {
     }
 };
 
-struct ExplicitConstruct {};
-
 class ConstantInteger final : public ConstantValue {
     intmax_t mValue;
     ConstantInteger(const Type* type, intmax_t value);

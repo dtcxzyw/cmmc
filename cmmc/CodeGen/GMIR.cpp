@@ -71,6 +71,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
     if(!mUsedStackObjects.empty()) {
         out << "# used stack objects:"sv;
         for(auto used : mUsedStackObjects) {
+            assert(used.addressSpace == AddressSpace::Stack);
             out << ' ';
             dumpOperand(used);
         }

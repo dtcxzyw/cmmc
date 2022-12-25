@@ -58,7 +58,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
             out << "f"sv << operand.id;
             break;
         case ARMAddressSpace::FPR_D:
-            out << "f"sv << operand.id * 2;
+            out << "f"sv << operand.id;
             break;
         default:
             reportUnreachable();

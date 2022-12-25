@@ -32,7 +32,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
+constexpr Operand zero{ MIPSAddressSpace::GPR, 0U };
 constexpr Operand v0{ MIPSAddressSpace::GPR, 2U };
+constexpr Operand f032{ MIPSAddressSpace::FPR_S, 0U };
+constexpr Operand f064{ MIPSAddressSpace::FPR_D, 0U };
 constexpr Operand sp{ MIPSAddressSpace::GPR, 29U };
 constexpr Operand hi{ MIPSAddressSpace::HILO, 0U };
 constexpr Operand lo{ MIPSAddressSpace::HILO, 1U };
@@ -57,6 +60,9 @@ public:
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
+    }
+    void postPeepholeOpt(GMIRFunction& func) const override {
+        useZeroRegister(func, zero, 4U);
     }
 };
 
@@ -151,12 +157,12 @@ MIPSLoweringInfo::MIPSLoweringInfo()
       mHi{ String::get("hi") }, mLo{ String::get("lo") }, mFPR{ String::get("f") } {}
 Operand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
-    auto zero = pool.allocate(type);
+    auto zeroReg = pool.allocate(type);
     if(type->isInteger())
-        pool.getMetadata(zero) = ConstantInteger::get(type, 0);
+        pool.getMetadata(zeroReg) = ConstantInteger::get(type, 0);
     else
         reportUnreachable();
-    return zero;
+    return zeroReg;
 }
 String MIPSLoweringInfo::getOperand(const Operand& operand) const {
     switch(operand.addressSpace) {
@@ -171,7 +177,7 @@ String MIPSLoweringInfo::getOperand(const Operand& operand) const {
         case MIPSAddressSpace::FPR_S:
             return mFPR.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::FPR_D:
-            return mFPR.withID(static_cast<int32_t>(operand.id) * 2);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         case MIPSAddressSpace::HILO:
             return (operand.id == 0 ? mHi : mLo);
         default:
@@ -182,8 +188,6 @@ std::string_view MIPSLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const 
     switch(static_cast<MIPSIntrinsic>(intrinsicID)) {
         case MIPSIntrinsic::Fma:
             return "fma";
-        case MIPSIntrinsic::ConditionalMove:
-            return "cmov";
         default:
             reportUnreachable();
     }
@@ -192,11 +196,15 @@ void MIPSLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
     if(!inst->operands().empty()) {
         const auto val = inst->operands().front();
         const auto& dataLayout = ctx.getDataLayout();
-        // TODO: floating-point return value
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 4) {
-            // return by $v0
-            ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, v0, false, 0, static_cast<uint32_t>(size), false);
+            if(val->getType()->isFloatingPoint()) {
+                // return by $f0
+                ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, f032, false, 0, static_cast<uint32_t>(size), false);
+            } else {
+                // return by $v0
+                ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, v0, false, 0, static_cast<uint32_t>(size), false);
+            }
         } else  // return by $v0, $v1
             reportNotImplemented();
     }
@@ -219,9 +227,12 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             if(&arg == &inst->operands().back())
                 break;
 
-            const auto size = arg->getType()->getSize(dataLayout);
-            const auto alignment = arg->getType()->getAlignment(dataLayout);
-            // TODO: float
+            auto size = arg->getType()->getSize(dataLayout);
+            auto alignment = arg->getType()->getAlignment(dataLayout);
+
+            constexpr size_t minimumSize = sizeof(uint32_t);
+            size = std::max(size, minimumSize);
+            alignment = std::max(alignment, minimumSize);
 
             curOffset = (curOffset + alignment - 1) / alignment * alignment;
             offsets.push_back(curOffset);
@@ -240,8 +251,15 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             const auto size = arg->getType()->getSize(dataLayout);
 
             if(offset < 16U) {
-                // $a0-$a3
-                const Operand dst{ MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
+                // $a0-$a3, $f12/$f14
+                Operand dst = unusedOperand;
+                if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
+                    dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
+                            14U + static_cast<uint32_t>(offset) / 4U };
+                } else {
+                    dst = { MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
+                }
+
                 ctx.emitInst<CopyMInst>(val, false, 0, dst, false, 0, static_cast<uint32_t>(size), false);
             } else {
                 ctx.emitInst<CopyMInst>(val, false, 0, stackStorage, true, static_cast<int32_t>(offset),
@@ -258,7 +276,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         Operand val = unusedOperand;
         if(ret->isFloatingPoint()) {
             // $f0
-            val = Operand{ ret->getFixedSize() == 4 ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D, 0U };
+            val = ret->getFixedSize() == 4 ? f032 : f064;
         } else {
             assert(ret->getFixedSize() == 4);
             val = v0;
@@ -274,10 +292,14 @@ void MIPSLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     reportNotImplemented();
 }
 
-MIPSRegisterUsage::MIPSRegisterUsage() : mGPR{ std::numeric_limits<uint32_t>::max() }, mFPR{ 0U } {
+MIPSRegisterUsage::MIPSRegisterUsage()
+    : mGPR{ std::numeric_limits<uint32_t>::max() }, mFPR{ std::numeric_limits<uint32_t>::max() } {
     // $t0-$t9, $s0-$s7
     for(uint32_t idx = 8; idx < 26; ++idx)
         setDiscarded(mGPR, idx);
+    // o32
+    for(uint32_t idx = 0; idx < 32; idx += 2)
+        setDiscarded(mFPR, idx);
 }
 void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
     switch(operand.addressSpace) {
@@ -285,6 +307,8 @@ void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
             setUsed(mGPR, operand.id);
             break;
         case MIPSAddressSpace::FPR_S:
+            [[fallthrough]];
+        case MIPSAddressSpace::FPR_D:
             setUsed(mFPR, operand.id);
             break;
         default:
@@ -297,6 +321,8 @@ void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
             setDiscarded(mGPR, operand.id);
             break;
         case MIPSAddressSpace::FPR_S:
+            [[fallthrough]];
+        case MIPSAddressSpace::FPR_D:
             setDiscarded(mFPR, operand.id);
             break;
         default:
@@ -304,35 +330,41 @@ void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
     }
 }
 Operand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
-    uint32_t x;
     switch(src) {
         case MIPSAddressSpace::GPR: {
-            x = mGPR;
+            const auto freeBits = ~mGPR;
+            if(freeBits == 0)
+                return unusedOperand;
+            // prefer caller-saved registers
+            // $t0-$t9
+            for(uint32_t idx = 8; idx < 16; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            for(uint32_t idx = 24; idx < 26; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
-        case MIPSAddressSpace::FPR_S: {
-            x = mFPR;
+        case MIPSAddressSpace::FPR_S:
+            [[fallthrough]];
+        case MIPSAddressSpace::FPR_D: {
+            const auto freeBits = ~mFPR;
+            if(freeBits == 0)
+                return unusedOperand;
+            // prefer caller-saved registers
+            // $f4-f18
+            for(uint32_t idx = 4; idx <= 18; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
         default:
             reportUnreachable();
     }
-
-    const auto freeBits = ~x;
-    if(freeBits == 0)
-        return unusedOperand;
-    // prefer caller-saved registers
-    // $t0-$t9
-    for(uint32_t idx = 8; idx < 16; ++idx)
-        if(freeBits & (1U << idx))
-            return { src, idx };
-    for(uint32_t idx = 24; idx < 26; ++idx)
-        if(freeBits & (1U << idx))
-            return { src, idx };
-    return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
 }
 uint32_t MIPSRegisterUsage::getRegisterClass(const Type* type) const {
     if(type->isFloatingPoint()) {
-        // TODO: double
-        return MIPSAddressSpace::FPR_S;
+        return type->getFixedSize() == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D;
     }
     return MIPSAddressSpace::GPR;
 }
@@ -341,12 +373,20 @@ bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
         // $t0-$t9
         return (8 <= op.id && op.id <= 15) || (24 <= op.id && op.id <= 25);
     }
+    if(op.addressSpace == MIPSAddressSpace::FPR_S || op.addressSpace == MIPSAddressSpace::FPR_D) {
+        // $f4-$f18
+        return 4 <= op.id && op.id <= 18;
+    }
     reportNotImplemented();
 }
 bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
         // $s0-$s7
         return 16 <= op.id && op.id <= 23;
+    }
+    if(op.addressSpace == MIPSAddressSpace::FPR_S || op.addressSpace == MIPSAddressSpace::FPR_D) {
+        // $f20-$f30
+        return 20 <= op.id && op.id <= 30;
     }
     reportNotImplemented();
 }
@@ -359,9 +399,12 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
     const auto& dataLayout = ctx.getDataLayout();
 
     for(auto arg : args) {
-        const auto size = arg->getType()->getSize(dataLayout);
-        const auto alignment = arg->getType()->getAlignment(dataLayout);
-        // TODO: float
+        auto size = arg->getType()->getSize(dataLayout);
+        auto alignment = arg->getType()->getAlignment(dataLayout);
+
+        constexpr size_t minimumSize = sizeof(uint32_t);
+        size = std::max(size, minimumSize);
+        alignment = std::max(alignment, minimumSize);
 
         curOffset = (curOffset + alignment - 1) / alignment * alignment;
         offsets.push_back(curOffset);
@@ -375,8 +418,15 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
         const auto size = arg->getType()->getSize(dataLayout);
 
         if(offset < 16U) {
-            // $a0-$a3
-            const Operand dst{ MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
+            // $a0-$a3, $f12/$f14
+            Operand dst = unusedOperand;
+            if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
+                dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
+                        14U + static_cast<uint32_t>(offset) / 4U };
+            } else {
+                dst = { MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
+            }
+
             ctx.emitInst<CopyMInst>(dst, false, 0, val, false, 0, static_cast<uint32_t>(size), false);
         } else {
             ctx.emitInst<CopyMInst>(sp, true, static_cast<int32_t>(offset), val, false, 0, static_cast<uint32_t>(size), false);

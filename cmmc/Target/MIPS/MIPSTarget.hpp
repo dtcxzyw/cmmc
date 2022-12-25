@@ -21,7 +21,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-enum class MIPSIntrinsic { Fma, ConditionalMove };
+enum class MIPSIntrinsic { Fma };
 struct MIPSAddressSpace final : public AddressSpace {
     static constexpr uint32_t GPR = Custom + 0;    // NOLINT
     static constexpr uint32_t FPR_S = Custom + 1;  // NOLINT

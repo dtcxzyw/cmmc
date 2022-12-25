@@ -143,7 +143,7 @@ String ARMLoweringInfo::getOperand(const Operand& operand) const {
         case ARMAddressSpace::FPR_S:
             return mFPR.withID(static_cast<int32_t>(operand.id));
         case ARMAddressSpace::FPR_D:
-            return mFPR.withID(static_cast<int32_t>(operand.id) * 2);
+            return mFPR.withID(static_cast<int32_t>(operand.id));
         default:
             return mUnused;
     }

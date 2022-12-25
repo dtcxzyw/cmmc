@@ -32,6 +32,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+constexpr Operand zero{ RISCVAddressSpace::GPR, 0U };
 constexpr Operand a0{ RISCVAddressSpace::GPR, 10U };
 constexpr Operand sp{ RISCVAddressSpace::GPR, 2U };
 
@@ -55,6 +56,9 @@ public:
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
+    }
+    void postPeepholeOpt(GMIRFunction& func) const override {
+        useZeroRegister(func, zero, 8U);
     }
 };
 
@@ -129,12 +133,12 @@ RISCVLoweringInfo::RISCVLoweringInfo()
       mFPR{ String::get("f") } {}
 Operand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
-    auto zero = pool.allocate(type);
+    auto zeroReg = pool.allocate(type);
     if(type->isInteger())
-        pool.getMetadata(zero) = ConstantInteger::get(type, 0);
+        pool.getMetadata(zeroReg) = ConstantInteger::get(type, 0);
     else
         reportUnreachable();
-    return zero;
+    return zeroReg;
 }
 String RISCVLoweringInfo::getOperand(const Operand& operand) const {
     switch(operand.addressSpace) {

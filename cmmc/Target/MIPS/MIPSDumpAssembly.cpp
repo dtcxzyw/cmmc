@@ -84,7 +84,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
             out << "$f"sv << operand.id;
             break;
         case MIPSAddressSpace::FPR_D:
-            out << "$f"sv << operand.id * 2;
+            out << "$f"sv << operand.id;
             break;
         default:
             reportUnreachable();
@@ -148,9 +148,16 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
             std::visit(Overload{ [&](const CopyMInst& copy) {
                                     if(copy.indirectSrc && !copy.indirectDst) {
                                         // load
-                                        if(copy.size == 4)
-                                            out << "lw "sv;
-                                        else if(copy.size == 1)
+                                        if(copy.size == 4) {
+                                            if(copy.dst.addressSpace == MIPSAddressSpace::GPR)
+                                                out << "lw "sv;
+                                            else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S)
+                                                out << "lwc1 "sv;
+                                            else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_D)
+                                                out << "ldc1 "sv;
+                                            else
+                                                reportUnreachable();
+                                        } else if(copy.size == 1)
                                             out << "lb "sv;
                                         else
                                             reportUnreachable();
@@ -163,9 +170,16 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         delaySlot();
                                     } else if(copy.indirectDst && !copy.indirectSrc) {
                                         // store
-                                        if(copy.size == 4)
-                                            out << "sw "sv;
-                                        else if(copy.size == 1)
+                                        if(copy.size == 4) {
+                                            if(copy.src.addressSpace == MIPSAddressSpace::GPR)
+                                                out << "sw "sv;
+                                            else if(copy.src.addressSpace == MIPSAddressSpace::FPR_S)
+                                                out << "swc1 "sv;
+                                            else if(copy.src.addressSpace == MIPSAddressSpace::FPR_D)
+                                                out << "sdc1 "sv;
+                                            else
+                                                reportUnreachable();
+                                        } else if(copy.size == 1)
                                             out << "sb "sv;
                                         else
                                             reportUnreachable();
@@ -174,31 +188,40 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         dumpOperand(copy.dst);
                                         out << ')';
                                     } else {
-                                        if(copy.size == 4) {
-                                            // mfacc
-                                            if(copy.src.addressSpace == MIPSAddressSpace::HILO) {
-                                                out << "mf"sv << (copy.src.id == 0 ? "hi"sv : "lo"sv) << ' ';
-                                                dumpOperand(copy.dst);
-                                            }
-                                            // mtacc
-                                            else if(copy.dst.addressSpace == MIPSAddressSpace::HILO) {
-                                                out << "mt"sv << (copy.dst.id == 0 ? "hi"sv : "lo"sv) << ' ';
-                                                dumpOperand(copy.src);
-                                            } else {
-                                                // move
-                                                if(copy.src.addressSpace == MIPSAddressSpace::GPR)
+                                        // mfacc
+                                        if(copy.src.addressSpace == MIPSAddressSpace::HILO) {
+                                            out << "mf"sv << (copy.src.id == 0 ? "hi"sv : "lo"sv) << ' ';
+                                            dumpOperand(copy.dst);
+                                        }
+                                        // mtacc
+                                        else if(copy.dst.addressSpace == MIPSAddressSpace::HILO) {
+                                            out << "mt"sv << (copy.dst.id == 0 ? "hi"sv : "lo"sv) << ' ';
+                                            dumpOperand(copy.src);
+                                        } else {
+                                            // move
+                                            if(copy.src.addressSpace == MIPSAddressSpace::GPR) {
+                                                if(copy.dst.addressSpace == MIPSAddressSpace::GPR)
                                                     out << "move "sv;
-                                                else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
-                                                    out << "li "sv;
+                                                else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S)
+                                                    out << "mtc1 "sv;
                                                 else
                                                     reportNotImplemented();
+                                            } else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
+                                                out << "li "sv;
+                                            else if(copy.src.addressSpace == MIPSAddressSpace::FPR_S) {
+                                                if(copy.dst.addressSpace == MIPSAddressSpace::GPR)
+                                                    out << "mfc1 "sv;
+                                                else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S)
+                                                    out << "mov.s "sv;
+                                                else
+                                                    reportNotImplemented();
+                                            } else
+                                                reportNotImplemented();
 
-                                                dumpOperand(copy.dst);
-                                                out << ", "sv;
-                                                dumpOperand(copy.src);
-                                            }
-                                        } else
-                                            reportUnreachable();
+                                            dumpOperand(copy.dst);
+                                            out << ", "sv;
+                                            dumpOperand(copy.src);
+                                        }
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
@@ -207,7 +230,31 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      out << ", "sv;
                                      std::visit([&](auto x) { out << x; }, constant.constant);
                                  },
-                                 [&](const UnaryArithmeticMInst&) { reportUnreachable(); },
+                                 [&](const GlobalAddressMInst& global) {
+                                     out << "la "sv;
+                                     dumpOperand(global.dst);
+                                     out << ", "sv;
+                                     symbolMap.at(global.global);
+                                 },
+                                 [&](const UnaryArithmeticMInst& unary) {
+                                     if(unary.instID == GMIRInstID::FNeg) {
+                                         if(unary.src.addressSpace == MIPSAddressSpace::FPR_S)
+                                             out << "neg.s "sv;
+                                         else
+                                             out << "neg.d "sv;
+                                     } else if(unary.instID == GMIRInstID::S2F) {
+                                         if(unary.dst.addressSpace == MIPSAddressSpace::FPR_S) {
+                                             out << "cvt.s.w "sv;
+                                         } else {
+                                             out << "cvt.d.w "sv;
+                                         }
+                                     } else
+                                         reportNotImplemented();
+
+                                     dumpOperand(unary.dst);
+                                     out << ", ";
+                                     dumpOperand(unary.src);
+                                 },
                                  [&](const BinaryArithmeticMInst& binary) {
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
@@ -230,15 +277,17 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << "divu"sv;
                                              break;
                                          case GMIRInstID::FAdd:
-                                             [[fallthrough]];
+                                             out << "add"sv;
+                                             break;
                                          case GMIRInstID::FSub:
-                                             [[fallthrough]];
+                                             out << "sub"sv;
+                                             break;
                                          case GMIRInstID::FMul:
-                                             [[fallthrough]];
+                                             out << "mul"sv;
+                                             break;
                                          case GMIRInstID::FDiv:
-                                             [[fallthrough]];
-                                         case GMIRInstID::FNeg:
-                                             reportNotImplemented();
+                                             out << "div"sv;
+                                             break;
                                          case GMIRInstID::And:
                                              out << "and"sv;
                                              break;
@@ -261,6 +310,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      if(binary.instID == GMIRInstID::Add || binary.instID == GMIRInstID::Sub) {
                                          out << 'u';
                                      }
+                                     if(binary.lhs.addressSpace == MIPSAddressSpace::FPR_S) {
+                                         out << ".s"sv;
+                                     } else if(binary.lhs.addressSpace == MIPSAddressSpace::FPR_D) {
+                                         out << ".d"sv;
+                                     }
                                      out << ' ';
                                      if(binary.instID != GMIRInstID::Mul && binary.instID != GMIRInstID::SDiv &&
                                         binary.instID != GMIRInstID::UDiv && binary.instID != GMIRInstID::SRem &&
@@ -279,21 +333,35 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      delaySlot();
                                  },
                                  [&](const BranchCompareMInst& branch) {
-                                     out << 'b';
-                                     dumpCompare(branch.compareOp);
-                                     if(branch.lhs.addressSpace == MIPSAddressSpace::GPR && isZero(branch.rhs)) {
-                                         out << "z "sv;
-                                         dumpOperand(branch.lhs);
-                                     } else if(branch.lhs.addressSpace == MIPSAddressSpace::GPR &&
-                                               branch.rhs.addressSpace == MIPSAddressSpace::GPR) {
-                                         out << ' ';
+                                     if(branch.instID == GMIRInstID::FCmp) {
+                                         out << "c."sv;
+                                         dumpCompare(branch.compareOp);
+                                         if(branch.lhs.addressSpace == MIPSAddressSpace::FPR_S)
+                                             out << ".s "sv;
+                                         else
+                                             out << ".d "sv;
+
                                          dumpOperand(branch.lhs);
                                          out << ", "sv;
                                          dumpOperand(branch.rhs);
-                                     } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                         out << "\nbc1t "sv << labelMap.at(branch.targetBlock);
+                                     } else {
+                                         out << 'b';
+                                         dumpCompare(branch.compareOp);
+                                         if(branch.lhs.addressSpace == MIPSAddressSpace::GPR && isZero(branch.rhs)) {
+                                             out << "z "sv;
+                                             dumpOperand(branch.lhs);
+                                         } else if(branch.lhs.addressSpace == MIPSAddressSpace::GPR &&
+                                                   branch.rhs.addressSpace == MIPSAddressSpace::GPR) {
+                                             out << ' ';
+                                             dumpOperand(branch.lhs);
+                                             out << ", "sv;
+                                             dumpOperand(branch.rhs);
+                                         } else
+                                             reportNotImplemented();  // TODO: fp cmp
 
-                                     out << ", "sv << labelMap.at(branch.targetBlock);
+                                         out << ", "sv << labelMap.at(branch.targetBlock);
+                                     }
                                      delaySlot();
                                  },
                                  [&](const CompareMInst& cmp) {
@@ -314,7 +382,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << "jalr "sv;
                                          dumpOperand(*dst);
                                      } else {
-                                         out << "jal "sv << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
+                                         out << "jal "sv << symbolMap.at(std::get<GMIRSymbol*>(call.callee));
                                      }
                                      delaySlot();
                                  },
@@ -323,7 +391,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      delaySlot();
                                  },
                                  [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
-                                 [](const auto&) { reportUnreachable(); } },
+                                 [](const auto&) { reportNotImplemented(); } },
                        inst);
 
             out << '\n';

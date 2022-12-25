@@ -34,7 +34,6 @@ public:
             // innermost loop
             if(loop.header != loop.latch)
                 continue;
-            // TODO: dynamic loops
             if(!loop.bound->is<ConstantInteger>())
                 continue;
             if(!loop.initial->is<ConstantInteger>())

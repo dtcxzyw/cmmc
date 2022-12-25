@@ -80,7 +80,9 @@ Operand LoweringContext::mapOperand(Value* operand) {
         return iter->second;
     if(operand->isGlobal()) {
         // la
-        reportNotImplemented();
+        const auto ptr = getAllocationPool(AddressSpace::VirtualReg).allocate(operand->getType());
+        emitInst<GlobalAddressMInst>(ptr, mGlobalMap.at(operand->as<GlobalValue>()));
+        return ptr;
     }
     if(!operand->isConstant()) {
         operand->dump(reportError() << "undefined operand "sv);
@@ -125,6 +127,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
     std::unordered_map<BlockArgument*, Operand> blockArgs;
     std::unordered_map<Value*, Operand> valueMap;
+    std::unordered_map<Value*, Operand> storageMap;
     LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgs, valueMap, mfunc.pools(), blockArgMap };
 
     auto& vregPool = ctx.getAllocationPool(AddressSpace::VirtualReg);
@@ -151,7 +154,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
                 const auto storage = stackPool.allocate(type);
                 stackPool.getMetadata(storage) = inst;
-                const auto addr = vregPool.allocate(type);
+                storageMap.emplace(inst, storage);
+                const auto addr = vregPool.allocate(inst->getType());
                 ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()),
                                         false);
                 ctx.addOperand(inst, addr);
@@ -172,7 +176,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         ctx.setCurrentBasicBlock(mblock);
         const auto& stackUsage = stackLifetime.getUsedAllocas(block);
         for(auto alloca : stackUsage)
-            mblock->usedStackObjects().insert(ctx.mapOperand(alloca));
+            mblock->usedStackObjects().insert(storageMap.at(alloca));
         for(auto inst : block->instructions()) {
             info.lowerInst(inst, ctx);
         }
@@ -237,8 +241,16 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                             data.push_back(static_cast<std::byte>(value));
                         } else
                             reportNotImplemented();
+                    } else if(valType->isFloatingPoint()) {
+                        const auto value = val->as<ConstantFloatingPoint>()->getValue();
+                        if(valType->getFixedSize() == sizeof(float)) {
+                            const auto fpv = static_cast<float>(value);
+                            const void* ptr = &fpv;
+                            data.push_back(*static_cast<const uint32_t*>(ptr));
+                        } else
+                            reportNotImplemented();
                     } else
-                        reportNotImplemented();
+                        reportUnreachable();
                 };
                 expand(expand, initialValue);
 
@@ -534,32 +546,41 @@ void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
 void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
     const auto src = ctx.mapOperand(inst->getOperand(0));
     const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto op = [&]() -> GMIRInstID {
-        switch(inst->getInstID()) {
-            case InstructionID::SExt:
-                [[fallthrough]];
-            case InstructionID::ZExt:
-                [[fallthrough]];
-            case InstructionID::Trunc:
-                [[fallthrough]];
-            case InstructionID::Bitcast:
-                [[fallthrough]];
-                // TODO: use copy
-            case InstructionID::F2U:
-                [[fallthrough]];
-            case InstructionID::F2S:
-                [[fallthrough]];
-            case InstructionID::U2F:
-                [[fallthrough]];
-            case InstructionID::S2F:
-                [[fallthrough]];
-            case InstructionID::FCast:
-                reportNotImplemented();
-            default:
-                reportUnreachable();
+
+    switch(inst->getInstID()) {
+        case InstructionID::ZExt: {
+            ctx.emitInst<CopyMInst>(src, false, 0, dst, false, 0, 0U, false);
+            break;
         }
-    }();
-    ctx.emitInst<UnaryArithmeticMInst>(op, src, dst);
+        case InstructionID::SExt:
+            [[fallthrough]];
+        case InstructionID::Trunc:
+            [[fallthrough]];
+        case InstructionID::Bitcast:
+            [[fallthrough]];
+            // TODO: use copy
+        case InstructionID::F2U: {
+            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2U, src, dst);
+            break;
+        }
+        case InstructionID::F2S: {
+            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2S, src, dst);
+            break;
+        }
+        case InstructionID::U2F: {
+            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::U2F, src, dst);
+            break;
+        }
+        case InstructionID::S2F: {
+            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::S2F, src, dst);
+            break;
+        }
+        case InstructionID::FCast:
+            [[fallthrough]];
+        default:
+            reportUnreachable();
+    }
+    ctx.addOperand(inst, dst);
 }
 void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
@@ -616,12 +637,12 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
     } else if(auto condInst = dynamic_cast<CompareInst*>(ctx.queryRoot(inst->getOperand(0)))) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
-                case InstructionID::FCmp:
-                    return GMIRInstID::FCmp;
                 case InstructionID::UCmp:
                     return GMIRInstID::UCmp;
                 case InstructionID::SCmp:
                     return GMIRInstID::SCmp;
+                case InstructionID::FCmp:
+                    return GMIRInstID::FCmp;
                 default:
                     reportUnreachable();
             }

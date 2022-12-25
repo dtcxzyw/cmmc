@@ -139,7 +139,7 @@ class IntegerType final : public Type {
     uint32_t mBitWidth;
 
 public:
-    explicit IntegerType(uint32_t bitWidth) : mBitWidth{ bitWidth } {}
+    explicit IntegerType(uint32_t bitWidth, ExplicitConstruct) : mBitWidth{ bitWidth } {}
     static const IntegerType* get(uint32_t bitWidth);
     static const IntegerType* getBoolean() {
         return get(1);
@@ -164,7 +164,7 @@ class FloatingPointType final : public Type {
     bool mIsFloat;
 
 public:
-    explicit FloatingPointType(bool isFloat) : mIsFloat{ isFloat } {}
+    explicit FloatingPointType(bool isFloat, ExplicitConstruct) : mIsFloat{ isFloat } {}
     static const FloatingPointType* get(bool isFloat);
     static const FloatingPointType* getFloat() {
         return get(true);

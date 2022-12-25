@@ -154,9 +154,9 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
                 }
                 if(!item.verify(std::cerr))
                     DiagnosticsContext::get().attach<ModuleAttachment>("module", &item).reportFatal();
-            }
-            if(debugTransform.get()) {
-                verifyModuleExec(item);
+                if(debugTransform.get()) {
+                    verifyModuleExec(item);
+                }
             }
         }
     }
@@ -315,7 +315,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collect({
                 "FuncInlining",  //
-                "CombineFma",    //
+                // "CombineFma", // TODO: fast math?
             }))
             root->addPass(pass);
     }
@@ -414,10 +414,9 @@ public:
                 analysis.invalidateFunc(*func);
                 modified = true;
                 assert(func->verify(std::cerr));
-            }
-
-            if(debugTransform.get()) {
-                verifyModuleExec(module);
+                if(debugTransform.get()) {
+                    verifyModuleExec(module);
+                }
             }
         }
         if(debugTransform.get()) {

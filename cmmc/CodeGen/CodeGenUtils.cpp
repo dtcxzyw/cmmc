@@ -14,8 +14,10 @@
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cstdint>
 #include <queue>
 #include <unordered_map>
 #include <variant>
@@ -92,6 +94,7 @@ void removeUnusedInsts(GMIRFunction& func) {
                            if(auto* dst = std::get_if<Operand>(&inst.callee))
                                popSrc(*dst);
                        },
+                       [](const GlobalAddressMInst&) {},
                        [&](const auto& inst) { popSrc(inst.src); },
                    },
                    instruction);
@@ -235,9 +238,9 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     out << ".data\n"sv;
     emitData();
     const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
+        out << ".align " << symbol.alignment << std::endl;
         if(symbol.linkage == Linkage::Global)
             out << ".globl "sv << symbol.symbol << '\n';
-        out << ".align " << symbol.alignment << std::endl;
         out << symbol.symbol << ":\n"sv;
     };
     for(auto& symbol : module.symbols) {
@@ -263,6 +266,31 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
                              [](const auto&) {} },
                    symbol.def);
     }
+}
+
+void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions()) {
+            if(std::holds_alternative<ConstantMInst>(inst)) {
+                auto& constant = std::get<ConstantMInst>(inst);
+                if(constant.dst.addressSpace != zero.addressSpace)
+                    continue;
+                if(std::visit([](auto val) { return val == static_cast<decltype(val)>(0); }, constant.constant)) {
+                    inst = CopyMInst{ zero, false, 0, constant.dst, false, 0, size, false };
+                }
+            } else if(std::holds_alternative<CopyMInst>(inst)) {
+                auto& copy = std::get<CopyMInst>(inst);
+                if(copy.src.addressSpace != AddressSpace::Constant)
+                    continue;
+                // if(copy.size != size)
+                //     continue;
+                const auto constant =
+                    static_cast<ConstantValue*>(func.pools().pools[AddressSpace::Constant].getMetadata(copy.src));
+                if((constant->is<ConstantInteger>() && constant->as<ConstantInteger>()->getSignExtended() == 0) ||
+                   (constant->is<ConstantFloatingPoint>() && constant->as<ConstantFloatingPoint>()->getValue() == 0.0))
+                    copy.src = zero;
+            }
+        }
 }
 
 CMMC_NAMESPACE_END

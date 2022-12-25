@@ -62,7 +62,7 @@ dumpOptPipeline.setName("dump-opt-pipeline", 'P').setDesc("dump the transform pi
 CMMC_INIT_OPTIONS_END
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
-    Interpreter interpreter{ 120'000'000'000ULL, 2ULL << 30, 1024 };
+    Interpreter interpreter{ 600'000'000'000ULL, 2ULL << 30, 1024 };
     Function* func = nullptr;
     for(auto global : module.globals())
         if(global->isFunction() && global->getSymbol() == "main") {

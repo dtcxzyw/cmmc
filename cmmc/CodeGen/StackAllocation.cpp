@@ -38,6 +38,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     // args & saved regs
     for(auto& block : func.blocks()) {
         for(auto& stackObject : block->usedStackObjects()) {
+            assert(stackObject.addressSpace == AddressSpace::Stack);
             const auto type = stack.getType(stackObject);
             if(type->isStackStorage()) {
                 const auto size = type->getSize(dataLayout);

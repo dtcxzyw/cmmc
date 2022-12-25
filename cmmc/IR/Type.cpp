@@ -92,7 +92,8 @@ struct IntegerTypeEqual final {
 };
 
 const IntegerType* IntegerType::get(uint32_t bitWidth) {
-    static const IntegerType i1{ 1U }, i8{ 8U }, i16{ 16U }, i32{ 32U }, i64{ 64U };
+    static const IntegerType i1{ 1U, ExplicitConstruct{} }, i8{ 8U, ExplicitConstruct{} }, i16{ 16U, ExplicitConstruct{} },
+        i32{ 32U, ExplicitConstruct{} }, i64{ 64U, ExplicitConstruct{} };
     switch(bitWidth) {
         case 1:
             return &i1;
@@ -119,7 +120,7 @@ size_t IntegerType::getAlignment(const DataLayout& dataLayout) const noexcept {
 }
 
 const FloatingPointType* FloatingPointType::get(bool isFloat) {
-    static FloatingPointType fp32{ true }, fp64{ false };
+    static FloatingPointType fp32{ true, ExplicitConstruct{} }, fp64{ false, ExplicitConstruct{} };
     return isFloat ? &fp32 : &fp64;
 }
 bool FloatingPointType::isSame(const Type* rhs) const {
@@ -222,13 +223,13 @@ ConstantOffset* StructType::getOffset(const String& fieldName) const {
 struct InvalidOffset final {
     const StructType* thisStruct;
     const ConstantOffset* offset;
-    friend void operator<<(std::ostream& out, const InvalidOffset& offset) {
+    friend void operator<<(std::ostream& out, const InvalidOffset& info) {
         out << "mismatched struct offset:"sv << std::endl;
         out << "base's struct: "sv;
-        offset.thisStruct->dump(out);
+        info.thisStruct->dump(out);
         out << std::endl;
         out << "offset's struct: "sv;
-        offset.offset->base()->dump(out);
+        info.offset->base()->dump(out);
         out << std::endl;
     }
 };

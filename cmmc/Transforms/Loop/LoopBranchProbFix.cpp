@@ -37,7 +37,7 @@ public:
             assert(loop.step);
             if((loop.step > 0 && initial + loop.step >= bound) || ((loop.step < 0 && initial + loop.step <= bound)))
                 continue;  // handled by loop elimination
-            const auto size = (bound - initial) / loop.step;
+            const auto size = (bound - initial + loop.step + (loop.step > 0 ? -1 : 1)) / loop.step;
             assert(size >= 0);
 
             const auto prob = 1.0 - 1.0 / static_cast<double>(size);

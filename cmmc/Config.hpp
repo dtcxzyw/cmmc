@@ -40,4 +40,6 @@ namespace Config {
 #endif
 }  // namespace Config
 
+struct ExplicitConstruct final {};
+
 CMMC_NAMESPACE_END

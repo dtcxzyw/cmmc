@@ -71,6 +71,11 @@ enum class GMIRInstID {
     Shl,
     AShr,
     LShr,
+    F2U,
+    F2S,
+    U2F,
+    S2F,
+    FCast,
     ArithIntrinsic,
     // ControlFlow
     Branch,
@@ -185,7 +190,7 @@ struct ControlFlowIntrinsicMInst final {
     Operand src, dst;
 };
 
-using GMIRInst = std::variant<CopyMInst, ConstantMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMInst,
+using GMIRInst = std::variant<CopyMInst, ConstantMInst, GlobalAddressMInst, /*AddressSpaceIntrinsicMInst,*/ UnaryArithmeticMInst,
                               BinaryArithmeticMInst, ArithmeticIntrinsicMInst, CompareMInst, BranchMInst, BranchCompareMInst,
                               CallMInst, UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
 

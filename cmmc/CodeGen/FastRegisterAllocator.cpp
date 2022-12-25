@@ -73,6 +73,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
         auto& usedStackObjects = block->usedStackObjects();
         for(auto [v, s] : stackMap) {
             CMMC_UNUSED(v);
+            assert(s.addressSpace == AddressSpace::Stack);
             usedStackObjects.insert(s);
         }
 
@@ -92,6 +93,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
                 return ref = iter->second;
             }
             const auto storage = stack.allocate(vreg.getType(op));
+            assert(storage.addressSpace == AddressSpace::Stack);
             usedStackObjects.insert(storage);
             return ref = storage;
         };
@@ -293,6 +295,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
         auto& instructions = block->instructions();
         for(auto [p, s] : overwrited) {
             CMMC_UNUSED(p);
+            assert(s.addressSpace == AddressSpace::Stack);
             block->usedStackObjects().insert(s);
         }
 

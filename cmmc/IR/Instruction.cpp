@@ -339,7 +339,7 @@ ConditionalBranchInst::ConditionalBranchInst(Value* condition, double branchProb
     operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
 }
 void ConditionalBranchInst::updateBranchProb(double branchProb) {
-    assert(getInstID() == InstructionID::Branch);
+    assert(getInstID() == InstructionID::ConditionalBranch);
     mBranchProb = branchProb;
 }
 bool ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {

@@ -180,6 +180,26 @@ def spl_codegen_mips(src):
     return True
 
 
+def sysy_codegen_mips(src):
+    tmp_out = os.path.join(binary_dir, 'tmp.S')
+    out = subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-o',
+                               tmp_out, src], capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+
+    return True
+
+
+def sysy_codegen_riscv64(src):
+    tmp_out = os.path.join(binary_dir, 'tmp.S')
+    out = subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-o',
+                               tmp_out, src], capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+
+    return True
+
+
 def spl_codegen_riscv64(src):
     name = os.path.basename(src)
     tmp_out = os.path.join(binary_dir, 'tmp.S')
@@ -456,12 +476,16 @@ if "codegen" in test_cases:
     res.append(test("SPL SPL->RISCV64 project4", tests_path +
                "/TAC2MC", ".spl", spl_codegen_riscv64))
     # TODO: IR->MIPS
+    # res.append(test("SysY ->MIPS functional", tests_path +
+    #           "/SysY2022/functional", ".sy", sysy_codegen_mips))
+    # res.append(test("SysY ->RISCV64 functional", tests_path +
+    #           "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 
 
 if "opt" in test_cases:
     res.append(test("SysY opt & test functional", tests_path +
                     "/SysY2022/functional", ".sy", sysy_test))
-    res.append(test("SysY opt hidden_functional", tests_path +
+    res.append(test("SysY opt & test hidden_functional", tests_path +
                     "/SysY2022/hidden_functional", ".sy", sysy_opt))
     res.append(test("SysY opt performance", tests_path +
                     "/SysY2022/performance", ".sy", sysy_opt))
