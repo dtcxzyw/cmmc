@@ -64,7 +64,7 @@ class StoreEliminate final : public TransformPass<Function> {
                 } else if(inst->getInstID() == InstructionID::Call) {
                     // TODO: store gep?
                     if(addr->isInstruction() && addr->as<Instruction>()->getInstID() == InstructionID::Alloc) {
-                        if(leak.mayModify(inst, addr))
+                        if(leak.mayRead(inst, addr) || leak.mayModify(inst, addr))
                             return false;
                     } else {
                         const auto callee = inst->operands().back();

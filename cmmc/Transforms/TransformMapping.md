@@ -14,7 +14,7 @@
 + [x] globldce -> GlobalEliminate
 + [ ] globalopt
 + [x] gvn
-+ [ ] indvars
++ [x] indvars -> LoopCanonicalize
 + [x] inline -> Inlining
 + [x] instcombine -> ArithmeticReduce
 + [ ] aggressive-instcombine
@@ -22,12 +22,12 @@
 + [x] ipsccp -> Inlining & sccp
 + [ ] jump-threading
 + [ ] lcssa
-+ [ ] licm
++ [x] licm -> CodeMove
 + [ ] loop-deletion
 + [ ] loop-reduce
 + [ ] loop-rotate
 + [ ] loop-simplify
-+ [x] loop-unroll
++ [x] loop-unroll -> LoopUnroll/DynamicLoopUnroll
 + [ ] loop-unroll-and-jam
 + [ ] loop-unswitch
 + [x] mem2reg -> ScalarMem2Reg
@@ -38,7 +38,7 @@
 + [ ] sroa
 + [x] sccp -> ConstantPropagation & SimplifyBranch & ConditionalPropagation
 + [x] simplifycfg -> BlockEliminate & BlockMerge
-+ [ ] sink
++ [x] sink -> CodeSink
 + [x] tailcallelim -> TailCallEliminate
 
 # MLIR

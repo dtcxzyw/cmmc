@@ -34,7 +34,6 @@
 #include <ios>
 #include <iostream>
 #include <limits>
-#include <map>
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
@@ -95,7 +94,8 @@ class MemoryContext final {
     std::vector<ByteStorage> mGlobalStorage;
     std::unordered_map<GlobalVariable*, uintptr_t> mGlobalAlloc;
     std::vector<ByteStorage> mStackStorage;
-    std::map<uintptr_t, uintptr_t> mStackAlloc;  // [begin, end)
+    std::vector<std::pair<uintptr_t, uintptr_t>> mStackAlloc;  // [begin, end)
+    std::unordered_set<uintptr_t> mPopedStackPtr;
     size_t mLoadMemFootprint = 0;
     size_t mStoreMemFootprint = 0;
 
@@ -150,7 +150,7 @@ class MemoryContext final {
 
 public:
     MemoryContext(size_t budget, const DataLayout& dataLayout) : mBudget{ budget }, mDataLayout{ dataLayout } {
-        mStackAlloc.emplace(16U, 16U);  // start
+        mStackAlloc.emplace_back(0U, 16U);  // start
     }
     bool isExceeded() const noexcept {
         return (mGlobalStorage.size() + mStackStorage.size()) * sizeof(ByteStorage) > mBudget;
@@ -186,20 +186,35 @@ public:
         return ptr + globalOffset;
     }
     uintptr_t stackPush(size_t size, size_t alignment) {
-        const auto [beg, end] = *mStackAlloc.rbegin();
+        assert(size >= 1);
+        assert(!mStackAlloc.empty());
+        const auto [beg, end] = mStackAlloc.back();
         CMMC_UNUSED(beg);
         const auto ptr = paddingTo(mStackStorage, end, alignment);
         setTag(mStackStorage, ptr, size, ByteState::Read | ByteState::Write);
-        mStackAlloc.emplace(ptr, ptr + size);
+        assert(!mStackAlloc.count(ptr));
+        mStackAlloc.emplace_back(ptr, ptr + size);
         return ptr + stackOffset;
     }
     void stackPop(uintptr_t base) {
         base -= stackOffset;
-        const auto iter = mStackAlloc.find(base);
-        assert(iter != mStackAlloc.cend());
-        const auto [begin, end] = *iter;
-        setTag(mStackStorage, begin, end - begin, ByteState::None);
-        mStackAlloc.erase(iter);
+        if(mStackAlloc.back().first == base) {
+            const auto stackPopOne = [&] {
+                const auto [begin, end] = mStackAlloc.back();
+                setTag(mStackStorage, begin, end - begin, ByteState::None);
+                mStackAlloc.pop_back();
+            };
+            stackPopOne();
+            while(true) {
+                auto iter = mPopedStackPtr.find(mStackAlloc.back().first);
+                if(iter == mPopedStackPtr.cend())
+                    return;
+                stackPopOne();
+                mPopedStackPtr.erase(iter);
+            }
+        } else {
+            mPopedStackPtr.insert(base);
+        }
     }
 
     std::byte load(uintptr_t ptr) {
@@ -486,7 +501,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         Block* block;
         std::unordered_map<Value*, OperandStorage> operands;
         List<Instruction*>::const_iterator execIter;
-        std::unordered_set<uintptr_t> stackAllocs;
+        std::unordered_map<uintptr_t, Instruction*> stackAllocs;
+        std::unordered_map<Instruction*, uintptr_t> cachedAllocs;
     };
 
     std::vector<BlockContext> execCtx;
@@ -620,8 +636,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         switch(inst->getInstID()) {
             case InstructionID::Ret: {
                 const auto caller = currentExecCtx.caller;
-                for(auto base : currentExecCtx.stackAllocs)
+                for(auto [base, alloc] : currentExecCtx.stackAllocs) {
+                    CMMC_UNUSED(alloc);
                     memCtx.stackPop(base);
+                }
 
                 execCtx.pop_back();
                 if(execCtx.empty()) {
@@ -819,17 +837,26 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::Alloc: {
-                const auto type = inst->getType()->as<PointerType>()->getPointee();
-                const auto ptr = memCtx.stackPush(type->getSize(dataLayout), type->getAlignment(dataLayout));
-                addPtr(ptr);
-                currentExecCtx.stackAllocs.insert(ptr);
+                if(auto it = currentExecCtx.cachedAllocs.find(inst); it != currentExecCtx.cachedAllocs.cend()) {
+                    // allocas in loop --> reuse
+                    addPtr(it->second);
+                } else {
+                    const auto type = inst->getType()->as<PointerType>()->getPointee();
+                    const auto ptr = memCtx.stackPush(type->getSize(dataLayout), type->getAlignment(dataLayout));
+                    addPtr(ptr);
+                    currentExecCtx.stackAllocs.emplace(ptr, inst);
+                    currentExecCtx.cachedAllocs.emplace(inst, ptr);
+                }
                 --instructionCount;
                 break;
             }
             case InstructionID::Free: {
                 const auto ptr = getPtr(0);
-                if(currentExecCtx.stackAllocs.erase(ptr))
+                if(auto it = currentExecCtx.stackAllocs.find(ptr); it != currentExecCtx.stackAllocs.cend()) {
+                    currentExecCtx.cachedAllocs.erase(it->second);
+                    currentExecCtx.stackAllocs.erase(it);
                     memCtx.stackPop(ptr);
+                }
                 --instructionCount;
                 break;
             }

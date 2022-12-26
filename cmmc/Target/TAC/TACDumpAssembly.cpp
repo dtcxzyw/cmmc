@@ -62,12 +62,12 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         }
     }
 
-    const auto printOperand = [&](const Operand& operand) {
+    const auto printOperand = [&](const Operand& operand, bool foldStack) {
         if(operand.addressSpace == TACAddressSpace::GPR)
             out << 'v' << map.gprMap.at(operand.id);
-        else if(operand.addressSpace == TACAddressSpace::Stack)
-            out << "&x"sv << map.stackMap.at(operand.id);
-        else if(operand.addressSpace == TACAddressSpace::Constant) {
+        else if(operand.addressSpace == TACAddressSpace::Stack) {
+            out << (foldStack ? "x"sv : "&x"sv) << map.stackMap.at(operand.id);
+        } else if(operand.addressSpace == TACAddressSpace::Constant) {
             out << '#';
             const auto metadata = static_cast<ConstantValue*>(func.pools().pools[TACAddressSpace::Constant].getMetadata(operand));
             if(metadata->isUndefined())
@@ -105,28 +105,27 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                         return false;
                                     };
                                     if(valid()) {
-                                        if(copy.indirectDst)
+                                        if(copy.indirectDst && copy.dst.addressSpace != TACAddressSpace::Stack)
                                             out << '*';
-                                        printOperand(copy.dst);
+                                        printOperand(copy.dst, copy.indirectDst);
                                         out << " := "sv;
 
-                                        if(copy.indirectSrc)
+                                        if(copy.indirectSrc && copy.src.addressSpace != TACAddressSpace::Stack)
                                             out << '*';
-                                        printOperand(copy.src);
+                                        printOperand(copy.src, copy.indirectSrc);
                                     } else
                                         reportUnreachable();
                                 },
                                  [&](const ConstantMInst& constant) {
-                                     if(constant.dst.addressSpace == TACAddressSpace::Stack)
-                                         out << '*';
-                                     printOperand(constant.dst);
+                                     assert(constant.dst.addressSpace != TACAddressSpace::Stack);
+                                     printOperand(constant.dst, false);
                                      out << " := #"sv << std::get<intmax_t>(constant.constant);
                                  },
                                  [&](const UnaryArithmeticMInst& unary) {
                                      if(unary.instID == GMIRInstID::Neg) {
-                                         printOperand(unary.dst);
+                                         printOperand(unary.dst, false);
                                          out << " := #0 - "sv;
-                                         printOperand(unary.src);
+                                         printOperand(unary.src, false);
                                      } else
                                          reportUnreachable();
                                  },
@@ -149,41 +148,42 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                              reportUnreachable();
                                      }
 
-                                     printOperand(binary.dst);
+                                     printOperand(binary.dst, false);
                                      out << " := "sv;
-                                     printOperand(binary.lhs);
+                                     printOperand(binary.lhs, false);
                                      out << ' ' << op << ' ';
-                                     printOperand(binary.rhs);
+                                     printOperand(binary.rhs, false);
                                  },
                                  [&](const BranchMInst& branch) { out << "GOTO "sv << map.labelMap.at(branch.targetBlock); },
                                  [&](const BranchCompareMInst& branch) {
                                      out << "IF "sv;
-                                     printOperand(branch.lhs);
+                                     printOperand(branch.lhs, false);
                                      out << ' ' << getCompareOp(branch.compareOp) << ' ';
-                                     printOperand(branch.rhs);
+                                     printOperand(branch.rhs, false);
                                      out << " GOTO "sv;
                                      out << map.labelMap.at(branch.targetBlock);
                                  },
                                  [&](const CallMInst& call) {
-                                     printOperand(call.dst);
+                                     printOperand(call.dst, false);
                                      out << " := CALL "sv;
                                      out << std::get<GMIRSymbol*>(call.callee)->symbol;
                                  },
                                  [&](const RetMInst& ret) {
                                      out << "RETURN "sv;
-                                     printOperand(ret.retVal);
+                                     printOperand(ret.retVal, false);
                                  },
+                                 [&](const UnreachableMInst&) { out << "RETURN #0"sv; },
                                  [&](const ControlFlowIntrinsicMInst& intrinsic) {
                                      const auto id = static_cast<TACIntrinsic>(intrinsic.intrinsicID);
                                      if(id == TACIntrinsic::PushArg) {
                                          out << "ARG "sv;
-                                         printOperand(intrinsic.src);
+                                         printOperand(intrinsic.src, false);
                                      } else if(id == TACIntrinsic::Read) {
                                          out << "READ "sv;
-                                         printOperand(intrinsic.dst);
+                                         printOperand(intrinsic.dst, false);
                                      } else if(id == TACIntrinsic::Write) {
                                          out << "WRITE "sv;
-                                         printOperand(intrinsic.src);
+                                         printOperand(intrinsic.src, false);
                                      } else
                                          reportUnreachable();
                                  },

@@ -297,8 +297,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
         // Stage 2: clean up unused insts
-        if(optLevel >= OptimizationLevel::O1)
-            removeUnusedInsts(mfunc);
+        removeUnusedInsts(mfunc);
         // Stage 3: legalize
         target.legalizeFunc(mfunc);
         // Stage 4: peephole opt

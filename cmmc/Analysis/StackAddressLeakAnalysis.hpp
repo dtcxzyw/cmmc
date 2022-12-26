@@ -24,11 +24,14 @@ CMMC_NAMESPACE_BEGIN
 
 class StackAddressLeakAnalysisResult final {
     std::unordered_map<Value*, std::unordered_set<Instruction*>> mModifyingCalls;
+    std::unordered_map<Value*, std::unordered_set<Instruction*>> mReadingCalls;
 
 public:
-    explicit StackAddressLeakAnalysisResult(std::unordered_map<Value*, std::unordered_set<Instruction*>> modifyingCalls)
-        : mModifyingCalls{ std::move(modifyingCalls) } {}
+    explicit StackAddressLeakAnalysisResult(std::unordered_map<Value*, std::unordered_set<Instruction*>> modifyingCalls,
+                                            std::unordered_map<Value*, std::unordered_set<Instruction*>> readingCalls)
+        : mModifyingCalls{ std::move(modifyingCalls) }, mReadingCalls{ std::move(readingCalls) } {}
     bool mayModify(Instruction* callInst, Value* alloc) const;
+    bool mayRead(Instruction* callInst, Value* alloc) const;
 };
 
 class StackAddressLeakAnalysis final : public FuncAnalysisPassWrapper<StackAddressLeakAnalysis, StackAddressLeakAnalysisResult> {

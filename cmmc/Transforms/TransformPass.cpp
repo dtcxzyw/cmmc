@@ -103,7 +103,7 @@ static void verifyModuleExec(Module& module) {
             [&](auto retVal) {
                 if constexpr(std::is_same_v<std::decay_t<decltype(retVal)>, ConstantValue*>) {
                     if(auto val = dynamic_cast<ConstantInteger*>(retVal)) {
-                        retCode = static_cast<int>(val->getSignExtended());
+                        retCode = static_cast<int>(val->getSignExtended()) & 0x7f;
                     } else {
                         std::cerr << " failed"sv << std::endl;
                         DiagnosticsContext::get().attach<Reason>("main should return a integer").reportFatal();
@@ -132,6 +132,12 @@ static void verifyModuleExec(Module& module) {
 }
 
 bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
+    if(debugTransform.get()) {
+        std::cerr << "Original" << std::endl;
+        item.dump(std::cerr);
+        verifyModuleExec(item);
+    }
+
     bool modified = false;
     for(auto& pass : mPasses) {
         if(pass->isWrapper()) {

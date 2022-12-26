@@ -170,37 +170,46 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
-                             [&](auto& inst) { functor(inst.dst); } },
+                             [&](auto& inst) { functor(inst.dst); },
+                             [&](CopyMInst& inst) {
+                                 if(!inst.indirectDst)
+                                     functor(inst.dst);
+                             } },
                    instruction);
     }
 }
 
-void forEachUseOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
+void forEachUseOperands(GMIRFunction& func, const std::function<void(GMIRInst& inst, Operand& op)>& functor) {
     for(auto& block : func.blocks())
         forEachUseOperands(*block, functor);
 }
 
-void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst& inst, Operand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
-        std::visit(Overload{ [&](CopyMInst& inst) { functor(inst.src); }, [&](UnaryArithmeticMInst& inst) { functor(inst.src); },
+        std::visit(Overload{ [&](CopyMInst& inst) {
+                                functor(instruction, inst.src);
+                                if(inst.indirectDst)
+                                    functor(instruction, inst.dst);
+                            },
+                             [&](UnaryArithmeticMInst& inst) { functor(instruction, inst.src); },
                              [&](BinaryArithmeticMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
+                                 functor(instruction, inst.lhs);
+                                 functor(instruction, inst.rhs);
                              },
                              [&](ArithmeticIntrinsicMInst& inst) {
                                  for(auto& op : inst.src)
-                                     functor(op);
+                                     functor(instruction, op);
                              },
                              [&](CompareMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
+                                 functor(instruction, inst.lhs);
+                                 functor(instruction, inst.rhs);
                              },
                              [&](BranchCompareMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
+                                 functor(instruction, inst.lhs);
+                                 functor(instruction, inst.rhs);
                              },
-                             [&](RetMInst& inst) { functor(inst.retVal); },
-                             [&](ControlFlowIntrinsicMInst& inst) { functor(inst.src); }, [](auto&) {} },
+                             [&](RetMInst& inst) { functor(instruction, inst.retVal); },
+                             [&](ControlFlowIntrinsicMInst& inst) { functor(instruction, inst.src); }, [](auto&) {} },
                    instruction);
     }
 }
@@ -212,7 +221,7 @@ void removeIdentityCopies(GMIRFunction& func) {
                 const auto& copy = std::get<CopyMInst>(inst);
                 if(copy.indirectDst || copy.indirectSrc)
                     return false;
-                if(copy.dst.id == copy.src.id)
+                if(copy.dst == copy.src)
                     return true;
             }
             return false;

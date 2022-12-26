@@ -7,37 +7,49 @@ import subprocess
 import json
 import CodeGenTAC.irsim_quiet as irsim
 import platform
+import math
 
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
+optimization_level = '3'
 assert os.path.exists(rars_path)
 
-# 10/27/2022
+# O0 reference
 baseline = {
-    "inst": 207616174,
-    "branch": 18005070,
-    "call": 15663,
-    "load": 10519398,
-    "store": 31260338,
-    "load_bytes": 42168672,
-    "store_bytes": 179166224
+    "inst": 243.5,
+    "branch": 29.7,
+    "call": 7.3,
+    "load": 74.5,
+    "store": 41.6,
+    "load_bytes": 281.4,
+    "store_bytes": 173.2
 }
 
 summary = {}
-tac_inst_count = 0
-tac_inst_count_ref = 4490137
-total_perf_gcc_ref = 0
-total_perf_self = 0
+summary_samples = 0
+tac_inst_count = 1
+tac_inst_count_samples = 0
+tac_inst_count_ref = 296.3
+total_perf_gcc_ref = 1
+total_perf_gcc_ref_samples = 0
+total_perf_self = 1
+total_perf_self_samples = 1
+
+
+def geo_means(prod, samples):
+    return math.exp(math.log(prod) / max(1, samples))
 
 
 def parse_perf(result):
     try:
         perf = json.loads(result)
         for key in baseline.keys():
-            summary[key] = summary.get(key, 0) + perf[key]
+            summary[key] = summary.get(key, 1) * max(1, perf[key])
+        global summary_samples
+        summary_samples += 1
     except:
         pass
 
@@ -98,7 +110,7 @@ def spl_semantic_noref(src):
 
 
 def spl_codegen_tac(src):
-    out = subprocess.run(args=[binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-o',
+    out = subprocess.run(args=[binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
                                '/dev/stdout', src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -116,7 +128,9 @@ def spl_codegen_tac(src):
                 print("\ninput", inputs, "answer", answer, "output", ret[1])
                 return False
             global tac_inst_count
-            tac_inst_count += ret[0]
+            tac_inst_count *= max(1, ret[0])
+            global tac_inst_count_samples
+            tac_inst_count_samples += 1
     else:
         print("\nWarning: no test cases for", src)
 
@@ -265,12 +279,8 @@ def sysy_test(src: str, opt=True):
     input_file = src[:-3] + '.in'
     if not os.path.exists(input_file):
         input_file = "/dev/null"
-    args = [binary_path, '-t', 'sim', '--hide-symbol', '-o',
+    args = [binary_path, '-t', 'sim', '--hide-symbol', '-O', optimization_level if opt else '0', '-o',
             '/dev/stdout', '-e', input_file, src]
-
-    if not opt:
-        args.insert(-1, '-O')
-        args.insert(-1, '0')
 
     for key in white_list:
         if key in src:
@@ -374,7 +384,9 @@ def sysy_gcc(src):
             used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
                 60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
             global total_perf_gcc_ref
-            total_perf_gcc_ref += used
+            total_perf_gcc_ref *= max(1e-6, used)
+            global total_perf_gcc_ref_samples
+            total_perf_gcc_ref_samples += 1
 
     return True
 
@@ -514,19 +526,22 @@ print("Passed", total_tests-failed_tests,
       "Failed", failed_tests, "Total", total_tests)
 print("Total time: ", end-start)
 
-print("\nPerformance metrics:")
-baseline['tac_inst_count'] = tac_inst_count_ref
-summary['tac_inst_count'] = tac_inst_count
+print("\nPerformance metrics (GeoMeans):")
 
 for key in summary.keys():
-    print(key, "= {} baseline = {} ratio = {:.3f}".format(
-        summary[key], baseline[key], summary[key] / baseline[key]))
+    val = geo_means(summary[key], summary_samples)
+    print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+        val, baseline[key], val / baseline[key]))
+
+tac_perf = geo_means(tac_inst_count, tac_inst_count_samples)
+print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+    tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
 
 if "gcc" in test_cases:
     print('Platform: ', platform.platform())
-    print("gcc: {:.3f}s with command '{}'".format(
-        total_perf_gcc_ref, gcc_ref_command))
-    print("cmmc: {:.3f}s -> {:.2f}x".format(total_perf_self,
-                                            total_perf_self/total_perf_gcc_ref))
+    gcc_perf = geo_means(total_perf_gcc_ref, total_perf_gcc_ref_samples)
+    self_perf = geo_means(total_perf_self, total_perf_self_samples)
+    print("gcc: {:.3f}s with command '{}'".format(gcc_perf, gcc_ref_command))
+    print("cmmc: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
 
 exit(0 if failed_tests == 0 else -1)

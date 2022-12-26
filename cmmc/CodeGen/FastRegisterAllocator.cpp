@@ -41,7 +41,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
     std::unordered_map<Operand, VirtualRegUseInfo, OperandHasher> useDefInfo;
 
     for(auto& block : mfunc.blocks()) {
-        forEachUseOperands(*block, [&](Operand& op) {
+        forEachUseOperands(*block, [&](GMIRInst&, Operand& op) {
             if(op.addressSpace == AddressSpace::VirtualReg)
                 useDefInfo[op].uses.insert(block.get());
         });

@@ -132,8 +132,11 @@ void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     const auto srcBlock = ctx.getCurrentBasicBlock();
     const auto trueBlock = ctx.addBlockAfter(srcBlock->getTripCount() * defaultSelectProb);
+    ctx.setCurrentBasicBlock(trueBlock);
     const auto falseBlock = ctx.addBlockAfter(srcBlock->getTripCount() * (1.0 - defaultSelectProb));
+    ctx.setCurrentBasicBlock(falseBlock);
     const auto nextBlock = ctx.addBlockAfter(srcBlock->getTripCount());
+    ctx.setCurrentBasicBlock(srcBlock);
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)),
                                      getInvertedOp(inst->getOp()), defaultSelectProb, falseBlock);
     ctx.setCurrentBasicBlock(trueBlock);

@@ -29,9 +29,9 @@ void identicalCodeFolding(GMIRFunction& func);
 
 void removeUnusedInsts(GMIRFunction& func);
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
-void forEachUseOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
+void forEachUseOperands(GMIRFunction& func, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
 void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
-void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
+void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void removeIdentityCopies(GMIRFunction& func);
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);

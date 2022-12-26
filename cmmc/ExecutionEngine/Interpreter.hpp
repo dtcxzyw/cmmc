@@ -90,7 +90,7 @@ class Interpreter final {
         mMaxRecursiveDepth;  //
 
 public:
-    Interpreter(size_t timeBudget = 10'000'000'000ULL, size_t memBudget = 2ULL << 30, size_t maxRecursiveDepth = 256);
+    Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiveDepth);
     std::variant<ConstantValue*, SimulationFailReason>
     execute(Module& module, Function& func, const std::vector<ConstantValue*>& arguments, SimulationIOContext& ioCtx) const;
 };

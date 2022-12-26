@@ -16,6 +16,7 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
+#include <iostream>
 #include <unordered_map>
 #include <variant>
 
@@ -69,8 +70,23 @@ void TACSubTarget::peepholeOpt(GMIRFunction& func) const {
             return;
 
         bool modified = false;
-        forEachUseOperands(func, [&](Operand& operand) {
+        forEachUseOperands(func, [&](GMIRInst& inst, Operand& operand) {
+            CMMC_UNUSED(inst);
+            /* *&a will be fold into a
+            bool cannotBeStack = false;
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                // indirect src, dst cannot be stack
+                const auto& copy = std::get<CopyMInst>(inst);
+                if(&operand == &copy.dst || (&operand == &copy.src && copy.indirectSrc))
+                    cannotBeStack = true;
+            }
+            */
             if(const auto iter = replace.find(operand); iter != replace.cend()) {
+                /*
+                if(cannotBeStack && iter->second.addressSpace == TACAddressSpace::Stack)
+                    return;
+                */
+
                 operand = iter->second;
                 modified = true;
             }

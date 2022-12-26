@@ -27,25 +27,38 @@ bool StackAddressLeakAnalysisResult::mayModify(Instruction* callInst, Value* all
         return iter->second.count(callInst);
     return false;
 }
+bool StackAddressLeakAnalysisResult::mayRead(Instruction* callInst, Value* alloc) const {
+    if(auto iter = mReadingCalls.find(alloc); iter != mReadingCalls.cend())
+        return iter->second.count(callInst);
+    return false;
+}
 
 StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& address = analysis.get<PointerAddressSpaceAnalysis>(func);
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
 
     std::vector<Value*> allocs;
-    std::vector<Instruction*> calls;
-    bool unknownLeak = false;  // TODO: handling leak by store?
+    std::vector<Instruction*> writeCalls, readCalls;
+    bool unknownLeakWrite = false, unknownLeakRead = false;  // TODO: handling leak by store?
 
     for(auto block : func.blocks()) {
         for(auto inst : block->instructions()) {
             switch(inst->getInstID()) {
                 case InstructionID::Call: {
                     auto callee = inst->operands().back();
+                    bool noWrite = false, noRead = false;
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
-                            break;
+                            noWrite = true;
                     }
-                    calls.push_back(inst);
+                    if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
+                        if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryRead))
+                            noRead = true;
+                    }
+                    if(!noWrite)
+                        writeCalls.push_back(inst);
+                    if(!noRead)
+                        readCalls.push_back(inst);
                 } break;
                 case InstructionID::Alloc:
                     allocs.push_back(inst);
@@ -53,11 +66,11 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
                 case InstructionID::Store:
                     if(auto storeValue = inst->getOperand(1);
                        storeValue->getType()->isPointer() && address.mayBe(storeValue, AddressSpaceType::InternalStack)) {
-                        unknownLeak = true;
+                        unknownLeakWrite = unknownLeakRead = true;
                     }
                     break;
                 case InstructionID::PtrToInt:
-                    unknownLeak = true;
+                    unknownLeakWrite = unknownLeakRead = true;
                     break;
                 default:
                     break;
@@ -65,8 +78,8 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
         }
     }
 
-    std::unordered_map<Value*, std::unordered_set<Instruction*>> modifyingCalls;
-    for(auto call : calls) {
+    std::unordered_map<Value*, std::unordered_set<Instruction*>> modifyingCalls, readingCalls;
+    for(auto call : writeCalls) {
         for(auto operand : call->operands()) {
             if(operand->getType()->isPointer()) {
                 if(auto alloc = blockArgMap.queryRoot(operand); alloc->isInstruction()) {
@@ -75,7 +88,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
                         modifyingCalls[allocInst].insert(call);
                     } else {
                         if(address.mayBe(allocInst, AddressSpaceType::InternalStack)) {
-                            unknownLeak = true;
+                            unknownLeakWrite = true;
                             break;
                         }
                     }
@@ -83,18 +96,45 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
             }
         }
 
-        if(unknownLeak)
+        if(unknownLeakWrite)
+            break;
+    }
+    for(auto call : readCalls) {
+        for(auto operand : call->operands()) {
+            if(operand->getType()->isPointer()) {
+                if(auto alloc = blockArgMap.queryRoot(operand); alloc->isInstruction()) {
+                    auto allocInst = alloc->as<Instruction>();
+                    if(allocInst->getInstID() == InstructionID::Alloc) {
+                        readingCalls[allocInst].insert(call);
+                    } else {
+                        if(address.mayBe(allocInst, AddressSpaceType::InternalStack)) {
+                            unknownLeakRead = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if(unknownLeakRead)
             break;
     }
 
-    if(unknownLeak) {
-        std::unordered_set<Instruction*> callSet{ calls.begin(), calls.end() };
+    if(unknownLeakWrite) {
+        std::unordered_set<Instruction*> callSet{ writeCalls.begin(), writeCalls.end() };
         for(auto alloc : allocs) {
             modifyingCalls[alloc] = callSet;
         }
     }
 
-    return StackAddressLeakAnalysisResult{ std::move(modifyingCalls) };
+    if(unknownLeakRead) {
+        std::unordered_set<Instruction*> callSet{ readCalls.begin(), readCalls.end() };
+        for(auto alloc : allocs) {
+            readingCalls[alloc] = callSet;
+        }
+    }
+
+    return StackAddressLeakAnalysisResult{ std::move(modifyingCalls), std::move(readingCalls) };
 }
 
 CMMC_NAMESPACE_END
