@@ -113,6 +113,7 @@ public:
         for(NodeIndex idx = 0; idx < blocks.size(); ++idx) {
             const auto block = blocks[idx];
             for(auto& [next, nextTarget] : cfg.successors(block)) {
+                CMMC_UNUSED(nextTarget);
                 graph[idx].push_back(nodeMap[next]);
             }
         }

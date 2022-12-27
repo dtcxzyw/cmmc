@@ -22,7 +22,6 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <pstl/glue_algorithm_defs.h>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN

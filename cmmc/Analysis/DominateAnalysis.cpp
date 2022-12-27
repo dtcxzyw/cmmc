@@ -113,13 +113,13 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
     color(color, entryBlk, nullptr);
 
     std::unordered_map<Block*, Block*> ran, idom, sdom;
-    auto merge = [&](auto&& self, Block* blk) {
-        if(f[blk] == blk)
-            return blk;
-        Block* res = self(self, f[blk]);
-        if(dfn[sdom[ran[f[blk]]]] < dfn[sdom[ran[blk]]])
-            ran[blk] = ran[f[blk]];
-        return f[blk] = res;
+    auto merge = [&](auto&& self, Block* cur) {
+        if(f[cur] == cur)
+            return cur;
+        Block* res = self(self, f[cur]);
+        if(dfn[sdom[ran[f[cur]]]] < dfn[sdom[ran[cur]]])
+            ran[cur] = ran[f[cur]];
+        return f[cur] = res;
     };
 
     std::unordered_map<Block*, std::vector<Block*>> tr;

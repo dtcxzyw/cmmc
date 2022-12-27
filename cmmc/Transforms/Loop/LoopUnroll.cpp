@@ -89,6 +89,7 @@ public:
                     head = loop.header->clone(replace);
                     insertedBlocks.push_back(head);
                     for(auto [block, branchTarget] : cfg.predecessors(loop.latch)) {
+                        CMMC_UNUSED(block);
                         branchTarget->resetTarget(head);
                     }
                     prev = head;

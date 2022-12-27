@@ -46,6 +46,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
             const auto arg = block->getArg(idx);
             allocateID(arg);
             for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
+                CMMC_UNUSED(predBlock);
                 const auto provided = predTarget->getArgs()[idx];
                 allocateID(provided);
             }
@@ -61,6 +62,7 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
             const auto arg = block->getArg(idx);
             const auto src = nodeMap.at(arg);
             for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
+                CMMC_UNUSED(predBlock);
                 const auto provided = predTarget->getArgs()[idx];
                 const auto dst = nodeMap.at(provided);
                 graph[src].push_back(dst);

@@ -19,6 +19,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
+#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -140,10 +141,10 @@ void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)),
                                      getInvertedOp(inst->getOp()), defaultSelectProb, falseBlock);
     ctx.setCurrentBasicBlock(trueBlock);
-    ctx.emitInst<ConstantMInst>(ret, 1);
+    ctx.emitInst<ConstantMInst>(ret, static_cast<intmax_t>(1));
     ctx.emitInst<BranchMInst>(nextBlock);
     ctx.setCurrentBasicBlock(falseBlock);
-    ctx.emitInst<ConstantMInst>(ret, 0);
+    ctx.emitInst<ConstantMInst>(ret, static_cast<intmax_t>(0));
     ctx.emitInst<BranchMInst>(nextBlock);
 
     ctx.addOperand(inst, ret);
