@@ -1,0 +1,15 @@
+int sum(int x[2]) {
+    return x[0] + x[1];
+}
+int main() {
+    int a[2];
+    int b[2][2];
+    a[0] = read();
+    a[1] = read();
+    b[0][0] = read();
+    b[0][1] = read();
+    b[1][0] = read();
+    b[1][1] = read();
+    write(sum(a));
+    return b[0][0] + b[0][1] + b[1][0] + b[1][1];
+}

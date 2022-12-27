@@ -1,0 +1,19 @@
+int main() {
+    int t = 15;
+    int sum = 0;
+    int a,b,c;
+    while(t--) {
+        sum += t;
+    }
+    write(sum);
+
+    a = read();
+    b = read();
+    c = read();
+    write(a < b);
+    if(a<b && b<c) {
+        write(a < b);
+    }
+
+    return 0;
+}

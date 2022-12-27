@@ -1,0 +1,57 @@
+struct foo {
+    int a;
+    int b[10];
+    struct bar {
+        int x;
+    } c[2];
+};
+
+struct foo func_struct_ret() {
+    struct foo x;
+    x.a = 10;
+    x.b[10] = 20;
+    x.c[0].x = 20;
+    return x;
+}
+
+int func_struct_array_param(struct foo param[10]) {
+    param[0].a = 10;
+    return param[0].a;
+}
+
+int func_struct_param(struct foo param) {
+    param.a = 10;
+    return param.a + param.b[0];
+}
+
+int func_struct_param2(struct bar param) {
+    param.x = 0;
+    return param.x;
+}
+
+int main() {
+    struct foo local;
+    struct foo local_array[10];
+    struct bar sub;
+    int res = 0;
+
+    local = local;
+    local_array[0] = local;
+    local = local_array[0];
+
+    local = func_struct_ret();
+    
+    func_struct_array_param(local_array);
+    
+    res = 0;
+    local.b[0]=-1;
+    res+=func_struct_param(local);
+    res+=func_struct_param2(local.c[0]);
+
+    sub.x = 1;
+
+    local.c[1] = sub;
+    res+=sub.x;
+
+    return res;
+}

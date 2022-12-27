@@ -479,6 +479,8 @@ if "tac" in test_cases:
                     "/CodeGenTAC", ".spl", spl_codegen_tac))
     res.append(test("SPL TAC->IR project3", tests_path +
                     "/CodeGenTAC", ".ir", spl_tac2ir))
+    res.append(test("SPL TAC->IR project3 self", tests_path +
+                    "/Project3", ".spl", spl_tac2ir))
     res.append(test("SPL TAC->IR project4", tests_path +
                     "/TAC2MC", ".ir", spl_tac2ir))
 

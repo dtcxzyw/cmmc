@@ -77,19 +77,19 @@ debug: $(BIN)
 cmmc: $(BIN)
 .PHONY: splc_project1 splc_project2 splc
 splc_project1: $(BIN) # Project 1
-	echo "\$$(dirname \$$0)/cmmc -s -a -o /dev/stdout \$$1" > $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc --strict -a -o /dev/stdout \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -a -o /dev/stdout \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
 splc_project2: $(BIN) # Project 2
-	echo "\$$(dirname \$$0)/cmmc -s -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc --strict -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
 splc: $(BIN) # Project 3
-	echo "\$$(dirname \$$0)/cmmc -s -t tac -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc --strict -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
-	echo "\$$(dirname \$$0)/cmmc -t tac -o 2>\$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_ex
+	echo "\$$(dirname \$$0)/cmmc -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
 
 .PHONY: test
