@@ -60,3 +60,4 @@
 + [ ] mul x, 2^k -> shl x, k
 + [ ] x >> c1 >> c2 -> x >> (c1 + c2)
 + [ ] x << c1 << c2 -> x << (c1 + c2)
++ [ ] merge a + b with b + a

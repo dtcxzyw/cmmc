@@ -159,15 +159,15 @@ def test_gen_arith():
 
 
 spl_test_generators = {
-    'test_4_fact.spl': test_gen_fact,
-    'test_4_r01.spl': test_gen_hanoi,
-    'test_4_r02.spl': test_gen_sign,
-    'test_4_r03.spl': test_gen_arith,
+    'test_4_fact': test_gen_fact,
+    'test_4_r01': test_gen_hanoi,
+    'test_4_r02': test_gen_sign,
+    'test_4_r03': test_gen_arith,
 }
 
 
 def spl_codegen_mips(src):
-    name = os.path.basename(src)
+    name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
     out = subprocess.run(args=[binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-o',
                                tmp_out, src], capture_output=True, text=True)
@@ -215,7 +215,7 @@ def sysy_codegen_riscv64(src):
 
 
 def spl_codegen_riscv64(src):
-    name = os.path.basename(src)
+    name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
     out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-o',
                                tmp_out, src], capture_output=True, text=True)
@@ -489,7 +489,8 @@ if "codegen" in test_cases:
                "/TAC2MC", ".spl", spl_codegen_mips))
     res.append(test("SPL SPL->RISCV64 project4", tests_path +
                "/TAC2MC", ".spl", spl_codegen_riscv64))
-    # TODO: IR->MIPS
+    res.append(test("SPL TAC->MIPS project4", tests_path +
+                    "/TAC2MC", ".ir", spl_codegen_mips))
     # res.append(test("SysY ->MIPS functional", tests_path +
     #           "/SysY2022/functional", ".sy", sysy_codegen_mips))
     # res.append(test("SysY ->RISCV64 functional", tests_path +

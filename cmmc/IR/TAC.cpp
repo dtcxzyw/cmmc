@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <algorithm>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -22,6 +23,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
@@ -31,6 +33,8 @@
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
+
+extern Flag hideSymbol;  // NOLINT
 
 struct UndefinedTACIdentifier final {
     String identifier;
@@ -178,6 +182,10 @@ void loadTAC(Module& module, const std::string& path) {
                                  auto funcType = make<FunctionType>(i32, args);
                                  auto func = make<Function>(function.symbol, funcType);
                                  module.add(func);
+                                 if(hideSymbol.get()) {
+                                     if(func->getSymbol().prefix() != "main"sv)
+                                         func->setLinkage(Linkage::Internal);
+                                 }
                                  callables.emplace(function.symbol, func);
 
                                  builder.setCurrentFunction(func);
@@ -244,6 +252,7 @@ void loadTAC(Module& module, const std::string& path) {
                                  const auto func = callables.find(call.callee);
                                  if(func == callables.cend())
                                      DiagnosticsContext::get().attach<Reason>("missing function").reportFatal();
+                                 std::reverse(paramStack.begin(), paramStack.end());
                                  const auto ret = builder.makeOp<FunctionCallInst>(func->second, paramStack);
                                  paramStack.clear();
                                  const auto dst = getLValue(call.ret, false);

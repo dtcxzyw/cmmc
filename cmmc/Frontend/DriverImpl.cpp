@@ -30,7 +30,7 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag hideSymbol;  // NOLINT
+Flag hideSymbol;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 hideSymbol.setName("hide-symbol", 'H').setDesc("only make main function public");
