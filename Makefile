@@ -75,7 +75,7 @@ bear3: clean # make clangd happy
 debug: $(BIN)
 	gdb $(BIN)
 cmmc: $(BIN)
-.PHONY: splc_project1 splc_project2 splc
+.PHONY: splc_project1 splc_project2 splc_project3 splc
 splc_project1: $(BIN) # Project 1
 	echo "\$$(dirname \$$0)/cmmc --strict -a -o /dev/stdout \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
@@ -86,11 +86,14 @@ splc_project2: $(BIN) # Project 2
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -i -o /dev/null \$$1 2>\$${1%.spl}.out" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
-splc: $(BIN) # Project 3
+splc_project3: $(BIN) # Project 3
 	echo "\$$(dirname \$$0)/cmmc --strict -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
+splc: $(BIN) # Project 4
+	echo "\$$(dirname \$$0)/cmmc -t mips --hide-symbol -o \$${1%.ir}.s \$$1" > $(SPLC_SHELL)
+	chmod +x $(SPLC_SHELL)
 
 .PHONY: test
 test: cmmc

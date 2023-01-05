@@ -1,0 +1,7 @@
+int main() {
+    int x = getint();
+    int y = getint();
+    int z = x ^ y;
+    int w = y ^ x;
+    return z == w;
+}

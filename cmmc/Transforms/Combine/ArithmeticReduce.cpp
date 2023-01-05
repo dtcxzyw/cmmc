@@ -132,9 +132,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(ucmp(cmp, any(v1), cuint_(0))(matchCtx)) {
                 switch(cmp) {
                     case CompareOp::GreaterEqual:
-                        return makeInt(1);
+                        return builder.getTrue();
                     case CompareOp::LessThan:
-                        return makeInt(0);
+                        return builder.getFalse();
                     default:
                         break;
                 }
@@ -305,6 +305,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(xor_(capture(xcmp(cmp, any(v1), any(v2)), v3), cuint_(1))(matchCtx)) {
                 const auto cmpInst = v3->as<CompareInst>();
                 return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
+            }
+
+            // a >/</!= a -> false
+            // a >=/<=/== a -> true
+            if(xcmp(cmp, any(v1), any(v2))(matchCtx) && v1 == v2) {
+                return (cmp == CompareOp::Equal || cmp == CompareOp::LessEqual || cmp == CompareOp::GreaterEqual) ?
+                    builder.getTrue() :
+                    builder.getFalse();
             }
 
             return nullptr;
