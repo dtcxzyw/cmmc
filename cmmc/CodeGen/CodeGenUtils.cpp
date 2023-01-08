@@ -247,7 +247,8 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     out << ".data\n"sv;
     emitData();
     const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
-        out << ".align " << symbol.alignment << std::endl;
+        if(!std::holds_alternative<GMIRFunction>(symbol.def))
+            out << ".align " << symbol.alignment << std::endl;
         if(symbol.linkage == Linkage::Global)
             out << ".globl "sv << symbol.symbol << '\n';
         out << symbol.symbol << ":\n"sv;

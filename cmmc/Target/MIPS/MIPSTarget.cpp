@@ -242,6 +242,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         Operand stackStorage = unusedOperand;
         if(curOffset > 16U) {
             stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(curOffset, 8U));
+            ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
         }
 
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {

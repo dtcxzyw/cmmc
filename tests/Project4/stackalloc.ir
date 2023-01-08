@@ -1,0 +1,1040 @@
+FUNCTION main :
+DEC x0 400
+READ v0
+IF v0 <= #0 GOTO label2
+IF v0 <= #15 GOTO label7
+GOTO label6
+LABEL label1 :
+v2 := v1
+v4 := v3
+GOTO label11
+LABEL label2 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label3 :
+v1 := &x0
+v3 := v0
+LABEL label4 :
+IF v3 <= #1 GOTO label10
+GOTO label8
+LABEL label5 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label6 :
+READ v5
+x0 := v5
+v6 := &x0 + #4
+READ v7
+*v6 := v7
+v8 := &x0 + #8
+READ v9
+*v8 := v9
+v10 := &x0 + #12
+READ v11
+*v10 := v11
+v12 := &x0 + #16
+READ v13
+*v12 := v13
+v14 := &x0 + #20
+READ v15
+*v14 := v15
+v16 := &x0 + #24
+READ v17
+*v16 := v17
+v18 := &x0 + #28
+READ v19
+*v18 := v19
+v20 := &x0 + #32
+READ v21
+*v20 := v21
+v22 := &x0 + #36
+READ v23
+*v22 := v23
+v24 := &x0 + #40
+READ v25
+*v24 := v25
+v26 := &x0 + #44
+READ v27
+*v26 := v27
+v28 := &x0 + #48
+READ v29
+*v28 := v29
+v30 := &x0 + #52
+READ v31
+*v30 := v31
+v32 := &x0 + #56
+READ v33
+*v32 := v33
+v34 := &x0 + #60
+READ v35
+*v34 := v35
+IF v0 <= #16 GOTO label9
+GOTO label12
+LABEL label7 :
+READ v36
+x0 := v36
+IF v0 <= #1 GOTO label5
+GOTO label23
+LABEL label8 :
+v37 := v1 + #4
+v38 := *v37
+v39 := *v1
+IF v39 <= v38 GOTO label17
+GOTO label16
+LABEL label9 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label10 :
+v2 := v1
+v4 := v3
+LABEL label11 :
+IF v4 <= #0 GOTO label19
+IF v4 <= #15 GOTO label28
+GOTO label27
+LABEL label12 :
+IF v0 <= #31 GOTO label21
+GOTO label20
+LABEL label13 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label14 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label15 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label16 :
+v40 := v1 + #4
+v41 := *v1
+*v40 := v41
+*v1 := v38
+IF v3 <= #2 GOTO label1
+GOTO label24
+LABEL label17 :
+v42 := v1 + #4
+*v42 := v38
+IF v3 <= #2 GOTO label18
+v43 := v1
+v44 := v3
+v45 := #2
+GOTO label43
+LABEL label18 :
+v2 := v1
+v4 := v3
+GOTO label11
+LABEL label19 :
+RETURN #0
+LABEL label20 :
+v46 := &x0 + #64
+READ v47
+*v46 := v47
+v48 := &x0 + #68
+READ v49
+*v48 := v49
+v50 := &x0 + #72
+READ v51
+*v50 := v51
+v52 := &x0 + #76
+READ v53
+*v52 := v53
+v54 := &x0 + #80
+READ v55
+*v54 := v55
+v56 := &x0 + #84
+READ v57
+*v56 := v57
+v58 := &x0 + #88
+READ v59
+*v58 := v59
+v60 := &x0 + #92
+READ v61
+*v60 := v61
+v62 := &x0 + #96
+READ v63
+*v62 := v63
+v64 := &x0 + #100
+READ v65
+*v64 := v65
+v66 := &x0 + #104
+READ v67
+*v66 := v67
+v68 := &x0 + #108
+READ v69
+*v68 := v69
+v70 := &x0 + #112
+READ v71
+*v70 := v71
+v72 := &x0 + #116
+READ v73
+*v72 := v73
+v74 := &x0 + #120
+READ v75
+*v74 := v75
+v76 := &x0 + #124
+READ v77
+*v76 := v77
+IF v0 <= #32 GOTO label13
+GOTO label29
+LABEL label21 :
+v78 := &x0 + #64
+READ v79
+*v78 := v79
+IF v0 <= #17 GOTO label15
+GOTO label30
+LABEL label22 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label23 :
+v80 := &x0 + #4
+READ v81
+*v80 := v81
+IF v0 <= #2 GOTO label3
+v82 := &x0 + #8
+READ v83
+*v82 := v83
+IF v0 <= #3 GOTO label48
+v84 := &x0 + #12
+READ v85
+*v84 := v85
+IF v0 <= #4 GOTO label14
+GOTO label50
+LABEL label24 :
+v86 := v1 + #8
+v87 := *v86
+v88 := v1 + #4
+v89 := *v88
+IF v89 <= v87 GOTO label34
+v90 := v1 + #8
+v91 := v1 + #4
+v92 := *v91
+*v90 := v92
+v93 := *v1
+IF v93 <= v87 GOTO label25
+GOTO label51
+LABEL label25 :
+v94 := v1
+v95 := v3
+v96 := #2
+v97 := v87
+v98 := #0
+GOTO label42
+LABEL label26 :
+v99 := v43
+v100 := v44
+v101 := v45
+v103 := v102
+v105 := v104
+GOTO label38
+LABEL label27 :
+v106 := *v2
+WRITE v106
+v107 := v2 + #4
+v108 := *v107
+WRITE v108
+v109 := v2 + #8
+v110 := *v109
+WRITE v110
+v111 := v2 + #12
+v112 := *v111
+WRITE v112
+v113 := v2 + #16
+v114 := *v113
+WRITE v114
+v115 := v2 + #20
+v116 := *v115
+WRITE v116
+v117 := v2 + #24
+v118 := *v117
+WRITE v118
+v119 := v2 + #28
+v120 := *v119
+WRITE v120
+v121 := v2 + #32
+v122 := *v121
+WRITE v122
+v123 := v2 + #36
+v124 := *v123
+WRITE v124
+v125 := v2 + #40
+v126 := *v125
+WRITE v126
+v127 := v2 + #44
+v128 := *v127
+WRITE v128
+v129 := v2 + #48
+v130 := *v129
+WRITE v130
+v131 := v2 + #52
+v132 := *v131
+WRITE v132
+v133 := v2 + #56
+v134 := *v133
+WRITE v134
+v135 := v2 + #60
+v136 := *v135
+WRITE v136
+IF v4 <= #16 GOTO label19
+GOTO label36
+LABEL label28 :
+v137 := *v2
+WRITE v137
+IF v4 <= #1 GOTO label19
+GOTO label39
+LABEL label29 :
+IF v0 <= #47 GOTO label46
+GOTO label45
+LABEL label30 :
+v138 := &x0 + #68
+READ v139
+*v138 := v139
+IF v0 <= #18 GOTO label31
+v140 := &x0 + #72
+READ v141
+*v140 := v141
+IF v0 <= #19 GOTO label33
+GOTO label61
+LABEL label31 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label32 :
+v2 := v94
+v4 := v95
+GOTO label11
+LABEL label33 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label34 :
+v142 := v1 + #8
+*v142 := v87
+IF v3 <= #3 GOTO label35
+v43 := v1
+v44 := v3
+v45 := #3
+GOTO label43
+LABEL label35 :
+v2 := v1
+v4 := v3
+GOTO label11
+LABEL label36 :
+IF v4 <= #31 GOTO label54
+v143 := v2 + #64
+v144 := *v143
+WRITE v144
+v145 := v2 + #68
+v146 := *v145
+WRITE v146
+v147 := v2 + #72
+v148 := *v147
+WRITE v148
+v149 := v2 + #76
+v150 := *v149
+WRITE v150
+v151 := v2 + #80
+v152 := *v151
+WRITE v152
+v153 := v2 + #84
+v154 := *v153
+WRITE v154
+v155 := v2 + #88
+v156 := *v155
+WRITE v156
+v157 := v2 + #92
+v158 := *v157
+WRITE v158
+v159 := v2 + #96
+v160 := *v159
+WRITE v160
+v161 := v2 + #100
+v162 := *v161
+WRITE v162
+v163 := v2 + #104
+v164 := *v163
+WRITE v164
+v165 := v2 + #108
+v166 := *v165
+WRITE v166
+v167 := v2 + #112
+v168 := *v167
+WRITE v168
+v169 := v2 + #116
+v170 := *v169
+WRITE v170
+v171 := v2 + #120
+v172 := *v171
+WRITE v172
+v173 := v2 + #124
+v174 := *v173
+WRITE v174
+IF v4 <= #32 GOTO label19
+GOTO label63
+LABEL label37 :
+v99 := v175
+v100 := v176
+v101 := v177
+v103 := v178
+v105 := v179
+LABEL label38 :
+v180 := v99
+v181 := v105 * #4
+v180 := v180 + v181
+v182 := *v180
+IF v182 <= v103 GOTO label41
+v175 := v99
+v176 := v100
+v177 := v101
+v178 := v103
+v183 := v105
+GOTO label52
+LABEL label39 :
+v184 := v2 + #4
+v185 := *v184
+WRITE v185
+IF v4 <= #2 GOTO label19
+GOTO label55
+LABEL label40 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label41 :
+v94 := v99
+v95 := v100
+v96 := v101
+v97 := v103
+v98 := v105
+LABEL label42 :
+v186 := v98 + #1
+v187 := v94
+v188 := v186 * #4
+v187 := v187 + v188
+*v187 := v97
+v189 := v96 + #1
+IF v189 >= v95 GOTO label32
+v43 := v94
+v44 := v95
+v45 := v189
+LABEL label43 :
+v190 := v43
+v191 := v45 * #4
+v190 := v190 + v191
+v102 := *v190
+v104 := v45 + #-1
+IF v104 <= #-1 GOTO label44
+GOTO label26
+LABEL label44 :
+v94 := v43
+v95 := v44
+v96 := v45
+v97 := v102
+v98 := v104
+GOTO label42
+LABEL label45 :
+v192 := &x0 + #128
+READ v193
+*v192 := v193
+v194 := &x0 + #132
+READ v195
+*v194 := v195
+v196 := &x0 + #136
+READ v197
+*v196 := v197
+v198 := &x0 + #140
+READ v199
+*v198 := v199
+v200 := &x0 + #144
+READ v201
+*v200 := v201
+v202 := &x0 + #148
+READ v203
+*v202 := v203
+v204 := &x0 + #152
+READ v205
+*v204 := v205
+v206 := &x0 + #156
+READ v207
+*v206 := v207
+v208 := &x0 + #160
+READ v209
+*v208 := v209
+v210 := &x0 + #164
+READ v211
+*v210 := v211
+v212 := &x0 + #168
+READ v213
+*v212 := v213
+v214 := &x0 + #172
+READ v215
+*v214 := v215
+v216 := &x0 + #176
+READ v217
+*v216 := v217
+v218 := &x0 + #180
+READ v219
+*v218 := v219
+v220 := &x0 + #184
+READ v221
+*v220 := v221
+v222 := &x0 + #188
+READ v223
+*v222 := v223
+IF v0 <= #48 GOTO label22
+GOTO label56
+LABEL label46 :
+v224 := &x0 + #128
+READ v225
+*v224 := v225
+IF v0 <= #33 GOTO label40
+GOTO label57
+LABEL label47 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label48 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label49 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label50 :
+v226 := &x0 + #16
+READ v227
+*v226 := v227
+IF v0 <= #5 GOTO label49
+GOTO label62
+LABEL label51 :
+v175 := v1
+v176 := v3
+v177 := #2
+v178 := v87
+v183 := #0
+LABEL label52 :
+v228 := v183 + #1
+v229 := v175
+v230 := v228 * #4
+v229 := v229 + v230
+v231 := v175
+v232 := v183 * #4
+v231 := v231 + v232
+v233 := *v231
+*v229 := v233
+v179 := v183 + #-1
+IF v179 <= #-1 GOTO label53
+GOTO label37
+LABEL label53 :
+v94 := v175
+v95 := v176
+v96 := v177
+v97 := v178
+v98 := v179
+GOTO label42
+LABEL label54 :
+v234 := v2 + #64
+v235 := *v234
+WRITE v235
+IF v4 <= #17 GOTO label19
+GOTO label64
+LABEL label55 :
+v236 := v2 + #8
+v237 := *v236
+WRITE v237
+IF v4 <= #3 GOTO label19
+v238 := v2 + #12
+v239 := *v238
+WRITE v239
+IF v4 <= #4 GOTO label19
+GOTO label76
+LABEL label56 :
+IF v0 <= #63 GOTO label66
+GOTO label65
+LABEL label57 :
+v240 := &x0 + #132
+READ v241
+*v240 := v241
+IF v0 <= #34 GOTO label59
+GOTO label68
+LABEL label58 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label59 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label60 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label61 :
+v242 := &x0 + #76
+READ v243
+*v242 := v243
+IF v0 <= #20 GOTO label69
+v244 := &x0 + #80
+READ v245
+*v244 := v245
+IF v0 <= #21 GOTO label71
+GOTO label70
+LABEL label62 :
+v246 := &x0 + #20
+READ v247
+*v246 := v247
+IF v0 <= #6 GOTO label60
+GOTO label72
+LABEL label63 :
+IF v4 <= #47 GOTO label75
+GOTO label74
+LABEL label64 :
+v248 := v2 + #68
+v249 := *v248
+WRITE v249
+IF v4 <= #18 GOTO label19
+v250 := v2 + #72
+v251 := *v250
+WRITE v251
+IF v4 <= #19 GOTO label19
+GOTO label82
+LABEL label65 :
+v252 := &x0 + #192
+READ v253
+*v252 := v253
+v254 := &x0 + #196
+READ v255
+*v254 := v255
+v256 := &x0 + #200
+READ v257
+*v256 := v257
+v258 := &x0 + #204
+READ v259
+*v258 := v259
+v260 := &x0 + #208
+READ v261
+*v260 := v261
+v262 := &x0 + #212
+READ v263
+*v262 := v263
+v264 := &x0 + #216
+READ v265
+*v264 := v265
+v266 := &x0 + #220
+READ v267
+*v266 := v267
+v268 := &x0 + #224
+READ v269
+*v268 := v269
+v270 := &x0 + #228
+READ v271
+*v270 := v271
+v272 := &x0 + #232
+READ v273
+*v272 := v273
+v274 := &x0 + #236
+READ v275
+*v274 := v275
+v276 := &x0 + #240
+READ v277
+*v276 := v277
+v278 := &x0 + #244
+READ v279
+*v278 := v279
+v280 := &x0 + #248
+READ v281
+*v280 := v281
+v282 := &x0 + #252
+READ v283
+*v282 := v283
+IF v0 <= #64 GOTO label47
+v284 := &x0
+v285 := v0
+v286 := #64
+GOTO label85
+LABEL label66 :
+v287 := &x0 + #192
+READ v288
+*v287 := v288
+IF v0 <= #49 GOTO label67
+v289 := &x0
+v290 := v0
+v291 := #49
+GOTO label79
+LABEL label67 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label68 :
+v292 := &x0 + #136
+READ v293
+*v292 := v293
+IF v0 <= #35 GOTO label58
+v289 := &x0
+v290 := v0
+v291 := #35
+GOTO label79
+LABEL label69 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label70 :
+v289 := &x0
+v290 := v0
+v291 := #21
+GOTO label79
+LABEL label71 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label72 :
+v294 := &x0 + #24
+READ v295
+*v294 := v295
+IF v0 <= #7 GOTO label73
+v289 := &x0
+v290 := v0
+v291 := #7
+GOTO label79
+LABEL label73 :
+v1 := &x0
+v3 := v0
+GOTO label4
+LABEL label74 :
+v296 := v2 + #128
+v297 := *v296
+WRITE v297
+v298 := v2 + #132
+v299 := *v298
+WRITE v299
+v300 := v2 + #136
+v301 := *v300
+WRITE v301
+v302 := v2 + #140
+v303 := *v302
+WRITE v303
+v304 := v2 + #144
+v305 := *v304
+WRITE v305
+v306 := v2 + #148
+v307 := *v306
+WRITE v307
+v308 := v2 + #152
+v309 := *v308
+WRITE v309
+v310 := v2 + #156
+v311 := *v310
+WRITE v311
+v312 := v2 + #160
+v313 := *v312
+WRITE v313
+v314 := v2 + #164
+v315 := *v314
+WRITE v315
+v316 := v2 + #168
+v317 := *v316
+WRITE v317
+v318 := v2 + #172
+v319 := *v318
+WRITE v319
+v320 := v2 + #176
+v321 := *v320
+WRITE v321
+v322 := v2 + #180
+v323 := *v322
+WRITE v323
+v324 := v2 + #184
+v325 := *v324
+WRITE v325
+v326 := v2 + #188
+v327 := *v326
+WRITE v327
+IF v4 <= #48 GOTO label19
+IF v4 <= #63 GOTO label87
+GOTO label86
+LABEL label75 :
+v328 := v2 + #128
+v329 := *v328
+WRITE v329
+IF v4 <= #33 GOTO label19
+GOTO label81
+LABEL label76 :
+v330 := v2 + #16
+v331 := *v330
+WRITE v331
+IF v4 <= #5 GOTO label19
+GOTO label83
+LABEL label77 :
+v1 := v284
+v3 := v285
+GOTO label4
+LABEL label78 :
+v289 := v284
+v290 := v285
+v291 := v286
+LABEL label79 :
+v332 := v289
+v333 := v291 * #4
+v332 := v332 + v333
+READ v334
+*v332 := v334
+v335 := v291 + #1
+IF v335 >= v290 GOTO label80
+v289 := v289
+v290 := v290
+v291 := v335
+GOTO label79
+LABEL label80 :
+v1 := v289
+v3 := v290
+GOTO label4
+LABEL label81 :
+v336 := v2 + #132
+v337 := *v336
+WRITE v337
+IF v4 <= #34 GOTO label19
+v338 := v2 + #136
+v339 := *v338
+WRITE v339
+IF v4 <= #35 GOTO label19
+GOTO label88
+LABEL label82 :
+v340 := v2 + #76
+v341 := *v340
+WRITE v341
+IF v4 <= #20 GOTO label19
+GOTO label89
+LABEL label83 :
+v342 := v2 + #20
+v343 := *v342
+WRITE v343
+IF v4 <= #6 GOTO label19
+GOTO label90
+LABEL label84 :
+v344 := v284
+v345 := v286 * #4
+v344 := v344 + v345
+READ v346
+*v344 := v346
+v347 := v344 + #4
+READ v348
+*v347 := v348
+v349 := v344 + #8
+READ v350
+*v349 := v350
+v351 := v344 + #12
+READ v352
+*v351 := v352
+v353 := v344 + #16
+READ v354
+*v353 := v354
+v355 := v344 + #20
+READ v356
+*v355 := v356
+v357 := v344 + #24
+READ v358
+*v357 := v358
+v359 := v344 + #28
+READ v360
+*v359 := v360
+v361 := v344 + #32
+READ v362
+*v361 := v362
+v363 := v344 + #36
+READ v364
+*v363 := v364
+v365 := v344 + #40
+READ v366
+*v365 := v366
+v367 := v344 + #44
+READ v368
+*v367 := v368
+v369 := v344 + #48
+READ v370
+*v369 := v370
+v371 := v344 + #52
+READ v372
+*v371 := v372
+v373 := v344 + #56
+READ v374
+*v373 := v374
+v375 := v344 + #60
+READ v376
+*v375 := v376
+v377 := v286 + #16
+IF v377 >= v285 GOTO label77
+v284 := v284
+v285 := v285
+v286 := v377
+LABEL label85 :
+v378 := v286 + #15
+IF v378 >= v285 GOTO label78
+GOTO label84
+LABEL label86 :
+v379 := v2 + #192
+v380 := *v379
+WRITE v380
+v381 := v2 + #196
+v382 := *v381
+WRITE v382
+v383 := v2 + #200
+v384 := *v383
+WRITE v384
+v385 := v2 + #204
+v386 := *v385
+WRITE v386
+v387 := v2 + #208
+v388 := *v387
+WRITE v388
+v389 := v2 + #212
+v390 := *v389
+WRITE v390
+v391 := v2 + #216
+v392 := *v391
+WRITE v392
+v393 := v2 + #220
+v394 := *v393
+WRITE v394
+v395 := v2 + #224
+v396 := *v395
+WRITE v396
+v397 := v2 + #228
+v398 := *v397
+WRITE v398
+v399 := v2 + #232
+v400 := *v399
+WRITE v400
+v401 := v2 + #236
+v402 := *v401
+WRITE v402
+v403 := v2 + #240
+v404 := *v403
+WRITE v404
+v405 := v2 + #244
+v406 := *v405
+WRITE v406
+v407 := v2 + #248
+v408 := *v407
+WRITE v408
+v409 := v2 + #252
+v410 := *v409
+WRITE v410
+IF v4 <= #64 GOTO label19
+v411 := v2
+v412 := v4
+v413 := #64
+GOTO label94
+LABEL label87 :
+v414 := v2 + #192
+v415 := *v414
+WRITE v415
+IF v4 <= #49 GOTO label19
+v416 := v2
+v417 := v4
+v418 := #49
+GOTO label92
+LABEL label88 :
+v416 := v2
+v417 := v4
+v418 := #35
+GOTO label92
+LABEL label89 :
+v419 := v2 + #80
+v420 := *v419
+WRITE v420
+IF v4 <= #21 GOTO label19
+v416 := v2
+v417 := v4
+v418 := #21
+GOTO label92
+LABEL label90 :
+v421 := v2 + #24
+v422 := *v421
+WRITE v422
+IF v4 <= #7 GOTO label19
+v416 := v2
+v417 := v4
+v418 := #7
+GOTO label92
+LABEL label91 :
+v416 := v411
+v417 := v412
+v418 := v413
+LABEL label92 :
+v423 := v416
+v424 := v418 * #4
+v423 := v423 + v424
+v425 := *v423
+WRITE v425
+v426 := v418 + #1
+IF v426 >= v417 GOTO label19
+v416 := v416
+v417 := v417
+v418 := v426
+GOTO label92
+LABEL label93 :
+v427 := v411
+v428 := v413 * #4
+v427 := v427 + v428
+v429 := *v427
+WRITE v429
+v430 := v427 + #4
+v431 := *v430
+WRITE v431
+v432 := v427 + #8
+v433 := *v432
+WRITE v433
+v434 := v427 + #12
+v435 := *v434
+WRITE v435
+v436 := v427 + #16
+v437 := *v436
+WRITE v437
+v438 := v427 + #20
+v439 := *v438
+WRITE v439
+v440 := v427 + #24
+v441 := *v440
+WRITE v441
+v442 := v427 + #28
+v443 := *v442
+WRITE v443
+v444 := v427 + #32
+v445 := *v444
+WRITE v445
+v446 := v427 + #36
+v447 := *v446
+WRITE v447
+v448 := v427 + #40
+v449 := *v448
+WRITE v449
+v450 := v427 + #44
+v451 := *v450
+WRITE v451
+v452 := v427 + #48
+v453 := *v452
+WRITE v453
+v454 := v427 + #52
+v455 := *v454
+WRITE v455
+v456 := v427 + #56
+v457 := *v456
+WRITE v457
+v458 := v427 + #60
+v459 := *v458
+WRITE v459
+v460 := v413 + #16
+IF v460 >= v412 GOTO label19
+v411 := v411
+v412 := v412
+v413 := v460
+LABEL label94 :
+v461 := v413 + #15
+IF v461 >= v412 GOTO label91
+GOTO label93
+

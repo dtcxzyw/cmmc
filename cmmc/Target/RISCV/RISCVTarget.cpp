@@ -199,7 +199,6 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
 
             const auto size = arg->getType()->getSize(dataLayout);
             const auto alignment = arg->getType()->getAlignment(dataLayout);
-            // TODO: float
 
             curOffset = (curOffset + alignment - 1) / alignment * alignment;
             offsets.push_back(curOffset);
@@ -209,6 +208,7 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
         Operand stackStorage = unusedOperand;
         if(curOffset > 32U) {
             stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(curOffset, 8U));
+            ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
         }
 
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
@@ -221,6 +221,8 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
                 // $a0-$a7
                 const Operand dst{ RISCVAddressSpace::GPR, 10U + static_cast<uint32_t>(offset) / 4U };
                 ctx.emitInst<CopyMInst>(val, false, 0, dst, false, 0, static_cast<uint32_t>(size), false);
+
+                // TODO: float
             } else {
                 ctx.emitInst<CopyMInst>(val, false, 0, stackStorage, true, static_cast<int32_t>(offset),
                                         static_cast<uint32_t>(size), false);

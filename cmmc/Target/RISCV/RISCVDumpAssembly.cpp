@@ -73,8 +73,13 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
             const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
             if(metadata->isUndefined())
                 out << '0';
-            else
-                metadata->dump(out);
+            else {
+                if(metadata->getType()->isInteger()) {
+                    out << metadata->as<ConstantInteger>()->getSignExtended();
+                } else {
+                    reportNotImplemented();
+                }
+            }
         } break;
         case RISCVAddressSpace::GPR:
             out << getRISCVTextualName(operand.id);

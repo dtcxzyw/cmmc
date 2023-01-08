@@ -192,7 +192,6 @@ public:
         CMMC_UNUSED(beg);
         const auto ptr = paddingTo(mStackStorage, end, alignment);
         setTag(mStackStorage, ptr, size, ByteState::Read | ByteState::Write);
-        assert(!mStackAlloc.count(ptr));
         mStackAlloc.emplace_back(ptr, ptr + size);
         return ptr + stackOffset;
     }

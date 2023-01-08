@@ -1,6 +1,6 @@
 BUILD_TYPE = Release
 OPTFLAGS = -O3 -flto -DNDEBUG -s -march=native -funroll-loops
-DBGFLAGS = -fsanitize=address,undefined -O0 -fno-omit-frame-pointer -ggdb -g
+DBGFLAGS = -fsanitize=address,undefined -fsanitize-recover=address -O0 -fno-omit-frame-pointer -ggdb -g
 ADDFLAGS = 
 
 ifeq ($(BUILD_TYPE), Debug)
@@ -92,8 +92,14 @@ splc_project3: $(BIN) # Project 3
 	echo "\$$(dirname \$$0)/cmmc -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
 splc: $(BIN) # Project 4
-	echo "\$$(dirname \$$0)/cmmc -t mips --hide-symbol -o \$${1%.ir}.s \$$1" > $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc -t mips --strict --hide-symbol -o \$${1%.ir}.s \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
+	echo "\$$(dirname \$$0)/cmmc -t mips --strict --hide-symbol -o \$${1%.spl}.s \$$1" > $(SPLC_SHELL)_spl2mips
+	chmod +x $(SPLC_SHELL)_spl2mips
+	echo "\$$(dirname \$$0)/cmmc -t tac --strict --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_spl2ir
+	chmod +x $(SPLC_SHELL)_spl2ir
+	echo "\$$(dirname \$$0)/cmmc -t tac --strict --hide-symbol -O 2 -o \$${1%.ir}.s \$$1" > $(SPLC_SHELL)_ir2mips
+	chmod +x $(SPLC_SHELL)_ir2mips
 
 .PHONY: test
 test: cmmc

@@ -52,7 +52,7 @@ void IPRAUsageCache::add(const Target& target, GMIRSymbol* symbol, GMIRFunction&
     IPRAInfo info;
     for(auto& block : func.blocks()) {
         forEachDefOperands(*block, [&](Operand& operand) {
-            if(operand.addressSpace <= AddressSpace::Custom || operand == unusedOperand)
+            if(operand.addressSpace < AddressSpace::Custom || operand == unusedOperand)
                 return;
             if(target.isCallerSaved(operand)) {
                 info.emplace(operand);

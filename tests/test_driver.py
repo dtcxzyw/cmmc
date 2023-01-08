@@ -32,7 +32,7 @@ summary = {}
 summary_samples = 0
 tac_inst_count = 1
 tac_inst_count_samples = 0
-tac_inst_count_ref = 296.3
+tac_inst_count_ref = 286.292
 total_perf_gcc_ref = 1
 total_perf_gcc_ref_samples = 0
 total_perf_self = 1
@@ -118,7 +118,7 @@ def spl_codegen_tac(src):
     if not irsim.check(ir):
         return False
     print('', ir.count('\n'), end='')
-    name = os.path.basename(src)
+    name = str(os.path.basename(src)).split('.')[0]
     if name in irsim.test_generators:
         for inputs, answer in irsim.test_generators[name]():
             ret = irsim.exec(ir, inputs.copy())
@@ -137,35 +137,6 @@ def spl_codegen_tac(src):
     return True
 
 
-def test_gen_fact():
-    ret = [([-1], [1]), ([0], [1]), ([1], [1])]
-    res = 1
-    for idx in range(2, 12):
-        res *= idx
-        ret.append(([idx], [res]))
-    return ret
-
-
-def test_gen_hanoi():
-    return [([], [10003, 10002, 30002, 10003, 20001, 20003, 10003])]
-
-
-def test_gen_sign():
-    return irsim.testgen_test_01()
-
-
-def test_gen_arith():
-    return [([], [19])]
-
-
-spl_test_generators = {
-    'test_4_fact': test_gen_fact,
-    'test_4_r01': test_gen_hanoi,
-    'test_4_r02': test_gen_sign,
-    'test_4_r03': test_gen_arith,
-}
-
-
 def spl_codegen_mips(src):
     name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
@@ -173,7 +144,7 @@ def spl_codegen_mips(src):
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
-    spl_test_cases = spl_test_generators[name]()
+    spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
         out_spim = subprocess.run(
             args=['spim', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
@@ -182,12 +153,14 @@ def spl_codegen_mips(src):
         start = False
         for v in out:
             if start:
-                v = v.removeprefix('Enter an integer:')
+                while v.startswith('Enter an integer:'):
+                    v = v.removeprefix('Enter an integer:')
                 res.append(int(v))
             elif v.startswith('Loaded:') and 'exceptions.s' in v:
                 start = True
 
         if res != answer:
+            print(out)
             print("\ninput", inputs, "answer", answer, "output", res)
             return False
 
@@ -221,7 +194,7 @@ def spl_codegen_riscv64(src):
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
-    spl_test_cases = spl_test_generators[name]()
+    spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
         out_rars = subprocess.run(
             args=['java', '-jar', rars_path, 'nc',
@@ -482,7 +455,10 @@ if "tac" in test_cases:
     res.append(test("SPL TAC->IR project3 self", tests_path +
                     "/Project3", ".spl", spl_tac2ir))
     res.append(test("SPL TAC->IR project4", tests_path +
-                    "/TAC2MC", ".ir", spl_tac2ir))
+                    "/TAC2MC", ".ir", spl_codegen_tac))
+    res.append(test("SPL TAC->IR project4 self", tests_path +
+                    "/Project4", ".spl", spl_codegen_tac))
+
 
 if "codegen" in test_cases:
     res.append(test("SPL SPL->MIPS project4", tests_path +
@@ -491,6 +467,8 @@ if "codegen" in test_cases:
                "/TAC2MC", ".spl", spl_codegen_riscv64))
     res.append(test("SPL TAC->MIPS project4", tests_path +
                     "/TAC2MC", ".ir", spl_codegen_mips))
+    res.append(test("SPL SPL->MIPS project4 self", tests_path +
+                    "/Project4", ".spl", spl_codegen_mips))
     # res.append(test("SysY ->MIPS functional", tests_path +
     #           "/SysY2022/functional", ".sy", sysy_codegen_mips))
     # res.append(test("SysY ->RISCV64 functional", tests_path +

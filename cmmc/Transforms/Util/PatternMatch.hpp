@@ -402,4 +402,36 @@ auto capture(Matcher m, Value*& val) {
     return CaptureMatcher{ m, val };
 }
 
+template <typename Matcher>
+class PtrToIntCastMatcher final : public GenericMatcher<PtrToIntInst, PtrToIntCastMatcher<Matcher>> {
+    Matcher mOperand;
+
+public:
+    explicit PtrToIntCastMatcher(Matcher operand) noexcept : mOperand{ operand } {}
+    [[nodiscard]] bool handle(const MatchContext<PtrToIntInst>& ctx) const noexcept {
+        return mOperand(ctx.getOperand(0));
+    }
+};
+
+template <typename Matcher>
+auto ptr2int(Matcher m) {
+    return PtrToIntCastMatcher{ m };
+}
+
+template <typename Matcher>
+class IntToPtrCastMatcher final : public GenericMatcher<IntToPtrInst, IntToPtrCastMatcher<Matcher>> {
+    Matcher mOperand;
+
+public:
+    explicit IntToPtrCastMatcher(Matcher operand) noexcept : mOperand{ operand } {}
+    [[nodiscard]] bool handle(const MatchContext<IntToPtrInst>& ctx) const noexcept {
+        return mOperand(ctx.getOperand(0));
+    }
+};
+
+template <typename Matcher>
+auto int2ptr(Matcher m) {
+    return IntToPtrCastMatcher{ m };
+}
+
 CMMC_NAMESPACE_END

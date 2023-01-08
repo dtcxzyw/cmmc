@@ -568,22 +568,79 @@ def testgen_test_3_r10():
     return testgen_test_01()
 
 
-test_generators = {"test01.spl": testgen_test_01,
-                   "test02.spl": testgen_test_02,
-                   "test03.spl": testgen_test_03,
-                   "test04.spl": testgen_test_04,
-                   "test_3_b01.spl": testgen_test_3_b01,
-                   "test_3_b02.spl": testgen_test_3_b02,
-                   "test_3_b03.spl": testgen_test_3_b03,
-                   "test_3_b04.spl": testgen_test_3_b04,
-                   "test_3_r01.spl": testgen_test_3_r01,
-                   "test_3_r02.spl": testgen_test_3_r02,
-                   "test_3_r03.spl": testgen_test_3_r03,
-                   "test_3_r04.spl": testgen_test_3_r04,
-                   "test_3_r05.spl": testgen_test_3_r05,
-                   "test_3_r06.spl": testgen_test_3_r06,
-                   "test_3_r07.spl": testgen_test_3_r07,
-                   "test_3_r08.spl": testgen_test_3_r08,
-                   "test_3_r09.spl": testgen_test_3_r09,
-                   "test_3_r10.spl": testgen_test_3_r10,
+def testgen_fact():
+    ret = [([-1], [1]), ([0], [1]), ([1], [1])]
+    res = 1
+    for idx in range(2, 12):
+        res *= idx
+        ret.append(([idx], [res]))
+    return ret
+
+
+def testgen_hanoi():
+    return [([], [10003, 10002, 30002, 10003, 20001, 20003, 10003])]
+
+
+def testgen_sign():
+    return testgen_test_01()
+
+
+def testgen_arith():
+    return [([], [19])]
+
+
+def testgen_sort():
+    res = []
+    rng = random.Random(114514)
+    for i in range(100):
+        cnt = rng.randint(0, 100)
+        inputs = []
+        for _ in range(cnt):
+            inputs.append(rng.randint(-100, 100))
+        outputs = inputs.copy()
+        outputs.sort()
+        inputs.insert(0, cnt)
+        res.append((inputs, outputs))
+
+    return res
+
+
+def testgen_regalloc():
+    return [([1]*16, [10])]
+
+
+def testgen_gcd():
+    res = []
+    for i in range(1, 50):
+        for j in range(1, 50):
+            res.append(([i, j], [math.gcd(i, j)]))
+    return res
+
+
+test_generators = {"test01": testgen_test_01,
+                   "test02": testgen_test_02,
+                   "test03": testgen_test_03,
+                   "test04": testgen_test_04,
+                   "test_3_b01": testgen_test_3_b01,
+                   "test_3_b02": testgen_test_3_b02,
+                   "test_3_b03": testgen_test_3_b03,
+                   "test_3_b04": testgen_test_3_b04,
+                   "test_3_r01": testgen_test_3_r01,
+                   "test_3_r02": testgen_test_3_r02,
+                   "test_3_r03": testgen_test_3_r03,
+                   "test_3_r04": testgen_test_3_r04,
+                   "test_3_r05": testgen_test_3_r05,
+                   "test_3_r06": testgen_test_3_r06,
+                   "test_3_r07": testgen_test_3_r07,
+                   "test_3_r08": testgen_test_3_r08,
+                   "test_3_r09": testgen_test_3_r09,
+                   "test_3_r10": testgen_test_3_r10,
+                   'test_4_fact': testgen_fact,
+                   'test_4_r01': testgen_hanoi,
+                   'test_4_r02': testgen_sign,
+                   'test_4_r03': testgen_arith,
+                   'mergesort': testgen_sort,
+                   'regalloc': testgen_regalloc,
+                   'stackalloc': testgen_sort,
+                   'struct': testgen_gcd
                    }

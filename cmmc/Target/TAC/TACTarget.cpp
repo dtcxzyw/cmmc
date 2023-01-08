@@ -56,7 +56,7 @@ bool TACTarget::builtinRA(GMIRFunction& mfunc) const {
         if(op == unusedOperand)
             return;
         if(op.addressSpace == AddressSpace::VirtualReg)
-            op.addressSpace = AddressSpace::Custom;
+            op.addressSpace = TACAddressSpace::GPR;
     });
 
     return true;

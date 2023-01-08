@@ -115,19 +115,22 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
                 assert(operand.addressSpace == AddressSpace::VirtualReg);
                 auto& map = getDataMap(operand);
                 Operand physReg = unusedOperand;
+                bool alreadyInStack = false;
                 for(auto& reg : map) {
                     if(reg.addressSpace == AddressSpace::Stack) {
-                        map = { reg };
-                        return;
+                        alreadyInStack = true;
                     }
-                    physReg = reg;
+                    if(reg.addressSpace >= AddressSpace::Custom)
+                        physReg = reg;
                 }
                 assert(physReg != unusedOperand);
                 physMap.erase(physReg);
                 const auto stackStorage = getStackStorage(operand);
-                const auto size = vreg.getType(operand)->getSize(dataLayout);
-                instructions.insert(iter,
-                                    CopyMInst{ physReg, false, 0U, stackStorage, true, 0U, static_cast<uint32_t>(size), false });
+                if(!alreadyInStack) {
+                    const auto size = vreg.getType(operand)->getSize(dataLayout);
+                    instructions.insert(
+                        iter, CopyMInst{ physReg, false, 0U, stackStorage, true, 0U, static_cast<uint32_t>(size), false });
+                }
                 map = { stackStorage };
             };
             /*

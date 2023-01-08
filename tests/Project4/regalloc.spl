@@ -1,0 +1,14 @@
+int test(int a, int c0, int c1, int c2, int c3, int c4, int c5, int c6, int c7, int c8, int c9, int c10, int c11, int c12, int c13, int c14, int c15) {
+    if(a == 0)
+        return a;
+    return 1 + test(a-1, c2, c3, c5, c7, c11, c13, c15, c14, c12, c10, c9, c8, c6, c4, c1, c0);
+}
+int main() {
+    write(test(10, 
+    read(), read(), read(), read(),
+    read(), read(), read(), read(),
+    read(), read(), read(), read(),
+    read(), read(), read(), read())
+    );
+    return 0;
+}

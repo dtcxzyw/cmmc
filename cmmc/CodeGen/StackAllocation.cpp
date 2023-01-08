@@ -129,6 +129,20 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
             instructions.insert(std::prev(instructions.end()), BinaryArithmeticMInst{ GMIRInstID::Add, sp, offset, sp });
         }
     }
+
+    // convert copy[reg] dst, sp+k to addi dst, sp, k
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                auto& copy = std::get<CopyMInst>(inst);
+                if(!copy.indirectDst && !copy.indirectSrc && copy.srcOffset != 0 && copy.src == sp) {
+                    const auto spOffset = constantPool.allocate(sizeType);
+                    constantPool.getMetadata(spOffset) = ConstantInteger::get(sizeType, static_cast<intmax_t>(copy.srcOffset));
+                    inst = BinaryArithmeticMInst{ GMIRInstID::Add, sp, spOffset, copy.dst };
+                }
+            }
+        }
+    }
 }
 
 CMMC_NAMESPACE_END

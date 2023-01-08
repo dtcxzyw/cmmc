@@ -36,13 +36,6 @@ CMMC_NAMESPACE_BEGIN
 
 extern Flag hideSymbol;  // NOLINT
 
-struct UndefinedTACIdentifier final {
-    String identifier;
-    friend void operator<<(std::ostream& out, const UndefinedTACIdentifier& err) {
-        out << R"(Undefined identifier ")" << err.identifier << '"' << std::endl;
-    }
-};
-
 void loadTAC(Module& module, const std::string& path) {
     const auto i32 = IntegerType::get(32);
     const auto i32ptr = PointerType::get(i32);
@@ -68,27 +61,24 @@ void loadTAC(Module& module, const std::string& path) {
     Vector<Value*> paramStack;
     std::vector<std::tuple<const TACInstStorage*, Block*, Block*>> postTerminator;
 
-    auto getLValue = [&](const TACOperand& operand, bool required) -> Value* {
+    auto getLValue = [&](const TACOperand& operand) -> Value* {
         if(operand.kind == TACOperandType::Variable || operand.kind == TACOperandType::Pointer) {
             const auto identifier = std::get<String>(operand.val);
             if(auto iter = identifierMap.find(identifier); iter != identifierMap.cend()) {
                 return iter->second;
             }
-            if(required)
-                DiagnosticsContext::get().attach<UndefinedTACIdentifier>(identifier).reportFatal();
-            else {
-                const auto oldBlock = builder.getCurrentBlock();
-                const auto allocateBlock = builder.getCurrentFunction()->entryBlock();
-                builder.setCurrentBlock(allocateBlock);
-                auto inst = make<StackAllocInst>(i32);
-                auto& insts = allocateBlock->instructions();
-                insts.insert(std::prev(insts.cend()), inst);
-                inst->setBlock(allocateBlock);
-                inst->setLabel(identifier);
-                builder.setCurrentBlock(oldBlock);
-                identifierMap.emplace(identifier, inst);
-                return inst;
-            }
+
+            const auto oldBlock = builder.getCurrentBlock();
+            const auto allocateBlock = builder.getCurrentFunction()->entryBlock();
+            builder.setCurrentBlock(allocateBlock);
+            auto inst = make<StackAllocInst>(i32);
+            auto& insts = allocateBlock->instructions();
+            insts.insert(std::prev(insts.cend()), inst);
+            inst->setBlock(allocateBlock);
+            inst->setLabel(identifier);
+            builder.setCurrentBlock(oldBlock);
+            identifierMap.emplace(identifier, inst);
+            return inst;
         }
         reportUnreachable();
     };
@@ -96,11 +86,11 @@ void loadTAC(Module& module, const std::string& path) {
     auto getRValue = [&](const TACOperand& operand) -> Value* {
         switch(operand.kind) {
             case TACOperandType::Variable: {
-                const auto addr = getLValue(operand, true);
+                const auto addr = getLValue(operand);
                 return builder.makeOp<LoadInst>(addr);
             }
             case TACOperandType::Pointer: {
-                const auto addr = getLValue(operand, true);
+                const auto addr = getLValue(operand);
                 return builder.makeOp<PtrToIntInst>(addr, i32);
             }
             case TACOperandType::Constant:
@@ -144,6 +134,14 @@ void loadTAC(Module& module, const std::string& path) {
         }
 
         blockArgPropagation(*func);
+    };
+
+    const auto emitStore = [&](Value* dst, Value* src) {
+        if(!dst->getType()->as<PointerType>()->getPointee()->isSame(src->getType())) {
+            // special case: DEC x1[0] = v1;
+            dst = builder.makeOp<GetElementPtrInst>(dst, Vector<Value*>{ builder.getZeroIndex(), builder.getZeroIndex() });
+        }
+        builder.makeOp<StoreInst>(dst, src);
     };
 
     for(uint32_t k = 0; k < seq.size(); ++k) {
@@ -208,32 +206,32 @@ void loadTAC(Module& module, const std::string& path) {
                                  builder.setCurrentBlock(codeBlock);
                              },
                              [&](const TACAssign& assign) {
-                                 const auto lvalue = getLValue(assign.lhs, false);
+                                 auto lvalue = getLValue(assign.lhs);
                                  const auto rvalue = getRValue(assign.rhs);
-                                 builder.makeOp<StoreInst>(lvalue, rvalue);
+                                 emitStore(lvalue, rvalue);
                              },
                              [&](const TACBinary& binary) {
-                                 const auto dest = getLValue(binary.result, false);
+                                 const auto dest = getLValue(binary.result);
                                  const auto lhsVal = getRValue(binary.lhs);
                                  const auto rhsVal = getRValue(binary.rhs);
                                  const auto res = builder.makeOp<BinaryInst>(binary.instruction, i32, lhsVal, rhsVal);
-                                 builder.makeOp<StoreInst>(dest, res);
+                                 emitStore(dest, res);
                              },
                              [&](const TACAddr& addr) {
-                                 const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(addr.rhs, true), i32);
-                                 const auto base = getLValue(addr.lhs, false);
-                                 builder.makeOp<StoreInst>(base, ptr);
+                                 const auto ptr = builder.makeOp<PtrToIntInst>(getLValue(addr.rhs), i32);
+                                 const auto base = getLValue(addr.lhs);
+                                 emitStore(base, ptr);
                              },
                              [&](const TACFetch& fetch) {
                                  const auto ptr = builder.makeOp<IntToPtrInst>(getRValue(fetch.rhsAddr), i32ptr);
-                                 const auto base = getLValue(fetch.lhs, false);
-                                 builder.makeOp<StoreInst>(base, builder.makeOp<LoadInst>(ptr));
+                                 const auto base = getLValue(fetch.lhs);
+                                 emitStore(base, builder.makeOp<LoadInst>(ptr));
                              },
                              [&](const TACDeref& deref) {
                                  const auto val = getRValue(deref.rhs);
                                  const auto base = getRValue(deref.lhsAddr);
                                  const auto ptr = builder.makeOp<IntToPtrInst>(base, i32ptr);
-                                 builder.makeOp<StoreInst>(ptr, val);
+                                 emitStore(ptr, val);
                              },
                              [&](const TACReturn& ret) {
                                  builder.makeOp<ReturnInst>(getRValue(ret.val));
@@ -255,13 +253,13 @@ void loadTAC(Module& module, const std::string& path) {
                                  std::reverse(paramStack.begin(), paramStack.end());
                                  const auto ret = builder.makeOp<FunctionCallInst>(func->second, paramStack);
                                  paramStack.clear();
-                                 const auto dst = getLValue(call.ret, false);
-                                 builder.makeOp<StoreInst>(dst, ret);
+                                 const auto dst = getLValue(call.ret);
+                                 emitStore(dst, ret);
                              },
                              [&](const TACRead& readInst) {
-                                 const auto dst = getLValue(readInst.var, false);
+                                 const auto dst = getLValue(readInst.var);
                                  const auto ret = builder.makeOp<FunctionCallInst>(read, Vector<Value*>{});
-                                 builder.makeOp<StoreInst>(dst, ret);
+                                 emitStore(dst, ret);
                              },
                              [&](const TACWrite& writeInst) {
                                  const auto val = getRValue(writeInst.val);

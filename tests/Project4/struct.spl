@@ -1,0 +1,24 @@
+struct foo {
+    int a;
+    int b;
+};
+
+int gcd(struct foo p) {
+    int a = p.a;
+    int b = p.b;
+    if(b) {
+        struct foo pn;
+        pn.a = b;
+        pn.b = a - a/b*b;
+        return gcd(pn);
+    }
+    return a;
+}
+
+int main() {
+    struct foo p;
+    p.a = read();
+    p.b = read();
+    write(gcd(p));
+    return 0;
+}

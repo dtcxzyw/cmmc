@@ -23,6 +23,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -239,11 +240,15 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     }
 
     std::unordered_set<Block*> reachableBlocks;
+    uint32_t entryArgID = std::numeric_limits<uint32_t>::max();
 
     for(auto block : dom.blocks()) {
         reachableBlocks.insert(block);
 
         const auto argID = ++allocateID;
+        if(block == func.entryBlock())
+            entryArgID = argID;
+
         for(auto arg : block->args())
             if(arg->getType()->isPointer()) {
                 // TODO: use phi analysis
@@ -307,8 +312,14 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     result.addValue(inst, {});
                     break;
                 }
-                case InstructionID::IntToPtr:
-                    [[fallthrough]];
+                case InstructionID::IntToPtr: {
+                    const auto base = blockArgMap.queryRoot(inst->getOperand(0));
+                    if(base->getBlock() == func.entryBlock() && base->is<BlockArgument>()) {
+                        result.addValue(inst, { entryArgID });
+                    } else
+                        result.addValue(inst, {});
+                    break;
+                }
                 case InstructionID::Load:
                     [[fallthrough]];
                 case InstructionID::Call: {
