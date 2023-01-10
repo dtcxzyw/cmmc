@@ -123,7 +123,8 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
                     if(reg.addressSpace >= AddressSpace::Custom)
                         physReg = reg;
                 }
-                assert(physReg != unusedOperand);
+                if(physReg == unusedOperand)
+                    return;
                 physMap.erase(physReg);
                 const auto stackStorage = getStackStorage(operand);
                 if(!alreadyInStack) {

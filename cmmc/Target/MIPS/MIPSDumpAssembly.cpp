@@ -116,12 +116,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                 out << "\n    nop"sv;
         };
         const auto isZero = [&](const Operand& op) {
-            if(op.addressSpace == MIPSAddressSpace::Constant) {
-                const auto value = static_cast<ConstantValue*>(constantPool.getMetadata(op));
-                MatchContext<Value> matchCtx{ value, nullptr };
-                return cint_(0)(matchCtx);
-            }
-            return false;
+            return op == Operand{ MIPSAddressSpace::GPR, 0 };  //$zero
         };
         const auto dumpCompare = [&](CompareOp compareOp) {
             switch(compareOp) {
@@ -233,7 +228,10 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      out << "li "sv;
                                      dumpOperand(constant.dst);
                                      out << ", "sv;
-                                     std::visit([&](auto x) { out << x; }, constant.constant);
+                                     if(std::holds_alternative<intmax_t>(constant.constant)) {
+                                         out << std::get<intmax_t>(constant.constant);
+                                     } else
+                                         reportUnreachable();
                                  },
                                  [&](const GlobalAddressMInst& global) {
                                      out << "la "sv;
@@ -253,11 +251,22 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          } else {
                                              out << "cvt.d.w "sv;
                                          }
+                                     } else if(unary.instID == GMIRInstID::F2S) {
+                                         if(unary.dst.addressSpace == MIPSAddressSpace::FPR_S) {
+                                             out << "cvt.w.s "sv;
+                                         } else {
+                                             out << "cvt.w.d "sv;
+                                         }
+                                     } else if(unary.instID == GMIRInstID::Neg) {
+                                         out << "subu "sv;
                                      } else
                                          reportNotImplemented();
 
                                      dumpOperand(unary.dst);
-                                     out << ", ";
+                                     if(unary.instID == GMIRInstID::Neg) {
+                                         out << ", $zero, "sv;
+                                     } else
+                                         out << ", "sv;
                                      dumpOperand(unary.src);
                                  },
                                  [&](const BinaryArithmeticMInst& binary) {
@@ -298,6 +307,9 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              break;
                                          case GMIRInstID::Or:
                                              out << "or"sv;
+                                             break;
+                                         case GMIRInstID::Xor:
+                                             out << "xor"sv;
                                              break;
                                          case GMIRInstID::Shl:
                                              [[fallthrough]];
@@ -349,7 +361,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          dumpOperand(branch.lhs);
                                          out << ", "sv;
                                          dumpOperand(branch.rhs);
-                                         out << "\nbc1t "sv << labelMap.at(branch.targetBlock);
+                                         out << "\n    bc1t "sv << labelMap.at(branch.targetBlock);
                                      } else {
                                          out << 'b';
                                          dumpCompare(branch.compareOp);
@@ -370,17 +382,34 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      delaySlot();
                                  },
                                  [&](const CompareMInst& cmp) {
-                                     out << 's';
-                                     dumpCompare(cmp.compareOp);
                                      if(cmp.instID == GMIRInstID::SCmp) {
+                                         out << 's';
+                                         dumpCompare(cmp.compareOp);
                                          out << ' ';
                                          dumpOperand(cmp.dst);
                                          out << ", "sv;
                                          dumpOperand(cmp.lhs);
                                          out << ", "sv;
                                          dumpOperand(cmp.rhs);
-                                     } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                     } else if(cmp.instID == GMIRInstID::FCmp) {
+                                         out << "c."sv;
+                                         dumpCompare(cmp.compareOp);
+                                         if(cmp.lhs.addressSpace == MIPSAddressSpace::FPR_S)
+                                             out << ".s "sv;
+                                         else
+                                             out << ".d "sv;
+
+                                         dumpOperand(cmp.lhs);
+                                         out << ", "sv;
+                                         dumpOperand(cmp.rhs);
+                                         // clear
+                                         out << "\n    li "sv;
+                                         dumpOperand(cmp.dst);
+                                         // set
+                                         out << ", 1\n    movf "sv;
+                                         dumpOperand(cmp.dst);
+                                         out << ", $zero"sv;
+                                     }
                                  },
                                  [&](const CallMInst& call) {
                                      if(auto dst = std::get_if<Operand>(&call.callee)) {
@@ -396,7 +425,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      delaySlot();
                                  },
                                  [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
-                                 [](const auto&) { reportNotImplemented(); } },
+                                 [&](const UnreachableMInst&) { out << "break"; }, [](const auto&) { reportNotImplemented(); } },
                        inst);
 
             out << '\n';

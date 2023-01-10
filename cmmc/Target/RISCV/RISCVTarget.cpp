@@ -123,6 +123,8 @@ void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
             iter = next;
         }
     }
+
+    legalizeStoreWithConstants(func);
 }
 
 CMMC_TARGET("riscv", RISCVTarget);

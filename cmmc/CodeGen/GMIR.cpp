@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -327,6 +328,20 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
             if(!ret)
                 return false;
         }
+    }
+
+    // check usedStackObjects
+    bool stackRefValid = true;
+    // NOLINTNEXTLINE
+    forEachOperands(const_cast<GMIRBasicBlock&>(*this), [&](Operand& op) {
+        if(op.addressSpace == AddressSpace::Stack && !mUsedStackObjects.count(op)) {
+            stackRefValid = false;
+        }
+    });
+
+    if(!stackRefValid) {
+        err << "invalid reference to stack object" << std::endl;
+        return false;
     }
 
     return true;

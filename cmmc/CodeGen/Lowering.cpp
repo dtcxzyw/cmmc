@@ -88,9 +88,18 @@ Operand LoweringContext::mapOperand(Value* operand) {
         operand->dump(reportError() << "undefined operand "sv);
         reportUnreachable();
     }
-    auto& pool = getAllocationPool(AddressSpace::Constant);
-    const auto reg = pool.allocate(operand->getType());
-    pool.getMetadata(reg) = operand;
+    // constant
+    Operand reg = unusedOperand;
+    // TODO: create constant for integers
+    if(operand->getType()->isFloatingPoint()) {
+        // create constant for fp
+        reg = getAllocationPool(AddressSpace::VirtualReg).allocate(operand->getType());
+        emitInst<ConstantMInst>(reg, operand->as<ConstantFloatingPoint>()->getValue());
+    } else {
+        auto& pool = getAllocationPool(AddressSpace::Constant);
+        reg = pool.allocate(operand->getType());
+        pool.getMetadata(reg) = operand;
+    }
     mValueMap.emplace(operand, reg);
     return reg;
 }
@@ -189,8 +198,6 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         mfunc.dump(std::cerr, target);
     }
     */
-
-    assert(mfunc.verify(std::cerr, true));
 }
 
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
@@ -296,49 +303,71 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         // Stage 1: instruction selection
         lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
+        assert(mfunc.verify(std::cerr, true));
         // Stage 2: clean up unused insts
         removeUnusedInsts(mfunc);
+        assert(mfunc.verify(std::cerr, true));
         // Stage 3: legalize
         target.legalizeFunc(mfunc);
+        assert(mfunc.verify(std::cerr, true));
         // Stage 4: peephole opt
-        if(optLevel >= OptimizationLevel::O1)
+        if(optLevel >= OptimizationLevel::O1) {
             subTarget.peepholeOpt(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 5: pre-RA scheduling, minimize register pressure
-        if(optLevel >= OptimizationLevel::O2)
+        if(optLevel >= OptimizationLevel::O2) {
             schedule(mfunc, target, true);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 6: register coalescing
         /* //FIXME
         if(optLevel >= OptimizationLevel::O1) {
             registerCoalescing(mfunc);
+            assert(mfunc.verify(std::cerr, true));
         }
         */
         // Stage 7: register allocation
         bool useBuiltinRA = false;
-        if(!target.builtinRA(mfunc))
-            assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
-        else
-            useBuiltinRA = true;
+        {
+            if(!target.builtinRA(mfunc))
+                assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
+            else
+                useBuiltinRA = true;
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 8: legalize stack objects, stack -> sp
         if(!target.builtinSA(mfunc))
             allocateStackObjects(mfunc, target, hasCall(func));
+        assert(mfunc.verify(std::cerr, true));
         // Stage 9: post-RA scheduling, minimize latency
-        if(optLevel >= OptimizationLevel::O3)
+        if(optLevel >= OptimizationLevel::O3) {
             schedule(mfunc, target, false);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 10: post peephole opt
-        if(optLevel >= OptimizationLevel::O1)
+        if(optLevel >= OptimizationLevel::O1) {
             subTarget.postPeepholeOpt(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 11: ICF
         /* TODO: select a better position to apply ICF
         // Applying ICF before BlockLayoutOpt may hurt the performance (code locality)
-        if(optLevel >= OptimizationLevel::O2)
+        if(optLevel >= OptimizationLevel::O2) {
             identicalCodeFolding(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
         */
         // Stage 12: code layout opt
-        if(optLevel >= OptimizationLevel::O2)
+        if(optLevel >= OptimizationLevel::O2) {
             optimizeBlockLayout(mfunc, target);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 13: remove unreachable block/continuous goto/unused label
-        if(optLevel >= OptimizationLevel::O1)
+        if(optLevel >= OptimizationLevel::O1) {
             simplifyCFG(mfunc);
+            assert(mfunc.verify(std::cerr, false));
+        }
 
         // add to IPRA cache
         if(!useBuiltinRA)

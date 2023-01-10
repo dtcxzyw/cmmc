@@ -113,6 +113,8 @@ void ARMTarget::legalizeFunc(GMIRFunction& func) const {
             iter = next;
         }
     }
+
+    legalizeStoreWithConstants(func);
 }
 
 CMMC_TARGET("arm", ARMTarget);

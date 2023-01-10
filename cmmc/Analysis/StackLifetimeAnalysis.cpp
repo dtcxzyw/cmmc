@@ -12,9 +12,11 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -28,6 +30,9 @@ StackLifetimeAnalysisResult StackLifetimeAnalysis::run(Function& func, AnalysisP
         res.emplace(block, std::unordered_set<Value*>{});
 
     auto& domTree = analysis.get<DominateAnalysis>(func);
+    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+    std::unordered_map<Block*, std::vector<Value*>> temporaryUsages;
+
     for(auto block : domTree.blocks()) {
         auto& allocas = res[block];
         const auto parent = domTree.parent(block);
@@ -42,9 +47,20 @@ StackLifetimeAnalysisResult StackLifetimeAnalysis::run(Function& func, AnalysisP
             if(inst->getInstID() == InstructionID::Alloc) {  // lifetime begin
                 allocas.insert(inst);
             } else if(inst->getInstID() == InstructionID::Free) {  // lifetime end
-                allocas.erase(inst->getOperand(0));
+                const auto alloc = blockArgMap.queryRoot(inst->getOperand(0));
+                if(auto iter = allocas.find(alloc); iter != allocas.cend()) {
+                    allocas.erase(iter);
+                    temporaryUsages[block].push_back(alloc);
+                }
             }
         }
+    }
+
+    // restore temporary usages
+    for(auto& [block, usages] : temporaryUsages) {
+        auto& allocas = res[block];
+        for(auto alloc : usages)
+            allocas.insert(alloc);
     }
 
     return StackLifetimeAnalysisResult{ res };

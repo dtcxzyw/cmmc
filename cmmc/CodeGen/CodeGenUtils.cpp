@@ -303,4 +303,35 @@ void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
         }
 }
 
+void legalizeStoreWithConstants(GMIRFunction& func) {
+    auto& constant = func.pools().pools[AddressSpace::Constant];
+    auto& vreg = func.pools().pools[AddressSpace::VirtualReg];
+
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            auto& inst = *iter;
+            const auto next = std::next(iter);
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                auto& copy = std::get<CopyMInst>(inst);
+
+                // match store with constants
+                if(copy.indirectDst && !copy.indirectSrc && copy.src.addressSpace == AddressSpace::Constant) {
+                    // create temporary vreg
+                    const auto type = constant.getType(copy.src);
+                    const auto temp = vreg.allocate(type);
+                    copy.dst = temp;
+                    copy.indirectDst = false;
+                    copy.dstOffset = 0;
+                    // mem <- vreg <- constant
+                    instructions.insert(next,
+                                        CopyMInst{ temp, false, 0, copy.dst, true, copy.dstOffset, copy.size, copy.signExtend });
+                }
+            }
+
+            iter = next;
+        }
+    }
+}
+
 CMMC_NAMESPACE_END

@@ -469,8 +469,8 @@ if "codegen" in test_cases:
                     "/TAC2MC", ".ir", spl_codegen_mips))
     res.append(test("SPL SPL->MIPS project4 self", tests_path +
                     "/Project4", ".spl", spl_codegen_mips))
-    # res.append(test("SysY ->MIPS functional", tests_path +
-    #           "/SysY2022/functional", ".sy", sysy_codegen_mips))
+    res.append(test("SysY SysY->MIPS functional", tests_path +
+               "/SysY2022/functional", ".sy", sysy_codegen_mips))
     # res.append(test("SysY ->RISCV64 functional", tests_path +
     #           "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 

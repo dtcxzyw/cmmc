@@ -67,7 +67,7 @@ public:
 };
 
 MIPSTarget::MIPSTarget() {
-    if(targetMachine.get() == "emulator")
+    if(targetMachine.get() == "emulator" || targetMachine.get() == "generic")
         mSubTarget = std::make_unique<MIPSSimpleSubTarget>();
     else
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
@@ -83,21 +83,18 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
-            const auto tryReplace = [&](Operand& op, bool allowZero) {
+            const auto tryReplace = [&](Operand& op) {
                 if(op.addressSpace == AddressSpace::Constant) {
                     const auto val = static_cast<ConstantValue*>(constant.getMetadata(op));
-                    MatchContext<Value> matchCtx{ val, nullptr };
-                    if(!allowZero || !cint_(0)(matchCtx)) {
-                        // create li
-                        op = vreg.allocate(constant.getType(op));
-                        std::variant<intmax_t, double> cval;
-                        if(val->is<ConstantInteger>())
-                            cval = val->as<ConstantInteger>()->getSignExtended();
-                        else
-                            cval = val->as<ConstantFloatingPoint>()->getValue();
+                    // create li
+                    op = vreg.allocate(constant.getType(op));
+                    std::variant<intmax_t, double> cval;
+                    if(val->is<ConstantInteger>())
+                        cval = val->as<ConstantInteger>()->getSignExtended();
+                    else
+                        cval = val->as<ConstantFloatingPoint>()->getValue();
 
-                        instructions.insert(iter, ConstantMInst{ op, cval });
-                    }
+                    instructions.insert(iter, ConstantMInst{ op, cval });
                 }
             };
 
@@ -109,17 +106,26 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                                         std::swap(inst.lhs, inst.rhs);
                                     }
 
-                                    tryReplace(inst.lhs, false);
+                                    tryReplace(inst.lhs);
                                     if(!commutative)
-                                        tryReplace(inst.rhs, false);
+                                        tryReplace(inst.rhs);
                                 },
-                                 [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src, false); },
+                                 [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src); },
                                  [&](BranchCompareMInst& inst) {
                                      if(inst.lhs.addressSpace == AddressSpace::Constant) {
                                          std::swap(inst.lhs, inst.rhs);
                                          inst.compareOp = getReversedOp(inst.compareOp);
                                      }
-                                     tryReplace(inst.rhs, true);
+                                     tryReplace(inst.lhs);
+                                     tryReplace(inst.rhs);  // reserve for bxxz
+                                 },
+                                 [&](CompareMInst& inst) {
+                                     if(inst.lhs.addressSpace == AddressSpace::Constant) {
+                                         std::swap(inst.lhs, inst.rhs);
+                                         inst.compareOp = getReversedOp(inst.compareOp);
+                                     }
+                                     tryReplace(inst.lhs);
+                                     tryReplace(inst.rhs);
                                  },
                                  [](auto&) {} },
                        *iter);
@@ -141,6 +147,37 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                     const auto result = (binary.instID == GMIRInstID::SRem || binary.instID == GMIRInstID::URem) ? hi : lo;
                     instructions.insert(next, CopyMInst{ result, false, 0, binary.dst, false, 0, sizeof(uint32_t), false });
                     binary.dst = unusedOperand;
+                }
+            }
+
+            iter = next;
+        }
+    }
+
+    legalizeStoreWithConstants(func);
+
+    // legalize fp constants
+    // constant fp -> constant int + copy
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            auto& inst = *iter;
+            const auto next = std::next(iter);
+
+            if(std::holds_alternative<ConstantMInst>(inst)) {
+                auto& imm = std::get<ConstantMInst>(inst);
+                if(imm.dst.addressSpace == MIPSAddressSpace::VirtualReg && std::holds_alternative<double>(imm.constant)) {
+                    const auto type = vreg.getType(imm.dst)->as<FloatingPointType>();
+                    const auto val = std::get<double>(imm.constant);
+                    if(type->getFixedSize() == sizeof(float)) {
+                        const auto fpVal = static_cast<float>(val);  // TODO: endians
+                        const auto ptr = static_cast<const void*>(&fpVal);
+                        const auto intVal = *static_cast<const int32_t*>(ptr);
+                        const auto temp = vreg.allocate(IntegerType::get(sizeof(float) * 8));
+                        instructions.insert(next, CopyMInst{ temp, false, 0, imm.dst, false, 0, sizeof(float), false });
+                        imm = { temp, static_cast<intmax_t>(intVal) };
+                    } else
+                        reportUnreachable();
                 }
             }
 
