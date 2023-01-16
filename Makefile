@@ -17,7 +17,7 @@ DIR_BUILD := ./build
 BIN := ./bin/cmmc
 SPLC_SHELL := ./bin/splc
 
-WARNFLAGS = -Wextra -Wall -Werror -Wconversion -Wshadow -Wno-format-security
+WARNFLAGS = -Wextra -Wall -Werror -Wconversion -Wshadow -Wno-format-security -Wno-psabi
 WARNFLAGS_FOR_GENERATED = -Wextra -Wall -Werror
 CXXFLAGS = -std=c++17 $(ADDFLAGS) -I $(abspath ./) -MD -pthread
 LDFLAGS = $(CXXFLAGS)
