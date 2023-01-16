@@ -320,12 +320,13 @@ void legalizeStoreWithConstants(GMIRFunction& func) {
                     // create temporary vreg
                     const auto type = constant.getType(copy.src);
                     const auto temp = vreg.allocate(type);
-                    copy.dst = temp;
-                    copy.indirectDst = false;
-                    copy.dstOffset = 0;
                     // mem <- vreg <- constant
                     instructions.insert(next,
                                         CopyMInst{ temp, false, 0, copy.dst, true, copy.dstOffset, copy.size, copy.signExtend });
+
+                    copy.dst = temp;
+                    copy.indirectDst = false;
+                    copy.dstOffset = 0;
                 }
             }
 
