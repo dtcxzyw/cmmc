@@ -236,8 +236,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                  [&](const GlobalAddressMInst& global) {
                                      out << "la "sv;
                                      dumpOperand(global.dst);
-                                     out << ", "sv;
-                                     symbolMap.at(global.global);
+                                     out << ", "sv << symbolMap.at(global.global);
                                  },
                                  [&](const UnaryArithmeticMInst& unary) {
                                      if(unary.instID == GMIRInstID::FNeg) {
