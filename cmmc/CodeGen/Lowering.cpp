@@ -366,6 +366,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 13: remove unreachable block/continuous goto/unused label
         if(optLevel >= OptimizationLevel::O1) {
             simplifyCFG(mfunc);
+
+            eliminateStackLoads(mfunc, target.getStackPointer());
             assert(mfunc.verify(std::cerr, false));
         }
 

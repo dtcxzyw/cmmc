@@ -209,7 +209,8 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
 
         Operand stackStorage = unusedOperand;
         if(curOffset > 32U) {
-            stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(curOffset, 8U));
+            stackStorage = ctx.getAllocationPool(AddressSpace::Stack)
+                               .allocate(make<StackStorageType>(curOffset, ctx.getModule().target.getStackPointerAlignment()));
             ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
         }
 

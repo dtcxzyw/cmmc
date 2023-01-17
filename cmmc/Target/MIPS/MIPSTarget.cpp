@@ -30,6 +30,8 @@
 #include <memory>
 #include <variant>
 
+// MIPS o32 abi, please refer to https://refspecs.linuxfoundation.org/elf/mipsabi.pdf
+
 CMMC_NAMESPACE_BEGIN
 
 constexpr Operand zero{ MIPSAddressSpace::GPR, 0U };
@@ -276,11 +278,13 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             curOffset += size;
         }
 
-        Operand stackStorage = unusedOperand;
-        if(curOffset > 16U) {
-            stackStorage = ctx.getAllocationPool(AddressSpace::Stack).allocate(make<StackStorageType>(curOffset, 8U));
-            ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
-        }
+        constexpr size_t passingByRegisterThreshold = 16;
+
+        const auto incomingArgumentsStackSize = std::max(curOffset, passingByRegisterThreshold);
+        const auto stackStorage =
+            ctx.getAllocationPool(AddressSpace::Stack)
+                .allocate(make<StackStorageType>(incomingArgumentsStackSize, ctx.getModule().target.getStackPointerAlignment()));
+        ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
 
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
             const auto offset = offsets[idx];
@@ -288,7 +292,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             const auto val = ctx.mapOperand(arg);
             const auto size = arg->getType()->getSize(dataLayout);
 
-            if(offset < 16U) {
+            if(offset < passingByRegisterThreshold) {
                 // $a0-$a3, $f12/$f14
                 Operand dst = unusedOperand;
                 if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
@@ -314,9 +318,9 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         Operand val = unusedOperand;
         if(ret->isFloatingPoint()) {
             // $f0
-            val = ret->getFixedSize() == 4 ? f032 : f064;
+            val = ret->getFixedSize() == sizeof(float) ? f032 : f064;
         } else {
-            assert(ret->getFixedSize() == 4);
+            assert(ret->getFixedSize() == sizeof(uint32_t));
             val = v0;
         }
 

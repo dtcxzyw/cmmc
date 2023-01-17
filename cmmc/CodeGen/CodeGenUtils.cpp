@@ -18,9 +18,13 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
+#include <iostream>
+#include <iterator>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -167,15 +171,19 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
     }
 }
 
+static void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor) {
+    std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
+                         [&](auto& inst) { functor(inst.dst); },
+                         [&](CopyMInst& inst) {
+                             if(!inst.indirectDst)
+                                 functor(inst.dst);
+                         } },
+               instruction);
+}
+
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
-        std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
-                             [&](auto& inst) { functor(inst.dst); },
-                             [&](CopyMInst& inst) {
-                                 if(!inst.indirectDst)
-                                     functor(inst.dst);
-                             } },
-                   instruction);
+        forEachDefOperands(instruction, functor);
     }
 }
 
@@ -333,6 +341,64 @@ void legalizeStoreWithConstants(GMIRFunction& func) {
             iter = next;
         }
     }
+}
+
+void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
+    if(stackPointer == unusedOperand)
+        return;
+
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+
+        std::unordered_map<int32_t, Operand> stack2Reg;
+        std::unordered_set<Operand, OperandHasher> dirtyRegs;
+
+        for(auto& inst : instructions) {
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                auto& copy = std::get<CopyMInst>(inst);
+
+                if(copy.indirectSrc && copy.src == stackPointer && !copy.indirectDst) {
+                    const auto cached = stack2Reg.find(copy.srcOffset);
+
+                    const auto dst = copy.dst;
+
+                    if(cached != stack2Reg.cend()) {
+                        const auto srcReg = cached->second;
+                        if(!dirtyRegs.count(srcReg)) {
+                            // load -> move
+                            copy.src = srcReg;
+                            copy.indirectSrc = false;
+                            copy.srcOffset = 0;
+                        }
+                    }
+
+                    stack2Reg[copy.srcOffset] = dst;  // TODO: multiple targets
+                    dirtyRegs.erase(copy.dst);
+                } else if(copy.indirectDst && copy.dst == stackPointer && !copy.indirectSrc) {
+                    stack2Reg[copy.dstOffset] = copy.src;
+                    dirtyRegs.erase(copy.src);
+                } else {
+                    if(copy.indirectDst) {
+                        // unknown store
+                        stack2Reg.clear();
+                        dirtyRegs.clear();
+                    } else {
+                        dirtyRegs.insert(copy.dst);
+                    }
+                }
+            } else if(std::holds_alternative<BranchCompareMInst>(inst) || std::holds_alternative<BranchMInst>(inst) ||
+                      std::holds_alternative<CallMInst>(inst) || std::holds_alternative<UnreachableMInst>(inst) ||
+                      std::holds_alternative<RetMInst>(inst)) {
+                stack2Reg.clear();
+                dirtyRegs.clear();
+            } else {
+                // update dirty
+                forEachDefOperands(inst, [&](Operand& dst) { dirtyRegs.insert(dst); });
+            }
+        }
+    }
+
+    removeIdentityCopies(func);
 }
 
 CMMC_NAMESPACE_END

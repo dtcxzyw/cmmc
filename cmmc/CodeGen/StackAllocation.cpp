@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -143,6 +144,8 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
             }
         }
     }
+
+    eliminateStackLoads(func, sp);
 }
 
 CMMC_NAMESPACE_END

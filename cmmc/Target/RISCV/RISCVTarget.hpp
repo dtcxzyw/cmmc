@@ -106,7 +106,7 @@ public:
         return Operand{ RISCVAddressSpace::GPR, 1 };  // ra
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 8-byte aligned
+        return 16U;  // 128-bit aligned
     }
     [[nodiscard]] bool isCalleeSaved(const Operand& op) const noexcept override;
     [[nodiscard]] bool isCallerSaved(const Operand& op) const noexcept override;

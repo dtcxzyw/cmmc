@@ -101,7 +101,7 @@ public:
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
     [[nodiscard]] Operand getStackPointer() const noexcept override {
-        reportUnreachable();
+        return unusedOperand;
     }
     [[nodiscard]] Operand getReturnAddress() const noexcept override {
         reportUnreachable();

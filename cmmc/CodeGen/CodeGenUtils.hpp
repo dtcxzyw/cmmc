@@ -36,6 +36,7 @@ void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand&
 void removeIdentityCopies(GMIRFunction& func);
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
 void legalizeStoreWithConstants(GMIRFunction& func);
+void eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
 
 void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
                   const std::function<void()>& emitText,
