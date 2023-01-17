@@ -257,20 +257,20 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                 }
 
                 if(copyDst) {
-                    const auto srcType = vreg.getType(unary.src);
+                    const auto srcType = unary.src.addressSpace == MIPSAddressSpace::VirtualReg ? vreg.getType(unary.src) :
+                                                                                                  constant.getType(unary.src);
                     const auto intermediate = vreg.allocate(srcType);
                     const auto dst = std::exchange(unary.dst, intermediate);
                     instructions.insert(next,
                                         CopyMInst{ intermediate, false, 0, dst, false, 0,
                                                    static_cast<uint32_t>(srcType->getFixedSize()), false });
                 } else if(copySrc) {
-                    const auto srcType = unary.src.addressSpace == MIPSAddressSpace::VirtualReg ? vreg.getType(unary.src) :
-                                                                                                  constant.getType(unary.src);
-                    const auto intermediate = vreg.allocate(srcType);
+                    const auto dstType = vreg.getType(unary.dst);
+                    const auto intermediate = vreg.allocate(dstType);
                     const auto src = std::exchange(unary.src, intermediate);
                     instructions.insert(iter,
                                         CopyMInst{ src, false, 0, intermediate, false, 0,
-                                                   static_cast<uint32_t>(srcType->getFixedSize()), false });
+                                                   static_cast<uint32_t>(dstType->getFixedSize()), false });
                 }
             }
 

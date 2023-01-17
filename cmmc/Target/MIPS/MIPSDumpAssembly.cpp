@@ -479,7 +479,7 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
         hasDelaySlot = true;
         // directives
         // -mhard-float -mips32r2 -mabi=32 -mno-mips16 -mabicalls
-        out << R"(.nan    legacy
+        out << R"(.nan legacy
 .module fp=32
 .module oddspreg
 .module arch=mips32r2
