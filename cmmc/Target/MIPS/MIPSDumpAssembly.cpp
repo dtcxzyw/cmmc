@@ -483,9 +483,10 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
 .module fp=32
 .module oddspreg
 .module arch=mips32r2
-.abicalls
 
 )";
+
+        // TODO: .abicalls for PIC
     }
 
     dumpAssembly(
