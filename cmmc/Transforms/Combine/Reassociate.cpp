@@ -54,7 +54,7 @@ class Reassociate final : public TransformPass<Function> {
                         continue;
                     }
                 }
-                args.push_back({ 1U, operand });
+                args.emplace_back(1U, operand);
             }
 
             std::sort(args.begin(), args.end(),

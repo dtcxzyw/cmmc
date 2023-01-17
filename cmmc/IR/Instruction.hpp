@@ -275,7 +275,7 @@ public:
 class BlockArgument;
 
 class BranchTarget final {
-    Block* mTarget{ nullptr };
+    Block* mTarget;
     Vector<Value*> mArgs;
 
     friend class ConditionalBranchInst;
