@@ -142,6 +142,30 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                     reportUnreachable();
             }
         };
+        const auto dumpCompareFP = [&](CompareOp compareOp) {
+            switch(compareOp) {
+                case CompareOp::LessThan:
+                    out << "lt"sv;
+                    return false;
+                case CompareOp::LessEqual:
+                    out << "le"sv;
+                    return false;
+                case CompareOp::GreaterThan:
+                    out << "le"sv;
+                    return true;
+                case CompareOp::GreaterEqual:
+                    out << "lt"sv;
+                    return true;
+                case CompareOp::Equal:
+                    out << "eq"sv;
+                    return false;
+                case CompareOp::NotEqual:
+                    out << "eq"sv;
+                    return true;
+                default:
+                    reportUnreachable();
+            }
+        };
 
         for(auto& inst : block->instructions()) {
             out << "    "sv;
@@ -198,13 +222,16 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                             out << "mt"sv << (copy.dst.id == 0 ? "hi"sv : "lo"sv) << ' ';
                                             dumpOperand(copy.src);
                                         } else {
+                                            bool reversed = false;
+
                                             // move
                                             if(copy.src.addressSpace == MIPSAddressSpace::GPR) {
                                                 if(copy.dst.addressSpace == MIPSAddressSpace::GPR)
                                                     out << "move "sv;
-                                                else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S)
+                                                else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S) {
                                                     out << "mtc1 "sv;
-                                                else
+                                                    reversed = true;
+                                                } else
                                                     reportNotImplemented();
                                             } else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
                                                 out << "li "sv;
@@ -218,9 +245,16 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                             } else
                                                 reportNotImplemented();
 
-                                            dumpOperand(copy.dst);
-                                            out << ", "sv;
-                                            dumpOperand(copy.src);
+                                            if(!reversed) {
+                                                dumpOperand(copy.dst);
+                                                out << ", "sv;
+                                                dumpOperand(copy.src);
+                                            } else {
+
+                                                dumpOperand(copy.src);
+                                                out << ", "sv;
+                                                dumpOperand(copy.dst);
+                                            }
                                         }
                                     }
                                 },
@@ -353,7 +387,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                  [&](const BranchCompareMInst& branch) {
                                      if(branch.instID == GMIRInstID::FCmp) {
                                          out << "c."sv;
-                                         dumpCompare(branch.compareOp);
+                                         const auto inverted = dumpCompareFP(branch.compareOp);
                                          if(branch.lhs.addressSpace == MIPSAddressSpace::FPR_S)
                                              out << ".s "sv;
                                          else
@@ -362,7 +396,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          dumpOperand(branch.lhs);
                                          out << ", "sv;
                                          dumpOperand(branch.rhs);
-                                         out << "\n    bc1t "sv << labelMap.at(branch.targetBlock);
+                                         out << (inverted ? "\n    bc1f "sv : "\n    bc1t "sv) << labelMap.at(branch.targetBlock);
                                      } else {
                                          out << 'b';
                                          dumpCompare(branch.compareOp);
@@ -394,7 +428,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          dumpOperand(cmp.rhs);
                                      } else if(cmp.instID == GMIRInstID::FCmp) {
                                          out << "c."sv;
-                                         dumpCompare(cmp.compareOp);
+                                         const auto inverted = dumpCompareFP(cmp.compareOp);
                                          if(cmp.lhs.addressSpace == MIPSAddressSpace::FPR_S)
                                              out << ".s "sv;
                                          else
@@ -407,7 +441,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << "\n    li "sv;
                                          dumpOperand(cmp.dst);
                                          // set
-                                         out << ", 1\n    movf "sv;
+                                         out << (inverted ? ", 1\n    movt "sv : ", 1\n    movf "sv);
                                          dumpOperand(cmp.dst);
                                          out << ", $zero"sv;
                                      }
@@ -443,6 +477,15 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
         hasSpimRuntime = true;
     } else {
         hasDelaySlot = true;
+        // directives
+        // -mhard-float -mips32r2 -mabi=32 -mno-mips16 -mabicalls
+        out << R"(.nan    legacy
+.module fp=32
+.module oddspreg
+.module arch=mips32r2
+.abicalls
+
+)";
     }
 
     dumpAssembly(

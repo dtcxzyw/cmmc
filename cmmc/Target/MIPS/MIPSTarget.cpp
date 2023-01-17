@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <utility>
 #include <variant>
 
 // MIPS o32 abi, please refer to https://refspecs.linuxfoundation.org/elf/mipsabi.pdf
@@ -222,6 +223,54 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                         imm = { temp, static_cast<intmax_t>(intVal) };
                     } else
                         reportUnreachable();
+                }
+            }
+
+            iter = next;
+        }
+    }
+
+    // legalize cvt
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            auto& inst = *iter;
+            const auto next = std::next(iter);
+
+            if(std::holds_alternative<UnaryArithmeticMInst>(inst)) {
+                auto& unary = std::get<UnaryArithmeticMInst>(inst);
+                bool copySrc = false;
+                bool copyDst = false;
+                switch(unary.instID) {
+                    case GMIRInstID::F2S:
+                        [[fallthrough]];
+                    case GMIRInstID::F2U:
+                        copyDst = true;
+                        break;
+                    case GMIRInstID::U2F:
+                        [[fallthrough]];
+                    case GMIRInstID::S2F:
+                        copySrc = true;
+                        break;
+                    default:
+                        break;
+                }
+
+                if(copyDst) {
+                    const auto srcType = vreg.getType(unary.src);
+                    const auto intermediate = vreg.allocate(srcType);
+                    const auto dst = std::exchange(unary.dst, intermediate);
+                    instructions.insert(next,
+                                        CopyMInst{ intermediate, false, 0, dst, false, 0,
+                                                   static_cast<uint32_t>(srcType->getFixedSize()), false });
+                } else if(copySrc) {
+                    const auto srcType = unary.src.addressSpace == MIPSAddressSpace::VirtualReg ? vreg.getType(unary.src) :
+                                                                                                  constant.getType(unary.src);
+                    const auto intermediate = vreg.allocate(srcType);
+                    const auto src = std::exchange(unary.src, intermediate);
+                    instructions.insert(iter,
+                                        CopyMInst{ src, false, 0, intermediate, false, 0,
+                                                   static_cast<uint32_t>(srcType->getFixedSize()), false });
                 }
             }
 
