@@ -1,99 +1,78 @@
 FUNCTION gcd1 :
 PARAM v0
 PARAM v1
-v2 := v0 / v1
-v3 := v1 * v2
-v4 := v0 - v3
-IF v4 == #0 GOTO label2
-v5 := v1
-v6 := v4
+v2 := v0
+v3 := v1
 LABEL label1 :
-v7 := v5 / v6
-v8 := v6 * v7
-v9 := v5 - v8
-IF v9 == #0 GOTO label3
-v5 := v6
-v6 := v9
+v4 := v2 / v3
+v5 := v3 * v4
+v6 := v2 - v5
+IF v6 == #0 GOTO label2
+v2 := v3
+v3 := v6
 GOTO label1
 LABEL label2 :
-v10 := v1
-GOTO label4
-LABEL label3 :
-v10 := v6
-LABEL label4 :
-RETURN v10
+RETURN v3
 
 FUNCTION gcd2 :
-PARAM v11
-PARAM v12
+PARAM v7
+PARAM v8
 DEC x0 4
 DEC x1 4
 DEC x2 4
-v13 := &x0
-v14 := &x1
-*v13 := v11
-*v14 := v12
-IF v11 <= v12 GOTO label6
-v15 := &x2
-v16 := &x1
-v17 := v12
-v18 := v11
-GOTO label7
+x0 := v7
+x1 := v8
+IF v7 <= v8 GOTO label4
+v9 := &x1
+v10 := v8
+v11 := v7
+GOTO label5
+LABEL label4 :
+v9 := &x0
+v10 := v7
+v11 := v8
+LABEL label5 :
+v12 := v11 / v10
+v13 := v10 * v12
+v14 := v11 - v13
+x2 := v14
+IF v14 != #0 GOTO label6
+v15 := *v9
+RETURN v15
 LABEL label6 :
-v15 := &x2
-v16 := &x0
-v17 := v11
-v18 := v12
-LABEL label7 :
-v19 := v18 / v17
-v20 := v17 * v19
-v21 := v18 - v20
-*v15 := v21
-IF v21 != #0 GOTO label8
-v22 := *v16
-RETURN v22
-LABEL label8 :
-v23 := *v16
-ARG v21
-ARG v23
-v24 := CALL gcd2
-RETURN v24
+v16 := *v9
+ARG v14
+ARG v16
+v17 := CALL gcd2
+RETURN v17
 
 FUNCTION main :
-READ v25
-READ v26
-v27 := v25 / v26
-v28 := v26 * v27
-v29 := v25 - v28
-IF v29 == #0 GOTO label11
-v30 := v25
-v31 := v26
-v32 := v26
-v33 := v29
+READ v18
+READ v19
+v20 := v18 / v19
+v21 := v19 * v20
+v22 := v18 - v21
+IF v22 == #0 GOTO label9
+v23 := v19
+v24 := v22
+LABEL label8 :
+v25 := v23 / v24
+v26 := v25 * v24
+v27 := v23 - v26
+IF v27 == #0 GOTO label10
+v23 := v24
+v24 := v27
+GOTO label8
+LABEL label9 :
+v28 := v19
+GOTO label11
 LABEL label10 :
-v34 := v32 / v33
-v35 := v34 * v33
-v36 := v32 - v35
-IF v36 == #0 GOTO label12
-v30 := v30
-v31 := v31
-v32 := v33
-v33 := v36
-GOTO label10
+v28 := v24
 LABEL label11 :
-v37 := v25
-v38 := v26
-v39 := v26
-GOTO label13
-LABEL label12 :
-v37 := v30
-v38 := v31
-v39 := v33
-LABEL label13 :
-WRITE v39
-ARG v38
-ARG v37
-v40 := CALL gcd2
-WRITE v40
+WRITE v28
+ARG v19
+ARG v18
+v29 := CALL gcd2
+WRITE v29
 RETURN #0
 

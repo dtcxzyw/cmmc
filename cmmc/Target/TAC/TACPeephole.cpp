@@ -16,88 +16,11 @@
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Target/TAC/TACTarget.hpp>
-#include <iostream>
-#include <unordered_map>
-#include <variant>
 
 CMMC_NAMESPACE_BEGIN
 
 void TACSubTarget::peepholeOpt(GMIRFunction& func) const {
-    while(true) {
-        std::unordered_map<Operand, Operand, OperandHasher> writer;
-        const auto count = [&](const Operand& op, const Operand& val) {
-            if(op.addressSpace == AddressSpace::VirtualReg) {
-                if(const auto iter = writer.find(op); iter != writer.cend()) {
-                    iter->second = unusedOperand;
-                } else {
-                    auto& ref = writer[op];
-                    if(ref.addressSpace == AddressSpace::Stack || ref.addressSpace == AddressSpace::VirtualReg)
-                        ref = val;
-                    else
-                        ref = unusedOperand;
-                }
-            }
-        };
-
-        for(auto& block : func.blocks())
-            for(auto& inst : block->instructions()) {
-                std::visit(Overload{
-                               [&](const CopyMInst& instRef) {
-                                   if(!instRef.indirectDst) {
-                                       if(instRef.indirectSrc)
-                                           count(instRef.dst, unusedOperand);
-                                       else
-                                           count(instRef.dst, instRef.src);
-                                   }
-                               },                                  //
-                               [&](const BranchCompareMInst&) {},  //
-                               [&](const RetMInst&) {},            //
-                               [&](const UnreachableMInst&) {},    //
-                               [&](const BranchMInst&) {},         //
-                               [&](const auto& instRef) { count(instRef.dst, unusedOperand); },
-                           },
-                           inst);
-            }
-
-        std::unordered_map<Operand, Operand, OperandHasher> replace;
-        for(auto& [op, val] : writer) {
-            if(val != unusedOperand) {
-                replace.emplace(op, val);
-            }
-        }
-
-        if(replace.empty())
-            return;
-
-        bool modified = false;
-        forEachUseOperands(func, [&](GMIRInst& inst, Operand& operand) {
-            CMMC_UNUSED(inst);
-            /* *&a will be fold into a
-            bool cannotBeStack = false;
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                // indirect src, dst cannot be stack
-                const auto& copy = std::get<CopyMInst>(inst);
-                if(&operand == &copy.dst || (&operand == &copy.src && copy.indirectSrc))
-                    cannotBeStack = true;
-            }
-            */
-            if(const auto iter = replace.find(operand); iter != replace.cend()) {
-                /*
-                if(cannotBeStack && iter->second.addressSpace == TACAddressSpace::Stack)
-                    return;
-                */
-
-                operand = iter->second;
-                modified = true;
-            }
-        });
-        if(modified) {
-            removeUnusedInsts(func);
-        } else
-            break;
-    }
-
-    removeIdentityCopies(func);
+    applySSAPropagation(func);
 }
 
 void TACSubTarget::postPeepholeOpt(GMIRFunction&) const {}

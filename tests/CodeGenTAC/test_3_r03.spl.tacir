@@ -31,9 +31,7 @@ LABEL label6 :
 v14 := v7 + #1
 IF v14 > v8 GOTO label2
 v5 := v8
-v6 := v6
 v7 := v14
-v8 := v8
 GOTO label5
 LABEL label7 :
 v9 := v3

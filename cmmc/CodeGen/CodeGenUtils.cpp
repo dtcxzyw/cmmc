@@ -412,4 +412,67 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
     removeIdentityCopies(func);
 }
 
+// TODO: fix it for mips/riscv backends
+void applySSAPropagation(GMIRFunction& func) {
+    while(true) {
+        std::unordered_map<Operand, Operand, OperandHasher> writer;
+        const auto count = [&](const Operand& op, const Operand& val) {
+            if(op.addressSpace == AddressSpace::VirtualReg) {
+                if(const auto iter = writer.find(op); iter != writer.cend()) {
+                    iter->second = unusedOperand;
+                } else {
+                    auto& ref = writer[op];
+                    if(val.addressSpace == AddressSpace::Stack || val.addressSpace == AddressSpace::VirtualReg)
+                        ref = val;
+                    else
+                        ref = unusedOperand;
+                }
+            }
+        };
+
+        for(auto& block : func.blocks())
+            for(auto& inst : block->instructions()) {
+                std::visit(Overload{
+                               [&](const CopyMInst& instRef) {
+                                   if(!instRef.indirectDst) {
+                                       if(instRef.indirectSrc)
+                                           count(instRef.dst, unusedOperand);
+                                       else
+                                           count(instRef.dst, instRef.src);
+                                   }
+                               },                                  //
+                               [&](const BranchCompareMInst&) {},  //
+                               [&](const RetMInst&) {},            //
+                               [&](const UnreachableMInst&) {},    //
+                               [&](const BranchMInst&) {},         //
+                               [&](const auto& instRef) { count(instRef.dst, unusedOperand); },
+                           },
+                           inst);
+            }
+
+        std::unordered_map<Operand, Operand, OperandHasher> replace;
+        for(auto& [op, val] : writer) {
+            if(val != unusedOperand) {
+                replace.emplace(op, val);
+            }
+        }
+
+        if(replace.empty())
+            break;
+
+        bool modified = false;
+        forEachUseOperands(func, [&](GMIRInst&, Operand& operand) {
+            if(const auto iter = replace.find(operand); iter != replace.cend()) {
+                operand = iter->second;
+                modified = true;
+            }
+        });
+        if(modified) {
+            removeIdentityCopies(func);
+            removeUnusedInsts(func);
+        } else
+            break;
+    }
+}
+
 CMMC_NAMESPACE_END

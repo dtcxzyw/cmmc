@@ -21,7 +21,7 @@
 CMMC_NAMESPACE_BEGIN
 
 void simplifyCFG(GMIRFunction& func);
-void registerCoalescing(GMIRFunction& func);
+void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Operand, OperandHasher>& operandMap);
 void optimizeBlockLayout(GMIRFunction& func, const Target& target);
 void schedule(GMIRFunction& func, const Target& target, bool preRA);
 void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall);
@@ -37,6 +37,7 @@ void removeIdentityCopies(GMIRFunction& func);
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
 void legalizeStoreWithConstants(GMIRFunction& func);
 void eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
+void applySSAPropagation(GMIRFunction& func);
 
 void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
                   const std::function<void()>& emitText,

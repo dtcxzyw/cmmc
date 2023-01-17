@@ -63,8 +63,13 @@ public:
     void lower(CompareInst* inst, LoweringContext& ctx) const override;
 };
 
+class TACTarget;
+
 class TACSubTarget final : public SimpleSubTarget {
+    const TACTarget& mTarget;
+
 public:
+    explicit TACSubTarget(const TACTarget& target) : mTarget{ target } {}
     [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
     void peepholeOpt(GMIRFunction& func) const override;
     void postPeepholeOpt(GMIRFunction& func) const override;
@@ -75,7 +80,7 @@ public:
 };
 
 class TACTarget final : public Target {
-    TACSubTarget mSubTarget;
+    TACSubTarget mSubTarget{ *this };
     TACDataLayout mDataLayout;
     TACLoweringInfo mLowerVisitor;
 

@@ -52,15 +52,13 @@ IF v0 <= #10 GOTO label19
 v2 := #11
 v3 := #34
 v4 := #55
-v5 := v0
 LABEL label15 :
-v6 := v3 + v4
-v7 := v2 + #1
-IF v7 > v5 GOTO label18
-v2 := v7
+v5 := v3 + v4
+v6 := v2 + #1
+IF v6 > v0 GOTO label18
+v2 := v6
 v3 := v4
-v4 := v6
-v5 := v5
+v4 := v5
 GOTO label15
 LABEL label16 :
 v1 := #13
@@ -69,7 +67,7 @@ LABEL label17 :
 v1 := #8
 GOTO label20
 LABEL label18 :
-v1 := v6
+v1 := v5
 GOTO label20
 LABEL label19 :
 v1 := #55

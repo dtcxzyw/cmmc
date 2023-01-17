@@ -3,50 +3,36 @@ READ v0
 READ v1
 v2 := v0 / #100
 v3 := v2 * #100
-IF v0 != v3 GOTO label2
+IF v0 != v3 GOTO label1
 v4 := v0 / #400
 v5 := v4 * #400
-IF v0 != v5 GOTO label1
-GOTO label9
+IF v0 != v5 GOTO label4
+GOTO label2
 LABEL label1 :
-v6 := v1
-GOTO label8
+v6 := v0 / #4
+v7 := v6 * #4
+IF v0 != v7 GOTO label4
 LABEL label2 :
-v7 := v0 / #4
-v8 := v7 * #4
-IF v0 != v8 GOTO label7
-v9 := v1
+IF v1 != #2 GOTO label3
+GOTO label5
 LABEL label3 :
-IF v9 != #2 GOTO label4
-GOTO label10
+v8 := v1 / #2
+v9 := v8 * #2
+IF v1 != v9 GOTO label8
+GOTO label7
 LABEL label4 :
-v10 := v9
+IF v1 != #2 GOTO label3
 GOTO label6
 LABEL label5 :
-v10 := v6
-LABEL label6 :
-v11 := v10 / #2
-v12 := v11 * #2
-IF v10 != v12 GOTO label13
-GOTO label12
-LABEL label7 :
-v6 := v1
-LABEL label8 :
-IF v6 != #2 GOTO label5
-GOTO label11
-LABEL label9 :
-v9 := v1
-GOTO label3
-LABEL label10 :
 WRITE #29
 RETURN #0
-LABEL label11 :
+LABEL label6 :
 WRITE #28
 RETURN #0
-LABEL label12 :
+LABEL label7 :
 WRITE #30
 RETURN #0
-LABEL label13 :
+LABEL label8 :
 WRITE #31
 RETURN #0
 

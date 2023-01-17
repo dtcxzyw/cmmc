@@ -22,38 +22,34 @@ write:
     mv a0, x0
     ret
 
-.align 4
 .globl main
 main:
-    addi sp, sp, -16
+    addi sp, sp, -32
     sd ra, 0(sp)
     call read
     mv t0, a0
-    sw t0, 12(sp)
-    blez t0, .BB1
+    sw t0, 16(sp)
+    ble t0, zero, .BB1
     li a0, 1
     call write
     mv a0, zero
     ld ra, 0(sp)
-    addi sp, sp, 16
+    addi sp, sp, 32
     ret
 .BB1:
-    lw t0, 12(sp)
-    mv t1, t0
-    sw t1, 8(sp)
-    lw t0, 8(sp)
-    bgez t0, .BB2
+    lw t0, 16(sp)
+    bge t0, zero, .BB2
     li a0, -1
     call write
     mv a0, zero
     ld ra, 0(sp)
-    addi sp, sp, 16
+    addi sp, sp, 32
     ret
 .BB2:
     mv a0, zero
     call write
     mv a0, zero
     ld ra, 0(sp)
-    addi sp, sp, 16
+    addi sp, sp, 32
     ret
 

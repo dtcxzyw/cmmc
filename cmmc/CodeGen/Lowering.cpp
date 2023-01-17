@@ -127,8 +127,9 @@ Value* LoweringContext::queryRoot(Value* val) const {
     return mBlockArgMap.queryRoot(val);
 }
 
-static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
-                                   std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
+static std::unordered_map<Operand, Operand, OperandHasher>
+lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
+                       std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
     auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(*func);
     auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
@@ -191,6 +192,15 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         }
     }
 
+    std::unordered_map<Operand, Operand, OperandHasher> operandMap;
+    for(auto [k, v] : blockArgMap.map()) {
+        const auto dst = blockArgs.at(k);
+        if(v->getBlock()) {  // instructions/block arguments
+            const auto src = ctx.mapOperand(v);
+            operandMap.emplace(dst, src);
+        }
+    }
+
     /*
     if constexpr(Config::debug) {
         func->dump(std::cerr);
@@ -198,6 +208,8 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
         mfunc.dump(std::cerr, target);
     }
     */
+
+    return operandMap;
 }
 
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
@@ -315,11 +327,16 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
 
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         // Stage 1: instruction selection
-        lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
+        const auto operandMap = lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
         assert(mfunc.verify(std::cerr, true));
         // Stage 2: clean up unused insts
         removeUnusedInsts(mfunc);
         assert(mfunc.verify(std::cerr, true));
+        // Stage 3: register coalescing
+        if(optLevel >= OptimizationLevel::O1) {
+            registerCoalescing(mfunc, operandMap);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 3: legalize
         target.legalizeFunc(mfunc);
         assert(mfunc.verify(std::cerr, true));
@@ -333,14 +350,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             schedule(mfunc, target, true);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 6: register coalescing
-        /* //FIXME
-        if(optLevel >= OptimizationLevel::O1) {
-            registerCoalescing(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-        }
-        */
-        // Stage 7: register allocation
+        // Stage 6: register allocation
         bool useBuiltinRA = false;
         {
             if(!target.builtinRA(mfunc))
@@ -349,21 +359,21 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                 useBuiltinRA = true;
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 8: legalize stack objects, stack -> sp
+        // Stage 7: legalize stack objects, stack -> sp
         if(!target.builtinSA(mfunc))
             allocateStackObjects(mfunc, target, hasCall(func));
         assert(mfunc.verify(std::cerr, true));
-        // Stage 9: post-RA scheduling, minimize latency
+        // Stage 8: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
             schedule(mfunc, target, false);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 10: post peephole opt
+        // Stage 9: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             subTarget.postPeepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 11: ICF
+        // Stage 10: ICF
         /* TODO: select a better position to apply ICF
         // Applying ICF before BlockLayoutOpt may hurt the performance (code locality)
         if(optLevel >= OptimizationLevel::O2) {
@@ -371,12 +381,12 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             assert(mfunc.verify(std::cerr, true));
         }
         */
-        // Stage 12: code layout opt
+        // Stage 11: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 13: remove unreachable block/continuous goto/unused label
+        // Stage 12: remove unreachable block/continuous goto/unused label
         if(optLevel >= OptimizationLevel::O1) {
             simplifyCFG(mfunc);
 

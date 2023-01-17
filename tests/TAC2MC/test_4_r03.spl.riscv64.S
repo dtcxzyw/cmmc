@@ -22,15 +22,14 @@ write:
     mv a0, x0
     ret
 
-.align 4
 .globl main
 main:
-    addi sp, sp, -8
+    addi sp, sp, -16
     sd ra, 0(sp)
     li a0, 19
     call write
     mv a0, zero
     ld ra, 0(sp)
-    addi sp, sp, 8
+    addi sp, sp, 16
     ret
 
