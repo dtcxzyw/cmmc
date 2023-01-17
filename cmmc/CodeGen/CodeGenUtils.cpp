@@ -350,8 +350,23 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
+        // TODO: multiple targets
         std::unordered_map<int32_t, Operand> stack2Reg;
-        std::unordered_set<Operand, OperandHasher> dirtyRegs;
+        std::unordered_map<Operand, int32_t, OperandHasher> invMap;
+
+        auto invalidateReg = [&](Operand reg) {
+            if(auto iter = invMap.find(reg); iter != invMap.cend()) {
+                stack2Reg.erase(iter->second);
+                invMap.erase(iter);
+            }
+        };
+
+        auto updateMap = [&](Operand reg, int32_t offset) {
+            invalidateReg(reg);
+
+            stack2Reg[offset] = reg;
+            invMap[reg] = offset;
+        };
 
         for(auto& inst : instructions) {
             if(std::holds_alternative<CopyMInst>(inst)) {
@@ -361,39 +376,36 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
                     const auto cached = stack2Reg.find(copy.srcOffset);
 
                     const auto dst = copy.dst;
+                    const auto oldOffset = copy.srcOffset;
 
                     if(cached != stack2Reg.cend()) {
                         const auto srcReg = cached->second;
-                        if(!dirtyRegs.count(srcReg)) {
-                            // load -> move
-                            copy.src = srcReg;
-                            copy.indirectSrc = false;
-                            copy.srcOffset = 0;
-                        }
+                        // load -> move
+                        copy.src = srcReg;
+                        copy.indirectSrc = false;
+                        copy.srcOffset = 0;
                     }
 
-                    stack2Reg[copy.srcOffset] = dst;  // TODO: multiple targets
-                    dirtyRegs.erase(copy.dst);
+                    updateMap(dst, oldOffset);
                 } else if(copy.indirectDst && copy.dst == stackPointer && !copy.indirectSrc) {
-                    stack2Reg[copy.dstOffset] = copy.src;
-                    dirtyRegs.erase(copy.src);
+                    updateMap(copy.src, copy.dstOffset);
                 } else {
                     if(copy.indirectDst) {
                         // unknown store
                         stack2Reg.clear();
-                        dirtyRegs.clear();
+                        invMap.clear();
                     } else {
-                        dirtyRegs.insert(copy.dst);
+                        invalidateReg(copy.dst);
                     }
                 }
             } else if(std::holds_alternative<BranchCompareMInst>(inst) || std::holds_alternative<BranchMInst>(inst) ||
                       std::holds_alternative<CallMInst>(inst) || std::holds_alternative<UnreachableMInst>(inst) ||
                       std::holds_alternative<RetMInst>(inst)) {
                 stack2Reg.clear();
-                dirtyRegs.clear();
+                invMap.clear();
             } else {
                 // update dirty
-                forEachDefOperands(inst, [&](Operand& dst) { dirtyRegs.insert(dst); });
+                forEachDefOperands(inst, [&](Operand& dst) { invalidateReg(dst); });
             }
         }
     }

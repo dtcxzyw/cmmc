@@ -28,7 +28,7 @@ ALLSRCS := $(CXXSRCS) $(wildcard cmmc/**/*.hpp) $(wildcard cmmc/Transforms/**/*.
 OBJS = $(CXXSRCS:%.cpp=$(DIR_BUILD)/objs/%.o)
 
 .PHONY: all
-all: splc cmmc
+all: cmmc
 
 $(DIR_BUILD)/generated/Spl/ParserImpl.hpp: cmmc/Frontend/ParserSpl.yy
 	mkdir -p $(dir $@)
@@ -91,7 +91,7 @@ splc_project3: $(BIN) # Project 3
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -t tac --hide-symbol -o \$${1%.spl}.ir \$$1" > $(SPLC_SHELL)_ex
 	chmod +x $(SPLC_SHELL)_ex
-splc: $(BIN) # Project 4
+splc_project4: $(BIN) # Project 4
 	echo "\$$(dirname \$$0)/cmmc -t mips --strict --hide-symbol -o \$${1%.ir}.s \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
 	echo "\$$(dirname \$$0)/cmmc -t mips --strict --hide-symbol -o \$${1%.spl}.s \$$1" > $(SPLC_SHELL)_spl2mips

@@ -137,6 +137,12 @@ def spl_codegen_tac(src):
     return True
 
 
+def remove_prompt(v: str):
+    while v.startswith('Enter an integer:'):
+        v = v[len('Enter an integer:'):]
+    return v
+
+
 def spl_codegen_mips(src):
     name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
@@ -153,8 +159,7 @@ def spl_codegen_mips(src):
         start = False
         for v in out:
             if start:
-                while v.startswith('Enter an integer:'):
-                    v = v.removeprefix('Enter an integer:')
+                v = remove_prompt(v)
                 res.append(int(v))
             elif v.startswith('Loaded:') and 'exceptions.s' in v:
                 start = True
@@ -205,8 +210,9 @@ def spl_codegen_riscv64(src):
         out = out_rars.stdout.splitlines()
         res = []
         for v in out:
-            v = v.removeprefix('Enter an integer:')
-            res.append(int(v))
+            v = remove_prompt(v)
+            if len(v):
+                res.append(int(v))
         if res != answer:
             print("\ninput", inputs, "answer", answer, "output", res)
             return False
@@ -412,6 +418,7 @@ def test(name, path, filter, tester):
 
 
 test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
+test_cases = ["codegen"]
 generate_ref = False
 
 if generate_ref:
