@@ -287,7 +287,8 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
 }
 
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
-    for(auto& block : func.blocks())
+    const auto& constants = func.pools().pools[AddressSpace::Constant];
+    for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
             if(std::holds_alternative<ConstantMInst>(inst)) {
                 auto& constant = std::get<ConstantMInst>(inst);
@@ -296,19 +297,17 @@ void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
                 if(std::visit([](auto val) { return val == static_cast<decltype(val)>(0); }, constant.constant)) {
                     inst = CopyMInst{ zero, false, 0, constant.dst, false, 0, size, false };
                 }
-            } else if(std::holds_alternative<CopyMInst>(inst)) {
-                auto& copy = std::get<CopyMInst>(inst);
-                if(copy.src.addressSpace != AddressSpace::Constant)
-                    continue;
-                // if(copy.size != size)
-                //     continue;
-                const auto constant =
-                    static_cast<ConstantValue*>(func.pools().pools[AddressSpace::Constant].getMetadata(copy.src));
-                if((constant->is<ConstantInteger>() && constant->as<ConstantInteger>()->getSignExtended() == 0) ||
-                   (constant->is<ConstantFloatingPoint>() && constant->as<ConstantFloatingPoint>()->getValue() == 0.0))
-                    copy.src = zero;
             }
         }
+
+        forEachUseOperands(*block, [&](GMIRInst&, Operand& src) {
+            if(src.addressSpace != AddressSpace::Constant)
+                return;
+            const auto constant = static_cast<ConstantValue*>(constants.getMetadata(src));
+            if(constant->is<ConstantInteger>() && constant->as<ConstantInteger>()->getSignExtended() == 0)
+                src = zero;
+        });
+    }
 }
 
 void legalizeStoreWithConstants(GMIRFunction& func) {

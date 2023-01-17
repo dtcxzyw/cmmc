@@ -128,9 +128,12 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
-            const auto tryReplace = [&](Operand& op) {
+            const auto tryReplace = [&](Operand& op, bool checkZero) {
                 if(op.addressSpace == AddressSpace::Constant) {
                     const auto val = static_cast<ConstantValue*>(constant.getMetadata(op));
+                    if(checkZero && val == ConstantInteger::get(val->getType(), 0))
+                        return;
+
                     // create li
                     op = vreg.allocate(constant.getType(op));
                     std::variant<intmax_t, double> cval;
@@ -151,26 +154,25 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                                         std::swap(inst.lhs, inst.rhs);
                                     }
 
-                                    tryReplace(inst.lhs);
+                                    tryReplace(inst.lhs, false);
                                     if(!commutative)
-                                        tryReplace(inst.rhs);
+                                        tryReplace(inst.rhs, false);
                                 },
-                                 [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src); },
+                                 [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src, false); },
                                  [&](BranchCompareMInst& inst) {
                                      if(inst.lhs.addressSpace == AddressSpace::Constant) {
                                          std::swap(inst.lhs, inst.rhs);
                                          inst.compareOp = getReversedOp(inst.compareOp);
                                      }
-                                     tryReplace(inst.lhs);
-                                     tryReplace(inst.rhs);  // reserve for bxxz
+                                     tryReplace(inst.lhs, false);
+                                     tryReplace(inst.rhs, true);  // reserve for bxxz
                                  },
                                  [&](CompareMInst& inst) {
                                      if(inst.lhs.addressSpace == AddressSpace::Constant) {
                                          std::swap(inst.lhs, inst.rhs);
                                          inst.compareOp = getReversedOp(inst.compareOp);
                                      }
-                                     tryReplace(inst.lhs);
-                                     tryReplace(inst.rhs);
+                                     tryReplace(inst.lhs, false);
                                  },
                                  [](auto&) {} },
                        *iter);
@@ -433,6 +435,11 @@ MIPSRegisterUsage::MIPSRegisterUsage()
     // o32
     for(uint32_t idx = 0; idx < 32; idx += 2)
         setDiscarded(mFPR, idx);
+    // return value
+    for(uint32_t idx = 0; idx < 4; ++idx)
+        setUsed(mFPR, idx);
+    for(uint32_t idx = 12; idx < 16; ++idx)
+        setUsed(mFPR, idx);
 }
 void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
     switch(operand.addressSpace) {

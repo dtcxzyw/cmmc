@@ -14,6 +14,7 @@
 
 // Merge same blocks
 
+#include "cmmc/IR/IRBuilder.hpp"
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -75,12 +76,15 @@ class BlockOutliner final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& moduleTarget = analysis.module().getTarget();
+
         std::unordered_map<Block*, Block*> replace;
         // block-level merge
         std::unordered_map<size_t, std::vector<Block*>> blocks;
+        const auto entry = func.entryBlock();
         for(auto block : func.blocks()) {
-            if(block == func.entryBlock())
+            if(block == entry)
                 continue;
             const auto key = block->instructions().size();
             auto& blockGroup = blocks[key];
@@ -96,6 +100,22 @@ public:
                 blockGroup.push_back(block);
         }
         bool modified = false;
+        // handle entry block
+
+        for(auto& block : blocks[entry->instructions().size()]) {
+            if(isEqual(block, entry)) {
+                entry->instructions().clear();
+                IRBuilder builder{ moduleTarget, entry };
+                Vector<Value*> args;
+                for(auto arg : entry->args())
+                    args.push_back(arg);
+                builder.makeOp<ConditionalBranchInst>(BranchTarget{ block, std::move(args) });
+                modified = true;
+                break;
+            }
+        }
+
+        // handle other blocks
         for(auto block : func.blocks()) {
             auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
