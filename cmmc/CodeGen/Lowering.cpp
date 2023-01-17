@@ -211,8 +211,21 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(global->isFunction()) {
             auto func = global->as<Function>();
             if(func->blocks().empty()) {
-                symbols.push_back(
-                    GMIRSymbol{ func->getSymbol(), func->getLinkage(), dataLayout.getCodeAlignment(), std::monostate{} });
+                String symbol = func->getSymbol();
+                switch(func->getIntrinsic()) {
+                    case Intrinsic::memcpy:
+                        symbol = String::get("memcpy"sv);
+                        break;
+                    case Intrinsic::memmove:
+                        symbol = String::get("memmove"sv);
+                        break;
+                    case Intrinsic::memset:
+                        symbol = String::get("memset"sv);
+                        break;
+                    default:
+                        break;
+                }
+                symbols.push_back(GMIRSymbol{ symbol, func->getLinkage(), dataLayout.getCodeAlignment(), std::monostate{} });
             } else {
                 symbols.push_back(
                     GMIRSymbol{ func->getSymbol(), func->getLinkage(), dataLayout.getCodeAlignment(), GMIRFunction{} });

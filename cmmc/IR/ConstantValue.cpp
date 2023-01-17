@@ -36,6 +36,10 @@ void UndefinedValue::dump(std::ostream& out) const {
     out << "undef"sv;
 }
 
+intmax_t ConstantInteger::getStorage() const noexcept {
+    return mValue;
+}
+
 intmax_t ConstantInteger::getSignExtended() const noexcept {
     const auto bits = getType()->as<IntegerType>()->getBitwidth();
     if(bits == std::numeric_limits<uintmax_t>::digits)

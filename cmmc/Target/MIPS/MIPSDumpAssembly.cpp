@@ -225,11 +225,13 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                     }
                                 },
                                  [&](const ConstantMInst& constant) {
-                                     out << "li "sv;
-                                     dumpOperand(constant.dst);
-                                     out << ", "sv;
-                                     if(std::holds_alternative<intmax_t>(constant.constant)) {
-                                         out << std::get<intmax_t>(constant.constant);
+                                     if(constant.dst.addressSpace == MIPSAddressSpace::GPR &&
+                                        std::holds_alternative<intmax_t>(constant.constant)) {
+                                         const auto val = std::get<intmax_t>(constant.constant);
+
+                                         out << "li "sv;
+                                         dumpOperand(constant.dst);
+                                         out << ", "sv << val;
                                      } else
                                          reportUnreachable();
                                  },

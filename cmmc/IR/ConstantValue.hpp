@@ -72,6 +72,7 @@ public:
     explicit ConstantInteger(const Type* type, intmax_t value, ExplicitConstruct) : ConstantInteger{ type, value } {}
     void dump(std::ostream& out) const override;
 
+    [[nodiscard]] intmax_t getStorage() const noexcept;
     [[nodiscard]] uintmax_t getZeroExtended() const noexcept;
     [[nodiscard]] intmax_t getSignExtended() const noexcept;
     bool isEqual(ConstantValue* rhs) const override;
