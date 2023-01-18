@@ -44,6 +44,8 @@ constexpr Operand sp{ MIPSAddressSpace::GPR, 29U };
 constexpr Operand hi{ MIPSAddressSpace::HILO, 0U };
 constexpr Operand lo{ MIPSAddressSpace::HILO, 1U };
 
+constexpr size_t passingByRegisterThreshold = 16;
+
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
 extern StringOpt targetMachine;  // NOLINT
@@ -371,8 +373,6 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             curOffset += size;
         }
 
-        constexpr size_t passingByRegisterThreshold = 16;
-
         const auto incomingArgumentsStackSize = std::max(curOffset, passingByRegisterThreshold);
         const auto stackStorage =
             ctx.getAllocationPool(AddressSpace::Stack)
@@ -390,7 +390,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
                 Operand dst = unusedOperand;
                 if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
                     dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
-                            14U + static_cast<uint32_t>(offset) / 4U };
+                            12U + static_cast<uint32_t>(offset) / 2U };  // 0 -> 12, 4 -> 14
                 } else {
                     dst = { MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
                 }
@@ -438,6 +438,7 @@ MIPSRegisterUsage::MIPSRegisterUsage()
     // return value
     for(uint32_t idx = 0; idx < 4; ++idx)
         setUsed(mFPR, idx);
+    // arguments
     for(uint32_t idx = 12; idx < 16; ++idx)
         setUsed(mFPR, idx);
 }
@@ -557,12 +558,12 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
         const auto val = ctx.mapOperand(arg);
         const auto size = arg->getType()->getSize(dataLayout);
 
-        if(offset < 16U) {
+        if(offset < passingByRegisterThreshold) {
             // $a0-$a3, $f12/$f14
             Operand dst = unusedOperand;
             if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
                 dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
-                        14U + static_cast<uint32_t>(offset) / 4U };
+                        12U + static_cast<uint32_t>(offset) / 2U };  // 0 -> 12, 4 -> 14
             } else {
                 dst = { MIPSAddressSpace::GPR, 4U + static_cast<uint32_t>(offset) / 4U };
             }
