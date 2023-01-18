@@ -287,10 +287,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << "cvt.d.w "sv;
                                          }
                                      } else if(unary.instID == GMIRInstID::F2S) {
+                                         // use trunc (not round)
                                          if(unary.dst.addressSpace == MIPSAddressSpace::FPR_S) {
-                                             out << "cvt.w.s "sv;
+                                             out << "trunc.w.s "sv;
                                          } else {
-                                             out << "cvt.w.d "sv;
+                                             out << "trunc.w.d "sv;
                                          }
                                      } else if(unary.instID == GMIRInstID::Neg) {
                                          out << "subu "sv;
