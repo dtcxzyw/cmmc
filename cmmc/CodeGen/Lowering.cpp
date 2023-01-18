@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Block.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
@@ -25,6 +24,7 @@
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
+#include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
