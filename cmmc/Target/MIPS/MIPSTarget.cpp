@@ -432,7 +432,7 @@ MIPSRegisterUsage::MIPSRegisterUsage()
     // $t0-$t9, $s0-$s7
     for(uint32_t idx = 8; idx < 26; ++idx)
         setDiscarded(mGPR, idx);
-    // o32
+    // o32 nooddspreg
     for(uint32_t idx = 0; idx < 32; idx += 2)
         setDiscarded(mFPR, idx);
     // return value

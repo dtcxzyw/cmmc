@@ -305,6 +305,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      dumpOperand(unary.src);
                                  },
                                  [&](const BinaryArithmeticMInst& binary) {
+                                     const auto div = binary.instID == GMIRInstID::SDiv || binary.instID == GMIRInstID::SRem ||
+                                         binary.instID == GMIRInstID::UDiv || binary.instID == GMIRInstID::URem;
+                                     if(div) {
+                                         out << ".set nomacro\n    ";
+                                     }
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
                                              out << "add"sv;
@@ -368,17 +373,20 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << ".d"sv;
                                      }
                                      out << ' ';
-                                     if(binary.instID != GMIRInstID::Mul && binary.instID != GMIRInstID::SDiv &&
-                                        binary.instID != GMIRInstID::UDiv && binary.instID != GMIRInstID::SRem &&
-                                        binary.instID != GMIRInstID::URem) {
+                                     if(!div && binary.instID != GMIRInstID::Mul) {
                                          dumpOperand(binary.dst);
                                          out << ", "sv;
+                                     } else if(div) {
+                                         out << "$zero , "sv;
                                      } else {
                                          assert(binary.dst == unusedOperand);
                                      }
                                      dumpOperand(binary.lhs);
                                      out << ", "sv;
                                      dumpOperand(binary.rhs);
+                                     if(div) {
+                                         out << "\n    .set macro";
+                                     }
                                  },
                                  [&](const BranchMInst& branch) {
                                      out << "b "sv << labelMap.at(branch.targetBlock);
@@ -481,8 +489,9 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
         // -mhard-float -mips32r2 -mabi=32 -mno-mips16 -mabicalls
         out << R"(.nan legacy
 .module fp=32
-.module oddspreg
+.module nooddspreg
 .module arch=mips32r2
+.set noat
 
 )";
 
