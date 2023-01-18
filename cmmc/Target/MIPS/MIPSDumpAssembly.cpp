@@ -452,7 +452,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          // set
                                          out << (inverted ? ", 1\n    movt "sv : ", 1\n    movf "sv);
                                          dumpOperand(cmp.dst);
-                                         out << ", $zero, 0"sv;
+                                         out << ", $zero, $fcc0"sv;
                                      }
                                  },
                                  [&](const CallMInst& call) {

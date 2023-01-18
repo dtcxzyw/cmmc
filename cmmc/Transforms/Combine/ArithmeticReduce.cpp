@@ -315,6 +315,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     builder.getFalse();
             }
 
+            // TODO: -x <= c -> x >= -c
+
             return nullptr;
         });
         return ret || modified;
