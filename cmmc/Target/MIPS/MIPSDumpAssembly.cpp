@@ -377,7 +377,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          dumpOperand(binary.dst);
                                          out << ", "sv;
                                      } else if(div) {
-                                         out << "$zero , "sv;
+                                         out << "$zero, "sv;
                                      } else {
                                          assert(binary.dst == unusedOperand);
                                      }
@@ -491,10 +491,11 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
 .module fp=32
 .module nooddspreg
 .module arch=mips32r2
-.set noat
+.set noreorder
 
 )";
 
+        // TODO: .set noat
         // TODO: .abicalls for PIC
     }
 
