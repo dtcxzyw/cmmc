@@ -609,19 +609,24 @@ void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
 void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
     const auto src = ctx.mapOperand(inst->getOperand(0));
     const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+    auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
 
     switch(inst->getInstID()) {
         case InstructionID::ZExt: {
-            ctx.emitInst<CopyMInst>(src, false, 0, dst, false, 0, 0U, false);
+            const auto mask = constant.allocate(inst->getType());
+            constant.getMetadata(mask) = ConstantInteger::get(
+                inst->getType(), static_cast<intmax_t>((1ULL << inst->getType()->as<IntegerType>()->getBitwidth()) - 1));
+            ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::And, src, mask, dst);
             break;
         }
         case InstructionID::SExt:
             [[fallthrough]];
+        case InstructionID::Bitcast: {
+            ctx.emitInst<CopyMInst>(src, false, 0, dst, false, 0, static_cast<uint32_t>(inst->getType()->getFixedSize()), false);
+            break;
+        }
         case InstructionID::Trunc:
-            [[fallthrough]];
-        case InstructionID::Bitcast:
-            [[fallthrough]];
-            // TODO: use copy
+            reportNotImplemented();
         case InstructionID::F2U: {
             ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2U, src, dst);
             break;

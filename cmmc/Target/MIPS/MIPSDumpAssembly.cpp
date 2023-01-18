@@ -250,7 +250,6 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                                 out << ", "sv;
                                                 dumpOperand(copy.src);
                                             } else {
-
                                                 dumpOperand(copy.src);
                                                 out << ", "sv;
                                                 dumpOperand(copy.dst);

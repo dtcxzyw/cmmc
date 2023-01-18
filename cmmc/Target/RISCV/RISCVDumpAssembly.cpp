@@ -147,6 +147,8 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
             out << "    "sv;
             std::visit(Overload{ [&](const CopyMInst& copy) {
                                     if(copy.indirectSrc && !copy.indirectDst) {
+                                        if(copy.dst.addressSpace != RISCVAddressSpace::GPR)
+                                            out << 'f';
                                         // load
                                         if(copy.size == 8)
                                             out << "ld "sv;
@@ -164,6 +166,8 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         dumpOperand(copy.src);
                                         out << ')';
                                     } else if(copy.indirectDst && !copy.indirectSrc) {
+                                        if(copy.dst.addressSpace != RISCVAddressSpace::GPR)
+                                            out << 'f';
                                         // store
                                         if(copy.size == 8)
                                             out << "sd "sv;
@@ -180,31 +184,71 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         dumpOperand(copy.dst);
                                         out << ')';
                                     } else {
-                                        if(copy.size == 4 || copy.size == 8) {
-                                            {
-                                                // move
-                                                if(copy.src.addressSpace == RISCVAddressSpace::GPR)
-                                                    out << "mv "sv;
-                                                else if(copy.src.addressSpace == RISCVAddressSpace::Constant)
-                                                    out << "li "sv;
-                                                else
-                                                    reportNotImplemented();
-
-                                                dumpOperand(copy.dst);
-                                                out << ", "sv;
-                                                dumpOperand(copy.src);
-                                            }
+                                        // move
+                                        if(copy.src.addressSpace == RISCVAddressSpace::GPR) {
+                                            if(copy.dst.addressSpace == RISCVAddressSpace::GPR)
+                                                out << "mv "sv;
+                                            else if(copy.dst.addressSpace == RISCVAddressSpace::FPR_S) {
+                                                out << "fmv.w.x "sv;
+                                            } else
+                                                reportNotImplemented();
+                                        } else if(copy.src.addressSpace == RISCVAddressSpace::Constant)
+                                            out << "li "sv;
+                                        else if(copy.src.addressSpace == RISCVAddressSpace::FPR_S) {
+                                            if(copy.dst.addressSpace == RISCVAddressSpace::GPR)
+                                                out << "fmv.x.w "sv;
+                                            else if(copy.dst.addressSpace == RISCVAddressSpace::FPR_S)
+                                                out << "fmv.s "sv;
+                                            else
+                                                reportNotImplemented();
                                         } else
-                                            reportUnreachable();
+                                            reportNotImplemented();
+
+                                        dumpOperand(copy.dst);
+                                        out << ", "sv;
+                                        dumpOperand(copy.src);
                                     }
                                 },
+                                 [&](const GlobalAddressMInst& global) {
+                                     out << "la "sv;
+                                     dumpOperand(global.dst);
+                                     out << ", "sv << symbolMap.at(global.global);
+                                 },
                                  [&](const ConstantMInst& constant) {
                                      out << "li "sv;
                                      dumpOperand(constant.dst);
                                      out << ", "sv;
                                      std::visit([&](auto x) { out << x; }, constant.constant);
                                  },
-                                 [&](const UnaryArithmeticMInst&) { reportUnreachable(); },
+                                 [&](const UnaryArithmeticMInst& unary) {
+                                     if(unary.instID == GMIRInstID::FNeg) {
+                                         if(unary.src.addressSpace == RISCVAddressSpace::FPR_S)
+                                             out << "fneg.s "sv;
+                                         else
+                                             out << "fneg.d "sv;
+                                     } else if(unary.instID == GMIRInstID::S2F) {
+                                         // TODO: 64-bit integer to float
+                                         if(unary.dst.addressSpace == RISCVAddressSpace::FPR_S) {
+                                             out << "fcvt.s.w "sv;
+                                         } else {
+                                             out << "fcvt.d.w "sv;
+                                         }
+                                     } else if(unary.instID == GMIRInstID::F2S) {
+                                         // use trunc (not round)
+                                         if(unary.dst.addressSpace == RISCVAddressSpace::FPR_S) {
+                                             out << "fcvt.w.s "sv;
+                                         } else {
+                                             out << "fcvt.w.d "sv;
+                                         }
+                                     } else if(unary.instID == GMIRInstID::Neg) {
+                                         out << "neg "sv;
+                                     } else
+                                         reportNotImplemented();
+
+                                     dumpOperand(unary.dst);
+                                     out << ", "sv;
+                                     dumpOperand(unary.src);
+                                 },
                                  [&](const BinaryArithmeticMInst& binary) {
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
@@ -229,15 +273,17 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << "remu"sv;
                                              break;
                                          case GMIRInstID::FAdd:
-                                             [[fallthrough]];
+                                             out << "fadd"sv;
+                                             break;
                                          case GMIRInstID::FSub:
-                                             [[fallthrough]];
+                                             out << "fsub"sv;
+                                             break;
                                          case GMIRInstID::FMul:
-                                             [[fallthrough]];
+                                             out << "fmul"sv;
+                                             break;
                                          case GMIRInstID::FDiv:
-                                             [[fallthrough]];
-                                         case GMIRInstID::FNeg:
-                                             reportNotImplemented();
+                                             out << "fdiv"sv;
+                                             break;
                                          case GMIRInstID::And:
                                              out << "and"sv;
                                              break;
@@ -258,6 +304,10 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      };
                                      if(binary.rhs.addressSpace == RISCVAddressSpace::Constant) {
                                          out << 'i';
+                                     } else if(binary.lhs.addressSpace == RISCVAddressSpace::FPR_S) {
+                                         out << ".s"sv;
+                                     } else if(binary.lhs.addressSpace == RISCVAddressSpace::FPR_D) {
+                                         out << ".d"sv;
                                      }
                                      out << ' ';
                                      dumpOperand(binary.dst);

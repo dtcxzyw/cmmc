@@ -14,6 +14,7 @@
 
 #pragma once
 #include <array>
+#include <cassert>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
@@ -115,6 +116,14 @@ struct CopyMInst final {
     int32_t dstOffset;
     uint32_t size;
     bool signExtend;
+
+    explicit CopyMInst(Operand srcOp, bool indirectSrcCopy, int32_t srcCopyOffset, Operand dstOp, bool indirectDstCopy,
+                       int32_t dstCopyOffset, uint32_t copySize, bool signExtendCopy)
+        : src{ srcOp }, indirectSrc{ indirectSrcCopy }, srcOffset{ srcCopyOffset }, dst{ dstOp },
+          indirectDst{ indirectDstCopy }, dstOffset{ dstCopyOffset }, size{ copySize }, signExtend{ signExtendCopy } {
+        assert(!(indirectSrc && indirectDst));
+        assert(size);
+    }
 
     bool operator==(const CopyMInst& rhs) const noexcept;
 };

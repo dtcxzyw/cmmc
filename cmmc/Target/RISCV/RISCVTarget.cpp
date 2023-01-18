@@ -34,7 +34,11 @@ CMMC_NAMESPACE_BEGIN
 
 constexpr Operand zero{ RISCVAddressSpace::GPR, 0U };
 constexpr Operand a0{ RISCVAddressSpace::GPR, 10U };
+constexpr Operand fa032{ RISCVAddressSpace::FPR_S, 10U };
+constexpr Operand fa064{ RISCVAddressSpace::FPR_D, 10U };
 constexpr Operand sp{ RISCVAddressSpace::GPR, 2U };
+
+constexpr size_t passingByRegisterThreshold = 64;
 
 // TODO: peephole: beq 0 v0 -> beq v0 0 -> beqz
 
@@ -129,6 +133,13 @@ void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
 
 CMMC_TARGET("riscv", RISCVTarget);
 
+static uint32_t getRegisterClass(const Type* type) {
+    if(type->isFloatingPoint()) {
+        return type->getFixedSize() == sizeof(float) ? RISCVAddressSpace::FPR_S : RISCVAddressSpace::FPR_D;
+    }
+    return RISCVAddressSpace::GPR;
+}
+
 std::string_view getRISCVTextualName(uint32_t idx) noexcept;
 RISCVLoweringInfo::RISCVLoweringInfo()
     : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("m") }, mVReg{ String::get("vr") },
@@ -153,7 +164,7 @@ String RISCVLoweringInfo::getOperand(const Operand& operand) const {
         case RISCVAddressSpace::GPR:
             return String::get(getRISCVTextualName(operand.id));
         case RISCVAddressSpace::FPR_S:
-            return mFPR.withID(static_cast<int32_t>(operand.id));
+            [[fallthrough]];
         case RISCVAddressSpace::FPR_D:
             return mFPR.withID(static_cast<int32_t>(operand.id));
         default:
@@ -175,8 +186,14 @@ void RISCVLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
         // TODO: floating-point return value
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 8) {
-            // return by $a0
-            ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, a0, false, 0, static_cast<uint32_t>(size), false);
+            if(val->getType()->isFloatingPoint()) {
+                // return by $fa0
+                ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, (size == sizeof(float) ? fa032 : fa064), false, 0,
+                                        static_cast<uint32_t>(size), false);
+            } else {
+                // return by $a0
+                ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, a0, false, 0, static_cast<uint32_t>(size), false);
+            }
         } else  // return by $a0, $a1
             reportNotImplemented();
     }
@@ -199,20 +216,23 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
             if(&arg == &inst->operands().back())
                 break;
 
-            const auto size = arg->getType()->getSize(dataLayout);
-            const auto alignment = arg->getType()->getAlignment(dataLayout);
+            auto size = arg->getType()->getSize(dataLayout);
+            auto alignment = arg->getType()->getAlignment(dataLayout);
+
+            constexpr size_t minimumSize = sizeof(uint64_t);
+            size = std::max(size, minimumSize);
+            alignment = std::max(alignment, minimumSize);
 
             curOffset = (curOffset + alignment - 1) / alignment * alignment;
             offsets.push_back(curOffset);
             curOffset += size;
         }
 
-        Operand stackStorage = unusedOperand;
-        if(curOffset > 32U) {
-            stackStorage = ctx.getAllocationPool(AddressSpace::Stack)
-                               .allocate(make<StackStorageType>(curOffset, ctx.getModule().target.getStackPointerAlignment()));
-            ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
-        }
+        const auto incomingArgumentsStackSize = std::max(curOffset, passingByRegisterThreshold);
+        const auto stackStorage =
+            ctx.getAllocationPool(AddressSpace::Stack)
+                .allocate(make<StackStorageType>(incomingArgumentsStackSize, ctx.getModule().target.getStackPointerAlignment()));
+        ctx.getCurrentBasicBlock()->usedStackObjects().insert(stackStorage);
 
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
             const auto offset = offsets[idx];
@@ -220,12 +240,10 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
             const auto val = ctx.mapOperand(arg);
             const auto size = arg->getType()->getSize(dataLayout);
 
-            if(offset < 32U) {
-                // $a0-$a7
-                const Operand dst{ RISCVAddressSpace::GPR, 10U + static_cast<uint32_t>(offset) / 4U };
+            if(offset < passingByRegisterThreshold) {
+                // $a0-$a7，$fa0-$fa7
+                const Operand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
                 ctx.emitInst<CopyMInst>(val, false, 0, dst, false, 0, static_cast<uint32_t>(size), false);
-
-                // TODO: float
             } else {
                 ctx.emitInst<CopyMInst>(val, false, 0, stackStorage, true, static_cast<int32_t>(offset),
                                         static_cast<uint32_t>(size), false);
@@ -240,10 +258,9 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
         const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
         Operand val = unusedOperand;
         if(ret->isFloatingPoint()) {
-            // $f0
-            val = Operand{ ret->getFixedSize() == 4 ? RISCVAddressSpace::FPR_S : RISCVAddressSpace::FPR_D, 0U };
+            // $fa0
+            val = (ret->getFixedSize() == sizeof(float) ? fa032 : fa064);
         } else {
-            assert(ret->getFixedSize() == 4);
             val = a0;
         }
 
@@ -257,12 +274,18 @@ void RISCVLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     reportNotImplemented();
 }
 
-RISCVRegisterUsage::RISCVRegisterUsage() : mGPR{ std::numeric_limits<uint32_t>::max() }, mFPR{ 0U } {
+RISCVRegisterUsage::RISCVRegisterUsage()
+    : mGPR{ std::numeric_limits<uint32_t>::max() }, mFPR{ std::numeric_limits<uint32_t>::max() } {
     // $t0-$t6, $s0-$s11
     for(uint32_t idx = 5; idx < 10; ++idx)
         setDiscarded(mGPR, idx);
     for(uint32_t idx = 18; idx < 32; ++idx)
         setDiscarded(mGPR, idx);
+    // $ft0-$ft11 $fs0-$fs11
+    for(uint32_t idx = 0; idx < 10; ++idx)
+        setDiscarded(mFPR, idx);
+    for(uint32_t idx = 18; idx < 32; ++idx)
+        setDiscarded(mFPR, idx);
 }
 void RISCVRegisterUsage::markAsUsed(const Operand& operand) {
     switch(operand.addressSpace) {
@@ -270,6 +293,8 @@ void RISCVRegisterUsage::markAsUsed(const Operand& operand) {
             setUsed(mGPR, operand.id);
             break;
         case RISCVAddressSpace::FPR_S:
+            [[fallthrough]];
+        case RISCVAddressSpace::FPR_D:
             setUsed(mFPR, operand.id);
             break;
         default:
@@ -282,6 +307,8 @@ void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
             setDiscarded(mGPR, operand.id);
             break;
         case RISCVAddressSpace::FPR_S:
+            [[fallthrough]];
+        case RISCVAddressSpace::FPR_D:
             setDiscarded(mFPR, operand.id);
             break;
         default:
@@ -289,53 +316,60 @@ void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
     }
 }
 Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
-    uint32_t x;
     switch(src) {
         case RISCVAddressSpace::GPR: {
-            x = mGPR;
+            const auto freeBits = ~mGPR;
+            if(freeBits == 0)
+                return unusedOperand;
+            // prefer caller-saved registers
+            // $t0-$t6
+            for(uint32_t idx = 5; idx < 8; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            for(uint32_t idx = 28; idx < 32; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
-        case RISCVAddressSpace::FPR_S: {
-            x = mFPR;
-        } break;
+        case RISCVAddressSpace::FPR_S:
+            [[fallthrough]];
         case RISCVAddressSpace::FPR_D: {
-            x = mFPR;
+            const auto freeBits = ~mFPR;
+            if(freeBits == 0)
+                return unusedOperand;
+            // prefer caller-saved registers
+            // $ft0-$t11
+            for(uint32_t idx = 0; idx < 8; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            for(uint32_t idx = 28; idx < 32; ++idx)
+                if(freeBits & (1U << idx))
+                    return { src, idx };
+            return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
         default:
             reportUnreachable();
     }
-
-    const auto freeBits = ~x;
-    if(freeBits == 0)
-        return unusedOperand;
-    // prefer caller-saved registers
-    // $t0-$t6
-    for(uint32_t idx = 5; idx < 8; ++idx)
-        if(freeBits & (1U << idx))
-            return { src, idx };
-    for(uint32_t idx = 28; idx < 32; ++idx)
-        if(freeBits & (1U << idx))
-            return { src, idx };
-    return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
 }
 uint32_t RISCVRegisterUsage::getRegisterClass(const Type* type) const {
-    if(type->isFloatingPoint()) {
-        return RISCVAddressSpace::FPR_D;
-    }
-    return RISCVAddressSpace::GPR;
+    return cmmc::getRegisterClass(type);
 }
 bool RISCVTarget::isCallerSaved(const Operand& op) const noexcept {
     if(op.addressSpace == RISCVAddressSpace::GPR) {
         // $t0-$t6
         return (5 <= op.id && op.id <= 7) || (28 <= op.id && op.id <= 31);
     }
-    reportNotImplemented();
+    if(op.addressSpace == RISCVAddressSpace::FPR_S || op.addressSpace == RISCVAddressSpace::FPR_D) {
+        // $ft0-$ft11
+        return op.id <= 7 || (28 <= op.id && op.id <= 31);
+    }
+    reportUnreachable();
 }
 bool RISCVTarget::isCalleeSaved(const Operand& op) const noexcept {
-    if(op.addressSpace == RISCVAddressSpace::GPR) {
-        // $s0-$s11
-        return (8 <= op.id && op.id <= 9) || (18 <= op.id && op.id <= 27);
-    }
-    reportNotImplemented();
+    assert(op.addressSpace == RISCVAddressSpace::GPR || op.addressSpace == RISCVAddressSpace::FPR_S ||
+           op.addressSpace == RISCVAddressSpace::FPR_D);
+    // $(f)s0-$s11
+    return (8 <= op.id && op.id <= 9) || (18 <= op.id && op.id <= 27);
 }
 
 void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
@@ -346,9 +380,12 @@ void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const
     const auto& dataLayout = ctx.getDataLayout();
 
     for(auto arg : args) {
-        const auto size = arg->getType()->getSize(dataLayout);
-        const auto alignment = arg->getType()->getAlignment(dataLayout);
-        // TODO: float
+        auto size = arg->getType()->getSize(dataLayout);
+        auto alignment = arg->getType()->getAlignment(dataLayout);
+
+        constexpr size_t minimumSize = sizeof(uint64_t);
+        size = std::max(size, minimumSize);
+        alignment = std::max(alignment, minimumSize);
 
         curOffset = (curOffset + alignment - 1) / alignment * alignment;
         offsets.push_back(curOffset);
@@ -361,9 +398,9 @@ void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const
         const auto val = ctx.mapOperand(arg);
         const auto size = arg->getType()->getSize(dataLayout);
 
-        if(offset < 32U) {
+        if(offset < passingByRegisterThreshold) {
             // $a0-$a7
-            const Operand dst{ RISCVAddressSpace::GPR, 10U + static_cast<uint32_t>(offset) / 4U };
+            const Operand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
             ctx.emitInst<CopyMInst>(dst, false, 0, val, false, 0, static_cast<uint32_t>(size), false);
         } else {
             ctx.emitInst<CopyMInst>(sp, true, static_cast<int32_t>(offset), val, false, 0, static_cast<uint32_t>(size), false);

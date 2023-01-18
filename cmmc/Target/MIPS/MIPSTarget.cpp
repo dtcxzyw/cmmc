@@ -437,10 +437,10 @@ MIPSRegisterUsage::MIPSRegisterUsage()
     for(uint32_t idx = 0; idx < 32; idx += 2)
         setDiscarded(mFPR, idx);
     // return value
-    for(uint32_t idx = 0; idx < 4; ++idx)
+    for(uint32_t idx = 0; idx < 4; idx += 2)
         setUsed(mFPR, idx);
     // arguments
-    for(uint32_t idx = 12; idx < 16; ++idx)
+    for(uint32_t idx = 12; idx < 16; idx += 2)
         setUsed(mFPR, idx);
 }
 void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
@@ -519,7 +519,7 @@ bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
         // $f4-$f18
         return 4 <= op.id && op.id <= 18;
     }
-    reportNotImplemented();
+    reportUnreachable();
 }
 bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
@@ -530,7 +530,7 @@ bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
         // $f20-$f30
         return 20 <= op.id && op.id <= 30;
     }
-    reportNotImplemented();
+    reportUnreachable();
 }
 
 void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
