@@ -496,7 +496,6 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
 
 )";
 
-        // TODO: .set noat
         // TODO: .abicalls for PIC
     }
 

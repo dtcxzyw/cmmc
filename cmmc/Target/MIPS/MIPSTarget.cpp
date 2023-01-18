@@ -36,7 +36,7 @@
 CMMC_NAMESPACE_BEGIN
 
 constexpr Operand zero{ MIPSAddressSpace::GPR, 0U };
-constexpr Operand at{ MIPSAddressSpace::GPR, 1U };
+constexpr Operand immReg{ MIPSAddressSpace::GPR, 30U };  // use fp
 constexpr Operand v0{ MIPSAddressSpace::GPR, 2U };
 constexpr Operand f032{ MIPSAddressSpace::FPR_S, 0U };
 constexpr Operand f064{ MIPSAddressSpace::FPR_D, 0U };
@@ -103,7 +103,7 @@ public:
                 // addiu
                 if(std::holds_alternative<BinaryArithmeticMInst>(inst)) {
                     auto& binary = std::get<BinaryArithmeticMInst>(inst);
-                    resolve(binary.rhs, binary.dst != binary.lhs ? binary.dst : at);
+                    resolve(binary.rhs, binary.dst != binary.lhs ? binary.dst : immReg);
                 }
 
                 iter = next;
