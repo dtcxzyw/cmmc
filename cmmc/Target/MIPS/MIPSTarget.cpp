@@ -68,7 +68,7 @@ public:
         return size <= 256;
     }
     void postPeepholeOpt(GMIRFunction& func) const override {
-        // legalize int constants using $at
+        // legalize int constants using $dst
 
         auto& constants = func.pools().pools[MIPSAddressSpace::Constant];
 
@@ -77,7 +77,7 @@ public:
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 const auto next = std::next(iter);
 
-                auto resolve = [&](Operand& cv) {
+                auto resolve = [&](Operand& cv, const Operand& dst) {
                     if(cv.addressSpace != MIPSAddressSpace::Constant)
                         return;
                     const auto type = constants.getType(cv);
@@ -91,10 +91,11 @@ public:
                     const auto high = (static_cast<uintmax_t>(cval) & (1ULL << (bits - 1))) ? ~mask : 0;
                     const auto lowVal = static_cast<intmax_t>(low | high);
                     if(lowVal != val->getSignExtended()) {
-                        // li $at, cval
-                        // use $at
-                        instructions.insert(iter, ConstantMInst{ at, val->getSignExtended() });
-                        cv = at;
+                        // li $dst, cval
+                        // use $dst
+                        const auto tmp = dst;
+                        instructions.insert(iter, ConstantMInst{ tmp, val->getSignExtended() });
+                        cv = tmp;
                     }
                 };
 
@@ -102,7 +103,7 @@ public:
                 // addiu
                 if(std::holds_alternative<BinaryArithmeticMInst>(inst)) {
                     auto& binary = std::get<BinaryArithmeticMInst>(inst);
-                    resolve(binary.rhs);
+                    resolve(binary.rhs, binary.dst != binary.lhs ? binary.dst : at);
                 }
 
                 iter = next;

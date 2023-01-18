@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Block.hpp"
+#include <algorithm>
 #include <cassert>
 #include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
@@ -31,6 +33,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cmmc/Support/Graph.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
@@ -40,6 +43,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -653,21 +657,126 @@ void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
                             static_cast<uint32_t>(size), false);
 }
-static void emitBranch(const BranchTarget& target, LoweringContext& ctx) {
+static void emitBranch(const BranchTarget& target, Block* srcBlock, LoweringContext& ctx) {
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
     auto& dataLayout = ctx.getDataLayout();
-    for(size_t idx = 0; idx < dst.size(); ++idx) {
-        const auto arg = ctx.mapOperand(src[idx]);
-        const auto dstArg = ctx.mapBlockArg(dst[idx]);
-        const auto size = src[idx]->getType()->getSize(dataLayout);
-        ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+
+    // setup arguments
+    if(srcBlock == dstBlock) {
+        // self jump
+        auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
+        // calcuates the best order and create temporary variables for args
+
+        std::unordered_map<Value*, uint32_t> nodeMap;
+        for(uint32_t idx = 0; idx < dst.size(); ++idx)
+            nodeMap.emplace(dst[idx], idx);
+
+        Graph graph(dst.size());  // direct copy graph
+        for(size_t idx = 0; idx < dst.size(); ++idx) {
+            const auto arg = src[idx];
+            if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
+                // copy b to a -> a should be resetted before b
+                graph[idx].push_back(iter->second);
+            }
+        }
+
+        const auto [ccnt, col] = calcSCC(graph);
+        std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
+        std::vector<std::vector<NodeIndex>> groups(ccnt);
+        std::vector<uint32_t> in(ccnt);
+        for(uint32_t u = 0; u < graph.size(); ++u) {
+            const auto cu = col[u];
+            groups[cu].push_back(u);
+            for(auto v : graph[u]) {
+                const auto cv = col[v];
+                if(cu != cv && dag[cu].emplace(cv).second) {
+                    ++in[cv];
+                }
+            }
+        }
+
+        std::queue<uint32_t> q;
+        for(uint32_t u = 0; u < ccnt; ++u)
+            if(in[u] == 0)
+                q.push(u);
+        std::vector<uint32_t> order;
+        order.reserve(graph.size());
+        while(!q.empty()) {
+            const auto u = q.front();
+            q.pop();
+
+            const auto& group = groups[u];
+            order.insert(order.end(), group.cbegin(), group.cend());
+
+            for(auto v : dag[u]) {
+                if(--in[v] == 0) {
+                    q.push(v);
+                }
+            }
+        }
+
+        assert(order.size() == dst.size());
+
+        std::unordered_map<Value*, Operand> dirtyRegRemapping;
+
+        for(size_t i = 0; i < dst.size(); ++i) {
+            const auto idx = order[i];
+            auto arg = unusedOperand;
+            if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
+                arg = iter->second;  // use copy
+            } else
+                arg = ctx.mapOperand(src[idx]);
+            const auto dstArg = ctx.mapBlockArg(dst[idx]);
+
+            if(arg == dstArg)
+                continue;  // identical copy
+
+            const auto type = src[idx]->getType();
+            const auto size = type->getSize(dataLayout);
+
+            // create copy
+            const auto intermediate = vreg.allocate(type);
+            ctx.emitInst<CopyMInst>(dstArg, false, 0, intermediate, false, 0, static_cast<uint32_t>(size), false);
+            dirtyRegRemapping.emplace(dst[idx], intermediate);
+
+            // apply reset
+            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+        }
+
+        /*
+        std::vector<Operand> temps;
+        temps.reserve(dst.size());
+        for(size_t idx = 0; idx < dst.size(); ++idx) {
+            const auto arg = ctx.mapOperand(src[idx]);
+            const auto type = src[idx]->getType();
+            const auto dstArg = vreg.allocate(type);
+            const auto size = type->getSize(dataLayout);
+            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+            temps.push_back(dstArg);
+        }
+        for(size_t idx = 0; idx < dst.size(); ++idx) {
+            const auto arg = temps[idx];
+            const auto type = src[idx]->getType();
+            const auto dstArg = ctx.mapBlockArg(dst[idx]);
+            const auto size = type->getSize(dataLayout);
+            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+        }
+        */
+    } else {
+        for(size_t idx = 0; idx < dst.size(); ++idx) {
+            const auto arg = ctx.mapOperand(src[idx]);
+            const auto dstArg = ctx.mapBlockArg(dst[idx]);
+            const auto size = src[idx]->getType()->getSize(dataLayout);
+            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+        }
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
 }
 void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
+    const auto srcBlock = inst->getBlock();
     const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
         // beqz %cond, else_label
         // then_label:
@@ -686,13 +795,13 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
         ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, 1.0 - inst->getBranchProb(), elsePrepareBlock);
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
-        emitBranch(inst->getTrueTarget(), ctx);
+        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
 
         ctx.setCurrentBasicBlock(elsePrepareBlock);
-        emitBranch(inst->getFalseTarget(), ctx);
+        emitBranch(inst->getFalseTarget(), srcBlock, ctx);
     };
     if(inst->getInstID() == InstructionID::Branch) {
-        emitBranch(inst->getTrueTarget(), ctx);
+        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
     } else if(auto condInst = dynamic_cast<CompareInst*>(ctx.queryRoot(inst->getOperand(0)))) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
