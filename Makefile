@@ -1,5 +1,5 @@
 BUILD_TYPE = Release
-OPTFLAGS = -O3 -flto -DNDEBUG -s -march=native -funroll-loops
+OPTFLAGS = -O3 -flto -DNDEBUG -s -march=native -funroll-loops -ffp-contract=on
 DBGFLAGS = -fsanitize=address,undefined -fsanitize-recover=address -O0 -fno-omit-frame-pointer -ggdb -g
 ADDFLAGS = 
 

@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
 #include <functional>
 #include <ostream>
 
@@ -24,7 +25,7 @@ void simplifyCFG(GMIRFunction& func);
 void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Operand, OperandHasher>& operandMap);
 void optimizeBlockLayout(GMIRFunction& func, const Target& target);
 void schedule(GMIRFunction& func, const Target& target, bool preRA);
-void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall);
+void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel);
 void identicalCodeFolding(GMIRFunction& func);
 
 void removeUnusedInsts(GMIRFunction& func);

@@ -95,6 +95,26 @@ void TACLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
     } else
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
+void TACLoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
+    const auto src = ctx.mapOperand(inst->getOperand(0));
+    const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
+
+    switch(inst->getInstID()) {
+        case InstructionID::ZExt:
+            [[fallthrough]];
+        case InstructionID::SExt:
+            [[fallthrough]];
+        case InstructionID::Bitcast: {
+            ctx.emitInst<CopyMInst>(src, false, 0, dst, false, 0, static_cast<uint32_t>(inst->getType()->getFixedSize()), false);
+            break;
+        }
+        case InstructionID::Trunc:
+            reportNotImplemented();
+        default:
+            reportUnreachable();
+    }
+    ctx.addOperand(inst, dst);
+}
 void TACLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     DiagnosticsContext::get().attach<Reason>("FMA is not supported by TAC").reportFatal();
 }

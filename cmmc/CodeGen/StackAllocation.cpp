@@ -12,6 +12,9 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/DataLayout.hpp"
+#include "cmmc/Transforms/TransformPass.hpp"
+#include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -20,14 +23,190 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cstdint>
+#include <iostream>
+#include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
 
 // TODO: stack coloring
 
 CMMC_NAMESPACE_BEGIN
 
-void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall) {
+struct StackObjectInterval final {
+    uint32_t begin;
+    uint32_t end;
+};
+
+using Intervals = std::unordered_map<Operand, StackObjectInterval, OperandHasher>;
+struct Slot final {
+    uint32_t color;
+    uint32_t end;
+
+    bool operator<(const Slot& rhs) const noexcept {
+        return end > rhs.end;
+    }
+};
+
+static std::pair<uint32_t, std::unordered_map<Operand, uint32_t, OperandHasher>>
+calcIntervalPartition(std::vector<std::pair<Operand, StackObjectInterval>>& intervals) {
+    uint32_t colorCount = 0;
+    std::unordered_map<Operand, uint32_t, OperandHasher> color;
+
+    std::sort(intervals.begin(), intervals.end(),
+              [](const auto& lhs, const auto& rhs) { return lhs.second.begin < rhs.second.begin; });
+
+    std::priority_queue<Slot> slots;
+
+    for(auto& [operand, interval] : intervals) {
+        if(slots.empty() || slots.top().end > interval.begin) {
+            // create new slot
+            const auto col = colorCount++;
+            slots.push({ col, interval.end });
+            color.emplace(operand, col);
+        } else {
+            auto top = slots.top();
+            color.emplace(operand, top.color);
+            top.end = interval.end;
+            slots.pop();
+            slots.push(top);
+        }
+    }
+
+    /*
+    std::cerr << "begin" << std::endl;
+
+    for(auto& [operand, interval] : intervals) {
+        std::cerr << 'm' << operand.id << ' ' << interval.begin << '-' << interval.end << ' ' << color.at(operand) << std::endl;
+    }
+
+    std::cerr << "end" << std::endl;
+    */
+
+    return { colorCount, std::move(color) };
+}
+
+static std::unordered_map<Operand, uint32_t, OperandHasher>
+renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLayout& dataLayout, OptimizationLevel optLevel) {
+    std::unordered_map<Operand, uint32_t, OperandHasher> mapping;  // same size & alignment
+
+    if(optLevel >= OptimizationLevel::O1) {
+        // local reuse for spilled regs
+
+        std::unordered_set<Operand, OperandHasher> uniqueStackObjects;
+        {
+            std::unordered_map<Operand, GMIRBasicBlock*, OperandHasher> ownerOfStackObjectsForSpilledRegs;
+            for(auto& block : func.blocks()) {
+                for(auto& stackObject : block->usedStackObjects()) {
+                    assert(stackObject.addressSpace == AddressSpace::Stack);
+                    const auto type = stack.getType(stackObject);
+                    if(!type->isStackStorage() && !stack.getMetadata(stackObject)) {
+                        if(auto iter = ownerOfStackObjectsForSpilledRegs.find(stackObject);
+                           iter != ownerOfStackObjectsForSpilledRegs.cend())
+                            iter->second = nullptr;
+                        else {
+                            ownerOfStackObjectsForSpilledRegs.emplace(stackObject, block.get());
+                        }
+                    }
+                }
+            }
+            for(auto& [obj, owner] : ownerOfStackObjectsForSpilledRegs) {
+                if(owner) {
+                    uniqueStackObjects.insert(obj);
+                    // std::cerr << 'm' << obj.id << std::endl;
+                }
+            }
+        }
+
+        uint32_t idx = 0;
+        for(auto& block : func.blocks()) {
+
+            auto& instructions = block->instructions();
+            const StackObjectInterval initialInterval{ static_cast<uint32_t>(instructions.size()), 0 };
+
+            Intervals intervals;
+
+            for(auto& stackObject : block->usedStackObjects()) {
+                if(mapping.count(stackObject))
+                    continue;
+                assert(stackObject.addressSpace == AddressSpace::Stack);
+                const auto type = stack.getType(stackObject);
+                if(!type->isStackStorage()) {
+                    if(!uniqueStackObjects.count(stackObject)) {
+                        mapping.emplace(stackObject, idx++);
+                    } else {
+                        intervals.emplace(stackObject, initialInterval);
+                    }
+                }
+            }
+
+            uint32_t id = 0;
+            auto updateInterval = [&](const Operand& obj) {
+                if(obj.addressSpace != AddressSpace::Stack)
+                    return;
+                if(auto iter = intervals.find(obj); iter != intervals.cend()) {
+                    auto& interval = iter->second;
+                    interval.begin = std::min(interval.begin, id);
+                    interval.end = std::max(interval.end, id + 1);
+                }
+            };
+
+            // save/restore
+            for(auto& inst : instructions) {
+                if(std::holds_alternative<CopyMInst>(inst)) {
+                    const auto& copy = std::get<CopyMInst>(inst);
+                    updateInterval(copy.src);
+                    updateInterval(copy.dst);
+                }
+                ++id;
+            }
+
+            // group by size & alignments
+            std::unordered_map<uint32_t, std::vector<std::pair<Operand, StackObjectInterval>>> groups;
+            for(auto& [obj, interval] : intervals) {
+                const auto type = stack.getType(obj);
+                const auto size = type->getSize(dataLayout);
+                const auto alignment = type->getAlignment(dataLayout);
+                const auto key = static_cast<uint32_t>(size) * 1024 + static_cast<uint32_t>(alignment);
+                groups[key].emplace_back(obj, interval);
+            }
+
+            for(auto& [key, groupedIntervals] : groups) {
+                CMMC_UNUSED(key);
+                auto [colorCount, color] = calcIntervalPartition(groupedIntervals);
+
+                for(auto& [obj, col] : color)
+                    mapping.emplace(obj, idx + col);
+
+                idx += colorCount;
+            }
+        }
+
+        if(optLevel >= OptimizationLevel::O2) {
+            // global reuse
+        }
+    } else {
+        // unique
+        uint32_t idx = 0;
+        for(auto& block : func.blocks()) {
+            for(auto& stackObject : block->usedStackObjects()) {
+                if(mapping.count(stackObject))
+                    continue;
+                assert(stackObject.addressSpace == AddressSpace::Stack);
+                const auto type = stack.getType(stackObject);
+                if(!type->isStackStorage()) {
+                    mapping.emplace(stackObject, idx++);
+                }
+            }
+        }
+    }
+
+    return mapping;
+}
+
+void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel) {
+    // func.dump(std::cerr, target);
+
     std::unordered_map<Operand, size_t, OperandHasher> usedStackObjects;
     size_t allocationBase = 0;
 
@@ -58,12 +237,18 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     }
 
     // locals
-    for(auto& block : func.blocks()) {
-        for(auto& stackObject : block->usedStackObjects()) {
-            if(!usedStackObjects.count(stackObject)) {
+    {
+        const auto mapping = renameStackObjects(func, stack, dataLayout, optLevel);
+        std::unordered_map<uint32_t, size_t> slots;
+
+        for(auto& [stackObject, color] : mapping) {
+            if(auto iter = slots.find(color); iter != slots.cend()) {
+                usedStackObjects.emplace(stackObject, iter->second);
+            } else {
                 const auto type = stack.getType(stackObject);
                 const auto size = type->getSize(dataLayout);
                 alignTo(type->getAlignment(dataLayout));
+                slots.emplace(color, allocationBase);
                 usedStackObjects.emplace(stackObject, allocationBase);
                 allocationBase += size;
             }

@@ -20,6 +20,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <queue>
 #include <unordered_map>
@@ -53,6 +54,7 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
 
     // find all cross-block vregs and allocate stack slots for them
     std::unordered_map<Operand, Operand, OperandHasher> stackMap;
+    std::unordered_set<Operand, OperandHasher> crossBlockSpilledStackObjects;
 
     auto& vreg = mfunc.pools().pools[AddressSpace::VirtualReg];
     auto& stack = mfunc.pools().pools[AddressSpace::Stack];
@@ -65,7 +67,9 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
                 continue;  // local
             }
 
-            stackMap[reg] = stack.allocate(vreg.getType(reg));
+            const auto storage = stack.allocate(vreg.getType(reg));
+            stackMap[reg] = storage;
+            crossBlockSpilledStackObjects.insert(storage);
         }
     }
 
@@ -279,6 +283,53 @@ static void fastAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCac
 
             iter = next;
         }
+
+        // remove unused stack objects and dead stores
+        std::unordered_map<Operand, std::list<GMIRInst>::iterator, OperandHasher> usesOfLocals;
+        const auto updateUse = [&](std::list<GMIRInst>::iterator iter, const Operand& obj) {
+            if(obj.addressSpace != AddressSpace::Stack)
+                return;
+            if(!usedStackObjects.count(obj) || stack.getType(obj)->isStackStorage() || stack.getMetadata(obj) ||
+               crossBlockSpilledStackObjects.count(obj))
+                return;
+            // local stack object for splled regs
+            if(auto it = usesOfLocals.find(obj); it != usesOfLocals.cend()) {
+                it->second = instructions.end();  // multiple uses
+            } else {
+                usesOfLocals.emplace(obj, iter);
+            }
+        };
+
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                const auto& copy = std::get<CopyMInst>(inst);
+                updateUse(iter, copy.src);
+                updateUse(iter, copy.dst);
+            }
+        }
+
+        for(auto& [obj, iter] : usesOfLocals)
+            if(iter != instructions.cend()) {
+                usedStackObjects.erase(obj);  // remove unused stack objects
+                instructions.erase(iter);     // remove dead stores
+            }
+
+        // remove unused stack objects
+        std::vector<Operand> toRemove;
+        for(auto obj : usedStackObjects) {
+            if(!stack.getType(obj)->isStackStorage()         // not stack storage
+               && !stack.getMetadata(obj)                    // not local alloca
+               && !crossBlockSpilledStackObjects.count(obj)  // not cross-block vreg
+               && !usesOfLocals.count(obj)                   // not used
+            ) {
+                toRemove.push_back(obj);
+            }
+        }
+        for(auto obj : toRemove)
+            usedStackObjects.erase(obj);
+
+        assert(block->verify(std::cerr, true));
     }
 
     // callee saved

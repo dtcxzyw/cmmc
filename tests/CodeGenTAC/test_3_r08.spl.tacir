@@ -1,32 +1,24 @@
-FUNCTION mod :
-PARAM v0
-PARAM v1
-v2 := v0 / v1
-v3 := v1 * v2
-v4 := v0 - v3
-RETURN v4
-
 FUNCTION DigitSum :
-PARAM v5
-IF v5 != #0 GOTO label2
+PARAM v0
+IF v0 != #0 GOTO label1
 RETURN #0
-LABEL label2 :
-v6 := v5 / #10
-v7 := v6 * #10
-v8 := v5 - v7
-ARG v6
-v9 := CALL DigitSum
-v10 := v9 + v8
-RETURN v10
+LABEL label1 :
+v1 := v0 / #10
+v2 := v1 * #10
+v3 := v0 - v2
+ARG v1
+v4 := CALL DigitSum
+v5 := v4 + v3
+RETURN v5
 
 FUNCTION main :
-READ v11
-IF v11 >= #0 GOTO label4
+READ v6
+IF v6 >= #0 GOTO label3
 WRITE #-1
 RETURN #0
-LABEL label4 :
-ARG v11
-v12 := CALL DigitSum
-WRITE v12
+LABEL label3 :
+ARG v6
+v7 := CALL DigitSum
+WRITE v7
 RETURN #0
 

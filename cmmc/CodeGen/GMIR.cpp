@@ -27,13 +27,25 @@ CMMC_NAMESPACE_BEGIN
 void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                           const std::unordered_map<const GMIRBasicBlock*, String>& blockMap, const TemporaryPools& pools) const {
     auto& loweringInfo = target.getTargetLoweringInfo();
+    auto& stack = pools.pools[AddressSpace::Stack];
+    auto& constants = pools.pools[AddressSpace::Constant];
     auto dumpOperand = [&](const Operand& operand) {
         out << loweringInfo.getOperand(operand);
         if(operand.addressSpace == AddressSpace::Constant) {
             out << '[';
-            const auto cv = static_cast<ConstantValue*>(pools.pools[AddressSpace::Constant].getMetadata(operand));
+            const auto cv = static_cast<ConstantValue*>(constants.getMetadata(operand));
             assert(cv->isConstant());
             cv->dumpAsOperand(out);
+            out << ']';
+        } else if(operand.addressSpace == AddressSpace::Stack) {
+            out << '[';
+            if(stack.getType(operand)->isStackStorage()) {
+                out << "storage"sv;
+            } else if(stack.getMetadata(operand)) {
+                out << "alloca"sv;
+            } else {
+                out << "regspill"sv;
+            }
             out << ']';
         }
     };
@@ -331,16 +343,16 @@ bool GMIRBasicBlock::verify(std::ostream& err, bool checkTerminator) const {
     }
 
     // check usedStackObjects
-    bool stackRefValid = true;
+    Operand invalidRef = unusedOperand;
     // NOLINTNEXTLINE
     forEachOperands(const_cast<GMIRBasicBlock&>(*this), [&](Operand& op) {
         if(op.addressSpace == AddressSpace::Stack && !mUsedStackObjects.count(op)) {
-            stackRefValid = false;
+            invalidRef = op;
         }
     });
 
-    if(!stackRefValid) {
-        err << "invalid reference to stack object" << std::endl;
+    if(invalidRef != unusedOperand) {
+        err << "invalid reference to stack object: m" << invalidRef.id << std::endl;
         return false;
     }
 

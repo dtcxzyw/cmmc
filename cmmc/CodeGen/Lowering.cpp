@@ -365,7 +365,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 7: legalize stack objects, stack -> sp
         if(!target.builtinSA(mfunc))
-            allocateStackObjects(mfunc, target, hasCall(func));
+            allocateStackObjects(mfunc, target, hasCall(func), optLevel);
         assert(mfunc.verify(std::cerr, true));
         // Stage 8: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
@@ -394,7 +394,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1) {
             simplifyCFG(mfunc);
 
+            // generic peephole opt
             eliminateStackLoads(mfunc, target.getStackPointer());
+            // TODO: more peephole
             assert(mfunc.verify(std::cerr, false));
         }
 

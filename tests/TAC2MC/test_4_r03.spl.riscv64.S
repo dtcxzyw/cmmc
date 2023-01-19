@@ -24,12 +24,12 @@ write:
 
 .globl main
 main:
-    addi sp, sp, -16
-    sd ra, 0(sp)
+    addi sp, sp, -80
+    sd ra, 64(sp)
     li a0, 19
     call write
     mv a0, zero
-    ld ra, 0(sp)
-    addi sp, sp, 16
+    ld ra, 64(sp)
+    addi sp, sp, 80
     ret
 

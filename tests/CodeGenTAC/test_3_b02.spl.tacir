@@ -1,282 +1,172 @@
-FUNCTION Swap :
+FUNCTION QuickSort :
 PARAM v0
 PARAM v1
 PARAM v2
+DEC x0 4
+DEC x1 4
+DEC x2 4
+IF v1 >= v2 GOTO label6
+x0 := v1
+x1 := v2
 v3 := v0
 v4 := v1 * #4
 v3 := v3 + v4
 v5 := *v3
-v6 := v0
-v7 := v2 * #4
-v6 := v6 + v7
-v8 := *v6
-*v3 := v8
-*v6 := v5
-RETURN #0
-
-FUNCTION Partition :
-PARAM v9
-PARAM v10
-PARAM v11
-v12 := v9
-v13 := v10 * #4
+x2 := v5
+IF v1 >= v2 GOTO label11
+v6 := v1
+v7 := v2
+v8 := v5
+GOTO label7
+LABEL label1 :
+v9 := v6
+v11 := v10
+LABEL label2 :
+v12 := v0
+v13 := v9 * #4
 v12 := v12 + v13
 v14 := *v12
-IF v10 >= v11 GOTO label5
-v15 := v10
-v16 := v11
-LABEL label2 :
-IF v15 >= v16 GOTO label3
-GOTO label12
+v15 := v0
+v16 := v11 * #4
+v15 := v15 + v16
+v17 := *v15
+*v12 := v17
+*v15 := v14
+v18 := x2
+v19 := x1
+v20 := x0
+IF v20 >= v19 GOTO label3
+GOTO label14
 LABEL label3 :
-v17 := v15
-v18 := v16
-GOTO label8
+v21 := v20
 LABEL label4 :
-v17 := v15
-v18 := v19
-GOTO label8
-LABEL label5 :
-v20 := v10
-LABEL label6 :
-RETURN v20
-LABEL label7 :
-v17 := v15
-v18 := v21
-LABEL label8 :
-v22 := v9
-v23 := v17 * #4
+v22 := v0
+v23 := v21 * #4
 v22 := v22 + v23
 v24 := *v22
-v25 := v9
-v26 := v18 * #4
+v25 := v0
+v26 := v19 * #4
 v25 := v25 + v26
 v27 := *v25
 *v22 := v27
 *v25 := v24
-IF v17 >= v18 GOTO label10
-v28 := v17
+v28 := x2
+v29 := x1
+v30 := x0
+IF v30 >= v29 GOTO label17
+v6 := v30
+v7 := v29
+v8 := v28
+GOTO label7
+LABEL label5 :
+v9 := v6
+v11 := v7
+GOTO label2
+LABEL label6 :
+RETURN #0
+LABEL label7 :
+IF v6 >= v7 GOTO label5
+v10 := v7
+LABEL label8 :
+v31 := v0
+v32 := v10 * #4
+v31 := v31 + v32
+v33 := *v31
+IF v33 < v8 GOTO label1
+v34 := v10 + #-1
+x1 := v34
+IF v6 >= v34 GOTO label9
+GOTO label13
 LABEL label9 :
-v29 := v9
-v30 := v28 * #4
-v29 := v29 + v30
-v31 := *v29
-IF v31 > v14 GOTO label14
-v32 := v28 + #1
-IF v32 >= v18 GOTO label16
-v28 := v32
-GOTO label9
+v9 := v6
+v11 := v34
+GOTO label2
 LABEL label10 :
-v33 := v17
-v34 := v18
+v36 := v35 + #1
+x0 := v36
+IF v36 >= v19 GOTO label18
+v35 := v36
 GOTO label15
 LABEL label11 :
-v20 := v33
-GOTO label6
+v37 := v1
 LABEL label12 :
-v19 := v16
+v38 := v37 + #-1
+ARG v38
+ARG v1
+ARG v0
+v39 := CALL QuickSort
+v40 := v37 + #1
+ARG v2
+ARG v40
+ARG v0
+v41 := CALL QuickSort
+RETURN #0
 LABEL label13 :
-v35 := v9
-v36 := v19 * #4
-v35 := v35 + v36
-v37 := *v35
-IF v37 < v14 GOTO label4
-v21 := v19 + #-1
-IF v15 >= v21 GOTO label7
-v19 := v21
-GOTO label13
+v10 := v34
+GOTO label8
 LABEL label14 :
-v33 := v28
-v34 := v18
+v35 := v20
 LABEL label15 :
-v38 := v9
-v39 := v33 * #4
-v38 := v38 + v39
-v40 := *v38
-v41 := v9
-v42 := v34 * #4
-v41 := v41 + v42
-v43 := *v41
-*v38 := v43
-*v41 := v40
-IF v33 >= v34 GOTO label11
-v15 := v33
-v16 := v34
-GOTO label2
+v42 := v0
+v43 := v35 * #4
+v42 := v42 + v43
+v44 := *v42
+IF v44 > v18 GOTO label16
+GOTO label10
 LABEL label16 :
-v33 := v32
-v34 := v18
-GOTO label15
-
-FUNCTION QuickSort :
-PARAM v44
-PARAM v45
-PARAM v46
-DEC x0 4
-DEC x1 4
-DEC x2 4
-IF v45 >= v46 GOTO label23
-x0 := v45
-x1 := v46
-v47 := v44
-v48 := v45 * #4
-v47 := v47 + v48
-v49 := *v47
-x2 := v49
-IF v45 >= v46 GOTO label28
-v50 := v45
-v51 := v46
-v52 := v49
-GOTO label24
+v21 := v35
+GOTO label4
+LABEL label17 :
+v37 := v30
+GOTO label12
 LABEL label18 :
-v53 := v50
-v55 := v54
-LABEL label19 :
-v56 := v44
-v57 := v53 * #4
-v56 := v56 + v57
-v58 := *v56
-v59 := v44
-v60 := v55 * #4
-v59 := v59 + v60
-v61 := *v59
-*v56 := v61
-*v59 := v58
-v62 := x2
-v63 := x1
-v64 := x0
-IF v64 >= v63 GOTO label20
-GOTO label31
-LABEL label20 :
-v65 := v64
-LABEL label21 :
-v66 := v44
-v67 := v65 * #4
-v66 := v66 + v67
-v68 := *v66
-v69 := v44
-v70 := v63 * #4
-v69 := v69 + v70
-v71 := *v69
-*v66 := v71
-*v69 := v68
-v72 := x2
-v73 := x1
-v74 := x0
-IF v74 >= v73 GOTO label34
-v50 := v74
-v51 := v73
-v52 := v72
-GOTO label24
-LABEL label22 :
-v53 := v50
-v55 := v51
-GOTO label19
-LABEL label23 :
-RETURN #0
-LABEL label24 :
-IF v50 >= v51 GOTO label22
-v54 := v51
-LABEL label25 :
-v75 := v44
-v76 := v54 * #4
-v75 := v75 + v76
-v77 := *v75
-IF v77 < v52 GOTO label18
-v78 := v54 + #-1
-x1 := v78
-IF v50 >= v78 GOTO label26
-GOTO label30
-LABEL label26 :
-v53 := v50
-v55 := v78
-GOTO label19
-LABEL label27 :
-v80 := v79 + #1
-x0 := v80
-IF v80 >= v63 GOTO label35
-v79 := v80
-GOTO label32
-LABEL label28 :
-v81 := v45
-LABEL label29 :
-v82 := v81 + #-1
-ARG v82
-ARG v45
-ARG v44
-v83 := CALL QuickSort
-v84 := v81 + #1
-ARG v46
-ARG v84
-ARG v44
-v85 := CALL QuickSort
-RETURN #0
-LABEL label30 :
-v54 := v78
-GOTO label25
-LABEL label31 :
-v79 := v64
-LABEL label32 :
-v86 := v44
-v87 := v79 * #4
-v86 := v86 + v87
-v88 := *v86
-IF v88 > v62 GOTO label33
-GOTO label27
-LABEL label33 :
-v65 := v79
-GOTO label21
-LABEL label34 :
-v81 := v74
-GOTO label29
-LABEL label35 :
-v65 := v80
-GOTO label21
+v21 := v36
+GOTO label4
 
 FUNCTION main :
 DEC x3 32
-READ v89
-x3 := v89
-v90 := &x3 + #4
-READ v91
-*v90 := v91
-v92 := &x3 + #8
-READ v93
-*v92 := v93
-v94 := &x3 + #12
-READ v95
-*v94 := v95
-v96 := &x3 + #16
-READ v97
-*v96 := v97
-v98 := &x3 + #20
-READ v99
-*v98 := v99
-v100 := &x3 + #24
-READ v101
-*v100 := v101
-v102 := &x3 + #28
-READ v103
-*v102 := v103
+READ v45
+x3 := v45
+v46 := &x3 + #4
+READ v47
+*v46 := v47
+v48 := &x3 + #8
+READ v49
+*v48 := v49
+v50 := &x3 + #12
+READ v51
+*v50 := v51
+v52 := &x3 + #16
+READ v53
+*v52 := v53
+v54 := &x3 + #20
+READ v55
+*v54 := v55
+v56 := &x3 + #24
+READ v57
+*v56 := v57
+v58 := &x3 + #28
+READ v59
+*v58 := v59
 ARG #7
 ARG #0
 ARG &x3
-v104 := CALL QuickSort
-v105 := x3
-WRITE v105
-v106 := *v90
-WRITE v106
-v107 := *v92
-WRITE v107
-v108 := *v94
-WRITE v108
-v109 := *v96
-WRITE v109
-v110 := *v98
-WRITE v110
-v111 := *v100
-WRITE v111
-v112 := *v102
-WRITE v112
+v60 := CALL QuickSort
+v61 := x3
+WRITE v61
+v62 := *v46
+WRITE v62
+v63 := *v48
+WRITE v63
+v64 := *v50
+WRITE v64
+v65 := *v52
+WRITE v65
+v66 := *v54
+WRITE v66
+v67 := *v56
+WRITE v67
+v68 := *v58
+WRITE v68
 RETURN #0
 

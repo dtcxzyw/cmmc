@@ -289,33 +289,34 @@ def sysy_test_noopt(src: str):
 
 
 def spl_ref(src):
-    subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-o',
-                         src+".ir", src], stderr=subprocess.DEVNULL)
-    return True
+    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-o',
+                                src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def spl_tac_ref(src):
-    subprocess.run(args=[binary_path, '-t', 'tac', '-o',
-                         src+".tacir", src], stderr=subprocess.DEVNULL)
-    return True
+    name = src+".tacir"
+    if 'Project' in src:
+        name = src[:-4]+".ir"
+    return subprocess.run(args=[binary_path, '-t', 'tac', '--hide-symbol', '-o',
+                                name, src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def spl_mips_ref(src):
-    subprocess.run(args=[binary_path, '-t', 'mips', '-o',
-                         src+".mips32.S", src], stderr=subprocess.DEVNULL)
-    return True
+    name = src+".mips32.S"
+    if 'Project' in src:
+        name = src[:-4]+".s"
+    return subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-o',
+                                name, src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def spl_riscv64_ref(src):
-    subprocess.run(args=[binary_path, '-t', 'riscv', '-o',
-                         src+".riscv64.S", src], stderr=subprocess.DEVNULL)
-    return True
+    return subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-o',
+                                src+".riscv64.S", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def sysy_ref(src):
-    subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
-                         src+".ir", src], stderr=subprocess.DEVNULL)
-    return True
+    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
+                                src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def sysy_gcc(src):
@@ -498,7 +499,11 @@ if generate_ref:
     test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
     test("Reference Spl", tests_path + "/", ".spl", spl_ref)
     test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
+    test("Reference Spl->TAC Extra", tests_path +
+         "/Project3", ".spl", spl_tac_ref)
     test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
+    test("Reference Spl->MIPS Extra", tests_path +
+         "/Project4", ".spl", spl_mips_ref)
     test("Reference Spl->RISCV64", tests_path +
          "/TAC2MC", ".spl", spl_riscv64_ref)
 

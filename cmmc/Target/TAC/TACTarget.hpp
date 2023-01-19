@@ -61,6 +61,7 @@ public:
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
     void lower(CompareInst* inst, LoweringContext& ctx) const override;
+    void lower(CastInst* inst, LoweringContext& ctx) const override;
 };
 
 class TACTarget;

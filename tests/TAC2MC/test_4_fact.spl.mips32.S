@@ -23,44 +23,42 @@ write:
     move $v0, $0
     jr $ra
 
-.globl fact
 fact:
-    addiu $sp, $sp, -48
+    addiu $sp, $sp, -32
     sw $ra, 16($sp)
     move $t0, $a0
     li $t1, 1
-    sw $t0, 28($sp)
+    sw $t0, 24($sp)
     bne $t0, $t1, .BB1
-    lw $t0, 28($sp)
+    lw $t0, 24($sp)
     move $v0, $t0
     lw $ra, 16($sp)
-    addiu $sp, $sp, 48
+    addiu $sp, $sp, 32
     jr $ra
 .BB1:
-    lw $t0, 28($sp)
+    lw $t0, 24($sp)
     addiu $t1, $t0, -1
     move $a0, $t1
-    sw $t1, 40($sp)
     jal fact
     move $t2, $v0
-    lw $t3, 28($sp)
+    lw $t3, 24($sp)
     mult $t2, $t3
     mflo $t4
     move $v0, $t4
     lw $ra, 16($sp)
-    addiu $sp, $sp, 48
+    addiu $sp, $sp, 32
     jr $ra
 
 .globl main
 main:
-    addiu $sp, $sp, -40
+    addiu $sp, $sp, -32
     sw $ra, 16($sp)
     jal read
     move $t0, $v0
     li $t1, 1
-    sw $t0, 28($sp)
+    sw $t0, 24($sp)
     ble $t0, $t1, .BB3
-    lw $t0, 28($sp)
+    lw $t0, 24($sp)
     move $a0, $t0
     jal fact
     move $t1, $v0
@@ -68,13 +66,13 @@ main:
     jal write
     move $v0, $zero
     lw $ra, 16($sp)
-    addiu $sp, $sp, 40
+    addiu $sp, $sp, 32
     jr $ra
 .BB3:
     li $a0, 1
     jal write
     move $v0, $zero
     lw $ra, 16($sp)
-    addiu $sp, $sp, 40
+    addiu $sp, $sp, 32
     jr $ra
 
