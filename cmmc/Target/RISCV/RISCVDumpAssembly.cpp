@@ -330,32 +330,53 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << ", "sv;
                                          dumpOperand(branch.rhs);
                                      } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                         reportUnreachable();  // fused fp conditional branch is unsupported
 
                                      out << ", "sv << labelMap.at(branch.targetBlock);
                                  },
                                  [&](const CompareMInst& cmp) {
-                                     out << 's';
-                                     dumpCompare(cmp.compareOp);
-                                     if(cmp.rhs.addressSpace == RISCVAddressSpace::Constant) {
-                                         out << 'i';
+                                     bool reversed = false;
+                                     if(cmp.instID == GMIRInstID::FCmp) {
+                                         out << 'f';
+                                         const auto dumpCompareFP = [&](CompareOp compareOp) {
+                                             switch(compareOp) {
+                                                 case CompareOp::LessThan:
+                                                     out << "lt"sv;
+                                                     return false;
+                                                 case CompareOp::LessEqual:
+                                                     out << "le"sv;
+                                                     return false;
+                                                 case CompareOp::GreaterThan:
+                                                     out << "lt"sv;
+                                                     return true;
+                                                 case CompareOp::GreaterEqual:
+                                                     out << "lt"sv;
+                                                     return true;
+                                                 case CompareOp::Equal:
+                                                     out << "eq"sv;
+                                                     return false;
+                                                     // neq should be handled by legalization
+                                                 default:
+                                                     reportUnreachable();
+                                             }
+                                         };
+                                         reversed = dumpCompareFP(cmp.compareOp);
+                                         out << (cmp.lhs.addressSpace == RISCVAddressSpace::FPR_S ? ".s "sv : ".d "sv);
+                                     } else {
+                                         out << 's';
+                                         dumpCompare(cmp.compareOp);
+                                         if(cmp.rhs.addressSpace == RISCVAddressSpace::Constant) {
+                                             out << 'i';
+                                         }
+                                         if(cmp.instID == GMIRInstID::UCmp)
+                                             out << 'u';
                                      }
-                                     if(cmp.instID == GMIRInstID::SCmp) {
-                                         out << ' ';
-                                         dumpOperand(cmp.dst);
-                                         out << ", "sv;
-                                         dumpOperand(cmp.lhs);
-                                         out << ", "sv;
-                                         dumpOperand(cmp.rhs);
-                                     } else if(cmp.instID == GMIRInstID::UCmp) {
-                                         out << 'u' << ' ';
-                                         dumpOperand(cmp.dst);
-                                         out << ", "sv;
-                                         dumpOperand(cmp.lhs);
-                                         out << ", "sv;
-                                         dumpOperand(cmp.rhs);
-                                     } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                     out << ' ';
+                                     dumpOperand(cmp.dst);
+                                     out << ", "sv;
+                                     dumpOperand(reversed ? cmp.rhs : cmp.lhs);
+                                     out << ", "sv;
+                                     dumpOperand(reversed ? cmp.lhs : cmp.rhs);
                                  },
                                  [&](const CallMInst& call) {
                                      if(auto dst = std::get_if<Operand>(&call.callee)) {

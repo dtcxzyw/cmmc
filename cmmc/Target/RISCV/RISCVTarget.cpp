@@ -129,6 +129,33 @@ void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
     }
 
     legalizeStoreWithConstants(func);
+
+    // fne -> not feq
+
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            const auto next = std::next(iter);
+            auto& inst = *iter;
+
+            if(std::holds_alternative<CompareMInst>(inst)) {
+                auto& cmp = std::get<CompareMInst>(inst);
+
+                if(cmp.instID == GMIRInstID::FCmp && cmp.compareOp == CompareOp::NotEqual) {
+                    cmp.compareOp = CompareOp::Equal;
+                    const auto intermediateReg = vreg.allocate(vreg.getType(cmp.dst));
+                    const auto dst = std::exchange(cmp.dst, intermediateReg);
+                    const auto boolean = IntegerType::getBoolean();
+                    const auto cv = constant.allocate(boolean);
+                    constant.getMetadata(cv) = ConstantInteger::get(boolean, 1);
+                    // xori res, 1
+                    instructions.insert(next, BinaryArithmeticMInst{ GMIRInstID::Xor, intermediateReg, cv, dst });
+                }
+            }
+
+            iter = next;
+        }
+    }
 }
 
 CMMC_TARGET("riscv", RISCVTarget);
@@ -417,6 +444,11 @@ void RISCVTarget::addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& in
             infoIPRA.add(symbol, empty);
         }
     }
+}
+
+bool RISCVLoweringInfo::isFusible(ConditionalBranchInst* branch, CompareInst* cmp) const {
+    CMMC_UNUSED(branch);
+    return cmp->getInstID() != InstructionID::FCmp;
 }
 
 CMMC_NAMESPACE_END

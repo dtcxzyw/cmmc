@@ -807,7 +807,8 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
     };
     if(inst->getInstID() == InstructionID::Branch) {
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
-    } else if(auto condInst = dynamic_cast<CompareInst*>(ctx.queryRoot(inst->getOperand(0)))) {
+    } else if(auto condInst = dynamic_cast<CompareInst*>(ctx.queryRoot(inst->getOperand(0)));
+              condInst && isFusible(inst, condInst)) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
                 case InstructionID::UCmp:

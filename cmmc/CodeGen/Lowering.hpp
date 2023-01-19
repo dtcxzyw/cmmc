@@ -85,6 +85,11 @@ public:
     virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FMAInst* inst, LoweringContext& ctx) const = 0;
+    virtual bool isFusible(ConditionalBranchInst* branch, CompareInst* cmp) const {
+        CMMC_UNUSED(branch);
+        CMMC_UNUSED(cmp);
+        return true;
+    }
 
     void lowerInst(Instruction* inst, LoweringContext& ctx) const;
     virtual void lower(BinaryInst* inst, LoweringContext& ctx) const;

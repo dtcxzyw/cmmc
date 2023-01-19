@@ -452,8 +452,9 @@ if "semantic" in test_cases:
                     "/Project2/student_test", ".spl", spl_semantic))
 
 if "opt" in test_cases:
-    res.append(test("SysY opt & test functional", tests_path +
-                    "/SysY2022/functional", ".sy", sysy_test))
+    # covered by codegen
+    # res.append(test("SysY opt & test functional", tests_path +
+    #                "/SysY2022/functional", ".sy", sysy_test))
     res.append(test("SysY opt & test hidden_functional", tests_path +
                     "/SysY2022/hidden_functional", ".sy", sysy_opt))
     res.append(test("SysY opt performance", tests_path +
@@ -489,8 +490,8 @@ if "codegen" in test_cases:
                     "/Project4", ".spl", spl_codegen_mips))
     res.append(test("SysY SysY->MIPS functional", tests_path +
                     "/SysY2022/functional", ".sy", sysy_codegen_mips))
-    # res.append(test("SysY ->RISCV64 functional", tests_path +
-    #          "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
+    res.append(test("SysY SysY->RISCV64 functional", tests_path +
+                    "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 
 
 if generate_ref:
