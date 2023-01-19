@@ -36,15 +36,15 @@ gcd:
     addiu $t6, $t1, 4
     lw $t7, 0($t6)
     sw $t7, 0($t5)
-    sw $t7, 40($sp)
-    sw $t4, 44($sp)
+    sw $t7, 28($sp)
+    sw $t4, 24($sp)
     beqz $t7, .BB1
-    addiu $t0, $sp, 24
+    addiu $t0, $sp, 40
     move $t1, $t0
-    lw $t2, 40($sp)
+    lw $t2, 28($sp)
     sw $t2, 0($t1)
     addiu $t3, $t0, 4
-    lw $t4, 44($sp)
+    lw $t4, 24($sp)
     .set nomacro
     div $zero, $t4, $t2
     .set macro
@@ -61,7 +61,7 @@ gcd:
     addiu $sp, $sp, 48
     jr $ra
 .BB1:
-    lw $t0, 44($sp)
+    lw $t0, 24($sp)
     move $v0, $t0
     lw $ra, 16($sp)
     addiu $sp, $sp, 48

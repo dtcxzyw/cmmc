@@ -26,75 +26,75 @@ hanoi:
     addi sp, sp, -176
     sd ra, 64(sp)
     sd s0, 120(sp)
-    sd s5, 160(sp)
-    sd s1, 104(sp)
-    sd s6, 152(sp)
-    sd s2, 88(sp)
-    sd s3, 144(sp)
-    sd s4, 136(sp)
+    sd s5, 80(sp)
+    sd s1, 136(sp)
+    sd s6, 88(sp)
+    sd s2, 152(sp)
+    sd s3, 96(sp)
+    sd s4, 104(sp)
     mv t0, a0
     mv t1, a1
     mv t2, a2
     mv t3, a3
     li t4, 1
-    sw t3, 84(sp)
-    sw t2, 96(sp)
-    sw t1, 112(sp)
-    sw t0, 128(sp)
+    sw t3, 160(sp)
+    sw t2, 144(sp)
+    sw t1, 128(sp)
+    sw t0, 112(sp)
     bne t0, t4, .BB1
     li t0, 10000
-    lw t1, 112(sp)
+    lw t1, 128(sp)
     mul t2, t1, t0
-    lw t3, 84(sp)
+    lw t3, 160(sp)
     add t4, t2, t3
     mv a0, t4
     call write
     mv a0, zero
-    ld s4, 136(sp)
-    ld s3, 144(sp)
-    ld s2, 88(sp)
-    ld s6, 152(sp)
-    ld s1, 104(sp)
-    ld s5, 160(sp)
+    ld s4, 104(sp)
+    ld s3, 96(sp)
+    ld s2, 152(sp)
+    ld s6, 88(sp)
+    ld s1, 136(sp)
+    ld s5, 80(sp)
     ld s0, 120(sp)
     ld ra, 64(sp)
     addi sp, sp, 176
     ret
 .BB1:
-    lw t0, 128(sp)
+    lw t0, 112(sp)
     addi t1, t0, -1
     mv a0, t1
-    lw t2, 112(sp)
+    lw t2, 128(sp)
     mv a1, t2
-    lw t3, 84(sp)
+    lw t3, 160(sp)
     mv a2, t3
-    lw t4, 96(sp)
+    lw t4, 144(sp)
     mv a3, t4
-    sw t1, 80(sp)
+    sw t1, 164(sp)
     call hanoi
     mv t5, a0
     li t6, 10000
-    lw s0, 112(sp)
+    lw s0, 128(sp)
     mul s1, s0, t6
-    lw s2, 84(sp)
+    lw s2, 160(sp)
     add s3, s1, s2
     mv a0, s3
     call write
-    lw s4, 80(sp)
+    lw s4, 164(sp)
     mv a0, s4
-    lw s5, 96(sp)
+    lw s5, 144(sp)
     mv a1, s5
     mv a2, s0
     mv a3, s2
     call hanoi
     mv s6, a0
     mv a0, zero
-    ld s4, 136(sp)
-    ld s3, 144(sp)
-    ld s2, 88(sp)
-    ld s6, 152(sp)
-    ld s1, 104(sp)
-    ld s5, 160(sp)
+    ld s4, 104(sp)
+    ld s3, 96(sp)
+    ld s2, 152(sp)
+    ld s6, 88(sp)
+    ld s1, 136(sp)
+    ld s5, 80(sp)
     ld s0, 120(sp)
     ld ra, 64(sp)
     addi sp, sp, 176

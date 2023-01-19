@@ -12,24 +12,26 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/DataLayout.hpp"
-#include "cmmc/Transforms/TransformPass.hpp"
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdint>
+#include <cstdlib>
 #include <iostream>
+#include <map>
 #include <queue>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <variant>
-
-// TODO: stack coloring
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -91,100 +93,188 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
     std::unordered_map<Operand, uint32_t, OperandHasher> mapping;  // same size & alignment
 
     if(optLevel >= OptimizationLevel::O1) {
+        const auto getStorageKey = [&](const Operand& op) {
+            const auto type = stack.getType(op);
+            const auto size = type->getSize(dataLayout);
+            const auto alignment = type->getAlignment(dataLayout);
+            const auto key = static_cast<uint32_t>(size) * 1024 + static_cast<uint32_t>(alignment);
+            return key;
+        };
+
         // local reuse for spilled regs
 
-        std::unordered_set<Operand, OperandHasher> uniqueStackObjects;
         {
-            std::unordered_map<Operand, GMIRBasicBlock*, OperandHasher> ownerOfStackObjectsForSpilledRegs;
-            for(auto& block : func.blocks()) {
-                for(auto& stackObject : block->usedStackObjects()) {
-                    assert(stackObject.addressSpace == AddressSpace::Stack);
-                    const auto type = stack.getType(stackObject);
-                    if(!type->isStackStorage() && !stack.getMetadata(stackObject)) {
-                        if(auto iter = ownerOfStackObjectsForSpilledRegs.find(stackObject);
-                           iter != ownerOfStackObjectsForSpilledRegs.cend())
-                            iter->second = nullptr;
-                        else {
-                            ownerOfStackObjectsForSpilledRegs.emplace(stackObject, block.get());
+            std::unordered_set<Operand, OperandHasher> uniqueStackObjects;
+            {
+                std::unordered_map<Operand, GMIRBasicBlock*, OperandHasher> ownerOfStackObjectsForSpilledRegs;
+                for(auto& block : func.blocks()) {
+                    for(auto& stackObject : block->usedStackObjects()) {
+                        assert(stackObject.addressSpace == AddressSpace::Stack);
+                        const auto type = stack.getType(stackObject);
+                        if(!type->isStackStorage() && !stack.getMetadata(stackObject)) {
+                            if(auto iter = ownerOfStackObjectsForSpilledRegs.find(stackObject);
+                               iter != ownerOfStackObjectsForSpilledRegs.cend())
+                                iter->second = nullptr;
+                            else {
+                                ownerOfStackObjectsForSpilledRegs.emplace(stackObject, block.get());
+                            }
                         }
                     }
                 }
-            }
-            for(auto& [obj, owner] : ownerOfStackObjectsForSpilledRegs) {
-                if(owner) {
-                    uniqueStackObjects.insert(obj);
-                    // std::cerr << 'm' << obj.id << std::endl;
-                }
-            }
-        }
-
-        uint32_t idx = 0;
-        for(auto& block : func.blocks()) {
-
-            auto& instructions = block->instructions();
-            const StackObjectInterval initialInterval{ static_cast<uint32_t>(instructions.size()), 0 };
-
-            Intervals intervals;
-
-            for(auto& stackObject : block->usedStackObjects()) {
-                if(mapping.count(stackObject))
-                    continue;
-                assert(stackObject.addressSpace == AddressSpace::Stack);
-                const auto type = stack.getType(stackObject);
-                if(!type->isStackStorage()) {
-                    if(!uniqueStackObjects.count(stackObject)) {
-                        mapping.emplace(stackObject, idx++);
-                    } else {
-                        intervals.emplace(stackObject, initialInterval);
+                for(auto& [obj, owner] : ownerOfStackObjectsForSpilledRegs) {
+                    if(owner) {
+                        uniqueStackObjects.insert(obj);
+                        // std::cerr << 'm' << obj.id << std::endl;
                     }
                 }
             }
 
-            uint32_t id = 0;
-            auto updateInterval = [&](const Operand& obj) {
-                if(obj.addressSpace != AddressSpace::Stack)
-                    return;
-                if(auto iter = intervals.find(obj); iter != intervals.cend()) {
-                    auto& interval = iter->second;
-                    interval.begin = std::min(interval.begin, id);
-                    interval.end = std::max(interval.end, id + 1);
+            uint32_t idx = 0;
+            for(auto& block : func.blocks()) {
+
+                auto& instructions = block->instructions();
+                const StackObjectInterval initialInterval{ static_cast<uint32_t>(instructions.size()), 0 };
+
+                Intervals intervals;
+
+                for(auto& stackObject : block->usedStackObjects()) {
+                    if(mapping.count(stackObject))
+                        continue;
+                    assert(stackObject.addressSpace == AddressSpace::Stack);
+                    const auto type = stack.getType(stackObject);
+                    if(!type->isStackStorage()) {
+                        if(!uniqueStackObjects.count(stackObject)) {
+                            mapping.emplace(stackObject, idx++);
+                        } else {
+                            intervals.emplace(stackObject, initialInterval);
+                        }
+                    }
                 }
-            };
 
-            // save/restore
-            for(auto& inst : instructions) {
-                if(std::holds_alternative<CopyMInst>(inst)) {
-                    const auto& copy = std::get<CopyMInst>(inst);
-                    updateInterval(copy.src);
-                    updateInterval(copy.dst);
+                uint32_t id = 0;
+                auto updateInterval = [&](const Operand& obj) {
+                    if(obj.addressSpace != AddressSpace::Stack)
+                        return;
+                    if(auto iter = intervals.find(obj); iter != intervals.cend()) {
+                        auto& interval = iter->second;
+                        interval.begin = std::min(interval.begin, id);
+                        interval.end = std::max(interval.end, id + 1);
+                    }
+                };
+
+                // save/restore
+                for(auto& inst : instructions) {
+                    if(std::holds_alternative<CopyMInst>(inst)) {
+                        const auto& copy = std::get<CopyMInst>(inst);
+                        updateInterval(copy.src);
+                        updateInterval(copy.dst);
+                    }
+                    ++id;
                 }
-                ++id;
-            }
 
-            // group by size & alignments
-            std::unordered_map<uint32_t, std::vector<std::pair<Operand, StackObjectInterval>>> groups;
-            for(auto& [obj, interval] : intervals) {
-                const auto type = stack.getType(obj);
-                const auto size = type->getSize(dataLayout);
-                const auto alignment = type->getAlignment(dataLayout);
-                const auto key = static_cast<uint32_t>(size) * 1024 + static_cast<uint32_t>(alignment);
-                groups[key].emplace_back(obj, interval);
-            }
+                // group by size & alignments
+                std::unordered_map<uint32_t, std::vector<std::pair<Operand, StackObjectInterval>>> groups;
+                for(auto& [obj, interval] : intervals) {
+                    groups[getStorageKey(obj)].emplace_back(obj, interval);
+                }
 
-            for(auto& [key, groupedIntervals] : groups) {
-                CMMC_UNUSED(key);
-                auto [colorCount, color] = calcIntervalPartition(groupedIntervals);
+                for(auto& [key, groupedIntervals] : groups) {
+                    CMMC_UNUSED(key);
+                    auto [colorCount, color] = calcIntervalPartition(groupedIntervals);
 
-                for(auto& [obj, col] : color)
-                    mapping.emplace(obj, idx + col);
+                    for(auto& [obj, col] : color)
+                        mapping.emplace(obj, idx + col);
 
-                idx += colorCount;
+                    idx += colorCount;
+                }
             }
         }
 
-        if(optLevel >= OptimizationLevel::O2) {
-            // global reuse
+        // global reuse: incremental graph coloring
+        std::unordered_map<uint32_t, std::map<uint32_t, std::unordered_set<uint32_t>>> inferenceGraph;
+
+        constexpr size_t maxGraphSize = 5000;
+
+        for(auto& block : func.blocks()) {
+            std::unordered_map<uint32_t, std::vector<uint32_t>> ids;
+            std::unordered_set<uint32_t> proccessed;
+            for(auto obj : block->usedStackObjects()) {
+                if(stack.getType(obj)->isStackStorage())
+                    continue;
+
+                const auto id = mapping.at(obj);
+                if(proccessed.count(id))
+                    continue;
+
+                ids[getStorageKey(obj)].push_back(id);
+                proccessed.insert(id);
+            }
+
+            // build inference graph
+            for(auto& [key, arr] : ids) {
+                if(arr.size() > maxGraphSize)
+                    return mapping;  // The inference graph will be too large
+
+                auto& graph = inferenceGraph[key];
+                std::sort(arr.begin(), arr.end());
+                for(uint32_t i = 0; i < arr.size(); ++i) {
+                    auto& neighbours = graph[arr[i]];
+                    for(uint32_t j = 0; j < i; ++j) {
+                        neighbours.insert(arr[j]);  // high -> low
+                    }
+                }
+            }
         }
+
+        // calculate mex function
+        std::unordered_map<uint32_t, uint32_t> remapping;
+        uint32_t colorBase = 0;
+
+        for(auto& [key, graph] : inferenceGraph) {
+            std::unordered_map<uint32_t, uint32_t> color;
+            uint32_t colorCount = 0;  // == maximum degrees + 1
+
+            for(auto& [u, neighbours] : graph) {
+                uint32_t current = 0;
+
+                std::set<uint32_t> greater;
+                const auto maxMex = static_cast<uint32_t>(neighbours.size());
+
+                for(auto v : neighbours) {
+                    const auto col = color.at(v);
+                    if(col < current || col >= maxMex) {
+                        continue;
+                    }
+                    if(col == current) {
+                        ++current;
+                        while(!greater.empty() && *greater.begin() == current) {
+                            greater.erase(greater.begin());
+                            ++current;
+                        }
+                    } else {
+                        greater.insert(col);
+                    }
+                }
+
+                color.emplace(u, current);
+                colorCount = std::max(colorCount, current + 1);
+            }
+
+            for(auto [k, v] : color)
+                remapping.emplace(k, v + colorBase);
+            colorBase += colorCount;
+        }
+
+        std::unordered_map<Operand, uint32_t, OperandHasher> newMapping;
+        for(auto& [obj, id] : mapping) {
+            if(stack.getType(obj)->isStackStorage()) {
+                newMapping.emplace(obj, colorBase++);
+            } else {
+                newMapping.emplace(obj, remapping.at(id));
+            }
+        }
+
+        newMapping.swap(mapping);
     } else {
         // unique
         uint32_t idx = 0;
