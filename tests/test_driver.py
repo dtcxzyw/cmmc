@@ -9,7 +9,7 @@ import CodeGenTAC.irsim_quiet as irsim
 import platform
 import math
 
-gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -w "
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
