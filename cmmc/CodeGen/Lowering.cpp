@@ -617,7 +617,8 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
         case InstructionID::ZExt: {
             const auto mask = constant.allocate(inst->getType());
             constant.getMetadata(mask) = ConstantInteger::get(
-                inst->getType(), static_cast<intmax_t>((1ULL << inst->getType()->as<IntegerType>()->getBitwidth()) - 1));
+                inst->getType(),
+                static_cast<intmax_t>((1ULL << inst->getOperand(0)->getType()->as<IntegerType>()->getBitwidth()) - 1));
             ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::And, src, mask, dst);
             break;
         }
