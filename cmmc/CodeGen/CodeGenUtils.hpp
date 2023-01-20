@@ -42,7 +42,7 @@ void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand&
 void removeIdentityCopies(GMIRFunction& func);
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
 void legalizeStoreWithConstants(GMIRFunction& func);
-bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
+bool eliminateStackLoads(GMIRFunction& func, const Target& target);
 void applySSAPropagation(GMIRFunction& func);
 bool redirectGoto(GMIRFunction& func);
 

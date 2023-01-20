@@ -99,6 +99,7 @@ public:
         CMMC_UNUSED(analysis);
     }
     void legalizeFunc(GMIRFunction& func) const override;
+    void postLegalizeFunc(GMIRFunction& func) const override;
     void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
     [[nodiscard]] Operand getStackPointer() const noexcept override {
         return Operand{ MIPSAddressSpace::GPR, 29 };  // sp

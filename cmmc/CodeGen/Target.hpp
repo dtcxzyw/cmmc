@@ -54,6 +54,9 @@ public:
         return true;
     }
     virtual void legalizeFunc(GMIRFunction& func) const = 0;
+    virtual void postLegalizeFunc(GMIRFunction& func) const {
+        CMMC_UNUSED(func);
+    }
     virtual void emitAssembly(const GMIRModule& module, std::ostream& out) const = 0;
 
     // TODO: move to frame info

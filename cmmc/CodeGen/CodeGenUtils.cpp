@@ -14,6 +14,7 @@
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -39,7 +40,7 @@ bool removeUnusedInsts(GMIRFunction& func) {
                            [&](const ControlFlowIntrinsicMInst&) { q.push(&inst); },  //
                            [&](const CopyMInst& instRef) {
                                // store/special
-                               if(instRef.indirectDst || hasCustomReg(instRef.src) || hasCustomReg(instRef.dst))
+                               if(instRef.indirectDst || hasCustomReg(instRef.dst))
                                    q.push(&inst);
                                else {  // load/move
                                    writers[instRef.dst].push_back(&inst);
@@ -343,9 +344,12 @@ void legalizeStoreWithConstants(GMIRFunction& func) {
     }
 }
 
-bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
+bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
+    const auto stackPointer = target.getStackPointer();
     if(stackPointer == unusedOperand)
         return false;
+
+    const auto& privateStackOffsets = func.privateStackOffsets();
     bool modified = false;
 
     for(auto& block : func.blocks()) {
@@ -367,6 +371,20 @@ bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
 
             stack2Reg[offset] = reg;
             invMap[reg] = offset;
+        };
+
+        const auto reset = [&](bool call) {
+            std::vector<std::pair<const int32_t, Operand>> dirtyStackSlots;
+            for(auto& pair : stack2Reg) {
+                if(!privateStackOffsets.count(pair.first) ||
+                   (call && (pair.second.addressSpace >= AddressSpace::Custom && target.isCallerSaved(pair.second)))) {
+                    dirtyStackSlots.push_back(pair);
+                }
+            }
+            for(auto [offset, reg] : dirtyStackSlots) {
+                stack2Reg.erase(offset);
+                invMap.erase(reg);
+            }
         };
 
         for(auto& inst : instructions) {
@@ -394,15 +412,13 @@ bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
                 } else {
                     if(copy.indirectDst) {
                         // unknown store
-                        stack2Reg.clear();
-                        invMap.clear();
+                        reset(false);
                     } else {
                         invalidateReg(copy.dst);
                     }
                 }
             } else if(std::holds_alternative<CallMInst>(inst)) {
-                stack2Reg.clear();
-                invMap.clear();
+                reset(true);
             } else {
                 // update dirty
                 forEachDefOperands(inst, [&](Operand& dst) { invalidateReg(dst); });

@@ -17,9 +17,12 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
+// TODO: CSE
+// bool machineInstCSE(GMIRFunction& func) {}
 // bool constantPropagation(GMIRFunction& func, const Target& target) {}
 
 bool removeIndirectCopy(GMIRFunction& func) {
@@ -70,8 +73,14 @@ bool removeIndirectCopy(GMIRFunction& func) {
                 } else if(!copy.indirectDst)
                     invalidateReg(copy.dst);
             } else if(std::holds_alternative<CallMInst>(inst)) {
-                regValue.clear();
-                invMap.clear();
+                std::vector<Operand> nonVReg;
+                for(auto [reg, val] : regValue) {
+                    CMMC_UNUSED(val);
+                    if(reg.addressSpace != AddressSpace::VirtualReg)
+                        nonVReg.push_back(reg);
+                }
+                for(auto reg : nonVReg)
+                    invalidateReg(reg);
             } else {
                 // update dirty
                 // TODO: replace use
@@ -89,7 +98,7 @@ bool removeIndirectCopy(GMIRFunction& func) {
 
 bool genericPeepholeOpt(GMIRFunction& func, const Target& target) {
     bool modified = false;
-    modified |= eliminateStackLoads(func, target.getStackPointer());
+    modified |= eliminateStackLoads(func, target);
     modified |= removeIndirectCopy(func);
     modified |= removeUnusedInsts(func);
     return modified;

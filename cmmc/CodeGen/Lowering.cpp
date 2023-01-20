@@ -352,6 +352,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         if(optLevel >= OptimizationLevel::O1) {
             subTarget.peepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
+            while(genericPeepholeOpt(mfunc, target))
+                ;
+            assert(mfunc.verify(std::cerr, true));
         }
         // Stage 5: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2) {
@@ -359,6 +362,12 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             tailDuplication(mfunc);
             assert(mfunc.verify(std::cerr, true));
             identicalCodeFolding(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+
+            subTarget.peepholeOpt(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+            while(genericPeepholeOpt(mfunc, target))
+                ;
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 6: pre-RA scheduling, minimize register pressure
@@ -390,16 +399,19 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 11: remove unreachable block/continuous goto/unused label/peephold
-        if(optLevel >= OptimizationLevel::O1) {
-            simplifyCFG(mfunc, target);
-            assert(mfunc.verify(std::cerr, false));
-        }
-        // Stage 12: post peephole opt
+        // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             subTarget.postPeepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
+        // Stage 12: remove unreachable block/continuous goto/unused label/peephold
+        if(optLevel >= OptimizationLevel::O1) {
+            simplifyCFG(mfunc, target);
+            assert(mfunc.verify(std::cerr, false));
+        }
+        // Stage 13: post legalization
+        target.postLegalizeFunc(mfunc);
+        assert(mfunc.verify(std::cerr, false));
 
         // add to IPRA cache
         if(!useBuiltinRA)

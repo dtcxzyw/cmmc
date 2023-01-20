@@ -275,6 +275,7 @@ class GMIRFunction final {
     std::vector<Operand> mParameters;
     TemporaryPools mPools;
     std::list<std::unique_ptr<GMIRBasicBlock>> mBasicBlocks;
+    std::unordered_set<int32_t> mPrivateStackOffsets;
 
 public:
     TemporaryPools& pools() noexcept {
@@ -282,6 +283,9 @@ public:
     }
     [[nodiscard]] const TemporaryPools& pools() const noexcept {
         return mPools;
+    }
+    auto& privateStackOffsets() noexcept {
+        return mPrivateStackOffsets;
     }
     std::vector<Operand>& parameters() noexcept {
         return mParameters;

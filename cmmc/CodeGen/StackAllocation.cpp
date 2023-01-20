@@ -330,6 +330,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     {
         const auto mapping = renameStackObjects(func, stack, dataLayout, optLevel);
         std::unordered_map<uint32_t, size_t> slots;
+        std::unordered_map<uint32_t, bool> isPrivate;
 
         for(auto& [stackObject, color] : mapping) {
             if(auto iter = slots.find(color); iter != slots.cend()) {
@@ -341,8 +342,18 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
                 slots.emplace(color, allocationBase);
                 usedStackObjects.emplace(stackObject, allocationBase);
                 allocationBase += size;
+                isPrivate[color] = true;
+            }
+            // TODO: stack address leak analysis
+            if(stack.getMetadata(stackObject)) {
+                isPrivate[color] = false;
             }
         }
+
+        auto& privateStackOffsets = func.privateStackOffsets();
+        for(auto [color, attr] : isPrivate)
+            if(attr)
+                privateStackOffsets.insert(static_cast<int32_t>(slots.at(color)));
     }
 
     const auto sp = target.getStackPointer();
@@ -420,7 +431,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
         }
     }
 
-    eliminateStackLoads(func, sp);
+    eliminateStackLoads(func, target);
 
     // discard stack object usage tracking
     for(auto& block : func.blocks())

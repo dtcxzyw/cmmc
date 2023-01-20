@@ -68,48 +68,6 @@ public:
         return size <= 256;
     }
     void postPeepholeOpt(GMIRFunction& func) const override {
-        // legalize int constants using $dst
-
-        auto& constants = func.pools().pools[MIPSAddressSpace::Constant];
-
-        for(auto& block : func.blocks()) {
-            auto& instructions = block->instructions();
-            for(auto iter = instructions.begin(); iter != instructions.end();) {
-                const auto next = std::next(iter);
-
-                auto resolve = [&](Operand& cv, const Operand& dst) {
-                    if(cv.addressSpace != MIPSAddressSpace::Constant)
-                        return;
-                    const auto type = constants.getType(cv);
-                    if(!type->isInteger())
-                        return;
-                    const auto val = static_cast<ConstantInteger*>(constants.getMetadata(cv));
-                    const auto cval = val->getStorage();
-                    constexpr auto bits = 16U;
-                    constexpr auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
-                    const auto low = static_cast<uintmax_t>(cval) & mask;
-                    const auto high = (static_cast<uintmax_t>(cval) & (1ULL << (bits - 1))) ? ~mask : 0;
-                    const auto lowVal = static_cast<intmax_t>(low | high);
-                    if(lowVal != val->getSignExtended()) {
-                        // li $dst, cval
-                        // use $dst
-                        const auto tmp = dst;
-                        instructions.insert(iter, ConstantMInst{ tmp, val->getSignExtended() });
-                        cv = tmp;
-                    }
-                };
-
-                auto& inst = *iter;
-                // addiu
-                if(std::holds_alternative<BinaryArithmeticMInst>(inst)) {
-                    auto& binary = std::get<BinaryArithmeticMInst>(inst);
-                    resolve(binary.rhs, binary.dst != binary.lhs ? binary.dst : immReg);
-                }
-
-                iter = next;
-            }
-        }
-
         useZeroRegister(func, zero, 4U);
     }
 };
@@ -283,7 +241,49 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
         }
     }
 }
+void MIPSTarget::postLegalizeFunc(GMIRFunction& func) const {
+    // legalize int constants using $dst/$fp
 
+    auto& constants = func.pools().pools[MIPSAddressSpace::Constant];
+
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            const auto next = std::next(iter);
+
+            auto resolve = [&](Operand& cv, const Operand& dst) {
+                if(cv.addressSpace != MIPSAddressSpace::Constant)
+                    return;
+                const auto type = constants.getType(cv);
+                if(!type->isInteger())
+                    return;
+                const auto val = static_cast<ConstantInteger*>(constants.getMetadata(cv));
+                const auto cval = val->getStorage();
+                constexpr auto bits = 16U;
+                constexpr auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
+                const auto low = static_cast<uintmax_t>(cval) & mask;
+                const auto high = (static_cast<uintmax_t>(cval) & (1ULL << (bits - 1))) ? ~mask : 0;
+                const auto lowVal = static_cast<intmax_t>(low | high);
+                if(lowVal != val->getSignExtended()) {
+                    // li $dst, cval
+                    // use $dst
+                    const auto tmp = dst;
+                    instructions.insert(iter, ConstantMInst{ tmp, val->getSignExtended() });
+                    cv = tmp;
+                }
+            };
+
+            auto& inst = *iter;
+            // addiu
+            if(std::holds_alternative<BinaryArithmeticMInst>(inst)) {
+                auto& binary = std::get<BinaryArithmeticMInst>(inst);
+                resolve(binary.rhs, binary.dst != binary.lhs ? binary.dst : immReg);
+            }
+
+            iter = next;
+        }
+    }
+}
 CMMC_TARGET("mips", MIPSTarget);
 
 std::string_view getMIPSTextualName(uint32_t idx) noexcept;

@@ -23,24 +23,22 @@ write:
     ret
 
 hanoi:
-    addi sp, sp, -176
+    addi sp, sp, -160
     sd ra, 64(sp)
-    sd s0, 120(sp)
-    sd s5, 80(sp)
-    sd s1, 136(sp)
-    sd s6, 88(sp)
-    sd s2, 152(sp)
-    sd s3, 96(sp)
-    sd s4, 104(sp)
+    sd s0, 80(sp)
+    sd s1, 88(sp)
+    sd s2, 104(sp)
+    sd s3, 120(sp)
+    sd s4, 136(sp)
     mv t0, a0
     mv t1, a1
     mv t2, a2
     mv t3, a3
     li t4, 1
-    sw a3, 160(sp)
-    sw a2, 144(sp)
+    sw a3, 96(sp)
+    sw a2, 112(sp)
     sw a1, 128(sp)
-    sw a0, 112(sp)
+    sw a0, 144(sp)
     bne t0, t4, .BB1
     li t0, 10000
     mul t2, t1, t0
@@ -48,54 +46,43 @@ hanoi:
     mv a0, t4
     call write
     mv a0, zero
-    ld s4, 104(sp)
-    ld s3, 96(sp)
-    ld s2, 152(sp)
-    ld s6, 88(sp)
-    ld s1, 136(sp)
-    ld s5, 80(sp)
-    ld s0, 120(sp)
     ld ra, 64(sp)
-    addi sp, sp, 176
+    addi sp, sp, 160
     ret
 .BB1:
-    lw t0, 112(sp)
+    lw t0, 144(sp)
     addi t1, t0, -1
     mv a0, t1
     lw t2, 128(sp)
     mv a1, t2
-    lw t3, 160(sp)
+    lw t3, 96(sp)
     mv a2, t3
-    lw t4, 144(sp)
+    lw t4, 112(sp)
     mv a3, t4
-    sw t1, 164(sp)
+    sw t1, 148(sp)
     call hanoi
-    mv t5, a0
-    li t6, 10000
-    lw s0, 128(sp)
-    mul s1, s0, t6
-    lw s2, 160(sp)
-    add s3, s1, s2
-    mv a0, s3
+    li t5, 10000
+    lw t6, 128(sp)
+    mul s0, t6, t5
+    lw s1, 96(sp)
+    add s2, s0, s1
+    mv a0, s2
     call write
-    lw s4, 164(sp)
-    mv a0, s4
-    lw s5, 144(sp)
-    mv a1, s5
-    mv a2, s0
-    mv a3, s2
+    lw s3, 148(sp)
+    mv a0, s3
+    lw s4, 112(sp)
+    mv a1, s4
+    mv a2, t6
+    mv a3, s1
     call hanoi
-    mv s6, a0
     mv a0, zero
-    ld s4, 104(sp)
-    ld s3, 96(sp)
-    ld s2, 152(sp)
-    ld s6, 88(sp)
-    ld s1, 136(sp)
-    ld s5, 80(sp)
-    ld s0, 120(sp)
+    ld s4, 136(sp)
+    ld s3, 120(sp)
+    ld s2, 104(sp)
+    ld s1, 88(sp)
+    ld s0, 80(sp)
     ld ra, 64(sp)
-    addi sp, sp, 176
+    addi sp, sp, 160
     ret
 
 .globl main
@@ -107,7 +94,6 @@ main:
     li a2, 2
     li a3, 3
     call hanoi
-    mv t0, a0
     mv a0, zero
     ld ra, 64(sp)
     addi sp, sp, 80

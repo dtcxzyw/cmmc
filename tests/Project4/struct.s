@@ -68,17 +68,16 @@ main:
     addiu $sp, $sp, -32
     sw $ra, 16($sp)
     addiu $t0, $sp, 24
-    move $t1, $t0
     jal read
-    move $t2, $v0
-    sw $v0, 0($t1)
-    addiu $t3, $t0, 4
+    move $t1, $v0
+    sw $v0, 0($t0)
+    addiu $t2, $t0, 4
     jal read
-    move $t4, $v0
-    sw $v0, 0($t3)
+    move $t3, $v0
+    sw $v0, 0($t2)
     move $a0, $t0
     jal gcd
-    move $t5, $v0
+    move $t4, $v0
     move $a0, $v0
     jal write
     move $v0, $zero

@@ -478,7 +478,6 @@ if "tac" in test_cases:
     res.append(test("SPL TAC->IR project4 self", tests_path +
                     "/Project4", ".spl", spl_codegen_tac))
 
-
 if "codegen" in test_cases:
     res.append(test("SPL SPL->MIPS project4", tests_path +
                     "/TAC2MC", ".spl", spl_codegen_mips))
@@ -488,6 +487,8 @@ if "codegen" in test_cases:
                     "/TAC2MC", ".ir", spl_codegen_mips))
     res.append(test("SPL SPL->MIPS project4 self", tests_path +
                     "/Project4", ".spl", spl_codegen_mips))
+    # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
+    #                "/Project4", ".spl", spl_codegen_riscv64))
     res.append(test("SysY SysY->MIPS functional", tests_path +
                     "/SysY2022/functional", ".sy", sysy_codegen_mips))
     res.append(test("SysY SysY->RISCV64 functional", tests_path +
@@ -495,8 +496,8 @@ if "codegen" in test_cases:
 
 
 if generate_ref:
-    test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
-    test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+    #test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+    #test("Reference Spl", tests_path + "/", ".spl", spl_ref)
     test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
     test("Reference Spl->TAC Extra", tests_path +
          "/Project3", ".spl", spl_tac_ref)
