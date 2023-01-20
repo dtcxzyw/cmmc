@@ -21,7 +21,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void simplifyCFG(GMIRFunction& func);
+void simplifyCFG(GMIRFunction& func, const Target& target);
 void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Operand, OperandHasher>& operandMap);
 void optimizeBlockLayout(GMIRFunction& func, const Target& target);
 void schedule(GMIRFunction& func, const Target& target, bool preRA);
@@ -29,17 +29,20 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
 void identicalCodeFolding(GMIRFunction& func);
 void tailDuplication(GMIRFunction& func);
 void simplifyCFGWithUniqueTerminator(GMIRFunction& func);
+bool genericPeepholeOpt(GMIRFunction& func, const Target& target);
 
-void removeUnusedInsts(GMIRFunction& func);
+bool removeUnusedInsts(GMIRFunction& func);
+bool removeIndirectCopy(GMIRFunction& func);
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
 void forEachUseOperands(GMIRFunction& func, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
 void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
+void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor);
 void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
 void removeIdentityCopies(GMIRFunction& func);
 void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
 void legalizeStoreWithConstants(GMIRFunction& func);
-void eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
+bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
 void applySSAPropagation(GMIRFunction& func);
 bool redirectGoto(GMIRFunction& func);
 

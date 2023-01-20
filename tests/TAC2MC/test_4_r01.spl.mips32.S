@@ -35,16 +35,14 @@ hanoi:
     move $t2, $a2
     move $t3, $a3
     li $t4, 1
-    sw $t3, 52($sp)
-    sw $t2, 44($sp)
-    sw $t1, 36($sp)
-    sw $t0, 28($sp)
+    sw $a3, 52($sp)
+    sw $a2, 44($sp)
+    sw $a1, 36($sp)
+    sw $a0, 28($sp)
     bne $t0, $t4, .BB1
     li $t0, 10000
-    lw $t1, 36($sp)
     mult $t1, $t0
     mflo $t2
-    lw $t3, 52($sp)
     addu $t4, $t2, $t3
     move $a0, $t4
     jal write

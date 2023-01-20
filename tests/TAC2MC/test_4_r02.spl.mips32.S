@@ -29,14 +29,9 @@ main:
     sw $ra, 16($sp)
     jal read
     move $t0, $v0
-    sw $t0, 24($sp)
+    sw $v0, 24($sp)
     blez $t0, .BB1
-    li $a0, 1
-    jal write
-    move $v0, $zero
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 32
-    jr $ra
+    b .BB3
 .BB1:
     lw $t0, 24($sp)
     bgez $t0, .BB2
@@ -48,6 +43,13 @@ main:
     jr $ra
 .BB2:
     move $a0, $zero
+    jal write
+    move $v0, $zero
+    lw $ra, 16($sp)
+    addiu $sp, $sp, 32
+    jr $ra
+.BB3:
+    li $a0, 1
     jal write
     move $v0, $zero
     lw $ra, 16($sp)

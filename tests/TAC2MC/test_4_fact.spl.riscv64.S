@@ -27,11 +27,8 @@ fact:
     sd ra, 64(sp)
     mv t0, a0
     li t1, 1
-    sw t0, 80(sp)
+    sw a0, 80(sp)
     bne t0, t1, .BB1
-    lw t0, 80(sp)
-    mv a0, t0
-    ld ra, 64(sp)
     addi sp, sp, 96
     ret
 .BB1:
@@ -54,13 +51,10 @@ main:
     call read
     mv t0, a0
     li t1, 1
-    sw t0, 80(sp)
+    sw a0, 80(sp)
     ble t0, t1, .BB3
-    lw t0, 80(sp)
-    mv a0, t0
     call fact
     mv t1, a0
-    mv a0, t1
     call write
     mv a0, zero
     ld ra, 64(sp)

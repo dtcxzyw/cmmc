@@ -347,12 +347,20 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             subTarget.peepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 5: pre-RA scheduling, minimize register pressure
+        // Stage 5: ICF & Tail duplication
+        if(optLevel >= OptimizationLevel::O2) {
+            // tail duplication as the small block inliner does in CMMC IR
+            tailDuplication(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+            identicalCodeFolding(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
+        // Stage 6: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
             schedule(mfunc, target, true);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 6: register allocation
+        // Stage 7: register allocation
         bool useBuiltinRA = false;
         {
             if(!target.builtinRA(mfunc))
@@ -361,43 +369,30 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                 useBuiltinRA = true;
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 7: legalize stack objects, stack -> sp
+        // Stage 8: legalize stack objects, stack -> sp
         if(!target.builtinSA(mfunc))
             allocateStackObjects(mfunc, target, hasCall(func), optLevel);
         assert(mfunc.verify(std::cerr, true));
-        // Stage 8: post-RA scheduling, minimize latency
+        // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
             schedule(mfunc, target, false);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 9: post peephole opt
-        if(optLevel >= OptimizationLevel::O1) {
-            subTarget.postPeepholeOpt(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-        }
-        // Stage 10: ICF & Tail duplication
-        if(optLevel >= OptimizationLevel::O2) {
-            identicalCodeFolding(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-            // tail duplication as the small block inliner does in CMMC IR
-            tailDuplication(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-        }
-
-        // Stage 11: code layout opt
+        // Stage 10: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
             simplifyCFGWithUniqueTerminator(mfunc);
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 12: remove unreachable block/continuous goto/unused label
+        // Stage 11: remove unreachable block/continuous goto/unused label/peephold
         if(optLevel >= OptimizationLevel::O1) {
-            simplifyCFG(mfunc);
-
-            // generic peephole opt
-            eliminateStackLoads(mfunc, target.getStackPointer());
-            // TODO: more peephole
+            simplifyCFG(mfunc, target);
             assert(mfunc.verify(std::cerr, false));
+        }
+        // Stage 12: post peephole opt
+        if(optLevel >= OptimizationLevel::O1) {
+            subTarget.postPeepholeOpt(mfunc);
+            assert(mfunc.verify(std::cerr, true));
         }
 
         // add to IPRA cache

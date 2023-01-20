@@ -55,10 +55,10 @@ test:
     sw $s5, 160($sp)
     sw $s4, 168($sp)
     sw $s3, 176($sp)
-    sw $t0, 132($sp)
-    sw $t1, 136($sp)
-    sw $t2, 140($sp)
-    sw $t3, 144($sp)
+    sw $a0, 132($sp)
+    sw $a1, 136($sp)
+    sw $a2, 140($sp)
+    sw $a3, 144($sp)
     sw $t4, 128($sp)
     sw $t5, 116($sp)
     sw $t6, 108($sp)
@@ -69,9 +69,7 @@ test:
     sw $s1, 172($sp)
     sw $s2, 80($sp)
     bnez $t0, .BB1
-    lw $t0, 132($sp)
-    move $v0, $t0
-    lw $s7, 84($sp)
+    move $v0, $a0
     lw $s6, 88($sp)
     lw $s5, 96($sp)
     lw $s4, 104($sp)
@@ -79,7 +77,6 @@ test:
     lw $s2, 120($sp)
     lw $s1, 124($sp)
     lw $s0, 148($sp)
-    lw $ra, 72($sp)
     addiu $sp, $sp, 184
     jr $ra
 .BB1:
@@ -193,10 +190,10 @@ main:
     sw $s2, 52($sp)
     sw $s3, 56($sp)
     sw $s4, 60($sp)
-    sw $s5, 64($sp)
+    sw $v0, 64($sp)
     jal test
     move $s6, $v0
-    move $a0, $s6
+    move $a0, $v0
     jal write
     move $v0, $zero
     lw $ra, 72($sp)

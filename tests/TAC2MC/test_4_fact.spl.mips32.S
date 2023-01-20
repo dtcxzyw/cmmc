@@ -28,11 +28,9 @@ fact:
     sw $ra, 16($sp)
     move $t0, $a0
     li $t1, 1
-    sw $t0, 24($sp)
+    sw $a0, 24($sp)
     bne $t0, $t1, .BB1
-    lw $t0, 24($sp)
-    move $v0, $t0
-    lw $ra, 16($sp)
+    move $v0, $a0
     addiu $sp, $sp, 32
     jr $ra
 .BB1:
@@ -56,13 +54,12 @@ main:
     jal read
     move $t0, $v0
     li $t1, 1
-    sw $t0, 24($sp)
+    sw $v0, 24($sp)
     ble $t0, $t1, .BB3
-    lw $t0, 24($sp)
-    move $a0, $t0
+    move $a0, $v0
     jal fact
     move $t1, $v0
-    move $a0, $t1
+    move $a0, $v0
     jal write
     move $v0, $zero
     lw $ra, 16($sp)

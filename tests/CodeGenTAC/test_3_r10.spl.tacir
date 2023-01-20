@@ -1,13 +1,15 @@
 FUNCTION main :
 READ v0
 IF v0 <= #0 GOTO label1
-WRITE #1
-RETURN #0
+GOTO label3
 LABEL label1 :
 IF v0 >= #0 GOTO label2
 WRITE #-1
 RETURN #0
 LABEL label2 :
 WRITE #0
+RETURN #0
+LABEL label3 :
+WRITE #1
 RETURN #0
 

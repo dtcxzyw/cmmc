@@ -33,6 +33,8 @@ void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Op
             operand = iter->second;
     });
 
+    while(removeIndirectCopy(func))
+        ;
     removeIdentityCopies(func);
     removeUnusedInsts(func);
 }

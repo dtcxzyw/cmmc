@@ -37,15 +37,13 @@ hanoi:
     mv t2, a2
     mv t3, a3
     li t4, 1
-    sw t3, 160(sp)
-    sw t2, 144(sp)
-    sw t1, 128(sp)
-    sw t0, 112(sp)
+    sw a3, 160(sp)
+    sw a2, 144(sp)
+    sw a1, 128(sp)
+    sw a0, 112(sp)
     bne t0, t4, .BB1
     li t0, 10000
-    lw t1, 128(sp)
     mul t2, t1, t0
-    lw t3, 160(sp)
     add t4, t2, t3
     mv a0, t4
     call write

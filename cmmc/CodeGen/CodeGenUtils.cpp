@@ -28,7 +28,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void removeUnusedInsts(GMIRFunction& func) {
+bool removeUnusedInsts(GMIRFunction& func) {
     std::unordered_map<Operand, std::vector<GMIRInst*>, OperandHasher> writers;
     std::queue<GMIRInst*> q;
     const auto hasCustomReg = [](const Operand& op) { return op.addressSpace >= AddressSpace::Custom; };
@@ -115,6 +115,7 @@ void removeUnusedInsts(GMIRFunction& func) {
 
     for(auto& block : func.blocks())
         block->instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
+    return !remove.empty();
 }
 
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
@@ -171,7 +172,7 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
     }
 }
 
-static void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor) {
+void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor) {
     std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
                          [&](auto& inst) { functor(inst.dst); },
                          [&](CopyMInst& inst) {
@@ -342,9 +343,10 @@ void legalizeStoreWithConstants(GMIRFunction& func) {
     }
 }
 
-void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
+bool eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
     if(stackPointer == unusedOperand)
-        return;
+        return false;
+    bool modified = false;
 
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
@@ -383,6 +385,7 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
                         copy.src = srcReg;
                         copy.indirectSrc = false;
                         copy.srcOffset = 0;
+                        modified = true;
                     }
 
                     updateMap(dst, oldOffset);
@@ -397,9 +400,7 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
                         invalidateReg(copy.dst);
                     }
                 }
-            } else if(std::holds_alternative<BranchCompareMInst>(inst) || std::holds_alternative<BranchMInst>(inst) ||
-                      std::holds_alternative<CallMInst>(inst) || std::holds_alternative<UnreachableMInst>(inst) ||
-                      std::holds_alternative<RetMInst>(inst)) {
+            } else if(std::holds_alternative<CallMInst>(inst)) {
                 stack2Reg.clear();
                 invMap.clear();
             } else {
@@ -409,7 +410,9 @@ void eliminateStackLoads(GMIRFunction& func, Operand stackPointer) {
         }
     }
 
-    removeIdentityCopies(func);
+    if(modified)
+        removeIdentityCopies(func);
+    return modified;
 }
 
 // TODO: fix it for mips/riscv backends

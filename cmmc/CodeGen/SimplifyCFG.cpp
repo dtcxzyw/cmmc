@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
@@ -253,7 +254,7 @@ static bool conditional2Unconditional(GMIRFunction& func) {
     return modified;
 }
 
-void simplifyCFG(GMIRFunction& func) {
+void simplifyCFG(GMIRFunction& func, const Target& target) {
     while(true) {
         bool modified = false;
         modified |= removeUnreachableCode(func);
@@ -261,6 +262,7 @@ void simplifyCFG(GMIRFunction& func) {
         modified |= redirectGoto(func);
         modified |= removeEmptyBlocks(func);
         modified |= removeUnusedLabels(func);
+        modified |= genericPeepholeOpt(func, target);
 
         if(!modified)
             return;

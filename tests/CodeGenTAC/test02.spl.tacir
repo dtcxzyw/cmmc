@@ -12,11 +12,13 @@ RETURN v3
 FUNCTION main :
 READ v4
 IF v4 <= #1 GOTO label3
+GOTO label4
+LABEL label3 :
+WRITE #1
+RETURN #0
+LABEL label4 :
 ARG v4
 v5 := CALL fact
 WRITE v5
-RETURN #0
-LABEL label3 :
-WRITE #1
 RETURN #0
 

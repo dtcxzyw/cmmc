@@ -28,14 +28,9 @@ main:
     sd ra, 64(sp)
     call read
     mv t0, a0
-    sw t0, 80(sp)
+    sw a0, 80(sp)
     ble t0, zero, .BB1
-    li a0, 1
-    call write
-    mv a0, zero
-    ld ra, 64(sp)
-    addi sp, sp, 96
-    ret
+    j .BB3
 .BB1:
     lw t0, 80(sp)
     bge t0, zero, .BB2
@@ -47,6 +42,13 @@ main:
     ret
 .BB2:
     mv a0, zero
+    call write
+    mv a0, zero
+    ld ra, 64(sp)
+    addi sp, sp, 96
+    ret
+.BB3:
+    li a0, 1
     call write
     mv a0, zero
     ld ra, 64(sp)
