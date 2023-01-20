@@ -27,6 +27,8 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target);
 void schedule(GMIRFunction& func, const Target& target, bool preRA);
 void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel);
 void identicalCodeFolding(GMIRFunction& func);
+void tailDuplication(GMIRFunction& func);
+void simplifyCFGWithUniqueTerminator(GMIRFunction& func);
 
 void removeUnusedInsts(GMIRFunction& func);
 void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
@@ -39,6 +41,7 @@ void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
 void legalizeStoreWithConstants(GMIRFunction& func);
 void eliminateStackLoads(GMIRFunction& func, Operand stackPointer);
 void applySSAPropagation(GMIRFunction& func);
+bool redirectGoto(GMIRFunction& func);
 
 void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
                   const std::function<void()>& emitText,

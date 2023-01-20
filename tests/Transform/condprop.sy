@@ -1,0 +1,16 @@
+int main() {
+    int i = getint();
+    if(i == 0) {
+        if(i == 0) {
+            putint(10); // always execute
+        }
+        if(i != 0) {
+            putint(12); // TODO: never execute
+        }
+        putint(i-1); // TODO: constant propagation
+    }
+    else {
+        putint(i);
+    }
+    return 0;
+}

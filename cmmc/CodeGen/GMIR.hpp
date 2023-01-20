@@ -219,18 +219,14 @@ using GMIRInst = std::variant<CopyMInst, ConstantMInst, GlobalAddressMInst, /*Ad
                               CallMInst, UnreachableMInst, RetMInst, ControlFlowIntrinsicMInst>;
 
 class GMIRBasicBlock final {
-    String mLabel;
     GMIRFunction* mFunction;
     double mTripCount;
     std::unordered_set<Operand, OperandHasher> mUsedStackObjects;
     std::list<GMIRInst> mInstructions;
 
 public:
-    explicit GMIRBasicBlock(const String& label, GMIRFunction* function, double blockTripCount)
-        : mLabel{ label }, mFunction{ function }, mTripCount{ blockTripCount } {}
-    const String& label() const noexcept {
-        return mLabel;
-    }
+    explicit GMIRBasicBlock(GMIRFunction* function, double blockTripCount)
+        : mFunction{ function }, mTripCount{ blockTripCount } {}
     GMIRFunction* getFunction() const noexcept {
         return mFunction;
     }
@@ -239,6 +235,9 @@ public:
     }
     std::list<GMIRInst>& instructions() noexcept {
         return mInstructions;
+    }
+    auto& usedStackObjects() const noexcept {
+        return mUsedStackObjects;
     }
     auto& usedStackObjects() noexcept {
         return mUsedStackObjects;

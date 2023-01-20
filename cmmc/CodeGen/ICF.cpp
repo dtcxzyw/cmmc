@@ -23,6 +23,7 @@
 CMMC_NAMESPACE_BEGIN
 
 static bool isIdentical(GMIRBasicBlock* lhs, GMIRBasicBlock* rhs, const GMIRCFGAnalysisResult& cfg) {
+    // TODO: check used stack objects?
     auto& inst1 = lhs->instructions();
     auto& inst2 = rhs->instructions();
     if(inst1.size() != inst2.size())
@@ -47,7 +48,6 @@ static bool isIdentical(GMIRBasicBlock* lhs, GMIRBasicBlock* rhs, const GMIRCFGA
     return true;
 }
 
-bool redirectGoto(GMIRFunction& func);
 void identicalCodeFolding(GMIRFunction& func) {
     const auto cfg = calcGMIRCFG(func);
 
@@ -81,7 +81,8 @@ void identicalCodeFolding(GMIRFunction& func) {
             block->instructions().emplace_back(BranchMInst{ redirectTarget });
         }
     }
-    redirectGoto(func);  // apply before code layout
+    while(redirectGoto(func))  // apply before code layout
+        ;
 }
 
 CMMC_NAMESPACE_END

@@ -421,6 +421,10 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     }
 
     eliminateStackLoads(func, sp);
+
+    // discard stack object usage tracking
+    for(auto& block : func.blocks())
+        block->usedStackObjects() = {};
 }
 
 CMMC_NAMESPACE_END

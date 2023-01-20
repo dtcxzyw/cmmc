@@ -48,15 +48,17 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
         assert(block->verify(std::cerr, true));
         const auto& lastInst = block->instructions().back();
         std::visit(Overload{ [&](const BranchCompareMInst& inst) {
-                                connect(block.get(), inst.targetBlock, inst.branchProb);
-                                if(next != blocks.cend())
-                                    connect(block.get(), next->get(), 1.0 - inst.branchProb);
+                                if(next != blocks.cend()) {
+                                    if(next->get() == inst.targetBlock) {
+                                        connect(block.get(), inst.targetBlock, 1.0);
+                                    } else {
+                                        connect(block.get(), inst.targetBlock, inst.branchProb);
+                                        connect(block.get(), next->get(), 1.0 - inst.branchProb);
+                                    }
+                                } else
+                                    connect(block.get(), inst.targetBlock, inst.branchProb);
                             },
-                             [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock, 1.0); },
-                             [&](const auto&) {
-                                 if(next != blocks.cend())
-                                     connect(block.get(), next->get(), 1.0);
-                             } },
+                             [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock, 1.0); }, [&](const auto&) {} },
                    lastInst);
     }
 

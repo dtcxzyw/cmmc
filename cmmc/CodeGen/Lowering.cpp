@@ -117,10 +117,8 @@ GMIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
-    const auto ret = blocks.insert(
-        std::next(iter),
-        std::make_unique<GMIRBasicBlock>(String::get((std::string{ mCurrentBasicBlock->label().prefix() } + ".next").c_str()),
-                                         mCurrentBasicBlock->getFunction(), blockTripCount));
+    const auto ret =
+        blocks.insert(std::next(iter), std::make_unique<GMIRBasicBlock>(mCurrentBasicBlock->getFunction(), blockTripCount));
     (*ret)->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
     return ret->get();
 }
@@ -152,7 +150,7 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
 
     for(auto block : func->blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
-        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(block->getLabel(), &mfunc, tripCount));
+        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc, tripCount));
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
@@ -377,16 +375,18 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             subTarget.postPeepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 10: ICF
-        /* TODO: select a better position to apply ICF
-        // Applying ICF before BlockLayoutOpt may hurt the performance (code locality)
+        // Stage 10: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2) {
             identicalCodeFolding(mfunc);
             assert(mfunc.verify(std::cerr, true));
+            // tail duplication as the small block inliner does in CMMC IR
+            tailDuplication(mfunc);
+            assert(mfunc.verify(std::cerr, true));
         }
-        */
+
         // Stage 11: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
+            simplifyCFGWithUniqueTerminator(mfunc);
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }

@@ -18,6 +18,7 @@
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -27,9 +28,13 @@
 #include <variant>
 #include <vector>
 
-// TODO: implement ExtTsp used by LLVM & BOLT
-
 CMMC_NAMESPACE_BEGIN
+
+static StringOpt blockPlacementAlgo;  // NOLINT
+
+CMMC_INIT_OPTIONS_BEGIN
+blockPlacementAlgo.withDefault("GA").setName("placement-algo", 'M').setDesc("The algorithm for machine block placement");
+CMMC_INIT_OPTIONS_END
 
 using NodeIndex = uint32_t;
 using BlockSeq = std::vector<NodeIndex>;
@@ -41,7 +46,27 @@ struct BranchEdge final {
     double prob;
 };
 
-static CostT evalCost(BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
+// ExtTsp algorithm, see also https://reviews.llvm.org/D113424 and
+// the CGO'19 paper for BOLT: https://research.fb.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
+
+static CostT evalExtTspScore(const BlockSeq& seq, const std::vector<uint32_t>& weights, const std::vector<double>& freq,
+                             const std::vector<BranchEdge>& edges) {
+    CMMC_UNUSED(seq);
+    CMMC_UNUSED(weights);
+    CMMC_UNUSED(freq);
+    CMMC_UNUSED(edges);
+    reportNotImplemented();
+}
+static BlockSeq solveExtTsp(const std::vector<uint32_t>& weights, const std::vector<double>& freq,
+                            const std::vector<BranchEdge>& edges) {
+    CMMC_UNUSED(weights);
+    CMMC_UNUSED(freq);
+    CMMC_UNUSED(edges);
+    CMMC_UNUSED(evalExtTspScore);
+    reportNotImplemented();
+}
+
+static CostT evalCost(const BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
                       const std::vector<double>& freq, const std::vector<uint32_t>& weights, uint32_t bufferSize) {
     assert(seq[0] == 0);
     for(uint32_t idx = 0; idx < seq.size(); ++idx)
@@ -171,7 +196,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     if(func.blocks().size() <= 2)
         return;
 
-    const auto& cfg = calcGMIRCFG(func);
+    const auto cfg = calcGMIRCFG(func);
     const auto& subTarget = target.getSubTarget();
     CMMC_UNUSED(subTarget);
 
@@ -198,14 +223,23 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     }
 
     // sort graph
-    BlockSeq seq(func.blocks().size());
-    std::iota(seq.begin(), seq.end(), 0U);
+    BlockSeq seq;
 
-    const auto bufferSize = subTarget.microOpBufferSize();
-    if(seq.size() <= 10) {
-        solveBruteForce(seq, edges, freq, weights, bufferSize);
+    if(blockPlacementAlgo.get() == "GA") {
+        seq.resize((func.blocks().size()));
+        std::iota(seq.begin(), seq.end(), 0U);
+
+        const auto bufferSize = subTarget.microOpBufferSize();
+        if(seq.size() <= 10) {
+            solveBruteForce(seq, edges, freq, weights, bufferSize);
+        } else {
+            solveGA(seq, edges, freq, weights, bufferSize);
+        }
+    } else if(blockPlacementAlgo.get() == "ExtTSP") {
+        // Ext-TSP algo
+        seq = solveExtTsp(weights, freq, edges);
     } else {
-        solveGA(seq, edges, freq, weights, bufferSize);
+        DiagnosticsContext::get().attach<UnrecognizedInput>("register allocation method", blockPlacementAlgo.get()).reportFatal();
     }
 
     // apply changes
@@ -219,30 +253,35 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     for(uint32_t i = 0; i < newBlocks.size(); ++i)
         func.blocks().emplace_back(std::move(newBlocks[seq[i]]));
 
-    for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
+    for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend();) {
         auto& block = *iter;
         const auto nextIter = std::next(iter);
 
         const auto& terminator = block->instructions().back();
         const auto ensureNext = [&](const GMIRBasicBlock* next) {
             if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                const auto newLabel = String::get((std::string{ block->label().prefix() } + ".next").c_str());
-                auto newBlock = std::make_unique<GMIRBasicBlock>(newLabel, &func, next->getTripCount());
+                auto newBlock = std::make_unique<GMIRBasicBlock>(&func, next->getTripCount());
                 newBlock->instructions().emplace_back(BranchMInst{ next });
                 newBlock->usedStackObjects() = block->usedStackObjects();
-                iter = func.blocks().insert(nextIter, std::move(newBlock));
+                func.blocks().insert(nextIter, std::move(newBlock));
             }
         };
 
         if(std::holds_alternative<BranchCompareMInst>(terminator)) {
             auto& branchInst = std::get<BranchCompareMInst>(terminator);
             const auto& successors = cfg.successors(block.get());
-            assert(successors.size() == 2);
-            if(branchInst.targetBlock == successors[0].block) {
-                ensureNext(successors[1].block);
-            } else
+            if(successors.size() == 2) {
+                if(branchInst.targetBlock == successors[0].block) {
+                    ensureNext(successors[1].block);
+                } else
+                    ensureNext(successors[0].block);
+            } else if(successors.size() == 1) {
                 ensureNext(successors[0].block);
+            } else
+                reportUnreachable();
         }
+
+        iter = nextIter;
     }
 }
 

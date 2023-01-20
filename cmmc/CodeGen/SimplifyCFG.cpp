@@ -229,6 +229,30 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
     return !redirects.empty();
 }
 
+static bool conditional2Unconditional(GMIRFunction& func) {
+    bool modified = false;
+    for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
+        const auto next = std::next(iter);
+        if(next == func.blocks().end())
+            break;
+
+        const auto currentBlock = iter->get();
+        const auto nextBlock = next->get();
+
+        auto& terminator = currentBlock->instructions().back();
+        if(std::holds_alternative<BranchCompareMInst>(terminator)) {
+            const auto conditional = std::get<BranchCompareMInst>(terminator);
+            if(conditional.targetBlock == nextBlock) {
+                terminator = BranchMInst{ nextBlock };
+                modified = true;
+            }
+        }
+
+        iter = next;
+    }
+    return modified;
+}
+
 void simplifyCFG(GMIRFunction& func) {
     while(true) {
         bool modified = false;
@@ -237,6 +261,17 @@ void simplifyCFG(GMIRFunction& func) {
         modified |= redirectGoto(func);
         modified |= removeEmptyBlocks(func);
         modified |= removeUnusedLabels(func);
+
+        if(!modified)
+            return;
+    }
+}
+
+void simplifyCFGWithUniqueTerminator(GMIRFunction& func) {
+    while(true) {
+        bool modified = false;
+        modified |= conditional2Unconditional(func);
+        modified |= redirectGoto(func);
 
         if(!modified)
             return;
