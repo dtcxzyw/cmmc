@@ -239,6 +239,12 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                     default:
                         break;
                 }
+                // SysY runtime alias
+                if(symbol.prefix() == "starttime"sv) {
+                    symbol = String::get("_sysy_starttime");
+                } else if(symbol.prefix() == "stoptime"sv) {
+                    symbol = String::get("_sysy_stoptime");
+                }
                 symbols.push_back(GMIRSymbol{ symbol, func->getLinkage(), dataLayout.getCodeAlignment(), std::monostate{} });
             } else {
                 symbols.push_back(
