@@ -57,7 +57,7 @@ void StageStorage::printNested(uint32_t depth, double total) const {
     for(auto& [k, v] : mNestedStages)
         storages.emplace_back(&k, v.get());
     std::sort(storages.begin(), storages.end(),
-              [](auto& lhs, auto& rhs) { return lhs.second->creationTime() < rhs.second->creationTime(); });
+              [](auto& lhs, auto& rhs) { return lhs.second->duration() > rhs.second->duration(); });
     for(auto [name, stage] : storages) {
         const auto count = stage->count();
         const auto duraiton = static_cast<double>(stage->duration().count());

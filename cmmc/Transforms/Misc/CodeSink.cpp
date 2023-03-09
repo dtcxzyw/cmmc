@@ -12,9 +12,10 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
-#include <cmmc/Analysis/DominateAnalysis.hpp>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -40,7 +41,7 @@ public:
         if(!blockTripCount.isAvailable())
             return false;
 
-        const auto& dom = analysis.get<DominateAnalysis>(func);
+        const auto& cfg = analysis.get<CFGAnalysis>(func);
 
         bool modified = false;
         // auto& target = analysis.module().getTarget();
@@ -60,10 +61,22 @@ public:
             if(trueTarget.getTarget() == falseTarget.getTarget())
                 continue;
 
-            const auto moveToTrueTarget = dom.dominate(block, trueTarget.getTarget()) &&
-                blockTripCount.query(trueTarget.getTarget()) < freq - significantBlockTripCountDifference;
-            const auto moveToFalseTarget = dom.dominate(block, falseTarget.getTarget()) &&
-                blockTripCount.query(falseTarget.getTarget()) < freq - significantBlockTripCountDifference;
+            const auto shouldMoveToTarget = [&](const BranchTarget& target) {
+                const auto targetBlock = target.getTarget();
+                if(block == targetBlock)
+                    return false;
+
+                for(auto [pred, predTarget] : cfg.predecessors(targetBlock)) {
+                    CMMC_UNUSED(predTarget);
+                    if(pred != block) {
+                        return false;
+                    }
+                }
+                return blockTripCount.query(targetBlock) < freq - significantBlockTripCountDifference;
+            };
+
+            const auto moveToTrueTarget = shouldMoveToTarget(trueTarget);
+            const auto moveToFalseTarget = shouldMoveToTarget(falseTarget);
             if(!moveToTrueTarget && !moveToFalseTarget)
                 continue;
 
@@ -97,12 +110,12 @@ public:
                 }
             }
 
-            std::unordered_map<Value*, BlockArgument*> argMap;
+            std::unordered_map<Value*, std::vector<BlockArgument*>> argMap;
             const auto buildArgMap = [&](const BranchTarget& branchTarget) {
                 const auto& args1 = branchTarget.getArgs();
                 const auto& args2 = branchTarget.getTarget()->args();
                 for(uint32_t idx = 0; idx < args1.size(); ++idx)
-                    argMap.emplace(args1[idx], args2[idx]);
+                    argMap[args1[idx]].push_back(args2[idx]);
             };
             buildArgMap(trueTarget);
             buildArgMap(falseTarget);
@@ -136,7 +149,8 @@ public:
                 replace.emplace(inst, newInst);
 
                 if(auto it = argMap.find(inst); it != argMap.cend())
-                    replace.emplace(it->second, newInst);
+                    for(auto arg : it->second)
+                        replace.emplace(arg, newInst);
                 modified = true;
             }
 

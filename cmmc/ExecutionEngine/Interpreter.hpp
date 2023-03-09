@@ -33,7 +33,8 @@ enum class SimulationFailReason {
     Undefined,                //
     Unreachable,              //
     EnterNoreturnFunc,        //
-    NoEntry
+    NoEntry,                  //
+    RuntimeError
 };
 
 // NOTE: don't use std::iostream since it doesn't support hexfloat parsing in libc++
@@ -88,11 +89,12 @@ class Interpreter final {
     size_t mTimeBudget,      // in ns
         mMemBudget,          // in bytes
         mMaxRecursiveDepth;  //
+    bool mDumpStatistics;
 
 public:
-    Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiveDepth);
+    Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiveDepth, bool dumpStatistics);
     std::variant<ConstantValue*, SimulationFailReason>
-    execute(Module& module, Function& func, const std::vector<ConstantValue*>& arguments, SimulationIOContext& ioCtx) const;
+    execute(Module& module, Function& func, const std::vector<ConstantValue*>& arguments, SimulationIOContext* ioCtx) const;
 };
 
 CMMC_NAMESPACE_END

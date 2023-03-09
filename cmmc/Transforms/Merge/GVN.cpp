@@ -26,7 +26,6 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
-#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>

@@ -423,12 +423,14 @@ public:
     }
 };
 
-Interpreter::Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiveDepth)
-    : mTimeBudget{ timeBudget }, mMemBudget{ memBudget }, mMaxRecursiveDepth{ maxRecursiveDepth } {}
+Interpreter::Interpreter(size_t timeBudget, size_t memBudget, size_t maxRecursiveDepth, bool dumpStatistics)
+    : mTimeBudget{ timeBudget }, mMemBudget{ memBudget }, mMaxRecursiveDepth{ maxRecursiveDepth }, mDumpStatistics{
+          dumpStatistics
+      } {}
 
 std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& module, Function& func,
                                                                         const std::vector<ConstantValue*>& arguments,
-                                                                        SimulationIOContext& ioCtx) const {
+                                                                        SimulationIOContext* ioCtx) const {
     if(func.attr().hasAttr(FunctionAttribute::NoReturn))
         return SimulationFailReason::EnterNoreturnFunc;
 
@@ -642,7 +644,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                 execCtx.pop_back();
                 if(execCtx.empty()) {
-                    reportStatistics();
+                    if(mDumpStatistics)
+                        reportStatistics();
                     return operands.empty() ? nullptr : toConstant(operands[0]);
                 }
                 if(!operands.empty()) {
@@ -920,31 +923,35 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         if(callee->blocks().empty()) {
 
                             // runtime func
+
+                            if(!ioCtx)
+                                return SimulationFailReason::RuntimeError;
+
                             const auto symbol = callee->getSymbol().prefix();
                             if(symbol == "read"sv || symbol == "getint"sv) {
                                 int x;
-                                ioCtx.stdinStream.get("%d", x);
+                                ioCtx->stdinStream.get("%d", x);
                                 addInt(x);
                             } else if(symbol == "write"sv || symbol == "putint"sv) {
                                 const auto x = static_cast<int>(getInt(0));
-                                ioCtx.stdoutStream.put("%d", x);
+                                ioCtx->stdoutStream.put("%d", x);
                                 if(symbol == "write"sv)
-                                    ioCtx.stdoutStream.putch(' ');
+                                    ioCtx->stdoutStream.putch(' ');
                             } else if(symbol == "getch"sv) {
                                 int ch;
-                                ioCtx.stdinStream.get("%c", ch);
+                                ioCtx->stdinStream.get("%c", ch);
                                 addInt(ch);
                             } else if(symbol == "putch"sv) {
                                 const auto ch = static_cast<int>(getInt(0));
-                                ioCtx.stdoutStream.put("%c", ch);
+                                ioCtx->stdoutStream.put("%c", ch);
                             } else if(symbol == "getarray"sv) {
                                 int size;
-                                ioCtx.stdinStream.get("%d", size);
+                                ioCtx->stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
                                     int val;
-                                    ioCtx.stdinStream.get("%d", val);
+                                    ioCtx->stdinStream.get("%d", val);
                                     memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(int), val);
                                 }
 
@@ -953,27 +960,27 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
-                                ioCtx.stdoutStream.put("%d:", size);
+                                ioCtx->stdoutStream.put("%d:", size);
                                 for(int idx = 0; idx < size; ++idx) {
                                     const auto val = memCtx.loadValue<int>(ptr + static_cast<uint32_t>(idx) * sizeof(int));
-                                    ioCtx.stdoutStream.put(" %d", val);
+                                    ioCtx->stdoutStream.put(" %d", val);
                                 }
-                                ioCtx.stdoutStream.put("\n");
+                                ioCtx->stdoutStream.put("\n");
                             } else if(symbol == "getfloat"sv) {
                                 float val;
-                                ioCtx.stdinStream.get("%a", val);
+                                ioCtx->stdinStream.get("%a", val);
                                 addFP(val);
                             } else if(symbol == "putfloat"sv) {
                                 const auto val = static_cast<float>(getFP(0));
-                                ioCtx.stdoutStream.put("%a", val);
+                                ioCtx->stdoutStream.put("%a", val);
                             } else if(symbol == "getfarray"sv) {
                                 int size;
-                                ioCtx.stdinStream.get("%d", size);
+                                ioCtx->stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
                                     float val;
-                                    ioCtx.stdinStream.get("%a", val);
+                                    ioCtx->stdinStream.get("%a", val);
                                     memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(float), val);
                                 }
 
@@ -982,12 +989,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 const auto size = static_cast<int>(getUInt(0));
                                 const auto ptr = getPtr(1);
 
-                                ioCtx.stdoutStream.put("%d:", size);
+                                ioCtx->stdoutStream.put("%d:", size);
                                 for(int idx = 0; idx < size; ++idx) {
                                     const auto val = memCtx.loadValue<float>(ptr + static_cast<uint32_t>(idx) * sizeof(float));
-                                    ioCtx.stdoutStream.put(" %a", val);
+                                    ioCtx->stdoutStream.put(" %a", val);
                                 }
-                                ioCtx.stdoutStream.put("\n");
+                                ioCtx->stdoutStream.put("\n");
                             } else if(symbol == "starttime"sv) {
                                 // ignore
                             } else if(symbol == "stoptime"sv) {

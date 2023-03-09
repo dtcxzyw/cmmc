@@ -24,7 +24,6 @@
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
-#include <iostream>
 #include <queue>
 #include <unordered_set>
 

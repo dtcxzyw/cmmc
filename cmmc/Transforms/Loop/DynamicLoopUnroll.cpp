@@ -25,7 +25,6 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdlib>
-#include <iostream>
 #include <new>
 
 constexpr uint32_t unrollBlockSize = 16U;

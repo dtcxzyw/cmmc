@@ -56,8 +56,18 @@
 + [ ] scf-for-loop-peeling
 
 # TODO
-## Arithmetic
-+ [ ] mul x, 2^k -> shl x, k
-+ [ ] x >> c1 >> c2 -> x >> (c1 + c2)
-+ [ ] x << c1 << c2 -> x << (c1 + c2)
-+ [ ] merge a + b with b + a
++ mul x, 2^k -> shl x, k
++ x >> c1 >> c2 -> x >> (c1 + c2)
++ x << c1 << c2 -> x << (c1 + c2)
++ merge a + b with b + a
++ ./tests/SysY2022/functional/55_sort_test1.sy DynamicLoopUnroll/LICM/Out-of-bound
++ ./tests/SysY2022/functional/56_sort_test2.sy
++ ./tests/SysY2022/functional/57_sort_test3.sy
++ ./tests/SysY2022/functional/58_sort_test4.sy
++ ./tests/SysY2022/functional/59_sort_test5.sy
++ ./tests/SysY2022/functional/61_sort_test7.sy memset
++ ./tests/SysY2022/functional/62_percolation.sy dup blocks
++ ./tests/SysY2022/functional/66_exgcd.sy sroa
++ ./tests/SysY2022/functional/67_reverse_output.sy tail call
++ ./tests/SysY2022/functional/82_long_func.sy subgraph
++ ./tests/SysY2022/functional/92_register_alloc.sy add_sub tree

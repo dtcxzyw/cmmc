@@ -684,4 +684,25 @@ bool StoreInst::verify(std::ostream& out) const {
     }
     return true;
 }
+static bool checkBinaryOpType(const Instruction* op, std::ostream& out) {
+    const auto lhs = op->getOperand(0);
+    const auto rhs = op->getOperand(1);
+
+    if(!lhs->getType()->isSame(rhs->getType())) {
+        out << "Type mismatch [Lhs = "sv;
+        lhs->getType()->dump(out);
+        out << ", Rhs = "sv;
+        rhs->getType()->dump(out);
+        out << ']' << std::endl;
+        return false;
+    }
+    return true;
+}
+bool BinaryInst::verify(std::ostream& out) const {
+    return checkBinaryOpType(this, out);
+}
+bool CompareInst::verify(std::ostream& out) const {
+    return checkBinaryOpType(this, out);
+}
+
 CMMC_NAMESPACE_END

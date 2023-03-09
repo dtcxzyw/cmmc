@@ -24,7 +24,6 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdlib>
-#include <iostream>
 #include <new>
 
 constexpr uint32_t maxUnrollBlockSize = 16U;

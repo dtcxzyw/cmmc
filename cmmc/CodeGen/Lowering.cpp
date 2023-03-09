@@ -308,8 +308,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     auto& target = module.getTarget();
     auto& subTarget = target.getSubTarget();
 
-    target.legalizeModuleBeforeCodeGen(module, analysis);
-    analysis.invalidateModule();
+    {
+        Stage stage{ "Pre-lowering legalization" };
+        target.legalizeModuleBeforeCodeGen(module, analysis);
+        analysis.invalidateModule();
+    }
 
     auto dumpFunc = [&](const GMIRFunction& func) { func.dump(std::cerr, target); };
     CMMC_UNUSED(dumpFunc);
@@ -334,22 +337,34 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
 
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
-        // Stage 1: instruction selection
-        const auto operandMap = lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
-        assert(mfunc.verify(std::cerr, true));
-        // Stage 2: clean up unused insts
-        removeUnusedInsts(mfunc);
-        assert(mfunc.verify(std::cerr, true));
+        std::unordered_map<Operand, Operand, OperandHasher> operandMap;
+        {
+            // Stage 1: instruction selection
+            Stage stage{ "Instruction selection" };
+            operandMap = lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
+            assert(mfunc.verify(std::cerr, true));
+        }
+        {
+            // Stage 2: clean up unused insts
+            Stage stage{ "Clean up unused instructions" };
+            removeUnusedInsts(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 3: register coalescing
         if(optLevel >= OptimizationLevel::O1) {
+            Stage stage{ "Register coalescing" };
             registerCoalescing(mfunc, operandMap);
             assert(mfunc.verify(std::cerr, true));
         }
-        // Stage 3: legalize
-        target.legalizeFunc(mfunc);
-        assert(mfunc.verify(std::cerr, true));
+        {
+            // Stage 3: legalize
+            Stage stage{ "Legalization" };
+            target.legalizeFunc(mfunc);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 4: peephole opt
         if(optLevel >= OptimizationLevel::O1) {
+            Stage stage{ "Peephole optimization" };
             subTarget.peepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
             while(genericPeepholeOpt(mfunc, target))
@@ -358,6 +373,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 5: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2) {
+            Stage stage{ "ICF & Tail duplication" };
             // tail duplication as the small block inliner does in CMMC IR
             tailDuplication(mfunc);
             assert(mfunc.verify(std::cerr, true));
@@ -372,12 +388,14 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 6: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
+            Stage stage{ "Pre-RA scheduling" };
             schedule(mfunc, target, true);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 7: register allocation
         bool useBuiltinRA = false;
         {
+            Stage stage{ "Register allocation" };
             if(!target.builtinRA(mfunc))
                 assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
             else
@@ -385,33 +403,43 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 8: legalize stack objects, stack -> sp
-        if(!target.builtinSA(mfunc))
-            allocateStackObjects(mfunc, target, hasCall(func), optLevel);
-        assert(mfunc.verify(std::cerr, true));
+        {
+            Stage stage{ "Stack object allocation" };
+            if(!target.builtinSA(mfunc))
+                allocateStackObjects(mfunc, target, hasCall(func), optLevel);
+            assert(mfunc.verify(std::cerr, true));
+        }
         // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
+            Stage stage{ "Post-RA scheduling" };
             schedule(mfunc, target, false);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 10: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
+            Stage stage{ "Code layout optimization" };
             simplifyCFGWithUniqueTerminator(mfunc);
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
+            Stage stage{ "Post peephole optimization" };
             subTarget.postPeepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
         if(optLevel >= OptimizationLevel::O1) {
+            Stage stage{ "CFG Simplification" };
             simplifyCFG(mfunc, target);
             assert(mfunc.verify(std::cerr, false));
         }
-        // Stage 13: post legalization
-        target.postLegalizeFunc(mfunc);
-        assert(mfunc.verify(std::cerr, false));
+        {
+            // Stage 13: post legalization
+            Stage stage{ "Post legalization" };
+            target.postLegalizeFunc(mfunc);
+            assert(mfunc.verify(std::cerr, false));
+        }
 
         // add to IPRA cache
         if(!useBuiltinRA)

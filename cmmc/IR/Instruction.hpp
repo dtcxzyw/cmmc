@@ -179,6 +179,7 @@ public:
         : Instruction{ instID, valueType, { lhs, rhs } } {}
     void dump(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
+    bool verify(std::ostream& out) const override;
 };
 
 enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
@@ -237,6 +238,7 @@ public:
     void setOp(CompareOp op) noexcept {
         mCompare = op;
     }
+    bool verify(std::ostream& out) const override;
 };
 
 class UnaryInst final : public Instruction {

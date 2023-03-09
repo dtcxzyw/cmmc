@@ -181,7 +181,7 @@ bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) cons
     bool modified = false;
     bool stopEarly = false;
     using namespace std::literals;
-    constexpr auto timeout = 10s;
+    constexpr auto timeout = 1s;
     const auto deadline = Clock::now() + timeout;
     for(uint32_t i = 0; i < mMaxIterations; ++i) {
         if(!mSubPasses->run(item, analysis)) {
@@ -239,6 +239,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             // Constant
+            "ConstexprFuncEval",       //
             "ConstantMerge",           //
             "ConditionalPropagation",  //
             "SimpleCSE",               //
@@ -314,12 +315,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     root->addPass(iter);  // pre optimization
 
-    /*
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({ "GlobalScalar2Local" }))
             root->addPass(pass);
     }
-    */
 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collect({
@@ -375,7 +374,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "NoSideEffectEliminate",   // clean up
             }))
             specialization->addPass(pass);
-        root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 8, false));
+        root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
     }
 
     for(const auto& pass : passesSource.collect({

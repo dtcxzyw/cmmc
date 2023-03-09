@@ -148,7 +148,7 @@ static void solveGA(BlockSeq& seq, const std::vector<BranchEdge>& edges, const s
 
     constexpr uint32_t popSize = 20;
     constexpr uint32_t crossCount = 5;
-    constexpr uint32_t iteration = 400;
+    constexpr uint32_t iteration = 50;
     std::vector<NodeIndex> invMap(seq.size());
     std::vector<std::pair<BlockSeq, CostT>> pop;
     for(uint32_t k = 0; k < popSize; ++k) {
