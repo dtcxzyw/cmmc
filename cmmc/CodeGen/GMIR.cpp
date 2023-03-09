@@ -112,7 +112,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                     dumpOperand(inst.dst);
                                     out << ')';
                                 } else
-                                    reportUnreachable();
+                                    reportUnreachable(CMMC_LOCATION());
                             },
                              [&](const ConstantMInst& inst) {
                                  out << "li "sv;
@@ -134,7 +134,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                          out << "fneg "sv;
                                          break;
                                      default:
-                                         reportUnreachable();
+                                         reportUnreachable(CMMC_LOCATION());
                                  }
                                  dumpOperand(inst.dst);
                                  out << ' ';
@@ -194,7 +194,7 @@ void GMIRBasicBlock::dump(std::ostream& out, const Target& target,
                                          out << "lshr "sv;
                                          break;
                                      default:
-                                         reportUnreachable();
+                                         reportUnreachable(CMMC_LOCATION());
                                  }
 
                                  dumpOperand(inst.dst);

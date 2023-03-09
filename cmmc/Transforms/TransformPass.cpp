@@ -66,7 +66,7 @@ String TransformPass<Module>::dump(std::ostream& out, String prev, LabelAllocato
 
 template <>
 String TransformPass<Function>::dump(std::ostream&, String, LabelAllocator&) const {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx);

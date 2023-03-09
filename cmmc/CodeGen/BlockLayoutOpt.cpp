@@ -55,7 +55,7 @@ static CostT evalExtTspScore(const BlockSeq& seq, const std::vector<uint32_t>& w
     CMMC_UNUSED(weights);
     CMMC_UNUSED(freq);
     CMMC_UNUSED(edges);
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 static BlockSeq solveExtTsp(const std::vector<uint32_t>& weights, const std::vector<double>& freq,
                             const std::vector<BranchEdge>& edges) {
@@ -63,7 +63,7 @@ static BlockSeq solveExtTsp(const std::vector<uint32_t>& weights, const std::vec
     CMMC_UNUSED(freq);
     CMMC_UNUSED(edges);
     CMMC_UNUSED(evalExtTspScore);
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 static CostT evalCost(const BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
@@ -278,7 +278,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
             } else if(successors.size() == 1) {
                 ensureNext(successors[0].block);
             } else
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
 
         iter = nextIter;

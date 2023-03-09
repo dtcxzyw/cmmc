@@ -70,7 +70,7 @@ class CombineBranch final : public TransformPass<Function> {
                 reportError() << "BlockB:"sv << std::endl;
                 target.getTarget()->dump(std::cerr);
                 arg->dump(reportError() << "arg "sv);
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
             }
         }
 

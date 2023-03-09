@@ -187,6 +187,8 @@ def sysy_codegen_riscv64(src):
     out = subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
+        print(out.returncode)
+        print(out.stderr)
         return False
 
     return True

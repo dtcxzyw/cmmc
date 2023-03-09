@@ -53,7 +53,7 @@ public:
                     self(self, arg);
                 self(self, funcType->getRetType());
             } else
-                reportNotImplemented();
+                reportNotImplemented(CMMC_LOCATION());
         };
         for(auto global : module.globals()) {
             removeType(removeType, global->getType());

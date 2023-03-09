@@ -76,7 +76,7 @@ bool sortBlocks(Function& func) {
                 break;
             }
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }
 

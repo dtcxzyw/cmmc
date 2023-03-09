@@ -42,7 +42,7 @@ static std::string_view getCompareOp(CompareOp compare) {
         case CompareOp::GreaterEqual:
             return ">=";
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -114,7 +114,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                             out << '*';
                                         printOperand(copy.src, copy.indirectSrc);
                                     } else
-                                        reportUnreachable();
+                                        reportUnreachable(CMMC_LOCATION());
                                 },
                                  [&](const ConstantMInst& constant) {
                                      assert(constant.dst.addressSpace != TACAddressSpace::Stack);
@@ -127,7 +127,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                          out << " := #0 - "sv;
                                          printOperand(unary.src, false);
                                      } else
-                                         reportUnreachable();
+                                         reportUnreachable(CMMC_LOCATION());
                                  },
                                  [&](const BinaryArithmeticMInst& binary) {
                                      char op;
@@ -145,7 +145,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                              op = '/';
                                              break;
                                          default:
-                                             reportUnreachable();
+                                             reportUnreachable(CMMC_LOCATION());
                                      }
 
                                      printOperand(binary.dst, false);
@@ -185,9 +185,9 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                          out << "WRITE "sv;
                                          printOperand(intrinsic.src, false);
                                      } else
-                                         reportUnreachable();
+                                         reportUnreachable(CMMC_LOCATION());
                                  },
-                                 [](const auto&) { reportUnreachable(); } },
+                                 [](const auto&) { reportUnreachable(CMMC_LOCATION()); } },
                        inst);
 
             out << '\n';
@@ -239,7 +239,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
                                         }
                                     });
                                 },
-                                 [](const std::monostate&) {}, [](const auto&) { reportUnreachable(); } },
+                                 [](const std::monostate&) {}, [](const auto&) { reportUnreachable(CMMC_LOCATION()); } },
                        symbol.def);
         }
     }
@@ -248,7 +248,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
 
     for(auto& symbol : module.symbols) {
         std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, funcMap.at(&func)); },
-                             [](const auto&) { reportUnreachable(); }, [](const std::monostate&) {} },
+                             [](const auto&) { reportUnreachable(CMMC_LOCATION()); }, [](const std::monostate&) {} },
                    symbol.def);
     }
 }

@@ -213,7 +213,7 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
                 return InstructionID::FCmp;
 
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     } else {
         switch(op) {
@@ -250,7 +250,7 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
                 return InstructionID::Xor;
 
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }
 }
@@ -291,7 +291,7 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
                     return lhs % rhs;
                 reportDividedByZero();
             } else
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
         default:
             return std::monostate{};
@@ -417,7 +417,7 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
             break;
         }
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 
     if(target->isInvalid()) {
@@ -552,7 +552,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
             DiagnosticsContext::get().attach<Reason>("unary plus is only allowed for scalar types").reportFatal();
         }
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -1145,7 +1145,7 @@ void EmitContext::popScope() {
                 makeOp<StackFreeInst>(alloc);
             }
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
     mScopes.pop_back();
 }
@@ -1330,7 +1330,7 @@ Block* EmitContext::getBreakTarget() {
 }
 
 QualifiedValue ArrayInitializer::emit(EmitContext&) const {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 void ArrayInitializer::gatherArrayElementsImpl(EmitContext& ctx, uint32_t& offset, uint32_t layer,
@@ -1538,7 +1538,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
             if(!ptr->getPointee()->isSame(i8))
                 DiagnosticsContext::get().attach<Reason>("type mismatch").reportFatal();
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
 
         global = str->emitGlobal(var.name, size, ctx);
     } else {
@@ -1612,7 +1612,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
     FunctionType* funcType = nullptr;
     switch(intrinsic) {
         case Intrinsic::none:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         case Intrinsic::memset: {
             const auto ptr = PointerType::get(IntegerType::get(8));
             funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, IntegerType::get(32), getIndexType() });
@@ -1624,13 +1624,13 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
             break;
         }
         default:
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
     auto func = make<Function>(String::get(symbol), funcType, intrinsic);
     mModule->add(func);
     switch(intrinsic) {
         case Intrinsic::none:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         case Intrinsic::memset: {
             // TODO: more precise information
             func->attr().addAttr(FunctionAttribute::NoMemoryRead);
@@ -1640,7 +1640,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
             break;
         }
         default:
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
     return func;
 }
@@ -1817,7 +1817,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
                     self(self, subDst, subSrc);
                 }
             } else
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         };
         recursiveCopy(recursiveCopy, dest, src);
     } else {

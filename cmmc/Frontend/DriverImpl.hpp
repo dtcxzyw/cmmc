@@ -91,7 +91,7 @@ struct Hierarchy final {
     }
 
     [[noreturn]] static void print(std::ostream&, const char*, uint32_t, Empty) {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
 
     uint32_t updateLocation(DriverImpl& driver);

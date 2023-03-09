@@ -61,7 +61,7 @@ public:
             case MIPSAddressSpace::GPR:
                 return 18;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
@@ -185,7 +185,7 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
                         instructions.insert(next, CopyMInst{ temp, false, 0, imm.dst, false, 0, sizeof(float), false });
                         imm = { temp, static_cast<intmax_t>(intVal) };
                     } else
-                        reportUnreachable();
+                        reportUnreachable(CMMC_LOCATION());
                 }
             }
 
@@ -296,7 +296,7 @@ Operand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) co
     if(type->isInteger())
         pool.getMetadata(zeroReg) = ConstantInteger::get(type, 0);
     else
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     return zeroReg;
 }
 String MIPSLoweringInfo::getOperand(const Operand& operand) const {
@@ -324,7 +324,7 @@ std::string_view MIPSLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const 
         case MIPSIntrinsic::Fma:
             return "fma";
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void MIPSLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
@@ -341,7 +341,7 @@ void MIPSLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
                 ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, v0, false, 0, static_cast<uint32_t>(size), false);
             }
         } else  // return by $v0, $v1
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
     ctx.emitInst<RetMInst>(unusedOperand);
 }
@@ -349,7 +349,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
     auto callee = inst->operands().back();
     if(auto func = dynamic_cast<Function*>(callee)) {
         if(func->getCallingConvention() != CallingConvention::C)
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
 
         const auto global = ctx.mapGlobal(func);
         const auto& dataLayout = ctx.getDataLayout();
@@ -425,7 +425,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
 void MIPSLoweringInfo::lower(FMAInst*, LoweringContext&) const {
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 MIPSRegisterUsage::MIPSRegisterUsage()
@@ -454,7 +454,7 @@ void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
             setUsed(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
@@ -468,7 +468,7 @@ void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
             setDiscarded(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 Operand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
@@ -501,7 +501,7 @@ Operand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
             return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 uint32_t MIPSRegisterUsage::getRegisterClass(const Type* type) const {
@@ -519,7 +519,7 @@ bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
         // $f4-$f18
         return 4 <= op.id && op.id <= 18;
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
@@ -530,7 +530,7 @@ bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
         // $f20-$f30
         return 20 <= op.id && op.id <= 30;
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {

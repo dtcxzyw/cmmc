@@ -166,7 +166,7 @@ static std::string_view getInstName(InstructionID instID) {
         case InstructionID::Call:
             return "call"sv;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -207,7 +207,7 @@ static std::string_view getCompareName(CompareOp op) {
         case CompareOp::NotEqual:
             return "neq"sv;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -437,7 +437,7 @@ const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& i
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {
             cur = cur->as<StructType>()->getFieldType(offset);
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
     return cur;
 }
@@ -477,7 +477,7 @@ std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gat
             constantOffset += structType->getFieldOffset(offset, dataLayout);
             cur = structType->getFieldType(offset);
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
     return { constantOffset, std::move(offsets) };
 }
@@ -498,7 +498,7 @@ void GetElementPtrInst::dump(std::ostream& out) const {
         } else if(auto offset = idx->as<ConstantOffset>()) {
             out << '.' << offset->getName();
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -612,7 +612,7 @@ Value* BranchTarget::getOperand(BlockArgument* arg) const {
         if(args[idx] == arg)
             return mArgs[idx];
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 bool ReturnInst::verify(std::ostream& out) const {

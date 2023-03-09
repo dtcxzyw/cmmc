@@ -39,14 +39,14 @@ public:
         return sizeof(uintptr_t);
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
 };
 
 class SimSubTarget final : public SimpleSubTarget {
 public:
     [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t) const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
@@ -65,45 +65,45 @@ public:
         return mDataLayout;
     }
     [[nodiscard]] const LoweringInfo& getTargetLoweringInfo() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
 
     void legalizeFunc(GMIRFunction&) const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     void legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
         CMMC_UNUSED(module);
         CMMC_UNUSED(analysis);
     }
     void emitAssembly(const GMIRModule&, std::ostream&) const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] Operand getStackPointer() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] Operand getReturnAddress() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
 };
 

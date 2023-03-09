@@ -134,7 +134,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                         case CompareOp::NotEqual:
                             return lhs != rhs;
                     }
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
                 };
                 auto makeBool = [&](Instruction* mappedInst, bool val) {
                     return ConstantInteger::get(mappedInst->getType(), val);

@@ -94,7 +94,7 @@ public:
         return mLowerVisitor;
     }
     [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     bool builtinRA(GMIRFunction& mfunc) const override;
     bool builtinSA(GMIRFunction& mfunc) const override;
@@ -110,19 +110,19 @@ public:
         return unusedOperand;
     }
     [[nodiscard]] Operand getReturnAddress() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
 };
 

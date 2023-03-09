@@ -265,7 +265,7 @@ public:
                 base[idx] = load(ptr + idx);
             return val;
         }
-        reportNotImplemented();
+        reportNotImplemented(CMMC_LOCATION());
     }
 
     template <typename T>
@@ -350,11 +350,11 @@ public:
                 }
             }
         } else
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
 
     void storeValue(uintptr_t ptr, const OperandStorage& value, const Type* type) {
-        std::visit(Overload{ [&](auto&&) { reportUnreachable(); },  //
+        std::visit(Overload{ [&](auto&&) { reportUnreachable(CMMC_LOCATION()); },  //
                              [&](const ConstantInteger& x) {
                                  const uintmax_t val = x.getZeroExtended();
                                  const auto base = reinterpret_cast<const std::byte*>(&val);
@@ -480,15 +480,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             if(type->isFloatingPoint()) {
                 return ConstantFloatingPoint{ type, std::numeric_limits<double>::quiet_NaN() };
             }
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         } else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     };
 
     const auto toConstant = [](const OperandStorage& val) -> ConstantValue* {
         ConstantValue* ret = nullptr;
         std::visit(Overload{
-                       [&](auto&&) { reportUnreachable(); },                                                             //
+                       [&](auto&&) { reportUnreachable(CMMC_LOCATION()); },                                              //
                        [&](const ConstantInteger& x) { ret = ConstantInteger::get(x.getType(), x.getSignExtended()); },  //
                        [&](const ConstantFloatingPoint& x) { ret = make<ConstantFloatingPoint>(x); },                    //
                        [&](ConstantOffset* x) { ret = x; }                                                               //
@@ -582,7 +582,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 assert(currentExecCtx.operands.count(operand));
                 operands.push_back(currentExecCtx.operands.at(operand));
             } else
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
 
         const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
@@ -631,7 +631,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 case CompareOp::NotEqual:
                     return lhs != rhs;
             }
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         };
 
         switch(inst->getInstID()) {
@@ -816,7 +816,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::Bitcast: {
-                reportNotImplemented();
+                reportNotImplemented(CMMC_LOCATION());
             }
             case InstructionID::F2U: {
                 addUInt(static_cast<uintmax_t>(getFP(0)));
@@ -875,7 +875,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         } else if(baseType->isArray()) {
                             baseType = baseType->as<ArrayType>()->getElementType();
                         } else
-                            reportUnreachable();
+                            reportUnreachable(CMMC_LOCATION());
                         basePtr += static_cast<uintptr_t>(getInt(idx)) * baseType->getSize(dataLayout);
                     } else if(auto offset = dynamic_cast<ConstantOffset*>(operand)) {
                         const auto structType = baseType->as<StructType>();
@@ -1000,7 +1000,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             } else if(symbol == "stoptime"sv) {
                                 // ignore
                             } else
-                                reportUnreachable();
+                                reportUnreachable(CMMC_LOCATION());
                         } else {
                             BlockContext blockCtx;
                             blockCtx.caller = inst;
@@ -1035,13 +1035,13 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         break;
                     }
                     default:
-                        reportNotImplemented();
+                        reportNotImplemented(CMMC_LOCATION());
                 }
 
                 break;
             }
             default:
-                reportNotImplemented();
+                reportNotImplemented(CMMC_LOCATION());
                 break;
         }
     }

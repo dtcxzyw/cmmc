@@ -52,7 +52,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
                 if(metadata->getType()->isInteger()) {
                     out << metadata->as<ConstantInteger>()->getSignExtended();
                 } else {
-                    reportNotImplemented();
+                    reportNotImplemented(CMMC_LOCATION());
                 }
             }
         } break;
@@ -66,7 +66,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
             out << "f"sv << operand.id;
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -114,7 +114,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                     out << "ne"sv;
                     break;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
         };
 
@@ -128,7 +128,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         else if(copy.size == 1)
                                             out << "ldrb "sv;
                                         else
-                                            reportNotImplemented();
+                                            reportNotImplemented(CMMC_LOCATION());
 
                                         dumpOperand(copy.dst);
                                         out << ", "sv << copy.srcOffset << '(';
@@ -142,7 +142,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                         else if(copy.size == 1)
                                             out << "strb "sv;
                                         else
-                                            reportNotImplemented();
+                                            reportNotImplemented(CMMC_LOCATION());
                                         dumpOperand(copy.src);
                                         out << ", "sv << copy.dstOffset << '(';
                                         dumpOperand(copy.dst);
@@ -153,17 +153,17 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                             if(copy.src.addressSpace == ARMAddressSpace::GPR)
                                                 out << "mov "sv;
                                             else
-                                                reportNotImplemented();
+                                                reportNotImplemented(CMMC_LOCATION());
 
                                             dumpOperand(copy.dst);
                                             out << ", "sv;
                                             dumpOperand(copy.src);
                                         } else
-                                            reportUnreachable();
+                                            reportUnreachable(CMMC_LOCATION());
                                     }
                                 },
-                                 [&](const ConstantMInst&) { reportNotImplemented(); },
-                                 [&](const UnaryArithmeticMInst&) { reportUnreachable(); },
+                                 [&](const ConstantMInst&) { reportNotImplemented(CMMC_LOCATION()); },
+                                 [&](const UnaryArithmeticMInst&) { reportUnreachable(CMMC_LOCATION()); },
                                  [&](const BinaryArithmeticMInst& binary) {
                                      switch(binary.instID) {
                                          case GMIRInstID::Add:
@@ -194,7 +194,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          case GMIRInstID::FDiv:
                                              [[fallthrough]];
                                          case GMIRInstID::FNeg:
-                                             reportNotImplemented();
+                                             reportNotImplemented(CMMC_LOCATION());
                                          case GMIRInstID::And:
                                              out << "and"sv;
                                              break;
@@ -209,9 +209,9 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          case GMIRInstID::AShr:
                                              [[fallthrough]];
                                          case GMIRInstID::LShr:
-                                             reportNotImplemented();
+                                             reportNotImplemented(CMMC_LOCATION());
                                          default:
-                                             reportUnreachable();
+                                             reportUnreachable(CMMC_LOCATION());
                                      };
                                      out << ' ';
                                      if(binary.instID != GMIRInstID::Mul && binary.instID != GMIRInstID::SDiv &&
@@ -240,7 +240,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << ", "sv;
                                          dumpOperand(branch.rhs);
                                      } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                         reportNotImplemented(CMMC_LOCATION());  // TODO: fp cmp
 
                                      out << ", "sv << labelMap.at(branch.targetBlock);
                                  },
@@ -255,7 +255,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          out << ", "sv;
                                          dumpOperand(cmp.rhs);
                                      } else
-                                         reportNotImplemented();  // TODO: fp cmp
+                                         reportNotImplemented(CMMC_LOCATION());  // TODO: fp cmp
                                  },
                                  [&](const CallMInst& call) {
                                      out << "bl "sv;
@@ -266,8 +266,8 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      }
                                  },
                                  [&](const RetMInst&) { out << "bx lr"sv; },
-                                 [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
-                                 [](const auto&) { reportUnreachable(); } },
+                                 [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(CMMC_LOCATION()); },
+                                 [](const auto&) { reportUnreachable(CMMC_LOCATION()); } },
                        inst);
 
             out << '\n';

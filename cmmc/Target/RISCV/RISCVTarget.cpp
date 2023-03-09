@@ -55,7 +55,7 @@ public:
             case RISCVAddressSpace::GPR:
                 return 19;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
@@ -177,7 +177,7 @@ Operand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) c
     if(type->isInteger())
         pool.getMetadata(zeroReg) = ConstantInteger::get(type, 0);
     else
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     return zeroReg;
 }
 String RISCVLoweringInfo::getOperand(const Operand& operand) const {
@@ -203,7 +203,7 @@ std::string_view RISCVLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const
         case RISCVIntrinsic::Fma:
             return "fma";
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void RISCVLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
@@ -222,7 +222,7 @@ void RISCVLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
                 ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, a0, false, 0, static_cast<uint32_t>(size), false);
             }
         } else  // return by $a0, $a1
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
     ctx.emitInst<RetMInst>(unusedOperand);
 }
@@ -230,7 +230,7 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
     auto callee = inst->operands().back();
     if(auto func = dynamic_cast<Function*>(callee)) {
         if(func->getCallingConvention() != CallingConvention::C)
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
 
         const auto global = ctx.mapGlobal(func);
         const auto& dataLayout = ctx.getDataLayout();
@@ -298,7 +298,7 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
 void RISCVLoweringInfo::lower(FMAInst*, LoweringContext&) const {
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 RISCVRegisterUsage::RISCVRegisterUsage()
@@ -325,7 +325,7 @@ void RISCVRegisterUsage::markAsUsed(const Operand& operand) {
             setUsed(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
@@ -339,7 +339,7 @@ void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
             setDiscarded(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
@@ -375,7 +375,7 @@ Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
             return { src, static_cast<uint32_t>(__builtin_ctz(freeBits & (-freeBits))) };
         } break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 uint32_t RISCVRegisterUsage::getRegisterClass(const Type* type) const {
@@ -390,7 +390,7 @@ bool RISCVTarget::isCallerSaved(const Operand& op) const noexcept {
         // $ft0-$ft11
         return op.id <= 7 || (28 <= op.id && op.id <= 31);
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 bool RISCVTarget::isCalleeSaved(const Operand& op) const noexcept {
     assert(op.addressSpace == RISCVAddressSpace::GPR || op.addressSpace == RISCVAddressSpace::FPR_S ||

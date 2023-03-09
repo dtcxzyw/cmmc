@@ -69,7 +69,7 @@ void tailDuplication(GMIRFunction& func) {
                         } else if(successors.size() == 1) {
                             ensureNext(successors[0].block);
                         } else
-                            reportUnreachable();
+                            reportUnreachable(CMMC_LOCATION());
                     }
 
                     modified = true;

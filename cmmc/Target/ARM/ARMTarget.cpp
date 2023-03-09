@@ -45,7 +45,7 @@ public:
             case ARMAddressSpace::GPR:
                 return 13;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
@@ -129,7 +129,7 @@ Operand ARMLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
     if(type->isInteger())
         pool.getMetadata(zero) = ConstantInteger::get(type, 0);
     else
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     return zero;
 }
 String ARMLoweringInfo::getOperand(const Operand& operand) const {
@@ -155,7 +155,7 @@ std::string_view ARMLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
         case ARMIntrinsic::Mvn:
             return "mvn";
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void ARMLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
@@ -168,7 +168,7 @@ void ARMLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
             // return by $a1
             ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, a1, false, 0, static_cast<uint32_t>(size), false);
         } else  // return by $a1, $a2
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
     }
     ctx.emitInst<RetMInst>(unusedOperand);
 }
@@ -176,7 +176,7 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
     auto callee = inst->operands().back();
     if(auto func = dynamic_cast<Function*>(callee)) {
         if(func->getCallingConvention() != CallingConvention::C)
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
 
         const auto global = ctx.mapGlobal(func);
         const auto& dataLayout = ctx.getDataLayout();
@@ -242,7 +242,7 @@ void ARMLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const 
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
 }
 void ARMLoweringInfo::lower(FMAInst*, LoweringContext&) const {
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 ARMRegisterUsage::ARMRegisterUsage() : mGPR{ std::numeric_limits<uint32_t>::max() }, mFPR{ 0U } {
@@ -259,7 +259,7 @@ void ARMRegisterUsage::markAsUsed(const Operand& operand) {
             setUsed(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void ARMRegisterUsage::markAsDiscarded(const Operand& operand) {
@@ -271,7 +271,7 @@ void ARMRegisterUsage::markAsDiscarded(const Operand& operand) {
             setDiscarded(mFPR, operand.id);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 Operand ARMRegisterUsage::getFreeRegister(uint32_t src) {
@@ -284,7 +284,7 @@ Operand ARMRegisterUsage::getFreeRegister(uint32_t src) {
             x = mFPR;
         } break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 
     const auto freeBits = ~x;
@@ -304,14 +304,14 @@ bool ARMTarget::isCallerSaved(const Operand& op) const noexcept {
         // $t0-$t9
         return (8 <= op.id && op.id <= 15) || (24 <= op.id && op.id <= 25);
     }
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 bool ARMTarget::isCalleeSaved(const Operand& op) const noexcept {
     if(op.addressSpace == ARMAddressSpace::GPR) {
         // $s0-$s7
         return 16 <= op.id && op.id <= 23;
     }
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {

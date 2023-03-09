@@ -88,8 +88,19 @@ std::ostream& reportInfo();
 std::ostream& reportWarning();
 std::ostream& reportError();
 std::ostream& reportDebug();
-[[noreturn]] void reportUnreachable();
-[[noreturn]] void reportNotImplemented();
+struct DiagLocation final {
+    const char* const file;
+    const char* const func;
+    int line;
+};
+
+#define CMMC_LOCATION()              \
+    DiagLocation {                   \
+        __FILE__, __func__, __LINE__ \
+    }
+
+[[noreturn]] void reportUnreachable(const DiagLocation& location);
+[[noreturn]] void reportNotImplemented(const DiagLocation& location);
 
 template <typename T>
 static constexpr bool staticAssertionFail = false;

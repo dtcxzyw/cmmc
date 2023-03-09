@@ -85,7 +85,7 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
     if(pointee->isFloatingPoint()) {
         return make<ConstantFloatingPoint>(pointee, 0.0);
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 void SimpleValueAnalysis::next(Instruction* inst) {

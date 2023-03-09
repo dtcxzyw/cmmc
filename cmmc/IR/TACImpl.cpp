@@ -31,7 +31,7 @@ static void split(std::string_view line, std::array<std::string_view, 6>& tokens
         if(idx < tokens.size())
             tokens[idx] = token;
         else
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     };
 
     size_t startPos = 0;
@@ -85,7 +85,7 @@ static TACInstStorage parseTACLine(std::string_view line) {
                 return TACRead{ t1 };
             if(key == "WRITE"sv)
                 return TACWrite{ t1 };
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         }
         case 3: {
             const auto key = tokens[0];
@@ -144,7 +144,7 @@ static TACInstStorage parseTACLine(std::string_view line) {
                     binary.instruction = InstructionID::SDiv;
                     break;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
             return binary;
         }
@@ -167,11 +167,11 @@ static TACInstStorage parseTACLine(std::string_view line) {
             else if(tokens[2] == "=="sv)
                 inst.cmp = CompareOp::Equal;
             else
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
             return inst;
         }
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 

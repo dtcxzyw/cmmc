@@ -67,10 +67,10 @@ clean:
 	rm -rf *~ $(DIR_BUILD) bin
 bear2: clean # make clangd happy
 	mkdir -p $(DIR_BUILD)
-	bear -o $(DIR_BUILD)/compile_commands.json make
+	bear -o $(DIR_BUILD)/compile_commands.json $(MAKE)
 bear3: clean # make clangd happy
 	mkdir -p $(DIR_BUILD)
-	bear --output $(DIR_BUILD)/compile_commands.json -- make
+	bear --output $(DIR_BUILD)/compile_commands.json -- $(MAKE)
 -include $(OBJS:.o=.d)
 debug: $(BIN)
 	gdb $(BIN)

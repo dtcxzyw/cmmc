@@ -80,7 +80,7 @@ void loadTAC(Module& module, const std::string& path) {
             identifierMap.emplace(identifier, inst);
             return inst;
         }
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     };
 
     auto getRValue = [&](const TACOperand& operand) -> Value* {
@@ -96,7 +96,7 @@ void loadTAC(Module& module, const std::string& path) {
             case TACOperandType::Constant:
                 return ConstantInteger::get(i32, std::get<int>(operand.val));
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     };
 
@@ -118,7 +118,7 @@ void loadTAC(Module& module, const std::string& path) {
                 constexpr auto defaultGotoProb = 0.3;  // prefer fallthrough
                 builder.makeOp<ConditionalBranchInst>(ret, defaultGotoProb, BranchTarget{ targetBlock }, BranchTarget{ next });
             } else {
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
             }
         }
         postTerminator.clear();
@@ -153,7 +153,7 @@ void loadTAC(Module& module, const std::string& path) {
                                     postTerminator.emplace_back(&inst, builder.getCurrentBlock(), nextBlock);
                                     builder.setCurrentBlock(nextBlock);
                                 } else
-                                    reportUnreachable();
+                                    reportUnreachable(CMMC_LOCATION());
                             },
                              [&](const TACLabel& label) {
                                  const auto nextBlock = builder.addBlock();

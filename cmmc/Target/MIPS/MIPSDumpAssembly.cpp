@@ -78,7 +78,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
                 if(metadata->getType()->isInteger()) {
                     out << metadata->as<ConstantInteger>()->getSignExtended();
                 } else {
-                    reportNotImplemented();
+                    reportNotImplemented(CMMC_LOCATION());
                 }
             }
         } break;
@@ -92,7 +92,7 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
             out << "$f"sv << operand.id;
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 
@@ -139,7 +139,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                     out << "ne"sv;
                     break;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
         };
         const auto dumpCompareFP = [&](CompareOp compareOp) {
@@ -163,7 +163,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                     out << "eq"sv;
                     return true;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
         };
 
@@ -180,11 +180,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                             else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_D)
                                                 out << "ldc1 "sv;
                                             else
-                                                reportUnreachable();
+                                                reportUnreachable(CMMC_LOCATION());
                                         } else if(copy.size == 1)
                                             out << "lb "sv;
                                         else
-                                            reportUnreachable();
+                                            reportUnreachable(CMMC_LOCATION());
 
                                         dumpOperand(copy.dst);
                                         out << ", "sv << copy.srcOffset << '(';
@@ -202,11 +202,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                             else if(copy.src.addressSpace == MIPSAddressSpace::FPR_D)
                                                 out << "sdc1 "sv;
                                             else
-                                                reportUnreachable();
+                                                reportUnreachable(CMMC_LOCATION());
                                         } else if(copy.size == 1)
                                             out << "sb "sv;
                                         else
-                                            reportUnreachable();
+                                            reportUnreachable(CMMC_LOCATION());
                                         dumpOperand(copy.src);
                                         out << ", "sv << copy.dstOffset << '(';
                                         dumpOperand(copy.dst);
@@ -232,7 +232,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                                     out << "mtc1 "sv;
                                                     reversed = true;
                                                 } else
-                                                    reportNotImplemented();
+                                                    reportNotImplemented(CMMC_LOCATION());
                                             } else if(copy.src.addressSpace == MIPSAddressSpace::Constant)
                                                 out << "li "sv;
                                             else if(copy.src.addressSpace == MIPSAddressSpace::FPR_S) {
@@ -241,9 +241,9 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                                 else if(copy.dst.addressSpace == MIPSAddressSpace::FPR_S)
                                                     out << "mov.s "sv;
                                                 else
-                                                    reportNotImplemented();
+                                                    reportNotImplemented(CMMC_LOCATION());
                                             } else
-                                                reportNotImplemented();
+                                                reportNotImplemented(CMMC_LOCATION());
 
                                             if(!reversed) {
                                                 dumpOperand(copy.dst);
@@ -266,7 +266,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          dumpOperand(constant.dst);
                                          out << ", "sv << val;
                                      } else
-                                         reportUnreachable();
+                                         reportUnreachable(CMMC_LOCATION());
                                  },
                                  [&](const GlobalAddressMInst& global) {
                                      out << "la "sv;
@@ -295,7 +295,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      } else if(unary.instID == GMIRInstID::Neg) {
                                          out << "subu "sv;
                                      } else
-                                         reportNotImplemented();
+                                         reportNotImplemented(CMMC_LOCATION());
 
                                      dumpOperand(unary.dst);
                                      if(unary.instID == GMIRInstID::Neg) {
@@ -356,9 +356,9 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                          case GMIRInstID::AShr:
                                              [[fallthrough]];
                                          case GMIRInstID::LShr:
-                                             reportNotImplemented();
+                                             reportNotImplemented(CMMC_LOCATION());
                                          default:
-                                             reportUnreachable();
+                                             reportUnreachable(CMMC_LOCATION());
                                      };
                                      if(binary.rhs.addressSpace == MIPSAddressSpace::Constant) {
                                          out << 'i';
@@ -418,7 +418,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << ", "sv;
                                              dumpOperand(branch.rhs);
                                          } else
-                                             reportNotImplemented();  // TODO: fp cmp
+                                             reportNotImplemented(CMMC_LOCATION());  // TODO: fp cmp
 
                                          out << ", "sv << labelMap.at(branch.targetBlock);
                                      }
@@ -467,8 +467,9 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      out << "jr $ra"sv;
                                      delaySlot();
                                  },
-                                 [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(); },
-                                 [&](const UnreachableMInst&) { out << "break"; }, [](const auto&) { reportNotImplemented(); } },
+                                 [&](const ControlFlowIntrinsicMInst&) { reportUnreachable(CMMC_LOCATION()); },
+                                 [&](const UnreachableMInst&) { out << "break"; },
+                                 [](const auto&) { reportNotImplemented(CMMC_LOCATION()); } },
                        inst);
 
             out << '\n';

@@ -35,10 +35,10 @@ void VoidType::dumpName(std::ostream& out) const {
     out << "void"sv;
 }
 size_t VoidType::getSize(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 size_t VoidType::getAlignment(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 bool PointerType::isSame(const Type* rhs) const {
@@ -106,7 +106,7 @@ const IntegerType* IntegerType::get(uint32_t bitWidth) {
         case 64:
             return &i64;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void IntegerType::dumpName(std::ostream& out) const {
@@ -170,10 +170,10 @@ void FunctionType::dumpName(std::ostream& out) const {
     mRetType->dumpName(out);
 }
 size_t FunctionType::getSize(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 size_t FunctionType::getAlignment(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 void StructType::dump(std::ostream& out) const {
@@ -254,7 +254,7 @@ size_t StructType::getFieldOffset(const ConstantOffset* offset, const DataLayout
         offsetBytes += size;
         ++idx;
     }
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 void ArrayType::dumpName(std::ostream& out) const {
     out << '[' << mElementCount << " * "sv;
@@ -298,14 +298,14 @@ const InvalidType* InvalidType::get() {
     return &invalid;
 }
 size_t InvalidType::getSize(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 size_t InvalidType::getAlignment(const DataLayout&) const noexcept {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 bool StackStorageType::isSame(const Type*) const {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 void StackStorageType::dumpName(std::ostream& out) const {
     out << "storage["sv << mSize << ']';

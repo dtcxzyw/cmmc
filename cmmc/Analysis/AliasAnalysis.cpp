@@ -53,12 +53,12 @@ bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
         if(!mPointerAttributes.count(p1)) {
             p1->getBlock()->dump(reportError());
             p1->dump(reportError() << "undefined pointer "sv);
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         }
         if(!mPointerAttributes.count(p2)) {
             p2->getBlock()->dump(reportError());
             p2->dump(reportError() << "undefined pointer "sv);
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         }
     }
     if(p1 == p2)
@@ -180,7 +180,7 @@ class TBAAQuery final {
                     return true;
             return false;
         }
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
 
 public:
@@ -327,7 +327,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 default: {
-                    reportNotImplemented();
+                    reportNotImplemented(CMMC_LOCATION());
                 }
             }
         }

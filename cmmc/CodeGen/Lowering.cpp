@@ -90,7 +90,7 @@ Operand LoweringContext::mapOperand(Value* operand) {
     }
     if(!operand->isConstant()) {
         operand->dump(reportError() << "undefined operand "sv);
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     }
     // constant
     Operand reg = unusedOperand;
@@ -280,7 +280,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                         } else if(valType->getFixedSize() == sizeof(uint8_t)) {
                             data.push_back(static_cast<std::byte>(value));
                         } else
-                            reportNotImplemented();
+                            reportNotImplemented(CMMC_LOCATION());
                     } else if(valType->isFloatingPoint()) {
                         const auto value = val->as<ConstantFloatingPoint>()->getValue();
                         if(valType->getFixedSize() == sizeof(float)) {
@@ -288,9 +288,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                             const void* ptr = &fpv;
                             data.push_back(*static_cast<const uint32_t*>(ptr));
                         } else
-                            reportNotImplemented();
+                            reportNotImplemented(CMMC_LOCATION());
                     } else
-                        reportUnreachable();
+                        reportUnreachable(CMMC_LOCATION());
                 };
                 expand(expand, initialValue);
 
@@ -567,7 +567,7 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
             lower(inst->as<FunctionCallInst>(), ctx);
             break;
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
@@ -608,7 +608,7 @@ void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
             case InstructionID::FDiv:
                 return GMIRInstID::FDiv;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }();
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
@@ -625,7 +625,7 @@ void LoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
             case InstructionID::SCmp:
                 return GMIRInstID::SCmp;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }();
 
@@ -641,7 +641,7 @@ void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
             case InstructionID::FNeg:
                 return GMIRInstID::FNeg;
             default:
-                reportUnreachable();
+                reportUnreachable(CMMC_LOCATION());
         }
     }();
 
@@ -670,7 +670,7 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
             break;
         }
         case InstructionID::Trunc:
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
         case InstructionID::F2U: {
             ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2U, src, dst);
             break;
@@ -690,7 +690,7 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
         case InstructionID::FCast:
             [[fallthrough]];
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
     ctx.addOperand(inst, dst);
 }
@@ -862,7 +862,7 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
                 case InstructionID::FCmp:
                     return GMIRInstID::FCmp;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
         }();
 

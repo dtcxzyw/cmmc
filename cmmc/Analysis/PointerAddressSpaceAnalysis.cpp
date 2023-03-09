@@ -110,7 +110,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                     }
                     default: {
                         inst->dump(reportError() << "unimplemented inst "sv);
-                        reportNotImplemented();
+                        reportNotImplemented(CMMC_LOCATION());
                     }
                 }
             }

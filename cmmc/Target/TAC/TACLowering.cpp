@@ -29,7 +29,7 @@ Operand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
     if(type->isInteger())
         pool.getMetadata(zero) = ConstantInteger::get(type, 0);
     else
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
     return zero;
 }
 TACLoweringInfo::TACLoweringInfo()
@@ -48,7 +48,7 @@ String TACLoweringInfo::getOperand(const Operand& operand) const {
         case TACAddressSpace::GPR:
             return mGPR.withID(static_cast<int32_t>(operand.id));
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 std::string_view TACLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
@@ -60,7 +60,7 @@ std::string_view TACLoweringInfo::getIntrinsicName(uint32_t intrinsicID) const {
         case TACIntrinsic::PushArg:
             return "arg";
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
 }
 void TACLoweringInfo::lower(ReturnInst* inst, LoweringContext& ctx) const {
@@ -109,9 +109,9 @@ void TACLoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
             break;
         }
         case InstructionID::Trunc:
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
         default:
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
     }
     ctx.addOperand(inst, dst);
 }
@@ -148,7 +148,7 @@ void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
     }
 
     if(inst->getInstID() != InstructionID::SCmp)
-        reportUnreachable();
+        reportUnreachable(CMMC_LOCATION());
 
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     const auto srcBlock = ctx.getCurrentBasicBlock();

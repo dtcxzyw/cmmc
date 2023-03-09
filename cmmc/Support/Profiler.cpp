@@ -92,7 +92,7 @@ void Profiler::printStatistics() {
 
     if(enableProfiling.get()) {
         if(!mStageStack.empty())
-            reportUnreachable();
+            reportUnreachable(CMMC_LOCATION());
         std::cerr.precision(2);
         std::cerr << std::fixed;
         std::cerr << "===================== PERFORMANCE PROFILING RESULT ====================="sv << std::endl;

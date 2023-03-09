@@ -131,7 +131,7 @@ class Reassociate final : public TransformPass<Function> {
                         reduction = ConstantInteger::get(inst->getType(), 0);
                 } break;
                 default:
-                    reportUnreachable();
+                    reportUnreachable(CMMC_LOCATION());
             }
             assert(reduction);
 

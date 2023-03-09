@@ -46,12 +46,17 @@ std::ostream& reportError() {
 std::ostream& reportDebug() {
     return (verbose.get() ? std::cerr : null) << "[DEBUG] "sv;
 }
-[[noreturn]] void reportUnreachable() {
+static void dumpLocation(const DiagLocation& location) {
+    std::cerr << "in func \"" << location.func << " (" << location.file << ":" << location.line << std::endl;
+}
+[[noreturn]] void reportUnreachable(const DiagLocation& location) {
     std::cerr << "Unreachable code"sv << std::endl;
+    dumpLocation(location);
     __builtin_trap();
 }
-[[noreturn]] void reportNotImplemented() {
+[[noreturn]] void reportNotImplemented(const DiagLocation& location) {
     std::cerr << "Not implemented feature"sv << std::endl;
+    dumpLocation(location);
     __builtin_trap();
 }
 

@@ -102,7 +102,7 @@ String ConstantOffset::getName() const {
 }
 
 void ConstantOffset::dump(std::ostream&) const {
-    reportUnreachable();
+    reportUnreachable(CMMC_LOCATION());
 }
 
 void ConstantArray::dump(std::ostream& out) const {

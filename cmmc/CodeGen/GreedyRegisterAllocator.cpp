@@ -34,7 +34,7 @@ static void greedyAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageC
     CMMC_UNUSED(target);
     CMMC_UNUSED(mfunc);
     CMMC_UNUSED(infoIPRA);
-    reportNotImplemented();
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 CMMC_REGISTER_ALLOCATOR("greedy", greedyAllocate);

@@ -137,7 +137,7 @@ public:
             if(scalarType->isFloatingPoint()) {
                 return make<ConstantFloatingPoint>(scalarType, 0.0);
             }
-            reportNotImplemented();
+            reportNotImplemented(CMMC_LOCATION());
         };
 
         {
@@ -192,7 +192,7 @@ public:
                                     operands.insert(std::prev(operands.cend()), var);
                             }
                         } else
-                            reportNotImplemented();
+                            reportNotImplemented(CMMC_LOCATION());
                     }
                 }
         }
