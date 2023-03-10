@@ -12,13 +12,13 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Attachments.hpp"
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PhiAnalysis.hpp>
 #include <cmmc/Conversion/LLVM.hpp>
+#include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>

@@ -19,7 +19,7 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim ninja-build
+      run: sudo apt install spim ninja-build llvm-15-dev
     
     - name: Format
       run: make format-check
