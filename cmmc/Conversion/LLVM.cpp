@@ -407,8 +407,6 @@ public:
 void llvmCodeGen(Module& module, const std::string& path) {
     llvm::InitializeAllTargets();
     llvm::InitializeAllAsmPrinters();
-    llvm::InitializeAllAsmParsers();
-    llvm::InitializeAllDisassemblers();
 
     llvm::LLVMContext context;
     llvm::Module llvmMod{ "CMMC IR Module", context };
