@@ -199,7 +199,8 @@ class LLVMConversionContext final {
                 return builder.CreateFNeg(getOperand(0));
             case InstructionID::FFma: {
                 const auto type = getType(inst.getType());
-                return builder.CreateIntrinsic(type, llvm::Intrinsic::fma, { getOperand(0), getOperand(1), getOperand(2) });
+                return builder.CreateIntrinsic(llvm::Intrinsic::fma, { type, type, type },
+                                               { getOperand(0), getOperand(1), getOperand(2) });
             }
             case InstructionID::SCmp:
                 [[fallthrough]];
