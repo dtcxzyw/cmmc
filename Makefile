@@ -75,7 +75,7 @@ bear3: clean # make clangd happy
 debug: $(BIN)
 	gdb $(BIN)
 cmmc: $(BIN)
-.PHONY: splc_project1 splc_project2 splc_project3 splc
+.PHONY: splc_project1 splc_project2 splc_project3 splc_project4
 splc_project1: $(BIN) # Project 1
 	echo "\$$(dirname \$$0)/cmmc --strict -a -o /dev/stdout \$$1" > $(SPLC_SHELL)
 	chmod +x $(SPLC_SHELL)
@@ -111,6 +111,6 @@ format-check:
 format:
 	clang-format -style=file -i $(ALLSRCS)
 lint: cmmc
-	clang-tidy --config-file=.clang-tidy -p ./build -header-filter=.*cmmc.* $(ALLSRCS) >./build/clang_tidy_result.log
+	clang-tidy --config-file=.clang-tidy -p $(DIR_BUILD) -header-filter=.*cmmc.* $(ALLSRCS) >$(DIR_BUILD)/clang_tidy_result.log
 iwyu: cmmc
-	iwyu_tool -j 16 -p ./build
+	iwyu_tool -j 16 -p $(DIR_BUILD)

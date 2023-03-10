@@ -19,13 +19,16 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim
+      run: sudo apt install spim ninja-build
     
     - name: Format
       run: make format-check
 
     - name: Build
-      run: make -j2
+      run: |
+        mkdir build && cd build
+        cmake .. -G Ninja
+        cmake --build . -j
 
     - name: Test
-      run: make test
+      run: cd build && ctest --verbose
