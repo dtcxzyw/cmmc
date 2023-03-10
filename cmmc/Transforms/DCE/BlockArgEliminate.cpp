@@ -13,25 +13,25 @@
 */
 
 // entry(int a, int b):
-//     break b2(a);
+//     br b2(a);
 // b2(int a):
 //     return 0;
 // ==>
 // entry(int a, int b):
-//     break b2();
+//     br b2();
 // b2():
 //     return 0;
 
 // cycles
 // entry(int a, int b):
-//     break b2(a);
+//     br b2(a);
 // b2(int a):
 //     cbr false, b2(a), exit(0);
 // exit(int x):
 //     return x;
 // ==>
 // entry(int a, int b):
-//     break b2();
+//     br b2();
 // b2():
 //     cbr false, b2(), exit(0);
 // exit(int x):

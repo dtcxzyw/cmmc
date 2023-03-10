@@ -40,6 +40,7 @@ static Flag debugTransform;        // NOLINT
 static StringOpt referenceOutput;  // NOLINT
 extern StringOpt executeInput;     // NOLINT
 static IntegerOpt skipCount;       // NOLINT
+extern StringOpt targetName;       // NOLINT
 
 static uint32_t runCount = 0;  // NOLINT
 
@@ -391,6 +392,9 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
         }))
         root->addPass(pass);
 
+    if(targetName.get() == "llvm")
+        for(auto& pass : passesSource.collect({ "LegalizeLLVMPhi", "BlockSort" }))
+            root->addPass(pass);
     if(debugTransform.get()) {
         for(auto& pass : passesSource.collect({ "DumpCFG" }))
             root->addPass(pass);

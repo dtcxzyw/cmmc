@@ -15,10 +15,11 @@
 #include <cassert>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Conversion/LLVM.hpp>
+#include <cmmc/Conversion/TAC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/IR/Module.hpp>
-#include <cmmc/IR/TAC.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -81,7 +82,7 @@ static std::string getOutputPath(const std::string& defaultPath) {
     return path.empty() ? defaultPath : path;
 }
 
-static int runIRPipeline(Module& module, const std::string& base) {
+static int runIRPipeline(Module& module, const std::string& base, const std::string& filePath) {
     if(!module.verify(std::cerr)) {
         DiagnosticsContext::get().attach<Reason>("Invalid IR").reportFatal();
     }
@@ -106,6 +107,14 @@ static int runIRPipeline(Module& module, const std::string& base) {
         module.dump(out);
         return EXIT_SUCCESS;
     }
+
+#ifdef CMMC_WITH_LLVM_SUPPORT
+    const auto emitLLVM = (::targetName.get() == "llvm");
+    if(emitLLVM) {
+        llvmCodeGen(module, filePath);
+        return EXIT_SUCCESS;
+    }
+#endif
 
     if(auto& input = executeInput.get(false); !input.empty()) {
         InputStream in{ input };
@@ -156,6 +165,13 @@ int mainImpl(int argc, char** argv) {
     if(version.get()) {
         reportInfo() << "CMMC " CMMC_VERSION << std::endl;
         reportInfo() << "Build time: " __TIME__ " " __DATE__ << std::endl;
+        reportInfo() << "LLVM Support: "
+#ifdef CMMC_WITH_LLVM_SUPPORT
+                        "\033[1;32mON\033[0m"
+#else
+                        "\033[1;31mOFF\033[0m"
+#endif
+                     << std::endl;
         return EXIT_SUCCESS;
     }
 
@@ -208,7 +224,7 @@ int mainImpl(int argc, char** argv) {
                 driver.emit(module);
             }
 
-            return runIRPipeline(module, base);
+            return runIRPipeline(module, base, path);
         }
         if(endswith(path, ".ir"sv)) {
             Module module;
@@ -216,7 +232,7 @@ int mainImpl(int argc, char** argv) {
             module.setTarget(target.get());
             loadTAC(module, path);
             const auto base = path.substr(0, path.size() - 3);
-            return runIRPipeline(module, base);
+            return runIRPipeline(module, base, path);
         }
 
         reportError() << "Unrecognized input"sv << std::endl;

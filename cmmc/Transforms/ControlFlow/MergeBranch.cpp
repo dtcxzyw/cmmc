@@ -13,13 +13,13 @@
 */
 
 // entry(int c):
-//     cbreak c, b2(1), b2(0);
+//     cbr c, b2(1), b2(0);
 // b2(int c):
 //     return c;
 // ==>
 // entry(int c):
 //     int arg = select c, 1, 0;
-//     break b2(arg);
+//     br b2(arg);
 // b2(int c):
 //     return c;
 

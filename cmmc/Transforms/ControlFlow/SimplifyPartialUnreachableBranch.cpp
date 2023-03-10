@@ -15,7 +15,7 @@
 // func add(int a, int b) -> int:
 // entry(int a, int b):
 //     int c = a + b;
-//     cbreak true, b2(1), b3(c);
+//     cbr true, b2(1), b3(c);
 // b2(int c):
 //     return c;
 // b3(int c):
@@ -24,7 +24,7 @@
 // func add(int a, int b) -> int:
 // entry(int a, int b):
 //     int c = a + b;
-//     break b2(1);
+//     br b2(1);
 // b2(int c):
 //     return c;
 // b3(int c):

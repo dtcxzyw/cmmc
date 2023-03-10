@@ -15,7 +15,7 @@
 // func foo(int a, int b) -> int:
 // entry(int a, int b):
 //     int c = a + b;
-//     break b1(c);
+//     br b1(c);
 // b1(int c):
 //     return c;
 // ==>

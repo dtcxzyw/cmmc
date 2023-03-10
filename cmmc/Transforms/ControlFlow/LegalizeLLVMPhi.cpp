@@ -12,66 +12,71 @@
     limitations under the License.
 */
 
-// func add(int a, int b) -> int:
-// entry(int a, int b):
-//     int c = a + b;
-//     cbr true, b2(1), b3(c);
+// entry(int c):
+//     cbr c, b2(1), b2(0);
 // b2(int c):
 //     return c;
-// b3(int c):
-//     reutrn c;
 // ==>
-// func add(int a, int b) -> int:
-// entry(int a, int b):
-//     int c = a + b;
-//     br b2(1);
+// entry(int c):
+//     cbr c, b2(1), b2.indirect(0);
+// b2.indirect(int c):
+//     br b2(c);
 // b2(int c):
 //     return c;
-// b3(int c):
-//     reutrn c;
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Module.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
 
-class SimplifyBranch final : public TransformPass<Function> {
+class LegalizeLLVMPhi final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& target = analysis.module().getTarget();
+
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            const auto cond = terminator->getOperand(0);
-            MatchContext<Value> matchCtx{ cond, nullptr };
-            uintmax_t constCond;
-            if(!uint_(constCond)(matchCtx))
-                continue;
             auto branch = terminator->as<ConditionalBranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
-            auto& insts = block->instructions();
-            insts.pop_back();
-            const auto inst = make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget);
-            inst->setBlock(block);
-            insts.push_back(inst);
+            if(trueTarget.getTarget() != falseTarget.getTarget())
+                continue;
+
+            IRBuilder builder{ target };
+            const auto forwardingBlock = builder.addBlock();
+            forwardingBlock->setLabel(String::get(std::string{ falseTarget.getTarget()->getLabel().prefix() } + ".indirect"));
+            const auto& falseTargetArgs = falseTarget.getTarget()->args();
+            Vector<Value*> args;
+            args.reserve(falseTargetArgs.size());
+            for(auto arg : falseTargetArgs) {
+                args.push_back(forwardingBlock->addArg(arg->getType()));
+            }
+            builder.setCurrentBlock(forwardingBlock);
+            builder.makeOp<ConditionalBranchInst>(BranchTarget{ falseTarget.getTarget(), std::move(args) });
+
+            falseTarget.resetTarget(forwardingBlock);
+
             modified = true;
         }
         return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {
-        return "SimplifyBranch"sv;
+        return "LegalizeLLVMPhi"sv;
     }
 };
 
-CMMC_TRANSFORM_PASS(SimplifyBranch);
+CMMC_TRANSFORM_PASS(LegalizeLLVMPhi);
 
 CMMC_NAMESPACE_END

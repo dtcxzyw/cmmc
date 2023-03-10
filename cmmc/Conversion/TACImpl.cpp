@@ -13,8 +13,8 @@
 */
 
 #include <cassert>
+#include <cmmc/Conversion/TACImpl.hpp>
 #include <cmmc/IR/Instruction.hpp>
-#include <cmmc/IR/TACImpl.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <cstring>

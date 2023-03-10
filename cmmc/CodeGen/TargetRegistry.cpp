@@ -43,6 +43,11 @@ std::unique_ptr<Target> TargetRegistry::selectTarget() const {
         }
     }
 
+    auto& info = reportInfo();
+    info << "Supported targets:";
+    for(auto& builder : mTargets)
+        info << ' ' << builder.first;
+    info << std::endl;
     DiagnosticsContext::get().attach<UnrecognizedInput>("target", target).reportFatal();
 }
 
