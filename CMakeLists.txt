@@ -52,12 +52,10 @@ add_frontend(SysY)
 find_package(LLVM CONFIG)
 if(${LLVM_FOUND})
   message(STATUS "With LLVM reference backend support")
+  list(JOIN LLVM_TARGETS_TO_BUILD " " LLVM_TARGETS_TO_BUILD_LIST)
+  message(STATUS "Supported targets: " ${LLVM_TARGETS_TO_BUILD_LIST})
+  message(STATUS "Native target: " ${LLVM_NATIVE_ARCH})
   include_directories(${LLVM_INCLUDE_DIRS})
-  find_program(LLVM_CONFIG_EXEC NAMES llvm-config)
-  execute_process(COMMAND ${LLVM_CONFIG_EXEC} --libfiles
-  OUTPUT_VARIABLE LLVM_LIBRARIES
-  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  string (REPLACE " " ";" LLVM_LIBRARIES "${LLVM_LIBRARIES}")
 endif()
 
 file(GLOB CMMC_SRC cmmc/**/*.cpp cmmc/Transforms/**/*.cpp cmmc/Target/**/*.cpp)
@@ -66,6 +64,22 @@ if(${LLVM_FOUND})
   add_compile_definitions(CMMC_WITH_LLVM_SUPPORT)
   set(CMMC_SRC_LLVM cmmc/Conversion/LLVM.cpp)
   set_source_files_properties(${CMMC_SRC_LLVM} PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter")
+  set(LLVM_LIBRARIES 
+    LLVMCore
+    LLVMSupport
+    
+    LLVM${LLVM_NATIVE_ARCH}AsmParser
+    LLVM${LLVM_NATIVE_ARCH}Disassembler 
+    LLVM${LLVM_NATIVE_ARCH}TargetMCA
+  )
+  foreach(TARGET ${LLVM_TARGETS_TO_BUILD})
+    list(APPEND LLVM_LIBRARIES 
+    LLVM${TARGET}Info 
+    LLVM${TARGET}CodeGen 
+    LLVM${TARGET}Desc 
+    )
+  endforeach()
+  
 else()
   set(CMMC_SRC_LLVM "")
   set(LLVM_LIBRARIES "")
