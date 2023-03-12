@@ -373,6 +373,16 @@ def sysy_gcc(src):
     return True
 
 
+def sysy_codegen_llvm(src):
+    tmp_out = os.path.join(binary_dir, 'tmp.S')
+    out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-o',
+                               tmp_out, src], capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+
+    return True
+
+
 skip_list = []
 
 
@@ -420,7 +430,12 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
+test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen", "llvm"]
+if len(sys.argv) >= 4:
+    test_cases = sys.argv[3].split(',')
+
+# TODO: has llvm support?
+
 generate_ref = False
 
 if generate_ref:
@@ -496,6 +511,16 @@ if "codegen" in test_cases:
     # res.append(test("SysY SysY->RISCV64 functional", tests_path +
     #                "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 
+if "llvm" in test_cases:
+    res.append(test("SysY SysY->LLVMIR functional", tests_path +
+                    "/SysY2022/functional", ".sy", sysy_codegen_llvm))
+    res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
+                    "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
+    res.append(test("SysY SysY->LLVMIR performance", tests_path +
+                    "/SysY2022/performance", ".sy", sysy_codegen_llvm))
+    res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
+                    "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
+
 
 if generate_ref:
     #test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
@@ -528,15 +553,17 @@ for key in summary.keys():
     print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
         val, baseline[key], val / baseline[key]))
 
-tac_perf = geo_means(tac_inst_count, tac_inst_count_samples)
-print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
-    tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
+if "tac" in test_cases:
+    tac_perf = geo_means(tac_inst_count, tac_inst_count_samples)
+    print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+        tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
 
-if "gcc" in test_cases:
+if "gcc" in test_cases and "llvm" in test_cases:
     print('Platform: ', platform.platform())
     gcc_perf = geo_means(total_perf_gcc_ref, total_perf_gcc_ref_samples)
     self_perf = geo_means(total_perf_self, total_perf_self_samples)
     print("gcc: {:.3f}s with command '{}'".format(gcc_perf, gcc_ref_command))
-    print("cmmc: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
+    print(
+        "cmmc[llvm-backend]: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
 
 exit(0 if failed_tests == 0 else -1)

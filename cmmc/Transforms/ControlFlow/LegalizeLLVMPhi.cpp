@@ -54,6 +54,7 @@ public:
                 continue;
 
             IRBuilder builder{ target };
+            builder.setCurrentFunction(&func);
             const auto forwardingBlock = builder.addBlock();
             forwardingBlock->setLabel(String::get(std::string{ falseTarget.getTarget()->getLabel().prefix() } + ".indirect"));
             const auto& falseTargetArgs = falseTarget.getTarget()->args();

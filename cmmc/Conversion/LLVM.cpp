@@ -15,8 +15,11 @@
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PhiAnalysis.hpp>
+#include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Conversion/LLVM.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -35,6 +38,7 @@
 #include <llvm/ADT/SmallVector.h>
 #include <llvm/ADT/StringRef.h>
 #include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constant.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Function.h>
@@ -51,8 +55,11 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Alignment.h>
 #include <llvm/Support/Casting.h>
+#include <llvm/Support/FileSystem.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Support/ToolOutputFile.h>
 #include <llvm/Support/raw_ostream.h>
+#include <system_error>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -110,31 +117,50 @@ class LLVMConversionContext final {
     static llvm::StringRef convertStr(const String& str) {
         return str.prefix();
     }
+    llvm::Constant* convertConstant(const Value* value) {
+        if(value->isUndefined()) {
+            return llvm::UndefValue::get(getType(value->getType()));
+        }
+        if(value->getType()->isInteger()) {
+            return llvm::ConstantInt::get(getType(value->getType()),
+                                          static_cast<uint64_t>(value->as<ConstantInteger>()->getSignExtended()), true);
+        }
+        if(value->getType()->isFloatingPoint()) {
+            return llvm::ConstantFP::get(getType(value->getType()), value->as<ConstantFloatingPoint>()->getValue());
+        }
+        if(value->getType()->isArray()) {
+            const auto arrayType = value->getType()->as<ArrayType>();
+            llvm::SmallVector<llvm::Constant*, 4> elements;
+            for(auto val : value->as<ConstantArray>()->values()) {
+                elements.push_back(convertConstant(val));
+            }
+            return llvm::ConstantArray::get(
+                llvm::ArrayType::get(getType(arrayType->getElementType()), arrayType->getElementCount()), elements);
+        }
+        reportUnreachable(CMMC_LOCATION());
+    }
+    llvm::Value* convertValue(Value* value, const llvm::SmallDenseMap<Value*, llvm::Value*>& valueMap) {
+        if(value->isConstant()) {
+            return convertConstant(value);
+        }
+        if(value->isGlobal()) {
+            if(value->is<GlobalVariable>()) {
+                const auto globalVar = value->as<GlobalVariable>();
+                return mModule.getOrInsertGlobal(convertStr(globalVar->getSymbol()),
+                                                 getType(value->getType()->as<PointerType>()->getPointee()));
+            }
+            reportUnreachable(CMMC_LOCATION());
+        }
+        return valueMap.lookup(value);
+    }
 
-    llvm::Value* convertInst(llvm::IRBuilder<>& builder, Instruction& inst,
+    llvm::Value* convertInst(llvm::IRBuilder<>& builder, Instruction& inst, const DataLayout& dataLayout,
                              const llvm::SmallDenseMap<Value*, llvm::Value*>& valueMap,
                              const llvm::SmallDenseMap<Block*, llvm::BasicBlock*>& blockMap) {
         const auto getInstType = [&] { return getType(inst.getType()); };
-        const auto getOperand = [&](uint32_t idx) -> llvm::Value* {
+        const auto getOperand = [&](uint32_t idx) {
             const auto value = inst.getOperand(idx);
-            if(value->isConstant()) {
-                if(value->getType()->isInteger()) {
-                    return llvm::ConstantInt::get(getType(value->getType()),
-                                                  static_cast<uint64_t>(value->as<ConstantInteger>()->getSignExtended()), true);
-                }
-                if(value->getType()->isFloatingPoint()) {
-                    return llvm::ConstantFP::get(getType(value->getType()), value->as<ConstantFloatingPoint>()->getValue());
-                }
-                reportUnreachable(CMMC_LOCATION());
-            }
-            if(value->isGlobal()) {
-                if(value->is<GlobalVariable>()) {
-                    const auto globalVar = value->as<GlobalVariable>();
-                    return mModule.getOrInsertGlobal(convertStr(globalVar->getSymbol()), getType(value->getType()));
-                }
-                reportUnreachable(CMMC_LOCATION());
-            }
-            return valueMap.lookup(value);
+            return convertValue(value, valueMap);
         };
         switch(inst.getInstID()) {
             case InstructionID::Ret: {
@@ -268,12 +294,14 @@ class LLVMConversionContext final {
             case InstructionID::FCast:
                 return builder.CreateFPCast(getOperand(0), getInstType());
             case InstructionID::Alloc: {
-                const auto alloca = builder.CreateAlloca(getType(inst.getType()->as<PointerType>()->getPointee()));
-                builder.CreateLifetimeStart(alloca);
+                const auto pointee = inst.getType()->as<PointerType>()->getPointee();
+                const auto alloca = builder.CreateAlloca(getType(pointee));
+                builder.CreateLifetimeStart(alloca, builder.getInt64(pointee->getSize(dataLayout)));
                 return alloca;
             }
             case InstructionID::Free: {
-                return builder.CreateLifetimeEnd(getOperand(0));
+                const auto pointee = inst.getOperand(0)->getType()->as<PointerType>()->getPointee();
+                return builder.CreateLifetimeEnd(getOperand(0), builder.getInt64(pointee->getSize(dataLayout)));
             }
             case InstructionID::GetElementPtr: {
                 const auto& operands = inst.operands();
@@ -285,7 +313,8 @@ class LLVMConversionContext final {
                     } else
                         indices.push_back(getOperand(idx));
                 }
-                return builder.CreateGEP(getInstType(), ptr, indices);
+                return builder.CreateInBoundsGEP(getType(operands.back()->getType()->as<PointerType>()->getPointee()), ptr,
+                                                 indices);
             }
             case InstructionID::PtrCast:
                 return builder.CreatePointerCast(getOperand(0), getInstType());
@@ -311,7 +340,8 @@ class LLVMConversionContext final {
                         return builder.CreateCall(func, args);
                     }
                     case Intrinsic::memset:
-                        return builder.CreateMemSet(getOperand(0), getOperand(1), getOperand(2), llvm::MaybeAlign{});
+                        return builder.CreateMemSet(getOperand(0), builder.CreateTrunc(getOperand(1), builder.getInt8Ty()),
+                                                    getOperand(2), llvm::MaybeAlign{});
                     case Intrinsic::memcpy:
                         return builder.CreateMemCpy(getOperand(0), llvm::MaybeAlign{}, getOperand(1), llvm::MaybeAlign{},
                                                     getOperand(2));
@@ -332,30 +362,50 @@ class LLVMConversionContext final {
         if(func.blocks().empty())
             return llvmFunc;
 
-        const auto dom = analysis.get<DominateAnalysis>(func);
+        const auto& dom = analysis.get<DominateAnalysis>(func);
         llvm::SmallDenseMap<Block*, llvm::BasicBlock*> blockMap;
         for(auto block : dom.blocks()) {
             const auto llvmBlock = llvm::BasicBlock::Create(mContext, convertStr(block->getLabel()), llvmFunc);
             blockMap.insert({ block, llvmBlock });
         }
 
-        const auto phiInfo = analysis.get<PhiAnalysis>(func);
+        const auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& phiInfo = analysis.get<PhiAnalysis>(func);
         llvm::SmallDenseMap<Value*, llvm::Value*> valueMap;
+        const auto& dataLayout = analysis.module().getTarget().getDataLayout();
 
         for(auto block : dom.blocks()) {
             const auto llvmBlock = blockMap.lookup(block);
 
             llvm::IRBuilder<> builder{ llvmBlock };
-            for(auto arg : block->args()) {
-                const auto& phi = phiInfo.query(arg);
-                if(std::holds_alternative<Value*>(phi)) {
-                    valueMap.insert({ arg, valueMap.lookup(std::get<Value*>(phi)) });
+            if(block == func.entryBlock()) {
+                uint32_t idx = 0;
+                for(auto arg : block->args()) {
+                    valueMap.insert({ arg, llvmFunc->getArg(idx) });
+                    ++idx;
+                }
+            } else {
+                const auto& predecessors = cfg.predecessors(block);
+                if(predecessors.size() == 1) {
+                    uint32_t idx = 0;
+                    const auto& args = predecessors.front().second->getArgs();
+                    for(auto arg : block->args()) {
+                        valueMap.insert({ arg, convertValue(args[idx], valueMap) });
+                        ++idx;
+                    }
                 } else {
-                    valueMap.insert({ arg, builder.CreatePHI(getType(arg->getType()), std::get<PhiNode>(phi).size()) });
+                    for(auto arg : block->args()) {
+                        const auto& phi = phiInfo.query(arg);
+                        if(std::holds_alternative<Value*>(phi)) {
+                            valueMap.insert({ arg, convertValue(std::get<Value*>(phi), valueMap) });
+                        } else {
+                            valueMap.insert({ arg, builder.CreatePHI(getType(arg->getType()), predecessors.size()) });
+                        }
+                    }
                 }
             }
             for(auto inst : block->instructions()) {
-                const auto val = convertInst(builder, *inst, valueMap, blockMap);
+                const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
                 if(inst->canbeOperand())
                     valueMap.insert({ inst, val });
             }
@@ -363,26 +413,36 @@ class LLVMConversionContext final {
 
         // fix phi nodes
         for(auto block : dom.blocks()) {
+            if(block == func.entryBlock())
+                continue;
+            const auto& predecessors = cfg.predecessors(block);
+            if(predecessors.size() == 1)
+                continue;
+
+            uint32_t idx = 0;
             for(auto arg : block->args()) {
                 const auto& phi = phiInfo.query(arg);
                 if(std::holds_alternative<PhiNode>(phi)) {
-                    const auto& phiNode = std::get<PhiNode>(phi);
-
                     const auto llvmPhi = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(arg));
-                    for(auto val : phiNode)
-                        llvmPhi->addIncoming(valueMap.lookup(val), blockMap.lookup(val->getBlock()));
+
+                    for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
+                        llvmPhi->addIncoming(convertValue(predTarget->getArgs()[idx], valueMap), blockMap.lookup(predBlock));
+                    }
                 }
+                ++idx;
             }
         }
 
         return llvmFunc;
     }
     llvm::GlobalValue* convertGlobalVar(GlobalVariable& globalVar) {
-        const auto global = llvm::dyn_cast<llvm::GlobalVariable>(
-            mModule.getOrInsertGlobal(convertStr(globalVar.getSymbol()), getType(globalVar.getType())));
-        if(globalVar.initialValue()) {
-            reportNotImplemented(CMMC_LOCATION());
-        }
+        const auto type = getType(globalVar.getType()->as<PointerType>()->getPointee());
+        const auto global =
+            llvm::dyn_cast<llvm::GlobalVariable>(mModule.getOrInsertGlobal(convertStr(globalVar.getSymbol()), type));
+        if(const auto initValue = globalVar.initialValue()) {
+            global->setInitializer(convertConstant(initValue));
+        } else
+            global->setInitializer(llvm::ConstantAggregateZero::get(type));
         return global;
     }
 
@@ -404,22 +464,26 @@ public:
     }
 };
 
-void llvmCodeGen(Module& module, const std::string& path) {
+void llvmCodeGen(Module& module, const std::string& srcPath, const std::string& output) {
     llvm::InitializeAllTargets();
     llvm::InitializeAllAsmPrinters();
 
     llvm::LLVMContext context;
     llvm::Module llvmMod{ "CMMC IR Module", context };
-    llvmMod.setSourceFileName(path);
+    llvmMod.setSourceFileName(srcPath);
     LLVMConversionContext conversionContext{ context, llvmMod };
 
     conversionContext.convert(module);
 
-    llvmMod.print(llvm::errs(), nullptr);
+    std::error_code ec;
+    llvm::ToolOutputFile file{ output, ec, llvm::sys::fs::OF_Text };
+
+    llvmMod.print(file.os(), nullptr);
 
     if(llvm::verifyModule(llvmMod, &llvm::errs())) {
         DiagnosticsContext::get().attach<ModuleAttachment>("cmmc IR", &module).reportFatal();
-    }
+    } else
+        file.keep();
 }
 
 CMMC_NAMESPACE_END

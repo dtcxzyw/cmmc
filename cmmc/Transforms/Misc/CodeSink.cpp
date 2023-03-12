@@ -12,11 +12,11 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Config.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>

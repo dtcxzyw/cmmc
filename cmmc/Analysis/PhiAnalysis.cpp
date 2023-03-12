@@ -104,8 +104,8 @@ PhiAnalysisResult PhiAnalysis::run(Function& func, AnalysisPassManager& analysis
     for(NodeIndex i = 0; i < ccnt; ++i)
         if(degreeIn[i] == 0) {
             auto& g = group[i];
-            if(g.size() == 1 && !invMap[g[0]]->is<BlockArgument>()) {
-                phiNodes[i] = { invMap[g[0]] };
+            if(g.size() == 1 && !invMap.at(g.front())->is<BlockArgument>()) {
+                phiNodes[i] = { invMap.at(g.front()) };
             } else if(!g.empty()) {
                 std::list<BlockArgument*> args;
 

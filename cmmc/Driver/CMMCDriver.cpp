@@ -111,7 +111,8 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
 #ifdef CMMC_WITH_LLVM_SUPPORT
     const auto emitLLVM = (::targetName.get() == "llvm");
     if(emitLLVM) {
-        llvmCodeGen(module, filePath);
+        const auto output = getOutputPath(base + ".ll");
+        llvmCodeGen(module, filePath, output);
         return EXIT_SUCCESS;
     }
 #endif

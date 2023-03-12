@@ -16,6 +16,7 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cstdint>
 #include <limits>
 #include <unordered_map>

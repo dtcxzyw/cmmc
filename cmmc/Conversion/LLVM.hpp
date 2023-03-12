@@ -18,6 +18,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void llvmCodeGen(Module& module, const std::string& path);
+void llvmCodeGen(Module& module, const std::string& srcPath, const std::string& output);
 
 CMMC_NAMESPACE_END
