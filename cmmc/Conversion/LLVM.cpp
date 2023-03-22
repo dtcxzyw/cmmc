@@ -37,6 +37,7 @@
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/ADT/SmallVector.h>
 #include <llvm/ADT/StringRef.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/Constants.h>
@@ -131,11 +132,15 @@ class LLVMConversionContext final {
         if(value->getType()->isArray()) {
             const auto arrayType = value->getType()->as<ArrayType>();
             llvm::SmallVector<llvm::Constant*, 4> elements;
-            for(auto val : value->as<ConstantArray>()->values()) {
+            const auto& values = value->as<ConstantArray>()->values();
+            for(auto val : values) {
                 elements.push_back(convertConstant(val));
             }
-            return llvm::ConstantArray::get(
-                llvm::ArrayType::get(getType(arrayType->getElementType()), arrayType->getElementCount()), elements);
+            const auto elementType = getType(arrayType->getElementType());
+            while(elements.size() != arrayType->getElementCount()) {
+                elements.push_back(llvm::ConstantAggregateZero::get(elementType));
+            }
+            return llvm::ConstantArray::get(llvm::ArrayType::get(elementType, arrayType->getElementCount()), elements);
         }
         reportUnreachable(CMMC_LOCATION());
     }
@@ -296,12 +301,13 @@ class LLVMConversionContext final {
             case InstructionID::Alloc: {
                 const auto pointee = inst.getType()->as<PointerType>()->getPointee();
                 const auto alloca = builder.CreateAlloca(getType(pointee));
-                builder.CreateLifetimeStart(alloca, builder.getInt64(pointee->getSize(dataLayout)));
+                // builder.CreateLifetimeStart(alloca, builder.getInt64(pointee->getSize(dataLayout)));
                 return alloca;
             }
             case InstructionID::Free: {
-                const auto pointee = inst.getOperand(0)->getType()->as<PointerType>()->getPointee();
-                return builder.CreateLifetimeEnd(getOperand(0), builder.getInt64(pointee->getSize(dataLayout)));
+                // const auto pointee = inst.getOperand(0)->getType()->as<PointerType>()->getPointee();
+                // return builder.CreateLifetimeEnd(getOperand(0), builder.getInt64(pointee->getSize(dataLayout)));
+                return nullptr;
             }
             case InstructionID::GetElementPtr: {
                 const auto& operands = inst.operands();
@@ -313,8 +319,8 @@ class LLVMConversionContext final {
                     } else
                         indices.push_back(getOperand(idx));
                 }
-                return builder.CreateInBoundsGEP(getType(operands.back()->getType()->as<PointerType>()->getPointee()), ptr,
-                                                 indices);
+                const auto destTy = getType(operands.back()->getType()->as<PointerType>()->getPointee());
+                return builder.CreateInBoundsGEP(destTy, ptr, indices);
             }
             case InstructionID::PtrCast:
                 return builder.CreatePointerCast(getOperand(0), getInstType());
@@ -362,9 +368,9 @@ class LLVMConversionContext final {
         if(func.blocks().empty())
             return llvmFunc;
 
-        const auto& dom = analysis.get<DominateAnalysis>(func);
+        // const auto& dom = analysis.get<DominateAnalysis>(func);
         llvm::SmallDenseMap<Block*, llvm::BasicBlock*> blockMap;
-        for(auto block : dom.blocks()) {
+        for(auto block : func.blocks()) {
             const auto llvmBlock = llvm::BasicBlock::Create(mContext, convertStr(block->getLabel()), llvmFunc);
             blockMap.insert({ block, llvmBlock });
         }
@@ -374,7 +380,20 @@ class LLVMConversionContext final {
         llvm::SmallDenseMap<Value*, llvm::Value*> valueMap;
         const auto& dataLayout = analysis.module().getTarget().getDataLayout();
 
-        for(auto block : dom.blocks()) {
+        {
+            // promote allocas
+            const auto entry = blockMap.lookup(func.entryBlock());
+            llvm::IRBuilder<> builder{ entry };
+            for(auto block : func.blocks()) {
+                for(auto inst : block->instructions()) {
+                    if(inst->getInstID() == InstructionID::Alloc) {
+                        valueMap.insert({ inst, convertInst(builder, *inst, dataLayout, valueMap, blockMap) });
+                    }
+                }
+            }
+        }
+
+        for(auto block : func.blocks()) {
             const auto llvmBlock = blockMap.lookup(block);
 
             llvm::IRBuilder<> builder{ llvmBlock };
@@ -405,6 +424,8 @@ class LLVMConversionContext final {
                 }
             }
             for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Alloc)
+                    continue;
                 const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
                 if(inst->canbeOperand())
                     valueMap.insert({ inst, val });
@@ -412,7 +433,7 @@ class LLVMConversionContext final {
         }
 
         // fix phi nodes
-        for(auto block : dom.blocks()) {
+        for(auto block : func.blocks()) {
             if(block == func.entryBlock())
                 continue;
             const auto& predecessors = cfg.predecessors(block);
@@ -443,6 +464,7 @@ class LLVMConversionContext final {
             global->setInitializer(convertConstant(initValue));
         } else
             global->setInitializer(llvm::ConstantAggregateZero::get(type));
+        global->setAlignment(llvm::MaybeAlign{ mModule.getDataLayout().getPrefTypeAlignment(type) });
         return global;
     }
 
@@ -464,6 +486,11 @@ public:
     }
 };
 
+void llvmTranslate(Module& module, llvm::Module& llvmMod) {
+    LLVMConversionContext conversionContext{ llvmMod.getContext(), llvmMod };
+    conversionContext.convert(module);
+}
+
 void llvmCodeGen(Module& module, const std::string& srcPath, const std::string& output) {
     llvm::InitializeAllTargets();
     llvm::InitializeAllAsmPrinters();
@@ -471,14 +498,15 @@ void llvmCodeGen(Module& module, const std::string& srcPath, const std::string& 
     llvm::LLVMContext context;
     llvm::Module llvmMod{ "CMMC IR Module", context };
     llvmMod.setSourceFileName(srcPath);
-    LLVMConversionContext conversionContext{ context, llvmMod };
-
-    conversionContext.convert(module);
+    llvmTranslate(module, llvmMod);
 
     std::error_code ec;
     llvm::ToolOutputFile file{ output, ec, llvm::sys::fs::OF_Text };
 
-    llvmMod.print(file.os(), nullptr);
+    if(output.size() >= 3 && output.substr(output.size() - 3) == ".bc") {
+        llvm::WriteBitcodeToFile(llvmMod, file.os());
+    } else
+        llvmMod.print(file.os(), nullptr);
 
     if(llvm::verifyModule(llvmMod, &llvm::errs())) {
         DiagnosticsContext::get().attach<ModuleAttachment>("cmmc IR", &module).reportFatal();

@@ -87,12 +87,12 @@ ConstantInteger* ConstantInteger::get(const Type* type, intmax_t value) {
 }
 
 double ConstantFloatingPoint::getValue() const noexcept {
-    if(getType()->as<FloatingPointType>()->getFixedSize() == 4)
+    if(getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float))
         return static_cast<double>(static_cast<float>(mValue));
     return mValue;
 }
 bool ConstantFloatingPoint::isEqual(double val) const noexcept {
-    if(getType()->as<FloatingPointType>()->getFixedSize() == 4)
+    if(getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float))
         return static_cast<float>(mValue) == static_cast<float>(val);
     return mValue == val;
 }

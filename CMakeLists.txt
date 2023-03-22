@@ -25,7 +25,7 @@ else()
   add_link_options(-s -march=native -funroll-loops -ffp-contract=on)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
-add_compile_options(-Wextra -Wall -Werror)
+add_compile_options(-Wextra -Wall -Werror -Wno-format-security)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
@@ -62,13 +62,17 @@ endif()
 
 file(GLOB CMMC_SRC cmmc/**/*.cpp cmmc/Transforms/**/*.cpp cmmc/Target/**/*.cpp)
 list(FILTER CMMC_SRC EXCLUDE REGEX LLVM[.]cpp)
+list(FILTER CMMC_SRC EXCLUDE REGEX LLVMOrcJIT[.]cpp)
 if(${LLVM_FOUND})
   add_compile_definitions(CMMC_WITH_LLVM_SUPPORT)
-  set(CMMC_SRC_LLVM cmmc/Conversion/LLVM.cpp)
-  set_source_files_properties(${CMMC_SRC_LLVM} PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter")
+  set(CMMC_SRC_LLVM cmmc/Conversion/LLVM.cpp cmmc/ExecutionEngine/LLVMOrcJIT.cpp)
+  set_source_files_properties(${CMMC_SRC_LLVM} PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter -Wno-redundant-move")
   set(LLVM_LIBRARIES 
     LLVMCore
     LLVMSupport
+    LLVMBitWriter
+    LLVMOrcJIT
+    LLVMMC
     
     LLVM${LLVM_NATIVE_ARCH}AsmParser
     LLVM${LLVM_NATIVE_ARCH}Disassembler 
@@ -89,7 +93,7 @@ endif()
 file(GLOB CMMC_SRC_FRONTEND cmmc/Frontend/Support/*.cpp)
 add_executable(cmmc ${CMMC_SRC} ${CMMC_SRC_FRONTEND} ${CMMC_SRC_LLVM})
 add_dependencies(cmmc Spl_generated SysY_generated)
-set_source_files_properties(${CMMC_SRC} PROPERTIES COMPILE_FLAGS "-Wconversion -Wshadow -Wno-format-security -Wno-psabi")
+set_source_files_properties(${CMMC_SRC} PROPERTIES COMPILE_FLAGS "-Wconversion -Wshadow -Wno-psabi")
 target_include_directories(cmmc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(cmmc PRIVATE ${LLVM_LIBRARIES})
 

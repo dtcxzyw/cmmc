@@ -321,6 +321,34 @@ def sysy_ref(src):
                                 src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
+def compare_and_parse_perf(src, out):
+    output = out.stdout
+    if len(output) != 0 and output[-1] != '\n':
+        output += '\n'
+    output += str(out.returncode) + '\n'
+    output_file = src[:-3] + '.out'
+    # print(output.encode('utf-8'))
+    standard_answer = ''
+    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
+        for line in f.readlines():
+            standard_answer += line
+    if not standard_answer.endswith('\n'):
+        standard_answer += '\n'
+
+    # print(standard_answer.encode('utf-8'))
+    if output != standard_answer:
+        return None
+
+    for line in out.stderr.splitlines():
+        if line.startswith('TOTAL:'):
+            perf = line[7:].split('-')
+            used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
+                60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
+            return used
+
+    return None
+
+
 def sysy_gcc(src):
     runtime = tests_path + "/SysY2022/sylib.c"
     header = tests_path + "/SysY2022/sylib.h"
@@ -343,42 +371,34 @@ def sysy_gcc(src):
     else:
         out = subprocess.run([output], capture_output=True, text=True)
 
-    output = out.stdout
-    if len(output) != 0 and output[-1] != '\n':
-        output += '\n'
-    output += str(out.returncode) + '\n'
-    output_file = src[:-3] + '.out'
-    # print(output.encode('utf-8'))
-    standard_answer = ''
-    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
-        for line in f.readlines():
-            standard_answer += line
-    if not standard_answer.endswith('\n'):
-        standard_answer += '\n'
-
-    # print(standard_answer.encode('utf-8'))
-    if output != standard_answer:
+    used = compare_and_parse_perf(src, out)
+    if used is None:
         return False
 
-    for line in out.stderr.splitlines():
-        if line.startswith('TOTAL:'):
-            perf = line[7:].split('-')
-            used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
-                60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
-            global total_perf_gcc_ref
-            total_perf_gcc_ref *= max(1e-6, used)
-            global total_perf_gcc_ref_samples
-            total_perf_gcc_ref_samples += 1
+    global total_perf_gcc_ref
+    total_perf_gcc_ref *= max(1e-6, used)
+    global total_perf_gcc_ref_samples
+    total_perf_gcc_ref_samples += 1
 
     return True
 
 
 def sysy_codegen_llvm(src):
-    tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-o',
-                               tmp_out, src], capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
+    inputs = src[:-3]+".in"
+    if not os.path.exists(inputs):
+        inputs = '/dev/null'
+
+    out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-O', optimization_level, '-o',
+                               '/dev/stdout', '-e', inputs, src], capture_output=True, text=True)
+
+    used = compare_and_parse_perf(src, out)
+    if used is None:
         return False
+
+    global total_perf_self
+    total_perf_self *= max(1e-6, used)
+    global total_perf_self_samples
+    total_perf_self_samples += 1
 
     return True
 
@@ -430,7 +450,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen", "llvm"]
+test_cases = ["gcc", "parse", "semantic", "opt", "tac", "codegen"]
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 
@@ -516,6 +536,9 @@ if "llvm" in test_cases:
                     "/SysY2022/functional", ".sy", sysy_codegen_llvm))
     res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
                     "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
+    total_perf_self = 1
+    total_perf_self_samples = 0
+
     res.append(test("SysY SysY->LLVMIR performance", tests_path +
                     "/SysY2022/performance", ".sy", sysy_codegen_llvm))
     res.append(test("SysY SysY->LLVMIR final_performance", tests_path +

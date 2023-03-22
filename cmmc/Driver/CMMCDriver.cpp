@@ -74,6 +74,7 @@ std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, Simul
         return interpreter.execute(module, *func, {}, &ctx);
     return SimulationFailReason::NoEntry;
 }
+std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
 
 CMMC_NAMESPACE_END
 
@@ -108,21 +109,29 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
         return EXIT_SUCCESS;
     }
 
-#ifdef CMMC_WITH_LLVM_SUPPORT
-    const auto emitLLVM = (::targetName.get() == "llvm");
-    if(emitLLVM) {
-        const auto output = getOutputPath(base + ".ll");
-        llvmCodeGen(module, filePath, output);
-        return EXIT_SUCCESS;
-    }
-#endif
-
     if(auto& input = executeInput.get(false); !input.empty()) {
         InputStream in{ input };
         const auto path = getOutputPath(base + ".out");
         reportDebug() << "simulation << "sv << input << " >> "sv << path << std::endl;
         OutputStream out{ path };
         SimulationIOContext ctx{ in, out };
+
+#ifdef CMMC_WITH_LLVM_SUPPORT
+        if(::targetName.get() == "llvm") {
+            reportDebug() << "use LLVM Orc JIT backend" << std::endl;
+            const auto retVal = llvmExecMain(module, filePath, ctx);
+            return std::visit(
+                [](auto ret) -> int {
+                    if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, int>) {
+                        return ret;
+                    } else {
+                        reportError() << enumName(ret) << std::endl;
+                        return EXIT_FAILURE;
+                    }
+                },
+                retVal);
+        }
+#endif
         const auto retVal = runMain(module, ctx);
         return std::visit(
             [](auto ret) -> int {
@@ -138,6 +147,15 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
             },
             retVal);
     }
+
+#ifdef CMMC_WITH_LLVM_SUPPORT
+    const auto emitLLVM = (::targetName.get() == "llvm");
+    if(emitLLVM) {
+        const auto output = getOutputPath(base + ".ll");
+        llvmCodeGen(module, filePath, output);
+        return EXIT_SUCCESS;
+    }
+#endif
 
     const auto emitTAC = (::targetName.get() == "tac");
     const auto path = getOutputPath(base + (emitTAC ? ".ir" : ".s"));

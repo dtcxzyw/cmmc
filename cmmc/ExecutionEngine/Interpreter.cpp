@@ -938,7 +938,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 if(symbol == "write"sv)
                                     ioCtx->stdoutStream.putch(' ');
                             } else if(symbol == "getch"sv) {
-                                int ch;
+                                char ch;
                                 ioCtx->stdinStream.get("%c", ch);
                                 addInt(ch);
                             } else if(symbol == "putch"sv) {
