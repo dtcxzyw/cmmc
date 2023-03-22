@@ -131,6 +131,8 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
                 },
                 retVal);
         }
+#else
+        CMMC_UNUSED(filePath);
 #endif
         const auto retVal = runMain(module, ctx);
         return std::visit(

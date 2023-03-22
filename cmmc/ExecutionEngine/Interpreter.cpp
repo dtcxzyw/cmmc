@@ -929,7 +929,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                             const auto symbol = callee->getSymbol().prefix();
                             if(symbol == "read"sv || symbol == "getint"sv) {
-                                int x;
+                                int x = 0;
                                 ioCtx->stdinStream.get("%d", x);
                                 addInt(x);
                             } else if(symbol == "write"sv || symbol == "putint"sv) {
@@ -938,19 +938,19 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 if(symbol == "write"sv)
                                     ioCtx->stdoutStream.putch(' ');
                             } else if(symbol == "getch"sv) {
-                                char ch;
+                                char ch = 0;
                                 ioCtx->stdinStream.get("%c", ch);
                                 addInt(ch);
                             } else if(symbol == "putch"sv) {
                                 const auto ch = static_cast<int>(getInt(0));
                                 ioCtx->stdoutStream.put("%c", ch);
                             } else if(symbol == "getarray"sv) {
-                                int size;
+                                int size = 0;
                                 ioCtx->stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
-                                    int val;
+                                    int val = 0;
                                     ioCtx->stdinStream.get("%d", val);
                                     memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(int), val);
                                 }
@@ -967,19 +967,19 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 }
                                 ioCtx->stdoutStream.put("\n");
                             } else if(symbol == "getfloat"sv) {
-                                float val;
+                                float val = 0.0F;
                                 ioCtx->stdinStream.get("%a", val);
                                 addFP(val);
                             } else if(symbol == "putfloat"sv) {
                                 const auto val = static_cast<float>(getFP(0));
                                 ioCtx->stdoutStream.put("%a", val);
                             } else if(symbol == "getfarray"sv) {
-                                int size;
+                                int size = 0;
                                 ioCtx->stdinStream.get("%d", size);
 
                                 const auto ptr = getPtr(0);
                                 for(int idx = 0; idx < size; ++idx) {
-                                    float val;
+                                    float val = 0.0F;
                                     ioCtx->stdinStream.get("%a", val);
                                     memCtx.storeValue(ptr + static_cast<uint32_t>(idx) * sizeof(float), val);
                                 }

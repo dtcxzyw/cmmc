@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include "llvm/Support/CodeGen.h"
-#include "llvm/Target/TargetOptions.h"
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Config.hpp>
@@ -30,9 +28,11 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Verifier.h>
+#include <llvm/Support/CodeGen.h>
 #include <llvm/Support/Error.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Support/TargetSelect.h>
+#include <llvm/Target/TargetOptions.h>
 #include <sys/time.h>
 
 CMMC_NAMESPACE_BEGIN
@@ -104,7 +104,7 @@ namespace sysy {
     }
 
     static int32_t getint() {
-        int32_t x;
+        int32_t x = 0;
         globalIOCtx->stdinStream.get("%d", x);
         return x;
     }
@@ -112,7 +112,7 @@ namespace sysy {
         globalIOCtx->stdoutStream.put("%d", x);
     }
     static int32_t getch() {
-        char x;
+        char x = 0;
         globalIOCtx->stdinStream.get("%c", x);
         return x;
     }
@@ -132,7 +132,7 @@ namespace sysy {
         globalIOCtx->stdoutStream.put("\n");
     }
     static float getfloat() {
-        float x;
+        float x = 0.0F;
         globalIOCtx->stdinStream.get("%a", x);
         return x;
     }
