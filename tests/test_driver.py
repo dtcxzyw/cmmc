@@ -321,6 +321,10 @@ def sysy_ref(src):
                                 src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
+dict_gcc = dict()
+dict_cmmc = dict()
+
+
 def compare_and_parse_perf(src, out):
     output = out.stdout
     if len(output) != 0 and output[-1] != '\n':
@@ -345,7 +349,9 @@ def compare_and_parse_perf(src, out):
             perf = line[7:].split('-')
             used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
                 60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
-            return used
+            if 'performance' in src:
+                print(" {:.3f}".format(used), end='')
+            return max(1e-6, used)
 
     return None
 
@@ -376,8 +382,10 @@ def sysy_gcc(src):
     if used is None:
         return False
 
+    global dict_gcc
+    dict_gcc[src] = min(used, dict_gcc.get(src, 1e10))
     global total_perf_gcc_ref
-    total_perf_gcc_ref *= max(1e-6, used)
+    total_perf_gcc_ref *= used
     global total_perf_gcc_ref_samples
     total_perf_gcc_ref_samples += 1
 
@@ -397,7 +405,7 @@ def sysy_codegen_llvm(src):
         level = '1'
     elif 'sort' in src:
         level = '1'
-        
+
     out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
                                '/dev/stdout', '-e', inputs, src], capture_output=True, text=True)
 
@@ -405,8 +413,10 @@ def sysy_codegen_llvm(src):
     if used is None:
         return False
 
+    global dict_cmmc
+    dict_cmmc[src] = min(used, dict_cmmc.get(src, 1e10))
     global total_perf_self
-    total_perf_self *= max(1e-6, used)
+    total_perf_self *= used
     global total_perf_self_samples
     total_perf_self_samples += 1
 
@@ -546,6 +556,7 @@ if "llvm" in test_cases:
                     "/SysY2022/functional", ".sy", sysy_codegen_llvm))
     res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
                     "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
+    dict_cmmc.clear()
     total_perf_self = 1
     total_perf_self_samples = 0
 
@@ -598,5 +609,13 @@ if "gcc" in test_cases and "llvm" in test_cases:
     print("gcc: {:.3f}s with command '{}'".format(gcc_perf, gcc_ref_command))
     print(
         "cmmc[llvm-backend]: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
+    print("Regressions:")
+
+    for key in dict_gcc.keys():
+        if key in dict_cmmc:
+            lhs = dict_gcc[key]
+            rhs = dict_cmmc[key]
+            if lhs < rhs:
+                print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, rhs/lhs, key))
 
 exit(0 if failed_tests == 0 else -1)

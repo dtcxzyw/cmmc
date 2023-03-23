@@ -32,6 +32,7 @@ bool replaceOperands(Block& block, const ReplaceMap& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target);
 bool isNoSideEffectExpr(const Instruction& inst);
+bool hasCall(Block& block);
 
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {

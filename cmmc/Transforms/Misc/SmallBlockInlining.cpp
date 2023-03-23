@@ -67,6 +67,8 @@ public:
             const auto nextBlock = target.getTarget();
             if(nextBlock->instructions().size() > sizeThreshold)
                 continue;
+            if(hasCall(*block))
+                continue;
 
             modified = true;
             auto& insts = block->instructions();

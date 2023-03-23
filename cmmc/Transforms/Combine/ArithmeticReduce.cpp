@@ -25,6 +25,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <limits>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -338,6 +339,17 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // -x cmp c -> -c cmp x
             if(scmp(cmp, neg(any(v1)), int_(i1))(matchCtx)) {
                 return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(-i1, v1), v1);
+            }
+
+            // FIXME: Range analysis
+            // (((x mod c1) + c2) mod c1 + c3) mod c1 -> ((x mod c1) + (c2 + c3)) mod c1
+            intmax_t i3, i4, i5;
+            if(srem(add(srem(add(capture(srem(any(v1), capture(int_(i1), v3)), v2), int_(i2)), int_(i3)), int_(i4)),
+                    int_(i5))(matchCtx) &&
+               (i1 > 0 && i1 == i3 && i3 == i5) && (i2 >= 0 && i4 >= 0 && i1 + i2 + i4 < std::numeric_limits<int32_t>::max())) {
+                return builder.makeOp<BinaryInst>(
+                    InstructionID::SRem, inst->getType(),
+                    builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v2, makeIntLike((i2 + i4) % i1, v2)), v3);
             }
 
             return nullptr;

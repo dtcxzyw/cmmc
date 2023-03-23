@@ -28,7 +28,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-constexpr uint32_t maxInlineBlockSize = 64;
+constexpr uint32_t maxInlineBlockSize = 5;
 
 class BlockArgSpecialization final : public TransformPass<Function> {
 public:
@@ -61,6 +61,8 @@ public:
                 if(!targetBlock)
                     return;
                 if(targetBlock->instructions().size() > maxInlineBlockSize)
+                    return;
+                if(hasCall(*targetBlock))
                     return;
 
                 if(!std::any_of(target.getArgs().cbegin(), target.getArgs().cend(), [](Value* arg) { return arg->isConstant(); }))

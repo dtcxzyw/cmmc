@@ -145,5 +145,12 @@ bool isNoSideEffectExpr(const Instruction& inst) {
 
     return true;
 }
+bool hasCall(Block& block) {
+    for(auto inst : block.instructions())
+        if(inst->getInstID() == InstructionID::Call) {
+            return true;
+        }
+    return false;
+}
 
 CMMC_NAMESPACE_END
