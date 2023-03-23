@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
@@ -57,13 +56,9 @@ Operand LoweringContext::getZero(const Type* type) {
 
 LoweringContext::LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
                                  std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
-                                 std::unordered_map<BlockArgument*, Operand>& blockArgs,
-                                 std::unordered_map<Value*, Operand>& valueMap, TemporaryPools& pools,
-                                 const BlockArgumentAnalysisResult& blockArgMap)
-    : mModule{ module }, mDataLayout{ module.target.getDataLayout() }, mBlockMap{ blockMap }, mGlobalMap{ globalMap },
-      mBlockArgs{ blockArgs }, mValueMap{ valueMap }, mPools{ pools }, mCurrentBasicBlock{ nullptr }, mBlockArgMap{
-          blockArgMap
-      } {}
+                                 std::unordered_map<Value*, Operand>& valueMap, TemporaryPools& pools)
+    : mModule{ module }, mDataLayout{ module.target.getDataLayout() }, mBlockMap{ blockMap },
+      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mPools{ pools }, mCurrentBasicBlock{ nullptr } {}
 
 VirtualRegPool& LoweringContext::getAllocationPool(uint32_t addressSpace) noexcept {
     assert(addressSpace < std::size(mPools.pools));
@@ -74,9 +69,6 @@ GMIRModule& LoweringContext::getModule() const noexcept {
 }
 GMIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
     return mBlockMap.at(block);
-}
-Operand LoweringContext::mapBlockArg(BlockArgument* arg) const {
-    return mBlockArgs.at(arg);
 }
 Operand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
@@ -125,22 +117,17 @@ GMIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
 void LoweringContext::addOperand(Value* value, Operand reg) {
     mValueMap.emplace(value, reg);
 }
-Value* LoweringContext::queryRoot(Value* val) const {
-    return mBlockArgMap.queryRoot(val);
-}
 
 static std::unordered_map<Operand, Operand, OperandHasher>
 lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
                        std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
-    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(*func);
     auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
 
     std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
-    std::unordered_map<BlockArgument*, Operand> blockArgs;
     std::unordered_map<Value*, Operand> valueMap;
     std::unordered_map<Value*, Operand> storageMap;
-    LoweringContext ctx{ machineModule, blockMap, globalMap, blockArgs, valueMap, mfunc.pools(), blockArgMap };
+    LoweringContext ctx{ machineModule, blockMap, globalMap, valueMap, mfunc.pools() };
 
     auto& vregPool = ctx.getAllocationPool(AddressSpace::VirtualReg);
     auto& stackPool = ctx.getAllocationPool(AddressSpace::Stack);
@@ -154,11 +141,13 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
 
+        /*
         for(auto arg : block->args()) {
             const auto reg = vregPool.allocate(arg->getType());
             blockArgs[arg] = reg;
             valueMap[arg] = reg;
         }
+        */
 
         ctx.setCurrentBasicBlock(mblock);
         for(auto inst : block->instructions()) {
@@ -176,9 +165,10 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
     }
 
     {
-        auto& parameters = mfunc.parameters();
-        for(auto arg : func->entryBlock()->args())
-            parameters.push_back(blockArgs[arg]);
+        reportNotImplemented(CMMC_LOCATION());
+        // auto& parameters = mfunc.parameters();
+        // for(auto arg : func->args())
+        //     parameters.push_back();
         ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
         info.emitPrologue(ctx, func);
     }
@@ -195,13 +185,15 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
     }
 
     std::unordered_map<Operand, Operand, OperandHasher> operandMap;
+    // TODO: phi nodes
+    /*
     for(auto [k, v] : blockArgMap.map()) {
         const auto dst = blockArgs.at(k);
         if(v->getBlock()) {  // instructions/block arguments
             const auto src = ctx.mapOperand(v);
             operandMap.emplace(dst, src);
         }
-    }
+    }*/
 
     /*
     if constexpr(Config::debug) {
@@ -514,7 +506,7 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
         case InstructionID::Branch:
             [[fallthrough]];
         case InstructionID::ConditionalBranch:
-            lower(inst->as<ConditionalBranchInst>(), ctx);
+            lower(inst->as<BranchInst>(), ctx);
             break;
         case InstructionID::Unreachable:
             lower(inst->as<UnreachableInst>(), ctx);
@@ -706,7 +698,12 @@ void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
                             static_cast<uint32_t>(size), false);
 }
-static void emitBranch(const BranchTarget& target, Block* srcBlock, LoweringContext& ctx) {
+static void emitBranch(Block* targetBlock, Block* srcBlock, LoweringContext& ctx) {
+    CMMC_UNUSED(targetBlock);
+    CMMC_UNUSED(srcBlock);
+    CMMC_UNUSED(ctx);
+    reportNotImplemented(CMMC_LOCATION());
+    /*
     const auto dstBlock = target.getTarget();
     auto& dst = dstBlock->args();
     auto& src = target.getArgs();
@@ -793,26 +790,6 @@ static void emitBranch(const BranchTarget& target, Block* srcBlock, LoweringCont
             // apply reset
             ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
         }
-
-        /*
-        std::vector<Operand> temps;
-        temps.reserve(dst.size());
-        for(size_t idx = 0; idx < dst.size(); ++idx) {
-            const auto arg = ctx.mapOperand(src[idx]);
-            const auto type = src[idx]->getType();
-            const auto dstArg = vreg.allocate(type);
-            const auto size = type->getSize(dataLayout);
-            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
-            temps.push_back(dstArg);
-        }
-        for(size_t idx = 0; idx < dst.size(); ++idx) {
-            const auto arg = temps[idx];
-            const auto type = src[idx]->getType();
-            const auto dstArg = ctx.mapBlockArg(dst[idx]);
-            const auto size = type->getSize(dataLayout);
-            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
-        }
-        */
     } else {
         for(size_t idx = 0; idx < dst.size(); ++idx) {
             const auto arg = ctx.mapOperand(src[idx]);
@@ -823,8 +800,9 @@ static void emitBranch(const BranchTarget& target, Block* srcBlock, LoweringCont
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
+    */
 }
-void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) const {
+void LoweringInfo::lower(BranchInst* inst, LoweringContext& ctx) const {
     const auto srcBlock = inst->getBlock();
     const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
         // beqz %cond, else_label
@@ -836,9 +814,9 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
 
         const auto curBlock = ctx.getCurrentBasicBlock();
 
-        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget().getTarget())->getTripCount());
+        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget())->getTripCount());
         ctx.setCurrentBasicBlock(thenPrepareBlock);
-        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget().getTarget())->getTripCount());
+        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget())->getTripCount());
         ctx.setCurrentBasicBlock(curBlock);
 
         ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, 1.0 - inst->getBranchProb(), elsePrepareBlock);
@@ -851,8 +829,7 @@ void LoweringInfo::lower(ConditionalBranchInst* inst, LoweringContext& ctx) cons
     };
     if(inst->getInstID() == InstructionID::Branch) {
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
-    } else if(auto condInst = dynamic_cast<CompareInst*>(ctx.queryRoot(inst->getOperand(0)));
-              condInst && isFusible(inst, condInst)) {
+    } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0)); condInst && isFusible(inst, condInst)) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
                 case InstructionID::UCmp:

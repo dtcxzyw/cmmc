@@ -54,6 +54,9 @@ public:
     [[nodiscard]] virtual bool isInstruction() const noexcept {
         return false;
     }
+    [[nodiscard]] virtual bool isArgument() const noexcept {
+        return false;
+    }
     [[nodiscard]] virtual Block* getBlock() const noexcept {
         return nullptr;
     }

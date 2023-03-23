@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -35,7 +34,6 @@ bool StackAddressLeakAnalysisResult::mayRead(Instruction* callInst, Value* alloc
 
 StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& address = analysis.get<PointerAddressSpaceAnalysis>(func);
-    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
 
     std::vector<Value*> allocs;
     std::vector<Instruction*> writeCalls, readCalls;
@@ -82,7 +80,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
     for(auto call : writeCalls) {
         for(auto operand : call->operands()) {
             if(operand->getType()->isPointer()) {
-                if(auto alloc = blockArgMap.queryRoot(operand); alloc->isInstruction()) {
+                if(auto alloc = operand; alloc->isInstruction()) {
                     auto allocInst = alloc->as<Instruction>();
                     if(allocInst->getInstID() == InstructionID::Alloc) {
                         modifyingCalls[allocInst].insert(call);
@@ -102,7 +100,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
     for(auto call : readCalls) {
         for(auto operand : call->operands()) {
             if(operand->getType()->isPointer()) {
-                if(auto alloc = blockArgMap.queryRoot(operand); alloc->isInstruction()) {
+                if(auto alloc = operand; alloc->isInstruction()) {
                     auto allocInst = alloc->as<Instruction>();
                     if(allocInst->getInstID() == InstructionID::Alloc) {
                         readingCalls[allocInst].insert(call);

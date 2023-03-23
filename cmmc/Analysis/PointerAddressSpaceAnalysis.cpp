@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -46,7 +45,6 @@ bool PointerAddressSpaceAnalysisResult::mustBe(Value* ptr, AddressSpaceType spac
 }
 
 PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& func, AnalysisPassManager& analysis) {
-    auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
     auto& dom = analysis.get<DominateAnalysis>(func);
     PointerAddressSpaceAnalysisResult result;
 
@@ -60,6 +58,8 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
             }
         };
         for(auto block : dom.blocks()) {
+            // FIXME
+            /*
             for(auto arg : block->args()) {
                 if(!arg->getType()->isPointer() || result.isTagged(arg))
                     continue;
@@ -68,7 +68,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                 else {
                     // TODO: mixed tag
                 }
-            }
+            }*/
 
             for(auto inst : block->instructions()) {
                 if(!inst->getType()->isPointer() || result.isTagged(inst))

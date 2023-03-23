@@ -18,7 +18,6 @@
 // etc.
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>

@@ -23,6 +23,7 @@
 #include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <ostream>
+#include <type_traits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -49,6 +50,7 @@ public:
 
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
+        static_assert(!std::is_same_v<StackAllocInst, T> && !std::is_same_v<PhiInst, T>);
         auto inst = make<T>(std::forward<Args>(args)...);
         auto block = getCurrentBlock();
         auto iter = block->instructions().insert(mInsertPoint, inst);
@@ -57,12 +59,9 @@ public:
         return inst;
     }
 
-    Block* addBlock(const Vector<const Type*>& types);
+    StackAllocInst* createAlloc(const Type* type);
 
-    template <typename... Args>
-    Block* addBlock(Args... types) {
-        return addBlock({ types... });
-    }
+    Block* addBlock();
 
     [[nodiscard]] Value* getTrue() const noexcept;
     [[nodiscard]] Value* getFalse() const noexcept;

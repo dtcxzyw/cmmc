@@ -20,6 +20,4 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void blockArgPropagation(Function& func);
-
 CMMC_NAMESPACE_END

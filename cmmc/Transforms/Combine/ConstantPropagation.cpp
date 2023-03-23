@@ -16,7 +16,6 @@
 // 2 < 1 -> false
 
 #include <cmath>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -32,16 +31,10 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
-    static bool reduceConstantBlockArgs(Block& block, const BlockArgumentAnalysisResult& blockArgRef) {
-        ReplaceMap replace;
-        for(auto arg : block.args()) {
-            const auto target = blockArgRef.query(arg);
-            if(!target)
-                continue;
-            if(target->isConstant() || target->isGlobal())
-                replace.emplace(arg, target);
-        }
-        return replaceOperands(block, replace);
+    static bool reduceConstantPhis(Block& block) {
+        CMMC_UNUSED(block);
+        reportNotImplemented(CMMC_LOCATION());
+        // return replaceOperands(block, replace);
     }
 
     static bool runOnBlock(IRBuilder& builder, Block& block) {
@@ -215,7 +208,6 @@ class ConstantPropagation final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& blockArgRef = analysis.get<BlockArgumentAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
@@ -224,7 +216,7 @@ public:
         while(true) {
             bool changed = false;
             for(auto block : dom.blocks()) {
-                modified |= reduceConstantBlockArgs(*block, blockArgRef);
+                modified |= reduceConstantPhis(*block);
                 modified |= runOnBlock(builder, *block);
             }
             modified |= changed;

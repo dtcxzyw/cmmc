@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -28,29 +27,27 @@ class UndefPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         bool modified = false;
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& target = analysis.module().getTarget();
 
         for(auto block : func.blocks()) {
             ReplaceMap replace;
             for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::ConditionalBranch &&
-                   blockArgMap.queryRoot(inst->getOperand(0))->isUndefined()) {
-                    const auto terminator = block->getTerminator()->as<ConditionalBranchInst>();
+                if(inst->getInstID() == InstructionID::ConditionalBranch && inst->getOperand(0)->isUndefined()) {
+                    const auto terminator = block->getTerminator()->as<BranchInst>();
                     block->instructions().pop_back();
                     IRBuilder builder{ target, block };
                     // builder.makeOp<UnreachableInst>();
                     const auto& trueTarget = terminator->getTrueTarget();
                     const auto& falseTarget = terminator->getFalseTarget();
                     // select a target
-                    builder.makeOp<ConditionalBranchInst>(terminator->getBranchProb() < 0.5 ? trueTarget : falseTarget);
+                    builder.makeOp<BranchInst>(terminator->getBranchProb() < 0.5 ? trueTarget : falseTarget);
                     modified = true;
                     break;
                 }
                 if(inst->getInstID() != InstructionID::Call && inst->canbeOperand()) {
                     bool hasUndef = false;
                     for(auto operand : inst->operands()) {
-                        if(blockArgMap.queryRoot(operand)->isUndefined()) {
+                        if(operand->isUndefined()) {
                             hasUndef = true;
                             break;
                         }

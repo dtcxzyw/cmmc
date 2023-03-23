@@ -25,15 +25,16 @@
 
 CMMC_NAMESPACE_BEGIN
 
-SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet,
-                                         const BlockArgumentAnalysisResult& blockArgMap)
-    : mAliasSet{ aliasSet }, mBlockArgMap{ blockArgMap } {
+SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet) : mAliasSet{ aliasSet } {
     std::vector<Value*> args;
+    // FIXME
+    CMMC_UNUSED(block);
+    /*
     for(auto arg : block->args()) {
         if(arg->getType()->isPointer()) {
             args.push_back(arg);
         }
-    }
+    }*/
 
     bool allDistinct = true;
 
@@ -179,7 +180,7 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             mLastValue[inst].emplace(inst, make<UndefinedValue>(inst->getType()->as<PointerType>()->getPointee()));
         } break;
         case InstructionID::GetElementPtr: {
-            const auto root = mBlockArgMap.queryRoot(inst->operands().back());
+            const auto root = inst->operands().back();
             if(const auto iter = mBasePointer.find(root); iter != mBasePointer.cend())
                 mBasePointer.emplace(inst, iter->second);
             else

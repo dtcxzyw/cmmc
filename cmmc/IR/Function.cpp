@@ -22,11 +22,30 @@
 
 CMMC_NAMESPACE_BEGIN
 
+void FuncArgument::dump(std::ostream& out) const {
+    dumpAsOperand(out);
+}
+
+void FuncArgument::dumpAsOperand(std::ostream& out) const {
+    dumpPrefix(out);
+    getType()->dumpName(out);
+    out << " %"sv << mLabel;
+}
+
+void FuncArgument::setLabel(String label) {
+    mLabel = label;
+}
+FuncArgument* Function::getArg(uint32_t idx) const {
+    return mArgs[idx];
+}
+
 void Function::dump(std::ostream& out) const {
     if(getLinkage() == Linkage::Internal)
         out << "internal "sv;
     out << "func @"sv << getSymbol();
     getType()->dump(out);
+    // TODO: print labeled args
+
     if(!mAttr.empty()) {
         out << " { "sv;
         // NOLINTNEXTLINE
@@ -55,14 +74,20 @@ void Function::dump(std::ostream& out) const {
     }
 
     LabelAllocator allocator;
-    for(auto block : mBlocks)
+    for(auto block : mBlocks) {
         block->setLabel(allocator.allocate(block->getLabel()));
+        block->relabel(allocator);
+    }
     out << " {\n"sv;
     for(auto block : mBlocks)
         block->dump(out);
     out << "}\n"sv;
 }
-
+FuncArgument* Function::addArg(const Type* type) {
+    const auto arg = make<FuncArgument>(this, type);
+    mArgs.push_back(arg);
+    return arg;
+}
 bool Function::verify(std::ostream& out) const {
     std::unordered_set<Value*> set;
     std::unordered_set<Block*> blocks;
@@ -82,19 +107,19 @@ bool Function::verify(std::ostream& out) const {
     for(auto block : mBlocks) {
         auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            const auto branch = terminator->as<ConditionalBranchInst>();
+            const auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
-            if(!blocks.count(trueTarget.getTarget())) {
+            if(!blocks.count(trueTarget)) {
                 out << "invalid use of deleted block "sv;
-                trueTarget.getTarget()->dumpAsTarget(out);
+                trueTarget->dumpAsTarget(out);
                 out << std::endl;
                 terminator->dump(out);
                 return false;
             }
-            if(falseTarget.getTarget() && !blocks.count(falseTarget.getTarget())) {
+            if(falseTarget && !blocks.count(falseTarget)) {
                 out << "invalid use of deleted block "sv;
-                falseTarget.getTarget()->dumpAsTarget(out);
+                falseTarget->dumpAsTarget(out);
                 out << std::endl;
                 terminator->dump(out);
                 return false;
@@ -110,8 +135,6 @@ void Function::dumpCFG(std::ostream& out) const {
     out << "digraph "sv << getSymbol() << '{' << std::endl;
     std::unordered_map<Block*, std::string> ids;
     uint32_t id = 0;
-
-    ;
 
     for(auto block : mBlocks) {
         ids[block] = "b" + std::to_string(++id);
@@ -144,12 +167,12 @@ void Function::dumpCFG(std::ostream& out) const {
     for(auto block : mBlocks) {
         auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            auto branch = terminator->as<ConditionalBranchInst>();
+            auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();
-            out << ids[block] << "->"sv << ids[trueTarget.getTarget()] << ';' << std::endl;
+            out << ids[block] << "->"sv << ids[trueTarget] << ';' << std::endl;
             auto& falseTarget = branch->getFalseTarget();
-            if(falseTarget.getTarget())
-                out << ids[block] << "->"sv << ids[falseTarget.getTarget()] << ';' << std::endl;
+            if(falseTarget)
+                out << ids[block] << "->"sv << ids[falseTarget] << ';' << std::endl;
         }
     }
 

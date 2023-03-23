@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+// TODO: +InfiniteEliminate
 // eliminate unreachable blocks
 // ^entry(i32 %a, i32 %b):
 //     ret i32 0;
@@ -42,12 +43,12 @@ public:
 
             const auto terminator = u->getTerminator();
             if(terminator->isBranch()) {
-                const auto inst = terminator->as<ConditionalBranchInst>();
-                const auto trueTarget = inst->getTrueTarget().getTarget();
+                const auto inst = terminator->as<BranchInst>();
+                const auto trueTarget = inst->getTrueTarget();
                 if(reachable.insert(trueTarget).second) {
                     q.push(trueTarget);
                 }
-                const auto falseTarget = inst->getFalseTarget().getTarget();
+                const auto falseTarget = inst->getFalseTarget();
                 if(falseTarget && reachable.insert(falseTarget).second) {
                     q.push(falseTarget);
                 }

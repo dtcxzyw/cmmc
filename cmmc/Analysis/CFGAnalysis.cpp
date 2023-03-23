@@ -16,10 +16,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-const std::vector<std::pair<Block*, BranchTarget*>>& CFGAnalysisResult::predecessors(Block* block) const {
+const std::vector<Block*>& CFGAnalysisResult::predecessors(Block* block) const {
     return mInfo.at(block).predecessors;
 }
-const std::vector<std::pair<Block*, BranchTarget*>>& CFGAnalysisResult::successors(Block* block) const {
+const std::vector<Block*>& CFGAnalysisResult::successors(Block* block) const {
     return mInfo.at(block).successors;
 }
 
@@ -30,14 +30,14 @@ CFGAnalysisResult CFGAnalysis::run(Function& func, AnalysisPassManager&) {
         auto& self = storage[block];
         const auto terminator = block->getTerminator();
         if(terminator->isBranch()) {
-            const auto branch = terminator->as<ConditionalBranchInst>();
-            auto& trueTarget = branch->getTrueTarget();
-            auto& falseTarget = branch->getFalseTarget();
-            self.successors.emplace_back(trueTarget.getTarget(), &trueTarget);
-            storage[trueTarget.getTarget()].predecessors.emplace_back(block, &trueTarget);
-            if(falseTarget.getTarget()) {
-                self.successors.emplace_back(falseTarget.getTarget(), &falseTarget);
-                storage[falseTarget.getTarget()].predecessors.emplace_back(block, &falseTarget);
+            const auto branch = terminator->as<BranchInst>();
+            const auto trueTarget = branch->getTrueTarget();
+            const auto falseTarget = branch->getFalseTarget();
+            self.successors.emplace_back(trueTarget);
+            storage[trueTarget].predecessors.emplace_back(block);
+            if(falseTarget) {
+                self.successors.emplace_back(falseTarget);
+                storage[falseTarget].predecessors.emplace_back(block);
             }
         }
     }

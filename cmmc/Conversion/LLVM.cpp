@@ -17,7 +17,6 @@
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
-#include <cmmc/Analysis/PhiAnalysis.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Conversion/LLVM.hpp>
@@ -174,15 +173,14 @@ class LLVMConversionContext final {
                 return builder.CreateRet(getOperand(0));
             }
             case InstructionID::Branch: {
-                const auto& target = inst.as<ConditionalBranchInst>()->getTrueTarget();
-                return builder.CreateBr(blockMap.lookup(target.getTarget()));
+                const auto& target = inst.as<BranchInst>()->getTrueTarget();
+                return builder.CreateBr(blockMap.lookup(target));
             }
             case InstructionID::ConditionalBranch: {
-                const auto branch = inst.as<ConditionalBranchInst>();
+                const auto branch = inst.as<BranchInst>();
                 const auto& trueTarget = branch->getTrueTarget();
                 const auto& falseTarget = branch->getFalseTarget();
-                return builder.CreateCondBr(getOperand(0), blockMap.lookup(trueTarget.getTarget()),
-                                            blockMap.lookup(falseTarget.getTarget()));
+                return builder.CreateCondBr(getOperand(0), blockMap.lookup(trueTarget), blockMap.lookup(falseTarget));
             }
             case InstructionID::Unreachable:
                 return builder.CreateUnreachable();
@@ -375,21 +373,14 @@ class LLVMConversionContext final {
             blockMap.insert({ block, llvmBlock });
         }
 
-        const auto& cfg = analysis.get<CFGAnalysis>(func);
-        const auto& phiInfo = analysis.get<PhiAnalysis>(func);
         llvm::SmallDenseMap<Value*, llvm::Value*> valueMap;
         const auto& dataLayout = analysis.module().getTarget().getDataLayout();
 
         {
-            // promote allocas
-            const auto entry = blockMap.lookup(func.entryBlock());
-            llvm::IRBuilder<> builder{ entry };
-            for(auto block : func.blocks()) {
-                for(auto inst : block->instructions()) {
-                    if(inst->getInstID() == InstructionID::Alloc) {
-                        valueMap.insert({ inst, convertInst(builder, *inst, dataLayout, valueMap, blockMap) });
-                    }
-                }
+            uint32_t idx = 0;
+            for(auto arg : func.args()) {
+                valueMap.insert({ arg, llvmFunc->getArg(idx) });
+                ++idx;
             }
         }
 
@@ -397,60 +388,12 @@ class LLVMConversionContext final {
             const auto llvmBlock = blockMap.lookup(block);
 
             llvm::IRBuilder<> builder{ llvmBlock };
-            if(block == func.entryBlock()) {
-                uint32_t idx = 0;
-                for(auto arg : block->args()) {
-                    valueMap.insert({ arg, llvmFunc->getArg(idx) });
-                    ++idx;
-                }
-            } else {
-                const auto& predecessors = cfg.predecessors(block);
-                if(predecessors.size() == 1) {
-                    uint32_t idx = 0;
-                    const auto& args = predecessors.front().second->getArgs();
-                    for(auto arg : block->args()) {
-                        valueMap.insert({ arg, convertValue(args[idx], valueMap) });
-                        ++idx;
-                    }
-                } else {
-                    for(auto arg : block->args()) {
-                        const auto& phi = phiInfo.query(arg);
-                        if(std::holds_alternative<Value*>(phi)) {
-                            valueMap.insert({ arg, convertValue(std::get<Value*>(phi), valueMap) });
-                        } else {
-                            valueMap.insert({ arg, builder.CreatePHI(getType(arg->getType()), predecessors.size()) });
-                        }
-                    }
-                }
-            }
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Alloc)
                     continue;
                 const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
                 if(inst->canbeOperand())
                     valueMap.insert({ inst, val });
-            }
-        }
-
-        // fix phi nodes
-        for(auto block : func.blocks()) {
-            if(block == func.entryBlock())
-                continue;
-            const auto& predecessors = cfg.predecessors(block);
-            if(predecessors.size() == 1)
-                continue;
-
-            uint32_t idx = 0;
-            for(auto arg : block->args()) {
-                const auto& phi = phiInfo.query(arg);
-                if(std::holds_alternative<PhiNode>(phi)) {
-                    const auto llvmPhi = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(arg));
-
-                    for(auto [predBlock, predTarget] : cfg.predecessors(block)) {
-                        llvmPhi->addIncoming(convertValue(predTarget->getArgs()[idx], valueMap), blockMap.lookup(predBlock));
-                    }
-                }
-                ++idx;
             }
         }
 

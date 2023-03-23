@@ -54,12 +54,12 @@ public:
             uintmax_t constCond;
             if(!uint_(constCond)(matchCtx))
                 continue;
-            auto branch = terminator->as<ConditionalBranchInst>();
+            auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
             auto& insts = block->instructions();
             insts.pop_back();
-            const auto inst = make<ConditionalBranchInst>(constCond ? trueTarget : falseTarget);
+            const auto inst = make<BranchInst>(constCond ? trueTarget : falseTarget);
             inst->setBlock(block);
             insts.push_back(inst);
             modified = true;

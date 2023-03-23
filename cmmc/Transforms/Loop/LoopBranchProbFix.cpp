@@ -41,7 +41,7 @@ public:
             assert(size >= 0);
 
             const auto prob = 1.0 - 1.0 / static_cast<double>(size);
-            const auto branch = loop.latch->getTerminator()->as<ConditionalBranchInst>();
+            const auto branch = loop.latch->getTerminator()->as<BranchInst>();
             const auto oldProb = branch->getBranchProb();
 
             if(std::fabs(oldProb - prob) > 1e-8) {

@@ -50,7 +50,6 @@
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -68,6 +67,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class LoadReduce final : public TransformPass<Function> {
     static bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) {
         ReplaceMap replace;
@@ -83,7 +83,6 @@ class LoadReduce final : public TransformPass<Function> {
 
     static bool runInterBlock(Function& func, AnalysisPassManager& analysis,
                               std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis) {
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
         const auto& module = analysis.module();
@@ -95,7 +94,7 @@ class LoadReduce final : public TransformPass<Function> {
             std::vector<Value*> storePointers;
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Load) {
-                    auto ptr = blockArgMap.queryRoot(inst->getOperand(0));
+                    auto ptr = inst->getOperand(0);
                     if(ptr->isInstruction() && ptr->getBlock() == block)  // GEP-based load reduce is not supported
                         continue;
                     bool mayBeOverrided = false;
@@ -109,7 +108,7 @@ class LoadReduce final : public TransformPass<Function> {
                     if(!mayBeOverrided)
                         loadInsts.push_back(inst);
                 } else if(inst->getInstID() == InstructionID::Store) {
-                    auto ptr = blockArgMap.queryRoot(inst->getOperand(0));
+                    auto ptr = inst->getOperand(0);
                     storePointers.push_back(ptr);
                 } else if(inst->getInstID() == InstructionID::Call) {
                     const auto callee = inst->operands().back();
@@ -126,12 +125,12 @@ class LoadReduce final : public TransformPass<Function> {
             if(predecessors.empty())
                 continue;
 
-            std::unordered_map<Instruction*, std::unordered_map<BranchTarget*, Value*>> reuseValues;
-            for(auto [pred, target] : predecessors) {
+            std::unordered_map<Instruction*, std::unordered_map<Block*, Value*>> reuseValues;
+            for(auto pred : predecessors) {
                 const auto& lut = valueAnalysis.at(pred);
                 for(auto inst : loadInsts) {
                     auto ptr = inst->getOperand(0);
-                    if(const auto arg = dynamic_cast<BlockArgument*>(ptr))
+                    if(const auto arg = dynamic_cast<FuncArgument*>(ptr))
                         ptr = target->getOperand(arg);
                     if(auto val = lut.getLastValue(ptr)) {
                         if(const auto load = dynamic_cast<LoadInst*>(val)) {
@@ -158,7 +157,7 @@ class LoadReduce final : public TransformPass<Function> {
             modified = true;
 
             for(auto [pred, target] : predecessors) {
-                const auto branch = pred->getTerminator()->as<ConditionalBranchInst>();
+                const auto branch = pred->getTerminator()->as<BranchInst>();
                 const auto [indirectBranch, indirectTarget] = createIndirectBlock(module, func, *target);
                 const auto indirectBlock = indirectBranch->getBlock();
                 auto args = target->getArgs();
@@ -170,7 +169,7 @@ class LoadReduce final : public TransformPass<Function> {
                         indirectArgs.push_back(indirectBlock->addArg(iter->second->getType()));
                     } else {
                         auto ptr = inst->getOperand(0);
-                        if(const auto arg = dynamic_cast<BlockArgument*>(ptr))
+                        if(const auto arg = dynamic_cast<FuncArgument*>(ptr))
                             ptr = indirectTarget->getOperand(arg);
                         auto load = make<LoadInst>(ptr);
                         load->setBlock(indirectBlock);
@@ -198,13 +197,12 @@ class LoadReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& alias = analysis.get<AliasAnalysis>(func);
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
 
         std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
         bool modified = false;
         // intra-block
         for(auto block : func.blocks()) {
-            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias, blockArgMap }).first;
+            const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
             modified |= runBlock(*block, iter->second);
         }
         // inter-block
@@ -219,5 +217,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(LoadReduce);
+*/
 
 CMMC_NAMESPACE_END

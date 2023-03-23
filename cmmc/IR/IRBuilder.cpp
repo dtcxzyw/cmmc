@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -24,10 +25,8 @@ IRBuilder::IRBuilder(const Target& target)
                                                                  target.getDataLayout().getPointerSize() * 8)) },
       mTrueValue{ ConstantInteger::getTrue() }, mFalseValue{ ConstantInteger::getFalse() }, mZeroIndex{ ConstantInteger::get(
                                                                                                 mIndexType, 0) } {}
-Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
+Block* IRBuilder::addBlock() {
     auto block = make<Block>(mCurrentFunction);
-    for(auto type : types)
-        block->addArg(type);
     block->setLabel(String::get("b"));
     mCurrentFunction->blocks().push_back(block);
     return block;
@@ -35,7 +34,20 @@ Block* IRBuilder::addBlock(const Vector<const Type*>& types) {
 IRBuilder::IRBuilder(const Target& target, Block* block) : IRBuilder{ target } {
     setCurrentBlock(block);
 }
-
+StackAllocInst* IRBuilder::createAlloc(const Type* type) {
+    auto inst = make<StackAllocInst>(type);
+    auto block = getCurrentBlock();
+    const auto entry = getCurrentFunction()->entryBlock();
+    if(block != entry) {
+        entry->instructions().emplace_front(inst);
+        inst->setBlock(entry);
+    } else {
+        auto iter = block->instructions().insert(mInsertPoint, inst);
+        mInsertPoint = std::next(iter);
+        inst->setBlock(block);
+    }
+    return inst;
+}
 Function* IRBuilder::getCurrentFunction() const noexcept {
     return mCurrentFunction;
 }

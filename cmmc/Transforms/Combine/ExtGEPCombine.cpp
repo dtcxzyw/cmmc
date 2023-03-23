@@ -14,7 +14,6 @@
 
 // sext index -> index
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -30,7 +29,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class ExtGEPCombine final : public TransformPass<Function> {
-    static bool runBlock(Block& block, const BlockArgumentAnalysisResult& blockArgMap, const Type* indexType) {
+    static bool runBlock(Block& block, const Type* indexType) {
         bool modified = false;
         for(auto inst : block.instructions()) {
             if(inst->getInstID() != InstructionID::GetElementPtr)
@@ -39,13 +38,12 @@ class ExtGEPCombine final : public TransformPass<Function> {
             for(auto& operand : inst->operands()) {
                 if(operand->getType()->isInteger()) {
                     Value* idx;
-                    if(sext(any(idx))(MatchContext<Value>{ blockArgMap.queryRoot(operand), nullptr })) {
+                    if(sext(any(idx))(MatchContext<Value>{ operand, nullptr })) {
                         operand = idx;  // NOLINT(clang-analyzer-core.uninitialized.Assign)
                         modified = true;
                     }
                     intmax_t val;
-                    if(operand->getType() != indexType &&
-                       int_(val)(MatchContext<Value>{ blockArgMap.queryRoot(operand), nullptr })) {
+                    if(operand->getType() != indexType && int_(val)(MatchContext<Value>{ operand, nullptr })) {
                         operand = ConstantInteger::get(indexType, val);
                         modified = true;
                     }
@@ -58,16 +56,12 @@ class ExtGEPCombine final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto indexType =
             IntegerType::get(static_cast<uint32_t>(analysis.module().getTarget().getDataLayout().getPointerSize() * 8));
         bool modified = false;
 
         for(auto block : func.blocks())
-            modified |= runBlock(*block, blockArgMap, indexType);
-
-        if(modified)
-            blockArgPropagation(func);
+            modified |= runBlock(*block, indexType);
 
         return modified;
     }

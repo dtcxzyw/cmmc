@@ -44,8 +44,7 @@ public:
             const auto u = q.front();
             q.pop();
 
-            for(auto [pred, predTarget] : cfg.predecessors(u)) {
-                CMMC_UNUSED(predTarget);
+            for(auto pred : cfg.predecessors(u)) {
                 if(visit.insert(pred).second) {
                     q.push(pred);
                 }

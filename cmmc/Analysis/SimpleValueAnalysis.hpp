@@ -14,7 +14,6 @@
 
 #pragma once
 #include <cmmc/Analysis/AliasAnalysis.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 
@@ -22,13 +21,11 @@ CMMC_NAMESPACE_BEGIN
 
 class SimpleValueAnalysis final {
     const AliasAnalysisResult& mAliasSet;
-    const BlockArgumentAnalysisResult& mBlockArgMap;
     std::unordered_map<Value*, Value*> mBasePointer;                            // <pointer, base pointer>
     std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base pointer, <pointer, value>>
 
 public:
-    explicit SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet,
-                                 const BlockArgumentAnalysisResult& blockArgMap);
+    explicit SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet);
     void next(Instruction* inst);
     Value* getLastValue(Value* pointer) const;
 };

@@ -16,6 +16,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/LabelAllocator.hpp>
 #include <cstdint>
 #include <ostream>
 
@@ -23,32 +24,16 @@ CMMC_NAMESPACE_BEGIN
 
 class Function;
 
-class BlockArgument final : public Value {
-    Block* mBlock;
-    String mLabel;
-
-public:
-    BlockArgument(Block* block, const Type* type) noexcept : Value{ type }, mBlock{ block } {}
-    void dump(std::ostream& out) const override;
-    void dumpAsOperand(std::ostream& out) const override;
-    void setLabel(String label);
-    [[nodiscard]] const String& getLabel() const noexcept {
-        return mLabel;
-    }
-    [[nodiscard]] Block* getBlock() const noexcept override {
-        return mBlock;
-    }
-};
-
 class Block final {
     Function* mFunction;
     String mLabel;
-    Deque<BlockArgument*> mArgs;
     List<Instruction*> mInstructions;
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
     void dump(std::ostream& out) const;
+    void relabel(LabelAllocator& allocator) const;
+    void dumpLabeled(std::ostream& out) const;
     bool verify(std::ostream& out) const;
 
     [[nodiscard]] Instruction* getTerminator() const noexcept {
@@ -61,13 +46,6 @@ public:
     void setLabel(String label) {
         mLabel = label;
     }
-
-    [[nodiscard]] const Deque<BlockArgument*>& args() const noexcept {
-        return mArgs;
-    }
-    BlockArgument* addArg(const Type* type);
-    void removeArg(BlockArgument* arg);
-    BlockArgument* getArg(uint32_t idx);
 
     List<Instruction*>& instructions() noexcept {
         return mInstructions;

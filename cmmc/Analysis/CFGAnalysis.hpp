@@ -25,8 +25,8 @@
 CMMC_NAMESPACE_BEGIN
 
 struct BlockCFGInfo final {
-    std::vector<std::pair<Block*, BranchTarget*>> predecessors;
-    std::vector<std::pair<Block*, BranchTarget*>> successors;
+    std::vector<Block*> predecessors;
+    std::vector<Block*> successors;
 };
 
 class CFGAnalysisResult final {
@@ -36,8 +36,8 @@ public:
     std::unordered_map<Block*, BlockCFGInfo>& storage() {
         return mInfo;
     }
-    const std::vector<std::pair<Block*, BranchTarget*>>& predecessors(Block* block) const;
-    const std::vector<std::pair<Block*, BranchTarget*>>& successors(Block* block) const;
+    const std::vector<Block*>& predecessors(Block* block) const;
+    const std::vector<Block*>& successors(Block* block) const;
 };
 
 class CFGAnalysis final : public FuncAnalysisPassWrapper<CFGAnalysis, CFGAnalysisResult> {

@@ -108,15 +108,14 @@ void loadTAC(Module& module, const std::string& path) {
             builder.setCurrentBlock(block);
 
             if(std::holds_alternative<TACGoto>(*node)) {
-                builder.makeOp<ConditionalBranchInst>(
-                    BranchTarget{ blockMap.find(std::get<int>(std::get<TACGoto>(*node).label.val))->second });
+                builder.makeOp<BranchInst>(blockMap.find(std::get<int>(std::get<TACGoto>(*node).label.val))->second);
             } else if(std::holds_alternative<TACConditionalGoto>(*node)) {
                 auto& branch = std::get<TACConditionalGoto>(*node);
                 const auto ret =
                     builder.makeOp<CompareInst>(InstructionID::SCmp, branch.cmp, getRValue(branch.lhs), getRValue(branch.rhs));
                 const auto targetBlock = blockMap.find(std::get<int>(branch.label.val))->second;
                 constexpr auto defaultGotoProb = 0.3;  // prefer fallthrough
-                builder.makeOp<ConditionalBranchInst>(ret, defaultGotoProb, BranchTarget{ targetBlock }, BranchTarget{ next });
+                builder.makeOp<BranchInst>(ret, defaultGotoProb, targetBlock, next);
             } else {
                 reportUnreachable(CMMC_LOCATION());
             }
@@ -132,8 +131,6 @@ void loadTAC(Module& module, const std::string& path) {
                 builder.makeOp<UnreachableInst>();
             }
         }
-
-        blockArgPropagation(*func);
     };
 
     const auto emitStore = [&](Value* dst, Value* src) {
@@ -157,7 +154,7 @@ void loadTAC(Module& module, const std::string& path) {
                             },
                              [&](const TACLabel& label) {
                                  const auto nextBlock = builder.addBlock();
-                                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ nextBlock });
+                                 builder.makeOp<BranchInst>(nextBlock);
                                  builder.setCurrentBlock(nextBlock);
                                  blockMap.emplace(std::get<int>(label.label.val), nextBlock);
                              },
@@ -193,8 +190,8 @@ void loadTAC(Module& module, const std::string& path) {
 
                                  idx = 0;
                                  for(auto arg : args) {
-                                     const auto val = entryBlock->addArg(arg);
-                                     const auto storage = builder.makeOp<StackAllocInst>(val->getType());
+                                     const auto val = func->addArg(arg);
+                                     const auto storage = builder.createAlloc(val->getType());
                                      builder.makeOp<StoreInst>(storage, val);
                                      identifierMap.emplace(argNames[idx], storage);
                                      ++idx;
@@ -202,7 +199,7 @@ void loadTAC(Module& module, const std::string& path) {
 
                                  const auto codeBlock = builder.addBlock();
                                  builder.setCurrentBlock(entryBlock);
-                                 builder.makeOp<ConditionalBranchInst>(BranchTarget{ codeBlock });
+                                 builder.makeOp<BranchInst>(codeBlock);
                                  builder.setCurrentBlock(codeBlock);
                              },
                              [&](const TACAssign& assign) {
@@ -242,7 +239,7 @@ void loadTAC(Module& module, const std::string& path) {
                                  const auto size = static_cast<uint32_t>(dec.size);
                                  assert(size % 4 == 0);
                                  const auto type = make<ArrayType>(i32, size / 4);
-                                 const auto ptr = builder.makeOp<StackAllocInst>(type);
+                                 const auto ptr = builder.createAlloc(type);
                                  identifierMap.emplace(std::get<String>(dec.var.val), ptr);
                              },
                              [&](const TACArg& arg) { paramStack.push_back(getRValue(arg.val)); },

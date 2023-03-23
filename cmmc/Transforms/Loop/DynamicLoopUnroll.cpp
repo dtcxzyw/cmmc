@@ -20,6 +20,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -64,13 +65,13 @@ public:
 
             Block* prev = loop.latch;
             const auto retarget = [&](Block* block, bool nocheck) {
-                auto prevTerminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                auto prevTerminator = prev->getTerminator()->as<BranchInst>();
                 if(nocheck) {
                     prev->instructions().pop_back();
                     IRBuilder builder{ target, prev };
-                    prevTerminator = builder.makeOp<ConditionalBranchInst>(prevTerminator->getTrueTarget());
+                    prevTerminator = builder.makeOp<BranchInst>(prevTerminator->getTrueTarget());
                 }
-                prevTerminator->getTrueTarget().resetTarget(block);
+                prevTerminator->getTrueTarget() = block;
             };
             const auto append = [&](bool nocheck) {
                 ReplaceMap replace;
@@ -85,25 +86,19 @@ public:
 
             {
                 head = make<Block>(&func);
-                BlockArgument* indvar = nullptr;
+                PhiInst* indvar = nullptr;
                 Value* bound = loop.bound;
-                for(auto arg : loop.latch->args()) {
-                    const auto headerArg = head->addArg(arg->getType());
-
-                    if(arg == loop.inductionVar)
-                        indvar = headerArg;
-                    if(arg == loop.bound)
-                        bound = headerArg;
-                }
                 assert(indvar);
                 assert(bound->isConstant() || bound->getBlock() == head);
 
                 constexpr auto header = "super.header"sv;
                 head->setLabel(String::get(header));
                 insertedBlocks.push_back(head);
-                for(auto [block, branchTarget] : cfg.predecessors(loop.latch)) {
-                    if(block != loop.latch)
-                        branchTarget->resetTarget(head);
+                for(auto block : cfg.predecessors(loop.latch)) {
+                    if(block != loop.latch) {
+                        // branchTarget->resetTarget(head);
+                        reportNotImplemented(CMMC_LOCATION());
+                    }
                 }
 
                 IRBuilder builder{ target, head };
@@ -117,12 +112,13 @@ public:
                 batchCond->operands()[1] = bound;
                 batchCond->setBlock(head);
                 builder.setInsertPoint(head, head->instructions().end());
-                Vector<Value*> args{ head->args().cbegin(), head->args().cend() };
 
                 constexpr auto exitProb =
                     1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(unrollBlockSize));
-                builder.makeOp<ConditionalBranchInst>(batchCond, 1.0 - exitProb, BranchTarget{ loop.latch, args },
-                                                      BranchTarget{ loop.latch, args });
+                CMMC_UNUSED(exitProb);
+                reportNotImplemented(CMMC_LOCATION());
+                // FIXME
+                // builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch, loop.latch);
                 prev = head;
             }
 
@@ -131,8 +127,8 @@ public:
 
             // reset terminator
             {
-                const auto superBlockTerminator = prev->getTerminator()->as<ConditionalBranchInst>();
-                superBlockTerminator->getTrueTarget().resetTarget(head);
+                const auto superBlockTerminator = prev->getTerminator()->as<BranchInst>();
+                superBlockTerminator->getTrueTarget() = head;
                 constexpr auto exitProb = 1.0 /
                     static_cast<double>(unrollBlockSize)  // the trip count is divided by unrollBlockSize
                     / (static_cast<double>(estimatedLoopTripCount) /
@@ -146,9 +142,6 @@ public:
             for(auto block : insertedBlocks)
                 blocks.insert(iter, block);
         }
-
-        if(modified)
-            blockArgPropagation(func);
 
         return modified;
     }

@@ -243,121 +243,46 @@ void StoreInst::dump(std::ostream& out) const {
     getOperand(1)->dumpAsOperand(out);
 }
 
-void BranchTarget::dump(std::ostream& out) const {
-    mTarget->dumpAsTarget(out);
-    if(!mArgs.empty()) {
-        out << ' ';
-        bool isFirst = true;
-        for(auto arg : mArgs) {
-            if(!isFirst)
-                out << ", "sv;
-            else
-                isFirst = false;
-            arg->dumpAsOperand(out);
-        }
-    }
-}
-
-void ConditionalBranchInst::dump(std::ostream& out) const {
+void BranchInst::dump(std::ostream& out) const {
     out << getInstName(getInstID()) << ' ';
-    if(getInstID() == InstructionID::Branch) {
-        out << "[ "sv;
-        mTrueTarget.dump(out);
-        out << " ]"sv;
-    } else {
-        getOperand(0)->dumpAsOperand(out);
-        const auto prec = out.precision(2);
-        out << "(prob = " << mBranchProb << "), [ "sv;
-        out.precision(prec);
-        mTrueTarget.dump(out);
-        out << " ], [ "sv;
-        mFalseTarget.dump(out);
-        out << " ]"sv;
-    }
+    getOperand(0)->dumpAsOperand(out);
+    const auto prec = out.precision(2);
+    out << "(prob = " << mBranchProb << "), "sv;
+    out.precision(prec);
+    mTrueTarget->dumpAsTarget(out);
+    out << ", "sv;
+    mFalseTarget->dumpAsTarget(out);
 }
 
-bool ConditionalBranchInst::verify(std::ostream& out) const {
+bool BranchInst::verify(std::ostream& out) const {
     if(!Instruction::verify(out))
         return false;
     if(mBranchProb < 0.0 || mBranchProb > 1.0) {
         out << "invalid branch prob = " << mBranchProb << std::endl;
         return false;
     }
-    auto verifyTarget = [&](const BranchTarget& target) {
-        const auto block = target.getTarget();
+    auto verifyTarget = [&](const Block* block) {
         if(!block)
             return true;
         if(block == getBlock()->getFunction()->entryBlock()) {
             out << "Cannot branch to entry block"sv << std::endl;
             return false;
         }
-        auto& args1 = target.getArgs();
-        auto& args2 = block->args();
-        if(args1.size() != args2.size()) {
-            out << "The counts of block arguments mismatch."sv << std::endl;
-            out << "Source block: "sv << getBlock()->getLabel() << " provided "sv << args1.size() << std::endl;
-            out << "Dest block: "sv << block->getLabel() << " required "sv << args2.size() << std::endl;
-            return false;
-        }
-        for(uint32_t idx = 0; idx < args1.size(); ++idx) {
-            const auto t1 = args1[idx];
-            const auto t2 = args2[idx];
-            if(!t1->getType()->isSame(t2->getType())) {
-                out << "The types of block arguments mismatch."sv << std::endl;
-                out << "Source block: "sv << getBlock()->getLabel() << std::endl;
-                out << "Dest block: "sv << block->getLabel() << std::endl;
-                out << "Index: "sv << idx << std::endl;
-                out << "Source type: "sv;
-                t1->getType()->dump(out);
-                out << std::endl << "Dest type: "sv;
-                t2->getType()->dump(out);
-                out << std::endl;
-                return false;
-            }
-        }
         return true;
     };
     return verifyTarget(mTrueTarget) && verifyTarget(mFalseTarget);
 }
 
-void BranchTarget::replaceOperand(Value* oldOperand, Value* newOperand) {
-    for(auto& operand : mArgs)
-        if(operand == oldOperand)
-            operand = newOperand;
-}
-
-ConditionalBranchInst::ConditionalBranchInst(BranchTarget target)
-    : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ std::move(target) }, mFalseTarget{ nullptr },
-      mBranchProb{ 0.0 } {
-    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
-}
-ConditionalBranchInst::ConditionalBranchInst(Value* condition, double branchProb, BranchTarget trueTarget,
-                                             BranchTarget falseTarget)
-    : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ std::move(trueTarget) },
-      mFalseTarget{ std::move(falseTarget) }, mBranchProb{ branchProb } {
-    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
-    operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
-}
-void ConditionalBranchInst::updateBranchProb(double branchProb) {
+BranchInst::BranchInst(Block* targetBlock)
+    : Instruction{ InstructionID::Branch, VoidType::get(), {} }, mTrueTarget{ targetBlock }, mFalseTarget{ nullptr }, mBranchProb{
+          0.0
+      } {}
+BranchInst::BranchInst(Value* condition, double branchProb, Block* trueTarget, Block* falseTarget)
+    : Instruction{ InstructionID::ConditionalBranch, VoidType::get(), { condition } }, mTrueTarget{ trueTarget },
+      mFalseTarget{ falseTarget }, mBranchProb{ branchProb } {}
+void BranchInst::updateBranchProb(double branchProb) {
     assert(getInstID() == InstructionID::ConditionalBranch);
     mBranchProb = branchProb;
-}
-bool ConditionalBranchInst::replaceOperand(Value* oldOperand, Value* newOperand) {
-    bool ret = Instruction::replaceOperand(oldOperand, newOperand);
-    mTrueTarget.replaceOperand(oldOperand, newOperand);
-    mFalseTarget.replaceOperand(oldOperand, newOperand);
-    return ret;
-}
-
-void ConditionalBranchInst::updateTargetArgs(BranchTarget& target, Vector<Value*> args) {
-    target.getArgsRef() = std::move(args);
-    if(getInstID() == InstructionID::Branch)
-        operands().clear();
-    else
-        operands().resize(1);
-    operands().insert(operands().cend(), mTrueTarget.getArgs().cbegin(), mTrueTarget.getArgs().cend());
-    if(getInstID() != InstructionID::Branch)
-        operands().insert(operands().cend(), mFalseTarget.getArgs().cbegin(), mFalseTarget.getArgs().cend());
 }
 
 void ReturnInst::dump(std::ostream& out) const {
@@ -532,10 +457,10 @@ Instruction* StoreInst::clone() const {
     return make<StoreInst>(getOperand(0), getOperand(1));
 }
 
-Instruction* ConditionalBranchInst::clone() const {
+Instruction* BranchInst::clone() const {
     if(getInstID() == InstructionID::Branch)
-        return make<ConditionalBranchInst>(getTrueTarget());
-    return make<ConditionalBranchInst>(getOperand(0), mBranchProb, getTrueTarget(), getFalseTarget());
+        return make<BranchInst>(getTrueTarget());
+    return make<BranchInst>(getOperand(0), mBranchProb, getTrueTarget(), getFalseTarget());
 }
 
 Instruction* ReturnInst::clone() const {
@@ -606,15 +531,6 @@ Instruction* IntToPtrInst::clone() const {
     return make<IntToPtrInst>(getOperand(0), getType());
 }
 
-Value* BranchTarget::getOperand(BlockArgument* arg) const {
-    const auto& args = mTarget->args();
-    for(size_t idx = 0; idx < mArgs.size(); ++idx) {
-        if(args[idx] == arg)
-            return mArgs[idx];
-    }
-    reportUnreachable(CMMC_LOCATION());
-}
-
 bool ReturnInst::verify(std::ostream& out) const {
     if(!Instruction::verify(out))
         return false;
@@ -648,14 +564,11 @@ bool CompareInst::isEqual(const Instruction* rhs) const {
     return mCompare == rhsCompare->mCompare;
 }
 
-bool ConditionalBranchInst::isEqual(const Instruction* rhs) const {
+bool BranchInst::isEqual(const Instruction* rhs) const {
     if(!Instruction::isEqual(rhs))
         return false;
-    const auto rhsBranch = rhs->as<ConditionalBranchInst>();
-    return mTrueTarget.getTarget() == rhsBranch->mTrueTarget.getTarget() &&
-        mTrueTarget.getArgs().size() == rhsBranch->mTrueTarget.getArgs().size() &&
-        mFalseTarget.getTarget() == rhsBranch->mFalseTarget.getTarget() &&
-        mFalseTarget.getArgs().size() == rhsBranch->mFalseTarget.getArgs().size();
+    const auto rhsBranch = rhs->as<BranchInst>();
+    return mTrueTarget == rhsBranch->mTrueTarget && mFalseTarget == rhsBranch->mFalseTarget;
 }
 
 bool LoadInst::verify(std::ostream& out) const {
@@ -703,6 +616,49 @@ bool BinaryInst::verify(std::ostream& out) const {
 }
 bool CompareInst::verify(std::ostream& out) const {
     return checkBinaryOpType(this, out);
+}
+void PhiInst::dump(std::ostream& out) const {
+    dumpWithNoOperand(out);
+    for(auto [block, val] : mIncomings) {
+        out << " ["sv;
+        block->dumpAsTarget(out);
+        out << ", "sv;
+        val->dumpAsOperand(out);
+        out << ']';
+    }
+}
+bool PhiInst::verify(std::ostream& out) const {
+    if(!Instruction::verify(out))
+        return false;
+    for(auto [block, val] : mIncomings) {
+        CMMC_UNUSED(block);
+        if(val->getType()->isSame(getType())) {
+            out << "type mismatch\n";
+            return false;
+        }
+    }
+    return true;
+}
+Instruction* PhiInst::clone() const {
+    const auto inst = make<PhiInst>(getType());
+    inst->operands() = operands();
+    inst->mIncomings = mIncomings;
+    return inst;
+}
+bool PhiInst::replaceOperand(Value* oldOperand, Value* newOperand) {
+    if(!Instruction::replaceOperand(oldOperand, newOperand))
+        return false;
+    for(auto& [block, val] : mIncomings) {
+        CMMC_UNUSED(block);
+        if(val == oldOperand)
+            val = newOperand;
+    }
+    return true;
+}
+bool PhiInst::isEqual(const Instruction* rhs) const {
+    if(!Instruction::isEqual(rhs))
+        return false;
+    return mIncomings == rhs->as<PhiInst>()->mIncomings;
 }
 
 CMMC_NAMESPACE_END

@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/Compatibility/Compatibility.hpp>
@@ -20,31 +19,23 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void canonicalizeBranchCompare(Function& func, AnalysisPassManager& analysis) {
+void canonicalizeBranchCompare(Function& func, AnalysisPassManager&) {
     // deGVN
-    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
-    bool needBackPropagation = false;
-
     for(auto block : func.blocks()) {
         const auto terminator = block->getTerminator();
         if(terminator->getInstID() != InstructionID::ConditionalBranch)
             continue;
         const auto cond = terminator->getOperand(0);
-        if(!cond->is<BlockArgument>())
+        if(!cond->isArgument())
             continue;
-        const auto root = blockArgMap.queryRoot(cond);
+        const auto root = cond;
         if(!root->is<CompareInst>())
             continue;
         const auto newInst = root->as<Instruction>()->clone();
         auto& instructions = block->instructions();
         newInst->setBlock(block);
         instructions.insert(std::prev(instructions.end()), newInst);
-
-        needBackPropagation = true;
     }
-
-    if(needBackPropagation)
-        blockArgPropagation(func);
 }
 
 CMMC_NAMESPACE_END

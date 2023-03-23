@@ -42,11 +42,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class SimplifyPartialUnreachableBranch final : public TransformPass<Function> {
-
-    static bool isUnreachablePath(BranchTarget& target) {
-        const auto block = target.getTarget();
-        if(block == nullptr)
-            return true;
+    static bool isUnreachablePath(Block* block) {
         return block->instructions().size() == 1 && block->getTerminator()->getInstID() == InstructionID::Unreachable;
     }
 
@@ -57,7 +53,7 @@ public:
             const auto terminator = block->getTerminator();
             if(!terminator->isBranch())
                 continue;
-            auto branch = terminator->as<ConditionalBranchInst>();
+            auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
             const auto trueUnreachable = isUnreachablePath(trueTarget);
@@ -69,7 +65,7 @@ public:
                     continue;
                 auto& insts = block->instructions();
                 insts.pop_back();
-                const auto inst = make<ConditionalBranchInst>(falseUnreachable ? trueTarget : falseTarget);
+                const auto inst = make<BranchInst>(falseUnreachable ? trueTarget : falseTarget);
                 inst->setBlock(block);
                 insts.push_back(inst);
             } else {

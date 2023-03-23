@@ -46,36 +46,13 @@ CMMC_NAMESPACE_BEGIN
 class CombineBranch final : public TransformPass<Function> {
     static bool isForwardBlock(Block& block) {
         return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch &&
-            block.getTerminator()->as<ConditionalBranchInst>()->getTrueTarget().getTarget() != &block;
+            block.getTerminator()->as<BranchInst>()->getTrueTarget() != &block;
     }
 
-    static void foldForward(ConditionalBranchInst* branch, BranchTarget& target) {
-        const auto nextBranch = target.getTarget()->getTerminator()->as<ConditionalBranchInst>();
-        const auto& nextTarget = nextBranch->getTrueTarget();
-        const auto& args1 = target.getArgs();
-        const auto& args2 = target.getTarget()->args();
-        assert(args1.size() == args2.size());
-        auto newArgs = nextTarget.getArgs();
-        for(auto& arg : newArgs) {
-            if(arg->isConstant() || arg->isGlobal())
-                continue;
-            const auto iter = std::find(args2.cbegin(), args2.cend(), arg);
-            if(iter != args2.cend()) {  // only replace block arguments, keep globals/constants
-                const auto pos = iter - args2.cbegin();
-                arg = args1[static_cast<uint32_t>(pos)];
-            } else {
-                reportError() << "Bad block argument when forwarding"sv << std::endl;
-                reportError() << "BlockA:"sv << std::endl;
-                branch->getBlock()->dump(std::cerr);
-                reportError() << "BlockB:"sv << std::endl;
-                target.getTarget()->dump(std::cerr);
-                arg->dump(reportError() << "arg "sv);
-                reportUnreachable(CMMC_LOCATION());
-            }
-        }
-
-        target.resetTarget(nextTarget.getTarget());
-        branch->updateTargetArgs(target, std::move(newArgs));
+    static void foldForward(BranchInst* branch, const Block* target) {
+        CMMC_UNUSED(branch);
+        CMMC_UNUSED(target);
+        reportNotImplemented(CMMC_LOCATION());
     }
 
 public:
@@ -90,14 +67,14 @@ public:
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
-                auto branch = terminator->as<ConditionalBranchInst>();
+                auto branch = terminator->as<BranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
-                if(trueTarget.getTarget() != block && forwardBlocks.count(trueTarget.getTarget())) {
+                if(trueTarget != block && forwardBlocks.count(trueTarget)) {
                     foldForward(branch, trueTarget);
                     modified = true;
                 }
                 auto& falseTarget = branch->getFalseTarget();
-                if(falseTarget.getTarget() != block && forwardBlocks.count(falseTarget.getTarget())) {
+                if(falseTarget != block && forwardBlocks.count(falseTarget)) {
                     foldForward(branch, falseTarget);
                     modified = true;
                 }

@@ -48,30 +48,17 @@ public:
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            const auto cond = terminator->getOperand(0);
-            auto branch = terminator->as<ConditionalBranchInst>();
+            auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();
             auto& falseTarget = branch->getFalseTarget();
-            if(trueTarget.getTarget() != falseTarget.getTarget())
+            if(trueTarget != falseTarget)
                 continue;
 
             auto& insts = block->instructions();
             insts.pop_back();
 
-            const auto targetBlock = trueTarget.getTarget();
-            const auto& trueArgs = trueTarget.getArgs();
-            const auto& falseArgs = falseTarget.getArgs();
-
             IRBuilder builder{ target, block };
-
-            Vector<Value*> args;
-            args.reserve(targetBlock->args().size());
-            for(size_t idx = 0; idx < targetBlock->args().size(); ++idx) {
-                const auto val = builder.makeOp<SelectInst>(cond, trueArgs[idx], falseArgs[idx]);
-                args.push_back(val);
-            }
-
-            builder.makeOp<ConditionalBranchInst>(BranchTarget{ targetBlock, std::move(args) });
+            builder.makeOp<BranchInst>(trueTarget);
             modified = true;
         }
         return modified;

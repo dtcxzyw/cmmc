@@ -17,7 +17,6 @@
 // NOTICE: Using by free is a weak reference
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
@@ -25,6 +24,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class FreeEliminate final : public TransformPass<Function> {
     bool isUsed(Value* alloc, Block* block, std::unordered_set<Value*>& visited) const {
         if(visited.count(alloc))
@@ -56,7 +56,7 @@ class FreeEliminate final : public TransformPass<Function> {
                     return ret;
                 };
 
-                const auto& branch = inst->as<ConditionalBranchInst>();
+                const auto& branch = inst->as<BranchInst>();
                 const auto& trueTarget = branch->getTrueTarget();
                 const auto& falseTarget = branch->getFalseTarget();
                 return handleTarget(trueTarget) || handleTarget(falseTarget);
@@ -67,7 +67,6 @@ class FreeEliminate final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         constexpr uint32_t strongThreshold = 8U;
         const auto strongCheck = func.blocks().size() <= strongThreshold;
 
@@ -119,5 +118,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(FreeEliminate);
+*/
 
 CMMC_NAMESPACE_END

@@ -20,7 +20,6 @@
 // int* a = alloc int;
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -40,8 +39,7 @@ CMMC_NAMESPACE_BEGIN
 class StoreEliminate final : public TransformPass<Function> {
     static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet,
                             const PointerAddressSpaceAnalysisResult& addressSpace, Instruction* store,
-                            std::unordered_set<Block*>& visited, const BlockArgumentAnalysisResult& blockArgMap,
-                            const StackAddressLeakAnalysisResult& leak) {
+                            std::unordered_set<Block*>& visited, const StackAddressLeakAnalysisResult& leak) {
         if(!store) {
             if(visited.count(&block))
                 return true;
@@ -53,13 +51,12 @@ class StoreEliminate final : public TransformPass<Function> {
             if(isAfterStore) {
                 if(inst->isBranch()) {
                     // TODO: leak querying by block
-                    const auto branch = inst->as<ConditionalBranchInst>();
+                    const auto branch = inst->as<BranchInst>();
                     const auto& trueTarget = branch->getTrueTarget();
                     const auto& falseTarget = branch->getFalseTarget();
-                    if(!isInvisible(addr, *trueTarget.getTarget(), aliasSet, addressSpace, nullptr, visited, blockArgMap, leak))
+                    if(!isInvisible(addr, *trueTarget, aliasSet, addressSpace, nullptr, visited, leak))
                         return false;
-                    if(falseTarget.getTarget() &&
-                       !isInvisible(addr, *falseTarget.getTarget(), aliasSet, addressSpace, nullptr, visited, blockArgMap, leak))
+                    if(falseTarget && !isInvisible(addr, *falseTarget, aliasSet, addressSpace, nullptr, visited, leak))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     // TODO: store gep?
@@ -75,7 +72,7 @@ class StoreEliminate final : public TransformPass<Function> {
                             return false;
                     }
                 } else if(inst->getInstID() == InstructionID::Store) {
-                    const auto storeAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                    const auto storeAddr = inst->getOperand(0);
                     const auto storeValue = inst->getOperand(1);
 
                     if(storeValue->getType()->isPointer() && !aliasSet.isDistinct(addr, storeValue))
@@ -89,14 +86,14 @@ class StoreEliminate final : public TransformPass<Function> {
                         return false;
                     }
                 } else if(inst->getInstID() == InstructionID::Free) {
-                    const auto freeAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                    const auto freeAddr = inst->getOperand(0);
                     if(freeAddr == addr) {
                         break;  // end of lifetime
                     }
                 } else if(inst->isTerminator()) {
                     return addressSpace.mustBe(addr, AddressSpaceType::InternalStack);
                 } else if(inst->getInstID() == InstructionID::Load) {
-                    const auto loadAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                    const auto loadAddr = inst->getOperand(0);
                     if(loadAddr->getType()->isPointer() && !aliasSet.isDistinct(addr, loadAddr))
                         return false;
                 }
@@ -108,16 +105,15 @@ class StoreEliminate final : public TransformPass<Function> {
     }
 
     static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet,
-                           const PointerAddressSpaceAnalysisResult& addressSpace, const BlockArgumentAnalysisResult& blockArgMap,
-                           const StackAddressLeakAnalysisResult& leak) {
+                           const PointerAddressSpaceAnalysisResult& addressSpace, const StackAddressLeakAnalysisResult& leak) {
         auto& insts = block.instructions();
         const auto size = insts.size();
         insts.remove_if([&](Instruction* inst) {
             if(inst->getInstID() != InstructionID::Store)
                 return false;
-            const auto addr = blockArgMap.queryRoot(inst->getOperand(0));
+            const auto addr = inst->getOperand(0);
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited, blockArgMap, leak);
+            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited, leak);
         });
         return insts.size() != size;
     }
@@ -172,12 +168,11 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
         auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
 
         bool modified = removeStoreOnlyAlloca(func);
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet, addressSpace, blockArgMap, leak);
+            modified |= runOnBlock(*block, aliasSet, addressSpace, leak);
         }
         return modified;
     }

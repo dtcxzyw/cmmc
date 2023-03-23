@@ -44,10 +44,10 @@ public:
             if((loop.step > 0 && initial + loop.step >= bound) || ((loop.step < 0 && initial + loop.step <= bound))) {
                 // remove backedge
                 modified = true;
-                const auto terminator = loop.latch->getTerminator()->as<ConditionalBranchInst>();
+                const auto terminator = loop.latch->getTerminator()->as<BranchInst>();
                 loop.latch->instructions().pop_back();
                 IRBuilder builder{ target, loop.latch };
-                builder.makeOp<ConditionalBranchInst>(terminator->getFalseTarget());
+                builder.makeOp<BranchInst>(terminator->getFalseTarget());
             }
         }
         return modified;

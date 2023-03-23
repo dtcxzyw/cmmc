@@ -59,7 +59,7 @@ public:
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
     void lower(FMAInst* inst, LoweringContext& ctx) const override;
-    bool isFusible(ConditionalBranchInst* branch, CompareInst* cmp) const override;
+    bool isFusible(BranchInst* branch, CompareInst* cmp) const override;
 };
 
 class RISCVRegisterUsage final : public TargetRegisterUsage {

@@ -15,7 +15,6 @@
 // Remove unused aggregates
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -58,9 +57,10 @@ public:
         for(auto global : module.globals()) {
             removeType(removeType, global->getType());
             if(global->isFunction()) {
-                for(auto block : global->as<Function>()->blocks()) {
-                    for(auto arg : block->args())
-                        removeType(removeType, arg->getType());
+                const auto func = global->as<Function>();
+                for(auto arg : func->args())
+                    removeType(removeType, arg->getType());
+                for(auto block : func->blocks()) {
                     for(auto inst : block->instructions()) {
                         for(auto operand : inst->operands())
                             removeType(removeType, operand->getType());

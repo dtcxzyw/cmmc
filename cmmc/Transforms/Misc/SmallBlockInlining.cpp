@@ -63,8 +63,8 @@ public:
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::Branch)
                 continue;
-            const auto& target = terminator->as<ConditionalBranchInst>()->getTrueTarget();
-            const auto nextBlock = target.getTarget();
+            const auto& target = terminator->as<BranchInst>()->getTrueTarget();
+            const auto nextBlock = target;
             if(nextBlock->instructions().size() > sizeThreshold)
                 continue;
             if(hasCall(*block))
@@ -75,11 +75,6 @@ public:
             insts.pop_back();
 
             ReplaceMap replace;
-            auto& srcArgs = target.getArgs();
-            auto& dstArgs = nextBlock->args();
-            for(uint32_t idx = 0; idx < srcArgs.size(); ++idx) {
-                replace.emplace(dstArgs[idx], srcArgs[idx]);
-            }
             std::vector<Instruction*> newInsts;
             for(auto inst : nextBlock->instructions()) {
                 const auto newInst = inst->clone();

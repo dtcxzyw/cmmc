@@ -52,6 +52,7 @@ class FuncInlining final : public TransformPass<Function> {
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
         const auto callRet = *call;
+        CMMC_UNUSED(callRet);
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
@@ -71,8 +72,9 @@ class FuncInlining final : public TransformPass<Function> {
         {
             assert(entryBlock);
             auto& operands = (*call)->operands();
-            auto branch = make<ConditionalBranchInst>(
-                BranchTarget{ entryBlock, Vector<Value*>{ operands.cbegin(), std::prev(operands.cend()) } });
+            CMMC_UNUSED(operands);
+            reportUnreachable(CMMC_LOCATION());
+            auto branch = make<BranchInst>(entryBlock);
             branch->setBlock(block);
             block->instructions().back() = branch;
         }
@@ -82,9 +84,7 @@ class FuncInlining final : public TransformPass<Function> {
             auto terminator = newBlock->getTerminator();
             switch(terminator->getInstID()) {
                 case InstructionID::Ret: {
-                    auto& operands = terminator->operands();
-                    auto branch = make<ConditionalBranchInst>(
-                        BranchTarget{ sinkBlock, Vector<Value*>{ operands.cbegin(), operands.cend() } });
+                    auto branch = make<BranchInst>(sinkBlock);
                     branch->setBlock(newBlock);
                     newBlock->instructions().back() = branch;
                     break;
@@ -92,19 +92,21 @@ class FuncInlining final : public TransformPass<Function> {
                 case InstructionID::Branch:
                     [[fallthrough]];
                 case InstructionID::ConditionalBranch: {
-                    auto branch = terminator->as<ConditionalBranchInst>();
+                    auto branch = terminator->as<BranchInst>();
                     auto& trueTarget = branch->getTrueTarget();
-                    trueTarget.resetTarget(replace.at(trueTarget.getTarget()));
+                    trueTarget = replace.at(trueTarget);
 
                     auto& falseTarget = branch->getFalseTarget();
-                    if(falseTarget.getTarget())
-                        falseTarget.resetTarget(replace.at(falseTarget.getTarget()));
+                    if(falseTarget)
+                        falseTarget = replace.at(falseTarget);
                     break;
                 }
                 default:
                     break;
             }
         }
+        reportNotImplemented(CMMC_LOCATION());
+        /*
         // fix references to return value
         auto retType = callRet->getType();
         if(!retType->isVoid()) {
@@ -113,6 +115,7 @@ class FuncInlining final : public TransformPass<Function> {
                 inst->replaceOperand(callRet, arg);
             }
         }
+        */
     }
 
     static bool tryInline(Function& func) {
@@ -139,8 +142,6 @@ public:
         bool modified = false;
         while(tryInline(func))
             modified = true;
-        if(modified)
-            blockArgPropagation(func);
         return modified;
     }
 

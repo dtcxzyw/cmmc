@@ -13,7 +13,6 @@
 */
 
 #include <algorithm>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -41,7 +40,6 @@ public:
         if(!blockTripCount.isAvailable())
             return false;
 
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& dom = analysis.get<DominateAnalysis>(func);
 
         bool modified = false;
@@ -73,7 +71,7 @@ public:
                             canMove = false;
                             break;
                         }
-                    } else if(blockArgMap.queryRoot(operand)->getBlock() == block) {
+                    } else if(operand->getBlock() == block) {
                         canMove = false;
                         break;
                     }
@@ -111,7 +109,7 @@ public:
                             break;
                         }
                     } else {
-                        const auto dest = blockArgMap.queryRoot(operand);
+                        const auto dest = operand;
                         if(auto destBlock = dest->getBlock(); destBlock != nullptr)
                             updateTargetBlock(destBlock);
                     }
@@ -125,13 +123,6 @@ public:
                 if(blockTripCount.query(targetBlock) + significantBlockTripCountDifference >= freq)
                     continue;
 
-                for(auto& operand : inst->operands()) {
-                    if(!operand->isInstruction()) {
-                        const auto dest = blockArgMap.queryRoot(operand);
-                        operand = dest;
-                    }
-                }
-
                 block->instructions().remove(inst);
                 auto& dest = targetBlock->instructions();
                 dest.insert(std::prev(dest.cend()), inst);
@@ -141,8 +132,6 @@ public:
             }
         }
 
-        if(modified)
-            blockArgPropagation(func);
         return modified;
     }
 

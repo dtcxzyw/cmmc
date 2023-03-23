@@ -14,7 +14,6 @@
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -37,11 +36,12 @@
 CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2Reg final : public TransformPass<Function> {
-    static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias,
-                             const BlockArgumentAnalysisResult& blockArgMap, StackAllocInst* alloc,
+    static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
                              std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak) {
+        CMMC_UNUSED(func);
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
+        /*
         for(auto block : func.blocks()) {
             for(auto arg : block->args())
                 if(blockArgMap.queryRoot(arg) == alloc) {
@@ -49,6 +49,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     break;
                 }
         }
+        */
 
         const auto root = alloc->getBlock();
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
@@ -59,9 +60,10 @@ class ScalarMem2Reg final : public TransformPass<Function> {
         for(auto [block, addr] : todo) {
             Value* value = nullptr;
             if(block != root) {
-                value = block->addArg(valueType);
-                if(value->getType()->isPointer())
-                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
+                reportNotImplemented(CMMC_LOCATION());
+                // value = block->addArg(valueType);
+                // if(value->getType()->isPointer())
+                //    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             } else {
                 value = undef;
             }
@@ -85,11 +87,11 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                 if(start) {
                     switch(inst->getInstID()) {
                         case InstructionID::Load: {
-                            if(blockArgMap.queryRoot(inst->getOperand(0)) == alloc)
+                            if(inst->getOperand(0) == alloc)
                                 replace.emplace(inst, value);
                         } break;
                         case InstructionID::Store: {
-                            const auto storeAddr = blockArgMap.queryRoot(inst->getOperand(0));
+                            const auto storeAddr = inst->getOperand(0);
                             if(storeAddr == alloc) {
                                 value = inst->getOperand(1);
                             } else if(!alias.isDistinct(storeAddr, alloc)) {
@@ -102,21 +104,18 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                         } break;
                         case InstructionID::Free: {
                             const auto ptr = inst->getOperand(0);
-                            if(blockArgMap.queryRoot(ptr) == alloc) {
+                            if(ptr == alloc) {
                                 stop = true;
                             }
                         } break;
                         case InstructionID::Branch:
                             [[fallthrough]];
                         case InstructionID::ConditionalBranch: {
-                            const auto branch = inst->as<ConditionalBranchInst>();
-                            auto handleTarget = [&](BranchTarget& target) {
-                                const auto targetBlock = target.getTarget();
+                            const auto branch = inst->as<BranchInst>();
+                            auto handleTarget = [&](Block* targetBlock) {
                                 if(!todo.count(targetBlock) || targetBlock == root)
                                     return;
-                                auto args = target.getArgs();
-                                args.push_back(value);
-                                branch->updateTargetArgs(target, std::move(args));
+                                reportNotImplemented(CMMC_LOCATION());
                             };
                             handleTarget(branch->getTrueTarget());
                             handleTarget(branch->getFalseTarget());
@@ -136,7 +135,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
         const auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
 
@@ -158,7 +156,7 @@ public:
         std::unordered_map<Block*, ReplaceMap> replaceMap;
         IRBuilder builder{ analysis.module().getTarget() };
         for(auto alloc : interested) {
-            applyMem2Reg(builder, func, alias, blockArgMap, alloc, replaceMap, leak);
+            applyMem2Reg(builder, func, alias, alloc, replaceMap, leak);
         }
         for(auto& [block, replace] : replaceMap)
             replaceOperands(*block, replace);

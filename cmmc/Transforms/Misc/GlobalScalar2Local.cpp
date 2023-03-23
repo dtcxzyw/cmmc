@@ -144,7 +144,7 @@ public:
             auto& mainMapping = mapping[exportedFunc];
             for(auto var : globalVars) {
                 const auto type = var->getType()->as<PointerType>()->getPointee();
-                const auto alloc = builder.makeOp<StackAllocInst>(type);
+                const auto alloc = builder.createAlloc(type);
                 alloc->setLabel(var->getSymbol());
                 if(auto val = var->initialValue()) {
                     if(auto valArray = dynamic_cast<ConstantArray*>(val)) {
@@ -168,12 +168,15 @@ public:
                     args.push_back(var->getType());
                 }
             }
+            reportNotImplemented(CMMC_LOCATION());
+            /*
             {
                 auto& map = mapping[func];
                 auto block = func->entryBlock();
                 for(auto var : globalVars)
                     map.emplace(var, block->addArg(var->getType()));
             }
+            */
         }
 
         // modify calls
@@ -202,7 +205,6 @@ public:
             auto& map = mapping[func];
             for(auto block : func->blocks())
                 replaceOperands(*block, map);
-            blockArgPropagation(*func);
         }
 
         return true;

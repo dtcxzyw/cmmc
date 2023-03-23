@@ -111,19 +111,19 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
 
     ctx.setCurrentFunction(func);
     ctx.pushScope();  // arguments
-    const auto entry = ctx.addBlock(funcType->getArgTypes());
+    const auto entry = ctx.addBlock();
     entry->setLabel(String::get("entry"));
     ctx.setCurrentBlock(entry);
 
     // NOTICE: function arguments must be lvalues
     for(uint32_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
-        const auto arg = entry->getArg(idx);
+        const auto arg = func->getArg(idx);
         arg->setLabel(name);
 
         if(!info.passingArgsByPointer[idx]) {
             // passing by register
-            const auto memArg = ctx.makeOp<StackAllocInst>(arg->getType());
+            const auto memArg = ctx.createAlloc(arg->getType());
             memArg->setLabel(name);
             ctx.makeOp<StoreInst>(memArg, arg);
             ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
@@ -134,7 +134,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
                 ctx.addIdentifier(name, { arg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
             } else {
                 // create a copy
-                const auto memArg = ctx.makeOp<StackAllocInst>(argType);
+                const auto memArg = ctx.createAlloc(argType);
                 memArg->setLabel(name);
                 ctx.copyStruct(memArg, arg);
                 ctx.addIdentifier(name, { memArg, ValueQualifier::AsLValue, decl.args[idx].type.qualifier });
@@ -176,7 +176,6 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
             }
         }
 
-        blockArgPropagation(*func);
         sortBlocks(*func);
     }
 
@@ -455,26 +454,27 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     }
 
     // short circut logical op
+    // TODO: A && B -> A & B, A || B -> A | B
     auto [lhs, lhsQualifier] = ctx.getRValue(mLhs);
     if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
         lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, {}, ConversionUsage::Condition);
 
         auto rhsBlock = ctx.addBlock();
-        auto newBlock = ctx.addBlock(IntegerType::getBoolean());
+        auto newBlock = ctx.addBlock();
 
         if(mOp == OperatorID::LogicalAnd) {
-            ctx.makeOp<ConditionalBranchInst>(lhs, defaultShortCircuitProb, BranchTarget{ rhsBlock },
-                                              BranchTarget{ newBlock, ctx.getFalse() });
+            ctx.makeOp<BranchInst>(lhs, defaultShortCircuitProb, rhsBlock, newBlock);
         } else {
-            ctx.makeOp<ConditionalBranchInst>(lhs, defaultShortCircuitProb, BranchTarget{ newBlock, ctx.getTrue() },
-                                              BranchTarget{ rhsBlock });
+            ctx.makeOp<BranchInst>(lhs, defaultShortCircuitProb, newBlock, rhsBlock);
         }
 
         ctx.setCurrentBlock(rhsBlock);
         const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock, rhs });
+        ctx.makeOp<BranchInst>(newBlock);
         ctx.setCurrentBlock(newBlock);
-        return QualifiedValue{ ctx.booleanToInt(newBlock->getArg(0)) };
+        // TODO: phi nodes
+        CMMC_UNUSED(rhs);
+        return QualifiedValue{ ctx.booleanToInt(nullptr) };
     }
 
     auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
@@ -701,7 +701,7 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
 
     if(info.passingRetValByPointer) {
         const auto retType = argTypes.back()->as<PointerType>()->getPointee();
-        const auto storage = ctx.makeOp<StackAllocInst>(retType);
+        const auto storage = ctx.createAlloc(retType);
         args.push_back(storage);
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
         // TODO: RVO
@@ -715,7 +715,7 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
     const auto& info = ctx.getFunctionCallInfo(func->getType()->as<FunctionType>());
 
     if(info.passingRetValByPointer) {
-        const auto ret = func->entryBlock()->args().back();
+        const auto ret = func->args().back();
         const auto retType = ret->getType()->as<PointerType>()->getPointee();
         const auto retVal = ctx.getRValue(mReturnValue, retType, info.retQualifier, ConversionUsage::ReturnValue);
         if(retVal->isUndefined() || retVal->getType()->isInvalid()) {
@@ -760,21 +760,21 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
 
     ctx.setCurrentBlock(ifBlock);
     mThenBlock->emitWithLoc(ctx);
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
+    ctx.makeOp<BranchInst>(newBlock);
 
     if(mElseBlock) {
         const auto elseBlock = ctx.addBlock();
         elseBlock->setLabel(String::get("if.else"));
 
         ctx.setCurrentBlock(oldBlock);
-        ctx.makeOp<ConditionalBranchInst>(pred, defaultIfThenProb, BranchTarget{ ifBlock }, BranchTarget{ elseBlock });
+        ctx.makeOp<BranchInst>(pred, defaultIfThenProb, ifBlock, elseBlock);
 
         ctx.setCurrentBlock(elseBlock);
         mElseBlock->emitWithLoc(ctx);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ newBlock });
+        ctx.makeOp<BranchInst>(newBlock);
     } else {
         ctx.setCurrentBlock(oldBlock);
-        ctx.makeOp<ConditionalBranchInst>(pred, defaultIfThenProb, BranchTarget{ ifBlock }, BranchTarget{ newBlock });
+        ctx.makeOp<BranchInst>(pred, defaultIfThenProb, ifBlock, newBlock);
     }
 
     ctx.setCurrentBlock(newBlock);
@@ -796,7 +796,7 @@ QualifiedValue ScopedExpr::emit(EmitContext& ctx) const {
 QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     auto whileHeader = ctx.addBlock();
     whileHeader->setLabel(String::get("while.header"));
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
+    ctx.makeOp<BranchInst>(whileHeader);
     ctx.setCurrentBlock(whileHeader);
 
     auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
@@ -805,12 +805,12 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     whileBody->setLabel(String::get("while.body"));
     auto newBlock = ctx.addBlock();
 
-    ctx.makeOp<ConditionalBranchInst>(val, defaultLoopProb, BranchTarget{ whileBody }, BranchTarget{ newBlock });
+    ctx.makeOp<BranchInst>(val, defaultLoopProb, whileBody, newBlock);
 
     ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
     mBlock->emitWithLoc(ctx);
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ whileHeader });
+    ctx.makeOp<BranchInst>(whileHeader);
     ctx.popLoop();
 
     ctx.setCurrentBlock(newBlock);
@@ -825,17 +825,17 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
     header->setLabel(String::get("dowhile.header"));
     auto next = ctx.addBlock();
 
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
+    ctx.makeOp<BranchInst>(body);
 
     ctx.pushLoop(header, next);
     ctx.setCurrentBlock(body);
     mBody->emitWithLoc(ctx);
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+    ctx.makeOp<BranchInst>(header);
     ctx.popLoop();
 
     ctx.setCurrentBlock(header);
     auto val = ctx.getRValue(mCondition, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
-    ctx.makeOp<ConditionalBranchInst>(val, defaultLoopProb, BranchTarget{ body }, BranchTarget{ next });
+    ctx.makeOp<BranchInst>(val, defaultLoopProb, body, next);
     ctx.setCurrentBlock(next);
 
     return QualifiedValue{};
@@ -846,7 +846,7 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
         EmitContext::pushLoc(loc);
 
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
-        auto local = ctx.makeOp<StackAllocInst>(type);
+        auto local = ctx.createAlloc(type);
         constexpr size_t maxLen = 16;
         if(name.prefix().size() <= maxLen)
             local->setLabel(name);
@@ -1115,7 +1115,7 @@ std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage us
 Value* EmitContext::getLValueForce(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage) {
     const auto createFromRValue = [&](Value* rvalue, Qualifier srcQualifier) -> Value* {
         const auto val = convertTo(rvalue, type, srcQualifier, dstQualifier, usage);
-        const auto storage = makeOp<StackAllocInst>(val->getType());
+        const auto storage = createAlloc(val->getType());
         makeOp<StoreInst>(storage, val);
         return storage;
     };
@@ -1509,11 +1509,11 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     zeroTo(type->getScalarCount());
 }
 QualifiedValue BreakExpr::emit(EmitContext& ctx) const {
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getBreakTarget() });
+    ctx.makeOp<BranchInst>(ctx.getBreakTarget());
     return QualifiedValue{};
 }
 QualifiedValue ContinueExpr::emit(EmitContext& ctx) const {
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ ctx.getContinueTarget() });
+    ctx.makeOp<BranchInst>(ctx.getContinueTarget());
     return QualifiedValue{};
 }
 
@@ -1657,26 +1657,25 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     iteration->setLabel(String::get("for.iteration"));
     auto next = ctx.addBlock();
 
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+    ctx.makeOp<BranchInst>(header);
     ctx.setCurrentBlock(header);
     if(mCondition)
-        ctx.makeOp<ConditionalBranchInst>(
-            ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition), defaultLoopProb,
-            BranchTarget{ body }, BranchTarget{ next });
+        ctx.makeOp<BranchInst>(ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition),
+                               defaultLoopProb, body, next);
     else
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ body });
+        ctx.makeOp<BranchInst>(body);
 
     ctx.setCurrentBlock(body);
     ctx.pushLoop(iteration, next);
     mBody->emitWithLoc(ctx);
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ iteration });
+    ctx.makeOp<BranchInst>(iteration);
     ctx.popLoop();
 
     ctx.setCurrentBlock(iteration);
     if(mIteration)
         mIteration->emitWithLoc(ctx);
 
-    ctx.makeOp<ConditionalBranchInst>(BranchTarget{ header });
+    ctx.makeOp<BranchInst>(header);
 
     ctx.setCurrentBlock(next);
     ctx.popScope();
@@ -1705,7 +1704,7 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     rhsBlock->setLabel(String::get("rhsBlock"));
 
     const auto condition = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition);
-    ctx.makeOp<ConditionalBranchInst>(condition, defaultSelectProb, BranchTarget{ lhsBlock }, BranchTarget{ rhsBlock });
+    ctx.makeOp<BranchInst>(condition, defaultSelectProb, lhsBlock, rhsBlock);
 
     ctx.setCurrentBlock(lhsBlock);
     const auto lhs = mLhs->emitWithLoc(ctx);
@@ -1725,13 +1724,13 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
                 .reportFatal();
         if(lhs.qualifier.isSigned != rhs.qualifier.isSigned)
             DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
-        next->addArg(lhs.value->getType());
+        // next->addArg(lhs.value->getType());
         qualifier.isSigned = lhs.qualifier.isSigned;
         qualifier.isConst = lhs.qualifier.isConst || rhs.qualifier.isConst;
         ctx.setCurrentBlock(lhsBlock);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, lhs.value });
+        ctx.makeOp<BranchInst>(next);
         ctx.setCurrentBlock(rhsBlock);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, rhs.value });
+        ctx.makeOp<BranchInst>(next);
         valueQualifier = ValueQualifier::AsLValue;
     } else {
         // convert to rvalue
@@ -1746,20 +1745,21 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
                 .attach<TypeAttachment>("lhs", lhsValue->getType())
                 .attach<TypeAttachment>("rhs", rhsValue->getType())
                 .reportFatal();
-        next->addArg(lhsValue->getType());
+        // next->addArg(lhsValue->getType());
         if(lhsQualifier.isSigned != rhsQualifier.isSigned)
             DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
         qualifier.isSigned = lhsQualifier.isSigned;
         qualifier.isConst = lhsQualifier.isConst || rhsQualifier.isConst;
         ctx.setCurrentBlock(lhsBlock);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, lhsValue });
+        ctx.makeOp<BranchInst>(next);
         ctx.setCurrentBlock(rhsBlock);
-        ctx.makeOp<ConditionalBranchInst>(BranchTarget{ next, rhsValue });
+        ctx.makeOp<BranchInst>(next);
         valueQualifier = ValueQualifier::AsRValue;
     }
 
     ctx.setCurrentBlock(next);
-    return QualifiedValue{ next->getArg(0), valueQualifier, qualifier };
+    // TODO: phi node
+    return QualifiedValue{ nullptr, valueQualifier, qualifier };
 }
 
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {

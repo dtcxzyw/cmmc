@@ -34,6 +34,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class CodeSink final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
@@ -54,20 +55,18 @@ public:
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            const auto branch = terminator->as<ConditionalBranchInst>();
+            const auto branch = terminator->as<BranchInst>();
             const auto cond = branch->getOperand(0);
             const auto& trueTarget = branch->getTrueTarget();
             const auto& falseTarget = branch->getFalseTarget();
-            if(trueTarget.getTarget() == falseTarget.getTarget())
+            if(trueTarget == falseTarget)
                 continue;
 
-            const auto shouldMoveToTarget = [&](const BranchTarget& target) {
-                const auto targetBlock = target.getTarget();
+            const auto shouldMoveToTarget = [&](Block* targetBlock) {
                 if(block == targetBlock)
                     return false;
 
-                for(auto [pred, predTarget] : cfg.predecessors(targetBlock)) {
-                    CMMC_UNUSED(predTarget);
+                for(auto pred : cfg.predecessors(targetBlock)) {
                     if(pred != block) {
                         return false;
                     }
@@ -119,6 +118,7 @@ public:
             };
             buildArgMap(trueTarget);
             buildArgMap(falseTarget);
+            reportUnreachable(CMMC_LOCATION());
 
             ReplaceMap replaceTrue, replaceFalse;
 
@@ -169,5 +169,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(CodeSink);
+*/
 
 CMMC_NAMESPACE_END

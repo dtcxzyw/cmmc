@@ -57,7 +57,7 @@ class ConstexprFuncEval final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& module = analysis.module();
-        if(isConstexprFunc(func) && func.entryBlock()->args().empty() &&
+        if(isConstexprFunc(func) && func.args().empty() &&
            !(func.blocks().size() == 1 && func.entryBlock()->instructions().size() == 1)) {
             const auto res = eval(module, func, {});
             if(!res)

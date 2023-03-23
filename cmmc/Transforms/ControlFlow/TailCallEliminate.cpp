@@ -76,15 +76,10 @@ public:
         // add dummy entry
         {
             auto newEntry = make<Block>(&func);
-            Vector<Value*> args;
-            args.reserve(func.entryBlock()->args().size());
-            for(auto arg : func.entryBlock()->args())
-                args.push_back(newEntry->addArg(arg->getType()));
-
             newEntry->setLabel(String::get("dummy_entry"));
             func.blocks().push_front(newEntry);
             builder.setCurrentBlock(newEntry);
-            builder.makeOp<ConditionalBranchInst>(BranchTarget{ entry, std::move(args) });
+            builder.makeOp<BranchInst>(entry);
         }
 
         for(auto block : redirect) {
@@ -93,7 +88,7 @@ public:
             Vector<Value*> operands{ callInst->operands().cbegin(), std::prev(callInst->operands().cend()) };
             removeInst(callInst);
             builder.setCurrentBlock(block);
-            builder.makeOp<ConditionalBranchInst>(BranchTarget{ entry, std::move(operands) });
+            builder.makeOp<BranchInst>(entry);
         }
 
         return true;

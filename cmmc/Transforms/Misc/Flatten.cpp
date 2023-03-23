@@ -13,7 +13,6 @@
 */
 
 #include <algorithm>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -34,7 +33,6 @@ public:
         if(analysis.module().types().empty())
             return false;
 
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         std::list<Instruction*> todo;
 
         for(auto block : func.blocks()) {
@@ -55,7 +53,6 @@ public:
                 cuint_(0)(MatchContext<Value>{ inst->getOperand(0), nullptr }) && inst->getOperand(1)->isConstant();
         };
         CMMC_UNUSED(isDirectUse);
-        CMMC_UNUSED(blockArgMap);
 
         return false;
     }

@@ -103,8 +103,7 @@ DominateAnalysisResult DominateAnalysis::run(Function& func, AnalysisPassManager
             tree[parent].insert(cur), fa[cur] = parent;
         dfn[cur] = ++cnt;
         dfseq.push_back(cur);
-        for(auto [succBlk, succTgt] : cfg.successors(cur)) {
-            CMMC_UNUSED(succTgt);
+        for(auto succBlk : cfg.successors(cur)) {
             e[cur].insert(succBlk), g[succBlk].insert(cur);
             self(self, succBlk, cur);
         }

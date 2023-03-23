@@ -516,10 +516,11 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         entry.block = func.entryBlock();
         entry.execIter = entry.block->instructions().cbegin();
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
-            entry.operands.emplace(entry.block->getArg(idx), fromConstant(arguments[idx]));
+            entry.operands.emplace(func.getArg(idx), fromConstant(arguments[idx]));
         if(step.get()) {
             func.dump(std::cerr);
-            entry.block->dump(std::cerr);
+            LabelAllocator allocator;
+            entry.block->dumpLabeled(std::cerr);
         }
 
         execCtx.push_back(std::move(entry));
@@ -658,24 +659,17 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 [[fallthrough]];
             case InstructionID::ConditionalBranch: {
                 ++branchCount;
-                auto branch = inst->as<ConditionalBranchInst>();
+                auto branch = inst->as<BranchInst>();
 
                 Block* targetBlock = nullptr;
                 if(inst->getInstID() == InstructionID::Branch) {
-                    targetBlock = branch->getTrueTarget().getTarget();
+                    targetBlock = branch->getTrueTarget();
                 } else if(getUInt(0)) {
-                    targetBlock = branch->getTrueTarget().getTarget();
-                    operands.erase(operands.begin());
-                    operands.erase(operands.begin() + static_cast<intptr_t>(targetBlock->args().size()), operands.end());
+                    targetBlock = branch->getTrueTarget();
                 } else {
-                    targetBlock = branch->getFalseTarget().getTarget();
-                    operands.erase(operands.begin());
-                    operands.erase(operands.begin(), operands.end() - static_cast<intptr_t>(targetBlock->args().size()));
+                    targetBlock = branch->getFalseTarget();
                 }
 
-                currentExecCtx.operands.clear();
-                for(uint32_t idx = 0; idx < targetBlock->args().size(); ++idx)
-                    currentExecCtx.operands.emplace(targetBlock->getArg(idx), operands[idx]);
                 currentExecCtx.block = targetBlock;
                 currentExecCtx.execIter = targetBlock->instructions().cbegin();
                 if(step.get()) {
@@ -1006,8 +1000,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             blockCtx.caller = inst;
                             blockCtx.block = callee->entryBlock();
 
-                            for(uint32_t idx = 0; idx < blockCtx.block->args().size(); ++idx)
-                                blockCtx.operands.emplace(blockCtx.block->getArg(idx), operands[idx]);
+                            for(uint32_t idx = 0; idx < callee->args().size(); ++idx)
+                                blockCtx.operands.emplace(callee->getArg(idx), operands[idx]);
 
                             blockCtx.execIter = blockCtx.block->instructions().cbegin();
                             if(step.get()) {

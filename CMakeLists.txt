@@ -16,6 +16,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Supported build types: Debug Release" FORCE)
 endif()
 
+add_compile_options(-Wfatal-errors)
 if(${CMAKE_BUILD_TYPE} MATCHES Debug)
   add_compile_options(-fsanitize=address -fsanitize-recover=address -fno-omit-frame-pointer -ggdb -g)
   add_link_options(-fsanitize=address -fsanitize-recover=address -fno-omit-frame-pointer -ggdb -g)

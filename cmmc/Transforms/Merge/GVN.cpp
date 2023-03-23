@@ -15,7 +15,6 @@
 // Global Value Numbering
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -74,7 +73,6 @@ public:
         // func.dump(std::cerr);
 
         const auto& dom = analysis.get<DominateAnalysis>(func);
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
         auto& target = analysis.module().getTarget();
 
         uint32_t allocateID = 0;
@@ -128,7 +126,7 @@ public:
         };
 
         getNumber = [&](Value* value) -> uint32_t {
-            const auto root = blockArgMap.queryRoot(value);
+            const auto root = value;
             if(root->isInstruction()) {
                 const auto inst = root->as<Instruction>();
                 if(isNoSideEffectExpr(*inst))
@@ -219,9 +217,6 @@ public:
 
         for(auto block : func.blocks())
             modified |= replaceOperands(*block, replace);
-
-        if(modified)
-            blockArgPropagation(func);
 
         return modified;
     }

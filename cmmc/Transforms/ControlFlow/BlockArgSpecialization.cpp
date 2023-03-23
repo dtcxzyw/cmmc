@@ -28,6 +28,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 constexpr uint32_t maxInlineBlockSize = 5;
 
 class BlockArgSpecialization final : public TransformPass<Function> {
@@ -54,10 +55,9 @@ public:
             if(freq > primaryPathThreshold)
                 continue;
 
-            const auto branch = terminator->as<ConditionalBranchInst>();
+            const auto branch = terminator->as<BranchInst>();
 
-            const auto handleTarget = [&](BranchTarget& target) {
-                const auto targetBlock = target.getTarget();
+            const auto handleTarget = [&](Block* targetBlock) {
                 if(!targetBlock)
                     return;
                 if(targetBlock->instructions().size() > maxInlineBlockSize)
@@ -92,5 +92,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(BlockArgSpecialization);
+*/
 
 CMMC_NAMESPACE_END

@@ -19,7 +19,6 @@
 // [1 x i32]* %a = getelementptr &([1 * [1 * i32]]* %x)[i32 0][i32 0];
 // i32* %b = getelementptr &([1 * [1 * i32]]* %x)[i32 0][i32 0][i32 0];
 
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -55,14 +54,13 @@ class GEPCombine final : public TransformPass<Function> {
             constantGEP.insert(inst);
         }
     }
-    static bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP,
-                         const BlockArgumentAnalysisResult& blockArgMap) {
+    static bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP) {
         bool modified = false;
         for(auto inst : block.instructions()) {
             if(!constantGEP.count(inst))
                 continue;
 
-            const auto base = blockArgMap.queryRoot(inst->operands().back());
+            const auto base = inst->operands().back();
             if(!constantGEP.count(base))
                 continue;
 
@@ -99,8 +97,7 @@ class GEPCombine final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
-        auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
+    bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_set<Value*> constantGEP;
         for(auto block : func.blocks())
             gatherBlock(*block, constantGEP);
@@ -110,9 +107,7 @@ public:
 
         bool modified = false;
         for(auto block : func.blocks())
-            modified |= runBlock(*block, constantGEP, blockArgMap);
-        if(modified)
-            blockArgPropagation(func);
+            modified |= runBlock(*block, constantGEP);
 
         return modified;
     }

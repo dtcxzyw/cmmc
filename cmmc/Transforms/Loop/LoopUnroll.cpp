@@ -20,6 +20,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -65,11 +66,11 @@ public:
 
             Block* prev = loop.latch;
             const auto retarget = [&](Block* block) {
-                auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                auto terminator = prev->getTerminator()->as<BranchInst>();
                 prev->instructions().pop_back();
                 IRBuilder builder{ target, prev };
-                terminator = builder.makeOp<ConditionalBranchInst>(terminator->getTrueTarget());
-                terminator->getTrueTarget().resetTarget(block);
+                terminator = builder.makeOp<BranchInst>(terminator->getTrueTarget());
+                terminator->getTrueTarget() = block;
             };
             const auto append = [&]() {
                 ReplaceMap replace;
@@ -87,9 +88,10 @@ public:
                     ReplaceMap replace;
                     head = loop.header->clone(replace);
                     insertedBlocks.push_back(head);
-                    for(auto [block, branchTarget] : cfg.predecessors(loop.latch)) {
+                    for(auto block : cfg.predecessors(loop.latch)) {
+                        reportNotImplemented(CMMC_LOCATION());
                         CMMC_UNUSED(block);
-                        branchTarget->resetTarget(head);
+                        // branchTarget->resetTarget(head);
                     }
                     prev = head;
                 }
@@ -97,9 +99,9 @@ public:
                 for(uint32_t idx = 1; idx < maxUnrollBlockSize; ++idx)
                     append();
 
-                const auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                const auto terminator = prev->getTerminator()->as<BranchInst>();
                 // reset terminator
-                terminator->getTrueTarget().resetTarget(head);
+                terminator->getTrueTarget() = head;
                 terminator->getOperand(0)->as<CompareInst>()->replaceOperand(loop.bound, startValue);
 
                 const auto tripCount = (size - epilogueSize) / maxUnrollBlockSize;
@@ -117,7 +119,9 @@ public:
                         --epilogueSize;
                         keepOldBlock = true;
                     } else {
-                        const auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                        reportNotImplemented(CMMC_LOCATION());
+                        /*
+                        const auto terminator = prev->getTerminator()->as<BranchInst>();
                         auto args = terminator->getTrueTarget().getArgs();
                         const auto nextValue = terminator->getOperand(0)->as<CompareInst>()->getOperand(0);
                         for(auto& arg : args)
@@ -125,6 +129,7 @@ public:
                                 arg = startValue;
                         terminator->updateTargetArgs(terminator->getFalseTarget(), args);
                         terminator->getFalseTarget().resetTarget(head);
+                        */
                     }
 
                     prev = head;
@@ -136,10 +141,10 @@ public:
 
                 // remove backedge
                 {
-                    const auto terminator = prev->getTerminator()->as<ConditionalBranchInst>();
+                    const auto terminator = prev->getTerminator()->as<BranchInst>();
                     prev->instructions().pop_back();
                     IRBuilder builder{ target, prev };
-                    builder.makeOp<ConditionalBranchInst>(terminator->getFalseTarget());
+                    builder.makeOp<BranchInst>(terminator->getFalseTarget());
                 }
 
                 // retarget to head

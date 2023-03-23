@@ -14,7 +14,6 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -38,26 +37,22 @@ class LoweringContext final {
     const DataLayout& mDataLayout;
     std::unordered_map<Block*, GMIRBasicBlock*>& mBlockMap;
     std::unordered_map<GlobalValue*, GMIRSymbol*>& mGlobalMap;
-    std::unordered_map<BlockArgument*, Operand>& mBlockArgs;
     std::unordered_map<Value*, Operand>& mValueMap;
 
     TemporaryPools& mPools;
     GMIRBasicBlock* mCurrentBasicBlock = nullptr;
     std::unordered_map<const Type*, Operand> mZeros;
-    const BlockArgumentAnalysisResult& mBlockArgMap;
 
 public:
     LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
-                    std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
-                    std::unordered_map<BlockArgument*, Operand>& blockArgs, std::unordered_map<Value*, Operand>& valueMap,
-                    TemporaryPools& pools, const BlockArgumentAnalysisResult& blockArgMap);
+                    std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, std::unordered_map<Value*, Operand>& valueMap,
+                    TemporaryPools& pools);
     const DataLayout& getDataLayout() const noexcept {
         return mDataLayout;
     }
     VirtualRegPool& getAllocationPool(uint32_t addressSpace) noexcept;
     GMIRModule& getModule() const noexcept;
     GMIRBasicBlock* mapBlock(Block* block) const;
-    Operand mapBlockArg(BlockArgument* arg) const;
     Operand mapOperand(Value* operand);
     GMIRSymbol* mapGlobal(GlobalValue* global) const;
     void setCurrentBasicBlock(GMIRBasicBlock* block) noexcept;
@@ -72,7 +67,6 @@ public:
     }
     void addOperand(Value* value, Operand reg);
     Operand getZero(const Type* type);
-    Value* queryRoot(Value* val) const;
 };
 
 class LoweringInfo {
@@ -85,7 +79,7 @@ public:
     virtual void lower(ReturnInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
     virtual void lower(FMAInst* inst, LoweringContext& ctx) const = 0;
-    virtual bool isFusible(ConditionalBranchInst* branch, CompareInst* cmp) const {
+    virtual bool isFusible(BranchInst* branch, CompareInst* cmp) const {
         CMMC_UNUSED(branch);
         CMMC_UNUSED(cmp);
         return true;
@@ -98,7 +92,7 @@ public:
     virtual void lower(CastInst* inst, LoweringContext& ctx) const;
     virtual void lower(LoadInst* inst, LoweringContext& ctx) const;
     virtual void lower(StoreInst* inst, LoweringContext& ctx) const;
-    virtual void lower(ConditionalBranchInst* inst, LoweringContext& ctx) const;
+    virtual void lower(BranchInst* inst, LoweringContext& ctx) const;
     virtual void lower(UnreachableInst* inst, LoweringContext& ctx) const;
     virtual void lower(SelectInst* inst, LoweringContext& ctx) const;
     virtual void lower(GetElementPtrInst* inst, LoweringContext& ctx) const;

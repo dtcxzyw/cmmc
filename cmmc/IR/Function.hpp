@@ -35,7 +35,25 @@ enum class CallingConvention { C, Fast };
 
 enum class Intrinsic { none, memset, memcpy, memmove };
 
+class FuncArgument final : public Value {
+    Function* mFunc;
+    String mLabel;
+
+public:
+    FuncArgument(Function* func, const Type* type) noexcept : Value{ type }, mFunc{ func } {}
+    void dump(std::ostream& out) const override;
+    void dumpAsOperand(std::ostream& out) const override;
+    void setLabel(String label);
+    [[nodiscard]] bool isArgument() const noexcept override {
+        return true;
+    }
+    [[nodiscard]] const String& getLabel() const noexcept {
+        return mLabel;
+    }
+};
+
 class Function final : public GlobalValue {
+    Deque<FuncArgument*> mArgs;
     List<Block*> mBlocks;
     Attribute<FunctionAttribute> mAttr;
     CallingConvention mCallingConvention{ CallingConvention::C };
@@ -44,6 +62,11 @@ class Function final : public GlobalValue {
 public:
     Function(String symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
         : GlobalValue{ symbol, type }, mIntrinsic{ intrinsic } {}
+    [[nodiscard]] FuncArgument* getArg(uint32_t idx) const;
+    [[nodiscard]] FuncArgument* addArg(const Type* type);
+    [[nodiscard]] auto& args() const noexcept {
+        return mArgs;
+    }
     [[nodiscard]] Block* entryBlock() const noexcept {
         return mBlocks.front();
     }

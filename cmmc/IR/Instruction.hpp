@@ -15,9 +15,11 @@
 #pragma once
 #include <cassert>
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/Config.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <functional>
 #include <ostream>
 #include <unordered_map>
 
@@ -96,6 +98,7 @@ enum class InstructionID {
     IntToPtr,
     Select,
     Call,
+    Phi
 };
 
 class Instruction : public Value {
@@ -274,64 +277,33 @@ public:
     bool verify(std::ostream& out) const override;
 };
 
-class BlockArgument;
-
-class BranchTarget final {
-    Block* mTarget;
-    Vector<Value*> mArgs;
-
-    friend class ConditionalBranchInst;
-    Vector<Value*>& getArgsRef() noexcept {
-        return mArgs;
-    }
-
-public:
-    BranchTarget() noexcept = default;
-    template <typename... Args>
-    explicit BranchTarget(Block* target, Args&&... args) : mTarget{ target }, mArgs{ std::forward<Args>(args)... } {}
-
-    void resetTarget(Block* target) noexcept {
-        mTarget = target;
-    }
-    [[nodiscard]] Block* getTarget() const noexcept {
-        return mTarget;
-    }
-    [[nodiscard]] const Vector<Value*>& getArgs() const noexcept {
-        return mArgs;
-    }
-    void dump(std::ostream& out) const;
-    void replaceOperand(Value* oldOperand, Value* newOperand);
-    Value* getOperand(BlockArgument* arg) const;
-};
-
-class ConditionalBranchInst final : public Instruction {
-    BranchTarget mTrueTarget, mFalseTarget;
+class BranchInst final : public Instruction {
+    Block* mTrueTarget;
+    Block* mFalseTarget;
     double mBranchProb;
 
 public:
-    explicit ConditionalBranchInst(BranchTarget target);
-    explicit ConditionalBranchInst(Value* condition, double branchProb, BranchTarget trueTarget, BranchTarget falseTarget);
+    explicit BranchInst(Block* target);
+    explicit BranchInst(Value* condition, double branchProb, Block* trueTarget, Block* falseTarget);
 
     void updateBranchProb(double branchProb);
     [[nodiscard]] double getBranchProb() const noexcept {
         return mBranchProb;
     }
-    bool replaceOperand(Value* oldOperand, Value* newOperand) override;
-    void updateTargetArgs(BranchTarget& target, Vector<Value*> args);
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
     bool isEqual(const Instruction* rhs) const override;
 
-    [[nodiscard]] const BranchTarget& getTrueTarget() const noexcept {
+    [[nodiscard]] auto& getTrueTarget() noexcept {
         return mTrueTarget;
     }
-    [[nodiscard]] const BranchTarget& getFalseTarget() const noexcept {
+    [[nodiscard]] auto& getFalseTarget() noexcept {
         return mFalseTarget;
     }
-    BranchTarget& getTrueTarget() noexcept {
+    [[nodiscard]] auto getTrueTarget() const noexcept {
         return mTrueTarget;
     }
-    BranchTarget& getFalseTarget() noexcept {
+    [[nodiscard]] auto getFalseTarget() const noexcept {
         return mFalseTarget;
     }
     [[nodiscard]] Instruction* clone() const override;
@@ -445,6 +417,29 @@ public:
         assert(targetType->isPointer());
     }
     void dump(std::ostream& out) const override;
+    [[nodiscard]] Instruction* clone() const override;
+};
+
+class PhiInst final : public Instruction {
+    std::unordered_map<Block*, Value*, std::hash<Block*>, std::equal_to<>,
+                       ArenaAllocator<Arena::Source::IR, std::pair<Block* const, Value*>>>
+        mIncomings;
+
+public:
+    explicit PhiInst(const Type* type) : Instruction{ InstructionID::Phi, type, {} } {}
+    void addIncoming(Block* block, Value* value) {
+        assert(type->isSame(value->getType()));
+        assert(!mIncomings.count(block));
+        mIncomings.emplace(block, value);
+        operands().push_back(value);
+    }
+    auto& incomings() const noexcept {
+        return mIncomings;
+    }
+    bool replaceOperand(Value* oldOperand, Value* newOperand) override;
+    void dump(std::ostream& out) const override;
+    bool verify(std::ostream& out) const override;
+    bool isEqual(const Instruction* rhs) const override;
     [[nodiscard]] Instruction* clone() const override;
 };
 

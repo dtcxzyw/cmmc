@@ -42,8 +42,7 @@ bool sortBlocks(Function& func) {
     constexpr uint32_t unreachableCost = 1'000'000;
 
     std::queue<Block*> q{ { func.entryBlock() } };
-    const auto addTarget = [&](const BranchTarget& target, uint32_t w) {
-        const auto block = target.getTarget();
+    const auto addTarget = [&](Block* block, uint32_t w) {
         if(weight.emplace(block, w).second)
             q.push(block);
     };
@@ -55,13 +54,13 @@ bool sortBlocks(Function& func) {
         const auto terminator = u->getTerminator();
         switch(terminator->getInstID()) {
             case InstructionID::Branch: {
-                const auto& branch = terminator->as<ConditionalBranchInst>();
+                const auto& branch = terminator->as<BranchInst>();
                 addTarget(branch->getTrueTarget(), val + branchTrueCost);
                 val += brCost;
                 break;
             }
             case InstructionID::ConditionalBranch: {
-                const auto& branch = terminator->as<ConditionalBranchInst>();
+                const auto& branch = terminator->as<BranchInst>();
                 addTarget(branch->getTrueTarget(), val + branchTrueCost);
                 addTarget(branch->getFalseTarget(), val + branchFalseCost);
                 val += ubrCost;

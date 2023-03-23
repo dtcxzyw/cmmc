@@ -26,41 +26,22 @@
 CMMC_NAMESPACE_BEGIN
 extern Flag uniqueLabel;  // NOLINT
 
-void BlockArgument::dump(std::ostream& out) const {
-    dumpAsOperand(out);
-}
-
-void BlockArgument::dumpAsOperand(std::ostream& out) const {
-    dumpPrefix(out);
-    getType()->dumpName(out);
-    out << " %"sv << mLabel;
-}
-
-void BlockArgument::setLabel(String label) {
-    mLabel = label;
-}
-
 void Block::dump(std::ostream& out) const {
-    // relabel args and instructions
     LabelAllocator allocator;
-    auto argBaseLabel = String::get("arg");  // TODO: use default label
-    for(auto arg : mArgs)
-        arg->setLabel(allocator.allocate(argBaseLabel));
+    relabel(allocator);
+    dumpLabeled(out);
+}
+
+void Block::relabel(LabelAllocator& allocator) const {
+    // relabel instructions
     for(auto inst : mInstructions)
         if(inst->canbeOperand())
             inst->setLabel(allocator.allocate(inst->getLabel()));
+}
 
+void Block::dumpLabeled(std::ostream& out) const {
     dumpAsTarget(out);
-    out << '(';
-    bool isFirst = true;
-    for(auto arg : mArgs) {
-        if(!isFirst)
-            out << ", "sv;
-        else
-            isFirst = false;
-        arg->dump(out);
-    }
-    out << "):\n"sv;
+    out << ":\n";
     for(auto inst : mInstructions) {
         out << "    "sv;
         inst->dump(out);
@@ -76,14 +57,6 @@ bool Block::verify(std::ostream& out) const {
         return false;
     }
 
-    // ownership
-    for(auto arg : mArgs)
-        if(arg->getBlock() != this) {
-            out << "bad ownership"sv;
-            arg->dump(out);
-            return false;
-        }
-
     for(auto inst : mInstructions)
         if(inst->getBlock() != this) {
             out << "bad ownership"sv;
@@ -91,11 +64,9 @@ bool Block::verify(std::ostream& out) const {
             return false;
         }
 
+    // TODO: dominated?
     // topological ordering
     std::unordered_set<Value*> definedValue;
-    for(auto arg : mArgs) {
-        definedValue.insert(arg);
-    }
     for(auto inst : mInstructions) {
         if(inst->isTerminator() && inst != mInstructions.back()) {
             out << "the terminator must be in the end of a block"sv << std::endl;
@@ -105,7 +76,7 @@ bool Block::verify(std::ostream& out) const {
             if(!operand->isConstant() && !operand->isGlobal()) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
-                    dump(out);
+                    dumpLabeled(out);
                     out << "this operand is required: "sv << std::endl;
                     operand->dump(out);
                     out << std::endl << "user: "sv << std::endl;
@@ -125,26 +96,6 @@ bool Block::verify(std::ostream& out) const {
 
     return true;
 }
-BlockArgument* Block::getArg(uint32_t idx) {
-    return mArgs[idx];
-}
-
-BlockArgument* Block::addArg(const Type* type) {
-    auto arg = make<BlockArgument>(this, type);
-    mArgs.push_back(arg);
-    return arg;
-}
-void Block::removeArg(BlockArgument* arg) {
-    const auto iter = std::find(mArgs.begin(), mArgs.end(), arg);
-    if(iter != mArgs.end()) {
-        mArgs.erase(iter);
-        if constexpr(Config::debug) {
-            arg->setLabel(String::get("removed"));
-        }
-    } else {
-        DiagnosticsContext::get().attach<ValueAttachment>("invalid block arg", arg).reportFatal();
-    }
-}
 
 void Block::dumpAsTarget(std::ostream& out) const {
     if(uniqueLabel.get()) {
@@ -156,12 +107,6 @@ void Block::dumpAsTarget(std::ostream& out) const {
 Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
     auto block = make<Block>(mFunction);
     block->setLabel(getLabel());
-
-    for(auto arg : mArgs) {
-        auto newArg = block->addArg(arg->getType());
-        newArg->setLabel(arg->getLabel());
-        replace.emplace(arg, newArg);
-    }
 
     for(auto inst : mInstructions) {
         auto newInst = inst->clone();

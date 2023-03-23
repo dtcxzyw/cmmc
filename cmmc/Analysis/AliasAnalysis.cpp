@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -196,7 +195,6 @@ public:
 };
 
 AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& analysis) {
-    auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
     auto& dom = analysis.get<DominateAnalysis>(func);
 
     AliasAnalysisResult result;
@@ -249,16 +247,6 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
         if(block == func.entryBlock())
             entryArgID = argID;
 
-        for(auto arg : block->args())
-            if(arg->getType()->isPointer()) {
-                // TODO: use phi analysis
-                const auto root = blockArgMap.query(arg);
-                if(root)
-                    inheritGraph.emplace(arg, root);
-
-                result.addValue(arg, { argID });
-            }
-
         for(auto inst : block->instructions()) {
             if(!inst->getType()->isPointer())
                 continue;
@@ -275,7 +263,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     std::vector<uint32_t> attrs;
                     auto cur = inst;
                     while(true) {
-                        const auto base = blockArgMap.queryRoot(cur->operands().back());
+                        const auto base = cur->operands().back();
                         MatchContext<Value> matchCtx{ cur->getOperand(0), nullptr };
                         if(cuint_(0)(matchCtx)) {
                             inheritGraph.emplace(inst, base);
@@ -302,19 +290,18 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::PtrCast: {
-                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->getOperand(0)));
+                    inheritGraph.emplace(inst, inst->getOperand(0));
                     result.addValue(inst, {});
                     break;
                 }
                 case InstructionID::Select: {
-                    inheritGraph.emplace(inst, blockArgMap.queryRoot(inst->getOperand(1)),
-                                         blockArgMap.queryRoot(inst->getOperand(2)));
+                    inheritGraph.emplace(inst, inst->getOperand(1), inst->getOperand(2));
                     result.addValue(inst, {});
                     break;
                 }
                 case InstructionID::IntToPtr: {
-                    const auto base = blockArgMap.queryRoot(inst->getOperand(0));
-                    if(base->getBlock() == func.entryBlock() && base->is<BlockArgument>()) {
+                    const auto base = inst->getOperand(0);
+                    if(base->isArgument()) {
                         result.addValue(inst, { entryArgID });
                     } else
                         result.addValue(inst, {});
@@ -337,19 +324,10 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     for(auto block : func.blocks()) {
         if(reachableBlocks.count(block))
             continue;
-        for(auto arg : block->args())
-            if(arg->getType()->isPointer())
-                result.addValue(arg, {});
         for(auto inst : block->instructions()) {
             if(!inst->getType()->isPointer())
                 continue;
             result.addValue(inst, {});
-        }
-    }
-
-    for(auto [arg, val] : blockArgMap.map()) {
-        if(arg->getType()->isPointer() && reachableBlocks.count(arg->getBlock())) {
-            inheritGraph.emplace(arg, val);
         }
     }
 
@@ -394,7 +372,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     // geps
     std::unordered_map<Value*, std::vector<Instruction*>> clusters;
     for(auto gep : geps)
-        clusters[blockArgMap.queryRoot(gep->operands().back())].push_back(gep);
+        clusters[gep->operands().back()].push_back(gep);
     for(auto& [base, gepList] : clusters) {
         CMMC_UNUSED(base);
         divide(gepList, allocateID, result, 0);

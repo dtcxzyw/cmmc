@@ -13,7 +13,6 @@
 */
 
 #include <algorithm>
-#include <cmmc/Analysis/BlockArgumentAnalysis.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -29,6 +28,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 struct Condition final {
     Value* cond;
     bool value;
@@ -103,7 +103,6 @@ class ConditionalPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& cfg = analysis.get<CFGAnalysis>(func);
-        const auto& blockArgMap = analysis.get<BlockArgumentAnalysis>(func);
 
         std::vector<Block*> blocks{ func.blocks().cbegin(), func.blocks().cend() };
         std::unordered_map<Block*, NodeIndex> nodeMap;
@@ -112,8 +111,7 @@ public:
         Graph graph{ blocks.size() };
         for(NodeIndex idx = 0; idx < blocks.size(); ++idx) {
             const auto block = blocks[idx];
-            for(auto& [next, nextTarget] : cfg.successors(block)) {
-                CMMC_UNUSED(nextTarget);
+            for(auto& next : cfg.successors(block)) {
                 graph[idx].push_back(nodeMap[next]);
             }
         }
@@ -139,18 +137,18 @@ public:
         for(NodeIndex u = 0; u < blocks.size(); ++u) {
             const auto cu = col[u];
             const auto bu = blocks[u];
-            for(auto& [next, nextTarget] : cfg.successors(bu)) {
+            for(auto next : cfg.successors(bu)) {
                 const auto v = nodeMap.at(next);
                 const auto cv = col[v];
                 if(cu == cv)
                     continue;
 
-                const auto terminator = bu->getTerminator()->as<ConditionalBranchInst>();
+                const auto terminator = bu->getTerminator()->as<BranchInst>();
                 auto& e = edges[cu][cv];
 
                 if(terminator->getInstID() == InstructionID::ConditionalBranch) {
-                    const auto cond = blockArgMap.queryRoot(terminator->getOperand(0));
-                    e.push_back({ cond, nextTarget == &terminator->getTrueTarget() });
+                    const auto cond = terminator->getOperand(0);
+                    e.push_back({ cond, next == terminator->getTrueTarget() });
                 } else {
                     e.push_back({ nullptr, false });
                 }
@@ -217,5 +215,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(ConditionalPropagation);
+*/
 
 CMMC_NAMESPACE_END

@@ -102,7 +102,8 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
     return nextBlock;
 }
 
-std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target) {
+/*
+std::pair<BranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target) {
     IRBuilder builder{ module.getTarget() };
     builder.setCurrentFunction(&func);
     const auto block = builder.addBlock();
@@ -111,10 +112,11 @@ std::pair<ConditionalBranchInst*, BranchTarget*> createIndirectBlock(const Modul
     Vector<Value*> args;
     for(auto arg : target.getArgs())
         args.push_back(block->addArg(arg->getType()));
-    const auto inst = builder.makeOp<ConditionalBranchInst>(BranchTarget{ target.getTarget(), std::move(args) });
+    const auto inst = builder.makeOp<BranchInst>(BranchTarget{ target.getTarget(), std::move(args) });
     target.resetTarget(block);
     return { inst, &inst->getTrueTarget() };
 }
+*/
 
 bool isNoSideEffectExpr(const Instruction& inst) {
     if(!inst.canbeOperand())

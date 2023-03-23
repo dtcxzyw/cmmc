@@ -19,6 +19,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
@@ -26,16 +27,12 @@
 #include <unordered_map>
 #include <unordered_set>
 
-// TODO: block arg order-agonistic compare
+// TODO: inst order-agonistic compare
 
 CMMC_NAMESPACE_BEGIN
 
 class BlockOutliner final : public TransformPass<Function> {
     static bool isEqual(Block* lhs, Block* rhs) {
-        auto& lhsArgs = lhs->args();
-        auto& rhsArgs = rhs->args();
-        if(lhsArgs.size() != rhsArgs.size())
-            return false;
         if(lhs->instructions().size() != rhs->instructions().size())
             return false;
         uint32_t alloc = 0;
@@ -44,11 +41,6 @@ class BlockOutliner final : public TransformPass<Function> {
         const auto allocOperand = [&](Value* lhsValue, Value* rhsValue) {
             lhsOperands[lhsValue] = rhsOperands[rhsValue] = ++alloc;
         };
-        for(size_t idx = 0; idx < lhsArgs.size(); ++idx) {
-            if(!lhsArgs[idx]->getType()->isSame(rhsArgs[idx]->getType()))
-                return false;
-            allocOperand(lhsArgs[idx], rhsArgs[idx]);
-        }
         for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
             lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
             const auto lhsInst = *lhsIter;
@@ -106,10 +98,7 @@ public:
             if(isEqual(block, entry)) {
                 entry->instructions().clear();
                 IRBuilder builder{ moduleTarget, entry };
-                Vector<Value*> args;
-                for(auto arg : entry->args())
-                    args.push_back(arg);
-                builder.makeOp<ConditionalBranchInst>(BranchTarget{ block, std::move(args) });
+                builder.makeOp<BranchInst>(block);
                 modified = true;
                 break;
             }
@@ -119,12 +108,13 @@ public:
         for(auto block : func.blocks()) {
             auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
-                auto branch = terminator->as<ConditionalBranchInst>();
-                auto handleTarget = [&](BranchTarget& target) {
-                    if(!target.getTarget())
+                auto branch = terminator->as<BranchInst>();
+                auto handleTarget = [&](Block* target) {
+                    if(!target)
                         return;
-                    if(auto iter = replace.find(target.getTarget()); iter != replace.cend()) {
-                        target.resetTarget(iter->second);
+                    if(auto iter = replace.find(target); iter != replace.cend()) {
+                        // target.resetTarget(iter->second);
+                        reportNotImplemented(CMMC_LOCATION());
                         modified = true;
                     }
                 };

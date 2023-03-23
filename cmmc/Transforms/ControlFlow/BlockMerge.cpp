@@ -45,9 +45,9 @@ public:
                 const auto inst = block->getTerminator();
                 if(!inst->isBranch())
                     continue;
-                const auto branch = inst->as<ConditionalBranchInst>();
-                ++blockRef[branch->getTrueTarget().getTarget()];
-                ++blockRef[branch->getFalseTarget().getTarget()];
+                const auto branch = inst->as<BranchInst>();
+                ++blockRef[branch->getTrueTarget()];
+                ++blockRef[branch->getFalseTarget()];
             }
             std::unordered_set<Block*> deferred;
             for(auto block : func.blocks()) {
@@ -56,23 +56,11 @@ public:
                 const auto terminator = block->getTerminator();
                 if(terminator->getInstID() != InstructionID::Branch)
                     continue;
-                const auto branch = terminator->as<ConditionalBranchInst>();
-                const auto target = branch->getTrueTarget().getTarget();
+                const auto branch = terminator->as<BranchInst>();
+                const auto target = branch->getTrueTarget();
                 assert(blockRef[target] >= 1);
                 if(blockRef.at(target) == 1) {
                     auto& instsA = block->instructions();
-
-                    const auto& argsA = branch->getTrueTarget().getArgs();
-                    const auto& argsB = target->args();
-                    assert(argsA.size() == argsB.size());
-                    ReplaceMap replace;
-                    for(uint32_t idx = 0; idx < argsB.size(); ++idx) {
-                        const auto src = argsB[idx];
-                        const auto dst = argsA[idx];
-                        replace.emplace(src, dst);
-                    }
-                    replaceOperands(*target, replace);
-
                     instsA.pop_back();
                     auto& instsB = target->instructions();
                     for(auto inst : instsB)

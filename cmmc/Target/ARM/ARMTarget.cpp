@@ -315,7 +315,7 @@ bool ARMTarget::isCalleeSaved(const Operand& op) const noexcept {
 }
 
 void ARMLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const {
-    const auto& args = func->entryBlock()->args();
+    const auto& args = func->args();
     size_t curOffset = 0U;
     std::vector<size_t> offsets;
     offsets.reserve(args.size());
