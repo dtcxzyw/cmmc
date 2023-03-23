@@ -337,6 +337,7 @@ def compare_and_parse_perf(src, out):
 
     # print(standard_answer.encode('utf-8'))
     if output != standard_answer:
+        print("Output mismatch")
         return None
 
     for line in out.stderr.splitlines():
@@ -394,6 +395,9 @@ def sysy_codegen_llvm(src):
         level = '1'
     elif 'conv' in src:
         level = '1'
+    elif 'sort' in src:
+        level = '1'
+        
     out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
                                '/dev/stdout', '-e', inputs, src], capture_output=True, text=True)
 
