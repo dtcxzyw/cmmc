@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "llvm/IR/Instructions.h"
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
@@ -353,6 +354,9 @@ class LLVMConversionContext final {
                         reportNotImplemented(CMMC_LOCATION());
                 }
             }
+            case InstructionID::Phi: {
+                return builder.CreatePHI(getInstType(), inst.as<PhiInst>()->incomings().size());
+            }
             default:
                 reportNotImplemented(CMMC_LOCATION());
         }
@@ -389,11 +393,25 @@ class LLVMConversionContext final {
 
             llvm::IRBuilder<> builder{ llvmBlock };
             for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Alloc)
-                    continue;
                 const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
                 if(inst->canbeOperand())
                     valueMap.insert({ inst, val });
+            }
+        }
+
+        // fix phi nodes
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Phi) {
+                    const auto phi = inst->as<PhiInst>();
+                    const auto phiNode = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(phi));
+                    for(auto [srcBlock, value] : phi->incomings()) {
+
+                        phiNode->addIncoming(value->isInstruction() ? valueMap.lookup(value) : convertValue(value, valueMap),
+                                             blockMap.lookup(srcBlock));
+                    }
+                } else
+                    break;
             }
         }
 

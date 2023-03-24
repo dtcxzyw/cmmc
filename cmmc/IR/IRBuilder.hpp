@@ -60,6 +60,7 @@ public:
     }
 
     StackAllocInst* createAlloc(const Type* type);
+    PhiInst* createPhi(const Type* type);
 
     Block* addBlock();
 

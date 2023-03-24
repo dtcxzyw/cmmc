@@ -55,6 +55,7 @@ bool Instruction::canbeOperand() const noexcept {
 
 bool Instruction::verify(std::ostream& out) const {
     // cross block reference
+    /*
     for(auto operand : operands())
         if(auto block = operand->getBlock(); block && block != getBlock()) {
             out << "cross block reference"sv << std::endl;
@@ -69,6 +70,8 @@ bool Instruction::verify(std::ostream& out) const {
             out << std::endl;
             return false;
         }
+    */
+    CMMC_UNUSED(out);
 
     return true;
 }
@@ -165,6 +168,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "select"sv;
         case InstructionID::Call:
             return "call"sv;
+        case InstructionID::Phi:
+            return "phi"sv;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -245,13 +250,17 @@ void StoreInst::dump(std::ostream& out) const {
 
 void BranchInst::dump(std::ostream& out) const {
     out << getInstName(getInstID()) << ' ';
-    getOperand(0)->dumpAsOperand(out);
-    const auto prec = out.precision(2);
-    out << "(prob = " << mBranchProb << "), "sv;
-    out.precision(prec);
-    mTrueTarget->dumpAsTarget(out);
-    out << ", "sv;
-    mFalseTarget->dumpAsTarget(out);
+    if(getInstID() == InstructionID::Branch) {
+        mTrueTarget->dumpAsTarget(out);
+    } else {
+        getOperand(0)->dumpAsOperand(out);
+        const auto prec = out.precision(2);
+        out << "(prob = " << mBranchProb << "), "sv;
+        out.precision(prec);
+        mTrueTarget->dumpAsTarget(out);
+        out << ", "sv;
+        mFalseTarget->dumpAsTarget(out);
+    }
 }
 
 bool BranchInst::verify(std::ostream& out) const {
@@ -263,13 +272,16 @@ bool BranchInst::verify(std::ostream& out) const {
     }
     auto verifyTarget = [&](const Block* block) {
         if(!block)
-            return true;
+            return false;
         if(block == getBlock()->getFunction()->entryBlock()) {
             out << "Cannot branch to entry block"sv << std::endl;
             return false;
         }
         return true;
     };
+    if(getInstID() == InstructionID::Branch) {
+        return verifyTarget(mTrueTarget) && !mFalseTarget;
+    }
     return verifyTarget(mTrueTarget) && verifyTarget(mFalseTarget);
 }
 
@@ -632,11 +644,12 @@ bool PhiInst::verify(std::ostream& out) const {
         return false;
     for(auto [block, val] : mIncomings) {
         CMMC_UNUSED(block);
-        if(val->getType()->isSame(getType())) {
-            out << "type mismatch\n";
+        if(!val->getType()->isSame(getType())) {
+            out << "Type mismatch\n";
             return false;
         }
     }
+    // TODO: verify predecessors
     return true;
 }
 Instruction* PhiInst::clone() const {

@@ -63,7 +63,7 @@ public:
     Function(String symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
         : GlobalValue{ symbol, type }, mIntrinsic{ intrinsic } {}
     [[nodiscard]] FuncArgument* getArg(uint32_t idx) const;
-    [[nodiscard]] FuncArgument* addArg(const Type* type);
+    FuncArgument* addArg(const Type* type);
     [[nodiscard]] auto& args() const noexcept {
         return mArgs;
     }

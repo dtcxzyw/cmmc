@@ -428,7 +428,7 @@ class PhiInst final : public Instruction {
 public:
     explicit PhiInst(const Type* type) : Instruction{ InstructionID::Phi, type, {} } {}
     void addIncoming(Block* block, Value* value) {
-        assert(type->isSame(value->getType()));
+        assert(getType()->isSame(value->getType()));
         assert(!mIncomings.count(block));
         mIncomings.emplace(block, value);
         operands().push_back(value);

@@ -115,6 +115,9 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     entry->setLabel(String::get("entry"));
     ctx.setCurrentBlock(entry);
 
+    for(auto arg : funcType->getArgTypes())
+        func->addArg(arg);
+
     // NOTICE: function arguments must be lvalues
     for(uint32_t idx = 0; idx < decl.args.size(); ++idx) {
         const auto& name = decl.args[idx].var.name;
@@ -180,7 +183,7 @@ void FunctionDefinition::emit(EmitContext& ctx) const {
     }
 
     if(!ctx.invalid()) {
-        assert(func->verify(reportDebug()));
+        assert(func->verify(std::cerr));
     }
 
     EmitContext::popLoc();
@@ -458,7 +461,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     auto [lhs, lhsQualifier] = ctx.getRValue(mLhs);
     if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
         lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, {}, ConversionUsage::Condition);
-
+        const auto srcBlock = ctx.getCurrentBlock();
         auto rhsBlock = ctx.addBlock();
         auto newBlock = ctx.addBlock();
 
@@ -470,11 +473,14 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
 
         ctx.setCurrentBlock(rhsBlock);
         const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+        rhsBlock = ctx.getCurrentBlock();
         ctx.makeOp<BranchInst>(newBlock);
         ctx.setCurrentBlock(newBlock);
-        // TODO: phi nodes
-        CMMC_UNUSED(rhs);
-        return QualifiedValue{ ctx.booleanToInt(nullptr) };
+        const auto phi = ctx.createPhi(IntegerType::getBoolean());
+        phi->addIncoming(srcBlock, mOp == OperatorID::LogicalAnd ? ctx.getFalse() : ctx.getTrue());
+        phi->addIncoming(rhsBlock, rhs);
+
+        return QualifiedValue{ ctx.booleanToInt(phi) };
     }
 
     auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
@@ -1708,13 +1714,17 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
 
     ctx.setCurrentBlock(lhsBlock);
     const auto lhs = mLhs->emitWithLoc(ctx);
+    lhsBlock = ctx.getCurrentBlock();
 
     ctx.setCurrentBlock(rhsBlock);
     const auto rhs = mRhs->emitWithLoc(ctx);
+    rhsBlock = ctx.getCurrentBlock();
 
     Qualifier qualifier;
     ValueQualifier valueQualifier;
     auto next = ctx.addBlock();
+    Value* phiLhs = nullptr;
+    Value* phiRhs = nullptr;
     if(lhs.valueQualifier == ValueQualifier::AsLValue && rhs.valueQualifier == ValueQualifier::AsLValue) {
         if(!lhs.value->getType()->isSame(rhs.value->getType()))
             DiagnosticsContext::get()
@@ -1732,6 +1742,8 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
         ctx.setCurrentBlock(rhsBlock);
         ctx.makeOp<BranchInst>(next);
         valueQualifier = ValueQualifier::AsLValue;
+        phiLhs = lhs.value;
+        phiRhs = rhs.value;
     } else {
         // convert to rvalue
         ctx.setCurrentBlock(lhsBlock);
@@ -1745,7 +1757,6 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
                 .attach<TypeAttachment>("lhs", lhsValue->getType())
                 .attach<TypeAttachment>("rhs", rhsValue->getType())
                 .reportFatal();
-        // next->addArg(lhsValue->getType());
         if(lhsQualifier.isSigned != rhsQualifier.isSigned)
             DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
         qualifier.isSigned = lhsQualifier.isSigned;
@@ -1755,11 +1766,15 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
         ctx.setCurrentBlock(rhsBlock);
         ctx.makeOp<BranchInst>(next);
         valueQualifier = ValueQualifier::AsRValue;
+        phiLhs = lhsValue;
+        phiRhs = rhsValue;
     }
 
     ctx.setCurrentBlock(next);
-    // TODO: phi node
-    return QualifiedValue{ nullptr, valueQualifier, qualifier };
+    const auto phi = ctx.createPhi(phiLhs->getType());
+    phi->addIncoming(lhsBlock, phiLhs);
+    phi->addIncoming(rhsBlock, phiRhs);
+    return QualifiedValue{ phi, valueQualifier, qualifier };
 }
 
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {

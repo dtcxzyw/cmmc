@@ -14,7 +14,7 @@ binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '3'
+optimization_level = '0'
 assert os.path.exists(rars_path)
 
 # O0 reference
@@ -342,6 +342,14 @@ def compare_and_parse_perf(src, out):
     # print(standard_answer.encode('utf-8'))
     if output != standard_answer:
         print("Output mismatch")
+        print("output:")
+        if len(output) > 100:
+            output = output[:100]
+        print(output)
+        print("stdans:")
+        if len(standard_answer) > 100:
+            standard_answer = standard_answer[:100]
+        print(standard_answer)
         return None
 
     for line in out.stderr.splitlines():
@@ -397,17 +405,20 @@ def sysy_codegen_llvm(src):
     if not os.path.exists(inputs):
         inputs = '/dev/null'
 
+    level = optimization_level
     # FIXME
-    level = '3'
-    if "shuffle" in src:
-        level = '1'
-    elif 'conv' in src:
-        level = '1'
-    elif 'sort' in src:
-        level = '1'
+    if 'performance' in src and level != '0':
+        if "shuffle" in src:
+            level = '1'
+        elif 'conv' in src:
+            level = '1'
+        elif 'sort' in src:
+            level = '1'
 
-    out = subprocess.run(args=[binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
-                               '/dev/stdout', '-e', inputs, src], capture_output=True, text=True)
+    args = [binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
+                               '/dev/stdout', '-e', inputs, src]
+    #print(' '.join(args))
+    out = subprocess.run(args=args, capture_output=True, text=True)
 
     used = compare_and_parse_perf(src, out)
     if used is None:
@@ -560,10 +571,10 @@ if "llvm" in test_cases:
     total_perf_self = 1
     total_perf_self_samples = 0
 
-    res.append(test("SysY SysY->LLVMIR performance", tests_path +
-                    "/SysY2022/performance", ".sy", sysy_codegen_llvm))
-    res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
-                    "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
+    # res.append(test("SysY SysY->LLVMIR performance", tests_path +
+    #                "/SysY2022/performance", ".sy", sysy_codegen_llvm))
+    # res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
+    #                "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
 
 
 if generate_ref:

@@ -55,7 +55,7 @@ help.setName("help", 'h').setDesc("print help information");
 emitAST.setName("emitAST", 'a').setDesc("emit AST");
 emitIR.setName("emitIR", 'i').setDesc("emit IR");
 strictMode.setName("strict", 's').setDesc("disable language extensions (SPL only)");
-optimizationLevel.withDefault(3).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
+optimizationLevel.withDefault(0).setName("opt", 'O').setDesc("optimiaztion level [0-3]");
 outputPath.setName("output", 'o').setDesc("path to the output file");
 grammarCheck.setName("grammar-check", 'g').setDesc("only check grammar");
 executeInput.setName("execute-input", 'e').setDesc("execute with built-in interpreter");
@@ -116,8 +116,8 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
         OutputStream out{ path };
         SimulationIOContext ctx{ in, out };
 
-#ifdef CMMC_WITH_LLVM_SUPPORT
         if(::targetName.get() == "llvm") {
+#ifdef CMMC_WITH_LLVM_SUPPORT
             reportDebug() << "use LLVM Orc JIT backend" << std::endl;
             const auto retVal = llvmExecMain(module, filePath, ctx);
             return std::visit(
@@ -130,10 +130,13 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
                     }
                 },
                 retVal);
-        }
 #else
-        CMMC_UNUSED(filePath);
+            CMMC_UNUSED(filePath);
+            std::cerr << "Please compile cmmc with llvm backend to use OrcJIT" << std::endl;
+            return EXIT_FAILURE;
 #endif
+        }
+
         const auto retVal = runMain(module, ctx);
         return std::visit(
             [](auto ret) -> int {
@@ -150,14 +153,17 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
             retVal);
     }
 
-#ifdef CMMC_WITH_LLVM_SUPPORT
     const auto emitLLVM = (::targetName.get() == "llvm");
     if(emitLLVM) {
+#ifdef CMMC_WITH_LLVM_SUPPORT
         const auto output = getOutputPath(base + ".ll");
         llvmCodeGen(module, filePath, output);
         return EXIT_SUCCESS;
-    }
+#else
+        std::cerr << "Please compile cmmc with llvm backend" << std::endl;
+        return EXIT_FAILURE;
 #endif
+    }
 
     const auto emitTAC = (::targetName.get() == "tac");
     const auto path = getOutputPath(base + (emitTAC ? ".ir" : ".s"));

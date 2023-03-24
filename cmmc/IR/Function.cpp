@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cstdint>
@@ -42,9 +43,22 @@ FuncArgument* Function::getArg(uint32_t idx) const {
 void Function::dump(std::ostream& out) const {
     if(getLinkage() == Linkage::Internal)
         out << "internal "sv;
-    out << "func @"sv << getSymbol();
-    getType()->dump(out);
-    // TODO: print labeled args
+    out << "func @"sv << getSymbol() << '(';
+
+    LabelAllocator allocator;
+    for(auto arg : mArgs)
+        arg->setLabel(allocator.allocate(arg->getLabel()));
+
+    bool isFirst = true;
+    for(auto arg : mArgs) {
+        if(!isFirst) {
+            out << ", "sv;
+        } else
+            isFirst = false;
+        arg->dumpAsOperand(out);
+    }
+    out << ") -> "sv;
+    getType()->as<FunctionType>()->getRetType()->dumpName(out);
 
     if(!mAttr.empty()) {
         out << " { "sv;
@@ -73,14 +87,13 @@ void Function::dump(std::ostream& out) const {
         return;
     }
 
-    LabelAllocator allocator;
     for(auto block : mBlocks) {
         block->setLabel(allocator.allocate(block->getLabel()));
         block->relabel(allocator);
     }
     out << " {\n"sv;
     for(auto block : mBlocks)
-        block->dump(out);
+        block->dumpLabeled(out);
     out << "}\n"sv;
 }
 FuncArgument* Function::addArg(const Type* type) {

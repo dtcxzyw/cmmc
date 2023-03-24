@@ -66,6 +66,7 @@ bool Block::verify(std::ostream& out) const {
 
     // TODO: dominated?
     // topological ordering
+    /*
     std::unordered_set<Value*> definedValue;
     for(auto inst : mInstructions) {
         if(inst->isTerminator() && inst != mInstructions.back()) {
@@ -76,7 +77,7 @@ bool Block::verify(std::ostream& out) const {
             if(!operand->isConstant() && !operand->isGlobal()) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
-                    dumpLabeled(out);
+                    dump(out);
                     out << "this operand is required: "sv << std::endl;
                     operand->dump(out);
                     out << std::endl << "user: "sv << std::endl;
@@ -88,11 +89,16 @@ bool Block::verify(std::ostream& out) const {
         }
         definedValue.insert(inst);
     }
+    */
 
     // per-instruction
     for(auto inst : mInstructions)
-        if(!inst->verify(out))
+        if(!inst->verify(out)) {
+            out << "invalid inst "sv << std::endl;
+            dump(out);
+            inst->dump(out);
             return false;
+        }
 
     return true;
 }

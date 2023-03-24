@@ -12,11 +12,12 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -46,6 +47,17 @@ StackAllocInst* IRBuilder::createAlloc(const Type* type) {
         mInsertPoint = std::next(iter);
         inst->setBlock(block);
     }
+    return inst;
+}
+PhiInst* IRBuilder::createPhi(const Type* type) {
+    auto inst = make<PhiInst>(type);
+    auto block = getCurrentBlock();
+    if(mInsertPoint != block->instructions().cend() && (*std::prev(mInsertPoint))->getInstID() != InstructionID::Phi) {
+        DiagnosticsContext::get().attach<Reason>("Cannot insert a phi instruction after non-phi instructions").reportFatal();
+    }
+    auto iter = block->instructions().insert(mInsertPoint, inst);
+    mInsertPoint = std::next(iter);
+    inst->setBlock(block);
     return inst;
 }
 Function* IRBuilder::getCurrentFunction() const noexcept {
