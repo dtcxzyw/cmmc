@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "llvm/IR/Instructions.h"
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
@@ -48,6 +47,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/InstrTypes.h>
 #include <llvm/IR/Instruction.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/Intrinsics.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -300,13 +300,7 @@ class LLVMConversionContext final {
             case InstructionID::Alloc: {
                 const auto pointee = inst.getType()->as<PointerType>()->getPointee();
                 const auto alloca = builder.CreateAlloca(getType(pointee));
-                // builder.CreateLifetimeStart(alloca, builder.getInt64(pointee->getSize(dataLayout)));
                 return alloca;
-            }
-            case InstructionID::Free: {
-                // const auto pointee = inst.getOperand(0)->getType()->as<PointerType>()->getPointee();
-                // return builder.CreateLifetimeEnd(getOperand(0), builder.getInt64(pointee->getSize(dataLayout)));
-                return nullptr;
             }
             case InstructionID::GetElementPtr: {
                 const auto& operands = inst.operands();

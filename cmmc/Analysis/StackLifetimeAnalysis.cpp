@@ -17,6 +17,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <unordered_map>
 
+// FIXME
 CMMC_NAMESPACE_BEGIN
 
 const std::unordered_set<Value*>& StackLifetimeAnalysisResult::getUsedAllocas(const Block* block) const {
@@ -42,14 +43,8 @@ StackLifetimeAnalysisResult StackLifetimeAnalysis::run(Function& func, AnalysisP
         }
 
         for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {  // lifetime begin
+            if(inst->getInstID() == InstructionID::Alloc) {
                 allocas.insert(inst);
-            } else if(inst->getInstID() == InstructionID::Free) {  // lifetime end
-                const auto alloc = inst->getOperand(0);
-                if(auto iter = allocas.find(alloc); iter != allocas.cend()) {
-                    allocas.erase(iter);
-                    temporaryUsages[block].push_back(alloc);
-                }
             }
         }
     }

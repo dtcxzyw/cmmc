@@ -17,7 +17,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 
 // Replace undef with an arbitrary value
 
@@ -26,11 +26,12 @@ CMMC_NAMESPACE_BEGIN
 class UndefPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
-        bool modified = false;
         const auto& target = analysis.module().getTarget();
 
+        ReplaceMap replace;
+        bool modified = false;
+
         for(auto block : func.blocks()) {
-            ReplaceMap replace;
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::ConditionalBranch && inst->getOperand(0)->isUndefined()) {
                     const auto terminator = block->getTerminator()->as<BranchInst>();
@@ -61,10 +62,9 @@ public:
                     // replace.emplace(inst, make<UndefinedValue>(inst->getType()));
                 }
             }
-
-            modified |= replaceOperands(*block, replace);
         }
 
+        modified |= replaceOperands(func, replace);
         return modified;
     }
 

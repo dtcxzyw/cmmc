@@ -537,8 +537,6 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
             lower(inst->as<CastInst>(), ctx);
             break;
         case InstructionID::Alloc:
-            [[fallthrough]];
-        case InstructionID::Free:
             break;
         case InstructionID::GetElementPtr:
             lower(inst->as<GetElementPtrInst>(), ctx);

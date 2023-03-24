@@ -24,4 +24,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
+bool replaceOperands(Function& func, const ReplaceMap& replace) {
+    bool modified = false;
+    for(auto block : func.blocks())
+        modified |= replaceOperandsInBlock(*block, replace);
+    return modified;
+}
+
 CMMC_NAMESPACE_END

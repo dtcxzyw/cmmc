@@ -203,8 +203,7 @@ public:
         //  replace operands & back propagation
         for(auto func : funcs) {
             auto& map = mapping[func];
-            for(auto block : func->blocks())
-                replaceOperands(*block, map);
+            replaceOperands(*func, map);
         }
 
         return true;

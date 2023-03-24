@@ -226,7 +226,6 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "CombineBranch",          //
             "BlockMerge",             //
             "BlockEliminate",         // clean up
-            "BlockArgEliminate",      // clean up
             "NoSideEffectEliminate",  // clean up
             "GlobalEliminate"         //
         }))
@@ -263,25 +262,22 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "CombineBranch",      //
             "BlockMerge",         //
             "BlockEliminate",     // clean up
-            "BlockArgEliminate",  // clean up
             // Load/Store
             "LoadReduce",             //
             "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
             // Outline
-            "BlockOutliner",   //
+            // "BlockOutliner",   //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
             // Code Move
-            "CodeMove",               //
-            "CodeSink",               //
-            "BlockArgEliminate",      // clean up
+            "CodeMove",  //
+            //"CodeSink",               //
             "NoSideEffectEliminate",  // clean up
             // MemoryOp
             "MemoryIntrinsicOpt",  //
             // Postprocess
             "NoReturnCallEliminate",  //
-            "FreeEliminate",          //
             "NoSideEffectEliminate",  // clean up
             "GlobalEliminate",        //
             "UndefPropagation"        //
@@ -290,7 +286,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({
-                "GVN",                    //
+                //  "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
                 "BlockMerge",             // clean up
@@ -333,10 +329,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({
-                "ScalarMem2Reg",          //
+                //"ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up
-                "BlockArgEliminate",      // clean up
-                "FreeEliminate",          // clean up
                 "NoSideEffectEliminate",  // clean up
                 "SmallBlockInlining",     //
             }))
@@ -362,6 +356,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             }))
             root->addPass(pass);
 
+        /*
         // TODO: it is a time costuming phase.
         auto specialization = std::make_shared<PassManager>();
         for(const auto& pass : passesSource.collect({
@@ -376,12 +371,8 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             }))
             specialization->addPass(pass);
         root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
+        */
     }
-
-    for(const auto& pass : passesSource.collect({
-            "FreeCleanup",  //
-        }))
-        root->addPass(pass);
 
     root->addPass(iter);  // post optimization
 
@@ -392,9 +383,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
         }))
         root->addPass(pass);
 
-    if(targetName.get() == "llvm")
-        for(auto& pass : passesSource.collect({ "LegalizeLLVMPhi", "BlockSort" }))
-            root->addPass(pass);
+    // TODO: inst/arg sort for testing
     if(debugTransform.get()) {
         for(auto& pass : passesSource.collect({ "DumpCFG" }))
             root->addPass(pass);
@@ -468,7 +457,7 @@ std::vector<std::shared_ptr<TransformPass<Module>>> PassRegistry::collect(std::i
         if(auto iter = mPasses.find(name); iter != mPasses.cend()) {
             ret.push_back(iter->second);
         } else {
-            DiagnosticsContext::get().attach<Reason>("invalid pass name").reportFatal();
+            DiagnosticsContext::get().attach<Reason>("invalid pass name").attach<Reason>(name).reportFatal();
         }
     }
     return ret;

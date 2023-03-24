@@ -91,7 +91,6 @@ enum class InstructionID {
     ConvertOpEnd,
     // miscellaneous
     Alloc,
-    Free,
     GetElementPtr,
     PtrCast,
     PtrToInt,
@@ -359,16 +358,6 @@ public:
     [[nodiscard]] Instruction* clone() const override;
 };
 
-class StackFreeInst final : public Instruction {
-public:
-    explicit StackFreeInst(Value* ptr) : Instruction{ InstructionID::Free, VoidType::get(), { ptr } } {
-        assert(ptr->getType()->isPointer());
-    }
-
-    void dump(std::ostream& out) const override;
-    [[nodiscard]] Instruction* clone() const override;
-};
-
 class FMAInst final : public Instruction {
 public:
     explicit FMAInst(Value* x, Value* y, Value* z) : Instruction{ InstructionID::FFma, x->getType(), { x, y, z } } {}
@@ -436,6 +425,7 @@ public:
     auto& incomings() const noexcept {
         return mIncomings;
     }
+    void replaceSource(Block* oldBLock, Block* newBlock);
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;

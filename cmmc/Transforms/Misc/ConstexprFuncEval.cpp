@@ -22,7 +22,7 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN
@@ -70,9 +70,8 @@ public:
             builder.makeOp<ReturnInst>(res);
             return true;
         }
-        bool modified = false;
+        ReplaceMap replaceMap;
         for(auto block : func.blocks()) {
-            ReplaceMap replaceMap;
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() != InstructionID::Call)
                     continue;
@@ -101,10 +100,8 @@ public:
                     replaceMap.emplace(inst, res);
                 }
             }
-
-            modified |= replaceOperands(*block, replaceMap);
         }
-        return modified;
+        return replaceOperands(func, replaceMap);
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

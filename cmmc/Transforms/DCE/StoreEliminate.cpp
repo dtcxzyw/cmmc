@@ -85,11 +85,6 @@ class StoreEliminate final : public TransformPass<Function> {
                     if(!aliasSet.isDistinct(addr, storeAddr)) {
                         return false;
                     }
-                } else if(inst->getInstID() == InstructionID::Free) {
-                    const auto freeAddr = inst->getOperand(0);
-                    if(freeAddr == addr) {
-                        break;  // end of lifetime
-                    }
                 } else if(inst->isTerminator()) {
                     return addressSpace.mustBe(addr, AddressSpaceType::InternalStack);
                 } else if(inst->getInstID() == InstructionID::Load) {
@@ -123,7 +118,7 @@ class StoreEliminate final : public TransformPass<Function> {
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
         for(auto block : func.blocks()) {
             for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Store || inst->getInstID() == InstructionID::Free) {
+                if(inst->getInstID() == InstructionID::Store) {
                     auto storeAddr = inst->getOperand(0);
                     if(auto alloca = dynamic_cast<StackAllocInst*>(storeAddr)) {
                         interested[alloca].push_back(inst);
@@ -136,7 +131,7 @@ class StoreEliminate final : public TransformPass<Function> {
                 if(inst->getInstID() == InstructionID::Store) {
                     if(inst->getOperand(1)->getType()->isPointer())
                         interested.erase(inst->getOperand(1));
-                } else if(inst->getInstID() != InstructionID::Free) {
+                } else {
                     for(auto operand : inst->operands())
                         if(operand->getType()->isPointer())
                             interested.erase(operand);

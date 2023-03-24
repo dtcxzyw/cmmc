@@ -20,7 +20,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
@@ -47,9 +47,8 @@ struct InstEqual final {
 };
 
 class SimpleCSE final : public TransformPass<Function> {
-    static bool instMerge(Block* block) {
+    static void instMerge(Block* block, ReplaceMap& replace) {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
-        ReplaceMap replace;
         for(auto inst : block->instructions()) {
             if(!isNoSideEffectExpr(*inst))
                 continue;
@@ -58,18 +57,16 @@ class SimpleCSE final : public TransformPass<Function> {
                 replace.emplace(inst, *iter);
             }
         }
-
-        return replaceOperands(*block, replace);
     }
 
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
-        bool modified = false;
         // block-level merge
+        ReplaceMap replace;
         for(auto block : func.blocks()) {
-            modified |= instMerge(block);
+            instMerge(block, replace);
         }
-        return modified;
+        return replaceOperands(func, replace);
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

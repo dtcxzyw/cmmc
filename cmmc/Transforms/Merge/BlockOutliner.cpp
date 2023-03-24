@@ -31,6 +31,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class BlockOutliner final : public TransformPass<Function> {
     static bool isEqual(Block* lhs, Block* rhs) {
         if(lhs->instructions().size() != rhs->instructions().size())
@@ -131,5 +132,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(BlockOutliner);
+*/
 
 CMMC_NAMESPACE_END

@@ -14,7 +14,8 @@ binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '0'
+optimization_level = '1'
+fast_fail = True
 assert os.path.exists(rars_path)
 
 # O0 reference
@@ -417,7 +418,7 @@ def sysy_codegen_llvm(src):
 
     args = [binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
                                '/dev/stdout', '-e', inputs, src]
-    #print(' '.join(args))
+    print(' '.join(args))
     out = subprocess.run(args=args, capture_output=True, text=True)
 
     used = compare_and_parse_perf(src, out)
@@ -464,6 +465,8 @@ def test(name, path, filter, tester):
         else:
             print(" Failed")
             fail_set.append(src)
+            if fast_fail:
+                exit(-1)
 
     print("\r")
     print("[==========] {} tests ran.".format(cnt))

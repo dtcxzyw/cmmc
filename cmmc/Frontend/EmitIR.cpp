@@ -1147,9 +1147,6 @@ void EmitContext::popScope() {
             const auto value = iter->second.back().value;
             iter->second.pop_back();
             mConstantBinding.erase(value);
-            if(auto alloc = dynamic_cast<StackAllocInst*>(value)) {
-                makeOp<StackFreeInst>(alloc);
-            }
         } else
             reportUnreachable(CMMC_LOCATION());
     }

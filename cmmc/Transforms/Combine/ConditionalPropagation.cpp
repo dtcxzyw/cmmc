@@ -28,7 +28,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 struct Condition final {
     Value* cond;
     bool value;
@@ -188,22 +187,16 @@ public:
         }
 
         bool modified = false;
-
         for(auto block : func.blocks()) {
             auto& set = color[col[nodeMap.at(block)]];
             ReplaceMap replace;
-            for(auto arg : block->args()) {
-                if(arg->getType()->isBoolean()) {
-                    const auto root = blockArgMap.queryRoot(arg);
-                    if(set.trueSet.count(root)) {
-                        replace.emplace(arg, ConstantInteger::getTrue());
-                    } else if(set.falseSet.count(root)) {
-                        replace.emplace(arg, ConstantInteger::getFalse());
-                    }
-                }
+            for(auto val : set.trueSet) {
+                replace.emplace(val, ConstantInteger::getTrue());
             }
-
-            modified |= replaceOperands(*block, replace);
+            for(auto val : set.falseSet) {
+                replace.emplace(val, ConstantInteger::getFalse());
+            }
+            modified |= replaceOperandsInBlock(*block, replace);
         }
 
         return modified;
@@ -215,6 +208,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(ConditionalPropagation);
-*/
 
 CMMC_NAMESPACE_END

@@ -15,9 +15,10 @@
 #pragma once
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <functional>
 #include <memory>
 
 CMMC_NAMESPACE_BEGIN
-
+bool replaceOperands(Function& func, const ReplaceMap& replace);
 CMMC_NAMESPACE_END

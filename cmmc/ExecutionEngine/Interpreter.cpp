@@ -500,6 +500,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
     struct BlockContext final {
         Instruction* caller;
         Block* block;
+        Block* predBlock;
         std::unordered_map<Value*, OperandStorage> operands;
         List<Instruction*>::const_iterator execIter;
         std::unordered_map<uintptr_t, Instruction*> stackAllocs;
@@ -514,12 +515,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         BlockContext entry;
         entry.caller = nullptr;
         entry.block = func.entryBlock();
+        entry.predBlock = nullptr;
         entry.execIter = entry.block->instructions().cbegin();
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
             entry.operands.emplace(func.getArg(idx), fromConstant(arguments[idx]));
         if(step.get()) {
             func.dump(std::cerr);
-            LabelAllocator allocator;
             entry.block->dumpLabeled(std::cerr);
         }
 
@@ -568,22 +569,23 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         ++instructionCount;
 
         operands.clear();
-        operands.reserve(inst->operands().size());
-
-        for(auto operand : inst->operands()) {
-            if(operand->isConstant())
-                operands.push_back(fromConstant(operand->as<ConstantValue>()));
-            else if(operand->isGlobal()) {
-                if(operand->getType()->isFunction()) {
-                    operands.emplace_back(operand->as<Function>());
+        if(inst->getInstID() != InstructionID::Phi) {
+            operands.reserve(inst->operands().size());
+            for(auto operand : inst->operands()) {
+                if(operand->isConstant())
+                    operands.push_back(fromConstant(operand->as<ConstantValue>()));
+                else if(operand->isGlobal()) {
+                    if(operand->getType()->isFunction()) {
+                        operands.emplace_back(operand->as<Function>());
+                    } else {
+                        operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
+                    }
                 } else {
-                    operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
+                    operands.push_back(currentExecCtx.operands.at(operand));
                 }
-            } else if(operand->getBlock()) {
-                assert(currentExecCtx.operands.count(operand));
-                operands.push_back(currentExecCtx.operands.at(operand));
-            } else
-                reportUnreachable(CMMC_LOCATION());
+            }
+        } else {
+            operands.push_back(currentExecCtx.operands.at(inst->as<PhiInst>()->incomings().at(currentExecCtx.predBlock)));
         }
 
         const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
@@ -591,19 +593,23 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
         const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
 
+        const auto dumpValue = [&](const OperandStorage& val) {
+            auto& out = std::cerr;
+            std::visit(Overload{ [&](auto&&) { out << "unknown"sv; },                                   //
+                                 [&](const ConstantInteger& x) { x.dump(out); },                        //
+                                 [&](const ConstantFloatingPoint& x) { x.dump(out); },                  //
+                                 [&](const ConstantOffset* x) { x->dump(out); },                        //
+                                 [&](const Function* x) { x->dumpAsOperand(out); },                     //
+                                 [&](uintptr_t x) { out << "ptr "sv << std::hex << x << std::dec; } },  //
+                       val);
+        };
         const auto addValue = [&](Instruction* mappedInst, const OperandStorage& val) {
-            currentExecCtx.operands.emplace(mappedInst, val);
+            currentExecCtx.operands.insert_or_assign(mappedInst, val);
             if(step.get()) {
                 auto& out = std::cerr;
                 mappedInst->dump(out);
                 out << " -> "sv;
-                std::visit(Overload{ [&](auto&&) { out << "unknown"sv; },                                   //
-                                     [&](const ConstantInteger& x) { x.dump(out); },                        //
-                                     [&](const ConstantFloatingPoint& x) { x.dump(out); },                  //
-                                     [&](const ConstantOffset* x) { x->dump(out); },                        //
-                                     [&](const Function* x) { x->dumpAsOperand(out); },                     //
-                                     [&](uintptr_t x) { out << "ptr "sv << std::hex << x << std::dec; } },  //
-                           val);
+                dumpValue(val);
                 out << '\n';
             }
         };
@@ -670,10 +676,11 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     targetBlock = branch->getFalseTarget();
                 }
 
+                currentExecCtx.predBlock = currentExecCtx.block;
                 currentExecCtx.block = targetBlock;
                 currentExecCtx.execIter = targetBlock->instructions().cbegin();
                 if(step.get()) {
-                    currentExecCtx.block->dump(std::cerr);
+                    currentExecCtx.block->dumpLabeled(std::cerr);
                 }
                 break;
             }
@@ -691,6 +698,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                 const auto ptr = getPtr(0);
                 memCtx.storeValue(ptr, operands[1], inst->getOperand(1)->getType());
+                if(step.get()) {
+                    auto& out = std::cerr;
+                    inst->dump(out);
+                    out << " : "sv;
+                    dumpValue(operands[1]);
+                    out << " -> "sv;
+                    dumpValue(operands[0]);
+                    out << '\n';
+                }
                 break;
             }
             case InstructionID::Add: {
@@ -846,16 +862,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 --instructionCount;
                 break;
             }
-            case InstructionID::Free: {
-                const auto ptr = getPtr(0);
-                if(auto it = currentExecCtx.stackAllocs.find(ptr); it != currentExecCtx.stackAllocs.cend()) {
-                    currentExecCtx.cachedAllocs.erase(it->second);
-                    currentExecCtx.stackAllocs.erase(it);
-                    memCtx.stackPop(ptr);
-                }
-                --instructionCount;
-                break;
-            }
             case InstructionID::GetElementPtr: {
                 auto basePtr = getPtr(static_cast<uint32_t>(operands.size() - 1U));
                 const auto oldPtr = basePtr;
@@ -999,6 +1005,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             BlockContext blockCtx;
                             blockCtx.caller = inst;
                             blockCtx.block = callee->entryBlock();
+                            blockCtx.predBlock = nullptr;
 
                             for(uint32_t idx = 0; idx < callee->args().size(); ++idx)
                                 blockCtx.operands.emplace(callee->getArg(idx), operands[idx]);
@@ -1006,7 +1013,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             blockCtx.execIter = blockCtx.block->instructions().cbegin();
                             if(step.get()) {
                                 callee->dump(std::cerr);
-                                blockCtx.block->dump(std::cerr);
+                                blockCtx.block->dumpLabeled(std::cerr);
                             }
                             execCtx.push_back(std::move(blockCtx));
                         }
@@ -1034,9 +1041,18 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                 break;
             }
+            case InstructionID::Phi: {
+                addValue(inst, operands.front());
+                --instructionCount;
+                break;
+            }
             default:
                 reportNotImplemented(CMMC_LOCATION());
                 break;
+        }
+
+        if(step.get()) {
+            std::cin.get();
         }
     }
 }

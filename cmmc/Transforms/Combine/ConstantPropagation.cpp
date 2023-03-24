@@ -23,7 +23,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -31,10 +31,22 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
-    static bool reduceConstantPhis(Block& block) {
-        CMMC_UNUSED(block);
-        reportNotImplemented(CMMC_LOCATION());
-        // return replaceOperands(block, replace);
+    static void reduceConstantPhis(Block& block, ReplaceMap& replace) {
+        for(auto inst : block.instructions()) {
+            if(inst->getInstID() == InstructionID::Phi) {
+                const auto phi = inst->as<PhiInst>();
+                Value* value = phi->incomings().begin()->second;
+                for(auto [pred, val] : phi->incomings()) {
+                    CMMC_UNUSED(pred);
+                    if(value != val) {
+                        value = nullptr;
+                        break;
+                    }
+                }
+                if(value)
+                    replace.emplace(inst, value);
+            }
+        }
     }
 
     static bool runOnBlock(IRBuilder& builder, Block& block) {
@@ -215,10 +227,13 @@ public:
         bool modified = false;
         while(true) {
             bool changed = false;
-            for(auto block : dom.blocks()) {
-                modified |= reduceConstantPhis(*block);
+            ReplaceMap replace;
+            for(auto block : dom.blocks())
+                reduceConstantPhis(*block, replace);
+            modified |= replaceOperands(func, replace);
+            for(auto block : dom.blocks())
                 modified |= runOnBlock(builder, *block);
-            }
+
             modified |= changed;
             if(!changed)
                 return modified;

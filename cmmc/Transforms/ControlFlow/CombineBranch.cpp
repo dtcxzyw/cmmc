@@ -36,6 +36,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iostream>
@@ -49,10 +50,10 @@ class CombineBranch final : public TransformPass<Function> {
             block.getTerminator()->as<BranchInst>()->getTrueTarget() != &block;
     }
 
-    static void foldForward(BranchInst* branch, const Block* target) {
-        CMMC_UNUSED(branch);
-        CMMC_UNUSED(target);
-        reportNotImplemented(CMMC_LOCATION());
+    static void foldForward(Block* source, Block*& target) {
+        const auto realTarget = target->getTerminator()->as<BranchInst>()->getTrueTarget();
+        retargetBlock(realTarget, target, source);
+        target = realTarget;
     }
 
 public:
@@ -70,12 +71,12 @@ public:
                 auto branch = terminator->as<BranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
                 if(trueTarget != block && forwardBlocks.count(trueTarget)) {
-                    foldForward(branch, trueTarget);
+                    foldForward(block, trueTarget);
                     modified = true;
                 }
                 auto& falseTarget = branch->getFalseTarget();
                 if(falseTarget != block && forwardBlocks.count(falseTarget)) {
-                    foldForward(branch, falseTarget);
+                    foldForward(block, falseTarget);
                     modified = true;
                 }
             }

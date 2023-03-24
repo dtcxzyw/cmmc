@@ -35,21 +35,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
+/*
 class ScalarMem2Reg final : public TransformPass<Function> {
     static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
-                             std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak) {
+                             std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak,
+                             ReplaceMap& replace) {
         CMMC_UNUSED(func);
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
-        /*
-        for(auto block : func.blocks()) {
-            for(auto arg : block->args())
-                if(blockArgMap.queryRoot(arg) == alloc) {
-                    todo.emplace(block, arg);
-                    break;
-                }
-        }
-        */
 
         const auto root = alloc->getBlock();
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
@@ -77,7 +70,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             };
 
-            auto& replace = replaceMap[block];
             bool start = block != root;
             std::vector<Instruction*> instructionList{ block->instructions().cbegin(), block->instructions().cend() };
             bool stop = false;
@@ -128,8 +120,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     start = true;
                 }
             }
-
-            replaceOperands(*block, replace);
         }
     }
 
@@ -169,5 +159,6 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(ScalarMem2Reg);
+*/
 
 CMMC_NAMESPACE_END

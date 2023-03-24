@@ -116,20 +116,11 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
 
     for(auto inst : mInstructions) {
         auto newInst = inst->clone();
-        if(!newInst->isBranch()) {
+        if(newInst->getInstID() != InstructionID::Phi) {
             for(auto& operand : newInst->operands()) {
                 if(operand->getBlock()) {
-                    assert(replace.count(operand));
                     const auto newOperand = replace.at(operand);
                     operand = newOperand;
-                }
-            }
-        } else {
-            for(auto& operand : newInst->operands()) {
-                if(auto srcBlock = operand->getBlock(); srcBlock == this) {
-                    assert(replace.count(operand));
-                    const auto newOperand = replace.at(operand);
-                    newInst->replaceOperand(operand, newOperand);
                 }
             }
         }

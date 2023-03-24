@@ -50,7 +50,7 @@ bool Instruction::canbeOperand() const noexcept {
     if(mInstID == InstructionID::Call) {
         return !getType()->isVoid();
     }
-    return !isTerminator() && mInstID != InstructionID::Store && mInstID != InstructionID::Free;
+    return !isTerminator() && mInstID != InstructionID::Store;
 }
 
 bool Instruction::verify(std::ostream& out) const {
@@ -154,8 +154,6 @@ static std::string_view getInstName(InstructionID instID) {
             return "s2f"sv;
         case InstructionID::Alloc:
             return "alloc"sv;
-        case InstructionID::Free:
-            return "free"sv;
         case InstructionID::GetElementPtr:
             return "getelementptr"sv;
         case InstructionID::PtrCast:
@@ -345,10 +343,6 @@ void StackAllocInst::dump(std::ostream& out) const {
     getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
-void StackFreeInst::dump(std::ostream& out) const {
-    dumpUnary(out);
-}
-
 void FMAInst::dump(std::ostream& out) const {
     dumpBinary(out);
     out << ", "sv;
@@ -502,10 +496,6 @@ Instruction* SelectInst::clone() const {
 
 Instruction* StackAllocInst::clone() const {
     return make<StackAllocInst>(getType()->as<PointerType>()->getPointee());
-}
-
-Instruction* StackFreeInst::clone() const {
-    return make<StackFreeInst>(getOperand(0));
 }
 
 Instruction* FMAInst::clone() const {
@@ -672,6 +662,13 @@ bool PhiInst::isEqual(const Instruction* rhs) const {
     if(!Instruction::isEqual(rhs))
         return false;
     return mIncomings == rhs->as<PhiInst>()->mIncomings;
+}
+void PhiInst::replaceSource(cmmc::Block* oldBlock, cmmc::Block* newBlock) {
+    assert(oldBlock != newBlock);
+    const auto iter = mIncomings.find(oldBlock);
+    assert(iter != mIncomings.cend());
+    mIncomings.emplace(newBlock, iter->second);
+    mIncomings.erase(iter);
 }
 
 CMMC_NAMESPACE_END

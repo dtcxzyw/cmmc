@@ -22,28 +22,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) {
-    auto& insts = block.instructions();
-
-    ReplaceMap replace;
-    const auto oldSize = block.instructions().size();
-    for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
-        const auto inst = *iter;
-        builder.setInsertPoint(&block, iter);
-        if(auto value = reducer(inst, replace)) {
-            replace.emplace(inst, value);
-        }
-        iter = builder.getInsertPoint();
-    }
-    const auto newSize = block.instructions().size();
-    auto modified = newSize != oldSize;
-    modified |= replaceOperands(block, replace);
-    return modified;
-}
-
 static bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
     bool modified = false;
-    if(!inst->isBranch())
+    if(inst->getInstID() != InstructionID::Phi)
         for(auto& operand : inst->operands()) {
             if(auto iter = replace.find(operand); iter != replace.cend()) {
                 operand = iter->second;
@@ -60,12 +41,30 @@ static bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
     }
     return modified;
 }
-bool replaceOperands(Block& block, const ReplaceMap& replace) {
+bool replaceOperandsInBlock(Block& block, const ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;
     for(auto inst : block.instructions())
         modified |= applyReplace(inst, replace);
+    return modified;
+}
+bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) {
+    auto& insts = block.instructions();
+
+    ReplaceMap replace;
+    const auto oldSize = block.instructions().size();
+    for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
+        const auto inst = *iter;
+        builder.setInsertPoint(&block, iter);
+        if(auto value = reducer(inst, replace)) {
+            replace.emplace(inst, value);
+        }
+        iter = builder.getInsertPoint();
+    }
+    const auto newSize = block.instructions().size();
+    auto modified = newSize != oldSize;
+    modified |= replaceOperandsInBlock(block, replace);
     return modified;
 }
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace) {
@@ -102,21 +101,22 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
     return nextBlock;
 }
 
-/*
-std::pair<BranchInst*, BranchTarget*> createIndirectBlock(const Module& module, Function& func, BranchTarget& target) {
+Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock) {
     IRBuilder builder{ module.getTarget() };
     builder.setCurrentFunction(&func);
     const auto block = builder.addBlock();
     builder.setCurrentBlock(block);
     block->setLabel(String::get("indirect"));
-    Vector<Value*> args;
-    for(auto arg : target.getArgs())
-        args.push_back(block->addArg(arg->getType()));
-    const auto inst = builder.makeOp<BranchInst>(BranchTarget{ target.getTarget(), std::move(args) });
-    target.resetTarget(block);
-    return { inst, &inst->getTrueTarget() };
+    builder.makeOp<BranchInst>(targetBlock);
+    const auto terminator = sourceBlock->getTerminator()->as<BranchInst>();
+    if(terminator->getTrueTarget() == targetBlock)
+        terminator->getTrueTarget() = block;
+    if(terminator->getFalseTarget() == targetBlock)
+        terminator->getFalseTarget() = block;
+
+    retargetBlock(targetBlock, sourceBlock, block);
+    return block;
 }
-*/
 
 bool isNoSideEffectExpr(const Instruction& inst) {
     if(!inst.canbeOperand())
@@ -127,8 +127,6 @@ bool isNoSideEffectExpr(const Instruction& inst) {
         case InstructionID::Store:
             [[fallthrough]];
         case InstructionID::Alloc:
-            [[fallthrough]];
-        case InstructionID::Free:
             [[fallthrough]];
         case InstructionID::Load: {
             return false;
@@ -153,6 +151,14 @@ bool hasCall(Block& block) {
             return true;
         }
     return false;
+}
+void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
+    for(auto inst : target->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            inst->as<PhiInst>()->replaceSource(oldSource, newSource);
+        } else
+            break;
+    }
 }
 
 CMMC_NAMESPACE_END

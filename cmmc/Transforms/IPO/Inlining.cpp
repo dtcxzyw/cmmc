@@ -48,16 +48,22 @@ class FuncInlining final : public TransformPass<Function> {
         return func.attr().hasAttr(FunctionAttribute::NoRecurse);
     }
 
-    static void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
+    static Value* applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
         const auto callRet = *call;
-        CMMC_UNUSED(callRet);
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
         ReplaceMap targetReplace;
         Block* entryBlock = nullptr;
+        {
+            auto& arguments = (*call)->operands();
+            auto& parameters = callee->args();
+            for(size_t idx = 0; idx < parameters.size(); ++idx) {
+                targetReplace.emplace(parameters[idx], arguments[idx]);
+            }
+        }
         for(auto subBlock : callee->blocks()) {
             auto newBlock = subBlock->clone(targetReplace);
             if(subBlock == callee->entryBlock())
@@ -71,14 +77,19 @@ class FuncInlining final : public TransformPass<Function> {
         // replace call with unconditional branch
         {
             assert(entryBlock);
-            auto& operands = (*call)->operands();
-            CMMC_UNUSED(operands);
-            reportUnreachable(CMMC_LOCATION());
             auto branch = make<BranchInst>(entryBlock);
             branch->setBlock(block);
             block->instructions().back() = branch;
         }
         // fix terminators
+        PhiInst* retValue = nullptr;
+        auto retType = callRet->getType();
+        if(!retType->isVoid()) {
+            retValue = make<PhiInst>(retType);
+            retValue->setBlock(sinkBlock);
+            sinkBlock->instructions().push_front(retValue);
+        }
+
         for(auto [oldBlock, newBlock] : replace) {
             CMMC_UNUSED(oldBlock);
             auto terminator = newBlock->getTerminator();
@@ -87,6 +98,9 @@ class FuncInlining final : public TransformPass<Function> {
                     auto branch = make<BranchInst>(sinkBlock);
                     branch->setBlock(newBlock);
                     newBlock->instructions().back() = branch;
+                    if(!retType->isVoid()) {
+                        retValue->addIncoming(newBlock, terminator->getOperand(0));
+                    }
                     break;
                 }
                 case InstructionID::Branch:
@@ -105,17 +119,7 @@ class FuncInlining final : public TransformPass<Function> {
                     break;
             }
         }
-        reportNotImplemented(CMMC_LOCATION());
-        /*
-        // fix references to return value
-        auto retType = callRet->getType();
-        if(!retType->isVoid()) {
-            auto arg = sinkBlock->addArg(retType);
-            for(auto inst : sinkBlock->instructions()) {
-                inst->replaceOperand(callRet, arg);
-            }
-        }
-        */
+        return retValue;
     }
 
     static bool tryInline(Function& func) {

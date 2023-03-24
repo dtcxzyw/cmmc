@@ -54,6 +54,7 @@
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -67,27 +68,22 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 class LoadReduce final : public TransformPass<Function> {
-    static bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) {
-        ReplaceMap replace;
+    static void runBlock(Block& block, SimpleValueAnalysis& valueAnalysis, ReplaceMap& replace) {
         for(auto inst : block.instructions()) {
             if(inst->getInstID() == InstructionID::Load)
                 if(auto value = valueAnalysis.getLastValue(inst->getOperand(0)))
                     replace.emplace(inst, value);
             valueAnalysis.next(inst);
         }
-
-        return replaceOperands(block, replace);
     }
 
-    static bool runInterBlock(Function& func, AnalysisPassManager& analysis,
-                              std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis) {
+    static void runInterBlock(Function& func, AnalysisPassManager& analysis,
+                              std::unordered_map<Block*, SimpleValueAnalysis>& valueAnalysis, ReplaceMap& replace) {
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& alias = analysis.get<AliasAnalysis>(func);
         const auto& module = analysis.module();
 
-        bool modified = false;
         std::vector<Block*> blocks{ func.blocks().begin(), func.blocks().end() };
         for(auto block : blocks) {
             std::vector<Instruction*> loadInsts;
@@ -130,11 +126,9 @@ class LoadReduce final : public TransformPass<Function> {
                 const auto& lut = valueAnalysis.at(pred);
                 for(auto inst : loadInsts) {
                     auto ptr = inst->getOperand(0);
-                    if(const auto arg = dynamic_cast<FuncArgument*>(ptr))
-                        ptr = target->getOperand(arg);
                     if(auto val = lut.getLastValue(ptr)) {
                         if(const auto load = dynamic_cast<LoadInst*>(val)) {
-                            // Deferred load is better than reusing this load !
+                            // Deferred load is better than reusing the value of this load!
                             bool used = false;
                             for(auto user : load->getBlock()->instructions()) {
                                 if(user->isTerminator())
@@ -146,7 +140,7 @@ class LoadReduce final : public TransformPass<Function> {
                             if(!used)
                                 continue;
                         }
-                        reuseValues[inst].emplace(target, val);
+                        reuseValues[inst].emplace(pred, val);
                     }
                 }
             }
@@ -154,44 +148,36 @@ class LoadReduce final : public TransformPass<Function> {
             if(reuseValues.empty())
                 continue;
 
-            modified = true;
+            std::vector<PhiInst*> phiList;
+            phiList.reserve(reuseValues.size());
+            for(auto& [inst, vals] : reuseValues) {
+                const auto phi = make<PhiInst>(inst->getType());
+                phi->setBlock(block);
+                replace.emplace(inst, phi);
+                phiList.push_back(phi);
+            }
 
-            for(auto [pred, target] : predecessors) {
-                const auto branch = pred->getTerminator()->as<BranchInst>();
-                const auto [indirectBranch, indirectTarget] = createIndirectBlock(module, func, *target);
-                const auto indirectBlock = indirectBranch->getBlock();
-                auto args = target->getArgs();
-                auto indirectArgs = indirectTarget->getArgs();
+            for(auto pred : predecessors) {
+                Block* indirectBlock = nullptr;
 
                 for(auto& [inst, vals] : reuseValues) {
-                    if(auto iter = vals.find(target); iter != vals.cend()) {
-                        args.push_back(iter->second);
-                        indirectArgs.push_back(indirectBlock->addArg(iter->second->getType()));
+                    const auto phi = replace.at(inst)->as<PhiInst>();
+                    if(auto iter = vals.find(pred); iter != vals.cend()) {
+                        phi->addIncoming(pred, iter->second);
                     } else {
                         auto ptr = inst->getOperand(0);
-                        if(const auto arg = dynamic_cast<FuncArgument*>(ptr))
-                            ptr = indirectTarget->getOperand(arg);
                         auto load = make<LoadInst>(ptr);
+                        if(!indirectBlock)
+                            indirectBlock = createIndirectBlock(module, func, pred, block);
                         load->setBlock(indirectBlock);
                         indirectBlock->instructions().push_front(load);
-                        indirectArgs.push_back(load);
+                        phi->addIncoming(indirectBlock, load);
                     }
                 }
-
-                branch->updateTargetArgs(*target, args);
-                indirectBranch->updateTargetArgs(*indirectTarget, indirectArgs);
             }
 
-            ReplaceMap replace;
-            for(auto& [inst, vals] : reuseValues) {
-                CMMC_UNUSED(vals);
-                const auto arg = block->addArg(inst->getType());
-                replace.emplace(inst, arg);
-            }
-            replaceOperands(*block, replace);
+            block->instructions().insert(block->instructions().cbegin(), phiList.cbegin(), phiList.cend());
         }
-
-        return modified;
     }
 
 public:
@@ -199,16 +185,16 @@ public:
         const auto& alias = analysis.get<AliasAnalysis>(func);
 
         std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
-        bool modified = false;
+        ReplaceMap replace;
         // intra-block
         for(auto block : func.blocks()) {
             const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
-            modified |= runBlock(*block, iter->second);
+            runBlock(*block, iter->second, replace);
         }
         // inter-block
-        modified |= runInterBlock(func, analysis, valueAnalysis);
+        runInterBlock(func, analysis, valueAnalysis, replace);
         // TODO: handle cross blockchain reusing, e.g., test_3_r03.spl
-        return modified;
+        return replaceOperands(func, replace);
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {
@@ -217,6 +203,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(LoadReduce);
-*/
 
 CMMC_NAMESPACE_END

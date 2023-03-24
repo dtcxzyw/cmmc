@@ -24,7 +24,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -42,8 +42,8 @@ public:
         const auto& dataLayout = target.getDataLayout();
 
         bool modified = false;
+        ReplaceMap replaceMap;
         for(auto block : func.blocks()) {
-            ReplaceMap replaceMap;
 
             auto& instructions = block->instructions();
             for(auto iter = instructions.begin(); iter != instructions.end();) {
@@ -85,10 +85,12 @@ public:
 
             if(!replaceMap.empty()) {
                 modified = true;
-                replaceOperands(*block, replaceMap);
             }
         }
 
+        if(modified) {
+            replaceOperands(func, replaceMap);
+        }
         return modified;
     }
 

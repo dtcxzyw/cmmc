@@ -80,10 +80,6 @@ public:
                 continue;
 
             std::unordered_set<Instruction*> trueDep, falseDep;
-            const auto hasArg = [](Value* val, const BranchTarget& branchTarget) {
-                auto& args = branchTarget.getArgs();
-                return std::any_of(args.begin(), args.end(), [val](Value* arg) { return val == arg; });
-            };
             const auto addDep = [](Instruction* inst, std::unordered_set<Instruction*>& dep) {
                 dep.insert(inst);
                 for(auto operand : inst->operands())
@@ -98,27 +94,16 @@ public:
                     continue;
                 const auto usedByBoth = cond == inst || !isNoSideEffectExpr(*inst);
 
-                const auto usedByTrue = usedByBoth || trueDep.count(inst) || hasArg(inst, trueTarget);
+                const auto usedByTrue = usedByBoth || trueDep.count(inst);
                 if(usedByTrue) {
                     addDep(inst, trueDep);
                 }
 
-                const auto usedByFalse = usedByBoth || falseDep.count(inst) || hasArg(inst, falseTarget);
+                const auto usedByFalse = usedByBoth || falseDep.count(inst);
                 if(usedByFalse) {
                     addDep(inst, falseDep);
                 }
             }
-
-            std::unordered_map<Value*, std::vector<BlockArgument*>> argMap;
-            const auto buildArgMap = [&](const BranchTarget& branchTarget) {
-                const auto& args1 = branchTarget.getArgs();
-                const auto& args2 = branchTarget.getTarget()->args();
-                for(uint32_t idx = 0; idx < args1.size(); ++idx)
-                    argMap[args1[idx]].push_back(args2[idx]);
-            };
-            buildArgMap(trueTarget);
-            buildArgMap(falseTarget);
-            reportUnreachable(CMMC_LOCATION());
 
             ReplaceMap replaceTrue, replaceFalse;
 
@@ -139,7 +124,7 @@ public:
                     continue;
 
                 const auto& selectedTarget = usedByTrue ? trueTarget : falseTarget;
-                const auto targetBlock = selectedTarget.getTarget();
+                const auto targetBlock = selectedTarget;
 
                 const auto newInst = inst->clone();
                 auto& dest = targetBlock->instructions();
@@ -148,18 +133,13 @@ public:
                 auto& replace = usedByTrue ? replaceTrue : replaceFalse;
                 replace.emplace(inst, newInst);
 
-                if(auto it = argMap.find(inst); it != argMap.cend())
-                    for(auto arg : it->second)
-                        replace.emplace(arg, newInst);
                 modified = true;
             }
 
-            replaceOperands(*trueTarget.getTarget(), replaceTrue);
-            replaceOperands(*falseTarget.getTarget(), replaceFalse);
+            replaceOperands(*trueTarget, replaceTrue);
+            replaceOperands(*falseTarget, replaceFalse);
         }
 
-        if(modified)
-            blockArgPropagation(func);
         return modified;
     }
 

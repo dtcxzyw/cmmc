@@ -51,7 +51,7 @@ public:
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
-            if(!terminator->isBranch())
+            if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
             auto branch = terminator->as<BranchInst>();
             auto& trueTarget = branch->getTrueTarget();

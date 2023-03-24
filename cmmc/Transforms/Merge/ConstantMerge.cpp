@@ -19,7 +19,7 @@
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
@@ -59,9 +59,7 @@ public:
 
         for(auto global : module.globals()) {
             if(auto func = dynamic_cast<Function*>(global)) {
-                for(auto block : func->blocks()) {
-                    modified |= replaceOperands(*block, replace);
-                }
+                modified |= replaceOperands(*func, replace);
             } else if(auto var = dynamic_cast<GlobalVariable*>(global)) {
                 if(auto iter = replace.find(var->initialValue()); iter != replace.cend()) {
                     var->setInitialValue(iter->second->as<ConstantValue>());
