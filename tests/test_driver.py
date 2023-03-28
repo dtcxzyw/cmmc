@@ -574,10 +574,10 @@ if "llvm" in test_cases:
     total_perf_self = 1
     total_perf_self_samples = 0
 
-    # res.append(test("SysY SysY->LLVMIR performance", tests_path +
-    #                "/SysY2022/performance", ".sy", sysy_codegen_llvm))
-    # res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
-    #                "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
+    res.append(test("SysY SysY->LLVMIR performance", tests_path +
+                    "/SysY2022/performance", ".sy", sysy_codegen_llvm))
+    res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
+                    "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
 
 
 if generate_ref:

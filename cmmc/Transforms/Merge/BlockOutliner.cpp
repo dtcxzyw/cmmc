@@ -22,6 +22,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
@@ -31,7 +32,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 class BlockOutliner final : public TransformPass<Function> {
     static bool isEqual(Block* lhs, Block* rhs) {
         if(lhs->instructions().size() != rhs->instructions().size())
@@ -39,16 +39,22 @@ class BlockOutliner final : public TransformPass<Function> {
         uint32_t alloc = 0;
         std::unordered_map<Value*, uint32_t> lhsOperands;
         std::unordered_map<Value*, uint32_t> rhsOperands;
-        const auto allocOperand = [&](Value* lhsValue, Value* rhsValue) {
-            lhsOperands[lhsValue] = rhsOperands[rhsValue] = ++alloc;
-        };
+        for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
+            lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
+            const auto lhsInst = *lhsIter;
+            const auto rhsInst = *rhsIter;
+            if(!lhsInst->isEqual(rhsInst))
+                return false;
+
+            lhsOperands[lhsInst] = rhsOperands[rhsInst] = ++alloc;
+        }
         for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
             lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
             const auto lhsInst = *lhsIter;
             const auto rhsInst = *rhsIter;
 
-            if(!lhsInst->isEqual(rhsInst))
-                return false;
+            if(lhsInst->getInstID() == InstructionID::Phi)
+                continue;
 
             if(lhsInst->operands().size() != rhsInst->operands().size())
                 return false;
@@ -58,11 +64,38 @@ class BlockOutliner final : public TransformPass<Function> {
                 if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
                     if(lhsOperands.at(lhsOperand) != rhsOperands.at(rhsOperand))
                         return false;
-                } else if(lhsOperand != rhsOperand) {  // globals/constants
+                } else if(lhsOperand != rhsOperand) {  // globals/constants/other values
                     return false;
                 }
             }
-            allocOperand(lhsInst, rhsInst);
+        }
+
+        auto checkTarget = [&](Block* target) {
+            if(!target)
+                return true;
+            for(auto inst : target->instructions()) {
+                if(inst->getInstID() == InstructionID::Phi) {
+                    const auto phi = inst->as<PhiInst>();
+                    auto& incomings = phi->incomings();
+                    if(incomings.at(lhs) != incomings.at(rhs))
+                        return false;
+                } else
+                    break;
+            }
+            return true;
+        };
+
+        // TODO: A->A,C B->B,D C=D ??? SubCFGIsomorphism
+        const auto terminator = lhs->getTerminator();
+        if(terminator->isBranch()) {
+            const auto branch = terminator->as<BranchInst>();
+            if(!checkTarget(branch->getTrueTarget())) {
+                return false;
+            }
+            if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget() &&
+               !checkTarget(branch->getFalseTarget())) {
+                return false;
+            }
         }
 
         return true;
@@ -105,17 +138,31 @@ public:
             }
         }
 
+        ReplaceMap replaceMap;
+        for(auto [src, dst] : replace) {
+            const auto terminator = src->getTerminator();
+            if(terminator->isBranch()) {
+                auto branch = terminator->as<BranchInst>();
+                retargetBlock(branch->getTrueTarget(), src, dst);
+                if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
+                    retargetBlock(branch->getFalseTarget(), src, dst);
+            }
+            for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
+                lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
+                replaceMap.emplace(*lhsIter, *rhsIter);
+            }
+        }
+
         // handle other blocks
         for(auto block : func.blocks()) {
             auto terminator = block->getTerminator();
             if(terminator->isBranch()) {
                 auto branch = terminator->as<BranchInst>();
-                auto handleTarget = [&](Block* target) {
+                auto handleTarget = [&](Block*& target) {
                     if(!target)
                         return;
                     if(auto iter = replace.find(target); iter != replace.cend()) {
-                        // target.resetTarget(iter->second);
-                        reportNotImplemented(CMMC_LOCATION());
+                        target = iter->second;
                         modified = true;
                     }
                 };
@@ -123,6 +170,7 @@ public:
                 handleTarget(branch->getFalseTarget());
             }
         }
+        modified |= replaceOperands(func, replaceMap);
         return modified;
     }
 
@@ -132,6 +180,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(BlockOutliner);
-*/
 
 CMMC_NAMESPACE_END

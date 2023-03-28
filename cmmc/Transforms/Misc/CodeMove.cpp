@@ -57,6 +57,8 @@ public:
             std::unordered_set<Value*> moveOutSet;
 
             for(auto inst : block->instructions()) {
+                if(inst->getInstID() == InstructionID::Phi)
+                    continue;
                 if(!isNoSideEffectExpr(*inst))
                     continue;
 

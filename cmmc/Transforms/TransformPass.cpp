@@ -267,12 +267,12 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
             // Outline
-            // "BlockOutliner",   //
+            "BlockOutliner",   //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
             // Code Move
-            //"CodeMove",  //
-            //"CodeSink",               //
+            "CodeMove",               //
+            "CodeSink",               //
             "NoSideEffectEliminate",  // clean up
             // MemoryOp
             "MemoryIntrinsicOpt",  //

@@ -12,11 +12,11 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Instruction.hpp"
 #include <algorithm>
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>

@@ -878,6 +878,11 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
                         ctx.addConstant(local, val);
                 }
             }
+        } else {
+            // fix vector_mul
+            if(type->isInteger()) {
+                ctx.makeOp<StoreInst>(local, ConstantInteger::get(type, 0));
+            }
         }
 
         ctx.addIdentifier(name, { local, ValueQualifier::AsLValue, mType.qualifier });

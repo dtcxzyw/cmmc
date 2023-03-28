@@ -156,7 +156,12 @@ bool hasCall(Block& block) {
 void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
     for(auto inst : target->instructions()) {
         if(inst->getInstID() == InstructionID::Phi) {
-            inst->as<PhiInst>()->replaceSource(oldSource, newSource);
+            const auto phi = inst->as<PhiInst>();
+            if(phi->incomings().count(newSource)) {
+                assert(phi->incomings().at(oldSource) == phi->incomings().at(newSource));
+                phi->removeSource(oldSource);
+            } else
+                phi->replaceSource(oldSource, newSource);
         } else
             break;
     }

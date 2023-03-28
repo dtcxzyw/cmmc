@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Analysis/DominateAnalysis.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
@@ -26,6 +27,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
+#include <iterator>
 #include <unordered_set>
 #include <vector>
 
@@ -34,7 +36,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 class CodeSink final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
@@ -43,6 +44,7 @@ public:
             return false;
 
         const auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& dom = analysis.get<DominateAnalysis>(func);
 
         bool modified = false;
         // auto& target = analysis.module().getTarget();
@@ -56,9 +58,8 @@ public:
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
             const auto branch = terminator->as<BranchInst>();
-            const auto cond = branch->getOperand(0);
-            const auto& trueTarget = branch->getTrueTarget();
-            const auto& falseTarget = branch->getFalseTarget();
+            const auto trueTarget = branch->getTrueTarget();
+            const auto falseTarget = branch->getFalseTarget();
             if(trueTarget == falseTarget)
                 continue;
 
@@ -79,65 +80,56 @@ public:
             if(!moveToTrueTarget && !moveToFalseTarget)
                 continue;
 
-            std::unordered_set<Instruction*> trueDep, falseDep;
-            const auto addDep = [](Instruction* inst, std::unordered_set<Instruction*>& dep) {
-                dep.insert(inst);
-                for(auto operand : inst->operands())
-                    if(operand->isInstruction())
-                        dep.insert(operand->as<Instruction>());
+            const auto tryMove = [&](Instruction* inst, Block* target) {
+                for(auto userBlock : func.blocks()) {
+                    const auto domination = dom.dominate(target, userBlock);
+                    for(auto userInst : userBlock->instructions()) {
+                        if(userInst->getInstID() == InstructionID::Phi) {
+                            for(auto [pred, val] : userInst->as<PhiInst>()->incomings()) {
+                                if(val == inst && !dom.dominate(target, pred)) {
+                                    return false;
+                                }
+                            }
+                        } else {
+                            bool used = false;
+                            for(auto operand : userInst->operands())
+                                if(operand == inst) {
+                                    used = true;
+                                    break;
+                                }
+                            if(used && !domination) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                // apply motion
+                inst->setBlock(target);
+                auto& instructions = target->instructions();
+                auto iter = instructions.begin();
+                while(iter != instructions.cend() && (*iter)->getInstID() == InstructionID::Phi)
+                    ++iter;
+                instructions.insert(iter, inst);
+                return true;
             };
 
             auto& instructions = block->instructions();
-            for(auto iter = instructions.rbegin(); iter != instructions.rend(); ++iter) {
-                const auto inst = *iter;
-                if(inst->isTerminator())
-                    continue;
-                const auto usedByBoth = cond == inst || !isNoSideEffectExpr(*inst);
-
-                const auto usedByTrue = usedByBoth || trueDep.count(inst);
-                if(usedByTrue) {
-                    addDep(inst, trueDep);
-                }
-
-                const auto usedByFalse = usedByBoth || falseDep.count(inst);
-                if(usedByFalse) {
-                    addDep(inst, falseDep);
+            std::unordered_set<Instruction*> moved;
+            for(auto inst : instructions) {
+                if(!inst->isTerminator() && inst->getInstID() != InstructionID::Phi && isNoSideEffectExpr(*inst)) {
+                    if(moveToTrueTarget) {
+                        if(tryMove(inst, trueTarget)) {
+                            moved.insert(inst);
+                        }
+                    } else if(moveToFalseTarget) {
+                        if(tryMove(inst, falseTarget)) {
+                            moved.insert(inst);
+                        }
+                    }
                 }
             }
-
-            ReplaceMap replaceTrue, replaceFalse;
-
-            for(auto iter = instructions.rbegin(); iter != instructions.rend(); ++iter) {
-                const auto inst = *iter;
-                if(inst->isTerminator())
-                    continue;
-
-                const auto usedByTrue = trueDep.count(inst);
-                const auto usedByFalse = falseDep.count(inst);
-                if(usedByTrue && usedByFalse)
-                    continue;
-                if(!usedByTrue && !usedByFalse)  // unused insts
-                    continue;
-                if(usedByTrue && !moveToTrueTarget)
-                    continue;
-                if(usedByFalse && !moveToFalseTarget)
-                    continue;
-
-                const auto& selectedTarget = usedByTrue ? trueTarget : falseTarget;
-                const auto targetBlock = selectedTarget;
-
-                const auto newInst = inst->clone();
-                auto& dest = targetBlock->instructions();
-                dest.insert(dest.begin(), newInst);
-                newInst->setBlock(targetBlock);
-                auto& replace = usedByTrue ? replaceTrue : replaceFalse;
-                replace.emplace(inst, newInst);
-
-                modified = true;
-            }
-
-            replaceOperands(*trueTarget, replaceTrue);
-            replaceOperands(*falseTarget, replaceFalse);
+            instructions.remove_if([&](Instruction* inst) { return moved.count(inst); });
         }
 
         return modified;
@@ -149,6 +141,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(CodeSink);
-*/
 
 CMMC_NAMESPACE_END
