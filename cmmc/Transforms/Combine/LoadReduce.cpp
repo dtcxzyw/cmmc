@@ -158,17 +158,23 @@ class LoadReduce final : public TransformPass<Function> {
             }
 
             for(auto pred : predecessors) {
-                Block* indirectBlock = nullptr;
+                bool shouldCreateIndirectBlock = false;
+                for(auto& [inst, vals] : reuseValues) {
+                    CMMC_UNUSED(inst);
+                    if(!vals.count(pred)) {
+                        shouldCreateIndirectBlock = true;
+                        break;
+                    }
+                }
+                Block* indirectBlock = shouldCreateIndirectBlock ? createIndirectBlock(module, func, pred, block) : pred;
 
                 for(auto& [inst, vals] : reuseValues) {
                     const auto phi = replace.at(inst)->as<PhiInst>();
                     if(auto iter = vals.find(pred); iter != vals.cend()) {
-                        phi->addIncoming(pred, iter->second);
+                        phi->addIncoming(indirectBlock, iter->second);
                     } else {
                         auto ptr = inst->getOperand(0);
                         auto load = make<LoadInst>(ptr);
-                        if(!indirectBlock)
-                            indirectBlock = createIndirectBlock(module, func, pred, block);
                         load->setBlock(indirectBlock);
                         indirectBlock->instructions().push_front(load);
                         phi->addIncoming(indirectBlock, load);
@@ -177,6 +183,8 @@ class LoadReduce final : public TransformPass<Function> {
             }
 
             block->instructions().insert(block->instructions().cbegin(), phiList.cbegin(), phiList.cend());
+            analysis.invalidateFunc(func);
+            return;
         }
     }
 
@@ -185,16 +193,20 @@ public:
         const auto& alias = analysis.get<AliasAnalysis>(func);
 
         std::unordered_map<Block*, SimpleValueAnalysis> valueAnalysis;
-        ReplaceMap replace;
+        bool modified = false;
         // intra-block
         for(auto block : func.blocks()) {
             const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
+            ReplaceMap replace;
             runBlock(*block, iter->second, replace);
+            modified |= replaceOperandsInBlock(*block, replace);
         }
         // inter-block
+        ReplaceMap replace;
         runInterBlock(func, analysis, valueAnalysis, replace);
         // TODO: handle cross blockchain reusing, e.g., test_3_r03.spl
-        return replaceOperands(func, replace);
+        modified |= replaceOperands(func, replace);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

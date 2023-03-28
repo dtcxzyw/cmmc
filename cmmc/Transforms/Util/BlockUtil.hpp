@@ -28,12 +28,15 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
 Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
+bool applyReplace(Instruction* inst, const ReplaceMap& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 bool replaceOperandsInBlock(Block& block, const ReplaceMap& replace);
 Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock);
 bool isNoSideEffectExpr(const Instruction& inst);
 bool hasCall(Block& block);
 void retargetBlock(Block* target, Block* oldSource, Block* newSource);
+void copyTarget(Block* target, Block* oldSource, Block* newSource);
+void removePhi(Block* source, Block* target);
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {
     bool modified = false;

@@ -35,6 +35,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -62,6 +63,7 @@ public:
             const auto inst = make<BranchInst>(constCond ? trueTarget : falseTarget);
             inst->setBlock(block);
             insts.push_back(inst);
+            removePhi(block, !constCond ? trueTarget : falseTarget);
             modified = true;
         }
         return modified;

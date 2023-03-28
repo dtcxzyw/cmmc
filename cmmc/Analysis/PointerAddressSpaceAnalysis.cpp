@@ -108,6 +108,19 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                     case InstructionID::IntToPtr: {
                         break;
                     }
+                    case InstructionID::Phi: {
+                        bool allTagged = true;
+                        AddressSpaceType space = AddressSpaceType::InternalStack;
+                        for(auto ptr : inst->operands()) {
+                            if(!result.isTagged(ptr) || result.getAddressSpace(ptr) != space) {
+                                allTagged = false;
+                                break;
+                            }
+                        }
+                        if(allTagged)
+                            result.addTag(inst, space);
+                        break;
+                    }
                     default: {
                         inst->dump(reportError() << "unimplemented inst "sv);
                         reportNotImplemented(CMMC_LOCATION());

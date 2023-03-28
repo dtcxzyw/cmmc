@@ -569,23 +569,25 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         ++instructionCount;
 
         operands.clear();
+        auto buildOperand = [&](Value* operand) {
+            if(operand->isConstant())
+                operands.push_back(fromConstant(operand->as<ConstantValue>()));
+            else if(operand->isGlobal()) {
+                if(operand->getType()->isFunction()) {
+                    operands.emplace_back(operand->as<Function>());
+                } else {
+                    operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
+                }
+            } else {
+                operands.push_back(currentExecCtx.operands.at(operand));
+            }
+        };
         if(inst->getInstID() != InstructionID::Phi) {
             operands.reserve(inst->operands().size());
-            for(auto operand : inst->operands()) {
-                if(operand->isConstant())
-                    operands.push_back(fromConstant(operand->as<ConstantValue>()));
-                else if(operand->isGlobal()) {
-                    if(operand->getType()->isFunction()) {
-                        operands.emplace_back(operand->as<Function>());
-                    } else {
-                        operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
-                    }
-                } else {
-                    operands.push_back(currentExecCtx.operands.at(operand));
-                }
-            }
+            for(auto operand : inst->operands())
+                buildOperand(operand);
         } else {
-            operands.push_back(currentExecCtx.operands.at(inst->as<PhiInst>()->incomings().at(currentExecCtx.predBlock)));
+            buildOperand(inst->as<PhiInst>()->incomings().at(currentExecCtx.predBlock));
         }
 
         const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };

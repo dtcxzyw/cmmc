@@ -12,14 +12,22 @@
     limitations under the License.
 */
 
+#include <algorithm>
+#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cstdint>
+#include <iostream>
 #include <string>
 #include <string_view>
 #include <unordered_set>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -102,6 +110,9 @@ FuncArgument* Function::addArg(const Type* type) {
     return arg;
 }
 bool Function::verify(std::ostream& out) const {
+    if(mBlocks.empty())
+        return true;
+
     std::unordered_set<Value*> set;
     std::unordered_set<Block*> blocks;
     for(auto block : mBlocks) {
@@ -109,12 +120,19 @@ bool Function::verify(std::ostream& out) const {
             out << "bad ownership"sv << std::endl;
             return false;
         }
-        for(auto inst : block->instructions())
+        for(auto inst : block->instructions()) {
+            if(inst->getInstID() == InstructionID::Alloc) {
+                if(inst->getBlock() != entryBlock()) {
+                    out << "Stack allocations should be in the entry block"sv << std::endl;
+                    return false;
+                }
+            }
             if(!set.insert(inst).second) {
                 out << "unexpected copy of instruction "sv << inst << std::endl;
                 inst->dump(out);
                 return false;
             }
+        }
         blocks.insert(block);
     }
     for(auto block : mBlocks) {
@@ -140,6 +158,89 @@ bool Function::verify(std::ostream& out) const {
         }
         if(!block->verify(out))
             return false;
+    }
+    std::unordered_set<Value*> insts;
+    for(auto block : mBlocks)
+        insts.insert(block->instructions().cbegin(), block->instructions().cend());
+    for(auto block : mBlocks)
+        for(auto inst : block->instructions())
+            for(auto operand : inst->operands())
+                if(operand->isInstruction() && !insts.count(operand)) {
+                    out << "Invalid inst: ";
+                    inst->dump(out);
+                    out << "\nInvalid reference: ";
+                    operand->dumpAsOperand(out);
+                    out << "\n";
+                    return false;
+                }
+
+    AnalysisPassManager analysis{ nullptr };
+    // verify phi node
+    const auto& cfg = analysis.get<CFGAnalysis>(const_cast<Function&>(*this));  // NOLINT
+
+    for(auto block : mBlocks) {
+        bool stopPhi = false;
+        for(auto inst : block->instructions()) {
+            if(inst->getInstID() == InstructionID::Phi) {
+                if(stopPhi) {
+                    out << "Phi nodes should be in the front of instructions." << std::endl;
+                    return false;
+                }
+                const auto phi = inst->as<PhiInst>();
+                auto& incomings = phi->incomings();
+                auto& predecessors = cfg.predecessors(block);
+                if(predecessors.size() != incomings.size() ||
+                   !std::all_of(predecessors.cbegin(), predecessors.cend(), [&](Block* pred) { return incomings.count(pred); })) {
+                    out << "Invalid phi node: ";
+                    phi->dump(out);
+                    out << "\nPredecessors:";
+                    for(auto pred : predecessors) {
+                        out << ' ';
+                        pred->dumpAsTarget(out);
+                    }
+                    return false;
+                }
+            } else
+                stopPhi = true;
+        }
+    }
+    // verify dominate
+    const auto& dom = analysis.get<DominateAnalysis>(const_cast<Function&>(*this));  // NOLINT
+    std::unordered_set<Block*> reachableBlocks{ dom.blocks().cbegin(), dom.blocks().cend() };
+
+    for(auto block : dom.blocks()) {
+        for(auto inst : block->instructions()) {
+            const auto checkDominate = [&](Block* blockA, Block* blockB) {
+                if(blockA != blockB && reachableBlocks.count(blockB) && !dom.dominate(blockA, blockB)) {
+                    block->dump(out);
+                    out << "Invalid inst: ";
+                    inst->dump(out);
+                    out << "\nblock ";
+                    blockA->dumpAsTarget(out);
+                    out << " should dominate block ";
+                    blockB->dumpAsTarget(out);
+                    out << std::endl;
+                    return false;
+                }
+                return true;
+            };
+            if(inst->getInstID() == InstructionID::Phi) {
+                const auto phi = inst->as<PhiInst>();
+                for(auto [pred, val] : phi->incomings()) {
+                    if(auto depBlock = val->getBlock()) {
+                        if(!checkDominate(depBlock, pred))
+                            return false;
+                    }
+                }
+            } else {
+                for(auto operand : inst->operands()) {
+                    if(auto depBlock = operand->getBlock()) {
+                        if(!checkDominate(depBlock, block))
+                            return false;
+                    }
+                }
+            }
+        }
     }
     return true;
 }

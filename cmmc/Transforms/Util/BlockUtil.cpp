@@ -16,13 +16,14 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iterator>
 #include <unordered_map>
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
-static bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
+bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
     bool modified = false;
     if(inst->getInstID() != InstructionID::Phi)
         for(auto& operand : inst->operands()) {
@@ -64,7 +65,7 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
     }
     const auto newSize = block.instructions().size();
     auto modified = newSize != oldSize;
-    modified |= replaceOperandsInBlock(block, replace);
+    modified |= replaceOperands(*builder.getCurrentFunction(), replace);
     return modified;
 }
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace) {
@@ -160,5 +161,21 @@ void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
             break;
     }
 }
-
+void copyTarget(Block* target, Block* oldSource, Block* newSource) {
+    for(auto inst : target->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            auto phi = inst->as<PhiInst>();
+            phi->addIncoming(newSource, phi->incomings().at(oldSource));
+        } else
+            break;
+    }
+}
+void removePhi(Block* source, Block* target) {
+    for(auto inst : target->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            inst->as<PhiInst>()->removeSource(source);
+        } else
+            break;
+    }
+}
 CMMC_NAMESPACE_END

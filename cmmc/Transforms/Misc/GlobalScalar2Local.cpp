@@ -168,15 +168,11 @@ public:
                     args.push_back(var->getType());
                 }
             }
-            reportNotImplemented(CMMC_LOCATION());
-            /*
             {
                 auto& map = mapping[func];
-                auto block = func->entryBlock();
                 for(auto var : globalVars)
-                    map.emplace(var, block->addArg(var->getType()));
+                    map.emplace(var, func->addArg(var->getType()));
             }
-            */
         }
 
         // modify calls

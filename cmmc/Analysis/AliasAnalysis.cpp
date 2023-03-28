@@ -238,14 +238,20 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     }
 
     std::unordered_set<Block*> reachableBlocks;
-    uint32_t entryArgID = std::numeric_limits<uint32_t>::max();
+    uint32_t argID = ++allocateID;
+    bool noAlias = func.attr().hasAttr(FunctionAttribute::NoAlias);
+    for(auto arg : func.args()) {
+        if(!arg->getType()->isPointer())
+            continue;
+        if(noAlias) {
+            result.addValue(arg, { argID, ++allocateID });
+        } else {
+            result.addValue(arg, { argID });
+        }
+    }
 
     for(auto block : dom.blocks()) {
         reachableBlocks.insert(block);
-
-        const auto argID = ++allocateID;
-        if(block == func.entryBlock())
-            entryArgID = argID;
 
         for(auto inst : block->instructions()) {
             if(!inst->getType()->isPointer())
@@ -302,7 +308,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                 case InstructionID::IntToPtr: {
                     const auto base = inst->getOperand(0);
                     if(base->isArgument()) {
-                        result.addValue(inst, { entryArgID });
+                        result.addValue(inst, { argID });
                     } else
                         result.addValue(inst, {});
                     break;
@@ -311,6 +317,28 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     [[fallthrough]];
                 case InstructionID::Call: {
                     result.addValue(inst, {});
+                    break;
+                }
+                case InstructionID::Phi: {
+                    result.addValue(inst, {});
+                    std::unordered_set<Value*> inheritSet;
+                    for(auto ptr : inst->operands()) {
+                        if(ptr->isConstant())
+                            continue;
+
+                        inheritSet.insert(ptr);
+                        // TODO: support more sources
+                        if(inheritSet.size() > 2) {
+                            break;
+                        }
+                    }
+
+                    if(inheritSet.size() == 1) {
+                        inheritGraph.emplace(inst, *inheritSet.begin());
+                    } else if(inheritSet.size() == 2) {
+                        inheritGraph.emplace(inst, *inheritSet.begin(), *std::next(inheritSet.begin()));
+                    }
+
                     break;
                 }
                 default: {

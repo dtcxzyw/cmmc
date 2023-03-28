@@ -54,6 +54,9 @@ add_frontend(Spl)
 add_frontend(SysY)
 
 option(CMMC_LLVM_SUPPORT "Enable LLVM support" ON)
+if(${CMAKE_BUILD_TYPE} MATCHES Debug)
+  set(CMMC_LLVM_SUPPORT OFF)
+endif()
 
 if(${CMMC_LLVM_SUPPORT})
   find_package(LLVM CONFIG)

@@ -74,18 +74,43 @@ public:
         auto entry = func.entryBlock();
 
         // add dummy entry
+        std::vector<PhiInst*> phis;
+        ReplaceMap replace;
+
         {
             auto newEntry = make<Block>(&func);
             newEntry->setLabel(String::get("dummy_entry"));
             func.blocks().push_front(newEntry);
             builder.setCurrentBlock(newEntry);
             builder.makeOp<BranchInst>(entry);
+            builder.setInsertPoint(entry, entry->instructions().begin());
+            phis.reserve(func.args().size());
+            for(auto arg : func.args()) {
+                const auto phi = builder.createPhi(arg->getType());
+                phi->addIncoming(newEntry, arg);
+                phis.push_back(phi);
+                replace.emplace(arg, phi);
+            }
+        }
+
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                if(block == entry && inst->getInstID() == InstructionID::Phi)
+                    continue;
+                applyReplace(inst, replace);
+            }
         }
 
         for(auto block : redirect) {
             removeInst(block->instructions().back());
             auto callInst = block->instructions().back();
-            Vector<Value*> operands{ callInst->operands().cbegin(), std::prev(callInst->operands().cend()) };
+            uint32_t idx = 0;
+            for(auto operand : callInst->operands()) {
+                if(idx < phis.size()) {
+                    phis[idx]->addIncoming(block, operand);
+                    ++idx;
+                }
+            }
             removeInst(callInst);
             builder.setCurrentBlock(block);
             builder.makeOp<BranchInst>(entry);

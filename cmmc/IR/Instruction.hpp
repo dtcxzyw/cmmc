@@ -425,7 +425,8 @@ public:
     auto& incomings() const noexcept {
         return mIncomings;
     }
-    void replaceSource(Block* oldBLock, Block* newBlock);
+    void removeSource(Block* block);
+    void replaceSource(Block* oldBlock, Block* newBlock);
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void dump(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;

@@ -13,6 +13,8 @@
 */
 
 #include <algorithm>
+#include <cassert>
+#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -670,5 +672,13 @@ void PhiInst::replaceSource(cmmc::Block* oldBlock, cmmc::Block* newBlock) {
     mIncomings.emplace(newBlock, iter->second);
     mIncomings.erase(iter);
 }
-
+void PhiInst::removeSource(Block* block) {
+    const auto iter = mIncomings.find(block);
+    assert(iter != mIncomings.cend());
+    const auto val = iter->second;
+    mIncomings.erase(iter);
+    const auto it = std::find(operands().begin(), operands().end(), val);
+    assert(it != operands().end());
+    operands().erase(it);
+}
 CMMC_NAMESPACE_END

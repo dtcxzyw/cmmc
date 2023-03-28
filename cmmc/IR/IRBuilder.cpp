@@ -52,7 +52,7 @@ StackAllocInst* IRBuilder::createAlloc(const Type* type) {
 PhiInst* IRBuilder::createPhi(const Type* type) {
     auto inst = make<PhiInst>(type);
     auto block = getCurrentBlock();
-    if(mInsertPoint != block->instructions().cend() && (*std::prev(mInsertPoint))->getInstID() != InstructionID::Phi) {
+    if(mInsertPoint != block->instructions().cbegin() && (*std::prev(mInsertPoint))->getInstID() != InstructionID::Phi) {
         DiagnosticsContext::get().attach<Reason>("Cannot insert a phi instruction after non-phi instructions").reportFatal();
     }
     auto iter = block->instructions().insert(mInsertPoint, inst);

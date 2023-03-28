@@ -50,10 +50,13 @@ class CombineBranch final : public TransformPass<Function> {
             block.getTerminator()->as<BranchInst>()->getTrueTarget() != &block;
     }
 
-    static void foldForward(Block* source, Block*& target) {
+    static bool foldForward(Block* source, Block*& target, Block* rhs) {
         const auto realTarget = target->getTerminator()->as<BranchInst>()->getTrueTarget();
-        retargetBlock(realTarget, target, source);
+        if(target == realTarget || rhs == realTarget)
+            return false;
+        copyTarget(realTarget, target, source);  // NOLINT
         target = realTarget;
+        return true;
     }
 
 public:
@@ -70,14 +73,12 @@ public:
             if(terminator->isBranch()) {
                 auto branch = terminator->as<BranchInst>();
                 auto& trueTarget = branch->getTrueTarget();
-                if(trueTarget != block && forwardBlocks.count(trueTarget)) {
-                    foldForward(block, trueTarget);
-                    modified = true;
-                }
                 auto& falseTarget = branch->getFalseTarget();
+                if(trueTarget != block && forwardBlocks.count(trueTarget)) {
+                    modified |= foldForward(block, trueTarget, falseTarget);
+                }
                 if(falseTarget != block && forwardBlocks.count(falseTarget)) {
-                    foldForward(block, falseTarget);
-                    modified = true;
+                    modified |= foldForward(block, falseTarget, trueTarget);
                 }
             }
         }

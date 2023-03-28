@@ -60,12 +60,24 @@ public:
                 const auto target = branch->getTrueTarget();
                 assert(blockRef[target] >= 1);
                 if(blockRef.at(target) == 1) {
+                    auto& instsB = target->instructions();
+                    if(instsB.front()->getInstID() == InstructionID::Phi)
+                        continue;
+
                     auto& instsA = block->instructions();
                     instsA.pop_back();
-                    auto& instsB = target->instructions();
+
                     for(auto inst : instsB)
                         inst->setBlock(block);
                     instsA.insert(instsA.cend(), instsB.cbegin(), instsB.cend());
+
+                    const auto newTerminator = block->getTerminator();
+                    if(newTerminator->isBranch()) {
+                        const auto newBranch = newTerminator->as<BranchInst>();
+                        retargetBlock(newBranch->getTrueTarget(), target, block);
+                        if(newBranch->getFalseTarget())
+                            retargetBlock(newBranch->getFalseTarget(), target, block);
+                    }
                     deferred.insert(target);
                 }
             }

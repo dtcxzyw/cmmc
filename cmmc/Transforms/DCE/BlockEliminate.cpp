@@ -24,6 +24,7 @@
 
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <queue>
 
 CMMC_NAMESPACE_BEGIN
@@ -56,10 +57,32 @@ public:
         }
 
         auto& blocks = func.blocks();
-        size_t oldSize = blocks.size();
-        blocks.remove_if([&](auto block) { return !reachable.count(block); });
+        if(blocks.size() == reachable.size())
+            return false;
+        std::vector<Block*> removed;
+        removed.reserve(blocks.size() - reachable.size());
+        blocks.remove_if([&](auto block) {
+            if(!reachable.count(block)) {
+                removed.push_back(block);
+                return true;
+            }
+            return false;
+        });
+        for(auto block : removed) {
+            const auto terminator = block->getTerminator();
+            if(!terminator->isBranch())
+                continue;
+            const auto branch = terminator->as<BranchInst>();
+            auto handleTarget = [&](Block* target) {
+                if(!target || !reachable.count(target))
+                    return;
+                removePhi(block, target);
+            };
+            handleTarget(branch->getTrueTarget());
+            handleTarget(branch->getFalseTarget());
+        }
 
-        return blocks.size() != oldSize;
+        return true;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

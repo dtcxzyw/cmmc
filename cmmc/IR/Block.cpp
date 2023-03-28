@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Instruction.hpp"
 #include <algorithm>
 #include <cmmc/Config.hpp>
 #include <cmmc/IR/Attachments.hpp>
@@ -57,16 +58,25 @@ bool Block::verify(std::ostream& out) const {
         return false;
     }
 
-    for(auto inst : mInstructions)
+    for(auto inst : mInstructions) {
         if(inst->getBlock() != this) {
-            out << "bad ownership"sv;
+            out << "bad ownership "sv;
             inst->dump(out);
             return false;
         }
+        for(auto operand : inst->operands()) {
+            if(auto block = operand->getBlock()) {
+                if(block->getFunction() != getFunction()) {
+                    out << "bad ownership "sv;
+                    inst->dump(out);
+                    out << "\ninvalid operand "sv;
+                    operand->dumpAsOperand(out);
+                    return false;
+                }
+            }
+        }
+    }
 
-    // TODO: dominated?
-    // topological ordering
-    /*
     std::unordered_set<Value*> definedValue;
     for(auto inst : mInstructions) {
         if(inst->isTerminator() && inst != mInstructions.back()) {
@@ -74,10 +84,10 @@ bool Block::verify(std::ostream& out) const {
             return false;
         }
         for(auto operand : inst->operands()) {
-            if(!operand->isConstant() && !operand->isGlobal()) {
+            if(operand->getBlock() == this && !operand->is<PhiInst>()) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
-                    dump(out);
+                    dumpLabeled(out);
                     out << "this operand is required: "sv << std::endl;
                     operand->dump(out);
                     out << std::endl << "user: "sv << std::endl;
@@ -89,7 +99,6 @@ bool Block::verify(std::ostream& out) const {
         }
         definedValue.insert(inst);
     }
-    */
 
     // per-instruction
     for(auto inst : mInstructions)
@@ -118,7 +127,7 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
         auto newInst = inst->clone();
         if(newInst->getInstID() != InstructionID::Phi) {
             for(auto& operand : newInst->operands()) {
-                if(operand->getBlock()) {
+                if(operand->getBlock() == this) {
                     const auto newOperand = replace.at(operand);
                     operand = newOperand;
                 }
