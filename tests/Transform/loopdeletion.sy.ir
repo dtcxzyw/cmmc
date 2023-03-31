@@ -1,6 +1,47 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry():
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %i = alloc i32;
+    i32* %sum = alloc i32;
+    i32* %x = alloc i32;
     i32 %0 = call () -> i32 @getint();
-    ret i32 %0;
+    store i32* %x with i32 %0;
+    store i32* %sum with i32 0;
+    store i32* %i with i32 0;
+    ubr ^for.header;
+^for.header:
+    i32 %1 = load i32* %i;
+    i1 %2 = scmp lt i32 %1, i32 10000;
+    i32 %3 = zext i1 %2 to i32;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.97), ^for.body, ^b;
+^for.body:
+    i32 %5 = load i32* %sum;
+    i32 %6 = load i32* %x;
+    i32 %7 = load i32* %sum;
+    i32 %8 = mul i32 %6, i32 %7;
+    i32 %9 = add i32 %5, i32 %8;
+    store i32* %sum with i32 %9;
+    ubr ^for.iteration;
+^b:
+    i32 %10 = load i32* %x;
+    i32 %11 = load i32* %sum;
+    i32 %12 = add i32 %10, i32 %11;
+    ret i32 %12;
+^for.iteration:
+    i32 %13 = load i32* %i;
+    i32 %14 = add i32 %13, i32 1;
+    store i32* %i with i32 %14;
+    ubr ^for.header;
 }

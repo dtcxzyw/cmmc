@@ -1,108 +1,157 @@
-func @main() -> i32 { NoRecurse Entry } {
-^entry():
-    [6 * i8]* %a = alloc [6 * i8];
-    i8* %0 = getelementptr &([6 * i8]* %a)[i64 0][i64 0];
-    store i8* %0 with i8 72;
-    i8* %1 = getelementptr &([6 * i8]* %a)[i64 0][i64 1];
-    store i8* %1 with i8 101;
-    i8* %2 = getelementptr &([6 * i8]* %a)[i64 0][i64 2];
-    store i8* %2 with i8 108;
-    i8* %3 = getelementptr &([6 * i8]* %a)[i64 0][i64 3];
-    store i8* %3 with i8 108;
-    i8* %4 = getelementptr &([6 * i8]* %a)[i64 0][i64 4];
-    store i8* %4 with i8 111;
-    i8* %5 = getelementptr &([6 * i8]* %a)[i64 0][i64 5];
-    store i8* %5 with i8 0;
-    [6 * i8]* %cmmc.str.s295471233978816214 = alloc [6 * i8];
-    i8* %6 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 0];
-    store i8* %6 with i8 87;
-    i8* %7 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 1];
-    store i8* %7 with i8 111;
-    i8* %8 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 2];
-    store i8* %8 with i8 114;
-    i8* %9 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 3];
-    store i8* %9 with i8 108;
-    i8* %10 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 4];
-    store i8* %10 with i8 100;
-    i8* %11 = getelementptr &([6 * i8]* %cmmc.str.s295471233978816214)[i64 0][i64 5];
-    store i8* %11 with i8 0;
-    [512 * i8]* %c = alloc [512 * i8];
-    i8* %12 = getelementptr &([512 * i8]* %c)[i64 0][i64 0];
-    i8** %a1 = alloc i8*;
-    store i8** %a1 with i8* %0;
-    i8** %b = alloc i8*;
-    store i8** %b with i8* %6;
-    i8** %c1 = alloc i8*;
-    store i8** %c1 with i8* %12;
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @concat(i8* %a, i8* %b, i8* %c) -> void {
+^entry:
+    i32* %i = alloc i32;
+    i32* %i1 = alloc i32;
     i32* %j = alloc i32;
+    i8** %c1 = alloc i8*;
+    i8** %b1 = alloc i8*;
+    i8** %a1 = alloc i8*;
+    store i8** %a1 with i8* %a;
+    store i8** %b1 with i8* %b;
+    store i8** %c1 with i8* %c;
     store i32* %j with i32 0;
-    i32* %i = alloc i32;
+    store i32* %i1 with i32 0;
+    ubr ^for.header;
+^for.header:
+    i32 %0 = load i32* %i1;
+    i64 %1 = sext i32 %0 to i64;
+    i8* %2 = load i8** %a1;
+    i8* %3 = getelementptr &(i8* %2)[i64 %1];
+    i8 %4 = load i8* %3;
+    i1 %5 = scmp neq i8 %4, i8 0;
+    cbr i1 %5(prob = 0.97), ^for.body, ^b2;
+^for.body:
+    i32 %6 = load i32* %j;
+    i64 %7 = sext i32 %6 to i64;
+    i8* %8 = load i8** %c1;
+    i8* %9 = getelementptr &(i8* %8)[i64 %7];
+    i32 %10 = load i32* %i1;
+    i64 %11 = sext i32 %10 to i64;
+    i8* %12 = load i8** %a1;
+    i8* %13 = getelementptr &(i8* %12)[i64 %11];
+    i8 %14 = load i8* %13;
+    store i8* %9 with i8 %14;
+    i32 %15 = load i32* %j;
+    i32 %16 = add i32 %15, i32 1;
+    store i32* %j with i32 %16;
+    ubr ^for.iteration;
+^b2:
+    i32 %17 = load i32* %j;
+    i64 %18 = sext i32 %17 to i64;
+    i8* %19 = load i8** %c1;
+    i8* %20 = getelementptr &(i8* %19)[i64 %18];
+    store i8* %20 with i8 32;
+    i32 %21 = load i32* %j;
+    i32 %22 = add i32 %21, i32 1;
+    store i32* %j with i32 %22;
     store i32* %i with i32 0;
-    ubr [ ^for.body i8** %b, i8** %a1, i32* %i, i8** %c1, i32* %j, i8* %12, i8* %0, i8* %12, i32 0, i32 0 ];
-^for.body(i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %arg6, i8* %arg7, i32 %arg8, i32 %arg9):
-    i8* %0 = getelementptr &(i8* %arg7)[i32 %arg8];
-    i8* %1 = getelementptr &(i8* %arg6)[i32 %arg9];
-    i8 %2 = load i8* %1;
-    store i8* %0 with i8 %2;
-    i32 %3 = load i32* %arg2;
-    i32 %4 = load i32* %arg4;
-    i8* %5 = load i8** %arg3;
-    i8* %6 = load i8** %arg1;
-    i32 %7 = add i32 %4, i32 1;
-    store i32* %arg4 with i32 %7;
-    i32 %8 = add i32 %3, i32 1;
-    store i32* %arg2 with i32 %8;
-    i8* %9 = getelementptr &(i8* %6)[i32 %8];
-    i8 %10 = load i8* %9;
-    i1 %11 = scmp neq i8 %10, i8 0;
-    cbr i1 %11(prob = 0.97), [ ^for.body i8** %arg, i8** %arg1, i32* %arg2, i8** %arg3, i32* %arg4, i8* %arg5, i8* %6, i8* %5, i32 %7, i32 %8 ], [ ^b i8** %arg, i8** %arg3, i32* %arg4, i8* %arg5, i8* %5, i32 %7 ];
-^b(i8** %arg, i8** %arg1, i32* %arg2, i8* %arg3, i8* %arg4, i32 %arg5):
-    i8* %0 = getelementptr &(i8* %arg4)[i32 %arg5];
-    store i8* %0 with i8 32;
-    i32 %1 = load i32* %arg2;
-    i8* %2 = load i8** %arg1;
-    i8* %3 = load i8** %arg;
-    i32 %4 = add i32 %1, i32 1;
-    store i32* %arg2 with i32 %4;
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
-    i8 %5 = load i8* %3;
-    i1 %6 = scmp neq i8 %5, i8 0;
-    cbr i1 %6(prob = 0.97), [ ^for.body1 i8** %arg, i32* %i, i8** %arg1, i32* %arg2, i8* %arg3, i8* %3, i8* %2, i32 %4, i32 0 ], [ ^b1 i8* %arg3, i8* %2, i32 %4 ];
-^for.body1(i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %arg5, i8* %arg6, i32 %arg7, i32 %arg8):
-    i8* %0 = getelementptr &(i8* %arg6)[i32 %arg7];
-    i8* %1 = getelementptr &(i8* %arg5)[i32 %arg8];
-    i8 %2 = load i8* %1;
-    store i8* %0 with i8 %2;
-    i32 %3 = load i32* %arg1;
-    i32 %4 = load i32* %arg3;
-    i8* %5 = load i8** %arg2;
-    i8* %6 = load i8** %arg;
-    i32 %7 = add i32 %4, i32 1;
-    store i32* %arg3 with i32 %7;
-    i32 %8 = add i32 %3, i32 1;
-    store i32* %arg1 with i32 %8;
-    i8* %9 = getelementptr &(i8* %6)[i32 %8];
-    i8 %10 = load i8* %9;
-    i1 %11 = scmp neq i8 %10, i8 0;
-    cbr i1 %11(prob = 0.97), [ ^for.body1 i8** %arg, i32* %arg1, i8** %arg2, i32* %arg3, i8* %arg4, i8* %6, i8* %5, i32 %7, i32 %8 ], [ ^b1 i8* %arg4, i8* %5, i32 %7 ];
-^b1(i8* %arg, i8* %arg1, i32 %arg2):
-    i8* %0 = getelementptr &(i8* %arg1)[i32 %arg2];
-    store i8* %0 with i8 0;
-    i8 %1 = load i8* %arg;
-    i1 %2 = scmp neq i8 %1, i8 0;
-    cbr i1 %2(prob = 0.97), [ ^for.body2 i8* %arg, i32 0, i32 0 ], [ ^b2 i32 0 ];
-^for.body2(i8* %arg, i32 %arg1, i32 %arg2):
-    i32 %0 = mul i32 %arg1, i32 131;
-    i8* %1 = getelementptr &(i8* %arg)[i32 %arg2];
-    i8 %2 = load i8* %1;
-    i32 %3 = sext i8 %2 to i32;
-    i32 %4 = add i32 %0, i32 %3;
-    i32 %5 = add i32 %arg2, i32 1;
-    i8* %6 = getelementptr &(i8* %1)[i64 1];
-    i8 %7 = load i8* %6;
-    i1 %8 = scmp neq i8 %7, i8 0;
-    cbr i1 %8(prob = 0.97), [ ^for.body2 i8* %arg, i32 %4, i32 %5 ], [ ^b2 i32 %4 ];
-^b2(i32 %arg):
-    ret i32 %arg;
+    ubr ^for.header1;
+^for.iteration:
+    i32 %23 = load i32* %i1;
+    i32 %24 = add i32 %23, i32 1;
+    store i32* %i1 with i32 %24;
+    ubr ^for.header;
+^for.header1:
+    i32 %25 = load i32* %i;
+    i64 %26 = sext i32 %25 to i64;
+    i8* %27 = load i8** %b1;
+    i8* %28 = getelementptr &(i8* %27)[i64 %26];
+    i8 %29 = load i8* %28;
+    i1 %30 = scmp neq i8 %29, i8 0;
+    cbr i1 %30(prob = 0.97), ^for.body1, ^b3;
+^for.body1:
+    i32 %31 = load i32* %j;
+    i64 %32 = sext i32 %31 to i64;
+    i8* %33 = load i8** %c1;
+    i8* %34 = getelementptr &(i8* %33)[i64 %32];
+    i32 %35 = load i32* %i;
+    i64 %36 = sext i32 %35 to i64;
+    i8* %37 = load i8** %b1;
+    i8* %38 = getelementptr &(i8* %37)[i64 %36];
+    i8 %39 = load i8* %38;
+    store i8* %34 with i8 %39;
+    i32 %40 = load i32* %j;
+    i32 %41 = add i32 %40, i32 1;
+    store i32* %j with i32 %41;
+    ubr ^for.iteration1;
+^b3:
+    i32 %42 = load i32* %j;
+    i64 %43 = sext i32 %42 to i64;
+    i8* %44 = load i8** %c1;
+    i8* %45 = getelementptr &(i8* %44)[i64 %43];
+    store i8* %45 with i8 0;
+    ret;
+^for.iteration1:
+    i32 %46 = load i32* %i;
+    i32 %47 = add i32 %46, i32 1;
+    store i32* %i with i32 %47;
+    ubr ^for.header1;
 }
+internal func @BKDRHash(i8* %a) -> i32 {
+^entry:
+    i32* %i = alloc i32;
+    i32* %ret = alloc i32;
+    i8** %a1 = alloc i8*;
+    store i8** %a1 with i8* %a;
+    store i32* %ret with i32 0;
+    store i32* %i with i32 0;
+    ubr ^for.header;
+^for.header:
+    i32 %0 = load i32* %i;
+    i64 %1 = sext i32 %0 to i64;
+    i8* %2 = load i8** %a1;
+    i8* %3 = getelementptr &(i8* %2)[i64 %1];
+    i8 %4 = load i8* %3;
+    i1 %5 = scmp neq i8 %4, i8 0;
+    cbr i1 %5(prob = 0.97), ^for.body, ^b;
+^for.body:
+    i32 %6 = load i32* %ret;
+    i32 %7 = mul i32 %6, i32 131;
+    i32 %8 = load i32* %i;
+    i64 %9 = sext i32 %8 to i64;
+    i8* %10 = load i8** %a1;
+    i8* %11 = getelementptr &(i8* %10)[i64 %9];
+    i8 %12 = load i8* %11;
+    i32 %13 = sext i8 %12 to i32;
+    i32 %14 = add i32 %7, i32 %13;
+    store i32* %ret with i32 %14;
+    ubr ^for.iteration;
+^b:
+    i32 %15 = load i32* %ret;
+    ret i32 %15;
+^for.iteration:
+    i32 %16 = load i32* %i;
+    i32 %17 = add i32 %16, i32 1;
+    store i32* %i with i32 %17;
+    ubr ^for.header;
+}
+internal [6 * i8]* @a { ReadOnly } = [72, 101, 108, 108, 111];
+func @main() -> i32 { Entry } {
+^entry:
+    [512 * i8]* %c = alloc [512 * i8];
+    i32* %BUF_SIZ = alloc i32;
+    i8** %b = alloc i8*;
+    i8* %0 = getelementptr &([6 * i8]* @cmmc.str.s295471233978816214)[i64 0][i64 0];
+    store i8** %b with i8* %0;
+    store i32* %BUF_SIZ with i32 512;
+    i8* %1 = getelementptr &([6 * i8]* @a)[i64 0][i64 0];
+    i8* %2 = load i8** %b;
+    i8* %3 = getelementptr &([512 * i8]* %c)[i64 0][i64 0];
+    call (i8*, i8*, i8*) -> void @concat(i8* %1, i8* %2, i8* %3);
+    i8* %4 = getelementptr &([512 * i8]* %c)[i64 0][i64 0];
+    i32 %5 = call (i8*) -> i32 @BKDRHash(i8* %4);
+    ret i32 %5;
+}
+internal [6 * i8]* @cmmc.str.s295471233978816214 { ReadOnly } = [87, 111, 114, 108, 100];

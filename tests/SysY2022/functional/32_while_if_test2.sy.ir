@@ -1,4 +1,70 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
-^entry():
-    ret i32 96;
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @ifWhile() -> i32 {
+^entry:
+    i32* %b = alloc i32;
+    i32* %a = alloc i32;
+    store i32* %a with i32 0;
+    store i32* %a with i32 0;
+    store i32* %b with i32 0;
+    store i32* %b with i32 3;
+    i32 %0 = load i32* %a;
+    i1 %1 = scmp eq i32 %0, i32 5;
+    i32 %2 = zext i1 %1 to i32;
+    i1 %3 = scmp neq i32 %2, i32 0;
+    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    ubr ^while.header;
+^if.else:
+    ubr ^while.header1;
+^while.header:
+    i32 %4 = load i32* %b;
+    i1 %5 = scmp eq i32 %4, i32 2;
+    i32 %6 = zext i1 %5 to i32;
+    i1 %7 = scmp neq i32 %6, i32 0;
+    cbr i1 %7(prob = 0.97), ^while.body, ^b1;
+^while.header1:
+    i32 %8 = load i32* %a;
+    i1 %9 = scmp lt i32 %8, i32 5;
+    i32 %10 = zext i1 %9 to i32;
+    i1 %11 = scmp neq i32 %10, i32 0;
+    cbr i1 %11(prob = 0.97), ^while.body1, ^b2;
+^while.body:
+    i32 %12 = load i32* %b;
+    i32 %13 = add i32 %12, i32 2;
+    store i32* %b with i32 %13;
+    ubr ^while.header;
+^b1:
+    i32 %14 = load i32* %b;
+    i32 %15 = add i32 %14, i32 25;
+    store i32* %b with i32 %15;
+    ubr ^b3;
+^while.body1:
+    i32 %16 = load i32* %b;
+    i32 %17 = mul i32 %16, i32 2;
+    store i32* %b with i32 %17;
+    i32 %18 = load i32* %a;
+    i32 %19 = add i32 %18, i32 1;
+    store i32* %a with i32 %19;
+    ubr ^while.header1;
+^b2:
+    ubr ^b3;
+^b3:
+    i32 %20 = load i32* %b;
+    ret i32 %20;
+}
+func @main() -> i32 { Entry } {
+^entry:
+    i32 %0 = call () -> i32 @ifWhile();
+    ret i32 %0;
 }

@@ -1,6 +1,11 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @test_1() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry():
+func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @test_1() -> i32 {
+^entry:
+    i32* %b = alloc i32;
+    i32* %a = alloc i32;
+    store i32* %a with i32 1;
+    i32 %0 = load i32* %a;
+    store i32* %b with i32 %0;
     ret i32 0;
 }

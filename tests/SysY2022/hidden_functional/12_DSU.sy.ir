@@ -1,327 +1,256 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch(i32) -> void { NoMemoryRead NoMemoryWrite };
-internal [100005 * i32]* @fa;
-internal func @find(i32, i32*, i32*) -> i32 {
-^entry(i32 %arg, i32* %arg1, i32* %arg2):
-    i32* %0 = getelementptr &([100005 * i32]* @fa)[i64 0][i32 %arg];
-    i32 %1 = load i32* %0;
-    i1 %2 = scmp eq i32 %1, i32 %arg;
-    cbr i1 %2(prob = 0.5), [ ^indirect i32 %arg ], [ ^indirect1 i32 %1, i32* %arg2, i32* %arg1, i32* %0 ];
-^indirect(i32 %arg):
-    ret i32 %arg;
-^indirect1(i32 %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = call (i32, i32*, i32*) -> i32 @find(i32 %arg, i32* %arg2, i32* %arg1);
-    store i32* %arg3 with i32 %0;
-    ret i32 %0;
-}
-func @main() -> i32 { NoRecurse Entry } {
-^entry():
-    i32* %n = alloc i32;
-    i32* %m = alloc i32;
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @quick_read() -> i32 {
+^entry:
+    i32* %f = alloc i32;
+    i32* %x = alloc i32;
     i32* %ch = alloc i32;
     i32 %0 = call () -> i32 @getch();
     store i32* %ch with i32 %0;
-    i32* %x = alloc i32;
     store i32* %x with i32 0;
-    i32* %f = alloc i32;
     store i32* %f with i32 0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body i32* %x, i32* %f, i32* %ch, i32* %n, i32* %m, i32 %0, i32 0 ], [ ^b i32* %f, i32* %x, i32* %ch, i32* %m, i32* %n, i32 %0, i32 0 ];
-^while.body(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6):
-    i1 %0 = scmp eq i32 %arg5, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then i32* %arg, i32* %arg2, i32* %arg1, i32* %arg4, i32* %arg3 ], [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg6 ];
-^b(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6):
-    i1 %0 = scmp gt i32 %arg5, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body i32* %arg1, i32* %arg, i32* %arg2, i32* %arg4, i32* %arg3, i32 %arg5, i32 %arg6 ], [ ^indirect i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6 ];
-^if.then(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4):
-    store i32* %arg2 with i32 1;
-    i32 %0 = call () -> i32 @getch();
-    store i32* %arg1 with i32 %0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body i32* %arg, i32* %arg2, i32* %arg1, i32* %arg4, i32* %arg3, i32 %0, i32 1 ], [ ^b i32* %arg2, i32* %arg, i32* %arg1, i32* %arg3, i32* %arg4, i32 %0, i32 1 ];
-^b1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5):
-    i32 %0 = call () -> i32 @getch();
-    store i32* %arg2 with i32 %0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %0, i32 %arg5 ], [ ^b i32* %arg1, i32* %arg, i32* %arg2, i32* %arg4, i32* %arg3, i32 %0, i32 %arg5 ];
-^indirect(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5):
-    i1 %0 = scmp gt i32 %arg4, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b2 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 0, i32 %arg5 ], [ ^b3 i32* %arg2, i32* %arg3, i32 0, i32 %arg5 ];
-^b2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
-    i1 %0 = scmp lt i32 %arg4, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body1 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6 ], [ ^b3 i32* %arg2, i32* %arg3, i32 %arg5, i32 %arg6 ];
-^b3(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp neq i32 %arg3, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then1 i32* %arg1, i32* %arg, i32 %arg2 ], [ ^entry1 i32 %arg2, i32* %arg, i32* %arg1 ];
-^if.then1(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = neg i32 %arg2;
-    ubr [ ^entry1 i32 %0, i32* %arg1, i32* %arg ];
-^while.body1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
-    i32 %0 = mul i32 %arg5, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg4;
-    store i32* %arg1 with i32 %2;
-    i32 %3 = call () -> i32 @getch();
-    store i32* %arg with i32 %3;
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b2 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg3, i32 %3, i32 %2, i32 %arg6 ], [ ^b3 i32* %arg2, i32* %arg3, i32 %2, i32 %arg6 ];
-^entry1(i32 %arg, i32* %arg1, i32* %arg2):
-    store i32* %arg2 with i32 %arg;
-    i32* %ch = alloc i32;
-    i32 %0 = call () -> i32 @getch();
-    store i32* %ch with i32 %0;
-    i32* %x = alloc i32;
-    store i32* %x with i32 0;
-    i32* %f = alloc i32;
-    store i32* %f with i32 0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body2 i32* %x, i32* %f, i32* %ch, i32* %arg1, i32* %arg2, i32 %arg, i32 %0, i32 0 ], [ ^b4 i32* %f, i32* %x, i32* %ch, i32* %arg2, i32* %arg1, i32 %arg, i32 %0, i32 0 ];
-^while.body2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
-    i1 %0 = scmp eq i32 %arg6, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then2 i32* %arg, i32* %arg2, i32* %arg1, i32* %arg4, i32* %arg3, i32 %arg5 ], [ ^b5 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg7 ];
-^b4(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
-    i1 %0 = scmp gt i32 %arg6, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body2 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg4, i32* %arg3, i32 %arg5, i32 %arg6, i32 %arg7 ], [ ^indirect1 i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ];
-^if.then2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5):
-    store i32* %arg2 with i32 1;
-    i32 %0 = call () -> i32 @getch();
-    store i32* %arg1 with i32 %0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body2 i32* %arg, i32* %arg2, i32* %arg1, i32* %arg4, i32* %arg3, i32 %arg5, i32 %0, i32 1 ], [ ^b4 i32* %arg2, i32* %arg, i32* %arg1, i32* %arg3, i32* %arg4, i32 %arg5, i32 %0, i32 1 ];
-^b5(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %arg6):
-    i32 %0 = call () -> i32 @getch();
-    store i32* %arg2 with i32 %0;
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body2 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32 %arg5, i32 %0, i32 %arg6 ], [ ^b4 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg4, i32* %arg3, i32 %arg5, i32 %0, i32 %arg6 ];
-^indirect1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6):
-    i1 %0 = scmp gt i32 %arg5, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b6 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 0, i32 %arg6 ], [ ^b7 i32* %arg2, i32* %arg3, i32 %arg4, i32 0, i32 %arg6 ];
-^b6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
-    i1 %0 = scmp lt i32 %arg5, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body3 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7 ], [ ^b7 i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg6, i32 %arg7 ];
-^b7(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp neq i32 %arg4, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then3 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ], [ ^if.else i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ];
-^if.then3(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = neg i32 %arg3;
-    store i32* %arg with i32 %0;
-    i32* %i = alloc i32;
-    store i32* %i with i32 1;
-    ubr [ ^indirect2 i32* %i, i32* %arg1, i32* %arg, i32 %arg2, i32 %0 ];
-^while.body3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4, i32 %arg5, i32 %arg6, i32 %arg7):
-    i32 %0 = mul i32 %arg6, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg5;
-    store i32* %arg1 with i32 %2;
-    i32 %3 = call () -> i32 @getch();
-    store i32* %arg with i32 %3;
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b6 i32* %arg1, i32* %arg, i32* %arg2, i32* %arg3, i32 %arg4, i32 %3, i32 %2, i32 %arg7 ], [ ^b7 i32* %arg2, i32* %arg3, i32 %arg4, i32 %2, i32 %arg7 ];
-^if.else(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    store i32* %arg with i32 %arg3;
-    i32* %i = alloc i32;
-    store i32* %i with i32 1;
-    ubr [ ^indirect2 i32* %i, i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ];
-^indirect2(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg3, i32 0;
-    cbr i1 %0(prob = 0.97), [ ^while.body4 i32* %arg, i32* %arg2, i32* %arg1, i32 %arg3, i32 %arg4, i32 1 ], [ ^b8 i32* %arg2, i32* %arg1, i32 %arg4 ];
-^while.body4(i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i32* %0 = getelementptr &([100005 * i32]* @fa)[i64 0][i32 %arg5];
-    store i32* %0 with i32 %arg5;
-    i32 %1 = add i32 %arg5, i32 1;
-    store i32* %arg with i32 %1;
-    i1 %2 = scmp le i32 %1, i32 %arg3;
-    cbr i1 %2(prob = 0.97), [ ^while.body4 i32* %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4, i32 %1 ], [ ^b8 i32* %arg1, i32* %arg2, i32 %arg4 ];
-^b8(i32* %arg, i32* %arg1, i32 %arg2):
-    i1 %0 = scmp neq i32 %arg2, i32 0;
-    cbr i1 %0(prob = 0.97), [ ^while.body5 i32* %arg1, i32* %arg ], [ ^b9 ];
-^while.body5(i32* %arg, i32* %arg1):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp neq i32 %0, i32 81;
-    cbr i1 %1(prob = 0.5), [ ^b10 i32* %arg, i32* %arg1, i32 %0 ], [ ^b11 i32* %arg, i32* %arg1, i32 %0 ];
-^b9():
-    ret i32 0;
-^b10(i32* %arg, i32* %arg1, i32 %arg2):
-    i1 %0 = scmp neq i32 %arg2, i32 85;
-    cbr i1 %0(prob = 0.97), [ ^while.body5 i32* %arg, i32* %arg1 ], [ ^b11 i32* %arg, i32* %arg1, i32 %arg2 ];
-^b11(i32* %arg, i32* %arg1, i32 %arg2):
-    i1 %0 = scmp eq i32 %arg2, i32 81;
-    cbr i1 %0(prob = 0.5), [ ^entry2 i32* %arg, i32* %arg1 ], [ ^if.else1 i32* %arg1, i32* %arg ];
-^entry2(i32* %arg, i32* %arg1):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body6 i32* %arg, i32* %arg1, i32 %0, i32 0 ], [ ^b12 i32* %arg1, i32* %arg, i32 %0, i32 0 ];
-^if.else1(i32* %arg, i32* %arg1):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body7 i32* %arg1, i32* %arg, i32 %0, i32 0 ], [ ^b13 i32* %arg, i32* %arg1, i32 %0, i32 0 ];
-^while.body6(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp eq i32 %arg2, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then4 i32* %arg1, i32* %arg ], [ ^b14 i32* %arg, i32* %arg1, i32 %arg3 ];
-^b12(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp gt i32 %arg2, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body6 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ], [ ^indirect3 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3 ];
-^while.body7(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp eq i32 %arg2, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then5 i32* %arg1, i32* %arg ], [ ^b15 i32* %arg, i32* %arg1, i32 %arg3 ];
-^b13(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp gt i32 %arg2, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body7 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ], [ ^indirect4 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3 ];
-^if.then4(i32* %arg, i32* %arg1):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body6 i32* %arg1, i32* %arg, i32 %0, i32 1 ], [ ^b12 i32* %arg, i32* %arg1, i32 %0, i32 1 ];
-^if.then5(i32* %arg, i32* %arg1):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body7 i32* %arg1, i32* %arg, i32 %0, i32 1 ], [ ^b13 i32* %arg, i32* %arg1, i32 %0, i32 1 ];
-^b14(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body6 i32* %arg, i32* %arg1, i32 %0, i32 %arg2 ], [ ^b12 i32* %arg1, i32* %arg, i32 %0, i32 %arg2 ];
-^indirect3(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp gt i32 %arg2, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b16 i32* %arg, i32* %arg1, i32 %arg2, i32 0, i32 %arg3 ], [ ^b18 i32* %arg, i32* %arg1, i32 0, i32 %arg3 ];
-^b15(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body7 i32* %arg, i32* %arg1, i32 %0, i32 %arg2 ], [ ^b13 i32* %arg1, i32* %arg, i32 %0, i32 %arg2 ];
-^indirect4(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp gt i32 %arg2, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b17 i32* %arg, i32* %arg1, i32 %arg2, i32 0, i32 %arg3 ], [ ^b19 i32* %arg, i32* %arg1, i32 0, i32 %arg3 ];
-^b16(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg2, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body8 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4 ], [ ^b18 i32* %arg, i32* %arg1, i32 %arg3, i32 %arg4 ];
-^b17(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg2, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body9 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4 ], [ ^b19 i32* %arg, i32* %arg1, i32 %arg3, i32 %arg4 ];
-^b18(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp neq i32 %arg3, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then6 i32* %arg1, i32* %arg, i32 %arg2 ], [ ^entry3 i32 %arg2, i32* %arg1, i32* %arg ];
-^b19(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i1 %0 = scmp neq i32 %arg3, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then7 i32* %arg1, i32* %arg, i32 %arg2 ], [ ^if.else2 i32 %arg2, i32* %arg, i32* %arg1 ];
-^if.then6(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = neg i32 %arg2;
-    ubr [ ^entry3 i32 %0, i32* %arg, i32* %arg1 ];
-^while.body8(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i32 %0 = mul i32 %arg3, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg2;
-    i32 %3 = call () -> i32 @getch();
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b16 i32* %arg, i32* %arg1, i32 %3, i32 %2, i32 %arg4 ], [ ^b18 i32* %arg, i32* %arg1, i32 %2, i32 %arg4 ];
-^if.then7(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = neg i32 %arg2;
-    ubr [ ^if.else2 i32 %0, i32* %arg1, i32* %arg ];
-^while.body9(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i32 %0 = mul i32 %arg3, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg2;
-    i32 %3 = call () -> i32 @getch();
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b17 i32* %arg, i32* %arg1, i32 %3, i32 %2, i32 %arg4 ], [ ^b19 i32* %arg, i32* %arg1, i32 %2, i32 %arg4 ];
-^entry3(i32 %arg, i32* %arg1, i32* %arg2):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body10 i32 %arg, i32* %arg1, i32* %arg2, i32 %0, i32 0 ], [ ^b20 i32* %arg2, i32* %arg1, i32 %arg, i32 %0, i32 0 ];
-^if.else2(i32 %arg, i32* %arg1, i32* %arg2):
-    i32 %0 = call (i32, i32*, i32*) -> i32 @find(i32 %arg, i32* %arg2, i32* %arg1);
-    i32 %1 = call () -> i32 @getch();
+    ubr ^while.header;
+^while.header:
+    i32 %1 = load i32* %ch;
     i1 %2 = scmp lt i32 %1, i32 48;
-    cbr i1 %2(prob = 0.5), [ ^while.body11 i32* %arg2, i32* %arg1, i32 %0, i32 %1, i32 0 ], [ ^b21 i32* %arg1, i32* %arg2, i32 %0, i32 %1, i32 0 ];
-^while.body10(i32 %arg, i32* %arg1, i32* %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp eq i32 %arg3, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then8 i32* %arg2, i32* %arg1, i32 %arg ], [ ^b22 i32 %arg, i32* %arg1, i32* %arg2, i32 %arg4 ];
-^b20(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg3, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body10 i32 %arg2, i32* %arg1, i32* %arg, i32 %arg3, i32 %arg4 ], [ ^indirect5 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4 ];
-^while.body11(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp eq i32 %arg3, i32 45;
-    cbr i1 %0(prob = 0.5), [ ^if.then9 i32* %arg1, i32* %arg, i32 %arg2 ], [ ^b23 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg4 ];
-^b21(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg3, i32 57;
-    cbr i1 %0(prob = 0.97), [ ^while.body11 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3, i32 %arg4 ], [ ^indirect6 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4 ];
-^if.then8(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body10 i32 %arg2, i32* %arg1, i32* %arg, i32 %0, i32 1 ], [ ^b20 i32* %arg, i32* %arg1, i32 %arg2, i32 %0, i32 1 ];
-^if.then9(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body11 i32* %arg1, i32* %arg, i32 %arg2, i32 %0, i32 1 ], [ ^b21 i32* %arg, i32* %arg1, i32 %arg2, i32 %0, i32 1 ];
-^b22(i32 %arg, i32* %arg1, i32* %arg2, i32 %arg3):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body10 i32 %arg, i32* %arg1, i32* %arg2, i32 %0, i32 %arg3 ], [ ^b20 i32* %arg2, i32* %arg1, i32 %arg, i32 %0, i32 %arg3 ];
-^indirect5(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg3, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b24 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 0, i32 %arg4 ], [ ^b26 i32* %arg, i32* %arg1, i32 %arg2, i32 0, i32 %arg4 ];
-^b23(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = call () -> i32 @getch();
-    i1 %1 = scmp lt i32 %0, i32 48;
-    cbr i1 %1(prob = 0.5), [ ^while.body11 i32* %arg, i32* %arg1, i32 %arg2, i32 %0, i32 %arg3 ], [ ^b21 i32* %arg1, i32* %arg, i32 %arg2, i32 %0, i32 %arg3 ];
-^indirect6(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp gt i32 %arg3, i32 47;
-    cbr i1 %0(prob = 0.5), [ ^b25 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 0, i32 %arg4 ], [ ^b27 i32* %arg, i32* %arg1, i32 %arg2, i32 0, i32 %arg4 ];
-^b24(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i1 %0 = scmp lt i32 %arg3, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body12 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5 ], [ ^b26 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg4, i32 %arg5 ];
-^b25(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i1 %0 = scmp lt i32 %arg3, i32 58;
-    cbr i1 %0(prob = 0.97), [ ^while.body13 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5 ], [ ^b27 i32* %arg, i32* %arg1, i32 %arg2, i32 %arg4, i32 %arg5 ];
-^b26(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp neq i32 %arg4, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then10 i32 %arg2, i32* %arg1, i32* %arg, i32 %arg3 ], [ ^entry4 i32 %arg2, i32 %arg3, i32* %arg1, i32* %arg, i32* %arg, i32* %arg1 ];
-^b27(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4):
-    i1 %0 = scmp neq i32 %arg4, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then11 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ], [ ^if.else3 i32* %arg1, i32* %arg, i32 %arg2, i32 %arg3 ];
-^if.then10(i32 %arg, i32* %arg1, i32* %arg2, i32 %arg3):
-    i32 %0 = neg i32 %arg3;
-    ubr [ ^entry4 i32 %arg, i32 %0, i32* %arg1, i32* %arg2, i32* %arg2, i32* %arg1 ];
-^while.body12(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i32 %0 = mul i32 %arg4, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg3;
-    i32 %3 = call () -> i32 @getch();
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b24 i32* %arg, i32* %arg1, i32 %arg2, i32 %3, i32 %2, i32 %arg5 ], [ ^b26 i32* %arg, i32* %arg1, i32 %arg2, i32 %2, i32 %arg5 ];
-^if.then11(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = neg i32 %arg3;
-    i32 %1 = call (i32, i32*, i32*) -> i32 @find(i32 %0, i32* %arg, i32* %arg1);
-    i32 %2 = load i32* %arg1;
-    i32* %3 = getelementptr &([100005 * i32]* @fa)[i64 0][i32 %arg2];
-    store i32* %3 with i32 %1;
-    ubr [ ^b28 i32* %arg, i32* %arg1, i32 %2 ];
-^while.body13(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3, i32 %arg4, i32 %arg5):
-    i32 %0 = mul i32 %arg4, i32 10;
-    i32 %1 = add i32 %0, i32 -48;
-    i32 %2 = add i32 %1, i32 %arg3;
-    i32 %3 = call () -> i32 @getch();
-    i1 %4 = scmp gt i32 %3, i32 47;
-    cbr i1 %4(prob = 0.5), [ ^b25 i32* %arg, i32* %arg1, i32 %arg2, i32 %3, i32 %2, i32 %arg5 ], [ ^b27 i32* %arg, i32* %arg1, i32 %arg2, i32 %2, i32 %arg5 ];
-^if.else3(i32* %arg, i32* %arg1, i32 %arg2, i32 %arg3):
-    i32 %0 = call (i32, i32*, i32*) -> i32 @find(i32 %arg3, i32* %arg, i32* %arg1);
-    i32 %1 = load i32* %arg1;
-    i32* %2 = getelementptr &([100005 * i32]* @fa)[i64 0][i32 %arg2];
-    store i32* %2 with i32 %0;
-    ubr [ ^b28 i32* %arg, i32* %arg1, i32 %1 ];
-^entry4(i32 %arg, i32 %arg1, i32* %arg2, i32* %arg3, i32* %arg4, i32* %arg5):
-    i32 %0 = call (i32, i32*, i32*) -> i32 @find(i32 %arg, i32* %arg2, i32* %arg3);
-    i32 %1 = call (i32, i32*, i32*) -> i32 @find(i32 %arg1, i32* %arg2, i32* %arg3);
-    i32 %2 = load i32* %arg3;
-    i1 %3 = scmp eq i32 %0, i32 %1;
-    i32 %4 = zext i1 %3 to i32;
-    call (i32) -> void @putint(i32 %4);
-    call (i32) -> void @putch(i32 10);
-    i32 %5 = add i32 %2, i32 -1;
-    store i32* %arg4 with i32 %5;
+    i32 %3 = zext i1 %2 to i32;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.5), ^b1, ^b;
+^b:
+    i32 %5 = load i32* %ch;
+    i1 %6 = scmp gt i32 %5, i32 57;
+    i32 %7 = zext i1 %6 to i32;
+    i1 %8 = scmp neq i32 %7, i32 0;
+    ubr ^b1;
+^b1:
+    i1 %9 = phi [^b, i1 %8] [^while.header, i1 true];
+    i32 %10 = zext i1 %9 to i32;
+    i1 %11 = scmp neq i32 %10, i32 0;
+    cbr i1 %11(prob = 0.97), ^while.body, ^b2;
+^b2:
+    ubr ^while.header1;
+^while.body:
+    i32 %12 = load i32* %ch;
+    i1 %13 = scmp eq i32 %12, i32 45;
+    i32 %14 = zext i1 %13 to i32;
+    i1 %15 = scmp neq i32 %14, i32 0;
+    cbr i1 %15(prob = 0.5), ^if.then, ^b3;
+^if.then:
+    store i32* %f with i32 1;
+    ubr ^b3;
+^b3:
+    i32 %16 = call () -> i32 @getch();
+    store i32* %ch with i32 %16;
+    ubr ^while.header;
+^while.header1:
+    i32 %17 = load i32* %ch;
+    i1 %18 = scmp ge i32 %17, i32 48;
+    i32 %19 = zext i1 %18 to i32;
+    i1 %20 = scmp neq i32 %19, i32 0;
+    cbr i1 %20(prob = 0.5), ^b4, ^b5;
+^b4:
+    i32 %21 = load i32* %ch;
+    i1 %22 = scmp le i32 %21, i32 57;
+    i32 %23 = zext i1 %22 to i32;
+    i1 %24 = scmp neq i32 %23, i32 0;
+    ubr ^b5;
+^b5:
+    i1 %25 = phi [^b4, i1 %24] [^while.header1, i1 false];
+    i32 %26 = zext i1 %25 to i32;
+    i1 %27 = scmp neq i32 %26, i32 0;
+    cbr i1 %27(prob = 0.97), ^while.body1, ^b6;
+^while.body1:
+    i32 %28 = load i32* %x;
+    i32 %29 = mul i32 %28, i32 10;
+    i32 %30 = load i32* %ch;
+    i32 %31 = add i32 %29, i32 %30;
+    i32 %32 = sub i32 %31, i32 48;
+    store i32* %x with i32 %32;
+    i32 %33 = call () -> i32 @getch();
+    store i32* %ch with i32 %33;
+    ubr ^while.header1;
+^b6:
+    i32 %34 = load i32* %f;
+    i1 %35 = scmp neq i32 %34, i32 0;
+    cbr i1 %35(prob = 0.5), ^if.then1, ^if.else;
+^if.then1:
+    i32 %36 = load i32* %x;
+    i32 %37 = neg i32 %36;
+    ret i32 %37;
+^if.else:
+    i32 %38 = load i32* %x;
+    ret i32 %38;
+^b7:
+    unreachable;
+}
+internal i32* @n;
+internal i32* @m;
+internal [100005 * i32]* @fa;
+internal func @init() -> void {
+^entry:
+    i32* %i = alloc i32;
+    store i32* %i with i32 1;
+    ubr ^while.header;
+^while.header:
+    i32 %0 = load i32* %i;
+    i32 %1 = load i32* @n;
+    i1 %2 = scmp le i32 %0, i32 %1;
+    i32 %3 = zext i1 %2 to i32;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.97), ^while.body, ^b;
+^while.body:
+    i32 %5 = load i32* %i;
+    i64 %6 = sext i32 %5 to i64;
+    i32* %7 = getelementptr &([100005 * i32]* @fa)[i64 0][i64 %6];
+    i32 %8 = load i32* %i;
+    store i32* %7 with i32 %8;
+    i32 %9 = load i32* %i;
+    i32 %10 = add i32 %9, i32 1;
+    store i32* %i with i32 %10;
+    ubr ^while.header;
+^b:
+    ret;
+}
+internal func @find(i32 %x) -> i32 {
+^entry:
+    i32* %pa = alloc i32;
+    i32* %x1 = alloc i32;
+    store i32* %x1 with i32 %x;
+    i32 %0 = load i32* %x1;
+    i64 %1 = sext i32 %0 to i64;
+    i32* %2 = getelementptr &([100005 * i32]* @fa)[i64 0][i64 %1];
+    i32 %3 = load i32* %2;
+    i32 %4 = load i32* %x1;
+    i1 %5 = scmp eq i32 %3, i32 %4;
+    i32 %6 = zext i1 %5 to i32;
+    i1 %7 = scmp neq i32 %6, i32 0;
+    cbr i1 %7(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    i32 %8 = load i32* %x1;
+    ret i32 %8;
+^if.else:
+    i32 %9 = load i32* %x1;
+    i64 %10 = sext i32 %9 to i64;
+    i32* %11 = getelementptr &([100005 * i32]* @fa)[i64 0][i64 %10];
+    i32 %12 = load i32* %11;
+    i32 %13 = call (i32) -> i32 @find(i32 %12);
+    store i32* %pa with i32 %13;
+    i32 %14 = load i32* %x1;
+    i64 %15 = sext i32 %14 to i64;
+    i32* %16 = getelementptr &([100005 * i32]* @fa)[i64 0][i64 %15];
+    i32 %17 = load i32* %pa;
+    store i32* %16 with i32 %17;
+    i32 %18 = load i32* %pa;
+    ret i32 %18;
+^b:
+    unreachable;
+}
+internal func @same(i32 %x, i32 %y) -> i32 {
+^entry:
+    i32* %y1 = alloc i32;
+    i32* %x1 = alloc i32;
+    store i32* %x1 with i32 %x;
+    store i32* %y1 with i32 %y;
+    i32 %0 = load i32* %x1;
+    i32 %1 = call (i32) -> i32 @find(i32 %0);
+    i32 %2 = load i32* %y1;
+    i32 %3 = call (i32) -> i32 @find(i32 %2);
+    i1 %4 = scmp eq i32 %1, i32 %3;
+    i32 %5 = zext i1 %4 to i32;
     i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.97), [ ^while.body5 i32* %arg5, i32* %arg4 ], [ ^b9 ];
-^b28(i32* %arg, i32* %arg1, i32 %arg2):
-    i32 %0 = add i32 %arg2, i32 -1;
-    store i32* %arg1 with i32 %0;
-    i1 %1 = scmp neq i32 %0, i32 0;
-    cbr i1 %1(prob = 0.97), [ ^while.body5 i32* %arg, i32* %arg1 ], [ ^b9 ];
+    cbr i1 %6(prob = 0.5), ^if.then, ^b;
+^if.then:
+    ret i32 1;
+^b:
+    ret i32 0;
+}
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %y = alloc i32;
+    i32* %x = alloc i32;
+    i32* %y1 = alloc i32;
+    i32* %x1 = alloc i32;
+    i32* %ch = alloc i32;
+    i32 %0 = call () -> i32 @quick_read();
+    store i32* @n with i32 %0;
+    i32 %1 = call () -> i32 @quick_read();
+    store i32* @m with i32 %1;
+    call () -> void @init();
+    ubr ^while.header;
+^while.header:
+    i32 %2 = load i32* @m;
+    i1 %3 = scmp neq i32 %2, i32 0;
+    cbr i1 %3(prob = 0.97), ^while.body, ^b;
+^while.body:
+    i32 %4 = call () -> i32 @getch();
+    store i32* %ch with i32 %4;
+    ubr ^while.header1;
+^b:
+    ret i32 0;
+^while.header1:
+    i32 %5 = load i32* %ch;
+    i1 %6 = scmp neq i32 %5, i32 81;
+    i32 %7 = zext i1 %6 to i32;
+    i1 %8 = scmp neq i32 %7, i32 0;
+    cbr i1 %8(prob = 0.5), ^b1, ^b2;
+^b1:
+    i32 %9 = load i32* %ch;
+    i1 %10 = scmp neq i32 %9, i32 85;
+    i32 %11 = zext i1 %10 to i32;
+    i1 %12 = scmp neq i32 %11, i32 0;
+    ubr ^b2;
+^b2:
+    i1 %13 = phi [^b1, i1 %12] [^while.header1, i1 false];
+    i32 %14 = zext i1 %13 to i32;
+    i1 %15 = scmp neq i32 %14, i32 0;
+    cbr i1 %15(prob = 0.97), ^while.body1, ^b3;
+^while.body1:
+    i32 %16 = call () -> i32 @getch();
+    store i32* %ch with i32 %16;
+    ubr ^while.header1;
+^b3:
+    i32 %17 = load i32* %ch;
+    i1 %18 = scmp eq i32 %17, i32 81;
+    i32 %19 = zext i1 %18 to i32;
+    i1 %20 = scmp neq i32 %19, i32 0;
+    cbr i1 %20(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    i32 %21 = call () -> i32 @quick_read();
+    store i32* %x1 with i32 %21;
+    i32 %22 = call () -> i32 @quick_read();
+    store i32* %y1 with i32 %22;
+    i32 %23 = load i32* %x1;
+    i32 %24 = load i32* %y1;
+    i32 %25 = call (i32, i32) -> i32 @same(i32 %23, i32 %24);
+    call (i32) -> void @putint(i32 %25);
+    call (i32) -> void @putch(i32 10);
+    ubr ^b4;
+^if.else:
+    i32 %26 = call () -> i32 @quick_read();
+    i32 %27 = call (i32) -> i32 @find(i32 %26);
+    store i32* %x with i32 %27;
+    i32 %28 = call () -> i32 @quick_read();
+    i32 %29 = call (i32) -> i32 @find(i32 %28);
+    store i32* %y with i32 %29;
+    i32 %30 = load i32* %x;
+    i64 %31 = sext i32 %30 to i64;
+    i32* %32 = getelementptr &([100005 * i32]* @fa)[i64 0][i64 %31];
+    i32 %33 = load i32* %y;
+    store i32* %32 with i32 %33;
+    ubr ^b4;
+^b4:
+    i32 %34 = load i32* @m;
+    i32 %35 = sub i32 %34, i32 1;
+    store i32* @m with i32 %35;
+    ubr ^while.header;
 }

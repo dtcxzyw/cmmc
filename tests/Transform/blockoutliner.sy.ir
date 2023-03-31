@@ -1,9 +1,28 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @putint(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry():
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { Entry } {
+^entry:
     i32 %0 = call () -> i32 @getint();
-    i32 %1 = call () -> i32 @getint();
-    call (i32) -> void @putint(i32 %1);
+    i1 %1 = scmp neq i32 %0, i32 0;
+    cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    i32 %2 = call () -> i32 @getint();
+    call (i32) -> void @putint(i32 %2);
+    ret i32 0;
+^if.else:
+    i32 %3 = call () -> i32 @getint();
+    call (i32) -> void @putint(i32 %3);
+    ret i32 0;
+^b:
     ret i32 0;
 }

@@ -1,4 +1,58 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
-^entry():
-    ret i32 11;
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %a = alloc i32;
+    i32* %b = alloc i32;
+    i32* %a1 = alloc i32;
+    i32* %b1 = alloc i32;
+    i32* %a2 = alloc i32;
+    store i32* %a2 with i32 893;
+    store i32* %b1 with i32 716;
+    store i32* %a1 with i32 837;
+    i32 %0 = load i32* %a1;
+    i32 %1 = add i32 %0, i32 128;
+    store i32* %a1 with i32 %1;
+    i32 %2 = load i32* %b1;
+    i32 %3 = load i32* %a1;
+    i32 %4 = add i32 %2, i32 %3;
+    store i32* %b1 with i32 %4;
+    store i32* %b with i32 241;
+    i32 %5 = load i32* %a1;
+    i32 %6 = load i32* %b;
+    i32 %7 = add i32 %5, i32 %6;
+    i32 %8 = sub i32 %7, i32 412;
+    store i32* %a1 with i32 %8;
+    store i32* %a with i32 771;
+    i32 %9 = load i32* %b;
+    i32 %10 = load i32* %a;
+    i32 %11 = add i32 %9, i32 %10;
+    i32 %12 = sub i32 %11, i32 18;
+    store i32* %b with i32 %12;
+    i32 %13 = load i32* %b;
+    i32 %14 = add i32 %13, i32 66;
+    store i32* %a with i32 %14;
+    i32 %15 = load i32* %b;
+    i32 %16 = load i32* %a1;
+    i32 %17 = add i32 %15, i32 %16;
+    i32 %18 = sub i32 %17, i32 33;
+    store i32* %b with i32 %18;
+    i32 %19 = load i32* %b;
+    i32 %20 = sub i32 %19, i32 55;
+    store i32* %a1 with i32 %20;
+    i32 %21 = load i32* %a1;
+    i32 %22 = load i32* %b;
+    i32 %23 = add i32 %21, i32 %22;
+    i32 %24 = srem i32 %23, i32 21;
+    ret i32 %24;
 }

@@ -1,6 +1,28 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry():
-    ret i32 0;
+func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 {
+^entry:
+    i32* %b = alloc i32;
+    i32* %a = alloc i32;
+    store i32* %a with i32 1;
+    store i32* %b with i32 0;
+    i32 %0 = load i32* %b;
+    i1 %1 = scmp neq i32 %0, i32 0;
+    cbr i1 %1(prob = 0.5), ^lhsBlock, ^rhsBlock;
+^lhsBlock:
+    ubr ^b1;
+^rhsBlock:
+    ubr ^b1;
+^b1:
+    i32* %2 = phi [^rhsBlock, i32* %b] [^lhsBlock, i32* %a];
+    store i32* %2 with i32 1;
+    i1 %3 = scmp neq i32 1, i32 0;
+    cbr i1 %3(prob = 0.5), ^lhsBlock1, ^rhsBlock1;
+^lhsBlock1:
+    ubr ^b2;
+^rhsBlock1:
+    ubr ^b2;
+^b2:
+    i32 %4 = phi [^rhsBlock1, i32 1] [^lhsBlock1, i32 0];
+    ret i32 %4;
 }

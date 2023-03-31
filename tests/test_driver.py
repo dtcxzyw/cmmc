@@ -10,12 +10,14 @@ import platform
 import math
 
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -ffp-contract=on -w "
+clang_ref_command = "clang -x c++ -O3 -DNDEBUG -emit-llvm -S -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '3'
 fast_fail = True
+generate_ref = False
 assert os.path.exists(rars_path)
 
 # O0 reference
@@ -322,6 +324,17 @@ def sysy_ref(src):
                                 src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
+def sysy_ref_clang(src: str):
+    header = tests_path + "/SysY2022/sylib.h"
+    output = src.removesuffix('.sy')+".ll"
+    ref_command = clang_ref_command
+    include = "-include "+header
+    if "many_params3" in src:
+        ref_command = clang_ref_command.replace("c++", "c")
+        include = ""
+    return os.system("{} {} -Ddelete=delete_ -o {} {}".format(ref_command, include, output, src)) == 0
+
+
 dict_gcc = dict()
 dict_cmmc = dict()
 
@@ -494,10 +507,9 @@ if len(sys.argv) >= 4:
 
 # TODO: has llvm support?
 
-generate_ref = False
-
 if generate_ref:
     test_cases = []
+    fast_fail = False
 
 res = []
 start = time.perf_counter()
@@ -585,16 +597,18 @@ if "llvm" in test_cases:
 
 
 if generate_ref:
-    #test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+    test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+    test("Reference SysY Clang", tests_path +
+         "/SysY2022", ".sy", sysy_ref_clang)
     #test("Reference Spl", tests_path + "/", ".spl", spl_ref)
-    test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
-    test("Reference Spl->TAC Extra", tests_path +
-         "/Project3", ".spl", spl_tac_ref)
-    test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
-    test("Reference Spl->MIPS Extra", tests_path +
-         "/Project4", ".spl", spl_mips_ref)
-    test("Reference Spl->RISCV64", tests_path +
-         "/TAC2MC", ".spl", spl_riscv64_ref)
+    # test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
+    # test("Reference Spl->TAC Extra", tests_path +
+    #     "/Project3", ".spl", spl_tac_ref)
+    # test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
+    # test("Reference Spl->MIPS Extra", tests_path +
+    #     "/Project4", ".spl", spl_mips_ref)
+    # test("Reference Spl->RISCV64", tests_path +
+    #     "/TAC2MC", ".spl", spl_riscv64_ref)
 
 end = time.perf_counter()
 

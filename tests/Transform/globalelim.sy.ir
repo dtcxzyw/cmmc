@@ -1,8 +1,25 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry():
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+internal i32* @a;
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %b = alloc i32;
     i32 %0 = call () -> i32 @getint();
+    store i32* %b with i32 %0;
     i32 %1 = call () -> i32 @getint();
-    i32 %2 = add i32 %0, i32 %1;
-    ret i32 %2;
+    store i32* @a with i32 %1;
+    i32 %2 = load i32* @a;
+    i32 %3 = load i32* %b;
+    i32 %4 = add i32 %2, i32 %3;
+    ret i32 %4;
 }

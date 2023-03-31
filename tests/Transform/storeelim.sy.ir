@@ -1,16 +1,39 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry():
+internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %z = alloc i32;
+    i32* %y = alloc i32;
+    i32* %x = alloc i32;
     i32 %0 = call () -> i32 @getint();
-    i32 %1 = call () -> i32 @getint();
-    i32 %2 = add i32 %0, i32 %1;
-    i32 %3 = call () -> i32 @getint();
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.5), [ ^indirect i32 %2 ], [ ^indirect1 i32 %2 ];
-^indirect(i32 %arg):
-    i32 %0 = call () -> i32 @getint();
-    i32 %1 = add i32 %0, i32 %arg;
-    ret i32 %1;
-^indirect1(i32 %arg):
-    ret i32 %arg;
+    store i32* %x with i32 %0;
+    i32 %1 = load i32* %x;
+    i32 %2 = add i32 %1, i32 1;
+    store i32* %y with i32 %2;
+    i32 %3 = load i32* %x;
+    i32 %4 = call () -> i32 @getint();
+    i32 %5 = add i32 %3, i32 %4;
+    store i32* %z with i32 %5;
+    i32 %6 = call () -> i32 @getint();
+    i1 %7 = scmp neq i32 %6, i32 0;
+    cbr i1 %7(prob = 0.5), ^if.then, ^b;
+^if.then:
+    i32 %8 = load i32* %z;
+    i32 %9 = call () -> i32 @getint();
+    i32 %10 = add i32 %8, i32 %9;
+    store i32* %z with i32 %10;
+    ubr ^b;
+^b:
+    i32 %11 = load i32* %z;
+    ret i32 %11;
 }

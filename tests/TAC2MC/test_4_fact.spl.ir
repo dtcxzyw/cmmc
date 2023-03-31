@@ -1,27 +1,50 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @fact(i32) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
-^entry(i32 %arg):
-    i1 %0 = scmp eq i32 %arg, i32 1;
-    cbr i1 %0(prob = 0.5), [ ^indirect i32 %arg ], [ ^indirect1 i32 %arg ];
-^indirect(i32 %arg):
-    ret i32 %arg;
-^indirect1(i32 %arg):
-    i32 %0 = add i32 %arg, i32 -1;
-    i32 %1 = call (i32) -> i32 @fact(i32 %0);
-    i32 %2 = mul i32 %1, i32 %arg;
-    ret i32 %2;
+func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @fact(i32 %n) -> i32 {
+^entry:
+    i32* %n1 = alloc i32;
+    store i32* %n1 with i32 %n;
+    i32 %0 = load i32* %n1;
+    i1 %1 = scmp eq i32 %0, i32 1;
+    i32 %2 = zext i1 %1 to i32;
+    i1 %3 = scmp neq i32 %2, i32 0;
+    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    i32 %4 = load i32* %n1;
+    ret i32 %4;
+^if.else:
+    i32 %5 = load i32* %n1;
+    i32 %6 = load i32* %n1;
+    i32 %7 = sub i32 %6, i32 1;
+    i32 %8 = call (i32) -> i32 @fact(i32 %7);
+    i32 %9 = mul i32 %5, i32 %8;
+    ret i32 %9;
+^b:
+    unreachable;
 }
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry():
+func @main() -> i32 {
+^entry:
+    i32* %result = alloc i32;
+    i32* %m = alloc i32;
+    store i32* %m with i32 0;
+    store i32* %result with i32 0;
     i32 %0 = call () -> i32 @read();
-    i1 %1 = scmp gt i32 %0, i32 1;
-    cbr i1 %1(prob = 0.5), [ ^indirect i32 %0 ], [ ^indirect1 ];
-^indirect(i32 %arg):
-    i32 %0 = call (i32) -> i32 @fact(i32 %arg);
-    call (i32) -> void @write(i32 %0);
-    ret i32 0;
-^indirect1():
-    call (i32) -> void @write(i32 1);
+    store i32* %m with i32 %0;
+    i32 %1 = load i32* %m;
+    i1 %2 = scmp gt i32 %1, i32 1;
+    i32 %3 = zext i1 %2 to i32;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
+^if.then:
+    i32 %5 = load i32* %m;
+    i32 %6 = call (i32) -> i32 @fact(i32 %5);
+    store i32* %result with i32 %6;
+    ubr ^b;
+^if.else:
+    store i32* %result with i32 1;
+    ubr ^b;
+^b:
+    i32 %7 = load i32* %result;
+    call (i32) -> void @write(i32 %7);
     ret i32 0;
 }

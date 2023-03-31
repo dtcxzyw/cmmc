@@ -1,15 +1,46 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry():
+internal func @getarray() -> i32 { NoMemoryRead };
+internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
+internal func @getfarray() -> i32 { NoMemoryRead };
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putarray() -> void { NoMemoryWrite };
+internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
+internal func @putfarray() -> void { NoMemoryWrite };
+internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
+internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { Entry } {
+^entry:
+    i32* %c = alloc i32;
+    i8* %b = alloc i8;
+    i32* %a = alloc i32;
+    i8* %w = alloc i8;
+    i8* %z = alloc i8;
+    i32* %y = alloc i32;
+    i32* %x = alloc i32;
     i32 %0 = call () -> i32 @getint();
+    store i32* %x with i32 %0;
     i32 %1 = call () -> i32 @getch();
-    i8 %2 = trunc i32 %1 to i8;
-    i8 %3 = trunc i32 %0 to i8;
-    i32 %4 = sext i8 %3 to i32;
+    store i32* %y with i32 %1;
+    i32 %2 = load i32* %y;
+    i8 %3 = trunc i32 %2 to i8;
+    store i8* %z with i8 %3;
+    i32 %4 = load i32* %x;
     i8 %5 = trunc i32 %4 to i8;
-    i32 %6 = sext i8 %2 to i32;
-    i32 %7 = sext i8 %5 to i32;
-    i32 %8 = add i32 %6, i32 %7;
-    ret i32 %8;
+    store i8* %w with i8 %5;
+    i8 %6 = load i8* %w;
+    i32 %7 = sext i8 %6 to i32;
+    store i32* %a with i32 %7;
+    i32 %8 = load i32* %a;
+    i8 %9 = trunc i32 %8 to i8;
+    store i8* %b with i8 %9;
+    i8 %10 = load i8* %z;
+    i32 %11 = sext i8 %10 to i32;
+    store i32* %c with i32 %11;
+    i8 %12 = load i8* %b;
+    i32 %13 = load i32* %c;
+    i32 %14 = sext i8 %12 to i32;
+    i32 %15 = add i32 %14, i32 %13;
+    ret i32 %15;
 }

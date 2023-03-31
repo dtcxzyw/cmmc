@@ -1,20 +1,33 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry():
+func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 {
+^entry:
+    i32* %n = alloc i32;
+    store i32* %n with i32 0;
     i32 %0 = call () -> i32 @read();
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1(prob = 0.5), [ ^if.then ], [ ^indirect i32 %0 ];
-^indirect(i32 %arg):
-    i1 %0 = scmp lt i32 %arg, i32 0;
-    cbr i1 %0(prob = 0.5), [ ^if.then1 ], [ ^if.else ];
-^if.then():
+    store i32* %n with i32 %0;
+    i32 %1 = load i32* %n;
+    i1 %2 = scmp gt i32 %1, i32 0;
+    i32 %3 = zext i1 %2 to i32;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
+^if.then:
     call (i32) -> void @write(i32 1);
-    ret i32 0;
-^if.then1():
+    ubr ^b;
+^if.else:
+    i32 %5 = load i32* %n;
+    i1 %6 = scmp lt i32 %5, i32 0;
+    i32 %7 = zext i1 %6 to i32;
+    i1 %8 = scmp neq i32 %7, i32 0;
+    cbr i1 %8(prob = 0.5), ^if.then1, ^if.else1;
+^if.then1:
     call (i32) -> void @write(i32 -1);
-    ret i32 0;
-^if.else():
+    ubr ^b1;
+^if.else1:
     call (i32) -> void @write(i32 0);
+    ubr ^b1;
+^b:
     ret i32 0;
+^b1:
+    ubr ^b;
 }

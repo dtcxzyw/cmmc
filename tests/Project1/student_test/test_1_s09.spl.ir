@@ -1,10 +1,22 @@
 func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-func @abaaba(i32) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry(i32 %arg):
+func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @abaaba(i32 %times) -> i8 {
+^entry:
+    i32* %i = alloc i32;
+    i32* %i1 = alloc i32;
+    i32* %times1 = alloc i32;
+    store i32* %times1 with i32 %times;
+    store i32* %i1 with i32 1;
+    store i32* %i1 with i32 2;
+    store i32* %i with i32 2;
+    store i32* %i with i32 3;
     unreachable;
 }
-func @sleeeeeeeep() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
-^entry():
+func @sleeeeeeeep() -> i8 {
+^entry:
+    i32* %i = alloc i32;
+    i32* %i1 = alloc i32;
+    store i32* %i1 with i32 1;
+    store i32* %i with i32 2;
     unreachable;
 }
