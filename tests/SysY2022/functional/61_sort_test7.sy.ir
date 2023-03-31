@@ -19,90 +19,83 @@ internal func @merge_sort(i32 %l, i32 %r, [2 * [100 * i32]]* %0) -> void {
     i32 %7 = phi [^b3, i32 %7] [^b, i32 %l];
     i32 %8 = phi [^b3, i32 %8] [^b, i32 %r];
     i32 %9 = phi [^b3, i32 %9] [^b, i32 %6];
-    i32 %10 = phi [^b3, i32 %47] [^b, i32 %l];
-    i32 %11 = phi [^b3, i32 %48] [^b, i32 %6];
-    i32 %12 = phi [^b3, i32 %50] [^b, i32 %l];
-    i32 %13 = phi [^b3, i32 %9] [^b, i32 %6];
-    i32 %14 = phi [^b3, i32 %49] [^b, i32 %l];
-    i1 %15 = scmp lt i32 %14, i32 %13;
-    cbr i1 %15(prob = 0.5), ^b1, ^b2;
+    i32 %10 = phi [^b3, i32 %43] [^b, i32 %l];
+    i32 %11 = phi [^b3, i32 %44] [^b, i32 %6];
+    i32 %12 = phi [^b3, i32 %45] [^b, i32 %l];
+    i1 %13 = scmp lt i32 %10, i32 %9;
+    cbr i1 %13(prob = 0.5), ^b1, ^b2;
 ^b1:
-    i1 %16 = scmp lt i32 %11, i32 %8;
+    i1 %14 = scmp lt i32 %11, i32 %8;
     ubr ^b2;
 ^b2:
-    i1 %17 = phi [^b1, i1 %16] [^while.header, i1 false];
-    cbr i1 %17(prob = 0.97), ^while.body, ^while.header1;
+    i1 %15 = phi [^b1, i1 %14] [^while.header, i1 false];
+    cbr i1 %15(prob = 0.97), ^while.body, ^while.header1;
 ^while.body:
-    i32* %18 = getelementptr &([100 * i32]* %4)[i64 0][i32 %10];
+    i32* %16 = getelementptr &([100 * i32]* %4)[i64 0][i32 %10];
+    i32 %17 = load i32* %16;
+    i32* %18 = getelementptr &([100 * i32]* %4)[i64 0][i32 %11];
     i32 %19 = load i32* %18;
-    i32* %20 = getelementptr &([100 * i32]* %4)[i64 0][i32 %11];
-    i32 %21 = load i32* %20;
-    i1 %22 = scmp lt i32 %19, i32 %21;
-    cbr i1 %22(prob = 0.5), ^if.then1, ^if.else;
+    i1 %20 = scmp lt i32 %17, i32 %19;
+    cbr i1 %20(prob = 0.5), ^if.then1, ^if.else;
 ^while.header1:
-    i32 %23 = phi [^b2, i32 %7] [^while.body1, i32 %23];
-    i32 %24 = phi [^b2, i32 %8] [^while.body1, i32 %24];
-    i32 %25 = phi [^b2, i32 %9] [^while.body1, i32 %25];
-    i32 %26 = phi [^b2, i32 %10] [^while.body1, i32 %39];
-    i32 %27 = phi [^b2, i32 %11] [^while.body1, i32 %27];
-    i32 %28 = phi [^b2, i32 %12] [^while.body1, i32 %40];
-    i32 %29 = phi [^b2, i32 %10] [^while.body1, i32 %39];
-    i1 %30 = scmp lt i32 %29, i32 %25;
-    cbr i1 %30(prob = 0.97), ^while.body1, ^while.header2;
+    i32 %21 = phi [^b2, i32 %7] [^while.body1, i32 %21];
+    i32 %22 = phi [^b2, i32 %8] [^while.body1, i32 %22];
+    i32 %23 = phi [^b2, i32 %9] [^while.body1, i32 %23];
+    i32 %24 = phi [^b2, i32 %10] [^while.body1, i32 %36];
+    i32 %25 = phi [^b2, i32 %11] [^while.body1, i32 %25];
+    i32 %26 = phi [^b2, i32 %12] [^while.body1, i32 %37];
+    i1 %27 = scmp lt i32 %24, i32 %23;
+    cbr i1 %27(prob = 0.97), ^while.body1, ^while.header2;
 ^if.then1:
-    i32* %31 = getelementptr &([100 * i32]* %3)[i64 0][i32 %12];
-    i32 %32 = load i32* %18;
-    store i32* %31 with i32 %32;
-    i32 %33 = add i32 %10, i32 1;
+    i32* %28 = getelementptr &([100 * i32]* %3)[i64 0][i32 %12];
+    i32 %29 = load i32* %16;
+    store i32* %28 with i32 %29;
+    i32 %30 = add i32 %10, i32 1;
     ubr ^b3;
 ^if.else:
-    i32* %34 = getelementptr &([100 * i32]* %3)[i64 0][i32 %12];
-    store i32* %34 with i32 %21;
-    i32 %35 = add i32 %11, i32 1;
+    i32* %31 = getelementptr &([100 * i32]* %3)[i64 0][i32 %12];
+    store i32* %31 with i32 %19;
+    i32 %32 = add i32 %11, i32 1;
     ubr ^b3;
 ^while.body1:
-    i32* %36 = getelementptr &([100 * i32]* %3)[i64 0][i32 %28];
-    i32* %37 = getelementptr &([100 * i32]* %4)[i64 0][i32 %26];
-    i32 %38 = load i32* %37;
-    store i32* %36 with i32 %38;
-    i32 %39 = add i32 %26, i32 1;
-    i32 %40 = add i32 %28, i32 1;
+    i32* %33 = getelementptr &([100 * i32]* %3)[i64 0][i32 %26];
+    i32* %34 = getelementptr &([100 * i32]* %4)[i64 0][i32 %24];
+    i32 %35 = load i32* %34;
+    store i32* %33 with i32 %35;
+    i32 %36 = add i32 %24, i32 1;
+    i32 %37 = add i32 %26, i32 1;
     ubr ^while.header1;
 ^while.header2:
-    i32 %41 = phi [^while.header1, i32 %23] [^while.body2, i32 %41];
-    i32 %42 = phi [^while.header1, i32 %24] [^while.body2, i32 %42];
-    i32 %43 = phi [^while.header1, i32 %27] [^while.body2, i32 %54];
-    i32 %44 = phi [^while.header1, i32 %28] [^while.body2, i32 %55];
-    i32 %45 = phi [^while.header1, i32 %27] [^while.body2, i32 %54];
-    i1 %46 = scmp lt i32 %45, i32 %42;
-    cbr i1 %46(prob = 0.97), ^while.body2, ^while.header3;
+    i32 %38 = phi [^while.header1, i32 %21] [^while.body2, i32 %38];
+    i32 %39 = phi [^while.header1, i32 %22] [^while.body2, i32 %39];
+    i32 %40 = phi [^while.header1, i32 %25] [^while.body2, i32 %49];
+    i32 %41 = phi [^while.header1, i32 %26] [^while.body2, i32 %50];
+    i1 %42 = scmp lt i32 %40, i32 %39;
+    cbr i1 %42(prob = 0.97), ^while.body2, ^while.header3;
 ^b3:
-    i32 %47 = phi [^if.else, i32 %10] [^if.then1, i32 %33];
-    i32 %48 = phi [^if.else, i32 %35] [^if.then1, i32 %11];
-    i32 %49 = phi [^if.else, i32 %10] [^if.then1, i32 %33];
-    i32 %50 = add i32 %12, i32 1;
+    i32 %43 = phi [^if.else, i32 %10] [^if.then1, i32 %30];
+    i32 %44 = phi [^if.else, i32 %32] [^if.then1, i32 %11];
+    i32 %45 = add i32 %12, i32 1;
     ubr ^while.header;
 ^while.body2:
-    i32* %51 = getelementptr &([100 * i32]* %3)[i64 0][i32 %44];
-    i32* %52 = getelementptr &([100 * i32]* %4)[i64 0][i32 %43];
-    i32 %53 = load i32* %52;
-    store i32* %51 with i32 %53;
-    i32 %54 = add i32 %43, i32 1;
-    i32 %55 = add i32 %44, i32 1;
+    i32* %46 = getelementptr &([100 * i32]* %3)[i64 0][i32 %41];
+    i32* %47 = getelementptr &([100 * i32]* %4)[i64 0][i32 %40];
+    i32 %48 = load i32* %47;
+    store i32* %46 with i32 %48;
+    i32 %49 = add i32 %40, i32 1;
+    i32 %50 = add i32 %41, i32 1;
     ubr ^while.header2;
 ^while.header3:
-    i32 %56 = phi [^while.header2, i32 %41] [^while.body3, i32 %64];
-    i32 %57 = phi [^while.header2, i32 %42] [^while.body3, i32 %57];
-    i32 %58 = phi [^while.header2, i32 %41] [^while.body3, i32 %64];
-    i32 %59 = phi [^while.header2, i32 %42] [^while.body3, i32 %57];
-    i1 %60 = scmp lt i32 %58, i32 %59;
-    cbr i1 %60(prob = 0.97), ^while.body3, ^if.then;
+    i32 %51 = phi [^while.header2, i32 %38] [^while.body3, i32 %57];
+    i32 %52 = phi [^while.header2, i32 %39] [^while.body3, i32 %52];
+    i1 %53 = scmp lt i32 %51, i32 %52;
+    cbr i1 %53(prob = 0.97), ^while.body3, ^if.then;
 ^while.body3:
-    i32* %61 = getelementptr &([100 * i32]* %4)[i64 0][i32 %56];
-    i32* %62 = getelementptr &([100 * i32]* %3)[i64 0][i32 %56];
-    i32 %63 = load i32* %62;
-    store i32* %61 with i32 %63;
-    i32 %64 = add i32 %56, i32 1;
+    i32* %54 = getelementptr &([100 * i32]* %4)[i64 0][i32 %51];
+    i32* %55 = getelementptr &([100 * i32]* %3)[i64 0][i32 %51];
+    i32 %56 = load i32* %55;
+    store i32* %54 with i32 %56;
+    i32 %57 = add i32 %51, i32 1;
     ubr ^while.header3;
 }
 func @main() -> i32 { NoRecurse Entry } {

@@ -34,7 +34,7 @@ internal func @dfs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %last, [200 * i32
     i1 %18 = scmp neq i32 %b, i32 0;
     cbr i1 %18(prob = 0.5), ^if.then4, ^b5;
 ^if.then3:
-    i32 %19 = phi [^if.then2, i32 1] [^b4, i32 0];
+    i32 %19 = phi [^b4, i32 0] [^if.then2, i32 1];
     i32 %20 = sub i32 %a, i32 %19;
     i32 %21 = add i32 %a, i32 -1;
     i32 %22 = call (i32, i32, i32, i32, i32, i32, [200 * i32]*, [20 * i32]*) -> i32 @dfs(i32 %21, i32 %b, i32 %c, i32 %d, i32 %e, i32 1, [200 * i32]* %0, [20 * i32]* %1);
@@ -89,7 +89,7 @@ internal func @dfs(i32 %a, i32 %b, i32 %c, i32 %d, i32 %e, i32 %last, [200 * i32
     i1 %49 = scmp neq i32 %e, i32 0;
     cbr i1 %49(prob = 0.5), ^if.then10, ^b11;
 ^if.then9:
-    i32 %50 = phi [^b10, i32 0] [^if.then8, i32 1];
+    i32 %50 = phi [^if.then8, i32 1] [^b10, i32 0];
     i32 %51 = sub i32 %d, i32 %50;
     i32 %52 = add i32 %c, i32 1;
     i32 %53 = add i32 %d, i32 -1;
@@ -561,104 +561,97 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %220 = call () -> i32 @getint();
     ubr ^while.header;
 ^while.header:
-    i32 %221 = phi [^b, i32 %225] [^entry, i32 %220];
-    i32 %222 = phi [^b, i32 %234] [^entry, i32 0];
-    i32 %223 = phi [^b, i32 %234] [^entry, i32 0];
-    i1 %224 = scmp lt i32 %223, i32 18;
-    cbr i1 %224(prob = 0.97), ^while.header1, ^while.header2;
+    i32 %221 = phi [^b, i32 %224] [^entry, i32 %220];
+    i32 %222 = phi [^b, i32 %231] [^entry, i32 0];
+    i1 %223 = scmp lt i32 %222, i32 18;
+    cbr i1 %223(prob = 0.97), ^while.header1, ^while.header2;
 ^while.header1:
-    i32 %225 = phi [^while.header, i32 %221] [^b2, i32 %241];
-    i32 %226 = phi [^while.header, i32 %222] [^b2, i32 %242];
-    i32 %227 = phi [^while.header, i32 0] [^b2, i32 %253];
-    i32 %228 = phi [^while.header, i32 0] [^b2, i32 %253];
-    i1 %229 = scmp lt i32 %228, i32 18;
-    cbr i1 %229(prob = 0.97), ^while.header3, ^b;
+    i32 %224 = phi [^while.header, i32 %221] [^b2, i32 %238];
+    i32 %225 = phi [^while.header, i32 %222] [^b2, i32 %239];
+    i32 %226 = phi [^while.header, i32 0] [^b2, i32 %249];
+    i1 %227 = scmp lt i32 %226, i32 18;
+    cbr i1 %227(prob = 0.97), ^while.header3, ^b;
 ^while.header2:
-    i32 %230 = phi [^while.header, i32 %221] [^while.body, i32 %230];
-    i32 %231 = phi [^while.header, i32 0] [^while.body, i32 %240];
-    i32 %232 = phi [^while.header, i32 0] [^while.body, i32 %240];
-    i1 %233 = scmp lt i32 %232, i32 %230;
-    cbr i1 %233(prob = 0.97), ^while.body, ^b1;
+    i32 %228 = phi [^while.header, i32 %221] [^while.body, i32 %228];
+    i32 %229 = phi [^while.header, i32 0] [^while.body, i32 %237];
+    i1 %230 = scmp lt i32 %229, i32 %228;
+    cbr i1 %230(prob = 0.97), ^while.body, ^b1;
 ^b:
-    i32 %234 = add i32 %226, i32 1;
+    i32 %231 = add i32 %225, i32 1;
     ubr ^while.header;
 ^while.body:
-    i32* %235 = getelementptr &([200 * i32]* %list)[i64 0][i32 %231];
-    i32 %236 = call () -> i32 @getint();
-    store i32* %235 with i32 %236;
-    i32* %237 = getelementptr &([20 * i32]* %cns)[i64 0][i32 %236];
-    i32 %238 = load i32* %237;
-    i32 %239 = add i32 %238, i32 1;
-    store i32* %237 with i32 %239;
-    i32 %240 = add i32 %231, i32 1;
+    i32* %232 = getelementptr &([200 * i32]* %list)[i64 0][i32 %229];
+    i32 %233 = call () -> i32 @getint();
+    store i32* %232 with i32 %233;
+    i32* %234 = getelementptr &([20 * i32]* %cns)[i64 0][i32 %233];
+    i32 %235 = load i32* %234;
+    i32 %236 = add i32 %235, i32 1;
+    store i32* %234 with i32 %236;
+    i32 %237 = add i32 %229, i32 1;
     ubr ^while.header2;
 ^while.header3:
-    i32 %241 = phi [^while.header1, i32 %225] [^b3, i32 %254];
-    i32 %242 = phi [^while.header1, i32 %226] [^b3, i32 %255];
-    i32 %243 = phi [^while.header1, i32 %227] [^b3, i32 %256];
-    i32 %244 = phi [^while.header1, i32 0] [^b3, i32 %261];
-    i32 %245 = phi [^while.header1, i32 0] [^b3, i32 %261];
-    i1 %246 = scmp lt i32 %245, i32 18;
-    cbr i1 %246(prob = 0.97), ^while.header4, ^b2;
+    i32 %238 = phi [^while.header1, i32 %224] [^b3, i32 %250];
+    i32 %239 = phi [^while.header1, i32 %225] [^b3, i32 %251];
+    i32 %240 = phi [^while.header1, i32 %226] [^b3, i32 %252];
+    i32 %241 = phi [^while.header1, i32 0] [^b3, i32 %256];
+    i1 %242 = scmp lt i32 %241, i32 18;
+    cbr i1 %242(prob = 0.97), ^while.header4, ^b2;
 ^b1:
-    i32 %247 = load i32* %201;
-    i32 %248 = load i32* %202;
-    i32 %249 = load i32* %203;
-    i32 %250 = load i32* %204;
-    i32 %251 = load i32* %205;
-    i32 %252 = call (i32, i32, i32, i32, i32, i32, [200 * i32]*, [20 * i32]*) -> i32 @dfs(i32 %247, i32 %248, i32 %249, i32 %250, i32 %251, i32 0, [200 * i32]* %list, [20 * i32]* %cns);
-    call (i32) -> void @putint(i32 %252);
-    ret i32 %252;
+    i32 %243 = load i32* %201;
+    i32 %244 = load i32* %202;
+    i32 %245 = load i32* %203;
+    i32 %246 = load i32* %204;
+    i32 %247 = load i32* %205;
+    i32 %248 = call (i32, i32, i32, i32, i32, i32, [200 * i32]*, [20 * i32]*) -> i32 @dfs(i32 %243, i32 %244, i32 %245, i32 %246, i32 %247, i32 0, [200 * i32]* %list, [20 * i32]* %cns);
+    call (i32) -> void @putint(i32 %248);
+    ret i32 %248;
 ^b2:
-    i32 %253 = add i32 %243, i32 1;
+    i32 %249 = add i32 %240, i32 1;
     ubr ^while.header1;
 ^while.header4:
-    i32 %254 = phi [^while.header3, i32 %241] [^b4, i32 %262];
-    i32 %255 = phi [^while.header3, i32 %242] [^b4, i32 %263];
-    i32 %256 = phi [^while.header3, i32 %243] [^b4, i32 %264];
-    i32 %257 = phi [^while.header3, i32 %244] [^b4, i32 %265];
-    i32 %258 = phi [^while.header3, i32 0] [^b4, i32 %270];
-    i32 %259 = phi [^while.header3, i32 0] [^b4, i32 %270];
-    i1 %260 = scmp lt i32 %259, i32 18;
-    cbr i1 %260(prob = 0.97), ^while.header5, ^b3;
+    i32 %250 = phi [^while.header3, i32 %238] [^b4, i32 %257];
+    i32 %251 = phi [^while.header3, i32 %239] [^b4, i32 %258];
+    i32 %252 = phi [^while.header3, i32 %240] [^b4, i32 %259];
+    i32 %253 = phi [^while.header3, i32 %241] [^b4, i32 %260];
+    i32 %254 = phi [^while.header3, i32 0] [^b4, i32 %264];
+    i1 %255 = scmp lt i32 %254, i32 18;
+    cbr i1 %255(prob = 0.97), ^while.header5, ^b3;
 ^b3:
-    i32 %261 = add i32 %257, i32 1;
+    i32 %256 = add i32 %253, i32 1;
     ubr ^while.header3;
 ^while.header5:
-    i32 %262 = phi [^while.header4, i32 %254] [^b5, i32 %271];
-    i32 %263 = phi [^while.header4, i32 %255] [^b5, i32 %272];
-    i32 %264 = phi [^while.header4, i32 %256] [^b5, i32 %273];
-    i32 %265 = phi [^while.header4, i32 %257] [^b5, i32 %274];
-    i32 %266 = phi [^while.header4, i32 %258] [^b5, i32 %275];
-    i32 %267 = phi [^while.header4, i32 0] [^b5, i32 %287];
-    i32 %268 = phi [^while.header4, i32 0] [^b5, i32 %287];
-    i1 %269 = scmp lt i32 %268, i32 18;
-    cbr i1 %269(prob = 0.97), ^while.header6, ^b4;
+    i32 %257 = phi [^while.header4, i32 %250] [^b5, i32 %265];
+    i32 %258 = phi [^while.header4, i32 %251] [^b5, i32 %266];
+    i32 %259 = phi [^while.header4, i32 %252] [^b5, i32 %267];
+    i32 %260 = phi [^while.header4, i32 %253] [^b5, i32 %268];
+    i32 %261 = phi [^while.header4, i32 %254] [^b5, i32 %269];
+    i32 %262 = phi [^while.header4, i32 0] [^b5, i32 %280];
+    i1 %263 = scmp lt i32 %262, i32 18;
+    cbr i1 %263(prob = 0.97), ^while.header6, ^b4;
 ^b4:
-    i32 %270 = add i32 %266, i32 1;
+    i32 %264 = add i32 %261, i32 1;
     ubr ^while.header4;
 ^while.header6:
-    i32 %271 = phi [^while.header5, i32 %262] [^while.body1, i32 %271];
-    i32 %272 = phi [^while.header5, i32 %263] [^while.body1, i32 %272];
-    i32 %273 = phi [^while.header5, i32 %264] [^while.body1, i32 %273];
-    i32 %274 = phi [^while.header5, i32 %265] [^while.body1, i32 %274];
-    i32 %275 = phi [^while.header5, i32 %266] [^while.body1, i32 %275];
-    i32 %276 = phi [^while.header5, i32 %267] [^while.body1, i32 %276];
-    i32 %277 = phi [^while.header5, i32 0] [^while.body1, i32 %286];
-    i32 %278 = phi [^while.header5, i32 0] [^while.body1, i32 %286];
-    i1 %279 = scmp lt i32 %278, i32 7;
-    cbr i1 %279(prob = 0.97), ^while.body1, ^b5;
+    i32 %265 = phi [^while.header5, i32 %257] [^while.body1, i32 %265];
+    i32 %266 = phi [^while.header5, i32 %258] [^while.body1, i32 %266];
+    i32 %267 = phi [^while.header5, i32 %259] [^while.body1, i32 %267];
+    i32 %268 = phi [^while.header5, i32 %260] [^while.body1, i32 %268];
+    i32 %269 = phi [^while.header5, i32 %261] [^while.body1, i32 %269];
+    i32 %270 = phi [^while.header5, i32 %262] [^while.body1, i32 %270];
+    i32 %271 = phi [^while.header5, i32 0] [^while.body1, i32 %279];
+    i1 %272 = scmp lt i32 %271, i32 7;
+    cbr i1 %272(prob = 0.97), ^while.body1, ^b5;
 ^while.body1:
-    [18 * [18 * [18 * [18 * [7 * i32]]]]]* %280 = getelementptr &([18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* @dp)[i64 0][i32 %272];
-    [18 * [18 * [18 * [7 * i32]]]]* %281 = getelementptr &([18 * [18 * [18 * [18 * [7 * i32]]]]]* %280)[i64 0][i32 %273];
-    [18 * [18 * [7 * i32]]]* %282 = getelementptr &([18 * [18 * [18 * [7 * i32]]]]* %281)[i64 0][i32 %274];
-    [18 * [7 * i32]]* %283 = getelementptr &([18 * [18 * [7 * i32]]]* %282)[i64 0][i32 %275];
-    [7 * i32]* %284 = getelementptr &([18 * [7 * i32]]* %283)[i64 0][i32 %276];
-    i32* %285 = getelementptr &([7 * i32]* %284)[i64 0][i32 %277];
-    store i32* %285 with i32 -1;
-    i32 %286 = add i32 %277, i32 1;
+    [18 * [18 * [18 * [18 * [7 * i32]]]]]* %273 = getelementptr &([18 * [18 * [18 * [18 * [18 * [7 * i32]]]]]]* @dp)[i64 0][i32 %266];
+    [18 * [18 * [18 * [7 * i32]]]]* %274 = getelementptr &([18 * [18 * [18 * [18 * [7 * i32]]]]]* %273)[i64 0][i32 %267];
+    [18 * [18 * [7 * i32]]]* %275 = getelementptr &([18 * [18 * [18 * [7 * i32]]]]* %274)[i64 0][i32 %268];
+    [18 * [7 * i32]]* %276 = getelementptr &([18 * [18 * [7 * i32]]]* %275)[i64 0][i32 %269];
+    [7 * i32]* %277 = getelementptr &([18 * [7 * i32]]* %276)[i64 0][i32 %270];
+    i32* %278 = getelementptr &([7 * i32]* %277)[i64 0][i32 %271];
+    store i32* %278 with i32 -1;
+    i32 %279 = add i32 %271, i32 1;
     ubr ^while.header6;
 ^b5:
-    i32 %287 = add i32 %276, i32 1;
+    i32 %280 = add i32 %270, i32 1;
     ubr ^while.header5;
 }

@@ -6,12 +6,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     ubr ^while.header;
 ^while.header:
-    i32 %1 = phi [^while.body, i32 %4] [^entry, i32 %0];
-    i32 %2 = phi [^while.body, i32 %4] [^entry, i32 %0];
-    i1 %3 = scmp eq i32 %2, i32 5;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
+    i32 %1 = phi [^while.body, i32 %3] [^entry, i32 %0];
+    i1 %2 = scmp eq i32 %1, i32 5;
+    cbr i1 %2(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %4 = add i32 %1, i32 1;
+    i32 %3 = add i32 %1, i32 1;
     ubr ^while.header;
 ^b:
     call (i32) -> void @putint(i32 0);

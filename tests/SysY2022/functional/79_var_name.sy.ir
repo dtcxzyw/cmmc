@@ -45,27 +45,26 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %19 with i32 0;
     ubr ^while.header;
 ^while.header:
-    i32 %20 = phi [^while.body, i32 %35] [^entry, i32 2];
-    i32 %21 = phi [^while.body, i32 %34] [^entry, i32 0];
-    i32 %22 = phi [^while.body, i32 %35] [^entry, i32 2];
-    i1 %23 = scmp lt i32 %22, i32 20;
-    cbr i1 %23(prob = 0.97), ^while.body, ^b;
+    i32 %20 = phi [^while.body, i32 %34] [^entry, i32 2];
+    i32 %21 = phi [^while.body, i32 %33] [^entry, i32 0];
+    i1 %22 = scmp lt i32 %20, i32 20;
+    cbr i1 %22(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32* %24 = getelementptr &([20 * i32]* %VLDTJUr0)[i64 0][i32 %20];
-    i32 %25 = load i32* %24;
-    i32* %26 = getelementptr &(i32* %24)[i64 -1];
-    i32 %27 = load i32* %26;
-    i32* %28 = getelementptr &(i32* %24)[i64 -2];
-    i32 %29 = load i32* %28;
-    i32 %30 = add i32 %25, i32 %27;
-    i32 %31 = add i32 %30, i32 %29;
-    store i32* %24 with i32 %31;
-    i32 %32 = add i32 %21, i32 %25;
-    i32 %33 = add i32 %32, i32 %27;
-    i32 %34 = add i32 %33, i32 %29;
-    call (i32) -> void @putint(i32 %31);
+    i32* %23 = getelementptr &([20 * i32]* %VLDTJUr0)[i64 0][i32 %20];
+    i32 %24 = load i32* %23;
+    i32* %25 = getelementptr &(i32* %23)[i64 -1];
+    i32 %26 = load i32* %25;
+    i32* %27 = getelementptr &(i32* %23)[i64 -2];
+    i32 %28 = load i32* %27;
+    i32 %29 = add i32 %24, i32 %26;
+    i32 %30 = add i32 %29, i32 %28;
+    store i32* %23 with i32 %30;
+    i32 %31 = add i32 %21, i32 %24;
+    i32 %32 = add i32 %31, i32 %26;
+    i32 %33 = add i32 %32, i32 %28;
+    call (i32) -> void @putint(i32 %30);
     call (i32) -> void @putch(i32 10);
-    i32 %35 = add i32 %20, i32 1;
+    i32 %34 = add i32 %20, i32 1;
     ubr ^while.header;
 ^b:
     ret i32 %21;

@@ -36,7 +36,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 %13);
     ubr ^entry5;
 ^entry5:
-    i32 %14 = phi [^entry4, i32 %13] [^b2, i32 %10];
+    i32 %14 = phi [^b2, i32 %10] [^entry4, i32 %13];
     i32 %15 = add i32 %14, i32 99;
     call (i32) -> void @putint(i32 %15);
     i1 %16 = scmp eq i32 %14, i32 -99;

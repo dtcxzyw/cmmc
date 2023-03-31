@@ -17,101 +17,97 @@ internal func @graphColoring([4 * i32]* %graph, i32 %m, i32 %i, i32* %color) -> 
     store i32* %j with i32 1;
     ubr ^while.header1;
 ^while.header:
-    i32* %1 = phi [^entry, i32* %color] [^b2, i32* %18];
-    i32 %2 = phi [^entry, i32 0] [^b2, i32 %38];
-    i32* %3 = phi [^entry, i32* %color] [^b2, i32* %21];
-    [4 * i32]* %4 = phi [^entry, [4 * i32]* %graph] [^b2, [4 * i32]* %22];
-    i32 %5 = phi [^entry, i32 0] [^b2, i32 %38];
-    i1 %6 = scmp lt i32 %5, i32 4;
-    cbr i1 %6(prob = 0.97), ^while.body, ^if.then;
+    i32* %1 = phi [^entry, i32* %color] [^b2, i32* %16];
+    i32 %2 = phi [^entry, i32 0] [^b2, i32 %34];
+    i32* %3 = phi [^entry, i32* %color] [^b2, i32* %19];
+    [4 * i32]* %4 = phi [^entry, [4 * i32]* %graph] [^b2, [4 * i32]* %20];
+    i1 %5 = scmp lt i32 %2, i32 4;
+    cbr i1 %5(prob = 0.97), ^while.body, ^if.then;
 ^while.body:
-    i32 %7 = add i32 %2, i32 1;
+    i32 %6 = add i32 %2, i32 1;
     ubr ^while.header2;
 ^while.header1:
-    [4 * i32]* %8 = phi [^b3, [4 * i32]* %30] [^b, [4 * i32]* %graph];
-    i32 %9 = phi [^b3, i32 %43] [^b, i32 %m];
-    i32 %10 = phi [^b3, i32 %44] [^b, i32 %i];
-    i32* %11 = phi [^b3, i32* %32] [^b, i32* %color];
-    i32 %12 = phi [^b3, i32 %46] [^b, i32 1];
-    i32 %13 = phi [^b3, i32 %46] [^b, i32 1];
-    i1 %14 = scmp le i32 %13, i32 %9;
-    cbr i1 %14(prob = 0.97), ^while.body1, ^b1;
+    [4 * i32]* %7 = phi [^b3, [4 * i32]* %27] [^b, [4 * i32]* %graph];
+    i32 %8 = phi [^b3, i32 %39] [^b, i32 %m];
+    i32 %9 = phi [^b3, i32 %40] [^b, i32 %i];
+    i32* %10 = phi [^b3, i32* %29] [^b, i32* %color];
+    i32 %11 = phi [^b3, i32 %42] [^b, i32 1];
+    i1 %12 = scmp le i32 %11, i32 %8;
+    cbr i1 %12(prob = 0.97), ^while.body1, ^b1;
 ^if.then:
-    i32* %15 = phi [^b6, i32* %18] [^while.header, i32* %1];
-    i32 %16 = phi [^b6, i32 0] [^while.header, i32 1];
-    i1 %17 = scmp neq i32 %16, i32 0;
-    cbr i1 %17(prob = 0.5), ^while.header3, ^b1;
+    i32* %13 = phi [^b6, i32* %16] [^while.header, i32* %1];
+    i32 %14 = phi [^b6, i32 0] [^while.header, i32 1];
+    i1 %15 = scmp neq i32 %14, i32 0;
+    cbr i1 %15(prob = 0.5), ^while.header3, ^b1;
 ^while.header2:
-    i32* %18 = phi [^b7, i32* %18] [^while.body, i32* %1];
-    i32 %19 = phi [^b7, i32 %57] [^while.body, i32 %7];
-    i32 %20 = phi [^b7, i32 %20] [^while.body, i32 %2];
-    i32* %21 = phi [^b7, i32* %21] [^while.body, i32* %3];
-    [4 * i32]* %22 = phi [^b7, [4 * i32]* %22] [^while.body, [4 * i32]* %4];
-    i32 %23 = phi [^while.body, i32 %7] [^b7, i32 %57];
-    i1 %24 = scmp lt i32 %23, i32 4;
-    cbr i1 %24(prob = 0.97), ^while.body3, ^b2;
+    i32* %16 = phi [^b7, i32* %16] [^while.body, i32* %1];
+    i32 %17 = phi [^b7, i32 %53] [^while.body, i32 %6];
+    i32 %18 = phi [^b7, i32 %18] [^while.body, i32 %2];
+    i32* %19 = phi [^b7, i32* %19] [^while.body, i32* %3];
+    [4 * i32]* %20 = phi [^b7, [4 * i32]* %20] [^while.body, [4 * i32]* %4];
+    i1 %21 = scmp lt i32 %17, i32 4;
+    cbr i1 %21(prob = 0.97), ^while.body3, ^b2;
 ^while.body1:
-    i32* %25 = getelementptr &(i32* %11)[i32 %10];
-    store i32* %25 with i32 %12;
-    i32 %26 = load i32* %m1;
-    i32 %27 = load i32* %i1;
-    i32 %28 = add i32 %27, i32 1;
-    i32 %29 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %8, i32 %26, i32 %28, i32* %11);
-    [4 * i32]* %30 = load [4 * i32]** %graph1;
-    i32 %31 = load i32* %i1;
-    i32* %32 = load i32** %color1;
-    i1 %33 = scmp neq i32 %29, i32 0;
-    cbr i1 %33(prob = 0.5), ^if.then1, ^b3;
+    i32* %22 = getelementptr &(i32* %10)[i32 %9];
+    store i32* %22 with i32 %11;
+    i32 %23 = load i32* %m1;
+    i32 %24 = load i32* %i1;
+    i32 %25 = add i32 %24, i32 1;
+    i32 %26 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %7, i32 %23, i32 %25, i32* %10);
+    [4 * i32]* %27 = load [4 * i32]** %graph1;
+    i32 %28 = load i32* %i1;
+    i32* %29 = load i32** %color1;
+    i1 %30 = scmp neq i32 %26, i32 0;
+    cbr i1 %30(prob = 0.5), ^if.then1, ^b3;
 ^while.header3:
-    i32 %34 = phi [^if.then, i32 0] [^while.body2, i32 %41];
-    i32* %35 = phi [^if.then, i32* %15] [^while.body2, i32* %35];
-    i32 %36 = phi [^if.then, i32 0] [^while.body2, i32 %41];
-    i1 %37 = scmp lt i32 %36, i32 4;
-    cbr i1 %37(prob = 0.97), ^while.body2, ^b4;
+    i32 %31 = phi [^if.then, i32 0] [^while.body2, i32 %37];
+    i32* %32 = phi [^if.then, i32* %13] [^while.body2, i32* %32];
+    i1 %33 = scmp lt i32 %31, i32 4;
+    cbr i1 %33(prob = 0.97), ^while.body2, ^b4;
 ^b1:
     ret i32 0;
 ^b2:
-    i32 %38 = add i32 %20, i32 1;
+    i32 %34 = add i32 %18, i32 1;
     ubr ^while.header;
 ^while.body2:
-    i32* %39 = getelementptr &(i32* %35)[i32 %34];
-    i32 %40 = load i32* %39;
-    call (i32) -> void @putint(i32 %40);
+    i32* %35 = getelementptr &(i32* %32)[i32 %31];
+    i32 %36 = load i32* %35;
+    call (i32) -> void @putint(i32 %36);
     call (i32) -> void @putch(i32 32);
-    i32 %41 = add i32 %34, i32 1;
+    i32 %37 = add i32 %31, i32 1;
     ubr ^while.header3;
 ^b3:
-    i32* %42 = getelementptr &(i32* %32)[i32 %31];
-    store i32* %42 with i32 0;
-    i32 %43 = load i32* %m1;
-    i32 %44 = load i32* %i1;
-    i32 %45 = load i32* %j;
-    i32 %46 = add i32 %45, i32 1;
-    store i32* %j with i32 %46;
+    i32* %38 = getelementptr &(i32* %29)[i32 %28];
+    store i32* %38 with i32 0;
+    i32 %39 = load i32* %m1;
+    i32 %40 = load i32* %i1;
+    i32 %41 = load i32* %j;
+    i32 %42 = add i32 %41, i32 1;
+    store i32* %j with i32 %42;
     ubr ^while.header1;
 ^while.body3:
-    [4 * i32]* %47 = getelementptr &([4 * i32]* %22)[i32 %20];
-    i32* %48 = getelementptr &([4 * i32]* %47)[i64 0][i32 %19];
-    i32 %49 = load i32* %48;
-    i1 %50 = scmp neq i32 %49, i32 0;
-    cbr i1 %50(prob = 0.5), ^b5, ^b6;
+    [4 * i32]* %43 = getelementptr &([4 * i32]* %20)[i32 %18];
+    i32* %44 = getelementptr &([4 * i32]* %43)[i64 0][i32 %17];
+    i32 %45 = load i32* %44;
+    i1 %46 = scmp neq i32 %45, i32 0;
+    cbr i1 %46(prob = 0.5), ^b5, ^b6;
 ^if.then1:
     ret i32 1;
 ^b4:
     call (i32) -> void @putch(i32 10);
     ret i32 1;
 ^b5:
-    i32* %51 = getelementptr &(i32* %21)[i32 %19];
-    i32 %52 = load i32* %51;
-    i32* %53 = getelementptr &(i32* %21)[i32 %20];
-    i32 %54 = load i32* %53;
-    i1 %55 = scmp eq i32 %52, i32 %54;
+    i32* %47 = getelementptr &(i32* %19)[i32 %17];
+    i32 %48 = load i32* %47;
+    i32* %49 = getelementptr &(i32* %19)[i32 %18];
+    i32 %50 = load i32* %49;
+    i1 %51 = scmp eq i32 %48, i32 %50;
     ubr ^b6;
 ^b6:
-    i1 %56 = phi [^b5, i1 %55] [^while.body3, i1 false];
-    cbr i1 %56(prob = 0.5), ^if.then, ^b7;
+    i1 %52 = phi [^b5, i1 %51] [^while.body3, i1 false];
+    cbr i1 %52(prob = 0.5), ^if.then, ^b7;
 ^b7:
-    i32 %57 = add i32 %19, i32 1;
+    i32 %53 = add i32 %17, i32 1;
     ubr ^while.header2;
 }
 func @main() -> i32 { NoRecurse Entry } {
@@ -153,21 +149,20 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header;
 ^while.header:
     i32 %16 = phi [^while.body, i32 %16] [^entry, i32 3];
-    i32 %17 = phi [^while.body, i32 %21] [^entry, i32 0];
-    i32 %18 = phi [^while.body, i32 %21] [^entry, i32 0];
-    i1 %19 = scmp lt i32 %18, i32 4;
-    cbr i1 %19(prob = 0.97), ^while.body, ^b;
+    i32 %17 = phi [^while.body, i32 %20] [^entry, i32 0];
+    i1 %18 = scmp lt i32 %17, i32 4;
+    cbr i1 %18(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32* %20 = getelementptr &([4 * i32]* %color)[i64 0][i32 %17];
-    store i32* %20 with i32 0;
-    i32 %21 = add i32 %17, i32 1;
+    i32* %19 = getelementptr &([4 * i32]* %color)[i64 0][i32 %17];
+    store i32* %19 with i32 0;
+    i32 %20 = add i32 %17, i32 1;
     ubr ^while.header;
 ^b:
-    [4 * i32]* %22 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0];
-    i32* %23 = getelementptr &([4 * i32]* %color)[i64 0][i64 0];
-    i32 %24 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %22, i32 %16, i32 0, i32* %23);
-    i1 %25 = scmp eq i32 %24, i32 0;
-    cbr i1 %25(prob = 0.5), ^entry1, ^b1;
+    [4 * i32]* %21 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0];
+    i32* %22 = getelementptr &([4 * i32]* %color)[i64 0][i64 0];
+    i32 %23 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %21, i32 %16, i32 0, i32* %22);
+    i1 %24 = scmp eq i32 %23, i32 0;
+    cbr i1 %24(prob = 0.5), ^entry1, ^b1;
 ^entry1:
     call (i32) -> void @putch(i32 78);
     call (i32) -> void @putch(i32 111);

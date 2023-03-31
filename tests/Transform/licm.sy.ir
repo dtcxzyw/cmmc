@@ -6,19 +6,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^for.header;
 ^for.header:
     i32 %1 = phi [^for.body, i32 %1] [^entry, i32 %0];
-    i32 %2 = phi [^for.body, i32 %11] [^entry, i32 0];
-    i32 %3 = phi [^for.body, i32 %12] [^entry, i32 0];
-    i32 %4 = phi [^for.body, i32 %1] [^entry, i32 %0];
-    i32 %5 = phi [^for.body, i32 %12] [^entry, i32 0];
-    i1 %6 = scmp lt i32 %5, i32 %4;
-    cbr i1 %6(prob = 0.97), ^for.body, ^b;
+    i32 %2 = phi [^for.body, i32 %9] [^entry, i32 0];
+    i32 %3 = phi [^for.body, i32 %10] [^entry, i32 0];
+    i1 %4 = scmp lt i32 %3, i32 %1;
+    cbr i1 %4(prob = 0.97), ^for.body, ^b;
 ^for.body:
-    i32 %7 = mul i32 %3, i32 %3;
-    i32 %8 = mul i32 %1, i32 %1;
-    i32 %9 = mul i32 %1, i32 %8;
-    i32 %10 = add i32 %7, i32 %9;
-    i32 %11 = add i32 %10, i32 %2;
-    i32 %12 = add i32 %3, i32 1;
+    i32 %5 = mul i32 %3, i32 %3;
+    i32 %6 = mul i32 %1, i32 %1;
+    i32 %7 = mul i32 %1, i32 %6;
+    i32 %8 = add i32 %5, i32 %7;
+    i32 %9 = add i32 %8, i32 %2;
+    i32 %10 = add i32 %3, i32 1;
     ubr ^for.header;
 ^b:
     call (i32) -> void @putint(i32 %2);

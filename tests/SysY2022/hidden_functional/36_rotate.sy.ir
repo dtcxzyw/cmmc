@@ -44,9 +44,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %6 = phi [^entry, i1 true] [^b, i1 %5];
     cbr i1 %6(prob = 0.5), ^entry1, ^b2;
 ^entry1:
-    f32 %7 = phi [^while.header2, f32 %34] [^b7, f32 %0] [^b1, f32 %0];
-    i32 %8 = phi [^while.header2, i32 %35] [^b7, i32 %12] [^b1, i32 0];
-    i32 %9 = phi [^while.header2, i32 %36] [^b7, i32 %13] [^b1, i32 0];
+    f32 %7 = phi [^while.header2, f32 %31] [^b7, f32 %0] [^b1, f32 %0];
+    i32 %8 = phi [^while.header2, i32 %32] [^b7, i32 %12] [^b1, i32 0];
+    i32 %9 = phi [^while.header2, i32 %33] [^b7, i32 %13] [^b1, i32 0];
     i32 %10 = phi [^while.header2, i32 0] [^b7, i32 -1] [^b1, i32 -1];
     i1 %11 = scmp lt i32 %10, i32 0;
     cbr i1 %11(prob = 0.5), ^if.then, ^b3;
@@ -82,176 +82,166 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %19 = phi [^b5, i1 true] [^b6, i1 %18];
     cbr i1 %19(prob = 0.5), ^entry1, ^while.header2;
 ^while.header:
-    i32 %20 = phi [^b9, i32 %27] [^b3, i32 %8];
-    i32 %21 = phi [^b9, i32 %28] [^b3, i32 %9];
-    i32 %22 = phi [^b9, i32 %40] [^b3, i32 0];
-    f32 %23 = phi [^b9, f32 %31] [^b3, f32 %7];
-    i32 %24 = phi [^b3, i32 %9] [^b9, i32 %28];
-    i32 %25 = phi [^b3, i32 0] [^b9, i32 %40];
-    i1 %26 = scmp lt i32 %25, i32 %24;
-    cbr i1 %26(prob = 0.97), ^while.header1, ^b8;
+    i32 %20 = phi [^b9, i32 %25] [^b3, i32 %8];
+    i32 %21 = phi [^b9, i32 %26] [^b3, i32 %9];
+    i32 %22 = phi [^b9, i32 %36] [^b3, i32 0];
+    f32 %23 = phi [^b9, f32 %29] [^b3, f32 %7];
+    i1 %24 = scmp lt i32 %22, i32 %21;
+    cbr i1 %24(prob = 0.97), ^while.header1, ^b8;
 ^while.header1:
-    i32 %27 = phi [^while.header, i32 %20] [^while.body2, i32 %27];
-    i32 %28 = phi [^while.header, i32 %21] [^while.body2, i32 %28];
-    i32 %29 = phi [^while.header, i32 0] [^while.body2, i32 %118];
-    i32 %30 = phi [^while.header, i32 %22] [^while.body2, i32 %30];
-    f32 %31 = phi [^while.header, f32 %23] [^while.body2, f32 %31];
-    i32 %32 = phi [^while.header, i32 0] [^while.body2, i32 %118];
-    i1 %33 = scmp lt i32 %32, i32 %27;
-    cbr i1 %33(prob = 0.97), ^while.body, ^b9;
+    i32 %25 = phi [^while.header, i32 %20] [^while.body2, i32 %25];
+    i32 %26 = phi [^while.header, i32 %21] [^while.body2, i32 %26];
+    i32 %27 = phi [^while.header, i32 0] [^while.body2, i32 %108];
+    i32 %28 = phi [^while.header, i32 %22] [^while.body2, i32 %28];
+    f32 %29 = phi [^while.header, f32 %23] [^while.body2, f32 %29];
+    i1 %30 = scmp lt i32 %27, i32 %25;
+    cbr i1 %30(prob = 0.97), ^while.body, ^b9;
 ^while.header2:
-    f32 %34 = phi [^b7, f32 %0] [^b12, f32 %42];
-    i32 %35 = phi [^b7, i32 %12] [^b12, i32 %43];
-    i32 %36 = phi [^b7, i32 %13] [^b12, i32 %44];
-    i32 %37 = phi [^b7, i32 0] [^b12, i32 %57];
-    i32 %38 = phi [^b7, i32 0] [^b12, i32 %57];
-    i1 %39 = scmp lt i32 %38, i32 %36;
-    cbr i1 %39(prob = 0.97), ^while.header3, ^entry1;
+    f32 %31 = phi [^b7, f32 %0] [^b12, f32 %38];
+    i32 %32 = phi [^b7, i32 %12] [^b12, i32 %39];
+    i32 %33 = phi [^b7, i32 %13] [^b12, i32 %40];
+    i32 %34 = phi [^b7, i32 0] [^b12, i32 %51];
+    i1 %35 = scmp lt i32 %34, i32 %33;
+    cbr i1 %35(prob = 0.97), ^while.header3, ^entry1;
 ^b8:
     ret i32 0;
 ^b9:
     call (i32) -> void @putch(i32 10);
-    i32 %40 = add i32 %30, i32 1;
+    i32 %36 = add i32 %28, i32 1;
     ubr ^while.header;
 ^while.body:
-    i1 %41 = fcmp gt f32 %31, f32 6.28319;
-    cbr i1 %41(prob = 0.5), ^b11, ^b10;
+    i1 %37 = fcmp gt f32 %29, f32 6.28319;
+    cbr i1 %37(prob = 0.5), ^b11, ^b10;
 ^while.header3:
-    f32 %42 = phi [^while.header2, f32 %34] [^while.body1, f32 %42];
-    i32 %43 = phi [^while.header2, i32 %35] [^while.body1, i32 %43];
-    i32 %44 = phi [^while.header2, i32 %36] [^while.body1, i32 %44];
-    i32 %45 = phi [^while.header2, i32 0] [^while.body1, i32 %55];
-    i32 %46 = phi [^while.header2, i32 %37] [^while.body1, i32 %46];
-    i32 %47 = phi [^while.header2, i32 %35] [^while.body1, i32 %43];
-    i32 %48 = phi [^while.header2, i32 0] [^while.body1, i32 %55];
-    i1 %49 = scmp lt i32 %48, i32 %47;
-    cbr i1 %49(prob = 0.97), ^while.body1, ^b12;
+    f32 %38 = phi [^while.header2, f32 %31] [^while.body1, f32 %38];
+    i32 %39 = phi [^while.header2, i32 %32] [^while.body1, i32 %39];
+    i32 %40 = phi [^while.header2, i32 %33] [^while.body1, i32 %40];
+    i32 %41 = phi [^while.header2, i32 0] [^while.body1, i32 %49];
+    i32 %42 = phi [^while.header2, i32 %34] [^while.body1, i32 %42];
+    i1 %43 = scmp lt i32 %41, i32 %39;
+    cbr i1 %43(prob = 0.97), ^while.body1, ^b12;
 ^b10:
-    i1 %50 = fcmp lt f32 %31, f32 -6.28319;
+    i1 %44 = fcmp lt f32 %29, f32 -6.28319;
     ubr ^b11;
 ^while.body1:
-    i32 %51 = mul i32 %46, i32 %43;
-    i32 %52 = add i32 %51, i32 %45;
-    i32* %53 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %52];
-    i32 %54 = call () -> i32 @getint();
-    store i32* %53 with i32 %54;
-    i32 %55 = add i32 %45, i32 1;
+    i32 %45 = mul i32 %42, i32 %39;
+    i32 %46 = add i32 %45, i32 %41;
+    i32* %47 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %46];
+    i32 %48 = call () -> i32 @getint();
+    store i32* %47 with i32 %48;
+    i32 %49 = add i32 %41, i32 1;
     ubr ^while.header3;
 ^b11:
-    i1 %56 = phi [^while.body, i1 true] [^b10, i1 %50];
-    cbr i1 %56(prob = 0.5), ^if.then1, ^b13;
+    i1 %50 = phi [^while.body, i1 true] [^b10, i1 %44];
+    cbr i1 %50(prob = 0.5), ^if.then1, ^b13;
 ^b12:
-    i32 %57 = add i32 %46, i32 1;
+    i32 %51 = add i32 %42, i32 1;
     ubr ^while.header2;
 ^if.then1:
-    f32 %58 = fdiv f32 %31, f32 6.28319;
-    i32 %59 = f2s f32 %58 to i32;
-    f32 %60 = s2f i32 %59 to f32;
-    f32 %61 = fmul f32 %60, f32 6.28319;
-    f32 %62 = fsub f32 %31, f32 %61;
+    f32 %52 = fdiv f32 %29, f32 6.28319;
+    i32 %53 = f2s f32 %52 to i32;
+    f32 %54 = s2f i32 %53 to f32;
+    f32 %55 = fmul f32 %54, f32 6.28319;
+    f32 %56 = fsub f32 %29, f32 %55;
     ubr ^b13;
 ^b13:
-    f32 %63 = phi [^b11, f32 %31] [^if.then1, f32 %62];
-    f32 %64 = phi [^b11, f32 %31] [^if.then1, f32 %62];
-    i1 %65 = fcmp gt f32 %64, f32 3.14159;
-    cbr i1 %65(prob = 0.5), ^if.then2, ^b14;
+    f32 %57 = phi [^b11, f32 %29] [^if.then1, f32 %56];
+    i1 %58 = fcmp gt f32 %57, f32 3.14159;
+    cbr i1 %58(prob = 0.5), ^if.then2, ^b14;
 ^if.then2:
-    f32 %66 = fsub f32 %63, f32 6.28319;
+    f32 %59 = fsub f32 %57, f32 6.28319;
     ubr ^b14;
 ^b14:
-    f32 %67 = phi [^b13, f32 %63] [^if.then2, f32 %66];
-    f32 %68 = phi [^b13, f32 %63] [^if.then2, f32 %66];
-    i1 %69 = fcmp lt f32 %68, f32 -3.14159;
-    cbr i1 %69(prob = 0.5), ^if.then3, ^b15;
+    f32 %60 = phi [^b13, f32 %57] [^if.then2, f32 %59];
+    i1 %61 = fcmp lt f32 %60, f32 -3.14159;
+    cbr i1 %61(prob = 0.5), ^if.then3, ^b15;
 ^if.then3:
-    f32 %70 = fadd f32 %67, f32 6.28319;
+    f32 %62 = fadd f32 %60, f32 6.28319;
     ubr ^b15;
 ^b15:
-    f32 %71 = phi [^if.then3, f32 %70] [^b14, f32 %67];
-    f32 %72 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %71, i32* %width, i32* %height);
-    f32 %73 = fadd f32 %31, f32 1.5708;
-    i1 %74 = fcmp gt f32 %73, f32 6.28319;
-    cbr i1 %74(prob = 0.5), ^b17, ^b16;
+    f32 %63 = phi [^if.then3, f32 %62] [^b14, f32 %60];
+    f32 %64 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %63, i32* %width, i32* %height);
+    f32 %65 = fadd f32 %29, f32 1.5708;
+    i1 %66 = fcmp gt f32 %65, f32 6.28319;
+    cbr i1 %66(prob = 0.5), ^b17, ^b16;
 ^b16:
-    i1 %75 = fcmp lt f32 %73, f32 -6.28319;
+    i1 %67 = fcmp lt f32 %65, f32 -6.28319;
     ubr ^b17;
 ^b17:
-    i1 %76 = phi [^b15, i1 true] [^b16, i1 %75];
-    cbr i1 %76(prob = 0.5), ^if.then4, ^b18;
+    i1 %68 = phi [^b15, i1 true] [^b16, i1 %67];
+    cbr i1 %68(prob = 0.5), ^if.then4, ^b18;
 ^if.then4:
-    f32 %77 = fdiv f32 %73, f32 6.28319;
-    i32 %78 = f2s f32 %77 to i32;
-    f32 %79 = s2f i32 %78 to f32;
-    f32 %80 = fmul f32 %79, f32 6.28319;
-    f32 %81 = fsub f32 %73, f32 %80;
+    f32 %69 = fdiv f32 %65, f32 6.28319;
+    i32 %70 = f2s f32 %69 to i32;
+    f32 %71 = s2f i32 %70 to f32;
+    f32 %72 = fmul f32 %71, f32 6.28319;
+    f32 %73 = fsub f32 %65, f32 %72;
     ubr ^b18;
 ^b18:
-    f32 %82 = phi [^b17, f32 %73] [^if.then4, f32 %81];
-    f32 %83 = phi [^b17, f32 %73] [^if.then4, f32 %81];
-    i1 %84 = fcmp gt f32 %83, f32 3.14159;
-    cbr i1 %84(prob = 0.5), ^if.then5, ^b19;
+    f32 %74 = phi [^b17, f32 %65] [^if.then4, f32 %73];
+    i1 %75 = fcmp gt f32 %74, f32 3.14159;
+    cbr i1 %75(prob = 0.5), ^if.then5, ^b19;
 ^if.then5:
-    f32 %85 = fsub f32 %82, f32 6.28319;
+    f32 %76 = fsub f32 %74, f32 6.28319;
     ubr ^b19;
 ^b19:
-    f32 %86 = phi [^b18, f32 %82] [^if.then5, f32 %85];
-    f32 %87 = phi [^b18, f32 %82] [^if.then5, f32 %85];
-    i1 %88 = fcmp lt f32 %87, f32 -3.14159;
-    cbr i1 %88(prob = 0.5), ^if.then6, ^b20;
+    f32 %77 = phi [^b18, f32 %74] [^if.then5, f32 %76];
+    i1 %78 = fcmp lt f32 %77, f32 -3.14159;
+    cbr i1 %78(prob = 0.5), ^if.then6, ^b20;
 ^if.then6:
-    f32 %89 = fadd f32 %86, f32 6.28319;
+    f32 %79 = fadd f32 %77, f32 6.28319;
     ubr ^b20;
 ^b20:
-    f32 %90 = phi [^if.then6, f32 %89] [^b19, f32 %86];
-    f32 %91 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %90, i32* %width, i32* %height);
-    i32 %92 = sdiv i32 %27, i32 2;
-    i32 %93 = sdiv i32 %28, i32 2;
-    i32 %94 = sub i32 %29, i32 %92;
-    i32 %95 = sub i32 %30, i32 %93;
-    f32 %96 = s2f i32 %94 to f32;
-    f32 %97 = fmul f32 %96, f32 %91;
-    f32 %98 = s2f i32 %95 to f32;
-    f32 %99 = fmul f32 %98, f32 %72;
-    f32 %100 = fsub f32 %97, f32 %99;
-    f32 %101 = s2f i32 %92 to f32;
-    f32 %102 = fadd f32 %100, f32 %101;
-    i32 %103 = f2s f32 %102 to i32;
-    f32 %104 = fmul f32 %96, f32 %72;
-    f32 %105 = fmul f32 %98, f32 %91;
-    f32 %106 = fadd f32 %104, f32 %105;
-    f32 %107 = s2f i32 %93 to f32;
-    f32 %108 = fadd f32 %106, f32 %107;
-    i32 %109 = f2s f32 %108 to i32;
-    i1 %110 = scmp lt i32 %103, i32 0;
-    cbr i1 %110(prob = 0.5), ^b22, ^b21;
+    f32 %80 = phi [^if.then6, f32 %79] [^b19, f32 %77];
+    f32 %81 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %80, i32* %width, i32* %height);
+    i32 %82 = sdiv i32 %25, i32 2;
+    i32 %83 = sdiv i32 %26, i32 2;
+    i32 %84 = sub i32 %27, i32 %82;
+    i32 %85 = sub i32 %28, i32 %83;
+    f32 %86 = s2f i32 %84 to f32;
+    f32 %87 = fmul f32 %86, f32 %81;
+    f32 %88 = s2f i32 %85 to f32;
+    f32 %89 = fmul f32 %88, f32 %64;
+    f32 %90 = fsub f32 %87, f32 %89;
+    f32 %91 = s2f i32 %82 to f32;
+    f32 %92 = fadd f32 %90, f32 %91;
+    i32 %93 = f2s f32 %92 to i32;
+    f32 %94 = fmul f32 %86, f32 %64;
+    f32 %95 = fmul f32 %88, f32 %81;
+    f32 %96 = fadd f32 %94, f32 %95;
+    f32 %97 = s2f i32 %83 to f32;
+    f32 %98 = fadd f32 %96, f32 %97;
+    i32 %99 = f2s f32 %98 to i32;
+    i1 %100 = scmp lt i32 %93, i32 0;
+    cbr i1 %100(prob = 0.5), ^b22, ^b21;
 ^b21:
-    i1 %111 = scmp ge i32 %103, i32 %27;
+    i1 %101 = scmp ge i32 %93, i32 %25;
     ubr ^b22;
 ^b22:
-    i1 %112 = phi [^b20, i1 true] [^b21, i1 %111];
-    cbr i1 %112(prob = 0.5), ^b24, ^b23;
+    i1 %102 = phi [^b20, i1 true] [^b21, i1 %101];
+    cbr i1 %102(prob = 0.5), ^b24, ^b23;
 ^b23:
-    i1 %113 = scmp lt i32 %109, i32 0;
+    i1 %103 = scmp lt i32 %99, i32 0;
     ubr ^b24;
 ^b24:
-    i1 %114 = phi [^b22, i1 true] [^b23, i1 %113];
-    cbr i1 %114(prob = 0.5), ^b26, ^b25;
+    i1 %104 = phi [^b22, i1 true] [^b23, i1 %103];
+    cbr i1 %104(prob = 0.5), ^b26, ^b25;
 ^b25:
-    i1 %115 = scmp ge i32 %109, i32 %28;
+    i1 %105 = scmp ge i32 %99, i32 %26;
     ubr ^b26;
 ^b26:
-    i1 %116 = phi [^b24, i1 true] [^b25, i1 %115];
-    cbr i1 %116(prob = 0.5), ^while.body2, ^b27;
+    i1 %106 = phi [^b24, i1 true] [^b25, i1 %105];
+    cbr i1 %106(prob = 0.5), ^while.body2, ^b27;
 ^while.body2:
-    i32 %117 = phi [^b26, i32 0] [^b27, i32 %122];
-    call (i32) -> void @putint(i32 %117);
+    i32 %107 = phi [^b26, i32 0] [^b27, i32 %112];
+    call (i32) -> void @putint(i32 %107);
     call (i32) -> void @putch(i32 32);
-    i32 %118 = add i32 %29, i32 1;
+    i32 %108 = add i32 %27, i32 1;
     ubr ^while.header1;
 ^b27:
-    i32 %119 = mul i32 %109, i32 %27;
-    i32 %120 = add i32 %103, i32 %119;
-    i32* %121 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %120];
-    i32 %122 = load i32* %121;
+    i32 %109 = mul i32 %99, i32 %25;
+    i32 %110 = add i32 %93, i32 %109;
+    i32* %111 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %110];
+    i32 %112 = load i32* %111;
     ubr ^while.body2;
 }

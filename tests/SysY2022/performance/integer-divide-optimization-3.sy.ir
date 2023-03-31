@@ -9,46 +9,43 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @starttime(i32 1016);
     ubr ^while.header;
 ^while.header:
-    i32 %1 = phi [^b1, i32 %29] [^entry, i32 0];
-    i32 %2 = phi [^b1, i32 %30] [^entry, i32 0];
-    i32 %3 = phi [^b1, i32 %13] [^entry, i32 %0];
-    i32 %4 = phi [^b1, i32 %14] [^entry, i32 2];
-    i32 %5 = phi [^b1, i32 %15] [^entry, i32 1000];
-    i32 %6 = phi [^b1, i32 %13] [^entry, i32 %0];
-    i32 %7 = phi [^b1, i32 %30] [^entry, i32 0];
-    i1 %8 = scmp lt i32 %7, i32 %6;
-    cbr i1 %8(prob = 0.97), ^while.header1, ^b;
+    i32 %1 = phi [^b1, i32 %26] [^entry, i32 0];
+    i32 %2 = phi [^b1, i32 %27] [^entry, i32 0];
+    i32 %3 = phi [^b1, i32 %11] [^entry, i32 %0];
+    i32 %4 = phi [^b1, i32 %12] [^entry, i32 2];
+    i32 %5 = phi [^b1, i32 %13] [^entry, i32 1000];
+    i1 %6 = scmp lt i32 %2, i32 %3;
+    cbr i1 %6(prob = 0.97), ^while.header1, ^b;
 ^while.header1:
-    i32 %9 = phi [^while.header, i32 %1] [^while.body, i32 %9];
-    i32 %10 = phi [^while.header, i32 %2] [^while.body, i32 %10];
-    i32 %11 = phi [^while.header, i32 0] [^while.body, i32 %25];
-    i32 %12 = phi [^while.header, i32 0] [^while.body, i32 %26];
-    i32 %13 = phi [^while.header, i32 %3] [^while.body, i32 %13];
-    i32 %14 = phi [^while.header, i32 %4] [^while.body, i32 %14];
-    i32 %15 = phi [^while.header, i32 %5] [^while.body, i32 %15];
-    i32 %16 = phi [^while.header, i32 0] [^while.body, i32 %26];
-    i1 %17 = scmp lt i32 %16, i32 300;
-    cbr i1 %17(prob = 0.97), ^while.body, ^b1;
+    i32 %7 = phi [^while.header, i32 %1] [^while.body, i32 %7];
+    i32 %8 = phi [^while.header, i32 %2] [^while.body, i32 %8];
+    i32 %9 = phi [^while.header, i32 0] [^while.body, i32 %22];
+    i32 %10 = phi [^while.header, i32 0] [^while.body, i32 %23];
+    i32 %11 = phi [^while.header, i32 %3] [^while.body, i32 %11];
+    i32 %12 = phi [^while.header, i32 %4] [^while.body, i32 %12];
+    i32 %13 = phi [^while.header, i32 %5] [^while.body, i32 %13];
+    i1 %14 = scmp lt i32 %10, i32 300;
+    cbr i1 %14(prob = 0.97), ^while.body, ^b1;
 ^b:
     call (i32) -> void @stoptime(i32 1031);
     call (i32) -> void @putint(i32 %1);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 ^while.body:
-    i32 %18 = mul i32 %14, i32 %10;
-    i32 %19 = mul i32 %10, i32 2;
-    i32 %20 = sdiv i32 %18, i32 2;
-    i32 %21 = sdiv i32 %19, i32 2;
-    i32 %22 = mul i32 %21, i32 999;
-    i32 %23 = add i32 %20, i32 %22;
-    i32 %24 = sdiv i32 %23, i32 %15;
-    i32 %25 = add i32 %11, i32 %24;
-    i32 %26 = add i32 %12, i32 1;
+    i32 %15 = mul i32 %12, i32 %8;
+    i32 %16 = mul i32 %8, i32 2;
+    i32 %17 = sdiv i32 %15, i32 2;
+    i32 %18 = sdiv i32 %16, i32 2;
+    i32 %19 = mul i32 %18, i32 999;
+    i32 %20 = add i32 %17, i32 %19;
+    i32 %21 = sdiv i32 %20, i32 %13;
+    i32 %22 = add i32 %9, i32 %21;
+    i32 %23 = add i32 %10, i32 1;
     ubr ^while.header1;
 ^b1:
-    i32 %27 = sdiv i32 %11, i32 300;
-    i32 %28 = add i32 %9, i32 %27;
-    i32 %29 = srem i32 %28, i32 2147385347;
-    i32 %30 = add i32 %10, i32 1;
+    i32 %24 = sdiv i32 %9, i32 300;
+    i32 %25 = add i32 %7, i32 %24;
+    i32 %26 = srem i32 %25, i32 2147385347;
+    i32 %27 = add i32 %8, i32 1;
     ubr ^while.header;
 }

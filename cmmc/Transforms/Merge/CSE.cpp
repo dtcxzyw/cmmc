@@ -49,12 +49,27 @@ struct InstEqual final {
 class SimpleCSE final : public TransformPass<Function> {
     static void instMerge(Block* block, ReplaceMap& replace) {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
+        std::vector<PhiInst*> phiList;
         for(auto inst : block->instructions()) {
-            if(!isNoSideEffectExpr(*inst))
-                continue;
+            if(inst->getInstID() == InstructionID::Phi) {
+                const auto lhs = inst->as<PhiInst>();
+                bool unique = true;
+                for(auto rhs : phiList) {
+                    if(lhs->isEqual(rhs)) {
+                        replace.emplace(lhs, rhs);
+                        unique = false;
+                        break;
+                    }
+                }
+                if(unique)
+                    phiList.push_back(lhs);
+            } else {
+                if(!isNoSideEffectExpr(*inst))
+                    continue;
 
-            if(auto [iter, res] = lut.insert(inst); !res) {
-                replace.emplace(inst, *iter);
+                if(auto [iter, res] = lut.insert(inst); !res) {
+                    replace.emplace(inst, *iter);
+                }
             }
         }
     }

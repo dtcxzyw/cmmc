@@ -16,18 +16,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %6 = add i32 %0, i32 1;
     ubr ^while.header;
 ^while.header1:
-    i32 %7 = phi [^while.header, i32 %0] [^while.body1, i32 %11];
-    i32 %8 = phi [^while.header, i32 %1] [^while.body1, i32 %14];
-    i32 %9 = phi [^while.header, i32 %0] [^while.body1, i32 %11];
-    i1 %10 = scmp neq i32 %9, i32 0;
-    cbr i1 %10(prob = 0.97), ^while.body1, ^b;
+    i32 %7 = phi [^while.header, i32 %0] [^while.body1, i32 %10];
+    i32 %8 = phi [^while.header, i32 %1] [^while.body1, i32 %13];
+    i1 %9 = scmp neq i32 %7, i32 0;
+    cbr i1 %9(prob = 0.97), ^while.body1, ^b;
 ^while.body1:
-    i32 %11 = add i32 %7, i32 -1;
-    i32* %12 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %11];
-    i32 %13 = load i32* %12;
-    i32 %14 = add i32 %13, i32 %8;
+    i32 %10 = add i32 %7, i32 -1;
+    i32* %11 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %10];
+    i32 %12 = load i32* %11;
+    i32 %13 = add i32 %12, i32 %8;
     ubr ^while.header1;
 ^b:
-    i32 %15 = srem i32 %8, i32 79;
-    ret i32 %15;
+    i32 %14 = srem i32 %8, i32 79;
+    ret i32 %14;
 }

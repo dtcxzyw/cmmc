@@ -172,35 +172,32 @@ func @main() -> i32 { NoRecurse Entry } {
 ^while.header:
     i32 %6 = phi [^while.body, i32 %6] [^b, i32 %0];
     i32 %7 = phi [^while.body, i32 %7] [^b, i32 0];
-    i32 %8 = phi [^while.body, i32 %13] [^b, i32 1];
-    i32 %9 = phi [^b, i32 1] [^while.body, i32 %13];
-    i1 %10 = scmp lt i32 %9, i32 %6;
-    cbr i1 %10(prob = 0.97), ^while.body, ^b1;
+    i32 %8 = phi [^while.body, i32 %12] [^b, i32 1];
+    i1 %9 = scmp lt i32 %8, i32 %6;
+    cbr i1 %9(prob = 0.97), ^while.body, ^b1;
 ^while.body:
-    i32 %11 = call () -> i32 @getint();
-    i32 %12 = call (i32, i32, i32*) -> i32 @insert(i32 %7, i32 %11, i32* %now);
-    i32 %13 = add i32 %8, i32 1;
+    i32 %10 = call () -> i32 @getint();
+    i32 %11 = call (i32, i32, i32*) -> i32 @insert(i32 %7, i32 %10, i32* %now);
+    i32 %12 = add i32 %8, i32 1;
     ubr ^while.header;
 ^b1:
     call (i32, i32*) -> void @inorder(i32 %7, i32* %now);
     call (i32) -> void @putch(i32 10);
-    i32 %14 = call () -> i32 @getint();
+    i32 %13 = call () -> i32 @getint();
     ubr ^while.header1;
 ^while.header1:
-    i32 %15 = phi [^while.body1, i32 %15] [^b1, i32 %14];
-    i32 %16 = phi [^while.body1, i32 %22] [^b1, i32 %7];
-    i32 %17 = phi [^while.body1, i32 %23] [^b1, i32 0];
-    i32 %18 = phi [^while.body1, i32 %15] [^b1, i32 %14];
-    i32 %19 = phi [^while.body1, i32 %23] [^b1, i32 0];
-    i1 %20 = scmp lt i32 %19, i32 %18;
-    cbr i1 %20(prob = 0.97), ^while.body1, ^b2;
+    i32 %14 = phi [^while.body1, i32 %14] [^b1, i32 %13];
+    i32 %15 = phi [^while.body1, i32 %19] [^b1, i32 %7];
+    i32 %16 = phi [^while.body1, i32 %20] [^b1, i32 0];
+    i1 %17 = scmp lt i32 %16, i32 %14;
+    cbr i1 %17(prob = 0.97), ^while.body1, ^b2;
 ^while.body1:
-    i32 %21 = call () -> i32 @getint();
-    i32 %22 = call (i32, i32, i32*) -> i32 @delete(i32 %16, i32 %21, i32* %now);
-    i32 %23 = add i32 %17, i32 1;
+    i32 %18 = call () -> i32 @getint();
+    i32 %19 = call (i32, i32, i32*) -> i32 @delete(i32 %15, i32 %18, i32* %now);
+    i32 %20 = add i32 %16, i32 1;
     ubr ^while.header1;
 ^b2:
-    call (i32, i32*) -> void @inorder(i32 %16, i32* %now);
+    call (i32, i32*) -> void @inorder(i32 %15, i32* %now);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
