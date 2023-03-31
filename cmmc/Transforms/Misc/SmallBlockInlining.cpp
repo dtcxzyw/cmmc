@@ -65,7 +65,10 @@ public:
                 continue;
             const auto& target = terminator->as<BranchInst>()->getTrueTarget();
             const auto nextBlock = target;
-            if(nextBlock->instructions().size() > sizeThreshold)
+            // Cannot inline blocks which end with branches since we don't use argumented SSA now.
+            if(nextBlock->getTerminator()->isBranch())
+                continue;
+            if(nextBlock->instructions().size() > sizeThreshold)  // TODO: only count non-phi instructions?
                 continue;
             if(hasCall(*block))
                 continue;
@@ -77,11 +80,17 @@ public:
             ReplaceMap replace;
             std::vector<Instruction*> newInsts;
             for(auto inst : nextBlock->instructions()) {
-                const auto newInst = inst->clone();
-                newInst->setBlock(block);
-                newInst->setLabel(inst->getLabel());
-                newInsts.push_back(newInst);
-                replace.emplace(inst, newInst);
+                if(inst->getInstID() == InstructionID::Phi) {
+                    auto phi = inst->as<PhiInst>();
+                    replace.emplace(inst, phi->incomings().at(block));
+                    phi->removeSource(block);
+                } else {
+                    const auto newInst = inst->clone();
+                    newInst->setBlock(block);
+                    newInst->setLabel(inst->getLabel());
+                    newInsts.push_back(newInst);
+                    replace.emplace(inst, newInst);
+                }
             }
             replaceOperands(newInsts, replace);
             insts.insert(insts.cend(), newInsts.cbegin(), newInsts.cend());

@@ -22,6 +22,23 @@ CMMC_NAMESPACE_BEGIN
 
 class Module;
 class Block;
+class Instruction;
+
+class HighlightSelector {
+public:
+    virtual bool highlight(const Block* block) const noexcept = 0;
+    virtual bool highlight(const Instruction* instruction) const noexcept = 0;
+    virtual ~HighlightSelector() = default;
+};
+
+struct Noop final : public HighlightSelector {
+    bool highlight(const Block*) const noexcept override {
+        return false;
+    }
+    bool highlight(const Instruction*) const noexcept override {
+        return false;
+    }
+};
 
 class Value {
     const Type* mType;
@@ -36,7 +53,7 @@ public:
     Value& operator=(Value&&) = default;
     virtual ~Value() = default;
 
-    virtual void dump(std::ostream& out) const = 0;
+    virtual void dump(std::ostream& out, const HighlightSelector& selector) const = 0;  // TODO: highlight?
     void dumpPrefix(std::ostream& out) const;
     virtual void dumpAsOperand(std::ostream& out) const;
     [[nodiscard]] const Type* getType() const noexcept {

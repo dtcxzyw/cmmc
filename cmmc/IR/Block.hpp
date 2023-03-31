@@ -24,6 +24,16 @@ CMMC_NAMESPACE_BEGIN
 
 class Function;
 
+struct HighlightBlock final : public HighlightSelector {
+    const Block* targetBlock;
+    bool highlight(const Block* block) const noexcept override {
+        return block == targetBlock;
+    }
+    bool highlight(const Instruction*) const noexcept override {
+        return false;
+    }
+};
+
 class Block final {
     Function* mFunction;
     String mLabel;
@@ -31,9 +41,9 @@ class Block final {
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
-    void dump(std::ostream& out) const;
+    void dump(std::ostream& out, const HighlightSelector& selector) const;
     void relabel(LabelAllocator& allocator) const;
-    void dumpLabeled(std::ostream& out) const;
+    void dumpLabeled(std::ostream& out, const HighlightSelector& selector) const;
     bool verify(std::ostream& out) const;
 
     [[nodiscard]] Instruction* getTerminator() const noexcept {

@@ -89,9 +89,7 @@ public:
                     head = loop.header->clone(replace);
                     insertedBlocks.push_back(head);
                     for(auto block : cfg.predecessors(loop.latch)) {
-                        reportNotImplemented(CMMC_LOCATION());
-                        CMMC_UNUSED(block);
-                        // branchTarget->resetTarget(head);
+                        resetTarget(block->getTerminator()->as<BranchInst>(), loop.latch, head);
                     }
                     prev = head;
                 }
@@ -119,17 +117,16 @@ public:
                         --epilogueSize;
                         keepOldBlock = true;
                     } else {
-                        reportNotImplemented(CMMC_LOCATION());
-                        /*
                         const auto terminator = prev->getTerminator()->as<BranchInst>();
+                        /*
                         auto args = terminator->getTrueTarget().getArgs();
                         const auto nextValue = terminator->getOperand(0)->as<CompareInst>()->getOperand(0);
                         for(auto& arg : args)
                             if(arg == nextValue)
                                 arg = startValue;
                         terminator->updateTargetArgs(terminator->getFalseTarget(), args);
-                        terminator->getFalseTarget().resetTarget(head);
                         */
+                        terminator->getFalseTarget() = head;
                     }
 
                     prev = head;

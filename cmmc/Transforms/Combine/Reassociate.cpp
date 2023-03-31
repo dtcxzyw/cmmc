@@ -47,7 +47,7 @@ class Reassociate final : public TransformPass<Function> {
             // gather operands
             auto& args = map[inst];
             for(auto operand : inst->operands()) {
-                if(operand->isInstruction() && operand->as<Instruction>()->getInstID() == inst->getInstID()) {
+                if(operand->getBlock() == &block && operand->as<Instruction>()->getInstID() == inst->getInstID()) {
                     auto& sub = map.at(operand);
                     if(sub.size() < 512U) {
                         args.insert(args.cend(), sub.cbegin(), sub.cend());

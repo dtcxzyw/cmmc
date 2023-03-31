@@ -31,7 +31,8 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void FuncArgument::dump(std::ostream& out) const {
+void FuncArgument::dump(std::ostream& out, const HighlightSelector& selector) const {
+    CMMC_UNUSED(selector);
     dumpAsOperand(out);
 }
 
@@ -48,7 +49,7 @@ FuncArgument* Function::getArg(uint32_t idx) const {
     return mArgs[idx];
 }
 
-void Function::dump(std::ostream& out) const {
+void Function::dump(std::ostream& out, const HighlightSelector& selector) const {
     if(getLinkage() == Linkage::Internal)
         out << "internal "sv;
     out << "func @"sv << getSymbol() << '(';
@@ -101,7 +102,7 @@ void Function::dump(std::ostream& out) const {
     }
     out << " {\n"sv;
     for(auto block : mBlocks)
-        block->dumpLabeled(out);
+        block->dumpLabeled(out, selector);
     out << "}\n"sv;
 }
 FuncArgument* Function::addArg(const Type* type) {
@@ -120,16 +121,19 @@ bool Function::verify(std::ostream& out) const {
             out << "bad ownership"sv << std::endl;
             return false;
         }
+        bool stopAlloc = block != entryBlock();
         for(auto inst : block->instructions()) {
             if(inst->getInstID() == InstructionID::Alloc) {
-                if(inst->getBlock() != entryBlock()) {
-                    out << "Stack allocations should be in the entry block"sv << std::endl;
+                if(inst->getBlock() != entryBlock() || stopAlloc) {
+                    out << "Stack allocations should be in the front of entry block"sv << std::endl;
+                    block->dump(out, HighlightInst{ inst });
                     return false;
                 }
-            }
+            } else
+                stopAlloc = true;
             if(!set.insert(inst).second) {
                 out << "unexpected copy of instruction "sv << inst << std::endl;
-                inst->dump(out);
+                block->dump(out, HighlightInst{ inst });
                 return false;
             }
         }
@@ -145,14 +149,14 @@ bool Function::verify(std::ostream& out) const {
                 out << "invalid use of deleted block "sv;
                 trueTarget->dumpAsTarget(out);
                 out << std::endl;
-                terminator->dump(out);
+                terminator->dump(out, Noop{});
                 return false;
             }
             if(falseTarget && !blocks.count(falseTarget)) {
                 out << "invalid use of deleted block "sv;
                 falseTarget->dumpAsTarget(out);
                 out << std::endl;
-                terminator->dump(out);
+                terminator->dump(out, Noop{});
                 return false;
             }
         }
@@ -167,7 +171,7 @@ bool Function::verify(std::ostream& out) const {
             for(auto operand : inst->operands())
                 if(operand->isInstruction() && !insts.count(operand)) {
                     out << "Invalid inst: ";
-                    inst->dump(out);
+                    inst->dump(out, Noop{});
                     out << "\nInvalid reference: ";
                     operand->dumpAsOperand(out);
                     out << "\n";
@@ -176,9 +180,9 @@ bool Function::verify(std::ostream& out) const {
 
     AnalysisPassManager analysis{ nullptr };
     // verify phi node
-    const auto& cfg = analysis.get<CFGAnalysis>(const_cast<Function&>(*this));  // NOLINT
-
-    for(auto block : mBlocks) {
+    const auto& cfg = analysis.get<CFGAnalysis>(const_cast<Function&>(*this));       // NOLINT
+    const auto& dom = analysis.get<DominateAnalysis>(const_cast<Function&>(*this));  // NOLINT
+    for(auto block : dom.blocks()) {
         bool stopPhi = false;
         for(auto inst : block->instructions()) {
             if(inst->getInstID() == InstructionID::Phi) {
@@ -189,10 +193,11 @@ bool Function::verify(std::ostream& out) const {
                 const auto phi = inst->as<PhiInst>();
                 auto& incomings = phi->incomings();
                 auto& predecessors = cfg.predecessors(block);
-                if(predecessors.size() != incomings.size() ||
+                if(!std::all_of(incomings.cbegin(), incomings.cend(),
+                                [&](auto incoming) { return incoming.first->getFunction() == this; }) ||
                    !std::all_of(predecessors.cbegin(), predecessors.cend(), [&](Block* pred) { return incomings.count(pred); })) {
                     out << "Invalid phi node: ";
-                    phi->dump(out);
+                    phi->dump(out, Noop{});
                     out << "\nPredecessors:";
                     for(auto pred : predecessors) {
                         out << ' ';
@@ -205,16 +210,16 @@ bool Function::verify(std::ostream& out) const {
         }
     }
     // verify dominate
-    const auto& dom = analysis.get<DominateAnalysis>(const_cast<Function&>(*this));  // NOLINT
     std::unordered_set<Block*> reachableBlocks{ dom.blocks().cbegin(), dom.blocks().cend() };
 
     for(auto block : dom.blocks()) {
         for(auto inst : block->instructions()) {
-            const auto checkDominate = [&](Block* blockA, Block* blockB) {
-                if(blockA != blockB && reachableBlocks.count(blockB) && !dom.dominate(blockA, blockB)) {
-                    block->dump(out);
+            const auto checkDominate = [&](Block* blockA, Block* blockB, bool strict) {
+                if(blockA != blockB && (strict || reachableBlocks.count(blockA)) && reachableBlocks.count(blockB) &&
+                   !dom.dominate(blockA, blockB)) {
+                    block->dump(out, Noop{});
                     out << "Invalid inst: ";
-                    inst->dump(out);
+                    inst->dump(out, Noop{});
                     out << "\nblock ";
                     blockA->dumpAsTarget(out);
                     out << " should dominate block ";
@@ -228,14 +233,14 @@ bool Function::verify(std::ostream& out) const {
                 const auto phi = inst->as<PhiInst>();
                 for(auto [pred, val] : phi->incomings()) {
                     if(auto depBlock = val->getBlock()) {
-                        if(!checkDominate(depBlock, pred))
+                        if(!checkDominate(depBlock, pred, false))  // depBlock can be unreachable
                             return false;
                     }
                 }
             } else {
                 for(auto operand : inst->operands()) {
                     if(auto depBlock = operand->getBlock()) {
-                        if(!checkDominate(depBlock, block))
+                        if(!checkDominate(depBlock, block, true))  // depBlock must be reachable
                             return false;
                     }
                 }

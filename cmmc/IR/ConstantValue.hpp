@@ -32,12 +32,15 @@ protected:
         return false;
     }
 
+    virtual void dumpImpl(std::ostream& out) const = 0;
+
 public:
     explicit ConstantValue(const Type* type) : Value{ type } {}
     ConstantValue(const ConstantValue&) = default;
     ConstantValue(ConstantValue&&) = default;
     ConstantValue& operator=(const ConstantValue&) = default;
     ConstantValue& operator=(ConstantValue&&) = default;
+    void dump(std::ostream& out, const HighlightSelector& selector) const final;
 
     [[nodiscard]] bool isConstant() const noexcept override {
         return true;
@@ -70,7 +73,7 @@ class ConstantInteger final : public ConstantValue {
 
 public:
     explicit ConstantInteger(const Type* type, intmax_t value, ExplicitConstruct) : ConstantInteger{ type, value } {}
-    void dump(std::ostream& out) const override;
+    void dumpImpl(std::ostream& out) const override;
 
     [[nodiscard]] intmax_t getStorage() const noexcept;
     [[nodiscard]] uintmax_t getZeroExtended() const noexcept;
@@ -90,7 +93,7 @@ public:
     ConstantFloatingPoint(const Type* type, double value) : ConstantValue{ type }, mValue{ value } {
         assert(type->isFloatingPoint());
     }
-    void dump(std::ostream& out) const override;
+    void dumpImpl(std::ostream& out) const override;
     [[nodiscard]] double getValue() const noexcept;
     [[nodiscard]] bool isEqual(double val) const noexcept;
     bool isEqual(ConstantValue* rhs) const override;
@@ -103,7 +106,7 @@ class ConstantOffset final : public ConstantValue {
 
 public:
     ConstantOffset(const StructType* base, uint32_t index) : ConstantValue{ VoidType::get() }, mBase{ base }, mIndex{ index } {}
-    void dump(std::ostream& out) const override;
+    void dumpImpl(std::ostream& out) const override;
     [[nodiscard]] const StructType* base() const noexcept {
         return mBase;
     }
@@ -120,7 +123,7 @@ class ConstantArray final : public ConstantValue {
 
 public:
     ConstantArray(const ArrayType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
-    void dump(std::ostream& out) const override;
+    void dumpImpl(std::ostream& out) const override;
     [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
@@ -136,7 +139,7 @@ public:
     [[nodiscard]] bool isUndefined() const noexcept override {
         return true;
     }
-    void dump(std::ostream& out) const override;
+    void dumpImpl(std::ostream& out) const override;
     bool isEqual(ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };

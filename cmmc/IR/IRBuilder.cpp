@@ -35,18 +35,11 @@ Block* IRBuilder::addBlock() {
 IRBuilder::IRBuilder(const Target& target, Block* block) : IRBuilder{ target } {
     setCurrentBlock(block);
 }
-StackAllocInst* IRBuilder::createAlloc(const Type* type) {
+StackAllocInst* IRBuilder::createAlloc(const Type* type) {  // NOLINT
     auto inst = make<StackAllocInst>(type);
-    auto block = getCurrentBlock();
     const auto entry = getCurrentFunction()->entryBlock();
-    if(block != entry) {
-        entry->instructions().emplace_front(inst);
-        inst->setBlock(entry);
-    } else {
-        auto iter = block->instructions().insert(mInsertPoint, inst);
-        mInsertPoint = std::next(iter);
-        inst->setBlock(block);
-    }
+    entry->instructions().emplace_front(inst);
+    inst->setBlock(entry);
     return inst;
 }
 PhiInst* IRBuilder::createPhi(const Type* type) {

@@ -41,7 +41,7 @@ class FuncArgument final : public Value {
 
 public:
     FuncArgument(Function* func, const Type* type) noexcept : Value{ type }, mFunc{ func } {}
-    void dump(std::ostream& out) const override;
+    void dump(std::ostream& out, const HighlightSelector& selector) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String label);
     [[nodiscard]] bool isArgument() const noexcept override {
@@ -73,7 +73,7 @@ public:
     List<Block*>& blocks() noexcept {
         return mBlocks;
     }
-    void dump(std::ostream& out) const override;
+    void dump(std::ostream& out, const HighlightSelector& selector) const override;
     void dumpCFG(std::ostream& out) const;
     bool verify(std::ostream& out) const;
     [[nodiscard]] bool isFunction() const noexcept override {

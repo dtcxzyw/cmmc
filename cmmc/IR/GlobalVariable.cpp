@@ -17,7 +17,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void GlobalVariable::dump(std::ostream& out) const {
+void GlobalVariable::dump(std::ostream& out, const HighlightSelector& selector) const {
+    CMMC_UNUSED(selector);
+
     if(getLinkage() == Linkage::Internal)
         out << "internal "sv;
     getType()->as<PointerType>()->dump(out);
@@ -37,7 +39,7 @@ void GlobalVariable::dump(std::ostream& out) const {
 
     if(mStaticInitializedValue) {
         out << " = "sv;
-        mStaticInitializedValue->dump(out);
+        mStaticInitializedValue->dump(out, Noop{});
     }
 
     out << ";\n"sv;

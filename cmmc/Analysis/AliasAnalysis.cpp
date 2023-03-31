@@ -49,16 +49,15 @@ void AliasAnalysisResult::addValue(Value* p, std::vector<uint32_t> attrs) {
 }
 bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
     if constexpr(Config::debug) {
-        if(!mPointerAttributes.count(p1)) {
-            p1->getBlock()->dump(reportError());
-            p1->dump(reportError() << "undefined pointer "sv);
-            reportUnreachable(CMMC_LOCATION());
-        }
-        if(!mPointerAttributes.count(p2)) {
-            p2->getBlock()->dump(reportError());
-            p2->dump(reportError() << "undefined pointer "sv);
-            reportUnreachable(CMMC_LOCATION());
-        }
+        auto checkPointer = [&](Value* p) {
+            if(!mPointerAttributes.count(p)) {
+                p->getBlock()->dump(reportError() << "undefined pointer "sv, HighlightInst{ p1->as<Instruction>() });
+                reportUnreachable(CMMC_LOCATION());
+            }
+        };
+
+        checkPointer(p1);
+        checkPointer(p2);
     }
     if(p1 == p2)
         return false;

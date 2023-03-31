@@ -129,7 +129,9 @@ bool isNoSideEffectExpr(const Instruction& inst) {
             [[fallthrough]];
         case InstructionID::Alloc:
             [[fallthrough]];
-        case InstructionID::Load: {
+        case InstructionID::Load:
+            [[fallthrough]];
+        case InstructionID::Phi: {
             return false;
         }
         case InstructionID::Call: {
@@ -165,6 +167,15 @@ void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
         } else
             break;
     }
+}
+void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget) {
+    assert(branch->getTrueTarget() == oldTarget || branch->getFalseTarget() == oldTarget);
+    const auto handleTarget = [=](Block*& target) {
+        if(target == oldTarget)
+            target = newTarget;
+    };
+    handleTarget(branch->getTrueTarget());
+    handleTarget(branch->getFalseTarget());
 }
 void copyTarget(Block* target, Block* oldSource, Block* newSource) {
     for(auto inst : target->instructions()) {

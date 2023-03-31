@@ -35,11 +35,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 class ScalarMem2Reg final : public TransformPass<Function> {
     static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
-                             std::unordered_map<Block*, ReplaceMap>& replaceMap, const StackAddressLeakAnalysisResult& leak,
-                             ReplaceMap& replace) {
+                             const StackAddressLeakAnalysisResult& leak, ReplaceMap& replace) {
         CMMC_UNUSED(func);
         std::unordered_map<Block*, Value*> todo;
         todo.emplace(alloc->getBlock(), alloc);
@@ -51,15 +49,7 @@ class ScalarMem2Reg final : public TransformPass<Function> {
             const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});  // NOLINT
 
         for(auto [block, addr] : todo) {
-            Value* value = nullptr;
-            if(block != root) {
-                reportNotImplemented(CMMC_LOCATION());
-                // value = block->addArg(valueType);
-                // if(value->getType()->isPointer())
-                //    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
-            } else {
-                value = undef;
-            }
+            Value* value = undef;
 
             const auto update = [&, insertBlock = block, storeAddr = addr](Instruction* pos, bool after) {
                 builder.setInsertPoint(insertBlock, pos);
@@ -93,12 +83,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                         case InstructionID::Call: {
                             if(leak.mayModify(inst, alloc))
                                 update(inst, true);
-                        } break;
-                        case InstructionID::Free: {
-                            const auto ptr = inst->getOperand(0);
-                            if(ptr == alloc) {
-                                stop = true;
-                            }
                         } break;
                         case InstructionID::Branch:
                             [[fallthrough]];
@@ -143,13 +127,12 @@ public:
         if(interested.empty())
             return false;
 
-        std::unordered_map<Block*, ReplaceMap> replaceMap;
         IRBuilder builder{ analysis.module().getTarget() };
+        ReplaceMap replace;
         for(auto alloc : interested) {
-            applyMem2Reg(builder, func, alias, alloc, replaceMap, leak);
+            applyMem2Reg(builder, func, alias, alloc, leak, replace);
         }
-        for(auto& [block, replace] : replaceMap)
-            replaceOperands(*block, replace);
+        replaceOperands(func, replace);
         return true;
     }
 
@@ -159,6 +142,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(ScalarMem2Reg);
-*/
 
 CMMC_NAMESPACE_END

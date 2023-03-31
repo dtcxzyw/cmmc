@@ -36,6 +36,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -48,7 +49,7 @@ class FuncInlining final : public TransformPass<Function> {
         return func.attr().hasAttr(FunctionAttribute::NoRecurse);
     }
 
-    static Value* applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
+    static void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
         const auto callRet = *call;
@@ -64,6 +65,7 @@ class FuncInlining final : public TransformPass<Function> {
                 targetReplace.emplace(parameters[idx], arguments[idx]);
             }
         }
+        std::vector<PhiInst*> phiNodes;
         for(auto subBlock : callee->blocks()) {
             auto newBlock = subBlock->clone(targetReplace);
             if(subBlock == callee->entryBlock())
@@ -72,6 +74,12 @@ class FuncInlining final : public TransformPass<Function> {
             newBlock->setFunction(caller);
             callerBlocks.insert(insertPoint, newBlock);
             replace.emplace(subBlock, newBlock);
+            for(auto inst : newBlock->instructions()) {
+                if(inst->getInstID() == InstructionID::Phi) {
+                    phiNodes.push_back(inst->as<PhiInst>());
+                } else
+                    break;
+            }
         }
 
         // replace call with unconditional branch
@@ -81,6 +89,16 @@ class FuncInlining final : public TransformPass<Function> {
             branch->setBlock(block);
             block->instructions().back() = branch;
         }
+        // fix allocs
+        const auto callerEntry = caller->entryBlock();
+        entryBlock->instructions().remove_if([&](Instruction* inst) {
+            if(inst->getInstID() == InstructionID::Alloc) {
+                inst->setBlock(callerEntry);
+                callerEntry->instructions().push_front(inst);
+                return true;
+            }
+            return false;
+        });
         // fix terminators
         PhiInst* retValue = nullptr;
         auto retType = callRet->getType();
@@ -88,10 +106,14 @@ class FuncInlining final : public TransformPass<Function> {
             retValue = make<PhiInst>(retType);
             retValue->setBlock(sinkBlock);
             sinkBlock->instructions().push_front(retValue);
+            targetReplace.emplace(callRet, retValue);
         }
 
         for(auto [oldBlock, newBlock] : replace) {
-            CMMC_UNUSED(oldBlock);
+            for(auto phi : phiNodes)
+                if(phi->incomings().count(oldBlock))
+                    phi->replaceSource(oldBlock, newBlock);
+
             auto terminator = newBlock->getTerminator();
             switch(terminator->getInstID()) {
                 case InstructionID::Ret: {
@@ -119,7 +141,26 @@ class FuncInlining final : public TransformPass<Function> {
                     break;
             }
         }
-        return retValue;
+        replaceOperands(*caller, targetReplace);
+
+        // fix phi nodes: block -> sinkBlock
+        const auto terminator = sinkBlock->getTerminator();
+        if(terminator->isBranch()) {
+            const auto branch = terminator->as<BranchInst>();
+
+            auto handleTarget = [&](Block* target) {
+                for(auto inst : target->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        inst->as<PhiInst>()->replaceSource(block, sinkBlock);
+                    } else
+                        break;
+                }
+            };
+
+            handleTarget(branch->getTrueTarget());
+            if(branch->getFalseTarget() && branch->getFalseTarget() != branch->getTrueTarget())
+                handleTarget(branch->getFalseTarget());
+        }
     }
 
     static bool tryInline(Function& func) {
@@ -144,8 +185,15 @@ class FuncInlining final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
-        while(tryInline(func))
+        while(tryInline(func)) {
             modified = true;
+            /*
+            func.dump(std::cerr, Noop{});
+            if(!func.verify(std::cerr)) {
+                reportUnreachable(CMMC_LOCATION());
+            }
+            */
+        }
         return modified;
     }
 

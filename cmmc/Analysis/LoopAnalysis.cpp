@@ -61,15 +61,26 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!dom.dominate(header, block))
             continue;
 
-        // TODO: handle phi nodes
-        if(indvar->getBlock() != header || !indvar->is<FuncArgument>())
+        if(indvar->getBlock() != header || !indvar->is<PhiInst>())
             continue;
 
+        // TODO: remove this constraint
         if(!bound->isConstant())
             continue;
 
         Value* initial = nullptr;
-        assert(initial);
+        bool uniqueInitial = true;
+        const auto phi = indvar->as<PhiInst>();
+        for(auto [pred, val] : phi->incomings()) {
+            if(pred != block) {
+                if(initial)
+                    uniqueInitial = false;
+                else
+                    initial = val;
+            }
+        }
+        if(!uniqueInitial || !initial)
+            continue;
 
         if(cmp->getOp() == CompareOp::NotEqual) {
             intmax_t boundValue;

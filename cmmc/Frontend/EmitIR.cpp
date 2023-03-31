@@ -853,7 +853,7 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
 
         const auto type = ctx.getType(mType.typeIdentifier, mType.space, arraySize);
         auto local = ctx.createAlloc(type);
-        constexpr size_t maxLen = 16;
+        constexpr size_t maxLen = 8;
         if(name.prefix().size() <= maxLen)
             local->setLabel(name);
         else

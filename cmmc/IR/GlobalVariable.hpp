@@ -35,7 +35,7 @@ public:
     [[nodiscard]] ConstantValue* initialValue() const noexcept {
         return mStaticInitializedValue;
     }
-    void dump(std::ostream& out) const override;
+    void dump(std::ostream& out, const HighlightSelector& selector) const override;
     auto& attr() noexcept {
         return mAttr;
     }

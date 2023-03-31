@@ -286,7 +286,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({
-                //  "GVN",                    //
+                "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
                 "BlockMerge",             // clean up
@@ -303,7 +303,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "InfiniteEliminate",                 //
                 "UnreachableEliminate",              //
                 "SimplifyPartialUnreachableBranch",  //
-                "BlockEliminate",                    // clean u
+                "BlockEliminate",                    // clean up
             }))
             basic->addPass(pass);
     }
@@ -329,7 +329,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({
-                //"ScalarMem2Reg",          //
+                "ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up
                 "NoSideEffectEliminate",  // clean up
                 "SmallBlockInlining",     //
@@ -410,7 +410,7 @@ public:
             if(mPass->run(*func, analysis)) {
                 if(debugTransform.get()) {
                     std::cerr << "\tmodified" << std::endl;
-                    func->dump(std::cerr);
+                    func->dump(std::cerr, Noop{});
                 }
                 analysis.invalidateFunc(*func);
                 modified = true;

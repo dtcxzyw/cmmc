@@ -21,18 +21,23 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void ConstantInteger::dump(std::ostream& out) const {
+void ConstantValue::dump(std::ostream& out, const HighlightSelector& selector) const {
+    CMMC_UNUSED(selector);
+    dumpImpl(out);
+}
+
+void ConstantInteger::dumpImpl(std::ostream& out) const {
     if(getType()->isBoolean())
         out << (getZeroExtended() ? "true" : "false");
     else
         out << getSignExtended();
 }
 
-void ConstantFloatingPoint::dump(std::ostream& out) const {
+void ConstantFloatingPoint::dumpImpl(std::ostream& out) const {
     out << mValue;
 }
 
-void UndefinedValue::dump(std::ostream& out) const {
+void UndefinedValue::dumpImpl(std::ostream& out) const {
     out << "undef"sv;
 }
 
@@ -101,11 +106,11 @@ String ConstantOffset::getName() const {
     return mBase->fields()[mIndex].fieldName;
 }
 
-void ConstantOffset::dump(std::ostream&) const {
+void ConstantOffset::dumpImpl(std::ostream&) const {
     reportUnreachable(CMMC_LOCATION());
 }
 
-void ConstantArray::dump(std::ostream& out) const {
+void ConstantArray::dumpImpl(std::ostream& out) const {
     out << '[';
     bool isFirst = true;
     for(auto val : mValues) {
@@ -113,7 +118,7 @@ void ConstantArray::dump(std::ostream& out) const {
             out << ", "sv;
         else
             isFirst = false;
-        val->dump(out);
+        val->dump(out, Noop{});
     }
     out << ']';
 }

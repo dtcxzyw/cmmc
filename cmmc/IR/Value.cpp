@@ -40,7 +40,7 @@ void Value::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
     mType->dumpName(out);
     out << ' ';
-    dump(out);
+    dump(out, Noop{});
 }
 
 CMMC_NAMESPACE_END

@@ -55,6 +55,16 @@ bool Instruction::canbeOperand() const noexcept {
     return !isTerminator() && mInstID != InstructionID::Store;
 }
 
+void Instruction::dump(std::ostream& out, const HighlightSelector& selector) const {
+    if(selector.highlight(this)) {
+        out << "\033[0;31m";
+    }
+    dumpInst(out);
+    if(selector.highlight(this)) {
+        out << "\033[0m";
+    }
+}
+
 bool Instruction::verify(std::ostream& out) const {
     // cross block reference
     /*
@@ -193,7 +203,7 @@ void Instruction::dumpUnary(std::ostream& out) const {
     getOperand(0)->dumpAsOperand(out);
 }
 
-void BinaryInst::dump(std::ostream& out) const {
+void BinaryInst::dumpInst(std::ostream& out) const {
     dumpBinary(out);
 }
 
@@ -216,7 +226,7 @@ static std::string_view getCompareName(CompareOp op) {
     }
 }
 
-void CompareInst::dump(std::ostream& out) const {
+void CompareInst::dumpInst(std::ostream& out) const {
     dumpAsOperand(out);
     out << " = "sv << getInstName(getInstID()) << ' ' << getCompareName(mCompare) << ' ';
     getOperand(0)->dumpAsOperand(out);
@@ -224,11 +234,11 @@ void CompareInst::dump(std::ostream& out) const {
     getOperand(1)->dumpAsOperand(out);
 }
 
-void UnaryInst::dump(std::ostream& out) const {
+void UnaryInst::dumpInst(std::ostream& out) const {
     dumpUnary(out);
 }
 
-void CastInst::dump(std::ostream& out) const {
+void CastInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
@@ -236,11 +246,11 @@ void CastInst::dump(std::ostream& out) const {
     getType()->dumpName(out);
 }
 
-void LoadInst::dump(std::ostream& out) const {
+void LoadInst::dumpInst(std::ostream& out) const {
     dumpUnary(out);
 }
 
-void StoreInst::dump(std::ostream& out) const {
+void StoreInst::dumpInst(std::ostream& out) const {
     out << getInstName(getInstID());
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
@@ -248,7 +258,7 @@ void StoreInst::dump(std::ostream& out) const {
     getOperand(1)->dumpAsOperand(out);
 }
 
-void BranchInst::dump(std::ostream& out) const {
+void BranchInst::dumpInst(std::ostream& out) const {
     out << getInstName(getInstID()) << ' ';
     if(getInstID() == InstructionID::Branch) {
         mTrueTarget->dumpAsTarget(out);
@@ -297,7 +307,7 @@ void BranchInst::updateBranchProb(double branchProb) {
     mBranchProb = branchProb;
 }
 
-void ReturnInst::dump(std::ostream& out) const {
+void ReturnInst::dumpInst(std::ostream& out) const {
     out << getInstName(getInstID());
     if(!operands().empty()) {
         out << ' ';
@@ -305,11 +315,11 @@ void ReturnInst::dump(std::ostream& out) const {
     }
 }
 
-void UnreachableInst::dump(std::ostream& out) const {
+void UnreachableInst::dumpInst(std::ostream& out) const {
     out << getInstName(getInstID());
 }
 
-void FunctionCallInst::dump(std::ostream& out) const {
+void FunctionCallInst::dumpInst(std::ostream& out) const {
     const auto callee = operands().back();
     dumpWithNoOperand(out);
     out << ' ';
@@ -329,7 +339,7 @@ void FunctionCallInst::dump(std::ostream& out) const {
     out << ')';
 }
 
-void SelectInst::dump(std::ostream& out) const {
+void SelectInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getOperand(0)->dumpAsOperand(out);
@@ -339,13 +349,13 @@ void SelectInst::dump(std::ostream& out) const {
     getOperand(2)->dumpAsOperand(out);
 }
 
-void StackAllocInst::dump(std::ostream& out) const {
+void StackAllocInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     out << ' ';
     getType()->as<PointerType>()->getPointee()->dumpName(out);
 }
 
-void FMAInst::dump(std::ostream& out) const {
+void FMAInst::dumpInst(std::ostream& out) const {
     dumpBinary(out);
     out << ", "sv;
     getOperand(2)->dumpAsOperand(out);
@@ -415,7 +425,7 @@ std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gat
     return { constantOffset, std::move(offsets) };
 }
 
-void GetElementPtrInst::dump(std::ostream& out) const {
+void GetElementPtrInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     const auto base = operands().back();
     out << " &("sv;
@@ -435,7 +445,7 @@ void GetElementPtrInst::dump(std::ostream& out) const {
     }
 }
 
-void PtrCastInst::dump(std::ostream& out) const {
+void PtrCastInst::dumpInst(std::ostream& out) const {
     dumpUnary(out);
     out << " to "sv;
     getType()->dump(out);
@@ -516,7 +526,7 @@ Instruction* PtrCastInst::clone() const {
     return make<PtrCastInst>(getOperand(0), getType());
 }
 
-void PtrToIntInst::dump(std::ostream& out) const {
+void PtrToIntInst::dumpInst(std::ostream& out) const {
     dumpUnary(out);
     out << " to "sv;
     getType()->dump(out);
@@ -525,7 +535,7 @@ Instruction* PtrToIntInst::clone() const {
     return make<PtrToIntInst>(getOperand(0), getType());
 }
 
-void IntToPtrInst::dump(std::ostream& out) const {
+void IntToPtrInst::dumpInst(std::ostream& out) const {
     // TODO: dump cast
     dumpUnary(out);
     out << " to "sv;
@@ -621,7 +631,7 @@ bool BinaryInst::verify(std::ostream& out) const {
 bool CompareInst::verify(std::ostream& out) const {
     return checkBinaryOpType(this, out);
 }
-void PhiInst::dump(std::ostream& out) const {
+void PhiInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
     for(auto [block, val] : mIncomings) {
         out << " ["sv;

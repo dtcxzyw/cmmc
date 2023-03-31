@@ -35,7 +35,7 @@ void Module::dump(std::ostream& out) const {
     }
 
     for(auto value : mGlobals)
-        value->dump(out);
+        value->dump(out, Noop{});
 }
 
 bool Module::verify(std::ostream& out) const {

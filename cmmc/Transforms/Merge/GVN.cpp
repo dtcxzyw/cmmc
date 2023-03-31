@@ -32,7 +32,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 struct GlobalInstHasher final {
     std::unordered_map<const Instruction*, size_t>& cachedHash;
     std::function<uint32_t(Value*)>& getNumber;
@@ -82,21 +81,21 @@ public:
                 return iter->second;
             const auto id = allocateID++;
             valueNumber.emplace(value, id);
-            //value->dumpAsOperand(std::cerr);
-            //std::cerr << "->" << id << std::endl;
+            // value->dumpAsOperand(std::cerr);
+            // std::cerr << "->" << id << std::endl;
             return id;
         };
         std::function<uint32_t(Value*)> getNumber;
         std::unordered_map<const Instruction*, size_t> cachedHash;
-       //FIXME: improve the performance of hash table?
-        //std::unordered_map<Instruction*, uint32_t, GlobalInstHasher, GlobalInstEqual> instNumber(
-       //     0U, GlobalInstHasher{ cachedHash, getNumber }, GlobalInstEqual{ getNumber });
+        // FIXME: improve the performance of hash table?
+        // std::unordered_map<Instruction*, uint32_t, GlobalInstHasher, GlobalInstEqual> instNumber(
+        //     0U, GlobalInstHasher{ cachedHash, getNumber }, GlobalInstEqual{ getNumber });
 
-        //const auto getInstNumber = [&](Instruction* inst) {
-       //     if(auto iter = instNumber.find(inst); iter != instNumber.cend()) {
-       //         return iter->second;
-       //     }
-       //     const auto id = allocateID++;
+        // const auto getInstNumber = [&](Instruction* inst) {
+        //     if(auto iter = instNumber.find(inst); iter != instNumber.cend()) {
+        //         return iter->second;
+        //     }
+        //     const auto id = allocateID++;
         //    instNumber.emplace(inst, id);
         //    return id;
         //};
@@ -142,8 +141,8 @@ public:
 
                 const auto id = getInstNumber(inst);
                 instructions[id].push_back(inst);
-                //inst->dump(std::cerr);
-                //std::cerr << "->" << id << std::endl;
+                // inst->dump(std::cerr);
+                // std::cerr << "->" << id << std::endl;
             }
         }
 
@@ -183,13 +182,13 @@ public:
 
             // hoisting
             if(replaceInst == nullptr) {
-                //const auto inst = sameInstructions.front()->clone();
-                //for(auto& operand : inst->operands())
-                //    operand = operandMap[getNumber(operand)];
-                //auto& instructions = block->instructions();
-                //inst->setBlock(block);
-               // instructions.insert(std::prev(instructions.cend()), inst);
-                //replaceInst = inst;
+                // const auto inst = sameInstructions.front()->clone();
+                // for(auto& operand : inst->operands())
+                //     operand = operandMap[getNumber(operand)];
+                // auto& instructions = block->instructions();
+                // inst->setBlock(block);
+                // instructions.insert(std::prev(instructions.cend()), inst);
+                // replaceInst = inst;
                 // TODO: better strategy
                 continue;  // disable hoisting
             }
@@ -216,6 +215,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(GVN);
-*/
 
 CMMC_NAMESPACE_END

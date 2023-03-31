@@ -19,6 +19,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <ostream>
 #include <string_view>
+#include <type_traits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -28,9 +29,12 @@ struct Attachment final {
     const T* val;
     friend void operator<<(std::ostream& out, const Attachment<T>& attachment) {
         out << attachment.desc << ": "sv;
-        if(attachment.val)
-            attachment.val->dump(out);
-        else
+        if(attachment.val) {
+            if constexpr(std::is_same_v<T, Type> || std::is_same_v<T, Module>)
+                attachment.val->dump(out);
+            else
+                attachment.val->dump(out, Noop{});
+        } else
             out << " invalid"sv;
         out << std::endl;
     }

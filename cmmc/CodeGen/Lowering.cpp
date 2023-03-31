@@ -81,7 +81,7 @@ Operand LoweringContext::mapOperand(Value* operand) {
         return ptr;
     }
     if(!operand->isConstant()) {
-        operand->dump(reportError() << "undefined operand "sv);
+        operand->dump(reportError() << "undefined operand "sv, Noop{});
         reportUnreachable(CMMC_LOCATION());
     }
     // constant

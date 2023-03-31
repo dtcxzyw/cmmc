@@ -520,8 +520,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
             entry.operands.emplace(func.getArg(idx), fromConstant(arguments[idx]));
         if(step.get()) {
-            func.dump(std::cerr);
-            entry.block->dumpLabeled(std::cerr);
+            func.dump(std::cerr, Noop{});
+            entry.block->dumpLabeled(std::cerr, Noop{});
         }
 
         execCtx.push_back(std::move(entry));
@@ -598,9 +598,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto dumpValue = [&](const OperandStorage& val) {
             auto& out = std::cerr;
             std::visit(Overload{ [&](auto&&) { out << "unknown"sv; },                                   //
-                                 [&](const ConstantInteger& x) { x.dump(out); },                        //
-                                 [&](const ConstantFloatingPoint& x) { x.dump(out); },                  //
-                                 [&](const ConstantOffset* x) { x->dump(out); },                        //
+                                 [&](const ConstantInteger& x) { x.dump(out, Noop{}); },                //
+                                 [&](const ConstantFloatingPoint& x) { x.dump(out, Noop{}); },          //
+                                 [&](const ConstantOffset* x) { x->dump(out, Noop{}); },                //
                                  [&](const Function* x) { x->dumpAsOperand(out); },                     //
                                  [&](uintptr_t x) { out << "ptr "sv << std::hex << x << std::dec; } },  //
                        val);
@@ -609,7 +609,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             currentExecCtx.operands.insert_or_assign(mappedInst, val);
             if(step.get()) {
                 auto& out = std::cerr;
-                mappedInst->dump(out);
+                mappedInst->dump(out, Noop{});
                 out << " -> "sv;
                 dumpValue(val);
                 out << '\n';
@@ -682,7 +682,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 currentExecCtx.block = targetBlock;
                 currentExecCtx.execIter = targetBlock->instructions().cbegin();
                 if(step.get()) {
-                    currentExecCtx.block->dumpLabeled(std::cerr);
+                    currentExecCtx.block->dumpLabeled(std::cerr, Noop{});
                 }
                 break;
             }
@@ -702,7 +702,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 memCtx.storeValue(ptr, operands[1], inst->getOperand(1)->getType());
                 if(step.get()) {
                     auto& out = std::cerr;
-                    inst->dump(out);
+                    inst->dump(out, Noop{});
                     out << " : "sv;
                     dumpValue(operands[1]);
                     out << " -> "sv;
@@ -1014,8 +1014,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                             blockCtx.execIter = blockCtx.block->instructions().cbegin();
                             if(step.get()) {
-                                callee->dump(std::cerr);
-                                blockCtx.block->dumpLabeled(std::cerr);
+                                callee->dump(std::cerr, Noop{});
+                                blockCtx.block->dumpLabeled(std::cerr, Noop{});
                             }
                             execCtx.push_back(std::move(blockCtx));
                         }

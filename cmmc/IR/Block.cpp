@@ -27,10 +27,10 @@
 CMMC_NAMESPACE_BEGIN
 extern Flag uniqueLabel;  // NOLINT
 
-void Block::dump(std::ostream& out) const {
+void Block::dump(std::ostream& out, const HighlightSelector& selector) const {
     LabelAllocator allocator;
     relabel(allocator);
-    dumpLabeled(out);
+    dumpLabeled(out, selector);
 }
 
 void Block::relabel(LabelAllocator& allocator) const {
@@ -40,12 +40,18 @@ void Block::relabel(LabelAllocator& allocator) const {
             inst->setLabel(allocator.allocate(inst->getLabel()));
 }
 
-void Block::dumpLabeled(std::ostream& out) const {
+void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) const {
+    if(selector.highlight(this)) {
+        out << "\033[1;33m";
+    }
     dumpAsTarget(out);
+    if(selector.highlight(this)) {
+        out << "\033[0m";
+    }
     out << ":\n";
     for(auto inst : mInstructions) {
         out << "    "sv;
-        inst->dump(out);
+        inst->dump(out, selector);
         out << ";\n"sv;
     }
 }
@@ -61,14 +67,14 @@ bool Block::verify(std::ostream& out) const {
     for(auto inst : mInstructions) {
         if(inst->getBlock() != this) {
             out << "bad ownership "sv;
-            inst->dump(out);
+            inst->dump(out, Noop{});
             return false;
         }
         for(auto operand : inst->operands()) {
             if(auto block = operand->getBlock()) {
                 if(block->getFunction() != getFunction()) {
                     out << "bad ownership "sv;
-                    inst->dump(out);
+                    inst->dump(out, Noop{});
                     out << "\ninvalid operand "sv;
                     operand->dumpAsOperand(out);
                     return false;
@@ -87,11 +93,11 @@ bool Block::verify(std::ostream& out) const {
             if(operand->getBlock() == this && !operand->is<PhiInst>()) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
-                    dumpLabeled(out);
+                    dumpLabeled(out, Noop{});
                     out << "this operand is required: "sv << std::endl;
-                    operand->dump(out);
+                    operand->dump(out, Noop{});
                     out << std::endl << "user: "sv << std::endl;
-                    inst->dump(out);
+                    inst->dump(out, Noop{});
                     out << std::endl;
                     return false;
                 }
@@ -104,8 +110,7 @@ bool Block::verify(std::ostream& out) const {
     for(auto inst : mInstructions)
         if(!inst->verify(out)) {
             out << "invalid inst "sv << std::endl;
-            dump(out);
-            inst->dump(out);
+            dump(out, HighlightInst{ inst });
             return false;
         }
 

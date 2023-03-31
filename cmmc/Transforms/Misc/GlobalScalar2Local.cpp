@@ -125,7 +125,11 @@ public:
 
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
-        builder.setInsertPoint(exportedFunc->entryBlock(), exportedFunc->entryBlock()->instructions().begin());
+        const auto entryBlock = exportedFunc->entryBlock();
+        auto& instructions = entryBlock->instructions();
+        builder.setInsertPoint(entryBlock, std::find_if_not(instructions.begin(), instructions.end(), [](Instruction* inst) {
+                                   return inst->getInstID() == InstructionID::Alloc;
+                               }));
 
         std::unordered_map<Function*, std::unordered_map<Value*, Value*>> mapping;
 
