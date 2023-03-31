@@ -1,493 +1,341 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal i32* @program_length = 0;
 internal [65536 * i32]* @program = [];
 internal [65536 * i32]* @tape = [];
 internal [65536 * i32]* @input = [];
-internal i32* @input_length = 0;
 internal [65536 * i32]* @output = [];
-internal i32* @output_length = 0;
-internal func @get_bf_char() -> i32 {
+internal func @cmmc::Intrinsic::memset() -> i8* { NoMemoryRead };
+func @main() -> i32 { NoRecurse Entry } {
 ^entry:
-    i32* %get = alloc i32;
+    i32* %ip = alloc i32;
+    i32* %read_hea = alloc i32;
+    i32* %input_he = alloc i32;
+    [512 * i32]* %return_a = alloc [512 * i32];
+    i32* %input_length = alloc i32;
+    i32* %program_length = alloc i32;
+    store i32* %program_length with i32 0;
+    store i32* %input_length with i32 0;
     i32 %0 = call () -> i32 @getch();
-    store i32* %get with i32 %0;
     ubr ^while.header;
 ^while.header:
-    i32 %1 = load i32* %get;
-    i1 %2 = scmp neq i32 %1, i32 62;
-    i32 %3 = zext i1 %2 to i32;
-    i1 %4 = scmp neq i32 %3, i32 0;
+    i32 %1 = phi [^while.body, i32 %1] [^entry, i32 0];
+    i32 %2 = phi [^while.body, i32 %21] [^entry, i32 %0];
+    i32 %3 = phi [^entry, i32 %0] [^while.body, i32 %21];
+    i1 %4 = scmp neq i32 %3, i32 62;
     cbr i1 %4(prob = 0.5), ^b, ^b1;
 ^b:
-    i32 %5 = load i32* %get;
-    i1 %6 = scmp neq i32 %5, i32 60;
-    i32 %7 = zext i1 %6 to i32;
-    i1 %8 = scmp neq i32 %7, i32 0;
+    i1 %5 = scmp neq i32 %2, i32 60;
     ubr ^b1;
 ^b1:
-    i1 %9 = phi [^b, i1 %8] [^while.header, i1 false];
-    i32 %10 = zext i1 %9 to i32;
-    i1 %11 = scmp neq i32 %10, i32 0;
-    cbr i1 %11(prob = 0.5), ^b2, ^b3;
+    i1 %6 = phi [^while.header, i1 false] [^b, i1 %5];
+    cbr i1 %6(prob = 0.5), ^b2, ^b3;
 ^b2:
-    i32 %12 = load i32* %get;
-    i1 %13 = scmp neq i32 %12, i32 43;
-    i32 %14 = zext i1 %13 to i32;
-    i1 %15 = scmp neq i32 %14, i32 0;
+    i1 %7 = scmp neq i32 %2, i32 43;
     ubr ^b3;
 ^b3:
-    i1 %16 = phi [^b2, i1 %15] [^b1, i1 false];
-    i32 %17 = zext i1 %16 to i32;
-    i1 %18 = scmp neq i32 %17, i32 0;
-    cbr i1 %18(prob = 0.5), ^b4, ^b5;
+    i1 %8 = phi [^b2, i1 %7] [^b1, i1 false];
+    cbr i1 %8(prob = 0.5), ^b4, ^b5;
 ^b4:
-    i32 %19 = load i32* %get;
-    i1 %20 = scmp neq i32 %19, i32 45;
-    i32 %21 = zext i1 %20 to i32;
-    i1 %22 = scmp neq i32 %21, i32 0;
+    i1 %9 = scmp neq i32 %2, i32 45;
     ubr ^b5;
 ^b5:
-    i1 %23 = phi [^b4, i1 %22] [^b3, i1 false];
-    i32 %24 = zext i1 %23 to i32;
-    i1 %25 = scmp neq i32 %24, i32 0;
-    cbr i1 %25(prob = 0.5), ^b6, ^b7;
+    i1 %10 = phi [^b3, i1 false] [^b4, i1 %9];
+    cbr i1 %10(prob = 0.5), ^b6, ^b7;
 ^b6:
-    i32 %26 = load i32* %get;
-    i1 %27 = scmp neq i32 %26, i32 91;
-    i32 %28 = zext i1 %27 to i32;
-    i1 %29 = scmp neq i32 %28, i32 0;
+    i1 %11 = scmp neq i32 %2, i32 91;
     ubr ^b7;
 ^b7:
-    i1 %30 = phi [^b6, i1 %29] [^b5, i1 false];
-    i32 %31 = zext i1 %30 to i32;
-    i1 %32 = scmp neq i32 %31, i32 0;
-    cbr i1 %32(prob = 0.5), ^b8, ^b9;
+    i1 %12 = phi [^b5, i1 false] [^b6, i1 %11];
+    cbr i1 %12(prob = 0.5), ^b8, ^b9;
 ^b8:
-    i32 %33 = load i32* %get;
-    i1 %34 = scmp neq i32 %33, i32 93;
-    i32 %35 = zext i1 %34 to i32;
-    i1 %36 = scmp neq i32 %35, i32 0;
+    i1 %13 = scmp neq i32 %2, i32 93;
     ubr ^b9;
 ^b9:
-    i1 %37 = phi [^b8, i1 %36] [^b7, i1 false];
-    i32 %38 = zext i1 %37 to i32;
-    i1 %39 = scmp neq i32 %38, i32 0;
-    cbr i1 %39(prob = 0.5), ^b10, ^b11;
+    i1 %14 = phi [^b7, i1 false] [^b8, i1 %13];
+    cbr i1 %14(prob = 0.5), ^b10, ^b11;
 ^b10:
-    i32 %40 = load i32* %get;
-    i1 %41 = scmp neq i32 %40, i32 46;
-    i32 %42 = zext i1 %41 to i32;
-    i1 %43 = scmp neq i32 %42, i32 0;
+    i1 %15 = scmp neq i32 %2, i32 46;
     ubr ^b11;
 ^b11:
-    i1 %44 = phi [^b10, i1 %43] [^b9, i1 false];
-    i32 %45 = zext i1 %44 to i32;
-    i1 %46 = scmp neq i32 %45, i32 0;
-    cbr i1 %46(prob = 0.5), ^b12, ^b13;
+    i1 %16 = phi [^b10, i1 %15] [^b9, i1 false];
+    cbr i1 %16(prob = 0.5), ^b12, ^b13;
 ^b12:
-    i32 %47 = load i32* %get;
-    i1 %48 = scmp neq i32 %47, i32 44;
-    i32 %49 = zext i1 %48 to i32;
-    i1 %50 = scmp neq i32 %49, i32 0;
+    i1 %17 = scmp neq i32 %2, i32 44;
     ubr ^b13;
 ^b13:
-    i1 %51 = phi [^b12, i1 %50] [^b11, i1 false];
-    i32 %52 = zext i1 %51 to i32;
-    i1 %53 = scmp neq i32 %52, i32 0;
-    cbr i1 %53(prob = 0.5), ^b14, ^b15;
+    i1 %18 = phi [^b12, i1 %17] [^b11, i1 false];
+    cbr i1 %18(prob = 0.5), ^b14, ^b15;
 ^b14:
-    i32 %54 = load i32* %get;
-    i1 %55 = scmp neq i32 %54, i32 35;
-    i32 %56 = zext i1 %55 to i32;
-    i1 %57 = scmp neq i32 %56, i32 0;
+    i1 %19 = scmp neq i32 %2, i32 35;
     ubr ^b15;
 ^b15:
-    i1 %58 = phi [^b14, i1 %57] [^b13, i1 false];
-    i32 %59 = zext i1 %58 to i32;
-    i1 %60 = scmp neq i32 %59, i32 0;
-    cbr i1 %60(prob = 0.97), ^while.body, ^b16;
+    i1 %20 = phi [^b14, i1 %19] [^b13, i1 false];
+    cbr i1 %20(prob = 0.97), ^while.body, ^while.header1;
 ^while.body:
-    i32 %61 = call () -> i32 @getch();
-    store i32* %get with i32 %61;
+    i32 %21 = call () -> i32 @getch();
     ubr ^while.header;
-^b16:
-    i32 %62 = load i32* %get;
-    ret i32 %62;
-}
-internal func @read_program() -> void {
-^entry:
-    i32* %i = alloc i32;
-    i32* %verify = alloc i32;
-    i32* %get = alloc i32;
-    i32 %0 = call () -> i32 @get_bf_char();
-    store i32* %get with i32 %0;
-    ubr ^while.header;
-^while.header:
-    i32 %1 = load i32* %get;
-    i1 %2 = scmp neq i32 %1, i32 35;
-    i32 %3 = zext i1 %2 to i32;
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %5 = load i32* @program_length;
-    i64 %6 = sext i32 %5 to i64;
-    i32* %7 = getelementptr &([65536 * i32]* @program)[i64 0][i64 %6];
-    i32 %8 = load i32* %get;
-    store i32* %7 with i32 %8;
-    i32 %9 = call () -> i32 @get_bf_char();
-    store i32* %get with i32 %9;
-    i32 %10 = load i32* @program_length;
-    i32 %11 = add i32 %10, i32 1;
-    store i32* @program_length with i32 %11;
-    ubr ^while.header;
-^b:
-    i32 %12 = call () -> i32 @getch();
-    store i32* %verify with i32 %12;
-    i32 %13 = load i32* %verify;
-    i1 %14 = scmp neq i32 %13, i32 105;
-    i32 %15 = zext i1 %14 to i32;
-    i1 %16 = scmp neq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.5), ^if.then, ^b1;
-^b1:
-    i32 %17 = call () -> i32 @getint();
-    store i32* @input_length with i32 %17;
-    i32 %18 = call () -> i32 @getch();
-    store i32* %i with i32 0;
-    ubr ^while.header1;
-^if.then:
-    ret;
 ^while.header1:
-    i32 %19 = load i32* %i;
-    i32 %20 = load i32* @input_length;
-    i1 %21 = scmp lt i32 %19, i32 %20;
-    i32 %22 = zext i1 %21 to i32;
-    i1 %23 = scmp neq i32 %22, i32 0;
-    cbr i1 %23(prob = 0.97), ^while.body1, ^b2;
+    i32 %22 = phi [^b15, i32 %1] [^b35, i32 %139];
+    i32 %23 = phi [^b15, i32 %2] [^b35, i32 %40];
+    i32 %24 = phi [^b15, i32 %2] [^b35, i32 %40];
+    i1 %25 = scmp neq i32 %24, i32 35;
+    cbr i1 %25(prob = 0.97), ^while.body1, ^b16;
 ^while.body1:
-    i32 %24 = load i32* %i;
-    i64 %25 = sext i32 %24 to i64;
-    i32* %26 = getelementptr &([65536 * i32]* @input)[i64 0][i64 %25];
+    i32* %26 = getelementptr &([65536 * i32]* @program)[i64 0][i32 %22];
+    store i32* %26 with i32 %23;
     i32 %27 = call () -> i32 @getch();
-    store i32* %26 with i32 %27;
-    i32 %28 = load i32* %i;
-    i32 %29 = add i32 %28, i32 1;
-    store i32* %i with i32 %29;
-    ubr ^while.header1;
-^b2:
-    ret;
-}
-internal func @run_program() -> void {
-^entry:
-    i32* %val = alloc i32;
-    i32* %loop = alloc i32;
-    i32* %val1 = alloc i32;
-    i32* %code = alloc i32;
-    i32* %return_a = alloc i32;
-    [512 * i32]* %return_a1 = alloc [512 * i32];
-    i32* %input_he = alloc i32;
-    i32* %read_hea = alloc i32;
-    i32* %ip = alloc i32;
+    ubr ^while.header2;
+^b16:
+    i32 %28 = call () -> i32 @getch();
+    i1 %29 = scmp neq i32 %28, i32 105;
+    cbr i1 %29(prob = 0.5), ^entry1, ^b17;
+^entry1:
+    call (i32) -> void @starttime(i32 116);
     store i32* %ip with i32 0;
     store i32* %read_hea with i32 0;
     store i32* %input_he with i32 0;
-    i32* %0 = getelementptr &([512 * i32]* %return_a1)[i64 1][i64 0];
-    i32* %1 = getelementptr &([512 * i32]* %return_a1)[i64 0][i64 0];
-    i8* %2 = ptrcast i32* %1 to i8*;
-    i8* %3 = call (i8*, i32, i64) -> i8* @cmmc::Intrinsic::memset(i8* %2, i32 0, i64 2048);
-    store i32* %return_a with i32 0;
-    store i32* @output_length with i32 0;
-    ubr ^while.header;
-^while.header:
-    i32 %4 = load i32* %ip;
-    i32 %5 = load i32* @program_length;
-    i1 %6 = scmp lt i32 %4, i32 %5;
-    i32 %7 = zext i1 %6 to i32;
-    i1 %8 = scmp neq i32 %7, i32 0;
-    cbr i1 %8(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %9 = load i32* %ip;
-    i64 %10 = sext i32 %9 to i64;
-    i32* %11 = getelementptr &([65536 * i32]* @program)[i64 0][i64 %10];
-    i32 %12 = load i32* %11;
-    store i32* %code with i32 %12;
-    i32 %13 = load i32* %code;
-    i1 %14 = scmp eq i32 %13, i32 62;
-    i32 %15 = zext i1 %14 to i32;
-    i1 %16 = scmp neq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.5), ^if.then, ^if.else;
-^b:
-    ret;
-^if.then:
-    i32 %17 = load i32* %read_hea;
-    i32 %18 = add i32 %17, i32 1;
-    store i32* %read_hea with i32 %18;
-    ubr ^b1;
-^if.else:
-    i32 %19 = load i32* %code;
-    i1 %20 = scmp eq i32 %19, i32 60;
-    i32 %21 = zext i1 %20 to i32;
-    i1 %22 = scmp neq i32 %21, i32 0;
-    cbr i1 %22(prob = 0.5), ^if.then1, ^if.else1;
-^b1:
-    i32 %23 = load i32* %ip;
-    i32 %24 = add i32 %23, i32 1;
-    store i32* %ip with i32 %24;
-    ubr ^while.header;
-^if.then1:
-    i32 %25 = load i32* %read_hea;
-    i32 %26 = sub i32 %25, i32 1;
-    store i32* %read_hea with i32 %26;
-    ubr ^b2;
-^if.else1:
-    i32 %27 = load i32* %code;
-    i1 %28 = scmp eq i32 %27, i32 43;
-    i32 %29 = zext i1 %28 to i32;
-    i1 %30 = scmp neq i32 %29, i32 0;
-    cbr i1 %30(prob = 0.5), ^if.then2, ^if.else2;
-^b2:
-    ubr ^b1;
-^if.then2:
-    i32 %31 = load i32* %read_hea;
-    i64 %32 = sext i32 %31 to i64;
-    i32* %33 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %32];
-    i32 %34 = load i32* %read_hea;
-    i64 %35 = sext i32 %34 to i64;
-    i32* %36 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %35];
-    i32 %37 = load i32* %36;
-    i32 %38 = add i32 %37, i32 1;
-    store i32* %33 with i32 %38;
-    ubr ^b3;
-^if.else2:
-    i32 %39 = load i32* %code;
-    i1 %40 = scmp eq i32 %39, i32 45;
-    i32 %41 = zext i1 %40 to i32;
-    i1 %42 = scmp neq i32 %41, i32 0;
-    cbr i1 %42(prob = 0.5), ^if.then3, ^if.else3;
-^b3:
-    ubr ^b2;
-^if.then3:
-    i32 %43 = load i32* %read_hea;
-    i64 %44 = sext i32 %43 to i64;
-    i32* %45 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %44];
-    i32 %46 = load i32* %read_hea;
-    i64 %47 = sext i32 %46 to i64;
-    i32* %48 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %47];
-    i32 %49 = load i32* %48;
-    i32 %50 = sub i32 %49, i32 1;
-    store i32* %45 with i32 %50;
-    ubr ^b4;
-^if.else3:
-    i32 %51 = load i32* %code;
-    i1 %52 = scmp eq i32 %51, i32 91;
-    i32 %53 = zext i1 %52 to i32;
-    i1 %54 = scmp neq i32 %53, i32 0;
-    cbr i1 %54(prob = 0.5), ^if.then4, ^if.else4;
-^b4:
-    ubr ^b3;
-^if.then4:
-    i32 %55 = load i32* %read_hea;
-    i64 %56 = sext i32 %55 to i64;
-    i32* %57 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %56];
-    i32 %58 = load i32* %57;
-    store i32* %val1 with i32 %58;
-    i32 %59 = load i32* %val1;
-    i1 %60 = scmp neq i32 %59, i32 0;
-    i32 %61 = zext i1 %60 to i32;
-    i1 %62 = scmp neq i32 %61, i32 0;
-    cbr i1 %62(prob = 0.5), ^if.then5, ^if.else5;
-^if.else4:
-    i32 %63 = load i32* %code;
-    i1 %64 = scmp eq i32 %63, i32 93;
-    i32 %65 = zext i1 %64 to i32;
-    i1 %66 = scmp neq i32 %65, i32 0;
-    cbr i1 %66(prob = 0.5), ^if.then6, ^if.else6;
-^if.then5:
-    i32 %67 = load i32* %return_a;
-    i64 %68 = sext i32 %67 to i64;
-    i32* %69 = getelementptr &([512 * i32]* %return_a1)[i64 0][i64 %68];
-    i32 %70 = load i32* %ip;
-    store i32* %69 with i32 %70;
-    i32 %71 = load i32* %return_a;
-    i32 %72 = add i32 %71, i32 1;
-    store i32* %return_a with i32 %72;
-    ubr ^b5;
-^if.else5:
-    store i32* %loop with i32 1;
-    ubr ^while.header1;
-^if.then6:
-    i32 %73 = load i32* %read_hea;
-    i64 %74 = sext i32 %73 to i64;
-    i32* %75 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %74];
-    i32 %76 = load i32* %75;
-    store i32* %val with i32 %76;
-    i32 %77 = load i32* %val;
-    i1 %78 = scmp eq i32 %77, i32 0;
-    i32 %79 = zext i1 %78 to i32;
-    i1 %80 = scmp neq i32 %79, i32 0;
-    cbr i1 %80(prob = 0.5), ^if.then7, ^if.else7;
-^if.else6:
-    i32 %81 = load i32* %code;
-    i1 %82 = scmp eq i32 %81, i32 46;
-    i32 %83 = zext i1 %82 to i32;
-    i1 %84 = scmp neq i32 %83, i32 0;
-    cbr i1 %84(prob = 0.5), ^if.then8, ^if.else8;
-^b5:
-    ubr ^b6;
-^if.then7:
-    i32 %85 = load i32* %return_a;
-    i32 %86 = sub i32 %85, i32 1;
-    store i32* %return_a with i32 %86;
-    ubr ^b7;
-^if.else7:
-    i32 %87 = load i32* %return_a;
-    i32 %88 = sub i32 %87, i32 1;
-    i64 %89 = sext i32 %88 to i64;
-    i32* %90 = getelementptr &([512 * i32]* %return_a1)[i64 0][i64 %89];
-    i32 %91 = load i32* %90;
-    store i32* %ip with i32 %91;
-    ubr ^b7;
-^if.then8:
-    i32 %92 = load i32* @output_length;
-    i64 %93 = sext i32 %92 to i64;
-    i32* %94 = getelementptr &([65536 * i32]* @output)[i64 0][i64 %93];
-    i32 %95 = load i32* %read_hea;
-    i64 %96 = sext i32 %95 to i64;
-    i32* %97 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %96];
-    i32 %98 = load i32* %97;
-    store i32* %94 with i32 %98;
-    i32 %99 = load i32* @output_length;
-    i32 %100 = add i32 %99, i32 1;
-    store i32* @output_length with i32 %100;
-    ubr ^b9;
-^while.header1:
-    i32 %101 = load i32* %loop;
-    i1 %102 = scmp gt i32 %101, i32 0;
-    i32 %103 = zext i1 %102 to i32;
-    i1 %104 = scmp neq i32 %103, i32 0;
-    cbr i1 %104(prob = 0.97), ^while.body1, ^b8;
-^if.else8:
-    i32 %105 = load i32* %code;
-    i1 %106 = scmp eq i32 %105, i32 44;
-    i32 %107 = zext i1 %106 to i32;
-    i1 %108 = scmp neq i32 %107, i32 0;
-    cbr i1 %108(prob = 0.5), ^if.then9, ^b10;
-^b6:
-    ubr ^b4;
-^b7:
-    ubr ^b11;
-^b8:
-    ubr ^b5;
-^b9:
-    ubr ^b11;
-^while.body1:
-    i32 %109 = load i32* %ip;
-    i32 %110 = add i32 %109, i32 1;
-    store i32* %ip with i32 %110;
-    i32 %111 = load i32* %ip;
-    i64 %112 = sext i32 %111 to i64;
-    i32* %113 = getelementptr &([65536 * i32]* @program)[i64 0][i64 %112];
-    i32 %114 = load i32* %113;
-    i1 %115 = scmp eq i32 %114, i32 93;
-    i32 %116 = zext i1 %115 to i32;
-    i1 %117 = scmp neq i32 %116, i32 0;
-    cbr i1 %117(prob = 0.5), ^if.then10, ^b12;
-^b10:
-    ubr ^b9;
-^if.then9:
-    i32 %118 = load i32* %input_he;
-    i32 %119 = load i32* @input_length;
-    i1 %120 = scmp ge i32 %118, i32 %119;
-    i32 %121 = zext i1 %120 to i32;
-    i1 %122 = scmp neq i32 %121, i32 0;
-    cbr i1 %122(prob = 0.5), ^if.then11, ^if.else9;
-^if.then10:
-    i32 %123 = load i32* %loop;
-    i32 %124 = sub i32 %123, i32 1;
-    store i32* %loop with i32 %124;
-    ubr ^b12;
-^b11:
-    ubr ^b6;
-^if.then11:
-    i32 %125 = load i32* %read_hea;
-    i64 %126 = sext i32 %125 to i64;
-    i32* %127 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %126];
-    store i32* %127 with i32 0;
-    ubr ^b14;
-^b12:
-    i32 %128 = load i32* %ip;
-    i64 %129 = sext i32 %128 to i64;
-    i32* %130 = getelementptr &([65536 * i32]* @program)[i64 0][i64 %129];
-    i32 %131 = load i32* %130;
-    i1 %132 = scmp eq i32 %131, i32 91;
-    i32 %133 = zext i1 %132 to i32;
-    i1 %134 = scmp neq i32 %133, i32 0;
-    cbr i1 %134(prob = 0.5), ^if.then12, ^b13;
-^if.else9:
-    i32 %135 = load i32* %read_hea;
-    i64 %136 = sext i32 %135 to i64;
-    i32* %137 = getelementptr &([65536 * i32]* @tape)[i64 0][i64 %136];
-    i32 %138 = load i32* %input_he;
-    i64 %139 = sext i32 %138 to i64;
-    i32* %140 = getelementptr &([65536 * i32]* @input)[i64 0][i64 %139];
-    i32 %141 = load i32* %140;
-    store i32* %137 with i32 %141;
-    i32 %142 = load i32* %input_he;
-    i32 %143 = add i32 %142, i32 1;
-    store i32* %input_he with i32 %143;
-    ubr ^b14;
-^if.then12:
-    i32 %144 = load i32* %loop;
-    i32 %145 = add i32 %144, i32 1;
-    store i32* %loop with i32 %145;
-    ubr ^b13;
-^b13:
-    ubr ^while.header1;
-^b14:
-    ubr ^b10;
-}
-internal func @cmmc::Intrinsic::memset() -> i8* { NoMemoryRead };
-internal func @output_() -> void {
-^entry:
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
-    ubr ^while.header;
-^while.header:
-    i32 %0 = load i32* %i;
-    i32 %1 = load i32* @output_length;
-    i1 %2 = scmp lt i32 %0, i32 %1;
-    i32 %3 = zext i1 %2 to i32;
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %5 = load i32* %i;
-    i64 %6 = sext i32 %5 to i64;
-    i32* %7 = getelementptr &([65536 * i32]* @output)[i64 0][i64 %6];
-    i32 %8 = load i32* %7;
-    call (i32) -> void @putch(i32 %8);
-    i32 %9 = load i32* %i;
-    i32 %10 = add i32 %9, i32 1;
-    store i32* %i with i32 %10;
-    ubr ^while.header;
-^b:
-    ret;
-}
-func @main() -> i32 { Entry } {
-^entry:
-    call () -> void @read_program();
-    call (i32) -> void @starttime(i32 116);
-    call () -> void @run_program();
+    i32* %30 = getelementptr &([512 * i32]* %return_a)[i64 0][i64 0];
+    i8* %31 = ptrcast i32* %30 to i8*;
+    i8* %32 = call (i8*, i32, i64) -> i8* @cmmc::Intrinsic::memset(i8* %31, i32 0, i64 2048);
+    i32 %33 = load i32* %program_length;
+    i32 %34 = load i32* %input_length;
+    i32 %35 = load i32* %input_he;
+    i32 %36 = load i32* %read_hea;
+    i32 %37 = load i32* %ip;
+    ubr ^while.header3;
+^b17:
+    i32 %38 = call () -> i32 @getint();
+    store i32* %input_length with i32 %38;
+    i32 %39 = call () -> i32 @getch();
+    ubr ^while.header4;
+^while.header2:
+    i32 %40 = phi [^while.body5, i32 %134] [^while.body1, i32 %27];
+    i32 %41 = phi [^while.body1, i32 %27] [^while.body5, i32 %134];
+    i1 %42 = scmp neq i32 %41, i32 62;
+    cbr i1 %42(prob = 0.5), ^b18, ^b19;
+^b18:
+    i1 %43 = scmp neq i32 %40, i32 60;
+    ubr ^b19;
+^b19:
+    i1 %44 = phi [^b18, i1 %43] [^while.header2, i1 false];
+    cbr i1 %44(prob = 0.5), ^b20, ^b21;
+^while.header3:
+    i32 %45 = phi [^b24, i32 %75] [^entry1, i32 %33];
+    i32 %46 = phi [^b24, i32 %76] [^entry1, i32 %34];
+    i32 %47 = phi [^b24, i32 %77] [^entry1, i32 0];
+    i32 %48 = phi [^b24, i32 %78] [^entry1, i32 0];
+    i32 %49 = phi [^b24, i32 %79] [^entry1, i32 %35];
+    i32 %50 = phi [^b24, i32 %80] [^entry1, i32 %36];
+    i32 %51 = phi [^b24, i32 %82] [^entry1, i32 %37];
+    i32 %52 = phi [^entry1, i32 %37] [^b24, i32 %82];
+    i1 %53 = scmp lt i32 %52, i32 %45;
+    cbr i1 %53(prob = 0.97), ^while.body3, ^entry2;
+^while.header4:
+    i32 %54 = phi [^while.body2, i32 %54] [^b17, i32 %38];
+    i32 %55 = phi [^while.body2, i32 %62] [^b17, i32 0];
+    i32 %56 = phi [^b17, i32 %38] [^while.body2, i32 %54];
+    i32 %57 = phi [^b17, i32 0] [^while.body2, i32 %62];
+    i1 %58 = scmp lt i32 %57, i32 %56;
+    cbr i1 %58(prob = 0.97), ^while.body2, ^entry1;
+^b20:
+    i1 %59 = scmp neq i32 %40, i32 43;
+    ubr ^b21;
+^while.body2:
+    i32* %60 = getelementptr &([65536 * i32]* @input)[i64 0][i32 %55];
+    i32 %61 = call () -> i32 @getch();
+    store i32* %60 with i32 %61;
+    i32 %62 = add i32 %55, i32 1;
+    ubr ^while.header4;
+^entry2:
     call (i32) -> void @stoptime(i32 118);
-    call () -> void @output_();
+    ubr ^while.header5;
+^while.body3:
+    i32* %63 = getelementptr &([65536 * i32]* @program)[i64 0][i32 %51];
+    i32 %64 = load i32* %63;
+    i1 %65 = scmp eq i32 %64, i32 62;
+    cbr i1 %65(prob = 0.5), ^if.then, ^if.else;
+^b21:
+    i1 %66 = phi [^b20, i1 %59] [^b19, i1 false];
+    cbr i1 %66(prob = 0.5), ^b22, ^b23;
+^if.then:
+    i32 %67 = add i32 %50, i32 1;
+    ubr ^b24;
+^b22:
+    i1 %68 = scmp neq i32 %40, i32 45;
+    ubr ^b23;
+^if.else:
+    i1 %69 = scmp eq i32 %64, i32 60;
+    cbr i1 %69(prob = 0.5), ^if.then1, ^if.else1;
+^while.header5:
+    i32 %70 = phi [^while.body4, i32 %70] [^entry2, i32 %47];
+    i32 %71 = phi [^while.body4, i32 %86] [^entry2, i32 0];
+    i32 %72 = phi [^entry2, i32 0] [^while.body4, i32 %86];
+    i1 %73 = scmp lt i32 %72, i32 %70;
+    cbr i1 %73(prob = 0.97), ^while.body4, ^entry3;
+^b23:
+    i1 %74 = phi [^b21, i1 false] [^b22, i1 %68];
+    cbr i1 %74(prob = 0.5), ^b25, ^b26;
+^b24:
+    i32 %75 = phi [^while.header6, i32 %114] [^if.then, i32 %45] [^if.then1, i32 %45] [^if.then3, i32 %45] [^if.else7, i32 %45] [^if.then8, i32 %45] [^if.then2, i32 %45] [^if.then5, i32 %45] [^if.then7, i32 %45] [^if.else6, i32 %45] [^if.then12, i32 %45] [^if.else8, i32 %45];
+    i32 %76 = phi [^while.header6, i32 %115] [^if.then, i32 %46] [^if.then1, i32 %46] [^if.then3, i32 %46] [^if.else7, i32 %46] [^if.then8, i32 %46] [^if.then2, i32 %46] [^if.then5, i32 %46] [^if.then7, i32 %46] [^if.else6, i32 %46] [^if.then12, i32 %46] [^if.else8, i32 %46];
+    i32 %77 = phi [^while.header6, i32 %116] [^if.then, i32 %47] [^if.then1, i32 %47] [^if.then3, i32 %47] [^if.else7, i32 %47] [^if.then8, i32 %133] [^if.then2, i32 %47] [^if.then5, i32 %47] [^if.then7, i32 %47] [^if.else6, i32 %47] [^if.then12, i32 %47] [^if.else8, i32 %47];
+    i32 %78 = phi [^while.header6, i32 %118] [^if.then, i32 %48] [^if.then1, i32 %48] [^if.then3, i32 %48] [^if.else7, i32 %48] [^if.then8, i32 %48] [^if.then2, i32 %48] [^if.then5, i32 %109] [^if.then7, i32 %126] [^if.else6, i32 %48] [^if.then12, i32 %48] [^if.else8, i32 %48];
+    i32 %79 = phi [^while.header6, i32 %119] [^if.then, i32 %49] [^if.then1, i32 %49] [^if.then3, i32 %49] [^if.else7, i32 %49] [^if.then8, i32 %49] [^if.then2, i32 %49] [^if.then5, i32 %49] [^if.then7, i32 %49] [^if.else6, i32 %49] [^if.then12, i32 %49] [^if.else8, i32 %150];
+    i32 %80 = phi [^while.header6, i32 %120] [^if.then, i32 %67] [^if.then1, i32 %83] [^if.then3, i32 %50] [^if.else7, i32 %50] [^if.then8, i32 %50] [^if.then2, i32 %50] [^if.then5, i32 %50] [^if.then7, i32 %50] [^if.else6, i32 %50] [^if.then12, i32 %50] [^if.else8, i32 %50];
+    i32 %81 = phi [^while.header6, i32 %121] [^if.else6, i32 %129] [^if.then7, i32 %51] [^if.then3, i32 %51] [^if.then, i32 %51] [^if.then1, i32 %51] [^if.else7, i32 %51] [^if.else8, i32 %51] [^if.then12, i32 %51] [^if.then5, i32 %51] [^if.then2, i32 %51] [^if.then8, i32 %51];
+    i32 %82 = add i32 %81, i32 1;
+    ubr ^while.header3;
+^if.then1:
+    i32 %83 = add i32 %50, i32 -1;
+    ubr ^b24;
+^while.body4:
+    i32* %84 = getelementptr &([65536 * i32]* @output)[i64 0][i32 %71];
+    i32 %85 = load i32* %84;
+    call (i32) -> void @putch(i32 %85);
+    i32 %86 = add i32 %71, i32 1;
+    ubr ^while.header5;
+^b25:
+    i1 %87 = scmp neq i32 %40, i32 91;
+    ubr ^b26;
+^if.else1:
+    i1 %88 = scmp eq i32 %64, i32 43;
+    cbr i1 %88(prob = 0.5), ^if.then2, ^if.else2;
+^b26:
+    i1 %89 = phi [^b23, i1 false] [^b25, i1 %87];
+    cbr i1 %89(prob = 0.5), ^b27, ^b28;
+^entry3:
     ret i32 0;
+^if.then2:
+    i32* %90 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32 %91 = load i32* %90;
+    i32 %92 = add i32 %91, i32 1;
+    store i32* %90 with i32 %92;
+    ubr ^b24;
+^b27:
+    i1 %93 = scmp neq i32 %40, i32 93;
+    ubr ^b28;
+^if.else2:
+    i1 %94 = scmp eq i32 %64, i32 45;
+    cbr i1 %94(prob = 0.5), ^if.then3, ^if.else3;
+^b28:
+    i1 %95 = phi [^b26, i1 false] [^b27, i1 %93];
+    cbr i1 %95(prob = 0.5), ^b29, ^b30;
+^if.then3:
+    i32* %96 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32 %97 = load i32* %96;
+    i32 %98 = add i32 %97, i32 -1;
+    store i32* %96 with i32 %98;
+    ubr ^b24;
+^b29:
+    i1 %99 = scmp neq i32 %40, i32 46;
+    ubr ^b30;
+^if.else3:
+    i1 %100 = scmp eq i32 %64, i32 91;
+    cbr i1 %100(prob = 0.5), ^if.then4, ^if.else4;
+^b30:
+    i1 %101 = phi [^b29, i1 %99] [^b28, i1 false];
+    cbr i1 %101(prob = 0.5), ^b31, ^b32;
+^b31:
+    i1 %102 = scmp neq i32 %40, i32 44;
+    ubr ^b32;
+^if.then4:
+    i32* %103 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32 %104 = load i32* %103;
+    i1 %105 = scmp neq i32 %104, i32 0;
+    cbr i1 %105(prob = 0.5), ^if.then5, ^while.header6;
+^if.else4:
+    i1 %106 = scmp eq i32 %64, i32 93;
+    cbr i1 %106(prob = 0.5), ^if.then6, ^if.else5;
+^b32:
+    i1 %107 = phi [^b30, i1 false] [^b31, i1 %102];
+    cbr i1 %107(prob = 0.5), ^b33, ^b34;
+^if.then5:
+    i32* %108 = getelementptr &([512 * i32]* %return_a)[i64 0][i32 %48];
+    store i32* %108 with i32 %51;
+    i32 %109 = add i32 %48, i32 1;
+    ubr ^b24;
+^b33:
+    i1 %110 = scmp neq i32 %40, i32 35;
+    ubr ^b34;
+^if.then6:
+    i32* %111 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32 %112 = load i32* %111;
+    i1 %113 = scmp eq i32 %112, i32 0;
+    cbr i1 %113(prob = 0.5), ^if.then7, ^if.else6;
+^while.header6:
+    i32 %114 = phi [^if.then4, i32 %45] [^b36, i32 %114] [^if.then11, i32 %114];
+    i32 %115 = phi [^if.then4, i32 %46] [^b36, i32 %115] [^if.then11, i32 %115];
+    i32 %116 = phi [^if.then4, i32 %47] [^b36, i32 %116] [^if.then11, i32 %116];
+    i32 %117 = phi [^if.then4, i32 1] [^b36, i32 %142] [^if.then11, i32 %145];
+    i32 %118 = phi [^if.then4, i32 %48] [^b36, i32 %118] [^if.then11, i32 %118];
+    i32 %119 = phi [^if.then4, i32 %49] [^b36, i32 %119] [^if.then11, i32 %119];
+    i32 %120 = phi [^if.then4, i32 %50] [^b36, i32 %120] [^if.then11, i32 %120];
+    i32 %121 = phi [^if.then4, i32 %51] [^b36, i32 %135] [^if.then11, i32 %135];
+    i32 %122 = phi [^if.then4, i32 1] [^b36, i32 %142] [^if.then11, i32 %145];
+    i1 %123 = scmp gt i32 %122, i32 0;
+    cbr i1 %123(prob = 0.97), ^while.body6, ^b24;
+^if.else5:
+    i1 %124 = scmp eq i32 %64, i32 46;
+    cbr i1 %124(prob = 0.5), ^if.then8, ^if.else7;
+^b34:
+    i1 %125 = phi [^b33, i1 %110] [^b32, i1 false];
+    cbr i1 %125(prob = 0.97), ^while.body5, ^b35;
+^if.then7:
+    i32 %126 = add i32 %48, i32 -1;
+    ubr ^b24;
+^if.else6:
+    i32 %127 = add i32 %48, i32 -1;
+    i32* %128 = getelementptr &([512 * i32]* %return_a)[i64 0][i32 %127];
+    i32 %129 = load i32* %128;
+    ubr ^b24;
+^if.then8:
+    i32* %130 = getelementptr &([65536 * i32]* @output)[i64 0][i32 %47];
+    i32* %131 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32 %132 = load i32* %131;
+    store i32* %130 with i32 %132;
+    i32 %133 = add i32 %47, i32 1;
+    ubr ^b24;
+^while.body5:
+    i32 %134 = call () -> i32 @getch();
+    ubr ^while.header2;
+^while.body6:
+    i32 %135 = add i32 %121, i32 1;
+    i32* %136 = getelementptr &([65536 * i32]* @program)[i64 0][i32 %135];
+    i32 %137 = load i32* %136;
+    i1 %138 = scmp eq i32 %137, i32 93;
+    cbr i1 %138(prob = 0.5), ^if.then9, ^b36;
+^b35:
+    i32 %139 = add i32 %22, i32 1;
+    store i32* %program_length with i32 %139;
+    ubr ^while.header1;
+^if.else7:
+    i1 %140 = scmp eq i32 %64, i32 44;
+    cbr i1 %140(prob = 0.5), ^if.then10, ^b24;
+^if.then9:
+    i32 %141 = add i32 %117, i32 -1;
+    ubr ^b36;
+^b36:
+    i32 %142 = phi [^if.then9, i32 %141] [^while.body6, i32 %117];
+    i1 %143 = scmp eq i32 %137, i32 91;
+    cbr i1 %143(prob = 0.5), ^if.then11, ^while.header6;
+^if.then10:
+    i1 %144 = scmp ge i32 %49, i32 %46;
+    cbr i1 %144(prob = 0.5), ^if.then12, ^if.else8;
+^if.then11:
+    i32 %145 = add i32 %142, i32 1;
+    ubr ^while.header6;
+^if.then12:
+    i32* %146 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    store i32* %146 with i32 0;
+    ubr ^b24;
+^if.else8:
+    i32* %147 = getelementptr &([65536 * i32]* @tape)[i64 0][i32 %50];
+    i32* %148 = getelementptr &([65536 * i32]* @input)[i64 0][i32 %49];
+    i32 %149 = load i32* %148;
+    store i32* %147 with i32 %149;
+    i32 %150 = add i32 %49, i32 1;
+    ubr ^b24;
 }

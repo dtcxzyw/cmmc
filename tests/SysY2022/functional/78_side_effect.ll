@@ -8,37 +8,37 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z5inc_av() local_unnamed_addr #0 {
-  %1 = load i32, i32* @a, align 4, !tbaa !5
+  %1 = load i32, i32* @a, align 4, !tbaa !4
   %2 = add nsw i32 %1, 1
-  store i32 %2, i32* @a, align 4, !tbaa !5
+  store i32 %2, i32* @a, align 4, !tbaa !4
   ret i32 %2
 }
 
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
-  %1 = load i32, i32* @a, align 4, !tbaa !5
+  %1 = load i32, i32* @a, align 4, !tbaa !4
   %2 = icmp ugt i32 %1, -3
   br i1 %2, label %6, label %3
 
 3:                                                ; preds = %0
   %4 = add nsw i32 %1, 3
-  store i32 %4, i32* @a, align 4, !tbaa !5
+  store i32 %4, i32* @a, align 4, !tbaa !4
   %5 = icmp eq i32 %4, 0
   br i1 %5, label %6, label %7
 
 6:                                                ; preds = %3, %0
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %12
 
 7:                                                ; preds = %3
   tail call void @_Z6putinti(i32 noundef %4)
   tail call void @_Z5putchi(i32 noundef 32)
-  %8 = load i32, i32* @b, align 4, !tbaa !5
+  %8 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %8)
   tail call void @_Z5putchi(i32 noundef 10)
-  %9 = load i32, i32* @a, align 4, !tbaa !5
+  %9 = load i32, i32* @a, align 4, !tbaa !4
   %10 = add nsw i32 %9, 1
-  store i32 %10, i32* @a, align 4, !tbaa !5
+  store i32 %10, i32* @a, align 4, !tbaa !4
   %11 = icmp slt i32 %9, 13
   br i1 %11, label %12, label %17
 
@@ -46,10 +46,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %13 = phi i32 [ 1, %6 ], [ %10, %7 ]
   tail call void @_Z6putinti(i32 noundef %13)
   tail call void @_Z5putchi(i32 noundef 10)
-  %14 = load i32, i32* @b, align 4, !tbaa !5
+  %14 = load i32, i32* @b, align 4, !tbaa !4
   %15 = shl nsw i32 %14, 1
-  store i32 %15, i32* @b, align 4, !tbaa !5
-  %16 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %15, i32* @b, align 4, !tbaa !4
+  %16 = load i32, i32* @a, align 4, !tbaa !4
   br label %19
 
 17:                                               ; preds = %7
@@ -63,23 +63,23 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 22:                                               ; preds = %19
   %23 = add nsw i32 %20, 3
-  store i32 %23, i32* @a, align 4, !tbaa !5
+  store i32 %23, i32* @a, align 4, !tbaa !4
   %24 = icmp eq i32 %23, 0
   br i1 %24, label %25, label %26
 
 25:                                               ; preds = %22, %19
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %33
 
 26:                                               ; preds = %22
   tail call void @_Z6putinti(i32 noundef %23)
   tail call void @_Z5putchi(i32 noundef 32)
-  %27 = load i32, i32* @b, align 4, !tbaa !5
+  %27 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %27)
   tail call void @_Z5putchi(i32 noundef 10)
-  %28 = load i32, i32* @a, align 4, !tbaa !5
+  %28 = load i32, i32* @a, align 4, !tbaa !4
   %29 = add nsw i32 %28, 1
-  store i32 %29, i32* @a, align 4, !tbaa !5
+  store i32 %29, i32* @a, align 4, !tbaa !4
   %30 = icmp slt i32 %28, 13
   br i1 %30, label %33, label %31
 
@@ -91,10 +91,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %34 = phi i32 [ 1, %25 ], [ %29, %26 ]
   tail call void @_Z6putinti(i32 noundef %34)
   tail call void @_Z5putchi(i32 noundef 10)
-  %35 = load i32, i32* @b, align 4, !tbaa !5
+  %35 = load i32, i32* @b, align 4, !tbaa !4
   %36 = shl nsw i32 %35, 1
-  store i32 %36, i32* @b, align 4, !tbaa !5
-  %37 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %36, i32* @b, align 4, !tbaa !4
+  %37 = load i32, i32* @a, align 4, !tbaa !4
   br label %38
 
 38:                                               ; preds = %33, %31
@@ -104,23 +104,23 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 41:                                               ; preds = %38
   %42 = add nsw i32 %39, 3
-  store i32 %42, i32* @a, align 4, !tbaa !5
+  store i32 %42, i32* @a, align 4, !tbaa !4
   %43 = icmp eq i32 %42, 0
   br i1 %43, label %44, label %45
 
 44:                                               ; preds = %41, %38
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %52
 
 45:                                               ; preds = %41
   tail call void @_Z6putinti(i32 noundef %42)
   tail call void @_Z5putchi(i32 noundef 32)
-  %46 = load i32, i32* @b, align 4, !tbaa !5
+  %46 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %46)
   tail call void @_Z5putchi(i32 noundef 10)
-  %47 = load i32, i32* @a, align 4, !tbaa !5
+  %47 = load i32, i32* @a, align 4, !tbaa !4
   %48 = add nsw i32 %47, 1
-  store i32 %48, i32* @a, align 4, !tbaa !5
+  store i32 %48, i32* @a, align 4, !tbaa !4
   %49 = icmp slt i32 %47, 13
   br i1 %49, label %52, label %50
 
@@ -132,10 +132,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %53 = phi i32 [ 1, %44 ], [ %48, %45 ]
   tail call void @_Z6putinti(i32 noundef %53)
   tail call void @_Z5putchi(i32 noundef 10)
-  %54 = load i32, i32* @b, align 4, !tbaa !5
+  %54 = load i32, i32* @b, align 4, !tbaa !4
   %55 = shl nsw i32 %54, 1
-  store i32 %55, i32* @b, align 4, !tbaa !5
-  %56 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %55, i32* @b, align 4, !tbaa !4
+  %56 = load i32, i32* @a, align 4, !tbaa !4
   br label %57
 
 57:                                               ; preds = %52, %50
@@ -145,23 +145,23 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 60:                                               ; preds = %57
   %61 = add nsw i32 %58, 3
-  store i32 %61, i32* @a, align 4, !tbaa !5
+  store i32 %61, i32* @a, align 4, !tbaa !4
   %62 = icmp eq i32 %61, 0
   br i1 %62, label %63, label %64
 
 63:                                               ; preds = %60, %57
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %71
 
 64:                                               ; preds = %60
   tail call void @_Z6putinti(i32 noundef %61)
   tail call void @_Z5putchi(i32 noundef 32)
-  %65 = load i32, i32* @b, align 4, !tbaa !5
+  %65 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %65)
   tail call void @_Z5putchi(i32 noundef 10)
-  %66 = load i32, i32* @a, align 4, !tbaa !5
+  %66 = load i32, i32* @a, align 4, !tbaa !4
   %67 = add nsw i32 %66, 1
-  store i32 %67, i32* @a, align 4, !tbaa !5
+  store i32 %67, i32* @a, align 4, !tbaa !4
   %68 = icmp slt i32 %66, 13
   br i1 %68, label %71, label %69
 
@@ -173,10 +173,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %72 = phi i32 [ 1, %63 ], [ %67, %64 ]
   tail call void @_Z6putinti(i32 noundef %72)
   tail call void @_Z5putchi(i32 noundef 10)
-  %73 = load i32, i32* @b, align 4, !tbaa !5
+  %73 = load i32, i32* @b, align 4, !tbaa !4
   %74 = shl nsw i32 %73, 1
-  store i32 %74, i32* @b, align 4, !tbaa !5
-  %75 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %74, i32* @b, align 4, !tbaa !4
+  %75 = load i32, i32* @a, align 4, !tbaa !4
   br label %76
 
 76:                                               ; preds = %71, %69
@@ -186,23 +186,23 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 79:                                               ; preds = %76
   %80 = add nsw i32 %77, 3
-  store i32 %80, i32* @a, align 4, !tbaa !5
+  store i32 %80, i32* @a, align 4, !tbaa !4
   %81 = icmp eq i32 %80, 0
   br i1 %81, label %82, label %83
 
 82:                                               ; preds = %79, %76
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %90
 
 83:                                               ; preds = %79
   tail call void @_Z6putinti(i32 noundef %80)
   tail call void @_Z5putchi(i32 noundef 32)
-  %84 = load i32, i32* @b, align 4, !tbaa !5
+  %84 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %84)
   tail call void @_Z5putchi(i32 noundef 10)
-  %85 = load i32, i32* @a, align 4, !tbaa !5
+  %85 = load i32, i32* @a, align 4, !tbaa !4
   %86 = add nsw i32 %85, 1
-  store i32 %86, i32* @a, align 4, !tbaa !5
+  store i32 %86, i32* @a, align 4, !tbaa !4
   %87 = icmp slt i32 %85, 13
   br i1 %87, label %90, label %88
 
@@ -214,10 +214,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %91 = phi i32 [ 1, %82 ], [ %86, %83 ]
   tail call void @_Z6putinti(i32 noundef %91)
   tail call void @_Z5putchi(i32 noundef 10)
-  %92 = load i32, i32* @b, align 4, !tbaa !5
+  %92 = load i32, i32* @b, align 4, !tbaa !4
   %93 = shl nsw i32 %92, 1
-  store i32 %93, i32* @b, align 4, !tbaa !5
-  %94 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %93, i32* @b, align 4, !tbaa !4
+  %94 = load i32, i32* @a, align 4, !tbaa !4
   br label %95
 
 95:                                               ; preds = %90, %88
@@ -227,49 +227,49 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 98:                                               ; preds = %95
   %99 = add nsw i32 %96, 3
-  store i32 %99, i32* @a, align 4, !tbaa !5
+  store i32 %99, i32* @a, align 4, !tbaa !4
   %100 = icmp eq i32 %99, 0
   br i1 %100, label %101, label %102
 
 101:                                              ; preds = %98, %95
-  store i32 1, i32* @a, align 4, !tbaa !5
+  store i32 1, i32* @a, align 4, !tbaa !4
   br label %109
 
 102:                                              ; preds = %98
   tail call void @_Z6putinti(i32 noundef %99)
   tail call void @_Z5putchi(i32 noundef 32)
-  %103 = load i32, i32* @b, align 4, !tbaa !5
+  %103 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %103)
   tail call void @_Z5putchi(i32 noundef 10)
-  %104 = load i32, i32* @a, align 4, !tbaa !5
+  %104 = load i32, i32* @a, align 4, !tbaa !4
   %105 = add nsw i32 %104, 1
-  store i32 %105, i32* @a, align 4, !tbaa !5
+  store i32 %105, i32* @a, align 4, !tbaa !4
   %106 = icmp slt i32 %104, 13
   br i1 %106, label %109, label %107
 
 107:                                              ; preds = %102
   %108 = add nuw nsw i32 %104, 5
-  store i32 %108, i32* @a, align 4, !tbaa !5
+  store i32 %108, i32* @a, align 4, !tbaa !4
   br label %114
 
 109:                                              ; preds = %101, %102
   %110 = phi i32 [ 1, %101 ], [ %105, %102 ]
   tail call void @_Z6putinti(i32 noundef %110)
   tail call void @_Z5putchi(i32 noundef 10)
-  %111 = load i32, i32* @b, align 4, !tbaa !5
+  %111 = load i32, i32* @b, align 4, !tbaa !4
   %112 = shl nsw i32 %111, 1
-  store i32 %112, i32* @b, align 4, !tbaa !5
-  %113 = load i32, i32* @a, align 4, !tbaa !5
+  store i32 %112, i32* @b, align 4, !tbaa !4
+  %113 = load i32, i32* @a, align 4, !tbaa !4
   br label %114
 
 114:                                              ; preds = %109, %107
   %115 = phi i32 [ %113, %109 ], [ %108, %107 ]
   tail call void @_Z6putinti(i32 noundef %115)
   tail call void @_Z5putchi(i32 noundef 32)
-  %116 = load i32, i32* @b, align 4, !tbaa !5
+  %116 = load i32, i32* @b, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %116)
   tail call void @_Z5putchi(i32 noundef 10)
-  %117 = load i32, i32* @a, align 4, !tbaa !5
+  %117 = load i32, i32* @a, align 4, !tbaa !4
   ret i32 %117
 }
 
@@ -282,14 +282,12 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}

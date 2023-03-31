@@ -1,34 +1,11 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
 internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
-    i32* %w = alloc i32;
-    f32* %z = alloc f32;
-    f32* %y = alloc f32;
-    f32* %x = alloc f32;
     f32 %0 = call () -> f32 @getfloat();
-    store f32* %x with f32 %0;
     f32 %1 = call () -> f32 @getfloat();
-    store f32* %y with f32 %1;
     f32 %2 = call () -> f32 @getfloat();
-    store f32* %z with f32 %2;
-    f32 %3 = load f32* %x;
-    f32 %4 = load f32* %y;
-    f32 %5 = load f32* %z;
-    f32 %6 = fmul f32 %4, f32 %5;
-    f32 %7 = fadd f32 %3, f32 %6;
-    i32 %8 = f2s f32 %7 to i32;
-    store i32* %w with i32 %8;
-    i32 %9 = load i32* %w;
-    ret i32 %9;
+    f32 %3 = fmul f32 %1, f32 %2;
+    f32 %4 = fadd f32 %0, f32 %3;
+    i32 %5 = f2s f32 %4 to i32;
+    ret i32 %5;
 }

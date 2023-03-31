@@ -45,7 +45,7 @@ define dso_local noundef float @_Z11my_sin_implf(float noundef %0) local_unnamed
   %11 = fmul float %10, -4.000000e+00
   %12 = fmul float %10, %11
   %13 = fmul float %10, %12
-  %14 = tail call float @llvm.fmuladd.f32(float %10, float 3.000000e+00, float %13) #8
+  %14 = tail call float @llvm.fmuladd.f32(float %10, float 3.000000e+00, float %13) #7
   br label %6
 }
 
@@ -89,7 +89,7 @@ define dso_local noundef float @_Z6my_cosf(float noundef %0) local_unnamed_addr 
   %8 = fptosi float %7 to i32
   %9 = sitofp i32 %8 to float
   %10 = fneg float %9
-  %11 = tail call float @llvm.fmuladd.f32(float %10, float 0x401921FB60000000, float %2) #8
+  %11 = tail call float @llvm.fmuladd.f32(float %10, float 0x401921FB60000000, float %2) #7
   br label %12
 
 12:                                               ; preds = %1, %6
@@ -100,7 +100,7 @@ define dso_local noundef float @_Z6my_cosf(float noundef %0) local_unnamed_addr 
   %17 = fcmp olt float %16, 0xC00921FB60000000
   %18 = fadd float %16, 0x401921FB60000000
   %19 = select i1 %17, float %18, float %16
-  %20 = tail call noundef float @_Z11my_sin_implf(float noundef %19) #8
+  %20 = tail call noundef float @_Z11my_sin_implf(float noundef %19) #7
   ret float %20
 }
 
@@ -117,10 +117,10 @@ define dso_local noundef i32 @_Z10read_imagev() local_unnamed_addr #3 {
 
 6:                                                ; preds = %3
   %7 = tail call noundef i32 @_Z6getintv()
-  store i32 %7, i32* @width, align 4, !tbaa !5
+  store i32 %7, i32* @width, align 4, !tbaa !4
   %8 = tail call noundef i32 @_Z6getintv()
-  store i32 %8, i32* @height, align 4, !tbaa !5
-  %9 = load i32, i32* @width, align 4, !tbaa !5
+  store i32 %8, i32* @height, align 4, !tbaa !4
+  %9 = load i32, i32* @width, align 4, !tbaa !4
   %10 = icmp sgt i32 %9, 1024
   %11 = icmp sgt i32 %8, 1024
   %12 = or i1 %11, %10
@@ -132,7 +132,7 @@ define dso_local noundef i32 @_Z10read_imagev() local_unnamed_addr #3 {
   br i1 %15, label %16, label %44
 
 16:                                               ; preds = %13
-  %17 = load i32, i32* @height, align 4, !tbaa !5
+  %17 = load i32, i32* @height, align 4, !tbaa !4
   %18 = icmp sgt i32 %17, 0
   %19 = load i32, i32* @width, align 4
   %20 = icmp sgt i32 %19, 0
@@ -149,18 +149,18 @@ define dso_local noundef i32 @_Z10read_imagev() local_unnamed_addr #3 {
 27:                                               ; preds = %22, %27
   %28 = phi i32 [ %35, %27 ], [ 0, %22 ]
   %29 = tail call noundef i32 @_Z6getintv()
-  %30 = load i32, i32* @width, align 4, !tbaa !5
+  %30 = load i32, i32* @width, align 4, !tbaa !4
   %31 = mul nsw i32 %30, %25
   %32 = add nsw i32 %31, %28
   %33 = sext i32 %32 to i64
   %34 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image, i64 0, i64 %33
-  store i32 %29, i32* %34, align 4, !tbaa !5
+  store i32 %29, i32* %34, align 4, !tbaa !4
   %35 = add nuw nsw i32 %28, 1
   %36 = icmp slt i32 %35, %30
-  br i1 %36, label %27, label %37, !llvm.loop !9
+  br i1 %36, label %27, label %37, !llvm.loop !8
 
 37:                                               ; preds = %27
-  %38 = load i32, i32* @height, align 4, !tbaa !5
+  %38 = load i32, i32* @height, align 4, !tbaa !4
   br label %39
 
 39:                                               ; preds = %37, %22
@@ -168,7 +168,7 @@ define dso_local noundef i32 @_Z10read_imagev() local_unnamed_addr #3 {
   %41 = phi i32 [ %30, %37 ], [ %24, %22 ]
   %42 = add nuw nsw i32 %25, 1
   %43 = icmp slt i32 %42, %40
-  br i1 %43, label %22, label %44, !llvm.loop !11
+  br i1 %43, label %22, label %44, !llvm.loop !10
 
 44:                                               ; preds = %39, %16, %6, %13, %0, %3
   %45 = phi i32 [ -1, %3 ], [ -1, %0 ], [ -1, %13 ], [ -1, %6 ], [ 0, %16 ], [ 0, %39 ]
@@ -191,7 +191,7 @@ define dso_local noundef i32 @_Z6rotateiif(i32 noundef %0, i32 noundef %1, float
   %9 = fptosi float %8 to i32
   %10 = sitofp i32 %9 to float
   %11 = fneg float %10
-  %12 = tail call float @llvm.fmuladd.f32(float %11, float 0x401921FB60000000, float %2) #8
+  %12 = tail call float @llvm.fmuladd.f32(float %11, float 0x401921FB60000000, float %2) #7
   br label %13
 
 13:                                               ; preds = %3, %7
@@ -202,7 +202,7 @@ define dso_local noundef i32 @_Z6rotateiif(i32 noundef %0, i32 noundef %1, float
   %18 = fcmp olt float %17, 0xC00921FB60000000
   %19 = fadd float %17, 0x401921FB60000000
   %20 = select i1 %18, float %19, float %17
-  %21 = tail call noundef float @_Z11my_sin_implf(float noundef %20) #8
+  %21 = tail call noundef float @_Z11my_sin_implf(float noundef %20) #7
   %22 = fadd float %2, 0x3FF921FB60000000
   %23 = fcmp ogt float %22, 0x401921FB60000000
   %24 = fcmp olt float %22, 0xC01921FB60000000
@@ -214,7 +214,7 @@ define dso_local noundef i32 @_Z6rotateiif(i32 noundef %0, i32 noundef %1, float
   %28 = fptosi float %27 to i32
   %29 = sitofp i32 %28 to float
   %30 = fneg float %29
-  %31 = tail call float @llvm.fmuladd.f32(float %30, float 0x401921FB60000000, float %22) #8
+  %31 = tail call float @llvm.fmuladd.f32(float %30, float 0x401921FB60000000, float %22) #7
   br label %32
 
 32:                                               ; preds = %13, %26
@@ -225,57 +225,48 @@ define dso_local noundef i32 @_Z6rotateiif(i32 noundef %0, i32 noundef %1, float
   %37 = fcmp olt float %36, 0xC00921FB60000000
   %38 = fadd float %36, 0x401921FB60000000
   %39 = select i1 %37, float %38, float %36
-  %40 = tail call noundef float @_Z11my_sin_implf(float noundef %39) #8
-  %41 = load i32, i32* @width, align 4, !tbaa !5
-  %42 = load i32, i32* @height, align 4, !tbaa !5
-  %43 = insertelement <2 x i32> poison, i32 %42, i64 0
-  %44 = insertelement <2 x i32> %43, i32 %41, i64 1
-  %45 = sdiv <2 x i32> %44, <i32 2, i32 2>
-  %46 = extractelement <2 x i32> %45, i64 1
-  %47 = sub nsw i32 %0, %46
-  %48 = extractelement <2 x i32> %45, i64 0
-  %49 = sub nsw i32 %1, %48
-  %50 = sitofp i32 %47 to float
-  %51 = sitofp i32 %49 to float
-  %52 = fneg float %21
-  %53 = insertelement <2 x float> poison, float %40, i64 0
-  %54 = insertelement <2 x float> %53, float %52, i64 1
-  %55 = insertelement <2 x float> poison, float %51, i64 0
-  %56 = shufflevector <2 x float> %55, <2 x float> poison, <2 x i32> zeroinitializer
-  %57 = fmul <2 x float> %54, %56
-  %58 = insertelement <2 x float> poison, float %50, i64 0
-  %59 = shufflevector <2 x float> %58, <2 x float> poison, <2 x i32> zeroinitializer
-  %60 = insertelement <2 x float> poison, float %21, i64 0
-  %61 = insertelement <2 x float> %60, float %40, i64 1
-  %62 = call <2 x float> @llvm.fmuladd.v2f32(<2 x float> %59, <2 x float> %61, <2 x float> %57)
-  %63 = sitofp <2 x i32> %45 to <2 x float>
-  %64 = fadd <2 x float> %62, %63
-  %65 = fptosi <2 x float> %64 to <2 x i32>
-  %66 = extractelement <2 x i32> %65, i64 1
-  %67 = icmp slt i32 %66, 0
-  br i1 %67, label %82, label %68
+  %40 = tail call noundef float @_Z11my_sin_implf(float noundef %39) #7
+  %41 = load i32, i32* @width, align 4, !tbaa !4
+  %42 = sdiv i32 %41, 2
+  %43 = load i32, i32* @height, align 4, !tbaa !4
+  %44 = sdiv i32 %43, 2
+  %45 = sub nsw i32 %0, %42
+  %46 = sub nsw i32 %1, %44
+  %47 = sitofp i32 %45 to float
+  %48 = sitofp i32 %46 to float
+  %49 = fneg float %21
+  %50 = fmul float %49, %48
+  %51 = tail call float @llvm.fmuladd.f32(float %47, float %40, float %50)
+  %52 = sitofp i32 %42 to float
+  %53 = fadd float %51, %52
+  %54 = fptosi float %53 to i32
+  %55 = fmul float %40, %48
+  %56 = tail call float @llvm.fmuladd.f32(float %47, float %21, float %55)
+  %57 = sitofp i32 %44 to float
+  %58 = fadd float %56, %57
+  %59 = fptosi float %58 to i32
+  %60 = icmp slt i32 %54, 0
+  br i1 %60, label %73, label %61
 
-68:                                               ; preds = %32
-  %69 = extractelement <2 x i32> %65, i64 0
-  %70 = icmp sgt i32 %69, -1
-  %71 = icmp sgt <2 x i32> %44, %65
-  %72 = extractelement <2 x i1> %71, i64 1
-  %73 = select i1 %72, i1 %70, i1 false
-  %74 = extractelement <2 x i1> %71, i64 0
-  %75 = select i1 %73, i1 %74, i1 false
-  br i1 %75, label %76, label %82
+61:                                               ; preds = %32
+  %62 = icmp sgt i32 %41, %54
+  %63 = icmp sgt i32 %59, -1
+  %64 = select i1 %62, i1 %63, i1 false
+  %65 = icmp sgt i32 %43, %59
+  %66 = select i1 %64, i1 %65, i1 false
+  br i1 %66, label %67, label %73
 
-76:                                               ; preds = %68
-  %77 = mul nsw i32 %41, %69
-  %78 = add nsw i32 %77, %66
-  %79 = sext i32 %78 to i64
-  %80 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image, i64 0, i64 %79
-  %81 = load i32, i32* %80, align 4, !tbaa !5
-  br label %82
+67:                                               ; preds = %61
+  %68 = mul nsw i32 %41, %59
+  %69 = add nsw i32 %68, %54
+  %70 = sext i32 %69 to i64
+  %71 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image, i64 0, i64 %70
+  %72 = load i32, i32* %71, align 4, !tbaa !4
+  br label %73
 
-82:                                               ; preds = %32, %68, %76
-  %83 = phi i32 [ %81, %76 ], [ 0, %68 ], [ 0, %32 ]
-  ret i32 %83
+73:                                               ; preds = %32, %61, %67
+  %74 = phi i32 [ %72, %67 ], [ 0, %61 ], [ 0, %32 ]
+  ret i32 %74
 }
 
 ; Function Attrs: mustprogress uwtable
@@ -283,47 +274,47 @@ define dso_local void @_Z9write_pgmf(float noundef %0) local_unnamed_addr #3 {
   tail call void @_Z5putchi(i32 noundef 80)
   tail call void @_Z5putchi(i32 noundef 50)
   tail call void @_Z5putchi(i32 noundef 10)
-  %2 = load i32, i32* @width, align 4, !tbaa !5
+  %2 = load i32, i32* @width, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %2)
   tail call void @_Z5putchi(i32 noundef 32)
-  %3 = load i32, i32* @height, align 4, !tbaa !5
+  %3 = load i32, i32* @height, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %3)
   tail call void @_Z5putchi(i32 noundef 32)
   tail call void @_Z6putinti(i32 noundef 255)
   tail call void @_Z5putchi(i32 noundef 10)
-  %4 = load i32, i32* @height, align 4, !tbaa !5
+  %4 = load i32, i32* @height, align 4, !tbaa !4
   %5 = icmp sgt i32 %4, 0
   br i1 %5, label %6, label %91
 
 6:                                                ; preds = %1
-  %7 = fadd float %0, 0x3FF921FB60000000
-  %8 = insertelement <2 x float> <float poison, float 0xC01921FB60000000>, float %7, i64 0
-  %9 = insertelement <2 x float> <float 0x401921FB60000000, float poison>, float %0, i64 1
-  %10 = fcmp ogt <2 x float> %8, %9
-  %11 = insertelement <2 x float> <float poison, float 0x401921FB60000000>, float %7, i64 0
-  %12 = insertelement <2 x float> <float 0xC01921FB60000000, float poison>, float %0, i64 1
-  %13 = fcmp olt <2 x float> %11, %12
-  %14 = or <2 x i1> %13, %10
-  %15 = insertelement <2 x float> poison, float %0, i64 1
-  %16 = insertelement <2 x float> %15, float %7, i64 0
-  %17 = fdiv <2 x float> %16, <float 0x401921FB60000000, float 0x401921FB60000000>
-  %18 = fptosi <2 x float> %17 to <2 x i32>
-  %19 = sitofp <2 x i32> %18 to <2 x float>
-  %20 = fneg <2 x float> %19
-  %21 = call <2 x float> @llvm.fmuladd.v2f32(<2 x float> %20, <2 x float> <float 0x401921FB60000000, float 0x401921FB60000000>, <2 x float> %16)
-  %22 = select <2 x i1> %14, <2 x float> %21, <2 x float> %16
-  %23 = extractelement <2 x float> %22, i64 1
-  %24 = fadd float %23, 0xC01921FB60000000
-  %25 = fcmp ogt <2 x float> %22, <float 0x400921FB60000000, float 0x400921FB60000000>
-  %26 = extractelement <2 x i1> %25, i64 1
-  %27 = select i1 %26, float %24, float %23
+  %7 = fcmp ogt float %0, 0x401921FB60000000
+  %8 = fcmp olt float %0, 0xC01921FB60000000
+  %9 = or i1 %7, %8
+  %10 = fdiv float %0, 0x401921FB60000000
+  %11 = fptosi float %10 to i32
+  %12 = sitofp i32 %11 to float
+  %13 = fneg float %12
+  %14 = tail call float @llvm.fmuladd.f32(float %13, float 0x401921FB60000000, float %0) #7
+  %15 = fadd float %0, 0x3FF921FB60000000
+  %16 = fcmp ogt float %15, 0x401921FB60000000
+  %17 = fcmp olt float %15, 0xC01921FB60000000
+  %18 = or i1 %16, %17
+  %19 = fdiv float %15, 0x401921FB60000000
+  %20 = fptosi float %19 to i32
+  %21 = sitofp i32 %20 to float
+  %22 = fneg float %21
+  %23 = tail call float @llvm.fmuladd.f32(float %22, float 0x401921FB60000000, float %15) #7
+  %24 = select i1 %9, float %14, float %0
+  %25 = fcmp ogt float %24, 0x400921FB60000000
+  %26 = fadd float %24, 0xC01921FB60000000
+  %27 = select i1 %25, float %26, float %24
   %28 = fcmp olt float %27, 0xC00921FB60000000
   %29 = fadd float %27, 0x401921FB60000000
   %30 = select i1 %28, float %29, float %27
-  %31 = extractelement <2 x float> %22, i64 0
-  %32 = fadd float %31, 0xC01921FB60000000
-  %33 = extractelement <2 x i1> %25, i64 0
-  %34 = select i1 %33, float %32, float %31
+  %31 = select i1 %18, float %23, float %15
+  %32 = fcmp ogt float %31, 0x400921FB60000000
+  %33 = fadd float %31, 0xC01921FB60000000
+  %34 = select i1 %32, float %33, float %31
   %35 = fcmp olt float %34, 0xC00921FB60000000
   %36 = fadd float %34, 0x401921FB60000000
   %37 = select i1 %35, float %36, float %34
@@ -332,13 +323,13 @@ define dso_local void @_Z9write_pgmf(float noundef %0) local_unnamed_addr #3 {
 38:                                               ; preds = %6, %87
   %39 = phi i32 [ %4, %6 ], [ %89, %87 ]
   %40 = phi i32 [ 0, %6 ], [ %88, %87 ]
-  %41 = load i32, i32* @width, align 4, !tbaa !5
+  %41 = load i32, i32* @width, align 4, !tbaa !4
   %42 = icmp sgt i32 %41, 0
   br i1 %42, label %43, label %87
 
 43:                                               ; preds = %38
-  %44 = tail call noundef float @_Z11my_sin_implf(float noundef %30) #8
-  %45 = tail call noundef float @_Z11my_sin_implf(float noundef %37) #8
+  %44 = tail call noundef float @_Z11my_sin_implf(float noundef %30) #7
+  %45 = tail call noundef float @_Z11my_sin_implf(float noundef %37) #7
   %46 = fneg float %44
   br label %47
 
@@ -353,12 +344,12 @@ define dso_local void @_Z9write_pgmf(float noundef %0) local_unnamed_addr #3 {
   %55 = sitofp i32 %53 to float
   %56 = sitofp i32 %54 to float
   %57 = fmul float %46, %56
-  %58 = tail call float @llvm.fmuladd.f32(float %55, float %45, float %57) #8
+  %58 = tail call float @llvm.fmuladd.f32(float %55, float %45, float %57) #7
   %59 = sitofp i32 %51 to float
   %60 = fadd float %58, %59
   %61 = fptosi float %60 to i32
   %62 = fmul float %45, %56
-  %63 = tail call float @llvm.fmuladd.f32(float %55, float %44, float %62) #8
+  %63 = tail call float @llvm.fmuladd.f32(float %55, float %44, float %62) #7
   %64 = sitofp i32 %52 to float
   %65 = fadd float %63, %64
   %66 = fptosi float %65 to i32
@@ -378,7 +369,7 @@ define dso_local void @_Z9write_pgmf(float noundef %0) local_unnamed_addr #3 {
   %76 = add nsw i32 %75, %61
   %77 = sext i32 %76 to i64
   %78 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image, i64 0, i64 %77
-  %79 = load i32, i32* %78, align 4, !tbaa !5
+  %79 = load i32, i32* %78, align 4, !tbaa !4
   br label %80
 
 80:                                               ; preds = %47, %68, %74
@@ -386,20 +377,20 @@ define dso_local void @_Z9write_pgmf(float noundef %0) local_unnamed_addr #3 {
   tail call void @_Z6putinti(i32 noundef %81)
   tail call void @_Z5putchi(i32 noundef 32)
   %82 = add nuw nsw i32 %50, 1
-  %83 = load i32, i32* @width, align 4, !tbaa !5
+  %83 = load i32, i32* @width, align 4, !tbaa !4
   %84 = icmp slt i32 %82, %83
-  br i1 %84, label %85, label %87, !llvm.loop !13
+  br i1 %84, label %85, label %87, !llvm.loop !12
 
 85:                                               ; preds = %80
-  %86 = load i32, i32* @height, align 4, !tbaa !5
+  %86 = load i32, i32* @height, align 4, !tbaa !4
   br label %47
 
 87:                                               ; preds = %80, %38
   tail call void @_Z5putchi(i32 noundef 10)
   %88 = add nuw nsw i32 %40, 1
-  %89 = load i32, i32* @height, align 4, !tbaa !5
+  %89 = load i32, i32* @height, align 4, !tbaa !4
   %90 = icmp slt i32 %88, %89
-  br i1 %90, label %38, label %91, !llvm.loop !14
+  br i1 %90, label %38, label %91, !llvm.loop !13
 
 91:                                               ; preds = %87, %1
   ret void
@@ -413,7 +404,7 @@ declare void @_Z6putinti(i32 noundef) local_unnamed_addr #4
 define dso_local noundef i32 @main() local_unnamed_addr #6 {
   %1 = tail call noundef float @_Z8getfloatv()
   %2 = tail call noundef i32 @_Z5getchv()
-  %3 = tail call noundef i32 @_Z10read_imagev(), !range !15
+  %3 = tail call noundef i32 @_Z10read_imagev(), !range !14
   %4 = icmp slt i32 %3, 0
   br i1 %4, label %6, label %5
 
@@ -428,9 +419,6 @@ define dso_local noundef i32 @main() local_unnamed_addr #6 {
 
 declare noundef float @_Z8getfloatv() local_unnamed_addr #4
 
-; Function Attrs: nofree nosync nounwind readnone speculatable willreturn
-declare <2 x float> @llvm.fmuladd.v2f32(<2 x float>, <2 x float>, <2 x float>) #7
-
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { mustprogress nofree nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { mustprogress nofree nosync nounwind readnone speculatable willreturn }
@@ -438,25 +426,22 @@ attributes #3 = { mustprogress uwtable "frame-pointer"="none" "min-legal-vector-
 attributes #4 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #5 = { mustprogress nofree nosync nounwind readonly uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #6 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #7 = { nofree nosync nounwind readnone speculatable willreturn }
-attributes #8 = { nounwind }
+attributes #7 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10, !12}
-!12 = !{!"llvm.loop.unswitch.partial.disable"}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
-!15 = !{i32 -1, i32 1}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9, !11}
+!11 = !{!"llvm.loop.unswitch.partial.disable"}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !9}
+!14 = !{i32 -1, i32 1}

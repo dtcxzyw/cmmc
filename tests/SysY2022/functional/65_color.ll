@@ -23,7 +23,7 @@ define dso_local noundef i32 @_Z3dfsiiiiii(i32 noundef %0, i32 noundef %1, i32 n
   %11 = sext i32 %4 to i64
   %12 = sext i32 %5 to i64
   %13 = getelementptr inbounds [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]], [18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]]* @dp, i64 0, i64 %7, i64 %8, i64 %9, i64 %10, i64 %11, i64 %12
-  %14 = load i32, i32* %13, align 4, !tbaa !5
+  %14 = load i32, i32* %13, align 4, !tbaa !4
   %15 = icmp eq i32 %14, -1
   br i1 %15, label %16, label %84
 
@@ -117,7 +117,7 @@ define dso_local noundef i32 @_Z3dfsiiiiii(i32 noundef %0, i32 noundef %1, i32 n
 81:                                               ; preds = %74, %71
   %82 = phi i32 [ %80, %74 ], [ %72, %71 ]
   %83 = srem i32 %82, 1000000007
-  store i32 %83, i32* %13, align 4, !tbaa !5
+  store i32 %83, i32* %13, align 4, !tbaa !4
   br label %84
 
 84:                                               ; preds = %16, %6, %81
@@ -128,7 +128,7 @@ define dso_local noundef i32 @_Z3dfsiiiiii(i32 noundef %0, i32 noundef %1, i32 n
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #2 {
   %1 = tail call noundef i32 @_Z6getintv()
-  call void @llvm.memset.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(52907904) bitcast ([18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]]* @dp to i8*), i8 -1, i64 52907904, i1 false), !tbaa !5
+  call void @llvm.memset.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(52907904) bitcast ([18 x [18 x [18 x [18 x [18 x [7 x i32]]]]]]* @dp to i8*), i8 -1, i64 52907904, i1 false), !tbaa !4
   %2 = icmp sgt i32 %1, 0
   br i1 %2, label %3, label %15
 
@@ -140,22 +140,22 @@ define dso_local noundef i32 @main() local_unnamed_addr #2 {
   %6 = phi i64 [ 0, %3 ], [ %13, %5 ]
   %7 = tail call noundef i32 @_Z6getintv()
   %8 = getelementptr inbounds [200 x i32], [200 x i32]* @list, i64 0, i64 %6
-  store i32 %7, i32* %8, align 4, !tbaa !5
+  store i32 %7, i32* %8, align 4, !tbaa !4
   %9 = sext i32 %7 to i64
   %10 = getelementptr inbounds [20 x i32], [20 x i32]* @cns, i64 0, i64 %9
-  %11 = load i32, i32* %10, align 4, !tbaa !5
+  %11 = load i32, i32* %10, align 4, !tbaa !4
   %12 = add nsw i32 %11, 1
-  store i32 %12, i32* %10, align 4, !tbaa !5
+  store i32 %12, i32* %10, align 4, !tbaa !4
   %13 = add nuw nsw i64 %6, 1
   %14 = icmp eq i64 %13, %4
-  br i1 %14, label %15, label %5, !llvm.loop !9
+  br i1 %14, label %15, label %5, !llvm.loop !8
 
 15:                                               ; preds = %5, %0
-  %16 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 1), align 4, !tbaa !5
-  %17 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 2), align 8, !tbaa !5
-  %18 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 3), align 4, !tbaa !5
-  %19 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 4), align 16, !tbaa !5
-  %20 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 5), align 4, !tbaa !5
+  %16 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 1), align 4, !tbaa !4
+  %17 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 2), align 8, !tbaa !4
+  %18 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 3), align 4, !tbaa !4
+  %19 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 4), align 16, !tbaa !4
+  %20 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @cns, i64 0, i64 5), align 4, !tbaa !4
   %21 = tail call noundef i32 @_Z3dfsiiiiii(i32 noundef %16, i32 noundef %17, i32 noundef %18, i32 noundef %19, i32 noundef %20, i32 noundef 0)
   tail call void @_Z6putinti(i32 noundef %21)
   ret i32 %21
@@ -175,16 +175,14 @@ attributes #3 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #4 = { argmemonly nofree nounwind willreturn writeonly }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}

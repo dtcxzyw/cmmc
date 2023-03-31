@@ -14,326 +14,223 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
 1:                                                ; preds = %4
   %2 = add nuw nsw i64 %5, 1
   %3 = icmp eq i64 %2, 1000
-  br i1 %3, label %9, label %4, !llvm.loop !5
+  br i1 %3, label %9, label %4, !llvm.loop !4
 
 4:                                                ; preds = %0, %1
   %5 = phi i64 [ 0, %0 ], [ %2, %1 ]
   %6 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %5, i64 0
   %7 = tail call noundef i32 @_Z8getarrayPi(i32* noundef nonnull %6)
   %8 = icmp eq i32 %7, 1000
-  br i1 %8, label %1, label %253
+  br i1 %8, label %1, label %159
 
 9:                                                ; preds = %1
   tail call void @_Z15_sysy_starttimei(i32 noundef 23)
   br label %10
 
-10:                                               ; preds = %51, %9
-  %11 = phi i64 [ 0, %9 ], [ %52, %51 ]
+10:                                               ; preds = %9, %31
+  %11 = phi i64 [ 0, %9 ], [ %32, %31 ]
   br label %12
 
 12:                                               ; preds = %12, %10
-  %13 = phi i64 [ 0, %10 ], [ %49, %12 ]
-  %14 = or i64 %13, 1
-  %15 = or i64 %13, 2
-  %16 = or i64 %13, 3
-  %17 = or i64 %13, 4
-  %18 = or i64 %13, 5
-  %19 = or i64 %13, 6
-  %20 = or i64 %13, 7
-  %21 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %13, i64 %11
-  %22 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %14, i64 %11
-  %23 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %15, i64 %11
-  %24 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %16, i64 %11
-  %25 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %17, i64 %11
-  %26 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %18, i64 %11
-  %27 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %19, i64 %11
-  %28 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %20, i64 %11
-  %29 = load i32, i32* %21, align 4, !tbaa !7
-  %30 = load i32, i32* %22, align 4, !tbaa !7
-  %31 = load i32, i32* %23, align 4, !tbaa !7
-  %32 = load i32, i32* %24, align 4, !tbaa !7
-  %33 = insertelement <4 x i32> poison, i32 %29, i64 0
-  %34 = insertelement <4 x i32> %33, i32 %30, i64 1
-  %35 = insertelement <4 x i32> %34, i32 %31, i64 2
-  %36 = insertelement <4 x i32> %35, i32 %32, i64 3
-  %37 = load i32, i32* %25, align 4, !tbaa !7
-  %38 = load i32, i32* %26, align 4, !tbaa !7
-  %39 = load i32, i32* %27, align 4, !tbaa !7
-  %40 = load i32, i32* %28, align 4, !tbaa !7
-  %41 = insertelement <4 x i32> poison, i32 %37, i64 0
-  %42 = insertelement <4 x i32> %41, i32 %38, i64 1
-  %43 = insertelement <4 x i32> %42, i32 %39, i64 2
-  %44 = insertelement <4 x i32> %43, i32 %40, i64 3
-  %45 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %11, i64 %13
-  %46 = bitcast i32* %45 to <4 x i32>*
-  store <4 x i32> %36, <4 x i32>* %46, align 16, !tbaa !7
-  %47 = getelementptr inbounds i32, i32* %45, i64 4
-  %48 = bitcast i32* %47 to <4 x i32>*
-  store <4 x i32> %44, <4 x i32>* %48, align 16, !tbaa !7
-  %49 = add nuw i64 %13, 8
-  %50 = icmp eq i64 %49, 1000
-  br i1 %50, label %51, label %12, !llvm.loop !11
+  %13 = phi i64 [ 0, %10 ], [ %29, %12 ]
+  %14 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %13, i64 %11
+  %15 = load i32, i32* %14, align 4, !tbaa !6
+  %16 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %11, i64 %13
+  store i32 %15, i32* %16, align 16, !tbaa !6
+  %17 = or i64 %13, 1
+  %18 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %17, i64 %11
+  %19 = load i32, i32* %18, align 4, !tbaa !6
+  %20 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %11, i64 %17
+  store i32 %19, i32* %20, align 4, !tbaa !6
+  %21 = or i64 %13, 2
+  %22 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %21, i64 %11
+  %23 = load i32, i32* %22, align 4, !tbaa !6
+  %24 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %11, i64 %21
+  store i32 %23, i32* %24, align 8, !tbaa !6
+  %25 = or i64 %13, 3
+  %26 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %25, i64 %11
+  %27 = load i32, i32* %26, align 4, !tbaa !6
+  %28 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %11, i64 %25
+  store i32 %27, i32* %28, align 4, !tbaa !6
+  %29 = add nuw nsw i64 %13, 4
+  %30 = icmp eq i64 %29, 1000
+  br i1 %30, label %31, label %12, !llvm.loop !10
 
-51:                                               ; preds = %12
-  %52 = add nuw nsw i64 %11, 1
-  %53 = icmp eq i64 %52, 1000
-  br i1 %53, label %54, label %10, !llvm.loop !13
+31:                                               ; preds = %12
+  %32 = add nuw nsw i64 %11, 1
+  %33 = icmp eq i64 %32, 1000
+  br i1 %33, label %34, label %10, !llvm.loop !11
 
-54:                                               ; preds = %51, %111
-  %55 = phi i64 [ %112, %111 ], [ 0, %51 ]
-  br label %56
+34:                                               ; preds = %31, %60
+  %35 = phi i64 [ %61, %60 ], [ 0, %31 ]
+  br label %36
 
-56:                                               ; preds = %105, %54
-  %57 = phi i64 [ 0, %54 ], [ %109, %105 ]
-  br label %58
+36:                                               ; preds = %34, %56
+  %37 = phi i64 [ 0, %34 ], [ %58, %56 ]
+  br label %38
 
-58:                                               ; preds = %58, %56
-  %59 = phi i64 [ 0, %56 ], [ %103, %58 ]
-  %60 = phi <4 x i32> [ zeroinitializer, %56 ], [ %101, %58 ]
-  %61 = phi <4 x i32> [ zeroinitializer, %56 ], [ %102, %58 ]
-  %62 = or i64 %59, 1
-  %63 = or i64 %59, 2
-  %64 = or i64 %59, 3
-  %65 = or i64 %59, 4
-  %66 = or i64 %59, 5
-  %67 = or i64 %59, 6
-  %68 = or i64 %59, 7
-  %69 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %55, i64 %59
-  %70 = bitcast i32* %69 to <4 x i32>*
-  %71 = load <4 x i32>, <4 x i32>* %70, align 16, !tbaa !7
-  %72 = getelementptr inbounds i32, i32* %69, i64 4
-  %73 = bitcast i32* %72 to <4 x i32>*
-  %74 = load <4 x i32>, <4 x i32>* %73, align 16, !tbaa !7
-  %75 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %59, i64 %57
-  %76 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %62, i64 %57
-  %77 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %63, i64 %57
-  %78 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %64, i64 %57
-  %79 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %65, i64 %57
-  %80 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %66, i64 %57
-  %81 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %67, i64 %57
-  %82 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %68, i64 %57
-  %83 = load i32, i32* %75, align 4, !tbaa !7
-  %84 = load i32, i32* %76, align 4, !tbaa !7
-  %85 = load i32, i32* %77, align 4, !tbaa !7
-  %86 = load i32, i32* %78, align 4, !tbaa !7
-  %87 = insertelement <4 x i32> poison, i32 %83, i64 0
-  %88 = insertelement <4 x i32> %87, i32 %84, i64 1
-  %89 = insertelement <4 x i32> %88, i32 %85, i64 2
-  %90 = insertelement <4 x i32> %89, i32 %86, i64 3
-  %91 = load i32, i32* %79, align 4, !tbaa !7
-  %92 = load i32, i32* %80, align 4, !tbaa !7
-  %93 = load i32, i32* %81, align 4, !tbaa !7
-  %94 = load i32, i32* %82, align 4, !tbaa !7
-  %95 = insertelement <4 x i32> poison, i32 %91, i64 0
-  %96 = insertelement <4 x i32> %95, i32 %92, i64 1
-  %97 = insertelement <4 x i32> %96, i32 %93, i64 2
-  %98 = insertelement <4 x i32> %97, i32 %94, i64 3
-  %99 = mul nsw <4 x i32> %90, %71
-  %100 = mul nsw <4 x i32> %98, %74
-  %101 = add <4 x i32> %99, %60
-  %102 = add <4 x i32> %100, %61
-  %103 = add nuw i64 %59, 8
-  %104 = icmp eq i64 %103, 1000
-  br i1 %104, label %105, label %58, !llvm.loop !14
+38:                                               ; preds = %38, %36
+  %39 = phi i64 [ 0, %36 ], [ %54, %38 ]
+  %40 = phi i32 [ 0, %36 ], [ %53, %38 ]
+  %41 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %35, i64 %39
+  %42 = load i32, i32* %41, align 8, !tbaa !6
+  %43 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %39, i64 %37
+  %44 = load i32, i32* %43, align 4, !tbaa !6
+  %45 = mul nsw i32 %44, %42
+  %46 = add nsw i32 %45, %40
+  %47 = or i64 %39, 1
+  %48 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @a, i64 0, i64 %35, i64 %47
+  %49 = load i32, i32* %48, align 4, !tbaa !6
+  %50 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @b, i64 0, i64 %47, i64 %37
+  %51 = load i32, i32* %50, align 4, !tbaa !6
+  %52 = mul nsw i32 %51, %49
+  %53 = add nsw i32 %52, %46
+  %54 = add nuw nsw i64 %39, 2
+  %55 = icmp eq i64 %54, 1000
+  br i1 %55, label %56, label %38, !llvm.loop !12
 
-105:                                              ; preds = %58
-  %106 = add <4 x i32> %102, %101
-  %107 = call i32 @llvm.vector.reduce.add.v4i32(<4 x i32> %106)
-  %108 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %55, i64 %57
-  store i32 %107, i32* %108, align 4, !tbaa !7
-  %109 = add nuw nsw i64 %57, 1
-  %110 = icmp eq i64 %109, 1000
-  br i1 %110, label %111, label %56, !llvm.loop !15
+56:                                               ; preds = %38
+  %57 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %35, i64 %37
+  store i32 %53, i32* %57, align 4, !tbaa !6
+  %58 = add nuw nsw i64 %37, 1
+  %59 = icmp eq i64 %58, 1000
+  br i1 %59, label %60, label %36, !llvm.loop !13
 
-111:                                              ; preds = %105
-  %112 = add nuw nsw i64 %55, 1
-  %113 = icmp eq i64 %112, 1000
-  br i1 %113, label %114, label %54, !llvm.loop !16
+60:                                               ; preds = %56
+  %61 = add nuw nsw i64 %35, 1
+  %62 = icmp eq i64 %61, 1000
+  br i1 %62, label %63, label %34, !llvm.loop !14
 
-114:                                              ; preds = %111, %180
-  %115 = phi i64 [ %181, %180 ], [ 0, %111 ]
-  br label %116
+63:                                               ; preds = %60, %107
+  %64 = phi i64 [ %108, %107 ], [ 0, %60 ]
+  br label %65
 
-116:                                              ; preds = %132, %114
-  %117 = phi i64 [ 0, %114 ], [ %143, %132 ]
-  %118 = phi <4 x i32> [ <i32 2147483647, i32 2147483647, i32 2147483647, i32 2147483647>, %114 ], [ %141, %132 ]
-  %119 = phi <4 x i32> [ <i32 2147483647, i32 2147483647, i32 2147483647, i32 2147483647>, %114 ], [ %142, %132 ]
-  %120 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %117
-  %121 = bitcast i32* %120 to <4 x i32>*
-  %122 = load <4 x i32>, <4 x i32>* %121, align 16, !tbaa !7
-  %123 = getelementptr inbounds i32, i32* %120, i64 4
-  %124 = bitcast i32* %123 to <4 x i32>*
-  %125 = load <4 x i32>, <4 x i32>* %124, align 16, !tbaa !7
-  %126 = icmp slt <4 x i32> %122, %118
-  %127 = icmp slt <4 x i32> %125, %119
-  %128 = select <4 x i1> %126, <4 x i32> %122, <4 x i32> %118
-  %129 = select <4 x i1> %127, <4 x i32> %125, <4 x i32> %119
-  %130 = or i64 %117, 8
-  %131 = icmp eq i64 %130, 1000
-  br i1 %131, label %144, label %132, !llvm.loop !17
+65:                                               ; preds = %65, %63
+  %66 = phi i64 [ 0, %63 ], [ %92, %65 ]
+  %67 = phi i32 [ 2147483647, %63 ], [ %91, %65 ]
+  %68 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %66
+  %69 = load i32, i32* %68, align 4, !tbaa !6
+  %70 = icmp slt i32 %69, %67
+  %71 = select i1 %70, i32 %69, i32 %67
+  %72 = add nuw nsw i64 %66, 1
+  %73 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %72
+  %74 = load i32, i32* %73, align 4, !tbaa !6
+  %75 = icmp slt i32 %74, %71
+  %76 = select i1 %75, i32 %74, i32 %71
+  %77 = add nuw nsw i64 %66, 2
+  %78 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %77
+  %79 = load i32, i32* %78, align 4, !tbaa !6
+  %80 = icmp slt i32 %79, %76
+  %81 = select i1 %80, i32 %79, i32 %76
+  %82 = add nuw nsw i64 %66, 3
+  %83 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %82
+  %84 = load i32, i32* %83, align 4, !tbaa !6
+  %85 = icmp slt i32 %84, %81
+  %86 = select i1 %85, i32 %84, i32 %81
+  %87 = add nuw nsw i64 %66, 4
+  %88 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %87
+  %89 = load i32, i32* %88, align 4, !tbaa !6
+  %90 = icmp slt i32 %89, %86
+  %91 = select i1 %90, i32 %89, i32 %86
+  %92 = add nuw nsw i64 %66, 5
+  %93 = icmp eq i64 %92, 1000
+  br i1 %93, label %94, label %65, !llvm.loop !15
 
-132:                                              ; preds = %116
-  %133 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %130
-  %134 = bitcast i32* %133 to <4 x i32>*
-  %135 = load <4 x i32>, <4 x i32>* %134, align 16, !tbaa !7
-  %136 = getelementptr inbounds i32, i32* %133, i64 4
-  %137 = bitcast i32* %136 to <4 x i32>*
-  %138 = load <4 x i32>, <4 x i32>* %137, align 16, !tbaa !7
-  %139 = icmp slt <4 x i32> %135, %128
-  %140 = icmp slt <4 x i32> %138, %129
-  %141 = select <4 x i1> %139, <4 x i32> %135, <4 x i32> %128
-  %142 = select <4 x i1> %140, <4 x i32> %138, <4 x i32> %129
-  %143 = add nuw nsw i64 %117, 16
-  br label %116
+94:                                               ; preds = %65, %94
+  %95 = phi i64 [ %105, %94 ], [ 0, %65 ]
+  %96 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %95
+  store i32 %91, i32* %96, align 4, !tbaa !6
+  %97 = add nuw nsw i64 %95, 1
+  %98 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %97
+  store i32 %91, i32* %98, align 4, !tbaa !6
+  %99 = add nuw nsw i64 %95, 2
+  %100 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %99
+  store i32 %91, i32* %100, align 4, !tbaa !6
+  %101 = add nuw nsw i64 %95, 3
+  %102 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %101
+  store i32 %91, i32* %102, align 4, !tbaa !6
+  %103 = add nuw nsw i64 %95, 4
+  %104 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %64, i64 %103
+  store i32 %91, i32* %104, align 4, !tbaa !6
+  %105 = add nuw nsw i64 %95, 5
+  %106 = icmp eq i64 %105, 1000
+  br i1 %106, label %107, label %94, !llvm.loop !16
 
-144:                                              ; preds = %116
-  %145 = icmp slt <4 x i32> %128, %129
-  %146 = select <4 x i1> %145, <4 x i32> %128, <4 x i32> %129
-  %147 = call i32 @llvm.vector.reduce.smin.v4i32(<4 x i32> %146)
-  %148 = insertelement <4 x i32> poison, i32 %147, i64 0
-  %149 = shufflevector <4 x i32> %148, <4 x i32> poison, <4 x i32> zeroinitializer
-  %150 = insertelement <4 x i32> poison, i32 %147, i64 0
-  %151 = shufflevector <4 x i32> %150, <4 x i32> poison, <4 x i32> zeroinitializer
-  br label %152
+107:                                              ; preds = %94
+  %108 = add nuw nsw i64 %64, 1
+  %109 = icmp eq i64 %108, 1000
+  br i1 %109, label %110, label %63, !llvm.loop !17
 
-152:                                              ; preds = %152, %144
-  %153 = phi i64 [ 0, %144 ], [ %178, %152 ]
-  %154 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %153
-  %155 = bitcast i32* %154 to <4 x i32>*
-  store <4 x i32> %149, <4 x i32>* %155, align 16, !tbaa !7
-  %156 = getelementptr inbounds i32, i32* %154, i64 4
-  %157 = bitcast i32* %156 to <4 x i32>*
-  store <4 x i32> %151, <4 x i32>* %157, align 16, !tbaa !7
-  %158 = add nuw nsw i64 %153, 8
-  %159 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %158
-  %160 = bitcast i32* %159 to <4 x i32>*
-  store <4 x i32> %149, <4 x i32>* %160, align 16, !tbaa !7
-  %161 = getelementptr inbounds i32, i32* %159, i64 4
-  %162 = bitcast i32* %161 to <4 x i32>*
-  store <4 x i32> %151, <4 x i32>* %162, align 16, !tbaa !7
-  %163 = add nuw nsw i64 %153, 16
-  %164 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %163
-  %165 = bitcast i32* %164 to <4 x i32>*
-  store <4 x i32> %149, <4 x i32>* %165, align 16, !tbaa !7
-  %166 = getelementptr inbounds i32, i32* %164, i64 4
-  %167 = bitcast i32* %166 to <4 x i32>*
-  store <4 x i32> %151, <4 x i32>* %167, align 16, !tbaa !7
-  %168 = add nuw nsw i64 %153, 24
-  %169 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %168
-  %170 = bitcast i32* %169 to <4 x i32>*
-  store <4 x i32> %149, <4 x i32>* %170, align 16, !tbaa !7
-  %171 = getelementptr inbounds i32, i32* %169, i64 4
-  %172 = bitcast i32* %171 to <4 x i32>*
-  store <4 x i32> %151, <4 x i32>* %172, align 16, !tbaa !7
-  %173 = add nuw nsw i64 %153, 32
-  %174 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %115, i64 %173
-  %175 = bitcast i32* %174 to <4 x i32>*
-  store <4 x i32> %149, <4 x i32>* %175, align 16, !tbaa !7
-  %176 = getelementptr inbounds i32, i32* %174, i64 4
-  %177 = bitcast i32* %176 to <4 x i32>*
-  store <4 x i32> %151, <4 x i32>* %177, align 16, !tbaa !7
-  %178 = add nuw nsw i64 %153, 40
-  %179 = icmp eq i64 %178, 1000
-  br i1 %179, label %180, label %152, !llvm.loop !18
+110:                                              ; preds = %107, %125
+  %111 = phi i64 [ %126, %125 ], [ 0, %107 ]
+  br label %112
 
-180:                                              ; preds = %152
-  %181 = add nuw nsw i64 %115, 1
-  %182 = icmp eq i64 %181, 1000
-  br i1 %182, label %183, label %114, !llvm.loop !19
+112:                                              ; preds = %112, %110
+  %113 = phi i64 [ 0, %110 ], [ %123, %112 ]
+  %114 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %113, i64 %111
+  %115 = load i32, i32* %114, align 4, !tbaa !6
+  %116 = sub nsw i32 0, %115
+  %117 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %111, i64 %113
+  store i32 %116, i32* %117, align 8, !tbaa !6
+  %118 = or i64 %113, 1
+  %119 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %118, i64 %111
+  %120 = load i32, i32* %119, align 4, !tbaa !6
+  %121 = sub nsw i32 0, %120
+  %122 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %111, i64 %118
+  store i32 %121, i32* %122, align 4, !tbaa !6
+  %123 = add nuw nsw i64 %113, 2
+  %124 = icmp eq i64 %123, 1000
+  br i1 %124, label %125, label %112, !llvm.loop !18
 
-183:                                              ; preds = %180, %198
-  %184 = phi i64 [ %199, %198 ], [ 0, %180 ]
-  br label %185
+125:                                              ; preds = %112
+  %126 = add nuw nsw i64 %111, 1
+  %127 = icmp eq i64 %126, 1000
+  br i1 %127, label %128, label %110, !llvm.loop !19
 
-185:                                              ; preds = %185, %183
-  %186 = phi i64 [ 0, %183 ], [ %196, %185 ]
-  %187 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %186, i64 %184
-  %188 = load i32, i32* %187, align 4, !tbaa !7
-  %189 = sub nsw i32 0, %188
-  %190 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %184, i64 %186
-  store i32 %189, i32* %190, align 8, !tbaa !7
-  %191 = or i64 %186, 1
-  %192 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %191, i64 %184
-  %193 = load i32, i32* %192, align 4, !tbaa !7
-  %194 = sub nsw i32 0, %193
-  %195 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %184, i64 %191
-  store i32 %194, i32* %195, align 4, !tbaa !7
-  %196 = add nuw nsw i64 %186, 2
-  %197 = icmp eq i64 %196, 1000
-  br i1 %197, label %198, label %185, !llvm.loop !20
+128:                                              ; preds = %125, %155
+  %129 = phi i64 [ %156, %155 ], [ 0, %125 ]
+  %130 = phi i32 [ %152, %155 ], [ 0, %125 ]
+  br label %131
 
-198:                                              ; preds = %185
-  %199 = add nuw nsw i64 %184, 1
-  %200 = icmp eq i64 %199, 1000
-  br i1 %200, label %201, label %183, !llvm.loop !21
+131:                                              ; preds = %131, %128
+  %132 = phi i64 [ 0, %128 ], [ %153, %131 ]
+  %133 = phi i32 [ %130, %128 ], [ %152, %131 ]
+  %134 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %129, i64 %132
+  %135 = load i32, i32* %134, align 4, !tbaa !6
+  %136 = add nsw i32 %135, %133
+  %137 = add nuw nsw i64 %132, 1
+  %138 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %129, i64 %137
+  %139 = load i32, i32* %138, align 4, !tbaa !6
+  %140 = add nsw i32 %139, %136
+  %141 = add nuw nsw i64 %132, 2
+  %142 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %129, i64 %141
+  %143 = load i32, i32* %142, align 4, !tbaa !6
+  %144 = add nsw i32 %143, %140
+  %145 = add nuw nsw i64 %132, 3
+  %146 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %129, i64 %145
+  %147 = load i32, i32* %146, align 4, !tbaa !6
+  %148 = add nsw i32 %147, %144
+  %149 = add nuw nsw i64 %132, 4
+  %150 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %129, i64 %149
+  %151 = load i32, i32* %150, align 4, !tbaa !6
+  %152 = add nsw i32 %151, %148
+  %153 = add nuw nsw i64 %132, 5
+  %154 = icmp eq i64 %153, 1000
+  br i1 %154, label %155, label %131, !llvm.loop !20
 
-201:                                              ; preds = %198, %247
-  %202 = phi i64 [ %250, %247 ], [ 0, %198 ]
-  %203 = phi i32 [ %249, %247 ], [ 0, %198 ]
-  %204 = insertelement <4 x i32> <i32 poison, i32 0, i32 0, i32 0>, i32 %203, i64 0
-  br label %205
+155:                                              ; preds = %131
+  %156 = add nuw nsw i64 %129, 1
+  %157 = icmp eq i64 %156, 1000
+  br i1 %157, label %158, label %128, !llvm.loop !21
 
-205:                                              ; preds = %219, %201
-  %206 = phi i64 [ 0, %201 ], [ %246, %219 ]
-  %207 = phi <4 x i32> [ %204, %201 ], [ %244, %219 ]
-  %208 = phi <4 x i32> [ zeroinitializer, %201 ], [ %245, %219 ]
-  %209 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %202, i64 %206
-  %210 = bitcast i32* %209 to <4 x i32>*
-  %211 = load <4 x i32>, <4 x i32>* %210, align 16, !tbaa !7
-  %212 = getelementptr inbounds i32, i32* %209, i64 4
-  %213 = bitcast i32* %212 to <4 x i32>*
-  %214 = load <4 x i32>, <4 x i32>* %213, align 16, !tbaa !7
-  %215 = add <4 x i32> %211, %207
-  %216 = add <4 x i32> %214, %208
-  %217 = or i64 %206, 8
-  %218 = icmp eq i64 %217, 1000
-  br i1 %218, label %247, label %219, !llvm.loop !22
-
-219:                                              ; preds = %205
-  %220 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %202, i64 %217
-  %221 = bitcast i32* %220 to <4 x i32>*
-  %222 = load <4 x i32>, <4 x i32>* %221, align 16, !tbaa !7
-  %223 = getelementptr inbounds i32, i32* %220, i64 4
-  %224 = bitcast i32* %223 to <4 x i32>*
-  %225 = load <4 x i32>, <4 x i32>* %224, align 16, !tbaa !7
-  %226 = add <4 x i32> %222, %215
-  %227 = add <4 x i32> %225, %216
-  %228 = or i64 %206, 16
-  %229 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %202, i64 %228
-  %230 = bitcast i32* %229 to <4 x i32>*
-  %231 = load <4 x i32>, <4 x i32>* %230, align 16, !tbaa !7
-  %232 = getelementptr inbounds i32, i32* %229, i64 4
-  %233 = bitcast i32* %232 to <4 x i32>*
-  %234 = load <4 x i32>, <4 x i32>* %233, align 16, !tbaa !7
-  %235 = add <4 x i32> %231, %226
-  %236 = add <4 x i32> %234, %227
-  %237 = or i64 %206, 24
-  %238 = getelementptr inbounds [1000 x [1000 x i32]], [1000 x [1000 x i32]]* @c, i64 0, i64 %202, i64 %237
-  %239 = bitcast i32* %238 to <4 x i32>*
-  %240 = load <4 x i32>, <4 x i32>* %239, align 16, !tbaa !7
-  %241 = getelementptr inbounds i32, i32* %238, i64 4
-  %242 = bitcast i32* %241 to <4 x i32>*
-  %243 = load <4 x i32>, <4 x i32>* %242, align 16, !tbaa !7
-  %244 = add <4 x i32> %240, %235
-  %245 = add <4 x i32> %243, %236
-  %246 = add nuw nsw i64 %206, 32
-  br label %205
-
-247:                                              ; preds = %205
-  %248 = add <4 x i32> %216, %215
-  %249 = call i32 @llvm.vector.reduce.add.v4i32(<4 x i32> %248)
-  %250 = add nuw nsw i64 %202, 1
-  %251 = icmp eq i64 %250, 1000
-  br i1 %251, label %252, label %201, !llvm.loop !23
-
-252:                                              ; preds = %247
+158:                                              ; preds = %155
   tail call void @_Z14_sysy_stoptimei(i32 noundef 92)
-  tail call void @_Z6putinti(i32 noundef %249)
-  br label %253
+  tail call void @_Z6putinti(i32 noundef %152)
+  br label %159
 
-253:                                              ; preds = %4, %252
-  %254 = phi i32 [ 0, %252 ], [ %7, %4 ]
-  ret i32 %254
+159:                                              ; preds = %4, %158
+  %160 = phi i32 [ 0, %158 ], [ %7, %4 ]
+  ret i32 %160
 }
 
 declare noundef i32 @_Z8getarrayPi(i32* noundef) local_unnamed_addr #1
@@ -344,40 +241,30 @@ declare void @_Z14_sysy_stoptimei(i32 noundef) local_unnamed_addr #1
 
 declare void @_Z6putinti(i32 noundef) local_unnamed_addr #1
 
-; Function Attrs: nofree nosync nounwind readnone willreturn
-declare i32 @llvm.vector.reduce.add.v4i32(<4 x i32>) #2
-
-; Function Attrs: nofree nosync nounwind readnone willreturn
-declare i32 @llvm.vector.reduce.smin.v4i32(<4 x i32>) #2
-
 attributes #0 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #2 = { nofree nosync nounwind readnone willreturn }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
-!7 = !{!8, !8, i64 0}
-!8 = !{!"int", !9, i64 0}
-!9 = !{!"omnipotent char", !10, i64 0}
-!10 = !{!"Simple C++ TBAA"}
-!11 = distinct !{!11, !6, !12}
-!12 = !{!"llvm.loop.isvectorized", i32 1}
-!13 = distinct !{!13, !6}
-!14 = distinct !{!14, !6, !12}
-!15 = distinct !{!15, !6}
-!16 = distinct !{!16, !6}
-!17 = distinct !{!17, !6, !12}
-!18 = distinct !{!18, !6, !12}
-!19 = distinct !{!19, !6}
-!20 = distinct !{!20, !6}
-!21 = distinct !{!21, !6}
-!22 = distinct !{!22, !6, !12}
-!23 = distinct !{!23, !6}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}
+!6 = !{!7, !7, i64 0}
+!7 = !{!"int", !8, i64 0}
+!8 = !{!"omnipotent char", !9, i64 0}
+!9 = !{!"Simple C++ TBAA"}
+!10 = distinct !{!10, !5}
+!11 = distinct !{!11, !5}
+!12 = distinct !{!12, !5}
+!13 = distinct !{!13, !5}
+!14 = distinct !{!14, !5}
+!15 = distinct !{!15, !5}
+!16 = distinct !{!16, !5}
+!17 = distinct !{!17, !5}
+!18 = distinct !{!18, !5}
+!19 = distinct !{!19, !5}
+!20 = distinct !{!20, !5}
+!21 = distinct !{!21, !5}

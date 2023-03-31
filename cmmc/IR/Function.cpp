@@ -194,7 +194,11 @@ bool Function::verify(std::ostream& out) const {
                 auto& incomings = phi->incomings();
                 auto& predecessors = cfg.predecessors(block);
                 if(!std::all_of(incomings.cbegin(), incomings.cend(),
-                                [&](auto incoming) { return incoming.first->getFunction() == this; }) ||
+                                [&](auto incoming) {
+                                    return incoming.first->getFunction() == this &&
+                                        std::find(predecessors.cbegin(), predecessors.cend(), incoming.first) !=
+                                        predecessors.cend();
+                                }) ||
                    !std::all_of(predecessors.cbegin(), predecessors.cend(), [&](Block* pred) { return incomings.count(pred); })) {
                     out << "Invalid phi node: ";
                     phi->dump(out, Noop{});

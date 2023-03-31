@@ -7,7 +7,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local noundef i32 @_Z10bubblesortPi(i32* nocapture noundef %0) local_unnamed_addr #0 {
-  %2 = load i32, i32* @n, align 4, !tbaa !5
+  %2 = load i32, i32* @n, align 4, !tbaa !4
   %3 = icmp sgt i32 %2, 1
   br i1 %3, label %4, label %36
 
@@ -20,7 +20,7 @@ define dso_local noundef i32 @_Z10bubblesortPi(i32* nocapture noundef %0) local_
   br i1 %9, label %10, label %31
 
 10:                                               ; preds = %4
-  %11 = load i32, i32* %0, align 4, !tbaa !5
+  %11 = load i32, i32* %0, align 4, !tbaa !4
   br label %12
 
 12:                                               ; preds = %10, %24
@@ -30,15 +30,15 @@ define dso_local noundef i32 @_Z10bubblesortPi(i32* nocapture noundef %0) local_
   %16 = phi i64 [ 0, %10 ], [ %17, %24 ]
   %17 = add nuw nsw i64 %16, 1
   %18 = getelementptr inbounds i32, i32* %0, i64 %17
-  %19 = load i32, i32* %18, align 4, !tbaa !5
+  %19 = load i32, i32* %18, align 4, !tbaa !4
   %20 = icmp sgt i32 %15, %19
   br i1 %20, label %21, label %24
 
 21:                                               ; preds = %12
   %22 = getelementptr inbounds i32, i32* %0, i64 %16
-  store i32 %15, i32* %18, align 4, !tbaa !5
-  store i32 %19, i32* %22, align 4, !tbaa !5
-  %23 = load i32, i32* @n, align 4, !tbaa !5
+  store i32 %15, i32* %18, align 4, !tbaa !4
+  store i32 %19, i32* %22, align 4, !tbaa !4
+  %23 = load i32, i32* @n, align 4, !tbaa !4
   br label %24
 
 24:                                               ; preds = %21, %12
@@ -48,14 +48,14 @@ define dso_local noundef i32 @_Z10bubblesortPi(i32* nocapture noundef %0) local_
   %28 = add i32 %26, %7
   %29 = sext i32 %28 to i64
   %30 = icmp slt i64 %17, %29
-  br i1 %30, label %12, label %31, !llvm.loop !9
+  br i1 %30, label %12, label %31, !llvm.loop !8
 
 31:                                               ; preds = %24, %4
   %32 = phi i32 [ %5, %4 ], [ %25, %24 ]
   %33 = add nuw nsw i32 %6, 1
   %34 = add nsw i32 %32, -1
   %35 = icmp slt i32 %33, %34
-  br i1 %35, label %4, label %36, !llvm.loop !11
+  br i1 %35, label %4, label %36, !llvm.loop !10
 
 36:                                               ; preds = %31, %1
   ret i32 0
@@ -70,37 +70,48 @@ declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #1
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #2 {
   %1 = alloca [10 x i32], align 16
-  store i32 10, i32* @n, align 4, !tbaa !5
+  store i32 10, i32* @n, align 4, !tbaa !4
   %2 = bitcast [10 x i32]* %1 to i8*
   call void @llvm.lifetime.start.p0i8(i64 40, i8* nonnull %2) #4
-  %3 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 4
-  %4 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 8
-  %5 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 9
-  store i32 9, i32* %5, align 4, !tbaa !5
-  store i32 8, i32* %4, align 16, !tbaa !5
-  %6 = bitcast i32* %3 to <4 x i32>*
-  store <4 x i32> <i32 4, i32 5, i32 6, i32 7>, <4 x i32>* %6, align 16, !tbaa !5
-  %7 = bitcast [10 x i32]* %1 to <4 x i32>*
-  store <4 x i32> <i32 0, i32 1, i32 2, i32 3>, <4 x i32>* %7, align 16, !tbaa !5
+  %3 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 0
+  %4 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 1
+  %5 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 2
+  %6 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 3
+  %7 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 4
+  %8 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 5
+  %9 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 6
+  %10 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 7
+  %11 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 8
+  %12 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 9
+  store i32 7, i32* %10, align 4, !tbaa !4
+  store i32 9, i32* %12, align 4, !tbaa !4
+  store i32 8, i32* %11, align 16, !tbaa !4
+  store i32 4, i32* %7, align 16, !tbaa !4
+  store i32 6, i32* %9, align 8, !tbaa !4
+  store i32 5, i32* %8, align 4, !tbaa !4
+  store i32 3, i32* %6, align 4, !tbaa !4
+  store i32 0, i32* %3, align 16, !tbaa !4
+  store i32 2, i32* %5, align 8, !tbaa !4
+  store i32 1, i32* %4, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef 0)
   tail call void @_Z5putchi(i32 noundef 10)
-  %8 = load i32, i32* @n, align 4, !tbaa !5
-  %9 = icmp sgt i32 %8, 1
-  br i1 %9, label %10, label %18, !llvm.loop !12
+  %13 = load i32, i32* @n, align 4, !tbaa !4
+  %14 = icmp sgt i32 %13, 1
+  br i1 %14, label %15, label %23, !llvm.loop !11
 
-10:                                               ; preds = %0, %10
-  %11 = phi i64 [ %14, %10 ], [ 1, %0 ]
-  %12 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 %11
-  %13 = load i32, i32* %12, align 4, !tbaa !5
-  tail call void @_Z6putinti(i32 noundef %13)
+15:                                               ; preds = %0, %15
+  %16 = phi i64 [ %19, %15 ], [ 1, %0 ]
+  %17 = getelementptr inbounds [10 x i32], [10 x i32]* %1, i64 0, i64 %16
+  %18 = load i32, i32* %17, align 4, !tbaa !4
+  tail call void @_Z6putinti(i32 noundef %18)
   tail call void @_Z5putchi(i32 noundef 10)
-  %14 = add nuw nsw i64 %11, 1
-  %15 = load i32, i32* @n, align 4, !tbaa !5
-  %16 = sext i32 %15 to i64
-  %17 = icmp slt i64 %14, %16
-  br i1 %17, label %10, label %18, !llvm.loop !12
+  %19 = add nuw nsw i64 %16, 1
+  %20 = load i32, i32* @n, align 4, !tbaa !4
+  %21 = sext i32 %20 to i64
+  %22 = icmp slt i64 %19, %21
+  br i1 %22, label %15, label %23, !llvm.loop !11
 
-18:                                               ; preds = %10, %0
+23:                                               ; preds = %15, %0
   call void @llvm.lifetime.end.p0i8(i64 40, i8* nonnull %2) #4
   ret i32 0
 }
@@ -116,18 +127,16 @@ attributes #3 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #4 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}

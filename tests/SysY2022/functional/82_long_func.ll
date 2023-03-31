@@ -11,2213 +11,1233 @@ define dso_local noundef i32 @_Z9long_funcv() local_unnamed_addr #0 {
   tail call void @_Z5putchi(i32 noundef 10)
   br label %1
 
-1:                                                ; preds = %0, %359
-  %2 = phi i32 [ %184, %359 ], [ 0, %0 ]
-  %3 = phi i32 [ %361, %359 ], [ 2, %0 ]
-  %4 = phi i32 [ %360, %359 ], [ 1, %0 ]
+1:                                                ; preds = %0, %147
+  %2 = phi i32 [ %78, %147 ], [ 0, %0 ]
+  %3 = phi i32 [ %149, %147 ], [ 2, %0 ]
+  %4 = phi i32 [ %148, %147 ], [ 1, %0 ]
   %5 = and i32 %3, 1
   %6 = icmp eq i32 %5, 0
   %7 = icmp eq i32 %4, 0
   %8 = select i1 %6, i1 true, i1 %7
-  br i1 %8, label %183, label %9
+  br i1 %8, label %77, label %11
 
-9:                                                ; preds = %1, %53
-  %10 = phi i32 [ %181, %53 ], [ %4, %1 ]
-  %11 = phi i32 [ %28, %53 ], [ %2, %1 ]
-  br label %12
+9:                                                ; preds = %71
+  %10 = icmp eq i32 %72, 0
+  br i1 %10, label %77, label %11, !llvm.loop !4
 
-12:                                               ; preds = %9, %27
-  %13 = phi i64 [ 0, %9 ], [ %31, %27 ]
-  %14 = phi i32 [ 0, %9 ], [ %28, %27 ]
-  %15 = phi i32 [ %11, %9 ], [ %29, %27 ]
-  %16 = phi i32 [ %10, %9 ], [ %30, %27 ]
-  %17 = and i32 %15, 1
-  %18 = icmp eq i32 %17, 0
-  %19 = and i32 %16, 1
+11:                                               ; preds = %1, %9
+  %12 = phi i32 [ %72, %9 ], [ %4, %1 ]
+  %13 = phi i32 [ %30, %9 ], [ %2, %1 ]
+  br label %14
+
+14:                                               ; preds = %11, %29
+  %15 = phi i64 [ 0, %11 ], [ %33, %29 ]
+  %16 = phi i32 [ 0, %11 ], [ %30, %29 ]
+  %17 = phi i32 [ %13, %11 ], [ %31, %29 ]
+  %18 = phi i32 [ %12, %11 ], [ %32, %29 ]
+  %19 = and i32 %17, 1
   %20 = icmp eq i32 %19, 0
-  br i1 %18, label %22, label %21
+  %21 = and i32 %18, 1
+  %22 = icmp eq i32 %21, 0
+  br i1 %20, label %24, label %23
 
-21:                                               ; preds = %12
-  br i1 %20, label %23, label %27
+23:                                               ; preds = %14
+  br i1 %22, label %25, label %29
 
-22:                                               ; preds = %12
-  br i1 %20, label %27, label %23
+24:                                               ; preds = %14
+  br i1 %22, label %29, label %25
 
-23:                                               ; preds = %22, %21
-  %24 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %13
-  %25 = load i32, i32* %24, align 4, !tbaa !5
-  %26 = add nsw i32 %25, %14
-  br label %27
+25:                                               ; preds = %24, %23
+  %26 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %15
+  %27 = load i32, i32* %26, align 4, !tbaa !6
+  %28 = add nsw i32 %27, %16
+  br label %29
 
-27:                                               ; preds = %23, %22, %21
-  %28 = phi i32 [ %14, %21 ], [ %14, %22 ], [ %26, %23 ]
-  %29 = sdiv i32 %15, 2
-  %30 = sdiv i32 %16, 2
-  %31 = add nuw nsw i64 %13, 1
-  %32 = icmp eq i64 %31, 16
-  br i1 %32, label %33, label %12, !llvm.loop !9
+29:                                               ; preds = %25, %24, %23
+  %30 = phi i32 [ %16, %23 ], [ %16, %24 ], [ %28, %25 ]
+  %31 = sdiv i32 %17, 2
+  %32 = sdiv i32 %18, 2
+  %33 = add nuw nsw i64 %15, 1
+  %34 = icmp eq i64 %33, 16
+  br i1 %34, label %35, label %14, !llvm.loop !10
 
-33:                                               ; preds = %27, %47
-  %34 = phi i64 [ %51, %47 ], [ 0, %27 ]
-  %35 = phi i32 [ %48, %47 ], [ 0, %27 ]
-  %36 = phi i32 [ %49, %47 ], [ %11, %27 ]
-  %37 = phi i32 [ %50, %47 ], [ %10, %27 ]
-  %38 = and i32 %36, 1
-  %39 = icmp eq i32 %38, 0
-  %40 = and i32 %37, 1
+35:                                               ; preds = %29, %49
+  %36 = phi i64 [ %53, %49 ], [ 0, %29 ]
+  %37 = phi i32 [ %50, %49 ], [ 0, %29 ]
+  %38 = phi i32 [ %51, %49 ], [ %13, %29 ]
+  %39 = phi i32 [ %52, %49 ], [ %12, %29 ]
+  %40 = and i32 %38, 1
   %41 = icmp eq i32 %40, 0
-  %42 = select i1 %39, i1 true, i1 %41
-  br i1 %42, label %47, label %43
+  %42 = and i32 %39, 1
+  %43 = icmp eq i32 %42, 0
+  %44 = select i1 %41, i1 true, i1 %43
+  br i1 %44, label %49, label %45
 
-43:                                               ; preds = %33
-  %44 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %34
-  %45 = load i32, i32* %44, align 4, !tbaa !5
-  %46 = add nsw i32 %45, %35
-  br label %47
+45:                                               ; preds = %35
+  %46 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %36
+  %47 = load i32, i32* %46, align 4, !tbaa !6
+  %48 = add nsw i32 %47, %37
+  br label %49
 
-47:                                               ; preds = %43, %33
-  %48 = phi i32 [ %46, %43 ], [ %35, %33 ]
-  %49 = sdiv i32 %36, 2
-  %50 = sdiv i32 %37, 2
-  %51 = add nuw nsw i64 %34, 1
-  %52 = icmp eq i64 %51, 16
-  br i1 %52, label %53, label %33, !llvm.loop !11
+49:                                               ; preds = %45, %35
+  %50 = phi i32 [ %48, %45 ], [ %37, %35 ]
+  %51 = sdiv i32 %38, 2
+  %52 = sdiv i32 %39, 2
+  %53 = add nuw nsw i64 %36, 1
+  %54 = icmp eq i64 %53, 16
+  br i1 %54, label %55, label %35, !llvm.loop !11
 
-53:                                               ; preds = %47
-  %54 = shl nsw i32 %48, 1
-  %55 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %54, i64 1
-  %56 = and <2 x i32> %55, <i32 1, i32 1>
-  %57 = icmp eq <2 x i32> %56, zeroinitializer
-  %58 = extractelement <2 x i1> %57, i64 0
-  %59 = extractelement <2 x i1> %57, i64 1
-  %60 = select i1 %59, i1 true, i1 %58
-  %61 = select i1 %60, i32 0, i32 1
-  %62 = sdiv <2 x i32> %55, <i32 2, i32 2>
-  %63 = and <2 x i32> %62, <i32 1, i32 1>
-  %64 = icmp eq <2 x i32> %63, zeroinitializer
-  %65 = extractelement <2 x i1> %64, i64 0
-  %66 = extractelement <2 x i1> %64, i64 1
-  %67 = select i1 %66, i1 true, i1 %65
-  %68 = or i32 %61, 2
-  %69 = select i1 %67, i32 %61, i32 %68
-  %70 = sdiv <2 x i32> %55, <i32 4, i32 4>
-  %71 = and <2 x i32> %70, <i32 1, i32 1>
-  %72 = icmp eq <2 x i32> %71, zeroinitializer
-  %73 = extractelement <2 x i1> %72, i64 0
-  %74 = extractelement <2 x i1> %72, i64 1
-  %75 = select i1 %74, i1 true, i1 %73
-  %76 = add nsw i32 %69, 4
-  %77 = select i1 %75, i32 %69, i32 %76
-  %78 = sdiv <2 x i32> %55, <i32 8, i32 8>
-  %79 = and <2 x i32> %78, <i32 1, i32 1>
-  %80 = icmp eq <2 x i32> %79, zeroinitializer
-  %81 = extractelement <2 x i1> %80, i64 0
-  %82 = extractelement <2 x i1> %80, i64 1
-  %83 = select i1 %82, i1 true, i1 %81
-  %84 = add nsw i32 %77, 8
-  %85 = select i1 %83, i32 %77, i32 %84
-  %86 = sdiv <2 x i32> %55, <i32 16, i32 16>
-  %87 = and <2 x i32> %86, <i32 1, i32 1>
-  %88 = icmp eq <2 x i32> %87, zeroinitializer
-  %89 = extractelement <2 x i1> %88, i64 0
-  %90 = extractelement <2 x i1> %88, i64 1
-  %91 = select i1 %90, i1 true, i1 %89
-  %92 = add nsw i32 %85, 16
-  %93 = select i1 %91, i32 %85, i32 %92
-  %94 = sdiv <2 x i32> %55, <i32 32, i32 32>
-  %95 = and <2 x i32> %94, <i32 1, i32 1>
-  %96 = icmp eq <2 x i32> %95, zeroinitializer
-  %97 = extractelement <2 x i1> %96, i64 0
-  %98 = extractelement <2 x i1> %96, i64 1
-  %99 = select i1 %98, i1 true, i1 %97
-  %100 = add nsw i32 %93, 32
-  %101 = select i1 %99, i32 %93, i32 %100
-  %102 = sdiv <2 x i32> %55, <i32 64, i32 64>
-  %103 = and <2 x i32> %102, <i32 1, i32 1>
-  %104 = icmp eq <2 x i32> %103, zeroinitializer
-  %105 = extractelement <2 x i1> %104, i64 0
-  %106 = extractelement <2 x i1> %104, i64 1
-  %107 = select i1 %106, i1 true, i1 %105
-  %108 = add nsw i32 %101, 64
-  %109 = select i1 %107, i32 %101, i32 %108
-  %110 = sdiv <2 x i32> %55, <i32 128, i32 128>
-  %111 = and <2 x i32> %110, <i32 1, i32 1>
-  %112 = icmp eq <2 x i32> %111, zeroinitializer
-  %113 = extractelement <2 x i1> %112, i64 0
-  %114 = extractelement <2 x i1> %112, i64 1
-  %115 = select i1 %114, i1 true, i1 %113
-  %116 = add nsw i32 %109, 128
-  %117 = select i1 %115, i32 %109, i32 %116
-  %118 = sdiv <2 x i32> %55, <i32 256, i32 256>
-  %119 = and <2 x i32> %118, <i32 1, i32 1>
-  %120 = icmp eq <2 x i32> %119, zeroinitializer
-  %121 = extractelement <2 x i1> %120, i64 0
-  %122 = extractelement <2 x i1> %120, i64 1
-  %123 = select i1 %122, i1 true, i1 %121
-  %124 = add nsw i32 %117, 256
-  %125 = select i1 %123, i32 %117, i32 %124
-  %126 = sdiv <2 x i32> %55, <i32 512, i32 512>
-  %127 = and <2 x i32> %126, <i32 1, i32 1>
-  %128 = icmp eq <2 x i32> %127, zeroinitializer
-  %129 = extractelement <2 x i1> %128, i64 0
-  %130 = extractelement <2 x i1> %128, i64 1
-  %131 = select i1 %130, i1 true, i1 %129
-  %132 = add nsw i32 %125, 512
-  %133 = select i1 %131, i32 %125, i32 %132
-  %134 = sdiv <2 x i32> %55, <i32 1024, i32 1024>
-  %135 = and <2 x i32> %134, <i32 1, i32 1>
-  %136 = icmp eq <2 x i32> %135, zeroinitializer
-  %137 = extractelement <2 x i1> %136, i64 0
-  %138 = extractelement <2 x i1> %136, i64 1
-  %139 = select i1 %138, i1 true, i1 %137
-  %140 = add nsw i32 %133, 1024
-  %141 = select i1 %139, i32 %133, i32 %140
-  %142 = sdiv <2 x i32> %55, <i32 2048, i32 2048>
-  %143 = and <2 x i32> %142, <i32 1, i32 1>
-  %144 = icmp eq <2 x i32> %143, zeroinitializer
-  %145 = extractelement <2 x i1> %144, i64 0
-  %146 = extractelement <2 x i1> %144, i64 1
-  %147 = select i1 %146, i1 true, i1 %145
-  %148 = add nsw i32 %141, 2048
-  %149 = select i1 %147, i32 %141, i32 %148
-  %150 = sdiv <2 x i32> %55, <i32 4096, i32 4096>
-  %151 = and <2 x i32> %150, <i32 1, i32 1>
-  %152 = icmp eq <2 x i32> %151, zeroinitializer
-  %153 = extractelement <2 x i1> %152, i64 0
-  %154 = extractelement <2 x i1> %152, i64 1
-  %155 = select i1 %154, i1 true, i1 %153
-  %156 = add nsw i32 %149, 4096
-  %157 = select i1 %155, i32 %149, i32 %156
-  %158 = sdiv <2 x i32> %55, <i32 8192, i32 8192>
-  %159 = and <2 x i32> %158, <i32 1, i32 1>
-  %160 = icmp eq <2 x i32> %159, zeroinitializer
-  %161 = extractelement <2 x i1> %160, i64 0
-  %162 = extractelement <2 x i1> %160, i64 1
-  %163 = select i1 %162, i1 true, i1 %161
-  %164 = add nsw i32 %157, 8192
-  %165 = select i1 %163, i32 %157, i32 %164
-  %166 = sdiv <2 x i32> %55, <i32 16384, i32 16384>
-  %167 = and <2 x i32> %166, <i32 1, i32 1>
-  %168 = icmp eq <2 x i32> %167, zeroinitializer
-  %169 = extractelement <2 x i1> %168, i64 0
-  %170 = extractelement <2 x i1> %168, i64 1
-  %171 = select i1 %170, i1 true, i1 %169
-  %172 = add nsw i32 %165, 16384
-  %173 = select i1 %171, i32 %165, i32 %172
-  %174 = sdiv <2 x i32> %55, <i32 32768, i32 32768>
-  %175 = and <2 x i32> %174, <i32 1, i32 1>
-  %176 = icmp eq <2 x i32> %175, zeroinitializer
-  %177 = extractelement <2 x i1> %176, i64 0
-  %178 = extractelement <2 x i1> %176, i64 1
-  %179 = select i1 %178, i1 true, i1 %177
-  %180 = add nsw i32 %173, 32768
-  %181 = select i1 %179, i32 %173, i32 %180
-  %182 = icmp eq i32 %181, 0
-  br i1 %182, label %183, label %9, !llvm.loop !12
+55:                                               ; preds = %49
+  %56 = shl nsw i32 %50, 1
+  br label %57
 
-183:                                              ; preds = %53, %1
-  %184 = phi i32 [ %2, %1 ], [ %28, %53 ]
-  br i1 %7, label %359, label %185
+57:                                               ; preds = %55, %71
+  %58 = phi i64 [ 0, %55 ], [ %75, %71 ]
+  %59 = phi i32 [ 0, %55 ], [ %72, %71 ]
+  %60 = phi i32 [ %56, %55 ], [ %73, %71 ]
+  %61 = phi i32 [ 65535, %55 ], [ %74, %71 ]
+  %62 = and i32 %60, 1
+  %63 = icmp eq i32 %62, 0
+  %64 = and i32 %61, 1
+  %65 = icmp eq i32 %64, 0
+  %66 = select i1 %63, i1 true, i1 %65
+  br i1 %66, label %71, label %67
 
-185:                                              ; preds = %183, %229
-  %186 = phi i32 [ %357, %229 ], [ %4, %183 ]
-  %187 = phi i32 [ %204, %229 ], [ %4, %183 ]
-  br label %188
+67:                                               ; preds = %57
+  %68 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %58
+  %69 = load i32, i32* %68, align 4, !tbaa !6
+  %70 = add nsw i32 %69, %59
+  br label %71
 
-188:                                              ; preds = %185, %203
-  %189 = phi i64 [ 0, %185 ], [ %207, %203 ]
-  %190 = phi i32 [ 0, %185 ], [ %204, %203 ]
-  %191 = phi i32 [ %187, %185 ], [ %205, %203 ]
-  %192 = phi i32 [ %186, %185 ], [ %206, %203 ]
-  %193 = and i32 %191, 1
-  %194 = icmp eq i32 %193, 0
-  %195 = and i32 %192, 1
-  %196 = icmp eq i32 %195, 0
-  br i1 %194, label %198, label %197
+71:                                               ; preds = %67, %57
+  %72 = phi i32 [ %70, %67 ], [ %59, %57 ]
+  %73 = sdiv i32 %60, 2
+  %74 = sdiv i32 %61, 2
+  %75 = add nuw nsw i64 %58, 1
+  %76 = icmp eq i64 %75, 16
+  br i1 %76, label %9, label %57, !llvm.loop !12
 
-197:                                              ; preds = %188
-  br i1 %196, label %199, label %203
+77:                                               ; preds = %9, %1
+  %78 = phi i32 [ %2, %1 ], [ %30, %9 ]
+  br i1 %7, label %147, label %81
 
-198:                                              ; preds = %188
-  br i1 %196, label %203, label %199
+79:                                               ; preds = %141
+  %80 = icmp eq i32 %142, 0
+  br i1 %80, label %147, label %81, !llvm.loop !13
 
-199:                                              ; preds = %198, %197
-  %200 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %189
-  %201 = load i32, i32* %200, align 4, !tbaa !5
-  %202 = add nsw i32 %201, %190
-  br label %203
+81:                                               ; preds = %77, %79
+  %82 = phi i32 [ %142, %79 ], [ %4, %77 ]
+  %83 = phi i32 [ %100, %79 ], [ %4, %77 ]
+  br label %84
 
-203:                                              ; preds = %199, %198, %197
-  %204 = phi i32 [ %190, %197 ], [ %190, %198 ], [ %202, %199 ]
-  %205 = sdiv i32 %191, 2
-  %206 = sdiv i32 %192, 2
-  %207 = add nuw nsw i64 %189, 1
-  %208 = icmp eq i64 %207, 16
-  br i1 %208, label %209, label %188, !llvm.loop !13
+84:                                               ; preds = %81, %99
+  %85 = phi i64 [ 0, %81 ], [ %103, %99 ]
+  %86 = phi i32 [ 0, %81 ], [ %100, %99 ]
+  %87 = phi i32 [ %83, %81 ], [ %101, %99 ]
+  %88 = phi i32 [ %82, %81 ], [ %102, %99 ]
+  %89 = and i32 %87, 1
+  %90 = icmp eq i32 %89, 0
+  %91 = and i32 %88, 1
+  %92 = icmp eq i32 %91, 0
+  br i1 %90, label %94, label %93
 
-209:                                              ; preds = %203, %223
-  %210 = phi i64 [ %227, %223 ], [ 0, %203 ]
-  %211 = phi i32 [ %224, %223 ], [ 0, %203 ]
-  %212 = phi i32 [ %225, %223 ], [ %187, %203 ]
-  %213 = phi i32 [ %226, %223 ], [ %186, %203 ]
-  %214 = and i32 %212, 1
-  %215 = icmp eq i32 %214, 0
-  %216 = and i32 %213, 1
-  %217 = icmp eq i32 %216, 0
-  %218 = select i1 %215, i1 true, i1 %217
-  br i1 %218, label %223, label %219
+93:                                               ; preds = %84
+  br i1 %92, label %95, label %99
 
-219:                                              ; preds = %209
-  %220 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %210
-  %221 = load i32, i32* %220, align 4, !tbaa !5
-  %222 = add nsw i32 %221, %211
-  br label %223
+94:                                               ; preds = %84
+  br i1 %92, label %99, label %95
 
-223:                                              ; preds = %219, %209
-  %224 = phi i32 [ %222, %219 ], [ %211, %209 ]
-  %225 = sdiv i32 %212, 2
-  %226 = sdiv i32 %213, 2
-  %227 = add nuw nsw i64 %210, 1
-  %228 = icmp eq i64 %227, 16
-  br i1 %228, label %229, label %209, !llvm.loop !14
+95:                                               ; preds = %94, %93
+  %96 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %85
+  %97 = load i32, i32* %96, align 4, !tbaa !6
+  %98 = add nsw i32 %97, %86
+  br label %99
 
-229:                                              ; preds = %223
-  %230 = shl nsw i32 %224, 1
-  %231 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %230, i64 1
-  %232 = and <2 x i32> %231, <i32 1, i32 1>
-  %233 = icmp eq <2 x i32> %232, zeroinitializer
-  %234 = extractelement <2 x i1> %233, i64 0
-  %235 = extractelement <2 x i1> %233, i64 1
-  %236 = select i1 %235, i1 true, i1 %234
-  %237 = select i1 %236, i32 0, i32 1
-  %238 = sdiv <2 x i32> %231, <i32 2, i32 2>
-  %239 = and <2 x i32> %238, <i32 1, i32 1>
-  %240 = icmp eq <2 x i32> %239, zeroinitializer
-  %241 = extractelement <2 x i1> %240, i64 0
-  %242 = extractelement <2 x i1> %240, i64 1
-  %243 = select i1 %242, i1 true, i1 %241
-  %244 = or i32 %237, 2
-  %245 = select i1 %243, i32 %237, i32 %244
-  %246 = sdiv <2 x i32> %231, <i32 4, i32 4>
-  %247 = and <2 x i32> %246, <i32 1, i32 1>
-  %248 = icmp eq <2 x i32> %247, zeroinitializer
-  %249 = extractelement <2 x i1> %248, i64 0
-  %250 = extractelement <2 x i1> %248, i64 1
-  %251 = select i1 %250, i1 true, i1 %249
-  %252 = add nsw i32 %245, 4
-  %253 = select i1 %251, i32 %245, i32 %252
-  %254 = sdiv <2 x i32> %231, <i32 8, i32 8>
-  %255 = and <2 x i32> %254, <i32 1, i32 1>
-  %256 = icmp eq <2 x i32> %255, zeroinitializer
-  %257 = extractelement <2 x i1> %256, i64 0
-  %258 = extractelement <2 x i1> %256, i64 1
-  %259 = select i1 %258, i1 true, i1 %257
-  %260 = add nsw i32 %253, 8
-  %261 = select i1 %259, i32 %253, i32 %260
-  %262 = sdiv <2 x i32> %231, <i32 16, i32 16>
-  %263 = and <2 x i32> %262, <i32 1, i32 1>
-  %264 = icmp eq <2 x i32> %263, zeroinitializer
-  %265 = extractelement <2 x i1> %264, i64 0
-  %266 = extractelement <2 x i1> %264, i64 1
-  %267 = select i1 %266, i1 true, i1 %265
-  %268 = add nsw i32 %261, 16
-  %269 = select i1 %267, i32 %261, i32 %268
-  %270 = sdiv <2 x i32> %231, <i32 32, i32 32>
-  %271 = and <2 x i32> %270, <i32 1, i32 1>
-  %272 = icmp eq <2 x i32> %271, zeroinitializer
-  %273 = extractelement <2 x i1> %272, i64 0
-  %274 = extractelement <2 x i1> %272, i64 1
-  %275 = select i1 %274, i1 true, i1 %273
-  %276 = add nsw i32 %269, 32
-  %277 = select i1 %275, i32 %269, i32 %276
-  %278 = sdiv <2 x i32> %231, <i32 64, i32 64>
-  %279 = and <2 x i32> %278, <i32 1, i32 1>
-  %280 = icmp eq <2 x i32> %279, zeroinitializer
-  %281 = extractelement <2 x i1> %280, i64 0
-  %282 = extractelement <2 x i1> %280, i64 1
-  %283 = select i1 %282, i1 true, i1 %281
-  %284 = add nsw i32 %277, 64
-  %285 = select i1 %283, i32 %277, i32 %284
-  %286 = sdiv <2 x i32> %231, <i32 128, i32 128>
-  %287 = and <2 x i32> %286, <i32 1, i32 1>
-  %288 = icmp eq <2 x i32> %287, zeroinitializer
-  %289 = extractelement <2 x i1> %288, i64 0
-  %290 = extractelement <2 x i1> %288, i64 1
-  %291 = select i1 %290, i1 true, i1 %289
-  %292 = add nsw i32 %285, 128
-  %293 = select i1 %291, i32 %285, i32 %292
-  %294 = sdiv <2 x i32> %231, <i32 256, i32 256>
-  %295 = and <2 x i32> %294, <i32 1, i32 1>
-  %296 = icmp eq <2 x i32> %295, zeroinitializer
-  %297 = extractelement <2 x i1> %296, i64 0
-  %298 = extractelement <2 x i1> %296, i64 1
-  %299 = select i1 %298, i1 true, i1 %297
-  %300 = add nsw i32 %293, 256
-  %301 = select i1 %299, i32 %293, i32 %300
-  %302 = sdiv <2 x i32> %231, <i32 512, i32 512>
-  %303 = and <2 x i32> %302, <i32 1, i32 1>
-  %304 = icmp eq <2 x i32> %303, zeroinitializer
-  %305 = extractelement <2 x i1> %304, i64 0
-  %306 = extractelement <2 x i1> %304, i64 1
-  %307 = select i1 %306, i1 true, i1 %305
-  %308 = add nsw i32 %301, 512
-  %309 = select i1 %307, i32 %301, i32 %308
-  %310 = sdiv <2 x i32> %231, <i32 1024, i32 1024>
-  %311 = and <2 x i32> %310, <i32 1, i32 1>
-  %312 = icmp eq <2 x i32> %311, zeroinitializer
-  %313 = extractelement <2 x i1> %312, i64 0
-  %314 = extractelement <2 x i1> %312, i64 1
-  %315 = select i1 %314, i1 true, i1 %313
-  %316 = add nsw i32 %309, 1024
-  %317 = select i1 %315, i32 %309, i32 %316
-  %318 = sdiv <2 x i32> %231, <i32 2048, i32 2048>
-  %319 = and <2 x i32> %318, <i32 1, i32 1>
-  %320 = icmp eq <2 x i32> %319, zeroinitializer
-  %321 = extractelement <2 x i1> %320, i64 0
-  %322 = extractelement <2 x i1> %320, i64 1
-  %323 = select i1 %322, i1 true, i1 %321
-  %324 = add nsw i32 %317, 2048
-  %325 = select i1 %323, i32 %317, i32 %324
-  %326 = sdiv <2 x i32> %231, <i32 4096, i32 4096>
-  %327 = and <2 x i32> %326, <i32 1, i32 1>
-  %328 = icmp eq <2 x i32> %327, zeroinitializer
-  %329 = extractelement <2 x i1> %328, i64 0
-  %330 = extractelement <2 x i1> %328, i64 1
-  %331 = select i1 %330, i1 true, i1 %329
-  %332 = add nsw i32 %325, 4096
-  %333 = select i1 %331, i32 %325, i32 %332
-  %334 = sdiv <2 x i32> %231, <i32 8192, i32 8192>
-  %335 = and <2 x i32> %334, <i32 1, i32 1>
-  %336 = icmp eq <2 x i32> %335, zeroinitializer
-  %337 = extractelement <2 x i1> %336, i64 0
-  %338 = extractelement <2 x i1> %336, i64 1
-  %339 = select i1 %338, i1 true, i1 %337
-  %340 = add nsw i32 %333, 8192
-  %341 = select i1 %339, i32 %333, i32 %340
-  %342 = sdiv <2 x i32> %231, <i32 16384, i32 16384>
-  %343 = and <2 x i32> %342, <i32 1, i32 1>
-  %344 = icmp eq <2 x i32> %343, zeroinitializer
-  %345 = extractelement <2 x i1> %344, i64 0
-  %346 = extractelement <2 x i1> %344, i64 1
-  %347 = select i1 %346, i1 true, i1 %345
-  %348 = add nsw i32 %341, 16384
-  %349 = select i1 %347, i32 %341, i32 %348
-  %350 = sdiv <2 x i32> %231, <i32 32768, i32 32768>
-  %351 = and <2 x i32> %350, <i32 1, i32 1>
-  %352 = icmp eq <2 x i32> %351, zeroinitializer
-  %353 = extractelement <2 x i1> %352, i64 0
-  %354 = extractelement <2 x i1> %352, i64 1
-  %355 = select i1 %354, i1 true, i1 %353
-  %356 = add nsw i32 %349, 32768
-  %357 = select i1 %355, i32 %349, i32 %356
-  %358 = icmp eq i32 %357, 0
-  br i1 %358, label %359, label %185, !llvm.loop !15
+99:                                               ; preds = %95, %94, %93
+  %100 = phi i32 [ %86, %93 ], [ %86, %94 ], [ %98, %95 ]
+  %101 = sdiv i32 %87, 2
+  %102 = sdiv i32 %88, 2
+  %103 = add nuw nsw i64 %85, 1
+  %104 = icmp eq i64 %103, 16
+  br i1 %104, label %105, label %84, !llvm.loop !14
 
-359:                                              ; preds = %229, %183
-  %360 = phi i32 [ 0, %183 ], [ %204, %229 ]
-  %361 = sdiv i32 %3, 2
-  %362 = add nsw i32 %3, 1
-  %363 = icmp ult i32 %362, 3
-  br i1 %363, label %364, label %1, !llvm.loop !16
+105:                                              ; preds = %99, %119
+  %106 = phi i64 [ %123, %119 ], [ 0, %99 ]
+  %107 = phi i32 [ %120, %119 ], [ 0, %99 ]
+  %108 = phi i32 [ %121, %119 ], [ %83, %99 ]
+  %109 = phi i32 [ %122, %119 ], [ %82, %99 ]
+  %110 = and i32 %108, 1
+  %111 = icmp eq i32 %110, 0
+  %112 = and i32 %109, 1
+  %113 = icmp eq i32 %112, 0
+  %114 = select i1 %111, i1 true, i1 %113
+  br i1 %114, label %119, label %115
 
-364:                                              ; preds = %359
-  tail call void @_Z6putinti(i32 noundef %184)
+115:                                              ; preds = %105
+  %116 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %106
+  %117 = load i32, i32* %116, align 4, !tbaa !6
+  %118 = add nsw i32 %117, %107
+  br label %119
+
+119:                                              ; preds = %115, %105
+  %120 = phi i32 [ %118, %115 ], [ %107, %105 ]
+  %121 = sdiv i32 %108, 2
+  %122 = sdiv i32 %109, 2
+  %123 = add nuw nsw i64 %106, 1
+  %124 = icmp eq i64 %123, 16
+  br i1 %124, label %125, label %105, !llvm.loop !15
+
+125:                                              ; preds = %119
+  %126 = shl nsw i32 %120, 1
+  br label %127
+
+127:                                              ; preds = %125, %141
+  %128 = phi i64 [ 0, %125 ], [ %145, %141 ]
+  %129 = phi i32 [ 0, %125 ], [ %142, %141 ]
+  %130 = phi i32 [ %126, %125 ], [ %143, %141 ]
+  %131 = phi i32 [ 65535, %125 ], [ %144, %141 ]
+  %132 = and i32 %130, 1
+  %133 = icmp eq i32 %132, 0
+  %134 = and i32 %131, 1
+  %135 = icmp eq i32 %134, 0
+  %136 = select i1 %133, i1 true, i1 %135
+  br i1 %136, label %141, label %137
+
+137:                                              ; preds = %127
+  %138 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %128
+  %139 = load i32, i32* %138, align 4, !tbaa !6
+  %140 = add nsw i32 %139, %129
+  br label %141
+
+141:                                              ; preds = %137, %127
+  %142 = phi i32 [ %140, %137 ], [ %129, %127 ]
+  %143 = sdiv i32 %130, 2
+  %144 = sdiv i32 %131, 2
+  %145 = add nuw nsw i64 %128, 1
+  %146 = icmp eq i64 %145, 16
+  br i1 %146, label %79, label %127, !llvm.loop !16
+
+147:                                              ; preds = %79, %77
+  %148 = phi i32 [ 0, %77 ], [ %100, %79 ]
+  %149 = sdiv i32 %3, 2
+  %150 = add nsw i32 %3, 1
+  %151 = icmp ult i32 %150, 3
+  br i1 %151, label %152, label %1, !llvm.loop !17
+
+152:                                              ; preds = %147
+  tail call void @_Z6putinti(i32 noundef %78)
   tail call void @_Z5putchi(i32 noundef 10)
-  br label %365
+  br label %153
 
-365:                                              ; preds = %364, %1128
-  %366 = phi i32 [ 2, %364 ], [ %1129, %1128 ]
-  br label %367
+153:                                              ; preds = %152, %492
+  %154 = phi i32 [ 2, %152 ], [ %493, %492 ]
+  br label %155
 
-367:                                              ; preds = %365, %1125
-  %368 = phi i32 [ 1, %365 ], [ %1117, %1125 ]
-  %369 = phi i32 [ %366, %365 ], [ %1126, %1125 ]
-  %370 = phi i32 [ 2, %365 ], [ %1118, %1125 ]
-  %371 = and i32 %369, 1
-  %372 = icmp eq i32 %371, 0
-  br i1 %372, label %744, label %373
+155:                                              ; preds = %153, %489
+  %156 = phi i32 [ 1, %153 ], [ %481, %489 ]
+  %157 = phi i32 [ %154, %153 ], [ %490, %489 ]
+  %158 = phi i32 [ 2, %153 ], [ %482, %489 ]
+  %159 = and i32 %157, 1
+  %160 = icmp eq i32 %159, 0
+  br i1 %160, label %320, label %161
 
-373:                                              ; preds = %367
-  %374 = icmp eq i32 %370, 0
-  br i1 %374, label %1116, label %375
+161:                                              ; preds = %155
+  %162 = icmp eq i32 %158, 0
+  br i1 %162, label %480, label %163
 
-375:                                              ; preds = %373, %741
-  %376 = phi i32 [ %558, %741 ], [ 0, %373 ]
-  %377 = phi i32 [ %742, %741 ], [ %370, %373 ]
-  %378 = phi i32 [ %734, %741 ], [ %368, %373 ]
-  %379 = and i32 %377, 1
-  %380 = icmp eq i32 %379, 0
-  %381 = icmp eq i32 %378, 0
-  %382 = select i1 %380, i1 true, i1 %381
-  br i1 %382, label %557, label %383
+163:                                              ; preds = %161, %317
+  %164 = phi i32 [ %240, %317 ], [ 0, %161 ]
+  %165 = phi i32 [ %318, %317 ], [ %158, %161 ]
+  %166 = phi i32 [ %310, %317 ], [ %156, %161 ]
+  %167 = and i32 %165, 1
+  %168 = icmp eq i32 %167, 0
+  %169 = icmp eq i32 %166, 0
+  %170 = select i1 %168, i1 true, i1 %169
+  br i1 %170, label %239, label %173
 
-383:                                              ; preds = %375, %427
-  %384 = phi i32 [ %555, %427 ], [ %378, %375 ]
-  %385 = phi i32 [ %402, %427 ], [ %376, %375 ]
-  br label %386
+171:                                              ; preds = %233
+  %172 = icmp eq i32 %234, 0
+  br i1 %172, label %239, label %173, !llvm.loop !18
 
-386:                                              ; preds = %383, %401
-  %387 = phi i64 [ 0, %383 ], [ %405, %401 ]
-  %388 = phi i32 [ 0, %383 ], [ %402, %401 ]
-  %389 = phi i32 [ %385, %383 ], [ %403, %401 ]
-  %390 = phi i32 [ %384, %383 ], [ %404, %401 ]
-  %391 = and i32 %389, 1
-  %392 = icmp eq i32 %391, 0
-  %393 = and i32 %390, 1
-  %394 = icmp eq i32 %393, 0
-  br i1 %392, label %396, label %395
+173:                                              ; preds = %163, %171
+  %174 = phi i32 [ %234, %171 ], [ %166, %163 ]
+  %175 = phi i32 [ %192, %171 ], [ %164, %163 ]
+  br label %176
 
-395:                                              ; preds = %386
-  br i1 %394, label %397, label %401
+176:                                              ; preds = %173, %191
+  %177 = phi i64 [ 0, %173 ], [ %195, %191 ]
+  %178 = phi i32 [ 0, %173 ], [ %192, %191 ]
+  %179 = phi i32 [ %175, %173 ], [ %193, %191 ]
+  %180 = phi i32 [ %174, %173 ], [ %194, %191 ]
+  %181 = and i32 %179, 1
+  %182 = icmp eq i32 %181, 0
+  %183 = and i32 %180, 1
+  %184 = icmp eq i32 %183, 0
+  br i1 %182, label %186, label %185
 
-396:                                              ; preds = %386
-  br i1 %394, label %401, label %397
+185:                                              ; preds = %176
+  br i1 %184, label %187, label %191
 
-397:                                              ; preds = %396, %395
-  %398 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %387
-  %399 = load i32, i32* %398, align 4, !tbaa !5
-  %400 = add nsw i32 %399, %388
-  br label %401
+186:                                              ; preds = %176
+  br i1 %184, label %191, label %187
 
-401:                                              ; preds = %397, %396, %395
-  %402 = phi i32 [ %388, %395 ], [ %388, %396 ], [ %400, %397 ]
-  %403 = sdiv i32 %389, 2
-  %404 = sdiv i32 %390, 2
-  %405 = add nuw nsw i64 %387, 1
-  %406 = icmp eq i64 %405, 16
-  br i1 %406, label %407, label %386, !llvm.loop !17
+187:                                              ; preds = %186, %185
+  %188 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %177
+  %189 = load i32, i32* %188, align 4, !tbaa !6
+  %190 = add nsw i32 %189, %178
+  br label %191
 
-407:                                              ; preds = %401, %421
-  %408 = phi i64 [ %425, %421 ], [ 0, %401 ]
-  %409 = phi i32 [ %422, %421 ], [ 0, %401 ]
-  %410 = phi i32 [ %423, %421 ], [ %385, %401 ]
-  %411 = phi i32 [ %424, %421 ], [ %384, %401 ]
-  %412 = and i32 %410, 1
-  %413 = icmp eq i32 %412, 0
-  %414 = and i32 %411, 1
-  %415 = icmp eq i32 %414, 0
-  %416 = select i1 %413, i1 true, i1 %415
-  br i1 %416, label %421, label %417
+191:                                              ; preds = %187, %186, %185
+  %192 = phi i32 [ %178, %185 ], [ %178, %186 ], [ %190, %187 ]
+  %193 = sdiv i32 %179, 2
+  %194 = sdiv i32 %180, 2
+  %195 = add nuw nsw i64 %177, 1
+  %196 = icmp eq i64 %195, 16
+  br i1 %196, label %197, label %176, !llvm.loop !19
 
-417:                                              ; preds = %407
-  %418 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %408
-  %419 = load i32, i32* %418, align 4, !tbaa !5
-  %420 = add nsw i32 %419, %409
+197:                                              ; preds = %191, %211
+  %198 = phi i64 [ %215, %211 ], [ 0, %191 ]
+  %199 = phi i32 [ %212, %211 ], [ 0, %191 ]
+  %200 = phi i32 [ %213, %211 ], [ %175, %191 ]
+  %201 = phi i32 [ %214, %211 ], [ %174, %191 ]
+  %202 = and i32 %200, 1
+  %203 = icmp eq i32 %202, 0
+  %204 = and i32 %201, 1
+  %205 = icmp eq i32 %204, 0
+  %206 = select i1 %203, i1 true, i1 %205
+  br i1 %206, label %211, label %207
+
+207:                                              ; preds = %197
+  %208 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %198
+  %209 = load i32, i32* %208, align 4, !tbaa !6
+  %210 = add nsw i32 %209, %199
+  br label %211
+
+211:                                              ; preds = %207, %197
+  %212 = phi i32 [ %210, %207 ], [ %199, %197 ]
+  %213 = sdiv i32 %200, 2
+  %214 = sdiv i32 %201, 2
+  %215 = add nuw nsw i64 %198, 1
+  %216 = icmp eq i64 %215, 16
+  br i1 %216, label %217, label %197, !llvm.loop !20
+
+217:                                              ; preds = %211
+  %218 = shl nsw i32 %212, 1
+  br label %219
+
+219:                                              ; preds = %217, %233
+  %220 = phi i64 [ 0, %217 ], [ %237, %233 ]
+  %221 = phi i32 [ 0, %217 ], [ %234, %233 ]
+  %222 = phi i32 [ %218, %217 ], [ %235, %233 ]
+  %223 = phi i32 [ 65535, %217 ], [ %236, %233 ]
+  %224 = and i32 %222, 1
+  %225 = icmp eq i32 %224, 0
+  %226 = and i32 %223, 1
+  %227 = icmp eq i32 %226, 0
+  %228 = select i1 %225, i1 true, i1 %227
+  br i1 %228, label %233, label %229
+
+229:                                              ; preds = %219
+  %230 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %220
+  %231 = load i32, i32* %230, align 4, !tbaa !6
+  %232 = add nsw i32 %231, %221
+  br label %233
+
+233:                                              ; preds = %229, %219
+  %234 = phi i32 [ %232, %229 ], [ %221, %219 ]
+  %235 = sdiv i32 %222, 2
+  %236 = sdiv i32 %223, 2
+  %237 = add nuw nsw i64 %220, 1
+  %238 = icmp eq i64 %237, 16
+  br i1 %238, label %171, label %219, !llvm.loop !21
+
+239:                                              ; preds = %171, %163
+  %240 = phi i32 [ %164, %163 ], [ %192, %171 ]
+  br i1 %169, label %309, label %243
+
+241:                                              ; preds = %303
+  %242 = icmp eq i32 %304, 0
+  br i1 %242, label %309, label %243, !llvm.loop !22
+
+243:                                              ; preds = %239, %241
+  %244 = phi i32 [ %304, %241 ], [ %166, %239 ]
+  %245 = phi i32 [ %262, %241 ], [ %166, %239 ]
+  br label %246
+
+246:                                              ; preds = %243, %261
+  %247 = phi i64 [ 0, %243 ], [ %265, %261 ]
+  %248 = phi i32 [ 0, %243 ], [ %262, %261 ]
+  %249 = phi i32 [ %245, %243 ], [ %263, %261 ]
+  %250 = phi i32 [ %244, %243 ], [ %264, %261 ]
+  %251 = and i32 %249, 1
+  %252 = icmp eq i32 %251, 0
+  %253 = and i32 %250, 1
+  %254 = icmp eq i32 %253, 0
+  br i1 %252, label %256, label %255
+
+255:                                              ; preds = %246
+  br i1 %254, label %257, label %261
+
+256:                                              ; preds = %246
+  br i1 %254, label %261, label %257
+
+257:                                              ; preds = %256, %255
+  %258 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %247
+  %259 = load i32, i32* %258, align 4, !tbaa !6
+  %260 = add nsw i32 %259, %248
+  br label %261
+
+261:                                              ; preds = %257, %256, %255
+  %262 = phi i32 [ %248, %255 ], [ %248, %256 ], [ %260, %257 ]
+  %263 = sdiv i32 %249, 2
+  %264 = sdiv i32 %250, 2
+  %265 = add nuw nsw i64 %247, 1
+  %266 = icmp eq i64 %265, 16
+  br i1 %266, label %267, label %246, !llvm.loop !23
+
+267:                                              ; preds = %261, %281
+  %268 = phi i64 [ %285, %281 ], [ 0, %261 ]
+  %269 = phi i32 [ %282, %281 ], [ 0, %261 ]
+  %270 = phi i32 [ %283, %281 ], [ %245, %261 ]
+  %271 = phi i32 [ %284, %281 ], [ %244, %261 ]
+  %272 = and i32 %270, 1
+  %273 = icmp eq i32 %272, 0
+  %274 = and i32 %271, 1
+  %275 = icmp eq i32 %274, 0
+  %276 = select i1 %273, i1 true, i1 %275
+  br i1 %276, label %281, label %277
+
+277:                                              ; preds = %267
+  %278 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %268
+  %279 = load i32, i32* %278, align 4, !tbaa !6
+  %280 = add nsw i32 %279, %269
+  br label %281
+
+281:                                              ; preds = %277, %267
+  %282 = phi i32 [ %280, %277 ], [ %269, %267 ]
+  %283 = sdiv i32 %270, 2
+  %284 = sdiv i32 %271, 2
+  %285 = add nuw nsw i64 %268, 1
+  %286 = icmp eq i64 %285, 16
+  br i1 %286, label %287, label %267, !llvm.loop !24
+
+287:                                              ; preds = %281
+  %288 = shl nsw i32 %282, 1
+  br label %289
+
+289:                                              ; preds = %287, %303
+  %290 = phi i64 [ 0, %287 ], [ %307, %303 ]
+  %291 = phi i32 [ 0, %287 ], [ %304, %303 ]
+  %292 = phi i32 [ %288, %287 ], [ %305, %303 ]
+  %293 = phi i32 [ 65535, %287 ], [ %306, %303 ]
+  %294 = and i32 %292, 1
+  %295 = icmp eq i32 %294, 0
+  %296 = and i32 %293, 1
+  %297 = icmp eq i32 %296, 0
+  %298 = select i1 %295, i1 true, i1 %297
+  br i1 %298, label %303, label %299
+
+299:                                              ; preds = %289
+  %300 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %290
+  %301 = load i32, i32* %300, align 4, !tbaa !6
+  %302 = add nsw i32 %301, %291
+  br label %303
+
+303:                                              ; preds = %299, %289
+  %304 = phi i32 [ %302, %299 ], [ %291, %289 ]
+  %305 = sdiv i32 %292, 2
+  %306 = sdiv i32 %293, 2
+  %307 = add nuw nsw i64 %290, 1
+  %308 = icmp eq i64 %307, 16
+  br i1 %308, label %241, label %289, !llvm.loop !25
+
+309:                                              ; preds = %241, %239
+  %310 = phi i32 [ 0, %239 ], [ %262, %241 ]
+  %311 = icmp sgt i32 %165, 32767
+  br i1 %311, label %312, label %315
+
+312:                                              ; preds = %309
+  %313 = lshr i32 %165, 1
+  %314 = add nuw nsw i32 %313, 32768
+  br label %317
+
+315:                                              ; preds = %309
+  %316 = sdiv i32 %165, 2
+  br label %317
+
+317:                                              ; preds = %315, %312
+  %318 = phi i32 [ %314, %312 ], [ %316, %315 ]
+  %319 = icmp eq i32 %318, 0
+  br i1 %319, label %320, label %163, !llvm.loop !26
+
+320:                                              ; preds = %317, %155
+  %321 = phi i32 [ %156, %155 ], [ %240, %317 ]
+  %322 = icmp eq i32 %158, 0
+  br i1 %322, label %480, label %323
+
+323:                                              ; preds = %320, %477
+  %324 = phi i32 [ %400, %477 ], [ 0, %320 ]
+  %325 = phi i32 [ %478, %477 ], [ %158, %320 ]
+  %326 = phi i32 [ %470, %477 ], [ %158, %320 ]
+  %327 = and i32 %325, 1
+  %328 = icmp eq i32 %327, 0
+  %329 = icmp eq i32 %326, 0
+  %330 = select i1 %328, i1 true, i1 %329
+  br i1 %330, label %399, label %333
+
+331:                                              ; preds = %393
+  %332 = icmp eq i32 %394, 0
+  br i1 %332, label %399, label %333, !llvm.loop !27
+
+333:                                              ; preds = %323, %331
+  %334 = phi i32 [ %394, %331 ], [ %326, %323 ]
+  %335 = phi i32 [ %352, %331 ], [ %324, %323 ]
+  br label %336
+
+336:                                              ; preds = %333, %351
+  %337 = phi i64 [ 0, %333 ], [ %355, %351 ]
+  %338 = phi i32 [ 0, %333 ], [ %352, %351 ]
+  %339 = phi i32 [ %335, %333 ], [ %353, %351 ]
+  %340 = phi i32 [ %334, %333 ], [ %354, %351 ]
+  %341 = and i32 %339, 1
+  %342 = icmp eq i32 %341, 0
+  %343 = and i32 %340, 1
+  %344 = icmp eq i32 %343, 0
+  br i1 %342, label %346, label %345
+
+345:                                              ; preds = %336
+  br i1 %344, label %347, label %351
+
+346:                                              ; preds = %336
+  br i1 %344, label %351, label %347
+
+347:                                              ; preds = %346, %345
+  %348 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %337
+  %349 = load i32, i32* %348, align 4, !tbaa !6
+  %350 = add nsw i32 %349, %338
+  br label %351
+
+351:                                              ; preds = %347, %346, %345
+  %352 = phi i32 [ %338, %345 ], [ %338, %346 ], [ %350, %347 ]
+  %353 = sdiv i32 %339, 2
+  %354 = sdiv i32 %340, 2
+  %355 = add nuw nsw i64 %337, 1
+  %356 = icmp eq i64 %355, 16
+  br i1 %356, label %357, label %336, !llvm.loop !28
+
+357:                                              ; preds = %351, %371
+  %358 = phi i64 [ %375, %371 ], [ 0, %351 ]
+  %359 = phi i32 [ %372, %371 ], [ 0, %351 ]
+  %360 = phi i32 [ %373, %371 ], [ %335, %351 ]
+  %361 = phi i32 [ %374, %371 ], [ %334, %351 ]
+  %362 = and i32 %360, 1
+  %363 = icmp eq i32 %362, 0
+  %364 = and i32 %361, 1
+  %365 = icmp eq i32 %364, 0
+  %366 = select i1 %363, i1 true, i1 %365
+  br i1 %366, label %371, label %367
+
+367:                                              ; preds = %357
+  %368 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %358
+  %369 = load i32, i32* %368, align 4, !tbaa !6
+  %370 = add nsw i32 %369, %359
+  br label %371
+
+371:                                              ; preds = %367, %357
+  %372 = phi i32 [ %370, %367 ], [ %359, %357 ]
+  %373 = sdiv i32 %360, 2
+  %374 = sdiv i32 %361, 2
+  %375 = add nuw nsw i64 %358, 1
+  %376 = icmp eq i64 %375, 16
+  br i1 %376, label %377, label %357, !llvm.loop !29
+
+377:                                              ; preds = %371
+  %378 = shl nsw i32 %372, 1
+  br label %379
+
+379:                                              ; preds = %377, %393
+  %380 = phi i64 [ 0, %377 ], [ %397, %393 ]
+  %381 = phi i32 [ 0, %377 ], [ %394, %393 ]
+  %382 = phi i32 [ %378, %377 ], [ %395, %393 ]
+  %383 = phi i32 [ 65535, %377 ], [ %396, %393 ]
+  %384 = and i32 %382, 1
+  %385 = icmp eq i32 %384, 0
+  %386 = and i32 %383, 1
+  %387 = icmp eq i32 %386, 0
+  %388 = select i1 %385, i1 true, i1 %387
+  br i1 %388, label %393, label %389
+
+389:                                              ; preds = %379
+  %390 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %380
+  %391 = load i32, i32* %390, align 4, !tbaa !6
+  %392 = add nsw i32 %391, %381
+  br label %393
+
+393:                                              ; preds = %389, %379
+  %394 = phi i32 [ %392, %389 ], [ %381, %379 ]
+  %395 = sdiv i32 %382, 2
+  %396 = sdiv i32 %383, 2
+  %397 = add nuw nsw i64 %380, 1
+  %398 = icmp eq i64 %397, 16
+  br i1 %398, label %331, label %379, !llvm.loop !30
+
+399:                                              ; preds = %331, %323
+  %400 = phi i32 [ %324, %323 ], [ %352, %331 ]
+  br i1 %329, label %469, label %403
+
+401:                                              ; preds = %463
+  %402 = icmp eq i32 %464, 0
+  br i1 %402, label %469, label %403, !llvm.loop !31
+
+403:                                              ; preds = %399, %401
+  %404 = phi i32 [ %464, %401 ], [ %326, %399 ]
+  %405 = phi i32 [ %422, %401 ], [ %326, %399 ]
+  br label %406
+
+406:                                              ; preds = %403, %421
+  %407 = phi i64 [ 0, %403 ], [ %425, %421 ]
+  %408 = phi i32 [ 0, %403 ], [ %422, %421 ]
+  %409 = phi i32 [ %405, %403 ], [ %423, %421 ]
+  %410 = phi i32 [ %404, %403 ], [ %424, %421 ]
+  %411 = and i32 %409, 1
+  %412 = icmp eq i32 %411, 0
+  %413 = and i32 %410, 1
+  %414 = icmp eq i32 %413, 0
+  br i1 %412, label %416, label %415
+
+415:                                              ; preds = %406
+  br i1 %414, label %417, label %421
+
+416:                                              ; preds = %406
+  br i1 %414, label %421, label %417
+
+417:                                              ; preds = %416, %415
+  %418 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %407
+  %419 = load i32, i32* %418, align 4, !tbaa !6
+  %420 = add nsw i32 %419, %408
   br label %421
 
-421:                                              ; preds = %417, %407
-  %422 = phi i32 [ %420, %417 ], [ %409, %407 ]
-  %423 = sdiv i32 %410, 2
-  %424 = sdiv i32 %411, 2
-  %425 = add nuw nsw i64 %408, 1
+421:                                              ; preds = %417, %416, %415
+  %422 = phi i32 [ %408, %415 ], [ %408, %416 ], [ %420, %417 ]
+  %423 = sdiv i32 %409, 2
+  %424 = sdiv i32 %410, 2
+  %425 = add nuw nsw i64 %407, 1
   %426 = icmp eq i64 %425, 16
-  br i1 %426, label %427, label %407, !llvm.loop !18
+  br i1 %426, label %427, label %406, !llvm.loop !32
 
-427:                                              ; preds = %421
-  %428 = shl nsw i32 %422, 1
-  %429 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %428, i64 1
-  %430 = and <2 x i32> %429, <i32 1, i32 1>
-  %431 = icmp eq <2 x i32> %430, zeroinitializer
-  %432 = extractelement <2 x i1> %431, i64 0
-  %433 = extractelement <2 x i1> %431, i64 1
-  %434 = select i1 %433, i1 true, i1 %432
-  %435 = select i1 %434, i32 0, i32 1
-  %436 = sdiv <2 x i32> %429, <i32 2, i32 2>
-  %437 = and <2 x i32> %436, <i32 1, i32 1>
-  %438 = icmp eq <2 x i32> %437, zeroinitializer
-  %439 = extractelement <2 x i1> %438, i64 0
-  %440 = extractelement <2 x i1> %438, i64 1
-  %441 = select i1 %440, i1 true, i1 %439
-  %442 = or i32 %435, 2
-  %443 = select i1 %441, i32 %435, i32 %442
-  %444 = sdiv <2 x i32> %429, <i32 4, i32 4>
-  %445 = and <2 x i32> %444, <i32 1, i32 1>
-  %446 = icmp eq <2 x i32> %445, zeroinitializer
-  %447 = extractelement <2 x i1> %446, i64 0
-  %448 = extractelement <2 x i1> %446, i64 1
-  %449 = select i1 %448, i1 true, i1 %447
-  %450 = add nsw i32 %443, 4
-  %451 = select i1 %449, i32 %443, i32 %450
-  %452 = sdiv <2 x i32> %429, <i32 8, i32 8>
-  %453 = and <2 x i32> %452, <i32 1, i32 1>
-  %454 = icmp eq <2 x i32> %453, zeroinitializer
-  %455 = extractelement <2 x i1> %454, i64 0
-  %456 = extractelement <2 x i1> %454, i64 1
-  %457 = select i1 %456, i1 true, i1 %455
-  %458 = add nsw i32 %451, 8
-  %459 = select i1 %457, i32 %451, i32 %458
-  %460 = sdiv <2 x i32> %429, <i32 16, i32 16>
-  %461 = and <2 x i32> %460, <i32 1, i32 1>
-  %462 = icmp eq <2 x i32> %461, zeroinitializer
-  %463 = extractelement <2 x i1> %462, i64 0
-  %464 = extractelement <2 x i1> %462, i64 1
-  %465 = select i1 %464, i1 true, i1 %463
-  %466 = add nsw i32 %459, 16
-  %467 = select i1 %465, i32 %459, i32 %466
-  %468 = sdiv <2 x i32> %429, <i32 32, i32 32>
-  %469 = and <2 x i32> %468, <i32 1, i32 1>
-  %470 = icmp eq <2 x i32> %469, zeroinitializer
-  %471 = extractelement <2 x i1> %470, i64 0
-  %472 = extractelement <2 x i1> %470, i64 1
-  %473 = select i1 %472, i1 true, i1 %471
-  %474 = add nsw i32 %467, 32
-  %475 = select i1 %473, i32 %467, i32 %474
-  %476 = sdiv <2 x i32> %429, <i32 64, i32 64>
-  %477 = and <2 x i32> %476, <i32 1, i32 1>
-  %478 = icmp eq <2 x i32> %477, zeroinitializer
-  %479 = extractelement <2 x i1> %478, i64 0
-  %480 = extractelement <2 x i1> %478, i64 1
-  %481 = select i1 %480, i1 true, i1 %479
-  %482 = add nsw i32 %475, 64
-  %483 = select i1 %481, i32 %475, i32 %482
-  %484 = sdiv <2 x i32> %429, <i32 128, i32 128>
-  %485 = and <2 x i32> %484, <i32 1, i32 1>
-  %486 = icmp eq <2 x i32> %485, zeroinitializer
-  %487 = extractelement <2 x i1> %486, i64 0
-  %488 = extractelement <2 x i1> %486, i64 1
-  %489 = select i1 %488, i1 true, i1 %487
-  %490 = add nsw i32 %483, 128
-  %491 = select i1 %489, i32 %483, i32 %490
-  %492 = sdiv <2 x i32> %429, <i32 256, i32 256>
-  %493 = and <2 x i32> %492, <i32 1, i32 1>
-  %494 = icmp eq <2 x i32> %493, zeroinitializer
-  %495 = extractelement <2 x i1> %494, i64 0
-  %496 = extractelement <2 x i1> %494, i64 1
-  %497 = select i1 %496, i1 true, i1 %495
-  %498 = add nsw i32 %491, 256
-  %499 = select i1 %497, i32 %491, i32 %498
-  %500 = sdiv <2 x i32> %429, <i32 512, i32 512>
-  %501 = and <2 x i32> %500, <i32 1, i32 1>
-  %502 = icmp eq <2 x i32> %501, zeroinitializer
-  %503 = extractelement <2 x i1> %502, i64 0
-  %504 = extractelement <2 x i1> %502, i64 1
-  %505 = select i1 %504, i1 true, i1 %503
-  %506 = add nsw i32 %499, 512
-  %507 = select i1 %505, i32 %499, i32 %506
-  %508 = sdiv <2 x i32> %429, <i32 1024, i32 1024>
-  %509 = and <2 x i32> %508, <i32 1, i32 1>
-  %510 = icmp eq <2 x i32> %509, zeroinitializer
-  %511 = extractelement <2 x i1> %510, i64 0
-  %512 = extractelement <2 x i1> %510, i64 1
-  %513 = select i1 %512, i1 true, i1 %511
-  %514 = add nsw i32 %507, 1024
-  %515 = select i1 %513, i32 %507, i32 %514
-  %516 = sdiv <2 x i32> %429, <i32 2048, i32 2048>
-  %517 = and <2 x i32> %516, <i32 1, i32 1>
-  %518 = icmp eq <2 x i32> %517, zeroinitializer
-  %519 = extractelement <2 x i1> %518, i64 0
-  %520 = extractelement <2 x i1> %518, i64 1
-  %521 = select i1 %520, i1 true, i1 %519
-  %522 = add nsw i32 %515, 2048
-  %523 = select i1 %521, i32 %515, i32 %522
-  %524 = sdiv <2 x i32> %429, <i32 4096, i32 4096>
-  %525 = and <2 x i32> %524, <i32 1, i32 1>
-  %526 = icmp eq <2 x i32> %525, zeroinitializer
-  %527 = extractelement <2 x i1> %526, i64 0
-  %528 = extractelement <2 x i1> %526, i64 1
-  %529 = select i1 %528, i1 true, i1 %527
-  %530 = add nsw i32 %523, 4096
-  %531 = select i1 %529, i32 %523, i32 %530
-  %532 = sdiv <2 x i32> %429, <i32 8192, i32 8192>
-  %533 = and <2 x i32> %532, <i32 1, i32 1>
-  %534 = icmp eq <2 x i32> %533, zeroinitializer
-  %535 = extractelement <2 x i1> %534, i64 0
-  %536 = extractelement <2 x i1> %534, i64 1
-  %537 = select i1 %536, i1 true, i1 %535
-  %538 = add nsw i32 %531, 8192
-  %539 = select i1 %537, i32 %531, i32 %538
-  %540 = sdiv <2 x i32> %429, <i32 16384, i32 16384>
-  %541 = and <2 x i32> %540, <i32 1, i32 1>
-  %542 = icmp eq <2 x i32> %541, zeroinitializer
-  %543 = extractelement <2 x i1> %542, i64 0
-  %544 = extractelement <2 x i1> %542, i64 1
-  %545 = select i1 %544, i1 true, i1 %543
-  %546 = add nsw i32 %539, 16384
-  %547 = select i1 %545, i32 %539, i32 %546
-  %548 = sdiv <2 x i32> %429, <i32 32768, i32 32768>
-  %549 = and <2 x i32> %548, <i32 1, i32 1>
-  %550 = icmp eq <2 x i32> %549, zeroinitializer
-  %551 = extractelement <2 x i1> %550, i64 0
-  %552 = extractelement <2 x i1> %550, i64 1
-  %553 = select i1 %552, i1 true, i1 %551
-  %554 = add nsw i32 %547, 32768
-  %555 = select i1 %553, i32 %547, i32 %554
-  %556 = icmp eq i32 %555, 0
-  br i1 %556, label %557, label %383, !llvm.loop !19
+427:                                              ; preds = %421, %441
+  %428 = phi i64 [ %445, %441 ], [ 0, %421 ]
+  %429 = phi i32 [ %442, %441 ], [ 0, %421 ]
+  %430 = phi i32 [ %443, %441 ], [ %405, %421 ]
+  %431 = phi i32 [ %444, %441 ], [ %404, %421 ]
+  %432 = and i32 %430, 1
+  %433 = icmp eq i32 %432, 0
+  %434 = and i32 %431, 1
+  %435 = icmp eq i32 %434, 0
+  %436 = select i1 %433, i1 true, i1 %435
+  br i1 %436, label %441, label %437
 
-557:                                              ; preds = %427, %375
-  %558 = phi i32 [ %376, %375 ], [ %402, %427 ]
-  br i1 %381, label %733, label %559
+437:                                              ; preds = %427
+  %438 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %428
+  %439 = load i32, i32* %438, align 4, !tbaa !6
+  %440 = add nsw i32 %439, %429
+  br label %441
 
-559:                                              ; preds = %557, %603
-  %560 = phi i32 [ %731, %603 ], [ %378, %557 ]
-  %561 = phi i32 [ %578, %603 ], [ %378, %557 ]
-  br label %562
+441:                                              ; preds = %437, %427
+  %442 = phi i32 [ %440, %437 ], [ %429, %427 ]
+  %443 = sdiv i32 %430, 2
+  %444 = sdiv i32 %431, 2
+  %445 = add nuw nsw i64 %428, 1
+  %446 = icmp eq i64 %445, 16
+  br i1 %446, label %447, label %427, !llvm.loop !33
 
-562:                                              ; preds = %559, %577
-  %563 = phi i64 [ 0, %559 ], [ %581, %577 ]
-  %564 = phi i32 [ 0, %559 ], [ %578, %577 ]
-  %565 = phi i32 [ %561, %559 ], [ %579, %577 ]
-  %566 = phi i32 [ %560, %559 ], [ %580, %577 ]
-  %567 = and i32 %565, 1
-  %568 = icmp eq i32 %567, 0
-  %569 = and i32 %566, 1
-  %570 = icmp eq i32 %569, 0
-  br i1 %568, label %572, label %571
+447:                                              ; preds = %441
+  %448 = shl nsw i32 %442, 1
+  br label %449
 
-571:                                              ; preds = %562
-  br i1 %570, label %573, label %577
+449:                                              ; preds = %447, %463
+  %450 = phi i64 [ 0, %447 ], [ %467, %463 ]
+  %451 = phi i32 [ 0, %447 ], [ %464, %463 ]
+  %452 = phi i32 [ %448, %447 ], [ %465, %463 ]
+  %453 = phi i32 [ 65535, %447 ], [ %466, %463 ]
+  %454 = and i32 %452, 1
+  %455 = icmp eq i32 %454, 0
+  %456 = and i32 %453, 1
+  %457 = icmp eq i32 %456, 0
+  %458 = select i1 %455, i1 true, i1 %457
+  br i1 %458, label %463, label %459
 
-572:                                              ; preds = %562
-  br i1 %570, label %577, label %573
+459:                                              ; preds = %449
+  %460 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %450
+  %461 = load i32, i32* %460, align 4, !tbaa !6
+  %462 = add nsw i32 %461, %451
+  br label %463
 
-573:                                              ; preds = %572, %571
-  %574 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %563
-  %575 = load i32, i32* %574, align 4, !tbaa !5
-  %576 = add nsw i32 %575, %564
-  br label %577
+463:                                              ; preds = %459, %449
+  %464 = phi i32 [ %462, %459 ], [ %451, %449 ]
+  %465 = sdiv i32 %452, 2
+  %466 = sdiv i32 %453, 2
+  %467 = add nuw nsw i64 %450, 1
+  %468 = icmp eq i64 %467, 16
+  br i1 %468, label %401, label %449, !llvm.loop !34
 
-577:                                              ; preds = %573, %572, %571
-  %578 = phi i32 [ %564, %571 ], [ %564, %572 ], [ %576, %573 ]
-  %579 = sdiv i32 %565, 2
-  %580 = sdiv i32 %566, 2
-  %581 = add nuw nsw i64 %563, 1
-  %582 = icmp eq i64 %581, 16
-  br i1 %582, label %583, label %562, !llvm.loop !20
+469:                                              ; preds = %401, %399
+  %470 = phi i32 [ 0, %399 ], [ %422, %401 ]
+  %471 = icmp sgt i32 %325, 32767
+  br i1 %471, label %472, label %475
 
-583:                                              ; preds = %577, %597
-  %584 = phi i64 [ %601, %597 ], [ 0, %577 ]
-  %585 = phi i32 [ %598, %597 ], [ 0, %577 ]
-  %586 = phi i32 [ %599, %597 ], [ %561, %577 ]
-  %587 = phi i32 [ %600, %597 ], [ %560, %577 ]
-  %588 = and i32 %586, 1
-  %589 = icmp eq i32 %588, 0
-  %590 = and i32 %587, 1
-  %591 = icmp eq i32 %590, 0
-  %592 = select i1 %589, i1 true, i1 %591
-  br i1 %592, label %597, label %593
+472:                                              ; preds = %469
+  %473 = lshr i32 %325, 1
+  %474 = add nuw nsw i32 %473, 32768
+  br label %477
 
-593:                                              ; preds = %583
-  %594 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %584
-  %595 = load i32, i32* %594, align 4, !tbaa !5
-  %596 = add nsw i32 %595, %585
-  br label %597
+475:                                              ; preds = %469
+  %476 = sdiv i32 %325, 2
+  br label %477
 
-597:                                              ; preds = %593, %583
-  %598 = phi i32 [ %596, %593 ], [ %585, %583 ]
-  %599 = sdiv i32 %586, 2
-  %600 = sdiv i32 %587, 2
-  %601 = add nuw nsw i64 %584, 1
-  %602 = icmp eq i64 %601, 16
-  br i1 %602, label %603, label %583, !llvm.loop !21
+477:                                              ; preds = %475, %472
+  %478 = phi i32 [ %474, %472 ], [ %476, %475 ]
+  %479 = icmp eq i32 %478, 0
+  br i1 %479, label %480, label %323, !llvm.loop !35
 
-603:                                              ; preds = %597
-  %604 = shl nsw i32 %598, 1
-  %605 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %604, i64 1
-  %606 = and <2 x i32> %605, <i32 1, i32 1>
-  %607 = icmp eq <2 x i32> %606, zeroinitializer
-  %608 = extractelement <2 x i1> %607, i64 0
-  %609 = extractelement <2 x i1> %607, i64 1
-  %610 = select i1 %609, i1 true, i1 %608
-  %611 = select i1 %610, i32 0, i32 1
-  %612 = sdiv <2 x i32> %605, <i32 2, i32 2>
-  %613 = and <2 x i32> %612, <i32 1, i32 1>
-  %614 = icmp eq <2 x i32> %613, zeroinitializer
-  %615 = extractelement <2 x i1> %614, i64 0
-  %616 = extractelement <2 x i1> %614, i64 1
-  %617 = select i1 %616, i1 true, i1 %615
-  %618 = or i32 %611, 2
-  %619 = select i1 %617, i32 %611, i32 %618
-  %620 = sdiv <2 x i32> %605, <i32 4, i32 4>
-  %621 = and <2 x i32> %620, <i32 1, i32 1>
-  %622 = icmp eq <2 x i32> %621, zeroinitializer
-  %623 = extractelement <2 x i1> %622, i64 0
-  %624 = extractelement <2 x i1> %622, i64 1
-  %625 = select i1 %624, i1 true, i1 %623
-  %626 = add nsw i32 %619, 4
-  %627 = select i1 %625, i32 %619, i32 %626
-  %628 = sdiv <2 x i32> %605, <i32 8, i32 8>
-  %629 = and <2 x i32> %628, <i32 1, i32 1>
-  %630 = icmp eq <2 x i32> %629, zeroinitializer
-  %631 = extractelement <2 x i1> %630, i64 0
-  %632 = extractelement <2 x i1> %630, i64 1
-  %633 = select i1 %632, i1 true, i1 %631
-  %634 = add nsw i32 %627, 8
-  %635 = select i1 %633, i32 %627, i32 %634
-  %636 = sdiv <2 x i32> %605, <i32 16, i32 16>
-  %637 = and <2 x i32> %636, <i32 1, i32 1>
-  %638 = icmp eq <2 x i32> %637, zeroinitializer
-  %639 = extractelement <2 x i1> %638, i64 0
-  %640 = extractelement <2 x i1> %638, i64 1
-  %641 = select i1 %640, i1 true, i1 %639
-  %642 = add nsw i32 %635, 16
-  %643 = select i1 %641, i32 %635, i32 %642
-  %644 = sdiv <2 x i32> %605, <i32 32, i32 32>
-  %645 = and <2 x i32> %644, <i32 1, i32 1>
-  %646 = icmp eq <2 x i32> %645, zeroinitializer
-  %647 = extractelement <2 x i1> %646, i64 0
-  %648 = extractelement <2 x i1> %646, i64 1
-  %649 = select i1 %648, i1 true, i1 %647
-  %650 = add nsw i32 %643, 32
-  %651 = select i1 %649, i32 %643, i32 %650
-  %652 = sdiv <2 x i32> %605, <i32 64, i32 64>
-  %653 = and <2 x i32> %652, <i32 1, i32 1>
-  %654 = icmp eq <2 x i32> %653, zeroinitializer
-  %655 = extractelement <2 x i1> %654, i64 0
-  %656 = extractelement <2 x i1> %654, i64 1
-  %657 = select i1 %656, i1 true, i1 %655
-  %658 = add nsw i32 %651, 64
-  %659 = select i1 %657, i32 %651, i32 %658
-  %660 = sdiv <2 x i32> %605, <i32 128, i32 128>
-  %661 = and <2 x i32> %660, <i32 1, i32 1>
-  %662 = icmp eq <2 x i32> %661, zeroinitializer
-  %663 = extractelement <2 x i1> %662, i64 0
-  %664 = extractelement <2 x i1> %662, i64 1
-  %665 = select i1 %664, i1 true, i1 %663
-  %666 = add nsw i32 %659, 128
-  %667 = select i1 %665, i32 %659, i32 %666
-  %668 = sdiv <2 x i32> %605, <i32 256, i32 256>
-  %669 = and <2 x i32> %668, <i32 1, i32 1>
-  %670 = icmp eq <2 x i32> %669, zeroinitializer
-  %671 = extractelement <2 x i1> %670, i64 0
-  %672 = extractelement <2 x i1> %670, i64 1
-  %673 = select i1 %672, i1 true, i1 %671
-  %674 = add nsw i32 %667, 256
-  %675 = select i1 %673, i32 %667, i32 %674
-  %676 = sdiv <2 x i32> %605, <i32 512, i32 512>
-  %677 = and <2 x i32> %676, <i32 1, i32 1>
-  %678 = icmp eq <2 x i32> %677, zeroinitializer
-  %679 = extractelement <2 x i1> %678, i64 0
-  %680 = extractelement <2 x i1> %678, i64 1
-  %681 = select i1 %680, i1 true, i1 %679
-  %682 = add nsw i32 %675, 512
-  %683 = select i1 %681, i32 %675, i32 %682
-  %684 = sdiv <2 x i32> %605, <i32 1024, i32 1024>
-  %685 = and <2 x i32> %684, <i32 1, i32 1>
-  %686 = icmp eq <2 x i32> %685, zeroinitializer
-  %687 = extractelement <2 x i1> %686, i64 0
-  %688 = extractelement <2 x i1> %686, i64 1
-  %689 = select i1 %688, i1 true, i1 %687
-  %690 = add nsw i32 %683, 1024
-  %691 = select i1 %689, i32 %683, i32 %690
-  %692 = sdiv <2 x i32> %605, <i32 2048, i32 2048>
-  %693 = and <2 x i32> %692, <i32 1, i32 1>
-  %694 = icmp eq <2 x i32> %693, zeroinitializer
-  %695 = extractelement <2 x i1> %694, i64 0
-  %696 = extractelement <2 x i1> %694, i64 1
-  %697 = select i1 %696, i1 true, i1 %695
-  %698 = add nsw i32 %691, 2048
-  %699 = select i1 %697, i32 %691, i32 %698
-  %700 = sdiv <2 x i32> %605, <i32 4096, i32 4096>
-  %701 = and <2 x i32> %700, <i32 1, i32 1>
-  %702 = icmp eq <2 x i32> %701, zeroinitializer
-  %703 = extractelement <2 x i1> %702, i64 0
-  %704 = extractelement <2 x i1> %702, i64 1
-  %705 = select i1 %704, i1 true, i1 %703
-  %706 = add nsw i32 %699, 4096
-  %707 = select i1 %705, i32 %699, i32 %706
-  %708 = sdiv <2 x i32> %605, <i32 8192, i32 8192>
-  %709 = and <2 x i32> %708, <i32 1, i32 1>
-  %710 = icmp eq <2 x i32> %709, zeroinitializer
-  %711 = extractelement <2 x i1> %710, i64 0
-  %712 = extractelement <2 x i1> %710, i64 1
-  %713 = select i1 %712, i1 true, i1 %711
-  %714 = add nsw i32 %707, 8192
-  %715 = select i1 %713, i32 %707, i32 %714
-  %716 = sdiv <2 x i32> %605, <i32 16384, i32 16384>
-  %717 = and <2 x i32> %716, <i32 1, i32 1>
-  %718 = icmp eq <2 x i32> %717, zeroinitializer
-  %719 = extractelement <2 x i1> %718, i64 0
-  %720 = extractelement <2 x i1> %718, i64 1
-  %721 = select i1 %720, i1 true, i1 %719
-  %722 = add nsw i32 %715, 16384
-  %723 = select i1 %721, i32 %715, i32 %722
-  %724 = sdiv <2 x i32> %605, <i32 32768, i32 32768>
-  %725 = and <2 x i32> %724, <i32 1, i32 1>
-  %726 = icmp eq <2 x i32> %725, zeroinitializer
-  %727 = extractelement <2 x i1> %726, i64 0
-  %728 = extractelement <2 x i1> %726, i64 1
-  %729 = select i1 %728, i1 true, i1 %727
-  %730 = add nsw i32 %723, 32768
-  %731 = select i1 %729, i32 %723, i32 %730
-  %732 = icmp eq i32 %731, 0
-  br i1 %732, label %733, label %559, !llvm.loop !22
+480:                                              ; preds = %477, %161, %320
+  %481 = phi i32 [ %321, %320 ], [ 0, %161 ], [ %321, %477 ]
+  %482 = phi i32 [ 0, %320 ], [ 0, %161 ], [ %400, %477 ]
+  %483 = icmp sgt i32 %157, 32767
+  br i1 %483, label %484, label %487
 
-733:                                              ; preds = %603, %557
-  %734 = phi i32 [ 0, %557 ], [ %578, %603 ]
-  %735 = icmp sgt i32 %377, 32767
-  br i1 %735, label %736, label %739
+484:                                              ; preds = %480
+  %485 = lshr i32 %157, 1
+  %486 = add nuw nsw i32 %485, 32768
+  br label %489
 
-736:                                              ; preds = %733
-  %737 = lshr i32 %377, 1
-  %738 = add nuw nsw i32 %737, 32768
-  br label %741
+487:                                              ; preds = %480
+  %488 = sdiv i32 %157, 2
+  br label %489
 
-739:                                              ; preds = %733
-  %740 = sdiv i32 %377, 2
-  br label %741
+489:                                              ; preds = %487, %484
+  %490 = phi i32 [ %486, %484 ], [ %488, %487 ]
+  %491 = icmp sgt i32 %490, 0
+  br i1 %491, label %155, label %492, !llvm.loop !36
 
-741:                                              ; preds = %739, %736
-  %742 = phi i32 [ %738, %736 ], [ %740, %739 ]
-  %743 = icmp eq i32 %742, 0
-  br i1 %743, label %744, label %375, !llvm.loop !23
-
-744:                                              ; preds = %741, %367
-  %745 = phi i32 [ %368, %367 ], [ %558, %741 ]
-  %746 = icmp eq i32 %370, 0
-  br i1 %746, label %1116, label %747
-
-747:                                              ; preds = %744, %1113
-  %748 = phi i32 [ %930, %1113 ], [ 0, %744 ]
-  %749 = phi i32 [ %1114, %1113 ], [ %370, %744 ]
-  %750 = phi i32 [ %1106, %1113 ], [ %370, %744 ]
-  %751 = and i32 %749, 1
-  %752 = icmp eq i32 %751, 0
-  %753 = icmp eq i32 %750, 0
-  %754 = select i1 %752, i1 true, i1 %753
-  br i1 %754, label %929, label %755
-
-755:                                              ; preds = %747, %799
-  %756 = phi i32 [ %927, %799 ], [ %750, %747 ]
-  %757 = phi i32 [ %774, %799 ], [ %748, %747 ]
-  br label %758
-
-758:                                              ; preds = %755, %773
-  %759 = phi i64 [ 0, %755 ], [ %777, %773 ]
-  %760 = phi i32 [ 0, %755 ], [ %774, %773 ]
-  %761 = phi i32 [ %757, %755 ], [ %775, %773 ]
-  %762 = phi i32 [ %756, %755 ], [ %776, %773 ]
-  %763 = and i32 %761, 1
-  %764 = icmp eq i32 %763, 0
-  %765 = and i32 %762, 1
-  %766 = icmp eq i32 %765, 0
-  br i1 %764, label %768, label %767
-
-767:                                              ; preds = %758
-  br i1 %766, label %769, label %773
-
-768:                                              ; preds = %758
-  br i1 %766, label %773, label %769
-
-769:                                              ; preds = %768, %767
-  %770 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %759
-  %771 = load i32, i32* %770, align 4, !tbaa !5
-  %772 = add nsw i32 %771, %760
-  br label %773
-
-773:                                              ; preds = %769, %768, %767
-  %774 = phi i32 [ %760, %767 ], [ %760, %768 ], [ %772, %769 ]
-  %775 = sdiv i32 %761, 2
-  %776 = sdiv i32 %762, 2
-  %777 = add nuw nsw i64 %759, 1
-  %778 = icmp eq i64 %777, 16
-  br i1 %778, label %779, label %758, !llvm.loop !24
-
-779:                                              ; preds = %773, %793
-  %780 = phi i64 [ %797, %793 ], [ 0, %773 ]
-  %781 = phi i32 [ %794, %793 ], [ 0, %773 ]
-  %782 = phi i32 [ %795, %793 ], [ %757, %773 ]
-  %783 = phi i32 [ %796, %793 ], [ %756, %773 ]
-  %784 = and i32 %782, 1
-  %785 = icmp eq i32 %784, 0
-  %786 = and i32 %783, 1
-  %787 = icmp eq i32 %786, 0
-  %788 = select i1 %785, i1 true, i1 %787
-  br i1 %788, label %793, label %789
-
-789:                                              ; preds = %779
-  %790 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %780
-  %791 = load i32, i32* %790, align 4, !tbaa !5
-  %792 = add nsw i32 %791, %781
-  br label %793
-
-793:                                              ; preds = %789, %779
-  %794 = phi i32 [ %792, %789 ], [ %781, %779 ]
-  %795 = sdiv i32 %782, 2
-  %796 = sdiv i32 %783, 2
-  %797 = add nuw nsw i64 %780, 1
-  %798 = icmp eq i64 %797, 16
-  br i1 %798, label %799, label %779, !llvm.loop !25
-
-799:                                              ; preds = %793
-  %800 = shl nsw i32 %794, 1
-  %801 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %800, i64 1
-  %802 = and <2 x i32> %801, <i32 1, i32 1>
-  %803 = icmp eq <2 x i32> %802, zeroinitializer
-  %804 = extractelement <2 x i1> %803, i64 0
-  %805 = extractelement <2 x i1> %803, i64 1
-  %806 = select i1 %805, i1 true, i1 %804
-  %807 = select i1 %806, i32 0, i32 1
-  %808 = sdiv <2 x i32> %801, <i32 2, i32 2>
-  %809 = and <2 x i32> %808, <i32 1, i32 1>
-  %810 = icmp eq <2 x i32> %809, zeroinitializer
-  %811 = extractelement <2 x i1> %810, i64 0
-  %812 = extractelement <2 x i1> %810, i64 1
-  %813 = select i1 %812, i1 true, i1 %811
-  %814 = or i32 %807, 2
-  %815 = select i1 %813, i32 %807, i32 %814
-  %816 = sdiv <2 x i32> %801, <i32 4, i32 4>
-  %817 = and <2 x i32> %816, <i32 1, i32 1>
-  %818 = icmp eq <2 x i32> %817, zeroinitializer
-  %819 = extractelement <2 x i1> %818, i64 0
-  %820 = extractelement <2 x i1> %818, i64 1
-  %821 = select i1 %820, i1 true, i1 %819
-  %822 = add nsw i32 %815, 4
-  %823 = select i1 %821, i32 %815, i32 %822
-  %824 = sdiv <2 x i32> %801, <i32 8, i32 8>
-  %825 = and <2 x i32> %824, <i32 1, i32 1>
-  %826 = icmp eq <2 x i32> %825, zeroinitializer
-  %827 = extractelement <2 x i1> %826, i64 0
-  %828 = extractelement <2 x i1> %826, i64 1
-  %829 = select i1 %828, i1 true, i1 %827
-  %830 = add nsw i32 %823, 8
-  %831 = select i1 %829, i32 %823, i32 %830
-  %832 = sdiv <2 x i32> %801, <i32 16, i32 16>
-  %833 = and <2 x i32> %832, <i32 1, i32 1>
-  %834 = icmp eq <2 x i32> %833, zeroinitializer
-  %835 = extractelement <2 x i1> %834, i64 0
-  %836 = extractelement <2 x i1> %834, i64 1
-  %837 = select i1 %836, i1 true, i1 %835
-  %838 = add nsw i32 %831, 16
-  %839 = select i1 %837, i32 %831, i32 %838
-  %840 = sdiv <2 x i32> %801, <i32 32, i32 32>
-  %841 = and <2 x i32> %840, <i32 1, i32 1>
-  %842 = icmp eq <2 x i32> %841, zeroinitializer
-  %843 = extractelement <2 x i1> %842, i64 0
-  %844 = extractelement <2 x i1> %842, i64 1
-  %845 = select i1 %844, i1 true, i1 %843
-  %846 = add nsw i32 %839, 32
-  %847 = select i1 %845, i32 %839, i32 %846
-  %848 = sdiv <2 x i32> %801, <i32 64, i32 64>
-  %849 = and <2 x i32> %848, <i32 1, i32 1>
-  %850 = icmp eq <2 x i32> %849, zeroinitializer
-  %851 = extractelement <2 x i1> %850, i64 0
-  %852 = extractelement <2 x i1> %850, i64 1
-  %853 = select i1 %852, i1 true, i1 %851
-  %854 = add nsw i32 %847, 64
-  %855 = select i1 %853, i32 %847, i32 %854
-  %856 = sdiv <2 x i32> %801, <i32 128, i32 128>
-  %857 = and <2 x i32> %856, <i32 1, i32 1>
-  %858 = icmp eq <2 x i32> %857, zeroinitializer
-  %859 = extractelement <2 x i1> %858, i64 0
-  %860 = extractelement <2 x i1> %858, i64 1
-  %861 = select i1 %860, i1 true, i1 %859
-  %862 = add nsw i32 %855, 128
-  %863 = select i1 %861, i32 %855, i32 %862
-  %864 = sdiv <2 x i32> %801, <i32 256, i32 256>
-  %865 = and <2 x i32> %864, <i32 1, i32 1>
-  %866 = icmp eq <2 x i32> %865, zeroinitializer
-  %867 = extractelement <2 x i1> %866, i64 0
-  %868 = extractelement <2 x i1> %866, i64 1
-  %869 = select i1 %868, i1 true, i1 %867
-  %870 = add nsw i32 %863, 256
-  %871 = select i1 %869, i32 %863, i32 %870
-  %872 = sdiv <2 x i32> %801, <i32 512, i32 512>
-  %873 = and <2 x i32> %872, <i32 1, i32 1>
-  %874 = icmp eq <2 x i32> %873, zeroinitializer
-  %875 = extractelement <2 x i1> %874, i64 0
-  %876 = extractelement <2 x i1> %874, i64 1
-  %877 = select i1 %876, i1 true, i1 %875
-  %878 = add nsw i32 %871, 512
-  %879 = select i1 %877, i32 %871, i32 %878
-  %880 = sdiv <2 x i32> %801, <i32 1024, i32 1024>
-  %881 = and <2 x i32> %880, <i32 1, i32 1>
-  %882 = icmp eq <2 x i32> %881, zeroinitializer
-  %883 = extractelement <2 x i1> %882, i64 0
-  %884 = extractelement <2 x i1> %882, i64 1
-  %885 = select i1 %884, i1 true, i1 %883
-  %886 = add nsw i32 %879, 1024
-  %887 = select i1 %885, i32 %879, i32 %886
-  %888 = sdiv <2 x i32> %801, <i32 2048, i32 2048>
-  %889 = and <2 x i32> %888, <i32 1, i32 1>
-  %890 = icmp eq <2 x i32> %889, zeroinitializer
-  %891 = extractelement <2 x i1> %890, i64 0
-  %892 = extractelement <2 x i1> %890, i64 1
-  %893 = select i1 %892, i1 true, i1 %891
-  %894 = add nsw i32 %887, 2048
-  %895 = select i1 %893, i32 %887, i32 %894
-  %896 = sdiv <2 x i32> %801, <i32 4096, i32 4096>
-  %897 = and <2 x i32> %896, <i32 1, i32 1>
-  %898 = icmp eq <2 x i32> %897, zeroinitializer
-  %899 = extractelement <2 x i1> %898, i64 0
-  %900 = extractelement <2 x i1> %898, i64 1
-  %901 = select i1 %900, i1 true, i1 %899
-  %902 = add nsw i32 %895, 4096
-  %903 = select i1 %901, i32 %895, i32 %902
-  %904 = sdiv <2 x i32> %801, <i32 8192, i32 8192>
-  %905 = and <2 x i32> %904, <i32 1, i32 1>
-  %906 = icmp eq <2 x i32> %905, zeroinitializer
-  %907 = extractelement <2 x i1> %906, i64 0
-  %908 = extractelement <2 x i1> %906, i64 1
-  %909 = select i1 %908, i1 true, i1 %907
-  %910 = add nsw i32 %903, 8192
-  %911 = select i1 %909, i32 %903, i32 %910
-  %912 = sdiv <2 x i32> %801, <i32 16384, i32 16384>
-  %913 = and <2 x i32> %912, <i32 1, i32 1>
-  %914 = icmp eq <2 x i32> %913, zeroinitializer
-  %915 = extractelement <2 x i1> %914, i64 0
-  %916 = extractelement <2 x i1> %914, i64 1
-  %917 = select i1 %916, i1 true, i1 %915
-  %918 = add nsw i32 %911, 16384
-  %919 = select i1 %917, i32 %911, i32 %918
-  %920 = sdiv <2 x i32> %801, <i32 32768, i32 32768>
-  %921 = and <2 x i32> %920, <i32 1, i32 1>
-  %922 = icmp eq <2 x i32> %921, zeroinitializer
-  %923 = extractelement <2 x i1> %922, i64 0
-  %924 = extractelement <2 x i1> %922, i64 1
-  %925 = select i1 %924, i1 true, i1 %923
-  %926 = add nsw i32 %919, 32768
-  %927 = select i1 %925, i32 %919, i32 %926
-  %928 = icmp eq i32 %927, 0
-  br i1 %928, label %929, label %755, !llvm.loop !26
-
-929:                                              ; preds = %799, %747
-  %930 = phi i32 [ %748, %747 ], [ %774, %799 ]
-  br i1 %753, label %1105, label %931
-
-931:                                              ; preds = %929, %975
-  %932 = phi i32 [ %1103, %975 ], [ %750, %929 ]
-  %933 = phi i32 [ %950, %975 ], [ %750, %929 ]
-  br label %934
-
-934:                                              ; preds = %931, %949
-  %935 = phi i64 [ 0, %931 ], [ %953, %949 ]
-  %936 = phi i32 [ 0, %931 ], [ %950, %949 ]
-  %937 = phi i32 [ %933, %931 ], [ %951, %949 ]
-  %938 = phi i32 [ %932, %931 ], [ %952, %949 ]
-  %939 = and i32 %937, 1
-  %940 = icmp eq i32 %939, 0
-  %941 = and i32 %938, 1
-  %942 = icmp eq i32 %941, 0
-  br i1 %940, label %944, label %943
-
-943:                                              ; preds = %934
-  br i1 %942, label %945, label %949
-
-944:                                              ; preds = %934
-  br i1 %942, label %949, label %945
-
-945:                                              ; preds = %944, %943
-  %946 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %935
-  %947 = load i32, i32* %946, align 4, !tbaa !5
-  %948 = add nsw i32 %947, %936
-  br label %949
-
-949:                                              ; preds = %945, %944, %943
-  %950 = phi i32 [ %936, %943 ], [ %936, %944 ], [ %948, %945 ]
-  %951 = sdiv i32 %937, 2
-  %952 = sdiv i32 %938, 2
-  %953 = add nuw nsw i64 %935, 1
-  %954 = icmp eq i64 %953, 16
-  br i1 %954, label %955, label %934, !llvm.loop !27
-
-955:                                              ; preds = %949, %969
-  %956 = phi i64 [ %973, %969 ], [ 0, %949 ]
-  %957 = phi i32 [ %970, %969 ], [ 0, %949 ]
-  %958 = phi i32 [ %971, %969 ], [ %933, %949 ]
-  %959 = phi i32 [ %972, %969 ], [ %932, %949 ]
-  %960 = and i32 %958, 1
-  %961 = icmp eq i32 %960, 0
-  %962 = and i32 %959, 1
-  %963 = icmp eq i32 %962, 0
-  %964 = select i1 %961, i1 true, i1 %963
-  br i1 %964, label %969, label %965
-
-965:                                              ; preds = %955
-  %966 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %956
-  %967 = load i32, i32* %966, align 4, !tbaa !5
-  %968 = add nsw i32 %967, %957
-  br label %969
-
-969:                                              ; preds = %965, %955
-  %970 = phi i32 [ %968, %965 ], [ %957, %955 ]
-  %971 = sdiv i32 %958, 2
-  %972 = sdiv i32 %959, 2
-  %973 = add nuw nsw i64 %956, 1
-  %974 = icmp eq i64 %973, 16
-  br i1 %974, label %975, label %955, !llvm.loop !28
-
-975:                                              ; preds = %969
-  %976 = shl nsw i32 %970, 1
-  %977 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %976, i64 1
-  %978 = and <2 x i32> %977, <i32 1, i32 1>
-  %979 = icmp eq <2 x i32> %978, zeroinitializer
-  %980 = extractelement <2 x i1> %979, i64 0
-  %981 = extractelement <2 x i1> %979, i64 1
-  %982 = select i1 %981, i1 true, i1 %980
-  %983 = select i1 %982, i32 0, i32 1
-  %984 = sdiv <2 x i32> %977, <i32 2, i32 2>
-  %985 = and <2 x i32> %984, <i32 1, i32 1>
-  %986 = icmp eq <2 x i32> %985, zeroinitializer
-  %987 = extractelement <2 x i1> %986, i64 0
-  %988 = extractelement <2 x i1> %986, i64 1
-  %989 = select i1 %988, i1 true, i1 %987
-  %990 = or i32 %983, 2
-  %991 = select i1 %989, i32 %983, i32 %990
-  %992 = sdiv <2 x i32> %977, <i32 4, i32 4>
-  %993 = and <2 x i32> %992, <i32 1, i32 1>
-  %994 = icmp eq <2 x i32> %993, zeroinitializer
-  %995 = extractelement <2 x i1> %994, i64 0
-  %996 = extractelement <2 x i1> %994, i64 1
-  %997 = select i1 %996, i1 true, i1 %995
-  %998 = add nsw i32 %991, 4
-  %999 = select i1 %997, i32 %991, i32 %998
-  %1000 = sdiv <2 x i32> %977, <i32 8, i32 8>
-  %1001 = and <2 x i32> %1000, <i32 1, i32 1>
-  %1002 = icmp eq <2 x i32> %1001, zeroinitializer
-  %1003 = extractelement <2 x i1> %1002, i64 0
-  %1004 = extractelement <2 x i1> %1002, i64 1
-  %1005 = select i1 %1004, i1 true, i1 %1003
-  %1006 = add nsw i32 %999, 8
-  %1007 = select i1 %1005, i32 %999, i32 %1006
-  %1008 = sdiv <2 x i32> %977, <i32 16, i32 16>
-  %1009 = and <2 x i32> %1008, <i32 1, i32 1>
-  %1010 = icmp eq <2 x i32> %1009, zeroinitializer
-  %1011 = extractelement <2 x i1> %1010, i64 0
-  %1012 = extractelement <2 x i1> %1010, i64 1
-  %1013 = select i1 %1012, i1 true, i1 %1011
-  %1014 = add nsw i32 %1007, 16
-  %1015 = select i1 %1013, i32 %1007, i32 %1014
-  %1016 = sdiv <2 x i32> %977, <i32 32, i32 32>
-  %1017 = and <2 x i32> %1016, <i32 1, i32 1>
-  %1018 = icmp eq <2 x i32> %1017, zeroinitializer
-  %1019 = extractelement <2 x i1> %1018, i64 0
-  %1020 = extractelement <2 x i1> %1018, i64 1
-  %1021 = select i1 %1020, i1 true, i1 %1019
-  %1022 = add nsw i32 %1015, 32
-  %1023 = select i1 %1021, i32 %1015, i32 %1022
-  %1024 = sdiv <2 x i32> %977, <i32 64, i32 64>
-  %1025 = and <2 x i32> %1024, <i32 1, i32 1>
-  %1026 = icmp eq <2 x i32> %1025, zeroinitializer
-  %1027 = extractelement <2 x i1> %1026, i64 0
-  %1028 = extractelement <2 x i1> %1026, i64 1
-  %1029 = select i1 %1028, i1 true, i1 %1027
-  %1030 = add nsw i32 %1023, 64
-  %1031 = select i1 %1029, i32 %1023, i32 %1030
-  %1032 = sdiv <2 x i32> %977, <i32 128, i32 128>
-  %1033 = and <2 x i32> %1032, <i32 1, i32 1>
-  %1034 = icmp eq <2 x i32> %1033, zeroinitializer
-  %1035 = extractelement <2 x i1> %1034, i64 0
-  %1036 = extractelement <2 x i1> %1034, i64 1
-  %1037 = select i1 %1036, i1 true, i1 %1035
-  %1038 = add nsw i32 %1031, 128
-  %1039 = select i1 %1037, i32 %1031, i32 %1038
-  %1040 = sdiv <2 x i32> %977, <i32 256, i32 256>
-  %1041 = and <2 x i32> %1040, <i32 1, i32 1>
-  %1042 = icmp eq <2 x i32> %1041, zeroinitializer
-  %1043 = extractelement <2 x i1> %1042, i64 0
-  %1044 = extractelement <2 x i1> %1042, i64 1
-  %1045 = select i1 %1044, i1 true, i1 %1043
-  %1046 = add nsw i32 %1039, 256
-  %1047 = select i1 %1045, i32 %1039, i32 %1046
-  %1048 = sdiv <2 x i32> %977, <i32 512, i32 512>
-  %1049 = and <2 x i32> %1048, <i32 1, i32 1>
-  %1050 = icmp eq <2 x i32> %1049, zeroinitializer
-  %1051 = extractelement <2 x i1> %1050, i64 0
-  %1052 = extractelement <2 x i1> %1050, i64 1
-  %1053 = select i1 %1052, i1 true, i1 %1051
-  %1054 = add nsw i32 %1047, 512
-  %1055 = select i1 %1053, i32 %1047, i32 %1054
-  %1056 = sdiv <2 x i32> %977, <i32 1024, i32 1024>
-  %1057 = and <2 x i32> %1056, <i32 1, i32 1>
-  %1058 = icmp eq <2 x i32> %1057, zeroinitializer
-  %1059 = extractelement <2 x i1> %1058, i64 0
-  %1060 = extractelement <2 x i1> %1058, i64 1
-  %1061 = select i1 %1060, i1 true, i1 %1059
-  %1062 = add nsw i32 %1055, 1024
-  %1063 = select i1 %1061, i32 %1055, i32 %1062
-  %1064 = sdiv <2 x i32> %977, <i32 2048, i32 2048>
-  %1065 = and <2 x i32> %1064, <i32 1, i32 1>
-  %1066 = icmp eq <2 x i32> %1065, zeroinitializer
-  %1067 = extractelement <2 x i1> %1066, i64 0
-  %1068 = extractelement <2 x i1> %1066, i64 1
-  %1069 = select i1 %1068, i1 true, i1 %1067
-  %1070 = add nsw i32 %1063, 2048
-  %1071 = select i1 %1069, i32 %1063, i32 %1070
-  %1072 = sdiv <2 x i32> %977, <i32 4096, i32 4096>
-  %1073 = and <2 x i32> %1072, <i32 1, i32 1>
-  %1074 = icmp eq <2 x i32> %1073, zeroinitializer
-  %1075 = extractelement <2 x i1> %1074, i64 0
-  %1076 = extractelement <2 x i1> %1074, i64 1
-  %1077 = select i1 %1076, i1 true, i1 %1075
-  %1078 = add nsw i32 %1071, 4096
-  %1079 = select i1 %1077, i32 %1071, i32 %1078
-  %1080 = sdiv <2 x i32> %977, <i32 8192, i32 8192>
-  %1081 = and <2 x i32> %1080, <i32 1, i32 1>
-  %1082 = icmp eq <2 x i32> %1081, zeroinitializer
-  %1083 = extractelement <2 x i1> %1082, i64 0
-  %1084 = extractelement <2 x i1> %1082, i64 1
-  %1085 = select i1 %1084, i1 true, i1 %1083
-  %1086 = add nsw i32 %1079, 8192
-  %1087 = select i1 %1085, i32 %1079, i32 %1086
-  %1088 = sdiv <2 x i32> %977, <i32 16384, i32 16384>
-  %1089 = and <2 x i32> %1088, <i32 1, i32 1>
-  %1090 = icmp eq <2 x i32> %1089, zeroinitializer
-  %1091 = extractelement <2 x i1> %1090, i64 0
-  %1092 = extractelement <2 x i1> %1090, i64 1
-  %1093 = select i1 %1092, i1 true, i1 %1091
-  %1094 = add nsw i32 %1087, 16384
-  %1095 = select i1 %1093, i32 %1087, i32 %1094
-  %1096 = sdiv <2 x i32> %977, <i32 32768, i32 32768>
-  %1097 = and <2 x i32> %1096, <i32 1, i32 1>
-  %1098 = icmp eq <2 x i32> %1097, zeroinitializer
-  %1099 = extractelement <2 x i1> %1098, i64 0
-  %1100 = extractelement <2 x i1> %1098, i64 1
-  %1101 = select i1 %1100, i1 true, i1 %1099
-  %1102 = add nsw i32 %1095, 32768
-  %1103 = select i1 %1101, i32 %1095, i32 %1102
-  %1104 = icmp eq i32 %1103, 0
-  br i1 %1104, label %1105, label %931, !llvm.loop !29
-
-1105:                                             ; preds = %975, %929
-  %1106 = phi i32 [ 0, %929 ], [ %950, %975 ]
-  %1107 = icmp sgt i32 %749, 32767
-  br i1 %1107, label %1108, label %1111
-
-1108:                                             ; preds = %1105
-  %1109 = lshr i32 %749, 1
-  %1110 = add nuw nsw i32 %1109, 32768
-  br label %1113
-
-1111:                                             ; preds = %1105
-  %1112 = sdiv i32 %749, 2
-  br label %1113
-
-1113:                                             ; preds = %1111, %1108
-  %1114 = phi i32 [ %1110, %1108 ], [ %1112, %1111 ]
-  %1115 = icmp eq i32 %1114, 0
-  br i1 %1115, label %1116, label %747, !llvm.loop !30
-
-1116:                                             ; preds = %1113, %373, %744
-  %1117 = phi i32 [ %745, %744 ], [ 0, %373 ], [ %745, %1113 ]
-  %1118 = phi i32 [ 0, %744 ], [ 0, %373 ], [ %930, %1113 ]
-  %1119 = icmp sgt i32 %369, 32767
-  br i1 %1119, label %1120, label %1123
-
-1120:                                             ; preds = %1116
-  %1121 = lshr i32 %369, 1
-  %1122 = add nuw nsw i32 %1121, 32768
-  br label %1125
-
-1123:                                             ; preds = %1116
-  %1124 = sdiv i32 %369, 2
-  br label %1125
-
-1125:                                             ; preds = %1123, %1120
-  %1126 = phi i32 [ %1122, %1120 ], [ %1124, %1123 ]
-  %1127 = icmp sgt i32 %1126, 0
-  br i1 %1127, label %367, label %1128, !llvm.loop !31
-
-1128:                                             ; preds = %1125
-  tail call void @_Z6putinti(i32 noundef %1117)
+492:                                              ; preds = %489
+  tail call void @_Z6putinti(i32 noundef %481)
   tail call void @_Z5putchi(i32 noundef 10)
-  %1129 = add nuw nsw i32 %366, 1
-  %1130 = icmp eq i32 %1129, 16
-  br i1 %1130, label %1134, label %365, !llvm.loop !32
-
-1131:                                             ; preds = %1900
-  %1132 = add nuw nsw i64 %1135, 1
-  %1133 = icmp eq i64 %1132, 16
-  br i1 %1133, label %1905, label %1134, !llvm.loop !33
-
-1134:                                             ; preds = %1128, %1131
-  %1135 = phi i64 [ %1132, %1131 ], [ 0, %1128 ]
-  %1136 = icmp eq i64 %1135, 0
-  br i1 %1136, label %1900, label %1137
-
-1137:                                             ; preds = %1134
-  %1138 = trunc i64 %1135 to i32
-  br label %1139
-
-1139:                                             ; preds = %1137, %1897
-  %1140 = phi i32 [ %1889, %1897 ], [ 1, %1137 ]
-  %1141 = phi i32 [ %1898, %1897 ], [ %1138, %1137 ]
-  %1142 = phi i32 [ %1890, %1897 ], [ 2, %1137 ]
-  %1143 = and i32 %1141, 1
-  %1144 = icmp eq i32 %1143, 0
-  br i1 %1144, label %1516, label %1145
-
-1145:                                             ; preds = %1139
-  %1146 = icmp eq i32 %1142, 0
-  br i1 %1146, label %1888, label %1147
-
-1147:                                             ; preds = %1145, %1513
-  %1148 = phi i32 [ %1330, %1513 ], [ 0, %1145 ]
-  %1149 = phi i32 [ %1514, %1513 ], [ %1142, %1145 ]
-  %1150 = phi i32 [ %1506, %1513 ], [ %1140, %1145 ]
-  %1151 = and i32 %1149, 1
-  %1152 = icmp eq i32 %1151, 0
-  %1153 = icmp eq i32 %1150, 0
-  %1154 = select i1 %1152, i1 true, i1 %1153
-  br i1 %1154, label %1329, label %1155
-
-1155:                                             ; preds = %1147, %1199
-  %1156 = phi i32 [ %1327, %1199 ], [ %1150, %1147 ]
-  %1157 = phi i32 [ %1174, %1199 ], [ %1148, %1147 ]
-  br label %1158
-
-1158:                                             ; preds = %1155, %1173
-  %1159 = phi i64 [ 0, %1155 ], [ %1177, %1173 ]
-  %1160 = phi i32 [ 0, %1155 ], [ %1174, %1173 ]
-  %1161 = phi i32 [ %1157, %1155 ], [ %1175, %1173 ]
-  %1162 = phi i32 [ %1156, %1155 ], [ %1176, %1173 ]
-  %1163 = and i32 %1161, 1
-  %1164 = icmp eq i32 %1163, 0
-  %1165 = and i32 %1162, 1
-  %1166 = icmp eq i32 %1165, 0
-  br i1 %1164, label %1168, label %1167
-
-1167:                                             ; preds = %1158
-  br i1 %1166, label %1169, label %1173
-
-1168:                                             ; preds = %1158
-  br i1 %1166, label %1173, label %1169
-
-1169:                                             ; preds = %1168, %1167
-  %1170 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1159
-  %1171 = load i32, i32* %1170, align 4, !tbaa !5
-  %1172 = add nsw i32 %1171, %1160
-  br label %1173
-
-1173:                                             ; preds = %1169, %1168, %1167
-  %1174 = phi i32 [ %1160, %1167 ], [ %1160, %1168 ], [ %1172, %1169 ]
-  %1175 = sdiv i32 %1161, 2
-  %1176 = sdiv i32 %1162, 2
-  %1177 = add nuw nsw i64 %1159, 1
-  %1178 = icmp eq i64 %1177, 16
-  br i1 %1178, label %1179, label %1158, !llvm.loop !34
-
-1179:                                             ; preds = %1173, %1193
-  %1180 = phi i64 [ %1197, %1193 ], [ 0, %1173 ]
-  %1181 = phi i32 [ %1194, %1193 ], [ 0, %1173 ]
-  %1182 = phi i32 [ %1195, %1193 ], [ %1157, %1173 ]
-  %1183 = phi i32 [ %1196, %1193 ], [ %1156, %1173 ]
-  %1184 = and i32 %1182, 1
-  %1185 = icmp eq i32 %1184, 0
-  %1186 = and i32 %1183, 1
-  %1187 = icmp eq i32 %1186, 0
-  %1188 = select i1 %1185, i1 true, i1 %1187
-  br i1 %1188, label %1193, label %1189
-
-1189:                                             ; preds = %1179
-  %1190 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1180
-  %1191 = load i32, i32* %1190, align 4, !tbaa !5
-  %1192 = add nsw i32 %1191, %1181
-  br label %1193
-
-1193:                                             ; preds = %1189, %1179
-  %1194 = phi i32 [ %1192, %1189 ], [ %1181, %1179 ]
-  %1195 = sdiv i32 %1182, 2
-  %1196 = sdiv i32 %1183, 2
-  %1197 = add nuw nsw i64 %1180, 1
-  %1198 = icmp eq i64 %1197, 16
-  br i1 %1198, label %1199, label %1179, !llvm.loop !35
-
-1199:                                             ; preds = %1193
-  %1200 = shl nsw i32 %1194, 1
-  %1201 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %1200, i64 1
-  %1202 = and <2 x i32> %1201, <i32 1, i32 1>
-  %1203 = icmp eq <2 x i32> %1202, zeroinitializer
-  %1204 = extractelement <2 x i1> %1203, i64 0
-  %1205 = extractelement <2 x i1> %1203, i64 1
-  %1206 = select i1 %1205, i1 true, i1 %1204
-  %1207 = select i1 %1206, i32 0, i32 1
-  %1208 = sdiv <2 x i32> %1201, <i32 2, i32 2>
-  %1209 = and <2 x i32> %1208, <i32 1, i32 1>
-  %1210 = icmp eq <2 x i32> %1209, zeroinitializer
-  %1211 = extractelement <2 x i1> %1210, i64 0
-  %1212 = extractelement <2 x i1> %1210, i64 1
-  %1213 = select i1 %1212, i1 true, i1 %1211
-  %1214 = or i32 %1207, 2
-  %1215 = select i1 %1213, i32 %1207, i32 %1214
-  %1216 = sdiv <2 x i32> %1201, <i32 4, i32 4>
-  %1217 = and <2 x i32> %1216, <i32 1, i32 1>
-  %1218 = icmp eq <2 x i32> %1217, zeroinitializer
-  %1219 = extractelement <2 x i1> %1218, i64 0
-  %1220 = extractelement <2 x i1> %1218, i64 1
-  %1221 = select i1 %1220, i1 true, i1 %1219
-  %1222 = add nsw i32 %1215, 4
-  %1223 = select i1 %1221, i32 %1215, i32 %1222
-  %1224 = sdiv <2 x i32> %1201, <i32 8, i32 8>
-  %1225 = and <2 x i32> %1224, <i32 1, i32 1>
-  %1226 = icmp eq <2 x i32> %1225, zeroinitializer
-  %1227 = extractelement <2 x i1> %1226, i64 0
-  %1228 = extractelement <2 x i1> %1226, i64 1
-  %1229 = select i1 %1228, i1 true, i1 %1227
-  %1230 = add nsw i32 %1223, 8
-  %1231 = select i1 %1229, i32 %1223, i32 %1230
-  %1232 = sdiv <2 x i32> %1201, <i32 16, i32 16>
-  %1233 = and <2 x i32> %1232, <i32 1, i32 1>
-  %1234 = icmp eq <2 x i32> %1233, zeroinitializer
-  %1235 = extractelement <2 x i1> %1234, i64 0
-  %1236 = extractelement <2 x i1> %1234, i64 1
-  %1237 = select i1 %1236, i1 true, i1 %1235
-  %1238 = add nsw i32 %1231, 16
-  %1239 = select i1 %1237, i32 %1231, i32 %1238
-  %1240 = sdiv <2 x i32> %1201, <i32 32, i32 32>
-  %1241 = and <2 x i32> %1240, <i32 1, i32 1>
-  %1242 = icmp eq <2 x i32> %1241, zeroinitializer
-  %1243 = extractelement <2 x i1> %1242, i64 0
-  %1244 = extractelement <2 x i1> %1242, i64 1
-  %1245 = select i1 %1244, i1 true, i1 %1243
-  %1246 = add nsw i32 %1239, 32
-  %1247 = select i1 %1245, i32 %1239, i32 %1246
-  %1248 = sdiv <2 x i32> %1201, <i32 64, i32 64>
-  %1249 = and <2 x i32> %1248, <i32 1, i32 1>
-  %1250 = icmp eq <2 x i32> %1249, zeroinitializer
-  %1251 = extractelement <2 x i1> %1250, i64 0
-  %1252 = extractelement <2 x i1> %1250, i64 1
-  %1253 = select i1 %1252, i1 true, i1 %1251
-  %1254 = add nsw i32 %1247, 64
-  %1255 = select i1 %1253, i32 %1247, i32 %1254
-  %1256 = sdiv <2 x i32> %1201, <i32 128, i32 128>
-  %1257 = and <2 x i32> %1256, <i32 1, i32 1>
-  %1258 = icmp eq <2 x i32> %1257, zeroinitializer
-  %1259 = extractelement <2 x i1> %1258, i64 0
-  %1260 = extractelement <2 x i1> %1258, i64 1
-  %1261 = select i1 %1260, i1 true, i1 %1259
-  %1262 = add nsw i32 %1255, 128
-  %1263 = select i1 %1261, i32 %1255, i32 %1262
-  %1264 = sdiv <2 x i32> %1201, <i32 256, i32 256>
-  %1265 = and <2 x i32> %1264, <i32 1, i32 1>
-  %1266 = icmp eq <2 x i32> %1265, zeroinitializer
-  %1267 = extractelement <2 x i1> %1266, i64 0
-  %1268 = extractelement <2 x i1> %1266, i64 1
-  %1269 = select i1 %1268, i1 true, i1 %1267
-  %1270 = add nsw i32 %1263, 256
-  %1271 = select i1 %1269, i32 %1263, i32 %1270
-  %1272 = sdiv <2 x i32> %1201, <i32 512, i32 512>
-  %1273 = and <2 x i32> %1272, <i32 1, i32 1>
-  %1274 = icmp eq <2 x i32> %1273, zeroinitializer
-  %1275 = extractelement <2 x i1> %1274, i64 0
-  %1276 = extractelement <2 x i1> %1274, i64 1
-  %1277 = select i1 %1276, i1 true, i1 %1275
-  %1278 = add nsw i32 %1271, 512
-  %1279 = select i1 %1277, i32 %1271, i32 %1278
-  %1280 = sdiv <2 x i32> %1201, <i32 1024, i32 1024>
-  %1281 = and <2 x i32> %1280, <i32 1, i32 1>
-  %1282 = icmp eq <2 x i32> %1281, zeroinitializer
-  %1283 = extractelement <2 x i1> %1282, i64 0
-  %1284 = extractelement <2 x i1> %1282, i64 1
-  %1285 = select i1 %1284, i1 true, i1 %1283
-  %1286 = add nsw i32 %1279, 1024
-  %1287 = select i1 %1285, i32 %1279, i32 %1286
-  %1288 = sdiv <2 x i32> %1201, <i32 2048, i32 2048>
-  %1289 = and <2 x i32> %1288, <i32 1, i32 1>
-  %1290 = icmp eq <2 x i32> %1289, zeroinitializer
-  %1291 = extractelement <2 x i1> %1290, i64 0
-  %1292 = extractelement <2 x i1> %1290, i64 1
-  %1293 = select i1 %1292, i1 true, i1 %1291
-  %1294 = add nsw i32 %1287, 2048
-  %1295 = select i1 %1293, i32 %1287, i32 %1294
-  %1296 = sdiv <2 x i32> %1201, <i32 4096, i32 4096>
-  %1297 = and <2 x i32> %1296, <i32 1, i32 1>
-  %1298 = icmp eq <2 x i32> %1297, zeroinitializer
-  %1299 = extractelement <2 x i1> %1298, i64 0
-  %1300 = extractelement <2 x i1> %1298, i64 1
-  %1301 = select i1 %1300, i1 true, i1 %1299
-  %1302 = add nsw i32 %1295, 4096
-  %1303 = select i1 %1301, i32 %1295, i32 %1302
-  %1304 = sdiv <2 x i32> %1201, <i32 8192, i32 8192>
-  %1305 = and <2 x i32> %1304, <i32 1, i32 1>
-  %1306 = icmp eq <2 x i32> %1305, zeroinitializer
-  %1307 = extractelement <2 x i1> %1306, i64 0
-  %1308 = extractelement <2 x i1> %1306, i64 1
-  %1309 = select i1 %1308, i1 true, i1 %1307
-  %1310 = add nsw i32 %1303, 8192
-  %1311 = select i1 %1309, i32 %1303, i32 %1310
-  %1312 = sdiv <2 x i32> %1201, <i32 16384, i32 16384>
-  %1313 = and <2 x i32> %1312, <i32 1, i32 1>
-  %1314 = icmp eq <2 x i32> %1313, zeroinitializer
-  %1315 = extractelement <2 x i1> %1314, i64 0
-  %1316 = extractelement <2 x i1> %1314, i64 1
-  %1317 = select i1 %1316, i1 true, i1 %1315
-  %1318 = add nsw i32 %1311, 16384
-  %1319 = select i1 %1317, i32 %1311, i32 %1318
-  %1320 = sdiv <2 x i32> %1201, <i32 32768, i32 32768>
-  %1321 = and <2 x i32> %1320, <i32 1, i32 1>
-  %1322 = icmp eq <2 x i32> %1321, zeroinitializer
-  %1323 = extractelement <2 x i1> %1322, i64 0
-  %1324 = extractelement <2 x i1> %1322, i64 1
-  %1325 = select i1 %1324, i1 true, i1 %1323
-  %1326 = add nsw i32 %1319, 32768
-  %1327 = select i1 %1325, i32 %1319, i32 %1326
-  %1328 = icmp eq i32 %1327, 0
-  br i1 %1328, label %1329, label %1155, !llvm.loop !36
-
-1329:                                             ; preds = %1199, %1147
-  %1330 = phi i32 [ %1148, %1147 ], [ %1174, %1199 ]
-  br i1 %1153, label %1505, label %1331
-
-1331:                                             ; preds = %1329, %1375
-  %1332 = phi i32 [ %1503, %1375 ], [ %1150, %1329 ]
-  %1333 = phi i32 [ %1350, %1375 ], [ %1150, %1329 ]
-  br label %1334
-
-1334:                                             ; preds = %1331, %1349
-  %1335 = phi i64 [ 0, %1331 ], [ %1353, %1349 ]
-  %1336 = phi i32 [ 0, %1331 ], [ %1350, %1349 ]
-  %1337 = phi i32 [ %1333, %1331 ], [ %1351, %1349 ]
-  %1338 = phi i32 [ %1332, %1331 ], [ %1352, %1349 ]
-  %1339 = and i32 %1337, 1
-  %1340 = icmp eq i32 %1339, 0
-  %1341 = and i32 %1338, 1
-  %1342 = icmp eq i32 %1341, 0
-  br i1 %1340, label %1344, label %1343
-
-1343:                                             ; preds = %1334
-  br i1 %1342, label %1345, label %1349
-
-1344:                                             ; preds = %1334
-  br i1 %1342, label %1349, label %1345
-
-1345:                                             ; preds = %1344, %1343
-  %1346 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1335
-  %1347 = load i32, i32* %1346, align 4, !tbaa !5
-  %1348 = add nsw i32 %1347, %1336
-  br label %1349
-
-1349:                                             ; preds = %1345, %1344, %1343
-  %1350 = phi i32 [ %1336, %1343 ], [ %1336, %1344 ], [ %1348, %1345 ]
-  %1351 = sdiv i32 %1337, 2
-  %1352 = sdiv i32 %1338, 2
-  %1353 = add nuw nsw i64 %1335, 1
-  %1354 = icmp eq i64 %1353, 16
-  br i1 %1354, label %1355, label %1334, !llvm.loop !37
-
-1355:                                             ; preds = %1349, %1369
-  %1356 = phi i64 [ %1373, %1369 ], [ 0, %1349 ]
-  %1357 = phi i32 [ %1370, %1369 ], [ 0, %1349 ]
-  %1358 = phi i32 [ %1371, %1369 ], [ %1333, %1349 ]
-  %1359 = phi i32 [ %1372, %1369 ], [ %1332, %1349 ]
-  %1360 = and i32 %1358, 1
-  %1361 = icmp eq i32 %1360, 0
-  %1362 = and i32 %1359, 1
-  %1363 = icmp eq i32 %1362, 0
-  %1364 = select i1 %1361, i1 true, i1 %1363
-  br i1 %1364, label %1369, label %1365
-
-1365:                                             ; preds = %1355
-  %1366 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1356
-  %1367 = load i32, i32* %1366, align 4, !tbaa !5
-  %1368 = add nsw i32 %1367, %1357
-  br label %1369
-
-1369:                                             ; preds = %1365, %1355
-  %1370 = phi i32 [ %1368, %1365 ], [ %1357, %1355 ]
-  %1371 = sdiv i32 %1358, 2
-  %1372 = sdiv i32 %1359, 2
-  %1373 = add nuw nsw i64 %1356, 1
-  %1374 = icmp eq i64 %1373, 16
-  br i1 %1374, label %1375, label %1355, !llvm.loop !38
-
-1375:                                             ; preds = %1369
-  %1376 = shl nsw i32 %1370, 1
-  %1377 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %1376, i64 1
-  %1378 = and <2 x i32> %1377, <i32 1, i32 1>
-  %1379 = icmp eq <2 x i32> %1378, zeroinitializer
-  %1380 = extractelement <2 x i1> %1379, i64 0
-  %1381 = extractelement <2 x i1> %1379, i64 1
-  %1382 = select i1 %1381, i1 true, i1 %1380
-  %1383 = select i1 %1382, i32 0, i32 1
-  %1384 = sdiv <2 x i32> %1377, <i32 2, i32 2>
-  %1385 = and <2 x i32> %1384, <i32 1, i32 1>
-  %1386 = icmp eq <2 x i32> %1385, zeroinitializer
-  %1387 = extractelement <2 x i1> %1386, i64 0
-  %1388 = extractelement <2 x i1> %1386, i64 1
-  %1389 = select i1 %1388, i1 true, i1 %1387
-  %1390 = or i32 %1383, 2
-  %1391 = select i1 %1389, i32 %1383, i32 %1390
-  %1392 = sdiv <2 x i32> %1377, <i32 4, i32 4>
-  %1393 = and <2 x i32> %1392, <i32 1, i32 1>
-  %1394 = icmp eq <2 x i32> %1393, zeroinitializer
-  %1395 = extractelement <2 x i1> %1394, i64 0
-  %1396 = extractelement <2 x i1> %1394, i64 1
-  %1397 = select i1 %1396, i1 true, i1 %1395
-  %1398 = add nsw i32 %1391, 4
-  %1399 = select i1 %1397, i32 %1391, i32 %1398
-  %1400 = sdiv <2 x i32> %1377, <i32 8, i32 8>
-  %1401 = and <2 x i32> %1400, <i32 1, i32 1>
-  %1402 = icmp eq <2 x i32> %1401, zeroinitializer
-  %1403 = extractelement <2 x i1> %1402, i64 0
-  %1404 = extractelement <2 x i1> %1402, i64 1
-  %1405 = select i1 %1404, i1 true, i1 %1403
-  %1406 = add nsw i32 %1399, 8
-  %1407 = select i1 %1405, i32 %1399, i32 %1406
-  %1408 = sdiv <2 x i32> %1377, <i32 16, i32 16>
-  %1409 = and <2 x i32> %1408, <i32 1, i32 1>
-  %1410 = icmp eq <2 x i32> %1409, zeroinitializer
-  %1411 = extractelement <2 x i1> %1410, i64 0
-  %1412 = extractelement <2 x i1> %1410, i64 1
-  %1413 = select i1 %1412, i1 true, i1 %1411
-  %1414 = add nsw i32 %1407, 16
-  %1415 = select i1 %1413, i32 %1407, i32 %1414
-  %1416 = sdiv <2 x i32> %1377, <i32 32, i32 32>
-  %1417 = and <2 x i32> %1416, <i32 1, i32 1>
-  %1418 = icmp eq <2 x i32> %1417, zeroinitializer
-  %1419 = extractelement <2 x i1> %1418, i64 0
-  %1420 = extractelement <2 x i1> %1418, i64 1
-  %1421 = select i1 %1420, i1 true, i1 %1419
-  %1422 = add nsw i32 %1415, 32
-  %1423 = select i1 %1421, i32 %1415, i32 %1422
-  %1424 = sdiv <2 x i32> %1377, <i32 64, i32 64>
-  %1425 = and <2 x i32> %1424, <i32 1, i32 1>
-  %1426 = icmp eq <2 x i32> %1425, zeroinitializer
-  %1427 = extractelement <2 x i1> %1426, i64 0
-  %1428 = extractelement <2 x i1> %1426, i64 1
-  %1429 = select i1 %1428, i1 true, i1 %1427
-  %1430 = add nsw i32 %1423, 64
-  %1431 = select i1 %1429, i32 %1423, i32 %1430
-  %1432 = sdiv <2 x i32> %1377, <i32 128, i32 128>
-  %1433 = and <2 x i32> %1432, <i32 1, i32 1>
-  %1434 = icmp eq <2 x i32> %1433, zeroinitializer
-  %1435 = extractelement <2 x i1> %1434, i64 0
-  %1436 = extractelement <2 x i1> %1434, i64 1
-  %1437 = select i1 %1436, i1 true, i1 %1435
-  %1438 = add nsw i32 %1431, 128
-  %1439 = select i1 %1437, i32 %1431, i32 %1438
-  %1440 = sdiv <2 x i32> %1377, <i32 256, i32 256>
-  %1441 = and <2 x i32> %1440, <i32 1, i32 1>
-  %1442 = icmp eq <2 x i32> %1441, zeroinitializer
-  %1443 = extractelement <2 x i1> %1442, i64 0
-  %1444 = extractelement <2 x i1> %1442, i64 1
-  %1445 = select i1 %1444, i1 true, i1 %1443
-  %1446 = add nsw i32 %1439, 256
-  %1447 = select i1 %1445, i32 %1439, i32 %1446
-  %1448 = sdiv <2 x i32> %1377, <i32 512, i32 512>
-  %1449 = and <2 x i32> %1448, <i32 1, i32 1>
-  %1450 = icmp eq <2 x i32> %1449, zeroinitializer
-  %1451 = extractelement <2 x i1> %1450, i64 0
-  %1452 = extractelement <2 x i1> %1450, i64 1
-  %1453 = select i1 %1452, i1 true, i1 %1451
-  %1454 = add nsw i32 %1447, 512
-  %1455 = select i1 %1453, i32 %1447, i32 %1454
-  %1456 = sdiv <2 x i32> %1377, <i32 1024, i32 1024>
-  %1457 = and <2 x i32> %1456, <i32 1, i32 1>
-  %1458 = icmp eq <2 x i32> %1457, zeroinitializer
-  %1459 = extractelement <2 x i1> %1458, i64 0
-  %1460 = extractelement <2 x i1> %1458, i64 1
-  %1461 = select i1 %1460, i1 true, i1 %1459
-  %1462 = add nsw i32 %1455, 1024
-  %1463 = select i1 %1461, i32 %1455, i32 %1462
-  %1464 = sdiv <2 x i32> %1377, <i32 2048, i32 2048>
-  %1465 = and <2 x i32> %1464, <i32 1, i32 1>
-  %1466 = icmp eq <2 x i32> %1465, zeroinitializer
-  %1467 = extractelement <2 x i1> %1466, i64 0
-  %1468 = extractelement <2 x i1> %1466, i64 1
-  %1469 = select i1 %1468, i1 true, i1 %1467
-  %1470 = add nsw i32 %1463, 2048
-  %1471 = select i1 %1469, i32 %1463, i32 %1470
-  %1472 = sdiv <2 x i32> %1377, <i32 4096, i32 4096>
-  %1473 = and <2 x i32> %1472, <i32 1, i32 1>
-  %1474 = icmp eq <2 x i32> %1473, zeroinitializer
-  %1475 = extractelement <2 x i1> %1474, i64 0
-  %1476 = extractelement <2 x i1> %1474, i64 1
-  %1477 = select i1 %1476, i1 true, i1 %1475
-  %1478 = add nsw i32 %1471, 4096
-  %1479 = select i1 %1477, i32 %1471, i32 %1478
-  %1480 = sdiv <2 x i32> %1377, <i32 8192, i32 8192>
-  %1481 = and <2 x i32> %1480, <i32 1, i32 1>
-  %1482 = icmp eq <2 x i32> %1481, zeroinitializer
-  %1483 = extractelement <2 x i1> %1482, i64 0
-  %1484 = extractelement <2 x i1> %1482, i64 1
-  %1485 = select i1 %1484, i1 true, i1 %1483
-  %1486 = add nsw i32 %1479, 8192
-  %1487 = select i1 %1485, i32 %1479, i32 %1486
-  %1488 = sdiv <2 x i32> %1377, <i32 16384, i32 16384>
-  %1489 = and <2 x i32> %1488, <i32 1, i32 1>
-  %1490 = icmp eq <2 x i32> %1489, zeroinitializer
-  %1491 = extractelement <2 x i1> %1490, i64 0
-  %1492 = extractelement <2 x i1> %1490, i64 1
-  %1493 = select i1 %1492, i1 true, i1 %1491
-  %1494 = add nsw i32 %1487, 16384
-  %1495 = select i1 %1493, i32 %1487, i32 %1494
-  %1496 = sdiv <2 x i32> %1377, <i32 32768, i32 32768>
-  %1497 = and <2 x i32> %1496, <i32 1, i32 1>
-  %1498 = icmp eq <2 x i32> %1497, zeroinitializer
-  %1499 = extractelement <2 x i1> %1498, i64 0
-  %1500 = extractelement <2 x i1> %1498, i64 1
-  %1501 = select i1 %1500, i1 true, i1 %1499
-  %1502 = add nsw i32 %1495, 32768
-  %1503 = select i1 %1501, i32 %1495, i32 %1502
-  %1504 = icmp eq i32 %1503, 0
-  br i1 %1504, label %1505, label %1331, !llvm.loop !39
-
-1505:                                             ; preds = %1375, %1329
-  %1506 = phi i32 [ 0, %1329 ], [ %1350, %1375 ]
-  %1507 = icmp sgt i32 %1149, 32767
-  br i1 %1507, label %1508, label %1511
-
-1508:                                             ; preds = %1505
-  %1509 = lshr i32 %1149, 1
-  %1510 = add nuw nsw i32 %1509, 32768
-  br label %1513
-
-1511:                                             ; preds = %1505
-  %1512 = sdiv i32 %1149, 2
-  br label %1513
-
-1513:                                             ; preds = %1511, %1508
-  %1514 = phi i32 [ %1510, %1508 ], [ %1512, %1511 ]
-  %1515 = icmp eq i32 %1514, 0
-  br i1 %1515, label %1516, label %1147, !llvm.loop !40
-
-1516:                                             ; preds = %1513, %1139
-  %1517 = phi i32 [ %1140, %1139 ], [ %1330, %1513 ]
-  %1518 = icmp eq i32 %1142, 0
-  br i1 %1518, label %1888, label %1519
-
-1519:                                             ; preds = %1516, %1885
-  %1520 = phi i32 [ %1702, %1885 ], [ 0, %1516 ]
-  %1521 = phi i32 [ %1886, %1885 ], [ %1142, %1516 ]
-  %1522 = phi i32 [ %1878, %1885 ], [ %1142, %1516 ]
-  %1523 = and i32 %1521, 1
-  %1524 = icmp eq i32 %1523, 0
-  %1525 = icmp eq i32 %1522, 0
-  %1526 = select i1 %1524, i1 true, i1 %1525
-  br i1 %1526, label %1701, label %1527
-
-1527:                                             ; preds = %1519, %1571
-  %1528 = phi i32 [ %1699, %1571 ], [ %1522, %1519 ]
-  %1529 = phi i32 [ %1546, %1571 ], [ %1520, %1519 ]
-  br label %1530
-
-1530:                                             ; preds = %1527, %1545
-  %1531 = phi i64 [ 0, %1527 ], [ %1549, %1545 ]
-  %1532 = phi i32 [ 0, %1527 ], [ %1546, %1545 ]
-  %1533 = phi i32 [ %1529, %1527 ], [ %1547, %1545 ]
-  %1534 = phi i32 [ %1528, %1527 ], [ %1548, %1545 ]
-  %1535 = and i32 %1533, 1
-  %1536 = icmp eq i32 %1535, 0
-  %1537 = and i32 %1534, 1
-  %1538 = icmp eq i32 %1537, 0
-  br i1 %1536, label %1540, label %1539
-
-1539:                                             ; preds = %1530
-  br i1 %1538, label %1541, label %1545
-
-1540:                                             ; preds = %1530
-  br i1 %1538, label %1545, label %1541
-
-1541:                                             ; preds = %1540, %1539
-  %1542 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1531
-  %1543 = load i32, i32* %1542, align 4, !tbaa !5
-  %1544 = add nsw i32 %1543, %1532
-  br label %1545
-
-1545:                                             ; preds = %1541, %1540, %1539
-  %1546 = phi i32 [ %1532, %1539 ], [ %1532, %1540 ], [ %1544, %1541 ]
-  %1547 = sdiv i32 %1533, 2
-  %1548 = sdiv i32 %1534, 2
-  %1549 = add nuw nsw i64 %1531, 1
-  %1550 = icmp eq i64 %1549, 16
-  br i1 %1550, label %1551, label %1530, !llvm.loop !41
-
-1551:                                             ; preds = %1545, %1565
-  %1552 = phi i64 [ %1569, %1565 ], [ 0, %1545 ]
-  %1553 = phi i32 [ %1566, %1565 ], [ 0, %1545 ]
-  %1554 = phi i32 [ %1567, %1565 ], [ %1529, %1545 ]
-  %1555 = phi i32 [ %1568, %1565 ], [ %1528, %1545 ]
-  %1556 = and i32 %1554, 1
-  %1557 = icmp eq i32 %1556, 0
-  %1558 = and i32 %1555, 1
-  %1559 = icmp eq i32 %1558, 0
-  %1560 = select i1 %1557, i1 true, i1 %1559
-  br i1 %1560, label %1565, label %1561
-
-1561:                                             ; preds = %1551
-  %1562 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1552
-  %1563 = load i32, i32* %1562, align 4, !tbaa !5
-  %1564 = add nsw i32 %1563, %1553
-  br label %1565
-
-1565:                                             ; preds = %1561, %1551
-  %1566 = phi i32 [ %1564, %1561 ], [ %1553, %1551 ]
-  %1567 = sdiv i32 %1554, 2
-  %1568 = sdiv i32 %1555, 2
-  %1569 = add nuw nsw i64 %1552, 1
-  %1570 = icmp eq i64 %1569, 16
-  br i1 %1570, label %1571, label %1551, !llvm.loop !42
-
-1571:                                             ; preds = %1565
-  %1572 = shl nsw i32 %1566, 1
-  %1573 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %1572, i64 1
-  %1574 = and <2 x i32> %1573, <i32 1, i32 1>
-  %1575 = icmp eq <2 x i32> %1574, zeroinitializer
-  %1576 = extractelement <2 x i1> %1575, i64 0
-  %1577 = extractelement <2 x i1> %1575, i64 1
-  %1578 = select i1 %1577, i1 true, i1 %1576
-  %1579 = select i1 %1578, i32 0, i32 1
-  %1580 = sdiv <2 x i32> %1573, <i32 2, i32 2>
-  %1581 = and <2 x i32> %1580, <i32 1, i32 1>
-  %1582 = icmp eq <2 x i32> %1581, zeroinitializer
-  %1583 = extractelement <2 x i1> %1582, i64 0
-  %1584 = extractelement <2 x i1> %1582, i64 1
-  %1585 = select i1 %1584, i1 true, i1 %1583
-  %1586 = or i32 %1579, 2
-  %1587 = select i1 %1585, i32 %1579, i32 %1586
-  %1588 = sdiv <2 x i32> %1573, <i32 4, i32 4>
-  %1589 = and <2 x i32> %1588, <i32 1, i32 1>
-  %1590 = icmp eq <2 x i32> %1589, zeroinitializer
-  %1591 = extractelement <2 x i1> %1590, i64 0
-  %1592 = extractelement <2 x i1> %1590, i64 1
-  %1593 = select i1 %1592, i1 true, i1 %1591
-  %1594 = add nsw i32 %1587, 4
-  %1595 = select i1 %1593, i32 %1587, i32 %1594
-  %1596 = sdiv <2 x i32> %1573, <i32 8, i32 8>
-  %1597 = and <2 x i32> %1596, <i32 1, i32 1>
-  %1598 = icmp eq <2 x i32> %1597, zeroinitializer
-  %1599 = extractelement <2 x i1> %1598, i64 0
-  %1600 = extractelement <2 x i1> %1598, i64 1
-  %1601 = select i1 %1600, i1 true, i1 %1599
-  %1602 = add nsw i32 %1595, 8
-  %1603 = select i1 %1601, i32 %1595, i32 %1602
-  %1604 = sdiv <2 x i32> %1573, <i32 16, i32 16>
-  %1605 = and <2 x i32> %1604, <i32 1, i32 1>
-  %1606 = icmp eq <2 x i32> %1605, zeroinitializer
-  %1607 = extractelement <2 x i1> %1606, i64 0
-  %1608 = extractelement <2 x i1> %1606, i64 1
-  %1609 = select i1 %1608, i1 true, i1 %1607
-  %1610 = add nsw i32 %1603, 16
-  %1611 = select i1 %1609, i32 %1603, i32 %1610
-  %1612 = sdiv <2 x i32> %1573, <i32 32, i32 32>
-  %1613 = and <2 x i32> %1612, <i32 1, i32 1>
-  %1614 = icmp eq <2 x i32> %1613, zeroinitializer
-  %1615 = extractelement <2 x i1> %1614, i64 0
-  %1616 = extractelement <2 x i1> %1614, i64 1
-  %1617 = select i1 %1616, i1 true, i1 %1615
-  %1618 = add nsw i32 %1611, 32
-  %1619 = select i1 %1617, i32 %1611, i32 %1618
-  %1620 = sdiv <2 x i32> %1573, <i32 64, i32 64>
-  %1621 = and <2 x i32> %1620, <i32 1, i32 1>
-  %1622 = icmp eq <2 x i32> %1621, zeroinitializer
-  %1623 = extractelement <2 x i1> %1622, i64 0
-  %1624 = extractelement <2 x i1> %1622, i64 1
-  %1625 = select i1 %1624, i1 true, i1 %1623
-  %1626 = add nsw i32 %1619, 64
-  %1627 = select i1 %1625, i32 %1619, i32 %1626
-  %1628 = sdiv <2 x i32> %1573, <i32 128, i32 128>
-  %1629 = and <2 x i32> %1628, <i32 1, i32 1>
-  %1630 = icmp eq <2 x i32> %1629, zeroinitializer
-  %1631 = extractelement <2 x i1> %1630, i64 0
-  %1632 = extractelement <2 x i1> %1630, i64 1
-  %1633 = select i1 %1632, i1 true, i1 %1631
-  %1634 = add nsw i32 %1627, 128
-  %1635 = select i1 %1633, i32 %1627, i32 %1634
-  %1636 = sdiv <2 x i32> %1573, <i32 256, i32 256>
-  %1637 = and <2 x i32> %1636, <i32 1, i32 1>
-  %1638 = icmp eq <2 x i32> %1637, zeroinitializer
-  %1639 = extractelement <2 x i1> %1638, i64 0
-  %1640 = extractelement <2 x i1> %1638, i64 1
-  %1641 = select i1 %1640, i1 true, i1 %1639
-  %1642 = add nsw i32 %1635, 256
-  %1643 = select i1 %1641, i32 %1635, i32 %1642
-  %1644 = sdiv <2 x i32> %1573, <i32 512, i32 512>
-  %1645 = and <2 x i32> %1644, <i32 1, i32 1>
-  %1646 = icmp eq <2 x i32> %1645, zeroinitializer
-  %1647 = extractelement <2 x i1> %1646, i64 0
-  %1648 = extractelement <2 x i1> %1646, i64 1
-  %1649 = select i1 %1648, i1 true, i1 %1647
-  %1650 = add nsw i32 %1643, 512
-  %1651 = select i1 %1649, i32 %1643, i32 %1650
-  %1652 = sdiv <2 x i32> %1573, <i32 1024, i32 1024>
-  %1653 = and <2 x i32> %1652, <i32 1, i32 1>
-  %1654 = icmp eq <2 x i32> %1653, zeroinitializer
-  %1655 = extractelement <2 x i1> %1654, i64 0
-  %1656 = extractelement <2 x i1> %1654, i64 1
-  %1657 = select i1 %1656, i1 true, i1 %1655
-  %1658 = add nsw i32 %1651, 1024
-  %1659 = select i1 %1657, i32 %1651, i32 %1658
-  %1660 = sdiv <2 x i32> %1573, <i32 2048, i32 2048>
-  %1661 = and <2 x i32> %1660, <i32 1, i32 1>
-  %1662 = icmp eq <2 x i32> %1661, zeroinitializer
-  %1663 = extractelement <2 x i1> %1662, i64 0
-  %1664 = extractelement <2 x i1> %1662, i64 1
-  %1665 = select i1 %1664, i1 true, i1 %1663
-  %1666 = add nsw i32 %1659, 2048
-  %1667 = select i1 %1665, i32 %1659, i32 %1666
-  %1668 = sdiv <2 x i32> %1573, <i32 4096, i32 4096>
-  %1669 = and <2 x i32> %1668, <i32 1, i32 1>
-  %1670 = icmp eq <2 x i32> %1669, zeroinitializer
-  %1671 = extractelement <2 x i1> %1670, i64 0
-  %1672 = extractelement <2 x i1> %1670, i64 1
-  %1673 = select i1 %1672, i1 true, i1 %1671
-  %1674 = add nsw i32 %1667, 4096
-  %1675 = select i1 %1673, i32 %1667, i32 %1674
-  %1676 = sdiv <2 x i32> %1573, <i32 8192, i32 8192>
-  %1677 = and <2 x i32> %1676, <i32 1, i32 1>
-  %1678 = icmp eq <2 x i32> %1677, zeroinitializer
-  %1679 = extractelement <2 x i1> %1678, i64 0
-  %1680 = extractelement <2 x i1> %1678, i64 1
-  %1681 = select i1 %1680, i1 true, i1 %1679
-  %1682 = add nsw i32 %1675, 8192
-  %1683 = select i1 %1681, i32 %1675, i32 %1682
-  %1684 = sdiv <2 x i32> %1573, <i32 16384, i32 16384>
-  %1685 = and <2 x i32> %1684, <i32 1, i32 1>
-  %1686 = icmp eq <2 x i32> %1685, zeroinitializer
-  %1687 = extractelement <2 x i1> %1686, i64 0
-  %1688 = extractelement <2 x i1> %1686, i64 1
-  %1689 = select i1 %1688, i1 true, i1 %1687
-  %1690 = add nsw i32 %1683, 16384
-  %1691 = select i1 %1689, i32 %1683, i32 %1690
-  %1692 = sdiv <2 x i32> %1573, <i32 32768, i32 32768>
-  %1693 = and <2 x i32> %1692, <i32 1, i32 1>
-  %1694 = icmp eq <2 x i32> %1693, zeroinitializer
-  %1695 = extractelement <2 x i1> %1694, i64 0
-  %1696 = extractelement <2 x i1> %1694, i64 1
-  %1697 = select i1 %1696, i1 true, i1 %1695
-  %1698 = add nsw i32 %1691, 32768
-  %1699 = select i1 %1697, i32 %1691, i32 %1698
-  %1700 = icmp eq i32 %1699, 0
-  br i1 %1700, label %1701, label %1527, !llvm.loop !43
-
-1701:                                             ; preds = %1571, %1519
-  %1702 = phi i32 [ %1520, %1519 ], [ %1546, %1571 ]
-  br i1 %1525, label %1877, label %1703
-
-1703:                                             ; preds = %1701, %1747
-  %1704 = phi i32 [ %1875, %1747 ], [ %1522, %1701 ]
-  %1705 = phi i32 [ %1722, %1747 ], [ %1522, %1701 ]
-  br label %1706
-
-1706:                                             ; preds = %1703, %1721
-  %1707 = phi i64 [ 0, %1703 ], [ %1725, %1721 ]
-  %1708 = phi i32 [ 0, %1703 ], [ %1722, %1721 ]
-  %1709 = phi i32 [ %1705, %1703 ], [ %1723, %1721 ]
-  %1710 = phi i32 [ %1704, %1703 ], [ %1724, %1721 ]
-  %1711 = and i32 %1709, 1
-  %1712 = icmp eq i32 %1711, 0
-  %1713 = and i32 %1710, 1
-  %1714 = icmp eq i32 %1713, 0
-  br i1 %1712, label %1716, label %1715
-
-1715:                                             ; preds = %1706
-  br i1 %1714, label %1717, label %1721
-
-1716:                                             ; preds = %1706
-  br i1 %1714, label %1721, label %1717
-
-1717:                                             ; preds = %1716, %1715
-  %1718 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1707
-  %1719 = load i32, i32* %1718, align 4, !tbaa !5
-  %1720 = add nsw i32 %1719, %1708
-  br label %1721
-
-1721:                                             ; preds = %1717, %1716, %1715
-  %1722 = phi i32 [ %1708, %1715 ], [ %1708, %1716 ], [ %1720, %1717 ]
-  %1723 = sdiv i32 %1709, 2
-  %1724 = sdiv i32 %1710, 2
-  %1725 = add nuw nsw i64 %1707, 1
-  %1726 = icmp eq i64 %1725, 16
-  br i1 %1726, label %1727, label %1706, !llvm.loop !44
-
-1727:                                             ; preds = %1721, %1741
-  %1728 = phi i64 [ %1745, %1741 ], [ 0, %1721 ]
-  %1729 = phi i32 [ %1742, %1741 ], [ 0, %1721 ]
-  %1730 = phi i32 [ %1743, %1741 ], [ %1705, %1721 ]
-  %1731 = phi i32 [ %1744, %1741 ], [ %1704, %1721 ]
-  %1732 = and i32 %1730, 1
-  %1733 = icmp eq i32 %1732, 0
-  %1734 = and i32 %1731, 1
-  %1735 = icmp eq i32 %1734, 0
-  %1736 = select i1 %1733, i1 true, i1 %1735
-  br i1 %1736, label %1741, label %1737
-
-1737:                                             ; preds = %1727
-  %1738 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1728
-  %1739 = load i32, i32* %1738, align 4, !tbaa !5
-  %1740 = add nsw i32 %1739, %1729
-  br label %1741
-
-1741:                                             ; preds = %1737, %1727
-  %1742 = phi i32 [ %1740, %1737 ], [ %1729, %1727 ]
-  %1743 = sdiv i32 %1730, 2
-  %1744 = sdiv i32 %1731, 2
-  %1745 = add nuw nsw i64 %1728, 1
-  %1746 = icmp eq i64 %1745, 16
-  br i1 %1746, label %1747, label %1727, !llvm.loop !45
-
-1747:                                             ; preds = %1741
-  %1748 = shl nsw i32 %1742, 1
-  %1749 = insertelement <2 x i32> <i32 65535, i32 poison>, i32 %1748, i64 1
-  %1750 = and <2 x i32> %1749, <i32 1, i32 1>
-  %1751 = icmp eq <2 x i32> %1750, zeroinitializer
-  %1752 = extractelement <2 x i1> %1751, i64 0
-  %1753 = extractelement <2 x i1> %1751, i64 1
-  %1754 = select i1 %1753, i1 true, i1 %1752
-  %1755 = select i1 %1754, i32 0, i32 1
-  %1756 = sdiv <2 x i32> %1749, <i32 2, i32 2>
-  %1757 = and <2 x i32> %1756, <i32 1, i32 1>
-  %1758 = icmp eq <2 x i32> %1757, zeroinitializer
-  %1759 = extractelement <2 x i1> %1758, i64 0
-  %1760 = extractelement <2 x i1> %1758, i64 1
-  %1761 = select i1 %1760, i1 true, i1 %1759
-  %1762 = or i32 %1755, 2
-  %1763 = select i1 %1761, i32 %1755, i32 %1762
-  %1764 = sdiv <2 x i32> %1749, <i32 4, i32 4>
-  %1765 = and <2 x i32> %1764, <i32 1, i32 1>
-  %1766 = icmp eq <2 x i32> %1765, zeroinitializer
-  %1767 = extractelement <2 x i1> %1766, i64 0
-  %1768 = extractelement <2 x i1> %1766, i64 1
-  %1769 = select i1 %1768, i1 true, i1 %1767
-  %1770 = add nsw i32 %1763, 4
-  %1771 = select i1 %1769, i32 %1763, i32 %1770
-  %1772 = sdiv <2 x i32> %1749, <i32 8, i32 8>
-  %1773 = and <2 x i32> %1772, <i32 1, i32 1>
-  %1774 = icmp eq <2 x i32> %1773, zeroinitializer
-  %1775 = extractelement <2 x i1> %1774, i64 0
-  %1776 = extractelement <2 x i1> %1774, i64 1
-  %1777 = select i1 %1776, i1 true, i1 %1775
-  %1778 = add nsw i32 %1771, 8
-  %1779 = select i1 %1777, i32 %1771, i32 %1778
-  %1780 = sdiv <2 x i32> %1749, <i32 16, i32 16>
-  %1781 = and <2 x i32> %1780, <i32 1, i32 1>
-  %1782 = icmp eq <2 x i32> %1781, zeroinitializer
-  %1783 = extractelement <2 x i1> %1782, i64 0
-  %1784 = extractelement <2 x i1> %1782, i64 1
-  %1785 = select i1 %1784, i1 true, i1 %1783
-  %1786 = add nsw i32 %1779, 16
-  %1787 = select i1 %1785, i32 %1779, i32 %1786
-  %1788 = sdiv <2 x i32> %1749, <i32 32, i32 32>
-  %1789 = and <2 x i32> %1788, <i32 1, i32 1>
-  %1790 = icmp eq <2 x i32> %1789, zeroinitializer
-  %1791 = extractelement <2 x i1> %1790, i64 0
-  %1792 = extractelement <2 x i1> %1790, i64 1
-  %1793 = select i1 %1792, i1 true, i1 %1791
-  %1794 = add nsw i32 %1787, 32
-  %1795 = select i1 %1793, i32 %1787, i32 %1794
-  %1796 = sdiv <2 x i32> %1749, <i32 64, i32 64>
-  %1797 = and <2 x i32> %1796, <i32 1, i32 1>
-  %1798 = icmp eq <2 x i32> %1797, zeroinitializer
-  %1799 = extractelement <2 x i1> %1798, i64 0
-  %1800 = extractelement <2 x i1> %1798, i64 1
-  %1801 = select i1 %1800, i1 true, i1 %1799
-  %1802 = add nsw i32 %1795, 64
-  %1803 = select i1 %1801, i32 %1795, i32 %1802
-  %1804 = sdiv <2 x i32> %1749, <i32 128, i32 128>
-  %1805 = and <2 x i32> %1804, <i32 1, i32 1>
-  %1806 = icmp eq <2 x i32> %1805, zeroinitializer
-  %1807 = extractelement <2 x i1> %1806, i64 0
-  %1808 = extractelement <2 x i1> %1806, i64 1
-  %1809 = select i1 %1808, i1 true, i1 %1807
-  %1810 = add nsw i32 %1803, 128
-  %1811 = select i1 %1809, i32 %1803, i32 %1810
-  %1812 = sdiv <2 x i32> %1749, <i32 256, i32 256>
-  %1813 = and <2 x i32> %1812, <i32 1, i32 1>
-  %1814 = icmp eq <2 x i32> %1813, zeroinitializer
-  %1815 = extractelement <2 x i1> %1814, i64 0
-  %1816 = extractelement <2 x i1> %1814, i64 1
-  %1817 = select i1 %1816, i1 true, i1 %1815
-  %1818 = add nsw i32 %1811, 256
-  %1819 = select i1 %1817, i32 %1811, i32 %1818
-  %1820 = sdiv <2 x i32> %1749, <i32 512, i32 512>
-  %1821 = and <2 x i32> %1820, <i32 1, i32 1>
-  %1822 = icmp eq <2 x i32> %1821, zeroinitializer
-  %1823 = extractelement <2 x i1> %1822, i64 0
-  %1824 = extractelement <2 x i1> %1822, i64 1
-  %1825 = select i1 %1824, i1 true, i1 %1823
-  %1826 = add nsw i32 %1819, 512
-  %1827 = select i1 %1825, i32 %1819, i32 %1826
-  %1828 = sdiv <2 x i32> %1749, <i32 1024, i32 1024>
-  %1829 = and <2 x i32> %1828, <i32 1, i32 1>
-  %1830 = icmp eq <2 x i32> %1829, zeroinitializer
-  %1831 = extractelement <2 x i1> %1830, i64 0
-  %1832 = extractelement <2 x i1> %1830, i64 1
-  %1833 = select i1 %1832, i1 true, i1 %1831
-  %1834 = add nsw i32 %1827, 1024
-  %1835 = select i1 %1833, i32 %1827, i32 %1834
-  %1836 = sdiv <2 x i32> %1749, <i32 2048, i32 2048>
-  %1837 = and <2 x i32> %1836, <i32 1, i32 1>
-  %1838 = icmp eq <2 x i32> %1837, zeroinitializer
-  %1839 = extractelement <2 x i1> %1838, i64 0
-  %1840 = extractelement <2 x i1> %1838, i64 1
-  %1841 = select i1 %1840, i1 true, i1 %1839
-  %1842 = add nsw i32 %1835, 2048
-  %1843 = select i1 %1841, i32 %1835, i32 %1842
-  %1844 = sdiv <2 x i32> %1749, <i32 4096, i32 4096>
-  %1845 = and <2 x i32> %1844, <i32 1, i32 1>
-  %1846 = icmp eq <2 x i32> %1845, zeroinitializer
-  %1847 = extractelement <2 x i1> %1846, i64 0
-  %1848 = extractelement <2 x i1> %1846, i64 1
-  %1849 = select i1 %1848, i1 true, i1 %1847
-  %1850 = add nsw i32 %1843, 4096
-  %1851 = select i1 %1849, i32 %1843, i32 %1850
-  %1852 = sdiv <2 x i32> %1749, <i32 8192, i32 8192>
-  %1853 = and <2 x i32> %1852, <i32 1, i32 1>
-  %1854 = icmp eq <2 x i32> %1853, zeroinitializer
-  %1855 = extractelement <2 x i1> %1854, i64 0
-  %1856 = extractelement <2 x i1> %1854, i64 1
-  %1857 = select i1 %1856, i1 true, i1 %1855
-  %1858 = add nsw i32 %1851, 8192
-  %1859 = select i1 %1857, i32 %1851, i32 %1858
-  %1860 = sdiv <2 x i32> %1749, <i32 16384, i32 16384>
-  %1861 = and <2 x i32> %1860, <i32 1, i32 1>
-  %1862 = icmp eq <2 x i32> %1861, zeroinitializer
-  %1863 = extractelement <2 x i1> %1862, i64 0
-  %1864 = extractelement <2 x i1> %1862, i64 1
-  %1865 = select i1 %1864, i1 true, i1 %1863
-  %1866 = add nsw i32 %1859, 16384
-  %1867 = select i1 %1865, i32 %1859, i32 %1866
-  %1868 = sdiv <2 x i32> %1749, <i32 32768, i32 32768>
-  %1869 = and <2 x i32> %1868, <i32 1, i32 1>
-  %1870 = icmp eq <2 x i32> %1869, zeroinitializer
-  %1871 = extractelement <2 x i1> %1870, i64 0
-  %1872 = extractelement <2 x i1> %1870, i64 1
-  %1873 = select i1 %1872, i1 true, i1 %1871
-  %1874 = add nsw i32 %1867, 32768
-  %1875 = select i1 %1873, i32 %1867, i32 %1874
-  %1876 = icmp eq i32 %1875, 0
-  br i1 %1876, label %1877, label %1703, !llvm.loop !46
-
-1877:                                             ; preds = %1747, %1701
-  %1878 = phi i32 [ 0, %1701 ], [ %1722, %1747 ]
-  %1879 = icmp sgt i32 %1521, 32767
-  br i1 %1879, label %1880, label %1883
-
-1880:                                             ; preds = %1877
-  %1881 = lshr i32 %1521, 1
-  %1882 = add nuw nsw i32 %1881, 32768
-  br label %1885
-
-1883:                                             ; preds = %1877
-  %1884 = sdiv i32 %1521, 2
-  br label %1885
-
-1885:                                             ; preds = %1883, %1880
-  %1886 = phi i32 [ %1882, %1880 ], [ %1884, %1883 ]
-  %1887 = icmp eq i32 %1886, 0
-  br i1 %1887, label %1888, label %1519, !llvm.loop !47
-
-1888:                                             ; preds = %1885, %1145, %1516
-  %1889 = phi i32 [ %1517, %1516 ], [ 0, %1145 ], [ %1517, %1885 ]
-  %1890 = phi i32 [ 0, %1516 ], [ 0, %1145 ], [ %1702, %1885 ]
-  %1891 = icmp sgt i32 %1141, 32767
-  br i1 %1891, label %1892, label %1895
-
-1892:                                             ; preds = %1888
-  %1893 = lshr i32 %1141, 1
-  %1894 = add nuw nsw i32 %1893, 32768
-  br label %1897
-
-1895:                                             ; preds = %1888
-  %1896 = sdiv i32 %1141, 2
-  br label %1897
-
-1897:                                             ; preds = %1895, %1892
-  %1898 = phi i32 [ %1894, %1892 ], [ %1896, %1895 ]
-  %1899 = icmp sgt i32 %1898, 0
-  br i1 %1899, label %1139, label %1900, !llvm.loop !48
-
-1900:                                             ; preds = %1897, %1134
-  %1901 = phi i32 [ 1, %1134 ], [ %1889, %1897 ]
-  %1902 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %1135
-  %1903 = load i32, i32* %1902, align 4, !tbaa !5
-  %1904 = icmp eq i32 %1903, %1901
-  br i1 %1904, label %1131, label %1905
-
-1905:                                             ; preds = %1131, %1900
-  %1906 = phi i32 [ 1, %1900 ], [ 0, %1131 ]
-  ret i32 %1906
+  %493 = add nuw nsw i32 %154, 1
+  %494 = icmp eq i32 %493, 16
+  br i1 %494, label %498, label %153, !llvm.loop !37
+
+495:                                              ; preds = %840
+  %496 = add nuw nsw i64 %499, 1
+  %497 = icmp eq i64 %496, 16
+  br i1 %497, label %845, label %498, !llvm.loop !38
+
+498:                                              ; preds = %492, %495
+  %499 = phi i64 [ %496, %495 ], [ 0, %492 ]
+  %500 = icmp eq i64 %499, 0
+  br i1 %500, label %840, label %501
+
+501:                                              ; preds = %498
+  %502 = trunc i64 %499 to i32
+  br label %503
+
+503:                                              ; preds = %501, %837
+  %504 = phi i32 [ %829, %837 ], [ 1, %501 ]
+  %505 = phi i32 [ %838, %837 ], [ %502, %501 ]
+  %506 = phi i32 [ %830, %837 ], [ 2, %501 ]
+  %507 = and i32 %505, 1
+  %508 = icmp eq i32 %507, 0
+  br i1 %508, label %668, label %509
+
+509:                                              ; preds = %503
+  %510 = icmp eq i32 %506, 0
+  br i1 %510, label %828, label %511
+
+511:                                              ; preds = %509, %665
+  %512 = phi i32 [ %588, %665 ], [ 0, %509 ]
+  %513 = phi i32 [ %666, %665 ], [ %506, %509 ]
+  %514 = phi i32 [ %658, %665 ], [ %504, %509 ]
+  %515 = and i32 %513, 1
+  %516 = icmp eq i32 %515, 0
+  %517 = icmp eq i32 %514, 0
+  %518 = select i1 %516, i1 true, i1 %517
+  br i1 %518, label %587, label %521
+
+519:                                              ; preds = %581
+  %520 = icmp eq i32 %582, 0
+  br i1 %520, label %587, label %521, !llvm.loop !39
+
+521:                                              ; preds = %511, %519
+  %522 = phi i32 [ %582, %519 ], [ %514, %511 ]
+  %523 = phi i32 [ %540, %519 ], [ %512, %511 ]
+  br label %524
+
+524:                                              ; preds = %521, %539
+  %525 = phi i64 [ 0, %521 ], [ %543, %539 ]
+  %526 = phi i32 [ 0, %521 ], [ %540, %539 ]
+  %527 = phi i32 [ %523, %521 ], [ %541, %539 ]
+  %528 = phi i32 [ %522, %521 ], [ %542, %539 ]
+  %529 = and i32 %527, 1
+  %530 = icmp eq i32 %529, 0
+  %531 = and i32 %528, 1
+  %532 = icmp eq i32 %531, 0
+  br i1 %530, label %534, label %533
+
+533:                                              ; preds = %524
+  br i1 %532, label %535, label %539
+
+534:                                              ; preds = %524
+  br i1 %532, label %539, label %535
+
+535:                                              ; preds = %534, %533
+  %536 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %525
+  %537 = load i32, i32* %536, align 4, !tbaa !6
+  %538 = add nsw i32 %537, %526
+  br label %539
+
+539:                                              ; preds = %535, %534, %533
+  %540 = phi i32 [ %526, %533 ], [ %526, %534 ], [ %538, %535 ]
+  %541 = sdiv i32 %527, 2
+  %542 = sdiv i32 %528, 2
+  %543 = add nuw nsw i64 %525, 1
+  %544 = icmp eq i64 %543, 16
+  br i1 %544, label %545, label %524, !llvm.loop !40
+
+545:                                              ; preds = %539, %559
+  %546 = phi i64 [ %563, %559 ], [ 0, %539 ]
+  %547 = phi i32 [ %560, %559 ], [ 0, %539 ]
+  %548 = phi i32 [ %561, %559 ], [ %523, %539 ]
+  %549 = phi i32 [ %562, %559 ], [ %522, %539 ]
+  %550 = and i32 %548, 1
+  %551 = icmp eq i32 %550, 0
+  %552 = and i32 %549, 1
+  %553 = icmp eq i32 %552, 0
+  %554 = select i1 %551, i1 true, i1 %553
+  br i1 %554, label %559, label %555
+
+555:                                              ; preds = %545
+  %556 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %546
+  %557 = load i32, i32* %556, align 4, !tbaa !6
+  %558 = add nsw i32 %557, %547
+  br label %559
+
+559:                                              ; preds = %555, %545
+  %560 = phi i32 [ %558, %555 ], [ %547, %545 ]
+  %561 = sdiv i32 %548, 2
+  %562 = sdiv i32 %549, 2
+  %563 = add nuw nsw i64 %546, 1
+  %564 = icmp eq i64 %563, 16
+  br i1 %564, label %565, label %545, !llvm.loop !41
+
+565:                                              ; preds = %559
+  %566 = shl nsw i32 %560, 1
+  br label %567
+
+567:                                              ; preds = %565, %581
+  %568 = phi i64 [ 0, %565 ], [ %585, %581 ]
+  %569 = phi i32 [ 0, %565 ], [ %582, %581 ]
+  %570 = phi i32 [ %566, %565 ], [ %583, %581 ]
+  %571 = phi i32 [ 65535, %565 ], [ %584, %581 ]
+  %572 = and i32 %570, 1
+  %573 = icmp eq i32 %572, 0
+  %574 = and i32 %571, 1
+  %575 = icmp eq i32 %574, 0
+  %576 = select i1 %573, i1 true, i1 %575
+  br i1 %576, label %581, label %577
+
+577:                                              ; preds = %567
+  %578 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %568
+  %579 = load i32, i32* %578, align 4, !tbaa !6
+  %580 = add nsw i32 %579, %569
+  br label %581
+
+581:                                              ; preds = %577, %567
+  %582 = phi i32 [ %580, %577 ], [ %569, %567 ]
+  %583 = sdiv i32 %570, 2
+  %584 = sdiv i32 %571, 2
+  %585 = add nuw nsw i64 %568, 1
+  %586 = icmp eq i64 %585, 16
+  br i1 %586, label %519, label %567, !llvm.loop !42
+
+587:                                              ; preds = %519, %511
+  %588 = phi i32 [ %512, %511 ], [ %540, %519 ]
+  br i1 %517, label %657, label %591
+
+589:                                              ; preds = %651
+  %590 = icmp eq i32 %652, 0
+  br i1 %590, label %657, label %591, !llvm.loop !43
+
+591:                                              ; preds = %587, %589
+  %592 = phi i32 [ %652, %589 ], [ %514, %587 ]
+  %593 = phi i32 [ %610, %589 ], [ %514, %587 ]
+  br label %594
+
+594:                                              ; preds = %591, %609
+  %595 = phi i64 [ 0, %591 ], [ %613, %609 ]
+  %596 = phi i32 [ 0, %591 ], [ %610, %609 ]
+  %597 = phi i32 [ %593, %591 ], [ %611, %609 ]
+  %598 = phi i32 [ %592, %591 ], [ %612, %609 ]
+  %599 = and i32 %597, 1
+  %600 = icmp eq i32 %599, 0
+  %601 = and i32 %598, 1
+  %602 = icmp eq i32 %601, 0
+  br i1 %600, label %604, label %603
+
+603:                                              ; preds = %594
+  br i1 %602, label %605, label %609
+
+604:                                              ; preds = %594
+  br i1 %602, label %609, label %605
+
+605:                                              ; preds = %604, %603
+  %606 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %595
+  %607 = load i32, i32* %606, align 4, !tbaa !6
+  %608 = add nsw i32 %607, %596
+  br label %609
+
+609:                                              ; preds = %605, %604, %603
+  %610 = phi i32 [ %596, %603 ], [ %596, %604 ], [ %608, %605 ]
+  %611 = sdiv i32 %597, 2
+  %612 = sdiv i32 %598, 2
+  %613 = add nuw nsw i64 %595, 1
+  %614 = icmp eq i64 %613, 16
+  br i1 %614, label %615, label %594, !llvm.loop !44
+
+615:                                              ; preds = %609, %629
+  %616 = phi i64 [ %633, %629 ], [ 0, %609 ]
+  %617 = phi i32 [ %630, %629 ], [ 0, %609 ]
+  %618 = phi i32 [ %631, %629 ], [ %593, %609 ]
+  %619 = phi i32 [ %632, %629 ], [ %592, %609 ]
+  %620 = and i32 %618, 1
+  %621 = icmp eq i32 %620, 0
+  %622 = and i32 %619, 1
+  %623 = icmp eq i32 %622, 0
+  %624 = select i1 %621, i1 true, i1 %623
+  br i1 %624, label %629, label %625
+
+625:                                              ; preds = %615
+  %626 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %616
+  %627 = load i32, i32* %626, align 4, !tbaa !6
+  %628 = add nsw i32 %627, %617
+  br label %629
+
+629:                                              ; preds = %625, %615
+  %630 = phi i32 [ %628, %625 ], [ %617, %615 ]
+  %631 = sdiv i32 %618, 2
+  %632 = sdiv i32 %619, 2
+  %633 = add nuw nsw i64 %616, 1
+  %634 = icmp eq i64 %633, 16
+  br i1 %634, label %635, label %615, !llvm.loop !45
+
+635:                                              ; preds = %629
+  %636 = shl nsw i32 %630, 1
+  br label %637
+
+637:                                              ; preds = %635, %651
+  %638 = phi i64 [ 0, %635 ], [ %655, %651 ]
+  %639 = phi i32 [ 0, %635 ], [ %652, %651 ]
+  %640 = phi i32 [ %636, %635 ], [ %653, %651 ]
+  %641 = phi i32 [ 65535, %635 ], [ %654, %651 ]
+  %642 = and i32 %640, 1
+  %643 = icmp eq i32 %642, 0
+  %644 = and i32 %641, 1
+  %645 = icmp eq i32 %644, 0
+  %646 = select i1 %643, i1 true, i1 %645
+  br i1 %646, label %651, label %647
+
+647:                                              ; preds = %637
+  %648 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %638
+  %649 = load i32, i32* %648, align 4, !tbaa !6
+  %650 = add nsw i32 %649, %639
+  br label %651
+
+651:                                              ; preds = %647, %637
+  %652 = phi i32 [ %650, %647 ], [ %639, %637 ]
+  %653 = sdiv i32 %640, 2
+  %654 = sdiv i32 %641, 2
+  %655 = add nuw nsw i64 %638, 1
+  %656 = icmp eq i64 %655, 16
+  br i1 %656, label %589, label %637, !llvm.loop !46
+
+657:                                              ; preds = %589, %587
+  %658 = phi i32 [ 0, %587 ], [ %610, %589 ]
+  %659 = icmp sgt i32 %513, 32767
+  br i1 %659, label %660, label %663
+
+660:                                              ; preds = %657
+  %661 = lshr i32 %513, 1
+  %662 = add nuw nsw i32 %661, 32768
+  br label %665
+
+663:                                              ; preds = %657
+  %664 = sdiv i32 %513, 2
+  br label %665
+
+665:                                              ; preds = %663, %660
+  %666 = phi i32 [ %662, %660 ], [ %664, %663 ]
+  %667 = icmp eq i32 %666, 0
+  br i1 %667, label %668, label %511, !llvm.loop !47
+
+668:                                              ; preds = %665, %503
+  %669 = phi i32 [ %504, %503 ], [ %588, %665 ]
+  %670 = icmp eq i32 %506, 0
+  br i1 %670, label %828, label %671
+
+671:                                              ; preds = %668, %825
+  %672 = phi i32 [ %748, %825 ], [ 0, %668 ]
+  %673 = phi i32 [ %826, %825 ], [ %506, %668 ]
+  %674 = phi i32 [ %818, %825 ], [ %506, %668 ]
+  %675 = and i32 %673, 1
+  %676 = icmp eq i32 %675, 0
+  %677 = icmp eq i32 %674, 0
+  %678 = select i1 %676, i1 true, i1 %677
+  br i1 %678, label %747, label %681
+
+679:                                              ; preds = %741
+  %680 = icmp eq i32 %742, 0
+  br i1 %680, label %747, label %681, !llvm.loop !48
+
+681:                                              ; preds = %671, %679
+  %682 = phi i32 [ %742, %679 ], [ %674, %671 ]
+  %683 = phi i32 [ %700, %679 ], [ %672, %671 ]
+  br label %684
+
+684:                                              ; preds = %681, %699
+  %685 = phi i64 [ 0, %681 ], [ %703, %699 ]
+  %686 = phi i32 [ 0, %681 ], [ %700, %699 ]
+  %687 = phi i32 [ %683, %681 ], [ %701, %699 ]
+  %688 = phi i32 [ %682, %681 ], [ %702, %699 ]
+  %689 = and i32 %687, 1
+  %690 = icmp eq i32 %689, 0
+  %691 = and i32 %688, 1
+  %692 = icmp eq i32 %691, 0
+  br i1 %690, label %694, label %693
+
+693:                                              ; preds = %684
+  br i1 %692, label %695, label %699
+
+694:                                              ; preds = %684
+  br i1 %692, label %699, label %695
+
+695:                                              ; preds = %694, %693
+  %696 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %685
+  %697 = load i32, i32* %696, align 4, !tbaa !6
+  %698 = add nsw i32 %697, %686
+  br label %699
+
+699:                                              ; preds = %695, %694, %693
+  %700 = phi i32 [ %686, %693 ], [ %686, %694 ], [ %698, %695 ]
+  %701 = sdiv i32 %687, 2
+  %702 = sdiv i32 %688, 2
+  %703 = add nuw nsw i64 %685, 1
+  %704 = icmp eq i64 %703, 16
+  br i1 %704, label %705, label %684, !llvm.loop !49
+
+705:                                              ; preds = %699, %719
+  %706 = phi i64 [ %723, %719 ], [ 0, %699 ]
+  %707 = phi i32 [ %720, %719 ], [ 0, %699 ]
+  %708 = phi i32 [ %721, %719 ], [ %683, %699 ]
+  %709 = phi i32 [ %722, %719 ], [ %682, %699 ]
+  %710 = and i32 %708, 1
+  %711 = icmp eq i32 %710, 0
+  %712 = and i32 %709, 1
+  %713 = icmp eq i32 %712, 0
+  %714 = select i1 %711, i1 true, i1 %713
+  br i1 %714, label %719, label %715
+
+715:                                              ; preds = %705
+  %716 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %706
+  %717 = load i32, i32* %716, align 4, !tbaa !6
+  %718 = add nsw i32 %717, %707
+  br label %719
+
+719:                                              ; preds = %715, %705
+  %720 = phi i32 [ %718, %715 ], [ %707, %705 ]
+  %721 = sdiv i32 %708, 2
+  %722 = sdiv i32 %709, 2
+  %723 = add nuw nsw i64 %706, 1
+  %724 = icmp eq i64 %723, 16
+  br i1 %724, label %725, label %705, !llvm.loop !50
+
+725:                                              ; preds = %719
+  %726 = shl nsw i32 %720, 1
+  br label %727
+
+727:                                              ; preds = %725, %741
+  %728 = phi i64 [ 0, %725 ], [ %745, %741 ]
+  %729 = phi i32 [ 0, %725 ], [ %742, %741 ]
+  %730 = phi i32 [ %726, %725 ], [ %743, %741 ]
+  %731 = phi i32 [ 65535, %725 ], [ %744, %741 ]
+  %732 = and i32 %730, 1
+  %733 = icmp eq i32 %732, 0
+  %734 = and i32 %731, 1
+  %735 = icmp eq i32 %734, 0
+  %736 = select i1 %733, i1 true, i1 %735
+  br i1 %736, label %741, label %737
+
+737:                                              ; preds = %727
+  %738 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %728
+  %739 = load i32, i32* %738, align 4, !tbaa !6
+  %740 = add nsw i32 %739, %729
+  br label %741
+
+741:                                              ; preds = %737, %727
+  %742 = phi i32 [ %740, %737 ], [ %729, %727 ]
+  %743 = sdiv i32 %730, 2
+  %744 = sdiv i32 %731, 2
+  %745 = add nuw nsw i64 %728, 1
+  %746 = icmp eq i64 %745, 16
+  br i1 %746, label %679, label %727, !llvm.loop !51
+
+747:                                              ; preds = %679, %671
+  %748 = phi i32 [ %672, %671 ], [ %700, %679 ]
+  br i1 %677, label %817, label %751
+
+749:                                              ; preds = %811
+  %750 = icmp eq i32 %812, 0
+  br i1 %750, label %817, label %751, !llvm.loop !52
+
+751:                                              ; preds = %747, %749
+  %752 = phi i32 [ %812, %749 ], [ %674, %747 ]
+  %753 = phi i32 [ %770, %749 ], [ %674, %747 ]
+  br label %754
+
+754:                                              ; preds = %751, %769
+  %755 = phi i64 [ 0, %751 ], [ %773, %769 ]
+  %756 = phi i32 [ 0, %751 ], [ %770, %769 ]
+  %757 = phi i32 [ %753, %751 ], [ %771, %769 ]
+  %758 = phi i32 [ %752, %751 ], [ %772, %769 ]
+  %759 = and i32 %757, 1
+  %760 = icmp eq i32 %759, 0
+  %761 = and i32 %758, 1
+  %762 = icmp eq i32 %761, 0
+  br i1 %760, label %764, label %763
+
+763:                                              ; preds = %754
+  br i1 %762, label %765, label %769
+
+764:                                              ; preds = %754
+  br i1 %762, label %769, label %765
+
+765:                                              ; preds = %764, %763
+  %766 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %755
+  %767 = load i32, i32* %766, align 4, !tbaa !6
+  %768 = add nsw i32 %767, %756
+  br label %769
+
+769:                                              ; preds = %765, %764, %763
+  %770 = phi i32 [ %756, %763 ], [ %756, %764 ], [ %768, %765 ]
+  %771 = sdiv i32 %757, 2
+  %772 = sdiv i32 %758, 2
+  %773 = add nuw nsw i64 %755, 1
+  %774 = icmp eq i64 %773, 16
+  br i1 %774, label %775, label %754, !llvm.loop !53
+
+775:                                              ; preds = %769, %789
+  %776 = phi i64 [ %793, %789 ], [ 0, %769 ]
+  %777 = phi i32 [ %790, %789 ], [ 0, %769 ]
+  %778 = phi i32 [ %791, %789 ], [ %753, %769 ]
+  %779 = phi i32 [ %792, %789 ], [ %752, %769 ]
+  %780 = and i32 %778, 1
+  %781 = icmp eq i32 %780, 0
+  %782 = and i32 %779, 1
+  %783 = icmp eq i32 %782, 0
+  %784 = select i1 %781, i1 true, i1 %783
+  br i1 %784, label %789, label %785
+
+785:                                              ; preds = %775
+  %786 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %776
+  %787 = load i32, i32* %786, align 4, !tbaa !6
+  %788 = add nsw i32 %787, %777
+  br label %789
+
+789:                                              ; preds = %785, %775
+  %790 = phi i32 [ %788, %785 ], [ %777, %775 ]
+  %791 = sdiv i32 %778, 2
+  %792 = sdiv i32 %779, 2
+  %793 = add nuw nsw i64 %776, 1
+  %794 = icmp eq i64 %793, 16
+  br i1 %794, label %795, label %775, !llvm.loop !54
+
+795:                                              ; preds = %789
+  %796 = shl nsw i32 %790, 1
+  br label %797
+
+797:                                              ; preds = %795, %811
+  %798 = phi i64 [ 0, %795 ], [ %815, %811 ]
+  %799 = phi i32 [ 0, %795 ], [ %812, %811 ]
+  %800 = phi i32 [ %796, %795 ], [ %813, %811 ]
+  %801 = phi i32 [ 65535, %795 ], [ %814, %811 ]
+  %802 = and i32 %800, 1
+  %803 = icmp eq i32 %802, 0
+  %804 = and i32 %801, 1
+  %805 = icmp eq i32 %804, 0
+  %806 = select i1 %803, i1 true, i1 %805
+  br i1 %806, label %811, label %807
+
+807:                                              ; preds = %797
+  %808 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %798
+  %809 = load i32, i32* %808, align 4, !tbaa !6
+  %810 = add nsw i32 %809, %799
+  br label %811
+
+811:                                              ; preds = %807, %797
+  %812 = phi i32 [ %810, %807 ], [ %799, %797 ]
+  %813 = sdiv i32 %800, 2
+  %814 = sdiv i32 %801, 2
+  %815 = add nuw nsw i64 %798, 1
+  %816 = icmp eq i64 %815, 16
+  br i1 %816, label %749, label %797, !llvm.loop !55
+
+817:                                              ; preds = %749, %747
+  %818 = phi i32 [ 0, %747 ], [ %770, %749 ]
+  %819 = icmp sgt i32 %673, 32767
+  br i1 %819, label %820, label %823
+
+820:                                              ; preds = %817
+  %821 = lshr i32 %673, 1
+  %822 = add nuw nsw i32 %821, 32768
+  br label %825
+
+823:                                              ; preds = %817
+  %824 = sdiv i32 %673, 2
+  br label %825
+
+825:                                              ; preds = %823, %820
+  %826 = phi i32 [ %822, %820 ], [ %824, %823 ]
+  %827 = icmp eq i32 %826, 0
+  br i1 %827, label %828, label %671, !llvm.loop !56
+
+828:                                              ; preds = %825, %509, %668
+  %829 = phi i32 [ %669, %668 ], [ 0, %509 ], [ %669, %825 ]
+  %830 = phi i32 [ 0, %668 ], [ 0, %509 ], [ %748, %825 ]
+  %831 = icmp sgt i32 %505, 32767
+  br i1 %831, label %832, label %835
+
+832:                                              ; preds = %828
+  %833 = lshr i32 %505, 1
+  %834 = add nuw nsw i32 %833, 32768
+  br label %837
+
+835:                                              ; preds = %828
+  %836 = sdiv i32 %505, 2
+  br label %837
+
+837:                                              ; preds = %835, %832
+  %838 = phi i32 [ %834, %832 ], [ %836, %835 ]
+  %839 = icmp sgt i32 %838, 0
+  br i1 %839, label %503, label %840, !llvm.loop !57
+
+840:                                              ; preds = %837, %498
+  %841 = phi i32 [ 1, %498 ], [ %829, %837 ]
+  %842 = getelementptr inbounds [16 x i32], [16 x i32]* @_ZL11SHIFT_TABLE, i64 0, i64 %499
+  %843 = load i32, i32* %842, align 4, !tbaa !6
+  %844 = icmp eq i32 %843, %841
+  br i1 %844, label %495, label %845
+
+845:                                              ; preds = %495, %840
+  %846 = phi i32 [ 1, %840 ], [ 0, %495 ]
+  ret i32 %846
 }
 
 declare void @_Z6putinti(i32 noundef) local_unnamed_addr #1
@@ -2226,7 +1246,7 @@ declare void @_Z5putchi(i32 noundef) local_unnamed_addr #1
 
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #2 {
-  %1 = tail call noundef i32 @_Z9long_funcv(), !range !49
+  %1 = tail call noundef i32 @_Z9long_funcv(), !range !58
   ret i32 %1
 }
 
@@ -2235,55 +1255,63 @@ attributes #1 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #2 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
-!15 = distinct !{!15, !10}
-!16 = distinct !{!16, !10}
-!17 = distinct !{!17, !10}
-!18 = distinct !{!18, !10}
-!19 = distinct !{!19, !10}
-!20 = distinct !{!20, !10}
-!21 = distinct !{!21, !10}
-!22 = distinct !{!22, !10}
-!23 = distinct !{!23, !10}
-!24 = distinct !{!24, !10}
-!25 = distinct !{!25, !10}
-!26 = distinct !{!26, !10}
-!27 = distinct !{!27, !10}
-!28 = distinct !{!28, !10}
-!29 = distinct !{!29, !10}
-!30 = distinct !{!30, !10}
-!31 = distinct !{!31, !10}
-!32 = distinct !{!32, !10}
-!33 = distinct !{!33, !10}
-!34 = distinct !{!34, !10}
-!35 = distinct !{!35, !10}
-!36 = distinct !{!36, !10}
-!37 = distinct !{!37, !10}
-!38 = distinct !{!38, !10}
-!39 = distinct !{!39, !10}
-!40 = distinct !{!40, !10}
-!41 = distinct !{!41, !10}
-!42 = distinct !{!42, !10}
-!43 = distinct !{!43, !10}
-!44 = distinct !{!44, !10}
-!45 = distinct !{!45, !10}
-!46 = distinct !{!46, !10}
-!47 = distinct !{!47, !10}
-!48 = distinct !{!48, !10}
-!49 = !{i32 0, i32 2}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}
+!6 = !{!7, !7, i64 0}
+!7 = !{!"int", !8, i64 0}
+!8 = !{!"omnipotent char", !9, i64 0}
+!9 = !{!"Simple C++ TBAA"}
+!10 = distinct !{!10, !5}
+!11 = distinct !{!11, !5}
+!12 = distinct !{!12, !5}
+!13 = distinct !{!13, !5}
+!14 = distinct !{!14, !5}
+!15 = distinct !{!15, !5}
+!16 = distinct !{!16, !5}
+!17 = distinct !{!17, !5}
+!18 = distinct !{!18, !5}
+!19 = distinct !{!19, !5}
+!20 = distinct !{!20, !5}
+!21 = distinct !{!21, !5}
+!22 = distinct !{!22, !5}
+!23 = distinct !{!23, !5}
+!24 = distinct !{!24, !5}
+!25 = distinct !{!25, !5}
+!26 = distinct !{!26, !5}
+!27 = distinct !{!27, !5}
+!28 = distinct !{!28, !5}
+!29 = distinct !{!29, !5}
+!30 = distinct !{!30, !5}
+!31 = distinct !{!31, !5}
+!32 = distinct !{!32, !5}
+!33 = distinct !{!33, !5}
+!34 = distinct !{!34, !5}
+!35 = distinct !{!35, !5}
+!36 = distinct !{!36, !5}
+!37 = distinct !{!37, !5}
+!38 = distinct !{!38, !5}
+!39 = distinct !{!39, !5}
+!40 = distinct !{!40, !5}
+!41 = distinct !{!41, !5}
+!42 = distinct !{!42, !5}
+!43 = distinct !{!43, !5}
+!44 = distinct !{!44, !5}
+!45 = distinct !{!45, !5}
+!46 = distinct !{!46, !5}
+!47 = distinct !{!47, !5}
+!48 = distinct !{!48, !5}
+!49 = distinct !{!49, !5}
+!50 = distinct !{!50, !5}
+!51 = distinct !{!51, !5}
+!52 = distinct !{!52, !5}
+!53 = distinct !{!53, !5}
+!54 = distinct !{!54, !5}
+!55 = distinct !{!55, !5}
+!56 = distinct !{!56, !5}
+!57 = distinct !{!57, !5}
+!58 = !{i32 0, i32 2}

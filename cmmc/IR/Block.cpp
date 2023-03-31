@@ -90,7 +90,7 @@ bool Block::verify(std::ostream& out) const {
             return false;
         }
         for(auto operand : inst->operands()) {
-            if(operand->getBlock() == this && !operand->is<PhiInst>()) {
+            if(operand->getBlock() == this && inst->getInstID() != InstructionID::Phi) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
                     dumpLabeled(out, Noop{});

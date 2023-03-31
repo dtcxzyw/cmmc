@@ -14,20 +14,20 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
-  %1 = load i32, i32* @n, align 4, !tbaa !5
+  %1 = load i32, i32* @n, align 4, !tbaa !4
   %2 = icmp slt i32 %1, 1
   br i1 %2, label %3, label %4
 
 3:                                                ; preds = %0
-  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !5
+  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !4
   br label %91
 
 4:                                                ; preds = %0
   %5 = zext i32 %1 to i64
   %6 = shl nuw nsw i64 %5, 2
-  call void @llvm.memset.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1) to i8*), i8 0, i64 %6, i1 false), !tbaa !5
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @dis, i64 0, i64 1) to i8*), i8* align 4 bitcast (i32* getelementptr inbounds ([16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 1, i64 1) to i8*), i64 %6, i1 false), !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !5
+  call void @llvm.memset.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1) to i8*), i8 0, i64 %6, i1 false), !tbaa !4
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @dis, i64 0, i64 1) to i8*), i8* align 4 bitcast (i32* getelementptr inbounds ([16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 1, i64 1) to i8*), i64 %6, i1 false), !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !4
   %7 = icmp eq i32 %1, 1
   br i1 %7, label %91, label %8
 
@@ -51,13 +51,13 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
   %21 = phi i32 [ %48, %47 ], [ 65535, %16 ]
   %22 = phi i64 [ %51, %47 ], [ 0, %16 ]
   %23 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %19
-  %24 = load i32, i32* %23, align 4, !tbaa !5
+  %24 = load i32, i32* %23, align 4, !tbaa !4
   %25 = icmp sgt i32 %21, %24
   br i1 %25, label %26, label %33
 
 26:                                               ; preds = %18
   %27 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %19
-  %28 = load i32, i32* %27, align 4, !tbaa !5
+  %28 = load i32, i32* %27, align 4, !tbaa !4
   %29 = icmp eq i32 %28, 0
   %30 = select i1 %29, i32 %24, i32 %21
   %31 = trunc i64 %19 to i32
@@ -69,13 +69,13 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
   %35 = phi i32 [ %20, %18 ], [ %32, %26 ]
   %36 = add nuw nsw i64 %19, 1
   %37 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %36
-  %38 = load i32, i32* %37, align 4, !tbaa !5
+  %38 = load i32, i32* %37, align 4, !tbaa !4
   %39 = icmp sgt i32 %34, %38
   br i1 %39, label %40, label %47
 
 40:                                               ; preds = %33
   %41 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %36
-  %42 = load i32, i32* %41, align 4, !tbaa !5
+  %42 = load i32, i32* %41, align 4, !tbaa !4
   %43 = icmp eq i32 %42, 0
   %44 = select i1 %43, i32 %38, i32 %34
   %45 = trunc i64 %36 to i32
@@ -88,7 +88,7 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
   %50 = add nuw nsw i64 %19, 2
   %51 = add i64 %22, 2
   %52 = icmp eq i64 %51, %14
-  br i1 %52, label %53, label %18, !llvm.loop !9
+  br i1 %52, label %53, label %18, !llvm.loop !8
 
 53:                                               ; preds = %47, %16
   %54 = phi i32 [ undef, %16 ], [ %49, %47 ]
@@ -99,13 +99,13 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
 
 58:                                               ; preds = %53
   %59 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %55
-  %60 = load i32, i32* %59, align 4, !tbaa !5
+  %60 = load i32, i32* %59, align 4, !tbaa !4
   %61 = icmp sgt i32 %57, %60
   br i1 %61, label %62, label %68
 
 62:                                               ; preds = %58
   %63 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %55
-  %64 = load i32, i32* %63, align 4, !tbaa !5
+  %64 = load i32, i32* %63, align 4, !tbaa !4
   %65 = icmp eq i32 %64, 0
   %66 = trunc i64 %55 to i32
   %67 = select i1 %65, i32 %66, i32 %56
@@ -115,38 +115,38 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
   %69 = phi i32 [ %54, %53 ], [ %56, %58 ], [ %67, %62 ]
   %70 = sext i32 %69 to i64
   %71 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %70
-  store i32 1, i32* %71, align 4, !tbaa !5
+  store i32 1, i32* %71, align 4, !tbaa !4
   %72 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %70
   br label %73
 
 73:                                               ; preds = %68, %85
   %74 = phi i64 [ 1, %68 ], [ %86, %85 ]
   %75 = getelementptr inbounds [16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 %70, i64 %74
-  %76 = load i32, i32* %75, align 4, !tbaa !5
+  %76 = load i32, i32* %75, align 4, !tbaa !4
   %77 = icmp slt i32 %76, 65535
   br i1 %77, label %78, label %85
 
 78:                                               ; preds = %73
   %79 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %74
-  %80 = load i32, i32* %79, align 4, !tbaa !5
-  %81 = load i32, i32* %72, align 4, !tbaa !5
+  %80 = load i32, i32* %79, align 4, !tbaa !4
+  %81 = load i32, i32* %72, align 4, !tbaa !4
   %82 = add nsw i32 %81, %76
   %83 = icmp sgt i32 %80, %82
   br i1 %83, label %84, label %85
 
 84:                                               ; preds = %78
-  store i32 %82, i32* %79, align 4, !tbaa !5
+  store i32 %82, i32* %79, align 4, !tbaa !4
   br label %85
 
 85:                                               ; preds = %78, %84, %73
   %86 = add nuw nsw i64 %74, 1
   %87 = icmp eq i64 %86, %10
-  br i1 %87, label %88, label %73, !llvm.loop !11
+  br i1 %87, label %88, label %73, !llvm.loop !10
 
 88:                                               ; preds = %85
   %89 = add nuw nsw i32 %17, 1
   %90 = icmp eq i32 %89, %1
-  br i1 %90, label %91, label %16, !llvm.loop !12
+  br i1 %90, label %91, label %16, !llvm.loop !11
 
 91:                                               ; preds = %88, %3, %4
   ret void
@@ -155,10 +155,10 @@ define dso_local void @_Z8Dijkstrav() local_unnamed_addr #0 {
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %1 = tail call noundef i32 @_Z6getintv()
-  store i32 %1, i32* @n, align 4, !tbaa !5
+  store i32 %1, i32* @n, align 4, !tbaa !4
   %2 = tail call noundef i32 @_Z6getintv()
-  store i32 %2, i32* @m, align 4, !tbaa !5
-  %3 = load i32, i32* @n, align 4, !tbaa !5
+  store i32 %2, i32* @m, align 4, !tbaa !4
+  %3 = load i32, i32* @n, align 4, !tbaa !4
   %4 = icmp slt i32 %3, 1
   br i1 %4, label %16, label %5
 
@@ -206,7 +206,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %36 = add nuw nsw i64 %19, 4
   %37 = add i64 %20, 4
   %38 = icmp eq i64 %37, %12
-  br i1 %38, label %39, label %18, !llvm.loop !13
+  br i1 %38, label %39, label %18, !llvm.loop !12
 
 39:                                               ; preds = %18, %14
   %40 = phi i64 [ 1, %14 ], [ %36, %18 ]
@@ -222,12 +222,12 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %47 = add nuw nsw i64 %42, 1
   %48 = add i64 %43, 1
   %49 = icmp eq i64 %48, %10
-  br i1 %49, label %50, label %41, !llvm.loop !14
+  br i1 %49, label %50, label %41, !llvm.loop !13
 
 50:                                               ; preds = %41, %39
   %51 = add nuw nsw i64 %15, 1
   %52 = icmp eq i64 %51, %7
-  br i1 %52, label %16, label %14, !llvm.loop !16
+  br i1 %52, label %16, label %14, !llvm.loop !15
 
 53:                                               ; preds = %16, %53
   %54 = phi i32 [ %61, %53 ], [ 1, %16 ]
@@ -237,14 +237,14 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %58 = sext i32 %55 to i64
   %59 = sext i32 %56 to i64
   %60 = getelementptr inbounds [16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 %58, i64 %59
-  store i32 %57, i32* %60, align 4, !tbaa !5
+  store i32 %57, i32* %60, align 4, !tbaa !4
   %61 = add nuw nsw i32 %54, 1
-  %62 = load i32, i32* @m, align 4, !tbaa !5
+  %62 = load i32, i32* @m, align 4, !tbaa !4
   %63 = icmp slt i32 %54, %62
-  br i1 %63, label %53, label %64, !llvm.loop !17
+  br i1 %63, label %53, label %64, !llvm.loop !16
 
 64:                                               ; preds = %53
-  %65 = load i32, i32* @n, align 4, !tbaa !5
+  %65 = load i32, i32* @n, align 4, !tbaa !4
   br label %66
 
 66:                                               ; preds = %64, %16
@@ -253,15 +253,15 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   br i1 %68, label %69, label %70
 
 69:                                               ; preds = %66
-  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !5
+  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !4
   br label %167
 
 70:                                               ; preds = %66
   %71 = zext i32 %67 to i64
   %72 = shl nuw nsw i64 %71, 2
-  tail call void @llvm.memset.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1) to i8*), i8 0, i64 %72, i1 false) #5, !tbaa !5
-  tail call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @dis, i64 0, i64 1) to i8*), i8* align 4 bitcast (i32* getelementptr inbounds ([16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 1, i64 1) to i8*), i64 %72, i1 false) #5, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !5
+  tail call void @llvm.memset.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1) to i8*), i8 0, i64 %72, i1 false) #5, !tbaa !4
+  tail call void @llvm.memcpy.p0i8.p0i8.i64(i8* align 4 bitcast (i32* getelementptr inbounds ([16 x i32], [16 x i32]* @dis, i64 0, i64 1) to i8*), i8* align 4 bitcast (i32* getelementptr inbounds ([16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 1, i64 1) to i8*), i64 %72, i1 false) #5, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([16 x i32], [16 x i32]* @book, i64 0, i64 1), align 4, !tbaa !4
   %73 = icmp eq i32 %67, 1
   br i1 %73, label %158, label %74
 
@@ -285,13 +285,13 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %87 = phi i32 [ %114, %113 ], [ 65535, %82 ]
   %88 = phi i64 [ %117, %113 ], [ 0, %82 ]
   %89 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %85
-  %90 = load i32, i32* %89, align 4, !tbaa !5
+  %90 = load i32, i32* %89, align 4, !tbaa !4
   %91 = icmp sgt i32 %87, %90
   br i1 %91, label %92, label %99
 
 92:                                               ; preds = %84
   %93 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %85
-  %94 = load i32, i32* %93, align 4, !tbaa !5
+  %94 = load i32, i32* %93, align 4, !tbaa !4
   %95 = icmp eq i32 %94, 0
   %96 = select i1 %95, i32 %90, i32 %87
   %97 = trunc i64 %85 to i32
@@ -303,13 +303,13 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %101 = phi i32 [ %86, %84 ], [ %98, %92 ]
   %102 = add nuw nsw i64 %85, 1
   %103 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %102
-  %104 = load i32, i32* %103, align 4, !tbaa !5
+  %104 = load i32, i32* %103, align 4, !tbaa !4
   %105 = icmp sgt i32 %100, %104
   br i1 %105, label %106, label %113
 
 106:                                              ; preds = %99
   %107 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %102
-  %108 = load i32, i32* %107, align 4, !tbaa !5
+  %108 = load i32, i32* %107, align 4, !tbaa !4
   %109 = icmp eq i32 %108, 0
   %110 = select i1 %109, i32 %104, i32 %100
   %111 = trunc i64 %102 to i32
@@ -322,7 +322,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %116 = add nuw nsw i64 %85, 2
   %117 = add i64 %88, 2
   %118 = icmp eq i64 %117, %80
-  br i1 %118, label %119, label %84, !llvm.loop !9
+  br i1 %118, label %119, label %84, !llvm.loop !8
 
 119:                                              ; preds = %113, %82
   %120 = phi i32 [ undef, %82 ], [ %115, %113 ]
@@ -333,13 +333,13 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 
 124:                                              ; preds = %119
   %125 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %121
-  %126 = load i32, i32* %125, align 4, !tbaa !5
+  %126 = load i32, i32* %125, align 4, !tbaa !4
   %127 = icmp sgt i32 %123, %126
   br i1 %127, label %128, label %134
 
 128:                                              ; preds = %124
   %129 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %121
-  %130 = load i32, i32* %129, align 4, !tbaa !5
+  %130 = load i32, i32* %129, align 4, !tbaa !4
   %131 = icmp eq i32 %130, 0
   %132 = trunc i64 %121 to i32
   %133 = select i1 %131, i32 %132, i32 %122
@@ -349,38 +349,38 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %135 = phi i32 [ %120, %119 ], [ %122, %124 ], [ %133, %128 ]
   %136 = sext i32 %135 to i64
   %137 = getelementptr inbounds [16 x i32], [16 x i32]* @book, i64 0, i64 %136
-  store i32 1, i32* %137, align 4, !tbaa !5
+  store i32 1, i32* %137, align 4, !tbaa !4
   %138 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %136
   br label %139
 
 139:                                              ; preds = %151, %134
   %140 = phi i64 [ 1, %134 ], [ %152, %151 ]
   %141 = getelementptr inbounds [16 x [16 x i32]], [16 x [16 x i32]]* @e, i64 0, i64 %136, i64 %140
-  %142 = load i32, i32* %141, align 4, !tbaa !5
+  %142 = load i32, i32* %141, align 4, !tbaa !4
   %143 = icmp slt i32 %142, 65535
   br i1 %143, label %144, label %151
 
 144:                                              ; preds = %139
   %145 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %140
-  %146 = load i32, i32* %145, align 4, !tbaa !5
-  %147 = load i32, i32* %138, align 4, !tbaa !5
+  %146 = load i32, i32* %145, align 4, !tbaa !4
+  %147 = load i32, i32* %138, align 4, !tbaa !4
   %148 = add nsw i32 %147, %142
   %149 = icmp sgt i32 %146, %148
   br i1 %149, label %150, label %151
 
 150:                                              ; preds = %144
-  store i32 %148, i32* %145, align 4, !tbaa !5
+  store i32 %148, i32* %145, align 4, !tbaa !4
   br label %151
 
 151:                                              ; preds = %150, %144, %139
   %152 = add nuw nsw i64 %140, 1
   %153 = icmp eq i64 %152, %76
-  br i1 %153, label %154, label %139, !llvm.loop !11
+  br i1 %153, label %154, label %139, !llvm.loop !10
 
 154:                                              ; preds = %151
   %155 = add nuw nsw i32 %83, 1
   %156 = icmp eq i32 %155, %67
-  br i1 %156, label %157, label %82, !llvm.loop !12
+  br i1 %156, label %157, label %82, !llvm.loop !11
 
 157:                                              ; preds = %154
   br i1 %68, label %167, label %158
@@ -391,14 +391,14 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 159:                                              ; preds = %158, %159
   %160 = phi i64 [ %163, %159 ], [ 1, %158 ]
   %161 = getelementptr inbounds [16 x i32], [16 x i32]* @dis, i64 0, i64 %160
-  %162 = load i32, i32* %161, align 4, !tbaa !5
+  %162 = load i32, i32* %161, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %162)
   tail call void @_Z5putchi(i32 noundef 32)
   %163 = add nuw nsw i64 %160, 1
-  %164 = load i32, i32* @n, align 4, !tbaa !5
+  %164 = load i32, i32* @n, align 4, !tbaa !4
   %165 = sext i32 %164 to i64
   %166 = icmp slt i64 %160, %165
-  br i1 %166, label %159, label %167, !llvm.loop !18
+  br i1 %166, label %159, label %167, !llvm.loop !17
 
 167:                                              ; preds = %159, %69, %157
   tail call void @_Z5putchi(i32 noundef 10)
@@ -425,24 +425,22 @@ attributes #4 = { argmemonly nofree nounwind willreturn }
 attributes #5 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !15}
-!15 = !{!"llvm.loop.unroll.disable"}
-!16 = distinct !{!16, !10}
-!17 = distinct !{!17, !10}
-!18 = distinct !{!18, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !14}
+!14 = !{!"llvm.loop.unroll.disable"}
+!15 = distinct !{!15, !9}
+!16 = distinct !{!16, !9}
+!17 = distinct !{!17, !9}

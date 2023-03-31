@@ -72,10 +72,8 @@ attributes #3 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #4 = { inaccessiblememonly nofree nosync nounwind willreturn }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}

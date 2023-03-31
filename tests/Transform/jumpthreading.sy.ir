@@ -1,34 +1,19 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
-    i32* %x = alloc i32;
-    store i32* %x with i32 4;
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp neq i32 %0, i32 0;
     cbr i1 %1(prob = 0.5), ^if.then, ^b;
 ^if.then:
-    store i32* %x with i32 3;
     ubr ^b;
 ^b:
-    i32 %2 = load i32* %x;
+    i32 %2 = phi [^if.then, i32 3] [^entry, i32 4];
     i1 %3 = scmp lt i32 %2, i32 4;
-    i32 %4 = zext i1 %3 to i32;
-    i1 %5 = scmp neq i32 %4, i32 0;
-    cbr i1 %5(prob = 0.5), ^if.then1, ^if.else;
+    cbr i1 %3(prob = 0.5), ^if.then1, ^if.else;
 ^if.then1:
-    i32 %6 = call () -> i32 @getint();
-    call (i32) -> void @putint(i32 %6);
+    i32 %4 = call () -> i32 @getint();
+    call (i32) -> void @putint(i32 %4);
     ubr ^b1;
 ^if.else:
     call (i32) -> void @putint(i32 0);

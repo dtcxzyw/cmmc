@@ -11,7 +11,7 @@ define dso_local noundef i32 @_Z9my_getintv() local_unnamed_addr #0 {
   %2 = tail call noundef i32 @_Z5getchv()
   %3 = add i32 %2, -58
   %4 = icmp ult i32 %3, -10
-  br i1 %4, label %1, label %5, !llvm.loop !5
+  br i1 %4, label %1, label %5, !llvm.loop !4
 
 5:                                                ; preds = %1
   %6 = add nsw i32 %2, -48
@@ -28,7 +28,7 @@ define dso_local noundef i32 @_Z9my_getintv() local_unnamed_addr #0 {
   %15 = tail call noundef i32 @_Z5getchv()
   %16 = add i32 %15, -48
   %17 = icmp ult i32 %16, 10
-  br i1 %17, label %10, label %18, !llvm.loop !7
+  br i1 %17, label %10, label %18, !llvm.loop !6
 
 18:                                               ; preds = %10, %5
   %19 = phi i32 [ %6, %5 ], [ %14, %10 ]
@@ -66,21 +66,21 @@ define dso_local void @_Z9my_putinti(i32 noundef %0) local_unnamed_addr #0 {
   %13 = urem i32 %12, 10
   %14 = or i32 %13, 48
   %15 = getelementptr inbounds [16 x i32], [16 x i32]* %2, i64 0, i64 %11
-  store i32 %14, i32* %15, align 4, !tbaa !8
+  store i32 %14, i32* %15, align 4, !tbaa !7
   %16 = udiv i32 %12, 10
   %17 = add nuw i64 %11, 1
   %18 = icmp ult i32 %12, 10
-  br i1 %18, label %5, label %10, !llvm.loop !12
+  br i1 %18, label %5, label %10, !llvm.loop !11
 
 19:                                               ; preds = %8, %19
   %20 = phi i64 [ %9, %8 ], [ %21, %19 ]
   %21 = add nsw i64 %20, -1
   %22 = and i64 %21, 4294967295
   %23 = getelementptr inbounds [16 x i32], [16 x i32]* %2, i64 0, i64 %22
-  %24 = load i32, i32* %23, align 4, !tbaa !8
+  %24 = load i32, i32* %23, align 4, !tbaa !7
   tail call void @_Z5putchi(i32 noundef %24)
   %25 = icmp ugt i64 %20, 1
-  br i1 %25, label %19, label %26, !llvm.loop !13
+  br i1 %25, label %19, label %26, !llvm.loop !12
 
 26:                                               ; preds = %19, %1, %5
   call void @llvm.lifetime.end.p0i8(i64 64, i8* nonnull %3) #4
@@ -98,7 +98,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %3 = tail call noundef i32 @_Z5getchv()
   %4 = add i32 %3, -58
   %5 = icmp ult i32 %4, -10
-  br i1 %5, label %2, label %6, !llvm.loop !5
+  br i1 %5, label %2, label %6, !llvm.loop !4
 
 6:                                                ; preds = %2
   %7 = add nsw i32 %3, -48
@@ -115,7 +115,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %16 = tail call noundef i32 @_Z5getchv()
   %17 = add i32 %16, -48
   %18 = icmp ult i32 %17, 10
-  br i1 %18, label %11, label %19, !llvm.loop !7
+  br i1 %18, label %11, label %19, !llvm.loop !6
 
 19:                                               ; preds = %11, %6
   %20 = phi i32 [ %7, %6 ], [ %15, %11 ]
@@ -134,7 +134,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %27 = tail call noundef i32 @_Z5getchv()
   %28 = add i32 %27, -58
   %29 = icmp ult i32 %28, -10
-  br i1 %29, label %26, label %30, !llvm.loop !5
+  br i1 %29, label %26, label %30, !llvm.loop !4
 
 30:                                               ; preds = %26
   %31 = add nsw i32 %27, -48
@@ -151,7 +151,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %40 = tail call noundef i32 @_Z5getchv()
   %41 = add i32 %40, -48
   %42 = icmp ult i32 %41, 10
-  br i1 %42, label %35, label %43, !llvm.loop !7
+  br i1 %42, label %35, label %43, !llvm.loop !6
 
 43:                                               ; preds = %35, %30
   %44 = phi i32 [ %31, %30 ], [ %39, %35 ]
@@ -174,28 +174,28 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %54 = urem i32 %53, 10
   %55 = or i32 %54, 48
   %56 = getelementptr inbounds [16 x i32], [16 x i32]* %1, i64 0, i64 %52
-  store i32 %55, i32* %56, align 4, !tbaa !8
+  store i32 %55, i32* %56, align 4, !tbaa !7
   %57 = udiv i32 %53, 10
   %58 = add nuw i64 %52, 1
   %59 = icmp ult i32 %53, 10
-  br i1 %59, label %46, label %51, !llvm.loop !12
+  br i1 %59, label %46, label %51, !llvm.loop !11
 
 60:                                               ; preds = %60, %49
   %61 = phi i64 [ %50, %49 ], [ %62, %60 ]
   %62 = add nsw i64 %61, -1
   %63 = and i64 %62, 4294967295
   %64 = getelementptr inbounds [16 x i32], [16 x i32]* %1, i64 0, i64 %63
-  %65 = load i32, i32* %64, align 4, !tbaa !8
+  %65 = load i32, i32* %64, align 4, !tbaa !7
   tail call void @_Z5putchi(i32 noundef %65)
   %66 = icmp ugt i64 %61, 1
-  br i1 %66, label %60, label %67, !llvm.loop !13
+  br i1 %66, label %60, label %67, !llvm.loop !12
 
 67:                                               ; preds = %60, %43, %46
   call void @llvm.lifetime.end.p0i8(i64 64, i8* nonnull %23) #4
   tail call void @_Z5putchi(i32 noundef 10)
   %68 = add nsw i32 %25, -1
   %69 = icmp sgt i32 %25, 1
-  br i1 %69, label %24, label %70, !llvm.loop !14
+  br i1 %69, label %24, label %70, !llvm.loop !13
 
 70:                                               ; preds = %67, %19
   ret i32 0
@@ -208,20 +208,18 @@ attributes #3 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #4 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
-!7 = distinct !{!7, !6}
-!8 = !{!9, !9, i64 0}
-!9 = !{!"int", !10, i64 0}
-!10 = !{!"omnipotent char", !11, i64 0}
-!11 = !{!"Simple C++ TBAA"}
-!12 = distinct !{!12, !6}
-!13 = distinct !{!13, !6}
-!14 = distinct !{!14, !6}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}
+!6 = distinct !{!6, !5}
+!7 = !{!8, !8, i64 0}
+!8 = !{!"int", !9, i64 0}
+!9 = !{!"omnipotent char", !10, i64 0}
+!10 = !{!"Simple C++ TBAA"}
+!11 = distinct !{!11, !5}
+!12 = distinct !{!12, !5}
+!13 = distinct !{!13, !5}

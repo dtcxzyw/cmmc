@@ -38,20 +38,24 @@ CMMC_NAMESPACE_BEGIN
 class ScalarMem2Reg final : public TransformPass<Function> {
     static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
                              const StackAddressLeakAnalysisResult& leak, ReplaceMap& replace) {
-        CMMC_UNUSED(func);
-        std::unordered_map<Block*, Value*> todo;
-        todo.emplace(alloc->getBlock(), alloc);
-
-        const auto root = alloc->getBlock();
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
-        const auto undef = make<UndefinedValue>(valueType);
+        Value* undef = make<UndefinedValue>(valueType);
         if(valueType->isPointer())
             const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});  // NOLINT
 
-        for(auto [block, addr] : todo) {
-            Value* value = undef;
+        std::unordered_map<Block*, PhiInst*> phiNodes;
+        for(auto block : func.blocks()) {
+            if(block == func.entryBlock())
+                continue;
+            builder.setInsertPoint(block, block->instructions().begin());
+            const auto phi = builder.createPhi(valueType);
+            phiNodes.emplace(block, phi);
+        }
 
-            const auto update = [&, insertBlock = block, storeAddr = addr](Instruction* pos, bool after) {
+        for(auto block : func.blocks()) {
+            Value* value = (block == func.entryBlock() ? undef : phiNodes.at(block));
+
+            const auto update = [&, insertBlock = block, storeAddr = alloc](Instruction* pos, bool after) {
                 builder.setInsertPoint(insertBlock, pos);
                 if(after)
                     builder.nextInsertPoint();
@@ -60,48 +64,39 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             };
 
-            bool start = block != root;
             std::vector<Instruction*> instructionList{ block->instructions().cbegin(), block->instructions().cend() };
             bool stop = false;
             for(auto inst : instructionList) {
                 if(stop)
                     break;
-                if(start) {
-                    switch(inst->getInstID()) {
-                        case InstructionID::Load: {
-                            if(inst->getOperand(0) == alloc)
-                                replace.emplace(inst, value);
-                        } break;
-                        case InstructionID::Store: {
-                            const auto storeAddr = inst->getOperand(0);
-                            if(storeAddr == alloc) {
-                                value = inst->getOperand(1);
-                            } else if(!alias.isDistinct(storeAddr, alloc)) {
-                                update(inst, true);
-                            }
-                        } break;
-                        case InstructionID::Call: {
-                            if(leak.mayModify(inst, alloc))
-                                update(inst, true);
-                        } break;
-                        case InstructionID::Branch:
-                            [[fallthrough]];
-                        case InstructionID::ConditionalBranch: {
-                            const auto branch = inst->as<BranchInst>();
-                            auto handleTarget = [&](Block* targetBlock) {
-                                if(!todo.count(targetBlock) || targetBlock == root)
-                                    return;
-                                reportNotImplemented(CMMC_LOCATION());
-                            };
-                            handleTarget(branch->getTrueTarget());
+                switch(inst->getInstID()) {
+                    case InstructionID::Load: {
+                        if(inst->getOperand(0) == alloc)
+                            replace.emplace(inst, value);
+                    } break;
+                    case InstructionID::Store: {
+                        const auto storeAddr = inst->getOperand(0);
+                        if(storeAddr == alloc) {
+                            value = inst->getOperand(1);
+                        } else if(!alias.isDistinct(storeAddr, alloc)) {
+                            update(inst, true);
+                        }
+                    } break;
+                    case InstructionID::Call: {
+                        if(leak.mayModify(inst, alloc))
+                            update(inst, true);
+                    } break;
+                    case InstructionID::Branch:
+                        [[fallthrough]];
+                    case InstructionID::ConditionalBranch: {
+                        const auto branch = inst->as<BranchInst>();
+                        auto handleTarget = [&](Block* targetBlock) { phiNodes.at(targetBlock)->addIncoming(block, value); };
+                        handleTarget(branch->getTrueTarget());
+                        if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget())
                             handleTarget(branch->getFalseTarget());
-                        } break;
-                        default:
-                            break;
-                    }
-
-                } else if(inst == alloc) {
-                    start = true;
+                    } break;
+                    default:
+                        break;
                 }
             }
         }
@@ -113,15 +108,14 @@ public:
         const auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
 
         std::vector<StackAllocInst*> interested;
-        for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Alloc) {
-                    auto alloc = inst->as<StackAllocInst>();
-                    if(alloc->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
-                        interested.push_back(alloc);
-                    }
+        for(auto inst : func.entryBlock()->instructions()) {
+            if(inst->getInstID() == InstructionID::Alloc) {
+                auto alloc = inst->as<StackAllocInst>();
+                if(alloc->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
+                    interested.push_back(alloc);
                 }
-            }
+            } else
+                break;
         }
 
         if(interested.empty())

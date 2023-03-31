@@ -1,89 +1,44 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @move(i32 %x, i32 %y) -> void {
+internal func @hanoi(i32 %n, i32 %one, i32 %two, i32 %three) -> void { NoMemoryRead NoMemoryWrite } {
 ^entry:
-    i32* %y1 = alloc i32;
-    i32* %x1 = alloc i32;
-    store i32* %x1 with i32 %x;
-    store i32* %y1 with i32 %y;
-    i32 %0 = load i32* %x1;
-    call (i32) -> void @putint(i32 %0);
+    i1 %0 = scmp eq i32 %n, i32 1;
+    cbr i1 %0(prob = 0.5), ^entry1, ^if.else;
+^entry1:
+    call (i32) -> void @putint(i32 %one);
     call (i32) -> void @putch(i32 32);
-    i32 %1 = load i32* %y1;
-    call (i32) -> void @putint(i32 %1);
+    call (i32) -> void @putint(i32 %three);
     call (i32) -> void @putch(i32 44);
     call (i32) -> void @putch(i32 32);
-    ret;
-}
-internal func @hanoi(i32 %n, i32 %one, i32 %two, i32 %three) -> void {
-^entry:
-    i32* %three1 = alloc i32;
-    i32* %two1 = alloc i32;
-    i32* %one1 = alloc i32;
-    i32* %n1 = alloc i32;
-    store i32* %n1 with i32 %n;
-    store i32* %one1 with i32 %one;
-    store i32* %two1 with i32 %two;
-    store i32* %three1 with i32 %three;
-    i32 %0 = load i32* %n1;
-    i1 %1 = scmp eq i32 %0, i32 1;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-^if.then:
-    i32 %4 = load i32* %one1;
-    i32 %5 = load i32* %three1;
-    call (i32, i32) -> void @move(i32 %4, i32 %5);
     ubr ^b;
 ^if.else:
-    i32 %6 = load i32* %n1;
-    i32 %7 = sub i32 %6, i32 1;
-    i32 %8 = load i32* %one1;
-    i32 %9 = load i32* %three1;
-    i32 %10 = load i32* %two1;
-    call (i32, i32, i32, i32) -> void @hanoi(i32 %7, i32 %8, i32 %9, i32 %10);
-    i32 %11 = load i32* %one1;
-    i32 %12 = load i32* %three1;
-    call (i32, i32) -> void @move(i32 %11, i32 %12);
-    i32 %13 = load i32* %n1;
-    i32 %14 = sub i32 %13, i32 1;
-    i32 %15 = load i32* %two1;
-    i32 %16 = load i32* %one1;
-    i32 %17 = load i32* %three1;
-    call (i32, i32, i32, i32) -> void @hanoi(i32 %14, i32 %15, i32 %16, i32 %17);
+    i32 %1 = add i32 %n, i32 -1;
+    call (i32, i32, i32, i32) -> void @hanoi(i32 %1, i32 %one, i32 %three, i32 %two);
+    call (i32) -> void @putint(i32 %one);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putint(i32 %three);
+    call (i32) -> void @putch(i32 44);
+    call (i32) -> void @putch(i32 32);
+    call (i32, i32, i32, i32) -> void @hanoi(i32 %1, i32 %two, i32 %one, i32 %three);
     ubr ^b;
 ^b:
     ret;
 }
-func @main() -> i32 { Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
-    i32* %n = alloc i32;
     i32 %0 = call () -> i32 @getint();
-    store i32* %n with i32 %0;
     ubr ^while.header;
 ^while.header:
-    i32 %1 = load i32* %n;
-    i1 %2 = scmp gt i32 %1, i32 0;
-    i32 %3 = zext i1 %2 to i32;
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.97), ^while.body, ^b;
+    i32 %1 = phi [^while.body, i32 %5] [^entry, i32 %0];
+    i32 %2 = phi [^while.body, i32 %5] [^entry, i32 %0];
+    i1 %3 = scmp gt i32 %2, i32 0;
+    cbr i1 %3(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %5 = call () -> i32 @getint();
-    call (i32, i32, i32, i32) -> void @hanoi(i32 %5, i32 1, i32 2, i32 3);
+    i32 %4 = call () -> i32 @getint();
+    call (i32, i32, i32, i32) -> void @hanoi(i32 %4, i32 1, i32 2, i32 3);
     call (i32) -> void @putch(i32 10);
-    i32 %6 = load i32* %n;
-    i32 %7 = sub i32 %6, i32 1;
-    store i32* %n with i32 %7;
+    i32 %5 = add i32 %1, i32 -1;
     ubr ^while.header;
 ^b:
     ret i32 0;

@@ -9,61 +9,61 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z4getAv() local_unnamed_addr #0 {
-  %1 = load i32, i32* @count, align 4, !tbaa !5
+  %1 = load i32, i32* @count, align 4, !tbaa !4
   %2 = add nsw i32 %1, 1
-  store i32 %2, i32* @count, align 4, !tbaa !5
+  store i32 %2, i32* @count, align 4, !tbaa !4
   ret i32 %2
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local void @_Z2f1i(i32 noundef %0) local_unnamed_addr #0 {
-  %2 = load i32, i32* @sum, align 4, !tbaa !5
+  %2 = load i32, i32* @sum, align 4, !tbaa !4
   %3 = add nsw i32 %2, %0
-  %4 = load i32, i32* @count, align 4, !tbaa !5
+  %4 = load i32, i32* @count, align 4, !tbaa !4
   %5 = add nsw i32 %4, 1
   %6 = add nsw i32 %5, %3
   %7 = add nsw i32 %4, 2
-  store i32 %7, i32* @count, align 4, !tbaa !5
+  store i32 %7, i32* @count, align 4, !tbaa !4
   %8 = add nsw i32 %6, %7
   %9 = shl i32 %5, 1
   %10 = add i32 %8, %9
-  store i32 %10, i32* @sum, align 4, !tbaa !5
+  store i32 %10, i32* @sum, align 4, !tbaa !4
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local void @_Z2f2v() local_unnamed_addr #0 {
-  %1 = load i32, i32* @sum, align 4, !tbaa !5
-  %2 = load i32, i32* @a, align 4, !tbaa !5
-  %3 = load i32, i32* @count, align 4, !tbaa !5
+  %1 = load i32, i32* @sum, align 4, !tbaa !4
+  %2 = load i32, i32* @a, align 4, !tbaa !4
+  %3 = load i32, i32* @count, align 4, !tbaa !4
   %4 = add nsw i32 %3, 1
-  store i32 %4, i32* @count, align 4, !tbaa !5
+  store i32 %4, i32* @count, align 4, !tbaa !4
   %5 = shl i32 %2, 1
   %6 = add i32 %1, %5
-  store i32 %6, i32* @sum, align 4, !tbaa !5
+  store i32 %6, i32* @sum, align 4, !tbaa !4
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local void @_Z2f3v() local_unnamed_addr #0 {
-  %1 = load i32, i32* @count, align 4, !tbaa !5
+  %1 = load i32, i32* @count, align 4, !tbaa !4
   %2 = add nsw i32 %1, 1
-  %3 = load i32, i32* @sum, align 4, !tbaa !5
+  %3 = load i32, i32* @sum, align 4, !tbaa !4
   %4 = add nsw i32 %3, %2
   %5 = add nsw i32 %1, 3
-  store i32 %5, i32* @count, align 4, !tbaa !5
+  store i32 %5, i32* @count, align 4, !tbaa !4
   %6 = shl i32 %1, 1
   %7 = add i32 %6, 4
   %8 = add i32 %4, %7
-  store i32 %8, i32* @sum, align 4, !tbaa !5
+  store i32 %8, i32* @sum, align 4, !tbaa !4
   ret void
 }
 
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
-  %1 = load i32, i32* @count, align 4, !tbaa !5
+  %1 = load i32, i32* @count, align 4, !tbaa !4
   %2 = add nsw i32 %1, 1
-  store i32 %2, i32* @a, align 4, !tbaa !5
+  store i32 %2, i32* @a, align 4, !tbaa !4
   %3 = add nsw i32 %1, 2
   %4 = add nsw i32 %2, %3
   %5 = add nsw i32 %1, 3
@@ -98,7 +98,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %34 = add i32 %33, %31
   %35 = add i32 %34, %29
   %36 = add nsw i32 %1, 18
-  store i32 %36, i32* @count, align 4, !tbaa !5
+  store i32 %36, i32* @count, align 4, !tbaa !4
   %37 = add i32 %35, %11
   %38 = shl i32 %36, 1
   %39 = add i32 %1, 23
@@ -117,7 +117,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %52 = add i32 %1, 31
   %53 = add i32 %52, %51
   %54 = add i32 %53, %49
-  store i32 %54, i32* @sum, align 4, !tbaa !5
+  store i32 %54, i32* @sum, align 4, !tbaa !4
   %55 = add nsw i32 %1, 30
   %56 = add nsw i32 %1, 32
   %57 = shl i32 %52, 1
@@ -220,11 +220,11 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %148 = add nsw i32 %135, 13
   %149 = add nsw i32 %134, 1
   %150 = icmp slt i32 %134, 2
-  br i1 %150, label %92, label %151, !llvm.loop !9
+  br i1 %150, label %92, label %151, !llvm.loop !8
 
 151:                                              ; preds = %133
-  store i32 %147, i32* @sum, align 4, !tbaa !5
-  store i32 %148, i32* @count, align 4, !tbaa !5
+  store i32 %147, i32* @sum, align 4, !tbaa !4
+  store i32 %148, i32* @count, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %147)
   ret i32 0
 }
@@ -236,16 +236,14 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}

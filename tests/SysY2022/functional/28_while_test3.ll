@@ -10,10 +10,10 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
-  %1 = load i32, i32* @e, align 4, !tbaa !5
-  %2 = load i32, i32* @f, align 4, !tbaa !5
-  %3 = load i32, i32* @g, align 4, !tbaa !5
-  %4 = load i32, i32* @h, align 4, !tbaa !5
+  %1 = load i32, i32* @e, align 4, !tbaa !4
+  %2 = load i32, i32* @f, align 4, !tbaa !4
+  %3 = load i32, i32* @g, align 4, !tbaa !4
+  %4 = load i32, i32* @h, align 4, !tbaa !4
   br label %5
 
 5:                                                ; preds = %430, %0
@@ -95,10 +95,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %67 = phi i32 [ %56, %54 ], [ %65, %59 ]
   %68 = add nsw i32 %67, -1
   %69 = icmp slt i32 %55, -7
-  br i1 %69, label %54, label %70, !llvm.loop !9
+  br i1 %69, label %54, label %70, !llvm.loop !8
 
 70:                                               ; preds = %66
-  store i32 %68, i32* @h, align 4, !tbaa !5
+  store i32 %68, i32* @h, align 4, !tbaa !4
   br label %71
 
 71:                                               ; preds = %70, %44
@@ -110,10 +110,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %77 = phi i32 [ %57, %70 ], [ %50, %44 ]
   %78 = add nsw i32 %77, -8
   %79 = icmp sgt i32 %49, 4
-  br i1 %79, label %44, label %80, !llvm.loop !11
+  br i1 %79, label %44, label %80, !llvm.loop !10
 
 80:                                               ; preds = %71
-  store i32 %78, i32* @g, align 4, !tbaa !5
+  store i32 %78, i32* @g, align 4, !tbaa !4
   br label %81
 
 81:                                               ; preds = %80, %31
@@ -128,11 +128,11 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %90 = phi i32 [ %52, %80 ], [ %39, %31 ]
   %91 = add nsw i32 %90, 1
   %92 = icmp sgt i32 %38, 2
-  br i1 %92, label %31, label %93, !llvm.loop !12
+  br i1 %92, label %31, label %93, !llvm.loop !11
 
 93:                                               ; preds = %81
   %94 = add i32 %30, -1
-  store i32 %91, i32* @f, align 4, !tbaa !5
+  store i32 %91, i32* @f, align 4, !tbaa !4
   br label %95
 
 95:                                               ; preds = %93, %15
@@ -148,10 +148,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %105 = phi i32 [ %94, %93 ], [ %23, %15 ]
   %106 = add nsw i32 %105, 1
   %107 = icmp slt i32 %22, 17
-  br i1 %107, label %15, label %108, !llvm.loop !13
+  br i1 %107, label %15, label %108, !llvm.loop !12
 
 108:                                              ; preds = %95
-  store i32 %106, i32* @e, align 4, !tbaa !5
+  store i32 %106, i32* @e, align 4, !tbaa !4
   br label %109
 
 109:                                              ; preds = %108, %5
@@ -234,10 +234,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %172 = phi i32 [ %161, %159 ], [ %170, %164 ]
   %173 = add nsw i32 %172, -1
   %174 = icmp slt i32 %160, -7
-  br i1 %174, label %159, label %175, !llvm.loop !9
+  br i1 %174, label %159, label %175, !llvm.loop !8
 
 175:                                              ; preds = %171
-  store i32 %173, i32* @h, align 4, !tbaa !5
+  store i32 %173, i32* @h, align 4, !tbaa !4
   br label %176
 
 176:                                              ; preds = %175, %149
@@ -249,10 +249,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %182 = phi i32 [ %162, %175 ], [ %155, %149 ]
   %183 = add nsw i32 %182, -8
   %184 = icmp sgt i32 %154, 4
-  br i1 %184, label %149, label %185, !llvm.loop !11
+  br i1 %184, label %149, label %185, !llvm.loop !10
 
 185:                                              ; preds = %176
-  store i32 %183, i32* @g, align 4, !tbaa !5
+  store i32 %183, i32* @g, align 4, !tbaa !4
   br label %186
 
 186:                                              ; preds = %185, %136
@@ -267,11 +267,11 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %195 = phi i32 [ %157, %185 ], [ %144, %136 ]
   %196 = add nsw i32 %195, 1
   %197 = icmp sgt i32 %143, 2
-  br i1 %197, label %136, label %198, !llvm.loop !12
+  br i1 %197, label %136, label %198, !llvm.loop !11
 
 198:                                              ; preds = %186
   %199 = add i32 %135, -1
-  store i32 %196, i32* @f, align 4, !tbaa !5
+  store i32 %196, i32* @f, align 4, !tbaa !4
   br label %200
 
 200:                                              ; preds = %198, %120
@@ -287,10 +287,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %210 = phi i32 [ %199, %198 ], [ %128, %120 ]
   %211 = add nsw i32 %210, 1
   %212 = icmp slt i32 %127, 17
-  br i1 %212, label %120, label %213, !llvm.loop !13
+  br i1 %212, label %120, label %213, !llvm.loop !12
 
 213:                                              ; preds = %200
-  store i32 %211, i32* @e, align 4, !tbaa !5
+  store i32 %211, i32* @e, align 4, !tbaa !4
   br label %214
 
 214:                                              ; preds = %213, %109
@@ -303,7 +303,7 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %221 = phi i32 [ %211, %213 ], [ %116, %109 ]
   %222 = phi i32 [ %132, %213 ], [ %118, %109 ]
   %223 = add nsw i32 %222, -1
-  br i1 %7, label %430, label %224, !llvm.loop !14
+  br i1 %7, label %430, label %224, !llvm.loop !13
 
 224:                                              ; preds = %214
   %225 = icmp slt i32 %222, 21
@@ -376,10 +376,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %278 = phi i32 [ %267, %265 ], [ %276, %270 ]
   %279 = add nsw i32 %278, -1
   %280 = icmp slt i32 %266, -7
-  br i1 %280, label %265, label %281, !llvm.loop !9
+  br i1 %280, label %265, label %281, !llvm.loop !8
 
 281:                                              ; preds = %277
-  store i32 %279, i32* @h, align 4, !tbaa !5
+  store i32 %279, i32* @h, align 4, !tbaa !4
   br label %282
 
 282:                                              ; preds = %281, %255
@@ -391,10 +391,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %288 = phi i32 [ %268, %281 ], [ %261, %255 ]
   %289 = add nsw i32 %288, -8
   %290 = icmp sgt i32 %260, 4
-  br i1 %290, label %255, label %291, !llvm.loop !11
+  br i1 %290, label %255, label %291, !llvm.loop !10
 
 291:                                              ; preds = %282
-  store i32 %289, i32* @g, align 4, !tbaa !5
+  store i32 %289, i32* @g, align 4, !tbaa !4
   br label %292
 
 292:                                              ; preds = %291, %242
@@ -409,11 +409,11 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %301 = phi i32 [ %263, %291 ], [ %250, %242 ]
   %302 = add nsw i32 %301, 1
   %303 = icmp sgt i32 %249, 2
-  br i1 %303, label %242, label %304, !llvm.loop !12
+  br i1 %303, label %242, label %304, !llvm.loop !11
 
 304:                                              ; preds = %292
   %305 = add i32 %241, -1
-  store i32 %302, i32* @f, align 4, !tbaa !5
+  store i32 %302, i32* @f, align 4, !tbaa !4
   br label %306
 
 306:                                              ; preds = %304, %226
@@ -429,10 +429,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %316 = phi i32 [ %305, %304 ], [ %234, %226 ]
   %317 = add nsw i32 %316, 1
   %318 = icmp slt i32 %233, 17
-  br i1 %318, label %226, label %319, !llvm.loop !13
+  br i1 %318, label %226, label %319, !llvm.loop !12
 
 319:                                              ; preds = %306
-  store i32 %317, i32* @e, align 4, !tbaa !5
+  store i32 %317, i32* @e, align 4, !tbaa !4
   br label %320
 
 320:                                              ; preds = %319, %224
@@ -514,10 +514,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %382 = phi i32 [ %371, %369 ], [ %380, %374 ]
   %383 = add nsw i32 %382, -1
   %384 = icmp slt i32 %370, -7
-  br i1 %384, label %369, label %385, !llvm.loop !9
+  br i1 %384, label %369, label %385, !llvm.loop !8
 
 385:                                              ; preds = %381
-  store i32 %383, i32* @h, align 4, !tbaa !5
+  store i32 %383, i32* @h, align 4, !tbaa !4
   br label %386
 
 386:                                              ; preds = %385, %359
@@ -529,10 +529,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %392 = phi i32 [ %372, %385 ], [ %365, %359 ]
   %393 = add nsw i32 %392, -8
   %394 = icmp sgt i32 %364, 4
-  br i1 %394, label %359, label %395, !llvm.loop !11
+  br i1 %394, label %359, label %395, !llvm.loop !10
 
 395:                                              ; preds = %386
-  store i32 %393, i32* @g, align 4, !tbaa !5
+  store i32 %393, i32* @g, align 4, !tbaa !4
   br label %396
 
 396:                                              ; preds = %395, %346
@@ -547,11 +547,11 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %405 = phi i32 [ %367, %395 ], [ %354, %346 ]
   %406 = add nsw i32 %405, 1
   %407 = icmp sgt i32 %353, 2
-  br i1 %407, label %346, label %408, !llvm.loop !12
+  br i1 %407, label %346, label %408, !llvm.loop !11
 
 408:                                              ; preds = %396
   %409 = add i32 %345, -1
-  store i32 %406, i32* @f, align 4, !tbaa !5
+  store i32 %406, i32* @f, align 4, !tbaa !4
   br label %410
 
 410:                                              ; preds = %408, %331
@@ -566,10 +566,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %419 = phi i32 [ %409, %408 ], [ %338, %331 ]
   %420 = add nsw i32 %419, 1
   %421 = icmp slt i32 %337, 17
-  br i1 %421, label %331, label %422, !llvm.loop !13
+  br i1 %421, label %331, label %422, !llvm.loop !12
 
 422:                                              ; preds = %410
-  store i32 %420, i32* @e, align 4, !tbaa !5
+  store i32 %420, i32* @e, align 4, !tbaa !4
   br label %423
 
 423:                                              ; preds = %422, %320
@@ -588,7 +588,7 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
   %434 = phi i32 [ %221, %214 ], [ %427, %423 ]
   %435 = phi i32 [ %223, %214 ], [ %429, %423 ]
   %436 = icmp ult i32 %8, 17
-  br i1 %436, label %5, label %437, !llvm.loop !15
+  br i1 %436, label %5, label %437, !llvm.loop !14
 
 437:                                              ; preds = %430
   %438 = add i32 %432, 35
@@ -599,10 +599,10 @@ define dso_local noundef i32 @_Z10EightWhilev() local_unnamed_addr #0 {
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #0 {
-  store i32 13, i32* @h, align 4, !tbaa !5
-  store i32 3, i32* @g, align 4, !tbaa !5
-  store i32 3, i32* @f, align 4, !tbaa !5
-  store i32 2, i32* @e, align 4, !tbaa !5
+  store i32 13, i32* @h, align 4, !tbaa !4
+  store i32 3, i32* @g, align 4, !tbaa !4
+  store i32 3, i32* @f, align 4, !tbaa !4
+  store i32 2, i32* @e, align 4, !tbaa !4
   ret i32 23
 }
 
@@ -616,21 +616,19 @@ attributes #0 = { mustprogress nofree norecurse nosync nounwind uwtable "frame-p
 attributes #1 = { nofree nosync nounwind readnone speculatable willreturn }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
-!15 = distinct !{!15, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !9}
+!14 = distinct !{!14, !9}

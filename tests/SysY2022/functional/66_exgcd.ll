@@ -9,17 +9,17 @@ define dso_local noundef i32 @_Z5exgcdiiPiS_(i32 noundef %0, i32 noundef %1, i32
   br i1 %5, label %6, label %7
 
 6:                                                ; preds = %4
-  store i32 1, i32* %2, align 4, !tbaa !5
+  store i32 1, i32* %2, align 4, !tbaa !4
   br label %16
 
 7:                                                ; preds = %4
   %8 = srem i32 %0, %1
   %9 = tail call noundef i32 @_Z5exgcdiiPiS_(i32 noundef %1, i32 noundef %8, i32* noundef %2, i32* noundef %3)
-  %10 = load i32, i32* %2, align 4, !tbaa !5
-  %11 = load i32, i32* %3, align 4, !tbaa !5
-  store i32 %11, i32* %2, align 4, !tbaa !5
+  %10 = load i32, i32* %2, align 4, !tbaa !4
+  %11 = load i32, i32* %3, align 4, !tbaa !4
+  store i32 %11, i32* %2, align 4, !tbaa !4
   %12 = sdiv i32 %0, %1
-  %13 = load i32, i32* %3, align 4, !tbaa !5
+  %13 = load i32, i32* %3, align 4, !tbaa !4
   %14 = mul nsw i32 %13, %12
   %15 = sub nsw i32 %10, %14
   br label %16
@@ -27,7 +27,7 @@ define dso_local noundef i32 @_Z5exgcdiiPiS_(i32 noundef %0, i32 noundef %1, i32
 16:                                               ; preds = %7, %6
   %17 = phi i32 [ %15, %7 ], [ 0, %6 ]
   %18 = phi i32 [ %9, %7 ], [ %0, %6 ]
-  store i32 %17, i32* %3, align 4, !tbaa !5
+  store i32 %17, i32* %3, align 4, !tbaa !4
   ret i32 %18
 }
 
@@ -50,7 +50,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #2 {
   %6 = getelementptr inbounds [1 x i32], [1 x i32]* %2, i64 0, i64 0
   store i32 1, i32* %6, align 4
   %7 = call noundef i32 @_Z5exgcdiiPiS_(i32 noundef 7, i32 noundef 15, i32* noundef nonnull %4, i32* noundef nonnull %6)
-  %8 = load i32, i32* %4, align 4, !tbaa !5
+  %8 = load i32, i32* %4, align 4, !tbaa !4
   %9 = srem i32 %8, 15
   %10 = trunc i32 %9 to i8
   %11 = add nsw i8 %10, 15
@@ -71,14 +71,12 @@ attributes #3 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #4 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}

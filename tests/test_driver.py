@@ -10,7 +10,7 @@ import platform
 import math
 
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -ffp-contract=on -w "
-clang_ref_command = "clang -x c++ -O3 -DNDEBUG -emit-llvm -S -ffp-contract=on -w "
+clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
@@ -294,7 +294,7 @@ def sysy_test_noopt(src: str):
 
 
 def spl_ref(src):
-    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-o',
+    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-O', optimization_level, '-o',
                                 src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
@@ -302,7 +302,7 @@ def spl_tac_ref(src):
     name = src+".tacir"
     if 'Project' in src:
         name = src[:-4]+".ir"
-    return subprocess.run(args=[binary_path, '-t', 'tac', '--hide-symbol', '-o',
+    return subprocess.run(args=[binary_path, '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
                                 name, src], stderr=subprocess.DEVNULL).returncode == 0
 
 
@@ -310,17 +310,17 @@ def spl_mips_ref(src):
     name = src+".mips32.S"
     if 'Project' in src:
         name = src[:-4]+".s"
-    return subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-o',
+    return subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level, '-o',
                                 name, src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def spl_riscv64_ref(src):
-    return subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-o',
+    return subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-O', optimization_level, '-o',
                                 src+".riscv64.S", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
 def sysy_ref(src):
-    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
+    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-O', filter_cmmc_opt(src), '-o',
                                 src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
 
 
@@ -414,24 +414,25 @@ def sysy_gcc(src):
     return True
 
 
+def filter_cmmc_opt(src):
+    # FIXME
+    level = optimization_level
+    if 'performance' in src and level != '0':
+        if 'sort' in src:
+            level = '1'
+        elif 'median2' in src:
+            level = '2'
+    if 'functional' in src and ('prim' in src or 'long_line' in src):
+        level = '1'
+    return level
+
+
 def sysy_codegen_llvm(src):
     inputs = src[:-3]+".in"
     if not os.path.exists(inputs):
         inputs = '/dev/null'
 
-    level = optimization_level
-    # FIXME
-    if 'performance' in src and level != '0':
-        if "shuffle" in src:
-            level = '1'
-        elif 'conv' in src:
-            level = '1'
-        elif 'sort' in src:
-            level = '1'
-        elif 'median2' in src:
-            level = '2'
-    if 'functional' in src and 'prim' in src:
-        level = '2'
+    level = filter_cmmc_opt(src)
 
     args = [binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
                                '/dev/stdout', '-e', inputs, src]

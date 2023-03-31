@@ -7,7 +7,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
 define dso_local noundef i32 @_Z4funciiiiiiiiiiiiiii(i32 noundef %0, i32 noundef %1, i32 noundef %2, i32 noundef %3, i32 noundef %4, i32 noundef %5, i32 noundef %6, i32 noundef %7, i32 noundef %8, i32 noundef %9, i32 noundef %10, i32 noundef %11, i32 noundef %12, i32 noundef %13, i32 noundef %14) local_unnamed_addr #0 {
-  %16 = load i32, i32* @loopCount, align 4, !tbaa !5
+  %16 = load i32, i32* @loopCount, align 4, !tbaa !4
   %17 = icmp sgt i32 %16, 0
   br i1 %17, label %18, label %64
 
@@ -50,7 +50,7 @@ define dso_local noundef i32 @_Z4funciiiiiiiiiiiiiii(i32 noundef %0, i32 noundef
   %50 = srem i32 %49, 1500000001
   %51 = add i32 %42, 4
   %52 = icmp eq i32 %51, %39
-  br i1 %52, label %53, label %40, !llvm.loop !9
+  br i1 %52, label %53, label %40, !llvm.loop !8
 
 53:                                               ; preds = %40, %18
   %54 = phi i32 [ undef, %18 ], [ %50, %40 ]
@@ -65,7 +65,7 @@ define dso_local noundef i32 @_Z4funciiiiiiiiiiiiiii(i32 noundef %0, i32 noundef
   %61 = srem i32 %60, 1500000001
   %62 = add i32 %59, 1
   %63 = icmp eq i32 %62, %36
-  br i1 %63, label %64, label %57, !llvm.loop !11
+  br i1 %63, label %64, label %57, !llvm.loop !10
 
 64:                                               ; preds = %53, %57, %15
   %65 = phi i32 [ 0, %15 ], [ %54, %53 ], [ %61, %57 ]
@@ -75,9 +75,9 @@ define dso_local noundef i32 @_Z4funciiiiiiiiiiiiiii(i32 noundef %0, i32 noundef
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %1 = tail call noundef i32 @_Z6getintv()
-  store i32 %1, i32* @loopCount, align 4, !tbaa !5
+  store i32 %1, i32* @loopCount, align 4, !tbaa !4
   tail call void @_Z15_sysy_starttimei(i32 noundef 121)
-  %2 = load i32, i32* @loopCount, align 4, !tbaa !5
+  %2 = load i32, i32* @loopCount, align 4, !tbaa !4
   %3 = icmp sgt i32 %2, 0
   br i1 %3, label %4, label %34
 
@@ -104,7 +104,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %20 = srem i32 %19, 1500000001
   %21 = add i32 %12, 4
   %22 = icmp eq i32 %21, %9
-  br i1 %22, label %23, label %10, !llvm.loop !9
+  br i1 %22, label %23, label %10, !llvm.loop !8
 
 23:                                               ; preds = %10, %4
   %24 = phi i32 [ undef, %4 ], [ %20, %10 ]
@@ -119,7 +119,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %31 = srem i32 %30, 1500000001
   %32 = add i32 %29, 1
   %33 = icmp eq i32 %32, %6
-  br i1 %33, label %34, label %27, !llvm.loop !13
+  br i1 %33, label %34, label %27, !llvm.loop !12
 
 34:                                               ; preds = %23, %27, %0
   %35 = phi i32 [ 0, %0 ], [ %24, %23 ], [ %31, %27 ]
@@ -144,19 +144,17 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !12}
-!12 = !{!"llvm.loop.unroll.disable"}
-!13 = distinct !{!13, !12}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !11}
+!11 = !{!"llvm.loop.unroll.disable"}
+!12 = distinct !{!12, !11}

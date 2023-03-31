@@ -336,7 +336,9 @@ class LLVMConversionContext final {
                             args.push_back(getOperand(idx));
                         }
 
-                        return builder.CreateCall(func, args);
+                        const auto call = builder.CreateCall(func, args);
+                        call->setTailCall();
+                        return call;
                     }
                     case Intrinsic::memset:
                         return builder.CreateMemSet(getOperand(0), builder.CreateTrunc(getOperand(1), builder.getInt8Ty()),

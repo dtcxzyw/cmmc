@@ -15,76 +15,76 @@ define dso_local noundef i32 @_Z8relu_regi(i32 noundef %0) local_unnamed_addr #0
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
 define dso_local noundef i32 @_Z5modelPA5_i([5 x i32]* noundef readonly %0) local_unnamed_addr #1 {
   %2 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 0, i64 0
-  %3 = load i32, i32* %2, align 4, !tbaa !5
+  %3 = load i32, i32* %2, align 4, !tbaa !4
   %4 = mul nsw i32 %3, 85
   %5 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 0, i64 1
-  %6 = load i32, i32* %5, align 4, !tbaa !5
+  %6 = load i32, i32* %5, align 4, !tbaa !4
   %7 = mul nsw i32 %6, 23
   %8 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 0, i64 2
-  %9 = load i32, i32* %8, align 4, !tbaa !5
+  %9 = load i32, i32* %8, align 4, !tbaa !4
   %10 = mul nsw i32 %9, -82
   %11 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 0, i64 3
-  %12 = load i32, i32* %11, align 4, !tbaa !5
+  %12 = load i32, i32* %11, align 4, !tbaa !4
   %13 = mul nsw i32 %12, -103
   %14 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 0, i64 4
-  %15 = load i32, i32* %14, align 4, !tbaa !5
+  %15 = load i32, i32* %14, align 4, !tbaa !4
   %16 = mul nsw i32 %15, -123
   %17 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 1, i64 0
-  %18 = load i32, i32* %17, align 4, !tbaa !5
+  %18 = load i32, i32* %17, align 4, !tbaa !4
   %19 = shl nsw i32 %18, 6
   %20 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 1, i64 1
-  %21 = load i32, i32* %20, align 4, !tbaa !5
+  %21 = load i32, i32* %20, align 4, !tbaa !4
   %22 = mul nsw i32 %21, -120
   %23 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 1, i64 2
-  %24 = load i32, i32* %23, align 4, !tbaa !5
+  %24 = load i32, i32* %23, align 4, !tbaa !4
   %25 = mul nsw i32 %24, 50
   %26 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 1, i64 3
-  %27 = load i32, i32* %26, align 4, !tbaa !5
+  %27 = load i32, i32* %26, align 4, !tbaa !4
   %28 = mul nsw i32 %27, -59
   %29 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 1, i64 4
-  %30 = load i32, i32* %29, align 4, !tbaa !5
+  %30 = load i32, i32* %29, align 4, !tbaa !4
   %31 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 2, i64 0
-  %32 = load i32, i32* %31, align 4, !tbaa !5
+  %32 = load i32, i32* %31, align 4, !tbaa !4
   %33 = mul nsw i32 %32, -111
   %34 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 2, i64 1
-  %35 = load i32, i32* %34, align 4, !tbaa !5
+  %35 = load i32, i32* %34, align 4, !tbaa !4
   %36 = mul nsw i32 %35, -67
   %37 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 2, i64 2
-  %38 = load i32, i32* %37, align 4, !tbaa !5
+  %38 = load i32, i32* %37, align 4, !tbaa !4
   %39 = mul nsw i32 %38, -106
   %40 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 2, i64 3
-  %41 = load i32, i32* %40, align 4, !tbaa !5
+  %41 = load i32, i32* %40, align 4, !tbaa !4
   %42 = mul nsw i32 %41, -75
   %43 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 2, i64 4
-  %44 = load i32, i32* %43, align 4, !tbaa !5
+  %44 = load i32, i32* %43, align 4, !tbaa !4
   %45 = mul nsw i32 %44, -102
   %46 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 3, i64 0
-  %47 = load i32, i32* %46, align 4, !tbaa !5
+  %47 = load i32, i32* %46, align 4, !tbaa !4
   %48 = mul nsw i32 %47, 34
   %49 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 3, i64 1
-  %50 = load i32, i32* %49, align 4, !tbaa !5
+  %50 = load i32, i32* %49, align 4, !tbaa !4
   %51 = mul nsw i32 %50, -39
   %52 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 3, i64 2
-  %53 = load i32, i32* %52, align 4, !tbaa !5
+  %53 = load i32, i32* %52, align 4, !tbaa !4
   %54 = mul nsw i32 %53, 65
   %55 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 3, i64 3
-  %56 = load i32, i32* %55, align 4, !tbaa !5
+  %56 = load i32, i32* %55, align 4, !tbaa !4
   %57 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 3, i64 4
-  %58 = load i32, i32* %57, align 4, !tbaa !5
+  %58 = load i32, i32* %57, align 4, !tbaa !4
   %59 = mul nsw i32 %58, 113
   %60 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 4, i64 0
-  %61 = load i32, i32* %60, align 4, !tbaa !5
+  %61 = load i32, i32* %60, align 4, !tbaa !4
   %62 = mul nsw i32 %61, 110
   %63 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 4, i64 1
-  %64 = load i32, i32* %63, align 4, !tbaa !5
+  %64 = load i32, i32* %63, align 4, !tbaa !4
   %65 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 4, i64 2
-  %66 = load i32, i32* %65, align 4, !tbaa !5
+  %66 = load i32, i32* %65, align 4, !tbaa !4
   %67 = mul nsw i32 %66, -4
   %68 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 4, i64 3
-  %69 = load i32, i32* %68, align 4, !tbaa !5
+  %69 = load i32, i32* %68, align 4, !tbaa !4
   %70 = mul nsw i32 %69, 80
   %71 = getelementptr inbounds [5 x i32], [5 x i32]* %0, i64 4, i64 4
-  %72 = load i32, i32* %71, align 4, !tbaa !5
+  %72 = load i32, i32* %71, align 4, !tbaa !4
   %73 = mul nsw i32 %72, 46
   %74 = add i32 %56, %30
   %75 = add i32 %74, %64
@@ -630,56 +630,56 @@ define dso_local noundef i32 @main() local_unnamed_addr #2 {
 32:                                               ; preds = %5, %32
   %33 = phi i32 [ %2, %5 ], [ %64, %32 ]
   %34 = call noundef i32 @_Z6getintv()
-  store i32 %34, i32* %7, align 16, !tbaa !5
+  store i32 %34, i32* %7, align 16, !tbaa !4
   %35 = call noundef i32 @_Z6getintv()
-  store i32 %35, i32* %8, align 4, !tbaa !5
+  store i32 %35, i32* %8, align 4, !tbaa !4
   %36 = call noundef i32 @_Z6getintv()
-  store i32 %36, i32* %9, align 8, !tbaa !5
+  store i32 %36, i32* %9, align 8, !tbaa !4
   %37 = call noundef i32 @_Z6getintv()
-  store i32 %37, i32* %10, align 4, !tbaa !5
+  store i32 %37, i32* %10, align 4, !tbaa !4
   %38 = call noundef i32 @_Z6getintv()
-  store i32 %38, i32* %11, align 16, !tbaa !5
+  store i32 %38, i32* %11, align 16, !tbaa !4
   %39 = call noundef i32 @_Z6getintv()
-  store i32 %39, i32* %12, align 4, !tbaa !5
+  store i32 %39, i32* %12, align 4, !tbaa !4
   %40 = call noundef i32 @_Z6getintv()
-  store i32 %40, i32* %13, align 8, !tbaa !5
+  store i32 %40, i32* %13, align 8, !tbaa !4
   %41 = call noundef i32 @_Z6getintv()
-  store i32 %41, i32* %14, align 4, !tbaa !5
+  store i32 %41, i32* %14, align 4, !tbaa !4
   %42 = call noundef i32 @_Z6getintv()
-  store i32 %42, i32* %15, align 16, !tbaa !5
+  store i32 %42, i32* %15, align 16, !tbaa !4
   %43 = call noundef i32 @_Z6getintv()
-  store i32 %43, i32* %16, align 4, !tbaa !5
+  store i32 %43, i32* %16, align 4, !tbaa !4
   %44 = call noundef i32 @_Z6getintv()
-  store i32 %44, i32* %17, align 8, !tbaa !5
+  store i32 %44, i32* %17, align 8, !tbaa !4
   %45 = call noundef i32 @_Z6getintv()
-  store i32 %45, i32* %18, align 4, !tbaa !5
+  store i32 %45, i32* %18, align 4, !tbaa !4
   %46 = call noundef i32 @_Z6getintv()
-  store i32 %46, i32* %19, align 16, !tbaa !5
+  store i32 %46, i32* %19, align 16, !tbaa !4
   %47 = call noundef i32 @_Z6getintv()
-  store i32 %47, i32* %20, align 4, !tbaa !5
+  store i32 %47, i32* %20, align 4, !tbaa !4
   %48 = call noundef i32 @_Z6getintv()
-  store i32 %48, i32* %21, align 8, !tbaa !5
+  store i32 %48, i32* %21, align 8, !tbaa !4
   %49 = call noundef i32 @_Z6getintv()
-  store i32 %49, i32* %22, align 4, !tbaa !5
+  store i32 %49, i32* %22, align 4, !tbaa !4
   %50 = call noundef i32 @_Z6getintv()
-  store i32 %50, i32* %23, align 16, !tbaa !5
+  store i32 %50, i32* %23, align 16, !tbaa !4
   %51 = call noundef i32 @_Z6getintv()
-  store i32 %51, i32* %24, align 4, !tbaa !5
+  store i32 %51, i32* %24, align 4, !tbaa !4
   %52 = call noundef i32 @_Z6getintv()
-  store i32 %52, i32* %25, align 8, !tbaa !5
+  store i32 %52, i32* %25, align 8, !tbaa !4
   %53 = call noundef i32 @_Z6getintv()
-  store i32 %53, i32* %26, align 4, !tbaa !5
+  store i32 %53, i32* %26, align 4, !tbaa !4
   %54 = call noundef i32 @_Z6getintv()
-  store i32 %54, i32* %27, align 16, !tbaa !5
+  store i32 %54, i32* %27, align 16, !tbaa !4
   %55 = call noundef i32 @_Z6getintv()
-  store i32 %55, i32* %28, align 4, !tbaa !5
+  store i32 %55, i32* %28, align 4, !tbaa !4
   %56 = call noundef i32 @_Z6getintv()
-  store i32 %56, i32* %29, align 8, !tbaa !5
+  store i32 %56, i32* %29, align 8, !tbaa !4
   %57 = call noundef i32 @_Z6getintv()
-  store i32 %57, i32* %30, align 4, !tbaa !5
+  store i32 %57, i32* %30, align 4, !tbaa !4
   %58 = call noundef i32 @_Z6getintv()
-  store i32 %58, i32* %31, align 16, !tbaa !5
-  %59 = call noundef i32 @_Z5modelPA5_i([5 x i32]* noundef nonnull %6), !range !9
+  store i32 %58, i32* %31, align 16, !tbaa !4
+  %59 = call noundef i32 @_Z5modelPA5_i([5 x i32]* noundef nonnull %6), !range !8
   %60 = icmp eq i32 %59, 0
   %61 = select i1 %60, i32 100, i32 99
   %62 = select i1 %60, i32 111, i32 97
@@ -690,7 +690,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #2 {
   call void @_Z5putchi(i32 noundef 10)
   %64 = add nsw i32 %33, -1
   %65 = icmp sgt i32 %33, 1
-  br i1 %65, label %32, label %66, !llvm.loop !10
+  br i1 %65, label %32, label %66, !llvm.loop !9
 
 66:                                               ; preds = %32, %0
   call void @llvm.lifetime.end.p0i8(i64 100, i8* nonnull %3) #5
@@ -715,17 +715,15 @@ attributes #4 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #5 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = !{i32 0, i32 2}
-!10 = distinct !{!10, !11}
-!11 = !{!"llvm.loop.mustprogress"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = !{i32 0, i32 2}
+!9 = distinct !{!9, !10}
+!10 = !{!"llvm.loop.mustprogress"}

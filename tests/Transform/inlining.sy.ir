@@ -1,28 +1,4 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
-internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @add(i32 %a, i32 %b) -> i32 {
-^entry:
-    i32* %b1 = alloc i32;
-    i32* %a1 = alloc i32;
-    store i32* %a1 with i32 %a;
-    store i32* %b1 with i32 %b;
-    i32 %0 = load i32* %a1;
-    i32 %1 = load i32* %b1;
-    i32 %2 = add i32 %0, i32 %1;
-    ret i32 %2;
-}
-func @main() -> i32 { Entry } {
-^entry:
-    i32 %0 = call (i32, i32) -> i32 @add(i32 1, i32 2);
-    ret i32 %0;
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
+^b:
+    ret i32 3;
 }

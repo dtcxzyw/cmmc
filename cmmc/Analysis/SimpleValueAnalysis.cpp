@@ -27,14 +27,11 @@ CMMC_NAMESPACE_BEGIN
 
 SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet) : mAliasSet{ aliasSet } {
     std::vector<Value*> args;
-    // FIXME
-    CMMC_UNUSED(block);
-    /*
-    for(auto arg : block->args()) {
+    for(auto arg : block->getFunction()->args()) {
         if(arg->getType()->isPointer()) {
             args.push_back(arg);
         }
-    }*/
+    }
 
     bool allDistinct = true;
 
@@ -55,6 +52,14 @@ SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult
     } else {
         for(auto arg : args)
             mBasePointer.emplace(arg, nullptr);
+    }
+
+    const auto entryBlock = block->getFunction()->entryBlock();
+    for(auto inst : entryBlock->instructions()) {
+        if(inst->getInstID() == InstructionID::Alloc) {
+            mBasePointer.emplace(inst, inst);
+        } else
+            break;
     }
 }
 
@@ -174,10 +179,6 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             } else {
                 mLastValue.clear();  // discard all cached values
             }
-        } break;
-        case InstructionID::Alloc: {
-            mBasePointer.emplace(inst, inst);
-            mLastValue[inst].emplace(inst, make<UndefinedValue>(inst->getType()->as<PointerType>()->getPointee()));
         } break;
         case InstructionID::GetElementPtr: {
             const auto root = inst->operands().back();

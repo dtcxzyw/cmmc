@@ -615,7 +615,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   tail call void @_Z5putchi(i32 noundef 10)
   %4 = add nuw nsw i32 %2, 1
   %5 = icmp eq i32 %4, 21
-  br i1 %5, label %6, label %1, !llvm.loop !5
+  br i1 %5, label %6, label %1, !llvm.loop !4
 
 6:                                                ; preds = %1
   ret i32 0
@@ -630,12 +630,10 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}

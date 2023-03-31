@@ -27,7 +27,7 @@ define dso_local noundef i32 @_Z10quick_readv() local_unnamed_addr #0 {
   %12 = tail call noundef i32 @_Z5getchv()
   %13 = add i32 %12, -58
   %14 = icmp ult i32 %13, -10
-  br i1 %14, label %7, label %4, !llvm.loop !5
+  br i1 %14, label %7, label %4, !llvm.loop !4
 
 15:                                               ; preds = %4, %15
   %16 = phi i32 [ %20, %15 ], [ 0, %4 ]
@@ -38,7 +38,7 @@ define dso_local noundef i32 @_Z10quick_readv() local_unnamed_addr #0 {
   %21 = tail call noundef i32 @_Z5getchv()
   %22 = add i32 %21, -48
   %23 = icmp ult i32 %22, 10
-  br i1 %23, label %15, label %24, !llvm.loop !7
+  br i1 %23, label %15, label %24, !llvm.loop !6
 
 24:                                               ; preds = %15
   %25 = icmp eq i32 %6, 0
@@ -51,96 +51,63 @@ declare noundef i32 @_Z5getchv() local_unnamed_addr #1
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local void @_Z4initv() local_unnamed_addr #2 {
-  %1 = load i32, i32* @n, align 4, !tbaa !8
+  %1 = load i32, i32* @n, align 4, !tbaa !7
   %2 = icmp slt i32 %1, 1
-  br i1 %2, label %61, label %3
+  br i1 %2, label %40, label %3
 
 3:                                                ; preds = %0
   %4 = add nuw i32 %1, 1
   %5 = zext i32 %4 to i64
   %6 = add nsw i64 %5, -1
-  %7 = icmp ult i64 %6, 8
-  br i1 %7, label %53, label %8
+  %7 = add nsw i64 %5, -2
+  %8 = and i64 %6, 3
+  %9 = icmp ult i64 %7, 3
+  br i1 %9, label %29, label %10
 
-8:                                                ; preds = %3
-  %9 = and i64 %6, -8
-  %10 = or i64 %9, 1
-  %11 = add nsw i64 %9, -8
-  %12 = lshr exact i64 %11, 3
-  %13 = add nuw nsw i64 %12, 1
-  %14 = and i64 %13, 1
-  %15 = icmp eq i64 %11, 0
-  br i1 %15, label %41, label %16
+10:                                               ; preds = %3
+  %11 = and i64 %6, -4
+  br label %12
 
-16:                                               ; preds = %8
-  %17 = and i64 %13, 4611686018427387902
-  br label %18
+12:                                               ; preds = %12, %10
+  %13 = phi i64 [ 1, %10 ], [ %26, %12 ]
+  %14 = phi i64 [ 0, %10 ], [ %27, %12 ]
+  %15 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %13
+  %16 = trunc i64 %13 to i32
+  store i32 %16, i32* %15, align 4, !tbaa !7
+  %17 = add nuw nsw i64 %13, 1
+  %18 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %17
+  %19 = trunc i64 %17 to i32
+  store i32 %19, i32* %18, align 4, !tbaa !7
+  %20 = add nuw nsw i64 %13, 2
+  %21 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %20
+  %22 = trunc i64 %20 to i32
+  store i32 %22, i32* %21, align 4, !tbaa !7
+  %23 = add nuw nsw i64 %13, 3
+  %24 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %23
+  %25 = trunc i64 %23 to i32
+  store i32 %25, i32* %24, align 4, !tbaa !7
+  %26 = add nuw nsw i64 %13, 4
+  %27 = add i64 %14, 4
+  %28 = icmp eq i64 %27, %11
+  br i1 %28, label %29, label %12, !llvm.loop !11
 
-18:                                               ; preds = %18, %16
-  %19 = phi i64 [ 0, %16 ], [ %35, %18 ]
-  %20 = phi <4 x i32> [ <i32 1, i32 2, i32 3, i32 4>, %16 ], [ %36, %18 ]
-  %21 = phi i64 [ 0, %16 ], [ %37, %18 ]
-  %22 = or i64 %19, 1
-  %23 = add <4 x i32> %20, <i32 4, i32 4, i32 4, i32 4>
-  %24 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %22
-  %25 = bitcast i32* %24 to <4 x i32>*
-  store <4 x i32> %20, <4 x i32>* %25, align 4, !tbaa !8
-  %26 = getelementptr inbounds i32, i32* %24, i64 4
-  %27 = bitcast i32* %26 to <4 x i32>*
-  store <4 x i32> %23, <4 x i32>* %27, align 4, !tbaa !8
-  %28 = add <4 x i32> %20, <i32 8, i32 8, i32 8, i32 8>
-  %29 = or i64 %19, 9
-  %30 = add <4 x i32> %20, <i32 12, i32 12, i32 12, i32 12>
-  %31 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %29
-  %32 = bitcast i32* %31 to <4 x i32>*
-  store <4 x i32> %28, <4 x i32>* %32, align 4, !tbaa !8
-  %33 = getelementptr inbounds i32, i32* %31, i64 4
-  %34 = bitcast i32* %33 to <4 x i32>*
-  store <4 x i32> %30, <4 x i32>* %34, align 4, !tbaa !8
-  %35 = add nuw i64 %19, 16
-  %36 = add <4 x i32> %20, <i32 16, i32 16, i32 16, i32 16>
-  %37 = add i64 %21, 2
-  %38 = icmp eq i64 %37, %17
-  br i1 %38, label %39, label %18, !llvm.loop !12
+29:                                               ; preds = %12, %3
+  %30 = phi i64 [ 1, %3 ], [ %26, %12 ]
+  %31 = icmp eq i64 %8, 0
+  br i1 %31, label %40, label %32
 
-39:                                               ; preds = %18
-  %40 = or i64 %35, 1
-  br label %41
+32:                                               ; preds = %29, %32
+  %33 = phi i64 [ %37, %32 ], [ %30, %29 ]
+  %34 = phi i64 [ %38, %32 ], [ 0, %29 ]
+  %35 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %33
+  %36 = trunc i64 %33 to i32
+  store i32 %36, i32* %35, align 4, !tbaa !7
+  %37 = add nuw nsw i64 %33, 1
+  %38 = add i64 %34, 1
+  %39 = icmp eq i64 %38, %8
+  br i1 %39, label %40, label %32, !llvm.loop !12
 
-41:                                               ; preds = %39, %8
-  %42 = phi i64 [ 1, %8 ], [ %40, %39 ]
-  %43 = phi <4 x i32> [ <i32 1, i32 2, i32 3, i32 4>, %8 ], [ %36, %39 ]
-  %44 = icmp eq i64 %14, 0
-  br i1 %44, label %51, label %45
-
-45:                                               ; preds = %41
-  %46 = add <4 x i32> %43, <i32 4, i32 4, i32 4, i32 4>
-  %47 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %42
-  %48 = bitcast i32* %47 to <4 x i32>*
-  store <4 x i32> %43, <4 x i32>* %48, align 4, !tbaa !8
-  %49 = getelementptr inbounds i32, i32* %47, i64 4
-  %50 = bitcast i32* %49 to <4 x i32>*
-  store <4 x i32> %46, <4 x i32>* %50, align 4, !tbaa !8
-  br label %51
-
-51:                                               ; preds = %41, %45
-  %52 = icmp eq i64 %6, %9
-  br i1 %52, label %61, label %53
-
-53:                                               ; preds = %3, %51
-  %54 = phi i64 [ 1, %3 ], [ %10, %51 ]
-  br label %55
-
-55:                                               ; preds = %53, %55
-  %56 = phi i64 [ %59, %55 ], [ %54, %53 ]
-  %57 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %56
-  %58 = trunc i64 %56 to i32
-  store i32 %58, i32* %57, align 4, !tbaa !8
-  %59 = add nuw nsw i64 %56, 1
-  %60 = icmp eq i64 %59, %5
-  br i1 %60, label %61, label %55, !llvm.loop !14
-
-61:                                               ; preds = %55, %51, %0
+40:                                               ; preds = %29, %32, %0
   ret void
 }
 
@@ -148,7 +115,7 @@ define dso_local void @_Z4initv() local_unnamed_addr #2 {
 define dso_local noundef i32 @_Z4findi(i32 noundef %0) local_unnamed_addr #3 {
   %2 = sext i32 %0 to i64
   %3 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %2
-  %4 = load i32, i32* %3, align 4, !tbaa !8
+  %4 = load i32, i32* %3, align 4, !tbaa !7
   %5 = icmp eq i32 %4, %0
   br i1 %5, label %6, label %8
 
@@ -158,7 +125,7 @@ define dso_local noundef i32 @_Z4findi(i32 noundef %0) local_unnamed_addr #3 {
 
 8:                                                ; preds = %1
   %9 = tail call noundef i32 @_Z4findi(i32 noundef %4)
-  store i32 %9, i32* %3, align 4, !tbaa !8
+  store i32 %9, i32* %3, align 4, !tbaa !7
   br label %6
 }
 
@@ -191,7 +158,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #4 {
   %12 = tail call noundef i32 @_Z5getchv()
   %13 = add i32 %12, -58
   %14 = icmp ult i32 %13, -10
-  br i1 %14, label %7, label %4, !llvm.loop !5
+  br i1 %14, label %7, label %4, !llvm.loop !4
 
 15:                                               ; preds = %15, %4
   %16 = phi i32 [ %20, %15 ], [ 0, %4 ]
@@ -202,13 +169,13 @@ define dso_local noundef i32 @main() local_unnamed_addr #4 {
   %21 = tail call noundef i32 @_Z5getchv()
   %22 = add i32 %21, -48
   %23 = icmp ult i32 %22, 10
-  br i1 %23, label %15, label %24, !llvm.loop !7
+  br i1 %23, label %15, label %24, !llvm.loop !6
 
 24:                                               ; preds = %15
   %25 = icmp eq i32 %6, 0
   %26 = sub nsw i32 0, %20
   %27 = select i1 %25, i32 %20, i32 %26
-  store i32 %27, i32* @n, align 4, !tbaa !8
+  store i32 %27, i32* @n, align 4, !tbaa !7
   %28 = tail call noundef i32 @_Z5getchv()
   %29 = add i32 %28, -58
   %30 = icmp ult i32 %29, -10
@@ -227,7 +194,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #4 {
   %39 = tail call noundef i32 @_Z5getchv()
   %40 = add i32 %39, -58
   %41 = icmp ult i32 %40, -10
-  br i1 %41, label %34, label %31, !llvm.loop !5
+  br i1 %41, label %34, label %31, !llvm.loop !4
 
 42:                                               ; preds = %42, %31
   %43 = phi i32 [ %47, %42 ], [ 0, %31 ]
@@ -238,285 +205,252 @@ define dso_local noundef i32 @main() local_unnamed_addr #4 {
   %48 = tail call noundef i32 @_Z5getchv()
   %49 = add i32 %48, -48
   %50 = icmp ult i32 %49, 10
-  br i1 %50, label %42, label %51, !llvm.loop !7
+  br i1 %50, label %42, label %51, !llvm.loop !6
 
 51:                                               ; preds = %42
   %52 = icmp eq i32 %33, 0
   %53 = sub nsw i32 0, %47
   %54 = select i1 %52, i32 %47, i32 %53
-  store i32 %54, i32* @m, align 4, !tbaa !8
-  %55 = load i32, i32* @n, align 4, !tbaa !8
+  store i32 %54, i32* @m, align 4, !tbaa !7
+  %55 = load i32, i32* @n, align 4, !tbaa !7
   %56 = icmp slt i32 %55, 1
-  br i1 %56, label %115, label %57
+  br i1 %56, label %94, label %57
 
 57:                                               ; preds = %51
   %58 = add nuw i32 %55, 1
   %59 = zext i32 %58 to i64
   %60 = add nsw i64 %59, -1
-  %61 = icmp ult i64 %60, 8
-  br i1 %61, label %107, label %62
+  %61 = add nsw i64 %59, -2
+  %62 = and i64 %60, 3
+  %63 = icmp ult i64 %61, 3
+  br i1 %63, label %83, label %64
 
-62:                                               ; preds = %57
-  %63 = and i64 %60, -8
-  %64 = or i64 %63, 1
-  %65 = add nsw i64 %63, -8
-  %66 = lshr exact i64 %65, 3
-  %67 = add nuw nsw i64 %66, 1
-  %68 = and i64 %67, 1
-  %69 = icmp eq i64 %65, 0
-  br i1 %69, label %95, label %70
+64:                                               ; preds = %57
+  %65 = and i64 %60, -4
+  br label %66
 
-70:                                               ; preds = %62
-  %71 = and i64 %67, 4611686018427387902
-  br label %72
+66:                                               ; preds = %66, %64
+  %67 = phi i64 [ 1, %64 ], [ %80, %66 ]
+  %68 = phi i64 [ 0, %64 ], [ %81, %66 ]
+  %69 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %67
+  %70 = trunc i64 %67 to i32
+  store i32 %70, i32* %69, align 4, !tbaa !7
+  %71 = add nuw nsw i64 %67, 1
+  %72 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %71
+  %73 = trunc i64 %71 to i32
+  store i32 %73, i32* %72, align 4, !tbaa !7
+  %74 = add nuw nsw i64 %67, 2
+  %75 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %74
+  %76 = trunc i64 %74 to i32
+  store i32 %76, i32* %75, align 4, !tbaa !7
+  %77 = add nuw nsw i64 %67, 3
+  %78 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %77
+  %79 = trunc i64 %77 to i32
+  store i32 %79, i32* %78, align 4, !tbaa !7
+  %80 = add nuw nsw i64 %67, 4
+  %81 = add i64 %68, 4
+  %82 = icmp eq i64 %81, %65
+  br i1 %82, label %83, label %66, !llvm.loop !11
 
-72:                                               ; preds = %72, %70
-  %73 = phi i64 [ 0, %70 ], [ %89, %72 ]
-  %74 = phi <4 x i32> [ <i32 1, i32 2, i32 3, i32 4>, %70 ], [ %90, %72 ]
-  %75 = phi i64 [ 0, %70 ], [ %91, %72 ]
-  %76 = or i64 %73, 1
-  %77 = add <4 x i32> %74, <i32 4, i32 4, i32 4, i32 4>
-  %78 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %76
-  %79 = bitcast i32* %78 to <4 x i32>*
-  store <4 x i32> %74, <4 x i32>* %79, align 4, !tbaa !8
-  %80 = getelementptr inbounds i32, i32* %78, i64 4
-  %81 = bitcast i32* %80 to <4 x i32>*
-  store <4 x i32> %77, <4 x i32>* %81, align 4, !tbaa !8
-  %82 = add <4 x i32> %74, <i32 8, i32 8, i32 8, i32 8>
-  %83 = or i64 %73, 9
-  %84 = add <4 x i32> %74, <i32 12, i32 12, i32 12, i32 12>
-  %85 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %83
-  %86 = bitcast i32* %85 to <4 x i32>*
-  store <4 x i32> %82, <4 x i32>* %86, align 4, !tbaa !8
-  %87 = getelementptr inbounds i32, i32* %85, i64 4
-  %88 = bitcast i32* %87 to <4 x i32>*
-  store <4 x i32> %84, <4 x i32>* %88, align 4, !tbaa !8
-  %89 = add nuw i64 %73, 16
-  %90 = add <4 x i32> %74, <i32 16, i32 16, i32 16, i32 16>
-  %91 = add i64 %75, 2
-  %92 = icmp eq i64 %91, %71
-  br i1 %92, label %93, label %72, !llvm.loop !16
+83:                                               ; preds = %66, %57
+  %84 = phi i64 [ 1, %57 ], [ %80, %66 ]
+  %85 = icmp eq i64 %62, 0
+  br i1 %85, label %94, label %86
 
-93:                                               ; preds = %72
-  %94 = or i64 %89, 1
-  br label %95
+86:                                               ; preds = %83, %86
+  %87 = phi i64 [ %91, %86 ], [ %84, %83 ]
+  %88 = phi i64 [ %92, %86 ], [ 0, %83 ]
+  %89 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %87
+  %90 = trunc i64 %87 to i32
+  store i32 %90, i32* %89, align 4, !tbaa !7
+  %91 = add nuw nsw i64 %87, 1
+  %92 = add i64 %88, 1
+  %93 = icmp eq i64 %92, %62
+  br i1 %93, label %94, label %86, !llvm.loop !14
 
-95:                                               ; preds = %93, %62
-  %96 = phi i64 [ 1, %62 ], [ %94, %93 ]
-  %97 = phi <4 x i32> [ <i32 1, i32 2, i32 3, i32 4>, %62 ], [ %90, %93 ]
-  %98 = icmp eq i64 %68, 0
-  br i1 %98, label %105, label %99
+94:                                               ; preds = %83, %86, %51
+  %95 = icmp eq i32 %54, 0
+  br i1 %95, label %226, label %96
 
-99:                                               ; preds = %95
-  %100 = add <4 x i32> %97, <i32 4, i32 4, i32 4, i32 4>
-  %101 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %96
-  %102 = bitcast i32* %101 to <4 x i32>*
-  store <4 x i32> %97, <4 x i32>* %102, align 4, !tbaa !8
-  %103 = getelementptr inbounds i32, i32* %101, i64 4
-  %104 = bitcast i32* %103 to <4 x i32>*
-  store <4 x i32> %100, <4 x i32>* %104, align 4, !tbaa !8
-  br label %105
+96:                                               ; preds = %94, %222
+  %97 = tail call noundef i32 @_Z5getchv()
+  %98 = and i32 %97, -5
+  %99 = icmp eq i32 %98, 81
+  br i1 %99, label %104, label %100
 
-105:                                              ; preds = %95, %99
-  %106 = icmp eq i64 %60, %63
-  br i1 %106, label %115, label %107
+100:                                              ; preds = %96, %100
+  %101 = tail call noundef i32 @_Z5getchv()
+  %102 = and i32 %101, -5
+  %103 = icmp eq i32 %102, 81
+  br i1 %103, label %104, label %100, !llvm.loop !15
 
-107:                                              ; preds = %57, %105
-  %108 = phi i64 [ 1, %57 ], [ %64, %105 ]
-  br label %109
+104:                                              ; preds = %100, %96
+  %105 = phi i32 [ %97, %96 ], [ %101, %100 ]
+  %106 = icmp eq i32 %105, 81
+  %107 = tail call noundef i32 @_Z5getchv()
+  %108 = add i32 %107, -58
+  %109 = icmp ult i32 %108, -10
+  br i1 %106, label %110, label %166
 
-109:                                              ; preds = %107, %109
-  %110 = phi i64 [ %113, %109 ], [ %108, %107 ]
-  %111 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %110
-  %112 = trunc i64 %110 to i32
-  store i32 %112, i32* %111, align 4, !tbaa !8
-  %113 = add nuw nsw i64 %110, 1
-  %114 = icmp eq i64 %113, %59
-  br i1 %114, label %115, label %109, !llvm.loop !17
+110:                                              ; preds = %104
+  br i1 %109, label %114, label %111
 
-115:                                              ; preds = %109, %105, %51
-  %116 = icmp eq i32 %54, 0
-  br i1 %116, label %247, label %117
+111:                                              ; preds = %114, %110
+  %112 = phi i32 [ %107, %110 ], [ %119, %114 ]
+  %113 = phi i32 [ 0, %110 ], [ %118, %114 ]
+  br label %122
 
-117:                                              ; preds = %115, %243
-  %118 = tail call noundef i32 @_Z5getchv()
-  %119 = and i32 %118, -5
-  %120 = icmp eq i32 %119, 81
-  br i1 %120, label %125, label %121
+114:                                              ; preds = %110, %114
+  %115 = phi i32 [ %118, %114 ], [ 0, %110 ]
+  %116 = phi i32 [ %119, %114 ], [ %107, %110 ]
+  %117 = icmp eq i32 %116, 45
+  %118 = select i1 %117, i32 1, i32 %115
+  %119 = tail call noundef i32 @_Z5getchv()
+  %120 = add i32 %119, -58
+  %121 = icmp ult i32 %120, -10
+  br i1 %121, label %114, label %111, !llvm.loop !4
 
-121:                                              ; preds = %117, %121
-  %122 = tail call noundef i32 @_Z5getchv()
-  %123 = and i32 %122, -5
-  %124 = icmp eq i32 %123, 81
-  br i1 %124, label %125, label %121, !llvm.loop !18
-
-125:                                              ; preds = %121, %117
-  %126 = phi i32 [ %118, %117 ], [ %122, %121 ]
-  %127 = icmp eq i32 %126, 81
+122:                                              ; preds = %122, %111
+  %123 = phi i32 [ %127, %122 ], [ 0, %111 ]
+  %124 = phi i32 [ %128, %122 ], [ %112, %111 ]
+  %125 = mul nsw i32 %123, 10
+  %126 = add nsw i32 %124, -48
+  %127 = add i32 %126, %125
   %128 = tail call noundef i32 @_Z5getchv()
-  %129 = add i32 %128, -58
-  %130 = icmp ult i32 %129, -10
-  br i1 %127, label %131, label %187
+  %129 = add i32 %128, -48
+  %130 = icmp ult i32 %129, 10
+  br i1 %130, label %122, label %131, !llvm.loop !6
 
-131:                                              ; preds = %125
-  br i1 %130, label %135, label %132
+131:                                              ; preds = %122
+  %132 = icmp eq i32 %113, 0
+  %133 = sub nsw i32 0, %127
+  %134 = select i1 %132, i32 %127, i32 %133
+  %135 = tail call noundef i32 @_Z5getchv()
+  %136 = add i32 %135, -58
+  %137 = icmp ult i32 %136, -10
+  br i1 %137, label %141, label %138
 
-132:                                              ; preds = %135, %131
-  %133 = phi i32 [ %128, %131 ], [ %140, %135 ]
-  %134 = phi i32 [ 0, %131 ], [ %139, %135 ]
-  br label %143
+138:                                              ; preds = %141, %131
+  %139 = phi i32 [ %135, %131 ], [ %146, %141 ]
+  %140 = phi i32 [ 0, %131 ], [ %145, %141 ]
+  br label %149
 
-135:                                              ; preds = %131, %135
-  %136 = phi i32 [ %139, %135 ], [ 0, %131 ]
-  %137 = phi i32 [ %140, %135 ], [ %128, %131 ]
-  %138 = icmp eq i32 %137, 45
-  %139 = select i1 %138, i32 1, i32 %136
-  %140 = tail call noundef i32 @_Z5getchv()
-  %141 = add i32 %140, -58
-  %142 = icmp ult i32 %141, -10
-  br i1 %142, label %135, label %132, !llvm.loop !5
+141:                                              ; preds = %131, %141
+  %142 = phi i32 [ %145, %141 ], [ 0, %131 ]
+  %143 = phi i32 [ %146, %141 ], [ %135, %131 ]
+  %144 = icmp eq i32 %143, 45
+  %145 = select i1 %144, i32 1, i32 %142
+  %146 = tail call noundef i32 @_Z5getchv()
+  %147 = add i32 %146, -58
+  %148 = icmp ult i32 %147, -10
+  br i1 %148, label %141, label %138, !llvm.loop !4
 
-143:                                              ; preds = %143, %132
-  %144 = phi i32 [ %148, %143 ], [ 0, %132 ]
-  %145 = phi i32 [ %149, %143 ], [ %133, %132 ]
-  %146 = mul nsw i32 %144, 10
-  %147 = add nsw i32 %145, -48
-  %148 = add i32 %147, %146
-  %149 = tail call noundef i32 @_Z5getchv()
-  %150 = add i32 %149, -48
-  %151 = icmp ult i32 %150, 10
-  br i1 %151, label %143, label %152, !llvm.loop !7
+149:                                              ; preds = %149, %138
+  %150 = phi i32 [ %154, %149 ], [ 0, %138 ]
+  %151 = phi i32 [ %155, %149 ], [ %139, %138 ]
+  %152 = mul nsw i32 %150, 10
+  %153 = add nsw i32 %151, -48
+  %154 = add i32 %153, %152
+  %155 = tail call noundef i32 @_Z5getchv()
+  %156 = add i32 %155, -48
+  %157 = icmp ult i32 %156, 10
+  br i1 %157, label %149, label %158, !llvm.loop !6
 
-152:                                              ; preds = %143
-  %153 = icmp eq i32 %134, 0
-  %154 = sub nsw i32 0, %148
-  %155 = select i1 %153, i32 %148, i32 %154
-  %156 = tail call noundef i32 @_Z5getchv()
-  %157 = add i32 %156, -58
-  %158 = icmp ult i32 %157, -10
-  br i1 %158, label %162, label %159
-
-159:                                              ; preds = %162, %152
-  %160 = phi i32 [ %156, %152 ], [ %167, %162 ]
-  %161 = phi i32 [ 0, %152 ], [ %166, %162 ]
-  br label %170
-
-162:                                              ; preds = %152, %162
-  %163 = phi i32 [ %166, %162 ], [ 0, %152 ]
-  %164 = phi i32 [ %167, %162 ], [ %156, %152 ]
-  %165 = icmp eq i32 %164, 45
-  %166 = select i1 %165, i32 1, i32 %163
-  %167 = tail call noundef i32 @_Z5getchv()
-  %168 = add i32 %167, -58
-  %169 = icmp ult i32 %168, -10
-  br i1 %169, label %162, label %159, !llvm.loop !5
-
-170:                                              ; preds = %170, %159
-  %171 = phi i32 [ %175, %170 ], [ 0, %159 ]
-  %172 = phi i32 [ %176, %170 ], [ %160, %159 ]
-  %173 = mul nsw i32 %171, 10
-  %174 = add nsw i32 %172, -48
-  %175 = add i32 %174, %173
-  %176 = tail call noundef i32 @_Z5getchv()
-  %177 = add i32 %176, -48
-  %178 = icmp ult i32 %177, 10
-  br i1 %178, label %170, label %179, !llvm.loop !7
-
-179:                                              ; preds = %170
-  %180 = icmp eq i32 %161, 0
-  %181 = sub nsw i32 0, %175
-  %182 = select i1 %180, i32 %175, i32 %181
-  %183 = tail call noundef i32 @_Z4findi(i32 noundef %155) #5
-  %184 = tail call noundef i32 @_Z4findi(i32 noundef %182) #5
-  %185 = icmp eq i32 %183, %184
-  %186 = zext i1 %185 to i32
-  tail call void @_Z6putinti(i32 noundef %186)
+158:                                              ; preds = %149
+  %159 = icmp eq i32 %140, 0
+  %160 = sub nsw i32 0, %154
+  %161 = select i1 %159, i32 %154, i32 %160
+  %162 = tail call noundef i32 @_Z4findi(i32 noundef %134) #5
+  %163 = tail call noundef i32 @_Z4findi(i32 noundef %161) #5
+  %164 = icmp eq i32 %162, %163
+  %165 = zext i1 %164 to i32
+  tail call void @_Z6putinti(i32 noundef %165)
   tail call void @_Z5putchi(i32 noundef 10)
-  br label %243
+  br label %222
 
-187:                                              ; preds = %125
-  br i1 %130, label %191, label %188
+166:                                              ; preds = %104
+  br i1 %109, label %170, label %167
 
-188:                                              ; preds = %191, %187
-  %189 = phi i32 [ %128, %187 ], [ %196, %191 ]
-  %190 = phi i32 [ 0, %187 ], [ %195, %191 ]
-  br label %199
+167:                                              ; preds = %170, %166
+  %168 = phi i32 [ %107, %166 ], [ %175, %170 ]
+  %169 = phi i32 [ 0, %166 ], [ %174, %170 ]
+  br label %178
 
-191:                                              ; preds = %187, %191
-  %192 = phi i32 [ %195, %191 ], [ 0, %187 ]
-  %193 = phi i32 [ %196, %191 ], [ %128, %187 ]
-  %194 = icmp eq i32 %193, 45
-  %195 = select i1 %194, i32 1, i32 %192
-  %196 = tail call noundef i32 @_Z5getchv()
-  %197 = add i32 %196, -58
-  %198 = icmp ult i32 %197, -10
-  br i1 %198, label %191, label %188, !llvm.loop !5
+170:                                              ; preds = %166, %170
+  %171 = phi i32 [ %174, %170 ], [ 0, %166 ]
+  %172 = phi i32 [ %175, %170 ], [ %107, %166 ]
+  %173 = icmp eq i32 %172, 45
+  %174 = select i1 %173, i32 1, i32 %171
+  %175 = tail call noundef i32 @_Z5getchv()
+  %176 = add i32 %175, -58
+  %177 = icmp ult i32 %176, -10
+  br i1 %177, label %170, label %167, !llvm.loop !4
 
-199:                                              ; preds = %199, %188
-  %200 = phi i32 [ %204, %199 ], [ 0, %188 ]
-  %201 = phi i32 [ %205, %199 ], [ %189, %188 ]
-  %202 = mul nsw i32 %200, 10
-  %203 = add nsw i32 %201, -48
-  %204 = add i32 %203, %202
-  %205 = tail call noundef i32 @_Z5getchv()
-  %206 = add i32 %205, -48
-  %207 = icmp ult i32 %206, 10
-  br i1 %207, label %199, label %208, !llvm.loop !7
+178:                                              ; preds = %178, %167
+  %179 = phi i32 [ %183, %178 ], [ 0, %167 ]
+  %180 = phi i32 [ %184, %178 ], [ %168, %167 ]
+  %181 = mul nsw i32 %179, 10
+  %182 = add nsw i32 %180, -48
+  %183 = add i32 %182, %181
+  %184 = tail call noundef i32 @_Z5getchv()
+  %185 = add i32 %184, -48
+  %186 = icmp ult i32 %185, 10
+  br i1 %186, label %178, label %187, !llvm.loop !6
 
-208:                                              ; preds = %199
-  %209 = icmp eq i32 %190, 0
-  %210 = sub nsw i32 0, %204
-  %211 = select i1 %209, i32 %204, i32 %210
-  %212 = tail call noundef i32 @_Z4findi(i32 noundef %211)
-  %213 = tail call noundef i32 @_Z5getchv()
-  %214 = add i32 %213, -58
-  %215 = icmp ult i32 %214, -10
-  br i1 %215, label %219, label %216
+187:                                              ; preds = %178
+  %188 = icmp eq i32 %169, 0
+  %189 = sub nsw i32 0, %183
+  %190 = select i1 %188, i32 %183, i32 %189
+  %191 = tail call noundef i32 @_Z4findi(i32 noundef %190)
+  %192 = tail call noundef i32 @_Z5getchv()
+  %193 = add i32 %192, -58
+  %194 = icmp ult i32 %193, -10
+  br i1 %194, label %198, label %195
 
-216:                                              ; preds = %219, %208
-  %217 = phi i32 [ %213, %208 ], [ %224, %219 ]
-  %218 = phi i32 [ 0, %208 ], [ %223, %219 ]
-  br label %227
+195:                                              ; preds = %198, %187
+  %196 = phi i32 [ %192, %187 ], [ %203, %198 ]
+  %197 = phi i32 [ 0, %187 ], [ %202, %198 ]
+  br label %206
 
-219:                                              ; preds = %208, %219
-  %220 = phi i32 [ %223, %219 ], [ 0, %208 ]
-  %221 = phi i32 [ %224, %219 ], [ %213, %208 ]
-  %222 = icmp eq i32 %221, 45
-  %223 = select i1 %222, i32 1, i32 %220
-  %224 = tail call noundef i32 @_Z5getchv()
-  %225 = add i32 %224, -58
-  %226 = icmp ult i32 %225, -10
-  br i1 %226, label %219, label %216, !llvm.loop !5
+198:                                              ; preds = %187, %198
+  %199 = phi i32 [ %202, %198 ], [ 0, %187 ]
+  %200 = phi i32 [ %203, %198 ], [ %192, %187 ]
+  %201 = icmp eq i32 %200, 45
+  %202 = select i1 %201, i32 1, i32 %199
+  %203 = tail call noundef i32 @_Z5getchv()
+  %204 = add i32 %203, -58
+  %205 = icmp ult i32 %204, -10
+  br i1 %205, label %198, label %195, !llvm.loop !4
 
-227:                                              ; preds = %227, %216
-  %228 = phi i32 [ %232, %227 ], [ 0, %216 ]
-  %229 = phi i32 [ %233, %227 ], [ %217, %216 ]
-  %230 = mul nsw i32 %228, 10
-  %231 = add nsw i32 %229, -48
-  %232 = add i32 %231, %230
-  %233 = tail call noundef i32 @_Z5getchv()
-  %234 = add i32 %233, -48
-  %235 = icmp ult i32 %234, 10
-  br i1 %235, label %227, label %236, !llvm.loop !7
+206:                                              ; preds = %206, %195
+  %207 = phi i32 [ %211, %206 ], [ 0, %195 ]
+  %208 = phi i32 [ %212, %206 ], [ %196, %195 ]
+  %209 = mul nsw i32 %207, 10
+  %210 = add nsw i32 %208, -48
+  %211 = add i32 %210, %209
+  %212 = tail call noundef i32 @_Z5getchv()
+  %213 = add i32 %212, -48
+  %214 = icmp ult i32 %213, 10
+  br i1 %214, label %206, label %215, !llvm.loop !6
 
-236:                                              ; preds = %227
-  %237 = icmp eq i32 %218, 0
-  %238 = sub nsw i32 0, %232
-  %239 = select i1 %237, i32 %232, i32 %238
-  %240 = tail call noundef i32 @_Z4findi(i32 noundef %239)
-  %241 = sext i32 %212 to i64
-  %242 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %241
-  store i32 %240, i32* %242, align 4, !tbaa !8
-  br label %243
+215:                                              ; preds = %206
+  %216 = icmp eq i32 %197, 0
+  %217 = sub nsw i32 0, %211
+  %218 = select i1 %216, i32 %211, i32 %217
+  %219 = tail call noundef i32 @_Z4findi(i32 noundef %218)
+  %220 = sext i32 %191 to i64
+  %221 = getelementptr inbounds [100005 x i32], [100005 x i32]* @fa, i64 0, i64 %220
+  store i32 %219, i32* %221, align 4, !tbaa !7
+  br label %222
 
-243:                                              ; preds = %236, %179
-  %244 = load i32, i32* @m, align 4, !tbaa !8
-  %245 = add nsw i32 %244, -1
-  store i32 %245, i32* @m, align 4, !tbaa !8
-  %246 = icmp eq i32 %245, 0
-  br i1 %246, label %247, label %117, !llvm.loop !19
+222:                                              ; preds = %215, %158
+  %223 = load i32, i32* @m, align 4, !tbaa !7
+  %224 = add nsw i32 %223, -1
+  store i32 %224, i32* @m, align 4, !tbaa !7
+  %225 = icmp eq i32 %224, 0
+  br i1 %225, label %226, label %96, !llvm.loop !16
 
-247:                                              ; preds = %243, %115
+226:                                              ; preds = %222, %94
   ret i32 0
 }
 
@@ -532,25 +466,21 @@ attributes #4 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #5 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
-!7 = distinct !{!7, !6}
-!8 = !{!9, !9, i64 0}
-!9 = !{!"int", !10, i64 0}
-!10 = !{!"omnipotent char", !11, i64 0}
-!11 = !{!"Simple C++ TBAA"}
-!12 = distinct !{!12, !6, !13}
-!13 = !{!"llvm.loop.isvectorized", i32 1}
-!14 = distinct !{!14, !6, !15, !13}
-!15 = !{!"llvm.loop.unroll.runtime.disable"}
-!16 = distinct !{!16, !6, !13}
-!17 = distinct !{!17, !6, !15, !13}
-!18 = distinct !{!18, !6}
-!19 = distinct !{!19, !6}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}
+!6 = distinct !{!6, !5}
+!7 = !{!8, !8, i64 0}
+!8 = !{!"int", !9, i64 0}
+!9 = !{!"omnipotent char", !10, i64 0}
+!10 = !{!"Simple C++ TBAA"}
+!11 = distinct !{!11, !5}
+!12 = distinct !{!12, !13}
+!13 = !{!"llvm.loop.unroll.disable"}
+!14 = distinct !{!14, !13}
+!15 = distinct !{!15, !5}
+!16 = distinct !{!16, !5}

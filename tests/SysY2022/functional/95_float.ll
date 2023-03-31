@@ -142,9 +142,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %14 = fmul float %13, 0x400921FB60000000
   %15 = call float @llvm.fmuladd.f32(float %11, float %10, float %14) #8
   %16 = fmul float %15, 5.000000e-01
-  %17 = load float, float* %3, align 16, !tbaa !5
+  %17 = load float, float* %3, align 16, !tbaa !4
   %18 = fadd float %6, %17
-  store float %18, float* %3, align 16, !tbaa !5
+  store float %18, float* %3, align 16, !tbaa !4
   call void @_Z8putfloatf(float noundef %8)
   call void @_Z5putchi(i32 noundef 32)
   %19 = fptosi float %16 to i32
@@ -161,9 +161,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %28 = fmul float %27, 0x400921FB60000000
   %29 = call float @llvm.fmuladd.f32(float %25, float %24, float %28) #8
   %30 = fmul float %29, 5.000000e-01
-  %31 = load float, float* %4, align 4, !tbaa !5
+  %31 = load float, float* %4, align 4, !tbaa !4
   %32 = fadd float %20, %31
-  store float %32, float* %4, align 4, !tbaa !5
+  store float %32, float* %4, align 4, !tbaa !4
   call void @_Z8putfloatf(float noundef %22)
   call void @_Z5putchi(i32 noundef 32)
   %33 = fptosi float %30 to i32
@@ -181,9 +181,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %43 = call float @llvm.fmuladd.f32(float %39, float %38, float %42) #8
   %44 = fmul float %43, 5.000000e-01
   %45 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 2
-  %46 = load float, float* %45, align 8, !tbaa !5
+  %46 = load float, float* %45, align 8, !tbaa !4
   %47 = fadd float %34, %46
-  store float %47, float* %45, align 8, !tbaa !5
+  store float %47, float* %45, align 8, !tbaa !4
   call void @_Z8putfloatf(float noundef %36)
   call void @_Z5putchi(i32 noundef 32)
   %48 = fptosi float %44 to i32
@@ -201,9 +201,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %58 = call float @llvm.fmuladd.f32(float %54, float %53, float %57) #8
   %59 = fmul float %58, 5.000000e-01
   %60 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 3
-  %61 = load float, float* %60, align 4, !tbaa !5
+  %61 = load float, float* %60, align 4, !tbaa !4
   %62 = fadd float %49, %61
-  store float %62, float* %60, align 4, !tbaa !5
+  store float %62, float* %60, align 4, !tbaa !4
   call void @_Z8putfloatf(float noundef %51)
   call void @_Z5putchi(i32 noundef 32)
   %63 = fptosi float %59 to i32
@@ -221,9 +221,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %73 = call float @llvm.fmuladd.f32(float %69, float %68, float %72) #8
   %74 = fmul float %73, 5.000000e-01
   %75 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 4
-  %76 = load float, float* %75, align 16, !tbaa !5
+  %76 = load float, float* %75, align 16, !tbaa !4
   %77 = fadd float %64, %76
-  store float %77, float* %75, align 16, !tbaa !5
+  store float %77, float* %75, align 16, !tbaa !4
   call void @_Z8putfloatf(float noundef %66)
   call void @_Z5putchi(i32 noundef 32)
   %78 = fptosi float %74 to i32
@@ -241,9 +241,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %88 = call float @llvm.fmuladd.f32(float %84, float %83, float %87) #8
   %89 = fmul float %88, 5.000000e-01
   %90 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 5
-  %91 = load float, float* %90, align 4, !tbaa !5
+  %91 = load float, float* %90, align 4, !tbaa !4
   %92 = fadd float %79, %91
-  store float %92, float* %90, align 4, !tbaa !5
+  store float %92, float* %90, align 4, !tbaa !4
   call void @_Z8putfloatf(float noundef %81)
   call void @_Z5putchi(i32 noundef 32)
   %93 = fptosi float %89 to i32
@@ -261,9 +261,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %103 = call float @llvm.fmuladd.f32(float %99, float %98, float %102) #8
   %104 = fmul float %103, 5.000000e-01
   %105 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 6
-  %106 = load float, float* %105, align 8, !tbaa !5
+  %106 = load float, float* %105, align 8, !tbaa !4
   %107 = fadd float %94, %106
-  store float %107, float* %105, align 8, !tbaa !5
+  store float %107, float* %105, align 8, !tbaa !4
   call void @_Z8putfloatf(float noundef %96)
   call void @_Z5putchi(i32 noundef 32)
   %108 = fptosi float %104 to i32
@@ -281,9 +281,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %118 = call float @llvm.fmuladd.f32(float %114, float %113, float %117) #8
   %119 = fmul float %118, 5.000000e-01
   %120 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 7
-  %121 = load float, float* %120, align 4, !tbaa !5
+  %121 = load float, float* %120, align 4, !tbaa !4
   %122 = fadd float %109, %121
-  store float %122, float* %120, align 4, !tbaa !5
+  store float %122, float* %120, align 4, !tbaa !4
   call void @_Z8putfloatf(float noundef %111)
   call void @_Z5putchi(i32 noundef 32)
   %123 = fptosi float %119 to i32
@@ -301,9 +301,9 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %133 = call float @llvm.fmuladd.f32(float %129, float %128, float %132) #8
   %134 = fmul float %133, 5.000000e-01
   %135 = getelementptr inbounds [10 x float], [10 x float]* %1, i64 0, i64 8
-  %136 = load float, float* %135, align 16, !tbaa !5
+  %136 = load float, float* %135, align 16, !tbaa !4
   %137 = fadd float %124, %136
-  store float %137, float* %135, align 16, !tbaa !5
+  store float %137, float* %135, align 16, !tbaa !4
   call void @_Z8putfloatf(float noundef %126)
   call void @_Z5putchi(i32 noundef 32)
   %138 = fptosi float %134 to i32
@@ -344,14 +344,12 @@ attributes #7 = { argmemonly mustprogress nofree nounwind willreturn writeonly }
 attributes #8 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"float", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"float", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}

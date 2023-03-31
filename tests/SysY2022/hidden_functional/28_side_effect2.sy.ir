@@ -1,863 +1,1154 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal i32* @sum = 0;
-internal [20 * i32]* @array;
-internal func @f(i32 %i, i32 %j) -> i32 {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
-    i32* %j1 = alloc i32;
-    i32* %i1 = alloc i32;
-    store i32* %i1 with i32 %i;
-    store i32* %j1 with i32 %j;
-    i32 %0 = load i32* @sum;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* @sum with i32 %1;
-    i32 %2 = load i32* %i1;
-    i32 %3 = load i32* %j1;
-    i1 %4 = scmp ge i32 %2, i32 %3;
-    i32 %5 = zext i1 %4 to i32;
-    i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^b1, ^b;
-^b:
-    i32 %7 = load i32* %i1;
-    i1 %8 = scmp ge i32 %7, i32 20;
-    i32 %9 = zext i1 %8 to i32;
-    i1 %10 = scmp neq i32 %9, i32 0;
-    ubr ^b1;
-^b1:
-    i1 %11 = phi [^b, i1 %10] [^entry, i1 true];
-    i32 %12 = zext i1 %11 to i32;
-    i1 %13 = scmp neq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.5), ^if.then, ^b2;
-^b2:
-    i32 %14 = load i32* %i1;
-    i64 %15 = sext i32 %14 to i64;
-    i32* %16 = getelementptr &([20 * i32]* @array)[i64 0][i64 %15];
-    store i32* %16 with i32 1;
-    i32 %17 = load i32* %i1;
-    i1 %18 = scmp eq i32 %17, i32 0;
-    i32 %19 = zext i1 %18 to i32;
-    i1 %20 = scmp neq i32 %19, i32 0;
-    cbr i1 %20(prob = 0.5), ^if.then1, ^if.else;
-^if.then:
-    ret i32 0;
-^if.then1:
-    i32* %21 = getelementptr &([20 * i32]* @array)[i64 0][i64 0];
-    i32 %22 = load i32* %21;
-    ret i32 %22;
-^if.else:
-    i32 %23 = load i32* %i1;
-    i32 %24 = sub i32 %23, i32 1;
-    i64 %25 = sext i32 %24 to i64;
-    i32* %26 = getelementptr &([20 * i32]* @array)[i64 0][i64 %25];
-    i32 %27 = load i32* %26;
-    ret i32 %27;
-^b3:
-    unreachable;
-}
-internal func @g(i32 %i, i32 %j) -> i32 {
-^entry:
-    i32* %j1 = alloc i32;
-    i32* %i1 = alloc i32;
-    store i32* %i1 with i32 %i;
-    store i32* %j1 with i32 %j;
-    i32 %0 = load i32* @sum;
-    i32 %1 = add i32 %0, i32 2;
-    store i32* @sum with i32 %1;
-    i32 %2 = load i32* %i1;
-    i32 %3 = load i32* %j1;
-    i1 %4 = scmp ge i32 %2, i32 %3;
-    i32 %5 = zext i1 %4 to i32;
-    i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^b1, ^b;
-^b:
-    i32 %7 = load i32* %i1;
-    i1 %8 = scmp ge i32 %7, i32 20;
-    i32 %9 = zext i1 %8 to i32;
-    i1 %10 = scmp neq i32 %9, i32 0;
-    ubr ^b1;
-^b1:
-    i1 %11 = phi [^b, i1 %10] [^entry, i1 true];
-    i32 %12 = zext i1 %11 to i32;
-    i1 %13 = scmp neq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.5), ^if.then, ^b2;
-^b2:
-    i32 %14 = load i32* %i1;
-    i64 %15 = sext i32 %14 to i64;
-    i32* %16 = getelementptr &([20 * i32]* @array)[i64 0][i64 %15];
+    [20 * i32]* %array = alloc [20 * i32];
+    i32* %0 = getelementptr &([20 * i32]* %array)[i64 0][i64 0];
+    store i32* %0 with i32 0;
+    i32* %1 = getelementptr &([20 * i32]* %array)[i64 0][i64 1];
+    store i32* %1 with i32 0;
+    i32* %2 = getelementptr &([20 * i32]* %array)[i64 0][i64 2];
+    store i32* %2 with i32 0;
+    i32* %3 = getelementptr &([20 * i32]* %array)[i64 0][i64 3];
+    store i32* %3 with i32 0;
+    i32* %4 = getelementptr &([20 * i32]* %array)[i64 0][i64 4];
+    store i32* %4 with i32 0;
+    i32* %5 = getelementptr &([20 * i32]* %array)[i64 0][i64 5];
+    store i32* %5 with i32 0;
+    i32* %6 = getelementptr &([20 * i32]* %array)[i64 0][i64 6];
+    store i32* %6 with i32 0;
+    i32* %7 = getelementptr &([20 * i32]* %array)[i64 0][i64 7];
+    store i32* %7 with i32 0;
+    i32* %8 = getelementptr &([20 * i32]* %array)[i64 0][i64 8];
+    store i32* %8 with i32 0;
+    i32* %9 = getelementptr &([20 * i32]* %array)[i64 0][i64 9];
+    store i32* %9 with i32 0;
+    i32* %10 = getelementptr &([20 * i32]* %array)[i64 0][i64 10];
+    store i32* %10 with i32 0;
+    i32* %11 = getelementptr &([20 * i32]* %array)[i64 0][i64 11];
+    store i32* %11 with i32 0;
+    i32* %12 = getelementptr &([20 * i32]* %array)[i64 0][i64 12];
+    store i32* %12 with i32 0;
+    i32* %13 = getelementptr &([20 * i32]* %array)[i64 0][i64 13];
+    store i32* %13 with i32 0;
+    i32* %14 = getelementptr &([20 * i32]* %array)[i64 0][i64 14];
+    store i32* %14 with i32 0;
+    i32* %15 = getelementptr &([20 * i32]* %array)[i64 0][i64 15];
+    store i32* %15 with i32 0;
+    i32* %16 = getelementptr &([20 * i32]* %array)[i64 0][i64 16];
     store i32* %16 with i32 0;
-    i32 %17 = load i32* %i1;
-    i1 %18 = scmp eq i32 %17, i32 0;
-    i32 %19 = zext i1 %18 to i32;
-    i1 %20 = scmp neq i32 %19, i32 0;
-    cbr i1 %20(prob = 0.5), ^if.then1, ^if.else;
-^if.then:
-    ret i32 1;
-^if.then1:
-    i32* %21 = getelementptr &([20 * i32]* @array)[i64 0][i64 0];
-    i32 %22 = load i32* %21;
-    ret i32 %22;
-^if.else:
-    i32 %23 = load i32* %i1;
-    i32 %24 = sub i32 %23, i32 1;
-    i64 %25 = sext i32 %24 to i64;
-    i32* %26 = getelementptr &([20 * i32]* @array)[i64 0][i64 %25];
-    i32 %27 = load i32* %26;
-    ret i32 %27;
-^b3:
-    unreachable;
-}
-internal func @h(i32 %i) -> i32 {
-^entry:
-    i32* %i1 = alloc i32;
-    store i32* %i1 with i32 %i;
-    i32 %0 = load i32* @sum;
-    i32 %1 = add i32 %0, i32 3;
-    store i32* @sum with i32 %1;
-    i32 %2 = load i32* %i1;
-    i1 %3 = scmp lt i32 %2, i32 0;
-    i32 %4 = zext i1 %3 to i32;
-    i1 %5 = scmp neq i32 %4, i32 0;
-    cbr i1 %5(prob = 0.5), ^b1, ^b;
-^b:
-    i32 %6 = load i32* %i1;
-    i1 %7 = scmp ge i32 %6, i32 20;
-    i32 %8 = zext i1 %7 to i32;
-    i1 %9 = scmp neq i32 %8, i32 0;
-    ubr ^b1;
-^b1:
-    i1 %10 = phi [^b, i1 %9] [^entry, i1 true];
-    i32 %11 = zext i1 %10 to i32;
-    i1 %12 = scmp neq i32 %11, i32 0;
-    cbr i1 %12(prob = 0.5), ^if.then, ^b2;
-^if.then:
-    ret i32 0;
-^b2:
-    i32 %13 = load i32* %i1;
-    i64 %14 = sext i32 %13 to i64;
-    i32* %15 = getelementptr &([20 * i32]* @array)[i64 0][i64 %14];
-    i32 %16 = load i32* %15;
-    ret i32 %16;
-}
-func @main() -> i32 { Entry } {
-^entry:
-    i32* %ans = alloc i32;
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
+    i32* %17 = getelementptr &([20 * i32]* %array)[i64 0][i64 17];
+    store i32* %17 with i32 0;
+    i32* %18 = getelementptr &([20 * i32]* %array)[i64 0][i64 18];
+    store i32* %18 with i32 0;
+    i32* %19 = getelementptr &([20 * i32]* %array)[i64 0][i64 19];
+    store i32* %19 with i32 0;
     ubr ^while.header;
 ^while.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 20;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
-^b:
-    store i32* %i with i32 0;
-    ubr ^while.header1;
+    i32 %20 = phi [^b252, i32 %465] [^entry, i32 0];
+    i32 %21 = phi [^b252, i32 %442] [^entry, i32 0];
+    i32 %22 = phi [^b252, i32 %465] [^entry, i32 0];
+    i1 %23 = scmp lt i32 %22, i32 20;
+    cbr i1 %23(prob = 0.97), ^while.body, ^while.header1;
 ^while.body:
-    i32 %4 = load i32* %i;
-    i32 %5 = call (i32, i32) -> i32 @f(i32 0, i32 %4);
-    i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^b1, ^b2;
-^b1:
-    i32 %7 = load i32* %i;
-    i32 %8 = call (i32, i32) -> i32 @f(i32 1, i32 %7);
-    i1 %9 = scmp neq i32 %8, i32 0;
-    ubr ^b2;
-^b2:
-    i1 %10 = phi [^b1, i1 %9] [^while.body, i1 false];
-    i32 %11 = zext i1 %10 to i32;
-    i1 %12 = scmp neq i32 %11, i32 0;
-    cbr i1 %12(prob = 0.5), ^b3, ^b5;
+    i32 %24 = add i32 %21, i32 1;
+    i1 %25 = scmp lt i32 %20, i32 1;
+    cbr i1 %25(prob = 0.5), ^b1, ^b;
 ^while.header1:
-    i32 %13 = load i32* %i;
-    i1 %14 = scmp lt i32 %13, i32 20;
-    i32 %15 = zext i1 %14 to i32;
-    i1 %16 = scmp neq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.97), ^while.body1, ^b4;
-^b3:
-    i32 %17 = load i32* %i;
-    i32 %18 = call (i32, i32) -> i32 @f(i32 2, i32 %17);
-    i1 %19 = scmp neq i32 %18, i32 0;
-    ubr ^b5;
-^b4:
-    store i32* %i with i32 1;
-    ubr ^while.header2;
+    i32 %26 = phi [^while.header, i32 0] [^b254, i32 %467];
+    i32 %27 = phi [^while.header, i32 %21] [^b254, i32 %446];
+    i32 %28 = phi [^while.header, i32 0] [^b254, i32 %467];
+    i1 %29 = scmp lt i32 %28, i32 20;
+    cbr i1 %29(prob = 0.97), ^while.body1, ^while.header2;
+^b:
+    ubr ^b1;
+^b1:
+    i1 %30 = phi [^while.body, i1 true] [^b, i1 false];
+    cbr i1 %30(prob = 0.5), ^while.body2, ^b2;
 ^while.body1:
-    i32 %20 = load i32* %i;
-    i32 %21 = call (i32, i32) -> i32 @g(i32 0, i32 %20);
-    i1 %22 = scmp neq i32 %21, i32 0;
-    cbr i1 %22(prob = 0.5), ^b8, ^b7;
-^b5:
-    i1 %23 = phi [^b3, i1 %19] [^b2, i1 false];
-    i32 %24 = zext i1 %23 to i32;
-    i1 %25 = scmp neq i32 %24, i32 0;
-    cbr i1 %25(prob = 0.5), ^b6, ^b9;
-^b6:
-    i32 %26 = load i32* %i;
-    i32 %27 = call (i32, i32) -> i32 @f(i32 3, i32 %26);
-    i1 %28 = scmp neq i32 %27, i32 0;
-    ubr ^b9;
-^b7:
-    i32 %29 = load i32* %i;
-    i32 %30 = call (i32, i32) -> i32 @g(i32 1, i32 %29);
-    i1 %31 = scmp neq i32 %30, i32 0;
-    ubr ^b8;
-^b8:
-    i1 %32 = phi [^b7, i1 %31] [^while.body1, i1 true];
-    i32 %33 = zext i1 %32 to i32;
-    i1 %34 = scmp neq i32 %33, i32 0;
-    cbr i1 %34(prob = 0.5), ^b13, ^b10;
+    i32 %31 = add i32 %27, i32 2;
+    i1 %32 = scmp lt i32 %26, i32 1;
+    cbr i1 %32(prob = 0.5), ^b4, ^b3;
 ^while.header2:
-    i32 %35 = load i32* %i;
+    i32 %33 = phi [^while.header1, i32 1] [^while.body4, i32 %53];
+    i32 %34 = phi [^while.header1, i32 %27] [^while.body4, i32 %44];
+    i32 %35 = phi [^while.header1, i32 1] [^while.body4, i32 %53];
     i1 %36 = scmp lt i32 %35, i32 20;
-    i32 %37 = zext i1 %36 to i32;
-    i1 %38 = scmp neq i32 %37, i32 0;
-    cbr i1 %38(prob = 0.5), ^b11, ^b14;
-^b9:
-    i1 %39 = phi [^b6, i1 %28] [^b5, i1 false];
-    i32 %40 = zext i1 %39 to i32;
-    i1 %41 = scmp neq i32 %40, i32 0;
-    cbr i1 %41(prob = 0.5), ^b12, ^b15;
-^b10:
-    i32 %42 = load i32* %i;
-    i32 %43 = call (i32, i32) -> i32 @g(i32 2, i32 %42);
-    i1 %44 = scmp neq i32 %43, i32 0;
-    ubr ^b13;
-^b11:
-    i32 %45 = load i32* %i;
-    i32 %46 = sub i32 %45, i32 1;
-    i32 %47 = load i32* %i;
-    i32 %48 = call (i32, i32) -> i32 @f(i32 %46, i32 %47);
-    i1 %49 = scmp neq i32 %48, i32 0;
-    ubr ^b14;
-^b12:
-    i32 %50 = load i32* %i;
-    i32 %51 = call (i32, i32) -> i32 @f(i32 4, i32 %50);
-    i1 %52 = scmp neq i32 %51, i32 0;
-    ubr ^b15;
-^b13:
-    i1 %53 = phi [^b10, i1 %44] [^b8, i1 true];
-    i32 %54 = zext i1 %53 to i32;
-    i1 %55 = scmp neq i32 %54, i32 0;
-    cbr i1 %55(prob = 0.5), ^b17, ^b16;
-^b14:
-    i1 %56 = phi [^b11, i1 %49] [^while.header2, i1 false];
-    i32 %57 = zext i1 %56 to i32;
-    i1 %58 = scmp neq i32 %57, i32 0;
-    cbr i1 %58(prob = 0.97), ^while.body2, ^b19;
-^b15:
-    i1 %59 = phi [^b12, i1 %52] [^b9, i1 false];
-    i32 %60 = zext i1 %59 to i32;
-    i1 %61 = scmp neq i32 %60, i32 0;
-    cbr i1 %61(prob = 0.5), ^b18, ^b20;
-^b16:
-    i32 %62 = load i32* %i;
-    i32 %63 = call (i32, i32) -> i32 @g(i32 3, i32 %62);
-    i1 %64 = scmp neq i32 %63, i32 0;
-    ubr ^b17;
-^b17:
-    i1 %65 = phi [^b16, i1 %64] [^b13, i1 true];
-    i32 %66 = zext i1 %65 to i32;
-    i1 %67 = scmp neq i32 %66, i32 0;
-    cbr i1 %67(prob = 0.5), ^b22, ^b21;
+    cbr i1 %36(prob = 0.5), ^b5, ^b6;
+^b2:
+    store i32* %0 with i32 1;
+    i32 %37 = load i32* %0;
+    ubr ^while.body2;
 ^while.body2:
-    i32 %68 = load i32* %i;
-    i32 %69 = add i32 %68, i32 1;
-    store i32* %i with i32 %69;
+    i32 %38 = phi [^b2, i32 %37] [^b1, i32 0];
+    i1 %39 = scmp neq i32 %38, i32 0;
+    cbr i1 %39(prob = 0.5), ^b7, ^b9;
+^b3:
+    ubr ^b4;
+^b4:
+    i1 %40 = phi [^while.body1, i1 true] [^b3, i1 false];
+    cbr i1 %40(prob = 0.5), ^while.body3, ^b8;
+^b5:
+    i32 %41 = add i32 %33, i32 -1;
+    i32 %42 = add i32 %34, i32 1;
+    i1 %43 = scmp ge i32 %41, i32 %33;
+    cbr i1 %43(prob = 0.5), ^b11, ^b10;
+^b6:
+    i32 %44 = phi [^b14, i32 %42] [^while.header2, i32 %34];
+    i1 %45 = phi [^b14, i1 %61] [^while.header2, i1 false];
+    cbr i1 %45(prob = 0.97), ^while.body4, ^entry1;
+^b7:
+    i32 %46 = add i32 %21, i32 2;
+    i1 %47 = scmp lt i32 %20, i32 2;
+    cbr i1 %47(prob = 0.5), ^b13, ^b12;
+^b8:
+    store i32* %0 with i32 0;
+    i32 %48 = load i32* %0;
+    ubr ^while.body3;
+^b9:
+    i32 %49 = phi [^b21, i32 %46] [^while.body2, i32 %24];
+    i1 %50 = phi [^b21, i1 %78] [^while.body2, i1 false];
+    cbr i1 %50(prob = 0.5), ^b15, ^b17;
+^while.body3:
+    i32 %51 = phi [^b8, i32 %48] [^b4, i32 1];
+    i1 %52 = scmp neq i32 %51, i32 0;
+    cbr i1 %52(prob = 0.5), ^b16, ^b18;
+^while.body4:
+    i32 %53 = add i32 %33, i32 1;
     ubr ^while.header2;
+^b10:
+    i1 %54 = scmp ge i32 %33, i32 21;
+    ubr ^b11;
+^b11:
+    i1 %55 = phi [^b5, i1 true] [^b10, i1 %54];
+    cbr i1 %55(prob = 0.5), ^b14, ^b19;
+^entry1:
+    i32 %56 = add i32 %44, i32 3;
+    i32 %57 = load i32* %0;
+    i1 %58 = scmp neq i32 %57, i32 0;
+    cbr i1 %58(prob = 0.5), ^entry2, ^b20;
+^b12:
+    ubr ^b13;
+^b13:
+    i1 %59 = phi [^b7, i1 true] [^b12, i1 false];
+    cbr i1 %59(prob = 0.5), ^b21, ^b22;
+^b14:
+    i32 %60 = phi [^if.then, i32 %83] [^b11, i32 0] [^if.else, i32 %91];
+    i1 %61 = scmp neq i32 %60, i32 0;
+    ubr ^b6;
+^b15:
+    i32 %62 = add i32 %49, i32 1;
+    i1 %63 = scmp lt i32 %20, i32 3;
+    cbr i1 %63(prob = 0.5), ^b24, ^b23;
+^b16:
+    i32 %64 = phi [^b34, i32 %68] [^while.body3, i32 %31];
+    i1 %65 = phi [^while.body3, i1 true] [^b34, i1 %103];
+    cbr i1 %65(prob = 0.5), ^b25, ^b28;
+^b17:
+    i32 %66 = phi [^b32, i32 %62] [^b9, i32 %49];
+    i1 %67 = phi [^b32, i1 %100] [^b9, i1 false];
+    cbr i1 %67(prob = 0.5), ^b27, ^b30;
 ^b18:
-    i32 %70 = load i32* %i;
-    i32 %71 = call (i32, i32) -> i32 @f(i32 5, i32 %70);
+    i32 %68 = add i32 %27, i32 4;
+    i1 %69 = scmp lt i32 %26, i32 2;
+    cbr i1 %69(prob = 0.5), ^b29, ^b26;
+^entry2:
+    i32 %70 = add i32 %44, i32 6;
+    i32 %71 = load i32* %1;
     i1 %72 = scmp neq i32 %71, i32 0;
     ubr ^b20;
 ^b19:
-    store i32* %ans with i32 0;
-    store i32* %ans with i32 0;
-    i32 %73 = call (i32) -> i32 @h(i32 0);
-    i1 %74 = scmp neq i32 %73, i32 0;
-    cbr i1 %74(prob = 0.5), ^b23, ^b25;
+    i32* %73 = getelementptr &([20 * i32]* %array)[i64 0][i32 %41];
+    store i32* %73 with i32 1;
+    i1 %74 = scmp eq i32 %33, i32 1;
+    cbr i1 %74(prob = 0.5), ^if.then, ^if.else;
 ^b20:
-    i1 %75 = phi [^b18, i1 %72] [^b15, i1 false];
-    i32 %76 = zext i1 %75 to i32;
-    i1 %77 = scmp neq i32 %76, i32 0;
-    cbr i1 %77(prob = 0.5), ^b24, ^b26;
+    i32 %75 = phi [^entry2, i32 %70] [^entry1, i32 %56];
+    i1 %76 = phi [^entry1, i1 false] [^entry2, i1 %72];
+    cbr i1 %76(prob = 0.5), ^b31, ^entry3;
 ^b21:
-    i32 %78 = load i32* %i;
-    i32 %79 = call (i32, i32) -> i32 @g(i32 4, i32 %78);
-    i1 %80 = scmp neq i32 %79, i32 0;
-    ubr ^b22;
+    i32 %77 = phi [^b22, i32 %79] [^b13, i32 0];
+    i1 %78 = scmp neq i32 %77, i32 0;
+    ubr ^b9;
 ^b22:
-    i1 %81 = phi [^b21, i1 %80] [^b17, i1 true];
-    i32 %82 = zext i1 %81 to i32;
-    i1 %83 = scmp neq i32 %82, i32 0;
-    cbr i1 %83(prob = 0.5), ^b28, ^b27;
+    store i32* %1 with i32 1;
+    i32 %79 = load i32* %0;
+    ubr ^b21;
 ^b23:
-    i32 %84 = call (i32) -> i32 @h(i32 1);
-    i1 %85 = scmp neq i32 %84, i32 0;
-    ubr ^b25;
+    ubr ^b24;
 ^b24:
-    i32 %86 = load i32* %i;
-    i32 %87 = call (i32, i32) -> i32 @f(i32 6, i32 %86);
-    i1 %88 = scmp neq i32 %87, i32 0;
-    ubr ^b26;
+    i1 %80 = phi [^b15, i1 true] [^b23, i1 false];
+    cbr i1 %80(prob = 0.5), ^b32, ^b33;
 ^b25:
-    i1 %89 = phi [^b23, i1 %85] [^b19, i1 false];
-    i32 %90 = zext i1 %89 to i32;
-    i1 %91 = scmp neq i32 %90, i32 0;
-    cbr i1 %91(prob = 0.5), ^b31, ^b30;
+    i32 %81 = phi [^b46, i32 %86] [^b16, i32 %64];
+    i1 %82 = phi [^b46, i1 %123] [^b16, i1 true];
+    cbr i1 %82(prob = 0.5), ^b36, ^b40;
 ^b26:
-    i1 %92 = phi [^b24, i1 %88] [^b20, i1 false];
-    i32 %93 = zext i1 %92 to i32;
-    i1 %94 = scmp neq i32 %93, i32 0;
-    cbr i1 %94(prob = 0.5), ^b29, ^b32;
+    ubr ^b29;
+^if.then:
+    i32 %83 = load i32* %0;
+    ubr ^b14;
 ^b27:
-    i32 %95 = load i32* %i;
-    i32 %96 = call (i32, i32) -> i32 @g(i32 5, i32 %95);
-    i1 %97 = scmp neq i32 %96, i32 0;
-    ubr ^b28;
+    i32 %84 = add i32 %66, i32 1;
+    i1 %85 = scmp lt i32 %20, i32 4;
+    cbr i1 %85(prob = 0.5), ^b39, ^b35;
 ^b28:
-    i1 %98 = phi [^b27, i1 %97] [^b22, i1 true];
-    i32 %99 = zext i1 %98 to i32;
-    i1 %100 = scmp neq i32 %99, i32 0;
-    cbr i1 %100(prob = 0.5), ^b34, ^b33;
+    i32 %86 = add i32 %64, i32 2;
+    i1 %87 = scmp lt i32 %26, i32 3;
+    cbr i1 %87(prob = 0.5), ^b41, ^b37;
 ^b29:
-    i32 %101 = load i32* %i;
-    i32 %102 = call (i32, i32) -> i32 @f(i32 7, i32 %101);
-    i1 %103 = scmp neq i32 %102, i32 0;
-    ubr ^b32;
+    i1 %88 = phi [^b18, i1 true] [^b26, i1 false];
+    cbr i1 %88(prob = 0.5), ^b34, ^b38;
+^if.else:
+    i32 %89 = add i32 %33, i32 -2;
+    i32* %90 = getelementptr &([20 * i32]* %array)[i64 0][i32 %89];
+    i32 %91 = load i32* %90;
+    ubr ^b14;
 ^b30:
-    i32 %104 = call (i32) -> i32 @h(i32 2);
-    i1 %105 = scmp neq i32 %104, i32 0;
-    i1 %106 = xor i1 %105, i1 true;
-    i32 %107 = zext i1 %106 to i32;
-    i1 %108 = scmp neq i32 %107, i32 0;
+    i32 %92 = phi [^b45, i32 %84] [^b17, i32 %66];
+    i1 %93 = phi [^b45, i1 %121] [^b17, i1 false];
+    cbr i1 %93(prob = 0.5), ^b42, ^b43;
+^entry3:
+    i32 %94 = add i32 %75, i32 3;
+    i32 %95 = load i32* %2;
+    i1 %96 = scmp eq i32 %95, i32 0;
     ubr ^b31;
 ^b31:
-    i1 %109 = phi [^b30, i1 %108] [^b25, i1 true];
-    i32 %110 = zext i1 %109 to i32;
-    i1 %111 = scmp neq i32 %110, i32 0;
-    cbr i1 %111(prob = 0.5), ^b37, ^b35;
+    i32 %97 = phi [^entry3, i32 %94] [^b20, i32 %75];
+    i1 %98 = phi [^entry3, i1 %96] [^b20, i1 true];
+    cbr i1 %98(prob = 0.5), ^b44, ^entry4;
 ^b32:
-    i1 %112 = phi [^b29, i1 %103] [^b26, i1 false];
-    i32 %113 = zext i1 %112 to i32;
-    i1 %114 = scmp neq i32 %113, i32 0;
-    cbr i1 %114(prob = 0.5), ^b36, ^b38;
+    i32 %99 = phi [^b33, i32 %101] [^b24, i32 0];
+    i1 %100 = scmp neq i32 %99, i32 0;
+    ubr ^b17;
 ^b33:
-    i32 %115 = load i32* %i;
-    i32 %116 = call (i32, i32) -> i32 @g(i32 6, i32 %115);
-    i1 %117 = scmp neq i32 %116, i32 0;
-    ubr ^b34;
+    store i32* %2 with i32 1;
+    i32 %101 = load i32* %1;
+    ubr ^b32;
 ^b34:
-    i1 %118 = phi [^b33, i1 %117] [^b28, i1 true];
-    i32 %119 = zext i1 %118 to i32;
-    i1 %120 = scmp neq i32 %119, i32 0;
-    cbr i1 %120(prob = 0.5), ^b40, ^b39;
+    i32 %102 = phi [^b38, i32 %106] [^b29, i32 1];
+    i1 %103 = scmp neq i32 %102, i32 0;
+    ubr ^b16;
 ^b35:
-    i32 %121 = call (i32) -> i32 @h(i32 3);
-    i1 %122 = scmp neq i32 %121, i32 0;
-    ubr ^b37;
+    ubr ^b39;
 ^b36:
-    i32 %123 = load i32* %i;
-    i32 %124 = call (i32, i32) -> i32 @f(i32 8, i32 %123);
-    i1 %125 = scmp neq i32 %124, i32 0;
-    ubr ^b38;
+    i32 %104 = phi [^b57, i32 %108] [^b25, i32 %81];
+    i1 %105 = phi [^b57, i1 %140] [^b25, i1 true];
+    cbr i1 %105(prob = 0.5), ^b48, ^b52;
 ^b37:
-    i1 %126 = phi [^b35, i1 %122] [^b31, i1 true];
-    i32 %127 = zext i1 %126 to i32;
-    i1 %128 = scmp neq i32 %127, i32 0;
-    cbr i1 %128(prob = 0.5), ^if.then, ^b42;
+    ubr ^b41;
 ^b38:
-    i1 %129 = phi [^b36, i1 %125] [^b32, i1 false];
-    i32 %130 = zext i1 %129 to i32;
-    i1 %131 = scmp neq i32 %130, i32 0;
-    cbr i1 %131(prob = 0.5), ^b41, ^b43;
+    store i32* %1 with i32 0;
+    i32 %106 = load i32* %0;
+    ubr ^b34;
 ^b39:
-    i32 %132 = load i32* %i;
-    i32 %133 = call (i32, i32) -> i32 @g(i32 7, i32 %132);
-    i1 %134 = scmp neq i32 %133, i32 0;
-    ubr ^b40;
+    i1 %107 = phi [^b27, i1 true] [^b35, i1 false];
+    cbr i1 %107(prob = 0.5), ^b45, ^b47;
 ^b40:
-    i1 %135 = phi [^b39, i1 %134] [^b34, i1 true];
-    i32 %136 = zext i1 %135 to i32;
-    i1 %137 = scmp neq i32 %136, i32 0;
-    cbr i1 %137(prob = 0.5), ^b45, ^b44;
-^if.then:
-    store i32* %ans with i32 1;
-    ubr ^b42;
+    i32 %108 = add i32 %81, i32 2;
+    i1 %109 = scmp lt i32 %26, i32 4;
+    cbr i1 %109(prob = 0.5), ^b53, ^b49;
 ^b41:
-    i32 %138 = load i32* %i;
-    i32 %139 = call (i32, i32) -> i32 @f(i32 9, i32 %138);
-    i1 %140 = scmp neq i32 %139, i32 0;
-    ubr ^b43;
+    i1 %110 = phi [^b28, i1 true] [^b37, i1 false];
+    cbr i1 %110(prob = 0.5), ^b46, ^b50;
 ^b42:
-    i32 %141 = load i32* @sum;
-    i32 %142 = load i32* %ans;
-    i32 %143 = add i32 %141, i32 %142;
-    store i32* %ans with i32 0;
-    i32 %144 = call (i32) -> i32 @h(i32 4);
-    i1 %145 = scmp neq i32 %144, i32 0;
-    i1 %146 = xor i1 %145, i1 true;
-    i32 %147 = zext i1 %146 to i32;
-    i1 %148 = scmp neq i32 %147, i32 0;
-    cbr i1 %148(prob = 0.5), ^b46, ^b48;
+    i32 %111 = add i32 %92, i32 1;
+    i1 %112 = scmp lt i32 %20, i32 5;
+    cbr i1 %112(prob = 0.5), ^b54, ^b51;
 ^b43:
-    i1 %149 = phi [^b41, i1 %140] [^b38, i1 false];
-    i32 %150 = zext i1 %149 to i32;
-    i1 %151 = scmp neq i32 %150, i32 0;
-    cbr i1 %151(prob = 0.5), ^b47, ^b49;
+    i32 %113 = phi [^b58, i32 %111] [^b30, i32 %92];
+    i1 %114 = phi [^b58, i1 %142] [^b30, i1 false];
+    cbr i1 %114(prob = 0.5), ^b55, ^b56;
+^entry4:
+    i32 %115 = add i32 %97, i32 3;
+    i32 %116 = load i32* %3;
+    i1 %117 = scmp neq i32 %116, i32 0;
+    ubr ^b44;
 ^b44:
-    i32 %152 = load i32* %i;
-    i32 %153 = call (i32, i32) -> i32 @g(i32 8, i32 %152);
-    i1 %154 = scmp neq i32 %153, i32 0;
-    ubr ^b45;
+    i32 %118 = phi [^entry4, i32 %115] [^b31, i32 %97];
+    i1 %119 = phi [^entry4, i1 %117] [^b31, i1 true];
+    cbr i1 %119(prob = 0.5), ^if.then1, ^entry5;
 ^b45:
-    i1 %155 = phi [^b44, i1 %154] [^b40, i1 true];
-    i32 %156 = zext i1 %155 to i32;
-    i1 %157 = scmp neq i32 %156, i32 0;
-    cbr i1 %157(prob = 0.5), ^b51, ^b50;
+    i32 %120 = phi [^b47, i32 %124] [^b39, i32 0];
+    i1 %121 = scmp neq i32 %120, i32 0;
+    ubr ^b30;
 ^b46:
-    i1 %158 = phi [^b61, i1 %207] [^b42, i1 true];
-    i32 %159 = zext i1 %158 to i32;
-    i1 %160 = scmp neq i32 %159, i32 0;
-    cbr i1 %160(prob = 0.5), ^b54, ^b53;
+    i32 %122 = phi [^b50, i32 %127] [^b41, i32 1];
+    i1 %123 = scmp neq i32 %122, i32 0;
+    ubr ^b25;
 ^b47:
-    i32 %161 = load i32* %i;
-    i32 %162 = call (i32, i32) -> i32 @f(i32 10, i32 %161);
-    i1 %163 = scmp neq i32 %162, i32 0;
-    ubr ^b49;
+    store i32* %3 with i32 1;
+    i32 %124 = load i32* %2;
+    ubr ^b45;
 ^b48:
-    i32 %164 = call (i32) -> i32 @h(i32 5);
-    i1 %165 = scmp neq i32 %164, i32 0;
-    cbr i1 %165(prob = 0.5), ^b52, ^b56;
+    i32 %125 = phi [^b70, i32 %128] [^b36, i32 %104];
+    i1 %126 = phi [^b70, i1 %161] [^b36, i1 true];
+    cbr i1 %126(prob = 0.5), ^b59, ^b63;
 ^b49:
-    i1 %166 = phi [^b47, i1 %163] [^b43, i1 false];
-    i32 %167 = zext i1 %166 to i32;
-    i1 %168 = scmp neq i32 %167, i32 0;
-    cbr i1 %168(prob = 0.5), ^b55, ^b57;
+    ubr ^b53;
 ^b50:
-    i32 %169 = load i32* %i;
-    i32 %170 = call (i32, i32) -> i32 @g(i32 9, i32 %169);
-    i1 %171 = scmp neq i32 %170, i32 0;
-    ubr ^b51;
-^b51:
-    i1 %172 = phi [^b50, i1 %171] [^b45, i1 true];
-    i32 %173 = zext i1 %172 to i32;
-    i1 %174 = scmp neq i32 %173, i32 0;
-    cbr i1 %174(prob = 0.5), ^b59, ^b58;
-^b52:
-    i32 %175 = call (i32) -> i32 @h(i32 6);
-    i1 %176 = scmp neq i32 %175, i32 0;
-    i1 %177 = xor i1 %176, i1 true;
-    i32 %178 = zext i1 %177 to i32;
-    i1 %179 = scmp neq i32 %178, i32 0;
-    ubr ^b56;
-^b53:
-    i32 %180 = call (i32) -> i32 @h(i32 8);
-    i1 %181 = scmp neq i32 %180, i32 0;
-    i1 %182 = xor i1 %181, i1 true;
-    i32 %183 = zext i1 %182 to i32;
-    i1 %184 = scmp neq i32 %183, i32 0;
-    ubr ^b54;
-^b54:
-    i1 %185 = phi [^b53, i1 %184] [^b46, i1 true];
-    i32 %186 = zext i1 %185 to i32;
-    i1 %187 = scmp neq i32 %186, i32 0;
-    cbr i1 %187(prob = 0.5), ^if.then1, ^b62;
-^b55:
-    i32 %188 = load i32* %i;
-    i32 %189 = call (i32, i32) -> i32 @f(i32 11, i32 %188);
-    i1 %190 = scmp neq i32 %189, i32 0;
-    ubr ^b57;
-^b56:
-    i1 %191 = phi [^b52, i1 %179] [^b48, i1 false];
-    i32 %192 = zext i1 %191 to i32;
-    i1 %193 = scmp neq i32 %192, i32 0;
-    cbr i1 %193(prob = 0.5), ^b60, ^b61;
-^b57:
-    i1 %194 = phi [^b55, i1 %190] [^b49, i1 false];
-    i32 %195 = zext i1 %194 to i32;
-    i1 %196 = scmp neq i32 %195, i32 0;
-    cbr i1 %196(prob = 0.5), ^b63, ^b64;
-^b58:
-    i32 %197 = load i32* %i;
-    i32 %198 = call (i32, i32) -> i32 @g(i32 10, i32 %197);
-    i1 %199 = scmp neq i32 %198, i32 0;
-    ubr ^b59;
-^b59:
-    i1 %200 = phi [^b58, i1 %199] [^b51, i1 true];
-    i32 %201 = zext i1 %200 to i32;
-    i1 %202 = scmp neq i32 %201, i32 0;
-    cbr i1 %202(prob = 0.5), ^b66, ^b65;
-^if.then1:
-    store i32* %ans with i32 1;
-    ubr ^b62;
-^b60:
-    i32 %203 = call (i32) -> i32 @h(i32 7);
-    i1 %204 = scmp neq i32 %203, i32 0;
-    ubr ^b61;
-^b61:
-    i1 %205 = phi [^b60, i1 %204] [^b56, i1 false];
-    i32 %206 = zext i1 %205 to i32;
-    i1 %207 = scmp neq i32 %206, i32 0;
+    store i32* %2 with i32 0;
+    i32 %127 = load i32* %1;
     ubr ^b46;
-^b62:
-    i32 %208 = load i32* @sum;
-    i32 %209 = load i32* %ans;
-    i32 %210 = mul i32 %208, i32 %209;
-    store i32* %ans with i32 0;
-    i32 %211 = call (i32) -> i32 @h(i32 9);
-    i1 %212 = scmp neq i32 %211, i32 0;
-    cbr i1 %212(prob = 0.5), ^b67, ^b68;
-^b63:
-    i32 %213 = load i32* %i;
-    i32 %214 = call (i32, i32) -> i32 @f(i32 12, i32 %213);
-    i1 %215 = scmp neq i32 %214, i32 0;
+^b51:
+    ubr ^b54;
+^b52:
+    i32 %128 = add i32 %104, i32 2;
+    i1 %129 = scmp lt i32 %26, i32 5;
+    cbr i1 %129(prob = 0.5), ^b64, ^b60;
+^b53:
+    i1 %130 = phi [^b40, i1 true] [^b49, i1 false];
+    cbr i1 %130(prob = 0.5), ^b57, ^b61;
+^b54:
+    i1 %131 = phi [^b42, i1 true] [^b51, i1 false];
+    cbr i1 %131(prob = 0.5), ^b58, ^b62;
+^if.then1:
+    ubr ^entry5;
+^b55:
+    i32 %132 = add i32 %113, i32 1;
+    i1 %133 = scmp lt i32 %20, i32 6;
+    cbr i1 %133(prob = 0.5), ^b66, ^b65;
+^b56:
+    i32 %134 = phi [^b74, i32 %132] [^b43, i32 %113];
+    i1 %135 = phi [^b74, i1 %166] [^b43, i1 false];
+    cbr i1 %135(prob = 0.5), ^b67, ^b68;
+^entry5:
+    i32 %136 = add i32 %118, i32 3;
+    i32 %137 = load i32* %4;
+    i1 %138 = scmp eq i32 %137, i32 0;
+    cbr i1 %138(prob = 0.5), ^b69, ^entry6;
+^b57:
+    i32 %139 = phi [^b61, i32 %145] [^b53, i32 1];
+    i1 %140 = scmp neq i32 %139, i32 0;
+    ubr ^b36;
+^b58:
+    i32 %141 = phi [^b62, i32 %146] [^b54, i32 0];
+    i1 %142 = scmp neq i32 %141, i32 0;
+    ubr ^b43;
+^b59:
+    i32 %143 = phi [^b84, i32 %147] [^b48, i32 %125];
+    i1 %144 = phi [^b84, i1 %187] [^b48, i1 true];
+    cbr i1 %144(prob = 0.5), ^b71, ^b75;
+^b60:
     ubr ^b64;
+^b61:
+    store i32* %3 with i32 0;
+    i32 %145 = load i32* %2;
+    ubr ^b57;
+^b62:
+    store i32* %4 with i32 1;
+    i32 %146 = load i32* %3;
+    ubr ^b58;
+^b63:
+    i32 %147 = add i32 %125, i32 2;
+    i1 %148 = scmp lt i32 %26, i32 6;
+    cbr i1 %148(prob = 0.5), ^b76, ^b72;
 ^b64:
-    i1 %216 = phi [^b63, i1 %215] [^b57, i1 false];
-    i32 %217 = zext i1 %216 to i32;
-    i1 %218 = scmp neq i32 %217, i32 0;
-    cbr i1 %218(prob = 0.5), ^b69, ^b70;
+    i1 %149 = phi [^b52, i1 true] [^b60, i1 false];
+    cbr i1 %149(prob = 0.5), ^b70, ^b73;
 ^b65:
-    i32 %219 = load i32* %i;
-    i32 %220 = call (i32, i32) -> i32 @g(i32 11, i32 %219);
-    i1 %221 = scmp neq i32 %220, i32 0;
     ubr ^b66;
 ^b66:
-    i1 %222 = phi [^b65, i1 %221] [^b59, i1 true];
-    i32 %223 = zext i1 %222 to i32;
-    i1 %224 = scmp neq i32 %223, i32 0;
-    cbr i1 %224(prob = 0.5), ^b72, ^b71;
+    i1 %150 = phi [^b55, i1 true] [^b65, i1 false];
+    cbr i1 %150(prob = 0.5), ^b74, ^b77;
 ^b67:
-    i32 %225 = call (i32) -> i32 @h(i32 10);
-    i1 %226 = scmp neq i32 %225, i32 0;
-    i1 %227 = xor i1 %226, i1 true;
-    i32 %228 = zext i1 %227 to i32;
-    i1 %229 = scmp neq i32 %228, i32 0;
-    ubr ^b68;
+    i32 %151 = add i32 %134, i32 1;
+    i1 %152 = scmp lt i32 %20, i32 7;
+    cbr i1 %152(prob = 0.5), ^b79, ^b78;
 ^b68:
-    i1 %230 = phi [^b67, i1 %229] [^b62, i1 false];
-    i32 %231 = zext i1 %230 to i32;
-    i1 %232 = scmp neq i32 %231, i32 0;
-    cbr i1 %232(prob = 0.5), ^b74, ^b73;
+    i32 %153 = phi [^b90, i32 %151] [^b56, i32 %134];
+    i1 %154 = phi [^b90, i1 %195] [^b56, i1 false];
+    cbr i1 %154(prob = 0.5), ^b80, ^b82;
 ^b69:
-    i32 %233 = load i32* %i;
-    i32 %234 = call (i32, i32) -> i32 @f(i32 13, i32 %233);
-    i1 %235 = scmp neq i32 %234, i32 0;
-    ubr ^b70;
+    i32 %155 = phi [^b95, i32 %206] [^entry5, i32 %136];
+    i1 %156 = phi [^entry5, i1 true] [^b95, i1 %207];
+    cbr i1 %156(prob = 0.5), ^b81, ^entry7;
+^entry6:
+    i32 %157 = add i32 %118, i32 6;
+    i32 %158 = load i32* %5;
+    i1 %159 = scmp neq i32 %158, i32 0;
+    cbr i1 %159(prob = 0.5), ^entry8, ^b83;
 ^b70:
-    i1 %236 = phi [^b69, i1 %235] [^b64, i1 false];
-    i32 %237 = zext i1 %236 to i32;
-    i1 %238 = scmp neq i32 %237, i32 0;
-    cbr i1 %238(prob = 0.5), ^b75, ^b76;
+    i32 %160 = phi [^b73, i32 %164] [^b64, i32 1];
+    i1 %161 = scmp neq i32 %160, i32 0;
+    ubr ^b48;
 ^b71:
-    i32 %239 = load i32* %i;
-    i32 %240 = call (i32, i32) -> i32 @g(i32 12, i32 %239);
-    i1 %241 = scmp neq i32 %240, i32 0;
-    ubr ^b72;
+    i32 %162 = phi [^b97, i32 %167] [^b59, i32 %143];
+    i1 %163 = phi [^b97, i1 %211] [^b59, i1 true];
+    cbr i1 %163(prob = 0.5), ^b85, ^b88;
 ^b72:
-    i1 %242 = phi [^b71, i1 %241] [^b66, i1 true];
-    i32 %243 = zext i1 %242 to i32;
-    i1 %244 = scmp neq i32 %243, i32 0;
-    cbr i1 %244(prob = 0.5), ^b78, ^b77;
-^b73:
-    i32 %245 = call (i32) -> i32 @h(i32 11);
-    i1 %246 = scmp neq i32 %245, i32 0;
-    i1 %247 = xor i1 %246, i1 true;
-    i32 %248 = zext i1 %247 to i32;
-    i1 %249 = scmp neq i32 %248, i32 0;
-    ubr ^b74;
-^b74:
-    i1 %250 = phi [^b73, i1 %249] [^b68, i1 true];
-    i32 %251 = zext i1 %250 to i32;
-    i1 %252 = scmp neq i32 %251, i32 0;
-    cbr i1 %252(prob = 0.5), ^b80, ^b79;
-^b75:
-    i32 %253 = load i32* %i;
-    i32 %254 = call (i32, i32) -> i32 @f(i32 14, i32 %253);
-    i1 %255 = scmp neq i32 %254, i32 0;
     ubr ^b76;
+^b73:
+    store i32* %4 with i32 0;
+    i32 %164 = load i32* %3;
+    ubr ^b70;
+^b74:
+    i32 %165 = phi [^b77, i32 %170] [^b66, i32 0];
+    i1 %166 = scmp neq i32 %165, i32 0;
+    ubr ^b56;
+^b75:
+    i32 %167 = add i32 %143, i32 2;
+    i1 %168 = scmp lt i32 %26, i32 7;
+    cbr i1 %168(prob = 0.5), ^b89, ^b86;
 ^b76:
-    i1 %256 = phi [^b75, i1 %255] [^b70, i1 false];
-    i32 %257 = zext i1 %256 to i32;
-    i1 %258 = scmp neq i32 %257, i32 0;
-    cbr i1 %258(prob = 0.5), ^b81, ^b82;
+    i1 %169 = phi [^b63, i1 true] [^b72, i1 false];
+    cbr i1 %169(prob = 0.5), ^b84, ^b87;
 ^b77:
-    i32 %259 = load i32* %i;
-    i32 %260 = call (i32, i32) -> i32 @g(i32 13, i32 %259);
-    i1 %261 = scmp neq i32 %260, i32 0;
-    ubr ^b78;
+    store i32* %5 with i32 1;
+    i32 %170 = load i32* %4;
+    ubr ^b74;
 ^b78:
-    i1 %262 = phi [^b77, i1 %261] [^b72, i1 true];
-    i32 %263 = zext i1 %262 to i32;
-    i1 %264 = scmp neq i32 %263, i32 0;
-    cbr i1 %264(prob = 0.5), ^b84, ^b83;
+    ubr ^b79;
 ^b79:
-    i32 %265 = call (i32) -> i32 @h(i32 12);
-    i1 %266 = scmp neq i32 %265, i32 0;
-    i1 %267 = xor i1 %266, i1 true;
-    i32 %268 = zext i1 %267 to i32;
-    i1 %269 = scmp neq i32 %268, i32 0;
-    ubr ^b80;
+    i1 %171 = phi [^b67, i1 true] [^b78, i1 false];
+    cbr i1 %171(prob = 0.5), ^b90, ^b91;
+^entry7:
+    i32 %172 = add i32 %155, i32 3;
+    i32 %173 = load i32* %8;
+    i1 %174 = scmp eq i32 %173, i32 0;
+    ubr ^b81;
+^entry8:
+    i32 %175 = add i32 %118, i32 9;
+    i32 %176 = load i32* %6;
+    i1 %177 = scmp eq i32 %176, i32 0;
+    ubr ^b83;
 ^b80:
-    i1 %270 = phi [^b79, i1 %269] [^b74, i1 true];
-    i32 %271 = zext i1 %270 to i32;
-    i1 %272 = scmp neq i32 %271, i32 0;
-    cbr i1 %272(prob = 0.5), ^b86, ^b85;
+    i32 %178 = add i32 %153, i32 1;
+    i1 %179 = scmp lt i32 %20, i32 8;
+    cbr i1 %179(prob = 0.5), ^b93, ^b92;
 ^b81:
-    i32 %273 = load i32* %i;
-    i32 %274 = call (i32, i32) -> i32 @f(i32 15, i32 %273);
-    i1 %275 = scmp neq i32 %274, i32 0;
-    ubr ^b82;
+    i32 %180 = phi [^entry7, i32 %172] [^b69, i32 %155];
+    i1 %181 = phi [^entry7, i1 %174] [^b69, i1 true];
+    cbr i1 %181(prob = 0.5), ^if.then2, ^entry10;
 ^b82:
-    i1 %276 = phi [^b81, i1 %275] [^b76, i1 false];
-    i32 %277 = zext i1 %276 to i32;
-    i1 %278 = scmp neq i32 %277, i32 0;
-    cbr i1 %278(prob = 0.5), ^b87, ^b88;
+    i32 %182 = phi [^b103, i32 %178] [^b68, i32 %153];
+    i1 %183 = phi [^b103, i1 %219] [^b68, i1 false];
+    cbr i1 %183(prob = 0.5), ^b94, ^b96;
 ^b83:
-    i32 %279 = load i32* %i;
-    i32 %280 = call (i32, i32) -> i32 @g(i32 14, i32 %279);
-    i1 %281 = scmp neq i32 %280, i32 0;
-    ubr ^b84;
+    i32 %184 = phi [^entry8, i32 %175] [^entry6, i32 %157];
+    i1 %185 = phi [^entry8, i1 %177] [^entry6, i1 false];
+    cbr i1 %185(prob = 0.5), ^entry9, ^b95;
 ^b84:
-    i1 %282 = phi [^b83, i1 %281] [^b78, i1 true];
-    i32 %283 = zext i1 %282 to i32;
-    i1 %284 = scmp neq i32 %283, i32 0;
-    cbr i1 %284(prob = 0.5), ^b90, ^b89;
+    i32 %186 = phi [^b87, i32 %190] [^b76, i32 1];
+    i1 %187 = scmp neq i32 %186, i32 0;
+    ubr ^b59;
 ^b85:
-    i32 %285 = call (i32) -> i32 @h(i32 13);
-    i1 %286 = scmp neq i32 %285, i32 0;
-    i1 %287 = xor i1 %286, i1 true;
-    i32 %288 = zext i1 %287 to i32;
-    i1 %289 = scmp neq i32 %288, i32 0;
-    ubr ^b86;
+    i32 %188 = phi [^b110, i32 %191] [^b71, i32 %162];
+    i1 %189 = phi [^b110, i1 %232] [^b71, i1 true];
+    cbr i1 %189(prob = 0.5), ^b98, ^b101;
 ^b86:
-    i1 %290 = phi [^b85, i1 %289] [^b80, i1 true];
-    i32 %291 = zext i1 %290 to i32;
-    i1 %292 = scmp neq i32 %291, i32 0;
-    cbr i1 %292(prob = 0.5), ^b91, ^b92;
+    ubr ^b89;
 ^b87:
-    i32 %293 = load i32* %i;
-    i32 %294 = call (i32, i32) -> i32 @f(i32 16, i32 %293);
-    i1 %295 = scmp neq i32 %294, i32 0;
-    ubr ^b88;
+    store i32* %5 with i32 0;
+    i32 %190 = load i32* %4;
+    ubr ^b84;
 ^b88:
-    i1 %296 = phi [^b87, i1 %295] [^b82, i1 false];
-    i32 %297 = zext i1 %296 to i32;
-    i1 %298 = scmp neq i32 %297, i32 0;
-    cbr i1 %298(prob = 0.5), ^b93, ^b94;
+    i32 %191 = add i32 %162, i32 2;
+    i1 %192 = scmp lt i32 %26, i32 8;
+    cbr i1 %192(prob = 0.5), ^b102, ^b99;
 ^b89:
-    i32 %299 = load i32* %i;
-    i32 %300 = call (i32, i32) -> i32 @g(i32 15, i32 %299);
-    i1 %301 = scmp neq i32 %300, i32 0;
-    ubr ^b90;
+    i1 %193 = phi [^b75, i1 true] [^b86, i1 false];
+    cbr i1 %193(prob = 0.5), ^b97, ^b100;
 ^b90:
-    i1 %302 = phi [^b89, i1 %301] [^b84, i1 true];
-    i32 %303 = zext i1 %302 to i32;
-    i1 %304 = scmp neq i32 %303, i32 0;
-    cbr i1 %304(prob = 0.5), ^b96, ^b95;
+    i32 %194 = phi [^b91, i32 %196] [^b79, i32 0];
+    i1 %195 = scmp neq i32 %194, i32 0;
+    ubr ^b68;
 ^b91:
-    i1 %305 = phi [^b98, i1 %326] [^b86, i1 true];
-    i32 %306 = zext i1 %305 to i32;
-    i1 %307 = scmp neq i32 %306, i32 0;
-    cbr i1 %307(prob = 0.5), ^if.then2, ^b99;
-^b92:
-    i32 %308 = call (i32) -> i32 @h(i32 14);
-    i1 %309 = scmp neq i32 %308, i32 0;
-    cbr i1 %309(prob = 0.5), ^b97, ^b98;
-^b93:
-    i32 %310 = load i32* %i;
-    i32 %311 = call (i32, i32) -> i32 @f(i32 17, i32 %310);
-    i1 %312 = scmp neq i32 %311, i32 0;
-    ubr ^b94;
-^b94:
-    i1 %313 = phi [^b93, i1 %312] [^b88, i1 false];
-    i32 %314 = zext i1 %313 to i32;
-    i1 %315 = scmp neq i32 %314, i32 0;
-    cbr i1 %315(prob = 0.5), ^b100, ^b101;
-^b95:
-    i32 %316 = load i32* %i;
-    i32 %317 = call (i32, i32) -> i32 @g(i32 16, i32 %316);
-    i1 %318 = scmp neq i32 %317, i32 0;
-    ubr ^b96;
-^b96:
-    i1 %319 = phi [^b95, i1 %318] [^b90, i1 true];
-    i32 %320 = zext i1 %319 to i32;
-    i1 %321 = scmp neq i32 %320, i32 0;
-    cbr i1 %321(prob = 0.5), ^b103, ^b102;
+    store i32* %6 with i32 1;
+    i32 %196 = load i32* %5;
+    ubr ^b90;
 ^if.then2:
-    store i32* %ans with i32 1;
-    ubr ^b99;
+    ubr ^entry10;
+^b92:
+    ubr ^b93;
+^b93:
+    i1 %197 = phi [^b80, i1 true] [^b92, i1 false];
+    cbr i1 %197(prob = 0.5), ^b103, ^b104;
+^entry9:
+    i32 %198 = add i32 %184, i32 3;
+    i32 %199 = load i32* %7;
+    i1 %200 = scmp neq i32 %199, i32 0;
+    ubr ^b95;
+^b94:
+    i32 %201 = add i32 %182, i32 1;
+    i1 %202 = scmp lt i32 %20, i32 9;
+    cbr i1 %202(prob = 0.5), ^b106, ^b105;
+^entry10:
+    i32 %203 = add i32 %180, i32 3;
+    i32 %204 = load i32* %9;
+    i1 %205 = scmp neq i32 %204, i32 0;
+    cbr i1 %205(prob = 0.5), ^entry11, ^b108;
+^b95:
+    i32 %206 = phi [^entry9, i32 %198] [^b83, i32 %184];
+    i1 %207 = phi [^entry9, i1 %200] [^b83, i1 false];
+    ubr ^b69;
+^b96:
+    i32 %208 = phi [^b116, i32 %201] [^b82, i32 %182];
+    i1 %209 = phi [^b116, i1 %240] [^b82, i1 false];
+    cbr i1 %209(prob = 0.5), ^b107, ^b109;
 ^b97:
-    i32 %322 = call (i32) -> i32 @h(i32 15);
-    i1 %323 = scmp neq i32 %322, i32 0;
-    ubr ^b98;
+    i32 %210 = phi [^b100, i32 %214] [^b89, i32 1];
+    i1 %211 = scmp neq i32 %210, i32 0;
+    ubr ^b71;
 ^b98:
-    i1 %324 = phi [^b97, i1 %323] [^b92, i1 false];
-    i32 %325 = zext i1 %324 to i32;
-    i1 %326 = scmp neq i32 %325, i32 0;
-    ubr ^b91;
+    i32 %212 = phi [^b123, i32 %215] [^b85, i32 %188];
+    i1 %213 = phi [^b123, i1 %253] [^b85, i1 true];
+    cbr i1 %213(prob = 0.5), ^b111, ^b114;
 ^b99:
-    i32 %327 = load i32* @sum;
-    i32 %328 = load i32* %ans;
-    i32 %329 = sub i32 %327, i32 %328;
-    store i32* %ans with i32 0;
-    i32 %330 = call (i32) -> i32 @h(i32 0);
-    i1 %331 = scmp neq i32 %330, i32 0;
-    cbr i1 %331(prob = 0.5), ^b104, ^b105;
+    ubr ^b102;
 ^b100:
-    i32 %332 = load i32* %i;
-    i32 %333 = call (i32, i32) -> i32 @f(i32 18, i32 %332);
-    i1 %334 = scmp neq i32 %333, i32 0;
-    ubr ^b101;
+    store i32* %6 with i32 0;
+    i32 %214 = load i32* %5;
+    ubr ^b97;
 ^b101:
-    i1 %335 = phi [^b100, i1 %334] [^b94, i1 false];
-    i32 %336 = zext i1 %335 to i32;
-    i1 %337 = scmp neq i32 %336, i32 0;
-    cbr i1 %337(prob = 0.5), ^b106, ^b107;
+    i32 %215 = add i32 %188, i32 2;
+    i1 %216 = scmp lt i32 %26, i32 9;
+    cbr i1 %216(prob = 0.5), ^b115, ^b112;
 ^b102:
-    i32 %338 = load i32* %i;
-    i32 %339 = call (i32, i32) -> i32 @g(i32 17, i32 %338);
-    i1 %340 = scmp neq i32 %339, i32 0;
-    ubr ^b103;
+    i1 %217 = phi [^b88, i1 true] [^b99, i1 false];
+    cbr i1 %217(prob = 0.5), ^b110, ^b113;
 ^b103:
-    i1 %341 = phi [^b102, i1 %340] [^b96, i1 true];
-    i32 %342 = zext i1 %341 to i32;
-    i1 %343 = scmp neq i32 %342, i32 0;
-    cbr i1 %343(prob = 0.5), ^b109, ^b108;
+    i32 %218 = phi [^b104, i32 %220] [^b93, i32 0];
+    i1 %219 = scmp neq i32 %218, i32 0;
+    ubr ^b82;
 ^b104:
-    i32 %344 = call (i32) -> i32 @h(i32 2);
-    i1 %345 = scmp neq i32 %344, i32 0;
-    ubr ^b105;
+    store i32* %7 with i32 1;
+    i32 %220 = load i32* %6;
+    ubr ^b103;
+^entry11:
+    i32 %221 = add i32 %180, i32 6;
+    i32 %222 = load i32* %10;
+    i1 %223 = scmp eq i32 %222, i32 0;
+    ubr ^b108;
 ^b105:
-    i1 %346 = phi [^b104, i1 %345] [^b99, i1 false];
-    i32 %347 = zext i1 %346 to i32;
-    i1 %348 = scmp neq i32 %347, i32 0;
-    cbr i1 %348(prob = 0.5), ^b110, ^b111;
+    ubr ^b106;
 ^b106:
-    i32 %349 = load i32* %i;
-    i32 %350 = call (i32, i32) -> i32 @f(i32 19, i32 %349);
-    i1 %351 = scmp neq i32 %350, i32 0;
-    ubr ^b107;
+    i1 %224 = phi [^b94, i1 true] [^b105, i1 false];
+    cbr i1 %224(prob = 0.5), ^b116, ^b117;
 ^b107:
-    i1 %352 = phi [^b106, i1 %351] [^b101, i1 false];
-    i32 %353 = zext i1 %352 to i32;
-    i1 %354 = scmp neq i32 %353, i32 0;
-    cbr i1 %354(prob = 0.5), ^if.then3, ^b112;
+    i32 %225 = add i32 %208, i32 1;
+    i1 %226 = scmp lt i32 %20, i32 10;
+    cbr i1 %226(prob = 0.5), ^b119, ^b118;
 ^b108:
-    i32 %355 = load i32* %i;
-    i32 %356 = call (i32, i32) -> i32 @g(i32 18, i32 %355);
-    i1 %357 = scmp neq i32 %356, i32 0;
-    ubr ^b109;
+    i32 %227 = phi [^entry11, i32 %221] [^entry10, i32 %203];
+    i1 %228 = phi [^entry11, i1 %223] [^entry10, i1 false];
+    cbr i1 %228(prob = 0.5), ^b120, ^entry12;
 ^b109:
-    i1 %358 = phi [^b108, i1 %357] [^b103, i1 true];
-    i32 %359 = zext i1 %358 to i32;
-    i1 %360 = scmp neq i32 %359, i32 0;
-    cbr i1 %360(prob = 0.5), ^b114, ^b113;
+    i32 %229 = phi [^b129, i32 %225] [^b96, i32 %208];
+    i1 %230 = phi [^b129, i1 %261] [^b96, i1 false];
+    cbr i1 %230(prob = 0.5), ^b121, ^b122;
 ^b110:
-    i32 %361 = call (i32) -> i32 @h(i32 3);
-    i1 %362 = scmp neq i32 %361, i32 0;
-    i1 %363 = xor i1 %362, i1 true;
-    i32 %364 = zext i1 %363 to i32;
-    i1 %365 = scmp neq i32 %364, i32 0;
-    ubr ^b111;
+    i32 %231 = phi [^b113, i32 %235] [^b102, i32 1];
+    i1 %232 = scmp neq i32 %231, i32 0;
+    ubr ^b85;
 ^b111:
-    i1 %366 = phi [^b110, i1 %365] [^b105, i1 false];
-    i32 %367 = zext i1 %366 to i32;
-    i1 %368 = scmp neq i32 %367, i32 0;
-    cbr i1 %368(prob = 0.5), ^b115, ^b116;
-^if.then3:
-    ubr ^b112;
+    i32 %233 = phi [^b136, i32 %236] [^b98, i32 %212];
+    i1 %234 = phi [^b136, i1 %274] [^b98, i1 true];
+    cbr i1 %234(prob = 0.5), ^b124, ^b127;
 ^b112:
-    i32 %369 = load i32* %i;
-    i32 %370 = add i32 %369, i32 1;
-    store i32* %i with i32 %370;
-    ubr ^while.header;
+    ubr ^b115;
 ^b113:
-    i32 %371 = load i32* %i;
-    i32 %372 = call (i32, i32) -> i32 @g(i32 19, i32 %371);
-    i1 %373 = scmp neq i32 %372, i32 0;
-    ubr ^b114;
+    store i32* %7 with i32 0;
+    i32 %235 = load i32* %6;
+    ubr ^b110;
 ^b114:
-    i1 %374 = phi [^b113, i1 %373] [^b109, i1 true];
-    i32 %375 = zext i1 %374 to i32;
-    i1 %376 = scmp neq i32 %375, i32 0;
-    cbr i1 %376(prob = 0.5), ^if.then4, ^b117;
+    i32 %236 = add i32 %212, i32 2;
+    i1 %237 = scmp lt i32 %26, i32 10;
+    cbr i1 %237(prob = 0.5), ^b128, ^b125;
 ^b115:
-    i32 %377 = call (i32) -> i32 @h(i32 4);
-    i1 %378 = scmp neq i32 %377, i32 0;
-    i1 %379 = xor i1 %378, i1 true;
-    i32 %380 = zext i1 %379 to i32;
-    i1 %381 = scmp neq i32 %380, i32 0;
-    ubr ^b116;
+    i1 %238 = phi [^b101, i1 true] [^b112, i1 false];
+    cbr i1 %238(prob = 0.5), ^b123, ^b126;
 ^b116:
-    i1 %382 = phi [^b115, i1 %381] [^b111, i1 false];
-    i32 %383 = zext i1 %382 to i32;
-    i1 %384 = scmp neq i32 %383, i32 0;
-    cbr i1 %384(prob = 0.5), ^b119, ^b118;
-^if.then4:
-    ubr ^b117;
+    i32 %239 = phi [^b117, i32 %241] [^b106, i32 0];
+    i1 %240 = scmp neq i32 %239, i32 0;
+    ubr ^b96;
 ^b117:
-    i32 %385 = load i32* %i;
-    i32 %386 = add i32 %385, i32 1;
-    store i32* %i with i32 %386;
-    ubr ^while.header1;
+    store i32* %8 with i32 1;
+    i32 %241 = load i32* %7;
+    ubr ^b116;
 ^b118:
-    i32 %387 = call (i32) -> i32 @h(i32 5);
-    i1 %388 = scmp neq i32 %387, i32 0;
     ubr ^b119;
-^b119:
-    i1 %389 = phi [^b118, i1 %388] [^b116, i1 true];
-    i32 %390 = zext i1 %389 to i32;
-    i1 %391 = scmp neq i32 %390, i32 0;
-    cbr i1 %391(prob = 0.5), ^b120, ^b121;
-^b120:
-    i1 %392 = phi [^b124, i1 %406] [^b119, i1 true];
-    i32 %393 = zext i1 %392 to i32;
-    i1 %394 = scmp neq i32 %393, i32 0;
-    cbr i1 %394(prob = 0.5), ^b125, ^b123;
-^b121:
-    i32 %395 = call (i32) -> i32 @h(i32 6);
-    i1 %396 = scmp neq i32 %395, i32 0;
-    cbr i1 %396(prob = 0.5), ^b122, ^b124;
-^b122:
-    i32 %397 = call (i32) -> i32 @h(i32 7);
-    i1 %398 = scmp neq i32 %397, i32 0;
-    i1 %399 = xor i1 %398, i1 true;
-    i32 %400 = zext i1 %399 to i32;
-    i1 %401 = scmp neq i32 %400, i32 0;
-    ubr ^b124;
-^b123:
-    i32 %402 = call (i32) -> i32 @h(i32 8);
-    i1 %403 = scmp neq i32 %402, i32 0;
-    ubr ^b125;
-^b124:
-    i1 %404 = phi [^b122, i1 %401] [^b121, i1 false];
-    i32 %405 = zext i1 %404 to i32;
-    i1 %406 = scmp neq i32 %405, i32 0;
+^entry12:
+    i32 %242 = add i32 %227, i32 3;
+    i32 %243 = load i32* %11;
+    i1 %244 = scmp eq i32 %243, i32 0;
     ubr ^b120;
+^b119:
+    i1 %245 = phi [^b107, i1 true] [^b118, i1 false];
+    cbr i1 %245(prob = 0.5), ^b129, ^b130;
+^b120:
+    i32 %246 = phi [^entry12, i32 %242] [^b108, i32 %227];
+    i1 %247 = phi [^entry12, i1 %244] [^b108, i1 true];
+    cbr i1 %247(prob = 0.5), ^b132, ^entry13;
+^b121:
+    i32 %248 = add i32 %229, i32 1;
+    i1 %249 = scmp lt i32 %20, i32 11;
+    cbr i1 %249(prob = 0.5), ^b133, ^b131;
+^b122:
+    i32 %250 = phi [^b142, i32 %248] [^b109, i32 %229];
+    i1 %251 = phi [^b142, i1 %282] [^b109, i1 false];
+    cbr i1 %251(prob = 0.5), ^b134, ^b135;
+^b123:
+    i32 %252 = phi [^b126, i32 %256] [^b115, i32 1];
+    i1 %253 = scmp neq i32 %252, i32 0;
+    ubr ^b98;
+^b124:
+    i32 %254 = phi [^b149, i32 %257] [^b111, i32 %233];
+    i1 %255 = phi [^b149, i1 %295] [^b111, i1 true];
+    cbr i1 %255(prob = 0.5), ^b137, ^b140;
 ^b125:
-    i1 %407 = phi [^b123, i1 %403] [^b120, i1 true];
-    i32 %408 = zext i1 %407 to i32;
-    i1 %409 = scmp neq i32 %408, i32 0;
-    cbr i1 %409(prob = 0.5), ^if.then5, ^b126;
-^if.then5:
-    store i32* %ans with i32 1;
-    ubr ^b126;
+    ubr ^b128;
 ^b126:
-    i32 %410 = load i32* @sum;
-    i32 %411 = load i32* %ans;
-    i32 %412 = add i32 %410, i32 %411;
-    call (i32) -> void @putint(i32 %412);
+    store i32* %8 with i32 0;
+    i32 %256 = load i32* %7;
+    ubr ^b123;
+^b127:
+    i32 %257 = add i32 %233, i32 2;
+    i1 %258 = scmp lt i32 %26, i32 11;
+    cbr i1 %258(prob = 0.5), ^b141, ^b138;
+^b128:
+    i1 %259 = phi [^b114, i1 true] [^b125, i1 false];
+    cbr i1 %259(prob = 0.5), ^b136, ^b139;
+^b129:
+    i32 %260 = phi [^b130, i32 %262] [^b119, i32 0];
+    i1 %261 = scmp neq i32 %260, i32 0;
+    ubr ^b109;
+^b130:
+    store i32* %9 with i32 1;
+    i32 %262 = load i32* %8;
+    ubr ^b129;
+^entry13:
+    i32 %263 = add i32 %246, i32 3;
+    i32 %264 = load i32* %12;
+    i1 %265 = scmp eq i32 %264, i32 0;
+    ubr ^b132;
+^b131:
+    ubr ^b133;
+^b132:
+    i32 %266 = phi [^entry13, i32 %263] [^b120, i32 %246];
+    i1 %267 = phi [^entry13, i1 %265] [^b120, i1 true];
+    cbr i1 %267(prob = 0.5), ^b144, ^entry14;
+^b133:
+    i1 %268 = phi [^b121, i1 true] [^b131, i1 false];
+    cbr i1 %268(prob = 0.5), ^b142, ^b143;
+^b134:
+    i32 %269 = add i32 %250, i32 1;
+    i1 %270 = scmp lt i32 %20, i32 12;
+    cbr i1 %270(prob = 0.5), ^b146, ^b145;
+^b135:
+    i32 %271 = phi [^b155, i32 %269] [^b122, i32 %250];
+    i1 %272 = phi [^b155, i1 %303] [^b122, i1 false];
+    cbr i1 %272(prob = 0.5), ^b147, ^b148;
+^b136:
+    i32 %273 = phi [^b139, i32 %277] [^b128, i32 1];
+    i1 %274 = scmp neq i32 %273, i32 0;
+    ubr ^b111;
+^b137:
+    i32 %275 = phi [^b162, i32 %278] [^b124, i32 %254];
+    i1 %276 = phi [^b162, i1 %316] [^b124, i1 true];
+    cbr i1 %276(prob = 0.5), ^b150, ^b153;
+^b138:
+    ubr ^b141;
+^b139:
+    store i32* %9 with i32 0;
+    i32 %277 = load i32* %8;
+    ubr ^b136;
+^b140:
+    i32 %278 = add i32 %254, i32 2;
+    i1 %279 = scmp lt i32 %26, i32 12;
+    cbr i1 %279(prob = 0.5), ^b154, ^b151;
+^b141:
+    i1 %280 = phi [^b127, i1 true] [^b138, i1 false];
+    cbr i1 %280(prob = 0.5), ^b149, ^b152;
+^b142:
+    i32 %281 = phi [^b143, i32 %286] [^b133, i32 0];
+    i1 %282 = scmp neq i32 %281, i32 0;
+    ubr ^b122;
+^entry14:
+    i32 %283 = add i32 %266, i32 3;
+    i32 %284 = load i32* %13;
+    i1 %285 = scmp eq i32 %284, i32 0;
+    ubr ^b144;
+^b143:
+    store i32* %10 with i32 1;
+    i32 %286 = load i32* %9;
+    ubr ^b142;
+^b144:
+    i32 %287 = phi [^entry14, i32 %283] [^b132, i32 %266];
+    i1 %288 = phi [^entry14, i1 %285] [^b132, i1 true];
+    cbr i1 %288(prob = 0.5), ^b156, ^entry15;
+^b145:
+    ubr ^b146;
+^b146:
+    i1 %289 = phi [^b134, i1 true] [^b145, i1 false];
+    cbr i1 %289(prob = 0.5), ^b155, ^b157;
+^b147:
+    i32 %290 = add i32 %271, i32 1;
+    i1 %291 = scmp lt i32 %20, i32 13;
+    cbr i1 %291(prob = 0.5), ^b159, ^b158;
+^b148:
+    i32 %292 = phi [^b169, i32 %290] [^b135, i32 %271];
+    i1 %293 = phi [^b169, i1 %329] [^b135, i1 false];
+    cbr i1 %293(prob = 0.5), ^b160, ^b161;
+^b149:
+    i32 %294 = phi [^b152, i32 %298] [^b141, i32 1];
+    i1 %295 = scmp neq i32 %294, i32 0;
+    ubr ^b124;
+^b150:
+    i32 %296 = phi [^b176, i32 %299] [^b137, i32 %275];
+    i1 %297 = phi [^b176, i1 %340] [^b137, i1 true];
+    cbr i1 %297(prob = 0.5), ^b163, ^b166;
+^b151:
+    ubr ^b154;
+^b152:
+    store i32* %10 with i32 0;
+    i32 %298 = load i32* %9;
+    ubr ^b149;
+^b153:
+    i32 %299 = add i32 %275, i32 2;
+    i1 %300 = scmp lt i32 %26, i32 13;
+    cbr i1 %300(prob = 0.5), ^b167, ^b164;
+^b154:
+    i1 %301 = phi [^b140, i1 true] [^b151, i1 false];
+    cbr i1 %301(prob = 0.5), ^b162, ^b165;
+^b155:
+    i32 %302 = phi [^b157, i32 %306] [^b146, i32 0];
+    i1 %303 = scmp neq i32 %302, i32 0;
+    ubr ^b135;
+^b156:
+    i32 %304 = phi [^b168, i32 %326] [^b144, i32 %287];
+    i1 %305 = phi [^b168, i1 %327] [^b144, i1 true];
+    cbr i1 %305(prob = 0.5), ^if.then3, ^b170;
+^b157:
+    store i32* %11 with i32 1;
+    i32 %306 = load i32* %10;
+    ubr ^b155;
+^entry15:
+    i32 %307 = add i32 %287, i32 3;
+    i32 %308 = load i32* %14;
+    i1 %309 = scmp neq i32 %308, i32 0;
+    cbr i1 %309(prob = 0.5), ^entry16, ^b168;
+^b158:
+    ubr ^b159;
+^b159:
+    i1 %310 = phi [^b147, i1 true] [^b158, i1 false];
+    cbr i1 %310(prob = 0.5), ^b169, ^b171;
+^b160:
+    i32 %311 = add i32 %292, i32 1;
+    i1 %312 = scmp lt i32 %20, i32 14;
+    cbr i1 %312(prob = 0.5), ^b173, ^b172;
+^b161:
+    i32 %313 = phi [^b182, i32 %311] [^b148, i32 %292];
+    i1 %314 = phi [^b182, i1 %351] [^b148, i1 false];
+    cbr i1 %314(prob = 0.5), ^b174, ^b175;
+^b162:
+    i32 %315 = phi [^b165, i32 %319] [^b154, i32 1];
+    i1 %316 = scmp neq i32 %315, i32 0;
+    ubr ^b137;
+^b163:
+    i32 %317 = phi [^b189, i32 %320] [^b150, i32 %296];
+    i1 %318 = phi [^b189, i1 %361] [^b150, i1 true];
+    cbr i1 %318(prob = 0.5), ^b177, ^b180;
+^b164:
+    ubr ^b167;
+^b165:
+    store i32* %11 with i32 0;
+    i32 %319 = load i32* %10;
+    ubr ^b162;
+^b166:
+    i32 %320 = add i32 %296, i32 2;
+    i1 %321 = scmp lt i32 %26, i32 14;
+    cbr i1 %321(prob = 0.5), ^b181, ^b178;
+^b167:
+    i1 %322 = phi [^b153, i1 true] [^b164, i1 false];
+    cbr i1 %322(prob = 0.5), ^b176, ^b179;
+^if.then3:
+    ubr ^b170;
+^entry16:
+    i32 %323 = add i32 %287, i32 6;
+    i32 %324 = load i32* %15;
+    i1 %325 = scmp neq i32 %324, i32 0;
+    ubr ^b168;
+^b168:
+    i32 %326 = phi [^entry16, i32 %323] [^entry15, i32 %307];
+    i1 %327 = phi [^entry16, i1 %325] [^entry15, i1 false];
+    ubr ^b156;
+^b169:
+    i32 %328 = phi [^b171, i32 %333] [^b159, i32 0];
+    i1 %329 = scmp neq i32 %328, i32 0;
+    ubr ^b148;
+^b170:
+    i32 %330 = add i32 %304, i32 3;
+    i32 %331 = load i32* %0;
+    i1 %332 = scmp neq i32 %331, i32 0;
+    cbr i1 %332(prob = 0.5), ^entry17, ^b183;
+^b171:
+    store i32* %12 with i32 1;
+    i32 %333 = load i32* %11;
+    ubr ^b169;
+^b172:
+    ubr ^b173;
+^b173:
+    i1 %334 = phi [^b160, i1 true] [^b172, i1 false];
+    cbr i1 %334(prob = 0.5), ^b182, ^b184;
+^b174:
+    i32 %335 = add i32 %313, i32 1;
+    i1 %336 = scmp lt i32 %20, i32 15;
+    cbr i1 %336(prob = 0.5), ^b186, ^b185;
+^b175:
+    i32 %337 = phi [^b195, i32 %335] [^b161, i32 %313];
+    i1 %338 = phi [^b195, i1 %372] [^b161, i1 false];
+    cbr i1 %338(prob = 0.5), ^b187, ^b188;
+^b176:
+    i32 %339 = phi [^b179, i32 %343] [^b167, i32 1];
+    i1 %340 = scmp neq i32 %339, i32 0;
+    ubr ^b150;
+^b177:
+    i32 %341 = phi [^b202, i32 %344] [^b163, i32 %317];
+    i1 %342 = phi [^b202, i1 %382] [^b163, i1 true];
+    cbr i1 %342(prob = 0.5), ^b190, ^b193;
+^b178:
+    ubr ^b181;
+^b179:
+    store i32* %12 with i32 0;
+    i32 %343 = load i32* %11;
+    ubr ^b176;
+^b180:
+    i32 %344 = add i32 %317, i32 2;
+    i1 %345 = scmp lt i32 %26, i32 15;
+    cbr i1 %345(prob = 0.5), ^b194, ^b191;
+^b181:
+    i1 %346 = phi [^b166, i1 true] [^b178, i1 false];
+    cbr i1 %346(prob = 0.5), ^b189, ^b192;
+^entry17:
+    i32 %347 = add i32 %304, i32 6;
+    i32 %348 = load i32* %2;
+    i1 %349 = scmp neq i32 %348, i32 0;
+    ubr ^b183;
+^b182:
+    i32 %350 = phi [^b184, i32 %354] [^b173, i32 0];
+    i1 %351 = scmp neq i32 %350, i32 0;
+    ubr ^b161;
+^b183:
+    i32 %352 = phi [^entry17, i32 %347] [^b170, i32 %330];
+    i1 %353 = phi [^entry17, i1 %349] [^b170, i1 false];
+    cbr i1 %353(prob = 0.5), ^entry18, ^b196;
+^b184:
+    store i32* %13 with i32 1;
+    i32 %354 = load i32* %12;
+    ubr ^b182;
+^b185:
+    ubr ^b186;
+^b186:
+    i1 %355 = phi [^b174, i1 true] [^b185, i1 false];
+    cbr i1 %355(prob = 0.5), ^b195, ^b197;
+^b187:
+    i32 %356 = add i32 %337, i32 1;
+    i1 %357 = scmp lt i32 %20, i32 16;
+    cbr i1 %357(prob = 0.5), ^b199, ^b198;
+^b188:
+    i32 %358 = phi [^b208, i32 %356] [^b175, i32 %337];
+    i1 %359 = phi [^b208, i1 %393] [^b175, i1 false];
+    cbr i1 %359(prob = 0.5), ^b200, ^b201;
+^b189:
+    i32 %360 = phi [^b192, i32 %364] [^b181, i32 1];
+    i1 %361 = scmp neq i32 %360, i32 0;
+    ubr ^b163;
+^b190:
+    i32 %362 = phi [^b215, i32 %365] [^b177, i32 %341];
+    i1 %363 = phi [^b215, i1 %403] [^b177, i1 true];
+    cbr i1 %363(prob = 0.5), ^b203, ^b206;
+^b191:
+    ubr ^b194;
+^b192:
+    store i32* %13 with i32 0;
+    i32 %364 = load i32* %12;
+    ubr ^b189;
+^b193:
+    i32 %365 = add i32 %341, i32 2;
+    i1 %366 = scmp lt i32 %26, i32 16;
+    cbr i1 %366(prob = 0.5), ^b207, ^b204;
+^b194:
+    i1 %367 = phi [^b180, i1 true] [^b191, i1 false];
+    cbr i1 %367(prob = 0.5), ^b202, ^b205;
+^entry18:
+    i32 %368 = add i32 %352, i32 3;
+    i32 %369 = load i32* %3;
+    i1 %370 = scmp eq i32 %369, i32 0;
+    ubr ^b196;
+^b195:
+    i32 %371 = phi [^b197, i32 %375] [^b186, i32 0];
+    i1 %372 = scmp neq i32 %371, i32 0;
+    ubr ^b175;
+^b196:
+    i32 %373 = phi [^entry18, i32 %368] [^b183, i32 %352];
+    i1 %374 = phi [^entry18, i1 %370] [^b183, i1 false];
+    cbr i1 %374(prob = 0.5), ^entry19, ^b209;
+^b197:
+    store i32* %14 with i32 1;
+    i32 %375 = load i32* %13;
+    ubr ^b195;
+^b198:
+    ubr ^b199;
+^b199:
+    i1 %376 = phi [^b187, i1 true] [^b198, i1 false];
+    cbr i1 %376(prob = 0.5), ^b208, ^b210;
+^b200:
+    i32 %377 = add i32 %358, i32 1;
+    i1 %378 = scmp lt i32 %20, i32 17;
+    cbr i1 %378(prob = 0.5), ^b212, ^b211;
+^b201:
+    i32 %379 = phi [^b222, i32 %377] [^b188, i32 %358];
+    i1 %380 = phi [^b222, i1 %416] [^b188, i1 false];
+    cbr i1 %380(prob = 0.5), ^b213, ^b214;
+^b202:
+    i32 %381 = phi [^b205, i32 %385] [^b194, i32 1];
+    i1 %382 = scmp neq i32 %381, i32 0;
+    ubr ^b177;
+^b203:
+    i32 %383 = phi [^b228, i32 %386] [^b190, i32 %362];
+    i1 %384 = phi [^b228, i1 %424] [^b190, i1 true];
+    cbr i1 %384(prob = 0.5), ^b216, ^b219;
+^b204:
+    ubr ^b207;
+^b205:
+    store i32* %14 with i32 0;
+    i32 %385 = load i32* %13;
+    ubr ^b202;
+^b206:
+    i32 %386 = add i32 %362, i32 2;
+    i1 %387 = scmp lt i32 %26, i32 17;
+    cbr i1 %387(prob = 0.5), ^b220, ^b217;
+^b207:
+    i1 %388 = phi [^b193, i1 true] [^b204, i1 false];
+    cbr i1 %388(prob = 0.5), ^b215, ^b218;
+^entry19:
+    i32 %389 = add i32 %373, i32 3;
+    i32 %390 = load i32* %4;
+    i1 %391 = scmp eq i32 %390, i32 0;
+    ubr ^b209;
+^b208:
+    i32 %392 = phi [^b210, i32 %396] [^b199, i32 0];
+    i1 %393 = scmp neq i32 %392, i32 0;
+    ubr ^b188;
+^b209:
+    i32 %394 = phi [^entry19, i32 %389] [^b196, i32 %373];
+    i1 %395 = phi [^entry19, i1 %391] [^b196, i1 false];
+    cbr i1 %395(prob = 0.5), ^b221, ^entry20;
+^b210:
+    store i32* %15 with i32 1;
+    i32 %396 = load i32* %14;
+    ubr ^b208;
+^b211:
+    ubr ^b212;
+^b212:
+    i1 %397 = phi [^b200, i1 true] [^b211, i1 false];
+    cbr i1 %397(prob = 0.5), ^b222, ^b223;
+^b213:
+    i32 %398 = add i32 %379, i32 1;
+    i1 %399 = scmp lt i32 %20, i32 18;
+    cbr i1 %399(prob = 0.5), ^b225, ^b224;
+^b214:
+    i32 %400 = phi [^b235, i32 %398] [^b201, i32 %379];
+    i1 %401 = phi [^b235, i1 %437] [^b201, i1 false];
+    cbr i1 %401(prob = 0.5), ^b226, ^b227;
+^b215:
+    i32 %402 = phi [^b218, i32 %406] [^b207, i32 1];
+    i1 %403 = scmp neq i32 %402, i32 0;
+    ubr ^b190;
+^b216:
+    i32 %404 = phi [^b241, i32 %407] [^b203, i32 %383];
+    i1 %405 = phi [^b241, i1 %445] [^b203, i1 true];
+    cbr i1 %405(prob = 0.5), ^b229, ^b232;
+^b217:
+    ubr ^b220;
+^b218:
+    store i32* %15 with i32 0;
+    i32 %406 = load i32* %14;
+    ubr ^b215;
+^b219:
+    i32 %407 = add i32 %383, i32 2;
+    i1 %408 = scmp lt i32 %26, i32 18;
+    cbr i1 %408(prob = 0.5), ^b233, ^b230;
+^b220:
+    i1 %409 = phi [^b206, i1 true] [^b217, i1 false];
+    cbr i1 %409(prob = 0.5), ^b228, ^b231;
+^entry20:
+    i32 %410 = add i32 %394, i32 3;
+    i32 %411 = load i32* %5;
+    i1 %412 = scmp neq i32 %411, i32 0;
+    ubr ^b221;
+^b221:
+    i32 %413 = phi [^entry20, i32 %410] [^b209, i32 %394];
+    i1 %414 = phi [^entry20, i1 %412] [^b209, i1 true];
+    cbr i1 %414(prob = 0.5), ^b234, ^entry21;
+^b222:
+    i32 %415 = phi [^b223, i32 %417] [^b212, i32 0];
+    i1 %416 = scmp neq i32 %415, i32 0;
+    ubr ^b201;
+^b223:
+    store i32* %16 with i32 1;
+    i32 %417 = load i32* %15;
+    ubr ^b222;
+^b224:
+    ubr ^b225;
+^b225:
+    i1 %418 = phi [^b213, i1 true] [^b224, i1 false];
+    cbr i1 %418(prob = 0.5), ^b235, ^b236;
+^b226:
+    i32 %419 = add i32 %400, i32 1;
+    i1 %420 = scmp lt i32 %20, i32 19;
+    cbr i1 %420(prob = 0.5), ^b238, ^b237;
+^b227:
+    i32 %421 = phi [^b249, i32 %419] [^b214, i32 %400];
+    i1 %422 = phi [^b249, i1 %463] [^b214, i1 false];
+    cbr i1 %422(prob = 0.5), ^b239, ^b240;
+^b228:
+    i32 %423 = phi [^b231, i32 %427] [^b220, i32 1];
+    i1 %424 = scmp neq i32 %423, i32 0;
+    ubr ^b203;
+^b229:
+    i32 %425 = phi [^b255, i32 %428] [^b216, i32 %404];
+    i1 %426 = phi [^b255, i1 %469] [^b216, i1 true];
+    cbr i1 %426(prob = 0.5), ^b242, ^b245;
+^b230:
+    ubr ^b233;
+^b231:
+    store i32* %16 with i32 0;
+    i32 %427 = load i32* %15;
+    ubr ^b228;
+^b232:
+    i32 %428 = add i32 %404, i32 2;
+    i1 %429 = scmp lt i32 %26, i32 19;
+    cbr i1 %429(prob = 0.5), ^b246, ^b243;
+^b233:
+    i1 %430 = phi [^b219, i1 true] [^b230, i1 false];
+    cbr i1 %430(prob = 0.5), ^b241, ^b244;
+^b234:
+    i32 %431 = phi [^b248, i32 %460] [^b221, i32 %413];
+    i1 %432 = phi [^b248, i1 %461] [^b221, i1 true];
+    cbr i1 %432(prob = 0.5), ^b247, ^entry22;
+^entry21:
+    i32 %433 = add i32 %413, i32 3;
+    i32 %434 = load i32* %6;
+    i1 %435 = scmp neq i32 %434, i32 0;
+    cbr i1 %435(prob = 0.5), ^entry23, ^b248;
+^b235:
+    i32 %436 = phi [^b236, i32 %438] [^b225, i32 0];
+    i1 %437 = scmp neq i32 %436, i32 0;
+    ubr ^b214;
+^b236:
+    store i32* %17 with i32 1;
+    i32 %438 = load i32* %16;
+    ubr ^b235;
+^b237:
+    ubr ^b238;
+^b238:
+    i1 %439 = phi [^b226, i1 true] [^b237, i1 false];
+    cbr i1 %439(prob = 0.5), ^b249, ^b250;
+^b239:
+    i32 %440 = add i32 %421, i32 1;
+    i1 %441 = scmp lt i32 %20, i32 20;
+    cbr i1 %441(prob = 0.5), ^b253, ^b251;
+^b240:
+    i32 %442 = phi [^b259, i32 %440] [^b227, i32 %421];
+    i1 %443 = phi [^b259, i1 %473] [^b227, i1 false];
+    cbr i1 %443(prob = 0.5), ^if.then4, ^b252;
+^b241:
+    i32 %444 = phi [^b244, i32 %448] [^b233, i32 1];
+    i1 %445 = scmp neq i32 %444, i32 0;
+    ubr ^b216;
+^b242:
+    i32 %446 = phi [^b262, i32 %449] [^b229, i32 %425];
+    i1 %447 = phi [^b262, i1 %477] [^b229, i1 true];
+    cbr i1 %447(prob = 0.5), ^if.then5, ^b254;
+^b243:
+    ubr ^b246;
+^b244:
+    store i32* %17 with i32 0;
+    i32 %448 = load i32* %16;
+    ubr ^b241;
+^b245:
+    i32 %449 = add i32 %425, i32 2;
+    i1 %450 = scmp lt i32 %26, i32 20;
+    cbr i1 %450(prob = 0.5), ^b258, ^b256;
+^b246:
+    i1 %451 = phi [^b232, i1 true] [^b243, i1 false];
+    cbr i1 %451(prob = 0.5), ^b255, ^b257;
+^entry22:
+    i32 %452 = add i32 %431, i32 3;
+    i32 %453 = load i32* %8;
+    i1 %454 = scmp neq i32 %453, i32 0;
+    ubr ^b247;
+^entry23:
+    i32 %455 = add i32 %413, i32 6;
+    i32 %456 = load i32* %7;
+    i1 %457 = scmp eq i32 %456, i32 0;
+    ubr ^b248;
+^b247:
+    i32 %458 = phi [^entry22, i32 %452] [^b234, i32 %431];
+    i1 %459 = phi [^entry22, i1 %454] [^b234, i1 true];
+    cbr i1 %459(prob = 0.5), ^b261, ^indirect;
+^b248:
+    i32 %460 = phi [^entry23, i32 %455] [^entry21, i32 %433];
+    i1 %461 = phi [^entry23, i1 %457] [^entry21, i1 false];
+    ubr ^b234;
+^b249:
+    i32 %462 = phi [^b250, i32 %464] [^b238, i32 0];
+    i1 %463 = scmp neq i32 %462, i32 0;
+    ubr ^b227;
+^b250:
+    store i32* %18 with i32 1;
+    i32 %464 = load i32* %17;
+    ubr ^b249;
+^if.then4:
+    ubr ^b252;
+^b251:
+    ubr ^b253;
+^b252:
+    i32 %465 = add i32 %20, i32 1;
+    ubr ^while.header;
+^b253:
+    i1 %466 = phi [^b239, i1 true] [^b251, i1 false];
+    cbr i1 %466(prob = 0.5), ^b259, ^b260;
+^if.then5:
+    ubr ^b254;
+^b254:
+    i32 %467 = add i32 %26, i32 1;
+    ubr ^while.header1;
+^b255:
+    i32 %468 = phi [^b257, i32 %470] [^b246, i32 1];
+    i1 %469 = scmp neq i32 %468, i32 0;
+    ubr ^b229;
+^b256:
+    ubr ^b258;
+^b257:
+    store i32* %18 with i32 0;
+    i32 %470 = load i32* %17;
+    ubr ^b255;
+^b258:
+    i1 %471 = phi [^b245, i1 true] [^b256, i1 false];
+    cbr i1 %471(prob = 0.5), ^b262, ^b263;
+^b259:
+    i32 %472 = phi [^b260, i32 %474] [^b253, i32 0];
+    i1 %473 = scmp neq i32 %472, i32 0;
+    ubr ^b240;
+^b260:
+    store i32* %19 with i32 1;
+    i32 %474 = load i32* %18;
+    ubr ^b259;
+^b261:
+    i32 %475 = add i32 %458, i32 1;
+    call (i32) -> void @putint(i32 %475);
     ret i32 0;
+^indirect:
+    call (i32) -> void @putint(i32 %458);
+    ret i32 0;
+^b262:
+    i32 %476 = phi [^b263, i32 %478] [^b258, i32 1];
+    i1 %477 = scmp neq i32 %476, i32 0;
+    ubr ^b242;
+^b263:
+    store i32* %19 with i32 0;
+    i32 %478 = load i32* %18;
+    ubr ^b262;
 }

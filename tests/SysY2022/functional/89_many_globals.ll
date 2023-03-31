@@ -114,63 +114,63 @@ define dso_local noundef i32 @_Z11testParam32iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii(i3
 
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
-  store i32 1, i32* @a1, align 4, !tbaa !5
-  store i32 2, i32* @a2, align 4, !tbaa !5
-  store i32 3, i32* @a3, align 4, !tbaa !5
-  store i32 4, i32* @a4, align 4, !tbaa !5
-  store i32 5, i32* @a5, align 4, !tbaa !5
-  store i32 6, i32* @a6, align 4, !tbaa !5
-  store i32 7, i32* @a7, align 4, !tbaa !5
-  store i32 8, i32* @a8, align 4, !tbaa !5
-  store i32 9, i32* @a9, align 4, !tbaa !5
-  store i32 0, i32* @a10, align 4, !tbaa !5
-  store i32 1, i32* @a11, align 4, !tbaa !5
-  store i32 2, i32* @a12, align 4, !tbaa !5
-  store i32 3, i32* @a13, align 4, !tbaa !5
-  store i32 4, i32* @a14, align 4, !tbaa !5
-  store i32 5, i32* @a15, align 4, !tbaa !5
-  store i32 6, i32* @a16, align 4, !tbaa !5
-  store i32 7, i32* @a17, align 4, !tbaa !5
-  store i32 8, i32* @a18, align 4, !tbaa !5
-  store i32 9, i32* @a19, align 4, !tbaa !5
-  store i32 0, i32* @a20, align 4, !tbaa !5
-  store i32 1, i32* @a21, align 4, !tbaa !5
-  store i32 2, i32* @a22, align 4, !tbaa !5
-  store i32 3, i32* @a23, align 4, !tbaa !5
-  store i32 4, i32* @a24, align 4, !tbaa !5
-  store i32 5, i32* @a25, align 4, !tbaa !5
-  store i32 6, i32* @a26, align 4, !tbaa !5
-  store i32 7, i32* @a27, align 4, !tbaa !5
-  store i32 8, i32* @a28, align 4, !tbaa !5
-  store i32 9, i32* @a29, align 4, !tbaa !5
-  store i32 0, i32* @a30, align 4, !tbaa !5
-  store i32 1, i32* @a31, align 4, !tbaa !5
-  store i32 4, i32* @a32, align 4, !tbaa !5
-  store i32 5, i32* @a33, align 4, !tbaa !5
-  store i32 6, i32* @a34, align 4, !tbaa !5
-  store i32 7, i32* @a35, align 4, !tbaa !5
-  store i32 8, i32* @a36, align 4, !tbaa !5
-  store i32 9, i32* @a37, align 4, !tbaa !5
-  store i32 0, i32* @a38, align 4, !tbaa !5
-  store i32 1, i32* @a39, align 4, !tbaa !5
-  store i32 28, i32* @a0, align 4, !tbaa !5
+  store i32 1, i32* @a1, align 4, !tbaa !4
+  store i32 2, i32* @a2, align 4, !tbaa !4
+  store i32 3, i32* @a3, align 4, !tbaa !4
+  store i32 4, i32* @a4, align 4, !tbaa !4
+  store i32 5, i32* @a5, align 4, !tbaa !4
+  store i32 6, i32* @a6, align 4, !tbaa !4
+  store i32 7, i32* @a7, align 4, !tbaa !4
+  store i32 8, i32* @a8, align 4, !tbaa !4
+  store i32 9, i32* @a9, align 4, !tbaa !4
+  store i32 0, i32* @a10, align 4, !tbaa !4
+  store i32 1, i32* @a11, align 4, !tbaa !4
+  store i32 2, i32* @a12, align 4, !tbaa !4
+  store i32 3, i32* @a13, align 4, !tbaa !4
+  store i32 4, i32* @a14, align 4, !tbaa !4
+  store i32 5, i32* @a15, align 4, !tbaa !4
+  store i32 6, i32* @a16, align 4, !tbaa !4
+  store i32 7, i32* @a17, align 4, !tbaa !4
+  store i32 8, i32* @a18, align 4, !tbaa !4
+  store i32 9, i32* @a19, align 4, !tbaa !4
+  store i32 0, i32* @a20, align 4, !tbaa !4
+  store i32 1, i32* @a21, align 4, !tbaa !4
+  store i32 2, i32* @a22, align 4, !tbaa !4
+  store i32 3, i32* @a23, align 4, !tbaa !4
+  store i32 4, i32* @a24, align 4, !tbaa !4
+  store i32 5, i32* @a25, align 4, !tbaa !4
+  store i32 6, i32* @a26, align 4, !tbaa !4
+  store i32 7, i32* @a27, align 4, !tbaa !4
+  store i32 8, i32* @a28, align 4, !tbaa !4
+  store i32 9, i32* @a29, align 4, !tbaa !4
+  store i32 0, i32* @a30, align 4, !tbaa !4
+  store i32 1, i32* @a31, align 4, !tbaa !4
+  store i32 4, i32* @a32, align 4, !tbaa !4
+  store i32 5, i32* @a33, align 4, !tbaa !4
+  store i32 6, i32* @a34, align 4, !tbaa !4
+  store i32 7, i32* @a35, align 4, !tbaa !4
+  store i32 8, i32* @a36, align 4, !tbaa !4
+  store i32 9, i32* @a37, align 4, !tbaa !4
+  store i32 0, i32* @a38, align 4, !tbaa !4
+  store i32 1, i32* @a39, align 4, !tbaa !4
+  store i32 28, i32* @a0, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef 28)
-  %1 = load i32, i32* @a32, align 4, !tbaa !5
-  %2 = load i32, i32* @a33, align 4, !tbaa !5
-  %3 = load i32, i32* @a34, align 4, !tbaa !5
-  %4 = load i32, i32* @a35, align 4, !tbaa !5
-  %5 = load i32, i32* @a36, align 4, !tbaa !5
-  %6 = load i32, i32* @a37, align 4, !tbaa !5
-  %7 = load i32, i32* @a38, align 4, !tbaa !5
-  %8 = load i32, i32* @a39, align 4, !tbaa !5
-  %9 = load i32, i32* @a8, align 4, !tbaa !5
-  %10 = load i32, i32* @a9, align 4, !tbaa !5
-  %11 = load i32, i32* @a10, align 4, !tbaa !5
-  %12 = load i32, i32* @a11, align 4, !tbaa !5
-  %13 = load i32, i32* @a12, align 4, !tbaa !5
-  %14 = load i32, i32* @a13, align 4, !tbaa !5
-  %15 = load i32, i32* @a14, align 4, !tbaa !5
-  %16 = load i32, i32* @a15, align 4, !tbaa !5
+  %1 = load i32, i32* @a32, align 4, !tbaa !4
+  %2 = load i32, i32* @a33, align 4, !tbaa !4
+  %3 = load i32, i32* @a34, align 4, !tbaa !4
+  %4 = load i32, i32* @a35, align 4, !tbaa !4
+  %5 = load i32, i32* @a36, align 4, !tbaa !4
+  %6 = load i32, i32* @a37, align 4, !tbaa !4
+  %7 = load i32, i32* @a38, align 4, !tbaa !4
+  %8 = load i32, i32* @a39, align 4, !tbaa !4
+  %9 = load i32, i32* @a8, align 4, !tbaa !4
+  %10 = load i32, i32* @a9, align 4, !tbaa !4
+  %11 = load i32, i32* @a10, align 4, !tbaa !4
+  %12 = load i32, i32* @a11, align 4, !tbaa !4
+  %13 = load i32, i32* @a12, align 4, !tbaa !4
+  %14 = load i32, i32* @a13, align 4, !tbaa !4
+  %15 = load i32, i32* @a14, align 4, !tbaa !4
+  %16 = load i32, i32* @a15, align 4, !tbaa !4
   %17 = add i32 %2, %1
   %18 = add i32 %17, %3
   %19 = add i32 %4, %5
@@ -186,40 +186,40 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %29 = add i32 %28, %14
   %30 = add i32 %29, %15
   %31 = add i32 %30, %16
-  store i32 %31, i32* @a0, align 4, !tbaa !5
+  store i32 %31, i32* @a0, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %31)
-  %32 = load i32, i32* @a0, align 4, !tbaa !5
-  %33 = load i32, i32* @a1, align 4, !tbaa !5
-  %34 = load i32, i32* @a2, align 4, !tbaa !5
-  %35 = load i32, i32* @a3, align 4, !tbaa !5
-  %36 = load i32, i32* @a4, align 4, !tbaa !5
-  %37 = load i32, i32* @a5, align 4, !tbaa !5
-  %38 = load i32, i32* @a6, align 4, !tbaa !5
-  %39 = load i32, i32* @a7, align 4, !tbaa !5
-  %40 = load i32, i32* @a8, align 4, !tbaa !5
-  %41 = load i32, i32* @a9, align 4, !tbaa !5
-  %42 = load i32, i32* @a10, align 4, !tbaa !5
-  %43 = load i32, i32* @a11, align 4, !tbaa !5
-  %44 = load i32, i32* @a12, align 4, !tbaa !5
-  %45 = load i32, i32* @a13, align 4, !tbaa !5
-  %46 = load i32, i32* @a14, align 4, !tbaa !5
-  %47 = load i32, i32* @a15, align 4, !tbaa !5
-  %48 = load i32, i32* @a16, align 4, !tbaa !5
-  %49 = load i32, i32* @a17, align 4, !tbaa !5
-  %50 = load i32, i32* @a18, align 4, !tbaa !5
-  %51 = load i32, i32* @a19, align 4, !tbaa !5
-  %52 = load i32, i32* @a20, align 4, !tbaa !5
-  %53 = load i32, i32* @a21, align 4, !tbaa !5
-  %54 = load i32, i32* @a22, align 4, !tbaa !5
-  %55 = load i32, i32* @a23, align 4, !tbaa !5
-  %56 = load i32, i32* @a24, align 4, !tbaa !5
-  %57 = load i32, i32* @a25, align 4, !tbaa !5
-  %58 = load i32, i32* @a26, align 4, !tbaa !5
-  %59 = load i32, i32* @a27, align 4, !tbaa !5
-  %60 = load i32, i32* @a28, align 4, !tbaa !5
-  %61 = load i32, i32* @a29, align 4, !tbaa !5
-  %62 = load i32, i32* @a30, align 4, !tbaa !5
-  %63 = load i32, i32* @a31, align 4, !tbaa !5
+  %32 = load i32, i32* @a0, align 4, !tbaa !4
+  %33 = load i32, i32* @a1, align 4, !tbaa !4
+  %34 = load i32, i32* @a2, align 4, !tbaa !4
+  %35 = load i32, i32* @a3, align 4, !tbaa !4
+  %36 = load i32, i32* @a4, align 4, !tbaa !4
+  %37 = load i32, i32* @a5, align 4, !tbaa !4
+  %38 = load i32, i32* @a6, align 4, !tbaa !4
+  %39 = load i32, i32* @a7, align 4, !tbaa !4
+  %40 = load i32, i32* @a8, align 4, !tbaa !4
+  %41 = load i32, i32* @a9, align 4, !tbaa !4
+  %42 = load i32, i32* @a10, align 4, !tbaa !4
+  %43 = load i32, i32* @a11, align 4, !tbaa !4
+  %44 = load i32, i32* @a12, align 4, !tbaa !4
+  %45 = load i32, i32* @a13, align 4, !tbaa !4
+  %46 = load i32, i32* @a14, align 4, !tbaa !4
+  %47 = load i32, i32* @a15, align 4, !tbaa !4
+  %48 = load i32, i32* @a16, align 4, !tbaa !4
+  %49 = load i32, i32* @a17, align 4, !tbaa !4
+  %50 = load i32, i32* @a18, align 4, !tbaa !4
+  %51 = load i32, i32* @a19, align 4, !tbaa !4
+  %52 = load i32, i32* @a20, align 4, !tbaa !4
+  %53 = load i32, i32* @a21, align 4, !tbaa !4
+  %54 = load i32, i32* @a22, align 4, !tbaa !4
+  %55 = load i32, i32* @a23, align 4, !tbaa !4
+  %56 = load i32, i32* @a24, align 4, !tbaa !4
+  %57 = load i32, i32* @a25, align 4, !tbaa !4
+  %58 = load i32, i32* @a26, align 4, !tbaa !4
+  %59 = load i32, i32* @a27, align 4, !tbaa !4
+  %60 = load i32, i32* @a28, align 4, !tbaa !4
+  %61 = load i32, i32* @a29, align 4, !tbaa !4
+  %62 = load i32, i32* @a30, align 4, !tbaa !4
+  %63 = load i32, i32* @a31, align 4, !tbaa !4
   %64 = add i32 %33, %32
   %65 = add i32 %64, %34
   %66 = add i32 %65, %35
@@ -251,7 +251,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %92 = add i32 %91, %61
   %93 = add i32 %92, %62
   %94 = add i32 %93, %63
-  store i32 %94, i32* @a0, align 4, !tbaa !5
+  store i32 %94, i32* @a0, align 4, !tbaa !4
   tail call void @_Z6putinti(i32 noundef %94)
   ret i32 0
 }
@@ -263,14 +263,12 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}

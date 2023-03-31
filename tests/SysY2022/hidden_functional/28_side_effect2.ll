@@ -8,9 +8,9 @@ target triple = "x86_64-pc-linux-gnu"
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z1fii(i32 noundef %0, i32 noundef %1) local_unnamed_addr #0 {
-  %3 = load i32, i32* @sum, align 4, !tbaa !5
+  %3 = load i32, i32* @sum, align 4, !tbaa !4
   %4 = add nsw i32 %3, 1
-  store i32 %4, i32* @sum, align 4, !tbaa !5
+  store i32 %4, i32* @sum, align 4, !tbaa !4
   %5 = icmp sge i32 %0, %1
   %6 = icmp sgt i32 %0, 19
   %7 = or i1 %6, %5
@@ -19,19 +19,19 @@ define dso_local noundef i32 @_Z1fii(i32 noundef %0, i32 noundef %1) local_unnam
 8:                                                ; preds = %2
   %9 = sext i32 %0 to i64
   %10 = getelementptr inbounds [20 x i32], [20 x i32]* @array, i64 0, i64 %9
-  store i32 1, i32* %10, align 4, !tbaa !5
+  store i32 1, i32* %10, align 4, !tbaa !4
   %11 = icmp eq i32 %0, 0
   br i1 %11, label %12, label %14
 
 12:                                               ; preds = %8
-  %13 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !5
+  %13 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !4
   br label %19
 
 14:                                               ; preds = %8
   %15 = add nsw i32 %0, -1
   %16 = sext i32 %15 to i64
   %17 = getelementptr inbounds [20 x i32], [20 x i32]* @array, i64 0, i64 %16
-  %18 = load i32, i32* %17, align 4, !tbaa !5
+  %18 = load i32, i32* %17, align 4, !tbaa !4
   br label %19
 
 19:                                               ; preds = %2, %14, %12
@@ -41,9 +41,9 @@ define dso_local noundef i32 @_Z1fii(i32 noundef %0, i32 noundef %1) local_unnam
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z1gii(i32 noundef %0, i32 noundef %1) local_unnamed_addr #0 {
-  %3 = load i32, i32* @sum, align 4, !tbaa !5
+  %3 = load i32, i32* @sum, align 4, !tbaa !4
   %4 = add nsw i32 %3, 2
-  store i32 %4, i32* @sum, align 4, !tbaa !5
+  store i32 %4, i32* @sum, align 4, !tbaa !4
   %5 = icmp sge i32 %0, %1
   %6 = icmp sgt i32 %0, 19
   %7 = or i1 %6, %5
@@ -52,19 +52,19 @@ define dso_local noundef i32 @_Z1gii(i32 noundef %0, i32 noundef %1) local_unnam
 8:                                                ; preds = %2
   %9 = sext i32 %0 to i64
   %10 = getelementptr inbounds [20 x i32], [20 x i32]* @array, i64 0, i64 %9
-  store i32 0, i32* %10, align 4, !tbaa !5
+  store i32 0, i32* %10, align 4, !tbaa !4
   %11 = icmp eq i32 %0, 0
   br i1 %11, label %12, label %14
 
 12:                                               ; preds = %8
-  %13 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !5
+  %13 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !4
   br label %19
 
 14:                                               ; preds = %8
   %15 = add nsw i32 %0, -1
   %16 = sext i32 %15 to i64
   %17 = getelementptr inbounds [20 x i32], [20 x i32]* @array, i64 0, i64 %16
-  %18 = load i32, i32* %17, align 4, !tbaa !5
+  %18 = load i32, i32* %17, align 4, !tbaa !4
   br label %19
 
 19:                                               ; preds = %2, %14, %12
@@ -74,16 +74,16 @@ define dso_local noundef i32 @_Z1gii(i32 noundef %0, i32 noundef %1) local_unnam
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z1hi(i32 noundef %0) local_unnamed_addr #0 {
-  %2 = load i32, i32* @sum, align 4, !tbaa !5
+  %2 = load i32, i32* @sum, align 4, !tbaa !4
   %3 = add nsw i32 %2, 3
-  store i32 %3, i32* @sum, align 4, !tbaa !5
+  store i32 %3, i32* @sum, align 4, !tbaa !4
   %4 = icmp ugt i32 %0, 19
   br i1 %4, label %9, label %5
 
 5:                                                ; preds = %1
   %6 = zext i32 %0 to i64
   %7 = getelementptr inbounds [20 x i32], [20 x i32]* @array, i64 0, i64 %6
-  %8 = load i32, i32* %7, align 4, !tbaa !5
+  %8 = load i32, i32* %7, align 4, !tbaa !4
   br label %9
 
 9:                                                ; preds = %1, %5
@@ -93,20 +93,29 @@ define dso_local noundef i32 @_Z1hi(i32 noundef %0) local_unnamed_addr #0 {
 
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
-  %1 = load i32, i32* @sum, align 4, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !5
+  %1 = load i32, i32* @sum, align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !4
   %2 = add nsw i32 %1, 3
   br label %5
 
 3:                                                ; preds = %58
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast (i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4) to <4 x i32>*), align 16, !tbaa !5
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast (i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8) to <4 x i32>*), align 16, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12), align 16, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 13), align 4, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 14), align 8, !tbaa !5
-  store i32 %59, i32* @sum, align 4, !tbaa !5
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 2), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 3), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 9), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 10), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 11), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 13), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 14), align 8, !tbaa !4
+  store i32 %59, i32* @sum, align 4, !tbaa !4
   %4 = add nsw i32 %7, 26
-  store <4 x i32> <i32 0, i32 0, i32 1, i32 1>, <4 x i32>* bitcast ([20 x i32]* @array to <4 x i32>*), align 16, !tbaa !5
+  store i32 0, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !4
+  store i32 0, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 1), align 4, !tbaa !4
   br label %65
 
 5:                                                ; preds = %62, %0
@@ -202,7 +211,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   br i1 %60, label %3, label %61
 
 61:                                               ; preds = %58
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 19), align 4, !tbaa !5
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 19), align 4, !tbaa !4
   br label %62
 
 62:                                               ; preds = %55, %52, %49, %46, %43, %40, %37, %34, %31, %28, %25, %22, %19, %16, %13, %10, %5, %61
@@ -303,7 +312,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   br i1 %120, label %125, label %121
 
 121:                                              ; preds = %118
-  store i32 0, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 19), align 4, !tbaa !5
+  store i32 0, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 19), align 4, !tbaa !4
   br label %122
 
 122:                                              ; preds = %115, %112, %109, %106, %103, %100, %97, %94, %91, %88, %85, %82, %79, %76, %73, %70, %65, %121
@@ -312,15 +321,27 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   br label %65
 
 125:                                              ; preds = %118
-  store i32 %119, i32* @sum, align 4, !tbaa !5
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast ([20 x i32]* @array to <4 x i32>*), align 16, !tbaa !5
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast (i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4) to <4 x i32>*), align 16, !tbaa !5
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast (i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8) to <4 x i32>*), align 16, !tbaa !5
-  store <4 x i32> <i32 1, i32 1, i32 1, i32 1>, <4 x i32>* bitcast (i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12) to <4 x i32>*), align 16, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 16), align 16, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 17), align 4, !tbaa !5
-  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 18), align 8, !tbaa !5
-  %126 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 1), align 4, !tbaa !5
+  store i32 %119, i32* @sum, align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 0), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 1), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 2), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 3), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 9), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 10), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 11), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 13), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 14), align 8, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 15), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 16), align 16, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 17), align 4, !tbaa !4
+  store i32 1, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 18), align 8, !tbaa !4
+  %126 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 1), align 4, !tbaa !4
   %127 = icmp eq i32 %126, 0
   %128 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 2), align 8
   %129 = icmp eq i32 %128, 0
@@ -328,25 +349,25 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %131 = select i1 %127, i32 %130, i32 65
   %132 = add i32 %67, %131
   %133 = add nsw i32 %132, 3
-  %134 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4), align 16, !tbaa !5
+  %134 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 4), align 16, !tbaa !4
   %135 = icmp eq i32 %134, 0
   br i1 %135, label %151, label %136
 
 136:                                              ; preds = %125
   %137 = add nsw i32 %132, 6
-  %138 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !5
+  %138 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !4
   %139 = icmp eq i32 %138, 0
   br i1 %139, label %148, label %140
 
 140:                                              ; preds = %136
   %141 = add nsw i32 %132, 9
-  %142 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !5
+  %142 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !4
   %143 = icmp eq i32 %142, 0
   br i1 %143, label %144, label %148
 
 144:                                              ; preds = %140
   %145 = add nsw i32 %132, 12
-  %146 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !5
+  %146 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !4
   %147 = icmp eq i32 %146, 0
   br i1 %147, label %148, label %151
 
@@ -358,37 +379,37 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 151:                                              ; preds = %148, %125, %144
   %152 = phi i32 [ %150, %148 ], [ %133, %125 ], [ %145, %144 ]
   %153 = add nsw i32 %152, 3
-  %154 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 9), align 4, !tbaa !5
+  %154 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 9), align 4, !tbaa !4
   %155 = icmp eq i32 %154, 0
   br i1 %155, label %160, label %156
 
 156:                                              ; preds = %151
   %157 = add nsw i32 %152, 6
-  %158 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 10), align 8, !tbaa !5
+  %158 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 10), align 8, !tbaa !4
   %159 = icmp eq i32 %158, 0
   br i1 %159, label %178, label %160
 
 160:                                              ; preds = %156, %151
   %161 = phi i32 [ %157, %156 ], [ %153, %151 ]
   %162 = add nsw i32 %161, 3
-  %163 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 11), align 4, !tbaa !5
+  %163 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 11), align 4, !tbaa !4
   %164 = icmp eq i32 %163, 0
   br i1 %164, label %178, label %165
 
 165:                                              ; preds = %160
   %166 = add nsw i32 %161, 6
-  %167 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12), align 16, !tbaa !5
+  %167 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 12), align 16, !tbaa !4
   %168 = icmp eq i32 %167, 0
   br i1 %168, label %178, label %169
 
 169:                                              ; preds = %165
   %170 = add nsw i32 %161, 9
-  %171 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 13), align 4, !tbaa !5
+  %171 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 13), align 4, !tbaa !4
   %172 = icmp eq i32 %171, 0
   br i1 %172, label %178, label %173
 
 173:                                              ; preds = %169
-  %174 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 14), align 8, !tbaa !5
+  %174 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 14), align 8, !tbaa !4
   %175 = icmp eq i32 %174, 0
   %176 = select i1 %175, i32 12, i32 15
   %177 = add nsw i32 %161, %176
@@ -397,48 +418,48 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
 178:                                              ; preds = %173, %169, %165, %160, %156
   %179 = phi i32 [ %157, %156 ], [ %162, %160 ], [ %166, %165 ], [ %170, %169 ], [ %177, %173 ]
   %180 = add nsw i32 %179, 6
-  %181 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 2), align 8, !tbaa !5
+  %181 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 2), align 8, !tbaa !4
   %182 = icmp eq i32 %181, 0
   br i1 %182, label %189, label %183
 
 183:                                              ; preds = %178
   %184 = add nsw i32 %179, 9
-  %185 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 3), align 4, !tbaa !5
+  %185 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 3), align 4, !tbaa !4
   %186 = icmp eq i32 %185, 0
   br i1 %186, label %187, label %189
 
 187:                                              ; preds = %183
   %188 = add nsw i32 %179, 12
-  store i32 %188, i32* @sum, align 4, !tbaa !5
+  store i32 %188, i32* @sum, align 4, !tbaa !4
   br i1 %135, label %207, label %189
 
 189:                                              ; preds = %187, %183, %178
   %190 = phi i32 [ %188, %187 ], [ %184, %183 ], [ %180, %178 ]
   %191 = add nsw i32 %190, 3
-  store i32 %191, i32* @sum, align 4, !tbaa !5
-  %192 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !5
+  store i32 %191, i32* @sum, align 4, !tbaa !4
+  %192 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 5), align 4, !tbaa !4
   %193 = icmp eq i32 %192, 0
   br i1 %193, label %194, label %207
 
 194:                                              ; preds = %189
   %195 = add nsw i32 %190, 6
-  store i32 %195, i32* @sum, align 4, !tbaa !5
-  %196 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !5
+  store i32 %195, i32* @sum, align 4, !tbaa !4
+  %196 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 6), align 8, !tbaa !4
   %197 = icmp eq i32 %196, 0
   br i1 %197, label %202, label %198
 
 198:                                              ; preds = %194
   %199 = add nsw i32 %190, 9
-  store i32 %199, i32* @sum, align 4, !tbaa !5
-  %200 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !5
+  store i32 %199, i32* @sum, align 4, !tbaa !4
+  %200 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 7), align 4, !tbaa !4
   %201 = icmp eq i32 %200, 0
   br i1 %201, label %207, label %202
 
 202:                                              ; preds = %198, %194
   %203 = phi i32 [ %199, %198 ], [ %195, %194 ]
   %204 = add nsw i32 %203, 3
-  store i32 %204, i32* @sum, align 4, !tbaa !5
-  %205 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8), align 16, !tbaa !5
+  store i32 %204, i32* @sum, align 4, !tbaa !4
+  %205 = load i32, i32* getelementptr inbounds ([20 x i32], [20 x i32]* @array, i64 0, i64 8), align 16, !tbaa !4
   %206 = icmp eq i32 %205, 0
   br i1 %206, label %209, label %207
 
@@ -461,14 +482,12 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}

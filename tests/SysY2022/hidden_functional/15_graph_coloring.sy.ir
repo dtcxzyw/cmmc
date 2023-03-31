@@ -1,133 +1,5 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal i32* @V { ReadOnly } = 4;
-internal i32* @space { ReadOnly } = 32;
-internal i32* @LF { ReadOnly } = 10;
-internal func @printSolution(i32* %color) -> void {
-^entry:
-    i32* %i = alloc i32;
-    i32** %color1 = alloc i32*;
-    store i32** %color1 with i32* %color;
-    store i32* %i with i32 0;
-    ubr ^while.header;
-^while.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 4;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %4 = load i32* %i;
-    i64 %5 = sext i32 %4 to i64;
-    i32* %6 = load i32** %color1;
-    i32* %7 = getelementptr &(i32* %6)[i64 %5];
-    i32 %8 = load i32* %7;
-    call (i32) -> void @putint(i32 %8);
-    call (i32) -> void @putch(i32 32);
-    i32 %9 = load i32* %i;
-    i32 %10 = add i32 %9, i32 1;
-    store i32* %i with i32 %10;
-    ubr ^while.header;
-^b:
-    call (i32) -> void @putch(i32 10);
-    ret;
-}
-internal func @printMessage() -> void {
-^entry:
-    call (i32) -> void @putch(i32 78);
-    call (i32) -> void @putch(i32 111);
-    call (i32) -> void @putch(i32 116);
-    call (i32) -> void @putch(i32 32);
-    call (i32) -> void @putch(i32 101);
-    call (i32) -> void @putch(i32 120);
-    call (i32) -> void @putch(i32 105);
-    call (i32) -> void @putch(i32 115);
-    call (i32) -> void @putch(i32 116);
-    ret;
-}
-internal func @isSafe([4 * i32]* %graph, i32* %color) -> i32 {
-^entry:
-    i32* %j = alloc i32;
-    i32* %i = alloc i32;
-    i32** %color1 = alloc i32*;
-    [4 * i32]** %graph1 = alloc [4 * i32]*;
-    store [4 * i32]** %graph1 with [4 * i32]* %graph;
-    store i32** %color1 with i32* %color;
-    store i32* %i with i32 0;
-    ubr ^while.header;
-^while.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 4;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %4 = load i32* %i;
-    i32 %5 = add i32 %4, i32 1;
-    store i32* %j with i32 %5;
-    ubr ^while.header1;
-^b:
-    ret i32 1;
-^while.header1:
-    i32 %6 = load i32* %j;
-    i1 %7 = scmp lt i32 %6, i32 4;
-    i32 %8 = zext i1 %7 to i32;
-    i1 %9 = scmp neq i32 %8, i32 0;
-    cbr i1 %9(prob = 0.97), ^while.body1, ^b1;
-^b1:
-    i32 %10 = load i32* %i;
-    i32 %11 = add i32 %10, i32 1;
-    store i32* %i with i32 %11;
-    ubr ^while.header;
-^while.body1:
-    i32 %12 = load i32* %i;
-    i64 %13 = sext i32 %12 to i64;
-    [4 * i32]* %14 = load [4 * i32]** %graph1;
-    [4 * i32]* %15 = getelementptr &([4 * i32]* %14)[i64 %13];
-    i32 %16 = load i32* %j;
-    i64 %17 = sext i32 %16 to i64;
-    i32* %18 = getelementptr &([4 * i32]* %15)[i64 0][i64 %17];
-    i32 %19 = load i32* %18;
-    i1 %20 = scmp neq i32 %19, i32 0;
-    cbr i1 %20(prob = 0.5), ^b2, ^b3;
-^b2:
-    i32 %21 = load i32* %j;
-    i64 %22 = sext i32 %21 to i64;
-    i32* %23 = load i32** %color1;
-    i32* %24 = getelementptr &(i32* %23)[i64 %22];
-    i32 %25 = load i32* %24;
-    i32 %26 = load i32* %i;
-    i64 %27 = sext i32 %26 to i64;
-    i32* %28 = load i32** %color1;
-    i32* %29 = getelementptr &(i32* %28)[i64 %27];
-    i32 %30 = load i32* %29;
-    i1 %31 = scmp eq i32 %25, i32 %30;
-    i32 %32 = zext i1 %31 to i32;
-    i1 %33 = scmp neq i32 %32, i32 0;
-    ubr ^b3;
-^b3:
-    i1 %34 = phi [^b2, i1 %33] [^while.body1, i1 false];
-    i32 %35 = zext i1 %34 to i32;
-    i1 %36 = scmp neq i32 %35, i32 0;
-    cbr i1 %36(prob = 0.5), ^if.then, ^b4;
-^b4:
-    i32 %37 = load i32* %j;
-    i32 %38 = add i32 %37, i32 1;
-    store i32* %j with i32 %38;
-    ubr ^while.header1;
-^if.then:
-    ret i32 0;
-}
 internal func @graphColoring([4 * i32]* %graph, i32 %m, i32 %i, i32* %color) -> i32 {
 ^entry:
     i32* %j = alloc i32;
@@ -139,68 +11,112 @@ internal func @graphColoring([4 * i32]* %graph, i32 %m, i32 %i, i32* %color) -> 
     store i32* %m1 with i32 %m;
     store i32* %i1 with i32 %i;
     store i32** %color1 with i32* %color;
-    i32 %0 = load i32* %i1;
-    i1 %1 = scmp eq i32 %0, i32 4;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.5), ^if.then, ^b;
+    i1 %0 = scmp eq i32 %i, i32 4;
+    cbr i1 %0(prob = 0.5), ^while.header, ^b;
 ^b:
     store i32* %j with i32 1;
-    ubr ^while.header;
-^if.then:
-    [4 * i32]* %4 = load [4 * i32]** %graph1;
-    i32* %5 = load i32** %color1;
-    i32 %6 = call ([4 * i32]*, i32*) -> i32 @isSafe([4 * i32]* %4, i32* %5);
-    i1 %7 = scmp neq i32 %6, i32 0;
-    cbr i1 %7(prob = 0.5), ^if.then1, ^b1;
+    ubr ^while.header1;
 ^while.header:
-    i32 %8 = load i32* %j;
-    i32 %9 = load i32* %m1;
-    i1 %10 = scmp le i32 %8, i32 %9;
-    i32 %11 = zext i1 %10 to i32;
-    i1 %12 = scmp neq i32 %11, i32 0;
-    cbr i1 %12(prob = 0.97), ^while.body, ^b2;
-^if.then1:
-    i32* %13 = load i32** %color1;
-    call (i32*) -> void @printSolution(i32* %13);
-    ret i32 1;
+    i32* %1 = phi [^entry, i32* %color] [^b2, i32* %18];
+    i32 %2 = phi [^entry, i32 0] [^b2, i32 %38];
+    i32* %3 = phi [^entry, i32* %color] [^b2, i32* %21];
+    [4 * i32]* %4 = phi [^entry, [4 * i32]* %graph] [^b2, [4 * i32]* %22];
+    i32 %5 = phi [^entry, i32 0] [^b2, i32 %38];
+    i1 %6 = scmp lt i32 %5, i32 4;
+    cbr i1 %6(prob = 0.97), ^while.body, ^if.then;
+^while.body:
+    i32 %7 = add i32 %2, i32 1;
+    ubr ^while.header2;
+^while.header1:
+    [4 * i32]* %8 = phi [^b3, [4 * i32]* %30] [^b, [4 * i32]* %graph];
+    i32 %9 = phi [^b3, i32 %43] [^b, i32 %m];
+    i32 %10 = phi [^b3, i32 %44] [^b, i32 %i];
+    i32* %11 = phi [^b3, i32* %32] [^b, i32* %color];
+    i32 %12 = phi [^b3, i32 %46] [^b, i32 1];
+    i32 %13 = phi [^b3, i32 %46] [^b, i32 1];
+    i1 %14 = scmp le i32 %13, i32 %9;
+    cbr i1 %14(prob = 0.97), ^while.body1, ^b1;
+^if.then:
+    i32* %15 = phi [^b6, i32* %18] [^while.header, i32* %1];
+    i32 %16 = phi [^b6, i32 0] [^while.header, i32 1];
+    i1 %17 = scmp neq i32 %16, i32 0;
+    cbr i1 %17(prob = 0.5), ^while.header3, ^b1;
+^while.header2:
+    i32* %18 = phi [^b7, i32* %18] [^while.body, i32* %1];
+    i32 %19 = phi [^b7, i32 %57] [^while.body, i32 %7];
+    i32 %20 = phi [^b7, i32 %20] [^while.body, i32 %2];
+    i32* %21 = phi [^b7, i32* %21] [^while.body, i32* %3];
+    [4 * i32]* %22 = phi [^b7, [4 * i32]* %22] [^while.body, [4 * i32]* %4];
+    i32 %23 = phi [^while.body, i32 %7] [^b7, i32 %57];
+    i1 %24 = scmp lt i32 %23, i32 4;
+    cbr i1 %24(prob = 0.97), ^while.body3, ^b2;
+^while.body1:
+    i32* %25 = getelementptr &(i32* %11)[i32 %10];
+    store i32* %25 with i32 %12;
+    i32 %26 = load i32* %m1;
+    i32 %27 = load i32* %i1;
+    i32 %28 = add i32 %27, i32 1;
+    i32 %29 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %8, i32 %26, i32 %28, i32* %11);
+    [4 * i32]* %30 = load [4 * i32]** %graph1;
+    i32 %31 = load i32* %i1;
+    i32* %32 = load i32** %color1;
+    i1 %33 = scmp neq i32 %29, i32 0;
+    cbr i1 %33(prob = 0.5), ^if.then1, ^b3;
+^while.header3:
+    i32 %34 = phi [^if.then, i32 0] [^while.body2, i32 %41];
+    i32* %35 = phi [^if.then, i32* %15] [^while.body2, i32* %35];
+    i32 %36 = phi [^if.then, i32 0] [^while.body2, i32 %41];
+    i1 %37 = scmp lt i32 %36, i32 4;
+    cbr i1 %37(prob = 0.97), ^while.body2, ^b4;
 ^b1:
     ret i32 0;
-^while.body:
-    i32 %14 = load i32* %i1;
-    i64 %15 = sext i32 %14 to i64;
-    i32* %16 = load i32** %color1;
-    i32* %17 = getelementptr &(i32* %16)[i64 %15];
-    i32 %18 = load i32* %j;
-    store i32* %17 with i32 %18;
-    [4 * i32]* %19 = load [4 * i32]** %graph1;
-    i32 %20 = load i32* %m1;
-    i32 %21 = load i32* %i1;
-    i32 %22 = add i32 %21, i32 1;
-    i32* %23 = load i32** %color1;
-    i32 %24 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %19, i32 %20, i32 %22, i32* %23);
-    i1 %25 = scmp neq i32 %24, i32 0;
-    cbr i1 %25(prob = 0.5), ^if.then2, ^b3;
 ^b2:
-    ret i32 0;
-^b3:
-    i32 %26 = load i32* %i1;
-    i64 %27 = sext i32 %26 to i64;
-    i32* %28 = load i32** %color1;
-    i32* %29 = getelementptr &(i32* %28)[i64 %27];
-    store i32* %29 with i32 0;
-    i32 %30 = load i32* %j;
-    i32 %31 = add i32 %30, i32 1;
-    store i32* %j with i32 %31;
+    i32 %38 = add i32 %20, i32 1;
     ubr ^while.header;
-^if.then2:
+^while.body2:
+    i32* %39 = getelementptr &(i32* %35)[i32 %34];
+    i32 %40 = load i32* %39;
+    call (i32) -> void @putint(i32 %40);
+    call (i32) -> void @putch(i32 32);
+    i32 %41 = add i32 %34, i32 1;
+    ubr ^while.header3;
+^b3:
+    i32* %42 = getelementptr &(i32* %32)[i32 %31];
+    store i32* %42 with i32 0;
+    i32 %43 = load i32* %m1;
+    i32 %44 = load i32* %i1;
+    i32 %45 = load i32* %j;
+    i32 %46 = add i32 %45, i32 1;
+    store i32* %j with i32 %46;
+    ubr ^while.header1;
+^while.body3:
+    [4 * i32]* %47 = getelementptr &([4 * i32]* %22)[i32 %20];
+    i32* %48 = getelementptr &([4 * i32]* %47)[i64 0][i32 %19];
+    i32 %49 = load i32* %48;
+    i1 %50 = scmp neq i32 %49, i32 0;
+    cbr i1 %50(prob = 0.5), ^b5, ^b6;
+^if.then1:
     ret i32 1;
+^b4:
+    call (i32) -> void @putch(i32 10);
+    ret i32 1;
+^b5:
+    i32* %51 = getelementptr &(i32* %21)[i32 %19];
+    i32 %52 = load i32* %51;
+    i32* %53 = getelementptr &(i32* %21)[i32 %20];
+    i32 %54 = load i32* %53;
+    i1 %55 = scmp eq i32 %52, i32 %54;
+    ubr ^b6;
+^b6:
+    i1 %56 = phi [^b5, i1 %55] [^while.body3, i1 false];
+    cbr i1 %56(prob = 0.5), ^if.then, ^b7;
+^b7:
+    i32 %57 = add i32 %19, i32 1;
+    ubr ^while.header2;
 }
-func @main() -> i32 { Entry } {
+func @main() -> i32 { NoRecurse Entry } {
 ^entry:
-    i32* %i = alloc i32;
     [4 * i32]* %color = alloc [4 * i32];
-    i32* %m = alloc i32;
     [4 * [4 * i32]]* %graph = alloc [4 * [4 * i32]];
     i32* %0 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0][i64 1];
     i32* %1 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0][i64 0];
@@ -232,41 +148,37 @@ func @main() -> i32 { Entry } {
     i32* %14 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 3][i64 1];
     store i32* %14 with i32 0;
     store i32* %13 with i32 1;
-    i32* %15 = getelementptr &([4 * [4 * i32]]* %graph)[i64 1][i64 0][i64 0];
-    i32* %16 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 3][i64 3];
-    store i32* %16 with i32 0;
-    store i32* %m with i32 3;
-    store i32* %i with i32 0;
+    i32* %15 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 3][i64 3];
+    store i32* %15 with i32 0;
     ubr ^while.header;
 ^while.header:
-    i32 %17 = load i32* %i;
-    i1 %18 = scmp lt i32 %17, i32 4;
-    i32 %19 = zext i1 %18 to i32;
-    i1 %20 = scmp neq i32 %19, i32 0;
-    cbr i1 %20(prob = 0.97), ^while.body, ^b;
+    i32 %16 = phi [^while.body, i32 %16] [^entry, i32 3];
+    i32 %17 = phi [^while.body, i32 %21] [^entry, i32 0];
+    i32 %18 = phi [^while.body, i32 %21] [^entry, i32 0];
+    i1 %19 = scmp lt i32 %18, i32 4;
+    cbr i1 %19(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %21 = load i32* %i;
-    i64 %22 = sext i32 %21 to i64;
-    i32* %23 = getelementptr &([4 * i32]* %color)[i64 0][i64 %22];
-    store i32* %23 with i32 0;
-    i32 %24 = load i32* %i;
-    i32 %25 = add i32 %24, i32 1;
-    store i32* %i with i32 %25;
+    i32* %20 = getelementptr &([4 * i32]* %color)[i64 0][i32 %17];
+    store i32* %20 with i32 0;
+    i32 %21 = add i32 %17, i32 1;
     ubr ^while.header;
 ^b:
-    [4 * i32]* %26 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0];
-    i32 %27 = load i32* %m;
-    i32* %28 = getelementptr &([4 * i32]* %color)[i64 0][i64 0];
-    i32 %29 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %26, i32 %27, i32 0, i32* %28);
-    i1 %30 = scmp neq i32 %29, i32 0;
-    i1 %31 = xor i1 %30, i1 true;
-    i32 %32 = zext i1 %31 to i32;
-    i1 %33 = scmp neq i32 %32, i32 0;
-    cbr i1 %33(prob = 0.5), ^if.then, ^b1;
-^if.then:
-    call () -> void @printMessage();
+    [4 * i32]* %22 = getelementptr &([4 * [4 * i32]]* %graph)[i64 0][i64 0];
+    i32* %23 = getelementptr &([4 * i32]* %color)[i64 0][i64 0];
+    i32 %24 = call ([4 * i32]*, i32, i32, i32*) -> i32 @graphColoring([4 * i32]* %22, i32 %16, i32 0, i32* %23);
+    i1 %25 = scmp eq i32 %24, i32 0;
+    cbr i1 %25(prob = 0.5), ^entry1, ^b1;
+^entry1:
+    call (i32) -> void @putch(i32 78);
+    call (i32) -> void @putch(i32 111);
+    call (i32) -> void @putch(i32 116);
+    call (i32) -> void @putch(i32 32);
+    call (i32) -> void @putch(i32 101);
+    call (i32) -> void @putch(i32 120);
+    call (i32) -> void @putch(i32 105);
+    call (i32) -> void @putch(i32 115);
+    call (i32) -> void @putch(i32 116);
     ubr ^b1;
 ^b1:
     ret i32 0;
 }
-internal func @cmmc::Intrinsic::memset() -> i8* { NoMemoryRead };

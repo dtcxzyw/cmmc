@@ -25,7 +25,9 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdlib>
+#include <iostream>
 #include <new>
+#include <unordered_map>
 
 constexpr uint32_t maxUnrollBlockSize = 16U;
 constexpr uint32_t maxUnrollSize = 64U;
@@ -63,18 +65,42 @@ public:
 
             modified = true;
             std::vector<Block*> insertedBlocks;
+            std::unordered_map<Block*, ReplaceMap> replaceMap;
 
             Block* prev = loop.latch;
             const auto retarget = [&](Block* block) {
-                auto terminator = prev->getTerminator()->as<BranchInst>();
                 prev->instructions().pop_back();
                 IRBuilder builder{ target, prev };
-                terminator = builder.makeOp<BranchInst>(terminator->getTrueTarget());
-                terminator->getTrueTarget() = block;
+                builder.makeOp<BranchInst>(block);
+                for(auto inst : block->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        ReplaceMap replace;
+                        const auto phi = inst->as<PhiInst>();
+                        for(auto [pred, val] : phi->incomings()) {
+                            CMMC_UNUSED(val);
+                            if(pred != loop.latch) {
+                                phi->removeSource(pred);
+                                break;
+                            }
+                        }
+
+                        if(loop.latch != prev && phi->incomings().count(loop.latch)) {
+                            // block->dump(std::cerr, HighlightInst{ phi });
+                            phi->replaceSource(loop.latch, prev);
+                        }
+                        if(replaceMap.count(prev)) {
+                            const auto indvar = phi->incomings().at(prev);
+                            if(indvar->isInstruction())
+                                phi->replaceOperand(indvar, replaceMap.at(prev).at(indvar));
+                        }
+                    } else
+                        break;
+                }
             };
             const auto append = [&]() {
                 ReplaceMap replace;
                 const auto block = loop.header->clone(replace);
+                replaceMap[block] = std::move(replace);
                 insertedBlocks.push_back(block);
                 retarget(block);
                 prev = block;
@@ -87,6 +113,7 @@ public:
                 {
                     ReplaceMap replace;
                     head = loop.header->clone(replace);
+                    replaceMap[head] = std::move(replace);
                     insertedBlocks.push_back(head);
                     for(auto block : cfg.predecessors(loop.latch)) {
                         resetTarget(block->getTerminator()->as<BranchInst>(), loop.latch, head);
@@ -112,6 +139,7 @@ public:
                 {
                     ReplaceMap replace;
                     head = loop.latch->clone(replace);
+                    replaceMap[head] = std::move(replace);
                     insertedBlocks.push_back(head);
                     if(prev == loop.latch) {
                         --epilogueSize;
@@ -148,6 +176,13 @@ public:
                 if(keepOldBlock) {
                     prev = loop.latch;
                     retarget(head);
+                    for(auto inst : loop.latch->instructions()) {
+                        if(inst->getInstID() == InstructionID::Phi) {
+                            const auto phi = inst->as<PhiInst>();
+                            phi->removeSource(loop.latch);
+                        } else
+                            break;
+                    }
                 }
             }
 

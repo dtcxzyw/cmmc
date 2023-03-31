@@ -12,7 +12,7 @@ target triple = "x86_64-pc-linux-gnu"
 ; Function Attrs: mustprogress uwtable
 define dso_local noundef i32 @_Z9next_charv() local_unnamed_addr #0 {
   %1 = tail call noundef i32 @_Z5getchv()
-  store i32 %1, i32* @last_char, align 4, !tbaa !5
+  store i32 %1, i32* @last_char, align 4, !tbaa !4
   ret i32 %1
 }
 
@@ -37,7 +37,7 @@ define dso_local noundef i32 @_Z6is_numi(i32 noundef %0) local_unnamed_addr #2 {
 
 ; Function Attrs: mustprogress uwtable
 define dso_local noundef i32 @_Z10next_tokenv() local_unnamed_addr #0 {
-  %1 = load i32, i32* @last_char, align 4, !tbaa !5
+  %1 = load i32, i32* @last_char, align 4, !tbaa !4
   br label %2
 
 2:                                                ; preds = %4, %0
@@ -49,8 +49,8 @@ define dso_local noundef i32 @_Z10next_tokenv() local_unnamed_addr #0 {
 
 4:                                                ; preds = %2, %2
   %5 = tail call noundef i32 @_Z5getchv()
-  store i32 %5, i32* @last_char, align 4, !tbaa !5
-  br label %2, !llvm.loop !9
+  store i32 %5, i32* @last_char, align 4, !tbaa !4
+  br label %2, !llvm.loop !8
 
 6:                                                ; preds = %2
   %7 = add i32 %3, -58
@@ -59,35 +59,35 @@ define dso_local noundef i32 @_Z10next_tokenv() local_unnamed_addr #0 {
 
 9:                                                ; preds = %6
   %10 = add nsw i32 %3, -48
-  store i32 %10, i32* @num, align 4, !tbaa !5
+  store i32 %10, i32* @num, align 4, !tbaa !4
   %11 = tail call noundef i32 @_Z5getchv()
-  store i32 %11, i32* @last_char, align 4, !tbaa !5
+  store i32 %11, i32* @last_char, align 4, !tbaa !4
   %12 = add i32 %11, -58
   %13 = icmp ult i32 %12, -10
   br i1 %13, label %25, label %14
 
 14:                                               ; preds = %9, %14
   %15 = phi i32 [ %20, %14 ], [ %11, %9 ]
-  %16 = load i32, i32* @num, align 4, !tbaa !5
+  %16 = load i32, i32* @num, align 4, !tbaa !4
   %17 = mul nsw i32 %16, 10
   %18 = add nsw i32 %17, %15
   %19 = add nsw i32 %18, -48
-  store i32 %19, i32* @num, align 4, !tbaa !5
+  store i32 %19, i32* @num, align 4, !tbaa !4
   %20 = tail call noundef i32 @_Z5getchv()
-  store i32 %20, i32* @last_char, align 4, !tbaa !5
+  store i32 %20, i32* @last_char, align 4, !tbaa !4
   %21 = add i32 %20, -58
   %22 = icmp ult i32 %21, -10
-  br i1 %22, label %25, label %14, !llvm.loop !11
+  br i1 %22, label %25, label %14, !llvm.loop !10
 
 23:                                               ; preds = %6
-  store i32 %3, i32* @other, align 4, !tbaa !5
+  store i32 %3, i32* @other, align 4, !tbaa !4
   %24 = tail call noundef i32 @_Z5getchv()
-  store i32 %24, i32* @last_char, align 4, !tbaa !5
+  store i32 %24, i32* @last_char, align 4, !tbaa !4
   br label %25
 
 25:                                               ; preds = %14, %9, %23
   %26 = phi i32 [ 1, %23 ], [ 0, %9 ], [ 0, %14 ]
-  store i32 %26, i32* @cur_token, align 4, !tbaa !5
+  store i32 %26, i32* @cur_token, align 4, !tbaa !4
   ret i32 %26
 }
 
@@ -124,23 +124,23 @@ define dso_local noundef i32 @_Z11get_op_preci(i32 noundef %0) local_unnamed_add
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local void @_Z10stack_pushPii(i32* nocapture noundef %0, i32 noundef %1) local_unnamed_addr #3 {
-  %3 = load i32, i32* %0, align 4, !tbaa !5
+  %3 = load i32, i32* %0, align 4, !tbaa !4
   %4 = add nsw i32 %3, 1
-  store i32 %4, i32* %0, align 4, !tbaa !5
+  store i32 %4, i32* %0, align 4, !tbaa !4
   %5 = sext i32 %4 to i64
   %6 = getelementptr inbounds i32, i32* %0, i64 %5
-  store i32 %1, i32* %6, align 4, !tbaa !5
+  store i32 %1, i32* %6, align 4, !tbaa !4
   ret void
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local noundef i32 @_Z9stack_popPi(i32* nocapture noundef %0) local_unnamed_addr #3 {
-  %2 = load i32, i32* %0, align 4, !tbaa !5
+  %2 = load i32, i32* %0, align 4, !tbaa !4
   %3 = sext i32 %2 to i64
   %4 = getelementptr inbounds i32, i32* %0, i64 %3
-  %5 = load i32, i32* %4, align 4, !tbaa !5
+  %5 = load i32, i32* %4, align 4, !tbaa !4
   %6 = add nsw i32 %2, -1
-  store i32 %6, i32* %0, align 4, !tbaa !5
+  store i32 %6, i32* %0, align 4, !tbaa !4
   ret i32 %5
 }
 
@@ -152,16 +152,16 @@ declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #4
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
 define dso_local noundef i32 @_Z10stack_peekPi(i32* nocapture noundef readonly %0) local_unnamed_addr #5 {
-  %2 = load i32, i32* %0, align 4, !tbaa !5
+  %2 = load i32, i32* %0, align 4, !tbaa !4
   %3 = sext i32 %2 to i64
   %4 = getelementptr inbounds i32, i32* %0, i64 %3
-  %5 = load i32, i32* %4, align 4, !tbaa !5
+  %5 = load i32, i32* %4, align 4, !tbaa !4
   ret i32 %5
 }
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
 define dso_local noundef i32 @_Z10stack_sizePi(i32* nocapture noundef readonly %0) local_unnamed_addr #5 {
-  %2 = load i32, i32* %0, align 4, !tbaa !5
+  %2 = load i32, i32* %0, align 4, !tbaa !4
   ret i32 %2
 }
 
@@ -210,7 +210,7 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
   %4 = bitcast [256 x i32]* %2 to i8*
   call void @llvm.lifetime.start.p0i8(i64 1024, i8* nonnull %4) #8
   call void @llvm.memset.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(1024) %4, i8 0, i64 1024, i1 false)
-  %5 = load i32, i32* @cur_token, align 4, !tbaa !5
+  %5 = load i32, i32* @cur_token, align 4, !tbaa !4
   %6 = icmp eq i32 %5, 0
   br i1 %6, label %8, label %7
 
@@ -226,11 +226,11 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 8:                                                ; preds = %0
   %9 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 0
-  %10 = load i32, i32* @num, align 4, !tbaa !5
-  store i32 1, i32* %9, align 16, !tbaa !5
+  %10 = load i32, i32* @num, align 4, !tbaa !4
+  store i32 1, i32* %9, align 16, !tbaa !4
   %11 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 1
-  store i32 %10, i32* %11, align 4, !tbaa !5
-  %12 = load i32, i32* @last_char, align 4, !tbaa !5
+  store i32 %10, i32* %11, align 4, !tbaa !4
+  %12 = load i32, i32* @last_char, align 4, !tbaa !4
   br label %13
 
 13:                                               ; preds = %15, %8
@@ -242,8 +242,8 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 15:                                               ; preds = %13, %13
   %16 = tail call noundef i32 @_Z5getchv()
-  store i32 %16, i32* @last_char, align 4, !tbaa !5
-  br label %13, !llvm.loop !9
+  store i32 %16, i32* @last_char, align 4, !tbaa !4
+  br label %13, !llvm.loop !8
 
 17:                                               ; preds = %13
   %18 = add i32 %14, -58
@@ -252,44 +252,44 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 20:                                               ; preds = %17
   %21 = add nsw i32 %14, -48
-  store i32 %21, i32* @num, align 4, !tbaa !5
+  store i32 %21, i32* @num, align 4, !tbaa !4
   %22 = tail call noundef i32 @_Z5getchv()
-  store i32 %22, i32* @last_char, align 4, !tbaa !5
+  store i32 %22, i32* @last_char, align 4, !tbaa !4
   %23 = add i32 %22, -58
   %24 = icmp ult i32 %23, -10
   br i1 %24, label %154, label %25
 
 25:                                               ; preds = %20, %25
   %26 = phi i32 [ %31, %25 ], [ %22, %20 ]
-  %27 = load i32, i32* @num, align 4, !tbaa !5
+  %27 = load i32, i32* @num, align 4, !tbaa !4
   %28 = mul nsw i32 %27, 10
   %29 = add nsw i32 %26, -48
   %30 = add i32 %29, %28
-  store i32 %30, i32* @num, align 4, !tbaa !5
+  store i32 %30, i32* @num, align 4, !tbaa !4
   %31 = tail call noundef i32 @_Z5getchv()
-  store i32 %31, i32* @last_char, align 4, !tbaa !5
+  store i32 %31, i32* @last_char, align 4, !tbaa !4
   %32 = add i32 %31, -58
   %33 = icmp ult i32 %32, -10
-  br i1 %33, label %154, label %25, !llvm.loop !11
+  br i1 %33, label %154, label %25, !llvm.loop !10
 
 34:                                               ; preds = %17
-  store i32 %14, i32* @other, align 4, !tbaa !5
+  store i32 %14, i32* @other, align 4, !tbaa !4
   %35 = tail call noundef i32 @_Z5getchv()
-  store i32 %35, i32* @last_char, align 4, !tbaa !5
-  store i32 1, i32* @cur_token, align 4, !tbaa !5
+  store i32 %35, i32* @last_char, align 4, !tbaa !4
+  store i32 1, i32* @cur_token, align 4, !tbaa !4
   %36 = getelementptr inbounds [256 x i32], [256 x i32]* %2, i64 0, i64 0
   br label %39
 
 37:                                               ; preds = %137
-  store i32 %134, i32* @other, align 4, !tbaa !5
+  store i32 %134, i32* @other, align 4, !tbaa !4
   %38 = tail call noundef i32 @_Z5getchv()
-  store i32 %38, i32* @last_char, align 4, !tbaa !5
-  store i32 1, i32* @cur_token, align 4, !tbaa !5
+  store i32 %38, i32* @last_char, align 4, !tbaa !4
+  store i32 1, i32* @cur_token, align 4, !tbaa !4
   br label %39
 
 39:                                               ; preds = %37, %34
   %40 = phi i32 [ %35, %34 ], [ %38, %37 ]
-  %41 = load i32, i32* @other, align 4, !tbaa !5
+  %41 = load i32, i32* @other, align 4, !tbaa !4
   switch i32 %41, label %156 [
     i32 45, label %42
     i32 43, label %42
@@ -310,8 +310,8 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 45:                                               ; preds = %43, %43
   %46 = tail call noundef i32 @_Z5getchv()
-  store i32 %46, i32* @last_char, align 4, !tbaa !5
-  br label %43, !llvm.loop !9
+  store i32 %46, i32* @last_char, align 4, !tbaa !4
+  br label %43, !llvm.loop !8
 
 47:                                               ; preds = %43
   %48 = add i32 %44, -58
@@ -320,38 +320,38 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 50:                                               ; preds = %47
   %51 = add nsw i32 %44, -48
-  store i32 %51, i32* @num, align 4, !tbaa !5
+  store i32 %51, i32* @num, align 4, !tbaa !4
   %52 = tail call noundef i32 @_Z5getchv()
-  store i32 %52, i32* @last_char, align 4, !tbaa !5
+  store i32 %52, i32* @last_char, align 4, !tbaa !4
   %53 = add i32 %52, -58
   %54 = icmp ult i32 %53, -10
   br i1 %54, label %66, label %55
 
 55:                                               ; preds = %50, %55
   %56 = phi i32 [ %61, %55 ], [ %52, %50 ]
-  %57 = load i32, i32* @num, align 4, !tbaa !5
+  %57 = load i32, i32* @num, align 4, !tbaa !4
   %58 = mul nsw i32 %57, 10
   %59 = add nsw i32 %56, -48
   %60 = add i32 %59, %58
-  store i32 %60, i32* @num, align 4, !tbaa !5
+  store i32 %60, i32* @num, align 4, !tbaa !4
   %61 = tail call noundef i32 @_Z5getchv()
-  store i32 %61, i32* @last_char, align 4, !tbaa !5
+  store i32 %61, i32* @last_char, align 4, !tbaa !4
   %62 = add i32 %61, -58
   %63 = icmp ult i32 %62, -10
-  br i1 %63, label %66, label %55, !llvm.loop !11
+  br i1 %63, label %66, label %55, !llvm.loop !10
 
 64:                                               ; preds = %47
-  store i32 %44, i32* @other, align 4, !tbaa !5
+  store i32 %44, i32* @other, align 4, !tbaa !4
   %65 = tail call noundef i32 @_Z5getchv()
-  store i32 %65, i32* @last_char, align 4, !tbaa !5
+  store i32 %65, i32* @last_char, align 4, !tbaa !4
   br label %66
 
 66:                                               ; preds = %55, %50, %64
   %67 = phi i32 [ %52, %50 ], [ %65, %64 ], [ %61, %55 ]
   %68 = phi i1 [ true, %50 ], [ false, %64 ], [ true, %55 ]
   %69 = phi i32 [ 0, %50 ], [ 1, %64 ], [ 0, %55 ]
-  store i32 %69, i32* @cur_token, align 4, !tbaa !5
-  %70 = load i32, i32* %36, align 16, !tbaa !5
+  store i32 %69, i32* @cur_token, align 4, !tbaa !4
+  %70 = load i32, i32* %36, align 16, !tbaa !4
   %71 = icmp eq i32 %70, 0
   br i1 %71, label %121, label %72
 
@@ -366,7 +366,7 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 78:                                               ; preds = %72, %115
   %79 = phi i64 [ %73, %72 ], [ %96, %115 ]
   %80 = getelementptr inbounds [256 x i32], [256 x i32]* %2, i64 0, i64 %79
-  %81 = load i32, i32* %80, align 4, !tbaa !5
+  %81 = load i32, i32* %80, align 4, !tbaa !4
   %82 = add i32 %81, -37
   %83 = icmp ult i32 %82, 11
   br i1 %83, label %84, label %88
@@ -392,15 +392,15 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 95:                                               ; preds = %92
   %96 = add nsw i64 %79, -1
-  %97 = load i32, i32* %9, align 16, !tbaa !5
+  %97 = load i32, i32* %9, align 16, !tbaa !4
   %98 = sext i32 %97 to i64
   %99 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %98
-  %100 = load i32, i32* %99, align 4, !tbaa !5
+  %100 = load i32, i32* %99, align 4, !tbaa !4
   %101 = add nsw i32 %97, -1
-  store i32 %101, i32* %9, align 16, !tbaa !5
+  store i32 %101, i32* %9, align 16, !tbaa !4
   %102 = sext i32 %101 to i64
   %103 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %102
-  %104 = load i32, i32* %103, align 4, !tbaa !5
+  %104 = load i32, i32* %103, align 4, !tbaa !4
   switch i32 %81, label %115 [
     i32 43, label %105
     i32 45, label %107
@@ -431,10 +431,10 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 115:                                              ; preds = %95, %105, %107, %109, %111, %113
   %116 = phi i32 [ %106, %105 ], [ %108, %107 ], [ %110, %109 ], [ %112, %111 ], [ %114, %113 ], [ 0, %95 ]
-  store i32 %116, i32* %103, align 4, !tbaa !5
+  store i32 %116, i32* %103, align 4, !tbaa !4
   %117 = trunc i64 %96 to i32
   %118 = icmp eq i32 %117, 0
-  br i1 %118, label %121, label %78, !llvm.loop !12
+  br i1 %118, label %121, label %78, !llvm.loop !11
 
 119:                                              ; preds = %92
   %120 = trunc i64 %79 to i32
@@ -443,10 +443,10 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 121:                                              ; preds = %115, %119, %66
   %122 = phi i32 [ 0, %66 ], [ %120, %119 ], [ 0, %115 ]
   %123 = add nsw i32 %122, 1
-  store i32 %123, i32* %36, align 16, !tbaa !5
+  store i32 %123, i32* %36, align 16, !tbaa !4
   %124 = sext i32 %123 to i64
   %125 = getelementptr inbounds [256 x i32], [256 x i32]* %2, i64 0, i64 %124
-  store i32 %41, i32* %125, align 4, !tbaa !5
+  store i32 %41, i32* %125, align 4, !tbaa !4
   br i1 %68, label %127, label %126
 
 126:                                              ; preds = %121
@@ -460,13 +460,13 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
   br label %220
 
 127:                                              ; preds = %121
-  %128 = load i32, i32* @num, align 4, !tbaa !5
-  %129 = load i32, i32* %9, align 16, !tbaa !5
+  %128 = load i32, i32* @num, align 4, !tbaa !4
+  %129 = load i32, i32* %9, align 16, !tbaa !4
   %130 = add nsw i32 %129, 1
-  store i32 %130, i32* %9, align 16, !tbaa !5
+  store i32 %130, i32* %9, align 16, !tbaa !4
   %131 = sext i32 %130 to i64
   %132 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %131
-  store i32 %128, i32* %132, align 4, !tbaa !5
+  store i32 %128, i32* %132, align 4, !tbaa !4
   br label %133
 
 133:                                              ; preds = %135, %127
@@ -478,8 +478,8 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 135:                                              ; preds = %133, %133
   %136 = tail call noundef i32 @_Z5getchv()
-  store i32 %136, i32* @last_char, align 4, !tbaa !5
-  br label %133, !llvm.loop !9
+  store i32 %136, i32* @last_char, align 4, !tbaa !4
+  br label %133, !llvm.loop !8
 
 137:                                              ; preds = %133
   %138 = add i32 %134, -58
@@ -488,29 +488,29 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 140:                                              ; preds = %137
   %141 = add nsw i32 %134, -48
-  store i32 %141, i32* @num, align 4, !tbaa !5
+  store i32 %141, i32* @num, align 4, !tbaa !4
   %142 = tail call noundef i32 @_Z5getchv()
-  store i32 %142, i32* @last_char, align 4, !tbaa !5
+  store i32 %142, i32* @last_char, align 4, !tbaa !4
   %143 = add i32 %142, -58
   %144 = icmp ult i32 %143, -10
   br i1 %144, label %154, label %145
 
 145:                                              ; preds = %140, %145
   %146 = phi i32 [ %151, %145 ], [ %142, %140 ]
-  %147 = load i32, i32* @num, align 4, !tbaa !5
+  %147 = load i32, i32* @num, align 4, !tbaa !4
   %148 = mul nsw i32 %147, 10
   %149 = add nsw i32 %146, -48
   %150 = add i32 %149, %148
-  store i32 %150, i32* @num, align 4, !tbaa !5
+  store i32 %150, i32* @num, align 4, !tbaa !4
   %151 = tail call noundef i32 @_Z5getchv()
-  store i32 %151, i32* @last_char, align 4, !tbaa !5
+  store i32 %151, i32* @last_char, align 4, !tbaa !4
   %152 = add i32 %151, -58
   %153 = icmp ult i32 %152, -10
-  br i1 %153, label %154, label %145, !llvm.loop !11
+  br i1 %153, label %154, label %145, !llvm.loop !10
 
 154:                                              ; preds = %25, %145, %140, %20
   %155 = phi i32 [ %22, %20 ], [ %142, %140 ], [ %151, %145 ], [ %31, %25 ]
-  store i32 0, i32* @cur_token, align 4, !tbaa !5
+  store i32 0, i32* @cur_token, align 4, !tbaa !4
   br label %156
 
 156:                                              ; preds = %39, %154
@@ -526,8 +526,8 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 160:                                              ; preds = %158, %158
   %161 = tail call noundef i32 @_Z5getchv()
-  store i32 %161, i32* @last_char, align 4, !tbaa !5
-  br label %158, !llvm.loop !9
+  store i32 %161, i32* @last_char, align 4, !tbaa !4
+  br label %158, !llvm.loop !8
 
 162:                                              ; preds = %158
   %163 = add i32 %159, -58
@@ -536,37 +536,37 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 165:                                              ; preds = %162
   %166 = add nsw i32 %159, -48
-  store i32 %166, i32* @num, align 4, !tbaa !5
+  store i32 %166, i32* @num, align 4, !tbaa !4
   %167 = tail call noundef i32 @_Z5getchv()
-  store i32 %167, i32* @last_char, align 4, !tbaa !5
+  store i32 %167, i32* @last_char, align 4, !tbaa !4
   %168 = add i32 %167, -58
   %169 = icmp ult i32 %168, -10
   br i1 %169, label %181, label %170
 
 170:                                              ; preds = %165, %170
   %171 = phi i32 [ %176, %170 ], [ %167, %165 ]
-  %172 = load i32, i32* @num, align 4, !tbaa !5
+  %172 = load i32, i32* @num, align 4, !tbaa !4
   %173 = mul nsw i32 %172, 10
   %174 = add nsw i32 %171, -48
   %175 = add i32 %174, %173
-  store i32 %175, i32* @num, align 4, !tbaa !5
+  store i32 %175, i32* @num, align 4, !tbaa !4
   %176 = tail call noundef i32 @_Z5getchv()
-  store i32 %176, i32* @last_char, align 4, !tbaa !5
+  store i32 %176, i32* @last_char, align 4, !tbaa !4
   %177 = add i32 %176, -58
   %178 = icmp ult i32 %177, -10
-  br i1 %178, label %181, label %170, !llvm.loop !11
+  br i1 %178, label %181, label %170, !llvm.loop !10
 
 179:                                              ; preds = %162
-  store i32 %159, i32* @other, align 4, !tbaa !5
+  store i32 %159, i32* @other, align 4, !tbaa !4
   %180 = tail call noundef i32 @_Z5getchv()
-  store i32 %180, i32* @last_char, align 4, !tbaa !5
+  store i32 %180, i32* @last_char, align 4, !tbaa !4
   br label %181
 
 181:                                              ; preds = %170, %165, %179
   %182 = phi i32 [ 1, %179 ], [ 0, %165 ], [ 0, %170 ]
-  store i32 %182, i32* @cur_token, align 4, !tbaa !5
+  store i32 %182, i32* @cur_token, align 4, !tbaa !4
   %183 = getelementptr inbounds [256 x i32], [256 x i32]* %2, i64 0, i64 0
-  %184 = load i32, i32* %183, align 16, !tbaa !5
+  %184 = load i32, i32* %183, align 16, !tbaa !4
   %185 = icmp eq i32 %184, 0
   br i1 %185, label %215, label %186
 
@@ -577,17 +577,17 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 188:                                              ; preds = %186, %211
   %189 = phi i64 [ %187, %186 ], [ %192, %211 ]
   %190 = getelementptr inbounds [256 x i32], [256 x i32]* %2, i64 0, i64 %189
-  %191 = load i32, i32* %190, align 4, !tbaa !5
+  %191 = load i32, i32* %190, align 4, !tbaa !4
   %192 = add nsw i64 %189, -1
-  %193 = load i32, i32* %9, align 16, !tbaa !5
+  %193 = load i32, i32* %9, align 16, !tbaa !4
   %194 = sext i32 %193 to i64
   %195 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %194
-  %196 = load i32, i32* %195, align 4, !tbaa !5
+  %196 = load i32, i32* %195, align 4, !tbaa !4
   %197 = add nsw i32 %193, -1
-  store i32 %197, i32* %9, align 16, !tbaa !5
+  store i32 %197, i32* %9, align 16, !tbaa !4
   %198 = sext i32 %197 to i64
   %199 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %198
-  %200 = load i32, i32* %199, align 4, !tbaa !5
+  %200 = load i32, i32* %199, align 4, !tbaa !4
   switch i32 %191, label %211 [
     i32 43, label %201
     i32 45, label %203
@@ -618,16 +618,16 @@ define dso_local noundef i32 @_Z4evalv() local_unnamed_addr #0 {
 
 211:                                              ; preds = %188, %201, %203, %205, %207, %209
   %212 = phi i32 [ %202, %201 ], [ %204, %203 ], [ %206, %205 ], [ %208, %207 ], [ %210, %209 ], [ 0, %188 ]
-  store i32 %212, i32* %199, align 4, !tbaa !5
+  store i32 %212, i32* %199, align 4, !tbaa !4
   %213 = trunc i64 %192 to i32
   %214 = icmp eq i32 %213, 0
-  br i1 %214, label %215, label %188, !llvm.loop !13
+  br i1 %214, label %215, label %188, !llvm.loop !12
 
 215:                                              ; preds = %211, %181
-  %216 = load i32, i32* %9, align 16, !tbaa !5
+  %216 = load i32, i32* %9, align 16, !tbaa !4
   %217 = sext i32 %216 to i64
   %218 = getelementptr inbounds [256 x i32], [256 x i32]* %1, i64 0, i64 %217
-  %219 = load i32, i32* %218, align 4, !tbaa !5
+  %219 = load i32, i32* %218, align 4, !tbaa !4
   br label %220
 
 220:                                              ; preds = %126, %215, %7
@@ -644,7 +644,7 @@ declare void @llvm.memset.p0i8.i64(i8* nocapture writeonly, i8, i64, i1 immarg) 
 define dso_local noundef i32 @main() local_unnamed_addr #7 {
   %1 = tail call noundef i32 @_Z6getintv()
   %2 = tail call noundef i32 @_Z5getchv()
-  %3 = load i32, i32* @last_char, align 4, !tbaa !5
+  %3 = load i32, i32* @last_char, align 4, !tbaa !4
   br label %4
 
 4:                                                ; preds = %6, %0
@@ -656,8 +656,8 @@ define dso_local noundef i32 @main() local_unnamed_addr #7 {
 
 6:                                                ; preds = %4, %4
   %7 = tail call noundef i32 @_Z5getchv()
-  store i32 %7, i32* @last_char, align 4, !tbaa !5
-  br label %4, !llvm.loop !9
+  store i32 %7, i32* @last_char, align 4, !tbaa !4
+  br label %4, !llvm.loop !8
 
 8:                                                ; preds = %4
   %9 = add i32 %5, -58
@@ -666,35 +666,35 @@ define dso_local noundef i32 @main() local_unnamed_addr #7 {
 
 11:                                               ; preds = %8
   %12 = add nsw i32 %5, -48
-  store i32 %12, i32* @num, align 4, !tbaa !5
+  store i32 %12, i32* @num, align 4, !tbaa !4
   %13 = tail call noundef i32 @_Z5getchv()
-  store i32 %13, i32* @last_char, align 4, !tbaa !5
+  store i32 %13, i32* @last_char, align 4, !tbaa !4
   %14 = add i32 %13, -58
   %15 = icmp ult i32 %14, -10
   br i1 %15, label %27, label %16
 
 16:                                               ; preds = %11, %16
   %17 = phi i32 [ %22, %16 ], [ %13, %11 ]
-  %18 = load i32, i32* @num, align 4, !tbaa !5
+  %18 = load i32, i32* @num, align 4, !tbaa !4
   %19 = mul nsw i32 %18, 10
   %20 = add nsw i32 %17, -48
   %21 = add i32 %20, %19
-  store i32 %21, i32* @num, align 4, !tbaa !5
+  store i32 %21, i32* @num, align 4, !tbaa !4
   %22 = tail call noundef i32 @_Z5getchv()
-  store i32 %22, i32* @last_char, align 4, !tbaa !5
+  store i32 %22, i32* @last_char, align 4, !tbaa !4
   %23 = add i32 %22, -58
   %24 = icmp ult i32 %23, -10
-  br i1 %24, label %27, label %16, !llvm.loop !11
+  br i1 %24, label %27, label %16, !llvm.loop !10
 
 25:                                               ; preds = %8
-  store i32 %5, i32* @other, align 4, !tbaa !5
+  store i32 %5, i32* @other, align 4, !tbaa !4
   %26 = tail call noundef i32 @_Z5getchv()
-  store i32 %26, i32* @last_char, align 4, !tbaa !5
+  store i32 %26, i32* @last_char, align 4, !tbaa !4
   br label %27
 
 27:                                               ; preds = %16, %11, %25
   %28 = phi i32 [ 1, %25 ], [ 0, %11 ], [ 0, %16 ]
-  store i32 %28, i32* @cur_token, align 4, !tbaa !5
+  store i32 %28, i32* @cur_token, align 4, !tbaa !4
   %29 = icmp eq i32 %1, 0
   br i1 %29, label %35, label %30
 
@@ -705,7 +705,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #7 {
   tail call void @_Z5putchi(i32 noundef 10)
   %33 = add nsw i32 %31, -1
   %34 = icmp eq i32 %33, 0
-  br i1 %34, label %35, label %30, !llvm.loop !14
+  br i1 %34, label %35, label %30, !llvm.loop !13
 
 35:                                               ; preds = %30, %27
   ret i32 0
@@ -726,20 +726,18 @@ attributes #7 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #8 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !9}

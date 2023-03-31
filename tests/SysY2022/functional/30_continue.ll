@@ -19,12 +19,12 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
 
 7:                                                ; preds = %4
   %8 = icmp eq i32 %5, 50
-  br i1 %8, label %4, label %9, !llvm.loop !5
+  br i1 %8, label %4, label %9, !llvm.loop !4
 
 9:                                                ; preds = %7
   %10 = add nsw i32 %3, %5
   %11 = add nsw i32 %5, 1
-  br label %1, !llvm.loop !5
+  br label %1, !llvm.loop !4
 
 12:                                               ; preds = %4
   ret i32 %3
@@ -33,12 +33,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}

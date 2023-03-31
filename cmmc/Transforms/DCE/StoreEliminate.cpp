@@ -144,10 +144,9 @@ class StoreEliminate final : public TransformPass<Function> {
         std::unordered_map<Block*, std::unordered_set<Value*>> deletedInstructions;
 
         for(auto& [alloca, deletedInsts] : interested) {
-            auto& insts = deletedInstructions[alloca->getBlock()];
-            insts.insert(alloca);
+            deletedInstructions[alloca->getBlock()].insert(alloca);
             for(auto inst : deletedInsts)
-                insts.insert(inst);
+                deletedInstructions[inst->getBlock()].insert(inst);
             std::vector<Instruction*> empty;
             deletedInsts.swap(empty);
         }

@@ -61,6 +61,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <iostream>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -199,7 +200,7 @@ public:
             const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
             ReplaceMap replace;
             runBlock(*block, iter->second, replace);
-            modified |= replaceOperandsInBlock(*block, replace);
+            modified |= replaceOperands(func, replace);
         }
         // inter-block
         ReplaceMap replace;

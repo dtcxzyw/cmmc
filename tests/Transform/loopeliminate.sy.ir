@@ -1,54 +1,25 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
-internal func @getarray() -> i32 { NoMemoryRead };
-internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
-internal func @getfarray() -> i32 { NoMemoryRead };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putarray() -> void { NoMemoryWrite };
-internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
-internal func @putfarray() -> void { NoMemoryWrite };
-internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
-internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
-    i32* %j = alloc i32;
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
     ubr ^for.header;
 ^for.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 1;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^for.body, ^b;
+    i32 %0 = phi [^for.body, i32 %3] [^entry, i32 0];
+    i32 %1 = phi [^for.body, i32 %3] [^entry, i32 0];
+    i1 %2 = scmp lt i32 %1, i32 1;
+    cbr i1 %2(prob = 0.97), ^for.body, ^for.header1;
 ^for.body:
-    i32 %4 = load i32* %i;
-    call (i32) -> void @putint(i32 %4);
-    ubr ^for.iteration;
-^b:
-    store i32* %j with i32 -1;
-    ubr ^for.header1;
-^for.iteration:
-    i32 %5 = load i32* %i;
-    i32 %6 = add i32 %5, i32 1;
-    store i32* %i with i32 %6;
+    call (i32) -> void @putint(i32 %0);
+    i32 %3 = add i32 %0, i32 1;
     ubr ^for.header;
 ^for.header1:
-    i32 %7 = load i32* %j;
-    i1 %8 = scmp lt i32 %7, i32 0;
-    i32 %9 = zext i1 %8 to i32;
-    i1 %10 = scmp neq i32 %9, i32 0;
-    cbr i1 %10(prob = 0.97), ^for.body1, ^b1;
+    i32 %4 = phi [^for.header, i32 -1] [^for.body1, i32 %7];
+    i32 %5 = phi [^for.header, i32 -1] [^for.body1, i32 %7];
+    i1 %6 = scmp lt i32 %5, i32 0;
+    cbr i1 %6(prob = 0.97), ^for.body1, ^b;
 ^for.body1:
-    i32 %11 = load i32* %j;
-    call (i32) -> void @putint(i32 %11);
-    ubr ^for.iteration1;
-^b1:
-    ret i32 0;
-^for.iteration1:
-    i32 %12 = load i32* %j;
-    i32 %13 = add i32 %12, i32 1;
-    store i32* %j with i32 %13;
+    call (i32) -> void @putint(i32 %4);
+    i32 %7 = add i32 %4, i32 1;
     ubr ^for.header1;
+^b:
+    ret i32 0;
 }

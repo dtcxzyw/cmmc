@@ -100,7 +100,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
   %71 = sext i16 %70 to i32
   %72 = add nuw nsw i32 %32, 2
   %73 = icmp ult i32 %32, 5
-  br i1 %73, label %31, label %74, !llvm.loop !5
+  br i1 %73, label %31, label %74, !llvm.loop !4
 
 74:                                               ; preds = %31, %74
   %75 = phi i32 [ %115, %74 ], [ 0, %31 ]
@@ -145,7 +145,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
   %114 = sext i16 %113 to i32
   %115 = add nuw nsw i32 %75, 2
   %116 = icmp ult i32 %75, 5
-  br i1 %116, label %74, label %117, !llvm.loop !5
+  br i1 %116, label %74, label %117, !llvm.loop !4
 
 117:                                              ; preds = %74, %117
   %118 = phi i32 [ %158, %117 ], [ 0, %74 ]
@@ -190,57 +190,57 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
   %157 = sext i16 %156 to i32
   %158 = add nuw nsw i32 %118, 2
   %159 = icmp ult i32 %118, 5
-  br i1 %159, label %117, label %160, !llvm.loop !5
+  br i1 %159, label %117, label %160, !llvm.loop !4
 
 160:                                              ; preds = %117
   %161 = add nuw nsw i32 %29, 1
   %162 = icmp eq i32 %161, 3
-  br i1 %162, label %163, label %28, !llvm.loop !7
+  br i1 %162, label %163, label %28, !llvm.loop !6
 
 163:                                              ; preds = %160
   %164 = add nuw nsw i32 %26, 1
   %165 = icmp eq i32 %164, 5
-  br i1 %165, label %166, label %25, !llvm.loop !8
+  br i1 %165, label %166, label %25, !llvm.loop !7
 
 166:                                              ; preds = %163
   %167 = add nuw nsw i32 %23, 1
   %168 = icmp eq i32 %167, 5
-  br i1 %168, label %169, label %22, !llvm.loop !9
+  br i1 %168, label %169, label %22, !llvm.loop !8
 
 169:                                              ; preds = %166
   %170 = add nuw nsw i32 %20, 1
   %171 = icmp eq i32 %170, 6
-  br i1 %171, label %172, label %19, !llvm.loop !10
+  br i1 %171, label %172, label %19, !llvm.loop !9
 
 172:                                              ; preds = %169
   %173 = add nuw nsw i32 %17, 1
   %174 = icmp eq i32 %173, 4
-  br i1 %174, label %175, label %16, !llvm.loop !11
+  br i1 %174, label %175, label %16, !llvm.loop !10
 
 175:                                              ; preds = %172
   %176 = add nuw nsw i32 %14, 1
   %177 = icmp eq i32 %176, 5
-  br i1 %177, label %178, label %13, !llvm.loop !12
+  br i1 %177, label %178, label %13, !llvm.loop !11
 
 178:                                              ; preds = %175
   %179 = add nuw nsw i32 %11, 1
   %180 = icmp eq i32 %179, 3
-  br i1 %180, label %181, label %10, !llvm.loop !13
+  br i1 %180, label %181, label %10, !llvm.loop !12
 
 181:                                              ; preds = %178
   %182 = add nuw nsw i32 %8, 1
   %183 = icmp eq i32 %182, 5
-  br i1 %183, label %184, label %7, !llvm.loop !14
+  br i1 %183, label %184, label %7, !llvm.loop !13
 
 184:                                              ; preds = %181
   %185 = add nuw nsw i32 %5, 1
   %186 = icmp eq i32 %185, 4
-  br i1 %186, label %187, label %4, !llvm.loop !15
+  br i1 %186, label %187, label %4, !llvm.loop !14
 
 187:                                              ; preds = %184
   %188 = add nuw nsw i32 %2, 1
   %189 = icmp eq i32 %188, 3
-  br i1 %189, label %190, label %1, !llvm.loop !16
+  br i1 %189, label %190, label %1, !llvm.loop !15
 
 190:                                              ; preds = %187
   ret i32 %157
@@ -249,22 +249,20 @@ define dso_local noundef i32 @main() local_unnamed_addr #0 {
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
-!7 = distinct !{!7, !6}
-!8 = distinct !{!8, !6}
-!9 = distinct !{!9, !6}
-!10 = distinct !{!10, !6}
-!11 = distinct !{!11, !6}
-!12 = distinct !{!12, !6}
-!13 = distinct !{!13, !6}
-!14 = distinct !{!14, !6}
-!15 = distinct !{!15, !6}
-!16 = distinct !{!16, !6}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}
+!6 = distinct !{!6, !5}
+!7 = distinct !{!7, !5}
+!8 = distinct !{!8, !5}
+!9 = distinct !{!9, !5}
+!10 = distinct !{!10, !5}
+!11 = distinct !{!11, !5}
+!12 = distinct !{!12, !5}
+!13 = distinct !{!13, !5}
+!14 = distinct !{!14, !5}
+!15 = distinct !{!15, !5}

@@ -15,9 +15,9 @@ define dso_local noundef i32 @_Z4funcii(i32 noundef %0, i32 noundef %1) local_un
 ; Function Attrs: mustprogress norecurse uwtable
 define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %1 = tail call noundef i32 @_Z6getintv()
-  store i32 %1, i32* @loopCount, align 4, !tbaa !5
+  store i32 %1, i32* @loopCount, align 4, !tbaa !4
   tail call void @_Z15_sysy_starttimei(i32 noundef 10015)
-  %2 = load i32, i32* @loopCount, align 4, !tbaa !5
+  %2 = load i32, i32* @loopCount, align 4, !tbaa !4
   %3 = icmp sgt i32 %2, 0
   br i1 %3, label %4, label %33
 
@@ -44,7 +44,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %20 = add i32 %10, 120
   %21 = add i32 %12, 2
   %22 = icmp eq i32 %21, %8
-  br i1 %22, label %23, label %9, !llvm.loop !9
+  br i1 %22, label %23, label %9, !llvm.loop !8
 
 23:                                               ; preds = %9
   %24 = udiv i32 %20, 60
@@ -85,16 +85,14 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}

@@ -121,7 +121,7 @@ define dso_local void @_Z9write_matPA8_fii([8 x float]* nocapture noundef readon
 10:                                               ; preds = %8, %20
   %11 = phi i64 [ 0, %8 ], [ %21, %20 ]
   %12 = getelementptr inbounds [8 x float], [8 x float]* %0, i64 %11, i64 0
-  %13 = load float, float* %12, align 4, !tbaa !5
+  %13 = load float, float* %12, align 4, !tbaa !4
   tail call void @_Z8putfloatf(float noundef %13)
   br label %14
 
@@ -129,27 +129,27 @@ define dso_local void @_Z9write_matPA8_fii([8 x float]* nocapture noundef readon
   %15 = phi i64 [ 1, %10 ], [ %18, %14 ]
   tail call void @_Z5putchi(i32 noundef 32)
   %16 = getelementptr inbounds [8 x float], [8 x float]* %0, i64 %11, i64 %15
-  %17 = load float, float* %16, align 4, !tbaa !5
+  %17 = load float, float* %16, align 4, !tbaa !4
   tail call void @_Z8putfloatf(float noundef %17)
   %18 = add nuw nsw i64 %15, 1
   %19 = icmp eq i64 %18, %9
-  br i1 %19, label %20, label %14, !llvm.loop !9
+  br i1 %19, label %20, label %14, !llvm.loop !8
 
 20:                                               ; preds = %14
   tail call void @_Z5putchi(i32 noundef 10)
   %21 = add nuw nsw i64 %11, 1
   %22 = icmp eq i64 %21, %7
-  br i1 %22, label %29, label %10, !llvm.loop !11
+  br i1 %22, label %29, label %10, !llvm.loop !10
 
 23:                                               ; preds = %5, %23
   %24 = phi i64 [ %27, %23 ], [ 0, %5 ]
   %25 = getelementptr inbounds [8 x float], [8 x float]* %0, i64 %24, i64 0
-  %26 = load float, float* %25, align 4, !tbaa !5
+  %26 = load float, float* %25, align 4, !tbaa !4
   tail call void @_Z8putfloatf(float noundef %26)
   tail call void @_Z5putchi(i32 noundef 10)
   %27 = add nuw nsw i64 %24, 1
   %28 = icmp eq i64 %27, %7
-  br i1 %28, label %29, label %23, !llvm.loop !11
+  br i1 %28, label %29, label %23, !llvm.loop !10
 
 29:                                               ; preds = %23, %20, %3
   tail call void @_Z5putchi(i32 noundef 10)
@@ -189,7 +189,7 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
 21:                                               ; preds = %132, %17
   %22 = phi i64 [ %133, %132 ], [ 0, %17 ]
   %23 = getelementptr inbounds [8 x float], [8 x float]* %0, i64 %18, i64 %22
-  store float 0.000000e+00, float* %23, align 4, !tbaa !5
+  store float 0.000000e+00, float* %23, align 4, !tbaa !4
   %24 = trunc i64 %22 to i32
   %25 = sitofp i32 %24 to double
   br label %26
@@ -218,7 +218,7 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
   %45 = phi float [ %27, %78 ], [ %75, %66 ]
   %46 = phi i64 [ 0, %78 ], [ %76, %66 ]
   %47 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %28, i64 %46
-  %48 = load float, float* %47, align 4, !tbaa !5
+  %48 = load float, float* %47, align 4, !tbaa !4
   %49 = fmul float %48, %85
   %50 = trunc i64 %46 to i32
   %51 = sitofp i32 %50 to double
@@ -250,10 +250,10 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
   %73 = select i1 %71, float %72, float %70
   %74 = tail call noundef float @_Z11my_sin_implf(float noundef %73) #7
   %75 = tail call float @llvm.fmuladd.f32(float %49, float %74, float %45)
-  store float %75, float* %23, align 4, !tbaa !5
+  store float %75, float* %23, align 4, !tbaa !4
   %76 = add nuw nsw i64 %46, 1
   %77 = icmp eq i64 %76, %16
-  br i1 %77, label %86, label %44, !llvm.loop !12
+  br i1 %77, label %86, label %44, !llvm.loop !11
 
 78:                                               ; preds = %26
   %79 = fcmp ogt float %35, 0x400921FB60000000
@@ -269,7 +269,7 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
   %87 = phi float [ %129, %120 ], [ %75, %66 ]
   %88 = add nuw nsw i64 %28, 1
   %89 = icmp eq i64 %88, %15
-  br i1 %89, label %132, label %26, !llvm.loop !13
+  br i1 %89, label %132, label %26, !llvm.loop !12
 
 90:                                               ; preds = %26
   %91 = fcmp ogt float %43, 0x400921FB60000000
@@ -285,7 +285,7 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
   %99 = phi float [ %129, %120 ], [ %27, %90 ]
   %100 = phi i64 [ %130, %120 ], [ 0, %90 ]
   %101 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %28, i64 %100
-  %102 = load float, float* %101, align 4, !tbaa !5
+  %102 = load float, float* %101, align 4, !tbaa !4
   %103 = fmul float %102, %97
   %104 = trunc i64 %100 to i32
   %105 = sitofp i32 %104 to double
@@ -317,20 +317,20 @@ define dso_local void @_Z3dctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x 
   %127 = select i1 %125, float %126, float %124
   %128 = tail call noundef float @_Z11my_sin_implf(float noundef %127) #7
   %129 = tail call float @llvm.fmuladd.f32(float %103, float %128, float %99)
-  store float %129, float* %23, align 4, !tbaa !5
+  store float %129, float* %23, align 4, !tbaa !4
   %130 = add nuw nsw i64 %100, 1
   %131 = icmp eq i64 %130, %16
-  br i1 %131, label %86, label %98, !llvm.loop !12
+  br i1 %131, label %86, label %98, !llvm.loop !11
 
 132:                                              ; preds = %86
   %133 = add nuw nsw i64 %22, 1
   %134 = icmp eq i64 %133, %16
-  br i1 %134, label %135, label %21, !llvm.loop !14
+  br i1 %134, label %135, label %21, !llvm.loop !13
 
 135:                                              ; preds = %132
   %136 = add nuw nsw i64 %18, 1
   %137 = icmp eq i64 %136, %15
-  br i1 %137, label %138, label %17, !llvm.loop !15
+  br i1 %137, label %138, label %17, !llvm.loop !14
 
 138:                                              ; preds = %135, %6, %4
   ret void
@@ -381,10 +381,10 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
 
 38:                                               ; preds = %32, %44
   %39 = phi i64 [ 0, %32 ], [ %52, %44 ]
-  %40 = load float, float* %8, align 4, !tbaa !5
+  %40 = load float, float* %8, align 4, !tbaa !4
   %41 = fmul float %40, 2.500000e-01
   %42 = getelementptr inbounds [8 x float], [8 x float]* %0, i64 %33, i64 %39
-  store float %41, float* %42, align 4, !tbaa !5
+  store float %41, float* %42, align 4, !tbaa !4
   br i1 %9, label %122, label %43
 
 43:                                               ; preds = %38
@@ -398,10 +398,10 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %49 = fmul double %48, 2.000000e+00
   %50 = fdiv double %49, %18
   %51 = fptrunc double %50 to float
-  store float %51, float* %42, align 4, !tbaa !5
+  store float %51, float* %42, align 4, !tbaa !4
   %52 = add nuw nsw i64 %39, 1
   %53 = icmp eq i64 %52, %21
-  br i1 %53, label %228, label %38, !llvm.loop !16
+  br i1 %53, label %228, label %38, !llvm.loop !15
 
 54:                                               ; preds = %120, %54
   %55 = phi float [ %70, %54 ], [ %121, %120 ]
@@ -409,23 +409,23 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %57 = phi i64 [ %72, %54 ], [ 0, %120 ]
   %58 = fpext float %55 to double
   %59 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 0, i64 %56
-  %60 = load float, float* %59, align 4, !tbaa !5
+  %60 = load float, float* %59, align 4, !tbaa !4
   %61 = fpext float %60 to double
   %62 = tail call double @llvm.fmuladd.f64(double %61, double 5.000000e-01, double %58)
   %63 = fptrunc double %62 to float
-  store float %63, float* %42, align 4, !tbaa !5
+  store float %63, float* %42, align 4, !tbaa !4
   %64 = add nuw nsw i64 %56, 1
   %65 = fpext float %63 to double
   %66 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 0, i64 %64
-  %67 = load float, float* %66, align 4, !tbaa !5
+  %67 = load float, float* %66, align 4, !tbaa !4
   %68 = fpext float %67 to double
   %69 = tail call double @llvm.fmuladd.f64(double %68, double 5.000000e-01, double %65)
   %70 = fptrunc double %69 to float
-  store float %70, float* %42, align 4, !tbaa !5
+  store float %70, float* %42, align 4, !tbaa !4
   %71 = add nuw nsw i64 %56, 2
   %72 = add i64 %57, 2
   %73 = icmp eq i64 %72, %30
-  br i1 %73, label %94, label %54, !llvm.loop !17
+  br i1 %73, label %94, label %54, !llvm.loop !16
 
 74:                                               ; preds = %43, %74
   %75 = phi float [ %90, %74 ], [ %41, %43 ]
@@ -433,23 +433,23 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %77 = phi i64 [ %92, %74 ], [ 0, %43 ]
   %78 = fpext float %75 to double
   %79 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %76, i64 0
-  %80 = load float, float* %79, align 4, !tbaa !5
+  %80 = load float, float* %79, align 4, !tbaa !4
   %81 = fpext float %80 to double
   %82 = tail call double @llvm.fmuladd.f64(double %81, double 5.000000e-01, double %78)
   %83 = fptrunc double %82 to float
-  store float %83, float* %42, align 4, !tbaa !5
+  store float %83, float* %42, align 4, !tbaa !4
   %84 = add nuw nsw i64 %76, 1
   %85 = fpext float %83 to double
   %86 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %84, i64 0
-  %87 = load float, float* %86, align 4, !tbaa !5
+  %87 = load float, float* %86, align 4, !tbaa !4
   %88 = fpext float %87 to double
   %89 = tail call double @llvm.fmuladd.f64(double %88, double 5.000000e-01, double %85)
   %90 = fptrunc double %89 to float
-  store float %90, float* %42, align 4, !tbaa !5
+  store float %90, float* %42, align 4, !tbaa !4
   %91 = add nuw nsw i64 %76, 2
   %92 = add i64 %77, 2
   %93 = icmp eq i64 %92, %26
-  br i1 %93, label %107, label %74, !llvm.loop !18
+  br i1 %93, label %107, label %74, !llvm.loop !17
 
 94:                                               ; preds = %54, %120
   %95 = phi float [ undef, %120 ], [ %70, %54 ]
@@ -460,11 +460,11 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
 98:                                               ; preds = %94
   %99 = fpext float %96 to double
   %100 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 0, i64 %97
-  %101 = load float, float* %100, align 4, !tbaa !5
+  %101 = load float, float* %100, align 4, !tbaa !4
   %102 = fpext float %101 to double
   %103 = tail call double @llvm.fmuladd.f64(double %102, double 5.000000e-01, double %99)
   %104 = fptrunc double %103 to float
-  store float %104, float* %42, align 4, !tbaa !5
+  store float %104, float* %42, align 4, !tbaa !4
   br label %105
 
 105:                                              ; preds = %94, %98
@@ -480,11 +480,11 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
 111:                                              ; preds = %107
   %112 = fpext float %109 to double
   %113 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %110, i64 0
-  %114 = load float, float* %113, align 4, !tbaa !5
+  %114 = load float, float* %113, align 4, !tbaa !4
   %115 = fpext float %114 to double
   %116 = tail call double @llvm.fmuladd.f64(double %115, double 5.000000e-01, double %112)
   %117 = fptrunc double %116 to float
-  store float %117, float* %42, align 4, !tbaa !5
+  store float %117, float* %42, align 4, !tbaa !4
   br label %118
 
 118:                                              ; preds = %107, %111
@@ -527,7 +527,7 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %145 = phi float [ %129, %176 ], [ %173, %164 ]
   %146 = phi i64 [ 1, %176 ], [ %174, %164 ]
   %147 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %130, i64 %146
-  %148 = load float, float* %147, align 4, !tbaa !5
+  %148 = load float, float* %147, align 4, !tbaa !4
   %149 = fmul float %148, %183
   %150 = trunc i64 %146 to i32
   %151 = sitofp i32 %150 to double
@@ -557,10 +557,10 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %171 = select i1 %169, float %170, float %168
   %172 = tail call noundef float @_Z11my_sin_implf(float noundef %171) #7
   %173 = tail call float @llvm.fmuladd.f32(float %149, float %172, float %145)
-  store float %173, float* %42, align 4, !tbaa !5
+  store float %173, float* %42, align 4, !tbaa !4
   %174 = add nuw nsw i64 %146, 1
   %175 = icmp eq i64 %174, %21
-  br i1 %175, label %184, label %144, !llvm.loop !19
+  br i1 %175, label %184, label %144, !llvm.loop !18
 
 176:                                              ; preds = %128
   %177 = fcmp ogt float %135, 0x400921FB60000000
@@ -576,7 +576,7 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %185 = phi float [ %225, %216 ], [ %173, %164 ]
   %186 = add nuw nsw i64 %130, 1
   %187 = icmp eq i64 %186, %20
-  br i1 %187, label %44, label %128, !llvm.loop !20
+  br i1 %187, label %44, label %128, !llvm.loop !19
 
 188:                                              ; preds = %128
   %189 = fcmp ogt float %143, 0x400921FB60000000
@@ -592,7 +592,7 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %197 = phi float [ %225, %216 ], [ %129, %188 ]
   %198 = phi i64 [ %226, %216 ], [ 1, %188 ]
   %199 = getelementptr inbounds [8 x float], [8 x float]* %1, i64 %130, i64 %198
-  %200 = load float, float* %199, align 4, !tbaa !5
+  %200 = load float, float* %199, align 4, !tbaa !4
   %201 = fmul float %200, %195
   %202 = trunc i64 %198 to i32
   %203 = sitofp i32 %202 to double
@@ -622,15 +622,15 @@ define dso_local void @_Z4idctPA8_fS0_ii([8 x float]* nocapture noundef %0, [8 x
   %223 = select i1 %221, float %222, float %220
   %224 = tail call noundef float @_Z11my_sin_implf(float noundef %223) #7
   %225 = tail call float @llvm.fmuladd.f32(float %201, float %224, float %197)
-  store float %225, float* %42, align 4, !tbaa !5
+  store float %225, float* %42, align 4, !tbaa !4
   %226 = add nuw nsw i64 %198, 1
   %227 = icmp eq i64 %226, %21
-  br i1 %227, label %184, label %196, !llvm.loop !19
+  br i1 %227, label %184, label %196, !llvm.loop !18
 
 228:                                              ; preds = %44
   %229 = add nuw nsw i64 %33, 1
   %230 = icmp eq i64 %229, %20
-  br i1 %230, label %231, label %32, !llvm.loop !21
+  br i1 %230, label %231, label %32, !llvm.loop !20
 
 231:                                              ; preds = %228, %6, %4
   ret void
@@ -661,15 +661,15 @@ define dso_local noundef i32 @main() local_unnamed_addr #6 {
   %12 = phi i64 [ 0, %9 ], [ %15, %11 ]
   %13 = tail call noundef float @_Z8getfloatv()
   %14 = getelementptr inbounds [8 x [8 x float]], [8 x [8 x float]]* @test_block, i64 0, i64 %10, i64 %12
-  store float %13, float* %14, align 4, !tbaa !5
+  store float %13, float* %14, align 4, !tbaa !4
   %15 = add nuw nsw i64 %12, 1
   %16 = icmp eq i64 %15, %8
-  br i1 %16, label %17, label %11, !llvm.loop !22
+  br i1 %16, label %17, label %11, !llvm.loop !21
 
 17:                                               ; preds = %11
   %18 = add nuw nsw i64 %10, 1
   %19 = icmp eq i64 %18, %7
-  br i1 %19, label %20, label %9, !llvm.loop !23
+  br i1 %19, label %20, label %9, !llvm.loop !22
 
 20:                                               ; preds = %17, %0
   tail call void @_Z3dctPA8_fS0_ii([8 x float]* noundef getelementptr inbounds ([8 x [8 x float]], [8 x [8 x float]]* @test_dct, i64 0, i64 0), [8 x float]* noundef getelementptr inbounds ([8 x [8 x float]], [8 x [8 x float]]* @test_block, i64 0, i64 0), i32 noundef %1, i32 noundef %2)
@@ -693,29 +693,27 @@ attributes #6 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #7 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"float", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
-!15 = distinct !{!15, !10}
-!16 = distinct !{!16, !10}
-!17 = distinct !{!17, !10}
-!18 = distinct !{!18, !10}
-!19 = distinct !{!19, !10}
-!20 = distinct !{!20, !10}
-!21 = distinct !{!21, !10}
-!22 = distinct !{!22, !10}
-!23 = distinct !{!23, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"float", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !9}
+!14 = distinct !{!14, !9}
+!15 = distinct !{!15, !9}
+!16 = distinct !{!16, !9}
+!17 = distinct !{!17, !9}
+!18 = distinct !{!18, !9}
+!19 = distinct !{!19, !9}
+!20 = distinct !{!20, !9}
+!21 = distinct !{!21, !9}
+!22 = distinct !{!22, !9}

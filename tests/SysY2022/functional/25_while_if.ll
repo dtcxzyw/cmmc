@@ -20,7 +20,7 @@ define dso_local noundef i32 @_Z11deepWhileBrii(i32 noundef %0, i32 noundef %1) 
   %8 = icmp sgt i32 %6, 57
   %9 = select i1 %8, i32 168, i32 %7
   %10 = icmp slt i32 %9, 75
-  br i1 %10, label %5, label %11, !llvm.loop !5
+  br i1 %10, label %5, label %11, !llvm.loop !4
 
 11:                                               ; preds = %5, %2
   %12 = phi i32 [ %3, %2 ], [ %9, %5 ]
@@ -40,12 +40,10 @@ attributes #1 = { mustprogress norecurse uwtable "frame-pointer"="none" "min-leg
 attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = distinct !{!5, !6}
-!6 = !{!"llvm.loop.mustprogress"}
+!4 = distinct !{!4, !5}
+!5 = !{!"llvm.loop.mustprogress"}

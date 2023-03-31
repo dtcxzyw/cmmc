@@ -32,21 +32,21 @@ define dso_local noundef i32 @_Z9is_cliquei(i32 noundef %0) local_unnamed_addr #
 
 14:                                               ; preds = %9
   %15 = getelementptr inbounds [30 x i32], [30 x i32]* @store, i64 0, i64 %10
-  %16 = load i32, i32* %15, align 4, !tbaa !5
+  %16 = load i32, i32* %15, align 4, !tbaa !4
   %17 = sext i32 %16 to i64
   br label %20
 
 18:                                               ; preds = %20
   %19 = icmp eq i64 %28, %5
-  br i1 %19, label %6, label %20, !llvm.loop !9
+  br i1 %19, label %6, label %20, !llvm.loop !8
 
 20:                                               ; preds = %14, %18
   %21 = phi i64 [ %11, %14 ], [ %28, %18 ]
   %22 = getelementptr inbounds [30 x i32], [30 x i32]* @store, i64 0, i64 %21
-  %23 = load i32, i32* %22, align 4, !tbaa !5
+  %23 = load i32, i32* %22, align 4, !tbaa !4
   %24 = sext i32 %23 to i64
   %25 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %17, i64 %24
-  %26 = load i32, i32* %25, align 4, !tbaa !5
+  %26 = load i32, i32* %25, align 4, !tbaa !4
   %27 = icmp eq i32 %26, 0
   %28 = add nuw nsw i64 %21, 1
   br i1 %27, label %29, label %18
@@ -64,7 +64,7 @@ declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #1
 
 ; Function Attrs: mustprogress nofree nosync nounwind uwtable
 define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unnamed_addr #2 {
-  %3 = load i32, i32* @n, align 4, !tbaa !5
+  %3 = load i32, i32* @n, align 4, !tbaa !4
   %4 = icmp slt i32 %3, 1
   br i1 %4, label %61, label %5
 
@@ -80,7 +80,7 @@ define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unn
   %12 = phi i32 [ %39, %38 ], [ %3, %5 ]
   %13 = phi i32 [ %40, %38 ], [ 0, %5 ]
   %14 = phi i32 [ %41, %38 ], [ 1, %5 ]
-  store i32 %14, i32* %7, align 4, !tbaa !5
+  store i32 %14, i32* %7, align 4, !tbaa !4
   br label %15
 
 15:                                               ; preds = %35, %11
@@ -92,24 +92,24 @@ define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unn
 
 20:                                               ; preds = %15
   %21 = getelementptr inbounds [30 x i32], [30 x i32]* @store, i64 0, i64 %16
-  %22 = load i32, i32* %21, align 4, !tbaa !5
+  %22 = load i32, i32* %21, align 4, !tbaa !4
   %23 = sext i32 %22 to i64
   br label %24
 
 24:                                               ; preds = %33, %20
   %25 = phi i64 [ %17, %20 ], [ %32, %33 ]
   %26 = getelementptr inbounds [30 x i32], [30 x i32]* @store, i64 0, i64 %25
-  %27 = load i32, i32* %26, align 4, !tbaa !5
+  %27 = load i32, i32* %26, align 4, !tbaa !4
   %28 = sext i32 %27 to i64
   %29 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %23, i64 %28
-  %30 = load i32, i32* %29, align 4, !tbaa !5
+  %30 = load i32, i32* %29, align 4, !tbaa !4
   %31 = icmp eq i32 %30, 0
   %32 = add nuw nsw i64 %25, 1
   br i1 %31, label %38, label %33
 
 33:                                               ; preds = %24
   %34 = icmp eq i64 %32, %10
-  br i1 %34, label %35, label %24, !llvm.loop !9
+  br i1 %34, label %35, label %24, !llvm.loop !8
 
 35:                                               ; preds = %33, %15
   %36 = add nuw nsw i64 %17, 1
@@ -121,7 +121,7 @@ define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unn
   %40 = phi i32 [ %48, %43 ], [ %13, %24 ]
   %41 = add nuw nsw i32 %14, 1
   %42 = icmp slt i32 %14, %39
-  br i1 %42, label %11, label %61, !llvm.loop !11
+  br i1 %42, label %11, label %61, !llvm.loop !10
 
 43:                                               ; preds = %35
   %44 = icmp slt i32 %13, %1
@@ -129,22 +129,22 @@ define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unn
   %46 = tail call noundef i32 @_Z10maxCliquesii(i32 undef, i32 noundef %8)
   %47 = icmp sgt i32 %46, %45
   %48 = select i1 %47, i32 %46, i32 %45
-  %49 = load i32, i32* @n, align 4, !tbaa !5
+  %49 = load i32, i32* @n, align 4, !tbaa !4
   br label %38
 
 50:                                               ; preds = %5, %50
   %51 = phi i32 [ %57, %50 ], [ 0, %5 ]
   %52 = phi i32 [ %58, %50 ], [ 1, %5 ]
-  store i32 %52, i32* %7, align 4, !tbaa !5
+  store i32 %52, i32* %7, align 4, !tbaa !4
   %53 = icmp slt i32 %51, %1
   %54 = select i1 %53, i32 %1, i32 %51
   %55 = tail call noundef i32 @_Z10maxCliquesii(i32 undef, i32 noundef %8)
   %56 = icmp sgt i32 %55, %54
   %57 = select i1 %56, i32 %55, i32 %54
   %58 = add nuw nsw i32 %52, 1
-  %59 = load i32, i32* @n, align 4, !tbaa !5
+  %59 = load i32, i32* @n, align 4, !tbaa !4
   %60 = icmp slt i32 %52, %59
-  br i1 %60, label %50, label %61, !llvm.loop !11
+  br i1 %60, label %50, label %61, !llvm.loop !10
 
 61:                                               ; preds = %50, %38, %2
   %62 = phi i32 [ 0, %2 ], [ %40, %38 ], [ %57, %50 ]
@@ -155,9 +155,9 @@ define dso_local noundef i32 @_Z10maxCliquesii(i32 %0, i32 noundef %1) local_unn
 define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %1 = alloca [600 x [2 x i32]], align 16
   %2 = tail call noundef i32 @_Z6getintv()
-  store i32 %2, i32* @n, align 4, !tbaa !5
+  store i32 %2, i32* @n, align 4, !tbaa !4
   %3 = tail call noundef i32 @_Z6getintv()
-  store i32 %3, i32* @m, align 4, !tbaa !5
+  store i32 %3, i32* @m, align 4, !tbaa !4
   %4 = bitcast [600 x [2 x i32]]* %1 to i8*
   call void @llvm.lifetime.start.p0i8(i64 4800, i8* nonnull %4) #5
   %5 = icmp sgt i32 %3, 0
@@ -181,44 +181,44 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
   %15 = phi i64 [ %20, %14 ], [ 0, %0 ]
   %16 = tail call noundef i32 @_Z6getintv()
   %17 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %15, i64 0
-  store i32 %16, i32* %17, align 8, !tbaa !5
+  store i32 %16, i32* %17, align 8, !tbaa !4
   %18 = tail call noundef i32 @_Z6getintv()
   %19 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %15, i64 1
-  store i32 %18, i32* %19, align 4, !tbaa !5
+  store i32 %18, i32* %19, align 4, !tbaa !4
   %20 = add nuw nsw i64 %15, 1
-  %21 = load i32, i32* @m, align 4, !tbaa !5
+  %21 = load i32, i32* @m, align 4, !tbaa !4
   %22 = sext i32 %21 to i64
   %23 = icmp slt i64 %20, %22
-  br i1 %23, label %14, label %6, !llvm.loop !12
+  br i1 %23, label %14, label %6, !llvm.loop !11
 
 24:                                               ; preds = %24, %12
   %25 = phi i64 [ 0, %12 ], [ %44, %24 ]
   %26 = phi i64 [ 0, %12 ], [ %45, %24 ]
   %27 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %25, i64 0
-  %28 = load i32, i32* %27, align 16, !tbaa !5
+  %28 = load i32, i32* %27, align 16, !tbaa !4
   %29 = sext i32 %28 to i64
   %30 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %25, i64 1
-  %31 = load i32, i32* %30, align 4, !tbaa !5
+  %31 = load i32, i32* %30, align 4, !tbaa !4
   %32 = sext i32 %31 to i64
   %33 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %29, i64 %32
-  store i32 1, i32* %33, align 4, !tbaa !5
+  store i32 1, i32* %33, align 4, !tbaa !4
   %34 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %32, i64 %29
-  store i32 1, i32* %34, align 4, !tbaa !5
+  store i32 1, i32* %34, align 4, !tbaa !4
   %35 = or i64 %25, 1
   %36 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %35, i64 0
-  %37 = load i32, i32* %36, align 8, !tbaa !5
+  %37 = load i32, i32* %36, align 8, !tbaa !4
   %38 = sext i32 %37 to i64
   %39 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %35, i64 1
-  %40 = load i32, i32* %39, align 4, !tbaa !5
+  %40 = load i32, i32* %39, align 4, !tbaa !4
   %41 = sext i32 %40 to i64
   %42 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %38, i64 %41
-  store i32 1, i32* %42, align 4, !tbaa !5
+  store i32 1, i32* %42, align 4, !tbaa !4
   %43 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %41, i64 %38
-  store i32 1, i32* %43, align 4, !tbaa !5
+  store i32 1, i32* %43, align 4, !tbaa !4
   %44 = add nuw nsw i64 %25, 2
   %45 = add i64 %26, 2
   %46 = icmp eq i64 %45, %13
-  br i1 %46, label %47, label %24, !llvm.loop !13
+  br i1 %46, label %47, label %24, !llvm.loop !12
 
 47:                                               ; preds = %24, %8
   %48 = phi i64 [ 0, %8 ], [ %44, %24 ]
@@ -227,15 +227,15 @@ define dso_local noundef i32 @main() local_unnamed_addr #3 {
 
 50:                                               ; preds = %47
   %51 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %48, i64 0
-  %52 = load i32, i32* %51, align 8, !tbaa !5
+  %52 = load i32, i32* %51, align 8, !tbaa !4
   %53 = sext i32 %52 to i64
   %54 = getelementptr inbounds [600 x [2 x i32]], [600 x [2 x i32]]* %1, i64 0, i64 %48, i64 1
-  %55 = load i32, i32* %54, align 4, !tbaa !5
+  %55 = load i32, i32* %54, align 4, !tbaa !4
   %56 = sext i32 %55 to i64
   %57 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %53, i64 %56
-  store i32 1, i32* %57, align 4, !tbaa !5
+  store i32 1, i32* %57, align 4, !tbaa !4
   %58 = getelementptr inbounds [30 x [30 x i32]], [30 x [30 x i32]]* @graph, i64 0, i64 %56, i64 %53
-  store i32 1, i32* %58, align 4, !tbaa !5
+  store i32 1, i32* %58, align 4, !tbaa !4
   br label %59
 
 59:                                               ; preds = %50, %47, %0, %6
@@ -257,19 +257,17 @@ attributes #4 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #5 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
-!13 = distinct !{!13, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}
+!12 = distinct !{!12, !9}

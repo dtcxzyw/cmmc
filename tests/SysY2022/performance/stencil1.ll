@@ -40,24 +40,24 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %16 = add nsw i64 %15, -1
   %17 = add nuw nsw i64 %15, 1
   %18 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %7
-  %19 = load i32, i32* %18, align 4, !tbaa !5
+  %19 = load i32, i32* %18, align 4, !tbaa !4
   %20 = shl nsw i32 %19, 3
   %21 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %9
-  %22 = load i32, i32* %21, align 4, !tbaa !5
+  %22 = load i32, i32* %21, align 4, !tbaa !4
   %23 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %8
-  %24 = load i32, i32* %23, align 4, !tbaa !5
+  %24 = load i32, i32* %23, align 4, !tbaa !4
   %25 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %10
-  %26 = load i32, i32* %25, align 4, !tbaa !5
+  %26 = load i32, i32* %25, align 4, !tbaa !4
   %27 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %11
-  %28 = load i32, i32* %27, align 4, !tbaa !5
+  %28 = load i32, i32* %27, align 4, !tbaa !4
   %29 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %12
-  %30 = load i32, i32* %29, align 4, !tbaa !5
+  %30 = load i32, i32* %29, align 4, !tbaa !4
   %31 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %16
-  %32 = load i32, i32* %31, align 4, !tbaa !5
+  %32 = load i32, i32* %31, align 4, !tbaa !4
   %33 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %15
-  %34 = load i32, i32* %33, align 4, !tbaa !5
+  %34 = load i32, i32* %33, align 4, !tbaa !4
   %35 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %17
-  %36 = load i32, i32* %35, align 4, !tbaa !5
+  %36 = load i32, i32* %35, align 4, !tbaa !4
   %37 = add i32 %22, %24
   %38 = add i32 %37, %26
   %39 = add i32 %38, %28
@@ -71,45 +71,45 @@ define dso_local noundef i32 @main() local_unnamed_addr #1 {
   %47 = icmp sgt i32 %46, 0
   %48 = select i1 %47, i32 %46, i32 0
   %49 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 %7
-  store i32 %48, i32* %49, align 4, !tbaa !5
+  store i32 %48, i32* %49, align 4, !tbaa !4
   %50 = icmp eq i64 %13, 1023
-  br i1 %50, label %51, label %4, !llvm.loop !9
+  br i1 %50, label %51, label %4, !llvm.loop !8
 
 51:                                               ; preds = %4
   %52 = add nuw nsw i64 %3, 1
   %53 = icmp eq i64 %52, 1023
-  br i1 %53, label %54, label %2, !llvm.loop !11
+  br i1 %53, label %54, label %2, !llvm.loop !10
 
 54:                                               ; preds = %51, %54
   %55 = phi i64 [ %73, %54 ], [ 0, %51 ]
   %56 = shl nuw nsw i64 %55, 10
   %57 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %56
-  %58 = load i32, i32* %57, align 16, !tbaa !5
+  %58 = load i32, i32* %57, align 16, !tbaa !4
   %59 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 %56
-  store i32 %58, i32* %59, align 16, !tbaa !5
+  store i32 %58, i32* %59, align 16, !tbaa !4
   %60 = or i64 %56, 1023
   %61 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %60
-  %62 = load i32, i32* %61, align 4, !tbaa !5
+  %62 = load i32, i32* %61, align 4, !tbaa !4
   %63 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 %60
-  store i32 %62, i32* %63, align 4, !tbaa !5
+  store i32 %62, i32* %63, align 4, !tbaa !4
   %64 = shl i64 %55, 10
   %65 = or i64 %64, 1024
   %66 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %65
-  %67 = load i32, i32* %66, align 16, !tbaa !5
+  %67 = load i32, i32* %66, align 16, !tbaa !4
   %68 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 %65
-  store i32 %67, i32* %68, align 16, !tbaa !5
+  store i32 %67, i32* %68, align 16, !tbaa !4
   %69 = or i64 %64, 2047
   %70 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 %69
-  %71 = load i32, i32* %70, align 4, !tbaa !5
+  %71 = load i32, i32* %70, align 4, !tbaa !4
   %72 = getelementptr inbounds [1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 %69
-  store i32 %71, i32* %72, align 4, !tbaa !5
+  store i32 %71, i32* %72, align 4, !tbaa !4
   %73 = add nuw nsw i64 %55, 2
   %74 = icmp eq i64 %73, 1024
-  br i1 %74, label %75, label %54, !llvm.loop !12
+  br i1 %74, label %75, label %54, !llvm.loop !11
 
 75:                                               ; preds = %54
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(4096) bitcast ([1048576 x i32]* @image_out to i8*), i8* noundef nonnull align 16 dereferenceable(4096) bitcast ([1048576 x i32]* @image_in to i8*), i64 4096, i1 false), !tbaa !5
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(4096) bitcast (i32* getelementptr inbounds ([1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 1047552) to i8*), i8* noundef nonnull align 16 dereferenceable(4096) bitcast (i32* getelementptr inbounds ([1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 1047552) to i8*), i64 4096, i1 false), !tbaa !5
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(4096) bitcast ([1048576 x i32]* @image_out to i8*), i8* noundef nonnull align 16 dereferenceable(4096) bitcast ([1048576 x i32]* @image_in to i8*), i64 4096, i1 false), !tbaa !4
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* noundef nonnull align 16 dereferenceable(4096) bitcast (i32* getelementptr inbounds ([1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 1047552) to i8*), i8* noundef nonnull align 16 dereferenceable(4096) bitcast (i32* getelementptr inbounds ([1048576 x i32], [1048576 x i32]* @image_in, i64 0, i64 1047552) to i8*), i64 4096, i1 false), !tbaa !4
   tail call void @_Z14_sysy_stoptimei(i32 noundef 59)
   tail call void @_Z8putarrayiPi(i32 noundef 1048576, i32* noundef getelementptr inbounds ([1048576 x i32], [1048576 x i32]* @image_out, i64 0, i64 0))
   ret i32 %1
@@ -132,18 +132,16 @@ attributes #2 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #3 = { argmemonly nofree nounwind willreturn }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"int", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !10}
-!12 = distinct !{!12, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"int", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !9}
+!11 = distinct !{!11, !9}

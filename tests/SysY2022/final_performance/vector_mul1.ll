@@ -37,32 +37,32 @@ define dso_local noundef float @_Z9VectordotPfS_i(float* nocapture noundef reado
   %14 = phi float [ 0.000000e+00, %10 ], [ %38, %12 ]
   %15 = phi i64 [ 0, %10 ], [ %40, %12 ]
   %16 = getelementptr inbounds float, float* %0, i64 %13
-  %17 = load float, float* %16, align 4, !tbaa !5
+  %17 = load float, float* %16, align 4, !tbaa !4
   %18 = getelementptr inbounds float, float* %1, i64 %13
-  %19 = load float, float* %18, align 4, !tbaa !5
+  %19 = load float, float* %18, align 4, !tbaa !4
   %20 = tail call float @llvm.fmuladd.f32(float %17, float %19, float %14)
   %21 = or i64 %13, 1
   %22 = getelementptr inbounds float, float* %0, i64 %21
-  %23 = load float, float* %22, align 4, !tbaa !5
+  %23 = load float, float* %22, align 4, !tbaa !4
   %24 = getelementptr inbounds float, float* %1, i64 %21
-  %25 = load float, float* %24, align 4, !tbaa !5
+  %25 = load float, float* %24, align 4, !tbaa !4
   %26 = tail call float @llvm.fmuladd.f32(float %23, float %25, float %20)
   %27 = or i64 %13, 2
   %28 = getelementptr inbounds float, float* %0, i64 %27
-  %29 = load float, float* %28, align 4, !tbaa !5
+  %29 = load float, float* %28, align 4, !tbaa !4
   %30 = getelementptr inbounds float, float* %1, i64 %27
-  %31 = load float, float* %30, align 4, !tbaa !5
+  %31 = load float, float* %30, align 4, !tbaa !4
   %32 = tail call float @llvm.fmuladd.f32(float %29, float %31, float %26)
   %33 = or i64 %13, 3
   %34 = getelementptr inbounds float, float* %0, i64 %33
-  %35 = load float, float* %34, align 4, !tbaa !5
+  %35 = load float, float* %34, align 4, !tbaa !4
   %36 = getelementptr inbounds float, float* %1, i64 %33
-  %37 = load float, float* %36, align 4, !tbaa !5
+  %37 = load float, float* %36, align 4, !tbaa !4
   %38 = tail call float @llvm.fmuladd.f32(float %35, float %37, float %32)
   %39 = add nuw nsw i64 %13, 4
   %40 = add i64 %15, 4
   %41 = icmp eq i64 %40, %11
-  br i1 %41, label %42, label %12, !llvm.loop !9
+  br i1 %41, label %42, label %12, !llvm.loop !8
 
 42:                                               ; preds = %12, %5
   %43 = phi float [ undef, %5 ], [ %38, %12 ]
@@ -76,14 +76,14 @@ define dso_local noundef float @_Z9VectordotPfS_i(float* nocapture noundef reado
   %49 = phi float [ %55, %47 ], [ %45, %42 ]
   %50 = phi i64 [ %57, %47 ], [ 0, %42 ]
   %51 = getelementptr inbounds float, float* %0, i64 %48
-  %52 = load float, float* %51, align 4, !tbaa !5
+  %52 = load float, float* %51, align 4, !tbaa !4
   %53 = getelementptr inbounds float, float* %1, i64 %48
-  %54 = load float, float* %53, align 4, !tbaa !5
+  %54 = load float, float* %53, align 4, !tbaa !4
   %55 = tail call float @llvm.fmuladd.f32(float %52, float %54, float %49)
   %56 = add nuw nsw i64 %48, 1
   %57 = add i64 %50, 1
   %58 = icmp eq i64 %57, %8
-  br i1 %58, label %59, label %47, !llvm.loop !11
+  br i1 %58, label %59, label %47, !llvm.loop !10
 
 59:                                               ; preds = %42, %47, %3
   %60 = phi float [ 0.000000e+00, %3 ], [ %43, %42 ], [ %55, %47 ]
@@ -128,7 +128,7 @@ define dso_local void @_Z5mult1PfS_i(float* nocapture noundef readonly %0, float
   %20 = phi float [ %10, %14 ], [ %33, %18 ]
   %21 = trunc i64 %19 to i32
   %22 = getelementptr inbounds float, float* %0, i64 %19
-  %23 = load float, float* %22, align 4, !tbaa !5
+  %23 = load float, float* %22, align 4, !tbaa !4
   %24 = add nsw i64 %19, %9
   %25 = add nsw i32 %21, %16
   %26 = add nsw i32 %25, 1
@@ -141,15 +141,15 @@ define dso_local void @_Z5mult1PfS_i(float* nocapture noundef readonly %0, float
   %33 = fadd float %20, %32
   %34 = add nsw i64 %19, 1
   %35 = icmp eq i64 %34, %7
-  br i1 %35, label %36, label %18, !llvm.loop !13
+  br i1 %35, label %36, label %18, !llvm.loop !12
 
 36:                                               ; preds = %18, %8
   %37 = phi i32 [ %11, %8 ], [ %2, %18 ]
   %38 = phi float [ %10, %8 ], [ %33, %18 ]
   %39 = getelementptr inbounds float, float* %1, i64 %9
-  store float %38, float* %39, align 4, !tbaa !5
+  store float %38, float* %39, align 4, !tbaa !4
   %40 = icmp eq i64 %13, %6
-  br i1 %40, label %41, label %8, !llvm.loop !14
+  br i1 %40, label %41, label %8, !llvm.loop !13
 
 41:                                               ; preds = %36, %3
   ret void
@@ -182,7 +182,7 @@ define dso_local void @_Z5mult2PfS_i(float* nocapture noundef readonly %0, float
   %18 = phi float [ %10, %13 ], [ %33, %16 ]
   %19 = trunc i64 %17 to i32
   %20 = getelementptr inbounds float, float* %0, i64 %17
-  %21 = load float, float* %20, align 4, !tbaa !5
+  %21 = load float, float* %20, align 4, !tbaa !4
   %22 = add nsw i64 %17, %9
   %23 = add nsw i32 %19, %15
   %24 = add nsw i32 %23, 1
@@ -196,16 +196,16 @@ define dso_local void @_Z5mult2PfS_i(float* nocapture noundef readonly %0, float
   %32 = fdiv float %21, %31
   %33 = fadd float %18, %32
   %34 = icmp eq i64 %28, %7
-  br i1 %34, label %35, label %16, !llvm.loop !15
+  br i1 %34, label %35, label %16, !llvm.loop !14
 
 35:                                               ; preds = %16, %8
   %36 = phi i32 [ %11, %8 ], [ %2, %16 ]
   %37 = phi float [ %10, %8 ], [ %33, %16 ]
   %38 = getelementptr inbounds float, float* %1, i64 %9
-  store float %37, float* %38, align 4, !tbaa !5
+  store float %37, float* %38, align 4, !tbaa !4
   %39 = add nuw nsw i64 %9, 1
   %40 = icmp eq i64 %39, %6
-  br i1 %40, label %41, label %8, !llvm.loop !16
+  br i1 %40, label %41, label %8, !llvm.loop !15
 
 41:                                               ; preds = %35, %3
   ret void
@@ -240,7 +240,7 @@ define dso_local void @_Z11mult_combinPfS_iS_(float* nocapture noundef readonly 
   %21 = phi float [ %10, %14 ], [ %33, %19 ]
   %22 = trunc i64 %20 to i32
   %23 = getelementptr inbounds float, float* %0, i64 %20
-  %24 = load float, float* %23, align 4, !tbaa !5
+  %24 = load float, float* %23, align 4, !tbaa !4
   %25 = add nsw i64 %20, %9
   %26 = add i32 %18, %22
   %27 = trunc i64 %25 to i32
@@ -252,15 +252,15 @@ define dso_local void @_Z11mult_combinPfS_iS_(float* nocapture noundef readonly 
   %33 = fadd float %21, %32
   %34 = add nsw i64 %20, 1
   %35 = icmp eq i64 %34, %7
-  br i1 %35, label %36, label %19, !llvm.loop !13
+  br i1 %35, label %36, label %19, !llvm.loop !12
 
 36:                                               ; preds = %19, %8
   %37 = phi i32 [ %11, %8 ], [ %2, %19 ]
   %38 = phi float [ %10, %8 ], [ %33, %19 ]
   %39 = getelementptr inbounds float, float* %3, i64 %9
-  store float %38, float* %39, align 4, !tbaa !5
+  store float %38, float* %39, align 4, !tbaa !4
   %40 = icmp eq i64 %13, %7
-  br i1 %40, label %41, label %8, !llvm.loop !14
+  br i1 %40, label %41, label %8, !llvm.loop !13
 
 41:                                               ; preds = %36, %68
   %42 = phi i64 [ %72, %68 ], [ 0, %36 ]
@@ -280,7 +280,7 @@ define dso_local void @_Z11mult_combinPfS_iS_(float* nocapture noundef readonly 
   %52 = phi float [ %43, %46 ], [ %66, %50 ]
   %53 = trunc i64 %51 to i32
   %54 = getelementptr inbounds float, float* %3, i64 %51
-  %55 = load float, float* %54, align 4, !tbaa !5
+  %55 = load float, float* %54, align 4, !tbaa !4
   %56 = add nsw i64 %51, %42
   %57 = add i32 %49, %53
   %58 = trunc i64 %56 to i32
@@ -293,16 +293,16 @@ define dso_local void @_Z11mult_combinPfS_iS_(float* nocapture noundef readonly 
   %65 = fdiv float %55, %64
   %66 = fadd float %52, %65
   %67 = icmp eq i64 %61, %7
-  br i1 %67, label %68, label %50, !llvm.loop !15
+  br i1 %67, label %68, label %50, !llvm.loop !14
 
 68:                                               ; preds = %50, %41
   %69 = phi i32 [ %44, %41 ], [ %2, %50 ]
   %70 = phi float [ %43, %41 ], [ %66, %50 ]
   %71 = getelementptr inbounds float, float* %1, i64 %42
-  store float %70, float* %71, align 4, !tbaa !5
+  store float %70, float* %71, align 4, !tbaa !4
   %72 = add nuw nsw i64 %42, 1
   %73 = icmp eq i64 %72, %7
-  br i1 %73, label %74, label %41, !llvm.loop !16
+  br i1 %73, label %74, label %41, !llvm.loop !15
 
 74:                                               ; preds = %68, %4
   ret void
@@ -310,7 +310,7 @@ define dso_local void @_Z11mult_combinPfS_iS_(float* nocapture noundef readonly 
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable
 define dso_local noundef float @_Z7my_sqrtf(float noundef %0) local_unnamed_addr #4 {
-  %2 = load float, float* @temp, align 4, !tbaa !5
+  %2 = load float, float* @temp, align 4, !tbaa !4
   %3 = fdiv float %0, %2
   %4 = fsub float %2, %3
   %5 = fpext float %4 to double
@@ -330,10 +330,10 @@ define dso_local noundef float @_Z7my_sqrtf(float noundef %0) local_unnamed_addr
   %17 = fcmp ogt double %16, 0x3EB0C6F7A0B5ED8D
   %18 = fcmp olt double %16, 0xBEB0C6F7A0B5ED8D
   %19 = or i1 %17, %18
-  br i1 %19, label %9, label %20, !llvm.loop !17
+  br i1 %19, label %9, label %20, !llvm.loop !16
 
 20:                                               ; preds = %9
-  store float %13, float* @temp, align 4, !tbaa !5
+  store float %13, float* @temp, align 4, !tbaa !4
   br label %21
 
 21:                                               ; preds = %20, %1
@@ -379,7 +379,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %22 = phi float [ %11, %15 ], [ %34, %20 ]
   %23 = trunc i64 %21 to i32
   %24 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %21
-  %25 = load float, float* %24, align 4, !tbaa !5
+  %25 = load float, float* %24, align 4, !tbaa !4
   %26 = add nuw nsw i64 %21, %10
   %27 = add i32 %19, %23
   %28 = trunc i64 %26 to i32
@@ -391,15 +391,15 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %34 = fadd float %22, %33
   %35 = add nuw nsw i64 %21, 1
   %36 = icmp eq i64 %35, 100000
-  br i1 %36, label %37, label %20, !llvm.loop !13
+  br i1 %36, label %37, label %20, !llvm.loop !12
 
 37:                                               ; preds = %20, %9
   %38 = phi i32 [ %12, %9 ], [ 100000, %20 ]
   %39 = phi float [ %11, %9 ], [ %34, %20 ]
   %40 = getelementptr inbounds [100000 x float], [100000 x float]* %3, i64 0, i64 %10
-  store float %39, float* %40, align 4, !tbaa !5
+  store float %39, float* %40, align 4, !tbaa !4
   %41 = icmp eq i64 %14, 100000
-  br i1 %41, label %42, label %9, !llvm.loop !14
+  br i1 %41, label %42, label %9, !llvm.loop !13
 
 42:                                               ; preds = %37, %69
   %43 = phi i64 [ %73, %69 ], [ 0, %37 ]
@@ -419,7 +419,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %53 = phi float [ %44, %47 ], [ %67, %51 ]
   %54 = trunc i64 %52 to i32
   %55 = getelementptr inbounds [100000 x float], [100000 x float]* %3, i64 0, i64 %52
-  %56 = load float, float* %55, align 4, !tbaa !5
+  %56 = load float, float* %55, align 4, !tbaa !4
   %57 = add nuw nsw i64 %52, %43
   %58 = add i32 %50, %54
   %59 = trunc i64 %57 to i32
@@ -432,16 +432,16 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %66 = fdiv float %56, %65
   %67 = fadd float %53, %66
   %68 = icmp eq i64 %62, 100000
-  br i1 %68, label %69, label %51, !llvm.loop !15
+  br i1 %68, label %69, label %51, !llvm.loop !14
 
 69:                                               ; preds = %51, %42
   %70 = phi i32 [ %45, %42 ], [ 100000, %51 ]
   %71 = phi float [ %44, %42 ], [ %67, %51 ]
   %72 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %43
-  store float %71, float* %72, align 4, !tbaa !5
+  store float %71, float* %72, align 4, !tbaa !4
   %73 = add nuw nsw i64 %43, 1
   %74 = icmp eq i64 %73, 100000
-  br i1 %74, label %75, label %42, !llvm.loop !16
+  br i1 %74, label %75, label %42, !llvm.loop !15
 
 75:                                               ; preds = %69, %103
   %76 = phi i64 [ %80, %103 ], [ 0, %69 ]
@@ -463,7 +463,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %88 = phi float [ %77, %81 ], [ %100, %86 ]
   %89 = trunc i64 %87 to i32
   %90 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %87
-  %91 = load float, float* %90, align 4, !tbaa !5
+  %91 = load float, float* %90, align 4, !tbaa !4
   %92 = add nuw nsw i64 %87, %76
   %93 = add i32 %85, %89
   %94 = trunc i64 %92 to i32
@@ -475,15 +475,15 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %100 = fadd float %88, %99
   %101 = add nuw nsw i64 %87, 1
   %102 = icmp eq i64 %101, 100000
-  br i1 %102, label %103, label %86, !llvm.loop !13
+  br i1 %102, label %103, label %86, !llvm.loop !12
 
 103:                                              ; preds = %86, %75
   %104 = phi i32 [ %78, %75 ], [ 100000, %86 ]
   %105 = phi float [ %77, %75 ], [ %100, %86 ]
   %106 = getelementptr inbounds [100000 x float], [100000 x float]* %3, i64 0, i64 %76
-  store float %105, float* %106, align 4, !tbaa !5
+  store float %105, float* %106, align 4, !tbaa !4
   %107 = icmp eq i64 %80, 100000
-  br i1 %107, label %108, label %75, !llvm.loop !14
+  br i1 %107, label %108, label %75, !llvm.loop !13
 
 108:                                              ; preds = %103, %135
   %109 = phi i64 [ %139, %135 ], [ 0, %103 ]
@@ -503,7 +503,7 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %119 = phi float [ %110, %113 ], [ %133, %117 ]
   %120 = trunc i64 %118 to i32
   %121 = getelementptr inbounds [100000 x float], [100000 x float]* %3, i64 0, i64 %118
-  %122 = load float, float* %121, align 4, !tbaa !5
+  %122 = load float, float* %121, align 4, !tbaa !4
   %123 = add nuw nsw i64 %118, %109
   %124 = add i32 %116, %120
   %125 = trunc i64 %123 to i32
@@ -516,21 +516,21 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %132 = fdiv float %122, %131
   %133 = fadd float %119, %132
   %134 = icmp eq i64 %128, 100000
-  br i1 %134, label %135, label %117, !llvm.loop !15
+  br i1 %134, label %135, label %117, !llvm.loop !14
 
 135:                                              ; preds = %117, %108
   %136 = phi i32 [ %111, %108 ], [ 100000, %117 ]
   %137 = phi float [ %110, %108 ], [ %133, %117 ]
   %138 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %109
-  store float %137, float* %138, align 4, !tbaa !5
+  store float %137, float* %138, align 4, !tbaa !4
   %139 = add nuw nsw i64 %109, 1
   %140 = icmp eq i64 %139, 100000
-  br i1 %140, label %141, label %108, !llvm.loop !16
+  br i1 %140, label %141, label %108, !llvm.loop !15
 
 141:                                              ; preds = %135
   %142 = add nuw nsw i32 %8, 1
   %143 = icmp eq i32 %142, 1000
-  br i1 %143, label %144, label %7, !llvm.loop !18
+  br i1 %143, label %144, label %7, !llvm.loop !17
 
 144:                                              ; preds = %141
   tail call void @_Z14_sysy_stoptimei(i32 noundef 76)
@@ -540,67 +540,67 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %146 = phi i64 [ 0, %144 ], [ %177, %145 ]
   %147 = phi float [ 0.000000e+00, %144 ], [ %176, %145 ]
   %148 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %146
-  %149 = load float, float* %148, align 4, !tbaa !5
+  %149 = load float, float* %148, align 4, !tbaa !4
   %150 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %146
-  %151 = load float, float* %150, align 4, !tbaa !5
+  %151 = load float, float* %150, align 4, !tbaa !4
   %152 = tail call float @llvm.fmuladd.f32(float %149, float %151, float %147) #7
   %153 = add nuw nsw i64 %146, 1
   %154 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %153
-  %155 = load float, float* %154, align 4, !tbaa !5
+  %155 = load float, float* %154, align 4, !tbaa !4
   %156 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %153
-  %157 = load float, float* %156, align 4, !tbaa !5
+  %157 = load float, float* %156, align 4, !tbaa !4
   %158 = tail call float @llvm.fmuladd.f32(float %155, float %157, float %152) #7
   %159 = add nuw nsw i64 %146, 2
   %160 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %159
-  %161 = load float, float* %160, align 4, !tbaa !5
+  %161 = load float, float* %160, align 4, !tbaa !4
   %162 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %159
-  %163 = load float, float* %162, align 4, !tbaa !5
+  %163 = load float, float* %162, align 4, !tbaa !4
   %164 = tail call float @llvm.fmuladd.f32(float %161, float %163, float %158) #7
   %165 = add nuw nsw i64 %146, 3
   %166 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %165
-  %167 = load float, float* %166, align 4, !tbaa !5
+  %167 = load float, float* %166, align 4, !tbaa !4
   %168 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %165
-  %169 = load float, float* %168, align 4, !tbaa !5
+  %169 = load float, float* %168, align 4, !tbaa !4
   %170 = tail call float @llvm.fmuladd.f32(float %167, float %169, float %164) #7
   %171 = add nuw nsw i64 %146, 4
   %172 = getelementptr inbounds [100000 x float], [100000 x float]* %1, i64 0, i64 %171
-  %173 = load float, float* %172, align 4, !tbaa !5
+  %173 = load float, float* %172, align 4, !tbaa !4
   %174 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %171
-  %175 = load float, float* %174, align 4, !tbaa !5
+  %175 = load float, float* %174, align 4, !tbaa !4
   %176 = tail call float @llvm.fmuladd.f32(float %173, float %175, float %170) #7
   %177 = add nuw nsw i64 %146, 5
   %178 = icmp eq i64 %177, 100000
-  br i1 %178, label %179, label %145, !llvm.loop !9
+  br i1 %178, label %179, label %145, !llvm.loop !8
 
 179:                                              ; preds = %145, %179
   %180 = phi i64 [ %201, %179 ], [ 0, %145 ]
   %181 = phi float [ %200, %179 ], [ 0.000000e+00, %145 ]
   %182 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %180
-  %183 = load float, float* %182, align 4, !tbaa !5
+  %183 = load float, float* %182, align 4, !tbaa !4
   %184 = tail call float @llvm.fmuladd.f32(float %183, float %183, float %181) #7
   %185 = add nuw nsw i64 %180, 1
   %186 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %185
-  %187 = load float, float* %186, align 4, !tbaa !5
+  %187 = load float, float* %186, align 4, !tbaa !4
   %188 = tail call float @llvm.fmuladd.f32(float %187, float %187, float %184) #7
   %189 = add nuw nsw i64 %180, 2
   %190 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %189
-  %191 = load float, float* %190, align 4, !tbaa !5
+  %191 = load float, float* %190, align 4, !tbaa !4
   %192 = tail call float @llvm.fmuladd.f32(float %191, float %191, float %188) #7
   %193 = add nuw nsw i64 %180, 3
   %194 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %193
-  %195 = load float, float* %194, align 4, !tbaa !5
+  %195 = load float, float* %194, align 4, !tbaa !4
   %196 = tail call float @llvm.fmuladd.f32(float %195, float %195, float %192) #7
   %197 = add nuw nsw i64 %180, 4
   %198 = getelementptr inbounds [100000 x float], [100000 x float]* %2, i64 0, i64 %197
-  %199 = load float, float* %198, align 4, !tbaa !5
+  %199 = load float, float* %198, align 4, !tbaa !4
   %200 = tail call float @llvm.fmuladd.f32(float %199, float %199, float %196) #7
   %201 = add nuw nsw i64 %180, 5
   %202 = icmp eq i64 %201, 100000
-  br i1 %202, label %203, label %179, !llvm.loop !9
+  br i1 %202, label %203, label %179, !llvm.loop !8
 
 203:                                              ; preds = %179
   %204 = fdiv float %176, %200
-  %205 = load float, float* @temp, align 4, !tbaa !5
+  %205 = load float, float* @temp, align 4, !tbaa !4
   %206 = fdiv float %204, %205
   %207 = fsub float %205, %206
   %208 = fpext float %207 to double
@@ -620,10 +620,10 @@ define dso_local noundef i32 @main() local_unnamed_addr #5 {
   %220 = fcmp ogt double %219, 0x3EB0C6F7A0B5ED8D
   %221 = fcmp olt double %219, 0xBEB0C6F7A0B5ED8D
   %222 = or i1 %220, %221
-  br i1 %222, label %212, label %223, !llvm.loop !17
+  br i1 %222, label %212, label %223, !llvm.loop !16
 
 223:                                              ; preds = %212
-  store float %216, float* @temp, align 4, !tbaa !5
+  store float %216, float* @temp, align 4, !tbaa !4
   br label %224
 
 224:                                              ; preds = %203, %223
@@ -660,24 +660,22 @@ attributes #6 = { "frame-pointer"="none" "no-trapping-math"="true" "stack-protec
 attributes #7 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
-!llvm.ident = !{!4}
 
 !0 = !{i32 1, !"wchar_size", i32 4}
 !1 = !{i32 7, !"PIC Level", i32 2}
 !2 = !{i32 7, !"PIE Level", i32 2}
 !3 = !{i32 7, !"uwtable", i32 1}
-!4 = !{!"Ubuntu clang version 14.0.0-1ubuntu1"}
-!5 = !{!6, !6, i64 0}
-!6 = !{!"float", !7, i64 0}
-!7 = !{!"omnipotent char", !8, i64 0}
-!8 = !{!"Simple C++ TBAA"}
-!9 = distinct !{!9, !10}
-!10 = !{!"llvm.loop.mustprogress"}
-!11 = distinct !{!11, !12}
-!12 = !{!"llvm.loop.unroll.disable"}
-!13 = distinct !{!13, !10}
-!14 = distinct !{!14, !10}
-!15 = distinct !{!15, !10}
-!16 = distinct !{!16, !10}
-!17 = distinct !{!17, !10}
-!18 = distinct !{!18, !10}
+!4 = !{!5, !5, i64 0}
+!5 = !{!"float", !6, i64 0}
+!6 = !{!"omnipotent char", !7, i64 0}
+!7 = !{!"Simple C++ TBAA"}
+!8 = distinct !{!8, !9}
+!9 = !{!"llvm.loop.mustprogress"}
+!10 = distinct !{!10, !11}
+!11 = !{!"llvm.loop.unroll.disable"}
+!12 = distinct !{!12, !9}
+!13 = distinct !{!13, !9}
+!14 = distinct !{!14, !9}
+!15 = distinct !{!15, !9}
+!16 = distinct !{!16, !9}
+!17 = distinct !{!17, !9}
