@@ -480,6 +480,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             if(type->isFloatingPoint()) {
                 return ConstantFloatingPoint{ type, std::numeric_limits<double>::quiet_NaN() };
             }
+            if(type->isPointer()) {
+                return static_cast<uintptr_t>(0);
+            }
             reportUnreachable(CMMC_LOCATION());
         } else
             reportUnreachable(CMMC_LOCATION());

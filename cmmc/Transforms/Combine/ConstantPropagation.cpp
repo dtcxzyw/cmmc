@@ -35,17 +35,23 @@ class ConstantPropagation final : public TransformPass<Function> {
         for(auto inst : block.instructions()) {
             if(inst->getInstID() == InstructionID::Phi) {
                 const auto phi = inst->as<PhiInst>();
-                Value* value = phi->incomings().begin()->second;
+                Value* value = nullptr;
+                bool unique = true;
                 for(auto [pred, val] : phi->incomings()) {
-                    CMMC_UNUSED(pred);
-                    if(value != val) {
-                        value = nullptr;
+                    // self reference
+                    if(val == inst)
+                        continue;
+                    if(!value)
+                        value = val;
+                    else if(value != val) {
+                        unique = false;
                         break;
                     }
                 }
-                if(value)
+                if(value && unique)
                     replace.emplace(inst, value);
-            }
+            } else
+                break;
         }
     }
 

@@ -138,7 +138,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %60(prob = 0.5), ^b24, ^b23;
 ^b16:
     i32 %61 = phi [^b34, i32 %65] [^while.body3, i32 %29];
-    i1 %62 = phi [^while.body3, i1 true] [^b34, i1 %100];
+    i1 %62 = phi [^b34, i1 %100] [^while.body3, i1 true];
     cbr i1 %62(prob = 0.5), ^b25, ^b28;
 ^b17:
     i32 %63 = phi [^b32, i32 %59] [^b9, i32 %46];

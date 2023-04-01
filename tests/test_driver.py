@@ -504,7 +504,10 @@ def test(name, path, filter, tester):
 
 test_cases = ["gcc", "llvm"]
 if len(sys.argv) >= 4:
-    test_cases = sys.argv[3].split(',')
+    if sys.argv[3] == 'ref':
+        generate_ref = True
+    else:
+        test_cases = sys.argv[3].split(',')
 
 # TODO: has llvm support?
 
@@ -599,8 +602,8 @@ if "llvm" in test_cases:
 
 if generate_ref:
     test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
-    test("Reference SysY Clang", tests_path +
-         "/SysY2022", ".sy", sysy_ref_clang)
+    # test("Reference SysY Clang", tests_path +
+    #     "/SysY2022", ".sy", sysy_ref_clang)
     #test("Reference Spl", tests_path + "/", ".spl", spl_ref)
     # test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
     # test("Reference Spl->TAC Extra", tests_path +

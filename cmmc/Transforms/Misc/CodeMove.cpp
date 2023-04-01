@@ -25,6 +25,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_set>
 #include <vector>
 
@@ -57,8 +58,6 @@ public:
             std::unordered_set<Value*> moveOutSet;
 
             for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Phi)
-                    continue;
                 if(!isNoSideEffectExpr(*inst))
                     continue;
 
@@ -68,14 +67,11 @@ public:
 
                 bool canMove = true;
                 for(auto operand : inst->operands()) {
-                    if(operand->isInstruction()) {
+                    if(operand->getBlock() == block) {
                         if(!moveOutSet.count(operand)) {
                             canMove = false;
                             break;
                         }
-                    } else if(operand->getBlock() == block) {
-                        canMove = false;
-                        break;
                     }
                 }
 
@@ -103,18 +99,15 @@ public:
 
                 bool valid = true;
                 for(auto operand : inst->operands()) {
-                    if(operand->isInstruction()) {
+                    if(operand->getBlock() == block) {
                         if(auto iter = moveTargetSet.find(operand); iter != moveTargetSet.cend())
                             updateTargetBlock(iter->second);
                         else {
                             valid = false;
                             break;
                         }
-                    } else {
-                        const auto dest = operand;
-                        if(auto destBlock = dest->getBlock(); destBlock != nullptr)
-                            updateTargetBlock(destBlock);
-                    }
+                    } else if(operand->getBlock())
+                        updateTargetBlock(operand->getBlock());
                 }
 
                 assert(targetBlock != block);

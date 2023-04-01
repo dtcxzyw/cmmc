@@ -20,6 +20,7 @@
 // int* a = alloc int;
 
 #include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -37,7 +38,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class StoreEliminate final : public TransformPass<Function> {
-    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet,
+    static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet, const DominateAnalysisResult& dom,
                             const PointerAddressSpaceAnalysisResult& addressSpace, Instruction* store,
                             std::unordered_set<Block*>& visited, const StackAddressLeakAnalysisResult& leak) {
         if(!store) {
@@ -52,11 +53,19 @@ class StoreEliminate final : public TransformPass<Function> {
                 if(inst->isBranch()) {
                     // TODO: leak querying by block
                     const auto branch = inst->as<BranchInst>();
-                    const auto& trueTarget = branch->getTrueTarget();
-                    const auto& falseTarget = branch->getFalseTarget();
-                    if(!isInvisible(addr, *trueTarget, aliasSet, addressSpace, nullptr, visited, leak))
+                    const auto trueTarget = branch->getTrueTarget();
+                    const auto falseTarget = branch->getFalseTarget();
+                    auto handleTarget = [&](Block* target) {
+                        if(addr->getBlock()) {
+                            // addr may be changed
+                            if(addr->getBlock() == target || !dom.dominate(addr->getBlock(), target))
+                                return false;
+                        }
+                        return isInvisible(addr, *target, aliasSet, dom, addressSpace, nullptr, visited, leak);
+                    };
+                    if(!handleTarget(trueTarget))
                         return false;
-                    if(falseTarget && !isInvisible(addr, *falseTarget, aliasSet, addressSpace, nullptr, visited, leak))
+                    if(falseTarget && trueTarget != falseTarget && !handleTarget(falseTarget))
                         return false;
                 } else if(inst->getInstID() == InstructionID::Call) {
                     // TODO: store gep?
@@ -99,7 +108,7 @@ class StoreEliminate final : public TransformPass<Function> {
         return true;
     }
 
-    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet,
+    static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet, const DominateAnalysisResult& dom,
                            const PointerAddressSpaceAnalysisResult& addressSpace, const StackAddressLeakAnalysisResult& leak) {
         auto& insts = block.instructions();
         const auto size = insts.size();
@@ -108,7 +117,7 @@ class StoreEliminate final : public TransformPass<Function> {
                 return false;
             const auto addr = inst->getOperand(0);
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, addressSpace, inst, visited, leak);
+            return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak);
         });
         return insts.size() != size;
     }
@@ -163,10 +172,11 @@ public:
         auto& aliasSet = analysis.get<AliasAnalysis>(func);
         auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
         auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
 
         bool modified = removeStoreOnlyAlloca(func);
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet, addressSpace, leak);
+            modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak);
         }
         return modified;
     }

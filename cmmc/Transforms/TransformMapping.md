@@ -71,3 +71,4 @@
 + ./tests/SysY2022/functional/67_reverse_output.sy tail call
 + ./tests/SysY2022/functional/82_long_func.sy subgraph
 + ./tests/SysY2022/functional/92_register_alloc.sy add_sub tree
++ https://gcc.gnu.org/onlinedocs/gccint/

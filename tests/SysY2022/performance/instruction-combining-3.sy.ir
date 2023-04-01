@@ -9,32 +9,28 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @starttime(i32 10015);
     ubr ^while.header;
 ^while.header:
-    i32 %1 = phi [^b1, i32 %15] [^entry, i32 0];
-    i32 %2 = phi [^b1, i32 %16] [^entry, i32 0];
-    i32 %3 = phi [^b1, i32 %9] [^entry, i32 %0];
-    i1 %4 = scmp lt i32 %2, i32 %3;
-    cbr i1 %4(prob = 0.97), ^while.header1, ^b;
+    i32 %1 = phi [^b1, i32 %11] [^entry, i32 0];
+    i32 %2 = phi [^b1, i32 %12] [^entry, i32 0];
+    i1 %3 = scmp lt i32 %2, i32 %0;
+    cbr i1 %3(prob = 0.97), ^while.header1, ^b;
 ^while.header1:
-    i32 %5 = phi [^while.header, i32 %1] [^while.body, i32 %5];
-    i32 %6 = phi [^while.header, i32 %2] [^while.body, i32 %6];
-    i32 %7 = phi [^while.header, i32 0] [^while.body, i32 %11];
-    i32 %8 = phi [^while.header, i32 0] [^while.body, i32 %12];
-    i32 %9 = phi [^while.header, i32 %3] [^while.body, i32 %9];
-    i1 %10 = scmp lt i32 %8, i32 60;
-    cbr i1 %10(prob = 0.97), ^while.body, ^b1;
+    i32 %4 = phi [^while.header, i32 0] [^while.body, i32 %7];
+    i32 %5 = phi [^while.header, i32 0] [^while.body, i32 %8];
+    i1 %6 = scmp lt i32 %5, i32 60;
+    cbr i1 %6(prob = 0.97), ^while.body, ^b1;
 ^b:
     call (i32) -> void @stoptime(i32 10030);
     call (i32) -> void @putint(i32 %1);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 ^while.body:
-    i32 %11 = add i32 %7, i32 %6;
-    i32 %12 = add i32 %8, i32 1;
+    i32 %7 = add i32 %4, i32 %2;
+    i32 %8 = add i32 %5, i32 1;
     ubr ^while.header1;
 ^b1:
-    i32 %13 = sdiv i32 %7, i32 60;
-    i32 %14 = add i32 %13, i32 %5;
-    i32 %15 = srem i32 %14, i32 536854529;
-    i32 %16 = add i32 %6, i32 1;
+    i32 %9 = sdiv i32 %4, i32 60;
+    i32 %10 = add i32 %9, i32 %1;
+    i32 %11 = srem i32 %10, i32 536854529;
+    i32 %12 = add i32 %2, i32 1;
     ubr ^while.header;
 }

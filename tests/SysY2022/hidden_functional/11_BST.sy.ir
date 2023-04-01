@@ -170,34 +170,31 @@ func @main() -> i32 { NoRecurse Entry } {
 ^if.then:
     ret i32 0;
 ^while.header:
-    i32 %6 = phi [^while.body, i32 %6] [^b, i32 %0];
-    i32 %7 = phi [^while.body, i32 %7] [^b, i32 0];
-    i32 %8 = phi [^while.body, i32 %12] [^b, i32 1];
-    i1 %9 = scmp lt i32 %8, i32 %6;
-    cbr i1 %9(prob = 0.97), ^while.body, ^b1;
+    i32 %6 = phi [^while.body, i32 %10] [^b, i32 1];
+    i1 %7 = scmp lt i32 %6, i32 %0;
+    cbr i1 %7(prob = 0.97), ^while.body, ^b1;
 ^while.body:
-    i32 %10 = call () -> i32 @getint();
-    i32 %11 = call (i32, i32, i32*) -> i32 @insert(i32 %7, i32 %10, i32* %now);
-    i32 %12 = add i32 %8, i32 1;
+    i32 %8 = call () -> i32 @getint();
+    i32 %9 = call (i32, i32, i32*) -> i32 @insert(i32 0, i32 %8, i32* %now);
+    i32 %10 = add i32 %6, i32 1;
     ubr ^while.header;
 ^b1:
-    call (i32, i32*) -> void @inorder(i32 %7, i32* %now);
+    call (i32, i32*) -> void @inorder(i32 0, i32* %now);
     call (i32) -> void @putch(i32 10);
-    i32 %13 = call () -> i32 @getint();
+    i32 %11 = call () -> i32 @getint();
     ubr ^while.header1;
 ^while.header1:
-    i32 %14 = phi [^while.body1, i32 %14] [^b1, i32 %13];
-    i32 %15 = phi [^while.body1, i32 %19] [^b1, i32 %7];
-    i32 %16 = phi [^while.body1, i32 %20] [^b1, i32 0];
-    i1 %17 = scmp lt i32 %16, i32 %14;
-    cbr i1 %17(prob = 0.97), ^while.body1, ^b2;
+    i32 %12 = phi [^while.body1, i32 %16] [^b1, i32 0];
+    i32 %13 = phi [^while.body1, i32 %17] [^b1, i32 0];
+    i1 %14 = scmp lt i32 %13, i32 %11;
+    cbr i1 %14(prob = 0.97), ^while.body1, ^b2;
 ^while.body1:
-    i32 %18 = call () -> i32 @getint();
-    i32 %19 = call (i32, i32, i32*) -> i32 @delete(i32 %15, i32 %18, i32* %now);
-    i32 %20 = add i32 %16, i32 1;
+    i32 %15 = call () -> i32 @getint();
+    i32 %16 = call (i32, i32, i32*) -> i32 @delete(i32 %12, i32 %15, i32* %now);
+    i32 %17 = add i32 %13, i32 1;
     ubr ^while.header1;
 ^b2:
-    call (i32, i32*) -> void @inorder(i32 %15, i32* %now);
+    call (i32, i32*) -> void @inorder(i32 %12, i32* %now);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }

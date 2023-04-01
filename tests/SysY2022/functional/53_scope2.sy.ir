@@ -3,18 +3,17 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     ubr ^while.header;
 ^while.header:
-    i32 %0 = phi [^if.then, i32 %5] [^while.body, i32 %3] [^entry, i32 112];
-    i32 %1 = phi [^if.then, i32 %1] [^while.body, i32 %1] [^entry, i32 3390];
-    i1 %2 = scmp gt i32 %0, i32 10;
-    cbr i1 %2(prob = 0.97), ^while.body, ^b;
+    i32 %0 = phi [^if.then, i32 %4] [^while.body, i32 %2] [^entry, i32 112];
+    i1 %1 = scmp gt i32 %0, i32 10;
+    cbr i1 %1(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %3 = add i32 %0, i32 -88;
-    i1 %4 = scmp lt i32 %0, i32 1088;
-    cbr i1 %4(prob = 0.5), ^if.then, ^while.header;
+    i32 %2 = add i32 %0, i32 -88;
+    i1 %3 = scmp lt i32 %0, i32 1088;
+    cbr i1 %3(prob = 0.5), ^if.then, ^while.header;
 ^b:
     call (i32) -> void @putint(i32 %0);
-    ret i32 %1;
+    ret i32 3390;
 ^if.then:
-    i32 %5 = add i32 %0, i32 -76;
+    i32 %4 = add i32 %0, i32 -76;
     ubr ^while.header;
 }

@@ -4,13 +4,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     ubr ^for.header;
 ^for.header:
-    i32 %1 = phi [^for.body, i32 %1] [^entry, i32 %0];
-    i32 %2 = phi [^for.body, i32 %4] [^entry, i32 0];
-    i1 %3 = scmp lt i32 %2, i32 %1;
-    cbr i1 %3(prob = 0.97), ^for.body, ^b;
+    i32 %1 = phi [^for.body, i32 %3] [^entry, i32 0];
+    i1 %2 = scmp lt i32 %1, i32 %0;
+    cbr i1 %2(prob = 0.97), ^for.body, ^b;
 ^for.body:
-    i32 %4 = add i32 %2, i32 1;
+    i32 %3 = add i32 %1, i32 1;
     ubr ^for.header;
 ^b:
-    ret i32 %1;
+    ret i32 %0;
 }

@@ -50,19 +50,18 @@ internal func @my_sqrt(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect 
     f32 %9 = fmul f32 10, f32 %8;
     ret f32 %9;
 ^while.header:
-    f32 %10 = phi [^while.body, f32 %10] [^b, f32 %x];
-    f32 %11 = phi [^while.body, f32 %16] [^b, f32 %6];
-    i32 %12 = phi [^while.body, i32 %17] [^b, i32 10];
-    i1 %13 = scmp neq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.97), ^while.body, ^b1;
+    f32 %10 = phi [^while.body, f32 %15] [^b, f32 %6];
+    i32 %11 = phi [^while.body, i32 %16] [^b, i32 10];
+    i1 %12 = scmp neq i32 %11, i32 0;
+    cbr i1 %12(prob = 0.97), ^while.body, ^b1;
 ^while.body:
-    f32 %14 = fdiv f32 %10, f32 %11;
-    f32 %15 = fadd f32 %11, f32 %14;
-    f32 %16 = fdiv f32 %15, f32 2;
-    i32 %17 = add i32 %12, i32 -1;
+    f32 %13 = fdiv f32 %x, f32 %10;
+    f32 %14 = fadd f32 %10, f32 %13;
+    f32 %15 = fdiv f32 %14, f32 2;
+    i32 %16 = add i32 %11, i32 -1;
     ubr ^while.header;
 ^b1:
-    ret f32 %11;
+    ret f32 %10;
 }
 internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry:
