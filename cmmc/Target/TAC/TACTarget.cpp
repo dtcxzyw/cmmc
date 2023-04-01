@@ -73,8 +73,6 @@ bool TACTarget::isNativeSupported(InstructionID inst) const noexcept {
             [[fallthrough]];
         case InstructionID::Or:
             [[fallthrough]];
-        case InstructionID::Not:
-            [[fallthrough]];
         case InstructionID::Xor:
             [[fallthrough]];
         case InstructionID::Shl:

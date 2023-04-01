@@ -123,7 +123,9 @@ class MemoryContext final {
         for(size_t idx = 0; idx != size; ++idx)
             storage[base + idx].first &= ~tag;
     }
-
+    void triggerMemoryError() {
+        mHasMemoryError = true;
+    }
     std::byte load(std::vector<ByteStorage>& storage, uintptr_t ptr) {
         ++mLoadMemFootprint;
 
@@ -132,7 +134,7 @@ class MemoryContext final {
             if(hasTag(val.first, ByteState::Read))
                 return val.second;
         }
-        mHasMemoryError = true;
+        triggerMemoryError();
         return invalidByte;
     }
     void store(std::vector<ByteStorage>& storage, uintptr_t ptr, std::byte val) {
@@ -145,7 +147,7 @@ class MemoryContext final {
                 return;
             }
         }
-        mHasMemoryError = true;
+        triggerMemoryError();
     }
 
 public:
@@ -232,7 +234,7 @@ public:
     OperandStorage loadValue(uintptr_t ptr, const Type* type) {
         const auto alignment = type->getAlignment(mDataLayout);
         if(ptr % alignment != 0) {
-            mHasMemoryError = true;
+            triggerMemoryError();
             return std::monostate{};
         }
 
@@ -272,7 +274,7 @@ public:
     T loadValue(uintptr_t ptr) {
         const auto alignment = alignof(T);
         if(ptr % alignment != 0) {
-            mHasMemoryError = true;
+            triggerMemoryError();
             return T{};
         }
 
@@ -308,7 +310,7 @@ public:
     void storeValue(uintptr_t ptr, ConstantValue* value, const Type* type) {
         const auto alignment = type->getAlignment(mDataLayout);
         if(ptr % alignment != 0) {
-            mHasMemoryError = true;
+            triggerMemoryError();
             return;
         }
 
@@ -392,7 +394,7 @@ public:
     void storeValue(uintptr_t ptr, T value) {
         const auto alignment = alignof(T);
         if(ptr % alignment != 0) {
-            mHasMemoryError = true;
+            triggerMemoryError();
             return;
         }
 
@@ -1056,9 +1058,11 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
         }
 
+        /*
         if(step.get()) {
             std::cin.get();
         }
+        */
     }
 }
 

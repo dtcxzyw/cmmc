@@ -252,6 +252,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "ExtGEPCombine",             //
             "NoSideEffectEliminate",     // clean up
             // Loop
+            //"LoopRotate",         //
             "LoopCanonicalize",   //
             "LoopBranchProbFix",  //
             "LoopEliminate",      //
@@ -286,9 +287,10 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collect({
+                "CompareCombine",         //
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
-                "LoopUnroll",             //
+                //"LoopUnroll",             //
                 "BlockMerge",             // clean up
                 "BlockEliminate",         // clean up
                 "LoopGEPCombine",         //
@@ -332,7 +334,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up
                 "NoSideEffectEliminate",  // clean up
-                "SmallBlockInlining",     //
+                //"SmallBlockInlining",     //
             }))
             root->addPass(pass);
         root->addPass(iter);  // middle-1 optimization
@@ -340,9 +342,9 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collect({
-                "DynamicLoopUnroll",  //
-                "BlockMerge",         // clean up
-                "BlockEliminate",     // clean up
+                //"DynamicLoopUnroll",  //
+                "BlockMerge",      // clean up
+                "BlockEliminate",  // clean up
             }))
             root->addPass(pass);
         root->addPass(iter);  // middle-2 optimization

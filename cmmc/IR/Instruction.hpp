@@ -56,7 +56,6 @@ enum class InstructionID {
     // bitwise ops
     And,
     Or,
-    Not,
     Xor,
     Shl,
     LShr,

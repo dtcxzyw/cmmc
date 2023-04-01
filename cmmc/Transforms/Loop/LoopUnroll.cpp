@@ -45,7 +45,7 @@ public:
             // innermost loop
             if(loop.header != loop.latch)
                 continue;
-            if(loop.header->instructions().size() > maxUnrollBodySize)
+            if(loop.header->instructions().size() > maxUnrollBodySize)  // TODO: only count non-phi instructions?
                 continue;
             if(!loop.bound->is<ConstantInteger>())
                 continue;

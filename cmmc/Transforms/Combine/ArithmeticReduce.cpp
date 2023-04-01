@@ -324,6 +324,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     builder.getFalse();
             }
 
+            // FIXME: conflict with loop analysis
+            /*
             // (x op c1) cmp c2
             if(scmp(cmp, add(any(v1), int_(i1)), int_(i2))(matchCtx)) {
                 const auto res = builder.makeOp<CompareInst>(inst->getInstID(), cmp, v1, makeIntLike(i2 - i1, v1));
@@ -335,6 +337,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(scmp(cmp, sub(int_(i1), any(v1)), int_(i2))(matchCtx)) {
                 return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(i1 - i2, v1), v1);
             }
+            */
 
             // -x cmp c -> -c cmp x
             if(scmp(cmp, neg(any(v1)), int_(i1))(matchCtx)) {
