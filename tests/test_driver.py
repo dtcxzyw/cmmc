@@ -422,6 +422,8 @@ def filter_cmmc_opt(src):
             level = '1'
         elif 'median2' in src:
             level = '2'
+        elif 'shuffle' in src:
+            level = '1'
     if 'functional' in src and ('prim' in src or 'long_line' in src):
         level = '1'
     return level
