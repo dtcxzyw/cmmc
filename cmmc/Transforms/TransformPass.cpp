@@ -31,6 +31,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <string_view>
@@ -140,7 +141,7 @@ std::string_view PassManager<Scope>::name() const noexcept {
 }
 
 template <typename Scope>
-bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
+std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis, size_t lastStop) const {
     auto dumpItem = [&] {
         if constexpr(std::is_same_v<Function, Scope>)
             item.dump(std::cerr, Noop{});
@@ -155,11 +156,16 @@ bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
     }
 
     bool modified = false;
+    size_t idx = 0, newLastStop = 0;
     for(auto& pass : mPasses) {
+        if(!modified && idx >= lastStop)
+            return std::nullopt;
+
         if(pass->isWrapper()) {
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
                 modified = true;
+                newLastStop = idx + 1;
             }
         } else {
             Stage stage{ pass->name() };
@@ -169,6 +175,7 @@ bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
                 modified = true;
+                newLastStop = idx + 1;
 
                 if(debugTransform.get()) {
                     std::cerr << "\tmodified" << std::endl;
@@ -181,8 +188,15 @@ bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
                 }
             }
         }
+
+        ++idx;
     }
-    return modified;
+    return modified ? std::optional<size_t>{ newLastStop } : std::nullopt;
+}
+
+template <typename Scope>
+bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
+    return run(item, analysis, std::numeric_limits<size_t>::max()).has_value();
 }
 
 template <typename Scope>
@@ -190,35 +204,61 @@ void PassManager<Scope>::addPass(std::shared_ptr<TransformPass<Scope>> pass) {
     mPasses.push_back(std::move(pass));
 }
 
-IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager<Function>> subPasses, uint32_t maxIterations,
-                                           bool treatWarningAsError)
-    : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations }, mTreatWarningAsError{ treatWarningAsError } {}
+class IterationPassWrapper final : public TransformPass<Function> {
+    std::shared_ptr<PassManager<Function>> mSubPasses;
+    uint32_t mMaxIterations;
+    bool mTreatWarningAsError;
 
-bool IterationPassWrapper::run(Function& item, AnalysisPassManager& analysis) const {
-    bool modified = false;
-    bool stopEarly = false;
-    using namespace std::literals;
-    constexpr auto timeout = 1s;
-    const auto deadline = Clock::now() + timeout;
-    for(uint32_t i = 0; i < mMaxIterations; ++i) {
-        if(!mSubPasses->run(item, analysis)) {
-            stopEarly = true;
-            break;
+public:
+    IterationPassWrapper(std::shared_ptr<PassManager<Function>> subPasses, uint32_t maxIterations, bool treatWarningAsError)
+        : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations }, mTreatWarningAsError{ treatWarningAsError } {}
+    bool run(Function& item, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+        bool stopEarly = false;
+        using namespace std::literals;
+        constexpr auto timeout = 1s;
+        const auto deadline = Clock::now() + timeout;
+        size_t lastStop = std::numeric_limits<size_t>::max();
+        for(uint32_t i = 0; i < mMaxIterations; ++i) {
+            auto newLastStop = mSubPasses->run(item, analysis, lastStop);
+            if(!newLastStop) {
+                stopEarly = true;
+                break;
+            }
+
+            lastStop = newLastStop.value();
+            analysis.invalidateFunc(item);
+            modified = true;
+            const auto now = Clock::now();
+            if(now > deadline)
+                return modified;
         }
-        analysis.invalidateModule();
-        modified = true;
-        const auto now = Clock::now();
-        if(now > deadline)
-            return modified;
+        if(!stopEarly && mTreatWarningAsError)
+            DiagnosticsContext::get().attach<Reason>("partial optimization").reportFatal();
+        return modified;
     }
-    if(!stopEarly && mTreatWarningAsError)
-        DiagnosticsContext::get().attach<Reason>("partial optimization").reportFatal();
-    return modified;
-}
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "IterationPassWrapper"sv;
+    }
+    [[nodiscard]] bool isWrapper() const noexcept override {
+        return true;
+    }
+    String dump(std::ostream& out, String prev, LabelAllocator& allocator) const override {
+        const auto clusterName = allocator.allocate(String::get("cluster_")).withDefaultID(0);
 
-std::string_view IterationPassWrapper::name() const noexcept {
-    return "IterationPassWrapper"sv;
-}
+        out << "subgraph " << clusterName << " {\n";
+        const auto start = allocator.allocate(String::get("start"));
+        const auto end = allocator.allocate(String::get("end"));
+        out << start << "[color=blue];\n";
+        out << end << "[color=blue];\n";
+        const auto last = mSubPasses->dump(out, start, allocator);
+        out << last << " -> " << end << ";\n";
+        out << end << " -> " << start << "[color=red];\n";
+        out << "}\n";
+        out << prev << " -> " << start << ";\n";
+        return end;
+    }
+};
 
 class FunctionPassWrapper final : public TransformPass<Module> {
     std::shared_ptr<TransformPass<Function>> mPass;
@@ -519,22 +559,6 @@ String PassManager<Scope>::dump(std::ostream& out, String prev, LabelAllocator& 
     for(auto& pass : mPasses)
         prev = pass->dump(out, prev, allocator);
     return prev;
-}
-
-String IterationPassWrapper::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
-    const auto clusterName = allocator.allocate(String::get("cluster_")).withDefaultID(0);
-
-    out << "subgraph " << clusterName << " {\n";
-    const auto start = allocator.allocate(String::get("start"));
-    const auto end = allocator.allocate(String::get("end"));
-    out << start << "[color=blue];\n";
-    out << end << "[color=blue];\n";
-    const auto last = mSubPasses->dump(out, start, allocator);
-    out << last << " -> " << end << ";\n";
-    out << end << " -> " << start << "[color=red];\n";
-    out << "}\n";
-    out << prev << " -> " << start << ";\n";
-    return end;
 }
 
 template <>
