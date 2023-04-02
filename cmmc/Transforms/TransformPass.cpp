@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Value.hpp"
 #include <chrono>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
@@ -33,6 +34,7 @@
 #include <ostream>
 #include <string>
 #include <string_view>
+#include <type_traits>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -132,11 +134,24 @@ static void verifyModuleExec(Module& module) {
     }
 }
 
-bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
+template <typename Scope>
+std::string_view PassManager<Scope>::name() const noexcept {
+    return "PassManager"sv;
+}
+
+template <typename Scope>
+bool PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis) const {
+    auto dumpItem = [&] {
+        if constexpr(std::is_same_v<Function, Scope>)
+            item.dump(std::cerr, Noop{});
+        else
+            item.dump(std::cerr);
+    };
+
     if(debugTransform.get()) {
         std::cerr << "Original" << std::endl;
-        item.dump(std::cerr);
-        verifyModuleExec(item);
+        dumpItem();
+        verifyModuleExec(analysis.module());
     }
 
     bool modified = false;
@@ -157,12 +172,12 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
 
                 if(debugTransform.get()) {
                     std::cerr << "\tmodified" << std::endl;
-                    item.dump(std::cerr);
+                    dumpItem();
                 }
                 if(!item.verify(std::cerr))
-                    DiagnosticsContext::get().attach<ModuleAttachment>("module", &item).reportFatal();
+                    DiagnosticsContext::get().attach<Attachment<Scope>>("item", &item).reportFatal();
                 if(debugTransform.get()) {
-                    verifyModuleExec(item);
+                    verifyModuleExec(analysis.module());
                 }
             }
         }
@@ -170,15 +185,16 @@ bool PassManager::run(Module& item, AnalysisPassManager& analysis) const {
     return modified;
 }
 
-void PassManager::addPass(std::shared_ptr<TransformPass<Module>> pass) {
+template <typename Scope>
+void PassManager<Scope>::addPass(std::shared_ptr<TransformPass<Scope>> pass) {
     mPasses.push_back(std::move(pass));
 }
 
-IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager> subPasses, uint32_t maxIterations,
+IterationPassWrapper::IterationPassWrapper(std::shared_ptr<PassManager<Function>> subPasses, uint32_t maxIterations,
                                            bool treatWarningAsError)
     : mSubPasses{ std::move(subPasses) }, mMaxIterations{ maxIterations }, mTreatWarningAsError{ treatWarningAsError } {}
 
-bool IterationPassWrapper::run(Module& item, AnalysisPassManager& analysis) const {
+bool IterationPassWrapper::run(Function& item, AnalysisPassManager& analysis) const {
     bool modified = false;
     bool stopEarly = false;
     using namespace std::literals;
@@ -204,16 +220,76 @@ std::string_view IterationPassWrapper::name() const noexcept {
     return "IterationPassWrapper"sv;
 }
 
-std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
-    auto root = std::make_shared<PassManager>();
+class FunctionPassWrapper final : public TransformPass<Module> {
+    std::shared_ptr<TransformPass<Function>> mPass;
+
+public:
+    explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
+    bool run(Module& module, AnalysisPassManager& analysis) const override {
+        bool modified = false;
+
+        const auto funcOrder = analysis.get<CallGraphSCCAnalysis>().getOrder();
+        for(auto func : funcOrder) {
+            if(func->blocks().empty())
+                continue;
+            Stage stage{ mPass->name() };
+            if(debugTransform.get()) {
+                std::cerr << mPass->name() << ' ' << func->getSymbol() << std::endl;
+            }
+            if(mPass->run(*func, analysis)) {
+                if(debugTransform.get()) {
+                    std::cerr << "\tmodified" << std::endl;
+                    func->dump(std::cerr, Noop{});
+                }
+                analysis.invalidateFunc(*func);
+                modified = true;
+                assert(func->verify(std::cerr));
+                if(debugTransform.get()) {
+                    verifyModuleExec(module);
+                }
+            }
+        }
+        if(debugTransform.get()) {
+            for(auto global : module.globals()) {
+                if(global->isFunction()) {
+                    auto& func = *global->as<Function>();
+                    if(func.blocks().empty())
+                        continue;
+                    if(!func.verify(std::cerr))
+                        DiagnosticsContext::get().attach<FuncAttachment>("function", &func).reportFatal();
+                }
+            }
+        }
+
+        return modified;
+    }
+    [[nodiscard]] bool isWrapper() const noexcept override {
+        return true;
+    }
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return mPass->name();
+    }
+};
+
+template <>
+std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel level) {
+    auto root = std::make_shared<PassManager<Module>>();
 
     if(level == OptimizationLevel::O0)
         return root;
 
     auto& passesSource = PassRegistry::get();
+    auto perFunc = std::make_shared<PassManager<Function>>();
+
+    auto globalOpt = std::make_shared<PassManager<Module>>();
+    for(auto& pass : passesSource.collectModulePass({
+            "GlobalVarAttrInfer",  //
+            "GlobalEliminate"      //
+        }))
+        globalOpt->addPass(pass);
 
     // preprocess to improve transform performance
-    for(auto& pass : passesSource.collect({
+    for(auto& pass : passesSource.collectFunctionPass({
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             "ConstantMerge",          //
@@ -227,15 +303,13 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             "BlockMerge",             //
             "BlockEliminate",         // clean up
             "NoSideEffectEliminate",  // clean up
-            "GlobalEliminate"         //
         }))
-        root->addPass(pass);
+        perFunc->addPass(pass);
 
-    auto basic = std::make_shared<PassManager>();
-    for(auto& pass : passesSource.collect({
+    auto basic = std::make_shared<PassManager<Function>>();
+    for(auto& pass : passesSource.collectFunctionPass({
             // Preprocess
             "FunctionAttrInfer",      //
-            "GlobalVarAttrInfer",     //
             "BlockSort",              //
             "NoSideEffectEliminate",  // clean up
             // Constant
@@ -280,13 +354,12 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             // Postprocess
             "NoReturnCallEliminate",  //
             "NoSideEffectEliminate",  // clean up
-            "GlobalEliminate",        //
             "UndefPropagation"        //
         }))
         basic->addPass(pass);
 
     if(level >= OptimizationLevel::O2) {
-        for(const auto& pass : passesSource.collect({
+        for(const auto& pass : passesSource.collectFunctionPass({
                 "CompareCombine",         //
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
@@ -301,7 +374,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     if(level >= OptimizationLevel::O3) {
         // Assuming that all functions are terminated with return instructions normally.
-        for(const auto& pass : passesSource.collect({
+        for(const auto& pass : passesSource.collectFunctionPass({
                 "InfiniteEliminate",                 //
                 "UnreachableEliminate",              //
                 "SimplifyPartialUnreachableBranch",  //
@@ -312,51 +385,36 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
 
     auto iter = std::make_shared<IterationPassWrapper>(std::move(basic), 1024, true);
 
-    root->addPass(iter);  // pre optimization
+    perFunc->addPass(iter);
 
     if(level >= OptimizationLevel::O2) {
-        for(const auto& pass : passesSource.collect({ "GlobalScalar2Local" }))
-            root->addPass(pass);
-    }
-
-    if(level >= OptimizationLevel::O3) {
-        for(const auto& pass : passesSource.collect({
-                "FuncInlining",  //
-                // "CombineFma", // TODO: fast math?
-            }))
-            root->addPass(pass);
-    }
-
-    root->addPass(iter);  // optimization after inlining
-
-    if(level >= OptimizationLevel::O2) {
-        for(const auto& pass : passesSource.collect({
+        for(const auto& pass : passesSource.collectFunctionPass({
                 "ScalarMem2Reg",          //
                 "StoreEliminate",         // clean up
                 "NoSideEffectEliminate",  // clean up
                 //"SmallBlockInlining",     //
             }))
-            root->addPass(pass);
-        root->addPass(iter);  // middle-1 optimization
+            perFunc->addPass(pass);
+        perFunc->addPass(iter);  // middle-1 optimization
     }
 
     if(level >= OptimizationLevel::O3) {
-        for(const auto& pass : passesSource.collect({
+        for(const auto& pass : passesSource.collectFunctionPass({
                 //"DynamicLoopUnroll",  //
                 "BlockMerge",      // clean up
                 "BlockEliminate",  // clean up
             }))
-            root->addPass(pass);
-        root->addPass(iter);  // middle-2 optimization
+            perFunc->addPass(pass);
+        perFunc->addPass(iter);  // middle-2 optimization
     }
 
     if(level >= OptimizationLevel::O3) {
-        for(const auto& pass : passesSource.collect({
+        for(const auto& pass : passesSource.collectFunctionPass({
                 "Reassociate",            //
                 "ConstantPropagation",    //
                 "NoSideEffectEliminate",  // clean up
             }))
-            root->addPass(pass);
+            perFunc->addPass(pass);
 
         /*
         // TODO: it is a time costuming phase.
@@ -374,92 +432,78 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
             specialization->addPass(pass);
         root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
         */
+        perFunc->addPass(iter);  // middle-3 optimization
     }
 
-    root->addPass(iter);  // post optimization
+    auto perFuncWithInline = std::make_shared<PassManager<Function>>();
+    perFuncWithInline->addPass(perFunc);
+
+    if(level >= OptimizationLevel::O3) {
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "FuncInlining",  //
+            }))
+            perFuncWithInline->addPass(pass);
+        perFuncWithInline->addPass(perFunc);  // after inlining
+    }
+
+    root->addPass(globalOpt);
+    root->addPass(std::make_shared<FunctionPassWrapper>(perFuncWithInline));
+
+    if(level >= OptimizationLevel::O2) {
+        for(const auto& pass : passesSource.collectModulePass({
+                "GlobalScalar2Local",
+            }))
+            root->addPass(pass);
+        root->addPass(globalOpt);
+        root->addPass(std::make_shared<FunctionPassWrapper>(perFunc));
+    }
 
     // final cleanup
-    for(const auto& pass : passesSource.collect({
-            "UnusedTypeEliminate",
+    for(const auto& pass : passesSource.collectModulePass({
+            "UnusedTypeEliminate",  //
+            "GlobalEliminate"       //
             //"UninitializedCheck"
         }))
         root->addPass(pass);
 
-    // TODO: inst/arg sort for testing
+    // TODO: inst sort for testing
     if(debugTransform.get()) {
-        for(auto& pass : passesSource.collect({ "DumpCFG" }))
-            root->addPass(pass);
+        for(auto& pass : passesSource.collectFunctionPass({ "DumpCFG" }))
+            root->addPass(std::make_shared<FunctionPassWrapper>(pass));
     }
     return root;
 }
 
-class FunctionPassWrapper final : public TransformPass<Module> {
-    std::shared_ptr<TransformPass<Function>> mPass;
-
-public:
-    explicit FunctionPassWrapper(std::shared_ptr<TransformPass<Function>> pass) : mPass{ std::move(pass) } {}
-    bool run(Module& module, AnalysisPassManager& analysis) const override {
-        bool modified = false;
-
-        const auto& funcOrder = analysis.get<CallGraphSCCAnalysis>().getOrder();
-        for(auto func : funcOrder) {
-            if(func->blocks().empty())
-                continue;
-            Stage stage{ mPass->name() };
-            if(debugTransform.get()) {
-                std::cerr << mPass->name() << ' ' << func->getSymbol() << std::endl;
-            }
-            if(mPass->run(*func, analysis)) {
-                if(debugTransform.get()) {
-                    std::cerr << "\tmodified" << std::endl;
-                    func->dump(std::cerr, Noop{});
-                }
-                analysis.invalidateFunc(*func);
-                modified = true;
-                assert(func->verify(std::cerr));
-                if(debugTransform.get()) {
-                    verifyModuleExec(module);
-                }
-            }
-        }
-        if(debugTransform.get()) {
-            for(auto global : module.globals()) {
-                if(global->isFunction()) {
-                    auto& func = *global->as<Function>();
-                    if(func.blocks().empty())
-                        continue;
-                    if(!func.verify(std::cerr))
-                        DiagnosticsContext::get().attach<FuncAttachment>("function", &func).reportFatal();
-                }
-            }
-        }
-
-        return modified;
-    }
-    [[nodiscard]] bool isWrapper() const noexcept override {
-        return true;
-    }
-    [[nodiscard]] std::string_view name() const noexcept override {
-        return mPass->name();
-    }
-};
-
 void PassRegistry::registerPass(std::shared_ptr<TransformPass<Module>> pass) {
     auto name = pass->name();
-    mPasses.emplace(name, std::move(pass));
+    mModulePasses.emplace(name, std::move(pass));
 }
 void PassRegistry::registerPass(std::shared_ptr<TransformPass<Function>> pass) {
     auto name = pass->name();
-    mPasses.emplace(name, std::make_shared<FunctionPassWrapper>(std::move(pass)));
+    mFunctionPasses.emplace(name, std::move(pass));
 }
-std::vector<std::shared_ptr<TransformPass<Module>>> PassRegistry::collect(std::initializer_list<std::string_view> list) const {
+std::vector<std::shared_ptr<TransformPass<Module>>>
+PassRegistry::collectModulePass(std::initializer_list<std::string_view> list) const {
     std::vector<std::shared_ptr<TransformPass<Module>>> ret;
     ret.reserve(list.size());
     for(auto name : list) {
-        if(auto iter = mPasses.find(name); iter != mPasses.cend()) {
+        if(auto iter = mModulePasses.find(name); iter != mModulePasses.cend()) {
             ret.push_back(iter->second);
         } else {
-            DiagnosticsContext::get().attach<Reason>("invalid pass name").attach<Reason>(name).reportFatal();
+            DiagnosticsContext::get().attach<Reason>("invalid module pass name").attach<Reason>(name).reportFatal();
+        }
+    }
+    return ret;
+}
+std::vector<std::shared_ptr<TransformPass<Function>>>
+PassRegistry::collectFunctionPass(std::initializer_list<std::string_view> list) const {
+    std::vector<std::shared_ptr<TransformPass<Function>>> ret;
+    ret.reserve(list.size());
+    for(auto name : list) {
+        if(auto iter = mFunctionPasses.find(name); iter != mFunctionPasses.cend()) {
+            ret.push_back(iter->second);
+        } else {
+            DiagnosticsContext::get().attach<Reason>("invalid module pass name").attach<Reason>(name).reportFatal();
         }
     }
     return ret;
@@ -470,7 +514,8 @@ PassRegistry& PassRegistry::get() {
     return instance;
 }
 
-String PassManager::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
+template <typename Scope>
+String PassManager<Scope>::dump(std::ostream& out, String prev, LabelAllocator& allocator) const {
     for(auto& pass : mPasses)
         prev = pass->dump(out, prev, allocator);
     return prev;
@@ -492,7 +537,8 @@ String IterationPassWrapper::dump(std::ostream& out, String prev, LabelAllocator
     return end;
 }
 
-void PassManager::printOptPipeline(OptimizationLevel level) {
+template <>
+void PassManager<Module>::printOptPipeline(OptimizationLevel level) {
     auto pipeline = get(level);
 
     LabelAllocator allocator;

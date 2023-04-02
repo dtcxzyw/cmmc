@@ -14,6 +14,7 @@
 
 // Merge same blocks
 
+#include "cmmc/Analysis/CFGAnalysis.hpp"
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -104,6 +105,7 @@ class BlockOutliner final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& moduleTarget = analysis.module().getTarget();
+        const auto& cfg = analysis.get<CFGAnalysis>(func);
 
         std::unordered_map<Block*, Block*> replace;
         // block-level merge
@@ -126,19 +128,27 @@ public:
                 blockGroup.push_back(block);
         }
         bool modified = false;
-        // handle entry block
 
+        // handle entry block
+        ReplaceMap replaceMap;
         for(auto& block : blocks[entry->instructions().size()]) {
             if(isEqual(block, entry)) {
                 entry->instructions().clear();
                 IRBuilder builder{ moduleTarget, entry };
                 builder.makeOp<BranchInst>(block);
                 modified = true;
-                break;
+
+                for(auto succ : cfg.successors(entry))
+                    removePhi(entry, succ);
+                const auto src = entry;
+                const auto dst = block;
+                for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
+                    lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
+                    replaceMap.emplace(*lhsIter, *rhsIter);
+                }
             }
         }
 
-        ReplaceMap replaceMap;
         for(auto [src, dst] : replace) {
             const auto terminator = src->getTerminator();
             if(terminator->isBranch()) {

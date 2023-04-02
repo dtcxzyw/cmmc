@@ -94,7 +94,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
 
     {
         Stage stage{ "optimize IR" };
-        const auto opt = PassManager::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
+        const auto opt = PassManager<Module>::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
         opt->run(module, analysis);
     }
     if(!module.verify(std::cerr)) {
@@ -208,7 +208,7 @@ int mainImpl(int argc, char** argv) {
     }
 
     if(dumpOptPipeline.get()) {
-        PassManager::printOptPipeline(static_cast<OptimizationLevel>(optimizationLevel.get()));
+        PassManager<Module>::printOptPipeline(static_cast<OptimizationLevel>(optimizationLevel.get()));
         return EXIT_SUCCESS;
     }
 

@@ -24,14 +24,13 @@
 #include <unordered_map>
 #include <unordered_set>
 
-// module-level constant merge
+// TODO: merge with global vars?
 
 CMMC_NAMESPACE_BEGIN
 
-class ConstantMerge final : public TransformPass<Module> {
+class ConstantMerge final : public TransformPass<Function> {
 public:
-    bool run(Module& module, AnalysisPassManager&) const override {
-        bool modified = false;
+    bool run(Function& func, AnalysisPassManager&) const override {
         std::unordered_set<ConstantValue*> visited;
         std::unordered_set<ConstantValue*, ConstantHasher, ConstantStrongEqual> pool;
         ReplaceMap replace;
@@ -41,34 +40,16 @@ public:
             if(auto [iter, res] = pool.insert(value); !res)
                 replace.emplace(value, *iter);
         };
-        for(auto global : module.globals()) {
-            if(auto func = dynamic_cast<Function*>(global)) {
-                for(auto block : func->blocks()) {
-                    for(auto inst : block->instructions()) {
-                        for(auto operand : inst->operands())
-                            if(auto val = dynamic_cast<ConstantValue*>(operand))
-                                addValue(val);
-                    }
-                }
-            } else if(auto var = dynamic_cast<GlobalVariable*>(global)) {
-                if(auto val = var->initialValue()) {
-                    addValue(val);
-                }
+
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                for(auto operand : inst->operands())
+                    if(auto val = dynamic_cast<ConstantValue*>(operand))
+                        addValue(val);
             }
         }
 
-        for(auto global : module.globals()) {
-            if(auto func = dynamic_cast<Function*>(global)) {
-                modified |= replaceOperands(*func, replace);
-            } else if(auto var = dynamic_cast<GlobalVariable*>(global)) {
-                if(auto iter = replace.find(var->initialValue()); iter != replace.cend()) {
-                    var->setInitialValue(iter->second->as<ConstantValue>());
-                    modified = true;
-                }
-            }
-        }
-
-        return modified;
+        return replaceOperands(func, replace);
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {
