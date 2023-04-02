@@ -189,7 +189,9 @@ void copyTarget(Block* target, Block* oldSource, Block* newSource) {
 void removePhi(Block* source, Block* target) {
     for(auto inst : target->instructions()) {
         if(inst->getInstID() == InstructionID::Phi) {
-            inst->as<PhiInst>()->removeSource(source);
+            const auto phi = inst->as<PhiInst>();
+            if(phi->incomings().count(source))
+                phi->removeSource(source);
         } else
             break;
     }

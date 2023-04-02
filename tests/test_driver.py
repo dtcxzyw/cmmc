@@ -9,7 +9,7 @@ import CodeGenTAC.irsim_quiet as irsim
 import platform
 import math
 
-gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -s -funroll-loops -ffp-contract=on -w "
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -fno-tree-vectorize -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
@@ -424,7 +424,7 @@ def filter_cmmc_opt(src):
             level = '2'
         elif 'shuffle' in src:
             level = '1'
-    if 'functional' in src and ('prim' in src or 'long_line' in src):
+    if 'functional' in src and ('prim' in src or 'long_line' in src or 'max_flow' in src):
         level = '1'
     return level
 

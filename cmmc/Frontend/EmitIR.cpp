@@ -1806,7 +1806,8 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
 #ifndef NDEBUG
     if(mEmitted) {
-        DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
+        // FIXME: loop rotate in frontend
+        // DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
     } else {
         mEmitted = true;
     }

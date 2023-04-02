@@ -182,6 +182,8 @@ bool Function::verify(std::ostream& out) const {
     // verify phi node
     const auto& cfg = analysis.get<CFGAnalysis>(const_cast<Function&>(*this));       // NOLINT
     const auto& dom = analysis.get<DominateAnalysis>(const_cast<Function&>(*this));  // NOLINT
+    std::unordered_set<Block*> reachableBlocks{ dom.blocks().cbegin(), dom.blocks().cend() };
+
     for(auto block : dom.blocks()) {
         bool stopPhi = false;
         for(auto inst : block->instructions()) {
@@ -199,7 +201,8 @@ bool Function::verify(std::ostream& out) const {
                                         std::find(predecessors.cbegin(), predecessors.cend(), incoming.first) !=
                                         predecessors.cend();
                                 }) ||
-                   !std::all_of(predecessors.cbegin(), predecessors.cend(), [&](Block* pred) { return incomings.count(pred); })) {
+                   !std::all_of(predecessors.cbegin(), predecessors.cend(),
+                                [&](Block* pred) { return !reachableBlocks.count(pred) || incomings.count(pred); })) {
                     out << "Invalid phi node: ";
                     phi->dump(out, Noop{});
                     out << "\nPredecessors:";
@@ -213,9 +216,8 @@ bool Function::verify(std::ostream& out) const {
                 stopPhi = true;
         }
     }
-    // verify dominate
-    std::unordered_set<Block*> reachableBlocks{ dom.blocks().cbegin(), dom.blocks().cend() };
 
+    // verify dominate
     for(auto block : dom.blocks()) {
         for(auto inst : block->instructions()) {
             const auto checkDominate = [&](Block* blockA, Block* blockB, bool strict) {

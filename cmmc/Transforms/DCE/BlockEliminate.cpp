@@ -22,10 +22,13 @@
 // ^entry(i32 %a, int %b):
 //     ret i32 0;
 
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <queue>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -68,7 +71,11 @@ public:
             }
             return false;
         });
+        ReplaceMap replace;
         for(auto block : removed) {
+            for(auto inst : block->instructions())
+                if(inst->canbeOperand())
+                    replace.emplace(inst, make<UndefinedValue>(inst->getType()));
             const auto terminator = block->getTerminator();
             if(!terminator->isBranch())
                 continue;
@@ -81,6 +88,8 @@ public:
             handleTarget(branch->getTrueTarget());
             handleTarget(branch->getFalseTarget());
         }
+
+        replaceOperands(func, replace);
 
         return true;
     }

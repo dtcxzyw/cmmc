@@ -290,7 +290,7 @@ std::shared_ptr<PassManager> PassManager::get(OptimizationLevel level) {
                 "CompareCombine",         //
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
-                //"LoopUnroll",             //
+                "LoopUnroll",             //
                 "BlockMerge",             // clean up
                 "BlockEliminate",         // clean up
                 "LoopGEPCombine",         //
