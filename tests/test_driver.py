@@ -643,11 +643,16 @@ if "gcc" in test_cases and "llvm" in test_cases:
         "cmmc[llvm-backend]: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
     print("Regressions:")
 
+    testcases = []
     for key in dict_gcc.keys():
         if key in dict_cmmc:
             lhs = dict_gcc[key]
             rhs = dict_cmmc[key]
             if lhs < rhs:
-                print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, rhs/lhs, key))
+                testcases.append((rhs / lhs, lhs, rhs, key))
+
+    testcases.sort(key=lambda x: -x[0])
+    for ratio, lhs, rhs, key in testcases:
+        print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
 
 exit(0 if failed_tests == 0 else -1)
