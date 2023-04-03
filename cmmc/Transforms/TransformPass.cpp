@@ -377,6 +377,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "CombineBranch",        //
             "BlockMerge",           //
             "ShortCircuitCombine",  //
+            "UnifyReturn",          //
             "BlockEliminate",       // clean up
             // Load/Store
             "LoadReduce",             //

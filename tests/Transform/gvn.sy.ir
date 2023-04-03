@@ -8,9 +8,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
 ^if.then:
     i32 %4 = mul i32 %0, i32 %1;
-    ret i32 %4;
+    ubr ^b;
 ^if.else:
     i32 %5 = mul i32 %0, i32 %1;
     i32 %6 = add i32 %5, i32 1;
-    ret i32 %6;
+    ubr ^b;
+^b:
+    i32 %7 = phi [^if.else, i32 %6] [^if.then, i32 %4];
+    ret i32 %7;
 }

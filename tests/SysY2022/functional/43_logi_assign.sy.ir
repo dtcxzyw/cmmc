@@ -7,12 +7,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %2(prob = 0.5), ^b, ^b1;
 ^b:
     i1 %3 = scmp neq i32 %0, i32 3;
-    ubr ^b1;
+    cbr i1 %3(prob = 0.5), ^b1, ^if.else;
 ^b1:
-    i1 %4 = phi [^b, i1 %3] [^entry, i1 false];
-    cbr i1 %4(prob = 0.5), ^b2, ^if.else;
-^b2:
-    ret i32 1;
+    i32 %4 = phi [^b, i32 1] [^entry, i32 0] [^if.else, i32 0];
+    ret i32 %4;
 ^if.else:
-    ret i32 0;
+    ubr ^b1;
 }

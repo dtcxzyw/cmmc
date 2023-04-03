@@ -17,21 +17,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %11 = sdiv i32 %10, i32 %2;
     i32 %12 = add i32 %3, i32 %4;
     i1 %13 = scmp eq i32 %11, i32 %12;
-    ubr ^b1;
+    i32 %14 = add i32 %0, i32 %1;
+    i32 %15 = add i32 %14, i32 %2;
+    i1 %16 = scmp eq i32 %15, i32 %12;
+    i1 %17 = or i1 %16, i1 %13;
+    cbr i1 %17(prob = 0.75), ^b1, ^indirect;
 ^b1:
-    i1 %14 = phi [^b, i1 %13] [^entry, i1 true];
-    cbr i1 %14(prob = 0.5), ^b3, ^b2;
-^b2:
-    i32 %15 = add i32 %0, i32 %1;
-    i32 %16 = add i32 %15, i32 %2;
-    i32 %17 = add i32 %3, i32 %4;
-    i1 %18 = scmp eq i32 %16, i32 %17;
-    ubr ^b3;
-^b3:
-    i1 %19 = phi [^b2, i1 %18] [^b1, i1 true];
-    cbr i1 %19(prob = 0.5), ^b4, ^indirect;
-^b4:
-    ret i32 1;
+    i32 %18 = phi [^entry, i32 1] [^b, i32 1] [^indirect, i32 0];
+    ret i32 %18;
 ^indirect:
-    ret i32 0;
+    ubr ^b1;
 }

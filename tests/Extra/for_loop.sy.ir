@@ -21,10 +21,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^for.body2:
     i32 %6 = phi [^for.header1, i32 0] [^b, i32 %7] [^for.body2, i32 %7];
     i32 %7 = add i32 %6, i32 1;
-    i1 %8 = scmp eq i32 %6, i32 4;
+    i1 %8 = scmp eq i32 %7, i32 5;
     cbr i1 %8(prob = 0.5), ^for.body2, ^b;
 ^b:
-    i1 %9 = scmp gt i32 %6, i32 8;
+    i1 %9 = scmp gt i32 %7, i32 9;
     cbr i1 %9(prob = 0.5), ^b1, ^for.body2;
 ^b1:
     ret i32 %7;

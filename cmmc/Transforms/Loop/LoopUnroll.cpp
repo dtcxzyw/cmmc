@@ -49,6 +49,8 @@ public:
                 continue;
             if(loop.header->instructions().size() > maxUnrollBodySize)  // TODO: only count non-phi instructions?
                 continue;
+            if(hasCall(*loop.header))
+                continue;
             if(!loop.bound->is<ConstantInteger>())
                 continue;
             if(!loop.initial->is<ConstantInteger>())

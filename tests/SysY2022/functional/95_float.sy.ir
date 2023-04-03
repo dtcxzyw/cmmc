@@ -58,13 +58,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %10 = call (f32*) -> i32 @getfarray(f32* %0);
     i32 %11 = load i32* %i;
     i32 %12 = load i32* %p;
-    ubr ^while.header;
-^while.header:
-    i32 %13 = phi [^while.body, i32 %34] [^entry, i32 %11];
-    i32 %14 = phi [^while.body, i32 %35] [^entry, i32 %12];
-    i1 %15 = scmp lt i32 %13, i32 1000000000;
-    cbr i1 %15(prob = 0.97), ^while.body, ^b;
+    i1 %13 = scmp lt i32 %11, i32 1000000000;
+    cbr i1 %13(prob = 0.97), ^while.body, ^b;
 ^while.body:
+    i32 %14 = phi [^entry, i32 %12] [^while.body, i32 %35];
+    i32 %15 = phi [^entry, i32 %11] [^while.body, i32 %34];
     f32 %16 = call () -> f32 @getfloat();
     f32 %17 = fmul f32 3.14159, f32 %16;
     f32 %18 = fmul f32 %17, f32 %16;
@@ -86,13 +84,14 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %31 = f2s f32 %27 to i32;
     call (i32) -> void @putint(i32 %31);
     call (i32) -> void @putch(i32 10);
-    f32 %32 = s2f i32 %13 to f32;
+    f32 %32 = s2f i32 %15 to f32;
     f32 %33 = fmul f32 %32, f32 10;
     i32 %34 = f2s f32 %33 to i32;
     store i32* %i with i32 %34;
     i32 %35 = add i32 %14, i32 1;
     store i32* %p with i32 %35;
-    ubr ^while.header;
+    i1 %36 = scmp lt i32 %34, i32 1000000000;
+    cbr i1 %36(prob = 0.97), ^while.body, ^b;
 ^b:
     call (i32, f32*) -> void @putfarray(i32 %10, f32* %0);
     ret i32 0;

@@ -16,7 +16,7 @@ internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
 ^if.then:
     store i32* %x with i32 1;
     store i32* %y with i32 0;
-    ret i32 %a;
+    ubr ^b2;
 ^if.else:
     i32 %1 = srem i32 %a, i32 %b;
     i32 %2 = call (i32, i32, i32*, i32*) -> i32 @exgcd(i32 %b, i32 %1, i32* %x, i32* %y);
@@ -36,7 +36,10 @@ internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
     i32 %13 = sub i32 %9, i32 %12;
     store i32* %4 with i32 %13;
     i32 %14 = load i32* %r;
-    ret i32 %14;
+    ubr ^b2;
+^b2:
+    i32 %15 = phi [^if.else, i32 %14] [^if.then, i32 %a];
+    ret i32 %15;
 }
 func @main() -> i32 { NoRecurse Entry } {
 ^entry:

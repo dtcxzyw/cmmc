@@ -5,20 +5,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp eq i32 %0, i32 0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
-^if.else:
-    call (i32) -> void @putint(i32 %0);
-    ubr ^b1;
 ^if.then:
     call (i32) -> void @putint(i32 10);
-    i1 %2 = scmp neq i32 %0, i32 0;
-    cbr i1 %2(prob = 0.5), ^if.then1, ^b;
-^if.then1:
-    call (i32) -> void @putint(i32 12);
+    i32 %2 = add i32 %0, i32 -1;
+    call (i32) -> void @putint(i32 %2);
+    ubr ^b;
+^if.else:
+    call (i32) -> void @putint(i32 %0);
     ubr ^b;
 ^b:
-    i32 %3 = add i32 %0, i32 -1;
-    call (i32) -> void @putint(i32 %3);
-    ubr ^b1;
-^b1:
     ret i32 0;
 }

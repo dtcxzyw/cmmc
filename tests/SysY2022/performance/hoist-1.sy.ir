@@ -7,20 +7,20 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     i32 %0 = call () -> i32 @getint();
     call (i32) -> void @starttime(i32 121);
-    ubr ^while.header;
-^while.header:
-    i32 %1 = phi [^while.body, i32 %6] [^entry, i32 0];
-    i32 %2 = phi [^while.body, i32 %5] [^entry, i32 0];
-    i1 %3 = scmp lt i32 %1, i32 %0;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
+    i1 %1 = scmp gt i32 %0, i32 0;
+    cbr i1 %1(prob = 0.97), ^while.body, ^b;
 ^while.body:
+    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %5];
+    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %6];
     i32 %4 = add i32 %2, i32 15;
     i32 %5 = srem i32 %4, i32 1500000001;
-    i32 %6 = add i32 %1, i32 1;
-    ubr ^while.header;
+    i32 %6 = add i32 %3, i32 1;
+    i1 %7 = scmp lt i32 %6, i32 %0;
+    cbr i1 %7(prob = 0.97), ^while.body, ^b;
 ^b:
+    i32 %8 = phi [^entry, i32 0] [^while.body, i32 %5];
     call (i32) -> void @stoptime(i32 123);
-    call (i32) -> void @putint(i32 %2);
+    call (i32) -> void @putint(i32 %8);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }

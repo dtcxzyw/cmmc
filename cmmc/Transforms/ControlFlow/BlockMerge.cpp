@@ -32,6 +32,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -47,8 +48,10 @@ public:
                     continue;
                 const auto branch = inst->as<BranchInst>();
                 ++blockRef[branch->getTrueTarget()];
-                ++blockRef[branch->getFalseTarget()];
+                if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget())
+                    ++blockRef[branch->getFalseTarget()];
             }
+
             std::unordered_set<Block*> deferred;
             for(auto block : func.blocks()) {
                 if(deferred.count(block))
@@ -58,6 +61,7 @@ public:
                     continue;
                 const auto branch = terminator->as<BranchInst>();
                 const auto target = branch->getTrueTarget();
+
                 assert(blockRef[target] >= 1);
                 if(blockRef.at(target) == 1) {
                     auto& instsB = target->instructions();
@@ -75,7 +79,7 @@ public:
                     if(newTerminator->isBranch()) {
                         const auto newBranch = newTerminator->as<BranchInst>();
                         retargetBlock(newBranch->getTrueTarget(), target, block);
-                        if(newBranch->getFalseTarget())
+                        if(newBranch->getFalseTarget() && newBranch->getTrueTarget() != newBranch->getFalseTarget())
                             retargetBlock(newBranch->getFalseTarget(), target, block);
                     }
                     deferred.insert(target);

@@ -52,9 +52,12 @@ class CombineBranch final : public TransformPass<Function> {
 
     static bool foldForward(Block* source, Block*& target, Block* rhs) {
         const auto realTarget = target->getTerminator()->as<BranchInst>()->getTrueTarget();
-        if(target == realTarget || rhs == realTarget)
+        if(target == realTarget)
             return false;
-        copyTarget(realTarget, target, source);  // NOLINT
+        if(rhs == realTarget && !hasSamePhiValue(realTarget, source, target))  // NOLINT
+            return false;
+        if(rhs != realTarget)
+            copyTarget(realTarget, target, source);  // NOLINT
         target = realTarget;
         return true;
     }

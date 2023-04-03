@@ -5,111 +5,59 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     [3 * f32]* %c2 = alloc [3 * f32];
     [3 * f32]* %c1 = alloc [3 * f32];
     [6 * f32]* %c0 = alloc [6 * f32];
-    [3 * f32]* %b2 = alloc [3 * f32];
-    [3 * f32]* %b1 = alloc [3 * f32];
-    [3 * f32]* %b0 = alloc [3 * f32];
-    [3 * f32]* %a2 = alloc [3 * f32];
-    [3 * f32]* %a1 = alloc [3 * f32];
-    [3 * f32]* %a0 = alloc [3 * f32];
-    ubr ^while.header;
-^while.header:
-    i32 %0 = phi [^while.body, i32 %9] [^entry, i32 0];
-    i1 %1 = scmp lt i32 %0, i32 3;
-    cbr i1 %1(prob = 0.97), ^while.body, ^b;
+    f32* %0 = getelementptr &([6 * f32]* %c0)[i64 0][i64 0];
+    f32* %1 = getelementptr &([3 * f32]* %c1)[i64 0][i64 0];
+    f32* %2 = getelementptr &([3 * f32]* %c2)[i64 0][i64 0];
+    f32* %3 = getelementptr &([3 * f32]* %c1)[i64 0][i64 2];
+    store f32* %3 with f32 1;
+    f32* %4 = getelementptr &([3 * f32]* %c2)[i64 0][i64 1];
+    store f32* %4 with f32 2;
+    f32* %5 = getelementptr &([6 * f32]* %c0)[i64 0][i64 1];
+    store f32* %5 with f32 0;
+    f32* %6 = getelementptr &([6 * f32]* %c0)[i64 0][i64 2];
+    store f32* %6 with f32 0;
+    store f32* %1 with f32 1;
+    store f32* %2 with f32 2;
+    f32* %7 = getelementptr &([3 * f32]* %c1)[i64 0][i64 1];
+    store f32* %7 with f32 1;
+    f32* %8 = getelementptr &([3 * f32]* %c2)[i64 0][i64 2];
+    store f32* %8 with f32 2;
+    store f32* %0 with f32 0;
+    ubr ^while.body;
 ^while.body:
-    f32* %2 = getelementptr &([3 * f32]* %a0)[i64 0][i32 %0];
-    f32 %3 = s2f i32 %0 to f32;
-    store f32* %2 with f32 %3;
-    f32* %4 = getelementptr &([3 * f32]* %a1)[i64 0][i32 %0];
-    store f32* %4 with f32 %3;
-    f32* %5 = getelementptr &([3 * f32]* %a2)[i64 0][i32 %0];
-    store f32* %5 with f32 %3;
-    f32* %6 = getelementptr &([3 * f32]* %b0)[i64 0][i32 %0];
-    store f32* %6 with f32 %3;
-    f32* %7 = getelementptr &([3 * f32]* %b1)[i64 0][i32 %0];
-    store f32* %7 with f32 %3;
-    f32* %8 = getelementptr &([3 * f32]* %b2)[i64 0][i32 %0];
-    store f32* %8 with f32 %3;
-    i32 %9 = add i32 %0, i32 1;
-    ubr ^while.header;
-^b:
-    f32* %10 = getelementptr &([3 * f32]* %a0)[i64 0][i64 0];
-    f32* %11 = getelementptr &([3 * f32]* %a1)[i64 0][i64 0];
-    f32* %12 = getelementptr &([3 * f32]* %a2)[i64 0][i64 0];
-    f32* %13 = getelementptr &([6 * f32]* %c0)[i64 0][i64 0];
-    f32* %14 = getelementptr &([3 * f32]* %c1)[i64 0][i64 0];
-    f32* %15 = getelementptr &([3 * f32]* %c2)[i64 0][i64 0];
-    f32* %16 = getelementptr &([3 * f32]* %c1)[i64 0][i64 2];
-    f32* %17 = getelementptr &([3 * f32]* %a2)[i64 0][i64 1];
-    f32 %18 = load f32* %17;
-    store f32* %16 with f32 %18;
-    f32* %19 = getelementptr &([3 * f32]* %c2)[i64 0][i64 1];
-    f32* %20 = getelementptr &([3 * f32]* %a1)[i64 0][i64 2];
-    f32 %21 = load f32* %20;
-    store f32* %19 with f32 %21;
-    f32* %22 = getelementptr &([6 * f32]* %c0)[i64 0][i64 1];
-    f32 %23 = load f32* %11;
-    store f32* %22 with f32 %23;
-    f32* %24 = getelementptr &([6 * f32]* %c0)[i64 0][i64 2];
-    f32 %25 = load f32* %12;
-    store f32* %24 with f32 %25;
-    f32* %26 = getelementptr &([3 * f32]* %a0)[i64 0][i64 1];
-    f32 %27 = load f32* %26;
-    store f32* %14 with f32 %27;
-    f32* %28 = getelementptr &([3 * f32]* %a0)[i64 0][i64 2];
-    f32 %29 = load f32* %28;
-    store f32* %15 with f32 %29;
-    f32* %30 = getelementptr &([3 * f32]* %c1)[i64 0][i64 1];
-    f32* %31 = getelementptr &([3 * f32]* %a1)[i64 0][i64 1];
-    f32 %32 = load f32* %31;
-    store f32* %30 with f32 %32;
-    f32* %33 = getelementptr &([3 * f32]* %c2)[i64 0][i64 2];
-    f32* %34 = getelementptr &([3 * f32]* %a2)[i64 0][i64 2];
-    f32 %35 = load f32* %34;
-    store f32* %33 with f32 %35;
-    f32 %36 = load f32* %10;
-    store f32* %13 with f32 %36;
-    ubr ^while.header1;
-^while.header1:
-    i32 %37 = phi [^while.body1, i32 %42] [^b, i32 0];
-    i1 %38 = scmp lt i32 %37, i32 3;
-    cbr i1 %38(prob = 0.97), ^while.body1, ^b1;
+    i32 %9 = phi [^entry, i32 0] [^while.body, i32 %13];
+    f32* %10 = getelementptr &([6 * f32]* %c0)[i64 0][i32 %9];
+    f32 %11 = load f32* %10;
+    i32 %12 = f2s f32 %11 to i32;
+    call (i32) -> void @putint(i32 %12);
+    i32 %13 = add i32 %9, i32 1;
+    i1 %14 = scmp lt i32 %13, i32 3;
+    cbr i1 %14(prob = 0.67), ^while.body, ^indirect;
+^indirect:
+    call (i32) -> void @putch(i32 10);
+    ubr ^while.body1;
 ^while.body1:
-    f32* %39 = getelementptr &([6 * f32]* %c0)[i64 0][i32 %37];
-    f32 %40 = load f32* %39;
-    i32 %41 = f2s f32 %40 to i32;
-    call (i32) -> void @putint(i32 %41);
-    i32 %42 = add i32 %37, i32 1;
-    ubr ^while.header1;
-^b1:
+    i32 %15 = phi [^indirect, i32 0] [^while.body1, i32 %19];
+    f32* %16 = getelementptr &([3 * f32]* %c1)[i64 0][i32 %15];
+    f32 %17 = load f32* %16;
+    i32 %18 = f2s f32 %17 to i32;
+    call (i32) -> void @putint(i32 %18);
+    i32 %19 = add i32 %15, i32 1;
+    i1 %20 = scmp lt i32 %19, i32 3;
+    cbr i1 %20(prob = 0.67), ^while.body1, ^b;
+^b:
     call (i32) -> void @putch(i32 10);
-    ubr ^while.header2;
-^while.header2:
-    i32 %43 = phi [^while.body2, i32 %48] [^b1, i32 0];
-    i1 %44 = scmp lt i32 %43, i32 3;
-    cbr i1 %44(prob = 0.97), ^while.body2, ^b2;
+    ubr ^while.body2;
 ^while.body2:
-    f32* %45 = getelementptr &([3 * f32]* %c1)[i64 0][i32 %43];
-    f32 %46 = load f32* %45;
-    i32 %47 = f2s f32 %46 to i32;
-    call (i32) -> void @putint(i32 %47);
-    i32 %48 = add i32 %43, i32 1;
-    ubr ^while.header2;
-^b2:
-    call (i32) -> void @putch(i32 10);
-    ubr ^while.header3;
-^while.header3:
-    i32 %49 = phi [^while.body3, i32 %54] [^b2, i32 0];
-    i1 %50 = scmp lt i32 %49, i32 3;
-    cbr i1 %50(prob = 0.97), ^while.body3, ^b3;
-^while.body3:
-    f32* %51 = getelementptr &([3 * f32]* %c2)[i64 0][i32 %49];
-    f32 %52 = load f32* %51;
-    i32 %53 = f2s f32 %52 to i32;
-    call (i32) -> void @putint(i32 %53);
-    i32 %54 = add i32 %49, i32 1;
-    ubr ^while.header3;
-^b3:
+    i32 %21 = phi [^while.body2, i32 %25] [^b, i32 0];
+    f32* %22 = getelementptr &([3 * f32]* %c2)[i64 0][i32 %21];
+    f32 %23 = load f32* %22;
+    i32 %24 = f2s f32 %23 to i32;
+    call (i32) -> void @putint(i32 %24);
+    i32 %25 = add i32 %21, i32 1;
+    i1 %26 = scmp lt i32 %25, i32 3;
+    cbr i1 %26(prob = 0.67), ^while.body2, ^b1;
+^b1:
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }
