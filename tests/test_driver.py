@@ -523,8 +523,6 @@ start = time.perf_counter()
 if "gcc" in test_cases:
     res.append(test("SysY gcc performance", tests_path +
                     "/SysY2022/performance", ".sy", sysy_gcc))
-    res.append(test("SysY gcc final_performance", tests_path +
-                    "/SysY2022/final_performance", ".sy", sysy_gcc))
 
 if "parse" in test_cases:
     res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
@@ -552,8 +550,6 @@ if "opt" in test_cases:
                     "/SysY2022/hidden_functional", ".sy", sysy_opt))
     res.append(test("SysY opt performance", tests_path +
                     "/SysY2022/performance", ".sy", sysy_opt))
-    res.append(test("SysY opt final_performance", tests_path +
-                    "/SysY2022/final_performance", ".sy", sysy_opt))
     res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
     res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
 
@@ -598,8 +594,6 @@ if "llvm" in test_cases:
 
     res.append(test("SysY SysY->LLVMIR performance", tests_path +
                     "/SysY2022/performance", ".sy", sysy_codegen_llvm))
-    res.append(test("SysY SysY->LLVMIR final_performance", tests_path +
-                    "/SysY2022/final_performance", ".sy", sysy_codegen_llvm))
 
 
 if generate_ref:
