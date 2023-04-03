@@ -196,4 +196,25 @@ void removePhi(Block* source, Block* target) {
             break;
     }
 }
+bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs) {
+    for(auto inst : target->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            const auto phi = inst->as<PhiInst>();
+            auto& incomings = phi->incomings();
+            if(incomings.at(sourceLhs) != incomings.at(sourceRhs)) {
+                return false;
+            }
+        } else
+            break;
+    }
+    return true;
+}
+void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor) {
+    // immutable
+    const auto trueTarget = branch->getTrueTarget();
+    const auto falseTarget = branch->getFalseTarget();
+    functor(branch->getTrueTarget());
+    if(falseTarget && trueTarget != falseTarget)
+        functor(branch->getFalseTarget());
+}
 CMMC_NAMESPACE_END

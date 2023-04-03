@@ -333,7 +333,7 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
     if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
         return ctx.booleanToInt(ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs));
     }
-    return ctx.makeOp<BinaryInst>(inst, lhs->getType(), lhs, rhs);
+    return ctx.makeOp<BinaryInst>(inst, lhs, rhs);
 }
 
 static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Qualifier& lhsQualifier, Value* rhs,
@@ -539,7 +539,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
                                                          value->getType(), value) };
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
-                return QualifiedValue{ ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value,
+                return QualifiedValue{ ctx.makeOp<BinaryInst>(InstructionID::Xor, value,
                                                               ConstantInteger::get(value->getType(), -1)) };
             }
             DiagnosticsContext::get()
@@ -550,7 +550,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
         case OperatorID::LogicalNot: {
             value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {}, ConversionUsage::Condition);
             return QualifiedValue{ ctx.booleanToInt(
-                ctx.makeOp<BinaryInst>(InstructionID::Xor, value->getType(), value, ConstantInteger::get(value->getType(), 1))) };
+                ctx.makeOp<BinaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), 1))) };
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
@@ -585,7 +585,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
         DiagnosticsContext::get().attach<Reason>("Unsupported type for self increment/decrement operator").reportFatal();
     }
 
-    const auto newVal = ctx.makeOp<BinaryInst>(instID, type, val, rhs);
+    const auto newVal = ctx.makeOp<BinaryInst>(instID, val, rhs);
     ctx.makeOp<StoreInst>(ptr, newVal);
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
         return QualifiedValue{ ptr, ValueQualifier::AsLValue, qualifier };

@@ -178,8 +178,9 @@ public:
 
 class BinaryInst final : public Instruction {
 public:
-    BinaryInst(InstructionID instID, const Type* valueType, Value* lhs, Value* rhs)
-        : Instruction{ instID, valueType, { lhs, rhs } } {}
+    BinaryInst(InstructionID instID, Value* lhs, Value* rhs) : Instruction{ instID, lhs->getType(), { lhs, rhs } } {
+        assert(lhs->getType()->isSame(rhs->getType()));
+    }
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
     bool verify(std::ostream& out) const override;
@@ -429,6 +430,7 @@ public:
     void removeSource(Block* block);
     void replaceSource(Block* oldBlock, Block* newBlock);
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;
+    void keepOneIncoming(Block* block);
     void dumpInst(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;
     bool isEqual(const Instruction* rhs) const override;

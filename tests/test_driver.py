@@ -640,7 +640,7 @@ if "gcc" in test_cases and "llvm" in test_cases:
     self_perf = geo_means(total_perf_self, total_perf_self_samples)
     print("gcc: {:.3f}s with command '{}'".format(gcc_perf, gcc_ref_command))
     print(
-        "cmmc[llvm-backend]: {:.3f}s -> {:.2f}x".format(self_perf, self_perf/gcc_perf))
+        "cmmc[llvm-backend]: {:.3f}s -> {:.5f}x".format(self_perf, self_perf/gcc_perf))
     print("Regressions:")
 
     testcases = []

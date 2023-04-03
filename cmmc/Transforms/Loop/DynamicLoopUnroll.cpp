@@ -102,9 +102,8 @@ public:
                 }
 
                 IRBuilder builder{ target, head };
-                const auto batchEnd =
-                    builder.makeOp<BinaryInst>(InstructionID::Add, indvar->getType(), indvar,
-                                               ConstantInteger::get(indvar->getType(), loop.step * (unrollBlockSize - 1)));
+                const auto batchEnd = builder.makeOp<BinaryInst>(
+                    InstructionID::Add, indvar, ConstantInteger::get(indvar->getType(), loop.step * (unrollBlockSize - 1)));
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
                 head->instructions().push_back(batchCond);

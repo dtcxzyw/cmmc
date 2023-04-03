@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
@@ -23,12 +24,13 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-/*
 constexpr uint32_t maxInlineBlockSize = 5;
 
 class BlockArgSpecialization final : public TransformPass<Function> {
@@ -56,31 +58,84 @@ public:
                 continue;
 
             const auto branch = terminator->as<BranchInst>();
+            if(branch->getTrueTarget() == branch->getFalseTarget())
+                continue;
 
-            const auto handleTarget = [&](Block* targetBlock) {
-                if(!targetBlock)
-                    return;
+            const auto handleTarget = [&](Block*& targetBlock) {
                 if(targetBlock->instructions().size() > maxInlineBlockSize)
                     return;
                 if(hasCall(*targetBlock))
                     return;
+                const auto targetTerminator = targetBlock->getTerminator();
+                if(targetTerminator->isBranch()) {
+                    const auto targetBranch = targetTerminator->as<BranchInst>();
+                    if(targetBranch->getTrueTarget() == targetBlock || targetBranch->getFalseTarget() == targetBlock) {
+                        return;  // handled by loop rotate
+                    }
+                } else {
+                    // reduce returns
+                    return;
+                }
 
-                if(!std::any_of(target.getArgs().cbegin(), target.getArgs().cend(), [](Value* arg) { return arg->isConstant(); }))
+                bool hasPhi = false;
+                for(auto inst : targetBlock->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        hasPhi = true;
+                        if(!inst->as<PhiInst>()->incomings().at(block)->isConstant())
+                            return;
+                    } else
+                        break;
+                }
+                if(!hasPhi)
                     return;
 
                 const auto targetBlockFreq = blockTripCount.query(targetBlock);
-                if(targetBlockFreq - freq <= significantBlockTripCountDifference)
+                if(targetBlockFreq <= freq * 0.5)
+                    return;
+
+                // TODO: remove this limitation by creating new phi nodes
+                if([&] {
+                       std::unordered_set<Value*> instructions{ targetBlock->instructions().cbegin(),
+                                                                targetBlock->instructions().cend() };
+                       for(auto otherBlock : blocks) {
+                           if(otherBlock == targetBlock)
+                               continue;
+                           for(auto inst : otherBlock->instructions()) {
+                               for(auto operand : inst->operands()) {
+                                   if(operand->isInstruction() && instructions.count(operand)) {
+                                       return true;
+                                   }
+                               }
+                           }
+                       }
+                       return false;
+                   }())
                     return;
 
                 ReplaceMap replace;
                 const auto newBlock = targetBlock->clone(replace);
                 blocks.insert(next, newBlock);
-                target.resetTarget(newBlock);
+
+                for(auto inst : newBlock->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        inst->as<PhiInst>()->keepOneIncoming(block);
+                    } else
+                        break;
+                }
+
+                if(targetTerminator->isBranch()) {
+                    const auto targetBranch = targetTerminator->as<BranchInst>();
+                    applyForSuccessors(targetBranch, [&](Block* target) {
+                        copyTarget(target, targetBlock, newBlock);  // NOLINT
+                    });
+                }
+                removePhi(block, targetBlock);
+
+                targetBlock = newBlock;
                 modified = true;
             };
 
-            handleTarget(branch->getTrueTarget());
-            handleTarget(branch->getFalseTarget());
+            applyForSuccessors(branch, handleTarget);
         }
 
         return modified;
@@ -92,6 +147,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(BlockArgSpecialization);
-*/
 
 CMMC_NAMESPACE_END

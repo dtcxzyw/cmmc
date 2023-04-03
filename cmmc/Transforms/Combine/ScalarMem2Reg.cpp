@@ -90,10 +90,8 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                         [[fallthrough]];
                     case InstructionID::ConditionalBranch: {
                         const auto branch = inst->as<BranchInst>();
-                        auto handleTarget = [&](Block* targetBlock) { phiNodes.at(targetBlock)->addIncoming(block, value); };
-                        handleTarget(branch->getTrueTarget());
-                        if(branch->getFalseTarget() && branch->getTrueTarget() != branch->getFalseTarget())
-                            handleTarget(branch->getFalseTarget());
+                        applyForSuccessors(branch,
+                                           [&](Block* targetBlock) { phiNodes.at(targetBlock)->addIncoming(block, value); });
                     } break;
                     default:
                         break;

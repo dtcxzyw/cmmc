@@ -37,7 +37,9 @@ bool hasCall(Block& block);
 void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget);
 void retargetBlock(Block* target, Block* oldSource, Block* newSource);
 void copyTarget(Block* target, Block* oldSource, Block* newSource);
+bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs);
 void removePhi(Block* source, Block* target);
+void applyForSuccessors(BranchInst* branch, const std::function<void(Block*&)>& functor);
 template <typename Callable>
 bool scanInstructions(Block& block, Callable callable) {
     bool modified = false;

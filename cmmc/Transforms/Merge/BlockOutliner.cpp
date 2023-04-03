@@ -14,7 +14,7 @@
 
 // Merge same blocks
 
-#include "cmmc/Analysis/CFGAnalysis.hpp"
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>

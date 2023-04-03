@@ -452,7 +452,7 @@ void PtrCastInst::dumpInst(std::ostream& out) const {
 }
 
 Instruction* BinaryInst::clone() const {
-    return make<BinaryInst>(getInstID(), getType(), getOperand(0), getOperand(1));
+    return make<BinaryInst>(getInstID(), getOperand(0), getOperand(1));
 }
 
 Instruction* CompareInst::clone() const {
@@ -687,8 +687,14 @@ void PhiInst::removeSource(Block* block) {
     assert(iter != mIncomings.cend());
     const auto val = iter->second;
     mIncomings.erase(iter);
+    // TODO: lazy update
     const auto it = std::find(operands().begin(), operands().end(), val);
     assert(it != operands().end());
     operands().erase(it);
+}
+void PhiInst::keepOneIncoming(Block* block) {
+    const auto val = mIncomings.at(block);
+    mIncomings = { { block, val } };
+    operands() = { val };
 }
 CMMC_NAMESPACE_END

@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Value.hpp"
 #include <chrono>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
@@ -20,6 +19,7 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
@@ -371,12 +371,13 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "LoopBranchProbFix",  //
             "LoopEliminate",      //
             // Control flow
-            "TailCallEliminate",  //
-            "MergeBranch",        //
-            "SimplifyBranch",     //
-            "CombineBranch",      //
-            "BlockMerge",         //
-            "BlockEliminate",     // clean up
+            "TailCallEliminate",    //
+            "MergeBranch",          //
+            "SimplifyBranch",       //
+            "CombineBranch",        //
+            "BlockMerge",           //
+            "ShortCircuitCombine",  //
+            "BlockEliminate",       // clean up
             // Load/Store
             "LoadReduce",             //
             "StoreEliminate",         //
@@ -456,10 +457,9 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             }))
             perFunc->addPass(pass);
 
-        /*
         // TODO: it is a time costuming phase.
-        auto specialization = std::make_shared<PassManager>();
-        for(const auto& pass : passesSource.collect({
+        auto specialization = std::make_shared<PassManager<Function>>();
+        for(const auto& pass : passesSource.collectFunctionPass({
                 "BlockArgSpecialization",  //
                 "ConstantPropagation",     // clean up
                 "ArithmeticReduce",        // clean up
@@ -470,8 +470,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "NoSideEffectEliminate",   // clean up
             }))
             specialization->addPass(pass);
-        root->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
-        */
+        perFunc->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
         perFunc->addPass(iter);  // middle-3 optimization
     }
 

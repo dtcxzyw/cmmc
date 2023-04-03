@@ -74,8 +74,7 @@ public:
                            (getReversedOp(getInvertedOp(lhsOp)) == rhsOp && match(1, 0))) {
                             IRBuilder builder{ analysis.module().getTarget() };
                             builder.setInsertPoint(block, cmp);
-                            const auto invert =
-                                builder.makeOp<BinaryInst>(InstructionID::Xor, IntegerType::getBoolean(), rhs, builder.getTrue());
+                            const auto invert = builder.makeOp<BinaryInst>(InstructionID::Xor, rhs, builder.getTrue());
                             replace.emplace(cmp, invert);
                             reuse = true;
                             break;

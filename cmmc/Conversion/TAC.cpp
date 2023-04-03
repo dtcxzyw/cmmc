@@ -211,7 +211,7 @@ void loadTAC(Module& module, const std::string& path) {
                                  const auto dest = getLValue(binary.result);
                                  const auto lhsVal = getRValue(binary.lhs);
                                  const auto rhsVal = getRValue(binary.rhs);
-                                 const auto res = builder.makeOp<BinaryInst>(binary.instruction, i32, lhsVal, rhsVal);
+                                 const auto res = builder.makeOp<BinaryInst>(binary.instruction, lhsVal, rhsVal);
                                  emitStore(dest, res);
                              },
                              [&](const TACAddr& addr) {

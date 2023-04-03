@@ -40,9 +40,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             MatchContext<Value> matchCtx{ inst, &replace };
 
             auto makeIntLike = [](intmax_t val, const Value* like) { return ConstantInteger::get(like->getType(), val); };
-            auto makeNot = [&](Value* val) {
-                return builder.makeOp<BinaryInst>(InstructionID::Xor, val->getType(), val, builder.getTrue());
-            };
+            auto makeNot = [&](Value* val) { return builder.makeOp<BinaryInst>(InstructionID::Xor, val, builder.getTrue()); };
 
             Value *v1, *v2, *v3, *v4;
             // a + 0 -> a
@@ -145,11 +143,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             // a + -b -> a - b
             if(add(any(v1), neg(any(v2)))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::Sub, inst->getType(), v1, v2);
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, v1, v2);
             }
             // a - -b -> a + b
             if(sub(any(v1), neg(any(v2)))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, v2);
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, v2);
             }
             // select c?a:a -> a
             if(select(any(v1), any(v2), any(v3))(matchCtx) && v2 == v3) {
@@ -161,7 +159,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
             // a + a -> 2 * a
             if(add(any(v1), any(v2))(matchCtx) && v1 == v2)
-                return builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(), makeIntLike(2, inst), v1);
+                return builder.makeOp<BinaryInst>(InstructionID::Mul, makeIntLike(2, inst), v1);
             // b * a + a -> (b+1) * a
             if(add(mul(any(v1), any(v2)), any(v3))(matchCtx)) {
                 Value *a = nullptr, *b = nullptr;
@@ -171,9 +169,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     a = v2, b = v1;
                 }
                 if(a && b)
-                    return builder.makeOp<BinaryInst>(
-                        InstructionID::Mul, inst->getType(),
-                        builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), b, makeIntLike(1, inst)), a);
+                    return builder.makeOp<BinaryInst>(InstructionID::Mul,
+                                                      builder.makeOp<BinaryInst>(InstructionID::Add, b, makeIntLike(1, inst)), a);
             }
             // b * a + c * a -> (b + c) * a
             if(add(mul(any(v1), any(v2)), mul(any(v3), any(v4)))(matchCtx)) {
@@ -188,15 +185,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     a = v2, b = v1, c = v3;
                 }
                 if(a && b && c)
-                    return builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(),
-                                                      builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), b, c), a);
+                    return builder.makeOp<BinaryInst>(InstructionID::Mul, builder.makeOp<BinaryInst>(InstructionID::Add, b, c),
+                                                      a);
             }
 
             // c % (2^k) = c & (2^k - 1)
             uintmax_t c;
             if(urem(any(v1), uint_(c))(matchCtx) && c && (c == (c & (-c)))) {
-                return builder.makeOp<BinaryInst>(InstructionID::And, inst->getType(), v1,
-                                                  makeIntLike(static_cast<intmax_t>(c - 1), inst));
+                return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(static_cast<intmax_t>(c - 1), inst));
             }
 
             // (zext i1 a) != 0 -> a
@@ -249,16 +245,16 @@ class ArithmeticReduce final : public TransformPass<Function> {
             intmax_t i1, i2;
             // add (add x c1) c2 -> add x c1+c2
             if(add(add(any(v1), int_(i1)), int_(i2))(matchCtx))
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeIntLike(i1 + i2, v1));
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i1 + i2, v1));
             // add (sub x c1) c2 -> add x c2-c1
             if(add(sub(any(v1), int_(i1)), int_(i2))(matchCtx))
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeIntLike(i2 - i1, v1));
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i2 - i1, v1));
             // sub (sub x c1) c2 -> add x -c1-c2
             if(sub(sub(any(v1), int_(i1)), int_(i2))(matchCtx))
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeIntLike(-(i1 + i2), v1));
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(-(i1 + i2), v1));
             // sub (add x c1) c2 -> add x c1-c2
             if(sub(add(any(v1), int_(i1)), int_(i2))(matchCtx))
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeIntLike(i1 - i2, v1));
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i1 - i2, v1));
 
             // commutative c x -> commutative x c
             switch(inst->getInstID()) {
@@ -283,7 +279,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // a - c -> a + (-c)
             if(sub(any(v1), int_(i1))(matchCtx) && !v1->isConstant())
-                return builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v1, makeIntLike(-i1, v1));
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(-i1, v1));
 
             // select cond, x, x + 1
             // ->
@@ -295,7 +291,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 const auto targetType = base->getType();
                 if(!targetType->isBoolean())
                     val = builder.makeOp<CastInst>(InstructionID::ZExt, targetType, val);
-                return builder.makeOp<BinaryInst>(InstructionID::Sub, targetType, base, val);
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, base, val);
             }
 
             // select (not cond), x, y
@@ -351,8 +347,21 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     int_(i5))(matchCtx) &&
                (i1 > 0 && i1 == i3 && i3 == i5) && (i2 >= 0 && i4 >= 0 && i1 + i2 + i4 < std::numeric_limits<int32_t>::max())) {
                 return builder.makeOp<BinaryInst>(
-                    InstructionID::SRem, inst->getType(),
-                    builder.makeOp<BinaryInst>(InstructionID::Add, inst->getType(), v2, makeIntLike((i2 + i4) % i1, v2)), v3);
+                    InstructionID::SRem, builder.makeOp<BinaryInst>(InstructionID::Add, v2, makeIntLike((i2 + i4) % i1, v2)), v3);
+            }
+
+            // (a == 0) & (b == 0) -> (a | b) == 0
+            CompareOp cmp1, cmp2;
+            if(and_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::Equal &&
+               cmp2 == CompareOp::Equal) {
+                return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal,
+                                                   builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
+            }
+            // (a != 0) | (b != 0) -> (a | b) != 0
+            if(or_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::NotEqual &&
+               cmp2 == CompareOp::NotEqual) {
+                return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual,
+                                                   builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }
 
             return nullptr;

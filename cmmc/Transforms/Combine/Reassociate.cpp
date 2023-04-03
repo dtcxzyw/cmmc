@@ -80,7 +80,7 @@ class Reassociate final : public TransformPass<Function> {
             Value* reduction = nullptr;
             const auto reduce = [&](Value* val) {
                 if(reduction) {
-                    reduction = builder.makeOp<BinaryInst>(inst->getInstID(), inst->getType(), reduction, val);
+                    reduction = builder.makeOp<BinaryInst>(inst->getInstID(), reduction, val);
                 } else
                     reduction = val;
             };
@@ -90,7 +90,7 @@ class Reassociate final : public TransformPass<Function> {
                     if(c & 1)
                         reduce(val);
                     c >>= 1;
-                    val = builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(), val, val);
+                    val = builder.makeOp<BinaryInst>(InstructionID::Mul, val, val);
                 }
             };
 
@@ -100,7 +100,7 @@ class Reassociate final : public TransformPass<Function> {
                         if(c == 1)
                             reduce(v);
                         else {
-                            reduce(builder.makeOp<BinaryInst>(InstructionID::Mul, inst->getType(), v,
+                            reduce(builder.makeOp<BinaryInst>(InstructionID::Mul, v,
                                                               ConstantInteger::get(inst->getType(), static_cast<intmax_t>(c))));
                         }
                     }
