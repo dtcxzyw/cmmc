@@ -85,7 +85,7 @@ if(${LLVM_FOUND})
     
     LLVM${LLVM_NATIVE_ARCH}AsmParser
     LLVM${LLVM_NATIVE_ARCH}Disassembler 
-    LLVM${LLVM_NATIVE_ARCH}TargetMCA
+    # LLVM${LLVM_NATIVE_ARCH}TargetMCA
   )
   foreach(TARGET ${LLVM_TARGETS_TO_BUILD})
     list(APPEND LLVM_LIBRARIES 
