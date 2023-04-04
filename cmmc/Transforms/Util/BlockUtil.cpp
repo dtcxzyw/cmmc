@@ -186,15 +186,18 @@ void copyTarget(Block* target, Block* oldSource, Block* newSource) {
             break;
     }
 }
-void removePhi(Block* source, Block* target) {
+bool removePhi(Block* source, Block* target) {
     for(auto inst : target->instructions()) {
         if(inst->getInstID() == InstructionID::Phi) {
             const auto phi = inst->as<PhiInst>();
-            if(phi->incomings().count(source))
+            if(phi->incomings().count(source)) {
                 phi->removeSource(source);
+            } else
+                return false;
         } else
-            break;
+            return false;
     }
+    return true;
 }
 bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs) {
     for(auto inst : target->instructions()) {

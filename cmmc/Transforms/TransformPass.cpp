@@ -395,6 +395,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Postprocess
             "NoReturnCallEliminate",  //
             "NoSideEffectEliminate",  // clean up
+            "SCCEliminate",           //
             "UndefPropagation"        //
         }))
         basic->addPass(pass);
@@ -472,7 +473,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collectFunctionPass({
-                "FuncInlining",  //
+                "DiscardReturnValue",  //
+                "FuncInlining",        //
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(iter);
@@ -530,7 +532,7 @@ PassRegistry::collectModulePass(std::initializer_list<std::string_view> list) co
         if(auto iter = mModulePasses.find(name); iter != mModulePasses.cend()) {
             ret.push_back(iter->second);
         } else {
-            DiagnosticsContext::get().attach<Reason>("invalid module pass name").attach<Reason>(name).reportFatal();
+            DiagnosticsContext::get().attach<Reason>("Unknown module pass").attach<Reason>(name).reportFatal();
         }
     }
     return ret;
@@ -543,7 +545,7 @@ PassRegistry::collectFunctionPass(std::initializer_list<std::string_view> list) 
         if(auto iter = mFunctionPasses.find(name); iter != mFunctionPasses.cend()) {
             ret.push_back(iter->second);
         } else {
-            DiagnosticsContext::get().attach<Reason>("invalid module pass name").attach<Reason>(name).reportFatal();
+            DiagnosticsContext::get().attach<Reason>("Unknown function pass").attach<Reason>(name).reportFatal();
         }
     }
     return ret;
