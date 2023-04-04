@@ -417,6 +417,9 @@ def sysy_gcc(src):
 def filter_cmmc_opt(src):
     # FIXME
     level = optimization_level
+    if 'performance' in src and level != '0':
+        if 'shuffle' in src:
+            level = '1'
     return level
 
 

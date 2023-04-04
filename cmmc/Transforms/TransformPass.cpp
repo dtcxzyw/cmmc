@@ -382,6 +382,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
             // Outline
+            "ConstantHoist",   //
             "BlockOutliner",   //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
