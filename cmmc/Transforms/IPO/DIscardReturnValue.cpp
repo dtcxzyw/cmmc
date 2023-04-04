@@ -12,14 +12,14 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/ConstantValue.hpp"
-#include "cmmc/IR/Function.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/IR/Module.hpp"
-#include "cmmc/IR/Type.hpp"
 #include <algorithm>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>

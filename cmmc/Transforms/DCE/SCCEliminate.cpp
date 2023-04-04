@@ -182,8 +182,6 @@ public:
             }
         }
 
-        // TODO: reorder unusedSCC?
-
         bool modified = false;
         for(auto [col, exitNode, commonRetValue, refBlock] : unusedSCC) {
             const auto& group = groups[col];
