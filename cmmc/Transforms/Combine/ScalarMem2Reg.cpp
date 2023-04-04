@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <chrono>
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
@@ -119,10 +120,18 @@ public:
         if(interested.empty())
             return false;
 
+        // FIXME: don't create phi nodes in all blocks
+        using namespace std::chrono_literals;
+        constexpr auto timeBudget = 10ms;
+        using Clock = std::chrono::steady_clock;
+        const auto deadline = Clock::now() + timeBudget;
+
         IRBuilder builder{ analysis.module().getTarget() };
         ReplaceMap replace;
         for(auto alloc : interested) {
             applyMem2Reg(builder, func, alias, alloc, leak, replace);
+            if(Clock::now() > deadline)
+                break;
         }
         replaceOperands(func, replace);
         return true;

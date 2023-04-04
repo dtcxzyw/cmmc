@@ -697,4 +697,8 @@ void PhiInst::keepOneIncoming(Block* block) {
     mIncomings = { { block, val } };
     operands() = { val };
 }
+void PhiInst::clear() {
+    operands().clear();
+    mIncomings.clear();
+}
 CMMC_NAMESPACE_END

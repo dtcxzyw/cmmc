@@ -16,5 +16,34 @@ int main() {
         s += i;
     for(int i = 0; i < -1; ++i)
         s += i;
+    int i = 0;
+    while(i < 15) {
+        s += i;
+        ++i;
+    }
+    i = 0;
+    while(i < 16) {
+        s += i * i;
+        ++i;
+    }
+    i = 0;
+    while(i < 32) {
+        s += i + 1;
+        ++i;
+    }
+    i = 0;
+    while(i < 64) {
+        s += i * 2;
+        ++i;
+    }
+    while(i < 65) {
+        s += i * 3;
+        ++i;
+    }
+    while(i < 67) {
+        s += i * i * i;
+        ++i;
+    }
+    putint(s);
     return s;
 }

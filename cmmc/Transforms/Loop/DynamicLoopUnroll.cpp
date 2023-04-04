@@ -28,7 +28,8 @@
 #include <cstdlib>
 #include <new>
 
-constexpr uint32_t unrollBlockSize = 16U;
+constexpr intmax_t unrollBlockSize = 16U;  // must be signed integer
+constexpr intmax_t maxStep = 65536;
 
 CMMC_NAMESPACE_BEGIN
 
@@ -44,7 +45,11 @@ public:
             // innermost loop
             if(loop.header != loop.latch)
                 continue;
+            if(std::abs(loop.step) > maxStep)
+                continue;
             if(loop.header->instructions().size() > maxUnrollBodySize)
+                continue;
+            if(hasCall(*loop.header))
                 continue;
             // handled by static loop unroll
             if(loop.bound->isConstant() && loop.initial->isConstant())
@@ -62,20 +67,60 @@ public:
 
             modified = true;
             std::vector<Block*> insertedBlocks;
+            std::unordered_map<Block*, ReplaceMap> replaceMap;
 
             Block* prev = loop.latch;
+            // TODO: remove duplicate code
             const auto retarget = [&](Block* block, bool nocheck) {
-                auto prevTerminator = prev->getTerminator()->as<BranchInst>();
                 if(nocheck) {
                     prev->instructions().pop_back();
                     IRBuilder builder{ target, prev };
-                    prevTerminator = builder.makeOp<BranchInst>(prevTerminator->getTrueTarget());
+                    builder.makeOp<BranchInst>(block);
+                    for(auto inst : block->instructions()) {
+                        if(inst->getInstID() == InstructionID::Phi) {
+                            ReplaceMap replace;
+                            const auto phi = inst->as<PhiInst>();
+                            for(auto [pred, val] : phi->incomings()) {
+                                CMMC_UNUSED(val);
+                                if(pred != loop.latch) {
+                                    phi->removeSource(pred);
+                                    break;
+                                }
+                            }
+
+                            if(loop.latch != prev && phi->incomings().count(loop.latch)) {
+                                // block->dump(std::cerr, HighlightInst{ phi });
+                                phi->replaceSource(loop.latch, prev);
+                            }
+                            if(replaceMap.count(prev)) {
+                                const auto val = phi->incomings().at(prev);
+                                auto& map = replaceMap.at(prev);
+                                if(map.count(val))
+                                    phi->replaceOperand(val, map.at(val));
+                            }
+                        } else
+                            break;
+                    }
+                } else {
+                    auto prevTerminator = prev->getTerminator()->as<BranchInst>();
+                    prevTerminator->getTrueTarget() = block;
+                    const auto& replaceHeader = replaceMap.at(prev);
+                    const auto& replaceClone = replaceMap.at(block);
+                    for(auto inst : loop.latch->instructions()) {
+                        if(inst->getInstID() == InstructionID::Phi) {
+                            const auto superBlockPhi = replaceClone.at(inst)->as<PhiInst>();
+                            const auto initial = replaceHeader.at(inst);
+                            superBlockPhi->clear();
+                            superBlockPhi->addIncoming(prev, initial);
+                        } else
+                            break;
+                    }
                 }
-                prevTerminator->getTrueTarget() = block;
             };
             const auto append = [&](bool nocheck) {
                 ReplaceMap replace;
                 const auto block = loop.header->clone(replace);
+                replaceMap[block] = std::move(replace);
                 insertedBlocks.push_back(block);
                 retarget(block, nocheck);
                 prev = block;
@@ -86,24 +131,38 @@ public:
 
             {
                 head = make<Block>(&func);
-                PhiInst* indvar = nullptr;
+                Value* indvar = loop.inductionVar;
                 Value* bound = loop.bound;
-                assert(indvar);
-                assert(bound->isConstant() || bound->getBlock() == head);
 
                 constexpr auto header = "super.header"sv;
                 head->setLabel(String::get(header));
                 insertedBlocks.push_back(head);
                 for(auto block : cfg.predecessors(loop.latch)) {
                     if(block != loop.latch) {
-                        // branchTarget->resetTarget(head);
-                        reportNotImplemented(CMMC_LOCATION());
+                        resetTarget(block->getTerminator()->as<BranchInst>(), loop.latch, head);
                     }
                 }
 
                 IRBuilder builder{ target, head };
+
+                ReplaceMap replace;
+                for(auto inst : loop.latch->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        const auto phi = inst->as<PhiInst>();
+                        const auto newPhi = builder.createPhi(phi->getType());
+                        for(auto [pred, val] : phi->incomings()) {
+                            newPhi->addIncoming(pred, val);
+                        }
+                        replace.emplace(phi, newPhi);
+                    } else
+                        break;
+                }
+
                 const auto batchEnd = builder.makeOp<BinaryInst>(
-                    InstructionID::Add, indvar, ConstantInteger::get(indvar->getType(), loop.step * (unrollBlockSize - 1)));
+                    InstructionID::Add, replace.at(indvar),
+                    ConstantInteger::get(indvar->getType(),
+                                         loop.step * unrollBlockSize));  // larger bound to keep one exiting edge
+                replaceMap[head] = std::move(replace);
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
                 head->instructions().push_back(batchCond);
@@ -114,10 +173,7 @@ public:
 
                 constexpr auto exitProb =
                     1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(unrollBlockSize));
-                CMMC_UNUSED(exitProb);
-                reportNotImplemented(CMMC_LOCATION());
-                // FIXME
-                // builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch, loop.latch);
+                builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch /*place holder*/, loop.latch);
                 prev = head;
             }
 
@@ -126,14 +182,39 @@ public:
 
             // reset terminator
             {
-                const auto superBlockTerminator = prev->getTerminator()->as<BranchInst>();
-                superBlockTerminator->getTrueTarget() = head;
-                constexpr auto exitProb = 1.0 /
-                    static_cast<double>(unrollBlockSize)  // the trip count is divided by unrollBlockSize
-                    / (static_cast<double>(estimatedLoopTripCount) /
-                       static_cast<double>(unrollBlockSize))  // number of super blocks
-                    ;
-                superBlockTerminator->updateBranchProb(1.0 - exitProb);
+                prev->instructions().pop_back();
+                IRBuilder builder{ target, prev };
+                builder.makeOp<BranchInst>(head);
+            }
+
+            // fix phi nodes of the header
+            {
+                auto& replace = replaceMap.at(prev);
+                for(auto inst : head->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        const auto phi = inst->as<PhiInst>();
+                        auto val = phi->incomings().at(loop.latch);
+                        if(auto iter = replace.find(val); iter != replace.cend())
+                            val = iter->second;
+                        phi->removeSource(loop.latch);
+                        phi->addIncoming(prev, val);
+                    } else
+                        break;
+                }
+            }
+
+            // fix phi nodes of the scalar block
+            {
+                const auto& replaceHeader = replaceMap.at(head);
+                for(auto inst : loop.latch->instructions()) {
+                    if(inst->getInstID() == InstructionID::Phi) {
+                        const auto phi = inst->as<PhiInst>();
+                        const auto headerPhi = replaceHeader.at(inst)->as<PhiInst>();
+                        phi->keepOneIncoming(loop.latch);
+                        phi->addIncoming(head, headerPhi);
+                    } else
+                        break;
+                }
             }
 
             auto& blocks = func.blocks();

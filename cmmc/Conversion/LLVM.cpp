@@ -466,6 +466,8 @@ void llvmCodeGen(Module& module, const std::string& srcPath, const std::string& 
         llvmMod.print(file.os(), nullptr);
 
     if(llvm::verifyModule(llvmMod, &llvm::errs())) {
+        llvmMod.print(llvm::errs(), nullptr);
+        llvm::errs().flush();
         DiagnosticsContext::get().attach<ModuleAttachment>("cmmc IR", &module).reportFatal();
     } else
         file.keep();

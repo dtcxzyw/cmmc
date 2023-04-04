@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include "cmmc/Analysis/AnalysisPass.hpp"
-#include "cmmc/Analysis/DominateAnalysis.hpp"
+#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>

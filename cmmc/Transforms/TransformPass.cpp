@@ -44,6 +44,7 @@ static StringOpt referenceOutput;  // NOLINT
 extern StringOpt executeInput;     // NOLINT
 static IntegerOpt skipCount;       // NOLINT
 extern StringOpt targetName;       // NOLINT
+static StringOpt passFilter;       // NOLINT
 
 static uint32_t runCount = 0;  // NOLINT
 
@@ -53,6 +54,7 @@ referenceOutput.setName("reference-output", 'R').setDesc("reference output for d
 skipCount.withDefault(0)
     .setName("skip-transform-count", 'T')
     .setDesc("skip the correctness check for the first N transform runs");
+passFilter.withDefault("").setName("pass-filter", 'f').setDesc("only do correctness check for specified passes");
 CMMC_INIT_OPTIONS_END
 
 template <>
@@ -73,7 +75,7 @@ String TransformPass<Function>::dump(std::ostream&, String, LabelAllocator&) con
     reportUnreachable(CMMC_LOCATION());
 }
 
-std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx);
+std::optional<int> runMain(Module& module, SimulationIOContext& ctx, const std::string& filePath);
 static std::string loadString(const std::string& input) {
     std::string str;
     std::ifstream in{ input, std::ios::binary | std::ios::in };
@@ -84,7 +86,12 @@ static std::string loadString(const std::string& input) {
     in.read(str.data(), size);
     return str;
 }
-static void verifyModuleExec(Module& module) {
+static void verifyModuleExec(Module& module, const std::string_view& passName) {
+    if(!passFilter.get().empty()) {
+        if(passFilter.get() != passName)
+            return;
+    }
+
     const auto tempOutput = "/tmp/cmmcsim";
     int retCode = 0;
 
@@ -102,22 +109,13 @@ static void verifyModuleExec(Module& module) {
         InputStream in{ executeInput.get() };
         OutputStream out{ tempOutput };
         SimulationIOContext ctx{ in, out };
-        const auto ret = runMain(module, ctx);
-        std::visit(
-            [&](auto retVal) {
-                if constexpr(std::is_same_v<std::decay_t<decltype(retVal)>, ConstantValue*>) {
-                    if(auto val = dynamic_cast<ConstantInteger*>(retVal)) {
-                        retCode = static_cast<int>(val->getSignExtended()) & 0x7f;
-                    } else {
-                        std::cerr << " failed"sv << std::endl;
-                        DiagnosticsContext::get().attach<Reason>("main should return a integer").reportFatal();
-                    }
-                } else {
-                    std::cerr << " failed"sv << std::endl;
-                    DiagnosticsContext::get().attach<Reason>(enumName(retVal)).reportFatal();
-                }
-            },
-            ret);
+        const auto ret = runMain(module, ctx, "unknown");
+        if(ret) {
+            retCode = ret.value() & 0x7f;
+        } else {
+            std::cerr << " failed"sv << std::endl;
+            DiagnosticsContext::get().attach<Reason>("runtime error").attach<Reason>(passName).reportFatal();
+        }
     }
 
     auto answer = loadString(tempOutput);
@@ -131,7 +129,7 @@ static void verifyModuleExec(Module& module) {
         std::cerr << " passed"sv << std::endl;
     } else {
         std::cerr << " failed"sv << std::endl;
-        DiagnosticsContext::get().attach<Reason>("output mismatch").reportFatal();
+        DiagnosticsContext::get().attach<Reason>("output mismatch").attach<Reason>(passName).reportFatal();
     }
 }
 
@@ -152,7 +150,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
     if(debugTransform.get()) {
         std::cerr << "Original" << std::endl;
         dumpItem();
-        verifyModuleExec(analysis.module());
+        verifyModuleExec(analysis.module(), name());
     }
 
     bool modified = false;
@@ -170,7 +168,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
         } else {
             Stage stage{ pass->name() };
             if(debugTransform.get()) {
-                std::cerr << pass->name() << std::endl;
+                std::cerr << "\033[1;32m" << pass->name() << "\033[0m" << std::endl;
             }
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
@@ -184,7 +182,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
                 if(!item.verify(std::cerr))
                     DiagnosticsContext::get().attach<Attachment<Scope>>("item", &item).reportFatal();
                 if(debugTransform.get()) {
-                    verifyModuleExec(analysis.module());
+                    verifyModuleExec(analysis.module(), pass->name());
                 }
             }
         }
@@ -274,7 +272,7 @@ public:
                 continue;
             Stage stage{ mPass->name() };
             if(debugTransform.get()) {
-                std::cerr << mPass->name() << ' ' << func->getSymbol() << std::endl;
+                std::cerr << "\033[1;32m" << mPass->name() << "\033[0m" << ' ' << func->getSymbol() << std::endl;
             }
             if(mPass->run(*func, analysis)) {
                 if(debugTransform.get()) {
@@ -285,7 +283,7 @@ public:
                 modified = true;
                 assert(func->verify(std::cerr));
                 if(debugTransform.get()) {
-                    verifyModuleExec(module);
+                    verifyModuleExec(module, mPass->name());
                 }
             }
         }
@@ -441,23 +439,6 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     }
 
     if(level >= OptimizationLevel::O3) {
-        for(const auto& pass : passesSource.collectFunctionPass({
-                //"DynamicLoopUnroll",  //
-                "BlockMerge",      // clean up
-                "BlockEliminate",  // clean up
-            }))
-            perFunc->addPass(pass);
-        perFunc->addPass(iter);  // middle-2 optimization
-    }
-
-    if(level >= OptimizationLevel::O3) {
-        for(const auto& pass : passesSource.collectFunctionPass({
-                "Reassociate",            //
-                "ConstantPropagation",    //
-                "NoSideEffectEliminate",  // clean up
-            }))
-            perFunc->addPass(pass);
-
         // TODO: it is a time costuming phase.
         auto specialization = std::make_shared<PassManager<Function>>();
         for(const auto& pass : passesSource.collectFunctionPass({
@@ -472,6 +453,16 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             }))
             specialization->addPass(pass);
         perFunc->addPass(std::make_shared<IterationPassWrapper>(std::move(specialization), 256, false));
+        perFunc->addPass(iter);  // middle-2 optimization
+    }
+
+    if(level >= OptimizationLevel::O3) {
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "Reassociate",            //
+                "ConstantPropagation",    //
+                "NoSideEffectEliminate",  // clean up
+            }))
+            perFunc->addPass(pass);
         perFunc->addPass(iter);  // middle-3 optimization
     }
 
@@ -481,6 +472,14 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 "FuncInlining",  //
+            }))
+            perFuncWithInline->addPass(pass);
+        perFuncWithInline->addPass(iter);
+
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "DynamicLoopUnroll",  //
+                "BlockMerge",         // clean up
+                "BlockEliminate",     // clean up
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);  // after inlining

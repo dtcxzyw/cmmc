@@ -427,6 +427,7 @@ public:
     auto& incomings() const noexcept {
         return mIncomings;
     }
+    void clear();
     void removeSource(Block* block);
     void replaceSource(Block* oldBlock, Block* newBlock);
     bool replaceOperand(Value* oldOperand, Value* newOperand) override;

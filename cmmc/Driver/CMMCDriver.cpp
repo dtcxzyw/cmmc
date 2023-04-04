@@ -19,6 +19,7 @@
 #include <cmmc/Conversion/TAC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/Frontend/Driver.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/EnumName.hpp>
@@ -28,6 +29,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <type_traits>
@@ -62,7 +64,29 @@ executeInput.setName("execute-input", 'e').setDesc("execute with built-in interp
 dumpOptPipeline.setName("dump-opt-pipeline", 'P').setDesc("dump the transform pipeline in dot format");
 CMMC_INIT_OPTIONS_END
 
-std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, SimulationIOContext& ctx) {
+std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
+std::optional<int> runMain(Module& module, SimulationIOContext& ctx, const std::string& filePath) {
+    if(::targetName.get() == "llvm") {
+#ifdef CMMC_WITH_LLVM_SUPPORT
+        reportDebug() << "use LLVM Orc JIT backend" << std::endl;
+        const auto retVal = llvmExecMain(module, filePath, ctx);
+        return std::visit(
+            [](auto ret) -> int {
+                if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, int>) {
+                    return ret;
+                } else {
+                    reportError() << enumName(ret) << std::endl;
+                    return EXIT_FAILURE;
+                }
+            },
+            retVal);
+#else
+        CMMC_UNUSED(filePath);
+        std::cerr << "Please compile cmmc with llvm backend to use OrcJIT" << std::endl;
+        return EXIT_FAILURE;
+#endif
+    }
+
     Interpreter interpreter{ 1200'000'000'000ULL, 2ULL << 30, 1024, true };
     Function* func = nullptr;
     for(auto global : module.globals())
@@ -70,11 +94,25 @@ std::variant<ConstantValue*, SimulationFailReason> runMain(Module& module, Simul
             func = global->as<Function>();
             break;
         }
-    if(func)
-        return interpreter.execute(module, *func, {}, &ctx);
-    return SimulationFailReason::NoEntry;
+    auto runSim = [&]() -> std::variant<ConstantValue*, SimulationFailReason> {
+        if(func)
+            return interpreter.execute(module, *func, {}, &ctx);
+        return SimulationFailReason::NoEntry;
+    };
+    return std::visit(
+        [](auto ret) -> int {
+            if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
+                if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
+                    return static_cast<int>(val->getSignExtended());
+                }
+                return EXIT_FAILURE;
+            } else {
+                reportError() << enumName(ret) << std::endl;
+                return EXIT_FAILURE;
+            }
+        },
+        runSim());
 }
-std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
 
 CMMC_NAMESPACE_END
 
@@ -116,41 +154,8 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
         OutputStream out{ path };
         SimulationIOContext ctx{ in, out };
 
-        if(::targetName.get() == "llvm") {
-#ifdef CMMC_WITH_LLVM_SUPPORT
-            reportDebug() << "use LLVM Orc JIT backend" << std::endl;
-            const auto retVal = llvmExecMain(module, filePath, ctx);
-            return std::visit(
-                [](auto ret) -> int {
-                    if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, int>) {
-                        return ret;
-                    } else {
-                        reportError() << enumName(ret) << std::endl;
-                        return EXIT_FAILURE;
-                    }
-                },
-                retVal);
-#else
-            CMMC_UNUSED(filePath);
-            std::cerr << "Please compile cmmc with llvm backend to use OrcJIT" << std::endl;
-            return EXIT_FAILURE;
-#endif
-        }
-
-        const auto retVal = runMain(module, ctx);
-        return std::visit(
-            [](auto ret) -> int {
-                if constexpr(std::is_same_v<std::decay_t<decltype(ret)>, ConstantValue*>) {
-                    if(auto val = dynamic_cast<ConstantInteger*>(ret)) {
-                        return static_cast<int>(val->getSignExtended());
-                    }
-                    return EXIT_FAILURE;
-                } else {
-                    reportError() << enumName(ret) << std::endl;
-                    return EXIT_FAILURE;
-                }
-            },
-            retVal);
+        auto ret = runMain(module, ctx, filePath);
+        return ret.value_or(EXIT_FAILURE);
     }
 
     const auto emitLLVM = (::targetName.get() == "llvm");

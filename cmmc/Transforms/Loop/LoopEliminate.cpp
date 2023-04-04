@@ -27,7 +27,6 @@ class LoopEliminate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
-        const auto& target = analysis.module().getTarget();
 
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
@@ -45,9 +44,7 @@ public:
                 // remove backedge
                 modified = true;
                 const auto terminator = loop.latch->getTerminator()->as<BranchInst>();
-                loop.latch->instructions().pop_back();
-                IRBuilder builder{ target, loop.latch };
-                builder.makeOp<BranchInst>(terminator->getFalseTarget());
+                terminator->operands()[0] = ConstantInteger::getFalse();
             }
         }
         return modified;
