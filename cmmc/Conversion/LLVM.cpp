@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <iostream>
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
@@ -156,7 +157,12 @@ class LLVMConversionContext final {
             }
             reportUnreachable(CMMC_LOCATION());
         }
-        return valueMap.lookup(value);
+        if(auto ret = valueMap.lookup(value))
+            return ret;
+
+        std::cerr << "Invalid value: ";
+        value->dump(std::cerr, Noop{});
+        reportUnreachable(CMMC_LOCATION());
     }
 
     llvm::Value* convertInst(llvm::IRBuilder<>& builder, Instruction& inst, const DataLayout& dataLayout,
@@ -366,9 +372,11 @@ class LLVMConversionContext final {
         if(func.blocks().empty())
             return llvmFunc;
 
-        // const auto& dom = analysis.get<DominateAnalysis>(func);
+        analysis.invalidateFunc(func);
+        const auto& dom = analysis.get<DominateAnalysis>(func);
+
         llvm::SmallDenseMap<Block*, llvm::BasicBlock*> blockMap;
-        for(auto block : func.blocks()) {
+        for(auto block : dom.blocks()) {
             const auto llvmBlock = llvm::BasicBlock::Create(mContext, convertStr(block->getLabel()), llvmFunc);
             blockMap.insert({ block, llvmBlock });
         }
@@ -384,7 +392,7 @@ class LLVMConversionContext final {
             }
         }
 
-        for(auto block : func.blocks()) {
+        for(auto block : dom.blocks()) {
             const auto llvmBlock = blockMap.lookup(block);
 
             llvm::IRBuilder<> builder{ llvmBlock };
@@ -396,15 +404,15 @@ class LLVMConversionContext final {
         }
 
         // fix phi nodes
-        for(auto block : func.blocks()) {
+        for(auto block : dom.blocks()) {
             for(auto inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Phi) {
                     const auto phi = inst->as<PhiInst>();
                     const auto phiNode = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(phi));
                     for(auto [srcBlock, value] : phi->incomings()) {
-
-                        phiNode->addIncoming(value->isInstruction() ? valueMap.lookup(value) : convertValue(value, valueMap),
-                                             blockMap.lookup(srcBlock));
+                        if(dom.reachable(srcBlock))
+                            phiNode->addIncoming(value->isInstruction() ? valueMap.lookup(value) : convertValue(value, valueMap),
+                                                 blockMap.lookup(srcBlock));
                     }
                 } else
                     break;

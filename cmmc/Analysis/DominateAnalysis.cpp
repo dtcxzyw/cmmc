@@ -52,6 +52,10 @@ DomTreeNode::NodeIndex DominateAnalysisResult::getIndex(Block* block) const {
     return DomTreeNode::invalidNode;
 }
 
+bool DominateAnalysisResult::reachable(Block* block) const {
+    return mDomTreeInvMap.count(block);
+}
+
 Block* DominateAnalysisResult::lca(Block* a, Block* b) const {
     const auto lhs = mDomTreeInvMap.find(a);
     const auto rhs = mDomTreeInvMap.find(b);

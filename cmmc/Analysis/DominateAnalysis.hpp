@@ -49,6 +49,7 @@ public:
     explicit DominateAnalysisResult(std::unordered_map<Block*, DomTreeNode::NodeIndex> invMap, std::vector<DomTreeNode> domTree);
 
     DomTreeNode::NodeIndex getIndex(Block* block) const;
+    bool reachable(Block* block) const;
     const Block* parent(Block* node) const;
     const std::vector<Block*>& blocks() const {
         return mOrder;
