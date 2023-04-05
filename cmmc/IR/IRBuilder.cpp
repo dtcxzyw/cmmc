@@ -18,6 +18,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 
 CMMC_NAMESPACE_BEGIN
 

@@ -119,31 +119,31 @@ void TACLoweringInfo::lower(FMAInst*, LoweringContext&) const {
     DiagnosticsContext::get().attach<Reason>("FMA is not supported by TAC").reportFatal();
 }
 void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
-    bool onlyUsedByCondition = true, start = false;
-    for(auto rhs : inst->getBlock()->instructions()) {
-        if(start && rhs->hasOperand(inst)) {
-            if(rhs->getInstID() == InstructionID::ConditionalBranch) {
-                if(rhs->getOperand(0) == inst) {
-                    bool valid = true;
-                    for(uint32_t idx = 1; idx < rhs->operands().size(); ++idx)
-                        if(rhs->getOperand(idx) == inst) {
-                            valid = false;
-                            break;
-                        }
-                    if(valid)
-                        continue;
+    bool onlyUsedByCondition = true;
+    for(auto block : inst->getBlock()->getFunction()->blocks())
+        for(auto rhs : block->instructions()) {
+            if(rhs->hasOperand(inst)) {
+                if(rhs->getInstID() == InstructionID::ConditionalBranch) {
+                    if(rhs->getOperand(0) == inst) {
+                        bool valid = true;
+                        for(uint32_t idx = 1; idx < rhs->operands().size(); ++idx)
+                            if(rhs->getOperand(idx) == inst) {
+                                valid = false;
+                                break;
+                            }
+                        if(valid)
+                            continue;
+                    }
                 }
-            }
 
-            onlyUsedByCondition = false;
-            break;
+                onlyUsedByCondition = false;
+                break;
+            }
         }
-        if(rhs == inst)
-            start = true;
-    }
 
     if(onlyUsedByCondition) {
-        LoweringInfo::lower(inst, ctx);
+        // noop, fused with conditional branch
+        // LoweringInfo::lower(inst, ctx);
         return;
     }
 

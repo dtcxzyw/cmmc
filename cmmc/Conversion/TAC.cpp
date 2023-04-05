@@ -69,12 +69,7 @@ void loadTAC(Module& module, const std::string& path) {
             }
 
             const auto oldBlock = builder.getCurrentBlock();
-            const auto allocateBlock = builder.getCurrentFunction()->entryBlock();
-            builder.setCurrentBlock(allocateBlock);
-            auto inst = make<StackAllocInst>(i32);
-            auto& insts = allocateBlock->instructions();
-            insts.insert(std::prev(insts.cend()), inst);
-            inst->setBlock(allocateBlock);
+            auto inst = builder.createAlloc(i32);
             inst->setLabel(identifier);
             builder.setCurrentBlock(oldBlock);
             identifierMap.emplace(identifier, inst);

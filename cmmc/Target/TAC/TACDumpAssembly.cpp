@@ -247,7 +247,10 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
     const auto& dataLayout = module.target.getDataLayout();
 
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) { emitFunc(out, symbol.symbol, func, dataLayout, funcMap.at(&func)); },
+        std::visit(Overload{ [&](const GMIRFunction& func) {
+                                // func.dump(std::cerr, *this);
+                                emitFunc(out, symbol.symbol, func, dataLayout, funcMap.at(&func));
+                            },
                              [](const auto&) { reportUnreachable(CMMC_LOCATION()); }, [](const std::monostate&) {} },
                    symbol.def);
     }

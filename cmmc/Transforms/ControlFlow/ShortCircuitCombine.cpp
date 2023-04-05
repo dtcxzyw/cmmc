@@ -57,6 +57,7 @@
 //    xxx
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -204,16 +205,20 @@ class ShortCircuitCombine final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& target = analysis.module().getTarget();
+        const auto andSupport = target.isNativeSupported(InstructionID::And);
+        const auto orSupport = target.isNativeSupported(InstructionID::Or);
+
         bool modified = false;
 
         for(auto block : func.blocks()) {
             if(block->getTerminator()->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            if(combineLogicalAnd(block, analysis)) {
+            if(andSupport && combineLogicalAnd(block, analysis)) {
                 modified = true;
                 continue;
             }
-            if(combineLogicalOr(block, analysis)) {
+            if(orSupport && combineLogicalOr(block, analysis)) {
                 modified = true;
                 continue;
             }

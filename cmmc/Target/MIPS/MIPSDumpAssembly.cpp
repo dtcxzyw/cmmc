@@ -418,7 +418,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                              out << ", "sv;
                                              dumpOperand(branch.rhs);
                                          } else
-                                             reportNotImplemented(CMMC_LOCATION());  // TODO: fp cmp
+                                             reportNotImplemented(CMMC_LOCATION());
 
                                          out << ", "sv << labelMap.at(branch.targetBlock);
                                      }

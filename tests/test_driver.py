@@ -9,7 +9,7 @@ import CodeGenTAC.irsim_quiet as irsim
 import platform
 import math
 
-gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -fno-tree-vectorize -s -funroll-loops -ffp-contract=on -w "
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
@@ -113,8 +113,10 @@ def spl_semantic_noref(src):
 
 
 def spl_codegen_tac(src):
-    out = subprocess.run(args=[binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
+    args = [binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
+            '/dev/stdout', src]
+    #print("", " ".join(args))
+    out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
     ir = out.stdout
@@ -149,8 +151,10 @@ def remove_prompt(v: str):
 def spl_codegen_mips(src):
     name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-o',
-                               tmp_out, src], capture_output=True, text=True)
+    args = [binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-O', optimization_level, '-o',
+            tmp_out, src]
+    #print("", " ".join(args))
+    out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
     spl_test_cases = irsim.test_generators[name]()
@@ -177,7 +181,7 @@ def spl_codegen_mips(src):
 
 def sysy_codegen_mips(src):
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-o',
+    out = subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level,  '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -187,7 +191,7 @@ def sysy_codegen_mips(src):
 
 def sysy_codegen_riscv64(src):
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-o',
+    out = subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-O', optimization_level,  '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         print(out.returncode)
@@ -200,7 +204,7 @@ def sysy_codegen_riscv64(src):
 def spl_codegen_riscv64(src):
     name = str(os.path.basename(src)).split('.')[0]
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-o',
+    out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-O', optimization_level, '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -226,7 +230,7 @@ def spl_codegen_riscv64(src):
 
 
 def spl_tac2ir(src):
-    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'mips', '-o',
+    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'mips', '-O', optimization_level, '-o',
                                '/dev/null', src], capture_output=True, text=True)
     return out.returncode == 0
 
@@ -498,7 +502,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["gcc", "llvm"]
+test_cases = ["parse", "semantic", "codegen", "tac", "gcc", "llvm"]
 if len(sys.argv) >= 4:
     if sys.argv[3] == 'ref':
         generate_ref = True
@@ -513,10 +517,6 @@ if generate_ref:
 
 res = []
 start = time.perf_counter()
-
-if "gcc" in test_cases:
-    res.append(test("SysY gcc performance", tests_path +
-                    "/SysY2022/performance", ".sy", sysy_gcc))
 
 if "parse" in test_cases:
     res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
@@ -576,6 +576,10 @@ if "codegen" in test_cases:
                     "/SysY2022/functional", ".sy", sysy_codegen_mips))
     # res.append(test("SysY SysY->RISCV64 functional", tests_path +
     #                "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
+
+if "gcc" in test_cases:
+    res.append(test("SysY gcc performance", tests_path +
+                    "/SysY2022/performance", ".sy", sysy_gcc))
 
 if "llvm" in test_cases:
     res.append(test("SysY SysY->LLVMIR functional", tests_path +

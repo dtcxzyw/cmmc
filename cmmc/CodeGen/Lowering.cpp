@@ -16,6 +16,7 @@
 #include <cassert>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/GMIR.hpp>
@@ -115,12 +116,13 @@ GMIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     return ret->get();
 }
 void LoweringContext::addOperand(Value* value, Operand reg) {
+    if(mValueMap.count(value))
+        reportUnreachable(CMMC_LOCATION());
     mValueMap.emplace(value, reg);
 }
 
-static std::unordered_map<Operand, Operand, OperandHasher>
-lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
-                       std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
+static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
+                                   std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
     auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
 
@@ -134,23 +136,24 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
     auto& target = machineModule.target;
     auto& dataLayout = target.getDataLayout();
     auto& info = target.getTargetLoweringInfo();
+    auto& dom = analysis.get<DominateAnalysis>(*func);
 
-    for(auto block : func->blocks()) {
+    for(auto block : dom.blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
         mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc, tripCount));
         auto mblock = mfunc.blocks().back().get();
         blockMap.emplace(block, mblock);
-
-        /*
-        for(auto arg : block->args()) {
-            const auto reg = vregPool.allocate(arg->getType());
-            blockArgs[arg] = reg;
-            valueMap[arg] = reg;
-        }
-        */
-
-        ctx.setCurrentBasicBlock(mblock);
         for(auto inst : block->instructions()) {
+            if(inst->getInstID() == InstructionID::Phi) {
+                auto vreg = vregPool.allocate(inst->getType());
+                ctx.addOperand(inst, vreg);
+            }
+        }
+    }
+
+    {
+        ctx.setCurrentBasicBlock(blockMap.at(func->entryBlock()));
+        for(auto inst : func->entryBlock()->instructions()) {
             if(inst->getInstID() == InstructionID::Alloc) {
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
                 const auto storage = stackPool.allocate(type);
@@ -160,20 +163,23 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
                 ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()),
                                         false);
                 ctx.addOperand(inst, addr);
-            }
+            } else
+                break;
         }
     }
 
     {
-        reportNotImplemented(CMMC_LOCATION());
-        // auto& parameters = mfunc.parameters();
-        // for(auto arg : func->args())
-        //     parameters.push_back();
+        auto& parameters = mfunc.parameters();
+        for(auto arg : func->args()) {
+            auto vreg = vregPool.allocate(arg->getType());
+            ctx.addOperand(arg, vreg);
+            parameters.push_back(vreg);
+        }
         ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
         info.emitPrologue(ctx, func);
     }
 
-    for(auto block : func->blocks()) {
+    for(auto block : dom.blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
         const auto& stackUsage = stackLifetime.getUsedAllocas(block);
@@ -184,26 +190,13 @@ lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineM
         }
     }
 
-    std::unordered_map<Operand, Operand, OperandHasher> operandMap;
-    // TODO: phi nodes
-    /*
-    for(auto [k, v] : blockArgMap.map()) {
-        const auto dst = blockArgs.at(k);
-        if(v->getBlock()) {  // instructions/block arguments
-            const auto src = ctx.mapOperand(v);
-            operandMap.emplace(dst, src);
-        }
-    }*/
-
     /*
     if constexpr(Config::debug) {
-        func->dump(std::cerr);
+        func->dump(std::cerr, Noop{});
         std::cerr << '\n';
         mfunc.dump(std::cerr, target);
     }
     */
-
-    return operandMap;
 }
 
 static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
@@ -322,6 +315,8 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     };
 
     for(auto func : cgscc.getOrder()) {
+        // func->dump(std::cerr, Noop{});
+
         const auto symbol = globalMap.at(func);
         if(func->blocks().empty()) {  // external
             target.addExternalFuncIPRAInfo(symbol, infoIPRA);
@@ -329,11 +324,10 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
 
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
-        std::unordered_map<Operand, Operand, OperandHasher> operandMap;
         {
             // Stage 1: instruction selection
             Stage stage{ "Instruction selection" };
-            operandMap = lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
+            lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
             assert(mfunc.verify(std::cerr, true));
         }
         {
@@ -345,7 +339,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // Stage 3: register coalescing
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Register coalescing" };
-            registerCoalescing(mfunc, operandMap);
+            // registerCoalescing(mfunc, operandMap);
             assert(mfunc.verify(std::cerr, true));
         }
         {
@@ -556,6 +550,8 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
         case InstructionID::Call:
             lower(inst->as<FunctionCallInst>(), ctx);
             break;
+        case InstructionID::Phi:  // noop
+            break;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -696,109 +692,113 @@ void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
                             static_cast<uint32_t>(size), false);
 }
-static void emitBranch(Block* targetBlock, Block* srcBlock, LoweringContext& ctx) {
-    CMMC_UNUSED(targetBlock);
-    CMMC_UNUSED(srcBlock);
-    CMMC_UNUSED(ctx);
-    reportNotImplemented(CMMC_LOCATION());
-    /*
-    const auto dstBlock = target.getTarget();
-    auto& dst = dstBlock->args();
-    auto& src = target.getArgs();
+static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     auto& dataLayout = ctx.getDataLayout();
+    std::vector<Value*> src;
+    std::vector<Value*> dst;
 
-    // setup arguments
-    if(srcBlock == dstBlock) {
-        // self jump
-        auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
-        // calcuates the best order and create temporary variables for args
+    for(auto inst : dstBlock->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            const auto phi = inst->as<PhiInst>();
+            src.push_back(phi->incomings().at(srcBlock));
+            dst.push_back(phi);
+        } else
+            break;
+    }
 
-        std::unordered_map<Value*, uint32_t> nodeMap;
-        for(uint32_t idx = 0; idx < dst.size(); ++idx)
-            nodeMap.emplace(dst[idx], idx);
+    if(!src.empty()) {
+        // setup arguments
+        if(srcBlock == dstBlock) {
+            // self-loop
+            auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
+            // calcuates the best order and create temporary variables for args
 
-        Graph graph(dst.size());  // direct copy graph
-        for(size_t idx = 0; idx < dst.size(); ++idx) {
-            const auto arg = src[idx];
-            if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
-                // copy b to a -> a should be resetted before b
-                graph[idx].push_back(iter->second);
-            }
-        }
+            std::unordered_map<Value*, uint32_t> nodeMap;
+            for(uint32_t idx = 0; idx < dst.size(); ++idx)
+                nodeMap.emplace(dst[idx], idx);
 
-        const auto [ccnt, col] = calcSCC(graph);
-        std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
-        std::vector<std::vector<NodeIndex>> groups(ccnt);
-        std::vector<uint32_t> in(ccnt);
-        for(uint32_t u = 0; u < graph.size(); ++u) {
-            const auto cu = col[u];
-            groups[cu].push_back(u);
-            for(auto v : graph[u]) {
-                const auto cv = col[v];
-                if(cu != cv && dag[cu].emplace(cv).second) {
-                    ++in[cv];
+            Graph graph(dst.size());  // direct copy graph
+            for(size_t idx = 0; idx < dst.size(); ++idx) {
+                const auto arg = src[idx];
+                if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
+                    // copy b to a -> a should be resetted before b
+                    graph[idx].push_back(iter->second);
                 }
             }
-        }
 
-        std::queue<uint32_t> q;
-        for(uint32_t u = 0; u < ccnt; ++u)
-            if(in[u] == 0)
-                q.push(u);
-        std::vector<uint32_t> order;
-        order.reserve(graph.size());
-        while(!q.empty()) {
-            const auto u = q.front();
-            q.pop();
-
-            const auto& group = groups[u];
-            order.insert(order.end(), group.cbegin(), group.cend());
-
-            for(auto v : dag[u]) {
-                if(--in[v] == 0) {
-                    q.push(v);
+            const auto [ccnt, col] = calcSCC(graph);
+            std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
+            std::vector<std::vector<NodeIndex>> groups(ccnt);
+            std::vector<uint32_t> in(ccnt);
+            for(uint32_t u = 0; u < graph.size(); ++u) {
+                const auto cu = col[u];
+                groups[cu].push_back(u);
+                for(auto v : graph[u]) {
+                    const auto cv = col[v];
+                    if(cu != cv && dag[cu].emplace(cv).second) {
+                        ++in[cv];
+                    }
                 }
             }
-        }
 
-        assert(order.size() == dst.size());
+            std::queue<uint32_t> q;
+            for(uint32_t u = 0; u < ccnt; ++u)
+                if(in[u] == 0)
+                    q.push(u);
+            std::vector<uint32_t> order;
+            order.reserve(graph.size());
+            while(!q.empty()) {
+                const auto u = q.front();
+                q.pop();
 
-        std::unordered_map<Value*, Operand> dirtyRegRemapping;
+                const auto& group = groups[u];
+                order.insert(order.end(), group.cbegin(), group.cend());
 
-        for(size_t i = 0; i < dst.size(); ++i) {
-            const auto idx = order[i];
-            auto arg = unusedOperand;
-            if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
-                arg = iter->second;  // use copy
-            } else
-                arg = ctx.mapOperand(src[idx]);
-            const auto dstArg = ctx.mapBlockArg(dst[idx]);
+                for(auto v : dag[u]) {
+                    if(--in[v] == 0) {
+                        q.push(v);
+                    }
+                }
+            }
 
-            if(arg == dstArg)
-                continue;  // identical copy
+            assert(order.size() == dst.size());
 
-            const auto type = src[idx]->getType();
-            const auto size = type->getSize(dataLayout);
+            std::unordered_map<Value*, Operand> dirtyRegRemapping;
 
-            // create copy
-            const auto intermediate = vreg.allocate(type);
-            ctx.emitInst<CopyMInst>(dstArg, false, 0, intermediate, false, 0, static_cast<uint32_t>(size), false);
-            dirtyRegRemapping.emplace(dst[idx], intermediate);
+            for(size_t i = 0; i < dst.size(); ++i) {
+                const auto idx = order[i];
+                auto arg = unusedOperand;
+                if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
+                    arg = iter->second;  // use copy
+                } else
+                    arg = ctx.mapOperand(src[idx]);
+                const auto dstArg = ctx.mapOperand(dst[idx]);
 
-            // apply reset
-            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
-        }
-    } else {
-        for(size_t idx = 0; idx < dst.size(); ++idx) {
-            const auto arg = ctx.mapOperand(src[idx]);
-            const auto dstArg = ctx.mapBlockArg(dst[idx]);
-            const auto size = src[idx]->getType()->getSize(dataLayout);
-            ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+                if(arg == dstArg)
+                    continue;  // identical copy
+
+                const auto type = src[idx]->getType();
+                const auto size = type->getSize(dataLayout);
+
+                // create copy
+                const auto intermediate = vreg.allocate(type);
+                ctx.emitInst<CopyMInst>(dstArg, false, 0, intermediate, false, 0, static_cast<uint32_t>(size), false);
+                dirtyRegRemapping.emplace(dst[idx], intermediate);
+
+                // apply reset
+                ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+            }
+        } else {
+            for(size_t idx = 0; idx < dst.size(); ++idx) {
+                const auto arg = ctx.mapOperand(src[idx]);
+                const auto dstArg = ctx.mapOperand(dst[idx]);
+                const auto size = src[idx]->getType()->getSize(dataLayout);
+                ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
+            }
         }
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
-    */
 }
 void LoweringInfo::lower(BranchInst* inst, LoweringContext& ctx) const {
     const auto srcBlock = inst->getBlock();
