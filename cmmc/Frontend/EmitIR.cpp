@@ -121,7 +121,13 @@ Function* FunctionDeclaration::emit(EmitContext& ctx) {
         const auto identifier = ctx.lookupIdentifier(symbol, IdentifierUsageHint::Function);
         if(identifier.value->is<Function>()) {
             func = identifier.value->as<Function>();
+
             if(!func->getType()->isSame(funcType)) {
+                if(strictMode.get()) {
+                    ctx.addIdentifier(symbol, identifier);
+                    EmitContext::popLoc();  // TODO: RAII
+                    return nullptr;
+                }
                 DiagnosticsContext::get().attach<Reason>("Function declaration is conflict with the previous one").reportFatal();
             }
         } else {
@@ -145,6 +151,10 @@ void FunctionDefinition::emit(EmitContext& ctx) {
     EmitContext::pushLoc(decl.loc);
 
     auto func = decl.emit(ctx);
+    if(!func) {
+        EmitContext::popLoc();  // TODO: RAII
+        return;
+    }
     const auto funcType = func->getType()->as<FunctionType>();
     const auto& callInfo = ctx.getFunctionCallInfo(funcType);
 

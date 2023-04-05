@@ -87,7 +87,7 @@ def spl_semantic(src, strict=True):
     args = [binary_path,  '--emitIR', '-t', 'tac', '-o', '/dev/stdout', src]
     if strict:
         args.insert(-1, '--strict')
-    dump_args(args)
+    # dump_args(args)
     out = subprocess.run(args, capture_output=True, text=True)
 
     ref_content = ""
@@ -186,9 +186,12 @@ def spl_codegen_mips(src):
 
 def sysy_codegen_mips(src):
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level,  '-o',
-                               tmp_out, src], capture_output=True, text=True)
+    args = [binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level,  '-o',
+            tmp_out, src]
+    # dump_args(args)
+    out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
+        print(out.returncode, out.stderr)
         return False
 
     return True
@@ -441,7 +444,7 @@ def sysy_codegen_llvm(src):
 
     args = [binary_path, '-t', 'llvm', '--hide-symbol', '-O', level, '-o',
                                '/dev/stdout', '-e', inputs, src]
-    print('', ' '.join(args))
+    # dump_args(args)
     out = subprocess.run(args=args, capture_output=True, text=True)
 
     used = compare_and_parse_perf(src, out)
