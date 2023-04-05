@@ -123,7 +123,6 @@ public:
         // FIXME: don't create phi nodes in all blocks
         using namespace std::chrono_literals;
         constexpr auto timeBudget = 10ms;
-        using Clock = std::chrono::steady_clock;
         const auto deadline = Clock::now() + timeBudget;
 
         IRBuilder builder{ analysis.module().getTarget() };

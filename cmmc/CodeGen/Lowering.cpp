@@ -294,7 +294,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
     auto& subTarget = target.getSubTarget();
 
     {
-        Stage stage{ "Pre-lowering legalization" };
+        Stage stage{ "Pre-lowering legalization"sv };
         target.legalizeModuleBeforeCodeGen(module, analysis);
         analysis.invalidateModule();
     }
@@ -326,31 +326,31 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         auto& mfunc = std::get<GMIRFunction>(symbol->def);
         {
             // Stage 1: instruction selection
-            Stage stage{ "Instruction selection" };
+            Stage stage{ "Instruction selection"sv };
             lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
             assert(mfunc.verify(std::cerr, true));
         }
         {
             // Stage 2: clean up unused insts
-            Stage stage{ "Clean up unused instructions" };
+            Stage stage{ "Clean up unused instructions"sv };
             removeUnusedInsts(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 3: register coalescing
         if(optLevel >= OptimizationLevel::O1) {
-            Stage stage{ "Register coalescing" };
+            Stage stage{ "Register coalescing"sv };
             // registerCoalescing(mfunc, operandMap);
             assert(mfunc.verify(std::cerr, true));
         }
         {
             // Stage 3: legalize
-            Stage stage{ "Legalization" };
+            Stage stage{ "Legalization"sv };
             target.legalizeFunc(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 4: peephole opt
         if(optLevel >= OptimizationLevel::O1) {
-            Stage stage{ "Peephole optimization" };
+            Stage stage{ "Peephole optimization"sv };
             subTarget.peepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
             while(genericPeepholeOpt(mfunc, target))
@@ -359,7 +359,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 5: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2) {
-            Stage stage{ "ICF & Tail duplication" };
+            Stage stage{ "ICF & Tail duplication"sv };
             // tail duplication as the small block inliner does in CMMC IR
             tailDuplication(mfunc);
             assert(mfunc.verify(std::cerr, true));
@@ -374,14 +374,14 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 6: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
-            Stage stage{ "Pre-RA scheduling" };
+            Stage stage{ "Pre-RA scheduling"sv };
             schedule(mfunc, target, true);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 7: register allocation
         bool useBuiltinRA = false;
         {
-            Stage stage{ "Register allocation" };
+            Stage stage{ "Register allocation"sv };
             if(!target.builtinRA(mfunc))
                 assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
             else
@@ -390,39 +390,39 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         }
         // Stage 8: legalize stack objects, stack -> sp
         {
-            Stage stage{ "Stack object allocation" };
+            Stage stage{ "Stack object allocation"sv };
             if(!target.builtinSA(mfunc))
                 allocateStackObjects(mfunc, target, hasCall(func), optLevel);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
-            Stage stage{ "Post-RA scheduling" };
+            Stage stage{ "Post-RA scheduling"sv };
             schedule(mfunc, target, false);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 10: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
-            Stage stage{ "Code layout optimization" };
+            Stage stage{ "Code layout optimization"sv };
             simplifyCFGWithUniqueTerminator(mfunc);
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
-            Stage stage{ "Post peephole optimization" };
+            Stage stage{ "Post peephole optimization"sv };
             subTarget.postPeepholeOpt(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
         if(optLevel >= OptimizationLevel::O1) {
-            Stage stage{ "CFG Simplification" };
+            Stage stage{ "CFG Simplification"sv };
             simplifyCFG(mfunc, target);
             assert(mfunc.verify(std::cerr, false));
         }
         {
             // Stage 13: post legalization
-            Stage stage{ "Post legalization" };
+            Stage stage{ "Post legalization"sv };
             target.postLegalizeFunc(mfunc);
             assert(mfunc.verify(std::cerr, false));
         }
@@ -436,7 +436,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
 }
 
 std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
-    Stage stage{ "lower to GMIR" };
+    Stage stage{ "lower to GMIR"sv };
 
     auto& target = module.getTarget();
     auto machineModule = std::make_unique<GMIRModule>(target);

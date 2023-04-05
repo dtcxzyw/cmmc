@@ -21,10 +21,10 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <fstream>

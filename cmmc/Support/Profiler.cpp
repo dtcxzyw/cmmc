@@ -20,6 +20,7 @@
 #include <ios>
 #include <iostream>
 #include <memory>
+#include <string_view>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
@@ -30,8 +31,7 @@ CMMC_INIT_OPTIONS_BEGIN
 enableProfiling.setName("profile", 'p').setDesc("enable built-in profiling");
 CMMC_INIT_OPTIONS_END
 
-Stage::Stage(const std::string_view& name) : Stage{ std::string{ name } } {}
-Stage::Stage(const std::string& name) {
+Stage::Stage(const std::string_view& name) {
     if(enableProfiling.get())
         Profiler::get().pushStage(name);
 }
@@ -41,7 +41,7 @@ Stage::~Stage() {
 }
 
 StageStorage::StageStorage() : mCreationTime{ Clock::now() }, mTotalDuration{}, mCount{ 0 } {}
-StageStorage* StageStorage::getSubStorage(const std::string& name) {
+StageStorage* StageStorage::getSubStorage(const std::string_view& name) {
     const auto iter = mNestedStages.find(name);
     if(iter != mNestedStages.cend())
         return iter->second.get();
@@ -53,20 +53,29 @@ void StageStorage::record(Duration duration) {
 }
 void StageStorage::printNested(uint32_t depth, double total) const {
     const auto self = static_cast<double>(mTotalDuration.count());
-    std::vector<std::pair<const std::string*, const StageStorage*>> storages;
+    std::vector<std::pair<const std::string_view*, const StageStorage*>> storages;
     for(auto& [k, v] : mNestedStages)
         storages.emplace_back(&k, v.get());
     std::sort(storages.begin(), storages.end(),
               [](auto& lhs, auto& rhs) { return lhs.second->duration() > rhs.second->duration(); });
+    double acc = 0.0;
+    constexpr double accThreshold = 0.95;    // top 95%
+    constexpr double printThreshold = 0.05;  // at least 5%
     for(auto [name, stage] : storages) {
         const auto count = stage->count();
         const auto duraiton = static_cast<double>(stage->duration().count());
         constexpr auto ratio = static_cast<double>(Clock::period::num) / static_cast<double>(Clock::period::den);
+        const auto selfRatio = duraiton / self;
+        if(selfRatio < printThreshold)
+            break;
         for(uint32_t idx = 0; idx < depth; ++idx)
             std::cerr << "    "sv;
-        std::cerr << *name << ' ' << (duraiton * ratio * 1000.0) << " ms "sv << count << ' ' << (duraiton / self * 100.0)
-                  << "% "sv << (duraiton / total * 100.0) << "% "sv << std::endl;
+        std::cerr << *name << ' ' << (duraiton * ratio * 1000.0) << " ms "sv << count << ' ' << (selfRatio * 100.0) << "% "sv
+                  << (duraiton / total * 100.0) << "% "sv << std::endl;
         stage->printNested(depth + 1, total);
+        acc += selfRatio;
+        if(acc > accThreshold)
+            break;
     }
 }
 
@@ -74,7 +83,7 @@ Profiler::Profiler() {
     pushStage({});
 }
 // performance
-void Profiler::pushStage(const std::string& name) {
+void Profiler::pushStage(const std::string_view& name) {
     const auto current = Clock::now();
     if(!mStageStack.empty())
         mStageStack.emplace_back(current, mStageStack.back().second->getSubStorage(name));

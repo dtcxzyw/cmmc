@@ -27,9 +27,9 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
@@ -106,7 +106,7 @@ bool EmitContext::isIdentifierDefined(const String& identifier) const {
 }
 
 Function* FunctionDeclaration::emit(EmitContext& ctx) {
-    Stage stage{ "emit function" };
+    Stage stage{ "emit function"sv };
     EmitContext::pushLoc(loc);
     // (void) -> ()
     if(args.size() == 1 && args.front().type.typeIdentifier == "void") {
@@ -147,7 +147,7 @@ Function* FunctionDeclaration::emit(EmitContext& ctx) {
 }
 
 void FunctionDefinition::emit(EmitContext& ctx) {
-    Stage stage{ "emit function" };
+    Stage stage{ "emit function"sv };
     EmitContext::pushLoc(decl.loc);
 
     auto func = decl.emit(ctx);
@@ -200,7 +200,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
         }
     }
     {
-        Stage stage2{ "emit function body" };
+        Stage stage2{ "emit function body"sv };
         for(auto st : block)
             st->emitWithLoc(ctx);
     }
@@ -209,7 +209,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
     ctx.setCurrentBlock(nullptr);  // clean up
 
     {
-        Stage stage2{ "post fixup" };
+        Stage stage3{ "post fixup"sv };
         // trim instructions after the first terminator
         const auto retType = funcType->getRetType();
         for(auto funcBlock : func->blocks()) {
@@ -1666,7 +1666,7 @@ QualifiedValue EmptyExpr::emit(EmitContext&) const {
 }
 
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
-    Stage stage{ "emit global" };
+    Stage stage{ "emit global"sv };
 
     auto module = ctx.getModule();
     GlobalVariable* global = nullptr;
@@ -1720,7 +1720,7 @@ void GlobalVarDefinition::emit(EmitContext& ctx) const {
 }
 
 void StructDefinition::emit(EmitContext& ctx) const {
-    Stage stage{ "emit struct" };
+    Stage stage{ "emit struct"sv };
     EmitContext::pushLoc(location);
 
     Vector<StructField> fields;

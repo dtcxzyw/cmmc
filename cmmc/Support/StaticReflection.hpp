@@ -22,32 +22,32 @@ CMMC_NAMESPACE_BEGIN
 // Please refer to https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87372
 // Workaround: only use constexpr with gcc>=9.4
 #if(__GNUC__ > 9) || (__GNUC__ == 9 && __GNUC_MINOR__ >= 4)
-#define CMMC_ENUM_CONSTEXPR constexpr
+#define CMMC_CONSTEXPR constexpr
 #else
-#define CMMC_ENUM_CONSTEXPR
+#define CMMC_CONSTEXPR
 #endif
 
 namespace impl {
     template <typename Enum, Enum Value>
-    CMMC_ENUM_CONSTEXPR const char* staticEnumNameImpl() {
+    CMMC_CONSTEXPR const char* staticEnumNameImpl() {
         return __PRETTY_FUNCTION__;
     }
 
     template <typename Enum, Enum Value>
-    CMMC_ENUM_CONSTEXPR std::string_view staticEnumName() {
+    CMMC_CONSTEXPR std::string_view staticEnumName() {
         const std::string_view name = staticEnumNameImpl<Enum, Value>();
         const auto begin = name.find_last_of('=') + 2;
         return name.substr(begin, name.size() - begin - 1);
     }
 
     template <typename Enum, Enum Value>
-    CMMC_ENUM_CONSTEXPR std::string_view enumName(Enum val) {
+    CMMC_CONSTEXPR std::string_view enumName(Enum val) {
         if constexpr(static_cast<uint32_t>(Value) >= 128) {  // make clangd happy
             CMMC_UNUSED(val);
             return "Unknown";
         } else {
-            CMMC_ENUM_CONSTEXPR auto name = staticEnumName<Enum, Value>();
-            if CMMC_ENUM_CONSTEXPR(name[0] == '(') {
+            CMMC_CONSTEXPR auto name = staticEnumName<Enum, Value>();
+            if CMMC_CONSTEXPR(name[0] == '(') {
                 CMMC_UNUSED(val);
                 return "Unknown";
             }
@@ -59,8 +59,27 @@ namespace impl {
 }  // namespace impl
 
 template <typename Enum>
-CMMC_ENUM_CONSTEXPR std::string_view enumName(Enum val) {
+CMMC_CONSTEXPR std::string_view enumName(Enum val) {
     return impl::enumName<Enum, static_cast<Enum>(0)>(val);
+}
+
+namespace impl {
+    template <typename T>
+    CMMC_CONSTEXPR const char* staticTypeNameImpl() {
+        return __PRETTY_FUNCTION__;
+    }
+
+    template <typename T>
+    CMMC_CONSTEXPR std::string_view staticTypeName() {
+        const std::string_view name = staticTypeNameImpl<T>();
+        const auto begin = name.find_last_of('=') + 8;
+        return name.substr(begin, name.size() - begin - 1);
+    }
+}  // namespace impl
+
+template <typename T>
+CMMC_CONSTEXPR std::string_view typeName() {
+    return impl::staticTypeName<T>();
 }
 
 CMMC_NAMESPACE_END

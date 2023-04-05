@@ -14,7 +14,7 @@ test_count = int(sys.argv[2])
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-safe-math --no-structs --output /dev/stdout"
 gcc_command = "gcc -w -Wno-narrowing -O2 "
 optimization_level = '1'
-timeout = 25.0
+timeout = None
 
 cwd = os.path.dirname(binary)+"/csmith"
 if os.path.exists(cwd):

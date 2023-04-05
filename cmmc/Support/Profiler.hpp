@@ -30,8 +30,7 @@ using TimePoint = Clock::time_point;
 
 class Stage final {
 public:
-    explicit Stage(const std::string& name);
-    explicit Stage(const char* name) : Stage{ std::string{ name } } {}
+    explicit Stage(const std::string& name) = delete;
     explicit Stage(const std::string_view& name);
     ~Stage();
     Stage(const Stage&) = delete;
@@ -42,13 +41,13 @@ public:
 
 class StageStorage final {
     TimePoint mCreationTime;
-    std::unordered_map<std::string, std::unique_ptr<StageStorage>> mNestedStages;
+    std::unordered_map<std::string_view, std::unique_ptr<StageStorage>> mNestedStages;
     Duration mTotalDuration;
     uint32_t mCount;
 
 public:
     StageStorage();
-    StageStorage* getSubStorage(const std::string& name);
+    StageStorage* getSubStorage(const std::string_view& name);
     void record(Duration duration);
     TimePoint creationTime() const noexcept {
         return mCreationTime;
@@ -69,7 +68,7 @@ class Profiler final {
 public:
     Profiler();
     // performance
-    void pushStage(const std::string& name);
+    void pushStage(const std::string_view& name);
     void popStage();
     void printStatistics();
     // counter

@@ -30,7 +30,7 @@ bool parseSpl(DriverImpl& driver, const std::string& file);
 bool parseSysY(DriverImpl& driver, const std::string& file);
 
 void Driver::parse(const std::string& file, FrontEndLang lang, bool recordHierarchy, bool strictMode) {
-    Stage stage{ "parse" };
+    Stage stage{ "parse"sv };
     auto arena = std::make_shared<Arena>();
     Arena::setArena(Arena::Source::AST, arena.get());
     mImpl = std::make_unique<DriverImpl>(file, lang, recordHierarchy, strictMode, std::move(arena));
@@ -45,12 +45,12 @@ void Driver::parse(const std::string& file, FrontEndLang lang, bool recordHierar
 }
 
 void Driver::emit(Module& module) {
-    Stage stage{ "emit IR" };
+    Stage stage{ "emit IR"sv };
     mImpl->emit(module);
 }
 
 void Driver::dump(std::ostream& out) {
-    Stage stage{ "dump AST" };
+    Stage stage{ "dump AST"sv };
     mImpl->dump(out);
 }
 

@@ -15,6 +15,8 @@
 #pragma once
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -108,6 +110,7 @@ public:
 
     template <typename Pass, typename = std::enable_if_t<std::is_base_of_v<AnalysisPass<Module>, Pass>>>
     const auto& get() {
+        Stage stage{ typeName<Pass>() };
         registerModulePass<Pass>();
         using Result = typename Pass::Result;
         return *static_cast<const Result*>(getPassResult(Pass::getID()));
@@ -115,6 +118,7 @@ public:
 
     template <typename Pass, typename = std::enable_if_t<std::is_base_of_v<AnalysisPass<Function>, Pass>>>
     const auto& get(Function& func) {
+        Stage stage{ typeName<Pass>() };
         registerFuncPass<Pass>();
         using Result = typename Pass::Result;
         return *static_cast<const Result*>(getPassResult(func, Pass::getID()));

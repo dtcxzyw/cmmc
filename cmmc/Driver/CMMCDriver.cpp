@@ -22,9 +22,9 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdlib>
 #include <fstream>
@@ -133,7 +133,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     analysis.invalidateModule();
 
     {
-        Stage stage{ "optimize IR" };
+        Stage stage{ "optimize IR"sv };
         const auto opt = PassManager<Module>::get(static_cast<OptimizationLevel>(optimizationLevel.get()));
         opt->run(module, analysis);
     }
@@ -180,7 +180,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     const auto machineModule = lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
     // assert(machineModule->verify());
     {
-        Stage stage{ "dump ASM" };
+        Stage stage{ "dump ASM"sv };
         target.emitAssembly(*machineModule, out);
     }
 

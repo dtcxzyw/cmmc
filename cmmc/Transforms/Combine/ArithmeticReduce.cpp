@@ -353,13 +353,13 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // (a == 0) & (b == 0) -> (a | b) == 0
             CompareOp cmp1, cmp2;
             if(and_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::Equal &&
-               cmp2 == CompareOp::Equal) {
+               cmp2 == CompareOp::Equal && v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal,
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }
             // (a != 0) | (b != 0) -> (a | b) != 0
             if(or_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::NotEqual &&
-               cmp2 == CompareOp::NotEqual) {
+               cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual,
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }

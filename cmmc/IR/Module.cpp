@@ -25,7 +25,7 @@ CMMC_NAMESPACE_BEGIN
 Module::Module() : mArena{ Arena::Source::IR } {}
 
 void Module::dump(std::ostream& out) const {
-    Stage stage{ "dump IR" };
+    Stage stage{ "dump IR"sv };
 
     if(!mTypes.empty()) {
         for(auto type : mTypes)

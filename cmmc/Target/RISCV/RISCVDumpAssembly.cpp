@@ -19,9 +19,9 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
-#include <cmmc/Support/EnumName.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Target/RISCV/RISCVTarget.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
