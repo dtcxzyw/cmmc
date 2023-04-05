@@ -81,6 +81,7 @@ struct FunctionDeclaration final {
     // bool isVarArg;
 
     std::pair<FunctionCallInfo, const FunctionType*> getSignature(EmitContext& ctx) const;
+    Function* emit(EmitContext& ctx);
 };
 
 struct StructDefinition final {

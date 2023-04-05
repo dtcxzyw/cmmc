@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from concurrent.futures import ThreadPoolExecutor
+from tqdm import tqdm
 import os
 import sys
 import subprocess
@@ -11,17 +13,20 @@ binary = sys.argv[1]
 test_count = int(sys.argv[2])
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-safe-math --no-structs --output /dev/stdout"
 gcc_command = "gcc -w -Wno-narrowing -O2 "
-optimization_level = '3'
+optimization_level = '0'
 
 
-def read_header():
-    base = os.path.dirname(os.path.abspath(__file__))
-    header_path = base+"/csmith_header.h"
-    with open(header_path) as f:
-        return f.read()
+cwd = os.path.dirname(binary)+"/csmith"
+if os.path.exists(cwd):
+    shutil.rmtree(cwd)
+os.makedirs(cwd)
+base = os.path.dirname(os.path.abspath(__file__))
+header_path = base+"/csmith_header.h"
+with open(header_path) as f:
+    header = f.read()
 
 
-def csmith_test(header: str, cwd: str):
+def csmith_test(i):
     src = subprocess.check_output(csmith_command.split(' '), cwd=cwd).decode()
     src = src.replace('#include "csmith.h"', header)
     src = src.replace('static ', "")
@@ -41,14 +46,12 @@ def csmith_test(header: str, cwd: str):
     return False
 
 
-cwd = os.path.dirname(binary)+"/csmith"
-if os.path.exists(cwd):
-    shutil.rmtree(cwd)
-os.makedirs(cwd)
-header = read_header()
-
-pbar = tqdm.tqdm(range(test_count))
+L = list(range(test_count))
+pbar = tqdm.tqdm(L)
 error_count = 0
-for _ in pbar:
-    error_count += 0 if csmith_test(header, cwd) else 1
-    pbar.set_description("Errors: {}".format(error_count))
+
+with ThreadPoolExecutor() as p:
+    for res in p.map(csmith_test, L):
+        error_count += 0 if res else 1
+        pbar.update(1)
+        pbar.set_description("Errors: {}".format(error_count))

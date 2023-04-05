@@ -95,6 +95,7 @@
 %type <ExprPack> StmtList;
 %type <Expr*> Stmt;
 %type <Expr*> Exp;
+%type <Expr*> ExpCommaSep;
 %type <ExprPack> Args;
 %type <VarDefList> DefList;
 %type <VarDef> Def;
@@ -114,7 +115,7 @@ ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType(std::move($1)); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 | Def { driver.addGlobalDef(std::move($1.type), std::move($1.var)); CMMC_NONTERMINAL(@$, ExtDef, @1); }
 | QualifiedSpecifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({std::move($2), std::move($3)}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
-| QualifiedSpecifier FunDec SEMI { CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
+| QualifiedSpecifier FunDec SEMI { $2.retType = $1; driver.addFunctionDecl(std::move($2)); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
 ;
 /* specifier */
 QualifiedSpecifier: Specifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
@@ -144,7 +145,7 @@ CompSt: LC StmtList RC { $$ = std::move($2); CMMC_NONTERMINAL(@$, CompSt, @1, @2
 StmtList: Stmt StmtList { CMMC_CONCAT_PACK($$, $1, $2); CMMC_NONTERMINAL(@$, StmtList, @1, @2); }
 | %empty { $$ = {}; CMMC_EMPTY(@$, StmtList);}
 ;
-Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
+Stmt: ExpCommaSep SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | CompSt { $$ = CMMC_SCOPE(@1, $1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | RETURN Exp SEMI { $$ = CMMC_RETURN(@1, $2); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3); }
 | RETURN SEMI { $$ = CMMC_RETURN(@1, nullptr); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
@@ -157,6 +158,9 @@ Stmt: Exp SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | SEMI { $$ = CMMC_EMPTY_STMT(@1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | FOR LP Stmt ForOptional SEMI ForOptional RP Stmt { $$ = CMMC_FOR_LOOP(@1, $3, $4, $6, $8); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7, @8); }
 | DO Stmt WHILE LP Exp RP SEMI { $$ = CMMC_DO_WHILE(@1, $2, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
+;
+ExpCommaSep: Exp COMMA ExpCommaSep { $$ = CMMC_COMMA_OP(@2, $1, $3); CMMC_NONTERMINAL(@$, ExpCommaSep, @1, @2, @3); }
+| Exp { $$ = $1; CMMC_NONTERMINAL(@$, ExpCommaSep, @1); }
 ;
 ForOptional: Exp { $$ = $1; CMMC_NONTERMINAL(@$, ForOptional, @1); }
 | %empty { $$ = nullptr; CMMC_EMPTY(@$, ForOptional); }
@@ -199,7 +203,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp XOR Exp { $$ = CMMC_BINARY_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp SHL Exp { $$ = CMMC_BINARY_OP(@2, ShiftLeft, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp SHR Exp { $$ = CMMC_BINARY_OP(@2, ShiftRight, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
-| Exp COMMA Exp { $$ = CMMC_COMMA_OP(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| LP Exp COMMA Exp RP { $$ = CMMC_COMMA_OP(@3, $2, $4); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4, @5); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Specifier RP Exp %prec EXPLICIT_CAST { $$ = CMMC_CAST_OP(@2, std::move($2), $4); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); } 
 | INC Exp %prec PREFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixInc, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}

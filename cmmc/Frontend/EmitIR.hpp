@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/Support/StringFlyWeight.hpp"
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -136,6 +137,7 @@ public:
     void addIdentifier(String identifier, const StructType* type);
     void addConstant(Value* address, Value* val);
     QualifiedValue lookupIdentifier(const String& identifier, IdentifierUsageHint hint);
+    bool isIdentifierDefined(const String& identifier) const;
     const Type* getType(const String& type, TypeLookupSpace space, const ArraySize& arraySize);
 
     void addFunctionCallInfo(const FunctionType* func, FunctionCallInfo info);

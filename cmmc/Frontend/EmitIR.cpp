@@ -98,20 +98,61 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
 
 bool sortBlocks(Function& func);
 
+bool EmitContext::isIdentifierDefined(const String& identifier) const {
+    assert(!mScopes.empty());
+    if(auto iter = mVariables.find(identifier); iter != mVariables.cend())
+        return !iter->second.empty();
+    return false;
+}
+
+Function* FunctionDeclaration::emit(EmitContext& ctx) {
+    Stage stage{ "emit function" };
+    EmitContext::pushLoc(loc);
+    // (void) -> ()
+    if(args.size() == 1 && args.front().type.typeIdentifier == "void") {
+        args.clear();
+    }
+
+    auto [info, funcType] = getSignature(ctx);
+    auto module = ctx.getModule();
+    Function* func;
+
+    if(ctx.isIdentifierDefined(symbol)) {
+        const auto identifier = ctx.lookupIdentifier(symbol, IdentifierUsageHint::Function);
+        if(identifier.value->is<Function>()) {
+            func = identifier.value->as<Function>();
+            if(!func->getType()->isSame(funcType)) {
+                DiagnosticsContext::get().attach<Reason>("Function declaration is conflict with the previous one").reportFatal();
+            }
+        } else {
+            DiagnosticsContext::get()
+                .attach<Reason>("Function symbol is conflict with the previous global variable")
+                .reportFatal();
+        }
+    } else {
+        func = make<Function>(symbol, funcType);
+        module->add(func);
+        ctx.addIdentifier(symbol, QualifiedValue::asRValue(func, Qualifier::getDefault()));
+        ctx.addFunctionCallInfo(funcType, info);
+    }
+
+    EmitContext::popLoc();
+    return func;
+}
+
 void FunctionDefinition::emit(EmitContext& ctx) {
     Stage stage{ "emit function" };
     EmitContext::pushLoc(decl.loc);
 
-    auto module = ctx.getModule();
-    // (void) -> ()
-    if(decl.args.size() == 1 && decl.args.front().type.typeIdentifier == "void") {
-        decl.args.clear();
+    auto func = decl.emit(ctx);
+    const auto funcType = func->getType()->as<FunctionType>();
+    const auto& callInfo = ctx.getFunctionCallInfo(funcType);
+
+    if(!func->blocks().empty()) {
+        // trigger a function redefinition error
+        ctx.addIdentifier(decl.symbol, QualifiedValue::asRValue(func, Qualifier::getDefault()));
+        return;
     }
-    auto [info, funcType] = decl.getSignature(ctx);
-    auto func = make<Function>(decl.symbol, funcType);
-    module->add(func);
-    ctx.addIdentifier(decl.symbol, QualifiedValue::asRValue(func, Qualifier::getDefault()));
-    ctx.addFunctionCallInfo(funcType, info);
 
     ctx.setCurrentFunction(func);
     ctx.pushScope();  // arguments
@@ -128,7 +169,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
         const auto arg = func->getArg(idx);
         arg->setLabel(name);
 
-        if(!info.passingArgsByPointer[idx]) {
+        if(!callInfo.passingArgsByPointer[idx]) {
             // passing by register
             const auto memArg = ctx.createAlloc(arg->getType());
             memArg->setLabel(name);
@@ -175,7 +216,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
             if(!hasTerminator) {
                 // fix terminator
                 ctx.setCurrentBlock(funcBlock);
-                if(retType->isVoid() && !info.passingRetValByPointer) {
+                if(retType->isVoid() && !callInfo.passingRetValByPointer) {
                     ctx.makeOp<ReturnInst>();
                 } else {
                     ctx.makeOp<UnreachableInst>();
@@ -272,10 +313,6 @@ static CompareOp getCompareOp(OperatorID op) {
                                   static_cast<uint32_t>(CompareOp::LessThan));
 }
 
-[[noreturn]] static void reportDividedByZero() {
-    DiagnosticsContext::get().attach<Reason>("divided by zero").reportFatal();
-};
-
 // TODO: [un]signed ops
 
 template <typename T>
@@ -291,7 +328,7 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
             if constexpr(std::is_integral_v<T>) {
                 if(rhs)
                     return lhs / rhs;
-                reportDividedByZero();
+                return std::monostate{};
             } else
                 return lhs / rhs;
         }
@@ -299,7 +336,7 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T lhs, T rhs) {
             if constexpr(std::is_integral_v<T>) {
                 if(rhs)
                     return lhs % rhs;
-                reportDividedByZero();
+                return std::monostate{};
             } else
                 reportUnreachable(CMMC_LOCATION());
         }
@@ -1260,7 +1297,7 @@ struct UndefinedIdentifier final {
 };
 QualifiedValue EmitContext::lookupIdentifier(const String& identifier, IdentifierUsageHint hint) {
     assert(!mScopes.empty());
-    if(auto iter = mVariables.find(identifier); iter != mVariables.cend())
+    if(auto iter = mVariables.find(identifier); iter != mVariables.cend() && !iter->second.empty())
         return iter->second.back();
 
     if(strictMode.get()) {

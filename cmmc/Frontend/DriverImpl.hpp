@@ -36,7 +36,7 @@ namespace std {  // NOTICE: we need ADL
 
 CMMC_NAMESPACE_BEGIN
 
-using MixedDefinition = std::variant<FunctionDefinition, GlobalVarDefinition, StructDefinition>;
+using MixedDefinition = std::variant<FunctionDefinition, FunctionDeclaration, GlobalVarDefinition, StructDefinition>;
 CMMC_ARENA_TRAIT(MixedDefinition, AST);
 
 struct ChildRef final {
@@ -120,6 +120,7 @@ public:
 
     void markEnd() noexcept;
     void addFunctionDef(FunctionDefinition def);
+    void addFunctionDecl(FunctionDeclaration decl);
     void addGlobalDef(const TypeRef& typeDef, const VarList& varList);
     void addOpaqueType(const TypeRef&);
     void addStructType(const SourceLocation& loc, String typeName, VarDefList list);

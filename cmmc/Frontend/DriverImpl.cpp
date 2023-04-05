@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-#include "cmmc/Frontend/EmitIR.hpp"
+#include "cmmc/Frontend/AST.hpp"
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -200,6 +200,9 @@ void DriverImpl::markEnd() noexcept {
 }
 void DriverImpl::addFunctionDef(FunctionDefinition def) {
     mDefs.push_back(std::move(def));
+}
+void DriverImpl::addFunctionDecl(FunctionDeclaration decl) {
+    mDefs.push_back(std::move(decl));
 }
 void DriverImpl::addGlobalDef(const TypeRef& typeDef, const VarList& varList) {
     for(auto& var : varList)
