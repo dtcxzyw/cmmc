@@ -69,6 +69,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
+// TODO: time-consuming pass
+// TODO: MemorySSA
+
 class LoadReduce final : public TransformPass<Function> {
     static void runBlock(Block& block, SimpleValueAnalysis& valueAnalysis, ReplaceMap& replace) {
         for(auto inst : block.instructions()) {

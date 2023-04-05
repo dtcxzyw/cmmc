@@ -131,6 +131,19 @@ public:
     [[nodiscard]] size_t hash() const override;
 };
 
+class ConstantStruct final : public ConstantValue {
+    Vector<ConstantValue*> mValues;
+
+public:
+    ConstantStruct(const StructType* type, Vector<ConstantValue*> values) : ConstantValue{ type }, mValues{ std::move(values) } {}
+    void dumpImpl(std::ostream& out) const override;
+    [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
+        return mValues;
+    }
+    bool isEqual(ConstantValue* rhs) const override;
+    [[nodiscard]] size_t hash() const override;
+};
+
 class UndefinedValue final : public ConstantValue {
 public:
     explicit UndefinedValue(const Type* type) : ConstantValue{ type } {

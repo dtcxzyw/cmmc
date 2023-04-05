@@ -13,8 +13,8 @@ binary = sys.argv[1]
 test_count = int(sys.argv[2])
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-safe-math --no-structs --output /dev/stdout"
 gcc_command = "gcc -w -Wno-narrowing -O2 "
-optimization_level = '0'
-
+optimization_level = '1'
+timeout = 25.0
 
 cwd = os.path.dirname(binary)+"/csmith"
 if os.path.exists(cwd):
@@ -35,10 +35,13 @@ def csmith_test(i):
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
     src = src.replace('printf("index = [%d][%d]\\n", ', 'putdim2(')
     src = src.replace('printf("index = [%d][%d][%d]\\n", ', 'putdim3(')
-    ret = subprocess.run([binary, '-o', '/dev/null',
-                         '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-i', '-x', 'SysY', '/dev/stdin'], input=src.encode(), capture_output=True)
-    if ret.returncode == 0:
-        return True
+    try:
+        ret = subprocess.run([binary, '-o', '/dev/null',
+                              '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-i', '-x', 'SysY', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=timeout)
+        if ret.returncode == 0:
+            return True
+    except subprocess.TimeoutExpired:
+        pass
     idx, file = tempfile.mkstemp(".sy", dir=cwd, text=True)
     # print(file)
     with open(file, 'w') as f:

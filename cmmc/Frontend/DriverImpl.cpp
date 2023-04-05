@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Frontend/AST.hpp"
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>

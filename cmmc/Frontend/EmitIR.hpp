@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Support/StringFlyWeight.hpp"
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>

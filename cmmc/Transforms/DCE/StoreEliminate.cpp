@@ -37,10 +37,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
+// TODO: time-consuming pass
+// TODO: MemorySSA
+constexpr uint32_t maxLookaheadCount = 100;
+
 class StoreEliminate final : public TransformPass<Function> {
     static bool isInvisible(Value* addr, Block& block, const AliasAnalysisResult& aliasSet, const DominateAnalysisResult& dom,
                             const PointerAddressSpaceAnalysisResult& addressSpace, Instruction* store,
-                            std::unordered_set<Block*>& visited, const StackAddressLeakAnalysisResult& leak) {
+                            std::unordered_set<Block*>& visited, const StackAddressLeakAnalysisResult& leak,
+                            uint32_t& lookaheadCount) {
         if(!store) {
             if(visited.count(&block))
                 return true;
@@ -49,6 +54,9 @@ class StoreEliminate final : public TransformPass<Function> {
 
         bool isAfterStore = store == nullptr;
         for(auto inst : block.instructions()) {
+            if(++lookaheadCount >= maxLookaheadCount) {
+                return false;
+            }
             if(isAfterStore) {
                 if(inst->isBranch()) {
                     // TODO: leak querying by block
@@ -61,7 +69,7 @@ class StoreEliminate final : public TransformPass<Function> {
                             if(addr->getBlock() == target || !dom.dominate(addr->getBlock(), target))
                                 return false;
                         }
-                        return isInvisible(addr, *target, aliasSet, dom, addressSpace, nullptr, visited, leak);
+                        return isInvisible(addr, *target, aliasSet, dom, addressSpace, nullptr, visited, leak, lookaheadCount);
                     };
                     if(!handleTarget(trueTarget))
                         return false;
@@ -117,7 +125,8 @@ class StoreEliminate final : public TransformPass<Function> {
                 return false;
             const auto addr = inst->getOperand(0);
             std::unordered_set<Block*> visited;
-            return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak);
+            uint32_t lookaheadCount = 0;
+            return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak, lookaheadCount);
         });
         return insts.size() != size;
     }

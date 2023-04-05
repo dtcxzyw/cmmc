@@ -123,6 +123,19 @@ void ConstantArray::dumpImpl(std::ostream& out) const {
     out << ']';
 }
 
+void ConstantStruct::dumpImpl(std::ostream& out) const {
+    out << '{';
+    bool isFirst = true;
+    for(auto val : mValues) {
+        if(!isFirst)
+            out << ", "sv;
+        else
+            isFirst = false;
+        val->dump(out, Noop{});
+    }
+    out << '}';
+}
+
 size_t ConstantInteger::hash() const {
     return std::hash<intmax_t>{}(getSignExtended());
 }
@@ -150,8 +163,14 @@ bool ConstantOffset::isEqual(ConstantValue* rhs) const {
 size_t ConstantArray::hash() const {
     return std::hash<const ConstantArray*>{}(this);
 }
+size_t ConstantStruct::hash() const {
+    return std::hash<const ConstantStruct*>{}(this);
+}
 bool ConstantArray::isEqual(ConstantValue* rhs) const {
     return isEqualImpl<ConstantArray>(rhs, [](ConstantArray*) { return false; });
+}
+bool ConstantStruct::isEqual(ConstantValue* rhs) const {
+    return isEqualImpl<ConstantStruct>(rhs, [](ConstantStruct*) { return false; });
 }
 
 size_t UndefinedValue::hash() const {
