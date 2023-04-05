@@ -39,8 +39,6 @@ bool parseSpl(DriverImpl& driver, const std::string& file) {
         std::abort();
     }
     Spl::parser parser{ driver };
-    // parser.set_debug_level(10);
-    // parser.set_debug_stream(std::cerr);
     bool ret = parser.parse() == 0;
     fclose(yyin);  // NOLINT
     return ret;

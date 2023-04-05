@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Frontend/EmitIR.hpp"
 #include <cmmc/Frontend/Driver.hpp>
 #include <cmmc/Frontend/DriverImpl.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -52,8 +53,8 @@ static void emitSplRuntime(Module& module, EmitContext& ctx) {
     const auto write = make<Function>(String::get("write"), make<FunctionType>(VoidType::get(), Vector<const Type*>{ i32 }));
     write->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
-    ctx.addIdentifier(String::get("read"), QualifiedValue{ read });
-    ctx.addIdentifier(String::get("write"), QualifiedValue{ write });
+    ctx.addIdentifier(String::get("read"), QualifiedValue::asRValue(read, Qualifier::getDefault()));
+    ctx.addIdentifier(String::get("write"), QualifiedValue::asRValue(write, Qualifier::getDefault()));
     module.add(read);
     module.add(write);
 }
@@ -104,7 +105,7 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
 
     for(auto func : { getInt, getCh, getArray, getFloat, getFloatArray, putInt, putCh, putArray, putFloat, putFloatArray,
                       startTime, stopTime }) {
-        ctx.addIdentifier(func->getSymbol(), QualifiedValue{ func });
+        ctx.addIdentifier(func->getSymbol(), QualifiedValue::asRValue(func, Qualifier::getDefault()));
         module.add(func);
     }
 }

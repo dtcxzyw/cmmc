@@ -122,11 +122,11 @@ ExtDecList: VarDec { $$ = { $1 }; CMMC_NONTERMINAL(@$, ExtDecList, @1); }
 | VarDec COMMA ExtDecList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, ExtDecList, @1, @2, @3); }
 ;
 /* specifier */
-Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
+Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default, Qualifier{false, true} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = $1; CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(castLoc(@1), $2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
-| STRUCT ID { $$ = { $2, TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, Qualifier::getDefault() }; driver.addStructType(castLoc(@1), $2, $4); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+| STRUCT ID { $$ = { $2, TypeLookupSpace::Struct, Qualifier::getDefault() }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 | STRUCT ID LC DefList error %prec FAKE_ERR { CMMC_MISS_RC(@$); }
 | STRUCT TYPE error { CMMC_BAD_STRUCT(@$); }
 ;

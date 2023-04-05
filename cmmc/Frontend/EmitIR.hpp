@@ -37,29 +37,37 @@ enum class TypeLookupSpace { Default /* Builtins & Aliases */, Struct, Enum };
 using ArraySize = Vector<Expr*, ArenaAllocator<Arena::Source::AST, Expr*>>;
 
 struct Qualifier final {
-    bool isConst = false;
-    bool isSigned = true;
+    bool isConst;
+    bool isSigned;
     // bool isVolatile;
 
-    static Qualifier getSigned() noexcept {
-        return Qualifier{ false, true };
-    }
-    static Qualifier getUnsigned() noexcept {
+    Qualifier() = delete;
+    constexpr Qualifier(bool isConstType, bool isSignedType) noexcept : isConst{ isConstType }, isSigned{ isSignedType } {}
+    static constexpr Qualifier getDefault() noexcept {
         return Qualifier{ false, false };
     }
 };
 
 enum class ValueQualifier { AsRValue, AsLValue };
 
+struct QualifiedType final {
+    const Type* type;
+    Qualifier qualifier;
+};
+
 struct QualifiedValue final {
     Value* value;
     ValueQualifier valueQualifier;
     Qualifier qualifier;
 
-    explicit QualifiedValue() : value{ nullptr }, valueQualifier{ ValueQualifier::AsRValue } {}
-    explicit QualifiedValue(Value* val) : value{ val }, valueQualifier{ ValueQualifier::AsRValue } {}
-    QualifiedValue(Value* val, ValueQualifier valueQualifierVal, Qualifier qualifierVal)
+    constexpr QualifiedValue(Value* val, ValueQualifier valueQualifierVal, Qualifier qualifierVal) noexcept
         : value{ val }, valueQualifier{ valueQualifierVal }, qualifier{ qualifierVal } {}
+    static QualifiedValue asRValue(Value* val, Qualifier qualifier) noexcept {
+        return { val, ValueQualifier::AsRValue, qualifier };
+    }
+    static constexpr QualifiedValue getNull() noexcept {
+        return { nullptr, ValueQualifier::AsRValue, Qualifier::getDefault() };
+    }
 };
 
 struct Scope final {
@@ -69,13 +77,13 @@ struct Scope final {
 CMMC_ARENA_TRAIT(Scope, AST);
 
 struct FunctionCallInfo final {
-    bool passingRetValByPointer = false;
+    bool passingRetValByPointer;
     std::vector<bool> passingArgsByPointer;
     std::vector<Qualifier> argQualifiers;
     Qualifier retQualifier;
 };
 
-enum class ConversionUsage { Assignment, Condition, FunctionCall, Initialization, Index, Size, ReturnValue, Implicit };
+enum class ConversionUsage { Assignment, Condition, FunctionCall, Initialization, Index, Size, ReturnValue, Implicit, Explcit };
 enum class AsLValueUsage { Assignment, GetAddress, SelfIncDec };
 
 class EmitContext final : public IRBuilder {

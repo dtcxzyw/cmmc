@@ -68,6 +68,8 @@
 #define CMMC_SELECT(LOC, COND, LHS, RHS) make<SelectExpr>(castLoc(LOC), COND, LHS, RHS)
 #define CMMC_ADDRESS_OP(LOC, VAL) make<AddressExpr>(castLoc(LOC), VAL)
 #define CMMC_DEREF_OP(LOC, VAL) make<DerefExpr>(castLoc(LOC), VAL)
+#define CMMC_CAST_OP(LOC, TYPE, VAL) make<CastExpr>(castLoc(LOC), TYPE, VAL)
+#define CMMC_COMMA_OP(LOC, LHS, RHS) make<CommaExpr>(castLoc(LOC), LHS, RHS)
 
 #define CMMC_MISS_RP(LOC) driver.reportParserError((LOC), "Missing closing parenthesis ')'")
 #define CMMC_MISS_RB(LOC) driver.reportParserError((LOC), "Missing closing bracket ']'")

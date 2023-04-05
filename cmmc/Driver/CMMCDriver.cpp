@@ -50,6 +50,7 @@ static StringOpt outputPath;   // NOLINT
 StringOpt executeInput;        // NOLINT
 static Flag grammarCheck;      // NOLINT
 static Flag dumpOptPipeline;   // NOLINT
+static StringOpt language;     // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
@@ -62,6 +63,7 @@ outputPath.setName("output", 'o').setDesc("path to the output file");
 grammarCheck.setName("grammar-check", 'g').setDesc("only check grammar");
 executeInput.setName("execute-input", 'e').setDesc("execute with built-in interpreter");
 dumpOptPipeline.setName("dump-opt-pipeline", 'P').setDesc("dump the transform pipeline in dot format");
+language.setName("language", 'x').setDesc("Specify the language (Spl/SysY) explicitly");
 CMMC_INIT_OPTIONS_END
 
 std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
@@ -232,6 +234,19 @@ int mainImpl(int argc, char** argv) {
 
         bool isSpl = endswith(path, ".spl"sv);
         bool isSysY = endswith(path, ".sy"sv);
+
+        const auto& type = language.get(false);
+        if(!type.empty()) {
+            if(type == "Spl") {
+                isSpl = true;
+                isSysY = false;
+            } else if(type == "SysY") {
+                isSpl = false;
+                isSysY = true;
+            } else {
+                DiagnosticsContext::get().attach<Reason>("unrecognized language").attach<Reason>(type).reportFatal();
+            }
+        }
 
         if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - (isSpl ? 4 : 3));

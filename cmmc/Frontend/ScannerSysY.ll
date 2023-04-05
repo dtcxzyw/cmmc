@@ -13,12 +13,17 @@
 */
 %option noyywrap batch
 %{
+#include <limits>
 #include <cmmc/Frontend/Driver.hpp>
 %}
 %{
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
 %}
+
+TYPE void|int|char|float
+FIXED_WIDTH_INTEGER_TYPE u?int(8|16|32|64)_t
+
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -28,6 +33,35 @@
 
   auto emitType = [&]{
     String val = String::get(yytext); return Parser::make_TYPE(val, {CMMC_RECORD(TYPE, val), loc});
+  };
+
+  auto emitInteger = [&] (int radix) {
+    char* end;
+    uintmax_t val = strtoull(yytext, &end, radix);
+    bool isSigned = true;
+    uint32_t width = 32U;
+    while(*end) {
+      if(*end == 'U')
+        isSigned = false;
+      if(*end == 'L')
+        width = 64U;
+      ++end;
+    }
+    if(isSigned) {
+      const auto signedVal = static_cast<intmax_t>(val);
+      const intmax_t maxValue = std::numeric_limits<int32_t>::max();
+      const intmax_t minValue = std::numeric_limits<int32_t>::min();
+      if(!(minValue <= signedVal && signedVal <= maxValue))
+        width = 64U;
+    }
+    else {
+      const uintmax_t maxValue = std::numeric_limits<uint32_t>::max();
+      const uintmax_t minValue = std::numeric_limits<uint32_t>::min();
+      if(!(minValue <= val && val <= maxValue))
+        width = 64U;
+    }
+
+    return Parser::make_INT(IntegerStorage{val, width, isSigned }, {CMMC_RECORD(INT, val), loc});
   };
 %}
 [ \t]+ loc.step ();
@@ -92,6 +126,8 @@
 "&=" { CMMC_TERMINAL(BAND_ASSIGN); }
 "|=" { CMMC_TERMINAL(BOR_ASSIGN); }
 "^=" { CMMC_TERMINAL(XOR_ASSIGN); }
+"<<=" { CMMC_TERMINAL(SHL_ASSIGN); }
+">>=" { CMMC_TERMINAL(SHR_ASSIGN); }
 "++" { CMMC_TERMINAL(INC); }
 "--" { CMMC_TERMINAL(DEC); }
 "+" { CMMC_TERMINAL(PLUS); }
@@ -104,6 +140,8 @@
 "&&" { CMMC_TERMINAL(AND); }
 "&" { CMMC_TERMINAL(BAND); }
 "^" { CMMC_TERMINAL(XOR); }
+"<<" { CMMC_TERMINAL(SHL); }
+">>" { CMMC_TERMINAL(SHR); }
 "||" { CMMC_TERMINAL(OR); }
 "|" { CMMC_TERMINAL(BOR); }
 "<" { CMMC_TERMINAL(LT); }
@@ -128,14 +166,12 @@
 "{" { CMMC_TERMINAL(LC); }
 "}" { CMMC_TERMINAL(RC); }
 
-"void" { return emitType(); }
-"int" { return emitType(); }
-"char" { return emitType(); }
-"float" { return emitType(); }
+{FIXED_WIDTH_INTEGER_TYPE} { return emitType(); }
+{TYPE} { return emitType(); }
 
-"0"[xX][0-9A-Fa-f]+ { uintmax_t val = strtoull(yytext, NULL, 16); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
-0|([1-9][0-9]*) { uintmax_t val = strtoull(yytext, NULL, 10); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
-"0"[1-7][0-7]* { uintmax_t val = strtoull(yytext, NULL, 8); return Parser::make_INT(val, {CMMC_RECORD(INT, val), loc}); }
+"0"[xX][0-9A-Fa-f]+U?L?L? { return emitInteger(16); }
+(0|([1-9][0-9]*))U?L?L? { return emitInteger(10); }
+"0"[1-7][0-7]*U?L?L? { return emitInteger(8); }
 ([0-9]+)?"."[0-9]+([eE][+-]?[1-9][0-9]*)? { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
 ([0-9]+)([eE]-?[1-9][0-9]*) { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }
 ([0-9]+)"." { double val = strtod(yytext, NULL); return Parser::make_FLOAT(val, {CMMC_RECORD(FLOAT, val), loc}); }

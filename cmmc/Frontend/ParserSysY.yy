@@ -33,7 +33,7 @@
 
 %token END 0 "End of file"
 // Literals
-%token <uintmax_t> INT "Integer"
+%token <IntegerStorage> INT "Integer"
 %token <double> FLOAT "Float"
 %token <char> CHAR "Char"
 %token <String> STRING "String"
@@ -55,7 +55,7 @@
 %token ASSIGN
 // Compound assignments
 %token PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN
-%token BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN
+%token BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN SHL_ASSIGN SHR_ASSIGN
 // Miscellaneous
 // . ; , # ? :
 %token DOT SEMI COMMA SHARP QUEST COLON
@@ -64,7 +64,7 @@
 %token ERR
 
 %left COMMA
-%right ASSIGN SELECT QUEST COLON PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN
+%right ASSIGN SELECT QUEST COLON PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN DIV_ASSIGN REM_ASSIGN BAND_ASSIGN BOR_ASSIGN XOR_ASSIGN SHL_ASSIGN SHR_ASSIGN
 %left OR
 %left AND
 %left BOR
@@ -72,9 +72,10 @@
 %left BAND
 %left EQ NE
 %left LT LE GT GE
+%left SHL SHR
 %left PLUS MINUS
 %left MUL DIV REM
-%right UPLUS UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC DEREF ADDRESS
+%right UPLUS UMINUS BNOT NOT PREFIX_INC PREFIX_DEC INC DEC DEREF ADDRESS EXPLICIT_CAST
 %left LB LP DOT SUFFIX_INC SUFFIX_DEC
 
 // Please refer to https://stackoverflow.com/questions/12731922/reforming-the-grammar-to-remove-shift-reduce-conflict-in-if-then-else
@@ -113,15 +114,16 @@ ExtDefList: ExtDef ExtDefList { CMMC_NONTERMINAL(@$, ExtDefList, @1, @2); }
 ExtDef: QualifiedSpecifier SEMI { driver.addOpaqueType(std::move($1)); CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 | Def { driver.addGlobalDef(std::move($1.type), std::move($1.var)); CMMC_NONTERMINAL(@$, ExtDef, @1); }
 | QualifiedSpecifier FunDec CompSt { $2.retType = $1; driver.addFunctionDef({std::move($2), std::move($3)}); CMMC_NONTERMINAL(@$, ExtDef, @1, @2, @3); }
+| QualifiedSpecifier FunDec SEMI { CMMC_NONTERMINAL(@$, ExtDef, @1, @2); }
 ;
 /* specifier */
 QualifiedSpecifier: Specifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1); }
 | CONST Specifier { $$ = std::move($2); $$.qualifier.isConst = true;  CMMC_NONTERMINAL(@$, QualifiedSpecifier, @1, @2); }
-Specifier: TYPE { $$ = { std::move($1), TypeLookupSpace::Default, {} }; CMMC_NONTERMINAL(@$, Specifier, @1); }
+Specifier: TYPE { $$ = { $1, TypeLookupSpace::Default, Qualifier{ false, $1.prefix().front() != 'u' } }; CMMC_NONTERMINAL(@$, Specifier, @1); }
 | StructSpecifier { $$ = std::move($1); CMMC_NONTERMINAL(@$, Specifier, @1); }
 ;
-StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, {} }; driver.addStructType(castLoc(@1), std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
-| STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct, {} }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
+StructSpecifier: STRUCT ID LC DefList RC { $$ = { $2, TypeLookupSpace::Struct, Qualifier::getDefault() }; driver.addStructType(castLoc(@1), std::move($2), std::move($4)); CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2, @3, @4, @5); }
+| STRUCT ID { $$ = { std::move($2), TypeLookupSpace::Struct, Qualifier::getDefault() }; CMMC_NONTERMINAL(@$, StructSpecifier, @1, @2); }
 ;
 /* declarator */
 VarDec: ID { $$ = { castLoc(@1), std::move($1), ArraySize{}, nullptr }; CMMC_NONTERMINAL(@$, VarDec, @1); }
@@ -135,6 +137,7 @@ VarList: ParamDec COMMA VarList { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL
 | ParamDec { $$ = { std::move($1) }; CMMC_NONTERMINAL(@$, VarList, @1); }
 ;
 ParamDec: QualifiedSpecifier VarDec { $$ = NamedArg{ std::move($1), std::move($2) }; CMMC_NONTERMINAL(@$, ParamDec, @1, @2); }
+| QualifiedSpecifier { $$ = NamedArg{ std::move($1), NamedVar{} }; CMMC_NONTERMINAL(@$, ParamDec, @1); }
 ;
 /* statement */
 CompSt: LC StmtList RC { $$ = std::move($2); CMMC_NONTERMINAL(@$, CompSt, @1, @2, @3); }
@@ -194,7 +197,11 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp BAND Exp { $$ = CMMC_BINARY_OP(@2, BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp BOR Exp { $$ = CMMC_BINARY_OP(@2, BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp XOR Exp { $$ = CMMC_BINARY_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp SHL Exp { $$ = CMMC_BINARY_OP(@2, ShiftLeft, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp SHR Exp { $$ = CMMC_BINARY_OP(@2, ShiftRight, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp COMMA Exp { $$ = CMMC_COMMA_OP(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | LP Exp RP { $$ = $2; CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| LP Specifier RP Exp %prec EXPLICIT_CAST { $$ = CMMC_CAST_OP(@2, std::move($2), $4); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); } 
 | INC Exp %prec PREFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixInc, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | DEC Exp %prec PREFIX_DEC {$$ = CMMC_SELF_INCDEC_OP(@1, PrefixDec, $2); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
 | Exp INC %prec SUFFIX_INC {$$ = CMMC_SELF_INCDEC_OP(@2, SuffixInc, $1); CMMC_NONTERMINAL(@$, Exp, @1, @2);}
@@ -210,7 +217,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp LB Exp RB { $$ = CMMC_ARRAY_INDEX(@2, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4); }
 | Exp DOT ID { $$ = CMMC_STRUCT_INDEX(@3, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | ID { $$ = CMMC_ID(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
-| INT { $$ = CMMC_INT(@1, $1, 32U, true); CMMC_NONTERMINAL(@$, Exp, @1); }
+| INT { $$ = CMMC_INT(@1, $1.val, $1.width, $1.isSigned); CMMC_NONTERMINAL(@$, Exp, @1); }
 | FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | STRING { $$ = CMMC_STRING(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
@@ -223,6 +230,8 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp BAND_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, BitwiseAnd, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp BOR_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, BitwiseOr, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | Exp XOR_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, Xor, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp SHL_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, ShiftLeft, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
+| Exp SHR_ASSIGN Exp { $$ = CMMC_COMPOUND_ASSIGN_OP(@2, ShiftRight, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 ;
 Args: Exp COMMA Args { CMMC_CONCAT_PACK($$, $1, $3); CMMC_NONTERMINAL(@$, Args, @1, @2, @3); }
 | Exp { $$ = { $1 }; CMMC_NONTERMINAL(@$, Args, @1); }

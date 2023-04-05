@@ -34,6 +34,7 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <exception>
@@ -64,10 +65,9 @@ template <typename Callable>
 }
 
 std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignature(EmitContext& ctx) const {
-    FunctionCallInfo info;
-
     auto ret = ctx.getType(retType.typeIdentifier, retType.space, {});
-    info.retQualifier = info.retQualifier;
+    FunctionCallInfo info{ false, {}, {}, retType.qualifier };
+
     if(ret->isArray())
         DiagnosticsContext::get().attach<Reason>("returning an array is not allowed").reportFatal();
 
@@ -98,15 +98,19 @@ std::pair<FunctionCallInfo, const FunctionType*> FunctionDeclaration::getSignatu
 
 bool sortBlocks(Function& func);
 
-void FunctionDefinition::emit(EmitContext& ctx) const {
+void FunctionDefinition::emit(EmitContext& ctx) {
     Stage stage{ "emit function" };
     EmitContext::pushLoc(decl.loc);
 
     auto module = ctx.getModule();
+    // (void) -> ()
+    if(decl.args.size() == 1 && decl.args.front().type.typeIdentifier == "void") {
+        decl.args.clear();
+    }
     auto [info, funcType] = decl.getSignature(ctx);
     auto func = make<Function>(decl.symbol, funcType);
     module->add(func);
-    ctx.addIdentifier(decl.symbol, QualifiedValue{ func });
+    ctx.addIdentifier(decl.symbol, QualifiedValue::asRValue(func, Qualifier::getDefault()));
     ctx.addFunctionCallInfo(funcType, info);
 
     ctx.setCurrentFunction(func);
@@ -250,6 +254,10 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
                 return InstructionID::Or;
             case OperatorID::Xor:
                 return InstructionID::Xor;
+            case OperatorID::ShiftLeft:
+                return InstructionID::Shl;
+            case OperatorID::ShiftRight:
+                return isSigned ? InstructionID::AShr : InstructionID::LShr;
 
             default:
                 reportUnreachable(CMMC_LOCATION());
@@ -344,37 +352,53 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
     if(!lt->isPrimitive() || !rt->isPrimitive()) {
         if(strictMode.get()) {
             if(lt->isInvalid() || rt->isInvalid())
-                return QualifiedValue{ ctx.getInvalidRValue() };
-            return QualifiedValue{
+                return QualifiedValue::asRValue(ctx.getInvalidRValue(), Qualifier::getDefault());
+            return QualifiedValue::asRValue(
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
                                [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
-            };
+                Qualifier::getDefault());
         }
         DiagnosticsContext::get().attach<Reason>("Custom operator is not supported").reportFatal();
     }
 
     if(lt->isPointer() || rt->isPointer()) {
         if(strictMode.get()) {
-            return QualifiedValue{
+            return QualifiedValue::asRValue(
                 reportSplError(ctx, InvalidType::get(), 7U, DiagnosticsContext::get().current<SourceLocation>(),
                                [](std::ostream& out) { out << "binary operation on non-number variables"sv; }),
-            };
+                Qualifier::getDefault());
         }
         DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
     }
 
+    // Please refer to https://en.cppreference.com/w/c/language/conversion
     auto selectTargetType = [&](const Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
-        if(lt->getFixedSize() != rt->getFixedSize()) {
+        // integer promotion
+        if(lt->getFixedSize() < sizeof(int32_t))
+            lt = IntegerType::get(32);
+        if(rt->getFixedSize() < sizeof(int32_t))
+            rt = IntegerType::get(32);
+
+        if(lhsQ.isSigned == rhsQ.isSigned) {
             target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
-            targetQualifier = (target == lt ? lhsQ : rhsQ);
+            targetQualifier = lhsQ;
         } else {
-            target = lt;
-            targetQualifier = lhsQ.isSigned ? rhsQ : lhsQ;  // signed op unsigned -> unsigned
+            // different signedness
+            const auto unsignedType = lhsQ.isSigned ? rt : lt;
+            const auto signedType = lhsQ.isSigned ? lt : rt;
+            if(unsignedType->getFixedSize() >= signedType->getFixedSize()) {
+                target = unsignedType;
+                targetQualifier = Qualifier{ true, false };
+            } else {
+                // The signed type can represent all values of the unsigned type
+                target = signedType;
+                targetQualifier = Qualifier{ true, true };
+            }
         }
     };
 
     const Type* target = nullptr;
-    Qualifier targetQualifier;
+    Qualifier targetQualifier{ false, false };
 
     switch(op) {
         // IOP/FOP
@@ -397,11 +421,14 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
         case OperatorID::Equal:
             [[fallthrough]];
         case OperatorID::NotEqual: {
-            if((lt->isInteger() && rt->isInteger()) || (lt->isFloatingPoint() && rt->isFloatingPoint())) {
+            if(lt->isFloatingPoint() && rt->isFloatingPoint()) {
+                target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
+                targetQualifier = Qualifier::getDefault();
+            } else if(lt->isInteger() && rt->isInteger()) {
                 selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
             } else {
                 target = lt->isFloatingPoint() ? lt : rt;
-                targetQualifier = (target == lt ? lhsQualifier : rhsQualifier);
+                targetQualifier = Qualifier::getDefault();
             }
             break;
         }
@@ -412,9 +439,13 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
             [[fallthrough]];
         case OperatorID::BitwiseOr:
             [[fallthrough]];
-        case OperatorID::Xor: {
+        case OperatorID::Xor:
+            [[fallthrough]];
+        case OperatorID::ShiftLeft:
+            [[fallthrough]];
+        case OperatorID::ShiftRight: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
-                DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor float,float is not allowed").reportFatal();
+                DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor/shl/shr float,float is not allowed").reportFatal();
             selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
             break;
         }
@@ -436,7 +467,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     // assign op
     if(mOp == OperatorID::Assign) {
         auto [lhs, dstQualifier] = ctx.getLValue(mLhs, AsLValueUsage::Assignment);
-        if(dstQualifier.isConst)
+        if(!lhs->isUndefined() && dstQualifier.isConst)
             DiagnosticsContext::get().attach<Reason>("require a mutable lvalue").reportFatal();
         const auto assignType = lhs->getType()->as<PointerType>()->getPointee();
 
@@ -460,7 +491,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
     // TODO: A && B -> A & B, A || B -> A | B
     auto [lhs, lhsQualifier] = ctx.getRValue(mLhs);
     if(mOp == OperatorID::LogicalAnd || mOp == OperatorID::LogicalOr) {
-        lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, {}, ConversionUsage::Condition);
+        lhs = ctx.convertTo(lhs, IntegerType::getBoolean(), lhsQualifier, Qualifier::getDefault(), ConversionUsage::Condition);
         const auto srcBlock = ctx.getCurrentBlock();
         auto rhsBlock = ctx.addBlock();
         auto newBlock = ctx.addBlock();
@@ -472,7 +503,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         }
 
         ctx.setCurrentBlock(rhsBlock);
-        const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+        const auto rhs = ctx.getRValue(mRhs, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
         rhsBlock = ctx.getCurrentBlock();
         ctx.makeOp<BranchInst>(newBlock);
         ctx.setCurrentBlock(newBlock);
@@ -480,7 +511,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         phi->addIncoming(srcBlock, mOp == OperatorID::LogicalAnd ? ctx.getFalse() : ctx.getTrue());
         phi->addIncoming(rhsBlock, rhs);
 
-        return QualifiedValue{ ctx.booleanToInt(phi) };
+        return QualifiedValue::asRValue(ctx.booleanToInt(phi), Qualifier::getDefault());
     }
 
     auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
@@ -517,30 +548,38 @@ std::variant<std::monostate, T> evaluateOp(OperatorID op, T val) {
 QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     auto [value, valueQualifier] = ctx.getRValue(mValue);
 
+    // integer promotion
+    if(value->getType()->isInteger() && value->getType()->getFixedSize() < sizeof(int32_t))
+        value = ctx.convertTo(value, IntegerType::get(32), valueQualifier, valueQualifier, ConversionUsage::Implicit);
+
     if(value->isConstant() && !value->isUndefined()) {
         if(value->getType()->isFloatingPoint()) {
             const auto val = value->as<ConstantFloatingPoint>()->getValue();
             const auto res = evaluateOp(mOp, val);
 
             if(std::holds_alternative<double>(res))
-                return QualifiedValue{ make<ConstantFloatingPoint>(value->getType(), std::get<double>(res)) };
+                return QualifiedValue::asRValue(make<ConstantFloatingPoint>(value->getType(), std::get<double>(res)),
+                                                valueQualifier);
         } else {
             const auto val = value->as<ConstantInteger>()->getSignExtended();
             const auto res = evaluateOp(mOp, val);
 
             if(std::holds_alternative<intmax_t>(res))
-                return QualifiedValue{ ConstantInteger::get(value->getType(), std::get<intmax_t>(res)) };
+                return QualifiedValue::asRValue(ConstantInteger::get(value->getType(), std::get<intmax_t>(res)), valueQualifier);
         }
     }
 
     switch(mOp) {
         case OperatorID::Neg:
-            return QualifiedValue{ ctx.makeOp<UnaryInst>(value->getType()->isInteger() ? InstructionID::Neg : InstructionID::FNeg,
-                                                         value->getType(), value) };
+            return QualifiedValue::asRValue(
+                ctx.makeOp<UnaryInst>(value->getType()->isInteger() ? InstructionID::Neg : InstructionID::FNeg, value->getType(),
+                                      value),
+                valueQualifier);
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
-                return QualifiedValue{ ctx.makeOp<BinaryInst>(InstructionID::Xor, value,
-                                                              ConstantInteger::get(value->getType(), -1)) };
+                return QualifiedValue::asRValue(
+                    ctx.makeOp<BinaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), -1)),
+                    valueQualifier);
             }
             DiagnosticsContext::get()
                 .attach<Reason>("bitwise not is only allowed for integer types")
@@ -548,13 +587,15 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
                 .reportFatal();
         }
         case OperatorID::LogicalNot: {
-            value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, {}, ConversionUsage::Condition);
-            return QualifiedValue{ ctx.booleanToInt(
-                ctx.makeOp<BinaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), 1))) };
+            value = ctx.convertTo(value, IntegerType::getBoolean(), valueQualifier, Qualifier::getDefault(),
+                                  ConversionUsage::Condition);
+            return QualifiedValue::asRValue(
+                ctx.booleanToInt(ctx.makeOp<BinaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), 1))),
+                Qualifier::getDefault());
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
-                return QualifiedValue{ value };
+                return QualifiedValue::asRValue(value, valueQualifier);
             DiagnosticsContext::get().attach<Reason>("unary plus is only allowed for scalar types").reportFatal();
         }
         default:
@@ -605,18 +646,19 @@ QualifiedValue DerefExpr::emit(EmitContext& ctx) const {
 QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
     // TODO: signed/unsigned?
     return QualifiedValue{ ConstantInteger::get(IntegerType::get(mBitWidth), static_cast<intmax_t>(mValue)),
-                           ValueQualifier::AsRValue, Qualifier::getSigned() };
+                           ValueQualifier::AsRValue, Qualifier{ true, mIsSigned } };
 }
 
 QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
-    return QualifiedValue{ make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue) };
+    return QualifiedValue::asRValue(make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue),
+                                    Qualifier::getDefault());
 }
 
 QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
     const auto val =
         emitGlobal(String::get("cmmc.str.s" + std::to_string(mString.hash())), std::numeric_limits<uint32_t>::max(), ctx);
     val->attr().addAttr(GlobalVariableAttribute::ReadOnly);
-    return QualifiedValue{ val, ValueQualifier::AsRValue, Qualifier{ true } };
+    return QualifiedValue::asRValue(val, Qualifier::getDefault());
 }
 
 GlobalVariable* ConstantStringExpr::emitGlobal(String symbol, uint32_t size, EmitContext& ctx) const {
@@ -642,22 +684,23 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
     CMMC_UNUSED(calleeQualifier);
 
     if(callee->isUndefined() || callee->getType()->isInvalid())
-        return QualifiedValue{ ctx.getInvalidRValue() };
+        return QualifiedValue::asRValue(ctx.getInvalidRValue(), Qualifier::getDefault());
 
     if(!callee->getType()->isFunction()) {
         if(strictMode.get()) {
-            return QualifiedValue{ reportSplError(ctx, InvalidType::get(), 11U, location(),
-                                                  [&, calleeVar = callee](std::ostream& out) mutable {
-                                                      out << "invoking non-function variable"sv;
-                                                      if(calleeVar->is<LoadInst>())
-                                                          calleeVar = calleeVar->as<LoadInst>()->getOperand(0);
+            return QualifiedValue::asRValue(reportSplError(ctx, InvalidType::get(), 11U, location(),
+                                                           [&, calleeVar = callee](std::ostream& out) mutable {
+                                                               out << "invoking non-function variable"sv;
+                                                               if(calleeVar->is<LoadInst>())
+                                                                   calleeVar = calleeVar->as<LoadInst>()->getOperand(0);
 
-                                                      if(calleeVar->isGlobal()) {
-                                                          out << ": "sv << calleeVar->as<GlobalValue>()->getSymbol();
-                                                      } else if(calleeVar->is<StackAllocInst>()) {
-                                                          out << ": "sv << calleeVar->as<StackAllocInst>()->getLabel();
-                                                      }
-                                                  }) };
+                                                               if(calleeVar->isGlobal()) {
+                                                                   out << ": "sv << calleeVar->as<GlobalValue>()->getSymbol();
+                                                               } else if(calleeVar->is<StackAllocInst>()) {
+                                                                   out << ": "sv << calleeVar->as<StackAllocInst>()->getLabel();
+                                                               }
+                                                           }),
+                                            Qualifier::getDefault());
         }
         DiagnosticsContext::get().attach<Reason>("cannot call uninvokable").reportFatal();
     }
@@ -681,11 +724,12 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         const auto retType = (info.passingRetValByPointer ? funcType->getArgTypes().back()->as<PointerType>()->getPointee() :
                                                             funcType->getRetType());
         if(strictMode.get()) {
-            return QualifiedValue{ reportSplError(ctx, retType, 9U, location(),
-                                                  [&, symbol = callee->as<Function>()->getSymbol()](std::ostream& out) {
-                                                      out << "invalid argument number for "sv << symbol << ", expect "sv
-                                                          << info.argQualifiers.size() << ", got "sv << argExprs.size();
-                                                  }) };
+            return QualifiedValue::asRValue(reportSplError(ctx, retType, 9U, location(),
+                                                           [&, symbol = callee->as<Function>()->getSymbol()](std::ostream& out) {
+                                                               out << "invalid argument number for "sv << symbol << ", expect "sv
+                                                                   << info.argQualifiers.size() << ", got "sv << argExprs.size();
+                                                           }),
+                                            Qualifier::getDefault());
         }
         DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
     }
@@ -711,9 +755,9 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         args.push_back(storage);
         ctx.makeOp<FunctionCallInst>(callee, std::move(args));
         // TODO: RVO
-        return QualifiedValue{ storage, ValueQualifier::AsLValue, Qualifier{ true } };
+        return QualifiedValue{ storage, ValueQualifier::AsLValue, Qualifier::getDefault() };
     }
-    return QualifiedValue{ ctx.makeOp<FunctionCallInst>(callee, std::move(args)) };
+    return QualifiedValue::asRValue(ctx.makeOp<FunctionCallInst>(callee, std::move(args)), info.retQualifier);
 }
 
 QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
@@ -752,11 +796,11 @@ QualifiedValue ReturnExpr::emit(EmitContext& ctx) const {
         }
     }
 
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
-    const auto pred = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+    const auto pred = ctx.getRValue(mPredicate, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
 
     const auto oldBlock = ctx.getCurrentBlock();
 
@@ -784,7 +828,7 @@ QualifiedValue IfElseExpr::emit(EmitContext& ctx) const {
     }
 
     ctx.setCurrentBlock(newBlock);
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue IdentifierExpr::emit(EmitContext& ctx) const {
@@ -796,7 +840,7 @@ QualifiedValue ScopedExpr::emit(EmitContext& ctx) const {
     for(auto statement : mBlock)
         statement->emitWithLoc(ctx);
     ctx.popScope();
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
@@ -829,7 +873,7 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     whileHeader->setLabel(String::get("while.guard"));
     ctx.makeOp<BranchInst>(whileHeader);
     ctx.setCurrentBlock(whileHeader);
-    auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+    auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
 
     auto whileBody = ctx.addBlock();
     whileBody->setLabel(String::get("while.body"));
@@ -839,13 +883,13 @@ QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
     ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
     mBlock->emitWithLoc(ctx);
-    auto val2 = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+    auto val2 = ctx.getRValue(mPredicate, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
     ctx.makeOp<BranchInst>(val2, defaultLoopProb, whileBody, newBlock);
     ctx.popLoop();
 
     ctx.setCurrentBlock(newBlock);
 
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
@@ -864,11 +908,11 @@ QualifiedValue DoWhileExpr::emit(EmitContext& ctx) const {
     ctx.popLoop();
 
     ctx.setCurrentBlock(header);
-    auto val = ctx.getRValue(mCondition, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
+    auto val = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
     ctx.makeOp<BranchInst>(val, defaultLoopProb, body, next);
     ctx.setCurrentBlock(next);
 
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
@@ -914,12 +958,12 @@ QualifiedValue LocalVarDefExpr::emit(EmitContext& ctx) const {
         EmitContext::popLoc();
     }
 
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
     const auto [base, valueQualifier, qualifier] = mBase->emitWithLoc(ctx);
-    const auto idx = ctx.getRValue(mIndex, ctx.getIndexType(), Qualifier::getUnsigned(), ConversionUsage::Index);
+    const auto idx = ctx.getRValue(mIndex, ctx.getIndexType(), Qualifier::getDefault(), ConversionUsage::Index);
 
     if(!base->getType()->isPointer()) {
         if(strictMode.get()) {
@@ -1125,7 +1169,7 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(Expr* expr) {
 Value* EmitContext::getRValue(Expr* expr, const Type* type, Qualifier dstQualifier, ConversionUsage usage) {
     const auto [val, valQualifier] = getRValue(expr);
     if(type->isStruct())
-        return convertTo(val, PointerType::get(type), valQualifier, Qualifier{ true }, usage);
+        return convertTo(val, PointerType::get(type), valQualifier, Qualifier::getDefault(), usage);
     return convertTo(val, type, valQualifier, dstQualifier, usage);
 }
 std::pair<Value*, Qualifier> EmitContext::getLValue(Expr* expr, AsLValueUsage usage) {
@@ -1190,6 +1234,8 @@ struct RedefinedIdentifier final {
     }
 };
 void EmitContext::addIdentifier(String identifier, QualifiedValue value) {
+    if(identifier.prefix().empty())  // unnamed
+        return;
     assert(!mScopes.empty());
     auto& scope = mScopes.back();
     if(scope.variables.count(identifier)) {
@@ -1226,7 +1272,7 @@ QualifiedValue EmitContext::lookupIdentifier(const String& identifier, Identifie
                                                       << (hint == IdentifierUsageHint::Function ? "function"sv : "variable"sv)
                                                       << ": "sv << identifier;
                                               }),
-                               ValueQualifier::AsLValue, Qualifier{} };
+                               ValueQualifier::AsLValue, Qualifier::getDefault() };
     }
     DiagnosticsContext::get().attach<UndefinedIdentifier>(identifier).reportFatal();
 }
@@ -1243,13 +1289,32 @@ EmitContext::EmitContext(Module* module)
 const Type* EmitContext::getType(const String& type, TypeLookupSpace space, const ArraySize& arraySize) {
     const Type* ret = nullptr;
     if(space == TypeLookupSpace::Default) {
-        if(type == "int")
+        const auto name = type.prefix();
+        // fixed width integer type
+        if(name.size() > 2 && name[name.size() - 1] == 't' && name[name.size() - 2] == '_') {
+            switch(name[name.size() - 3]) {
+                case '8':
+                    ret = IntegerType::get(8);
+                    break;
+                case '6':
+                    ret = IntegerType::get(16);
+                    break;
+                case '2':
+                    ret = mInteger;
+                    break;
+                case '4':
+                    ret = IntegerType::get(64);
+                    break;
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
+        } else if(name == "int")
             ret = mInteger;
-        else if(type == "float")
+        else if(name == "float")
             ret = mFloat;
-        else if(type == "char")
+        else if(name == "char")
             ret = mChar;
-        else if(type == "void")
+        else if(name == "void")
             ret = VoidType::get();
     } else if(space == TypeLookupSpace::Struct) {
         const auto iter = mStructTypes.find(type);
@@ -1287,7 +1352,7 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
                 // TODO: add const qualifier
                 // int[] -> int* const
             } else {
-                const auto constantSize = getRValue(*iter, getIndexType(), Qualifier::getUnsigned(), ConversionUsage::Size);
+                const auto constantSize = getRValue(*iter, getIndexType(), Qualifier::getDefault(), ConversionUsage::Size);
 
                 if(constantSize->isConstant() && !constantSize->isUndefined()) {
                     const auto val = constantSize->as<ConstantInteger>();
@@ -1337,10 +1402,10 @@ const FunctionCallInfo& EmitContext::getFunctionCallInfo(const FunctionType* fun
         return iter->second;
 
     // for runtime functions, pass arguments by register
-    FunctionCallInfo defaultInfo;
+    FunctionCallInfo defaultInfo{ false, {}, {}, Qualifier{ false, true } };
     const auto size = func->getArgTypes().size();
     defaultInfo.passingArgsByPointer.resize(size, false);
-    defaultInfo.argQualifiers.resize(size);
+    defaultInfo.argQualifiers.resize(size, Qualifier{ false, true });
     return mCallInfo.emplace(func, std::move(defaultInfo)).first->second;
 }
 
@@ -1542,15 +1607,15 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
 }
 QualifiedValue BreakExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<BranchInst>(ctx.getBreakTarget());
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 QualifiedValue ContinueExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<BranchInst>(ctx.getContinueTarget());
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 QualifiedValue EmptyExpr::emit(EmitContext&) const {
-    return QualifiedValue{};
+    return QualifiedValue::getNull();
 }
 
 void GlobalVarDefinition::emit(EmitContext& ctx) const {
@@ -1692,8 +1757,9 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.makeOp<BranchInst>(header);
     ctx.setCurrentBlock(header);
     if(mCondition)
-        ctx.makeOp<BranchInst>(ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition),
-                               defaultLoopProb, body, next);
+        ctx.makeOp<BranchInst>(
+            ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition),
+            defaultLoopProb, body, next);
     else
         ctx.makeOp<BranchInst>(body);
 
@@ -1712,7 +1778,7 @@ QualifiedValue ForExpr::emit(EmitContext& ctx) const {
     ctx.setCurrentBlock(next);
     ctx.popScope();
 
-    return QualifiedValue{ nullptr };
+    return QualifiedValue::getNull();
 }
 std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value) {
     const auto [val, valQualifier, qualifier] = value;
@@ -1735,7 +1801,8 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     auto rhsBlock = ctx.addBlock();
     rhsBlock->setLabel(String::get("rhsBlock"));
 
-    const auto condition = ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier{}, ConversionUsage::Condition);
+    const auto condition =
+        ctx.getRValue(mCondition, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
     ctx.makeOp<BranchInst>(condition, defaultSelectProb, lhsBlock, rhsBlock);
 
     ctx.setCurrentBlock(lhsBlock);
@@ -1746,7 +1813,7 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     const auto rhs = mRhs->emitWithLoc(ctx);
     rhsBlock = ctx.getCurrentBlock();
 
-    Qualifier qualifier;
+    Qualifier qualifier = Qualifier::getDefault();
     ValueQualifier valueQualifier;
     auto next = ctx.addBlock();
     Value* phiLhs = nullptr;
@@ -1870,6 +1937,16 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
                                       ConstantInteger::get(getIndexType(), static_cast<intmax_t>(size)) };
         makeOp<FunctionCallInst>(memcpyFunc, args);
     }
+}
+
+QualifiedValue CastExpr::emit(EmitContext& ctx) const {
+    const auto type = ctx.getType(mType.typeIdentifier, mType.space, {});
+    return QualifiedValue::asRValue(ctx.getRValue(mVal, type, mType.qualifier, ConversionUsage::Explcit), mType.qualifier);
+}
+
+QualifiedValue CommaExpr::emit(EmitContext& ctx) const {
+    mLhs->emitWithLoc(ctx);
+    return mRhs->emitWithLoc(ctx);
 }
 
 CMMC_NAMESPACE_END

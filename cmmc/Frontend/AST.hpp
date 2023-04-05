@@ -35,17 +35,17 @@ class EmitContext;
 class Expr;
 CMMC_ARENA_TRAIT(Expr*, AST);
 
+struct IntegerStorage final {
+    uintmax_t val;
+    uint32_t width;
+    bool isSigned;
+};
+
 struct TypeRef final {
     String typeIdentifier;
     TypeLookupSpace space;
 
-    Qualifier qualifier;
-};
-
-struct QualifiedType final {
-    Type* type;
-    bool isLeftValue;
-    Qualifier qualifier;
+    Qualifier qualifier = Qualifier::getDefault();
 };
 
 struct NamedVar final {
@@ -103,7 +103,7 @@ struct FunctionDefinition final {
     FunctionDeclaration decl;
     StatementBlock block;
 
-    void emit(EmitContext& ctx) const;
+    void emit(EmitContext& ctx);
 };
 
 class Expr {
@@ -153,7 +153,9 @@ enum class OperatorID {
     PrefixInc,
     PrefixDec,
     SuffixInc,
-    SuffixDec
+    SuffixDec,
+    ShiftLeft,
+    ShiftRight
 };
 
 class BinaryExpr final : public Expr {
@@ -396,6 +398,25 @@ class SelectExpr final : public Expr {
 public:
     explicit SelectExpr(const SourceLocation& location, Expr* condition, Expr* lhs, Expr* rhs)
         : Expr{ location }, mCondition{ condition }, mLhs{ lhs }, mRhs{ rhs } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class CastExpr final : public Expr {
+    TypeRef mType;
+    Expr* mVal;
+
+public:
+    explicit CastExpr(const SourceLocation& location, const TypeRef& type, Expr* val)
+        : Expr{ location }, mType{ type }, mVal{ val } {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class CommaExpr final : public Expr {
+    Expr* mLhs;
+    Expr* mRhs;
+
+public:
+    CommaExpr(const SourceLocation& location, Expr* lhs, Expr* rhs) noexcept : Expr{ location }, mLhs{ lhs }, mRhs{ rhs } {}
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 

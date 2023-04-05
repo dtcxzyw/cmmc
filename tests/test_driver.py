@@ -57,6 +57,10 @@ def parse_perf(result):
         pass
 
 
+def dump_args(args):
+    print("", " ".join(args))
+
+
 def spl_parse(src, strict=True):
     args = [binary_path, '--emitAST', '-o', '/dev/stdout', src]
     if strict:
@@ -83,6 +87,7 @@ def spl_semantic(src, strict=True):
     args = [binary_path,  '--emitIR', '-t', 'tac', '-o', '/dev/stdout', src]
     if strict:
         args.insert(-1, '--strict')
+    dump_args(args)
     out = subprocess.run(args, capture_output=True, text=True)
 
     ref_content = ""
