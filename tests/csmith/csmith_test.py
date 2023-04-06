@@ -11,10 +11,30 @@ import tqdm
 
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
-csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-safe-math --no-structs --output /dev/stdout"
-gcc_command = "gcc -w -Wno-narrowing -O2 "
-optimization_level = '1'
-timeout = None
+csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs --output /dev/stdout"
+gcc_command = "gcc -Wno-narrowing -O3 -DNDEBUG -ffp-contract=on -w "
+gcc_header = """
+#include <stdio.h>
+#include <stdint.h>
+
+static void putint(int x) {
+    printf("%d", x);
+}
+static void putch(int ch) {
+    printf("%c", ch);
+}
+"""
+cmmc_header = """
+float fabsf(float x) {
+    return x>=0.0f?x:-x;
+}
+double fabs(double x) {
+    return x>=0.0?x:-x;
+}
+"""
+optimization_level = '0'
+prog_timeout = 10.0
+cmmc_timeout = 30.0
 
 cwd = os.path.dirname(binary)+"/csmith"
 if os.path.exists(cwd):
@@ -29,22 +49,47 @@ with open(header_path) as f:
 def csmith_test(i):
     src = subprocess.check_output(csmith_command.split(' '), cwd=cwd).decode()
     src = src.replace('#include "csmith.h"', header)
-    src = src.replace('static ', "")
     src = src.replace('int print_hash_value = 0;', 'int print_hash_value = 1;')
     src = src.replace('long', 'int64_t')
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
     src = src.replace('printf("index = [%d][%d]\\n", ', 'putdim2(')
     src = src.replace('printf("index = [%d][%d][%d]\\n", ', 'putdim3(')
+
+    idx, file_c = tempfile.mkstemp(".c", dir=cwd, text=True)
+    file_ref = file_c[:-2]+".out"
+    with open(file_c, 'w') as f:
+        f.write(gcc_header)
+        f.write(src)
+    ret = os.system(gcc_command+" -o "+file_ref+" "+file_c)
+    assert ret == 0
+    ref_timeout = False
     try:
-        ret = subprocess.run([binary, '-o', '/dev/null',
-                              '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-i', '-x', 'SysY', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=timeout)
-        if ret.returncode == 0:
+        ref_output = subprocess.check_output(file_ref, timeout=prog_timeout)
+    except subprocess.TimeoutExpired:
+        ref_timeout = True
+
+    if ref_timeout:
+        os.remove(file_c)
+        os.remove(file_ref)
+        # skip this test
+        return None
+
+    src = src.replace('static ', "")
+    src = cmmc_header + src
+    try:
+        ret = subprocess.run([binary, '-o', '/dev/stdout',
+                              '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-e', '/dev/null', '-x', 'SysY', '-D', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
+        if ret.returncode == 0 and ref_output == ret.stdout:
+            os.remove(file_c)
+            os.remove(file_ref)
             return True
+        # print(ret.returncode)
+
     except subprocess.TimeoutExpired:
         pass
-    idx, file = tempfile.mkstemp(".sy", dir=cwd, text=True)
+    file_sy = file_c[:-2]+".sy"
     # print(file)
-    with open(file, 'w') as f:
+    with open(file_sy, 'w') as f:
         f.write(src)
     return False
 
@@ -52,9 +97,15 @@ def csmith_test(i):
 L = list(range(test_count))
 pbar = tqdm.tqdm(L)
 error_count = 0
+skipped_count = 0
 
 with ThreadPoolExecutor() as p:
     for res in p.map(csmith_test, L):
-        error_count += 0 if res else 1
+        if res is not None:
+            error_count += 0 if res else 1
+        else:
+            skipped_count += 1
+
         pbar.update(1)
-        pbar.set_description("Errors: {}".format(error_count))
+        pbar.set_description("Failed: {} Skipped: {}".format(
+            error_count, skipped_count))

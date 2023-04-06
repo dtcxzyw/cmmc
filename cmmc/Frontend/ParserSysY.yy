@@ -34,7 +34,7 @@
 %token END 0 "End of file"
 // Literals
 %token <IntegerStorage> INT "Integer"
-%token <double> FLOAT "Float"
+%token <FloatingPointStorage> FLOAT "Float"
 %token <char> CHAR "Char"
 %token <String> STRING "String"
 
@@ -222,7 +222,7 @@ Exp : Exp ASSIGN Exp { $$ = CMMC_BINARY_OP(@2, Assign, $1, $3); CMMC_NONTERMINAL
 | Exp DOT ID { $$ = CMMC_STRUCT_INDEX(@3, $1, $3); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3); }
 | ID { $$ = CMMC_ID(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | INT { $$ = CMMC_INT(@1, $1.val, $1.width, $1.isSigned); CMMC_NONTERMINAL(@$, Exp, @1); }
-| FLOAT { $$ = CMMC_FLOAT(@1, $1, true); CMMC_NONTERMINAL(@$, Exp, @1); }
+| FLOAT { $$ = CMMC_FLOAT(@1, $1.val, $1.isFloat); CMMC_NONTERMINAL(@$, Exp, @1); }
 | CHAR { $$ = CMMC_CHAR(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | STRING { $$ = CMMC_STRING(@1, $1); CMMC_NONTERMINAL(@$, Exp, @1); }
 | Exp QUEST Exp COLON Exp %prec SELECT { $$ = CMMC_SELECT(@2, $1, $3, $5); CMMC_NONTERMINAL(@$, Exp, @1, @2, @3, @4, @5); }

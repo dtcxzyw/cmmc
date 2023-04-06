@@ -164,6 +164,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "u2f"sv;
         case InstructionID::S2F:
             return "s2f"sv;
+        case InstructionID::FCast:
+            return "fcast"sv;
         case InstructionID::Alloc:
             return "alloc"sv;
         case InstructionID::GetElementPtr:

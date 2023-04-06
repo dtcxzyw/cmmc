@@ -98,6 +98,7 @@ class EmitContext final : public IRBuilder {
 
     const Type* mInteger;
     const Type* mFloat;
+    const Type* mDouble;
     const Type* mChar;
     bool mIsInvalid = false;
     Value *mInvalid, *mInvalidPtr;

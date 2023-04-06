@@ -48,7 +48,12 @@
 
 CMMC_NAMESPACE_BEGIN
 
-extern Flag strictMode;  // NOLINT
+extern Flag strictMode;     // NOLINT
+static Flag doubleSupport;  // NOLINT
+
+CMMC_INIT_OPTIONS_BEGIN
+doubleSupport.setName("double-support", 'D').setDesc("enable double support (for C99 compatibility)");
+CMMC_INIT_OPTIONS_END
 
 template <typename Callable>
 [[nodiscard]] static Value* reportSplError(EmitContext& ctx, const Type* type, uint32_t typeID, const SourceLocation& loc,
@@ -391,6 +396,93 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
     return ctx.makeOp<BinaryInst>(inst, lhs, rhs);
 }
 
+static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type* rt, const Qualifier& lhsQ,
+                                       const Qualifier& rhsQ, const Type*& target, Qualifier& targetQualifier,
+                                       bool doIntegerPromotion) {
+    // Please refer to https://en.cppreference.com/w/c/language/conversion
+    auto selectTargetType = [&] {
+        if(doIntegerPromotion) {
+            // integer promotion
+            if(lt->getFixedSize() < sizeof(int32_t))
+                lt = IntegerType::get(32);
+            if(rt->getFixedSize() < sizeof(int32_t))
+                rt = IntegerType::get(32);
+        }
+
+        if(lhsQ.isSigned == rhsQ.isSigned) {
+            target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
+            targetQualifier = lhsQ;
+        } else {
+            // different signedness
+            const auto unsignedType = lhsQ.isSigned ? rt : lt;
+            const auto signedType = lhsQ.isSigned ? lt : rt;
+            if(unsignedType->getFixedSize() >= signedType->getFixedSize()) {
+                target = unsignedType;
+                targetQualifier = Qualifier{ true, false };
+            } else {
+                // The signed type can represent all values of the unsigned type
+                target = signedType;
+                targetQualifier = Qualifier{ true, true };
+            }
+        }
+    };
+
+    switch(op) {
+        // IOP/FOP
+        case OperatorID::Add:
+            [[fallthrough]];
+        case OperatorID::Sub:
+            [[fallthrough]];
+        case OperatorID::Mul:
+            [[fallthrough]];
+        case OperatorID::Div:
+            [[fallthrough]];
+        case OperatorID::LessThan:
+            [[fallthrough]];
+        case OperatorID::LessEqual:
+            [[fallthrough]];
+        case OperatorID::GreaterThan:
+            [[fallthrough]];
+        case OperatorID::GreaterEqual:
+            [[fallthrough]];
+        case OperatorID::Equal:
+            [[fallthrough]];
+        case OperatorID::NotEqual:
+            [[fallthrough]];
+        case OperatorID::Select: {
+            if(lt->isFloatingPoint() && rt->isFloatingPoint()) {
+                target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
+                targetQualifier = Qualifier::getDefault();
+            } else if(lt->isInteger() && rt->isInteger()) {
+                selectTargetType();
+            } else {
+                target = lt->isFloatingPoint() ? lt : rt;
+                targetQualifier = Qualifier::getDefault();
+            }
+            break;
+        }
+        // IOP
+        case OperatorID::Rem:
+            [[fallthrough]];
+        case OperatorID::BitwiseAnd:
+            [[fallthrough]];
+        case OperatorID::BitwiseOr:
+            [[fallthrough]];
+        case OperatorID::Xor:
+            [[fallthrough]];
+        case OperatorID::ShiftLeft:
+            [[fallthrough]];
+        case OperatorID::ShiftRight: {
+            if(lt->isFloatingPoint() || rt->isFloatingPoint())
+                DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor/shl/shr float,float is not allowed").reportFatal();
+            selectTargetType();
+            break;
+        }
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Qualifier& lhsQualifier, Value* rhs,
                                        const Qualifier& rhsQualifier, OperatorID op) {
     auto lt = lhs->getType();
@@ -418,87 +510,9 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
         DiagnosticsContext::get().attach<Reason>("Pointer arithmetic is not supported").reportFatal();
     }
 
-    // Please refer to https://en.cppreference.com/w/c/language/conversion
-    auto selectTargetType = [&](const Type*& target, Qualifier& targetQualifier, Qualifier lhsQ, Qualifier rhsQ) {
-        // integer promotion
-        if(lt->getFixedSize() < sizeof(int32_t))
-            lt = IntegerType::get(32);
-        if(rt->getFixedSize() < sizeof(int32_t))
-            rt = IntegerType::get(32);
-
-        if(lhsQ.isSigned == rhsQ.isSigned) {
-            target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
-            targetQualifier = lhsQ;
-        } else {
-            // different signedness
-            const auto unsignedType = lhsQ.isSigned ? rt : lt;
-            const auto signedType = lhsQ.isSigned ? lt : rt;
-            if(unsignedType->getFixedSize() >= signedType->getFixedSize()) {
-                target = unsignedType;
-                targetQualifier = Qualifier{ true, false };
-            } else {
-                // The signed type can represent all values of the unsigned type
-                target = signedType;
-                targetQualifier = Qualifier{ true, true };
-            }
-        }
-    };
-
     const Type* target = nullptr;
     Qualifier targetQualifier{ false, false };
-
-    switch(op) {
-        // IOP/FOP
-        case OperatorID::Add:
-            [[fallthrough]];
-        case OperatorID::Sub:
-            [[fallthrough]];
-        case OperatorID::Mul:
-            [[fallthrough]];
-        case OperatorID::Div:
-            [[fallthrough]];
-        case OperatorID::LessThan:
-            [[fallthrough]];
-        case OperatorID::LessEqual:
-            [[fallthrough]];
-        case OperatorID::GreaterThan:
-            [[fallthrough]];
-        case OperatorID::GreaterEqual:
-            [[fallthrough]];
-        case OperatorID::Equal:
-            [[fallthrough]];
-        case OperatorID::NotEqual: {
-            if(lt->isFloatingPoint() && rt->isFloatingPoint()) {
-                target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
-                targetQualifier = Qualifier::getDefault();
-            } else if(lt->isInteger() && rt->isInteger()) {
-                selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
-            } else {
-                target = lt->isFloatingPoint() ? lt : rt;
-                targetQualifier = Qualifier::getDefault();
-            }
-            break;
-        }
-        // IOP
-        case OperatorID::Rem:
-            [[fallthrough]];
-        case OperatorID::BitwiseAnd:
-            [[fallthrough]];
-        case OperatorID::BitwiseOr:
-            [[fallthrough]];
-        case OperatorID::Xor:
-            [[fallthrough]];
-        case OperatorID::ShiftLeft:
-            [[fallthrough]];
-        case OperatorID::ShiftRight: {
-            if(lt->isFloatingPoint() || rt->isFloatingPoint())
-                DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor/shl/shr float,float is not allowed").reportFatal();
-            selectTargetType(target, targetQualifier, lhsQualifier, rhsQualifier);
-            break;
-        }
-        default:
-            reportUnreachable(CMMC_LOCATION());
-    }
+    calcImplicitTypeConversion(op, lt, rt, lhsQualifier, rhsQualifier, target, targetQualifier, true);
 
     if(target->isInvalid()) {
         return QualifiedValue{ ctx.getInvalidRValue(), ValueQualifier::AsRValue, targetQualifier };
@@ -697,8 +711,8 @@ QualifiedValue ConstantIntExpr::emit(EmitContext&) const {
 }
 
 QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
-    return QualifiedValue::asRValue(make<ConstantFloatingPoint>(FloatingPointType::get(mIsFloat), mValue),
-                                    Qualifier::getDefault());
+    return QualifiedValue::asRValue(
+        make<ConstantFloatingPoint>(FloatingPointType::get((!doubleSupport.get()) || mIsFloat), mValue), Qualifier::getDefault());
 }
 
 QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
@@ -1328,8 +1342,8 @@ void EmitContext::addConstant(Value* address, Value* val) {
         mConstantBinding.emplace(address, val);
 }
 EmitContext::EmitContext(Module* module)
-    : IRBuilder{ module->getTarget() }, mModule{ module }, mInteger(IntegerType::get(32U)), mFloat(FloatingPointType::get(true)),
-      mChar(IntegerType::get(8U)) {
+    : IRBuilder{ module->getTarget() }, mModule{ module }, mInteger{ IntegerType::get(32U) },  //
+      mFloat{ FloatingPointType::get(true) }, mDouble{ FloatingPointType::get(false) }, mChar{ IntegerType::get(8U) } {
     mInvalid = make<UndefinedValue>(InvalidType::get());
     mInvalidPtr = make<UndefinedValue>(PointerType::get(InvalidType::get()));
 }
@@ -1359,6 +1373,8 @@ const Type* EmitContext::getType(const String& type, TypeLookupSpace space, cons
             ret = mInteger;
         else if(name == "float")
             ret = mFloat;
+        else if(name == "double")
+            ret = mDouble;
         else if(name == "char")
             ret = mChar;
         else if(name == "void")
@@ -1860,61 +1876,40 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
     const auto rhs = mRhs->emitWithLoc(ctx);
     rhsBlock = ctx.getCurrentBlock();
 
-    Qualifier qualifier = Qualifier::getDefault();
     ValueQualifier valueQualifier;
     auto next = ctx.addBlock();
-    Value* phiLhs = nullptr;
-    Value* phiRhs = nullptr;
-    if(lhs.valueQualifier == ValueQualifier::AsLValue && rhs.valueQualifier == ValueQualifier::AsLValue) {
-        if(!lhs.value->getType()->isSame(rhs.value->getType()))
-            DiagnosticsContext::get()
-                .attach<Reason>("type mismatch")
-                .attach<TypeAttachment>("lhs", lhs.value->getType())
-                .attach<TypeAttachment>("rhs", rhs.value->getType())
-                .reportFatal();
-        if(lhs.qualifier.isSigned != rhs.qualifier.isSigned)
-            DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
-        // next->addArg(lhs.value->getType());
-        qualifier.isSigned = lhs.qualifier.isSigned;
-        qualifier.isConst = lhs.qualifier.isConst || rhs.qualifier.isConst;
-        ctx.setCurrentBlock(lhsBlock);
-        ctx.makeOp<BranchInst>(next);
-        ctx.setCurrentBlock(rhsBlock);
-        ctx.makeOp<BranchInst>(next);
-        valueQualifier = ValueQualifier::AsLValue;
-        phiLhs = lhs.value;
-        phiRhs = rhs.value;
-    } else {
-        // convert to rvalue
-        ctx.setCurrentBlock(lhsBlock);
-        auto [lhsValue, lhsQualifier] = ctx.getRValue(lhs);
-        ctx.setCurrentBlock(rhsBlock);
-        auto [rhsValue, rhsQualifier] = ctx.getRValue(rhs);
+    // convert to rvalue
+    ctx.setCurrentBlock(lhsBlock);
+    auto [lhsValue, lhsQualifier] = ctx.getRValue(lhs);
+    ctx.setCurrentBlock(rhsBlock);
+    auto [rhsValue, rhsQualifier] = ctx.getRValue(rhs);
 
-        if(!lhsValue->getType()->isSame(rhsValue->getType()))
-            DiagnosticsContext::get()
-                .attach<Reason>("type mismatch")
-                .attach<TypeAttachment>("lhs", lhsValue->getType())
-                .attach<TypeAttachment>("rhs", rhsValue->getType())
-                .reportFatal();
-        if(lhsQualifier.isSigned != rhsQualifier.isSigned)
-            DiagnosticsContext::get().attach<Reason>("type mismatch (integer extension mismatch)").reportFatal();
-        qualifier.isSigned = lhsQualifier.isSigned;
-        qualifier.isConst = lhsQualifier.isConst || rhsQualifier.isConst;
-        ctx.setCurrentBlock(lhsBlock);
-        ctx.makeOp<BranchInst>(next);
-        ctx.setCurrentBlock(rhsBlock);
-        ctx.makeOp<BranchInst>(next);
-        valueQualifier = ValueQualifier::AsRValue;
-        phiLhs = lhsValue;
-        phiRhs = rhsValue;
+    const auto lt = lhsValue->getType();
+    const auto rt = rhsValue->getType();
+
+    const Type* target = nullptr;
+    Qualifier targetQualifier{ false, false };
+    calcImplicitTypeConversion(OperatorID::Select, lt, rt, lhsQualifier, rhsQualifier, target, targetQualifier, true);
+
+    if(target->isInvalid()) {
+        return QualifiedValue{ ctx.getInvalidRValue(), ValueQualifier::AsRValue, Qualifier::getDefault() };
     }
 
+    ctx.setCurrentBlock(lhsBlock);
+    lhsValue = ctx.convertTo(lhsValue, target, lhsQualifier, targetQualifier, ConversionUsage::Implicit);
+    ctx.makeOp<BranchInst>(next);
+
+    ctx.setCurrentBlock(rhsBlock);
+    rhsValue = ctx.convertTo(rhsValue, target, rhsQualifier, targetQualifier, ConversionUsage::Implicit);
+    ctx.makeOp<BranchInst>(next);
+
+    valueQualifier = ValueQualifier::AsRValue;
+
     ctx.setCurrentBlock(next);
-    const auto phi = ctx.createPhi(phiLhs->getType());
-    phi->addIncoming(lhsBlock, phiLhs);
-    phi->addIncoming(rhsBlock, phiRhs);
-    return QualifiedValue{ phi, valueQualifier, qualifier };
+    const auto phi = ctx.createPhi(target);
+    phi->addIncoming(lhsBlock, lhsValue);
+    phi->addIncoming(rhsBlock, rhsValue);
+    return QualifiedValue{ phi, valueQualifier, targetQualifier };
 }
 
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {

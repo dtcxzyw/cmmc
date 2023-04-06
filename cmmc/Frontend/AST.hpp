@@ -41,6 +41,11 @@ struct IntegerStorage final {
     bool isSigned;
 };
 
+struct FloatingPointStorage final {
+    double val;
+    bool isFloat;
+};
+
 struct TypeRef final {
     String typeIdentifier;
     TypeLookupSpace space;
@@ -156,7 +161,8 @@ enum class OperatorID {
     SuffixInc,
     SuffixDec,
     ShiftLeft,
-    ShiftRight
+    ShiftRight,
+    Select
 };
 
 class BinaryExpr final : public Expr {
