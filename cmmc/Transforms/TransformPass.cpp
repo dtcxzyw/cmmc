@@ -227,9 +227,11 @@ public:
             lastStop = newLastStop.value();
             analysis.invalidateFunc(item);
             modified = true;
-            const auto now = Clock::now();
-            if(now > deadline)
-                return modified;
+            if(!debugTransform.get()) {
+                const auto now = Clock::now();
+                if(now > deadline)
+                    return modified;
+            }
         }
         if(!stopEarly && mTreatWarningAsError)
             DiagnosticsContext::get().attach<Reason>("partial optimization").reportFatal();

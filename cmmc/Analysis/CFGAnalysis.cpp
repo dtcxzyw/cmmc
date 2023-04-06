@@ -35,7 +35,7 @@ CFGAnalysisResult CFGAnalysis::run(Function& func, AnalysisPassManager&) {
             const auto falseTarget = branch->getFalseTarget();
             self.successors.emplace_back(trueTarget);
             storage[trueTarget].predecessors.emplace_back(block);
-            if(falseTarget) {
+            if(falseTarget && falseTarget != trueTarget) {
                 self.successors.emplace_back(falseTarget);
                 storage[falseTarget].predecessors.emplace_back(block);
             }

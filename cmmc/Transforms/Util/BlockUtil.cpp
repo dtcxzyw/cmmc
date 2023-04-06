@@ -110,6 +110,7 @@ Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBl
     block->setLabel(String::get("indirect"));
     builder.makeOp<BranchInst>(targetBlock);
     const auto terminator = sourceBlock->getTerminator()->as<BranchInst>();
+    assert(terminator->getTrueTarget() == targetBlock || terminator->getFalseTarget() == targetBlock);
     if(terminator->getTrueTarget() == targetBlock)
         terminator->getTrueTarget() = block;
     if(terminator->getFalseTarget() == targetBlock)

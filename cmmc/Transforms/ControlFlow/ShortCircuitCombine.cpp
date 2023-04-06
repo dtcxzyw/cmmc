@@ -70,6 +70,7 @@
 #include <cstdint>
 #include <iostream>
 #include <unordered_map>
+#include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -77,13 +78,17 @@ constexpr size_t inlineInstThreshold = 4;
 constexpr size_t inlineLoadThreshold = 1;
 
 class ShortCircuitCombine final : public TransformPass<Function> {
-    static bool shouldFold(Block& block) {
+    static bool shouldFold(Block& block, const std::unordered_set<Instruction*>& crossUses) {
         size_t loadCount = 0;
         if(block.instructions().size() > inlineInstThreshold)
             return false;
         if(block.getTerminator()->getInstID() != InstructionID::ConditionalBranch)
             return false;
         for(auto inst : block.instructions()) {
+            // TODO: handle inter-block uses
+            if(crossUses.count(inst)) {
+                return false;
+            }
             switch(inst->getInstID()) {
                 case InstructionID::Phi:
                     [[fallthrough]];
@@ -106,12 +111,13 @@ class ShortCircuitCombine final : public TransformPass<Function> {
         return true;
     }
 
-    static bool combineLogicalAnd(Block* block, AnalysisPassManager& analysis) {
+    static bool combineLogicalAnd(Block* block, AnalysisPassManager& analysis,
+                                  const std::unordered_set<Instruction*>& crossUses) {
         const auto branch = block->getTerminator()->as<BranchInst>();
         const auto nextCond = branch->getTrueTarget();
         if(nextCond == block)
             return false;
-        if(!shouldFold(*nextCond))
+        if(!shouldFold(*nextCond, crossUses))
             return false;
         const auto exiting = branch->getFalseTarget();
         if(exiting == block || exiting == nextCond)
@@ -153,7 +159,7 @@ class ShortCircuitCombine final : public TransformPass<Function> {
         return true;
     }
 
-    static bool combineLogicalOr(Block* block, AnalysisPassManager& analysis) {
+    static bool combineLogicalOr(Block* block, AnalysisPassManager& analysis, const std::unordered_set<Instruction*>& crossUses) {
         const auto branch = block->getTerminator()->as<BranchInst>();
         const auto body = branch->getTrueTarget();
         if(body == block)
@@ -162,7 +168,7 @@ class ShortCircuitCombine final : public TransformPass<Function> {
         const auto nextCond = branch->getFalseTarget();
         if(nextCond == block || nextCond == body)
             return false;
-        if(!shouldFold(*nextCond))
+        if(!shouldFold(*nextCond, crossUses))
             return false;
         if(nextCond->getTerminator()->getInstID() != InstructionID::ConditionalBranch)
             return false;
@@ -209,16 +215,24 @@ public:
         const auto andSupport = target.isNativeSupported(InstructionID::And);
         const auto orSupport = target.isNativeSupported(InstructionID::Or);
 
+        std::unordered_set<Instruction*> crossUses;
+        for(auto block : func.blocks())
+            for(auto inst : block->instructions())
+                for(auto operand : inst->operands())
+                    if(operand->getBlock() && operand->getBlock() != block) {
+                        crossUses.insert(operand->as<Instruction>());
+                    }
+
         bool modified = false;
 
         for(auto block : func.blocks()) {
             if(block->getTerminator()->getInstID() != InstructionID::ConditionalBranch)
                 continue;
-            if(andSupport && combineLogicalAnd(block, analysis)) {
+            if(andSupport && combineLogicalAnd(block, analysis, crossUses)) {
                 modified = true;
                 continue;
             }
-            if(orSupport && combineLogicalOr(block, analysis)) {
+            if(orSupport && combineLogicalOr(block, analysis, crossUses)) {
                 modified = true;
                 continue;
             }
