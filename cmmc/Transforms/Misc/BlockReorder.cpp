@@ -21,6 +21,7 @@
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
@@ -65,6 +66,95 @@ public:
 #else
         return T::operator()(lhs, rhs);
 #endif
+    }
+};
+
+class TypeComp {
+    std::unordered_map<const Type*, uint32_t> mIdx;
+    StrongOrder compareType(const Type* lhs, const Type* rhs) const {
+        const auto lhsRank = lhs->rank();
+        const auto rhsRank = rhs->rank();
+        if(lhsRank != rhsRank)
+            return lhsRank < rhsRank ? StrongOrder::LessThan : StrongOrder::GreaterThan;
+        if(lhs->isSame(rhs))
+            return StrongOrder::Equal;
+        switch(lhsRank) {
+            case TypeRank::Integer:
+                return lhs->as<IntegerType>()->getBitwidth() < rhs->as<IntegerType>()->getBitwidth() ? StrongOrder::LessThan :
+                                                                                                       StrongOrder::GreaterThan;
+            case TypeRank::FloatingPoint:
+                return lhs->getFixedSize() < rhs->getFixedSize() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
+            case TypeRank::Pointer:
+                return compareType(lhs->as<PointerType>()->getPointee(), rhs->as<PointerType>()->getPointee());
+            case TypeRank::Array: {
+                const auto lhsArray = lhs->as<ArrayType>();
+                const auto rhsArray = rhs->as<ArrayType>();
+                if(auto order = compareType(lhsArray->getElementType(), rhsArray->getElementType()); order != StrongOrder::Equal)
+                    return order;
+                return lhsArray->getElementCount() < rhsArray->getElementCount() ? StrongOrder::LessThan :
+                                                                                   StrongOrder::GreaterThan;
+            }
+            case TypeRank::Struct: {
+                const auto lhsStruct = lhs->as<StructType>();
+                const auto rhsStruct = rhs->as<StructType>();
+                if(lhsStruct->fields().size() != rhsStruct->fields().size())
+                    return lhsStruct->fields().size() < rhsStruct->fields().size() ? StrongOrder::LessThan :
+                                                                                     StrongOrder::GreaterThan;
+                for(uint32_t idx = 0; idx < lhsStruct->fields().size(); ++idx) {
+                    if(auto order = compareType(lhsStruct->fields()[idx].type, rhsStruct->fields()[idx].type);
+                       order != StrongOrder::Equal) {
+                        return order;
+                    }
+                }
+                return StrongOrder::Equal;
+            }
+            case TypeRank::Function: {
+                const auto lhsFunc = lhs->as<FunctionType>();
+                const auto rhsFunc = rhs->as<FunctionType>();
+                if(auto order = compareType(lhsFunc->getRetType(), rhsFunc->getRetType()); order != StrongOrder::Equal)
+                    return order;
+                if(lhsFunc->getArgTypes().size() != rhsFunc->getArgTypes().size())
+                    return lhsFunc->getArgTypes().size() < rhsFunc->getArgTypes().size() ? StrongOrder::LessThan :
+                                                                                           StrongOrder::GreaterThan;
+                for(uint32_t idx = 0; idx < lhsFunc->getArgTypes().size(); ++idx) {
+                    if(auto order = compareType(lhsFunc->getArgTypes()[idx], rhsFunc->getArgTypes()[idx]);
+                       order != StrongOrder::Equal) {
+                        return order;
+                    }
+                }
+                return StrongOrder::Equal;
+            }
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }
+
+public:
+    using CompareType = const Type*;
+    explicit TypeComp(Function& func) {
+        std::vector<const Type*> types;
+        for(auto block : func.blocks())
+            for(auto inst : block->instructions())
+                types.push_back(inst->getType());
+        std::sort(types.begin(), types.end());
+        types.erase(std::unique(types.begin(), types.end()), types.end());
+        std::sort(types.begin(), types.end(),
+                  [&](const Type* lhs, const Type* rhs) { return compareType(lhs, rhs) == StrongOrder::LessThan; });
+        uint32_t idx = 0;
+        for(auto type : types) {
+            // constant->dumpAsOperand(std::cerr);
+            // std::cerr << ' ';
+            mIdx[type] = ++idx;
+        }
+        // std::cerr << '\n';
+    }
+
+    StrongOrder operator()(CompareType lhs, CompareType rhs) const {
+        if(lhs == rhs)
+            return StrongOrder::Equal;
+        const auto lhsIdx = mIdx.at(lhs);
+        const auto rhsIdx = mIdx.at(rhs);
+        return lhsIdx < rhsIdx ? StrongOrder::LessThan : StrongOrder::GreaterThan;
     }
 };
 
@@ -150,12 +240,22 @@ public:
 };
 
 struct InstComp {
+    StrongOrderingWrapper<TypeComp>& typeComp;
     StrongOrderingWrapper<ExternalComp>& externalComp;
     using CompareType = const Instruction*;
 
     StrongOrder operator()(CompareType lhs, CompareType rhs) const {
         if(lhs->getInstID() != rhs->getInstID())
             return lhs->getInstID() < rhs->getInstID() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
+        if(lhs->isCompareOp() && rhs->isCompareOp()) {
+            const auto lhsComp = lhs->as<CompareInst>();
+            const auto rhsComp = rhs->as<CompareInst>();
+            if(lhsComp->getOp() != rhsComp->getOp()) {
+                return lhsComp->getOp() < rhsComp->getOp() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
+            }
+        }
+        if(auto order = typeComp(lhs->getType(), rhs->getType()); order != StrongOrder::Equal)
+            return order;
         if(lhs->operands().size() != rhs->operands().size())
             return lhs->operands().size() < rhs->operands().size() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
         for(auto lhsIter = lhs->operands().cbegin(), rhsIter = rhs->operands().cbegin(); lhsIter != lhs->operands().cend();
@@ -174,6 +274,7 @@ public:
         auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
 
+        StrongOrderingWrapper<TypeComp> typeComp{ func };
         StrongOrderingWrapper<ExternalComp> comp{ analysis.module(), func };
 
         for(auto block : dom.blocks()) {
@@ -231,7 +332,7 @@ public:
             }
 
             auto instComp = [&](uint32_t lhs, uint32_t rhs) -> bool {
-                return StrongOrderingWrapper<InstComp>{ comp }(invMap[lhs], invMap[rhs]) == StrongOrder::GreaterThan;
+                return StrongOrderingWrapper<InstComp>{ typeComp, comp }(invMap[lhs], invMap[rhs]) == StrongOrder::GreaterThan;
             };
             std::priority_queue<uint32_t, std::vector<uint32_t>, decltype(instComp)> freeInst{ std::move(
                 instComp) };  // degree = 0

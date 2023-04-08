@@ -25,6 +25,18 @@ CMMC_NAMESPACE_BEGIN
 class Module;
 class DataLayout;
 
+enum class TypeRank {
+    Void,
+    Integer,
+    FloatingPoint,
+    Pointer,
+    Array,
+    Struct,
+    Function,
+    StackStorage,
+    Invalid,
+};
+
 class Type {
 public:
     static constexpr auto arenaSource = Arena::Source::IR;
@@ -44,35 +56,37 @@ public:
         return ptr;
     }
 
-    [[nodiscard]] virtual bool isVoid() const noexcept {
-        return false;
+    [[nodiscard]] virtual TypeRank rank() const noexcept = 0;
+
+    [[nodiscard]] bool isVoid() const noexcept {
+        return rank() == TypeRank::Void;
     }
-    [[nodiscard]] virtual bool isPointer() const noexcept {
-        return false;
+    [[nodiscard]] bool isPointer() const noexcept {
+        return rank() == TypeRank::Pointer;
     }
-    [[nodiscard]] virtual bool isInteger() const noexcept {
-        return false;
+    [[nodiscard]] bool isInteger() const noexcept {
+        return rank() == TypeRank::Integer;
     }
     [[nodiscard]] virtual bool isBoolean() const noexcept {
         return false;
     }
-    [[nodiscard]] virtual bool isFloatingPoint() const noexcept {
-        return false;
+    [[nodiscard]] bool isFloatingPoint() const noexcept {
+        return rank() == TypeRank::FloatingPoint;
     }
-    [[nodiscard]] virtual bool isStruct() const noexcept {
-        return false;
+    [[nodiscard]] bool isStruct() const noexcept {
+        return rank() == TypeRank::Struct;
     }
-    [[nodiscard]] virtual bool isArray() const noexcept {
-        return false;
+    [[nodiscard]] bool isArray() const noexcept {
+        return rank() == TypeRank::Array;
     }
-    [[nodiscard]] virtual bool isStackStorage() const noexcept {
-        return false;
+    [[nodiscard]] bool isStackStorage() const noexcept {
+        return rank() == TypeRank::StackStorage;
     }
-    [[nodiscard]] virtual bool isFunction() const noexcept {
-        return false;
+    [[nodiscard]] bool isFunction() const noexcept {
+        return rank() == TypeRank::Function;
     }
-    [[nodiscard]] virtual bool isInvalid() const noexcept {
-        return false;
+    [[nodiscard]] bool isInvalid() const noexcept {
+        return rank() == TypeRank::Invalid;
     }
     [[nodiscard]] bool isPrimitive() const noexcept {
         return !isArray() && !isStruct() && !isInvalid();
@@ -96,8 +110,8 @@ CMMC_ARENA_TRAIT(Type, IR);
 
 class VoidType final : public Type {
 public:
-    [[nodiscard]] bool isVoid() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Void;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
@@ -108,8 +122,8 @@ public:
 
 class InvalidType final : public Type {
 public:
-    [[nodiscard]] bool isInvalid() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Invalid;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
@@ -123,8 +137,8 @@ class PointerType final : public Type {
 
 public:
     explicit PointerType(const Type* pointee) : mPointee{ pointee } {}
-    [[nodiscard]] bool isPointer() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Pointer;
     }
     [[nodiscard]] const Type* getPointee() const noexcept {
         return mPointee;
@@ -145,8 +159,8 @@ public:
     static const IntegerType* getBoolean() {
         return get(1);
     }
-    [[nodiscard]] bool isInteger() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Integer;
     }
     [[nodiscard]] bool isBoolean() const noexcept override {
         return mBitWidth == 1;
@@ -173,8 +187,8 @@ public:
     static const FloatingPointType* getDouble() {
         return get(false);
     }
-    [[nodiscard]] bool isFloatingPoint() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::FloatingPoint;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
@@ -189,8 +203,8 @@ class FunctionType final : public Type {
     // bool isVarArg
 public:
     FunctionType(const Type* retType, Vector<const Type*> argTypes) : mRetType{ retType }, mArgTypes{ std::move(argTypes) } {}
-    [[nodiscard]] bool isFunction() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Function;
     }
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
@@ -221,8 +235,8 @@ class StructType final : public Type {
 
 public:
     explicit StructType(String name, Vector<StructField> fields) : mName{ name }, mFields{ std::move(fields) } {}
-    [[nodiscard]] bool isStruct() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Struct;
     }
     void dump(std::ostream& out) const override;
     void dumpName(std::ostream& out) const override;
@@ -260,8 +274,8 @@ public:
     [[nodiscard]] uint32_t getScalarCount() const noexcept;
     [[nodiscard]] const Type* getScalarType() const noexcept;
 
-    [[nodiscard]] bool isArray() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::Array;
     }
     void dumpName(std::ostream& out) const override;
     bool isSame(const Type* rhs) const override;
@@ -275,8 +289,8 @@ class StackStorageType final : public Type {
 
 public:
     explicit StackStorageType(size_t size, size_t alignment) : mSize{ size }, mAlignment{ alignment } {}
-    [[nodiscard]] bool isStackStorage() const noexcept override {
-        return true;
+    [[nodiscard]] TypeRank rank() const noexcept override {
+        return TypeRank::StackStorage;
     }
     bool isSame(const Type* rhs) const override;
     void dumpName(std::ostream& out) const override;
