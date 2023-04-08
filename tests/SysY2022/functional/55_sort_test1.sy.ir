@@ -59,14 +59,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %31 = scmp lt i32 %28, i32 %30;
     cbr i1 %31(prob = 0.97), ^while.body1, ^b;
 ^while.body2:
-    i32 %32 = phi [^b, i32 0] [^while.body2, i32 %35];
-    i32* %33 = getelementptr &([10 * i32]* %a)[i64 0][i32 %32];
-    i32 %34 = load i32* %33;
-    call (i32) -> void @putint(i32 %34);
+    i32 %32 = phi [^b, i32 0] [^while.body2, i32 %33];
+    i32 %33 = add i32 %32, i32 1;
+    i1 %34 = scmp lt i32 %33, i32 10;
+    i32* %35 = getelementptr &([10 * i32]* %a)[i64 0][i32 %32];
+    i32 %36 = load i32* %35;
+    call (i32) -> void @putint(i32 %36);
     call (i32) -> void @putch(i32 10);
-    i32 %35 = add i32 %32, i32 1;
-    i1 %36 = scmp lt i32 %35, i32 10;
-    cbr i1 %36(prob = 0.9), ^while.body2, ^b2;
+    cbr i1 %34(prob = 0.9), ^while.body2, ^b2;
 ^b2:
     ret i32 0;
 }

@@ -33,11 +33,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^while.body1:
     i32 %14 = phi [^while.body, i32 %12] [^b1, i32 %28];
     i32 %15 = phi [^while.body, i32 %10] [^b1, i32 %27];
-    i32* %16 = getelementptr &(i32* %0)[i32 %15];
-    i32 %17 = load i32* %16;
-    i32* %18 = getelementptr &(i32* %0)[i32 %14];
-    i32 %19 = load i32* %18;
-    i1 %20 = scmp gt i32 %17, i32 %19;
+    i32* %16 = getelementptr &(i32* %0)[i32 %14];
+    i32* %17 = getelementptr &(i32* %0)[i32 %15];
+    i32 %18 = load i32* %17;
+    i32 %19 = load i32* %16;
+    i1 %20 = scmp gt i32 %18, i32 %19;
     cbr i1 %20(prob = 0.5), ^if.then, ^b1;
 ^b:
     i32 %21 = phi [^while.body, i32 %10] [^b1, i32 %27];
@@ -46,12 +46,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then:
     ubr ^b1;
 ^if.then1:
-    i32* %23 = getelementptr &(i32* %0)[i32 %21];
-    i32 %24 = load i32* %23;
-    i32* %25 = getelementptr &(i32* %0)[i32 %10];
-    i32 %26 = load i32* %25;
-    store i32* %23 with i32 %26;
-    store i32* %25 with i32 %24;
+    i32* %23 = getelementptr &(i32* %0)[i32 %10];
+    i32* %24 = getelementptr &(i32* %0)[i32 %21];
+    i32 %25 = load i32* %24;
+    i32 %26 = load i32* %23;
+    store i32* %24 with i32 %26;
+    store i32* %23 with i32 %25;
     ubr ^b2;
 ^b1:
     i32 %27 = phi [^while.body1, i32 %15] [^if.then, i32 %14];
@@ -64,14 +64,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %32 = scmp lt i32 %12, i32 %31;
     cbr i1 %32(prob = 0.97), ^while.body, ^while.body2;
 ^while.body2:
-    i32 %33 = phi [^b2, i32 0] [^while.body2, i32 %36];
-    i32* %34 = getelementptr &([10 * i32]* %a)[i64 0][i32 %33];
-    i32 %35 = load i32* %34;
-    call (i32) -> void @putint(i32 %35);
+    i32 %33 = phi [^b2, i32 0] [^while.body2, i32 %34];
+    i32 %34 = add i32 %33, i32 1;
+    i1 %35 = scmp lt i32 %34, i32 10;
+    i32* %36 = getelementptr &([10 * i32]* %a)[i64 0][i32 %33];
+    i32 %37 = load i32* %36;
+    call (i32) -> void @putint(i32 %37);
     call (i32) -> void @putch(i32 10);
-    i32 %36 = add i32 %33, i32 1;
-    i1 %37 = scmp lt i32 %36, i32 10;
-    cbr i1 %37(prob = 0.9), ^while.body2, ^b3;
+    cbr i1 %35(prob = 0.9), ^while.body2, ^b3;
 ^b3:
     ret i32 0;
 }

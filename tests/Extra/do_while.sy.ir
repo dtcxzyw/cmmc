@@ -4,9 +4,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^dowhile.body;
 ^dowhile.body:
     i32 %0 = phi [^entry, i32 0] [^dowhile.body, i32 %1];
-    call (i32) -> void @putint(i32 %0);
     i32 %1 = add i32 %0, i32 1;
     i1 %2 = scmp lt i32 %1, i32 10;
+    call (i32) -> void @putint(i32 %0);
     cbr i1 %2(prob = 0.9), ^dowhile.body, ^b;
 ^b:
     ret i32 %1;

@@ -6,29 +6,29 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp neq i32 %0, i32 0;
     cbr i1 %1(prob = 0.97), ^while.body, ^while.guard;
 ^while.body:
-    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %5];
-    i32* %3 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %2];
-    i32 %4 = call () -> i32 @getint();
-    store i32* %3 with i32 %4;
-    i32 %5 = add i32 %2, i32 1;
+    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %3];
+    i32 %3 = add i32 %2, i32 1;
+    i32* %4 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %2];
+    i32 %5 = call () -> i32 @getint();
+    store i32* %4 with i32 %5;
     i32 %6 = call () -> i32 @getint();
     i1 %7 = scmp neq i32 %6, i32 0;
     cbr i1 %7(prob = 0.97), ^while.body, ^while.guard;
 ^while.guard:
-    i32 %8 = phi [^entry, i32 0] [^while.body, i32 %5];
+    i32 %8 = phi [^entry, i32 0] [^while.body, i32 %3];
     i1 %9 = scmp neq i32 %8, i32 0;
     cbr i1 %9(prob = 0.97), ^while.body1, ^b;
 ^while.body1:
-    i32 %10 = phi [^while.guard, i32 0] [^while.body1, i32 %15];
+    i32 %10 = phi [^while.guard, i32 0] [^while.body1, i32 %16];
     i32 %11 = phi [^while.guard, i32 %8] [^while.body1, i32 %12];
     i32 %12 = add i32 %11, i32 -1;
-    i32* %13 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %12];
-    i32 %14 = load i32* %13;
-    i32 %15 = add i32 %14, i32 %10;
-    i1 %16 = scmp neq i32 %12, i32 0;
-    cbr i1 %16(prob = 0.97), ^while.body1, ^b;
+    i1 %13 = scmp neq i32 %12, i32 0;
+    i32* %14 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %12];
+    i32 %15 = load i32* %14;
+    i32 %16 = add i32 %15, i32 %10;
+    cbr i1 %13(prob = 0.97), ^while.body1, ^b;
 ^b:
-    i32 %17 = phi [^while.guard, i32 0] [^while.body1, i32 %15];
+    i32 %17 = phi [^while.guard, i32 0] [^while.body1, i32 %16];
     i32 %18 = srem i32 %17, i32 79;
     ret i32 %18;
 }

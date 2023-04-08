@@ -3,60 +3,60 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     ubr ^while.guard;
 ^while.guard:
-    i32 %0 = phi [^entry, i32 1352] [^entry1, i32 %33];
-    i32 %1 = phi [^entry, i32 49] [^entry1, i32 %25];
-    i32 %2 = phi [^entry, i32 2] [^entry1, i32 %7];
-    i32 %3 = phi [^entry, i32 0] [^entry1, i32 %34];
+    i32 %0 = phi [^entry, i32 1352] [^if.then1, i32 %34];
+    i32 %1 = phi [^entry, i32 49] [^if.then1, i32 %25];
+    i32 %2 = phi [^entry, i32 2] [^if.then1, i32 %7];
+    i32 %3 = phi [^entry, i32 0] [^if.then1, i32 %27];
     i1 %4 = scmp lt i32 %3, i32 3;
     cbr i1 %4(prob = 0.97), ^if.then, ^b;
 ^if.then:
-    i32 %5 = phi [^while.guard, i32 %1] [^entry2, i32 %43];
-    i32 %6 = phi [^while.guard, i32 %0] [^entry2, i32 %42];
-    i32 %7 = phi [^while.guard, i32 %2] [^entry2, i32 %43];
-    i32 %8 = phi [^while.guard, i32 %3] [^entry2, i32 %44];
+    i32 %5 = phi [^while.guard, i32 %1] [^if.else, i32 %37];
+    i32 %6 = phi [^while.guard, i32 %0] [^if.else, i32 %44];
+    i32 %7 = phi [^while.guard, i32 %2] [^if.else, i32 %37];
+    i32 %8 = phi [^while.guard, i32 %3] [^if.else, i32 %38];
     i32 %9 = add i32 %5, i32 1;
     i32 %10 = add i32 %5, i32 3;
-    i32 %11 = mul i32 %5, i32 2;
-    i32 %12 = mul i32 %9, i32 2;
-    i32 %13 = mul i32 %10, i32 3;
-    i32 %14 = add i32 %7, i32 8;
-    i32 %15 = add i32 %7, i32 10;
-    i32 %16 = add i32 %15, i32 %6;
-    i32 %17 = add i32 %16, i32 %11;
-    i32 %18 = add i32 %17, i32 %12;
-    i32 %19 = add i32 %18, i32 %13;
+    i32 %11 = add i32 %7, i32 8;
+    i32 %12 = add i32 %7, i32 10;
+    i32 %13 = add i32 %12, i32 %6;
+    i32 %14 = mul i32 %5, i32 2;
+    i32 %15 = add i32 %13, i32 %14;
+    i32 %16 = mul i32 %9, i32 2;
+    i32 %17 = add i32 %15, i32 %16;
+    i32 %18 = mul i32 %10, i32 3;
+    i32 %19 = add i32 %17, i32 %18;
     i1 %20 = scmp eq i32 %8, i32 1;
-    cbr i1 %20(prob = 0.5), ^entry1, ^entry2;
+    cbr i1 %20(prob = 0.5), ^if.then1, ^if.else;
 ^b:
-    i32 %21 = phi [^while.guard, i32 %0] [^entry2, i32 %42];
+    i32 %21 = phi [^while.guard, i32 %0] [^if.else, i32 %44];
     call (i32) -> void @putint(i32 %21);
     ret i32 0;
-^entry1:
+^if.then1:
     i32 %22 = add i32 %5, i32 7;
-    i32 %23 = add i32 %5, i32 10;
-    i32 %24 = add i32 %5, i32 8;
+    i32 %23 = add i32 %5, i32 8;
+    i32 %24 = add i32 %5, i32 10;
     i32 %25 = add i32 %5, i32 13;
-    i32 %26 = mul i32 %24, i32 2;
-    i32 %27 = mul i32 %22, i32 2;
-    i32 %28 = mul i32 %23, i32 3;
-    i32 %29 = add i32 %5, i32 17;
-    i32 %30 = add i32 %29, i32 %26;
-    i32 %31 = add i32 %30, i32 %27;
-    i32 %32 = add i32 %31, i32 %28;
-    i32 %33 = add i32 %32, i32 %19;
-    i32 %34 = add i32 %8, i32 1;
+    i32 %26 = add i32 %5, i32 17;
+    i32 %27 = add i32 %8, i32 1;
+    i32 %28 = mul i32 %22, i32 2;
+    i32 %29 = add i32 %26, i32 %28;
+    i32 %30 = mul i32 %23, i32 2;
+    i32 %31 = add i32 %29, i32 %30;
+    i32 %32 = mul i32 %24, i32 3;
+    i32 %33 = add i32 %31, i32 %32;
+    i32 %34 = add i32 %33, i32 %19;
     ubr ^while.guard;
-^entry2:
+^if.else:
     i32 %35 = add i32 %5, i32 7;
     i32 %36 = add i32 %5, i32 9;
-    i32 %37 = mul i32 %36, i32 3;
-    i32 %38 = mul i32 %35, i32 2;
-    i32 %39 = mul i32 %38, i32 2;
-    i32 %40 = add i32 %39, i32 %37;
-    i32 %41 = add i32 %40, i32 %14;
-    i32 %42 = add i32 %41, i32 %19;
-    i32 %43 = add i32 %5, i32 13;
-    i32 %44 = add i32 %8, i32 1;
-    i1 %45 = scmp lt i32 %44, i32 3;
+    i32 %37 = add i32 %5, i32 13;
+    i32 %38 = add i32 %8, i32 1;
+    i32 %39 = mul i32 %35, i32 2;
+    i32 %40 = mul i32 %36, i32 3;
+    i32 %41 = mul i32 %39, i32 2;
+    i32 %42 = add i32 %41, i32 %40;
+    i32 %43 = add i32 %42, i32 %11;
+    i32 %44 = add i32 %43, i32 %19;
+    i1 %45 = scmp lt i32 %38, i32 3;
     cbr i1 %45(prob = 0.97), ^if.then, ^b;
 }

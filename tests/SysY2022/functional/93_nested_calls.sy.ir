@@ -50,114 +50,120 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %3 = call () -> i32 @getint();
     ubr ^while.body;
 ^while.body:
-    i32 %4 = phi [^entry, i32 0] [^while.body, i32 %7];
-    i32* %5 = getelementptr &([10 * i32]* %arr)[i64 0][i32 %4];
-    i32 %6 = call () -> i32 @getint();
-    store i32* %5 with i32 %6;
-    i32 %7 = add i32 %4, i32 1;
-    i1 %8 = scmp lt i32 %7, i32 10;
-    cbr i1 %8(prob = 0.9), ^while.body, ^b;
+    i32 %4 = phi [^entry, i32 0] [^while.body, i32 %5];
+    i32 %5 = add i32 %4, i32 1;
+    i1 %6 = scmp lt i32 %5, i32 10;
+    i32* %7 = getelementptr &([10 * i32]* %arr)[i64 0][i32 %4];
+    i32 %8 = call () -> i32 @getint();
+    store i32* %7 with i32 %8;
+    cbr i1 %6(prob = 0.9), ^while.body, ^b;
 ^b:
-    i32* %9 = getelementptr &([10 * i32]* %arr)[i64 0][i64 0];
-    i1 %10 = scmp eq i32 %0, i32 0;
-    cbr i1 %10(prob = 0.5), ^b1, ^b2;
-^b1:
-    i1 %11 = scmp neq i32 %1, i32 0;
-    cbr i1 %11(prob = 0.5), ^b2, ^if.else;
-^b2:
-    i32 %12 = phi [^b, i32 0] [^b1, i32 1] [^if.else, i32 0];
-    i32 %13 = call (i32, i32) -> i32 @func2(i32 %12, i32 %2);
-    i32 %14 = call (i32, i32) -> i32 @func3(i32 %13, i32 %3);
-    i32 %15 = load i32* %9;
-    i32* %16 = getelementptr &([10 * i32]* %arr)[i64 0][i64 1];
+    i1 %9 = scmp eq i32 %0, i32 0;
+    i32* %10 = getelementptr &([10 * i32]* %arr)[i64 0][i64 0];
+    i32 %11 = load i32* %10;
+    i32* %12 = getelementptr &([10 * i32]* %arr)[i64 0][i64 1];
+    i32 %13 = load i32* %12;
+    i32* %14 = getelementptr &([10 * i32]* %arr)[i64 0][i64 2];
+    i32 %15 = load i32* %14;
+    i32* %16 = getelementptr &([10 * i32]* %arr)[i64 0][i64 3];
     i32 %17 = load i32* %16;
-    i32* %18 = getelementptr &([10 * i32]* %arr)[i64 0][i64 2];
+    i32* %18 = getelementptr &([10 * i32]* %arr)[i64 0][i64 4];
     i32 %19 = load i32* %18;
-    i32* %20 = getelementptr &([10 * i32]* %arr)[i64 0][i64 3];
+    i32* %20 = getelementptr &([10 * i32]* %arr)[i64 0][i64 5];
     i32 %21 = load i32* %20;
-    i32* %22 = getelementptr &([10 * i32]* %arr)[i64 0][i64 4];
-    i1 %23 = scmp eq i32 %21, i32 0;
-    cbr i1 %23(prob = 0.5), ^b3, ^if.else1;
+    i32* %22 = getelementptr &([10 * i32]* %arr)[i64 0][i64 6];
+    i32 %23 = load i32* %22;
+    i32* %24 = getelementptr &([10 * i32]* %arr)[i64 0][i64 7];
+    i32 %25 = load i32* %24;
+    i32* %26 = getelementptr &([10 * i32]* %arr)[i64 0][i64 8];
+    i32 %27 = load i32* %26;
+    i32* %28 = getelementptr &([10 * i32]* %arr)[i64 0][i64 9];
+    i32 %29 = load i32* %28;
+    cbr i1 %9(prob = 0.5), ^b1, ^if.else;
 ^if.else:
-    ubr ^b2;
+    ubr ^b1;
+^b1:
+    i32 %30 = phi [^b, i32 1] [^if.else, i32 0];
+    i1 %31 = scmp eq i32 %2, i32 0;
+    cbr i1 %31(prob = 0.5), ^b2, ^if.else1;
 ^if.else1:
+    ubr ^b2;
+^b2:
+    i32 %32 = phi [^b1, i32 1] [^if.else1, i32 0];
+    i1 %33 = scmp eq i32 %17, i32 0;
+    cbr i1 %33(prob = 0.5), ^b3, ^if.else2;
+^if.else2:
     ubr ^b3;
 ^b3:
-    i32 %24 = phi [^b2, i32 1] [^if.else1, i32 0];
-    i1 %25 = scmp neq i32 %19, i32 0;
-    cbr i1 %25(prob = 0.5), ^b4, ^b5;
-^b4:
-    i1 %26 = scmp neq i32 %24, i32 0;
-    cbr i1 %26(prob = 0.5), ^b5, ^if.else2;
-^b5:
-    i32 %27 = phi [^b3, i32 0] [^b4, i32 1] [^if.else2, i32 0];
-    i32 %28 = load i32* %22;
-    i32* %29 = getelementptr &([10 * i32]* %arr)[i64 0][i64 5];
-    i32 %30 = load i32* %29;
-    i32* %31 = getelementptr &([10 * i32]* %arr)[i64 0][i64 6];
-    i1 %32 = scmp eq i32 %30, i32 0;
-    cbr i1 %32(prob = 0.5), ^b6, ^if.else3;
-^if.else2:
-    ubr ^b5;
+    i32 %34 = phi [^b2, i32 1] [^if.else2, i32 0];
+    i32 %35 = neg i32 %21;
+    i1 %36 = scmp eq i32 %21, i32 0;
+    cbr i1 %36(prob = 0.5), ^b4, ^if.else3;
 ^if.else3:
+    ubr ^b4;
+^b4:
+    i32 %37 = phi [^b3, i32 1] [^if.else3, i32 0];
+    i32 %38 = neg i32 %23;
+    i1 %39 = scmp eq i32 %27, i32 0;
+    cbr i1 %39(prob = 0.5), ^b5, ^if.else4;
+^if.else4:
+    ubr ^b5;
+^b5:
+    i32 %40 = phi [^b4, i32 1] [^if.else4, i32 0];
+    i32 %41 = neg i32 %29;
+    i1 %42 = scmp eq i32 %29, i32 0;
+    cbr i1 %42(prob = 0.5), ^b6, ^if.else5;
+^if.else5:
     ubr ^b6;
 ^b6:
-    i32 %33 = phi [^b5, i32 1] [^if.else3, i32 0];
-    i1 %34 = scmp neq i32 %17, i32 0;
-    cbr i1 %34(prob = 0.5), ^b7, ^if.else4;
-^if.else4:
-    i32 %35 = call (i32, i32) -> i32 @func2(i32 %28, i32 %33);
-    ubr ^b7;
+    i32 %43 = phi [^b5, i32 1] [^if.else5, i32 0];
+    i1 %44 = scmp neq i32 %15, i32 0;
+    cbr i1 %44(prob = 0.5), ^b7, ^b8;
 ^b7:
-    i32 %36 = phi [^b6, i32 %27] [^if.else4, i32 %35];
-    i32 %37 = load i32* %31;
-    i32* %38 = getelementptr &([10 * i32]* %arr)[i64 0][i64 7];
-    i32 %39 = call (i32, i32) -> i32 @func3(i32 %36, i32 %37);
-    i32 %40 = load i32* %38;
-    i32* %41 = getelementptr &([10 * i32]* %arr)[i64 0][i64 8];
-    i32 %42 = call (i32, i32) -> i32 @func2(i32 %39, i32 %40);
-    i32 %43 = load i32* %41;
-    i32* %44 = getelementptr &([10 * i32]* %arr)[i64 0][i64 9];
-    i32 %45 = load i32* %44;
-    i1 %46 = scmp eq i32 %45, i32 0;
-    cbr i1 %46(prob = 0.5), ^b8, ^if.else5;
-^if.else5:
-    ubr ^b8;
+    i1 %45 = scmp neq i32 %34, i32 0;
+    cbr i1 %45(prob = 0.5), ^b8, ^if.else6;
 ^b8:
-    i32 %47 = phi [^b7, i32 1] [^if.else5, i32 0];
-    i32 %48 = neg i32 %30;
-    i32 %49 = neg i32 %45;
-    i1 %50 = scmp eq i32 %43, i32 0;
-    cbr i1 %50(prob = 0.5), ^b9, ^if.else6;
+    i32 %46 = phi [^b6, i32 0] [^b7, i32 1] [^if.else6, i32 0];
+    i1 %47 = scmp neq i32 %30, i32 0;
+    i32 %48 = call (i32, i32) -> i32 @func3(i32 %19, i32 %35);
+    i32 %49 = call (i32, i32) -> i32 @func2(i32 %19, i32 %37);
+    i32 %50 = call (i32, i32) -> i32 @func3(i32 %27, i32 %43);
+    cbr i1 %47(prob = 0.5), ^b9, ^b10;
 ^if.else6:
-    ubr ^b9;
+    ubr ^b8;
 ^b9:
-    i32 %51 = phi [^b8, i32 1] [^if.else6, i32 0];
-    i1 %52 = scmp eq i32 %2, i32 0;
-    cbr i1 %52(prob = 0.5), ^b10, ^if.else7;
+    i1 %51 = scmp neq i32 %1, i32 0;
+    cbr i1 %51(prob = 0.5), ^b10, ^if.else7;
+^b10:
+    i32 %52 = phi [^b8, i32 0] [^b9, i32 1] [^if.else7, i32 0];
+    i1 %53 = scmp neq i32 %13, i32 0;
+    i32 %54 = call (i32, i32) -> i32 @func3(i32 %32, i32 %3);
+    i32 %55 = call (i32, i32) -> i32 @func2(i32 %1, i32 %54);
+    i32 %56 = call (i32, i32) -> i32 @func2(i32 %48, i32 %38);
+    i32 %57 = call (i32, i32) -> i32 @func2(i32 %52, i32 %2);
+    i32 %58 = call (i32, i32) -> i32 @func3(i32 %57, i32 %3);
+    cbr i1 %53(prob = 0.5), ^b11, ^if.else8;
 ^if.else7:
     ubr ^b10;
-^b10:
-    i32 %53 = phi [^b9, i32 1] [^if.else7, i32 0];
-    i32 %54 = neg i32 %37;
-    i32 %55 = call (i32, i32) -> i32 @func3(i32 %53, i32 %3);
-    i32 %56 = call (i32, i32) -> i32 @func3(i32 %28, i32 %48);
-    i32 %57 = call (i32, i32) -> i32 @func2(i32 %1, i32 %55);
-    i32 %58 = call (i32, i32) -> i32 @func2(i32 %56, i32 %54);
-    i1 %59 = scmp neq i32 %14, i32 0;
-    cbr i1 %59(prob = 0.5), ^b11, ^if.else8;
 ^if.else8:
-    i32 %60 = call (i32, i32) -> i32 @func3(i32 %43, i32 %47);
-    i32 %61 = call (i32, i32, i32) -> i32 @func1(i32 %42, i32 %60, i32 %0);
     ubr ^b11;
 ^b11:
-    i32 %62 = phi [^b10, i32 %15] [^if.else8, i32 %61];
-    i32 %63 = call (i32, i32, i32) -> i32 @func1(i32 %58, i32 %40, i32 %51);
-    i32 %64 = call (i32, i32) -> i32 @func3(i32 %62, i32 %57);
-    i32 %65 = call (i32, i32) -> i32 @func2(i32 %63, i32 %49);
-    i32 %66 = call (i32, i32, i32) -> i32 @func1(i32 %64, i32 %15, i32 %17);
-    i32 %67 = call (i32, i32) -> i32 @func3(i32 %65, i32 %0);
-    i32 %68 = call (i32, i32) -> i32 @func2(i32 %66, i32 %19);
-    i32 %69 = call (i32, i32, i32) -> i32 @func1(i32 %68, i32 %21, i32 %67);
-    ret i32 %69;
+    i32 %59 = phi [^b10, i32 %46] [^if.else8, i32 %49];
+    i1 %60 = scmp neq i32 %58, i32 0;
+    i32 %61 = call (i32, i32, i32) -> i32 @func1(i32 %56, i32 %25, i32 %40);
+    i32 %62 = call (i32, i32) -> i32 @func2(i32 %61, i32 %41);
+    i32 %63 = call (i32, i32) -> i32 @func3(i32 %62, i32 %0);
+    cbr i1 %60(prob = 0.5), ^b12, ^if.else9;
+^if.else9:
+    i32 %64 = call (i32, i32) -> i32 @func3(i32 %59, i32 %23);
+    i32 %65 = call (i32, i32) -> i32 @func2(i32 %64, i32 %25);
+    i32 %66 = call (i32, i32, i32) -> i32 @func1(i32 %65, i32 %50, i32 %0);
+    ubr ^b12;
+^b12:
+    i32 %67 = phi [^b11, i32 %11] [^if.else9, i32 %66];
+    i32 %68 = call (i32, i32) -> i32 @func3(i32 %67, i32 %55);
+    i32 %69 = call (i32, i32, i32) -> i32 @func1(i32 %68, i32 %11, i32 %13);
+    i32 %70 = call (i32, i32) -> i32 @func2(i32 %69, i32 %15);
+    i32 %71 = call (i32, i32, i32) -> i32 @func1(i32 %70, i32 %17, i32 %63);
+    ret i32 %71;
 }
