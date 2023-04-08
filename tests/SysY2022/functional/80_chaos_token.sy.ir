@@ -335,7 +335,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     i1 %170 = scmp neq i32 %169, i32 0;
     cbr i1 %170(prob = 0.97), ^while.body2, ^while.body3;
 ^while.body3:
-    i32 %171 = phi [^while.body2, i32 0] [^if.then, i32 0] [^while.body3, i32 %174];
+    i32 %171 = phi [^if.then, i32 0] [^while.body2, i32 0] [^while.body3, i32 %174];
     i32* %172 = getelementptr &(i32* %100)[i32 %171];
     i32 %173 = load i32* %172;
     call (i32) -> void @putch(i32 %173);
@@ -363,7 +363,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     i1 %188 = scmp neq i32 %187, i32 0;
     cbr i1 %188(prob = 0.97), ^while.body4, ^while.body5;
 ^while.body5:
-    i32 %189 = phi [^while.body4, i32 0] [^if.then1, i32 0] [^while.body5, i32 %192];
+    i32 %189 = phi [^if.then1, i32 0] [^while.body4, i32 0] [^while.body5, i32 %192];
     i32* %190 = getelementptr &(i32* %140)[i32 %189];
     i32 %191 = load i32* %190;
     call (i32) -> void @putch(i32 %191);

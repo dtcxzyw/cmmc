@@ -421,7 +421,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %195 = scmp gt i32 %193, i32 0;
     cbr i1 %194(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %196 = phi [^b1, i32 %204] [^entry, i32 0];
+    i32 %196 = phi [^entry, i32 0] [^b1, i32 %204];
     cbr i1 %195(prob = 0.97), ^indirect, ^b1;
 ^b:
     [8 * f32]* %197 = getelementptr &([8 * [8 * f32]]* %test_dct)[i64 0][i64 0];
@@ -447,13 +447,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %209 = scmp gt i32 %193, i32 1;
     cbr i1 %194(prob = 0.97), ^while.body4, ^b4;
 ^while.body2:
-    i32 %210 = phi [^b11, i32 %267] [^while.body1, i32 0];
+    i32 %210 = phi [^while.body1, i32 0] [^b11, i32 %267];
     f32* %211 = getelementptr &([8 * f32]* %207)[i64 0][i32 %210];
     store f32* %211 with f32 0;
     f32 %212 = s2f i32 %210 to f32;
     ubr ^while.body5;
 ^while.body3:
-    i32 %213 = phi [^while.body3, i32 %216] [^indirect, i32 0];
+    i32 %213 = phi [^indirect, i32 0] [^while.body3, i32 %216];
     f32* %214 = getelementptr &([8 * f32]* %203)[i64 0][i32 %213];
     f32 %215 = call () -> f32 @getfloat();
     store f32* %214 with f32 %215;
@@ -477,7 +477,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %225 = scmp gt i32 %192, i32 1;
     cbr i1 %194(prob = 0.97), ^while.body7, ^b6;
 ^while.body5:
-    i32 %226 = phi [^b7, i32 %248] [^while.body2, i32 0];
+    i32 %226 = phi [^while.body2, i32 0] [^b7, i32 %248];
     cbr i1 %195(prob = 0.97), ^indirect1, ^b7;
 ^while.body6:
     i32 %227 = phi [^while.body4, i32 1] [^while.body6, i32 %230];
@@ -518,7 +518,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %249 = scmp lt i32 %248, i32 %192;
     cbr i1 %249(prob = 0.97), ^while.body5, ^b11;
 ^while.body8:
-    i32 %250 = phi [^b17, i32 %309] [^while.body7, i32 0];
+    i32 %250 = phi [^while.body7, i32 0] [^b17, i32 %309];
     f32* %251 = getelementptr &([8 * f32]* %235)[i64 0][i32 %250];
     f32 %252 = load f32* %64;
     f32 %253 = fmul f32 0.25, f32 %252;
@@ -546,7 +546,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %264 = fsub f32 %244, f32 %263;
     ubr ^b10;
 ^b10:
-    f32 %265 = phi [^if.then, f32 %264] [^indirect1, f32 %244];
+    f32 %265 = phi [^indirect1, f32 %244] [^if.then, f32 %264];
     i1 %266 = fcmp gt f32 %265, f32 3.14159;
     cbr i1 %266(prob = 0.5), ^if.then1, ^b14;
 ^b11:
@@ -554,8 +554,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %268 = scmp lt i32 %267, i32 %193;
     cbr i1 %268(prob = 0.97), ^while.body2, ^b3;
 ^while.body10:
-    f32 %269 = phi [^indirect2, f32 %289] [^while.body8, f32 %253];
-    i32 %270 = phi [^indirect2, i32 %276] [^while.body8, i32 1];
+    f32 %269 = phi [^while.body8, f32 %253] [^indirect2, f32 %289];
+    i32 %270 = phi [^while.body8, i32 1] [^indirect2, i32 %276];
     [8 * f32]* %271 = getelementptr &([8 * f32]* %197)[i32 %270];
     f32* %272 = getelementptr &([8 * f32]* %271)[i64 0][i64 0];
     f32 %273 = load f32* %272;
@@ -571,7 +571,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %280 = fmul f32 %200, f32 %279;
     cbr i1 %209(prob = 0.97), ^while.body12, ^b15;
 ^while.body11:
-    i32 %281 = phi [^while.body11, i32 %284] [^while.body9, i32 1];
+    i32 %281 = phi [^while.body9, i32 1] [^while.body11, i32 %284];
     call (i32) -> void @putch(i32 32);
     f32* %282 = getelementptr &([8 * f32]* %257)[i64 0][i32 %281];
     f32 %283 = load f32* %282;
@@ -591,7 +591,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %289 = load f32* %251;
     ubr ^while.body10;
 ^b14:
-    f32 %290 = phi [^if.then1, f32 %288] [^b10, f32 %265];
+    f32 %290 = phi [^b10, f32 %265] [^if.then1, f32 %288];
     i1 %291 = fcmp lt f32 %290, f32 -3.14159;
     cbr i1 %291(prob = 0.5), ^if.then2, ^b16;
 ^while.body12:
@@ -702,7 +702,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %356 = call (f32, [8 * [8 * f32]]*, [8 * [8 * f32]]*, [8 * [8 * f32]]*) -> f32 @my_sin_impl(f32 %355, [8 * [8 * f32]]* %test_block, [8 * [8 * f32]]* %test_dct, [8 * [8 * f32]]* %test_idct);
     ubr ^while.body15;
 ^b24:
-    f32 %357 = phi [^if.then7, f32 %353] [^b21, f32 %349];
+    f32 %357 = phi [^b21, f32 %349] [^if.then7, f32 %353];
     f32 %358 = call (f32, [8 * [8 * f32]]*, [8 * [8 * f32]]*, [8 * [8 * f32]]*) -> f32 @my_sin_impl(f32 %357, [8 * [8 * f32]]* %test_block, [8 * [8 * f32]]* %test_dct, [8 * [8 * f32]]* %test_idct);
     f32 %359 = fmul f32 %315, f32 %358;
     f32 %360 = fadd f32 %312, f32 %359;
@@ -745,7 +745,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %384 = fadd f32 %382, f32 6.28319;
     ubr ^b27;
 ^b27:
-    f32 %385 = phi [^if.then11, f32 %384] [^b26, f32 %382];
+    f32 %385 = phi [^b26, f32 %382] [^if.then11, f32 %384];
     f32 %386 = call (f32, [8 * [8 * f32]]*, [8 * [8 * f32]]*, [8 * [8 * f32]]*) -> f32 @my_sin_impl(f32 %385, [8 * [8 * f32]]* %test_block, [8 * [8 * f32]]* %test_dct, [8 * [8 * f32]]* %test_idct);
     f32 %387 = fmul f32 %367, f32 %386;
     f32 %388 = fadd f32 %364, f32 %387;

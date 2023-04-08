@@ -2,14 +2,5 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     i32 %0 = call () -> i32 @getint();
-    ubr ^for.header;
-^for.header:
-    i32 %1 = phi [^for.body, i32 %3] [^entry, i32 0];
-    i1 %2 = scmp lt i32 %1, i32 %0;
-    cbr i1 %2(prob = 0.97), ^for.body, ^b;
-^for.body:
-    i32 %3 = add i32 %1, i32 1;
-    ubr ^for.header;
-^b:
     ret i32 %0;
 }

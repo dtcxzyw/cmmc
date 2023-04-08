@@ -7,12 +7,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp eq i32 %0, i32 5;
     cbr i1 %1(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %2 = phi [^while.body, i32 %3] [^entry, i32 %0];
+    i32 %2 = phi [^entry, i32 %0] [^while.body, i32 %3];
     i32 %3 = add i32 %2, i32 1;
     i1 %4 = scmp eq i32 %3, i32 5;
     cbr i1 %4(prob = 0.97), ^while.body, ^b;
 ^b:
-    i32 %5 = phi [^while.body, i32 %3] [^entry, i32 %0];
+    i32 %5 = phi [^entry, i32 %0] [^while.body, i32 %3];
     call (i32) -> void @putint(i32 0);
     call (i32) -> void @putint(i32 1);
     call (i32) -> void @putint(i32 2);

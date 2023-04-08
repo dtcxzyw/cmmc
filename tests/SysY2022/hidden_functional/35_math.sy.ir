@@ -15,7 +15,7 @@ internal func @my_pow(f32 %a, i32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSide
     i1 %4 = scmp neq i32 %n, i32 0;
     cbr i1 %4(prob = 0.97), ^while.body, ^b1;
 ^b1:
-    f32 %5 = phi [^b3, f32 %13] [^b, f32 1];
+    f32 %5 = phi [^b, f32 1] [^b3, f32 %13];
     ubr ^b2;
 ^while.body:
     f32 %6 = phi [^b, f32 %a] [^b3, f32 %14];
@@ -25,7 +25,7 @@ internal func @my_pow(f32 %a, i32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSide
     i1 %10 = scmp neq i32 %9, i32 0;
     cbr i1 %10(prob = 0.5), ^if.then1, ^b3;
 ^b2:
-    f32 %11 = phi [^b1, f32 %5] [^if.then, f32 %3];
+    f32 %11 = phi [^if.then, f32 %3] [^b1, f32 %5];
     ret f32 %11;
 ^if.then1:
     f32 %12 = fmul f32 %8, f32 %6;
@@ -47,12 +47,12 @@ internal func @my_sqrt(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect 
     f32 %3 = fmul f32 10, f32 %2;
     ubr ^b1;
 ^b:
-    f32 %4 = fdiv f32 %x, f32 8;
-    f32 %5 = fadd f32 %4, f32 0.5;
-    f32 %6 = fmul f32 2, f32 %x;
-    f32 %7 = fadd f32 4, f32 %x;
-    f32 %8 = fdiv f32 %6, f32 %7;
-    f32 %9 = fadd f32 %5, f32 %8;
+    f32 %4 = fadd f32 4, f32 %x;
+    f32 %5 = fmul f32 2, f32 %x;
+    f32 %6 = fdiv f32 %x, f32 8;
+    f32 %7 = fadd f32 %6, f32 0.5;
+    f32 %8 = fdiv f32 %5, f32 %4;
+    f32 %9 = fadd f32 %7, f32 %8;
     f32 %10 = fdiv f32 %x, f32 %9;
     f32 %11 = fadd f32 %9, f32 %10;
     f32 %12 = fdiv f32 %11, f32 2;
@@ -85,7 +85,7 @@ internal func @my_sqrt(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect 
     f32 %39 = fdiv f32 %38, f32 2;
     ubr ^b1;
 ^b1:
-    f32 %40 = phi [^b, f32 %39] [^if.then, f32 %3];
+    f32 %40 = phi [^if.then, f32 %3] [^b, f32 %39];
     ret f32 %40;
 }
 internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
@@ -131,7 +131,7 @@ internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemo
     f32 %32 = fdiv f32 %31, f32 6;
     ubr ^b2;
 ^b2:
-    f32 %33 = phi [^b1, f32 0] [^entry2, f32 %32] [^entry1, f32 %14];
+    f32 %33 = phi [^entry1, f32 %14] [^b1, f32 0] [^entry2, f32 %32];
     f32 %34 = fsub f32 %b, f32 %2;
     f32 %35 = fdiv f32 %34, f32 2;
     f32 %36 = fadd f32 %2, f32 %35;
@@ -193,7 +193,7 @@ internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemo
     f32 %76 = fadd f32 %74, f32 %75;
     ubr ^b8;
 ^b8:
-    f32 %77 = phi [^b7, f32 %76] [^if.then, f32 %72];
+    f32 %77 = phi [^if.then, f32 %72] [^b7, f32 %76];
     ret f32 %77;
 }
 internal func @eee(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
@@ -221,7 +221,7 @@ internal func @eee(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stat
     f32 %16 = fadd f32 %13, f32 %15;
     ubr ^b1;
 ^b1:
-    f32 %17 = phi [^b, f32 %16] [^if.then, f32 %3];
+    f32 %17 = phi [^if.then, f32 %3] [^b, f32 %16];
     ret f32 %17;
 }
 internal func @my_exp(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
@@ -242,7 +242,7 @@ internal func @my_exp(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect S
     f32 %9 = fmul f32 %7, f32 %8;
     ubr ^b1;
 ^b1:
-    f32 %10 = phi [^b, f32 %9] [^if.then, f32 %3];
+    f32 %10 = phi [^if.then, f32 %3] [^b, f32 %9];
     ret f32 %10;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
@@ -251,7 +251,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp neq i32 %0, i32 0;
     cbr i1 %1(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %2 = phi [^b7, i32 %60] [^entry, i32 %0];
+    i32 %2 = phi [^entry, i32 %0] [^b7, i32 %60];
     f32 %3 = call () -> f32 @getfloat();
     f32 %4 = call () -> f32 @getfloat();
     i1 %5 = fcmp gt f32 %3, f32 0;
@@ -277,13 +277,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %5(prob = 0.5), ^entry1, ^if.else;
 ^entry1:
     f32 %11 = fsub f32 %3, f32 1;
-    f32 %12 = fdiv f32 %11, f32 2;
-    f32 %13 = fadd f32 1, f32 %12;
-    f32 %14 = fdiv f32 1, f32 %13;
-    f32 %15 = fmul f32 4, f32 %14;
-    f32 %16 = fadd f32 1, f32 %15;
-    f32 %17 = fdiv f32 1, f32 %3;
-    f32 %18 = fadd f32 %16, f32 %17;
+    f32 %12 = fdiv f32 1, f32 %3;
+    f32 %13 = fdiv f32 %11, f32 2;
+    f32 %14 = fadd f32 1, f32 %13;
+    f32 %15 = fdiv f32 1, f32 %14;
+    f32 %16 = fmul f32 4, f32 %15;
+    f32 %17 = fadd f32 1, f32 %16;
+    f32 %18 = fadd f32 %17, f32 %12;
     f32 %19 = fmul f32 %18, f32 %11;
     f32 %20 = fdiv f32 %19, f32 6;
     f32 %21 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %20, i32 1);
@@ -299,32 +299,32 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %22 = fcmp gt f32 %4, f32 0;
     ubr ^b5;
 ^b5:
-    i1 %23 = phi [^b4, i1 %22] [^b3, i1 false];
+    i1 %23 = phi [^b3, i1 false] [^b4, i1 %22];
     cbr i1 %23(prob = 0.5), ^entry2, ^if.else1;
 ^entry2:
     f32 %24 = fsub f32 %4, f32 1;
-    f32 %25 = fdiv f32 %24, f32 2;
-    f32 %26 = fadd f32 1, f32 %25;
-    f32 %27 = fdiv f32 1, f32 %26;
-    f32 %28 = fmul f32 4, f32 %27;
-    f32 %29 = fadd f32 1, f32 %28;
-    f32 %30 = fdiv f32 1, f32 %4;
-    f32 %31 = fadd f32 %29, f32 %30;
-    f32 %32 = fmul f32 %31, f32 %24;
-    f32 %33 = fdiv f32 %32, f32 6;
-    f32 %34 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %4, f32 1e-08, f32 %33, i32 1);
-    f32 %35 = fsub f32 %3, f32 1;
-    f32 %36 = fdiv f32 %35, f32 2;
-    f32 %37 = fadd f32 1, f32 %36;
-    f32 %38 = fdiv f32 1, f32 %37;
-    f32 %39 = fmul f32 4, f32 %38;
-    f32 %40 = fadd f32 1, f32 %39;
-    f32 %41 = fdiv f32 1, f32 %3;
-    f32 %42 = fadd f32 %40, f32 %41;
-    f32 %43 = fmul f32 %42, f32 %35;
-    f32 %44 = fdiv f32 %43, f32 6;
-    f32 %45 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %44, i32 1);
-    f32 %46 = fdiv f32 %34, f32 %45;
+    f32 %25 = fsub f32 %3, f32 1;
+    f32 %26 = fdiv f32 1, f32 %4;
+    f32 %27 = fdiv f32 1, f32 %3;
+    f32 %28 = fdiv f32 %24, f32 2;
+    f32 %29 = fdiv f32 %25, f32 2;
+    f32 %30 = fadd f32 1, f32 %28;
+    f32 %31 = fadd f32 1, f32 %29;
+    f32 %32 = fdiv f32 1, f32 %30;
+    f32 %33 = fdiv f32 1, f32 %31;
+    f32 %34 = fmul f32 4, f32 %32;
+    f32 %35 = fmul f32 4, f32 %33;
+    f32 %36 = fadd f32 1, f32 %34;
+    f32 %37 = fadd f32 1, f32 %35;
+    f32 %38 = fadd f32 %36, f32 %26;
+    f32 %39 = fadd f32 %37, f32 %27;
+    f32 %40 = fmul f32 %38, f32 %24;
+    f32 %41 = fmul f32 %39, f32 %25;
+    f32 %42 = fdiv f32 %40, f32 6;
+    f32 %43 = fdiv f32 %41, f32 6;
+    f32 %44 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %4, f32 1e-08, f32 %42, i32 1);
+    f32 %45 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %43, i32 1);
+    f32 %46 = fdiv f32 %44, f32 %45;
     call (f32) -> void @putfloat(f32 %46);
     ubr ^b6;
 ^if.else1:
@@ -335,13 +335,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %5(prob = 0.5), ^entry3, ^if.else2;
 ^entry3:
     f32 %47 = fsub f32 %3, f32 1;
-    f32 %48 = fdiv f32 %47, f32 2;
-    f32 %49 = fadd f32 1, f32 %48;
-    f32 %50 = fdiv f32 1, f32 %49;
-    f32 %51 = fmul f32 4, f32 %50;
-    f32 %52 = fadd f32 1, f32 %51;
-    f32 %53 = fdiv f32 1, f32 %3;
-    f32 %54 = fadd f32 %52, f32 %53;
+    f32 %48 = fdiv f32 1, f32 %3;
+    f32 %49 = fdiv f32 %47, f32 2;
+    f32 %50 = fadd f32 1, f32 %49;
+    f32 %51 = fdiv f32 1, f32 %50;
+    f32 %52 = fmul f32 4, f32 %51;
+    f32 %53 = fadd f32 1, f32 %52;
+    f32 %54 = fadd f32 %53, f32 %48;
     f32 %55 = fmul f32 %54, f32 %47;
     f32 %56 = fdiv f32 %55, f32 6;
     f32 %57 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %56, i32 1);

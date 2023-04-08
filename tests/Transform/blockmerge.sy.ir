@@ -7,6 +7,6 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then:
     ubr ^b;
 ^b:
-    i32 %2 = phi [^if.then, i32 4] [^entry, i32 0];
+    i32 %2 = phi [^entry, i32 0] [^if.then, i32 4];
     ret i32 %2;
 }

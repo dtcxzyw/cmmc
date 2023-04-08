@@ -3,8 +3,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     ubr ^for.header;
 ^for.header:
-    i32 %0 = phi [^for.body, i32 %3] [^entry, i32 0];
-    i32 %1 = phi [^for.body, i32 %4] [^entry, i32 0];
+    i32 %0 = phi [^entry, i32 0] [^for.body, i32 %3];
+    i32 %1 = phi [^entry, i32 0] [^for.body, i32 %4];
     i1 %2 = scmp lt i32 %1, i32 10;
     cbr i1 %2(prob = 0.97), ^for.body, ^for.header1;
 ^for.body:
@@ -69,12 +69,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %35 = call () -> i32 @getint();
     ubr ^for.header7;
 ^for.header7:
-    i32 %36 = phi [^for.body7, i32 %39] [^b, i32 %30];
-    i32 %37 = phi [^for.body7, i32 %40] [^b, i32 0];
+    i32 %36 = phi [^b, i32 %30] [^for.body7, i32 %39];
+    i32 %37 = phi [^b, i32 0] [^for.body7, i32 %40];
     i1 %38 = scmp lt i32 %37, i32 %35;
     cbr i1 %38(prob = 0.97), ^for.body7, ^b1;
 ^for.body7:
-    i32 %39 = add i32 %36, i32 %37;
+    i32 %39 = add i32 %37, i32 %36;
     i32 %40 = add i32 %37, i32 1;
     ubr ^for.header7;
 ^b1:

@@ -25,7 +25,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %9 with i32 8;
     ubr ^while.body;
 ^while.body:
-    i32 %10 = phi [^b2, i32 %12] [^entry, i32 0];
+    i32 %10 = phi [^entry, i32 0] [^b2, i32 %12];
     i32 %11 = phi [^entry, i32 10] [^b2, i32 %30];
     i32 %12 = add i32 %10, i32 1;
     i1 %13 = scmp lt i32 %12, i32 %11;

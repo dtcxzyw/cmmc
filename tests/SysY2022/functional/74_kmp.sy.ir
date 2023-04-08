@@ -9,7 +9,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %0 = getelementptr &([4096 * i32]* %dst)[i64 0][i64 0];
     ubr ^while.body;
 ^while.body:
-    i32 %1 = phi [^b1, i32 %6] [^entry, i32 0];
+    i32 %1 = phi [^entry, i32 0] [^b1, i32 %6];
     i32* %2 = getelementptr &(i32* %0)[i32 %1];
     i32 %3 = call () -> i32 @getch();
     store i32* %2 with i32 %3;
@@ -23,7 +23,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %6 = add i32 %1, i32 1;
     ubr ^while.body;
 ^while.body1:
-    i32 %7 = phi [^b2, i32 %11] [^b, i32 0];
+    i32 %7 = phi [^b, i32 0] [^b2, i32 %11];
     i32* %8 = getelementptr &(i32* %5)[i32 %7];
     i32 %9 = call () -> i32 @getch();
     store i32* %8 with i32 %9;
@@ -56,7 +56,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %24 = scmp eq i32 %21, i32 %23;
     ubr ^b5;
 ^b5:
-    i1 %25 = phi [^b4, i1 %24] [^while.body2, i1 true];
+    i1 %25 = phi [^while.body2, i1 true] [^b4, i1 %24];
     cbr i1 %25(prob = 0.5), ^if.then, ^if.else;
 ^while.body3:
     i32 %26 = phi [^entry1, i32 0] [^b8, i32 %54];
@@ -68,7 +68,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %32 = scmp eq i32 %29, i32 %31;
     cbr i1 %32(prob = 0.5), ^if.then1, ^if.else1;
 ^b6:
-    i32 %33 = phi [^if.then1, i32 %40] [^entry1, i32 -1] [^b8, i32 -1];
+    i32 %33 = phi [^entry1, i32 -1] [^if.then1, i32 %40] [^b8, i32 -1];
     call (i32) -> void @putint(i32 %33);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
@@ -106,8 +106,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %53 = add i32 %27, i32 1;
     ubr ^b8;
 ^b8:
-    i32 %54 = phi [^if.else1, i32 %45] [^if.then2, i32 %52] [^if.then1, i32 %39];
-    i32 %55 = phi [^if.else1, i32 %27] [^if.then2, i32 %53] [^if.then1, i32 %40];
+    i32 %54 = phi [^if.then1, i32 %39] [^if.else1, i32 %45] [^if.then2, i32 %52];
+    i32 %55 = phi [^if.then1, i32 %40] [^if.else1, i32 %27] [^if.then2, i32 %53];
     i32* %56 = getelementptr &(i32* %5)[i32 %55];
     i32 %57 = load i32* %56;
     i1 %58 = scmp neq i32 %57, i32 0;

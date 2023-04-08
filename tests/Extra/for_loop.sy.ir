@@ -3,7 +3,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     ubr ^for.header;
 ^for.header:
-    i32 %0 = phi [^for.body, i32 %2] [^entry, i32 0];
+    i32 %0 = phi [^entry, i32 0] [^for.body, i32 %2];
     i1 %1 = scmp lt i32 %0, i32 10;
     cbr i1 %1(prob = 0.97), ^for.body, ^for.header1;
 ^for.body:
@@ -19,7 +19,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %5 = add i32 %3, i32 1;
     ubr ^for.header1;
 ^for.body2:
-    i32 %6 = phi [^for.header1, i32 0] [^b, i32 %7] [^for.body2, i32 %7];
+    i32 %6 = phi [^for.header1, i32 0] [^for.body2, i32 %7] [^b, i32 %7];
     i32 %7 = add i32 %6, i32 1;
     i1 %8 = scmp eq i32 %7, i32 5;
     cbr i1 %8(prob = 0.5), ^for.body2, ^b;

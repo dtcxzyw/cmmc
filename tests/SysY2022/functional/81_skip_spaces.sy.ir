@@ -6,7 +6,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp neq i32 %0, i32 0;
     cbr i1 %1(prob = 0.97), ^while.body, ^while.guard;
 ^while.body:
-    i32 %2 = phi [^while.body, i32 %5] [^entry, i32 0];
+    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %5];
     i32* %3 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %2];
     i32 %4 = call () -> i32 @getint();
     store i32* %3 with i32 %4;
@@ -15,7 +15,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %7 = scmp neq i32 %6, i32 0;
     cbr i1 %7(prob = 0.97), ^while.body, ^while.guard;
 ^while.guard:
-    i32 %8 = phi [^while.body, i32 %5] [^entry, i32 0];
+    i32 %8 = phi [^entry, i32 0] [^while.body, i32 %5];
     i1 %9 = scmp neq i32 %8, i32 0;
     cbr i1 %9(prob = 0.97), ^while.body1, ^b;
 ^while.body1:

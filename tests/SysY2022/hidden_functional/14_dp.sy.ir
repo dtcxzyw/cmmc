@@ -9,17 +9,17 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %3 = scmp gt i32 %1, i32 0;
     cbr i1 %2(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %4 = phi [^while.body, i32 %16] [^entry, i32 1];
+    i32 %4 = phi [^entry, i32 1] [^while.body, i32 %16];
     i32 %5 = call () -> i32 @getint();
-    [2 * i32]* %6 = getelementptr &([1005 * [2 * i32]]* @t)[i64 0][i32 %4];
-    i32 %7 = srem i32 %5, i32 2;
-    i32* %8 = getelementptr &([2 * i32]* %6)[i64 0][i32 %7];
+    i32 %6 = srem i32 %5, i32 2;
+    [2 * i32]* %7 = getelementptr &([1005 * [2 * i32]]* @t)[i64 0][i32 %4];
+    i32* %8 = getelementptr &([2 * i32]* %7)[i64 0][i32 %6];
     store i32* %8 with i32 1;
     [35 * i32]* %9 = getelementptr &([1005 * [35 * i32]]* @dp)[i64 0][i32 %4];
     i32* %10 = getelementptr &([35 * i32]* %9)[i64 0][i64 0];
     i32* %11 = getelementptr &([35 * i32]* %9)[i64 -1][i64 0];
     i32 %12 = load i32* %11;
-    i32* %13 = getelementptr &([2 * i32]* %6)[i64 0][i64 1];
+    i32* %13 = getelementptr &([2 * i32]* %7)[i64 0][i64 1];
     i32 %14 = load i32* %13;
     i32 %15 = add i32 %12, i32 %14;
     store i32* %10 with i32 %15;
@@ -29,7 +29,7 @@ func @main() -> i32 { NoRecurse Entry } {
 ^b:
     cbr i1 %2(prob = 0.97), ^while.body1, ^b1;
 ^while.body1:
-    i32 %18 = phi [^b2, i32 %38] [^b, i32 1];
+    i32 %18 = phi [^b, i32 1] [^b2, i32 %38];
     i32 %19 = add i32 %18, i32 -1;
     [35 * i32]* %20 = getelementptr &([1005 * [35 * i32]]* @dp)[i64 0][i32 %19];
     [2 * i32]* %21 = getelementptr &([1005 * [2 * i32]]* @t)[i64 0][i32 %18];
@@ -41,7 +41,7 @@ func @main() -> i32 { NoRecurse Entry } {
     [35 * i32]* %25 = getelementptr &([1005 * [35 * i32]]* @dp)[i64 0][i32 %0];
     cbr i1 %24(prob = 0.97), ^while.body3, ^b3;
 ^while.body2:
-    i32 %26 = phi [^b5, i32 %29] [^while.body1, i32 1];
+    i32 %26 = phi [^while.body1, i32 1] [^b5, i32 %29];
     i32* %27 = getelementptr &([35 * i32]* %20)[i64 0][i32 %26];
     i32 %28 = load i32* %27;
     i32 %29 = add i32 %26, i32 1;
@@ -59,14 +59,14 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %39 = scmp le i32 %38, i32 %0;
     cbr i1 %39(prob = 0.97), ^while.body1, ^b1;
 ^while.body3:
-    i32 %40 = phi [^b4, i32 %56] [^b1, i32 0];
-    i32 %41 = phi [^b4, i32 %55] [^b1, i32 0];
+    i32 %40 = phi [^b1, i32 0] [^b4, i32 %56];
+    i32 %41 = phi [^b1, i32 0] [^b4, i32 %55];
     i32* %42 = getelementptr &([35 * i32]* %25)[i64 0][i32 %40];
     i32 %43 = load i32* %42;
     i1 %44 = scmp lt i32 %41, i32 %43;
     cbr i1 %44(prob = 0.5), ^if.then1, ^b4;
 ^b3:
-    i32 %45 = phi [^b4, i32 %55] [^b1, i32 0];
+    i32 %45 = phi [^b1, i32 0] [^b4, i32 %55];
     ret i32 %45;
 ^if.then:
     i32* %46 = getelementptr &([35 * i32]* %22)[i64 0][i32 %26];
@@ -76,12 +76,12 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %46 with i32 %49;
     ubr ^b5;
 ^if.else:
-    i32* %50 = getelementptr &([35 * i32]* %22)[i64 0][i32 %26];
-    i32 %51 = add i32 %26, i32 -1;
-    i32* %52 = getelementptr &([35 * i32]* %23)[i64 0][i32 %51];
+    i32 %50 = add i32 %26, i32 -1;
+    i32* %51 = getelementptr &([35 * i32]* %22)[i64 0][i32 %26];
+    i32* %52 = getelementptr &([35 * i32]* %23)[i64 0][i32 %50];
     i32 %53 = load i32* %52;
     i32 %54 = add i32 %32, i32 %53;
-    store i32* %50 with i32 %54;
+    store i32* %51 with i32 %54;
     ubr ^b5;
 ^if.then1:
     ubr ^b4;

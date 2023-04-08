@@ -18,7 +18,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %7 = load i32* %1;
     ubr ^b;
 ^b:
-    i32 %8 = phi [^if.then, i32 %7] [^entry, i32 %2];
+    i32 %8 = phi [^entry, i32 %2] [^if.then, i32 %7];
     call (i32) -> void @putint(i32 %8);
     i32* %9 = getelementptr &([10000 * i32]* %x)[i64 0][i32 %3];
     i32 %10 = load i32* %9;

@@ -5,11 +5,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     [3 * f32]* %c2 = alloc [3 * f32];
     [3 * f32]* %c1 = alloc [3 * f32];
     [6 * f32]* %c0 = alloc [6 * f32];
-    f32* %0 = getelementptr &([6 * f32]* %c0)[i64 0][i64 0];
+    f32* %0 = getelementptr &([3 * f32]* %c1)[i64 0][i64 2];
     f32* %1 = getelementptr &([3 * f32]* %c1)[i64 0][i64 0];
-    f32* %2 = getelementptr &([3 * f32]* %c2)[i64 0][i64 0];
-    f32* %3 = getelementptr &([3 * f32]* %c1)[i64 0][i64 2];
-    store f32* %3 with f32 1;
+    f32* %2 = getelementptr &([6 * f32]* %c0)[i64 0][i64 0];
+    f32* %3 = getelementptr &([3 * f32]* %c2)[i64 0][i64 0];
+    store f32* %0 with f32 1;
     f32* %4 = getelementptr &([3 * f32]* %c2)[i64 0][i64 1];
     store f32* %4 with f32 2;
     f32* %5 = getelementptr &([6 * f32]* %c0)[i64 0][i64 1];
@@ -17,12 +17,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %6 = getelementptr &([6 * f32]* %c0)[i64 0][i64 2];
     store f32* %6 with f32 0;
     store f32* %1 with f32 1;
-    store f32* %2 with f32 2;
+    store f32* %3 with f32 2;
     f32* %7 = getelementptr &([3 * f32]* %c1)[i64 0][i64 1];
     store f32* %7 with f32 1;
     f32* %8 = getelementptr &([3 * f32]* %c2)[i64 0][i64 2];
     store f32* %8 with f32 2;
-    store f32* %0 with f32 0;
+    store f32* %2 with f32 0;
     ubr ^while.body;
 ^while.body:
     i32 %9 = phi [^entry, i32 0] [^while.body, i32 %13];
@@ -49,7 +49,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^while.body2;
 ^while.body2:
-    i32 %21 = phi [^while.body2, i32 %25] [^b, i32 0];
+    i32 %21 = phi [^b, i32 0] [^while.body2, i32 %25];
     f32* %22 = getelementptr &([3 * f32]* %c2)[i64 0][i32 %21];
     f32 %23 = load f32* %22;
     i32 %24 = f2s f32 %23 to i32;

@@ -12,7 +12,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %2 = scmp gt i32 %0, i32 0;
     cbr i1 %2(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %3 = phi [^b3, i32 %62] [^entry, i32 0];
+    i32 %3 = phi [^entry, i32 0] [^b3, i32 %62];
     [600 * [600 * i32]]* %4 = getelementptr &([600 * [600 * [600 * i32]]]* @x)[i64 0][i32 %3];
     [600 * [600 * i32]]* %5 = getelementptr &([600 * [600 * [600 * i32]]]* @y)[i64 0][i32 %3];
     ubr ^while.body1;
@@ -32,8 +32,8 @@ func @main() -> i32 { NoRecurse Entry } {
     [600 * [600 * i32]]* %14 = getelementptr &([600 * [600 * i32]]* %12)[i64 1];
     ubr ^while.body3;
 ^b1:
-    i32 %15 = phi [^b5, i32 %64] [^b, i32 1];
-    i32 %16 = phi [^b5, i32 %66] [^b, i32 1];
+    i32 %15 = phi [^b, i32 1] [^b5, i32 %64];
+    i32 %16 = phi [^b, i32 1] [^b5, i32 %66];
     call (i32) -> void @stoptime(i32 53);
     i32* %17 = getelementptr &([600 * [600 * [600 * i32]]]* @x)[i64 0][i64 0][i64 0][i64 0];
     call (i32, i32*) -> void @putarray(i32 %0, i32* %17);
@@ -43,9 +43,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %21 = getelementptr &([600 * i32]* %20)[i64 0][i64 0];
     call (i32, i32*) -> void @putarray(i32 %0, i32* %21);
     i32 %22 = add i32 %16, i32 -1;
-    [600 * [600 * i32]]* %23 = getelementptr &([600 * [600 * [600 * i32]]]* @x)[i64 0][i32 %22];
-    i32 %24 = add i32 %15, i32 -1;
-    [600 * i32]* %25 = getelementptr &([600 * [600 * i32]]* %23)[i64 0][i32 %24];
+    i32 %23 = add i32 %15, i32 -1;
+    [600 * [600 * i32]]* %24 = getelementptr &([600 * [600 * [600 * i32]]]* @x)[i64 0][i32 %22];
+    [600 * i32]* %25 = getelementptr &([600 * [600 * i32]]* %24)[i64 0][i32 %23];
     i32* %26 = getelementptr &([600 * i32]* %25)[i64 0][i64 0];
     call (i32, i32*) -> void @putarray(i32 %0, i32* %26);
     ret i32 0;

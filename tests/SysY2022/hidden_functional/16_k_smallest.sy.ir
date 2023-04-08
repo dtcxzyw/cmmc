@@ -72,7 +72,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %2 = scmp gt i32 %0, i32 0;
     cbr i1 %2(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %3 = phi [^while.body, i32 %6] [^entry, i32 0];
+    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %6];
     i32* %4 = getelementptr &([1000 * i32]* @array)[i64 0][i32 %3];
     i32 %5 = call () -> i32 @getint();
     store i32* %4 with i32 %5;

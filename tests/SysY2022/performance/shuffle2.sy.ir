@@ -75,14 +75,14 @@ internal func @insert(i32 %k, i32 %v) -> i32 { NoRecurse } {
     store i32* %24 with i32 0;
     ubr ^b2;
 ^while.body:
-    i32 %25 = phi [^b3, i32 %41] [^b, i32 %12];
+    i32 %25 = phi [^b, i32 %12] [^b3, i32 %41];
     i32* %26 = getelementptr &([10000000 * i32]* @key)[i64 0][i32 %25];
     i32 %27 = load i32* %26;
     i32 %28 = load i32* %k1;
     i1 %29 = scmp eq i32 %27, i32 %28;
     cbr i1 %29(prob = 0.5), ^if.then1, ^b3;
 ^b2:
-    i32 %30 = phi [^if.then1, i32 1] [^b1, i32 0] [^if.then, i32 0];
+    i32 %30 = phi [^if.then, i32 0] [^b1, i32 0] [^if.then1, i32 1];
     ret i32 %30;
 ^if.then1:
     i32 %31 = load i32* @cnt;
@@ -118,14 +118,14 @@ internal func @reduce(i32 %k) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i1 %3 = scmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %4 = phi [^indirect, i32 %17] [^entry, i32 %k];
-    i32 %5 = phi [^indirect, i32 %14] [^entry, i32 %2];
+    i32 %4 = phi [^entry, i32 %k] [^indirect, i32 %17];
+    i32 %5 = phi [^entry, i32 %2] [^indirect, i32 %14];
     i32* %6 = getelementptr &([10000000 * i32]* @key)[i64 0][i32 %5];
     i32 %7 = load i32* %6;
     i1 %8 = scmp eq i32 %7, i32 %4;
     cbr i1 %8(prob = 0.5), ^if.then, ^b1;
 ^b:
-    i32 %9 = phi [^b1, i32 0] [^entry, i32 0] [^b2, i32 %16];
+    i32 %9 = phi [^entry, i32 0] [^b1, i32 0] [^b2, i32 %16];
     ret i32 %9;
 ^if.then:
     i32 %10 = load i32* %p;
@@ -139,14 +139,14 @@ internal func @reduce(i32 %k) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
     i1 %15 = scmp neq i32 %14, i32 0;
     cbr i1 %15(prob = 0.97), ^indirect, ^b;
 ^b2:
-    i32 %16 = phi [^while.body1, i32 %22] [^if.then, i32 0];
+    i32 %16 = phi [^if.then, i32 0] [^while.body1, i32 %22];
     ubr ^b;
 ^indirect:
     i32 %17 = load i32* %k1;
     ubr ^while.body;
 ^while.body1:
-    i32 %18 = phi [^while.body1, i32 %24] [^if.then, i32 %10];
-    i32 %19 = phi [^while.body1, i32 %22] [^if.then, i32 0];
+    i32 %18 = phi [^if.then, i32 %10] [^while.body1, i32 %24];
+    i32 %19 = phi [^if.then, i32 0] [^while.body1, i32 %22];
     i32* %20 = getelementptr &([10000000 * i32]* @value)[i64 0][i32 %18];
     i32 %21 = load i32* %20;
     i32 %22 = add i32 %19, i32 %21;
@@ -176,7 +176,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %8 = scmp gt i32 %7, i32 0;
     cbr i1 %8(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %9 = phi [^while.body, i32 %16] [^entry, i32 0];
+    i32 %9 = phi [^entry, i32 0] [^while.body, i32 %16];
     i32* %10 = getelementptr &([10000000 * i32]* @keys)[i64 0][i32 %9];
     i32 %11 = load i32* %10;
     i32* %12 = getelementptr &([10000000 * i32]* @values)[i64 0][i32 %9];
@@ -189,7 +189,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %18 = scmp lt i32 %16, i32 %17;
     cbr i1 %18(prob = 0.97), ^while.body, ^indirect;
 ^b:
-    i32 %19 = phi [^indirect, i32 %21] [^entry, i32 %6];
+    i32 %19 = phi [^entry, i32 %6] [^indirect, i32 %21];
     store i32* %i with i32 0;
     i1 %20 = scmp gt i32 %19, i32 0;
     cbr i1 %20(prob = 0.97), ^indirect1, ^b1;
@@ -206,7 +206,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32, i32*) -> void @putarray(i32 %23, i32* %24);
     ret i32 0;
 ^while.body1:
-    i32 %25 = phi [^while.body1, i32 %30] [^indirect1, i32 0];
+    i32 %25 = phi [^indirect1, i32 0] [^while.body1, i32 %30];
     i32* %26 = getelementptr &([10000000 * i32]* @ans)[i64 0][i32 %25];
     i32* %27 = getelementptr &([10000000 * i32]* @requests)[i64 0][i32 %25];
     i32 %28 = load i32* %27;

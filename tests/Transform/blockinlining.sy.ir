@@ -9,7 +9,7 @@ internal func @fac(i32 %a) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stat
     i32 %3 = mul i32 %a, i32 %2;
     ubr ^b;
 ^b:
-    i32 %4 = phi [^if.else, i32 %3] [^entry, i32 1];
+    i32 %4 = phi [^entry, i32 1] [^if.else, i32 %3];
     ret i32 %4;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {

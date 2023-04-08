@@ -44,10 +44,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %2 = call () -> f32 @getfloat();
     f32 %3 = call () -> f32 @getfloat();
     f32 %4 = s2f i32 %0 to f32;
-    f32 %5 = fadd f32 28, f32 %4;
-    f32 %6 = call (f32) -> f32 @fibFP(f32 %5);
-    f32 %7 = call (f32, f32, f32) -> f32 @takFP(f32 %1, f32 %2, f32 %3);
-    i1 %8 = fcmp eq f32 %6, f32 1.6558e+08;
+    f32 %5 = call (f32, f32, f32) -> f32 @takFP(f32 %1, f32 %2, f32 %3);
+    f32 %6 = fadd f32 28, f32 %4;
+    f32 %7 = call (f32) -> f32 @fibFP(f32 %6);
+    i1 %8 = fcmp eq f32 %7, f32 1.6558e+08;
     cbr i1 %8(prob = 0.5), ^if.then, ^if.else;
 ^if.then:
     call (i32) -> void @putch(i32 112);
@@ -56,7 +56,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 1);
     ubr ^b;
 ^b:
-    i1 %9 = fcmp eq f32 %7, f32 2;
+    i1 %9 = fcmp eq f32 %5, f32 2;
     cbr i1 %9(prob = 0.5), ^if.then1, ^if.else1;
 ^if.then1:
     call (i32) -> void @putch(i32 112);

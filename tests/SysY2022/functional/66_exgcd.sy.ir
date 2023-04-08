@@ -38,7 +38,7 @@ internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
     i32 %14 = load i32* %r;
     ubr ^b2;
 ^b2:
-    i32 %15 = phi [^if.else, i32 %14] [^if.then, i32 %a];
+    i32 %15 = phi [^if.then, i32 %a] [^if.else, i32 %14];
     ret i32 %15;
 }
 func @main() -> i32 { NoRecurse Entry } {

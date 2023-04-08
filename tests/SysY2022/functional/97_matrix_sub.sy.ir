@@ -37,7 +37,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^while.body1;
 ^while.body1:
-    i32 %15 = phi [^while.body1, i32 %19] [^b, i32 0];
+    i32 %15 = phi [^b, i32 0] [^while.body1, i32 %19];
     f32* %16 = getelementptr &([3 * f32]* %c1)[i64 0][i32 %15];
     f32 %17 = load f32* %16;
     i32 %18 = f2s f32 %17 to i32;
@@ -49,7 +49,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^while.body2;
 ^while.body2:
-    i32 %21 = phi [^while.body2, i32 %25] [^b1, i32 0];
+    i32 %21 = phi [^b1, i32 0] [^while.body2, i32 %25];
     f32* %22 = getelementptr &([3 * f32]* %c2)[i64 0][i32 %21];
     f32 %23 = load f32* %22;
     i32 %24 = f2s f32 %23 to i32;

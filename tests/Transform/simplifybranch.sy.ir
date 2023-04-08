@@ -11,7 +11,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %3 = scmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^b, ^if.else;
 ^b:
-    i32 %4 = phi [^while.body, i32 1] [^while.guard, i32 0];
+    i32 %4 = phi [^while.guard, i32 0] [^while.body, i32 1];
     ret i32 %4;
 ^if.else:
     i32 %5 = call () -> i32 @getint();
