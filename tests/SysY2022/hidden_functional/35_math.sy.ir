@@ -263,10 +263,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b2;
 ^b2:
     f32 %7 = phi [^while.body, f32 %3] [^b1, f32 %6];
-    f32 %8 = call (f32) -> f32 @my_sqrt(f32 %3);
-    f32 %9 = call (f32) -> f32 @my_exp(f32 %3);
     call (f32) -> void @putfloat(f32 %7);
     call (i32) -> void @putch(i32 32);
+    f32 %8 = call (f32) -> f32 @my_sqrt(f32 %3);
+    f32 %9 = call (f32) -> f32 @my_exp(f32 %3);
     f32 %10 = call (f32, i32) -> f32 @my_pow(f32 %3, i32 2);
     call (f32) -> void @putfloat(f32 %10);
     call (i32) -> void @putch(i32 32);

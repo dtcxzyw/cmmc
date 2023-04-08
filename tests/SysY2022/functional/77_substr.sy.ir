@@ -112,8 +112,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %52 = add i32 %50, i32 %51;
     i32* %53 = getelementptr &(i32* %48)[i64 -1];
     i32 %54 = load i32* %53;
-    i1 %55 = scmp eq i32 %52, i32 %54;
-    i1 %56 = scmp gt i32 %52, i32 %54;
+    i1 %55 = scmp gt i32 %52, i32 %54;
+    i1 %56 = scmp eq i32 %52, i32 %54;
     i1 %57 = or i1 %55, i1 %56;
     cbr i1 %57(prob = 0.75), ^b, ^if.else;
 ^if.else:
@@ -179,8 +179,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %91 = getelementptr &([16 * i32]* %73)[i64 0][i32 %77];
     i32 %92 = load i32* %91;
     i32 %93 = load i32* %90;
-    i1 %94 = scmp eq i32 %92, i32 %93;
-    i1 %95 = scmp gt i32 %92, i32 %93;
+    i1 %94 = scmp gt i32 %92, i32 %93;
+    i1 %95 = scmp eq i32 %92, i32 %93;
     i1 %96 = or i1 %94, i1 %95;
     cbr i1 %96(prob = 0.75), ^b4, ^if.else2;
 ^b4:

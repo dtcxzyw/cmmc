@@ -158,11 +158,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %47 = getelementptr &([2 * i32]* %44)[i64 0][i64 1];
     i32 %48 = load i32* %47;
     [30 * i32]* %49 = getelementptr &([30 * [30 * i32]]* @graph)[i64 0][i32 %46];
-    [30 * i32]* %50 = getelementptr &([30 * [30 * i32]]* @graph)[i64 0][i32 %48];
-    i32* %51 = getelementptr &([30 * i32]* %50)[i64 0][i32 %46];
-    i32* %52 = getelementptr &([30 * i32]* %49)[i64 0][i32 %48];
+    i32* %50 = getelementptr &([30 * i32]* %49)[i64 0][i32 %48];
+    store i32* %50 with i32 1;
+    [30 * i32]* %51 = getelementptr &([30 * [30 * i32]]* @graph)[i64 0][i32 %48];
+    i32* %52 = getelementptr &([30 * i32]* %51)[i64 0][i32 %46];
     store i32* %52 with i32 1;
-    store i32* %51 with i32 1;
     cbr i1 %43(prob = 0.97), ^while.body1, ^b1;
 ^b1:
     i32 %53 = call (i32, i32, [30 * i32]*, i32*, i32*) -> i32 @maxCliques(i32 0, i32 1, [30 * i32]* %store, i32* %n, i32* %m);

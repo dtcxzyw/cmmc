@@ -65,9 +65,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %38(prob = 1), ^while.body, ^b2;
 ^b2:
     f32 %39 = fsub f32 %37, f32 1.14424e+16;
-    i1 %40 = fcmp ge f32 %39, f32 -1e-06;
-    i1 %41 = fcmp le f32 %39, f32 1e-06;
-    i1 %42 = or i1 %40, i1 %41;
+    i1 %40 = fcmp le f32 %39, f32 1e-06;
+    i1 %41 = fcmp ge f32 %39, f32 -1e-06;
+    i1 %42 = or i1 %41, i1 %40;
     call (i32) -> void @stoptime(i32 39);
     cbr i1 %42(prob = 0.75), ^if.then, ^if.else1;
 ^if.then:

@@ -16,8 +16,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %4 = phi [^b1, i32 %1] [^if.then, i32 %11];
     i32 %5 = call () -> i32 @getch();
     i32 %6 = add i32 %5, i32 -48;
-    i1 %7 = scmp gt i32 %6, i32 -1;
-    i1 %8 = scmp lt i32 %6, i32 10;
+    i1 %7 = scmp lt i32 %6, i32 10;
+    i1 %8 = scmp gt i32 %6, i32 -1;
     i1 %9 = and i1 %7, i1 %8;
     cbr i1 %9(prob = 0.25), ^if.then, ^entry1;
 ^if.then:
@@ -46,8 +46,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %20 = phi [^b3, i32 %17] [^if.then1, i32 %27];
     i32 %21 = call () -> i32 @getch();
     i32 %22 = add i32 %21, i32 -48;
-    i1 %23 = scmp gt i32 %22, i32 -1;
-    i1 %24 = scmp lt i32 %22, i32 10;
+    i1 %23 = scmp lt i32 %22, i32 10;
+    i1 %24 = scmp gt i32 %22, i32 -1;
     i1 %25 = and i1 %23, i1 %24;
     cbr i1 %25(prob = 0.25), ^if.then1, ^while.body5;
 ^if.then1:

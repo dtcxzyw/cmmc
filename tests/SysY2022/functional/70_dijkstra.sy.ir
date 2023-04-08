@@ -597,12 +597,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^while.body1:
     i32 %295 = phi [^while.body, i32 1] [^while.body1, i32 %296];
     i32 %296 = add i32 %295, i32 1;
-    i1 %297 = scmp eq i32 %292, i32 %295;
-    i1 %298 = scmp le i32 %296, i32 %288;
+    i1 %297 = scmp le i32 %296, i32 %288;
+    i1 %298 = scmp eq i32 %292, i32 %295;
     i32* %299 = getelementptr &([16 * i32]* %293)[i64 0][i32 %295];
-    i32 %300 = select i1 %297 ? i32 0 : i32 65535;
+    i32 %300 = select i1 %298 ? i32 0 : i32 65535;
     store i32* %299 with i32 %300;
-    cbr i1 %298(prob = 0.97), ^while.body1, ^b1;
+    cbr i1 %297(prob = 0.97), ^while.body1, ^b1;
 ^while.body2:
     i32 %301 = phi [^b, i32 1] [^while.body2, i32 %302];
     i32 %302 = add i32 %301, i32 1;

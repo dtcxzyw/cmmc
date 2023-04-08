@@ -733,7 +733,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %347 = add i32 %339, i32 1;
     i1 %348 = scmp gt i32 %340, i32 19;
     i1 %349 = scmp ge i32 %340, i32 %341;
-    i1 %350 = or i1 %349, i1 %348;
+    i1 %350 = or i1 %348, i1 %349;
     cbr i1 %350(prob = 0.75), ^b117, ^b118;
 ^b116:
     i32 %351 = phi [^while.body2, i32 %339] [^b117, i32 %347];

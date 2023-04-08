@@ -73,11 +73,11 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %22 = fdiv f32 %0, f32 6.28319;
     f32 %23 = fdiv f32 %21, f32 6.28319;
     i1 %24 = fcmp lt f32 %0, f32 -6.28319;
-    i1 %25 = fcmp gt f32 %0, f32 6.28319;
-    i1 %26 = or i1 %24, i1 %25;
-    i1 %27 = fcmp lt f32 %21, f32 -6.28319;
+    i1 %25 = fcmp lt f32 %21, f32 -6.28319;
+    i1 %26 = fcmp gt f32 %0, f32 6.28319;
+    i1 %27 = or i1 %24, i1 %26;
     i1 %28 = fcmp gt f32 %21, f32 6.28319;
-    i1 %29 = or i1 %27, i1 %28;
+    i1 %29 = or i1 %25, i1 %28;
     i32 %30 = f2s f32 %22 to i32;
     i32 %31 = f2s f32 %23 to i32;
     f32 %32 = s2f i32 %30 to f32;
@@ -123,7 +123,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %52 = sub i32 %50, i32 %12;
     i1 %53 = scmp lt i32 %51, i32 %7;
     f32 %54 = s2f i32 %52 to f32;
-    cbr i1 %26(prob = 0.75), ^if.then, ^b7;
+    cbr i1 %27(prob = 0.75), ^if.then, ^b7;
 ^b6:
     i32 %55 = add i32 %39, i32 1;
     i1 %56 = scmp lt i32 %55, i32 %9;
