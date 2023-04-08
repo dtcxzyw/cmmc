@@ -5,7 +5,6 @@ from tqdm import tqdm
 import os
 import sys
 import subprocess
-import tempfile
 import shutil
 import tqdm
 
@@ -32,9 +31,9 @@ double fabs(double x) {
     return x>=0.0?x:-x;
 }
 """
-optimization_level = '0'
+optimization_level = '1'
 prog_timeout = 10.0
-cmmc_timeout = 30.0
+cmmc_timeout = None
 
 cwd = os.path.dirname(binary)+"/csmith"
 if os.path.exists(cwd):
@@ -46,7 +45,7 @@ with open(header_path) as f:
     header = f.read()
 
 
-def csmith_test(i):
+def generate():
     src = subprocess.check_output(csmith_command.split(' '), cwd=cwd).decode()
     src = src.replace('#include "csmith.h"', header)
     src = src.replace('int print_hash_value = 0;', 'int print_hash_value = 1;')
@@ -54,9 +53,33 @@ def csmith_test(i):
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
     src = src.replace('printf("index = [%d][%d]\\n", ', 'putdim2(')
     src = src.replace('printf("index = [%d][%d][%d]\\n", ', 'putdim3(')
+    return src
 
-    idx, file_c = tempfile.mkstemp(".c", dir=cwd, text=True)
-    file_ref = file_c[:-2]+".out"
+
+def csmith_opt_only(i):
+    src = generate()
+    src = src.replace('static ', "")
+    src = cmmc_header + src
+    try:
+        ret = subprocess.run([binary, '-i', '-o', '/dev/null',
+                              '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-x', 'SysY', '-D', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
+        if ret.returncode == 0 and len(ret.stderr) == 0:
+            return True
+
+    except subprocess.TimeoutExpired:
+        pass
+    file_sy = cwd+"/test{}.sy".format(i)
+    # print(file)
+    with open(file_sy, 'w') as f:
+        f.write(src)
+    return False
+
+
+def csmith_test(i):
+    src = generate()
+    basename = cwd+"/test"+str(i)
+    file_c = basename + ".c"
+    file_ref = basename + ".out"
     with open(file_c, 'w') as f:
         f.write(gcc_header)
         f.write(src)
@@ -83,11 +106,10 @@ def csmith_test(i):
             os.remove(file_c)
             os.remove(file_ref)
             return True
-        # print(ret.returncode)
 
     except subprocess.TimeoutExpired:
         pass
-    file_sy = file_c[:-2]+".sy"
+    file_sy = basename + ".sy"
     # print(file)
     with open(file_sy, 'w') as f:
         f.write(src)
@@ -100,7 +122,7 @@ error_count = 0
 skipped_count = 0
 
 with ThreadPoolExecutor() as p:
-    for res in p.map(csmith_test, L):
+    for res in p.map(csmith_opt_only, L):
         if res is not None:
             error_count += 0 if res else 1
         else:
