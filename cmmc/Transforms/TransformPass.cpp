@@ -340,6 +340,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "MergeBranch",            //
             "SimplifyBranch",         //
             "CombineBranch",          //
+            "BlockReorder",           //
             "BlockMerge",             //
             "BlockEliminate",         // clean up
             "NoSideEffectEliminate",  // clean up
@@ -375,6 +376,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "MergeBranch",          //
             "SimplifyBranch",       //
             "CombineBranch",        //
+            "BlockReorder",           //
             "BlockMerge",           //
             "ShortCircuitCombine",  //
             "UnifyReturn",          //
@@ -386,6 +388,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Outline
             "ConstantHoist",   //
             "BlockOutliner",   //
+            "BlockReorder",           //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
             // Code Move
@@ -408,6 +411,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "GVN",                    //
                 "NoSideEffectEliminate",  // clean up
                 "LoopUnroll",             //
+                "BlockReorder",           //
                 "BlockMerge",             // clean up
                 "BlockEliminate",         // clean up
                 "LoopGEPCombine",         //
@@ -451,6 +455,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "ArithmeticReduce",        // clean up
                 "SimplifyBranch",          // clean up
                 "CombineBranch",           // clean up
+                "BlockReorder",           //
                 "BlockMerge",              // clean up
                 "BlockEliminate",          // clean up
                 "NoSideEffectEliminate",   // clean up
@@ -483,6 +488,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
         for(const auto& pass : passesSource.collectFunctionPass({
                 "DynamicLoopUnroll",  //
+                "BlockReorder",           //
                 "BlockMerge",         // clean up
                 "BlockEliminate",     // clean up
             }))
