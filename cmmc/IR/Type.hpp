@@ -38,6 +38,7 @@ public:
 
     template <typename T>
     [[nodiscard]] const T* as() const {
+        static_assert(std::is_base_of_v<Type, T>);
         const auto ptr = dynamic_cast<const T*>(this);
         assert(ptr);
         return ptr;

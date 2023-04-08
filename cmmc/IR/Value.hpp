@@ -40,6 +40,8 @@ struct Noop final : public HighlightSelector {
     }
 };
 
+enum class ValueRank { Constant, Global, Argument, Instruction };
+
 class Value {
     const Type* mType;
 
@@ -53,26 +55,27 @@ public:
     Value& operator=(Value&&) = default;
     virtual ~Value() = default;
 
+    [[nodiscard]] virtual ValueRank rank() const noexcept = 0;
     virtual void dump(std::ostream& out, const HighlightSelector& selector) const = 0;  // TODO: highlight?
     void dumpPrefix(std::ostream& out) const;
     virtual void dumpAsOperand(std::ostream& out) const;
     [[nodiscard]] const Type* getType() const noexcept {
         return mType;
     }
-    [[nodiscard]] virtual bool isGlobal() const noexcept {
-        return false;
+    [[nodiscard]] bool isGlobal() const noexcept {
+        return rank() == ValueRank::Global;
     }
-    [[nodiscard]] virtual bool isConstant() const noexcept {
-        return false;
+    [[nodiscard]] bool isConstant() const noexcept {
+        return rank() == ValueRank::Constant;
     }
     [[nodiscard]] virtual bool isUndefined() const noexcept {
         return false;
     }
     [[nodiscard]] virtual bool isInstruction() const noexcept {
-        return false;
+        return rank() == ValueRank::Instruction;
     }
-    [[nodiscard]] virtual bool isArgument() const noexcept {
-        return false;
+    [[nodiscard]] bool isArgument() const noexcept {
+        return rank() == ValueRank::Argument;
     }
     [[nodiscard]] virtual Block* getBlock() const noexcept {
         return nullptr;

@@ -30,8 +30,8 @@ public:
         return mSymbol;
     }
     void dumpAsOperand(std::ostream& out) const final;
-    [[nodiscard]] bool isGlobal() const noexcept final {
-        return true;
+    [[nodiscard]] ValueRank rank() const noexcept final {
+        return ValueRank::Global;
     }
     [[nodiscard]] virtual bool isFunction() const noexcept {
         return false;

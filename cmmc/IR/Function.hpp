@@ -16,6 +16,7 @@
 #include <cmmc/IR/Attribute.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <ostream>
 
 CMMC_NAMESPACE_BEGIN
@@ -44,8 +45,8 @@ public:
     void dump(std::ostream& out, const HighlightSelector& selector) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String label);
-    [[nodiscard]] bool isArgument() const noexcept override {
-        return true;
+    [[nodiscard]] ValueRank rank() const noexcept override {
+        return ValueRank::Argument;
     }
     [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;

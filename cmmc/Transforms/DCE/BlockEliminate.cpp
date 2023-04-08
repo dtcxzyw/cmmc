@@ -71,7 +71,6 @@ public:
             }
             return false;
         });
-        bool modified = false;
         ReplaceMap replace;
         for(auto block : removed) {
             for(auto inst : block->instructions())
@@ -84,15 +83,15 @@ public:
             auto handleTarget = [&](Block* target) {
                 if(!target || !reachable.count(target))
                     return;
-                modified |= removePhi(block, target);
+                removePhi(block, target);
             };
             handleTarget(branch->getTrueTarget());
             handleTarget(branch->getFalseTarget());
         }
 
-        modified |= replaceOperands(func, replace);
+        replaceOperands(func, replace);
 
-        return modified;
+        return !removed.empty();
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

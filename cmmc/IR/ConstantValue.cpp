@@ -139,25 +139,25 @@ void ConstantStruct::dumpImpl(std::ostream& out) const {
 size_t ConstantInteger::hash() const {
     return std::hash<intmax_t>{}(getSignExtended());
 }
-bool ConstantInteger::isEqual(ConstantValue* rhs) const {
+bool ConstantInteger::isEqual(const ConstantValue* rhs) const {
     return isEqualImpl<ConstantInteger>(
-        rhs, [&](ConstantInteger* rhsVal) { return this->getSignExtended() == rhsVal->getSignExtended(); });
+        rhs, [&](const ConstantInteger* rhsVal) { return this->getSignExtended() == rhsVal->getSignExtended(); });
 }
 
 size_t ConstantFloatingPoint::hash() const {
     return std::hash<double>{}(getValue());
 }
-bool ConstantFloatingPoint::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantFloatingPoint>(rhs,
-                                              [&](ConstantFloatingPoint* rhsVal) { return getValue() == rhsVal->getValue(); });
+bool ConstantFloatingPoint::isEqual(const ConstantValue* rhs) const {
+    return isEqualImpl<ConstantFloatingPoint>(
+        rhs, [&](const ConstantFloatingPoint* rhsVal) { return getValue() == rhsVal->getValue(); });
 }
 
 size_t ConstantOffset::hash() const {
     return std::hash<uint32_t>{}(mIndex) ^ std::hash<const StructType*>{}(mBase);
 }
-bool ConstantOffset::isEqual(ConstantValue* rhs) const {
+bool ConstantOffset::isEqual(const ConstantValue* rhs) const {
     return isEqualImpl<ConstantOffset>(
-        rhs, [&](ConstantOffset* rhsVal) { return mBase == rhsVal->mBase && mIndex == rhsVal->mIndex; });
+        rhs, [&](const ConstantOffset* rhsVal) { return mBase == rhsVal->mBase && mIndex == rhsVal->mIndex; });
 }
 
 size_t ConstantArray::hash() const {
@@ -166,18 +166,18 @@ size_t ConstantArray::hash() const {
 size_t ConstantStruct::hash() const {
     return std::hash<const ConstantStruct*>{}(this);
 }
-bool ConstantArray::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantArray>(rhs, [](ConstantArray*) { return false; });
+bool ConstantArray::isEqual(const ConstantValue* rhs) const {
+    return isEqualImpl<ConstantArray>(rhs, [](const ConstantArray*) { return false; });
 }
-bool ConstantStruct::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<ConstantStruct>(rhs, [](ConstantStruct*) { return false; });
+bool ConstantStruct::isEqual(const ConstantValue* rhs) const {
+    return isEqualImpl<ConstantStruct>(rhs, [](const ConstantStruct*) { return false; });
 }
 
 size_t UndefinedValue::hash() const {
     return 0;
 }
-bool UndefinedValue::isEqual(ConstantValue* rhs) const {
-    return isEqualImpl<UndefinedValue>(rhs, [](UndefinedValue*) { return false; });
+bool UndefinedValue::isEqual(const ConstantValue* rhs) const {
+    return isEqualImpl<UndefinedValue>(rhs, [](const UndefinedValue*) { return false; });
 }
 
 CMMC_NAMESPACE_END

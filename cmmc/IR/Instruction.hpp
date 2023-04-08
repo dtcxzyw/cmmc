@@ -138,8 +138,8 @@ public:
     [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
-    [[nodiscard]] bool isInstruction() const noexcept final {
-        return true;
+    [[nodiscard]] ValueRank rank() const noexcept final {
+        return ValueRank::Instruction;
     }
 
     virtual bool verify(std::ostream& out) const;

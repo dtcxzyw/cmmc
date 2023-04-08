@@ -20,13 +20,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
+enum class ConstantRank { Integer, FloatingPoint, Offset, Unknown };
+
 class ConstantValue : public Value {
 protected:
     template <typename T, typename Callable>
-    bool isEqualImpl(ConstantValue* rhs, Callable callable) const {
+    bool isEqualImpl(const ConstantValue* rhs, Callable callable) const {
         if(this == rhs)
             return true;
-        if(auto rhsValue = dynamic_cast<T*>(rhs)) {
+        if(auto rhsValue = dynamic_cast<const T*>(rhs)) {
             return callable(rhsValue);
         }
         return false;
@@ -42,10 +44,13 @@ public:
     ConstantValue& operator=(ConstantValue&&) = default;
     void dump(std::ostream& out, const HighlightSelector& selector) const final;
 
-    [[nodiscard]] bool isConstant() const noexcept override {
-        return true;
+    [[nodiscard]] virtual ConstantRank constantRank() const noexcept {
+        return ConstantRank::Unknown;
     }
-    virtual bool isEqual(ConstantValue* rhs) const = 0;
+    [[nodiscard]] ValueRank rank() const noexcept override {
+        return ValueRank::Constant;
+    }
+    virtual bool isEqual(const ConstantValue* rhs) const = 0;
     [[nodiscard]] virtual size_t hash() const = 0;
 };
 
@@ -78,8 +83,11 @@ public:
     [[nodiscard]] intmax_t getStorage() const noexcept;
     [[nodiscard]] uintmax_t getZeroExtended() const noexcept;
     [[nodiscard]] intmax_t getSignExtended() const noexcept;
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
+    [[nodiscard]] ConstantRank constantRank() const noexcept override {
+        return ConstantRank::Integer;
+    }
 
     static ConstantInteger* getTrue() noexcept;
     static ConstantInteger* getFalse() noexcept;
@@ -93,10 +101,13 @@ public:
     ConstantFloatingPoint(const Type* type, double value) : ConstantValue{ type }, mValue{ value } {
         assert(type->isFloatingPoint());
     }
+    [[nodiscard]] ConstantRank constantRank() const noexcept override {
+        return ConstantRank::FloatingPoint;
+    }
     void dumpImpl(std::ostream& out) const override;
     [[nodiscard]] double getValue() const noexcept;
     [[nodiscard]] bool isEqual(double val) const noexcept;
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };
 
@@ -113,8 +124,11 @@ public:
     [[nodiscard]] uint32_t index() const noexcept {
         return mIndex;
     }
+    [[nodiscard]] ConstantRank constantRank() const noexcept override {
+        return ConstantRank::Offset;
+    }
     [[nodiscard]] String getName() const;
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };
 
@@ -127,7 +141,7 @@ public:
     [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };
 
@@ -140,7 +154,7 @@ public:
     [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };
 
@@ -153,7 +167,7 @@ public:
         return true;
     }
     void dumpImpl(std::ostream& out) const override;
-    bool isEqual(ConstantValue* rhs) const override;
+    bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };
 
