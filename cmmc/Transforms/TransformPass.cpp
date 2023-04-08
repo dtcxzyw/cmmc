@@ -376,7 +376,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "MergeBranch",          //
             "SimplifyBranch",       //
             "CombineBranch",        //
-            "BlockReorder",           //
+            "BlockReorder",         //
             "BlockMerge",           //
             "ShortCircuitCombine",  //
             "UnifyReturn",          //
@@ -388,7 +388,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Outline
             "ConstantHoist",   //
             "BlockOutliner",   //
-            "BlockReorder",           //
+            "BlockReorder",    //
             "BlockMerge",      //
             "BlockEliminate",  // clean up
             // Code Move
@@ -455,7 +455,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "ArithmeticReduce",        // clean up
                 "SimplifyBranch",          // clean up
                 "CombineBranch",           // clean up
-                "BlockReorder",           //
+                "BlockReorder",            //
                 "BlockMerge",              // clean up
                 "BlockEliminate",          // clean up
                 "NoSideEffectEliminate",   // clean up
@@ -488,7 +488,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
         for(const auto& pass : passesSource.collectFunctionPass({
                 "DynamicLoopUnroll",  //
-                "BlockReorder",           //
+                "BlockReorder",       //
                 "BlockMerge",         // clean up
                 "BlockEliminate",     // clean up
             }))
