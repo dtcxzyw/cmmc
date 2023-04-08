@@ -81,9 +81,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %39 = scmp neq i32 %18, i32 0;
     cbr i1 %39(prob = 0.97), ^while.body3, ^b6;
 ^while.body2:
-    i32 %40 = phi [^if.then1, i32 %16] [^b28, i32 %120];
+    i32 %40 = phi [^if.then1, i32 0] [^b28, i32 %100];
     i32 %41 = phi [^if.then1, i32 %18] [^b28, i32 %187];
-    i32 %42 = phi [^if.then1, i32 0] [^b28, i32 %100];
+    i32 %42 = phi [^if.then1, i32 %16] [^b28, i32 %120];
     ubr ^while.body4;
 ^b5:
     i32 %43 = phi [^if.then1, i32 0] [^b28, i32 %100];
@@ -182,7 +182,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %94 = phi [^while.body6, i32 1] [^b65, i32 %260];
     ubr ^while.body11;
 ^if.then5:
-    i1 %95 = scmp neq i32 %40, i32 0;
+    i1 %95 = scmp neq i32 %42, i32 0;
     cbr i1 %95(prob = 0.97), ^while.body8, ^b20;
 ^b17:
     i32 %96 = phi [^while.body6, i32 1] [^b65, i32 %260];
@@ -195,27 +195,27 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %99 = scmp neq i32 %44, i32 0;
     cbr i1 %99(prob = 0.97), ^while.body9, ^b21;
 ^b18:
-    i32 %100 = phi [^b15, i32 %42] [^b20, i32 %108];
-    i1 %101 = scmp neq i32 %40, i32 0;
+    i32 %100 = phi [^b15, i32 %40] [^b20, i32 %108];
+    i1 %101 = scmp neq i32 %42, i32 0;
     cbr i1 %101(prob = 0.97), ^while.body10, ^b22;
 ^b19:
     i32 %102 = phi [^b16, i32 %46] [^b21, i32 %117];
     i1 %103 = scmp neq i32 %44, i32 0;
     cbr i1 %103(prob = 0.97), ^while.body12, ^b23;
 ^while.body8:
-    i32 %104 = phi [^if.then5, i32 %42] [^b98, i32 %216];
-    i32 %105 = phi [^if.then5, i32 %40] [^b98, i32 %470];
+    i32 %104 = phi [^if.then5, i32 %40] [^b98, i32 %216];
+    i32 %105 = phi [^if.then5, i32 %42] [^b98, i32 %470];
     ubr ^while.body14;
 ^while.body9:
     i32 %106 = phi [^if.then6, i32 %46] [^b102, i32 %226];
     i32 %107 = phi [^if.then6, i32 %44] [^b102, i32 %490];
     ubr ^while.body16;
 ^b20:
-    i32 %108 = phi [^if.then5, i32 %42] [^b98, i32 %216];
+    i32 %108 = phi [^if.then5, i32 %40] [^b98, i32 %216];
     ubr ^b18;
 ^while.body10:
-    i32 %109 = phi [^b18, i32 %40] [^b101, i32 %221];
-    i32 %110 = phi [^b18, i32 %40] [^b101, i32 %485];
+    i32 %109 = phi [^b18, i32 %42] [^b101, i32 %221];
+    i32 %110 = phi [^b18, i32 %42] [^b101, i32 %485];
     ubr ^while.body17;
 ^while.body11:
     i32 %111 = phi [^while.body7, i32 1] [^b27, i32 %178];
@@ -233,7 +233,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %119 = phi [^b19, i32 %44] [^b103, i32 %495];
     ubr ^while.body18;
 ^b22:
-    i32 %120 = phi [^b18, i32 %40] [^b101, i32 %221];
+    i32 %120 = phi [^b18, i32 %42] [^b101, i32 %221];
     i1 %121 = scmp gt i32 %41, i32 32767;
     cbr i1 %121(prob = 0.5), ^if.then7, ^if.else1;
 ^while.body13:

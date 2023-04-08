@@ -214,7 +214,7 @@ public:
         bool modified = false;
         bool stopEarly = false;
         using namespace std::literals;
-        constexpr auto timeout = 1s;
+        constexpr auto timeout = 5s;
         const auto deadline = Clock::now() + timeout;
         size_t lastStop = std::numeric_limits<size_t>::max();
         for(uint32_t i = 0; i < mMaxIterations; ++i) {

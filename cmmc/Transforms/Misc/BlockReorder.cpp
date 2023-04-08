@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -33,6 +34,7 @@
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -138,8 +140,8 @@ public:
                 types.push_back(inst->getType());
         std::sort(types.begin(), types.end());
         types.erase(std::unique(types.begin(), types.end()), types.end());
-        std::sort(types.begin(), types.end(),
-                  [&](const Type* lhs, const Type* rhs) { return compareType(lhs, rhs) == StrongOrder::LessThan; });
+        std::stable_sort(types.begin(), types.end(),
+                         [&](const Type* lhs, const Type* rhs) { return compareType(lhs, rhs) == StrongOrder::LessThan; });
         uint32_t idx = 0;
         for(auto type : types) {
             // constant->dumpAsOperand(std::cerr);
@@ -214,7 +216,7 @@ public:
                     }
         std::sort(constants.begin(), constants.end());
         constants.erase(std::unique(constants.begin(), constants.end()), constants.end());
-        std::sort(constants.begin(), constants.end(), [](const ConstantValue* lhs, const ConstantValue* rhs) {
+        std::stable_sort(constants.begin(), constants.end(), [](const ConstantValue* lhs, const ConstantValue* rhs) {
             return StrongOrderingWrapper<ConstantComp>{}(lhs, rhs) == StrongOrder::LessThan;
         });
         for(auto constant : constants) {
@@ -242,6 +244,7 @@ public:
 struct InstComp {
     StrongOrderingWrapper<TypeComp>& typeComp;
     StrongOrderingWrapper<ExternalComp>& externalComp;
+    std::unordered_map<const Value*, uint32_t>& firstUse;
     using CompareType = const Instruction*;
 
     StrongOrder operator()(CompareType lhs, CompareType rhs) const {
@@ -264,15 +267,28 @@ struct InstComp {
                 return order;
             }
         }
-        return StrongOrder::Equal;
+        return firstUse.at(lhs) < firstUse.at(rhs) ? StrongOrder::LessThan : StrongOrder::GreaterThan;
     }
 };
 
 class BlockReorder final : public TransformPass<Function> {
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    static bool sortOnce(Function& func, AnalysisPassManager& analysis,
+                         const std::unordered_map<Block*, std::vector<Block*>>& preds) {
         auto& dom = analysis.get<DominateAnalysis>(func);
         bool modified = false;
+
+        uint32_t usePos = 0;
+        std::unordered_map<const Value*, uint32_t> firstUse;
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                for(auto operand : inst->operands()) {
+                    if(operand->isInstruction()) {
+                        firstUse.emplace(operand, usePos);
+                        ++usePos;
+                    }
+                }
+            }
+        }
 
         StrongOrderingWrapper<TypeComp> typeComp{ func };
         StrongOrderingWrapper<ExternalComp> comp{ analysis.module(), func };
@@ -332,7 +348,7 @@ public:
             }
 
             auto instComp = [&](uint32_t lhs, uint32_t rhs) -> bool {
-                return StrongOrderingWrapper<InstComp>{ typeComp, comp }(invMap[lhs], invMap[rhs]) == StrongOrder::GreaterThan;
+                return InstComp{ typeComp, comp, firstUse }(invMap[lhs], invMap[rhs]) == StrongOrder::GreaterThan;
             };
             std::priority_queue<uint32_t, std::vector<uint32_t>, decltype(instComp)> freeInst{ std::move(
                 instComp) };  // degree = 0
@@ -356,12 +372,121 @@ public:
 
             sortedBlock.push_back(instructions.back());
             assert(instructions.size() == sortedBlock.size());
-            if(!std::equal(instructions.cbegin(), instructions.cend(), sortedBlock.cbegin()))
+            if(!std::equal(instructions.cbegin(), instructions.cend(), sortedBlock.cbegin())) {
                 modified = true;
-
-            instructions = { sortedBlock.cbegin(), sortedBlock.cend() };
+                instructions = { sortedBlock.cbegin(), sortedBlock.cend() };
+            }
         }
 
+        /*
+        for(auto block : dom.blocks()) {
+            for(auto inst : block->instructions()) {
+                switch(inst->getInstID()) {
+                    case InstructionID::Add:
+                        [[fallthrough]];
+                    case InstructionID::Mul:
+                        [[fallthrough]];
+                    case InstructionID::And:
+                        [[fallthrough]];
+                    case InstructionID::Or:
+                        [[fallthrough]];
+                    case InstructionID::Xor: {
+                        if(comp(inst->getOperand(0), inst->getOperand(1)) == StrongOrder::LessThan) {
+                            std::swap(inst->operands()[0], inst->operands()[1]);
+                            modified = true;
+                        }
+                        break;
+                    }
+                    case InstructionID::SCmp:
+                        [[fallthrough]];
+                    case InstructionID::UCmp:
+                        [[fallthrough]];
+                    case InstructionID::FCmp: {
+                        if(auto op = inst->as<CompareInst>()->getOp(); (op == CompareOp::Equal || op == CompareOp::NotEqual) &&
+                           comp(inst->getOperand(0), inst->getOperand(1)) == StrongOrder::LessThan) {
+                            std::swap(inst->operands()[0], inst->operands()[1]);
+                            modified = true;
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        }
+        */
+
+        CMMC_UNUSED(preds);
+        // sort allocs and phis
+        /*
+        for(auto block : dom.blocks()) {
+            std::vector<Instruction*> prefix;
+            if(block == func.entryBlock()) {
+                for(auto inst : block->instructions())
+                    if(inst->getInstID() == InstructionID::Alloc)
+                        prefix.push_back(inst);
+                    else
+                        break;
+                std::sort(prefix.begin(), prefix.end(), [&](const Instruction* lhs, const Instruction* rhs) {
+                    const auto lhsLabel = lhs->getLabel().prefix();
+                    const auto rhsLabel = rhs->getLabel().prefix();
+                    if(lhsLabel != rhsLabel)
+                        return lhsLabel < rhsLabel;
+                    if(auto order = typeComp(lhs->getType(), rhs->getType()); order != StrongOrder::Equal)
+                        return order == StrongOrder::LessThan;
+                    return firstUse.at(lhs) < firstUse.at(rhs);
+                });
+            } else {
+                auto& predBlocks = preds.at(block);
+                CMMC_UNUSED(predBlocks);
+                for(auto inst : block->instructions())
+                    if(inst->getInstID() == InstructionID::Phi)
+                        prefix.push_back(inst);
+                    else
+                        break;
+                std::sort(prefix.begin(), prefix.end(), [&](const Instruction* lhs, const Instruction* rhs) {
+                    if(auto order = typeComp(lhs->getType(), rhs->getType()); order != StrongOrder::Equal)
+                        return order == StrongOrder::LessThan;
+                    auto& lhsIncomings = lhs->as<PhiInst>()->incomings();
+                    auto& rhsIncomings = rhs->as<PhiInst>()->incomings();
+                    for(auto pred : predBlocks)
+                        if(auto order = comp(lhsIncomings.at(pred), rhsIncomings.at(pred)); order != StrongOrder::Equal)
+                            return order == StrongOrder::LessThan;
+                    return firstUse.at(lhs) < firstUse.at(rhs);
+                });
+            }
+            if(!std::equal(prefix.cbegin(), prefix.cend(), block->instructions().cbegin())) {
+                std::copy(prefix.cbegin(), prefix.cend(), block->instructions().begin());
+                modified = true;
+            }
+        }
+        */
+
+        // func.dump(std::cerr, Noop{});
+
+        return modified;
+    }
+
+public:
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& cfg = analysis.get<CFGAnalysis>(func);
+
+        bool modified = false;
+
+        std::unordered_map<Block*, uint32_t> blockMap;
+        uint32_t count = 0;
+        for(auto block : func.blocks())
+            blockMap.emplace(block, ++count);
+        std::unordered_map<Block*, std::vector<Block*>> preds;
+        for(auto block : func.blocks()) {
+            auto pred = cfg.predecessors(block);
+            std::sort(pred.begin(), pred.end(), [&](Block* lhs, Block* rhs) { return blockMap.at(lhs) < blockMap.at(rhs); });
+            preds.emplace(block, std::move(pred));
+        }
+
+        modified = sortOnce(func, analysis, preds);
+        // while(sortOnce(func, analysis, preds))
+        //     modified = true;
         return modified;
     }
 
