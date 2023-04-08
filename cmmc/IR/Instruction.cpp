@@ -635,7 +635,10 @@ bool CompareInst::verify(std::ostream& out) const {
 }
 void PhiInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
-    for(auto [block, val] : mIncomings) {
+    std::vector<std::pair<Block*, Value*>> incomings{ mIncomings.cbegin(), mIncomings.cend() };
+    std::sort(incomings.begin(), incomings.end(),
+              [](auto lhs, auto rhs) { return lhs.first->getIndex() < rhs.first->getIndex(); });
+    for(auto [block, val] : incomings) {
         out << " ["sv;
         block->dumpAsTarget(out);
         out << ", "sv;

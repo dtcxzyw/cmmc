@@ -37,12 +37,16 @@ struct HighlightBlock final : public HighlightSelector {
 class Block final {
     Function* mFunction;
     String mLabel;
+    uint32_t mBlockIdx;
     List<Instruction*> mInstructions;
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
     void dump(std::ostream& out, const HighlightSelector& selector) const;
     void relabel(LabelAllocator& allocator) const;
+    [[nodiscard]] uint32_t getIndex() const noexcept {
+        return mBlockIdx;
+    }
     void dumpLabeled(std::ostream& out, const HighlightSelector& selector) const;
     bool verify(std::ostream& out) const;
 
@@ -53,8 +57,9 @@ public:
     [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
-    void setLabel(String label) {
+    void setLabel(String label, uint32_t idx = 0) {
         mLabel = label;
+        mBlockIdx = idx;
     }
 
     List<Instruction*>& instructions() noexcept {

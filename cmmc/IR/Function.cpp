@@ -96,8 +96,9 @@ void Function::dump(std::ostream& out, const HighlightSelector& selector) const 
         return;
     }
 
+    uint32_t idx = 0;
     for(auto block : mBlocks) {
-        block->setLabel(allocator.allocate(block->getLabel()));
+        block->setLabel(allocator.allocate(block->getLabel()), ++idx);
         block->relabel(allocator);
     }
     out << " {\n"sv;
