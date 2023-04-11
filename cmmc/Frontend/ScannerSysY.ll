@@ -15,6 +15,7 @@
 %{
 #include <limits>
 #include <cmmc/Frontend/Driver.hpp>
+#include <iostream>
 %}
 %{
   // Code run each time a pattern is matched.
@@ -38,28 +39,50 @@ FIXED_WIDTH_INTEGER_TYPE u?int(8|16|32|64)_t
   auto emitInteger = [&] (int radix) {
     char* end;
     uintmax_t val = strtoull(yytext, &end, radix);
-    bool isSigned = true;
-    uint32_t width = 32U;
+    bool base10 = radix == 10;
+    bool hasU = false;
+    bool hasL = false;
     while(*end) {
       if(*end == 'U')
-        isSigned = false;
+        hasU = true;
       if(*end == 'L')
-        width = 64U;
+        hasL = true;
       ++end;
     }
-    if(isSigned) {
-      const auto signedVal = static_cast<intmax_t>(val);
-      constexpr intmax_t maxValue = std::numeric_limits<int32_t>::max();
-      constexpr intmax_t minValue = std::numeric_limits<int32_t>::min();
-      if(!(minValue <= signedVal && signedVal <= maxValue))
-        width = 64U;
+
+    // Please refer to https://zh.cppreference.com/w/c/language/integer_constant
+    bool isSigned = true;
+    uint32_t width = 0U;
+    #define CMMC_TRY_INTEGER(TYPE) if(val <= static_cast<uintmax_t>(std::numeric_limits<TYPE>::max()))  width = sizeof(TYPE) * 8U, isSigned = std::is_signed_v<TYPE>
+    if(hasU && hasL) {
+      isSigned = false;
+      width = 64U;
+    } else if(hasU) {
+      CMMC_TRY_INTEGER(uint32_t);
+      else CMMC_TRY_INTEGER(uint64_t);
+    } else if(hasL) {
+      CMMC_TRY_INTEGER(int64_t);
+      else if(!base10) {
+        CMMC_TRY_INTEGER(uint64_t);
+      }
+    } else {
+      if(base10) {
+        CMMC_TRY_INTEGER(int32_t);
+        else CMMC_TRY_INTEGER(int64_t);
+      } else {
+        CMMC_TRY_INTEGER(int32_t);
+        else CMMC_TRY_INTEGER(uint32_t);
+        else CMMC_TRY_INTEGER(int64_t);
+        else CMMC_TRY_INTEGER(uint64_t);
+      }
     }
-    else {
-      constexpr uintmax_t maxValue = std::numeric_limits<uint32_t>::max();
-      constexpr uintmax_t minValue = std::numeric_limits<uint32_t>::min();
-      if(!(minValue <= val && val <= maxValue))
-        width = 64U;
+    #undef CMMC_TRY_INTEGER
+
+    if(width == 0U) {
+      CMMC_INTEGER_OUT_OF_RANGE_ERROR(yytext);
     }
+
+    // std::cerr << static_cast<intmax_t>(val) << ' ' << width << ' ' << isSigned << std::endl;
 
     return Parser::make_INT(IntegerStorage{val, width, isSigned}, {CMMC_RECORD(INT, val), loc});
   };

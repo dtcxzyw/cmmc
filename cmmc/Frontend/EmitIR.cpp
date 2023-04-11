@@ -396,17 +396,23 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
     return ctx.makeOp<BinaryInst>(inst, lhs, rhs);
 }
 
-static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type* rt, const Qualifier& lhsQ,
-                                       const Qualifier& rhsQ, const Type*& target, Qualifier& targetQualifier,
-                                       bool doIntegerPromotion) {
+static bool applyIntegerPromotion(const Type*& type, Qualifier& qualifier) {
+    if(type->isInteger() && type->getFixedSize() < sizeof(int32_t)) {
+        type = IntegerType::get(32);
+        qualifier.isSigned = true;
+        return true;
+    }
+    return false;
+}
+
+static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type* rt, Qualifier lhsQ, Qualifier rhsQ,
+                                       const Type*& target, Qualifier& targetQualifier, bool doIntegerPromotion) {
     // Please refer to https://en.cppreference.com/w/c/language/conversion
     auto selectTargetType = [&] {
+        assert(lt->isInteger() && rt->isInteger());
         if(doIntegerPromotion) {
-            // integer promotion
-            if(lt->getFixedSize() < sizeof(int32_t))
-                lt = IntegerType::get(32);
-            if(rt->getFixedSize() < sizeof(int32_t))
-                rt = IntegerType::get(32);
+            applyIntegerPromotion(lt, lhsQ);
+            applyIntegerPromotion(rt, rhsQ);
         }
 
         if(lhsQ.isSigned == rhsQ.isSigned) {
@@ -475,7 +481,15 @@ static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type
         case OperatorID::ShiftRight: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
                 DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor/shl/shr float,float is not allowed").reportFatal();
-            selectTargetType();
+            if(op == OperatorID::ShiftLeft || op == OperatorID::ShiftRight) {
+                if(doIntegerPromotion) {
+                    applyIntegerPromotion(lt, lhsQ);
+                    applyIntegerPromotion(rt, rhsQ);
+                }
+                target = lt;
+                targetQualifier = lhsQ;
+            } else
+                selectTargetType();
             break;
         }
         default:
@@ -520,8 +534,10 @@ static QualifiedValue emitArithmeticOp(EmitContext& ctx, Value* lhs, const Quali
 
     lhs = ctx.convertTo(lhs, target, lhsQualifier, targetQualifier, ConversionUsage::Implicit);
     rhs = ctx.convertTo(rhs, target, rhsQualifier, targetQualifier, ConversionUsage::Implicit);
+    const auto isCompare = op == OperatorID::LessThan || op == OperatorID::LessEqual || op == OperatorID::GreaterThan ||
+        op == OperatorID::GreaterEqual || op == OperatorID::Equal || op == OperatorID::NotEqual;
     return QualifiedValue{ makeBinaryOp(ctx, op, target->isFloatingPoint(), targetQualifier.isSigned, lhs, rhs),
-                           ValueQualifier::AsRValue, targetQualifier };
+                           ValueQualifier::AsRValue, isCompare ? Qualifier{ false, true } : targetQualifier };
 }
 
 QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
@@ -572,7 +588,7 @@ QualifiedValue BinaryExpr::emit(EmitContext& ctx) const {
         phi->addIncoming(srcBlock, mOp == OperatorID::LogicalAnd ? ctx.getFalse() : ctx.getTrue());
         phi->addIncoming(rhsBlock, rhs);
 
-        return QualifiedValue::asRValue(ctx.booleanToInt(phi), Qualifier::getDefault());
+        return QualifiedValue::asRValue(ctx.booleanToInt(phi), Qualifier{ false, true });
     }
 
     auto [rhs, rhsQualifier] = ctx.getRValue(mRhs);
@@ -610,8 +626,13 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     auto [value, valueQualifier] = ctx.getRValue(mValue);
 
     // integer promotion
-    if(value->getType()->isInteger() && value->getType()->getFixedSize() < sizeof(int32_t))
-        value = ctx.convertTo(value, IntegerType::get(32), valueQualifier, valueQualifier, ConversionUsage::Implicit);
+    if(value->getType()->isInteger()) {
+        auto type = value->getType();
+        const auto srcValueQualifier = valueQualifier;
+        if(applyIntegerPromotion(type, valueQualifier)) {
+            value = ctx.convertTo(value, type, srcValueQualifier, valueQualifier, ConversionUsage::Implicit);
+        }
+    }
 
     if(value->isConstant() && !value->isUndefined()) {
         if(value->getType()->isFloatingPoint()) {
@@ -652,7 +673,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
                                   ConversionUsage::Condition);
             return QualifiedValue::asRValue(
                 ctx.booleanToInt(ctx.makeOp<BinaryInst>(InstructionID::Xor, value, ConstantInteger::get(value->getType(), 1))),
-                Qualifier::getDefault());
+                Qualifier{ false, true });
         }
         case OperatorID::Positive: {
             if(value->getType()->isInteger() || value->getType()->isFloatingPoint())
@@ -690,7 +711,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     const auto newVal = ctx.makeOp<BinaryInst>(instID, val, rhs);
     ctx.makeOp<StoreInst>(ptr, newVal);
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
-        return QualifiedValue{ ptr, ValueQualifier::AsLValue, qualifier };
+        return QualifiedValue{ newVal, ValueQualifier::AsRValue, qualifier };
     }
     return QualifiedValue{ val, ValueQualifier::AsRValue, qualifier };
 }

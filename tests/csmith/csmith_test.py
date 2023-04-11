@@ -10,11 +10,14 @@ import tqdm
 
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
-csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs --output /dev/stdout"
-gcc_command = "gcc -Wno-narrowing -O3 -DNDEBUG -ffp-contract=on -w "
+csmith_ext = ""
+csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs {}--output /dev/stdout".format(
+    csmith_ext)
+gcc_command = "gcc -Wno-narrowing -O0 -DNDEBUG -ffp-contract=on -w "
 gcc_header = """
 #include <stdio.h>
 #include <stdint.h>
+#include <math.h>
 
 static void putint(int x) {
     printf("%d", x);
@@ -31,9 +34,9 @@ double fabs(double x) {
     return x>=0.0?x:-x;
 }
 """
-optimization_level = '1'
+optimization_level = '0'
 prog_timeout = 10.0
-cmmc_timeout = None
+cmmc_timeout = 20.0
 
 cwd = os.path.dirname(binary)+"/csmith"
 if os.path.exists(cwd):
@@ -122,7 +125,7 @@ error_count = 0
 skipped_count = 0
 
 with ThreadPoolExecutor() as p:
-    for res in p.map(csmith_opt_only, L):
+    for res in p.map(csmith_test, L):
         if res is not None:
             error_count += 0 if res else 1
         else:

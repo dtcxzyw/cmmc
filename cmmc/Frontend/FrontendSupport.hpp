@@ -84,3 +84,4 @@
     driver.reportLexerError("unknown lexeme", TEXT); \
     CMMC_TERMINAL(ERR)
 #define CMMC_COMMENT_ERROR() driver.reportLexerError("Missing closing comment", "*/")
+#define CMMC_INTEGER_OUT_OF_RANGE_ERROR(TEXT) driver.reportLexerError("Integer constant is out of range", TEXT)
