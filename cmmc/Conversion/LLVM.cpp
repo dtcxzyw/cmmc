@@ -192,9 +192,11 @@ class LLVMConversionContext final {
             case InstructionID::Unreachable:
                 return builder.CreateUnreachable();
             case InstructionID::Load:
-                return builder.CreateLoad(getType(inst.getType()), getOperand(0), false);
+                return builder.CreateAlignedLoad(getType(inst.getType()), getOperand(0),
+                                                 llvm::MaybeAlign{ inst.getType()->getAlignment(dataLayout) });
             case InstructionID::Store:
-                return builder.CreateStore(getOperand(1), getOperand(0));
+                return builder.CreateAlignedStore(getOperand(1), getOperand(0),
+                                                  llvm::MaybeAlign{ inst.getOperand(1)->getType()->getAlignment(dataLayout) });
             case InstructionID::Add:
                 return builder.CreateAdd(getOperand(0), getOperand(1));
             case InstructionID::Sub:
@@ -347,11 +349,19 @@ class LLVMConversionContext final {
                         return call;
                     }
                     case Intrinsic::memset:
-                        return builder.CreateMemSet(getOperand(0), builder.CreateTrunc(getOperand(1), builder.getInt8Ty()),
-                                                    getOperand(2), llvm::MaybeAlign{});
+                        return builder.CreateMemSet(
+                            getOperand(0), builder.CreateTrunc(getOperand(1), builder.getInt8Ty()), getOperand(2),
+                            llvm::MaybeAlign{
+                                inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getAlignment(dataLayout) });
                     case Intrinsic::memcpy:
-                        return builder.CreateMemCpy(getOperand(0), llvm::MaybeAlign{}, getOperand(1), llvm::MaybeAlign{},
-                                                    getOperand(2));
+                        return builder.CreateMemCpy(
+                            getOperand(0),
+                            llvm::MaybeAlign{
+                                inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getAlignment(dataLayout) },
+                            getOperand(1),
+                            llvm::MaybeAlign{
+                                inst.getOperand(1)->getType()->as<PointerType>()->getPointee()->getAlignment(dataLayout) },
+                            getOperand(2));
                     default:
                         reportNotImplemented(CMMC_LOCATION());
                 }
