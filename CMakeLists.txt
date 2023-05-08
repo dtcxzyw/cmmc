@@ -24,7 +24,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES Debug)
 else()
   add_compile_options(-ggdb -march=native -funroll-loops -ffp-contract=on)
   add_link_options(-ggdb -march=native -funroll-loops -ffp-contract=on)
-  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  set(CMAKE_INTERPROCEDURAL_OPTIMIZATION FALSE)
 endif()
 add_compile_options(-Wextra -Wall -Werror -Wno-format-security)
 
@@ -75,7 +75,7 @@ list(FILTER CMMC_SRC EXCLUDE REGEX LLVMOrcJIT[.]cpp)
 if(${LLVM_FOUND})
   add_compile_definitions(CMMC_WITH_LLVM_SUPPORT)
   set(CMMC_SRC_LLVM cmmc/Conversion/LLVM.cpp cmmc/ExecutionEngine/LLVMOrcJIT.cpp)
-  set_source_files_properties(${CMMC_SRC_LLVM} PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter -Wno-redundant-move")
+  set_source_files_properties(${CMMC_SRC_LLVM} PROPERTIES COMPILE_FLAGS "-Wno-unused-parameter -Wno-redundant-move -Wno-maybe-uninitialized")
   set(LLVM_LIBRARIES 
     LLVMCore
     LLVMSupport
@@ -106,6 +106,21 @@ set_source_files_properties(${CMMC_SRC} PROPERTIES COMPILE_FLAGS "-Wconversion -
 target_include_directories(cmmc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(cmmc PRIVATE ${LLVM_LIBRARIES})
 
+set(CMMC_EDUCG_SUBMIT_DIR ${CMAKE_CURRENT_BINARY_DIR}/educg_submit)
 find_package(Python3 REQUIRED)
+
+add_custom_target(educg_submit
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}
+COMMAND ${CMAKE_COMMAND} -E make_directory ${CMMC_EDUCG_SUBMIT_DIR}
+COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/LICENSE ${CMMC_EDUCG_SUBMIT_DIR}/LICENSE
+COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/Makefile ${CMMC_EDUCG_SUBMIT_DIR}/Makefile
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/cmmc ${CMMC_EDUCG_SUBMIT_DIR}/cmmc
+COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMMC_EDUCG_SUBMIT_DIR}/
+COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/CMMCDriver.cpp ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Driver/CMMCDriver.cpp
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Conversion/ ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/ExecutionEngine/LLVMOrcJIT.cpp
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC
+COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_header_fix.py ${CMMC_EDUCG_SUBMIT_DIR}
+DEPENDS cmmc
+)
 
 add_test(NAME cmmc_test COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/tests/test_driver.py $<TARGET_FILE:cmmc> ${CMAKE_CURRENT_LIST_DIR}/tests)

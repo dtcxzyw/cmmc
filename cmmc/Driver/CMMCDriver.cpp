@@ -39,18 +39,18 @@ using namespace cmmc;
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag version;           // NOLINT
-static Flag help;              // NOLINT
-static Flag emitAST;           // NOLINT
-static Flag emitIR;            // NOLINT
-Flag strictMode;               // NOLINT
-IntegerOpt optimizationLevel;  // NOLINT
-extern StringOpt targetName;   // NOLINT
-static StringOpt outputPath;   // NOLINT
-StringOpt executeInput;        // NOLINT
-static Flag grammarCheck;      // NOLINT
-static Flag dumpOptPipeline;   // NOLINT
-static StringOpt language;     // NOLINT
+static Flag version;                  // NOLINT
+static Flag help;                     // NOLINT
+static Flag emitAST;                  // NOLINT
+static Flag emitIR;                   // NOLINT
+Flag strictMode;                      // NOLINT
+static IntegerOpt optimizationLevel;  // NOLINT
+extern StringOpt targetName;          // NOLINT
+static StringOpt outputPath;          // NOLINT
+StringOpt executeInput;               // NOLINT
+static Flag grammarCheck;             // NOLINT
+static Flag dumpOptPipeline;          // NOLINT
+static StringOpt language;            // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");

@@ -28,6 +28,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <utility>
 #include <variant>
 
 CMMC_NAMESPACE_BEGIN

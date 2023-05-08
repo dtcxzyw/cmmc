@@ -1,0 +1,95 @@
+/*
+    SPDX-License-Identifier: Apache-2.0
+    Copyright 2022 Yingwei Zheng and Bingzhen Wang
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+#include <cassert>
+#include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/ExecutionEngine/Interpreter.hpp>
+#include <cmmc/Frontend/Driver.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
+#include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/Profiler.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
+#include <cmmc/Transforms/TransformPass.hpp>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <type_traits>
+#include <variant>
+
+using namespace cmmc;
+
+CMMC_NAMESPACE_BEGIN
+
+Flag strictMode;              // NOLINT
+StringOpt executeInput;       // NOLINT
+extern StringOpt targetName;  // NOLINT
+
+std::optional<int> runMain(Module&, SimulationIOContext&, const std::string&) {
+    return std::nullopt;
+}
+
+CMMC_NAMESPACE_END
+
+static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::string& outputPath) {
+    AnalysisPassManager analysis{ &module };
+    const auto& target = module.getTarget();
+    target.legalizeModuleBeforeOpt(module, analysis);
+    analysis.invalidateModule();
+
+    const auto opt = PassManager<Module>::get(optLevel);
+    opt->run(module, analysis);
+
+    std::ofstream out{ outputPath };
+    const auto machineModule = lowerToMachineModule(module, analysis, optLevel);
+    target.emitAssembly(*machineModule, out);
+
+    return EXIT_SUCCESS;
+}
+
+int main(int argc, char** argv) {
+    strictMode.handle("false");
+#if defined(__riscv)
+    targetName.handle("riscv");
+#elif defined(__aarch64__)
+    targetName.handle("arm");
+#else
+    targetName.handle("riscv");
+#endif
+    try {
+        std::string path = argv[1];
+        std::string outputPath = argv[4];
+        const auto opt = argc == 6;  // with -O1
+        Module module;
+        const auto target = TargetRegistry::get().selectTarget();
+        module.setTarget(target.get());
+
+        {
+            Driver driver{ path, FrontEndLang::SysY, false, false };
+            driver.emit(module);
+        }
+
+        return runIRPipeline(module, opt ? OptimizationLevel::O3 : OptimizationLevel::O0, outputPath);
+    } catch(const std::exception& ex) {
+        std::cerr << "Unexpected exception: "sv << ex.what() << std::endl;
+    } catch(...) {
+        std::cerr << "Unknown error"sv << std::endl;
+    }
+    return EXIT_FAILURE;
+}
