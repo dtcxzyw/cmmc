@@ -19,10 +19,22 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim ninja-build llvm-15-dev
+      run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu
     
     - name: Format
       run: make format-check
+
+    - uses: actions/checkout@v3
+      with:
+        repository: https://github.com/dtcxzyw/qemu.git
+        path: ${{github.workspace}}/qemu
+    
+    - name: Build qemu
+      run: |
+        cd qemu
+        ./configure --target-list=riscv64-linux-user --enable-plugins
+        make -j
+        echo "QEMU_PATH=$(pwd)/" >> $GITHUB_ENV
 
     - name: Build
       run: |

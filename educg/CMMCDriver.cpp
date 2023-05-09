@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+// Mini driver for online judge
+
 #include <cassert>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -72,6 +74,17 @@ int main(int argc, char** argv) {
 #else
     targetName.handle("riscv");
 #endif
+    if(argc != 5 && argc != 6) {
+        reportInfo() << "CMMC " CMMC_VERSION << std::endl;
+        reportInfo() << "Build time: " __TIME__ " " __DATE__ << std::endl;
+        return EXIT_SUCCESS;
+    }
+
+    if(!(argv[2] == "-S"sv && argv[3] == "-o"sv && (argc == 6 && argv[5] == "-O1"sv))) {
+        std::cerr << "Unexpected arguments for the mini driver"sv << std::endl;
+        return EXIT_FAILURE;
+    }
+
     try {
         std::string path = argv[1];
         std::string outputPath = argv[4];
