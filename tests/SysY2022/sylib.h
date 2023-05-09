@@ -8,12 +8,16 @@
 int getint(), getch(), getarray(int a[]);
 float getfloat();
 int getfarray(float a[]);
+#ifdef __cplusplus
 int getfarray(float a[][270]);
+#endif
 
 void putint(int a), putch(int a), putarray(int n, int a[]);
 void putfloat(float a);
 void putfarray(int n, float a[]);
+#ifdef __cplusplus
 void putfarray(int n, float a[][270]);
+#endif
 
 void putf(char a[], ...);
 

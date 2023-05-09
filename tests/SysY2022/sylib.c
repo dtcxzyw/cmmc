@@ -44,9 +44,11 @@ int getfarray(float a[]) {
     }
     return n;
 }
+#ifdef __cplusplus
 int getfarray(float a[][270]) {
-    return getfarray(reinterpret_cast<float*>(a));
+    return getfarray((float*)(a));
 }
+#endif
 void putint(int a) {
     printf("%d", a);
 }
@@ -69,9 +71,11 @@ void putfarray(int n, float a[]) {
     }
     printf("\n");
 }
+#ifdef __cplusplus
 void putfarray(int n, float a[][270]) {
-    putfarray(n, reinterpret_cast<float*>(a));
+    putfarray(n, (float*)(a));
 }
+#endif
 
 void putf(char a[], ...) {
     va_list args;

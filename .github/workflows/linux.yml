@@ -19,7 +19,7 @@ jobs:
         lfs: true
 
     - name: Env
-      run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu
+      run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu
     
     - name: Format
       run: make format-check

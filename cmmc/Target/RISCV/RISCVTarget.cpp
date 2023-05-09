@@ -115,6 +115,13 @@ void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
                                         tryReplace(inst.rhs, false);
                                 },
                                  [&](UnaryArithmeticMInst& inst) { tryReplace(inst.src, false); },
+                                 [&](CompareMInst& inst) {
+                                     if(inst.lhs.addressSpace == AddressSpace::Constant) {
+                                         std::swap(inst.lhs, inst.rhs);
+                                         inst.compareOp = getReversedOp(inst.compareOp);
+                                     }
+                                     tryReplace(inst.rhs, true);
+                                 },
                                  [&](BranchCompareMInst& inst) {
                                      if(inst.lhs.addressSpace == AddressSpace::Constant) {
                                          std::swap(inst.lhs, inst.rhs);
