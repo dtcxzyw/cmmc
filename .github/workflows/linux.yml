@@ -34,7 +34,7 @@ jobs:
         cd qemu
         ./configure --target-list=riscv64-linux-user --enable-plugins
         make -j
-        echo "QEMU_PATH=$(pwd)/" >> $GITHUB_ENV
+        echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
 
     - name: Build
       run: |
