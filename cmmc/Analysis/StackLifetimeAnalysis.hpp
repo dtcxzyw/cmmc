@@ -20,6 +20,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
+// deprecated
 class StackLifetimeAnalysisResult final {
     std::unordered_map<const Block*, std::unordered_set<Value*>> mUsedAllocas;
 

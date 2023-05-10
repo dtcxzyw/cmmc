@@ -12,31 +12,17 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/GMIR.hpp>
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
-#include <cmmc/CodeGen/RegisterAllocator.hpp>
-#include <cmmc/CodeGen/Target.hpp>
-#include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
-#include <memory>
-#include <unordered_map>
-#include <variant>
-
-// LLVM greedy RA
-// references:
-// https://www.youtube.com/watch?v=IK8TMJf3G6U
-// https://www.youtube.com/watch?v=hf8kD-eAaxg
+#include <cmmc/Target/TAC/TACTarget.hpp>
 
 CMMC_NAMESPACE_BEGIN
 
-static void greedyAllocate(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& infoIPRA) {
-    // const auto cfg = calcGMIRCFG(mfunc);
-    CMMC_UNUSED(target);
-    CMMC_UNUSED(mfunc);
-    CMMC_UNUSED(infoIPRA);
-    reportNotImplemented(CMMC_LOCATION());
+void TACSubTarget::peepholeOpt(MIRFunction& func) const {
+    applySSAPropagation(func);
 }
 
-CMMC_REGISTER_ALLOCATOR("greedy", greedyAllocate);
+void TACSubTarget::postPeepholeOpt(MIRFunction&) const {}
 
 CMMC_NAMESPACE_END

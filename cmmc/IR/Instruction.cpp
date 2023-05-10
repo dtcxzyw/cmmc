@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>

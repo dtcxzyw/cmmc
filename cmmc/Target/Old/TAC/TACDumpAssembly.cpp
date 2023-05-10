@@ -14,7 +14,7 @@
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -47,11 +47,11 @@ static std::string_view getCompareOp(CompareOp compare) {
 }
 
 struct FunctionNameMap final {
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    std::unordered_map<const MIRBasicBlock*, String> labelMap;
     std::unordered_map<uint32_t, uint32_t> gprMap, stackMap;
 };
 
-static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction& func, const DataLayout& dataLayout,
+static void emitFunc(std::ostream& out, const String& symbol, const MIRFunction& func, const DataLayout& dataLayout,
                      const FunctionNameMap& map) {
     out << "FUNCTION "sv << symbol << " :\n"sv;
 
@@ -62,7 +62,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
         }
     }
 
-    const auto printOperand = [&](const Operand& operand, bool foldStack) {
+    const auto printOperand = [&](const MIROperand& operand, bool foldStack) {
         if(operand.addressSpace == TACAddressSpace::GPR)
             out << 'v' << map.gprMap.at(operand.id);
         else if(operand.addressSpace == TACAddressSpace::Stack) {
@@ -166,7 +166,7 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
                                  [&](const CallMInst& call) {
                                      printOperand(call.dst, false);
                                      out << " := CALL "sv;
-                                     out << std::get<GMIRSymbol*>(call.callee)->symbol;
+                                     out << std::get<MIRRelocable*>(call.callee)->symbol;
                                  },
                                  [&](const RetMInst& ret) {
                                      out << "RETURN "sv;
@@ -196,10 +196,10 @@ static void emitFunc(std::ostream& out, const String& symbol, const GMIRFunction
     out << '\n';
 }
 
-void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
+void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
     using namespace std::string_literals;
 
-    std::unordered_map<const GMIRFunction*, FunctionNameMap> funcMap;
+    std::unordered_map<const MIRFunction*, FunctionNameMap> funcMap;
 
     {
         LabelAllocator allocator;
@@ -210,7 +210,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
         uint32_t gprAllocateID = 0, stackAllocateID = 0;
         String labelBase = String::get("label"sv);
         for(auto& symbol : module.symbols) {
-            std::visit(Overload{ [&](const GMIRFunction& func) {
+            std::visit(Overload{ [&](const MIRFunction& func) {
                                     auto& ref = funcMap[&func];
                                     {
                                         auto& labelMap = ref.labelMap;
@@ -233,7 +233,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
                                     }
 
                                     // NOLINTNEXTLINE
-                                    forEachOperands(const_cast<GMIRFunction&>(func), [&](const Operand& operand) {
+                                    forEachOperands(const_cast<MIRFunction&>(func), [&](const MIROperand& operand) {
                                         if(operand.addressSpace == TACAddressSpace::GPR) {
                                             tryAllocate(ref.gprMap, operand.id, gprAllocateID);
                                         }
@@ -247,7 +247,7 @@ void TACTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const 
     const auto& dataLayout = module.target.getDataLayout();
 
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) {
+        std::visit(Overload{ [&](const MIRFunction& func) {
                                 // func.dump(std::cerr, *this);
                                 emitFunc(out, symbol.symbol, func, dataLayout, funcMap.at(&func));
                             },

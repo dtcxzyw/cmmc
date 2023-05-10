@@ -13,13 +13,15 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
+
+/*
 
 StringOpt regAllocMethod;  // NOLINT
 
@@ -43,15 +45,15 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
     return instance;
 }
 
-void assignRegisters(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache) {
+void assignRegisters(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache) {
     RegisterAllocatorRegistry::get().selectMethod()(mfunc, target, cache);
     // TODO: verify
 }
 
-void IPRAUsageCache::add(const Target& target, GMIRSymbol* symbol, GMIRFunction& func) {
+void IPRAUsageCache::add(const Target& target, MIRRelocable* symbol, MIRFunction& func) {
     IPRAInfo info;
     for(auto& block : func.blocks()) {
-        forEachDefOperands(*block, [&](Operand& operand) {
+        forEachDefOperands(*block, [&](MIROperand& operand) {
             if(operand.addressSpace < AddressSpace::Custom || operand == unusedOperand)
                 return;
             if(target.isCallerSaved(operand)) {
@@ -61,13 +63,15 @@ void IPRAUsageCache::add(const Target& target, GMIRSymbol* symbol, GMIRFunction&
     }
     mCache.emplace(symbol, std::move(info));
 }
-void IPRAUsageCache::add(GMIRSymbol* symbol, IPRAInfo info) {
+void IPRAUsageCache::add(MIRRelocable* symbol, IPRAInfo info) {
     mCache.emplace(symbol, std::move(info));
 }
-const IPRAInfo* IPRAUsageCache::query(GMIRSymbol* calleeFunc) const {
+const IPRAInfo* IPRAUsageCache::query(MIRRelocable* calleeFunc) const {
     if(auto iter = mCache.find(calleeFunc); iter != mCache.cend())
         return &iter->second;
     return nullptr;
 }
 
-CMMC_NAMESPACE_END
+*/
+
+CMMC_MIR_NAMESPACE_END

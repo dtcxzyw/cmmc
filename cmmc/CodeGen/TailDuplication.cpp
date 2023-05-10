@@ -13,21 +13,23 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <variant>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
+
+/*
 
 constexpr size_t duplicationThreshold = 5;
 
-void tailDuplication(GMIRFunction& func) {
+void tailDuplication(MIRFunction& func) {
     while(redirectGoto(func))
         ;
 
     for(uint32_t k = 0; k < duplicationThreshold; ++k) {
-        const auto cfg = calcGMIRCFG(func);
+        const auto cfg = calcCFG(func);
 
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
@@ -48,9 +50,9 @@ void tailDuplication(GMIRFunction& func) {
                         usedStackObjects.insert(obj);
                     // fix CFG
 
-                    const auto ensureNext = [&](const GMIRBasicBlock* next) {
+                    const auto ensureNext = [&](const MIRBasicBlock* next) {
                         if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                            auto newBlock = std::make_unique<GMIRBasicBlock>(&func, next->getTripCount());
+                            auto newBlock = std::make_unique<MIRBasicBlock>(&func, next->getTripCount());
                             newBlock->instructions().emplace_back(BranchMInst{ next });
                             newBlock->usedStackObjects() = block->usedStackObjects();
                             func.blocks().insert(nextIter, std::move(newBlock));
@@ -86,4 +88,6 @@ void tailDuplication(GMIRFunction& func) {
     }
 }
 
-CMMC_NAMESPACE_END
+*/
+
+CMMC_MIR_NAMESPACE_END

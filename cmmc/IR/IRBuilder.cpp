@@ -22,7 +22,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-IRBuilder::IRBuilder(const Target& target)
+IRBuilder::IRBuilder(const mir::Target& target)
     : mCurrentFunction{ nullptr }, mCurrentBlock{ nullptr }, mIndexType{ IntegerType::get(static_cast<uint32_t>(
                                                                  target.getDataLayout().getPointerSize() * 8)) },
       mTrueValue{ ConstantInteger::getTrue() }, mFalseValue{ ConstantInteger::getFalse() }, mZeroIndex{ ConstantInteger::get(
@@ -33,7 +33,7 @@ Block* IRBuilder::addBlock() {
     mCurrentFunction->blocks().push_back(block);
     return block;
 }
-IRBuilder::IRBuilder(const Target& target, Block* block) : IRBuilder{ target } {
+IRBuilder::IRBuilder(const mir::Target& target, Block* block) : IRBuilder{ target } {
     setCurrentBlock(block);
 }
 StackAllocInst* IRBuilder::createAlloc(const Type* type) {  // NOLINT

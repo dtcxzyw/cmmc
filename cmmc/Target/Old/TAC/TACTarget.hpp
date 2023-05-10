@@ -14,8 +14,8 @@
 
 // TAC Virtual Target
 #pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -48,14 +48,14 @@ public:
     }
 };
 
-class TACLoweringInfo final : public LoweringInfo {
+class TACLoweringInfo final : public InstSelector {
     String mUnused, mGPR, mConstant, mStack, mVReg;
 
 public:
     TACLoweringInfo();
     void emitPrologue(LoweringContext&, Function*) const override {}
-    Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
-    [[nodiscard]] String getOperand(const Operand& operand) const override;
+    MIROperand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
+    [[nodiscard]] String getOperand(const MIROperand& operand) const override;
     [[nodiscard]] std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
@@ -72,8 +72,8 @@ class TACSubTarget final : public SimpleSubTarget {
 public:
     explicit TACSubTarget(const TACTarget& target) : mTarget{ target } {}
     [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t addressSpace) const override;
-    void peepholeOpt(GMIRFunction& func) const override;
-    void postPeepholeOpt(GMIRFunction& func) const override;
+    void peepholeOpt(MIRFunction& func) const override;
+    void postPeepholeOpt(MIRFunction& func) const override;
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         CMMC_UNUSED(size);
         return true;
@@ -96,29 +96,29 @@ public:
     [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         reportUnreachable(CMMC_LOCATION());
     }
-    bool builtinRA(GMIRFunction& mfunc) const override;
-    bool builtinSA(GMIRFunction& mfunc) const override;
-    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
+    bool builtinRA(MIRFunction& mfunc) const override;
+    bool builtinSA(MIRFunction& mfunc) const override;
+    [[nodiscard]] const ScheduleModel& getSubTarget() const noexcept override {
         return mSubTarget;
     }
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override;
-    void legalizeFunc(GMIRFunction& func) const override;
+    void legalizeFunc(MIRFunction& func) const override;
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
     void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
-    void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
-    [[nodiscard]] Operand getStackPointer() const noexcept override {
+    void emitAssembly(const MIRModule& module, std::ostream& out) const override;
+    [[nodiscard]] MIROperand getStackPointer() const noexcept override {
         return unusedOperand;
     }
-    [[nodiscard]] Operand getReturnAddress() const noexcept override {
+    [[nodiscard]] MIROperand getReturnAddress() const noexcept override {
         reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         reportUnreachable(CMMC_LOCATION());
     }
-    [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCallerSaved(const MIROperand&) const noexcept override {
         reportUnreachable(CMMC_LOCATION());
     }
-    [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
+    [[nodiscard]] bool isCalleeSaved(const MIROperand&) const noexcept override {
         reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {

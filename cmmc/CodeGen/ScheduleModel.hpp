@@ -12,17 +12,27 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
-#include <cmmc/Support/Dispatch.hpp>
-#include <cmmc/Target/TAC/TACTarget.hpp>
+#pragma once
+#include <cmmc/CodeGen/MIR.hpp>
+#include <cstdint>
+#include <string_view>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-void TACSubTarget::peepholeOpt(GMIRFunction& func) const {
-    applySSAPropagation(func);
-}
+class ScheduleClass {
+public:
+    virtual ~ScheduleClass() = default;
+};
 
-void TACSubTarget::postPeepholeOpt(GMIRFunction&) const {}
+class TargetScheduleModel {
+public:
+    virtual ~TargetScheduleModel() = default;
+    [[nodiscard]] virtual const ScheduleClass& getInstScheClass(uint32_t opcode) const = 0;
+};
 
-CMMC_NAMESPACE_END
+class DummyTargetScheduleModel final : public TargetScheduleModel {
+public:
+    [[nodiscard]] const ScheduleClass& getInstScheClass(uint32_t opcode) const override;
+};
+
+CMMC_MIR_NAMESPACE_END

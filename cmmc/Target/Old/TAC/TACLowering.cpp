@@ -12,8 +12,8 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -23,7 +23,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Operand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
+MIROperand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zero = pool.allocate(type);
     if(type->isInteger())
@@ -35,7 +35,7 @@ Operand TACLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) con
 TACLoweringInfo::TACLoweringInfo()
     : mUnused{ String::get("unused") }, mGPR{ String::get("v") }, mConstant{ String::get("c") }, mStack{ String::get("m") },
       mVReg{ String::get("vr") } {}
-String TACLoweringInfo::getOperand(const Operand& operand) const {
+String TACLoweringInfo::getOperand(const MIROperand& operand) const {
     if(operand == unusedOperand)
         return mUnused;
     switch(operand.addressSpace) {
@@ -143,7 +143,7 @@ void TACLoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
 
     if(onlyUsedByCondition) {
         // noop, fused with conditional branch
-        // LoweringInfo::lower(inst, ctx);
+        // InstSelector::lower(inst, ctx);
         return;
     }
 

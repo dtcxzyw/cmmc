@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Graph.hpp>
@@ -27,8 +27,9 @@
 
 CMMC_NAMESPACE_BEGIN
 
-void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Operand, OperandHasher>& operandMap) {
-    forEachUseOperands(func, [&](GMIRInst&, Operand& operand) {
+/*
+void registerCoalescing(MIRFunction& func, const std::unordered_map<MIROperand, MIROperand, MIROperandHasher>& operandMap) {
+    forEachUseOperands(func, [&](MIRInst&, MIROperand& operand) {
         if(auto iter = operandMap.find(operand); iter != operandMap.cend())
             operand = iter->second;
     });
@@ -38,5 +39,6 @@ void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Op
     removeIdentityCopies(func);
     removeUnusedInsts(func);
 }
+*/
 
 CMMC_NAMESPACE_END

@@ -36,8 +36,8 @@ class IRBuilder {
     Value *mTrueValue, *mFalseValue, *mZeroIndex;
 
 public:
-    explicit IRBuilder(const Target& target);
-    IRBuilder(const Target& target, Block* block);
+    explicit IRBuilder(const mir::Target& target);
+    IRBuilder(const mir::Target& target, Block* block);
 
     [[nodiscard]] Function* getCurrentFunction() const noexcept;
     void setCurrentFunction(Function* func) noexcept;

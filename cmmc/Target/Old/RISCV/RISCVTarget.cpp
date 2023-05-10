@@ -13,7 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -33,11 +33,11 @@
 
 CMMC_NAMESPACE_BEGIN
 
-constexpr Operand zero{ RISCVAddressSpace::GPR, 0U };
-constexpr Operand a0{ RISCVAddressSpace::GPR, 10U };
-constexpr Operand fa032{ RISCVAddressSpace::FPR_S, 10U };
-constexpr Operand fa064{ RISCVAddressSpace::FPR_D, 10U };
-constexpr Operand sp{ RISCVAddressSpace::GPR, 2U };
+constexpr MIROperand zero{ RISCVAddressSpace::GPR, 0U };
+constexpr MIROperand a0{ RISCVAddressSpace::GPR, 10U };
+constexpr MIROperand fa032{ RISCVAddressSpace::FPR_S, 10U };
+constexpr MIROperand fa064{ RISCVAddressSpace::FPR_D, 10U };
+constexpr MIROperand sp{ RISCVAddressSpace::GPR, 2U };
 
 constexpr size_t passingByRegisterThreshold = 64;
 
@@ -62,7 +62,7 @@ public:
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
-    void postPeepholeOpt(GMIRFunction& func) const override {
+    void postPeepholeOpt(MIRFunction& func) const override {
         useZeroRegister(func, zero, 8U);
     }
 };
@@ -75,7 +75,7 @@ RISCVTarget::RISCVTarget() {
 }
 
 void RISCVTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
-void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
+void RISCVTarget::legalizeFunc(MIRFunction& func) const {
     // replace non-zero immediates with li
     auto& constant = func.pools().pools[AddressSpace::Constant];
     auto& vreg = func.pools().pools[AddressSpace::VirtualReg];
@@ -84,7 +84,7 @@ void RISCVTarget::legalizeFunc(GMIRFunction& func) const {
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
-            const auto tryReplace = [&](Operand& op, bool allowZero) {
+            const auto tryReplace = [&](MIROperand& op, bool allowZero) {
                 if(op.addressSpace == AddressSpace::Constant) {
                     const auto val = static_cast<ConstantValue*>(constant.getMetadata(op));
                     MatchContext<Value> matchCtx{ val, nullptr };
@@ -179,7 +179,7 @@ std::string_view getRISCVTextualName(uint32_t idx) noexcept;
 RISCVLoweringInfo::RISCVLoweringInfo()
     : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("m") }, mVReg{ String::get("vr") },
       mFPR{ String::get("f") } {}
-Operand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
+MIROperand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zeroReg = pool.allocate(type);
     if(type->isInteger())
@@ -188,7 +188,7 @@ Operand RISCVLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) c
         reportUnreachable(CMMC_LOCATION());
     return zeroReg;
 }
-String RISCVLoweringInfo::getOperand(const Operand& operand) const {
+String RISCVLoweringInfo::getOperand(const MIROperand& operand) const {
     switch(operand.addressSpace) {
         case RISCVAddressSpace::Constant:
             return mConstant.withID(static_cast<int32_t>(operand.id));
@@ -277,7 +277,7 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
 
             if(offset < passingByRegisterThreshold) {
                 // $a0-$a7，$fa0-$fa7
-                const Operand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
+                const MIROperand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
                 ctx.emitInst<CopyMInst>(val, false, 0, dst, false, 0, static_cast<uint32_t>(size), false);
             } else {
                 ctx.emitInst<CopyMInst>(val, false, 0, stackStorage, true, static_cast<int32_t>(offset),
@@ -291,7 +291,7 @@ void RISCVLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) cons
             return;
         }
         const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
-        Operand val = unusedOperand;
+        MIROperand val = unusedOperand;
         if(ret->isFloatingPoint()) {
             // $fa0
             val = (ret->getFixedSize() == sizeof(float) ? fa032 : fa064);
@@ -322,7 +322,7 @@ RISCVRegisterUsage::RISCVRegisterUsage()
     for(uint32_t idx = 18; idx < 32; ++idx)
         setDiscarded(mFPR, idx);
 }
-void RISCVRegisterUsage::markAsUsed(const Operand& operand) {
+void RISCVRegisterUsage::markAsUsed(const MIROperand& operand) {
     switch(operand.addressSpace) {
         case RISCVAddressSpace::GPR:
             setUsed(mGPR, operand.id);
@@ -336,7 +336,7 @@ void RISCVRegisterUsage::markAsUsed(const Operand& operand) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
+void RISCVRegisterUsage::markAsDiscarded(const MIROperand& operand) {
     switch(operand.addressSpace) {
         case RISCVAddressSpace::GPR:
             setDiscarded(mGPR, operand.id);
@@ -350,7 +350,7 @@ void RISCVRegisterUsage::markAsDiscarded(const Operand& operand) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
+MIROperand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
     switch(src) {
         case RISCVAddressSpace::GPR: {
             const auto freeBits = ~mGPR;
@@ -389,7 +389,7 @@ Operand RISCVRegisterUsage::getFreeRegister(uint32_t src) {
 uint32_t RISCVRegisterUsage::getRegisterClass(const Type* type) const {
     return cmmc::getRegisterClass(type);
 }
-bool RISCVTarget::isCallerSaved(const Operand& op) const noexcept {
+bool RISCVTarget::isCallerSaved(const MIROperand& op) const noexcept {
     if(op.addressSpace == RISCVAddressSpace::GPR) {
         // $t0-$t6
         return (5 <= op.id && op.id <= 7) || (28 <= op.id && op.id <= 31);
@@ -400,7 +400,7 @@ bool RISCVTarget::isCallerSaved(const Operand& op) const noexcept {
     }
     reportUnreachable(CMMC_LOCATION());
 }
-bool RISCVTarget::isCalleeSaved(const Operand& op) const noexcept {
+bool RISCVTarget::isCalleeSaved(const MIROperand& op) const noexcept {
     assert(op.addressSpace == RISCVAddressSpace::GPR || op.addressSpace == RISCVAddressSpace::FPR_S ||
            op.addressSpace == RISCVAddressSpace::FPR_D);
     // $(f)s0-$s11
@@ -435,7 +435,7 @@ void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const
 
         if(offset < passingByRegisterThreshold) {
             // $a0-$a7
-            const Operand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
+            const MIROperand dst{ getRegisterClass(arg->getType()), 10U + static_cast<uint32_t>(offset) / 8U };
             ctx.emitInst<CopyMInst>(dst, false, 0, val, false, 0, static_cast<uint32_t>(size), false);
         } else {
             ctx.emitInst<CopyMInst>(sp, true, static_cast<int32_t>(offset), val, false, 0, static_cast<uint32_t>(size), false);
@@ -443,7 +443,7 @@ void RISCVLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const
     }
 }
 
-void RISCVTarget::addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const {
+void RISCVTarget::addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
     if(targetMachine.get() == "emulator") {
         const auto symbolName = symbol->symbol;
         // spl runtime

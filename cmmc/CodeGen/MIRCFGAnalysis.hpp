@@ -13,34 +13,34 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cstdint>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-struct GMIRBlockEdge final {
-    const GMIRBasicBlock* block;
+struct MIRBlockEdge final {
+    const MIRBasicBlock* block;
     double freq;
 };
 
-struct GMIRBlockCFGInfo final {
-    std::vector<GMIRBlockEdge> predecessors;
-    std::vector<GMIRBlockEdge> successors;
+struct MIRBlockCFGInfo final {
+    std::vector<MIRBlockEdge> predecessors;
+    std::vector<MIRBlockEdge> successors;
 };
 
-class GMIRCFGAnalysisResult final {
-    std::unordered_map<const GMIRBasicBlock*, GMIRBlockCFGInfo> mInfo;
+class CFGAnalysisResult final {
+    std::unordered_map<const MIRBasicBlock*, MIRBlockCFGInfo> mInfo;
 
 public:
-    std::unordered_map<const GMIRBasicBlock*, GMIRBlockCFGInfo>& storage() {
+    std::unordered_map<const MIRBasicBlock*, MIRBlockCFGInfo>& storage() {
         return mInfo;
     }
-    const std::vector<GMIRBlockEdge>& predecessors(const GMIRBasicBlock* block) const;
-    const std::vector<GMIRBlockEdge>& successors(const GMIRBasicBlock* block) const;
+    const std::vector<MIRBlockEdge>& predecessors(const MIRBasicBlock* block) const;
+    const std::vector<MIRBlockEdge>& successors(const MIRBasicBlock* block) const;
 };
 
-GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func);
+CFGAnalysisResult calcCFG(const MIRFunction& func);
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

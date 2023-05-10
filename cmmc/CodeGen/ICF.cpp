@@ -14,15 +14,17 @@
 
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cstddef>
 #include <functional>
 #include <unordered_map>
 #include <variant>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-static bool isIdentical(GMIRBasicBlock* lhs, GMIRBasicBlock* rhs, const GMIRCFGAnalysisResult& cfg) {
+/*
+
+static bool isIdentical(MIRBasicBlock* lhs, MIRBasicBlock* rhs, const GMIRCFGAnalysisResult& cfg) {
     // TODO: check used stack objects?
     auto& inst1 = lhs->instructions();
     auto& inst2 = rhs->instructions();
@@ -48,15 +50,15 @@ static bool isIdentical(GMIRBasicBlock* lhs, GMIRBasicBlock* rhs, const GMIRCFGA
     return true;
 }
 
-void identicalCodeFolding(GMIRFunction& func) {
+void identicalCodeFolding(MIRFunction& func) {
     const auto cfg = calcGMIRCFG(func);
 
-    std::unordered_map<size_t, std::vector<GMIRBasicBlock*>> blocks;
-    std::unordered_map<const GMIRBasicBlock*, GMIRBasicBlock*> replace;
+    std::unordered_map<size_t, std::vector<MIRBasicBlock*>> blocks;
+    std::unordered_map<const MIRBasicBlock*, MIRBasicBlock*> replace;
     for(auto& block : func.blocks()) {
         size_t hash = std::hash<size_t>{}(block->instructions().size());
         for(auto successor : cfg.successors(block.get()))
-            hash ^= std::hash<const GMIRBasicBlock*>{}(successor.block);
+            hash ^= std::hash<const MIRBasicBlock*>{}(successor.block);
         auto& set = blocks[hash];
 
         bool insertNew = true;
@@ -85,4 +87,6 @@ void identicalCodeFolding(GMIRFunction& func) {
         ;
 }
 
-CMMC_NAMESPACE_END
+*/
+
+CMMC_MIR_NAMESPACE_END

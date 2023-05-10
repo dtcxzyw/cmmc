@@ -12,22 +12,24 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <iostream>
 #include <variant>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-const std::vector<GMIRBlockEdge>& GMIRCFGAnalysisResult::predecessors(const GMIRBasicBlock* block) const {
+const std::vector<MIRBlockEdge>& CFGAnalysisResult::predecessors(const MIRBasicBlock* block) const {
     return mInfo.at(block).predecessors;
 }
-const std::vector<GMIRBlockEdge>& GMIRCFGAnalysisResult::successors(const GMIRBasicBlock* block) const {
+const std::vector<MIRBlockEdge>& CFGAnalysisResult::successors(const MIRBasicBlock* block) const {
     return mInfo.at(block).successors;
 }
 
-GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
-    GMIRCFGAnalysisResult result;
+CFGAnalysisResult calcCFG(const MIRFunction& func) {
+    CMMC_UNUSED(func);
+    CFGAnalysisResult result;
+    /*
     auto& map = result.storage();
     auto& blocks = func.blocks();
 
@@ -36,7 +38,7 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
         CMMC_UNUSED(ref);
     }
 
-    const auto connect = [&](const GMIRBasicBlock* src, const GMIRBasicBlock* dst, double freq) {
+    const auto connect = [&](const MIRBasicBlock* src, const MIRBasicBlock* dst, double freq) {
         map[src].successors.push_back({ dst, freq });
         map[dst].predecessors.push_back({ src, freq });
     };
@@ -61,8 +63,9 @@ GMIRCFGAnalysisResult calcGMIRCFG(const GMIRFunction& func) {
                              [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock, 1.0); }, [&](const auto&) {} },
                    lastInst);
     }
+    */
 
     return result;
 }
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

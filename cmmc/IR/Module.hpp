@@ -21,13 +21,15 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class Target;
+namespace mir {
+    class Target;
+}
 
 class Module final {
     Arena mArena;
     Vector<GlobalValue*> mGlobals;
     Vector<Type*> mTypes;
-    const Target* mTarget = nullptr;
+    const mir::Target* mTarget = nullptr;
 
 public:
     Module();
@@ -37,10 +39,10 @@ public:
     Module& operator=(const Module&) = delete;
     Module& operator=(Module&&) = delete;
 
-    void setTarget(const Target* target) {
+    void setTarget(const mir::Target* target) {
         mTarget = target;
     }
-    const Target& getTarget() const noexcept {
+    const mir::Target& getTarget() const noexcept {
         return *mTarget;
     }
 

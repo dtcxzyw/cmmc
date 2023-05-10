@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -33,14 +33,15 @@
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
+/*
 struct StackObjectInterval final {
     uint32_t begin;
     uint32_t end;
 };
 
-using Intervals = std::unordered_map<Operand, StackObjectInterval, OperandHasher>;
+using Intervals = std::unordered_map<MIROperand, StackObjectInterval, MIROperandHasher>;
 struct Slot final {
     uint32_t color;
     uint32_t end;
@@ -50,10 +51,10 @@ struct Slot final {
     }
 };
 
-static std::pair<uint32_t, std::unordered_map<Operand, uint32_t, OperandHasher>>
-calcIntervalPartition(std::vector<std::pair<Operand, StackObjectInterval>>& intervals) {
+static std::pair<uint32_t, std::unordered_map<MIROperand, uint32_t, MIROperandHasher>>
+calcIntervalPartition(std::vector<std::pair<MIROperand, StackObjectInterval>>& intervals) {
     uint32_t colorCount = 0;
-    std::unordered_map<Operand, uint32_t, OperandHasher> color;
+    std::unordered_map<MIROperand, uint32_t, MIROperandHasher> color;
 
     std::sort(intervals.begin(), intervals.end(),
               [](const auto& lhs, const auto& rhs) { return lhs.second.begin < rhs.second.begin; });
@@ -75,25 +76,25 @@ calcIntervalPartition(std::vector<std::pair<Operand, StackObjectInterval>>& inte
         }
     }
 
-    /*
-    std::cerr << "begin" << std::endl;
 
-    for(auto& [operand, interval] : intervals) {
-        std::cerr << 'm' << operand.id << ' ' << interval.begin << '-' << interval.end << ' ' << color.at(operand) << std::endl;
-    }
+    //std::cerr << "begin" << std::endl;
 
-    std::cerr << "end" << std::endl;
-    */
+    //for(auto& [operand, interval] : intervals) {
+    //    std::cerr << 'm' << operand.id << ' ' << interval.begin << '-' << interval.end << ' ' << color.at(operand) << std::endl;
+    //}
 
-    return { colorCount, std::move(color) };
+    //std::cerr << "end" << std::endl;
+
+
+return { colorCount, std::move(color) };
 }
 
-static std::unordered_map<Operand, uint32_t, OperandHasher>
-renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLayout& dataLayout, OptimizationLevel optLevel) {
-    std::unordered_map<Operand, uint32_t, OperandHasher> mapping;  // same size & alignment
+static std::unordered_map<MIROperand, uint32_t, MIROperandHasher>
+renameStackObjects(MIRFunction& func, const VirtualRegPool& stack, const DataLayout& dataLayout, OptimizationLevel optLevel) {
+    std::unordered_map<MIROperand, uint32_t, MIROperandHasher> mapping;  // same size & alignment
 
     if(optLevel >= OptimizationLevel::O1) {
-        const auto getStorageKey = [&](const Operand& op) {
+        const auto getStorageKey = [&](const MIROperand& op) {
             const auto type = stack.getType(op);
             const auto size = type->getSize(dataLayout);
             const auto alignment = type->getAlignment(dataLayout);
@@ -104,9 +105,9 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
         // local reuse for spilled regs
 
         {
-            std::unordered_set<Operand, OperandHasher> uniqueStackObjects;
+            std::unordered_set<MIROperand, MIROperandHasher> uniqueStackObjects;
             {
-                std::unordered_map<Operand, GMIRBasicBlock*, OperandHasher> ownerOfStackObjectsForSpilledRegs;
+                std::unordered_map<MIROperand, MIRBasicBlock*, MIROperandHasher> ownerOfStackObjectsForSpilledRegs;
                 for(auto& block : func.blocks()) {
                     for(auto& stackObject : block->usedStackObjects()) {
                         assert(stackObject.addressSpace == AddressSpace::Stack);
@@ -152,7 +153,7 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
                 }
 
                 uint32_t id = 0;
-                auto updateInterval = [&](const Operand& obj) {
+                auto updateInterval = [&](const MIROperand& obj) {
                     if(obj.addressSpace != AddressSpace::Stack)
                         return;
                     if(auto iter = intervals.find(obj); iter != intervals.cend()) {
@@ -173,7 +174,7 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
                 }
 
                 // group by size & alignments
-                std::unordered_map<uint32_t, std::vector<std::pair<Operand, StackObjectInterval>>> groups;
+                std::unordered_map<uint32_t, std::vector<std::pair<MIROperand, StackObjectInterval>>> groups;
                 for(auto& [obj, interval] : intervals) {
                     groups[getStorageKey(obj)].emplace_back(obj, interval);
                 }
@@ -265,7 +266,7 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
             colorBase += colorCount;
         }
 
-        std::unordered_map<Operand, uint32_t, OperandHasher> newMapping;
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> newMapping;
         for(auto& [obj, id] : mapping) {
             if(stack.getType(obj)->isStackStorage()) {
                 newMapping.emplace(obj, colorBase++);
@@ -294,10 +295,10 @@ renameStackObjects(GMIRFunction& func, const VirtualRegPool& stack, const DataLa
     return mapping;
 }
 
-void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel) {
+void allocateStackObjects(MIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel) {
     // func.dump(std::cerr, target);
 
-    std::unordered_map<Operand, size_t, OperandHasher> usedStackObjects;
+    std::unordered_map<MIROperand, size_t, MIROperandHasher> usedStackObjects;
     size_t allocationBase = 0;
 
     const auto alignTo = [&](size_t alignment) { allocationBase = (allocationBase + alignment - 1) / alignment * alignment; };
@@ -357,7 +358,7 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     }
 
     const auto sp = target.getStackPointer();
-    const auto replaceStack = [&](Operand& op, int32_t& offset) {
+    const auto replaceStack = [&](MIROperand& op, int32_t& offset) {
         if(op == sp) {
             // params
             offset += static_cast<int32_t>(allocationBase);
@@ -437,5 +438,6 @@ void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFunc
     for(auto& block : func.blocks())
         block->usedStackObjects() = {};
 }
+*/
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

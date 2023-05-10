@@ -13,7 +13,7 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cstdint>
 #include <memory>
 #include <string_view>
@@ -21,41 +21,21 @@
 #include <unordered_set>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-class TargetRegisterUsage {
-public:
-    virtual ~TargetRegisterUsage() = default;
-    // virtual uint32_t estimateMigrationCost(uint32_t src, uint32_t dst) const = 0;
-    virtual void markAsUsed(const Operand& operand) = 0;
-    virtual void markAsDiscarded(const Operand& operand) = 0;
-    virtual Operand getFreeRegister(uint32_t src) = 0;
-    virtual uint32_t getRegisterClass(const Type* type) const = 0;
-};
-
-inline void setUsed(uint32_t& val, uint32_t idx) {
-    assert(!(val & (1U << idx)));
-    val |= (1U << idx);
-}
-
-inline void setDiscarded(uint32_t& val, uint32_t idx) {
-    assert(val & (1U << idx));
-    val &= ~(1U << idx);
-}
-
-using IPRAInfo = std::unordered_set<Operand, OperandHasher>;
+using IPRAInfo = std::unordered_set<MIROperand, MIROperandHasher>;
 class Target;
 
 class IPRAUsageCache final {
-    std::unordered_map<GMIRSymbol*, IPRAInfo> mCache;
+    std::unordered_map<MIRRelocable*, IPRAInfo> mCache;
 
 public:
-    void add(const Target& target, GMIRSymbol* symbol, GMIRFunction& func);
-    void add(GMIRSymbol* symbol, IPRAInfo info);
-    const IPRAInfo* query(GMIRSymbol* calleeFunc) const;
+    void add(const Target& target, MIRRelocable* symbol, MIRFunction& func);
+    void add(MIRRelocable* symbol, IPRAInfo info);
+    const IPRAInfo* query(MIRRelocable* calleeFunc) const;
 };
 
-using RegisterAllocFunc = void (*)(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
+using RegisterAllocFunc = void (*)(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -74,6 +54,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(GMIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
+void assignRegisters(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

@@ -17,7 +17,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
 #include <unordered_map>
@@ -25,10 +25,12 @@
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-bool redirectGoto(GMIRFunction& func) {
-    std::unordered_map<const GMIRBasicBlock*, const GMIRBasicBlock*> redirect;
+/*
+
+bool redirectGoto(MIRFunction& func) {
+    std::unordered_map<const MIRBasicBlock*, const MIRBasicBlock*> redirect;
     for(auto& block : func.blocks()) {
         if(block->instructions().size() != 1)
             continue;
@@ -43,7 +45,7 @@ bool redirectGoto(GMIRFunction& func) {
         return false;
 
     bool modified = false;
-    auto tryReplace = [&](const GMIRBasicBlock*& targetBlock) {
+    auto tryReplace = [&](const MIRBasicBlock*& targetBlock) {
         if(auto iter = redirect.find(targetBlock); iter != redirect.cend()) {
             targetBlock = iter->second;
             modified = true;
@@ -63,11 +65,11 @@ bool redirectGoto(GMIRFunction& func) {
     return modified;
 }
 
-static bool removeUnreachableCode(GMIRFunction& func) {
-    std::unordered_set<const GMIRBasicBlock*> visit;
-    std::queue<GMIRBasicBlock*> q;
-    std::unordered_map<GMIRBasicBlock*, GMIRBasicBlock*> nextMap;
-    GMIRBasicBlock* prev = nullptr;
+static bool removeUnreachableCode(MIRFunction& func) {
+    std::unordered_set<const MIRBasicBlock*> visit;
+    std::queue<MIRBasicBlock*> q;
+    std::unordered_map<MIRBasicBlock*, MIRBasicBlock*> nextMap;
+    MIRBasicBlock* prev = nullptr;
     for(auto& block : func.blocks()) {
         if(prev)
             nextMap.emplace(prev, block.get());
@@ -98,13 +100,13 @@ static bool removeUnreachableCode(GMIRFunction& func) {
             std::visit(Overload{ [&](const RetMInst&) { stop = true; },
                                  [&](const BranchMInst& inst) {
                                      if(visit.emplace(inst.targetBlock).second) {
-                                         q.push(const_cast<GMIRBasicBlock*>(inst.targetBlock));  // NOLINT
+                                         q.push(const_cast<MIRBasicBlock*>(inst.targetBlock));  // NOLINT
                                      }
                                      stop = true;
                                  },
                                  [&](const BranchCompareMInst& inst) {
                                      if(visit.emplace(inst.targetBlock).second) {
-                                         q.push(const_cast<GMIRBasicBlock*>(inst.targetBlock));  // NOLINT
+                                         q.push(const_cast<MIRBasicBlock*>(inst.targetBlock));  // NOLINT
                                      }
                                  },
                                  [&](const UnreachableMInst&) { stop = true; }, [](const auto&) {} },
@@ -130,8 +132,8 @@ static bool removeUnreachableCode(GMIRFunction& func) {
     return modified || oldCount != newCount;
 }
 
-static bool removeUnusedLabels(GMIRFunction& func) {
-    std::unordered_set<const GMIRBasicBlock*> usedLabels;
+static bool removeUnusedLabels(MIRFunction& func) {
+    std::unordered_set<const MIRBasicBlock*> usedLabels;
     usedLabels.insert(func.blocks().front().get());
 
     for(auto& block : func.blocks()) {
@@ -145,7 +147,7 @@ static bool removeUnusedLabels(GMIRFunction& func) {
     if(usedLabels.size() == func.blocks().size())
         return false;
 
-    GMIRBasicBlock* lastAvailable = nullptr;
+    MIRBasicBlock* lastAvailable = nullptr;
 
     for(auto& block : func.blocks()) {
         if(usedLabels.count(block.get())) {
@@ -168,7 +170,7 @@ static bool removeUnusedLabels(GMIRFunction& func) {
     return true;
 }
 
-static bool removeGotoNext(GMIRFunction& func) {
+static bool removeGotoNext(MIRFunction& func) {
     bool modified = false;
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
         const auto next = std::next(iter);
@@ -190,10 +192,10 @@ static bool removeGotoNext(GMIRFunction& func) {
     return modified;
 }
 
-static bool removeEmptyBlocks(GMIRFunction& func) {
-    std::unordered_map<const GMIRBasicBlock*, const GMIRBasicBlock*> redirects;
-    std::vector<const GMIRBasicBlock*> currentEmptySet;
-    const auto commit = [&](GMIRBasicBlock* target) {
+static bool removeEmptyBlocks(MIRFunction& func) {
+    std::unordered_map<const MIRBasicBlock*, const MIRBasicBlock*> redirects;
+    std::vector<const MIRBasicBlock*> currentEmptySet;
+    const auto commit = [&](MIRBasicBlock* target) {
         for(auto block : currentEmptySet) {
             redirects.emplace(block, target);
         }
@@ -214,7 +216,7 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
 
     for(auto& block : func.blocks()) {
         for(auto& instruction : block->instructions()) {
-            const auto replaceTarget = [&](const GMIRBasicBlock*& blockRef) {
+            const auto replaceTarget = [&](const MIRBasicBlock*& blockRef) {
                 const auto iter = redirects.find(blockRef);
                 if(iter != redirects.cend())
                     blockRef = iter->second;
@@ -230,7 +232,7 @@ static bool removeEmptyBlocks(GMIRFunction& func) {
     return !redirects.empty();
 }
 
-static bool conditional2Unconditional(GMIRFunction& func) {
+static bool conditional2Unconditional(MIRFunction& func) {
     bool modified = false;
     for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
         const auto next = std::next(iter);
@@ -254,7 +256,7 @@ static bool conditional2Unconditional(GMIRFunction& func) {
     return modified;
 }
 
-void simplifyCFG(GMIRFunction& func, const Target& target) {
+void simplifyCFG(MIRFunction& func, const Target& target) {
     while(true) {
         bool modified = false;
         modified |= removeUnreachableCode(func);
@@ -269,7 +271,7 @@ void simplifyCFG(GMIRFunction& func, const Target& target) {
     }
 }
 
-void simplifyCFGWithUniqueTerminator(GMIRFunction& func) {
+void simplifyCFGWithUniqueTerminator(MIRFunction& func) {
     while(true) {
         bool modified = false;
         modified |= conditional2Unconditional(func);
@@ -280,4 +282,6 @@ void simplifyCFGWithUniqueTerminator(GMIRFunction& func) {
     }
 }
 
-CMMC_NAMESPACE_END
+*/
+
+CMMC_MIR_NAMESPACE_END

@@ -15,7 +15,7 @@
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
-#include <cmmc/CodeGen/SubTarget.hpp>
+#include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
@@ -24,52 +24,47 @@
 #include <memory>
 #include <string_view>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-class GMIRFunction;
-struct GMIRModule;
+class MIRFunction;
+struct MIRModule;
 class IPRAUsageCache;
-struct GMIRSymbol;
+struct MIRRelocable;
 
 class Target {
 public:
     virtual ~Target() = default;
 
     [[nodiscard]] virtual const DataLayout& getDataLayout() const noexcept = 0;
-    [[nodiscard]] virtual const LoweringInfo& getTargetLoweringInfo() const noexcept = 0;
-    [[nodiscard]] virtual const SubTarget& getSubTarget() const noexcept = 0;
-    virtual bool builtinRA(GMIRFunction& mfunc) const {
-        CMMC_UNUSED(mfunc);
-        return false;
-    }
-    virtual bool builtinSA(GMIRFunction& mfunc) const {
-        CMMC_UNUSED(mfunc);
-        return false;
-    }
-    [[nodiscard]] virtual std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const = 0;
-    virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const = 0;
-    virtual void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const = 0;
-    [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept {
-        CMMC_UNUSED(inst);
-        return true;
-    }
-    virtual void legalizeFunc(GMIRFunction& func) const = 0;
-    virtual void postLegalizeFunc(GMIRFunction& func) const {
-        CMMC_UNUSED(func);
-    }
-    virtual void emitAssembly(const GMIRModule& module, std::ostream& out) const = 0;
+    [[nodiscard]] virtual const TargetScheduleModel& getScheduleModel() const noexcept;
+    virtual bool builtinRA(MIRFunction& mfunc) const;
+    virtual bool builtinSA(MIRFunction& mfunc) const;
+    virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const;
+    virtual void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const;
+    [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept;
+    virtual void legalizeFunc(MIRFunction& func) const;
+    virtual void postLegalizeFunc(MIRFunction& func) const;
+    virtual void emitAssembly(const MIRModule& module, std::ostream& out) const;
 
     // TODO: move to frame info
-    [[nodiscard]] virtual Operand getStackPointer() const noexcept = 0;
-    [[nodiscard]] virtual Operand getReturnAddress() const noexcept = 0;
-    [[nodiscard]] virtual bool isCallerSaved(const Operand& op) const noexcept = 0;
-    [[nodiscard]] virtual bool isCalleeSaved(const Operand&) const noexcept = 0;
+    /*
+    [[nodiscard]] virtual MIROperand getStackPointer() const noexcept = 0;
+    [[nodiscard]] virtual MIROperand getReturnAddress() const noexcept = 0;
+    [[nodiscard]] virtual bool isCallerSaved(const MIROperand& op) const noexcept = 0;
+    [[nodiscard]] virtual bool isCalleeSaved(const MIROperand&) const noexcept = 0;
     [[nodiscard]] virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
     [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept = 0;
-    virtual void addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const {
+    virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
         CMMC_UNUSED(symbol);
         CMMC_UNUSED(infoIPRA);
     }
+    */
+};
+
+struct CodeGenContext final {
+    const Target& target;
+    const TargetScheduleModel& scheduleModel;
+    const DataLayout& dataLayout;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;
@@ -91,4 +86,4 @@ public:
         return 0;                                                                            \
     }();
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

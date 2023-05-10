@@ -1654,9 +1654,11 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         if(lastNotAssigned == offset)
             return end;
         const auto totalSize = static_cast<intmax_t>(scalarSize * (offset - lastNotAssigned));
-        const auto& subTarget = ctx.getModule()->getTarget().getSubTarget();
+        // const auto& subTarget = ctx.getModule()->getTarget().getSubTarget();
+        // TODO: use schedule model
+        constexpr intmax_t threshold = 256;
 
-        if(subTarget.inlineMemOp(static_cast<size_t>(totalSize))) {
+        if(/*subTarget.inlineMemOp(static_cast<size_t>(totalSize))*/ totalSize <= threshold) {
             while(lastNotAssigned != offset) {
                 ctx.makeOp<StoreInst>(getAddress(lastNotAssigned), zero);
                 ++lastNotAssigned;
@@ -1963,10 +1965,12 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
     assert(structType->isStruct());
     const auto& target = mModule->getTarget();
     const auto& dataLayout = target.getDataLayout();
-    const auto& subTarget = target.getSubTarget();
+    // const auto& subTarget = target.getSubTarget();
+    // TODO: use schedule model
+    constexpr uint32_t threshold = 256;
 
     const auto size = structType->getSize(dataLayout);
-    if(subTarget.inlineMemOp(size)) {
+    if(/*subTarget.inlineMemOp(size)*/ size <= threshold) {
         auto recursiveCopy = [&](auto&& self, Value* dstPtr, Value* srcPtr) -> void {
             const auto type = dstPtr->getType()->as<PointerType>()->getPointee();
             if(type->isPrimitive()) {

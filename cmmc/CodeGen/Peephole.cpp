@@ -13,29 +13,31 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
 // TODO: CSE
-// bool machineInstCSE(GMIRFunction& func) {}
-// bool constantPropagation(GMIRFunction& func, const Target& target) {}
+// bool machineInstCSE(MIRFunction& func) {}
+// bool constantPropagation(MIRFunction& func, const Target& target) {}
 
-bool removeIndirectCopy(GMIRFunction& func) {
+/*
+
+bool removeIndirectCopy(MIRFunction& func) {
     bool modified = false;
 
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
         // TODO: multiple targets
-        std::unordered_map<Operand, Operand, OperandHasher> regValue;
-        std::unordered_map<Operand, std::unordered_set<Operand, OperandHasher>, OperandHasher> invMap;
+        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> regValue;
+        std::unordered_map<MIROperand, std::unordered_set<MIROperand, MIROperandHasher>, MIROperandHasher> invMap;
 
-        const auto invalidateReg = [&](Operand reg) {
+        const auto invalidateReg = [&](MIROperand reg) {
             if(auto iter = invMap.find(reg); iter != invMap.cend()) {
                 for(auto ref : iter->second)
                     regValue.erase(ref);
@@ -45,14 +47,14 @@ bool removeIndirectCopy(GMIRFunction& func) {
             regValue.erase(reg);
         };
 
-        const auto replaceUse = [&](Operand& reg) {
+        const auto replaceUse = [&](MIROperand& reg) {
             if(auto iter = regValue.find(reg); iter != regValue.cend()) {
                 reg = iter->second;
                 modified = true;
             }
         };
 
-        const auto updateMap = [&](Operand reg, Operand value) {
+        const auto updateMap = [&](MIROperand reg, MIROperand value) {
             invalidateReg(reg);
 
             regValue[reg] = value;
@@ -73,7 +75,7 @@ bool removeIndirectCopy(GMIRFunction& func) {
                 } else if(!copy.indirectDst)
                     invalidateReg(copy.dst);
             } else if(std::holds_alternative<CallMInst>(inst)) {
-                std::vector<Operand> nonVReg;
+                std::vector<MIROperand> nonVReg;
                 for(auto [reg, val] : regValue) {
                     CMMC_UNUSED(val);
                     if(reg.addressSpace != AddressSpace::VirtualReg)
@@ -84,7 +86,7 @@ bool removeIndirectCopy(GMIRFunction& func) {
             } else {
                 // update dirty
                 // TODO: replace use
-                forEachDefOperands(inst, [&](Operand& dst) { invalidateReg(dst); });
+                forEachDefOperands(inst, [&](MIROperand& dst) { invalidateReg(dst); });
             }
         }
     }
@@ -96,12 +98,13 @@ bool removeIndirectCopy(GMIRFunction& func) {
     return modified;
 }
 
-bool genericPeepholeOpt(GMIRFunction& func, const Target& target) {
+bool genericPeepholeOpt(MIRFunction& func, const Target& target) {
     bool modified = false;
     modified |= eliminateStackLoads(func, target);
     modified |= removeIndirectCopy(func);
     modified |= removeUnusedInsts(func);
     return modified;
 }
+*/
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

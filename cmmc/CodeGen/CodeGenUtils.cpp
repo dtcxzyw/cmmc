@@ -13,7 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -27,12 +27,14 @@
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-bool removeUnusedInsts(GMIRFunction& func) {
-    std::unordered_map<Operand, std::vector<GMIRInst*>, OperandHasher> writers;
-    std::queue<GMIRInst*> q;
-    const auto hasCustomReg = [](const Operand& op) { return op.addressSpace >= AddressSpace::Custom; };
+/*
+
+bool removeUnusedInsts(MIRFunction& func) {
+    std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> writers;
+    std::queue<MIRInst*> q;
+    const auto hasCustomReg = [](const MIROperand& op) { return op.reg(); };
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
@@ -60,7 +62,7 @@ bool removeUnusedInsts(GMIRFunction& func) {
         auto& instruction = *q.front();
         q.pop();
 
-        auto popSrc = [&](const Operand& operand) {
+        auto popSrc = [&](const MIROperand& operand) {
             if(auto iter = writers.find(operand); iter != writers.cend()) {
                 for(auto inst : iter->second)
                     q.push(inst);
@@ -96,7 +98,7 @@ bool removeUnusedInsts(GMIRFunction& func) {
                                popSrc(op);
                        },
                        [&](const CallMInst& inst) {
-                           if(auto* dst = std::get_if<Operand>(&inst.callee))
+                           if(auto* dst = std::get_if<MIROperand>(&inst.callee))
                                popSrc(*dst);
                        },
                        [](const GlobalAddressMInst&) {},
@@ -104,7 +106,7 @@ bool removeUnusedInsts(GMIRFunction& func) {
                    },
                    instruction);
     }
-    std::unordered_set<GMIRInst*> remove;
+    std::unordered_set<MIRInst*> remove;
     for(auto& [op, writerList] : writers) {
         if(op.addressSpace != AddressSpace::VirtualReg)
             continue;
@@ -119,14 +121,14 @@ bool removeUnusedInsts(GMIRFunction& func) {
     return !remove.empty();
 }
 
-void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor) {
+void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor) {
     for(auto& param : func.parameters())
         functor(param);
     for(auto& block : func.blocks())
         forEachOperands(*block, functor);
 }
 
-void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+void forEachOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](CopyMInst& inst) {
                                 functor(inst.src);
@@ -158,7 +160,7 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
                                  functor(inst.rhs);
                              },
                              [&](CallMInst& inst) {
-                                 if(auto* dst = std::get_if<Operand>(&inst.callee))
+                                 if(auto* dst = std::get_if<MIROperand>(&inst.callee))
                                      functor(*dst);
 
                                  functor(inst.dst);
@@ -173,7 +175,7 @@ void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op
     }
 }
 
-void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor) {
+void forEachDefOperands(MIRInst& instruction, const std::function<void(MIROperand& op)>& functor) {
     std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
                          [&](auto& inst) { functor(inst.dst); },
                          [&](CopyMInst& inst) {
@@ -183,18 +185,18 @@ void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand&
                instruction);
 }
 
-void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor) {
+void forEachDefOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
         forEachDefOperands(instruction, functor);
     }
 }
 
-void forEachUseOperands(GMIRFunction& func, const std::function<void(GMIRInst& inst, Operand& op)>& functor) {
+void forEachUseOperands(MIRFunction& func, const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
     for(auto& block : func.blocks())
         forEachUseOperands(*block, functor);
 }
 
-void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst& inst, Operand& op)>& functor) {
+void forEachUseOperands(MIRBasicBlock& block, const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
     for(auto& instruction : block.instructions()) {
         std::visit(Overload{ [&](CopyMInst& inst) {
                                 functor(instruction, inst.src);
@@ -224,7 +226,7 @@ void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst
     }
 }
 
-void removeIdentityCopies(GMIRFunction& func) {
+void removeIdentityCopies(MIRFunction& func) {
     for(auto& block : func.blocks()) {
         block->instructions().remove_if([&](const auto& inst) {
             if(std::holds_alternative<CopyMInst>(inst)) {
@@ -239,14 +241,14 @@ void removeIdentityCopies(GMIRFunction& func) {
     }
 }
 
-void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
+void dumpAssembly(std::ostream& out, const MIRModule& module, const std::function<void()>& emitData,
                   const std::function<void()>& emitText,
-                  const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
+                  const std::function<void(const MIRFunction&, const std::unordered_map<const MIRRelocable*, String>&,
                                            LabelAllocator&)>& functionDumper) {
     LabelAllocator allocator;
     using namespace std::string_literals;
 
-    std::unordered_map<const GMIRSymbol*, String> symbolMap;
+    std::unordered_map<const MIRRelocable*, String> symbolMap;
 
     for(auto& symbol : module.symbols)
         symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
@@ -256,8 +258,8 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
 
     out << ".data\n"sv;
     emitData();
-    const auto dumpSymbol = [&](const GMIRSymbol& symbol) {
-        if(!std::holds_alternative<GMIRFunction>(symbol.def))
+    const auto dumpSymbol = [&](const MIRRelocable& symbol) {
+        if(!std::holds_alternative<MIRFunction>(symbol.def))
             out << ".align " << symbol.alignment << std::endl;
         if(symbol.linkage == Linkage::Global)
             out << ".globl "sv << symbol.symbol << '\n';
@@ -279,7 +281,7 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     out << ".text\n"sv;
     emitText();
     for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRFunction& func) {
+        std::visit(Overload{ [&](const MIRFunction& func) {
                                 dumpSymbol(symbol);
                                 functionDumper(func, symbolMap, allocator);
                             },
@@ -288,7 +290,7 @@ void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::functi
     }
 }
 
-void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
+void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size) {
     const auto& constants = func.pools().pools[AddressSpace::Constant];
     for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
@@ -302,7 +304,7 @@ void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
             }
         }
 
-        forEachUseOperands(*block, [&](GMIRInst&, Operand& src) {
+        forEachUseOperands(*block, [&](MIRInst&, MIROperand& src) {
             if(src.addressSpace != AddressSpace::Constant)
                 return;
             const auto constant = static_cast<ConstantValue*>(constants.getMetadata(src));
@@ -312,7 +314,7 @@ void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size) {
     }
 }
 
-void legalizeStoreWithConstants(GMIRFunction& func) {
+void legalizeStoreWithConstants(MIRFunction& func) {
     auto& constant = func.pools().pools[AddressSpace::Constant];
     auto& vreg = func.pools().pools[AddressSpace::VirtualReg];
 
@@ -344,7 +346,7 @@ void legalizeStoreWithConstants(GMIRFunction& func) {
     }
 }
 
-bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
+bool eliminateStackLoads(MIRFunction& func, const Target& target) {
     const auto stackPointer = target.getStackPointer();
     if(stackPointer == unusedOperand)
         return false;
@@ -356,17 +358,17 @@ bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
         auto& instructions = block->instructions();
 
         // TODO: multiple targets
-        std::unordered_map<int32_t, Operand> stack2Reg;
-        std::unordered_map<Operand, int32_t, OperandHasher> invMap;
+        std::unordered_map<int32_t, MIROperand> stack2Reg;
+        std::unordered_map<MIROperand, int32_t, MIROperandHasher> invMap;
 
-        auto invalidateReg = [&](Operand reg) {
+        auto invalidateReg = [&](MIROperand reg) {
             if(auto iter = invMap.find(reg); iter != invMap.cend()) {
                 stack2Reg.erase(iter->second);
                 invMap.erase(iter);
             }
         };
 
-        auto updateMap = [&](Operand reg, int32_t offset) {
+        auto updateMap = [&](MIROperand reg, int32_t offset) {
             invalidateReg(reg);
 
             stack2Reg[offset] = reg;
@@ -374,7 +376,7 @@ bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
         };
 
         const auto reset = [&](bool call) {
-            std::vector<std::pair<const int32_t, Operand>> dirtyStackSlots;
+            std::vector<std::pair<const int32_t, MIROperand>> dirtyStackSlots;
             for(auto& pair : stack2Reg) {
                 if(!privateStackOffsets.count(pair.first) ||
                    (call && (pair.second.addressSpace >= AddressSpace::Custom && target.isCallerSaved(pair.second)))) {
@@ -421,7 +423,7 @@ bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
                 reset(true);
             } else {
                 // update dirty
-                forEachDefOperands(inst, [&](Operand& dst) { invalidateReg(dst); });
+                forEachDefOperands(inst, [&](MIROperand& dst) { invalidateReg(dst); });
             }
         }
     }
@@ -432,10 +434,10 @@ bool eliminateStackLoads(GMIRFunction& func, const Target& target) {
 }
 
 // TODO: fix it for mips/riscv backends
-void applySSAPropagation(GMIRFunction& func) {
+void applySSAPropagation(MIRFunction& func) {
     while(true) {
-        std::unordered_map<Operand, Operand, OperandHasher> writer;
-        const auto count = [&](const Operand& op, const Operand& val) {
+        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> writer;
+        const auto count = [&](const MIROperand& op, const MIROperand& val) {
             if(op.addressSpace == AddressSpace::VirtualReg) {
                 if(const auto iter = writer.find(op); iter != writer.cend()) {
                     iter->second = unusedOperand;
@@ -469,7 +471,7 @@ void applySSAPropagation(GMIRFunction& func) {
                            inst);
             }
 
-        std::unordered_map<Operand, Operand, OperandHasher> replace;
+        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> replace;
         for(auto& [op, val] : writer) {
             if(val != unusedOperand) {
                 replace.emplace(op, val);
@@ -480,7 +482,7 @@ void applySSAPropagation(GMIRFunction& func) {
             break;
 
         bool modified = false;
-        forEachUseOperands(func, [&](GMIRInst&, Operand& operand) {
+        forEachUseOperands(func, [&](MIRInst&, MIROperand& operand) {
             if(const auto iter = replace.find(operand); iter != replace.cend()) {
                 operand = iter->second;
                 modified = true;
@@ -493,5 +495,6 @@ void applySSAPropagation(GMIRFunction& func) {
             break;
     }
 }
+*/
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

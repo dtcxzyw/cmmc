@@ -13,7 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -67,7 +67,7 @@ std::string_view getRISCVTextualName(uint32_t idx) noexcept {
     return name[idx];
 }
 
-static void printOperand(std::ostream& out, const Operand& operand, const VirtualRegPool& constantPool) {
+static void printOperand(std::ostream& out, const MIROperand& operand, const VirtualRegPool& constantPool) {
     switch(operand.addressSpace) {
         case RISCVAddressSpace::Constant: {
             const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
@@ -95,22 +95,22 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
     }
 }
 
-static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap,
+static void emitFunc(std::ostream& out, const MIRFunction& func, const std::unordered_map<const MIRRelocable*, String>& symbolMap,
                      LabelAllocator& allocator) {
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    std::unordered_map<const MIRBasicBlock*, String> labelMap;
     auto baseName = String::get(".BB"sv);
     for(auto& block : func.blocks())
         labelMap.emplace(block.get(), allocator.allocate(baseName));
 
     auto& constantPool = func.pools().pools[RISCVAddressSpace::Constant];
-    const auto dumpOperand = [&](const Operand& operand) { printOperand(out, operand, constantPool); };
+    const auto dumpOperand = [&](const MIROperand& operand) { printOperand(out, operand, constantPool); };
 
     for(auto& block : func.blocks()) {
         const auto& label = labelMap.at(block.get());
         if(&block != &func.blocks().front())
             out << label << ":\n"sv;
 
-        const auto isZero = [&](const Operand& op) {
+        const auto isZero = [&](const MIROperand& op) {
             if(op.addressSpace == RISCVAddressSpace::Constant) {
                 const auto value = static_cast<ConstantValue*>(constantPool.getMetadata(op));
                 MatchContext<Value> matchCtx{ value, nullptr };
@@ -379,11 +379,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      dumpOperand(reversed ? cmp.lhs : cmp.rhs);
                                  },
                                  [&](const CallMInst& call) {
-                                     if(auto dst = std::get_if<Operand>(&call.callee)) {
+                                     if(auto dst = std::get_if<MIROperand>(&call.callee)) {
                                          out << "call "sv;
                                          dumpOperand(*dst);
                                      } else {
-                                         out << "call "sv << symbolMap.find(std::get<GMIRSymbol*>(call.callee))->second;
+                                         out << "call "sv << symbolMap.find(std::get<MIRRelocable*>(call.callee))->second;
                                      }
                                  },
                                  [&](const RetMInst&) { out << "ret"sv; },
@@ -399,7 +399,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
 
 extern StringOpt targetMachine;  // NOLINT
 
-void RISCVTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
+void RISCVTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
     bool hasEmuRuntime = false;
     if(targetMachine.get() == "emulator") {
         hasEmuRuntime = true;
@@ -416,9 +416,8 @@ void RISCVTarget::emitAssembly(const GMIRModule& module, std::ostream& out) cons
                 out << emuRuntimeText << '\n';
             }
         },
-        [&](const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap, LabelAllocator& allocator) {
-            emitFunc(out, func, symbolMap, allocator);
-        });
+        [&](const MIRFunction& func, const std::unordered_map<const MIRRelocable*, String>& symbolMap,
+            LabelAllocator& allocator) { emitFunc(out, func, symbolMap, allocator); });
 }
 
 CMMC_NAMESPACE_END

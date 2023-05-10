@@ -12,19 +12,22 @@
     limitations under the License.
 */
 
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
-#include <cmmc/CodeGen/SubTarget.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
+#include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <iostream>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
 // static void scheduleBlock() {}
 
-void schedule(GMIRFunction& func, const Target& target, bool preRA) {
+void schedule(MIRFunction& func, const Target& target, bool preRA) {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(target);
     CMMC_UNUSED(preRA);
 
     return;
+    /*
     const auto& subTarget = target.getSubTarget();
     CMMC_UNUSED(subTarget);
     const auto cfg = calcGMIRCFG(func);
@@ -33,6 +36,7 @@ void schedule(GMIRFunction& func, const Target& target, bool preRA) {
         assert(block->verify(std::cerr, true));
         CMMC_UNUSED(block);
     }
+    */
 }
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

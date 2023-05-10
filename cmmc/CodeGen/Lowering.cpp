@@ -19,8 +19,8 @@
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
@@ -45,36 +45,37 @@
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-Operand LoweringContext::getZero(const Type* type) {
+MIROperand LoweringContext::getZero(const Type* type) {
+    /*
     const auto iter = mZeros.find(type);
     if(iter != mZeros.cend())
         return iter->second;
     const auto zero = mModule.target.getTargetLoweringInfo().getZeroImpl(*this, type);
     return mZeros.emplace(type, zero).first->second;
+    */
+    CMMC_UNUSED(type);
+    reportNotImplemented(CMMC_LOCATION());
 }
 
-LoweringContext::LoweringContext(GMIRModule& module, std::unordered_map<Block*, GMIRBasicBlock*>& blockMap,
-                                 std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap,
-                                 std::unordered_map<Value*, Operand>& valueMap, TemporaryPools& pools)
-    : mModule{ module }, mDataLayout{ module.target.getDataLayout() }, mBlockMap{ blockMap },
-      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mPools{ pools }, mCurrentBasicBlock{ nullptr } {}
-
-VirtualRegPool& LoweringContext::getAllocationPool(uint32_t addressSpace) noexcept {
-    assert(addressSpace < std::size(mPools.pools));
-    return mPools.pools[addressSpace];
-}
-GMIRModule& LoweringContext::getModule() const noexcept {
+LoweringContext::LoweringContext(MIRModule& module, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
+                                 std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
+                                 std::unordered_map<Value*, MIROperand>& valueMap)
+    : mModule{ module }, mDataLayout{ module.getTarget().getDataLayout() }, mBlockMap{ blockMap },
+      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {}
+MIRModule& LoweringContext::getModule() const noexcept {
     return mModule;
 }
-GMIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
+MIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
     return mBlockMap.at(block);
 }
-Operand LoweringContext::mapOperand(Value* operand) {
+MIROperand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
     if(iter != mValueMap.cend())
         return iter->second;
+    reportNotImplemented(CMMC_LOCATION());
+    /*
     if(operand->isGlobal()) {
         // la
         const auto ptr = getAllocationPool(AddressSpace::VirtualReg).allocate(operand->getType());
@@ -86,7 +87,7 @@ Operand LoweringContext::mapOperand(Value* operand) {
         reportUnreachable(CMMC_LOCATION());
     }
     // constant
-    Operand reg = unusedOperand;
+    MIROperand reg = unusedOperand;
     // TODO: create constant for integers
     if(operand->getType()->isFloatingPoint()) {
         // create constant for fp
@@ -99,50 +100,56 @@ Operand LoweringContext::mapOperand(Value* operand) {
     }
     mValueMap.emplace(operand, reg);
     return reg;
+    */
 }
-void LoweringContext::setCurrentBasicBlock(GMIRBasicBlock* block) noexcept {
+void LoweringContext::setCurrentBasicBlock(MIRBasicBlock* block) noexcept {
     mCurrentBasicBlock = block;
 }
-GMIRSymbol* LoweringContext::mapGlobal(GlobalValue* global) const {
+MIRGlobal* LoweringContext::mapGlobal(GlobalValue* global) const {
     return mGlobalMap.at(global);
 }
-GMIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
+MIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
     const auto ret =
-        blocks.insert(std::next(iter), std::make_unique<GMIRBasicBlock>(mCurrentBasicBlock->getFunction(), blockTripCount));
-    (*ret)->usedStackObjects() = mCurrentBasicBlock->usedStackObjects();  // inherit stack object usage
+        blocks.insert(std::next(iter), std::make_unique<MIRBasicBlock>(mCurrentBasicBlock->getFunction(), blockTripCount));
     return ret->get();
 }
-void LoweringContext::addOperand(Value* value, Operand reg) {
+void LoweringContext::addOperand(Value* value, MIROperand reg) {
     if(mValueMap.count(value))
         reportUnreachable(CMMC_LOCATION());
     mValueMap.emplace(value, reg);
 }
 
-static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModule& machineModule,
-                                   std::unordered_map<GlobalValue*, GMIRSymbol*>& globalMap, AnalysisPassManager& analysis) {
-    auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func);
+static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, MIRModule& machineModule,
+                                   std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, AnalysisPassManager& analysis) {
+    CMMC_UNUSED(mfunc);
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(machineModule);
+    CMMC_UNUSED(globalMap);
+    CMMC_UNUSED(analysis);
+    /*
+    auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func); // TODO: deprecated
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
 
-    std::unordered_map<Block*, GMIRBasicBlock*> blockMap;
-    std::unordered_map<Value*, Operand> valueMap;
-    std::unordered_map<Value*, Operand> storageMap;
-    LoweringContext ctx{ machineModule, blockMap, globalMap, valueMap, mfunc.pools() };
+    std::unordered_map<Block*, MIRBasicBlock*> blockMap;
+    std::unordered_map<Value*, MIROperand> valueMap;
+    std::unordered_map<Value*, MIROperand> storageMap;
+    */
+    /*
+    LoweringContext ctx{ machineModule, blockMap, globalMap, valueMap };
 
-    auto& vregPool = ctx.getAllocationPool(AddressSpace::VirtualReg);
-    auto& stackPool = ctx.getAllocationPool(AddressSpace::Stack);
-    auto& target = machineModule.target;
+    auto& target = machineModule.getTarget();
     auto& dataLayout = target.getDataLayout();
     auto& info = target.getTargetLoweringInfo();
     auto& dom = analysis.get<DominateAnalysis>(*func);
 
     for(auto block : dom.blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
-        mfunc.blocks().push_back(std::make_unique<GMIRBasicBlock>(&mfunc, tripCount));
-        auto mblock = mfunc.blocks().back().get();
-        blockMap.emplace(block, mblock);
+        mfunc.blocks().emplace_back(&mfunc, tripCount);
+        auto& mblock = mfunc.blocks().back();
+        blockMap.emplace(block, &mblock);
         for(auto inst : block->instructions()) {
             if(inst->getInstID() == InstructionID::Phi) {
                 auto vreg = vregPool.allocate(inst->getType());
@@ -189,6 +196,7 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
             info.lowerInst(inst, ctx);
         }
     }
+    */
 
     /*
     if constexpr(Config::debug) {
@@ -199,12 +207,12 @@ static void lowerToMachineFunction(GMIRFunction& mfunc, Function* func, GMIRModu
     */
 }
 
-static void lowerToMachineModule(GMIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
+static void lowerToMachineModule(MIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
                                  OptimizationLevel optLevel) {
-    auto& symbols = machineModule.symbols;
+    auto& globals = machineModule.globals();
     const auto& dataLayout = module.getTarget().getDataLayout();
 
-    std::unordered_map<GlobalValue*, GMIRSymbol*> globalMap;
+    std::unordered_map<GlobalValue*, MIRGlobal*> globalMap;
 
     for(auto global : module.globals()) {
         if(global->isFunction()) {
@@ -230,10 +238,11 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                 } else if(symbol.prefix() == "stoptime"sv) {
                     symbol = String::get("_sysy_stoptime");
                 }
-                symbols.push_back(GMIRSymbol{ symbol, func->getLinkage(), dataLayout.getCodeAlignment(), std::monostate{} });
+                globals.push_back(std::make_unique<MIRGlobal>(symbol, func->getLinkage(), dataLayout.getCodeAlignment(),
+                                                              nullptr));  // external symbol
             } else {
-                symbols.push_back(
-                    GMIRSymbol{ func->getSymbol(), func->getLinkage(), dataLayout.getCodeAlignment(), GMIRFunction{} });
+                globals.push_back(std::make_unique<MIRGlobal>(func->getSymbol(), func->getLinkage(),
+                                                              dataLayout.getCodeAlignment(), std::make_unique<MIRFunction>()));
             }
         } else {
             const auto var = global->as<GlobalVariable>();
@@ -242,7 +251,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             const auto size = type->getSize(dataLayout);
             if(auto initialValue = var->initialValue()) {
                 const auto readOnly = var->attr().hasAttr(GlobalVariableAttribute::ReadOnly);
-                GMIRDataStorage::Storage data;
+                MIRDataStorage::Storage data;
 
                 const auto expand = [&](auto&& self, Value* val) -> void {
                     const auto valType = val->getType();
@@ -280,18 +289,19 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
                 expand(expand, initialValue);
 
                 // data/rodata
-                symbols.emplace_back(GMIRSymbol{ global->getSymbol(), global->getLinkage(), alignment,
-                                                 GMIRDataStorage{ std::move(data), readOnly } });
+                globals.emplace_back(std::make_unique<MIRGlobal>(global->getSymbol(), global->getLinkage(), alignment,
+                                                                 std::make_unique<MIRDataStorage>(std::move(data), readOnly)));
             } else {
                 // bss
-                symbols.emplace_back(GMIRSymbol{ global->getSymbol(), global->getLinkage(), alignment, GMIRZeroStorage{ size } });
+                globals.emplace_back(std::make_unique<MIRGlobal>(global->getSymbol(), global->getLinkage(), alignment,
+                                                                 std::make_unique<MIRZeroStorage>(size)));
             }
         }
-        globalMap.emplace(global, &symbols.back());
+        globalMap.emplace(global, globals.back().get());
     }
 
     auto& target = module.getTarget();
-    auto& subTarget = target.getSubTarget();
+    // auto& subTarget = target.getSubTarget();
 
     {
         Stage stage{ "Pre-lowering legalization"sv };
@@ -299,7 +309,9 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         analysis.invalidateModule();
     }
 
-    auto dumpFunc = [&](const GMIRFunction& func) { func.dump(std::cerr, target); };
+    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout() };
+
+    auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
     CMMC_UNUSED(dumpFunc);
 
     const auto& cgscc = analysis.get<CallGraphSCCAnalysis>();
@@ -313,23 +325,28 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             }
         return false;
     };
+    CMMC_UNUSED(hasCall);
+    CMMC_UNUSED(optLevel);
+    CMMC_UNUSED(infoIPRA);
 
     for(auto func : cgscc.getOrder()) {
         // func->dump(std::cerr, Noop{});
 
         const auto symbol = globalMap.at(func);
         if(func->blocks().empty()) {  // external
-            target.addExternalFuncIPRAInfo(symbol, infoIPRA);
+            // TODO
+            // target.addExternalFuncIPRAInfo(symbol, infoIPRA);
             continue;
         }
 
-        auto& mfunc = std::get<GMIRFunction>(symbol->def);
+        auto& mfunc = dynamic_cast<MIRFunction&>(*symbol->reloc);
         {
             // Stage 1: instruction selection
             Stage stage{ "Instruction selection"sv };
             lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
             assert(mfunc.verify(std::cerr, true));
         }
+        /*
         {
             // Stage 2: clean up unused insts
             Stage stage{ "Clean up unused instructions"sv };
@@ -431,22 +448,24 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
         // add to IPRA cache
         if(!useBuiltinRA)
             infoIPRA.add(target, symbol, mfunc);
+        */
     }
 
     // TODO: apply HFSort
 }
 
-std::unique_ptr<GMIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
+std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
     Stage stage{ "lower to GMIR"sv };
 
     auto& target = module.getTarget();
-    auto machineModule = std::make_unique<GMIRModule>(target);
+    auto machineModule = std::make_unique<MIRModule>(target);
     lowerToMachineModule(*machineModule, module, analysis, optLevel);
     // machineModule->dump(std::cerr);
     return machineModule;
 }
 
-void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
+/*
+void lowerInst(Instruction* inst, LoweringContext& ctx) const {
     switch(inst->getInstID()) {
         case InstructionID::Add:
             [[fallthrough]];
@@ -557,7 +576,7 @@ void LoweringInfo::lowerInst(Instruction* inst, LoweringContext& ctx) const {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(BinaryInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::Add:
@@ -602,7 +621,7 @@ void LoweringInfo::lower(BinaryInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<BinaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(CompareInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::FCmp:
@@ -620,7 +639,7 @@ void LoweringInfo::lower(CompareInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<CompareMInst>(id, inst->getOp(), ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(UnaryInst* inst, LoweringContext& ctx) const {
     const auto id = [instID = inst->getInstID()] {
         switch(instID) {
             case InstructionID::Neg:
@@ -636,7 +655,7 @@ void LoweringInfo::lower(UnaryInst* inst, LoweringContext& ctx) const {
     ctx.emitInst<UnaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(CastInst* inst, LoweringContext& ctx) const {
     const auto src = ctx.mapOperand(inst->getOperand(0));
     const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
@@ -681,13 +700,13 @@ void LoweringInfo::lower(CastInst* inst, LoweringContext& ctx) const {
     }
     ctx.addOperand(inst, dst);
 }
-void LoweringInfo::lower(LoadInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(LoadInst* inst, LoweringContext& ctx) const {
     const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
     const auto size = inst->getType()->getSize(ctx.getDataLayout());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0, static_cast<uint32_t>(size), false);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(StoreInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(StoreInst* inst, LoweringContext& ctx) const {
     const auto val = inst->getOperand(1);
     const auto size = val->getType()->getSize(ctx.getDataLayout());
     ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
@@ -764,7 +783,7 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
 
             assert(order.size() == dst.size());
 
-            std::unordered_map<Value*, Operand> dirtyRegRemapping;
+            std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
 
             for(size_t i = 0; i < dst.size(); ++i) {
                 const auto idx = order[i];
@@ -801,9 +820,9 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     const auto dstMBlock = ctx.mapBlock(dstBlock);
     ctx.emitInst<BranchMInst>(dstMBlock);
 }
-void LoweringInfo::lower(BranchInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(BranchInst* inst, LoweringContext& ctx) const {
     const auto srcBlock = inst->getBlock();
-    const auto emitCondBranch = [&](const Operand& lhs, const Operand& rhs, GMIRInstID instID, CompareOp op) {
+    const auto emitCondBranch = [&](const MIROperand& lhs, const MIROperand& rhs, GMIRInstID instID, CompareOp op) {
         // beqz %cond, else_label
         // then_label:
         // ...
@@ -850,10 +869,10 @@ void LoweringInfo::lower(BranchInst* inst, LoweringContext& ctx) const {
         emitCondBranch(cond, ctx.getZero(IntegerType::get(1)), GMIRInstID::SCmp, CompareOp::Equal);
     }
 }
-void LoweringInfo::lower(UnreachableInst*, LoweringContext& ctx) const {
+void InstSelector::lower(UnreachableInst*, LoweringContext& ctx) const {
     ctx.emitInst<UnreachableMInst>();
 }
-void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(SelectInst* inst, LoweringContext& ctx) const {
     // c = x ? y : z;
     // ->
     // c = z;
@@ -883,7 +902,7 @@ void LoweringInfo::lower(SelectInst* inst, LoweringContext& ctx) const {
     ctx.setCurrentBasicBlock(target);
     ctx.addOperand(inst, ret);
 }
-void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
     auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
@@ -909,14 +928,15 @@ void LoweringInfo::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
     }
     ctx.addOperand(inst, ptr);
 }
-void LoweringInfo::lower(PtrCastInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(PtrCastInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
-void LoweringInfo::lower(PtrToIntInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(PtrToIntInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
-void LoweringInfo::lower(IntToPtrInst* inst, LoweringContext& ctx) const {
+void InstSelector::lower(IntToPtrInst* inst, LoweringContext& ctx) const {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
+*/
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

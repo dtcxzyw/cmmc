@@ -16,7 +16,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
 TargetRegistry& TargetRegistry::get() {
     static TargetRegistry instance;
@@ -51,4 +51,4 @@ std::unique_ptr<Target> TargetRegistry::selectTarget() const {
     DiagnosticsContext::get().attach<UnrecognizedInput>("target", target).reportFatal();
 }
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

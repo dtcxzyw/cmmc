@@ -14,9 +14,9 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmmc/CodeGen/GMIR.hpp>
-#include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Graph.hpp>
@@ -33,7 +33,7 @@
 #include <variant>
 #include <vector>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
 static StringOpt blockPlacementAlgo;  // NOLINT
 
@@ -276,19 +276,19 @@ static void solveGA(BlockSeq& seq, const std::vector<BranchEdge>& edges, const s
     seq = std::move(pop[0].first);
 }
 
-void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
+void optimizeBlockLayout(MIRFunction& func, const Target& target) {
+    CMMC_UNUSED(target);
     if(func.blocks().size() <= 2)
         return;
 
-    const auto cfg = calcGMIRCFG(func);
-    const auto& subTarget = target.getSubTarget();
-    CMMC_UNUSED(subTarget);
+    const auto cfg = calcCFG(func);
+    // TODO: sche model
 
     // build graph
     std::vector<uint32_t> weights;
     weights.reserve(func.blocks().size());
     std::vector<BranchEdge> edges;
-    std::unordered_map<const GMIRBasicBlock*, uint32_t> idxMap;
+    std::unordered_map<const MIRBasicBlock*, uint32_t> idxMap;
     std::vector<double> freq;
     {
         uint32_t idx = 0;
@@ -315,7 +315,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         seq.resize((func.blocks().size()));
         std::iota(seq.begin(), seq.end(), 0U);
 
-        const auto bufferSize = subTarget.microOpBufferSize();
+        const auto bufferSize = 128;  // TODO
         if(seq.size() <= 10) {
             solveBruteForce(seq, edges, freq, weights, bufferSize);
         } else {
@@ -332,7 +332,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     assert(seq[0] == 0);  // entry block
 
     // apply changes
-    std::vector<std::unique_ptr<GMIRBasicBlock>> newBlocks;
+    std::vector<std::unique_ptr<MIRBasicBlock>> newBlocks;
     newBlocks.reserve(func.blocks().size());
     for(auto& block : func.blocks()) {
         newBlocks.emplace_back(std::move(block));
@@ -342,16 +342,16 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     for(auto idx : seq)
         func.blocks().emplace_back(std::move(newBlocks[idx]));
 
+    /*
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend();) {
         auto& block = *iter;
         const auto nextIter = std::next(iter);
 
-        const auto& terminator = block->instructions().back();
-        const auto ensureNext = [&](const GMIRBasicBlock* next) {
-            if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                auto newBlock = std::make_unique<GMIRBasicBlock>(&func, next->getTripCount());
-                newBlock->instructions().emplace_back(BranchMInst{ next });
-                newBlock->usedStackObjects() = block->usedStackObjects();
+        const auto& terminator = block.instructions().back();
+        const auto ensureNext = [&](const MIRBasicBlock* next) {
+            if(nextIter == func.blocks().cend() || &*nextIter != next) {
+                auto newBlock = std::make_unique<MIRBasicBlock>(&func, next->getTripCount());
+                // newBlock->instructions().emplace_back(BranchMInst{ next });
                 func.blocks().insert(nextIter, std::move(newBlock));
             }
         };
@@ -372,6 +372,7 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
 
         iter = nextIter;
     }
+    */
 }
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

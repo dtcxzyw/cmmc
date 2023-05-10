@@ -177,7 +177,8 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 
     std::ofstream out{ path };
-    const auto machineModule = lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
+    const auto machineModule =
+        mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
     // assert(machineModule->verify());
     {
         Stage stage{ "dump ASM"sv };
@@ -251,7 +252,7 @@ int mainImpl(int argc, char** argv) {
         if(isSpl || isSysY) {
             const auto base = path.substr(0, path.size() - (isSpl ? 4 : 3));
             Module module;
-            const auto target = TargetRegistry::get().selectTarget();
+            const auto target = mir::TargetRegistry::get().selectTarget();
             module.setTarget(target.get());
 
             {
@@ -275,7 +276,7 @@ int mainImpl(int argc, char** argv) {
         }
         if(endswith(path, ".ir"sv)) {
             Module module;
-            const auto target = TargetRegistry::get().selectTarget();
+            const auto target = mir::TargetRegistry::get().selectTarget();
             module.setTarget(target.get());
             loadTAC(module, path);
             const auto base = path.substr(0, path.size() - 3);

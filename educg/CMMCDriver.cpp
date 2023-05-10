@@ -59,7 +59,7 @@ static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::
     opt->run(module, analysis);
 
     std::ofstream out{ outputPath };
-    const auto machineModule = lowerToMachineModule(module, analysis, optLevel);
+    const auto machineModule = mir::lowerToMachineModule(module, analysis, optLevel);
     target.emitAssembly(*machineModule, out);
 
     return EXIT_SUCCESS;

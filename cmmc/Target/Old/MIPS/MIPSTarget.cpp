@@ -13,7 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -35,14 +35,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
-constexpr Operand zero{ MIPSAddressSpace::GPR, 0U };
-constexpr Operand immReg{ MIPSAddressSpace::GPR, 30U };  // use fp
-constexpr Operand v0{ MIPSAddressSpace::GPR, 2U };
-constexpr Operand f032{ MIPSAddressSpace::FPR_S, 0U };
-constexpr Operand f064{ MIPSAddressSpace::FPR_D, 0U };
-constexpr Operand sp{ MIPSAddressSpace::GPR, 29U };
-constexpr Operand hi{ MIPSAddressSpace::HILO, 0U };
-constexpr Operand lo{ MIPSAddressSpace::HILO, 1U };
+constexpr MIROperand zero{ MIPSAddressSpace::GPR, 0U };
+constexpr MIROperand immReg{ MIPSAddressSpace::GPR, 30U };  // use fp
+constexpr MIROperand v0{ MIPSAddressSpace::GPR, 2U };
+constexpr MIROperand f032{ MIPSAddressSpace::FPR_S, 0U };
+constexpr MIROperand f064{ MIPSAddressSpace::FPR_D, 0U };
+constexpr MIROperand sp{ MIPSAddressSpace::GPR, 29U };
+constexpr MIROperand hi{ MIPSAddressSpace::HILO, 0U };
+constexpr MIROperand lo{ MIPSAddressSpace::HILO, 1U };
 
 constexpr size_t passingByRegisterThreshold = 16;
 
@@ -67,7 +67,7 @@ public:
     [[nodiscard]] bool inlineMemOp(size_t size) const override {
         return size <= 256;
     }
-    void postPeepholeOpt(GMIRFunction& func) const override {
+    void postPeepholeOpt(MIRFunction& func) const override {
         useZeroRegister(func, zero, 4U);
     }
 };
@@ -80,7 +80,7 @@ MIPSTarget::MIPSTarget() {
 }
 
 void MIPSTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
-void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
+void MIPSTarget::legalizeFunc(MIRFunction& func) const {
     // replace non-zero immediates with li
     auto& constant = func.pools().pools[AddressSpace::Constant];
     auto& vreg = func.pools().pools[AddressSpace::VirtualReg];
@@ -89,7 +89,7 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
-            const auto tryReplace = [&](Operand& op, bool checkZero) {
+            const auto tryReplace = [&](MIROperand& op, bool checkZero) {
                 if(op.addressSpace == AddressSpace::Constant) {
                     const auto val = static_cast<ConstantValue*>(constant.getMetadata(op));
                     if(checkZero && val == ConstantInteger::get(val->getType(), 0))
@@ -241,7 +241,7 @@ void MIPSTarget::legalizeFunc(GMIRFunction& func) const {
         }
     }
 }
-void MIPSTarget::postLegalizeFunc(GMIRFunction& func) const {
+void MIPSTarget::postLegalizeFunc(MIRFunction& func) const {
     // legalize int constants using $dst/$fp
 
     auto& constants = func.pools().pools[MIPSAddressSpace::Constant];
@@ -251,7 +251,7 @@ void MIPSTarget::postLegalizeFunc(GMIRFunction& func) const {
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
 
-            auto resolve = [&](Operand& cv, const Operand& dst) {
+            auto resolve = [&](MIROperand& cv, const MIROperand& dst) {
                 if(cv.addressSpace != MIPSAddressSpace::Constant)
                     return;
                 const auto type = constants.getType(cv);
@@ -290,7 +290,7 @@ std::string_view getMIPSTextualName(uint32_t idx) noexcept;
 MIPSLoweringInfo::MIPSLoweringInfo()
     : mUnused{ String::get("unused") }, mConstant{ String::get("c") }, mStack{ String::get("m") }, mVReg{ String::get("vr") },
       mHi{ String::get("hi") }, mLo{ String::get("lo") }, mFPR{ String::get("f") } {}
-Operand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
+MIROperand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) const {
     auto& pool = ctx.getAllocationPool(AddressSpace::Constant);
     auto zeroReg = pool.allocate(type);
     if(type->isInteger())
@@ -299,7 +299,7 @@ Operand MIPSLoweringInfo::getZeroImpl(LoweringContext& ctx, const Type* type) co
         reportUnreachable(CMMC_LOCATION());
     return zeroReg;
 }
-String MIPSLoweringInfo::getOperand(const Operand& operand) const {
+String MIPSLoweringInfo::getOperand(const MIROperand& operand) const {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::Constant:
             return mConstant.withID(static_cast<int32_t>(operand.id));
@@ -388,7 +388,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
 
             if(offset < passingByRegisterThreshold) {
                 // $a0-$a3, $f12/$f14
-                Operand dst = unusedOperand;
+                MIROperand dst = unusedOperand;
                 if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
                     dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
                             12U + static_cast<uint32_t>(offset) / 2U };  // 0 -> 12, 4 -> 14
@@ -409,7 +409,7 @@ void MIPSLoweringInfo::lower(FunctionCallInst* inst, LoweringContext& ctx) const
             return;
         }
         const auto retReg = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(ret);
-        Operand val = unusedOperand;
+        MIROperand val = unusedOperand;
         if(ret->isFloatingPoint()) {
             // $f0
             val = ret->getFixedSize() == sizeof(float) ? f032 : f064;
@@ -443,7 +443,7 @@ MIPSRegisterUsage::MIPSRegisterUsage()
     for(uint32_t idx = 12; idx < 16; idx += 2)
         setUsed(mFPR, idx);
 }
-void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
+void MIPSRegisterUsage::markAsUsed(const MIROperand& operand) {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::GPR:
             setUsed(mGPR, operand.id);
@@ -457,7 +457,7 @@ void MIPSRegisterUsage::markAsUsed(const Operand& operand) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
+void MIPSRegisterUsage::markAsDiscarded(const MIROperand& operand) {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::GPR:
             setDiscarded(mGPR, operand.id);
@@ -471,7 +471,7 @@ void MIPSRegisterUsage::markAsDiscarded(const Operand& operand) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-Operand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
+MIROperand MIPSRegisterUsage::getFreeRegister(uint32_t src) {
     switch(src) {
         case MIPSAddressSpace::GPR: {
             const auto freeBits = ~mGPR;
@@ -510,7 +510,7 @@ uint32_t MIPSRegisterUsage::getRegisterClass(const Type* type) const {
     }
     return MIPSAddressSpace::GPR;
 }
-bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
+bool MIPSTarget::isCallerSaved(const MIROperand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
         // $t0-$t9
         return (8 <= op.id && op.id <= 15) || (24 <= op.id && op.id <= 25);
@@ -521,7 +521,7 @@ bool MIPSTarget::isCallerSaved(const Operand& op) const noexcept {
     }
     reportUnreachable(CMMC_LOCATION());
 }
-bool MIPSTarget::isCalleeSaved(const Operand& op) const noexcept {
+bool MIPSTarget::isCalleeSaved(const MIROperand& op) const noexcept {
     if(op.addressSpace == MIPSAddressSpace::GPR) {
         // $s0-$s7
         return 16 <= op.id && op.id <= 23;
@@ -561,7 +561,7 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
 
         if(offset < passingByRegisterThreshold) {
             // $a0-$a3, $f12/$f14
-            Operand dst = unusedOperand;
+            MIROperand dst = unusedOperand;
             if(offset < 8U && arg->getType()->isFloatingPoint()) {  // pass by FPR
                 dst = { size == sizeof(float) ? MIPSAddressSpace::FPR_S : MIPSAddressSpace::FPR_D,
                         12U + static_cast<uint32_t>(offset) / 2U };  // 0 -> 12, 4 -> 14
@@ -576,7 +576,7 @@ void MIPSLoweringInfo::emitPrologue(LoweringContext& ctx, Function* func) const 
     }
 }
 
-void MIPSTarget::addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const {
+void MIPSTarget::addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
     if(targetMachine.get() == "emulator") {
         const auto symbolName = symbol->symbol;
         // spl runtime

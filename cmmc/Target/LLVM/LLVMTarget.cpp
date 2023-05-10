@@ -20,7 +20,7 @@
 #include <cstdint>
 #include <memory>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
 // Real target
 extern StringOpt targetMachine;  // NOLINT
@@ -44,70 +44,16 @@ public:
     }
 };
 
-class LLVMSubTarget final : public SimpleSubTarget {
-public:
-    [[nodiscard]] uint32_t getPhysicalRegisterCount(uint32_t) const override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] bool inlineMemOp(size_t size) const override {
-        return size <= 256;
-    }
-};
-
 class LLVMTarget final : public Target {
-    std::unique_ptr<SubTarget> mSubTarget;
     LLVMDataLayout mDataLayout;
 
 public:
-    explicit LLVMTarget() {
-        mSubTarget = std::make_unique<LLVMSubTarget>();
-    }
+    explicit LLVMTarget() {}
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
-    }
-    [[nodiscard]] const LoweringInfo& getTargetLoweringInfo() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
-        return *mSubTarget;
-    }
-
-    void legalizeFunc(GMIRFunction&) const override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    void legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
-        CMMC_UNUSED(module);
-        CMMC_UNUSED(analysis);
-    }
-    void emitAssembly(const GMIRModule&, std::ostream&) const override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] Operand getStackPointer() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] Operand getReturnAddress() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] bool isCallerSaved(const Operand&) const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] bool isCalleeSaved(const Operand&) const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
-    }
-    [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
     }
 };
 
 CMMC_TARGET("llvm", LLVMTarget);
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

@@ -13,7 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -68,7 +68,7 @@ std::string_view getMIPSTextualName(uint32_t idx) noexcept {
     return name[idx];
 }
 
-static void printOperand(std::ostream& out, const Operand& operand, const VirtualRegPool& constantPool) {
+static void printOperand(std::ostream& out, const MIROperand& operand, const VirtualRegPool& constantPool) {
     switch(operand.addressSpace) {
         case MIPSAddressSpace::Constant: {
             const auto metadata = static_cast<ConstantValue*>(constantPool.getMetadata(operand));
@@ -96,15 +96,15 @@ static void printOperand(std::ostream& out, const Operand& operand, const Virtua
     }
 }
 
-static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap,
+static void emitFunc(std::ostream& out, const MIRFunction& func, const std::unordered_map<const MIRRelocable*, String>& symbolMap,
                      LabelAllocator& allocator, bool hasDelaySlot) {
-    std::unordered_map<const GMIRBasicBlock*, String> labelMap;
+    std::unordered_map<const MIRBasicBlock*, String> labelMap;
     auto baseName = String::get(".BB"sv);
     for(auto& block : func.blocks())
         labelMap.emplace(block.get(), allocator.allocate(baseName));
 
     auto& constantPool = func.pools().pools[MIPSAddressSpace::Constant];
-    const auto dumpOperand = [&](const Operand& operand) { printOperand(out, operand, constantPool); };
+    const auto dumpOperand = [&](const MIROperand& operand) { printOperand(out, operand, constantPool); };
 
     for(auto& block : func.blocks()) {
         const auto& label = labelMap.at(block.get());
@@ -115,8 +115,8 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
             if(hasDelaySlot)
                 out << "\n    nop"sv;
         };
-        const auto isZero = [&](const Operand& op) {
-            return op == Operand{ MIPSAddressSpace::GPR, 0 };  //$zero
+        const auto isZero = [&](const MIROperand& op) {
+            return op == MIROperand{ MIPSAddressSpace::GPR, 0 };  //$zero
         };
         const auto dumpCompare = [&](CompareOp compareOp) {
             switch(compareOp) {
@@ -455,11 +455,11 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
                                      }
                                  },
                                  [&](const CallMInst& call) {
-                                     if(auto dst = std::get_if<Operand>(&call.callee)) {
+                                     if(auto dst = std::get_if<MIROperand>(&call.callee)) {
                                          out << "jalr "sv;
                                          dumpOperand(*dst);
                                      } else {
-                                         out << "jal "sv << symbolMap.at(std::get<GMIRSymbol*>(call.callee));
+                                         out << "jal "sv << symbolMap.at(std::get<MIRRelocable*>(call.callee));
                                      }
                                      delaySlot();
                                  },
@@ -480,7 +480,7 @@ static void emitFunc(std::ostream& out, const GMIRFunction& func, const std::uno
 
 extern StringOpt targetMachine;  // NOLINT
 
-void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const {
+void MIPSTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
     bool hasDelaySlot = false, hasSpimRuntime = false;
     if(targetMachine.get() == "emulator") {
         hasSpimRuntime = true;
@@ -511,9 +511,8 @@ void MIPSTarget::emitAssembly(const GMIRModule& module, std::ostream& out) const
                 out << spimRuntimeText << '\n';
             }
         },
-        [&](const GMIRFunction& func, const std::unordered_map<const GMIRSymbol*, String>& symbolMap, LabelAllocator& allocator) {
-            emitFunc(out, func, symbolMap, allocator, hasDelaySlot);
-        });
+        [&](const MIRFunction& func, const std::unordered_map<const MIRRelocable*, String>& symbolMap,
+            LabelAllocator& allocator) { emitFunc(out, func, symbolMap, allocator, hasDelaySlot); });
 }
 
 CMMC_NAMESPACE_END

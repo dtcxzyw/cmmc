@@ -13,42 +13,42 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <functional>
 #include <ostream>
 
-CMMC_NAMESPACE_BEGIN
+CMMC_MIR_NAMESPACE_BEGIN
 
-void simplifyCFG(GMIRFunction& func, const Target& target);
-void registerCoalescing(GMIRFunction& func, const std::unordered_map<Operand, Operand, OperandHasher>& operandMap);
-void optimizeBlockLayout(GMIRFunction& func, const Target& target);
-void schedule(GMIRFunction& func, const Target& target, bool preRA);
-void allocateStackObjects(GMIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel);
-void identicalCodeFolding(GMIRFunction& func);
-void tailDuplication(GMIRFunction& func);
-void simplifyCFGWithUniqueTerminator(GMIRFunction& func);
-bool genericPeepholeOpt(GMIRFunction& func, const Target& target);
+void simplifyCFG(MIRFunction& func, const Target& target);
+void registerCoalescing(MIRFunction& func, const std::unordered_map<MIROperand, MIROperand, MIROperandHasher>& operandMap);
+void optimizeBlockLayout(MIRFunction& func, const Target& target);
+void schedule(MIRFunction& func, const Target& target, bool preRA);
+void allocateStackObjects(MIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel);
+void identicalCodeFolding(MIRFunction& func);
+void tailDuplication(MIRFunction& func);
+void simplifyCFGWithUniqueTerminator(MIRFunction& func);
+bool genericPeepholeOpt(MIRFunction& func, const Target& target);
 
-bool removeUnusedInsts(GMIRFunction& func);
-bool removeIndirectCopy(GMIRFunction& func);
-void forEachOperands(GMIRFunction& func, const std::function<void(Operand& op)>& functor);
-void forEachUseOperands(GMIRFunction& func, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
-void forEachOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
-void forEachUseOperands(GMIRBasicBlock& block, const std::function<void(GMIRInst& inst, Operand& op)>& functor);
-void forEachDefOperands(GMIRInst& instruction, const std::function<void(Operand& op)>& functor);
-void forEachDefOperands(GMIRBasicBlock& block, const std::function<void(Operand& op)>& functor);
-void removeIdentityCopies(GMIRFunction& func);
-void useZeroRegister(GMIRFunction& func, Operand zero, uint32_t size);
-void legalizeStoreWithConstants(GMIRFunction& func);
-bool eliminateStackLoads(GMIRFunction& func, const Target& target);
-void applySSAPropagation(GMIRFunction& func);
-bool redirectGoto(GMIRFunction& func);
+bool removeUnusedInsts(MIRFunction& func);
+bool removeIndirectCopy(MIRFunction& func);
+void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor);
+void forEachUseOperands(MIRFunction& func, const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
+void forEachOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor);
+void forEachUseOperands(MIRBasicBlock& block, const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
+void forEachDefOperands(MIRInst& instruction, const std::function<void(MIROperand& op)>& functor);
+void forEachDefOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor);
+void removeIdentityCopies(MIRFunction& func);
+void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size);
+void legalizeStoreWithConstants(MIRFunction& func);
+bool eliminateStackLoads(MIRFunction& func, const Target& target);
+void applySSAPropagation(MIRFunction& func);
+bool redirectGoto(MIRFunction& func);
 
-void dumpAssembly(std::ostream& out, const GMIRModule& module, const std::function<void()>& emitData,
+void dumpAssembly(std::ostream& out, const MIRModule& module, const std::function<void()>& emitData,
                   const std::function<void()>& emitText,
-                  const std::function<void(const GMIRFunction&, const std::unordered_map<const GMIRSymbol*, String>&,
+                  const std::function<void(const MIRFunction&, const std::unordered_map<const MIRRelocable*, String>&,
                                            LabelAllocator&)>& functionDumper);
 
-CMMC_NAMESPACE_END
+CMMC_MIR_NAMESPACE_END

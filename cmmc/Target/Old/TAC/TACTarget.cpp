@@ -46,13 +46,13 @@ void TACTarget::legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager&
         }
     }
 }
-void TACTarget::legalizeFunc(GMIRFunction&) const {}
-bool TACTarget::builtinSA(GMIRFunction& mfunc) const {
+void TACTarget::legalizeFunc(MIRFunction&) const {}
+bool TACTarget::builtinSA(MIRFunction& mfunc) const {
     CMMC_UNUSED(mfunc);
     return true;
 }
-bool TACTarget::builtinRA(GMIRFunction& mfunc) const {
-    forEachOperands(mfunc, [](Operand& op) {
+bool TACTarget::builtinRA(MIRFunction& mfunc) const {
+    forEachOperands(mfunc, [](MIROperand& op) {
         if(op == unusedOperand)
             return;
         if(op.addressSpace == AddressSpace::VirtualReg)

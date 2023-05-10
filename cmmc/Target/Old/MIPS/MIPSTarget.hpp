@@ -13,8 +13,8 @@
 */
 
 #pragma once
-#include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <memory>
@@ -48,14 +48,14 @@ public:
     }
 };
 
-class MIPSLoweringInfo final : public LoweringInfo {
+class MIPSLoweringInfo final : public InstSelector {
     String mUnused, mConstant, mStack, mVReg, mHi, mLo, mFPR;
 
 public:
     MIPSLoweringInfo();
     void emitPrologue(LoweringContext& ctx, Function* func) const override;
-    Operand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
-    [[nodiscard]] String getOperand(const Operand& operand) const override;
+    MIROperand getZeroImpl(LoweringContext& ctx, const Type* type) const override;
+    [[nodiscard]] String getOperand(const MIROperand& operand) const override;
     [[nodiscard]] std::string_view getIntrinsicName(uint32_t intrinsicID) const override;
     void lower(ReturnInst* inst, LoweringContext& ctx) const override;
     void lower(FunctionCallInst* inst, LoweringContext& ctx) const override;
@@ -67,15 +67,15 @@ class MIPSRegisterUsage final : public TargetRegisterUsage {
 
 public:
     MIPSRegisterUsage();
-    void markAsUsed(const Operand& operand) override;
-    void markAsDiscarded(const Operand& operand) override;
-    Operand getFreeRegister(uint32_t src) override;
+    void markAsUsed(const MIROperand& operand) override;
+    void markAsDiscarded(const MIROperand& operand) override;
+    MIROperand getFreeRegister(uint32_t src) override;
     uint32_t getRegisterClass(const Type* type) const override;
 };
 
 // MIPS o32
 class MIPSTarget final : public Target {
-    std::unique_ptr<SubTarget> mSubTarget;
+    std::unique_ptr<ScheduleModel> mSubTarget;
     MIPSDataLayout mDataLayout;
     MIPSLoweringInfo mLoweringInfo;
 
@@ -84,13 +84,13 @@ public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
-    [[nodiscard]] const LoweringInfo& getTargetLoweringInfo() const noexcept override {
+    [[nodiscard]] const InstSelector& getTargetLoweringInfo() const noexcept override {
         return mLoweringInfo;
     }
     [[nodiscard]] std::unique_ptr<TargetRegisterUsage> newRegisterUsage() const override {
         return std::make_unique<MIPSRegisterUsage>();
     }
-    [[nodiscard]] const SubTarget& getSubTarget() const noexcept override {
+    [[nodiscard]] const ScheduleModel& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
     void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
@@ -98,24 +98,24 @@ public:
         CMMC_UNUSED(module);
         CMMC_UNUSED(analysis);
     }
-    void legalizeFunc(GMIRFunction& func) const override;
-    void postLegalizeFunc(GMIRFunction& func) const override;
-    void emitAssembly(const GMIRModule& module, std::ostream& out) const override;
-    [[nodiscard]] Operand getStackPointer() const noexcept override {
-        return Operand{ MIPSAddressSpace::GPR, 29 };  // sp
+    void legalizeFunc(MIRFunction& func) const override;
+    void postLegalizeFunc(MIRFunction& func) const override;
+    void emitAssembly(const MIRModule& module, std::ostream& out) const override;
+    [[nodiscard]] MIROperand getStackPointer() const noexcept override {
+        return MIROperand{ MIPSAddressSpace::GPR, 29 };  // sp
     }
-    [[nodiscard]] Operand getReturnAddress() const noexcept override {
-        return Operand{ MIPSAddressSpace::GPR, 31 };  // ra
+    [[nodiscard]] MIROperand getReturnAddress() const noexcept override {
+        return MIROperand{ MIPSAddressSpace::GPR, 31 };  // ra
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         return 8U;  // 8-byte aligned
     }
-    [[nodiscard]] bool isCalleeSaved(const Operand& op) const noexcept override;
-    [[nodiscard]] bool isCallerSaved(const Operand& op) const noexcept override;
+    [[nodiscard]] bool isCalleeSaved(const MIROperand& op) const noexcept override;
+    [[nodiscard]] bool isCallerSaved(const MIROperand& op) const noexcept override;
     [[nodiscard]] uint32_t getRegisterBitWidth(uint32_t) const noexcept override {
         return 32U;
     }
-    void addExternalFuncIPRAInfo(GMIRSymbol* symbol, IPRAUsageCache& infoIPRA) const override;
+    void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override;
 };
 
 CMMC_NAMESPACE_END
