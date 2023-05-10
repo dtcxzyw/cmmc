@@ -13,18 +13,23 @@
 */
 
 #include <algorithm>
+#include <cassert>
 #include <cmmc/CodeGen/GMIR.hpp>
 #include <cmmc/CodeGen/GMIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Graph.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
 #include <limits>
 #include <memory>
 #include <numeric>
+#include <pstl/glue_algorithm_defs.h>
+#include <queue>
 #include <random>
 #include <unordered_map>
+#include <unordered_set>
 #include <variant>
 #include <vector>
 
@@ -33,7 +38,9 @@ CMMC_NAMESPACE_BEGIN
 static StringOpt blockPlacementAlgo;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
-blockPlacementAlgo.withDefault("GA").setName("placement-algo", 'M').setDesc("The algorithm for machine block placement");
+blockPlacementAlgo.withDefault("Pettis-Hansen")
+    .setName("placement-algo", 'M')
+    .setDesc("The algorithm for machine block placement");
 CMMC_INIT_OPTIONS_END
 
 using NodeIndex = uint32_t;
@@ -64,6 +71,83 @@ static BlockSeq solveExtTsp(const std::vector<uint32_t>& weights, const std::vec
     CMMC_UNUSED(edges);
     CMMC_UNUSED(evalExtTspScore);
     reportNotImplemented(CMMC_LOCATION());
+}
+
+// Pettis-Hansen algorithm, O(VlogV+E)
+static BlockSeq solvePettisHansen(const std::vector<uint32_t>& weights, const std::vector<double>& freq,
+                                  const std::vector<BranchEdge>& edges) {
+    CMMC_UNUSED(weights);
+    const auto blockCount = weights.size();
+    // Stage1: chain decomposition
+    std::vector<uint32_t> fa;
+    fa.reserve(blockCount);
+    std::vector<std::pair<uint32_t, std::list<uint32_t>>> chains;
+    chains.reserve(blockCount);
+    for(uint32_t idx = 0; idx < blockCount; ++idx) {
+        chains.push_back({ std::numeric_limits<uint32_t>::max(), { idx } });
+        fa.push_back(idx);
+    }
+    std::vector<std::pair<BranchEdge, double>> edgeInfo;
+    edgeInfo.reserve(edges.size());
+    for(auto& edge : edges) {
+        edgeInfo.emplace_back(edge, freq[edge.source] * edge.prob);
+    }
+    auto findFaImpl = [&](uint32_t u, auto&& self) {
+        if(fa[u] == u)
+            return u;
+        return fa[u] = self(fa[u], self);
+    };
+    auto findFa = [&](uint32_t u) { return findFaImpl(u, findFaImpl); };
+    // in decreasing order
+    std::sort(edgeInfo.begin(), edgeInfo.end(), [](auto& lhs, auto& rhs) { return lhs.second > rhs.second; });
+    Graph graph(blockCount);
+    uint32_t p = 0;
+    for(auto& [e, f] : edgeInfo) {
+        CMMC_UNUSED(f);
+        auto& [u, v, prob] = e;
+        if(u == v)
+            continue;
+        graph[u].push_back(v);
+        auto& [pv, cv] = chains[v];
+        if(findFa(v) != v)
+            continue;  // merged
+        auto& [pu, cu] = chains[findFa(u)];
+        pu = std::min(std::min(pu, pv), ++p);
+        cu.merge(cv);
+        fa[v] = findFa(u);
+    }
+
+    // Stage2: code layout
+    assert(findFa(0) == 0);  // entry block
+    std::priority_queue<uint32_t, std::vector<uint32_t>, std::function<bool(uint32_t, uint32_t)>> workList{
+        [&](uint32_t lhs, uint32_t rhs) { return chains[lhs].first > chains[rhs].first; }
+    };
+    std::unordered_set<uint32_t> inserted;
+    std::unordered_set<uint32_t> insertedWorkList;
+    workList.push(0);
+    insertedWorkList.insert(0);
+    std::vector<uint32_t> seq;
+    seq.reserve(blockCount);
+    while(!workList.empty()) {
+        auto k = workList.top();
+        workList.pop();
+        for(auto u : chains[k].second) {
+            seq.push_back(u);
+            inserted.insert(u);
+        }
+        for(auto u : chains[k].second) {
+            for(auto v : graph[u]) {
+                if(inserted.count(v))
+                    continue;
+                auto head = findFa(v);
+                if(insertedWorkList.count(head))
+                    continue;
+                insertedWorkList.insert(head);
+                workList.push(head);
+            }
+        }
+    }
+    return seq;
 }
 
 static CostT evalCost(const BlockSeq& seq, std::vector<NodeIndex>& invMap, const std::vector<BranchEdge>& edges,
@@ -205,20 +289,22 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
     weights.reserve(func.blocks().size());
     std::vector<BranchEdge> edges;
     std::unordered_map<const GMIRBasicBlock*, uint32_t> idxMap;
-    uint32_t idx = 0;
-    for(auto& block : func.blocks()) {
-        idxMap[block.get()] = idx++;
-        weights.emplace_back(block->instructions().size());  // estimated code size
-    }
-    idx = 0;
     std::vector<double> freq;
-    freq.reserve(weights.size());
-    for(auto& block : func.blocks()) {
-        const auto blockIdx = idx++;
-        freq.emplace_back(block->getTripCount());
-        for(auto [successor, prob] : cfg.successors(block.get())) {
-            assert(idxMap.count(successor));
-            edges.push_back({ blockIdx, idxMap.at(successor), prob });
+    {
+        uint32_t idx = 0;
+        for(auto& block : func.blocks()) {
+            idxMap[block.get()] = idx++;
+            weights.emplace_back(block->instructions().size());  // estimated code size
+        }
+        idx = 0;
+        freq.reserve(weights.size());
+        for(auto& block : func.blocks()) {
+            const auto blockIdx = idx++;
+            freq.emplace_back(block->getTripCount());
+            for(auto [successor, prob] : cfg.successors(block.get())) {
+                assert(idxMap.count(successor));
+                edges.push_back({ blockIdx, idxMap.at(successor), prob });
+            }
         }
     }
 
@@ -235,23 +321,26 @@ void optimizeBlockLayout(GMIRFunction& func, const Target& target) {
         } else {
             solveGA(seq, edges, freq, weights, bufferSize);
         }
+    } else if(blockPlacementAlgo.get() == "Pettis-Hansen") {
+        seq = solvePettisHansen(weights, freq, edges);
     } else if(blockPlacementAlgo.get() == "ExtTSP") {
         // Ext-TSP algo
         seq = solveExtTsp(weights, freq, edges);
     } else {
-        DiagnosticsContext::get().attach<UnrecognizedInput>("register allocation method", blockPlacementAlgo.get()).reportFatal();
+        DiagnosticsContext::get().attach<UnrecognizedInput>("block placement method", blockPlacementAlgo.get()).reportFatal();
     }
+    assert(seq[0] == 0);  // entry block
 
     // apply changes
     std::vector<std::unique_ptr<GMIRBasicBlock>> newBlocks;
-    newBlocks.reserve(seq.size());
+    newBlocks.reserve(func.blocks().size());
     for(auto& block : func.blocks()) {
         newBlocks.emplace_back(std::move(block));
     }
 
     func.blocks().clear();
-    for(uint32_t i = 0; i < newBlocks.size(); ++i)
-        func.blocks().emplace_back(std::move(newBlocks[seq[i]]));
+    for(auto idx : seq)
+        func.blocks().emplace_back(std::move(newBlocks[idx]));
 
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend();) {
         auto& block = *iter;

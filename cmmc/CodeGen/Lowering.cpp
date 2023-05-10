@@ -408,6 +408,7 @@ static void lowerToMachineModule(GMIRModule& machineModule, Module& module, Anal
             optimizeBlockLayout(mfunc, target);
             assert(mfunc.verify(std::cerr, true));
         }
+        // TODO: basic block alignment
         // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Post peephole optimization"sv };
