@@ -74,7 +74,7 @@ RISCVTarget::RISCVTarget() {
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
 
-void RISCVTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
+void RISCVTarget::transformModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
 void RISCVTarget::legalizeFunc(MIRFunction& func) const {
     // replace non-zero immediates with li
     auto& constant = func.pools().pools[AddressSpace::Constant];

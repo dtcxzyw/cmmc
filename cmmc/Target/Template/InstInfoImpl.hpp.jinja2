@@ -1,0 +1,69 @@
+/*
+    SPDX-License-Identifier: Apache-2.0
+    Copyright 2023 CMMC Authors
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+// Automatically generated file, do not edit!
+
+#include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
+#include <{{target}}/InstInfoDecl.hpp>
+
+CMMC_TARGET_NAMESPACE_BEGIN
+
+{% for inst in insts %}
+class {{target}}InstInfo{{inst.name}} final: public InstInfo {
+public:
+    {{target}}InstInfo{{inst.name}}() = default;
+    void print(std::ostream& out, const MIRInst& inst) const override {
+        CMMC_UNUSED(inst);
+        out {% for val in inst.Format %} << {%if val is integer %} ::cmmc::mir::{{target}}::OperandDumper{ inst.getOperand({{val}}) } {%else%} "{{val}}" {%endif%} {%endfor%};
+    }
+    bool verify(std::ostream& out, const MIRInst& inst) const override {
+        CMMC_UNUSED(out);
+        CMMC_UNUSED(inst);
+        return true {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(out, inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(out, inst) {%endif%} ;
+    }
+    [[nodiscard]] virtual uint32_t getOperandNum() const noexcept override {
+        return {{inst.operands|length}};
+    }
+    [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept override {
+        switch(idx) {
+            {% for op in inst.operands %}case {{op.idx}}: return OperandFlag{{op.flag}};{% endfor %}
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }
+    [[nodiscard]] virtual InstFlag getInstFlag() const noexcept override {
+        return InstFlagNone {% for flag in inst.Flag %}| InstFlag{{flag}}{% endfor %};
+    }
+};
+{% endfor %}
+
+class {{target}}InstInfo final: public TargetInstInfo {
+    {% for inst in insts %} {{target}}InstInfo{{inst.name}} mInstInfo{{inst.name}}; {% endfor %}
+public:
+    {{target}}InstInfo() = default;
+    const InstInfo& getInstInfo(uint32_t opcode) const override {
+        switch (opcode) {
+            {% for inst in insts %}case {{target}}Inst::{{inst.name}}: return mInstInfo{{inst.name}};{% endfor %}
+            default: return TargetInstInfo::getInstInfo(opcode);
+        }
+    }
+};
+
+const TargetInstInfo& get{{target}}InstInfo() {
+    static {{target}}InstInfo instance;
+    return instance;
+}
+
+CMMC_TARGET_NAMESPACE_END

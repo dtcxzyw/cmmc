@@ -1,0 +1,91 @@
+InstInfo:
+  Jump:
+    Format: Jump $Tgt:Reloc[Metadata]
+  Branch:
+    Format: Branch $Src:Bool[Metadata], $Tgt:Reloc[Metadata], $Prob:Freq[Metadata]
+  Push:
+    Format: Push $Idx:Imm[Metadata], $Src:VReg[Use]
+  Call:
+    Format: Call $Tgt:Reloc[Metadata]
+  Ret:
+    Format: Ret $Src:VReg[Use]
+  RetVoid:
+    Format: RetVoid
+  Unreachable:
+    Format: Unreachable
+  Load:
+    Format: Load $Dst:VReg[Def], $Addr:VReg[Use], $Off:Imm[Metadata]
+  Store:
+    Format: Store $Addr:VReg[Use], $Src:VReg[Use], $Off:Imm[Metadata]
+  IntegerArithmetic:
+    Format: $Op:Template $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use]
+    Instances:
+      Add:
+        Op: Add
+      Sub:
+        Op: Sub
+      Mul:
+        Op: Mul
+      SDiv:
+        Op: SDiv
+      SRem:
+        Op: SRem
+      UDiv:
+        Op: UDiv
+      URem:
+        Op: URem
+      Neg:
+        Op: Neg
+      And:
+        Op: And
+      Or:
+        Op: Or
+      Xor:
+        Op: Xor
+      Shl:
+        Op: Shl
+      LShr:
+        Op: LShr
+      AShr:
+        Op: AShr
+  FloatArithmetic:
+    Format: $Op:Template $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use]
+    Instances:
+      FAdd:
+        Op: FAdd
+      FSub:
+        Op: FSub
+      FMul:
+        Op: FMul
+      FDiv:
+        Op: FDiv
+      FNeg:
+        Op: FNeg
+      FFma:
+        Op: FFma
+  SCmp:
+    Format: SCmp $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use], $Op:Imm[Metadata]
+  UCmp:
+    Format: UCmp $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use], $Op:Imm[Metadata]
+  FCmp:
+    Format: FCmp $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use], $Op:Imm[Metadata]
+  SExt:
+    Format: SExt $Dst:IReg[Def], $Src:IReg[Use]
+  ZExt:
+    Format: ZExt $Dst:IReg[Def], $Src:IReg[Use]
+  Trunc:
+    Format: Trunc $Dst:IReg[Def], $Src:IReg[Use]
+  F2U:
+    Format: F2U $Dst:IReg[Def], $Src:FReg[Use]
+  F2S:
+    Format: F2S $Dst:IReg[Def], $Src:FReg[Use]
+  U2F:
+    Format: U2F $Dst:FReg[Def], $Src:IReg[Use]
+  S2F:
+    Format: S2F $Dst:FReg[Def], $Src:IReg[Use]
+  FCast:
+    Format: FCast $Dst:FReg[Def], $Src:FReg[Use]
+  Copy:
+    Format: Copy $Dst:VReg[Def], $Src:VReg[Use]
+  Select:
+    Format: Select $Dst:VReg[Def], $Cond:IReg[Use], $Lhs:VReg[Use], $Rhs:VReg[Use]

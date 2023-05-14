@@ -1,0 +1,53 @@
+InstInfo:
+  Assign:
+    Format: $Dst:VReg[Def] = $Src:Val[Use]
+
+  Binary:
+    Format: $Dst:VReg[Def] = $Lhs:Val[Use] $Op:Template $Rhs:Val[Use]
+    Instances:
+      Add:
+        Op: +
+      Sub:
+        Op: "-"
+      Mul:
+        Op: "*"
+      Div:
+        Op: /
+
+  Addr:
+    Format: $Dst:VReg[Def] = &$Src:VReg[Use]
+
+  Fetch:
+    Format: $Dst:VReg[Def] = *$Src:VReg[Use]
+    Flag: [Load]
+
+  Deref:
+    Format: "*$Dst:VReg[Use] = $Src:VReg[Use]"
+    Flag: [Store]
+
+  Goto:
+    Format: GOTO $Tgt:Reloc[Metadata]
+
+  Branch:
+    Format: IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata]
+    Instances:
+      BranchEq:
+        Op: ==
+      BranchNe:
+        Op: "!="
+      BranchLt:
+        Op: <
+      BranchLe:
+        Op: <=
+
+  Return:
+    Format: RETURN $Src:Val[Use]
+
+  Read:
+    Format: READ $Dst:VReg[Def]
+
+  Write:
+    Format: WRITE $Src:Val[Use]
+
+ScheduleInfo:
+  emulator:

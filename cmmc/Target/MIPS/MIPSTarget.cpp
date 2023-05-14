@@ -12,8 +12,9 @@
     limitations under the License.
 */
 
-// Only be used by LLVM AOT/JIT backend
+// mips o32 abi
 
+#include <MIPS/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -22,10 +23,9 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-// Real target
 extern StringOpt targetMachine;  // NOLINT
 
-class LLVMDataLayout final : public DataLayout {
+class MIPSDataLayout final : public DataLayout {
 public:
     [[nodiscard]] Endian getEndian() const noexcept override {
         return Endian::Little;
@@ -37,22 +37,25 @@ public:
         return type->getFixedSize();
     }
     [[nodiscard]] size_t getPointerSize() const noexcept override {
-        return sizeof(uintptr_t);
+        return 32;
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
         reportUnreachable(CMMC_LOCATION());
     }
 };
 
-class LLVMTarget final : public Target {
-    LLVMDataLayout mDataLayout;
+class MIPSTarget final : public Target {
+    MIPSDataLayout mDataLayout;
 
 public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
+    [[nodiscard]] const TargetInstInfo& getInstInfo() const noexcept override {
+        return MIPS::getMIPSInstInfo();
+    }
 };
 
-CMMC_TARGET("llvm", LLVMTarget);
+CMMC_TARGET("MIPS", MIPSTarget);
 
 CMMC_MIR_NAMESPACE_END

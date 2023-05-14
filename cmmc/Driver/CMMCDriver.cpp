@@ -45,12 +45,14 @@ static Flag emitAST;                  // NOLINT
 static Flag emitIR;                   // NOLINT
 Flag strictMode;                      // NOLINT
 static IntegerOpt optimizationLevel;  // NOLINT
-extern StringOpt targetName;          // NOLINT
 static StringOpt outputPath;          // NOLINT
 StringOpt executeInput;               // NOLINT
 static Flag grammarCheck;             // NOLINT
 static Flag dumpOptPipeline;          // NOLINT
 static StringOpt language;            // NOLINT
+namespace mir {
+    extern StringOpt targetName;  // NOLINT
+}
 
 CMMC_INIT_OPTIONS_BEGIN
 version.setName("version", 'v').setDesc("print CMMC build information");
@@ -68,7 +70,7 @@ CMMC_INIT_OPTIONS_END
 
 std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
 std::optional<int> runMain(Module& module, SimulationIOContext& ctx, const std::string& filePath) {
-    if(::targetName.get() == "llvm") {
+    if(mir::targetName.get() == "llvm") {
 #ifdef CMMC_WITH_LLVM_SUPPORT
         reportDebug() << "use LLVM Orc JIT backend" << std::endl;
         const auto retVal = llvmExecMain(module, filePath, ctx);
@@ -129,7 +131,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     }
     AnalysisPassManager analysis{ &module };
     const auto& target = module.getTarget();
-    target.legalizeModuleBeforeOpt(module, analysis);
+    target.transformModuleBeforeOpt(module, analysis);
     analysis.invalidateModule();
 
     {
@@ -160,7 +162,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
         return ret.value_or(EXIT_FAILURE);
     }
 
-    const auto emitLLVM = (::targetName.get() == "llvm");
+    const auto emitLLVM = (mir::targetName.get() == "llvm");
     if(emitLLVM) {
 #ifdef CMMC_WITH_LLVM_SUPPORT
         const auto output = getOutputPath(base + ".ll");
@@ -172,7 +174,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
 #endif
     }
 
-    const auto emitTAC = (::targetName.get() == "tac");
+    const auto emitTAC = (mir::targetName.get() == "tac");
     const auto path = getOutputPath(base + (emitTAC ? ".ir" : ".s"));
     reportDebug() << (emitTAC ? "emitTAC >> " : "emitASM >> ") << path << std::endl;
 

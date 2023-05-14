@@ -1,0 +1,246 @@
+InstInfo:
+  # RV32I Base Integer Instruction Set
+  RType:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use]
+  IType:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm12[Metadata]
+  UType:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm20[Metadata]
+
+  ## 2.4 Integer Computational Instructions
+  InstanceRII:
+    Template: IType
+    ADDI:
+      Mnemonic: addi
+    SLTI:
+      Mnemonic: slti
+    SLTIU:
+      Mnemonic: sltiu
+    ANDI:
+      Mnemonic: andi
+    ORI:
+      Mnemonic: ori
+    XORI:
+      Mnemonic: xori
+    SLLI:
+      Mnemonic: slli
+      CustomVerifier: true
+    SRLI:
+      Mnemonic: srli
+      CustomVerifier: true
+    SRAI:
+      Mnemonic: srai
+      CustomVerifier: true
+  InstanceRIU:
+    Template: UType
+    LUI:
+      Mnemonic: lui
+    AUIPC:
+      Mnemonic: auipc
+  InstanceRRR:
+    Template: RType
+    ADD:
+      Mnemonic: add
+    SLT:
+      Mnemonic: slt
+    SLTU:
+      Mnemonic: sltu
+    AND:
+      Mnemonic: and
+    OR:
+      Mnemonic: or
+    XOR:
+      Mnemonic: xor
+    SLL:
+      Mnemonic: sll
+    SRL:
+      Mnemonic: srl
+    SUB:
+      Mnemonic: sub
+    SRA:
+      Mnemonic: sra
+  ## 2.5 Control Transfer Instructions
+  JAL:
+    Format: jal $Rd:GPR[Def] $Tgt:Reloc[Use]
+    Flag: [Terminator]
+  JALR:
+    Format: jalr $Rd:GPR[Def] $Rs1:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator]
+  BEQ:
+    Format: beq $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  BNE:
+    Format: bne $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  BLT:
+    Format: blt $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  BGE:
+    Format: bge $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  BLTU:
+    Format: bltu $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  BGEU:
+    Format: bgeu $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator, Branch]
+  ## 2.6 Load and Store Instructions
+  Load:
+    Format: $Mnemonic:Template $Rd:GPR[Def] $Imm:Imm12[Metadata]($Rs1:GPR[Use])
+    Flag: [Load]
+  InstanceLoad:
+    Template: Load
+    LB:
+      Mnemonic: lb
+    LH:
+      Mnemonic: lh
+    LW:
+      Mnemonic: lw
+    LBU:
+      Mnemonic: lbu
+    LHU:
+      Mnemonic: lhu
+  Store:
+    Format: $Mnemonic:Template $Rs2:GPR[Use] $Imm:Imm12[Metadata]($Rs1:GPR[Use])
+    Flag: [Store]
+  InstanceStore:
+    Template: Store
+    SB:
+      Mnemonic: sb
+    SH:
+      Mnemonic: sh
+    SW:
+      Mnemonic: sw
+  # RV64I Base Integer Instruction Set
+  ## 5.2 Integer Computational Instructions
+  InstanceRIW:
+    Template: IType
+    ADDIW:
+      Mnemonic: addiw
+    SLLIW:
+      Mnemonic: slliw
+      CustomVerifier: true
+    SRLIW:
+      Mnemonic: srliw
+      CustomVerifier: true
+    SRAIW:
+      Mnemonic: sraiw
+      CustomVerifier: true
+  InstanceRRW:
+    Template: RType
+    ADDW:
+      Mnemonic: addw
+    SUBW:
+      Mnemonic: subw
+    SLLW:
+      Mnemonic: sllw
+    SRLW:
+      Mnemonic: srlw
+    SRAW:
+      Mnemonic: sraw
+  ## 5.3 Load and Store Instructions
+  InstanceLoad64:
+    Template: Load
+    LD:
+      Mnemonic: ld
+  InstanceStore64:
+    Template: Store
+    SD:
+      Mnemonic: sd
+  # “M” Standard Extension for Integer Multiplication and Division
+  ## 6.2 Integer Multiplication Instructions
+  InstanceMRR:
+    Template: RType
+    MUL:
+      Mnemonic: mul
+    MULH:
+      Mnemonic: mulh
+    MULHSU:
+      Mnemonic: mulhsu
+    MULHU:
+      Mnemonic: mulhu
+    MULW:
+      Mnemonic: mulw
+    DIV:
+      Mnemonic: div
+    DIVU:
+      Mnemonic: divu
+    REM:
+      Mnemonic: rem
+    REMU:
+      Mnemonic: remu
+    DIVW:
+      Mnemonic: divw
+    DIVUW:
+      Mnemonic: divuw
+    REMW:
+      Mnemonic: remw
+    REMUW:
+      Mnemonic: remuw
+  # “F“ Standard Extension for Single-Precision Floating-Point
+  FRType:
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
+  FIFType:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:FPR[Use]
+  FFIType:
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs:GPR[Use]
+
+  ## 11.5 Single-Precision Load and Store Instructions
+  FLW:
+    Format: flw $Rd:FPR[Def] $Imm:Imm12[Metadata]($Rs1:GPR[Use])
+    Flag: [Load]
+  FSW:
+    Format: fsw $Rs2:FPR[Use] $Imm:Imm12[Metadata]($Rs1:GPR[Use])
+    Flag: [Store]
+  ## 11.6 Single-Precision Floating-Point Computational Instructions
+  ## 11.7 Single-Precision Floating-Point Conversion and Move Instructions
+  ## 11.8 Single-Precision Floating-Point Compare Instructions
+  ## 11.9 Single-Precision Floating-Point Classify Instruction
+  InstanceFRR:
+    Template: FRType
+    FADD_S:
+      Mnemonic: fadd.s
+    FSUB_S:
+      Mnemonic: fsub.s
+    FMUL_S:
+      Mnemonic: fmul.s
+    FDIV_S:
+      Mnemonic: fdiv.s
+    FSQRT_S:
+      Mnemonic: fsqrt.s
+    FMIN_S:
+      Mnemonic: fmin.s
+    FMAX_S:
+      Mnemonic: fmax.s
+  InstanceFIF:
+    Template: FIFType
+    FCVT_W_S:
+      Mnemonic: fcvt.w.s
+    FCVT_WU_S:
+      Mnemonic: fcvt.wu.s
+    FMV_W_X:
+      Mnemonic: fmv.w.x
+    FSGNJ_S:
+      Mnemonic: fsgnj.s
+    FCLASS_S:
+      Mnemonic: fclass.s
+    FEQ_S:
+      Mnemonic: feq.s
+    FLT_S:
+      Mnemonic: flt.s
+    FLE_S:
+      Mnemonic: fle.s
+  InstanceFFI:
+    Template: FFIType
+    FCVT_S_W:
+      Mnemonic: fcvt.s.w
+    FCVT_S_WU:
+      Mnemonic: fcvt.s.wu
+    FMV_X_W:
+      Mnemonic: fmv.x.w
+
+  # Pseudo Instructions
+
+ScheduleInfo:
+  emulator:
+  sifive-u74:

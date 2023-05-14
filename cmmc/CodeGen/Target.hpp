@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -27,24 +28,46 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 class MIRFunction;
-struct MIRModule;
+class MIRModule;
 class IPRAUsageCache;
-struct MIRRelocable;
+class MIRRelocable;
 
 class Target {
 public:
     virtual ~Target() = default;
 
     [[nodiscard]] virtual const DataLayout& getDataLayout() const noexcept = 0;
-    [[nodiscard]] virtual const TargetScheduleModel& getScheduleModel() const noexcept;
-    virtual bool builtinRA(MIRFunction& mfunc) const;
-    virtual bool builtinSA(MIRFunction& mfunc) const;
-    virtual void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const;
-    virtual void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const;
-    [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept;
-    virtual void legalizeFunc(MIRFunction& func) const;
-    virtual void postLegalizeFunc(MIRFunction& func) const;
-    virtual void emitAssembly(const MIRModule& module, std::ostream& out) const;
+    [[nodiscard]] virtual const TargetScheduleModel& getScheduleModel() const noexcept {
+        reportUnreachable(CMMC_LOCATION());
+    }
+    [[nodiscard]] virtual const TargetInstInfo& getInstInfo() const noexcept {
+        reportUnreachable(CMMC_LOCATION());
+    }
+    virtual bool builtinRA(MIRFunction& mfunc) const {
+        CMMC_UNUSED(mfunc);
+        return false;
+    }
+    virtual bool builtinSA(MIRFunction& mfunc) const {
+        CMMC_UNUSED(mfunc);
+        return false;
+    }
+    virtual void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(analysis);
+    }
+    virtual void transformModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(analysis);
+    }
+    [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept {
+        CMMC_UNUSED(inst);
+        return true;
+    }
+    virtual void emitAssembly(const MIRModule& module, std::ostream& out) const {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(out);
+        reportUnreachable(CMMC_LOCATION());
+    }
 
     // TODO: move to frame info
     /*
@@ -65,6 +88,8 @@ struct CodeGenContext final {
     const Target& target;
     const TargetScheduleModel& scheduleModel;
     const DataLayout& dataLayout;
+    const TargetInstInfo& instInfo;
+    bool requireOneTerminator;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

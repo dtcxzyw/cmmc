@@ -35,7 +35,7 @@ TACTarget::TACTarget() {
     if(targetMachine.get() != "emulator")
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
-void TACTarget::legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
+void TACTarget::transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
     // TODO: lowering memset/memcpy
     for(auto global : module.globals()) {
         if(global->isFunction()) {
@@ -123,7 +123,7 @@ bool TACTarget::isNativeSupported(InstructionID inst) const noexcept {
             return true;
     }
 }
-void TACTarget::legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const {
+void TACTarget::transformModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const {
     CMMC_UNUSED(module);
     CMMC_UNUSED(analysis);
 }

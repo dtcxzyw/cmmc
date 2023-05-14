@@ -39,9 +39,11 @@ using namespace cmmc;
 
 CMMC_NAMESPACE_BEGIN
 
-Flag strictMode;              // NOLINT
-StringOpt executeInput;       // NOLINT
-extern StringOpt targetName;  // NOLINT
+Flag strictMode;         // NOLINT
+StringOpt executeInput;  // NOLINT
+namespace mir {
+    extern StringOpt targetName;  // NOLINT
+}
 
 std::optional<int> runMain(Module&, SimulationIOContext&, const std::string&) {
     return std::nullopt;
@@ -52,7 +54,7 @@ CMMC_NAMESPACE_END
 static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::string& outputPath) {
     AnalysisPassManager analysis{ &module };
     const auto& target = module.getTarget();
-    target.legalizeModuleBeforeOpt(module, analysis);
+    target.transformModuleBeforeOpt(module, analysis);
     analysis.invalidateModule();
 
     const auto opt = PassManager<Module>::get(optLevel);
@@ -68,11 +70,11 @@ static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::
 int main(int argc, char** argv) {
     strictMode.handle("false");
 #if defined(__riscv)
-    targetName.handle("riscv");
+    mir::targetName.handle("riscv");
 #elif defined(__aarch64__)
-    targetName.handle("arm");
+    mir::targetName.handle("arm");
 #else
-    targetName.handle("riscv");
+    mir::targetName.handle("riscv");
 #endif
     if(argc != 5 && argc != 6) {
         reportInfo() << "CMMC " CMMC_VERSION << std::endl;
@@ -90,7 +92,7 @@ int main(int argc, char** argv) {
         std::string outputPath = argv[4];
         const auto opt = argc == 6;  // with -O1
         Module module;
-        const auto target = TargetRegistry::get().selectTarget();
+        const auto target = mir::TargetRegistry::get().selectTarget();
         module.setTarget(target.get());
 
         {

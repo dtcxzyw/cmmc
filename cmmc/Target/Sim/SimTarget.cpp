@@ -47,7 +47,6 @@ class SimTarget final : public Target {
     SimDataLayout mDataLayout;
 
 public:
-    explicit SimTarget() {}
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }

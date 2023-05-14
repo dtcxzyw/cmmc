@@ -79,7 +79,7 @@ MIPSTarget::MIPSTarget() {
         DiagnosticsContext::get().attach<UnrecognizedInput>("target machine", targetMachine.get()).reportFatal();
 }
 
-void MIPSTarget::legalizeModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
+void MIPSTarget::transformModuleBeforeCodeGen(Module&, AnalysisPassManager&) const {}
 void MIPSTarget::legalizeFunc(MIRFunction& func) const {
     // replace non-zero immediates with li
     auto& constant = func.pools().pools[AddressSpace::Constant];

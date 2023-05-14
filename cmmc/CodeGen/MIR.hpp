@@ -45,14 +45,24 @@ public:
 };
 
 constexpr uint32_t virtualRegBegin = 0xcc000000;
+constexpr uint32_t stackSlotBegin = 0xdd000000;
 constexpr bool isVirtualReg(uint32_t x) {
-    return x >= virtualRegBegin;
+    return (x & virtualRegBegin) == virtualRegBegin;
 }
+constexpr bool isStackSlot(uint32_t x) {
+    return (x & stackSlotBegin) == stackSlotBegin;
+}
+
+enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32 };
 
 class MIROperand final {
     std::variant<uint32_t, uint64_t, MIRRelocable*, double, std::monostate> mOperand;
+    OperandType mType;
 
 public:
+    [[nodiscard]] OperandType type() const noexcept {
+        return mType;
+    }
     [[nodiscard]] size_t hash() const {
         return std::hash<std::decay_t<decltype(mOperand)>>{}(mOperand);
     }
@@ -91,8 +101,9 @@ enum MIRGenericInst : uint32_t {
     InstJump,    // reloc
     InstBranch,  // cond, reloc, prob
     InstPush,    // idx, val
-    InstReturn,  // val
-    InstReturnVoid,
+    InstCall,    // reloc
+    InstRet,     // val
+    InstRetVoid,
     InstUnreachable,
     // Memory
     InstLoad,
@@ -121,28 +132,26 @@ enum MIRGenericInst : uint32_t {
     InstFNeg,
     InstFFma,
     // Comparison
-    InstSCmp,  // lhs, rhs, op
-    InstUCmp,  // lhs, rhs, op
-    InstFCmp,  // lhs, rhs, op
+    InstSCmp,  // dst, lhs, rhs, op
+    InstUCmp,  // dst, lhs, rhs, op
+    InstFCmp,  // dst, lhs, rhs, op
     // Conversion
     InstSExt,
     InstZExt,
     InstTrunc,
-    InstBitcast,
     InstF2U,
     InstF2S,
     InstU2F,
     InstS2F,
     InstFCast,
     // Misc
-    InstGetElementPtr,
     InstCopy,
     InstSelect,
 
     ISASpecificBegin,
 };
 class MIRInst final {
-    static constexpr uint32_t maxOperandCount = 4;
+    static constexpr uint32_t maxOperandCount = 6;
     uint32_t mOpcode;
     std::array<MIROperand, maxOperandCount> mOperands;
 
@@ -150,6 +159,12 @@ public:
     explicit MIRInst(uint32_t opcode) : mOpcode{ opcode } {}
     [[nodiscard]] uint32_t opcode() const {
         return mOpcode;
+    }
+    [[nodiscard]] const MIROperand& getOperand(uint32_t idx) const {
+        return mOperands[idx];
+    }
+    [[nodiscard]] MIROperand& getOperand(uint32_t idx) {
+        return mOperands[idx];
     }
 };
 class MIRFunction;
@@ -160,7 +175,7 @@ class MIRBasicBlock final : public MIRRelocable {
 
 public:
     MIRBasicBlock(MIRFunction* func, double tripCount) : mFunction{ func }, mTripCount{ tripCount } {}
-    MIRFunction* getFunction() const {
+    [[nodiscard]] MIRFunction* getFunction() const {
         return mFunction;
     }
     [[nodiscard]] double getTripCount() const {
@@ -184,7 +199,7 @@ public:
     std::list<std::unique_ptr<MIRBasicBlock>>& blocks() {
         return mBlocks;
     }
-    const std::list<std::unique_ptr<MIRBasicBlock>>& blocks() const {
+    [[nodiscard]] const std::list<std::unique_ptr<MIRBasicBlock>>& blocks() const {
         return mBlocks;
     }
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
@@ -210,8 +225,10 @@ private:
     bool mReadOnly;
 
 public:
-    MIRDataStorage(Storage data, bool readOnly);
-
+    MIRDataStorage(Storage data, bool readOnly) : mData{ std::move(data) }, mReadOnly{ readOnly } {}
+    [[nodiscard]] bool isReadOnly() const noexcept {
+        return mReadOnly;
+    }
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
@@ -223,7 +240,7 @@ struct MIRGlobal final {
     std::unique_ptr<MIRRelocable> reloc;
 
     MIRGlobal(String sym, Linkage globalLinkage, size_t align, std::unique_ptr<MIRRelocable> relocable)
-        : symbol{ std::move(sym) }, linkage{ globalLinkage }, alignment{ align }, reloc{ std::move(relocable) } {}
+        : symbol{ sym }, linkage{ globalLinkage }, alignment{ align }, reloc{ std::move(relocable) } {}
 
     bool verify(std::ostream& out, const CodeGenContext& ctx) const;
     void dump(std::ostream& out, const CodeGenContext& ctx) const;
@@ -239,7 +256,7 @@ public:
     std::vector<std::unique_ptr<MIRGlobal>>& globals() {
         return mGlobals;
     }
-    const Target& getTarget() const {
+    [[nodiscard]] const Target& getTarget() const {
         return mTarget;
     }
     bool verify(std::ostream& out, const CodeGenContext& ctx) const;

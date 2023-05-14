@@ -12,6 +12,8 @@ SET(CMAKE_FIND_PACKAGE_SORT_DIRECTION DEC)
 
 project(cmmc)
 
+find_package(Python3 REQUIRED)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Supported build types: Debug Release" FORCE)
 endif()
@@ -52,6 +54,26 @@ endfunction()
 
 add_frontend(Spl)
 add_frontend(SysY)
+
+file(GLOB CMMC_TARGET_TEMPLATE_ENGINE_FILES cmmc/Target/Template/*)
+
+function(add_backend backend)
+    message(STATUS "Add backend: ${backend}")
+    set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/${backend})
+    set(DESC_FILE ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/${backend}/${backend}.yml)
+    set(OUTPUTS ${GENERATED_DIR}/InstInfoImpl.hpp ${GENERATED_DIR}/InstInfoDecl.hpp)
+    add_custom_command(
+        OUTPUT ${OUTPUTS}
+        COMMAND ${CMAKE_COMMAND} -E echo Generating files for target ${backend}
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Template/generate.py ${DESC_FILE} ${GENERATED_DIR}
+        DEPENDS ${DESC_FILE} ${CMMC_TARGET_TEMPLATE_ENGINE_FILES}
+    )
+    add_custom_target(${backend}_generated DEPENDS ${OUTPUTS})
+endfunction()
+add_backend(Generic)
+add_backend(TAC)
+add_backend(RISCV)
+add_backend(MIPS)
 
 option(CMMC_LLVM_SUPPORT "Enable LLVM support" ON)
 if(${CMAKE_BUILD_TYPE} MATCHES Debug)
@@ -101,13 +123,12 @@ else()
 endif()
 file(GLOB CMMC_SRC_FRONTEND cmmc/Frontend/Support/*.cpp)
 add_executable(cmmc ${CMMC_SRC} ${CMMC_SRC_FRONTEND} ${CMMC_SRC_LLVM})
-add_dependencies(cmmc Spl_generated SysY_generated)
+add_dependencies(cmmc Spl_generated SysY_generated Generic_generated TAC_generated RISCV_generated MIPS_generated)
 set_source_files_properties(${CMMC_SRC} PROPERTIES COMPILE_FLAGS "-Wconversion -Wshadow -Wno-psabi")
 target_include_directories(cmmc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMAKE_CURRENT_LIST_DIR})
 target_link_libraries(cmmc PRIVATE ${LLVM_LIBRARIES})
 
 set(CMMC_EDUCG_SUBMIT_DIR ${CMAKE_CURRENT_BINARY_DIR}/educg_submit)
-find_package(Python3 REQUIRED)
 
 add_custom_target(educg_submit ALL
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}

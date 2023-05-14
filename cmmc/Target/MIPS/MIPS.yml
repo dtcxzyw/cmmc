@@ -1,0 +1,6 @@
+InstInfo:
+  LI:
+    Format: LI $Dst:GPR[Def], $Imm:Imm[Metadata]
+
+ScheduleModel:
+  emulator:

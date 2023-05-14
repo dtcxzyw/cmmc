@@ -93,8 +93,8 @@ public:
     [[nodiscard]] const ScheduleModel& getSubTarget() const noexcept override {
         return *mSubTarget;
     }
-    void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
-    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
+    void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void transformModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override {
         CMMC_UNUSED(module);
         CMMC_UNUSED(analysis);
     }

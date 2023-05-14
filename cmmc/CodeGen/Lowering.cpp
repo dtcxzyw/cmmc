@@ -305,11 +305,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
 
     {
         Stage stage{ "Pre-lowering legalization"sv };
-        target.legalizeModuleBeforeCodeGen(module, analysis);
+        target.transformModuleBeforeCodeGen(module, analysis);
         analysis.invalidateModule();
     }
 
-    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout() };
+    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout(), target.getInstInfo(), true };
 
     auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
     CMMC_UNUSED(dumpFunc);
@@ -344,7 +344,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // Stage 1: instruction selection
             Stage stage{ "Instruction selection"sv };
             lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
-            assert(mfunc.verify(std::cerr, true));
+            assert(mfunc.verify(std::cerr, ctx));
         }
         /*
         {

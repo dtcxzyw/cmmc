@@ -3,6 +3,18 @@
 import os
 import sys
 
+prefixes = ['cmmc', 'Spl', 'SysY', 'Generic', 'RISCV', 'TAC', 'MIPS']
+
+
+def is_owned_header(line: str):
+    if not line.startswith('#include <'):
+        return False
+    for prefix in prefixes:
+        if line.startswith('#include <'+prefix):
+            return True
+    return False
+
+
 cmmc_root = sys.argv[1]
 for root, dirs, files in os.walk(cmmc_root):
     for file in files:
@@ -10,7 +22,7 @@ for root, dirs, files in os.walk(cmmc_root):
         with open(root + '/' + file) as f:
             for line in f.readlines():
                 stripped = line.strip()
-                if stripped.startswith('#include <cmmc') or stripped.startswith('#include <Spl') or stripped.startswith('#include <SysY'):
+                if is_owned_header(stripped):
                     line = stripped
                     header = line[10:line.find('>')]
                     lines.append(

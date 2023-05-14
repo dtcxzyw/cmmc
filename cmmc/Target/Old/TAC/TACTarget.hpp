@@ -103,8 +103,8 @@ public:
     }
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override;
     void legalizeFunc(MIRFunction& func) const override;
-    void legalizeModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
-    void legalizeModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
+    void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override;
+    void transformModuleBeforeOpt(Module& module, AnalysisPassManager& analysis) const override;
     void emitAssembly(const MIRModule& module, std::ostream& out) const override;
     [[nodiscard]] MIROperand getStackPointer() const noexcept override {
         return unusedOperand;
