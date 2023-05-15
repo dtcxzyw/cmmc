@@ -27,9 +27,11 @@ InstInfo:
 
   Goto:
     Format: GOTO $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
 
   Branch:
     Format: IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
     Instances:
       BranchEq:
         Op: ==
@@ -42,6 +44,7 @@ InstInfo:
 
   Return:
     Format: RETURN $Src:Val[Use]
+    Flag: [Terminator]
 
   Read:
     Format: READ $Dst:VReg[Def]

@@ -15,6 +15,7 @@
 // Three-Address Code
 
 #include <TAC/InstInfoDecl.hpp>
+#include <TAC/ScheduleModelDecl.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -37,10 +38,10 @@ public:
         return type->getFixedSize();
     }
     [[nodiscard]] size_t getPointerSize() const noexcept override {
-        return 32;
+        return 4;
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
+        return 0;
     }
 };
 
@@ -50,6 +51,13 @@ class TACTarget final : public Target {
 public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
+    }
+    void emitPrologue(LoweringContext& ctx, MIRFunction& mfunc) const override {
+        CMMC_UNUSED(ctx);
+        CMMC_UNUSED(mfunc);
+    }
+    [[nodiscard]] const TargetScheduleModel& getScheduleModel() const noexcept override {
+        return TAC::getTACScheduleModel();
     }
     [[nodiscard]] const TargetInstInfo& getInstInfo() const noexcept override {
         return TAC::getTACInstInfo();

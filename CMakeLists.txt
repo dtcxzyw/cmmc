@@ -61,7 +61,7 @@ function(add_backend backend)
     message(STATUS "Add backend: ${backend}")
     set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/${backend})
     set(DESC_FILE ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/${backend}/${backend}.yml)
-    set(OUTPUTS ${GENERATED_DIR}/InstInfoImpl.hpp ${GENERATED_DIR}/InstInfoDecl.hpp)
+    set(OUTPUTS ${GENERATED_DIR}/InstInfoImpl.hpp ${GENERATED_DIR}/InstInfoDecl.hpp ${GENERATED_DIR}/ScheduleModelImpl.hpp ${GENERATED_DIR}/ScheduleModelDecl.hpp)
     add_custom_command(
         OUTPUT ${OUTPUTS}
         COMMAND ${CMAKE_COMMAND} -E echo Generating files for target ${backend}
@@ -139,7 +139,8 @@ COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/cmmc ${CMMC
 COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/generated ${CMMC_EDUCG_SUBMIT_DIR}/
 COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_LIST_DIR}/educg/CMMCDriver.cpp ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Driver/CMMCDriver.cpp
 COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Conversion/ ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/ExecutionEngine/LLVMOrcJIT.cpp
-COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/TAC
+COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/LLVM ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/MIPS ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Sim ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/TAC ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Old ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Template ${CMMC_EDUCG_SUBMIT_DIR}/cmmc/Target/Generic
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_header_fix.py ${CMMC_EDUCG_SUBMIT_DIR}
 COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/educg/cmmc_file_filter.py ${CMMC_EDUCG_SUBMIT_DIR}
 COMMAND cd ${CMMC_EDUCG_SUBMIT_DIR}

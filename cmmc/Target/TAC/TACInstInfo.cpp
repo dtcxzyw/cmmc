@@ -34,7 +34,7 @@ static bool isOperandVReg(std::ostream&, const MIROperand& operand) {
 }
 
 static bool isOperandVal(std::ostream&, const MIROperand& operand) {
-    return (operand.isReg() && (isVirtualReg(operand.reg()) || isStackSlot(operand.reg()))) || operand.isImm();
+    return (operand.isReg() && (isVirtualReg(operand.reg()) || isStackObject(operand.reg()))) || operand.isImm();
 }
 
 static bool isOperandReloc(std::ostream&, const MIROperand& operand) {

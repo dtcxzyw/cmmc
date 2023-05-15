@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -38,39 +39,67 @@ CMMC_MIR_NAMESPACE_BEGIN
 struct CodeGenContext;
 
 class MIRRelocable {
+    String mSymbol;
+
 public:
+    explicit MIRRelocable(String sym) : mSymbol{ sym } {}
     virtual ~MIRRelocable() = default;
     virtual bool verify(std::ostream& out, const CodeGenContext& ctx) const = 0;
+    void dumpAsTarget(std::ostream& out) const;
     virtual void dump(std::ostream& out, const CodeGenContext& ctx) const = 0;
 };
 
 constexpr uint32_t virtualRegBegin = 0xcc000000;
-constexpr uint32_t stackSlotBegin = 0xdd000000;
+constexpr uint32_t stackObjectBegin = 0xdd000000;
+constexpr uint32_t invalidReg = 0xdeadbeef;
 constexpr bool isVirtualReg(uint32_t x) {
     return (x & virtualRegBegin) == virtualRegBegin;
 }
-constexpr bool isStackSlot(uint32_t x) {
-    return (x & stackSlotBegin) == stackSlotBegin;
+constexpr bool isStackObject(uint32_t x) {
+    return (x & stackObjectBegin) == stackObjectBegin;
 }
 
-enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32 };
+enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32, Special };
 
 class MIROperand final {
-    std::variant<uint32_t, uint64_t, MIRRelocable*, double, std::monostate> mOperand;
-    OperandType mType;
+    std::variant<uint32_t, intmax_t, MIRRelocable*, double, std::monostate> mOperand;
+    OperandType mType = OperandType::Special;
 
 public:
+    MIROperand() = default;
+    template <typename T>
+    MIROperand(T x, OperandType type) : mOperand{ x }, mType{ type } {}
+    [[nodiscard]] const auto& getStorage() const noexcept {
+        return mOperand;
+    }
+    bool operator==(const MIROperand& rhs) const {
+        return mOperand == rhs.mOperand;
+    }
     [[nodiscard]] OperandType type() const noexcept {
         return mType;
     }
     [[nodiscard]] size_t hash() const {
         return std::hash<std::decay_t<decltype(mOperand)>>{}(mOperand);
     }
-    [[nodiscard]] uint64_t imm() const {
-        return std::get<uint64_t>(mOperand);
+    [[nodiscard]] intmax_t imm() const {
+        return std::get<intmax_t>(mOperand);
     }
     [[nodiscard]] bool isImm() const {
-        return std::holds_alternative<uint64_t>(mOperand);
+        return std::holds_alternative<intmax_t>(mOperand);
+    }
+    template <typename T>
+    [[nodiscard]] static MIROperand asImm(T val, OperandType type) {
+        static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
+        return MIROperand{ static_cast<intmax_t>(val), type };
+    }
+    [[nodiscard]] static MIROperand asReg(uint32_t reg, OperandType type) {
+        return MIROperand{ reg, type };
+    }
+    [[nodiscard]] static MIROperand asReloc(MIRRelocable* val) {
+        return MIROperand{ val, OperandType::Special };
+    }
+    [[nodiscard]] static MIROperand asFreq(double val) {
+        return MIROperand{ val, OperandType::Special };
     }
     [[nodiscard]] uint32_t reg() const {
         return std::get<uint32_t>(mOperand);
@@ -116,7 +145,6 @@ enum MIRGenericInst : uint32_t {
     InstSRem,
     InstUDiv,
     InstURem,
-    InstNeg,
     // Bitwise
     InstAnd,
     InstOr,
@@ -124,6 +152,8 @@ enum MIRGenericInst : uint32_t {
     InstShl,
     InstLShr,
     InstAShr,
+    // Int Unary
+    InstNeg,
     // FP
     InstFAdd,
     InstFSub,
@@ -147,6 +177,7 @@ enum MIRGenericInst : uint32_t {
     // Misc
     InstCopy,
     InstSelect,
+    InstLoadGlobalAddress,
 
     ISASpecificBegin,
 };
@@ -166,6 +197,12 @@ public:
     [[nodiscard]] MIROperand& getOperand(uint32_t idx) {
         return mOperands[idx];
     }
+    template <uint32_t Idx>
+    MIRInst& setOperand(const MIROperand& operand) {
+        static_assert(Idx < maxOperandCount);
+        mOperands[Idx] = operand;
+        return *this;
+    }
 };
 class MIRFunction;
 class MIRBasicBlock final : public MIRRelocable {
@@ -174,7 +211,8 @@ class MIRBasicBlock final : public MIRRelocable {
     std::list<MIRInst> mInsts;
 
 public:
-    MIRBasicBlock(MIRFunction* func, double tripCount) : mFunction{ func }, mTripCount{ tripCount } {}
+    MIRBasicBlock(String label, MIRFunction* func, double tripCount)
+        : MIRRelocable{ label }, mFunction{ func }, mTripCount{ tripCount } {}
     [[nodiscard]] MIRFunction* getFunction() const {
         return mFunction;
     }
@@ -192,12 +230,27 @@ public:
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
 
+struct StackObject final {
+    uint32_t size;
+    uint32_t alignment;
+    int32_t offset;
+    bool fixed;
+};
+
 class MIRFunction final : public MIRRelocable {
     std::list<std::unique_ptr<MIRBasicBlock>> mBlocks;
+    std::vector<StackObject> mStackObjects;
+    std::vector<MIROperand> mArgs;
 
 public:
+    explicit MIRFunction(String symbol) : MIRRelocable{ symbol } {}
+    MIROperand addStackObject(uint32_t size, uint32_t alignment, OperandType ptrType);
+    StackObject& getStackObject(uint32_t idx);
     std::list<std::unique_ptr<MIRBasicBlock>>& blocks() {
         return mBlocks;
+    }
+    std::vector<MIROperand>& args() {
+        return mArgs;
     }
     [[nodiscard]] const std::list<std::unique_ptr<MIRBasicBlock>>& blocks() const {
         return mBlocks;
@@ -210,7 +263,7 @@ class MIRZeroStorage final : public MIRRelocable {
     size_t mSize;
 
 public:
-    explicit MIRZeroStorage(size_t size) : mSize{ size } {}
+    explicit MIRZeroStorage(String symbol, size_t size) : MIRRelocable{ symbol }, mSize{ size } {}
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
@@ -225,7 +278,8 @@ private:
     bool mReadOnly;
 
 public:
-    MIRDataStorage(Storage data, bool readOnly) : mData{ std::move(data) }, mReadOnly{ readOnly } {}
+    MIRDataStorage(String symbol, Storage data, bool readOnly)
+        : MIRRelocable{ symbol }, mData{ std::move(data) }, mReadOnly{ readOnly } {}
     [[nodiscard]] bool isReadOnly() const noexcept {
         return mReadOnly;
     }
@@ -234,13 +288,12 @@ public:
 };
 
 struct MIRGlobal final {
-    String symbol;
     Linkage linkage;
     size_t alignment;
     std::unique_ptr<MIRRelocable> reloc;
 
-    MIRGlobal(String sym, Linkage globalLinkage, size_t align, std::unique_ptr<MIRRelocable> relocable)
-        : symbol{ sym }, linkage{ globalLinkage }, alignment{ align }, reloc{ std::move(relocable) } {}
+    MIRGlobal(Linkage globalLinkage, size_t align, std::unique_ptr<MIRRelocable> relocable)
+        : linkage{ globalLinkage }, alignment{ align }, reloc{ std::move(relocable) } {}
 
     bool verify(std::ostream& out, const CodeGenContext& ctx) const;
     void dump(std::ostream& out, const CodeGenContext& ctx) const;

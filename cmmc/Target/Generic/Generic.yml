@@ -1,24 +1,31 @@
 InstInfo:
   Jump:
     Format: Jump $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
   Branch:
     Format: Branch $Src:Bool[Metadata], $Tgt:Reloc[Metadata], $Prob:Freq[Metadata]
+    Flag: [Terminator]
   Push:
-    Format: Push $Idx:Imm[Metadata], $Src:VReg[Use]
+    Format: Push $Idx:Imm[Metadata], $Src:Val[Use]
   Call:
-    Format: Call $Tgt:Reloc[Metadata]
+    Format: Call $Dst:VRegOrInvalid[Def], $Tgt:Reloc[Metadata]
   Ret:
-    Format: Ret $Src:VReg[Use]
+    Format: Ret $Src:Val[Use]
+    Flag: [Terminator]
   RetVoid:
     Format: RetVoid
+    Flag: [Terminator]
   Unreachable:
     Format: Unreachable
+    Flag: [Terminator]
   Load:
-    Format: Load $Dst:VReg[Def], $Addr:VReg[Use], $Off:Imm[Metadata]
+    Format: Load $Dst:VReg[Def], $Addr:Val[Use], $Off:Imm[Metadata]
+    Flag: [Load]
   Store:
-    Format: Store $Addr:VReg[Use], $Src:VReg[Use], $Off:Imm[Metadata]
+    Format: Store $Addr:VReg[Use], $Src:Val[Use], $Off:Imm[Metadata]
+    Flag: [Store]
   IntegerArithmetic:
-    Format: $Op:Template $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use]
+    Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use]
     Instances:
       Add:
         Op: Add
@@ -34,8 +41,6 @@ InstInfo:
         Op: UDiv
       URem:
         Op: URem
-      Neg:
-        Op: Neg
       And:
         Op: And
       Or:
@@ -48,6 +53,11 @@ InstInfo:
         Op: LShr
       AShr:
         Op: AShr
+  IntegerUnary:
+    Format: $Op:Template $Dst:IReg[Def], $Src:IVal[Use]
+    Instances:
+      Neg:
+        Op: Neg
   FloatArithmetic:
     Format: $Op:Template $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use]
     Instances:
@@ -64,28 +74,30 @@ InstInfo:
       FFma:
         Op: FFma
   SCmp:
-    Format: SCmp $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use], $Op:Imm[Metadata]
+    Format: SCmp $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
   UCmp:
-    Format: UCmp $Dst:IReg[Def], $Lhs:IReg[Use], $Rhs:IReg[Use], $Op:Imm[Metadata]
+    Format: UCmp $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
   FCmp:
-    Format: FCmp $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use], $Op:Imm[Metadata]
+    Format: FCmp $Dst:FReg[Def], $Lhs:FVal[Use], $Rhs:FVal[Use], $Op:Flag[Metadata]
   SExt:
-    Format: SExt $Dst:IReg[Def], $Src:IReg[Use]
+    Format: SExt $Dst:IReg[Def], $Src:IVal[Use]
   ZExt:
-    Format: ZExt $Dst:IReg[Def], $Src:IReg[Use]
+    Format: ZExt $Dst:IReg[Def], $Src:IVal[Use]
   Trunc:
-    Format: Trunc $Dst:IReg[Def], $Src:IReg[Use]
+    Format: Trunc $Dst:IReg[Def], $Src:IVal[Use]
   F2U:
     Format: F2U $Dst:IReg[Def], $Src:FReg[Use]
   F2S:
     Format: F2S $Dst:IReg[Def], $Src:FReg[Use]
   U2F:
-    Format: U2F $Dst:FReg[Def], $Src:IReg[Use]
+    Format: U2F $Dst:FReg[Def], $Src:IVal[Use]
   S2F:
-    Format: S2F $Dst:FReg[Def], $Src:IReg[Use]
+    Format: S2F $Dst:FReg[Def], $Src:IVal[Use]
   FCast:
     Format: FCast $Dst:FReg[Def], $Src:FReg[Use]
   Copy:
     Format: Copy $Dst:VReg[Def], $Src:VReg[Use]
   Select:
-    Format: Select $Dst:VReg[Def], $Cond:IReg[Use], $Lhs:VReg[Use], $Rhs:VReg[Use]
+    Format: Select $Dst:VReg[Def], $Cond:Bool[Use], $Lhs:IVal[Use], $Rhs:IVal[Use]
+  LoadGlobalAddress:
+    Format: LoadGlobalAddress $Dst:IReg[Def], $Addr:Reloc[Metadata]

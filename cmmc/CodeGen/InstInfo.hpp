@@ -30,9 +30,8 @@ enum InstFlag : uint32_t {
     InstFlagNone = 0,
     InstFlagLoad = 1 << 0,
     InstFlagStore = 1 << 1,
-    InstFlagBranch = 1 << 2,
-    InstFlagTerminator = 1 << 3,
-    InstFlagPseudo = 1 << 4,
+    InstFlagTerminator = 1 << 2,
+    InstFlagPseudo = 1 << 3,
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {

@@ -41,37 +41,41 @@ CMMC_MIR_NAMESPACE_BEGIN
 class LoweringContext final {
     MIRModule& mModule;
     const DataLayout& mDataLayout;
+    CodeGenContext& mCodeGenCtx;
     std::unordered_map<Block*, MIRBasicBlock*>& mBlockMap;
     std::unordered_map<GlobalValue*, MIRGlobal*>& mGlobalMap;
     std::unordered_map<Value*, MIROperand>& mValueMap;
 
     MIRBasicBlock* mCurrentBasicBlock = nullptr;
-    std::unordered_map<const Type*, MIROperand> mZeros;
+    OperandType mPtrType;
 
 public:
-    LoweringContext(MIRModule& module, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
+    LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
                     std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, std::unordered_map<Value*, MIROperand>& valueMap);
-    const DataLayout& getDataLayout() const noexcept {
+    [[nodiscard]] const DataLayout& getDataLayout() const noexcept {
         return mDataLayout;
     }
-    MIRModule& getModule() const noexcept;
+    [[nodiscard]] OperandType getPtrType() const noexcept {
+        return mPtrType;
+    }
+    [[nodiscard]] MIRModule& getModule() const noexcept;
     MIRBasicBlock* mapBlock(Block* block) const;
     MIROperand mapOperand(Value* operand);
+    MIROperand newVReg(const Type* type);
+    void emitCopy(const MIROperand& dst, const MIROperand& src);
     MIRGlobal* mapGlobal(GlobalValue* global) const;
     void setCurrentBasicBlock(MIRBasicBlock* block) noexcept;
-    MIRBasicBlock* getCurrentBasicBlock() const noexcept {
+    [[nodiscard]] MIRBasicBlock* getCurrentBasicBlock() const noexcept {
         return mCurrentBasicBlock;
     }
     MIRBasicBlock* addBlockAfter(double blockTripCount);
 
-    template <typename Inst>
     MIRInst& emitInst(uint32_t opcode) {
         auto& insts = mCurrentBasicBlock->instructions();
         insts.emplace_back(opcode);
         return insts.back();
     }
     void addOperand(Value* value, MIROperand reg);
-    MIROperand getZero(const Type* type);
 };
 
 std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel);

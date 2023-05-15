@@ -66,24 +66,22 @@ InstInfo:
   JALR:
     Format: jalr $Rd:GPR[Def] $Rs1:GPR[Use] $Tgt:Reloc[Use]
     Flag: [Terminator]
-  BEQ:
-    Format: beq $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
-  BNE:
-    Format: bne $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
-  BLT:
-    Format: blt $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
-  BGE:
-    Format: bge $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
-  BLTU:
-    Format: bltu $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
-  BGEU:
-    Format: bgeu $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator, Branch]
+  Branches:
+    Format: $Mnemonic:Template $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Flag: [Terminator]
+    Instances:
+      BEQ:
+        Mnemonic: beq
+      BNE:
+        Mnemonic: bne
+      BLT:
+        Mnemonic: blt
+      BGE:
+        Mnemonic: bge
+      BLTU:
+        Mnemonic: bltu
+      BGEU:
+        Mnemonic: bgeu
   ## 2.6 Load and Store Instructions
   Load:
     Format: $Mnemonic:Template $Rd:GPR[Def] $Imm:Imm12[Metadata]($Rs1:GPR[Use])

@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/CodeGen/MIR.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -50,6 +51,11 @@ public:
     virtual bool builtinSA(MIRFunction& mfunc) const {
         CMMC_UNUSED(mfunc);
         return false;
+    }
+    virtual void emitPrologue(LoweringContext& ctx, MIRFunction& mfunc) const {
+        CMMC_UNUSED(ctx);
+        CMMC_UNUSED(mfunc);
+        reportUnreachable(CMMC_LOCATION());
     }
     virtual void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
         CMMC_UNUSED(module);
@@ -90,6 +96,8 @@ struct CodeGenContext final {
     const DataLayout& dataLayout;
     const TargetInstInfo& instInfo;
     bool requireOneTerminator;
+    uint32_t vregIdx = virtualRegBegin;
+    uint32_t blockIdx = 0;
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

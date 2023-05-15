@@ -1,6 +1,198 @@
 InstInfo:
   LI:
-    Format: LI $Dst:GPR[Def], $Imm:Imm[Metadata]
+    Format: li $Rd:GPR[Def], $Imm:Imm[Metadata]
+
+  IntegerBinary:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use]
+    Instances:
+      ADDU:
+        Mnemonic: addu
+      AND:
+        Mnemonic: and
+      NOR:
+        Mnemonic: nor
+      OR:
+        Mnemonic: or
+      SLLV:
+        Mnemonic: sllv
+      SRAV:
+        Mnemonic: srav
+      SRLV:
+        Mnemonic: srlv
+      SUBU:
+        Mnemonic: subu
+      XOR:
+        Mnemonic: xor
+
+  IntegerBinaryImm:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm[Metadata]
+    Instances:
+      ADDIU:
+        Mnemonic: addiu
+      ANDI:
+        Mnemonic: andi
+      ORI:
+        Mnemonic: ori
+      SLL:
+        Mnemonic: sll
+        CustomVerifier: true
+      SRA:
+        Mnemonic: sra
+        CustomVerifier: true
+      SRL:
+        Mnemonic: srl
+        CustomVerifier: true
+      XORI:
+        Mnemonic: xori
+
+  FloatingPointBinary:
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
+    Instances:
+      ADD_S:
+        Mnemonic: add.s
+
+  FloatingPointUnary:
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use]
+    Instances:
+      ABS_S:
+        Mnemonic: abs.s
+      NEG_S:
+        Mnemonic: neg.s
+
+  B:
+    Format: b $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
+  BAL:
+    Format: "bal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
+    Flag: [Terminator]
+  BC1F:
+    Format: "bc1f $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
+    Flag: [Terminator]
+  BC1T:
+    Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
+    Flag: [Terminator]
+  BranchCompare:
+    Format: $Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
+    Instances:
+      BEQ:
+        Mnemonic: beq
+      BNE:
+        Mnemonic: bne
+  BranchCompareZero:
+    Format: $Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata]
+    Flag: [Terminator]
+    Instances:
+      BGEZ:
+        Mnemonic: bgez
+      BGTZ:
+        Mnemonic: bgtz
+      BLEZ:
+        Mnemonic: blez
+      BLTZ:
+        Mnemonic: bltz
+
+  BranchCompareZeroAndLink:
+    Format: "$Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
+    Instances:
+      BGEZAL:
+        Mnemonic: bgezal
+      BLTZAL:
+        Mnemonic: bltzal
+
+  FloatingPointCompare:
+    Format: "$Mnemonic:Template $Rs1:FPR[Use], $Rs2:FPR[Use] # Implicit Def: $Rd:CC[Def]"
+    Instances:
+      C_EQ_S:
+        Mnemonic: c.eq.s
+      C_LT_S:
+        Mnemonic: c.lt.s
+      C_LE_S:
+        Mnemonic: c.le.s
+
+  FloatingPointConvert:
+    Format: "$Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use]"
+    Instances:
+      CVT_S_W:
+        Mnemonic: cvt.s.w
+      #CVT_W_S:
+      #  Mnemonic: cvt.w.s
+      TRUNC_W_S:
+        Mnemonic: trunc.w.s
+
+  MulDiv:
+    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use] # Implicit Def: $Rd:HILO[Def]"
+    Instances:
+      DIV:
+        Mnemonic: div
+      DIVU:
+        Mnemonic: divu
+      MULT:
+        Mnemonic: mult
+
+  JAL:
+    Format: "jal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
+    Flag: [Terminator]
+  JALR:
+    Format: "jalr $Rd:GPR[Def], $Rs:GPR[Use] # Implicit Def: $Rd:RAReg[Def]"
+    Flag: [Terminator]
+  JR:
+    Format: jr $Rs:GPR[Use]
+    Flag: [Terminator]
+
+  Load:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm[Metadata]($Rs:GPR[Use])
+    Flag: [Load]
+    Instances:
+      LB:
+        Mnemonic: lb
+      LBU:
+        Mnemonic: lbu
+      LH:
+        Mnemonic: lh
+      LHU:
+        Mnemonic: lhu
+      LW:
+        Mnemonic: lw
+  Store:
+    Format: $Mnemonic:Template $Rd:GPR[Use], $Imm:Imm[Metadata]($Rs:GPR[Use])
+    Flag: [Store]
+    Instances:
+      SB:
+        Mnemonic: sb
+      SH:
+        Mnemonic: sh
+      SW:
+        Mnemonic: sw
+
+  MFC1:
+    Format: mfc1 $Rd:GPR[Def], $Rs:FPR[Use]
+  MTC1:
+    Format: mtc1 $Rd:FPR[Def], $Rs:GPR[Use]
+  MFHI:
+    Format: "mfhi $Rd:GPR[Def] # Implicit Use: $Rd:HILO[Use]"
+  MFLO:
+    Format: "mflo $Rd:GPR[Def] # Implicit Use: $Rd:HILO[Use]"
+  MOV_S:
+    Format: mov.s $Rd:FPR[Def], $Rs:FPR[Use]
+
+  Compare:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm[Metadata]
+    Instances:
+      SLT:
+        Mnemonic: slt
+      SLTU:
+        Mnemonic: sltu
+
+  CompareImm:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm[Metadata]
+    Instances:
+      SLTI:
+        Mnemonic: slti
+      SLTIU:
+        Mnemonic: sltiu
+
+  # TODO: Conditional Move Instructions
 
 ScheduleModel:
   emulator:

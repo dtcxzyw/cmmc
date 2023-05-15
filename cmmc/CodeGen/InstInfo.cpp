@@ -12,8 +12,12 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <Generic/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Support/Dispatch.hpp>
+#include <cstdint>
+#include <ostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -22,13 +26,80 @@ struct OperandDumper final {
 };
 
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
-    CMMC_UNUSED(out);
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
+    const auto& op = operand.operand;
+    auto dumpType = [](OperandType type) {
+        switch(type) {
+            case OperandType::Bool:
+                return "i1 ";
+            case OperandType::Int8:
+                return "i8 ";
+            case OperandType::Int16:
+                return "i16 ";
+            case OperandType::Int32:
+                return "i32 ";
+            case OperandType::Int64:
+                return "i64 ";
+            case OperandType::Float32:
+                return "f32 ";
+            case OperandType::Special:
+                return "special ";
+        }
+        reportUnreachable(CMMC_LOCATION());
+    };
+    out << '[';
+    std::visit(Overload{
+                   [&](uint32_t reg) {
+                       out << dumpType(op.type());
+                       if(isVirtualReg(reg)) {
+                           out << 'v' << (reg ^ virtualRegBegin);
+                       } else if(isStackObject(reg)) {
+                           out << 's' << (reg ^ stackObjectBegin);
+                       } else {
+                           out << "isa " << reg;
+                       }
+                   },
+                   [&](intmax_t imm) { out << dumpType(op.type()) << imm; },
+                   [&](MIRRelocable* reloc) {
+                       out << "reloc ";
+                       reloc->dumpAsTarget(out);
+                   },
+                   [&](double freq) { out << "freq " << freq; },
+                   [&](std::monostate) { out << "invalid"; },
+               },
+               op.getStorage());
+    out << ']';
+    return out;
+}
+
+static bool isIntegerType(OperandType type) {
+    return type <= OperandType::Int64;
+}
+static bool isFPType(OperandType type) {
+    return type == OperandType::Float32;
 }
 
 static bool isOperandVReg(std::ostream&, const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
+}
+
+static bool isOperandVal(std::ostream&, const MIROperand& operand) {
+    return operand.isReg() || operand.isImm();
+}
+
+static bool isOperandIVal(std::ostream& out, const MIROperand& operand) {
+    return isIntegerType(operand.type()) && isOperandVal(out, operand);
+}
+static bool isOperandFVal(std::ostream& out, const MIROperand& operand) {
+    return isFPType(operand.type()) && isOperandVal(out, operand);
+}
+
+static bool isOperandVRegOrInvalid(std::ostream&, const MIROperand& operand) {
+    if(operand.isReg()) {
+        const auto reg = operand.reg();
+        if(isVirtualReg(reg) || reg == invalidReg)
+            return true;
+    }
+    return false;
 }
 
 static bool isOperandBool(std::ostream&, const MIROperand& operand) {
@@ -48,11 +119,15 @@ static bool isOperandImm(std::ostream&, const MIROperand& operand) {
 }
 
 static bool isOperandIReg(std::ostream&, const MIROperand& operand) {
-    return operand.isReg() && operand.type() != OperandType::Float32;
+    return operand.isReg() && isIntegerType(operand.type());
 }
 
 static bool isOperandFReg(std::ostream&, const MIROperand& operand) {
-    return operand.isReg() && operand.type() == OperandType::Float32;
+    return operand.isReg() && isFPType(operand.type());
+}
+
+static bool isOperandFlag(std::ostream&, const MIROperand& operand) {
+    return operand.isImm() && operand.type() == OperandType::Special;
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -81,13 +156,13 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(SRem);
     CMMC_ASSERT_OFFSET(UDiv);
     CMMC_ASSERT_OFFSET(URem);
-    CMMC_ASSERT_OFFSET(Neg);
     CMMC_ASSERT_OFFSET(And);
     CMMC_ASSERT_OFFSET(Or);
     CMMC_ASSERT_OFFSET(Xor);
     CMMC_ASSERT_OFFSET(Shl);
     CMMC_ASSERT_OFFSET(LShr);
     CMMC_ASSERT_OFFSET(AShr);
+    CMMC_ASSERT_OFFSET(Neg);
     CMMC_ASSERT_OFFSET(FAdd);
     CMMC_ASSERT_OFFSET(FSub);
     CMMC_ASSERT_OFFSET(FMul);
@@ -107,6 +182,7 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(FCast);
     CMMC_ASSERT_OFFSET(Copy);
     CMMC_ASSERT_OFFSET(Select);
+    CMMC_ASSERT_OFFSET(LoadGlobalAddress);
 #undef CMMC_ASSERT_OFFSET
     static Generic::GenericInstInfo instance;
     return instance.getInstInfo(opcode + offset);

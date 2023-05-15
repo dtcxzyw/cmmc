@@ -13,8 +13,12 @@
 */
 
 #pragma once
+#include <cstdint>
 #include <string_view>
+#include <type_traits>
 using namespace std::string_view_literals;
+static_assert(std::is_same_v<intmax_t, int64_t>);
+static_assert(std::is_same_v<uintptr_t, uint64_t>);
 
 // NOLINTNEXTLINE
 #define MAKE_VERSION(MAJOR, MINOR, PATCH) #MAJOR "." #MINOR "." #PATCH

@@ -47,23 +47,49 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-MIROperand LoweringContext::getZero(const Type* type) {
-    /*
-    const auto iter = mZeros.find(type);
-    if(iter != mZeros.cend())
-        return iter->second;
-    const auto zero = mModule.target.getTargetLoweringInfo().getZeroImpl(*this, type);
-    return mZeros.emplace(type, zero).first->second;
-    */
-    CMMC_UNUSED(type);
-    reportNotImplemented(CMMC_LOCATION());
+static OperandType getOperandType(const Type* type, OperandType ptrType) {
+    if(type->isPointer()) {
+        return ptrType;
+    }
+    if(type->isInteger()) {
+        switch(type->as<IntegerType>()->getBitwidth()) {
+            case 1:
+                return OperandType::Bool;
+            case 8:
+                return OperandType::Int8;
+            case 16:
+                return OperandType::Int16;
+            case 32:
+                return OperandType::Int32;
+            case 64:
+                return OperandType::Int64;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }
+    if(type->isFloatingPoint()) {
+        if(type->as<FloatingPointType>()->getFixedSize() == sizeof(float)) {
+            return OperandType::Float32;
+        } else {
+            reportNotImplemented(CMMC_LOCATION());
+        }
+    }
+    reportUnreachable(CMMC_LOCATION());
 }
-
-LoweringContext::LoweringContext(MIRModule& module, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
+LoweringContext::LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx,
+                                 std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
                                  std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
                                  std::unordered_map<Value*, MIROperand>& valueMap)
-    : mModule{ module }, mDataLayout{ module.getTarget().getDataLayout() }, mBlockMap{ blockMap },
-      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {}
+    : mModule{ module }, mDataLayout{ module.getTarget().getDataLayout() }, mCodeGenCtx{ codeGenCtx }, mBlockMap{ blockMap },
+      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {
+    const auto ptrSize = module.getTarget().getDataLayout().getPointerSize();
+    if(ptrSize == 4)
+        mPtrType = OperandType::Int32;
+    else if(ptrSize == 8)
+        mPtrType = OperandType::Int64;
+    else
+        reportUnreachable(CMMC_LOCATION());
+}
 MIRModule& LoweringContext::getModule() const noexcept {
     return mModule;
 }
@@ -74,12 +100,11 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
     if(iter != mValueMap.cend())
         return iter->second;
-    reportNotImplemented(CMMC_LOCATION());
-    /*
     if(operand->isGlobal()) {
-        // la
-        const auto ptr = getAllocationPool(AddressSpace::VirtualReg).allocate(operand->getType());
-        emitInst<GlobalAddressMInst>(ptr, mGlobalMap.at(operand->as<GlobalValue>()));
+        const auto ptr = newVReg(operand->getType());
+        emitInst(InstLoadGlobalAddress)
+            .setOperand<0>(ptr)
+            .setOperand<1>(MIROperand::asReloc(mGlobalMap.at(operand->as<GlobalValue>())->reloc.get()));
         return ptr;
     }
     if(!operand->isConstant()) {
@@ -87,20 +112,22 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
         reportUnreachable(CMMC_LOCATION());
     }
     // constant
-    MIROperand reg = unusedOperand;
-    // TODO: create constant for integers
-    if(operand->getType()->isFloatingPoint()) {
+    MIROperand reg;
+    const auto operandType = getOperandType(operand->getType(), mPtrType);
+    if(operand->isUndefined()) {
+        reg = MIROperand::asImm(0, operandType);
+    } else if(operand->getType()->isFloatingPoint()) {
+        reportNotImplemented(CMMC_LOCATION());
+        /*
         // create constant for fp
-        reg = getAllocationPool(AddressSpace::VirtualReg).allocate(operand->getType());
+        reg = newVReg(operand->getType());
         emitInst<ConstantMInst>(reg, operand->as<ConstantFloatingPoint>()->getValue());
+        */
     } else {
-        auto& pool = getAllocationPool(AddressSpace::Constant);
-        reg = pool.allocate(operand->getType());
-        pool.getMetadata(reg) = operand;
+        reg = MIROperand::asImm(operand->as<ConstantInteger>()->getSignExtended(), operandType);
     }
     mValueMap.emplace(operand, reg);
     return reg;
-    */
 }
 void LoweringContext::setCurrentBasicBlock(MIRBasicBlock* block) noexcept {
     mCurrentBasicBlock = block;
@@ -108,12 +135,16 @@ void LoweringContext::setCurrentBasicBlock(MIRBasicBlock* block) noexcept {
 MIRGlobal* LoweringContext::mapGlobal(GlobalValue* global) const {
     return mGlobalMap.at(global);
 }
+static String getBlockLabel(CodeGenContext& ctx) {
+    return String::get("label").withID(static_cast<int32_t>(++ctx.blockIdx));
+}
 MIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
     auto iter = std::find_if(blocks.cbegin(), blocks.cend(), [&](auto& block) { return block.get() == mCurrentBasicBlock; });
     assert(iter != blocks.cend());
-    const auto ret =
-        blocks.insert(std::next(iter), std::make_unique<MIRBasicBlock>(mCurrentBasicBlock->getFunction(), blockTripCount));
+    const auto ret = blocks.insert(
+        std::next(iter),
+        std::make_unique<MIRBasicBlock>(getBlockLabel(mCodeGenCtx), mCurrentBasicBlock->getFunction(), blockTripCount));
     return ret->get();
 }
 void LoweringContext::addOperand(Value* value, MIROperand reg) {
@@ -122,37 +153,28 @@ void LoweringContext::addOperand(Value* value, MIROperand reg) {
     mValueMap.emplace(value, reg);
 }
 
-static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, MIRModule& machineModule,
+static void lowerInst(Instruction* inst, LoweringContext& ctx);
+static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenContext& codeGenCtx, MIRModule& machineModule,
                                    std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, AnalysisPassManager& analysis) {
-    CMMC_UNUSED(mfunc);
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(machineModule);
-    CMMC_UNUSED(globalMap);
-    CMMC_UNUSED(analysis);
-    /*
-    auto& stackLifetime = analysis.get<StackLifetimeAnalysis>(*func); // TODO: deprecated
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
 
     std::unordered_map<Block*, MIRBasicBlock*> blockMap;
     std::unordered_map<Value*, MIROperand> valueMap;
     std::unordered_map<Value*, MIROperand> storageMap;
-    */
-    /*
-    LoweringContext ctx{ machineModule, blockMap, globalMap, valueMap };
+    LoweringContext ctx{ machineModule, codeGenCtx, blockMap, globalMap, valueMap };
 
     auto& target = machineModule.getTarget();
     auto& dataLayout = target.getDataLayout();
-    auto& info = target.getTargetLoweringInfo();
     auto& dom = analysis.get<DominateAnalysis>(*func);
 
     for(auto block : dom.blocks()) {
         const auto tripCount = blockTripCount.isAvailable() ? blockTripCount.query(block) : 1.0;
-        mfunc.blocks().emplace_back(&mfunc, tripCount);
+        mfunc.blocks().push_back(std::make_unique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc, tripCount));
         auto& mblock = mfunc.blocks().back();
-        blockMap.emplace(block, &mblock);
+        blockMap.emplace(block, mblock.get());
         for(auto inst : block->instructions()) {
             if(inst->getInstID() == InstructionID::Phi) {
-                auto vreg = vregPool.allocate(inst->getType());
+                auto vreg = ctx.newVReg(inst->getType());
                 ctx.addOperand(inst, vreg);
             }
         }
@@ -163,40 +185,34 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, MIRModule
         for(auto inst : func->entryBlock()->instructions()) {
             if(inst->getInstID() == InstructionID::Alloc) {
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
-                const auto storage = stackPool.allocate(type);
-                stackPool.getMetadata(storage) = inst;
+                const auto storage =
+                    mfunc.addStackObject(static_cast<uint32_t>(type->getSize(dataLayout)),
+                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), ctx.getPtrType());
                 storageMap.emplace(inst, storage);
-                const auto addr = vregPool.allocate(inst->getType());
-                ctx.emitInst<CopyMInst>(storage, false, 0, addr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()),
-                                        false);
-                ctx.addOperand(inst, addr);
+                ctx.addOperand(inst, storage);
             } else
                 break;
         }
     }
 
     {
-        auto& parameters = mfunc.parameters();
+        auto& args = mfunc.args();
         for(auto arg : func->args()) {
-            auto vreg = vregPool.allocate(arg->getType());
+            auto vreg = ctx.newVReg(arg->getType());
             ctx.addOperand(arg, vreg);
-            parameters.push_back(vreg);
+            args.push_back(vreg);
         }
         ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
-        info.emitPrologue(ctx, func);
+        target.emitPrologue(ctx, mfunc);
     }
 
     for(auto block : dom.blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
-        const auto& stackUsage = stackLifetime.getUsedAllocas(block);
-        for(auto alloca : stackUsage)
-            mblock->usedStackObjects().insert(storageMap.at(alloca));
         for(auto inst : block->instructions()) {
-            info.lowerInst(inst, ctx);
+            lowerInst(inst, ctx);
         }
     }
-    */
 
     /*
     if constexpr(Config::debug) {
@@ -238,11 +254,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                 } else if(symbol.prefix() == "stoptime"sv) {
                     symbol = String::get("_sysy_stoptime");
                 }
-                globals.push_back(std::make_unique<MIRGlobal>(symbol, func->getLinkage(), dataLayout.getCodeAlignment(),
-                                                              nullptr));  // external symbol
+                globals.push_back(std::make_unique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
+                                                              std::make_unique<MIRFunction>(symbol)));  // external symbol
             } else {
-                globals.push_back(std::make_unique<MIRGlobal>(func->getSymbol(), func->getLinkage(),
-                                                              dataLayout.getCodeAlignment(), std::make_unique<MIRFunction>()));
+                globals.push_back(std::make_unique<MIRGlobal>(func->getLinkage(), dataLayout.getCodeAlignment(),
+                                                              std::make_unique<MIRFunction>(func->getSymbol())));
             }
         } else {
             const auto var = global->as<GlobalVariable>();
@@ -289,19 +305,19 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                 expand(expand, initialValue);
 
                 // data/rodata
-                globals.emplace_back(std::make_unique<MIRGlobal>(global->getSymbol(), global->getLinkage(), alignment,
-                                                                 std::make_unique<MIRDataStorage>(std::move(data), readOnly)));
+                globals.emplace_back(std::make_unique<MIRGlobal>(
+                    global->getLinkage(), alignment,
+                    std::make_unique<MIRDataStorage>(global->getSymbol(), std::move(data), readOnly)));
             } else {
                 // bss
-                globals.emplace_back(std::make_unique<MIRGlobal>(global->getSymbol(), global->getLinkage(), alignment,
-                                                                 std::make_unique<MIRZeroStorage>(size)));
+                globals.emplace_back(std::make_unique<MIRGlobal>(global->getLinkage(), alignment,
+                                                                 std::make_unique<MIRZeroStorage>(global->getSymbol(), size)));
             }
         }
         globalMap.emplace(global, globals.back().get());
     }
 
     auto& target = module.getTarget();
-    // auto& subTarget = target.getSubTarget();
 
     {
         Stage stage{ "Pre-lowering legalization"sv };
@@ -343,7 +359,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         {
             // Stage 1: instruction selection
             Stage stage{ "Instruction selection"sv };
-            lowerToMachineFunction(mfunc, func, machineModule, globalMap, analysis);
+            lowerToMachineFunction(mfunc, func, ctx, machineModule, globalMap, analysis);
+            dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         /*
@@ -455,7 +472,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
 }
 
 std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
-    Stage stage{ "lower to GMIR"sv };
+    Stage stage{ "lower to MIR"sv };
 
     auto& target = module.getTarget();
     auto machineModule = std::make_unique<MIRModule>(target);
@@ -464,8 +481,359 @@ std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassMana
     return machineModule;
 }
 
-/*
-void lowerInst(Instruction* inst, LoweringContext& ctx) const {
+static void lower(BinaryInst* inst, LoweringContext& ctx) {
+    const auto id = [instID = inst->getInstID()] {
+        switch(instID) {
+            case InstructionID::Add:
+                return InstAdd;
+            case InstructionID::Sub:
+                return InstSub;
+            case InstructionID::Mul:
+                return InstMul;
+            case InstructionID::SDiv:
+                return InstSDiv;
+            case InstructionID::UDiv:
+                return InstUDiv;
+            case InstructionID::SRem:
+                return InstSRem;
+            case InstructionID::URem:
+                return InstURem;
+            case InstructionID::And:
+                return InstAnd;
+            case InstructionID::Or:
+                return InstOr;
+            case InstructionID::Xor:
+                return InstXor;
+            case InstructionID::Shl:
+                return InstShl;
+            case InstructionID::LShr:
+                return InstLShr;
+            case InstructionID::AShr:
+                return InstAShr;
+            case InstructionID::FAdd:
+                return InstFAdd;
+            case InstructionID::FSub:
+                return InstFSub;
+            case InstructionID::FMul:
+                return InstFMul;
+            case InstructionID::FDiv:
+                return InstFDiv;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }();
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(id)
+        .setOperand<0>(ret)
+        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)));
+    ctx.addOperand(inst, ret);
+}
+static void lower(CompareInst* inst, LoweringContext& ctx) {
+    const auto id = [instID = inst->getInstID()] {
+        switch(instID) {
+            case InstructionID::FCmp:
+                return InstFCmp;
+            case InstructionID::UCmp:
+                return InstUCmp;
+            case InstructionID::SCmp:
+                return InstSCmp;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }();
+
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(id)
+        .setOperand<0>(ret)
+        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+        .setOperand<3>(MIROperand::asImm(inst->getOp(), OperandType::Special));
+    ctx.addOperand(inst, ret);
+}
+static void lower(UnaryInst* inst, LoweringContext& ctx) {
+    const auto id = [instID = inst->getInstID()] {
+        switch(instID) {
+            case InstructionID::Neg:
+                return InstNeg;
+            case InstructionID::FNeg:
+                return InstFNeg;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }();
+
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(id).setOperand<0>(ret).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
+    ctx.addOperand(inst, ret);
+}
+static void lower(CastInst* inst, LoweringContext& ctx) {
+    const auto src = ctx.mapOperand(inst->getOperand(0));
+    const auto dst = ctx.newVReg(inst->getType());
+
+    const auto id = [instID = inst->getInstID()] {
+        switch(instID) {
+            case InstructionID::ZExt:
+                return InstZExt;
+            case InstructionID::SExt:
+                return InstSExt;
+            case InstructionID::Bitcast:
+                return InstCopy;
+            case InstructionID::Trunc:
+                return InstTrunc;
+            case InstructionID::F2U:
+                return InstF2U;
+            case InstructionID::F2S:
+                return InstF2S;
+            case InstructionID::U2F:
+                return InstU2F;
+            case InstructionID::S2F:
+                return InstS2F;
+            case InstructionID::FCast:
+                [[fallthrough]];
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }();
+
+    ctx.emitInst(id).setOperand<0>(dst).setOperand<1>(src);
+    ctx.addOperand(inst, dst);
+}
+static void lower(LoadInst* inst, LoweringContext& ctx) {
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(InstLoad)
+        .setOperand<0>(ret)
+        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+        .setOperand<2>(MIROperand::asImm(0, ctx.getPtrType()));
+    ctx.addOperand(inst, ret);
+}
+static void lower(StoreInst* inst, LoweringContext& ctx) {
+    ctx.emitInst(InstStore)
+        .setOperand<0>(ctx.mapOperand(inst->getOperand(1)))
+        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+        .setOperand<2>(MIROperand::asImm(0, ctx.getPtrType()));
+}
+static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
+    std::vector<Value*> src;
+    std::vector<Value*> dst;
+
+    for(auto inst : dstBlock->instructions()) {
+        if(inst->getInstID() == InstructionID::Phi) {
+            const auto phi = inst->as<PhiInst>();
+            src.push_back(phi->incomings().at(srcBlock));
+            dst.push_back(phi);
+        } else
+            break;
+    }
+
+    if(!src.empty()) {
+        // setup arguments
+        if(srcBlock == dstBlock) {
+            // self-loop
+            // calcuates the best order and create temporary variables for args
+
+            std::unordered_map<Value*, uint32_t> nodeMap;
+            for(uint32_t idx = 0; idx < dst.size(); ++idx)
+                nodeMap.emplace(dst[idx], idx);
+
+            Graph graph(dst.size());  // direct copy graph
+            for(size_t idx = 0; idx < dst.size(); ++idx) {
+                const auto arg = src[idx];
+                if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
+                    // copy b to a -> a should be resetted before b
+                    graph[idx].push_back(iter->second);
+                }
+            }
+
+            const auto [ccnt, col] = calcSCC(graph);
+            std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
+            std::vector<std::vector<NodeIndex>> groups(ccnt);
+            std::vector<uint32_t> in(ccnt);
+            for(uint32_t u = 0; u < graph.size(); ++u) {
+                const auto cu = col[u];
+                groups[cu].push_back(u);
+                for(auto v : graph[u]) {
+                    const auto cv = col[v];
+                    if(cu != cv && dag[cu].emplace(cv).second) {
+                        ++in[cv];
+                    }
+                }
+            }
+
+            std::queue<uint32_t> q;
+            for(uint32_t u = 0; u < ccnt; ++u)
+                if(in[u] == 0)
+                    q.push(u);
+            std::vector<uint32_t> order;
+            order.reserve(graph.size());
+            while(!q.empty()) {
+                const auto u = q.front();
+                q.pop();
+
+                const auto& group = groups[u];
+                order.insert(order.end(), group.cbegin(), group.cend());
+
+                for(auto v : dag[u]) {
+                    if(--in[v] == 0) {
+                        q.push(v);
+                    }
+                }
+            }
+
+            assert(order.size() == dst.size());
+
+            std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
+
+            for(size_t i = 0; i < dst.size(); ++i) {
+                const auto idx = order[i];
+                MIROperand arg;
+                if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
+                    arg = iter->second;  // use copy
+                } else
+                    arg = ctx.mapOperand(src[idx]);
+                const auto dstArg = ctx.mapOperand(dst[idx]);
+
+                if(arg == dstArg)
+                    continue;  // identical copy
+
+                const auto type = src[idx]->getType();
+
+                // create copy
+                const auto intermediate = ctx.newVReg(type);
+                ctx.emitCopy(intermediate, dstArg);
+                dirtyRegRemapping.emplace(dst[idx], intermediate);
+
+                // apply reset
+                ctx.emitCopy(dstArg, arg);
+            }
+        } else {
+            for(size_t idx = 0; idx < dst.size(); ++idx) {
+                const auto arg = ctx.mapOperand(src[idx]);
+                const auto dstArg = ctx.mapOperand(dst[idx]);
+                ctx.emitCopy(dstArg, arg);
+            }
+        }
+    }
+    const auto dstMBlock = ctx.mapBlock(dstBlock);
+    ctx.emitInst(InstJump).setOperand<0>(MIROperand::asReloc(dstMBlock));
+}
+static void lower(BranchInst* inst, LoweringContext& ctx) {
+    const auto srcBlock = inst->getBlock();
+    const auto emitCondBranch = [&](const MIROperand& lhs, const MIROperand& rhs, uint32_t instID, CompareOp op) {
+        // beqz %cond, else_label
+        // then_label:
+        // ...
+        // else_label:
+        // ...
+        //
+
+        const auto curBlock = ctx.getCurrentBasicBlock();
+
+        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget())->getTripCount());
+        ctx.setCurrentBasicBlock(thenPrepareBlock);
+        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget())->getTripCount());
+        ctx.setCurrentBasicBlock(curBlock);
+
+        const auto cond = ctx.newVReg(inst->getOperand(0)->getType());
+        ctx.emitInst(instID).setOperand<0>(cond).setOperand<1>(lhs).setOperand<2>(rhs).setOperand<3>(
+            MIROperand::asImm(op, OperandType::Special));
+        ctx.emitInst(InstBranch)
+            .setOperand<0>(cond)
+            .setOperand<1>(MIROperand::asReloc(elsePrepareBlock))
+            .setOperand<2>(MIROperand::asFreq(1.0 - inst->getBranchProb()));
+
+        ctx.setCurrentBasicBlock(thenPrepareBlock);
+        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
+
+        ctx.setCurrentBasicBlock(elsePrepareBlock);
+        emitBranch(inst->getFalseTarget(), srcBlock, ctx);
+    };
+    if(inst->getInstID() == InstructionID::Branch) {
+        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
+    } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0))) {
+        const auto id = [instID = condInst->getInstID()] {
+            switch(instID) {
+                case InstructionID::UCmp:
+                    return InstUCmp;
+                case InstructionID::SCmp:
+                    return InstSCmp;
+                case InstructionID::FCmp:
+                    return InstFCmp;
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
+        }();
+
+        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                       getInvertedOp(condInst->getOp()));
+    } else {
+        // beqz %cond, false_label
+        const auto cond = ctx.mapOperand(inst->getOperand(0));
+        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::Equal);
+    }
+}
+static void lower(UnreachableInst*, LoweringContext& ctx) {
+    ctx.emitInst(InstUnreachable);
+}
+static void lower(SelectInst* inst, LoweringContext& ctx) {
+    const auto ret = ctx.newVReg(inst->getType());
+    ctx.emitInst(InstSelect)
+        .setOperand<0>(ret)
+        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+        .setOperand<3>(ctx.mapOperand(inst->getOperand(2)));
+}
+static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
+    const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
+    const auto indexType = inst->operands().front()->getType();  // must be index type
+    auto ptr = ctx.newVReg(inst->getType());
+    const auto base = ctx.mapOperand(inst->operands().back());
+
+    if(constantOffset != 0) {
+        ctx.emitInst(InstAdd).setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(
+            MIROperand::asImm(constantOffset, ctx.getPtrType()));
+    } else {
+        ctx.emitCopy(ptr, base);
+    }
+    for(auto [size, index] : offsets) {
+        const auto idx = ctx.mapOperand(index);
+        const auto off = ctx.newVReg(indexType);
+        ctx.emitInst(InstMul).setOperand<0>(off).setOperand<1>(idx).setOperand<2>(MIROperand::asImm(size, ctx.getPtrType()));
+        ctx.emitInst(InstAdd).setOperand<0>(ptr).setOperand<1>(ptr).setOperand<2>(off);
+    }
+    ctx.addOperand(inst, ptr);
+}
+static void lower(PtrCastInst* inst, LoweringContext& ctx) {
+    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+}
+static void lower(PtrToIntInst* inst, LoweringContext& ctx) {
+    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+}
+static void lower(IntToPtrInst* inst, LoweringContext& ctx) {
+    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+}
+static void lower(ReturnInst* inst, LoweringContext& ctx) {
+    if(inst->operands().empty()) {
+        ctx.emitInst(InstRetVoid);
+    } else {
+        const auto val = ctx.mapOperand(inst->getOperand(0));
+        ctx.emitInst(InstRet).setOperand<0>(val);
+    }
+}
+static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
+    const auto callee = inst->operands().back();
+    auto ret = inst->getType()->isVoid() ? MIROperand::asReg(invalidReg, OperandType::Special) : ctx.newVReg(inst->getType());
+    for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
+        ctx.emitInst(InstPush)
+            .setOperand<0>(MIROperand::asImm(idx, OperandType::Int32))
+            .setOperand<1>(ctx.mapOperand(inst->getOperand(idx)));
+    }
+    ctx.emitInst(InstCall).setOperand<0>(ret).setOperand<1>(
+        MIROperand::asReloc(ctx.mapGlobal(callee->as<Function>())->reloc.get()));
+    ctx.addOperand(inst, ret);
+}
+
+static void lowerInst(Instruction* inst, LoweringContext& ctx) {
     switch(inst->getInstID()) {
         case InstructionID::Add:
             [[fallthrough]];
@@ -576,367 +944,12 @@ void lowerInst(Instruction* inst, LoweringContext& ctx) const {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-void InstSelector::lower(BinaryInst* inst, LoweringContext& ctx) const {
-    const auto id = [instID = inst->getInstID()] {
-        switch(instID) {
-            case InstructionID::Add:
-                return GMIRInstID::Add;
-            case InstructionID::Sub:
-                return GMIRInstID::Sub;
-            case InstructionID::Mul:
-                return GMIRInstID::Mul;
-            case InstructionID::SDiv:
-                return GMIRInstID::SDiv;
-            case InstructionID::UDiv:
-                return GMIRInstID::UDiv;
-            case InstructionID::SRem:
-                return GMIRInstID::SRem;
-            case InstructionID::URem:
-                return GMIRInstID::URem;
-            case InstructionID::And:
-                return GMIRInstID::And;
-            case InstructionID::Or:
-                return GMIRInstID::Or;
-            case InstructionID::Xor:
-                return GMIRInstID::Xor;
-            case InstructionID::Shl:
-                return GMIRInstID::Shl;
-            case InstructionID::LShr:
-                return GMIRInstID::LShr;
-            case InstructionID::AShr:
-                return GMIRInstID::AShr;
-            case InstructionID::FAdd:
-                return GMIRInstID::FAdd;
-            case InstructionID::FSub:
-                return GMIRInstID::FSub;
-            case InstructionID::FMul:
-                return GMIRInstID::FMul;
-            case InstructionID::FDiv:
-                return GMIRInstID::FDiv;
-            default:
-                reportUnreachable(CMMC_LOCATION());
-        }
-    }();
-    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<BinaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
-    ctx.addOperand(inst, ret);
+
+MIROperand LoweringContext::newVReg(const Type* type) {
+    return MIROperand{ mCodeGenCtx.vregIdx++, getOperandType(type, mPtrType) };
 }
-void InstSelector::lower(CompareInst* inst, LoweringContext& ctx) const {
-    const auto id = [instID = inst->getInstID()] {
-        switch(instID) {
-            case InstructionID::FCmp:
-                return GMIRInstID::FCmp;
-            case InstructionID::UCmp:
-                return GMIRInstID::UCmp;
-            case InstructionID::SCmp:
-                return GMIRInstID::SCmp;
-            default:
-                reportUnreachable(CMMC_LOCATION());
-        }
-    }();
 
-    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<CompareMInst>(id, inst->getOp(), ctx.mapOperand(inst->getOperand(0)), ctx.mapOperand(inst->getOperand(1)), ret);
-    ctx.addOperand(inst, ret);
+void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
+    emitInst(InstCopy).setOperand<0>(dst).setOperand<1>(src);
 }
-void InstSelector::lower(UnaryInst* inst, LoweringContext& ctx) const {
-    const auto id = [instID = inst->getInstID()] {
-        switch(instID) {
-            case InstructionID::Neg:
-                return GMIRInstID::Neg;
-            case InstructionID::FNeg:
-                return GMIRInstID::FNeg;
-            default:
-                reportUnreachable(CMMC_LOCATION());
-        }
-    }();
-
-    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    ctx.emitInst<UnaryArithmeticMInst>(id, ctx.mapOperand(inst->getOperand(0)), ret);
-    ctx.addOperand(inst, ret);
-}
-void InstSelector::lower(CastInst* inst, LoweringContext& ctx) const {
-    const auto src = ctx.mapOperand(inst->getOperand(0));
-    const auto dst = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
-
-    switch(inst->getInstID()) {
-        case InstructionID::ZExt: {
-            const auto mask = constant.allocate(inst->getType());
-            constant.getMetadata(mask) = ConstantInteger::get(
-                inst->getType(),
-                static_cast<intmax_t>((1ULL << inst->getOperand(0)->getType()->as<IntegerType>()->getBitwidth()) - 1));
-            ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::And, src, mask, dst);
-            break;
-        }
-        case InstructionID::SExt:
-            [[fallthrough]];
-        case InstructionID::Bitcast: {
-            ctx.emitInst<CopyMInst>(src, false, 0, dst, false, 0, static_cast<uint32_t>(inst->getType()->getFixedSize()), false);
-            break;
-        }
-        case InstructionID::Trunc:
-            reportNotImplemented(CMMC_LOCATION());
-        case InstructionID::F2U: {
-            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2U, src, dst);
-            break;
-        }
-        case InstructionID::F2S: {
-            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::F2S, src, dst);
-            break;
-        }
-        case InstructionID::U2F: {
-            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::U2F, src, dst);
-            break;
-        }
-        case InstructionID::S2F: {
-            ctx.emitInst<UnaryArithmeticMInst>(GMIRInstID::S2F, src, dst);
-            break;
-        }
-        case InstructionID::FCast:
-            [[fallthrough]];
-        default:
-            reportUnreachable(CMMC_LOCATION());
-    }
-    ctx.addOperand(inst, dst);
-}
-void InstSelector::lower(LoadInst* inst, LoweringContext& ctx) const {
-    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto size = inst->getType()->getSize(ctx.getDataLayout());
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(0)), true, 0, ret, false, 0, static_cast<uint32_t>(size), false);
-    ctx.addOperand(inst, ret);
-}
-void InstSelector::lower(StoreInst* inst, LoweringContext& ctx) const {
-    const auto val = inst->getOperand(1);
-    const auto size = val->getType()->getSize(ctx.getDataLayout());
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(val), false, 0, ctx.mapOperand(inst->getOperand(0)), true, 0,
-                            static_cast<uint32_t>(size), false);
-}
-static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
-    auto& dataLayout = ctx.getDataLayout();
-    std::vector<Value*> src;
-    std::vector<Value*> dst;
-
-    for(auto inst : dstBlock->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            const auto phi = inst->as<PhiInst>();
-            src.push_back(phi->incomings().at(srcBlock));
-            dst.push_back(phi);
-        } else
-            break;
-    }
-
-    if(!src.empty()) {
-        // setup arguments
-        if(srcBlock == dstBlock) {
-            // self-loop
-            auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
-            // calcuates the best order and create temporary variables for args
-
-            std::unordered_map<Value*, uint32_t> nodeMap;
-            for(uint32_t idx = 0; idx < dst.size(); ++idx)
-                nodeMap.emplace(dst[idx], idx);
-
-            Graph graph(dst.size());  // direct copy graph
-            for(size_t idx = 0; idx < dst.size(); ++idx) {
-                const auto arg = src[idx];
-                if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
-                    // copy b to a -> a should be resetted before b
-                    graph[idx].push_back(iter->second);
-                }
-            }
-
-            const auto [ccnt, col] = calcSCC(graph);
-            std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
-            std::vector<std::vector<NodeIndex>> groups(ccnt);
-            std::vector<uint32_t> in(ccnt);
-            for(uint32_t u = 0; u < graph.size(); ++u) {
-                const auto cu = col[u];
-                groups[cu].push_back(u);
-                for(auto v : graph[u]) {
-                    const auto cv = col[v];
-                    if(cu != cv && dag[cu].emplace(cv).second) {
-                        ++in[cv];
-                    }
-                }
-            }
-
-            std::queue<uint32_t> q;
-            for(uint32_t u = 0; u < ccnt; ++u)
-                if(in[u] == 0)
-                    q.push(u);
-            std::vector<uint32_t> order;
-            order.reserve(graph.size());
-            while(!q.empty()) {
-                const auto u = q.front();
-                q.pop();
-
-                const auto& group = groups[u];
-                order.insert(order.end(), group.cbegin(), group.cend());
-
-                for(auto v : dag[u]) {
-                    if(--in[v] == 0) {
-                        q.push(v);
-                    }
-                }
-            }
-
-            assert(order.size() == dst.size());
-
-            std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
-
-            for(size_t i = 0; i < dst.size(); ++i) {
-                const auto idx = order[i];
-                auto arg = unusedOperand;
-                if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
-                    arg = iter->second;  // use copy
-                } else
-                    arg = ctx.mapOperand(src[idx]);
-                const auto dstArg = ctx.mapOperand(dst[idx]);
-
-                if(arg == dstArg)
-                    continue;  // identical copy
-
-                const auto type = src[idx]->getType();
-                const auto size = type->getSize(dataLayout);
-
-                // create copy
-                const auto intermediate = vreg.allocate(type);
-                ctx.emitInst<CopyMInst>(dstArg, false, 0, intermediate, false, 0, static_cast<uint32_t>(size), false);
-                dirtyRegRemapping.emplace(dst[idx], intermediate);
-
-                // apply reset
-                ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
-            }
-        } else {
-            for(size_t idx = 0; idx < dst.size(); ++idx) {
-                const auto arg = ctx.mapOperand(src[idx]);
-                const auto dstArg = ctx.mapOperand(dst[idx]);
-                const auto size = src[idx]->getType()->getSize(dataLayout);
-                ctx.emitInst<CopyMInst>(arg, false, 0, dstArg, false, 0, static_cast<uint32_t>(size), false);
-            }
-        }
-    }
-    const auto dstMBlock = ctx.mapBlock(dstBlock);
-    ctx.emitInst<BranchMInst>(dstMBlock);
-}
-void InstSelector::lower(BranchInst* inst, LoweringContext& ctx) const {
-    const auto srcBlock = inst->getBlock();
-    const auto emitCondBranch = [&](const MIROperand& lhs, const MIROperand& rhs, GMIRInstID instID, CompareOp op) {
-        // beqz %cond, else_label
-        // then_label:
-        // ...
-        // else_label:
-        // ...
-        //
-
-        const auto curBlock = ctx.getCurrentBasicBlock();
-
-        const auto thenPrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getTrueTarget())->getTripCount());
-        ctx.setCurrentBasicBlock(thenPrepareBlock);
-        const auto elsePrepareBlock = ctx.addBlockAfter(ctx.mapBlock(inst->getFalseTarget())->getTripCount());
-        ctx.setCurrentBasicBlock(curBlock);
-
-        ctx.emitInst<BranchCompareMInst>(instID, lhs, rhs, op, 1.0 - inst->getBranchProb(), elsePrepareBlock);
-
-        ctx.setCurrentBasicBlock(thenPrepareBlock);
-        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
-
-        ctx.setCurrentBasicBlock(elsePrepareBlock);
-        emitBranch(inst->getFalseTarget(), srcBlock, ctx);
-    };
-    if(inst->getInstID() == InstructionID::Branch) {
-        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
-    } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0)); condInst && isFusible(inst, condInst)) {
-        const auto id = [instID = condInst->getInstID()] {
-            switch(instID) {
-                case InstructionID::UCmp:
-                    return GMIRInstID::UCmp;
-                case InstructionID::SCmp:
-                    return GMIRInstID::SCmp;
-                case InstructionID::FCmp:
-                    return GMIRInstID::FCmp;
-                default:
-                    reportUnreachable(CMMC_LOCATION());
-            }
-        }();
-
-        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
-                       getInvertedOp(condInst->getOp()));
-    } else {
-        // beqz %cond, false_label
-        const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, ctx.getZero(IntegerType::get(1)), GMIRInstID::SCmp, CompareOp::Equal);
-    }
-}
-void InstSelector::lower(UnreachableInst*, LoweringContext& ctx) const {
-    ctx.emitInst<UnreachableMInst>();
-}
-void InstSelector::lower(SelectInst* inst, LoweringContext& ctx) const {
-    // c = x ? y : z;
-    // ->
-    // c = z;
-    // beqz x BB2
-    // BB1:
-    // c = y;
-    // b BB2
-    // BB2:
-    // ...
-
-    const auto curBlock = ctx.getCurrentBasicBlock();
-    const auto ret = ctx.getAllocationPool(AddressSpace::VirtualReg).allocate(inst->getType());
-    const auto size = static_cast<uint32_t>(inst->getType()->getSize(ctx.getDataLayout()));
-
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(2)), false, 0, ret, false, 0, size, false);
-    const auto next = ctx.addBlockAfter(curBlock->getTripCount() * defaultSelectProb);
-    ctx.setCurrentBasicBlock(next);
-    const auto target = ctx.addBlockAfter(curBlock->getTripCount());
-
-    ctx.setCurrentBasicBlock(curBlock);
-    ctx.emitInst<BranchCompareMInst>(GMIRInstID::SCmp, ctx.mapOperand(inst->getOperand(0)), ctx.getZero(IntegerType::get(1)),
-                                     CompareOp::Equal, defaultSelectProb, target);
-    ctx.setCurrentBasicBlock(next);
-    ctx.emitInst<CopyMInst>(ctx.mapOperand(inst->getOperand(1)), false, 0, ret, false, 0, size, false);
-    ctx.emitInst<BranchMInst>(target);
-
-    ctx.setCurrentBasicBlock(target);
-    ctx.addOperand(inst, ret);
-}
-void InstSelector::lower(GetElementPtrInst* inst, LoweringContext& ctx) const {
-    const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
-    auto& vreg = ctx.getAllocationPool(AddressSpace::VirtualReg);
-    auto& constant = ctx.getAllocationPool(AddressSpace::Constant);
-    const auto indexType = inst->operands().front()->getType();  // must be index type
-    auto ptr = vreg.allocate(indexType);
-    const auto base = ctx.mapOperand(inst->operands().back());
-
-    if(constantOffset != 0) {
-        const auto baseOffset = constant.allocate(indexType);
-        constant.getMetadata(baseOffset) = ConstantInteger::get(indexType, static_cast<intmax_t>(constantOffset));
-        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, base, baseOffset, ptr);
-    } else {
-        const auto& dataLayout = ctx.getDataLayout();
-        ctx.emitInst<CopyMInst>(base, false, 0, ptr, false, 0, static_cast<uint32_t>(dataLayout.getPointerSize()), false);
-    }
-    for(auto [size, index] : offsets) {
-        const auto idx = ctx.mapOperand(index);
-        const auto off = vreg.allocate(indexType);
-        const auto sizeConstant = constant.allocate(indexType);
-        constant.getMetadata(sizeConstant) = ConstantInteger::get(indexType, static_cast<intmax_t>(size));
-        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Mul, idx, sizeConstant, off);
-        ctx.emitInst<BinaryArithmeticMInst>(GMIRInstID::Add, ptr, off, ptr);
-    }
-    ctx.addOperand(inst, ptr);
-}
-void InstSelector::lower(PtrCastInst* inst, LoweringContext& ctx) const {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
-}
-void InstSelector::lower(PtrToIntInst* inst, LoweringContext& ctx) const {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
-}
-void InstSelector::lower(IntToPtrInst* inst, LoweringContext& ctx) const {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
-}
-*/
-
 CMMC_MIR_NAMESPACE_END

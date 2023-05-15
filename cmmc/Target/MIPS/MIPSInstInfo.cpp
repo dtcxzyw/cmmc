@@ -35,9 +35,57 @@ static bool isOperandGPR(std::ostream& out, const MIROperand& operand) {
     reportNotImplemented(CMMC_LOCATION());
 }
 
+static bool isOperandFPR(std::ostream& out, const MIROperand& operand) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool isOperandRAReg(std::ostream& out, const MIROperand& operand) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool isOperandHILO(std::ostream& out, const MIROperand& operand) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool isOperandCC(std::ostream& out, const MIROperand& operand) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool isOperandReloc(std::ostream& out, const MIROperand& operand) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
 static bool isOperandImm(std::ostream& out, const MIROperand& operand) {
     CMMC_UNUSED(out);
     CMMC_UNUSED(operand);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool verifyInstSLL(std::ostream& out, const MIRInst& inst) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(inst);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool verifyInstSRA(std::ostream& out, const MIRInst& inst) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(inst);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static bool verifyInstSRL(std::ostream& out, const MIRInst& inst) {
+    CMMC_UNUSED(out);
+    CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 

@@ -38,26 +38,6 @@ def generate_file(template_file: str, output_dir: str, params: Dict[str, Any]):
     os.system('clang-format -i {}'.format(output_file))
 
 
-operand_order = {
-    'Dst': 0,
-    'Src': 1,
-    'Cond': 2,
-    'Lhs': 3,
-    'Rhs': 4,
-    'Rd': 5,
-    'Rs': 6,
-    'Rs1': 7,
-    'Rs2': 8,
-    'Tgt': 9,
-    'Addr': 10,
-    'Imm': 11,
-    'Off': 12,
-    'Prob': 13,
-    'Idx': 14,
-    'Op': 15
-}
-
-
 def parse_inst_format(inst):
     fmt: str = inst['Format']
     fmt_list = []
@@ -79,7 +59,6 @@ def parse_inst_format(inst):
         fmt_list.append(operand_name)
     if len(fmt) > 0:
         fmt_list.append(fmt)
-    operands.sort(key=lambda x: operand_order[x['name']])
     operands_idx = dict()
     for idx, op in enumerate(operands):
         operands_idx[op['name']] = idx
@@ -136,3 +115,5 @@ if __name__ == "__main__":
     }
     generate_file('InstInfoDecl.hpp.jinja2', output_dir, params)
     generate_file('InstInfoImpl.hpp.jinja2', output_dir, params)
+    generate_file('ScheduleModelDecl.hpp.jinja2', output_dir, params)
+    generate_file('ScheduleModelImpl.hpp.jinja2', output_dir, params)

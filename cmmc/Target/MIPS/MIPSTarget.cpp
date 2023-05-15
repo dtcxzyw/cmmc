@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// mips o32 abi
+// mips o32 abi, delay slot is not supported
 
 #include <MIPS/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -37,10 +37,10 @@ public:
         return type->getFixedSize();
     }
     [[nodiscard]] size_t getPointerSize() const noexcept override {
-        return 32;
+        return 4;
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
+        return 4;
     }
 };
 

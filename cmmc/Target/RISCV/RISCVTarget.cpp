@@ -37,10 +37,10 @@ public:
         return type->getFixedSize();
     }
     [[nodiscard]] size_t getPointerSize() const noexcept override {
-        return 32;
+        return 8;
     }
     [[nodiscard]] size_t getCodeAlignment() const noexcept override {
-        reportUnreachable(CMMC_LOCATION());
+        return 4;
     }
 };
 
