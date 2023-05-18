@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
 #include <Generic/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
 #include <ostream>
@@ -50,7 +50,9 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     std::visit(Overload{
                    [&](uint32_t reg) {
                        out << dumpType(op.type());
-                       if(isVirtualReg(reg)) {
+                       if(reg == invalidReg) {
+                           out << "invalid";
+                       } else if(isVirtualReg(reg)) {
                            out << 'v' << (reg ^ virtualRegBegin);
                        } else if(isStackObject(reg)) {
                            out << 's' << (reg ^ stackObjectBegin);

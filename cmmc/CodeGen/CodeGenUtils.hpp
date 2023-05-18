@@ -31,7 +31,7 @@ void tailDuplication(MIRFunction& func);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func);
 bool genericPeepholeOpt(MIRFunction& func, const Target& target);
 
-bool removeUnusedInsts(MIRFunction& func);
+bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
 bool removeIndirectCopy(MIRFunction& func);
 void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor);
 void forEachUseOperands(MIRFunction& func, const std::function<void(MIRInst& inst, MIROperand& op)>& functor);

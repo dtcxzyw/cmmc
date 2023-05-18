@@ -73,13 +73,11 @@ def parse_inst_format(inst):
     # print(inst)
 
 
-if __name__ == "__main__":
-    isa_desc_file = sys.argv[1]
+def load_inst_info(isa_desc_file: str):
     isa_desc = None
     with open(isa_desc_file, 'r') as f:
         isa_desc = yaml.load(f, Loader=yaml.FullLoader)
-    output_dir = sys.argv[2]
-    os.makedirs(output_dir, exist_ok=True)
+
     target_name = os.path.basename(isa_desc_file).removesuffix('.yml')
     inst_info: Dict[str, dict] = isa_desc['InstInfo']
     inst_templates = dict()
@@ -105,6 +103,118 @@ if __name__ == "__main__":
     # print(yaml.dump(insts))
     for inst in insts.values():
         parse_inst_format(inst)
+    return target_name, insts
+
+
+def load_isel_info(isa_desc_file: str):
+    isa_desc = None
+    with open(isa_desc_file, 'r') as f:
+        isa_desc = yaml.load(f, Loader=yaml.FullLoader)
+    isel_info = isa_desc['InstSelection']
+    return isel_info
+
+
+global_idx = 0
+
+
+def get_id():
+    global global_idx
+    global_idx += 1
+    return global_idx
+
+
+def replace_operand(code: str, map):
+    for k, v in map.items():
+        code = code.replace(k, 'op'+str(v))
+    return code
+
+
+def parse_isel_pattern_match(pattern: dict, root_id, insts, match_info: list, match_insts: set, operand_map: dict):
+    assert len(pattern) == 1
+    for inst, sub in pattern.items():
+        match_insts.add(inst)
+        inst_info = insts[inst]
+        local_map = dict()
+        capture_list = []
+        lookup_list = []
+        for operand in inst_info['operands']:
+            idx = get_id()
+            local_map[operand['name']] = idx
+            capture_list.append(idx)
+        match_info.append(
+            {"type": "match_inst", "root": root_id, "inst": inst, "capture_list": capture_list, "lookup_list": lookup_list})
+        if sub:
+            for k, v in sub.items():
+                if k == '$Predicate':
+                    match_info.append(
+                        {'type': 'predicate', 'code': replace_operand(v, operand_map)})
+                elif k == '$Capture':
+                    operand_map[v] = local_map[k]
+                elif isinstance(v, str):
+                    assert v.startswith('$')
+                    operand_map[v] = local_map[k]
+                elif isinstance(v, dict):
+                    lookup_list.append(local_map[k])
+                    parse_isel_pattern_match(
+                        v, local_map[k], insts, match_info,  match_insts, operand_map)
+                else:
+                    raise RuntimeError("Unrecognized DAG")
+
+
+def parse_isel_pattern_select(rep, insts, select_info: list, operand_map: dict, used_as_operand: bool = False):
+    if isinstance(rep, str):
+        idx = get_id()
+        select_info.append(
+            {'type': 'custom', 'code': replace_operand(rep, operand_map), 'idx': idx})
+        return idx
+
+    assert len(rep) == 1
+    for inst, sub in rep.items():
+        local_map = dict()
+        inst_ref = inst
+        for k, v in sub.items():
+            if k == '$Opcode':
+                inst = replace_operand(v, operand_map)
+            elif k == '$Template':
+                inst_ref = v
+            else:
+                local_map[k] = parse_isel_pattern_select(
+                    v, insts, select_info, operand_map, True)
+        inst_info = insts[inst_ref]
+        operands = []
+        for operand in inst_info['operands']:
+            operands.append(local_map[operand['name']])
+        idx = get_id()
+        select_info.append(
+            {'type': 'select_inst', 'inst': inst, 'operands': operands, 'idx': idx, 'used_as_operand': used_as_operand})
+        return idx
+
+
+def parse_isel_pattern(pattern, insts, match_insts):
+    p = pattern['Pattern']
+    r = pattern['Replace']
+
+    pattern_info = dict()
+    match_info = list()
+    select_info = list()
+    operand_map = dict()
+    root_id = get_id()
+    parse_isel_pattern_match(p, root_id, insts, match_info,
+                             match_insts, operand_map)
+    pattern_info['match_id'] = root_id
+    pattern_info['match_inst'] = match_info[0]['inst']
+    pattern_info['match_list'] = match_info
+    pattern_info['replace_id'] = parse_isel_pattern_select(
+        r, insts, select_info, operand_map)
+    pattern_info['select_list'] = select_info
+
+    return pattern_info
+
+
+if __name__ == "__main__":
+    target_name, insts = load_inst_info(sys.argv[1])
+    output_dir = sys.argv[2]
+    os.makedirs(output_dir, exist_ok=True)
     inst_list = []
     for key, value in insts.items():
         value['name'] = key
@@ -117,3 +227,34 @@ if __name__ == "__main__":
     generate_file('InstInfoImpl.hpp.jinja2', output_dir, params)
     generate_file('ScheduleModelDecl.hpp.jinja2', output_dir, params)
     generate_file('ScheduleModelImpl.hpp.jinja2', output_dir, params)
+
+    # Instruction Selection
+    if target_name == "Generic":
+        exit(0)
+
+    _, generic_insts = load_inst_info(sys.argv[1].removesuffix(
+        target_name+'/'+target_name+'.yml')+'Generic/Generic.yml')
+    for key, value in generic_insts.items():
+        insts['Inst'+key] = value
+
+    isel_patterns = load_isel_info(sys.argv[1])
+    isel_patterns_info = []
+    match_insts = set()
+    for pattern in isel_patterns:
+        isel_patterns_info.append(
+            parse_isel_pattern(pattern, insts, match_insts))
+    isel_patterns_map = dict()
+    for pattern in isel_patterns_info:
+        key = pattern['match_inst']
+        arr = isel_patterns_map.get(key, [])
+        arr.append(pattern)
+        isel_patterns_map[key] = arr
+
+    params = {
+        'target': target_name,
+        'isel_patterns': isel_patterns_map,
+        'match_insts': match_insts,
+        'inst_map': insts
+    }
+    generate_file('ISelInfoDecl.hpp.jinja2', output_dir, params)
+    generate_file('ISelInfoImpl.hpp.jinja2', output_dir, params)

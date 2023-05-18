@@ -68,7 +68,7 @@ InstInfo:
     Flag: [Terminator]
   Branches:
     Format: $Mnemonic:Template $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
     Instances:
       BEQ:
         Mnemonic: beq
@@ -145,7 +145,7 @@ InstInfo:
     Template: Store
     SD:
       Mnemonic: sd
-  # “M” Standard Extension for Integer Multiplication and Division
+  # "M" Standard Extension for Integer Multiplication and Division
   ## 6.2 Integer Multiplication Instructions
   InstanceMRR:
     Template: RType
@@ -175,7 +175,7 @@ InstInfo:
       Mnemonic: remw
     REMUW:
       Mnemonic: remuw
-  # “F“ Standard Extension for Single-Precision Floating-Point
+  # "F" Standard Extension for Single-Precision Floating-Point
   FRType:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
   FIFType:
@@ -238,6 +238,8 @@ InstInfo:
       Mnemonic: fmv.x.w
 
   # Pseudo Instructions
+
+InstSelection: []
 
 ScheduleInfo:
   emulator:

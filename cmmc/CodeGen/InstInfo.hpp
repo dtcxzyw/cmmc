@@ -31,7 +31,9 @@ enum InstFlag : uint32_t {
     InstFlagLoad = 1 << 0,
     InstFlagStore = 1 << 1,
     InstFlagTerminator = 1 << 2,
-    InstFlagPseudo = 1 << 3,
+    InstFlagBranch = 1 << 3,
+    InstFlagCall = 1 << 4,
+    InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
@@ -44,6 +46,7 @@ public:
     virtual ~InstInfo() = default;
     virtual void print(std::ostream& out, const MIRInst& inst) const = 0;
     virtual bool verify(std::ostream& out, const MIRInst& inst) const = 0;
+    // FIXME: use inline functions
     [[nodiscard]] virtual uint32_t getOperandNum() const noexcept = 0;
     [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept = 0;
     [[nodiscard]] virtual InstFlag getInstFlag() const noexcept = 0;

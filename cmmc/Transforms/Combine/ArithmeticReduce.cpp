@@ -18,6 +18,7 @@
 // etc.
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -34,7 +35,7 @@ CMMC_NAMESPACE_BEGIN
 // TODO: cross-block matching
 
 class ArithmeticReduce final : public TransformPass<Function> {
-    static bool runOnBlock(IRBuilder& builder, Block& block) {
+    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
         bool modified = false;
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap& replace) -> Value* {
             MatchContext<Value> matchCtx{ inst, &replace };
@@ -229,7 +230,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // select x 1 0 -> zext x
-            if(select(any(v1), cuint_(1), cuint_(0))(matchCtx)) {
+            if(target.isNativeSupported(InstructionID::SExt) && select(any(v1), cuint_(1), cuint_(0))(matchCtx)) {
                 if(inst->getType()->isBoolean()) {
                     return v1;
                 }
@@ -284,8 +285,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // select cond, x, x + 1
             // ->
             // sub x + 1, (zext cond)
-            if((select(any(v1), int_(i1), int_(i2))(matchCtx) && i1 + 1 == i2) ||
-               (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3)) {
+            if(target.isNativeSupported(InstructionID::SExt) &&
+               ((select(any(v1), int_(i1), int_(i2))(matchCtx) && i1 + 1 == i2) ||
+                (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3))) {
                 auto val = v1;
                 const auto base = inst->getOperand(2);
                 const auto targetType = base->getType();
@@ -376,7 +378,7 @@ public:
 
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(builder, *block);
+            modified |= runOnBlock(builder, *block, target);
         }
         return modified;
     }

@@ -14,6 +14,7 @@
 
 // Three-Address Code
 
+#include <TAC/ISelInfoDecl.hpp>
 #include <TAC/InstInfoDecl.hpp>
 #include <TAC/ScheduleModelDecl.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -61,6 +62,71 @@ public:
     }
     [[nodiscard]] const TargetInstInfo& getInstInfo() const noexcept override {
         return TAC::getTACInstInfo();
+    }
+    [[nodiscard]] const TargetISelInfo& getISelInfo() const noexcept override {
+        return TAC::getTACISelInfo();
+    }
+    [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
+        switch(inst) {
+            case InstructionID::UDiv:
+                [[fallthrough]];
+            case InstructionID::URem:
+                [[fallthrough]];
+            case InstructionID::Neg:
+                [[fallthrough]];
+            case InstructionID::And:
+                [[fallthrough]];
+            case InstructionID::Or:
+                [[fallthrough]];
+            case InstructionID::Xor:
+                [[fallthrough]];
+            case InstructionID::Shl:
+                [[fallthrough]];
+            case InstructionID::LShr:
+                [[fallthrough]];
+            case InstructionID::AShr:
+                [[fallthrough]];
+            case InstructionID::FAdd:
+                [[fallthrough]];
+            case InstructionID::FSub:
+                [[fallthrough]];
+            case InstructionID::FMul:
+                [[fallthrough]];
+            case InstructionID::FDiv:
+                [[fallthrough]];
+            case InstructionID::FNeg:
+                [[fallthrough]];
+            case InstructionID::FFma:
+                [[fallthrough]];
+            case InstructionID::SExt:
+                [[fallthrough]];
+            case InstructionID::ZExt:
+                [[fallthrough]];
+            case InstructionID::Trunc:
+                [[fallthrough]];
+            case InstructionID::Bitcast:
+                [[fallthrough]];
+            case InstructionID::F2U:
+                [[fallthrough]];
+            case InstructionID::F2S:
+                [[fallthrough]];
+            case InstructionID::U2F:
+                [[fallthrough]];
+            case InstructionID::S2F:
+                [[fallthrough]];
+            case InstructionID::FCast:
+                [[fallthrough]];
+            case InstructionID::Select:
+                [[fallthrough]];
+            case InstructionID::SCmp:
+                [[fallthrough]];
+            case InstructionID::UCmp:
+                [[fallthrough]];
+            case InstructionID::FCmp:
+                return false;
+            default:
+                return true;
+        }
     }
 };
 

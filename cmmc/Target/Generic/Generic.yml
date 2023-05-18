@@ -1,14 +1,16 @@
 InstInfo:
   Jump:
     Format: Jump $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
   Branch:
-    Format: Branch $Src:Bool[Metadata], $Tgt:Reloc[Metadata], $Prob:Freq[Metadata]
-    Flag: [Terminator]
+    Format: Branch $Cond:Bool[Use], $Tgt:Reloc[Metadata], $Prob:Freq[Metadata]
+    Flag: [Terminator, Branch]
   Push:
     Format: Push $Idx:Imm[Metadata], $Src:Val[Use]
+    Flag: [Call]
   Call:
     Format: Call $Dst:VRegOrInvalid[Def], $Tgt:Reloc[Metadata]
+    Flag: [Call]
   Ret:
     Format: Ret $Src:Val[Use]
     Flag: [Terminator]
@@ -19,10 +21,10 @@ InstInfo:
     Format: Unreachable
     Flag: [Terminator]
   Load:
-    Format: Load $Dst:VReg[Def], $Addr:Val[Use], $Off:Imm[Metadata]
+    Format: Load $Dst:VReg[Def], $Addr:VReg[Use]
     Flag: [Load]
   Store:
-    Format: Store $Addr:VReg[Use], $Src:Val[Use], $Off:Imm[Metadata]
+    Format: Store $Addr:VReg[Use], $Src:Val[Use]
     Flag: [Store]
   IntegerArithmetic:
     Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use]

@@ -27,11 +27,11 @@ InstInfo:
 
   Goto:
     Format: GOTO $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
 
   Branch:
-    Format: IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Format: "IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata] # Branch Prob $Prob:Freq[Metadata]"
+    Flag: [Terminator, Branch]
     Instances:
       BranchEq:
         Op: ==
@@ -41,6 +41,10 @@ InstInfo:
         Op: <
       BranchLe:
         Op: <=
+      BranchGt:
+        Op: ">"
+      BranchGe:
+        Op: ">="
 
   Return:
     Format: RETURN $Src:Val[Use]
@@ -48,9 +52,170 @@ InstInfo:
 
   Read:
     Format: READ $Dst:VReg[Def]
+    Flag: [Call]
 
   Write:
     Format: WRITE $Src:Val[Use]
+    Flag: [Call]
+
+  Call:
+    Format: $Dst:VReg[Def] := CALL $Tgt:Reloc[Metadata]
+    Flag: [Call]
+
+  Arg:
+    Format: ARG $Val:Val[Use]
+    Flag: [Call]
+
+InstSelection:
+  - Pattern:
+      InstJump:
+        Tgt: $Reloc
+    Replace:
+      Goto:
+        Tgt: $Reloc
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchOpcode($Op)
+        $Template: BranchEq
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstCall:
+        Dst: $Dst
+        Tgt: $Reloc
+        $Predicate: isRuntimeReadFunc($Reloc)
+    Replace:
+      Read:
+        Dst: $Dst
+
+  - Pattern:
+      InstCall:
+        Tgt: $Reloc
+        $Predicate: isRuntimeWriteFunc($Reloc)
+    Replace:
+      Write:
+        Src: selectWriteArg(ctx)
+
+  - Pattern:
+      InstPush:
+        Src: $Src
+    Replace:
+      Arg:
+        Val: $Src
+
+  - Pattern:
+      InstCall:
+        Dst: $Dst
+        Tgt: $Reloc
+        $Predicate: "!isRuntimeFunc($Reloc)"
+    Replace:
+      Call:
+        Dst: $Dst
+        Tgt: $Reloc
+
+  - Pattern:
+      InstRet:
+        Src: $Src
+    Replace:
+      Return:
+        Src: $Src
+
+  - Pattern:
+      InstRetVoid:
+    Replace:
+      Return:
+        Src: MIROperand::asImm(0, OperandType::Int32)
+
+  - Pattern:
+      InstUnreachable:
+    Replace:
+      Return:
+        Src: MIROperand::asImm(0, OperandType::Int32)
+
+  - Pattern:
+      InstLoad:
+        Dst: $Dst
+        Addr: $Addr
+    Replace:
+      Fetch:
+        Dst: $Dst
+        Src: $Addr
+
+  - Pattern:
+      InstStore:
+        Addr: $Addr
+        Src: $Src
+    Replace:
+      Deref:
+        Dst: $Addr
+        Src: $Src
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      Add:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+
+  - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      Sub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      Mul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      Div:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+
+  - Pattern:
+      InstNeg:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      Sub:
+        Dst: $Dst
+        Lhs: MIROperand::asImm(0, OperandType::Int32)
+        Rhs: $Src
 
 ScheduleInfo:
   emulator:

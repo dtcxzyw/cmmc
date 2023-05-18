@@ -19,6 +19,8 @@
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/ISelInfo.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -70,9 +72,8 @@ static OperandType getOperandType(const Type* type, OperandType ptrType) {
     if(type->isFloatingPoint()) {
         if(type->as<FloatingPointType>()->getFixedSize() == sizeof(float)) {
             return OperandType::Float32;
-        } else {
-            reportNotImplemented(CMMC_LOCATION());
         }
+        reportNotImplemented(CMMC_LOCATION());
     }
     reportUnreachable(CMMC_LOCATION());
 }
@@ -325,7 +326,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         analysis.invalidateModule();
     }
 
-    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout(), target.getInstInfo(), true };
+    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout(), target.getInstInfo(), target.getISelInfo(),
+                        true };
 
     auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
     CMMC_UNUSED(dumpFunc);
@@ -357,19 +359,21 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
 
         auto& mfunc = dynamic_cast<MIRFunction&>(*symbol->reloc);
         {
-            // Stage 1: instruction selection
-            Stage stage{ "Instruction selection"sv };
+            // Stage 1: lower to Generic MIR
+            Stage stage{ "lower to generic insts"sv };
             lowerToMachineFunction(mfunc, func, ctx, machineModule, globalMap, analysis);
             dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        /*
         {
-            // Stage 2: clean up unused insts
-            Stage stage{ "Clean up unused instructions"sv };
-            removeUnusedInsts(mfunc);
-            assert(mfunc.verify(std::cerr, true));
+            // Stage 2: instruction selection
+            Stage stage{ "Instruction selection"sv };
+            ISelContext iselCtx{ ctx };
+            iselCtx.runISel(mfunc);
+            dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
         }
+        /*
         // Stage 3: register coalescing
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Register coalescing"sv };
@@ -601,17 +605,11 @@ static void lower(CastInst* inst, LoweringContext& ctx) {
 }
 static void lower(LoadInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(InstLoad)
-        .setOperand<0>(ret)
-        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-        .setOperand<2>(MIROperand::asImm(0, ctx.getPtrType()));
+    ctx.emitInst(InstLoad).setOperand<0>(ret).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
     ctx.addOperand(inst, ret);
 }
 static void lower(StoreInst* inst, LoweringContext& ctx) {
-    ctx.emitInst(InstStore)
-        .setOperand<0>(ctx.mapOperand(inst->getOperand(1)))
-        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-        .setOperand<2>(MIROperand::asImm(0, ctx.getPtrType()));
+    ctx.emitInst(InstStore).setOperand<0>(ctx.mapOperand(inst->getOperand(1))).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<Value*> src;
@@ -700,7 +698,7 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
 
                 // create copy
                 const auto intermediate = ctx.newVReg(type);
-                ctx.emitCopy(intermediate, dstArg);
+                ctx.emitCopy(intermediate, dstArg);  // NOLINT
                 dirtyRegRemapping.emplace(dst[idx], intermediate);
 
                 // apply reset

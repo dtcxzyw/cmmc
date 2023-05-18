@@ -55,13 +55,13 @@ endfunction()
 add_frontend(Spl)
 add_frontend(SysY)
 
-file(GLOB CMMC_TARGET_TEMPLATE_ENGINE_FILES cmmc/Target/Template/*)
+file(GLOB CMMC_TARGET_TEMPLATE_ENGINE_FILES cmmc/Target/Template/* ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Generic/Generic.yml)
 
 function(add_backend backend)
     message(STATUS "Add backend: ${backend}")
     set(GENERATED_DIR ${CMAKE_CURRENT_BINARY_DIR}/generated/${backend})
     set(DESC_FILE ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/${backend}/${backend}.yml)
-    set(OUTPUTS ${GENERATED_DIR}/InstInfoImpl.hpp ${GENERATED_DIR}/InstInfoDecl.hpp ${GENERATED_DIR}/ScheduleModelImpl.hpp ${GENERATED_DIR}/ScheduleModelDecl.hpp)
+    set(OUTPUTS ${GENERATED_DIR}/InstInfoImpl.hpp ${GENERATED_DIR}/InstInfoDecl.hpp ${GENERATED_DIR}/ISelInfoImpl.hpp ${GENERATED_DIR}/ISelInfoDecl.hpp ${GENERATED_DIR}/ScheduleModelImpl.hpp ${GENERATED_DIR}/ScheduleModelDecl.hpp)
     add_custom_command(
         OUTPUT ${OUTPUTS}
         COMMAND ${CMAKE_COMMAND} -E echo Generating files for target ${backend}

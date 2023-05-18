@@ -13,11 +13,9 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
-#include <cmmc/IR/ConstantValue.hpp>
-#include <cmmc/IR/Instruction.hpp>
-#include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -29,86 +27,54 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
-
-bool removeUnusedInsts(MIRFunction& func) {
+bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
     std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> writers;
     std::queue<MIRInst*> q;
-    const auto hasCustomReg = [](const MIROperand& op) { return op.reg(); };
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
-            std::visit(Overload{
-                           [&](const ControlFlowIntrinsicMInst&) { q.push(&inst); },  //
-                           [&](const CopyMInst& instRef) {
-                               // store/special
-                               if(instRef.indirectDst || hasCustomReg(instRef.dst))
-                                   q.push(&inst);
-                               else {  // load/move
-                                   writers[instRef.dst].push_back(&inst);
-                               }
-                           },                                                  //
-                           [&](const BranchCompareMInst&) { q.push(&inst); },  //
-                           [&](const RetMInst&) { q.push(&inst); },            //
-                           [&](const UnreachableMInst&) {},                    //
-                           [&](const BranchMInst&) {},                         //
-                           [&](const CallMInst&) { q.push(&inst); },           //
-                           [&](const auto& instRef) { writers[instRef.dst].push_back(&inst); },
-                       },
-                       inst);
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            bool special = false;
+            if(auto flag = instInfo.getInstFlag(); flag & InstFlagSideEffect) {
+                special = true;
+            }
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    auto op = inst.getOperand(idx);
+                    writers[op].push_back(&inst);
+                    if(op.isReg() && isISAReg(op.reg()))
+                        special = true;
+                }
+            }
+
+            if(special)
+                q.push(&inst);
         }
 
     while(!q.empty()) {
-        auto& instruction = *q.front();
+        auto& inst = *q.front();
         q.pop();
 
         auto popSrc = [&](const MIROperand& operand) {
             if(auto iter = writers.find(operand); iter != writers.cend()) {
-                for(auto inst : iter->second)
-                    q.push(inst);
+                for(auto writer : iter->second)
+                    q.push(writer);
                 writers.erase(iter);
             }
         };
 
-        std::visit(Overload{
-                       [&](const ControlFlowIntrinsicMInst& inst) { popSrc(inst.src); },  //
-                       [&](const CopyMInst& inst) {
-                           popSrc(inst.src);
-                           if(inst.indirectDst)
-                               popSrc(inst.dst);
-                       },
-                       [&](const BranchCompareMInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },                                                   //
-                       [&](const RetMInst& inst) { popSrc(inst.retVal); },  //
-                       [&](const UnreachableMInst&) {},                     //
-                       [&](const BranchMInst&) {},
-                       [&](const ConstantMInst&) {},
-                       [&](const BinaryArithmeticMInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },
-                       [&](const CompareMInst& inst) {
-                           popSrc(inst.lhs);
-                           popSrc(inst.rhs);
-                       },
-                       [&](const ArithmeticIntrinsicMInst& inst) {
-                           for(auto op : inst.src)
-                               popSrc(op);
-                       },
-                       [&](const CallMInst& inst) {
-                           if(auto* dst = std::get_if<MIROperand>(&inst.callee))
-                               popSrc(*dst);
-                       },
-                       [](const GlobalAddressMInst&) {},
-                       [&](const auto& inst) { popSrc(inst.src); },
-                   },
-                   instruction);
+        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                popSrc(inst.getOperand(idx));
+            }
+        }
     }
+
     std::unordered_set<MIRInst*> remove;
     for(auto& [op, writerList] : writers) {
-        if(op.addressSpace != AddressSpace::VirtualReg)
+        if(!isVirtualReg(op.reg()))
             continue;
 
         for(auto writer : writerList) {
@@ -121,6 +87,7 @@ bool removeUnusedInsts(MIRFunction& func) {
     return !remove.empty();
 }
 
+/*
 void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor) {
     for(auto& param : func.parameters())
         functor(param);

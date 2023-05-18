@@ -15,6 +15,7 @@
 // Hoist constants of similar blocks
 
 #include <cmmc/Analysis/CFGAnalysis.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -122,6 +123,8 @@ class ConstantHoist final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& moduleTarget = analysis.module().getTarget();
+        if(!moduleTarget.isNativeSupported(InstructionID::Select))
+            return false;
         const auto& cfg = analysis.get<CFGAnalysis>(func);
 
         bool modified = false;

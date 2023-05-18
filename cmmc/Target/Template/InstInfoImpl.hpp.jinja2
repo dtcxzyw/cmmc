@@ -33,17 +33,17 @@ public:
         CMMC_UNUSED(inst);
         return true {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(out, inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(out, inst) {%endif%} ;
     }
-    [[nodiscard]] virtual uint32_t getOperandNum() const noexcept override {
+    [[nodiscard]] uint32_t getOperandNum() const noexcept override {
         return {{inst.operands|length}};
     }
-    [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept override {
+    [[nodiscard]] OperandFlag getOperandFlag(uint32_t idx) const noexcept override {
         switch(idx) {
             {% for op in inst.operands %}case {{op.idx}}: return OperandFlag{{op.flag}};{% endfor %}
             default:
                 reportUnreachable(CMMC_LOCATION());
         }
     }
-    [[nodiscard]] virtual InstFlag getInstFlag() const noexcept override {
+    [[nodiscard]] InstFlag getInstFlag() const noexcept override {
         return InstFlagNone {% for flag in inst.Flag %}| InstFlag{{flag}}{% endfor %};
     }
 };

@@ -13,10 +13,11 @@
 */
 
 #pragma once
-#include "cmmc/CodeGen/MIR.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -42,6 +43,9 @@ public:
         reportUnreachable(CMMC_LOCATION());
     }
     [[nodiscard]] virtual const TargetInstInfo& getInstInfo() const noexcept {
+        reportUnreachable(CMMC_LOCATION());
+    }
+    [[nodiscard]] virtual const TargetISelInfo& getISelInfo() const noexcept {
         reportUnreachable(CMMC_LOCATION());
     }
     virtual bool builtinRA(MIRFunction& mfunc) const {
@@ -95,6 +99,7 @@ struct CodeGenContext final {
     const TargetScheduleModel& scheduleModel;
     const DataLayout& dataLayout;
     const TargetInstInfo& instInfo;
+    const TargetISelInfo& iselInfo;
     bool requireOneTerminator;
     uint32_t vregIdx = virtualRegBegin;
     uint32_t blockIdx = 0;

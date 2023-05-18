@@ -24,8 +24,21 @@ struct OperandDumper final {
 };
 
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
-    CMMC_UNUSED(out);
-    CMMC_UNUSED(operand);
+    auto& op = operand.operand;
+    if(op.isImm()) {
+        return out << '#' << op.imm();
+    }
+    if(op.isReg()) {
+        if(isVirtualReg(op.reg()))
+            return out << 'v' << (op.reg() ^ virtualRegBegin);
+    }
+    if(op.isReloc()) {
+        op.reloc()->dumpAsTarget(out);
+        return out;
+    }
+    if(op.isFreq()) {
+        return out << "[freq " << op.freq() << "]";
+    }
     reportNotImplemented(CMMC_LOCATION());
 }
 
@@ -39,6 +52,10 @@ static bool isOperandVal(std::ostream&, const MIROperand& operand) {
 
 static bool isOperandReloc(std::ostream&, const MIROperand& operand) {
     return operand.isReloc();
+}
+
+static bool isOperandFreq(std::ostream&, const MIROperand& operand) {
+    return operand.isFreq();
 }
 
 CMMC_TARGET_NAMESPACE_END

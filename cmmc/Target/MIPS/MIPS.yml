@@ -61,19 +61,19 @@ InstInfo:
 
   B:
     Format: b $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
   BAL:
     Format: "bal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
   BC1F:
     Format: "bc1f $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
   BC1T:
     Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
   BranchCompare:
     Format: $Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
     Instances:
       BEQ:
         Mnemonic: beq
@@ -81,7 +81,7 @@ InstInfo:
         Mnemonic: bne
   BranchCompareZero:
     Format: $Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata]
-    Flag: [Terminator]
+    Flag: [Terminator, Branch]
     Instances:
       BGEZ:
         Mnemonic: bgez
@@ -94,6 +94,7 @@ InstInfo:
 
   BranchCompareZeroAndLink:
     Format: "$Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
+    Flag: [Terminator, Branch]
     Instances:
       BGEZAL:
         Mnemonic: bgezal
@@ -134,7 +135,7 @@ InstInfo:
     Format: "jal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
     Flag: [Terminator]
   JALR:
-    Format: "jalr $Rd:GPR[Def], $Rs:GPR[Use] # Implicit Def: $Rd:RAReg[Def]"
+    Format: "jalr $Rs:GPR[Use]"
     Flag: [Terminator]
   JR:
     Format: jr $Rs:GPR[Use]
@@ -193,6 +194,8 @@ InstInfo:
         Mnemonic: sltiu
 
   # TODO: Conditional Move Instructions
+
+InstSelection: []
 
 ScheduleModel:
   emulator:

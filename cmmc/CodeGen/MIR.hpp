@@ -44,14 +44,20 @@ class MIRRelocable {
 public:
     explicit MIRRelocable(String sym) : mSymbol{ sym } {}
     virtual ~MIRRelocable() = default;
+    [[nodiscard]] String symbol() const {
+        return mSymbol;
+    }
     virtual bool verify(std::ostream& out, const CodeGenContext& ctx) const = 0;
     void dumpAsTarget(std::ostream& out) const;
     virtual void dump(std::ostream& out, const CodeGenContext& ctx) const = 0;
 };
 
-constexpr uint32_t virtualRegBegin = 0xcc000000;
-constexpr uint32_t stackObjectBegin = 0xdd000000;
-constexpr uint32_t invalidReg = 0xdeadbeef;
+constexpr uint32_t virtualRegBegin = 0b0101U << 28;
+constexpr uint32_t stackObjectBegin = 0b1010U << 28;
+constexpr uint32_t invalidReg = 0x1100U << 28;
+constexpr bool isISAReg(uint32_t x) {
+    return x < virtualRegBegin;
+}
 constexpr bool isVirtualReg(uint32_t x) {
     return (x & virtualRegBegin) == virtualRegBegin;
 }
