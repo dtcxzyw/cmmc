@@ -49,7 +49,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandVal(std::ostream&, const MIROperand& operand) {
+static bool isOperandVal(const MIROperand& operand) {
     return (operand.isReg() && (isVirtualReg(operand.reg()) || isStackObject(operand.reg()))) || operand.isImm();
 }
 

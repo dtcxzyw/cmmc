@@ -29,9 +29,8 @@ public:
         out {% for val in inst.Format %} << {%if val is integer %} ::cmmc::mir::{{target}}::OperandDumper{ inst.getOperand({{val}}) } {%else%} "{{val}}" {%endif%} {%endfor%};
         {% if inst.Comment|length != 0 %} if(printComment) out {% for val in inst.Comment %} << {%if val is integer %} ::cmmc::mir::{{target}}::OperandDumper{ inst.getOperand({{val}}) } {%else%} "{{val}}" {%endif%} {%endfor%}; {% else %} CMMC_UNUSED(printComment); {% endif %}
     }
-    bool verify(std::ostream& out, const MIRInst& inst) const override {
-        CMMC_UNUSED(out);
-        return inst.checkOperandCount({{inst.operands|length}}) {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(out, inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(out, inst) {%endif%} ;
+    [[nodiscard]] bool verify(const MIRInst& inst) const override {
+        return inst.checkOperandCount({{inst.operands|length}}) {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(inst) {%endif%} ;
     }
     [[nodiscard]] uint32_t getOperandNum() const noexcept override {
         return {{inst.operands|length}};

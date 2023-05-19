@@ -57,7 +57,7 @@ public:
     InstInfo() = default;
     virtual ~InstInfo() = default;
     virtual void print(std::ostream& out, const MIRInst& inst, bool printComment) const = 0;
-    virtual bool verify(std::ostream& out, const MIRInst& inst) const = 0;
+    [[nodiscard]] virtual bool verify(const MIRInst& inst) const = 0;
     // FIXME: use inline functions
     [[nodiscard]] virtual uint32_t getOperandNum() const noexcept = 0;
     [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept = 0;
@@ -76,20 +76,40 @@ public:
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
 };
 
-inline bool isOperandVReg(std::ostream&, const MIROperand& operand) {
+constexpr bool isOperandVReg(const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
 }
 
-inline bool isOperandReloc(std::ostream&, const MIROperand& operand) {
+constexpr bool isOperandReloc(const MIROperand& operand) {
     return operand.isReloc();
 }
 
-inline bool isOperandProb(std::ostream&, const MIROperand& operand) {
+constexpr bool isOperandProb(const MIROperand& operand) {
     return operand.isProb();
 }
 
-inline bool isOperandStackObject(std::ostream&, const MIROperand& operand) {
+constexpr bool isOperandStackObject(const MIROperand& operand) {
     return operand.isReg() && isStackObject(operand.reg());
+}
+
+template <uint32_t N>
+constexpr bool isOperandSignedImm(const MIROperand& operand) {
+    static_assert(N < 64);
+    if(!operand.isImm())
+        return false;
+    constexpr auto x = static_cast<intmax_t>(1) << (N - 1);
+    const auto imm = operand.imm();
+    return -x <= imm && imm < x;
+}
+
+template <uint32_t N>
+constexpr bool isOperandUnsignedImm(const MIROperand& operand) {
+    static_assert(N < 63);
+    if(!operand.isImm())
+        return false;
+    constexpr auto x = static_cast<intmax_t>(1) << N;
+    const auto imm = operand.imm();
+    return 0 <= imm && imm < x;
 }
 
 CMMC_MIR_NAMESPACE_END

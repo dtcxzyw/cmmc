@@ -75,70 +75,70 @@ class MIROperand final {
     OperandType mType = OperandType::Special;
 
 public:
-    MIROperand() = default;
+    constexpr MIROperand() = default;
     template <typename T>
-    MIROperand(T x, OperandType type) : mOperand{ x }, mType{ type } {}
-    [[nodiscard]] const auto& getStorage() const noexcept {
+    constexpr MIROperand(T x, OperandType type) : mOperand{ x }, mType{ type } {}
+    [[nodiscard]] constexpr const auto& getStorage() const noexcept {
         return mOperand;
     }
     bool operator==(const MIROperand& rhs) const {
         return mOperand == rhs.mOperand;
     }
-    [[nodiscard]] OperandType type() const noexcept {
+    [[nodiscard]] constexpr OperandType type() const noexcept {
         return mType;
     }
     [[nodiscard]] size_t hash() const {
         return std::hash<std::decay_t<decltype(mOperand)>>{}(mOperand);
     }
-    [[nodiscard]] intmax_t imm() const {
+    [[nodiscard]] constexpr intmax_t imm() const {
         return std::get<intmax_t>(mOperand);
     }
-    [[nodiscard]] bool isImm() const {
+    [[nodiscard]] constexpr bool isImm() const {
         return std::holds_alternative<intmax_t>(mOperand);
     }
     template <typename T>
-    [[nodiscard]] static MIROperand asImm(T val, OperandType type) {
+    [[nodiscard]] constexpr static MIROperand asImm(T val, OperandType type) {
         static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
         return MIROperand{ static_cast<intmax_t>(val), type };
     }
-    [[nodiscard]] static MIROperand asISAReg(uint32_t reg, OperandType type) {
+    [[nodiscard]] constexpr static MIROperand asISAReg(uint32_t reg, OperandType type) {
         assert(isISAReg(reg));
         return MIROperand{ reg, type };
     }
-    [[nodiscard]] static MIROperand asVReg(uint32_t reg, OperandType type) {
+    [[nodiscard]] constexpr static MIROperand asVReg(uint32_t reg, OperandType type) {
         return MIROperand{ reg + virtualRegBegin, type };
     }
-    [[nodiscard]] static MIROperand asStackObject(uint32_t reg, OperandType type) {
+    [[nodiscard]] constexpr static MIROperand asStackObject(uint32_t reg, OperandType type) {
         return MIROperand{ reg + stackObjectBegin, type };
     }
-    [[nodiscard]] static MIROperand asInvalidReg() {
+    [[nodiscard]] constexpr static MIROperand asInvalidReg() {
         return MIROperand{ invalidReg, OperandType::Special };
     }
-    [[nodiscard]] static MIROperand asReloc(MIRRelocable* val) {
+    [[nodiscard]] constexpr static MIROperand asReloc(MIRRelocable* val) {
         return MIROperand{ val, OperandType::Special };
     }
-    [[nodiscard]] static MIROperand asProb(double val) {
+    [[nodiscard]] constexpr static MIROperand asProb(double val) {
         return MIROperand{ val, OperandType::Special };
     }
-    [[nodiscard]] uint32_t reg() const {
+    [[nodiscard]] constexpr uint32_t reg() const {
         return std::get<uint32_t>(mOperand);
     }
-    [[nodiscard]] bool isReg() const {
+    [[nodiscard]] constexpr bool isReg() const {
         return std::holds_alternative<uint32_t>(mOperand);
     }
-    [[nodiscard]] MIRRelocable* reloc() const {
+    [[nodiscard]] constexpr MIRRelocable* reloc() const {
         return std::get<MIRRelocable*>(mOperand);
     }
-    [[nodiscard]] bool isReloc() const {
+    [[nodiscard]] constexpr bool isReloc() const {
         return std::holds_alternative<MIRRelocable*>(mOperand);
     }
-    [[nodiscard]] double prob() const {
+    [[nodiscard]] constexpr double prob() const {
         return std::get<double>(mOperand);
     }
-    [[nodiscard]] bool isProb() const {
+    [[nodiscard]] constexpr bool isProb() const {
         return std::holds_alternative<double>(mOperand);
     }
-    [[nodiscard]] bool isUnused() const {
+    [[nodiscard]] constexpr bool isUnused() const {
         return std::holds_alternative<std::monostate>(mOperand);
     }
 };
@@ -218,8 +218,9 @@ public:
     [[nodiscard]] uint32_t opcode() const {
         return mOpcode;
     }
-    void setOpcode(uint32_t opcode) {
+    MIRInst& setOpcode(uint32_t opcode) {
         mOpcode = opcode;
+        return *this;
     }
     [[nodiscard]] bool checkOperandCount(uint32_t cnt) const {
         for(uint32_t idx = cnt; idx < maxOperandCount; ++idx)

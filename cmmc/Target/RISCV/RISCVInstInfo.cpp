@@ -29,26 +29,22 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandGPR(std::ostream& out, const MIROperand& operand) {
-    CMMC_UNUSED(out);
+static bool isOperandGPR(const MIROperand& operand) {
     CMMC_UNUSED(operand);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandFPR(std::ostream& out, const MIROperand& operand) {
-    CMMC_UNUSED(out);
+static bool isOperandFPR(const MIROperand& operand) {
     CMMC_UNUSED(operand);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandImm12(std::ostream& out, const MIROperand& operand) {
-    CMMC_UNUSED(out);
+static bool isOperandImm12(const MIROperand& operand) {
     CMMC_UNUSED(operand);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandImm20(std::ostream& out, const MIROperand& operand) {
-    CMMC_UNUSED(out);
+static bool isOperandImm20(const MIROperand& operand) {
     CMMC_UNUSED(operand);
     reportNotImplemented(CMMC_LOCATION());
 }
@@ -56,38 +52,32 @@ static bool isOperandImm20(std::ostream& out, const MIROperand& operand) {
 using mir::isOperandProb;
 using mir::isOperandReloc;
 
-static bool verifyInstSLLI(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSLLI(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool verifyInstSRAI(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSRAI(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool verifyInstSRLI(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSRLI(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool verifyInstSLLIW(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSLLIW(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool verifyInstSRAIW(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSRAIW(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool verifyInstSRLIW(std::ostream& out, const MIRInst& inst) {
-    CMMC_UNUSED(out);
+static bool verifyInstSRLIW(const MIRInst& inst) {
     CMMC_UNUSED(inst);
     reportNotImplemented(CMMC_LOCATION());
 }

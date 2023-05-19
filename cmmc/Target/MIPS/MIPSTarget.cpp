@@ -14,7 +14,11 @@
 
 // mips o32 abi, delay slot is not supported
 
+#include <MIPS/ISelInfoDecl.hpp>
 #include <MIPS/InstInfoDecl.hpp>
+#include <MIPS/ScheduleModelDecl.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -53,6 +57,17 @@ public:
     }
     [[nodiscard]] const TargetInstInfo& getInstInfo() const noexcept override {
         return MIPS::getMIPSInstInfo();
+    }
+    [[nodiscard]] const TargetISelInfo& getISelInfo() const noexcept override {
+        return MIPS::getMIPSISelInfo();
+    }
+    [[nodiscard]] const TargetScheduleModel& getScheduleModel() const noexcept override {
+        return MIPS::getMIPSScheduleModel();
+    }
+    void emitAssembly(const MIRModule& module, std::ostream& out) const override {
+        CMMC_UNUSED(module);
+        CMMC_UNUSED(out);
+        reportNotImplemented(CMMC_LOCATION());
     }
 };
 

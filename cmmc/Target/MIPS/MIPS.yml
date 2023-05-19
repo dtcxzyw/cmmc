@@ -1,7 +1,4 @@
 InstInfo:
-  LI:
-    Format: li $Rd:GPR[Def], $Imm:Imm[Metadata]
-
   IntegerBinary:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use]
     Instances:
@@ -25,7 +22,7 @@ InstInfo:
         Mnemonic: xor
 
   IntegerBinaryImm:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm[Metadata]
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm16[Metadata]
     Instances:
       ADDIU:
         Mnemonic: addiu
@@ -120,17 +117,17 @@ InstInfo:
         Mnemonic: mult
 
   JAL:
-    Format: "jal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
-    Flag: [Terminator]
+    Format: "jal $Tgt:Reloc[Metadata]"
+    Flag: [Terminator, NoFallthrough]
   JALR:
     Format: "jalr $Rs:GPR[Use]"
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
   JR:
     Format: jr $Rs:GPR[Use]
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
 
   Load:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm[Metadata]($Rs:GPR[Use])
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm16[Metadata]($Rs:GPR[Use])
     Flag: [Load]
     Instances:
       LB:
@@ -144,7 +141,7 @@ InstInfo:
       LW:
         Mnemonic: lw
   Store:
-    Format: $Mnemonic:Template $Rd:GPR[Use], $Imm:Imm[Metadata]($Rs:GPR[Use])
+    Format: $Mnemonic:Template $Rd:GPR[Use], $Imm:Imm16[Metadata]($Rs:GPR[Use])
     Flag: [Store]
     Instances:
       SB:
@@ -166,7 +163,7 @@ InstInfo:
     Format: mov.s $Rd:FPR[Def], $Rs:FPR[Use]
 
   Compare:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm[Metadata]
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]
     Instances:
       SLT:
         Mnemonic: slt
@@ -174,16 +171,47 @@ InstInfo:
         Mnemonic: sltu
 
   CompareImm:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm[Metadata]
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm16[Metadata]
     Instances:
       SLTI:
         Mnemonic: slti
       SLTIU:
         Mnemonic: sltiu
 
+  # Pseudo instructions
+  LoadAddress:
+    Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
+    Flag: [LoadConstant]
+
+  LoadImm16:
+    Format: "li $Rd:GPR[Def], $Imm:Imm16[Metadata]" # addiu
+    Flag: [LoadConstant]
+
+  LoadImm32:
+    Format: "li $Rd:GPR[Def], $Imm:Imm32[Metadata]" # lui + addiu
+    Flag: [LoadConstant]
+
   # TODO: Conditional Move Instructions
 
-InstSelection: []
+InstSelection:
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: isOperandImm16($Imm)
+    Replace:
+      LoadImm16:
+        Rd: $Dst
+        Imm: $Imm
+
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Imm
+    Replace:
+      LoadImm32:
+        Rd: $Dst
+        Imm: $Imm
 
 ScheduleModel:
   emulator:

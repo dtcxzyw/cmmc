@@ -12,9 +12,9 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MIR.hpp"
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cstddef>
 #include <functional>

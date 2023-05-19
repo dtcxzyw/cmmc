@@ -81,22 +81,22 @@ static bool isFPType(OperandType type) {
     return type == OperandType::Float32;
 }
 
-static bool isOperandVReg(std::ostream&, const MIROperand& operand) {
+static bool isOperandVReg(const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
 }
 
-static bool isOperandVal(std::ostream&, const MIROperand& operand) {
+static bool isOperandVal(const MIROperand& operand) {
     return operand.isReg() || operand.isImm();
 }
 
-static bool isOperandIVal(std::ostream& out, const MIROperand& operand) {
-    return isIntegerType(operand.type()) && isOperandVal(out, operand);
+static bool isOperandIVal(const MIROperand& operand) {
+    return isIntegerType(operand.type()) && isOperandVal(operand);
 }
-static bool isOperandFVal(std::ostream& out, const MIROperand& operand) {
-    return isFPType(operand.type()) && isOperandVal(out, operand);
+static bool isOperandFVal(const MIROperand& operand) {
+    return isFPType(operand.type()) && isOperandVal(operand);
 }
 
-static bool isOperandVRegOrInvalid(std::ostream&, const MIROperand& operand) {
+static bool isOperandVRegOrInvalid(const MIROperand& operand) {
     if(operand.isReg()) {
         const auto reg = operand.reg();
         if(isVirtualReg(reg) || reg == invalidReg)
@@ -105,23 +105,23 @@ static bool isOperandVRegOrInvalid(std::ostream&, const MIROperand& operand) {
     return false;
 }
 
-static bool isOperandBool(std::ostream&, const MIROperand& operand) {
+static bool isOperandBool(const MIROperand& operand) {
     return operand.type() == OperandType::Bool;
 }
 
-static bool isOperandImm(std::ostream&, const MIROperand& operand) {
+static bool isOperandImm(const MIROperand& operand) {
     return operand.isImm();
 }
 
-static bool isOperandIReg(std::ostream&, const MIROperand& operand) {
+static bool isOperandIReg(const MIROperand& operand) {
     return operand.isReg() && isIntegerType(operand.type());
 }
 
-static bool isOperandFReg(std::ostream&, const MIROperand& operand) {
+static bool isOperandFReg(const MIROperand& operand) {
     return operand.isReg() && isFPType(operand.type());
 }
 
-static bool isOperandFlag(std::ostream&, const MIROperand& operand) {
+static bool isOperandFlag(const MIROperand& operand) {
     return operand.isImm() && operand.type() == OperandType::Special;
 }
 
