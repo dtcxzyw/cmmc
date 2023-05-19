@@ -19,9 +19,11 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
+#include <cstddef>
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <vector>
 CMMC_MIR_NAMESPACE_BEGIN
 
 ISelContext::ISelContext(CodeGenContext& codeGenCtx) : mCodeGenCtx{ codeGenCtx } {}
@@ -30,14 +32,38 @@ void ISelContext::runISel(MIRFunction& func) {
     bool allowComplexPattern = false;  // create new blocks
 
     while(true) {
-        removeUnusedInsts(func, mCodeGenCtx);
-        // func.dump(std::cerr, mCodeGenCtx);
         // TODO: apply CSE
+
+        // func.dump(std::cerr, mCodeGenCtx);
+        while(genericPeepholeOpt(func, mCodeGenCtx))
+            ;
+        // func.dump(std::cerr, mCodeGenCtx);
         bool modified = false;
         bool hasIllegal = false;
         mRemoveWorkList.clear();
         mReplaceBlockList.clear();
         mReplaceList.clear();
+
+        // TODO: cross block isel?
+        mConstantMapping.clear();
+        {
+            std::vector<MIROperand> removeList;
+            for(auto& block : func.blocks()) {
+                for(auto& inst : block->instructions()) {
+                    auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+                    if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                        auto& def = getInstDef(inst);
+                        if(mConstantMapping.count(def)) {
+                            removeList.push_back(def);
+                        } else
+                            mConstantMapping.emplace(def, &inst);
+                    }
+                }
+            }
+            for(auto& op : removeList)
+                mConstantMapping.erase(op);
+        }
+
         for(auto& block : func.blocks()) {
             mInstMapping.clear();
             for(auto& inst : block->instructions()) {
@@ -109,8 +135,14 @@ void ISelContext::runISel(MIRFunction& func) {
     }
 }
 
-MIRInst& ISelContext::lookupDef(const MIROperand& operand) const {
-    return *mInstMapping.at(operand);
+MIRInst* ISelContext::lookupDef(const MIROperand& operand) const {
+    auto iter = mInstMapping.find(operand);
+    if(iter == mInstMapping.cend()) {
+        iter = mConstantMapping.find(operand);
+        if(iter == mConstantMapping.cend())
+            return nullptr;
+    }
+    return iter->second;
 }
 
 MIRInst& ISelContext::newInst(uint32_t opcode) {

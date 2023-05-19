@@ -24,10 +24,11 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
     if(ctx.requireOneTerminator) {
         if(mInsts.empty())
             return false;
-        if(!(ctx.instInfo.getInstInfo(mInsts.back().opcode()).getInstFlag() & InstFlagTerminator))
+        if(!requireFlag(ctx.instInfo.getInstInfo(mInsts.back().opcode()).getInstFlag(), InstFlagTerminator))
             return false;
         for(auto& inst : mInsts) {
-            if(&inst != &mInsts.back() && (ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag() & InstFlagTerminator)) {
+            if(&inst != &mInsts.back() &&
+               requireFlag(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag(), InstFlagTerminator)) {
                 return false;
             }
         }

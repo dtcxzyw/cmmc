@@ -70,6 +70,12 @@ static MIROperand selectWriteArg(ISelContext& ctx) {
     return push->getOperand(1);
 }
 
+constexpr uint32_t directStackAccessOffset = 1 << 20;
+static MIROperand convertToVal(const MIROperand& obj) {
+    assert(isStackObject(obj.reg()));
+    return MIROperand::asVReg((obj.reg() ^ stackObjectBegin) + directStackAccessOffset, obj.type());
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <TAC/ISelInfoImpl.hpp>

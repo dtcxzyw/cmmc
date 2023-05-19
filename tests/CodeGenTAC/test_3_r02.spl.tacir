@@ -1,40 +1,36 @@
 FUNCTION main :
-READ v0
-READ v1
-v2 := v0 / #100
-v3 := v2 * #100
-IF v0 != v3 GOTO label1
-v4 := v0 / #400
-v5 := v4 * #400
-IF v0 != v5 GOTO label2
-IF v1 != #2 GOTO label7
-GOTO label3
-LABEL label1 :
-v6 := v0 / #4
-v7 := v6 * #4
-IF v0 != v7 GOTO label2
-GOTO label4
-LABEL label2 :
-IF v1 != #2 GOTO label7
-GOTO label8
-LABEL label3 :
-WRITE #29
-RETURN #0
-LABEL label4 :
-IF v1 != #2 GOTO label7
-GOTO label3
-LABEL label5 :
+READ v12
+READ v13
+v14 := v12 / #100
+v15 := v14 * #100
+IF v12 != v15 GOTO label11
+v20 := v12 / #400
+v21 := v20 * #400
+IF v12 != v21 GOTO label9
+IF v13 != #2 GOTO label6
+GOTO label54
+LABEL label50 :
 WRITE #30
 RETURN #0
 LABEL label6 :
+v30 := v13 / #2
+v31 := v30 * #2
+IF v13 != v31 GOTO label34
+GOTO label50
+LABEL label34 :
 WRITE #31
 RETURN #0
-LABEL label7 :
-v8 := v1 / #2
-v9 := v8 * #2
-IF v1 != v9 GOTO label6
-GOTO label5
-LABEL label8 :
+LABEL label9 :
+IF v13 != #2 GOTO label6
+GOTO label49
+LABEL label11 :
+v40 := v12 / #4
+v41 := v40 * #4
+IF v12 != v41 GOTO label9
+IF v13 != #2 GOTO label6
+LABEL label54 :
+WRITE #29
+RETURN #0
+LABEL label49 :
 WRITE #28
 RETURN #0
-

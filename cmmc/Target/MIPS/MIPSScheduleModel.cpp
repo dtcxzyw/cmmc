@@ -13,3 +13,12 @@
 */
 
 #include <MIPS/ScheduleModelImpl.hpp>
+
+CMMC_TARGET_NAMESPACE_BEGIN
+
+void MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(ctx);
+}
+
+CMMC_TARGET_NAMESPACE_END

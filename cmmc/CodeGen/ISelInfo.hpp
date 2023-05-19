@@ -23,7 +23,7 @@ CMMC_MIR_NAMESPACE_BEGIN
 
 class ISelContext final {
     CodeGenContext& mCodeGenCtx;
-    std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> mInstMapping;
+    std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> mInstMapping, mConstantMapping;
     MIRBasicBlock* mCurrentBlock;
     std::list<MIRInst>::iterator mInsertPoint;
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> mReplaceList;
@@ -32,7 +32,7 @@ class ISelContext final {
 public:
     explicit ISelContext(CodeGenContext& codeGenCtx);
     void runISel(MIRFunction& func);
-    MIRInst& lookupDef(const MIROperand& operand) const;
+    MIRInst* lookupDef(const MIROperand& operand) const;
     MIRInst& newInst(uint32_t opcode);
     MIROperand& getInstDef(MIRInst& inst) const;
     std::list<MIRInst>& getInstructions() const;

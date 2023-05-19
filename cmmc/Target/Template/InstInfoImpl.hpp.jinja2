@@ -61,7 +61,7 @@ public:
     }
     bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const override {
         auto& instInfo = getInstInfo(inst.opcode());
-        if(instInfo.getInstFlag() & InstFlagBranch) {
+        if(requireFlag(instInfo.getInstFlag(), InstFlagBranch)) {
             if(inst.opcode() < ISASpecificBegin)
                 return TargetInstInfo::matchBranch(inst, target, prob); 
             switch(inst.opcode()) {
@@ -75,7 +75,7 @@ public:
     void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const override {
         if(inst.opcode() < ISASpecificBegin)
             return TargetInstInfo::redirectBranch(inst, target);
-        assert(getInstInfo(inst.opcode()).getInstFlag() & InstFlagBranch);
+        assert(requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagBranch));
         switch(inst.opcode()) {
         {%for branch in branches%} case {{branch.inst}}: inst.setOperand<{{branch.target}}>(MIROperand::asReloc(target)); break; {% endfor %}
         default: reportUnreachable(CMMC_LOCATION());

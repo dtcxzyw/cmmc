@@ -146,8 +146,8 @@ static const Generic::GenericInstInfo& getGenericInstInfoInstance() {
     return instance;
 }
 
+constexpr uint32_t offset = Generic::GenericInstBegin + 1;
 const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
-    constexpr uint32_t offset = Generic::GenericInstBegin + 1;
     static_assert(Generic::GenericInstEnd - Generic::GenericInstBegin - 1 == MIRGenericInst::ISASpecificBegin);
 #define CMMC_ASSERT_OFFSET(NAME) static_assert(MIRGenericInst::Inst##NAME + offset == Generic::NAME)
     CMMC_ASSERT_OFFSET(Jump);
@@ -199,21 +199,32 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
 }
 
 bool TargetInstInfo::matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(target);
-    CMMC_UNUSED(prob);
-    reportUnreachable(CMMC_LOCATION());
+    auto& instRef = const_cast<MIRInst&>(inst);  // NOLINT
+    const auto oldOpcode = instRef.opcode();
+    instRef.setOpcode(oldOpcode + offset);
+    bool res = getGenericInstInfoInstance().matchBranch(inst, target, prob);
+    instRef.setOpcode(oldOpcode);
+    return res;
 }
 
 void TargetInstInfo::redirectBranch(MIRInst& inst, MIRBasicBlock* target) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(target);
-    reportUnreachable(CMMC_LOCATION());
+    auto& instRef = const_cast<MIRInst&>(inst);  // NOLINT
+    const auto oldOpcode = instRef.opcode();
+    instRef.setOpcode(oldOpcode + offset);
+    getGenericInstInfoInstance().redirectBranch(inst, target);
+    instRef.setOpcode(oldOpcode);
 }
 
 MIRInst TargetInstInfo::emitGoto(MIRBasicBlock* target) const {
-    CMMC_UNUSED(target);
-    reportUnreachable(CMMC_LOCATION());
+    return MIRInst{ InstBranch }.setOperand<0>(MIROperand::asReloc(target));
+}
+
+bool TargetInstInfo::matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const {
+    return matchBranch(inst, target, prob) && !requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagNoFallthrough);
+}
+bool TargetInstInfo::matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const {
+    double prob;
+    return matchBranch(inst, target, prob) && requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagNoFallthrough);
 }
 
 CMMC_MIR_NAMESPACE_END

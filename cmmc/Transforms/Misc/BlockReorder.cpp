@@ -58,7 +58,7 @@ public:
 
 #ifndef NDEBUG
         assert(T::operator()(lhs, lhs) == StrongOrder::Equal);
-        assert(T::operator()(lhs, lhs) == StrongOrder::Equal);
+        assert(T::operator()(rhs, rhs) == StrongOrder::Equal);
         const auto r1 = T::operator()(lhs, rhs);
         const auto r2 = T::operator()(rhs, lhs);
         assert((r1 == StrongOrder::Equal && r2 == StrongOrder::Equal) ||
@@ -131,19 +131,48 @@ class TypeComp {
         }
     }
 
+    void insertType(std::unordered_set<const Type*>& types, const Type* type) {
+        if(!type)
+            return;
+        if(types.count(type))
+            return;
+        types.insert(type);
+        if(type->isPointer()) {
+            insertType(types, type->as<PointerType>()->getPointee());
+        }
+        if(type->isArray()) {
+            insertType(types, type->as<ArrayType>()->getElementType());
+        }
+        if(type->isStruct()) {
+            for(auto& field : type->as<StructType>()->fields())
+                insertType(types, field.type);
+        }
+        if(type->isFunction()) {
+            auto funcType = type->as<FunctionType>();
+            insertType(types, funcType->getRetType());
+            for(auto arg : funcType->getArgTypes())
+                insertType(types, arg);
+        }
+    }
+
 public:
     using CompareType = const Type*;
     explicit TypeComp(Function& func) {
-        std::vector<const Type*> types;
-        for(auto block : func.blocks())
-            for(auto inst : block->instructions())
-                types.push_back(inst->getType());
-        std::sort(types.begin(), types.end());
-        types.erase(std::unique(types.begin(), types.end()), types.end());
-        std::stable_sort(types.begin(), types.end(),
+        std::unordered_set<const Type*> types;
+        auto funcType = func.getType()->as<FunctionType>();
+        insertType(types, funcType);
+        for(auto block : func.blocks()) {
+            for(auto inst : block->instructions()) {
+                insertType(types, inst->getType());
+                for(auto operand : inst->operands())
+                    insertType(types, operand->getType());
+            }
+        }
+        std::vector<const Type*> sortedTypes{ types.cbegin(), types.cend() };
+        std::stable_sort(sortedTypes.begin(), sortedTypes.end(),
                          [&](const Type* lhs, const Type* rhs) { return compareType(lhs, rhs) == StrongOrder::LessThan; });
         uint32_t idx = 0;
-        for(auto type : types) {
+        for(auto type : sortedTypes) {
             // constant->dumpAsOperand(std::cerr);
             // std::cerr << ' ';
             mIdx[type] = ++idx;
@@ -160,8 +189,9 @@ public:
     }
 };
 
-class ConstantComp {
-public:
+struct ConstantComp {
+    StrongOrderingWrapper<TypeComp>& typeComp;
+
     using CompareType = const ConstantValue*;
     StrongOrder operator()(CompareType lhs, CompareType rhs) const {
         const auto lhsRank = lhs->constantRank();
@@ -183,9 +213,16 @@ public:
                 return lhs->as<ConstantFloatingPoint>()->getValue() < rhs->as<ConstantFloatingPoint>()->getValue() ?
                     StrongOrder::LessThan :
                     StrongOrder::GreaterThan;
-            case ConstantRank::Offset:
-                return lhs->as<ConstantOffset>()->index() < rhs->as<ConstantOffset>()->index() ? StrongOrder::LessThan :
-                                                                                                 StrongOrder::GreaterThan;
+            case ConstantRank::Offset: {
+                const auto lhsOffset = lhs->as<ConstantOffset>();
+                const auto rhsOffset = rhs->as<ConstantOffset>();
+                if(lhsOffset->base() != rhsOffset->base()) {
+                    if(auto ret = typeComp(lhsOffset->base(), rhsOffset->base()); ret != StrongOrder::Equal) {
+                        return ret;
+                    }
+                }
+                return lhsOffset->index() < rhsOffset->index() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
+            }
             default:
                 return StrongOrder::Equal;
         }
@@ -199,7 +236,7 @@ class ExternalComp {
 public:
     using CompareType = const Value*;
 
-    explicit ExternalComp(Module& mod, Function& func) {
+    explicit ExternalComp(Module& mod, Function& func, StrongOrderingWrapper<TypeComp>& typeComp) {
         // globals
         for(auto global : mod.globals())
             mIdx[global] = ++mCount;
@@ -216,8 +253,9 @@ public:
                     }
         std::sort(constants.begin(), constants.end());
         constants.erase(std::unique(constants.begin(), constants.end()), constants.end());
-        std::stable_sort(constants.begin(), constants.end(), [](const ConstantValue* lhs, const ConstantValue* rhs) {
-            return StrongOrderingWrapper<ConstantComp>{}(lhs, rhs) == StrongOrder::LessThan;
+        StrongOrderingWrapper<ConstantComp> constantCmp{ typeComp };
+        std::stable_sort(constants.begin(), constants.end(), [&](const ConstantValue* lhs, const ConstantValue* rhs) {
+            return constantCmp(lhs, rhs) == StrongOrder::LessThan;
         });
         for(auto constant : constants) {
             // constant->dumpAsOperand(std::cerr);
@@ -291,7 +329,7 @@ class BlockReorder final : public TransformPass<Function> {
         }
 
         StrongOrderingWrapper<TypeComp> typeComp{ func };
-        StrongOrderingWrapper<ExternalComp> comp{ analysis.module(), func };
+        StrongOrderingWrapper<ExternalComp> comp{ analysis.module(), func, typeComp };
 
         for(auto block : dom.blocks()) {
             auto& instructions = block->instructions();

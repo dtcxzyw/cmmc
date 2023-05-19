@@ -157,7 +157,9 @@ void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
         out << "FUNCTION "sv << mfunc.symbol() << " :\n"sv;
         {
             auto& params = mfunc.args();
-            for(auto& param : params) {
+            // Get arguments in reverse order
+            for(auto it = params.rbegin(); it != params.rend(); ++it) {
+                auto& param = *it;
                 out << "PARAM v"sv << (param.reg() ^ virtualRegBegin) << '\n';
             }
         }

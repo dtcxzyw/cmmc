@@ -130,7 +130,7 @@ def spl_semantic_noref(src):
 def spl_codegen_tac(src):
     args = [binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
             '/dev/stdout', src]
-    #print("", " ".join(args))
+    # print("", " ".join(args))
     out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -168,7 +168,7 @@ def spl_codegen_mips(src):
     tmp_out = os.path.join(binary_dir, 'tmp.S')
     args = [binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-O', optimization_level, '-o',
             tmp_out, src]
-    #print("", " ".join(args))
+    # print("", " ".join(args))
     out = subprocess.run(args, capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -611,128 +611,135 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "codegen",
-              "tac", "gcc", "llvm", "qemu", "qemu-gcc"]
+test_cases = ["parse", "semantic", "tac", "llvm"]
 if len(sys.argv) >= 4:
-    if sys.argv[3] == 'ref':
-        generate_ref = True
-    else:
-        test_cases = sys.argv[3].split(',')
+    test_cases = sys.argv[3].split(',')
 
 # TODO: has llvm support?
 
+generate_ref = 'ref' in test_cases
 if generate_ref:
-    test_cases = []
     fast_fail = False
 
 res = []
 start = time.perf_counter()
 
-if "parse" in test_cases:
-    res.append(test("SPL parse std", tests_path+"/Parse", ".spl", spl_parse))
-    res.append(test("SPL parse project1 extra", tests_path +
-                    "/Project1/test-ex", ".spl", spl_parse_ext))
-    res.append(test("SPL parse project1 self", tests_path +
-                    "/Project1/test", ".spl", spl_parse))
-    res.append(test("SPL parse project1 student", tests_path +
-                    "/Project1/student_test", ".spl", spl_parse))
+if not generate_ref:
+    if "parse" in test_cases:
+        res.append(test("SPL parse std", tests_path +
+                   "/Parse", ".spl", spl_parse))
+        res.append(test("SPL parse project1 extra", tests_path +
+                        "/Project1/test-ex", ".spl", spl_parse_ext))
+        res.append(test("SPL parse project1 self", tests_path +
+                        "/Project1/test", ".spl", spl_parse))
+        res.append(test("SPL parse project1 student", tests_path +
+                        "/Project1/student_test", ".spl", spl_parse))
 
-if "semantic" in test_cases:
-    res.append(test("SPL semantic & opt", tests_path +
-                    "/Semantic", ".spl", spl_semantic))
-    res.append(test("SPL parse project2 extra", tests_path +
-                    "/Project2/test-ex", ".spl", spl_semantic_ext))
-    res.append(test("SPL parse project2 self", tests_path +
-                    "/Project2/test", ".spl", spl_semantic))
-    res.append(test("SPL parse project2 student", tests_path +
-                    "/Project2/student_test", ".spl", spl_semantic))
+    if "semantic" in test_cases:
+        res.append(test("SPL semantic & opt", tests_path +
+                        "/Semantic", ".spl", spl_semantic))
+        res.append(test("SPL parse project2 extra", tests_path +
+                        "/Project2/test-ex", ".spl", spl_semantic_ext))
+        res.append(test("SPL parse project2 self", tests_path +
+                        "/Project2/test", ".spl", spl_semantic))
+        res.append(test("SPL parse project2 student", tests_path +
+                        "/Project2/student_test", ".spl", spl_semantic))
 
-if "opt" in test_cases:
-    res.append(test("SysY opt & test functional", tests_path +
-                    "/SysY2022/functional", ".sy", sysy_test))
-    res.append(test("SysY opt & test hidden_functional", tests_path +
-                    "/SysY2022/hidden_functional", ".sy", sysy_opt))
-    res.append(test("SysY opt performance", tests_path +
-                    "/SysY2022/performance", ".sy", sysy_opt))
-    res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
-    res.append(test("Transform", tests_path + "/Transform", ".sy", sysy_opt))
+    if "opt" in test_cases:
+        res.append(test("SysY opt & test functional", tests_path +
+                        "/SysY2022/functional", ".sy", sysy_test))
+        res.append(test("SysY opt & test hidden_functional", tests_path +
+                        "/SysY2022/hidden_functional", ".sy", sysy_opt))
+        res.append(test("SysY opt performance", tests_path +
+                        "/SysY2022/performance", ".sy", sysy_opt))
+        res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
+        res.append(test("Transform", tests_path +
+                   "/Transform", ".sy", sysy_opt))
 
-if "tac" in test_cases:
-    res.append(test("SPL SPL->TAC sample", tests_path +
-                    "/TAC2MC", ".spl", spl_semantic_noref))
-    res.append(test("SPL codegen TAC", tests_path +
-                    "/CodeGenTAC", ".spl", spl_codegen_tac))
-    res.append(test("SPL TAC->IR project3", tests_path +
-                    "/CodeGenTAC", ".ir", spl_tac2ir))
-    res.append(test("SPL TAC->IR project3 self", tests_path +
-                    "/Project3", ".spl", spl_tac2ir))
-    res.append(test("SPL TAC->IR project4", tests_path +
-                    "/TAC2MC", ".ir", spl_codegen_tac))
-    res.append(test("SPL TAC->IR project4 self", tests_path +
-                    "/Project4", ".spl", spl_codegen_tac))
+    if "tac" in test_cases:
+        res.append(test("SPL SPL->TAC sample", tests_path +
+                        "/TAC2MC", ".spl", spl_semantic_noref))
+        res.append(test("SPL codegen TAC", tests_path +
+                        "/CodeGenTAC", ".spl", spl_codegen_tac))
+        res.append(test("SPL TAC->IR project3", tests_path +
+                        "/CodeGenTAC", ".ir", spl_tac2ir))
+        res.append(test("SPL TAC->IR project3 self", tests_path +
+                        "/Project3", ".spl", spl_tac2ir))
+        res.append(test("SPL TAC->IR project4", tests_path +
+                        "/TAC2MC", ".ir", spl_codegen_tac))
+        res.append(test("SPL TAC->IR project4 self", tests_path +
+                        "/Project4", ".spl", spl_codegen_tac))
 
-if "codegen" in test_cases:
-    res.append(test("SPL SPL->MIPS project4", tests_path +
-                    "/TAC2MC", ".spl", spl_codegen_mips))
-    res.append(test("SPL SPL->RISCV64 project4", tests_path +
-                    "/TAC2MC", ".spl", spl_codegen_riscv64))
-    res.append(test("SPL TAC->MIPS project4", tests_path +
-                    "/TAC2MC", ".ir", spl_codegen_mips))
-    res.append(test("SPL SPL->MIPS project4 self", tests_path +
-                    "/Project4", ".spl", spl_codegen_mips))
-    # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
-    #                "/Project4", ".spl", spl_codegen_riscv64))
-    res.append(test("SysY SysY->MIPS functional", tests_path +
-                    "/SysY2022/functional", ".sy", sysy_codegen_mips))
-    # res.append(test("SysY SysY->RISCV64 functional", tests_path +
-    #                "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
+    if "codegen" in test_cases:
+        res.append(test("SPL SPL->MIPS project4", tests_path +
+                        "/TAC2MC", ".spl", spl_codegen_mips))
+        res.append(test("SPL SPL->RISCV64 project4", tests_path +
+                        "/TAC2MC", ".spl", spl_codegen_riscv64))
+        res.append(test("SPL TAC->MIPS project4", tests_path +
+                        "/TAC2MC", ".ir", spl_codegen_mips))
+        res.append(test("SPL SPL->MIPS project4 self", tests_path +
+                        "/Project4", ".spl", spl_codegen_mips))
+        # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
+        #                "/Project4", ".spl", spl_codegen_riscv64))
+        res.append(test("SysY SysY->MIPS functional", tests_path +
+                        "/SysY2022/functional", ".sy", sysy_codegen_mips))
+        # res.append(test("SysY SysY->RISCV64 functional", tests_path +
+        #                "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 
-if "gcc" in test_cases:
-    res.append(test("SysY gcc performance", tests_path +
-                    "/SysY2022/performance", ".sy", sysy_gcc))
+    if "gcc" in test_cases:
+        res.append(test("SysY gcc performance", tests_path +
+                        "/SysY2022/performance", ".sy", sysy_gcc))
 
-if "llvm" in test_cases:
-    res.append(test("SysY SysY->LLVMIR functional", tests_path +
-                    "/SysY2022/functional", ".sy", sysy_codegen_llvm))
-    res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
-                    "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
-    dict_cmmc.clear()
-    total_perf_self = 1
-    total_perf_self_samples = 0
+    if "llvm" in test_cases:
+        res.append(test("SysY SysY->LLVMIR functional", tests_path +
+                        "/SysY2022/functional", ".sy", sysy_codegen_llvm))
+        res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
+                        "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
+        dict_cmmc.clear()
+        total_perf_self = 1
+        total_perf_self_samples = 0
 
-    res.append(test("SysY SysY->LLVMIR performance", tests_path +
-                    "/SysY2022/performance", ".sy", sysy_codegen_llvm))
+        res.append(test("SysY SysY->LLVMIR performance", tests_path +
+                        "/SysY2022/performance", ".sy", sysy_codegen_llvm))
 
-if "qemu" in test_cases:
-    # res.append(test("SysY codegen functional (qemu-riscv64)", tests_path +
-    #                 "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
-    # res.append(test("SysY codegen hidden_functional (qemu-riscv64)", tests_path +
-    #                 "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
+    if "qemu" in test_cases:
+        # res.append(test("SysY codegen functional (qemu-riscv64)", tests_path +
+        #                 "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
+        # res.append(test("SysY codegen hidden_functional (qemu-riscv64)", tests_path +
+        #                 "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
 
-    # dict_cmmc_qemu.clear()
-    # total_perf_self_qemu = 1
-    # total_perf_self_samples_qemu = 0
-    # res.append(test("SysY codegen performance (qemu-riscv64)", tests_path +
-    #                 "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
-    pass
+        # dict_cmmc_qemu.clear()
+        # total_perf_self_qemu = 1
+        # total_perf_self_samples_qemu = 0
+        # res.append(test("SysY codegen performance (qemu-riscv64)", tests_path +
+        #                 "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
+        pass
 
-if "qemu-gcc" in test_cases:
-    res.append(test("SysY gcc performance (qemu-riscv64)", tests_path +
-               "/SysY2022/performance", ".sy", sysy_gcc_qemu))
+    if "qemu-gcc" in test_cases:
+        res.append(test("SysY gcc performance (qemu-riscv64)", tests_path +
+                        "/SysY2022/performance", ".sy", sysy_gcc_qemu))
 
 if generate_ref:
-    test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
-    # test("Reference SysY Clang", tests_path +
-    #     "/SysY2022", ".sy", sysy_ref_clang)
-    #test("Reference Spl", tests_path + "/", ".spl", spl_ref)
-    # test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
-    # test("Reference Spl->TAC Extra", tests_path +
-    #     "/Project3", ".spl", spl_tac_ref)
-    # test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
-    # test("Reference Spl->MIPS Extra", tests_path +
-    #     "/Project4", ".spl", spl_mips_ref)
-    # test("Reference Spl->RISCV64", tests_path +
-    #     "/TAC2MC", ".spl", spl_riscv64_ref)
+    if 'sysy' in test_cases:
+        test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+    if 'clang' in test_cases:
+        test("Reference SysY Clang", tests_path +
+             "/SysY2022", ".sy", sysy_ref_clang)
+    if 'spl' in test_cases:
+        test("Reference Spl", tests_path + "/", ".spl", spl_ref)
+    if 'tac' in test_cases:
+        test("Reference Spl->TAC", tests_path +
+             "/CodeGenTAC", ".spl", spl_tac_ref)
+        test("Reference Spl->TAC Extra", tests_path +
+             "/Project3", ".spl", spl_tac_ref)
+    if 'mips' in test_cases:
+        test("Reference Spl->MIPS", tests_path +
+             "/TAC2MC", ".spl", spl_mips_ref)
+        test("Reference Spl->MIPS Extra", tests_path +
+             "/Project4", ".spl", spl_mips_ref)
+    if 'riscv' in test_cases:
+        test("Reference Spl->RISCV64", tests_path +
+             "/TAC2MC", ".spl", spl_riscv64_ref)
 
 end = time.perf_counter()
 

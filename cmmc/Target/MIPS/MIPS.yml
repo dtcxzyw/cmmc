@@ -187,3 +187,4 @@ InstSelection: []
 
 ScheduleModel:
   emulator:
+    CustomPeepholeOpt: true

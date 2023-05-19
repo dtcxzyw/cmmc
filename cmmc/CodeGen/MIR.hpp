@@ -212,6 +212,9 @@ class MIRInst final {
 
 public:
     explicit MIRInst(uint32_t opcode) : mOpcode{ opcode } {}
+    bool operator==(const MIRInst& rhs) const {
+        return mOpcode == rhs.mOpcode && mOperands == rhs.mOperands;
+    }
     [[nodiscard]] uint32_t opcode() const {
         return mOpcode;
     }

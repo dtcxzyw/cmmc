@@ -34,11 +34,22 @@ enum InstFlag : uint32_t {
     InstFlagBranch = 1 << 3,
     InstFlagCall = 1 << 4,
     InstFlagNoFallthrough = 1 << 5,
-    InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall
+    InstFlagPush = 1 << 6,
+    InstFlagLoadConstant = 1 << 7,
+    InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
     return static_cast<InstFlag>(static_cast<uint32_t>(lhs) | static_cast<uint32_t>(rhs));
+}
+constexpr InstFlag operator&(InstFlag lhs, InstFlag rhs) noexcept = delete;
+constexpr InstFlag operator==(InstFlag lhs, InstFlag rhs) noexcept = delete;
+constexpr InstFlag operator!=(InstFlag lhs, InstFlag rhs) noexcept = delete;
+constexpr bool requireFlag(InstFlag flag, InstFlag required) noexcept {
+    return (static_cast<uint32_t>(flag) & static_cast<uint32_t>(required)) == static_cast<uint32_t>(required);
+}
+constexpr bool requireOneFlag(InstFlag flag, InstFlag required) noexcept {
+    return (static_cast<uint32_t>(flag) & static_cast<uint32_t>(required)) != 0;
 }
 
 class InstInfo {
@@ -59,6 +70,8 @@ public:
     virtual ~TargetInstInfo() = default;
     [[nodiscard]] virtual const InstInfo& getInstInfo(uint32_t opcode) const;
     virtual bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
+    bool matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
+    bool matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const;
     virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
 };

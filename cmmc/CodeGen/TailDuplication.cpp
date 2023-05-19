@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/InstInfo.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
@@ -20,16 +21,14 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
-
 constexpr size_t duplicationThreshold = 5;
 
-void tailDuplication(MIRFunction& func) {
+void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
     while(redirectGoto(func, ctx))
         ;
 
     for(uint32_t k = 0; k < duplicationThreshold; ++k) {
-        const auto cfg = calcCFG(func);
+        const auto cfg = calcCFG(func, ctx);
 
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
@@ -38,33 +37,29 @@ void tailDuplication(MIRFunction& func) {
             const auto block = iter->get();
             auto& instructions = block->instructions();
             const auto& terminator = instructions.back();
-            if(std::holds_alternative<BranchMInst>(terminator)) {
-                const auto targetBlock = std::get<BranchMInst>(terminator).targetBlock;
-
+            MIRBasicBlock* targetBlock;
+            if(ctx.instInfo.matchUnconditionalBranch(terminator, targetBlock)) {
                 if(targetBlock != block && targetBlock->instructions().size() <= duplicationThreshold) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());
-                    auto& usedStackObjects = block->usedStackObjects();
-                    for(auto obj : targetBlock->usedStackObjects())
-                        usedStackObjects.insert(obj);
                     // fix CFG
 
-                    const auto ensureNext = [&](const MIRBasicBlock* next) {
+                    const auto ensureNext = [&](MIRBasicBlock* next) {
                         if(nextIter == func.blocks().cend() || nextIter->get() != next) {
-                            auto newBlock = std::make_unique<MIRBasicBlock>(&func, next->getTripCount());
-                            newBlock->instructions().emplace_back(BranchMInst{ next });
-                            newBlock->usedStackObjects() = block->usedStackObjects();
+                            auto newBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(ctx.nextId()), &func,
+                                                                            next->getTripCount());
+                            newBlock->instructions().emplace_back(ctx.instInfo.emitGoto(next));
                             func.blocks().insert(nextIter, std::move(newBlock));
                         }
                     };
 
-                    if(std::holds_alternative<BranchCompareMInst>(instructions.back())) {
-                        const auto& branchInst = std::get<BranchCompareMInst>(instructions.back());
-
+                    MIRBasicBlock* target;
+                    double prob;
+                    if(ctx.instInfo.matchConditionalBranch(instructions.back(), target, prob)) {
                         const auto& successors = cfg.successors(targetBlock);
                         if(successors.size() == 2) {
-                            if(branchInst.targetBlock == successors[0].block) {
+                            if(target == successors[0].block) {
                                 ensureNext(successors[1].block);
                             } else
                                 ensureNext(successors[0].block);
@@ -87,7 +82,5 @@ void tailDuplication(MIRFunction& func) {
             ;
     }
 }
-
-*/
 
 CMMC_MIR_NAMESPACE_END

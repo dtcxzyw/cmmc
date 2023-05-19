@@ -23,14 +23,19 @@ struct OperandDumper final {
     const mir::MIROperand& operand;
 };
 
+constexpr uint32_t directStackAccessOffset = 1 << 20;
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
     auto& op = operand.operand;
     if(op.isImm()) {
         return out << '#' << op.imm();
     }
     if(op.isReg()) {
-        if(isVirtualReg(op.reg()))
-            return out << 'v' << (op.reg() ^ virtualRegBegin);
+        if(isVirtualReg(op.reg())) {
+            const auto val = op.reg() ^ virtualRegBegin;
+            if(val >= directStackAccessOffset)
+                return out << 'x' << (val - directStackAccessOffset);
+            return out << 'v' << val;
+        }
         if(isStackObject(op.reg()))
             return out << 'x' << (op.reg() ^ stackObjectBegin);
     }

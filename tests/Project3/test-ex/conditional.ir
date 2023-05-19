@@ -1,29 +1,54 @@
 FUNCTION main :
-WRITE #105
-READ v0
-READ v1
-READ v2
-IF v0 >= v1 GOTO label2
-v3 := #1
-WRITE v3
-IF v0 >= v1 GOTO label4
-IF v1 >= v2 GOTO label4
-IF v0 >= v1 GOTO label1
-GOTO label3
-LABEL label1 :
+v3 := #14
 v4 := #0
-WRITE v4
+v9 := v3 + v4
+v10 := v3 + #-1
+IF v3 == #0 GOTO label5
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
+IF v3 == #0 GOTO label5
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
+IF v3 == #0 GOTO label5
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
+IF v3 == #0 GOTO label5
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
+IF v3 == #0 GOTO label5
+LABEL label42 :
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
+IF v3 == #0 GOTO label5
+GOTO label42
+LABEL label5 :
+WRITE v9
+READ v17
+READ v18
+READ v19
+v29 := #1
+IF v17 < v18 GOTO label31
+v29 := #0
+WRITE v29
+IF v17 >= v18 GOTO label23
+IF v18 >= v19 GOTO label23
+LABEL label38 :
+WRITE #1
 RETURN #0
-LABEL label2 :
-v3 := #0
-WRITE v3
-IF v0 >= v1 GOTO label4
-IF v1 >= v2 GOTO label4
-IF v0 >= v1 GOTO label1
-LABEL label3 :
-v4 := #1
-WRITE v4
+LABEL label31 :
+WRITE v29
+IF v17 >= v18 GOTO label23
+IF v18 >= v19 GOTO label23
+GOTO label38
+LABEL label23 :
 RETURN #0
-LABEL label4 :
-RETURN #0
-

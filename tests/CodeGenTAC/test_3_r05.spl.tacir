@@ -1,89 +1,35 @@
 FUNCTION main :
-READ v0
-IF v0 >= #1 GOTO label2
+READ v13
+IF v13 >= #1 GOTO label4
 WRITE #0
 RETURN #0
-LABEL label1 :
+LABEL label4 :
+IF v13 != #1 GOTO label5
+LABEL label39 :
 WRITE #1
 RETURN #0
-LABEL label2 :
-IF v0 != #1 GOTO label3
-GOTO label1
-LABEL label3 :
-IF v0 != #2 GOTO label4
-GOTO label1
-LABEL label4 :
-IF v0 <= #2 GOTO label12
-IF v0 <= #2 GOTO label6
-IF v0 <= #3 GOTO label13
-IF v0 <= #4 GOTO label9
-IF v0 <= #5 GOTO label11
-IF v0 <= #6 GOTO label5
-IF v0 <= #7 GOTO label7
-IF v0 <= #8 GOTO label14
-GOTO label8
 LABEL label5 :
-v1 := #8
-WRITE v1
-RETURN #0
+IF v13 != #2 GOTO label6
+GOTO label39
 LABEL label6 :
-v1 := #0
-WRITE v1
+IF v13 <= #2 GOTO label3
+v8 := #1
+v9 := #1
+v10 := #3
+v30 := v8 + v9
+v31 := v10 + #1
+IF v31 > v13 GOTO label34
+GOTO label33
+LABEL label34 :
+WRITE v30
 RETURN #0
-LABEL label7 :
-v1 := #13
-WRITE v1
+LABEL label33 :
+v9 := v8
+v10 := v31
+v8 := v30
+v30 := v30 + v9
+v31 := v31 + #1
+IF v31 > v13 GOTO label34
+GOTO label33
+LABEL label3 :
 RETURN #0
-LABEL label8 :
-IF v0 <= #9 GOTO label15
-GOTO label10
-LABEL label9 :
-v1 := #3
-WRITE v1
-RETURN #0
-LABEL label10 :
-IF v0 <= #10 GOTO label17
-GOTO label16
-LABEL label11 :
-v1 := #5
-WRITE v1
-RETURN #0
-LABEL label12 :
-RETURN #0
-LABEL label13 :
-v1 := #2
-WRITE v1
-RETURN #0
-LABEL label14 :
-v1 := #21
-WRITE v1
-RETURN #0
-LABEL label15 :
-v1 := #34
-WRITE v1
-RETURN #0
-LABEL label16 :
-v2 := #11
-v3 := #34
-v4 := #55
-v5 := v3 + v4
-v6 := v2 + #1
-IF v6 > v0 GOTO label19
-GOTO label18
-LABEL label17 :
-v1 := #55
-WRITE v1
-RETURN #0
-LABEL label18 :
-v2 := v6
-v3 := v4
-v4 := v5
-v5 := v3 + v4
-v6 := v2 + #1
-IF v6 > v0 GOTO label19
-GOTO label18
-LABEL label19 :
-v1 := v5
-WRITE v1
-RETURN #0
-

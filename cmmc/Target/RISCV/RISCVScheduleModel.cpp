@@ -13,3 +13,12 @@
 */
 
 #include <RISCV/ScheduleModelImpl.hpp>
+
+CMMC_TARGET_NAMESPACE_BEGIN
+
+void RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(ctx);
+}
+
+CMMC_TARGET_NAMESPACE_END

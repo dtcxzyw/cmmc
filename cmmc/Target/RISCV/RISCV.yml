@@ -241,6 +241,6 @@ InstInfo:
 
 InstSelection: []
 
-ScheduleInfo:
-  emulator:
+ScheduleModel:
   sifive-u74:
+    CustomPeepholeOpt: true

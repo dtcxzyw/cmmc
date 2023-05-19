@@ -36,9 +36,7 @@ bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx) {
             continue;
         const auto& inst = block->instructions().front();
         MIRBasicBlock* targetBlock;
-        double prob;
-        if(ctx.instInfo.matchBranch(inst, targetBlock, prob) &&
-           (ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
+        if(ctx.instInfo.matchUnconditionalBranch(inst, targetBlock)) {
             redirect.emplace(block.get(), targetBlock);
         }
     }
@@ -102,7 +100,7 @@ static bool removeUnreachableCode(MIRFunction& func, const CodeGenContext& ctx) 
                     q.push(targetBlock);
                 }
             }
-            if(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag() & (InstFlagTerminator & InstFlagNoFallthrough)) {
+            if(requireFlag(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag(), InstFlagTerminator | InstFlagNoFallthrough)) {
                 stop = true;
             }
 
@@ -179,9 +177,7 @@ static bool removeGotoNext(MIRFunction& func, const CodeGenContext& ctx) {
         while(!block->instructions().empty()) {
             const auto& last = block->instructions().back();
             MIRBasicBlock* targetBlock;
-            double prob;
-            if(ctx.instInfo.matchBranch(last, targetBlock, prob) &&
-               (ctx.instInfo.getInstInfo(last.opcode()).getInstFlag() & InstFlagNoFallthrough) && targetBlock == nextBlock) {
+            if(ctx.instInfo.matchUnconditionalBranch(last, targetBlock) && targetBlock == nextBlock) {
                 block->instructions().pop_back();
                 modified = true;
             } else
@@ -242,8 +238,7 @@ static bool conditional2Unconditional(MIRFunction& func, const CodeGenContext& c
         auto& terminator = instructions.back();
         MIRBasicBlock* targetBlock;
         double prob;
-        if(ctx.instInfo.matchBranch(terminator, targetBlock, prob) &&
-           !(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
+        if(ctx.instInfo.matchConditionalBranch(terminator, targetBlock, prob)) {
             if(targetBlock == nextBlock) {
                 instructions.back() = ctx.instInfo.emitGoto(nextBlock);
                 modified = true;

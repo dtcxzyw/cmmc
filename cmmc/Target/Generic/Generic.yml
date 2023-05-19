@@ -7,7 +7,7 @@ InstInfo:
     Flag: [Terminator, Branch]
   Push:
     Format: Push $Idx:Imm[Metadata], $Src:Val[Use]
-    Flag: [Call]
+    Flag: [Push]
   Call:
     Format: Call $Dst:VRegOrInvalid[Def], $Tgt:Reloc[Metadata]
     Flag: [Call]
@@ -103,7 +103,10 @@ InstInfo:
     Format: Select $Dst:VReg[Def], $Cond:Bool[Use], $Lhs:IVal[Use], $Rhs:IVal[Use]
   LoadGlobalAddress:
     Format: LoadGlobalAddress $Dst:IReg[Def], $Addr:Reloc[Metadata]
+    Flag: [LoadConstant]
   LoadImm:
     Format: LoadImm $Dst:IReg[Def], $Imm:Imm[Metadata]
+    Flag: [LoadConstant]
   LoadStackObjectAddr:
     Format: LoadStackObjectAddr $Dst:IReg[Def], $Obj:StackObject[Metadata]
+    Flag: [LoadConstant]

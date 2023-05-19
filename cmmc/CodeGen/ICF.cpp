@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MIR.hpp"
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
@@ -22,9 +23,7 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
-
-static bool isIdentical(MIRBasicBlock* lhs, MIRBasicBlock* rhs, const GMIRCFGAnalysisResult& cfg) {
+static bool isIdentical(MIRBasicBlock* lhs, MIRBasicBlock* rhs, const CFGAnalysisResult& cfg) {
     // TODO: check used stack objects?
     auto& inst1 = lhs->instructions();
     auto& inst2 = rhs->instructions();
@@ -50,8 +49,8 @@ static bool isIdentical(MIRBasicBlock* lhs, MIRBasicBlock* rhs, const GMIRCFGAna
     return true;
 }
 
-void identicalCodeFolding(MIRFunction& func) {
-    const auto cfg = calcGMIRCFG(func);
+void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx) {
+    const auto cfg = calcCFG(func, ctx);
 
     std::unordered_map<size_t, std::vector<MIRBasicBlock*>> blocks;
     std::unordered_map<const MIRBasicBlock*, MIRBasicBlock*> replace;
@@ -80,13 +79,11 @@ void identicalCodeFolding(MIRFunction& func) {
         if(auto iter = replace.find(block.get()); iter != replace.cend()) {
             const auto redirectTarget = iter->second;
             block->instructions().clear();
-            block->instructions().emplace_back(BranchMInst{ redirectTarget });
+            block->instructions().emplace_back(ctx.instInfo.emitGoto(redirectTarget));
         }
     }
     while(redirectGoto(func, ctx))  // apply before code layout
         ;
 }
-
-*/
 
 CMMC_MIR_NAMESPACE_END

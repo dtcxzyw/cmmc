@@ -1,86 +1,115 @@
 FUNCTION main :
-v0 := #1
-v1 := #0
-v2 := #2
-v3 := v1 + #1
-v4 := v0 + #1
-IF v4 > v2 GOTO label2
-LABEL label1 :
-v5 := v2
-v6 := v3
-v7 := v4
-v8 := v2
-v9 := v5 / v7
-v10 := v7 * v9
-IF v5 != v10 GOTO label5
-GOTO label3
-LABEL label2 :
-v11 := v3
-v12 := v2
-IF v11 != #2 GOTO label4
-WRITE v12
-v13 := v12 + #1
-v14 := v13
-v15 := v13
-IF v14 >= #31 GOTO label7
-IF v15 <= #0 GOTO label8
-GOTO label9
-LABEL label3 :
-v0 := v7
-v1 := v6
-v2 := v8
-v3 := v1 + #1
-v4 := v0 + #1
-IF v4 > v2 GOTO label2
-GOTO label1
-LABEL label4 :
-v16 := v12 + #1
-v14 := v16
-v15 := v16
-IF v14 >= #31 GOTO label7
-IF v15 <= #0 GOTO label8
-GOTO label9
-LABEL label5 :
-v17 := v7 + #1
-IF v17 > v8 GOTO label6
-v5 := v8
-v7 := v17
-v9 := v5 / v7
-v10 := v7 * v9
-IF v5 != v10 GOTO label5
-GOTO label3
-LABEL label6 :
-v11 := v6
-v12 := v8
-IF v11 != #2 GOTO label4
-WRITE v12
-v13 := v12 + #1
-v14 := v13
-v15 := v13
-IF v14 >= #31 GOTO label7
-IF v14 >= #31 GOTO label7
-IF v15 <= #0 GOTO label8
-GOTO label9
-LABEL label7 :
-RETURN #0
-LABEL label8 :
+v3 := #1
+IF v3 <= #0 GOTO label17
+v5 := #0
+v6 := #1
+v19 := v3 / v6
+v20 := v19 * v6
+IF v3 != v20 GOTO label23
+v25 := v5 + #1
+v9 := v25
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+v5 := v25
+v6 := v26
+v19 := v3 / v26
+v20 := v19 * v26
+IF v3 != v20 GOTO label23
+GOTO label45
+LABEL label23 :
+v9 := v5
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+v6 := v26
+v19 := v3 / v26
+v20 := v19 * v26
+IF v3 != v20 GOTO label23
+v25 := v5 + #1
+v9 := v25
+v26 := v26 + #1
+IF v26 > v3 GOTO label29
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+v5 := v25
+v6 := v26
+v19 := v3 / v26
+v20 := v19 * v26
+IF v3 != v20 GOTO label23
+GOTO label76
+LABEL label45 :
+v25 := v5 + #1
+v9 := v25
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+LABEL label54 :
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+GOTO label64
+LABEL label76 :
+v25 := v5 + #1
+v9 := v25
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+GOTO label54
+LABEL label17 :
 v11 := #0
-v12 := v15
-IF v11 != #2 GOTO label4
-WRITE v12
-v13 := v12 + #1
-v14 := v13
-v15 := v13
-IF v14 >= #31 GOTO label7
-IF v14 >= #31 GOTO label7
-IF v15 <= #0 GOTO label8
-LABEL label9 :
-v5 := v15
-v6 := #0
-v7 := #1
-v8 := v15
-v9 := v5 / v7
-v10 := v7 * v9
-IF v5 != v10 GOTO label5
-GOTO label3
-
+IF v11 != #2 GOTO label13
+WRITE v3
+v35 := v3 + #1
+IF v35 >= #31 GOTO label38
+v3 := v35
+IF v35 <= #0 GOTO label17
+v5 := #0
+v6 := #1
+v19 := v35 / v6
+v20 := v19 * v6
+IF v35 != v20 GOTO label23
+GOTO label58
+LABEL label13 :
+v35 := v3 + #1
+IF v35 >= #31 GOTO label38
+v3 := v35
+IF v35 <= #0 GOTO label17
+v5 := #0
+v6 := #1
+v19 := v35 / v6
+v20 := v19 * v6
+IF v35 != v20 GOTO label23
+GOTO label58
+LABEL label81 :
+v5 := v9
+v6 := v26
+v19 := v3 / v26
+v20 := v19 * v26
+IF v3 != v20 GOTO label23
+GOTO label45
+LABEL label38 :
+RETURN #0
+LABEL label64 :
+v5 := v9
+v6 := v26
+v19 := v3 / v26
+v20 := v19 * v26
+IF v3 != v20 GOTO label23
+GOTO label76
+LABEL label29 :
+v11 := v9
+IF v9 != #2 GOTO label13
+WRITE v3
+v35 := v3 + #1
+IF v35 >= #31 GOTO label38
+v3 := v35
+IF v35 <= #0 GOTO label17
+v5 := #0
+v6 := #1
+v19 := v35 / v6
+v20 := v19 * v6
+IF v35 != v20 GOTO label23
+LABEL label58 :
+v25 := v5 + #1
+v9 := v25
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+v26 := v6 + #1
+IF v26 > v3 GOTO label29
+GOTO label81

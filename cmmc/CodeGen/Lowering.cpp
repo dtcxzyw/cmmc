@@ -374,44 +374,46 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        /*
         // Stage 3: register coalescing
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Register coalescing"sv };
-            // registerCoalescing(mfunc, operandMap);
-            assert(mfunc.verify(std::cerr, true));
+            registerCoalescing(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
         }
+
         // Stage 4: peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Peephole optimization"sv };
-            subTarget.peepholeOpt(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-            while(genericPeepholeOpt(mfunc, target))
+            ctx.scheduleModel.peepholeOpt(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
+            while(genericPeepholeOpt(mfunc, ctx))
                 ;
-            assert(mfunc.verify(std::cerr, true));
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 5: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2) {
             Stage stage{ "ICF & Tail duplication"sv };
             // tail duplication as the small block inliner does in CMMC IR
-            tailDuplication(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-            identicalCodeFolding(mfunc);
-            assert(mfunc.verify(std::cerr, true));
+            tailDuplication(mfunc, ctx);
+            assert(mfunc.verify(std::cerr, ctx));
+            identicalCodeFolding(mfunc, ctx);
+            assert(mfunc.verify(std::cerr, ctx));
 
-            subTarget.peepholeOpt(mfunc);
-            assert(mfunc.verify(std::cerr, true));
-            while(genericPeepholeOpt(mfunc, target))
+            ctx.scheduleModel.peepholeOpt(mfunc, ctx);
+            assert(mfunc.verify(std::cerr, ctx));
+            while(genericPeepholeOpt(mfunc, ctx))
                 ;
-            assert(mfunc.verify(std::cerr, true));
+            assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 6: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
             Stage stage{ "Pre-RA scheduling"sv };
-            schedule(mfunc, target, true);
-            assert(mfunc.verify(std::cerr, true));
+            schedule(mfunc, ctx, true);
+            assert(mfunc.verify(std::cerr, ctx));
         }
-        */
         // Stage 7: register allocation
         bool useBuiltinRA = false;
         CMMC_UNUSED(useBuiltinRA);
@@ -445,15 +447,13 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        /*
         // TODO: basic block alignment
         // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Post peephole optimization"sv };
-            subTarget.postPeepholeOpt(mfunc);
+            ctx.scheduleModel.postPeepholeOpt(mfunc, ctx);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        */
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "CFG Simplification"sv };

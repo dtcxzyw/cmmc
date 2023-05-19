@@ -32,7 +32,7 @@ StringOpt targetMachine;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
 targetName.withDefault("mips").setName("target", 't').setDesc("target ISA");
-targetMachine.withDefault("emulator").setName("machine", 'm').setDesc("target machine");
+targetMachine.withDefault("native").setName("machine", 'm').setDesc("target machine");
 CMMC_INIT_OPTIONS_END
 
 std::unique_ptr<Target> TargetRegistry::selectTarget() const {

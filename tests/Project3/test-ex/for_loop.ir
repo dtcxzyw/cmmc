@@ -1,54 +1,70 @@
 FUNCTION main :
-WRITE #0
-WRITE #1
-WRITE #2
-WRITE #3
-WRITE #4
-WRITE #5
-WRITE #6
-WRITE #7
-WRITE #8
-WRITE #9
-v0 := #4
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-LABEL label1 :
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-GOTO label1
-LABEL label2 :
-IF v1 <= #9 GOTO label3
-GOTO label4
-LABEL label3 :
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-v0 := v1
-v1 := v0 + #1
-IF v1 != #5 GOTO label2
-GOTO label1
-LABEL label4 :
-RETURN v1
-
+v3 := #0
+IF v3 >= #10 GOTO label11
+WRITE v3
+v13 := v3 + #1
+v3 := v13
+IF v13 >= #10 GOTO label11
+WRITE v13
+v13 := v3 + #1
+v3 := v13
+IF v13 >= #10 GOTO label11
+WRITE v13
+v13 := v3 + #1
+v3 := v13
+IF v13 >= #10 GOTO label11
+WRITE v13
+v13 := v3 + #1
+v3 := v13
+IF v13 >= #10 GOTO label11
+GOTO label42
+LABEL label11 :
+v6 := #0
+v14 := v6 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+GOTO label45
+LABEL label42 :
+WRITE v3
+v13 := v3 + #1
+v3 := v13
+IF v13 >= #10 GOTO label11
+GOTO label42
+LABEL label45 :
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+GOTO label45
+LABEL label7 :
+IF v14 <= #9 GOTO label22
+GOTO label28
+LABEL label22 :
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+v6 := v14
+v14 := v14 + #1
+IF v14 != #5 GOTO label7
+GOTO label45
+LABEL label28 :
+RETURN v14

@@ -35,7 +35,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
         for(auto& inst : block->instructions()) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
             bool special = false;
-            if(auto flag = instInfo.getInstFlag(); flag & InstFlagSideEffect) {
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
                 special = true;
             }
 
@@ -79,7 +79,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
 
         for(auto writer : writerList) {
             auto& instInfo = ctx.instInfo.getInstInfo(writer->opcode());
-            if(instInfo.getInstFlag() & InstFlagSideEffect)
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
                 continue;
             remove.insert(writer);
         }
@@ -127,7 +127,7 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
     for(auto& inst : block.instructions()) {
         auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse)
                 functor(inst, inst.getOperand(idx));
         }
     }
@@ -196,38 +196,6 @@ void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size) {
             if(constant->is<ConstantInteger>() && constant->as<ConstantInteger>()->getSignExtended() == 0)
                 src = zero;
         });
-    }
-}
-
-void legalizeStoreWithConstants(MIRFunction& func) {
-    auto& constant = func.pools().pools[AddressSpace::Constant];
-    auto& vreg = func.pools().pools[AddressSpace::VirtualReg];
-
-    for(auto& block : func.blocks()) {
-        auto& instructions = block->instructions();
-        for(auto iter = instructions.begin(); iter != instructions.end();) {
-            auto& inst = *iter;
-            const auto next = std::next(iter);
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                auto& copy = std::get<CopyMInst>(inst);
-
-                // match store with constants
-                if(copy.indirectDst && !copy.indirectSrc && copy.src.addressSpace == AddressSpace::Constant) {
-                    // create temporary vreg
-                    const auto type = constant.getType(copy.src);
-                    const auto temp = vreg.allocate(type);
-                    // mem <- vreg <- constant
-                    instructions.insert(next,
-                                        CopyMInst{ temp, false, 0, copy.dst, true, copy.dstOffset, copy.size, copy.signExtend });
-
-                    copy.dst = temp;
-                    copy.indirectDst = false;
-                    copy.dstOffset = 0;
-                }
-            }
-
-            iter = next;
-        }
     }
 }
 
@@ -317,48 +285,44 @@ bool eliminateStackLoads(MIRFunction& func, const Target& target) {
         removeIdentityCopies(func);
     return modified;
 }
+*/
 
 // TODO: fix it for mips/riscv backends
-void applySSAPropagation(MIRFunction& func) {
+void applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     while(true) {
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> writer;
         const auto count = [&](const MIROperand& op, const MIROperand& val) {
-            if(op.addressSpace == AddressSpace::VirtualReg) {
+            if(op.isReg() && isVirtualReg(op.reg())) {
                 if(const auto iter = writer.find(op); iter != writer.cend()) {
-                    iter->second = unusedOperand;
+                    iter->second = MIROperand{};
                 } else {
                     auto& ref = writer[op];
-                    if(val.addressSpace == AddressSpace::Stack || val.addressSpace == AddressSpace::VirtualReg)
+                    if(val.isReg() && isVirtualReg(val.reg()))
                         ref = val;
                     else
-                        ref = unusedOperand;
+                        ref = MIROperand{};
                 }
             }
         };
 
         for(auto& block : func.blocks())
             for(auto& inst : block->instructions()) {
-                std::visit(Overload{
-                               [&](const CopyMInst& instRef) {
-                                   if(!instRef.indirectDst) {
-                                       if(instRef.indirectSrc)
-                                           count(instRef.dst, unusedOperand);
-                                       else
-                                           count(instRef.dst, instRef.src);
-                                   }
-                               },                                  //
-                               [&](const BranchCompareMInst&) {},  //
-                               [&](const RetMInst&) {},            //
-                               [&](const UnreachableMInst&) {},    //
-                               [&](const BranchMInst&) {},         //
-                               [&](const auto& instRef) { count(instRef.dst, unusedOperand); },
-                           },
-                           inst);
+                // TODO: match copy?
+                if(inst.opcode() == InstCopy) {
+                    auto& dst = inst.getOperand(0);
+                    auto& src = inst.getOperand(1);
+                    count(dst, src);
+                } else {
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                        if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                            count(inst.getOperand(idx), MIROperand{});
+                }
             }
 
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> replace;
         for(auto& [op, val] : writer) {
-            if(val != unusedOperand) {
+            if(!val.isUnused()) {
                 replace.emplace(op, val);
             }
         }
@@ -367,19 +331,19 @@ void applySSAPropagation(MIRFunction& func) {
             break;
 
         bool modified = false;
-        forEachUseOperands(func, [&](MIRInst&, MIROperand& operand) {
+        forEachUseOperands(func, ctx, [&](MIRInst&, MIROperand& operand) {
             if(const auto iter = replace.find(operand); iter != replace.cend()) {
                 operand = iter->second;
                 modified = true;
             }
         });
         if(modified) {
+            // func.dump(std::cerr, ctx);
             removeIdentityCopies(func);
-            removeUnusedInsts(func);
+            removeUnusedInsts(func, ctx);
         } else
             break;
     }
 }
-*/
 
 CMMC_MIR_NAMESPACE_END

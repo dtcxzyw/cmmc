@@ -15,7 +15,10 @@ InstInfo:
         Op: /
 
   Addr:
-    Format: $Dst:VReg[Def] := &$Src:StackObject[Use]
+    Format: $Dst:VReg[Def] := &$Src:StackObject[Metadata]
+
+  AddrOffset:
+    Format: $Dst:VReg[Def] := &$Src:StackObject[Metadata] + $Offset:Val[Use]
 
   Fetch:
     Format: $Dst:VReg[Def] := *$Src:VReg[Use]
@@ -23,6 +26,10 @@ InstInfo:
 
   Deref:
     Format: "*$Dst:VReg[Use] := $Src:Val[Use]"
+    Flag: [Store]
+
+  DerefObj:
+    Format: "$Dst:StackObject[Use] := $Src:Val[Use]"
     Flag: [Store]
 
   Goto:
@@ -64,9 +71,48 @@ InstInfo:
 
   Arg:
     Format: ARG $Val:Val[Use]
-    Flag: [Call]
+    Flag: [Push]
+
+  ArgAddr:
+    Format: ARG &$Obj:StackObject[Metadata]
+    Flag: [Push]
 
 InstSelection:
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs:
+          InstLoadStackObjectAddr:
+            Obj: $Obj
+        Rhs: $Off
+    Replace:
+      AddrOffset:
+        Dst: $Dst
+        Src: $Obj
+        Offset: $Off
+
+  - Pattern:
+      InstLoad:
+        Dst: $Dst
+        Addr:
+          InstLoadStackObjectAddr:
+            Obj: $Obj
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: convertToVal($Obj)
+
+  - Pattern:
+      InstStore:
+        Addr:
+          InstLoadStackObjectAddr:
+            Obj: $Obj
+        Src: $Src
+    Replace:
+      DerefObj:
+        Dst: $Obj
+        Src: $Src
+
   - Pattern:
       InstJump:
         Tgt: $Reloc
@@ -108,6 +154,15 @@ InstSelection:
     Replace:
       Write:
         Src: selectWriteArg(ctx)
+
+  - Pattern:
+      InstPush:
+        Src:
+          InstLoadStackObjectAddr:
+            Obj: $Obj
+    Replace:
+      ArgAddr:
+        Obj: $Obj
 
   - Pattern:
       InstPush:
@@ -235,5 +290,15 @@ InstSelection:
         Dst: $Dst
         Src: $Src
 
-ScheduleInfo:
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
+
+ScheduleModel:
   emulator:
+    CustomPeepholeOpt: true

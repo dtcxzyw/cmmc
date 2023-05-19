@@ -1,5 +1,34 @@
 FUNCTION main :
-WRITE #1
-WRITE #3
+DEC x10 8
+DEC x8 8
+v9 := &x8
+v11 := &x10
+v14 := &x10 + #4
+v3 := #0
+v4 := #0
+v5 := #0
+LABEL label2 :
+v16 := v5 * #4
+v17 := &x10 + v16
+v18 := v4 + v5
+*v17 := v18
+v19 := v5 + #1
+IF v19 >= #2 GOTO label6
+v5 := v19
+GOTO label2
+LABEL label6 :
+v26 := v3 * #4
+v27 := v9 + v26
+v28 := *v11
+v29 := *v14
+v30 := v28 + v29
+*v27 := v30
+WRITE v30
+v31 := v3 + #1
+IF v31 >= #2 GOTO label34
+v3 := v31
+v4 := v31
+v5 := #0
+GOTO label2
+LABEL label34 :
 RETURN #0
-

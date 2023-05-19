@@ -358,8 +358,7 @@ void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
 
         MIRBasicBlock* targetBlock;
         double prob;
-        if(ctx.instInfo.matchBranch(terminator, targetBlock, prob) &&
-           !(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
+        if(ctx.instInfo.matchConditionalBranch(terminator, targetBlock, prob)) {
             const auto& successors = cfg.successors(block.get());
             if(successors.size() == 2) {
                 if(targetBlock == successors[0].block) {

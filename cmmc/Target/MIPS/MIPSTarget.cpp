@@ -56,6 +56,6 @@ public:
     }
 };
 
-CMMC_TARGET("MIPS", MIPSTarget);
+CMMC_TARGET("mips", MIPSTarget);
 
 CMMC_MIR_NAMESPACE_END

@@ -1,14 +1,13 @@
 FUNCTION main :
-READ v0
-READ v1
 READ v2
 READ v3
 READ v4
 READ v5
-v6 := v0 + v1
-WRITE v6
-v7 := v2 + v3
-v8 := v7 + v4
-v9 := v8 + v5
-RETURN v9
-
+READ v6
+READ v7
+v8 := v2 + v3
+WRITE v8
+v9 := v4 + v5
+v10 := v9 + v6
+v11 := v10 + v7
+RETURN v11

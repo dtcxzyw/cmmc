@@ -1,71 +1,63 @@
 FUNCTION gcd2 :
-PARAM v0
-PARAM v1
-DEC x0 4
-DEC x1 4
-DEC x2 4
-x0 := v0
-x1 := v1
-IF v0 <= v1 GOTO label1
-v2 := &x1
-v3 := v1
-v4 := v0
-v5 := v4 / v3
-v6 := v3 * v5
-v7 := v4 - v6
-x2 := v7
-IF v7 != #0 GOTO label3
-GOTO label2
-LABEL label1 :
-v2 := &x0
-v3 := v0
-v4 := v1
-v5 := v4 / v3
-v6 := v3 * v5
-v7 := v4 - v6
-x2 := v7
-IF v7 != #0 GOTO label3
-LABEL label2 :
-v8 := *v2
+PARAM v9
+PARAM v8
+IF v8 <= v9 GOTO label2
+v22 := v8 / v9
+v23 := v9 * v22
+v24 := v8 - v23
+IF v24 != #0 GOTO label27
+GOTO label30
+LABEL label31 :
 RETURN v8
-LABEL label3 :
-v9 := *v2
-ARG v7
+LABEL label2 :
+v14 := v9 / v8
+v15 := v8 * v14
+v16 := v9 - v15
+IF v16 != #0 GOTO label19
+GOTO label31
+LABEL label27 :
 ARG v9
-v10 := CALL gcd2
-RETURN v10
-
+ARG v24
+v29 := CALL gcd2
+RETURN v29
+LABEL label30 :
+RETURN v9
+LABEL label19 :
+ARG v8
+ARG v16
+v21 := CALL gcd2
+RETURN v21
 FUNCTION main :
-READ v11
-READ v12
-v13 := v11 / v12
-v14 := v12 * v13
-v15 := v11 - v14
-IF v15 == #0 GOTO label7
-v16 := v12
-v17 := v15
-v18 := v16 / v17
-v19 := v18 * v17
-v20 := v16 - v19
-IF v20 == #0 GOTO label6
-LABEL label5 :
-v16 := v17
-v17 := v20
-v18 := v16 / v17
-v19 := v18 * v17
-v20 := v16 - v19
-IF v20 == #0 GOTO label6
-GOTO label5
-LABEL label6 :
-v21 := v17
-GOTO label8
-LABEL label7 :
-v21 := v12
-LABEL label8 :
-WRITE v21
-ARG v12
-ARG v11
-v22 := CALL gcd2
-WRITE v22
+READ v40
+READ v41
+v42 := v40 / v41
+v43 := v41 * v42
+v44 := v40 - v43
+IF v44 == #0 GOTO label47
+v36 := v44
+v37 := v41
+v49 := v41 / v44
+v50 := v44 * v49
+v51 := v41 - v50
+IF v51 == #0 GOTO label54
+GOTO label53
+LABEL label47 :
+v39 := v41
+GOTO label38
+LABEL label53 :
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+GOTO label53
+LABEL label54 :
+v39 := v36
+LABEL label38 :
+WRITE v39
+ARG v40
+ARG v41
+v58 := CALL gcd2
+WRITE v58
 RETURN #0
-

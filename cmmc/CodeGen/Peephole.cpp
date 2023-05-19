@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -25,18 +26,19 @@ CMMC_MIR_NAMESPACE_BEGIN
 // bool machineInstCSE(MIRFunction& func) {}
 // bool constantPropagation(MIRFunction& func, const Target& target) {}
 
-/*
-bool removeIndirectCopy(MIRFunction& func) {
+bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
 
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
-        // TODO: multiple targets
+        // TODO: multiple targets?
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> regValue;
         std::unordered_map<MIROperand, std::unordered_set<MIROperand, MIROperandHasher>, MIROperandHasher> invMap;
 
-        const auto invalidateReg = [&](MIROperand reg) {
+        const auto invalidateReg = [&](const MIROperand& reg) {
+            if(!reg.isReg())
+                return;
             if(auto iter = invMap.find(reg); iter != invMap.cend()) {
                 for(auto ref : iter->second)
                     regValue.erase(ref);
@@ -47,13 +49,17 @@ bool removeIndirectCopy(MIRFunction& func) {
         };
 
         const auto replaceUse = [&](MIROperand& reg) {
+            if(!reg.isReg())
+                return;
             if(auto iter = regValue.find(reg); iter != regValue.cend()) {
                 reg = iter->second;
                 modified = true;
             }
         };
 
-        const auto updateMap = [&](MIROperand reg, MIROperand value) {
+        const auto updateMap = [&](const MIROperand& reg, const MIROperand& value) {
+            if(!reg.isReg())
+                return;
             invalidateReg(reg);
 
             regValue[reg] = value;
@@ -61,50 +67,56 @@ bool removeIndirectCopy(MIRFunction& func) {
         };
 
         for(auto& inst : instructions) {
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                auto& copy = std::get<CopyMInst>(inst);
-
-                replaceUse(copy.src);
-                if(copy.indirectDst)
-                    replaceUse(copy.dst);
-
-                if(!copy.indirectSrc && !copy.indirectDst && copy.dst.addressSpace == copy.src.addressSpace &&
-                   copy.dst != copy.src) {
-                    updateMap(copy.dst, copy.src);
-                } else if(!copy.indirectDst)
-                    invalidateReg(copy.dst);
-            } else if(std::holds_alternative<CallMInst>(inst)) {
-                std::vector<MIROperand> nonVReg;
-                for(auto [reg, val] : regValue) {
-                    CMMC_UNUSED(val);
-                    if(reg.addressSpace != AddressSpace::VirtualReg)
-                        nonVReg.push_back(reg);
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    auto& operand = inst.getOperand(idx);
+                    if(operand.isReg() && isVirtualReg(operand.reg()))
+                        replaceUse(operand);
                 }
-                for(auto reg : nonVReg)
-                    invalidateReg(reg);
+
+            // TODO: match copy?
+            if(inst.opcode() == InstCopy) {
+                auto& dst = inst.getOperand(0);
+                auto& src = inst.getOperand(1);
+                if(dst.type() == src.type()) {
+                    updateMap(dst, src);
+                } else
+                    invalidateReg(dst);
             } else {
-                // update dirty
-                // TODO: replace use
-                forEachDefOperands(inst, [&](MIROperand& dst) { invalidateReg(dst); });
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+                    if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                        invalidateReg(inst.getOperand(idx));
+                        auto& operand = inst.getOperand(idx);
+                        if(operand.isReg() && isVirtualReg(operand.reg()))
+                            replaceUse(operand);
+                    }
+                if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                    std::vector<MIROperand> nonVReg;
+                    for(auto [reg, val] : regValue) {
+                        CMMC_UNUSED(val);
+                        if(reg.isReg() && isVirtualReg(reg.reg()))
+                            nonVReg.push_back(reg);
+                    }
+                    for(auto reg : nonVReg)
+                        invalidateReg(reg);
+                }
             }
         }
     }
 
     if(modified) {
         removeIdentityCopies(func);
-        removeUnusedInsts(func);
+        removeUnusedInsts(func, ctx);
     }
     return modified;
 }
-*/
 
 bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(ctx);
     // modified |= eliminateStackLoads(func, ctx);
-    // modified |= removeIndirectCopy(func);
-    // modified |= removeUnusedInsts(func);
+    modified |= removeIndirectCopy(func, ctx);
+    modified |= removeUnusedInsts(func, ctx);
     return modified;
 }
 

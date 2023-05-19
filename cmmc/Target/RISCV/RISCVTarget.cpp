@@ -56,6 +56,6 @@ public:
     }
 };
 
-CMMC_TARGET("RISCV", RISCVTarget);
+CMMC_TARGET("riscv", RISCVTarget);
 
 CMMC_MIR_NAMESPACE_END

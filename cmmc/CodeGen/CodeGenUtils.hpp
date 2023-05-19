@@ -23,18 +23,18 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx);
-void registerCoalescing(MIRFunction& func, const std::unordered_map<MIROperand, MIROperand, MIROperandHasher>& operandMap);
+void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx);
 void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx);
 void schedule(MIRFunction& func, const CodeGenContext& ctx, bool preRA);
 void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool hasFuncCall, OptimizationLevel optLevel);
-void identicalCodeFolding(MIRFunction& func);
-void tailDuplication(MIRFunction& func);
+void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx);
+void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
 bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx);
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 
 bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
-bool removeIndirectCopy(MIRFunction& func);
+bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx);
 void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
 void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
                         const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
@@ -44,9 +44,8 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
 void removeIdentityCopies(MIRFunction& func);
 void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size);
-void legalizeStoreWithConstants(MIRFunction& func);
 bool eliminateStackLoads(MIRFunction& func, const Target& target);
-void applySSAPropagation(MIRFunction& func);
+void applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,

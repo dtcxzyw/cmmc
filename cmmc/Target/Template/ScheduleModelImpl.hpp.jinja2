@@ -14,20 +14,40 @@
 // Automatically generated file, do not edit!
 
 #include <{{target}}/ScheduleModelDecl.hpp>
+#include <cmmc/Support/Options.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
+
+CMMC_MIR_NAMESPACE_BEGIN
+extern StringOpt targetMachine;
+CMMC_MIR_NAMESPACE_END
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-class {{target}}ScheduleModel final: public TargetScheduleModel {
+{% for model in models %}
+class {{target}}ScheduleModel_{{model.class_name}} final: public TargetScheduleModel {
 public:
     const ScheduleClass& getInstScheClass(uint32_t opcode) const override {
         CMMC_UNUSED(opcode);
         reportNotImplemented(CMMC_LOCATION());
     }
+    {% if model.peephole %} void peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
+    {% if model.post_peephole %} void peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
 };
+{% endfor %}
 
 const TargetScheduleModel& get{{target}}ScheduleModel() {
-    static {{target}}ScheduleModel model;
-    return model;
+    auto machine = targetMachine.get();
+    if(machine == "native") {
+        machine = "{{models[0].name}}";
+    }
+    {% for model in models %}
+    static {{target}}ScheduleModel_{{model.class_name}} model_{{model.class_name}};
+    if(machine == "{{model.name}}") {
+        return model_{{model.class_name}};
+    }
+    {% endfor %}
+    
+    DiagnosticsContext::get().attach<Reason>("Unrecognized target machine").reportFatal();
 }
 
 CMMC_TARGET_NAMESPACE_END

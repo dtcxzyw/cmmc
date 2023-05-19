@@ -13,3 +13,12 @@
 */
 
 #include <TAC/ScheduleModelImpl.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
+
+CMMC_TARGET_NAMESPACE_BEGIN
+
+void TACScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+    applySSAPropagation(func, ctx);
+}
+
+CMMC_TARGET_NAMESPACE_END

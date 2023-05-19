@@ -235,6 +235,18 @@ def parse_isel_pattern(pattern, insts, match_insts):
     return pattern_info
 
 
+def load_schedule_info(isa_desc_file):
+    isa_desc = None
+    with open(isa_desc_file, 'r') as f:
+        isa_desc = yaml.load(f, Loader=yaml.FullLoader)
+    models: dict = isa_desc['ScheduleModel']
+    models_info = []
+    for name, info in models.items():
+        models_info.append({'name': name, 'class_name': name.replace('-', '_'), 'peephole': info.get(
+            'CustomPeepholeOpt', False), 'post_peephole':  info.get('CustomPostPeepholeOpt', False)})
+    return models_info
+
+
 if __name__ == "__main__":
     target_name, insts, branch_list = load_inst_info(sys.argv[1])
     output_dir = sys.argv[2]
@@ -250,12 +262,18 @@ if __name__ == "__main__":
     }
     generate_file('InstInfoDecl.hpp.jinja2', output_dir, params)
     generate_file('InstInfoImpl.hpp.jinja2', output_dir, params)
-    generate_file('ScheduleModelDecl.hpp.jinja2', output_dir, params)
-    generate_file('ScheduleModelImpl.hpp.jinja2', output_dir, params)
 
     # Instruction Selection
     if target_name == "Generic":
         exit(0)
+
+    models = load_schedule_info(sys.argv[1])
+    params = {
+        'target': target_name,
+        'models': models
+    }
+    generate_file('ScheduleModelDecl.hpp.jinja2', output_dir, params)
+    generate_file('ScheduleModelImpl.hpp.jinja2', output_dir, params)
 
     _, generic_insts, _ = load_inst_info(sys.argv[1].removesuffix(
         target_name+'/'+target_name+'.yml')+'Generic/Generic.yml')
