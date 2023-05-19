@@ -18,21 +18,26 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <iostream>
 #include <iterator>
+#include <memory>
 CMMC_MIR_NAMESPACE_BEGIN
 
 ISelContext::ISelContext(CodeGenContext& codeGenCtx) : mCodeGenCtx{ codeGenCtx } {}
 void ISelContext::runISel(MIRFunction& func) {
     auto& iselInfo = mCodeGenCtx.iselInfo;
+    bool allowComplexPattern = false;  // create new blocks
 
     while(true) {
         removeUnusedInsts(func, mCodeGenCtx);
+        // func.dump(std::cerr, mCodeGenCtx);
         // TODO: apply CSE
         bool modified = false;
         bool hasIllegal = false;
-        std::unordered_map<MIRInst*, MIRInst*> replaceDef;
         mRemoveWorkList.clear();
+        mReplaceBlockList.clear();
+        mReplaceList.clear();
         for(auto& block : func.blocks()) {
             mInstMapping.clear();
             for(auto& inst : block->instructions()) {
@@ -57,9 +62,11 @@ void ISelContext::runISel(MIRFunction& func) {
                 if(!mRemoveWorkList.count(&inst)) {
                     if(auto opcode = inst.opcode(); opcode < ISASpecificBegin && !iselInfo.isLegalGenericInst(opcode)) {
                         hasIllegal = true;
-                        if(auto* newInst = iselInfo.matchAndSelect(inst, *this)) {
-                            replaceDef.emplace(&inst, newInst);
+                        if(iselInfo.matchAndSelect(inst, *this, allowComplexPattern)) {
                             modified = true;
+                            if(allowComplexPattern) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -67,42 +74,36 @@ void ISelContext::runISel(MIRFunction& func) {
             }
         }
 
-        auto getDef = [&](const MIRInst& inst) {
-            auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-                if(instInfo.getOperandFlag(idx) & OperandFlagDef)
-                    return inst.getOperand(idx);
-            return MIROperand{};
-        };
-        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> replaceOperand;
-        for(auto& [oldInst, newInst] : replaceDef) {
-            auto oldDef = getDef(*oldInst);
-            auto newDef = getDef(*newInst);
-            if(oldDef.isReg() && newDef.isReg())
-                replaceOperand.emplace(oldDef, newDef);
-        }
-
         for(auto& block : func.blocks()) {
             // remove old insts
-            block->instructions().remove_if([&](auto& inst) { return replaceDef.count(&inst) || mRemoveWorkList.count(&inst); });
+            block->instructions().remove_if([&](auto& inst) { return mRemoveWorkList.count(&inst); });
             // replace defs
             for(auto& inst : block->instructions()) {
+                if(mReplaceBlockList.count(&inst))
+                    continue;
                 auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                     auto& operand = inst.getOperand(idx);
                     if(!operand.isReg())
                         continue;
-                    if(auto iter = replaceOperand.find(operand); iter != replaceOperand.cend())
+                    if(auto iter = mReplaceList.find(operand); iter != mReplaceList.cend())
                         operand = iter->second;
                 }
             }
         }
 
-        if(modified)
+        if(modified) {
+            allowComplexPattern = false;
             continue;
+        }
         if(hasIllegal) {
-            func.dump(std::cerr, mCodeGenCtx);
-            DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
+            if(allowComplexPattern) {
+                func.dump(std::cerr, mCodeGenCtx);
+                DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
+            } else {
+                allowComplexPattern = true;
+                continue;
+            }
         }
         return;
     }
@@ -132,6 +133,60 @@ std::list<MIRInst>::iterator ISelContext::getCurrentInstIter() const {
 }
 void ISelContext::removeInst(MIRInst& inst) {
     mRemoveWorkList.insert(&inst);
+}
+void ISelContext::blockReplace(MIRInst& inst) {
+    mReplaceBlockList.insert(&inst);
+}
+void ISelContext::replaceOperand(const MIROperand& src, const MIROperand& dst) {
+    assert(src.isReg());
+    mReplaceList.emplace(src, dst);
+}
+
+void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            if(inst.opcode() < ISASpecificBegin) {
+                ctx.iselInfo.postLegalizeInst(inst, ctx);
+            }
+        }
+    }
+}
+
+bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
+    assert(inst.opcode() == InstSCmp || inst.opcode() == InstUCmp || inst.opcode() == InstFCmp);
+    auto iter = ctx.getCurrentInstIter();
+    auto& instrcutions = ctx.getInstructions();
+    auto& codeGenCtx = ctx.getCodeGenCtx();
+    auto type = inst.getOperand(0).type();
+    auto val = MIROperand::asVReg(codeGenCtx.nextId(), type);
+    auto init = instrcutions.insert(iter, MIRInst{ InstLoadImm });
+    init->setOperand<0>(val).setOperand<1>(MIROperand::asImm(1, type));
+    auto branch = instrcutions.insert(std::next(iter), MIRInst{ InstBranch });
+
+    constexpr auto prob = defaultSelectProb;
+    auto block = ctx.getCurrentBlock();
+    auto func = block->getFunction();
+    auto falseBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                      block->getTripCount() * (1.0 - prob));
+    auto postBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                     block->getTripCount());
+    branch->setOperand<0>(inst.getOperand(0))
+        .setOperand<1>(MIROperand::asReloc(postBlock.get()))
+        .setOperand<2>(MIROperand::asProb(prob));
+    auto& onFalseInstructions = falseBlock->instructions();
+    onFalseInstructions.push_back(MIRInst{ InstLoadImm }.setOperand<0>(val).setOperand<1>(MIROperand::asImm(0, type)));
+    onFalseInstructions.push_back(MIRInst{ InstJump }.setOperand<0>(MIROperand::asReloc(postBlock.get())));
+    auto& postInstructions = postBlock->instructions();
+    postInstructions.splice(postInstructions.end(), instrcutions, std::next(branch), instrcutions.end());
+
+    auto nextBlockIter =
+        std::next(std::find_if(func->blocks().begin(), func->blocks().end(), [&](auto& b) { return b.get() == block; }));
+    func->blocks().insert(nextBlockIter, std::move(falseBlock));
+    func->blocks().insert(nextBlockIter, std::move(postBlock));
+    ctx.blockReplace(*branch);
+    ctx.blockReplace(inst);
+    ctx.replaceOperand(inst.getOperand(0), val);
+    return true;
 }
 
 CMMC_MIR_NAMESPACE_END

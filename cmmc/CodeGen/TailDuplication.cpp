@@ -25,7 +25,7 @@ CMMC_MIR_NAMESPACE_BEGIN
 constexpr size_t duplicationThreshold = 5;
 
 void tailDuplication(MIRFunction& func) {
-    while(redirectGoto(func))
+    while(redirectGoto(func, ctx))
         ;
 
     for(uint32_t k = 0; k < duplicationThreshold; ++k) {
@@ -83,7 +83,7 @@ void tailDuplication(MIRFunction& func) {
         if(!modified)
             return;
 
-        while(redirectGoto(func))
+        while(redirectGoto(func, ctx))
             ;
     }
 }

@@ -31,31 +31,32 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     if(op.isReg()) {
         if(isVirtualReg(op.reg()))
             return out << 'v' << (op.reg() ^ virtualRegBegin);
+        if(isStackObject(op.reg()))
+            return out << 'x' << (op.reg() ^ stackObjectBegin);
     }
     if(op.isReloc()) {
         op.reloc()->dumpAsTarget(out);
         return out;
     }
-    if(op.isFreq()) {
-        return out << "[freq " << op.freq() << "]";
+    if(op.isProb()) {
+        return out << "[prob " << op.prob() << "]";
     }
     reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool isOperandVReg(std::ostream&, const MIROperand& operand) {
-    return operand.isReg() && isVirtualReg(operand.reg());
 }
 
 static bool isOperandVal(std::ostream&, const MIROperand& operand) {
     return (operand.isReg() && (isVirtualReg(operand.reg()) || isStackObject(operand.reg()))) || operand.isImm();
 }
 
-static bool isOperandReloc(std::ostream&, const MIROperand& operand) {
-    return operand.isReloc();
-}
+using mir::isOperandProb;
+using mir::isOperandReloc;
+using mir::isOperandStackObject;
+using mir::isOperandVReg;
 
-static bool isOperandFreq(std::ostream&, const MIROperand& operand) {
-    return operand.isFreq();
+static MIRInst emitGotoImpl(MIRBasicBlock* target) {
+    MIRInst gotoInst(Goto);
+    gotoInst.setOperand<0>(MIROperand::asReloc(target));
+    return gotoInst;
 }
 
 CMMC_TARGET_NAMESPACE_END

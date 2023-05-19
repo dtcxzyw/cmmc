@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include <cmmc/CodeGen/InstInfo.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <iostream>
@@ -26,10 +28,9 @@ const std::vector<MIRBlockEdge>& CFGAnalysisResult::successors(const MIRBasicBlo
     return mInfo.at(block).successors;
 }
 
-CFGAnalysisResult calcCFG(const MIRFunction& func) {
+CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx) {
     CMMC_UNUSED(func);
     CFGAnalysisResult result;
-    /*
     auto& map = result.storage();
     auto& blocks = func.blocks();
 
@@ -38,32 +39,37 @@ CFGAnalysisResult calcCFG(const MIRFunction& func) {
         CMMC_UNUSED(ref);
     }
 
-    const auto connect = [&](const MIRBasicBlock* src, const MIRBasicBlock* dst, double freq) {
-        map[src].successors.push_back({ dst, freq });
-        map[dst].predecessors.push_back({ src, freq });
+    const auto connect = [&](MIRBasicBlock* src, MIRBasicBlock* dst, double prob) {
+        map[src].successors.push_back({ dst, prob });
+        map[dst].predecessors.push_back({ src, prob });
     };
 
     for(auto iter = blocks.cbegin(); iter != blocks.cend(); ++iter) {
         const auto& block = *iter;
         const auto next = std::next(iter);
 
-        assert(block->verify(std::cerr, true));
-        const auto& lastInst = block->instructions().back();
-        std::visit(Overload{ [&](const BranchCompareMInst& inst) {
-                                if(next != blocks.cend()) {
-                                    if(next->get() == inst.targetBlock) {
-                                        connect(block.get(), inst.targetBlock, 1.0);
-                                    } else {
-                                        connect(block.get(), inst.targetBlock, inst.branchProb);
-                                        connect(block.get(), next->get(), 1.0 - inst.branchProb);
-                                    }
-                                } else
-                                    connect(block.get(), inst.targetBlock, inst.branchProb);
-                            },
-                             [&](const BranchMInst& inst) { connect(block.get(), inst.targetBlock, 1.0); }, [&](const auto&) {} },
-                   lastInst);
+        assert(block->verify(std::cerr, ctx));
+        const auto& terminator = block->instructions().back();
+        MIRBasicBlock* targetBlock;
+        double prob;
+        if(ctx.instInfo.matchBranch(terminator, targetBlock, prob)) {
+            if(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag() & InstFlagNoFallthrough) {
+                // Unconditional
+                connect(block.get(), targetBlock, 1.0);
+            } else {
+                // Conditional
+                if(next != blocks.cend()) {
+                    if(next->get() == targetBlock) {
+                        connect(block.get(), targetBlock, 1.0);
+                    } else {
+                        connect(block.get(), targetBlock, prob);
+                        connect(block.get(), next->get(), 1.0 - prob);
+                    }
+                } else
+                    connect(block.get(), targetBlock, prob);
+            }
+        }
     }
-    */
 
     return result;
 }

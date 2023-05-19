@@ -1,9 +1,9 @@
 InstInfo:
   Assign:
-    Format: $Dst:VReg[Def] = $Src:Val[Use]
+    Format: $Dst:VReg[Def] := $Src:Val[Use]
 
   Binary:
-    Format: $Dst:VReg[Def] = $Lhs:Val[Use] $Op:Template $Rhs:Val[Use]
+    Format: $Dst:VReg[Def] := $Lhs:Val[Use] $Op:Template $Rhs:Val[Use]
     Instances:
       Add:
         Op: +
@@ -15,22 +15,22 @@ InstInfo:
         Op: /
 
   Addr:
-    Format: $Dst:VReg[Def] = &$Src:VReg[Use]
+    Format: $Dst:VReg[Def] := &$Src:StackObject[Use]
 
   Fetch:
-    Format: $Dst:VReg[Def] = *$Src:VReg[Use]
+    Format: $Dst:VReg[Def] := *$Src:VReg[Use]
     Flag: [Load]
 
   Deref:
-    Format: "*$Dst:VReg[Use] = $Src:VReg[Use]"
+    Format: "*$Dst:VReg[Use] := $Src:Val[Use]"
     Flag: [Store]
 
   Goto:
     Format: GOTO $Tgt:Reloc[Metadata]
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, NoFallthrough]
 
   Branch:
-    Format: "IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata] # Branch Prob $Prob:Freq[Metadata]"
+    Format: "IF $Lhs:Val[Use] $Op:Template $Rhs:Val[Use] GOTO $Tgt:Reloc[Metadata] # Branch Prob $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BranchEq:
@@ -48,7 +48,7 @@ InstInfo:
 
   Return:
     Format: RETURN $Src:Val[Use]
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
 
   Read:
     Format: READ $Dst:VReg[Def]
@@ -216,6 +216,24 @@ InstSelection:
         Dst: $Dst
         Lhs: MIROperand::asImm(0, OperandType::Int32)
         Rhs: $Src
+
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Src
+    Replace:
+      Assign:
+        Dst: $Dst
+        Src: $Src
+
+  - Pattern:
+      InstLoadStackObjectAddr:
+        Dst: $Dst
+        Obj: $Src
+    Replace:
+      Addr:
+        Dst: $Dst
+        Src: $Src
 
 ScheduleInfo:
   emulator:

@@ -21,9 +21,9 @@ CMMC_MIR_NAMESPACE_BEGIN
 
 // static void scheduleBlock() {}
 
-void schedule(MIRFunction& func, const Target& target, bool preRA) {
+void schedule(MIRFunction& func, const CodeGenContext& ctx, bool preRA) {
     CMMC_UNUSED(func);
-    CMMC_UNUSED(target);
+    CMMC_UNUSED(ctx);
     CMMC_UNUSED(preRA);
 
     return;

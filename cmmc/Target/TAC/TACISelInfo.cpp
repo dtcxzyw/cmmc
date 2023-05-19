@@ -15,6 +15,7 @@
 #include <TAC/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -79,8 +80,25 @@ bool TACISelInfo::isLegalGenericInst(uint32_t opcode) const {
     return opcode == InstCopy;
 }
 
-MIRInst* TACISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx) const {
+bool TACISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
+    if(allowComplexPattern) {
+        if(inst.opcode() == InstSCmp) {
+            return expandCmp(inst, ctx);
+        }
+    }
     return matchAndSelectImpl(inst, ctx);
+}
+
+void TACISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
+    CMMC_UNUSED(ctx);
+    switch(inst.opcode()) {
+        case InstCopy: {
+            inst.setOpcode(Assign);
+            break;
+        }
+        default:
+            reportNotImplemented(CMMC_LOCATION());
+    }
 }
 
 CMMC_TARGET_NAMESPACE_END

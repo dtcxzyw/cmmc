@@ -48,12 +48,14 @@ public:
     [[nodiscard]] virtual const TargetISelInfo& getISelInfo() const noexcept {
         reportUnreachable(CMMC_LOCATION());
     }
-    virtual bool builtinRA(MIRFunction& mfunc) const {
+    virtual bool builtinRA(MIRFunction& mfunc, CodeGenContext& ctx) const {
         CMMC_UNUSED(mfunc);
+        CMMC_UNUSED(ctx);
         return false;
     }
-    virtual bool builtinSA(MIRFunction& mfunc) const {
+    virtual bool builtinSA(MIRFunction& mfunc, CodeGenContext& ctx) const {
         CMMC_UNUSED(mfunc);
+        CMMC_UNUSED(ctx);
         return false;
     }
     virtual void emitPrologue(LoweringContext& ctx, MIRFunction& mfunc) const {
@@ -101,8 +103,10 @@ struct CodeGenContext final {
     const TargetInstInfo& instInfo;
     const TargetISelInfo& iselInfo;
     bool requireOneTerminator;
-    uint32_t vregIdx = virtualRegBegin;
-    uint32_t blockIdx = 0;
+    uint32_t idx = 0;
+    uint32_t nextId() {
+        return ++idx;
+    }
 };
 
 using TargetBuilder = std::pair<std::string_view, std::function<std::unique_ptr<Target>()>>;

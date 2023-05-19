@@ -50,6 +50,9 @@ public:
     virtual bool verify(std::ostream& out, const CodeGenContext& ctx) const = 0;
     void dumpAsTarget(std::ostream& out) const;
     virtual void dump(std::ostream& out, const CodeGenContext& ctx) const = 0;
+    [[nodiscard]] virtual bool isFunc() const noexcept {
+        return false;
+    }
 };
 
 constexpr uint32_t virtualRegBegin = 0b0101U << 28;
@@ -68,7 +71,7 @@ constexpr bool isStackObject(uint32_t x) {
 enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32, Special };
 
 class MIROperand final {
-    std::variant<uint32_t, intmax_t, MIRRelocable*, double, std::monostate> mOperand;
+    std::variant<std::monostate, uint32_t, intmax_t, MIRRelocable*, double> mOperand{ std::monostate{} };
     OperandType mType = OperandType::Special;
 
 public:
@@ -98,13 +101,23 @@ public:
         static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
         return MIROperand{ static_cast<intmax_t>(val), type };
     }
-    [[nodiscard]] static MIROperand asReg(uint32_t reg, OperandType type) {
+    [[nodiscard]] static MIROperand asISAReg(uint32_t reg, OperandType type) {
+        assert(isISAReg(reg));
         return MIROperand{ reg, type };
+    }
+    [[nodiscard]] static MIROperand asVReg(uint32_t reg, OperandType type) {
+        return MIROperand{ reg + virtualRegBegin, type };
+    }
+    [[nodiscard]] static MIROperand asStackObject(uint32_t reg, OperandType type) {
+        return MIROperand{ reg + stackObjectBegin, type };
+    }
+    [[nodiscard]] static MIROperand asInvalidReg() {
+        return MIROperand{ invalidReg, OperandType::Special };
     }
     [[nodiscard]] static MIROperand asReloc(MIRRelocable* val) {
         return MIROperand{ val, OperandType::Special };
     }
-    [[nodiscard]] static MIROperand asFreq(double val) {
+    [[nodiscard]] static MIROperand asProb(double val) {
         return MIROperand{ val, OperandType::Special };
     }
     [[nodiscard]] uint32_t reg() const {
@@ -119,11 +132,14 @@ public:
     [[nodiscard]] bool isReloc() const {
         return std::holds_alternative<MIRRelocable*>(mOperand);
     }
-    [[nodiscard]] double freq() const {
+    [[nodiscard]] double prob() const {
         return std::get<double>(mOperand);
     }
-    [[nodiscard]] bool isFreq() const {
+    [[nodiscard]] bool isProb() const {
         return std::holds_alternative<double>(mOperand);
+    }
+    [[nodiscard]] bool isUnused() const {
+        return std::holds_alternative<std::monostate>(mOperand);
     }
 };
 struct MIROperandHasher final {
@@ -184,6 +200,8 @@ enum MIRGenericInst : uint32_t {
     InstCopy,
     InstSelect,
     InstLoadGlobalAddress,
+    InstLoadImm,
+    InstLoadStackObjectAddr,
 
     ISASpecificBegin,
 };
@@ -196,6 +214,15 @@ public:
     explicit MIRInst(uint32_t opcode) : mOpcode{ opcode } {}
     [[nodiscard]] uint32_t opcode() const {
         return mOpcode;
+    }
+    void setOpcode(uint32_t opcode) {
+        mOpcode = opcode;
+    }
+    [[nodiscard]] bool checkOperandCount(uint32_t cnt) const {
+        for(uint32_t idx = cnt; idx < maxOperandCount; ++idx)
+            if(!mOperands[idx].isUnused())
+                return false;
+        return true;
     }
     [[nodiscard]] const MIROperand& getOperand(uint32_t idx) const {
         return mOperands[idx];
@@ -245,21 +272,26 @@ struct StackObject final {
 
 class MIRFunction final : public MIRRelocable {
     std::list<std::unique_ptr<MIRBasicBlock>> mBlocks;
-    std::vector<StackObject> mStackObjects;
+    std::unordered_map<MIROperand, StackObject, MIROperandHasher> mStackObjects;
     std::vector<MIROperand> mArgs;
 
 public:
     explicit MIRFunction(String symbol) : MIRRelocable{ symbol } {}
-    MIROperand addStackObject(uint32_t size, uint32_t alignment, OperandType ptrType);
-    StackObject& getStackObject(uint32_t idx);
+    MIROperand addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType);
     std::list<std::unique_ptr<MIRBasicBlock>>& blocks() {
         return mBlocks;
     }
     std::vector<MIROperand>& args() {
         return mArgs;
     }
+    auto& stackObjects() {
+        return mStackObjects;
+    }
     [[nodiscard]] const std::list<std::unique_ptr<MIRBasicBlock>>& blocks() const {
         return mBlocks;
+    }
+    [[nodiscard]] bool isFunc() const noexcept override {
+        return true;
     }
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
@@ -313,6 +345,9 @@ class MIRModule final {
 public:
     explicit MIRModule(const Target& target) : mTarget{ target } {}
     std::vector<std::unique_ptr<MIRGlobal>>& globals() {
+        return mGlobals;
+    }
+    [[nodiscard]] const std::vector<std::unique_ptr<MIRGlobal>>& globals() const {
         return mGlobals;
     }
     [[nodiscard]] const Target& getTarget() const {

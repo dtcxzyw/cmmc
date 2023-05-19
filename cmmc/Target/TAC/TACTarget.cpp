@@ -17,6 +17,7 @@
 #include <TAC/ISelInfoDecl.hpp>
 #include <TAC/InstInfoDecl.hpp>
 #include <TAC/ScheduleModelDecl.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
@@ -66,6 +67,17 @@ public:
     [[nodiscard]] const TargetISelInfo& getISelInfo() const noexcept override {
         return TAC::getTACISelInfo();
     }
+    bool builtinRA(MIRFunction& mfunc, CodeGenContext& ctx) const override {
+        CMMC_UNUSED(mfunc);
+        CMMC_UNUSED(ctx);
+        return true;
+    }
+    bool builtinSA(MIRFunction& mfunc, CodeGenContext& ctx) const override {
+        CMMC_UNUSED(mfunc);
+        CMMC_UNUSED(ctx);
+        return true;
+    }
+    void emitAssembly(const MIRModule& module, std::ostream& out) const override;
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
         switch(inst) {
             case InstructionID::UDiv:
@@ -131,5 +143,43 @@ public:
 };
 
 CMMC_TARGET("tac", TACTarget);
+
+void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
+    auto label = String::get("label");
+
+    for(auto& global : module.globals()) {
+        if(!global->reloc->isFunc())
+            reportUnreachable(CMMC_LOCATION());
+        auto& mfunc = dynamic_cast<MIRFunction&>(*global->reloc);
+        // runtime func
+        if(mfunc.blocks().empty())
+            continue;
+        out << "FUNCTION "sv << mfunc.symbol() << " :\n"sv;
+        {
+            auto& params = mfunc.args();
+            for(auto& param : params) {
+                out << "PARAM v"sv << (param.reg() ^ virtualRegBegin) << '\n';
+            }
+        }
+        {
+            auto& stackObjects = mfunc.stackObjects();
+            for(auto& [ref, stackObject] : stackObjects) {
+                out << "DEC x"sv << (ref.reg() ^ stackObjectBegin) << ' ' << stackObject.size << '\n';
+            }
+
+            for(auto& block : mfunc.blocks()) {
+                if(&block != &mfunc.blocks().front()) {
+                    out << "LABEL "sv << label.withID(block->symbol().id()) << " :\n"sv;
+                }
+
+                for(auto& inst : block->instructions()) {
+                    auto& instInfo = getInstInfo().getInstInfo(inst.opcode());
+                    instInfo.print(out, inst, false);
+                    out << '\n';
+                }
+            }
+        }
+    }
+}
 
 CMMC_MIR_NAMESPACE_END

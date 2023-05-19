@@ -61,18 +61,15 @@ InstInfo:
 
   B:
     Format: b $Tgt:Reloc[Metadata]
-    Flag: [Terminator, Branch]
-  BAL:
-    Format: "bal $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, NoFallthrough]
   BC1F:
-    Format: "bc1f $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
+    Format: "bc1f $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use] Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
   BC1T:
-    Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use]"
+    Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use] Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
   BranchCompare:
-    Format: $Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata]
+    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BEQ:
@@ -80,7 +77,7 @@ InstInfo:
       BNE:
         Mnemonic: bne
   BranchCompareZero:
-    Format: $Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata]
+    Format: "$Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BGEZ:
@@ -91,15 +88,6 @@ InstInfo:
         Mnemonic: blez
       BLTZ:
         Mnemonic: bltz
-
-  BranchCompareZeroAndLink:
-    Format: "$Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata] # Implicit Def: $Rd:RAReg[Def]"
-    Flag: [Terminator, Branch]
-    Instances:
-      BGEZAL:
-        Mnemonic: bgezal
-      BLTZAL:
-        Mnemonic: bltzal
 
   FloatingPointCompare:
     Format: "$Mnemonic:Template $Rs1:FPR[Use], $Rs2:FPR[Use] # Implicit Def: $Rd:CC[Def]"

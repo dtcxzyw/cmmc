@@ -78,6 +78,9 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
             continue;
 
         for(auto writer : writerList) {
+            auto& instInfo = ctx.instInfo.getInstInfo(writer->opcode());
+            if(instInfo.getInstFlag() & InstFlagSideEffect)
+                continue;
             remove.insert(writer);
         }
     }
@@ -87,176 +90,91 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
     return !remove.empty();
 }
 
-/*
-void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor) {
-    for(auto& param : func.parameters())
+void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
+    for(auto& param : func.args())
         functor(param);
     for(auto& block : func.blocks())
-        forEachOperands(*block, functor);
+        forEachOperands(*block, ctx, functor);
 }
 
-void forEachOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor) {
-    for(auto& instruction : block.instructions()) {
-        std::visit(Overload{ [&](CopyMInst& inst) {
-                                functor(inst.src);
-                                functor(inst.dst);
-                            },
-                             [&](ConstantMInst& inst) { functor(inst.dst); },
-                             [&](GlobalAddressMInst& inst) { functor(inst.dst); },
-                             [&](UnaryArithmeticMInst& inst) {
-                                 functor(inst.src);
-                                 functor(inst.dst);
-                             },
-                             [&](BinaryArithmeticMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
-                                 functor(inst.dst);
-                             },
-                             [&](ArithmeticIntrinsicMInst& inst) {
-                                 for(auto& op : inst.src)
-                                     functor(op);
-                                 functor(inst.dst);
-                             },
-                             [&](CompareMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
-                                 functor(inst.dst);
-                             },
-                             [&](BranchCompareMInst& inst) {
-                                 functor(inst.lhs);
-                                 functor(inst.rhs);
-                             },
-                             [&](CallMInst& inst) {
-                                 if(auto* dst = std::get_if<MIROperand>(&inst.callee))
-                                     functor(*dst);
-
-                                 functor(inst.dst);
-                             },
-                             [&](RetMInst& inst) { functor(inst.retVal); },
-                             [&](ControlFlowIntrinsicMInst& inst) {
-                                 functor(inst.src);
-                                 functor(inst.dst);
-                             },
-                             [](auto&) {} },
-                   instruction);
+void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            functor(inst.getOperand(idx));
+        }
     }
 }
 
-void forEachDefOperands(MIRInst& instruction, const std::function<void(MIROperand& op)>& functor) {
-    std::visit(Overload{ [&](BranchCompareMInst&) {}, [&](RetMInst&) {}, [&](BranchMInst&) {}, [&](UnreachableMInst&) {},
-                         [&](auto& inst) { functor(inst.dst); },
-                         [&](CopyMInst& inst) {
-                             if(!inst.indirectDst)
-                                 functor(inst.dst);
-                         } },
-               instruction);
-}
-
-void forEachDefOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor) {
-    for(auto& instruction : block.instructions()) {
-        forEachDefOperands(instruction, functor);
+void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                functor(inst.getOperand(idx));
+        }
     }
 }
 
-void forEachUseOperands(MIRFunction& func, const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
+void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
+                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
     for(auto& block : func.blocks())
-        forEachUseOperands(*block, functor);
+        forEachUseOperands(*block, ctx, functor);
 }
 
-void forEachUseOperands(MIRBasicBlock& block, const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
-    for(auto& instruction : block.instructions()) {
-        std::visit(Overload{ [&](CopyMInst& inst) {
-                                functor(instruction, inst.src);
-                                if(inst.indirectDst)
-                                    functor(instruction, inst.dst);
-                            },
-                             [&](UnaryArithmeticMInst& inst) { functor(instruction, inst.src); },
-                             [&](BinaryArithmeticMInst& inst) {
-                                 functor(instruction, inst.lhs);
-                                 functor(instruction, inst.rhs);
-                             },
-                             [&](ArithmeticIntrinsicMInst& inst) {
-                                 for(auto& op : inst.src)
-                                     functor(instruction, op);
-                             },
-                             [&](CompareMInst& inst) {
-                                 functor(instruction, inst.lhs);
-                                 functor(instruction, inst.rhs);
-                             },
-                             [&](BranchCompareMInst& inst) {
-                                 functor(instruction, inst.lhs);
-                                 functor(instruction, inst.rhs);
-                             },
-                             [&](RetMInst& inst) { functor(instruction, inst.retVal); },
-                             [&](ControlFlowIntrinsicMInst& inst) { functor(instruction, inst.src); }, [](auto&) {} },
-                   instruction);
+void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
+                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
+    for(auto& inst : block.instructions()) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                functor(inst, inst.getOperand(idx));
+        }
     }
 }
 
 void removeIdentityCopies(MIRFunction& func) {
     for(auto& block : func.blocks()) {
-        block->instructions().remove_if([&](const auto& inst) {
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                const auto& copy = std::get<CopyMInst>(inst);
-                if(copy.indirectDst || copy.indirectSrc)
-                    return false;
-                if(copy.dst == copy.src)
-                    return true;
-            }
-            return false;
+        block->instructions().remove_if([&](const MIRInst& inst) {
+            // TODO: instInfo.matchCopy?
+            return inst.opcode() == InstCopy && inst.getOperand(0) == inst.getOperand(1);
         });
     }
 }
 
-void dumpAssembly(std::ostream& out, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText,
-                  const std::function<void(const MIRFunction&, const std::unordered_map<const MIRRelocable*, String>&,
-                                           LabelAllocator&)>& functionDumper) {
-    LabelAllocator allocator;
-    using namespace std::string_literals;
-
-    std::unordered_map<const MIRRelocable*, String> symbolMap;
-
-    for(auto& symbol : module.symbols)
-        symbolMap.emplace(&symbol, allocator.allocate(symbol.symbol));
-
-    auto& target = module.target;
-    // TODO: rodata/bss
+void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
+                  const std::function<void()>& emitText, const std::function<void(const MIRFunction&)>& functionDumper) {
+    // auto& target = ctx.target;
+    //  TODO: rodata/bss
 
     out << ".data\n"sv;
     emitData();
-    const auto dumpSymbol = [&](const MIRRelocable& symbol) {
-        if(!std::holds_alternative<MIRFunction>(symbol.def))
-            out << ".align " << symbol.alignment << std::endl;
-        if(symbol.linkage == Linkage::Global)
-            out << ".globl "sv << symbol.symbol << '\n';
-        out << symbol.symbol << ":\n"sv;
+    const auto dumpSymbol = [&](const MIRGlobal& global) {
+        if(!global.reloc->isFunc())
+            out << ".align " << global.alignment << std::endl;
+        auto symbol = global.reloc->symbol();
+        if(global.linkage == Linkage::Global)
+            out << ".globl "sv << symbol << '\n';
+        out << symbol << ":\n"sv;
     };
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const GMIRDataStorage& data) {
-                                dumpSymbol(symbol);
-                                data.dump(out, target);
-                            },
-                             [&](const GMIRZeroStorage& data) {
-                                 dumpSymbol(symbol);
-                                 data.dump(out, target);
-                             },
-                             [](const auto&) {} },
-                   symbol.def);
+    for(auto& global : module.globals()) {
+        if(!global->reloc->isFunc()) {
+            dumpSymbol(*global);
+            global->reloc->dump(out, ctx);
+        }
     }
 
     out << ".text\n"sv;
     emitText();
-    for(auto& symbol : module.symbols) {
-        std::visit(Overload{ [&](const MIRFunction& func) {
-                                dumpSymbol(symbol);
-                                functionDumper(func, symbolMap, allocator);
-                            },
-                             [](const auto&) {} },
-                   symbol.def);
+    for(auto& global : module.globals()) {
+        if(global->reloc->isFunc()) {
+            dumpSymbol(*global);
+            functionDumper(dynamic_cast<MIRFunction&>(*global->reloc));
+        }
     }
 }
 
+/*
 void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size) {
     const auto& constants = func.pools().pools[AddressSpace::Constant];
     for(auto& block : func.blocks()) {

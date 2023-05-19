@@ -36,7 +36,7 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
         auto& info = ctx.instInfo.getInstInfo(inst.opcode());
         if(!info.verify(out, inst)) {
             out << "Invalid inst: ";
-            info.print(out, inst);
+            info.print(out, inst, true);
             out << '\n';
             return false;
         }
@@ -48,17 +48,17 @@ void MIRBasicBlock::dump(std::ostream& out, const CodeGenContext& ctx) const {
     out << ":\n";
     for(auto& inst : mInsts) {
         out << '\t';
-        ctx.instInfo.getInstInfo(inst.opcode()).print(out, inst);
+        ctx.instInfo.getInstInfo(inst.opcode()).print(out, inst, true);
         out << '\n';
     }
 }
 void MIRFunction::dump(std::ostream& out, const CodeGenContext& ctx) const {
     dumpAsTarget(out);
-    out << ":\nstack objects: ";
+    out << ":\nstack objects:\n";
     uint32_t idx = 0;
-    for(auto& obj : mStackObjects) {
-        out << 's' << idx << " size = " << obj.size << " align = " << obj.alignment << " offset = " << obj.offset
-            << (obj.fixed ? "(fixed)" : "") << '\n';
+    for(auto& [ref, obj] : mStackObjects) {
+        out << "  s" << (ref.reg() ^ stackObjectBegin) << " size = " << obj.size << " align = " << obj.alignment
+            << " offset = " << obj.offset << (obj.fixed ? "(fixed)" : "") << '\n';
         ++idx;
     }
     out << '\n';
@@ -93,15 +93,10 @@ void MIRDataStorage::dump(std::ostream& out, const CodeGenContext&) const {
                    val);
 }
 
-MIROperand MIRFunction::addStackObject(uint32_t size, uint32_t alignment, OperandType ptrType) {
-    const auto idx = static_cast<uint32_t>(mStackObjects.size());
-    mStackObjects.push_back(StackObject{ size, alignment, 0, false });
-    return MIROperand{ idx + stackObjectBegin, ptrType };
-}
-
-StackObject& MIRFunction::getStackObject(uint32_t idx) {
-    assert(isStackObject(idx));
-    return mStackObjects[idx ^ stackObjectBegin];
+MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType) {
+    auto ref = MIROperand::asStackObject(ctx.nextId(), ptrType);
+    mStackObjects.emplace(ref, StackObject{ size, alignment, 0, false });
+    return ref;
 }
 
 void MIRRelocable::dumpAsTarget(std::ostream& out) const {

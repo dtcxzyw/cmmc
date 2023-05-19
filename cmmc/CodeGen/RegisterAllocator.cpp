@@ -21,8 +21,6 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
-
 StringOpt regAllocMethod;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
@@ -52,6 +50,10 @@ void assignRegisters(MIRFunction& mfunc, const Target& target, IPRAUsageCache& c
 
 void IPRAUsageCache::add(const Target& target, MIRRelocable* symbol, MIRFunction& func) {
     IPRAInfo info;
+    CMMC_UNUSED(target);
+    CMMC_UNUSED(func);
+    reportNotImplemented(CMMC_LOCATION());
+    /*
     for(auto& block : func.blocks()) {
         forEachDefOperands(*block, [&](MIROperand& operand) {
             if(operand.addressSpace < AddressSpace::Custom || operand == unusedOperand)
@@ -61,6 +63,7 @@ void IPRAUsageCache::add(const Target& target, MIRRelocable* symbol, MIRFunction
             }
         });
     }
+    */
     mCache.emplace(symbol, std::move(info));
 }
 void IPRAUsageCache::add(MIRRelocable* symbol, IPRAInfo info) {
@@ -71,7 +74,5 @@ const IPRAInfo* IPRAUsageCache::query(MIRRelocable* calleeFunc) const {
         return &iter->second;
     return nullptr;
 }
-
-*/
 
 CMMC_MIR_NAMESPACE_END

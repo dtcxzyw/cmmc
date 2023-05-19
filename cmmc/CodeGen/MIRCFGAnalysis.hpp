@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cstdint>
 #include <vector>
@@ -21,8 +22,8 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 struct MIRBlockEdge final {
-    const MIRBasicBlock* block;
-    double freq;
+    MIRBasicBlock* block;
+    double prob;
 };
 
 struct MIRBlockCFGInfo final {
@@ -41,6 +42,6 @@ public:
     const std::vector<MIRBlockEdge>& successors(const MIRBasicBlock* block) const;
 };
 
-CFGAnalysisResult calcCFG(const MIRFunction& func);
+CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx);
 
 CMMC_MIR_NAMESPACE_END

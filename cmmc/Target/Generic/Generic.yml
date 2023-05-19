@@ -1,9 +1,9 @@
 InstInfo:
   Jump:
     Format: Jump $Tgt:Reloc[Metadata]
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, NoFallthrough]
   Branch:
-    Format: Branch $Cond:Bool[Use], $Tgt:Reloc[Metadata], $Prob:Freq[Metadata]
+    Format: Branch $Cond:Bool[Use], $Tgt:Reloc[Metadata], $Prob:Prob[Metadata]
     Flag: [Terminator, Branch]
   Push:
     Format: Push $Idx:Imm[Metadata], $Src:Val[Use]
@@ -13,13 +13,13 @@ InstInfo:
     Flag: [Call]
   Ret:
     Format: Ret $Src:Val[Use]
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
   RetVoid:
     Format: RetVoid
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
   Unreachable:
     Format: Unreachable
-    Flag: [Terminator]
+    Flag: [Terminator, NoFallthrough]
   Load:
     Format: Load $Dst:VReg[Def], $Addr:VReg[Use]
     Flag: [Load]
@@ -103,3 +103,7 @@ InstInfo:
     Format: Select $Dst:VReg[Def], $Cond:Bool[Use], $Lhs:IVal[Use], $Rhs:IVal[Use]
   LoadGlobalAddress:
     Format: LoadGlobalAddress $Dst:IReg[Def], $Addr:Reloc[Metadata]
+  LoadImm:
+    Format: LoadImm $Dst:IReg[Def], $Imm:Imm[Metadata]
+  LoadStackObjectAddr:
+    Format: LoadStackObjectAddr $Dst:IReg[Def], $Obj:StackObject[Metadata]

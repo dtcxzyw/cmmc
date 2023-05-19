@@ -26,7 +26,6 @@ CMMC_MIR_NAMESPACE_BEGIN
 // bool constantPropagation(MIRFunction& func, const Target& target) {}
 
 /*
-
 bool removeIndirectCopy(MIRFunction& func) {
     bool modified = false;
 
@@ -97,14 +96,16 @@ bool removeIndirectCopy(MIRFunction& func) {
     }
     return modified;
 }
+*/
 
-bool genericPeepholeOpt(MIRFunction& func, const Target& target) {
+bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
-    modified |= eliminateStackLoads(func, target);
-    modified |= removeIndirectCopy(func);
-    modified |= removeUnusedInsts(func);
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(ctx);
+    // modified |= eliminateStackLoads(func, ctx);
+    // modified |= removeIndirectCopy(func);
+    // modified |= removeUnusedInsts(func);
     return modified;
 }
-*/
 
 CMMC_MIR_NAMESPACE_END

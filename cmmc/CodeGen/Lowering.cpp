@@ -137,7 +137,7 @@ MIRGlobal* LoweringContext::mapGlobal(GlobalValue* global) const {
     return mGlobalMap.at(global);
 }
 static String getBlockLabel(CodeGenContext& ctx) {
-    return String::get("label").withID(static_cast<int32_t>(++ctx.blockIdx));
+    return String::get("label").withID(static_cast<int32_t>(ctx.nextId()));
 }
 MIRBasicBlock* LoweringContext::addBlockAfter(double blockTripCount) {
     auto& blocks = mCurrentBasicBlock->getFunction()->blocks();
@@ -187,10 +187,12 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
             if(inst->getInstID() == InstructionID::Alloc) {
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
                 const auto storage =
-                    mfunc.addStackObject(static_cast<uint32_t>(type->getSize(dataLayout)),
+                    mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
                                          static_cast<uint32_t>(type->getAlignment(dataLayout)), ctx.getPtrType());
                 storageMap.emplace(inst, storage);
-                ctx.addOperand(inst, storage);
+                const auto addr = ctx.newVReg(inst->getType());
+                ctx.emitInst(InstLoadStackObjectAddr).setOperand<0>(addr).setOperand<1>(storage);
+                ctx.addOperand(inst, addr);
             } else
                 break;
         }
@@ -344,7 +346,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         return false;
     };
     CMMC_UNUSED(hasCall);
-    CMMC_UNUSED(optLevel);
     CMMC_UNUSED(infoIPRA);
 
     for(auto func : cgscc.getOrder()) {
@@ -362,7 +363,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // Stage 1: lower to Generic MIR
             Stage stage{ "lower to generic insts"sv };
             lowerToMachineFunction(mfunc, func, ctx, machineModule, globalMap, analysis);
-            dumpFunc(mfunc);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         {
@@ -370,7 +371,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "Instruction selection"sv };
             ISelContext iselCtx{ ctx };
             iselCtx.runISel(mfunc);
-            dumpFunc(mfunc);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         /*
@@ -378,12 +379,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Register coalescing"sv };
             // registerCoalescing(mfunc, operandMap);
-            assert(mfunc.verify(std::cerr, true));
-        }
-        {
-            // Stage 3: legalize
-            Stage stage{ "Legalization"sv };
-            target.legalizeFunc(mfunc);
             assert(mfunc.verify(std::cerr, true));
         }
         // Stage 4: peephole opt
@@ -416,63 +411,69 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             schedule(mfunc, target, true);
             assert(mfunc.verify(std::cerr, true));
         }
+        */
         // Stage 7: register allocation
         bool useBuiltinRA = false;
+        CMMC_UNUSED(useBuiltinRA);
         {
             Stage stage{ "Register allocation"sv };
-            if(!target.builtinRA(mfunc))
+            if(!target.builtinRA(mfunc, ctx))
                 assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
             else
                 useBuiltinRA = true;
-            assert(mfunc.verify(std::cerr, true));
+            assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 8: legalize stack objects, stack -> sp
         {
             Stage stage{ "Stack object allocation"sv };
-            if(!target.builtinSA(mfunc))
-                allocateStackObjects(mfunc, target, hasCall(func), optLevel);
-            assert(mfunc.verify(std::cerr, true));
+            if(!target.builtinSA(mfunc, ctx))
+                allocateStackObjects(mfunc, ctx, hasCall(func), optLevel);
+            assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 9: post-RA scheduling, minimize latency
         if(optLevel >= OptimizationLevel::O3) {
             Stage stage{ "Post-RA scheduling"sv };
-            schedule(mfunc, target, false);
-            assert(mfunc.verify(std::cerr, true));
+            schedule(mfunc, ctx, false);
+            assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 10: code layout opt
         if(optLevel >= OptimizationLevel::O2) {
             Stage stage{ "Code layout optimization"sv };
-            simplifyCFGWithUniqueTerminator(mfunc);
-            optimizeBlockLayout(mfunc, target);
-            assert(mfunc.verify(std::cerr, true));
+            simplifyCFGWithUniqueTerminator(mfunc, ctx);
+            // dumpFunc(mfunc);
+            optimizeBlockLayout(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
         }
+        /*
         // TODO: basic block alignment
         // Stage 11: post peephole opt
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Post peephole optimization"sv };
             subTarget.postPeepholeOpt(mfunc);
-            assert(mfunc.verify(std::cerr, true));
+            assert(mfunc.verify(std::cerr, ctx));
         }
+        */
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "CFG Simplification"sv };
-            simplifyCFG(mfunc, target);
-            assert(mfunc.verify(std::cerr, false));
+            simplifyCFG(mfunc, ctx);
+            ctx.requireOneTerminator = false;
+            assert(mfunc.verify(std::cerr, ctx));
         }
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };
-            target.postLegalizeFunc(mfunc);
-            assert(mfunc.verify(std::cerr, false));
+            postLegalizeFunc(mfunc, ctx);
+            assert(mfunc.verify(std::cerr, ctx));
         }
 
+        /*
         // add to IPRA cache
         if(!useBuiltinRA)
             infoIPRA.add(target, symbol, mfunc);
         */
     }
-
-    // TODO: apply HFSort
 }
 
 std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {
@@ -609,7 +610,7 @@ static void lower(LoadInst* inst, LoweringContext& ctx) {
     ctx.addOperand(inst, ret);
 }
 static void lower(StoreInst* inst, LoweringContext& ctx) {
-    ctx.emitInst(InstStore).setOperand<0>(ctx.mapOperand(inst->getOperand(1))).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
+    ctx.emitInst(InstStore).setOperand<0>(ctx.mapOperand(inst->getOperand(0))).setOperand<1>(ctx.mapOperand(inst->getOperand(1)));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<Value*> src;
@@ -738,7 +739,7 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
         ctx.emitInst(InstBranch)
             .setOperand<0>(cond)
             .setOperand<1>(MIROperand::asReloc(elsePrepareBlock))
-            .setOperand<2>(MIROperand::asFreq(1.0 - inst->getBranchProb()));
+            .setOperand<2>(MIROperand::asProb(1.0 - inst->getBranchProb()));
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
@@ -796,8 +797,14 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     for(auto [size, index] : offsets) {
         const auto idx = ctx.mapOperand(index);
         const auto off = ctx.newVReg(indexType);
-        ctx.emitInst(InstMul).setOperand<0>(off).setOperand<1>(idx).setOperand<2>(MIROperand::asImm(size, ctx.getPtrType()));
-        ctx.emitInst(InstAdd).setOperand<0>(ptr).setOperand<1>(ptr).setOperand<2>(off);
+        if(size == 1) {
+            ctx.emitCopy(off, idx);
+        } else {
+            ctx.emitInst(InstMul).setOperand<0>(off).setOperand<1>(idx).setOperand<2>(MIROperand::asImm(size, ctx.getPtrType()));
+        }
+        auto newPtr = ctx.newVReg(inst->getType());  // SSA form
+        ctx.emitInst(InstAdd).setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off);
+        ptr = newPtr;
     }
     ctx.addOperand(inst, ptr);
 }
@@ -820,7 +827,7 @@ static void lower(ReturnInst* inst, LoweringContext& ctx) {
 }
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
     const auto callee = inst->operands().back();
-    auto ret = inst->getType()->isVoid() ? MIROperand::asReg(invalidReg, OperandType::Special) : ctx.newVReg(inst->getType());
+    auto ret = inst->getType()->isVoid() ? MIROperand::asInvalidReg() : ctx.newVReg(inst->getType());
     for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
         ctx.emitInst(InstPush)
             .setOperand<0>(MIROperand::asImm(idx, OperandType::Int32))
@@ -944,10 +951,13 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
 }
 
 MIROperand LoweringContext::newVReg(const Type* type) {
-    return MIROperand{ mCodeGenCtx.vregIdx++, getOperandType(type, mPtrType) };
+    return MIROperand::asVReg(mCodeGenCtx.nextId(), getOperandType(type, mPtrType));
 }
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
-    emitInst(InstCopy).setOperand<0>(dst).setOperand<1>(src);
+    if(src.isImm())
+        emitInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
+    else
+        emitInst(InstCopy).setOperand<0>(dst).setOperand<1>(src);
 }
 CMMC_MIR_NAMESPACE_END

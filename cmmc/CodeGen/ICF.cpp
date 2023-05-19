@@ -83,7 +83,7 @@ void identicalCodeFolding(MIRFunction& func) {
             block->instructions().emplace_back(BranchMInst{ redirectTarget });
         }
     }
-    while(redirectGoto(func))  // apply before code layout
+    while(redirectGoto(func, ctx))  // apply before code layout
         ;
 }
 

@@ -24,6 +24,7 @@ CMMC_TARGET_NAMESPACE_BEGIN
 enum {{target}}Inst {
     {{target}}InstBegin = ISASpecificBegin,
     {% for inst in insts %}{{inst.name}},{% endfor %}
+    {{target}}InstEnd
 };
 
 const TargetInstInfo& get{{target}}InstInfo();

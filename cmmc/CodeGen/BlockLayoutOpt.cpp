@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
@@ -276,12 +277,11 @@ static void solveGA(BlockSeq& seq, const std::vector<BranchEdge>& edges, const s
     seq = std::move(pop[0].first);
 }
 
-void optimizeBlockLayout(MIRFunction& func, const Target& target) {
-    CMMC_UNUSED(target);
+void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx) {
     if(func.blocks().size() <= 2)
         return;
 
-    const auto cfg = calcCFG(func);
+    const auto cfg = calcCFG(func, ctx);
     // TODO: sche model
 
     // build graph
@@ -342,25 +342,27 @@ void optimizeBlockLayout(MIRFunction& func, const Target& target) {
     for(auto idx : seq)
         func.blocks().emplace_back(std::move(newBlocks[idx]));
 
-    /*
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend();) {
         auto& block = *iter;
         const auto nextIter = std::next(iter);
 
-        const auto& terminator = block.instructions().back();
-        const auto ensureNext = [&](const MIRBasicBlock* next) {
-            if(nextIter == func.blocks().cend() || &*nextIter != next) {
-                auto newBlock = std::make_unique<MIRBasicBlock>(&func, next->getTripCount());
-                // newBlock->instructions().emplace_back(BranchMInst{ next });
+        const auto& terminator = block->instructions().back();
+        const auto ensureNext = [&](MIRBasicBlock* next) {
+            if(nextIter == func.blocks().cend() || nextIter->get() != next) {
+                auto newBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(ctx.nextId())), &func,
+                                                                next->getTripCount());
+                newBlock->instructions().emplace_back(ctx.instInfo.emitGoto(next));
                 func.blocks().insert(nextIter, std::move(newBlock));
             }
         };
 
-        if(std::holds_alternative<BranchCompareMInst>(terminator)) {
-            auto& branchInst = std::get<BranchCompareMInst>(terminator);
+        MIRBasicBlock* targetBlock;
+        double prob;
+        if(ctx.instInfo.matchBranch(terminator, targetBlock, prob) &&
+           !(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
             const auto& successors = cfg.successors(block.get());
             if(successors.size() == 2) {
-                if(branchInst.targetBlock == successors[0].block) {
+                if(targetBlock == successors[0].block) {
                     ensureNext(successors[1].block);
                 } else
                     ensureNext(successors[0].block);
@@ -372,7 +374,6 @@ void optimizeBlockLayout(MIRFunction& func, const Target& target) {
 
         iter = nextIter;
     }
-    */
 }
 
 CMMC_MIR_NAMESPACE_END

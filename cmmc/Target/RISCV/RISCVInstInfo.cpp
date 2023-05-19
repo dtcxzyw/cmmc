@@ -41,12 +41,6 @@ static bool isOperandFPR(std::ostream& out, const MIROperand& operand) {
     reportNotImplemented(CMMC_LOCATION());
 }
 
-static bool isOperandReloc(std::ostream& out, const MIROperand& operand) {
-    CMMC_UNUSED(out);
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
 static bool isOperandImm12(std::ostream& out, const MIROperand& operand) {
     CMMC_UNUSED(out);
     CMMC_UNUSED(operand);
@@ -58,6 +52,9 @@ static bool isOperandImm20(std::ostream& out, const MIROperand& operand) {
     CMMC_UNUSED(operand);
     reportNotImplemented(CMMC_LOCATION());
 }
+
+using mir::isOperandProb;
+using mir::isOperandReloc;
 
 static bool verifyInstSLLI(std::ostream& out, const MIRInst& inst) {
     CMMC_UNUSED(out);
@@ -92,6 +89,10 @@ static bool verifyInstSRAIW(std::ostream& out, const MIRInst& inst) {
 static bool verifyInstSRLIW(std::ostream& out, const MIRInst& inst) {
     CMMC_UNUSED(out);
     CMMC_UNUSED(inst);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
+static MIRInst emitGotoImpl(MIRBasicBlock*) {
     reportNotImplemented(CMMC_LOCATION());
 }
 

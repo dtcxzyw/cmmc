@@ -33,6 +33,7 @@ enum InstFlag : uint32_t {
     InstFlagTerminator = 1 << 2,
     InstFlagBranch = 1 << 3,
     InstFlagCall = 1 << 4,
+    InstFlagNoFallthrough = 1 << 5,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall
 };
 
@@ -44,7 +45,7 @@ class InstInfo {
 public:
     InstInfo() = default;
     virtual ~InstInfo() = default;
-    virtual void print(std::ostream& out, const MIRInst& inst) const = 0;
+    virtual void print(std::ostream& out, const MIRInst& inst, bool printComment) const = 0;
     virtual bool verify(std::ostream& out, const MIRInst& inst) const = 0;
     // FIXME: use inline functions
     [[nodiscard]] virtual uint32_t getOperandNum() const noexcept = 0;
@@ -57,6 +58,25 @@ public:
     TargetInstInfo() = default;
     virtual ~TargetInstInfo() = default;
     [[nodiscard]] virtual const InstInfo& getInstInfo(uint32_t opcode) const;
+    virtual bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
+    virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
+    virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
 };
+
+inline bool isOperandVReg(std::ostream&, const MIROperand& operand) {
+    return operand.isReg() && isVirtualReg(operand.reg());
+}
+
+inline bool isOperandReloc(std::ostream&, const MIROperand& operand) {
+    return operand.isReloc();
+}
+
+inline bool isOperandProb(std::ostream&, const MIROperand& operand) {
+    return operand.isProb();
+}
+
+inline bool isOperandStackObject(std::ostream&, const MIROperand& operand) {
+    return operand.isReg() && isStackObject(operand.reg());
+}
 
 CMMC_MIR_NAMESPACE_END

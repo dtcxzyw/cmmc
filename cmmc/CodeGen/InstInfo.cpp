@@ -13,6 +13,7 @@
 */
 
 #include <Generic/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -65,7 +66,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                        out << "reloc ";
                        reloc->dumpAsTarget(out);
                    },
-                   [&](double freq) { out << "freq " << freq; },
+                   [&](double prob) { out << "prob " << prob; },
                    [&](std::monostate) { out << "invalid"; },
                },
                op.getStorage());
@@ -108,14 +109,6 @@ static bool isOperandBool(std::ostream&, const MIROperand& operand) {
     return operand.type() == OperandType::Bool;
 }
 
-static bool isOperandReloc(std::ostream&, const MIROperand& operand) {
-    return operand.isReloc();
-}
-
-static bool isOperandFreq(std::ostream&, const MIROperand& operand) {
-    return operand.isFreq();
-}
-
 static bool isOperandImm(std::ostream&, const MIROperand& operand) {
     return operand.isImm();
 }
@@ -132,6 +125,14 @@ static bool isOperandFlag(std::ostream&, const MIROperand& operand) {
     return operand.isImm() && operand.type() == OperandType::Special;
 }
 
+using mir::isOperandProb;
+using mir::isOperandReloc;
+using mir::isOperandStackObject;
+
+static MIRInst emitGotoImpl(MIRBasicBlock*) {
+    reportUnreachable(CMMC_LOCATION());
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <Generic/InstInfoImpl.hpp>
@@ -140,8 +141,14 @@ CMMC_TARGET_NAMESPACE_END
 
 CMMC_MIR_NAMESPACE_BEGIN
 
+static const Generic::GenericInstInfo& getGenericInstInfoInstance() {
+    static Generic::GenericInstInfo instance;
+    return instance;
+}
+
 const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     constexpr uint32_t offset = Generic::GenericInstBegin + 1;
+    static_assert(Generic::GenericInstEnd - Generic::GenericInstBegin - 1 == MIRGenericInst::ISASpecificBegin);
 #define CMMC_ASSERT_OFFSET(NAME) static_assert(MIRGenericInst::Inst##NAME + offset == Generic::NAME)
     CMMC_ASSERT_OFFSET(Jump);
     CMMC_ASSERT_OFFSET(Branch);
@@ -185,9 +192,28 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(Copy);
     CMMC_ASSERT_OFFSET(Select);
     CMMC_ASSERT_OFFSET(LoadGlobalAddress);
+    CMMC_ASSERT_OFFSET(LoadImm);
+    CMMC_ASSERT_OFFSET(LoadStackObjectAddr);
 #undef CMMC_ASSERT_OFFSET
-    static Generic::GenericInstInfo instance;
-    return instance.getInstInfo(opcode + offset);
+    return getGenericInstInfoInstance().getInstInfo(opcode + offset);
+}
+
+bool TargetInstInfo::matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(target);
+    CMMC_UNUSED(prob);
+    reportUnreachable(CMMC_LOCATION());
+}
+
+void TargetInstInfo::redirectBranch(MIRInst& inst, MIRBasicBlock* target) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(target);
+    reportUnreachable(CMMC_LOCATION());
+}
+
+MIRInst TargetInstInfo::emitGoto(MIRBasicBlock* target) const {
+    CMMC_UNUSED(target);
+    reportUnreachable(CMMC_LOCATION());
 }
 
 CMMC_MIR_NAMESPACE_END

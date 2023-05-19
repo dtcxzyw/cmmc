@@ -27,31 +27,34 @@ static bool match{{inst}}(MIRInst& inst{% for operand in inst_map[inst].operands
 {% endfor %}
 
 {% for patterns in isel_patterns.values() %}{% for pattern in patterns %}
-static MIRInst* matchAndSelectPattern{{pattern.match_id}}(MIRInst& inst{{pattern.match_id}}, ISelContext& ctx) {
+static bool matchAndSelectPattern{{pattern.match_id}}(MIRInst& inst{{pattern.match_id}}, ISelContext& ctx) {
     // Match
-    {% for match in pattern.match_list %}{% if match.type == 'match_inst' %}{% for operand_idx in match.capture_list %} MIROperand op{{operand_idx}}; {% endfor %}if(!match{{match.inst}}(inst{{match.root}}{% for operand_idx in match.capture_list %},op{{operand_idx}}{% endfor %}))return nullptr;{% for lookup_idx in match.lookup_list %} MIRInst& inst{{lookup_idx}} = ctx.lookupDef(op{{lookup_idx}}); {% endfor %}{% else %}if(!({{match.code}}))return nullptr;{% endif %}{% endfor %}
+    {% for match in pattern.match_list %}{% if match.type == 'match_inst' %}{% for operand_idx in match.capture_list %} MIROperand op{{operand_idx}}; {% endfor %}if(!match{{match.inst}}(inst{{match.root}}{% for operand_idx in match.capture_list %},op{{operand_idx}}{% endfor %}))return false;{% for lookup_idx in match.lookup_list %} MIRInst& inst{{lookup_idx}} = ctx.lookupDef(op{{lookup_idx}}); {% endfor %}{% else %}if(!({{match.code}}))return false;{% endif %}{% endfor %}
     // Select
     {% for select in pattern.select_list %}{% if select.type == 'select_inst' %}auto& inst{{select.idx}} = ctx.newInst({{select.inst}}){% for operand in select.operands %}.setOperand<{{loop.index0}}>({% if operand is integer %}op{{operand}}{%else%}{{operand}}{%endif%}){%endfor%};{% if select.used_as_operand %}auto& op{{select.idx}} = ctx.getInstDef(inst{{select.idx}});{% endif %}{% else %}auto op{{select.idx}} = ({{select.code}});{% endif %}{% endfor %}
-    return &inst{{pattern.replace_id}};
+    {% if pattern.replace_operand %} ctx.replaceOperand(ctx.getInstDef(inst{{pattern.match_id}}), ctx.getInstDef(inst{{pattern.replace_id}})); {% else %} CMMC_UNUSED(inst{{pattern.replace_id}}); {% endif %}
+    ctx.removeInst(inst{{pattern.match_id}});
+    return true;
 }
 {% endfor %}{% endfor %}
 
-static MIRInst* matchAndSelectImpl(MIRInst& inst, ISelContext& ctx) {
+static bool matchAndSelectImpl(MIRInst& inst, ISelContext& ctx) {
     switch(inst.opcode()) {
     {% for inst, patterns in isel_patterns.items() %}case {{inst}}: {
-        {% for pattern in patterns %}if(auto ret = matchAndSelectPattern{{pattern.match_id}}(inst, ctx))return ret;{% endfor %}
+        {% for pattern in patterns %}if(matchAndSelectPattern{{pattern.match_id}}(inst, ctx))return true;{% endfor %}
         break;
     }{% endfor %}
     default:
         break;
     }
-    return nullptr;
+    return false;
 }
 
 class {{target}}ISelInfo final: public TargetISelInfo {
 public:
     [[nodiscard]] bool isLegalGenericInst(uint32_t opcode) const override;
-    MIRInst* matchAndSelect(MIRInst& inst, ISelContext& ctx) const override;
+    bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const override;
+    void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const override;
 };
 
 const TargetISelInfo& get{{target}}ISelInfo() {

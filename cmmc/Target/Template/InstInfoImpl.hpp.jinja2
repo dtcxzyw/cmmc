@@ -24,14 +24,14 @@ CMMC_TARGET_NAMESPACE_BEGIN
 class {{target}}InstInfo{{inst.name}} final: public InstInfo {
 public:
     {{target}}InstInfo{{inst.name}}() = default;
-    void print(std::ostream& out, const MIRInst& inst) const override {
+    void print(std::ostream& out, const MIRInst& inst, bool printComment) const override {
         CMMC_UNUSED(inst);
         out {% for val in inst.Format %} << {%if val is integer %} ::cmmc::mir::{{target}}::OperandDumper{ inst.getOperand({{val}}) } {%else%} "{{val}}" {%endif%} {%endfor%};
+        {% if inst.Comment|length != 0 %} if(printComment) out {% for val in inst.Comment %} << {%if val is integer %} ::cmmc::mir::{{target}}::OperandDumper{ inst.getOperand({{val}}) } {%else%} "{{val}}" {%endif%} {%endfor%}; {% else %} CMMC_UNUSED(printComment); {% endif %}
     }
     bool verify(std::ostream& out, const MIRInst& inst) const override {
         CMMC_UNUSED(out);
-        CMMC_UNUSED(inst);
-        return true {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(out, inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(out, inst) {%endif%} ;
+        return inst.checkOperandCount({{inst.operands|length}}) {% for op in inst.operands %} && ::cmmc::mir::{{target}}::isOperand{{op.class}}(out, inst.getOperand({{op.idx}})) {% endfor %} {%if inst.CustomVerifier%} && ::cmmc::mir::{{target}}::verifyInst{{inst.name}}(out, inst) {%endif%} ;
     }
     [[nodiscard]] uint32_t getOperandNum() const noexcept override {
         return {{inst.operands|length}};
@@ -58,6 +58,31 @@ public:
             {% for inst in insts %}case {{target}}Inst::{{inst.name}}: return mInstInfo{{inst.name}};{% endfor %}
             default: return TargetInstInfo::getInstInfo(opcode);
         }
+    }
+    bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const override {
+        auto& instInfo = getInstInfo(inst.opcode());
+        if(instInfo.getInstFlag() & InstFlagBranch) {
+            if(inst.opcode() < ISASpecificBegin)
+                return TargetInstInfo::matchBranch(inst, target, prob); 
+            switch(inst.opcode()) {
+            {%for branch in branches%} case {{branch.inst}}: target = dynamic_cast<MIRBasicBlock*>(inst.getOperand({{branch.target}}).reloc()); prob = {% if branch.prob != -1 %} inst.getOperand({{branch.prob}}).prob() {% else %} 1.0 {% endif %}; break; {% endfor %}
+            default: reportUnreachable(CMMC_LOCATION());
+            }
+            return true;
+        }
+        return false;
+    }
+    void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const override {
+        if(inst.opcode() < ISASpecificBegin)
+            return TargetInstInfo::redirectBranch(inst, target);
+        assert(getInstInfo(inst.opcode()).getInstFlag() & InstFlagBranch);
+        switch(inst.opcode()) {
+        {%for branch in branches%} case {{branch.inst}}: inst.setOperand<{{branch.target}}>(MIROperand::asReloc(target)); break; {% endfor %}
+        default: reportUnreachable(CMMC_LOCATION());
+        }
+    }
+    MIRInst emitGoto(MIRBasicBlock* target) const override {
+        return emitGotoImpl(target);
     }
 };
 

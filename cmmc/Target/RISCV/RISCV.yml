@@ -67,7 +67,7 @@ InstInfo:
     Format: jalr $Rd:GPR[Def] $Rs1:GPR[Use] $Tgt:Reloc[Use]
     Flag: [Terminator]
   Branches:
-    Format: $Mnemonic:Template $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use]
+    Format: "$Mnemonic:Template $Rs1:GPR[Use] $Rs2:GPR[Use] $Tgt:Reloc[Use] # $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BEQ:

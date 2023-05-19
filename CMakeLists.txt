@@ -55,7 +55,7 @@ endfunction()
 add_frontend(Spl)
 add_frontend(SysY)
 
-file(GLOB CMMC_TARGET_TEMPLATE_ENGINE_FILES cmmc/Target/Template/* ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Generic/Generic.yml)
+file(GLOB CMMC_TARGET_TEMPLATE_ENGINE_FILES cmmc/Target/Template/*)
 
 function(add_backend backend)
     message(STATUS "Add backend: ${backend}")
@@ -66,9 +66,12 @@ function(add_backend backend)
         OUTPUT ${OUTPUTS}
         COMMAND ${CMAKE_COMMAND} -E echo Generating files for target ${backend}
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Template/generate.py ${DESC_FILE} ${GENERATED_DIR}
-        DEPENDS ${DESC_FILE} ${CMMC_TARGET_TEMPLATE_ENGINE_FILES}
+        DEPENDS ${DESC_FILE} ${CMMC_TARGET_TEMPLATE_ENGINE_FILES} ${CMAKE_CURRENT_LIST_DIR}/cmmc/Target/Generic/Generic.yml
     )
     add_custom_target(${backend}_generated DEPENDS ${OUTPUTS})
+    if(NOT(${backend} STREQUAL "Generic"))
+      add_dependencies(${backend}_generated Generic_generated)
+    endif()
 endfunction()
 add_backend(Generic)
 add_backend(TAC)

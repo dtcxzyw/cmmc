@@ -17,7 +17,9 @@
 #include <algorithm>
 #include <cassert>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <queue>
 #include <unordered_map>
@@ -27,17 +29,17 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
-
-bool redirectGoto(MIRFunction& func) {
-    std::unordered_map<const MIRBasicBlock*, const MIRBasicBlock*> redirect;
+bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx) {
+    std::unordered_map<const MIRBasicBlock*, MIRBasicBlock*> redirect;
     for(auto& block : func.blocks()) {
         if(block->instructions().size() != 1)
             continue;
         const auto& inst = block->instructions().front();
-        if(std::holds_alternative<BranchMInst>(inst)) {
-            auto& branch = std::get<BranchMInst>(inst);
-            redirect.emplace(block.get(), branch.targetBlock);
+        MIRBasicBlock* targetBlock;
+        double prob;
+        if(ctx.instInfo.matchBranch(inst, targetBlock, prob) &&
+           (ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
+            redirect.emplace(block.get(), targetBlock);
         }
     }
 
@@ -45,27 +47,22 @@ bool redirectGoto(MIRFunction& func) {
         return false;
 
     bool modified = false;
-    auto tryReplace = [&](const MIRBasicBlock*& targetBlock) {
-        if(auto iter = redirect.find(targetBlock); iter != redirect.cend()) {
-            targetBlock = iter->second;
-            modified = true;
-        }
-    };
     for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
-            if(std::holds_alternative<BranchMInst>(inst)) {
-                auto& branch = std::get<BranchMInst>(inst);
-                tryReplace(branch.targetBlock);
-            } else if(std::holds_alternative<BranchCompareMInst>(inst)) {
-                auto& branch = std::get<BranchCompareMInst>(inst);
-                tryReplace(branch.targetBlock);
+            MIRBasicBlock* targetBlock;
+            double prob;
+            if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
+                if(auto iter = redirect.find(targetBlock); iter != redirect.cend()) {
+                    ctx.instInfo.redirectBranch(inst, iter->second);
+                    modified = true;
+                }
             }
         }
     }
     return modified;
 }
 
-static bool removeUnreachableCode(MIRFunction& func) {
+static bool removeUnreachableCode(MIRFunction& func, const CodeGenContext& ctx) {
     std::unordered_set<const MIRBasicBlock*> visit;
     std::queue<MIRBasicBlock*> q;
     std::unordered_map<MIRBasicBlock*, MIRBasicBlock*> nextMap;
@@ -97,20 +94,18 @@ static bool removeUnreachableCode(MIRFunction& func) {
         auto& instructions = u->instructions();
         bool stop = false;
         for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
-            std::visit(Overload{ [&](const RetMInst&) { stop = true; },
-                                 [&](const BranchMInst& inst) {
-                                     if(visit.emplace(inst.targetBlock).second) {
-                                         q.push(const_cast<MIRBasicBlock*>(inst.targetBlock));  // NOLINT
-                                     }
-                                     stop = true;
-                                 },
-                                 [&](const BranchCompareMInst& inst) {
-                                     if(visit.emplace(inst.targetBlock).second) {
-                                         q.push(const_cast<MIRBasicBlock*>(inst.targetBlock));  // NOLINT
-                                     }
-                                 },
-                                 [&](const UnreachableMInst&) { stop = true; }, [](const auto&) {} },
-                       *iter);
+            auto& inst = *iter;
+            MIRBasicBlock* targetBlock;
+            double prob;
+            if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
+                if(visit.emplace(targetBlock).second) {
+                    q.push(targetBlock);
+                }
+            }
+            if(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag() & (InstFlagTerminator & InstFlagNoFallthrough)) {
+                stop = true;
+            }
+
             if(stop) {
                 const auto start = std::next(iter);
                 if(start != instructions.cend()) {
@@ -132,15 +127,17 @@ static bool removeUnreachableCode(MIRFunction& func) {
     return modified || oldCount != newCount;
 }
 
-static bool removeUnusedLabels(MIRFunction& func) {
+static bool removeUnusedLabels(MIRFunction& func, const CodeGenContext& ctx) {
+    MIRBasicBlock* targetBlock;
+    double prob;
     std::unordered_set<const MIRBasicBlock*> usedLabels;
     usedLabels.insert(func.blocks().front().get());
 
     for(auto& block : func.blocks()) {
-        for(auto& instruction : block->instructions()) {
-            std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
-                                 [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
-                       instruction);
+        for(auto& inst : block->instructions()) {
+            if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
+                usedLabels.insert(targetBlock);
+            }
         }
     }
 
@@ -153,15 +150,14 @@ static bool removeUnusedLabels(MIRFunction& func) {
         if(usedLabels.count(block.get())) {
             lastAvailable = block.get();
         } else {
-            for(auto& instruction : block->instructions()) {
-                std::visit(Overload{ [&](BranchMInst& inst) { usedLabels.insert(inst.targetBlock); },
-                                     [&](BranchCompareMInst& inst) { usedLabels.insert(inst.targetBlock); }, [](auto&&) {} },
-                           instruction);
+            for(auto& inst : block->instructions()) {
+                if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
+                    usedLabels.insert(targetBlock);
+                }
             }
             assert(lastAvailable);
             lastAvailable->instructions().insert(lastAvailable->instructions().cend(), block->instructions().cbegin(),
                                                  block->instructions().cend());
-            lastAvailable->usedStackObjects().merge(block->usedStackObjects());
         }
     }
 
@@ -170,7 +166,7 @@ static bool removeUnusedLabels(MIRFunction& func) {
     return true;
 }
 
-static bool removeGotoNext(MIRFunction& func) {
+static bool removeGotoNext(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     for(auto iter = func.blocks().cbegin(); iter != func.blocks().cend(); ++iter) {
         const auto next = std::next(iter);
@@ -182,7 +178,10 @@ static bool removeGotoNext(MIRFunction& func) {
 
         while(!block->instructions().empty()) {
             const auto& last = block->instructions().back();
-            if(std::holds_alternative<BranchMInst>(last) && std::get<BranchMInst>(last).targetBlock == nextBlock) {
+            MIRBasicBlock* targetBlock;
+            double prob;
+            if(ctx.instInfo.matchBranch(last, targetBlock, prob) &&
+               (ctx.instInfo.getInstInfo(last.opcode()).getInstFlag() & InstFlagNoFallthrough) && targetBlock == nextBlock) {
                 block->instructions().pop_back();
                 modified = true;
             } else
@@ -192,8 +191,8 @@ static bool removeGotoNext(MIRFunction& func) {
     return modified;
 }
 
-static bool removeEmptyBlocks(MIRFunction& func) {
-    std::unordered_map<const MIRBasicBlock*, const MIRBasicBlock*> redirects;
+static bool removeEmptyBlocks(MIRFunction& func, const CodeGenContext& ctx) {
+    std::unordered_map<const MIRBasicBlock*, MIRBasicBlock*> redirects;
     std::vector<const MIRBasicBlock*> currentEmptySet;
     const auto commit = [&](MIRBasicBlock* target) {
         for(auto block : currentEmptySet) {
@@ -215,15 +214,13 @@ static bool removeEmptyBlocks(MIRFunction& func) {
     }
 
     for(auto& block : func.blocks()) {
-        for(auto& instruction : block->instructions()) {
-            const auto replaceTarget = [&](const MIRBasicBlock*& blockRef) {
-                const auto iter = redirects.find(blockRef);
-                if(iter != redirects.cend())
-                    blockRef = iter->second;
-            };
-            std::visit(Overload{ [&](BranchMInst& inst) { replaceTarget(inst.targetBlock); },
-                                 [&](BranchCompareMInst& inst) { replaceTarget(inst.targetBlock); }, [](auto&&) {} },
-                       instruction);
+        for(auto& inst : block->instructions()) {
+            MIRBasicBlock* targetBlock;
+            double prob;
+            if(ctx.instInfo.matchBranch(inst, targetBlock, prob)) {
+                if(const auto iter = redirects.find(targetBlock); iter != redirects.cend())
+                    ctx.instInfo.redirectBranch(inst, iter->second);
+            }
         }
     }
 
@@ -232,7 +229,7 @@ static bool removeEmptyBlocks(MIRFunction& func) {
     return !redirects.empty();
 }
 
-static bool conditional2Unconditional(MIRFunction& func) {
+static bool conditional2Unconditional(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
         const auto next = std::next(iter);
@@ -241,12 +238,14 @@ static bool conditional2Unconditional(MIRFunction& func) {
 
         const auto currentBlock = iter->get();
         const auto nextBlock = next->get();
-
-        auto& terminator = currentBlock->instructions().back();
-        if(std::holds_alternative<BranchCompareMInst>(terminator)) {
-            const auto conditional = std::get<BranchCompareMInst>(terminator);
-            if(conditional.targetBlock == nextBlock) {
-                terminator = BranchMInst{ nextBlock };
+        auto& instructions = currentBlock->instructions();
+        auto& terminator = instructions.back();
+        MIRBasicBlock* targetBlock;
+        double prob;
+        if(ctx.instInfo.matchBranch(terminator, targetBlock, prob) &&
+           !(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag() & InstFlagNoFallthrough)) {
+            if(targetBlock == nextBlock) {
+                instructions.back() = ctx.instInfo.emitGoto(nextBlock);
                 modified = true;
             }
         }
@@ -256,32 +255,30 @@ static bool conditional2Unconditional(MIRFunction& func) {
     return modified;
 }
 
-void simplifyCFG(MIRFunction& func, const Target& target) {
+void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
     while(true) {
         bool modified = false;
-        modified |= removeUnreachableCode(func);
-        modified |= removeGotoNext(func);
-        modified |= redirectGoto(func);
-        modified |= removeEmptyBlocks(func);
-        modified |= removeUnusedLabels(func);
-        modified |= genericPeepholeOpt(func, target);
+        modified |= removeUnreachableCode(func, ctx);
+        modified |= removeGotoNext(func, ctx);
+        modified |= redirectGoto(func, ctx);
+        modified |= removeEmptyBlocks(func, ctx);
+        modified |= removeUnusedLabels(func, ctx);
+        modified |= genericPeepholeOpt(func, ctx);
 
         if(!modified)
             return;
     }
 }
 
-void simplifyCFGWithUniqueTerminator(MIRFunction& func) {
+void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx) {
     while(true) {
         bool modified = false;
-        modified |= conditional2Unconditional(func);
-        modified |= redirectGoto(func);
+        modified |= conditional2Unconditional(func, ctx);
+        modified |= redirectGoto(func, ctx);
 
         if(!modified)
             return;
     }
 }
-
-*/
 
 CMMC_MIR_NAMESPACE_END

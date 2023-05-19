@@ -69,7 +69,13 @@ def parse_inst_format(inst):
             fmt_list[idx] = operands_idx[val]
 
     inst['operands'] = operands
+    comment_list = []
+    for idx, fmt in enumerate(fmt_list):
+        if isinstance(fmt, str) and '#' in fmt:
+            comment_list = fmt_list[idx:]
+            fmt_list = fmt_list[:idx]
     inst['Format'] = fmt_list
+    inst['Comment'] = comment_list
     # print(inst)
 
 
@@ -103,7 +109,16 @@ def load_inst_info(isa_desc_file: str):
     # print(yaml.dump(insts))
     for inst in insts.values():
         parse_inst_format(inst)
-    return target_name, insts
+    branches = []
+    for name, inst in insts.items():
+        flags = inst.get('Flag')
+        if flags and ('Branch' in flags):
+            idx_map = dict()
+            for operand in inst['operands']:
+                idx_map[operand['name']] = operand['idx']
+            branches.append(
+                {'inst': name, 'target': idx_map['Tgt'], 'prob': -1 if 'NoFallthrough' in flags else idx_map['Prob']})
+    return target_name, insts, branches
 
 
 def load_isel_info(isa_desc_file: str):
@@ -186,8 +201,15 @@ def parse_isel_pattern_select(rep, insts, select_info: list, operand_map: dict, 
             operands.append(local_map[operand['name']])
         idx = get_id()
         select_info.append(
-            {'type': 'select_inst', 'inst': inst, 'operands': operands, 'idx': idx, 'used_as_operand': used_as_operand})
+            {'type': 'select_inst', 'inst': inst, 'inst_ref': inst_ref, 'operands': operands, 'idx': idx, 'used_as_operand': used_as_operand})
         return idx
+
+
+def has_reg_def(inst_info):
+    for operand in inst_info['operands']:
+        if operand['flag'] == 'Def':
+            return True
+    return False
 
 
 def parse_isel_pattern(pattern, insts, match_insts):
@@ -207,12 +229,14 @@ def parse_isel_pattern(pattern, insts, match_insts):
     pattern_info['replace_id'] = parse_isel_pattern_select(
         r, insts, select_info, operand_map)
     pattern_info['select_list'] = select_info
+    pattern_info['replace_operand'] = has_reg_def(
+        insts[match_info[0]['inst']]) and has_reg_def(insts[select_info[-1]['inst_ref']])
 
     return pattern_info
 
 
 if __name__ == "__main__":
-    target_name, insts = load_inst_info(sys.argv[1])
+    target_name, insts, branch_list = load_inst_info(sys.argv[1])
     output_dir = sys.argv[2]
     os.makedirs(output_dir, exist_ok=True)
     inst_list = []
@@ -221,7 +245,8 @@ if __name__ == "__main__":
         inst_list.append(value)
     params = {
         'target': target_name,
-        'insts': inst_list
+        'insts': inst_list,
+        'branches': branch_list
     }
     generate_file('InstInfoDecl.hpp.jinja2', output_dir, params)
     generate_file('InstInfoImpl.hpp.jinja2', output_dir, params)
@@ -232,7 +257,7 @@ if __name__ == "__main__":
     if target_name == "Generic":
         exit(0)
 
-    _, generic_insts = load_inst_info(sys.argv[1].removesuffix(
+    _, generic_insts, _ = load_inst_info(sys.argv[1].removesuffix(
         target_name+'/'+target_name+'.yml')+'Generic/Generic.yml')
     for key, value in generic_insts.items():
         insts['Inst'+key] = value

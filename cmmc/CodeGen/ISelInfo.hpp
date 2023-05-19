@@ -26,7 +26,8 @@ class ISelContext final {
     std::unordered_map<MIROperand, MIRInst*, MIROperandHasher> mInstMapping;
     MIRBasicBlock* mCurrentBlock;
     std::list<MIRInst>::iterator mInsertPoint;
-    std::unordered_set<MIRInst*> mRemoveWorkList;
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> mReplaceList;
+    std::unordered_set<MIRInst*> mRemoveWorkList, mReplaceBlockList;
 
 public:
     explicit ISelContext(CodeGenContext& codeGenCtx);
@@ -37,13 +38,23 @@ public:
     std::list<MIRInst>& getInstructions() const;
     std::list<MIRInst>::iterator getCurrentInstIter() const;
     void removeInst(MIRInst& inst);
+    void replaceOperand(const MIROperand& src, const MIROperand& dst);
+    void blockReplace(MIRInst& inst);
+    CodeGenContext& getCodeGenCtx() const {
+        return mCodeGenCtx;
+    }
+    MIRBasicBlock* getCurrentBlock() const {
+        return mCurrentBlock;
+    }
 };
 
 class TargetISelInfo {
 public:
     virtual ~TargetISelInfo() = default;
     [[nodiscard]] virtual bool isLegalGenericInst(uint32_t opcode) const = 0;
-    virtual MIRInst* matchAndSelect(MIRInst& inst, ISelContext& ctx) const = 0;
+    static bool expandCmp(MIRInst& inst, ISelContext& ctx);
+    virtual bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const = 0;
+    virtual void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const = 0;
 };
 
 CMMC_MIR_NAMESPACE_END

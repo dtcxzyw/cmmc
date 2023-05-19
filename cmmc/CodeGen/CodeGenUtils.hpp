@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <functional>
@@ -21,34 +22,34 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-void simplifyCFG(MIRFunction& func, const Target& target);
+void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx);
 void registerCoalescing(MIRFunction& func, const std::unordered_map<MIROperand, MIROperand, MIROperandHasher>& operandMap);
-void optimizeBlockLayout(MIRFunction& func, const Target& target);
-void schedule(MIRFunction& func, const Target& target, bool preRA);
-void allocateStackObjects(MIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel);
+void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx);
+void schedule(MIRFunction& func, const CodeGenContext& ctx, bool preRA);
+void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool hasFuncCall, OptimizationLevel optLevel);
 void identicalCodeFolding(MIRFunction& func);
 void tailDuplication(MIRFunction& func);
-void simplifyCFGWithUniqueTerminator(MIRFunction& func);
-bool genericPeepholeOpt(MIRFunction& func, const Target& target);
+void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
+bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx);
+void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 
 bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
 bool removeIndirectCopy(MIRFunction& func);
-void forEachOperands(MIRFunction& func, const std::function<void(MIROperand& op)>& functor);
-void forEachUseOperands(MIRFunction& func, const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
-void forEachOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor);
-void forEachUseOperands(MIRBasicBlock& block, const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
-void forEachDefOperands(MIRInst& instruction, const std::function<void(MIROperand& op)>& functor);
-void forEachDefOperands(MIRBasicBlock& block, const std::function<void(MIROperand& op)>& functor);
+void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
+void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
+                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
+void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
+void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
+                        const std::function<void(MIRInst& inst, MIROperand& op)>& functor);
+void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
 void removeIdentityCopies(MIRFunction& func);
 void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size);
 void legalizeStoreWithConstants(MIRFunction& func);
 bool eliminateStackLoads(MIRFunction& func, const Target& target);
 void applySSAPropagation(MIRFunction& func);
-bool redirectGoto(MIRFunction& func);
+bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
-void dumpAssembly(std::ostream& out, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText,
-                  const std::function<void(const MIRFunction&, const std::unordered_map<const MIRRelocable*, String>&,
-                                           LabelAllocator&)>& functionDumper);
+void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
+                  const std::function<void()>& emitText, const std::function<void(const MIRFunction&)>& functionDumper);
 
 CMMC_MIR_NAMESPACE_END

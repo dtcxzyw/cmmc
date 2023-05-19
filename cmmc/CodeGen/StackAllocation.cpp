@@ -21,6 +21,7 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdint>
 #include <cstdlib>
@@ -439,5 +440,13 @@ void allocateStackObjects(MIRFunction& func, const Target& target, bool hasFuncC
         block->usedStackObjects() = {};
 }
 */
+
+void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool hasFuncCall, OptimizationLevel optLevel) {
+    CMMC_UNUSED(func);
+    CMMC_UNUSED(ctx);
+    CMMC_UNUSED(hasFuncCall);
+    CMMC_UNUSED(optLevel);
+    reportNotImplemented(CMMC_LOCATION());
+}
 
 CMMC_MIR_NAMESPACE_END
