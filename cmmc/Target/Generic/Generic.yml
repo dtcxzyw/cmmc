@@ -5,18 +5,6 @@ InstInfo:
   Branch:
     Format: Branch $Cond:Bool[Use], $Tgt:Reloc[Metadata], $Prob:Prob[Metadata]
     Flag: [Terminator, Branch]
-  Push:
-    Format: Push $Idx:Imm[Metadata], $Src:Val[Use]
-    Flag: [Push]
-  Call:
-    Format: Call $Dst:VRegOrInvalid[Def], $Tgt:Reloc[Metadata]
-    Flag: [Call]
-  Ret:
-    Format: Ret $Src:Val[Use]
-    Flag: [Terminator, NoFallthrough]
-  RetVoid:
-    Format: RetVoid
-    Flag: [Terminator, NoFallthrough]
   Unreachable:
     Format: Unreachable
     Flag: [Terminator, NoFallthrough]
@@ -31,10 +19,12 @@ InstInfo:
     Instances:
       Add:
         Op: Add
+        Flag: [Commutative]
       Sub:
         Op: Sub
       Mul:
         Op: Mul
+        Flag: [Commutative]
       SDiv:
         Op: SDiv
       SRem:
@@ -45,10 +35,13 @@ InstInfo:
         Op: URem
       And:
         Op: And
+        Flag: [Commutative]
       Or:
         Op: Or
+        Flag: [Commutative]
       Xor:
         Op: Xor
+        Flag: [Commutative]
       Shl:
         Op: Shl
       LShr:
@@ -65,10 +58,12 @@ InstInfo:
     Instances:
       FAdd:
         Op: FAdd
+        Flag: [Commutative]
       FSub:
         Op: FSub
       FMul:
         Op: FMul
+        Flag: [Commutative]
       FDiv:
         Op: FDiv
       FNeg:
@@ -110,3 +105,11 @@ InstInfo:
   LoadStackObjectAddr:
     Format: LoadStackObjectAddr $Dst:IReg[Def], $Obj:StackObject[Metadata]
     Flag: [LoadConstant]
+  CopyFromReg:
+    Format: CopyFromReg $Dst:VReg[Def], $Src:ISAReg[Use]
+  CopyToReg:
+    Format: CopyFromReg $Dst:ISAReg[Def], $Src:VReg[Use]
+    Flag: [RegCopy]
+  LoadImmToReg:
+    Format: LoadImmToReg $Dst:ISAReg[Def], $Imm:Imm[Metadata]
+    Flag: [RegCopy]

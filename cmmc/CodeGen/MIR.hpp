@@ -22,6 +22,7 @@
 #include <limits>
 #include <list>
 #include <memory>
+#include <optional>
 #include <ostream>
 #include <string>
 #include <type_traits>
@@ -57,7 +58,7 @@ public:
 
 constexpr uint32_t virtualRegBegin = 0b0101U << 28;
 constexpr uint32_t stackObjectBegin = 0b1010U << 28;
-constexpr uint32_t invalidReg = 0x1100U << 28;
+constexpr uint32_t invalidReg = 0b1100U << 28;
 constexpr bool isISAReg(uint32_t x) {
     return x < virtualRegBegin;
 }
@@ -69,6 +70,22 @@ constexpr bool isStackObject(uint32_t x) {
 }
 
 enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32, Special };
+constexpr uint32_t getOperandSize(const OperandType type) {
+    switch(type) {
+        case OperandType::Int8:
+            return 1;
+        case OperandType::Int16:
+            return 2;
+        case OperandType::Int32:
+            return 4;
+        case OperandType::Int64:
+            return 8;
+        case OperandType::Float32:
+            return 4;
+        default:
+            return 0;  // unsupported
+    }
+}
 
 class MIROperand final {
     std::variant<std::monostate, uint32_t, intmax_t, MIRRelocable*, double> mOperand{ std::monostate{} };
@@ -151,10 +168,6 @@ enum MIRGenericInst : uint32_t {
     // control-flow
     InstJump,    // reloc
     InstBranch,  // cond, reloc, prob
-    InstPush,    // idx, val
-    InstCall,    // reloc
-    InstRet,     // val
-    InstRetVoid,
     InstUnreachable,
     // Memory
     InstLoad,
@@ -202,6 +215,9 @@ enum MIRGenericInst : uint32_t {
     InstLoadGlobalAddress,
     InstLoadImm,
     InstLoadStackObjectAddr,
+    InstCopyFromReg,
+    InstCopyToReg,
+    InstLoadImmToReg,
 
     ISASpecificBegin,
 };
@@ -281,7 +297,8 @@ class MIRFunction final : public MIRRelocable {
 
 public:
     explicit MIRFunction(String symbol) : MIRRelocable{ symbol } {}
-    MIROperand addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType);
+    MIROperand addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType,
+                              std::optional<int32_t> fixedOffset);
     std::list<std::unique_ptr<MIRBasicBlock>>& blocks() {
         return mBlocks;
     }

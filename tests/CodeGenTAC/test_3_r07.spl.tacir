@@ -1,7 +1,7 @@
 FUNCTION gcd2 :
 PARAM v9
 PARAM v8
-IF v8 <= v9 GOTO label2
+IF v8 <= v9 GOTO label4
 v22 := v8 / v9
 v23 := v9 * v22
 v24 := v8 - v23
@@ -9,7 +9,7 @@ IF v24 != #0 GOTO label27
 GOTO label30
 LABEL label31 :
 RETURN v8
-LABEL label2 :
+LABEL label4 :
 v14 := v9 / v8
 v15 := v8 * v14
 v16 := v9 - v15

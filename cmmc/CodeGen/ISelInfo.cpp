@@ -30,14 +30,17 @@ ISelContext::ISelContext(CodeGenContext& codeGenCtx) : mCodeGenCtx{ codeGenCtx }
 void ISelContext::runISel(MIRFunction& func) {
     auto& iselInfo = mCodeGenCtx.iselInfo;
     bool allowComplexPattern = false;  // create new blocks
+    bool optLegal = false;
 
     while(true) {
         // TODO: apply CSE
 
         // func.dump(std::cerr, mCodeGenCtx);
+        assert(func.verify(std::cerr, mCodeGenCtx));
         while(genericPeepholeOpt(func, mCodeGenCtx))
             ;
         // func.dump(std::cerr, mCodeGenCtx);
+        assert(func.verify(std::cerr, mCodeGenCtx));
         bool modified = false;
         bool hasIllegal = false;
         mRemoveWorkList.clear();
@@ -82,17 +85,17 @@ void ISelContext::runISel(MIRFunction& func) {
             auto& instructions = block->instructions();
             auto it = instructions.end();
             while(it != instructions.begin()) {
-                mInsertPoint = it;
                 auto prev = std::prev(it);
+                mInsertPoint = prev;
                 auto& inst = *prev;
                 if(!mRemoveWorkList.count(&inst)) {
-                    if(auto opcode = inst.opcode(); opcode < ISASpecificBegin && !iselInfo.isLegalGenericInst(opcode)) {
-                        hasIllegal = true;
-                        if(iselInfo.matchAndSelect(inst, *this, allowComplexPattern)) {
-                            modified = true;
-                            if(allowComplexPattern) {
-                                break;
-                            }
+                    const auto opcode = inst.opcode();
+                    const auto isIllegal = opcode < ISASpecificBegin && !iselInfo.isLegalGenericInst(opcode);
+                    hasIllegal |= isIllegal;
+                    if((optLegal || isIllegal) && iselInfo.matchAndSelect(inst, *this, allowComplexPattern)) {
+                        modified = true;
+                        if(allowComplexPattern) {
+                            break;
                         }
                     }
                 }
@@ -123,6 +126,12 @@ void ISelContext::runISel(MIRFunction& func) {
             continue;
         }
         if(hasIllegal) {
+            if(optLegal) {
+                func.dump(std::cerr, mCodeGenCtx);
+                DiagnosticsContext::get()
+                    .attach<Reason>("Introducing new illegal instructions is not allowed after legalization")
+                    .reportFatal();
+            }
             if(allowComplexPattern) {
                 func.dump(std::cerr, mCodeGenCtx);
                 DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
@@ -130,6 +139,10 @@ void ISelContext::runISel(MIRFunction& func) {
                 allowComplexPattern = true;
                 continue;
             }
+        }
+        if(!optLegal) {
+            optLegal = true;
+            continue;
         }
         return;
     }
@@ -161,7 +174,7 @@ std::list<MIRInst>& ISelContext::getInstructions() const {
     return mCurrentBlock->instructions();
 }
 std::list<MIRInst>::iterator ISelContext::getCurrentInstIter() const {
-    return std::prev(mInsertPoint);
+    return mInsertPoint;
 }
 void ISelContext::removeInst(MIRInst& inst) {
     mRemoveWorkList.insert(&inst);

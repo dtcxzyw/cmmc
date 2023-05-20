@@ -36,7 +36,10 @@ enum InstFlag : uint32_t {
     InstFlagNoFallthrough = 1 << 5,
     InstFlagPush = 1 << 6,
     InstFlagLoadConstant = 1 << 7,
-    InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush
+    InstFlagRegCopy = 1 << 8,
+    InstFlagCommutative = 1 << 9,
+    InstFlagSideEffect =
+        InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush | InstFlagRegCopy
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
@@ -110,6 +113,13 @@ constexpr bool isOperandUnsignedImm(const MIROperand& operand) {
     constexpr auto x = static_cast<intmax_t>(1) << N;
     const auto imm = operand.imm();
     return 0 <= imm && imm < x;
+}
+
+constexpr bool isIntegerType(OperandType type) {
+    return type <= OperandType::Int64;
+}
+constexpr bool isFPType(OperandType type) {
+    return type == OperandType::Float32;
 }
 
 CMMC_MIR_NAMESPACE_END

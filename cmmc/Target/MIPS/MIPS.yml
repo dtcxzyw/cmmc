@@ -1,6 +1,6 @@
 InstInfo:
   IntegerBinary:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use]
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]
     Instances:
       ADDU:
         Mnemonic: addu
@@ -22,7 +22,7 @@ InstInfo:
         Mnemonic: xor
 
   IntegerBinaryImm:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm16[Metadata]
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm16[Metadata]
     Instances:
       ADDIU:
         Mnemonic: addiu
@@ -43,7 +43,7 @@ InstInfo:
         Mnemonic: xori
 
   FloatingPointBinary:
-    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
+    Format: $Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use], $Rt:FPR[Use]
     Instances:
       ADD_S:
         Mnemonic: add.s
@@ -66,7 +66,7 @@ InstInfo:
     Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use] Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
   BranchCompare:
-    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
+    Format: "$Mnemonic:Template $Rs:GPR[Use], $Rt:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BEQ:
@@ -87,7 +87,7 @@ InstInfo:
         Mnemonic: bltz
 
   FloatingPointCompare:
-    Format: "$Mnemonic:Template $Rs1:FPR[Use], $Rs2:FPR[Use] # Implicit Def: $Rd:CC[Def]"
+    Format: "$Mnemonic:Template $Rs:FPR[Use], $Rt:FPR[Use] # Implicit Def: $Rd:CC[Def]"
     Instances:
       C_EQ_S:
         Mnemonic: c.eq.s
@@ -107,7 +107,7 @@ InstInfo:
         Mnemonic: trunc.w.s
 
   MulDiv:
-    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use] # Implicit Def: $Rd:HILO[Def]"
+    Format: "$Mnemonic:Template $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Def: $Rd:HILO[Def]"
     Instances:
       DIV:
         Mnemonic: div
@@ -118,10 +118,7 @@ InstInfo:
 
   JAL:
     Format: "jal $Tgt:Reloc[Metadata]"
-    Flag: [Terminator, NoFallthrough]
-  JALR:
-    Format: "jalr $Rs:GPR[Use]"
-    Flag: [Terminator, NoFallthrough]
+    Flag: [Call]
   JR:
     Format: jr $Rs:GPR[Use]
     Flag: [Terminator, NoFallthrough]
@@ -156,9 +153,9 @@ InstInfo:
   MTC1:
     Format: mtc1 $Rd:FPR[Def], $Rs:GPR[Use]
   MFHI:
-    Format: "mfhi $Rd:GPR[Def] # Implicit Use: $Rd:HILO[Use]"
+    Format: "mfhi $Rd:GPR[Def] # Implicit Use: $Rs:HILO[Use]"
   MFLO:
-    Format: "mflo $Rd:GPR[Def] # Implicit Use: $Rd:HILO[Use]"
+    Format: "mflo $Rd:GPR[Def] # Implicit Use: $Rs:HILO[Use]"
   MOV_S:
     Format: mov.s $Rd:FPR[Def], $Rs:FPR[Use]
 
@@ -195,6 +192,25 @@ InstInfo:
 
 InstSelection:
   - Pattern:
+      InstLoadImmToReg:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: isOperandImm16($Imm)
+    Replace:
+      LoadImm16:
+        Rd: $Dst
+        Imm: $Imm
+
+  - Pattern:
+      InstLoadImmToReg:
+        Dst: $Dst
+        Imm: $Imm
+    Replace:
+      LoadImm32:
+        Rd: $Dst
+        Imm: $Imm
+
+  - Pattern:
       InstLoadImm:
         Dst: $Dst
         Imm: $Imm
@@ -212,6 +228,311 @@ InstSelection:
       LoadImm32:
         Rd: $Dst
         Imm: $Imm
+
+  - Pattern:
+      InstJump:
+        Tgt: $Tgt
+    Replace:
+      B:
+        Tgt: $Tgt
+
+  # Integer Arithmetic
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      ADDU:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+    Replace:
+      ADDIU:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SUBU:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstAnd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+    Replace:
+      ANDI:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstAnd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      AND:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstOr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+    Replace:
+      ORI:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstOr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      OR:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      XOR:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  # Branches
+  # BLEZ BLTZ BGEZ BGTZ
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isRationalOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchWithZeroOpcode($Op)
+        $Template: BLTZ
+        Rs: $Lhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && isOperandImm16(getNeg($Rhs)) && isRationalOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchWithZeroOpcode($Op)
+        $Template: BLTZ
+        Rs:
+          ADDIU:
+            Rd: getVRegAs(ctx, $Lhs)
+            Rs: $Lhs
+            Imm: getNeg($Rhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isEqualityOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchEqualityOpcode($Op)
+        $Template: BEQ
+        Rs: $Lhs
+        Rt: $Rhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOrLessEqualOp($Op)
+    Replace:
+      SLT:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOrLessEqualOp($Op)
+    Replace:
+      SLTU:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOrLessEqualOp($Op)
+    Replace:
+      SLTI:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOrLessEqualOp($Op)
+    Replace:
+      SLTIU:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  # MUL/DIV/DIVU
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MFLO:
+        Rd: $Dst
+        Rs:
+          MULT:
+            Rd: getHILO()
+            Rs: $Lhs
+            Rt: $Rhs
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MFLO:
+        Rd: $Dst
+        Rs:
+          DIV:
+            Rd: getHILO()
+            Rs: $Lhs
+            Rt: $Rhs
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MFHI:
+        Rd: $Dst
+        Rs:
+          DIV:
+            Rd: getHILO()
+            Rs: $Lhs
+            Rt: $Rhs
+
+  - Pattern:
+      InstUDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MFLO:
+        Rd: $Dst
+        Rs:
+          DIVU:
+            Rd: getHILO()
+            Rs: $Lhs
+            Rt: $Rhs
+
+  - Pattern:
+      InstURem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MFHI:
+        Rd: $Dst
+        Rs:
+          DIVU:
+            Rd: getHILO()
+            Rs: $Lhs
+            Rt: $Rhs
 
 ScheduleModel:
   emulator:

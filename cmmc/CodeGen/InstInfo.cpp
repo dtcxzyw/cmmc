@@ -74,15 +74,12 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     return out;
 }
 
-static bool isIntegerType(OperandType type) {
-    return type <= OperandType::Int64;
-}
-static bool isFPType(OperandType type) {
-    return type == OperandType::Float32;
-}
-
 static bool isOperandVReg(const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
+}
+
+static bool isOperandISAReg(const MIROperand& operand) {
+    return operand.isReg() && isISAReg(operand.reg());
 }
 
 static bool isOperandVal(const MIROperand& operand) {
@@ -94,15 +91,6 @@ static bool isOperandIVal(const MIROperand& operand) {
 }
 static bool isOperandFVal(const MIROperand& operand) {
     return isFPType(operand.type()) && isOperandVal(operand);
-}
-
-static bool isOperandVRegOrInvalid(const MIROperand& operand) {
-    if(operand.isReg()) {
-        const auto reg = operand.reg();
-        if(isVirtualReg(reg) || reg == invalidReg)
-            return true;
-    }
-    return false;
 }
 
 static bool isOperandBool(const MIROperand& operand) {
@@ -152,10 +140,6 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
 #define CMMC_ASSERT_OFFSET(NAME) static_assert(MIRGenericInst::Inst##NAME + offset == Generic::NAME)
     CMMC_ASSERT_OFFSET(Jump);
     CMMC_ASSERT_OFFSET(Branch);
-    CMMC_ASSERT_OFFSET(Push);
-    CMMC_ASSERT_OFFSET(Call);
-    CMMC_ASSERT_OFFSET(Ret);
-    CMMC_ASSERT_OFFSET(RetVoid);
     CMMC_ASSERT_OFFSET(Unreachable);
     CMMC_ASSERT_OFFSET(Load);
     CMMC_ASSERT_OFFSET(Add);
@@ -194,6 +178,9 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(LoadGlobalAddress);
     CMMC_ASSERT_OFFSET(LoadImm);
     CMMC_ASSERT_OFFSET(LoadStackObjectAddr);
+    CMMC_ASSERT_OFFSET(CopyFromReg);
+    CMMC_ASSERT_OFFSET(CopyToReg);
+    CMMC_ASSERT_OFFSET(LoadImmToReg);
 #undef CMMC_ASSERT_OFFSET
     return getGenericInstInfoInstance().getInstInfo(opcode + offset);
 }

@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/FrameInfo.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
@@ -48,6 +49,9 @@ public:
     [[nodiscard]] virtual const TargetISelInfo& getISelInfo() const noexcept {
         reportUnreachable(CMMC_LOCATION());
     }
+    [[nodiscard]] virtual const TargetFrameInfo& getFrameInfo() const noexcept {
+        reportUnreachable(CMMC_LOCATION());
+    }
     virtual bool builtinRA(MIRFunction& mfunc, CodeGenContext& ctx) const {
         CMMC_UNUSED(mfunc);
         CMMC_UNUSED(ctx);
@@ -57,11 +61,6 @@ public:
         CMMC_UNUSED(mfunc);
         CMMC_UNUSED(ctx);
         return false;
-    }
-    virtual void emitPrologue(LoweringContext& ctx, MIRFunction& mfunc) const {
-        CMMC_UNUSED(ctx);
-        CMMC_UNUSED(mfunc);
-        reportUnreachable(CMMC_LOCATION());
     }
     virtual void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
         CMMC_UNUSED(module);
@@ -102,6 +101,7 @@ struct CodeGenContext final {
     const DataLayout& dataLayout;
     const TargetInstInfo& instInfo;
     const TargetISelInfo& iselInfo;
+    const TargetFrameInfo& frameInfo;
     bool requireOneTerminator;
     uint32_t idx = 0;
     uint32_t nextId() {

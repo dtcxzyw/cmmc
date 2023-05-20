@@ -41,6 +41,7 @@
 #include <cstdint>
 #include <deque>
 #include <iostream>
+#include <optional>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -102,7 +103,7 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     if(iter != mValueMap.cend())
         return iter->second;
     if(operand->isGlobal()) {
-        const auto ptr = newVReg(operand->getType());
+        const auto ptr = newVReg(getPtrType());
         emitInst(InstLoadGlobalAddress)
             .setOperand<0>(ptr)
             .setOperand<1>(MIROperand::asReloc(mGlobalMap.at(operand->as<GlobalValue>())->reloc.get()));
@@ -188,9 +189,9 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
                 const auto storage =
                     mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
-                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), ctx.getPtrType());
+                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), ctx.getPtrType(), std::nullopt);
                 storageMap.emplace(inst, storage);
-                const auto addr = ctx.newVReg(inst->getType());
+                const auto addr = ctx.newVReg(ctx.getPtrType());
                 ctx.emitInst(InstLoadStackObjectAddr).setOperand<0>(addr).setOperand<1>(storage);
                 ctx.addOperand(inst, addr);
             } else
@@ -206,7 +207,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
             args.push_back(vreg);
         }
         ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
-        target.emitPrologue(ctx, mfunc);
+        codeGenCtx.frameInfo.emitPrologue(mfunc, ctx);
     }
 
     for(auto block : dom.blocks()) {
@@ -328,7 +329,12 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         analysis.invalidateModule();
     }
 
-    CodeGenContext ctx{ target, target.getScheduleModel(), target.getDataLayout(), target.getInstInfo(), target.getISelInfo(),
+    CodeGenContext ctx{ target,
+                        target.getScheduleModel(),
+                        target.getDataLayout(),
+                        target.getInstInfo(),
+                        target.getISelInfo(),
+                        target.getFrameInfo(),
                         true };
 
     auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
@@ -818,26 +824,11 @@ static void lower(IntToPtrInst* inst, LoweringContext& ctx) {
     ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
 }
 static void lower(ReturnInst* inst, LoweringContext& ctx) {
-    if(inst->operands().empty()) {
-        ctx.emitInst(InstRetVoid);
-    } else {
-        const auto val = ctx.mapOperand(inst->getOperand(0));
-        ctx.emitInst(InstRet).setOperand<0>(val);
-    }
+    ctx.getCodeGenContext().frameInfo.emitReturn(inst, ctx);
 }
 static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
-    const auto callee = inst->operands().back();
-    auto ret = inst->getType()->isVoid() ? MIROperand::asInvalidReg() : ctx.newVReg(inst->getType());
-    for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
-        ctx.emitInst(InstPush)
-            .setOperand<0>(MIROperand::asImm(idx, OperandType::Int32))
-            .setOperand<1>(ctx.mapOperand(inst->getOperand(idx)));
-    }
-    ctx.emitInst(InstCall).setOperand<0>(ret).setOperand<1>(
-        MIROperand::asReloc(ctx.mapGlobal(callee->as<Function>())->reloc.get()));
-    ctx.addOperand(inst, ret);
+    ctx.getCodeGenContext().frameInfo.emitCall(inst, ctx);
 }
-
 static void lowerInst(Instruction* inst, LoweringContext& ctx) {
     switch(inst->getInstID()) {
         case InstructionID::Add:
@@ -953,11 +944,28 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
 MIROperand LoweringContext::newVReg(const Type* type) {
     return MIROperand::asVReg(mCodeGenCtx.nextId(), getOperandType(type, mPtrType));
 }
+MIROperand LoweringContext::newVReg(OperandType type) {
+    return MIROperand::asVReg(mCodeGenCtx.nextId(), type);
+}
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
-    if(src.isImm())
-        emitInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
-    else
-        emitInst(InstCopy).setOperand<0>(dst).setOperand<1>(src);
+    uint32_t opcode;
+
+    if(dst.isReg() && isISAReg(dst.reg())) {
+        if(src.isImm()) {
+            opcode = InstLoadImmToReg;
+        } else {
+            assert(isOperandVReg(src));
+            opcode = InstCopyToReg;
+        }
+    } else if(src.isImm())
+        opcode = InstLoadImm;
+    else if(src.isReg() && isISAReg(src.reg()))
+        opcode = InstCopyFromReg;
+    else {
+        assert(isOperandVReg(src) && isOperandVReg(dst));
+        opcode = InstCopy;
+    }
+    emitInst(opcode).setOperand<0>(dst).setOperand<1>(src);
 }
 CMMC_MIR_NAMESPACE_END

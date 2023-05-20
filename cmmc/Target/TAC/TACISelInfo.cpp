@@ -19,30 +19,6 @@
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-static bool isRuntimeFunc(const MIROperand& op) {
-    if(op.isReloc()) {
-        auto symbol = op.reloc()->symbol();
-        return symbol == "read" || symbol == "write";
-    }
-    return false;
-}
-
-static bool isRuntimeReadFunc(const MIROperand& op) {
-    if(op.isReloc()) {
-        auto symbol = op.reloc()->symbol();
-        return symbol == "read";
-    }
-    return false;
-}
-
-static bool isRuntimeWriteFunc(const MIROperand& op) {
-    if(op.isReloc()) {
-        auto symbol = op.reloc()->symbol();
-        return symbol == "write";
-    }
-    return false;
-}
-
 static TACInst getBranchOpcode(const MIROperand& op) {
     switch(static_cast<CompareOp>(op.imm())) {
         case CompareOp::LessThan:
@@ -59,15 +35,6 @@ static TACInst getBranchOpcode(const MIROperand& op) {
             return BranchNe;
     }
     reportUnreachable(CMMC_LOCATION());
-}
-
-static MIROperand selectWriteArg(ISelContext& ctx) {
-    const auto call = ctx.getCurrentInstIter();
-    const auto push = std::prev(call);
-    assert(push->opcode() == InstPush);
-    assert(push->getOperand(0).imm() == 0);
-    ctx.removeInst(*push);
-    return push->getOperand(1);
 }
 
 constexpr uint32_t directStackAccessOffset = 1 << 20;

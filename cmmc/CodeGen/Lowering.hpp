@@ -55,6 +55,9 @@ public:
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept {
         return mDataLayout;
     }
+    [[nodiscard]] CodeGenContext& getCodeGenContext() const noexcept {
+        return mCodeGenCtx;
+    }
     [[nodiscard]] OperandType getPtrType() const noexcept {
         return mPtrType;
     }
@@ -62,6 +65,7 @@ public:
     MIRBasicBlock* mapBlock(Block* block) const;
     MIROperand mapOperand(Value* operand);
     MIROperand newVReg(const Type* type);
+    MIROperand newVReg(OperandType type);
     void emitCopy(const MIROperand& dst, const MIROperand& src);
     MIRGlobal* mapGlobal(GlobalValue* global) const;
     void setCurrentBasicBlock(MIRBasicBlock* block) noexcept;

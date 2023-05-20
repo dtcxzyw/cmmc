@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
+#include <optional>
 
 CMMC_MIR_NAMESPACE_BEGIN
 
@@ -94,9 +95,13 @@ void MIRDataStorage::dump(std::ostream& out, const CodeGenContext&) const {
                    val);
 }
 
-MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType) {
+MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType,
+                                       std::optional<int32_t> fixedOffset) {
     auto ref = MIROperand::asStackObject(ctx.nextId(), ptrType);
-    mStackObjects.emplace(ref, StackObject{ size, alignment, 0, false });
+    if(fixedOffset.has_value())
+        mStackObjects.emplace(ref, StackObject{ size, alignment, *fixedOffset, true });
+    else
+        mStackObjects.emplace(ref, StackObject{ size, alignment, 0, false });
     return ref;
 }
 

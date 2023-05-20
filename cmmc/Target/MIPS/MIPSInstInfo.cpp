@@ -38,6 +38,8 @@ static std::string_view getMIPSGPRTextualName(MIPSRegister gpr) noexcept {
 static bool isOperandGPR(const MIROperand& operand) {
     if(!operand.isReg())
         return false;
+    if(isVirtualReg(operand.reg()))
+        return true;
     const auto reg = operand.reg();
     return GPRBegin <= reg && reg < GPREnd;
 }
@@ -45,6 +47,8 @@ static bool isOperandGPR(const MIROperand& operand) {
 static bool isOperandFPR(const MIROperand& operand) {
     if(!operand.isReg())
         return false;
+    if(isVirtualReg(operand.reg()))
+        return true;
     const auto reg = operand.reg();
     return FPRBegin <= reg && reg < FPREnd;
 }

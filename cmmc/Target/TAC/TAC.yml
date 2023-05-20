@@ -16,6 +16,7 @@ InstInfo:
 
   Addr:
     Format: $Dst:VReg[Def] := &$Src:StackObject[Metadata]
+    Flag: [LoadConstant]
 
   AddrOffset:
     Format: $Dst:VReg[Def] := &$Src:StackObject[Metadata] + $Offset:Val[Use]
@@ -139,62 +140,6 @@ InstSelection:
         Prob: $Prob
 
   - Pattern:
-      InstCall:
-        Dst: $Dst
-        Tgt: $Reloc
-        $Predicate: isRuntimeReadFunc($Reloc)
-    Replace:
-      Read:
-        Dst: $Dst
-
-  - Pattern:
-      InstCall:
-        Tgt: $Reloc
-        $Predicate: isRuntimeWriteFunc($Reloc)
-    Replace:
-      Write:
-        Src: selectWriteArg(ctx)
-
-  - Pattern:
-      InstPush:
-        Src:
-          InstLoadStackObjectAddr:
-            Obj: $Obj
-    Replace:
-      ArgAddr:
-        Obj: $Obj
-
-  - Pattern:
-      InstPush:
-        Src: $Src
-    Replace:
-      Arg:
-        Val: $Src
-
-  - Pattern:
-      InstCall:
-        Dst: $Dst
-        Tgt: $Reloc
-        $Predicate: "!isRuntimeFunc($Reloc)"
-    Replace:
-      Call:
-        Dst: $Dst
-        Tgt: $Reloc
-
-  - Pattern:
-      InstRet:
-        Src: $Src
-    Replace:
-      Return:
-        Src: $Src
-
-  - Pattern:
-      InstRetVoid:
-    Replace:
-      Return:
-        Src: MIROperand::asImm(0, OperandType::Int32)
-
-  - Pattern:
       InstUnreachable:
     Replace:
       Return:
@@ -298,6 +243,15 @@ InstSelection:
       InstCopy:
         Dst: $Dst
         Src: $Src
+
+  - Pattern:
+      Arg:
+        Val:
+          Addr:
+            Src: $Obj
+    Replace:
+      ArgAddr:
+        Obj: $Obj
 
 ScheduleModel:
   emulator:
