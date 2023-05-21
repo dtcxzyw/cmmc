@@ -13,9 +13,11 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
+#include <cmmc/CodeGen/RegisterInfo.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
@@ -30,12 +32,9 @@
 
 // Local RA, without live range analysis
 
-/*
 CMMC_MIR_NAMESPACE_BEGIN
 
-static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCache& infoIPRA) {
-    auto& dataLayout = target.getDataLayout();
-
+static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
     struct VirtualRegUseInfo final {
         std::unordered_set<MIRBasicBlock*> uses;
         std::unordered_set<MIRBasicBlock*> defs;
@@ -43,12 +42,12 @@ static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCach
     std::unordered_map<MIROperand, VirtualRegUseInfo, MIROperandHasher> useDefInfo;
 
     for(auto& block : mfunc.blocks()) {
-        forEachUseOperands(*block, [&](MIRInst&, MIROperand& op) {
-            if(op.addressSpace == AddressSpace::VirtualReg)
+        forEachUseOperands(*block, ctx, [&](MIRInst&, MIROperand& op) {
+            if(isOperandVReg(op))
                 useDefInfo[op].uses.insert(block.get());
         });
-        forEachDefOperands(*block, [&](MIROperand& op) {
-            if(op.addressSpace == AddressSpace::VirtualReg)
+        forEachDefOperands(*block, ctx, [&](MIROperand& op) {
+            if(isOperandVReg(op))
                 useDefInfo[op].defs.insert(block.get());
         });
     }
@@ -57,8 +56,6 @@ static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCach
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> stackMap;
     std::unordered_set<MIROperand, MIROperandHasher> crossBlockSpilledStackObjects;
 
-    auto& vreg = mfunc.pools().pools[AddressSpace::VirtualReg];
-    auto& stack = mfunc.pools().pools[AddressSpace::Stack];
     {
         for(auto& [reg, info] : useDefInfo) {
             if(info.uses.empty() || info.defs.empty()) {
@@ -68,26 +65,20 @@ static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCach
                 continue;  // local
             }
 
-            const auto storage = stack.allocate(vreg.getType(reg));
+            const auto size = getOperandSize(reg.type());
+            const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             stackMap[reg] = storage;
             crossBlockSpilledStackObjects.insert(storage);
         }
     }
 
     for(auto& block : mfunc.blocks()) {
-        auto& usedStackObjects = block->usedStackObjects();
-        for(auto [v, s] : stackMap) {
-            CMMC_UNUSED(v);
-            assert(s.addressSpace == AddressSpace::Stack);
-            usedStackObjects.insert(s);
-        }
-
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> localStackMap;
         std::unordered_map<MIROperand, std::vector<MIROperand>, MIROperandHasher> currentMap;
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> physMap;
-        std::unordered_map<uint32_t, std::queue<uint32_t>> allocationQueue;
+        std::unordered_map<uint32_t, std::queue<MIROperand>> allocationQueue;
 
-        const auto usage = target.newRegisterUsage();
+        MultiClassRegisterSelector selector{ *ctx.registerInfo };
 
         const auto getStackStorage = [&](const MIROperand& op) {
             if(const auto iter = localStackMap.find(op); iter != localStackMap.cend()) {
@@ -97,9 +88,8 @@ static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCach
             if(const auto iter = stackMap.find(op); iter != stackMap.cend()) {
                 return ref = iter->second;
             }
-            const auto storage = stack.allocate(vreg.getType(op));
-            assert(storage.addressSpace == AddressSpace::Stack);
-            usedStackObjects.insert(storage);
+            const auto size = getOperandSize(op.type());
+            const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             return ref = storage;
         };
         const auto getDataMap = [&](const MIROperand& op) -> std::vector<MIROperand>& {
@@ -117,264 +107,220 @@ static void fastAllocate(MIRFunction& mfunc, const Target& target, IPRAUsageCach
             const auto next = std::next(iter);
 
             const auto evictVReg = [&](const MIROperand& operand) {
-                assert(operand.addressSpace == AddressSpace::VirtualReg);
+                assert(isOperandVReg(operand));
                 auto& map = getDataMap(operand);
-                MIROperand physReg = unusedOperand;
+                MIROperand isaReg;
                 bool alreadyInStack = false;
                 for(auto& reg : map) {
-                    if(reg.addressSpace == AddressSpace::Stack) {
+                    if(isStackObject(reg.reg())) {
                         alreadyInStack = true;
                     }
-                    if(reg.addressSpace >= AddressSpace::Custom)
-                        physReg = reg;
+                    if(isISAReg(reg.reg()))
+                        isaReg = reg;
                 }
-                if(physReg == unusedOperand)
+                if(isaReg.isUnused())
                     return;
-                physMap.erase(physReg);
+                physMap.erase(isaReg);
                 const auto stackStorage = getStackStorage(operand);
                 if(!alreadyInStack) {
-                    const auto size = vreg.getType(operand)->getSize(dataLayout);
-                    instructions.insert(
-                        iter, CopyMInst{ physReg, false, 0U, stackStorage, true, 0U, static_cast<uint32_t>(size), false });
+                    // spill to stack
+                    instructions.insert(iter, MIRInst{ InstStoreRegToStack }.setOperand<0>(isaReg).setOperand<1>(stackStorage));
                 }
                 map = { stackStorage };
             };
 
-            //const auto evictPhysReg = [&](const MIROperand& operand) {
-            //    assert(operand.addressSpace >= AddressSpace::Custom);
-            //    if(const auto iter = physMap.find(operand); iter != physMap.cend())
-            //        evictVReg(iter->second);
-            //};
+            const auto getFreeReg = [&](const MIROperand& operand) -> MIROperand {
+                const auto regClass = ctx.registerInfo->getAllocationClass(operand.type());
+                auto& q = allocationQueue[regClass];  // TODO: move to spill strategy?
+                MIROperand isaReg;
+                if(auto reg = selector.getFreeRegister(operand.type()); !reg.isUnused()) {
+                    isaReg = reg;
+                } else {
+                    // evict
+                    isaReg = q.front();
+                    q.pop();
+                    selector.markAsDiscarded(isaReg);
+                    if(auto it = physMap.find(isaReg); it != physMap.cend())
+                        evictVReg(it->second);
+                }
 
-const auto getFreeReg = [&](const MIROperand& operand) -> MIROperand {
-    const auto type = vreg.getType(operand);
-    const auto regClass = usage->getRegisterClass(type);
-    auto& q = allocationQueue[regClass];
-    MIROperand physReg;
-    if(auto reg = usage->getFreeRegister(regClass); reg != unusedOperand) {
-        physReg = reg;
-    } else {
-        // evict
-        physReg = MIROperand{ regClass, q.front() };
-        q.pop();
-        usage->markAsDiscarded(physReg);
-        if(auto it = physMap.find(physReg); it != physMap.cend())
-            evictVReg(it->second);
-    }
+                q.push(isaReg);
+                physMap[isaReg] = operand;
+                selector.markAsUsed(isaReg);
+                return isaReg;
+            };
 
-    q.push(physReg.id);
-    physMap[physReg] = operand;
-    usage->markAsUsed(physReg);
-    return physReg;
-};
+            const auto use = [&](MIROperand& op) {
+                if(!isOperandVReg(op))
+                    return;
 
-const auto use = [&](MIROperand& op) {
-    if(op.addressSpace != AddressSpace::VirtualReg)
-        return;
+                auto& map = getDataMap(op);
+                MIROperand stackStorage;
+                for(auto& reg : map) {
+                    if(!isStackObject(reg.reg())) {
+                        // loaded
+                        op = reg;
+                        return;
+                    }
+                    stackStorage = reg;
+                }
+                // load from stack
+                assert(!stackStorage.isUnused());
+                const auto reg = getFreeReg(op);
+                instructions.insert(iter, MIRInst{ InstLoadRegFromStack }.setOperand<0>(reg).setOperand<1>(stackStorage));
+                map.push_back(reg);
+                op = reg;
+            };
 
-    auto& map = getDataMap(op);
-    MIROperand stackStorage = unusedOperand;
-    for(auto& reg : map) {
-        if(reg.addressSpace != AddressSpace::Stack) {
-            // loaded
-            op = reg;
-            return;
+            const auto def = [&](MIROperand& op) {
+                if(!isOperandVReg(op))
+                    return;
+
+                if(stackMap.count(op))
+                    dirtyVRegs.insert(op);
+
+                auto& map = getDataMap(op);
+                MIROperand stackStorage;
+                for(auto& reg : map) {
+                    if(!isStackObject(reg.reg())) {
+                        op = reg;
+                        map = { reg };  // mark other storage dirty
+                        return;
+                    }
+                    stackStorage = reg;
+                }
+                const auto reg = getFreeReg(op);
+                map = { reg };
+                op = reg;
+            };
+
+            const auto beforeBranch = [&]() {
+                // write back all dirty vregs into stack slots before branch
+                for(auto dirty : dirtyVRegs) {
+                    evictVReg(dirty);
+                }
+            };
+
+            auto& inst = *iter;
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse)
+                    use(inst.getOperand(idx));
+            }
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                std::vector<MIROperand> savedVRegs;
+                const IPRAInfo* calleeUsage = nullptr;
+                if(auto symbol = inst.getOperand(0).reloc()) {
+                    calleeUsage = infoIPRA.query(symbol);
+                }
+                for(auto& [p, v] : physMap) {
+                    if(ctx.frameInfo.isCallerSaved(p)) {
+                        if(calleeUsage && !calleeUsage->count(p))
+                            continue;
+                        savedVRegs.push_back(v);
+                    }
+                }
+                for(auto v : savedVRegs)
+                    evictVReg(v);
+            }
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef)
+                    def(inst.getOperand(idx));
+            }
+            if(requireFlag(instInfo.getInstFlag(), InstFlagBranch)) {
+                beforeBranch();
+            }
+
+            iter = next;
         }
-        stackStorage = reg;
-    }
-    // load from stack
-    assert(stackStorage != unusedOperand);
-    const auto reg = getFreeReg(op);
-    const auto size = vreg.getType(op)->getSize(dataLayout);
-    instructions.insert(iter, CopyMInst{ stackStorage, true, 0U, reg, false, 0U, static_cast<uint32_t>(size), false });
-    map.push_back(reg);
-    op = reg;
-};
 
-const auto def = [&](MIROperand& op) {
-    if(op.addressSpace != AddressSpace::VirtualReg)
-        return;
+        /*
+        // remove unused stack objects and dead stores
+        std::unordered_map<MIROperand, std::list<MIRInst>::iterator, MIROperandHasher> usesOfLocals;
+        const auto updateUse = [&](std::list<MIRInst>::iterator iter, const MIROperand& obj) {
+            if(obj.addressSpace != AddressSpace::Stack)
+                return;
+            if(!usedStackObjects.count(obj) || stack.getType(obj)->isStackStorage() || stack.getMetadata(obj) ||
+               crossBlockSpilledStackObjects.count(obj))
+                return;
+            // local stack object for splled regs
+            if(auto it = usesOfLocals.find(obj); it != usesOfLocals.cend()) {
+                it->second = instructions.end();  // multiple uses
+            } else {
+                usesOfLocals.emplace(obj, iter);
+            }
+        };
 
-    if(stackMap.count(op))
-        dirtyVRegs.insert(op);
-
-    auto& map = getDataMap(op);
-    MIROperand stackStorage = unusedOperand;
-    for(auto& reg : map) {
-        if(reg.addressSpace != AddressSpace::Stack) {
-            op = reg;
-            map = { reg };  // mark other storage dirty
-            return;
-        }
-        stackStorage = reg;
-    }
-    const auto reg = getFreeReg(op);
-    map = { reg };
-    op = reg;
-};
-
-const auto beforeBranch = [&]() {
-    // write back into stack slots before branch
-    for(auto dirty : dirtyVRegs) {
-        evictVReg(dirty);
-    }
-};
-
-std::visit(Overload{ [&](CopyMInst& inst) {
-                        use(inst.src);
-                        if(inst.indirectDst)
-                            use(inst.dst);
-                        else
-                            def(inst.dst);
-                    },
-                     [&](ConstantMInst& inst) { def(inst.dst); }, [&](GlobalAddressMInst& inst) { def(inst.dst); },
-                     [&](UnaryArithmeticMInst& inst) {
-                         use(inst.src);
-                         def(inst.dst);
-                     },
-                     [&](BinaryArithmeticMInst& inst) {
-                         use(inst.lhs);
-                         use(inst.rhs);
-                         def(inst.dst);
-                     },
-                     [&](ArithmeticIntrinsicMInst& inst) {
-                         for(auto& op : inst.src)
-                             use(op);
-                         def(inst.dst);
-                     },
-                     [&](CompareMInst& inst) {
-                         use(inst.lhs);
-                         use(inst.rhs);
-                         def(inst.dst);
-                     },
-                     [&](BranchCompareMInst& inst) {
-                         use(inst.lhs);
-                         use(inst.rhs);
-                         beforeBranch();
-                     },
-                     [&](BranchMInst&) { beforeBranch(); },
-                     [&](CallMInst& inst) {
-                         // TODO: move to PEI pass
-                         // caller saved
-                         std::vector<MIROperand> savedVRegs;
-                         const IPRAInfo* calleeUsage = nullptr;
-                         if(auto symbol = std::get_if<MIRRelocable*>(&inst.callee)) {
-                             calleeUsage = infoIPRA.query(*symbol);
-                         }
-                         for(auto& [p, v] : physMap) {
-                             if(target.isCallerSaved(p)) {
-                                 if(calleeUsage && !calleeUsage->count(p))
-                                     continue;
-                                 savedVRegs.push_back(v);
-                             }
-                         }
-                         for(auto v : savedVRegs)
-                             evictVReg(v);
-
-                         def(inst.dst);
-                     },
-                     [&](RetMInst& inst) { use(inst.retVal); },
-                     [&](ControlFlowIntrinsicMInst& inst) {
-                         use(inst.src);
-                         def(inst.dst);
-                     },
-                     [](auto&) {} },
-           *iter);
-
-iter = next;
-}
-
-// remove unused stack objects and dead stores
-std::unordered_map<MIROperand, std::list<MIRInst>::iterator, MIROperandHasher> usesOfLocals;
-const auto updateUse = [&](std::list<MIRInst>::iterator iter, const MIROperand& obj) {
-    if(obj.addressSpace != AddressSpace::Stack)
-        return;
-    if(!usedStackObjects.count(obj) || stack.getType(obj)->isStackStorage() || stack.getMetadata(obj) ||
-       crossBlockSpilledStackObjects.count(obj))
-        return;
-    // local stack object for splled regs
-    if(auto it = usesOfLocals.find(obj); it != usesOfLocals.cend()) {
-        it->second = instructions.end();  // multiple uses
-    } else {
-        usesOfLocals.emplace(obj, iter);
-    }
-};
-
-for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
-    auto& inst = *iter;
-    if(std::holds_alternative<CopyMInst>(inst)) {
-        const auto& copy = std::get<CopyMInst>(inst);
-        updateUse(iter, copy.src);
-        updateUse(iter, copy.dst);
-    }
-}
-
-for(auto& [obj, iter] : usesOfLocals)
-    if(iter != instructions.cend()) {
-        usedStackObjects.erase(obj);  // remove unused stack objects
-        instructions.erase(iter);     // remove dead stores
-    }
-
-// remove unused stack objects
-std::vector<MIROperand> toRemove;
-for(auto obj : usedStackObjects) {
-    if(!stack.getType(obj)->isStackStorage()         // not stack storage
-       && !stack.getMetadata(obj)                    // not local alloca
-       && !crossBlockSpilledStackObjects.count(obj)  // not cross-block vreg
-       && !usesOfLocals.count(obj)                   // not used
-    ) {
-        toRemove.push_back(obj);
-    }
-}
-for(auto obj : toRemove)
-    usedStackObjects.erase(obj);
-
-assert(block->verify(std::cerr, true));
-}
-
-// callee saved
-std::unordered_map<MIROperand, MIROperand, MIROperandHasher> overwrited;
-for(auto& block : mfunc.blocks())
-    forEachDefOperands(*block, [&](const MIROperand& op) {
-        if(op == unusedOperand)
-            return;
-        if(op.addressSpace >= AddressSpace::Custom && target.isCalleeSaved(op)) {
-            if(!overwrited.count(op)) {
-                const auto storage = stack.allocate(IntegerType::get(target.getRegisterBitWidth(op.addressSpace)));
-                overwrited.emplace(op, storage);
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
+            if(std::holds_alternative<CopyMInst>(inst)) {
+                const auto& copy = std::get<CopyMInst>(inst);
+                updateUse(iter, copy.src);
+                updateUse(iter, copy.dst);
             }
         }
-    });
 
-for(auto& block : mfunc.blocks()) {
-    auto& instructions = block->instructions();
-    for(auto [p, s] : overwrited) {
-        CMMC_UNUSED(p);
-        assert(s.addressSpace == AddressSpace::Stack);
-        block->usedStackObjects().insert(s);
+        for(auto& [obj, iter] : usesOfLocals)
+            if(iter != instructions.cend()) {
+                usedStackObjects.erase(obj);  // remove unused stack objects
+                instructions.erase(iter);     // remove dead stores
+            }
+
+        // remove unused stack objects
+        std::vector<MIROperand> toRemove;
+        for(auto obj : usedStackObjects) {
+            if(!stack.getType(obj)->isStackStorage()         // not stack storage
+               && !stack.getMetadata(obj)                    // not local alloca
+               && !crossBlockSpilledStackObjects.count(obj)  // not cross-block vreg
+               && !usesOfLocals.count(obj)                   // not used
+            ) {
+                toRemove.push_back(obj);
+            }
+        }
+        for(auto obj : toRemove)
+            usedStackObjects.erase(obj);
+        */
+
+        assert(block->verify(std::cerr, ctx));
     }
 
-    if(&block == &mfunc.blocks().front()) {
-        // backup
-        for(auto [p, s] : overwrited) {
-            const auto size = target.getRegisterBitWidth(p.addressSpace) / 8U;
-            instructions.push_front(CopyMInst{ p, false, 0, s, true, 0, static_cast<uint32_t>(size), false });
-        }
-    } else {
-        // restore
-        auto& terminator = instructions.back();
-        if(std::holds_alternative<RetMInst>(terminator)) {
-            const auto pos = std::prev(instructions.end());
-            for(auto [p, s] : overwrited) {
-                const auto size = target.getRegisterBitWidth(p.addressSpace) / 8U;
-                instructions.insert(pos, CopyMInst{ s, true, 0, p, false, 0, static_cast<uint32_t>(size), false });
+    // TODO: move PEI
+    // callee saved
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> overwrited;
+    for(auto& block : mfunc.blocks())
+        forEachDefOperands(*block, ctx, [&](const MIROperand& op) {
+            if(op.isUnused())
+                return;
+            if(op.isReg() && isISAReg(op.reg()) && ctx.frameInfo.isCalleeSaved(op)) {
+                if(!overwrited.count(op)) {
+                    const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(op.type()));
+                    const auto alignment = size;
+                    const auto storage = mfunc.addStackObject(ctx, size, alignment, 0, StackObjectUsage::CalleeSaved);
+                    overwrited.emplace(op, storage);
+                }
+            }
+        });
+
+    for(auto& block : mfunc.blocks()) {
+        auto& instructions = block->instructions();
+        if(&block == &mfunc.blocks().front()) {
+            // backup
+            for(auto [p, s] : overwrited)
+                instructions.push_front(MIRInst{ InstStoreRegToStack }.setOperand<0>(p).setOperand<1>(s));
+        } else {
+            // restore
+            auto& terminator = instructions.back();
+            auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
+            if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
+                const auto pos = std::prev(instructions.end());
+                for(auto [p, s] : overwrited) {
+                    instructions.insert(pos, MIRInst{ InstLoadRegFromStack }.setOperand<0>(p).setOperand<1>(s));
+                }
             }
         }
     }
-}
 }
 
 CMMC_REGISTER_ALLOCATOR("fast", fastAllocate);
 
 CMMC_MIR_NAMESPACE_END
-*/

@@ -14,14 +14,13 @@
 
 // Three-Address Code
 
-#include "cmmc/CodeGen/FrameInfo.hpp"
-#include "cmmc/Config.hpp"
-#include "cmmc/IR/Function.hpp"
 #include <TAC/ISelInfoDecl.hpp>
 #include <TAC/InstInfoDecl.hpp>
 #include <TAC/ScheduleModelDecl.hpp>
+#include <cmmc/CodeGen/FrameInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
@@ -108,17 +107,10 @@ public:
     [[nodiscard]] const TargetISelInfo& getISelInfo() const noexcept override {
         return TAC::getTACISelInfo();
     }
-    bool builtinRA(MIRFunction& mfunc, CodeGenContext& ctx) const override {
-        CMMC_UNUSED(mfunc);
-        CMMC_UNUSED(ctx);
-        return true;
+    [[nodiscard]] const TargetRegisterInfo* getRegisterInfo() const noexcept override {
+        return nullptr;
     }
-    bool builtinSA(MIRFunction& mfunc, CodeGenContext& ctx) const override {
-        CMMC_UNUSED(mfunc);
-        CMMC_UNUSED(ctx);
-        return true;
-    }
-    void emitAssembly(const MIRModule& module, std::ostream& out) const override;
+    void emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const override;
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
         switch(inst) {
             case InstructionID::UDiv:
@@ -185,7 +177,8 @@ public:
 
 CMMC_TARGET("tac", TACTarget);
 
-void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out) const {
+void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const {
+    CMMC_UNUSED(runtime);
     auto label = String::get("label");
 
     for(auto& global : module.globals()) {

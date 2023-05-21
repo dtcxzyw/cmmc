@@ -16,6 +16,7 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cstdint>
 #include <optional>
 
@@ -60,7 +61,7 @@ void MIRFunction::dump(std::ostream& out, const CodeGenContext& ctx) const {
     uint32_t idx = 0;
     for(auto& [ref, obj] : mStackObjects) {
         out << "  s" << (ref.reg() ^ stackObjectBegin) << " size = " << obj.size << " align = " << obj.alignment
-            << " offset = " << obj.offset << (obj.fixed ? "(fixed)" : "") << '\n';
+            << " offset = " << obj.offset << " usage =" << enumName(obj.usage) << '\n';
         ++idx;
     }
     out << '\n';
@@ -95,13 +96,11 @@ void MIRDataStorage::dump(std::ostream& out, const CodeGenContext&) const {
                    val);
 }
 
-MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType,
-                                       std::optional<int32_t> fixedOffset) {
-    auto ref = MIROperand::asStackObject(ctx.nextId(), ptrType);
-    if(fixedOffset.has_value())
-        mStackObjects.emplace(ref, StackObject{ size, alignment, *fixedOffset, true });
-    else
-        mStackObjects.emplace(ref, StackObject{ size, alignment, 0, false });
+MIROperand MIRFunction::addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, int32_t offset,
+                                       StackObjectUsage usage) {
+    assert(alignment != 0);
+    auto ref = MIROperand::asStackObject(ctx.nextId(), OperandType::Special);
+    mStackObjects.emplace(ref, StackObject{ size, alignment, offset, usage });
     return ref;
 }
 

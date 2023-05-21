@@ -55,6 +55,7 @@ public:
     [[nodiscard]] bool isLegalGenericInst(uint32_t opcode) const override;
     bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const override;
     void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const override;
+    void legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op, const StackObject& obj) const override;
 };
 
 const TargetISelInfo& get{{target}}ISelInfo() {

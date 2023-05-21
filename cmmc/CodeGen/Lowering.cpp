@@ -189,7 +189,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
                 const auto type = inst->getType()->as<PointerType>()->getPointee();
                 const auto storage =
                     mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
-                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), ctx.getPtrType(), std::nullopt);
+                                         static_cast<uint32_t>(type->getAlignment(dataLayout)), 0, StackObjectUsage::Local);
                 storageMap.emplace(inst, storage);
                 const auto addr = ctx.newVReg(ctx.getPtrType());
                 ctx.emitInst(InstLoadStackObjectAddr).setOperand<0>(addr).setOperand<1>(storage);
@@ -335,6 +335,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                         target.getInstInfo(),
                         target.getISelInfo(),
                         target.getFrameInfo(),
+                        target.getRegisterInfo(),
                         true };
 
     auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
@@ -352,7 +353,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         return false;
     };
     CMMC_UNUSED(hasCall);
-    CMMC_UNUSED(infoIPRA);
 
     for(auto func : cgscc.getOrder()) {
         // func->dump(std::cerr, Noop{});
@@ -404,38 +404,39 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "ICF & Tail duplication"sv };
             // tail duplication as the small block inliner does in CMMC IR
             tailDuplication(mfunc, ctx);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
             identicalCodeFolding(mfunc, ctx);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
 
             ctx.scheduleModel.peepholeOpt(mfunc, ctx);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
             while(genericPeepholeOpt(mfunc, ctx))
                 ;
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 6: pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
             Stage stage{ "Pre-RA scheduling"sv };
             schedule(mfunc, ctx, true);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 7: register allocation
-        bool useBuiltinRA = false;
-        CMMC_UNUSED(useBuiltinRA);
-        {
+        if(ctx.registerInfo) {
             Stage stage{ "Register allocation"sv };
-            if(!target.builtinRA(mfunc, ctx))
-                assignRegisters(mfunc, target, infoIPRA);  // vr -> GPR/FPR/Stack
-            else
-                useBuiltinRA = true;
+            assignRegisters(mfunc, ctx, infoIPRA);  // vr -> GPR/FPR/Stack
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 8: legalize stack objects, stack -> sp
-        {
+        if(ctx.registerInfo) {
             Stage stage{ "Stack object allocation"sv };
-            if(!target.builtinSA(mfunc, ctx))
-                allocateStackObjects(mfunc, ctx, hasCall(func), optLevel);
+            allocateStackObjects(mfunc, ctx, hasCall(func), optLevel);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 9: post-RA scheduling, minimize latency
@@ -458,6 +459,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "Post peephole optimization"sv };
             ctx.scheduleModel.postPeepholeOpt(mfunc, ctx);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
@@ -465,20 +467,20 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "CFG Simplification"sv };
             simplifyCFG(mfunc, ctx);
             ctx.requireOneTerminator = false;
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };
             postLegalizeFunc(mfunc, ctx);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
 
-        /*
         // add to IPRA cache
-        if(!useBuiltinRA)
-            infoIPRA.add(target, symbol, mfunc);
-        */
+        // if(ctx.registerInfo)
+        //    infoIPRA.add(symbol, mfunc);
     }
 }
 

@@ -143,8 +143,7 @@ void removeIdentityCopies(MIRFunction& func) {
 }
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText, const std::function<void(const MIRFunction&)>& functionDumper) {
-    // auto& target = ctx.target;
+                  const std::function<void()>& emitText) {
     //  TODO: rodata/bss
 
     out << ".data\n"sv;
@@ -168,8 +167,22 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
     emitText();
     for(auto& global : module.globals()) {
         if(global->reloc->isFunc()) {
+            auto& func = dynamic_cast<MIRFunction&>(*global->reloc);
+            if(func.blocks().empty())
+                continue;
             dumpSymbol(*global);
-            functionDumper(dynamic_cast<MIRFunction&>(*global->reloc));
+            for(auto& block : func.blocks()) {
+                if(&block != &func.blocks().front()) {
+                    block->dumpAsTarget(out);
+                    out << ":\n";
+                }
+                for(auto& inst : block->instructions()) {
+                    out << '\t';
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    instInfo.print(out, inst, false);
+                    out << '\n';
+                }
+            }
         }
     }
 }
@@ -344,6 +357,14 @@ void applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
         } else
             break;
     }
+}
+
+[[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location) {
+    std::cerr << "Failed to legalizing inst: ";
+    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+    instInfo.print(std::cerr, inst, true);
+    std::cerr << '\n';
+    reportNotImplemented(location);
 }
 
 CMMC_MIR_NAMESPACE_END

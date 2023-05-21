@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -36,7 +37,6 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-/*
 struct StackObjectInterval final {
     uint32_t begin;
     uint32_t end;
@@ -77,28 +77,29 @@ calcIntervalPartition(std::vector<std::pair<MIROperand, StackObjectInterval>>& i
         }
     }
 
+    // std::cerr << "begin" << std::endl;
 
-    //std::cerr << "begin" << std::endl;
+    // for(auto& [operand, interval] : intervals) {
+    //     std::cerr << 'm' << operand.id << ' ' << interval.begin << '-' << interval.end << ' ' << color.at(operand) <<
+    //     std::endl;
+    // }
 
-    //for(auto& [operand, interval] : intervals) {
-    //    std::cerr << 'm' << operand.id << ' ' << interval.begin << '-' << interval.end << ' ' << color.at(operand) << std::endl;
-    //}
+    // std::cerr << "end" << std::endl;
 
-    //std::cerr << "end" << std::endl;
-
-
-return { colorCount, std::move(color) };
+    return { colorCount, std::move(color) };
 }
 
-static std::unordered_map<MIROperand, uint32_t, MIROperandHasher>
-renameStackObjects(MIRFunction& func, const VirtualRegPool& stack, const DataLayout& dataLayout, OptimizationLevel optLevel) {
+static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObjects(MIRFunction& func,
+                                                                                     OptimizationLevel optLevel) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> mapping;  // same size & alignment
-
+    CMMC_UNUSED(optLevel);
+    CMMC_UNUSED(calcIntervalPartition);
+    /*
     if(optLevel >= OptimizationLevel::O1) {
         const auto getStorageKey = [&](const MIROperand& op) {
-            const auto type = stack.getType(op);
-            const auto size = type->getSize(dataLayout);
-            const auto alignment = type->getAlignment(dataLayout);
+            const auto type = op.type();
+            const auto size = getOperandSize(type);
+            const auto alignment = size;
             const auto key = static_cast<uint32_t>(size) * 1024 + static_cast<uint32_t>(alignment);
             return key;
         };
@@ -278,175 +279,123 @@ renameStackObjects(MIRFunction& func, const VirtualRegPool& stack, const DataLay
 
         newMapping.swap(mapping);
     } else {
-        // unique
-        uint32_t idx = 0;
-        for(auto& block : func.blocks()) {
-            for(auto& stackObject : block->usedStackObjects()) {
-                if(mapping.count(stackObject))
-                    continue;
-                assert(stackObject.addressSpace == AddressSpace::Stack);
-                const auto type = stack.getType(stackObject);
-                if(!type->isStackStorage()) {
-                    mapping.emplace(stackObject, idx++);
-                }
-            }
+    */
+    // unique
+    uint32_t idx = 0;
+    for(auto& [ref, stackObject] : func.stackObjects()) {
+        assert(isStackObject(ref.reg()));
+        const auto usage = stackObject.usage;
+        if(usage != StackObjectUsage::Argument && usage != StackObjectUsage::CalleeArgument) {
+            mapping.emplace(ref, idx++);
         }
     }
+    //}
 
     return mapping;
 }
 
-void allocateStackObjects(MIRFunction& func, const Target& target, bool hasFuncCall, OptimizationLevel optLevel) {
+// Stack Layout
+// ------------------------ <----- Last sp
+// Locals & Spliis
+// ------------------------
+// Return Address
+// ------------------------
+// Callee Arguments
+// ------------------------ <----- Current sp
+
+void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel) {
     // func.dump(std::cerr, target);
 
-    std::unordered_map<MIROperand, size_t, MIROperandHasher> usedStackObjects;
-    size_t allocationBase = 0;
+    int32_t allocationBase = 0;
+    const auto spAlignment = static_cast<int32_t>(ctx.frameInfo.getStackPointerAlignment());
 
-    const auto alignTo = [&](size_t alignment) { allocationBase = (allocationBase + alignment - 1) / alignment * alignment; };
+    const auto alignTo = [&](int32_t alignment) { allocationBase = (allocationBase + alignment - 1) / alignment * alignment; };
 
-    auto& dataLayout = target.getDataLayout();
-    auto& stack = func.pools().pools[AddressSpace::Stack];
+    auto& dataLayout = ctx.target.getDataLayout();
 
-    // args & saved regs
-    for(auto& block : func.blocks()) {
-        for(auto& stackObject : block->usedStackObjects()) {
-            assert(stackObject.addressSpace == AddressSpace::Stack);
-            const auto type = stack.getType(stackObject);
-            if(type->isStackStorage()) {
-                const auto size = type->getSize(dataLayout);
-                allocationBase = std::max(allocationBase, size);
-                usedStackObjects.emplace(stackObject, 0U);
-            }
+    // callee arguments
+    for(auto& [ref, stackObject] : func.stackObjects()) {
+        assert(isStackObject(ref.reg()));
+        if(stackObject.usage == StackObjectUsage::CalleeArgument) {
+            allocationBase = std::max(allocationBase, stackObject.offset + static_cast<int32_t>(stackObject.size));
         }
     }
 
-    alignTo(target.getStackPointerAlignment());
+    alignTo(spAlignment);
     // ra
-    const auto raOffset = allocationBase;
-    if(hasFuncCall) {
-        allocationBase += dataLayout.getPointerSize();
-        alignTo(target.getStackPointerAlignment());
+    std::optional<int32_t> raOffset;
+    if(isNonLeafFunc) {
+        raOffset = allocationBase;
+        allocationBase += static_cast<int32_t>(dataLayout.getPointerSize());
+        alignTo(spAlignment);
     }
 
     // locals
+    // TODO: put frequently used locals in the bottom?
     {
-        const auto mapping = renameStackObjects(func, stack, dataLayout, optLevel);
-        std::unordered_map<uint32_t, size_t> slots;
-        std::unordered_map<uint32_t, bool> isPrivate;
+        const auto mapping = renameStackObjects(func, optLevel);
+        std::unordered_map<uint32_t, int32_t> slots;
+        // std::unordered_map<uint32_t, bool> isPrivate;
 
         for(auto& [stackObject, color] : mapping) {
+            auto& obj = func.stackObjects().at(stackObject);
             if(auto iter = slots.find(color); iter != slots.cend()) {
-                usedStackObjects.emplace(stackObject, iter->second);
+                obj.offset = iter->second;
             } else {
-                const auto type = stack.getType(stackObject);
-                const auto size = type->getSize(dataLayout);
-                alignTo(type->getAlignment(dataLayout));
+                alignTo(static_cast<int32_t>(obj.alignment));
                 slots.emplace(color, allocationBase);
-                usedStackObjects.emplace(stackObject, allocationBase);
-                allocationBase += size;
-                isPrivate[color] = true;
+                obj.offset = allocationBase;
+                allocationBase += static_cast<int32_t>(obj.size);
+                // isPrivate[color] = true;
             }
-            // TODO: stack address leak analysis
+            /*
+            // TODO: stack address leak analysis?
             if(stack.getMetadata(stackObject)) {
                 isPrivate[color] = false;
             }
+            */
         }
 
+        /*
         auto& privateStackOffsets = func.privateStackOffsets();
         for(auto [color, attr] : isPrivate)
             if(attr)
                 privateStackOffsets.insert(static_cast<int32_t>(slots.at(color)));
+        */
     }
 
-    const auto sp = target.getStackPointer();
-    const auto replaceStack = [&](MIROperand& op, int32_t& offset) {
-        if(op == sp) {
-            // params
-            offset += static_cast<int32_t>(allocationBase);
-        } else {
-            offset += static_cast<int32_t>(usedStackObjects.at(op));
-            op = sp;
+    alignTo(spAlignment);
+    const auto stackSize = allocationBase;
+    for(auto& [ref, stackObject] : func.stackObjects()) {
+        assert(isStackObject(ref.reg()));
+        if(stackObject.usage == StackObjectUsage::Argument) {
+            stackObject.offset += stackSize;
         }
-    };
+    }
 
     for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                auto& copy = std::get<CopyMInst>(inst);
-
-                if(copy.src.addressSpace == AddressSpace::Stack) {
-                    replaceStack(copy.src, copy.srcOffset);
-                } else if(copy.dst.addressSpace == AddressSpace::Stack) {
-                    replaceStack(copy.dst, copy.dstOffset);
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(auto& op = inst.getOperand(idx); isOperandStackObject(op)) {
+                    ctx.iselInfo.legalizeInstWithStackOperand(inst, ctx, op, func.stackObjects().at(op));
                 }
             }
         }
     }
 
     // prolog & epilog
-    alignTo(target.getStackPointerAlignment());
+    ctx.frameInfo.emitPostSAEpilogue(*func.blocks().front(), ctx, stackSize, raOffset);
 
-    auto& constantPool = func.pools().pools[AddressSpace::Constant];
-    const auto sizeType = IntegerType::get(static_cast<uint32_t>(dataLayout.getPointerSize()) * 8U);
-    const auto offset = constantPool.allocate(sizeType);
-    constantPool.getMetadata(offset) = ConstantInteger::get(sizeType, static_cast<intmax_t>(allocationBase));
-    const auto revOffset = constantPool.allocate(sizeType);
-    constantPool.getMetadata(revOffset) = ConstantInteger::get(sizeType, -static_cast<intmax_t>(allocationBase));
-
-    const auto ra = target.getReturnAddress();
     for(auto& block : func.blocks()) {
-        auto& instructions = block->instructions();
-        if(&block == &func.blocks().front()) {
-            // sp -= allocationBase
-            instructions.push_front(BinaryArithmeticMInst{ GMIRInstID::Add, sp, revOffset, sp });
-            if(hasFuncCall) {
-                // store $ra
-                instructions.insert(std::next(instructions.cbegin()),
-                                    CopyMInst{ ra, false, 0, sp, true, static_cast<int32_t>(raOffset),
-                                               static_cast<uint32_t>(dataLayout.getPointerSize()), false });
-            }
-        }
         const auto& terminator = block->instructions().back();
-        if(std::holds_alternative<RetMInst>(terminator)) {
-            if(hasFuncCall) {
-                // restore $ra
-                instructions.insert(std::prev(instructions.end()),
-                                    CopyMInst{ sp, true, static_cast<int32_t>(raOffset), ra, false, 0,
-                                               static_cast<uint32_t>(dataLayout.getPointerSize()), false });
-            }
-            // sp += allocationBase
-            instructions.insert(std::prev(instructions.end()), BinaryArithmeticMInst{ GMIRInstID::Add, sp, offset, sp });
+        auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
+        if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
+            ctx.frameInfo.emitPostSAEpilogue(*block, ctx, stackSize, raOffset);
         }
     }
 
-    // convert copy[reg] dst, sp+k to addi dst, sp, k
-    for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                auto& copy = std::get<CopyMInst>(inst);
-                if(!copy.indirectDst && !copy.indirectSrc && copy.srcOffset != 0 && copy.src == sp) {
-                    const auto spOffset = constantPool.allocate(sizeType);
-                    constantPool.getMetadata(spOffset) = ConstantInteger::get(sizeType, static_cast<intmax_t>(copy.srcOffset));
-                    inst = BinaryArithmeticMInst{ GMIRInstID::Add, sp, spOffset, copy.dst };
-                }
-            }
-        }
-    }
-
-    eliminateStackLoads(func, target);
-
-    // discard stack object usage tracking
-    for(auto& block : func.blocks())
-        block->usedStackObjects() = {};
-}
-*/
-
-void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool hasFuncCall, OptimizationLevel optLevel) {
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(ctx);
-    CMMC_UNUSED(hasFuncCall);
-    CMMC_UNUSED(optLevel);
-    reportNotImplemented(CMMC_LOCATION());
+    // eliminateStackLoads(func, target);
 }
 
 CMMC_MIR_NAMESPACE_END

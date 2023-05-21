@@ -35,7 +35,7 @@ public:
     const IPRAInfo* query(MIRRelocable* calleeFunc) const;
 };
 
-using RegisterAllocFunc = void (*)(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
+using RegisterAllocFunc = void (*)(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& cache);
 
 class RegisterAllocatorRegistry final {
     std::unordered_map<std::string_view, RegisterAllocFunc> mMethods;
@@ -54,6 +54,6 @@ public:
         return 0;                                               \
     }();
 
-void assignRegisters(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache);
+void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& cache);
 
 CMMC_MIR_NAMESPACE_END

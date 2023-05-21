@@ -55,6 +55,8 @@ public:
     static bool expandCmp(MIRInst& inst, ISelContext& ctx);
     virtual bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const = 0;
     virtual void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const = 0;
+    virtual void legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
+                                              const StackObject& obj) const = 0;
 };
 
 CMMC_MIR_NAMESPACE_END

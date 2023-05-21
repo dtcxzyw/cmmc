@@ -15,7 +15,9 @@
 #pragma once
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/Config.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <ostream>
 #include <string_view>
@@ -31,7 +33,35 @@ public:
     virtual void emitCall(FunctionCallInst* inst, LoweringContext& ctx) const = 0;
     virtual void emitPrologue(MIRFunction& func, LoweringContext& ctx) const = 0;
     virtual void emitReturn(ReturnInst* inst, LoweringContext& ctx) const = 0;
-    // post-RA stage
+    // RA stage
+    [[nodiscard]] virtual bool isCallerSaved(const MIROperand& op) const noexcept {
+        CMMC_UNUSED(op);
+        reportNotImplemented(CMMC_LOCATION());
+    }
+    [[nodiscard]] virtual bool isCalleeSaved(const MIROperand& op) const noexcept {
+        CMMC_UNUSED(op);
+        reportNotImplemented(CMMC_LOCATION());
+    }
+    // SA stage
+    [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept {
+        reportNotImplemented(CMMC_LOCATION());
+    }
+    virtual void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
+                                    std::optional<int32_t> raOffset) const {
+        CMMC_UNUSED(entryBlock);
+        CMMC_UNUSED(ctx);
+        CMMC_UNUSED(stackSize);
+        CMMC_UNUSED(raOffset);
+        reportNotImplemented(CMMC_LOCATION());
+    }
+    virtual void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
+                                    std::optional<int32_t> raOffset) const {
+        CMMC_UNUSED(exitBlock);
+        CMMC_UNUSED(ctx);
+        CMMC_UNUSED(stackSize);
+        CMMC_UNUSED(raOffset);
+        reportNotImplemented(CMMC_LOCATION());
+    }
 };
 
 CMMC_MIR_NAMESPACE_END

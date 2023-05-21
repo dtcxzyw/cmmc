@@ -74,4 +74,13 @@ void TACISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
     }
 }
 
+void TACISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
+                                               const StackObject& obj) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(ctx);
+    CMMC_UNUSED(op);
+    CMMC_UNUSED(obj);
+    reportNotImplemented(CMMC_LOCATION());
+}
+
 CMMC_TARGET_NAMESPACE_END

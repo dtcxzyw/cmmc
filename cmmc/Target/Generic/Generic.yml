@@ -93,7 +93,7 @@ InstInfo:
   FCast:
     Format: FCast $Dst:FReg[Def], $Src:FReg[Use]
   Copy:
-    Format: Copy $Dst:VReg[Def], $Src:VReg[Use]
+    Format: Copy $Dst:VRegOrISAReg[Def], $Src:VRegOrISAReg[Use]
   Select:
     Format: Select $Dst:VReg[Def], $Cond:Bool[Use], $Lhs:IVal[Use], $Rhs:IVal[Use]
   LoadGlobalAddress:
@@ -106,10 +106,16 @@ InstInfo:
     Format: LoadStackObjectAddr $Dst:IReg[Def], $Obj:StackObject[Metadata]
     Flag: [LoadConstant]
   CopyFromReg:
-    Format: CopyFromReg $Dst:VReg[Def], $Src:ISAReg[Use]
+    Format: CopyFromReg $Dst:VRegOrISAReg[Def], $Src:ISAReg[Use]
   CopyToReg:
-    Format: CopyFromReg $Dst:ISAReg[Def], $Src:VReg[Use]
+    Format: CopyFromReg $Dst:ISAReg[Def], $Src:VRegOrISAReg[Use]
     Flag: [RegCopy]
   LoadImmToReg:
     Format: LoadImmToReg $Dst:ISAReg[Def], $Imm:Imm[Metadata]
     Flag: [RegCopy]
+  LoadRegFromStack:
+    Format: LoadRegFromStack $Dst:ISAReg[Def], $Obj:StackObject[Metadata]
+    Flag: [Load]
+  StoreRegToStack:
+    Format: StoreRegToStack $Val:ISAReg[Use], $Obj:StackObject[Metadata]
+    Flag: [Store]

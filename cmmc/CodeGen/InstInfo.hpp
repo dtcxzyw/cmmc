@@ -38,8 +38,9 @@ enum InstFlag : uint32_t {
     InstFlagLoadConstant = 1 << 7,
     InstFlagRegCopy = 1 << 8,
     InstFlagCommutative = 1 << 9,
+    InstFlagReturn = 1 << 10,
     InstFlagSideEffect =
-        InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush | InstFlagRegCopy
+        InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush | InstFlagRegCopy | InstFlagReturn
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {

@@ -13,6 +13,7 @@
 */
 
 #include <MIPS/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>
@@ -44,6 +45,10 @@ static bool isOperandGPR(const MIROperand& operand) {
     return GPRBegin <= reg && reg < GPREnd;
 }
 
+static bool isOperandBaseLike(const MIROperand& operand) {
+    return isOperandGPR(operand) || isOperandStackObject(operand) || isOperandReloc(operand);
+}
+
 static bool isOperandFPR(const MIROperand& operand) {
     if(!operand.isReg())
         return false;
@@ -67,7 +72,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         if(isOperandGPR(op))
             out << '$' << getMIPSGPRTextualName(static_cast<MIPSRegister>(op.reg()));
         else if(isOperandFPR(op))
-            out << "$f" << (op.reg() - FPRBegin) * 2;
+            out << "$f" << (op.reg() - FPRBegin);
         else if(isOperandHILO(op))
             out << "[hi/lo]";
         else if(isOperandCC(op))

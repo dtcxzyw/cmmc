@@ -19,6 +19,7 @@
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/RegisterInfo.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -34,6 +35,8 @@ class MIRFunction;
 class MIRModule;
 class IPRAUsageCache;
 class MIRRelocable;
+
+enum class RuntimeType { None, SplRuntime };
 
 class Target {
 public:
@@ -52,15 +55,8 @@ public:
     [[nodiscard]] virtual const TargetFrameInfo& getFrameInfo() const noexcept {
         reportUnreachable(CMMC_LOCATION());
     }
-    virtual bool builtinRA(MIRFunction& mfunc, CodeGenContext& ctx) const {
-        CMMC_UNUSED(mfunc);
-        CMMC_UNUSED(ctx);
-        return false;
-    }
-    virtual bool builtinSA(MIRFunction& mfunc, CodeGenContext& ctx) const {
-        CMMC_UNUSED(mfunc);
-        CMMC_UNUSED(ctx);
-        return false;
+    [[nodiscard]] virtual const TargetRegisterInfo* getRegisterInfo() const noexcept {
+        reportUnreachable(CMMC_LOCATION());
     }
     virtual void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const {
         CMMC_UNUSED(module);
@@ -74,25 +70,12 @@ public:
         CMMC_UNUSED(inst);
         return true;
     }
-    virtual void emitAssembly(const MIRModule& module, std::ostream& out) const {
+    virtual void emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const {
         CMMC_UNUSED(module);
         CMMC_UNUSED(out);
+        CMMC_UNUSED(runtime);
         reportUnreachable(CMMC_LOCATION());
     }
-
-    // TODO: move to frame info
-    /*
-    [[nodiscard]] virtual MIROperand getStackPointer() const noexcept = 0;
-    [[nodiscard]] virtual MIROperand getReturnAddress() const noexcept = 0;
-    [[nodiscard]] virtual bool isCallerSaved(const MIROperand& op) const noexcept = 0;
-    [[nodiscard]] virtual bool isCalleeSaved(const MIROperand&) const noexcept = 0;
-    [[nodiscard]] virtual uint32_t getRegisterBitWidth(uint32_t addressSpace) const noexcept = 0;
-    [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept = 0;
-    virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
-        CMMC_UNUSED(symbol);
-        CMMC_UNUSED(infoIPRA);
-    }
-    */
 };
 
 struct CodeGenContext final {
@@ -102,6 +85,7 @@ struct CodeGenContext final {
     const TargetInstInfo& instInfo;
     const TargetISelInfo& iselInfo;
     const TargetFrameInfo& frameInfo;
+    const TargetRegisterInfo* registerInfo;  // optional
     bool requireOneTerminator;
     uint32_t idx = 0;
     uint32_t nextId() {

@@ -121,10 +121,10 @@ InstInfo:
     Flag: [Call]
   JR:
     Format: jr $Rs:GPR[Use]
-    Flag: [Terminator, NoFallthrough]
+    Flag: [Terminator, NoFallthrough, Return]
 
   Load:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm16[Metadata]($Rs:GPR[Use])
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])
     Flag: [Load]
     Instances:
       LB:
@@ -138,7 +138,7 @@ InstInfo:
       LW:
         Mnemonic: lw
   Store:
-    Format: $Mnemonic:Template $Rd:GPR[Use], $Imm:Imm16[Metadata]($Rs:GPR[Use])
+    Format: $Mnemonic:Template $Rd:GPR[Use], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])
     Flag: [Store]
     Instances:
       SB:

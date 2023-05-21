@@ -26,7 +26,7 @@ void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx);
 void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx);
 void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx);
 void schedule(MIRFunction& func, const CodeGenContext& ctx, bool preRA);
-void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool hasFuncCall, OptimizationLevel optLevel);
+void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel);
 void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx);
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
@@ -49,6 +49,8 @@ void applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,
-                  const std::function<void()>& emitText, const std::function<void(const MIRFunction&)>& functionDumper);
+                  const std::function<void()>& emitText);
+
+[[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location);
 
 CMMC_MIR_NAMESPACE_END

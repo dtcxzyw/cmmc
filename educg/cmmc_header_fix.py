@@ -30,5 +30,6 @@ for root, dirs, files in os.walk(cmmc_root):
                 else:
                     lines.append(line)
         with open(root + '/' + file, 'w') as f:
-            f.write('#define NDEBUG\n')
+            if file.endswith('.cpp'):
+                f.write('#define NDEBUG\n')
             f.writelines(lines)

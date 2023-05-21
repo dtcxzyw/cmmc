@@ -13,12 +13,14 @@
 */
 
 #include <MIPS/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>
+#include <iostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -109,7 +111,8 @@ CMMC_TARGET_NAMESPACE_END
 CMMC_TARGET_NAMESPACE_BEGIN
 
 bool MIPSISelInfo::isLegalGenericInst(uint32_t opcode) const {
-    return opcode == InstCopy || opcode == InstCopyFromReg || opcode == InstCopyToReg;
+    return opcode == InstCopy || opcode == InstCopyFromReg || opcode == InstCopyToReg || opcode == InstLoadRegFromStack ||
+        opcode == InstStoreRegToStack;
 }
 
 static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
@@ -234,18 +237,47 @@ bool MIPSISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowCom
 }
 
 void MIPSISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
-    CMMC_UNUSED(ctx);
     switch(inst.opcode()) {
-        case InstCopy: {
+        case InstCopy:
+            [[fallthrough]];
+        case InstCopyFromReg:
+            [[fallthrough]];
+        case InstCopyToReg: {
             if(inst.getOperand(0).type() == OperandType::Int32 && inst.getOperand(1).type() == OperandType::Int32) {
-                inst.setOpcode(InstAdd).setOperand<1>(MIROperand::asISAReg(0, OperandType::Int32));
+                inst.setOpcode(ADDU).setOperand<2>(MIROperand::asISAReg(MIPS::X0, OperandType::Int32));
             } else {
                 reportNotImplemented(CMMC_LOCATION());
             }
             break;
         }
         default:
-            reportNotImplemented(CMMC_LOCATION());
+            reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
+    }
+}
+
+void MIPSISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
+                                                const StackObject& obj) const {
+    [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
+    // TODO: legalize imm
+    const auto imm = MIROperand::asImm(-obj.offset, OperandType::Int32);
+    switch(inst.opcode()) {
+        case InstLoadStackObjectAddr: {
+            assert(checkOpIdx(1));
+            inst.setOpcode(ADDIU).setOperand<1>(sp).setOperand<2>(imm);
+            break;
+        }
+        case InstStoreRegToStack: {
+            assert(checkOpIdx(1));
+            inst.setOpcode(SW).setOperand<2>(sp).setOperand<1>(imm);
+            break;
+        }
+        case InstLoadRegFromStack: {
+            assert(checkOpIdx(1));
+            inst.setOpcode(LW).setOperand<2>(sp).setOperand<1>(imm);
+            break;
+        }
+        default:
+            reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
     }
 }
 

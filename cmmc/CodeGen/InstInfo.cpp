@@ -77,7 +77,9 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
 static bool isOperandVReg(const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
 }
-
+static bool isOperandVRegOrISAReg(const MIROperand& operand) {
+    return operand.isReg() && (isVirtualReg(operand.reg()) || isISAReg(operand.reg()));
+}
 static bool isOperandISAReg(const MIROperand& operand) {
     return operand.isReg() && isISAReg(operand.reg());
 }
@@ -181,6 +183,8 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(CopyFromReg);
     CMMC_ASSERT_OFFSET(CopyToReg);
     CMMC_ASSERT_OFFSET(LoadImmToReg);
+    CMMC_ASSERT_OFFSET(LoadRegFromStack);
+    CMMC_ASSERT_OFFSET(StoreRegToStack);
 #undef CMMC_ASSERT_OFFSET
     return getGenericInstInfoInstance().getInstInfo(opcode + offset);
 }

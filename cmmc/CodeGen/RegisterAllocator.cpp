@@ -13,11 +13,13 @@
 */
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
+#include <cstdint>
 
 CMMC_MIR_NAMESPACE_BEGIN
 
@@ -43,9 +45,19 @@ RegisterAllocatorRegistry& RegisterAllocatorRegistry::get() {
     return instance;
 }
 
-void assignRegisters(MIRFunction& mfunc, const Target& target, IPRAUsageCache& cache) {
-    RegisterAllocatorRegistry::get().selectMethod()(mfunc, target, cache);
-    // TODO: verify
+void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& cache) {
+    RegisterAllocatorRegistry::get().selectMethod()(mfunc, ctx, cache);
+    if constexpr(Config::debug) {
+        for(auto& block : mfunc.blocks()) {
+            for(auto& inst : block->instructions()) {
+                auto& info = ctx.instInfo.getInstInfo(inst.opcode());
+                for(uint32_t idx = 0; idx < info.getOperandNum(); ++idx)
+                    if(isOperandVReg(inst.getOperand(idx))) {
+                        DiagnosticsContext::get().attach<Reason>("Bad RA").reportFatal();
+                    }
+            }
+        }
+    }
 }
 
 void IPRAUsageCache::add(const Target& target, MIRRelocable* symbol, MIRFunction& func) {

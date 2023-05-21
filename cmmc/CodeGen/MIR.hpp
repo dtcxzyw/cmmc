@@ -218,6 +218,8 @@ enum MIRGenericInst : uint32_t {
     InstCopyFromReg,
     InstCopyToReg,
     InstLoadImmToReg,
+    InstLoadRegFromStack,
+    InstStoreRegToStack,
 
     ISASpecificBegin,
 };
@@ -283,11 +285,12 @@ public:
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
 
+enum class StackObjectUsage { Argument, CalleeArgument, Local, RegSpill, CalleeSaved };
 struct StackObject final {
     uint32_t size;
     uint32_t alignment;
-    int32_t offset;
-    bool fixed;
+    int32_t offset;  // positive
+    StackObjectUsage usage;
 };
 
 class MIRFunction final : public MIRRelocable {
@@ -297,8 +300,7 @@ class MIRFunction final : public MIRRelocable {
 
 public:
     explicit MIRFunction(String symbol) : MIRRelocable{ symbol } {}
-    MIROperand addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, OperandType ptrType,
-                              std::optional<int32_t> fixedOffset);
+    MIROperand addStackObject(CodeGenContext& ctx, uint32_t size, uint32_t alignment, int32_t offset, StackObjectUsage usage);
     std::list<std::unique_ptr<MIRBasicBlock>>& blocks() {
         return mBlocks;
     }

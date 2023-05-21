@@ -50,6 +50,7 @@ StringOpt executeInput;               // NOLINT
 static Flag grammarCheck;             // NOLINT
 static Flag dumpOptPipeline;          // NOLINT
 static StringOpt language;            // NOLINT
+static Flag withRuntime;              // NOLINT
 namespace mir {
     extern StringOpt targetName;  // NOLINT
 }
@@ -66,6 +67,7 @@ grammarCheck.setName("grammar-check", 'g').setDesc("only check grammar");
 executeInput.setName("execute-input", 'e').setDesc("execute with built-in interpreter");
 dumpOptPipeline.setName("dump-opt-pipeline", 'P').setDesc("dump the transform pipeline in dot format");
 language.setName("language", 'x').setDesc("Specify the language (Spl/SysY) explicitly");
+withRuntime.withDefault(true).setName("with-runtime", 'X').setDesc("Emit built-in runtime (entry/IO) for emulator");
 CMMC_INIT_OPTIONS_END
 
 std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::string& srcPath, SimulationIOContext& ioCtx);
@@ -125,7 +127,7 @@ static std::string getOutputPath(const std::string& defaultPath) {
     return path.empty() ? defaultPath : path;
 }
 
-static int runIRPipeline(Module& module, const std::string& base, const std::string& filePath) {
+static int runIRPipeline(Module& module, const std::string& base, const std::string& filePath, FrontEndLang lang) {
     if(!module.verify(std::cerr)) {
         DiagnosticsContext::get().attach<Reason>("Invalid IR").reportFatal();
     }
@@ -184,7 +186,9 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     // assert(machineModule->verify());
     {
         Stage stage{ "dump ASM"sv };
-        target.emitAssembly(*machineModule, out);
+        target.emitAssembly(*machineModule, out,
+                            (lang == FrontEndLang::Spl && withRuntime.get()) ? mir::RuntimeType::SplRuntime :
+                                                                               mir::RuntimeType::None);
     }
 
     return EXIT_SUCCESS;
@@ -257,8 +261,9 @@ int mainImpl(int argc, char** argv) {
             const auto target = mir::TargetRegistry::get().selectTarget();
             module.setTarget(target.get());
 
+            const auto lang = isSpl ? FrontEndLang::Spl : FrontEndLang::SysY;
             {
-                Driver driver{ path, isSpl ? FrontEndLang::Spl : FrontEndLang::SysY, emitAST.get(), strictMode.get() };
+                Driver driver{ path, lang, emitAST.get(), strictMode.get() };
 
                 if(grammarCheck.get())
                     return EXIT_SUCCESS;
@@ -274,7 +279,7 @@ int mainImpl(int argc, char** argv) {
                 driver.emit(module);
             }
 
-            return runIRPipeline(module, base, path);
+            return runIRPipeline(module, base, path, lang);
         }
         if(endswith(path, ".ir"sv)) {
             Module module;
@@ -282,7 +287,7 @@ int mainImpl(int argc, char** argv) {
             module.setTarget(target.get());
             loadTAC(module, path);
             const auto base = path.substr(0, path.size() - 3);
-            return runIRPipeline(module, base, path);
+            return runIRPipeline(module, base, path, FrontEndLang::Spl);
         }
 
         reportError() << "Unrecognized input"sv << std::endl;

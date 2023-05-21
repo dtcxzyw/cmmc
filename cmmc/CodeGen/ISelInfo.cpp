@@ -192,6 +192,8 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
         for(auto& inst : block->instructions()) {
             if(inst.opcode() < ISASpecificBegin) {
                 ctx.iselInfo.postLegalizeInst(inst, ctx);
+                if(inst.opcode() < ISASpecificBegin)
+                    reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
             }
         }
     }

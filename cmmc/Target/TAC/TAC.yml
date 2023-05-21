@@ -56,7 +56,7 @@ InstInfo:
 
   Return:
     Format: RETURN $Src:Val[Use]
-    Flag: [Terminator, NoFallthrough]
+    Flag: [Terminator, NoFallthrough, Return]
 
   Read:
     Format: READ $Dst:VReg[Def]
