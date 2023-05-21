@@ -45,6 +45,8 @@ class LoweringContext final {
     std::unordered_map<Block*, MIRBasicBlock*>& mBlockMap;
     std::unordered_map<GlobalValue*, MIRGlobal*>& mGlobalMap;
     std::unordered_map<Value*, MIROperand>& mValueMap;
+    MIRDataStorage* mFloatingPointConstantPool = nullptr;
+    std::unordered_map<uint32_t, uint32_t> mFloatingPointConstant;  // represention -> index
 
     MIRBasicBlock* mCurrentBasicBlock = nullptr;
     OperandType mPtrType;

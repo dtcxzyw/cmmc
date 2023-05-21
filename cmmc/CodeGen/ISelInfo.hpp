@@ -55,8 +55,12 @@ public:
     static bool expandCmp(MIRInst& inst, ISelContext& ctx);
     virtual bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const = 0;
     virtual void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const = 0;
+    virtual void preRALegalizeInst(MIRInst& inst, std::list<MIRInst>& instructions, std::list<MIRInst>::iterator& iter,
+                                   CodeGenContext& ctx) const = 0;
     virtual void legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
                                               const StackObject& obj) const = 0;
 };
+
+uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
 
 CMMC_MIR_NAMESPACE_END

@@ -36,40 +36,12 @@ static std::string_view getMIPSGPRTextualName(MIPSRegister gpr) noexcept {
     return name[gpr - GPRBegin];
 }
 
-static bool isOperandGPR(const MIROperand& operand) {
-    if(!operand.isReg())
-        return false;
-    if(isVirtualReg(operand.reg()))
-        return true;
-    const auto reg = operand.reg();
-    return GPRBegin <= reg && reg < GPREnd;
-}
-
-static bool isOperandBaseLike(const MIROperand& operand) {
-    return isOperandGPR(operand) || isOperandStackObject(operand) || isOperandReloc(operand);
-}
-
-static bool isOperandFPR(const MIROperand& operand) {
-    if(!operand.isReg())
-        return false;
-    if(isVirtualReg(operand.reg()))
-        return true;
-    const auto reg = operand.reg();
-    return FPRBegin <= reg && reg < FPREnd;
-}
-
-static bool isOperandHILO(const MIROperand& operand) {
-    return operand.isReg() && operand.reg() == HILO;
-}
-
-static bool isOperandCC(const MIROperand& operand) {
-    return operand.isReg() && operand.reg() == CC;
-}
-
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
     auto& op = operand.operand;
     if(op.isReg()) {
-        if(isOperandGPR(op))
+        if(isVirtualReg(op.reg())) {
+            out << 'v' << (op.reg() ^ virtualRegBegin);
+        } else if(isOperandGPR(op))
             out << '$' << getMIPSGPRTextualName(static_cast<MIPSRegister>(op.reg()));
         else if(isOperandFPR(op))
             out << "$f" << (op.reg() - FPRBegin);
@@ -79,8 +51,6 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             out << "[cc0]";
         else if(op.reg() == invalidReg) {
             out << "invalid";
-        } else if(isVirtualReg(op.reg())) {
-            out << 'v' << (op.reg() ^ virtualRegBegin);
         } else if(isStackObject(op.reg())) {
             out << 's' << (op.reg() ^ stackObjectBegin);
         } else {
@@ -99,14 +69,6 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         return out;
     }
     reportUnreachable(CMMC_LOCATION());
-}
-
-static bool isOperandImm16(const MIROperand& operand) {
-    return isOperandSignedImm<16>(operand);
-}
-
-static bool isOperandImm32(const MIROperand& operand) {
-    return isOperandSignedImm<32>(operand);
 }
 
 using mir::isOperandProb;

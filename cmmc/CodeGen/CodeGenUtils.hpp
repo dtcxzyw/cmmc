@@ -32,6 +32,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);
 bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx);
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
+void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx);
 
 bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx);
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx);

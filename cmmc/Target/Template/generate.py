@@ -137,6 +137,19 @@ def get_id():
     global_idx += 1
     return global_idx
 
+def handle_new_ops(code: str, map, new_ops):
+    while True:
+        pos = code.find('[$')
+        if pos == -1:
+            return code
+        end = code.find(']',pos)
+        name = code[pos+1:end]
+        new_id = get_id()
+        code = code.replace(code[pos:end+1], 'op'+str(new_id))
+        map[name] = new_id
+        new_ops.append(new_id)
+    
+
 
 def replace_operand(code: str, map):
     for k, v in map.items():
@@ -161,8 +174,10 @@ def parse_isel_pattern_match(pattern: dict, root_id, insts, match_info: list, ma
         if sub:
             for k, v in sub.items():
                 if k == '$Predicate':
+                    new_ops = []
+                    v = handle_new_ops(v, operand_map, new_ops)
                     match_info.append(
-                        {'type': 'predicate', 'code': replace_operand(v, operand_map)})
+                        {'type': 'predicate', 'code': replace_operand(v, operand_map), 'new_ops': new_ops})
                 elif k == '$Capture':
                     operand_map[v] = local_map[k]
                 elif isinstance(v, str):

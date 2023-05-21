@@ -16,6 +16,7 @@
 // See also https://courses.cs.washington.edu/courses/cse410/09sp/examples/MIPSCallingConventionsSummary.pdf for the o32 calling
 // convention
 
+#include "cmmc/CodeGen/InstInfo.hpp"
 #include <MIPS/ISelInfoDecl.hpp>
 #include <MIPS/InstInfoDecl.hpp>
 #include <MIPS/ScheduleModelDecl.hpp>
@@ -34,7 +35,8 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 static constexpr auto spimRuntimeData = R"(_prompt: .asciiz "Enter an integer:"
-_ret: .asciiz "\n")";
+_ret: .asciiz "\n"
+)";
 static constexpr auto spimRuntimeText = R"(_entry:
     jal main
     move $a0, $v0
@@ -298,7 +300,7 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
     for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
         const auto offset = offsets[idx];
         const auto arg = inst->getOperand(idx);
-        const auto val = ctx.mapOperand(arg);
+        auto val = ctx.mapOperand(arg);
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
@@ -315,7 +317,11 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
         } else {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
-
+            if(!isOperandVRegOrISAReg(val)) {
+                const auto reg = ctx.newVReg(val.type());
+                ctx.emitCopy(reg, val);
+                val = reg;
+            }
             ctx.emitInst(InstStoreRegToStack).setOperand<0>(val).setOperand<1>(obj);
         }
     }
@@ -336,7 +342,6 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
         // $f0
         val = MIROperand::asISAReg(MIPS::F0, OperandType::Float32);
     } else {
-        assert(ret->getFixedSize() == sizeof(uint32_t));
         // $v0
         val = MIROperand::asISAReg(MIPS::X2, OperandType::Int32);
     }
@@ -370,7 +375,7 @@ void MIPSFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenC
     CMMC_UNUSED(ctx);
     if(raOffset) {
         instructions.push_front(MIRInst{ MIPS::SW }.setOperand<0>(MIPS::ra).setOperand<2>(MIPS::sp).setOperand<1>(
-            MIROperand::asImm(-*raOffset, OperandType::Int32)));
+            MIROperand::asImm(*raOffset, OperandType::Int32)));
     }
     instructions.push_front(MIRInst{ MIPS::ADDIU }.setOperand<0>(MIPS::sp).setOperand<1>(MIPS::sp).setOperand<2>(
         MIROperand::asImm(-stackSize, OperandType::Int32)));
@@ -383,12 +388,12 @@ void MIPSFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenCo
     CMMC_UNUSED(ctx);
     if(raOffset) {
         instructions.insert(iter,
-                            MIRInst{ MIPS::SW }.setOperand<0>(MIPS::ra).setOperand<2>(MIPS::sp).setOperand<1>(
-                                MIROperand::asImm(-*raOffset, OperandType::Int32)));
+                            MIRInst{ MIPS::LW }.setOperand<0>(MIPS::ra).setOperand<2>(MIPS::sp).setOperand<1>(
+                                MIROperand::asImm(*raOffset, OperandType::Int32)));
     }
     instructions.insert(iter,
                         MIRInst{ MIPS::ADDIU }.setOperand<0>(MIPS::sp).setOperand<1>(MIPS::sp).setOperand<2>(
-                            MIROperand::asImm(-stackSize, OperandType::Int32)));
+                            MIROperand::asImm(stackSize, OperandType::Int32)));
 }
 
 CMMC_MIR_NAMESPACE_END

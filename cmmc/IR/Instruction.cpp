@@ -21,6 +21,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <ostream>
 #include <string>
@@ -387,12 +388,12 @@ const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& i
     return cur;
 }
 
-std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gatherOffsets(const DataLayout& dataLayout) const {
-    size_t constantOffset = 0;
+std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gatherOffsets(const DataLayout& dataLayout) const {
+    intptr_t constantOffset = 0;
     std::vector<std::pair<size_t, Value*>> offsets;
-    const auto addOffset = [&](size_t offset, Value* index) {
+    const auto addOffset = [&](intptr_t offset, Value* index) {
         if(index->isConstant()) {
-            constantOffset += offset * index->as<ConstantInteger>()->getZeroExtended();
+            constantOffset += offset * static_cast<intptr_t>(index->as<ConstantInteger>()->getSignExtended());
         } else {
             offsets.emplace_back(offset, index);
         }
@@ -416,10 +417,10 @@ std::pair<size_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::gat
                     .reportFatal();
             }
 
-            addOffset(cur->getSize(dataLayout), idx);
+            addOffset(static_cast<int64_t>(cur->getSize(dataLayout)), idx);
         } else if(auto offset = idx->as<ConstantOffset>(); offset) {
             const auto structType = cur->as<StructType>();
-            constantOffset += structType->getFieldOffset(offset, dataLayout);
+            constantOffset += static_cast<intptr_t>(structType->getFieldOffset(offset, dataLayout));
             cur = structType->getFieldType(offset);
         } else
             reportUnreachable(CMMC_LOCATION());

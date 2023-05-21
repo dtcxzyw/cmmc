@@ -73,7 +73,13 @@ void TACISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
             reportNotImplemented(CMMC_LOCATION());
     }
 }
-
+void TACISelInfo::preRALegalizeInst(MIRInst& inst, std::list<MIRInst>& instructions, std::list<MIRInst>::iterator& iter,
+                                    CodeGenContext& ctx) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(instructions);
+    CMMC_UNUSED(iter);
+    CMMC_UNUSED(ctx);
+}
 void TACISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
                                                const StackObject& obj) const {
     CMMC_UNUSED(inst);

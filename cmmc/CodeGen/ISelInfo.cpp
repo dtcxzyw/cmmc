@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -33,6 +34,7 @@ void ISelContext::runISel(MIRFunction& func) {
     bool optLegal = false;
 
     while(true) {
+        MIRInst* firstIllegalInst = nullptr;
         // TODO: apply CSE
 
         // func.dump(std::cerr, mCodeGenCtx);
@@ -75,7 +77,7 @@ void ISelContext::runISel(MIRFunction& func) {
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                         auto& operand = inst.getOperand(idx);
                         if(operand.isReg() && isVirtualReg(operand.reg())) {
-                            assert(!mInstMapping.count(operand));
+                            assert(!mInstMapping.count(operand));  // SSA Form
                             mInstMapping.emplace(operand, &inst);
                         }
                     }
@@ -91,6 +93,9 @@ void ISelContext::runISel(MIRFunction& func) {
                 if(!mRemoveWorkList.count(&inst)) {
                     const auto opcode = inst.opcode();
                     const auto isIllegal = opcode < ISASpecificBegin && !iselInfo.isLegalGenericInst(opcode);
+                    if(isIllegal && !firstIllegalInst) {
+                        firstIllegalInst = &inst;
+                    }
                     hasIllegal |= isIllegal;
                     if((optLegal || isIllegal) && iselInfo.matchAndSelect(inst, *this, allowComplexPattern)) {
                         modified = true;
@@ -134,6 +139,9 @@ void ISelContext::runISel(MIRFunction& func) {
             }
             if(allowComplexPattern) {
                 func.dump(std::cerr, mCodeGenCtx);
+                std::cerr << "First illegal inst:\n";
+                assert(firstIllegalInst);
+                mCodeGenCtx.instInfo.getInstInfo(firstIllegalInst->opcode()).print(std::cerr, *firstIllegalInst, true);
                 DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
             } else {
                 allowComplexPattern = true;
@@ -199,6 +207,30 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     }
 }
 
+void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
+                ctx.iselInfo.preRALegalizeInst(inst, instructions, iter, ctx);
+            }
+        }
+    }
+
+    if constexpr(Config::debug) {
+        for(auto& block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
+                    reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
+                }
+            }
+        }
+    }
+}
+
 bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     assert(inst.opcode() == InstSCmp || inst.opcode() == InstUCmp || inst.opcode() == InstFCmp);
     auto iter = ctx.getCurrentInstIter();
@@ -234,6 +266,22 @@ bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     ctx.blockReplace(inst);
     ctx.replaceOperand(inst.getOperand(0), val);
     return true;
+}
+
+uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src) {
+    if(dst.isReg() && isISAReg(dst.reg())) {
+        if(src.isImm()) {
+            return InstLoadImmToReg;
+        }
+        assert(isOperandVReg(src));
+        return InstCopyToReg;
+    }
+    if(src.isImm())
+        return InstLoadImm;
+    if(src.isReg() && isISAReg(src.reg()))
+        return InstCopyFromReg;
+    assert(isOperandVReg(src) && isOperandVReg(dst));
+    return InstCopy;
 }
 
 CMMC_MIR_NAMESPACE_END

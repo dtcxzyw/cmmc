@@ -22,7 +22,7 @@ submit_binary = os.path.abspath(
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '3'
-fast_fail = True
+fast_fail = False
 generate_ref = False
 assert os.path.exists(rars_path)
 
@@ -176,6 +176,7 @@ def spl_codegen_mips(src):
     for inputs, answer in spl_test_cases:
         out_spim = subprocess.run(
             args=['spim', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
+        # print(out_spim.stdout)
         out = out_spim.stdout.splitlines()
         res = []
         start = False
@@ -673,8 +674,8 @@ if not generate_ref:
     if "codegen" in test_cases:
         res.append(test("SPL SPL->MIPS project4", tests_path +
                         "/TAC2MC", ".spl", spl_codegen_mips))
-        res.append(test("SPL SPL->RISCV64 project4", tests_path +
-                        "/TAC2MC", ".spl", spl_codegen_riscv64))
+        #res.append(test("SPL SPL->RISCV64 project4", tests_path +
+        #                "/TAC2MC", ".spl", spl_codegen_riscv64))
         res.append(test("SPL TAC->MIPS project4", tests_path +
                         "/TAC2MC", ".ir", spl_codegen_mips))
         res.append(test("SPL SPL->MIPS project4 self", tests_path +

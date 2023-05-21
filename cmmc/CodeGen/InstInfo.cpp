@@ -74,16 +74,6 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     return out;
 }
 
-static bool isOperandVReg(const MIROperand& operand) {
-    return operand.isReg() && isVirtualReg(operand.reg());
-}
-static bool isOperandVRegOrISAReg(const MIROperand& operand) {
-    return operand.isReg() && (isVirtualReg(operand.reg()) || isISAReg(operand.reg()));
-}
-static bool isOperandISAReg(const MIROperand& operand) {
-    return operand.isReg() && isISAReg(operand.reg());
-}
-
 static bool isOperandVal(const MIROperand& operand) {
     return operand.isReg() || operand.isImm();
 }
@@ -115,9 +105,12 @@ static bool isOperandFlag(const MIROperand& operand) {
     return operand.isImm() && operand.type() == OperandType::Special;
 }
 
+using mir::isOperandISAReg;
 using mir::isOperandProb;
 using mir::isOperandReloc;
 using mir::isOperandStackObject;
+using mir::isOperandVReg;
+using mir::isOperandVRegOrISAReg;
 
 static MIRInst emitGotoImpl(MIRBasicBlock*) {
     reportUnreachable(CMMC_LOCATION());

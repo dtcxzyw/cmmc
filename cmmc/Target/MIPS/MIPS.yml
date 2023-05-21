@@ -47,6 +47,12 @@ InstInfo:
     Instances:
       ADD_S:
         Mnemonic: add.s
+      SUB_S:
+        Mnemonic: sub.s
+      MUL_S:
+        Mnemonic: mul.s
+      DIV_S:
+        Mnemonic: div.s
 
   FloatingPointUnary:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use]
@@ -148,6 +154,14 @@ InstInfo:
       SW:
         Mnemonic: sw
 
+  LWC1:
+    Format: lwc1 $Rd:FPR[Def], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])
+    Flag: [Load]
+
+  SWC1:
+    Format: swc1 $Rd:FPR[Use], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])
+    Flag: [Store]
+
   MFC1:
     Format: mfc1 $Rd:GPR[Def], $Rs:FPR[Use]
   MTC1:
@@ -175,27 +189,63 @@ InstInfo:
       SLTIU:
         Mnemonic: sltiu
 
-  # Pseudo instructions
+  # Pseudo Instrucitons
   LoadAddress:
     Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
     Flag: [LoadConstant]
 
   LoadImm16:
-    Format: "li $Rd:GPR[Def], $Imm:Imm16[Metadata]" # addiu
+    Format: "li $Rd:GPR[Def], $Imm:NonZeroImm16[Metadata]" # addiu
     Flag: [LoadConstant]
 
   LoadImm32:
-    Format: "li $Rd:GPR[Def], $Imm:Imm32[Metadata]" # lui + addiu
+    Format: "li $Rd:GPR[Def], $Imm:NonZeroImm32[Metadata]" # lui + addiu
     Flag: [LoadConstant]
 
-  # TODO: Conditional Move Instructions
+  MoveGPR:
+    Format: "move $Rd:GPR[Def], $Rs:GPR[Use]"
+    Flag: [RegCopy]
+
+  # Conditional Move Instructions
+  MOVN:
+    Format: "movn $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
+  MOVZ:
+    Format: "movz $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
+
+  # Illegal Pseudo Instrucitons
+  # select[CC][Val]
+  Select_GPR_GPR: # => Copy + MOVN
+    Format: "select_gpr_gpr $Rd:GPR[Def], $Rs:GPR[Use], $Rt:IRegOrImm[Use], $Cond:GPR[Use]"
+    Flag: [LegalizePreRA]
 
 InstSelection:
   - Pattern:
       InstLoadImmToReg:
         Dst: $Dst
         Imm: $Imm
-        $Predicate: isOperandImm16($Imm)
+        $Predicate: isZero($Imm)
+    Replace:
+      # TODO: using ResetToZero -> InstFlagLoadConstant
+      MoveGPR:
+        Rd: $Dst
+        Rs: getZero($Dst)
+
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: isZero($Imm)
+    Replace:
+      # TODO: using InstResetToZero -> InstFlagLoadConstant
+      InstCopyFromReg:
+        Dst: $Dst
+        Src: getZero($Dst)
+
+  - Pattern:
+      InstLoadImmToReg:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: isOperandNonZeroImm16($Imm)
     Replace:
       LoadImm16:
         Rd: $Dst
@@ -205,6 +255,7 @@ InstSelection:
       InstLoadImmToReg:
         Dst: $Dst
         Imm: $Imm
+        $Predicate: isOperandNonZeroImm32($Imm)
     Replace:
       LoadImm32:
         Rd: $Dst
@@ -214,7 +265,7 @@ InstSelection:
       InstLoadImm:
         Dst: $Dst
         Imm: $Imm
-        $Predicate: isOperandImm16($Imm)
+        $Predicate: isOperandNonZeroImm16($Imm)
     Replace:
       LoadImm16:
         Rd: $Dst
@@ -224,6 +275,7 @@ InstSelection:
       InstLoadImm:
         Dst: $Dst
         Imm: $Imm
+        $Predicate: isOperandNonZeroImm32($Imm)
     Replace:
       LoadImm32:
         Rd: $Dst
@@ -394,7 +446,29 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isEqualityOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isRationalOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchWithZeroOpcode($Op)
+        $Template: BLTZ
+        Rs:
+          SUBU:
+            Rd: getVRegAs(ctx, $Lhs)
+            Rs: $Lhs
+            Rt: $Rhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isEqualityOp($Op)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -402,7 +476,7 @@ InstSelection:
         $Opcode: getBranchEqualityOpcode($Op)
         $Template: BEQ
         Rs: $Lhs
-        Rt: $Rhs
+        Rt: getIReg(ctx, $Rhs)
         Tgt: $Reloc
         Prob: $Prob
 
@@ -412,7 +486,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOp($Op)
     Replace:
       SLT:
         Rd: $Dst
@@ -425,12 +499,38 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOp($Op)
     Replace:
       SLTU:
         Rd: $Dst
         Rs: $Lhs
         Rt: $Rhs
+
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isGreaterThanOp($Op)
+    Replace:
+      SLT:
+        Rd: $Dst
+        Rs: $Rhs
+        Rt: $Lhs
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isGreaterThanOp($Op)
+    Replace:
+      SLTU:
+        Rd: $Dst
+        Rs: $Rhs
+        Rt: $Lhs
 
   - Pattern:
       InstSCmp:
@@ -457,6 +557,36 @@ InstSelection:
         Rd: $Dst
         Rs: $Lhs
         Imm: $Rhs
+
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isEqualOp($Op)
+    Replace:
+      SLTIU:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: getOne($Lhs)
+
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs:
+          SLTIU:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs: $Lhs
+            Imm: getOne($Lhs)
+        Imm: getOne($Dst)
 
   # MUL/DIV/DIVU
   - Pattern:
@@ -533,6 +663,114 @@ InstSelection:
             Rd: getHILO()
             Rs: $Lhs
             Rt: $Rhs
+
+  # Load/Store
+  - Pattern:
+      InstLoad:
+        Dst: $Dst
+        Addr: $Addr
+        $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+    Replace:
+      Load:
+        $Opcode: getLoadOpcode($Dst)
+        $Template: LW
+        Rd: $Dst
+        Rs: $Base
+        Imm: $Offset
+
+  - Pattern:
+      InstStore:
+        Src: $Src
+        Addr: $Addr
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+    Replace:
+      Store:
+        $Opcode: getStoreOpcode($Src)
+        $Template: SW
+        Rd: $Src
+        Rs: $Base
+        Imm: $Offset
+
+  # Select
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond: $Cond
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isOperandIReg($Cond)
+    Replace:
+      Select_GPR_GPR:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+        Cond: $Cond
+
+  - Pattern:
+      InstLoadGlobalAddress:
+        Dst: $Dst
+        Addr: $Addr
+    Replace:
+      LoadAddress:
+        Rd: $Dst
+        Addr: $Addr
+
+  # Floating Point
+  - Pattern:
+      InstF2S:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      MFC1:
+        Rd: $Dst
+        Rs:
+          TRUNC_W_S:
+            Rd: getVRegAs(ctx, $Src)
+            Rs: $Src
+
+  - Pattern:
+      InstFAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      ADD_S:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstFSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      SUB_S:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstFMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      MUL_S:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstFDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+    Replace:
+      DIV_S:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
 
 ScheduleModel:
   emulator:

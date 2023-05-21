@@ -39,4 +39,62 @@ enum MIPSRegister : uint32_t {
 constexpr auto sp = MIROperand::asISAReg(MIPS::X29, OperandType::Int32);
 constexpr auto ra = MIROperand::asISAReg(MIPS::X31, OperandType::Int32);
 
+constexpr bool isOperandImm16(const MIROperand& operand) {
+    return isOperandSignedImm<16>(operand);
+}
+
+constexpr bool isOperandImm32(const MIROperand& operand) {
+    return isOperandSignedImm<32>(operand);
+}
+
+constexpr bool isOperandNonZeroImm16(const MIROperand& operand) {
+    return isOperandSignedImm<16>(operand) && operand.imm() != 0;
+}
+
+constexpr bool isOperandNonZeroImm32(const MIROperand& operand) {
+    return isOperandSignedImm<32>(operand) && operand.imm() != 0;
+}
+
+constexpr bool isOperandImm(const MIROperand& operand) {
+    return operand.isImm();
+}
+
+constexpr bool isOperandIReg(const MIROperand& operand) {
+    return operand.isReg() && isIntegerType(operand.type());
+}
+
+constexpr bool isOperandIRegOrImm(const MIROperand& operand) {
+    return (operand.isReg() && isIntegerType(operand.type())) || operand.isImm();
+}
+
+constexpr bool isOperandGPR(const MIROperand& operand) {
+    if(!operand.isReg())
+        return false;
+    if(isVirtualReg(operand.reg()))
+        return true;
+    const auto reg = operand.reg();
+    return GPRBegin <= reg && reg < GPREnd;
+}
+
+constexpr bool isOperandBaseLike(const MIROperand& operand) {
+    return isOperandGPR(operand) || isOperandStackObject(operand) || isOperandReloc(operand);
+}
+
+constexpr bool isOperandFPR(const MIROperand& operand) {
+    if(!operand.isReg())
+        return false;
+    if(isVirtualReg(operand.reg()))
+        return true;
+    const auto reg = operand.reg();
+    return FPRBegin <= reg && reg < FPREnd;
+}
+
+constexpr bool isOperandHILO(const MIROperand& operand) {
+    return operand.isReg() && operand.reg() == HILO;
+}
+
+constexpr bool isOperandCC(const MIROperand& operand) {
+    return operand.isReg() && operand.reg() == CC;
+}
+
 CMMC_TARGET_NAMESPACE_END

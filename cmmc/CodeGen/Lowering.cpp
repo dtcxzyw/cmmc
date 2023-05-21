@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
@@ -39,8 +40,10 @@
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
+#include <cstring>
 #include <deque>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <queue>
 #include <unordered_map>
@@ -116,15 +119,35 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     // constant
     MIROperand reg;
     const auto operandType = getOperandType(operand->getType(), mPtrType);
-    if(operand->isUndefined()) {
+    if(operand->getType()->isFloatingPoint()) {
+        const auto val = static_cast<float>(operand->as<ConstantFloatingPoint>()->getValue());
+        uint32_t rep;
+        memcpy(&rep, &val, sizeof(float));  // TODO: endianness?
+        assert(operand->getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float));
+        const auto it = mFloatingPointConstant.find(rep);  // TODO: for zero: copy from gpr
+        uint32_t offset;
+        if(it != mFloatingPointConstant.cend()) {
+            offset = it->second;
+        } else {
+            if(!mFloatingPointConstantPool) {
+                auto storage =
+                    std::make_unique<MIRDataStorage>(String::get("__cmmc_fp_constant_pool"), MIRDataStorage::Storage{}, true);
+                mFloatingPointConstantPool = storage.get();
+                auto pool = std::make_unique<MIRGlobal>(Linkage::Internal, sizeof(float), std::move(storage));
+                mModule.globals().push_back(std::move(pool));
+            }
+            offset = mFloatingPointConstant[rep] = mFloatingPointConstantPool->appendWord(rep) * sizeof(float);
+        }
+
+        const auto base = newVReg(mPtrType);
+        emitInst(InstLoadGlobalAddress).setOperand<0>(base).setOperand<1>(MIROperand::asReloc(mFloatingPointConstantPool));
+        const auto addr = newVReg(mPtrType);
+        emitInst(InstAdd).setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, mPtrType));
+        const auto dst = newVReg(operand->getType());
+        emitInst(InstLoad).setOperand<0>(dst).setOperand<1>(addr);
+        reg = dst;
+    } else if(operand->isUndefined()) {
         reg = MIROperand::asImm(0, operandType);
-    } else if(operand->getType()->isFloatingPoint()) {
-        reportNotImplemented(CMMC_LOCATION());
-        /*
-        // create constant for fp
-        reg = newVReg(operand->getType());
-        emitInst<ConstantMInst>(reg, operand->as<ConstantFloatingPoint>()->getValue());
-        */
     } else {
         reg = MIROperand::asImm(operand->as<ConstantInteger>()->getSignExtended(), operandType);
     }
@@ -227,6 +250,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
     */
 }
 
+// TODO: move to runCodeGenPipeline?
 static void lowerToMachineModule(MIRModule& machineModule, Module& module, AnalysisPassManager& analysis,
                                  OptimizationLevel optLevel) {
     auto& globals = machineModule.globals();
@@ -418,7 +442,17 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        // Stage 6: pre-RA scheduling, minimize register pressure
+
+        // Pre-RA legalization
+        {
+            // Stage 6: Pre-RA legalization
+            Stage stage{ "Pre-RA legalization"sv };
+            preRALegalizeFunc(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
+        }
+
+        // Stage 6: Pre-RA scheduling, minimize register pressure
         if(optLevel >= OptimizationLevel::O2) {
             Stage stage{ "Pre-RA scheduling"sv };
             schedule(mfunc, ctx, true);
@@ -789,6 +823,7 @@ static void lower(SelectInst* inst, LoweringContext& ctx) {
         .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
         .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
         .setOperand<3>(ctx.mapOperand(inst->getOperand(2)));
+    ctx.addOperand(inst, ret);
 }
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
@@ -951,23 +986,6 @@ MIROperand LoweringContext::newVReg(OperandType type) {
 }
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
-    uint32_t opcode;
-
-    if(dst.isReg() && isISAReg(dst.reg())) {
-        if(src.isImm()) {
-            opcode = InstLoadImmToReg;
-        } else {
-            assert(isOperandVReg(src));
-            opcode = InstCopyToReg;
-        }
-    } else if(src.isImm())
-        opcode = InstLoadImm;
-    else if(src.isReg() && isISAReg(src.reg()))
-        opcode = InstCopyFromReg;
-    else {
-        assert(isOperandVReg(src) && isOperandVReg(dst));
-        opcode = InstCopy;
-    }
-    emitInst(opcode).setOperand<0>(dst).setOperand<1>(src);
+    emitInst(selectCopyOpcode(dst, src)).setOperand<0>(dst).setOperand<1>(src);
 }
 CMMC_MIR_NAMESPACE_END

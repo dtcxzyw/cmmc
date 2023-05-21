@@ -30,7 +30,7 @@ class RegisterSelector final {
 public:
     RegisterSelector(const std::vector<uint32_t>& list) {
         assert(list.size() <= maxRegisterCount);
-        mFree = (static_cast<uint64_t>(1) << maxRegisterCount) - 1;
+        mFree = (static_cast<int64_t>(1) << list.size()) - 1;
         for(uint32_t idx = 0; idx < list.size(); ++idx) {
             const auto reg = list[idx];
             mIdx2Reg[idx] = reg;
@@ -78,6 +78,8 @@ void MultiClassRegisterSelector::markAsUsed(MIROperand reg) {
     const auto classId = mRegisterInfo.getAllocationClass(type);
     const auto& selector = *mSelectors[classId];
     const auto reg = selector.getFreeRegister();
+    if(reg == invalidReg)
+        return MIROperand{};
     return MIROperand::asISAReg(reg, mRegisterInfo.getCanonicalizedRegisterType(type));
 }
 

@@ -19,6 +19,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cstddef>
 #include <functional>
 #include <ostream>
 #include <unordered_map>
@@ -377,7 +378,7 @@ public:
         list.push_back(base);
     }
     void dumpInst(std::ostream& out) const override;
-    [[nodiscard]] std::pair<size_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
+    [[nodiscard]] std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
     [[nodiscard]] Instruction* clone() const override;
 };
 

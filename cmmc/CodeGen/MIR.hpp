@@ -344,6 +344,7 @@ public:
     [[nodiscard]] bool isReadOnly() const noexcept {
         return mReadOnly;
     }
+    uint32_t appendWord(uint32_t val);
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };

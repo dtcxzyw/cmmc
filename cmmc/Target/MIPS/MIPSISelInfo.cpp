@@ -24,18 +24,6 @@
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-static bool isOperandImm16(const MIROperand& operand) {
-    return isOperandSignedImm<16>(operand);
-}
-
-static bool isOperandImm(const MIROperand& operand) {
-    return operand.isImm();
-}
-
-static bool isOperandIReg(const MIROperand& operand) {
-    return operand.isReg() && isIntegerType(operand.type());
-}
-
 static bool isZero(const MIROperand& operand) {
     if(operand.isReg() && operand.reg() == MIPS::X0)
         return true;
@@ -56,7 +44,32 @@ static bool isLessThanOrLessEqualOp(const MIROperand& operand) {
     return op == CompareOp::LessThan || op == CompareOp::LessEqual;
 }
 
-static uint32_t getBranchWithZeroOpcode(const MIROperand& operand) {
+static bool isGreaterThanOrGreaterEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::GreaterThan || op == CompareOp::GreaterEqual;
+}
+
+static bool isLessThanOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::LessThan;
+}
+
+static bool isGreaterThanOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::GreaterThan;
+}
+
+static bool isEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::NotEqual;
+}
+
+static bool isNotEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::Equal;
+}
+
+static MIPSInst getBranchWithZeroOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     switch(op) {
         case CompareOp::LessThan:
@@ -72,7 +85,7 @@ static uint32_t getBranchWithZeroOpcode(const MIROperand& operand) {
     }
 }
 
-static uint32_t getBranchEqualityOpcode(const MIROperand& operand) {
+static MIPSInst getBranchEqualityOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     switch(op) {
         case CompareOp::Equal:
@@ -104,6 +117,81 @@ static MIROperand getZero(const MIROperand& operand) {
     return MIROperand::asISAReg(MIPS::X0, operand.type());
 }
 
+static MIROperand getOne(const MIROperand& operand) {
+    return MIROperand::asImm(1, operand.type());
+}
+
+static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
+    const auto addrInst = ctx.lookupDef(addr);
+    if(addrInst) {
+        if(addrInst->opcode() == InstLoadStackObjectAddr || addrInst->opcode() == InstLoadGlobalAddress) {
+            base = addrInst->getOperand(1);
+            offset = MIROperand::asImm(0, OperandType::Int32);
+            return true;
+        }
+        if(addrInst->opcode() == InstAdd) {
+            base = addrInst->getOperand(1);
+            const auto off = addrInst->getOperand(2);
+            if(isOperandIReg(base) && isOperandImm16(off)) {
+                base = addrInst->getOperand(1);
+                offset = off;
+                return true;
+            }
+        }
+    }
+    if(isOperandIReg(addr)) {
+        base = addr;
+        offset = MIROperand::asImm(0, OperandType::Int32);
+        return true;
+    }
+    return false;
+}
+
+static MIPSInst getLoadOpcode(const MIROperand& dst) {
+    switch(dst.type()) {
+        case OperandType::Bool:
+            [[fallthrough]];
+        case OperandType::Int8:
+            return LBU;  // TODO: fuse sext with lbu?
+        case OperandType::Int16:
+            return LHU;  // TODO: fuse sext with lhu?
+        case OperandType::Int32:
+            return LW;
+        case OperandType::Float32:
+            return LWC1;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static MIPSInst getStoreOpcode(const MIROperand& src) {
+    switch(src.type()) {
+        case OperandType::Bool:
+            [[fallthrough]];
+        case OperandType::Int8:
+            return SB;
+        case OperandType::Int16:
+            return SH;
+        case OperandType::Int32:
+            return SW;
+        case OperandType::Float32:
+            return SWC1;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
+    if(isOperandIReg(src))
+        return src;
+    if(isZero(src)) {
+        return getZero(src);
+    }
+    auto dst = getVRegAs(ctx, src);
+    ctx.newInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
+    return dst;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/ISelInfoImpl.hpp>
@@ -111,8 +199,22 @@ CMMC_TARGET_NAMESPACE_END
 CMMC_TARGET_NAMESPACE_BEGIN
 
 bool MIPSISelInfo::isLegalGenericInst(uint32_t opcode) const {
-    return opcode == InstCopy || opcode == InstCopyFromReg || opcode == InstCopyToReg || opcode == InstLoadRegFromStack ||
-        opcode == InstStoreRegToStack;
+    switch(opcode) {
+        case InstCopy:
+            [[fallthrough]];
+        case InstCopyFromReg:
+            [[fallthrough]];
+        case InstCopyToReg:
+            [[fallthrough]];
+        case InstLoadRegFromStack:
+            [[fallthrough]];
+        case InstStoreRegToStack:
+            [[fallthrough]];
+        case InstLoadStackObjectAddr:
+            return true;
+        default:
+            return false;
+    }
 }
 
 static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
@@ -205,14 +307,27 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         }
         case InstSCmp: {
             auto& op = inst.getOperand(3);
-            if(swapImmReg()) {
+            if(!isLessThanOrLessEqualOp(op) && swapImmReg()) {
                 op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+                modified = true;
             }
 
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
+            if(isGreaterThanOrGreaterEqualOp(op)) {
+                std::swap(lhs, rhs);
+                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+                modified = true;
+            }
             imm2reg(lhs);
             imm2reg(rhs);
+            if(isEqualityOp(op) && !isZero(rhs)) {
+                const auto dst = getVRegAs(ctx, lhs);
+                ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
+                lhs = dst;
+                rhs = getZero(rhs);
+                modified = true;
+            }
             break;
         }
         case InstZExt: {
@@ -222,6 +337,19 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 inst.setOpcode(InstCopy);
                 modified = true;
             }
+            break;
+        }
+        case InstStore: {
+            auto& val = inst.getOperand(1);
+            imm2reg(val);
+            break;
+        }
+        case InstSelect: {
+            auto& cond = inst.getOperand(1);
+            imm2reg(cond);
+            auto& lhs = inst.getOperand(2);
+            imm2reg(lhs);
+            break;
         }
     }
 
@@ -231,7 +359,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
 bool MIPSISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
     bool ret = legalizeInst(inst, ctx);
     if(allowComplexPattern) {
-        // TODO: expand select
+        // noop
     }
     return ret | matchAndSelectImpl(inst, ctx);
 }
@@ -243,8 +371,22 @@ void MIPSISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
         case InstCopyFromReg:
             [[fallthrough]];
         case InstCopyToReg: {
-            if(inst.getOperand(0).type() == OperandType::Int32 && inst.getOperand(1).type() == OperandType::Int32) {
-                inst.setOpcode(ADDU).setOperand<2>(MIROperand::asISAReg(MIPS::X0, OperandType::Int32));
+            auto& dst = inst.getOperand(0);
+            auto& src = inst.getOperand(1);
+            if(isOperandIReg(dst) && isOperandIReg(src)) {
+                inst.setOpcode(MoveGPR);
+            } else {
+                reportNotImplemented(CMMC_LOCATION());
+            }
+            break;
+        }
+        case InstLoadImm: {
+            auto& dst = inst.getOperand(0);
+            auto& src = inst.getOperand(1);
+            if(isOperandIReg(dst) && isOperandImm16(src)) {
+                inst.setOpcode(LoadImm16);
+            } else if(isOperandIReg(dst) && isOperandImm32(src)) {
+                inst.setOpcode(LoadImm32);
             } else {
                 reportNotImplemented(CMMC_LOCATION());
             }
@@ -254,12 +396,27 @@ void MIPSISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
             reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
     }
 }
-
+void MIPSISelInfo::preRALegalizeInst(MIRInst& inst, std::list<MIRInst>& instructions, std::list<MIRInst>::iterator& iter,
+                                     CodeGenContext& ctx) const {
+    switch(inst.opcode()) {
+        case Select_GPR_GPR: {
+            auto& dst = inst.getOperand(0);
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            auto& cond = inst.getOperand(3);
+            instructions.insert(iter, MIRInst{ selectCopyOpcode(dst, rhs) }.setOperand<0>(dst).setOperand<1>(rhs));
+            *iter = MIRInst{ MOVN }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cond);
+            break;
+        }
+        default:
+            reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
+    }
+}
 void MIPSISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
                                                 const StackObject& obj) const {
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
     // TODO: legalize imm
-    const auto imm = MIROperand::asImm(-obj.offset, OperandType::Int32);
+    const auto imm = MIROperand::asImm(obj.offset, OperandType::Int32);
     switch(inst.opcode()) {
         case InstLoadStackObjectAddr: {
             assert(checkOpIdx(1));
@@ -268,12 +425,31 @@ void MIPSISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenCont
         }
         case InstStoreRegToStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(SW).setOperand<2>(sp).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SW : SWC1).setOperand<2>(sp).setOperand<1>(imm);
             break;
         }
         case InstLoadRegFromStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(LW).setOperand<2>(sp).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LW : LWC1).setOperand<2>(sp).setOperand<1>(imm);
+            break;
+        }
+        case SW:
+            [[fallthrough]];
+        case SH:
+            [[fallthrough]];
+        case SB:
+            [[fallthrough]];
+        case SWC1:
+            [[fallthrough]];
+        case LW:
+            [[fallthrough]];
+        case LH:
+            [[fallthrough]];
+        case LB:
+            [[fallthrough]];
+        case LWC1: {
+            assert(checkOpIdx(2));
+            inst.setOperand<2>(sp).setOperand<1>(imm);
             break;
         }
         default:

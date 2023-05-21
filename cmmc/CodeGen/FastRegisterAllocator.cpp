@@ -22,6 +22,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <queue>
@@ -65,7 +66,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 continue;  // local
             }
 
-            const auto size = getOperandSize(reg.type());
+            const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(reg.type()));
             const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             stackMap[reg] = storage;
             crossBlockSpilledStackObjects.insert(storage);
@@ -88,7 +89,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             if(const auto iter = stackMap.find(op); iter != stackMap.cend()) {
                 return ref = iter->second;
             }
-            const auto size = getOperandSize(op.type());
+            const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(op.type()));
             const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             return ref = storage;
         };
@@ -106,7 +107,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
 
-            const auto evictVReg = [&](const MIROperand& operand) {
+            const auto evictVReg = [&](MIROperand operand) {
                 assert(isOperandVReg(operand));
                 auto& map = getDataMap(operand);
                 MIROperand isaReg;

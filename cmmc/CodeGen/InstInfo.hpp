@@ -39,8 +39,9 @@ enum InstFlag : uint32_t {
     InstFlagRegCopy = 1 << 8,
     InstFlagCommutative = 1 << 9,
     InstFlagReturn = 1 << 10,
-    InstFlagSideEffect =
-        InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush | InstFlagRegCopy | InstFlagReturn
+    InstFlagLegalizePreRA = 1 << 11,
+    InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
+        InstFlagRegCopy | InstFlagReturn
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
@@ -121,6 +122,13 @@ constexpr bool isIntegerType(OperandType type) {
 }
 constexpr bool isFPType(OperandType type) {
     return type == OperandType::Float32;
+}
+
+constexpr bool isOperandVRegOrISAReg(const MIROperand& operand) {
+    return operand.isReg() && (isVirtualReg(operand.reg()) || isISAReg(operand.reg()));
+}
+constexpr bool isOperandISAReg(const MIROperand& operand) {
+    return operand.isReg() && isISAReg(operand.reg());
 }
 
 CMMC_MIR_NAMESPACE_END

@@ -61,7 +61,7 @@ void MIRFunction::dump(std::ostream& out, const CodeGenContext& ctx) const {
     uint32_t idx = 0;
     for(auto& [ref, obj] : mStackObjects) {
         out << "  s" << (ref.reg() ^ stackObjectBegin) << " size = " << obj.size << " align = " << obj.alignment
-            << " offset = " << obj.offset << " usage =" << enumName(obj.usage) << '\n';
+            << " offset = " << obj.offset << " usage = " << enumName(obj.usage) << '\n';
         ++idx;
     }
     out << '\n';
@@ -84,6 +84,11 @@ bool MIRZeroStorage::verify(std::ostream&, const CodeGenContext&) const {
 }
 void MIRZeroStorage::dump(std::ostream& out, const CodeGenContext&) const {
     out << "\t.zero\t" << mSize << '\n';
+}
+uint32_t MIRDataStorage::appendWord(uint32_t val) {
+    const auto idx = static_cast<uint32_t>(mData.size());
+    mData.push_back(val);
+    return idx;
 }
 bool MIRDataStorage::verify(std::ostream&, const CodeGenContext&) const {
     return true;

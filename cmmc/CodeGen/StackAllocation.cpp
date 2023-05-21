@@ -385,7 +385,7 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
     }
 
     // prolog & epilog
-    ctx.frameInfo.emitPostSAEpilogue(*func.blocks().front(), ctx, stackSize, raOffset);
+    ctx.frameInfo.emitPostSAPrologue(*func.blocks().front(), ctx, stackSize, raOffset);
 
     for(auto& block : func.blocks()) {
         const auto& terminator = block->instructions().back();

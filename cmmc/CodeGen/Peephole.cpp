@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -48,12 +49,16 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
             regValue.erase(reg);
         };
 
-        const auto replaceUse = [&](MIROperand& reg) {
+        const auto replaceUse = [&](MIRInst& inst, MIROperand& reg) {
             if(!reg.isReg())
                 return;
             if(auto iter = regValue.find(reg); iter != regValue.cend()) {
                 reg = iter->second;
                 modified = true;
+                if constexpr(Config::debug) {
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    assert(instInfo.verify(inst));
+                }
             }
         };
 
@@ -72,7 +77,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                     auto& operand = inst.getOperand(idx);
                     if(operand.isReg() && isVirtualReg(operand.reg()))
-                        replaceUse(operand);
+                        replaceUse(inst, operand);
                 }
 
             // TODO: match copy?
@@ -89,7 +94,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                         invalidateReg(inst.getOperand(idx));
                         auto& operand = inst.getOperand(idx);
                         if(operand.isReg() && isVirtualReg(operand.reg()))
-                            replaceUse(operand);
+                            replaceUse(inst, operand);
                     }
                 if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
                     std::vector<MIROperand> nonVReg;
