@@ -98,22 +98,16 @@ constexpr bool isOperandStackObject(const MIROperand& operand) {
 }
 
 template <uint32_t N>
-constexpr bool isOperandSignedImm(const MIROperand& operand) {
+constexpr bool isSignedImm(intmax_t imm) {
     static_assert(N < 64);
-    if(!operand.isImm())
-        return false;
     constexpr auto x = static_cast<intmax_t>(1) << (N - 1);
-    const auto imm = operand.imm();
     return -x <= imm && imm < x;
 }
 
 template <uint32_t N>
-constexpr bool isOperandUnsignedImm(const MIROperand& operand) {
+constexpr bool isUnsignedImm(intmax_t imm) {
     static_assert(N < 63);
-    if(!operand.isImm())
-        return false;
     constexpr auto x = static_cast<intmax_t>(1) << N;
-    const auto imm = operand.imm();
     return 0 <= imm && imm < x;
 }
 

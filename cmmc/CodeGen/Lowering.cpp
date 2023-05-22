@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Value.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
@@ -34,6 +33,7 @@
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Graph.hpp>
@@ -474,6 +474,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 9: post-RA scheduling, minimize latency
+        // TODO: after post legalization?
         if(optLevel >= OptimizationLevel::O3) {
             Stage stage{ "Post-RA scheduling"sv };
             schedule(mfunc, ctx, false);

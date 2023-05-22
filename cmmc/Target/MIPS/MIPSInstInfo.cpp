@@ -74,18 +74,6 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
 using mir::isOperandProb;
 using mir::isOperandReloc;
 
-static bool verifyInstSLL(const MIRInst& inst) {
-    return isOperandUnsignedImm<5>(inst.getOperand(2));
-}
-
-static bool verifyInstSRA(const MIRInst& inst) {
-    return isOperandUnsignedImm<5>(inst.getOperand(2));
-}
-
-static bool verifyInstSRL(const MIRInst& inst) {
-    return isOperandUnsignedImm<5>(inst.getOperand(2));
-}
-
 static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ B }.setOperand<0>(MIROperand::asReloc(targetBlock));
 }

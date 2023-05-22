@@ -62,27 +62,20 @@ bool TACISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComp
     return matchAndSelectImpl(inst, ctx);
 }
 
-void TACISelInfo::postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const {
-    CMMC_UNUSED(ctx);
-    switch(inst.opcode()) {
+void TACISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
+    switch(ctx.inst.opcode()) {
         case InstCopy: {
-            inst.setOpcode(Assign);
+            ctx.inst.setOpcode(Assign);
             break;
         }
         default:
             reportNotImplemented(CMMC_LOCATION());
     }
 }
-void TACISelInfo::preRALegalizeInst(MIRInst& inst, std::list<MIRInst>& instructions, std::list<MIRInst>::iterator& iter,
-                                    CodeGenContext& ctx) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(instructions);
-    CMMC_UNUSED(iter);
+void TACISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     CMMC_UNUSED(ctx);
 }
-void TACISelInfo::legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op,
-                                               const StackObject& obj) const {
-    CMMC_UNUSED(inst);
+void TACISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(op);
     CMMC_UNUSED(obj);

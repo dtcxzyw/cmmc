@@ -12,11 +12,11 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <variant>
 #include <vector>
@@ -57,6 +57,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 modified = true;
                 if constexpr(Config::debug) {
                     auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    CMMC_UNUSED(instInfo);
                     assert(instInfo.verify(inst));
                 }
             }

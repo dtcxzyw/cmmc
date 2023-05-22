@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/DataLayout.hpp>
+#include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -374,11 +375,14 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
     }
 
     for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
             auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(auto& op = inst.getOperand(idx); isOperandStackObject(op)) {
-                    ctx.iselInfo.legalizeInstWithStackOperand(inst, ctx, op, func.stackObjects().at(op));
+                    ctx.iselInfo.legalizeInstWithStackOperand(InstLegalizeContext{ inst, instructions, iter, ctx }, op,
+                                                              func.stackObjects().at(op));
                 }
             }
         }

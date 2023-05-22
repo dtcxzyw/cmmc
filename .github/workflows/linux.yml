@@ -2,9 +2,9 @@ name: linux
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
   BUILD_TYPE: Release
@@ -14,33 +14,33 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        lfs: true
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
 
-    - name: Env
-      run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu
-    
-    - name: Format
-      run: make format-check
+      - name: Env
+        run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu
 
-    - uses: actions/checkout@v3
-      with:
-        repository: dtcxzyw/qemu
-        path: ${{github.workspace}}/qemu
-    
-    - name: Build qemu
-      run: |
-        cd qemu
-        ./configure --target-list=riscv64-linux-user --enable-plugins
-        make -j
-        echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
+      - name: Format
+        run: make format-check
 
-    - name: Build
-      run: |
-        mkdir build && cd build
-        cmake .. -G Ninja
-        cmake --build . -j
+      - uses: actions/checkout@v3
+        with:
+          repository: dtcxzyw/qemu
+          path: ${{github.workspace}}/qemu
 
-    - name: Test
-      run: cd build && ctest --verbose
+      - name: Build qemu
+        run: |
+          cd qemu
+          ./configure --target-list=riscv64-linux-user,mipsel-linux-user --enable-plugins
+          make -j
+          echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake .. -G Ninja
+          cmake --build . -j
+
+      - name: Test
+        run: cd build && ctest --verbose

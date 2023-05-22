@@ -16,11 +16,11 @@
 // See also https://courses.cs.washington.edu/courses/cse410/09sp/examples/MIPSCallingConventionsSummary.pdf for the o32 calling
 // convention
 
-#include "cmmc/CodeGen/InstInfo.hpp"
 #include <MIPS/ISelInfoDecl.hpp>
 #include <MIPS/InstInfoDecl.hpp>
 #include <MIPS/ScheduleModelDecl.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterInfo.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
@@ -370,30 +370,33 @@ void MIPSFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
 
 void MIPSFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
                                        std::optional<int32_t> raOffset) const {
-    auto& instructions = entryBlock.instructions();
-    // TODO: legalize imm
     CMMC_UNUSED(ctx);
+    auto& instructions = entryBlock.instructions();
     if(raOffset) {
-        instructions.push_front(MIRInst{ MIPS::SW }.setOperand<0>(MIPS::ra).setOperand<2>(MIPS::sp).setOperand<1>(
-            MIROperand::asImm(*raOffset, OperandType::Int32)));
+        int64_t offset = *raOffset;
+        MIROperand base = MIPS::sp;
+        const auto iter = instructions.begin();
+        MIPS::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
+        instructions.insert(iter,
+                            MIRInst{ MIPS::SW }.setOperand<0>(MIPS::ra).setOperand<2>(base).setOperand<1>(
+                                MIROperand::asImm(offset, OperandType::Int32)));
     }
-    instructions.push_front(MIRInst{ MIPS::ADDIU }.setOperand<0>(MIPS::sp).setOperand<1>(MIPS::sp).setOperand<2>(
-        MIROperand::asImm(-stackSize, OperandType::Int32)));
+    MIPS::adjustReg(instructions, instructions.begin(), MIPS::sp, MIPS::sp, -stackSize);
 }
 void MIPSFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
                                        std::optional<int32_t> raOffset) const {
     auto& instructions = exitBlock.instructions();
     auto iter = std::prev(instructions.end());
-    // TODO: legalize imm
     CMMC_UNUSED(ctx);
     if(raOffset) {
+        int64_t offset = *raOffset;
+        MIROperand base = MIPS::sp;
+        MIPS::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
         instructions.insert(iter,
-                            MIRInst{ MIPS::LW }.setOperand<0>(MIPS::ra).setOperand<2>(MIPS::sp).setOperand<1>(
-                                MIROperand::asImm(*raOffset, OperandType::Int32)));
+                            MIRInst{ MIPS::LW }.setOperand<0>(MIPS::ra).setOperand<2>(base).setOperand<1>(
+                                MIROperand::asImm(offset, OperandType::Int32)));
     }
-    instructions.insert(iter,
-                        MIRInst{ MIPS::ADDIU }.setOperand<0>(MIPS::sp).setOperand<1>(MIPS::sp).setOperand<2>(
-                            MIROperand::asImm(stackSize, OperandType::Int32)));
+    MIPS::adjustReg(instructions, iter, MIPS::sp, MIPS::sp, stackSize);
 }
 
 CMMC_MIR_NAMESPACE_END

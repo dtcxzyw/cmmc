@@ -12,12 +12,12 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstddef>
@@ -142,6 +142,7 @@ void ISelContext::runISel(MIRFunction& func) {
                 std::cerr << "First illegal inst:\n";
                 assert(firstIllegalInst);
                 mCodeGenCtx.instInfo.getInstInfo(firstIllegalInst->opcode()).print(std::cerr, *firstIllegalInst, true);
+                std::cerr << '\n';
                 DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
             } else {
                 allowComplexPattern = true;
@@ -197,11 +198,21 @@ void ISelContext::replaceOperand(const MIROperand& src, const MIROperand& dst) {
 
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     for(auto& block : func.blocks()) {
-        for(auto& inst : block->instructions()) {
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
             if(inst.opcode() < ISASpecificBegin) {
-                ctx.iselInfo.postLegalizeInst(inst, ctx);
-                if(inst.opcode() < ISASpecificBegin)
+                ctx.iselInfo.postLegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx });
+            }
+        }
+    }
+
+    if constexpr(Config::debug) {
+        for(auto& block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                if(inst.opcode() < ISASpecificBegin) {
                     reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
+                }
             }
         }
     }
@@ -214,7 +225,7 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
             auto& inst = *iter;
             auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
             if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
-                ctx.iselInfo.preRALegalizeInst(inst, instructions, iter, ctx);
+                ctx.iselInfo.preRALegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx });
             }
         }
     }

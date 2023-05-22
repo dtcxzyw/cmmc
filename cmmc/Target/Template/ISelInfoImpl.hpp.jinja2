@@ -54,9 +54,9 @@ class {{target}}ISelInfo final: public TargetISelInfo {
 public:
     [[nodiscard]] bool isLegalGenericInst(uint32_t opcode) const override;
     bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const override;
-    void postLegalizeInst(MIRInst& inst, CodeGenContext& ctx) const override;
-    void preRALegalizeInst(MIRInst& inst, std::list<MIRInst>& instructions, std::list<MIRInst>::iterator& iter, CodeGenContext& ctx) const override;
-    void legalizeInstWithStackOperand(MIRInst& inst, const CodeGenContext& ctx, MIROperand& op, const StackObject& obj) const override;
+    void postLegalizeInst(const InstLegalizeContext& ctx) const override;
+    void preRALegalizeInst(const InstLegalizeContext& ctx) const override;
+    void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const override;
 };
 
 const TargetISelInfo& get{{target}}ISelInfo() {

@@ -10,11 +10,11 @@ import platform
 import math
 
 qemu_path = os.environ.get('QEMU_PATH', '')
-qemu_command = "{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -L /usr/riscv64-linux-gnu/ -D /dev/stderr".format(
+qemu_command = "{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr".format(
     qemu_path=qemu_path).split()
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
-qemu_gcc_ref_command = "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -ffp-contract=on -w "
+qemu_gcc_ref_command = "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -mhard-float -ffp-contract=on -w "
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 submit_binary = os.path.abspath(
@@ -494,7 +494,7 @@ def sysy_cmmc_qemu(src):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     output_asm = output + '.s'
-    cmmc_command = submit_binary + ' ' + src + ' -S -o ' + output_asm + ' ' + opt
+    cmmc_command = binary_path + ' -t mips -O 3 -H -o ' + output_asm + ' ' + src
     if os.system(cmmc_command) != 0:
         return False
     command = qemu_gcc_ref_command.replace('-x c++', '') + \
@@ -674,7 +674,7 @@ if not generate_ref:
     if "codegen" in test_cases:
         res.append(test("SPL SPL->MIPS project4", tests_path +
                         "/TAC2MC", ".spl", spl_codegen_mips))
-        #res.append(test("SPL SPL->RISCV64 project4", tests_path +
+        # res.append(test("SPL SPL->RISCV64 project4", tests_path +
         #                "/TAC2MC", ".spl", spl_codegen_riscv64))
         res.append(test("SPL TAC->MIPS project4", tests_path +
                         "/TAC2MC", ".ir", spl_codegen_mips))
@@ -704,20 +704,20 @@ if not generate_ref:
                         "/SysY2022/performance", ".sy", sysy_codegen_llvm))
 
     if "qemu" in test_cases:
-        # res.append(test("SysY codegen functional (qemu-riscv64)", tests_path +
-        #                 "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
-        # res.append(test("SysY codegen hidden_functional (qemu-riscv64)", tests_path +
-        #                 "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
+        res.append(test("SysY codegen functional (qemu-mipsel)", tests_path +
+                        "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
+        res.append(test("SysY codegen hidden_functional (qemu-mipsel)", tests_path +
+                        "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
 
-        # dict_cmmc_qemu.clear()
-        # total_perf_self_qemu = 1
-        # total_perf_self_samples_qemu = 0
-        # res.append(test("SysY codegen performance (qemu-riscv64)", tests_path +
-        #                 "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
+        dict_cmmc_qemu.clear()
+        total_perf_self_qemu = 1
+        total_perf_self_samples_qemu = 0
+        res.append(test("SysY codegen performance (qemu-mipsel)", tests_path +
+                        "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
         pass
 
     if "qemu-gcc" in test_cases:
-        res.append(test("SysY gcc performance (qemu-riscv64)", tests_path +
+        res.append(test("SysY gcc performance (qemu-mipsel)", tests_path +
                         "/SysY2022/performance", ".sy", sysy_gcc_qemu))
 
 if generate_ref:

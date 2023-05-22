@@ -40,19 +40,27 @@ constexpr auto sp = MIROperand::asISAReg(MIPS::X29, OperandType::Int32);
 constexpr auto ra = MIROperand::asISAReg(MIPS::X31, OperandType::Int32);
 
 constexpr bool isOperandImm16(const MIROperand& operand) {
-    return isOperandSignedImm<16>(operand);
+    return operand.isImm() && isSignedImm<16>(operand.imm());
+}
+
+constexpr bool isOperandUImm16(const MIROperand& operand) {
+    return operand.isImm() && isUnsignedImm<16>(operand.imm());
+}
+
+constexpr bool isOperandUImm5(const MIROperand& operand) {
+    return operand.isImm() && isUnsignedImm<5>(operand.imm());
 }
 
 constexpr bool isOperandImm32(const MIROperand& operand) {
-    return isOperandSignedImm<32>(operand);
+    return operand.isImm() && isSignedImm<32>(operand.imm());
 }
 
 constexpr bool isOperandNonZeroImm16(const MIROperand& operand) {
-    return isOperandSignedImm<16>(operand) && operand.imm() != 0;
+    return isOperandImm16(operand) && operand.imm() != 0;
 }
 
 constexpr bool isOperandNonZeroImm32(const MIROperand& operand) {
-    return isOperandSignedImm<32>(operand) && operand.imm() != 0;
+    return isOperandImm32(operand) && operand.imm() != 0;
 }
 
 constexpr bool isOperandImm(const MIROperand& operand) {
@@ -77,7 +85,7 @@ constexpr bool isOperandGPR(const MIROperand& operand) {
 }
 
 constexpr bool isOperandBaseLike(const MIROperand& operand) {
-    return isOperandGPR(operand) || isOperandStackObject(operand) || isOperandReloc(operand);
+    return isOperandGPR(operand) || isOperandStackObject(operand);
 }
 
 constexpr bool isOperandFPR(const MIROperand& operand) {
@@ -96,5 +104,11 @@ constexpr bool isOperandHILO(const MIROperand& operand) {
 constexpr bool isOperandCC(const MIROperand& operand) {
     return operand.isReg() && operand.reg() == CC;
 }
+
+void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
+                                  int64_t& imm);
+// dst = src + imm
+void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
+               int64_t imm);
 
 CMMC_TARGET_NAMESPACE_END

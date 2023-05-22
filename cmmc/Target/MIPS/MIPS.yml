@@ -21,26 +21,26 @@ InstInfo:
       XOR:
         Mnemonic: xor
 
-  IntegerBinaryImm:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm16[Metadata]
+  ADDIU:
+    Format: addiu $Rd:GPR[Def], $Rs:GPR[Use], $Imm:Imm16[Metadata]
+  IntegerBitwiseOps:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:UImm16[Metadata]
     Instances:
-      ADDIU:
-        Mnemonic: addiu
       ANDI:
         Mnemonic: andi
       ORI:
         Mnemonic: ori
-      SLL:
-        Mnemonic: sll
-        CustomVerifier: true
-      SRA:
-        Mnemonic: sra
-        CustomVerifier: true
-      SRL:
-        Mnemonic: srl
-        CustomVerifier: true
       XORI:
         Mnemonic: xori
+  IntegerShiftOps:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Imm:UImm5[Metadata]
+    Instances:
+      SLL:
+        Mnemonic: sll
+      SRA:
+        Mnemonic: sra
+      SRL:
+        Mnemonic: srl
 
   FloatingPointBinary:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use], $Rt:FPR[Use]
@@ -189,6 +189,10 @@ InstInfo:
       SLTIU:
         Mnemonic: sltiu
 
+  LUI:
+    Format: "lui $Rd:GPR[Def], $Imm:UImm16[Metadata]"
+    Flag: [LoadConstant]
+
   # Pseudo Instrucitons
   LoadAddress:
     Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
@@ -198,6 +202,7 @@ InstInfo:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm16[Metadata]" # addiu
     Flag: [LoadConstant]
 
+  # TODO: expand to LUI+ADDIU?
   LoadImm32:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm32[Metadata]" # lui + addiu
     Flag: [LoadConstant]
@@ -330,7 +335,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
     Replace:
       ANDI:
         Rd: $Dst
@@ -354,7 +359,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
     Replace:
       ORI:
         Rd: $Dst
@@ -378,7 +383,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
     Replace:
       XORI:
         Rd: $Dst
@@ -436,6 +441,31 @@ InstSelection:
             Rd: getVRegAs(ctx, $Lhs)
             Rs: $Lhs
             Imm: getNeg($Rhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOperandImm32($Rhs) && isRationalOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getBranchWithZeroOpcode($Op)
+        $Template: BLTZ
+        Rs:
+          ADDU:
+            Rd: getVRegAs(ctx, $Lhs)
+            Rs: $Lhs
+            Rt:
+              LoadImm32:
+                Rd: getVRegAs(ctx, $Rhs)
+                Imm: getNeg($Rhs)
         Tgt: $Reloc
         Prob: $Prob
 
@@ -588,6 +618,24 @@ InstSelection:
             Imm: getOne($Lhs)
         Imm: getOne($Dst)
 
+  # x<=y -> !(y<x)
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs:
+          SLT:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs: $Rhs
+            Rt: $Lhs
+        Imm: getOne($Dst)
+
   # MUL/DIV/DIVU
   - Pattern:
       InstMul:
@@ -726,6 +774,18 @@ InstSelection:
         Rs:
           TRUNC_W_S:
             Rd: getVRegAs(ctx, $Src)
+            Rs: $Src
+
+  - Pattern:
+      InstS2F:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      CVT_S_W:
+        Rd: $Dst
+        Rs:
+          MTC1:
+            Rd: getVRegAs(ctx, $Dst)
             Rs: $Src
 
   - Pattern:
