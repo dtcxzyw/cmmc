@@ -62,18 +62,21 @@ InstInfo:
       NEG_S:
         Mnemonic: neg.s
 
+  BREAK:
+    Format: break
+    Flag: [Terminator, NoFallthrough]
   B:
     Format: b $Tgt:Reloc[Metadata]
-    Flag: [Terminator, Branch, NoFallthrough]
+    Flag: [Terminator, Branch, NoFallthrough, WithDelaySlot]
   BC1F:
     Format: "bc1f $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use] Branch Prob: $Prob:Prob[Metadata]"
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, WithDelaySlot]
   BC1T:
     Format: "bc1t $Tgt:Reloc[Metadata] # Implicit Use: $Rs:CC[Use] Branch Prob: $Prob:Prob[Metadata]"
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, WithDelaySlot]
   BranchCompare:
     Format: "$Mnemonic:Template $Rs:GPR[Use], $Rt:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, WithDelaySlot]
     Instances:
       BEQ:
         Mnemonic: beq
@@ -81,7 +84,7 @@ InstInfo:
         Mnemonic: bne
   BranchCompareZero:
     Format: "$Mnemonic:Template $Rs:GPR[Use], $Tgt:Reloc[Metadata] # Branch Prob: $Prob:Prob[Metadata]"
-    Flag: [Terminator, Branch]
+    Flag: [Terminator, Branch, WithDelaySlot]
     Instances:
       BGEZ:
         Mnemonic: bgez
@@ -97,10 +100,14 @@ InstInfo:
     Instances:
       C_EQ_S:
         Mnemonic: c.eq.s
-      C_LT_S:
-        Mnemonic: c.lt.s
-      C_LE_S:
-        Mnemonic: c.le.s
+      C_OLT_S:
+        Mnemonic: c.olt.s
+      C_OLE_S:
+        Mnemonic: c.ole.s
+      C_ULT_S:
+        Mnemonic: c.ult.s
+      C_ULE_S:
+        Mnemonic: c.ule.s
 
   FloatingPointConvert:
     Format: "$Mnemonic:Template $Rd:FPR[Def], $Rs:FPR[Use]"
@@ -124,10 +131,10 @@ InstInfo:
 
   JAL:
     Format: "jal $Tgt:Reloc[Metadata]"
-    Flag: [Call]
+    Flag: [Call, WithDelaySlot]
   JR:
     Format: jr $Rs:GPR[Use]
-    Flag: [Terminator, NoFallthrough, Return]
+    Flag: [Terminator, NoFallthrough, Return, WithDelaySlot]
 
   Load:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:Imm16[Metadata]($Rs:BaseLike[Use])
@@ -163,9 +170,9 @@ InstInfo:
     Flag: [Store]
 
   MFC1:
-    Format: mfc1 $Rd:GPR[Def], $Rs:FPR[Use]
+    Format: mfc1 $Rt:GPR[Def], $Fs:FPR[Use]
   MTC1:
-    Format: mtc1 $Rd:FPR[Def], $Rs:GPR[Use]
+    Format: mtc1 $Rt:GPR[Use], $Fs:FPR[Def]
   MFHI:
     Format: "mfhi $Rd:GPR[Def] # Implicit Use: $Rs:HILO[Use]"
   MFLO:
@@ -207,6 +214,10 @@ InstInfo:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm32[Metadata]" # lui + addiu
     Flag: [LoadConstant]
 
+  Nop:
+    Format: "nop"
+    Flag: []
+
   MoveGPR:
     Format: "move $Rd:GPR[Def], $Rs:GPR[Use]"
     Flag: [RegCopy]
@@ -216,11 +227,22 @@ InstInfo:
     Format: "movn $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
   MOVZ:
     Format: "movz $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
+  MOVF:
+    Format: "movf $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
+  MOVT:
+    Format: "movt $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
 
   # Illegal Pseudo Instrucitons
   # select[CC][Val]
   Select_GPR_GPR: # => Copy + MOVN
     Format: "select_gpr_gpr $Rd:GPR[Def], $Rs:GPR[Use], $Rt:IRegOrImm[Use], $Cond:GPR[Use]"
+    Flag: [LegalizePreRA]
+
+  # movt/movf
+  # Flip == 0: Rs = Rs using movf
+  # Flip == 1: Rd = !Rs using movt
+  FCC2GPR:
+    Format: "fcc2gpr $Rd:GPR[Def], $Rs:CC[Use], $Flip:Imm[Metadata]"
     Flag: [LegalizePreRA]
 
 InstSelection:
@@ -241,7 +263,7 @@ InstSelection:
         Imm: $Imm
         $Predicate: isZero($Imm)
     Replace:
-      # TODO: using InstResetToZero -> InstFlagLoadConstant
+      # TODO: using InstResetToZero with flag InstFlagLoadConstant
       InstCopyFromReg:
         Dst: $Dst
         Src: getZero($Dst)
@@ -402,6 +424,83 @@ InstSelection:
         Rs: $Lhs
         Rt: $Rhs
 
+  - Pattern:
+      InstShl:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
+    Replace:
+      SLL:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstAShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
+    Replace:
+      SRA:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstLShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
+    Replace:
+      SRL:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstShl:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SLLV:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstAShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SRAV:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  - Pattern:
+      InstLShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SRLV:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+
+  # Terminators
+  - Pattern:
+      InstUnreachable:
+    Replace:
+      BREAK:
   # Branches
   # BLEZ BLTZ BGEZ BGTZ
   - Pattern:
@@ -507,6 +606,18 @@ InstSelection:
         $Template: BEQ
         Rs: $Lhs
         Rt: getIReg(ctx, $Rhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond: $Cond
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BNE:
+        Rs: $Cond
+        Rt: getZero($Cond)
         Tgt: $Reloc
         Prob: $Prob
 
@@ -618,6 +729,37 @@ InstSelection:
             Imm: getOne($Lhs)
         Imm: getOne($Dst)
 
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandBoolReg($Src)
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
+
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src)
+    Replace:
+      ANDI:
+        Rd: $Dst
+        Rs: $Src
+        Imm: getZExtMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstSExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src)
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
+
   # x<=y -> !(y<x)
   - Pattern:
       InstSCmp:
@@ -727,6 +869,22 @@ InstSelection:
         Imm: $Offset
 
   - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src:
+          InstLoad:
+            Dst: $Val
+            Addr: $Addr
+            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+    Replace:
+      Load:
+        $Opcode: getZExtLoadOpcode($Dst)
+        $Template: LBU
+        Rd: $Dst
+        Rs: $Base
+        Imm: $Offset
+
+  - Pattern:
       InstStore:
         Src: $Src
         Addr: $Addr
@@ -770,8 +928,8 @@ InstSelection:
         Src: $Src
     Replace:
       MFC1:
-        Rd: $Dst
-        Rs:
+        Rt: $Dst
+        Fs:
           TRUNC_W_S:
             Rd: getVRegAs(ctx, $Src)
             Rs: $Src
@@ -785,8 +943,8 @@ InstSelection:
         Rd: $Dst
         Rs:
           MTC1:
-            Rd: getVRegAs(ctx, $Dst)
-            Rs: $Src
+            Fs: getVRegAs(ctx, $Dst)
+            Rt: $Src
 
   - Pattern:
       InstFAdd:
@@ -831,6 +989,33 @@ InstSelection:
         Rd: $Dst
         Rs: $Lhs
         Rt: $Rhs
+
+  - Pattern:
+      InstFNeg:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      NEG_S:
+        Rd: $Dst
+        Rs: $Src
+
+  - Pattern:
+      InstFCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+    Replace:
+      FCC2GPR:
+        Rd: $Dst
+        Rs:
+          CMP:
+            $Opcode: getFCmpOpcode($Op)
+            $Template: C_EQ_S
+            Rd: getCC()
+            Rs: $Lhs
+            Rt: $Rhs
+        Flip: shouldInvertFCmp($Op)
 
 ScheduleModel:
   emulator:

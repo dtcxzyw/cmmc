@@ -1,0 +1,78 @@
+// Please compile this file with -O0
+/*
+#include <stdio.h>
+void putch(int c) {
+    putchar(c);
+}
+void putint(int x) {
+    printf("%d", x);
+}
+*/
+void putString(char str[]) {
+    int i = 0;
+    do {
+        char ch = str[i];
+        if(ch == 0)
+            break;
+        putch(ch);
+        ++i;
+    } while(1);
+}
+int ret = 0;
+void reportResult(int res) {
+    if(res == 1) {
+        putString("PASS");
+    } else {
+        putString("FAIL");
+        ret = 1;
+    }
+    putch(10);
+}
+void reportTest(int id) {
+    putString("Testing: ");
+    putint(id);
+    putch(20);
+}
+void assertIntEqual(int id, int lhs, int rhs) {
+    reportTest(id);
+    if(lhs != rhs) {
+        putString(" ans = ");
+        putint(lhs);
+        putString(" out = ");
+        putint(rhs);
+        putch(20);
+    }
+    reportResult(lhs == rhs);
+}
+void assertFloatEqual(int id, float lhs, float rhs) {
+    reportTest(id);
+    reportResult(lhs == rhs);
+}
+void testIntegerExpression() {
+    {% for expr in int_expr %} {{expr}} {% endfor %}
+}
+void testFPExpression() {
+    const float inf = 1.0 / 0.0;
+    const float nan = 0.0 / 0.0;
+    {% for expr in fp_expr %} {{expr}} {% endfor %}
+}
+void assertUnreachable() {
+    reportResult(0);
+}
+void assertReachable() {
+    reportResult(1);
+}
+void testControlFlow() {
+    // Constant
+    if(1) {
+        assertReachable();
+    } else {
+        assertUnreachable();
+    }
+}
+int main() {
+    testIntegerExpression();
+    testFPExpression();
+    testControlFlow();
+    return ret;
+}

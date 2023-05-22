@@ -14,6 +14,7 @@
 
 #pragma once
 #include <MIPS/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -63,20 +64,10 @@ constexpr bool isOperandNonZeroImm32(const MIROperand& operand) {
     return isOperandImm32(operand) && operand.imm() != 0;
 }
 
-constexpr bool isOperandImm(const MIROperand& operand) {
-    return operand.isImm();
-}
-
-constexpr bool isOperandIReg(const MIROperand& operand) {
-    return operand.isReg() && isIntegerType(operand.type());
-}
-
-constexpr bool isOperandIRegOrImm(const MIROperand& operand) {
-    return (operand.isReg() && isIntegerType(operand.type())) || operand.isImm();
-}
-
 constexpr bool isOperandGPR(const MIROperand& operand) {
     if(!operand.isReg())
+        return false;
+    if(!isIntegerType(operand.type()))
         return false;
     if(isVirtualReg(operand.reg()))
         return true;
@@ -90,6 +81,8 @@ constexpr bool isOperandBaseLike(const MIROperand& operand) {
 
 constexpr bool isOperandFPR(const MIROperand& operand) {
     if(!operand.isReg())
+        return false;
+    if(!isFPType(operand.type()))
         return false;
     if(isVirtualReg(operand.reg()))
         return true;

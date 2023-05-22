@@ -21,6 +21,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <iterator>
 #include <memory>
@@ -216,6 +217,11 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
             }
         }
     }
+
+    assert(func.verify(std::cerr, ctx));
+
+    for(auto& block : func.blocks())
+        ctx.iselInfo.postLegalizeInstSeq(ctx, block->instructions());
 }
 
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
@@ -293,6 +299,24 @@ uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src) {
         return InstCopyFromReg;
     assert(isOperandVReg(src) && isOperandVReg(dst));
     return InstCopy;
+}
+
+MIROperand getZExtMask(OperandType dstType, OperandType srcType) {
+    intmax_t imm;
+    switch(srcType) {
+        case OperandType::Int8:
+            imm = 0xff;
+            break;
+        case OperandType::Int16:
+            imm = 0xffff;
+            break;
+        case OperandType::Int32:
+            imm = 0xfffffff;
+            break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    return MIROperand::asImm(imm, dstType);
 }
 
 CMMC_MIR_NAMESPACE_END

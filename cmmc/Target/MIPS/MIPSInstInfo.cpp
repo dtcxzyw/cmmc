@@ -40,7 +40,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     auto& op = operand.operand;
     if(op.isReg()) {
         if(isVirtualReg(op.reg())) {
-            out << 'v' << (op.reg() ^ virtualRegBegin);
+            dumpVirtualReg(out, op);
         } else if(isOperandGPR(op))
             out << '$' << getMIPSGPRTextualName(static_cast<MIPSRegister>(op.reg()));
         else if(isOperandFPR(op))
@@ -48,7 +48,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         else if(isOperandHILO(op))
             out << "[hi/lo]";
         else if(isOperandCC(op))
-            out << "[cc0]";
+            out << "$fcc0";
         else if(op.reg() == invalidReg) {
             out << "invalid";
         } else if(isStackObject(op.reg())) {
@@ -71,6 +71,9 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     reportUnreachable(CMMC_LOCATION());
 }
 
+using mir::isOperandImm;
+using mir::isOperandIReg;
+using mir::isOperandIRegOrImm;
 using mir::isOperandProb;
 using mir::isOperandReloc;
 

@@ -115,7 +115,7 @@ static MIROperand getHILO() {
     return MIROperand::asISAReg(MIPS::HILO, OperandType::Special);
 }
 
-[[maybe_unused]] static MIROperand getCC() {
+static MIROperand getCC() {
     return MIROperand::asISAReg(MIPS::CC, OperandType::Special);
 }
 
@@ -158,13 +158,24 @@ static MIPSInst getLoadOpcode(const MIROperand& dst) {
         case OperandType::Bool:
             [[fallthrough]];
         case OperandType::Int8:
-            return LBU;  // TODO: fuse sext with lbu?
+            return LB;
         case OperandType::Int16:
-            return LHU;  // TODO: fuse sext with lhu?
+            return LH;
         case OperandType::Int32:
             return LW;
         case OperandType::Float32:
             return LWC1;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static MIPSInst getZExtLoadOpcode(const MIROperand& dst) {
+    switch(dst.type()) {
+        case OperandType::Int8:
+            return LBU;
+        case OperandType::Int16:
+            return LHU;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -196,6 +207,42 @@ static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
     auto dst = getVRegAs(ctx, src);
     ctx.newInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
     return dst;
+}
+
+static MIPSInst getFCmpOpcode(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    switch(op) {
+        case CompareOp::LessThan:
+            return C_OLT_S;
+        case CompareOp::LessEqual:
+            return C_OLE_S;
+        case CompareOp::GreaterThan:
+            return C_ULE_S;
+        case CompareOp::GreaterEqual:
+            return C_ULT_S;
+        case CompareOp::Equal:
+            return C_EQ_S;
+        case CompareOp::NotEqual:
+            return C_EQ_S;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static MIROperand shouldInvertFCmp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    constexpr auto zero = MIROperand::asImm(0, OperandType::Special);
+    constexpr auto one = MIROperand::asImm(1, OperandType::Special);
+    switch(op) {
+        case CompareOp::LessThan:
+            [[fallthrough]];
+        case CompareOp::LessEqual:
+            [[fallthrough]];
+        case CompareOp::Equal:
+            return zero;
+        default:
+            return one;
+    }
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -358,6 +405,18 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(lhs);
             break;
         }
+        case InstShl:
+        case InstAShr:
+        case InstLShr: {
+            auto& lhs = inst.getOperand(1);
+            auto& shamt = inst.getOperand(2);
+            imm2reg(lhs);
+            if(!isOperandUImm5(shamt))
+                imm2reg(shamt);
+            break;
+        }
+        default:
+            break;
     }
 
     return modified;
@@ -393,14 +452,22 @@ void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
         case InstLoadImm: {
             auto& dst = inst.getOperand(0);
             auto& src = inst.getOperand(1);
-            if(isOperandIReg(dst) && isOperandImm16(src)) {
-                inst.setOpcode(LoadImm16);
-            } else if(isOperandIReg(dst) && isOperandImm32(src)) {
-                inst.setOpcode(LoadImm32);
-            } else {
-                reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
+            if(isOperandIReg(dst)) {
+                if(isZero(src)) {
+                    inst.setOpcode(MoveGPR);
+                    src = getZero(src);
+                    return;
+                }
+                if(isOperandImm16(src)) {
+                    inst.setOpcode(LoadImm16);
+                    return;
+                }
+                if(isOperandImm32(src)) {
+                    inst.setOpcode(LoadImm32);
+                    return;
+                }
             }
-            break;
+            reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
         }
         default:
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
@@ -416,6 +483,15 @@ void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto& cond = inst.getOperand(3);
             ctx.instructions.insert(ctx.iter, MIRInst{ selectCopyOpcode(dst, rhs) }.setOperand<0>(dst).setOperand<1>(rhs));
             *ctx.iter = MIRInst{ MOVN }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cond);
+            break;
+        }
+        case FCC2GPR: {
+            auto& dst = inst.getOperand(0);
+            const auto cc = inst.getOperand(1);
+            const auto flip = inst.getOperand(2).imm();
+            ctx.instructions.insert(
+                ctx.iter, MIRInst{ InstLoadImm }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(0, OperandType::Int32)));
+            *ctx.iter = MIRInst{ flip ? MOVT : MOVF }.setOperand<0>(dst).setOperand<1>(getZero(dst)).setOperand<2>(cc);
             break;
         }
         default:
@@ -511,5 +587,23 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     instructions.insert(
         iter, MIRInst{ ADDIU }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int32)));
 }
-
+void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+    assert(!ctx.requireOneTerminator);
+    constexpr bool alwaysInsertNop = true;
+    // insert nops/place insts without side-effects after branch/jump instructions
+    uint32_t lastStatus = 0b00;  // 0: with delay slot 1: without delay slot
+    for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+        auto& inst = *iter;
+        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        if(!requireFlag(instInfo.getInstFlag(), InstFlagWithDelaySlot)) {
+            lastStatus = (lastStatus << 1) | 1;
+            continue;
+        }
+        if(alwaysInsertNop || (lastStatus & 0b11) != 0b11) {
+            instructions.insert(iter, MIRInst{ Nop });
+        }
+        std::swap(*iter, *std::prev(iter));
+        lastStatus = 1;  // 0b01
+    }
+}
 CMMC_TARGET_NAMESPACE_END

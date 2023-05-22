@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -43,6 +44,7 @@ public:
     virtual ~TargetRegisterInfo() = default;
     [[nodiscard]] virtual uint32_t getAllocationClassCount() const noexcept = 0;
     [[nodiscard]] virtual uint32_t getAllocationClass(OperandType type) const = 0;
+    [[nodiscard]] virtual bool isLegalISARegOperand(const MIROperand& operand, OperandFlag flag) const = 0;
     [[nodiscard]] virtual OperandType getCanonicalizedRegisterType(OperandType type) const = 0;
     [[nodiscard]] virtual const std::vector<uint32_t>& getAllocationList(uint32_t classId) const = 0;
     virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {

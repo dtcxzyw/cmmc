@@ -66,16 +66,16 @@ InstInfo:
         Flag: [Commutative]
       FDiv:
         Op: FDiv
-      FNeg:
-        Op: FNeg
-      FFma:
-        Op: FFma
+  FNeg:
+    Format: FNeg $Dst:FReg[Def], $Src:FReg[Use]
+  FFma:
+    Format: FFma $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use], $Acc:FReg[Use]
   SCmp:
-    Format: SCmp $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
+    Format: SCmp $Dst:BoolReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
   UCmp:
-    Format: UCmp $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
+    Format: UCmp $Dst:BoolReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
   FCmp:
-    Format: FCmp $Dst:FReg[Def], $Lhs:FVal[Use], $Rhs:FVal[Use], $Op:Flag[Metadata]
+    Format: FCmp $Dst:BoolReg[Def], $Lhs:FVal[Use], $Rhs:FVal[Use], $Op:Flag[Metadata]
   SExt:
     Format: SExt $Dst:IReg[Def], $Src:IVal[Use]
   ZExt:
@@ -107,8 +107,10 @@ InstInfo:
     Flag: [LoadConstant]
   CopyFromReg:
     Format: CopyFromReg $Dst:VRegOrISAReg[Def], $Src:ISAReg[Use]
+    CustomVerifier: true
   CopyToReg:
-    Format: CopyFromReg $Dst:ISAReg[Def], $Src:VRegOrISAReg[Use]
+    Format: CopyToReg $Dst:ISAReg[Def], $Src:VRegOrISAReg[Use]
+    CustomVerifier: true
     Flag: [RegCopy]
   LoadImmToReg:
     Format: LoadImmToReg $Dst:ISAReg[Def], $Imm:Imm[Metadata]

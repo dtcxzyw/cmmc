@@ -137,18 +137,18 @@ def get_id():
     global_idx += 1
     return global_idx
 
+
 def handle_new_ops(code: str, map, new_ops):
     while True:
         pos = code.find('[$')
         if pos == -1:
             return code
-        end = code.find(']',pos)
+        end = code.find(']', pos)
         name = code[pos+1:end]
         new_id = get_id()
         code = code.replace(code[pos:end+1], 'op'+str(new_id))
         map[name] = new_id
         new_ops.append(new_id)
-    
 
 
 def replace_operand(code: str, map):
@@ -202,14 +202,15 @@ def parse_isel_pattern_select(rep, insts, select_info: list, operand_map: dict, 
     for inst, sub in rep.items():
         local_map = dict()
         inst_ref = inst
-        for k, v in sub.items():
-            if k == '$Opcode':
-                inst = replace_operand(v, operand_map)
-            elif k == '$Template':
-                inst_ref = v
-            else:
-                local_map[k] = parse_isel_pattern_select(
-                    v, insts, select_info, operand_map, True)
+        if sub:
+            for k, v in sub.items():
+                if k == '$Opcode':
+                    inst = replace_operand(v, operand_map)
+                elif k == '$Template':
+                    inst_ref = v
+                else:
+                    local_map[k] = parse_isel_pattern_select(
+                        v, insts, select_info, operand_map, True)
         inst_info = insts[inst_ref]
         operands = []
         for operand in inst_info['operands']:

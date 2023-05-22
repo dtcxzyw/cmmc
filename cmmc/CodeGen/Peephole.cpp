@@ -58,7 +58,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 if constexpr(Config::debug) {
                     auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
                     CMMC_UNUSED(instInfo);
-                    assert(instInfo.verify(inst));
+                    assert(instInfo.verify(inst, ctx));
                 }
             }
         };

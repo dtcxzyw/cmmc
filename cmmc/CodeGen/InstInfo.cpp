@@ -19,6 +19,34 @@
 #include <cmmc/Support/Dispatch.hpp>
 #include <cstdint>
 #include <ostream>
+#include <string_view>
+
+CMMC_MIR_NAMESPACE_BEGIN
+
+static std::string_view getType(OperandType type) {
+    switch(type) {
+        case OperandType::Bool:
+            return "i1 ";
+        case OperandType::Int8:
+            return "i8 ";
+        case OperandType::Int16:
+            return "i16 ";
+        case OperandType::Int32:
+            return "i32 ";
+        case OperandType::Int64:
+            return "i64 ";
+        case OperandType::Float32:
+            return "f32 ";
+        case OperandType::Special:
+            return "special ";
+    }
+    reportUnreachable(CMMC_LOCATION());
+};
+void dumpVirtualReg(std::ostream& out, const MIROperand& operand) {
+    out << '[' << getType(operand.type()) << 'v' << (operand.reg() ^ virtualRegBegin) << ']';
+}
+
+CMMC_MIR_NAMESPACE_END
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -28,29 +56,10 @@ struct OperandDumper final {
 
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
     const auto& op = operand.operand;
-    auto dumpType = [](OperandType type) {
-        switch(type) {
-            case OperandType::Bool:
-                return "i1 ";
-            case OperandType::Int8:
-                return "i8 ";
-            case OperandType::Int16:
-                return "i16 ";
-            case OperandType::Int32:
-                return "i32 ";
-            case OperandType::Int64:
-                return "i64 ";
-            case OperandType::Float32:
-                return "f32 ";
-            case OperandType::Special:
-                return "special ";
-        }
-        reportUnreachable(CMMC_LOCATION());
-    };
     out << '[';
     std::visit(Overload{
                    [&](uint32_t reg) {
-                       out << dumpType(op.type());
+                       out << getType(op.type());
                        if(reg == invalidReg) {
                            out << "invalid";
                        } else if(isVirtualReg(reg)) {
@@ -61,7 +70,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                            out << "isa " << reg;
                        }
                    },
-                   [&](intmax_t imm) { out << dumpType(op.type()) << imm; },
+                   [&](intmax_t imm) { out << getType(op.type()) << imm; },
                    [&](MIRRelocable* reloc) {
                        out << "reloc ";
                        reloc->dumpAsTarget(out);
@@ -89,14 +98,6 @@ static bool isOperandBool(const MIROperand& operand) {
     return operand.type() == OperandType::Bool;
 }
 
-static bool isOperandImm(const MIROperand& operand) {
-    return operand.isImm();
-}
-
-static bool isOperandIReg(const MIROperand& operand) {
-    return operand.isReg() && isIntegerType(operand.type());
-}
-
 static bool isOperandFReg(const MIROperand& operand) {
     return operand.isReg() && isFPType(operand.type());
 }
@@ -105,12 +106,25 @@ static bool isOperandFlag(const MIROperand& operand) {
     return operand.isImm() && operand.type() == OperandType::Special;
 }
 
+using mir::isOperandBoolReg;
+using mir::isOperandImm;
+using mir::isOperandIReg;
 using mir::isOperandISAReg;
 using mir::isOperandProb;
 using mir::isOperandReloc;
 using mir::isOperandStackObject;
 using mir::isOperandVReg;
 using mir::isOperandVRegOrISAReg;
+
+static bool isSameTypeReg(OperandType lhs, OperandType rhs) {
+    return (isIntegerType(lhs) && isIntegerType(rhs)) || (isFPType(lhs) || isFPType(rhs));
+}
+static bool verifyInstCopyFromReg(const MIRInst& inst) {
+    return isSameTypeReg(inst.getOperand(0).type(), inst.getOperand(1).type());
+}
+static bool verifyInstCopyToReg(const MIRInst& inst) {
+    return isSameTypeReg(inst.getOperand(0).type(), inst.getOperand(1).type());
+}
 
 static MIRInst emitGotoImpl(MIRBasicBlock*) {
     reportUnreachable(CMMC_LOCATION());
@@ -209,6 +223,21 @@ bool TargetInstInfo::matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*&
 bool TargetInstInfo::matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const {
     double prob;
     return matchBranch(inst, target, prob) && requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagNoFallthrough);
+}
+
+bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, uint32_t count) {
+    if(!ctx.registerInfo)
+        return true;
+    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+    for(uint32_t idx = 0; idx < count; ++idx) {
+        auto& operand = inst.getOperand(idx);
+        if(!isOperandISAReg(operand))
+            continue;
+        if(!ctx.registerInfo->isLegalISARegOperand(operand, instInfo.getOperandFlag(idx))) {
+            return false;
+        }
+    }
+    return true;
 }
 
 CMMC_MIR_NAMESPACE_END

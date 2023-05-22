@@ -40,8 +40,9 @@ enum InstFlag : uint32_t {
     InstFlagCommutative = 1 << 9,
     InstFlagReturn = 1 << 10,
     InstFlagLegalizePreRA = 1 << 11,
+    InstFlagWithDelaySlot = 1 << 12,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
-        InstFlagRegCopy | InstFlagReturn
+        InstFlagRegCopy | InstFlagReturn | InstFlagWithDelaySlot
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
@@ -62,7 +63,7 @@ public:
     InstInfo() = default;
     virtual ~InstInfo() = default;
     virtual void print(std::ostream& out, const MIRInst& inst, bool printComment) const = 0;
-    [[nodiscard]] virtual bool verify(const MIRInst& inst) const = 0;
+    [[nodiscard]] virtual bool verify(const MIRInst& inst, const CodeGenContext& ctx) const = 0;
     // FIXME: use inline functions
     [[nodiscard]] virtual uint32_t getOperandNum() const noexcept = 0;
     [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept = 0;
@@ -80,6 +81,9 @@ public:
     virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
 };
+
+bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, uint32_t count);
+void dumpVirtualReg(std::ostream& out, const MIROperand& operand);
 
 constexpr bool isOperandVReg(const MIROperand& operand) {
     return operand.isReg() && isVirtualReg(operand.reg());
@@ -111,18 +115,27 @@ constexpr bool isUnsignedImm(intmax_t imm) {
     return 0 <= imm && imm < x;
 }
 
-constexpr bool isIntegerType(OperandType type) {
-    return type <= OperandType::Int64;
-}
-constexpr bool isFPType(OperandType type) {
-    return type == OperandType::Float32;
-}
-
 constexpr bool isOperandVRegOrISAReg(const MIROperand& operand) {
     return operand.isReg() && (isVirtualReg(operand.reg()) || isISAReg(operand.reg()));
 }
 constexpr bool isOperandISAReg(const MIROperand& operand) {
     return operand.isReg() && isISAReg(operand.reg());
+}
+
+constexpr bool isOperandIReg(const MIROperand& operand) {
+    return operand.isReg() && isIntegerType(operand.type());
+}
+
+constexpr bool isOperandBoolReg(const MIROperand& operand) {
+    return operand.isReg() && operand.type() == OperandType::Bool;
+}
+
+constexpr bool isOperandIRegOrImm(const MIROperand& operand) {
+    return (operand.isReg() && isIntegerType(operand.type())) || operand.isImm();
+}
+
+constexpr bool isOperandImm(const MIROperand& operand) {
+    return operand.isImm();
 }
 
 CMMC_MIR_NAMESPACE_END

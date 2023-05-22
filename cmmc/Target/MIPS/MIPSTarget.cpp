@@ -143,6 +143,18 @@ public:
                 reportUnreachable(CMMC_LOCATION());
         }
     }
+    [[nodiscard]] bool isLegalISARegOperand(const MIROperand& operand, OperandFlag flag) const override {
+        if(flag & OperandFlagMetadata)
+            return false;
+        if(MIPS::isOperandGPR(operand)) {
+            if(operand.reg() == MIPS::X0 && (flag & OperandFlagDef))
+                return false;
+            return isIntegerType(operand.type());
+        }
+        if(MIPS::isOperandFPR(operand))
+            return isFPType(operand.type());
+        return MIPS::isOperandCC(operand) || MIPS::isOperandHILO(operand);
+    }
     [[nodiscard]] const std::vector<uint32_t>& getAllocationList(uint32_t classId) const override {
         if(classId == 0) {
             // prefer caller-saved registers
@@ -251,13 +263,17 @@ void MIPSFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const
         if(offset < passingByRegisterThreshold) {
             // $a0-$a3, $f12/$f14
             MIROperand src;
-            if(offset < 8 && isFPType(arg.type())) {                                                    // pass by FPR
-                src = MIROperand::asISAReg(MIPS::F12 + static_cast<uint32_t>(offset) / 2, arg.type());  // 0 -> 12, 4 -> 14
+            if(offset < 8 && isFPType(arg.type())) {  // pass by FPR
+                src = MIROperand::asISAReg(MIPS::F12 + static_cast<uint32_t>(offset) / 2,
+                                           OperandType::Float32);  // 0 -> 12, 4 -> 14
             } else {
-                src = MIROperand::asISAReg(MIPS::X4 + static_cast<uint32_t>(offset) / 4, arg.type());
+                src = MIROperand::asISAReg(MIPS::X4 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
             }
 
-            ctx.emitCopy(arg, src);
+            if(src.type() == OperandType::Int32 && arg.type() == OperandType::Float32) {
+                ctx.emitInst(MIPS::MTC1).setOperand<1>(arg).setOperand<0>(src);
+            } else
+                ctx.emitCopy(arg, src);
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
             ctx.emitInst(InstLoadRegFromStack).setOperand<0>(arg).setOperand<1>(obj);
@@ -313,7 +329,10 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
                 dst = MIROperand::asISAReg(MIPS::X4 + static_cast<uint32_t>(offset) / 4U, OperandType::Int32);
             }
 
-            ctx.emitCopy(dst, val);
+            if(val.type() == OperandType::Float32 && dst.type() == OperandType::Int32) {
+                ctx.emitInst(MIPS::MFC1).setOperand<0>(dst).setOperand<1>(val);
+            } else
+                ctx.emitCopy(dst, val);
         } else {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);

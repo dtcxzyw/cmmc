@@ -21,7 +21,7 @@ submit_binary = os.path.abspath(
     binary_dir + '/' + os.path.pardir) + "/educg_submit/compiler"
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '3'
+optimization_level = '0'
 fast_fail = False
 generate_ref = False
 assert os.path.exists(rars_path)

@@ -70,6 +70,14 @@ constexpr bool isStackObject(uint32_t x) {
 }
 
 enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32, Special };
+
+constexpr bool isIntegerType(OperandType type) {
+    return type <= OperandType::Int64;
+}
+constexpr bool isFPType(OperandType type) {
+    return type == OperandType::Float32;
+}
+
 constexpr uint32_t getOperandSize(const OperandType type) {
     switch(type) {
         case OperandType::Int8:
@@ -116,6 +124,7 @@ public:
     template <typename T>
     [[nodiscard]] constexpr static MIROperand asImm(T val, OperandType type) {
         static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
+        assert(isIntegerType(type) || type == OperandType::Special);
         return MIROperand{ static_cast<intmax_t>(val), type };
     }
     [[nodiscard]] constexpr static MIROperand asISAReg(uint32_t reg, OperandType type) {
@@ -319,6 +328,8 @@ public:
     bool verify(std::ostream& out, const CodeGenContext& ctx) const override;
     void dump(std::ostream& out, const CodeGenContext& ctx) const override;
 };
+
+// TODO: ascii/asciiz encoding
 
 class MIRZeroStorage final : public MIRRelocable {
     size_t mSize;

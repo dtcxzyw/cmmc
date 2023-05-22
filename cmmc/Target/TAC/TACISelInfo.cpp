@@ -75,6 +75,10 @@ void TACISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
 void TACISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     CMMC_UNUSED(ctx);
 }
+void TACISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+    CMMC_UNUSED(ctx);
+    CMMC_UNUSED(instructions);
+}
 void TACISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(op);

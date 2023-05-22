@@ -485,6 +485,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "Code layout optimization"sv };
             simplifyCFGWithUniqueTerminator(mfunc, ctx);
             // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
             optimizeBlockLayout(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
@@ -504,7 +505,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             ctx.requireOneTerminator = false;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
-        }
+        } else
+            ctx.requireOneTerminator = false;
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };
@@ -987,6 +989,11 @@ MIROperand LoweringContext::newVReg(OperandType type) {
 }
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
-    emitInst(selectCopyOpcode(dst, src)).setOperand<0>(dst).setOperand<1>(src);
+    auto& inst = emitInst(selectCopyOpcode(dst, src)).setOperand<0>(dst).setOperand<1>(src);
+    CMMC_UNUSED(inst);
+    if constexpr(Config::debug) {
+        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        assert(instInfo.verify(inst, mCodeGenCtx));
+    }
 }
 CMMC_MIR_NAMESPACE_END
