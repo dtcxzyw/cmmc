@@ -22,7 +22,7 @@ submit_binary = os.path.abspath(
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '0'
-fast_fail = False
+fast_fail = True
 generate_ref = False
 assert os.path.exists(rars_path)
 
@@ -41,7 +41,7 @@ summary = {}
 summary_samples = 0
 tac_inst_count = 1
 tac_inst_count_samples = 0
-tac_inst_count_ref = 286.292
+tac_inst_count_ref = 224.116
 total_perf_gcc_ref = 1
 total_perf_gcc_ref_samples = 0
 total_perf_self = 1
@@ -226,6 +226,8 @@ def spl_codegen_riscv64(src):
     out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-O', optimization_level, '-o',
                                tmp_out, src], capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
+        print(out.returncode)
+        print(out.stderr)
         return False
     spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
@@ -674,18 +676,18 @@ if not generate_ref:
     if "codegen" in test_cases:
         res.append(test("SPL SPL->MIPS project4", tests_path +
                         "/TAC2MC", ".spl", spl_codegen_mips))
-        # res.append(test("SPL SPL->RISCV64 project4", tests_path +
-        #                "/TAC2MC", ".spl", spl_codegen_riscv64))
+        res.append(test("SPL SPL->RISCV64 project4", tests_path +
+                        "/TAC2MC", ".spl", spl_codegen_riscv64))
         res.append(test("SPL TAC->MIPS project4", tests_path +
                         "/TAC2MC", ".ir", spl_codegen_mips))
         res.append(test("SPL SPL->MIPS project4 self", tests_path +
                         "/Project4", ".spl", spl_codegen_mips))
-        # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
-        #                "/Project4", ".spl", spl_codegen_riscv64))
+        res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
+                        "/Project4", ".spl", spl_codegen_riscv64))
         res.append(test("SysY SysY->MIPS functional", tests_path +
                         "/SysY2022/functional", ".sy", sysy_codegen_mips))
-        # res.append(test("SysY SysY->RISCV64 functional", tests_path +
-        #                "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
+        res.append(test("SysY SysY->RISCV64 functional", tests_path +
+                        "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
 
     if "gcc" in test_cases:
         res.append(test("SysY gcc performance", tests_path +

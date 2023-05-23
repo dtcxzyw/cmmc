@@ -12,29 +12,45 @@
     limitations under the License.
 */
 
-#include <MIPS/InstInfoDecl.hpp>
+#include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
-#include <cmmc/Target/MIPS/MIPS.hpp>
+#include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
 #include <iostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
 static bool isZero(const MIROperand& operand) {
-    if(operand.isReg() && operand.reg() == MIPS::X0)
+    if(operand.isReg() && operand.reg() == RISCV::X0)
         return true;
     return operand.isImm() && operand.imm() == 0;
 }
 
-static bool isRationalOp(const MIROperand& operand) {
+static RISCVInst getSignedBranchOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op != CompareOp::Equal && op != CompareOp::NotEqual;
+    switch(op) {
+        case CompareOp::LessThan:
+            return BLT;
+        case CompareOp::LessEqual:
+            return BLE;
+        case CompareOp::GreaterThan:
+            return BGT;
+        case CompareOp::GreaterEqual:
+            return BGE;
+        case CompareOp::Equal:
+            return BEQ;
+        case CompareOp::NotEqual:
+            return BNE;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
 }
+
 static bool isEqualityOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     return op == CompareOp::Equal || op == CompareOp::NotEqual;
@@ -75,48 +91,12 @@ static bool isNotEqualOp(const MIROperand& operand) {
     return op == CompareOp::NotEqual;
 }
 
-static MIPSInst getBranchWithZeroOpcode(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    switch(op) {
-        case CompareOp::LessThan:
-            return BLTZ;
-        case CompareOp::LessEqual:
-            return BLEZ;
-        case CompareOp::GreaterThan:
-            return BGTZ;
-        case CompareOp::GreaterEqual:
-            return BGEZ;
-        default:
-            reportUnreachable(CMMC_LOCATION());
-    }
-}
-
-static MIPSInst getBranchEqualityOpcode(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    switch(op) {
-        case CompareOp::Equal:
-            return BEQ;
-        case CompareOp::NotEqual:
-            return BNE;
-        default:
-            reportUnreachable(CMMC_LOCATION());
-    }
-}
-
 static MIROperand getVRegAs(ISelContext& ctx, const MIROperand& ref) {
     return MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), ref.type());
 }
 
-static MIROperand getHILO() {
-    return MIROperand::asISAReg(MIPS::HILO, OperandType::Special);
-}
-
-static MIROperand getCC() {
-    return MIROperand::asISAReg(MIPS::CC, OperandType::Special);
-}
-
 static MIROperand getZero(const MIROperand& operand) {
-    return MIROperand::asISAReg(MIPS::X0, operand.type());
+    return MIROperand::asISAReg(RISCV::X0, operand.type());
 }
 
 static MIROperand getOne(const MIROperand& operand) {
@@ -128,13 +108,13 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
     if(addrInst) {
         if(addrInst->opcode() == InstLoadStackObjectAddr) {
             base = addrInst->getOperand(1);
-            offset = MIROperand::asImm(0, OperandType::Int32);
+            offset = MIROperand::asImm(0, OperandType::Int64);
             return true;
         }
         if(addrInst->opcode() == InstAdd) {
             base = addrInst->getOperand(1);
             const auto off = addrInst->getOperand(2);
-            if(isOperandIReg(base) && isOperandImm16(off)) {
+            if(isOperandIReg(base) && isOperandImm12(off)) {
                 base = addrInst->getOperand(1);
                 offset = off;
                 return true;
@@ -143,13 +123,13 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
     }
     if(isOperandIReg(addr)) {
         base = addr;
-        offset = MIROperand::asImm(0, OperandType::Int32);
+        offset = MIROperand::asImm(0, OperandType::Int64);
         return true;
     }
     return false;
 }
 
-static MIPSInst getLoadOpcode(const MIROperand& dst) {
+static RISCVInst getLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
             [[fallthrough]];
@@ -159,25 +139,29 @@ static MIPSInst getLoadOpcode(const MIROperand& dst) {
             return LH;
         case OperandType::Int32:
             return LW;
+        case OperandType::Int64:
+            return LD;
         case OperandType::Float32:
-            return LWC1;
+            return FLW;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
 }
 
-static MIPSInst getZExtLoadOpcode(const MIROperand& dst) {
+static RISCVInst getZExtLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Int8:
             return LBU;
         case OperandType::Int16:
             return LHU;
+        case OperandType::Int32:
+            return LWU;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
 }
 
-static MIPSInst getStoreOpcode(const MIROperand& src) {
+static RISCVInst getStoreOpcode(const MIROperand& src) {
     switch(src.type()) {
         case OperandType::Bool:
             [[fallthrough]];
@@ -187,67 +171,56 @@ static MIPSInst getStoreOpcode(const MIROperand& src) {
             return SH;
         case OperandType::Int32:
             return SW;
+        case OperandType::Int64:
+            return SD;
         case OperandType::Float32:
-            return SWC1;
+            return FSW;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
 }
 
-static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
-    if(isOperandIReg(src))
-        return src;
-    if(isZero(src)) {
-        return getZero(src);
-    }
-    auto dst = getVRegAs(ctx, src);
-    ctx.newInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
-    return dst;
-}
-
-static MIPSInst getFCmpOpcode(const MIROperand& operand) {
+static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, const MIROperand& rhs, MIROperand& outLhs,
+                             MIROperand& outRhs, MIROperand& outOp) {
     const auto op = static_cast<CompareOp>(operand.imm());
+    // FCmp with the predicate 'NotEqual' is not a canonicalized form.
+    if(!isOperandFPR(lhs) || !isOperandFPR(rhs) || op == CompareOp::NotEqual)
+        return false;
+    outLhs = lhs;
+    outRhs = rhs;
+    RISCVInst opcode;
     switch(op) {
         case CompareOp::LessThan:
-            return C_OLT_S;
+            opcode = FLT_S;
+            break;
         case CompareOp::LessEqual:
-            return C_OLE_S;
+            opcode = FLE_S;
+            break;
         case CompareOp::GreaterThan:
-            return C_ULE_S;
+            std::swap(outLhs, outRhs);
+            opcode = FLT_S;
+            break;
         case CompareOp::GreaterEqual:
-            return C_ULT_S;
+            std::swap(outLhs, outRhs);
+            opcode = FLE_S;
+            break;
         case CompareOp::Equal:
-            return C_EQ_S;
-        case CompareOp::NotEqual:
-            return C_EQ_S;
+            opcode = FEQ_S;
+            break;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
-}
-
-static MIROperand shouldInvertFCmp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    constexpr auto zero = MIROperand::asImm(0, OperandType::Special);
-    constexpr auto one = MIROperand::asImm(1, OperandType::Special);
-    switch(op) {
-        case CompareOp::LessThan:
-            [[fallthrough]];
-        case CompareOp::LessEqual:
-            [[fallthrough]];
-        case CompareOp::Equal:
-            return zero;
-        default:
-            return one;
-    }
+    outOp = MIROperand::asImm(opcode, OperandType::Special);
+    return true;
 }
 
 CMMC_TARGET_NAMESPACE_END
 
-#include <MIPS/ISelInfoImpl.hpp>
+#include <RISCV/ISelInfoImpl.hpp>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-bool MIPSISelInfo::isLegalGenericInst(uint32_t opcode) const {
+bool RISCVISelInfo::isLegalGenericInst(uint32_t opcode) const {
     switch(opcode) {
         case InstCopy:
             [[fallthrough]];
@@ -296,8 +269,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             modified = true;
         }
     };
-    const auto largeImm2reg = [&](MIROperand& operand, bool signedImm) {
-        if(operand.isImm() && !(signedImm ? isOperandImm16(operand) : isOperandUImm16(operand))) {
+    const auto largeImm2reg = [&](MIROperand& operand) {
+        if(operand.isImm() && !isOperandImm12(operand)) {
             imm2reg(operand);
         }
     };
@@ -311,9 +284,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
-            const auto signedImm = inst.opcode() == InstAdd;
             imm2reg(lhs);
-            largeImm2reg(rhs, signedImm);
+            largeImm2reg(rhs);
             break;
         }
         case InstSub: {
@@ -322,7 +294,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(lhs);
             if(rhs.isImm()) {
                 auto neg = getNeg(rhs);
-                if(isOperandImm16(neg)) {
+                if(isOperandImm12(neg)) {
                     rhs = neg;
                     inst.setOpcode(InstAdd);
                     modified = true;
@@ -418,15 +390,17 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
     return modified;
 }
 
-bool MIPSISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
+bool RISCVISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
     bool ret = legalizeInst(inst, ctx);
     if(allowComplexPattern) {
-        // noop
+        if(inst.opcode() == InstSelect) {
+            return expandSelect(inst, ctx);
+        }
     }
     return ret | matchAndSelectImpl(inst, ctx);
 }
 
-void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
+void RISCVISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
         case InstCopy:
@@ -439,7 +413,7 @@ void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
             if(isOperandIReg(dst) && isOperandIReg(src)) {
                 inst.setOpcode(MoveGPR);
             } else if(isOperandFPR(dst) && isOperandFPR(src)) {
-                inst.setOpcode(MOV_S);
+                inst.setOpcode(FMV_S);
             } else {
                 reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
             }
@@ -454,8 +428,8 @@ void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
                     src = getZero(src);
                     return;
                 }
-                if(isOperandImm16(src)) {
-                    inst.setOpcode(LoadImm16);
+                if(isOperandImm12(src)) {
+                    inst.setOpcode(LoadImm12);
                     return;
                 }
                 if(isOperandImm32(src)) {
@@ -469,61 +443,43 @@ void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
     }
 }
-void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
-    auto& inst = ctx.inst;
-    switch(inst.opcode()) {
-        case Select_GPR_GPR: {
-            auto& dst = inst.getOperand(0);
-            auto& lhs = inst.getOperand(1);
-            auto& rhs = inst.getOperand(2);
-            auto& cond = inst.getOperand(3);
-            ctx.instructions.insert(ctx.iter, MIRInst{ selectCopyOpcode(dst, rhs) }.setOperand<0>(dst).setOperand<1>(rhs));
-            *ctx.iter = MIRInst{ MOVN }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cond);
-            break;
-        }
-        case FCC2GPR: {
-            auto& dst = inst.getOperand(0);
-            const auto cc = inst.getOperand(1);
-            const auto flip = inst.getOperand(2).imm();
-            ctx.instructions.insert(
-                ctx.iter, MIRInst{ InstLoadImm }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(0, OperandType::Int32)));
-            *ctx.iter = MIRInst{ flip ? MOVT : MOVF }.setOperand<0>(dst).setOperand<1>(getZero(dst)).setOperand<2>(cc);
-            break;
-        }
-        default:
-            reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
-    }
+void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
+    CMMC_UNUSED(ctx);
 }
-void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
+void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
     auto& inst = ctx.inst;
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
     int64_t immVal = obj.offset;
     MIROperand base = sp;
     legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal);
-    const auto imm = MIROperand::asImm(immVal, OperandType::Int32);
+    const auto imm = MIROperand::asImm(immVal, OperandType::Int64);
     switch(inst.opcode()) {
         case InstLoadStackObjectAddr: {
             assert(checkOpIdx(1));
-            inst.setOpcode(ADDIU).setOperand<1>(base).setOperand<2>(imm);
+            inst.setOpcode(ADDI).setOperand<1>(base).setOperand<2>(imm);
             break;
         }
         case InstStoreRegToStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SW : SWC1).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? SD : FSW).setOperand<2>(base).setOperand<1>(imm);
             break;
         }
         case InstLoadRegFromStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LW : LWC1).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LD : FLW).setOperand<2>(base).setOperand<1>(imm);
             break;
         }
+        case SD:
+            [[fallthrough]];
         case SW:
             [[fallthrough]];
         case SH:
             [[fallthrough]];
         case SB:
             [[fallthrough]];
-        case SWC1:
+        case FSW:
+            [[fallthrough]];
+        case LD:
             [[fallthrough]];
         case LW:
             [[fallthrough]];
@@ -531,7 +487,7 @@ void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, 
             [[fallthrough]];
         case LB:
             [[fallthrough]];
-        case LWC1: {
+        case FLW: {
             assert(checkOpIdx(2));
             inst.setOperand<2>(base).setOperand<1>(imm);
             break;
@@ -541,37 +497,38 @@ void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, 
     }
 }
 
-constexpr auto scratch = MIROperand::asISAReg(MIPS::X3, OperandType::Int32);  // use $v1
+constexpr auto scratch = MIROperand::asISAReg(RISCV::X5, OperandType::Int64);  // use $t0, never allocated
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm) {
     assert(isSignedImm<32>(imm));
-    if(isSignedImm<16>(imm)) {
+    if(isSignedImm<12>(imm)) {
         return;
     }
-    if(imm < -65536 || imm > 65534) {
+    if(imm < -4096 || imm > 4094) {
         // lui $scratch, %hi(imm)
-        // addu $scratch, $scratch, base
+        // add $scratch, $scratch, base
         // addr = $scratch + %lo(imm)
-        const auto lo = static_cast<int16_t>(imm);
-        const auto hi = static_cast<uint16_t>((imm - lo) >> 16);
-        assert(isSignedImm<16>(lo));
-        assert(isUnsignedImm<16>(static_cast<intmax_t>(hi)));
+        const auto lo12bits = imm & 0xfff;
+        const auto lo = lo12bits | ((lo12bits & 0x800) ? 0xfffff000 : 0);
+        const auto hi = static_cast<uint32_t>((imm - lo) >> 12) & 0xffff;
+        assert(isSignedImm<12>(lo));
+        assert(isUnsignedImm<20>(static_cast<intmax_t>(hi)));
         instructions.insert(iter,
                             MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
-                                MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int32)));
-        instructions.insert(iter, MIRInst{ ADDU }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
+                                MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int64)));
+        instructions.insert(iter, MIRInst{ ADD }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
         base = scratch;
         imm = static_cast<int64_t>(lo);
     } else {
-        // addiu $scratch, base, -32768/32767
+        // addiu $scratch, base, -2048/2047
         // addr = $scratch + %lo(imm)
-        const auto adjust = imm < 0 ? -32768 : 32767;
+        const auto adjust = imm < 0 ? -2048 : 2047;
         instructions.insert(iter,
-                            MIRInst{ ADDIU }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(adjust, OperandType ::Int32)));
+                            MIRInst{ ADDI }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
+                                MIROperand::asImm(adjust, OperandType::Int32)));
         base = scratch;
         imm -= adjust;
-        assert(isSignedImm<16>(imm));
+        assert(isSignedImm<12>(imm));
     }
 }
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
@@ -582,25 +539,10 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     MIROperand base = src;
     legalizeAddrBaseOffsetPostRA(instructions, iter, base, imm);
     instructions.insert(
-        iter, MIRInst{ ADDIU }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int32)));
+        iter, MIRInst{ ADDI }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int64)));
 }
-void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
-    assert(!ctx.requireOneTerminator);
-    constexpr bool alwaysInsertNop = true;
-    // insert nops/place insts without side-effects after branch/jump instructions
-    uint32_t lastStatus = 0b00;  // 0: with delay slot 1: without delay slot
-    for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
-        auto& inst = *iter;
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
-        if(!requireFlag(instInfo.getInstFlag(), InstFlagWithDelaySlot)) {
-            lastStatus = (lastStatus << 1) | 1;
-            continue;
-        }
-        if(alwaysInsertNop || (lastStatus & 0b11) != 0b11) {
-            instructions.insert(iter, MIRInst{ Nop });
-        }
-        std::swap(*iter, *std::prev(iter));
-        lastStatus = 1;  // 0b01
-    }
+void RISCVISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+    CMMC_UNUSED(ctx);
+    CMMC_UNUSED(instructions);
 }
 CMMC_TARGET_NAMESPACE_END

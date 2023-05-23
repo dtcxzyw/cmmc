@@ -15,6 +15,7 @@
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Target/RISCV/RISCV.hpp>
 #include <ostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
@@ -23,64 +24,50 @@ struct OperandDumper final {
     const mir::MIROperand& operand;
 };
 
+static std::string_view getRISCVGPRTextualName(uint32_t idx) noexcept {
+    // NOLINTNEXTLINE
+    constexpr std::string_view name[] = {
+        "zero", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",  //
+        "s0",   "s1", "a0",  "a1",  "a2", "a3", "a4", "a5",  //
+        "a6",   "a7", "s2",  "s3",  "s4", "s5", "s6", "s7",  //
+        "s8",   "s9", "s10", "s11", "t3", "t4", "t5", "t6",  //
+    };
+    return name[idx];
+}
+
 static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand) {
-    CMMC_UNUSED(out);
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool isOperandGPR(const MIROperand& operand) {
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool isOperandFPR(const MIROperand& operand) {
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool isOperandImm12(const MIROperand& operand) {
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool isOperandImm20(const MIROperand& operand) {
-    CMMC_UNUSED(operand);
-    reportNotImplemented(CMMC_LOCATION());
+    auto& op = operand.operand;
+    if(op.isReg()) {
+        if(isVirtualReg(op.reg())) {
+            dumpVirtualReg(out, op);
+        } else if(isOperandGPR(op))
+            out << getRISCVGPRTextualName(static_cast<RISCVRegister>(op.reg()));
+        else if(isOperandFPR(op))
+            out << "f" << (op.reg() - FPRBegin);
+        else if(op.reg() == invalidReg) {
+            out << "invalid";
+        } else if(isStackObject(op.reg())) {
+            out << "so" << (op.reg() ^ stackObjectBegin);
+        } else {
+            reportUnreachable(CMMC_LOCATION());
+        }
+        return out;
+    }
+    if(op.isImm()) {
+        return out << op.imm();
+    }
+    if(op.isProb()) {
+        return out << op.prob();
+    }
+    if(op.isReloc()) {
+        op.reloc()->dumpAsTarget(out);
+        return out;
+    }
+    reportUnreachable(CMMC_LOCATION());
 }
 
 using mir::isOperandProb;
 using mir::isOperandReloc;
-
-static bool verifyInstSLLI(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool verifyInstSRAI(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool verifyInstSRLI(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool verifyInstSLLIW(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool verifyInstSRAIW(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
-
-static bool verifyInstSRLIW(const MIRInst& inst) {
-    CMMC_UNUSED(inst);
-    reportNotImplemented(CMMC_LOCATION());
-}
 
 static MIRInst emitGotoImpl(MIRBasicBlock*) {
     reportNotImplemented(CMMC_LOCATION());

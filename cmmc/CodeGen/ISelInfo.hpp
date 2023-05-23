@@ -60,6 +60,7 @@ public:
     virtual ~TargetISelInfo() = default;
     [[nodiscard]] virtual bool isLegalGenericInst(uint32_t opcode) const = 0;
     static bool expandCmp(MIRInst& inst, ISelContext& ctx);
+    static bool expandSelect(MIRInst& inst, ISelContext& ctx);
     virtual bool matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const = 0;
     virtual void postLegalizeInst(const InstLegalizeContext& ctx) const = 0;
     virtual void postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const = 0;
@@ -69,5 +70,8 @@ public:
 
 uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
 MIROperand getZExtMask(OperandType dstType, OperandType srcType);
+constexpr MIROperand getNeg(const MIROperand& operand) {
+    return MIROperand::asImm(-operand.imm(), operand.type());
+}
 
 CMMC_MIR_NAMESPACE_END

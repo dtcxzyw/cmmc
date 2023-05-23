@@ -60,7 +60,6 @@ write:
 )";
 
 constexpr int32_t passingByRegisterThreshold = 16;
-extern StringOpt targetMachine;  // NOLINT
 
 class MIPSDataLayout final : public DataLayout {
 public:

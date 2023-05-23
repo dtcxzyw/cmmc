@@ -308,13 +308,6 @@ InstSelection:
         Rd: $Dst
         Imm: $Imm
 
-  - Pattern:
-      InstJump:
-        Tgt: $Tgt
-    Replace:
-      B:
-        Tgt: $Tgt
-
   # Integer Arithmetic
   - Pattern:
       InstAdd:
@@ -498,6 +491,12 @@ InstSelection:
 
   # Terminators
   - Pattern:
+      InstJump:
+        Tgt: $Tgt
+    Replace:
+      B:
+        Tgt: $Tgt
+  - Pattern:
       InstUnreachable:
     Replace:
       BREAK:
@@ -614,6 +613,7 @@ InstSelection:
         Cond: $Cond
         Tgt: $Reloc
         Prob: $Prob
+        $Predicate: isOperandIReg($Cond)
     Replace:
       BNE:
         Rs: $Cond
@@ -729,6 +729,24 @@ InstSelection:
             Imm: getOne($Lhs)
         Imm: getOne($Dst)
 
+  # x<=y -> !(y<x)
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs:
+          SLT:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs: $Rhs
+            Rt: $Lhs
+        Imm: getOne($Dst)
+
   - Pattern:
       InstZExt:
         Dst: $Dst
@@ -759,24 +777,6 @@ InstSelection:
       InstCopy:
         Dst: $Dst
         Src: $Src
-
-  # x<=y -> !(y<x)
-  - Pattern:
-      InstSCmp:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
-    Replace:
-      XORI:
-        Rd: $Dst
-        Rs:
-          SLT:
-            Rd: getVRegAs(ctx, $Dst)
-            Rs: $Rhs
-            Rt: $Lhs
-        Imm: getOne($Dst)
 
   # MUL/DIV/DIVU
   - Pattern:

@@ -990,9 +990,9 @@ MIROperand LoweringContext::newVReg(OperandType type) {
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
     auto& inst = emitInst(selectCopyOpcode(dst, src)).setOperand<0>(dst).setOperand<1>(src);
-    CMMC_UNUSED(inst);
     if constexpr(Config::debug) {
         auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        CMMC_UNUSED(instInfo);
         assert(instInfo.verify(inst, mCodeGenCtx));
     }
 }

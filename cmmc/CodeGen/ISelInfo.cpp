@@ -248,6 +248,40 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     }
 }
 
+bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
+    const auto dst = inst.getOperand(0);
+    const auto cond = inst.getOperand(1);
+    const auto trueV = inst.getOperand(2);
+    const auto falseV = inst.getOperand(3);
+
+    auto iter = ctx.getCurrentInstIter();
+    auto& instrcutions = ctx.getInstructions();
+    auto& codeGenCtx = ctx.getCodeGenCtx();
+    *iter = MIRInst{ selectCopyOpcode(dst, trueV) }.setOperand<0>(dst).setOperand<1>(trueV);
+    auto branch = instrcutions.insert(std::next(iter), MIRInst{ InstBranch });
+
+    constexpr auto prob = defaultSelectProb;
+    auto block = ctx.getCurrentBlock();
+    auto func = block->getFunction();
+    auto falseBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                      block->getTripCount() * (1.0 - prob));
+    auto postBlock = std::make_unique<MIRBasicBlock>(block->symbol().withID(static_cast<int32_t>(codeGenCtx.nextId())), func,
+                                                     block->getTripCount());
+    branch->setOperand<0>(cond).setOperand<1>(MIROperand::asReloc(postBlock.get())).setOperand<2>(MIROperand::asProb(prob));
+    auto& onFalseInstructions = falseBlock->instructions();
+    onFalseInstructions.push_back(MIRInst{ selectCopyOpcode(dst, falseV) }.setOperand<0>(dst).setOperand<1>(falseV));
+    onFalseInstructions.push_back(MIRInst{ InstJump }.setOperand<0>(MIROperand::asReloc(postBlock.get())));
+    auto& postInstructions = postBlock->instructions();
+    postInstructions.splice(postInstructions.end(), instrcutions, std::next(branch), instrcutions.end());
+
+    // FIXME: ctx.getCurrentBlock
+    auto nextBlockIter =
+        std::next(std::find_if(func->blocks().begin(), func->blocks().end(), [&](auto& b) { return b.get() == block; }));
+    func->blocks().insert(nextBlockIter, std::move(falseBlock));
+    func->blocks().insert(nextBlockIter, std::move(postBlock));
+    return true;
+}
+
 bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     assert(inst.opcode() == InstSCmp || inst.opcode() == InstUCmp || inst.opcode() == InstFCmp);
     auto iter = ctx.getCurrentInstIter();
@@ -275,6 +309,7 @@ bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
     auto& postInstructions = postBlock->instructions();
     postInstructions.splice(postInstructions.end(), instrcutions, std::next(branch), instrcutions.end());
 
+    // FIXME: ctx.getCurrentBlock
     auto nextBlockIter =
         std::next(std::find_if(func->blocks().begin(), func->blocks().end(), [&](auto& b) { return b.get() == block; }));
     func->blocks().insert(nextBlockIter, std::move(falseBlock));

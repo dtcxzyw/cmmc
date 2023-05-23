@@ -1185,8 +1185,8 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
                                        make<ConstantFloatingPoint>(srcType, 0.0));
         }
     } else if(srcType->isInteger() && type->isInteger()) {
-        if(strictMode.get())
-            return reportConversionErrorSpl(*this, type, usage);  // implicit sext/trunc is not allowed
+        if(strictMode.get() && srcType->getFixedSize() != sizeof(int32_t))  // i32->i64 index promotion
+            return reportConversionErrorSpl(*this, type, usage);            // implicit sext/trunc is not allowed
 
         if(value->isConstant() && !value->isUndefined()) {
             const auto cint = value->as<ConstantInteger>();
