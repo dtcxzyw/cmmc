@@ -261,6 +261,19 @@ static MIROperand shouldInvertFCmp(const MIROperand& operand) {
     }
 }
 
+static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, const MIROperand& flip, MIROperand& outLhs,
+                              MIROperand& outRhs) {
+    if(!(isOperandFPR(lhs) && isOperandFPR(rhs))) {
+        return false;
+    }
+    outLhs = lhs;
+    outRhs = rhs;
+    if(flip.imm() == 1) {
+        std::swap(outLhs, outRhs);
+    }
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/ISelInfoImpl.hpp>
@@ -506,8 +519,17 @@ void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             const auto cc = inst.getOperand(1);
             const auto flip = inst.getOperand(2).imm();
             ctx.instructions.insert(
-                ctx.iter, MIRInst{ InstLoadImm }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(0, OperandType::Int32)));
+                ctx.iter, MIRInst{ InstLoadImm }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(1, OperandType::Int32)));
             *ctx.iter = MIRInst{ flip ? MOVT : MOVF }.setOperand<0>(dst).setOperand<1>(getZero(dst)).setOperand<2>(cc);
+            break;
+        }
+        case Select_FCC_FPR_FPR: {
+            auto& dst = inst.getOperand(0);
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            auto& cc = inst.getOperand(3);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOV_S }.setOperand<0>(dst).setOperand<1>(rhs));
+            *ctx.iter = MIRInst{ MOVT_S }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cc);
             break;
         }
         default:

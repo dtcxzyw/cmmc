@@ -227,11 +227,19 @@ InstInfo:
     Format: "movf $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
   MOVT:
     Format: "movt $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
+  MOVT_S:
+    Format: "movt.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use]"
+  MOVF_S:
+    Format: "movf.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use]"
 
   # Illegal Pseudo Instrucitons
   # select[CC][Val]
   Select_GPR_GPR: # => Copy + MOVN
     Format: "select_gpr_gpr $Rd:GPR[Def], $Rs:GPR[Use], $Rt:IRegOrImm[Use], $Cond:GPR[Use]"
+    Flag: [LegalizePreRA]
+
+  Select_FCC_FPR_FPR: # => Copy + MOVT.s
+    Format: "select_fcc_fpr_fpr $Rd:FPR[Def], $Rs:FPR[Use], $Rt:FPR[Use], $Cond:CC[Use]"
     Flag: [LegalizePreRA]
 
   # movt/movf
@@ -925,6 +933,23 @@ InstSelection:
         Rs: $Lhs
         Rt: $Rhs
         Cond: $Cond
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          FCC2GPR:
+            Rs: $CC
+            Flip: $Flip
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
+    Replace:
+      Select_FCC_FPR_FPR:
+        Rd: $Dst
+        Rs: $OutLhs
+        Rt: $OutRhs
+        Cond: $CC
 
   # Floating Point
   - Pattern:

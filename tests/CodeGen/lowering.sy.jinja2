@@ -31,21 +31,28 @@ void reportResult(int res) {
 void reportTest(int id) {
     putString("Testing: ");
     putint(id);
-    putch(20);
+    putch(32);
 }
 void assertIntEqual(int id, int lhs, int rhs) {
     reportTest(id);
     if(lhs != rhs) {
-        putString(" ans = ");
+        putString("out = ");
         putint(lhs);
-        putString(" out = ");
+        putString(" ans = ");
         putint(rhs);
-        putch(20);
+        putch(32);
     }
     reportResult(lhs == rhs);
 }
 void assertFloatEqual(int id, float lhs, float rhs) {
     reportTest(id);
+    if(lhs != rhs) {
+        putString("out = ");
+        putfloat(lhs);
+        putString(" ans = ");
+        putfloat(rhs);
+        putch(32);
+    }
     reportResult(lhs == rhs);
 }
 void testIntegerExpression() {
@@ -68,6 +75,11 @@ void testControlFlow() {
         assertReachable();
     } else {
         assertUnreachable();
+    }
+    if(0) {
+        assertUnreachable();
+    } else {
+        assertReachable();
     }
 }
 int main() {

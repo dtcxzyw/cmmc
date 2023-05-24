@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+// FIXME: it defeats the optimization in ArithmeticReduce.
 // %1 = scmp eq a,b
 // %2 = scmp neq a,b
 // ->

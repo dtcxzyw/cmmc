@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 import tqdm
 import numpy as np
 import shutil
+import math
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -48,7 +49,7 @@ class Context:
         return self.random.randint(minv, maxv)
 
     def get_imm_shamt(self):
-        return self.random.randint(0, 64)
+        return self.random.randint(0, 31)
 
     def get_fp(self):
         if self.random.randrange(0, 2) == 0:
@@ -61,24 +62,24 @@ int_op_list = ['+', '-', '*', '/', '%', '<<', '>>', '&',
 
 
 def get_imm_typed(ctx: Context, op):
-    if 4 <= op <= 5:
+    if 5 <= op <= 6:
         return ctx.get_imm_shamt()
     while True:
         val = ctx.get_imm()
-        if val == 0 and op == 3:
+        if val == 0 and (3 <= op <= 4):
             continue
         return val
 
 
-def eval_int_expr(lhs, rhs, op):
-    lhs = np.int32(lhs)
-    rhs = np.int32(rhs)
+def eval_int_expr(l, r, op):
+    lhs = np.int32(l)
+    rhs = np.int32(r)
     match op:
         case 0: return lhs + rhs
         case 1: return lhs - rhs
         case 2: return lhs * rhs
-        case 3: return lhs // rhs
-        case 4: return lhs % rhs
+        case 3: return np.int32(np.fix(np.true_divide(lhs, rhs)))
+        case 4: return np.int32(lhs - rhs * np.int32(np.fix(np.true_divide(lhs, rhs))))
         case 5: return lhs << rhs
         case 6: return lhs >> rhs
         case 7: return lhs & rhs
@@ -94,7 +95,7 @@ def eval_int_expr(lhs, rhs, op):
 
 int_expr_fmts = [
     # imm reg
-    "int t{id} = {lhs}; assertIntEqual({id}, ({rhs}) {op} t{id}, {res});",
+    "int t{id} = {rhs}; assertIntEqual({id}, ({lhs}) {op} t{id}, {res});",
     # reg imm
     "int t{id} = {lhs}; assertIntEqual({id}, t{id} {op} ({rhs}), {res});",
     # reg reg
@@ -110,6 +111,7 @@ def generate_integer_expr(ctx: Context):
         lhs = ctx.get_imm()
         rhs = get_imm_typed(ctx, op)
         res = eval_int_expr(lhs, rhs, op)
+        # print(res, lhs, rhs, op)
         expr.append(int_expr_fmts[expr_type].format(
             id=idx, lhs=lhs, rhs=rhs, op=int_op_list[op], res=res))
 
@@ -119,9 +121,9 @@ def generate_integer_expr(ctx: Context):
 fp_op_list = ['+', '-', '*', '/', '<', '>', '<=', '>=', '==', '!=']
 
 
-def eval_fp_expr(lhs, rhs, op):
-    lhs = np.float32(lhs)
-    rhs = np.float32(rhs)
+def eval_fp_expr(l, r, op):
+    lhs = np.float32(l)
+    rhs = np.float32(r)
     match op:
         case 0: return lhs + rhs
         case 1: return lhs - rhs
@@ -137,7 +139,7 @@ def eval_fp_expr(lhs, rhs, op):
 
 fp_expr_fmts = [
     # imm reg
-    "float t{id} = {lhs}; assertFloatEqual({id}, ({rhs}) {op} t{id}, {res});",
+    "float t{id} = {rhs}; assertFloatEqual({id}, ({lhs}) {op} t{id}, {res});",
     # reg imm
     "float t{id} = {lhs}; assertFloatEqual({id}, t{id} {op} ({rhs}), {res});",
     # reg reg
@@ -147,12 +149,14 @@ fp_expr_fmts = [
 
 def generate_fp_expr(ctx: Context):
     expr = []
-    for idx in range(integer_expressions):
+    for idx in range(fp_expressions):
         expr_type = ctx.random.randrange(0, len(fp_expr_fmts))
         op = ctx.random.randrange(0, len(fp_op_list))
         lhs = ctx.get_fp()
         rhs = ctx.get_fp()
         res = eval_fp_expr(lhs, rhs, op)
+        if math.isnan(res):
+            continue
         expr.append(fp_expr_fmts[expr_type].format(
             id=idx, lhs=lhs, rhs=rhs, op=fp_op_list[op], res=res))
 
@@ -202,10 +206,6 @@ def codegen_test(id):
         if test_count == 1:
             print(out.stderr)
         return False
-    os.remove(src)
-    os.remove(output_asm)
-    os.remove(output)
-    return True
 
     out = subprocess.run(
         qemu_command + [output], capture_output=True, text=True)
@@ -215,6 +215,10 @@ def codegen_test(id):
             print(out.stderr)
             print(out.stdout)
         return False
+
+    os.remove(src)
+    os.remove(output_asm)
+    os.remove(output)
     return True
 
 

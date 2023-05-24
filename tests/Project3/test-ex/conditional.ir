@@ -24,31 +24,40 @@ v4 := v9
 v9 := v10 + v9
 v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-LABEL label42 :
+LABEL label50 :
 v3 := v10
 v4 := v9
 v9 := v10 + v9
 v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-GOTO label42
+GOTO label50
 LABEL label5 :
 WRITE v9
 READ v17
 READ v18
 READ v19
-v29 := #1
-IF v17 < v18 GOTO label31
-v29 := #0
-WRITE v29
+v31 := #1
+IF v17 < v18 GOTO label33
+v31 := #0
+WRITE v31
 IF v17 >= v18 GOTO label23
 IF v18 >= v19 GOTO label23
-LABEL label38 :
-WRITE #1
-RETURN #0
-LABEL label31 :
-WRITE v29
+v34 := #1
+IF v17 < v18 GOTO label36
+GOTO label48
+LABEL label33 :
+WRITE v31
 IF v17 >= v18 GOTO label23
 IF v18 >= v19 GOTO label23
-GOTO label38
+v34 := #1
+IF v17 < v18 GOTO label36
+GOTO label48
 LABEL label23 :
+RETURN #0
+LABEL label48 :
+v34 := #0
+WRITE v34
+RETURN #0
+LABEL label36 :
+WRITE v34
 RETURN #0

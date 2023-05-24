@@ -84,9 +84,9 @@ static OperandType getOperandType(const Type* type, OperandType ptrType) {
 LoweringContext::LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx,
                                  std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
                                  std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
-                                 std::unordered_map<Value*, MIROperand>& valueMap)
+                                 FloatingPointConstantPool& fpConstantPool, std::unordered_map<Value*, MIROperand>& valueMap)
     : mModule{ module }, mDataLayout{ module.getTarget().getDataLayout() }, mCodeGenCtx{ codeGenCtx }, mBlockMap{ blockMap },
-      mGlobalMap{ globalMap }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {
+      mGlobalMap{ globalMap }, mFPConstantPool{ fpConstantPool }, mValueMap{ valueMap }, mCurrentBasicBlock{ nullptr } {
     const auto ptrSize = module.getTarget().getDataLayout().getPointerSize();
     if(ptrSize == 4)
         mPtrType = OperandType::Int32;
@@ -100,6 +100,36 @@ MIRModule& LoweringContext::getModule() const noexcept {
 }
 MIRBasicBlock* LoweringContext::mapBlock(Block* block) const {
     return mBlockMap.at(block);
+}
+MIROperand FloatingPointConstantPool::getFPConstant(class LoweringContext& ctx, const ConstantFloatingPoint* val) {
+    assert(val->getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float));
+    const auto fpVal = static_cast<float>(val->getValue());
+    uint32_t rep;
+    memcpy(&rep, &fpVal, sizeof(float));               // TODO: endianness?
+    const auto it = mFloatingPointConstant.find(rep);  // TODO: for zero: copy from gpr
+    uint32_t offset;
+    if(it != mFloatingPointConstant.cend()) {
+        offset = it->second;
+    } else {
+        if(!mFloatingPointConstantPool) {
+            auto storage =
+                std::make_unique<MIRDataStorage>(String::get("__cmmc_fp_constant_pool"), MIRDataStorage::Storage{}, true);
+            mFloatingPointConstantPool = storage.get();
+            auto pool = std::make_unique<MIRGlobal>(Linkage::Internal, sizeof(float), std::move(storage));
+            ctx.getModule().globals().push_back(std::move(pool));
+        }
+        offset = mFloatingPointConstant[rep] = mFloatingPointConstantPool->appendWord(rep) * sizeof(float);
+    }
+
+    const auto ptrType = ctx.getPtrType();
+    const auto base = ctx.newVReg(ptrType);
+    ctx.emitInst(
+        MIRInst{ InstLoadGlobalAddress }.setOperand<0>(base).setOperand<1>(MIROperand::asReloc(mFloatingPointConstantPool)));
+    const auto addr = ctx.newVReg(ptrType);
+    ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, ptrType)));
+    const auto dst = ctx.newVReg(val->getType());
+    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(dst).setOperand<1>(addr));
+    return dst;
 }
 MIROperand LoweringContext::mapOperand(Value* operand) {
     const auto iter = mValueMap.find(operand);
@@ -116,43 +146,15 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
         reportUnreachable(CMMC_LOCATION());
     }
     // constant
-    MIROperand reg;
+    // NOTICE: loaded constant cannot be cached
     const auto operandType = getOperandType(operand->getType(), mPtrType);
     if(operand->getType()->isFloatingPoint()) {
-        const auto val = static_cast<float>(operand->as<ConstantFloatingPoint>()->getValue());
-        uint32_t rep;
-        memcpy(&rep, &val, sizeof(float));  // TODO: endianness?
-        assert(operand->getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float));
-        const auto it = mFloatingPointConstant.find(rep);  // TODO: for zero: copy from gpr
-        uint32_t offset;
-        if(it != mFloatingPointConstant.cend()) {
-            offset = it->second;
-        } else {
-            if(!mFloatingPointConstantPool) {
-                auto storage =
-                    std::make_unique<MIRDataStorage>(String::get("__cmmc_fp_constant_pool"), MIRDataStorage::Storage{}, true);
-                mFloatingPointConstantPool = storage.get();
-                auto pool = std::make_unique<MIRGlobal>(Linkage::Internal, sizeof(float), std::move(storage));
-                mModule.globals().push_back(std::move(pool));
-            }
-            offset = mFloatingPointConstant[rep] = mFloatingPointConstantPool->appendWord(rep) * sizeof(float);
-        }
-
-        const auto base = newVReg(mPtrType);
-        emitInst(
-            MIRInst{ InstLoadGlobalAddress }.setOperand<0>(base).setOperand<1>(MIROperand::asReloc(mFloatingPointConstantPool)));
-        const auto addr = newVReg(mPtrType);
-        emitInst(MIRInst{ InstAdd }.setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, mPtrType)));
-        const auto dst = newVReg(operand->getType());
-        emitInst(MIRInst{ InstLoad }.setOperand<0>(dst).setOperand<1>(addr));
-        reg = dst;
-    } else if(operand->isUndefined()) {
-        reg = MIROperand::asImm(0, operandType);
-    } else {
-        reg = MIROperand::asImm(operand->as<ConstantInteger>()->getSignExtended(), operandType);
+        return mFPConstantPool.getFPConstant(*this, operand->as<ConstantFloatingPoint>());
     }
-    mValueMap.emplace(operand, reg);
-    return reg;
+    if(operand->isUndefined()) {
+        return MIROperand::asImm(0, operandType);
+    }
+    return MIROperand::asImm(operand->as<ConstantInteger>()->getSignExtended(), operandType);
 }
 void LoweringContext::setCurrentBasicBlock(MIRBasicBlock* block) noexcept {
     mCurrentBasicBlock = block;
@@ -180,13 +182,14 @@ void LoweringContext::addOperand(Value* value, MIROperand reg) {
 
 static void lowerInst(Instruction* inst, LoweringContext& ctx);
 static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenContext& codeGenCtx, MIRModule& machineModule,
-                                   std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, AnalysisPassManager& analysis) {
+                                   std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap,
+                                   FloatingPointConstantPool& fpConstantPool, AnalysisPassManager& analysis) {
     auto& blockTripCount = analysis.get<BlockTripCountEstimation>(*func);
 
     std::unordered_map<Block*, MIRBasicBlock*> blockMap;
     std::unordered_map<Value*, MIROperand> valueMap;
     std::unordered_map<Value*, MIROperand> storageMap;
-    LoweringContext ctx{ machineModule, codeGenCtx, blockMap, globalMap, valueMap };
+    LoweringContext ctx{ machineModule, codeGenCtx, blockMap, globalMap, fpConstantPool, valueMap };
 
     auto& target = machineModule.getTarget();
     auto& dataLayout = target.getDataLayout();
@@ -257,6 +260,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
     const auto& dataLayout = module.getTarget().getDataLayout();
 
     std::unordered_map<GlobalValue*, MIRGlobal*> globalMap;
+    FloatingPointConstantPool fpConstantPool;
 
     for(auto global : module.globals()) {
         if(global->isFunction()) {
@@ -389,7 +393,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         {
             // Stage 1: lower to Generic MIR
             Stage stage{ "lower to generic insts"sv };
-            lowerToMachineFunction(mfunc, func, ctx, machineModule, globalMap, analysis);
+            lowerToMachineFunction(mfunc, func, ctx, machineModule, globalMap, fpConstantPool, analysis);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }

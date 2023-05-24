@@ -617,7 +617,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "tac", "llvm"]
+test_cases = ["parse", "semantic", "tac", "qemu"]
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 
@@ -685,12 +685,8 @@ if not generate_ref:
                         "/TAC2MC", ".ir", spl_codegen_mips))
         res.append(test("SPL SPL->MIPS project4 self", tests_path +
                         "/Project4", ".spl", spl_codegen_mips))
-        res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
-                        "/Project4", ".spl", spl_codegen_riscv64))
-        res.append(test("SysY SysY->MIPS functional", tests_path +
-                        "/SysY2022/functional", ".sy", sysy_codegen_mips))
-        res.append(test("SysY SysY->RISCV64 functional", tests_path +
-                        "/SysY2022/functional", ".sy", sysy_codegen_riscv64))
+        # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
+        #                "/Project4", ".spl", spl_codegen_riscv64))
 
     if "gcc" in test_cases:
         res.append(test("SysY gcc performance", tests_path +

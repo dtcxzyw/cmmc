@@ -2,78 +2,80 @@ FUNCTION main :
 DEC x21 400
 READ v23
 READ v24
-IF v23 <= #0 GOTO label2
-v20 := #1
-v60 := v20 * #4
-v61 := &x21 + v60
-*v61 := #1
-v62 := v20 + #1
-IF v62 > v23 GOTO label2
-LABEL label64 :
-v20 := v62
-v60 := v62 * #4
-v61 := &x21 + v60
-*v61 := #1
-v62 := v62 + #1
-IF v62 > v23 GOTO label2
-GOTO label64
-LABEL label2 :
-IF v23 <= #0 GOTO label30
-v4 := #1
-v5 := #0
-v6 := #0
-v33 := v4 * #4
-v34 := &x21 + v33
-v35 := *v34
-IF v35 != #1 GOTO label38
-v49 := v5 + v35
-IF v49 != v24 GOTO label52
-GOTO label14
-LABEL label52 :
-v16 := v49
-v17 := v6
-IF v6 != v23 GOTO label57
-GOTO label30
-LABEL label14 :
-WRITE v4
-*v34 := #0
-v54 := v6 + #1
-v16 := #0
-v17 := v54
-IF v54 != v23 GOTO label57
-GOTO label30
-LABEL label38 :
-v8 := v5
-v9 := v6
-IF v4 != v23 GOTO label42
-v12 := #0
-v44 := v12 + #1
-IF v44 > v23 GOTO label30
-GOTO label46
-LABEL label42 :
-v12 := v4
-v44 := v4 + #1
-IF v44 > v23 GOTO label30
-LABEL label46 :
-v4 := v44
-v5 := v8
-v6 := v9
-v33 := v44 * #4
-v34 := &x21 + v33
-v35 := *v34
-IF v35 != #1 GOTO label38
-v49 := v8 + v35
-IF v49 != v24 GOTO label52
-GOTO label14
-LABEL label57 :
-v8 := v16
-v9 := v17
-IF v4 != v23 GOTO label42
-v12 := #0
-v44 := v12 + #1
-IF v44 > v23 GOTO label30
-v44 := v12 + #1
-IF v44 > v23 GOTO label30
-GOTO label46
-LABEL label30 :
+IF v23 <= #0 GOTO label4
+v3 := #1
+v30 := v3 * #4
+v31 := &x21 + v30
+*v31 := #1
+v32 := v3 + #1
+IF v32 > v23 GOTO label4
+LABEL label34 :
+v3 := v32
+v30 := v32 * #4
+v31 := &x21 + v30
+*v31 := #1
+v32 := v32 + #1
+IF v32 > v23 GOTO label4
+GOTO label34
+LABEL label4 :
+IF v23 <= #0 GOTO label40
+GOTO label39
+LABEL label40 :
 RETURN #0
+LABEL label56 :
+v6 := v54
+v7 := v10
+v8 := v11
+v43 := v54 * #4
+v44 := &x21 + v43
+v45 := *v44
+IF v45 != #1 GOTO label48
+v59 := v10 + v45
+IF v59 != v24 GOTO label62
+GOTO label16
+LABEL label67 :
+v10 := v18
+v11 := v19
+IF v6 != v23 GOTO label52
+v14 := #0
+v54 := v14 + #1
+IF v54 > v23 GOTO label40
+v54 := v14 + #1
+IF v54 > v23 GOTO label40
+GOTO label56
+LABEL label39 :
+v6 := #1
+v7 := #0
+v8 := #0
+v43 := v6 * #4
+v44 := &x21 + v43
+v45 := *v44
+IF v45 != #1 GOTO label48
+v59 := v7 + v45
+IF v59 != v24 GOTO label62
+LABEL label16 :
+WRITE v6
+*v44 := #0
+v64 := v8 + #1
+v18 := #0
+v19 := v64
+IF v64 != v23 GOTO label67
+GOTO label40
+LABEL label52 :
+v14 := v6
+v54 := v6 + #1
+IF v54 > v23 GOTO label40
+GOTO label56
+LABEL label48 :
+v10 := v7
+v11 := v8
+IF v6 != v23 GOTO label52
+v14 := #0
+v54 := v14 + #1
+IF v54 > v23 GOTO label40
+GOTO label56
+LABEL label62 :
+v18 := v59
+v19 := v8
+IF v8 != v23 GOTO label67
+GOTO label40

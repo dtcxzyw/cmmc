@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -38,22 +39,29 @@ CMMC_NAMESPACE_END
 
 CMMC_MIR_NAMESPACE_BEGIN
 
+class FloatingPointConstantPool final {
+    MIRDataStorage* mFloatingPointConstantPool = nullptr;
+    std::unordered_map<uint32_t, uint32_t> mFloatingPointConstant;  // represention -> index
+public:
+    MIROperand getFPConstant(class LoweringContext& ctx, const ConstantFloatingPoint* val);
+};
+
 class LoweringContext final {
     MIRModule& mModule;
     const DataLayout& mDataLayout;
     CodeGenContext& mCodeGenCtx;
     std::unordered_map<Block*, MIRBasicBlock*>& mBlockMap;
     std::unordered_map<GlobalValue*, MIRGlobal*>& mGlobalMap;
+    FloatingPointConstantPool& mFPConstantPool;
     std::unordered_map<Value*, MIROperand>& mValueMap;
-    MIRDataStorage* mFloatingPointConstantPool = nullptr;
-    std::unordered_map<uint32_t, uint32_t> mFloatingPointConstant;  // represention -> index
 
     MIRBasicBlock* mCurrentBasicBlock = nullptr;
     OperandType mPtrType;
 
 public:
     LoweringContext(MIRModule& module, CodeGenContext& codeGenCtx, std::unordered_map<Block*, MIRBasicBlock*>& blockMap,
-                    std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, std::unordered_map<Value*, MIROperand>& valueMap);
+                    std::unordered_map<GlobalValue*, MIRGlobal*>& globalMap, FloatingPointConstantPool& fpConstantPool,
+                    std::unordered_map<Value*, MIROperand>& valueMap);
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept {
         return mDataLayout;
     }

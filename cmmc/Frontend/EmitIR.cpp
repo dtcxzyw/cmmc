@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/IRBuilder.hpp"
 #include <cassert>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Frontend/AST.hpp>
@@ -23,6 +22,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -739,8 +739,8 @@ QualifiedValue ConstantFloatExpr::emit(EmitContext&) const {
 }
 
 QualifiedValue ConstantStringExpr::emit(EmitContext& ctx) const {
-    const auto val =
-        emitGlobal(String::get("cmmc.str.s" + std::to_string(mString.hash())), std::numeric_limits<uint32_t>::max(), ctx);
+    const auto val = emitGlobal(String::get("cmmc.str.s" + std::to_string(ctx.getModule()->globals().size())),
+                                std::numeric_limits<uint32_t>::max(), ctx);
     val->attr().addAttr(GlobalVariableAttribute::ReadOnly);
     return QualifiedValue::asRValue(val, Qualifier::getDefault());
 }

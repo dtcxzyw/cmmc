@@ -201,8 +201,8 @@ FIXED_WIDTH_INTEGER_TYPE u?int(8|16|32|64)_t
 "0"[xX][0-9A-Fa-f]+U?L?L? { return emitInteger(16); }
 (0|([1-9][0-9]*))U?L?L? { return emitInteger(10); }
 "0"[1-7][0-7]*U?L?L? { return emitInteger(8); }
-([0-9]+)?"."[0-9]+([eE][+-]?[1-9][0-9]*)?(f|F)? { return emitFp(); }
-([0-9]+)([eE]-?[1-9][0-9]*)(f|F)? { return emitFp(); }
+([0-9]+)?"."[0-9]+([eE][+-]?[0-9]+)?(f|F)? { return emitFp(); }
+([0-9]+)([eE][+-]?[0-9]+)(f|F)? { return emitFp(); }
 ([0-9]+)"."(f|F)? { return emitFp(); }
 0[xX][0-9a-fA-F]*"."[0-9a-fA-F]*[pP][+-]?[0-9]+(f|F)? { return emitFp(); }
 [a-zA-Z_][a-zA-Z_0-9]* { String val = String::get(yytext); return Parser::make_ID(val, {CMMC_RECORD(ID, val), loc}); }
