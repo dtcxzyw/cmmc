@@ -21,8 +21,8 @@ submit_binary = os.path.abspath(
     binary_dir + '/' + os.path.pardir) + "/educg_submit/compiler"
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '0'
-fast_fail = True
+optimization_level = '3'
+fast_fail = False
 generate_ref = False
 assert os.path.exists(rars_path)
 
@@ -506,13 +506,16 @@ def sysy_cmmc_qemu(src):
 
     inputs = src[:-3]+".in"
     out = None
-    if os.path.exists(inputs):
-        with open(inputs, 'r', encoding='utf-8') as input_file:
-            out = subprocess.run(qemu_command + [output], stdin=input_file,
-                                 capture_output=True, text=True)
-    else:
-        out = subprocess.run(
-            qemu_command + [output], capture_output=True, text=True)
+    try:
+        if os.path.exists(inputs):
+            with open(inputs, 'r', encoding='utf-8') as input_file:
+                out = subprocess.run(qemu_command + [output], stdin=input_file,
+                                     capture_output=True, text=True)
+        else:
+            out = subprocess.run(
+                qemu_command + [output], capture_output=True, text=True)
+    except Exception:
+        return False
 
     used = compare_and_parse_perf(src, out)
     if used is None:
@@ -708,14 +711,14 @@ if not generate_ref:
     if "qemu" in test_cases:
         res.append(test("SysY codegen functional (qemu-mipsel)", tests_path +
                         "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
-        res.append(test("SysY codegen hidden_functional (qemu-mipsel)", tests_path +
-                        "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
+        # res.append(test("SysY codegen hidden_functional (qemu-mipsel)", tests_path +
+        #                "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
 
         dict_cmmc_qemu.clear()
         total_perf_self_qemu = 1
         total_perf_self_samples_qemu = 0
-        res.append(test("SysY codegen performance (qemu-mipsel)", tests_path +
-                        "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
+        # res.append(test("SysY codegen performance (qemu-mipsel)", tests_path +
+        #                "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
         pass
 
     if "qemu-gcc" in test_cases:

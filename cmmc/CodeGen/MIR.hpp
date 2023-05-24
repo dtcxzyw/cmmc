@@ -69,7 +69,18 @@ constexpr bool isStackObject(uint32_t x) {
     return (x & stackObjectBegin) == stackObjectBegin;
 }
 
-enum class OperandType : uint32_t { Bool, Int8, Int16, Int32, Int64, Float32, Special };
+enum class OperandType : uint32_t {
+    Bool,
+    Int8,
+    Int16,
+    Int32,
+    Int64,
+    Float32,
+    Special,
+    // %hi/%lo for absolute relocatable addresses
+    HighBits,
+    LowBits
+};
 
 constexpr bool isIntegerType(OperandType type) {
     return type <= OperandType::Int64;
@@ -388,6 +399,7 @@ public:
     [[nodiscard]] const Target& getTarget() const {
         return mTarget;
     }
+    // TODO: check global ref
     bool verify(std::ostream& out, const CodeGenContext& ctx) const;
     void dump(std::ostream& out, const CodeGenContext& ctx) const;
 };

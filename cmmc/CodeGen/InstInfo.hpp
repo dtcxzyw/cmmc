@@ -90,7 +90,7 @@ constexpr bool isOperandVReg(const MIROperand& operand) {
 }
 
 constexpr bool isOperandReloc(const MIROperand& operand) {
-    return operand.isReloc();
+    return operand.isReloc() && operand.type() == OperandType::Special;
 }
 
 constexpr bool isOperandProb(const MIROperand& operand) {

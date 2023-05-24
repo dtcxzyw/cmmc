@@ -69,8 +69,8 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
 using mir::isOperandProb;
 using mir::isOperandReloc;
 
-static MIRInst emitGotoImpl(MIRBasicBlock*) {
-    reportNotImplemented(CMMC_LOCATION());
+static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
+    return MIRInst{ J }.setOperand<0>(MIROperand::asReloc(targetBlock));
 }
 
 CMMC_TARGET_NAMESPACE_END

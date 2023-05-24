@@ -1028,10 +1028,8 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     }
                     case Intrinsic::memset: {
                         const auto ptr = getPtr(0);
-                        const auto byte = getUInt(1);
-                        const auto size = getUInt(2);
-                        memCtx.memReset(ptr, size, static_cast<std::byte>(byte));
-                        addPtr(ptr);
+                        const auto size = getUInt(1);
+                        memCtx.memReset(ptr, size, static_cast<std::byte>(0));
                         break;
                     }
                     case Intrinsic::memcpy: {
@@ -1039,7 +1037,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         const auto src = getPtr(1);
                         const auto size = getUInt(2);
                         memCtx.memCopy(dest, src, size);
-                        addPtr(dest);
                         break;
                     }
                     default:

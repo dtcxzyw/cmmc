@@ -107,9 +107,8 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
         return iter->second;
     if(operand->isGlobal()) {
         const auto ptr = newVReg(getPtrType());
-        emitInst(InstLoadGlobalAddress)
-            .setOperand<0>(ptr)
-            .setOperand<1>(MIROperand::asReloc(mGlobalMap.at(operand->as<GlobalValue>())->reloc.get()));
+        emitInst(MIRInst{ InstLoadGlobalAddress }.setOperand<0>(ptr).setOperand<1>(
+            MIROperand::asReloc(mGlobalMap.at(operand->as<GlobalValue>())->reloc.get())));
         return ptr;
     }
     if(!operand->isConstant()) {
@@ -140,11 +139,12 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
         }
 
         const auto base = newVReg(mPtrType);
-        emitInst(InstLoadGlobalAddress).setOperand<0>(base).setOperand<1>(MIROperand::asReloc(mFloatingPointConstantPool));
+        emitInst(
+            MIRInst{ InstLoadGlobalAddress }.setOperand<0>(base).setOperand<1>(MIROperand::asReloc(mFloatingPointConstantPool)));
         const auto addr = newVReg(mPtrType);
-        emitInst(InstAdd).setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, mPtrType));
+        emitInst(MIRInst{ InstAdd }.setOperand<0>(addr).setOperand<1>(base).setOperand<2>(MIROperand::asImm(offset, mPtrType)));
         const auto dst = newVReg(operand->getType());
-        emitInst(InstLoad).setOperand<0>(dst).setOperand<1>(addr);
+        emitInst(MIRInst{ InstLoad }.setOperand<0>(dst).setOperand<1>(addr));
         reg = dst;
     } else if(operand->isUndefined()) {
         reg = MIROperand::asImm(0, operandType);
@@ -215,7 +215,7 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
                                          static_cast<uint32_t>(type->getAlignment(dataLayout)), 0, StackObjectUsage::Local);
                 storageMap.emplace(inst, storage);
                 const auto addr = ctx.newVReg(ctx.getPtrType());
-                ctx.emitInst(InstLoadStackObjectAddr).setOperand<0>(addr).setOperand<1>(storage);
+                ctx.emitInst(MIRInst{ InstLoadStackObjectAddr }.setOperand<0>(addr).setOperand<1>(storage));
                 ctx.addOperand(inst, addr);
             } else
                 break;
@@ -266,9 +266,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                 switch(func->getIntrinsic()) {
                     case Intrinsic::memcpy:
                         symbol = String::get("memcpy"sv);
-                        break;
-                    case Intrinsic::memmove:
-                        symbol = String::get("memmove"sv);
                         break;
                     case Intrinsic::memset:
                         symbol = String::get("memset"sv);
@@ -573,10 +570,10 @@ static void lower(BinaryInst* inst, LoweringContext& ctx) {
         }
     }();
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(id)
-        .setOperand<0>(ret)
-        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)));
+    ctx.emitInst(MIRInst{ id }
+                     .setOperand<0>(ret)
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+                     .setOperand<2>(ctx.mapOperand(inst->getOperand(1))));
     ctx.addOperand(inst, ret);
 }
 static void lower(CompareInst* inst, LoweringContext& ctx) {
@@ -594,11 +591,11 @@ static void lower(CompareInst* inst, LoweringContext& ctx) {
     }();
 
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(id)
-        .setOperand<0>(ret)
-        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
-        .setOperand<3>(MIROperand::asImm(inst->getOp(), OperandType::Special));
+    ctx.emitInst(MIRInst{ id }
+                     .setOperand<0>(ret)
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+                     .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+                     .setOperand<3>(MIROperand::asImm(inst->getOp(), OperandType::Special)));
     ctx.addOperand(inst, ret);
 }
 static void lower(UnaryInst* inst, LoweringContext& ctx) {
@@ -614,7 +611,7 @@ static void lower(UnaryInst* inst, LoweringContext& ctx) {
     }();
 
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(id).setOperand<0>(ret).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
+    ctx.emitInst(MIRInst{ id }.setOperand<0>(ret).setOperand<1>(ctx.mapOperand(inst->getOperand(0))));
     ctx.addOperand(inst, ret);
 }
 static void lower(CastInst* inst, LoweringContext& ctx) {
@@ -646,16 +643,19 @@ static void lower(CastInst* inst, LoweringContext& ctx) {
         }
     }();
 
-    ctx.emitInst(id).setOperand<0>(dst).setOperand<1>(src);
+    ctx.emitInst(MIRInst{ id }.setOperand<0>(dst).setOperand<1>(src));
     ctx.addOperand(inst, dst);
 }
 static void lower(LoadInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(InstLoad).setOperand<0>(ret).setOperand<1>(ctx.mapOperand(inst->getOperand(0)));
+    const auto ptr = ctx.mapOperand(inst->getOperand(0));
+    ctx.emitInst(MIRInst{ InstLoad }.setOperand<0>(ret).setOperand<1>(ptr));
     ctx.addOperand(inst, ret);
 }
 static void lower(StoreInst* inst, LoweringContext& ctx) {
-    ctx.emitInst(InstStore).setOperand<0>(ctx.mapOperand(inst->getOperand(0))).setOperand<1>(ctx.mapOperand(inst->getOperand(1)));
+    ctx.emitInst(MIRInst{ InstStore }
+                     .setOperand<0>(ctx.mapOperand(inst->getOperand(0)))
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(1))));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<Value*> src;
@@ -759,7 +759,7 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
         }
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);
-    ctx.emitInst(InstJump).setOperand<0>(MIROperand::asReloc(dstMBlock));
+    ctx.emitInst(MIRInst{ InstJump }.setOperand<0>(MIROperand::asReloc(dstMBlock)));
 }
 static void lower(BranchInst* inst, LoweringContext& ctx) {
     const auto srcBlock = inst->getBlock();
@@ -779,12 +779,12 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
         ctx.setCurrentBasicBlock(curBlock);
 
         const auto cond = ctx.newVReg(inst->getOperand(0)->getType());
-        ctx.emitInst(instID).setOperand<0>(cond).setOperand<1>(lhs).setOperand<2>(rhs).setOperand<3>(
-            MIROperand::asImm(op, OperandType::Special));
-        ctx.emitInst(InstBranch)
-            .setOperand<0>(cond)
-            .setOperand<1>(MIROperand::asReloc(elsePrepareBlock))
-            .setOperand<2>(MIROperand::asProb(1.0 - inst->getBranchProb()));
+        ctx.emitInst(MIRInst{ instID }.setOperand<0>(cond).setOperand<1>(lhs).setOperand<2>(rhs).setOperand<3>(
+            MIROperand::asImm(op, OperandType::Special)));
+        ctx.emitInst(MIRInst{ InstBranch }
+                         .setOperand<0>(cond)
+                         .setOperand<1>(MIROperand::asReloc(elsePrepareBlock))
+                         .setOperand<2>(MIROperand::asProb(1.0 - inst->getBranchProb())));
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
@@ -817,15 +817,15 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
     }
 }
 static void lower(UnreachableInst*, LoweringContext& ctx) {
-    ctx.emitInst(InstUnreachable);
+    ctx.emitInst(MIRInst{ InstUnreachable });
 }
 static void lower(SelectInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(InstSelect)
-        .setOperand<0>(ret)
-        .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-        .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
-        .setOperand<3>(ctx.mapOperand(inst->getOperand(2)));
+    ctx.emitInst(MIRInst{ InstSelect }
+                     .setOperand<0>(ret)
+                     .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+                     .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+                     .setOperand<3>(ctx.mapOperand(inst->getOperand(2))));
     ctx.addOperand(inst, ret);
 }
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
@@ -835,8 +835,8 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto base = ctx.mapOperand(inst->operands().back());
 
     if(constantOffset != 0) {
-        ctx.emitInst(InstAdd).setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(
-            MIROperand::asImm(constantOffset, ctx.getPtrType()));
+        ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(
+            MIROperand::asImm(constantOffset, ctx.getPtrType())));
     } else {
         ctx.emitCopy(ptr, base);
     }
@@ -846,10 +846,11 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
         if(size == 1) {
             ctx.emitCopy(off, idx);
         } else {
-            ctx.emitInst(InstMul).setOperand<0>(off).setOperand<1>(idx).setOperand<2>(MIROperand::asImm(size, ctx.getPtrType()));
+            ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
+                MIROperand::asImm(size, ctx.getPtrType())));
         }
         auto newPtr = ctx.newVReg(inst->getType());  // SSA form
-        ctx.emitInst(InstAdd).setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off);
+        ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off));
         ptr = newPtr;
     }
     ctx.addOperand(inst, ptr);
@@ -987,9 +988,14 @@ MIROperand LoweringContext::newVReg(const Type* type) {
 MIROperand LoweringContext::newVReg(OperandType type) {
     return MIROperand::asVReg(mCodeGenCtx.nextId(), type);
 }
+void LoweringContext::emitInst(const MIRInst& inst) {
+    auto& insts = mCurrentBasicBlock->instructions();
+    insts.emplace_back(inst);
+}
 
 void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
-    auto& inst = emitInst(selectCopyOpcode(dst, src)).setOperand<0>(dst).setOperand<1>(src);
+    auto inst = MIRInst{ selectCopyOpcode(dst, src) }.setOperand<0>(dst).setOperand<1>(src);
+    emitInst(inst);
     if constexpr(Config::debug) {
         auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
         CMMC_UNUSED(instInfo);

@@ -34,7 +34,12 @@ enum class FunctionAttribute {
 
 enum class CallingConvention { C, Fast };
 
-enum class Intrinsic { none, memset, memcpy, memmove };
+enum class Intrinsic {
+    none,
+    // TODO: with alignment? memset.i8/memset.i32/memset.i64...
+    memset,  // void memset(i8* ptr, size_t size) -> memset(ptr, 0, size)
+    memcpy   // void memcpy(i8* dst, i8* src, size_t size)
+};
 
 class FuncArgument final : public Value {
     Function* mFunc;

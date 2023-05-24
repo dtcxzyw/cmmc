@@ -77,6 +77,7 @@ bool MIRFunction::verify(std::ostream& out, const CodeGenContext& ctx) const {
             out << '\n';
             return false;
         }
+    // TODO: check vreg use-def chain
     return true;
 }
 bool MIRZeroStorage::verify(std::ostream&, const CodeGenContext&) const {
@@ -95,7 +96,7 @@ bool MIRDataStorage::verify(std::ostream&, const CodeGenContext&) const {
 }
 void MIRDataStorage::dump(std::ostream& out, const CodeGenContext&) const {
     for(const auto& val : mData)
-        std::visit(Overload{ [&](const uint32_t word) { out << "\t.word\t" << word << '\n'; },
+        std::visit(Overload{ [&](const uint32_t word) { out << "\t.4byte\t" << word << '\n'; },
                              [&](const size_t size) { out << "\t.zero\t" << size << '\n'; },
                              [&](const std::byte byte) { out << "\t.byte\t" << static_cast<uint32_t>(byte) << '\n'; } },
                    val);

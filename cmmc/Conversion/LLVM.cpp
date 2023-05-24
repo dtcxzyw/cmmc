@@ -350,7 +350,7 @@ class LLVMConversionContext final {
                     }
                     case Intrinsic::memset:
                         return builder.CreateMemSet(
-                            getOperand(0), builder.CreateTrunc(getOperand(1), builder.getInt8Ty()), getOperand(2),
+                            getOperand(0), builder.getInt8(0), getOperand(1),
                             llvm::MaybeAlign{
                                 inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getAlignment(dataLayout) });
                     case Intrinsic::memcpy:

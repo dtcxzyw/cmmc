@@ -39,6 +39,10 @@ static std::string_view getType(OperandType type) {
             return "f32 ";
         case OperandType::Special:
             return "special ";
+        case OperandType::HighBits:
+            return "hi ";
+        case OperandType::LowBits:
+            return "lo ";
     }
     reportUnreachable(CMMC_LOCATION());
 };

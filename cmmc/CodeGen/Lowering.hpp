@@ -76,11 +76,7 @@ public:
     }
     MIRBasicBlock* addBlockAfter(double blockTripCount);
 
-    MIRInst& emitInst(uint32_t opcode) {
-        auto& insts = mCurrentBasicBlock->instructions();
-        insts.emplace_back(opcode);
-        return insts.back();
-    }
+    void emitInst(const MIRInst& inst);
     void addOperand(Value* value, MIROperand reg);
 };
 

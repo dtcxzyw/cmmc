@@ -119,15 +119,15 @@ InstInfo:
       TRUNC_W_S:
         Mnemonic: trunc.w.s
 
-  MulDiv:
-    Format: "$Mnemonic:Template $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Def: $Rd:HILO[Def]"
+  MULT:
+    Format: "mult $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Def: $Rd:HILO[Def]"
+  Div:
+    Format: "$Mnemonic:Template $Zero:Zero[Use], $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Def: $Rd:HILO[Def]" # NOTICE: div/divu with two operands are macros.
     Instances:
       DIV:
         Mnemonic: div
       DIVU:
         Mnemonic: divu
-      MULT:
-        Mnemonic: mult
 
   JAL:
     Format: "jal $Tgt:Reloc[Metadata]"
@@ -201,10 +201,6 @@ InstInfo:
     Flag: [LoadConstant]
 
   # Pseudo Instrucitons
-  LoadAddress:
-    Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
-    Flag: [LoadConstant]
-
   LoadImm16:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm16[Metadata]" # addiu
     Flag: [LoadConstant]
@@ -805,6 +801,7 @@ InstSelection:
         Rd: $Dst
         Rs:
           DIV:
+            Zero: getZero($Dst)
             Rd: getHILO()
             Rs: $Lhs
             Rt: $Rhs
@@ -820,6 +817,7 @@ InstSelection:
         Rd: $Dst
         Rs:
           DIV:
+            Zero: getZero($Dst)
             Rd: getHILO()
             Rs: $Lhs
             Rt: $Rhs
@@ -835,6 +833,7 @@ InstSelection:
         Rd: $Dst
         Rs:
           DIVU:
+            Zero: getZero($Dst)
             Rd: getHILO()
             Rs: $Lhs
             Rt: $Rhs
@@ -850,9 +849,24 @@ InstSelection:
         Rd: $Dst
         Rs:
           DIVU:
+            Zero: getZero($Dst)
             Rd: getHILO()
             Rs: $Lhs
             Rt: $Rhs
+
+  # Global Address
+  - Pattern:
+      InstLoadGlobalAddress:
+        Dst: $Dst
+        Addr: $Addr
+    Replace:
+      ADDIU:
+        Rd: $Dst
+        Rs:
+          LUI:
+            Rd: getVRegAs(ctx, $Dst)
+            Imm: getHighBits($Addr)
+        Imm: getLowBits($Addr)
 
   # Load/Store
   - Pattern:
@@ -911,15 +925,6 @@ InstSelection:
         Rs: $Lhs
         Rt: $Rhs
         Cond: $Cond
-
-  - Pattern:
-      InstLoadGlobalAddress:
-        Dst: $Dst
-        Addr: $Addr
-    Replace:
-      LoadAddress:
-        Rd: $Dst
-        Addr: $Addr
 
   # Floating Point
   - Pattern:

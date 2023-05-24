@@ -65,7 +65,15 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         return out << op.prob();
     }
     if(op.isReloc()) {
+        if(op.type() == OperandType::HighBits) {
+            out << "%hi(";
+        } else if(op.type() == OperandType::LowBits) {
+            out << "%lo(";
+        }
+
         op.reloc()->dumpAsTarget(out);
+        if(op.type() != OperandType::Special)
+            out << ')';
         return out;
     }
     reportUnreachable(CMMC_LOCATION());
@@ -76,6 +84,10 @@ using mir::isOperandIReg;
 using mir::isOperandIRegOrImm;
 using mir::isOperandProb;
 using mir::isOperandReloc;
+
+static bool isOperandZero(const MIROperand& operand) {
+    return operand.isReg() && operand.reg() == X0;
+}
 
 static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ B }.setOperand<0>(MIROperand::asReloc(targetBlock));

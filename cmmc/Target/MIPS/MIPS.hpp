@@ -41,10 +41,14 @@ constexpr auto sp = MIROperand::asISAReg(MIPS::X29, OperandType::Int32);
 constexpr auto ra = MIROperand::asISAReg(MIPS::X31, OperandType::Int32);
 
 constexpr bool isOperandImm16(const MIROperand& operand) {
+    if(operand.isReloc() && operand.type() == OperandType::LowBits)
+        return true;
     return operand.isImm() && isSignedImm<16>(operand.imm());
 }
 
 constexpr bool isOperandUImm16(const MIROperand& operand) {
+    if(operand.isReloc() && operand.type() == OperandType::HighBits)
+        return true;
     return operand.isImm() && isUnsignedImm<16>(operand.imm());
 }
 

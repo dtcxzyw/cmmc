@@ -56,24 +56,24 @@ public:
         auto symbol = callee->getSymbol();
         if(symbol == "read") {
             auto reg = ctx.newVReg(OperandType::Int32);
-            ctx.emitInst(TAC::Read).setOperand<0>(reg);
+            ctx.emitInst(MIRInst{ TAC::Read }.setOperand<0>(reg));
             ctx.addOperand(inst, reg);
             return;
         }
         if(symbol == "write") {
-            ctx.emitInst(TAC::Write).setOperand<0>(ctx.mapOperand(inst->operands().front()));
+            ctx.emitInst(MIRInst{ TAC::Write }.setOperand<0>(ctx.mapOperand(inst->operands().front())));
             return;
         }
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
-            ctx.emitInst(TAC::Arg).setOperand<0>(ctx.mapOperand(inst->operands()[idx]));
+            ctx.emitInst(MIRInst{ TAC::Arg }.setOperand<0>(ctx.mapOperand(inst->operands()[idx])));
         }
         auto calleeOperand = MIROperand::asReloc(ctx.mapGlobal(callee)->reloc.get());
         if(!inst->getType()->isVoid()) {
             auto ret = ctx.newVReg(inst->getType());
-            ctx.emitInst(TAC::Call).setOperand<0>(ret).setOperand<1>(calleeOperand);
+            ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(ret).setOperand<1>(calleeOperand));
             ctx.addOperand(inst, ret);
         } else {
-            ctx.emitInst(TAC::Call).setOperand<0>(MIROperand::asInvalidReg()).setOperand<1>(calleeOperand);
+            ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(MIROperand::asInvalidReg()).setOperand<1>(calleeOperand));
         }
     }
     void emitPrologue(MIRFunction& func, LoweringContext& ctx) const override {
@@ -83,7 +83,7 @@ public:
     void emitReturn(ReturnInst* inst, LoweringContext& ctx) const override {
         const auto val =
             inst->operands().empty() ? MIROperand::asImm(0, OperandType::Int32) : ctx.mapOperand(inst->operands().front());
-        ctx.emitInst(TAC::Return).setOperand<0>(val);
+        ctx.emitInst(MIRInst{ TAC::Return }.setOperand<0>(val));
     }
 };
 

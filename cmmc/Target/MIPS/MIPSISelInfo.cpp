@@ -123,6 +123,16 @@ static MIROperand getOne(const MIROperand& operand) {
     return MIROperand::asImm(1, operand.type());
 }
 
+static MIROperand getHighBits(const MIROperand& operand) {
+    assert(isOperandReloc(operand));
+    return MIROperand{ operand.getStorage(), OperandType::HighBits };
+}
+
+static MIROperand getLowBits(const MIROperand& operand) {
+    assert(isOperandReloc(operand));
+    return MIROperand{ operand.getStorage(), OperandType::LowBits };
+}
+
 static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {
@@ -139,6 +149,16 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                 offset = off;
                 return true;
             }
+        }
+        // TODO: move to emitLoadGlobalAddress?
+        if(addrInst->opcode() == InstLoadGlobalAddress) {
+            const auto reloc = addrInst->getOperand(1);
+            const auto hiBits = getHighBits(reloc);
+            const auto loBits = getLowBits(reloc);
+            base = getVRegAs(ctx, addr);
+            ctx.newInst(LUI).setOperand<0>(base).setOperand<1>(hiBits);
+            offset = loBits;
+            return true;
         }
     }
     if(isOperandIReg(addr)) {

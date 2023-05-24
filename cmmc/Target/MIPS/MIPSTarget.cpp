@@ -270,12 +270,12 @@ void MIPSFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const
             }
 
             if(src.type() == OperandType::Int32 && arg.type() == OperandType::Float32) {
-                ctx.emitInst(MIPS::MTC1).setOperand<1>(arg).setOperand<0>(src);
+                ctx.emitInst(MIRInst{ MIPS::MTC1 }.setOperand<1>(arg).setOperand<0>(src));
             } else
                 ctx.emitCopy(arg, src);
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
-            ctx.emitInst(InstLoadRegFromStack).setOperand<0>(arg).setOperand<1>(obj);
+            ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
         }
     }
 }
@@ -329,7 +329,7 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
             }
 
             if(val.type() == OperandType::Float32 && dst.type() == OperandType::Int32) {
-                ctx.emitInst(MIPS::MFC1).setOperand<0>(dst).setOperand<1>(val);
+                ctx.emitInst(MIRInst{ MIPS::MFC1 }.setOperand<0>(dst).setOperand<1>(val));
             } else
                 ctx.emitCopy(dst, val);
         } else {
@@ -340,7 +340,7 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
                 ctx.emitCopy(reg, val);
                 val = reg;
             }
-            ctx.emitInst(InstStoreRegToStack).setOperand<0>(val).setOperand<1>(obj);
+            ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
         }
     }
     // padding for arg0-arg4
@@ -349,7 +349,7 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
                               StackObjectUsage::CalleeArgument);
     }
 
-    ctx.emitInst(MIPS::JAL).setOperand<0>(MIROperand::asReloc(global->reloc.get()));
+    ctx.emitInst(MIRInst{ MIPS::JAL }.setOperand<0>(MIROperand::asReloc(global->reloc.get())));
     const auto ret = inst->getType();
     if(ret->isVoid()) {
         return;
@@ -383,7 +383,7 @@ void MIPSFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
         } else  // return by $v0, $v1
             reportNotImplemented(CMMC_LOCATION());
     }
-    ctx.emitInst(MIPS::JR).setOperand<0>(MIPS::ra);
+    ctx.emitInst(MIRInst{ MIPS::JR }.setOperand<0>(MIPS::ra));
 }
 
 void MIPSFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,

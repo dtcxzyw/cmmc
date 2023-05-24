@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/IRBuilder.hpp"
 #include <cassert>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Frontend/AST.hpp>
@@ -42,6 +43,7 @@
 #include <limits>
 #include <ostream>
 #include <queue>
+#include <string_view>
 #include <type_traits>
 #include <unordered_map>
 #include <variant>
@@ -1645,7 +1647,6 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
     const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
     const auto i8ptr = PointerType::get(IntegerType::get(8U));
-    const auto zeroByte = ConstantInteger::get(IntegerType::get(32), 0);
     const auto scalarSize = scalarType->getSize(dataLayout);
 
     uint32_t lastNotAssigned = 0;
@@ -1670,7 +1671,6 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
             ctx.makeOp<FunctionCallInst>(memsetFunc,
                                          Vector<Value*>{
                                              ptr,
-                                             zeroByte,
                                              size,
                                          });
         }
@@ -1787,8 +1787,45 @@ void StructDefinition::emit(EmitContext& ctx) const {
     EmitContext::popLoc();
 }
 
+static void emitMemset(Function* func, const mir::Target& target) {
+    // void memset(i8* ptr, size_t size) (size > 0)
+    // entry:
+    //     br loop
+    // loop:
+    //     idx = phi [ 0, entry ], [ idx, loop ]
+    //     cur = ptr + idx
+    //     store cur with '\0'
+    //     nxt = idx + 1
+    //     cbr [ nxt < size, loop ], [ exit ]
+    // exit:
+    //     ret
+
+    IRBuilder builder{ target };
+    builder.setCurrentFunction(func);
+    auto entry = builder.addBlock();
+    auto loop = builder.addBlock();
+    auto exit = builder.addBlock();
+    builder.setCurrentBlock(entry);
+    builder.makeOp<BranchInst>(loop);
+    builder.setCurrentBlock(loop);
+    auto funcType = func->getType()->as<FunctionType>();
+    const auto ptr = func->addArg(funcType->getArgTypes()[0]);
+    const auto size = func->addArg(funcType->getArgTypes()[1]);
+    const auto idx = builder.createPhi(size->getType());
+    idx->addIncoming(entry, ConstantInteger::get(size->getType(), 0));
+    const auto cur = builder.makeOp<GetElementPtrInst>(ptr, Vector<Value*>{ idx });
+    builder.makeOp<StoreInst>(cur, ConstantInteger::get(IntegerType::get(8U), 0));
+    const auto nxt = builder.makeOp<BinaryInst>(InstructionID::Add, idx, ConstantInteger::get(size->getType(), 1));
+    idx->addIncoming(loop, nxt);
+    const auto cond = builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::LessThan, nxt, size);
+    builder.makeOp<BranchInst>(cond, defaultLoopProb, loop, exit);
+    builder.setCurrentBlock(exit);
+    builder.makeOp<ReturnInst>();
+    assert(func->verify(std::cerr));
+}
+
 Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
-    auto symbol = enumName(intrinsic);
+    auto symbol = "__cmmc_builtin_" + std::string(enumName(intrinsic).substr("cmmc::Intrinsic::"sv.length()));
     for(auto global : mModule->globals())
         if(global->getSymbol() == symbol)
             return global->as<Function>();
@@ -1798,12 +1835,12 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
             reportUnreachable(CMMC_LOCATION());
         case Intrinsic::memset: {
             const auto ptr = PointerType::get(IntegerType::get(8));
-            funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, IntegerType::get(32), getIndexType() });
+            funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ ptr, getIndexType() });
             break;
         }
         case Intrinsic::memcpy: {
             const auto ptr = PointerType::get(IntegerType::get(8));
-            funcType = make<FunctionType>(ptr, Vector<const Type*>{ ptr, ptr, getIndexType() });
+            funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ ptr, ptr, getIndexType() });
             break;
         }
         default:
@@ -1817,6 +1854,7 @@ Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
         case Intrinsic::memset: {
             // TODO: more precise information
             func->attr().addAttr(FunctionAttribute::NoMemoryRead);
+            emitMemset(func, mModule->getTarget());
             break;
         }
         case Intrinsic::memcpy: {
@@ -1967,7 +2005,8 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
     const auto& dataLayout = target.getDataLayout();
     // const auto& subTarget = target.getSubTarget();
     // TODO: use schedule model
-    constexpr uint32_t threshold = 256;
+    // TODO: provide built-in implementation of memcpy
+    constexpr uint32_t threshold = 1U << 30;
 
     const auto size = structType->getSize(dataLayout);
     if(/*subTarget.inlineMemOp(size)*/ size <= threshold) {

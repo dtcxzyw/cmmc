@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// RV64GC lp64d
+// RV64GC lp64d medlow
 
 #include <RISCV/ISelInfoDecl.hpp>
 #include <RISCV/InstInfoDecl.hpp>
@@ -277,7 +277,7 @@ void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) cons
             ctx.emitCopy(arg, src);
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
-            ctx.emitInst(InstLoadRegFromStack).setOperand<0>(arg).setOperand<1>(obj);
+            ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
         }
     }
 }
@@ -338,11 +338,11 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
                 ctx.emitCopy(reg, val);
                 val = reg;
             }
-            ctx.emitInst(InstStoreRegToStack).setOperand<0>(val).setOperand<1>(obj);
+            ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
         }
     }
 
-    ctx.emitInst(RISCV::JAL).setOperand<0>(MIROperand::asReloc(global->reloc.get()));
+    ctx.emitInst(MIRInst{ RISCV::JAL }.setOperand<0>(MIROperand::asReloc(global->reloc.get())));
     const auto ret = inst->getType();
     if(ret->isVoid()) {
         return;
@@ -376,7 +376,7 @@ void RISCVFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
         } else
             reportNotImplemented(CMMC_LOCATION());
     }
-    ctx.emitInst(RISCV::JR).setOperand<0>(RISCV::ra);
+    ctx.emitInst(MIRInst{ RISCV::JR }.setOperand<0>(RISCV::ra));
 }
 
 void RISCVFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
