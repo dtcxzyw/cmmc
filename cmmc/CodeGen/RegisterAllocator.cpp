@@ -63,13 +63,29 @@ void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& ca
 void IPRAUsageCache::add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFunction& func) {
     IPRAInfo info;
     for(auto& block : func.blocks()) {
-        forEachDefOperands(*block, ctx, [&](MIROperand& operand) {
-            if(!isOperandISAReg(operand))
-                return;
-            if(ctx.frameInfo.isCallerSaved(operand)) {
-                info.emplace(operand);
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                auto& op = inst.getOperand(idx);
+                if(!isOperandISAReg(op))
+                    continue;
+                if(ctx.frameInfo.isCallerSaved(op)) {
+                    info.emplace(op);
+                }
             }
-        });
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                const auto callee = inst.getOperand(0).reloc();
+                if(callee != symbol) {
+                    auto calleeInfo = query(callee);
+                    if(calleeInfo) {
+                        for(auto& reg : *calleeInfo)
+                            info.emplace(reg);
+                    } else
+                        return;  // we cannot infer caller register usage from runtime api calls
+                }
+            }
+        }
     }
     mCache.emplace(symbol, std::move(info));
 }

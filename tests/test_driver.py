@@ -11,24 +11,24 @@ import math
 
 qemu_path = os.environ.get('QEMU_PATH', '')
 qemu_command = {
-'riscv':'{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
-'mips':'{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split()
+    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
+    'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split()
 }
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
-qemu_gcc_ref_command = { 
-'riscv': "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ",
-'mips': "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -mhard-float -ffp-contract=on -w "
+qemu_gcc_ref_command = {
+    'riscv': "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ",
+    'mips': "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -mhard-float -ffp-contract=on -w "
 }
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '0'
-fast_fail = False
+optimization_level = '1'
+fast_fail = True
 generate_ref = False
 assert os.path.exists(rars_path)
-targets = ['mips','riscv']
+targets = ['mips', 'riscv']
 
 # O0 reference
 baseline = {
@@ -45,37 +45,47 @@ summary = {}
 summary_samples = 0
 tac_inst_count_ref = 224.116
 
+
 def geo_means(prod, count):
     return math.exp(math.log(prod) / max(1, count))
+
 
 class Sample:
     def __init__(self):
         self.reset()
+
     def reset(self):
         self.count = 0
         self.prod = 1
         self.log = dict()
+
     def add_sample(self, name: str, val):
         self.log[name] = val
         self.prod *= val
+
     def geo_means(self):
         return geo_means(self.prod, self.count)
-    
+
+
 samples = dict()
+
+
 def add_sample(sample_name, item_name, item_val):
     global samples
     sample = samples.get(sample_name, Sample())
     sample.add_sample(item_name, item_val)
     samples[sample_name] = sample
 
-def print_and_compare(suffix:str):
+
+def print_and_compare(suffix: str):
     print(suffix.removeprefix('_'), 'result:')
     gcc_perf: Sample = samples['gcc'+suffix]
     cmmc_perf: Sample = samples['cmmc'+suffix]
     if gcc_perf:
         print("gcc: {:.3f}s".format(gcc_perf.geo_means()))
     if cmmc_perf and gcc_perf:
-        print("cmmc: {:.3f}s -> {:.5f}x".format(cmmc_perf.geo_means(), cmmc_perf.geo_means()/gcc_perf.geo_means()))
+        print("cmmc: {:.3f}s -> {:.5f}x".format(cmmc_perf.geo_means(),
+              cmmc_perf.geo_means()/gcc_perf.geo_means()))
         print("Regressions:")
 
         testcases = []
@@ -89,6 +99,7 @@ def print_and_compare(suffix:str):
         testcases.sort(key=lambda x: -x[0])
         for ratio, lhs, rhs, key in testcases:
             print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
+
 
 def parse_perf(result):
     try:
@@ -181,7 +192,7 @@ def spl_codegen_tac(src):
             if answer != ret[1]:
                 print("\ninput", inputs, "answer", answer, "output", ret[1])
                 return False
-            add_sample('tac', src, max(1,ret[0]))
+            add_sample('tac', src, max(1, ret[0]))
     else:
         print("\nWarning: no test cases for", src)
 
@@ -276,7 +287,8 @@ def spl_codegen_riscv64(src):
             if len(v):
                 res.append(int(v))
         if res != answer:
-            print("\ninput", inputs, "answer", answer, "output", res, "returncode", out_rars.returncode)
+            print("\ninput", inputs, "answer", answer, "output",
+                  res, "returncode", out_rars.returncode)
             return False
 
     return True
@@ -509,7 +521,9 @@ def sysy_cmmc_qemu(src, target):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     output_asm = output + '.s'
-    cmmc_command = binary_path + ' -t {} -O {} -H -o '.format(target, optimization_level) + output_asm + ' ' + src
+    cmmc_command = binary_path + \
+        ' -t {} -O {} -H -o '.format(target,
+                                     optimization_level) + output_asm + ' ' + src
     if os.system(cmmc_command) != 0:
         return False
     command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
@@ -620,7 +634,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "tac", "qemu"]
+test_cases = ["parse", "semantic", "tac", "qemu", 'riscv', 'mips']
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 
@@ -706,9 +720,9 @@ if not generate_ref:
         for target in targets:
             if target in test_cases:
                 res.append(test("SysY codegen functional (qemu-{})".format(target), tests_path +
-                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
-                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 samples['cmmc_qemu_'+target].reset()
                 # res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
                 #                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x,target)))

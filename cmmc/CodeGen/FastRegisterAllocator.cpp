@@ -280,15 +280,14 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             // backup
             for(auto [p, s] : overwrited)
                 instructions.push_front(MIRInst{ InstStoreRegToStack }.setOperand<0>(p).setOperand<1>(s));
-        } else {
-            // restore
-            auto& terminator = instructions.back();
-            auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
-            if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
-                const auto pos = std::prev(instructions.end());
-                for(auto [p, s] : overwrited) {
-                    instructions.insert(pos, MIRInst{ InstLoadRegFromStack }.setOperand<0>(p).setOperand<1>(s));
-                }
+        }
+        // restore
+        auto& terminator = instructions.back();
+        auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
+        if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
+            const auto pos = std::prev(instructions.end());
+            for(auto [p, s] : overwrited) {
+                instructions.insert(pos, MIRInst{ InstLoadRegFromStack }.setOperand<0>(p).setOperand<1>(s));
             }
         }
     }

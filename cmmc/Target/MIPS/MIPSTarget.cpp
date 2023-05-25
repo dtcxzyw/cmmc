@@ -218,8 +218,7 @@ public:
                             target.getISelInfo(),
                             target.getFrameInfo(),
                             target.getRegisterInfo(),
-                            false };
-
+                            MIRFlags{ false, false } };
         cmmc::mir::dumpAssembly(
             out, ctx, module,
             [&] {
