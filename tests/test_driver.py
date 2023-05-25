@@ -265,7 +265,7 @@ def spl_codegen_riscv64(src):
         # print(inputs)
         out_rars = subprocess.run(
             args=['java', '-jar', rars_path, 'nc',
-                  'me', 'rv64', '65536', tmp_out],
+                  'me', 'rv64', '1048576', tmp_out],
             input='\n'.join(map(lambda x: str(x), inputs)),
             capture_output=True, text=True
         )
