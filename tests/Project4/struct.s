@@ -34,15 +34,15 @@ gcd:
 	sw $t2, 36($sp)
 	lw $t3, 4($a0)
 	sw $t3, 4($t1)
-	sw $t3, 56($sp)
-	sw $t2, 60($sp)
-	sw $t0, 52($sp)
+	sw $t3, 52($sp)
+	sw $t2, 56($sp)
+	sw $t0, 60($sp)
 	beq $t3, $zero, label18
 	nop
 	b label2
 	nop
 label18:
-	lw $t0, 60($sp)
+	lw $t0, 56($sp)
 	move $t1, $t0
 	sw $t1, 48($sp)
 	lw $t0, 48($sp)
@@ -52,15 +52,15 @@ label18:
 	jr $ra
 	nop
 label2:
-	lw $t0, 56($sp)
+	lw $t0, 52($sp)
 	sw $t0, 24($sp)
-	lw $t1, 60($sp)
+	lw $t1, 56($sp)
 	div $zero, $t1, $t0
 	mflo $t2
 	mult $t0, $t2
 	mflo $t3
 	subu $t4, $t1, $t3
-	lw $t5, 52($sp)
+	lw $t5, 60($sp)
 	sw $t4, 4($t5)
 	move $a0, $t5
 	sw $t4, 68($sp)

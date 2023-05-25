@@ -21,13 +21,14 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-constexpr size_t duplicationThreshold = 5;
+// TODO: provided by schedule model?
+constexpr size_t duplicationThreshold = 10;
+constexpr size_t duplicationIterations = 10;
 
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
-    while(redirectGoto(func, ctx))
-        ;
+    simplifyCFGWithUniqueTerminator(func, ctx);
 
-    for(uint32_t k = 0; k < duplicationThreshold; ++k) {
+    for(uint32_t k = 0; k < duplicationIterations; ++k) {
         const auto cfg = calcCFG(func, ctx);
 
         bool modified = false;
@@ -78,8 +79,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
         if(!modified)
             return;
 
-        while(redirectGoto(func, ctx))
-            ;
+        simplifyCFGWithUniqueTerminator(func, ctx);
     }
 }
 

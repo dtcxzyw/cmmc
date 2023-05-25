@@ -50,7 +50,6 @@ hanoi:
 	move $a0, $t4
 	jal write
 	nop
-label3:
 	move $v0, $zero
 	lw $s1, 28($sp)
 	lw $s0, 36($sp)
@@ -91,7 +90,12 @@ label4:
 	sw $t5, 76($sp)
 	jal hanoi
 	nop
-	b label3
+	move $v0, $zero
+	lw $s1, 28($sp)
+	lw $s0, 36($sp)
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 80
+	jr $ra
 	nop
 .globl main
 main:

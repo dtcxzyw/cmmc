@@ -431,7 +431,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "Pre-RA legalization"sv };
             preRALegalizeFunc(mfunc, ctx);
             ctx.flags.inSSAForm = false;
-            dumpFunc(mfunc);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
 

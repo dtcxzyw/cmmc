@@ -35,19 +35,27 @@ public:
             const auto reg = list[idx];
             mIdx2Reg[idx] = reg;
             if(reg >= mReg2Idx.size())
-                mReg2Idx.resize(reg + 1);
+                mReg2Idx.resize(reg + 1, invalidReg);
             mReg2Idx[reg] = idx;
         }
     }
     void markAsDiscarded(uint32_t reg) {
+        assert(mReg2Idx[reg] != invalidReg);
         const auto mask = static_cast<int64_t>(1) << mReg2Idx[reg];
         assert((mFree & mask) == 0);
         mFree ^= mask;
     }
     void markAsUsed(uint32_t reg) {
+        assert(mReg2Idx[reg] != invalidReg);
         const auto mask = static_cast<int64_t>(1) << mReg2Idx[reg];
         assert((mFree & mask) == mask);
         mFree ^= mask;
+    }
+    [[nodiscard]] bool isFree(uint32_t reg) const {
+        if(mReg2Idx[reg] == invalidReg)
+            return false;
+        const auto mask = static_cast<int64_t>(1) << mReg2Idx[reg];
+        return (mFree & mask) == mask;
     }
     [[nodiscard]] uint32_t getFreeRegister() const {
         if(mFree == 0)
@@ -73,6 +81,12 @@ void MultiClassRegisterSelector::markAsUsed(MIROperand reg) {
     const auto classId = mRegisterInfo.getAllocationClass(reg.type());
     auto& selector = *mSelectors[classId];
     selector.markAsUsed(reg.reg());
+}
+[[nodiscard]] bool MultiClassRegisterSelector::isFree(MIROperand reg) const {
+    assert(isISAReg(reg.reg()));
+    const auto classId = mRegisterInfo.getAllocationClass(reg.type());
+    auto& selector = *mSelectors[classId];
+    return selector.isFree(reg.reg());
 }
 [[nodiscard]] MIROperand MultiClassRegisterSelector::getFreeRegister(OperandType type) {
     const auto classId = mRegisterInfo.getAllocationClass(type);

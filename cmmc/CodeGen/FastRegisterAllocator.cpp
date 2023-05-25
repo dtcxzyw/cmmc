@@ -35,22 +35,39 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
+// TODO: use argument/retval regs
 static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
     struct VirtualRegUseInfo final {
         std::unordered_set<MIRBasicBlock*> uses;
         std::unordered_set<MIRBasicBlock*> defs;
     };
     std::unordered_map<MIROperand, VirtualRegUseInfo, MIROperandHasher> useDefInfo;
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> isaRegHint;
 
     for(auto& block : mfunc.blocks()) {
-        forEachUseOperands(*block, ctx, [&](MIRInst&, MIROperand& op) {
-            if(isOperandVReg(op))
-                useDefInfo[op].uses.insert(block.get());
-        });
-        forEachDefOperands(*block, ctx, [&](MIROperand& op) {
-            if(isOperandVReg(op))
-                useDefInfo[op].defs.insert(block.get());
-        });
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+
+            if(inst.opcode() == InstCopyFromReg) {
+                isaRegHint[inst.getOperand(0)] = inst.getOperand(1);
+            }
+            if(inst.opcode() == InstCopyToReg) {
+                isaRegHint[inst.getOperand(1)] = inst.getOperand(0);
+            }
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                auto& op = inst.getOperand(idx);
+                if(!isOperandVReg(op)) {
+                    continue;
+                }
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    useDefInfo[op].uses.insert(block.get());
+                }
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    useDefInfo[op].defs.insert(block.get());
+                }
+            }
+        }
     }
 
     // find all cross-block vregs and allocate stack slots for them
@@ -134,7 +151,9 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 const auto regClass = ctx.registerInfo->getAllocationClass(operand.type());
                 auto& q = allocationQueue[regClass];  // TODO: move to spill strategy?
                 MIROperand isaReg;
-                if(auto reg = selector.getFreeRegister(operand.type()); !reg.isUnused()) {
+                if(auto hintIter = isaRegHint.find(operand); hintIter != isaRegHint.end() && selector.isFree(hintIter->second)) {
+                    isaReg = hintIter->second;
+                } else if(auto reg = selector.getFreeRegister(operand.type()); !reg.isUnused()) {
                     isaReg = reg;
                 } else {
                     // evict

@@ -36,6 +36,7 @@ public:
     ~MultiClassRegisterSelector();
     void markAsDiscarded(MIROperand reg);
     void markAsUsed(MIROperand reg);
+    [[nodiscard]] bool isFree(MIROperand reg) const;
     [[nodiscard]] MIROperand getFreeRegister(OperandType type);
 };
 

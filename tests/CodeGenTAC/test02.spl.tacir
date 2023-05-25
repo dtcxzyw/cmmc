@@ -1,8 +1,8 @@
 FUNCTION fact :
 PARAM v5
-IF v5 != #1 GOTO label4
+IF v5 != #1 GOTO label8
 RETURN v5
-LABEL label4 :
+LABEL label8 :
 v10 := v5 + #-1
 ARG v10
 v11 := CALL fact

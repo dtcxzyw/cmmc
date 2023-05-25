@@ -40,22 +40,78 @@ v49 := v41 / v44
 v50 := v44 * v49
 v51 := v41 - v50
 IF v51 == #0 GOTO label54
-GOTO label53
-LABEL label47 :
-v39 := v41
-GOTO label38
-LABEL label53 :
+v37 := v44
+v36 := v51
+v49 := v44 / v51
+v50 := v51 * v49
+v51 := v44 - v50
+IF v51 == #0 GOTO label54
 v37 := v36
 v36 := v51
 v49 := v37 / v51
 v50 := v51 * v49
 v51 := v37 - v50
 IF v51 == #0 GOTO label54
-GOTO label53
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+GOTO label76
+LABEL label47 :
+WRITE v41
+ARG v40
+ARG v41
+v58 := CALL gcd2
+WRITE v58
+RETURN #0
+LABEL label76 :
+v37 := v36
+v36 := v51
+v49 := v37 / v51
+v50 := v51 * v49
+v51 := v37 - v50
+IF v51 == #0 GOTO label54
+GOTO label76
 LABEL label54 :
-v39 := v36
-LABEL label38 :
-WRITE v39
+WRITE v36
 ARG v40
 ARG v41
 v58 := CALL gcd2

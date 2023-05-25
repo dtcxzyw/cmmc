@@ -33,7 +33,7 @@ main:
 	nop
 	move $t0, $v0
 	sw $t0, 28($sp)
-	blez $v0, label4
+	blez $v0, label9
 	nop
 	li $a0, 1
 	jal write
@@ -43,7 +43,7 @@ main:
 	addiu $sp, $sp, 40
 	jr $ra
 	nop
-label4:
+label9:
 	lw $t0, 28($sp)
 	slt $t1, $t0, $zero
 	subu $t2, $zero, $t1

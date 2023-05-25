@@ -1,9 +1,9 @@
 FUNCTION DigitSum :
 PARAM v5
-IF v5 != #0 GOTO label4
+IF v5 != #0 GOTO label8
 v3 := #0
 RETURN v3
-LABEL label4 :
+LABEL label8 :
 v10 := v5 / #10
 v11 := v10 * #10
 v12 := v5 - v11

@@ -71,21 +71,24 @@ main:
 	sw $t0, 24($sp)
 	blez $t1, label31
 	nop
-	b label24
-	nop
-label31:
-	li $t0, 1
-	sw $t0, 28($sp)
-	b label25
-	nop
-label24:
 	lw $t0, 24($sp)
 	move $a0, $t0
 	jal fact
 	nop
 	move $t1, $v0
 	sw $t1, 28($sp)
-label25:
+	lw $t0, 28($sp)
+	move $a0, $t0
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 40
+	jr $ra
+	nop
+label31:
+	li $t0, 1
+	sw $t0, 28($sp)
 	lw $t0, 28($sp)
 	move $a0, $t0
 	jal write
