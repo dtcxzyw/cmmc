@@ -4,6 +4,7 @@ _ret: .asciiz "\n"
 .text
 _entry:
     jal main
+    nop
     move $a0, $v0
     li $v0, 17
     syscall
@@ -14,6 +15,7 @@ read:
     li $v0, 5
     syscall
     jr $ra
+    nop
 write:
     li $v0, 1
     syscall
@@ -22,37 +24,34 @@ write:
     syscall
     move $v0, $0
     jr $ra
-
+    nop
 .globl main
 main:
-    addiu $sp, $sp, -32
-    sw $ra, 16($sp)
-    jal read
-    move $t0, $v0
-    sw $v0, 24($sp)
-    blez $t0, .BB1
-    b .BB3
-.BB1:
-    lw $t0, 24($sp)
-    bgez $t0, .BB2
-    li $a0, -1
-    jal write
-    move $v0, $zero
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 32
-    jr $ra
-.BB2:
-    move $a0, $zero
-    jal write
-    move $v0, $zero
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 32
-    jr $ra
-.BB3:
-    li $a0, 1
-    jal write
-    move $v0, $zero
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 32
-    jr $ra
-
+	addiu $sp, $sp, -40
+	sw $ra, 16($sp)
+	jal read
+	nop
+	move $t0, $v0
+	sw $t0, 28($sp)
+	blez $v0, label4
+	nop
+	li $a0, 1
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 40
+	jr $ra
+	nop
+label4:
+	lw $t0, 28($sp)
+	slt $t1, $t0, $zero
+	subu $t2, $zero, $t1
+	move $a0, $t2
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 40
+	jr $ra
+	nop

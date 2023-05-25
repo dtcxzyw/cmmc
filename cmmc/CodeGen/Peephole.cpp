@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/ISelInfo.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -112,7 +113,6 @@ bool eliminateStackLoads(MIRFunction& func, const Target& target) {
 }
 */
 
-// TODO: fix it for mips/riscv backends
 bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
         return false;
@@ -176,9 +176,29 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     return dirty;
 }
 
-// TODO: CSE
-// bool machineInstCSE(MIRFunction& func) {}
-// bool constantPropagation(MIRFunction& func, const Target& target) {}
+// FIXME
+[[maybe_unused]] bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        std::unordered_map<uint32_t, std::unordered_map<MIROperand, MIROperand, MIROperandHasher>> constants;
+        for(auto& inst : instructions) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
+                auto& dst = inst.getOperand(0);
+                auto& src = inst.getOperand(1);
+                auto& map = constants[inst.opcode()];
+                if(auto iter = map.find(src); iter != map.end()) {
+                    auto& lastDef = iter->second;
+                    inst = MIRInst{ selectCopyOpcode(dst, lastDef) }.setOperand<0>(dst).setOperand<1>(lastDef);
+                    modified = true;
+                } else
+                    map.emplace(src, dst);
+            }
+        }
+    }
+    return modified;
+}
 
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
@@ -186,12 +206,11 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
-        // TODO: multiple targets?
-        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> regValue;
+        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> regValue;  // vreg->vreg/isareg
         std::unordered_map<MIROperand, std::unordered_set<MIROperand, MIROperandHasher>, MIROperandHasher> invMap;
 
         const auto invalidateReg = [&](const MIROperand& reg) {
-            if(!reg.isReg())
+            if(!isOperandVRegOrISAReg(reg))
                 return;
             if(auto iter = invMap.find(reg); iter != invMap.cend()) {
                 for(auto ref : iter->second)
@@ -203,23 +222,29 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
         };
 
         const auto replaceUse = [&](MIRInst& inst, MIROperand& reg) {
-            if(!reg.isReg())
+            if(!isOperandVReg(reg))
                 return;
             if(auto iter = regValue.find(reg); iter != regValue.cend()) {
+                auto backup = reg;
                 reg = iter->second;
-                modified = true;
-                if constexpr(Config::debug) {
-                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
-                    CMMC_UNUSED(instInfo);
-                    assert(instInfo.verify(inst, ctx));
+                auto backupInstOpcode = inst.opcode();
+                if(inst.opcode() == InstCopy) {
+                    inst.setOpcode(selectCopyOpcode(inst.getOperand(0), reg));
+                }
+                auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                if(instInfo.verify(inst, ctx)) {
+                    modified = true;
+                } else {
+                    reg = backup;
+                    inst.setOpcode(backupInstOpcode);
                 }
             }
         };
 
         const auto updateMap = [&](const MIROperand& reg, const MIROperand& value) {
-            if(!reg.isReg())
-                return;
             invalidateReg(reg);
+            if(!isOperandVReg(reg) || !isOperandVRegOrISAReg(value))
+                return;
 
             regValue[reg] = value;
             invMap[value].insert(reg);
@@ -230,12 +255,11 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                     auto& operand = inst.getOperand(idx);
-                    if(operand.isReg() && isVirtualReg(operand.reg()))
-                        replaceUse(inst, operand);
+                    replaceUse(inst, operand);
                 }
 
             // TODO: match copy?
-            if(inst.opcode() == InstCopy) {
+            if(inst.opcode() == InstCopy || inst.opcode() == InstCopyFromReg) {
                 auto& dst = inst.getOperand(0);
                 auto& src = inst.getOperand(1);
                 if(dst.type() == src.type()) {
@@ -246,15 +270,13 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                         invalidateReg(inst.getOperand(idx));
-                        auto& operand = inst.getOperand(idx);
-                        if(operand.isReg() && isVirtualReg(operand.reg()))
-                            replaceUse(inst, operand);
                     }
                 if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
                     std::vector<MIROperand> nonVReg;
-                    for(auto [reg, val] : regValue) {
+                    for(auto [reg, val] : invMap) {
                         CMMC_UNUSED(val);
-                        if(reg.isReg() && isVirtualReg(reg.reg()))
+                        // TODO: use IPRA Info
+                        if(isISAReg(reg.reg()))
                             nonVReg.push_back(reg);
                     }
                     for(auto reg : nonVReg)
@@ -277,6 +299,7 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     modified |= removeIndirectCopy(func, ctx);
     modified |= removeUnusedInsts(func, ctx);
     modified |= applySSAPropagation(func, ctx);
+    // modified |= machineInstCSE(func, ctx);
     return modified;
 }
 

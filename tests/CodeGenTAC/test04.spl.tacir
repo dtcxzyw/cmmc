@@ -1,8 +1,6 @@
 FUNCTION main :
 DEC x10 8
 DEC x8 8
-v9 := &x8
-v11 := &x10
 v14 := &x10 + #4
 v3 := #0
 v4 := #0
@@ -18,10 +16,9 @@ v5 := v19
 GOTO label2
 LABEL label6 :
 v26 := v3 * #4
-v27 := v9 + v26
-v28 := *v11
+v27 := &x8 + v26
 v29 := *v14
-v30 := v28 + v29
+v30 := x10 + v29
 *v27 := v30
 WRITE v30
 v31 := v3 + #1

@@ -4,6 +4,7 @@ _ret: .asciiz "\n"
 .text
 _entry:
     jal main
+    nop
     move $a0, $v0
     li $v0, 17
     syscall
@@ -14,6 +15,7 @@ read:
     li $v0, 5
     syscall
     jr $ra
+    nop
 write:
     li $v0, 1
     syscall
@@ -22,66 +24,78 @@ write:
     syscall
     move $v0, $0
     jr $ra
-
+    nop
 gcd:
-    addiu $sp, $sp, -48
-    sw $ra, 16($sp)
-    addiu $t0, $sp, 32
-    move $t1, $a0
-    lw $t2, 0($a0)
-    sw $t2, 0($t0)
-    addiu $t3, $t0, 4
-    addiu $t4, $t1, 4
-    lw $t5, 0($t4)
-    sw $t5, 0($t3)
-    sw $t5, 24($sp)
-    sw $t2, 28($sp)
-    beqz $t5, .BB1
-    addiu $t0, $sp, 40
-    move $t1, $t5
-    sw $t5, 0($t0)
-    addiu $t2, $t0, 4
-    lw $t3, 28($sp)
-    .set nomacro
-    div $zero, $t3, $t1
-    .set macro
-    mflo $t4
-    mult $t4, $t1
-    mflo $t5
-    subu $t6, $t3, $t5
-    sw $t6, 0($t2)
-    move $a0, $t0
-    jal gcd
-    move $t7, $v0
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 48
-    jr $ra
-.BB1:
-    lw $t0, 28($sp)
-    move $v0, $t0
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 48
-    jr $ra
-
+	addiu $sp, $sp, -72
+	sw $ra, 16($sp)
+	addiu $t0, $sp, 24
+	addiu $t1, $sp, 36
+	lw $t2, 0($a0)
+	sw $t2, 36($sp)
+	lw $t3, 4($a0)
+	sw $t3, 4($t1)
+	sw $t3, 56($sp)
+	sw $t2, 60($sp)
+	sw $t0, 52($sp)
+	beq $t3, $zero, label18
+	nop
+	b label2
+	nop
+label18:
+	lw $t0, 60($sp)
+	move $t1, $t0
+	sw $t1, 48($sp)
+	lw $t0, 48($sp)
+	move $v0, $t0
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 72
+	jr $ra
+	nop
+label2:
+	lw $t0, 56($sp)
+	sw $t0, 24($sp)
+	lw $t1, 60($sp)
+	div $zero, $t1, $t0
+	mflo $t2
+	mult $t0, $t2
+	mflo $t3
+	subu $t4, $t1, $t3
+	lw $t5, 52($sp)
+	sw $t4, 4($t5)
+	move $a0, $t5
+	sw $t4, 68($sp)
+	sw $t3, 44($sp)
+	sw $t2, 64($sp)
+	jal gcd
+	nop
+	move $t6, $v0
+	sw $t6, 48($sp)
+	lw $t0, 48($sp)
+	move $v0, $t0
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 72
+	jr $ra
+	nop
 .globl main
 main:
-    addiu $sp, $sp, -32
-    sw $ra, 16($sp)
-    addiu $t0, $sp, 24
-    jal read
-    move $t1, $v0
-    sw $v0, 0($t0)
-    addiu $t2, $t0, 4
-    jal read
-    move $t3, $v0
-    sw $v0, 0($t2)
-    move $a0, $t0
-    jal gcd
-    move $t4, $v0
-    move $a0, $v0
-    jal write
-    move $v0, $zero
-    lw $ra, 16($sp)
-    addiu $sp, $sp, 32
-    jr $ra
-
+	addiu $sp, $sp, -40
+	sw $ra, 16($sp)
+	addiu $t0, $sp, 24
+	jal read
+	nop
+	sw $v0, 24($sp)
+	jal read
+	nop
+	sw $v0, 4($t0)
+	move $a0, $t0
+	sw $t0, 32($sp)
+	jal gcd
+	nop
+	move $a0, $v0
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 40
+	jr $ra
+	nop

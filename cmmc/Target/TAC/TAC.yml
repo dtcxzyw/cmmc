@@ -255,4 +255,4 @@ InstSelection:
 
 ScheduleModel:
   emulator:
-    CustomPeepholeOpt: true
+    CustomPeepholeOpt: false

@@ -424,25 +424,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        // Stage 5: ICF & Tail duplication
-        if(optLevel >= OptimizationLevel::O2) {
-            Stage stage{ "ICF & Tail duplication"sv };
-            // tail duplication as the small block inliner does in CMMC IR
-            tailDuplication(mfunc, ctx);
-            // dumpFunc(mfunc);
-            assert(mfunc.verify(std::cerr, ctx));
-            identicalCodeFolding(mfunc, ctx);
-            // dumpFunc(mfunc);
-            assert(mfunc.verify(std::cerr, ctx));
-
-            ctx.scheduleModel.peepholeOpt(mfunc, ctx);
-            // dumpFunc(mfunc);
-            assert(mfunc.verify(std::cerr, ctx));
-            while(genericPeepholeOpt(mfunc, ctx))
-                ;
-            // dumpFunc(mfunc);
-            assert(mfunc.verify(std::cerr, ctx));
-        }
 
         // Pre-RA legalization
         {
@@ -450,7 +431,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "Pre-RA legalization"sv };
             preRALegalizeFunc(mfunc, ctx);
             ctx.flags.inSSAForm = false;
-            // dumpFunc(mfunc);
+            dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
 
@@ -480,6 +461,21 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         if(optLevel >= OptimizationLevel::O3) {
             Stage stage{ "Post-RA scheduling"sv };
             schedule(mfunc, ctx, false);
+            assert(mfunc.verify(std::cerr, ctx));
+        }
+        // Stage 5: ICF & Tail duplication
+        if(optLevel >= OptimizationLevel::O2) {
+            Stage stage{ "ICF & Tail duplication"sv };
+            // tail duplication as the small block inliner does in CMMC IR
+            tailDuplication(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
+            identicalCodeFolding(mfunc, ctx);
+            // dumpFunc(mfunc);
+            assert(mfunc.verify(std::cerr, ctx));
+            while(genericPeepholeOpt(mfunc, ctx))
+                ;
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 10: code layout opt
