@@ -226,6 +226,7 @@ static bool removeEmptyBlocks(MIRFunction& func, const CodeGenContext& ctx) {
 }
 
 static bool conditional2Unconditional(MIRFunction& func, const CodeGenContext& ctx) {
+    assert(ctx.flags.endsWithTerminator);
     bool modified = false;
     for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
         const auto next = std::next(iter);
@@ -266,10 +267,12 @@ void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx) {
 }
 
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx) {
+    assert(ctx.flags.endsWithTerminator);
     while(true) {
         bool modified = false;
         modified |= conditional2Unconditional(func, ctx);
         modified |= redirectGoto(func, ctx);
+        modified |= genericPeepholeOpt(func, ctx);
 
         if(!modified)
             return;

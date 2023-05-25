@@ -30,7 +30,7 @@ class IPRAUsageCache final {
     std::unordered_map<MIRRelocable*, IPRAInfo> mCache;
 
 public:
-    void add(const Target& target, MIRRelocable* symbol, MIRFunction& func);
+    void add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFunction& func);
     void add(MIRRelocable* symbol, IPRAInfo info);
     const IPRAInfo* query(MIRRelocable* calleeFunc) const;
 };

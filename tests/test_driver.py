@@ -175,7 +175,7 @@ def spl_codegen_mips(src):
     spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
         out_spim = subprocess.run(
-            args=['spim', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
+            args=['spim', '-delayed_branches', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
         # print(out_spim.stdout)
         out = out_spim.stdout.splitlines()
         res = []

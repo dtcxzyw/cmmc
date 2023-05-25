@@ -361,7 +361,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                         target.getISelInfo(),
                         target.getFrameInfo(),
                         target.getRegisterInfo(),
-                        true };
+                        MIRFlags{} };
 
     auto dumpFunc = [&](const MIRFunction& func) { func.dump(std::cerr, ctx); };
     CMMC_UNUSED(dumpFunc);
@@ -384,8 +384,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
 
         const auto symbol = globalMap.at(func);
         if(func->blocks().empty()) {  // external
-            // TODO
-            // target.addExternalFuncIPRAInfo(symbol, infoIPRA);
+            if(ctx.registerInfo)
+                target.addExternalFuncIPRAInfo(symbol->reloc.get(), infoIPRA);
             continue;
         }
 
@@ -449,6 +449,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // Stage 6: Pre-RA legalization
             Stage stage{ "Pre-RA legalization"sv };
             preRALegalizeFunc(mfunc, ctx);
+            ctx.flags.inSSAForm = false;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
@@ -503,11 +504,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         if(optLevel >= OptimizationLevel::O1) {
             Stage stage{ "CFG Simplification"sv };
             simplifyCFG(mfunc, ctx);
-            ctx.requireOneTerminator = false;
+            ctx.flags.endsWithTerminator = false;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         } else
-            ctx.requireOneTerminator = false;
+            ctx.flags.endsWithTerminator = false;
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };
@@ -517,8 +518,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
 
         // add to IPRA cache
-        // if(ctx.registerInfo)
-        //    infoIPRA.add(symbol, mfunc);
+        if(ctx.registerInfo)
+            infoIPRA.add(ctx, symbol->reloc.get(), mfunc);
     }
 }
 

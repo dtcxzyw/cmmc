@@ -39,6 +39,7 @@ _ret: .asciiz "\n"
 )";
 static constexpr auto spimRuntimeText = R"(_entry:
     jal main
+    nop
     move $a0, $v0
     li $v0, 17
     syscall
@@ -49,6 +50,7 @@ read:
     li $v0, 5
     syscall
     jr $ra
+    nop
 write:
     li $v0, 1
     syscall
@@ -57,6 +59,7 @@ write:
     syscall
     move $v0, $0
     jr $ra
+    nop
 )";
 
 constexpr int32_t passingByRegisterThreshold = 16;
@@ -229,6 +232,14 @@ public:
                     out << spimRuntimeText;
                 }
             });
+    }
+    void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override {
+        const auto symbolName = symbol->symbol();
+        // spl runtime
+        if(symbolName == "read" || symbolName == "write") {
+            IPRAInfo empty;
+            infoIPRA.add(symbol, empty);
+        }
     }
 };
 

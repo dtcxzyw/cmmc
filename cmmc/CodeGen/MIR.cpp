@@ -23,7 +23,7 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
-    if(ctx.requireOneTerminator) {
+    if(ctx.flags.endsWithTerminator) {
         if(mInsts.empty())
             return false;
         if(!requireFlag(ctx.instInfo.getInstInfo(mInsts.back().opcode()).getInstFlag(), InstFlagTerminator))

@@ -627,8 +627,8 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
         iter, MIRInst{ ADDIU }.setOperand<0>(dst).setOperand<1>(base).setOperand<2>(MIROperand::asImm(imm, OperandType::Int32)));
 }
 void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
-    assert(!ctx.requireOneTerminator);
-    constexpr bool alwaysInsertNop = true;
+    assert(!ctx.flags.endsWithTerminator);
+    constexpr bool alwaysInsertNop = true;  // FIXME
     // insert nops/place insts without side-effects after branch/jump instructions
     uint32_t lastStatus = 0b00;  // 0: with delay slot 1: without delay slot
     for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {

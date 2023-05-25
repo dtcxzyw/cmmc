@@ -235,53 +235,6 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             iter = next;
         }
 
-        /*
-        // remove unused stack objects and dead stores
-        std::unordered_map<MIROperand, std::list<MIRInst>::iterator, MIROperandHasher> usesOfLocals;
-        const auto updateUse = [&](std::list<MIRInst>::iterator iter, const MIROperand& obj) {
-            if(obj.addressSpace != AddressSpace::Stack)
-                return;
-            if(!usedStackObjects.count(obj) || stack.getType(obj)->isStackStorage() || stack.getMetadata(obj) ||
-               crossBlockSpilledStackObjects.count(obj))
-                return;
-            // local stack object for splled regs
-            if(auto it = usesOfLocals.find(obj); it != usesOfLocals.cend()) {
-                it->second = instructions.end();  // multiple uses
-            } else {
-                usesOfLocals.emplace(obj, iter);
-            }
-        };
-
-        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
-            auto& inst = *iter;
-            if(std::holds_alternative<CopyMInst>(inst)) {
-                const auto& copy = std::get<CopyMInst>(inst);
-                updateUse(iter, copy.src);
-                updateUse(iter, copy.dst);
-            }
-        }
-
-        for(auto& [obj, iter] : usesOfLocals)
-            if(iter != instructions.cend()) {
-                usedStackObjects.erase(obj);  // remove unused stack objects
-                instructions.erase(iter);     // remove dead stores
-            }
-
-        // remove unused stack objects
-        std::vector<MIROperand> toRemove;
-        for(auto obj : usedStackObjects) {
-            if(!stack.getType(obj)->isStackStorage()         // not stack storage
-               && !stack.getMetadata(obj)                    // not local alloca
-               && !crossBlockSpilledStackObjects.count(obj)  // not cross-block vreg
-               && !usesOfLocals.count(obj)                   // not used
-            ) {
-                toRemove.push_back(obj);
-            }
-        }
-        for(auto obj : toRemove)
-            usedStackObjects.erase(obj);
-        */
-
         assert(block->verify(std::cerr, ctx));
     }
 

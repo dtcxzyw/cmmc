@@ -76,6 +76,15 @@ public:
         CMMC_UNUSED(runtime);
         reportUnreachable(CMMC_LOCATION());
     }
+    virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
+        CMMC_UNUSED(symbol);
+        CMMC_UNUSED(infoIPRA);
+    }
+};
+
+struct MIRFlags final {
+    bool endsWithTerminator = true;
+    bool inSSAForm = true;
 };
 
 struct CodeGenContext final {
@@ -86,7 +95,7 @@ struct CodeGenContext final {
     const TargetISelInfo& iselInfo;
     const TargetFrameInfo& frameInfo;
     const TargetRegisterInfo* registerInfo;  // optional
-    bool requireOneTerminator;
+    MIRFlags flags;
     uint32_t idx = 0;
     uint32_t nextId() {
         return ++idx;

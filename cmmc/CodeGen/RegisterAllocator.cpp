@@ -60,22 +60,17 @@ void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& ca
     }
 }
 
-void IPRAUsageCache::add(const Target& target, MIRRelocable* symbol, MIRFunction& func) {
+void IPRAUsageCache::add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFunction& func) {
     IPRAInfo info;
-    CMMC_UNUSED(target);
-    CMMC_UNUSED(func);
-    reportNotImplemented(CMMC_LOCATION());
-    /*
     for(auto& block : func.blocks()) {
-        forEachDefOperands(*block, [&](MIROperand& operand) {
-            if(operand.addressSpace < AddressSpace::Custom || operand == unusedOperand)
+        forEachDefOperands(*block, ctx, [&](MIROperand& operand) {
+            if(!isOperandISAReg(operand))
                 return;
-            if(target.isCallerSaved(operand)) {
+            if(ctx.frameInfo.isCallerSaved(operand)) {
                 info.emplace(operand);
             }
         });
     }
-    */
     mCache.emplace(symbol, std::move(info));
 }
 void IPRAUsageCache::add(MIRRelocable* symbol, IPRAInfo info) {
