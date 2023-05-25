@@ -123,16 +123,6 @@ static MIROperand getOne(const MIROperand& operand) {
     return MIROperand::asImm(1, operand.type());
 }
 
-static MIROperand getHighBits(const MIROperand& operand) {
-    assert(isOperandReloc(operand));
-    return MIROperand{ operand.getStorage(), OperandType::HighBits };
-}
-
-static MIROperand getLowBits(const MIROperand& operand) {
-    assert(isOperandReloc(operand));
-    return MIROperand{ operand.getStorage(), OperandType::LowBits };
-}
-
 static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {

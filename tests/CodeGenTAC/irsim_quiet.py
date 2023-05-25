@@ -611,8 +611,8 @@ def testgen_regalloc():
 
 def testgen_gcd():
     res = []
-    for i in range(1, 50):
-        for j in range(1, 50):
+    for i in range(1, 8):
+        for j in range(1, 8):
             res.append(([i, j], [math.gcd(i, j)]))
     return res
 

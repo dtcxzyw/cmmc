@@ -69,7 +69,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                        } else if(isVirtualReg(reg)) {
                            out << 'v' << (reg ^ virtualRegBegin);
                        } else if(isStackObject(reg)) {
-                           out << 's' << (reg ^ stackObjectBegin);
+                           out << "so" << (reg ^ stackObjectBegin);
                        } else {
                            out << "isa " << reg;
                        }

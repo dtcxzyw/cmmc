@@ -39,7 +39,9 @@ constexpr auto ra = MIROperand::asISAReg(RISCV::X1, OperandType::Int64);
 constexpr auto sp = MIROperand::asISAReg(RISCV::X2, OperandType::Int64);
 
 constexpr bool isOperandImm12(const MIROperand& operand) {
-    return operand.isImm() && isSignedImm<16>(operand.imm());
+    if(operand.isReloc() && operand.type() == OperandType::LowBits)
+        return true;
+    return operand.isImm() && isSignedImm<12>(operand.imm());
 }
 
 constexpr bool isOperandUImm5(const MIROperand& operand) {
@@ -51,6 +53,8 @@ constexpr bool isOperandUImm6(const MIROperand& operand) {
 }
 
 constexpr bool isOperandUImm20(const MIROperand& operand) {
+    if(operand.isReloc() && operand.type() == OperandType::HighBits)
+        return true;
     return operand.isImm() && isUnsignedImm<20>(operand.imm());
 }
 

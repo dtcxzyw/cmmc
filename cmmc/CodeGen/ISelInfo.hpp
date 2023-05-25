@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cstdint>
 #include <list>
@@ -72,6 +73,14 @@ uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
 MIROperand getZExtMask(OperandType dstType, OperandType srcType);
 constexpr MIROperand getNeg(const MIROperand& operand) {
     return MIROperand::asImm(-operand.imm(), operand.type());
+}
+inline MIROperand getHighBits(const MIROperand& operand) {
+    assert(isOperandReloc(operand));
+    return MIROperand{ operand.getStorage(), OperandType::HighBits };
+}
+inline MIROperand getLowBits(const MIROperand& operand) {
+    assert(isOperandReloc(operand));
+    return MIROperand{ operand.getStorage(), OperandType::LowBits };
 }
 
 CMMC_MIR_NAMESPACE_END

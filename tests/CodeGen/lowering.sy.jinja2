@@ -69,7 +69,7 @@ void assertUnreachable() {
 void assertReachable() {
     reportResult(1);
 }
-void testControlFlow() {
+void testIntControlFlow() {
     // Constant
     if(1) {
         assertReachable();
@@ -81,10 +81,23 @@ void testControlFlow() {
     } else {
         assertReachable();
     }
+    {% for expr in int_cf %} {{expr}} {% endfor %}
+}
+void testFPControlFlow() {
+    const float inf = 1.0 / 0.0;
+    const float nan = 0.0 / 0.0;
+    {% for expr in fp_cf %} {{expr}} {% endfor %}
+}
+void testSelectExpr() {
+    const float inf = 1.0 / 0.0;
+    const float nan = 0.0 / 0.0;
+    {% for expr in select %} {{expr}} {% endfor %}
 }
 int main() {
     testIntegerExpression();
     testFPExpression();
-    testControlFlow();
+    testIntControlFlow();
+    testFPControlFlow();
+    testSelectExpr();
     return ret;
 }

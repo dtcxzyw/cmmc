@@ -10,21 +10,25 @@ import platform
 import math
 
 qemu_path = os.environ.get('QEMU_PATH', '')
-qemu_command = "{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr".format(
-    qemu_path=qemu_path).split()
+qemu_command = {
+'riscv':'{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
+'mips':'{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split()
+}
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
-qemu_gcc_ref_command = "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -mhard-float -ffp-contract=on -w "
+qemu_gcc_ref_command = { 
+'riscv': "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ",
+'mips': "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -mhard-float -ffp-contract=on -w "
+}
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)
-submit_binary = os.path.abspath(
-    binary_dir + '/' + os.path.pardir) + "/educg_submit/compiler"
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '3'
+optimization_level = '0'
 fast_fail = False
 generate_ref = False
 assert os.path.exists(rars_path)
+targets = ['mips','riscv']
 
 # O0 reference
 baseline = {
@@ -39,22 +43,52 @@ baseline = {
 
 summary = {}
 summary_samples = 0
-tac_inst_count = 1
-tac_inst_count_samples = 0
 tac_inst_count_ref = 224.116
-total_perf_gcc_ref = 1
-total_perf_gcc_ref_samples = 0
-total_perf_self = 1
-total_perf_self_samples = 0
-total_perf_gcc_ref_qemu = 1
-total_perf_gcc_ref_samples_qemu = 0
-total_perf_self_qemu = 1
-total_perf_self_samples_qemu = 0
 
+def geo_means(prod, count):
+    return math.exp(math.log(prod) / max(1, count))
 
-def geo_means(prod, samples):
-    return math.exp(math.log(prod) / max(1, samples))
+class Sample:
+    def __init__(self):
+        self.reset()
+    def reset(self):
+        self.count = 0
+        self.prod = 1
+        self.log = dict()
+    def add_sample(self, name: str, val):
+        self.log[name] = val
+        self.prod *= val
+    def geo_means(self):
+        return geo_means(self.prod, self.count)
+    
+samples = dict()
+def add_sample(sample_name, item_name, item_val):
+    global samples
+    sample = samples.get(sample_name, Sample())
+    sample.add_sample(item_name, item_val)
+    samples[sample_name] = sample
 
+def print_and_compare(suffix:str):
+    print(suffix.removeprefix('_'), 'result:')
+    gcc_perf: Sample = samples['gcc'+suffix]
+    cmmc_perf: Sample = samples['cmmc'+suffix]
+    if gcc_perf:
+        print("gcc: {:.3f}s".format(gcc_perf.geo_means()))
+    if cmmc_perf and gcc_perf:
+        print("cmmc: {:.3f}s -> {:.5f}x".format(cmmc_perf.geo_means(), cmmc_perf.geo_means()/gcc_perf.geo_means()))
+        print("Regressions:")
+
+        testcases = []
+        for key in gcc_perf.log.keys():
+            if key in cmmc_perf.log:
+                lhs = gcc_perf.log[key]
+                rhs = cmmc_perf.log[key]
+                if lhs < rhs:
+                    testcases.append((rhs / lhs, lhs, rhs, key))
+
+        testcases.sort(key=lambda x: -x[0])
+        for ratio, lhs, rhs, key in testcases:
+            print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
 
 def parse_perf(result):
     try:
@@ -147,10 +181,7 @@ def spl_codegen_tac(src):
             if answer != ret[1]:
                 print("\ninput", inputs, "answer", answer, "output", ret[1])
                 return False
-            global tac_inst_count
-            tac_inst_count *= max(1, ret[0])
-            global tac_inst_count_samples
-            tac_inst_count_samples += 1
+            add_sample('tac', src, max(1,ret[0]))
     else:
         print("\nWarning: no test cases for", src)
 
@@ -231,6 +262,7 @@ def spl_codegen_riscv64(src):
         return False
     spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
+        # print(inputs)
         out_rars = subprocess.run(
             args=['java', '-jar', rars_path, 'nc',
                   'me', 'rv64', '65536', tmp_out],
@@ -244,7 +276,7 @@ def spl_codegen_riscv64(src):
             if len(v):
                 res.append(int(v))
         if res != answer:
-            print("\ninput", inputs, "answer", answer, "output", res)
+            print("\ninput", inputs, "answer", answer, "output", res, "returncode", out_rars.returncode)
             return False
 
     return True
@@ -406,10 +438,6 @@ def compare_and_parse_perf(src, out):
     return None
 
 
-dict_gcc = dict()
-dict_cmmc = dict()
-
-
 def sysy_gcc(src):
     runtime = tests_path + "/SysY2022/sylib.c"
     header = tests_path + "/SysY2022/sylib.h"
@@ -436,21 +464,12 @@ def sysy_gcc(src):
     if used is None:
         return False
 
-    global dict_gcc
-    dict_gcc[src] = min(used, dict_gcc.get(src, 1e10))
-    global total_perf_gcc_ref
-    total_perf_gcc_ref *= used
-    global total_perf_gcc_ref_samples
-    total_perf_gcc_ref_samples += 1
+    add_sample("gcc_host", src, used)
 
     return True
 
 
-dict_gcc_qemu = dict()
-dict_cmmc_qemu = dict()
-
-
-def sysy_gcc_qemu(src):
+def sysy_gcc_qemu(src, target):
     runtime = tests_path + "/SysY2022/sylib.c"
     header = tests_path + "/SysY2022/sylib.h"
     rel = os.path.relpath(src[:-3], tests_path)
@@ -458,7 +477,7 @@ def sysy_gcc_qemu(src):
     output_path = os.path.dirname(output)
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    command = qemu_gcc_ref_command + \
+    command = qemu_gcc_ref_command[target] + \
         ' -o {} -include {} {} {}'.format(output, header, runtime, src)
     if os.system(command) != 0:
         return False
@@ -467,28 +486,22 @@ def sysy_gcc_qemu(src):
     out = None
     if os.path.exists(inputs):
         with open(inputs, 'r', encoding='utf-8') as input_file:
-            out = subprocess.run(qemu_command + [output], stdin=input_file,
+            out = subprocess.run(qemu_command[target] + [output], stdin=input_file,
                                  capture_output=True, text=True)
     else:
         out = subprocess.run(
-            qemu_command + [output], capture_output=True, text=True)
+            qemu_command[target] + [output], capture_output=True, text=True)
 
     used = compare_and_parse_perf(src, out)
     if used is None:
         return False
 
-    global dict_gcc_qemu
-    dict_gcc_qemu[src] = min(used, dict_gcc_qemu.get(src, 1e10))
-    global total_perf_gcc_ref_qemu
-    total_perf_gcc_ref_qemu *= used
-    global total_perf_gcc_ref_samples_qemu
-    total_perf_gcc_ref_samples_qemu += 1
+    add_sample("gcc_qemu_"+target, src, used)
 
     return True
 
 
-def sysy_cmmc_qemu(src):
-    opt = '-O1' if 'performance' in src else ''
+def sysy_cmmc_qemu(src, target):
     runtime = tests_path + "/SysY2022/sylib.c"
     rel = os.path.relpath(src[:-3], tests_path)
     output = os.path.join(binary_dir, rel)+"_cmmc"
@@ -496,10 +509,10 @@ def sysy_cmmc_qemu(src):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     output_asm = output + '.s'
-    cmmc_command = binary_path + ' -t mips -O 3 -H -o ' + output_asm + ' ' + src
+    cmmc_command = binary_path + ' -t {} -O {} -H -o '.format(target, optimization_level) + output_asm + ' ' + src
     if os.system(cmmc_command) != 0:
         return False
-    command = qemu_gcc_ref_command.replace('-x c++', '') + \
+    command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
         ' -o {} {} {}'.format(output, runtime, output_asm)
     if os.system(command) != 0:
         return False
@@ -509,24 +522,19 @@ def sysy_cmmc_qemu(src):
     try:
         if os.path.exists(inputs):
             with open(inputs, 'r', encoding='utf-8') as input_file:
-                out = subprocess.run(qemu_command + [output], stdin=input_file,
+                out = subprocess.run(qemu_command[target] + [output], stdin=input_file,
                                      capture_output=True, text=True)
         else:
             out = subprocess.run(
-                qemu_command + [output], capture_output=True, text=True)
-    except Exception:
+                qemu_command[target] + [output], capture_output=True, text=True)
+    except Exception as e:
         return False
 
     used = compare_and_parse_perf(src, out)
     if used is None:
         return False
 
-    global dict_cmmc_qemu
-    dict_cmmc_qemu[src] = min(used, dict_cmmc_qemu.get(src, 1e10))
-    global total_perf_self_qemu
-    total_perf_self_qemu *= used
-    global total_perf_self_samples_qemu
-    total_perf_self_samples_qemu += 1
+    add_sample("cmmc_qemu_"+target, src, used)
 
     return True
 
@@ -558,12 +566,7 @@ def sysy_codegen_llvm(src):
     if used is None:
         return False
 
-    global dict_cmmc
-    dict_cmmc[src] = min(used, dict_cmmc.get(src, 1e10))
-    global total_perf_self
-    total_perf_self *= used
-    global total_perf_self_samples
-    total_perf_self_samples += 1
+    add_sample("cmmc_host", src, used)
 
     return True
 
@@ -620,8 +623,6 @@ def test(name, path, filter, tester):
 test_cases = ["parse", "semantic", "tac", "qemu"]
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
-
-# TODO: has llvm support?
 
 generate_ref = 'ref' in test_cases
 if generate_ref:
@@ -685,8 +686,8 @@ if not generate_ref:
                         "/TAC2MC", ".ir", spl_codegen_mips))
         res.append(test("SPL SPL->MIPS project4 self", tests_path +
                         "/Project4", ".spl", spl_codegen_mips))
-        # res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
-        #                "/Project4", ".spl", spl_codegen_riscv64))
+        res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
+                        "/Project4", ".spl", spl_codegen_riscv64))
 
     if "gcc" in test_cases:
         res.append(test("SysY gcc performance", tests_path +
@@ -697,29 +698,27 @@ if not generate_ref:
                         "/SysY2022/functional", ".sy", sysy_codegen_llvm))
         res.append(test("SysY SysY->LLVMIR hidden_functional", tests_path +
                         "/SysY2022/hidden_functional", ".sy", sysy_codegen_llvm))
-        dict_cmmc.clear()
-        total_perf_self = 1
-        total_perf_self_samples = 0
-
+        samples['cmmc_host'].reset()
         res.append(test("SysY SysY->LLVMIR performance", tests_path +
                         "/SysY2022/performance", ".sy", sysy_codegen_llvm))
 
     if "qemu" in test_cases:
-        res.append(test("SysY codegen functional (qemu-mipsel)", tests_path +
-                        "/SysY2022/functional", ".sy", sysy_cmmc_qemu))
-        # res.append(test("SysY codegen hidden_functional (qemu-mipsel)", tests_path +
-        #                "/SysY2022/hidden_functional", ".sy", sysy_cmmc_qemu))
-
-        dict_cmmc_qemu.clear()
-        total_perf_self_qemu = 1
-        total_perf_self_samples_qemu = 0
-        # res.append(test("SysY codegen performance (qemu-mipsel)", tests_path +
-        #                "/SysY2022/performance", ".sy", sysy_cmmc_qemu))
-        pass
+        for target in targets:
+            if target in test_cases:
+                res.append(test("SysY codegen functional (qemu-{})".format(target), tests_path +
+                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
+                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                samples['cmmc_qemu_'+target].reset()
+                # res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
+                #                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                pass
 
     if "qemu-gcc" in test_cases:
-        res.append(test("SysY gcc performance (qemu-mipsel)", tests_path +
-                        "/SysY2022/performance", ".sy", sysy_gcc_qemu))
+        for target in targets:
+            if target in test_cases:
+                res.append(test("SysY gcc performance (qemu {})".format(target), tests_path +
+                                "/SysY2022/performance", ".sy", lambda x: sysy_gcc_qemu(x, target)))
 
 if generate_ref:
     if 'sysy' in test_cases:
@@ -763,50 +762,17 @@ for key in summary.keys():
         val, baseline[key], val / baseline[key]))
 
 if "tac" in test_cases:
-    tac_perf = geo_means(tac_inst_count, tac_inst_count_samples)
+    tac_perf = samples['tac'].geo_means()
     print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
         tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
 
 if "gcc" in test_cases and "llvm" in test_cases:
     print('Platform: ', platform.platform())
-    gcc_perf = geo_means(total_perf_gcc_ref, total_perf_gcc_ref_samples)
-    self_perf = geo_means(total_perf_self, total_perf_self_samples)
-    print("gcc: {:.3f}s with command '{}'".format(gcc_perf, gcc_ref_command))
-    print(
-        "cmmc[llvm-backend]: {:.3f}s -> {:.5f}x".format(self_perf, self_perf/gcc_perf))
-    print("Regressions:")
-
-    testcases = []
-    for key in dict_gcc.keys():
-        if key in dict_cmmc:
-            lhs = dict_gcc[key]
-            rhs = dict_cmmc[key]
-            if lhs < rhs:
-                testcases.append((rhs / lhs, lhs, rhs, key))
-
-    testcases.sort(key=lambda x: -x[0])
-    for ratio, lhs, rhs, key in testcases:
-        print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
+    print_and_compare('_host')
 
 if "qemu-gcc" in test_cases and "qemu" in test_cases:
-    gcc_perf = geo_means(total_perf_gcc_ref_qemu,
-                         total_perf_gcc_ref_samples_qemu)
-    self_perf = geo_means(total_perf_self_qemu, total_perf_self_samples_qemu)
-    print("gcc: {:.3f} insts with command '{}'".format(
-        gcc_perf, qemu_gcc_ref_command))
-    print("cmmc: {:.3f} insts -> {:.5f}x".format(self_perf, self_perf/gcc_perf))
-    print("Regressions:")
-
-    testcases = []
-    for key in dict_gcc_qemu.keys():
-        if key in dict_cmmc_qemu:
-            lhs = dict_gcc_qemu[key]
-            rhs = dict_cmmc_qemu[key]
-            if lhs < rhs:
-                testcases.append((rhs / lhs, lhs, rhs, key))
-
-    testcases.sort(key=lambda x: -x[0])
-    for ratio, lhs, rhs, key in testcases:
-        print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
+    for target in targets:
+        if target in test_cases:
+            print_and_compare('_qemu_'+target)
 
 exit(0 if failed_tests == 0 else -1)

@@ -183,7 +183,6 @@ static RISCVInst getStoreOpcode(const MIROperand& src) {
 static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, const MIROperand& rhs, MIROperand& outLhs,
                              MIROperand& outRhs, MIROperand& outOp) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    // FCmp with the predicate 'NotEqual' is not a canonicalized form.
     if(!isOperandFPR(lhs) || !isOperandFPR(rhs) || op == CompareOp::NotEqual)
         return false;
     outLhs = lhs;
@@ -212,6 +211,10 @@ static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, c
     }
     outOp = MIROperand::asImm(opcode, OperandType::Special);
     return true;
+}
+
+static MIROperand getEqualOp() {
+    return MIROperand::asImm(CompareOp::Equal, OperandType::Special);
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -508,11 +511,13 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
         // lui $scratch, %hi(imm)
         // add $scratch, $scratch, base
         // addr = $scratch + %lo(imm)
-        const auto lo12bits = imm & 0xfff;
-        const auto lo = lo12bits | ((lo12bits & 0x800) ? 0xfffff000 : 0);
-        const auto hi = static_cast<uint32_t>((imm - lo) >> 12) & 0xffff;
+        auto lo = imm & 0xfff;
+        if(lo > 2047)
+            lo -= 4096;
+        const auto hi = (static_cast<uint32_t>(imm - lo) >> 12) & 0xfffff;
         assert(isSignedImm<12>(lo));
         assert(isUnsignedImm<20>(static_cast<intmax_t>(hi)));
+        assert(static_cast<int32_t>(hi << 12) + lo == imm);
         instructions.insert(iter,
                             MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
                                 MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int64)));
@@ -525,7 +530,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
         const auto adjust = imm < 0 ? -2048 : 2047;
         instructions.insert(iter,
                             MIRInst{ ADDI }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(adjust, OperandType::Int32)));
+                                MIROperand::asImm(adjust, OperandType::Int64)));
         base = scratch;
         imm -= adjust;
         assert(isSignedImm<12>(imm));

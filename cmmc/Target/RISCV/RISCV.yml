@@ -35,6 +35,8 @@ InstInfo:
     Template: UType
     LUI:
       Mnemonic: lui
+    AUIPC:
+      Mnemonic: auipc
   InstanceRRR:
     Template: RType
     ADD:
@@ -196,6 +198,8 @@ InstInfo:
     Format: $Mnemonic:Template $Rd:FPR[Def], $Rs1:FPR[Use]
   FIFType:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:FPR[Use]
+  FIFRTZType:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:FPR[Use], rtz
   FIFFType:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use]
   FFIType:
@@ -234,12 +238,14 @@ InstInfo:
       Mnemonic: fsgnj.s
     FMV_S:
       Mnemonic: fmv.s
-  InstanceFIF:
-    Template: FIFType
+  InstanceFIFRTZ:
+    Template: FIFRTZType
     FCVT_W_S:
       Mnemonic: fcvt.w.s
     FCVT_WU_S:
       Mnemonic: fcvt.wu.s
+  InstanceFIF:
+    Template: FIFType
     FMV_W_X:
       Mnemonic: fmv.w.x
     FCLASS_S:
@@ -262,7 +268,7 @@ InstInfo:
       Mnemonic: fmv.x.w
 
   # Pseudo Instructions
-  LoadAddress:
+  LoadLocalAddress:
     Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
     Flag: [LoadConstant]
 
@@ -286,7 +292,7 @@ InstSelection:
         Dst: $Dst
         Addr: $Addr
     Replace:
-      LoadAddress:
+      LoadLocalAddress:
         Rd: $Dst
         Addr: $Addr
 
@@ -933,6 +939,24 @@ InstSelection:
         Rd: $Dst
         Rs1: $OutLhs
         Rs2: $OutRhs
+
+  - Pattern:
+      InstFCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isNotEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs1:
+          InstFCmp:
+            Dst: $Dst
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: getEqualOp()
+        Imm: getOne($Dst)
 
 ScheduleModel:
   sifive-u74:

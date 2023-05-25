@@ -380,6 +380,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
     CMMC_UNUSED(hasCall);
 
     for(auto func : cgscc.getOrder()) {
+        ctx.flags = MIRFlags{};
         // func->dump(std::cerr, Noop{});
 
         const auto symbol = globalMap.at(func);

@@ -35,6 +35,15 @@ public:
     const IPRAInfo* query(MIRRelocable* calleeFunc) const;
 };
 
+// Key features:
+// Scope: Local/Global
+// Live range splitting
+// Coalescing
+// Load-store optimization
+// Multi-allocation
+// Register-packing
+// Rematerialization
+
 using RegisterAllocFunc = void (*)(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& cache);
 
 class RegisterAllocatorRegistry final {
