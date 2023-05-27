@@ -111,7 +111,7 @@ static void verifyModuleExec(Module& module, const std::string_view& passName) {
         SimulationIOContext ctx{ in, out };
         const auto ret = runMain(module, ctx, "unknown");
         if(ret) {
-            retCode = ret.value() & 0x7f;
+            retCode = ret.value() & 0xff;
         } else {
             std::cerr << " failed"sv << std::endl;
             DiagnosticsContext::get().attach<Reason>("runtime error").attach<Reason>(passName).reportFatal();
@@ -495,7 +495,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectModulePass({
-                "GlobalScalar2Local",
+                // FIXME
+                //"GlobalScalar2Local",
             }))
             root->addPass(pass);
         root->addPass(globalOpt);

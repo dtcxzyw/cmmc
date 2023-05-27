@@ -364,7 +364,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandImm12($Rhs)
     Replace:
       ADDI:
         Rd: $Dst
@@ -376,9 +376,33 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       ADD:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandImm12($Rhs)
+    Replace:
+      ADDIW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      ADDW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
@@ -460,7 +484,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SUB:
         Rd: $Dst
@@ -468,11 +492,23 @@ InstSelection:
         Rs2: $Rhs
 
   - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SUBW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
       InstShl:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
     Replace:
       SLLI:
         Rd: $Dst
@@ -480,13 +516,37 @@ InstSelection:
         Imm: $Rhs
 
   - Pattern:
+      InstShl:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+    Replace:
+      SLLIW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
       InstAShr:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
     Replace:
       SRAI:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstAShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+    Replace:
+      SRAIW:
         Rd: $Dst
         Rs1: $Lhs
         Imm: $Rhs
@@ -496,9 +556,21 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
     Replace:
       SRLI:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: $Rhs
+
+  - Pattern:
+      InstLShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandUImm6($Rhs)
+    Replace:
+      SRLIW:
         Rd: $Dst
         Rs1: $Lhs
         Imm: $Rhs
@@ -508,9 +580,21 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SLL:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstShl:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SLLW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
@@ -520,9 +604,21 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SRA:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstAShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SRAW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
@@ -532,9 +628,21 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SRL:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstLShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SRLW:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
@@ -544,7 +652,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Dst).type() == OperandType::Int64
+        $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MUL:
         Rd: $Dst
@@ -556,7 +664,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Dst).type() == OperandType::Int32
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MULW:
         Rd: $Dst
@@ -568,7 +676,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Dst).type() == OperandType::Int32
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       DIVW:
         Rd: $Dst
@@ -580,7 +688,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Dst).type() == OperandType::Int32
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       REMW:
         Rd: $Dst

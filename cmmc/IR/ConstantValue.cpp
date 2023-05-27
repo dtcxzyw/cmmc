@@ -47,6 +47,8 @@ intmax_t ConstantInteger::getStorage() const noexcept {
 
 intmax_t ConstantInteger::getSignExtended() const noexcept {
     const auto bits = getType()->as<IntegerType>()->getBitwidth();
+    if(bits == 1)
+        return mValue != 0 ? 1 : 0;
     if(bits == std::numeric_limits<uintmax_t>::digits)
         return mValue;
     const auto mask = (static_cast<uintmax_t>(1) << bits) - 1;
