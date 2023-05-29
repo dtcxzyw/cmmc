@@ -222,17 +222,17 @@ MIRInst TargetInstInfo::emitGoto(MIRBasicBlock* target) const {
 }
 
 bool TargetInstInfo::matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const {
-    return matchBranch(inst, target, prob) && !requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagNoFallthrough);
+    return matchBranch(inst, target, prob) && !requireFlag(getInstInfo(inst).getInstFlag(), InstFlagNoFallthrough);
 }
 bool TargetInstInfo::matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const {
     double prob;
-    return matchBranch(inst, target, prob) && requireFlag(getInstInfo(inst.opcode()).getInstFlag(), InstFlagNoFallthrough);
+    return matchBranch(inst, target, prob) && requireFlag(getInstInfo(inst).getInstFlag(), InstFlagNoFallthrough);
 }
 
 bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, uint32_t count) {
     if(!ctx.registerInfo)
         return true;
-    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+    auto& instInfo = ctx.instInfo.getInstInfo(inst);
     for(uint32_t idx = 0; idx < count; ++idx) {
         auto& operand = inst.getOperand(idx);
         if(!isOperandISAReg(operand))

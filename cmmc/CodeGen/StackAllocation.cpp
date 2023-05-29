@@ -378,7 +378,7 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
             auto& inst = *iter;
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(auto& op = inst.getOperand(idx); isOperandStackObject(op)) {
                     ctx.iselInfo.legalizeInstWithStackOperand(InstLegalizeContext{ inst, instructions, iter, ctx }, op,
@@ -393,7 +393,7 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
 
     for(auto& block : func.blocks()) {
         const auto& terminator = block->instructions().back();
-        auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(terminator);
         if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
             ctx.frameInfo.emitPostSAEpilogue(*block, ctx, stackSize, raOffset);
         }

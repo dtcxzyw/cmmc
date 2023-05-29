@@ -141,7 +141,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
                     auto& src = inst.getOperand(1);
                     count(dst, src);
                 } else {
-                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst);
                     for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                         if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                             count(inst.getOperand(idx), MIROperand{});
@@ -183,7 +183,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
         auto& instructions = block->instructions();
         std::unordered_map<uint32_t, std::unordered_map<MIROperand, MIROperand, MIROperandHasher>> constants;
         for(auto& inst : instructions) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                 auto& dst = inst.getOperand(0);
                 auto& src = inst.getOperand(1);
@@ -231,7 +231,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 if(inst.opcode() == InstCopy) {
                     inst.setOpcode(selectCopyOpcode(inst.getOperand(0), reg));
                 }
-                auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 if(instInfo.verify(inst, ctx)) {
                     modified = true;
                 } else {
@@ -251,7 +251,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
         };
 
         for(auto& inst : instructions) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                     auto& operand = inst.getOperand(idx);

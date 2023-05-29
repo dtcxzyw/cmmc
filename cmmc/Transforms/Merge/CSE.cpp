@@ -14,6 +14,7 @@
 
 // Simple Common Subexpression Extraction
 
+#include <algorithm>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -40,9 +41,12 @@ struct InstEqual final {
     bool operator()(const Instruction* lhs, const Instruction* rhs) const {
         if(!lhs->isEqual(rhs))
             return false;
-        auto& lhsOperands = lhs->operands();
-        auto& rhsOperands = rhs->operands();
-        return lhsOperands == rhsOperands;
+        auto lhsOperands = lhs->operands();
+        auto rhsOperands = rhs->operands();
+        if(lhsOperands.size() != rhsOperands.size())
+            return false;
+        return std::equal(lhsOperands.begin(), lhsOperands.end(), rhsOperands.begin(),
+                          [](Value* lhsVal, Value* rhsVal) { return lhsVal == rhsVal; });
     }
 };
 

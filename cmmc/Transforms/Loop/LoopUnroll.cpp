@@ -101,8 +101,14 @@ public:
                         if(replaceMap.count(prev)) {
                             const auto val = phi->incomings().at(prev);
                             auto& map = replaceMap.at(prev);
-                            if(map.count(val))
-                                phi->replaceOperand(val, map.at(val));
+                            if(map.count(val)) {
+                                const auto rep = map.at(val);
+                                for(auto& ref : phi->mutableOperands()) {
+                                    if(ref->value == val) {
+                                        ref->resetValue(rep);
+                                    }
+                                }
+                            }
                         }
                     } else
                         break;
@@ -144,7 +150,8 @@ public:
                 const auto terminator = prev->getTerminator()->as<BranchInst>();
                 // reset terminator
                 terminator->getTrueTarget() = head;
-                terminator->getOperand(0)->as<CompareInst>()->replaceOperand(loop.bound, startValue);
+                // loop.bound -> startValue
+                terminator->getOperand(0)->as<CompareInst>()->mutableOperands()[1]->resetValue(startValue);
                 const auto& replace = replaceMap[prev];
                 for(auto inst : head->instructions()) {
                     if(inst->getInstID() == InstructionID::Phi) {

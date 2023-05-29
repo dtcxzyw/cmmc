@@ -151,8 +151,9 @@ public:
 
             for(auto [idx, lhsInst, lhsValue, rhsInst, rhsValue] : pairs) {
                 const auto val = builder.makeOp<SelectInst>(cond, lhsValue, rhsValue);
-                lhsInst->operands()[idx] = val;
-                rhsInst->operands()[idx] = val;
+                // TODO: inst->setOperand(idx, val)
+                lhsInst->mutableOperands()[idx]->resetValue(val);
+                rhsInst->mutableOperands()[idx]->resetValue(val);
             }
         }
 

@@ -75,6 +75,9 @@ public:
     TargetInstInfo() = default;
     virtual ~TargetInstInfo() = default;
     [[nodiscard]] virtual const InstInfo& getInstInfo(uint32_t opcode) const;
+    [[nodiscard]] const InstInfo& getInstInfo(const MIRInst& inst) const {
+        return getInstInfo(inst.opcode());
+    }
     virtual bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
     bool matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
     bool matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const;

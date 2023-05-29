@@ -44,7 +44,7 @@ public:
                 // remove backedge
                 modified = true;
                 const auto terminator = loop.latch->getTerminator()->as<BranchInst>();
-                terminator->operands()[0] = ConstantInteger::getFalse();
+                terminator->mutableOperands()[0]->resetValue(ConstantInteger::getFalse());
             }
         }
         return modified;

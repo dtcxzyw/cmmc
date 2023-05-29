@@ -83,9 +83,7 @@ public:
                     continue;
                 bool hasConstantArgs = true;
                 std::vector<ConstantValue*> args;
-                for(auto& arg : inst->operands()) {
-                    if(&arg == &inst->operands().back())
-                        break;
+                for(auto arg : inst->arguments()) {
                     if(!arg->isConstant()) {
                         hasConstantArgs = false;
                         break;

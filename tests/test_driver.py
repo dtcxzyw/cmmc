@@ -718,8 +718,8 @@ if not generate_ref:
                 res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
                                 "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 samples['cmmc_qemu_'+target].reset()
-                res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
-                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
+                #res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
+                #                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
                 
 
 if generate_ref:

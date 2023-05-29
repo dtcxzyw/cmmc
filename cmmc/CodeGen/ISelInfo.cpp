@@ -56,7 +56,7 @@ void ISelContext::runISel(MIRFunction& func) {
             std::vector<MIROperand> removeList;
             for(auto& block : func.blocks()) {
                 for(auto& inst : block->instructions()) {
-                    auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+                    auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
                     if(requireFlag(instInfo.getInstFlag(), InstFlagLoadConstant)) {
                         auto& def = getInstDef(inst);
                         if(mConstantMapping.count(def)) {
@@ -73,7 +73,7 @@ void ISelContext::runISel(MIRFunction& func) {
         for(auto& block : func.blocks()) {
             mInstMapping.clear();
             for(auto& inst : block->instructions()) {
-                auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+                auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                         auto& operand = inst.getOperand(idx);
@@ -116,7 +116,7 @@ void ISelContext::runISel(MIRFunction& func) {
             for(auto& inst : block->instructions()) {
                 if(mReplaceBlockList.count(&inst))
                     continue;
-                auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+                auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                     auto& operand = inst.getOperand(idx);
                     if(!operand.isReg())
@@ -142,7 +142,7 @@ void ISelContext::runISel(MIRFunction& func) {
                 func.dump(std::cerr, mCodeGenCtx);
                 std::cerr << "First illegal inst:\n";
                 assert(firstIllegalInst);
-                mCodeGenCtx.instInfo.getInstInfo(firstIllegalInst->opcode()).print(std::cerr, *firstIllegalInst, true);
+                mCodeGenCtx.instInfo.getInstInfo(*firstIllegalInst).print(std::cerr, *firstIllegalInst, true);
                 std::cerr << '\n';
                 DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
             } else {
@@ -173,7 +173,7 @@ MIRInst& ISelContext::newInst(uint32_t opcode) {
 }
 
 MIROperand& ISelContext::getInstDef(MIRInst& inst) const {
-    auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+    auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
     for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
         if(instInfo.getOperandFlag(idx) & OperandFlagDef)
             return inst.getOperand(idx);
@@ -229,7 +229,7 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
             auto& inst = *iter;
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
                 ctx.iselInfo.preRALegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx });
             }
@@ -239,7 +239,7 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     if constexpr(Config::debug) {
         for(auto& block : func.blocks()) {
             for(auto& inst : block->instructions()) {
-                auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
                     reportLegalizationFailure(inst, ctx, CMMC_LOCATION());
                 }

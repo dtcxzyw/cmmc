@@ -131,10 +131,10 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
     for(auto inst : mInstructions) {
         auto newInst = inst->clone();
         if(newInst->getInstID() != InstructionID::Phi) {
-            for(auto& operand : newInst->operands()) {
-                if(operand->getBlock() == this) {
-                    const auto newOperand = replace.at(operand);
-                    operand = newOperand;
+            for(auto& operand : newInst->mutableOperands()) {
+                if(operand->value->getBlock() == this) {
+                    const auto newOperand = replace.at(operand->value);
+                    operand->resetValue(newOperand);
                 }
             }
         }

@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Block.hpp"
-#include "cmmc/IR/Function.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -83,7 +81,7 @@ static void calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx, RAInfo& i
     // Stage 1: local use/def chain
     for(auto& block : mfunc.blocks()) {
         for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 auto flag = instInfo.getOperandFlag(idx);
                 auto& operand = inst.getOperand(idx);

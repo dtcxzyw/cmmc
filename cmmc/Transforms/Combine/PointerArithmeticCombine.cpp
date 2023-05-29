@@ -72,7 +72,8 @@ public:
 
                                 const auto gep = builder.makeOp<GetElementPtrInst>(
                                     p,
-                                    Vector<Value*>{ builder.getZeroIndex(), ConstantInteger::get(builder.getIndexType(), idx) });
+                                    std::vector<Value*>{ builder.getZeroIndex(),
+                                                         ConstantInteger::get(builder.getIndexType(), idx) });
 
                                 replaceMap.emplace(inst, gep);
                             }

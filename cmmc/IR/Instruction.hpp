@@ -21,6 +21,7 @@
 #include <cmmc/Support/Arena.hpp>
 #include <cstddef>
 #include <functional>
+#include <initializer_list>
 #include <ostream>
 #include <unordered_map>
 
@@ -100,17 +101,189 @@ enum class InstructionID {
     Phi
 };
 
+struct ValueRef final {
+    Value* value;
+    Instruction* user;
+    ValueRef* prev = nullptr;
+    ValueRef* next = nullptr;
+
+    ValueRef(Value* val, Instruction* userInst);
+    ValueRef(const ValueRef& ref) = delete;
+    ValueRef(ValueRef&& ref) = delete;
+    ValueRef& operator=(const ValueRef& ref) = delete;
+    ValueRef& operator=(ValueRef&& ref) = delete;
+    void resetValue(Value* newValue);
+    ~ValueRef();
+};
+CMMC_ARENA_TRAIT(ValueRef, IR);
+
+class UserIterator final {
+    ValueRef* mRef;
+
+public:
+    explicit UserIterator(ValueRef* ref) : mRef{ ref } {}
+    bool operator!=(const UserIterator& other) const noexcept {
+        return mRef != other.mRef;
+    }
+    UserIterator& operator++() noexcept {
+        mRef = mRef->next;
+        return *this;
+    }
+    Instruction* operator*() const {
+        return mRef->user;
+    }
+};
+class UserList final {
+    ValueRef mHead{ nullptr, nullptr };
+
+public:
+    explicit UserList(Value* self);
+    UserList(const UserList&) = delete;
+    UserList(UserList&&) = delete;
+    UserList& operator=(const UserList& rhs) = delete;
+    UserList& operator=(UserList&& rhs) = delete;
+    ~UserList();
+    void addRef(ValueRef& ref);
+    void removeRef(ValueRef& ref);
+
+    [[nodiscard]] UserIterator begin() const noexcept;
+    [[nodiscard]] UserIterator end() const noexcept;
+};
+
+class ValueRefHandle final {
+    ValueRef* mRef;
+
+public:
+    ValueRefHandle() : mRef{ nullptr } {}
+    ValueRefHandle(ValueRef* ref) : mRef{ ref } {}
+    ValueRefHandle(const ValueRefHandle& rhs) = delete;
+    ValueRefHandle(ValueRefHandle&& rhs) noexcept : mRef{ rhs.mRef } {
+        rhs.mRef = nullptr;
+    }
+    ValueRefHandle& operator=(const ValueRefHandle& rhs) = delete;
+    ValueRefHandle& operator=(ValueRefHandle&& rhs) noexcept {
+        ValueRefHandle tmp{ std::move(rhs) };
+        swap(tmp);
+        return *this;
+    }
+    ~ValueRefHandle();
+    void swap(ValueRefHandle& rhs) noexcept {
+        std::swap(mRef, rhs.mRef);
+    }
+    ValueRef& operator*() const {
+        return *mRef;
+    }
+    ValueRef* operator->() const {
+        return mRef;
+    }
+};
+CMMC_ARENA_TRAIT(ValueRefHandle, IR);
+
+class OperandIterator final {
+    Deque<ValueRefHandle>::const_iterator mIter;
+
+public:
+    explicit OperandIterator(const Deque<ValueRefHandle>::const_iterator& iter) : mIter{ iter } {}
+    bool operator!=(const OperandIterator& other) const noexcept {
+        return mIter != other.mIter;
+    }
+    OperandIterator& operator++() noexcept {
+        ++mIter;
+        return *this;
+    }
+    Value* operator*() const {
+        return (*mIter)->value;
+    }
+};
+class MutableOperandIterator final {
+    Deque<ValueRefHandle>::const_iterator mIter;
+
+public:
+    explicit MutableOperandIterator(const Deque<ValueRefHandle>::const_iterator& iter) : mIter{ iter } {}
+    bool operator!=(const MutableOperandIterator& other) const noexcept {
+        return mIter != other.mIter;
+    }
+    MutableOperandIterator& operator++() noexcept {
+        ++mIter;
+        return *this;
+    }
+    ValueRef& operator*() const {
+        return *(*mIter);
+    }
+};
+class OperandView final {
+    const Deque<ValueRefHandle>& mRef;
+
+public:
+    explicit OperandView(const Deque<ValueRefHandle>& ref);
+    OperandView(const OperandView&) = delete;
+    OperandView(OperandView&&) = delete;
+    OperandView& operator=(const OperandView& rhs) = delete;
+    OperandView& operator=(OperandView&& rhs) = delete;
+    ~OperandView() = default;
+
+    [[nodiscard]] bool empty() const {
+        return mRef.empty();
+    }
+    [[nodiscard]] size_t size() const {
+        return mRef.size();
+    }
+    [[nodiscard]] Value* front() const {
+        return mRef.front()->value;
+    }
+    [[nodiscard]] Value* back() const {
+        return mRef.back()->value;
+    }
+
+    [[nodiscard]] OperandIterator begin() const noexcept;
+    [[nodiscard]] OperandIterator end() const noexcept;
+};
+
+class ArgumentView final {
+    const Deque<ValueRefHandle>& mRef;  // args/indices + callee/base
+
+public:
+    explicit ArgumentView(const Deque<ValueRefHandle>& ref);
+    ArgumentView(const ArgumentView&) = delete;
+    ArgumentView(ArgumentView&&) = delete;
+    ArgumentView& operator=(const ArgumentView& rhs) = delete;
+    ArgumentView& operator=(ArgumentView&& rhs) = delete;
+    ~ArgumentView() = default;
+
+    [[nodiscard]] bool empty() const {
+        return mRef.size() <= 1;
+    }
+    [[nodiscard]] size_t size() const {
+        return mRef.size() > 1;
+    }
+
+    [[nodiscard]] OperandIterator begin() const noexcept;
+    [[nodiscard]] OperandIterator end() const noexcept;
+};
+
 class Instruction : public Value {
     InstructionID mInstID;
-    Deque<Value*> mOperands;
+    Deque<ValueRefHandle> mOperands;
     Block* mBlock;
     String mLabel;
+    UserList mUsers;
 
-    // bool isVolatile;
 public:
-    Instruction(InstructionID instID, const Type* valueType, Deque<Value*> operands)
-        : Value{ valueType }, mInstID{ instID }, mOperands{ std::move(operands) } {}
+    Instruction(InstructionID instID, const Type* valueType) : Value{ valueType }, mInstID{ instID }, mUsers{ this } {}
+    Instruction(InstructionID instID, const Type* valueType, std::initializer_list<Value*> initOperands)
+        : Instruction{ instID, valueType } {
+        for(auto val : initOperands) {
+            mOperands.push_back(make<ValueRef>(val, this));
+        }
+    }
+    ~Instruction() override = default;
 
+    [[nodiscard]] UserList& users() noexcept {
+        return mUsers;
+    }
+    [[nodiscard]] const UserList& users() const noexcept {
+        return mUsers;
+    }
     [[nodiscard]] InstructionID getInstID() const noexcept {
         return mInstID;
     }
@@ -120,18 +293,22 @@ public:
     [[nodiscard]] Block* getBlock() const noexcept final {
         return mBlock;
     }
-    Deque<Value*>& operands() noexcept {
+    [[nodiscard]] auto& mutableOperands() noexcept {
         return mOperands;
     }
-    [[nodiscard]] const Deque<Value*>& operands() const noexcept {
-        return mOperands;
+    [[nodiscard]] OperandView operands() const noexcept {
+        return OperandView{ mOperands };
+    }
+    [[nodiscard]] ArgumentView arguments() const noexcept {
+        return ArgumentView{ mOperands };
+    }
+    [[nodiscard]] Value* lastOperand() const noexcept {
+        return mOperands.back()->value;
     }
     [[nodiscard]] Value* getOperand(uint32_t idx) const noexcept {
-        return mOperands[idx];
+        return mOperands[idx]->value;
     }
-
-    virtual bool replaceOperand(Value* oldOperand, Value* newOperand);
-    bool hasOperand(Value* operand) const noexcept;
+    void addOperand(Value* value);
 
     void setLabel(String label) {
         mLabel = label;
@@ -331,11 +508,11 @@ public:
 
 class FunctionCallInst final : public Instruction {
 public:
-    FunctionCallInst(Value* callee, const Vector<Value*>& args)
+    FunctionCallInst(Value* callee, const std::vector<Value*>& args)
         : Instruction{ InstructionID::Call, callee->getType()->as<FunctionType>()->getRetType(), {} } {
-        auto& list = operands();
-        list.insert(list.cend(), args.cbegin(), args.cend());
-        list.push_back(callee);
+        for(auto arg : args)
+            addOperand(arg);
+        addOperand(callee);
     }
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
@@ -370,12 +547,12 @@ public:
 
 class GetElementPtrInst final : public Instruction {
 public:
-    static const Type* getValueType(Value* base, const Vector<Value*>& indices);
-    explicit GetElementPtrInst(Value* base, const Vector<Value*>& indices)
+    static const Type* getValueType(Value* base, const std::vector<Value*>& indices);
+    explicit GetElementPtrInst(Value* base, const std::vector<Value*>& indices)
         : Instruction{ InstructionID::GetElementPtr, PointerType::get(getValueType(base, indices)), {} } {
-        auto& list = operands();
-        list.insert(list.cend(), indices.cbegin(), indices.cend());
-        list.push_back(base);
+        for(auto index : indices)
+            addOperand(index);
+        addOperand(base);
     }
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
@@ -423,7 +600,7 @@ public:
         assert(getType()->isSame(value->getType()));
         assert(!mIncomings.count(block));
         mIncomings.emplace(block, value);
-        operands().push_back(value);
+        addOperand(value);
     }
     auto& incomings() const noexcept {
         return mIncomings;
@@ -431,7 +608,6 @@ public:
     void clear();
     void removeSource(Block* block);
     void replaceSource(Block* oldBlock, Block* newBlock);
-    bool replaceOperand(Value* oldOperand, Value* newOperand) override;
     void keepOneIncoming(Block* block);
     void dumpInst(std::ostream& out) const override;
     bool verify(std::ostream& out) const override;

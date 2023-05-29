@@ -33,7 +33,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             bool special = false;
             if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
                 special = true;
@@ -64,7 +64,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
             }
         };
 
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                 popSrc(inst.getOperand(idx));
@@ -78,7 +78,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
             continue;
 
         for(auto writer : writerList) {
-            auto& instInfo = ctx.instInfo.getInstInfo(writer->opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(*writer);
             if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
                 continue;
             remove.insert(writer);
@@ -99,7 +99,7 @@ void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::fu
 
 void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
     for(auto& inst : block.instructions()) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             functor(inst.getOperand(idx));
         }
@@ -108,7 +108,7 @@ void forEachOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std:
 
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
     for(auto& inst : block.instructions()) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                 functor(inst.getOperand(idx));
@@ -125,7 +125,7 @@ void forEachUseOperands(MIRFunction& func, const CodeGenContext& ctx,
 void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
                         const std::function<void(MIRInst& inst, MIROperand& op)>& functor) {
     for(auto& inst : block.instructions()) {
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
             if(instInfo.getOperandFlag(idx) & OperandFlagUse)
                 functor(inst, inst.getOperand(idx));
@@ -178,7 +178,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
                 }
                 for(auto& inst : block->instructions()) {
                     out << '\t';
-                    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst);
                     instInfo.print(out, inst, false);
                     out << '\n';
                 }
@@ -189,7 +189,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
 
 [[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location) {
     std::cerr << "Failed to legalizing inst: ";
-    auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+    auto& instInfo = ctx.instInfo.getInstInfo(inst);
     instInfo.print(std::cerr, inst, true);
     std::cerr << '\n';
     reportNotImplemented(location);

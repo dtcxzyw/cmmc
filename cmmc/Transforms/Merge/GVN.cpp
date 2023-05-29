@@ -55,15 +55,12 @@ struct GlobalInstEqual final {
         if(!lhs->isEqual(rhs))
             return false;
 
-        auto& lhsOperands = lhs->operands();
-        auto& rhsOperands = rhs->operands();
+        auto lhsOperands = lhs->operands();
+        auto rhsOperands = rhs->operands();
         if(lhsOperands.size() != rhsOperands.size())
             return false;
-        for(size_t idx = 0; idx < lhsOperands.size(); ++idx) {
-            if(getNumber(lhsOperands[idx]) != getNumber(rhsOperands[idx]))
-                return false;
-        }
-        return true;
+        return std::equal(lhsOperands.begin(), lhsOperands.end(), rhsOperands.begin(),
+                          [&](Value* lhsVal, Value* rhsVal) { return getNumber(lhsVal) == getNumber(rhsVal); });
     }
 };
 

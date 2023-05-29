@@ -269,7 +269,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     [[fallthrough]];
                 case InstructionID::And: {
                     if(inst->getOperand(0)->isConstant() && !inst->getOperand(1)->isConstant()) {
-                        auto& operands = inst->operands();
+                        auto& operands = inst->mutableOperands();
                         std::swap(operands[0], operands[1]);
                         modified = true;
                     }
@@ -300,8 +300,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // ->
             // select cond, y, x
             if(select(not_(any(v1)), any(v2), any(v3))(matchCtx)) {
-                auto& operands = inst->operands();
-                operands[0] = v1;
+                auto& operands = inst->mutableOperands();
+                operands[0]->resetValue(v1);
                 // inplace modify
                 std::swap(operands[1], operands[2]);
                 modified = true;

@@ -53,7 +53,7 @@ CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx) {
         MIRBasicBlock* targetBlock;
         double prob;
         if(ctx.instInfo.matchBranch(terminator, targetBlock, prob)) {
-            if(requireFlag(ctx.instInfo.getInstInfo(terminator.opcode()).getInstFlag(), InstFlagNoFallthrough)) {
+            if(requireFlag(ctx.instInfo.getInstInfo(terminator).getInstFlag(), InstFlagNoFallthrough)) {
                 // Unconditional
                 connect(block.get(), targetBlock, 1.0);
             } else {

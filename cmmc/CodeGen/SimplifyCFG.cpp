@@ -100,7 +100,7 @@ static bool removeUnreachableCode(MIRFunction& func, const CodeGenContext& ctx) 
                     q.push(targetBlock);
                 }
             }
-            if(requireFlag(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag(), InstFlagTerminator | InstFlagNoFallthrough)) {
+            if(requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagTerminator | InstFlagNoFallthrough)) {
                 stop = true;
             }
 

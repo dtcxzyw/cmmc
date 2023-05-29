@@ -50,7 +50,7 @@ void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& ca
     if constexpr(Config::debug) {
         for(auto& block : mfunc.blocks()) {
             for(auto& inst : block->instructions()) {
-                auto& info = ctx.instInfo.getInstInfo(inst.opcode());
+                auto& info = ctx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < info.getOperandNum(); ++idx)
                     if(isOperandVReg(inst.getOperand(idx))) {
                         DiagnosticsContext::get().attach<Reason>("Bad RA").reportFatal();
@@ -64,7 +64,7 @@ void IPRAUsageCache::add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFun
     IPRAInfo info;
     for(auto& block : func.blocks()) {
         for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
 
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 auto& op = inst.getOperand(idx);

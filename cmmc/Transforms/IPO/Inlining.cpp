@@ -59,10 +59,10 @@ class FuncInlining final : public TransformPass<Function> {
         ReplaceMap targetReplace;
         Block* entryBlock = nullptr;
         {
-            auto& arguments = (*call)->operands();
+            auto& arguments = (*call)->mutableOperands();
             auto& parameters = callee->args();
             for(size_t idx = 0; idx < parameters.size(); ++idx) {
-                targetReplace.emplace(parameters[idx], arguments[idx]);
+                targetReplace.emplace(parameters[idx], arguments[idx]->value);
             }
         }
         std::vector<PhiInst*> phiNodes;

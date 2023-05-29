@@ -299,7 +299,7 @@ struct InstComp {
             return order;
         if(lhs->operands().size() != rhs->operands().size())
             return lhs->operands().size() < rhs->operands().size() ? StrongOrder::LessThan : StrongOrder::GreaterThan;
-        for(auto lhsIter = lhs->operands().cbegin(), rhsIter = rhs->operands().cbegin(); lhsIter != lhs->operands().cend();
+        for(auto lhsIter = lhs->operands().begin(), rhsIter = rhs->operands().begin(); lhsIter != lhs->operands().end();
             ++lhsIter, ++rhsIter) {
             if(auto order = externalComp(*lhsIter, *rhsIter); order != StrongOrder::Equal) {
                 return order;

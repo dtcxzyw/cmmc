@@ -263,7 +263,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         return false;
     };
     {
-        auto& instInfo = ctx.getCodeGenCtx().instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.getCodeGenCtx().instInfo.getInstInfo(inst);
         if(requireFlag(instInfo.getInstFlag(), InstFlagCommutative)) {
             swapImmReg();
         }

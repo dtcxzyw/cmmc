@@ -95,8 +95,14 @@ public:
                             if(replaceMap.count(prev)) {
                                 const auto val = phi->incomings().at(prev);
                                 auto& map = replaceMap.at(prev);
-                                if(map.count(val))
-                                    phi->replaceOperand(val, map.at(val));
+                                if(map.count(val)) {
+                                    const auto rep = map.at(val);
+                                    for(auto& ref : phi->mutableOperands()) {
+                                        if(ref->value == val) {
+                                            ref->resetValue(rep);
+                                        }
+                                    }
+                                }
                             }
                         } else
                             break;
@@ -166,8 +172,9 @@ public:
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
                 head->instructions().push_back(batchCond);
-                batchCond->operands()[0] = batchEnd;
-                batchCond->operands()[1] = bound;
+                // TODO: batchCond->setOperand(idx, val)
+                batchCond->mutableOperands()[0]->resetValue(batchEnd);
+                batchCond->mutableOperands()[1]->resetValue(bound);
                 batchCond->setBlock(head);
                 builder.setInsertPoint(head, head->instructions().end());
 

@@ -47,8 +47,8 @@ class GlobalScalar2Local final : public TransformPass<Module> {
         for(uint32_t idx = 0; idx < subCount; ++idx) {
             const auto addr = builder.makeOp<GetElementPtrInst>(
                 storage,
-                Vector<Value*>{ builder.getZeroIndex(),
-                                ConstantInteger::get(builder.getIndexType(), static_cast<intmax_t>(idx)) });
+                std::vector<Value*>{ builder.getZeroIndex(),
+                                     ConstantInteger::get(builder.getIndexType(), static_cast<intmax_t>(idx)) });
             Value* subValue = nullptr;
             if(valueArray && idx < valueArray->values().size())
                 subValue = valueArray->values()[idx];
@@ -104,8 +104,9 @@ public:
                 if(auto func = dynamic_cast<Function*>(global)) {
                     for(auto block : func->blocks())
                         for(auto inst : block->instructions()) {
-                            if(inst->hasOperand(exportedFunc)) {
-                                return true;
+                            if(inst->getInstID() == InstructionID::Call) {
+                                if(inst->operands().back() == exportedFunc)
+                                    return true;
                             }
                         }
                 }
@@ -190,9 +191,12 @@ public:
                         auto callee = call->operands().back();
                         if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                             if(funcSet.count(calleeFunc)) {
+                                reportNotImplemented(CMMC_LOCATION());
+                                /*
                                 auto& operands = call->operands();
                                 for(auto var : globalVars)
                                     operands.insert(std::prev(operands.cend()), var);
+                                */
                             }
                         } else
                             reportNotImplemented(CMMC_LOCATION());

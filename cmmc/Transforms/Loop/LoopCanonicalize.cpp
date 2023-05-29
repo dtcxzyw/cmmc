@@ -37,7 +37,7 @@ public:
             const auto cmp = cond->as<CompareInst>();
             // make constants rhs
             if(cmp->getOperand(0)->isConstant() && !cmp->getOperand(1)->isConstant()) {
-                auto& operands = cmp->operands();
+                auto& operands = cmp->mutableOperands();
                 std::swap(operands[0], operands[1]);
                 cmp->setOp(getReversedOp(cmp->getOp()));
                 modified = true;
@@ -53,7 +53,7 @@ public:
                         // check overflow
                         if(x < xn->getSignExtended()) {
                             cmp->setOp(CompareOp::LessThan);
-                            cmp->operands()[1] = xn;
+                            cmp->mutableOperands()[1]->resetValue(xn);
                             modified = true;
                         }
                     } else if(cmp->getOp() == CompareOp::GreaterEqual) {
@@ -61,7 +61,7 @@ public:
                         // check underflow
                         if(x > xn->getSignExtended()) {
                             cmp->setOp(CompareOp::GreaterThan);
-                            cmp->operands()[1] = xn;
+                            cmp->mutableOperands()[1]->resetValue(xn);
                             modified = true;
                         }
                     }

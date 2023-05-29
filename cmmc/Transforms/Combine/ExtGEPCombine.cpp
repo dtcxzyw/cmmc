@@ -35,16 +35,16 @@ class ExtGEPCombine final : public TransformPass<Function> {
             if(inst->getInstID() != InstructionID::GetElementPtr)
                 continue;
 
-            for(auto& operand : inst->operands()) {
-                if(operand->getType()->isInteger()) {
+            for(auto& operand : inst->mutableOperands()) {
+                if(operand->value->getType()->isInteger()) {
                     Value* idx;
-                    if(sext(any(idx))(MatchContext<Value>{ operand, nullptr })) {
-                        operand = idx;  // NOLINT(clang-analyzer-core.uninitialized.Assign)
+                    if(sext(any(idx))(MatchContext<Value>{ operand->value, nullptr })) {
+                        operand->resetValue(idx);
                         modified = true;
                     }
                     intmax_t val;
-                    if(operand->getType() != indexType && int_(val)(MatchContext<Value>{ operand, nullptr })) {
-                        operand = ConstantInteger::get(indexType, val);
+                    if(operand->value->getType() != indexType && int_(val)(MatchContext<Value>{ operand->value, nullptr })) {
+                        operand->resetValue(ConstantInteger::get(indexType, val));
                         modified = true;
                     }
                 }

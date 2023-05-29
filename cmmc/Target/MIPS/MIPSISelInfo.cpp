@@ -302,7 +302,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         return false;
     };
     {
-        auto& instInfo = ctx.getCodeGenCtx().instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.getCodeGenCtx().instInfo.getInstInfo(inst);
         if(requireFlag(instInfo.getInstFlag(), InstFlagCommutative)) {
             swapImmReg();
         }
@@ -623,7 +623,7 @@ void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRI
     uint32_t lastStatus = 0b00;  // 0: with delay slot 1: without delay slot
     for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
         auto& inst = *iter;
-        auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
         if(!requireFlag(instInfo.getInstFlag(), InstFlagWithDelaySlot)) {
             lastStatus = (lastStatus << 1) | 1;
             continue;

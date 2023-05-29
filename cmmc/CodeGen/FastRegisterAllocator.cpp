@@ -46,7 +46,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
     for(auto& block : mfunc.blocks()) {
         for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
 
             if(inst.opcode() == InstCopyFromReg) {
                 isaRegHint[inst.getOperand(0)] = inst.getOperand(1);
@@ -222,7 +222,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             auto& inst = *iter;
-            auto& instInfo = ctx.instInfo.getInstInfo(inst.opcode());
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse)
                     use(inst.getOperand(idx));
@@ -283,7 +283,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         }
         // restore
         auto& terminator = instructions.back();
-        auto& instInfo = ctx.instInfo.getInstInfo(terminator.opcode());
+        auto& instInfo = ctx.instInfo.getInstInfo(terminator);
         if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
             const auto pos = std::prev(instructions.end());
             for(auto [p, s] : overwrited) {

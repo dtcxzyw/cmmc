@@ -47,6 +47,7 @@
 #include <type_traits>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -818,7 +819,7 @@ QualifiedValue FunctionCallExpr::emit(EmitContext& ctx) const {
         DiagnosticsContext::get().attach<Reason>("the numbers of provided/required arguments mismatch").reportFatal();
     }
 
-    Vector<Value*> args;
+    std::vector<Value*> args;
     args.reserve(argExprs.size());
     auto& argTypes = funcType->getArgTypes();
     for(uint32_t idx = 0; idx < argExprs.size(); ++idx) {
@@ -1065,14 +1066,14 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
             if(strictMode.get() && idx->isUndefined()) {
                 return QualifiedValue{ ctx.getInvalidLValue(), ValueQualifier::AsLValue, qualifier };
             }
-            return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), idx }), ValueQualifier::AsLValue,
+            return { ctx.makeOp<GetElementPtrInst>(base, std::vector{ ctx.getZeroIndex(), idx }), ValueQualifier::AsLValue,
                      qualifier };
         }
         if(base->getType()->as<PointerType>()->getPointee()->isPointer()) {
             // int a[];
             // a[i];
             const auto addr = ctx.makeOp<LoadInst>(base);
-            return { ctx.makeOp<GetElementPtrInst>(addr, Vector<Value*>{ idx }), ValueQualifier::AsLValue, qualifier };
+            return { ctx.makeOp<GetElementPtrInst>(addr, std::vector{ idx }), ValueQualifier::AsLValue, qualifier };
         }
         if(strictMode.get()) {
             return QualifiedValue{ reportSplError(ctx, PointerType::get(InvalidType::get()), 10U, location(),
@@ -1084,7 +1085,7 @@ QualifiedValue ArrayIndexExpr::emit(EmitContext& ctx) const {
     } else {
         // int* a;
         // a[i];
-        return { ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ idx }), ValueQualifier::AsLValue, qualifier };
+        return { ctx.makeOp<GetElementPtrInst>(base, std::vector{ idx }), ValueQualifier::AsLValue, qualifier };
     }
 }
 
@@ -1118,7 +1119,7 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
         }
         DiagnosticsContext::get().attach<InvalidField>(structType->name(), mField).reportFatal();
     }
-    const auto ptr = ctx.makeOp<GetElementPtrInst>(base, Vector<Value*>{ ctx.getZeroIndex(), offset });
+    const auto ptr = ctx.makeOp<GetElementPtrInst>(base, std::vector<Value*>{ ctx.getZeroIndex(), offset });
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
 }
 Value* EmitContext::booleanToInt(Value* value) {
@@ -1162,11 +1163,11 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
     if(srcType->isPointer() && type->isPointer()) {
         const auto pointee = srcType->as<PointerType>()->getPointee();
         if(pointee->isArray()) {
-            auto base = makeOp<GetElementPtrInst>(value, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
+            auto base = makeOp<GetElementPtrInst>(value, std::vector{ getZeroIndex(), getZeroIndex() });
             while(!base->getType()->isSame(type)) {
                 if(!base->getType()->as<PointerType>()->getPointee()->isArray())
                     DiagnosticsContext::get().attach<Reason>("cannot decay array to pointer").reportFatal();
-                base = makeOp<GetElementPtrInst>(base, Vector<Value*>{ getZeroIndex(), getZeroIndex() });
+                base = makeOp<GetElementPtrInst>(base, std::vector{ getZeroIndex(), getZeroIndex() });
             }
             return base;
         }
@@ -1631,7 +1632,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
 
     const auto sizes = calculateArrayScalarSizes(type);
     const auto getAddress = [&](uint32_t offset) -> Value* {
-        Vector<Value*> indices;
+        std::vector<Value*> indices;
         indices.reserve(sizes.size());
 
         for(auto siz : sizes) {
@@ -1669,7 +1670,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
             const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
             const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize);
             ctx.makeOp<FunctionCallInst>(memsetFunc,
-                                         Vector<Value*>{
+                                         std::vector<Value*>{
                                              ptr,
                                              size,
                                          });
@@ -1813,7 +1814,7 @@ static void emitMemset(Function* func, const mir::Target& target) {
     const auto size = func->addArg(funcType->getArgTypes()[1]);
     const auto idx = builder.createPhi(size->getType());
     idx->addIncoming(entry, ConstantInteger::get(size->getType(), 0));
-    const auto cur = builder.makeOp<GetElementPtrInst>(ptr, Vector<Value*>{ idx });
+    const auto cur = builder.makeOp<GetElementPtrInst>(ptr, std::vector<Value*>{ idx });
     builder.makeOp<StoreInst>(cur, ConstantInteger::get(IntegerType::get(8U), 0));
     const auto nxt = builder.makeOp<BinaryInst>(InstructionID::Add, idx, ConstantInteger::get(size->getType(), 1));
     idx->addIncoming(loop, nxt);
@@ -1911,7 +1912,7 @@ std::pair<Value*, Qualifier> EmitContext::getRValue(const QualifiedValue& value)
             return { iter->second, qualifier };
         const auto pointee = val->getType()->as<PointerType>()->getPointee();
         if(pointee->isArray())
-            return { makeOp<GetElementPtrInst>(val, Vector<Value*>{ getZeroIndex(), getZeroIndex() }),
+            return { makeOp<GetElementPtrInst>(val, std::vector{ getZeroIndex(), getZeroIndex() }),
                      qualifier };  // decay to pointer
         if(pointee->isStruct())
             return { val, qualifier };  // only pass pointer
@@ -2017,7 +2018,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
             } else if(type->isArray()) {
                 const auto arr = type->as<ArrayType>();
                 for(uint32_t idx = 0; idx < arr->getElementCount(); ++idx) {
-                    Vector<Value*> offset{ getZeroIndex(), ConstantInteger::get(getIndexType(), idx) };
+                    std::vector<Value*> offset{ getZeroIndex(), ConstantInteger::get(getIndexType(), idx) };
                     const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
                     const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
                     self(self, subDst, subSrc);
@@ -2026,7 +2027,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
                 const auto curStructType = type->as<StructType>();
                 for(auto& field : curStructType->fields()) {
                     // TODO: get offset from field idx
-                    Vector<Value*> offset{ getZeroIndex(), curStructType->getOffset(field.fieldName) };
+                    std::vector<Value*> offset{ getZeroIndex(), curStructType->getOffset(field.fieldName) };
                     const auto subDst = makeOp<GetElementPtrInst>(dstPtr, offset);
                     const auto subSrc = makeOp<GetElementPtrInst>(srcPtr, offset);
                     self(self, subDst, subSrc);
@@ -2039,8 +2040,8 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
         const auto memcpyFunc = getIntrinsic(Intrinsic::memcpy);
         const auto ptr = PointerType::get(IntegerType::get(8));
 
-        const Vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
-                                      ConstantInteger::get(getIndexType(), static_cast<intmax_t>(size)) };
+        const std::vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),
+                                           ConstantInteger::get(getIndexType(), static_cast<intmax_t>(size)) };
         makeOp<FunctionCallInst>(memcpyFunc, args);
     }
 }

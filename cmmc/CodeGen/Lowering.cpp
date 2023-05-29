@@ -999,7 +999,7 @@ void LoweringContext::emitCopy(const MIROperand& dst, const MIROperand& src) {
     auto inst = MIRInst{ selectCopyOpcode(dst, src) }.setOperand<0>(dst).setOperand<1>(src);
     emitInst(inst);
     if constexpr(Config::debug) {
-        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst);
         CMMC_UNUSED(instInfo);
         assert(instInfo.verify(inst, mCodeGenCtx));
     }

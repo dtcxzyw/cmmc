@@ -134,12 +134,13 @@ class LoadReduce final : public TransformPass<Function> {
                         if(const auto load = dynamic_cast<LoadInst*>(val)) {
                             // Deferred load is better than reusing the value of this load!
                             bool used = false;
-                            for(auto user : load->getBlock()->instructions()) {
+                            for(auto user : load->users()) {
+                                if(user->getBlock() != load->getBlock())
+                                    continue;
                                 if(user->isTerminator())
                                     continue;
-                                if(user->hasOperand(load)) {
-                                    used = true;
-                                }
+                                used = true;
+                                break;
                             }
                             if(!used)
                                 continue;

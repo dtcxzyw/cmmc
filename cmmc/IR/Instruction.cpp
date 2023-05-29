@@ -20,33 +20,97 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <ostream>
 #include <string>
 #include <string_view>
 
 CMMC_NAMESPACE_BEGIN
 
+ValueRef::ValueRef(Value* val, Instruction* userInst) : value{ val }, user{ userInst } {
+    assert(val);
+    if(auto inst = dynamic_cast<Instruction*>(value)) {
+        inst->users().addRef(*this);
+    }
+}
+
+void ValueRef::resetValue(Value* newValue) {
+    if(newValue == value)
+        return;
+    if(auto inst = dynamic_cast<Instruction*>(value)) {
+        inst->users().removeRef(*this);
+    }
+    value = newValue;
+    if(auto inst = dynamic_cast<Instruction*>(value)) {
+        inst->users().addRef(*this);
+    }
+}
+ValueRef::~ValueRef() {
+    resetValue(nullptr);
+}
+
+ValueRefHandle::~ValueRefHandle() {
+    if(mRef)
+        std::destroy_at(mRef);
+}
+
+UserList::UserList(Value* self) : mHead{ self, nullptr } {}
+void UserList::addRef(ValueRef& ref) {
+    ref.prev = &mHead;
+    ref.next = mHead.next;
+    if(mHead.next) {
+        mHead.next->prev = &ref;
+    }
+    mHead.next = &ref;
+}
+void UserList::removeRef(ValueRef& ref) {
+    assert(ref.value == mHead.value);
+    if(ref.prev) {
+        ref.prev->next = ref.next;
+    }
+    if(ref.next) {
+        ref.next->prev = ref.prev;
+    }
+}
+
+[[nodiscard]] UserIterator UserList::begin() const noexcept {
+    return UserIterator{ mHead.next };
+}
+[[nodiscard]] UserIterator UserList::end() const noexcept {
+    return UserIterator{ nullptr };
+}
+
+UserList::~UserList() {
+    assert(!mHead.next);
+}
+
+OperandView::OperandView(const Deque<ValueRefHandle>& ref) : mRef{ ref } {}
+OperandIterator OperandView::begin() const noexcept {
+    return OperandIterator{ mRef.cbegin() };
+}
+OperandIterator OperandView::end() const noexcept {
+    return OperandIterator{ std::prev(mRef.cend()) };
+}
+ArgumentView::ArgumentView(const Deque<ValueRefHandle>& ref) : mRef{ ref } {}
+OperandIterator ArgumentView::begin() const noexcept {
+    return OperandIterator{ mRef.cbegin() };
+}
+OperandIterator ArgumentView::end() const noexcept {
+    return OperandIterator{ std::prev(mRef.cend()) };
+}
+
+void Instruction::addOperand(Value* value) {
+    mOperands.push_back(make<ValueRef>(value, this));
+}
+
 void Instruction::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
     getType()->dumpName(out);
     out << " %"sv << mLabel;
-}
-
-bool Instruction::replaceOperand(Value* oldOperand, Value* newOperand) {
-    assert(newOperand);
-    bool modified = false;
-    for(auto& operand : mOperands)
-        if(operand == oldOperand) {
-            operand = newOperand;
-            modified = true;
-        }
-    return modified;
-}
-bool Instruction::hasOperand(Value* operand) const noexcept {
-    return std::find(mOperands.cbegin(), mOperands.cend(), operand) != mOperands.cend();
 }
 
 bool Instruction::canbeOperand() const noexcept {
@@ -328,11 +392,8 @@ void FunctionCallInst::dumpInst(std::ostream& out) const {
     out << ' ';
     callee->dumpAsOperand(out);
     out << '(';
-    auto& args = operands();
-    size_t cnt = 0, size = args.size() - 1;
-    for(auto arg : operands()) {
-        if(cnt == size)
-            break;
+    size_t cnt = 0;
+    for(auto arg : arguments()) {
         if(cnt != 0) {
             out << ", "sv;
         }
@@ -364,7 +425,7 @@ void FMAInst::dumpInst(std::ostream& out) const {
     getOperand(2)->dumpAsOperand(out);
 }
 
-const Type* GetElementPtrInst::getValueType(Value* base, const Vector<Value*>& indices) {
+const Type* GetElementPtrInst::getValueType(Value* base, const std::vector<Value*>& indices) {
     assert(base->getType()->isPointer());
     const Type* cur = base->getType();
     for(auto idx : indices) {
@@ -400,10 +461,7 @@ std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::g
     };
 
     const Type* cur = operands().back()->getType();
-    for(auto& idx : operands()) {
-        if(&idx == &operands().back())
-            break;
-
+    for(auto idx : arguments()) {
         if(idx->getType()->isInteger()) {
             if(cur->isArray()) {
                 cur = cur->as<ArrayType>()->getElementType();
@@ -495,11 +553,9 @@ Instruction* UnreachableInst::clone() const {
 }
 
 Instruction* FunctionCallInst::clone() const {
-    Vector<Value*> args;
+    std::vector<Value*> args;
     args.reserve(operands().size() - 1);
-    for(auto& arg : operands()) {
-        if(&arg == &operands().back())
-            break;
+    for(auto arg : arguments()) {
         args.push_back(arg);
     }
     return make<FunctionCallInst>(operands().back(), args);
@@ -518,7 +574,7 @@ Instruction* FMAInst::clone() const {
 }
 
 Instruction* GetElementPtrInst::clone() const {
-    Vector<Value*> indices;
+    std::vector<Value*> indices;
     for(uint32_t idx = 0; idx + 1 < operands().size(); ++idx) {
         indices.push_back(getOperand(idx));
     }
@@ -662,19 +718,10 @@ bool PhiInst::verify(std::ostream& out) const {
 }
 Instruction* PhiInst::clone() const {
     const auto inst = make<PhiInst>(getType());
-    inst->operands() = operands();
+    for(auto val : operands())
+        inst->addOperand(val);
     inst->mIncomings = mIncomings;
     return inst;
-}
-bool PhiInst::replaceOperand(Value* oldOperand, Value* newOperand) {
-    if(!Instruction::replaceOperand(oldOperand, newOperand))
-        return false;
-    for(auto& [block, val] : mIncomings) {
-        CMMC_UNUSED(block);
-        if(val == oldOperand)
-            val = newOperand;
-    }
-    return true;
 }
 bool PhiInst::isEqual(const Instruction* rhs) const {
     if(!Instruction::isEqual(rhs))
@@ -694,17 +741,19 @@ void PhiInst::removeSource(Block* block) {
     const auto val = iter->second;
     mIncomings.erase(iter);
     // TODO: lazy update
-    const auto it = std::find(operands().begin(), operands().end(), val);
-    assert(it != operands().end());
-    operands().erase(it);
+    auto& operands = mutableOperands();
+    const auto it = std::find_if(operands.begin(), operands.end(), [&](const ValueRefHandle& ref) { return ref->value == val; });
+    assert(it != operands.end());
+    operands.erase(it);
 }
 void PhiInst::keepOneIncoming(Block* block) {
     const auto val = mIncomings.at(block);
     mIncomings = { { block, val } };
-    operands() = { val };
+    mutableOperands().clear();
+    mutableOperands().push_back(ValueRefHandle{ make<ValueRef>(val, this) });
 }
 void PhiInst::clear() {
-    operands().clear();
+    mutableOperands().clear();
     mIncomings.clear();
 }
 CMMC_NAMESPACE_END

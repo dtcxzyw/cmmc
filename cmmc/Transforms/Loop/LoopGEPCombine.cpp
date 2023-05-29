@@ -125,7 +125,7 @@ class LoopGEPCombine final : public TransformPass<Function> {
                 continue;
             builder.setInsertPoint(&block, iter);
             const auto newInst = builder.makeOp<GetElementPtrInst>(
-                it->second.baseGEP, Vector<Value*>{ ConstantInteger::get(builder.getIndexType(), it->second.offset) });
+                it->second.baseGEP, std::vector<Value*>{ ConstantInteger::get(builder.getIndexType(), it->second.offset) });
             replace.emplace(inst, newInst);
         }
     }

@@ -15,6 +15,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iterator>
@@ -24,30 +25,16 @@
 CMMC_NAMESPACE_BEGIN
 
 bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
-    bool modified = false;
-    if(inst->getInstID() != InstructionID::Phi)
-        for(auto& operand : inst->operands()) {
-            if(auto iter = replace.find(operand); iter != replace.cend()) {
-                operand = iter->second;
-                modified = true;
-            }
-        }
-    else {
-        for(auto& operand : inst->operands()) {
-            if(auto iter = replace.find(operand); iter != replace.cend()) {
-                inst->replaceOperand(operand, iter->second);
-                modified = true;
-            }
-        }
-    }
-    return modified;
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(replace);
+    reportNotImplemented(CMMC_LOCATION());
 }
 bool replaceOperandsInBlock(Block& block, const ReplaceMap& replace) {
     if(replace.empty())
         return false;
     bool modified = false;
-    for(auto inst : block.instructions())
-        modified |= applyReplace(inst, replace);
+    CMMC_UNUSED(block);
+    reportNotImplemented(CMMC_LOCATION());
     return modified;
 }
 bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) {

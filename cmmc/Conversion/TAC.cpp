@@ -58,7 +58,7 @@ void loadTAC(Module& module, const std::string& path) {
 
     std::unordered_map<String, Value*, StringHasher> identifierMap;
     std::unordered_map<int, Block*> blockMap;
-    Vector<Value*> paramStack;
+    std::vector<Value*> paramStack;
     std::vector<std::tuple<const TACInstStorage*, Block*, Block*>> postTerminator;
 
     auto getLValue = [&](const TACOperand& operand) -> Value* {
@@ -131,7 +131,7 @@ void loadTAC(Module& module, const std::string& path) {
     const auto emitStore = [&](Value* dst, Value* src) {
         if(!dst->getType()->as<PointerType>()->getPointee()->isSame(src->getType())) {
             // special case: DEC x1[0] = v1;
-            dst = builder.makeOp<GetElementPtrInst>(dst, Vector<Value*>{ builder.getZeroIndex(), builder.getZeroIndex() });
+            dst = builder.makeOp<GetElementPtrInst>(dst, std::vector{ builder.getZeroIndex(), builder.getZeroIndex() });
         }
         builder.makeOp<StoreInst>(dst, src);
     };
@@ -250,12 +250,12 @@ void loadTAC(Module& module, const std::string& path) {
                              },
                              [&](const TACRead& readInst) {
                                  const auto dst = getLValue(readInst.var);
-                                 const auto ret = builder.makeOp<FunctionCallInst>(read, Vector<Value*>{});
+                                 const auto ret = builder.makeOp<FunctionCallInst>(read, std::vector<Value*>{});
                                  emitStore(dst, ret);
                              },
                              [&](const TACWrite& writeInst) {
                                  const auto val = getRValue(writeInst.val);
-                                 builder.makeOp<FunctionCallInst>(write, Vector<Value*>{ val });
+                                 builder.makeOp<FunctionCallInst>(write, std::vector<Value*>{ val });
                              },
                              [&](std::monostate) {} },
                    inst);

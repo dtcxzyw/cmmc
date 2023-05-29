@@ -65,7 +65,7 @@ public:
             return;
         }
         for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
-            ctx.emitInst(MIRInst{ TAC::Arg }.setOperand<0>(ctx.mapOperand(inst->operands()[idx])));
+            ctx.emitInst(MIRInst{ TAC::Arg }.setOperand<0>(ctx.mapOperand(inst->getOperand(idx))));
         }
         auto calleeOperand = MIROperand::asReloc(ctx.mapGlobal(callee)->reloc.get());
         if(!inst->getType()->isVoid()) {
@@ -209,7 +209,7 @@ void TACTarget::emitAssembly(const MIRModule& module, std::ostream& out, Runtime
                 }
 
                 for(auto& inst : block->instructions()) {
-                    auto& instInfo = getInstInfo().getInstInfo(inst.opcode());
+                    auto& instInfo = getInstInfo().getInstInfo(inst);
                     instInfo.print(out, inst, false);
                     out << '\n';
                 }

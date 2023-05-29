@@ -26,17 +26,16 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
     if(ctx.flags.endsWithTerminator) {
         if(mInsts.empty())
             return false;
-        if(!requireFlag(ctx.instInfo.getInstInfo(mInsts.back().opcode()).getInstFlag(), InstFlagTerminator))
+        if(!requireFlag(ctx.instInfo.getInstInfo(mInsts.back()).getInstFlag(), InstFlagTerminator))
             return false;
         for(auto& inst : mInsts) {
-            if(&inst != &mInsts.back() &&
-               requireFlag(ctx.instInfo.getInstInfo(inst.opcode()).getInstFlag(), InstFlagTerminator)) {
+            if(&inst != &mInsts.back() && requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagTerminator)) {
                 return false;
             }
         }
     }
     for(auto& inst : mInsts) {
-        auto& info = ctx.instInfo.getInstInfo(inst.opcode());
+        auto& info = ctx.instInfo.getInstInfo(inst);
         if(!info.verify(inst, ctx)) {
             out << "Invalid inst: ";
             info.print(out, inst, true);
@@ -51,7 +50,7 @@ void MIRBasicBlock::dump(std::ostream& out, const CodeGenContext& ctx) const {
     out << ":\n";
     for(auto& inst : mInsts) {
         out << '\t';
-        ctx.instInfo.getInstInfo(inst.opcode()).print(out, inst, true);
+        ctx.instInfo.getInstInfo(inst).print(out, inst, true);
         out << '\n';
     }
 }

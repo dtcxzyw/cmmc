@@ -81,7 +81,7 @@ public:
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() == InstructionID::Ret) {
-                terminator->operands().front() = undef;
+                terminator->mutableOperands().front()->resetValue(undef);
             }
         }
 

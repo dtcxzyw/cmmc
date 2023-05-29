@@ -305,10 +305,7 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
     std::vector<int32_t> offsets;
     offsets.reserve(inst->operands().size() - 1);
 
-    for(auto& arg : inst->operands()) {
-        if(&arg == &inst->operands().back())
-            break;
-
+    for(auto arg : inst->arguments()) {
         auto size = static_cast<int32_t>(arg->getType()->getSize(dataLayout));
         auto alignment = static_cast<int32_t>(arg->getType()->getAlignment(dataLayout));
 
