@@ -84,12 +84,12 @@ class ShortCircuitCombine final : public TransformPass<Function> {
             return false;
         if(block.getTerminator()->getInstID() != InstructionID::ConditionalBranch)
             return false;
-        for(auto inst : block.instructions()) {
+        for(auto& inst : block.instructions()) {
             // TODO: handle inter-block uses
-            if(crossUses.count(inst)) {
+            if(crossUses.count(&inst)) {
                 return false;
             }
-            switch(inst->getInstID()) {
+            switch(inst.getInstID()) {
                 case InstructionID::Phi:
                     [[fallthrough]];
                 case InstructionID::Store:
@@ -97,7 +97,7 @@ class ShortCircuitCombine final : public TransformPass<Function> {
                 case InstructionID::Call:
                     return false;
                 case InstructionID::Load: {
-                    const auto addr = inst->getOperand(0);
+                    const auto addr = inst.getOperand(0);
                     if(addr->isGlobal() || addr->is<StackAllocInst>()) {
                         if(++loadCount > inlineLoadThreshold)
                             return false;
@@ -136,15 +136,14 @@ class ShortCircuitCombine final : public TransformPass<Function> {
         auto& instructions = block->instructions();
         instructions.pop_back();
         ReplaceMap replace;
-        for(auto inst : nextCond->instructions()) {
-            if(inst->isTerminator())
+        for(auto& inst : nextCond->instructions()) {
+            if(inst.isTerminator())
                 break;
-            const auto newInst = inst->clone();
-            newInst->setBlock(block);
-            instructions.push_back(newInst);
+            const auto newInst = inst.clone();
+            newInst->insertBefore(block, instructions.end());
             applyReplace(newInst, replace);
-            if(inst->canbeOperand())
-                replace.emplace(inst, newInst);
+            if(inst.canbeOperand())
+                replace.emplace(&inst, newInst);
         }
 
         IRBuilder builder(analysis.module().getTarget(), block);
@@ -185,15 +184,14 @@ class ShortCircuitCombine final : public TransformPass<Function> {
         auto& instructions = block->instructions();
         instructions.pop_back();
         ReplaceMap replace;
-        for(auto inst : nextCond->instructions()) {
-            if(inst->isTerminator())
+        for(auto& inst : nextCond->instructions()) {
+            if(inst.isTerminator())
                 break;
-            const auto newInst = inst->clone();
-            newInst->setBlock(block);
-            instructions.push_back(newInst);
+            const auto newInst = inst.clone();
+            newInst->insertBefore(block, instructions.end());
             applyReplace(newInst, replace);
-            if(inst->canbeOperand())
-                replace.emplace(inst, newInst);
+            if(inst.canbeOperand())
+                replace.emplace(&inst, newInst);
         }
 
         IRBuilder builder(analysis.module().getTarget(), block);
@@ -217,8 +215,8 @@ public:
 
         std::unordered_set<Instruction*> crossUses;
         for(auto block : func.blocks())
-            for(auto inst : block->instructions())
-                for(auto operand : inst->operands())
+            for(auto& inst : block->instructions())
+                for(auto operand : inst.operands())
                     if(operand->getBlock() && operand->getBlock() != block) {
                         crossUses.insert(operand->as<Instruction>());
                     }

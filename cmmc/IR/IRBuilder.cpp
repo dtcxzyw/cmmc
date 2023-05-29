@@ -39,19 +39,16 @@ IRBuilder::IRBuilder(const mir::Target& target, Block* block) : IRBuilder{ targe
 StackAllocInst* IRBuilder::createAlloc(const Type* type) {  // NOLINT
     auto inst = make<StackAllocInst>(type);
     const auto entry = getCurrentFunction()->entryBlock();
-    entry->instructions().emplace_front(inst);
-    inst->setBlock(entry);
+    inst->insertBefore(entry, entry->instructions().begin());
     return inst;
 }
 PhiInst* IRBuilder::createPhi(const Type* type) {
     auto inst = make<PhiInst>(type);
     auto block = getCurrentBlock();
-    if(mInsertPoint != block->instructions().cbegin() && (*std::prev(mInsertPoint))->getInstID() != InstructionID::Phi) {
+    if(mInsertPoint != block->instructions().begin() && std::prev(mInsertPoint)->getInstID() != InstructionID::Phi) {
         DiagnosticsContext::get().attach<Reason>("Cannot insert a phi instruction after non-phi instructions").reportFatal();
     }
-    auto iter = block->instructions().insert(mInsertPoint, inst);
-    mInsertPoint = std::next(iter);
-    inst->setBlock(block);
+    inst->insertBefore(mCurrentBlock, mInsertPoint);
     return inst;
 }
 Function* IRBuilder::getCurrentFunction() const noexcept {
@@ -74,7 +71,7 @@ void IRBuilder::setCurrentBlock(Block* block) {
     if(block)
         mInsertPoint = mCurrentBlock->instructions().end();
 }
-void IRBuilder::setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint) {
+void IRBuilder::setInsertPoint(Block* block, IntrusiveListIterator<Instruction> insertPoint) {
     assert(block);
     setCurrentBlock(block);
     mInsertPoint = insertPoint;
@@ -83,13 +80,13 @@ void IRBuilder::setInsertPoint(Block* block, Instruction* beforeInst) {
     assert(block);
     setCurrentBlock(block);
     assert(beforeInst);
-    mInsertPoint = std::find(block->instructions().begin(), block->instructions().end(), beforeInst);
-    assert(mInsertPoint != block->instructions().cend());
+    assert(beforeInst->getBlock() == block);
+    mInsertPoint = beforeInst->asIterator();
 }
 void IRBuilder::nextInsertPoint() {
     ++mInsertPoint;
 }
-List<Instruction*>::iterator IRBuilder::getInsertPoint() const noexcept {
+IntrusiveListIterator<Instruction> IRBuilder::getInsertPoint() const noexcept {
     return mInsertPoint;
 }
 Value* IRBuilder::getTrue() const noexcept {

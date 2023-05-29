@@ -74,11 +74,11 @@ CMMC_NAMESPACE_BEGIN
 
 class LoadReduce final : public TransformPass<Function> {
     static void runBlock(Block& block, SimpleValueAnalysis& valueAnalysis, ReplaceMap& replace) {
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() == InstructionID::Load)
-                if(auto value = valueAnalysis.getLastValue(inst->getOperand(0)))
-                    replace.emplace(inst, value);
-            valueAnalysis.next(inst);
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() == InstructionID::Load)
+                if(auto value = valueAnalysis.getLastValue(inst.getOperand(0)))
+                    replace.emplace(&inst, value);
+            valueAnalysis.next(&inst);
         }
     }
 
@@ -92,9 +92,9 @@ class LoadReduce final : public TransformPass<Function> {
         for(auto block : blocks) {
             std::vector<Instruction*> loadInsts;
             std::vector<Value*> storePointers;
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Load) {
-                    auto ptr = inst->getOperand(0);
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Load) {
+                    auto ptr = inst.getOperand(0);
                     if(ptr->isInstruction() && ptr->getBlock() == block)  // GEP-based load reduce is not supported
                         continue;
                     bool mayBeOverrided = false;
@@ -106,12 +106,12 @@ class LoadReduce final : public TransformPass<Function> {
                     }
 
                     if(!mayBeOverrided)
-                        loadInsts.push_back(inst);
-                } else if(inst->getInstID() == InstructionID::Store) {
-                    auto ptr = inst->getOperand(0);
+                        loadInsts.push_back(&inst);
+                } else if(inst.getInstID() == InstructionID::Store) {
+                    auto ptr = inst.getOperand(0);
                     storePointers.push_back(ptr);
-                } else if(inst->getInstID() == InstructionID::Call) {
-                    const auto callee = inst->operands().back();
+                } else if(inst.getInstID() == InstructionID::Call) {
+                    const auto callee = inst.operands().back();
                     if(const auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                             continue;
@@ -157,7 +157,6 @@ class LoadReduce final : public TransformPass<Function> {
             phiList.reserve(reuseValues.size());
             for(auto& [inst, vals] : reuseValues) {
                 const auto phi = make<PhiInst>(inst->getType());
-                phi->setBlock(block);
                 replace.emplace(inst, phi);
                 phiList.push_back(phi);
             }
@@ -180,14 +179,14 @@ class LoadReduce final : public TransformPass<Function> {
                     } else {
                         auto ptr = inst->getOperand(0);
                         auto load = make<LoadInst>(ptr);
-                        load->setBlock(indirectBlock);
-                        indirectBlock->instructions().push_front(load);
+                        load->insertBefore(indirectBlock, indirectBlock->instructions().begin());
                         phi->addIncoming(indirectBlock, load);
                     }
                 }
             }
 
-            block->instructions().insert(block->instructions().cbegin(), phiList.cbegin(), phiList.cend());
+            for(auto phi : phiList)
+                phi->insertBefore(block, block->instructions().begin());
             analysis.invalidateFunc(func);
             return;
         }

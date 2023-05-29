@@ -47,9 +47,9 @@ public:
 
             auto& instructions = block->instructions();
             for(auto iter = instructions.begin(); iter != instructions.end();) {
-                const auto inst = *iter;
+                auto& inst = *iter;
                 const auto next = std::next(iter);
-                MatchContext<Value> ctx{ inst, nullptr };
+                MatchContext<Value> ctx{ &inst, nullptr };
 
                 Value* p;
                 intmax_t c;
@@ -61,7 +61,7 @@ public:
                     if(pointee->isArray()) {
                         const auto srcArray = pointee->as<ArrayType>();
                         const auto elementType = srcArray->getElementType();
-                        if(elementType->isSame(inst->getType()->as<PointerType>()->getPointee())) {
+                        if(elementType->isSame(inst.getType()->as<PointerType>()->getPointee())) {
                             const auto elementSize = static_cast<intmax_t>(elementType->getSize(dataLayout));
 
                             if(c % elementSize == 0) {
@@ -75,7 +75,7 @@ public:
                                     std::vector<Value*>{ builder.getZeroIndex(),
                                                          ConstantInteger::get(builder.getIndexType(), idx) });
 
-                                replaceMap.emplace(inst, gep);
+                                replaceMap.emplace(&inst, gep);
                             }
                         }
                     }

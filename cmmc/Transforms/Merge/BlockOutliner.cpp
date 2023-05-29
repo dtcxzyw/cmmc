@@ -42,26 +42,26 @@ class BlockOutliner final : public TransformPass<Function> {
         std::unordered_map<Value*, uint32_t> rhsOperands;
         for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
             lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
-            const auto lhsInst = *lhsIter;
-            const auto rhsInst = *rhsIter;
-            if(!lhsInst->isEqual(rhsInst))
+            auto& lhsInst = *lhsIter;
+            auto& rhsInst = *rhsIter;
+            if(!lhsInst.isEqual(&rhsInst))
                 return false;
 
-            lhsOperands[lhsInst] = rhsOperands[rhsInst] = ++alloc;
+            lhsOperands[&lhsInst] = rhsOperands[&rhsInst] = ++alloc;
         }
         for(auto lhsIter = lhs->instructions().begin(), rhsIter = rhs->instructions().begin();
             lhsIter != lhs->instructions().end(); ++lhsIter, ++rhsIter) {
-            const auto lhsInst = *lhsIter;
-            const auto rhsInst = *rhsIter;
+            auto& lhsInst = *lhsIter;
+            auto& rhsInst = *rhsIter;
 
-            if(lhsInst->getInstID() == InstructionID::Phi)
+            if(lhsInst.getInstID() == InstructionID::Phi)
                 continue;
 
-            if(lhsInst->operands().size() != rhsInst->operands().size())
+            if(lhsInst.operands().size() != rhsInst.operands().size())
                 return false;
-            for(uint32_t idx = 0; idx < lhsInst->operands().size(); ++idx) {
-                const auto lhsOperand = lhsInst->getOperand(idx);
-                const auto rhsOperand = rhsInst->getOperand(idx);
+            for(uint32_t idx = 0; idx < lhsInst.operands().size(); ++idx) {
+                const auto lhsOperand = lhsInst.getOperand(idx);
+                const auto rhsOperand = rhsInst.getOperand(idx);
                 if(lhsOperand->getBlock() == lhs && rhsOperand->getBlock() == rhs) {
                     if(lhsOperands.at(lhsOperand) != rhsOperands.at(rhsOperand))
                         return false;
@@ -74,9 +74,9 @@ class BlockOutliner final : public TransformPass<Function> {
         auto checkTarget = [&](Block* target) {
             if(!target)
                 return true;
-            for(auto inst : target->instructions()) {
-                if(inst->getInstID() == InstructionID::Phi) {
-                    const auto phi = inst->as<PhiInst>();
+            for(auto& inst : target->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    const auto phi = inst.as<PhiInst>();
                     auto& incomings = phi->incomings();
                     if(incomings.at(lhs) != incomings.at(rhs))
                         return false;
@@ -144,7 +144,7 @@ public:
                 const auto dst = block;
                 for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                     lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                    replaceMap.emplace(*lhsIter, *rhsIter);
+                    replaceMap.emplace(lhsIter.get(), rhsIter.get());
                 }
             }
         }
@@ -159,7 +159,7 @@ public:
             }
             for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                 lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                replaceMap.emplace(*lhsIter, *rhsIter);
+                replaceMap.emplace(lhsIter.get(), rhsIter.get());
             }
         }
 

@@ -27,7 +27,7 @@ using BlockReducer = std::function<Value*(Instruction* inst, ReplaceMap& replace
 bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer);
 void removeInst(Instruction* inst);
 // NOTICE: no terminator/operand fix
-Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after);
+Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveListIterator<Instruction> after);
 bool applyReplace(Instruction* inst, const ReplaceMap& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 bool replaceOperandsInBlock(Block& block, const ReplaceMap& replace);
@@ -45,7 +45,7 @@ bool scanInstructions(Block& block, Callable callable) {
     bool modified = false;
     while(true) {
         bool rescan = false;
-        for(auto inst : block.instructions()) {
+        for(auto& inst : block.instructions()) {
             if(callable(inst)) {
                 modified = rescan = true;
                 break;

@@ -49,17 +49,17 @@ class FuncInlining final : public TransformPass<Function> {
         return func.attr().hasAttr(FunctionAttribute::NoRecurse);
     }
 
-    static void applyInline(Block* block, List<Instruction*>::iterator call, Function* caller, Function* callee) {
+    static void applyInline(Block* block, IntrusiveListIterator<Instruction> call, Function* caller, Function* callee) {
         auto& callerBlocks = block->getFunction()->blocks();
         auto iter = std::find(callerBlocks.begin(), callerBlocks.end(), block);
-        const auto callRet = *call;
+        auto& callRet = *call;
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
         ReplaceMap targetReplace;
         Block* entryBlock = nullptr;
         {
-            auto& arguments = (*call)->mutableOperands();
+            auto& arguments = (*call).mutableOperands();
             auto& parameters = callee->args();
             for(size_t idx = 0; idx < parameters.size(); ++idx) {
                 targetReplace.emplace(parameters[idx], arguments[idx]->value);
@@ -74,9 +74,9 @@ class FuncInlining final : public TransformPass<Function> {
             newBlock->setFunction(caller);
             callerBlocks.insert(insertPoint, newBlock);
             replace.emplace(subBlock, newBlock);
-            for(auto inst : newBlock->instructions()) {
-                if(inst->getInstID() == InstructionID::Phi) {
-                    phiNodes.push_back(inst->as<PhiInst>());
+            for(auto& inst : newBlock->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    phiNodes.push_back(inst.as<PhiInst>());
                 } else
                     break;
             }
@@ -86,27 +86,28 @@ class FuncInlining final : public TransformPass<Function> {
         {
             assert(entryBlock);
             auto branch = make<BranchInst>(entryBlock);
-            branch->setBlock(block);
-            block->instructions().back() = branch;
+            auto& instructions = block->instructions();
+            instructions.pop_back();
+            branch->insertBefore(block, instructions.end());
         }
         // fix allocs
         const auto callerEntry = caller->entryBlock();
+        // FIXME
+        reportNotImplemented(CMMC_LOCATION());
         entryBlock->instructions().remove_if([&](Instruction* inst) {
             if(inst->getInstID() == InstructionID::Alloc) {
-                inst->setBlock(callerEntry);
-                callerEntry->instructions().push_front(inst);
+                inst->insertBefore(callerEntry, callerEntry->instructions().begin());
                 return true;
             }
             return false;
         });
         // fix terminators
         PhiInst* retValue = nullptr;
-        auto retType = callRet->getType();
+        auto retType = callRet.getType();
         if(!retType->isVoid()) {
             retValue = make<PhiInst>(retType);
-            retValue->setBlock(sinkBlock);
-            sinkBlock->instructions().push_front(retValue);
-            targetReplace.emplace(callRet, retValue);
+            retValue->insertBefore(sinkBlock, sinkBlock->instructions().begin());
+            targetReplace.emplace(&callRet, retValue);
         }
 
         for(auto [oldBlock, newBlock] : replace) {
@@ -118,8 +119,9 @@ class FuncInlining final : public TransformPass<Function> {
             switch(terminator->getInstID()) {
                 case InstructionID::Ret: {
                     auto branch = make<BranchInst>(sinkBlock);
-                    branch->setBlock(newBlock);
-                    newBlock->instructions().back() = branch;
+                    auto& insts = newBlock->instructions();
+                    insts.pop_back();
+                    branch->insertBefore(newBlock, insts.end());
                     if(!retType->isVoid()) {
                         retValue->addIncoming(newBlock, terminator->getOperand(0));
                     }
@@ -149,9 +151,9 @@ class FuncInlining final : public TransformPass<Function> {
             const auto branch = terminator->as<BranchInst>();
 
             auto handleTarget = [&](Block* target) {
-                for(auto inst : target->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        inst->as<PhiInst>()->replaceSource(block, sinkBlock);
+                for(auto& inst : target->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        inst.as<PhiInst>()->replaceSource(block, sinkBlock);
                     } else
                         break;
                 }
@@ -167,9 +169,9 @@ class FuncInlining final : public TransformPass<Function> {
         for(auto block : func.blocks()) {
             auto& insts = block->instructions();
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
-                auto inst = *iter;
-                if(inst->getInstID() == InstructionID::Call) {
-                    const auto callee = inst->operands().back();
+                auto& inst = *iter;
+                if(inst.getInstID() == InstructionID::Call) {
+                    const auto callee = inst.operands().back();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(!calleeFunc->blocks().empty() && shouldInline(*calleeFunc)) {
                             applyInline(block, iter, &func, calleeFunc);

@@ -38,7 +38,7 @@ class Block final {
     Function* mFunction;
     String mLabel;
     uint32_t mBlockIdx;
-    List<Instruction*> mInstructions;
+    IntrusiveList<Instruction> mInstructions;
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
@@ -62,7 +62,7 @@ public:
         mBlockIdx = idx;
     }
 
-    List<Instruction*>& instructions() noexcept {
+    IntrusiveList<Instruction>& instructions() noexcept {
         return mInstructions;
     }
     [[nodiscard]] Function* getFunction() const noexcept {

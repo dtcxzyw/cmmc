@@ -37,7 +37,7 @@ public:
 
             auto& insts = block->instructions();
             modified |= insts.size() != 1;
-            insts.erase(insts.cbegin(), std::prev(insts.cend()));
+            insts.erase(insts.begin(), std::prev(insts.end()));
         }
         return modified;
     }

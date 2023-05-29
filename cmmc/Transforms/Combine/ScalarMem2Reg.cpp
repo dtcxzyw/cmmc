@@ -96,7 +96,7 @@ public:
 class ScalarMem2Reg final : public TransformPass<Function> {
     void filterPromotable(Function& func, std::unordered_set<Value*>& interested) const {
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
+            for(auto& inst : block->instructions()) {
                 switch(inst->getInstID()) {
                     case InstructionID::Store: {
                         interested.erase(inst->getOperand(1));  // use as value
@@ -189,7 +189,10 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
             };
 
-            std::vector<Instruction*> instructionList{ block->instructions().cbegin(), block->instructions().cend() };
+            std::vector<Instruction*> instructionList;
+            instructionList.reserve(block->instructions().size());
+            for(auto& inst : block->instructions())
+                instructionList.push_back(&inst);
             bool stop = false;
             for(auto inst : instructionList) {
                 if(stop)
@@ -231,9 +234,9 @@ public:
         const auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
 
         std::vector<StackAllocInst*> interested;
-        for(auto inst : func.entryBlock()->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                auto alloc = inst->as<StackAllocInst>();
+        for(auto& inst : func.entryBlock()->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                auto alloc = inst.as<StackAllocInst>();
                 if(alloc->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
                     interested.push_back(alloc);
                 }

@@ -200,26 +200,26 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
         mfunc.blocks().push_back(std::make_unique<MIRBasicBlock>(getBlockLabel(codeGenCtx), &mfunc, tripCount));
         auto& mblock = mfunc.blocks().back();
         blockMap.emplace(block, mblock.get());
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Phi) {
-                auto vreg = ctx.newVReg(inst->getType());
-                ctx.addOperand(inst, vreg);
+        for(auto& inst : block->instructions()) {
+            if(inst.getInstID() == InstructionID::Phi) {
+                auto vreg = ctx.newVReg(inst.getType());
+                ctx.addOperand(&inst, vreg);
             }
         }
     }
 
     {
         ctx.setCurrentBasicBlock(blockMap.at(func->entryBlock()));
-        for(auto inst : func->entryBlock()->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                const auto type = inst->getType()->as<PointerType>()->getPointee();
+        for(auto& inst : func->entryBlock()->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                const auto type = inst.getType()->as<PointerType>()->getPointee();
                 const auto storage =
                     mfunc.addStackObject(codeGenCtx, static_cast<uint32_t>(type->getSize(dataLayout)),
                                          static_cast<uint32_t>(type->getAlignment(dataLayout)), 0, StackObjectUsage::Local);
-                storageMap.emplace(inst, storage);
+                storageMap.emplace(&inst, storage);
                 const auto addr = ctx.newVReg(ctx.getPtrType());
                 ctx.emitInst(MIRInst{ InstLoadStackObjectAddr }.setOperand<0>(addr).setOperand<1>(storage));
-                ctx.addOperand(inst, addr);
+                ctx.addOperand(&inst, addr);
             } else
                 break;
         }
@@ -239,8 +239,8 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
     for(auto block : dom.blocks()) {
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
-        for(auto inst : block->instructions()) {
-            lowerInst(inst, ctx);
+        for(auto& inst : block->instructions()) {
+            lowerInst(&inst, ctx);
         }
     }
 
@@ -371,13 +371,12 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
 
     const auto hasCall = [](Function* func) {
         for(auto block : func->blocks())
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Call)
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Call)
                     return true;
             }
         return false;
     };
-    CMMC_UNUSED(hasCall);
 
     for(auto func : cgscc.getOrder()) {
         ctx.flags = MIRFlags{};
@@ -663,9 +662,9 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<Value*> src;
     std::vector<Value*> dst;
 
-    for(auto inst : dstBlock->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            const auto phi = inst->as<PhiInst>();
+    for(auto& inst : dstBlock->instructions()) {
+        if(inst.getInstID() == InstructionID::Phi) {
+            const auto phi = inst.as<PhiInst>();
             src.push_back(phi->incomings().at(srcBlock));
             dst.push_back(phi);
         } else

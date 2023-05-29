@@ -36,9 +36,10 @@ public:
         const auto& target = analysis.module().getTarget();
         // requirement: no alloc
         // TODO: hoist allocas
+        // FIXME: All allocas should be in the entry block!
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Alloc) {
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Alloc) {
                     return false;
                 }
             }
@@ -48,20 +49,20 @@ public:
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() == InstructionID::Ret) {
-                auto prev = std::next(block->instructions().crbegin());
-                if(prev == block->instructions().crend()) {
+                auto prev = std::next(block->instructions().rbegin());
+                if(prev == block->instructions().rend()) {
                     continue;
                 }
 
-                auto prevInst = *prev;
-                if(prevInst->getInstID() != InstructionID::Call)
+                auto& prevInst = *prev;
+                if(prevInst.getInstID() != InstructionID::Call)
                     continue;
-                auto callee = prevInst->operands().back();
+                auto callee = prevInst.operands().back();
                 if(auto calleeFunc = dynamic_cast<Function*>(callee); &func == calleeFunc) {
                     auto type = calleeFunc->getType()->as<FunctionType>();
                     if((type->getRetType()->isVoid() && terminator->operands().empty()) ||
                        (!type->getRetType()->isVoid() && !terminator->operands().empty() &&
-                        terminator->getOperand(0) == prevInst)) {
+                        terminator->getOperand(0) == &prevInst)) {
                         redirect.push_back(block);
                     }
                 }
@@ -94,10 +95,10 @@ public:
         }
 
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(block == entry && inst->getInstID() == InstructionID::Phi)
+            for(auto& inst : block->instructions()) {
+                if(block == entry && inst.getInstID() == InstructionID::Phi)
                     continue;
-                applyReplace(inst, replace);
+                applyReplace(&inst, replace);
             }
         }
 

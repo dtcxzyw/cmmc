@@ -66,14 +66,12 @@ public:
                 auto& insts = block->instructions();
                 insts.pop_back();
                 const auto inst = make<BranchInst>(falseUnreachable ? trueTarget : falseTarget);
-                inst->setBlock(block);
-                insts.push_back(inst);
+                inst->insertBefore(block, block->instructions().end());
             } else {
                 auto& insts = block->instructions();
                 insts.pop_back();
                 const auto inst = make<UnreachableInst>();
-                inst->setBlock(block);
-                insts.push_back(inst);
+                inst->insertBefore(block, block->instructions().end());
             }
             modified = true;
         }

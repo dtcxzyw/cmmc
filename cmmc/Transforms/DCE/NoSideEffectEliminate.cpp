@@ -37,18 +37,18 @@ public:
 
         // collect side effect sinks (terminators/stores/funcs)
         for(auto block : func.blocks())
-            for(auto inst : block->instructions()) {
-                const auto instID = inst->getInstID();
-                if(inst->isTerminator() || instID == InstructionID::Store) {
-                    used.insert(inst);
-                    q.push(inst);
+            for(auto& inst : block->instructions()) {
+                const auto instID = inst.getInstID();
+                if(inst.isTerminator() || instID == InstructionID::Store) {
+                    used.insert(&inst);
+                    q.push(&inst);
                 } else if(instID == InstructionID::Call) {
-                    const auto callee = inst->operands().back();
+                    const auto callee = inst.operands().back();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee);
                        calleeFunc->attr().hasAttr(FunctionAttribute::NoSideEffect))
                         continue;
-                    used.insert(inst);
-                    q.push(inst);
+                    used.insert(&inst);
+                    q.push(&inst);
                 }
             }
 

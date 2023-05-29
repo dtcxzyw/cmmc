@@ -73,9 +73,9 @@ public:
         });
         ReplaceMap replace;
         for(auto block : removed) {
-            for(auto inst : block->instructions())
-                if(inst->canbeOperand())
-                    replace.emplace(inst, make<UndefinedValue>(inst->getType()));
+            for(auto& inst : block->instructions())
+                if(inst.canbeOperand())
+                    replace.emplace(&inst, make<UndefinedValue>(inst.getType()));
             const auto terminator = block->getTerminator();
             if(!terminator->isBranch())
                 continue;

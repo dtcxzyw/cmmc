@@ -19,9 +19,12 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
+#include <cmmc/Support/IntrusiveList.hpp>
 #include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <initializer_list>
+#include <memory>
 #include <ostream>
 #include <unordered_map>
 
@@ -135,6 +138,7 @@ public:
 };
 class UserList final {
     ValueRef mHead{ nullptr, nullptr };
+    int32_t mUseCount;
 
 public:
     explicit UserList(Value* self);
@@ -145,6 +149,10 @@ public:
     ~UserList();
     void addRef(ValueRef& ref);
     void removeRef(ValueRef& ref);
+    void replaceWith(Value* value);
+    [[nodiscard]] int32_t useCount() const noexcept {
+        return mUseCount;
+    }
 
     [[nodiscard]] UserIterator begin() const noexcept;
     [[nodiscard]] UserIterator end() const noexcept;
@@ -267,9 +275,11 @@ class Instruction : public Value {
     Block* mBlock;
     String mLabel;
     UserList mUsers;
+    mutable IntrusiveListNode<Instruction> mNode;
 
 public:
-    Instruction(InstructionID instID, const Type* valueType) : Value{ valueType }, mInstID{ instID }, mUsers{ this } {}
+    Instruction(InstructionID instID, const Type* valueType)
+        : Value{ valueType }, mInstID{ instID }, mUsers{ this }, mNode{ nullptr, nullptr, this } {}
     Instruction(InstructionID instID, const Type* valueType, std::initializer_list<Value*> initOperands)
         : Instruction{ instID, valueType } {
         for(auto val : initOperands) {
@@ -286,9 +296,6 @@ public:
     }
     [[nodiscard]] InstructionID getInstID() const noexcept {
         return mInstID;
-    }
-    void setBlock(Block* block) noexcept {
-        mBlock = block;
     }
     [[nodiscard]] Block* getBlock() const noexcept final {
         return mBlock;
@@ -309,6 +316,17 @@ public:
         return mOperands[idx]->value;
     }
     void addOperand(Value* value);
+    void replaceWith(Value* value);
+    [[nodiscard]] bool isUsed() const {
+        return mUsers.useCount() > 0;
+    }
+    [[nodiscard]] bool hasExactlyOneUse() const noexcept {
+        return mUsers.useCount() == 1;
+    }
+
+    void insertBefore(Block* block, IntrusiveListIterator<Instruction> it);
+    IntrusiveListIterator<Instruction> asIterator() const;
+    IntrusiveListNode<Instruction>* asNode() const;
 
     void setLabel(String label) {
         mLabel = label;
@@ -352,6 +370,13 @@ public:
 
     [[nodiscard]] virtual Instruction* clone() const = 0;
     virtual bool isEqual(const Instruction* rhs) const;  // only check metadata
+};
+
+template <>
+struct IntrusiveListItemAccessor<Instruction> final {
+    static void destroy(IntrusiveListNode<Instruction>* node) {
+        std::destroy_at(node->ptr);
+    }
 };
 
 class BinaryInst final : public Instruction {

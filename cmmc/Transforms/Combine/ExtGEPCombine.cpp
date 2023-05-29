@@ -31,11 +31,11 @@ CMMC_NAMESPACE_BEGIN
 class ExtGEPCombine final : public TransformPass<Function> {
     static bool runBlock(Block& block, const Type* indexType) {
         bool modified = false;
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() != InstructionID::GetElementPtr)
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() != InstructionID::GetElementPtr)
                 continue;
 
-            for(auto& operand : inst->mutableOperands()) {
+            for(auto& operand : inst.mutableOperands()) {
                 if(operand->value->getType()->isInteger()) {
                     Value* idx;
                     if(sext(any(idx))(MatchContext<Value>{ operand->value, nullptr })) {

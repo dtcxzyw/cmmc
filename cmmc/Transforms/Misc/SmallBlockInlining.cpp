@@ -79,21 +79,21 @@ public:
 
             ReplaceMap replace;
             std::vector<Instruction*> newInsts;
-            for(auto inst : nextBlock->instructions()) {
-                if(inst->getInstID() == InstructionID::Phi) {
-                    auto phi = inst->as<PhiInst>();
-                    replace.emplace(inst, phi->incomings().at(block));
+            for(auto& inst : nextBlock->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    auto phi = inst.as<PhiInst>();
+                    replace.emplace(&inst, phi->incomings().at(block));
                     phi->removeSource(block);
                 } else {
-                    const auto newInst = inst->clone();
-                    newInst->setBlock(block);
-                    newInst->setLabel(inst->getLabel());
+                    const auto newInst = inst.clone();
+                    newInst->setLabel(inst.getLabel());
                     newInsts.push_back(newInst);
-                    replace.emplace(inst, newInst);
+                    replace.emplace(&inst, newInst);
                 }
             }
             replaceOperands(newInsts, replace);
-            insts.insert(insts.cend(), newInsts.cbegin(), newInsts.cend());
+            for(auto inst : newInsts)
+                inst->insertBefore(block, insts.end());
         }
         return modified;
     }

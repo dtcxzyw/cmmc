@@ -53,14 +53,15 @@ class StoreEliminate final : public TransformPass<Function> {
         }
 
         bool isAfterStore = store == nullptr;
-        for(auto inst : block.instructions()) {
+        // FIXME: start from store
+        for(auto& inst : block.instructions()) {
             if(++lookaheadCount >= maxLookaheadCount) {
                 return false;
             }
             if(isAfterStore) {
-                if(inst->isBranch()) {
+                if(inst.isBranch()) {
                     // TODO: leak querying by block
-                    const auto branch = inst->as<BranchInst>();
+                    const auto branch = inst.as<BranchInst>();
                     const auto trueTarget = branch->getTrueTarget();
                     const auto falseTarget = branch->getFalseTarget();
                     auto handleTarget = [&](Block* target) {
@@ -75,22 +76,22 @@ class StoreEliminate final : public TransformPass<Function> {
                         return false;
                     if(falseTarget && trueTarget != falseTarget && !handleTarget(falseTarget))
                         return false;
-                } else if(inst->getInstID() == InstructionID::Call) {
+                } else if(inst.getInstID() == InstructionID::Call) {
                     // TODO: store gep?
                     if(addr->isInstruction() && addr->as<Instruction>()->getInstID() == InstructionID::Alloc) {
-                        if(leak.mayRead(inst, addr) || leak.mayModify(inst, addr))
+                        if(leak.mayRead(&inst, addr) || leak.mayModify(&inst, addr))
                             return false;
                     } else {
-                        const auto callee = inst->operands().back();
+                        const auto callee = inst.operands().back();
                         if(auto func = dynamic_cast<Function*>(callee)) {
                             if(!func->attr().hasAttr(FunctionAttribute::NoMemoryRead))
                                 return false;
                         } else
                             return false;
                     }
-                } else if(inst->getInstID() == InstructionID::Store) {
-                    const auto storeAddr = inst->getOperand(0);
-                    const auto storeValue = inst->getOperand(1);
+                } else if(inst.getInstID() == InstructionID::Store) {
+                    const auto storeAddr = inst.getOperand(0);
+                    const auto storeValue = inst.getOperand(1);
 
                     if(storeValue->getType()->isPointer() && !aliasSet.isDistinct(addr, storeValue))
                         return false;
@@ -102,14 +103,14 @@ class StoreEliminate final : public TransformPass<Function> {
                     if(!aliasSet.isDistinct(addr, storeAddr)) {
                         return false;
                     }
-                } else if(inst->isTerminator()) {
+                } else if(inst.isTerminator()) {
                     return addressSpace.mustBe(addr, AddressSpaceType::InternalStack);
-                } else if(inst->getInstID() == InstructionID::Load) {
-                    const auto loadAddr = inst->getOperand(0);
+                } else if(inst.getInstID() == InstructionID::Load) {
+                    const auto loadAddr = inst.getOperand(0);
                     if(loadAddr->getType()->isPointer() && !aliasSet.isDistinct(addr, loadAddr))
                         return false;
                 }
-            } else if(inst == store) {
+            } else if(&inst == store) {
                 isAfterStore = true;
             }
         }
@@ -135,22 +136,22 @@ class StoreEliminate final : public TransformPass<Function> {
     static bool removeStoreOnlyAlloca(Function& func) {
         std::unordered_map<Value*, std::vector<Instruction*>> interested;
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Store) {
-                    auto storeAddr = inst->getOperand(0);
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Store) {
+                    auto storeAddr = inst.getOperand(0);
                     if(auto alloca = dynamic_cast<StackAllocInst*>(storeAddr)) {
-                        interested[alloca].push_back(inst);
+                        interested[alloca].push_back(&inst);
                     }
                 }
             }
         }
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Store) {
-                    if(inst->getOperand(1)->getType()->isPointer())
-                        interested.erase(inst->getOperand(1));
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Store) {
+                    if(inst.getOperand(1)->getType()->isPointer())
+                        interested.erase(inst.getOperand(1));
                 } else {
-                    for(auto operand : inst->operands())
+                    for(auto operand : inst.operands())
                         if(operand->getType()->isPointer())
                             interested.erase(operand);
                 }

@@ -82,10 +82,10 @@ public:
                 prev->instructions().pop_back();
                 IRBuilder builder{ target, prev };
                 builder.makeOp<BranchInst>(block);
-                for(auto inst : block->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
+                for(auto& inst : block->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
                         ReplaceMap replace;
-                        const auto phi = inst->as<PhiInst>();
+                        const auto phi = inst.as<PhiInst>();
                         for(auto [pred, val] : phi->incomings()) {
                             CMMC_UNUSED(val);
                             if(pred != loop.latch) {
@@ -153,9 +153,9 @@ public:
                 // loop.bound -> startValue
                 terminator->getOperand(0)->as<CompareInst>()->mutableOperands()[1]->resetValue(startValue);
                 const auto& replace = replaceMap[prev];
-                for(auto inst : head->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        const auto phi = inst->as<PhiInst>();
+                for(auto& inst : head->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        const auto phi = inst.as<PhiInst>();
                         auto val = phi->incomings().at(loop.latch);
                         if(replace.count(val))
                             val = replace.at(val);
@@ -177,9 +177,9 @@ public:
                 };
 
                 if(epilogueSize == 1) {
-                    for(auto inst : loop.latch->instructions()) {
-                        if(inst->getInstID() == InstructionID::Phi) {
-                            const auto phi = inst->as<PhiInst>();
+                    for(auto& inst : loop.latch->instructions()) {
+                        if(inst.getInstID() == InstructionID::Phi) {
+                            const auto phi = inst.as<PhiInst>();
                             phi->clear();
                             const auto val = replaceMap.at(head).at(phi)->as<PhiInst>()->incomings().at(prev);
                             phi->addIncoming(prev, val);
@@ -201,9 +201,9 @@ public:
                         for(auto block : cfg.predecessors(loop.latch)) {
                             resetTarget(block->getTerminator()->as<BranchInst>(), loop.latch, head);
                         }
-                        for(auto inst : head->instructions()) {
-                            if(inst->getInstID() == InstructionID::Phi) {
-                                const auto phi = inst->as<PhiInst>();
+                        for(auto& inst : head->instructions()) {
+                            if(inst.getInstID() == InstructionID::Phi) {
+                                const auto phi = inst.as<PhiInst>();
                                 phi->removeSource(loop.latch);
                             } else
                                 break;
@@ -211,9 +211,9 @@ public:
                     } else {
                         exitSuperBlock();
                         auto& replace = replaceMap[prev];
-                        for(auto inst : head->instructions()) {
-                            if(inst->getInstID() == InstructionID::Phi) {
-                                const auto phi = inst->as<PhiInst>();
+                        for(auto& inst : head->instructions()) {
+                            if(inst.getInstID() == InstructionID::Phi) {
+                                const auto phi = inst.as<PhiInst>();
                                 auto val = phi->incomings().at(loop.latch);
                                 if(replace.count(val))
                                     val = replace.at(val);
@@ -241,8 +241,7 @@ public:
                 const auto exiting = terminator->getFalseTarget();
                 prev->instructions().pop_back();
                 const auto branch = make<BranchInst>(exiting);
-                branch->setBlock(prev);
-                prev->instructions().push_back(branch);
+                branch->insertBefore(prev, prev->instructions().end());
             }
 
             auto& blocks = func.blocks();

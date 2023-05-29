@@ -406,7 +406,7 @@ class LLVMConversionContext final {
             const auto llvmBlock = blockMap.lookup(block);
 
             llvm::IRBuilder<> builder{ llvmBlock };
-            for(auto inst : block->instructions()) {
+            for(auto& inst : block->instructions()) {
                 const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
                 if(inst->canbeOperand())
                     valueMap.insert({ inst, val });
@@ -415,7 +415,7 @@ class LLVMConversionContext final {
 
         // fix phi nodes
         for(auto block : dom.blocks()) {
-            for(auto inst : block->instructions()) {
+            for(auto& inst : block->instructions()) {
                 if(inst->getInstID() == InstructionID::Phi) {
                     const auto phi = inst->as<PhiInst>();
                     const auto phiNode = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(phi));

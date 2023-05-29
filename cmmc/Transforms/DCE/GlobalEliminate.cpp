@@ -48,8 +48,8 @@ public:
 
         auto color = [&](Function* func) {
             for(auto block : func->blocks()) {
-                for(auto inst : block->instructions()) {
-                    for(auto operand : inst->operands())
+                for(auto& inst : block->instructions()) {
+                    for(auto operand : inst.operands())
                         if(operand->isGlobal()) {
                             unused.erase(operand);
                         }

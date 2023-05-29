@@ -54,9 +54,9 @@ class SimpleCSE final : public TransformPass<Function> {
     static void instMerge(Block* block, ReplaceMap& replace) {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
         std::vector<PhiInst*> phiList;
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Phi) {
-                const auto lhs = inst->as<PhiInst>();
+        for(auto& inst : block->instructions()) {
+            if(inst.getInstID() == InstructionID::Phi) {
+                const auto lhs = inst.as<PhiInst>();
                 bool unique = true;
                 for(auto rhs : phiList) {
                     if(lhs->isEqual(rhs)) {
@@ -68,11 +68,11 @@ class SimpleCSE final : public TransformPass<Function> {
                 if(unique)
                     phiList.push_back(lhs);
             } else {
-                if(!isNoSideEffectExpr(*inst))
+                if(!isNoSideEffectExpr(inst))
                     continue;
 
-                if(auto [iter, res] = lut.insert(inst); !res) {
-                    replace.emplace(inst, *iter);
+                if(auto [iter, res] = lut.insert(&inst); !res) {
+                    replace.emplace(&inst, *iter);
                 }
             }
         }

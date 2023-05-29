@@ -507,7 +507,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         Block* block;
         Block* predBlock;
         std::unordered_map<Value*, OperandStorage> operands;
-        List<Instruction*>::const_iterator execIter;
+        IntrusiveListIterator<Instruction> execIter;
         std::unordered_map<uintptr_t, Instruction*> stackAllocs;
         std::unordered_map<Instruction*, uintptr_t> cachedAllocs;
     };
@@ -521,7 +521,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         entry.caller = nullptr;
         entry.block = func.entryBlock();
         entry.predBlock = nullptr;
-        entry.execIter = entry.block->instructions().cbegin();
+        entry.execIter = entry.block->instructions().begin();
         for(uint32_t idx = 0; idx < arguments.size(); ++idx)
             entry.operands.emplace(func.getArg(idx), fromConstant(arguments[idx]));
         if(step.get()) {
@@ -566,10 +566,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
         auto& currentExecCtx = execCtx.back();
         const auto iter = currentExecCtx.execIter;
-        if(iter == currentExecCtx.block->instructions().cend())
+        if(iter == currentExecCtx.block->instructions().end())
             return SimulationFailReason::UnknownError;
 
-        const auto inst = *iter;
+        auto& inst = *iter;
         ++currentExecCtx.execIter;
         ++instructionCount;
 
@@ -587,12 +587,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 operands.push_back(currentExecCtx.operands.at(operand));
             }
         };
-        if(inst->getInstID() != InstructionID::Phi) {
-            operands.reserve(inst->operands().size());
-            for(auto operand : inst->operands())
+        if(inst.getInstID() != InstructionID::Phi) {
+            operands.reserve(inst.operands().size());
+            for(auto operand : inst.operands())
                 buildOperand(operand);
         } else {
-            buildOperand(inst->as<PhiInst>()->incomings().at(currentExecCtx.predBlock));
+            buildOperand(inst.as<PhiInst>()->incomings().at(currentExecCtx.predBlock));
         }
 
         const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
@@ -610,25 +610,25 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                  [&](uintptr_t x) { out << "ptr "sv << std::hex << x << std::dec; } },  //
                        val);
         };
-        const auto addValue = [&](Instruction* mappedInst, const OperandStorage& val) {
-            currentExecCtx.operands.insert_or_assign(mappedInst, val);
+        const auto addValue = [&](Instruction& mappedInst, const OperandStorage& val) {
+            currentExecCtx.operands.insert_or_assign(&mappedInst, val);
             if(step.get()) {
                 auto& out = std::cerr;
-                mappedInst->dump(out, Noop{});
+                mappedInst.dump(out, Noop{});
                 out << " -> "sv;
                 dumpValue(val);
                 out << '\n';
             }
         };
-        const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst->getType(), val, ExplicitConstruct{} }); };
+        const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst.getType(), val, ExplicitConstruct{} }); };
         const auto addUInt = [&](uintmax_t val) {
-            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
+            addValue(inst, ConstantInteger{ inst.getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
         };
         const auto addBoolean = [&](bool val) {
-            addValue(inst, ConstantInteger{ inst->getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
+            addValue(inst, ConstantInteger{ inst.getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
         };
         const auto addPtr = [&](uintptr_t val) { addValue(inst, val); };
-        const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst->getType(), val }); };
+        const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst.getType(), val }); };
 
         const auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
             switch(cmp) {
@@ -648,7 +648,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             reportUnreachable(CMMC_LOCATION());
         };
 
-        switch(inst->getInstID()) {
+        switch(inst.getInstID()) {
             case InstructionID::Ret: {
                 const auto caller = currentExecCtx.caller;
                 for(auto [base, alloc] : currentExecCtx.stackAllocs) {
@@ -672,10 +672,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 [[fallthrough]];
             case InstructionID::ConditionalBranch: {
                 ++branchCount;
-                auto branch = inst->as<BranchInst>();
+                auto branch = inst.as<BranchInst>();
 
                 Block* targetBlock = nullptr;
-                if(inst->getInstID() == InstructionID::Branch) {
+                if(inst.getInstID() == InstructionID::Branch) {
                     targetBlock = branch->getTrueTarget();
                 } else if(getUInt(0)) {
                     targetBlock = branch->getTrueTarget();
@@ -685,7 +685,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                 currentExecCtx.predBlock = currentExecCtx.block;
                 currentExecCtx.block = targetBlock;
-                currentExecCtx.execIter = targetBlock->instructions().cbegin();
+                currentExecCtx.execIter = targetBlock->instructions().begin();
                 if(step.get()) {
                     currentExecCtx.block->dumpLabeled(std::cerr, Noop{});
                 }
@@ -697,17 +697,17 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 ++loadCount;
 
                 const auto ptr = getPtr(0);
-                addValue(inst, memCtx.loadValue(ptr, inst->getType()));
+                addValue(inst, memCtx.loadValue(ptr, inst.getType()));
                 break;
             }
             case InstructionID::Store: {
                 ++storeCount;
 
                 const auto ptr = getPtr(0);
-                memCtx.storeValue(ptr, operands[1], inst->getOperand(1)->getType());
+                memCtx.storeValue(ptr, operands[1], inst.getOperand(1)->getType());
                 if(step.get()) {
                     auto& out = std::cerr;
-                    inst->dump(out, Noop{});
+                    inst.dump(out, Noop{});
                     out << " : "sv;
                     dumpValue(operands[1]);
                     out << " -> "sv;
@@ -809,15 +809,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::SCmp: {
-                addBoolean(doCompare(inst->as<CompareInst>()->getOp(), getInt(0), getInt(1)));
+                addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getInt(0), getInt(1)));
                 break;
             }
             case InstructionID::UCmp: {
-                addBoolean(doCompare(inst->as<CompareInst>()->getOp(), getUInt(0), getUInt(1)));
+                addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getUInt(0), getUInt(1)));
                 break;
             }
             case InstructionID::FCmp: {
-                addBoolean(doCompare(inst->as<CompareInst>()->getOp(), getFP(0), getFP(1)));
+                addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getFP(0), getFP(1)));
                 break;
             }
             case InstructionID::SExt: {
@@ -856,15 +856,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::Alloc: {
-                if(auto it = currentExecCtx.cachedAllocs.find(inst); it != currentExecCtx.cachedAllocs.cend()) {
+                if(auto it = currentExecCtx.cachedAllocs.find(&inst); it != currentExecCtx.cachedAllocs.cend()) {
                     // allocas in loop --> reuse
                     addPtr(it->second);
                 } else {
-                    const auto type = inst->getType()->as<PointerType>()->getPointee();
+                    const auto type = inst.getType()->as<PointerType>()->getPointee();
                     const auto ptr = memCtx.stackPush(type->getSize(dataLayout), type->getAlignment(dataLayout));
                     addPtr(ptr);
-                    currentExecCtx.stackAllocs.emplace(ptr, inst);
-                    currentExecCtx.cachedAllocs.emplace(inst, ptr);
+                    currentExecCtx.stackAllocs.emplace(ptr, &inst);
+                    currentExecCtx.cachedAllocs.emplace(&inst, ptr);
                 }
                 --instructionCount;
                 break;
@@ -872,9 +872,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             case InstructionID::GetElementPtr: {
                 auto basePtr = getPtr(static_cast<uint32_t>(operands.size() - 1U));
                 const auto oldPtr = basePtr;
-                auto baseType = inst->operands().back()->getType();
+                auto baseType = inst.operands().back()->getType();
                 for(uint32_t idx = 0; idx + 1 < operands.size(); ++idx) {
-                    const auto operand = inst->getOperand(idx);
+                    const auto operand = inst.getOperand(idx);
                     const auto type = operand->getType();
                     if(type->isInteger()) {
                         if(baseType->isPointer()) {
@@ -1010,14 +1010,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                                 reportUnreachable(CMMC_LOCATION());
                         } else {
                             BlockContext blockCtx;
-                            blockCtx.caller = inst;
+                            blockCtx.caller = &inst;
                             blockCtx.block = callee->entryBlock();
                             blockCtx.predBlock = nullptr;
 
                             for(uint32_t idx = 0; idx < callee->args().size(); ++idx)
                                 blockCtx.operands.emplace(callee->getArg(idx), operands[idx]);
 
-                            blockCtx.execIter = blockCtx.block->instructions().cbegin();
+                            blockCtx.execIter = blockCtx.block->instructions().begin();
                             if(step.get()) {
                                 callee->dump(std::cerr, Noop{});
                                 blockCtx.block->dumpLabeled(std::cerr, Noop{});

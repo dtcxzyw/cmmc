@@ -59,8 +59,7 @@ public:
             auto& instructions = block->instructions();
             instructions.pop_back();
             const auto branch = make<BranchInst>(exitBlock);
-            branch->setBlock(block);
-            instructions.push_back(branch);
+            branch->insertBefore(block, block->instructions().end());
         }
 
         if(retValue) {

@@ -54,10 +54,10 @@ CallGraphSCCAnalysisResult CallGraphSCCAnalysis::run(Module& module, AnalysisPas
     Graph graph(size);
     for(auto [func, u] : idxMap) {
         for(auto block : func->blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() != InstructionID::Call)
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() != InstructionID::Call)
                     continue;
-                const auto callee = inst->operands().back();
+                const auto callee = inst.operands().back();
                 if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                     const auto v = idxMap.at(calleeFunc);
                     graph[u].emplace_back(v);

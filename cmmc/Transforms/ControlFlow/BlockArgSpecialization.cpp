@@ -78,10 +78,10 @@ public:
                 }
 
                 bool hasPhi = false;
-                for(auto inst : targetBlock->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
+                for(auto& inst : targetBlock->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
                         hasPhi = true;
-                        if(!inst->as<PhiInst>()->incomings().at(block)->isConstant())
+                        if(!inst.as<PhiInst>()->incomings().at(block)->isConstant())
                             return;
                     } else
                         break;
@@ -95,13 +95,15 @@ public:
 
                 // TODO: remove this limitation by creating new phi nodes
                 if([&] {
-                       std::unordered_set<Value*> instructions{ targetBlock->instructions().cbegin(),
-                                                                targetBlock->instructions().cend() };
+                       std::unordered_set<Value*> instructions;
+                       for(auto& inst : targetBlock->instructions()) {
+                           instructions.insert(&inst);
+                       }
                        for(auto otherBlock : blocks) {
                            if(otherBlock == targetBlock)
                                continue;
-                           for(auto inst : otherBlock->instructions()) {
-                               for(auto operand : inst->operands()) {
+                           for(auto& inst : otherBlock->instructions()) {
+                               for(auto operand : inst.operands()) {
                                    if(operand->isInstruction() && instructions.count(operand)) {
                                        return true;
                                    }
@@ -116,9 +118,9 @@ public:
                 const auto newBlock = targetBlock->clone(replace);
                 blocks.insert(next, newBlock);
 
-                for(auto inst : newBlock->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        inst->as<PhiInst>()->keepOneIncoming(block);
+                for(auto& inst : newBlock->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        inst.as<PhiInst>()->keepOneIncoming(block);
                     } else
                         break;
                 }

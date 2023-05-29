@@ -55,9 +55,9 @@ SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult
     }
 
     const auto entryBlock = block->getFunction()->entryBlock();
-    for(auto inst : entryBlock->instructions()) {
-        if(inst->getInstID() == InstructionID::Alloc) {
-            mBasePointer.emplace(inst, inst);
+    for(auto& inst : entryBlock->instructions()) {
+        if(inst.getInstID() == InstructionID::Alloc) {
+            mBasePointer.emplace(&inst, &inst);
         } else
             break;
     }

@@ -162,9 +162,9 @@ public:
         auto funcType = func.getType()->as<FunctionType>();
         insertType(types, funcType);
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                insertType(types, inst->getType());
-                for(auto operand : inst->operands())
+            for(auto& inst : block->instructions()) {
+                insertType(types, inst.getType());
+                for(auto operand : inst.operands())
                     insertType(types, operand->getType());
             }
         }
@@ -246,8 +246,8 @@ public:
         // constants
         std::vector<ConstantValue*> constants;
         for(auto block : func.blocks())
-            for(auto inst : block->instructions())
-                for(auto operand : inst->operands())
+            for(auto& inst : block->instructions())
+                for(auto operand : inst.operands())
                     if(operand->isConstant()) {
                         constants.push_back(operand->as<ConstantValue>());
                     }
@@ -265,9 +265,9 @@ public:
         // std::cerr << '\n';
     }
 
-    void addInst(Instruction* inst) {
-        if(inst->canbeOperand())
-            mIdx[inst] = ++mCount;
+    void addInst(Instruction& inst) {
+        if(inst.canbeOperand())
+            mIdx[&inst] = ++mCount;
     }
 
     StrongOrder operator()(CompareType lhs, CompareType rhs) const {
@@ -318,8 +318,8 @@ class BlockReorder final : public TransformPass<Function> {
         uint32_t usePos = 0;
         std::unordered_map<const Value*, uint32_t> firstUse;
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                for(auto operand : inst->operands()) {
+            for(auto& inst : block->instructions()) {
+                for(auto operand : inst.operands()) {
                     if(operand->isInstruction()) {
                         firstUse.emplace(operand, usePos);
                         ++usePos;
@@ -340,13 +340,13 @@ class BlockReorder final : public TransformPass<Function> {
             std::vector<Instruction*> invMap(instructions.size());
             std::unordered_map<Instruction*, uint32_t> nodeMap;
             uint32_t count = 0;
-            for(auto inst : instructions) {
-                if(inst->getInstID() == InstructionID::Phi || inst->getInstID() == InstructionID::Alloc) {
-                    sortedBlock.push_back(inst);
+            for(auto& inst : instructions) {
+                if(inst.getInstID() == InstructionID::Phi || inst.getInstID() == InstructionID::Alloc) {
+                    sortedBlock.push_back(&inst);
                     comp.addInst(inst);
-                } else if(!inst->isTerminator()) {
-                    nodeMap.emplace(inst, count);
-                    invMap[count] = inst;
+                } else if(!inst.isTerminator()) {
+                    nodeMap.emplace(&inst, count);
+                    invMap[count] = &inst;
                     ++count;
                 }
             }
@@ -365,21 +365,21 @@ class BlockReorder final : public TransformPass<Function> {
                 dag[v].push_back(u);
             };
             count = 0;
-            for(auto inst : instructions) {
-                if(inst->getInstID() == InstructionID::Phi || inst->getInstID() == InstructionID::Alloc || inst->isTerminator())
+            for(auto& inst : instructions) {
+                if(inst.getInstID() == InstructionID::Phi || inst.getInstID() == InstructionID::Alloc || inst.isTerminator())
                     continue;
                 const uint32_t idx = count++;
-                if(!isNoSideEffectExpr(*inst)) {
+                if(!isNoSideEffectExpr(inst)) {
                     if(lastInstWithSideEffects) {
                         addEdge(idx, lastInstWithSideEffects);
                     }
-                    lastInstWithSideEffects = inst;
+                    lastInstWithSideEffects = &inst;
                 }
 
-                if(inst->getInstID() == InstructionID::Phi)
+                if(inst.getInstID() == InstructionID::Phi)
                     continue;
 
-                for(auto operand : inst->operands()) {
+                for(auto operand : inst.operands()) {
                     if(operand->getBlock() == block)
                         addEdge(idx, operand->as<Instruction>());
                 }
@@ -401,7 +401,7 @@ class BlockReorder final : public TransformPass<Function> {
                 freeInst.pop();
 
                 const auto inst = invMap[u];
-                comp.addInst(inst);
+                comp.addInst(*inst);
                 sortedBlock.emplace_back(inst);
                 for(auto v : dag[u])
                     if(--degree[v] == 0)
@@ -410,16 +410,19 @@ class BlockReorder final : public TransformPass<Function> {
 
             sortedBlock.push_back(instructions.back());
             assert(instructions.size() == sortedBlock.size());
-            if(!std::equal(instructions.cbegin(), instructions.cend(), sortedBlock.cbegin())) {
+            if(!std::equal(instructions.begin(), instructions.end(), sortedBlock.begin(),
+                           [](Instruction& lhs, Instruction* rhs) { return &lhs == rhs; })) {
                 modified = true;
-                instructions = { sortedBlock.cbegin(), sortedBlock.cend() };
+                reportNotImplemented(CMMC_LOCATION());
+                // FIXME
+                // instructions = { sortedBlock.cbegin(), sortedBlock.cend() };
             }
         }
 
         /*
         for(auto block : dom.blocks()) {
-            for(auto inst : block->instructions()) {
-                switch(inst->getInstID()) {
+            for(auto& inst : block->instructions()) {
+                switch(inst.getInstID()) {
                     case InstructionID::Add:
                         [[fallthrough]];
                     case InstructionID::Mul:
@@ -429,8 +432,8 @@ class BlockReorder final : public TransformPass<Function> {
                     case InstructionID::Or:
                         [[fallthrough]];
                     case InstructionID::Xor: {
-                        if(comp(inst->getOperand(0), inst->getOperand(1)) == StrongOrder::LessThan) {
-                            std::swap(inst->operands()[0], inst->operands()[1]);
+                        if(comp(inst.getOperand(0), inst.getOperand(1)) == StrongOrder::LessThan) {
+                            std::swap(inst.operands()[0], inst.operands()[1]);
                             modified = true;
                         }
                         break;
@@ -440,9 +443,9 @@ class BlockReorder final : public TransformPass<Function> {
                     case InstructionID::UCmp:
                         [[fallthrough]];
                     case InstructionID::FCmp: {
-                        if(auto op = inst->as<CompareInst>()->getOp(); (op == CompareOp::Equal || op == CompareOp::NotEqual) &&
-                           comp(inst->getOperand(0), inst->getOperand(1)) == StrongOrder::LessThan) {
-                            std::swap(inst->operands()[0], inst->operands()[1]);
+                        if(auto op = inst.as<CompareInst>()->getOp(); (op == CompareOp::Equal || op == CompareOp::NotEqual) &&
+                           comp(inst.getOperand(0), inst.getOperand(1)) == StrongOrder::LessThan) {
+                            std::swap(inst.operands()[0], inst.operands()[1]);
                             modified = true;
                         }
                         break;
@@ -460,8 +463,8 @@ class BlockReorder final : public TransformPass<Function> {
         for(auto block : dom.blocks()) {
             std::vector<Instruction*> prefix;
             if(block == func.entryBlock()) {
-                for(auto inst : block->instructions())
-                    if(inst->getInstID() == InstructionID::Alloc)
+                for(auto& inst : block->instructions())
+                    if(inst.getInstID() == InstructionID::Alloc)
                         prefix.push_back(inst);
                     else
                         break;
@@ -477,8 +480,8 @@ class BlockReorder final : public TransformPass<Function> {
             } else {
                 auto& predBlocks = preds.at(block);
                 CMMC_UNUSED(predBlocks);
-                for(auto inst : block->instructions())
-                    if(inst->getInstID() == InstructionID::Phi)
+                for(auto& inst : block->instructions())
+                    if(inst.getInstID() == InstructionID::Phi)
                         prefix.push_back(inst);
                     else
                         break;

@@ -43,10 +43,10 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
     ReplaceMap replace;
     const auto oldSize = block.instructions().size();
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
-        const auto inst = *iter;
+        auto& inst = *iter;
         builder.setInsertPoint(&block, iter);
-        if(auto value = reducer(inst, replace)) {
-            replace.emplace(inst, value);
+        if(auto value = reducer(&inst, replace)) {
+            replace.emplace(&inst, value);
         }
         iter = builder.getInsertPoint();
     }
@@ -66,14 +66,13 @@ bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& r
 
 void removeInst(Instruction* inst) {
     const auto block = inst->getBlock();
-    block->instructions().remove(inst);
+    block->instructions().erase(inst->asNode());
     if constexpr(Config::debug) {
-        inst->setBlock(nullptr);
         inst->setLabel(String::get("removed"));
     }
 }
 
-Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instruction*>::iterator after) {
+Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveListIterator<Instruction> after) {
     auto preBlock = *block;
     auto nextBlock = make<Block>(preBlock->getFunction());
     nextBlock->setLabel(preBlock->getLabel());
@@ -81,10 +80,13 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, List<Instr
     auto beg = std::next(after);
     auto end = oldInsts.end();
     auto& newInsts = nextBlock->instructions();
-    newInsts.insert(newInsts.cbegin(), beg, end);
+    // FIXME:
+    CMMC_UNUSED(newInsts);
+    reportNotImplemented(CMMC_LOCATION());
+    // newInsts.insert(newInsts.begin(), beg, end);
     oldInsts.erase(beg, end);
-    for(auto inst : newInsts)
-        inst->setBlock(nextBlock);
+    // for(auto inst : newInsts)
+    //     inst->setBlock(nextBlock);
     blocks.insert(std::next(block), nextBlock);
     return nextBlock;
 }
@@ -137,16 +139,16 @@ bool isNoSideEffectExpr(const Instruction& inst) {
     return true;
 }
 bool hasCall(Block& block) {
-    for(auto inst : block.instructions())
-        if(inst->getInstID() == InstructionID::Call) {
+    for(auto& inst : block.instructions())
+        if(inst.getInstID() == InstructionID::Call) {
             return true;
         }
     return false;
 }
 void retargetBlock(Block* target, Block* oldSource, Block* newSource) {
-    for(auto inst : target->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            const auto phi = inst->as<PhiInst>();
+    for(auto& inst : target->instructions()) {
+        if(inst.getInstID() == InstructionID::Phi) {
+            const auto phi = inst.as<PhiInst>();
             if(phi->incomings().count(newSource)) {
                 assert(phi->incomings().at(oldSource) == phi->incomings().at(newSource));
                 phi->removeSource(oldSource);
@@ -166,18 +168,18 @@ void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget) {
     handleTarget(branch->getFalseTarget());
 }
 void copyTarget(Block* target, Block* oldSource, Block* newSource) {
-    for(auto inst : target->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            auto phi = inst->as<PhiInst>();
+    for(auto& inst : target->instructions()) {
+        if(inst.getInstID() == InstructionID::Phi) {
+            auto phi = inst.as<PhiInst>();
             phi->addIncoming(newSource, phi->incomings().at(oldSource));
         } else
             break;
     }
 }
 bool removePhi(Block* source, Block* target) {
-    for(auto inst : target->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            const auto phi = inst->as<PhiInst>();
+    for(auto& inst : target->instructions()) {
+        if(inst.getInstID() == InstructionID::Phi) {
+            const auto phi = inst.as<PhiInst>();
             if(phi->incomings().count(source)) {
                 phi->removeSource(source);
             } else
@@ -188,9 +190,9 @@ bool removePhi(Block* source, Block* target) {
     return true;
 }
 bool hasSamePhiValue(Block* target, Block* sourceLhs, Block* sourceRhs) {
-    for(auto inst : target->instructions()) {
-        if(inst->getInstID() == InstructionID::Phi) {
-            const auto phi = inst->as<PhiInst>();
+    for(auto& inst : target->instructions()) {
+        if(inst.getInstID() == InstructionID::Phi) {
+            const auto phi = inst.as<PhiInst>();
             auto& incomings = phi->incomings();
             if(incomings.at(sourceLhs) != incomings.at(sourceRhs)) {
                 return false;

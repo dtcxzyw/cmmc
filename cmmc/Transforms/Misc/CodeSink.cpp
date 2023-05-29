@@ -83,16 +83,16 @@ public:
             const auto tryMove = [&](Instruction* inst, Block* target) {
                 for(auto userBlock : func.blocks()) {
                     const auto domination = dom.dominate(target, userBlock);
-                    for(auto userInst : userBlock->instructions()) {
-                        if(userInst->getInstID() == InstructionID::Phi) {
-                            for(auto [pred, val] : userInst->as<PhiInst>()->incomings()) {
+                    for(auto& userInst : userBlock->instructions()) {
+                        if(userInst.getInstID() == InstructionID::Phi) {
+                            for(auto [pred, val] : userInst.as<PhiInst>()->incomings()) {
                                 if(val == inst && !dom.dominate(target, pred)) {
                                     return false;
                                 }
                             }
                         } else {
                             bool used = false;
-                            for(auto operand : userInst->operands())
+                            for(auto operand : userInst.operands())
                                 if(operand == inst) {
                                     used = true;
                                     break;
@@ -105,26 +105,26 @@ public:
                 }
 
                 // apply motion
-                inst->setBlock(target);
                 auto& instructions = target->instructions();
+                // TODO: getFirstNonPhi?
                 auto iter = instructions.begin();
-                while(iter != instructions.cend() && (*iter)->getInstID() == InstructionID::Phi)
+                while(iter != instructions.end() && iter->getInstID() == InstructionID::Phi)
                     ++iter;
-                instructions.insert(iter, inst);
+                inst->insertBefore(target, iter);
                 return true;
             };
 
             auto& instructions = block->instructions();
             std::unordered_set<Instruction*> moved;
-            for(auto inst : instructions) {
-                if(!inst->isTerminator() && inst->getInstID() != InstructionID::Phi && isNoSideEffectExpr(*inst)) {
+            for(auto& inst : instructions) {
+                if(!inst.isTerminator() && inst.getInstID() != InstructionID::Phi && isNoSideEffectExpr(inst)) {
                     if(moveToTrueTarget) {
-                        if(tryMove(inst, trueTarget)) {
-                            moved.insert(inst);
+                        if(tryMove(&inst, trueTarget)) {
+                            moved.insert(&inst);
                         }
                     } else if(moveToFalseTarget) {
-                        if(tryMove(inst, falseTarget)) {
-                            moved.insert(inst);
+                        if(tryMove(&inst, falseTarget)) {
+                            moved.insert(&inst);
                         }
                     }
                 }

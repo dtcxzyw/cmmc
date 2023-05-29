@@ -45,16 +45,16 @@ public:
         if(!func.attr().hasAttr(FunctionAttribute::NoMemoryRead)) {
             auto hasLoad = [&] {
                 for(auto block : func.blocks()) {
-                    for(auto inst : block->instructions()) {
-                        switch(inst->getInstID()) {
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
                             case InstructionID::Load: {
-                                const auto addr = inst->getOperand(0);
+                                const auto addr = inst.getOperand(0);
                                 if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;
                                 return true;
                             }
                             case InstructionID::Call: {
-                                const auto callee = inst->operands().back();
+                                const auto callee = inst.operands().back();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -81,16 +81,16 @@ public:
         if(!func.attr().hasAttr(FunctionAttribute::NoMemoryWrite)) {
             auto hasWrite = [&] {
                 for(auto block : func.blocks()) {
-                    for(auto inst : block->instructions()) {
-                        switch(inst->getInstID()) {
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
                             case InstructionID::Store: {
-                                const auto addr = inst->getOperand(0);
+                                const auto addr = inst.getOperand(0);
                                 if(addressSpace.mustBe(addr, AddressSpaceType::InternalStack))
                                     continue;
                                 return true;
                             }
                             case InstructionID::Call: {
-                                const auto callee = inst->operands().back();
+                                const auto callee = inst.operands().back();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -118,10 +118,10 @@ public:
         if(func.attr().hasAttr(FunctionAttribute::NoMemoryWrite) && !func.attr().hasAttr(FunctionAttribute::NoSideEffect)) {
             auto hasSideEffect = [&] {
                 for(auto block : func.blocks()) {
-                    for(auto inst : block->instructions()) {
-                        switch(inst->getInstID()) {
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
                             case InstructionID::Call: {
-                                const auto callee = inst->operands().back();
+                                const auto callee = inst.operands().back();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -155,10 +155,10 @@ public:
         if(!func.attr().hasAttr(FunctionAttribute::NoRecurse)) {
             auto hasSelfCall = [&] {
                 for(auto block : func.blocks()) {
-                    for(auto inst : block->instructions()) {
-                        switch(inst->getInstID()) {
+                    for(auto& inst : block->instructions()) {
+                        switch(inst.getInstID()) {
                             case InstructionID::Call: {
-                                const auto callee = inst->operands().back();
+                                const auto callee = inst.operands().back();
                                 if(callee == &func)
                                     return true;
                             }

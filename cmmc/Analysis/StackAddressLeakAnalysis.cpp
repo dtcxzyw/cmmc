@@ -40,10 +40,10 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
     bool unknownLeakWrite = false, unknownLeakRead = false;  // TODO: handling leak by store?
 
     for(auto block : func.blocks()) {
-        for(auto inst : block->instructions()) {
-            switch(inst->getInstID()) {
+        for(auto& inst : block->instructions()) {
+            switch(inst.getInstID()) {
                 case InstructionID::Call: {
-                    auto callee = inst->operands().back();
+                    auto callee = inst.operands().back();
                     bool noWrite = false, noRead = false;
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
@@ -54,15 +54,15 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
                             noRead = true;
                     }
                     if(!noWrite)
-                        writeCalls.push_back(inst);
+                        writeCalls.push_back(&inst);
                     if(!noRead)
-                        readCalls.push_back(inst);
+                        readCalls.push_back(&inst);
                 } break;
                 case InstructionID::Alloc:
-                    allocs.push_back(inst);
+                    allocs.push_back(&inst);
                     break;
                 case InstructionID::Store:
-                    if(auto storeValue = inst->getOperand(1);
+                    if(auto storeValue = inst.getOperand(1);
                        storeValue->getType()->isPointer() && address.mayBe(storeValue, AddressSpaceType::InternalStack)) {
                         unknownLeakWrite = unknownLeakRead = true;
                     }

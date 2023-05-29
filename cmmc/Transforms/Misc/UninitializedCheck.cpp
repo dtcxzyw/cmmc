@@ -35,8 +35,8 @@ class UninitializedCheck final : public TransformPass<Function> {
             return false;
 
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                for(auto operand : inst->operands())
+            for(auto& inst : block->instructions()) {
+                for(auto operand : inst.operands())
                     if(operand->isConstant() && operand->is<UndefinedValue>()) {
                         DiagnosticsContext::get()
                             .attach<Reason>("use of uninitialized value or wrong optimization")

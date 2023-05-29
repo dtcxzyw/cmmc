@@ -30,7 +30,7 @@ CMMC_NAMESPACE_BEGIN
 class IRBuilder {
     Function* mCurrentFunction;
     Block* mCurrentBlock;
-    List<Instruction*>::iterator mInsertPoint;
+    IntrusiveListIterator<Instruction> mInsertPoint;
 
     const Type* mIndexType;
     Value *mTrueValue, *mFalseValue, *mZeroIndex;
@@ -43,19 +43,17 @@ public:
     void setCurrentFunction(Function* func) noexcept;
     [[nodiscard]] Block* getCurrentBlock() const;
     void setCurrentBlock(Block* block);
-    void setInsertPoint(Block* block, List<Instruction*>::iterator insertPoint);
+    void setInsertPoint(Block* block, IntrusiveListIterator<Instruction> insertPoint);
     void setInsertPoint(Block* block, Instruction* beforeInst);
     void nextInsertPoint();
-    [[nodiscard]] List<Instruction*>::iterator getInsertPoint() const noexcept;
+    [[nodiscard]] IntrusiveListIterator<Instruction> getInsertPoint() const noexcept;
 
     template <typename T, typename... Args>
     auto makeOp(Args&&... args) {
         static_assert(!std::is_same_v<StackAllocInst, T> && !std::is_same_v<PhiInst, T>);
         auto inst = make<T>(std::forward<Args>(args)...);
         auto block = getCurrentBlock();
-        auto iter = block->instructions().insert(mInsertPoint, inst);
-        mInsertPoint = std::next(iter);
-        inst->setBlock(block);
+        inst->insertBefore(block, mInsertPoint);
         return inst;
     }
 

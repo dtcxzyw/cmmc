@@ -35,11 +35,11 @@ CMMC_NAMESPACE_BEGIN
 
 class SCCEliminate final : public TransformPass<Function> {
     static bool hasSideEffect(Block& block) {
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() == InstructionID::Store)
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() == InstructionID::Store)
                 return true;
-            if(inst->getInstID() == InstructionID::Call) {
-                const auto callee = inst->operands().back()->as<Function>();
+            if(inst.getInstID() == InstructionID::Call) {
+                const auto callee = inst.operands().back()->as<Function>();
                 if(!callee->attr().hasAttr(FunctionAttribute::NoSideEffect))
                     return true;
             }
@@ -199,8 +199,7 @@ public:
                     const auto block = blocks[u];
                     block->instructions().clear();
                     const auto unreachableInst = make<UnreachableInst>();
-                    unreachableInst->setBlock(block);
-                    block->instructions().push_back(unreachableInst);
+                    unreachableInst->insertBefore(block, block->instructions().end());
                 }
                 modified = true;
             } else if(exitNode == retNode) {
@@ -209,8 +208,7 @@ public:
                     const auto block = blocks[u];
                     block->instructions().clear();
                     const auto retInst = retVoid ? make<ReturnInst>() : make<ReturnInst>(commonRetValue);
-                    retInst->setBlock(block);
-                    block->instructions().push_back(retInst);
+                    retInst->insertBefore(block, block->instructions().end());
                 }
                 modified = true;
             } else {
@@ -224,8 +222,8 @@ public:
                        for(idx = 0; idx < blocks.size(); ++idx) {
                            if((*colors)[idx] != color) {
                                const auto block = blocks[idx];
-                               for(auto inst : block->instructions()) {
-                                   for(auto operand : inst->operands()) {
+                               for(auto& inst : block->instructions()) {
+                                   for(auto operand : inst.operands()) {
                                        if(const auto dep = operand->getBlock(); groupSet.count(dep)) {
                                            return true;
                                        }
@@ -249,8 +247,7 @@ public:
                     }
                     block->instructions().clear();
                     const auto branchInst = make<BranchInst>(exitBlock);
-                    branchInst->setBlock(block);
-                    block->instructions().push_back(branchInst);
+                    branchInst->insertBefore(block, block->instructions().end());
                     if(hasPhiNodes) {
                         if(exitBlock->instructions().front()->as<PhiInst>()->incomings().count(block))
                             continue;

@@ -33,8 +33,7 @@ void canonicalizeBranchCompare(Function& func, AnalysisPassManager&) {
             continue;
         const auto newInst = root->as<Instruction>()->clone();
         auto& instructions = block->instructions();
-        newInst->setBlock(block);
-        instructions.insert(std::prev(instructions.end()), newInst);
+        newInst->insertBefore(block, std::prev(instructions.end()));
     }
 }
 

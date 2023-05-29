@@ -76,10 +76,10 @@ public:
                     prev->instructions().pop_back();
                     IRBuilder builder{ target, prev };
                     builder.makeOp<BranchInst>(block);
-                    for(auto inst : block->instructions()) {
-                        if(inst->getInstID() == InstructionID::Phi) {
+                    for(auto& inst : block->instructions()) {
+                        if(inst.getInstID() == InstructionID::Phi) {
                             ReplaceMap replace;
-                            const auto phi = inst->as<PhiInst>();
+                            const auto phi = inst.as<PhiInst>();
                             for(auto [pred, val] : phi->incomings()) {
                                 CMMC_UNUSED(val);
                                 if(pred != loop.latch) {
@@ -112,10 +112,10 @@ public:
                     prevTerminator->getTrueTarget() = block;
                     const auto& replaceHeader = replaceMap.at(prev);
                     const auto& replaceClone = replaceMap.at(block);
-                    for(auto inst : loop.latch->instructions()) {
-                        if(inst->getInstID() == InstructionID::Phi) {
-                            const auto superBlockPhi = replaceClone.at(inst)->as<PhiInst>();
-                            const auto initial = replaceHeader.at(inst);
+                    for(auto& inst : loop.latch->instructions()) {
+                        if(inst.getInstID() == InstructionID::Phi) {
+                            const auto superBlockPhi = replaceClone.at(&inst)->as<PhiInst>();
+                            const auto initial = replaceHeader.at(&inst);
                             superBlockPhi->clear();
                             superBlockPhi->addIncoming(prev, initial);
                         } else
@@ -152,9 +152,9 @@ public:
                 IRBuilder builder{ target, head };
 
                 ReplaceMap replace;
-                for(auto inst : loop.latch->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        const auto phi = inst->as<PhiInst>();
+                for(auto& inst : loop.latch->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        const auto phi = inst.as<PhiInst>();
                         const auto newPhi = builder.createPhi(phi->getType());
                         for(auto [pred, val] : phi->incomings()) {
                             newPhi->addIncoming(pred, val);
@@ -171,11 +171,10 @@ public:
                 replaceMap[head] = std::move(replace);
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
-                head->instructions().push_back(batchCond);
+                batchCond->insertBefore(head, head->instructions().end());
                 // TODO: batchCond->setOperand(idx, val)
                 batchCond->mutableOperands()[0]->resetValue(batchEnd);
                 batchCond->mutableOperands()[1]->resetValue(bound);
-                batchCond->setBlock(head);
                 builder.setInsertPoint(head, head->instructions().end());
 
                 constexpr auto exitProb =
@@ -197,9 +196,9 @@ public:
             // fix phi nodes of the header
             {
                 auto& replace = replaceMap.at(prev);
-                for(auto inst : head->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        const auto phi = inst->as<PhiInst>();
+                for(auto& inst : head->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        const auto phi = inst.as<PhiInst>();
                         auto val = phi->incomings().at(loop.latch);
                         if(auto iter = replace.find(val); iter != replace.cend())
                             val = iter->second;
@@ -213,10 +212,10 @@ public:
             // fix phi nodes of the scalar block
             {
                 const auto& replaceHeader = replaceMap.at(head);
-                for(auto inst : loop.latch->instructions()) {
-                    if(inst->getInstID() == InstructionID::Phi) {
-                        const auto phi = inst->as<PhiInst>();
-                        const auto headerPhi = replaceHeader.at(inst)->as<PhiInst>();
+                for(auto& inst : loop.latch->instructions()) {
+                    if(inst.getInstID() == InstructionID::Phi) {
+                        const auto phi = inst.as<PhiInst>();
+                        const auto headerPhi = replaceHeader.at(&inst)->as<PhiInst>();
                         phi->keepOneIncoming(loop.latch);
                         phi->addIncoming(head, headerPhi);
                     } else

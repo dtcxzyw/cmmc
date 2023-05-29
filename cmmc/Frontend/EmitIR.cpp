@@ -223,10 +223,10 @@ void FunctionDefinition::emit(EmitContext& ctx) {
         for(auto funcBlock : func->blocks()) {
             auto& insts = funcBlock->instructions();
             bool hasTerminator = false;
-            for(auto iter = insts.cbegin(); iter != insts.cend(); ++iter) {
-                if((*iter)->isTerminator()) {
+            for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
+                if(iter->isTerminator()) {
                     ++iter;
-                    insts.erase(iter, insts.cend());
+                    insts.erase(iter, insts.end());
                     hasTerminator = true;
                     break;
                 }

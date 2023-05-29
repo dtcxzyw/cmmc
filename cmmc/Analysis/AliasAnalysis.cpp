@@ -252,29 +252,29 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     for(auto block : dom.blocks()) {
         reachableBlocks.insert(block);
 
-        for(auto inst : block->instructions()) {
-            if(!inst->getType()->isPointer())
+        for(auto& inst : block->instructions()) {
+            if(!inst.getType()->isPointer())
                 continue;
 
-            switch(inst->getInstID()) {
+            switch(inst.getInstID()) {
                 case InstructionID::Alloc: {
                     uint32_t id = ++allocateID;
                     stackGroup.insert(id);
                     result.addPair(id, argID);
-                    result.addValue(inst, { stackID, id });
+                    result.addValue(&inst, { stackID, id });
                     break;
                 }
                 case InstructionID::GetElementPtr: {
                     std::vector<uint32_t> attrs;
-                    auto cur = inst;
+                    auto cur = &inst;
                     while(true) {
                         const auto base = cur->operands().back();
                         MatchContext<Value> matchCtx{ cur->getOperand(0), nullptr };
                         if(cuint_(0)(matchCtx)) {
-                            inheritGraph.emplace(inst, base);
+                            inheritGraph.emplace(&inst, base);
                             break;
                         }
-                        if(cur == inst) {
+                        if(cur == &inst) {
                             // add distinct pair
                             intmax_t offset;
                             if(int_(offset)(matchCtx) && offset != 0) {
@@ -290,38 +290,38 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                         } else
                             break;
                     }
-                    result.addValue(inst, std::move(attrs));
-                    geps.push_back(inst);
+                    result.addValue(&inst, std::move(attrs));
+                    geps.push_back(&inst);
                     break;
                 }
                 case InstructionID::PtrCast: {
-                    inheritGraph.emplace(inst, inst->getOperand(0));
-                    result.addValue(inst, {});
+                    inheritGraph.emplace(&inst, inst.getOperand(0));
+                    result.addValue(&inst, {});
                     break;
                 }
                 case InstructionID::Select: {
-                    inheritGraph.emplace(inst, inst->getOperand(1), inst->getOperand(2));
-                    result.addValue(inst, {});
+                    inheritGraph.emplace(&inst, inst.getOperand(1), inst.getOperand(2));
+                    result.addValue(&inst, {});
                     break;
                 }
                 case InstructionID::IntToPtr: {
-                    const auto base = inst->getOperand(0);
+                    const auto base = inst.getOperand(0);
                     if(base->isArgument()) {
-                        result.addValue(inst, { argID });
+                        result.addValue(&inst, { argID });
                     } else
-                        result.addValue(inst, {});
+                        result.addValue(&inst, {});
                     break;
                 }
                 case InstructionID::Load:
                     [[fallthrough]];
                 case InstructionID::Call: {
-                    result.addValue(inst, {});
+                    result.addValue(&inst, {});
                     break;
                 }
                 case InstructionID::Phi: {
-                    result.addValue(inst, {});
+                    result.addValue(&inst, {});
                     std::unordered_set<Value*> inheritSet;
-                    for(auto ptr : inst->operands()) {
+                    for(auto ptr : inst.operands()) {
                         if(ptr->isConstant())
                             continue;
 
@@ -333,9 +333,9 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     }
 
                     if(inheritSet.size() == 1) {
-                        inheritGraph.emplace(inst, *inheritSet.begin());
+                        inheritGraph.emplace(&inst, *inheritSet.begin());
                     } else if(inheritSet.size() == 2) {
-                        inheritGraph.emplace(inst, *inheritSet.begin(), *std::next(inheritSet.begin()));
+                        inheritGraph.emplace(&inst, *inheritSet.begin(), *std::next(inheritSet.begin()));
                     }
 
                     break;
@@ -351,10 +351,10 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     for(auto block : func.blocks()) {
         if(reachableBlocks.count(block))
             continue;
-        for(auto inst : block->instructions()) {
-            if(!inst->getType()->isPointer())
+        for(auto& inst : block->instructions()) {
+            if(!inst.getType()->isPointer())
                 continue;
-            result.addValue(inst, {});
+            result.addValue(&inst, {});
         }
     }
 

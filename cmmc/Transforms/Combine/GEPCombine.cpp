@@ -33,12 +33,12 @@ CMMC_NAMESPACE_BEGIN
 
 class GEPCombine final : public TransformPass<Function> {
     static void gatherBlock(Block& block, std::unordered_set<Value*>& constantGEP) {
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() != InstructionID::GetElementPtr)
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() != InstructionID::GetElementPtr)
                 continue;
 
             bool isConstant = true;
-            auto operands = inst->operands();
+            auto operands = inst.operands();
             auto base = operands.back();
             for(auto operand : operands) {
                 if(operand == base)
@@ -51,33 +51,33 @@ class GEPCombine final : public TransformPass<Function> {
 
             if(!isConstant)
                 continue;
-            constantGEP.insert(inst);
+            constantGEP.insert(&inst);
         }
     }
     static bool runBlock(Block& block, const std::unordered_set<Value*>& constantGEP) {
         bool modified = false;
-        for(auto inst : block.instructions()) {
-            if(!constantGEP.count(inst))
+        for(auto& inst : block.instructions()) {
+            if(!constantGEP.count(&inst))
                 continue;
 
-            const auto base = inst->operands().back();
+            const auto base = inst.operands().back();
             if(!constantGEP.count(base))
                 continue;
 
             const auto baseGEP = base->as<GetElementPtrInst>();
-            auto& operands = inst->mutableOperands();
+            auto& operands = inst.mutableOperands();
             MatchContext<Value> matchFront{ operands.front()->value, nullptr };
             MatchContext<Value> matchBack{ baseGEP->getOperand(static_cast<uint32_t>(baseGEP->operands().size() - 2)), nullptr };
             if(cuint_(0)(matchFront)) {
                 operands.pop_front();
                 for(auto prevOffset : baseGEP->arguments()) {
-                    operands.push_front(make<ValueRef>(prevOffset, inst));
+                    operands.push_front(make<ValueRef>(prevOffset, &inst));
                 }
                 operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
                 modified = true;
             } else if(cuint_(0)(matchBack)) {
                 for(auto prevOffset : baseGEP->arguments()) {
-                    operands.push_front(make<ValueRef>(prevOffset, inst));
+                    operands.push_front(make<ValueRef>(prevOffset, &inst));
                 }
                 operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
                 modified = true;
@@ -86,7 +86,7 @@ class GEPCombine final : public TransformPass<Function> {
                 if(int_(offset1)(matchFront) && int_(offset2)(matchBack)) {
                     operands.front()->resetValue(ConstantInteger::get(operands.front()->value->getType(), offset1 + offset2));
                     for(auto prevOffset : baseGEP->arguments()) {
-                        operands.push_front(make<ValueRef>(prevOffset, inst));
+                        operands.push_front(make<ValueRef>(prevOffset, &inst));
                     }
                     operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
                     modified = true;

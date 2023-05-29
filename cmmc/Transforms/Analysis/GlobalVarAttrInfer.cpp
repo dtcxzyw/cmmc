@@ -48,16 +48,16 @@ public:
             if(!func->blocks().empty()) {
                 auto& alias = analysis.get<AliasAnalysis>(*func);
                 for(auto block : func->blocks()) {
-                    for(auto inst : block->instructions()) {
-                        if(inst->getInstID() == InstructionID::Store) {
-                            const auto address = inst->getOperand(0);
+                    for(auto& inst : block->instructions()) {
+                        if(inst.getInstID() == InstructionID::Store) {
+                            const auto address = inst.getOperand(0);
                             todo.remove_if([&](GlobalVariable* gv) { return !alias.isDistinct(gv, address); });
-                        } else if(inst->getInstID() == InstructionID::Call) {
-                            const auto callee = inst->operands().back()->as<Function>();
+                        } else if(inst.getInstID() == InstructionID::Call) {
+                            const auto callee = inst.operands().back()->as<Function>();
                             // external funcs
                             if(callee->blocks().empty() && !callee->attr().hasAttr(FunctionAttribute::NoMemoryWrite)) {
                                 todo.remove_if([&](GlobalVariable* gv) {
-                                    for(auto operand : inst->operands()) {
+                                    for(auto operand : inst.operands()) {
                                         if(operand->getType()->isPointer() && !alias.isDistinct(gv, operand))
                                             return true;
                                     }

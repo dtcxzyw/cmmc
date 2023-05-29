@@ -41,13 +41,13 @@ class DiscardReturnValue final : public TransformPass<Function> {
                 if(callerFunc->blocks().empty())
                     continue;
                 for(auto block : callerFunc->blocks()) {
-                    for(auto inst : block->instructions()) {
-                        for(auto operand : inst->operands()) {
+                    for(auto& inst : block->instructions()) {
+                        for(auto operand : inst.operands()) {
                             if(operand->is<FunctionCallInst>()) {
                                 const auto callee = operand->as<FunctionCallInst>()->operands().back();
                                 if(callee == &func) {
                                     // TODO: generalize this case
-                                    if(inst->getInstID() == InstructionID::Ret && callerFunc == &func)
+                                    if(inst.getInstID() == InstructionID::Ret && callerFunc == &func)
                                         continue;
                                     return true;
                                 }

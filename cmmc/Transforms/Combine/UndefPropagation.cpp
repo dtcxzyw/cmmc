@@ -32,8 +32,8 @@ public:
         bool modified = false;
 
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::ConditionalBranch && inst->getOperand(0)->isUndefined()) {
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::ConditionalBranch && inst.getOperand(0)->isUndefined()) {
                     const auto terminator = block->getTerminator()->as<BranchInst>();
                     block->instructions().pop_back();
                     IRBuilder builder{ target, block };
@@ -45,9 +45,9 @@ public:
                     modified = true;
                     break;
                 }
-                if(inst->getInstID() != InstructionID::Call && inst->canbeOperand()) {
+                if(inst.getInstID() != InstructionID::Call && inst.canbeOperand()) {
                     bool hasUndef = false;
-                    for(auto operand : inst->operands()) {
+                    for(auto operand : inst.operands()) {
                         if(operand->isUndefined()) {
                             hasUndef = true;
                             break;
@@ -55,11 +55,11 @@ public:
                     }
                     if(!hasUndef)
                         continue;
-                    if(inst->getType()->isInteger()) {
-                        replace.emplace(inst, ConstantInteger::get(inst->getType(), 0));
+                    if(inst.getType()->isInteger()) {
+                        replace.emplace(&inst, ConstantInteger::get(inst.getType(), 0));
                     }
                     // TODO: remove UndefinedValue
-                    // replace.emplace(inst, make<UndefinedValue>(inst->getType()));
+                    // replace.emplace(inst, make<UndefinedValue>(inst.getType()));
                 }
             }
         }

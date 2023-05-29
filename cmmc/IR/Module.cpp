@@ -46,8 +46,8 @@ bool Module::verify(std::ostream& out) const {
             if(!func->verify(out))
                 return false;
             for(auto block : func->blocks()) {
-                for(auto inst : block->instructions()) {
-                    for(auto operand : inst->operands())
+                for(auto& inst : block->instructions()) {
+                    for(auto operand : inst.operands())
                         if(operand->isGlobal() && !values.count(operand)) {
                             out << "dangling reference to global "sv;
                             operand->dumpAsOperand(out);

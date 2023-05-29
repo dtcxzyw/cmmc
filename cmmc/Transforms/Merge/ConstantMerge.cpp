@@ -42,8 +42,8 @@ public:
         };
 
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                for(auto operand : inst->operands())
+            for(auto& inst : block->instructions()) {
+                for(auto operand : inst.operands())
                     if(auto val = dynamic_cast<ConstantValue*>(operand))
                         addValue(val);
             }

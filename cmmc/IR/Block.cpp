@@ -35,9 +35,9 @@ void Block::dump(std::ostream& out, const HighlightSelector& selector) const {
 
 void Block::relabel(LabelAllocator& allocator) const {
     // relabel instructions
-    for(auto inst : mInstructions)
-        if(inst->canbeOperand())
-            inst->setLabel(allocator.allocate(inst->getLabel()));
+    for(auto& inst : mInstructions)
+        if(inst.canbeOperand())
+            inst.setLabel(allocator.allocate(inst.getLabel()));
 }
 
 void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) const {
@@ -49,9 +49,9 @@ void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) co
         out << "\033[0m";
     }
     out << ":\n";
-    for(auto inst : mInstructions) {
+    for(auto& inst : mInstructions) {
         out << "    "sv;
-        inst->dump(out, selector);
+        inst.dump(out, selector);
         out << ";\n"sv;
     }
 }
@@ -64,17 +64,17 @@ bool Block::verify(std::ostream& out) const {
         return false;
     }
 
-    for(auto inst : mInstructions) {
-        if(inst->getBlock() != this) {
+    for(auto& inst : mInstructions) {
+        if(inst.getBlock() != this) {
             out << "bad ownership "sv;
-            inst->dump(out, Noop{});
+            inst.dump(out, Noop{});
             return false;
         }
-        for(auto operand : inst->operands()) {
+        for(auto operand : inst.operands()) {
             if(auto block = operand->getBlock()) {
                 if(block->getFunction() != getFunction()) {
                     out << "bad ownership "sv;
-                    inst->dump(out, Noop{});
+                    inst.dump(out, Noop{});
                     out << "\ninvalid operand "sv;
                     operand->dumpAsOperand(out);
                     return false;
@@ -84,33 +84,33 @@ bool Block::verify(std::ostream& out) const {
     }
 
     std::unordered_set<Value*> definedValue;
-    for(auto inst : mInstructions) {
-        if(inst->isTerminator() && inst != mInstructions.back()) {
+    for(auto& inst : mInstructions) {
+        if(inst.isTerminator() && &inst != mInstructions.back()) {
             out << "the terminator must be in the end of a block"sv << std::endl;
             return false;
         }
-        for(auto operand : inst->operands()) {
-            if(operand->getBlock() == this && inst->getInstID() != InstructionID::Phi) {
+        for(auto operand : inst.operands()) {
+            if(operand->getBlock() == this && inst.getInstID() != InstructionID::Phi) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
                     dumpLabeled(out, Noop{});
                     out << "this operand is required: "sv << std::endl;
                     operand->dump(out, Noop{});
                     out << std::endl << "user: "sv << std::endl;
-                    inst->dump(out, Noop{});
+                    inst.dump(out, Noop{});
                     out << std::endl;
                     return false;
                 }
             }
         }
-        definedValue.insert(inst);
+        definedValue.insert(&inst);
     }
 
     // per-instruction
-    for(auto inst : mInstructions)
-        if(!inst->verify(out)) {
+    for(auto& inst : mInstructions)
+        if(!inst.verify(out)) {
             out << "invalid inst "sv << std::endl;
-            dump(out, HighlightInst{ inst });
+            dump(out, HighlightInst{ &inst });
             return false;
         }
 
@@ -128,8 +128,8 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
     auto block = make<Block>(mFunction);
     block->setLabel(getLabel());
 
-    for(auto inst : mInstructions) {
-        auto newInst = inst->clone();
+    for(auto& inst : mInstructions) {
+        auto newInst = inst.clone();
         if(newInst->getInstID() != InstructionID::Phi) {
             for(auto& operand : newInst->mutableOperands()) {
                 if(operand->value->getBlock() == this) {
@@ -139,10 +139,9 @@ Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
             }
         }
 
-        newInst->setLabel(inst->getLabel());
-        newInst->setBlock(block);
-        replace.emplace(inst, newInst);
-        block->mInstructions.push_back(newInst);
+        newInst->setLabel(inst.getLabel());
+        replace.emplace(&inst, newInst);
+        newInst->insertBefore(block, block->mInstructions.end());
     }
 
     return block;

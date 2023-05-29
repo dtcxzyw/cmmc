@@ -36,12 +36,12 @@ public:
         std::list<Instruction*> todo;
 
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Alloc && inst->getType()->as<PointerType>()->getPointee()->isAggregate()) {
-                    const auto type = inst->getType()->as<PointerType>()->getPointee();
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Alloc && inst.getType()->as<PointerType>()->getPointee()->isAggregate()) {
+                    const auto type = inst.getType()->as<PointerType>()->getPointee();
                     if(type->isArray() && type->as<ArrayType>()->getElementCount() > 16U)
                         continue;
-                    todo.push_back(inst);
+                    todo.push_back(&inst);
                 }
             }
         }

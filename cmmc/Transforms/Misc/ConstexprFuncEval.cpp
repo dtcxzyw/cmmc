@@ -72,10 +72,10 @@ public:
         }
         ReplaceMap replaceMap;
         for(auto block : func.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(inst->getInstID() != InstructionID::Call)
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() != InstructionID::Call)
                     continue;
-                const auto callee = inst->operands().back();
+                const auto callee = inst.operands().back();
                 if(!callee->is<Function>())
                     continue;
                 const auto calleeFunc = callee->as<Function>();
@@ -83,7 +83,7 @@ public:
                     continue;
                 bool hasConstantArgs = true;
                 std::vector<ConstantValue*> args;
-                for(auto arg : inst->arguments()) {
+                for(auto arg : inst.arguments()) {
                     if(!arg->isConstant()) {
                         hasConstantArgs = false;
                         break;
@@ -95,7 +95,7 @@ public:
 
                 const auto res = eval(module, *calleeFunc, args);
                 if(res) {
-                    replaceMap.emplace(inst, res);
+                    replaceMap.emplace(&inst, res);
                 }
             }
         }

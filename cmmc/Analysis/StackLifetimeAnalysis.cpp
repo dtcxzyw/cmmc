@@ -42,9 +42,9 @@ StackLifetimeAnalysisResult StackLifetimeAnalysis::run(Function& func, AnalysisP
                 allocas.insert(alloca);
         }
 
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                allocas.insert(inst);
+        for(auto& inst : block->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                allocas.insert(&inst);
             }
         }
     }

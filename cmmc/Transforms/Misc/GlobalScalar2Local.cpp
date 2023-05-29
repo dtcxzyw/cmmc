@@ -103,9 +103,9 @@ public:
             for(auto global : mod.globals()) {
                 if(auto func = dynamic_cast<Function*>(global)) {
                     for(auto block : func->blocks())
-                        for(auto inst : block->instructions()) {
-                            if(inst->getInstID() == InstructionID::Call) {
-                                if(inst->operands().back() == exportedFunc)
+                        for(auto& inst : block->instructions()) {
+                            if(inst.getInstID() == InstructionID::Call) {
+                                if(inst.operands().back() == exportedFunc)
                                     return true;
                             }
                         }
@@ -128,8 +128,8 @@ public:
         IRBuilder builder{ target };
         const auto entryBlock = exportedFunc->entryBlock();
         auto& instructions = entryBlock->instructions();
-        builder.setInsertPoint(entryBlock, std::find_if_not(instructions.begin(), instructions.end(), [](Instruction* inst) {
-                                   return inst->getInstID() == InstructionID::Alloc;
+        builder.setInsertPoint(entryBlock, std::find_if_not(instructions.begin(), instructions.end(), [](Instruction& inst) {
+                                   return inst.getInstID() == InstructionID::Alloc;
                                }));
 
         std::unordered_map<Function*, std::unordered_map<Value*, Value*>> mapping;
@@ -186,8 +186,8 @@ public:
         funcs.push_back(exportedFunc);
         for(auto func : funcs) {
             for(auto block : func->blocks())
-                for(auto inst : block->instructions()) {
-                    if(auto call = dynamic_cast<FunctionCallInst*>(inst)) {
+                for(auto& inst : block->instructions()) {
+                    if(auto call = dynamic_cast<FunctionCallInst*>(&inst)) {
                         auto callee = call->operands().back();
                         if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                             if(funcSet.count(calleeFunc)) {

@@ -39,40 +39,40 @@ class LoopGEPCombine final : public TransformPass<Function> {
     static void runBlock(IRBuilder& builder, Block& block, ReplaceMap& replace) {
         std::unordered_map<size_t, std::vector<std::vector<Instruction*>>> continuousGEP;
 
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() != InstructionID::GetElementPtr)
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() != InstructionID::GetElementPtr)
                 continue;
             size_t hash = 0;
-            for(uint32_t idx = 0; idx < inst->operands().size(); ++idx) {
-                if(idx == inst->operands().size() - 2U)
+            for(uint32_t idx = 0; idx < inst.operands().size(); ++idx) {
+                if(idx == inst.operands().size() - 2U)
                     continue;
 
-                hash = hash * 131 + std::hash<Value*>{}(inst->getOperand(idx));
+                hash = hash * 131 + std::hash<Value*>{}(inst.getOperand(idx));
             }
             auto& sets = continuousGEP[hash];
             bool inserted = false;
             for(auto& set : sets) {
                 const auto lhs = set.front();
-                if(lhs->operands().size() != inst->operands().size())
+                if(lhs->operands().size() != inst.operands().size())
                     continue;
                 bool match = true;
-                for(uint32_t idx = 0; idx < inst->operands().size(); ++idx) {
-                    if(idx == inst->operands().size() - 2U)
+                for(uint32_t idx = 0; idx < inst.operands().size(); ++idx) {
+                    if(idx == inst.operands().size() - 2U)
                         continue;
 
-                    if(lhs->getOperand(idx) != inst->getOperand(idx)) {
+                    if(lhs->getOperand(idx) != inst.getOperand(idx)) {
                         match = false;
                         break;
                     }
                 }
                 if(match) {
                     inserted = true;
-                    set.push_back(inst);
+                    set.push_back(&inst);
                     break;
                 }
             }
             if(!inserted) {
-                sets.push_back({ inst });
+                sets.push_back({ &inst });
             }
         }
 
@@ -119,14 +119,14 @@ class LoopGEPCombine final : public TransformPass<Function> {
         builder.setCurrentBlock(&block);
 
         for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
-            const auto inst = *iter;
-            const auto it = todo.find(inst);
+            auto& inst = *iter;
+            const auto it = todo.find(&inst);
             if(it == todo.cend())
                 continue;
             builder.setInsertPoint(&block, iter);
             const auto newInst = builder.makeOp<GetElementPtrInst>(
                 it->second.baseGEP, std::vector<Value*>{ ConstantInteger::get(builder.getIndexType(), it->second.offset) });
-            replace.emplace(inst, newInst);
+            replace.emplace(&inst, newInst);
         }
     }
 

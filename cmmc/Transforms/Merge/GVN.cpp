@@ -132,12 +132,12 @@ public:
         std::unordered_map<uint32_t, std::vector<Instruction*>> instructions;
 
         for(auto block : dom.blocks()) {
-            for(auto inst : block->instructions()) {
-                if(!isNoSideEffectExpr(*inst))
+            for(auto& inst : block->instructions()) {
+                if(!isNoSideEffectExpr(inst))
                     continue;
 
-                const auto id = getInstNumber(inst);
-                instructions[id].push_back(inst);
+                const auto id = getInstNumber(&inst);
+                instructions[id].push_back(&inst);
                 // inst->dump(std::cerr);
                 // std::cerr << "->" << id << std::endl;
             }

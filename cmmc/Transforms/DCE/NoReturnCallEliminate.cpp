@@ -35,15 +35,14 @@ public:
         for(auto block : func.blocks()) {
             auto& insts = block->instructions();
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
-                const auto inst = *iter;
-                if(inst->getInstID() == InstructionID::Call) {
-                    const auto callee = inst->operands().back();
+                auto& inst = *iter;
+                if(inst.getInstID() == InstructionID::Call) {
+                    const auto callee = inst.operands().back();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee);
                        calleeFunc && calleeFunc->attr().hasAttr(FunctionAttribute::NoReturn)) {
                         insts.erase(std::next(iter), insts.end());
                         auto newTerminator = make<UnreachableInst>();
-                        newTerminator->setBlock(block);
-                        insts.push_back(newTerminator);
+                        newTerminator->insertBefore(block, block->instructions().end());
                         modified = true;
                         break;
                     }

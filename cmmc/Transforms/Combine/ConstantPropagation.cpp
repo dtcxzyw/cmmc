@@ -32,14 +32,14 @@ CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
     static void reduceConstantPhis(Block& block, ReplaceMap& replace) {
-        for(auto inst : block.instructions()) {
-            if(inst->getInstID() == InstructionID::Phi) {
-                const auto phi = inst->as<PhiInst>();
+        for(auto& inst : block.instructions()) {
+            if(inst.getInstID() == InstructionID::Phi) {
+                const auto phi = inst.as<PhiInst>();
                 Value* value = nullptr;
                 bool unique = true;
                 for(auto [pred, val] : phi->incomings()) {
                     // self reference
-                    if(val == inst)
+                    if(val == &inst)
                         continue;
                     if(!value)
                         value = val;
@@ -49,7 +49,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                     }
                 }
                 if(value && unique)
-                    replace.emplace(inst, value);
+                    replace.emplace(&inst, value);
             } else
                 break;
         }

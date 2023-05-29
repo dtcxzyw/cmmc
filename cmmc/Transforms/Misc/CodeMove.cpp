@@ -57,16 +57,16 @@ public:
             std::vector<Instruction*> moveOut;
             std::unordered_set<Value*> moveOutSet;
 
-            for(auto inst : block->instructions()) {
-                if(!isNoSideEffectExpr(*inst))
+            for(auto& inst : block->instructions()) {
+                if(!isNoSideEffectExpr(inst))
                     continue;
 
                 // don't touch not natively supported instructions as GVN does
-                if(!target.isNativeSupported(inst->getInstID()))
+                if(!target.isNativeSupported(inst.getInstID()))
                     continue;
 
                 bool canMove = true;
-                for(auto operand : inst->operands()) {
+                for(auto operand : inst.operands()) {
                     if(operand->getBlock() == block) {
                         if(!moveOutSet.count(operand)) {
                             canMove = false;
@@ -76,8 +76,8 @@ public:
                 }
 
                 if(canMove) {
-                    moveOut.push_back(inst);
-                    moveOutSet.insert(inst);
+                    moveOut.push_back(&inst);
+                    moveOutSet.insert(&inst);
                 }
             }
 
@@ -118,10 +118,9 @@ public:
                 if(blockTripCount.query(targetBlock) + significantBlockTripCountDifference >= freq)
                     continue;
 
-                block->instructions().remove(inst);
+                block->instructions().erase(inst->asNode());
                 auto& dest = targetBlock->instructions();
-                dest.insert(std::prev(dest.cend()), inst);
-                inst->setBlock(targetBlock);
+                inst->insertBefore(targetBlock, std::prev(dest.end()));
                 moveTargetSet.emplace(inst, targetBlock);
                 modified = true;
             }

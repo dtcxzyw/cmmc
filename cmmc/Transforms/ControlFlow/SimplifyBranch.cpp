@@ -61,8 +61,7 @@ public:
             auto& insts = block->instructions();
             insts.pop_back();
             const auto inst = make<BranchInst>(constCond ? trueTarget : falseTarget);
-            inst->setBlock(block);
-            insts.push_back(inst);
+            inst->insertBefore(block, insts.end());
             removePhi(block, !constCond ? trueTarget : falseTarget);
             modified = true;
         }

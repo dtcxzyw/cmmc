@@ -58,7 +58,7 @@ ValueRefHandle::~ValueRefHandle() {
         std::destroy_at(mRef);
 }
 
-UserList::UserList(Value* self) : mHead{ self, nullptr } {}
+UserList::UserList(Value* self) : mHead{ self, nullptr }, mUseCount{ 0 } {}
 void UserList::addRef(ValueRef& ref) {
     ref.prev = &mHead;
     ref.next = mHead.next;
@@ -66,6 +66,7 @@ void UserList::addRef(ValueRef& ref) {
         mHead.next->prev = &ref;
     }
     mHead.next = &ref;
+    ++mUseCount;
 }
 void UserList::removeRef(ValueRef& ref) {
     assert(ref.value == mHead.value);
@@ -75,6 +76,8 @@ void UserList::removeRef(ValueRef& ref) {
     if(ref.next) {
         ref.next->prev = ref.prev;
     }
+    --mUseCount;
+    assert(mUseCount >= 0);
 }
 
 [[nodiscard]] UserIterator UserList::begin() const noexcept {
@@ -130,26 +133,32 @@ void Instruction::dump(std::ostream& out, const HighlightSelector& selector) con
     }
 }
 
-bool Instruction::verify(std::ostream& out) const {
-    // cross block reference
-    /*
-    for(auto operand : operands())
-        if(auto block = operand->getBlock(); block && block != getBlock()) {
-            out << "cross block reference"sv << std::endl;
-            out << "user: "sv;
-            dump(out);
-            out << std::endl << "current block: "sv << getBlock()->getLabel() << std::endl;
-            getBlock()->dump(out);
-            out << "used block: "sv << block->getLabel() << std::endl;
-            block->dump(out);
-            out << "used operand: "sv << std::endl;
-            operand->dump(out);
-            out << std::endl;
-            return false;
-        }
-    */
-    CMMC_UNUSED(out);
+void UserList::replaceWith(Value* value) {
+    auto cur = mHead.next;
+    while(cur) {
+        const auto next = cur->next;
+        cur->resetValue(value);
+        cur = next;
+    }
+}
 
+void Instruction::replaceWith(Value* value) {
+    mUsers.replaceWith(value);
+}
+
+void Instruction::insertBefore(Block* block, IntrusiveListIterator<Instruction> it) {
+    mBlock = block;
+    block->instructions().insert(it, asNode());
+}
+IntrusiveListIterator<Instruction> Instruction::asIterator() const {
+    return IntrusiveListIterator<Instruction>{ asNode() };
+}
+IntrusiveListNode<Instruction>* Instruction::asNode() const {
+    return &mNode;
+}
+
+bool Instruction::verify(std::ostream& out) const {
+    CMMC_UNUSED(out);
     return true;
 }
 

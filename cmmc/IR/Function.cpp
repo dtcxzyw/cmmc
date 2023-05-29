@@ -123,18 +123,18 @@ bool Function::verify(std::ostream& out) const {
             return false;
         }
         bool stopAlloc = block != entryBlock();
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                if(inst->getBlock() != entryBlock() || stopAlloc) {
+        for(auto& inst : block->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                if(inst.getBlock() != entryBlock() || stopAlloc) {
                     out << "Stack allocations should be in the front of entry block"sv << std::endl;
-                    block->dump(out, HighlightInst{ inst });
+                    block->dump(out, HighlightInst{ &inst });
                     return false;
                 }
             } else
                 stopAlloc = true;
-            if(!set.insert(inst).second) {
-                out << "unexpected copy of instruction "sv << inst << std::endl;
-                block->dump(out, HighlightInst{ inst });
+            if(!set.insert(&inst).second) {
+                out << "unexpected copy of instruction "sv << &inst << std::endl;
+                block->dump(out, HighlightInst{ &inst });
                 return false;
             }
         }
@@ -166,13 +166,14 @@ bool Function::verify(std::ostream& out) const {
     }
     std::unordered_set<Value*> insts;
     for(auto block : mBlocks)
-        insts.insert(block->instructions().cbegin(), block->instructions().cend());
+        for(auto& inst : block->instructions())
+            insts.insert(&inst);
     for(auto block : mBlocks)
-        for(auto inst : block->instructions())
-            for(auto operand : inst->operands())
+        for(auto& inst : block->instructions())
+            for(auto operand : inst.operands())
                 if(operand->isInstruction() && !insts.count(operand)) {
                     out << "Invalid inst: ";
-                    inst->dump(out, Noop{});
+                    inst.dump(out, Noop{});
                     out << "\nInvalid reference: ";
                     operand->dumpAsOperand(out);
                     out << "\n";
@@ -186,13 +187,13 @@ bool Function::verify(std::ostream& out) const {
 
     for(auto block : dom.blocks()) {
         bool stopPhi = false;
-        for(auto inst : block->instructions()) {
-            if(inst->getInstID() == InstructionID::Phi) {
+        for(auto& inst : block->instructions()) {
+            if(inst.getInstID() == InstructionID::Phi) {
                 if(stopPhi) {
                     out << "Phi nodes should be in the front of instructions." << std::endl;
                     return false;
                 }
-                const auto phi = inst->as<PhiInst>();
+                const auto phi = inst.as<PhiInst>();
                 auto& incomings = phi->incomings();
                 auto& predecessors = cfg.predecessors(block);
                 if(!std::all_of(incomings.cbegin(), incomings.cend(),
@@ -219,13 +220,13 @@ bool Function::verify(std::ostream& out) const {
 
     // verify dominate
     for(auto block : dom.blocks()) {
-        for(auto inst : block->instructions()) {
+        for(auto& inst : block->instructions()) {
             const auto checkDominate = [&](Block* blockA, Block* blockB, bool strict) {
                 if(blockA != blockB && (strict || dom.reachable(blockA)) && dom.reachable(blockB) &&
                    !dom.dominate(blockA, blockB)) {
                     block->dump(out, Noop{});
                     out << "Invalid inst: ";
-                    inst->dump(out, Noop{});
+                    inst.dump(out, Noop{});
                     out << "\nblock ";
                     blockA->dumpAsTarget(out);
                     out << " should dominate block ";
@@ -235,8 +236,8 @@ bool Function::verify(std::ostream& out) const {
                 }
                 return true;
             };
-            if(inst->getInstID() == InstructionID::Phi) {
-                const auto phi = inst->as<PhiInst>();
+            if(inst.getInstID() == InstructionID::Phi) {
+                const auto phi = inst.as<PhiInst>();
                 for(auto [pred, val] : phi->incomings()) {
                     if(auto depBlock = val->getBlock()) {
                         if(!checkDominate(depBlock, pred, false))  // depBlock can be unreachable
@@ -244,7 +245,7 @@ bool Function::verify(std::ostream& out) const {
                     }
                 }
             } else {
-                for(auto operand : inst->operands()) {
+                for(auto operand : inst.operands()) {
                     if(auto depBlock = operand->getBlock()) {
                         if(!checkDominate(depBlock, block, true))  // depBlock must be reachable
                             return false;
@@ -253,6 +254,35 @@ bool Function::verify(std::ostream& out) const {
             }
         }
     }
+
+    // verify user tracking
+    std::unordered_map<Value*, std::vector<Instruction*>> users;
+    for(auto block : mBlocks) {
+        for(auto& inst : block->instructions()) {
+            for(auto operand : inst.operands()) {
+                if(operand->isInstruction()) {
+                    users[operand].push_back(&inst);
+                }
+            }
+        }
+    }
+    for(auto block : mBlocks) {
+        for(auto& inst : block->instructions()) {
+            std::vector<Instruction*> trackedUsers;
+            for(auto user : inst.users()) {
+                trackedUsers.push_back(user);
+            }
+            auto& realUsers = users[&inst];
+            std::sort(trackedUsers.begin(), trackedUsers.end());
+            std::sort(realUsers.begin(), realUsers.end());
+            if(trackedUsers != realUsers) {
+                out << "Invalid user list for ";
+                inst.dumpInst(std::cerr);
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 

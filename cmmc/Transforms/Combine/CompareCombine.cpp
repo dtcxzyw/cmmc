@@ -51,15 +51,15 @@ public:
                 insts = compareInsts.at(parent);
             }
 
-            for(auto inst : block->instructions()) {
-                if(inst->isCompareOp()) {
-                    const auto cmp = inst->as<CompareInst>();
+            for(auto& inst : block->instructions()) {
+                if(inst.isCompareOp()) {
+                    const auto cmp = inst.as<CompareInst>();
                     const auto hash = std::hash<InstructionID>{}(cmp->getInstID()) ^ std::hash<Value*>{}(cmp->getOperand(0)) ^
                         std::hash<Value*>{}(cmp->getOperand(1));
                     auto& instList = insts[hash];
                     bool reuse = false;
                     for(auto rhs : instList) {
-                        if(inst->getInstID() != rhs->getInstID())
+                        if(inst.getInstID() != rhs->getInstID())
                             continue;
                         const auto lhsOp = cmp->getOp();
                         const auto rhsOp = rhs->getOp();

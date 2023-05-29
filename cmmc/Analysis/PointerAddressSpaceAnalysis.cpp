@@ -70,10 +70,10 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                 }
             }*/
 
-            for(auto inst : block->instructions()) {
-                if(!inst->getType()->isPointer() || result.isTagged(inst))
+            for(auto& inst : block->instructions()) {
+                if(!inst.getType()->isPointer() || result.isTagged(&inst))
                     continue;
-                switch(inst->getInstID()) {
+                switch(inst.getInstID()) {
                     // TODO: value analysis
                     case InstructionID::Load: {
                         break;
@@ -82,27 +82,27 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                         break;
                     }
                     case InstructionID::Select: {
-                        const auto lhs = inst->getOperand(1);
-                        const auto rhs = inst->getOperand(2);
+                        const auto lhs = inst.getOperand(1);
+                        const auto rhs = inst.getOperand(2);
                         if(result.isTagged(lhs) && result.isTagged(rhs)) {
                             const auto spaceLhs = result.getAddressSpace(lhs);
                             const auto spaceRhs = result.getAddressSpace(rhs);
                             if(spaceLhs == spaceRhs)
-                                result.addTag(inst, spaceLhs);
+                                result.addTag(&inst, spaceLhs);
                         }
                         break;
                     }
                     case InstructionID::Alloc: {
-                        result.addTag(inst, AddressSpaceType::InternalStack);
+                        result.addTag(&inst, AddressSpaceType::InternalStack);
                         break;
                     }
                     case InstructionID::GetElementPtr: {
-                        const auto base = inst->operands().back();
-                        inheritFrom(base, inst);
+                        const auto base = inst.operands().back();
+                        inheritFrom(base, &inst);
                         break;
                     }
                     case InstructionID::PtrCast: {
-                        inheritFrom(inst->getOperand(0), inst);
+                        inheritFrom(inst.getOperand(0), &inst);
                         break;
                     }
                     case InstructionID::IntToPtr: {
@@ -111,18 +111,18 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                     case InstructionID::Phi: {
                         bool allTagged = true;
                         AddressSpaceType space = AddressSpaceType::InternalStack;
-                        for(auto ptr : inst->operands()) {
+                        for(auto ptr : inst.operands()) {
                             if(!result.isTagged(ptr) || result.getAddressSpace(ptr) != space) {
                                 allTagged = false;
                                 break;
                             }
                         }
                         if(allTagged)
-                            result.addTag(inst, space);
+                            result.addTag(&inst, space);
                         break;
                     }
                     default: {
-                        block->dump(reportError() << "unimplemented inst "sv, HighlightInst{ inst });
+                        block->dump(reportError() << "unimplemented inst "sv, HighlightInst{ &inst });
                         reportNotImplemented(CMMC_LOCATION());
                     }
                 }

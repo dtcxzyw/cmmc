@@ -61,10 +61,10 @@ public:
                 for(auto arg : func->args())
                     removeType(removeType, arg->getType());
                 for(auto block : func->blocks()) {
-                    for(auto inst : block->instructions()) {
-                        for(auto operand : inst->operands())
+                    for(auto& inst : block->instructions()) {
+                        for(auto operand : inst.operands())
                             removeType(removeType, operand->getType());
-                        removeType(removeType, inst->getType());
+                        removeType(removeType, inst.getType());
                     }
                     if(types.empty())
                         return false;
