@@ -19,7 +19,7 @@
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
@@ -41,15 +41,22 @@ public:
                 replace.emplace(value, *iter);
         };
 
+        bool modified = false;
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
-                for(auto operand : inst.operands())
-                    if(auto val = dynamic_cast<ConstantValue*>(operand))
+                for(auto& operand : inst.mutableOperands()) {
+                    if(auto val = dynamic_cast<ConstantValue*>(operand->value)) {
                         addValue(val);
+                        if(auto iter = replace.find(val); iter != replace.end()) {
+                            operand->value = iter->second;
+                            modified = true;
+                        }
+                    }
+                }
             }
         }
 
-        return replaceOperands(func, replace);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

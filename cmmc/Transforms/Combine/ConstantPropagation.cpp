@@ -19,11 +19,12 @@
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -31,7 +32,8 @@
 CMMC_NAMESPACE_BEGIN
 
 class ConstantPropagation final : public TransformPass<Function> {
-    static void reduceConstantPhis(Block& block, ReplaceMap& replace) {
+    static bool reduceConstantPhis(Block& block) {
+        bool modified = false;
         for(auto& inst : block.instructions()) {
             if(inst.getInstID() == InstructionID::Phi) {
                 const auto phi = inst.as<PhiInst>();
@@ -39,24 +41,25 @@ class ConstantPropagation final : public TransformPass<Function> {
                 bool unique = true;
                 for(auto [pred, val] : phi->incomings()) {
                     // self reference
-                    if(val == &inst)
+                    if(val->value == &inst)
                         continue;
                     if(!value)
-                        value = val;
-                    else if(value != val) {
+                        value = val->value;
+                    else if(value != val->value) {
                         unique = false;
                         break;
                     }
                 }
                 if(value && unique)
-                    replace.emplace(&inst, value);
+                    modified |= inst.replaceWith(value);
             } else
                 break;
         }
+        return modified;
     }
 
     static bool runOnBlock(IRBuilder& builder, Block& block) {
-        return reduceBlock(builder, block, [](Instruction* inst, ReplaceMap& replace) -> Value* {
+        return reduceBlock(builder, block, [](Instruction* inst) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
@@ -78,11 +81,11 @@ class ConstantPropagation final : public TransformPass<Function> {
             // d = select x a+1 b+1
 
             for(auto operand : inst->operands())
-                if(!operand->isConstant() && !replace.count(operand))
+                if(!operand->isConstant())
                     return nullptr;
 
             if(inst->isIntegerOp()) {
-                MatchContext<Value> matchCtx{ inst, &replace };
+                MatchContext<Value> matchCtx{ inst };
                 if(not_(int_(i1))(matchCtx))
                     return makeInt(inst, !i1);
                 if(neg(int_(i1))(matchCtx))
@@ -114,7 +117,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(xor_(uint_(u1), uint_(u2))(matchCtx))
                     return makeUInt(inst, u1 ^ u2);
             } else if(inst->isFloatingPointOp()) {
-                MatchContext<Value> matchCtx{ inst, &replace };
+                MatchContext<Value> matchCtx{ inst };
                 double f3;
 
                 if(fneg(fp_(f1))(matchCtx))
@@ -151,7 +154,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return ConstantInteger::get(mappedInst->getType(), val);
                 };
 
-                MatchContext<Value> matchCtx{ inst, &replace };
+                MatchContext<Value> matchCtx{ inst };
                 if(scmp(cmp, int_(i1), int_(i2))(matchCtx))
                     return makeBool(inst, doCompare(cmp, i1, i2));
                 if(ucmp(cmp, uint_(u1), uint_(u2))(matchCtx))
@@ -163,7 +166,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                 intmax_t sval;
                 double fval;
                 const auto val = inst->getOperand(0);
-                MatchContext<Value> matchCtx{ val, &replace };
+                MatchContext<Value> matchCtx{ val };
 
                 switch(inst->getInstID()) {
                     case InstructionID::SExt: {
@@ -207,7 +210,7 @@ class ConstantPropagation final : public TransformPass<Function> {
                         break;
                 }
             } else {
-                MatchContext<Value> matchCtx{ inst, &replace };
+                MatchContext<Value> matchCtx{ inst };
 
                 Value* v1;
                 // select c?a:a -> a
@@ -233,10 +236,8 @@ public:
         bool modified = false;
         while(true) {
             bool changed = false;
-            ReplaceMap replace;
             for(auto block : dom.blocks())
-                reduceConstantPhis(*block, replace);
-            modified |= replaceOperands(func, replace);
+                modified |= reduceConstantPhis(*block);
             for(auto block : dom.blocks())
                 modified |= runOnBlock(builder, *block);
 

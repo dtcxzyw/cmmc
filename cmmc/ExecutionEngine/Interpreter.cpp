@@ -181,6 +181,7 @@ public:
         }
         if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))
             removeTag(mGlobalStorage, ptr, size, ByteState::Write);
+        assert(!mGlobalAlloc.count(var));
         mGlobalAlloc.emplace(var, ptr + globalOffset);
 
         mStoreMemFootprint = oldStoreFootprint;  // rollback counters
@@ -592,7 +593,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             for(auto operand : inst.operands())
                 buildOperand(operand);
         } else {
-            buildOperand(inst.as<PhiInst>()->incomings().at(currentExecCtx.predBlock));
+            buildOperand(inst.as<PhiInst>()->incomings().at(currentExecCtx.predBlock)->value);
         }
 
         const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
@@ -631,6 +632,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst.getType(), val }); };
 
         const auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
+            if(step.get()) {
+                auto& out = std::cerr;
+                out << "compare "sv;
+                std::cerr << lhs;
+                out << ' ' << enumName(cmp) << ' ';
+                std::cerr << rhs;
+                out << '\n';
+            }
             switch(cmp) {
                 case CompareOp::LessThan:
                     return lhs < rhs;
@@ -663,7 +672,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     return operands.empty() ? nullptr : toConstant(operands[0]);
                 }
                 if(!operands.empty()) {
-                    execCtx.back().operands.emplace(caller, operands[0]);
+                    if(step.get()) {
+                        std::cerr << "Ret "sv;
+                        dumpValue(operands[0]);
+                        std::cerr << "->"sv;
+                        caller->dumpAsOperand(std::cerr);
+                        std::cerr << '\n';
+                    }
+                    execCtx.back().operands.insert_or_assign(caller, operands[0]);
                 }
 
                 break;
@@ -863,6 +879,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                     const auto type = inst.getType()->as<PointerType>()->getPointee();
                     const auto ptr = memCtx.stackPush(type->getSize(dataLayout), type->getAlignment(dataLayout));
                     addPtr(ptr);
+                    assert(!currentExecCtx.stackAllocs.count(ptr));
                     currentExecCtx.stackAllocs.emplace(ptr, &inst);
                     currentExecCtx.cachedAllocs.emplace(&inst, ptr);
                 }
@@ -872,7 +889,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             case InstructionID::GetElementPtr: {
                 auto basePtr = getPtr(static_cast<uint32_t>(operands.size() - 1U));
                 const auto oldPtr = basePtr;
-                auto baseType = inst.operands().back()->getType();
+                auto baseType = inst.lastOperand()->getType();
                 for(uint32_t idx = 0; idx + 1 < operands.size(); ++idx) {
                     const auto operand = inst.getOperand(idx);
                     const auto type = operand->getType();
@@ -883,7 +900,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             baseType = baseType->as<ArrayType>()->getElementType();
                         } else
                             reportUnreachable(CMMC_LOCATION());
-                        basePtr += static_cast<uintptr_t>(getInt(idx)) * baseType->getSize(dataLayout);
+                        basePtr += static_cast<intptr_t>(getInt(idx)) * baseType->getSize(dataLayout);
                     } else if(auto offset = dynamic_cast<ConstantOffset*>(operand)) {
                         const auto structType = baseType->as<StructType>();
                         baseType = structType->getFieldType(offset);
@@ -1019,6 +1036,18 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
 
                             blockCtx.execIter = blockCtx.block->instructions().begin();
                             if(step.get()) {
+                                std::cerr << "Call ";
+                                callee->dumpAsOperand(std::cerr);
+                                std::cerr << " with";
+                                for(uint32_t idx = 0; idx < callee->args().size(); ++idx) {
+                                    auto param = callee->getArg(idx);
+                                    auto& arg = operands[idx];
+                                    std::cerr << ' ';
+                                    param->dumpAsOperand(std::cerr);
+                                    std::cerr << "->"sv;
+                                    dumpValue(arg);
+                                }
+                                std::cerr << '\n';
                                 callee->dump(std::cerr, Noop{});
                                 blockCtx.block->dumpLabeled(std::cerr, Noop{});
                             }

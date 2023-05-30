@@ -23,7 +23,6 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <iostream>
 #include <unordered_set>
@@ -118,7 +117,6 @@ public:
                 if(blockTripCount.query(targetBlock) + significantBlockTripCountDifference >= freq)
                     continue;
 
-                block->instructions().erase(inst->asNode());
                 auto& dest = targetBlock->instructions();
                 inst->insertBefore(targetBlock, std::prev(dest.end()));
                 moveTargetSet.emplace(inst, targetBlock);

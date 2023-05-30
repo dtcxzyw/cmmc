@@ -37,7 +37,7 @@ public:
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
                 auto& inst = *iter;
                 if(inst.getInstID() == InstructionID::Call) {
-                    const auto callee = inst.operands().back();
+                    const auto callee = inst.lastOperand();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee);
                        calleeFunc && calleeFunc->attr().hasAttr(FunctionAttribute::NoReturn)) {
                         insts.erase(std::next(iter), insts.end());

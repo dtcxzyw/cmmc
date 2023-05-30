@@ -43,7 +43,7 @@ public:
                     used.insert(&inst);
                     q.push(&inst);
                 } else if(instID == InstructionID::Call) {
-                    const auto callee = inst.operands().back();
+                    const auto callee = inst.lastOperand();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee);
                        calleeFunc->attr().hasAttr(FunctionAttribute::NoSideEffect))
                         continue;
@@ -65,6 +65,7 @@ public:
             }
         }
 
+        DisableValueRefCheckScope scope;
         bool modified = false;
         for(auto block : func.blocks()) {
             auto& insts = block->instructions();

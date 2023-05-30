@@ -23,7 +23,6 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <queue>
@@ -60,35 +59,46 @@ class GEPCombine final : public TransformPass<Function> {
             if(!constantGEP.count(&inst))
                 continue;
 
-            const auto base = inst.operands().back();
+            const auto base = inst.lastOperand();
             if(!constantGEP.count(base))
                 continue;
 
             const auto baseGEP = base->as<GetElementPtrInst>();
             auto& operands = inst.mutableOperands();
-            MatchContext<Value> matchFront{ operands.front()->value, nullptr };
-            MatchContext<Value> matchBack{ baseGEP->getOperand(static_cast<uint32_t>(baseGEP->operands().size() - 2)), nullptr };
+            MatchContext<Value> matchFront{ operands.front()->value };
+            MatchContext<Value> matchBack{ baseGEP->arguments().back() };
             if(cuint_(0)(matchFront)) {
                 operands.pop_front();
+                auto iter = operands.begin();
                 for(auto prevOffset : baseGEP->arguments()) {
-                    operands.push_front(make<ValueRef>(prevOffset, &inst));
+                    iter = std::next(operands.insert(iter, make<ValueRef>(prevOffset, &inst)));
                 }
-                operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
+                operands.back()->resetValue(baseGEP->lastOperand());  // replace base
                 modified = true;
             } else if(cuint_(0)(matchBack)) {
+                auto iter = operands.begin();
+                size_t size = baseGEP->arguments().size();
                 for(auto prevOffset : baseGEP->arguments()) {
-                    operands.push_front(make<ValueRef>(prevOffset, &inst));
+                    if(size == 1)
+                        break;
+                    --size;
+                    iter = std::next(operands.insert(iter, make<ValueRef>(prevOffset, &inst)));
                 }
-                operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
+                operands.back()->resetValue(baseGEP->lastOperand());  // replace base
                 modified = true;
             } else {
                 intmax_t offset1, offset2;
                 if(int_(offset1)(matchFront) && int_(offset2)(matchBack)) {
                     operands.front()->resetValue(ConstantInteger::get(operands.front()->value->getType(), offset1 + offset2));
+                    auto iter = operands.begin();
+                    size_t size = baseGEP->arguments().size();
                     for(auto prevOffset : baseGEP->arguments()) {
-                        operands.push_front(make<ValueRef>(prevOffset, &inst));
+                        if(size == 1)
+                            break;
+                        --size;
+                        iter = std::next(operands.insert(iter, make<ValueRef>(prevOffset, &inst)));
                     }
-                    operands.back()->resetValue(baseGEP->mutableOperands().back()->value);  // replace base
+                    operands.back()->resetValue(baseGEP->lastOperand());  // replace base
                     modified = true;
                 }
             }

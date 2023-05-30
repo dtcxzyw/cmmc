@@ -37,8 +37,8 @@ CMMC_NAMESPACE_BEGIN
 class ArithmeticReduce final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
         bool modified = false;
-        const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap& replace) -> Value* {
-            MatchContext<Value> matchCtx{ inst, &replace };
+        const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
+            MatchContext<Value> matchCtx{ inst };
 
             auto makeIntLike = [](intmax_t val, const Value* like) { return ConstantInteger::get(like->getType(), val); };
             auto makeNot = [&](Value* val) { return builder.makeOp<BinaryInst>(InstructionID::Xor, val, builder.getTrue()); };
@@ -239,8 +239,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // gep x 0 -> x
             if(inst->getInstID() == InstructionID::GetElementPtr && inst->operands().size() == 2 &&
-               cuint_(0)(MatchContext<Value>{ inst->getOperand(0), &replace })) {
-                return inst->operands().back();
+               cuint_(0)(MatchContext<Value>{ inst->getOperand(0) })) {
+                return inst->lastOperand();
             }
 
             intmax_t i1, i2;

@@ -27,6 +27,7 @@
 #include <memory>
 #include <ostream>
 #include <unordered_map>
+#include <utility>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -120,6 +121,15 @@ struct ValueRef final {
 };
 CMMC_ARENA_TRAIT(ValueRef, IR);
 
+struct DisableValueRefCheckScope final {
+    DisableValueRefCheckScope();
+    ~DisableValueRefCheckScope();
+    DisableValueRefCheckScope(const DisableValueRefCheckScope&) = delete;
+    DisableValueRefCheckScope(DisableValueRefCheckScope&&) = delete;
+    DisableValueRefCheckScope& operator=(const DisableValueRefCheckScope& rhs) = delete;
+    DisableValueRefCheckScope& operator=(DisableValueRefCheckScope&& rhs) = delete;
+};
+
 class UserIterator final {
     ValueRef* mRef;
 
@@ -133,11 +143,12 @@ public:
         return *this;
     }
     Instruction* operator*() const {
+        assert(mRef->user);
         return mRef->user;
     }
 };
 class UserList final {
-    ValueRef mHead{ nullptr, nullptr };
+    ValueRef mHead;
     int32_t mUseCount;
 
 public:
@@ -149,7 +160,9 @@ public:
     ~UserList();
     void addRef(ValueRef& ref);
     void removeRef(ValueRef& ref);
-    void replaceWith(Value* value);
+    bool replaceWith(Value* value);
+    bool replaceWithInBlock(Block* block, Value* value);
+    bool replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value);
     [[nodiscard]] int32_t useCount() const noexcept {
         return mUseCount;
     }
@@ -179,10 +192,19 @@ public:
         std::swap(mRef, rhs.mRef);
     }
     ValueRef& operator*() const {
+        assert(mRef);
         return *mRef;
     }
     ValueRef* operator->() const {
+        assert(mRef);
         return mRef;
+    }
+    ValueRef* get() const noexcept {
+        assert(mRef);
+        return mRef;
+    }
+    ValueRef* release() noexcept {
+        return std::exchange(mRef, nullptr);
     }
 };
 CMMC_ARENA_TRAIT(ValueRefHandle, IR);
@@ -201,22 +223,6 @@ public:
     }
     Value* operator*() const {
         return (*mIter)->value;
-    }
-};
-class MutableOperandIterator final {
-    Deque<ValueRefHandle>::const_iterator mIter;
-
-public:
-    explicit MutableOperandIterator(const Deque<ValueRefHandle>::const_iterator& iter) : mIter{ iter } {}
-    bool operator!=(const MutableOperandIterator& other) const noexcept {
-        return mIter != other.mIter;
-    }
-    MutableOperandIterator& operator++() noexcept {
-        ++mIter;
-        return *this;
-    }
-    ValueRef& operator*() const {
-        return *(*mIter);
     }
 };
 class OperandView final {
@@ -262,7 +268,13 @@ public:
         return mRef.size() <= 1;
     }
     [[nodiscard]] size_t size() const {
-        return mRef.size() > 1;
+        return mRef.size() - 1;
+    }
+    [[nodiscard]] Value* front() const {
+        return mRef.front()->value;
+    }
+    [[nodiscard]] Value* back() const {
+        return (*std::next(mRef.rbegin()))->value;
     }
 
     [[nodiscard]] OperandIterator begin() const noexcept;
@@ -279,7 +291,7 @@ class Instruction : public Value {
 
 public:
     Instruction(InstructionID instID, const Type* valueType)
-        : Value{ valueType }, mInstID{ instID }, mUsers{ this }, mNode{ nullptr, nullptr, this } {}
+        : Value{ valueType }, mInstID{ instID }, mBlock{ nullptr }, mUsers{ this }, mNode{ nullptr, nullptr, this } {}
     Instruction(InstructionID instID, const Type* valueType, std::initializer_list<Value*> initOperands)
         : Instruction{ instID, valueType } {
         for(auto val : initOperands) {
@@ -315,8 +327,10 @@ public:
     [[nodiscard]] Value* getOperand(uint32_t idx) const noexcept {
         return mOperands[idx]->value;
     }
-    void addOperand(Value* value);
-    void replaceWith(Value* value);
+    ValueRef* addOperand(Value* value);
+    bool replaceWith(Value* value);
+    bool replaceWithInBlock(Block* block, Value* value);
+    bool replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value);
     [[nodiscard]] bool isUsed() const {
         return mUsers.useCount() > 0;
     }
@@ -580,6 +594,7 @@ public:
         addOperand(base);
     }
     void dumpInst(std::ostream& out) const override;
+    bool verify(std::ostream& out) const override;
     [[nodiscard]] std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> gatherOffsets(const DataLayout& dataLayout) const;
     [[nodiscard]] Instruction* clone() const override;
 };
@@ -615,18 +630,13 @@ public:
 };
 
 class PhiInst final : public Instruction {
-    std::unordered_map<Block*, Value*, std::hash<Block*>, std::equal_to<>,
-                       ArenaAllocator<Arena::Source::IR, std::pair<Block* const, Value*>>>
+    std::unordered_map<Block*, ValueRef*, std::hash<Block*>, std::equal_to<>,
+                       ArenaAllocator<Arena::Source::IR, std::pair<Block* const, ValueRef*>>>
         mIncomings;
 
 public:
     explicit PhiInst(const Type* type) : Instruction{ InstructionID::Phi, type, {} } {}
-    void addIncoming(Block* block, Value* value) {
-        assert(getType()->isSame(value->getType()));
-        assert(!mIncomings.count(block));
-        mIncomings.emplace(block, value);
-        addOperand(value);
-    }
+    void addIncoming(Block* block, Value* value);
     auto& incomings() const noexcept {
         return mIncomings;
     }

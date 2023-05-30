@@ -45,7 +45,6 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -82,7 +81,7 @@ public:
             for(auto& inst : nextBlock->instructions()) {
                 if(inst.getInstID() == InstructionID::Phi) {
                     auto phi = inst.as<PhiInst>();
-                    replace.emplace(&inst, phi->incomings().at(block));
+                    replace.emplace(&inst, phi->incomings().at(block)->value);
                     phi->removeSource(block);
                 } else {
                     const auto newInst = inst.clone();

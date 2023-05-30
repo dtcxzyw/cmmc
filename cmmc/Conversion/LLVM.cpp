@@ -332,7 +332,7 @@ class LLVMConversionContext final {
             case InstructionID::Select:
                 return builder.CreateSelect(getOperand(0), getOperand(1), getOperand(2));
             case InstructionID::Call: {
-                const auto callee = inst.operands().back()->as<Function>();
+                const auto callee = inst.lastOperand()->as<Function>();
 
                 switch(callee->getIntrinsic()) {
                     case Intrinsic::none: {
@@ -407,22 +407,24 @@ class LLVMConversionContext final {
 
             llvm::IRBuilder<> builder{ llvmBlock };
             for(auto& inst : block->instructions()) {
-                const auto val = convertInst(builder, *inst, dataLayout, valueMap, blockMap);
-                if(inst->canbeOperand())
-                    valueMap.insert({ inst, val });
+                const auto val = convertInst(builder, inst, dataLayout, valueMap, blockMap);
+                if(inst.canbeOperand())
+                    valueMap.insert({ &inst, val });
             }
         }
 
         // fix phi nodes
         for(auto block : dom.blocks()) {
             for(auto& inst : block->instructions()) {
-                if(inst->getInstID() == InstructionID::Phi) {
-                    const auto phi = inst->as<PhiInst>();
+                if(inst.getInstID() == InstructionID::Phi) {
+                    const auto phi = inst.as<PhiInst>();
                     const auto phiNode = llvm::dyn_cast<llvm::PHINode>(valueMap.lookup(phi));
-                    for(auto [srcBlock, value] : phi->incomings()) {
-                        if(dom.reachable(srcBlock))
+                    for(auto [srcBlock, val] : phi->incomings()) {
+                        if(dom.reachable(srcBlock)) {
+                            auto value = val->value;
                             phiNode->addIncoming(value->isInstruction() ? valueMap.lookup(value) : convertValue(value, valueMap),
                                                  blockMap.lookup(srcBlock));
+                        }
                     }
                 } else
                     break;

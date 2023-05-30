@@ -25,7 +25,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <queue>
@@ -36,7 +35,7 @@
 CMMC_NAMESPACE_BEGIN
 
 class LoopGEPCombine final : public TransformPass<Function> {
-    static void runBlock(IRBuilder& builder, Block& block, ReplaceMap& replace) {
+    static bool runBlock(IRBuilder& builder, Block& block) {
         std::unordered_map<size_t, std::vector<std::vector<Instruction*>>> continuousGEP;
 
         for(auto& inst : block.instructions()) {
@@ -93,7 +92,7 @@ class LoopGEPCombine final : public TransformPass<Function> {
                         const auto prevLast = prev->getOperand(static_cast<uint32_t>(prev->operands().size() - 2));
                         const auto curLast = gep->getOperand(static_cast<uint32_t>(gep->operands().size() - 2));
 
-                        MatchContext<Value> matchCtx{ curLast, nullptr };
+                        MatchContext<Value> matchCtx{ curLast };
                         intmax_t offset1, offset2;
                         Value *base1, *base2;
                         if(add(any(base1), int_(offset1))(matchCtx) && base1 == prevLast) {
@@ -101,7 +100,7 @@ class LoopGEPCombine final : public TransformPass<Function> {
                             break;
                         }
                         if(add(any(base1), int_(offset1))(matchCtx) &&
-                           add(any(base2), int_(offset2))(MatchContext<Value>{ prevLast, nullptr }) && base1 == base2) {
+                           add(any(base2), int_(offset2))(MatchContext<Value>{ prevLast }) && base1 == base2) {
                             todo.emplace(gep, OffsetPair{ prev, offset1 - offset2 });
                             break;
                         }
@@ -114,10 +113,11 @@ class LoopGEPCombine final : public TransformPass<Function> {
         }
 
         if(todo.empty())
-            return;
+            return false;
 
         builder.setCurrentBlock(&block);
 
+        bool modified = false;
         for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
             auto& inst = *iter;
             const auto it = todo.find(&inst);
@@ -126,8 +126,9 @@ class LoopGEPCombine final : public TransformPass<Function> {
             builder.setInsertPoint(&block, iter);
             const auto newInst = builder.makeOp<GetElementPtrInst>(
                 it->second.baseGEP, std::vector<Value*>{ ConstantInteger::get(builder.getIndexType(), it->second.offset) });
-            replace.emplace(&inst, newInst);
+            modified |= inst.replaceWith(newInst);
         }
+        return modified;
     }
 
 public:
@@ -135,11 +136,11 @@ public:
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
 
-        ReplaceMap replace;
+        bool modified = false;
         for(auto block : func.blocks())
-            runBlock(builder, *block, replace);
+            modified |= runBlock(builder, *block);
 
-        return replaceOperands(func, replace);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

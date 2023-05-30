@@ -39,6 +39,7 @@ ValueRef::ValueRef(Value* val, Instruction* userInst) : value{ val }, user{ user
 }
 
 void ValueRef::resetValue(Value* newValue) {
+    assert(newValue);
     if(newValue == value)
         return;
     if(auto inst = dynamic_cast<Instruction*>(value)) {
@@ -50,7 +51,9 @@ void ValueRef::resetValue(Value* newValue) {
     }
 }
 ValueRef::~ValueRef() {
-    resetValue(nullptr);
+    if(auto inst = dynamic_cast<Instruction*>(value)) {
+        inst->users().removeRef(*this);
+    }
 }
 
 ValueRefHandle::~ValueRefHandle() {
@@ -60,6 +63,9 @@ ValueRefHandle::~ValueRefHandle() {
 
 UserList::UserList(Value* self) : mHead{ self, nullptr }, mUseCount{ 0 } {}
 void UserList::addRef(ValueRef& ref) {
+    if(&ref == &mHead)
+        return;
+    assert(ref.value == mHead.value);
     ref.prev = &mHead;
     ref.next = mHead.next;
     if(mHead.next) {
@@ -69,6 +75,8 @@ void UserList::addRef(ValueRef& ref) {
     ++mUseCount;
 }
 void UserList::removeRef(ValueRef& ref) {
+    if(&ref == &mHead)
+        return;
     assert(ref.value == mHead.value);
     if(ref.prev) {
         ref.prev->next = ref.next;
@@ -87,8 +95,18 @@ void UserList::removeRef(ValueRef& ref) {
     return UserIterator{ nullptr };
 }
 
+static bool disableRefCheck = false;
+DisableValueRefCheckScope::DisableValueRefCheckScope() {
+    disableRefCheck = true;
+}
+DisableValueRefCheckScope::~DisableValueRefCheckScope() {
+    disableRefCheck = false;
+}
+
 UserList::~UserList() {
-    assert(!mHead.next);
+    if(!disableRefCheck) {
+        assert(!mHead.next);
+    }
 }
 
 OperandView::OperandView(const Deque<ValueRefHandle>& ref) : mRef{ ref } {}
@@ -96,9 +114,11 @@ OperandIterator OperandView::begin() const noexcept {
     return OperandIterator{ mRef.cbegin() };
 }
 OperandIterator OperandView::end() const noexcept {
-    return OperandIterator{ std::prev(mRef.cend()) };
+    return OperandIterator{ mRef.cend() };
 }
-ArgumentView::ArgumentView(const Deque<ValueRefHandle>& ref) : mRef{ ref } {}
+ArgumentView::ArgumentView(const Deque<ValueRefHandle>& ref) : mRef{ ref } {
+    assert(mRef.size() >= 1);
+}
 OperandIterator ArgumentView::begin() const noexcept {
     return OperandIterator{ mRef.cbegin() };
 }
@@ -106,8 +126,10 @@ OperandIterator ArgumentView::end() const noexcept {
     return OperandIterator{ std::prev(mRef.cend()) };
 }
 
-void Instruction::addOperand(Value* value) {
-    mOperands.push_back(make<ValueRef>(value, this));
+ValueRef* Instruction::addOperand(Value* value) {
+    auto ref = make<ValueRef>(value, this);
+    mOperands.push_back(ref);
+    return ref;
 }
 
 void Instruction::dumpAsOperand(std::ostream& out) const {
@@ -133,20 +155,63 @@ void Instruction::dump(std::ostream& out, const HighlightSelector& selector) con
     }
 }
 
-void UserList::replaceWith(Value* value) {
+bool UserList::replaceWith(Value* value) {
     auto cur = mHead.next;
+    if(!cur)
+        return false;
     while(cur) {
         const auto next = cur->next;
         cur->resetValue(value);
         cur = next;
     }
+    return true;
 }
 
-void Instruction::replaceWith(Value* value) {
-    mUsers.replaceWith(value);
+bool UserList::replaceWithInBlock(Block* block, Value* value) {
+    auto cur = mHead.next;
+    bool modified = false;
+    while(cur) {
+        const auto next = cur->next;
+        if(cur->user->getBlock() == block) {
+            cur->resetValue(value);
+            modified = true;
+        }
+        cur = next;
+    }
+    return modified;
+}
+
+bool UserList::replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value) {
+    auto cur = mHead.next;
+    bool modified = false;
+    while(cur) {
+        const auto next = cur->next;
+        if(blocks.count(cur->user->getBlock())) {
+            cur->resetValue(value);
+            modified = true;
+        }
+        cur = next;
+    }
+    return modified;
+}
+
+bool Instruction::replaceWith(Value* value) {
+    assert(value != this);
+    return mUsers.replaceWith(value);
+}
+bool Instruction::replaceWithInBlock(Block* block, Value* value) {
+    assert(value != this);
+    return mUsers.replaceWithInBlock(block, value);
+}
+bool Instruction::replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value) {
+    assert(value != this);
+    return mUsers.replaceWithInBlockList(blocks, value);
 }
 
 void Instruction::insertBefore(Block* block, IntrusiveListIterator<Instruction> it) {
+    if(mBlock) {
+        mBlock->instructions().erase(asNode(), false);
+    }
     mBlock = block;
     block->instructions().insert(it, asNode());
 }
@@ -396,7 +461,7 @@ void UnreachableInst::dumpInst(std::ostream& out) const {
 }
 
 void FunctionCallInst::dumpInst(std::ostream& out) const {
-    const auto callee = operands().back();
+    const auto callee = lastOperand();
     dumpWithNoOperand(out);
     out << ' ';
     callee->dumpAsOperand(out);
@@ -469,7 +534,7 @@ std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::g
         }
     };
 
-    const Type* cur = operands().back()->getType();
+    const Type* cur = lastOperand()->getType();
     for(auto idx : arguments()) {
         if(idx->getType()->isInteger()) {
             if(cur->isArray()) {
@@ -497,7 +562,7 @@ std::pair<intptr_t, std::vector<std::pair<size_t, Value*>>> GetElementPtrInst::g
 
 void GetElementPtrInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
-    const auto base = operands().back();
+    const auto base = lastOperand();
     out << " &("sv;
     base->dumpAsOperand(out);
     out << ')';
@@ -513,6 +578,16 @@ void GetElementPtrInst::dumpInst(std::ostream& out) const {
         } else
             reportUnreachable(CMMC_LOCATION());
     }
+}
+
+bool GetElementPtrInst::verify(std::ostream& out) const {
+    std::vector<Value*> indices;
+    for(auto idx : arguments()) {
+        indices.push_back(idx);
+    }
+    auto type = PointerType::get(getValueType(lastOperand(), indices));
+    CMMC_UNUSED(out);
+    return type->isSame(getType());
 }
 
 void PtrCastInst::dumpInst(std::ostream& out) const {
@@ -563,11 +638,12 @@ Instruction* UnreachableInst::clone() const {
 
 Instruction* FunctionCallInst::clone() const {
     std::vector<Value*> args;
-    args.reserve(operands().size() - 1);
-    for(auto arg : arguments()) {
+    auto arguments = this->arguments();
+    args.reserve(arguments.size());
+    for(auto arg : arguments) {
         args.push_back(arg);
     }
-    return make<FunctionCallInst>(operands().back(), args);
+    return make<FunctionCallInst>(lastOperand(), args);
 }
 
 Instruction* SelectInst::clone() const {
@@ -584,10 +660,10 @@ Instruction* FMAInst::clone() const {
 
 Instruction* GetElementPtrInst::clone() const {
     std::vector<Value*> indices;
-    for(uint32_t idx = 0; idx + 1 < operands().size(); ++idx) {
-        indices.push_back(getOperand(idx));
+    for(auto idx : arguments()) {
+        indices.push_back(idx);
     }
-    return make<GetElementPtrInst>(operands().back(), indices);
+    return make<GetElementPtrInst>(lastOperand(), indices);
 }
 
 Instruction* PtrCastInst::clone() const {
@@ -699,43 +775,69 @@ bool BinaryInst::verify(std::ostream& out) const {
 bool CompareInst::verify(std::ostream& out) const {
     return checkBinaryOpType(this, out);
 }
+void PhiInst::addIncoming(Block* block, Value* value) {
+    assert(getType()->isSame(value->getType()));
+    assert(!mIncomings.count(block));
+    mIncomings.emplace(block, addOperand(value));
+}
 void PhiInst::dumpInst(std::ostream& out) const {
     dumpWithNoOperand(out);
-    std::vector<std::pair<Block*, Value*>> incomings{ mIncomings.cbegin(), mIncomings.cend() };
+    std::vector<std::pair<Block*, ValueRef*>> incomings{ mIncomings.cbegin(), mIncomings.cend() };
     std::sort(incomings.begin(), incomings.end(),
               [](auto lhs, auto rhs) { return lhs.first->getIndex() < rhs.first->getIndex(); });
     for(auto [block, val] : incomings) {
         out << " ["sv;
         block->dumpAsTarget(out);
         out << ", "sv;
-        val->dumpAsOperand(out);
+        val->value->dumpAsOperand(out);
         out << ']';
     }
 }
 bool PhiInst::verify(std::ostream& out) const {
     if(!Instruction::verify(out))
         return false;
+    std::vector<Value*> values1;
+    values1.reserve(mIncomings.size());
     for(auto [block, val] : mIncomings) {
         CMMC_UNUSED(block);
-        if(!val->getType()->isSame(getType())) {
+        values1.push_back(val->value);
+        if(!val->value->getType()->isSame(getType())) {
             out << "Type mismatch\n";
             return false;
         }
+    }
+    std::vector<Value*> values2;
+    values2.reserve(mIncomings.size());
+    for(auto operand : operands())
+        values2.push_back(operand);
+    std::sort(values1.begin(), values1.end());
+    std::sort(values2.begin(), values2.end());
+    if(values1 != values2) {
+        out << "Values mismatch\n";
+        return false;
     }
     // TODO: verify predecessors
     return true;
 }
 Instruction* PhiInst::clone() const {
     const auto inst = make<PhiInst>(getType());
-    for(auto val : operands())
-        inst->addOperand(val);
-    inst->mIncomings = mIncomings;
+    for(auto [block, val] : mIncomings) {
+        inst->addIncoming(block, val->value);
+    }
     return inst;
 }
 bool PhiInst::isEqual(const Instruction* rhs) const {
     if(!Instruction::isEqual(rhs))
         return false;
-    return mIncomings == rhs->as<PhiInst>()->mIncomings;
+    auto rhsPhi = rhs->as<PhiInst>();
+    for(auto [block, val] : mIncomings) {
+        if(auto iter = rhsPhi->mIncomings.find(block); iter != rhsPhi->mIncomings.end()) {
+            if(iter->second->value != val->value)
+                return false;
+        } else
+            return false;
+    }
+    return true;
 }
 void PhiInst::replaceSource(cmmc::Block* oldBlock, cmmc::Block* newBlock) {
     assert(oldBlock != newBlock);
@@ -749,17 +851,20 @@ void PhiInst::removeSource(Block* block) {
     assert(iter != mIncomings.cend());
     const auto val = iter->second;
     mIncomings.erase(iter);
-    // TODO: lazy update
     auto& operands = mutableOperands();
-    const auto it = std::find_if(operands.begin(), operands.end(), [&](const ValueRefHandle& ref) { return ref->value == val; });
+    const auto it = std::find_if(operands.begin(), operands.end(), [&](const ValueRefHandle& ref) { return ref.get() == val; });
     assert(it != operands.end());
     operands.erase(it);
 }
 void PhiInst::keepOneIncoming(Block* block) {
     const auto val = mIncomings.at(block);
     mIncomings = { { block, val } };
-    mutableOperands().clear();
-    mutableOperands().push_back(ValueRefHandle{ make<ValueRef>(val, this) });
+    auto& operands = mutableOperands();
+    for(auto& ref : operands)
+        if(ref.get() == val)
+            ref.release();
+    operands.clear();
+    operands.push_back(ValueRefHandle{ val });
 }
 void PhiInst::clear() {
     mutableOperands().clear();

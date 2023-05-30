@@ -60,7 +60,6 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iostream>
 #include <queue>
 #include <unordered_map>
@@ -73,13 +72,15 @@ CMMC_NAMESPACE_BEGIN
 // TODO: MemorySSA
 
 class LoadReduce final : public TransformPass<Function> {
-    static void runBlock(Block& block, SimpleValueAnalysis& valueAnalysis, ReplaceMap& replace) {
+    static bool runBlock(Block& block, SimpleValueAnalysis& valueAnalysis) {
+        bool modified = false;
         for(auto& inst : block.instructions()) {
             if(inst.getInstID() == InstructionID::Load)
                 if(auto value = valueAnalysis.getLastValue(inst.getOperand(0)))
-                    replace.emplace(&inst, value);
+                    modified |= inst.replaceWith(value);
             valueAnalysis.next(&inst);
         }
+        return modified;
     }
 
     static void runInterBlock(Function& func, AnalysisPassManager& analysis,
@@ -111,7 +112,7 @@ class LoadReduce final : public TransformPass<Function> {
                     auto ptr = inst.getOperand(0);
                     storePointers.push_back(ptr);
                 } else if(inst.getInstID() == InstructionID::Call) {
-                    const auto callee = inst.operands().back();
+                    const auto callee = inst.lastOperand();
                     if(const auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                             continue;
@@ -201,15 +202,14 @@ public:
         // intra-block
         for(auto block : func.blocks()) {
             const auto iter = valueAnalysis.emplace(block, SimpleValueAnalysis{ block, alias }).first;
-            ReplaceMap replace;
-            runBlock(*block, iter->second, replace);
-            modified |= replaceOperands(func, replace);
+            modified |= runBlock(*block, iter->second);
         }
         // inter-block
         ReplaceMap replace;
         runInterBlock(func, analysis, valueAnalysis, replace);
         // TODO: handle cross blockchain reusing, e.g., test_3_r03.spl
-        modified |= replaceOperands(func, replace);
+        for(auto [src, dst] : replace)
+            modified |= src->as<Instruction>()->replaceWith(dst);
         return modified;
     }
 

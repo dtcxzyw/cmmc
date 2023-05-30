@@ -24,7 +24,6 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_map>
@@ -42,14 +41,12 @@ public:
         const auto& dataLayout = target.getDataLayout();
 
         bool modified = false;
-        ReplaceMap replaceMap;
         for(auto block : func.blocks()) {
-
             auto& instructions = block->instructions();
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 auto& inst = *iter;
                 const auto next = std::next(iter);
-                MatchContext<Value> ctx{ &inst, nullptr };
+                MatchContext<Value> ctx{ &inst };
 
                 Value* p;
                 intmax_t c;
@@ -75,7 +72,7 @@ public:
                                     std::vector<Value*>{ builder.getZeroIndex(),
                                                          ConstantInteger::get(builder.getIndexType(), idx) });
 
-                                replaceMap.emplace(&inst, gep);
+                                modified |= inst.replaceWith(gep);
                             }
                         }
                     }
@@ -83,15 +80,8 @@ public:
 
                 iter = next;
             }
-
-            if(!replaceMap.empty()) {
-                modified = true;
-            }
         }
 
-        if(modified) {
-            replaceOperands(func, replaceMap);
-        }
         return modified;
     }
 

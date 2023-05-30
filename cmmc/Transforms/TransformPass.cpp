@@ -39,7 +39,7 @@
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag debugTransform;        // NOLINT
+Flag debugTransform;               // NOLINT
 static StringOpt referenceOutput;  // NOLINT
 extern StringOpt executeInput;     // NOLINT
 static IntegerOpt skipCount;       // NOLINT

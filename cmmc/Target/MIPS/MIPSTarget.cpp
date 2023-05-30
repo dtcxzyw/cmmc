@@ -291,7 +291,7 @@ void MIPSFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const
 }
 
 void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const {
-    auto callee = inst->operands().back();
+    auto callee = inst->lastOperand();
     auto func = dynamic_cast<Function*>(callee);
     if(!func)
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();

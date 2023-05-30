@@ -15,7 +15,6 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/Compatibility/Compatibility.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 
 CMMC_NAMESPACE_BEGIN
 

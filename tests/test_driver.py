@@ -10,10 +10,10 @@ import platform
 import math
 
 qemu_path = os.environ.get('QEMU_PATH', '')
-stack_size = 128 << 20 # 128M
+stack_size = 128 << 20  # 128M
 qemu_command = {
-    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size,qemu_path=qemu_path).split(),
-    'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size,qemu_path=qemu_path).split()
+    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
+    'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split()
 }
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
@@ -26,7 +26,7 @@ binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '3'
-fast_fail = False
+fast_fail = True
 generate_ref = False
 assert os.path.exists(rars_path)
 targets = ['mips', 'riscv']
@@ -45,6 +45,7 @@ baseline = {
 summary = {}
 summary_samples = 0
 tac_inst_count_ref = 224.116
+
 
 def geo_means(prod, count):
     return math.exp(math.log(float(prod)) / max(1, count))
@@ -718,9 +719,9 @@ if not generate_ref:
                 res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
                                 "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 samples['cmmc_qemu_'+target].reset()
-                #res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
-                #                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x,target)))
-                
+                res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
+                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
+
 
 if generate_ref:
     if 'sysy' in test_cases:

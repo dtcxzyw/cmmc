@@ -23,7 +23,6 @@
 #include <cmmc/Support/Graph.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -39,7 +38,7 @@ class SCCEliminate final : public TransformPass<Function> {
             if(inst.getInstID() == InstructionID::Store)
                 return true;
             if(inst.getInstID() == InstructionID::Call) {
-                const auto callee = inst.operands().back()->as<Function>();
+                const auto callee = inst.lastOperand()->as<Function>();
                 if(!callee->attr().hasAttr(FunctionAttribute::NoSideEffect))
                     return true;
             }

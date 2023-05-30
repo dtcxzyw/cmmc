@@ -56,6 +56,9 @@ public:
     [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
+    Function* getFunc() const noexcept {
+        return mFunc;
+    }
 };
 
 class Function final : public GlobalValue {

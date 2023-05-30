@@ -189,14 +189,14 @@ public:
         bool modified = false;
         for(auto block : func.blocks()) {
             auto& set = color[col[nodeMap.at(block)]];
-            ReplaceMap replace;
             for(auto val : set.trueSet) {
-                replace.emplace(val, ConstantInteger::getTrue());
+                if(auto inst = val->as<Instruction>())
+                    modified |= inst->replaceWithInBlock(block, ConstantInteger::getTrue());
             }
             for(auto val : set.falseSet) {
-                replace.emplace(val, ConstantInteger::getFalse());
+                if(auto inst = val->as<Instruction>())
+                    modified |= inst->replaceWithInBlock(block, ConstantInteger::getFalse());
             }
-            modified |= replaceOperandsInBlock(*block, replace);
         }
 
         return modified;

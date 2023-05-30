@@ -24,7 +24,6 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdlib>
 #include <new>
 
@@ -95,13 +94,9 @@ public:
                             if(replaceMap.count(prev)) {
                                 const auto val = phi->incomings().at(prev);
                                 auto& map = replaceMap.at(prev);
-                                if(map.count(val)) {
-                                    const auto rep = map.at(val);
-                                    for(auto& ref : phi->mutableOperands()) {
-                                        if(ref->value == val) {
-                                            ref->resetValue(rep);
-                                        }
-                                    }
+                                if(map.count(val->value)) {
+                                    const auto rep = map.at(val->value);
+                                    val->resetValue(rep);
                                 }
                             }
                         } else
@@ -125,7 +120,7 @@ public:
             };
             const auto append = [&](bool nocheck) {
                 ReplaceMap replace;
-                const auto block = loop.header->clone(replace);
+                const auto block = loop.header->clone(replace, false);
                 replaceMap[block] = std::move(replace);
                 insertedBlocks.push_back(block);
                 retarget(block, nocheck);
@@ -157,7 +152,7 @@ public:
                         const auto phi = inst.as<PhiInst>();
                         const auto newPhi = builder.createPhi(phi->getType());
                         for(auto [pred, val] : phi->incomings()) {
-                            newPhi->addIncoming(pred, val);
+                            newPhi->addIncoming(pred, val->value);
                         }
                         replace.emplace(phi, newPhi);
                     } else
@@ -199,7 +194,7 @@ public:
                 for(auto& inst : head->instructions()) {
                     if(inst.getInstID() == InstructionID::Phi) {
                         const auto phi = inst.as<PhiInst>();
-                        auto val = phi->incomings().at(loop.latch);
+                        auto val = phi->incomings().at(loop.latch)->value;
                         if(auto iter = replace.find(val); iter != replace.cend())
                             val = iter->second;
                         phi->removeSource(loop.latch);

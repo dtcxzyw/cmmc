@@ -81,7 +81,7 @@ public:
                 for(auto& inst : targetBlock->instructions()) {
                     if(inst.getInstID() == InstructionID::Phi) {
                         hasPhi = true;
-                        if(!inst.as<PhiInst>()->incomings().at(block)->isConstant())
+                        if(!inst.as<PhiInst>()->incomings().at(block)->value->isConstant())
                             return;
                     } else
                         break;
@@ -115,7 +115,7 @@ public:
                     return;
 
                 ReplaceMap replace;
-                const auto newBlock = targetBlock->clone(replace);
+                const auto newBlock = targetBlock->clone(replace, false);
                 blocks.insert(next, newBlock);
 
                 for(auto& inst : newBlock->instructions()) {

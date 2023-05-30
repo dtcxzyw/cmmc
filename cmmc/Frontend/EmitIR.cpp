@@ -33,7 +33,6 @@
 #include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -226,6 +225,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
                 if(iter->isTerminator()) {
                     ++iter;
+                    DisableValueRefCheckScope scope;
                     insts.erase(iter, insts.end());
                     hasTerminator = true;
                     break;
@@ -1682,7 +1682,7 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
     for(auto [offset, value] : values) {
         const auto val = ctx.getRValue(value, scalarType, dstQualifier, ConversionUsage::Initialization);
         if(val->isConstant()) {
-            MatchContext<Value> matchCtx{ val, nullptr };
+            MatchContext<Value> matchCtx{ val };
             if(cint_(0)(matchCtx) || cfp_(0.0)(matchCtx))
                 continue;  // use zero initialization
         }

@@ -72,7 +72,7 @@ static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* in
         if(!arr)
             return nullptr;
         const auto operand = inst->getOperand(index);
-        MatchContext<Value> matchCtx{ operand, nullptr };
+        MatchContext<Value> matchCtx{ operand };
         uintmax_t idx;
         if(uint_(idx)(matchCtx)) {
             auto& values = arr->values();
@@ -172,7 +172,7 @@ void SimpleValueAnalysis::next(Instruction* inst) {
                 mLastValue.clear();  // discard all cached values
         } break;
         case InstructionID::Call: {
-            const auto callee = inst->operands().back();
+            const auto callee = inst->lastOperand();
             if(auto func = dynamic_cast<Function*>(callee)) {
                 if(!func->attr().hasAttr(FunctionAttribute::NoMemoryWrite))
                     mLastValue.clear();  // discard all cached values
@@ -181,12 +181,12 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             }
         } break;
         case InstructionID::GetElementPtr: {
-            const auto root = inst->operands().back();
+            const auto root = inst->lastOperand();
             if(const auto iter = mBasePointer.find(root); iter != mBasePointer.cend())
                 mBasePointer.emplace(inst, iter->second);
             else
                 mBasePointer.emplace(inst, nullptr);
-            MatchContext<Value> matchCtx{ inst->getOperand(0), nullptr };
+            MatchContext<Value> matchCtx{ inst->getOperand(0) };
             if(inst->getType()->as<PointerType>()->getPointee()->isPrimitive() && cuint_(0)(matchCtx)) {
                 if(const auto globalVar = dynamic_cast<GlobalVariable*>(root);
                    globalVar && globalVar->attr().hasAttr(GlobalVariableAttribute::ReadOnly)) {

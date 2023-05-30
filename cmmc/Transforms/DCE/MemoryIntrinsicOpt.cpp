@@ -30,7 +30,7 @@ public:
             block->instructions().remove_if([&](Instruction* inst) {
                 if(inst->getInstID() != InstructionID::Call)
                     return false;
-                const auto callee = inst->operands().back();
+                const auto callee = inst->lastOperand();
                 if(!callee->is<Function>())
                     return false;
                 const auto calleeFunc = callee->as<Function>();

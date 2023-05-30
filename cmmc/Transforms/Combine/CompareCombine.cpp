@@ -27,7 +27,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <functional>
 #include <queue>
@@ -76,7 +75,7 @@ public:
                             IRBuilder builder{ analysis.module().getTarget() };
                             builder.setInsertPoint(block, cmp);
                             const auto invert = builder.makeOp<BinaryInst>(InstructionID::Xor, rhs, builder.getTrue());
-                            replace.emplace(cmp, invert);
+                            modified |= cmp->replaceWith(invert);
                             reuse = true;
                             break;
                         }
@@ -89,8 +88,6 @@ public:
             }
         }
 
-        if(modified)
-            replaceOperands(func, replace);
         return modified;
     }
 

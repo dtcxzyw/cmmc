@@ -48,16 +48,8 @@ void AliasAnalysisResult::addValue(Value* p, std::vector<uint32_t> attrs) {
     mPointerAttributes.emplace(p, std::move(attrs));
 }
 bool AliasAnalysisResult::isDistinct(Value* p1, Value* p2) const {
-    if constexpr(Config::debug) {
-        auto checkPointer = [&](Value* p) {
-            if(!mPointerAttributes.count(p)) {
-                p->getBlock()->dump(reportError() << "undefined pointer "sv, HighlightInst{ p1->as<Instruction>() });
-                reportUnreachable(CMMC_LOCATION());
-            }
-        };
-
-        checkPointer(p1);
-        checkPointer(p2);
+    if(!mPointerAttributes.count(p1) || !mPointerAttributes.count(p2)) {
+        return false;
     }
     if(p1 == p2)
         return false;
@@ -268,8 +260,8 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     std::vector<uint32_t> attrs;
                     auto cur = &inst;
                     while(true) {
-                        const auto base = cur->operands().back();
-                        MatchContext<Value> matchCtx{ cur->getOperand(0), nullptr };
+                        const auto base = cur->lastOperand();
+                        MatchContext<Value> matchCtx{ cur->getOperand(0) };
                         if(cuint_(0)(matchCtx)) {
                             inheritGraph.emplace(&inst, base);
                             break;
@@ -282,7 +274,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                                 const auto a2 = ++allocateID;
                                 result.addPair(a1, a2);
                                 attrs.push_back(a1);
-                                result.appendAttr(cur->operands().back(), a2);
+                                result.appendAttr(cur->lastOperand(), a2);
                             }
                         }
                         if(base->is<GetElementPtrInst>()) {
@@ -399,7 +391,7 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
     // geps
     std::unordered_map<Value*, std::vector<Instruction*>> clusters;
     for(auto gep : geps)
-        clusters[gep->operands().back()].push_back(gep);
+        clusters[gep->lastOperand()].push_back(gep);
     for(auto& [base, gepList] : clusters) {
         CMMC_UNUSED(base);
         divide(gepList, allocateID, result, 0);

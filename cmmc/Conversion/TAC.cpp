@@ -25,7 +25,6 @@
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <fstream>
 #include <unordered_map>

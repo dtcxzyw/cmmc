@@ -54,7 +54,7 @@ public:
                                 return true;
                             }
                             case InstructionID::Call: {
-                                const auto callee = inst.operands().back();
+                                const auto callee = inst.lastOperand();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -90,7 +90,7 @@ public:
                                 return true;
                             }
                             case InstructionID::Call: {
-                                const auto callee = inst.operands().back();
+                                const auto callee = inst.lastOperand();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -121,7 +121,7 @@ public:
                     for(auto& inst : block->instructions()) {
                         switch(inst.getInstID()) {
                             case InstructionID::Call: {
-                                const auto callee = inst.operands().back();
+                                const auto callee = inst.lastOperand();
                                 if(callee == &func)
                                     continue;
                                 if(callee->is<Function>()) {
@@ -158,7 +158,7 @@ public:
                     for(auto& inst : block->instructions()) {
                         switch(inst.getInstID()) {
                             case InstructionID::Call: {
-                                const auto callee = inst.operands().back();
+                                const auto callee = inst.lastOperand();
                                 if(callee == &func)
                                     return true;
                             }

@@ -53,7 +53,7 @@ public:
                             const auto address = inst.getOperand(0);
                             todo.remove_if([&](GlobalVariable* gv) { return !alias.isDistinct(gv, address); });
                         } else if(inst.getInstID() == InstructionID::Call) {
-                            const auto callee = inst.operands().back()->as<Function>();
+                            const auto callee = inst.lastOperand()->as<Function>();
                             // external funcs
                             if(callee->blocks().empty() && !callee->attr().hasAttr(FunctionAttribute::NoMemoryWrite)) {
                                 todo.remove_if([&](GlobalVariable* gv) {

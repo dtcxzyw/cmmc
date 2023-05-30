@@ -19,9 +19,10 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
@@ -51,16 +52,17 @@ struct InstEqual final {
 };
 
 class SimpleCSE final : public TransformPass<Function> {
-    static void instMerge(Block* block, ReplaceMap& replace) {
+    static bool instMerge(Block* block) {
         std::unordered_set<Instruction*, InstHasher, InstEqual> lut;
         std::vector<PhiInst*> phiList;
+        bool modified = false;
         for(auto& inst : block->instructions()) {
             if(inst.getInstID() == InstructionID::Phi) {
                 const auto lhs = inst.as<PhiInst>();
                 bool unique = true;
                 for(auto rhs : phiList) {
                     if(lhs->isEqual(rhs)) {
-                        replace.emplace(lhs, rhs);
+                        modified |= lhs->replaceWith(rhs);
                         unique = false;
                         break;
                     }
@@ -72,20 +74,21 @@ class SimpleCSE final : public TransformPass<Function> {
                     continue;
 
                 if(auto [iter, res] = lut.insert(&inst); !res) {
-                    replace.emplace(&inst, *iter);
+                    modified |= inst.replaceWith(*iter);
                 }
             }
         }
+        return modified;
     }
 
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         // block-level merge
-        ReplaceMap replace;
+        bool modified = false;
         for(auto block : func.blocks()) {
-            instMerge(block, replace);
+            modified |= instMerge(block);
         }
-        return replaceOperands(func, replace);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

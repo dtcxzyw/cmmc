@@ -26,7 +26,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <queue>
 #include <vector>
 
@@ -71,11 +70,10 @@ public:
             }
             return false;
         });
-        ReplaceMap replace;
         for(auto block : removed) {
             for(auto& inst : block->instructions())
                 if(inst.canbeOperand())
-                    replace.emplace(&inst, make<UndefinedValue>(inst.getType()));
+                    inst.replaceWith(make<UndefinedValue>(inst.getType()));
             const auto terminator = block->getTerminator();
             if(!terminator->isBranch())
                 continue;
@@ -87,9 +85,9 @@ public:
             };
             handleTarget(branch->getTrueTarget());
             handleTarget(branch->getFalseTarget());
+            // remove references
+            block->instructions().clear();
         }
-
-        replaceOperands(func, replace);
 
         return !removed.empty();
     }

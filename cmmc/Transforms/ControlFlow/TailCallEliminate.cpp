@@ -57,7 +57,7 @@ public:
                 auto& prevInst = *prev;
                 if(prevInst.getInstID() != InstructionID::Call)
                     continue;
-                auto callee = prevInst.operands().back();
+                auto callee = prevInst.lastOperand();
                 if(auto calleeFunc = dynamic_cast<Function*>(callee); &func == calleeFunc) {
                     auto type = calleeFunc->getType()->as<FunctionType>();
                     if((type->getRetType()->isVoid() && terminator->operands().empty()) ||

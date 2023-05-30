@@ -26,7 +26,6 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <queue>
 #include <unordered_map>
@@ -105,7 +104,7 @@ public:
                     for(auto block : func->blocks())
                         for(auto& inst : block->instructions()) {
                             if(inst.getInstID() == InstructionID::Call) {
-                                if(inst.operands().back() == exportedFunc)
+                                if(inst.lastOperand() == exportedFunc)
                                     return true;
                             }
                         }
@@ -188,7 +187,7 @@ public:
             for(auto block : func->blocks())
                 for(auto& inst : block->instructions()) {
                     if(auto call = dynamic_cast<FunctionCallInst*>(&inst)) {
-                        auto callee = call->operands().back();
+                        auto callee = call->lastOperand();
                         if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                             if(funcSet.count(calleeFunc)) {
                                 reportNotImplemented(CMMC_LOCATION());
@@ -207,7 +206,10 @@ public:
         //  replace operands & back propagation
         for(auto func : funcs) {
             auto& map = mapping[func];
-            replaceOperands(*func, map);
+            CMMC_UNUSED(map);
+            // FIXME
+            reportNotImplemented(CMMC_LOCATION());
+            // replaceOperands(*func, map);
         }
 
         return true;

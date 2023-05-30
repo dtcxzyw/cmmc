@@ -23,7 +23,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
@@ -69,6 +68,7 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& dom = analysis.get<DominateAnalysis>(func);
         auto& target = analysis.module().getTarget();
+        bool modified = false;
 
         uint32_t allocateID = 0;
         std::unordered_map<Value*, uint32_t> valueNumber;
@@ -143,7 +143,6 @@ public:
             }
         }
 
-        ReplaceMap replace;
         std::vector<Value*> operandMap(allocateID);
         for(auto [key, val] : valueNumber)
             operandMap[val] = key;
@@ -198,12 +197,12 @@ public:
 
             for(auto inst : sameInstructions) {
                 if(replaceInst != inst) {
-                    replace.emplace(inst, replaceInst);
+                    modified |= inst->replaceWith(replaceInst);
                 }
             }
         }
 
-        return replaceOperands(func, replace);
+        return modified;
     }
 
     [[nodiscard]] std::string_view name() const noexcept override {

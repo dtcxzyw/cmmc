@@ -35,7 +35,6 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <iostream>
 #include <queue>
 #include <unordered_map>
@@ -56,24 +55,31 @@ class FuncInlining final : public TransformPass<Function> {
         auto sinkBlock = splitBlock(callerBlocks, iter, call);
         auto insertPoint = std::next(iter);
         std::unordered_map<Block*, Block*> replace;
+        std::unordered_set<Block*> newBlocks;
         ReplaceMap targetReplace;
         Block* entryBlock = nullptr;
-        {
-            auto& arguments = (*call).mutableOperands();
-            auto& parameters = callee->args();
-            for(size_t idx = 0; idx < parameters.size(); ++idx) {
-                targetReplace.emplace(parameters[idx], arguments[idx]->value);
-            }
+
+        auto& arguments = (*call).mutableOperands();
+        auto& parameters = callee->args();
+        std::vector<Instruction*> argPhis;
+        argPhis.reserve(parameters.size());
+        for(size_t idx = 0; idx < parameters.size(); ++idx) {
+            auto phi = make<PhiInst>(parameters[idx]->getType());
+            phi->addIncoming(block, arguments[idx]->value);
+            targetReplace.emplace(parameters[idx], phi);
+            argPhis.push_back(phi);
         }
+
         std::vector<PhiInst*> phiNodes;
         for(auto subBlock : callee->blocks()) {
-            auto newBlock = subBlock->clone(targetReplace);
+            auto newBlock = subBlock->clone(targetReplace, true);
             if(subBlock == callee->entryBlock())
                 entryBlock = newBlock;
 
             newBlock->setFunction(caller);
             callerBlocks.insert(insertPoint, newBlock);
             replace.emplace(subBlock, newBlock);
+            newBlocks.insert(newBlock);
             for(auto& inst : newBlock->instructions()) {
                 if(inst.getInstID() == InstructionID::Phi) {
                     phiNodes.push_back(inst.as<PhiInst>());
@@ -84,6 +90,7 @@ class FuncInlining final : public TransformPass<Function> {
 
         // replace call with unconditional branch
         {
+            DisableValueRefCheckScope scope;
             assert(entryBlock);
             auto branch = make<BranchInst>(entryBlock);
             auto& instructions = block->instructions();
@@ -92,22 +99,25 @@ class FuncInlining final : public TransformPass<Function> {
         }
         // fix allocs
         const auto callerEntry = caller->entryBlock();
-        // FIXME
-        reportNotImplemented(CMMC_LOCATION());
-        entryBlock->instructions().remove_if([&](Instruction* inst) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                inst->insertBefore(callerEntry, callerEntry->instructions().begin());
-                return true;
-            }
-            return false;
-        });
+        for(auto it = entryBlock->instructions().begin(); it != entryBlock->instructions().end();) {
+            auto next = std::next(it);
+            auto& inst = *it;
+            if(inst.getInstID() == InstructionID::Alloc) {
+                inst.insertBefore(callerEntry, callerEntry->instructions().begin());
+            } else
+                break;
+            it = next;
+        }
+        // fix parameters
+        for(auto phi : argPhis)
+            phi->insertBefore(entryBlock, entryBlock->instructions().begin());
         // fix terminators
         PhiInst* retValue = nullptr;
         auto retType = callRet.getType();
         if(!retType->isVoid()) {
             retValue = make<PhiInst>(retType);
             retValue->insertBefore(sinkBlock, sinkBlock->instructions().begin());
-            targetReplace.emplace(&callRet, retValue);
+            callRet.replaceWith(retValue);
         }
 
         for(auto [oldBlock, newBlock] : replace) {
@@ -143,7 +153,10 @@ class FuncInlining final : public TransformPass<Function> {
                     break;
             }
         }
-        replaceOperands(*caller, targetReplace);
+        for(auto [src, dst] : targetReplace) {
+            if(src->isInstruction())
+                src->as<Instruction>()->replaceWithInBlockList(newBlocks, dst);
+        }
 
         // fix phi nodes: block -> sinkBlock
         const auto terminator = sinkBlock->getTerminator();
@@ -171,7 +184,7 @@ class FuncInlining final : public TransformPass<Function> {
             for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
                 auto& inst = *iter;
                 if(inst.getInstID() == InstructionID::Call) {
-                    const auto callee = inst.operands().back();
+                    const auto callee = inst.lastOperand();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(!calleeFunc->blocks().empty() && shouldInline(*calleeFunc)) {
                             applyInline(block, iter, &func, calleeFunc);

@@ -17,7 +17,6 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 
 // Replace undef with an arbitrary value
 
@@ -27,8 +26,6 @@ class UndefPropagation final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& target = analysis.module().getTarget();
-
-        ReplaceMap replace;
         bool modified = false;
 
         for(auto block : func.blocks()) {
@@ -56,15 +53,12 @@ public:
                     if(!hasUndef)
                         continue;
                     if(inst.getType()->isInteger()) {
-                        replace.emplace(&inst, ConstantInteger::get(inst.getType(), 0));
+                        modified |= inst.replaceWith(ConstantInteger::get(inst.getType(), 0));
                     }
-                    // TODO: remove UndefinedValue
-                    // replace.emplace(inst, make<UndefinedValue>(inst.getType()));
                 }
             }
         }
 
-        modified |= replaceOperands(func, replace);
         return modified;
     }
 

@@ -82,7 +82,7 @@ class StoreEliminate final : public TransformPass<Function> {
                         if(leak.mayRead(&inst, addr) || leak.mayModify(&inst, addr))
                             return false;
                     } else {
-                        const auto callee = inst.operands().back();
+                        const auto callee = inst.lastOperand();
                         if(auto func = dynamic_cast<Function*>(callee)) {
                             if(!func->attr().hasAttr(FunctionAttribute::NoMemoryRead))
                                 return false;
@@ -171,8 +171,14 @@ class StoreEliminate final : public TransformPass<Function> {
         }
 
         for(auto& [block, insts] : deletedInstructions) {
+            if(block == func.entryBlock())
+                continue;
             auto& instsRef = insts;
             block->instructions().remove_if([&](Instruction* inst) { return instsRef.count(inst); });
+        }
+        if(auto iter = deletedInstructions.find(func.entryBlock()); iter != deletedInstructions.end()) {
+            auto& instsRef = iter->second;
+            iter->first->instructions().remove_if([&](Instruction* inst) { return instsRef.count(inst); });
         }
         return true;
     }

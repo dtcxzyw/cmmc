@@ -25,7 +25,8 @@
 #include <unordered_set>
 
 CMMC_NAMESPACE_BEGIN
-extern Flag uniqueLabel;  // NOLINT
+extern Flag uniqueLabel;     // NOLINT
+extern Flag debugTransform;  // NOLINT
 
 void Block::dump(std::ostream& out, const HighlightSelector& selector) const {
     LabelAllocator allocator;
@@ -38,6 +39,12 @@ void Block::relabel(LabelAllocator& allocator) const {
     for(auto& inst : mInstructions)
         if(inst.canbeOperand())
             inst.setLabel(allocator.allocate(inst.getLabel()));
+    if(debugTransform.get()) {
+        auto label = String::get("s");
+        for(auto& inst : mInstructions)
+            if(!inst.canbeOperand())
+                inst.setLabel(allocator.allocate(label));
+    }
 }
 
 void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) const {
@@ -52,7 +59,24 @@ void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) co
     for(auto& inst : mInstructions) {
         out << "    "sv;
         inst.dump(out, selector);
-        out << ";\n"sv;
+        if(debugTransform.get()) {
+            if(inst.canbeOperand()) {
+                out << ";  users: "sv;
+                for(auto user : inst.users()) {
+                    out << '[';
+                    if(user->canbeOperand()) {
+                        user->dumpAsOperand(out);
+                    } else {
+                        out << user->getLabel();
+                    }
+                    out << "] "sv;
+                }
+                out << '\n';
+            } else {
+                out << ";  #" << inst.getLabel() << '\n';
+            }
+        } else
+            out << ";\n"sv;
     }
 }
 
@@ -90,7 +114,8 @@ bool Block::verify(std::ostream& out) const {
             return false;
         }
         for(auto operand : inst.operands()) {
-            if(operand->getBlock() == this && inst.getInstID() != InstructionID::Phi) {
+            if((operand->getBlock() == this && inst.getInstID() != InstructionID::Phi) ||
+               (operand->isArgument() && operand->as<FuncArgument>()->getFunc() != getFunction())) {
                 if(!definedValue.count(operand)) {
                     out << "bad instruction order"sv << std::endl;
                     dumpLabeled(out, Noop{});
@@ -124,17 +149,18 @@ void Block::dumpAsTarget(std::ostream& out) const {
     out << '^' << mLabel;
 }
 
-Block* Block::clone(std::unordered_map<Value*, Value*>& replace) const {
+Block* Block::clone(std::unordered_map<Value*, Value*>& replace, bool replaceAll) const {
     auto block = make<Block>(mFunction);
     block->setLabel(getLabel());
 
     for(auto& inst : mInstructions) {
         auto newInst = inst.clone();
-        if(newInst->getInstID() != InstructionID::Phi) {
+        if(replaceAll || inst.getInstID() != InstructionID::Phi) {
             for(auto& operand : newInst->mutableOperands()) {
-                if(operand->value->getBlock() == this) {
-                    const auto newOperand = replace.at(operand->value);
-                    operand->resetValue(newOperand);
+                if(!replaceAll && operand->value->getBlock() != this)
+                    continue;
+                if(auto iter = replace.find(operand->value); iter != replace.end()) {
+                    operand->resetValue(iter->second);
                 }
             }
         }

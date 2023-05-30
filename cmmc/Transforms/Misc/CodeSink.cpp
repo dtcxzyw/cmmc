@@ -25,7 +25,6 @@
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <iterator>
 #include <unordered_set>
@@ -86,7 +85,7 @@ public:
                     for(auto& userInst : userBlock->instructions()) {
                         if(userInst.getInstID() == InstructionID::Phi) {
                             for(auto [pred, val] : userInst.as<PhiInst>()->incomings()) {
-                                if(val == inst && !dom.dominate(target, pred)) {
+                                if(val->value == inst && !dom.dominate(target, pred)) {
                                     return false;
                                 }
                             }
@@ -116,20 +115,22 @@ public:
 
             auto& instructions = block->instructions();
             std::unordered_set<Instruction*> moved;
-            for(auto& inst : instructions) {
+            for(auto iter = instructions.begin(); iter != instructions.end();) {
+                auto next = std::next(iter);
+                auto& inst = *iter;
                 if(!inst.isTerminator() && inst.getInstID() != InstructionID::Phi && isNoSideEffectExpr(inst)) {
                     if(moveToTrueTarget) {
                         if(tryMove(&inst, trueTarget)) {
-                            moved.insert(&inst);
+                            modified = true;
                         }
                     } else if(moveToFalseTarget) {
                         if(tryMove(&inst, falseTarget)) {
-                            moved.insert(&inst);
+                            modified = true;
                         }
                     }
                 }
+                iter = next;
             }
-            instructions.remove_if([&](Instruction* inst) { return moved.count(inst); });
         }
 
         return modified;

@@ -52,7 +52,7 @@ public:
 class TACFrameInfo final : public TargetFrameInfo {
 public:
     void emitCall(FunctionCallInst* inst, LoweringContext& ctx) const override {
-        const auto callee = inst->operands().back()->as<Function>();
+        const auto callee = inst->lastOperand()->as<Function>();
         auto symbol = callee->getSymbol();
         if(symbol == "read") {
             auto reg = ctx.newVReg(OperandType::Int32);

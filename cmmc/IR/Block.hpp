@@ -73,7 +73,7 @@ public:
     }
 
     void dumpAsTarget(std::ostream& out) const;
-    Block* clone(std::unordered_map<Value*, Value*>& replace) const;
+    Block* clone(std::unordered_map<Value*, Value*>& replace, bool replaceAll) const;
 };
 CMMC_ARENA_TRAIT(Block, IR);
 

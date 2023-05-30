@@ -24,11 +24,14 @@
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
+
+// TODO: Don't emit existing instructions
+
 class Reassociate final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block) {
         std::unordered_map<Value*, std::vector<std::pair<uint32_t, Value*>>> map;
 
-        const auto ret = reduceBlock(builder, block, [&](Instruction* inst, ReplaceMap&) -> Value* {
+        const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             switch(inst->getInstID()) {
                 case InstructionID::Add:
                     [[fallthrough]];
@@ -134,7 +137,8 @@ class Reassociate final : public TransformPass<Function> {
                     reportUnreachable(CMMC_LOCATION());
             }
             assert(reduction);
-
+            map[reduction] = std::move(map[inst]);
+            map.erase(inst);
             return reduction;
         });
         return ret;

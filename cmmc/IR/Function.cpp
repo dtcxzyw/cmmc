@@ -239,7 +239,7 @@ bool Function::verify(std::ostream& out) const {
             if(inst.getInstID() == InstructionID::Phi) {
                 const auto phi = inst.as<PhiInst>();
                 for(auto [pred, val] : phi->incomings()) {
-                    if(auto depBlock = val->getBlock()) {
+                    if(auto depBlock = val->value->getBlock()) {
                         if(!checkDominate(depBlock, pred, false))  // depBlock can be unreachable
                             return false;
                     }

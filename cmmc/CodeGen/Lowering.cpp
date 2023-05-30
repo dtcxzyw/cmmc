@@ -665,7 +665,7 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     for(auto& inst : dstBlock->instructions()) {
         if(inst.getInstID() == InstructionID::Phi) {
             const auto phi = inst.as<PhiInst>();
-            src.push_back(phi->incomings().at(srcBlock));
+            src.push_back(phi->incomings().at(srcBlock)->value);
             dst.push_back(phi);
         } else
             break;
@@ -833,7 +833,7 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     const auto indexType = inst->operands().front()->getType();  // must be index type
     auto ptr = ctx.newVReg(inst->getType());
-    const auto base = ctx.mapOperand(inst->operands().back());
+    const auto base = ctx.mapOperand(inst->lastOperand());
 
     if(constantOffset != 0) {
         ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(

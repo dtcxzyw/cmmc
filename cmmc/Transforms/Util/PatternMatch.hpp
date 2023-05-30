@@ -26,25 +26,14 @@ CMMC_NAMESPACE_BEGIN
 template <typename ValueType>
 struct MatchContext final {
     ValueType* value;
-    std::unordered_map<Value*, Value*>* replace;
 
-    explicit MatchContext(ValueType* val, std::unordered_map<Value*, Value*>* replaceMap)
-        : value{ val }, replace{ replaceMap } {};
-
-    Value* getReplaced(Value* val) const {
-        if(replace) {
-            if(auto iter = replace->find(val); iter != replace->cend()) {
-                return iter->second;
-            }
-        }
-        return val;
-    }
+    explicit MatchContext(ValueType* val) : value{ val } {};
 
     template <typename T = ValueType>
     [[nodiscard]] MatchContext<Value> getOperand(uint32_t idx) const {
         if constexpr(std::is_base_of_v<Instruction, T>) {
             const auto val = value->getOperand(idx);
-            return MatchContext<Value>{ getReplaced(val), replace };
+            return MatchContext<Value>{ val };
         } else {
             static_assert(staticAssertionFail<T>, "Unsupported operation");
         }
@@ -56,7 +45,7 @@ class GenericMatcher {
 public:
     bool operator()(const MatchContext<Value>& ctx) const noexcept {
         if(auto val = dynamic_cast<T*>(ctx.value)) {
-            return (static_cast<const Derived*>(this))->handle(MatchContext<T>{ val, ctx.replace });
+            return (static_cast<const Derived*>(this))->handle(MatchContext<T>{ val });
         }
         return false;
     }
@@ -68,7 +57,7 @@ class AnyMatcher {
 public:
     explicit AnyMatcher(Value*& value) noexcept : mValue{ value } {}
     bool operator()(const MatchContext<Value>& ctx) const noexcept {
-        mValue = ctx.getReplaced(ctx.value);
+        mValue = ctx.value;
         return true;
     }
 };
@@ -390,7 +379,7 @@ public:
     explicit CaptureMatcher(Matcher matcher, Value*& value) noexcept : mMatcher{ matcher }, mValue{ value } {}
     bool operator()(const MatchContext<Value>& ctx) const noexcept {
         if(mMatcher(ctx)) {
-            mValue = ctx.getReplaced(ctx.value);
+            mValue = ctx.value;
             return true;
         }
         return false;

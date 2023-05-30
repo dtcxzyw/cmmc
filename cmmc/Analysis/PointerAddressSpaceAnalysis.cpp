@@ -97,7 +97,7 @@ PointerAddressSpaceAnalysisResult PointerAddressSpaceAnalysis::run(Function& fun
                         break;
                     }
                     case InstructionID::GetElementPtr: {
-                        const auto base = inst.operands().back();
+                        const auto base = inst.lastOperand();
                         inheritFrom(base, &inst);
                         break;
                     }

@@ -34,8 +34,8 @@ public:
 
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= reduceBlock(builder, *block, [&](Instruction* inst, ReplaceMap&) -> Value* {
-                MatchContext<Value> matchCtx{ inst, nullptr };
+            modified |= reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
+                MatchContext<Value> matchCtx{ inst };
                 Value *v1, *v2, *v3;
                 if(fadd(fmul(any(v1), any(v2)), any(v3))(matchCtx)) {
                     return builder.makeOp<FMAInst>(v1, v2, v3);

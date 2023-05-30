@@ -143,10 +143,11 @@ public:
     [[nodiscard]] size_t size() const {
         return mCount;
     }
-    void erase(IntrusiveListNode<T>* node) {
+    void erase(IntrusiveListNode<T>* node, bool destroy = true) {
         node->prev->next = node->next;
         node->next->prev = node->prev;
-        IntrusiveListItemAccessor<T>::destroy(node);
+        if(destroy)
+            IntrusiveListItemAccessor<T>::destroy(node);
         --mCount;
         assert(mCount >= 0);
     }
@@ -204,13 +205,13 @@ public:
     }
     template <typename Callable>
     void remove_if(const Callable& callable) {
-        IntrusiveListNode<T>* cur = mHead.next;
-        while(cur != &mTail) {
-            const auto next = cur->next;
+        IntrusiveListNode<T>* cur = mTail.prev;
+        while(cur != &mHead) {
+            const auto prev = cur->prev;
             if(callable(cur->ptr)) {
                 erase(cur);
             }
-            cur = next;
+            cur = prev;
         }
     }
 };

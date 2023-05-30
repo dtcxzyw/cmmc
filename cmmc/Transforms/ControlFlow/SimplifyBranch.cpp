@@ -51,7 +51,7 @@ public:
             if(terminator->getInstID() != InstructionID::ConditionalBranch)
                 continue;
             const auto cond = terminator->getOperand(0);
-            MatchContext<Value> matchCtx{ cond, nullptr };
+            MatchContext<Value> matchCtx{ cond };
             uintmax_t constCond;
             if(!uint_(constCond)(matchCtx))
                 continue;

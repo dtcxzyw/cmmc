@@ -23,7 +23,6 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
@@ -130,7 +129,6 @@ public:
         bool modified = false;
 
         // handle entry block
-        ReplaceMap replaceMap;
         for(auto& block : blocks[entry->instructions().size()]) {
             if(isEqual(block, entry)) {
                 entry->instructions().clear();
@@ -144,7 +142,7 @@ public:
                 const auto dst = block;
                 for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                     lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                    replaceMap.emplace(lhsIter.get(), rhsIter.get());
+                    lhsIter.get()->replaceWith(rhsIter.get());
                 }
             }
         }
@@ -159,7 +157,7 @@ public:
             }
             for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                 lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                replaceMap.emplace(lhsIter.get(), rhsIter.get());
+                lhsIter.get()->replaceWith(rhsIter.get());
             }
         }
 
@@ -180,7 +178,6 @@ public:
                 handleTarget(branch->getFalseTarget());
             }
         }
-        modified |= replaceOperands(func, replaceMap);
         return modified;
     }
 

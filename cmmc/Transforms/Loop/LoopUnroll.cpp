@@ -101,13 +101,9 @@ public:
                         if(replaceMap.count(prev)) {
                             const auto val = phi->incomings().at(prev);
                             auto& map = replaceMap.at(prev);
-                            if(map.count(val)) {
-                                const auto rep = map.at(val);
-                                for(auto& ref : phi->mutableOperands()) {
-                                    if(ref->value == val) {
-                                        ref->resetValue(rep);
-                                    }
-                                }
+                            if(map.count(val->value)) {
+                                const auto rep = map.at(val->value);
+                                val->resetValue(rep);
                             }
                         }
                     } else
@@ -116,7 +112,7 @@ public:
             };
             const auto append = [&]() {
                 ReplaceMap replace;
-                const auto block = loop.header->clone(replace);
+                const auto block = loop.header->clone(replace, false);
                 replaceMap[block] = std::move(replace);
                 insertedBlocks.push_back(block);
                 retarget(block);
@@ -129,7 +125,7 @@ public:
 
                 {
                     ReplaceMap replace;
-                    head = loop.header->clone(replace);
+                    head = loop.header->clone(replace, false);
                     replaceMap[head] = std::move(replace);
                     insertedBlocks.push_back(head);
                     for(auto block : cfg.predecessors(loop.latch)) {
@@ -156,7 +152,7 @@ public:
                 for(auto& inst : head->instructions()) {
                     if(inst.getInstID() == InstructionID::Phi) {
                         const auto phi = inst.as<PhiInst>();
-                        auto val = phi->incomings().at(loop.latch);
+                        auto val = phi->incomings().at(loop.latch)->value;
                         if(replace.count(val))
                             val = replace.at(val);
                         phi->removeSource(loop.latch);
@@ -181,7 +177,7 @@ public:
                         if(inst.getInstID() == InstructionID::Phi) {
                             const auto phi = inst.as<PhiInst>();
                             phi->clear();
-                            const auto val = replaceMap.at(head).at(phi)->as<PhiInst>()->incomings().at(prev);
+                            const auto val = replaceMap.at(head).at(phi)->as<PhiInst>()->incomings().at(prev)->value;
                             phi->addIncoming(prev, val);
                         } else
                             break;
@@ -192,7 +188,7 @@ public:
                 } else {
                     {
                         ReplaceMap replace;
-                        head = loop.latch->clone(replace);
+                        head = loop.latch->clone(replace, false);
                         replaceMap[head] = std::move(replace);
                         insertedBlocks.push_back(head);
                     }
@@ -214,7 +210,7 @@ public:
                         for(auto& inst : head->instructions()) {
                             if(inst.getInstID() == InstructionID::Phi) {
                                 const auto phi = inst.as<PhiInst>();
-                                auto val = phi->incomings().at(loop.latch);
+                                auto val = phi->incomings().at(loop.latch)->value;
                                 if(replace.count(val))
                                     val = replace.at(val);
                                 phi->clear();

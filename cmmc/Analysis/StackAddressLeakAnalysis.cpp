@@ -43,7 +43,7 @@ StackAddressLeakAnalysisResult StackAddressLeakAnalysis::run(Function& func, Ana
         for(auto& inst : block->instructions()) {
             switch(inst.getInstID()) {
                 case InstructionID::Call: {
-                    auto callee = inst.operands().back();
+                    auto callee = inst.lastOperand();
                     bool noWrite = false, noRead = false;
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                         if(calleeFunc->attr().hasAttr(FunctionAttribute::NoMemoryWrite))

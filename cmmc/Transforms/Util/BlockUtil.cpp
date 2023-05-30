@@ -17,7 +17,7 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
+#include <iostream>
 #include <iterator>
 #include <unordered_map>
 #include <unordered_set>
@@ -25,34 +25,31 @@
 CMMC_NAMESPACE_BEGIN
 
 bool applyReplace(Instruction* inst, const ReplaceMap& replace) {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(replace);
-    reportNotImplemented(CMMC_LOCATION());
-}
-bool replaceOperandsInBlock(Block& block, const ReplaceMap& replace) {
-    if(replace.empty())
-        return false;
     bool modified = false;
-    CMMC_UNUSED(block);
-    reportNotImplemented(CMMC_LOCATION());
+    for(auto& ref : inst->mutableOperands()) {
+        if(auto iter = replace.find(ref->value); iter != replace.end()) {
+            ref->resetValue(iter->second);
+            modified = true;
+        }
+    }
     return modified;
 }
 bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) {
     auto& insts = block.instructions();
 
-    ReplaceMap replace;
+    bool modified = false;
     const auto oldSize = block.instructions().size();
     for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
         auto& inst = *iter;
+        // std::cerr << "reduce\n";
+        // block.dump(std::cerr, HighlightInst{ &inst });
         builder.setInsertPoint(&block, iter);
-        if(auto value = reducer(&inst, replace)) {
-            replace.emplace(&inst, value);
+        if(auto value = reducer(&inst)) {
+            modified |= inst.replaceWith(value);
         }
-        iter = builder.getInsertPoint();
     }
     const auto newSize = block.instructions().size();
-    auto modified = newSize != oldSize;
-    modified |= replaceOperands(*builder.getCurrentFunction(), replace);
+    modified |= newSize != oldSize;
     return modified;
 }
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace) {
@@ -80,13 +77,13 @@ Block* splitBlock(List<Block*>& blocks, List<Block*>::iterator block, IntrusiveL
     auto beg = std::next(after);
     auto end = oldInsts.end();
     auto& newInsts = nextBlock->instructions();
-    // FIXME:
-    CMMC_UNUSED(newInsts);
-    reportNotImplemented(CMMC_LOCATION());
-    // newInsts.insert(newInsts.begin(), beg, end);
-    oldInsts.erase(beg, end);
-    // for(auto inst : newInsts)
-    //     inst->setBlock(nextBlock);
+    auto pos = newInsts.begin();
+    DisableValueRefCheckScope scope;
+    for(auto iter = beg; iter != end;) {
+        auto next = std::next(iter);
+        iter->insertBefore(nextBlock, pos);
+        iter = next;
+    }
     blocks.insert(std::next(block), nextBlock);
     return nextBlock;
 }
@@ -125,7 +122,7 @@ bool isNoSideEffectExpr(const Instruction& inst) {
             return false;
         }
         case InstructionID::Call: {
-            const auto callee = inst.operands().back();
+            const auto callee = inst.lastOperand();
             if(auto func = dynamic_cast<Function*>(callee)) {
                 auto& attr = func->attr();
                 return attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless);
@@ -171,7 +168,7 @@ void copyTarget(Block* target, Block* oldSource, Block* newSource) {
     for(auto& inst : target->instructions()) {
         if(inst.getInstID() == InstructionID::Phi) {
             auto phi = inst.as<PhiInst>();
-            phi->addIncoming(newSource, phi->incomings().at(oldSource));
+            phi->addIncoming(newSource, phi->incomings().at(oldSource)->value);
         } else
             break;
     }

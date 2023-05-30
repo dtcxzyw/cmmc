@@ -46,7 +46,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
 
         Value* indvar;
         intmax_t step;
-        if(!add(any(indvar), int_(step))(MatchContext<Value>{ next, nullptr })) {
+        if(!add(any(indvar), int_(step))(MatchContext<Value>{ next })) {
             continue;
         }
 
@@ -76,7 +76,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
                 if(initial)
                     uniqueInitial = false;
                 else
-                    initial = val;
+                    initial = val->value;
             }
         }
         if(!uniqueInitial || !initial)
@@ -84,11 +84,11 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
 
         if(cmp->getOp() == CompareOp::NotEqual) {
             intmax_t boundValue;
-            if(!int_(boundValue)(MatchContext<Value>{ bound, nullptr }))
+            if(!int_(boundValue)(MatchContext<Value>{ bound }))
                 continue;
 
             intmax_t initialValue;
-            if(!int_(initialValue)(MatchContext<Value>{ initial, nullptr }))
+            if(!int_(initialValue)(MatchContext<Value>{ initial }))
                 continue;
 
             if((boundValue - initialValue) % step)

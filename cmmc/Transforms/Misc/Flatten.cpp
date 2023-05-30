@@ -19,7 +19,6 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <unordered_set>
@@ -50,7 +49,7 @@ public:
 
         const auto isDirectUse = [](Instruction* inst) {
             return inst->getInstID() == InstructionID::GetElementPtr && inst->operands().size() == 3 &&
-                cuint_(0)(MatchContext<Value>{ inst->getOperand(0), nullptr }) && inst->getOperand(1)->isConstant();
+                cuint_(0)(MatchContext<Value>{ inst->getOperand(0) }) && inst->getOperand(1)->isConstant();
         };
         CMMC_UNUSED(isDirectUse);
 

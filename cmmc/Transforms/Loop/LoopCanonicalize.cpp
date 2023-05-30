@@ -45,7 +45,7 @@ public:
             // le x c -> lt x c+1, ge x c -> ge x c-1
             if(cmp->getInstID() == InstructionID::SCmp) {
                 intmax_t x;
-                MatchContext<Value> matchCtx{ cmp->getOperand(1), nullptr };
+                MatchContext<Value> matchCtx{ cmp->getOperand(1) };
                 if(int_(x)(matchCtx)) {
                     const auto type = cmp->getOperand(1)->getType();
                     if(cmp->getOp() == CompareOp::LessEqual) {

@@ -35,7 +35,6 @@ Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-37051-9_6
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -162,7 +161,7 @@ public:
 
 class ScalarMem2Reg final : public TransformPass<Function> {
     static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
-                             const StackAddressLeakAnalysisResult& leak, ReplaceMap& replace) {
+                             const StackAddressLeakAnalysisResult& leak) {
         const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
         Value* undef = make<UndefinedValue>(valueType);
         if(valueType->isPointer())
@@ -199,8 +198,9 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                     break;
                 switch(inst->getInstID()) {
                     case InstructionID::Load: {
-                        if(inst->getOperand(0) == alloc)
-                            replace.emplace(inst, value);
+                        if(inst->getOperand(0) == alloc) {
+                            inst->replaceWith(value);
+                        }
                     } break;
                     case InstructionID::Store: {
                         const auto storeAddr = inst->getOperand(0);
@@ -253,13 +253,12 @@ public:
         const auto deadline = Clock::now() + timeBudget;
 
         IRBuilder builder{ analysis.module().getTarget() };
-        ReplaceMap replace;
         for(auto alloc : interested) {
-            applyMem2Reg(builder, func, alias, alloc, leak, replace);
+            applyMem2Reg(builder, func, alias, alloc, leak);
             if(Clock::now() > deadline)
                 break;
         }
-        replaceOperands(func, replace);
+
         return true;
     }
 

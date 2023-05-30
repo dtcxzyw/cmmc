@@ -20,7 +20,6 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
-#include <cmmc/Transforms/Util/FunctionUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <queue>
@@ -38,12 +37,12 @@ class ExtGEPCombine final : public TransformPass<Function> {
             for(auto& operand : inst.mutableOperands()) {
                 if(operand->value->getType()->isInteger()) {
                     Value* idx;
-                    if(sext(any(idx))(MatchContext<Value>{ operand->value, nullptr })) {
+                    if(sext(any(idx))(MatchContext<Value>{ operand->value })) {
                         operand->resetValue(idx);
                         modified = true;
                     }
                     intmax_t val;
-                    if(operand->value->getType() != indexType && int_(val)(MatchContext<Value>{ operand->value, nullptr })) {
+                    if(operand->value->getType() != indexType && int_(val)(MatchContext<Value>{ operand->value })) {
                         operand->resetValue(ConstantInteger::get(indexType, val));
                         modified = true;
                     }

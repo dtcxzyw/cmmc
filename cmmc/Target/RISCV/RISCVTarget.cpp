@@ -291,7 +291,7 @@ void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) cons
 }
 
 void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const {
-    auto callee = inst->operands().back();
+    auto callee = inst->lastOperand();
     auto func = dynamic_cast<Function*>(callee);
     if(!func)
         DiagnosticsContext::get().attach<Reason>("dynamic call is not supported").reportFatal();
