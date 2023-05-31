@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Transforms/Util/BlockUtil.hpp"
 #include <chrono>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
@@ -138,6 +139,18 @@ std::string_view PassManager<Scope>::name() const noexcept {
     return "PassManager"sv;
 }
 
+static void cleanupUnusedInsts(Function& func) {
+    for(auto block : func.blocks()) {
+        block->instructions().remove_if([](Instruction* inst) { return !inst->isUsed() && isNoSideEffectExpr(*inst); });
+    }
+}
+static void cleanupUnusedInsts(Module& module) {
+    for(auto global : module.globals()) {
+        if(global->isFunction())
+            cleanupUnusedInsts(*global->as<Function>());
+    }
+}
+
 template <typename Scope>
 std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis, size_t lastStop) const {
     auto dumpItem = [&] {
@@ -162,6 +175,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
         if(pass->isWrapper()) {
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
+                cleanupUnusedInsts(item);
                 modified = true;
                 newLastStop = idx + 1;
             }
@@ -172,6 +186,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
             }
             if(pass->run(item, analysis)) {
                 analysis.invalidateModule();
+                cleanupUnusedInsts(item);
                 modified = true;
                 newLastStop = idx + 1;
 
@@ -226,6 +241,7 @@ public:
 
             lastStop = newLastStop.value();
             analysis.invalidateFunc(item);
+            cleanupUnusedInsts(item);
             modified = true;
             if(!debugTransform.get()) {
                 const auto now = Clock::now();
@@ -382,6 +398,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Load/Store
             "LoadReduce",             //
             "StoreEliminate",         //
+            "PhiEliminate",           // clean up
             "NoSideEffectEliminate",  // clean up
             // Outline
             "ConstantHoist",   //
@@ -434,6 +451,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 "ScalarMem2Reg",          //
+                "PhiEliminate",           //
                 "StoreEliminate",         // clean up
                 "NoSideEffectEliminate",  // clean up
                 //"SmallBlockInlining",     //

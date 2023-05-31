@@ -21,10 +21,9 @@ Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-37051-9_6
 */
 
 #include <algorithm>
-#include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
-#include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -35,20 +34,19 @@ Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-37051-9_6
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
-#include <queue>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
-// global inter-block mem2reg, working with LoadReduce
-
 CMMC_NAMESPACE_BEGIN
 
-/*
 class ScalarMem2RegContext final {
     Function& mFunc;
     const CFGAnalysisResult& mCFG;
+    const DominateAnalysisResult& mDom;
     std::unordered_map<Value*, std::unordered_map<Block*, Value*>> mCurrentDef;
+    std::unordered_set<Block*> mSealedBlocks;
+    std::unordered_map<Block*, std::vector<std::pair<Value*, PhiInst*>>> mIncompletePhis;
 
     void defVar(Value* var, Block* block, Value* value) {
         mCurrentDef[var][block] = value;
@@ -59,36 +57,121 @@ class ScalarMem2RegContext final {
             return iter->second;
         return useVarRecursive(var, block);
     }
-    Value* tryRemoteTrivalPhi(PhiInst* phi) {
-        CMMC_UNUSED(phi);
-        return nullptr;
+    Value* tryRemoveTrivalPhi(PhiInst* phi) {
+        Value* common = nullptr;
+        for(auto val : phi->operands()) {
+            if(val == common || val == phi)
+                continue;
+            if(!common)
+                return phi;
+            common = val;
+        }
+        if(common == nullptr)
+            common = make<UndefinedValue>(phi->getType());
+        for(auto iter = phi->users().begin(); iter != phi->users().end();) {
+            auto next = std::next(iter);
+            auto ref = iter.ref();
+            if(ref->user != phi) {
+                ref->resetValue(common);
+                if(ref->user->getInstID() == InstructionID::Phi)
+                    tryRemoveTrivalPhi(ref->user->as<PhiInst>());
+            }
+            next = iter;
+        }
+        return common;
     }
     Value* addPhiOperands(Value* var, const std::vector<Block*>& pred, PhiInst* phi) {
         for(auto predBlock : pred) {
             phi->addIncoming(predBlock, useVar(var, predBlock));
         }
-        return tryRemoteTrivalPhi(phi);
+        return tryRemoveTrivalPhi(phi);
+    }
+    static PhiInst* createPhi(Value* var) {
+        return make<PhiInst>(var->getType()->as<PointerType>()->getPointee());
     }
     Value* useVarRecursive(Value* var, Block* block) {
-        auto& pred = mCFG.predecessors(block);
         Value* val = nullptr;
-        if(pred.size() == 1) {
-            val = useVar(var, block);
+        if(!mSealedBlocks.count(block)) {
+            const auto phi = createPhi(var);
+            phi->insertBefore(block, block->instructions().begin());
+            val = phi;
+            mIncompletePhis[block].emplace_back(var, phi);
         } else {
-            auto phi = make<PhiInst>(var->getType());
-            phi->setBlock(block);
-            block->instructions().push_front(phi);
-            defVar(var, block, phi);
-            val = addPhiOperands(var, pred, phi);
+            auto& pred = mCFG.predecessors(block);
+            if(pred.size() == 1) {
+                val = useVar(var, pred.front());
+            } else {
+                auto phi = createPhi(var);
+                phi->insertBefore(block, block->instructions().begin());
+                defVar(var, block, phi);
+                val = addPhiOperands(var, pred, phi);
+            }
         }
         defVar(var, block, val);
         return val;
     }
+    void sealBlock(Block* block) {
+        if(auto iter = mIncompletePhis.find(block); iter != mIncompletePhis.end()) {
+            auto& pred = mCFG.predecessors(block);
+            for(auto [var, phi] : iter->second) {
+                addPhiOperands(var, pred, phi);
+            }
+            mIncompletePhis.erase(iter);
+        }
+        mSealedBlocks.insert(block);
+    }
 
 public:
-    ScalarMem2RegContext(Function& func, const CFGAnalysisResult& cfg) : mFunc(func), mCFG(cfg) {}
+    ScalarMem2RegContext(Function& func, const CFGAnalysisResult& cfg, const DominateAnalysisResult& dom)
+        : mFunc(func), mCFG(cfg), mDom{ dom } {}
     void runOnFunction(const std::unordered_set<Value*>& insts) {
-        CMMC_UNUSED(insts);
+        std::unordered_map<Block*, size_t> degree;
+        for(auto block : mFunc.blocks())
+            degree[block] = mCFG.predecessors(block).size();
+        auto tryMarkSealed = [&](Block* block) {
+            if(degree[block] == 0 && !mSealedBlocks.count(block))
+                sealBlock(block);
+        };
+        std::vector<Block*> order;
+        order.reserve(mFunc.blocks().size());
+        order.insert(order.begin(), mDom.blocks().begin(), mDom.blocks().end());
+        for(auto block : mFunc.blocks())
+            if(!mDom.reachable(block))
+                order.push_back(block);
+
+        for(auto block : order) {
+            auto& instructions = block->instructions();
+            for(auto iter = instructions.begin(); iter != instructions.end();) {
+                auto next = std::next(iter);
+                auto& inst = *iter;
+                switch(inst.getInstID()) {
+                    case InstructionID::Load: {
+                        auto ptr = inst.getOperand(0);
+                        if(insts.count(ptr))
+                            inst.replaceWith(useVar(ptr, block));
+                        break;
+                    }
+                    case InstructionID::Store: {
+                        auto ptr = inst.getOperand(0);
+                        if(insts.count(ptr)) {
+                            auto val = inst.getOperand(1);
+                            defVar(ptr, block, val);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+                iter = next;
+            }
+
+            tryMarkSealed(block);
+            for(auto succBlock : mCFG.successors(block)) {
+                --degree[succBlock];
+                tryMarkSealed(succBlock);
+            }
+        }
+        assert(mSealedBlocks.size() == order.size());
     }
 };
 
@@ -96,30 +179,25 @@ class ScalarMem2Reg final : public TransformPass<Function> {
     void filterPromotable(Function& func, std::unordered_set<Value*>& interested) const {
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
-                switch(inst->getInstID()) {
+                switch(inst.getInstID()) {
                     case InstructionID::Store: {
-                        interested.erase(inst->getOperand(1));  // use as value
+                        interested.erase(inst.getOperand(1));  // use as value
                         break;
                     }
                     case InstructionID::Select: {
-                        interested.erase(inst->getOperand(1));
-                        interested.erase(inst->getOperand(2));
+                        interested.erase(inst.getOperand(1));
+                        interested.erase(inst.getOperand(2));
                         break;
                     }
                     case InstructionID::PtrToInt:
                         [[fallthrough]];
                     case InstructionID::PtrCast: {
-                        interested.erase(inst->getOperand(0));
+                        interested.erase(inst.getOperand(0));
                         break;
                     }
                     case InstructionID::Call: {
-                        for(auto operand : inst->operands())
+                        for(auto operand : inst.operands())
                             interested.erase(operand);
-                        break;
-                    }
-                    case InstructionID::Ret: {
-                        if(!inst->operands().empty())
-                            interested.erase(inst->getOperand(0));
                         break;
                     }
                     default:
@@ -132,11 +210,12 @@ class ScalarMem2Reg final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& cfg = analysis.get<CFGAnalysis>(func);
+        const auto& dom = analysis.get<DominateAnalysis>(func);
 
         std::unordered_set<Value*> interested;
-        for(auto inst : func.entryBlock()->instructions()) {
-            if(inst->getInstID() == InstructionID::Alloc) {
-                auto alloc = inst->as<StackAllocInst>();
+        for(auto& inst : func.entryBlock()->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                auto alloc = inst.as<StackAllocInst>();
                 if(alloc->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
                     interested.insert(alloc);
                 }
@@ -148,117 +227,8 @@ public:
         if(interested.empty())
             return false;
 
-        ScalarMem2RegContext ctx{ func, cfg };
+        ScalarMem2RegContext ctx{ func, cfg, dom };
         ctx.runOnFunction(interested);
-        return true;
-    }
-
-    [[nodiscard]] std::string_view name() const noexcept override {
-        return "ScalarMem2Reg"sv;
-    }
-};
-*/
-
-class ScalarMem2Reg final : public TransformPass<Function> {
-    static void applyMem2Reg(IRBuilder& builder, Function& func, const AliasAnalysisResult& alias, StackAllocInst* alloc,
-                             const StackAddressLeakAnalysisResult& leak) {
-        const auto valueType = alloc->getType()->as<PointerType>()->getPointee();
-        Value* undef = make<UndefinedValue>(valueType);
-        if(valueType->isPointer())
-            const_cast<AliasAnalysisResult&>(alias).addValue(undef, {});  // NOLINT
-
-        std::unordered_map<Block*, PhiInst*> phiNodes;
-        for(auto block : func.blocks()) {
-            if(block == func.entryBlock())
-                continue;
-            builder.setInsertPoint(block, block->instructions().begin());
-            const auto phi = builder.createPhi(valueType);
-            phiNodes.emplace(block, phi);
-        }
-
-        for(auto block : func.blocks()) {
-            Value* value = (block == func.entryBlock() ? undef : phiNodes.at(block));
-
-            const auto update = [&, insertBlock = block, storeAddr = alloc](Instruction* pos, bool after) {
-                builder.setInsertPoint(insertBlock, pos);
-                if(after)
-                    builder.nextInsertPoint();
-                value = builder.makeOp<LoadInst>(storeAddr);
-                if(value->getType()->isPointer())
-                    const_cast<AliasAnalysisResult&>(alias).addValue(value, {});  // NOLINT
-            };
-
-            std::vector<Instruction*> instructionList;
-            instructionList.reserve(block->instructions().size());
-            for(auto& inst : block->instructions())
-                instructionList.push_back(&inst);
-            bool stop = false;
-            for(auto inst : instructionList) {
-                if(stop)
-                    break;
-                switch(inst->getInstID()) {
-                    case InstructionID::Load: {
-                        if(inst->getOperand(0) == alloc) {
-                            inst->replaceWith(value);
-                        }
-                    } break;
-                    case InstructionID::Store: {
-                        const auto storeAddr = inst->getOperand(0);
-                        if(storeAddr == alloc) {
-                            value = inst->getOperand(1);
-                        } else if(!alias.isDistinct(storeAddr, alloc)) {
-                            update(inst, true);
-                        }
-                    } break;
-                    case InstructionID::Call: {
-                        if(leak.mayModify(inst, alloc))
-                            update(inst, true);
-                    } break;
-                    case InstructionID::Branch:
-                        [[fallthrough]];
-                    case InstructionID::ConditionalBranch: {
-                        const auto branch = inst->as<BranchInst>();
-                        applyForSuccessors(branch,
-                                           [&](Block* targetBlock) { phiNodes.at(targetBlock)->addIncoming(block, value); });
-                    } break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-
-public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
-        const auto& alias = analysis.get<AliasAnalysis>(func);
-        const auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
-
-        std::vector<StackAllocInst*> interested;
-        for(auto& inst : func.entryBlock()->instructions()) {
-            if(inst.getInstID() == InstructionID::Alloc) {
-                auto alloc = inst.as<StackAllocInst>();
-                if(alloc->getType()->as<PointerType>()->getPointee()->isPrimitive()) {
-                    interested.push_back(alloc);
-                }
-            } else
-                break;
-        }
-
-        if(interested.empty())
-            return false;
-
-        // FIXME: don't create phi nodes in all blocks
-        using namespace std::chrono_literals;
-        constexpr auto timeBudget = 10ms;
-        const auto deadline = Clock::now() + timeBudget;
-
-        IRBuilder builder{ analysis.module().getTarget() };
-        for(auto alloc : interested) {
-            applyMem2Reg(builder, func, alias, alloc, leak);
-            if(Clock::now() > deadline)
-                break;
-        }
-
         return true;
     }
 

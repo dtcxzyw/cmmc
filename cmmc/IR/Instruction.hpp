@@ -146,6 +146,9 @@ public:
         assert(mRef->user);
         return mRef->user;
     }
+    ValueRef* ref() const noexcept {
+        return mRef;
+    }
 };
 class UserList final {
     ValueRef mHead;
@@ -664,3 +667,13 @@ public:
 };
 
 CMMC_NAMESPACE_END
+
+namespace std {
+    template <>
+    class iterator_traits<cmmc::UserIterator> {
+    public:
+        using difference_type = ptrdiff_t;
+        using pointer = cmmc::Instruction*;
+        using iterator_category = forward_iterator_tag;
+    };
+}  // namespace std

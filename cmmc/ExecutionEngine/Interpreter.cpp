@@ -33,6 +33,7 @@
 #include <deque>
 #include <ios>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <type_traits>
 #include <unordered_map>
@@ -566,40 +567,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             return SimulationFailReason::MemoryError;
 
         auto& currentExecCtx = execCtx.back();
-        const auto iter = currentExecCtx.execIter;
+        auto iter = currentExecCtx.execIter;
         if(iter == currentExecCtx.block->instructions().end())
             return SimulationFailReason::UnknownError;
-
-        auto& inst = *iter;
-        ++currentExecCtx.execIter;
-        ++instructionCount;
-
-        operands.clear();
-        auto buildOperand = [&](Value* operand) {
-            if(operand->isConstant())
-                operands.push_back(fromConstant(operand->as<ConstantValue>()));
-            else if(operand->isGlobal()) {
-                if(operand->getType()->isFunction()) {
-                    operands.emplace_back(operand->as<Function>());
-                } else {
-                    operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
-                }
-            } else {
-                operands.push_back(currentExecCtx.operands.at(operand));
-            }
-        };
-        if(inst.getInstID() != InstructionID::Phi) {
-            operands.reserve(inst.operands().size());
-            for(auto operand : inst.operands())
-                buildOperand(operand);
-        } else {
-            buildOperand(inst.as<PhiInst>()->incomings().at(currentExecCtx.predBlock)->value);
-        }
-
-        const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
-        const auto getUInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getZeroExtended(); };
-        const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
-        const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
 
         const auto dumpValue = [&](const OperandStorage& val) {
             auto& out = std::cerr;
@@ -621,6 +591,47 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 out << '\n';
             }
         };
+        auto buildOperand = [&](Value* operand) {
+            if(operand->isConstant())
+                operands.push_back(fromConstant(operand->as<ConstantValue>()));
+            else if(operand->isGlobal()) {
+                if(operand->getType()->isFunction()) {
+                    operands.emplace_back(operand->as<Function>());
+                } else {
+                    operands.emplace_back(memCtx.getGlobalVarAddress(operand->as<GlobalVariable>()));
+                }
+            } else {
+                operands.push_back(currentExecCtx.operands.at(operand));
+            }
+        };
+        {
+            std::unordered_map<Instruction*, OperandStorage> phiValue;
+            while(iter->getInstID() == InstructionID::Phi) {
+                buildOperand(iter->as<PhiInst>()->incomings().at(currentExecCtx.predBlock)->value);
+                phiValue.emplace(iter.get(), operands.back());
+                ++iter;
+                assert(iter != currentExecCtx.block->instructions().end());
+            }
+            for(auto& [k, v] : phiValue)
+                addValue(*k, v);
+        }
+
+        auto& inst = *iter;
+        assert(inst.getInstID() != InstructionID::Phi);
+        currentExecCtx.execIter = std::next(iter);
+        ++instructionCount;
+
+        operands.clear();
+
+        operands.reserve(inst.operands().size());
+        for(auto operand : inst.operands())
+            buildOperand(operand);
+
+        const auto getInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getSignExtended(); };
+        const auto getUInt = [&](uint32_t idx) { return std::get<ConstantInteger>(operands[idx]).getZeroExtended(); };
+        const auto getPtr = [&](uint32_t idx) { return std::get<uintptr_t>(operands[idx]); };
+        const auto getFP = [&](uint32_t idx) { return std::get<ConstantFloatingPoint>(operands[idx]).getValue(); };
+
         const auto addInt = [&](intmax_t val) { addValue(inst, ConstantInteger{ inst.getType(), val, ExplicitConstruct{} }); };
         const auto addUInt = [&](uintmax_t val) {
             addValue(inst, ConstantInteger{ inst.getType(), static_cast<intmax_t>(val), ExplicitConstruct{} });
@@ -1072,11 +1083,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                         reportNotImplemented(CMMC_LOCATION());
                 }
 
-                break;
-            }
-            case InstructionID::Phi: {
-                addValue(inst, operands.front());
-                --instructionCount;
                 break;
             }
             default:
