@@ -17,7 +17,6 @@
 #include <cmmc/Analysis/BlockTripCountEstimation.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
-#include <cmmc/Analysis/StackLifetimeAnalysis.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>

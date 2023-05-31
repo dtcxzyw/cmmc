@@ -7,16 +7,16 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp lt i32 %0, i32 1;
     cbr i1 %1(prob = 0.97), ^for.body, ^for.header1;
 ^for.body:
-    i32 %2 = add i32 %0, i32 1;
     call (i32) -> void @putint(i32 %0);
+    i32 %2 = add i32 %0, i32 1;
     ubr ^for.header;
 ^for.header1:
     i32 %3 = phi [^for.header, i32 -1] [^for.body1, i32 %5];
     i1 %4 = scmp lt i32 %3, i32 0;
     cbr i1 %4(prob = 0.97), ^for.body1, ^b;
 ^for.body1:
-    i32 %5 = add i32 %3, i32 1;
     call (i32) -> void @putint(i32 %3);
+    i32 %5 = add i32 %3, i32 1;
     ubr ^for.header1;
 ^b:
     ret i32 0;

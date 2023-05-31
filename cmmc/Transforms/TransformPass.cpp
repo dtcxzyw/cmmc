@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Transforms/Util/BlockUtil.hpp"
 #include <chrono>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
@@ -28,6 +27,7 @@
 #include <cmmc/Support/StaticReflection.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <fstream>
 #include <iostream>
 #include <limits>

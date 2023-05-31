@@ -557,6 +557,27 @@ def sysy_cmmc_qemu(src, target):
 
     return True
 
+def compare_with_ref_file(answer_file, output):
+    if not os.path.exists(answer_file):
+        return False
+    with open(answer_file, 'r', encoding='utf-8') as f:
+        answer = f.read()
+        return answer == output
+
+# TODO: asm checks
+def sysy_regression(src):
+    output_asm = src + '.ir'
+    cmmc_command:str = binary_path + ' -i -O {} -t sim -H -o /dev/stdout '.format(optimization_level) + src
+    out = subprocess.run(cmmc_command.split(), capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+
+    return compare_with_ref_file(output_asm, out.stdout)
+
+def sysy_regression_ref(src):
+    output_asm = src + '.ir'
+    cmmc_command = binary_path + ' -i -O {} -t sim -H -o '.format(optimization_level) + output_asm + ' ' + src
+    return os.system(cmmc_command) == 0
 
 def sysy_codegen_llvm(src):
     inputs = src[:-3]+".in"
@@ -626,7 +647,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "tac", "codegen", "qemu", 'riscv', 'mips']
+test_cases = ["parse", "semantic", "tac", "codegen", "regression", 'riscv', 'mips']
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 
@@ -666,8 +687,6 @@ if not generate_ref:
         res.append(test("SysY opt performance", tests_path +
                         "/SysY2022/performance", ".sy", sysy_opt))
         res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
-        res.append(test("Transform", tests_path +
-                   "/Transform", ".sy", sysy_opt))
 
     if "tac" in test_cases:
         res.append(test("SPL SPL->TAC sample", tests_path +
@@ -724,6 +743,9 @@ if not generate_ref:
                 samples['cmmc_qemu_'+target].reset()
                 res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
                                 "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
+                
+    if "regression" in test_cases:
+        res.append(test("SysY regression", tests_path +"/Regression", ".sy", sysy_regression))
 
 
 if generate_ref:
@@ -747,6 +769,9 @@ if generate_ref:
     if 'riscv' in test_cases:
         test("Reference Spl->RISCV64", tests_path +
              "/TAC2MC", ".spl", spl_riscv64_ref)
+    if 'regression' in test_cases:
+        test("Reference SysY Regression", tests_path +
+             "/Regression", ".sy", sysy_regression_ref)
 
 end = time.perf_counter()
 

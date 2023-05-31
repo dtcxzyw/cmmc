@@ -35,14 +35,8 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& target = analysis.module().getTarget();
         // requirement: no alloc
-        // TODO: hoist allocas
-        // FIXME: All allocas should be in the entry block!
-        for(auto block : func.blocks()) {
-            for(auto& inst : block->instructions()) {
-                if(inst.getInstID() == InstructionID::Alloc) {
-                    return false;
-                }
-            }
+        if(func.entryBlock()->instructions().front()->getInstID() == InstructionID::Alloc) {
+            return false;
         }
 
         std::vector<Block*> redirect;

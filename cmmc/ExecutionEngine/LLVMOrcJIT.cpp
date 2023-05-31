@@ -179,7 +179,6 @@ std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::
     for(auto&& feature : features)
         jitBuilder->getFeatures().AddFeature(feature.first(), feature.second);
 
-    // FIXME: incorrect fp opt
     jitBuilder->setCodeGenOptLevel(llvm::CodeGenOpt::Aggressive);  //-O3
     jitBuilder->setRelocationModel(llvm::Reloc::PIC_);
     jitBuilder->setCodeModel(llvm::CodeModel::Small);

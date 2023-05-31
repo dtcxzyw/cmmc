@@ -1,8 +1,10 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
+internal i32* @a;
+func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
 ^entry:
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
+    store i32* @a with i32 %1;
     i32 %2 = add i32 %0, i32 %1;
     ret i32 %2;
 }

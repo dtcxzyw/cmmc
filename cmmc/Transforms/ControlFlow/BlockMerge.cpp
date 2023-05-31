@@ -41,11 +41,6 @@ class BlockMerge final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         auto tryMerge = [&] {
-            // FIXME
-            CMMC_UNUSED(func);
-            return false;
-
-            /*
             std::unordered_map<Block*, uint32_t> blockRef;
             for(auto& block : func.blocks()) {
                 const auto inst = block->getTerminator();
@@ -76,9 +71,11 @@ public:
                     auto& instsA = block->instructions();
                     instsA.pop_back();
 
-                    for(auto& inst : instsB)
-                        inst->setBlock(block);
-                    instsA.insert(instsA.cend(), instsB.cbegin(), instsB.cend());
+                    for(auto iter = instsB.begin(); iter != instsB.end();) {
+                        auto next = std::next(iter);
+                        iter->insertBefore(block, instsA.end());
+                        iter = next;
+                    }
 
                     const auto newTerminator = block->getTerminator();
                     if(newTerminator->isBranch()) {
@@ -94,7 +91,6 @@ public:
             for(auto block : deferred)
                 func.blocks().remove(block);
             return !deferred.empty();
-            */
         };
 
         bool modified = false;

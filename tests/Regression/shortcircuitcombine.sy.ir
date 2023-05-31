@@ -3,16 +3,16 @@ internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp neq i32 %0, i32 0;
-    i32 %2 = call () -> i32 @getint();
-    i1 %3 = scmp neq i32 %2, i32 0;
-    i1 %4 = and i1 %1, i1 %3;
+    i32 %1 = call () -> i32 @getint();
+    i1 %2 = scmp neq i32 %0, i32 0;
+    i1 %3 = scmp neq i32 %1, i32 0;
+    i1 %4 = and i1 %2, i1 %3;
     cbr i1 %4(prob = 0.25), ^if.then, ^b;
 ^if.then:
     call (i32) -> void @putint(i32 1);
     ubr ^b;
 ^b:
-    i32 %5 = or i32 %0, i32 %2;
+    i32 %5 = or i32 %0, i32 %1;
     i1 %6 = scmp neq i32 %5, i32 0;
     cbr i1 %6(prob = 0.75), ^if.then1, ^b1;
 ^if.then1:

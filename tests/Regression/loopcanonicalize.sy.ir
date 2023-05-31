@@ -1,0 +1,82 @@
+internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
+^entry:
+    ubr ^for.header;
+^for.header:
+    i32 %0 = phi [^entry, i32 0] [^for.body, i32 %4];
+    i32 %1 = phi [^entry, i32 0] [^for.body, i32 %3];
+    i1 %2 = scmp lt i32 %0, i32 10;
+    cbr i1 %2(prob = 0.97), ^for.body, ^for.header1;
+^for.body:
+    i32 %3 = add i32 %1, i32 %0;
+    i32 %4 = add i32 %0, i32 1;
+    ubr ^for.header;
+^for.header1:
+    i32 %5 = phi [^for.header, i32 0] [^for.body1, i32 %9];
+    i32 %6 = phi [^for.header, i32 %1] [^for.body1, i32 %8];
+    i1 %7 = scmp lt i32 %5, i32 1000;
+    cbr i1 %7(prob = 0.97), ^for.body1, ^for.header2;
+^for.body1:
+    i32 %8 = add i32 %6, i32 %5;
+    i32 %9 = add i32 %5, i32 10;
+    ubr ^for.header1;
+^for.header2:
+    i32 %10 = phi [^for.header1, i32 0] [^for.body2, i32 %14];
+    i32 %11 = phi [^for.header1, i32 %6] [^for.body2, i32 %13];
+    i1 %12 = scmp lt i32 %10, i32 10;
+    cbr i1 %12(prob = 0.97), ^for.body2, ^for.header3;
+^for.body2:
+    i32 %13 = add i32 %11, i32 %10;
+    i32 %14 = add i32 %10, i32 1;
+    ubr ^for.header2;
+^for.header3:
+    i32 %15 = phi [^for.header2, i32 0] [^for.body3, i32 %19];
+    i32 %16 = phi [^for.header2, i32 %11] [^for.body3, i32 %18];
+    i1 %17 = scmp lt i32 %15, i32 1000;
+    cbr i1 %17(prob = 0.97), ^for.body3, ^for.header4;
+^for.body3:
+    i32 %18 = add i32 %16, i32 %15;
+    i32 %19 = add i32 %15, i32 10;
+    ubr ^for.header3;
+^for.header4:
+    i32 %20 = phi [^for.header3, i32 1000] [^for.body4, i32 %24];
+    i32 %21 = phi [^for.header3, i32 %16] [^for.body4, i32 %23];
+    i1 %22 = scmp gt i32 %20, i32 0;
+    cbr i1 %22(prob = 0.97), ^for.body4, ^for.header5;
+^for.body4:
+    i32 %23 = add i32 %21, i32 %20;
+    i32 %24 = add i32 %20, i32 -10;
+    ubr ^for.header4;
+^for.header5:
+    i32 %25 = phi [^for.header4, i32 0] [^for.body5, i32 %29];
+    i32 %26 = phi [^for.header4, i32 %21] [^for.body5, i32 %28];
+    i1 %27 = scmp neq i32 %25, i32 1000;
+    cbr i1 %27(prob = 0.97), ^for.body5, ^for.header6;
+^for.body5:
+    i32 %28 = add i32 %26, i32 %25;
+    i32 %29 = add i32 %25, i32 1;
+    ubr ^for.header5;
+^for.header6:
+    i32 %30 = phi [^for.header5, i32 0] [^for.body6, i32 %34];
+    i32 %31 = phi [^for.header5, i32 %26] [^for.body6, i32 %33];
+    i1 %32 = scmp lt i32 %30, i32 1001;
+    cbr i1 %32(prob = 0.97), ^for.body6, ^b;
+^for.body6:
+    i32 %33 = add i32 %31, i32 %30;
+    i32 %34 = add i32 %30, i32 1;
+    ubr ^for.header6;
+^b:
+    i32 %35 = call () -> i32 @getint();
+    ubr ^for.header7;
+^for.header7:
+    i32 %36 = phi [^b, i32 0] [^for.body7, i32 %40];
+    i32 %37 = phi [^b, i32 %31] [^for.body7, i32 %39];
+    i1 %38 = scmp lt i32 %36, i32 %35;
+    cbr i1 %38(prob = 0.97), ^for.body7, ^b1;
+^for.body7:
+    i32 %39 = add i32 %37, i32 %36;
+    i32 %40 = add i32 %36, i32 1;
+    ubr ^for.header7;
+^b1:
+    ret i32 %37;
+}
