@@ -1,4 +1,9 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
+func @add(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = add i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^b:
     ret i32 3;
 }

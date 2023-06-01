@@ -6,31 +6,30 @@ v15 := v14 * #100
 IF v12 != v15 GOTO label11
 v20 := v12 / #400
 v21 := v20 * #400
-IF v12 != v21 GOTO label9
-IF v13 != #2 GOTO label6
+IF v12 != v21 GOTO label3
+IF v13 != #2 GOTO label8
 GOTO label54
-LABEL label50 :
-WRITE #30
-RETURN #0
-LABEL label6 :
-v30 := v13 / #2
-v31 := v30 * #2
-IF v13 != v31 GOTO label34
-GOTO label50
-LABEL label34 :
-WRITE #31
-RETURN #0
-LABEL label9 :
-IF v13 != #2 GOTO label6
+LABEL label3 :
+IF v13 != #2 GOTO label8
 GOTO label49
 LABEL label11 :
 v40 := v12 / #4
 v41 := v40 * #4
-IF v12 != v41 GOTO label9
-IF v13 != #2 GOTO label6
+IF v12 != v41 GOTO label3
+IF v13 != #2 GOTO label8
+GOTO label54
+LABEL label49 :
+WRITE #28
+RETURN #0
 LABEL label54 :
 WRITE #29
 RETURN #0
-LABEL label49 :
-WRITE #28
+LABEL label8 :
+v34 := v13 / #2
+v35 := v34 * #2
+IF v13 != v35 GOTO label38
+WRITE #30
+RETURN #0
+LABEL label38 :
+WRITE #31
 RETURN #0

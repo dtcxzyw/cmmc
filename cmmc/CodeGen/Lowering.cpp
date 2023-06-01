@@ -150,6 +150,7 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     if(operand->getType()->isFloatingPoint()) {
         return mFPConstantPool.getFPConstant(*this, operand->as<ConstantFloatingPoint>());
     }
+    // FIXME: detect undef by caller
     if(operand->isUndefined()) {
         return MIROperand::asImm(0, operandType);
     }
@@ -658,8 +659,8 @@ static void lower(StoreInst* inst, LoweringContext& ctx) {
                      .setOperand<1>(ctx.mapOperand(inst->getOperand(1))));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
-    std::vector<Value*> src;
     std::vector<Value*> dst;
+    std::vector<Value*> src;
 
     for(auto& inst : dstBlock->instructions()) {
         if(inst.getInstID() == InstructionID::Phi) {
@@ -671,91 +672,82 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     }
 
     if(!src.empty()) {
-        // setup arguments
-        if(srcBlock == dstBlock) {
-            // self-loop
-            // calcuates the best order and create temporary variables for args
+        // setup phi values
+        // calcuates the best order and create temporary variables for args
 
-            std::unordered_map<Value*, uint32_t> nodeMap;
-            for(uint32_t idx = 0; idx < dst.size(); ++idx)
-                nodeMap.emplace(dst[idx], idx);
+        std::unordered_map<Value*, uint32_t> nodeMap;
+        for(uint32_t idx = 0; idx < dst.size(); ++idx)
+            nodeMap.emplace(dst[idx], idx);
 
-            Graph graph(dst.size());  // direct copy graph
-            for(size_t idx = 0; idx < dst.size(); ++idx) {
-                const auto arg = src[idx];
-                if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
-                    // copy b to a -> a should be resetted before b
-                    graph[idx].push_back(iter->second);
+        Graph graph(dst.size());  // direct copy graph
+        for(size_t idx = 0; idx < dst.size(); ++idx) {
+            const auto arg = src[idx];
+            if(auto iter = nodeMap.find(arg); iter != nodeMap.cend()) {
+                // copy b to a -> a should be resetted before b
+                graph[idx].push_back(iter->second);
+            }
+        }
+
+        const auto [ccnt, col] = calcSCC(graph);
+        std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
+        std::vector<std::vector<NodeIndex>> groups(ccnt);
+        std::vector<uint32_t> in(ccnt);
+        for(uint32_t u = 0; u < graph.size(); ++u) {
+            const auto cu = col[u];
+            groups[cu].push_back(u);
+            for(auto v : graph[u]) {
+                const auto cv = col[v];
+                if(cu != cv && dag[cu].emplace(cv).second) {
+                    ++in[cv];
                 }
             }
+        }
 
-            const auto [ccnt, col] = calcSCC(graph);
-            std::vector<std::unordered_set<NodeIndex>> dag(ccnt);
-            std::vector<std::vector<NodeIndex>> groups(ccnt);
-            std::vector<uint32_t> in(ccnt);
-            for(uint32_t u = 0; u < graph.size(); ++u) {
-                const auto cu = col[u];
-                groups[cu].push_back(u);
-                for(auto v : graph[u]) {
-                    const auto cv = col[v];
-                    if(cu != cv && dag[cu].emplace(cv).second) {
-                        ++in[cv];
-                    }
+        std::queue<uint32_t> q;
+        for(uint32_t u = 0; u < ccnt; ++u)
+            if(in[u] == 0)
+                q.push(u);
+        std::vector<uint32_t> order;
+        order.reserve(graph.size());
+        while(!q.empty()) {
+            const auto u = q.front();
+            q.pop();
+
+            const auto& group = groups[u];
+            order.insert(order.end(), group.cbegin(), group.cend());
+
+            for(auto v : dag[u]) {
+                if(--in[v] == 0) {
+                    q.push(v);
                 }
             }
+        }
 
-            std::queue<uint32_t> q;
-            for(uint32_t u = 0; u < ccnt; ++u)
-                if(in[u] == 0)
-                    q.push(u);
-            std::vector<uint32_t> order;
-            order.reserve(graph.size());
-            while(!q.empty()) {
-                const auto u = q.front();
-                q.pop();
+        assert(order.size() == dst.size());
 
-                const auto& group = groups[u];
-                order.insert(order.end(), group.cbegin(), group.cend());
+        std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
 
-                for(auto v : dag[u]) {
-                    if(--in[v] == 0) {
-                        q.push(v);
-                    }
-                }
-            }
+        for(size_t i = 0; i < dst.size(); ++i) {
+            const auto idx = order[i];
+            MIROperand arg;
+            if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
+                arg = iter->second;  // use copy
+            } else
+                arg = ctx.mapOperand(src[idx]);
+            const auto dstArg = ctx.mapOperand(dst[idx]);
 
-            assert(order.size() == dst.size());
+            if(arg == dstArg)
+                continue;  // identical copy
 
-            std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
+            const auto type = src[idx]->getType();
 
-            for(size_t i = 0; i < dst.size(); ++i) {
-                const auto idx = order[i];
-                MIROperand arg;
-                if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
-                    arg = iter->second;  // use copy
-                } else
-                    arg = ctx.mapOperand(src[idx]);
-                const auto dstArg = ctx.mapOperand(dst[idx]);
+            // create copy
+            const auto intermediate = ctx.newVReg(type);
+            ctx.emitCopy(intermediate, dstArg);  // NOLINT
+            dirtyRegRemapping.emplace(dst[idx], intermediate);
 
-                if(arg == dstArg)
-                    continue;  // identical copy
-
-                const auto type = src[idx]->getType();
-
-                // create copy
-                const auto intermediate = ctx.newVReg(type);
-                ctx.emitCopy(intermediate, dstArg);  // NOLINT
-                dirtyRegRemapping.emplace(dst[idx], intermediate);
-
-                // apply reset
-                ctx.emitCopy(dstArg, arg);
-            }
-        } else {
-            for(size_t idx = 0; idx < dst.size(); ++idx) {
-                const auto arg = ctx.mapOperand(src[idx]);
-                const auto dstArg = ctx.mapOperand(dst[idx]);
-                ctx.emitCopy(dstArg, arg);
-            }
+            // apply reset
+            ctx.emitCopy(dstArg, arg);
         }
     }
     const auto dstMBlock = ctx.mapBlock(dstBlock);

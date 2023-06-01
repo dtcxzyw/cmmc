@@ -174,6 +174,29 @@ public:
     [[nodiscard]] UserIterator end() const noexcept;
 };
 
+class TrackableValue : public Value {
+    UserList mUsers;
+
+public:
+    explicit TrackableValue(const Type* type);
+    ~TrackableValue() override = default;
+    bool replaceWith(Value* value);
+    bool replaceWithInBlock(Block* block, Value* value);
+    bool replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value);
+    [[nodiscard]] bool isUsed() const {
+        return mUsers.useCount() > 0;
+    }
+    [[nodiscard]] bool hasExactlyOneUse() const noexcept {
+        return mUsers.useCount() == 1;
+    }
+    [[nodiscard]] UserList& users() noexcept {
+        return mUsers;
+    }
+    [[nodiscard]] const UserList& users() const noexcept {
+        return mUsers;
+    }
+};
+
 class ValueRefHandle final {
     ValueRef* mRef;
 
@@ -284,17 +307,16 @@ public:
     [[nodiscard]] OperandIterator end() const noexcept;
 };
 
-class Instruction : public Value {
+class Instruction : public TrackableValue {
     InstructionID mInstID;
     Deque<ValueRefHandle> mOperands;
     Block* mBlock;
     String mLabel;
-    UserList mUsers;
     mutable IntrusiveListNode<Instruction> mNode;
 
 public:
     Instruction(InstructionID instID, const Type* valueType)
-        : Value{ valueType }, mInstID{ instID }, mBlock{ nullptr }, mUsers{ this }, mNode{ nullptr, nullptr, this } {}
+        : TrackableValue{ valueType }, mInstID{ instID }, mBlock{ nullptr }, mNode{ nullptr, nullptr, this } {}
     Instruction(InstructionID instID, const Type* valueType, std::initializer_list<Value*> initOperands)
         : Instruction{ instID, valueType } {
         for(auto val : initOperands) {
@@ -303,12 +325,6 @@ public:
     }
     ~Instruction() override = default;
 
-    [[nodiscard]] UserList& users() noexcept {
-        return mUsers;
-    }
-    [[nodiscard]] const UserList& users() const noexcept {
-        return mUsers;
-    }
     [[nodiscard]] InstructionID getInstID() const noexcept {
         return mInstID;
     }
@@ -331,15 +347,6 @@ public:
         return mOperands[idx]->value;
     }
     ValueRef* addOperand(Value* value);
-    bool replaceWith(Value* value);
-    bool replaceWithInBlock(Block* block, Value* value);
-    bool replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value);
-    [[nodiscard]] bool isUsed() const {
-        return mUsers.useCount() > 0;
-    }
-    [[nodiscard]] bool hasExactlyOneUse() const noexcept {
-        return mUsers.useCount() == 1;
-    }
 
     void insertBefore(Block* block, IntrusiveListIterator<Instruction> it);
     IntrusiveListIterator<Instruction> asIterator() const;

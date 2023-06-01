@@ -1,120 +1,120 @@
 FUNCTION main :
 v3 := #0
-IF v3 >= #10 GOTO label11
+IF v3 >= #10 GOTO label12
 WRITE v3
-v13 := v3 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-WRITE v13
-v13 := v13 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-GOTO label72
-LABEL label11 :
+v15 := v3 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+WRITE v15
+v15 := v15 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+GOTO label76
+LABEL label12 :
 v6 := #0
-v14 := v6 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-GOTO label75
-LABEL label72 :
+v17 := v6 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+GOTO label79
+LABEL label76 :
 WRITE v3
-v13 := v3 + #1
-v3 := v13
-IF v13 >= #10 GOTO label11
-GOTO label72
-LABEL label75 :
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-GOTO label75
+v15 := v3 + #1
+v3 := v15
+IF v15 >= #10 GOTO label12
+GOTO label76
+LABEL label79 :
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+GOTO label79
 LABEL label7 :
-IF v14 <= #9 GOTO label22
-GOTO label28
-LABEL label22 :
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-v6 := v14
-v14 := v14 + #1
-IF v14 != #5 GOTO label7
-GOTO label75
-LABEL label28 :
-RETURN v14
+IF v17 <= #9 GOTO label25
+GOTO label32
+LABEL label25 :
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+v6 := v17
+v17 := v17 + #1
+IF v17 != #5 GOTO label7
+GOTO label79
+LABEL label32 :
+RETURN v17

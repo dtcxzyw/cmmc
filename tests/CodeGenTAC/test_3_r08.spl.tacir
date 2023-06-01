@@ -1,24 +1,21 @@
-FUNCTION DigitSum :
-PARAM v5
-IF v5 != #0 GOTO label8
-v3 := #0
-RETURN v3
-LABEL label8 :
-v10 := v5 / #10
-v11 := v10 * #10
-v12 := v5 - v11
-ARG v10
-v13 := CALL DigitSum
-v14 := v13 + v12
-v3 := v14
-RETURN v14
 FUNCTION main :
-READ v19
-IF v19 >= #0 GOTO label22
+READ v9
+IF v9 >= #0 GOTO label12
 WRITE #-1
 RETURN #0
-LABEL label22 :
-ARG v19
-v24 := CALL DigitSum
-WRITE v24
+LABEL label12 :
+v5 := #0
+v6 := v9
+IF v9 != #0 GOTO label8
+LABEL label26 :
+WRITE v5
 RETURN #0
+LABEL label8 :
+v20 := v6 / #10
+v21 := v20 * #10
+v22 := v6 - v21
+v23 := v5 + v22
+v5 := v23
+v6 := v20
+IF v20 != #0 GOTO label8
+GOTO label26

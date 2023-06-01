@@ -52,10 +52,11 @@ static void emitSplRuntime(Module& module, EmitContext& ctx) {
     const auto write = make<Function>(String::get("write"), make<FunctionType>(VoidType::get(), Vector<const Type*>{ i32 }));
     write->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoMemoryWrite);
 
-    ctx.addIdentifier(String::get("read"), QualifiedValue::asRValue(read, Qualifier::getDefault()));
-    ctx.addIdentifier(String::get("write"), QualifiedValue::asRValue(write, Qualifier::getDefault()));
-    module.add(read);
-    module.add(write);
+    for(auto func : { read, write }) {
+        func->setLinkage(Linkage::Internal);
+        ctx.addIdentifier(func->getSymbol(), QualifiedValue::asRValue(func, Qualifier::getDefault()));
+        module.add(func);
+    }
 }
 
 static void emitSysYRuntime(Module& module, EmitContext& ctx) {
@@ -104,6 +105,7 @@ static void emitSysYRuntime(Module& module, EmitContext& ctx) {
 
     for(auto func : { getInt, getCh, getArray, getFloat, getFloatArray, putInt, putCh, putArray, putFloat, putFloatArray,
                       startTime, stopTime }) {
+        func->setLinkage(Linkage::Internal);
         ctx.addIdentifier(func->getSymbol(), QualifiedValue::asRValue(func, Qualifier::getDefault()));
         module.add(func);
     }

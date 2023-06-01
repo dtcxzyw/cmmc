@@ -42,6 +42,8 @@ void ISelContext::runISel(MIRFunction& func) {
         assert(func.verify(std::cerr, mCodeGenCtx));
         while(genericPeepholeOpt(func, mCodeGenCtx))
             ;
+        // while(removeUnusedInsts(func, mCodeGenCtx))
+        //     ;
         // func.dump(std::cerr, mCodeGenCtx);
         assert(func.verify(std::cerr, mCodeGenCtx));
         bool modified = false;
@@ -279,6 +281,7 @@ bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
         std::next(std::find_if(func->blocks().begin(), func->blocks().end(), [&](auto& b) { return b.get() == block; }));
     func->blocks().insert(nextBlockIter, std::move(falseBlock));
     func->blocks().insert(nextBlockIter, std::move(postBlock));
+    ctx.removeInst(inst);
     return true;
 }
 

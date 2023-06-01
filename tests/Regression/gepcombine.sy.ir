@@ -1,7 +1,7 @@
 struct foo {i32 x, i32 y};
 
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
     [10 * struct foo]* %a = alloc [10 * struct foo];
     i32 %0 = call () -> i32 @getint();

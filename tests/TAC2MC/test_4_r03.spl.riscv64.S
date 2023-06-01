@@ -21,15 +21,13 @@ write:
     ecall
     mv a0, x0
     ret
-
 .globl main
 main:
-    addi sp, sp, -80
-    sd ra, 64(sp)
-    li a0, 19
-    call write
-    mv a0, zero
-    ld ra, 64(sp)
-    addi sp, sp, 80
-    ret
-
+	addi sp, sp, -8
+	sd ra, 0(sp)
+	li a0, 19
+	jal write
+	mv a0, zero
+	ld ra, 0(sp)
+	addi sp, sp, 8
+	jr ra

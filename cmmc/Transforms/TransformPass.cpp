@@ -387,7 +387,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "LoopBranchProbFix",  //
             "LoopEliminate",      //
             // Control flow
-            "TailCallEliminate",    //
+            "Branch2Select",        //
             "MergeBranch",          //
             "SimplifyBranch",       //
             "CombineBranch",        //
@@ -503,6 +503,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "DynamicLoopUnroll",  //
                 "BlockMerge",         // clean up
                 "BlockEliminate",     // clean up
+                "TailCallEliminate",  // TODO: move above inlining
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);  // after inlining

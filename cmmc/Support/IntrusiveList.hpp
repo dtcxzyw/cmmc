@@ -24,10 +24,16 @@ template <typename T>
 struct IntrusiveListItemAccessor;
 
 template <typename T>
+class IntrusiveList;
+
+template <typename T>
 struct IntrusiveListNode {
     IntrusiveListNode<T>* prev;
     IntrusiveListNode<T>* next;
     T* ptr;
+#ifndef NDEBUG
+    IntrusiveList<T>* parent = nullptr;
+#endif
 };
 
 template <typename T>
@@ -144,6 +150,9 @@ public:
         return mCount;
     }
     void erase(IntrusiveListNode<T>* node, bool destroy = true) {
+#ifndef NDEBUG
+        assert(node->parent == this);
+#endif
         node->prev->next = node->next;
         node->next->prev = node->prev;
         if(destroy)
@@ -152,19 +161,18 @@ public:
         assert(mCount >= 0);
     }
     void erase(IntrusiveListIterator<T> beg, IntrusiveListIterator<T> end) {
-        auto prev = beg.node()->prev;
-        auto cur = beg;
-        while(cur != end) {
-            const auto next = std::next(cur);
-            IntrusiveListItemAccessor<T>::destroy(cur.node());
-            cur = next;
-            --mCount;
+        auto prev = std::prev(beg);
+        while(true) {
+            const auto cur = std::prev(end);
+            if(cur == prev)
+                return;
+            erase(cur.node());
         }
-        prev->next = end.node();
-        end.node()->prev = prev;
-        assert(mCount >= 0);
     }
     void insert(IntrusiveListNode<T>* pos, IntrusiveListNode<T>* node) {
+#ifndef NDEBUG
+        node->parent = this;
+#endif
         node->prev = pos->prev;
         node->next = pos;
         pos->prev->next = node;

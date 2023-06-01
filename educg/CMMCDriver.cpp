@@ -39,6 +39,8 @@ using namespace cmmc;
 
 CMMC_NAMESPACE_BEGIN
 
+static_assert(!Config::debug);
+
 Flag strictMode;         // NOLINT
 StringOpt executeInput;  // NOLINT
 namespace mir {

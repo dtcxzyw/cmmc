@@ -1,5 +1,5 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
     ubr ^while.guard;
 ^while.guard:

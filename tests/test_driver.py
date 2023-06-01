@@ -567,7 +567,7 @@ def compare_with_ref_file(answer_file, output):
 # TODO: asm checks
 def sysy_regression(src):
     output_asm = src + '.ir'
-    cmmc_command:str = binary_path + ' -i -O {} -t sim -H -o /dev/stdout '.format(optimization_level) + src
+    cmmc_command:str = binary_path + ' -i -O {} -t sim -o /dev/stdout '.format(optimization_level) + src
     out = subprocess.run(cmmc_command.split(), capture_output=True, text=True)
     if out.returncode != 0 or len(out.stderr) != 0:
         return False
@@ -576,7 +576,7 @@ def sysy_regression(src):
 
 def sysy_regression_ref(src):
     output_asm = src + '.ir'
-    cmmc_command = binary_path + ' -i -O {} -t sim -H -o '.format(optimization_level) + output_asm + ' ' + src
+    cmmc_command = binary_path + ' -i -O {} -t sim -o '.format(optimization_level) + output_asm + ' ' + src
     return os.system(cmmc_command) == 0
 
 def sysy_codegen_llvm(src):
@@ -769,6 +769,8 @@ if generate_ref:
     if 'riscv' in test_cases:
         test("Reference Spl->RISCV64", tests_path +
              "/TAC2MC", ".spl", spl_riscv64_ref)
+        test("Reference Spl->RISCV64 Extra", tests_path +
+             "/Project4", ".spl", spl_riscv64_ref)
     if 'regression' in test_cases:
         test("Reference SysY Regression", tests_path +
              "/Regression", ".sy", sysy_regression_ref)
@@ -785,25 +787,26 @@ print("Passed", total_tests-failed_tests,
       "Failed", failed_tests, "Total", total_tests)
 print("Total time: ", end-start)
 
-print("\nPerformance metrics (GeoMeans):")
+if not generate_ref:
+    print("\nPerformance metrics (GeoMeans):")
 
-for key in summary.keys():
-    val = geo_means(summary[key], summary_samples)
-    print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
-        val, baseline[key], val / baseline[key]))
+    for key in summary.keys():
+        val = geo_means(summary[key], summary_samples)
+        print(key, "= {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+            val, baseline[key], val / baseline[key]))
 
-if "tac" in test_cases:
-    tac_perf = samples['tac'].geo_means()
-    print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
-        tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
+    if "tac" in test_cases:
+        tac_perf = samples['tac'].geo_means()
+        print("tac_inst_count = {:.3f} baseline = {:.3f} ratio = {:.3f}".format(
+            tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
 
-if "gcc" in test_cases and "llvm" in test_cases:
-    print('Platform: ', platform.platform())
-    print_and_compare('_host')
+    if "gcc" in test_cases and "llvm" in test_cases:
+        print('Platform: ', platform.platform())
+        print_and_compare('_host')
 
-if "qemu-gcc" in test_cases and "qemu" in test_cases:
-    for target in targets:
-        if target in test_cases:
-            print_and_compare('_qemu_'+target)
+    if "qemu-gcc" in test_cases and "qemu" in test_cases:
+        for target in targets:
+            if target in test_cases:
+                print_and_compare('_qemu_'+target)
 
 exit(0 if failed_tests == 0 else -1)

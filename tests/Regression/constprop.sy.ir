@@ -1,4 +1,4 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^b:
     ret i32 31;
 }

@@ -19,6 +19,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 #include <variant>
 #include <vector>
 
@@ -297,8 +298,12 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     // modified |= eliminateStackLoads(func, ctx);
     modified |= removeIndirectCopy(func, ctx);
+    // func.dump(std::cerr, ctx);
     modified |= removeUnusedInsts(func, ctx);
-    modified |= applySSAPropagation(func, ctx);
+    // func.dump(std::cerr, ctx);
+    // FIXME: incompatible with expanded Phi value setup
+    // modified |= applySSAPropagation(func, ctx);
+    // func.dump(std::cerr, ctx);
     // modified |= machineInstCSE(func, ctx);
     return modified;
 }

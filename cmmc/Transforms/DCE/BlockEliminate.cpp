@@ -75,16 +75,16 @@ public:
                 if(inst.canbeOperand())
                     inst.replaceWith(make<UndefinedValue>(inst.getType()));
             const auto terminator = block->getTerminator();
-            if(!terminator->isBranch())
-                continue;
-            const auto branch = terminator->as<BranchInst>();
-            auto handleTarget = [&](Block* target) {
-                if(!target || !reachable.count(target))
-                    return;
-                removePhi(block, target);
-            };
-            handleTarget(branch->getTrueTarget());
-            handleTarget(branch->getFalseTarget());
+            if(terminator->isBranch()) {
+                const auto branch = terminator->as<BranchInst>();
+                auto handleTarget = [&](Block* target) {
+                    if(!target || !reachable.count(target))
+                        return;
+                    removePhi(block, target);
+                };
+                handleTarget(branch->getTrueTarget());
+                handleTarget(branch->getFalseTarget());
+            }
             // remove references
             block->instructions().clear();
         }

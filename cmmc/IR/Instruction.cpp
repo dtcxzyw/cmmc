@@ -33,8 +33,8 @@ CMMC_NAMESPACE_BEGIN
 
 ValueRef::ValueRef(Value* val, Instruction* userInst) : value{ val }, user{ userInst } {
     assert(val);
-    if(auto inst = dynamic_cast<Instruction*>(value)) {
-        inst->users().addRef(*this);
+    if(auto trackable = dynamic_cast<TrackableValue*>(value)) {
+        trackable->users().addRef(*this);
     }
 }
 
@@ -42,17 +42,17 @@ void ValueRef::resetValue(Value* newValue) {
     assert(newValue);
     if(newValue == value)
         return;
-    if(auto inst = dynamic_cast<Instruction*>(value)) {
-        inst->users().removeRef(*this);
+    if(auto trackable = dynamic_cast<TrackableValue*>(value)) {
+        trackable->users().removeRef(*this);
     }
     value = newValue;
-    if(auto inst = dynamic_cast<Instruction*>(value)) {
-        inst->users().addRef(*this);
+    if(auto trackable = dynamic_cast<TrackableValue*>(value)) {
+        trackable->users().addRef(*this);
     }
 }
 ValueRef::~ValueRef() {
-    if(auto inst = dynamic_cast<Instruction*>(value)) {
-        inst->users().removeRef(*this);
+    if(auto trackable = dynamic_cast<TrackableValue*>(value)) {
+        trackable->users().removeRef(*this);
     }
 }
 
@@ -195,15 +195,15 @@ bool UserList::replaceWithInBlockList(const std::unordered_set<Block*>& blocks, 
     return modified;
 }
 
-bool Instruction::replaceWith(Value* value) {
+bool TrackableValue::replaceWith(Value* value) {
     assert(value != this);
     return mUsers.replaceWith(value);
 }
-bool Instruction::replaceWithInBlock(Block* block, Value* value) {
+bool TrackableValue::replaceWithInBlock(Block* block, Value* value) {
     assert(value != this);
     return mUsers.replaceWithInBlock(block, value);
 }
-bool Instruction::replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value) {
+bool TrackableValue::replaceWithInBlockList(const std::unordered_set<Block*>& blocks, Value* value) {
     assert(value != this);
     return mUsers.replaceWithInBlockList(blocks, value);
 }
@@ -871,3 +871,4 @@ void PhiInst::clear() {
     mIncomings.clear();
 }
 CMMC_NAMESPACE_END
+cmmc::TrackableValue::TrackableValue(const Type* type) : Value{ type }, mUsers{ this } {}

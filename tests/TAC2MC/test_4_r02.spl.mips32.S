@@ -46,8 +46,9 @@ main:
 label9:
 	lw $t0, 28($sp)
 	slt $t1, $t0, $zero
-	subu $t2, $zero, $t1
-	move $a0, $t2
+	move $t2, $t1
+	subu $t3, $zero, $t2
+	move $a0, $t3
 	jal write
 	nop
 	move $v0, $zero

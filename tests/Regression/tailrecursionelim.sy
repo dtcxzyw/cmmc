@@ -1,0 +1,60 @@
+int fac(int a) {
+    int res;
+    if(a == 1)
+        res = 1;
+    else
+        res = a * fac(a - 1);
+    return res;
+}
+int fib(int a) {
+    if(a <= 2)
+        return 1;
+    return fib(a - 1) + fib(a - 2);
+}
+int gcd(int a, int b) {
+    return b ? gcd(b, a % b) : a;
+}
+int g = 0;
+void test(int n) {
+    if(n == 0)
+        return;
+    g += 1;
+    test(n - 1);
+}
+const float eps = 1e-8;
+float f(float x) {
+    return x * x;
+}
+float my_fabs(float x) {
+    return x >= 0.0 ? x : -x;
+}
+float simpson(float l, float r, float fl, float fm, float fr) {
+    return (r - l) * (fl + 4.0 * fm + fr) / 6.0;
+}
+float SAAImpl(float l, float m, float r, float fl, float fm, float fr, float sm) {
+    float lm = (l + m) * 0.5, flm = f(lm), sl = simpson(l, m, fl, flm, fm);
+    float rm = (m + r) * 0.5, frm = f(rm), sr = simpson(m, r, fm, frm, fr);
+    float esm = sl + sr;
+    if(my_fabs(sm - esm) < eps)
+        return esm;
+    return SAAImpl(l, lm, m, fl, flm, fm, sl) + SAAImpl(m, rm, r, fm, frm, fr, sr);
+}
+float SAA(float l, float r) {
+    float m = (l + r) * 0.5;
+    float fl = f(l), fm = f(m), fr = f(r);
+    return SAAImpl(l, m, r, fl, fm, fr, simpson(l, r, fl, fm, fr));
+}
+
+int main() {
+    int x = getint();
+    float l = getfloat();
+    float r = getfloat();
+    g = x;
+    test(x);
+    putint(fac(x));
+    putint(fib(x));
+    putint(gcd(x, x));
+    putint(g);
+    putfloat(SAA(l, r));
+    return 0;
+}

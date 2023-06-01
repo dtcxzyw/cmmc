@@ -132,12 +132,17 @@ bool Block::verify(std::ostream& out) const {
     }
 
     // per-instruction
-    for(auto& inst : mInstructions)
+    size_t cnt = 0;
+    for(auto& inst : mInstructions) {
+        ++cnt;
         if(!inst.verify(out)) {
             out << "invalid inst "sv << std::endl;
             dump(out, HighlightInst{ &inst });
             return false;
         }
+    }
+    CMMC_UNUSED(cnt);
+    assert(cnt == mInstructions.size());
 
     return true;
 }

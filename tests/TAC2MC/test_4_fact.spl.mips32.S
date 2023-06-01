@@ -25,68 +25,43 @@ write:
     move $v0, $0
     jr $ra
     nop
-fact:
-	addiu $sp, $sp, -48
-	sw $ra, 16($sp)
-	move $t0, $a0
-	li $t1, 1
-	sw $t0, 28($sp)
-	bne $a0, $t1, label4
-	nop
-	lw $t0, 28($sp)
-	move $t1, $t0
-	sw $t1, 24($sp)
-	lw $t0, 24($sp)
-	move $v0, $t0
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 48
-	jr $ra
-	nop
-label4:
-	lw $t0, 28($sp)
-	addiu $t1, $t0, -1
-	move $a0, $t1
-	sw $t1, 36($sp)
-	jal fact
-	nop
-	lw $t2, 28($sp)
-	mult $t2, $v0
-	mflo $t3
-	move $t4, $t3
-	sw $t4, 24($sp)
-	lw $t0, 24($sp)
-	move $v0, $t0
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 48
-	jr $ra
-	nop
 .globl main
 main:
-	addiu $sp, $sp, -40
+	addiu $sp, $sp, -64
 	sw $ra, 16($sp)
 	jal read
 	nop
 	move $t0, $v0
 	addiu $t1, $v0, -1
-	sw $t0, 24($sp)
-	blez $t1, label31
+	sw $t0, 40($sp)
+	blez $t1, label13
 	nop
-	lw $t0, 24($sp)
-	move $a0, $t0
-	jal fact
+	li $t0, 1
+	lw $t1, 40($sp)
+	move $t2, $t1
+	sw $t2, 32($sp)
+	sw $t0, 36($sp)
+	li $t0, 1
+	lw $t1, 32($sp)
+	bne $t1, $t0, label6
 	nop
-	move $t1, $v0
-	sw $t1, 28($sp)
+label45:
+	lw $t0, 36($sp)
+	lw $t1, 32($sp)
+	mult $t0, $t1
+	mflo $t2
+	move $t3, $t2
+	sw $t3, 28($sp)
 	lw $t0, 28($sp)
 	move $a0, $t0
 	jal write
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
-	addiu $sp, $sp, 40
+	addiu $sp, $sp, 64
 	jr $ra
 	nop
-label31:
+label13:
 	li $t0, 1
 	sw $t0, 28($sp)
 	lw $t0, 28($sp)
@@ -95,6 +70,22 @@ label31:
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
-	addiu $sp, $sp, 40
+	addiu $sp, $sp, 64
 	jr $ra
+	nop
+label6:
+	lw $t0, 32($sp)
+	addiu $t1, $t0, -1
+	lw $t2, 36($sp)
+	mult $t2, $t0
+	mflo $t3
+	move $t2, $t3
+	move $t0, $t1
+	sw $t0, 32($sp)
+	sw $t2, 36($sp)
+	li $t0, 1
+	lw $t1, 32($sp)
+	bne $t1, $t0, label6
+	nop
+	b label45
 	nop

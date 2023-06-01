@@ -1,33 +1,37 @@
 FUNCTION hanoi :
+PARAM v11
+PARAM v10
+PARAM v9
 PARAM v8
-PARAM v7
-PARAM v6
-PARAM v5
-IF v5 != #1 GOTO label4
-v13 := v6 * #1000000
-v14 := v8 + v13
-WRITE v14
+v3 := v10
+v4 := v9
+v5 := v8
+IF v8 != #1 GOTO label7
+LABEL label28 :
+v19 := v4 * #1000000
+v20 := v11 + v19
+WRITE v20
 RETURN #0
-LABEL label4 :
-v15 := v5 + #-1
-ARG v15
-ARG v6
-ARG v8
-ARG v7
-v16 := CALL hanoi
-v17 := v6 * #1000000
-v18 := v8 + v17
-WRITE v18
-ARG v15
-ARG v7
-ARG v6
-ARG v8
-v19 := CALL hanoi
-RETURN #0
+LABEL label7 :
+v21 := v5 + #-1
+ARG v21
+ARG v4
+ARG v11
+ARG v3
+v22 := CALL hanoi
+v23 := v4 * #1000000
+v24 := v11 + v23
+WRITE v24
+v25 := v3
+v3 := v4
+v4 := v25
+v5 := v21
+IF v21 != #1 GOTO label7
+GOTO label28
 FUNCTION main :
 ARG #3
 ARG #1
 ARG #2
 ARG #3
-v21 := CALL hanoi
+v31 := CALL hanoi
 RETURN #0

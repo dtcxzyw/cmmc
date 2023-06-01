@@ -16,6 +16,7 @@
 #include <cmmc/IR/Attribute.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/GlobalValue.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <ostream>
 
@@ -41,12 +42,12 @@ enum class Intrinsic {
     memcpy   // void memcpy(i8* dst, i8* src, size_t size)
 };
 
-class FuncArgument final : public Value {
+class FuncArgument final : public TrackableValue {
     Function* mFunc;
     String mLabel;
 
 public:
-    FuncArgument(Function* func, const Type* type) noexcept : Value{ type }, mFunc{ func } {}
+    FuncArgument(Function* func, const Type* type) noexcept : TrackableValue{ type }, mFunc{ func } {}
     void dump(std::ostream& out, const HighlightSelector& selector) const override;
     void dumpAsOperand(std::ostream& out) const override;
     void setLabel(String label);
@@ -56,7 +57,7 @@ public:
     [[nodiscard]] const String& getLabel() const noexcept {
         return mLabel;
     }
-    Function* getFunc() const noexcept {
+    [[nodiscard]] Function* getFunc() const noexcept {
         return mFunc;
     }
 };

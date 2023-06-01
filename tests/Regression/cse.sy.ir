@@ -1,6 +1,41 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
+func @pow1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    ret i32 %x;
+}
+func @pow2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    ret i32 %0;
+}
+func @pow3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    i32 %1 = mul i32 %x, i32 %0;
+    ret i32 %1;
+}
+func @pow4(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    i32 %1 = mul i32 %0, i32 %0;
+    ret i32 %1;
+}
+func @pow5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    i32 %1 = mul i32 %0, i32 %0;
+    i32 %2 = mul i32 %x, i32 %1;
+    ret i32 %2;
+}
+func @pow6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i32 %0 = mul i32 %x, i32 %x;
+    i32 %1 = mul i32 %0, i32 %0;
+    i32 %2 = mul i32 %0, i32 %1;
+    ret i32 %2;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
     i32 %0 = call () -> i32 @getint();
     call (i32) -> void @putint(i32 %0);
