@@ -377,15 +377,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(val);
             break;
         }
-        case InstSelect: {
-            auto& cond = inst.getOperand(1);
-            imm2reg(cond);
-            auto& lhs = inst.getOperand(2);
-            imm2reg(lhs);
-            break;
-        }
         case InstShl:
+            [[fallthrough]];
         case InstAShr:
+            [[fallthrough]];
         case InstLShr: {
             auto& lhs = inst.getOperand(1);
             auto& shamt = inst.getOperand(2);

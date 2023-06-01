@@ -82,6 +82,10 @@ class ConstantHoist final : public TransformPass<Function> {
                 } else if(lhsOperand->getBlock() == lhs || rhsOperand->getBlock() == rhs) {
                     return false;
                 } else if(lhsOperand != rhsOperand) {  // globals/constants/other values
+                    // Don't hoist pointer of local allocas since it defeats AA and Mem2Reg.
+                    if(lhsOperand->is<StackAllocInst>() || rhsOperand->is<StackAllocInst>())
+                        return false;
+
                     if(!lhsOperand->getType()->isFunction())
                         pairs.push_back({ idx, &lhsInst, lhsOperand, &rhsInst, rhsOperand });
                     else

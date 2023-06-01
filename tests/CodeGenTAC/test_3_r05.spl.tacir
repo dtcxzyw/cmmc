@@ -12,7 +12,7 @@ LABEL label50 :
 WRITE #1
 RETURN #0
 LABEL label7 :
-IF v15 <= #2 GOTO label2
+IF v15 <= #2 GOTO label3
 IF v15 <= #2 GOTO label34
 v10 := #3
 v11 := #1
@@ -90,5 +90,5 @@ LABEL label44 :
 v14 := v40
 WRITE v40
 RETURN #0
-LABEL label2 :
+LABEL label3 :
 RETURN #0

@@ -113,10 +113,13 @@ class TailCallEliminate final : public TransformPass<Function> {
                 case InstructionID::Xor:
                     [[fallthrough]];
                 case InstructionID::Mul:
-                    [[fallthrough]];
-                case InstructionID::FAdd:
-                    [[fallthrough]];
-                case InstructionID::FMul:
+                    // FIXME: fp ops
+                    /*
+                        [[fallthrough]];
+                    case InstructionID::FAdd:
+                        [[fallthrough]];
+                    case InstructionID::FMul:
+                    */
                     accInst = iter.get();
                     break;
                     // TODO: max/min

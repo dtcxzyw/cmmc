@@ -38,6 +38,8 @@ Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-37051-9_6
 #include <unordered_set>
 #include <vector>
 
+// TODO: expand select alloc before Mem2Reg
+
 CMMC_NAMESPACE_BEGIN
 
 class ScalarMem2RegContext final {

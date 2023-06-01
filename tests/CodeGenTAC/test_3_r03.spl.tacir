@@ -6,92 +6,100 @@ v6 := #0
 v23 := v3 / v5
 v24 := v23 * v5
 IF v3 != v24 GOTO label27
-v38 := v6 + #1
-v8 := v38
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v3 / v30
-v24 := v23 * v30
+v30 := v6 + #1
+v9 := v30
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v3 / v30
-v24 := v23 * v30
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-GOTO label109
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+LABEL label110 :
+v5 := v32
+v6 := v9
+v23 := v3 / v32
+v24 := v23 * v32
+IF v3 != v24 GOTO label27
+GOTO label122
+LABEL label151 :
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+GOTO label110
 LABEL label27 :
-v8 := v6
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-v5 := v30
-v23 := v3 / v30
-v24 := v23 * v30
+v9 := v6
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+v5 := v32
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v6 + #1
-v8 := v38
+v30 := v6 + #1
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v3 / v32
+v24 := v23 * v32
+IF v3 != v24 GOTO label27
 v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v3 / v30
-v24 := v23 * v30
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v3 / v30
-v24 := v23 * v30
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+GOTO label146
+LABEL label122 :
+v30 := v6 + #1
+v9 := v30
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+GOTO label134
+LABEL label146 :
+v5 := v32
+v6 := v9
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
-v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-GOTO label145
-LABEL label109 :
-v5 := v30
-v6 := v8
-v23 := v3 / v30
-v24 := v23 * v30
-IF v3 != v24 GOTO label27
-LABEL label121 :
-v38 := v6 + #1
-v8 := v38
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-GOTO label133
-LABEL label145 :
-v5 := v30
-v6 := v8
-v23 := v3 / v30
-v24 := v23 * v30
-IF v3 != v24 GOTO label27
-GOTO label121
-LABEL label33 :
-v11 := v8
-IF v8 != #2 GOTO label13
+GOTO label122
+LABEL label134 :
+v32 := v5 + #1
+IF v32 > v3 GOTO label35
+GOTO label146
+LABEL label35 :
+v11 := v9
+IF v9 != #2 GOTO label13
 WRITE v3
 v44 := v3 + #1
 IF v44 >= #31 GOTO label47
@@ -102,40 +110,34 @@ v6 := #0
 v23 := v44 / v5
 v24 := v23 * v5
 IF v44 != v24 GOTO label27
-v38 := v6 + #1
-v8 := v38
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v44 / v30
-v24 := v23 * v30
+v30 := v6 + #1
+v9 := v30
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v44 / v32
+v24 := v23 * v32
 IF v44 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
+v9 := v30
+v32 := v32 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
 LABEL label127 :
-v5 := v30
-v6 := v8
-v23 := v3 / v30
-v24 := v23 * v30
+v5 := v32
+v6 := v9
+v23 := v3 / v32
+v24 := v23 * v32
 IF v3 != v24 GOTO label27
-v38 := v8 + #1
-v8 := v38
-v30 := v30 + #1
-IF v30 > v3 GOTO label33
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-GOTO label109
-LABEL label133 :
-v30 := v5 + #1
-IF v30 > v3 GOTO label33
-GOTO label145
+v30 := v9 + #1
+v9 := v30
+v32 := v32 + #1
+IF v32 > v3 GOTO label35
+GOTO label151
 LABEL label18 :
 v11 := #0
 IF v11 != #2 GOTO label13
@@ -149,23 +151,23 @@ v6 := #0
 v23 := v44 / v5
 v24 := v23 * v5
 IF v44 != v24 GOTO label27
-v38 := v6 + #1
-v8 := v38
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v44 / v30
-v24 := v23 * v30
+v30 := v6 + #1
+v9 := v30
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v44 / v32
+v24 := v23 * v32
 IF v44 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
+v9 := v30
+v32 := v32 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
 GOTO label127
 LABEL label13 :
 v44 := v3 + #1
@@ -177,23 +179,23 @@ v6 := #0
 v23 := v44 / v5
 v24 := v23 * v5
 IF v44 != v24 GOTO label27
-v38 := v6 + #1
-v8 := v38
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
-v5 := v30
-v6 := v38
-v23 := v44 / v30
-v24 := v23 * v30
+v30 := v6 + #1
+v9 := v30
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
+v5 := v32
+v6 := v30
+v23 := v44 / v32
+v24 := v23 * v32
 IF v44 != v24 GOTO label27
-v38 := v38 + #1
-v8 := v38
 v30 := v30 + #1
-IF v30 > v44 GOTO label33
-v30 := v5 + #1
-IF v30 > v44 GOTO label33
+v9 := v30
+v32 := v32 + #1
+IF v32 > v44 GOTO label35
+v32 := v5 + #1
+IF v32 > v44 GOTO label35
 GOTO label127
 LABEL label47 :
 RETURN #0

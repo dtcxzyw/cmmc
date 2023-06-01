@@ -19,6 +19,7 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstddef>
 #include <cstdint>
@@ -27,6 +28,7 @@
 #include <memory>
 #include <vector>
 CMMC_MIR_NAMESPACE_BEGIN
+extern Flag debugISel;
 
 ISelContext::ISelContext(CodeGenContext& codeGenCtx) : mCodeGenCtx{ codeGenCtx } {}
 void ISelContext::runISel(MIRFunction& func) {
@@ -40,10 +42,13 @@ void ISelContext::runISel(MIRFunction& func) {
 
         // func.dump(std::cerr, mCodeGenCtx);
         assert(func.verify(std::cerr, mCodeGenCtx));
-        while(genericPeepholeOpt(func, mCodeGenCtx))
-            ;
-        // while(removeUnusedInsts(func, mCodeGenCtx))
-        //     ;
+        if(debugISel.get()) {
+            while(removeUnusedInsts(func, mCodeGenCtx))
+                ;
+        } else {
+            while(genericPeepholeOpt(func, mCodeGenCtx))
+                ;
+        }
         // func.dump(std::cerr, mCodeGenCtx);
         assert(func.verify(std::cerr, mCodeGenCtx));
         bool modified = false;
@@ -281,7 +286,6 @@ bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
         std::next(std::find_if(func->blocks().begin(), func->blocks().end(), [&](auto& b) { return b.get() == block; }));
     func->blocks().insert(nextBlockIter, std::move(falseBlock));
     func->blocks().insert(nextBlockIter, std::move(postBlock));
-    ctx.removeInst(inst);
     return true;
 }
 

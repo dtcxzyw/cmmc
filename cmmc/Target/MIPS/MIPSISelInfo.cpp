@@ -425,7 +425,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstShl:
+            [[fallthrough]];
         case InstAShr:
+            [[fallthrough]];
         case InstLShr: {
             auto& lhs = inst.getOperand(1);
             auto& shamt = inst.getOperand(2);

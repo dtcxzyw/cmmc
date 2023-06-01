@@ -36,6 +36,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Graph.hpp>
+#include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
@@ -51,6 +52,12 @@
 #include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
+
+Flag debugISel;
+
+CMMC_INIT_OPTIONS_BEGIN
+debugISel.setName("debug-isel", 'I').setDesc("disable all codegen optimizations to debug lowering/ISel/RA/SA/Legalization");
+CMMC_INIT_OPTIONS_END
 
 static OperandType getOperandType(const Type* type, OperandType ptrType) {
     if(type->isPointer()) {
@@ -406,7 +413,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 3: register coalescing
-        if(optLevel >= OptimizationLevel::O1) {
+        if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "Register coalescing"sv };
             registerCoalescing(mfunc, ctx);
             // dumpFunc(mfunc);
@@ -414,7 +421,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
 
         // Stage 4: peephole opt
-        if(optLevel >= OptimizationLevel::O1) {
+        if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "Peephole optimization"sv };
             ctx.scheduleModel.peepholeOpt(mfunc, ctx);
             // dumpFunc(mfunc);
@@ -436,7 +443,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
 
         // Stage 6: Pre-RA scheduling, minimize register pressure
-        if(optLevel >= OptimizationLevel::O2) {
+        if(optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "Pre-RA scheduling"sv };
             schedule(mfunc, ctx, true);
             // dumpFunc(mfunc);
@@ -458,13 +465,13 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
         // Stage 9: post-RA scheduling, minimize latency
         // TODO: after post legalization?
-        if(optLevel >= OptimizationLevel::O3) {
+        if(optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
             Stage stage{ "Post-RA scheduling"sv };
             schedule(mfunc, ctx, false);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 5: ICF & Tail duplication
-        if(optLevel >= OptimizationLevel::O2) {
+        if(optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "ICF & Tail duplication"sv };
             // tail duplication as the small block inliner does in CMMC IR
             tailDuplication(mfunc, ctx);
@@ -479,7 +486,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 10: code layout opt
-        if(optLevel >= OptimizationLevel::O2) {
+        if(optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "Code layout optimization"sv };
             simplifyCFGWithUniqueTerminator(mfunc, ctx);
             // dumpFunc(mfunc);
@@ -490,14 +497,14 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
         // TODO: basic block alignment
         // Stage 11: post peephole opt
-        if(optLevel >= OptimizationLevel::O1) {
+        if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "Post peephole optimization"sv };
             ctx.scheduleModel.postPeepholeOpt(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 12: remove unreachable block/continuous goto/unused label/peephold
-        if(optLevel >= OptimizationLevel::O1) {
+        if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "CFG Simplification"sv };
             simplifyCFG(mfunc, ctx);
             ctx.flags.endsWithTerminator = false;

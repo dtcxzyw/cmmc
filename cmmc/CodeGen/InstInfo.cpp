@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
+#include <cmmc/Support/StaticReflection.hpp>
 #include <cstdint>
 #include <ostream>
 #include <string_view>
@@ -74,7 +75,12 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                            out << "isa " << reg;
                        }
                    },
-                   [&](intmax_t imm) { out << getType(op.type()) << imm; },
+                   [&](intmax_t imm) {
+                       out << getType(op.type()) << imm;
+                       if(op.type() == OperandType::Special) {
+                           out << " (" << enumName(static_cast<CompareOp>(imm)) << ')';
+                       }
+                   },
                    [&](MIRRelocable* reloc) {
                        out << "reloc ";
                        reloc->dumpAsTarget(out);
