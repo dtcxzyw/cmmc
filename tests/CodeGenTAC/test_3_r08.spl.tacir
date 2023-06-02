@@ -7,15 +7,15 @@ LABEL label12 :
 v5 := #0
 v6 := v9
 IF v9 != #0 GOTO label8
-LABEL label26 :
+LABEL label22 :
 WRITE v5
 RETURN #0
 LABEL label8 :
-v20 := v6 / #10
-v21 := v20 * #10
-v22 := v6 - v21
-v23 := v5 + v22
-v5 := v23
-v6 := v20
-IF v20 != #0 GOTO label8
-GOTO label26
+v18 := v6 / #10
+v19 := v18 * #10
+v20 := v6 - v19
+v21 := v5 + v20
+v5 := v21
+v6 := v18
+IF v18 != #0 GOTO label8
+GOTO label22

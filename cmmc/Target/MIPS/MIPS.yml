@@ -220,17 +220,19 @@ InstInfo:
 
   # Conditional Move Instructions
   MOVN:
-    Format: "movn $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
+    Format: "movn $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:GPR[Use]"
   MOVZ:
-    Format: "movz $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]"
+    Format: "movz $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:GPR[Use]"
   MOVF:
-    Format: "movf $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
+    Format: "movf $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
   MOVT:
-    Format: "movt $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use]"
+    Format: "movt $Rd:GPR[Def], $Rs:GPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
   MOVT_S:
-    Format: "movt.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use]"
+    Format: "movt.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
   MOVF_S:
-    Format: "movf.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use]"
+    Format: "movf.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:CC[Use] # Implicit Use: $Rd2:GPR[Use]"
+  MOVZ_S:
+    Format: "movz.s $Rd:FPR[Def], $Rs:FPR[Use], $Rt:GPR[Use] # Implicit Use: $Rd2:FPR[Use]"
 
   # Illegal Pseudo Instrucitons
   # select[CC][Val]
@@ -240,6 +242,10 @@ InstInfo:
 
   Select_FCC_FPR_FPR: # => Copy + MOVT.s
     Format: "select_fcc_fpr_fpr $Rd:FPR[Def], $Rs:FPR[Use], $Rt:FPR[Use], $Cond:CC[Use]"
+    Flag: [LegalizePreRA]
+
+  Select_GPR_FPR_FPR: # => Copy + MOVZ.s
+    Format: "select_gpr_fpr_fpr $Rd:FPR[Def], $Rs:FPR[Use], $Rt:FPR[Use], $Cond:GPR[Use]"
     Flag: [LegalizePreRA]
 
   # movt/movf
@@ -950,6 +956,20 @@ InstSelection:
         Rs: $OutLhs
         Rt: $OutRhs
         Cond: $CC
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond: $Cond
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Cond) && isOperandFPR($Lhs) && isOperandFPR($Rhs)
+    Replace:
+      Select_GPR_FPR_FPR:
+        Rd: $Dst
+        Rs: $Lhs
+        Rt: $Rhs
+        Cond: $Cond
 
   # Floating Point
   - Pattern:

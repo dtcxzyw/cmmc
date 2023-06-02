@@ -37,21 +37,21 @@ main:
 	li s0, 1
 	ld s1, 72(sp)
 	mv t1, s1
-	sd t1, 40(sp)
-	sd s0, 56(sp)
+	sd t1, 80(sp)
+	sd s0, 40(sp)
 	li s0, 1
-	ld s1, 40(sp)
+	ld s1, 80(sp)
 	xor t1, s1, s0
 	sltiu t2, t1, 1
 	xori t3, t2, 1
 	bne t3, zero, label6
-label48:
-	ld s0, 56(sp)
-	ld s1, 40(sp)
+label42:
+	ld s0, 40(sp)
+	ld s1, 80(sp)
 	mulw t1, s0, s1
 	mv t2, t1
-	sd t2, 80(sp)
-	ld s0, 80(sp)
+	sd t2, 56(sp)
+	ld s0, 56(sp)
 	mv a0, s0
 	jal write
 	mv a0, zero
@@ -62,8 +62,8 @@ label48:
 	jr ra
 label12:
 	li s0, 1
-	sd s0, 80(sp)
-	ld s0, 80(sp)
+	sd s0, 56(sp)
+	ld s0, 56(sp)
 	mv a0, s0
 	jal write
 	mv a0, zero
@@ -73,18 +73,18 @@ label12:
 	addi sp, sp, 136
 	jr ra
 label6:
-	ld s0, 40(sp)
+	ld s0, 80(sp)
 	addiw s1, s0, -1
-	ld t1, 56(sp)
+	ld t1, 40(sp)
 	mulw t2, t1, s0
 	mv t1, t2
 	mv s0, s1
-	sd s0, 40(sp)
-	sd t1, 56(sp)
+	sd s0, 80(sp)
+	sd t1, 40(sp)
 	li s0, 1
-	ld s1, 40(sp)
+	ld s1, 80(sp)
 	xor t1, s1, s0
 	sltiu t2, t1, 1
 	xori t3, t2, 1
 	bne t3, zero, label6
-	j label48
+	j label42

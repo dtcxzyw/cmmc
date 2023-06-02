@@ -668,11 +668,16 @@ static void lower(StoreInst* inst, LoweringContext& ctx) {
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
     std::vector<Value*> dst;
     std::vector<Value*> src;
+    std::unordered_set<Value*> needStagingRegister;
 
     for(auto& inst : dstBlock->instructions()) {
         if(inst.getInstID() == InstructionID::Phi) {
             const auto phi = inst.as<PhiInst>();
-            src.push_back(phi->incomings().at(srcBlock)->value);
+            const auto val = phi->incomings().at(srcBlock)->value;
+            src.push_back(val);
+            if(val->is<PhiInst>() && val->getBlock() == dstBlock) {
+                needStagingRegister.insert(val);
+            }
             dst.push_back(phi);
         } else
             break;
@@ -749,9 +754,11 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
             const auto type = src[idx]->getType();
 
             // create copy
-            const auto intermediate = ctx.newVReg(type);
-            ctx.emitCopy(intermediate, dstArg);  // NOLINT
-            dirtyRegRemapping.emplace(dst[idx], intermediate);
+            if(needStagingRegister.count(dst[idx])) {
+                const auto intermediate = ctx.newVReg(type);
+                ctx.emitCopy(intermediate, dstArg);  // NOLINT
+                dirtyRegRemapping.emplace(dst[idx], intermediate);
+            }
 
             // apply reset
             ctx.emitCopy(dstArg, arg);
@@ -827,11 +834,18 @@ static void lower(SelectInst* inst, LoweringContext& ctx) {
                      .setOperand<3>(ctx.mapOperand(inst->getOperand(2))));
     ctx.addOperand(inst, ret);
 }
+static bool isPowerOf2(size_t x) {
+    return __builtin_popcountll(x) == 1;
+}
+static int32_t ilog2(size_t x) {
+    return __builtin_ctzll(x);
+}
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     const auto indexType = inst->operands().front()->getType();  // must be index type
     auto ptr = ctx.newVReg(inst->getType());
     const auto base = ctx.mapOperand(inst->lastOperand());
+    const auto useShl = ctx.getCodeGenContext().target.isNativeSupported(InstructionID::Shl);
 
     if(constantOffset != 0) {
         ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(
@@ -845,8 +859,13 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
         if(size == 1) {
             ctx.emitCopy(off, idx);
         } else {
-            ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
-                MIROperand::asImm(size, ctx.getPtrType())));
+            // TODO: expand mul to (x<<c1) +/- (x<<c2)
+            if(useShl && isPowerOf2(size)) {
+                ctx.emitInst(MIRInst{ InstShl }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
+                    MIROperand::asImm(ilog2(size), ctx.getPtrType())));
+            } else
+                ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
+                    MIROperand::asImm(size, ctx.getPtrType())));
         }
         auto newPtr = ctx.newVReg(inst->getType());  // SSA form
         ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off));

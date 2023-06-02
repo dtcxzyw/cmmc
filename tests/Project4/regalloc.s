@@ -68,7 +68,7 @@ main:
 	lw $t0, 32($sp)
 	bne $t0, $zero, label6
 	nop
-label57:
+label53:
 	lw $t0, 36($sp)
 	lw $t1, 32($sp)
 	addu $t2, $t0, $t1
@@ -92,5 +92,5 @@ label6:
 	lw $t0, 32($sp)
 	bne $t0, $zero, label6
 	nop
-	b label57
+	b label53
 	nop

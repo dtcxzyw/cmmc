@@ -45,7 +45,7 @@ main:
 	lw $t1, 32($sp)
 	bne $t1, $t0, label6
 	nop
-label45:
+label39:
 	lw $t0, 36($sp)
 	lw $t1, 32($sp)
 	mult $t0, $t1
@@ -87,5 +87,5 @@ label6:
 	lw $t1, 32($sp)
 	bne $t1, $t0, label6
 	nop
-	b label45
+	b label39
 	nop

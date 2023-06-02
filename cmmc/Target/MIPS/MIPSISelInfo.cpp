@@ -503,7 +503,7 @@ void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto& rhs = inst.getOperand(2);
             auto& cond = inst.getOperand(3);
             ctx.instructions.insert(ctx.iter, MIRInst{ selectCopyOpcode(dst, rhs) }.setOperand<0>(dst).setOperand<1>(rhs));
-            *ctx.iter = MIRInst{ MOVN }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cond);
+            *ctx.iter = MIRInst{ MOVN }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cond).setOperand<3>(dst);
             break;
         }
         case FCC2GPR: {
@@ -512,7 +512,8 @@ void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             const auto flip = inst.getOperand(2).imm();
             ctx.instructions.insert(
                 ctx.iter, MIRInst{ InstLoadImm }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(1, OperandType::Int32)));
-            *ctx.iter = MIRInst{ flip ? MOVT : MOVF }.setOperand<0>(dst).setOperand<1>(getZero(dst)).setOperand<2>(cc);
+            *ctx.iter =
+                MIRInst{ flip ? MOVT : MOVF }.setOperand<0>(dst).setOperand<1>(getZero(dst)).setOperand<2>(cc).setOperand<3>(dst);
             break;
         }
         case Select_FCC_FPR_FPR: {
@@ -521,7 +522,16 @@ void MIPSISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto& rhs = inst.getOperand(2);
             auto& cc = inst.getOperand(3);
             ctx.instructions.insert(ctx.iter, MIRInst{ MOV_S }.setOperand<0>(dst).setOperand<1>(rhs));
-            *ctx.iter = MIRInst{ MOVT_S }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cc);
+            *ctx.iter = MIRInst{ MOVT_S }.setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(cc).setOperand<3>(dst);
+            break;
+        }
+        case Select_GPR_FPR_FPR: {
+            auto& dst = inst.getOperand(0);
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            auto& cond = inst.getOperand(3);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOV_S }.setOperand<0>(dst).setOperand<1>(lhs));
+            *ctx.iter = MIRInst{ MOVZ_S }.setOperand<0>(dst).setOperand<1>(rhs).setOperand<2>(cond).setOperand<3>(dst);
             break;
         }
         default:

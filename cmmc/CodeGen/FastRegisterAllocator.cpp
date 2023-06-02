@@ -14,8 +14,8 @@
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
+#include <cmmc/CodeGen/LiveInterval.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
-#include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/RegisterInfo.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -37,6 +37,7 @@ CMMC_MIR_NAMESPACE_BEGIN
 
 // TODO: use argument/retval regs
 static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
+    auto liveInterval = calcLiveIntervals(mfunc, ctx);
     struct VirtualRegUseInfo final {
         std::unordered_set<MIRBasicBlock*> uses;
         std::unordered_set<MIRBasicBlock*> defs;
@@ -120,6 +121,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         auto& instructions = block->instructions();
 
         std::unordered_set<MIROperand, MIROperandHasher> dirtyVRegs;
+        auto& liveIntervalInfo = liveInterval.blockInfo[block.get()];
 
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
@@ -149,7 +151,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
             const auto getFreeReg = [&](const MIROperand& operand) -> MIROperand {
                 const auto regClass = ctx.registerInfo->getAllocationClass(operand.type());
-                auto& q = allocationQueue[regClass];  // TODO: move to spill strategy?
+                auto& q = allocationQueue[regClass];
                 MIROperand isaReg;
                 if(auto hintIter = isaRegHint.find(operand); hintIter != isaRegHint.end() && selector.isFree(hintIter->second)) {
                     isaReg = hintIter->second;
@@ -215,9 +217,10 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             const auto beforeBranch = [&]() {
-                // write back all dirty vregs into stack slots before branch
+                // write back all out dirty vregs into stack slots before branch
                 for(auto dirty : dirtyVRegs) {
-                    evictVReg(dirty);
+                    if(liveIntervalInfo.outs.count(dirty.reg()))
+                        evictVReg(dirty);
                 }
             };
 

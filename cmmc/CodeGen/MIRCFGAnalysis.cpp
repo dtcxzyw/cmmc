@@ -29,7 +29,7 @@ const std::vector<MIRBlockEdge>& CFGAnalysisResult::successors(const MIRBasicBlo
 }
 
 CFGAnalysisResult calcCFG(const MIRFunction& func, const CodeGenContext& ctx) {
-    CMMC_UNUSED(func);
+    assert(ctx.flags.endsWithTerminator);
     CFGAnalysisResult result;
     auto& map = result.storage();
     auto& blocks = func.blocks();

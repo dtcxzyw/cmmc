@@ -1,91 +1,91 @@
 FUNCTION main :
 v3 := #0
 v4 := #14
-v11 := v4 + v3
-v12 := v4 + #-1
+v9 := v4 + v3
+v10 := v4 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-LABEL label66 :
-v3 := v11
-v4 := v12
-v11 := v12 + v11
-v12 := v12 + #-1
+LABEL label62 :
+v3 := v9
+v4 := v10
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v4 == #0 GOTO label5
-GOTO label66
+GOTO label62
 LABEL label5 :
-WRITE v11
-READ v19
-READ v20
-READ v21
-v33 := #1
-IF v19 < v20 GOTO label35
-v33 := #0
-v23 := v33
-WRITE v23
-IF v19 >= v20 GOTO label25
-IF v20 >= v21 GOTO label25
-v36 := #1
-IF v19 < v20 GOTO label38
-GOTO label56
-LABEL label38 :
-v32 := v36
-WRITE v32
+WRITE v9
+READ v15
+READ v16
+READ v17
+v29 := #1
+IF v15 < v16 GOTO label31
+v29 := #0
+v19 := v29
+WRITE v19
+IF v15 >= v16 GOTO label21
+IF v16 >= v17 GOTO label21
+v32 := #1
+IF v15 < v16 GOTO label34
+GOTO label52
+LABEL label34 :
+v28 := v32
+WRITE v28
 RETURN #0
-LABEL label25 :
+LABEL label21 :
 RETURN #0
-LABEL label35 :
-v23 := v33
-WRITE v23
-IF v19 >= v20 GOTO label25
-IF v20 >= v21 GOTO label25
-v36 := #1
-IF v19 < v20 GOTO label38
-LABEL label56 :
-v36 := #0
-v32 := v36
-WRITE v32
+LABEL label31 :
+v19 := v29
+WRITE v19
+IF v15 >= v16 GOTO label21
+IF v16 >= v17 GOTO label21
+v32 := #1
+IF v15 < v16 GOTO label34
+LABEL label52 :
+v32 := #0
+v28 := v32
+WRITE v28
 RETURN #0

@@ -7,31 +7,31 @@ v3 := v10
 v4 := v9
 v5 := v8
 IF v8 != #1 GOTO label7
-LABEL label28 :
-v19 := v4 * #1000000
-v20 := v11 + v19
-WRITE v20
+LABEL label24 :
+v16 := v4 * #1000000
+v17 := v11 + v16
+WRITE v17
 RETURN #0
 LABEL label7 :
-v21 := v5 + #-1
-ARG v21
+v18 := v5 + #-1
+ARG v18
 ARG v4
 ARG v11
 ARG v3
-v22 := CALL hanoi
-v23 := v4 * #1000000
-v24 := v11 + v23
-WRITE v24
-v25 := v3
+v19 := CALL hanoi
+v20 := v4 * #1000000
+v21 := v11 + v20
+WRITE v21
+v22 := v3
 v3 := v4
-v4 := v25
-v5 := v21
-IF v21 != #1 GOTO label7
-GOTO label28
+v4 := v22
+v5 := v18
+IF v18 != #1 GOTO label7
+GOTO label24
 FUNCTION main :
 ARG #3
 ARG #1
 ARG #2
 ARG #3
-v31 := CALL hanoi
+v27 := CALL hanoi
 RETURN #0

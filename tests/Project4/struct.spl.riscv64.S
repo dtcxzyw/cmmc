@@ -34,7 +34,7 @@ gcd:
 	sw t2, 4(s1)
 	sd t2, 48(sp)
 	sd t1, 56(sp)
-	sd s0, 16(sp)
+	sd s0, 64(sp)
 	beq t2, zero, label18
 	j label2
 label18:
@@ -55,12 +55,12 @@ label2:
 	divw t1, s1, s0
 	mulw t2, s0, t1
 	subw t3, s1, t2
-	ld t4, 16(sp)
+	ld t4, 64(sp)
 	sw t3, 4(t4)
 	mv a0, t4
-	sd t3, 80(sp)
-	sd t2, 72(sp)
-	sd t1, 32(sp)
+	sd t3, 32(sp)
+	sd t2, 80(sp)
+	sd t1, 16(sp)
 	jal gcd
 	mv t5, a0
 	mv t6, t5
