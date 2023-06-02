@@ -213,6 +213,7 @@ void FunctionDefinition::emit(EmitContext& ctx) {
     }
 
     ctx.popScope();
+    ctx.finalizeGoto();
     ctx.setCurrentBlock(nullptr);  // clean up
 
     {
@@ -1122,6 +1123,53 @@ QualifiedValue StructIndexExpr::emit(EmitContext& ctx) const {
     const auto ptr = ctx.makeOp<GetElementPtrInst>(base, std::vector<Value*>{ ctx.getZeroIndex(), offset });
     return { ptr, ValueQualifier::AsLValue, qualifier };  // TODO: sign/unsign mutable/const qualifier from struct field
 }
+
+QualifiedValue GotoExpr::emit(EmitContext& ctx) const {
+    auto inst = ctx.makeOp<BranchInst>(nullptr);  // fix after emitting all exprs
+    ctx.addGoto(inst, mLabel);
+    return QualifiedValue::getNull();
+}
+QualifiedValue LabelExpr::emit(EmitContext& ctx) const {
+    const auto block = ctx.addBlock();
+    ctx.makeOp<BranchInst>(block);
+    ctx.setCurrentBlock(block);
+    block->setLabel(mLabel);
+    ctx.addNamedLabel(mLabel, block);
+    return QualifiedValue::getNull();
+}
+void EmitContext::addGoto(Instruction* gotoInst, String label) {
+    mGotos.emplace_back(gotoInst, label);
+}
+struct RedefinedLabel final {
+    String label;
+    friend void operator<<(std::ostream& out, const RedefinedLabel& err) {
+        out << R"(Redefined label ")" << err.label << '"' << std::endl;
+    }
+};
+struct UndefinedLabel final {
+    String label;
+    friend void operator<<(std::ostream& out, const UndefinedLabel& err) {
+        out << R"(Undefined label ")" << err.label << '"' << std::endl;
+    }
+};
+void EmitContext::addNamedLabel(String label, Block* block) {
+    if(mNamedLabels.count(label))
+        DiagnosticsContext::get().attach<RedefinedLabel>(label).reportFatal();
+    mNamedLabels.emplace(label, block);
+}
+void EmitContext::finalizeGoto() {
+    for(auto& [inst, label] : mGotos) {
+        if(auto iter = mNamedLabels.find(label); iter != mNamedLabels.cend()) {
+            inst->as<BranchInst>()->getTrueTarget() = iter->second;
+        } else {
+            DiagnosticsContext::get().attach<UndefinedLabel>(label).reportFatal();
+        }
+    }
+
+    mNamedLabels.clear();
+    mGotos.clear();
+}
+
 Value* EmitContext::booleanToInt(Value* value) {
     assert(value->getType()->isBoolean());
     return makeOp<CastInst>(InstructionID::ZExt, mInteger, value);

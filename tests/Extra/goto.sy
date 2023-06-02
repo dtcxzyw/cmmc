@@ -1,0 +1,22 @@
+int main() {
+    const int maxInput = 100;
+    int i;
+    float number, average, sum = 0.0;
+
+    for(i = 1; i <= maxInput; ++i) {
+        number = getfloat();
+
+        // go to jump if the user enters a negative number
+        if(number < 0.0) {
+            goto jump;
+        }
+        sum += number;
+    }
+
+jump:
+    average = sum / (i - 1);
+    putfloat(sum);
+    putfloat(average);
+
+    return 0;
+}

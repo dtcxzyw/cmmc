@@ -158,6 +158,8 @@ Stmt: ExpCommaSep SEMI { $$ = $1; CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 | SEMI { $$ = CMMC_EMPTY_STMT(@1); CMMC_NONTERMINAL(@$, Stmt, @1); }
 | FOR LP Stmt ForOptional SEMI ForOptional RP Stmt { $$ = CMMC_FOR_LOOP(@1, $3, $4, $6, $8); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7, @8); }
 | DO Stmt WHILE LP Exp RP SEMI { $$ = CMMC_DO_WHILE(@1, $2, $5); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3, @4, @5, @6, @7); }
+| GOTO ID SEMI { $$ = CMMC_GOTO(@1, $2); CMMC_NONTERMINAL(@$, Stmt, @1, @2, @3); }
+| ID COLON { $$ = CMMC_LABEL(@1, $1); CMMC_NONTERMINAL(@$, Stmt, @1, @2); }
 ;
 ExpCommaSep: Exp COMMA ExpCommaSep { $$ = CMMC_COMMA_OP(@2, $1, $3); CMMC_NONTERMINAL(@$, ExpCommaSep, @1, @2, @3); }
 | Exp { $$ = $1; CMMC_NONTERMINAL(@$, ExpCommaSep, @1); }

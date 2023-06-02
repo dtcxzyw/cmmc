@@ -427,6 +427,22 @@ public:
     QualifiedValue emit(EmitContext& ctx) const override;
 };
 
+class GotoExpr final : public Expr {
+    String mLabel;
+
+public:
+    GotoExpr(const SourceLocation& location, String label) noexcept : Expr{ location }, mLabel(label) {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
+class LabelExpr final : public Expr {
+    String mLabel;
+
+public:
+    LabelExpr(const SourceLocation& location, String label) noexcept : Expr{ location }, mLabel(label) {}
+    QualifiedValue emit(EmitContext& ctx) const override;
+};
+
 template <typename T>
 void concatPack(Deque<T>& res, const T& lhs, Deque<T>& rhs) {
     res.swap(rhs);

@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -95,6 +96,8 @@ class EmitContext final : public IRBuilder {
     std::unordered_map<String, const StructType*, StringHasher> mStructTypes;
     std::unordered_map<const FunctionType*, FunctionCallInfo> mCallInfo;
     std::unordered_map<Value*, Value*> mConstantBinding;
+    std::unordered_map<String, Block*, StringHasher> mNamedLabels;
+    std::vector<std::pair<Instruction*, String>> mGotos;
 
     const Type* mInteger;
     const Type* mFloat;
@@ -105,6 +108,10 @@ class EmitContext final : public IRBuilder {
 
 public:
     explicit EmitContext(Module* module);
+
+    void addNamedLabel(String label, Block* block);
+    void addGoto(Instruction* gotoInst, String label);
+    void finalizeGoto();
 
     void markInvalid() noexcept {
         mIsInvalid = true;
