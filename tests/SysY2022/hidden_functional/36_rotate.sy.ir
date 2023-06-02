@@ -4,34 +4,32 @@ internal func @getfloat() -> f32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal [1048576 * i32]* @image;
-internal func @my_sin_impl(f32 %x, i32* %0, i32* %1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^entry:
-    i1 %2 = fcmp gt f32 %x, f32 0;
-    cbr i1 %2(prob = 0.5), ^b1, ^b;
+    i1 %0 = fcmp gt f32 %x, f32 0;
+    cbr i1 %0(prob = 0.5), ^b1, ^b;
 ^b:
-    f32 %3 = fneg f32 %x;
+    f32 %1 = fneg f32 %x;
     ubr ^b1;
 ^b1:
-    f32 %4 = phi [^entry, f32 %x] [^b, f32 %3];
-    i1 %5 = fcmp le f32 %4, f32 1e-06;
-    cbr i1 %5(prob = 0.5), ^b3, ^b2;
+    f32 %2 = phi [^entry, f32 %x] [^b, f32 %1];
+    i1 %3 = fcmp le f32 %2, f32 1e-06;
+    cbr i1 %3(prob = 0.5), ^b3, ^b2;
 ^b2:
-    f32 %6 = fdiv f32 %x, f32 3;
-    f32 %7 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %6, i32* %0, i32* %1);
-    f32 %8 = fmul f32 3, f32 %7;
-    f32 %9 = fmul f32 4, f32 %7;
-    f32 %10 = fmul f32 %9, f32 %7;
-    f32 %11 = fmul f32 %10, f32 %7;
-    f32 %12 = fsub f32 %8, f32 %11;
+    f32 %4 = fdiv f32 %x, f32 3;
+    f32 %5 = call (f32) -> f32 @my_sin_impl(f32 %4);
+    f32 %6 = fmul f32 3, f32 %5;
+    f32 %7 = fmul f32 4, f32 %5;
+    f32 %8 = fmul f32 %7, f32 %5;
+    f32 %9 = fmul f32 %8, f32 %5;
+    f32 %10 = fsub f32 %6, f32 %9;
     ubr ^b3;
 ^b3:
-    f32 %13 = phi [^b1, f32 %x] [^b2, f32 %12];
-    ret f32 %13;
+    f32 %11 = phi [^b1, f32 %x] [^b2, f32 %10];
+    ret f32 %11;
 }
 func @main() -> i32 { NoRecurse Entry } {
 ^entry:
-    i32* %height = alloc i32;
-    i32* %width = alloc i32;
     f32 %0 = call () -> f32 @getfloat();
     i32 %1 = call () -> i32 @getch();
     i32 %2 = call () -> i32 @getch();
@@ -42,160 +40,137 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %5 = scmp neq i32 %4, i32 50;
     cbr i1 %5(prob = 0.5), ^b1, ^b2;
 ^b1:
-    i32 %6 = phi [^entry, i32 -1] [^b, i32 -1] [^b2, i32 -1] [^b3, i32 -1] [^entry1, i32 0] [^b6, i32 0];
+    i32 %6 = phi [^entry, i32 -1] [^b, i32 -1] [^b2, i32 -1] [^b3, i32 -1] [^b4, i32 -1] [^entry1, i32 0] [^b7, i32 0];
     ret i32 %6;
 ^b2:
     i32 %7 = call () -> i32 @getint();
-    store i32* %width with i32 %7;
-    i1 %8 = scmp gt i32 %7, i32 1024;
-    i32 %9 = call () -> i32 @getint();
-    store i32* %height with i32 %9;
-    i1 %10 = scmp gt i32 %9, i32 1024;
-    i1 %11 = or i1 %8, i1 %10;
-    cbr i1 %11(prob = 0.75), ^b1, ^b3;
+    i32 %8 = call () -> i32 @getint();
+    i1 %9 = scmp gt i32 %7, i32 1024;
+    cbr i1 %9(prob = 0.5), ^b1, ^b3;
 ^b3:
-    i32 %12 = sdiv i32 %7, i32 2;
-    i32 %13 = sdiv i32 %9, i32 2;
-    i1 %14 = scmp gt i32 %7, i32 0;
-    f32 %15 = s2f i32 %12 to f32;
-    f32 %16 = s2f i32 %13 to f32;
-    i32 %17 = call () -> i32 @getint();
-    i1 %18 = scmp neq i32 %17, i32 255;
-    cbr i1 %18(prob = 0.5), ^b1, ^b4;
+    i1 %10 = scmp gt i32 %8, i32 1024;
+    cbr i1 %10(prob = 0.5), ^b1, ^b4;
 ^b4:
-    i1 %19 = scmp gt i32 %9, i32 0;
-    cbr i1 %19(prob = 0.97), ^while.body, ^entry1;
+    i32 %11 = sdiv i32 %7, i32 2;
+    i32 %12 = sdiv i32 %8, i32 2;
+    i1 %13 = scmp gt i32 %7, i32 0;
+    f32 %14 = s2f i32 %11 to f32;
+    f32 %15 = s2f i32 %12 to f32;
+    i32 %16 = call () -> i32 @getint();
+    i1 %17 = scmp neq i32 %16, i32 255;
+    cbr i1 %17(prob = 0.5), ^b1, ^b5;
+^b5:
+    i1 %18 = scmp gt i32 %8, i32 0;
+    cbr i1 %18(prob = 0.97), ^while.body, ^entry1;
 ^while.body:
-    i32 %20 = phi [^b4, i32 0] [^b5, i32 %42];
-    cbr i1 %14(prob = 0.97), ^indirect, ^b5;
+    i32 %19 = phi [^b5, i32 0] [^b6, i32 %59];
+    cbr i1 %13(prob = 0.97), ^indirect, ^b6;
 ^entry1:
-    f32 %21 = fadd f32 %0, f32 1.5708;
-    f32 %22 = fdiv f32 %0, f32 6.28319;
-    f32 %23 = fdiv f32 %21, f32 6.28319;
-    i1 %24 = fcmp lt f32 %0, f32 -6.28319;
-    i1 %25 = fcmp lt f32 %21, f32 -6.28319;
-    i1 %26 = fcmp gt f32 %0, f32 6.28319;
-    i1 %27 = or i1 %24, i1 %26;
-    i1 %28 = fcmp gt f32 %21, f32 6.28319;
-    i1 %29 = or i1 %25, i1 %28;
-    i32 %30 = f2s f32 %22 to i32;
-    i32 %31 = f2s f32 %23 to i32;
-    f32 %32 = s2f i32 %30 to f32;
-    f32 %33 = fmul f32 %32, f32 6.28319;
-    f32 %34 = fsub f32 %0, f32 %33;
-    f32 %35 = s2f i32 %31 to f32;
-    f32 %36 = fmul f32 %35, f32 6.28319;
-    f32 %37 = fsub f32 %21, f32 %36;
     call (i32) -> void @putch(i32 80);
     call (i32) -> void @putch(i32 50);
     call (i32) -> void @putch(i32 10);
     call (i32) -> void @putint(i32 %7);
     call (i32) -> void @putch(i32 32);
-    call (i32) -> void @putint(i32 %9);
+    call (i32) -> void @putint(i32 %8);
     call (i32) -> void @putch(i32 32);
     call (i32) -> void @putint(i32 255);
     call (i32) -> void @putch(i32 10);
-    cbr i1 %19(prob = 0.97), ^while.body1, ^b1;
+    i1 %20 = fcmp gt f32 %0, f32 6.28319;
+    i1 %21 = fcmp lt f32 %0, f32 -6.28319;
+    i1 %22 = or i1 %20, i1 %21;
+    f32 %23 = fdiv f32 %0, f32 6.28319;
+    i32 %24 = f2s f32 %23 to i32;
+    f32 %25 = s2f i32 %24 to f32;
+    f32 %26 = fmul f32 %25, f32 6.28319;
+    f32 %27 = fsub f32 %0, f32 %26;
+    f32 %28 = fadd f32 %0, f32 1.5708;
+    i1 %29 = fcmp gt f32 %28, f32 6.28319;
+    i1 %30 = fcmp lt f32 %28, f32 -6.28319;
+    i1 %31 = or i1 %29, i1 %30;
+    f32 %32 = fdiv f32 %28, f32 6.28319;
+    i32 %33 = f2s f32 %32 to i32;
+    f32 %34 = s2f i32 %33 to f32;
+    f32 %35 = fmul f32 %34, f32 6.28319;
+    f32 %36 = fsub f32 %28, f32 %35;
+    f32 %37 = select i1 %22 ? f32 %27 : f32 %0;
+    i1 %38 = fcmp gt f32 %37, f32 3.14159;
+    f32 %39 = fsub f32 %37, f32 6.28319;
+    f32 %40 = select i1 %31 ? f32 %36 : f32 %28;
+    i1 %41 = fcmp gt f32 %40, f32 3.14159;
+    f32 %42 = fsub f32 %40, f32 6.28319;
+    f32 %43 = select i1 %38 ? f32 %39 : f32 %37;
+    i1 %44 = fcmp lt f32 %43, f32 -3.14159;
+    f32 %45 = fadd f32 %43, f32 6.28319;
+    f32 %46 = select i1 %41 ? f32 %42 : f32 %40;
+    i1 %47 = fcmp lt f32 %46, f32 -3.14159;
+    f32 %48 = fadd f32 %46, f32 6.28319;
+    f32 %49 = select i1 %44 ? f32 %45 : f32 %43;
+    f32 %50 = call (f32) -> f32 @my_sin_impl(f32 %49);
+    f32 %51 = select i1 %47 ? f32 %48 : f32 %46;
+    f32 %52 = call (f32) -> f32 @my_sin_impl(f32 %51);
+    cbr i1 %18(prob = 0.97), ^while.body1, ^b1;
 ^indirect:
-    i32 %38 = mul i32 %7, i32 %20;
+    i32 %53 = mul i32 %7, i32 %19;
     ubr ^while.body2;
 ^while.body1:
-    i32 %39 = phi [^entry1, i32 0] [^b6, i32 %55];
-    i32 %40 = sub i32 %39, i32 %13;
-    f32 %41 = s2f i32 %40 to f32;
-    cbr i1 %14(prob = 0.97), ^while.body3, ^b6;
-^b5:
-    i32 %42 = add i32 %20, i32 1;
-    i1 %43 = scmp lt i32 %42, i32 %9;
-    cbr i1 %43(prob = 0.97), ^while.body, ^entry1;
-^while.body2:
-    i32 %44 = phi [^indirect, i32 0] [^while.body2, i32 %45];
-    i32 %45 = add i32 %44, i32 1;
-    i32 %46 = add i32 %44, i32 %38;
-    i1 %47 = scmp lt i32 %45, i32 %7;
-    i32* %48 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %46];
-    i32 %49 = call () -> i32 @getint();
-    store i32* %48 with i32 %49;
-    cbr i1 %47(prob = 0.97), ^while.body2, ^b5;
-^while.body3:
-    i32 %50 = phi [^while.body1, i32 0] [^b13, i32 %51];
-    i32 %51 = add i32 %50, i32 1;
-    i32 %52 = sub i32 %50, i32 %12;
-    i1 %53 = scmp lt i32 %51, i32 %7;
-    f32 %54 = s2f i32 %52 to f32;
-    cbr i1 %27(prob = 0.75), ^if.then, ^b7;
+    i32 %54 = phi [^entry1, i32 0] [^b7, i32 %75];
+    i32 %55 = sub i32 %54, i32 %12;
+    f32 %56 = s2f i32 %55 to f32;
+    f32 %57 = fmul f32 %56, f32 %50;
+    f32 %58 = fmul f32 %56, f32 %52;
+    cbr i1 %13(prob = 0.97), ^while.body3, ^b7;
 ^b6:
-    i32 %55 = add i32 %39, i32 1;
-    i1 %56 = scmp lt i32 %55, i32 %9;
-    call (i32) -> void @putch(i32 10);
-    cbr i1 %56(prob = 0.97), ^while.body1, ^b1;
-^if.then:
-    ubr ^b7;
+    i32 %59 = add i32 %19, i32 1;
+    i1 %60 = scmp lt i32 %59, i32 %8;
+    cbr i1 %60(prob = 0.97), ^while.body, ^entry1;
+^while.body2:
+    i32 %61 = phi [^indirect, i32 0] [^while.body2, i32 %65];
+    i32 %62 = add i32 %61, i32 %53;
+    i32* %63 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %62];
+    i32 %64 = call () -> i32 @getint();
+    store i32* %63 with i32 %64;
+    i32 %65 = add i32 %61, i32 1;
+    i1 %66 = scmp lt i32 %65, i32 %7;
+    cbr i1 %66(prob = 0.97), ^while.body2, ^b6;
+^while.body3:
+    i32 %67 = phi [^while.body1, i32 0] [^b8, i32 %78];
+    i32 %68 = sub i32 %67, i32 %11;
+    f32 %69 = s2f i32 %68 to f32;
+    f32 %70 = fmul f32 %69, f32 %52;
+    f32 %71 = fsub f32 %70, f32 %57;
+    f32 %72 = fadd f32 %71, f32 %14;
+    i32 %73 = f2s f32 %72 to i32;
+    i1 %74 = scmp lt i32 %73, i32 0;
+    cbr i1 %74(prob = 0.5), ^b8, ^b9;
 ^b7:
-    f32 %57 = phi [^while.body3, f32 %0] [^if.then, f32 %34];
-    i1 %58 = fcmp gt f32 %57, f32 3.14159;
-    cbr i1 %58(prob = 0.5), ^if.then1, ^b8;
-^if.then1:
-    f32 %59 = fsub f32 %57, f32 6.28319;
-    ubr ^b8;
+    call (i32) -> void @putch(i32 10);
+    i32 %75 = add i32 %54, i32 1;
+    i1 %76 = scmp lt i32 %75, i32 %8;
+    cbr i1 %76(prob = 0.97), ^while.body1, ^b1;
 ^b8:
-    f32 %60 = phi [^b7, f32 %57] [^if.then1, f32 %59];
-    i1 %61 = fcmp lt f32 %60, f32 -3.14159;
-    cbr i1 %61(prob = 0.5), ^if.then2, ^b9;
-^if.then2:
-    f32 %62 = fadd f32 %60, f32 6.28319;
-    ubr ^b9;
-^b9:
-    f32 %63 = phi [^b8, f32 %60] [^if.then2, f32 %62];
-    f32 %64 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %63, i32* %width, i32* %height);
-    f32 %65 = fmul f32 %41, f32 %64;
-    f32 %66 = fmul f32 %54, f32 %64;
-    cbr i1 %29(prob = 0.75), ^if.then3, ^b10;
-^if.then3:
-    ubr ^b10;
-^b10:
-    f32 %67 = phi [^b9, f32 %21] [^if.then3, f32 %37];
-    i1 %68 = fcmp gt f32 %67, f32 3.14159;
-    cbr i1 %68(prob = 0.5), ^if.then4, ^b11;
-^if.then4:
-    f32 %69 = fsub f32 %67, f32 6.28319;
-    ubr ^b11;
-^b11:
-    f32 %70 = phi [^b10, f32 %67] [^if.then4, f32 %69];
-    i1 %71 = fcmp lt f32 %70, f32 -3.14159;
-    cbr i1 %71(prob = 0.5), ^if.then5, ^b12;
-^if.then5:
-    f32 %72 = fadd f32 %70, f32 6.28319;
-    ubr ^b12;
-^b12:
-    f32 %73 = phi [^b11, f32 %70] [^if.then5, f32 %72];
-    f32 %74 = call (f32, i32*, i32*) -> f32 @my_sin_impl(f32 %73, i32* %width, i32* %height);
-    f32 %75 = fmul f32 %54, f32 %74;
-    f32 %76 = fsub f32 %75, f32 %65;
-    f32 %77 = fadd f32 %76, f32 %15;
-    i32 %78 = f2s f32 %77 to i32;
-    i1 %79 = scmp lt i32 %78, i32 0;
-    i1 %80 = scmp ge i32 %78, i32 %7;
-    i1 %81 = or i1 %79, i1 %80;
-    cbr i1 %81(prob = 0.75), ^b13, ^b14;
-^b13:
-    i32 %82 = phi [^b12, i32 0] [^b14, i32 0] [^b15, i32 %93];
-    call (i32) -> void @putint(i32 %82);
+    i32 %77 = phi [^while.body3, i32 0] [^b9, i32 0] [^b10, i32 0] [^b11, i32 0] [^b12, i32 %90];
+    call (i32) -> void @putint(i32 %77);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %53(prob = 0.97), ^while.body3, ^b6;
-^b14:
-    f32 %83 = fmul f32 %41, f32 %74;
-    f32 %84 = fadd f32 %66, f32 %83;
-    f32 %85 = fadd f32 %84, f32 %16;
-    i32 %86 = f2s f32 %85 to i32;
-    i1 %87 = scmp lt i32 %86, i32 0;
-    i1 %88 = scmp ge i32 %86, i32 %9;
-    i1 %89 = or i1 %87, i1 %88;
-    cbr i1 %89(prob = 0.75), ^b13, ^b15;
-^b15:
-    i32 %90 = mul i32 %7, i32 %86;
-    i32 %91 = add i32 %78, i32 %90;
-    i32* %92 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %91];
-    i32 %93 = load i32* %92;
-    ubr ^b13;
+    i32 %78 = add i32 %67, i32 1;
+    i1 %79 = scmp lt i32 %78, i32 %7;
+    cbr i1 %79(prob = 0.97), ^while.body3, ^b7;
+^b9:
+    i1 %80 = scmp ge i32 %73, i32 %7;
+    cbr i1 %80(prob = 0.5), ^b8, ^b10;
+^b10:
+    f32 %81 = fmul f32 %69, f32 %50;
+    f32 %82 = fadd f32 %81, f32 %58;
+    f32 %83 = fadd f32 %82, f32 %15;
+    i32 %84 = f2s f32 %83 to i32;
+    i1 %85 = scmp lt i32 %84, i32 0;
+    cbr i1 %85(prob = 0.5), ^b8, ^b11;
+^b11:
+    i1 %86 = scmp ge i32 %84, i32 %8;
+    cbr i1 %86(prob = 0.5), ^b8, ^b12;
+^b12:
+    i32 %87 = mul i32 %7, i32 %84;
+    i32 %88 = add i32 %73, i32 %87;
+    i32* %89 = getelementptr &([1048576 * i32]* @image)[i64 0][i32 %88];
+    i32 %90 = load i32* %89;
+    ubr ^b8;
 }

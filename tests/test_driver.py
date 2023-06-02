@@ -747,7 +747,7 @@ if not generate_ref:
 
 if generate_ref:
     if 'sysy' in test_cases:
-        test("Reference SysY", tests_path + "/", ".sy", sysy_ref)
+        test("Reference SysY", tests_path + "/SysY2022", ".sy", sysy_ref)
     if 'clang' in test_cases:
         test("Reference SysY Clang", tests_path +
              "/SysY2022", ".sy", sysy_ref_clang)
