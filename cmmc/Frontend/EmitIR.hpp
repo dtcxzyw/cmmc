@@ -13,12 +13,12 @@
 */
 
 #pragma once
-#include "cmmc/IR/Instruction.hpp"
 #include <cmmc/Frontend/SourceLocation.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>

@@ -34,43 +34,43 @@ gcd:
 	sw $t2, 36($sp)
 	lw $t3, 4($a0)
 	sw $t3, 4($t1)
-	sw $t3, 52($sp)
-	sw $t2, 56($sp)
-	sw $t0, 60($sp)
-	beq $t3, $zero, label18
+	sw $t3, 48($sp)
+	sw $t2, 52($sp)
+	sw $t0, 56($sp)
+	beq $t3, $zero, label16
 	nop
 	b label2
 	nop
-label18:
-	lw $t0, 56($sp)
+label16:
+	lw $t0, 52($sp)
 	move $t1, $t0
-	sw $t1, 48($sp)
-	lw $t0, 48($sp)
+	sw $t1, 44($sp)
+	lw $t0, 44($sp)
 	move $v0, $t0
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 72
 	jr $ra
 	nop
 label2:
-	lw $t0, 52($sp)
+	lw $t0, 48($sp)
 	sw $t0, 24($sp)
-	lw $t1, 56($sp)
+	lw $t1, 52($sp)
 	div $zero, $t1, $t0
 	mflo $t2
 	mult $t0, $t2
 	mflo $t3
 	subu $t4, $t1, $t3
-	lw $t5, 60($sp)
+	lw $t5, 56($sp)
 	sw $t4, 4($t5)
 	move $a0, $t5
-	sw $t4, 68($sp)
-	sw $t3, 44($sp)
+	sw $t4, 32($sp)
+	sw $t3, 68($sp)
 	sw $t2, 64($sp)
 	jal gcd
 	nop
 	move $t6, $v0
-	sw $t6, 48($sp)
-	lw $t0, 48($sp)
+	sw $t6, 44($sp)
+	lw $t0, 44($sp)
 	move $v0, $t0
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 72

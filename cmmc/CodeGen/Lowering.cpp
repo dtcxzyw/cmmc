@@ -843,16 +843,10 @@ static int32_t ilog2(size_t x) {
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
     const auto indexType = inst->operands().front()->getType();  // must be index type
-    auto ptr = ctx.newVReg(inst->getType());
     const auto base = ctx.mapOperand(inst->lastOperand());
     const auto useShl = ctx.getCodeGenContext().target.isNativeSupported(InstructionID::Shl);
 
-    if(constantOffset != 0) {
-        ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(ptr).setOperand<1>(base).setOperand<2>(
-            MIROperand::asImm(constantOffset, ctx.getPtrType())));
-    } else {
-        ctx.emitCopy(ptr, base);
-    }
+    auto ptr = base;
     for(auto [size, index] : offsets) {
         const auto idx = ctx.mapOperand(index);
         const auto off = ctx.newVReg(indexType);
@@ -867,8 +861,14 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
                 ctx.emitInst(MIRInst{ InstMul }.setOperand<0>(off).setOperand<1>(idx).setOperand<2>(
                     MIROperand::asImm(size, ctx.getPtrType())));
         }
-        auto newPtr = ctx.newVReg(inst->getType());  // SSA form
+        auto newPtr = ctx.newVReg(ctx.getPtrType());  // SSA form
         ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(off));
+        ptr = newPtr;
+    }
+    if(constantOffset != 0) {
+        auto newPtr = ctx.newVReg(ctx.getPtrType());
+        ctx.emitInst(MIRInst{ InstAdd }.setOperand<0>(newPtr).setOperand<1>(ptr).setOperand<2>(
+            MIROperand::asImm(constantOffset, ctx.getPtrType())));
         ptr = newPtr;
     }
     ctx.addOperand(inst, ptr);

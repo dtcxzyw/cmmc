@@ -24,8 +24,8 @@ write:
 gcd:
 	addi sp, sp, -112
 	sd ra, 0(sp)
-	sd s0, 96(sp)
-	sd s1, 104(sp)
+	sd s0, 104(sp)
+	sd s1, 32(sp)
 	addi s0, sp, 8
 	addi s1, sp, 24
 	lw t1, 0(a0)
@@ -35,16 +35,16 @@ gcd:
 	sd t2, 48(sp)
 	sd t1, 56(sp)
 	sd s0, 64(sp)
-	beq t2, zero, label18
+	beq t2, zero, label16
 	j label2
-label18:
+label16:
 	ld s0, 56(sp)
 	mv s1, s0
 	sd s1, 40(sp)
 	ld s0, 40(sp)
 	mv a0, s0
-	ld s1, 104(sp)
-	ld s0, 96(sp)
+	ld s1, 32(sp)
+	ld s0, 104(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 112
 	jr ra
@@ -58,17 +58,17 @@ label2:
 	ld t4, 64(sp)
 	sw t3, 4(t4)
 	mv a0, t4
-	sd t3, 32(sp)
-	sd t2, 80(sp)
-	sd t1, 16(sp)
+	sd t3, 96(sp)
+	sd t2, 88(sp)
+	sd t1, 80(sp)
 	jal gcd
 	mv t5, a0
 	mv t6, t5
 	sd t6, 40(sp)
 	ld s0, 40(sp)
 	mv a0, s0
-	ld s1, 104(sp)
-	ld s0, 96(sp)
+	ld s1, 32(sp)
+	ld s0, 104(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 112
 	jr ra
