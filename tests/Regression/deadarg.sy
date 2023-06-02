@@ -1,0 +1,18 @@
+int callee_cmmc_noinline(int x, int y) {
+    return x;
+}
+
+int caller(int x) {
+    return callee_cmmc_noinline(x, 0);
+}
+
+// TODO: remove dead args by IPA
+int callee_fibx_cmmc_noinline(int x, int y) {
+    if(x <= 2)
+        return 1;
+    return callee_fibx_cmmc_noinline(x - 1, y) - callee_fibx_cmmc_noinline(x - 2, y);
+}
+
+int caller_fibx(int x) {
+    return callee_fibx_cmmc_noinline(x, x + 10);
+}

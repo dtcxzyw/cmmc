@@ -37,6 +37,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <iostream>
 #include <queue>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -45,7 +46,8 @@ CMMC_NAMESPACE_BEGIN
 class FuncInlining final : public TransformPass<Function> {
     static bool shouldInline(Function& func) {
         // TODO: use better heuristic?
-        return func.attr().hasAttr(FunctionAttribute::NoRecurse);
+        return func.attr().hasAttr(FunctionAttribute::NoRecurse) &&
+            func.getSymbol().prefix().find("_cmmc_noinline") == std::string_view::npos;
     }
 
     static void applyInline(Block* block, IntrusiveListIterator<Instruction> call, Function* caller, Function* callee) {

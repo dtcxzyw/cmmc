@@ -112,13 +112,7 @@ bool isNoSideEffectExpr(const Instruction& inst) {
     if(inst.isTerminator())
         return false;
     switch(inst.getInstID()) {
-        case InstructionID::Store:
-            [[fallthrough]];
-        case InstructionID::Alloc:
-            [[fallthrough]];
-        case InstructionID::Load:
-            [[fallthrough]];
-        case InstructionID::Phi: {
+        case InstructionID::Store: {
             return false;
         }
         case InstructionID::Call: {
@@ -134,6 +128,20 @@ bool isNoSideEffectExpr(const Instruction& inst) {
     }
 
     return true;
+}
+bool isMovableExpr(const Instruction& inst) {
+    if(!isNoSideEffectExpr(inst))
+        return false;
+    switch(inst.getInstID()) {
+        case InstructionID::Alloc:
+            [[fallthrough]];
+        case InstructionID::Phi:
+            [[fallthrough]];
+        case InstructionID::Load:
+            return false;
+        default:
+            return true;
+    }
 }
 bool hasCall(Block& block) {
     for(auto& inst : block.instructions())

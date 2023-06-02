@@ -77,6 +77,10 @@ public:
     [[nodiscard]] auto& args() const noexcept {
         return mArgs;
     }
+    [[nodiscard]] auto& args() noexcept {
+        return mArgs;
+    }
+    void updateTypeFromArgs();
     [[nodiscard]] Block* entryBlock() const noexcept {
         return mBlocks.front();
     }

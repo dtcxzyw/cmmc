@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Support/Arena.hpp>
 
@@ -20,12 +21,12 @@ CMMC_NAMESPACE_BEGIN
 
 enum class Linkage { Global, Internal };
 
-class GlobalValue : public Value {
+class GlobalValue : public TrackableValue {
     String mSymbol;
     Linkage mLinkage{ Linkage::Global };
 
 public:
-    GlobalValue(String symbol, const Type* type) : Value{ type }, mSymbol{ symbol } {}
+    GlobalValue(String symbol, const Type* type) : TrackableValue{ type }, mSymbol{ symbol } {}
     [[nodiscard]] const String& getSymbol() const noexcept {
         return mSymbol;
     }

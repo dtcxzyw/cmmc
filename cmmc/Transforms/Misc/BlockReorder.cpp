@@ -369,7 +369,7 @@ class BlockReorder final : public TransformPass<Function> {
                 if(inst.getInstID() == InstructionID::Phi || inst.getInstID() == InstructionID::Alloc || inst.isTerminator())
                     continue;
                 const uint32_t idx = count++;
-                if(!isNoSideEffectExpr(inst)) {
+                if(!isMovableExpr(inst)) {
                     if(lastInstWithSideEffects) {
                         addEdge(idx, lastInstWithSideEffects);
                     }

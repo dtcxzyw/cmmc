@@ -34,6 +34,7 @@ Berlin, Heidelberg. https://doi.org/10.1007/978-3-642-37051-9_6
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <iterator>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -60,6 +61,7 @@ class ScalarMem2RegContext final {
         return useVarRecursive(var, block);
     }
     Value* tryRemoveTrivalPhi(PhiInst* phi) {
+        // TODO: use reduceConstantPhis in ConstantPropagation
         Value* common = nullptr;
         for(auto val : phi->operands()) {
             if(val == common || val == phi)

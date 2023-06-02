@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+// FIXME
 // func fac(int a) -> int:
 // entry(int a):
 //     bool c = a == 1;

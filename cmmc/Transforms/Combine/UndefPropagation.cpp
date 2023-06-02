@@ -42,18 +42,26 @@ public:
                     modified = true;
                     break;
                 }
-                if(inst.getInstID() != InstructionID::Call && inst.canbeOperand()) {
-                    bool hasUndef = false;
-                    for(auto operand : inst.operands()) {
-                        if(operand->isUndefined()) {
-                            hasUndef = true;
-                            break;
+                if(inst.getInstID() != InstructionID::Call && inst.getInstID() != InstructionID::Phi && inst.canbeOperand()) {
+                    if(inst.getInstID() == InstructionID::Select) {
+                        if(inst.getOperand(0)->isUndefined()) {
+                            const auto trueV = inst.getOperand(1);
+                            const auto falseV = inst.getOperand(2);
+                            modified |= inst.replaceWith(trueV->isUndefined() ? trueV : falseV);
                         }
-                    }
-                    if(!hasUndef)
-                        continue;
-                    if(inst.getType()->isInteger()) {
-                        modified |= inst.replaceWith(ConstantInteger::get(inst.getType(), 0));
+                    } else {
+                        bool hasUndef = false;
+                        for(auto operand : inst.operands()) {
+                            if(operand->isUndefined()) {
+                                hasUndef = true;
+                                break;
+                            }
+                        }
+                        if(!hasUndef)
+                            continue;
+                        if(inst.getType()->isInteger()) {
+                            modified |= inst.replaceWith(ConstantInteger::get(inst.getType(), 0));
+                        }
                     }
                 }
             }

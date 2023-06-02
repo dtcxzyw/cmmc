@@ -118,7 +118,7 @@ public:
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 auto next = std::next(iter);
                 auto& inst = *iter;
-                if(!inst.isTerminator() && inst.getInstID() != InstructionID::Phi && isNoSideEffectExpr(inst)) {
+                if(isMovableExpr(inst)) {
                     if(moveToTrueTarget) {
                         if(tryMove(&inst, trueTarget)) {
                             modified = true;

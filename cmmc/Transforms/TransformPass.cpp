@@ -514,8 +514,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectModulePass({
-                // FIXME
-                //"GlobalScalar2Local",
+                "GlobalScalar2Local",
+                "DeadArgEliminate",
             }))
             root->addPass(pass);
         root->addPass(globalOpt);

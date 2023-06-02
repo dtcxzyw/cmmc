@@ -26,7 +26,6 @@
 #include <limits>
 #include <memory>
 #include <numeric>
-#include <pstl/glue_algorithm_defs.h>
 #include <queue>
 #include <random>
 #include <unordered_map>

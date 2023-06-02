@@ -70,7 +70,7 @@ class SimpleCSE final : public TransformPass<Function> {
                 if(unique)
                     phiList.push_back(lhs);
             } else {
-                if(!isNoSideEffectExpr(inst))
+                if(!isMovableExpr(inst))
                     continue;
 
                 if(auto [iter, res] = lut.insert(&inst); !res) {

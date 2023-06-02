@@ -44,9 +44,9 @@ static void greedyAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCac
     CMMC_UNUSED(mfunc);
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(infoIPRA);
-    // RAInfo info;
-    // assignInstNum(mfunc, info);
-    // calcLiveIntervals(mfunc, ctx, info);
+    auto liveInterval = calcLiveIntervals(mfunc, ctx);
+    CMMC_UNUSED(liveInterval);
+    reportNotImplemented(CMMC_LOCATION());
 }
 
 CMMC_REGISTER_ALLOCATOR("greedy", greedyAllocate);

@@ -36,6 +36,7 @@ class ConstantPropagation final : public TransformPass<Function> {
         bool modified = false;
         for(auto& inst : block.instructions()) {
             if(inst.getInstID() == InstructionID::Phi) {
+                // TODO: handle undef
                 const auto phi = inst.as<PhiInst>();
                 Value* value = nullptr;
                 bool unique = true;

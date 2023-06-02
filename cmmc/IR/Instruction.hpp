@@ -347,6 +347,7 @@ public:
         return mOperands[idx]->value;
     }
     ValueRef* addOperand(Value* value);
+    ValueRef* addArgument(Value* value);
 
     void insertBefore(Block* block, IntrusiveListIterator<Instruction> it);
     IntrusiveListIterator<Instruction> asIterator() const;
@@ -564,6 +565,7 @@ public:
         addOperand(callee);
     }
     void dumpInst(std::ostream& out) const override;
+    bool verify(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };
 

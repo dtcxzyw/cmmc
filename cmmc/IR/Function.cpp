@@ -333,5 +333,15 @@ void Function::dumpCFG(std::ostream& out) const {
 
     out << "}\n"sv;
 }
+void Function::updateTypeFromArgs() {
+    const auto type = getType()->as<FunctionType>();
+    Vector<const Type*> argTypes;
+    argTypes.reserve(mArgs.size());
+    for(auto arg : mArgs)
+        argTypes.push_back(arg->getType());
+
+    const auto newType = make<FunctionType>(type->getRetType(), std::move(argTypes));
+    setType(newType);
+}
 
 CMMC_NAMESPACE_END

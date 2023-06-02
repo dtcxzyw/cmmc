@@ -122,7 +122,7 @@ public:
             const auto root = value;
             if(root->isInstruction()) {
                 const auto inst = root->as<Instruction>();
-                if(isNoSideEffectExpr(*inst))
+                if(isMovableExpr(*inst))
                     return getInstNumber(inst);
             }
 
@@ -133,7 +133,7 @@ public:
 
         for(auto block : dom.blocks()) {
             for(auto& inst : block->instructions()) {
-                if(!isNoSideEffectExpr(inst))
+                if(!isMovableExpr(inst))
                     continue;
 
                 const auto id = getInstNumber(&inst);

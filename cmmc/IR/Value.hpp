@@ -62,6 +62,9 @@ public:
     [[nodiscard]] const Type* getType() const noexcept {
         return mType;
     }
+    void setType(const Type* type) noexcept {
+        mType = type;
+    }
     [[nodiscard]] bool isGlobal() const noexcept {
         return rank() == ValueRank::Global;
     }
@@ -71,7 +74,7 @@ public:
     [[nodiscard]] virtual bool isUndefined() const noexcept {
         return false;
     }
-    [[nodiscard]] virtual bool isInstruction() const noexcept {
+    [[nodiscard]] bool isInstruction() const noexcept {
         return rank() == ValueRank::Instruction;
     }
     [[nodiscard]] bool isArgument() const noexcept {

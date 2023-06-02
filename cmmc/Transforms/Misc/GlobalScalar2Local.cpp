@@ -27,6 +27,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <pstl/glue_algorithm_defs.h>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -63,7 +64,7 @@ class GlobalScalar2Local final : public TransformPass<Module> {
 
 public:
     bool run(Module& mod, AnalysisPassManager& analysis) const override {
-        Function* exportedFunc = nullptr;
+        Function* entryFunc = nullptr;
         std::vector<GlobalVariable*> globalVars;
         std::vector<Function*> funcs;
 
@@ -71,16 +72,11 @@ public:
             if(auto func = dynamic_cast<Function*>(global)) {
                 if(func->blocks().empty())
                     continue;
-
-                if(func->getLinkage() == Linkage::Global) {
-                    if(exportedFunc) {
-                        exportedFunc = nullptr;  // multiple exported functions
-                        break;
-                    }
-                    exportedFunc = func;
-                } else {
+                if(func->attr().hasAttr(FunctionAttribute::Entry)) {
+                    assert(!entryFunc);
+                    entryFunc = func;
+                } else
                     funcs.push_back(func);
-                }
             } else {
                 auto var = global->as<GlobalVariable>();
                 if(var->getLinkage() == Linkage::Global)
@@ -95,43 +91,21 @@ public:
             }
         }
 
-        if(!exportedFunc)
+        if(!entryFunc)
             return false;
-
-        const auto hasInternalCall = [&] {
-            for(auto global : mod.globals()) {
-                if(auto func = dynamic_cast<Function*>(global)) {
-                    for(auto block : func->blocks())
-                        for(auto& inst : block->instructions()) {
-                            if(inst.getInstID() == InstructionID::Call) {
-                                if(inst.lastOperand() == exportedFunc)
-                                    return true;
-                            }
-                        }
-                }
-                return false;
-            }
-            return true;
-        };
-
-        if(!exportedFunc->attr().hasAttr(FunctionAttribute::Entry) || hasInternalCall()) {
-            globalVars.erase(
-                std::remove_if(globalVars.begin(), globalVars.end(), [](GlobalVariable* var) { return var->initialValue(); }),
-                globalVars.end());
-        }
 
         if(globalVars.empty())
             return false;
 
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
-        const auto entryBlock = exportedFunc->entryBlock();
+        const auto entryBlock = entryFunc->entryBlock();
         auto& instructions = entryBlock->instructions();
         builder.setInsertPoint(entryBlock, std::find_if_not(instructions.begin(), instructions.end(), [](Instruction& inst) {
                                    return inst.getInstID() == InstructionID::Alloc;
                                }));
 
-        std::unordered_map<Function*, std::unordered_map<Value*, Value*>> mapping;
+        std::unordered_map<GlobalVariable*, std::unordered_map<Function*, Value*>> mapping;
 
         const auto getZeroScalar = [](const Type* type) -> Value* {
             const auto scalarType = type->as<ArrayType>()->getScalarType();
@@ -145,7 +119,6 @@ public:
         };
 
         {
-            auto& mainMapping = mapping[exportedFunc];
             for(auto var : globalVars) {
                 const auto type = var->getType()->as<PointerType>()->getPointee();
                 const auto alloc = builder.createAlloc(type);
@@ -158,59 +131,79 @@ public:
                 } else if(type->isArray()) {
                     initializeArray(builder, alloc, type->as<ArrayType>(), nullptr, getZeroScalar(type));
                 }
-                mainMapping.emplace(var, alloc);
+                mapping[var].emplace(entryFunc, alloc);
             }
         }
 
-        // modify func signatures & entry blocks
+        // modify func signatures
+        std::unordered_map<Function*, std::unordered_set<Value*>> usedVars;
+        for(auto var : globalVars) {
+            for(auto user : var->users()) {
+                usedVars[user->getBlock()->getFunction()].insert(var);
+            }
+        }
+        std::unordered_map<Function*, std::unordered_set<Function*>> callers;
         for(auto func : funcs) {
-            {
-                const auto funcType = func->getType()->as<FunctionType>();
-                // NOLINTNEXTLINE
-                auto& args = const_cast<Vector<const Type*>&>(funcType->getArgTypes());
-                for(auto var : globalVars) {
-                    args.push_back(var->getType());
+            auto& callerSet = callers[func];
+            for(auto user : func->users()) {
+                callerSet.insert(user->getBlock()->getFunction());
+            }
+        }
+
+        while(true) {
+            bool changed = false;
+            for(auto func : funcs) {
+                auto& callerSet = callers[func];
+                auto& usedVarSet = usedVars[func];
+                for(auto caller : callerSet) {
+                    if(caller == func)
+                        continue;
+                    auto& callerUsedVarSet = usedVars[caller];
+                    for(auto var : usedVarSet) {
+                        changed |= callerUsedVarSet.insert(var).second;
+                    }
                 }
             }
-            {
-                auto& map = mapping[func];
-                for(auto var : globalVars)
-                    map.emplace(var, func->addArg(var->getType()));
-            }
+            if(!changed)
+                break;
+        }
+
+        for(auto func : funcs) {
+            auto& usedVarSet = usedVars[func];
+            for(auto var : globalVars)
+                if(usedVarSet.count(var))
+                    mapping[var].emplace(func, func->addArg(var->getType()));
+            func->updateTypeFromArgs();
         }
 
         // modify calls
         // TODO: function pointers?
-        std::unordered_set<Value*> funcSet{ funcs.cbegin(), funcs.cend() };
-        funcs.push_back(exportedFunc);
         for(auto func : funcs) {
-            for(auto block : func->blocks())
-                for(auto& inst : block->instructions()) {
-                    if(auto call = dynamic_cast<FunctionCallInst*>(&inst)) {
-                        auto callee = call->lastOperand();
-                        if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
-                            if(funcSet.count(calleeFunc)) {
-                                reportNotImplemented(CMMC_LOCATION());
-                                /*
-                                auto& operands = call->operands();
-                                for(auto var : globalVars)
-                                    operands.insert(std::prev(operands.cend()), var);
-                                */
-                            }
-                        } else
-                            reportNotImplemented(CMMC_LOCATION());
-                    }
-                }
+            auto& usedVarSet = usedVars[func];
+            for(auto user : func->users()) {
+                const auto call = dynamic_cast<FunctionCallInst*>(user);
+                const auto caller = call->getBlock()->getFunction();
+                assert(call->lastOperand() == func);
+                for(auto var : globalVars)
+                    if(usedVarSet.count(var))
+                        call->addArgument(mapping.at(var).at(caller));
+            }
         }
 
-        //  replace operands & back propagation
-        for(auto func : funcs) {
-            auto& map = mapping[func];
-            CMMC_UNUSED(map);
-            // FIXME
-            reportNotImplemented(CMMC_LOCATION());
-            // replaceOperands(*func, map);
+        for(auto var : globalVars) {
+            auto& users = var->users();
+            auto& map = mapping.at(var);
+            for(auto iter = users.begin(); iter != users.end();) {
+                auto next = std::next(iter);
+                iter.ref()->resetValue(map.at(iter.ref()->user->getBlock()->getFunction()));
+                iter = next;
+            }
         }
+
+        std::unordered_set<Value*> globalVarSet{ globalVars.begin(), globalVars.end() };
+        auto& globals = mod.globals();
+        globals.erase(std::remove_if(globals.begin(), globals.end(), [&](GlobalValue* var) { return globalVarSet.count(var); }),
+                      globals.end());
 
         return true;
     }

@@ -131,6 +131,11 @@ ValueRef* Instruction::addOperand(Value* value) {
     mOperands.push_back(ref);
     return ref;
 }
+ValueRef* Instruction::addArgument(Value* value) {
+    auto ref = make<ValueRef>(value, this);
+    mOperands.insert(std::prev(mOperands.end()), ref);
+    return ref;
+}
 
 void Instruction::dumpAsOperand(std::ostream& out) const {
     dumpPrefix(out);
@@ -475,6 +480,20 @@ void FunctionCallInst::dumpInst(std::ostream& out) const {
         arg->dumpAsOperand(out);
     }
     out << ')';
+}
+
+bool FunctionCallInst::verify(std::ostream&) const {
+    const auto type = lastOperand()->getType()->as<FunctionType>();
+    if(!type->getRetType()->isSame(getType()))
+        return false;
+    uint32_t idx = 0;
+    for(auto arg : arguments()) {
+        if(!arg->getType()->isSame(type->getArgTypes()[idx++]))
+            return false;
+    }
+    if(idx != type->getArgTypes().size())
+        return false;
+    return true;
 }
 
 void SelectInst::dumpInst(std::ostream& out) const {
