@@ -382,7 +382,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ExtGEPCombine",             //
             "NoSideEffectEliminate",     // clean up
             // Loop
-            //"LoopRotate",         //
+            "LoopRotate",         //
             "LoopCanonicalize",   //
             "LoopBranchProbFix",  //
             "LoopEliminate",      //

@@ -61,14 +61,19 @@ main:
 	nop
 	jal read
 	nop
-	move $t0, $zero
-	li $t1, 10
-	sw $t1, 32($sp)
-	sw $t0, 36($sp)
-	lw $t0, 32($sp)
-	bne $t0, $zero, label6
+	li $t0, 10
+	move $t1, $zero
+	sw $t1, 28($sp)
+	sw $t0, 40($sp)
+	lw $t0, 40($sp)
+	addiu $t1, $t0, -1
+	lw $t2, 28($sp)
+	addiu $t3, $t2, 1
+	sw $t3, 32($sp)
+	sw $t1, 36($sp)
+	bne $t1, $zero, label42
 	nop
-label53:
+label52:
 	lw $t0, 36($sp)
 	lw $t1, 32($sp)
 	addu $t2, $t0, $t1
@@ -80,17 +85,20 @@ label53:
 	addiu $sp, $sp, 48
 	jr $ra
 	nop
-label6:
-	lw $t0, 32($sp)
+label42:
+	lw $t0, 36($sp)
+	move $t1, $t0
+	lw $t2, 32($sp)
+	move $t3, $t2
+	sw $t3, 28($sp)
+	sw $t1, 40($sp)
+	lw $t0, 40($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 36($sp)
+	lw $t2, 28($sp)
 	addiu $t3, $t2, 1
-	move $t2, $t3
-	move $t0, $t1
-	sw $t0, 32($sp)
-	sw $t2, 36($sp)
-	lw $t0, 32($sp)
-	bne $t0, $zero, label6
+	sw $t3, 32($sp)
+	sw $t1, 36($sp)
+	bne $t1, $zero, label42
 	nop
-	b label53
+	b label52
 	nop

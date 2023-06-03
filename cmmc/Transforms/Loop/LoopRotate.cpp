@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-// Turn for-loops into LLVM Loop Simplify Form
-
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -22,11 +20,14 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <iterator>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-/*
+// Turn for-loops into LLVM Loop Simplify Form
 //       entering
 //          |
 //  ----> header ---> exiting
@@ -70,7 +71,6 @@ class LoopRotate final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& cfg = analysis.get<CFGAnalysis>(func);
-        auto& dom = analysis.get<DominateAnalysis>(func);
 
         bool modified = false;
         for(auto loop : detectLoops(func, analysis)) {
@@ -88,91 +88,97 @@ public:
             auto& succHeader = cfg.successors(loop.header);
             if(succHeader.size() != 2)
                 continue;
-            const auto entering = predHeader.front() == loop.latch ? predHeader.back() : predHeader.front();
             const auto exiting = succHeader.front() == loop.latch ? succHeader.back() : succHeader.front();
-
-            if(exiting->instructions().front()->getInstID() == InstructionID::Phi)
+            // TODO: create new block for phi nodes
+            if(cfg.predecessors(exiting).size() != 1)
                 continue;
 
-            auto& instructions = loop.latch->instructions();
-            instructions.pop_back();
-            ReplaceMap replacePhiLatch, replacePhiHeader;
-            ReplaceMap replaceHeader;
-            ReplaceMap replaceSucc;
-            std::vector<Instruction*> latchInstructions{ loop.latch->instructions().cbegin(), loop.latch->instructions().cend() };
-            std::vector<Instruction*> headerInstructions, phiInstructions;
-            for(auto inst : loop.header->instructions()) {
-                const auto newInst = inst->clone();
-                newInst->setBlock(loop.latch);
-
-                if(inst->getInstID() == InstructionID::Phi) {
-                    const auto phi = inst->as<PhiInst>();
-                    // header
-                    phi->removeSource(loop.latch);
-                    // latch
-                    const auto newPhi = newInst->as<PhiInst>();
-                    newPhi->replaceSource(entering, loop.header);
-                    instructions.push_front(newInst);
-
-                    replacePhiLatch.emplace(phi, newPhi);
-                    phiInstructions.push_back(newInst);
+            // duplicate instructions
+            std::unordered_map<Value*, PhiInst*> replace;
+            loop.latch->instructions().pop_back();
+            std::unordered_set<Instruction*> oldInsts;
+            std::unordered_set<Instruction*> newInsts;
+            for(auto& inst : loop.latch->instructions())
+                oldInsts.insert(&inst);
+            for(auto& inst : loop.header->instructions()) {
+                if(inst.canbeOperand()) {
+                    const auto phi = make<PhiInst>(inst.getType());
+                    replace.emplace(&inst, phi);
+                    phi->insertBefore(loop.latch, loop.latch->instructions().begin());
+                }
+            }
+            for(auto& inst : loop.header->instructions()) {
+                if(inst.getInstID() == InstructionID::Phi) {
+                    auto val = inst.as<PhiInst>()->incomings().at(loop.latch)->value;
+                    inst.as<PhiInst>()->removeSource(loop.latch);
+                    const auto phi = replace.at(&inst);
+                    phi->addIncoming(loop.header, &inst);
+                    if(auto iter = replace.find(val); iter != replace.end())
+                        val = iter->second;
+                    phi->addIncoming(loop.latch, val);
                 } else {
-                    headerInstructions.push_back(newInst);
-                    instructions.push_back(newInst);
-                    if(inst->canbeOperand()) {
-                        const auto phi = make<PhiInst>(inst->getType());
-                        phi->setBlock(loop.latch);
-                        phi->addIncoming(loop.header, inst);
+                    const auto newInst = inst.clone();
+                    newInst->insertBefore(loop.latch, loop.latch->instructions().end());
+                    if(inst.canbeOperand()) {
+                        const auto phi = replace.at(&inst);
+                        phi->addIncoming(loop.header, &inst);
                         phi->addIncoming(loop.latch, newInst);
-
-                        instructions.push_front(phi);
-                        replaceHeader.emplace(inst, newInst);
                     }
+                    newInsts.insert(newInst);
                 }
-
-                // exiting
-                if(newInst->canbeOperand()) {
-                    const auto newPhi = make<PhiInst>(newInst->getType());
-                    newPhi->addIncoming(loop.header, inst);
-                    newPhi->addIncoming(loop.latch, newInst);
-                    newPhi->setBlock(exiting);
-                    // exiting->instructions().push_front(newPhi);
-                    replaceSucc.emplace(inst, newPhi);
+            }
+            // body/tail header use header
+            // body:
+            //   new phis
+            //   old body
+            //   tail header
+            for(auto& inst : loop.header->instructions()) {
+                auto& users = inst.users();
+                for(auto iter = users.begin(); iter != users.end();) {
+                    const auto next = std::next(iter);
+                    const auto user = iter.ref()->user;
+                    if(oldInsts.count(user)) {
+                        // old body
+                        iter.ref()->resetValue(replace.at(&inst));
+                    } else if(newInsts.count(user)) {
+                        // tail header
+                        iter.ref()->resetValue(replace.at(&inst)->incomings().at(loop.latch)->value);
+                    } else {
+                        // new phis/outer users
+                    }
+                    iter = next;
                 }
             }
 
-            for(auto [key, val] : replacePhiLatch) {
-                const auto phi = val->as<PhiInst>();
-                auto realVal = phi->incomings().at(loop.latch);
-                phi->removeSource(loop.latch);
-                if(realVal->isInstruction()) {
-                    if(realVal->is<PhiInst>()) {
-                        realVal = replacePhiLatch.at(realVal);
-                    }
-                    if(realVal->getBlock() == loop.header) {
-                        realVal = replaceHeader.at(realVal);
+            // outer use header
+            for(auto& inst : loop.header->instructions()) {
+                bool usedByOuter = false;
+                auto& users = inst.users();
+                for(auto user : users) {
+                    const auto block = user->getBlock();
+                    if(block != loop.latch && block != loop.header) {
+                        usedByOuter = true;
+                        break;
                     }
                 }
-                replacePhiHeader.emplace(key, realVal);
-                phi->addIncoming(loop.latch, realVal);
-            }
 
-            replaceOperands(latchInstructions, replacePhiLatch);
-            replaceOperands(latchInstructions, replaceHeader);
-            replaceOperands(headerInstructions, replacePhiHeader);
-            replaceOperands(headerInstructions, replaceHeader);
-            replaceOperands(phiInstructions, replaceHeader);
-
-            for(auto rhs : dom.blocks()) {
-                if(!dom.dominate(exiting, rhs))
+                if(!usedByOuter)
                     continue;
 
-                replaceOperandsInBlock(*rhs, replaceSucc);
-            }
+                const auto phi = make<PhiInst>(inst.getType());
 
-            for(auto [key, val] : replaceSucc) {
-                CMMC_UNUSED(key);
-                exiting->instructions().push_front(val->as<Instruction>());
+                for(auto iter = users.begin(); iter != users.end();) {
+                    const auto next = std::next(iter);
+                    const auto block = iter.ref()->user->getBlock();
+                    if(block != loop.latch && block != loop.header) {
+                        iter.ref()->resetValue(phi);
+                    }
+                    iter = next;
+                }
+
+                phi->addIncoming(loop.header, &inst);
+                phi->addIncoming(loop.latch, replace.at(&inst)->incomings().at(loop.latch)->value);
+                phi->insertBefore(exiting, exiting->instructions().begin());
             }
 
             modified = true;
@@ -186,6 +192,5 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(LoopRotate);
-*/
 
 CMMC_NAMESPACE_END

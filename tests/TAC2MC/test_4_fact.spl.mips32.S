@@ -27,65 +27,108 @@ write:
     nop
 .globl main
 main:
-	addiu $sp, $sp, -64
+	addiu $sp, $sp, -72
 	sw $ra, 16($sp)
 	jal read
 	nop
 	move $t0, $v0
 	addiu $t1, $v0, -1
-	sw $t0, 40($sp)
-	blez $t1, label13
+	sw $t0, 32($sp)
+	blez $t1, label15
 	nop
 	li $t0, 1
-	lw $t1, 40($sp)
-	move $t2, $t1
-	sw $t2, 32($sp)
+	lw $t1, 32($sp)
+	bne $t1, $t0, label19
+	nop
+	b label18
+	nop
+label15:
+	li $t0, 1
 	sw $t0, 36($sp)
-	li $t0, 1
-	lw $t1, 32($sp)
-	bne $t1, $t0, label6
-	nop
-label39:
 	lw $t0, 36($sp)
-	lw $t1, 32($sp)
+	move $a0, $t0
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 72
+	jr $ra
+	nop
+label18:
+	lw $t0, 32($sp)
+	move $t1, $t0
+	li $t2, 1
+	sw $t2, 48($sp)
+	sw $t1, 44($sp)
+	lw $t0, 44($sp)
+	lw $t1, 48($sp)
 	mult $t0, $t1
 	mflo $t2
 	move $t3, $t2
-	sw $t3, 28($sp)
-	lw $t0, 28($sp)
+	sw $t3, 36($sp)
+	lw $t0, 36($sp)
 	move $a0, $t0
 	jal write
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
-	addiu $sp, $sp, 64
+	addiu $sp, $sp, 72
 	jr $ra
 	nop
-label13:
-	li $t0, 1
-	sw $t0, 28($sp)
-	lw $t0, 28($sp)
-	move $a0, $t0
-	jal write
-	nop
-	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 64
-	jr $ra
-	nop
-label6:
+label19:
 	lw $t0, 32($sp)
+	move $t1, $t0
+	li $t2, 1
+	sw $t2, 60($sp)
+	sw $t1, 52($sp)
+	lw $t0, 52($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 36($sp)
-	mult $t2, $t0
+	lw $t2, 60($sp)
+	mult $t0, $t2
 	mflo $t3
-	move $t2, $t3
-	move $t0, $t1
-	sw $t0, 32($sp)
-	sw $t2, 36($sp)
-	li $t0, 1
-	lw $t1, 32($sp)
-	bne $t1, $t0, label6
+	li $t4, 1
+	sw $t3, 40($sp)
+	sw $t1, 56($sp)
+	bne $t1, $t4, label26
 	nop
-	b label39
+	b label53
+	nop
+label26:
+	lw $t0, 56($sp)
+	move $t1, $t0
+	lw $t2, 40($sp)
+	move $t3, $t2
+	sw $t3, 60($sp)
+	sw $t1, 52($sp)
+	lw $t0, 52($sp)
+	addiu $t1, $t0, -1
+	lw $t2, 60($sp)
+	mult $t0, $t2
+	mflo $t3
+	li $t4, 1
+	sw $t3, 40($sp)
+	sw $t1, 56($sp)
+	bne $t1, $t4, label26
+	nop
+label53:
+	lw $t0, 56($sp)
+	move $t1, $t0
+	lw $t2, 40($sp)
+	move $t3, $t2
+	sw $t3, 48($sp)
+	sw $t1, 44($sp)
+	lw $t0, 44($sp)
+	lw $t1, 48($sp)
+	mult $t0, $t1
+	mflo $t2
+	move $t3, $t2
+	sw $t3, 36($sp)
+	lw $t0, 36($sp)
+	move $a0, $t0
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 72
+	jr $ra
 	nop

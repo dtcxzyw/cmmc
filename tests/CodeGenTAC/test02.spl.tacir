@@ -1,22 +1,35 @@
 FUNCTION main :
-READ v9
-IF v9 <= #1 GOTO label12
-v3 := #1
-v4 := v9
-IF v9 != #1 GOTO label6
-LABEL label21 :
-v18 := v3 * v4
-v8 := v18
-WRITE v18
+READ v11
+IF v11 <= #1 GOTO label14
+IF v11 != #1 GOTO label18
+GOTO label27
+LABEL label14 :
+v10 := #1
+WRITE v10
 RETURN #0
-LABEL label12 :
+LABEL label18 :
+v7 := v11
 v8 := #1
-WRITE v8
+v21 := v11 + #-1
+v22 := v11 * v8
+IF v21 != #1 GOTO label25
+GOTO label28
+LABEL label25 :
+v7 := v21
+v8 := v22
+v21 := v21 + #-1
+v22 := v7 * v22
+IF v21 != #1 GOTO label25
+GOTO label28
+LABEL label27 :
+v5 := #1
+v20 := v11 * v5
+v10 := v20
+WRITE v20
 RETURN #0
-LABEL label6 :
-v19 := v4 + #-1
-v20 := v3 * v4
-v3 := v20
-v4 := v19
-IF v19 != #1 GOTO label6
-GOTO label21
+LABEL label28 :
+v5 := v22
+v20 := v21 * v22
+v10 := v20
+WRITE v20
+RETURN #0

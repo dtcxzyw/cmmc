@@ -43,12 +43,17 @@ main:
 	jal read
 	jal read
 	jal read
-	mv s0, zero
-	li s1, 10
-	sd s1, 8(sp)
-	sd s0, 16(sp)
-	ld s0, 8(sp)
-	bne s0, zero, label6
+	li s0, 10
+	mv s1, zero
+	sd s1, 24(sp)
+	sd s0, 32(sp)
+	ld s0, 32(sp)
+	addiw s1, s0, -1
+	ld t1, 24(sp)
+	addiw t2, t1, 1
+	sd t2, 8(sp)
+	sd s1, 16(sp)
+	bne s1, zero, label26
 label5:
 	ld s0, 16(sp)
 	ld s1, 8(sp)
@@ -61,15 +66,18 @@ label5:
 	ld ra, 0(sp)
 	addi sp, sp, 64
 	jr ra
-label6:
-	ld s0, 8(sp)
+label26:
+	ld s0, 16(sp)
+	mv s1, s0
+	ld t1, 8(sp)
+	mv t2, t1
+	sd t2, 24(sp)
+	sd s1, 32(sp)
+	ld s0, 32(sp)
 	addiw s1, s0, -1
-	ld t1, 16(sp)
+	ld t1, 24(sp)
 	addiw t2, t1, 1
-	mv t1, t2
-	mv s0, s1
-	sd s0, 8(sp)
-	sd t1, 16(sp)
-	ld s0, 8(sp)
-	bne s0, zero, label6
+	sd t2, 8(sp)
+	sd s1, 16(sp)
+	bne s1, zero, label26
 	j label5
