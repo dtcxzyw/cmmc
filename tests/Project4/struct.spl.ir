@@ -1,12 +1,10 @@
 struct foo {i32 a, i32 b};
 
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @gcd(struct foo* %p) -> i32 {
+internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @gcd(struct foo* %p) -> i32 { NoMemoryWrite NoSideEffect } {
 ^entry:
     struct foo* %pn = alloc struct foo;
-    i32* %b = alloc i32;
-    i32* %a = alloc i32;
     struct foo* %p1 = alloc struct foo;
     i32* %0 = getelementptr &(struct foo* %p1)[i32 0].a;
     i32* %1 = getelementptr &(struct foo* %p)[i32 0].a;
@@ -16,35 +14,23 @@ func @gcd(struct foo* %p) -> i32 {
     i32* %4 = getelementptr &(struct foo* %p)[i32 0].b;
     i32 %5 = load i32* %4;
     store i32* %3 with i32 %5;
-    i32* %6 = getelementptr &(struct foo* %p1)[i32 0].a;
-    i32 %7 = load i32* %6;
-    store i32* %a with i32 %7;
-    i32* %8 = getelementptr &(struct foo* %p1)[i32 0].b;
-    i32 %9 = load i32* %8;
-    store i32* %b with i32 %9;
-    i32 %10 = load i32* %b;
-    i1 %11 = scmp neq i32 %10, i32 0;
-    cbr i1 %11(prob = 0.5), ^if.then, ^b1;
+    i1 %6 = scmp neq i32 %5, i32 0;
+    cbr i1 %6(prob = 0.5), ^if.then, ^b;
 ^if.then:
-    i32* %12 = getelementptr &(struct foo* %pn)[i32 0].a;
-    i32 %13 = load i32* %b;
-    store i32* %12 with i32 %13;
-    i32* %14 = getelementptr &(struct foo* %pn)[i32 0].b;
-    i32 %15 = load i32* %a;
-    i32 %16 = load i32* %a;
-    i32 %17 = load i32* %b;
-    i32 %18 = sdiv i32 %16, i32 %17;
-    i32 %19 = load i32* %b;
-    i32 %20 = mul i32 %18, i32 %19;
-    i32 %21 = sub i32 %15, i32 %20;
-    store i32* %14 with i32 %21;
-    i32 %22 = call (struct foo*) -> i32 @gcd(struct foo* %pn);
-    ret i32 %22;
-^b1:
-    i32 %23 = load i32* %a;
-    ret i32 %23;
+    i32* %7 = getelementptr &(struct foo* %pn)[i32 0].a;
+    store i32* %7 with i32 %5;
+    i32* %8 = getelementptr &(struct foo* %pn)[i32 0].b;
+    i32 %9 = sdiv i32 %2, i32 %5;
+    i32 %10 = mul i32 %5, i32 %9;
+    i32 %11 = sub i32 %2, i32 %10;
+    store i32* %8 with i32 %11;
+    i32 %12 = call (struct foo*) -> i32 @gcd(struct foo* %pn);
+    ubr ^b;
+^b:
+    i32 %13 = phi [^entry, i32 %2] [^if.then, i32 %12];
+    ret i32 %13;
 }
-func @main() -> i32 {
+func @main() -> i32 { NoMemoryWrite NoRecurse } {
 ^entry:
     struct foo* %p = alloc struct foo;
     i32* %0 = getelementptr &(struct foo* %p)[i32 0].a;

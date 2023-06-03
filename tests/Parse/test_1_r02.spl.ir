@@ -1,16 +1,5 @@
-struct my_struct {i32 code, i8 data};
-
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
 i32* @global;
-func @test_1_r02() -> i32 {
+func @test_1_r02() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
 ^entry:
-    struct my_struct* %obj = alloc struct my_struct;
-    i32* %0 = getelementptr &(struct my_struct* %obj)[i32 0].code;
-    i32 %1 = load i32* @global;
-    store i32* %0 with i32 %1;
-    i32 %2 = load i32* @global;
-    i32 %3 = add i32 %2, i32 1;
-    store i32* @global with i32 %3;
     unreachable;
 }

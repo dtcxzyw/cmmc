@@ -1,5 +1,3 @@
-int do, break, continue, for, goto, const, switch, case, union;
-
 int main() {
 	int a, res, n;
     int i = 0;

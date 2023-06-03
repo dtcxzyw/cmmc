@@ -24,229 +24,167 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^b1:
     i1 %11 = phi [^entry1, i1 false] [^b, i1 %10];
     i32 %12 = zext i1 %11 to i32;
-    ubr ^entry2;
-^entry2:
-    i32 %13 = phi [^b1, i32 %2] [^if.then, i32 0];
-    i32 %14 = phi [^b1, i32 %12] [^if.then, i32 %16];
-    i1 %15 = scmp neq i32 %13, i32 0;
-    cbr i1 %15(prob = 0.5), ^if.then, ^entry3;
+    i1 %13 = scmp neq i32 %2, i32 0;
+    cbr i1 %13(prob = 0.5), ^if.then, ^b2;
 ^if.then:
-    i32 %16 = srem i32 %14, i32 %13;
-    ubr ^entry2;
-^entry3:
-    i32 %17 = phi [^entry2, i32 %3] [^if.else, i32 0];
-    i32 %18 = phi [^entry2, i32 %14] [^if.else, i32 %39];
-    i1 %19 = scmp eq i32 %17, i32 0;
-    cbr i1 %19(prob = 0.5), ^if.then1, ^if.else;
-^if.then1:
-    i32 %20 = add i32 %18, i32 1;
-    i32* %21 = getelementptr &([10 * i32]* %arr)[i64 0][i64 0];
-    i32 %22 = load i32* %21;
-    i32* %23 = getelementptr &([10 * i32]* %arr)[i64 0][i64 1];
-    i32 %24 = load i32* %23;
-    i32* %25 = getelementptr &([10 * i32]* %arr)[i64 0][i64 2];
-    i32 %26 = load i32* %25;
-    i32* %27 = getelementptr &([10 * i32]* %arr)[i64 0][i64 3];
-    i32 %28 = load i32* %27;
-    i1 %29 = scmp eq i32 %28, i32 0;
-    i1 %30 = scmp neq i32 %26, i32 0;
-    i1 %31 = select i1 %30 ? i1 %29 : i1 false;
-    i32 %32 = zext i1 %31 to i32;
-    i32* %33 = getelementptr &([10 * i32]* %arr)[i64 0][i64 4];
-    i32 %34 = load i32* %33;
-    i32* %35 = getelementptr &([10 * i32]* %arr)[i64 0][i64 5];
-    i32 %36 = load i32* %35;
-    i1 %37 = scmp eq i32 %36, i32 0;
-    i32 %38 = zext i1 %37 to i32;
-    ubr ^entry4;
-^if.else:
-    i32 %39 = add i32 %17, i32 %18;
-    ubr ^entry3;
-^entry4:
-    i32 %40 = phi [^if.then1, i32 %38] [^if.then2, i32 0];
-    i32 %41 = phi [^if.then1, i32 %34] [^if.then2, i32 %43];
-    i1 %42 = scmp neq i32 %40, i32 0;
-    cbr i1 %42(prob = 0.5), ^if.then2, ^b2;
-^if.then2:
-    i32 %43 = srem i32 %41, i32 %40;
-    ubr ^entry4;
+    i32 %14 = srem i32 %12, i32 %2;
+    ubr ^b2;
 ^b2:
-    i1 %44 = scmp neq i32 0, i32 %24;
-    i32 %45 = select i1 %44 ? i32 %32 : i32 %41;
-    i32* %46 = getelementptr &([10 * i32]* %arr)[i64 0][i64 6];
-    i32 %47 = load i32* %46;
-    ubr ^entry5;
-^entry5:
-    i32 %48 = phi [^b2, i32 %47] [^if.else1, i32 0];
-    i32 %49 = phi [^b2, i32 %45] [^if.else1, i32 %54];
-    i1 %50 = scmp eq i32 %48, i32 0;
-    cbr i1 %50(prob = 0.5), ^if.then3, ^if.else1;
-^if.then3:
-    i32 %51 = add i32 %49, i32 1;
-    i32* %52 = getelementptr &([10 * i32]* %arr)[i64 0][i64 7];
-    i32 %53 = load i32* %52;
-    ubr ^entry6;
+    i32 %15 = phi [^b1, i32 %12] [^if.then, i32 %14];
+    i1 %16 = scmp eq i32 %3, i32 0;
+    cbr i1 %16(prob = 0.5), ^if.then1, ^if.else;
+^if.else:
+    i32 %17 = add i32 %15, i32 %3;
+    ubr ^if.then1;
+^if.then1:
+    i32 %18 = phi [^b2, i32 %15] [^if.else, i32 %17];
+    i32 %19 = add i32 %18, i32 1;
+    i32* %20 = getelementptr &([10 * i32]* %arr)[i64 0][i64 0];
+    i32 %21 = load i32* %20;
+    i32* %22 = getelementptr &([10 * i32]* %arr)[i64 0][i64 1];
+    i32 %23 = load i32* %22;
+    i32* %24 = getelementptr &([10 * i32]* %arr)[i64 0][i64 2];
+    i32 %25 = load i32* %24;
+    i32* %26 = getelementptr &([10 * i32]* %arr)[i64 0][i64 3];
+    i32 %27 = load i32* %26;
+    i1 %28 = scmp eq i32 %27, i32 0;
+    i1 %29 = scmp neq i32 %25, i32 0;
+    i1 %30 = select i1 %29 ? i1 %28 : i1 false;
+    i32 %31 = zext i1 %30 to i32;
+    i32* %32 = getelementptr &([10 * i32]* %arr)[i64 0][i64 4];
+    i32 %33 = load i32* %32;
+    i32* %34 = getelementptr &([10 * i32]* %arr)[i64 0][i64 5];
+    i32 %35 = load i32* %34;
+    i1 %36 = scmp eq i32 %35, i32 0;
+    i32 %37 = select i1 %36 ? i32 0 : i32 %33;
+    i1 %38 = scmp neq i32 0, i32 %23;
+    i32 %39 = select i1 %38 ? i32 %31 : i32 %37;
+    i32* %40 = getelementptr &([10 * i32]* %arr)[i64 0][i64 6];
+    i32 %41 = load i32* %40;
+    i1 %42 = scmp eq i32 %41, i32 0;
+    cbr i1 %42(prob = 0.5), ^if.then2, ^if.else1;
 ^if.else1:
-    i32 %54 = add i32 %48, i32 %49;
-    ubr ^entry5;
-^entry6:
-    i32 %55 = phi [^if.then3, i32 %53] [^if.then4, i32 0];
-    i32 %56 = phi [^if.then3, i32 %51] [^if.then4, i32 %58];
-    i1 %57 = scmp neq i32 %55, i32 0;
-    cbr i1 %57(prob = 0.5), ^if.then4, ^b3;
-^if.then4:
-    i32 %58 = srem i32 %56, i32 %55;
-    ubr ^entry6;
+    i32 %43 = add i32 %39, i32 %41;
+    ubr ^if.then2;
+^if.then2:
+    i32 %44 = phi [^if.then1, i32 %39] [^if.else1, i32 %43];
+    i32 %45 = add i32 %44, i32 1;
+    i32* %46 = getelementptr &([10 * i32]* %arr)[i64 0][i64 7];
+    i32 %47 = load i32* %46;
+    i1 %48 = scmp neq i32 %47, i32 0;
+    cbr i1 %48(prob = 0.5), ^if.then3, ^b3;
+^if.then3:
+    i32 %49 = srem i32 %45, i32 %47;
+    ubr ^b3;
 ^b3:
-    i32* %59 = getelementptr &([10 * i32]* %arr)[i64 0][i64 8];
-    i32 %60 = load i32* %59;
-    i32* %61 = getelementptr &([10 * i32]* %arr)[i64 0][i64 9];
-    i32 %62 = load i32* %61;
-    i1 %63 = scmp eq i32 %62, i32 0;
-    i32 %64 = zext i1 %63 to i32;
-    ubr ^entry7;
-^entry7:
-    i32 %65 = phi [^b3, i32 %64] [^if.else2, i32 0];
-    i32 %66 = phi [^b3, i32 %60] [^if.else2, i32 %69];
-    i1 %67 = scmp eq i32 %65, i32 0;
-    cbr i1 %67(prob = 0.5), ^if.then5, ^if.else2;
-^if.then5:
-    i32 %68 = add i32 %66, i32 1;
-    ubr ^entry8;
+    i32 %50 = phi [^if.then2, i32 %45] [^if.then3, i32 %49];
+    i32* %51 = getelementptr &([10 * i32]* %arr)[i64 0][i64 8];
+    i32 %52 = load i32* %51;
+    i32* %53 = getelementptr &([10 * i32]* %arr)[i64 0][i64 9];
+    i32 %54 = load i32* %53;
+    i1 %55 = scmp neq i32 %54, i32 0;
+    cbr i1 %55(prob = 0.5), ^if.then4, ^if.else2;
 ^if.else2:
-    i32 %69 = add i32 %65, i32 %66;
-    ubr ^entry7;
-^entry8:
-    i32 %70 = phi [^if.then5, i32 %0] [^if.else3, i32 0];
-    i32 %71 = phi [^if.then5, i32 %68] [^if.else3, i32 %78];
-    i1 %72 = scmp eq i32 %70, i32 0;
-    cbr i1 %72(prob = 0.5), ^if.then6, ^if.else3;
-^if.then6:
-    i32 %73 = mul i32 %56, i32 %71;
-    i1 %74 = scmp neq i32 0, i32 %20;
-    i32 %75 = select i1 %74 ? i32 %22 : i32 %73;
-    i1 %76 = scmp eq i32 %2, i32 0;
-    i32 %77 = zext i1 %76 to i32;
-    ubr ^entry9;
+    i1 %56 = scmp eq i32 %54, i32 0;
+    i32 %57 = zext i1 %56 to i32;
+    i32 %58 = add i32 %57, i32 %52;
+    ubr ^if.then4;
+^if.then4:
+    i32 %59 = phi [^b3, i32 %52] [^if.else2, i32 %58];
+    i32 %60 = add i32 %59, i32 1;
+    cbr i1 %9(prob = 0.5), ^if.then5, ^if.else3;
 ^if.else3:
-    i32 %78 = sub i32 %71, i32 %70;
-    ubr ^entry8;
-^entry9:
-    i32 %79 = phi [^if.then6, i32 %3] [^if.else4, i32 0];
-    i32 %80 = phi [^if.then6, i32 %77] [^if.else4, i32 %83];
-    i1 %81 = scmp eq i32 %79, i32 0;
-    cbr i1 %81(prob = 0.5), ^if.then7, ^if.else4;
-^if.then7:
-    i32 %82 = add i32 %80, i32 1;
-    ubr ^entry10;
+    i32 %61 = sub i32 %60, i32 %0;
+    ubr ^if.then5;
+^if.then5:
+    i32 %62 = phi [^if.then4, i32 %60] [^if.else3, i32 %61];
+    i32 %63 = mul i32 %50, i32 %62;
+    i1 %64 = scmp neq i32 0, i32 %19;
+    i32 %65 = select i1 %64 ? i32 %21 : i32 %63;
+    i1 %66 = scmp eq i32 %2, i32 0;
+    i32 %67 = zext i1 %66 to i32;
+    cbr i1 %16(prob = 0.5), ^if.then6, ^if.else4;
 ^if.else4:
-    i32 %83 = add i32 %79, i32 %80;
-    ubr ^entry9;
-^entry10:
-    i32 %84 = phi [^if.then7, i32 %82] [^if.then8, i32 0];
-    i32 %85 = phi [^if.then7, i32 %1] [^if.then8, i32 %87];
-    i1 %86 = scmp neq i32 %84, i32 0;
-    cbr i1 %86(prob = 0.5), ^if.then8, ^entry11;
-^if.then8:
-    i32 %87 = srem i32 %85, i32 %84;
-    ubr ^entry10;
-^entry11:
-    i32 %88 = phi [^entry10, i32 %85] [^if.else5, i32 0];
-    i32 %89 = phi [^entry10, i32 %75] [^if.else5, i32 %92];
-    i1 %90 = scmp eq i32 %88, i32 0;
-    cbr i1 %90(prob = 0.5), ^if.then9, ^if.else5;
-^if.then9:
-    i32 %91 = add i32 %89, i32 1;
-    ubr ^entry12;
-^if.else5:
-    i32 %92 = add i32 %88, i32 %89;
-    ubr ^entry11;
-^entry12:
-    i32 %93 = phi [^if.then9, i32 %24] [^if.else6, i32 0];
-    i32 %94 = phi [^if.then9, i32 %22] [^if.else6, i32 %97];
-    i1 %95 = scmp eq i32 %93, i32 0;
-    cbr i1 %95(prob = 0.5), ^if.then10, ^if.else6;
-^if.then10:
-    i32 %96 = mul i32 %94, i32 %91;
-    ubr ^entry13;
-^if.else6:
-    i32 %97 = sub i32 %94, i32 %93;
-    ubr ^entry12;
-^entry13:
-    i32 %98 = phi [^if.then10, i32 %26] [^if.then11, i32 0];
-    i32 %99 = phi [^if.then10, i32 %96] [^if.then11, i32 %101];
-    i1 %100 = scmp neq i32 %98, i32 0;
-    cbr i1 %100(prob = 0.5), ^if.then11, ^b4;
-^if.then11:
-    i32 %101 = srem i32 %99, i32 %98;
-    ubr ^entry13;
+    i32 %68 = add i32 %67, i32 %3;
+    ubr ^if.then6;
+^if.then6:
+    i32 %69 = phi [^if.then5, i32 %67] [^if.else4, i32 %68];
+    i32 %70 = add i32 %69, i32 1;
+    i1 %71 = scmp neq i32 %70, i32 0;
+    cbr i1 %71(prob = 0.5), ^if.then7, ^b4;
+^if.then7:
+    i32 %72 = srem i32 %1, i32 %70;
+    ubr ^b4;
 ^b4:
-    i32 %102 = neg i32 %36;
-    ubr ^entry14;
-^entry14:
-    i32 %103 = phi [^b4, i32 %102] [^if.else7, i32 0];
-    i32 %104 = phi [^b4, i32 %34] [^if.else7, i32 %108];
-    i1 %105 = scmp eq i32 %103, i32 0;
-    cbr i1 %105(prob = 0.5), ^if.then12, ^if.else7;
-^if.then12:
-    i32 %106 = add i32 %104, i32 1;
-    i32 %107 = neg i32 %47;
-    ubr ^entry15;
-^if.else7:
-    i32 %108 = add i32 %103, i32 %104;
-    ubr ^entry14;
-^entry15:
-    i32 %109 = phi [^if.then12, i32 %107] [^if.then13, i32 0];
-    i32 %110 = phi [^if.then12, i32 %106] [^if.then13, i32 %112];
-    i1 %111 = scmp neq i32 %109, i32 0;
-    cbr i1 %111(prob = 0.5), ^if.then13, ^b5;
-^if.then13:
-    i32 %112 = srem i32 %110, i32 %109;
-    ubr ^entry15;
+    i32 %73 = phi [^if.then6, i32 %1] [^if.then7, i32 %72];
+    i1 %74 = scmp eq i32 %73, i32 0;
+    cbr i1 %74(prob = 0.5), ^if.then8, ^if.else5;
+^if.else5:
+    i32 %75 = add i32 %65, i32 %73;
+    ubr ^if.then8;
+^if.then8:
+    i32 %76 = phi [^b4, i32 %65] [^if.else5, i32 %75];
+    i32 %77 = add i32 %76, i32 1;
+    i1 %78 = scmp eq i32 %23, i32 0;
+    cbr i1 %78(prob = 0.5), ^if.then9, ^if.else6;
+^if.else6:
+    i32 %79 = sub i32 %21, i32 %23;
+    ubr ^if.then9;
+^if.then9:
+    i32 %80 = phi [^if.then8, i32 %21] [^if.else6, i32 %79];
+    i32 %81 = mul i32 %80, i32 %77;
+    cbr i1 %29(prob = 0.5), ^if.then10, ^b5;
+^if.then10:
+    i32 %82 = srem i32 %81, i32 %25;
+    ubr ^b5;
 ^b5:
-    i1 %113 = scmp eq i32 %60, i32 0;
-    i32 %114 = zext i1 %113 to i32;
-    ubr ^entry16;
-^entry16:
-    i32 %115 = phi [^b5, i32 %114] [^if.else8, i32 0];
-    i32 %116 = phi [^b5, i32 %53] [^if.else8, i32 %120];
-    i1 %117 = scmp eq i32 %115, i32 0;
-    cbr i1 %117(prob = 0.5), ^if.then14, ^if.else8;
-^if.then14:
-    i32 %118 = mul i32 %110, i32 %116;
-    i32 %119 = neg i32 %62;
-    ubr ^entry17;
+    i32 %83 = phi [^if.then9, i32 %81] [^if.then10, i32 %82];
+    cbr i1 %36(prob = 0.5), ^if.then11, ^if.else7;
+^if.else7:
+    i32 %84 = sub i32 %33, i32 %35;
+    ubr ^if.then11;
+^if.then11:
+    i32 %85 = phi [^b5, i32 %33] [^if.else7, i32 %84];
+    i32 %86 = add i32 %85, i32 1;
+    i1 %87 = scmp neq i32 %41, i32 0;
+    cbr i1 %87(prob = 0.5), ^if.then12, ^b6;
+^if.then12:
+    i32 %88 = neg i32 %41;
+    i32 %89 = srem i32 %86, i32 %88;
+    ubr ^b6;
+^b6:
+    i32 %90 = phi [^if.then11, i32 %86] [^if.then12, i32 %89];
+    i1 %91 = scmp neq i32 %52, i32 0;
+    cbr i1 %91(prob = 0.5), ^if.then13, ^if.else8;
 ^if.else8:
-    i32 %120 = sub i32 %116, i32 %115;
-    ubr ^entry16;
-^entry17:
-    i32 %121 = phi [^if.then14, i32 %119] [^if.then15, i32 0];
-    i32 %122 = phi [^if.then14, i32 %118] [^if.then15, i32 %124];
-    i1 %123 = scmp neq i32 %121, i32 0;
-    cbr i1 %123(prob = 0.5), ^if.then15, ^entry18;
-^if.then15:
-    i32 %124 = srem i32 %122, i32 %121;
-    ubr ^entry17;
-^entry18:
-    i32 %125 = phi [^entry17, i32 %0] [^if.else9, i32 0];
-    i32 %126 = phi [^entry17, i32 %122] [^if.else9, i32 %129];
-    i1 %127 = scmp eq i32 %125, i32 0;
-    cbr i1 %127(prob = 0.5), ^if.then16, ^if.else9;
-^if.then16:
-    i32 %128 = add i32 %126, i32 1;
-    ubr ^entry19;
+    i1 %92 = scmp eq i32 %52, i32 0;
+    i32 %93 = zext i1 %92 to i32;
+    i32 %94 = sub i32 %47, i32 %93;
+    ubr ^if.then13;
+^if.then13:
+    i32 %95 = phi [^b6, i32 %47] [^if.else8, i32 %94];
+    i32 %96 = mul i32 %90, i32 %95;
+    cbr i1 %55(prob = 0.5), ^if.then14, ^b7;
+^if.then14:
+    i32 %97 = neg i32 %54;
+    i32 %98 = srem i32 %96, i32 %97;
+    ubr ^b7;
+^b7:
+    i32 %99 = phi [^if.then13, i32 %96] [^if.then14, i32 %98];
+    cbr i1 %9(prob = 0.5), ^if.then15, ^if.else9;
 ^if.else9:
-    i32 %129 = add i32 %125, i32 %126;
-    ubr ^entry18;
-^entry19:
-    i32 %130 = phi [^if.then16, i32 %128] [^if.else10, i32 0];
-    i32 %131 = phi [^if.then16, i32 %28] [^if.else10, i32 %133];
-    i1 %132 = scmp eq i32 %130, i32 0;
-    cbr i1 %132(prob = 0.5), ^if.then17, ^if.else10;
+    i32 %100 = add i32 %99, i32 %0;
+    ubr ^if.then15;
+^if.then15:
+    i32 %101 = phi [^b7, i32 %99] [^if.else9, i32 %100];
+    i32 %102 = add i32 %101, i32 1;
+    i1 %103 = scmp eq i32 %102, i32 0;
+    cbr i1 %103(prob = 0.5), ^if.then16, ^if.else10;
 ^if.else10:
-    i32 %133 = sub i32 %131, i32 %130;
-    ubr ^entry19;
-^if.then17:
-    i32 %134 = mul i32 %99, i32 %131;
-    ret i32 %134;
+    i32 %104 = sub i32 %27, i32 %102;
+    ubr ^if.then16;
+^if.then16:
+    i32 %105 = phi [^if.then15, i32 %27] [^if.else10, i32 %104];
+    i32 %106 = mul i32 %83, i32 %105;
+    ret i32 %106;
 }

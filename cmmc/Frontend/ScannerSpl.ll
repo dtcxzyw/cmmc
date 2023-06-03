@@ -78,7 +78,6 @@
 "continue" { if(driver.checkExtension()) { CMMC_TERMINAL(CONTINUE); } else { return emitID(); } }
 "break" { if(driver.checkExtension()) { CMMC_TERMINAL(BREAK); } else { return emitID(); } }
 "return" { CMMC_TERMINAL(RETURN); }
-"goto" { if(driver.checkExtension()) { CMMC_TERMINAL(GOTO); } else { return emitID(); } }
 "switch" { if(driver.checkExtension()) { CMMC_TERMINAL(SWITCH); } else { return emitID(); } }
 "case" { if(driver.checkExtension()) { CMMC_TERMINAL(CASE); } else { return emitID(); } }
 

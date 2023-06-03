@@ -10,13 +10,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %1 = scmp gt i32 %0, i32 0;
     cbr i1 %1(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %7];
-    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %8];
-    i32 %4 = mul i32 %3, i32 60;
+    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %8];
+    i32 %3 = phi [^entry, i32 0] [^while.body, i32 %7];
+    i32 %4 = mul i32 %2, i32 60;
     i32 %5 = sdiv i32 %4, i32 60;
-    i32 %6 = add i32 %5, i32 %2;
+    i32 %6 = add i32 %3, i32 %5;
     i32 %7 = srem i32 %6, i32 134209537;
-    i32 %8 = add i32 %3, i32 1;
+    i32 %8 = add i32 %2, i32 1;
     i1 %9 = scmp lt i32 %8, i32 %0;
     cbr i1 %9(prob = 0.97), ^while.body, ^b;
 ^b:

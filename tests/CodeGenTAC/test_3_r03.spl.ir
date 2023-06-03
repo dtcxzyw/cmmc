@@ -1,70 +1,37 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    i32* %k = alloc i32;
-    i32* %i = alloc i32;
-    i32* %num = alloc i32;
-    i32* %N = alloc i32;
-    store i32* %N with i32 30;
-    store i32* %num with i32 0;
-    store i32* %i with i32 1;
-    store i32* %k with i32 1;
     ubr ^while.header;
 ^while.header:
-    i32 %0 = load i32* %k;
-    i32 %1 = load i32* %N;
-    i1 %2 = scmp le i32 %0, i32 %1;
-    i32 %3 = zext i1 %2 to i32;
-    i1 %4 = scmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.97), ^while.body, ^b;
-^while.body:
-    ubr ^while.header1;
+    i32 %0 = phi [^entry, i32 1] [^b3, i32 %12];
+    i1 %1 = scmp lt i32 %0, i32 31;
+    cbr i1 %1(prob = 0.97), ^while.header1, ^b;
+^while.header1:
+    i32 %2 = phi [^while.header, i32 0] [^b2, i32 %10];
+    i32 %3 = phi [^while.header, i32 1] [^b2, i32 %11];
+    i1 %4 = scmp le i32 %3, i32 %0;
+    cbr i1 %4(prob = 0.97), ^while.body, ^b1;
 ^b:
     ret i32 0;
-^while.header1:
-    i32 %5 = load i32* %i;
-    i32 %6 = load i32* %k;
-    i1 %7 = scmp le i32 %5, i32 %6;
-    i32 %8 = zext i1 %7 to i32;
-    i1 %9 = scmp neq i32 %8, i32 0;
-    cbr i1 %9(prob = 0.97), ^while.body1, ^b1;
-^while.body1:
-    i32 %10 = load i32* %k;
-    i32 %11 = load i32* %k;
-    i32 %12 = load i32* %i;
-    i32 %13 = sdiv i32 %11, i32 %12;
-    i32 %14 = load i32* %i;
-    i32 %15 = mul i32 %13, i32 %14;
-    i1 %16 = scmp eq i32 %10, i32 %15;
-    i32 %17 = zext i1 %16 to i32;
-    i1 %18 = scmp neq i32 %17, i32 0;
-    cbr i1 %18(prob = 0.5), ^if.then, ^b2;
+^while.body:
+    i32 %5 = sdiv i32 %0, i32 %3;
+    i32 %6 = mul i32 %5, i32 %3;
+    i1 %7 = scmp eq i32 %0, i32 %6;
+    cbr i1 %7(prob = 0.5), ^if.then, ^b2;
 ^b1:
-    i32 %19 = load i32* %num;
-    i1 %20 = scmp eq i32 %19, i32 2;
-    i32 %21 = zext i1 %20 to i32;
-    i1 %22 = scmp neq i32 %21, i32 0;
-    cbr i1 %22(prob = 0.5), ^if.then1, ^b3;
+    i1 %8 = scmp eq i32 %2, i32 2;
+    cbr i1 %8(prob = 0.5), ^if.then1, ^b3;
 ^if.then:
-    i32 %23 = load i32* %num;
-    i32 %24 = add i32 %23, i32 1;
-    store i32* %num with i32 %24;
+    i32 %9 = add i32 %2, i32 1;
     ubr ^b2;
 ^b2:
-    i32 %25 = load i32* %i;
-    i32 %26 = add i32 %25, i32 1;
-    store i32* %i with i32 %26;
+    i32 %10 = phi [^while.body, i32 %2] [^if.then, i32 %9];
+    i32 %11 = add i32 %3, i32 1;
     ubr ^while.header1;
 ^if.then1:
-    i32 %27 = load i32* %k;
-    call (i32) -> void @write(i32 %27);
+    call (i32) -> void @write(i32 %0);
     ubr ^b3;
 ^b3:
-    store i32* %i with i32 1;
-    store i32* %num with i32 0;
-    i32 %28 = load i32* %k;
-    i32 %29 = add i32 %28, i32 1;
-    store i32* %k with i32 %29;
+    i32 %12 = add i32 %0, i32 1;
     ubr ^while.header;
 }

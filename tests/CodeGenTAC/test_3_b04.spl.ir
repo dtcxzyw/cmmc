@@ -1,24 +1,7 @@
-struct Student {i32 ID, i32 score};
-
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    struct Student* %s2 = alloc struct Student;
-    struct Student* %s1 = alloc struct Student;
-    i32* %0 = getelementptr &(struct Student* %s1)[i32 0].ID;
-    store i32* %0 with i32 1;
-    i32* %1 = getelementptr &(struct Student* %s1)[i32 0].score;
-    store i32* %1 with i32 70;
-    i32* %2 = getelementptr &(struct Student* %s2)[i32 0].ID;
-    store i32* %2 with i32 2;
-    i32* %3 = getelementptr &(struct Student* %s2)[i32 0].score;
-    store i32* %3 with i32 90;
-    i32* %4 = getelementptr &(struct Student* %s2)[i32 0].ID;
-    i32 %5 = load i32* %4;
-    call (i32) -> void @write(i32 %5);
-    i32* %6 = getelementptr &(struct Student* %s1)[i32 0].score;
-    i32 %7 = load i32* %6;
-    call (i32) -> void @write(i32 %7);
+    call (i32) -> void @write(i32 2);
+    call (i32) -> void @write(i32 70);
     ret i32 0;
 }

@@ -1,26 +1,4 @@
-struct x {[100 * [100 * i32]] to};
-struct c {struct x luck};
-struct d {i32 leg};
-
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @test_3() -> i32 {
+func @test_3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry:
-    struct c* %good = alloc struct c;
-    [100 * struct d]* %best = alloc [100 * struct d];
-    i32* %a = alloc i32;
-    i32* %you = alloc i32;
-    store i32* %you with i32 1;
-    store i32* %a with i32 2;
-    struct x* %0 = getelementptr &(struct c* %good)[i32 0].luck;
-    [100 * [100 * i32]]* %1 = getelementptr &(struct x* %0)[i32 0].to;
-    i32 %2 = load i32* %you;
-    [100 * i32]* %3 = getelementptr &([100 * [100 * i32]]* %1)[i32 0][i32 %2];
-    i32 %4 = load i32* %a;
-    struct d* %5 = getelementptr &([100 * struct d]* %best)[i32 0][i32 %4];
-    i32* %6 = getelementptr &(struct d* %5)[i32 0].leg;
-    i32 %7 = load i32* %6;
-    i32* %8 = getelementptr &([100 * i32]* %3)[i32 0][i32 %7];
-    store i32* %8 with i32 1;
     ret i32 0;
 }

@@ -1,1130 +1,891 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write(i32) -> void { NoMemoryRead NoMemoryWrite };
-i32* @do;
-i32* @break;
-i32* @continue;
-i32* @for;
-i32* @goto;
-i32* @const;
-i32* @switch;
-i32* @case;
-i32* @union;
+internal func @read() -> i32 { NoMemoryRead NoMemoryWrite };
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry():
-    i32* %a = alloc i32;
-    i32* %res = alloc i32;
-    i32* %n = alloc i32;
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
+^entry:
     i32 %0 = call () -> i32 @read();
-    store i32* %n with i32 %0;
-    i1 %1 = scmp lt i32 0, i32 %0;
-    cbr i1 %1, [ ^while.body i32* %n, i32* %i, i32* %a, i32* %res ], [ ^b ];
-^while.body(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    store i32* %arg3 with i32 0;
-    i32 %0 = call () -> i32 @read();
-    store i32* %arg2 with i32 %0;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect i32* %arg, i32* %arg3, i32* %arg1, i32* %arg2, i32 %0 ], [ ^if.else i32* %arg2, i32* %arg, i32* %arg1, i32* %arg3, i32 0 ];
-^b():
+    ubr ^while.header;
+^while.header:
+    i32 %1 = phi [^entry, i32 0] [^b3, i32 %8];
+    i1 %2 = scmp lt i32 %1, i32 %0;
+    cbr i1 %2(prob = 0.97), ^while.body, ^b;
+^while.body:
+    i32 %3 = call () -> i32 @read();
+    i1 %4 = scmp gt i32 %3, i32 0;
+    cbr i1 %4(prob = 0.5), ^b1, ^b2;
+^b:
     ret i32 0;
-^if.else(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i32 %0 = add i32 %arg4, i32 100;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ];
-^indirect(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 100;
-    cbr i1 %0, [ ^if.then i32* %arg, i32* %arg2, i32* %arg1, i32* %arg3 ], [ ^indirect1 i32* %arg3, i32* %arg, i32* %arg2, i32* %arg1 ];
-^indirect1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    ubr [ ^if.else i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ];
-^if.then(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect2 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else1 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^b1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    call (i32) -> void @write(i32 %arg4);
-    i32 %0 = load i32* %arg2;
-    i32 %1 = add i32 %0, i32 1;
-    store i32* %arg2 with i32 %1;
-    i32 %2 = load i32* %arg1;
-    i1 %3 = scmp lt i32 %1, i32 %2;
-    cbr i1 %3, [ ^while.body i32* %arg1, i32* %arg2, i32* %arg, i32* %arg3 ], [ ^b ];
-^if.else1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 99;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 99;
-    cbr i1 %0, [ ^if.then1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else1 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then1(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect3 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else2 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 98;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 98;
-    cbr i1 %0, [ ^if.then2 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else2 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then2(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect4 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else3 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 97;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect4(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 97;
-    cbr i1 %0, [ ^if.then3 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else3 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then3(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect5 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else4 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else4(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 96;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect5(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 96;
-    cbr i1 %0, [ ^if.then4 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else4 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then4(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect6 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else5 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else5(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 95;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 95;
-    cbr i1 %0, [ ^if.then5 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else5 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then5(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect7 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else6 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 94;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect7(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 94;
-    cbr i1 %0, [ ^if.then6 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else6 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then6(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect8 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else7 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else7(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 93;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect8(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 93;
-    cbr i1 %0, [ ^if.then7 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else7 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then7(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect9 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else8 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else8(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 92;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect9(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 92;
-    cbr i1 %0, [ ^if.then8 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else8 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then8(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect10 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else9 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else9(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 91;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect10(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 91;
-    cbr i1 %0, [ ^if.then9 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else9 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then9(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect11 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else10 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else10(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 90;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect11(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 90;
-    cbr i1 %0, [ ^if.then10 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else10 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then10(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect12 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else11 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else11(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 89;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect12(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 89;
-    cbr i1 %0, [ ^if.then11 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else11 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then11(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect13 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else12 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else12(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 88;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect13(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 88;
-    cbr i1 %0, [ ^if.then12 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else12 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then12(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect14 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else13 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else13(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 87;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect14(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 87;
-    cbr i1 %0, [ ^if.then13 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else13 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then13(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect15 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else14 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else14(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 86;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect15(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 86;
-    cbr i1 %0, [ ^if.then14 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else14 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then14(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect16 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else15 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else15(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 85;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect16(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 85;
-    cbr i1 %0, [ ^if.then15 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else15 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then15(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect17 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else16 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else16(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 84;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect17(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 84;
-    cbr i1 %0, [ ^if.then16 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else16 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then16(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect18 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else17 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else17(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 83;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect18(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 83;
-    cbr i1 %0, [ ^if.then17 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else17 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then17(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect19 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else18 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else18(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 82;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect19(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 82;
-    cbr i1 %0, [ ^if.then18 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else18 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then18(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect20 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else19 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else19(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 81;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect20(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 81;
-    cbr i1 %0, [ ^if.then19 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else19 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then19(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect21 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else20 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else20(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 80;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect21(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 80;
-    cbr i1 %0, [ ^if.then20 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else20 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then20(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect22 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else21 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else21(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 79;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect22(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 79;
-    cbr i1 %0, [ ^if.then21 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else21 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then21(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect23 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else22 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else22(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 78;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect23(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 78;
-    cbr i1 %0, [ ^if.then22 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else22 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then22(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect24 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else23 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else23(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 77;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect24(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 77;
-    cbr i1 %0, [ ^if.then23 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else23 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then23(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect25 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else24 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else24(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 76;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect25(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 76;
-    cbr i1 %0, [ ^if.then24 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else24 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then24(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect26 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else25 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else25(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 75;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect26(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 75;
-    cbr i1 %0, [ ^if.then25 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else25 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then25(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect27 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else26 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else26(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 74;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect27(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 74;
-    cbr i1 %0, [ ^if.then26 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else26 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then26(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect28 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else27 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else27(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 73;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect28(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 73;
-    cbr i1 %0, [ ^if.then27 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else27 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then27(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect29 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else28 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else28(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 72;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect29(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 72;
-    cbr i1 %0, [ ^if.then28 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else28 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then28(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect30 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else29 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else29(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 71;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect30(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 71;
-    cbr i1 %0, [ ^if.then29 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else29 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then29(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect31 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else30 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else30(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 70;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect31(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 70;
-    cbr i1 %0, [ ^if.then30 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else30 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then30(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect32 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else31 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else31(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 69;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect32(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 69;
-    cbr i1 %0, [ ^if.then31 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else31 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then31(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect33 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else32 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else32(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 68;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect33(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 68;
-    cbr i1 %0, [ ^if.then32 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else32 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then32(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect34 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else33 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else33(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 67;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect34(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 67;
-    cbr i1 %0, [ ^if.then33 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else33 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then33(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect35 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else34 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else34(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 66;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect35(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 66;
-    cbr i1 %0, [ ^if.then34 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else34 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then34(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect36 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else35 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else35(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 65;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect36(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 65;
-    cbr i1 %0, [ ^if.then35 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else35 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then35(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect37 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else36 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else36(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 64;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect37(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 64;
-    cbr i1 %0, [ ^if.then36 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else36 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then36(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect38 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else37 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else37(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 63;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect38(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 63;
-    cbr i1 %0, [ ^if.then37 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else37 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then37(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect39 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else38 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else38(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 62;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect39(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 62;
-    cbr i1 %0, [ ^if.then38 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else38 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then38(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect40 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else39 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else39(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 61;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect40(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 61;
-    cbr i1 %0, [ ^if.then39 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else39 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then39(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect41 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else40 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else40(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 60;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect41(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 60;
-    cbr i1 %0, [ ^if.then40 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else40 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then40(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect42 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else41 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else41(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 59;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect42(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 59;
-    cbr i1 %0, [ ^if.then41 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else41 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then41(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect43 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else42 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else42(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 58;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect43(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 58;
-    cbr i1 %0, [ ^if.then42 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else42 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then42(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect44 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else43 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else43(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 57;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect44(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 57;
-    cbr i1 %0, [ ^if.then43 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else43 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then43(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect45 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else44 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else44(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 56;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect45(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 56;
-    cbr i1 %0, [ ^if.then44 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else44 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then44(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect46 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else45 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else45(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 55;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect46(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 55;
-    cbr i1 %0, [ ^if.then45 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else45 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then45(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect47 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else46 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else46(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 54;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect47(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 54;
-    cbr i1 %0, [ ^if.then46 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else46 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then46(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect48 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else47 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else47(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 53;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect48(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 53;
-    cbr i1 %0, [ ^if.then47 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else47 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then47(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect49 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else48 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else48(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 52;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect49(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 52;
-    cbr i1 %0, [ ^if.then48 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else48 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then48(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect50 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else49 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else49(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 51;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect50(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 51;
-    cbr i1 %0, [ ^if.then49 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else49 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then49(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect51 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else50 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else50(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 50;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect51(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 50;
-    cbr i1 %0, [ ^if.then50 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else50 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then50(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect52 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else51 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else51(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 49;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect52(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 49;
-    cbr i1 %0, [ ^if.then51 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else51 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then51(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect53 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else52 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else52(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 48;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect53(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 48;
-    cbr i1 %0, [ ^if.then52 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else52 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then52(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect54 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else53 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else53(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 47;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect54(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 47;
-    cbr i1 %0, [ ^if.then53 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else53 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then53(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect55 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else54 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else54(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 46;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect55(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 46;
-    cbr i1 %0, [ ^if.then54 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else54 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then54(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect56 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else55 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else55(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 45;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect56(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 45;
-    cbr i1 %0, [ ^if.then55 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else55 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then55(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect57 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else56 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else56(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 44;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect57(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 44;
-    cbr i1 %0, [ ^if.then56 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else56 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then56(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect58 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else57 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else57(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 43;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect58(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 43;
-    cbr i1 %0, [ ^if.then57 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else57 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then57(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect59 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else58 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else58(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 42;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect59(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 42;
-    cbr i1 %0, [ ^if.then58 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else58 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then58(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect60 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else59 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else59(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 41;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect60(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 41;
-    cbr i1 %0, [ ^if.then59 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else59 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then59(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect61 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else60 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else60(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 40;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect61(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 40;
-    cbr i1 %0, [ ^if.then60 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else60 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then60(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect62 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else61 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else61(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 39;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect62(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 39;
-    cbr i1 %0, [ ^if.then61 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else61 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then61(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect63 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else62 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else62(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 38;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect63(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 38;
-    cbr i1 %0, [ ^if.then62 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else62 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then62(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect64 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else63 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else63(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 37;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect64(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 37;
-    cbr i1 %0, [ ^if.then63 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else63 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then63(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect65 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else64 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else64(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 36;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect65(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 36;
-    cbr i1 %0, [ ^if.then64 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else64 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then64(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect66 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else65 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else65(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 35;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect66(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 35;
-    cbr i1 %0, [ ^if.then65 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else65 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then65(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect67 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else66 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else66(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 34;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect67(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 34;
-    cbr i1 %0, [ ^if.then66 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else66 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then66(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect68 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else67 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else67(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 33;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect68(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 33;
-    cbr i1 %0, [ ^if.then67 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else67 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then67(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect69 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else68 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else68(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 32;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect69(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 32;
-    cbr i1 %0, [ ^if.then68 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else68 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then68(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect70 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else69 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else69(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 31;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect70(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 31;
-    cbr i1 %0, [ ^if.then69 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else69 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then69(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect71 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else70 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else70(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 30;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect71(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 30;
-    cbr i1 %0, [ ^if.then70 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else70 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then70(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect72 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else71 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else71(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 29;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect72(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 29;
-    cbr i1 %0, [ ^if.then71 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else71 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then71(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect73 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else72 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else72(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 28;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect73(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 28;
-    cbr i1 %0, [ ^if.then72 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else72 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then72(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect74 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else73 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else73(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 27;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect74(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 27;
-    cbr i1 %0, [ ^if.then73 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else73 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then73(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect75 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else74 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else74(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 26;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect75(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 26;
-    cbr i1 %0, [ ^if.then74 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else74 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then74(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect76 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else75 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else75(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 25;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect76(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 25;
-    cbr i1 %0, [ ^if.then75 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else75 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then75(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect77 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else76 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else76(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 24;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect77(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 24;
-    cbr i1 %0, [ ^if.then76 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else76 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then76(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect78 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else77 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else77(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 23;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect78(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 23;
-    cbr i1 %0, [ ^if.then77 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else77 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then77(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect79 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else78 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else78(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 22;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect79(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 22;
-    cbr i1 %0, [ ^if.then78 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else78 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then78(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect80 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else79 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else79(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 21;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect80(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 21;
-    cbr i1 %0, [ ^if.then79 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else79 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then79(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect81 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else80 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else80(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 20;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect81(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 20;
-    cbr i1 %0, [ ^if.then80 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else80 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then80(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect82 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else81 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else81(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 19;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect82(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 19;
-    cbr i1 %0, [ ^if.then81 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else81 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then81(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect83 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else82 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else82(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 18;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect83(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 18;
-    cbr i1 %0, [ ^if.then82 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else82 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then82(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect84 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else83 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else83(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 17;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect84(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 17;
-    cbr i1 %0, [ ^if.then83 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else83 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then83(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect85 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else84 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else84(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 16;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect85(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 16;
-    cbr i1 %0, [ ^if.then84 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else84 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then84(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect86 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else85 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else85(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 15;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect86(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 15;
-    cbr i1 %0, [ ^if.then85 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else85 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then85(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect87 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else86 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else86(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 14;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect87(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 14;
-    cbr i1 %0, [ ^if.then86 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else86 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then86(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect88 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else87 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else87(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 13;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect88(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 13;
-    cbr i1 %0, [ ^if.then87 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else87 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then87(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect89 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else88 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else88(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 12;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect89(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 12;
-    cbr i1 %0, [ ^if.then88 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else88 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then88(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect90 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else89 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else89(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 11;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect90(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 11;
-    cbr i1 %0, [ ^if.then89 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else89 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then89(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect91 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else90 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else90(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 10;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect91(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 10;
-    cbr i1 %0, [ ^if.then90 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else90 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then90(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect92 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else91 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else91(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 9;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect92(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 9;
-    cbr i1 %0, [ ^if.then91 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else91 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then91(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect93 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else92 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else92(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 8;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect93(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 8;
-    cbr i1 %0, [ ^if.then92 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else92 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then92(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect94 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else93 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else93(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 7;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect94(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 7;
-    cbr i1 %0, [ ^if.then93 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else93 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then93(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect95 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else94 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else94(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 6;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect95(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 6;
-    cbr i1 %0, [ ^if.then94 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else94 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then94(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect96 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else95 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else95(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 5;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect96(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 5;
-    cbr i1 %0, [ ^if.then95 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else95 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then95(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect97 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else96 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else96(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 4;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect97(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 4;
-    cbr i1 %0, [ ^if.then96 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else96 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then96(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect98 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else97 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else97(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 3;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect98(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 3;
-    cbr i1 %0, [ ^if.then97 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3 ], [ ^if.else97 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then97(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i1 %1 = scmp gt i32 %0, i32 0;
-    cbr i1 %1, [ ^indirect99 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %0 ], [ ^if.else98 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.else98(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 2;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
-^indirect99(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %arg4):
-    i1 %0 = scmp lt i32 %arg4, i32 2;
-    cbr i1 %0, [ ^if.then98 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ], [ ^if.else98 i32* %arg3, i32* %arg, i32* %arg1, i32* %arg2 ];
-^if.then98(i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3):
-    i32 %0 = load i32* %arg3;
-    i32 %1 = add i32 %0, i32 1;
-    ubr [ ^b1 i32* %arg, i32* %arg1, i32* %arg2, i32* %arg3, i32 %1 ];
+^b1:
+    i1 %5 = scmp lt i32 %3, i32 100;
+    ubr ^b2;
+^b2:
+    i1 %6 = phi [^while.body, i1 false] [^b1, i1 %5];
+    cbr i1 %6(prob = 0.5), ^if.then, ^b3;
+^b3:
+    i32 %7 = phi [^b2, i32 100] [^b5, i32 99] [^b7, i32 98] [^if.then2, i32 97] [^b8, i32 97] [^if.then3, i32 96] [^b9, i32 96] [^if.then4, i32 95] [^b10, i32 95] [^if.then5, i32 94] [^b11, i32 94] [^if.then6, i32 93] [^b12, i32 93] [^if.then7, i32 92] [^b13, i32 92] [^if.then8, i32 91] [^b14, i32 91] [^b16, i32 90] [^b18, i32 89] [^b20, i32 88] [^b22, i32 87] [^b24, i32 86] [^b26, i32 85] [^b28, i32 84] [^b30, i32 83] [^b32, i32 82] [^b34, i32 81] [^b36, i32 80] [^b38, i32 79] [^b40, i32 78] [^b42, i32 77] [^b44, i32 76] [^b46, i32 75] [^b48, i32 74] [^b50, i32 73] [^b52, i32 72] [^b54, i32 71] [^b56, i32 70] [^b58, i32 69] [^b60, i32 68] [^b62, i32 67] [^b64, i32 66] [^b66, i32 65] [^b68, i32 64] [^b70, i32 63] [^b72, i32 62] [^b74, i32 61] [^b76, i32 60] [^b78, i32 59] [^b80, i32 58] [^b82, i32 57] [^b84, i32 56] [^b86, i32 55] [^b88, i32 54] [^b90, i32 53] [^b92, i32 52] [^b94, i32 51] [^b96, i32 50] [^b98, i32 49] [^b100, i32 48] [^b102, i32 47] [^b104, i32 46] [^b106, i32 45] [^b108, i32 44] [^b110, i32 43] [^b112, i32 42] [^b114, i32 41] [^b116, i32 40] [^b118, i32 39] [^b120, i32 38] [^b122, i32 37] [^b124, i32 36] [^b126, i32 35] [^b128, i32 34] [^b130, i32 33] [^b132, i32 32] [^b134, i32 31] [^b136, i32 30] [^b138, i32 29] [^b140, i32 28] [^b142, i32 27] [^b144, i32 26] [^b146, i32 25] [^b148, i32 24] [^b150, i32 23] [^b152, i32 22] [^b154, i32 21] [^b156, i32 20] [^b158, i32 19] [^b160, i32 18] [^b162, i32 17] [^b164, i32 16] [^b166, i32 15] [^b168, i32 14] [^b170, i32 13] [^b172, i32 12] [^b174, i32 11] [^b176, i32 10] [^b178, i32 9] [^b180, i32 8] [^b182, i32 7] [^b184, i32 6] [^b186, i32 5] [^b188, i32 4] [^b190, i32 3] [^b192, i32 1] [^if.else, i32 2];
+    call (i32) -> void @write(i32 %7);
+    i32 %8 = add i32 %1, i32 1;
+    ubr ^while.header;
+^if.then:
+    i1 %9 = scmp gt i32 %3, i32 0;
+    cbr i1 %9(prob = 0.5), ^b4, ^b5;
+^b4:
+    i1 %10 = scmp lt i32 %3, i32 99;
+    ubr ^b5;
+^b5:
+    i1 %11 = phi [^if.then, i1 false] [^b4, i1 %10];
+    cbr i1 %11(prob = 0.5), ^if.then1, ^b3;
+^if.then1:
+    i1 %12 = scmp gt i32 %3, i32 0;
+    cbr i1 %12(prob = 0.5), ^b6, ^b7;
+^b6:
+    i1 %13 = scmp lt i32 %3, i32 98;
+    ubr ^b7;
+^b7:
+    i1 %14 = phi [^if.then1, i1 false] [^b6, i1 %13];
+    cbr i1 %14(prob = 0.5), ^if.then2, ^b3;
+^if.then2:
+    i1 %15 = scmp gt i32 %3, i32 0;
+    cbr i1 %15(prob = 0.5), ^b8, ^b3;
+^b8:
+    i1 %16 = scmp lt i32 %3, i32 97;
+    cbr i1 %16(prob = 0.5), ^if.then3, ^b3;
+^if.then3:
+    i1 %17 = scmp gt i32 %3, i32 0;
+    cbr i1 %17(prob = 0.5), ^b9, ^b3;
+^b9:
+    i1 %18 = scmp lt i32 %3, i32 96;
+    cbr i1 %18(prob = 0.5), ^if.then4, ^b3;
+^if.then4:
+    i1 %19 = scmp gt i32 %3, i32 0;
+    cbr i1 %19(prob = 0.5), ^b10, ^b3;
+^b10:
+    i1 %20 = scmp lt i32 %3, i32 95;
+    cbr i1 %20(prob = 0.5), ^if.then5, ^b3;
+^if.then5:
+    i1 %21 = scmp gt i32 %3, i32 0;
+    cbr i1 %21(prob = 0.5), ^b11, ^b3;
+^b11:
+    i1 %22 = scmp lt i32 %3, i32 94;
+    cbr i1 %22(prob = 0.5), ^if.then6, ^b3;
+^if.then6:
+    i1 %23 = scmp gt i32 %3, i32 0;
+    cbr i1 %23(prob = 0.5), ^b12, ^b3;
+^b12:
+    i1 %24 = scmp lt i32 %3, i32 93;
+    cbr i1 %24(prob = 0.5), ^if.then7, ^b3;
+^if.then7:
+    i1 %25 = scmp gt i32 %3, i32 0;
+    cbr i1 %25(prob = 0.5), ^b13, ^b3;
+^b13:
+    i1 %26 = scmp lt i32 %3, i32 92;
+    cbr i1 %26(prob = 0.5), ^if.then8, ^b3;
+^if.then8:
+    i1 %27 = scmp gt i32 %3, i32 0;
+    cbr i1 %27(prob = 0.5), ^b14, ^b3;
+^b14:
+    i1 %28 = scmp lt i32 %3, i32 91;
+    cbr i1 %28(prob = 0.5), ^if.then9, ^b3;
+^if.then9:
+    i1 %29 = scmp gt i32 %3, i32 0;
+    cbr i1 %29(prob = 0.5), ^b15, ^b16;
+^b15:
+    i1 %30 = scmp lt i32 %3, i32 90;
+    ubr ^b16;
+^b16:
+    i1 %31 = phi [^if.then9, i1 false] [^b15, i1 %30];
+    cbr i1 %31(prob = 0.5), ^if.then10, ^b3;
+^if.then10:
+    i1 %32 = scmp gt i32 %3, i32 0;
+    cbr i1 %32(prob = 0.5), ^b17, ^b18;
+^b17:
+    i1 %33 = scmp lt i32 %3, i32 89;
+    ubr ^b18;
+^b18:
+    i1 %34 = phi [^if.then10, i1 false] [^b17, i1 %33];
+    cbr i1 %34(prob = 0.5), ^if.then11, ^b3;
+^if.then11:
+    i1 %35 = scmp gt i32 %3, i32 0;
+    cbr i1 %35(prob = 0.5), ^b19, ^b20;
+^b19:
+    i1 %36 = scmp lt i32 %3, i32 88;
+    ubr ^b20;
+^b20:
+    i1 %37 = phi [^if.then11, i1 false] [^b19, i1 %36];
+    cbr i1 %37(prob = 0.5), ^if.then12, ^b3;
+^if.then12:
+    i1 %38 = scmp gt i32 %3, i32 0;
+    cbr i1 %38(prob = 0.5), ^b21, ^b22;
+^b21:
+    i1 %39 = scmp lt i32 %3, i32 87;
+    ubr ^b22;
+^b22:
+    i1 %40 = phi [^if.then12, i1 false] [^b21, i1 %39];
+    cbr i1 %40(prob = 0.5), ^if.then13, ^b3;
+^if.then13:
+    i1 %41 = scmp gt i32 %3, i32 0;
+    cbr i1 %41(prob = 0.5), ^b23, ^b24;
+^b23:
+    i1 %42 = scmp lt i32 %3, i32 86;
+    ubr ^b24;
+^b24:
+    i1 %43 = phi [^if.then13, i1 false] [^b23, i1 %42];
+    cbr i1 %43(prob = 0.5), ^if.then14, ^b3;
+^if.then14:
+    i1 %44 = scmp gt i32 %3, i32 0;
+    cbr i1 %44(prob = 0.5), ^b25, ^b26;
+^b25:
+    i1 %45 = scmp lt i32 %3, i32 85;
+    ubr ^b26;
+^b26:
+    i1 %46 = phi [^if.then14, i1 false] [^b25, i1 %45];
+    cbr i1 %46(prob = 0.5), ^if.then15, ^b3;
+^if.then15:
+    i1 %47 = scmp gt i32 %3, i32 0;
+    cbr i1 %47(prob = 0.5), ^b27, ^b28;
+^b27:
+    i1 %48 = scmp lt i32 %3, i32 84;
+    ubr ^b28;
+^b28:
+    i1 %49 = phi [^if.then15, i1 false] [^b27, i1 %48];
+    cbr i1 %49(prob = 0.5), ^if.then16, ^b3;
+^if.then16:
+    i1 %50 = scmp gt i32 %3, i32 0;
+    cbr i1 %50(prob = 0.5), ^b29, ^b30;
+^b29:
+    i1 %51 = scmp lt i32 %3, i32 83;
+    ubr ^b30;
+^b30:
+    i1 %52 = phi [^if.then16, i1 false] [^b29, i1 %51];
+    cbr i1 %52(prob = 0.5), ^if.then17, ^b3;
+^if.then17:
+    i1 %53 = scmp gt i32 %3, i32 0;
+    cbr i1 %53(prob = 0.5), ^b31, ^b32;
+^b31:
+    i1 %54 = scmp lt i32 %3, i32 82;
+    ubr ^b32;
+^b32:
+    i1 %55 = phi [^if.then17, i1 false] [^b31, i1 %54];
+    cbr i1 %55(prob = 0.5), ^if.then18, ^b3;
+^if.then18:
+    i1 %56 = scmp gt i32 %3, i32 0;
+    cbr i1 %56(prob = 0.5), ^b33, ^b34;
+^b33:
+    i1 %57 = scmp lt i32 %3, i32 81;
+    ubr ^b34;
+^b34:
+    i1 %58 = phi [^if.then18, i1 false] [^b33, i1 %57];
+    cbr i1 %58(prob = 0.5), ^if.then19, ^b3;
+^if.then19:
+    i1 %59 = scmp gt i32 %3, i32 0;
+    cbr i1 %59(prob = 0.5), ^b35, ^b36;
+^b35:
+    i1 %60 = scmp lt i32 %3, i32 80;
+    ubr ^b36;
+^b36:
+    i1 %61 = phi [^if.then19, i1 false] [^b35, i1 %60];
+    cbr i1 %61(prob = 0.5), ^if.then20, ^b3;
+^if.then20:
+    i1 %62 = scmp gt i32 %3, i32 0;
+    cbr i1 %62(prob = 0.5), ^b37, ^b38;
+^b37:
+    i1 %63 = scmp lt i32 %3, i32 79;
+    ubr ^b38;
+^b38:
+    i1 %64 = phi [^if.then20, i1 false] [^b37, i1 %63];
+    cbr i1 %64(prob = 0.5), ^if.then21, ^b3;
+^if.then21:
+    i1 %65 = scmp gt i32 %3, i32 0;
+    cbr i1 %65(prob = 0.5), ^b39, ^b40;
+^b39:
+    i1 %66 = scmp lt i32 %3, i32 78;
+    ubr ^b40;
+^b40:
+    i1 %67 = phi [^if.then21, i1 false] [^b39, i1 %66];
+    cbr i1 %67(prob = 0.5), ^if.then22, ^b3;
+^if.then22:
+    i1 %68 = scmp gt i32 %3, i32 0;
+    cbr i1 %68(prob = 0.5), ^b41, ^b42;
+^b41:
+    i1 %69 = scmp lt i32 %3, i32 77;
+    ubr ^b42;
+^b42:
+    i1 %70 = phi [^if.then22, i1 false] [^b41, i1 %69];
+    cbr i1 %70(prob = 0.5), ^if.then23, ^b3;
+^if.then23:
+    i1 %71 = scmp gt i32 %3, i32 0;
+    cbr i1 %71(prob = 0.5), ^b43, ^b44;
+^b43:
+    i1 %72 = scmp lt i32 %3, i32 76;
+    ubr ^b44;
+^b44:
+    i1 %73 = phi [^if.then23, i1 false] [^b43, i1 %72];
+    cbr i1 %73(prob = 0.5), ^if.then24, ^b3;
+^if.then24:
+    i1 %74 = scmp gt i32 %3, i32 0;
+    cbr i1 %74(prob = 0.5), ^b45, ^b46;
+^b45:
+    i1 %75 = scmp lt i32 %3, i32 75;
+    ubr ^b46;
+^b46:
+    i1 %76 = phi [^if.then24, i1 false] [^b45, i1 %75];
+    cbr i1 %76(prob = 0.5), ^if.then25, ^b3;
+^if.then25:
+    i1 %77 = scmp gt i32 %3, i32 0;
+    cbr i1 %77(prob = 0.5), ^b47, ^b48;
+^b47:
+    i1 %78 = scmp lt i32 %3, i32 74;
+    ubr ^b48;
+^b48:
+    i1 %79 = phi [^if.then25, i1 false] [^b47, i1 %78];
+    cbr i1 %79(prob = 0.5), ^if.then26, ^b3;
+^if.then26:
+    i1 %80 = scmp gt i32 %3, i32 0;
+    cbr i1 %80(prob = 0.5), ^b49, ^b50;
+^b49:
+    i1 %81 = scmp lt i32 %3, i32 73;
+    ubr ^b50;
+^b50:
+    i1 %82 = phi [^if.then26, i1 false] [^b49, i1 %81];
+    cbr i1 %82(prob = 0.5), ^if.then27, ^b3;
+^if.then27:
+    i1 %83 = scmp gt i32 %3, i32 0;
+    cbr i1 %83(prob = 0.5), ^b51, ^b52;
+^b51:
+    i1 %84 = scmp lt i32 %3, i32 72;
+    ubr ^b52;
+^b52:
+    i1 %85 = phi [^if.then27, i1 false] [^b51, i1 %84];
+    cbr i1 %85(prob = 0.5), ^if.then28, ^b3;
+^if.then28:
+    i1 %86 = scmp gt i32 %3, i32 0;
+    cbr i1 %86(prob = 0.5), ^b53, ^b54;
+^b53:
+    i1 %87 = scmp lt i32 %3, i32 71;
+    ubr ^b54;
+^b54:
+    i1 %88 = phi [^if.then28, i1 false] [^b53, i1 %87];
+    cbr i1 %88(prob = 0.5), ^if.then29, ^b3;
+^if.then29:
+    i1 %89 = scmp gt i32 %3, i32 0;
+    cbr i1 %89(prob = 0.5), ^b55, ^b56;
+^b55:
+    i1 %90 = scmp lt i32 %3, i32 70;
+    ubr ^b56;
+^b56:
+    i1 %91 = phi [^if.then29, i1 false] [^b55, i1 %90];
+    cbr i1 %91(prob = 0.5), ^if.then30, ^b3;
+^if.then30:
+    i1 %92 = scmp gt i32 %3, i32 0;
+    cbr i1 %92(prob = 0.5), ^b57, ^b58;
+^b57:
+    i1 %93 = scmp lt i32 %3, i32 69;
+    ubr ^b58;
+^b58:
+    i1 %94 = phi [^if.then30, i1 false] [^b57, i1 %93];
+    cbr i1 %94(prob = 0.5), ^if.then31, ^b3;
+^if.then31:
+    i1 %95 = scmp gt i32 %3, i32 0;
+    cbr i1 %95(prob = 0.5), ^b59, ^b60;
+^b59:
+    i1 %96 = scmp lt i32 %3, i32 68;
+    ubr ^b60;
+^b60:
+    i1 %97 = phi [^if.then31, i1 false] [^b59, i1 %96];
+    cbr i1 %97(prob = 0.5), ^if.then32, ^b3;
+^if.then32:
+    i1 %98 = scmp gt i32 %3, i32 0;
+    cbr i1 %98(prob = 0.5), ^b61, ^b62;
+^b61:
+    i1 %99 = scmp lt i32 %3, i32 67;
+    ubr ^b62;
+^b62:
+    i1 %100 = phi [^if.then32, i1 false] [^b61, i1 %99];
+    cbr i1 %100(prob = 0.5), ^if.then33, ^b3;
+^if.then33:
+    i1 %101 = scmp gt i32 %3, i32 0;
+    cbr i1 %101(prob = 0.5), ^b63, ^b64;
+^b63:
+    i1 %102 = scmp lt i32 %3, i32 66;
+    ubr ^b64;
+^b64:
+    i1 %103 = phi [^if.then33, i1 false] [^b63, i1 %102];
+    cbr i1 %103(prob = 0.5), ^if.then34, ^b3;
+^if.then34:
+    i1 %104 = scmp gt i32 %3, i32 0;
+    cbr i1 %104(prob = 0.5), ^b65, ^b66;
+^b65:
+    i1 %105 = scmp lt i32 %3, i32 65;
+    ubr ^b66;
+^b66:
+    i1 %106 = phi [^if.then34, i1 false] [^b65, i1 %105];
+    cbr i1 %106(prob = 0.5), ^if.then35, ^b3;
+^if.then35:
+    i1 %107 = scmp gt i32 %3, i32 0;
+    cbr i1 %107(prob = 0.5), ^b67, ^b68;
+^b67:
+    i1 %108 = scmp lt i32 %3, i32 64;
+    ubr ^b68;
+^b68:
+    i1 %109 = phi [^if.then35, i1 false] [^b67, i1 %108];
+    cbr i1 %109(prob = 0.5), ^if.then36, ^b3;
+^if.then36:
+    i1 %110 = scmp gt i32 %3, i32 0;
+    cbr i1 %110(prob = 0.5), ^b69, ^b70;
+^b69:
+    i1 %111 = scmp lt i32 %3, i32 63;
+    ubr ^b70;
+^b70:
+    i1 %112 = phi [^if.then36, i1 false] [^b69, i1 %111];
+    cbr i1 %112(prob = 0.5), ^if.then37, ^b3;
+^if.then37:
+    i1 %113 = scmp gt i32 %3, i32 0;
+    cbr i1 %113(prob = 0.5), ^b71, ^b72;
+^b71:
+    i1 %114 = scmp lt i32 %3, i32 62;
+    ubr ^b72;
+^b72:
+    i1 %115 = phi [^if.then37, i1 false] [^b71, i1 %114];
+    cbr i1 %115(prob = 0.5), ^if.then38, ^b3;
+^if.then38:
+    i1 %116 = scmp gt i32 %3, i32 0;
+    cbr i1 %116(prob = 0.5), ^b73, ^b74;
+^b73:
+    i1 %117 = scmp lt i32 %3, i32 61;
+    ubr ^b74;
+^b74:
+    i1 %118 = phi [^if.then38, i1 false] [^b73, i1 %117];
+    cbr i1 %118(prob = 0.5), ^if.then39, ^b3;
+^if.then39:
+    i1 %119 = scmp gt i32 %3, i32 0;
+    cbr i1 %119(prob = 0.5), ^b75, ^b76;
+^b75:
+    i1 %120 = scmp lt i32 %3, i32 60;
+    ubr ^b76;
+^b76:
+    i1 %121 = phi [^if.then39, i1 false] [^b75, i1 %120];
+    cbr i1 %121(prob = 0.5), ^if.then40, ^b3;
+^if.then40:
+    i1 %122 = scmp gt i32 %3, i32 0;
+    cbr i1 %122(prob = 0.5), ^b77, ^b78;
+^b77:
+    i1 %123 = scmp lt i32 %3, i32 59;
+    ubr ^b78;
+^b78:
+    i1 %124 = phi [^if.then40, i1 false] [^b77, i1 %123];
+    cbr i1 %124(prob = 0.5), ^if.then41, ^b3;
+^if.then41:
+    i1 %125 = scmp gt i32 %3, i32 0;
+    cbr i1 %125(prob = 0.5), ^b79, ^b80;
+^b79:
+    i1 %126 = scmp lt i32 %3, i32 58;
+    ubr ^b80;
+^b80:
+    i1 %127 = phi [^if.then41, i1 false] [^b79, i1 %126];
+    cbr i1 %127(prob = 0.5), ^if.then42, ^b3;
+^if.then42:
+    i1 %128 = scmp gt i32 %3, i32 0;
+    cbr i1 %128(prob = 0.5), ^b81, ^b82;
+^b81:
+    i1 %129 = scmp lt i32 %3, i32 57;
+    ubr ^b82;
+^b82:
+    i1 %130 = phi [^if.then42, i1 false] [^b81, i1 %129];
+    cbr i1 %130(prob = 0.5), ^if.then43, ^b3;
+^if.then43:
+    i1 %131 = scmp gt i32 %3, i32 0;
+    cbr i1 %131(prob = 0.5), ^b83, ^b84;
+^b83:
+    i1 %132 = scmp lt i32 %3, i32 56;
+    ubr ^b84;
+^b84:
+    i1 %133 = phi [^if.then43, i1 false] [^b83, i1 %132];
+    cbr i1 %133(prob = 0.5), ^if.then44, ^b3;
+^if.then44:
+    i1 %134 = scmp gt i32 %3, i32 0;
+    cbr i1 %134(prob = 0.5), ^b85, ^b86;
+^b85:
+    i1 %135 = scmp lt i32 %3, i32 55;
+    ubr ^b86;
+^b86:
+    i1 %136 = phi [^if.then44, i1 false] [^b85, i1 %135];
+    cbr i1 %136(prob = 0.5), ^if.then45, ^b3;
+^if.then45:
+    i1 %137 = scmp gt i32 %3, i32 0;
+    cbr i1 %137(prob = 0.5), ^b87, ^b88;
+^b87:
+    i1 %138 = scmp lt i32 %3, i32 54;
+    ubr ^b88;
+^b88:
+    i1 %139 = phi [^if.then45, i1 false] [^b87, i1 %138];
+    cbr i1 %139(prob = 0.5), ^if.then46, ^b3;
+^if.then46:
+    i1 %140 = scmp gt i32 %3, i32 0;
+    cbr i1 %140(prob = 0.5), ^b89, ^b90;
+^b89:
+    i1 %141 = scmp lt i32 %3, i32 53;
+    ubr ^b90;
+^b90:
+    i1 %142 = phi [^if.then46, i1 false] [^b89, i1 %141];
+    cbr i1 %142(prob = 0.5), ^if.then47, ^b3;
+^if.then47:
+    i1 %143 = scmp gt i32 %3, i32 0;
+    cbr i1 %143(prob = 0.5), ^b91, ^b92;
+^b91:
+    i1 %144 = scmp lt i32 %3, i32 52;
+    ubr ^b92;
+^b92:
+    i1 %145 = phi [^if.then47, i1 false] [^b91, i1 %144];
+    cbr i1 %145(prob = 0.5), ^if.then48, ^b3;
+^if.then48:
+    i1 %146 = scmp gt i32 %3, i32 0;
+    cbr i1 %146(prob = 0.5), ^b93, ^b94;
+^b93:
+    i1 %147 = scmp lt i32 %3, i32 51;
+    ubr ^b94;
+^b94:
+    i1 %148 = phi [^if.then48, i1 false] [^b93, i1 %147];
+    cbr i1 %148(prob = 0.5), ^if.then49, ^b3;
+^if.then49:
+    i1 %149 = scmp gt i32 %3, i32 0;
+    cbr i1 %149(prob = 0.5), ^b95, ^b96;
+^b95:
+    i1 %150 = scmp lt i32 %3, i32 50;
+    ubr ^b96;
+^b96:
+    i1 %151 = phi [^if.then49, i1 false] [^b95, i1 %150];
+    cbr i1 %151(prob = 0.5), ^if.then50, ^b3;
+^if.then50:
+    i1 %152 = scmp gt i32 %3, i32 0;
+    cbr i1 %152(prob = 0.5), ^b97, ^b98;
+^b97:
+    i1 %153 = scmp lt i32 %3, i32 49;
+    ubr ^b98;
+^b98:
+    i1 %154 = phi [^if.then50, i1 false] [^b97, i1 %153];
+    cbr i1 %154(prob = 0.5), ^if.then51, ^b3;
+^if.then51:
+    i1 %155 = scmp gt i32 %3, i32 0;
+    cbr i1 %155(prob = 0.5), ^b99, ^b100;
+^b99:
+    i1 %156 = scmp lt i32 %3, i32 48;
+    ubr ^b100;
+^b100:
+    i1 %157 = phi [^if.then51, i1 false] [^b99, i1 %156];
+    cbr i1 %157(prob = 0.5), ^if.then52, ^b3;
+^if.then52:
+    i1 %158 = scmp gt i32 %3, i32 0;
+    cbr i1 %158(prob = 0.5), ^b101, ^b102;
+^b101:
+    i1 %159 = scmp lt i32 %3, i32 47;
+    ubr ^b102;
+^b102:
+    i1 %160 = phi [^if.then52, i1 false] [^b101, i1 %159];
+    cbr i1 %160(prob = 0.5), ^if.then53, ^b3;
+^if.then53:
+    i1 %161 = scmp gt i32 %3, i32 0;
+    cbr i1 %161(prob = 0.5), ^b103, ^b104;
+^b103:
+    i1 %162 = scmp lt i32 %3, i32 46;
+    ubr ^b104;
+^b104:
+    i1 %163 = phi [^if.then53, i1 false] [^b103, i1 %162];
+    cbr i1 %163(prob = 0.5), ^if.then54, ^b3;
+^if.then54:
+    i1 %164 = scmp gt i32 %3, i32 0;
+    cbr i1 %164(prob = 0.5), ^b105, ^b106;
+^b105:
+    i1 %165 = scmp lt i32 %3, i32 45;
+    ubr ^b106;
+^b106:
+    i1 %166 = phi [^if.then54, i1 false] [^b105, i1 %165];
+    cbr i1 %166(prob = 0.5), ^if.then55, ^b3;
+^if.then55:
+    i1 %167 = scmp gt i32 %3, i32 0;
+    cbr i1 %167(prob = 0.5), ^b107, ^b108;
+^b107:
+    i1 %168 = scmp lt i32 %3, i32 44;
+    ubr ^b108;
+^b108:
+    i1 %169 = phi [^if.then55, i1 false] [^b107, i1 %168];
+    cbr i1 %169(prob = 0.5), ^if.then56, ^b3;
+^if.then56:
+    i1 %170 = scmp gt i32 %3, i32 0;
+    cbr i1 %170(prob = 0.5), ^b109, ^b110;
+^b109:
+    i1 %171 = scmp lt i32 %3, i32 43;
+    ubr ^b110;
+^b110:
+    i1 %172 = phi [^if.then56, i1 false] [^b109, i1 %171];
+    cbr i1 %172(prob = 0.5), ^if.then57, ^b3;
+^if.then57:
+    i1 %173 = scmp gt i32 %3, i32 0;
+    cbr i1 %173(prob = 0.5), ^b111, ^b112;
+^b111:
+    i1 %174 = scmp lt i32 %3, i32 42;
+    ubr ^b112;
+^b112:
+    i1 %175 = phi [^if.then57, i1 false] [^b111, i1 %174];
+    cbr i1 %175(prob = 0.5), ^if.then58, ^b3;
+^if.then58:
+    i1 %176 = scmp gt i32 %3, i32 0;
+    cbr i1 %176(prob = 0.5), ^b113, ^b114;
+^b113:
+    i1 %177 = scmp lt i32 %3, i32 41;
+    ubr ^b114;
+^b114:
+    i1 %178 = phi [^if.then58, i1 false] [^b113, i1 %177];
+    cbr i1 %178(prob = 0.5), ^if.then59, ^b3;
+^if.then59:
+    i1 %179 = scmp gt i32 %3, i32 0;
+    cbr i1 %179(prob = 0.5), ^b115, ^b116;
+^b115:
+    i1 %180 = scmp lt i32 %3, i32 40;
+    ubr ^b116;
+^b116:
+    i1 %181 = phi [^if.then59, i1 false] [^b115, i1 %180];
+    cbr i1 %181(prob = 0.5), ^if.then60, ^b3;
+^if.then60:
+    i1 %182 = scmp gt i32 %3, i32 0;
+    cbr i1 %182(prob = 0.5), ^b117, ^b118;
+^b117:
+    i1 %183 = scmp lt i32 %3, i32 39;
+    ubr ^b118;
+^b118:
+    i1 %184 = phi [^if.then60, i1 false] [^b117, i1 %183];
+    cbr i1 %184(prob = 0.5), ^if.then61, ^b3;
+^if.then61:
+    i1 %185 = scmp gt i32 %3, i32 0;
+    cbr i1 %185(prob = 0.5), ^b119, ^b120;
+^b119:
+    i1 %186 = scmp lt i32 %3, i32 38;
+    ubr ^b120;
+^b120:
+    i1 %187 = phi [^if.then61, i1 false] [^b119, i1 %186];
+    cbr i1 %187(prob = 0.5), ^if.then62, ^b3;
+^if.then62:
+    i1 %188 = scmp gt i32 %3, i32 0;
+    cbr i1 %188(prob = 0.5), ^b121, ^b122;
+^b121:
+    i1 %189 = scmp lt i32 %3, i32 37;
+    ubr ^b122;
+^b122:
+    i1 %190 = phi [^if.then62, i1 false] [^b121, i1 %189];
+    cbr i1 %190(prob = 0.5), ^if.then63, ^b3;
+^if.then63:
+    i1 %191 = scmp gt i32 %3, i32 0;
+    cbr i1 %191(prob = 0.5), ^b123, ^b124;
+^b123:
+    i1 %192 = scmp lt i32 %3, i32 36;
+    ubr ^b124;
+^b124:
+    i1 %193 = phi [^if.then63, i1 false] [^b123, i1 %192];
+    cbr i1 %193(prob = 0.5), ^if.then64, ^b3;
+^if.then64:
+    i1 %194 = scmp gt i32 %3, i32 0;
+    cbr i1 %194(prob = 0.5), ^b125, ^b126;
+^b125:
+    i1 %195 = scmp lt i32 %3, i32 35;
+    ubr ^b126;
+^b126:
+    i1 %196 = phi [^if.then64, i1 false] [^b125, i1 %195];
+    cbr i1 %196(prob = 0.5), ^if.then65, ^b3;
+^if.then65:
+    i1 %197 = scmp gt i32 %3, i32 0;
+    cbr i1 %197(prob = 0.5), ^b127, ^b128;
+^b127:
+    i1 %198 = scmp lt i32 %3, i32 34;
+    ubr ^b128;
+^b128:
+    i1 %199 = phi [^if.then65, i1 false] [^b127, i1 %198];
+    cbr i1 %199(prob = 0.5), ^if.then66, ^b3;
+^if.then66:
+    i1 %200 = scmp gt i32 %3, i32 0;
+    cbr i1 %200(prob = 0.5), ^b129, ^b130;
+^b129:
+    i1 %201 = scmp lt i32 %3, i32 33;
+    ubr ^b130;
+^b130:
+    i1 %202 = phi [^if.then66, i1 false] [^b129, i1 %201];
+    cbr i1 %202(prob = 0.5), ^if.then67, ^b3;
+^if.then67:
+    i1 %203 = scmp gt i32 %3, i32 0;
+    cbr i1 %203(prob = 0.5), ^b131, ^b132;
+^b131:
+    i1 %204 = scmp lt i32 %3, i32 32;
+    ubr ^b132;
+^b132:
+    i1 %205 = phi [^if.then67, i1 false] [^b131, i1 %204];
+    cbr i1 %205(prob = 0.5), ^if.then68, ^b3;
+^if.then68:
+    i1 %206 = scmp gt i32 %3, i32 0;
+    cbr i1 %206(prob = 0.5), ^b133, ^b134;
+^b133:
+    i1 %207 = scmp lt i32 %3, i32 31;
+    ubr ^b134;
+^b134:
+    i1 %208 = phi [^if.then68, i1 false] [^b133, i1 %207];
+    cbr i1 %208(prob = 0.5), ^if.then69, ^b3;
+^if.then69:
+    i1 %209 = scmp gt i32 %3, i32 0;
+    cbr i1 %209(prob = 0.5), ^b135, ^b136;
+^b135:
+    i1 %210 = scmp lt i32 %3, i32 30;
+    ubr ^b136;
+^b136:
+    i1 %211 = phi [^if.then69, i1 false] [^b135, i1 %210];
+    cbr i1 %211(prob = 0.5), ^if.then70, ^b3;
+^if.then70:
+    i1 %212 = scmp gt i32 %3, i32 0;
+    cbr i1 %212(prob = 0.5), ^b137, ^b138;
+^b137:
+    i1 %213 = scmp lt i32 %3, i32 29;
+    ubr ^b138;
+^b138:
+    i1 %214 = phi [^if.then70, i1 false] [^b137, i1 %213];
+    cbr i1 %214(prob = 0.5), ^if.then71, ^b3;
+^if.then71:
+    i1 %215 = scmp gt i32 %3, i32 0;
+    cbr i1 %215(prob = 0.5), ^b139, ^b140;
+^b139:
+    i1 %216 = scmp lt i32 %3, i32 28;
+    ubr ^b140;
+^b140:
+    i1 %217 = phi [^if.then71, i1 false] [^b139, i1 %216];
+    cbr i1 %217(prob = 0.5), ^if.then72, ^b3;
+^if.then72:
+    i1 %218 = scmp gt i32 %3, i32 0;
+    cbr i1 %218(prob = 0.5), ^b141, ^b142;
+^b141:
+    i1 %219 = scmp lt i32 %3, i32 27;
+    ubr ^b142;
+^b142:
+    i1 %220 = phi [^if.then72, i1 false] [^b141, i1 %219];
+    cbr i1 %220(prob = 0.5), ^if.then73, ^b3;
+^if.then73:
+    i1 %221 = scmp gt i32 %3, i32 0;
+    cbr i1 %221(prob = 0.5), ^b143, ^b144;
+^b143:
+    i1 %222 = scmp lt i32 %3, i32 26;
+    ubr ^b144;
+^b144:
+    i1 %223 = phi [^if.then73, i1 false] [^b143, i1 %222];
+    cbr i1 %223(prob = 0.5), ^if.then74, ^b3;
+^if.then74:
+    i1 %224 = scmp gt i32 %3, i32 0;
+    cbr i1 %224(prob = 0.5), ^b145, ^b146;
+^b145:
+    i1 %225 = scmp lt i32 %3, i32 25;
+    ubr ^b146;
+^b146:
+    i1 %226 = phi [^if.then74, i1 false] [^b145, i1 %225];
+    cbr i1 %226(prob = 0.5), ^if.then75, ^b3;
+^if.then75:
+    i1 %227 = scmp gt i32 %3, i32 0;
+    cbr i1 %227(prob = 0.5), ^b147, ^b148;
+^b147:
+    i1 %228 = scmp lt i32 %3, i32 24;
+    ubr ^b148;
+^b148:
+    i1 %229 = phi [^if.then75, i1 false] [^b147, i1 %228];
+    cbr i1 %229(prob = 0.5), ^if.then76, ^b3;
+^if.then76:
+    i1 %230 = scmp gt i32 %3, i32 0;
+    cbr i1 %230(prob = 0.5), ^b149, ^b150;
+^b149:
+    i1 %231 = scmp lt i32 %3, i32 23;
+    ubr ^b150;
+^b150:
+    i1 %232 = phi [^if.then76, i1 false] [^b149, i1 %231];
+    cbr i1 %232(prob = 0.5), ^if.then77, ^b3;
+^if.then77:
+    i1 %233 = scmp gt i32 %3, i32 0;
+    cbr i1 %233(prob = 0.5), ^b151, ^b152;
+^b151:
+    i1 %234 = scmp lt i32 %3, i32 22;
+    ubr ^b152;
+^b152:
+    i1 %235 = phi [^if.then77, i1 false] [^b151, i1 %234];
+    cbr i1 %235(prob = 0.5), ^if.then78, ^b3;
+^if.then78:
+    i1 %236 = scmp gt i32 %3, i32 0;
+    cbr i1 %236(prob = 0.5), ^b153, ^b154;
+^b153:
+    i1 %237 = scmp lt i32 %3, i32 21;
+    ubr ^b154;
+^b154:
+    i1 %238 = phi [^if.then78, i1 false] [^b153, i1 %237];
+    cbr i1 %238(prob = 0.5), ^if.then79, ^b3;
+^if.then79:
+    i1 %239 = scmp gt i32 %3, i32 0;
+    cbr i1 %239(prob = 0.5), ^b155, ^b156;
+^b155:
+    i1 %240 = scmp lt i32 %3, i32 20;
+    ubr ^b156;
+^b156:
+    i1 %241 = phi [^if.then79, i1 false] [^b155, i1 %240];
+    cbr i1 %241(prob = 0.5), ^if.then80, ^b3;
+^if.then80:
+    i1 %242 = scmp gt i32 %3, i32 0;
+    cbr i1 %242(prob = 0.5), ^b157, ^b158;
+^b157:
+    i1 %243 = scmp lt i32 %3, i32 19;
+    ubr ^b158;
+^b158:
+    i1 %244 = phi [^if.then80, i1 false] [^b157, i1 %243];
+    cbr i1 %244(prob = 0.5), ^if.then81, ^b3;
+^if.then81:
+    i1 %245 = scmp gt i32 %3, i32 0;
+    cbr i1 %245(prob = 0.5), ^b159, ^b160;
+^b159:
+    i1 %246 = scmp lt i32 %3, i32 18;
+    ubr ^b160;
+^b160:
+    i1 %247 = phi [^if.then81, i1 false] [^b159, i1 %246];
+    cbr i1 %247(prob = 0.5), ^if.then82, ^b3;
+^if.then82:
+    i1 %248 = scmp gt i32 %3, i32 0;
+    cbr i1 %248(prob = 0.5), ^b161, ^b162;
+^b161:
+    i1 %249 = scmp lt i32 %3, i32 17;
+    ubr ^b162;
+^b162:
+    i1 %250 = phi [^if.then82, i1 false] [^b161, i1 %249];
+    cbr i1 %250(prob = 0.5), ^if.then83, ^b3;
+^if.then83:
+    i1 %251 = scmp gt i32 %3, i32 0;
+    cbr i1 %251(prob = 0.5), ^b163, ^b164;
+^b163:
+    i1 %252 = scmp lt i32 %3, i32 16;
+    ubr ^b164;
+^b164:
+    i1 %253 = phi [^if.then83, i1 false] [^b163, i1 %252];
+    cbr i1 %253(prob = 0.5), ^if.then84, ^b3;
+^if.then84:
+    i1 %254 = scmp gt i32 %3, i32 0;
+    cbr i1 %254(prob = 0.5), ^b165, ^b166;
+^b165:
+    i1 %255 = scmp lt i32 %3, i32 15;
+    ubr ^b166;
+^b166:
+    i1 %256 = phi [^if.then84, i1 false] [^b165, i1 %255];
+    cbr i1 %256(prob = 0.5), ^if.then85, ^b3;
+^if.then85:
+    i1 %257 = scmp gt i32 %3, i32 0;
+    cbr i1 %257(prob = 0.5), ^b167, ^b168;
+^b167:
+    i1 %258 = scmp lt i32 %3, i32 14;
+    ubr ^b168;
+^b168:
+    i1 %259 = phi [^if.then85, i1 false] [^b167, i1 %258];
+    cbr i1 %259(prob = 0.5), ^if.then86, ^b3;
+^if.then86:
+    i1 %260 = scmp gt i32 %3, i32 0;
+    cbr i1 %260(prob = 0.5), ^b169, ^b170;
+^b169:
+    i1 %261 = scmp lt i32 %3, i32 13;
+    ubr ^b170;
+^b170:
+    i1 %262 = phi [^if.then86, i1 false] [^b169, i1 %261];
+    cbr i1 %262(prob = 0.5), ^if.then87, ^b3;
+^if.then87:
+    i1 %263 = scmp gt i32 %3, i32 0;
+    cbr i1 %263(prob = 0.5), ^b171, ^b172;
+^b171:
+    i1 %264 = scmp lt i32 %3, i32 12;
+    ubr ^b172;
+^b172:
+    i1 %265 = phi [^if.then87, i1 false] [^b171, i1 %264];
+    cbr i1 %265(prob = 0.5), ^if.then88, ^b3;
+^if.then88:
+    i1 %266 = scmp gt i32 %3, i32 0;
+    cbr i1 %266(prob = 0.5), ^b173, ^b174;
+^b173:
+    i1 %267 = scmp lt i32 %3, i32 11;
+    ubr ^b174;
+^b174:
+    i1 %268 = phi [^if.then88, i1 false] [^b173, i1 %267];
+    cbr i1 %268(prob = 0.5), ^if.then89, ^b3;
+^if.then89:
+    i1 %269 = scmp gt i32 %3, i32 0;
+    cbr i1 %269(prob = 0.5), ^b175, ^b176;
+^b175:
+    i1 %270 = scmp lt i32 %3, i32 10;
+    ubr ^b176;
+^b176:
+    i1 %271 = phi [^if.then89, i1 false] [^b175, i1 %270];
+    cbr i1 %271(prob = 0.5), ^if.then90, ^b3;
+^if.then90:
+    i1 %272 = scmp gt i32 %3, i32 0;
+    cbr i1 %272(prob = 0.5), ^b177, ^b178;
+^b177:
+    i1 %273 = scmp lt i32 %3, i32 9;
+    ubr ^b178;
+^b178:
+    i1 %274 = phi [^if.then90, i1 false] [^b177, i1 %273];
+    cbr i1 %274(prob = 0.5), ^if.then91, ^b3;
+^if.then91:
+    i1 %275 = scmp gt i32 %3, i32 0;
+    cbr i1 %275(prob = 0.5), ^b179, ^b180;
+^b179:
+    i1 %276 = scmp lt i32 %3, i32 8;
+    ubr ^b180;
+^b180:
+    i1 %277 = phi [^if.then91, i1 false] [^b179, i1 %276];
+    cbr i1 %277(prob = 0.5), ^if.then92, ^b3;
+^if.then92:
+    i1 %278 = scmp gt i32 %3, i32 0;
+    cbr i1 %278(prob = 0.5), ^b181, ^b182;
+^b181:
+    i1 %279 = scmp lt i32 %3, i32 7;
+    ubr ^b182;
+^b182:
+    i1 %280 = phi [^if.then92, i1 false] [^b181, i1 %279];
+    cbr i1 %280(prob = 0.5), ^if.then93, ^b3;
+^if.then93:
+    i1 %281 = scmp gt i32 %3, i32 0;
+    cbr i1 %281(prob = 0.5), ^b183, ^b184;
+^b183:
+    i1 %282 = scmp lt i32 %3, i32 6;
+    ubr ^b184;
+^b184:
+    i1 %283 = phi [^if.then93, i1 false] [^b183, i1 %282];
+    cbr i1 %283(prob = 0.5), ^if.then94, ^b3;
+^if.then94:
+    i1 %284 = scmp gt i32 %3, i32 0;
+    cbr i1 %284(prob = 0.5), ^b185, ^b186;
+^b185:
+    i1 %285 = scmp lt i32 %3, i32 5;
+    ubr ^b186;
+^b186:
+    i1 %286 = phi [^if.then94, i1 false] [^b185, i1 %285];
+    cbr i1 %286(prob = 0.5), ^if.then95, ^b3;
+^if.then95:
+    i1 %287 = scmp gt i32 %3, i32 0;
+    cbr i1 %287(prob = 0.5), ^b187, ^b188;
+^b187:
+    i1 %288 = scmp lt i32 %3, i32 4;
+    ubr ^b188;
+^b188:
+    i1 %289 = phi [^if.then95, i1 false] [^b187, i1 %288];
+    cbr i1 %289(prob = 0.5), ^if.then96, ^b3;
+^if.then96:
+    i1 %290 = scmp gt i32 %3, i32 0;
+    cbr i1 %290(prob = 0.5), ^b189, ^b190;
+^b189:
+    i1 %291 = scmp lt i32 %3, i32 3;
+    ubr ^b190;
+^b190:
+    i1 %292 = phi [^if.then96, i1 false] [^b189, i1 %291];
+    cbr i1 %292(prob = 0.5), ^if.then97, ^b3;
+^if.then97:
+    i1 %293 = scmp gt i32 %3, i32 0;
+    cbr i1 %293(prob = 0.5), ^b191, ^b192;
+^b191:
+    i1 %294 = scmp lt i32 %3, i32 2;
+    ubr ^b192;
+^b192:
+    i1 %295 = phi [^if.then97, i1 false] [^b191, i1 %294];
+    cbr i1 %295(prob = 0.5), ^b3, ^if.else;
+^if.else:
+    ubr ^b3;
 }

@@ -930,47 +930,23 @@ QualifiedValue ScopedExpr::emit(EmitContext& ctx) const {
 }
 
 QualifiedValue WhileExpr::emit(EmitContext& ctx) const {
-    /*
     auto whileHeader = ctx.addBlock();
     whileHeader->setLabel(String::get("while.header"));
     ctx.makeOp<BranchInst>(whileHeader);
     ctx.setCurrentBlock(whileHeader);
 
-    auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), {}, ConversionUsage::Condition);
-
-    auto whileBody = ctx.addBlock();
-    whileBody->setLabel(String::get("while.body"));
-    auto newBlock = ctx.addBlock();
-
-    ctx.makeOp<BranchInst>(val, defaultLoopProb, whileBody, newBlock);
-
-    ctx.pushLoop(whileHeader, newBlock);
-    ctx.setCurrentBlock(whileBody);
-    mBlock->emitWithLoc(ctx);
-    ctx.makeOp<BranchInst>(whileHeader);
-    ctx.popLoop();
-
-    ctx.setCurrentBlock(newBlock);
-    */
-
-    // Loop rotated version
-    // TODO: move to transform
-    auto whileHeader = ctx.addBlock();
-    whileHeader->setLabel(String::get("while.guard"));
-    ctx.makeOp<BranchInst>(whileHeader);
-    ctx.setCurrentBlock(whileHeader);
     auto val = ctx.getRValue(mPredicate, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
 
     auto whileBody = ctx.addBlock();
     whileBody->setLabel(String::get("while.body"));
     auto newBlock = ctx.addBlock();
+
     ctx.makeOp<BranchInst>(val, defaultLoopProb, whileBody, newBlock);
 
     ctx.pushLoop(whileHeader, newBlock);
     ctx.setCurrentBlock(whileBody);
     mBlock->emitWithLoc(ctx);
-    auto val2 = ctx.getRValue(mPredicate, IntegerType::getBoolean(), Qualifier::getDefault(), ConversionUsage::Condition);
-    ctx.makeOp<BranchInst>(val2, defaultLoopProb, whileBody, newBlock);
+    ctx.makeOp<BranchInst>(whileHeader);
     ctx.popLoop();
 
     ctx.setCurrentBlock(newBlock);
@@ -2025,8 +2001,7 @@ QualifiedValue SelectExpr::emit(EmitContext& ctx) const {
 QualifiedValue Expr::emitWithLoc(EmitContext& ctx) const {
 #ifndef NDEBUG
     if(mEmitted) {
-        // FIXME: loop rotate in frontend
-        // DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
+        DiagnosticsContext::get().attach<Reason>("emit twice").reportFatal();
     } else {
         mEmitted = true;
     }

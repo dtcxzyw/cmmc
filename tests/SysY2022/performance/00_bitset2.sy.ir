@@ -16,8 +16,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %3 = call () -> i32 @getint();
     i32 %4 = call () -> i32 @getint();
     call (i32) -> void @starttime(i32 56);
-    i1 %5 = scmp gt i32 %3, i32 0;
-    i32* %6 = getelementptr &([10000 * i32]* @a)[i64 0][i64 0];
+    i32* %5 = getelementptr &([10000 * i32]* @a)[i64 0][i64 0];
+    i1 %6 = scmp gt i32 %3, i32 0;
     i32* %7 = getelementptr &([31 * i32]* %x)[i64 0][i64 0];
     i32* %8 = getelementptr &([31 * i32]* %x)[i64 0][i64 1];
     i32* %9 = getelementptr &([31 * i32]* %x)[i64 0][i64 2];
@@ -49,7 +49,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %35 = getelementptr &([31 * i32]* %x)[i64 0][i64 28];
     i32* %36 = getelementptr &([31 * i32]* %x)[i64 0][i64 29];
     i32* %37 = getelementptr &([31 * i32]* %x)[i64 0][i64 30];
-    cbr i1 %5(prob = 0.97), ^while.body, ^b;
+    cbr i1 %6(prob = 0.97), ^while.body, ^b;
 ^while.body:
     i32 %38 = phi [^entry, i32 19971231] [^indirect, i32 %72];
     i32 %39 = phi [^entry, i32 19981013] [^indirect, i32 %73];
@@ -64,7 +64,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %47(prob = 0.5), ^if.then, ^b1;
 ^b:
     call (i32) -> void @stoptime(i32 64);
-    call (i32, i32*) -> void @putarray(i32 10000, i32* %6);
+    call (i32, i32*) -> void @putarray(i32 10000, i32* %5);
     ret i32 0;
 ^if.then:
     i32 %48 = add i32 %46, i32 %40;
@@ -124,7 +124,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %62(prob = 0.97), ^indirect, ^b;
 ^b3:
     i32 %63 = srem i32 %59, i32 2;
-    i32* %64 = getelementptr &(i32* %6)[i32 %60];
+    i32* %64 = getelementptr &(i32* %5)[i32 %60];
     i32 %65 = load i32* %64;
     i32 %66 = srem i32 %50, i32 30;
     i32* %67 = getelementptr &([31 * i32]* %x)[i64 0][i32 %66];

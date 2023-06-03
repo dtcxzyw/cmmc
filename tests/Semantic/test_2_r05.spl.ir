@@ -1,17 +1,4 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @test_2_r05() -> i32 {
+func @test_2_r05() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry:
-    i32* %ttt = alloc i32;
-    f32* %kkk = alloc f32;
-    f32* %iii = alloc f32;
-    store f32* %iii with f32 5;
-    store f32* %kkk with f32 1.2;
-    store i32* %ttt with i32 0;
-    f32 %0 = load f32* %iii;
-    f32 %1 = load f32* %kkk;
-    f32 %2 = fmul f32 %0, f32 %1;
-    i32 %3 = f2s f32 %2 to i32;
-    store i32* %ttt with i32 %3;
     ret i32 0;
 }

@@ -1,197 +1,185 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @mod(i32 %number2, i32 %m2) -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @mod(i32 %number2, i32 %m2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry:
-    i32* %result2 = alloc i32;
-    i32* %result = alloc i32;
-    i32* %m21 = alloc i32;
-    i32* %number21 = alloc i32;
-    store i32* %number21 with i32 %number2;
-    store i32* %m21 with i32 %m2;
-    i32 %0 = load i32* %number21;
-    i32 %1 = load i32* %number21;
-    i32 %2 = load i32* %m21;
-    i32 %3 = sdiv i32 %1, i32 %2;
-    i32 %4 = load i32* %m21;
-    i32 %5 = mul i32 %3, i32 %4;
-    i32 %6 = sub i32 %0, i32 %5;
-    store i32* %result with i32 %6;
-    i32 %7 = load i32* %result;
-    store i32* %result2 with i32 %7;
-    i32 %8 = load i32* %result;
-    ret i32 %8;
+    i32 %0 = sdiv i32 %number2, i32 %m2;
+    i32 %1 = mul i32 %m2, i32 %0;
+    i32 %2 = sub i32 %number2, i32 %1;
+    ret i32 %2;
 }
-func @power(i32 %base1, i32 %p1) -> i32 {
+func @power(i32 %base1, i32 %p1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
 ^entry:
-    i32* %ret1 = alloc i32;
-    i32* %p11 = alloc i32;
-    i32* %base11 = alloc i32;
-    store i32* %base11 with i32 %base1;
-    store i32* %p11 with i32 %p1;
-    i32 %0 = load i32* %p11;
-    i32 %1 = add i32 1, i32 %0;
-    i32 %2 = load i32* %p11;
-    i32 %3 = sub i32 %1, i32 %2;
-    store i32* %ret1 with i32 %3;
-    ubr ^while.header;
-^while.header:
-    i32 %4 = load i32* %p11;
-    i32 %5 = load i32* %ret1;
-    i32 %6 = load i32* %ret1;
-    i32 %7 = sub i32 %5, i32 %6;
-    i32 %8 = add i32 %7, i32 90;
-    i32 %9 = sub i32 %8, i32 89;
-    i32 %10 = add i32 %9, i32 1;
-    i32 %11 = sub i32 %10, i32 2;
-    i1 %12 = scmp gt i32 %4, i32 %11;
-    i32 %13 = zext i1 %12 to i32;
-    i1 %14 = scmp neq i32 %13, i32 0;
-    cbr i1 %14(prob = 0.97), ^while.body, ^b;
+    i32 %0 = add i32 %p1, i32 1;
+    i32 %1 = sub i32 %0, i32 %p1;
+    i1 %2 = scmp gt i32 %p1, i32 0;
+    cbr i1 %2(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %15 = load i32* %ret1;
-    i32 %16 = load i32* %base11;
-    i32 %17 = mul i32 %15, i32 %16;
-    store i32* %ret1 with i32 %17;
-    i32 %18 = load i32* %p11;
-    i32 %19 = mul i32 2, i32 %18;
-    i32 %20 = load i32* %p11;
-    i32 %21 = mul i32 1, i32 %20;
-    i32 %22 = sub i32 %19, i32 %21;
-    i32 %23 = sub i32 %22, i32 1;
-    store i32* %p11 with i32 %23;
-    ubr ^while.header;
+    i32 %3 = phi [^entry, i32 %1] [^while.body, i32 %5];
+    i32 %4 = phi [^entry, i32 %p1] [^while.body, i32 %8];
+    i32 %5 = mul i32 %3, i32 %base1;
+    i32 %6 = mul i32 %4, i32 2;
+    i32 %7 = sub i32 %6, i32 %4;
+    i32 %8 = add i32 %7, i32 -1;
+    i1 %9 = scmp gt i32 %8, i32 0;
+    cbr i1 %9(prob = 0.97), ^while.body, ^b;
 ^b:
-    i32 %24 = load i32* %ret1;
-    ret i32 %24;
-}
-func @getNumDigits(i32 %number3) -> i32 {
-^entry:
-    i32* %ret3 = alloc i32;
-    i32* %number31 = alloc i32;
-    store i32* %number31 with i32 %number3;
-    store i32* %ret3 with i32 0;
-    i32 %0 = load i32* %number31;
-    i1 %1 = scmp lt i32 %0, i32 0;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.5), ^if.then, ^b;
-^b:
-    ubr ^while.header;
-^if.then:
-    ret i32 -1;
-^while.header:
-    i32 %4 = load i32* %number31;
-    i1 %5 = scmp gt i32 %4, i32 0;
-    i32 %6 = zext i1 %5 to i32;
-    i1 %7 = scmp neq i32 %6, i32 0;
-    cbr i1 %7(prob = 0.97), ^while.body, ^b1;
-^while.body:
-    i32 %8 = load i32* %number31;
-    i32 %9 = sdiv i32 %8, i32 10;
-    store i32* %number31 with i32 %9;
-    i32 %10 = load i32* %ret3;
-    i32 %11 = add i32 %10, i32 2;
-    store i32* %ret3 with i32 %11;
-    i32 %12 = load i32* %ret3;
-    i32 %13 = add i32 %12, i32 2;
-    store i32* %ret3 with i32 %13;
-    i32 %14 = load i32* %ret3;
-    i32 %15 = sub i32 %14, i32 3;
-    store i32* %ret3 with i32 %15;
-    ubr ^while.header;
-^b1:
-    i32 %16 = load i32* %ret3;
-    ret i32 %16;
-}
-func @isNarcissistic(i32 %number4) -> i32 {
-^entry:
-    i32* %s4 = alloc i32;
-    i32* %n4 = alloc i32;
-    i32* %sum4 = alloc i32;
-    i32* %numDigit = alloc i32;
-    i32* %number41 = alloc i32;
-    store i32* %number41 with i32 %number4;
-    i32 %0 = load i32* %number41;
-    i32 %1 = add i32 1, i32 %0;
-    i32 %2 = sub i32 %1, i32 1;
-    i32 %3 = call (i32) -> i32 @getNumDigits(i32 %2);
-    store i32* %numDigit with i32 %3;
-    store i32* %sum4 with i32 0;
-    i32 %4 = load i32* %number41;
-    store i32* %n4 with i32 %4;
-    store i32* %s4 with i32 0;
-    ubr ^while.header;
-^while.header:
-    i32 %5 = load i32* %n4;
-    i1 %6 = scmp gt i32 %5, i32 0;
-    i32 %7 = zext i1 %6 to i32;
-    i1 %8 = scmp neq i32 %7, i32 0;
-    cbr i1 %8(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %9 = load i32* %n4;
-    i32 %10 = call (i32, i32) -> i32 @mod(i32 %9, i32 10);
-    store i32* %s4 with i32 %10;
-    i32 %11 = load i32* %n4;
-    i32 %12 = load i32* %s4;
-    i32 %13 = sub i32 %11, i32 %12;
-    i32 %14 = sdiv i32 %13, i32 10;
-    store i32* %n4 with i32 %14;
-    i32 %15 = load i32* %sum4;
-    i32 %16 = load i32* %s4;
-    i32 %17 = load i32* %numDigit;
-    i32 %18 = call (i32, i32) -> i32 @power(i32 %16, i32 %17);
-    i32 %19 = add i32 %15, i32 %18;
-    store i32* %sum4 with i32 %19;
-    ubr ^while.header;
-^b:
-    i32 %20 = load i32* %sum4;
-    i32 %21 = load i32* %number41;
-    i1 %22 = scmp eq i32 %20, i32 %21;
-    i32 %23 = zext i1 %22 to i32;
-    i1 %24 = scmp neq i32 %23, i32 0;
-    cbr i1 %24(prob = 0.5), ^if.then, ^if.else;
-^if.then:
-    ret i32 1;
-^if.else:
-    ret i32 0;
-^b1:
-    unreachable;
-}
-func @main() -> i32 {
-^entry:
-    i32* %i = alloc i32;
-    i32* %count = alloc i32;
-    store i32* %count with i32 0;
-    store i32* %i with i32 300;
-    ubr ^while.header;
-^while.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 500;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^while.body, ^b;
-^while.body:
-    i32 %4 = load i32* %i;
-    i32 %5 = call (i32) -> i32 @isNarcissistic(i32 %4);
-    i1 %6 = scmp eq i32 %5, i32 1;
-    i32 %7 = zext i1 %6 to i32;
-    i1 %8 = scmp neq i32 %7, i32 0;
-    cbr i1 %8(prob = 0.5), ^if.then, ^b1;
-^b:
-    i32 %9 = load i32* %count;
-    call (i32) -> void @write(i32 %9);
-    i32 %10 = load i32* %count;
+    i32 %10 = phi [^entry, i32 %1] [^while.body, i32 %5];
     ret i32 %10;
-^if.then:
-    i32 %11 = load i32* %i;
-    call (i32) -> void @write(i32 %11);
-    i32 %12 = load i32* %count;
-    i32 %13 = add i32 %12, i32 1;
-    store i32* %count with i32 %13;
-    ubr ^b1;
+}
+func @getNumDigits(i32 %number3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i1 %0 = scmp lt i32 %number3, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^while.header;
+^while.header:
+    i1 %1 = scmp gt i32 %number3, i32 0;
+    cbr i1 %1(prob = 0.97), ^while.body, ^b1;
+^b:
+    i32 %2 = phi [^entry, i32 -1] [^b1, i32 %3];
+    ret i32 %2;
 ^b1:
-    i32 %14 = load i32* %i;
-    i32 %15 = add i32 %14, i32 1;
-    store i32* %i with i32 %15;
+    i32 %3 = phi [^while.header, i32 0] [^while.body, i32 %7];
+    ubr ^b;
+^while.body:
+    i32 %4 = phi [^while.header, i32 %number3] [^while.body, i32 %6];
+    i32 %5 = phi [^while.header, i32 0] [^while.body, i32 %7];
+    i32 %6 = sdiv i32 %4, i32 10;
+    i32 %7 = add i32 %5, i32 1;
+    i1 %8 = scmp gt i32 %6, i32 0;
+    cbr i1 %8(prob = 0.97), ^while.body, ^b1;
+}
+func @isNarcissistic(i32 %number4) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+^entry:
+    i1 %0 = scmp lt i32 %number4, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^while.header;
+^b:
+    i32 %1 = phi [^entry, i32 -1] [^b1, i32 %6];
+    i1 %2 = scmp gt i32 %number4, i32 0;
+    i32 %3 = add i32 %1, i32 1;
+    i32 %4 = sub i32 %3, i32 %1;
+    cbr i1 %2(prob = 0.97), ^while.body, ^b2;
+^while.header:
+    i1 %5 = scmp gt i32 %number4, i32 0;
+    cbr i1 %5(prob = 0.97), ^while.body1, ^b1;
+^b1:
+    i32 %6 = phi [^while.header, i32 0] [^while.body1, i32 %18];
+    ubr ^b;
+^while.body:
+    i32 %7 = phi [^b, i32 %number4] [^b3, i32 %13];
+    i32 %8 = phi [^b, i32 0] [^b3, i32 %29];
+    i32 %9 = sdiv i32 %7, i32 10;
+    i32 %10 = mul i32 %9, i32 10;
+    i32 %11 = sub i32 %7, i32 %10;
+    i32 %12 = sub i32 %7, i32 %11;
+    i32 %13 = sdiv i32 %12, i32 10;
+    i1 %14 = scmp gt i32 %1, i32 0;
+    cbr i1 %14(prob = 0.97), ^while.body2, ^b3;
+^while.body1:
+    i32 %15 = phi [^while.header, i32 %number4] [^while.body1, i32 %17];
+    i32 %16 = phi [^while.header, i32 0] [^while.body1, i32 %18];
+    i32 %17 = sdiv i32 %15, i32 10;
+    i32 %18 = add i32 %16, i32 1;
+    i1 %19 = scmp gt i32 %17, i32 0;
+    cbr i1 %19(prob = 0.97), ^while.body1, ^b1;
+^b2:
+    i1 %20 = scmp eq i32 %number4, i32 0;
+    cbr i1 %20(prob = 0.5), ^b4, ^if.else;
+^if.else:
+    ubr ^b4;
+^while.body2:
+    i32 %21 = phi [^while.body, i32 %4] [^while.body2, i32 %23];
+    i32 %22 = phi [^while.body, i32 %1] [^while.body2, i32 %26];
+    i32 %23 = mul i32 %11, i32 %21;
+    i32 %24 = mul i32 %22, i32 2;
+    i32 %25 = sub i32 %24, i32 %22;
+    i32 %26 = add i32 %25, i32 -1;
+    i1 %27 = scmp gt i32 %26, i32 0;
+    cbr i1 %27(prob = 0.97), ^while.body2, ^b3;
+^b3:
+    i32 %28 = phi [^while.body, i32 %4] [^while.body2, i32 %23];
+    i32 %29 = add i32 %28, i32 %8;
+    i1 %30 = scmp gt i32 %13, i32 0;
+    cbr i1 %30(prob = 0.97), ^while.body, ^b5;
+^b4:
+    i32 %31 = phi [^b2, i32 1] [^if.else, i32 0] [^b5, i32 1];
+    ret i32 %31;
+^b5:
+    i1 %32 = scmp eq i32 %29, i32 %number4;
+    cbr i1 %32(prob = 0.5), ^b4, ^if.else;
+}
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+^entry:
     ubr ^while.header;
+^while.header:
+    i32 %0 = phi [^entry, i32 0] [^b4, i32 %32];
+    i32 %1 = phi [^entry, i32 300] [^b4, i32 %33];
+    i1 %2 = scmp lt i32 %1, i32 500;
+    cbr i1 %2(prob = 0.97), ^entry1, ^b;
+^entry1:
+    i1 %3 = scmp lt i32 %1, i32 0;
+    cbr i1 %3(prob = 0.5), ^b1, ^while.header1;
+^b:
+    call (i32) -> void @write(i32 %0);
+    ret i32 %0;
+^b1:
+    i32 %4 = phi [^entry1, i32 -1] [^b2, i32 %9];
+    i1 %5 = scmp gt i32 %1, i32 0;
+    i32 %6 = add i32 %4, i32 1;
+    i32 %7 = sub i32 %6, i32 %4;
+    cbr i1 %5(prob = 0.97), ^while.body, ^b3;
+^while.header1:
+    i1 %8 = scmp gt i32 %1, i32 0;
+    cbr i1 %8(prob = 0.97), ^while.body1, ^b2;
+^b2:
+    i32 %9 = phi [^while.header1, i32 0] [^while.body1, i32 %21];
+    ubr ^b1;
+^while.body:
+    i32 %10 = phi [^b1, i32 %1] [^b5, i32 %16];
+    i32 %11 = phi [^b1, i32 0] [^b5, i32 %35];
+    i32 %12 = sdiv i32 %10, i32 10;
+    i32 %13 = mul i32 %12, i32 10;
+    i32 %14 = sub i32 %10, i32 %13;
+    i32 %15 = sub i32 %10, i32 %14;
+    i32 %16 = sdiv i32 %15, i32 10;
+    i1 %17 = scmp gt i32 %4, i32 0;
+    cbr i1 %17(prob = 0.97), ^while.body2, ^b5;
+^while.body1:
+    i32 %18 = phi [^while.header1, i32 %1] [^while.body1, i32 %20];
+    i32 %19 = phi [^while.header1, i32 0] [^while.body1, i32 %21];
+    i32 %20 = sdiv i32 %18, i32 10;
+    i32 %21 = add i32 %19, i32 1;
+    i1 %22 = scmp gt i32 %20, i32 0;
+    cbr i1 %22(prob = 0.97), ^while.body1, ^b2;
+^b3:
+    i1 %23 = scmp eq i32 %1, i32 0;
+    cbr i1 %23(prob = 0.5), ^if.then, ^b4;
+^if.then:
+    call (i32) -> void @write(i32 %1);
+    i32 %24 = add i32 %0, i32 1;
+    ubr ^b4;
+^while.body2:
+    i32 %25 = phi [^while.body, i32 %7] [^while.body2, i32 %27];
+    i32 %26 = phi [^while.body, i32 %4] [^while.body2, i32 %30];
+    i32 %27 = mul i32 %14, i32 %25;
+    i32 %28 = mul i32 %26, i32 2;
+    i32 %29 = sub i32 %28, i32 %26;
+    i32 %30 = add i32 %29, i32 -1;
+    i1 %31 = scmp gt i32 %30, i32 0;
+    cbr i1 %31(prob = 0.97), ^while.body2, ^b5;
+^b4:
+    i32 %32 = phi [^b3, i32 %0] [^if.then, i32 %24] [^b7, i32 %0];
+    i32 %33 = add i32 %1, i32 1;
+    ubr ^while.header;
+^b5:
+    i32 %34 = phi [^while.body, i32 %7] [^while.body2, i32 %27];
+    i32 %35 = add i32 %11, i32 %34;
+    i1 %36 = scmp gt i32 %16, i32 0;
+    cbr i1 %36(prob = 0.97), ^while.body, ^b6;
+^b6:
+    i1 %37 = scmp eq i32 %35, i32 %1;
+    cbr i1 %37(prob = 0.5), ^b7, ^if.else;
+^if.else:
+    ubr ^b7;
+^b7:
+    i32 %38 = phi [^b6, i32 1] [^if.else, i32 0];
+    i1 %39 = scmp eq i32 %38, i32 1;
+    cbr i1 %39(prob = 0.5), ^if.then, ^b4;
 }

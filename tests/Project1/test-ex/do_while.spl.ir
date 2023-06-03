@@ -1,24 +1,13 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
     ubr ^dowhile.body;
 ^dowhile.body:
-    i32 %0 = load i32* %i;
+    i32 %0 = phi [^entry, i32 0] [^dowhile.body, i32 %1];
     call (i32) -> void @write(i32 %0);
-    i32 %1 = load i32* %i;
-    i32 %2 = add i32 %1, i32 1;
-    store i32* %i with i32 %2;
-    ubr ^dowhile.header;
-^dowhile.header:
-    i32 %3 = load i32* %i;
-    i1 %4 = scmp lt i32 %3, i32 10;
-    i32 %5 = zext i1 %4 to i32;
-    i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.97), ^dowhile.body, ^b;
+    i32 %1 = add i32 %0, i32 1;
+    i1 %2 = scmp lt i32 %1, i32 10;
+    cbr i1 %2(prob = 0.9), ^dowhile.body, ^b;
 ^b:
-    i32 %7 = load i32* %i;
-    ret i32 %7;
+    ret i32 %1;
 }

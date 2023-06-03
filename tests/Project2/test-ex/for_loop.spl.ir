@@ -1,55 +1,21 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    i32* %i = alloc i32;
-    store i32* %i with i32 0;
-    store i32* %i with i32 0;
-    ubr ^for.header;
-^for.header:
-    i32 %0 = load i32* %i;
-    i1 %1 = scmp lt i32 %0, i32 10;
-    i32 %2 = zext i1 %1 to i32;
-    i1 %3 = scmp neq i32 %2, i32 0;
-    cbr i1 %3(prob = 0.97), ^for.body, ^b;
+    ubr ^for.body;
 ^for.body:
-    i32 %4 = load i32* %i;
-    call (i32) -> void @write(i32 %4);
-    ubr ^for.iteration;
-^b:
-    store i32* %i with i32 0;
-    ubr ^for.header1;
-^for.iteration:
-    i32 %5 = load i32* %i;
-    i32 %6 = add i32 %5, i32 1;
-    store i32* %i with i32 %6;
-    ubr ^for.header;
-^for.header1:
-    ubr ^for.body1;
+    i32 %0 = phi [^entry, i32 0] [^for.body, i32 %1];
+    call (i32) -> void @write(i32 %0);
+    i32 %1 = add i32 %0, i32 1;
+    i1 %2 = scmp lt i32 %1, i32 10;
+    cbr i1 %2(prob = 0.9), ^for.body, ^for.body1;
 ^for.body1:
-    i32 %7 = load i32* %i;
-    i32 %8 = add i32 %7, i32 1;
-    store i32* %i with i32 %8;
-    i32 %9 = load i32* %i;
-    i1 %10 = scmp eq i32 %9, i32 5;
-    i32 %11 = zext i1 %10 to i32;
-    i1 %12 = scmp neq i32 %11, i32 0;
-    cbr i1 %12(prob = 0.5), ^if.then, ^b1;
-^if.then:
-    ubr ^for.iteration1;
+    i32 %3 = phi [^for.body, i32 0] [^for.body1, i32 %4] [^b, i32 %4];
+    i32 %4 = add i32 %3, i32 1;
+    i1 %5 = scmp eq i32 %4, i32 5;
+    cbr i1 %5(prob = 0.5), ^for.body1, ^b;
+^b:
+    i1 %6 = scmp gt i32 %4, i32 9;
+    cbr i1 %6(prob = 0.5), ^b1, ^for.body1;
 ^b1:
-    i32 %13 = load i32* %i;
-    i1 %14 = scmp ge i32 %13, i32 10;
-    i32 %15 = zext i1 %14 to i32;
-    i1 %16 = scmp neq i32 %15, i32 0;
-    cbr i1 %16(prob = 0.5), ^if.then1, ^b2;
-^for.iteration1:
-    ubr ^for.header1;
-^if.then1:
-    ubr ^b3;
-^b2:
-    ubr ^for.iteration1;
-^b3:
-    i32 %17 = load i32* %i;
-    ret i32 %17;
+    ret i32 %4;
 }

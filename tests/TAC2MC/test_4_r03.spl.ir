@@ -1,21 +1,6 @@
-func @read() -> i32 { NoMemoryRead NoMemoryWrite };
-func @write() -> void { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 {
+internal func @write() -> void { NoMemoryRead NoMemoryWrite };
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    i32* %c = alloc i32;
-    i32* %b = alloc i32;
-    i32* %a = alloc i32;
-    store i32* %a with i32 110;
-    store i32* %b with i32 97;
-    store i32* %c with i32 3;
-    i32 %0 = load i32* %a;
-    i32 %1 = load i32* %b;
-    i32 %2 = sub i32 %0, i32 %1;
-    i32 %3 = load i32* %c;
-    i32 %4 = mul i32 %3, i32 2;
-    i32 %5 = add i32 %2, i32 %4;
-    store i32* %c with i32 %5;
-    i32 %6 = load i32* %c;
-    call (i32) -> void @write(i32 %6);
+    call (i32) -> void @write(i32 19);
     ret i32 0;
 }

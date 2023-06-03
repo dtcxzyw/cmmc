@@ -31,42 +31,41 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %6(prob = 0.97), ^while.body, ^b;
 ^b:
     i1 %7 = scmp gt i32 %1, i32 0;
-    cbr i1 %7(prob = 0.97), ^while.body1, ^b1;
+    cbr i1 %7(prob = 0.97), ^while.body1, ^while.header;
 ^while.body1:
-    i32 %8 = phi [^b, i32 0] [^while.body3, i32 %20];
+    i32 %8 = phi [^b, i32 0] [^while.body3, i32 %21];
     i32 %9 = call () -> i32 @getint();
     i32 %10 = call () -> i32 @getint();
     i32 %11 = call (i32) -> i32 @find(i32 %9);
     i32 %12 = call (i32) -> i32 @find(i32 %10);
     i1 %13 = scmp neq i32 %11, i32 %12;
     cbr i1 %13(prob = 0.5), ^if.then, ^while.body3;
-^b1:
-    cbr i1 %2(prob = 0.97), ^while.body2, ^b2;
+^while.header:
+    i32 %14 = phi [^b, i32 0] [^while.body3, i32 0] [^b2, i32 %24];
+    i32 %15 = phi [^b, i32 0] [^while.body3, i32 0] [^b2, i32 %25];
+    i1 %16 = scmp lt i32 %15, i32 %0;
+    cbr i1 %16(prob = 0.97), ^while.body2, ^b1;
 ^if.then:
-    i32* %14 = getelementptr &([1005 * i32]* @parent)[i64 0][i32 %12];
-    store i32* %14 with i32 %11;
+    i32* %17 = getelementptr &([1005 * i32]* @parent)[i64 0][i32 %12];
+    store i32* %17 with i32 %11;
     ubr ^while.body3;
 ^while.body2:
-    i32 %15 = phi [^b1, i32 0] [^b3, i32 %25];
-    i32 %16 = phi [^b1, i32 0] [^b3, i32 %24];
-    i32* %17 = getelementptr &([1005 * i32]* @parent)[i64 0][i32 %15];
-    i32 %18 = load i32* %17;
-    i1 %19 = scmp eq i32 %18, i32 %15;
-    cbr i1 %19(prob = 0.5), ^if.then1, ^b3;
+    i32* %18 = getelementptr &([1005 * i32]* @parent)[i64 0][i32 %15];
+    i32 %19 = load i32* %18;
+    i1 %20 = scmp eq i32 %19, i32 %15;
+    cbr i1 %20(prob = 0.5), ^if.then1, ^b2;
 ^while.body3:
-    i32 %20 = add i32 %8, i32 1;
-    i1 %21 = scmp lt i32 %20, i32 %1;
-    cbr i1 %21(prob = 0.97), ^while.body1, ^b1;
-^b2:
-    i32 %22 = phi [^b1, i32 0] [^b3, i32 %24];
-    call (i32) -> void @putint(i32 %22);
+    i32 %21 = add i32 %8, i32 1;
+    i1 %22 = scmp lt i32 %21, i32 %1;
+    cbr i1 %22(prob = 0.97), ^while.body1, ^while.header;
+^b1:
+    call (i32) -> void @putint(i32 %14);
     ret i32 0;
 ^if.then1:
-    i32 %23 = add i32 %16, i32 1;
-    ubr ^b3;
-^b3:
-    i32 %24 = phi [^while.body2, i32 %16] [^if.then1, i32 %23];
+    i32 %23 = add i32 %14, i32 1;
+    ubr ^b2;
+^b2:
+    i32 %24 = phi [^while.body2, i32 %14] [^if.then1, i32 %23];
     i32 %25 = add i32 %15, i32 1;
-    i1 %26 = scmp lt i32 %25, i32 %0;
-    cbr i1 %26(prob = 0.97), ^while.body2, ^b2;
+    ubr ^while.header;
 }

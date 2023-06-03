@@ -21,23 +21,23 @@ internal func @fibFP(f32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect St
 }
 internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
 ^0:
-    ubr ^entry;
-^entry:
-    f32 %1 = phi [^0, f32 %z] [^if.then, f32 %10];
-    f32 %2 = phi [^0, f32 %y] [^if.then, f32 %8];
-    f32 %3 = phi [^0, f32 %x] [^if.then, f32 %6];
-    i1 %4 = fcmp lt f32 %2, f32 %3;
-    cbr i1 %4(prob = 0.5), ^if.then, ^b;
+    i1 %1 = fcmp lt f32 %y, f32 %x;
+    cbr i1 %1(prob = 0.5), ^if.then, ^b;
 ^if.then:
-    f32 %5 = fsub f32 %3, f32 1;
-    f32 %6 = call (f32, f32, f32) -> f32 @takFP(f32 %5, f32 %2, f32 %1);
-    f32 %7 = fsub f32 %2, f32 1;
-    f32 %8 = call (f32, f32, f32) -> f32 @takFP(f32 %7, f32 %1, f32 %3);
-    f32 %9 = fsub f32 %1, f32 1;
-    f32 %10 = call (f32, f32, f32) -> f32 @takFP(f32 %9, f32 %3, f32 %2);
-    ubr ^entry;
+    f32 %2 = phi [^0, f32 %x] [^if.then, f32 %6];
+    f32 %3 = phi [^0, f32 %y] [^if.then, f32 %8];
+    f32 %4 = phi [^0, f32 %z] [^if.then, f32 %10];
+    f32 %5 = fsub f32 %2, f32 1;
+    f32 %6 = call (f32, f32, f32) -> f32 @takFP(f32 %5, f32 %3, f32 %4);
+    f32 %7 = fsub f32 %3, f32 1;
+    f32 %8 = call (f32, f32, f32) -> f32 @takFP(f32 %7, f32 %4, f32 %2);
+    f32 %9 = fsub f32 %4, f32 1;
+    f32 %10 = call (f32, f32, f32) -> f32 @takFP(f32 %9, f32 %2, f32 %3);
+    i1 %11 = fcmp lt f32 %8, f32 %6;
+    cbr i1 %11(prob = 0.5), ^if.then, ^b;
 ^b:
-    ret f32 %1;
+    f32 %12 = phi [^0, f32 %z] [^if.then, f32 %10];
+    ret f32 %12;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^entry:

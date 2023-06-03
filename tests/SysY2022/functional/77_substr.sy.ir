@@ -161,58 +161,60 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i8* %77 with i8 0;
     i64 %78 = add i64 %61, i64 16;
     i1 %79 = scmp lt i64 %78, i64 1024;
-    cbr i1 %79(prob = 0.98), ^b2, ^while.body1;
-^while.body1:
-    i32 %80 = phi [^b2, i32 1] [^b5, i32 %105];
-    i32 %81 = add i32 %80, i32 -1;
-    i32* %82 = getelementptr &(i32* %0)[i32 %81];
-    [16 * i32]* %83 = getelementptr &([16 * [16 * i32]]* %p)[i64 0][i32 %80];
-    [16 * i32]* %84 = getelementptr &([16 * i32]* %83)[i64 -1];
-    ubr ^while.body2;
-^while.body2:
-    i32 %85 = phi [^while.body1, i32 1] [^b4, i32 %102];
-    i32 %86 = load i32* %82;
-    i32 %87 = add i32 %85, i32 -1;
-    i32* %88 = getelementptr &(i32* %15)[i32 %87];
-    i32 %89 = load i32* %88;
-    i1 %90 = scmp eq i32 %86, i32 %89;
-    cbr i1 %90(prob = 0.5), ^if.then, ^if.else2;
-^if.then:
-    i32* %91 = getelementptr &([16 * i32]* %83)[i64 0][i32 %85];
-    i32* %92 = getelementptr &([16 * i32]* %84)[i64 0][i32 %87];
-    i32 %93 = load i32* %92;
-    i32 %94 = add i32 %93, i32 1;
-    store i32* %91 with i32 %94;
-    ubr ^b4;
-^if.else2:
-    i32* %95 = getelementptr &([16 * i32]* %83)[i64 0][i32 %85];
-    i32* %96 = getelementptr &([16 * i32]* %84)[i64 0][i32 %85];
-    i32 %97 = load i32* %96;
-    i32* %98 = getelementptr &(i32* %95)[i64 -1];
-    i32 %99 = load i32* %98;
-    i1 %100 = scmp eq i32 %97, i32 %99;
-    cbr i1 %100(prob = 0.5), ^b3, ^if.else3;
+    cbr i1 %79(prob = 0.98), ^b2, ^while.header;
+^while.header:
+    i32 %80 = phi [^b2, i32 1] [^b4, i32 %90];
+    i1 %81 = scmp lt i32 %80, i32 16;
+    i32 %82 = add i32 %80, i32 -1;
+    i32* %83 = getelementptr &(i32* %0)[i32 %82];
+    [16 * i32]* %84 = getelementptr &([16 * [16 * i32]]* %p)[i64 0][i32 %80];
+    [16 * i32]* %85 = getelementptr &([16 * i32]* %84)[i64 -1];
+    cbr i1 %81(prob = 0.97), ^while.header1, ^b3;
+^while.header1:
+    i32 %86 = phi [^while.header, i32 1] [^b5, i32 %106];
+    i1 %87 = scmp lt i32 %86, i32 14;
+    cbr i1 %87(prob = 0.97), ^while.body1, ^b4;
 ^b3:
-    i32 %101 = phi [^if.else2, i32 %97] [^if.else3, i32 %97] [^if.else4, i32 %99];
-    store i32* %95 with i32 %101;
-    ubr ^b4;
-^b4:
-    i32 %102 = add i32 %85, i32 1;
-    i1 %103 = scmp lt i32 %102, i32 14;
-    cbr i1 %103(prob = 0.92), ^while.body2, ^b5;
-^if.else3:
-    i1 %104 = scmp gt i32 %97, i32 %99;
-    cbr i1 %104(prob = 0.5), ^b3, ^if.else4;
-^b5:
-    i32 %105 = add i32 %80, i32 1;
-    i1 %106 = scmp lt i32 %105, i32 16;
-    cbr i1 %106(prob = 0.93), ^while.body1, ^b6;
-^if.else4:
-    ubr ^b3;
-^b6:
-    i32* %107 = getelementptr &([16 * [16 * i32]]* %p)[i64 0][i64 15][i64 13];
-    i32 %108 = load i32* %107;
-    call (i32) -> void @putint(i32 %108);
+    i32* %88 = getelementptr &([16 * [16 * i32]]* %p)[i64 0][i64 15][i64 13];
+    i32 %89 = load i32* %88;
+    call (i32) -> void @putint(i32 %89);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
+^b4:
+    i32 %90 = add i32 %80, i32 1;
+    ubr ^while.header;
+^while.body1:
+    i32 %91 = load i32* %83;
+    i32 %92 = add i32 %86, i32 -1;
+    i32* %93 = getelementptr &(i32* %15)[i32 %92];
+    i32 %94 = load i32* %93;
+    i1 %95 = scmp eq i32 %91, i32 %94;
+    cbr i1 %95(prob = 0.5), ^if.then, ^if.else2;
+^if.then:
+    i32* %96 = getelementptr &([16 * i32]* %84)[i64 0][i32 %86];
+    i32* %97 = getelementptr &([16 * i32]* %85)[i64 0][i32 %92];
+    i32 %98 = load i32* %97;
+    i32 %99 = add i32 %98, i32 1;
+    store i32* %96 with i32 %99;
+    ubr ^b5;
+^if.else2:
+    i32* %100 = getelementptr &([16 * i32]* %84)[i64 0][i32 %86];
+    i32* %101 = getelementptr &([16 * i32]* %85)[i64 0][i32 %86];
+    i32 %102 = load i32* %101;
+    i32* %103 = getelementptr &(i32* %100)[i64 -1];
+    i32 %104 = load i32* %103;
+    i1 %105 = scmp eq i32 %102, i32 %104;
+    cbr i1 %105(prob = 0.5), ^b6, ^if.else3;
+^b5:
+    i32 %106 = add i32 %86, i32 1;
+    ubr ^while.header1;
+^b6:
+    i32 %107 = phi [^if.else2, i32 %102] [^if.else3, i32 %102] [^if.else4, i32 %104];
+    store i32* %100 with i32 %107;
+    ubr ^b5;
+^if.else3:
+    i1 %108 = scmp gt i32 %102, i32 %104;
+    cbr i1 %108(prob = 0.5), ^b6, ^if.else4;
+^if.else4:
+    ubr ^b6;
 }
