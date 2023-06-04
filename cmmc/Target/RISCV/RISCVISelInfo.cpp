@@ -21,6 +21,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
@@ -552,5 +553,29 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
 void RISCVISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(instructions);
+}
+MIROperand RISCVISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const {
+    if(fp->getType()->getFixedSize() == sizeof(float)) {
+        const auto val = static_cast<float>(fp->getValue());
+        uint32_t rep;
+        memcpy(&rep, &val, sizeof(float));
+        if(rep == 0) {
+            // fmv.w.x
+            const auto dst = loweringCtx.newVReg(OperandType::Float32);
+            loweringCtx.emitInst(
+                MIRInst{ FMV_W_X }.setOperand<0>(dst).setOperand<1>(MIROperand::asISAReg(RISCV::X0, OperandType::Int32)));
+            return dst;
+        }
+        if((rep & 0xfffff) == 0) {
+            // lui + fmv.w.x
+            const auto high = rep >> 20;
+            const auto gpr = loweringCtx.newVReg(OperandType::Int32);
+            const auto fpr = loweringCtx.newVReg(OperandType::Float32);
+            loweringCtx.emitInst(MIRInst{ LUI }.setOperand<0>(gpr).setOperand<1>(MIROperand::asImm(high, OperandType::Int32)));
+            loweringCtx.emitInst(MIRInst{ FMV_W_X }.setOperand<0>(fpr).setOperand<1>(gpr));
+            return fpr;
+        }
+    }
+    return MIROperand{};
 }
 CMMC_TARGET_NAMESPACE_END

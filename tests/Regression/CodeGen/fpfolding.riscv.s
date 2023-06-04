@@ -1,24 +1,18 @@
 .data
-.align 4
-__cmmc_fp_constant_pool:
-	.4byte	0
 .text
 .globl my_fabs
 my_fabs:
 	addi sp, sp, -8
 	fmv.s f0, f10
-	la t1, __cmmc_fp_constant_pool
-	flw f1, 0(t1)
-	la t2, __cmmc_fp_constant_pool
-	flw f2, 0(t2)
-	flt.s t3, f10, f2
+	fmv.w.x f1, zero
+	flt.s t1, f10, f1
 	fsw f0, 4(sp)
-	bne t3, zero, label14
+	bne t1, zero, label10
 	flw f0, 4(sp)
 	fmv.s f1, f0
 	fsw f1, 0(sp)
 	j label2
-label14:
+label10:
 	flw f0, 4(sp)
 	fneg.s f1, f0
 	fmv.s f2, f1
@@ -34,10 +28,10 @@ my_fmin:
 	flt.s t1, f10, f11
 	fmv.s f0, f10
 	fsw f0, 0(sp)
-	bne t1, zero, label31
+	bne t1, zero, label24
 	fmv.s f0, f11
 	fsw f0, 0(sp)
-label31:
+label24:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -48,10 +42,10 @@ my_fmax:
 	flt.s t1, f11, f10
 	fmv.s f0, f10
 	fsw f0, 0(sp)
-	bne t1, zero, label40
+	bne t1, zero, label33
 	fmv.s f0, f11
 	fsw f0, 0(sp)
-label40:
+label33:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8

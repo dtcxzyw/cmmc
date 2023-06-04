@@ -58,6 +58,7 @@ public:
     void postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const override;
     void preRALegalizeInst(const InstLegalizeContext& ctx) const override;
     void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const override;
+    MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const override;
 };
 
 const TargetISelInfo& get{{target}}ISelInfo() {

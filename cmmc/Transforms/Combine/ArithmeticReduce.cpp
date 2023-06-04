@@ -36,7 +36,7 @@ CMMC_NAMESPACE_BEGIN
 // TODO: cross-block matching
 
 class ArithmeticReduce final : public TransformPass<Function> {
-    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
+    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target, bool useShl) {
         bool modified = false;
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             MatchContext<Value> matchCtx{ inst };
@@ -78,7 +78,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(fmul(any(v1), cfp_(1.0))(matchCtx))
                 return v1;
             // a * (2^k) -> a << k
-            if(mul(any(v1), intLog2(v2))(matchCtx))
+            if(useShl && mul(any(v1), intLog2(v2))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, v2);
             // a * 2 -> a + a
             if(fmul(any(v1), cfp_(2.0))(matchCtx))
@@ -396,10 +396,11 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
+        const auto useShl = target.isNativeSupported(InstructionID::Shl);
 
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(builder, *block, target);
+            modified |= runOnBlock(builder, *block, target, useShl);
         }
         return modified;
     }

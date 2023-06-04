@@ -156,7 +156,10 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     // NOTICE: loaded constant cannot be cached
     const auto operandType = getOperandType(operand->getType(), mPtrType);
     if(operand->getType()->isFloatingPoint()) {
-        return mFPConstantPool.getFPConstant(*this, operand->as<ConstantFloatingPoint>());
+        const auto fpv = operand->as<ConstantFloatingPoint>();
+        if(auto fp = mCodeGenCtx.iselInfo.materializeFPConstant(fpv, *this); !fp.isUnused())
+            return fp;
+        return mFPConstantPool.getFPConstant(*this, fpv);
     }
     // FIXME: detect undef by caller
     if(operand->isUndefined()) {

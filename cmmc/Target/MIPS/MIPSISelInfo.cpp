@@ -21,6 +21,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/MIPS/MIPS.hpp>
 #include <cstdint>
+#include <cstring>
 #include <iostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
@@ -646,5 +647,20 @@ void MIPSISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRI
         std::swap(*iter, *std::prev(iter));
         lastStatus = 1;  // 0b01
     }
+}
+MIROperand MIPSISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const {
+    if(fp->getType()->getFixedSize() == sizeof(float)) {
+        const auto val = static_cast<float>(fp->getValue());
+        uint32_t rep;
+        memcpy(&rep, &val, sizeof(float));
+        if(rep == 0) {
+            // mtc1
+            const auto dst = loweringCtx.newVReg(OperandType::Float32);
+            loweringCtx.emitInst(
+                MIRInst{ MTC1 }.setOperand<0>(MIROperand::asISAReg(MIPS::X0, OperandType::Int32)).setOperand<1>(dst));
+            return dst;
+        }
+    }
+    return MIROperand{};
 }
 CMMC_TARGET_NAMESPACE_END

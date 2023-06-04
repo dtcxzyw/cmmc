@@ -1,30 +1,22 @@
 .data
-.align 4
-__cmmc_fp_constant_pool:
-	.4byte	0
 .text
 .globl my_fabs
 my_fabs:
 	addiu $sp, $sp, -8
 	mov.s $f4, $f12
-	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f6, 0($t1)
-	lui $t2, %hi(__cmmc_fp_constant_pool)
-	addiu $t3, $t2, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f8, 0($t3)
-	c.olt.s $f12, $f8
-	li $t4, 1
-	movf $t4, $zero, $fcc0
+	mtc1 $zero, $f6
+	c.olt.s $f12, $f6
+	li $t0, 1
+	movf $t0, $zero, $fcc0
 	swc1 $f4, 4($sp)
-	bne $t4, $zero, label14
+	bne $t0, $zero, label10
 	nop
 	lwc1 $f4, 4($sp)
 	mov.s $f6, $f4
 	swc1 $f6, 0($sp)
 	b label2
 	nop
-label14:
+label10:
 	lwc1 $f4, 4($sp)
 	neg.s $f6, $f4
 	mov.s $f8, $f6

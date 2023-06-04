@@ -19,27 +19,27 @@ jobs:
           lfs: true
 
       - name: Env
-        run: sudo apt install spim ninja-build llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu
+        run: sudo apt install spim ninja-build # llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu
 
       - name: Format
         run: make format-check
 
-      - uses: actions/checkout@v3
-        with:
-          repository: dtcxzyw/qemu
-          path: ${{github.workspace}}/qemu
+      # - uses: actions/checkout@v3
+      #   with:
+      #     repository: dtcxzyw/qemu
+      #     path: ${{github.workspace}}/qemu
 
-      - name: Build qemu
-        run: |
-          cd qemu
-          ./configure --target-list=riscv64-linux-user,mipsel-linux-user --enable-plugins
-          make -j
-          echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
+      # - name: Build qemu
+      #   run: |
+      #     cd qemu
+      #     ./configure --target-list=riscv64-linux-user,mipsel-linux-user --enable-plugins
+      #     make -j
+      #     echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
 
       - name: Build
         run: |
           mkdir build && cd build
-          cmake .. -G Ninja
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
           cmake --build . -j
 
       - name: Test

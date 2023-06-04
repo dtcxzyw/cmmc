@@ -86,7 +86,11 @@ void TACISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(op);
     CMMC_UNUSED(obj);
-    reportNotImplemented(CMMC_LOCATION());
+    reportUnreachable(CMMC_LOCATION());
 }
-
+MIROperand TACISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const {
+    CMMC_UNUSED(fp);
+    CMMC_UNUSED(loweringCtx);
+    reportUnreachable(CMMC_LOCATION());
+}
 CMMC_TARGET_NAMESPACE_END

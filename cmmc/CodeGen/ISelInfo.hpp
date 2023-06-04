@@ -14,7 +14,9 @@
 
 #pragma once
 #include <cmmc/CodeGen/InstInfo.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cstdint>
 #include <list>
 #include <unordered_map>
@@ -67,6 +69,7 @@ public:
     virtual void postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const = 0;
     virtual void preRALegalizeInst(const InstLegalizeContext& ctx) const = 0;
     virtual void legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const = 0;
+    virtual MIROperand materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const = 0;
 };
 
 uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
