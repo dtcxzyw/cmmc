@@ -22,73 +22,65 @@ write:
     mv a0, x0
     ret
 gcd:
-	addi sp, sp, -112
+	addi sp, sp, -72
 	sd ra, 0(sp)
-	sd s0, 104(sp)
-	sd s1, 32(sp)
-	addi s0, sp, 8
-	addi s1, sp, 24
-	lw t1, 0(a0)
-	sw t1, 24(sp)
-	lw t2, 4(a0)
-	sw t2, 4(s1)
-	sd t2, 48(sp)
-	sd t1, 56(sp)
 	sd s0, 64(sp)
-	beq t2, zero, label16
+	sd s1, 24(sp)
+	addi t1, sp, 8
+	addi t2, sp, 16
+	lw t3, 0(a0)
+	sw t3, 16(sp)
+	lw t4, 4(a0)
+	sw t4, 4(t2)
+	sd t4, 40(sp)
+	sd t3, 48(sp)
+	sd t1, 56(sp)
+	beq t4, zero, label16
 	j label2
 label16:
-	ld s0, 56(sp)
-	mv s1, s0
-	sd s1, 40(sp)
+	ld t1, 48(sp)
+	mv t2, t1
+	sd t2, 32(sp)
 	j label3
 label2:
-	ld s0, 48(sp)
-	sw s0, 8(sp)
-	ld s1, 56(sp)
-	divw t1, s1, s0
-	mulw t2, s0, t1
-	subw t3, s1, t2
-	ld t4, 64(sp)
-	sw t3, 4(t4)
-	mv a0, t4
-	sd t3, 96(sp)
-	sd t2, 88(sp)
-	sd t1, 80(sp)
+	ld t1, 40(sp)
+	sw t1, 8(sp)
+	ld t2, 48(sp)
+	divw t3, t2, t1
+	mulw t4, t1, t3
+	subw t5, t2, t4
+	ld t6, 56(sp)
+	sw t5, 4(t6)
+	mv a0, t6
 	jal gcd
-	mv t5, a0
-	mv t6, t5
-	sd t6, 40(sp)
+	mv s0, a0
+	mv s1, s0
+	sd s1, 32(sp)
 label3:
-	ld s0, 40(sp)
-	mv a0, s0
-	ld s1, 32(sp)
-	ld s0, 104(sp)
+	ld t1, 32(sp)
+	mv a0, t1
+	ld s1, 24(sp)
+	ld s0, 64(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 112
+	addi sp, sp, 72
 	jr ra
 .globl main
 main:
-	addi sp, sp, -64
+	addi sp, sp, -16
 	sd ra, 0(sp)
-	sd s0, 48(sp)
-	sd s1, 56(sp)
-	addi s0, sp, 8
+	addi t1, sp, 8
 	jal read
-	mv s1, a0
-	sw s1, 8(sp)
-	jal read
-	mv t1, a0
-	sw t1, 4(s0)
-	mv a0, s0
-	sd t1, 32(sp)
-	jal gcd
 	mv t2, a0
-	mv a0, t2
+	sw t2, 8(sp)
+	jal read
+	mv t3, a0
+	sw t3, 4(t1)
+	mv a0, t1
+	jal gcd
+	mv t4, a0
+	mv a0, t4
 	jal write
 	mv a0, zero
-	ld s1, 56(sp)
-	ld s0, 48(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 64
+	addi sp, sp, 16
 	jr ra

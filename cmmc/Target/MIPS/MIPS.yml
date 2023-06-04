@@ -915,6 +915,22 @@ InstSelection:
 
   - Pattern:
       InstStore:
+        Src:
+          InstTrunc:
+            Dst: $Dst
+            Src: $Src
+        Addr: $Addr
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+    Replace:
+      Store:
+        $Opcode: getStoreOpcode($Dst)
+        $Template: SW
+        Rd: $Src
+        Rs: $Base
+        Imm: $Offset
+
+  - Pattern:
+      InstStore:
         Src: $Src
         Addr: $Addr
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])

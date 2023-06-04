@@ -23,28 +23,24 @@ write:
     ret
 .globl main
 main:
-	addi sp, sp, -56
+	addi sp, sp, -16
 	sd ra, 0(sp)
-	sd s0, 40(sp)
-	sd s1, 48(sp)
 	jal read
-	mv s0, a0
-	sd s0, 8(sp)
-	ble s0, zero, label8
+	mv t1, a0
+	sd t1, 8(sp)
+	ble t1, zero, label8
 	li a0, 1
 	jal write
 	j label3
 label8:
-	ld s0, 8(sp)
-	slt s1, s0, zero
-	mv t1, s1
-	subw t2, zero, t1
-	mv a0, t2
+	ld t1, 8(sp)
+	slt t2, t1, zero
+	mv t3, t2
+	subw t4, zero, t3
+	mv a0, t4
 	jal write
 label3:
 	mv a0, zero
-	ld s1, 48(sp)
-	ld s0, 40(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 56
+	addi sp, sp, 16
 	jr ra

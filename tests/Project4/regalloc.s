@@ -27,7 +27,7 @@ write:
     nop
 .globl main
 main:
-	addiu $sp, $sp, -48
+	addiu $sp, $sp, -40
 	sw $ra, 16($sp)
 	jal read
 	nop
@@ -63,42 +63,42 @@ main:
 	nop
 	li $t0, 10
 	move $t1, $zero
-	sw $t1, 28($sp)
-	sw $t0, 40($sp)
-	lw $t0, 40($sp)
+	sw $t1, 24($sp)
+	sw $t0, 36($sp)
+	lw $t0, 36($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 28($sp)
+	lw $t2, 24($sp)
 	addiu $t3, $t2, 1
-	sw $t3, 32($sp)
-	sw $t1, 36($sp)
+	sw $t3, 28($sp)
+	sw $t1, 32($sp)
 	bne $t1, $zero, label42
 	nop
 	b label5
 	nop
 label42:
-	lw $t0, 36($sp)
+	lw $t0, 32($sp)
 	move $t1, $t0
-	lw $t2, 32($sp)
-	move $t3, $t2
-	sw $t3, 28($sp)
-	sw $t1, 40($sp)
-	lw $t0, 40($sp)
-	addiu $t1, $t0, -1
 	lw $t2, 28($sp)
-	addiu $t3, $t2, 1
-	sw $t3, 32($sp)
+	move $t3, $t2
+	sw $t3, 24($sp)
 	sw $t1, 36($sp)
+	lw $t0, 36($sp)
+	addiu $t1, $t0, -1
+	lw $t2, 24($sp)
+	addiu $t3, $t2, 1
+	sw $t3, 28($sp)
+	sw $t1, 32($sp)
 	bne $t1, $zero, label42
 	nop
 label5:
-	lw $t0, 36($sp)
-	lw $t1, 32($sp)
+	lw $t0, 32($sp)
+	lw $t1, 28($sp)
 	addu $t2, $t0, $t1
 	move $a0, $t2
 	jal write
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
-	addiu $sp, $sp, 48
+	addiu $sp, $sp, 40
 	jr $ra
 	nop

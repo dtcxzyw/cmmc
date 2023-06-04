@@ -304,7 +304,31 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
 // Callee Arguments
 // ------------------------ <----- Current sp
 
+static void removeUnusedSpillStackObjects(MIRFunction& func) {
+    std::unordered_set<MIROperand, MIROperandHasher> stackObjects;
+    for(auto& [ref, stackObject] : func.stackObjects()) {
+        assert(isStackObject(ref.reg()));
+        if(stackObject.usage == StackObjectUsage::RegSpill)
+            stackObjects.emplace(ref);
+    }
+    for(auto& block : func.blocks()) {
+        for(auto& inst : block->instructions()) {
+            if(inst.opcode() == InstLoadRegFromStack) {
+                stackObjects.erase(inst.getOperand(1));
+            }
+        }
+    }
+    // remove dead store
+    for(auto& block : func.blocks()) {
+        block->instructions().remove_if(
+            [&](auto& inst) { return inst.opcode() == InstStoreRegToStack && stackObjects.count(inst.getOperand(1)); });
+    }
+    for(auto object : stackObjects)
+        func.stackObjects().erase(object);
+}
+
 void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel) {
+    removeUnusedSpillStackObjects(func);
     // func.dump(std::cerr, target);
 
     int32_t allocationBase = 0;

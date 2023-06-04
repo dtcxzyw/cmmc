@@ -23,162 +23,162 @@ write:
     ret
 .globl main
 main:
-	addi sp, sp, -728
+	addi sp, sp, -512
 	sd ra, 0(sp)
-	sd s0, 248(sp)
-	sd s1, 264(sp)
-	sd s2, 280(sp)
-	addi s0, sp, 296
+	sd s0, 440(sp)
+	sd s1, 424(sp)
+	sd s2, 408(sp)
+	addi t1, sp, 8
 	jal read
-	mv s1, a0
-	sd s1, 256(sp)
-	sd s0, 272(sp)
-	ble s1, zero, label23
-	mv s0, zero
-	sd s0, 232(sp)
+	mv t2, a0
+	sd t2, 448(sp)
+	sd t1, 432(sp)
+	ble t2, zero, label23
+	mv t1, zero
+	sd t1, 456(sp)
 	j label2
 label23:
-	li s0, 1
-	sd s0, 216(sp)
-	ld s0, 216(sp)
-	ld s1, 256(sp)
-	bge s0, s1, label14
-	ld s0, 216(sp)
-	slli s1, s0, 2
-	ld t1, 272(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	addiw t4, s0, -1
-	mv t5, t4
-	sd t5, 136(sp)
-	sd t3, 168(sp)
-	li s0, -1
-	ld s1, 136(sp)
-	slt t1, s0, s1
-	xori t2, t1, 1
-	bne t2, zero, label43
+	li t1, 1
+	sd t1, 464(sp)
+	ld t1, 464(sp)
+	ld t2, 448(sp)
+	bge t1, t2, label14
+	ld t1, 464(sp)
+	slli t2, t1, 2
+	ld t3, 432(sp)
+	add t4, t3, t2
+	lw t5, 0(t4)
+	addiw t6, t1, -1
+	mv s0, t6
+	sd s0, 496(sp)
+	sd t5, 488(sp)
+	li t1, -1
+	ld t2, 496(sp)
+	slt t3, t1, t2
+	xori t4, t3, 1
+	bne t4, zero, label43
 	j label42
 label34:
-	ld s0, 216(sp)
-	slli s1, s0, 2
-	ld t1, 272(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	addiw t4, s0, -1
-	mv t5, t4
-	sd t5, 136(sp)
-	sd t3, 168(sp)
-	li s0, -1
-	ld s1, 136(sp)
-	slt t1, s0, s1
-	xori t2, t1, 1
-	bne t2, zero, label43
+	ld t1, 464(sp)
+	slli t2, t1, 2
+	ld t3, 432(sp)
+	add t4, t3, t2
+	lw t5, 0(t4)
+	addiw t6, t1, -1
+	mv s0, t6
+	sd s0, 496(sp)
+	sd t5, 488(sp)
+	li t1, -1
+	ld t2, 496(sp)
+	slt t3, t1, t2
+	xori t4, t3, 1
+	bne t4, zero, label43
 	j label42
 label43:
-	mv s0, zero
-	sd s0, 200(sp)
-	ld s0, 200(sp)
-	beq s0, zero, label12
+	mv t1, zero
+	sd t1, 472(sp)
+	ld t1, 472(sp)
+	beq t1, zero, label12
 	j label11
 label12:
-	ld s0, 136(sp)
+	ld t1, 496(sp)
+	addiw t2, t1, 1
+	slli t3, t2, 2
+	ld t4, 432(sp)
+	add t5, t4, t3
+	ld t6, 488(sp)
+	sw t6, 0(t5)
+	ld s0, 464(sp)
 	addiw s1, s0, 1
-	slli t1, s1, 2
-	ld t2, 272(sp)
-	add t3, t2, t1
-	ld t4, 168(sp)
-	sw t4, 0(t3)
-	ld t5, 216(sp)
-	addiw t6, t5, 1
-	mv t5, t6
-	sd t5, 216(sp)
-	ld s0, 216(sp)
-	ld s1, 256(sp)
-	bge s0, s1, label14
+	mv s0, s1
+	sd s0, 464(sp)
+	ld t1, 464(sp)
+	ld t2, 448(sp)
+	bge t1, t2, label14
 	j label34
 label42:
-	ld s0, 136(sp)
-	slli s1, s0, 2
-	ld t1, 272(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	ld t4, 168(sp)
-	slt t5, t4, t3
-	mv t6, t5
-	sd t6, 200(sp)
-	ld s0, 200(sp)
-	beq s0, zero, label12
+	ld t1, 496(sp)
+	slli t2, t1, 2
+	ld t3, 432(sp)
+	add t4, t3, t2
+	lw t5, 0(t4)
+	ld t6, 488(sp)
+	slt s0, t6, t5
+	mv s1, s0
+	sd s1, 472(sp)
+	ld t1, 472(sp)
+	beq t1, zero, label12
 label11:
-	ld s0, 136(sp)
-	addiw s1, s0, 1
-	slli t1, s1, 2
-	ld t2, 272(sp)
-	add t3, t2, t1
-	slli t4, s0, 2
-	add t5, t2, t4
-	lw t6, 0(t5)
-	sw t6, 0(t3)
-	addiw s2, s0, -1
-	mv s0, s2
-	sd s0, 136(sp)
-	li s0, -1
-	ld s1, 136(sp)
-	slt t1, s0, s1
-	xori t2, t1, 1
-	bne t2, zero, label43
+	ld t1, 496(sp)
+	addiw t2, t1, 1
+	slli t3, t2, 2
+	ld t4, 432(sp)
+	add t5, t4, t3
+	slli t6, t1, 2
+	add s0, t4, t6
+	lw s1, 0(s0)
+	sw s1, 0(t5)
+	addiw s2, t1, -1
+	mv t1, s2
+	sd t1, 496(sp)
+	li t1, -1
+	ld t2, 496(sp)
+	slt t3, t1, t2
+	xori t4, t3, 1
+	bne t4, zero, label43
 	j label42
 label2:
-	ld s0, 232(sp)
-	slli s1, s0, 2
-	ld t1, 272(sp)
-	add t2, t1, s1
+	ld t1, 456(sp)
+	slli t2, t1, 2
+	ld t3, 432(sp)
+	add t4, t3, t2
 	jal read
-	mv t3, a0
-	sw t3, 0(t2)
-	addiw t4, s0, 1
-	ld t5, 256(sp)
-	sd t4, 152(sp)
-	bge t4, t5, label31
-	ld s0, 152(sp)
-	mv s1, s0
-	sd s1, 232(sp)
+	mv t5, a0
+	sw t5, 0(t4)
+	addiw t6, t1, 1
+	ld s0, 448(sp)
+	sd t6, 504(sp)
+	bge t6, s0, label31
+	ld t1, 504(sp)
+	mv t2, t1
+	sd t2, 456(sp)
 	j label2
 label31:
-	li s0, 1
-	sd s0, 216(sp)
-	ld s0, 216(sp)
-	ld s1, 256(sp)
-	bge s0, s1, label14
+	li t1, 1
+	sd t1, 464(sp)
+	ld t1, 464(sp)
+	ld t2, 448(sp)
+	bge t1, t2, label14
 	j label34
 label122:
-	mv s0, zero
-	sd s0, 120(sp)
+	mv t1, zero
+	sd t1, 416(sp)
 	j label15
 label14:
-	ld s0, 256(sp)
-	ble s0, zero, label17
+	ld t1, 448(sp)
+	ble t1, zero, label17
 	j label122
 label15:
-	ld s0, 120(sp)
-	slli s1, s0, 2
-	ld t1, 272(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	mv a0, t3
+	ld t1, 416(sp)
+	slli t2, t1, 2
+	ld t3, 432(sp)
+	add t4, t3, t2
+	lw t5, 0(t4)
+	mv a0, t5
 	jal write
-	addiw t4, s0, 1
-	ld t5, 256(sp)
-	sd t4, 184(sp)
-	bge t4, t5, label17
-	ld s0, 184(sp)
-	mv s1, s0
-	sd s1, 120(sp)
+	addiw t6, t1, 1
+	ld s0, 448(sp)
+	sd t6, 480(sp)
+	bge t6, s0, label17
+	ld t1, 480(sp)
+	mv t2, t1
+	sd t2, 416(sp)
 	j label15
 label17:
 	mv a0, zero
-	ld s2, 280(sp)
-	ld s1, 264(sp)
-	ld s0, 248(sp)
+	ld s2, 408(sp)
+	ld s1, 424(sp)
+	ld s0, 440(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 728
+	addi sp, sp, 512
 	jr ra

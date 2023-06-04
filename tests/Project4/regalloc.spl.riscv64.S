@@ -23,10 +23,8 @@ write:
     ret
 .globl main
 main:
-	addi sp, sp, -64
+	addi sp, sp, -40
 	sd ra, 0(sp)
-	sd s0, 48(sp)
-	sd s1, 56(sp)
 	jal read
 	jal read
 	jal read
@@ -43,41 +41,39 @@ main:
 	jal read
 	jal read
 	jal read
-	li s0, 10
-	mv s1, zero
-	sd s1, 24(sp)
-	sd s0, 32(sp)
-	ld s0, 32(sp)
-	addiw s1, s0, -1
-	ld t1, 24(sp)
-	addiw t2, t1, 1
-	sd t2, 8(sp)
-	sd s1, 16(sp)
-	bne s1, zero, label26
+	li t1, 10
+	mv t2, zero
+	sd t2, 24(sp)
+	sd t1, 32(sp)
+	ld t1, 32(sp)
+	addiw t2, t1, -1
+	ld t3, 24(sp)
+	addiw t4, t3, 1
+	sd t4, 8(sp)
+	sd t2, 16(sp)
+	bne t2, zero, label26
 	j label5
 label26:
-	ld s0, 16(sp)
-	mv s1, s0
-	ld t1, 8(sp)
+	ld t1, 16(sp)
 	mv t2, t1
-	sd t2, 24(sp)
-	sd s1, 32(sp)
-	ld s0, 32(sp)
-	addiw s1, s0, -1
-	ld t1, 24(sp)
-	addiw t2, t1, 1
-	sd t2, 8(sp)
-	sd s1, 16(sp)
-	bne s1, zero, label26
+	ld t3, 8(sp)
+	mv t4, t3
+	sd t4, 24(sp)
+	sd t2, 32(sp)
+	ld t1, 32(sp)
+	addiw t2, t1, -1
+	ld t3, 24(sp)
+	addiw t4, t3, 1
+	sd t4, 8(sp)
+	sd t2, 16(sp)
+	bne t2, zero, label26
 label5:
-	ld s0, 16(sp)
-	ld s1, 8(sp)
-	addw t1, s0, s1
-	mv a0, t1
+	ld t1, 16(sp)
+	ld t2, 8(sp)
+	addw t3, t1, t2
+	mv a0, t3
 	jal write
 	mv a0, zero
-	ld s1, 56(sp)
-	ld s0, 48(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 64
+	addi sp, sp, 40
 	jr ra

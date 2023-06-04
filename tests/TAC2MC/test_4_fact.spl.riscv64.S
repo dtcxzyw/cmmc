@@ -23,85 +23,85 @@ write:
     ret
 .globl main
 main:
-	addi sp, sp, -184
+	addi sp, sp, -88
 	sd ra, 0(sp)
-	sd s0, 88(sp)
+	sd s0, 72(sp)
 	sd s1, 80(sp)
 	jal read
-	mv s0, a0
-	li s1, 1
-	slt t1, s1, s0
-	xori t2, t1, 1
-	sd s0, 144(sp)
-	bne t2, zero, label14
-	li s0, 1
-	ld s1, 144(sp)
-	xor t1, s1, s0
-	sltiu t2, t1, 1
-	xori t3, t2, 1
-	bne t3, zero, label18
+	mv t1, a0
+	li t2, 1
+	slt t3, t2, t1
+	xori t4, t3, 1
+	sd t1, 40(sp)
+	bne t4, zero, label14
+	li t1, 1
+	ld t2, 40(sp)
+	xor t3, t2, t1
+	sltiu t4, t3, 1
+	xori t5, t4, 1
+	bne t5, zero, label18
 	j label17
 label14:
-	li s0, 1
-	sd s0, 128(sp)
+	li t1, 1
+	sd t1, 32(sp)
 	j label9
 label17:
-	ld s0, 144(sp)
-	mv s1, s0
-	li t1, 1
-	sd t1, 64(sp)
-	sd s1, 72(sp)
-	ld s0, 72(sp)
-	ld s1, 64(sp)
-	mulw t1, s0, s1
+	ld t1, 40(sp)
 	mv t2, t1
-	sd t2, 128(sp)
+	li t3, 1
+	sd t3, 16(sp)
+	sd t2, 24(sp)
+	ld t1, 24(sp)
+	ld t2, 16(sp)
+	mulw t3, t1, t2
+	mv t4, t3
+	sd t4, 32(sp)
 	j label9
 label18:
-	ld s0, 144(sp)
-	mv s1, s0
-	li t1, 1
-	sd t1, 48(sp)
-	sd s1, 56(sp)
-label6:
-	ld s0, 56(sp)
-	addiw s1, s0, -1
-	ld t1, 48(sp)
-	mulw t2, s0, t1
+	ld t1, 40(sp)
+	mv t2, t1
 	li t3, 1
-	xor t4, s1, t3
-	sltiu t5, t4, 1
-	xori t6, t5, 1
-	sd t2, 176(sp)
-	sd s1, 160(sp)
-	bne t6, zero, label25
-	ld s0, 160(sp)
-	mv s1, s0
-	ld t1, 176(sp)
+	sd t3, 64(sp)
+	sd t2, 8(sp)
+label6:
+	ld t1, 8(sp)
+	addiw t2, t1, -1
+	ld t3, 64(sp)
+	mulw t4, t1, t3
+	li t5, 1
+	xor t6, t2, t5
+	sltiu s0, t6, 1
+	xori s1, s0, 1
+	sd t4, 56(sp)
+	sd t2, 48(sp)
+	bne s1, zero, label25
+	ld t1, 48(sp)
 	mv t2, t1
-	sd t2, 64(sp)
-	sd s1, 72(sp)
-	ld s0, 72(sp)
-	ld s1, 64(sp)
-	mulw t1, s0, s1
-	mv t2, t1
-	sd t2, 128(sp)
+	ld t3, 56(sp)
+	mv t4, t3
+	sd t4, 16(sp)
+	sd t2, 24(sp)
+	ld t1, 24(sp)
+	ld t2, 16(sp)
+	mulw t3, t1, t2
+	mv t4, t3
+	sd t4, 32(sp)
 	j label9
 label25:
-	ld s0, 160(sp)
-	mv s1, s0
-	ld t1, 176(sp)
+	ld t1, 48(sp)
 	mv t2, t1
-	sd t2, 48(sp)
-	sd s1, 56(sp)
+	ld t3, 56(sp)
+	mv t4, t3
+	sd t4, 64(sp)
+	sd t2, 8(sp)
 	j label6
 label9:
-	ld s0, 128(sp)
-	mv a0, s0
+	ld t1, 32(sp)
+	mv a0, t1
 	jal write
 	mv a0, zero
 	ld s1, 80(sp)
-	ld s0, 88(sp)
+	ld s0, 72(sp)
 	ld ra, 0(sp)
-	addi sp, sp, 184
+	addi sp, sp, 88
 	jr ra
