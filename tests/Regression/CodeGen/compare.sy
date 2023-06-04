@@ -40,3 +40,21 @@ int sgei(int x) {
 int sge(int x, int y) {
     return x >= y;
 }
+int feq(float x, float y) {
+    return x == y;
+}
+int fne(float x, float y) {
+    return x != y;
+}
+int flt(float x, float y) {
+    return x < y;
+}
+int fgt(float x, float y) {
+    return x > y;
+}
+int fle(float x, float y) {
+    return x <= y;
+}
+int fge(float x, float y) {
+    return x >= y;
+}

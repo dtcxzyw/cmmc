@@ -527,7 +527,7 @@ def sysy_cmmc_qemu(src, target):
         os.makedirs(output_path)
     output_asm = output + '.s'
     cmmc_command = binary_path + \
-        ' -t {} -O {} -H -I -o '.format(target,
+        ' -t {} -O {} -H -o '.format(target,
                                      optimization_level) + output_asm + ' ' + src
     if os.system(cmmc_command) != 0:
         return False

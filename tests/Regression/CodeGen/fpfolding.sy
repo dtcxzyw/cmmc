@@ -1,0 +1,13 @@
+float my_fabs(float x) {
+    return x >= 0.0 ? x : -x;
+}
+float my_fmin(float x, float y) {
+    return x < y ? x : y;
+}
+float my_fmax(float x, float y) {
+    return x > y ? x : y;
+}
+float my_trunc(float x) {
+    int y = x;
+    return y;
+}

@@ -1,0 +1,11 @@
+int callee_cmmc_noinline(int x) {
+    return x;
+}
+
+int caller_cmmc_noinline(int x) {
+    return callee_cmmc_noinline(x);
+}
+
+void ret_forwarding() {
+    putint(getint());
+}

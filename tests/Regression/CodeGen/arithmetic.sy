@@ -93,3 +93,41 @@ int ashr_imm(int x) {
 int ashr_reg(int x, int y) {
     return x >> y;
 }
+
+float s2f(int x) {
+    return x;
+}
+int f2s(float x) {
+    return x;
+}
+
+float fadd(float x, float y) {
+    return x + y;
+}
+float fadd_imm(float x) {
+    return x + 1.0;
+}
+float fadd_identity(float x) {
+    return x + -0.0;
+}
+float fsub(float x, float y) {
+    return x - y;
+}
+float fsub_imm(float x) {
+    return x - 1.0;
+}
+float fmul(float x, float y) {
+    return x * y;
+}
+float fmul_imm(float x) {
+    return x * 2.0;
+}
+float fdiv(float x, float y) {
+    return x / y;
+}
+float fdiv_imm(float x) {
+    return x / 2.0;
+}
+float fneg(float x) {
+    return -x;
+}

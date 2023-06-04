@@ -115,3 +115,57 @@ sge:
 	move $v0, $t2
 	jr $ra
 	nop
+.globl feq
+feq:
+	c.eq.s $f12, $f14
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop
+.globl fne
+fne:
+	c.eq.s $f12, $f14
+	li $t0, 1
+	movt $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop
+.globl flt
+flt:
+	c.olt.s $f12, $f14
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop
+.globl fgt
+fgt:
+	c.ule.s $f12, $f14
+	li $t0, 1
+	movt $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop
+.globl fle
+fle:
+	c.ole.s $f12, $f14
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop
+.globl fge
+fge:
+	c.ult.s $f12, $f14
+	li $t0, 1
+	movt $t0, $zero, $fcc0
+	move $t1, $t0
+	move $v0, $t1
+	jr $ra
+	nop

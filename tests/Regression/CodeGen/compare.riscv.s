@@ -121,3 +121,40 @@ sge:
 	mv t5, t4
 	mv a0, t5
 	jr ra
+.globl feq
+feq:
+	feq.s t1, f10, f11
+	mv t2, t1
+	mv a0, t2
+	jr ra
+.globl fne
+fne:
+	feq.s t1, f10, f11
+	xori t1, t1, 1
+	mv t2, t1
+	mv a0, t2
+	jr ra
+.globl flt
+flt:
+	flt.s t1, f10, f11
+	mv t2, t1
+	mv a0, t2
+	jr ra
+.globl fgt
+fgt:
+	flt.s t1, f11, f10
+	mv t2, t1
+	mv a0, t2
+	jr ra
+.globl fle
+fle:
+	fle.s t1, f10, f11
+	mv t2, t1
+	mv a0, t2
+	jr ra
+.globl fge
+fge:
+	fle.s t1, f11, f10
+	mv t2, t1
+	mv a0, t2
+	jr ra

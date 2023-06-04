@@ -1,3 +1,78 @@
-int select(int x, int y, int z) {
-    return x?y:z;
+int select_gpr_gpr_gpr(int x, int y, int z) {
+    return x ? y : z;
+}
+float select_gpr_fpr_fpr(int x, float y, float z) {
+    return x ? y : z;
+}
+int select_slt_gpr_gpr(int x, int y, int z, int w) {
+    return x < y ? z : w;
+}
+float select_slt_fpr_fpr(int x, int y, float z, float w) {
+    return x < y ? z : w;
+}
+int select_sle_gpr_gpr(int x, int y, int z, int w) {
+    return x <= y ? z : w;
+}
+float select_sle_fpr_fpr(int x, int y, float z, float w) {
+    return x <= y ? z : w;
+}
+int select_sgt_gpr_gpr(int x, int y, int z, int w) {
+    return x > y ? z : w;
+}
+float select_sgt_fpr_fpr(int x, int y, float z, float w) {
+    return x > y ? z : w;
+}
+int select_sge_gpr_gpr(int x, int y, int z, int w) {
+    return x >= y ? z : w;
+}
+float select_sge_fpr_fpr(int x, int y, float z, float w) {
+    return x >= y ? z : w;
+}
+int select_eq_gpr_gpr(int x, int y, int z, int w) {
+    return x == y ? z : w;
+}
+float select_eq_fpr_fpr(int x, int y, float z, float w) {
+    return x == y ? z : w;
+}
+int select_ne_gpr_gpr(int x, int y, int z, int w) {
+    return x != y ? z : w;
+}
+float select_ne_fpr_fpr(int x, int y, float z, float w) {
+    return x != y ? z : w;
+}
+int select_feq_gpr_gpr(float x, float y, int z, int w) {
+    return x == y ? z : w;
+}
+float select_feq_fpr_fpr(float x, float y, float z, float w) {
+    return x == y ? z : w;
+}
+int select_fne_gpr_gpr(float x, float y, int z, int w) {
+    return x != y ? z : w;
+}
+float select_fne_fpr_fpr(float x, float y, float z, float w) {
+    return x != y ? z : w;
+}
+int select_flt_gpr_gpr(float x, float y, int z, int w) {
+    return x < y ? z : w;
+}
+float select_flt_fpr_fpr(float x, float y, float z, float w) {
+    return x < y ? z : w;
+}
+int select_fle_gpr_gpr(float x, float y, int z, int w) {
+    return x <= y ? z : w;
+}
+float select_fle_fpr_fpr(float x, float y, float z, float w) {
+    return x <= y ? z : w;
+}
+int select_fgt_gpr_gpr(float x, float y, int z, int w) {
+    return x > y ? z : w;
+}
+float select_fgt_fpr_fpr(float x, float y, float z, float w) {
+    return x > y ? z : w;
+}
+int select_fge_gpr_gpr(float x, float y, int z, int w) {
+    return x >= y ? z : w;
+}
+float select_fge_fpr_fpr(float x, float y, float z, float w) {
+    return x >= y ? z : w;
 }
