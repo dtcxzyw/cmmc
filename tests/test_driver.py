@@ -564,7 +564,6 @@ def compare_with_ref_file(answer_file, output):
         answer = f.read()
         return answer == output
 
-# TODO: asm checks
 def sysy_regression(src):
     output_asm = src + '.ir'
     cmmc_command:str = binary_path + ' -i -O {} -t sim -o /dev/stdout '.format(optimization_level) + src
@@ -574,9 +573,23 @@ def sysy_regression(src):
 
     return compare_with_ref_file(output_asm, out.stdout)
 
+def sysy_regression_codegen(src, target):
+    output_asm = src[:-2] + target + '.s'
+    cmmc_command:str = binary_path + ' -O {} -t {} -o /dev/stdout '.format(optimization_level, target) + src
+    out = subprocess.run(cmmc_command.split(), capture_output=True, text=True)
+    if out.returncode != 0 or len(out.stderr) != 0:
+        return False
+
+    return compare_with_ref_file(output_asm, out.stdout)
+
 def sysy_regression_ref(src):
     output_asm = src + '.ir'
     cmmc_command = binary_path + ' -i -O {} -t sim -o '.format(optimization_level) + output_asm + ' ' + src
+    return os.system(cmmc_command) == 0
+
+def sysy_regression_ref_codegen(src,target):
+    output_asm = src[:-2] + target + '.s'
+    cmmc_command = binary_path + ' -O {} -t {} -o '.format(optimization_level, target) + output_asm + ' ' + src
     return os.system(cmmc_command) == 0
 
 def sysy_codegen_llvm(src):
@@ -647,7 +660,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "opt", "tac", "codegen", "regression"]
+test_cases = ["parse", "semantic", "opt", "tac", "codegen", "regression", 'mips', 'riscv']
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 
@@ -745,7 +758,11 @@ if not generate_ref:
                                 "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 
     if "regression" in test_cases:
-        res.append(test("SysY regression", tests_path +"/Regression", ".sy", sysy_regression))
+        res.append(test("SysY regression", tests_path +"/Regression/Transform", ".sy", sysy_regression))
+
+        for target in targets:
+            if target in test_cases:
+                res.append(test("SysY regression {}".format(target), tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_codegen(x, target)))
 
 
 if generate_ref:
@@ -774,7 +791,10 @@ if generate_ref:
              "/Project4", ".spl", spl_riscv64_ref)
     if 'regression' in test_cases:
         test("Reference SysY Regression", tests_path +
-             "/Regression", ".sy", sysy_regression_ref)
+             "/Regression/Transform", ".sy", sysy_regression_ref)
+        for target in targets:
+            if target in test_cases:
+                test("SysY regression {}".format(target), tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_ref_codegen(x, target))
 
 end = time.perf_counter()
 

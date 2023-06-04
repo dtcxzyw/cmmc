@@ -8,16 +8,17 @@ v16 := v10 / v11
 v17 := v11 * v16
 v18 := v10 - v17
 IF v18 != #0 GOTO label21
-LABEL label36 :
-RETURN v3
-LABEL label34 :
+GOTO label32
+LABEL label33 :
 RETURN v4
 LABEL label8 :
 v24 := v3 / v4
 v25 := v4 * v24
 v26 := v3 - v25
-IF v26 != #0 GOTO label29
-GOTO label34
+IF v26 != #0 GOTO label9
+GOTO label33
+LABEL label32 :
+RETURN v3
 LABEL label21 :
 v4 := v3
 v3 := v18
@@ -26,8 +27,8 @@ v16 := v4 / v18
 v17 := v18 * v16
 v18 := v4 - v17
 IF v18 != #0 GOTO label21
-GOTO label36
-LABEL label29 :
+GOTO label32
+LABEL label9 :
 ARG v4
 ARG v26
 v31 := CALL gcd2

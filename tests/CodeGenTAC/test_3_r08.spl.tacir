@@ -3,13 +3,11 @@ READ v10
 IF v10 >= #0 GOTO label3
 WRITE #-1
 RETURN #0
-LABEL label27 :
+LABEL label3 :
+IF v10 != #0 GOTO label17
 v5 := #0
 WRITE v5
 RETURN #0
-LABEL label3 :
-IF v10 != #0 GOTO label17
-GOTO label27
 LABEL label17 :
 v7 := v10
 v8 := #0

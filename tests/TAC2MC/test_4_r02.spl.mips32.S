@@ -38,10 +38,7 @@ main:
 	li $a0, 1
 	jal write
 	nop
-	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 40
-	jr $ra
+	b label3
 	nop
 label9:
 	lw $t0, 28($sp)
@@ -51,6 +48,7 @@ label9:
 	move $a0, $t3
 	jal write
 	nop
+label3:
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 40

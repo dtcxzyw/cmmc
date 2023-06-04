@@ -40,47 +40,13 @@ v77 := v26 + v76
 v78 := *v77
 v86 := #1
 IF v78 >= v35 GOTO label88
-GOTO label255
-LABEL label82 :
-v3 := #1
-v4 := v43
-v5 := v42
-IF v42 >= v28 GOTO label25
-v33 := v42 * #4
-v34 := v26 + v33
-v35 := *v34
-v8 := v42
-IF v42 >= v28 GOTO label10
-v12 := v28
-IF v42 >= v28 GOTO label46
-v76 := v28 * #4
-v77 := v26 + v76
-v78 := *v77
-v86 := #1
-IF v78 >= v35 GOTO label88
-v86 := #0
-v14 := v86
-IF v86 == #0 GOTO label15
-v75 := v28 + #-1
-v12 := v75
-IF v42 >= v75 GOTO label46
-v76 := v75 * #4
-v77 := v26 + v76
-v78 := *v77
-v86 := #1
-IF v78 >= v35 GOTO label88
-v86 := #0
-v14 := v86
-IF v86 == #0 GOTO label15
-v75 := v75 + #-1
-v12 := v75
-IF v42 >= v75 GOTO label46
-v76 := v75 * #4
-v77 := v26 + v76
-v78 := *v77
-v86 := #1
-IF v78 >= v35 GOTO label88
-GOTO label255
+GOTO label183
+LABEL label25 :
+v80 := v4
+IF v3 != #0 GOTO label90
+v80 := #0
+LABEL label90 :
+RETURN v80
 LABEL label46 :
 v14 := #0
 IF v14 == #0 GOTO label15
@@ -114,7 +80,10 @@ v77 := v26 + v76
 v78 := *v77
 v86 := #1
 IF v78 >= v35 GOTO label88
-GOTO label237
+v86 := #0
+v14 := v86
+IF v86 == #0 GOTO label15
+GOTO label185
 LABEL label15 :
 v51 := v8 * #4
 v52 := v26 + v51
@@ -156,26 +125,48 @@ IF v73 <= v35 GOTO label85
 v83 := #0
 v19 := v83
 IF v83 == #0 GOTO label20
-v70 := v70 + #1
-v17 := v70
-IF v70 >= v12 GOTO label59
-GOTO label244
-LABEL label264 :
+LABEL label187 :
 v70 := v17 + #1
 v17 := v70
 IF v70 >= v12 GOTO label59
-LABEL label244 :
-v71 := v17 * #4
+GOTO label179
+LABEL label59 :
+v19 := #0
+IF v19 == #0 GOTO label20
+v70 := v17 + #1
+v17 := v70
+IF v70 >= v12 GOTO label59
+v71 := v70 * #4
 v72 := v26 + v71
 v73 := *v72
 v83 := #1
 IF v73 <= v35 GOTO label85
-GOTO label266
-LABEL label217 :
-v75 := v12 + #-1
-v12 := v75
-IF v8 >= v75 GOTO label46
-GOTO label239
+v83 := #0
+v19 := v83
+IF v83 == #0 GOTO label20
+v70 := v70 + #1
+v17 := v70
+IF v70 >= v12 GOTO label59
+v71 := v70 * #4
+v72 := v26 + v71
+v73 := *v72
+v83 := #1
+IF v73 <= v35 GOTO label85
+v83 := #0
+v19 := v83
+IF v83 == #0 GOTO label20
+v70 := v70 + #1
+v17 := v70
+IF v70 >= v12 GOTO label59
+v71 := v70 * #4
+v72 := v26 + v71
+v73 := *v72
+v83 := #1
+IF v73 <= v35 GOTO label85
+v83 := #0
+v19 := v83
+IF v83 == #0 GOTO label20
+GOTO label187
 LABEL label20 :
 v64 := v17 * #4
 v65 := v26 + v64
@@ -218,18 +209,17 @@ IF v78 >= v35 GOTO label88
 v86 := #0
 v14 := v86
 IF v86 == #0 GOTO label15
-GOTO label217
-LABEL label259 :
-v75 := v12 + #-1
-v12 := v75
-IF v8 >= v75 GOTO label46
-LABEL label239 :
-v76 := v12 * #4
-v77 := v26 + v76
-v78 := *v77
-v86 := #1
-IF v78 >= v35 GOTO label88
-GOTO label261
+GOTO label169
+LABEL label179 :
+v71 := v17 * #4
+v72 := v26 + v71
+v73 := *v72
+v83 := #1
+IF v73 <= v35 GOTO label85
+v83 := #0
+v19 := v83
+IF v83 == #0 GOTO label20
+GOTO label187
 LABEL label88 :
 v14 := v86
 IF v86 == #0 GOTO label15
@@ -255,68 +245,30 @@ IF v78 >= v35 GOTO label88
 v86 := #0
 v14 := v86
 IF v86 == #0 GOTO label15
-v75 := v75 + #-1
+GOTO label169
+LABEL label185 :
+v75 := v12 + #-1
 v12 := v75
 IF v8 >= v75 GOTO label46
-v76 := v75 * #4
-v77 := v26 + v76
-v78 := *v77
-v86 := #1
-IF v78 >= v35 GOTO label88
-v86 := #0
-v14 := v86
-IF v86 == #0 GOTO label15
-GOTO label259
-LABEL label242 :
-v83 := #0
-v19 := v83
-IF v83 == #0 GOTO label20
-GOTO label264
-LABEL label59 :
-v19 := #0
-IF v19 == #0 GOTO label20
-v70 := v17 + #1
-v17 := v70
-IF v70 >= v12 GOTO label59
-v71 := v70 * #4
-v72 := v26 + v71
-v73 := *v72
-v83 := #1
-IF v73 <= v35 GOTO label85
-v83 := #0
-v19 := v83
-IF v83 == #0 GOTO label20
-v70 := v70 + #1
-v17 := v70
-IF v70 >= v12 GOTO label59
-v71 := v70 * #4
-v72 := v26 + v71
-v73 := *v72
-v83 := #1
-IF v73 <= v35 GOTO label85
-v83 := #0
-v19 := v83
-IF v83 == #0 GOTO label20
-v70 := v70 + #1
-v17 := v70
-IF v70 >= v12 GOTO label59
-v71 := v70 * #4
-v72 := v26 + v71
-v73 := *v72
-v83 := #1
-IF v73 <= v35 GOTO label85
-GOTO label242
-LABEL label253 :
+LABEL label181 :
 v76 := v12 * #4
 v77 := v26 + v76
 v78 := *v77
 v86 := #1
 IF v78 >= v35 GOTO label88
-LABEL label255 :
 v86 := #0
 v14 := v86
 IF v86 == #0 GOTO label15
-GOTO label217
+GOTO label185
+LABEL label183 :
+v86 := #0
+v14 := v86
+IF v86 == #0 GOTO label15
+LABEL label169 :
+v75 := v12 + #-1
+v12 := v75
+IF v8 >= v75 GOTO label46
+GOTO label181
 LABEL label10 :
 v40 := v8 + #-1
 ARG v26
@@ -327,6 +279,7 @@ v42 := v8 + #1
 v43 := v4
 IF v3 != #0 GOTO label82
 v43 := #0
+LABEL label82 :
 v3 := #1
 v4 := v43
 v5 := v42
@@ -360,26 +313,12 @@ IF v86 == #0 GOTO label15
 v75 := v75 + #-1
 v12 := v75
 IF v42 >= v75 GOTO label46
-GOTO label253
-LABEL label237 :
-v86 := #0
-v14 := v86
-IF v86 == #0 GOTO label15
-GOTO label259
-LABEL label92 :
-v80 := #0
-RETURN v80
-LABEL label25 :
-v80 := v4
-IF v3 != #0 GOTO label90
-GOTO label92
-LABEL label90 :
-RETURN v80
-LABEL label266 :
-v83 := #0
-v19 := v83
-IF v83 == #0 GOTO label20
-GOTO label264
+v76 := v75 * #4
+v77 := v26 + v76
+v78 := *v77
+v86 := #1
+IF v78 >= v35 GOTO label88
+GOTO label183
 LABEL label85 :
 v19 := v83
 IF v83 == #0 GOTO label20
@@ -408,185 +347,172 @@ IF v83 == #0 GOTO label20
 v70 := v70 + #1
 v17 := v70
 IF v70 >= v12 GOTO label59
-v71 := v70 * #4
-v72 := v26 + v71
-v73 := *v72
-v83 := #1
-IF v73 <= v35 GOTO label85
-v83 := #0
-v19 := v83
-IF v83 == #0 GOTO label20
-GOTO label264
-LABEL label261 :
-v86 := #0
-v14 := v86
-IF v86 == #0 GOTO label15
-GOTO label259
+GOTO label179
 FUNCTION main :
-DEC x315 32
-v310 := #0
-v317 := v310 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v310 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-LABEL label374 :
-v310 := v320
-v317 := v320 * #4
-v318 := &x315 + v317
-READ v319
-*v318 := v319
-v320 := v320 + #1
-IF v320 >= #8 GOTO label311
-GOTO label374
-LABEL label311 :
-ARG &x315
+DEC x217 32
+v212 := #0
+v219 := v212 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v212 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+GOTO label252
+LABEL label213 :
+ARG &x217
 ARG #0
 ARG #7
-v325 := CALL QuickSort
-v313 := #0
-v326 := v313 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v313 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-GOTO label377
-LABEL label332 :
+v227 := CALL QuickSort
+v215 := #0
+v228 := v215 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v215 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+LABEL label253 :
+v215 := v231
+v228 := v231 * #4
+v229 := &x217 + v228
+v230 := *v229
+WRITE v230
+v231 := v231 + #1
+IF v231 >= #8 GOTO label216
+GOTO label253
+LABEL label252 :
+v212 := v222
+v219 := v222 * #4
+v220 := &x217 + v219
+READ v221
+*v220 := v221
+v222 := v222 + #1
+IF v222 >= #8 GOTO label213
+GOTO label252
+LABEL label216 :
 RETURN #0
-LABEL label377 :
-v313 := v329
-v326 := v329 * #4
-v327 := &x315 + v326
-v328 := *v327
-WRITE v328
-v329 := v329 + #1
-IF v329 >= #8 GOTO label332
-GOTO label377

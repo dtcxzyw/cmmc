@@ -8,7 +8,9 @@ v20 := v12 / #400
 v21 := v20 * #400
 IF v12 != v21 GOTO label9
 IF v13 != #2 GOTO label6
-GOTO label54
+LABEL label54 :
+WRITE #29
+RETURN #0
 LABEL label50 :
 WRITE #30
 RETURN #0
@@ -28,9 +30,7 @@ v40 := v12 / #4
 v41 := v40 * #4
 IF v12 != v41 GOTO label9
 IF v13 != #2 GOTO label6
-LABEL label54 :
-WRITE #29
-RETURN #0
+GOTO label54
 LABEL label49 :
 WRITE #28
 RETURN #0

@@ -14,8 +14,8 @@ v14 := *v9
 v15 := v13 + v14
 *v12 := v15
 WRITE v15
-IF v10 >= #2 GOTO label18
+IF v10 >= #2 GOTO label4
 v3 := v10
 GOTO label2
-LABEL label18 :
+LABEL label4 :
 RETURN #0

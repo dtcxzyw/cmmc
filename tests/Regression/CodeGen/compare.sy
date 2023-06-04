@@ -1,0 +1,42 @@
+int seqz(int x) {
+    return x == 0;
+}
+int seqi(int x) {
+    return x == 1;
+}
+int seq(int x, int y) {
+    return x == y;
+}
+int snei(int x) {
+    return x != 1;
+}
+int sne(int x, int y) {
+    return x != y;
+}
+int snez(int x) {
+    return x != 0;
+}
+int slti(int x) {
+    return x < 1;
+}
+int slt(int x, int y) {
+    return x < y;
+}
+int sgti(int x) {
+    return x > 1;
+}
+int sgt(int x, int y) {
+    return x > y;
+}
+int slei(int x) {
+    return x <= 1;
+}
+int sle(int x, int y) {
+    return x <= y;
+}
+int sgei(int x) {
+    return x >= 1;
+}
+int sge(int x, int y) {
+    return x >= y;
+}

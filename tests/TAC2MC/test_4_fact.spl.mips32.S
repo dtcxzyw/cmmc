@@ -45,14 +45,7 @@ main:
 label15:
 	li $t0, 1
 	sw $t0, 36($sp)
-	lw $t0, 36($sp)
-	move $a0, $t0
-	jal write
-	nop
-	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 72
-	jr $ra
+	b label9
 	nop
 label18:
 	lw $t0, 32($sp)
@@ -66,6 +59,7 @@ label18:
 	mflo $t2
 	move $t3, $t2
 	sw $t3, 36($sp)
+label9:
 	lw $t0, 36($sp)
 	move $a0, $t0
 	jal write
@@ -91,7 +85,20 @@ label19:
 	sw $t1, 56($sp)
 	bne $t1, $t4, label26
 	nop
-	b label53
+label25:
+	lw $t0, 56($sp)
+	move $t1, $t0
+	lw $t2, 40($sp)
+	move $t3, $t2
+	sw $t3, 48($sp)
+	sw $t1, 44($sp)
+	lw $t0, 44($sp)
+	lw $t1, 48($sp)
+	mult $t0, $t1
+	mflo $t2
+	move $t3, $t2
+	sw $t3, 36($sp)
+	b label9
 	nop
 label26:
 	lw $t0, 56($sp)
@@ -110,25 +117,5 @@ label26:
 	sw $t1, 56($sp)
 	bne $t1, $t4, label26
 	nop
-label53:
-	lw $t0, 56($sp)
-	move $t1, $t0
-	lw $t2, 40($sp)
-	move $t3, $t2
-	sw $t3, 48($sp)
-	sw $t1, 44($sp)
-	lw $t0, 44($sp)
-	lw $t1, 48($sp)
-	mult $t0, $t1
-	mflo $t2
-	move $t3, $t2
-	sw $t3, 36($sp)
-	lw $t0, 36($sp)
-	move $a0, $t0
-	jal write
-	nop
-	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 72
-	jr $ra
+	b label25
 	nop

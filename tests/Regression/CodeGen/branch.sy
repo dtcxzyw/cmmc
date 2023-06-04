@@ -1,0 +1,4 @@
+void blt(int x, int y, int arr[]) {
+    if(x < y)
+        arr[0] = 0;
+}

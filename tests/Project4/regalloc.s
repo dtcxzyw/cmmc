@@ -73,17 +73,7 @@ main:
 	sw $t1, 36($sp)
 	bne $t1, $zero, label42
 	nop
-label52:
-	lw $t0, 36($sp)
-	lw $t1, 32($sp)
-	addu $t2, $t0, $t1
-	move $a0, $t2
-	jal write
-	nop
-	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 48
-	jr $ra
+	b label5
 	nop
 label42:
 	lw $t0, 36($sp)
@@ -100,5 +90,15 @@ label42:
 	sw $t1, 36($sp)
 	bne $t1, $zero, label42
 	nop
-	b label52
+label5:
+	lw $t0, 36($sp)
+	lw $t1, 32($sp)
+	addu $t2, $t0, $t1
+	move $a0, $t2
+	jal write
+	nop
+	move $v0, $zero
+	lw $ra, 16($sp)
+	addiu $sp, $sp, 48
+	jr $ra
 	nop

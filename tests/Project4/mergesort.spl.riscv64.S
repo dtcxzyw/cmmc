@@ -237,15 +237,10 @@ main:
 	sd t1, 920(sp)
 	sd s1, 32(sp)
 	sd s0, 488(sp)
-	ble t1, zero, label166
+	ble t1, zero, label160
 	mv s0, zero
 	sd s0, 912(sp)
-	j label164
-label218:
-	mv s0, zero
-	sd s0, 904(sp)
-	j label167
-label164:
+label158:
 	ld s0, 912(sp)
 	slli s1, s0, 2
 	ld t1, 32(sp)
@@ -256,12 +251,16 @@ label164:
 	addiw t4, s0, 1
 	ld t5, 920(sp)
 	sd t4, 64(sp)
-	bge t4, t5, label166
+	bge t4, t5, label160
 	ld s0, 64(sp)
 	mv s1, s0
 	sd s1, 912(sp)
-	j label164
-label166:
+	j label158
+label212:
+	mv s0, zero
+	sd s0, 904(sp)
+	j label161
+label160:
 	ld s0, 32(sp)
 	mv a0, s0
 	ld s1, 488(sp)
@@ -271,9 +270,9 @@ label166:
 	mv a3, t1
 	jal merge
 	ld t2, 920(sp)
-	ble t2, zero, label189
-	j label218
-label167:
+	ble t2, zero, label163
+	j label212
+label161:
 	ld s0, 904(sp)
 	slli s1, s0, 2
 	ld t1, 32(sp)
@@ -284,12 +283,12 @@ label167:
 	addiw t4, s0, 1
 	ld t5, 920(sp)
 	sd t4, 48(sp)
-	bge t4, t5, label189
+	bge t4, t5, label163
 	ld s0, 48(sp)
 	mv s1, s0
 	sd s1, 904(sp)
-	j label167
-label189:
+	j label161
+label163:
 	mv a0, zero
 	ld s1, 40(sp)
 	ld s0, 56(sp)

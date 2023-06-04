@@ -54,18 +54,7 @@ main:
 	sd t2, 8(sp)
 	sd s1, 16(sp)
 	bne s1, zero, label26
-label5:
-	ld s0, 16(sp)
-	ld s1, 8(sp)
-	addw t1, s0, s1
-	mv a0, t1
-	jal write
-	mv a0, zero
-	ld s1, 56(sp)
-	ld s0, 48(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 64
-	jr ra
+	j label5
 label26:
 	ld s0, 16(sp)
 	mv s1, s0
@@ -80,4 +69,15 @@ label26:
 	sd t2, 8(sp)
 	sd s1, 16(sp)
 	bne s1, zero, label26
-	j label5
+label5:
+	ld s0, 16(sp)
+	ld s1, 8(sp)
+	addw t1, s0, s1
+	mv a0, t1
+	jal write
+	mv a0, zero
+	ld s1, 56(sp)
+	ld s0, 48(sp)
+	ld ra, 0(sp)
+	addi sp, sp, 64
+	jr ra

@@ -44,15 +44,7 @@ main:
 label14:
 	li s0, 1
 	sd s0, 128(sp)
-	ld s0, 128(sp)
-	mv a0, s0
-	jal write
-	mv a0, zero
-	ld s1, 80(sp)
-	ld s0, 88(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 184
-	jr ra
+	j label9
 label17:
 	ld s0, 144(sp)
 	mv s1, s0
@@ -64,37 +56,13 @@ label17:
 	mulw t1, s0, s1
 	mv t2, t1
 	sd t2, 128(sp)
-	ld s0, 128(sp)
-	mv a0, s0
-	jal write
-	mv a0, zero
-	ld s1, 80(sp)
-	ld s0, 88(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 184
-	jr ra
+	j label9
 label18:
 	ld s0, 144(sp)
 	mv s1, s0
 	li t1, 1
 	sd t1, 48(sp)
 	sd s1, 56(sp)
-	j label6
-label3:
-	ld s0, 72(sp)
-	ld s1, 64(sp)
-	mulw t1, s0, s1
-	mv t2, t1
-	sd t2, 128(sp)
-	ld s0, 128(sp)
-	mv a0, s0
-	jal write
-	mv a0, zero
-	ld s1, 80(sp)
-	ld s0, 88(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 184
-	jr ra
 label6:
 	ld s0, 56(sp)
 	addiw s1, s0, -1
@@ -113,7 +81,12 @@ label6:
 	mv t2, t1
 	sd t2, 64(sp)
 	sd s1, 72(sp)
-	j label3
+	ld s0, 72(sp)
+	ld s1, 64(sp)
+	mulw t1, s0, s1
+	mv t2, t1
+	sd t2, 128(sp)
+	j label9
 label25:
 	ld s0, 160(sp)
 	mv s1, s0
@@ -122,3 +95,13 @@ label25:
 	sd t2, 48(sp)
 	sd s1, 56(sp)
 	j label6
+label9:
+	ld s0, 128(sp)
+	mv a0, s0
+	jal write
+	mv a0, zero
+	ld s1, 80(sp)
+	ld s0, 88(sp)
+	ld ra, 0(sp)
+	addi sp, sp, 184
+	jr ra

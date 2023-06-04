@@ -37,15 +37,6 @@ WRITE v26
 v27 := v10
 IF v11 != #0 GOTO label37
 v27 := #0
-IF v23 != #1 GOTO label30
-v4 := v27
-v5 := #1
-v20 := v9 * #1000000
-v21 := v15 + v20
-WRITE v21
-v22 := v27
-IF v5 != #0 GOTO label35
-GOTO label38
 LABEL label37 :
 IF v23 != #1 GOTO label30
 v4 := v27
@@ -69,5 +60,5 @@ ARG #3
 ARG #1
 ARG #2
 ARG #3
-v44 := CALL hanoi
+v42 := CALL hanoi
 RETURN #0

@@ -1,0 +1,95 @@
+int add_imm(int x) {
+    return x + 1;
+}
+
+int add_large_imm(int x) {
+    return x + (1 << 18);
+}
+
+int add_reg(int x, int y) {
+    return x + y;
+}
+
+int and_imm(int x) {
+    return x & 1;
+}
+
+int and_large_imm(int x) {
+    return x & (1 << 18);
+}
+
+int and_reg(int x, int y) {
+    return x & y;
+}
+
+int or_imm(int x) {
+    return x | 1;
+}
+
+int or_large_imm(int x) {
+    return x | (1 << 18);
+}
+
+int or_reg(int x, int y) {
+    return x | y;
+}
+
+int xor_imm(int x) {
+    return x ^ 1;
+}
+
+int xor_large_imm(int x) {
+    return x ^ (1 << 18);
+}
+
+int xor_reg(int x, int y) {
+    return x ^ y;
+}
+
+int sub_imm(int x) {
+    return x - 1;
+}
+
+int sub_reg(int x, int y) {
+    return x - y;
+}
+
+int mul_imm(int x) {
+    return x * 3;
+}
+
+int mul_reg(int x, int y) {
+    return x * y;
+}
+
+int div_imm(int x) {
+    return x / 3;
+}
+
+int div_reg(int x, int y) {
+    return x / y;
+}
+
+int mod_imm(int x) {
+    return x % 3;
+}
+
+int mod_reg(int x, int y) {
+    return x % y;
+}
+
+int shl_imm(int x) {
+    return x << 3;
+}
+
+int shl_reg(int x, int y) {
+    return x << y;
+}
+
+int ashr_imm(int x) {
+    return x >> 3;
+}
+
+int ashr_reg(int x, int y) {
+    return x >> y;
+}

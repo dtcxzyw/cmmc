@@ -1,0 +1,9 @@
+int load(int x[], int idx) {
+    return x[idx];
+}
+void store(int x[], int idx, int y) {
+    x[idx] = y;
+}
+int gep_const(int x[]) {
+    return x[3];
+}

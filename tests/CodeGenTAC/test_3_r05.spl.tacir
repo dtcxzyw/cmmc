@@ -3,14 +3,15 @@ READ v15
 IF v15 >= #1 GOTO label4
 WRITE #0
 RETURN #0
+LABEL label43 :
+WRITE #1
+RETURN #0
 LABEL label4 :
 IF v15 != #1 GOTO label6
 GOTO label43
 LABEL label6 :
 IF v15 != #2 GOTO label7
-LABEL label43 :
-WRITE #1
-RETURN #0
+GOTO label43
 LABEL label7 :
 IF v15 <= #2 GOTO label3
 IF v15 <= #2 GOTO label34
@@ -74,14 +75,14 @@ v11 := v36
 v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-LABEL label80 :
+LABEL label71 :
 v10 := v11
 v12 := v37
 v11 := v36
 v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-GOTO label80
+GOTO label71
 LABEL label34 :
 v14 := #0
 WRITE v14

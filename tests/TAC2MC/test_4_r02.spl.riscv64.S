@@ -33,12 +33,7 @@ main:
 	ble s0, zero, label8
 	li a0, 1
 	jal write
-	mv a0, zero
-	ld s1, 48(sp)
-	ld s0, 40(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 56
-	jr ra
+	j label3
 label8:
 	ld s0, 8(sp)
 	slt s1, s0, zero
@@ -46,6 +41,7 @@ label8:
 	subw t2, zero, t1
 	mv a0, t2
 	jal write
+label3:
 	mv a0, zero
 	ld s1, 48(sp)
 	ld s0, 40(sp)

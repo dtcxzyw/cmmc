@@ -41,13 +41,7 @@ label16:
 	ld s0, 56(sp)
 	mv s1, s0
 	sd s1, 40(sp)
-	ld s0, 40(sp)
-	mv a0, s0
-	ld s1, 32(sp)
-	ld s0, 104(sp)
-	ld ra, 0(sp)
-	addi sp, sp, 112
-	jr ra
+	j label3
 label2:
 	ld s0, 48(sp)
 	sw s0, 8(sp)
@@ -65,6 +59,7 @@ label2:
 	mv t5, a0
 	mv t6, t5
 	sd t6, 40(sp)
+label3:
 	ld s0, 40(sp)
 	mv a0, s0
 	ld s1, 32(sp)

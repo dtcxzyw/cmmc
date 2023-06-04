@@ -39,7 +39,12 @@ v3 := v8
 WRITE v8
 v8 := v8 + #1
 IF v8 >= #10 GOTO label11
-GOTO label64
+LABEL label46 :
+v3 := v8
+WRITE v8
+v8 := v8 + #1
+IF v8 >= #10 GOTO label11
+GOTO label46
 LABEL label11 :
 v5 := #0
 v13 := v5 + #1
@@ -71,21 +76,10 @@ IF v13 != #5 GOTO label6
 v5 := v13
 v13 := v13 + #1
 IF v13 != #5 GOTO label6
-GOTO label66
-LABEL label64 :
-v3 := v8
-WRITE v8
-v8 := v8 + #1
-IF v8 >= #10 GOTO label11
-GOTO label64
-LABEL label66 :
-v5 := v13
-v13 := v13 + #1
-IF v13 != #5 GOTO label6
-GOTO label66
+GOTO label47
 LABEL label6 :
 IF v13 <= #9 GOTO label20
-GOTO label26
+GOTO label19
 LABEL label20 :
 v5 := v13
 v13 := v13 + #1
@@ -117,6 +111,10 @@ IF v13 != #5 GOTO label6
 v5 := v13
 v13 := v13 + #1
 IF v13 != #5 GOTO label6
-GOTO label66
-LABEL label26 :
+LABEL label47 :
+v5 := v13
+v13 := v13 + #1
+IF v13 != #5 GOTO label6
+GOTO label47
+LABEL label19 :
 RETURN v13

@@ -166,11 +166,11 @@ v125 := v124 / #10
 *v64 := v125
 v126 := v4 + v125
 v127 := v3 + #1
-IF v127 >= #5 GOTO label130
+IF v127 >= #5 GOTO label5
 v3 := v127
 v4 := v126
 GOTO label2
-LABEL label130 :
+LABEL label5 :
 v132 := v126 / #5
 WRITE v132
 RETURN #0

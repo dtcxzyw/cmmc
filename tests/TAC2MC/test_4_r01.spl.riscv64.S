@@ -121,13 +121,13 @@ label6:
 	bne s6, zero, label45
 	mv s0, zero
 	sd s0, 248(sp)
+label45:
 	li s0, 1
 	ld s1, 240(sp)
 	xor t1, s1, s0
 	sltiu t2, t1, 1
 	xori t3, t2, 1
 	bne t3, zero, label30
-label83:
 	ld s0, 192(sp)
 	mv s1, s0
 	ld t1, 248(sp)
@@ -137,14 +137,6 @@ label83:
 	sd t2, 128(sp)
 	sd s1, 144(sp)
 	j label2
-label45:
-	li s0, 1
-	ld s1, 240(sp)
-	xor t1, s1, s0
-	sltiu t2, t1, 1
-	xori t3, t2, 1
-	bne t3, zero, label30
-	j label83
 label30:
 	ld s0, 240(sp)
 	mv s1, s0

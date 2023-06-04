@@ -45,11 +45,7 @@ label16:
 	lw $t0, 52($sp)
 	move $t1, $t0
 	sw $t1, 44($sp)
-	lw $t0, 44($sp)
-	move $v0, $t0
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 72
-	jr $ra
+	b label3
 	nop
 label2:
 	lw $t0, 48($sp)
@@ -70,6 +66,7 @@ label2:
 	nop
 	move $t6, $v0
 	sw $t6, 44($sp)
+label3:
 	lw $t0, 44($sp)
 	move $v0, $t0
 	lw $ra, 16($sp)

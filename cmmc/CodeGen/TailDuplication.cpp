@@ -41,6 +41,10 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             }
         }
 
+        auto isReturn = [&](const MIRInst& inst) {
+            return ctx.registerInfo && requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagReturn);
+        };
+
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
             const auto nextIter = std::next(iter);
@@ -50,7 +54,10 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             const auto& terminator = instructions.back();
             MIRBasicBlock* targetBlock;
             if(ctx.instInfo.matchUnconditionalBranch(terminator, targetBlock)) {
-                if(targetBlock != block && targetBlock->instructions().size() <= duplicationThreshold) {
+                if(targetBlock != block &&
+                   !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
+                   !isReturn(targetBlock->instructions().back()) &&                         // unify return
+                   targetBlock->instructions().size() <= duplicationThreshold) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());

@@ -44,7 +44,7 @@ merge:
 	sw $t2, 184($sp)
 	sw $t1, 176($sp)
 	sw $t0, 168($sp)
-	bgez $t5, label29
+	bgez $t5, label21
 	nop
 	lw $t0, 184($sp)
 	lw $t1, 92($sp)
@@ -107,7 +107,7 @@ label37:
 	sw $t1, 76($sp)
 	lw $t0, 76($sp)
 	lw $t1, 92($sp)
-	beq $t0, $t1, label29
+	beq $t0, $t1, label21
 	nop
 label20:
 	lw $t0, 76($sp)
@@ -124,7 +124,7 @@ label20:
 	sw $t0, 76($sp)
 	lw $t0, 76($sp)
 	lw $t1, 92($sp)
-	beq $t0, $t1, label29
+	beq $t0, $t1, label21
 	nop
 	b label20
 	nop
@@ -199,13 +199,6 @@ label15:
 	sw $s1, 116($sp)
 	b label12
 	nop
-label17:
-	lw $t0, 80($sp)
-	lw $t1, 84($sp)
-	beq $t0, $t1, label16
-	nop
-	b label15
-	nop
 label16:
 	lw $t0, 72($sp)
 	sll $t1, $t0, 2
@@ -225,7 +218,14 @@ label16:
 	sw $s0, 116($sp)
 	b label12
 	nop
-label29:
+label17:
+	lw $t0, 80($sp)
+	lw $t1, 84($sp)
+	beq $t0, $t1, label16
+	nop
+	b label15
+	nop
+label21:
 	move $v0, $zero
 	lw $s5, 160($sp)
 	lw $s4, 156($sp)
@@ -249,18 +249,11 @@ main:
 	sw $t2, 868($sp)
 	sw $t1, 876($sp)
 	sw $t0, 40($sp)
-	blez $v0, label162
+	blez $v0, label158
 	nop
 	move $t0, $zero
 	sw $t0, 28($sp)
-	b label160
-	nop
-label218:
-	move $t0, $zero
-	sw $t0, 872($sp)
-	b label163
-	nop
-label160:
+label156:
 	lw $t0, 28($sp)
 	sll $t1, $t0, 2
 	lw $t2, 876($sp)
@@ -272,14 +265,19 @@ label160:
 	lw $t5, 868($sp)
 	subu $t6, $t4, $t5
 	sw $t4, 464($sp)
-	bgez $t6, label162
+	bgez $t6, label158
 	nop
 	lw $t0, 464($sp)
 	move $t1, $t0
 	sw $t1, 28($sp)
-	b label160
+	b label156
 	nop
-label162:
+label214:
+	move $t0, $zero
+	sw $t0, 872($sp)
+	b label159
+	nop
+label158:
 	lw $t0, 876($sp)
 	move $a0, $t0
 	lw $t1, 40($sp)
@@ -290,11 +288,11 @@ label162:
 	jal merge
 	nop
 	lw $t3, 868($sp)
-	blez $t3, label187
+	blez $t3, label161
 	nop
-	b label218
+	b label214
 	nop
-label163:
+label159:
 	lw $t0, 872($sp)
 	sll $t1, $t0, 2
 	lw $t2, 876($sp)
@@ -307,14 +305,14 @@ label163:
 	lw $t6, 868($sp)
 	subu $t7, $t5, $t6
 	sw $t5, 32($sp)
-	bgez $t7, label187
+	bgez $t7, label161
 	nop
 	lw $t0, 32($sp)
 	move $t1, $t0
 	sw $t1, 872($sp)
-	b label163
+	b label159
 	nop
-label187:
+label161:
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 880
