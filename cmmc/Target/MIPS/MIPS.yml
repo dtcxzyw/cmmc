@@ -179,6 +179,7 @@ InstInfo:
     Format: "mflo $Rd:GPR[Def] # Implicit Use: $Rs:HILO[Use]"
   MOV_S:
     Format: mov.s $Rd:FPR[Def], $Rs:FPR[Use]
+    Flag: [RegCopy]
 
   Compare:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs:GPR[Use], $Rt:GPR[Use]
@@ -216,7 +217,7 @@ InstInfo:
 
   MoveGPR:
     Format: "move $Rd:GPR[Def], $Rs:GPR[Use]"
-    Flag: [RegCopy]
+    Flag: [RegDef, RegCopy]
 
   # Conditional Move Instructions
   MOVN:

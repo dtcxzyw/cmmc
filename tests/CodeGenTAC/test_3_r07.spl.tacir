@@ -5,7 +5,7 @@ v3 := v11
 v4 := v10
 IF v10 <= v11 GOTO label8
 v16 := v10 / v11
-v17 := v16 * v11
+v17 := v11 * v16
 v18 := v10 - v17
 IF v18 != #0 GOTO label21
 LABEL label36 :
@@ -14,7 +14,7 @@ LABEL label34 :
 RETURN v4
 LABEL label8 :
 v24 := v3 / v4
-v25 := v24 * v4
+v25 := v4 * v24
 v26 := v3 - v25
 IF v26 != #0 GOTO label29
 GOTO label34
@@ -23,7 +23,7 @@ v4 := v3
 v3 := v18
 IF v4 <= v18 GOTO label8
 v16 := v4 / v18
-v17 := v16 * v18
+v17 := v18 * v16
 v18 := v4 - v17
 IF v18 != #0 GOTO label21
 GOTO label36

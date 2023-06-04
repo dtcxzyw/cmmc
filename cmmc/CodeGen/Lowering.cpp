@@ -428,7 +428,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
             while(genericPeepholeOpt(mfunc, ctx))
                 ;
-            // dumpFunc(mfunc);
+            //  dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
 
@@ -443,7 +443,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
 
         // Stage 6: Pre-RA scheduling, minimize register pressure
-        if(optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
+        if(ctx.registerInfo && optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "Pre-RA scheduling"sv };
             schedule(mfunc, ctx, true);
             // dumpFunc(mfunc);
@@ -465,7 +465,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         }
         // Stage 9: post-RA scheduling, minimize latency
         // TODO: after post legalization?
-        if(optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
+        if(ctx.registerInfo && optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
             Stage stage{ "Post-RA scheduling"sv };
             schedule(mfunc, ctx, false);
             assert(mfunc.verify(std::cerr, ctx));

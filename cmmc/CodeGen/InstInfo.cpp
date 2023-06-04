@@ -250,4 +250,16 @@ bool checkISASpecificOperands(const MIRInst& inst, const CodeGenContext& ctx, ui
     return true;
 }
 
+bool TargetInstInfo::matchCopy(const MIRInst& inst, MIROperand& dst, MIROperand& src) const {
+    const auto& instInfo = getInstInfo(inst);
+    if(requireFlag(instInfo.getInstFlag(), InstFlagRegCopy)) {
+        assert(instInfo.getOperandNum() == 2);
+        dst = inst.getOperand(0);
+        src = inst.getOperand(1);
+        assert((isOperandIReg(dst) && isOperandIReg(src)) || (Generic::isOperandFReg(dst) && Generic::isOperandFReg(src)));
+        return true;
+    }
+    return false;
+}
+
 CMMC_MIR_NAMESPACE_END

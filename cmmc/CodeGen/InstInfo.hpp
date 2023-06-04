@@ -36,13 +36,14 @@ enum InstFlag : uint32_t {
     InstFlagNoFallthrough = 1 << 5,
     InstFlagPush = 1 << 6,
     InstFlagLoadConstant = 1 << 7,
-    InstFlagRegCopy = 1 << 8,
+    InstFlagRegDef = 1 << 8,  // def ISA register
     InstFlagCommutative = 1 << 9,
     InstFlagReturn = 1 << 10,
     InstFlagLegalizePreRA = 1 << 11,
     InstFlagWithDelaySlot = 1 << 12,
+    InstFlagRegCopy = 1 << 13,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
-        InstFlagRegCopy | InstFlagReturn | InstFlagWithDelaySlot
+        InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {
@@ -81,6 +82,7 @@ public:
     virtual bool matchBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
     bool matchConditionalBranch(const MIRInst& inst, MIRBasicBlock*& target, double& prob) const;
     bool matchUnconditionalBranch(const MIRInst& inst, MIRBasicBlock*& target) const;
+    bool matchCopy(const MIRInst& inst, MIROperand& dst, MIROperand& src) const;
     virtual void redirectBranch(MIRInst& inst, MIRBasicBlock* target) const;
     virtual MIRInst emitGoto(MIRBasicBlock* target) const = 0;
 };

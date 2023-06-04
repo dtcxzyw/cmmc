@@ -133,13 +133,17 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
     }
 }
 
-void removeIdentityCopies(MIRFunction& func) {
+bool removeIdentityCopies(MIRFunction& func, const CodeGenContext&) {
+    bool modified = false;
     for(auto& block : func.blocks()) {
         block->instructions().remove_if([&](const MIRInst& inst) {
             // TODO: instInfo.matchCopy?
-            return inst.opcode() == InstCopy && inst.getOperand(0) == inst.getOperand(1);
+            const auto remove = inst.opcode() == InstCopy && inst.getOperand(0) == inst.getOperand(1);
+            modified |= remove;
+            return remove;
         });
     }
+    return modified;
 }
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,

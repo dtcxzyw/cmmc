@@ -190,11 +190,11 @@ public:
         for(auto block : func.blocks()) {
             auto& set = color[col[nodeMap.at(block)]];
             for(auto val : set.trueSet) {
-                if(auto inst = val->as<Instruction>())
+                if(auto inst = dynamic_cast<Instruction*>(val))
                     modified |= inst->replaceWithInBlock(block, ConstantInteger::getTrue());
             }
             for(auto val : set.falseSet) {
-                if(auto inst = val->as<Instruction>())
+                if(auto inst = dynamic_cast<Instruction*>(val))
                     modified |= inst->replaceWithInBlock(block, ConstantInteger::getFalse());
             }
         }

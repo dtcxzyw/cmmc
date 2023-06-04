@@ -1,0 +1,73 @@
+FUNCTION hanoi :
+PARAM v15
+PARAM v14
+PARAM v13
+PARAM v12
+IF v12 != #1 GOTO label18
+v4 := #0
+v5 := #0
+v20 := v13 * #1000000
+v21 := v15 + v20
+WRITE v21
+v22 := v4
+IF v5 != #0 GOTO label35
+GOTO label38
+LABEL label18 :
+v7 := v12
+v8 := v13
+v9 := v14
+v10 := #0
+v11 := #0
+GOTO label6
+LABEL label38 :
+v22 := #0
+RETURN v22
+LABEL label35 :
+RETURN v22
+LABEL label6 :
+v23 := v7 + #-1
+ARG v23
+ARG v8
+ARG v15
+ARG v9
+v24 := CALL hanoi
+v25 := v8 * #1000000
+v26 := v15 + v25
+WRITE v26
+v27 := v10
+IF v11 != #0 GOTO label37
+v27 := #0
+IF v23 != #1 GOTO label30
+v4 := v27
+v5 := #1
+v20 := v9 * #1000000
+v21 := v15 + v20
+WRITE v21
+v22 := v27
+IF v5 != #0 GOTO label35
+GOTO label38
+LABEL label37 :
+IF v23 != #1 GOTO label30
+v4 := v27
+v5 := #1
+v20 := v9 * #1000000
+v21 := v15 + v20
+WRITE v21
+v22 := v27
+IF v5 != #0 GOTO label35
+GOTO label38
+LABEL label30 :
+v7 := v23
+v32 := v8
+v8 := v9
+v9 := v32
+v10 := v27
+v11 := #1
+GOTO label6
+FUNCTION main :
+ARG #3
+ARG #1
+ARG #2
+ARG #3
+v44 := CALL hanoi
+RETURN #0

@@ -17,10 +17,12 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 #include <variant>
 
 CMMC_MIR_NAMESPACE_BEGIN
 
+// FIXME: TailDuplication defeats BlockLayout opt.
 // TODO: provided by schedule model?
 constexpr size_t duplicationThreshold = 10;
 constexpr size_t duplicationIterations = 10;
@@ -30,6 +32,14 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
 
     for(uint32_t k = 0; k < duplicationIterations; ++k) {
         const auto cfg = calcCFG(func, ctx);
+        std::unordered_map<MIRBasicBlock*, std::vector<MIRBasicBlock*>> successors;
+        for(auto& block : func.blocks()) {
+            auto& blockSucc = successors[block.get()];
+            for(auto [succ, prob] : cfg.successors(block.get())) {
+                CMMC_UNUSED(prob);
+                blockSucc.push_back(succ);
+            }
+        }
 
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
@@ -57,17 +67,27 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
 
                     MIRBasicBlock* target;
                     double prob;
+                    auto& newSucc = successors.at(block);
                     if(ctx.instInfo.matchConditionalBranch(instructions.back(), target, prob)) {
-                        const auto& successors = cfg.successors(targetBlock);
-                        if(successors.size() == 2) {
-                            if(target == successors[0].block) {
-                                ensureNext(successors[1].block);
+                        const auto& succ = successors.at(targetBlock);
+                        if(succ.size() == 2) {
+                            if(target == succ[0]) {
+                                ensureNext(succ[1]);
                             } else
-                                ensureNext(successors[0].block);
-                        } else if(successors.size() == 1) {
-                            ensureNext(successors[0].block);
+                                ensureNext(succ[0]);
+                        } else if(succ.size() == 1) {
+                            ensureNext(succ[0]);
                         } else
                             reportUnreachable(CMMC_LOCATION());
+                        const auto nextBlock = std::next(iter)->get();
+                        if(target != nextBlock)
+                            newSucc = { target, nextBlock };
+                        else
+                            newSucc = { target };
+                    } else if(ctx.instInfo.matchUnconditionalBranch(instructions.back(), target)) {
+                        newSucc = { target };
+                    } else {
+                        newSucc = {};
                     }
 
                     modified = true;
@@ -80,6 +100,9 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             return;
 
         simplifyCFGWithUniqueTerminator(func, ctx);
+        while(genericPeepholeOpt(func, ctx))
+            ;
+        // func.dump(std::cerr, ctx);
     }
 }
 

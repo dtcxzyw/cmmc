@@ -527,7 +527,7 @@ def sysy_cmmc_qemu(src, target):
         os.makedirs(output_path)
     output_asm = output + '.s'
     cmmc_command = binary_path + \
-        ' -t {} -O {} -H -o '.format(target,
+        ' -t {} -O {} -H -I -o '.format(target,
                                      optimization_level) + output_asm + ' ' + src
     if os.system(cmmc_command) != 0:
         return False
@@ -647,7 +647,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "tac", "codegen", "regression", 'riscv', 'mips']
+test_cases = ["parse", "semantic", "opt", "tac", "codegen", "regression"]
 if len(sys.argv) >= 4:
     test_cases = sys.argv[3].split(',')
 

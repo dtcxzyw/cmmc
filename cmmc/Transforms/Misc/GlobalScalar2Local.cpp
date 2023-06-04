@@ -107,8 +107,7 @@ public:
 
         std::unordered_map<GlobalVariable*, std::unordered_map<Function*, Value*>> mapping;
 
-        const auto getZeroScalar = [](const Type* type) -> Value* {
-            const auto scalarType = type->as<ArrayType>()->getScalarType();
+        const auto getZeroScalar = [](const Type* scalarType) -> Value* {
             if(scalarType->isInteger()) {
                 return ConstantInteger::get(scalarType, 0);
             }
@@ -125,11 +124,16 @@ public:
                 alloc->setLabel(var->getSymbol());
                 if(auto val = var->initialValue()) {
                     if(auto valArray = dynamic_cast<ConstantArray*>(val)) {
-                        initializeArray(builder, alloc, type->as<ArrayType>(), valArray, getZeroScalar(type));
+                        initializeArray(builder, alloc, type->as<ArrayType>(), valArray,
+                                        getZeroScalar(type->as<ArrayType>()->getScalarType()));
                     } else
                         builder.makeOp<StoreInst>(alloc, val);
-                } else if(type->isArray()) {
-                    initializeArray(builder, alloc, type->as<ArrayType>(), nullptr, getZeroScalar(type));
+                } else {
+                    if(type->isArray()) {
+                        initializeArray(builder, alloc, type->as<ArrayType>(), nullptr,
+                                        getZeroScalar(type->as<ArrayType>()->getScalarType()));
+                    } else
+                        builder.makeOp<StoreInst>(alloc, getZeroScalar(type));
                 }
                 mapping[var].emplace(entryFunc, alloc);
             }

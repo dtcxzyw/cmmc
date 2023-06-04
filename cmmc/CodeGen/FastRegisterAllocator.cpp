@@ -35,8 +35,9 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-// TODO: use argument/retval regs
 static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
+    // mfunc.dump(std::cerr, ctx);
+
     auto liveInterval = calcLiveIntervals(mfunc, ctx);
     struct VirtualRegUseInfo final {
         std::unordered_set<MIRBasicBlock*> uses;
@@ -73,7 +74,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
     // find all cross-block vregs and allocate stack slots for them
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> stackMap;
-    std::unordered_set<MIROperand, MIROperandHasher> crossBlockSpilledStackObjects;
+    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> isaRegStackMap;
 
     {
         for(auto& [reg, info] : useDefInfo) {
@@ -87,8 +88,19 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(reg.type()));
             const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             stackMap[reg] = storage;
-            crossBlockSpilledStackObjects.insert(storage);
         }
+
+        /*
+        for(auto& [vreg, isaReg] : isaRegHint) {
+            CMMC_UNUSED(vreg);
+            assert(isOperandISAReg(isaReg));
+            if(isaRegStackMap.count(isaReg))
+                continue;
+            const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(isaReg.type()));
+            const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
+            isaRegStackMap[isaReg] = storage;
+        }
+        */
     }
 
     for(auto& block : mfunc.blocks()) {
@@ -149,6 +161,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 map = { stackStorage };
             };
 
+            std::unordered_set<MIROperand, MIROperandHasher> protect;
             const auto getFreeReg = [&](const MIROperand& operand) -> MIROperand {
                 const auto regClass = ctx.registerInfo->getAllocationClass(operand.type());
                 auto& q = allocationQueue[regClass];
@@ -160,12 +173,22 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 } else {
                     // evict
                     isaReg = q.front();
+                    while(protect.count(isaReg)) {
+                        q.push(isaReg);
+                        isaReg = q.front();
+                    }
                     q.pop();
                     selector.markAsDiscarded(isaReg);
                     if(auto it = physMap.find(isaReg); it != physMap.cend())
                         evictVReg(it->second);
                 }
 
+                // if(auto it = isaRegStackMap.find(isaReg); it != isaRegStackMap.cend()) {
+                //     // spill arguments/retval to stack
+                //     instructions.insert(iter, MIRInst{ InstStoreRegToStack }.setOperand<0>(isaReg).setOperand<1>(it->second));
+                // }
+
+                protect.insert(isaReg);
                 q.push(isaReg);
                 physMap[isaReg] = operand;
                 selector.markAsUsed(isaReg);
@@ -173,8 +196,15 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             const auto use = [&](MIROperand& op) {
-                if(!isOperandVReg(op))
+                // if(auto it = isaRegStackMap.find(op); it != isaRegStackMap.cend()) {
+                //     // load arguments/retval from stack
+                //     instructions.insert(iter, MIRInst{ InstLoadRegFromStack }.setOperand<0>(op).setOperand<1>(it->second));
+                // }
+                if(!isOperandVReg(op)) {
+                    if(isOperandISAReg(op))
+                        protect.insert(op);
                     return;
+                }
 
                 auto& map = getDataMap(op);
                 MIROperand stackStorage;
@@ -260,7 +290,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         assert(block->verify(std::cerr, ctx));
     }
 
-    // TODO: move PEI
+    // TODO: move to PEI
     // callee saved
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> overwrited;
     for(auto& block : mfunc.blocks())
@@ -294,6 +324,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             }
         }
     }
+
+    // mfunc.dump(std::cerr, ctx);
 }
 
 CMMC_REGISTER_ALLOCATOR("fast", fastAllocate);

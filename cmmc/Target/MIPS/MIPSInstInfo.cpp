@@ -52,7 +52,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         else if(op.reg() == invalidReg) {
             out << "invalid";
         } else if(isStackObject(op.reg())) {
-            out << 's' << (op.reg() ^ stackObjectBegin);
+            out << "so" << (op.reg() ^ stackObjectBegin);
         } else {
             reportUnreachable(CMMC_LOCATION());
         }

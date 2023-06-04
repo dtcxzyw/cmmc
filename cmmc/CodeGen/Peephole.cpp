@@ -136,10 +136,8 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
 
         for(auto& block : func.blocks())
             for(auto& inst : block->instructions()) {
-                // TODO: match copy?
-                if(inst.opcode() == InstCopy) {
-                    auto& dst = inst.getOperand(0);
-                    auto& src = inst.getOperand(1);
+                MIROperand dst, src;
+                if(ctx.instInfo.matchCopy(inst, dst, src)) {
                     count(dst, src);
                 } else {
                     auto& instInfo = ctx.instInfo.getInstInfo(inst);
@@ -168,7 +166,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
         });
         if(modified) {
             // func.dump(std::cerr, ctx);
-            removeIdentityCopies(func);
+            removeIdentityCopies(func, ctx);
             removeUnusedInsts(func, ctx);
             dirty = true;
         } else
@@ -288,7 +286,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     }
 
     if(modified) {
-        removeIdentityCopies(func);
+        removeIdentityCopies(func, ctx);
         removeUnusedInsts(func, ctx);
     }
     return modified;
@@ -297,6 +295,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
 bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     // modified |= eliminateStackLoads(func, ctx);
+    modified |= removeIdentityCopies(func, ctx);
     modified |= removeIndirectCopy(func, ctx);
     // func.dump(std::cerr, ctx);
     modified |= removeUnusedInsts(func, ctx);

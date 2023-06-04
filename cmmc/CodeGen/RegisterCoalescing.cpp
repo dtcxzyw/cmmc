@@ -31,7 +31,7 @@ CMMC_MIR_NAMESPACE_BEGIN
 void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx) {
     while(removeIndirectCopy(func, ctx))
         ;
-    removeIdentityCopies(func);
+    removeIdentityCopies(func, ctx);
     removeUnusedInsts(func, ctx);
 }
 

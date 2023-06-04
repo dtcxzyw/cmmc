@@ -14,71 +14,71 @@ RETURN #0
 LABEL label7 :
 IF v15 <= #2 GOTO label3
 IF v15 <= #2 GOTO label34
-v10 := #3
+v10 := #1
 v11 := #1
-v12 := #1
-v36 := v12 + v11
-v37 := v10 + #1
+v12 := #3
+v36 := v11 + v10
+v37 := v12 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
 LABEL label80 :
-v10 := v37
-v11 := v12
-v12 := v36
-v36 := v36 + v11
+v10 := v11
+v12 := v37
+v11 := v36
+v36 := v36 + v10
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
 GOTO label80

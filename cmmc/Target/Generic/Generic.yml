@@ -108,13 +108,14 @@ InstInfo:
   CopyFromReg:
     Format: CopyFromReg $Dst:VRegOrISAReg[Def], $Src:ISAReg[Use]
     CustomVerifier: true
+    Flag: [RegCopy]
   CopyToReg:
     Format: CopyToReg $Dst:ISAReg[Def], $Src:VRegOrISAReg[Use]
     CustomVerifier: true
-    Flag: [RegCopy]
+    Flag: [RegDef, RegCopy]
   LoadImmToReg:
     Format: LoadImmToReg $Dst:ISAReg[Def], $Imm:Imm[Metadata]
-    Flag: [RegCopy]
+    Flag: [RegDef]
   LoadRegFromStack:
     Format: LoadRegFromStack $Dst:VRegOrISAReg[Def], $Obj:StackObject[Metadata]
     Flag: [Load]

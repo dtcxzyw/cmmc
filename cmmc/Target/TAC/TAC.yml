@@ -140,6 +140,18 @@ InstSelection:
         Prob: $Prob
 
   - Pattern:
+      InstBranch:
+        Cond: $Cond
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BranchNe:
+        Lhs: $Cond
+        Rhs: MIROperand::asImm(0, OperandType::Int32)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
       InstUnreachable:
     Replace:
       Return:

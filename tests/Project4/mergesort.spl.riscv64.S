@@ -39,154 +39,74 @@ merge:
 	sd t2, 360(sp)
 	sd t1, 344(sp)
 	sd s1, 184(sp)
-	sd s0, 216(sp)
+	sd s0, 200(sp)
 	bge t3, t2, label2
 	ld s0, 344(sp)
 	ld s1, 360(sp)
 	addw t1, s0, s1
 	li t2, 2
 	divw t3, t1, t2
-	ld t4, 216(sp)
+	ld t4, 200(sp)
 	mv a0, t4
 	ld t5, 184(sp)
 	mv a1, t5
 	mv a2, s0
 	mv a3, t3
-	sd t3, 168(sp)
-	sd t2, 104(sp)
-	sd t1, 112(sp)
+	sd t3, 160(sp)
+	sd t2, 120(sp)
+	sd t1, 128(sp)
 	jal merge
-	ld t6, 216(sp)
+	ld t6, 200(sp)
 	mv a0, t6
 	ld s2, 184(sp)
 	mv a1, s2
-	ld s3, 168(sp)
+	ld s3, 160(sp)
 	mv a2, s3
 	mv a3, s1
 	jal merge
-	beq s0, s1, label4
-	ld s0, 344(sp)
-	mv s1, s0
-	mv t1, s0
-	ld t2, 168(sp)
-	mv t3, t2
-	sd t3, 128(sp)
-	sd t1, 328(sp)
-	sd s1, 200(sp)
-	ld s0, 328(sp)
-	ld s1, 168(sp)
-	beq s0, s1, label53
-	ld s0, 128(sp)
-	ld s1, 360(sp)
-	xor t1, s0, s1
-	sltiu t2, t1, 1
-	xori t3, t2, 1
-	mv t4, t3
-	sd t4, 232(sp)
-	ld s0, 232(sp)
-	beq s0, zero, label19
-	ld s0, 328(sp)
-	slli s1, s0, 2
-	ld t1, 216(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	ld t4, 128(sp)
-	slli t5, t4, 2
-	add t6, t1, t5
-	lw s2, 0(t6)
-	bge t3, s2, label18
-	j label14
-label53:
-	mv s0, zero
-	sd s0, 232(sp)
-	ld s0, 232(sp)
-	beq s0, zero, label19
-	ld s0, 328(sp)
-	slli s1, s0, 2
-	ld t1, 216(sp)
-	add t2, t1, s1
-	lw t3, 0(t2)
-	ld t4, 128(sp)
-	slli t5, t4, 2
-	add t6, t1, t5
-	lw s2, 0(t6)
-	bge t3, s2, label18
-label14:
-	ld s0, 200(sp)
-	slli s1, s0, 2
-	ld t1, 184(sp)
-	add t2, t1, s1
-	ld t3, 328(sp)
-	slli t4, t3, 2
-	ld t5, 216(sp)
-	add t6, t5, t4
-	lw s2, 0(t6)
-	sw s2, 0(t2)
-	addiw s3, t3, 1
-	ld s4, 128(sp)
-	mv s5, s4
-	mv s6, s3
+	mv s4, s0
+	mv s5, s3
+	mv s6, s0
 	sd s6, 144(sp)
+	sd s4, 168(sp)
 	sd s5, 152(sp)
-	ld s0, 200(sp)
-	addiw s1, s0, 1
-	ld t1, 360(sp)
-	sd s1, 136(sp)
-	beq s1, t1, label4
-label76:
-	ld s0, 136(sp)
-	mv s1, s0
-	ld t1, 144(sp)
-	mv t2, t1
-	ld t3, 152(sp)
-	mv t4, t3
-	sd t4, 128(sp)
-	sd t2, 328(sp)
-	sd s1, 200(sp)
-	ld s0, 328(sp)
-	ld s1, 168(sp)
-	beq s0, s1, label53
-	ld s0, 128(sp)
+	ld s0, 168(sp)
+	ld s1, 360(sp)
+	beq s0, s1, label37
+	ld s0, 144(sp)
+	ld s1, 160(sp)
+	beq s0, s1, label41
+	ld s0, 152(sp)
 	ld s1, 360(sp)
 	xor t1, s0, s1
 	sltiu t2, t1, 1
 	xori t3, t2, 1
 	mv t4, t3
-	sd t4, 232(sp)
-	ld s0, 232(sp)
-	beq s0, zero, label19
-	ld s0, 232(sp)
-	beq s0, zero, label19
+	sd t4, 328(sp)
 	ld s0, 328(sp)
+	beq s0, zero, label17
+	ld s0, 144(sp)
 	slli s1, s0, 2
-	ld t1, 216(sp)
+	ld t1, 200(sp)
 	add t2, t1, s1
 	lw t3, 0(t2)
-	ld t4, 128(sp)
+	ld t4, 152(sp)
 	slli t5, t4, 2
 	add t6, t1, t5
 	lw s2, 0(t6)
-	bge t3, s2, label18
-	j label14
-label19:
-	ld s0, 328(sp)
-	ld s1, 168(sp)
-	beq s0, s1, label18
-	j label14
-label151:
+	bge t3, s2, label16
+	j label12
+label37:
 	ld s0, 344(sp)
 	mv s1, s0
-	sd s1, 160(sp)
-	j label5
-label4:
-	ld s0, 344(sp)
+	sd s1, 136(sp)
+	ld s0, 136(sp)
 	ld s1, 360(sp)
 	beq s0, s1, label2
-	j label151
-label5:
-	ld s0, 160(sp)
+label21:
+	ld s0, 136(sp)
 	slli s1, s0, 2
-	ld t1, 216(sp)
+	ld t1, 200(sp)
 	add t2, t1, s1
 	slli t3, s0, 2
 	ld t4, 184(sp)
@@ -194,36 +114,104 @@ label5:
 	lw t6, 0(t5)
 	sw t6, 0(t2)
 	addiw s2, s0, 1
-	ld s3, 360(sp)
-	sd s2, 248(sp)
-	beq s2, s3, label2
-	ld s0, 248(sp)
-	mv s1, s0
-	sd s1, 160(sp)
-	j label5
-label18:
-	ld s0, 200(sp)
+	mv s0, s2
+	sd s0, 136(sp)
+	ld s0, 136(sp)
+	ld s1, 360(sp)
+	beq s0, s1, label2
+	j label21
+label41:
+	mv s0, zero
+	sd s0, 328(sp)
+	ld s0, 328(sp)
+	beq s0, zero, label17
+	ld s0, 144(sp)
+	slli s1, s0, 2
+	ld t1, 200(sp)
+	add t2, t1, s1
+	lw t3, 0(t2)
+	ld t4, 152(sp)
+	slli t5, t4, 2
+	add t6, t1, t5
+	lw s2, 0(t6)
+	bge t3, s2, label16
+label12:
+	ld s0, 168(sp)
 	slli s1, s0, 2
 	ld t1, 184(sp)
 	add t2, t1, s1
-	ld t3, 128(sp)
+	ld t3, 144(sp)
 	slli t4, t3, 2
-	ld t5, 216(sp)
+	ld t5, 200(sp)
+	add t6, t5, t4
+	lw s2, 0(t6)
+	sw s2, 0(t2)
+	addiw s3, t3, 1
+	ld s4, 152(sp)
+	mv s5, s4
+	mv s6, s3
+	sd s6, 232(sp)
+	sd s5, 216(sp)
+label13:
+	ld s0, 168(sp)
+	addiw s1, s0, 1
+	mv s0, s1
+	ld t1, 216(sp)
+	mv t2, t1
+	ld t3, 232(sp)
+	mv t4, t3
+	sd t4, 144(sp)
+	sd t2, 152(sp)
+	sd s0, 168(sp)
+	ld s0, 168(sp)
+	ld s1, 360(sp)
+	beq s0, s1, label37
+	ld s0, 144(sp)
+	ld s1, 160(sp)
+	beq s0, s1, label41
+	ld s0, 152(sp)
+	ld s1, 360(sp)
+	xor t1, s0, s1
+	sltiu t2, t1, 1
+	xori t3, t2, 1
+	mv t4, t3
+	sd t4, 328(sp)
+	ld s0, 328(sp)
+	beq s0, zero, label17
+	ld s0, 144(sp)
+	slli s1, s0, 2
+	ld t1, 200(sp)
+	add t2, t1, s1
+	lw t3, 0(t2)
+	ld t4, 152(sp)
+	slli t5, t4, 2
+	add t6, t1, t5
+	lw s2, 0(t6)
+	bge t3, s2, label16
+	j label12
+label17:
+	ld s0, 144(sp)
+	ld s1, 160(sp)
+	beq s0, s1, label16
+	j label12
+label16:
+	ld s0, 168(sp)
+	slli s1, s0, 2
+	ld t1, 184(sp)
+	add t2, t1, s1
+	ld t3, 152(sp)
+	slli t4, t3, 2
+	ld t5, 200(sp)
 	add t6, t5, t4
 	lw s2, 0(t6)
 	sw s2, 0(t2)
 	addiw s3, t3, 1
 	mv s4, s3
-	ld s5, 328(sp)
+	ld s5, 144(sp)
 	mv s6, s5
-	sd s6, 144(sp)
-	sd s4, 152(sp)
-	ld s0, 200(sp)
-	addiw s1, s0, 1
-	ld t1, 360(sp)
-	sd s1, 136(sp)
-	beq s1, t1, label4
-	j label76
+	sd s6, 232(sp)
+	sd s4, 216(sp)
+	j label13
 label2:
 	mv a0, zero
 	ld s4, 296(sp)
@@ -249,15 +237,15 @@ main:
 	sd t1, 920(sp)
 	sd s1, 32(sp)
 	sd s0, 488(sp)
-	ble t1, zero, label173
+	ble t1, zero, label166
 	mv s0, zero
 	sd s0, 912(sp)
-	j label171
-label225:
+	j label164
+label218:
 	mv s0, zero
 	sd s0, 904(sp)
-	j label174
-label171:
+	j label167
+label164:
 	ld s0, 912(sp)
 	slli s1, s0, 2
 	ld t1, 32(sp)
@@ -268,12 +256,12 @@ label171:
 	addiw t4, s0, 1
 	ld t5, 920(sp)
 	sd t4, 64(sp)
-	bge t4, t5, label173
+	bge t4, t5, label166
 	ld s0, 64(sp)
 	mv s1, s0
 	sd s1, 912(sp)
-	j label171
-label173:
+	j label164
+label166:
 	ld s0, 32(sp)
 	mv a0, s0
 	ld s1, 488(sp)
@@ -283,9 +271,9 @@ label173:
 	mv a3, t1
 	jal merge
 	ld t2, 920(sp)
-	ble t2, zero, label196
-	j label225
-label174:
+	ble t2, zero, label189
+	j label218
+label167:
 	ld s0, 904(sp)
 	slli s1, s0, 2
 	ld t1, 32(sp)
@@ -296,12 +284,12 @@ label174:
 	addiw t4, s0, 1
 	ld t5, 920(sp)
 	sd t4, 48(sp)
-	bge t4, t5, label196
+	bge t4, t5, label189
 	ld s0, 48(sp)
 	mv s1, s0
 	sd s1, 904(sp)
-	j label174
-label196:
+	j label167
+label189:
 	mv a0, zero
 	ld s1, 40(sp)
 	ld s0, 56(sp)

@@ -90,9 +90,9 @@ public:
     void emitReturn(ReturnInst* inst, LoweringContext& ctx) const override;
     [[nodiscard]] bool isCallerSaved(const MIROperand& op) const noexcept override {
         const auto reg = op.reg();
-        // $t0-$t9 $f4-$f18
-        return (MIPS::X8 <= reg && reg <= MIPS::X15) || (reg == MIPS::X24 || reg == MIPS::X25) ||
-            (MIPS::F4 <= reg && reg <= MIPS::F18);
+        // $v0-$v1 $a0-$a3 $t0-$t9 $f0 $f2 $f4-$f18
+        return (MIPS::X2 <= reg && reg <= MIPS::X15) || (reg == MIPS::X24 || reg == MIPS::X25) ||
+            (MIPS::F0 <= reg && reg <= MIPS::F18);
     }
     [[nodiscard]] bool isCalleeSaved(const MIROperand& op) const noexcept override {
         const auto reg = op.reg();
@@ -164,6 +164,8 @@ public:
                 // $t0-$t9
                 MIPS::X8, MIPS::X9, MIPS::X10, MIPS::X11, MIPS::X12,    //
                 MIPS::X13, MIPS::X14, MIPS::X15, MIPS::X24, MIPS::X25,  //
+                // $v0 $a0-$a3
+                // MIPS::X2, MIPS::X4, MIPS::X5, MIPS::X6, MIPS::X7,  //
                 // $s0-$s7
                 MIPS::X16, MIPS::X17, MIPS::X18, MIPS::X19,  //
                 MIPS::X20, MIPS::X21, MIPS::X22, MIPS::X23,  //
@@ -175,8 +177,10 @@ public:
             // $f0, $f2 for return value
             // $f12, $f14 for arguments
             static std::vector<uint32_t> list{
-                MIPS::F4,  MIPS::F6,  MIPS::F8,  MIPS::F10,  //
+                MIPS::F4, MIPS::F6, MIPS::F8, MIPS::F10,     //
                 MIPS::F16, MIPS::F18, MIPS::F20, MIPS::F22,  //
+                // $f0 $f2 $f12 $f14
+                // MIPS::F0, MIPS::F2, MIPS::F12, MIPS::F14,    //
                 MIPS::F24, MIPS::F26, MIPS::F28, MIPS::F30,  //
             };
             return list;
@@ -236,8 +240,11 @@ public:
         const auto symbolName = symbol->symbol();
         // spl runtime
         if(symbolName == "read" || symbolName == "write") {
-            IPRAInfo empty;
-            infoIPRA.add(symbol, empty);
+            IPRAInfo usage;
+            // $v0 $a0
+            usage.insert(MIROperand::asISAReg(MIPS::X2, OperandType::Int32));
+            usage.insert(MIROperand::asISAReg(MIPS::X4, OperandType::Int32));
+            infoIPRA.add(symbol, usage);
         }
     }
 };

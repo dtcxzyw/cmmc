@@ -238,6 +238,7 @@ InstInfo:
       Mnemonic: fsgnj.s
     FMV_S:
       Mnemonic: fmv.s
+      Flag: [RegCopy]
   InstanceFIFRTZ:
     Template: FIFRTZType
     FCVT_W_S:
@@ -283,7 +284,7 @@ InstInfo:
 
   MoveGPR:
     Format: "mv $Rd:GPR[Def], $Rs1:GPR[Use]"
-    Flag: [RegCopy]
+    Flag: [RegDef, RegCopy]
 
 InstSelection:
   # Constants

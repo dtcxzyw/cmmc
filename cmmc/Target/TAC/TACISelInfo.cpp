@@ -58,6 +58,9 @@ bool TACISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComp
         if(inst.opcode() == InstSCmp) {
             return expandCmp(inst, ctx);
         }
+        if(inst.opcode() == InstSelect) {
+            return expandSelect(inst, ctx);
+        }
     }
     return matchAndSelectImpl(inst, ctx);
 }

@@ -153,15 +153,14 @@ public:
             return isFPType(operand.type());
         return false;
     }
-    // TODO: reuse argument registers
     [[nodiscard]] const std::vector<uint32_t>& getAllocationList(uint32_t classId) const override {
         if(classId == 0) {
             // prefer caller-saved registers
             static std::vector<uint32_t> list{
-                // $s0-$s1 for RVC
-                RISCV::X8, RISCV::X9,
-                // $t1-$t6
-                RISCV::X6, RISCV::X7, RISCV::X28, RISCV::X29, RISCV::X30, RISCV::X31,  //
+                // $s0-$s1 $a0-$a5 for RVC
+                RISCV::X8, RISCV::X9,  // RISCV::X10, RISCV::X11, RISCV::X12, RISCV::X13, RISCV::X14, RISCV::X15,  //
+                // $t1-$t6 $a6-$a7
+                RISCV::X6, RISCV::X7, RISCV::X28, RISCV::X29, RISCV::X30, RISCV::X31,  // RISCV::X16, RISCV::X17,  //
                 // $s2-$s11
                 RISCV::X18, RISCV::X19,                          //
                 RISCV::X20, RISCV::X21, RISCV::X22, RISCV::X23,  //
@@ -170,14 +169,14 @@ public:
             return list;
         }
         if(classId == 1) {
-            // lp64d
             static std::vector<uint32_t> list{
-                // $fs0-$fs1 for RVC
-                RISCV::F8, RISCV::F9,
-                // $ft0-$ft11
+                // $fs0-$fs1 $fa0-$fa5 for RVC
+                RISCV::F8, RISCV::F9,  // RISCV::F10, RISCV::F11, RISCV::F12, RISCV::F13, RISCV::F14, RISCV::F15,  //
+                // $ft0-$ft11 $fa6-$fa7
                 RISCV::F0, RISCV::F1, RISCV::F2, RISCV::F3,      //
                 RISCV::F4, RISCV::F5, RISCV::F6, RISCV::F7,      //
                 RISCV::F28, RISCV::F29, RISCV::F30, RISCV::F31,  //
+                // RISCV::F16, RISCV::F17,                       //
                 // $fs2-$fs11
                 RISCV::F18, RISCV::F19, RISCV::F20, RISCV::F21,  //
                 RISCV::F22, RISCV::F23, RISCV::F24, RISCV::F25,  //
@@ -241,8 +240,11 @@ public:
         const auto symbolName = symbol->symbol();
         // spl runtime
         if(symbolName == "read" || symbolName == "write") {
-            IPRAInfo empty;
-            infoIPRA.add(symbol, empty);
+            // $a0 $a7
+            IPRAInfo usage;
+            usage.insert(MIROperand::asISAReg(RISCV::X10, OperandType::Int64));
+            usage.insert(MIROperand::asISAReg(RISCV::X17, OperandType::Int64));
+            infoIPRA.add(symbol, usage);
         }
     }
 };
