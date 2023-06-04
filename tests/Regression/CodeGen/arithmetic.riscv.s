@@ -2,7 +2,7 @@
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1065353216
-	.4byte	1073741824
+	.4byte	1056964608
 .text
 .globl add_imm
 add_imm:
@@ -211,10 +211,8 @@ fmul:
 	jr ra
 .globl fmul_imm
 fmul_imm:
-	la t1, __cmmc_fp_constant_pool
-	flw f0, 4(t1)
-	fmul.s f1, f10, f0
-	fmv.s f10, f1
+	fadd.s f0, f10, f10
+	fmv.s f10, f0
 	jr ra
 .globl fdiv
 fdiv:
@@ -225,7 +223,7 @@ fdiv:
 fdiv_imm:
 	la t1, __cmmc_fp_constant_pool
 	flw f0, 4(t1)
-	fdiv.s f1, f10, f0
+	fmul.s f1, f10, f0
 	fmv.s f10, f1
 	jr ra
 .globl fneg

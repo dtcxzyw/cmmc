@@ -16,6 +16,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <type_traits>
@@ -421,6 +422,30 @@ public:
 template <typename Matcher>
 auto int2ptr(Matcher m) {
     return IntToPtrCastMatcher{ m };
+}
+
+class IntegerLog2Matcher final {
+    Value*& mValue;
+
+public:
+    explicit IntegerLog2Matcher(Value*& value) noexcept : mValue{ value } {}
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        if(shl(cint_(1), any(mValue))(ctx)) {
+            return true;
+        }
+        if(const auto cval = dynamic_cast<ConstantInteger*>(ctx.value)) {
+            const auto val = cval->getSignExtended();
+            if(isPowerOf2(static_cast<size_t>(val))) {
+                mValue = ConstantInteger::get(cval->getType(), ilog2(static_cast<size_t>(val)));
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+inline auto intLog2(Value*& val) noexcept {
+    return IntegerLog2Matcher{ val };
 }
 
 CMMC_NAMESPACE_END

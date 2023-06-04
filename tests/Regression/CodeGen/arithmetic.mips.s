@@ -2,7 +2,7 @@
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1065353216
-	.4byte	1073741824
+	.4byte	1056964608
 .text
 .globl add_imm
 add_imm:
@@ -218,11 +218,8 @@ fmul:
 	nop
 .globl fmul_imm
 fmul_imm:
-	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 4($t1)
-	mul.s $f6, $f12, $f4
-	mov.s $f0, $f6
+	add.s $f4, $f12, $f12
+	mov.s $f0, $f4
 	jr $ra
 	nop
 .globl fdiv
@@ -236,7 +233,7 @@ fdiv_imm:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 4($t1)
-	div.s $f6, $f12, $f4
+	mul.s $f6, $f12, $f4
 	mov.s $f0, $f6
 	jr $ra
 	nop

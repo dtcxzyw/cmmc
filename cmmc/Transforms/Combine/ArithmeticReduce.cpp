@@ -26,6 +26,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <unordered_map>
 
@@ -44,6 +45,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             auto makeNot = [&](Value* val) { return builder.makeOp<BinaryInst>(InstructionID::Xor, val, builder.getTrue()); };
 
             Value *v1, *v2, *v3, *v4;
+            intmax_t i1, i2;
+            double f1;
             // a + 0 -> a
             if(add(any(v1), cint_(0))(matchCtx))
                 return v1;
@@ -74,6 +77,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             if(fmul(any(v1), cfp_(1.0))(matchCtx))
                 return v1;
+            // a * (2^k) -> a << k
+            if(mul(any(v1), intLog2(v2))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, v2);
+            // a * 2 -> a + a
+            if(fmul(any(v1), cfp_(2.0))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::FAdd, v1, v1);
             // a * -1 -> -a
             if(mul(any(v1), cint_(-1))(matchCtx))
                 return builder.makeOp<UnaryInst>(InstructionID::Neg, v1->getType(), v1);
@@ -104,6 +113,18 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return makeIntLike(-1, inst);
             if(fdiv(any(v1), neg(any(v2)))(matchCtx) && v1 == v2)
                 return make<ConstantFloatingPoint>(inst->getType(), -1.0);
+            // a / (2^k) -> a * (2^(-k))
+            auto isPowerOf2FP = [](double x) {
+                uint64_t rep;
+                memcpy(&rep, &x, sizeof(double));
+                return (rep & ((1ULL << 52) - 1)) == 0;
+            };
+            if(fdiv(any(v1), fp_(f1))(matchCtx) && isPowerOf2FP(f1)) {
+                const auto reciprocal = 1.0 / f1;
+                assert(isPowerOf2FP(reciprocal));
+                return builder.makeOp<BinaryInst>(InstructionID::FMul, v1,
+                                                  make<ConstantFloatingPoint>(inst->getType(), reciprocal));
+            }
             // 0 % a -> 0
             if(srem(cint_(0), any(v1))(matchCtx) || urem(cuint_(0), any(v1))(matchCtx))
                 return makeIntLike(0, inst);
@@ -158,6 +179,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(uint_(u1), any(v2), any(v3))(matchCtx)) {
                 return u1 ? v2 : v3;
             }
+            // FIXME:
             // a + a -> 2 * a
             if(add(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return builder.makeOp<BinaryInst>(InstructionID::Mul, makeIntLike(2, inst), v1);
@@ -243,7 +265,6 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return inst->lastOperand();
             }
 
-            intmax_t i1, i2;
             // add (add x c1) c2 -> add x c1+c2
             if(add(add(any(v1), int_(i1)), int_(i2))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i1 + i2, v1));

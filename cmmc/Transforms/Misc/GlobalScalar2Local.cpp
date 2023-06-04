@@ -27,7 +27,6 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
-#include <pstl/glue_algorithm_defs.h>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>

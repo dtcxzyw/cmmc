@@ -33,6 +33,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/IR/Value.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Graph.hpp>
@@ -833,12 +834,6 @@ static void lower(SelectInst* inst, LoweringContext& ctx) {
                      .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
                      .setOperand<3>(ctx.mapOperand(inst->getOperand(2))));
     ctx.addOperand(inst, ret);
-}
-static bool isPowerOf2(size_t x) {
-    return __builtin_popcountll(x) == 1;
-}
-static int32_t ilog2(size_t x) {
-    return __builtin_ctzll(x);
 }
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     const auto [constantOffset, offsets] = inst->gatherOffsets(ctx.getDataLayout());
