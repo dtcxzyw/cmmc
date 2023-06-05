@@ -26,8 +26,12 @@ void bltz(int x, int arr[]) {
     if(x < 0)
         arr[0] = 0;
 }
-void blti(int x, int arr[]) {
+void blti1(int x, int arr[]) {
     if(x < 1)
+        arr[0] = 0;
+}
+void blti2(int x, int arr[]) {
+    if(x < 10)
         arr[0] = 0;
 }
 void blt(int x, int y, int arr[]) {
@@ -38,8 +42,12 @@ void bgez(int x, int arr[]) {
     if(x >= 0)
         arr[0] = 0;
 }
-void bgei(int x, int arr[]) {
+void bgei1(int x, int arr[]) {
     if(x >= 1)
+        arr[0] = 0;
+}
+void bgei2(int x, int arr[]) {
+    if(x >= 10)
         arr[0] = 0;
 }
 void bge(int x, int y, int arr[]) {
@@ -50,8 +58,12 @@ void bgtz(int x, int arr[]) {
     if(x > 0)
         arr[0] = 0;
 }
-void bgti(int x, int arr[]) {
-    if(x > 1)
+void bgti1(int x, int arr[]) {
+    if(x > -1)
+        arr[0] = 0;
+}
+void bgti2(int x, int arr[]) {
+    if(x > 10)
         arr[0] = 0;
 }
 void bgt(int x, int y, int arr[]) {
@@ -62,8 +74,12 @@ void blez(int x, int arr[]) {
     if(x <= 0)
         arr[0] = 0;
 }
-void blei(int x, int arr[]) {
-    if(x <= 1)
+void blei1(int x, int arr[]) {
+    if(x <= -1)
+        arr[0] = 0;
+}
+void blei2(int x, int arr[]) {
+    if(x <= 10)
         arr[0] = 0;
 }
 void ble(int x, int y, int arr[]) {

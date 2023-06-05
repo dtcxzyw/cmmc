@@ -883,6 +883,78 @@ InstSelection:
         Tgt: $Reloc
         Prob: $Prob
 
+  # a >= 1 -> a > 0
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isGreaterEqualOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BGT:
+        Rs1: $Lhs
+        Rs2: getZero($Lhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  # a > -1 -> a >= 0
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isGreaterThanOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BGE:
+        Rs1: $Lhs
+        Rs2: getZero($Lhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  # a < 1 -> a <= 0
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isLessThanOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BLE:
+        Rs1: $Lhs
+        Rs2: getZero($Lhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  # a <= -1 -> a < 0
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isLessEqualOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BLT:
+        Rs1: $Lhs
+        Rs2: getZero($Lhs)
+        Tgt: $Reloc
+        Prob: $Prob
+
   - Pattern:
       InstBranch:
         Cond:
@@ -921,6 +993,30 @@ InstSelection:
         $Template: BLT
         Rs1: $Lhs
         Rs2: $Rhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  # a != b -> (a == b) == 0
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstFCmp:
+            Dst: $Dst
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: isNotEqualOp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      BEQ:
+        Rs1:
+          InstFCmp:
+            Dst: getVRegAs(ctx, $Dst)
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: getEqualOp()
+        Rs2: getZero($Dst)
         Tgt: $Reloc
         Prob: $Prob
 

@@ -196,6 +196,13 @@ static bool isOperandI32(const MIROperand& op) {
     return op.type() == OperandType::Int32;
 }
 
+static bool isOne(const MIROperand& op) {
+    return op.isImm() && op.imm() == 1;
+}
+static bool isNegativeOne(const MIROperand& op) {
+    return op.isImm() && static_cast<uint32_t>(op.imm()) == 0xffffffff;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
