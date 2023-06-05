@@ -282,7 +282,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                iter != regValue.cend() && iter->second.second == getVersion(iter->second.first)) {
                 auto backup = reg;
                 // NOTICE: Don't modify the type
-                reg = MIROperand::asISAReg(iter->second.first, backup.type());
+                reg = MIROperand{ iter->second.first, backup.type() };
                 if(reg == backup)
                     return;
                 auto backupInstOpcode = inst.opcode();
@@ -359,6 +359,7 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     // modified |= applySSAPropagation(func, ctx);
     // func.dump(std::cerr, ctx);
     // modified |= machineInstCSE(func, ctx);
+    modified |= ctx.scheduleModel.peepholeOpt(func, ctx);
     return modified;
 }
 

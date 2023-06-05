@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cassert>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -28,6 +29,7 @@ constexpr size_t duplicationThreshold = 10;
 constexpr size_t duplicationIterations = 10;
 
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
+    assert(ctx.flags.endsWithTerminator);
     simplifyCFGWithUniqueTerminator(func, ctx);
 
     for(uint32_t k = 0; k < duplicationIterations; ++k) {

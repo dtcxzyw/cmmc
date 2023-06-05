@@ -46,6 +46,7 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
     return true;
 }
 void MIRBasicBlock::dump(std::ostream& out, const CodeGenContext& ctx) const {
+    out << "  ";
     dumpAsTarget(out);
     out << ":\n";
     for(auto& inst : mInsts) {

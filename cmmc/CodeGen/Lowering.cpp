@@ -427,7 +427,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         // Stage 4: peephole opt
         if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "Peephole optimization"sv };
-            ctx.scheduleModel.peepholeOpt(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
             while(genericPeepholeOpt(mfunc, ctx))
@@ -501,22 +500,14 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
         }
         // TODO: basic block alignment
-        // Stage 11: post peephole opt
-        if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
-            Stage stage{ "Post peephole optimization"sv };
-            ctx.scheduleModel.postPeepholeOpt(mfunc, ctx);
-            // dumpFunc(mfunc);
-            assert(mfunc.verify(std::cerr, ctx));
-        }
-        // Stage 12: remove unreachable block/continuous goto/unused label/peephold
+        // Stage 12: remove unreachable block/continuous goto/unused label/peephole
+        ctx.flags.endsWithTerminator = false;
         if(optLevel >= OptimizationLevel::O1 && !debugISel.get()) {
             Stage stage{ "CFG Simplification"sv };
             simplifyCFG(mfunc, ctx);
-            ctx.flags.endsWithTerminator = false;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
-        } else
-            ctx.flags.endsWithTerminator = false;
+        }
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };

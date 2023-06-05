@@ -30,8 +30,7 @@ public:
         CMMC_UNUSED(opcode);
         reportNotImplemented(CMMC_LOCATION());
     }
-    {% if model.peephole %} void peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
-    {% if model.post_peephole %} void peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
+    {% if model.peephole %} bool peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const override; {% endif %}
 };
 {% endfor %}
 

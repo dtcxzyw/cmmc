@@ -80,7 +80,7 @@ label42:
 label43:
 	mv t1, zero
 	sd zero, 464(sp)
-	beq zero, zero, label12
+	j label12
 label11:
 	ld t1, 488(sp)
 	addiw t2, t1, 1

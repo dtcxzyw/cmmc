@@ -349,7 +349,6 @@ uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src) {
         if(src.isImm()) {
             return InstLoadImmToReg;
         }
-        assert(isOperandVReg(src));
         return InstCopyToReg;
     }
     if(src.isImm())

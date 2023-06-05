@@ -28,13 +28,10 @@ class TargetScheduleModel {
 public:
     virtual ~TargetScheduleModel() = default;
     [[nodiscard]] virtual const ScheduleClass& getInstScheClass(uint32_t opcode) const = 0;
-    virtual void peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+    virtual bool peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
         CMMC_UNUSED(func);
         CMMC_UNUSED(ctx);
-    }
-    virtual void postPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
-        CMMC_UNUSED(func);
-        CMMC_UNUSED(ctx);
+        return false;
     }
 };
 

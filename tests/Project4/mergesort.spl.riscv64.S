@@ -117,17 +117,7 @@ label21:
 label41:
 	mv t1, zero
 	sd zero, 136(sp)
-	beq zero, zero, label17
-	ld t1, 16(sp)
-	slli t2, t1, 2
-	ld t3, 104(sp)
-	add t4, t3, t2
-	lw t5, 0(t4)
-	ld t6, 24(sp)
-	slli s0, t6, 2
-	add s1, t3, s0
-	lw s2, 0(s1)
-	bge t5, s2, label16
+	j label17
 label12:
 	ld t1, 40(sp)
 	slli t2, t1, 2
