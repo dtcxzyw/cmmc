@@ -13,3 +13,11 @@ int lb(char x[]) {
 void sb(char x[], int y) {
     x[1] = y; 
 }
+int y;
+int arr[100];
+int global_addressing_scalar() {
+    return y;
+}
+int global_addressing_array(int x) {
+    return arr[x];
+}

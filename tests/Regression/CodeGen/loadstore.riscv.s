@@ -1,4 +1,12 @@
 .data
+.align 4
+.globl y
+y:
+	.zero	4
+.align 4
+.globl arr
+arr:
+	.zero	400
 .text
 .globl load
 load:
@@ -31,4 +39,22 @@ lb:
 sb:
 	mv t1, a1
 	sb a1, 1(a0)
+	jr ra
+.globl global_addressing_scalar
+global_addressing_scalar:
+pcrel46:
+	auipc t1, %pcrel_hi(y)
+	lw t2, %pcrel_lo(pcrel46)(t1)
+	mv a0, t2
+	jr ra
+.globl global_addressing_array
+global_addressing_array:
+	mv t1, a0
+pcrel60:
+	auipc t2, %pcrel_hi(arr)
+	addi t3, t2, %pcrel_lo(pcrel60)
+	slli t4, a0, 2
+	add t5, t3, t4
+	lw t6, 0(t5)
+	mv a0, t6
 	jr ra

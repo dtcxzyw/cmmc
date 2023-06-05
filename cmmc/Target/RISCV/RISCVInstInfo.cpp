@@ -60,7 +60,15 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         return out << op.prob();
     }
     if(op.isReloc()) {
+        if(op.type() == OperandType::HighBits) {
+            out << "%pcrel_hi(";
+        } else if(op.type() == OperandType::LowBits) {
+            out << "%pcrel_lo(";
+        }
+
         op.reloc()->dumpAsTarget(out);
+        if(op.type() != OperandType::Special)
+            out << ')';
         return out;
     }
     reportUnreachable(CMMC_LOCATION());

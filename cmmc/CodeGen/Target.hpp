@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/FrameInfo.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
@@ -69,6 +70,10 @@ public:
     [[nodiscard]] virtual bool isNativeSupported(InstructionID inst) const noexcept {
         CMMC_UNUSED(inst);
         return true;
+    }
+    virtual void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const {
+        CMMC_UNUSED(func);
+        CMMC_UNUSED(ctx);
     }
     virtual void emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const {
         CMMC_UNUSED(module);

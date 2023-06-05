@@ -258,7 +258,9 @@ fp_imm0:
 	jr ra
 .globl fp_imm1
 fp_imm1:
-	la t1, __cmmc_fp_constant_pool
-	flw f0, 0(t1)
+pcrel238:
+	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi t2, t1, %pcrel_lo(pcrel238)
+	flw f0, 0(t2)
 	fmv.s f10, f0
 	jr ra

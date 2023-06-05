@@ -14,6 +14,9 @@
 
 // RV64GC lp64d medlow
 
+#include "cmmc/CodeGen/ISelInfo.hpp"
+#include "cmmc/CodeGen/InstInfo.hpp"
+#include "cmmc/Config.hpp"
 #include <RISCV/ISelInfoDecl.hpp>
 #include <RISCV/InstInfoDecl.hpp>
 #include <RISCV/ScheduleModelDecl.hpp>
@@ -24,6 +27,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 
 CMMC_MIR_NAMESPACE_BEGIN
@@ -216,6 +220,7 @@ public:
     [[nodiscard]] const TargetScheduleModel& getScheduleModel() const noexcept override {
         return RISCV::getRISCVScheduleModel();
     }
+    void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const override;
     void emitAssembly(const MIRModule& module, std::ostream& out, RuntimeType runtime) const override {
         auto& target = *this;
         CodeGenContext ctx{ target,
@@ -420,5 +425,60 @@ void RISCVFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenC
     }
     RISCV::adjustReg(instructions, iter, RISCV::sp, RISCV::sp, stackSize);
 }
-
+void RISCVTarget::postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const {
+    // fix pcrel addressing
+    for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
+        auto next = std::next(iter);
+        std::unordered_map<MIROperand, std::unordered_map<MIROperand, MIROperand, MIROperandHasher>, MIROperandHasher>
+            auipcMap;  // global -> (hi -> auipc label)
+        while(true) {
+            auto& instructions = iter->get()->instructions();
+            if(instructions.empty())
+                break;
+            bool newBlock = false;
+            for(auto it = instructions.begin(); it != instructions.end(); ++it) {
+                auto& inst = *it;
+                if(inst.opcode() == RISCV::AUIPC) {
+                    if(it == instructions.begin() && iter != func.blocks().begin()) {
+                        assert(inst.getOperand(1).type() == OperandType::HighBits);
+                        auipcMap[inst.getOperand(1)][inst.getOperand(0)] = getLowBits(MIROperand::asReloc(iter->get()));
+                    } else {
+                        auto block = std::make_unique<MIRBasicBlock>(
+                            String::get("pcrel").withID(static_cast<int32_t>(ctx.nextId())), &func, iter->get()->getTripCount());
+                        auto& newInsts = block->instructions();
+                        newInsts.splice(newInsts.begin(), instructions, it, instructions.end());
+                        iter = func.blocks().insert(next, std::move(block));
+                        newBlock = true;
+                        break;
+                    }
+                } else {
+                    auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                        auto& operand = inst.getOperand(idx);
+                        if(operand.isReloc()) {
+                            auto getBase = [&] {
+                                switch(inst.opcode()) {
+                                    case RISCV::ADDI:
+                                        return inst.getOperand(1);
+                                    // load/store
+                                    default: {
+                                        assert(requireOneFlag(instInfo.getInstFlag(), InstFlagLoad | InstFlagStore));
+                                        return inst.getOperand(2);
+                                    }
+                                }
+                            };
+                            if(operand.type() == OperandType::LowBits) {
+                                operand = auipcMap.at(getHighBits(operand)).at(getBase());
+                            }
+                        }
+                    }
+                }
+            }
+            if(!newBlock)
+                break;
+        }
+        iter = next;
+    }
+    // func.dump(std::cerr, ctx);
+}
 CMMC_MIR_NAMESPACE_END

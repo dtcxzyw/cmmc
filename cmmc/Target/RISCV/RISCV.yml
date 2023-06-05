@@ -269,10 +269,6 @@ InstInfo:
       Mnemonic: fmv.x.w
 
   # Pseudo Instructions
-  LoadLocalAddress:
-    Format: "la $Rd:GPR[Def], $Addr:Reloc[Metadata]"
-    Flag: [LoadConstant]
-
   LoadImm12:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm12[Metadata]" # addiu
     Flag: [LoadConstant]
@@ -293,9 +289,13 @@ InstSelection:
         Dst: $Dst
         Addr: $Addr
     Replace:
-      LoadLocalAddress:
+      ADDI:
         Rd: $Dst
-        Addr: $Addr
+        Rs1:
+          AUIPC:
+            Rd: getVRegAs(ctx, $Dst)
+            Imm: getHighBits($Addr)
+        Imm: getLowBits($Addr)
 
   - Pattern:
       InstLoadImmToReg:

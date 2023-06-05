@@ -121,6 +121,16 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                 return true;
             }
         }
+        // TODO: move to emitLoadGlobalAddress?
+        if(addrInst->opcode() == InstLoadGlobalAddress) {
+            const auto reloc = addrInst->getOperand(1);
+            const auto hiBits = getHighBits(reloc);
+            const auto loBits = getLowBits(reloc);
+            base = getVRegAs(ctx, addr);
+            ctx.newInst(AUIPC).setOperand<0>(base).setOperand<1>(hiBits);
+            offset = loBits;
+            return true;
+        }
     }
     if(isOperandIReg(addr)) {
         base = addr;

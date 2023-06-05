@@ -229,6 +229,7 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
 
     for(auto& block : func.blocks())
         ctx.iselInfo.postLegalizeInstSeq(ctx, block->instructions());
+    ctx.target.postLegalizeFunc(func, ctx);
 }
 
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
