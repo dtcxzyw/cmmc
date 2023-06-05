@@ -202,6 +202,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %49 = getelementptr &([50 * i32]* %ans)[i64 0][i64 49];
     store i32* %49 with i32 0;
     store i32* %sum with i32 0;
+    store i32* %n with i32 0;
     i32* %50 = getelementptr &([50 * i32]* %row)[i64 0][i64 0];
     store i32* %50 with i32 0;
     i32* %51 = getelementptr &([50 * i32]* %row)[i64 0][i64 1];

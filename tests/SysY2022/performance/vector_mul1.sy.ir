@@ -1160,7 +1160,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %1059(prob = 0.97), ^while.body13, ^b8;
 ^while.body13:
     f32 %1060 = fadd f32 %1054, f32 %1055;
-    f32 %1061 = fdiv f32 %1060, f32 2;
+    f32 %1061 = fmul f32 %1060, f32 0.5;
     ubr ^while.header4;
 ^b8:
     f32 %1062 = fsub f32 %1054, f32 1;

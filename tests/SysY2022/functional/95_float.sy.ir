@@ -67,7 +67,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %21 = s2f i32 %20 to f32;
     f32 %22 = fmul f32 %21, f32 3.14159;
     f32 %23 = fadd f32 %19, f32 %22;
-    f32 %24 = fdiv f32 %23, f32 2;
+    f32 %24 = fmul f32 %23, f32 0.5;
     f32* %25 = getelementptr &([10 * f32]* %arr)[i64 0][i32 %11];
     f32 %26 = load f32* %25;
     f32 %27 = fadd f32 %26, f32 %13;

@@ -125,6 +125,17 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::FMul, v1,
                                                   make<ConstantFloatingPoint>(inst->getType(), reciprocal));
             }
+            // a / c1 / c2 -> a / (c1 * c2)
+            if(sdiv(sdiv(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+                const auto val = i1 * i2;
+                const auto width = v1->getType()->as<IntegerType>()->getBitwidth();
+                const auto min = -(1LL << (width - 1));
+                const auto max = -(min - 1);
+                if(min <= val && val <= max) {
+                    return builder.makeOp<BinaryInst>(InstructionID::SDiv, v1, makeIntLike(val, inst));
+                }
+                return ConstantInteger::get(inst->getType(), 0);
+            }
             // 0 % a -> 0
             if(srem(cint_(0), any(v1))(matchCtx) || urem(cuint_(0), any(v1))(matchCtx))
                 return makeIntLike(0, inst);
@@ -385,6 +396,16 @@ class ArithmeticReduce final : public TransformPass<Function> {
                cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual,
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
+            }
+
+            if(shl(shl(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, makeIntLike(i1 + i2, v1));
+            }
+            if(lshr(lshr(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::LShr, v1, makeIntLike(i1 + i2, v1));
+            }
+            if(ashr(ashr(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::AShr, v1, makeIntLike(i1 + i2, v1));
             }
 
             return nullptr;

@@ -23,9 +23,9 @@
 + [ ] jump-threading
 + [ ] lcssa
 + [x] licm -> CodeMove
-+ [ ] loop-deletion
++ [x] loop-deletion -> LoopEliminate
 + [ ] loop-reduce
-+ [ ] loop-rotate
++ [x] loop-rotate -> LoopRotate
 + [ ] loop-simplify
 + [x] loop-unroll -> LoopUnroll/DynamicLoopUnroll
 + [ ] loop-unroll-and-jam
@@ -56,9 +56,6 @@
 + [ ] scf-for-loop-peeling
 
 # TODO
-+ mul x, 2^k -> shl x, k
-+ x >> c1 >> c2 -> x >> (c1 + c2)
-+ x << c1 << c2 -> x << (c1 + c2)
 + merge a + b with b + a
 + ./tests/SysY2022/functional/55_sort_test1.sy DynamicLoopUnroll/LICM/Out-of-bound
 + ./tests/SysY2022/functional/56_sort_test2.sy
@@ -84,3 +81,4 @@
     i1 %41 = phi [^while.body1, i1 false] [^b9, i1 %36];
     cbr i1 %41(prob = 0.97), ^while.body1, ^b8;
 ```
++ immutable scalar ref arg -> pass by value

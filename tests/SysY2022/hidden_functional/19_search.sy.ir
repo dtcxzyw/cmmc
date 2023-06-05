@@ -117,14 +117,16 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %6 with i32 0;
     i32* %7 = getelementptr &([4 * [2 * i32]]* %step)[i64 0][i64 3][i64 1];
     store i32* %7 with i32 -1;
+    store i32* %x_1 with i32 0;
+    store i32* %y_1 with i32 0;
     i32 %8 = call () -> i32 @getint();
     store i32* %w with i32 %8;
     i32 %9 = call () -> i32 @getint();
     store i32* %h with i32 %9;
     ubr ^while.header;
 ^while.header:
-    i32 %10 = phi [^entry, i32 undef] [^b1, i32 %48];
-    i32 %11 = phi [^entry, i32 undef] [^b1, i32 %49];
+    i32 %10 = phi [^entry, i32 0] [^b1, i32 %48];
+    i32 %11 = phi [^entry, i32 0] [^b1, i32 %49];
     i32 %12 = phi [^entry, i32 %8] [^b1, i32 %57];
     i1 %13 = scmp neq i32 %12, i32 0;
     cbr i1 %13(prob = 0.97), ^while.body, ^b;

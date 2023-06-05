@@ -25,7 +25,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %7 = scmp gt i32 %2, i32 0;
     cbr i1 %7(prob = 0.97), ^while.body, ^b;
 ^while.body:
-    i32 %8 = phi [^entry, i32 undef] [^while.body2, i32 %40];
+    i32 %8 = phi [^entry, i32 0] [^while.body2, i32 %40];
     i32 %9 = phi [^entry, i32 0] [^while.body2, i32 %41];
     i32* %10 = getelementptr &([10000000 * i32]* @keys)[i64 0][i32 %9];
     i32 %11 = load i32* %10;

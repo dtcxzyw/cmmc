@@ -369,12 +369,12 @@ func @main() -> i32 { NoRecurse Entry } {
     [1000 * i32]* %297 = getelementptr &([1000 * [1000 * i32]]* @c)[i64 0][i32 %237];
     ubr ^while.body9;
 ^while.body7:
-    i32 %298 = phi [^while.header5, i32 0] [^while.body7, i32 %364];
-    i32 %299 = phi [^while.header5, i32 2147483647] [^while.body7, i32 %363];
-    i32* %300 = getelementptr &([1000 * i32]* %120)[i64 0][i32 %298];
+    i32 %298 = phi [^while.header5, i32 2147483647] [^while.body7, i32 %363];
+    i32 %299 = phi [^while.header5, i32 0] [^while.body7, i32 %364];
+    i32* %300 = getelementptr &([1000 * i32]* %120)[i64 0][i32 %299];
     i32 %301 = load i32* %300;
-    i1 %302 = scmp lt i32 %301, i32 %299;
-    i32 %303 = select i1 %302 ? i32 %301 : i32 %299;
+    i1 %302 = scmp lt i32 %301, i32 %298;
+    i32 %303 = select i1 %302 ? i32 %301 : i32 %298;
     i32* %304 = getelementptr &(i32* %300)[i64 1];
     i32 %305 = load i32* %304;
     i1 %306 = scmp lt i32 %305, i32 %303;
@@ -435,7 +435,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %361 = load i32* %360;
     i1 %362 = scmp lt i32 %361, i32 %359;
     i32 %363 = select i1 %362 ? i32 %361 : i32 %359;
-    i32 %364 = add i32 %298, i32 16;
+    i32 %364 = add i32 %299, i32 16;
     i1 %365 = scmp lt i32 %364, i32 992;
     cbr i1 %365(prob = 0.98), ^while.body7, ^while.body8;
 ^while.header7:

@@ -26,7 +26,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header;
 ^while.header1:
     i32 %7 = phi [^b, i32 0] [^b4, i32 %7988];
-    f32 %8 = phi [^b, f32 0] [^b4, f32 %7958];
+    f32 %8 = phi [^b, f32 0] [^b4, f32 %7957];
     i1 %9 = scmp lt i32 %7, i32 100;
     cbr i1 %9(prob = 0.97), ^while.header2, ^while.header3;
 ^b2:
@@ -8128,9 +8128,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %7956 = scmp lt i32 %7955, i32 992;
     cbr i1 %7956(prob = 0.98), ^while.body4, ^while.body5;
 ^while.header5:
-    i32 %7957 = phi [^while.header4, i32 0] [^while.body8, i32 %8299];
-    f32 %7958 = phi [^while.header4, f32 %8] [^while.body8, f32 %8298];
-    i1 %7959 = scmp lt i32 %7957, i32 1000;
+    f32 %7957 = phi [^while.header4, f32 %8] [^while.body8, f32 %8298];
+    i32 %7958 = phi [^while.header4, i32 0] [^while.body8, i32 %8299];
+    i1 %7959 = scmp lt i32 %7958, i32 1000;
     cbr i1 %7959(prob = 0.97), ^while.header6, ^b4;
 ^while.body5:
     f32* %7960 = getelementptr &([1000 * f32]* %3019)[i64 0][i32 %7955];
@@ -8160,9 +8160,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %7984 = add i32 %13, i32 1;
     ubr ^while.header3;
 ^while.header6:
-    f32* %7985 = getelementptr &([1000 * f32]* %var)[i64 0][i32 %7957];
-    f32* %7986 = getelementptr &([1000 * f32]* %mean)[i64 0][i32 %7957];
-    [1000 * f32]* %7987 = getelementptr &([1000 * [1000 * f32]]* @a)[i64 0][i32 %7957];
+    f32* %7985 = getelementptr &([1000 * f32]* %var)[i64 0][i32 %7958];
+    f32* %7986 = getelementptr &([1000 * f32]* %mean)[i64 0][i32 %7958];
+    [1000 * f32]* %7987 = getelementptr &([1000 * [1000 * f32]]* @a)[i64 0][i32 %7958];
     ubr ^while.body7;
 ^b4:
     i32 %7988 = add i32 %7, i32 1;
@@ -8229,7 +8229,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %8039 = load f32* %3022;
     f32 %8040 = fdiv f32 %8039, f32 1000;
     f32 %8041 = fadd f32 %8040, f32 0.01;
-    f32 %8042 = fdiv f32 %8041, f32 2;
+    f32 %8042 = fmul f32 %8041, f32 0.5;
     ubr ^while.header7;
 ^indirect:
     f32 %8043 = phi [^while.body3, f32 %7904];
@@ -8319,7 +8319,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.body6;
 ^while.body7:
     i32 %8127 = phi [^while.header6, i32 0] [^while.body7, i32 %8241];
-    f32 %8128 = phi [^while.header6, f32 %7958] [^while.body7, f32 %8240];
+    f32 %8128 = phi [^while.header6, f32 %7957] [^while.body7, f32 %8240];
     f32* %8129 = getelementptr &([1000 * f32]* %7987)[i64 0][i32 %8127];
     f32 %8130 = load f32* %8129;
     f32 %8131 = load f32* %7986;
@@ -8516,7 +8516,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %8297 = fdiv f32 %8295, f32 %8296;
     store f32* %8292 with f32 %8297;
     f32 %8298 = fadd f32 %8291, f32 %8297;
-    i32 %8299 = add i32 %7957, i32 1;
+    i32 %8299 = add i32 %7958, i32 1;
     ubr ^while.header5;
 ^while.header7:
     f32 %8300 = phi [^while.body6, f32 %8041] [^if.then1, f32 %8302] [^if.else, f32 %8300];
@@ -8542,10 +8542,10 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %8310(prob = 0.5), ^if.then1, ^if.else;
 ^if.then1:
     f32 %8311 = fadd f32 %8302, f32 %8301;
-    f32 %8312 = fdiv f32 %8311, f32 2;
+    f32 %8312 = fmul f32 %8311, f32 0.5;
     ubr ^while.header7;
 ^if.else:
     f32 %8313 = fadd f32 %8302, f32 %8300;
-    f32 %8314 = fdiv f32 %8313, f32 2;
+    f32 %8314 = fmul f32 %8313, f32 0.5;
     ubr ^while.header7;
 }

@@ -56,7 +56,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
 ^if.then1:
     call (i32) -> void @putint(i32 %16);
     call (i32) -> void @putch(i32 10);
-    i32 %20 = mul i32 %0, i32 2;
+    i32 %20 = shl i32 %0, i32 1;
     ubr ^b5;
 ^entry6:
     i32 %21 = add i32 %16, i32 1;

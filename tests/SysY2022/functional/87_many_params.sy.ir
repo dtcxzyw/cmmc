@@ -346,7 +346,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %154 with i32 8802;
     i32 %186 = add i32 %91, i32 -47;
     store i32* %155 with i32 %186;
-    i32 %187 = mul i32 %91, i32 32;
+    i32 %187 = shl i32 %91, i32 5;
     i32 %188 = add i32 %187, i32 281648;
     call (i32) -> void @putint(i32 %188);
     call (i32) -> void @putch(i32 10);

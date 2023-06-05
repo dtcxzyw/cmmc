@@ -652,9 +652,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b17;
 ^b16:
     f32 %323 = load f32* %264;
-    f32 %324 = fmul f32 %323, f32 2;
+    f32 %324 = fadd f32 %323, f32 %323;
     f32 %325 = fdiv f32 %324, f32 %199;
-    f32 %326 = fmul f32 %325, f32 2;
+    f32 %326 = fadd f32 %325, f32 %325;
     f32 %327 = fdiv f32 %326, f32 %201;
     store f32* %264 with f32 %327;
     i32 %328 = add i32 %252, i32 1;
