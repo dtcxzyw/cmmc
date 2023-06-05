@@ -73,4 +73,4 @@ label5:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 40
-	jr ra
+	ret

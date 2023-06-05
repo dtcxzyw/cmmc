@@ -89,7 +89,7 @@ label9:
 	ld s0, 72(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 88
-	jr ra
+	ret
 label57:
 	ld t1, 40(sp)
 	mv t2, t1

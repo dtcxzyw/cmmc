@@ -3,7 +3,7 @@
 .globl callee_cmmc_noinline
 callee_cmmc_noinline:
 	mv t1, a0
-	jr ra
+	ret
 .globl caller_cmmc_noinline
 caller_cmmc_noinline:
 	addi sp, sp, -8
@@ -13,7 +13,7 @@ caller_cmmc_noinline:
 	mv t2, a0
 	ld ra, 0(sp)
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl ret_forwarding
 ret_forwarding:
 	addi sp, sp, -8
@@ -23,4 +23,4 @@ ret_forwarding:
 	jal putint
 	ld ra, 0(sp)
 	addi sp, sp, 8
-	jr ra
+	ret

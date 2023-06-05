@@ -304,10 +304,8 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                     replaceUse(inst, operand);
                 }
 
-            // TODO: match copy?
-            if(inst.opcode() == InstCopy || inst.opcode() == InstCopyFromReg) {
-                auto& dst = inst.getOperand(0);
-                auto& src = inst.getOperand(1);
+            MIROperand dst, src;
+            if(ctx.instInfo.matchCopy(inst, dst, src)) {
                 if(dst.type() == src.type()) {
                     updateMap(dst, src);
                 } else

@@ -177,4 +177,4 @@ label17:
 	ld s0, 440(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 512
-	jr ra
+	ret

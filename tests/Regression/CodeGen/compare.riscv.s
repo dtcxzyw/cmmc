@@ -6,7 +6,7 @@ seqz:
 	sltiu t2, a0, 1
 	mv t3, t2
 	mv a0, t2
-	jr ra
+	ret
 .globl seqi
 seqi:
 	mv t1, a0
@@ -15,7 +15,7 @@ seqi:
 	sltiu t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl seq
 seq:
 	mv t1, a0
@@ -24,7 +24,7 @@ seq:
 	sltiu t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl snei
 snei:
 	mv t1, a0
@@ -34,7 +34,7 @@ snei:
 	xori t5, t4, 1
 	mv t6, t5
 	mv a0, t5
-	jr ra
+	ret
 .globl sne
 sne:
 	mv t1, a0
@@ -44,7 +44,7 @@ sne:
 	xori t5, t4, 1
 	mv t6, t5
 	mv a0, t5
-	jr ra
+	ret
 .globl snez
 snez:
 	mv t1, a0
@@ -52,7 +52,7 @@ snez:
 	xori t3, t2, 1
 	mv t4, t3
 	mv a0, t3
-	jr ra
+	ret
 .globl slti
 slti:
 	mv t1, a0
@@ -60,7 +60,7 @@ slti:
 	slt t3, a0, t2
 	mv t4, t3
 	mv a0, t3
-	jr ra
+	ret
 .globl slt
 slt:
 	mv t1, a0
@@ -68,7 +68,7 @@ slt:
 	slt t3, a0, a1
 	mv t4, t3
 	mv a0, t3
-	jr ra
+	ret
 .globl sgti
 sgti:
 	mv t1, a0
@@ -76,7 +76,7 @@ sgti:
 	slt t3, t2, a0
 	mv t4, t3
 	mv a0, t3
-	jr ra
+	ret
 .globl sgt
 sgt:
 	mv t1, a0
@@ -84,7 +84,7 @@ sgt:
 	slt t3, a1, a0
 	mv t4, t3
 	mv a0, t3
-	jr ra
+	ret
 .globl slei
 slei:
 	mv t1, a0
@@ -93,7 +93,7 @@ slei:
 	xori t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl sle
 sle:
 	mv t1, a0
@@ -102,7 +102,7 @@ sle:
 	xori t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl sgei
 sgei:
 	mv t1, a0
@@ -111,7 +111,7 @@ sgei:
 	xori t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl sge
 sge:
 	mv t1, a0
@@ -120,41 +120,41 @@ sge:
 	xori t4, t3, 1
 	mv t5, t4
 	mv a0, t4
-	jr ra
+	ret
 .globl feq
 feq:
 	feq.s t1, f10, f11
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret
 .globl fne
 fne:
 	feq.s t1, f10, f11
 	xori t1, t1, 1
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret
 .globl flt
 flt:
 	flt.s t1, f10, f11
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret
 .globl fgt
 fgt:
 	flt.s t1, f11, f10
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret
 .globl fle
 fle:
 	fle.s t1, f10, f11
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret
 .globl fge
 fge:
 	fle.s t1, f11, f10
 	mv t2, t1
 	mv a0, t1
-	jr ra
+	ret

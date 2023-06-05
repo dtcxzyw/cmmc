@@ -219,7 +219,7 @@ label2:
 	ld s0, 160(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 168
-	jr ra
+	ret
 .globl main
 main:
 	addi sp, sp, -872
@@ -288,4 +288,4 @@ label164:
 	ld s0, 864(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 872
-	jr ra
+	ret

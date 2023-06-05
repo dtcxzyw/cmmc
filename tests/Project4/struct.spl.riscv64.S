@@ -55,7 +55,7 @@ label2:
 	jal gcd
 	mv s0, a0
 	mv s1, a0
-	sd s1, 32(sp)
+	sd a0, 32(sp)
 label3:
 	ld t1, 32(sp)
 	mv a0, t1
@@ -63,7 +63,7 @@ label3:
 	ld s0, 64(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 72
-	jr ra
+	ret
 .globl main
 main:
 	addi sp, sp, -16
@@ -82,4 +82,4 @@ main:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 16
-	jr ra
+	ret

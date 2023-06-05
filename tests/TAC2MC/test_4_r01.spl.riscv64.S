@@ -94,7 +94,7 @@ label43:
 	ld s0, 160(sp)
 	ld ra, 0(sp)
 	addi sp, sp, 184
-	jr ra
+	ret
 label6:
 	ld t1, 24(sp)
 	addiw t2, t1, -1
@@ -166,4 +166,4 @@ main:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 8
-	jr ra
+	ret

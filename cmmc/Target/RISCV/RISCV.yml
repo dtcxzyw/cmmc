@@ -63,8 +63,8 @@ InstInfo:
   JAL:
     Format: jal $Tgt:Reloc[Use]
     Flag: [Call]
-  JR:
-    Format: jr $Rs1:GPR[Use]
+  RET:
+    Format: ret
     Flag: [Terminator, Return, NoFallthrough]
   Branches:
     Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Use] # $Prob:Prob[Metadata]"

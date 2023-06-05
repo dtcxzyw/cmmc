@@ -389,7 +389,7 @@ void RISCVFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
         } else
             reportNotImplemented(CMMC_LOCATION());
     }
-    ctx.emitInst(MIRInst{ RISCV::JR }.setOperand<0>(RISCV::ra));
+    ctx.emitInst(MIRInst{ RISCV::RET });
 }
 
 void RISCVFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,

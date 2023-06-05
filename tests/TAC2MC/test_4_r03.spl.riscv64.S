@@ -30,4 +30,4 @@ main:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 8
-	jr ra
+	ret

@@ -24,7 +24,6 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 static bool isIdentical(MIRBasicBlock* lhs, MIRBasicBlock* rhs, const CFGAnalysisResult& cfg) {
-    // TODO: check used stack objects?
     auto& inst1 = lhs->instructions();
     auto& inst2 = rhs->instructions();
     if(inst1.size() != inst2.size())

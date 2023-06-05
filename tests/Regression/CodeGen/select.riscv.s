@@ -9,7 +9,7 @@ select_gpr_gpr_gpr:
 	sltiu t4, a0, 1
 	xori t5, t4, 1
 	mv t6, a1
-	sd t6, 0(sp)
+	sd a1, 0(sp)
 	sd a2, 8(sp)
 	bne t5, zero, label9
 	mv t1, a2
@@ -19,7 +19,7 @@ label9:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
 	addi sp, sp, -8
@@ -35,7 +35,7 @@ label24:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
 	addi sp, sp, -16
@@ -45,7 +45,7 @@ select_slt_gpr_gpr:
 	mv t4, a3
 	slt t5, a0, a1
 	mv t6, a2
-	sd t6, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t5, zero, label37
 	mv t1, a3
@@ -55,7 +55,7 @@ label37:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_slt_fpr_fpr
 select_slt_fpr_fpr:
 	addi sp, sp, -8
@@ -71,7 +71,7 @@ label52:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
 	addi sp, sp, -24
@@ -83,7 +83,7 @@ select_sle_gpr_gpr:
 	slt t5, a1, a0
 	xori t6, t5, 1
 	mv s0, a2
-	sd s0, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label66
 	mv t1, a3
@@ -94,7 +94,7 @@ label66:
 	mv a0, t1
 	ld s0, 16(sp)
 	addi sp, sp, 24
-	jr ra
+	ret
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
 	addi sp, sp, -8
@@ -111,7 +111,7 @@ label84:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
 	addi sp, sp, -16
@@ -121,7 +121,7 @@ select_sgt_gpr_gpr:
 	mv t4, a3
 	slt t5, a1, a0
 	mv t6, a2
-	sd t6, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t5, zero, label98
 	mv t1, a3
@@ -131,7 +131,7 @@ label98:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_sgt_fpr_fpr
 select_sgt_fpr_fpr:
 	addi sp, sp, -8
@@ -147,7 +147,7 @@ label113:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
 	addi sp, sp, -24
@@ -159,7 +159,7 @@ select_sge_gpr_gpr:
 	slt t5, a0, a1
 	xori t6, t5, 1
 	mv s0, a2
-	sd s0, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label127
 	mv t1, a3
@@ -170,7 +170,7 @@ label127:
 	mv a0, t1
 	ld s0, 16(sp)
 	addi sp, sp, 24
-	jr ra
+	ret
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
 	addi sp, sp, -8
@@ -187,7 +187,7 @@ label145:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
 	addi sp, sp, -24
@@ -199,7 +199,7 @@ select_eq_gpr_gpr:
 	xor t5, a0, a1
 	sltiu t6, t5, 1
 	mv s0, a2
-	sd s0, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label160
 	mv t1, a3
@@ -210,7 +210,7 @@ label160:
 	mv a0, t1
 	ld s0, 16(sp)
 	addi sp, sp, 24
-	jr ra
+	ret
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
 	addi sp, sp, -8
@@ -227,7 +227,7 @@ label178:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
 	addi sp, sp, -32
@@ -241,7 +241,7 @@ select_ne_gpr_gpr:
 	sltiu t6, t5, 1
 	xori s0, t6, 1
 	mv s1, a2
-	sd s1, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne s0, zero, label194
 	mv t1, a3
@@ -253,7 +253,7 @@ label194:
 	ld s1, 24(sp)
 	ld s0, 16(sp)
 	addi sp, sp, 32
-	jr ra
+	ret
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
 	addi sp, sp, -8
@@ -271,7 +271,7 @@ label215:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_feq_gpr_gpr
 select_feq_gpr_gpr:
 	addi sp, sp, -16
@@ -279,7 +279,7 @@ select_feq_gpr_gpr:
 	mv t2, a3
 	feq.s t3, f10, f11
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label230
 	mv t1, a3
@@ -289,7 +289,7 @@ label230:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_feq_fpr_fpr
 select_feq_fpr_fpr:
 	addi sp, sp, -8
@@ -303,7 +303,7 @@ label243:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
 	addi sp, sp, -16
@@ -312,7 +312,7 @@ select_fne_gpr_gpr:
 	feq.s t3, f10, f11
 	xori t3, t3, 1
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label254
 	mv t1, a3
@@ -322,7 +322,7 @@ label254:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
 	addi sp, sp, -8
@@ -337,7 +337,7 @@ label267:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_flt_gpr_gpr
 select_flt_gpr_gpr:
 	addi sp, sp, -16
@@ -345,7 +345,7 @@ select_flt_gpr_gpr:
 	mv t2, a3
 	flt.s t3, f10, f11
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label278
 	mv t1, a3
@@ -355,7 +355,7 @@ label278:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_flt_fpr_fpr
 select_flt_fpr_fpr:
 	addi sp, sp, -8
@@ -369,7 +369,7 @@ label291:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_fle_gpr_gpr
 select_fle_gpr_gpr:
 	addi sp, sp, -16
@@ -377,7 +377,7 @@ select_fle_gpr_gpr:
 	mv t2, a3
 	fle.s t3, f10, f11
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label302
 	mv t1, a3
@@ -387,7 +387,7 @@ label302:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_fle_fpr_fpr
 select_fle_fpr_fpr:
 	addi sp, sp, -8
@@ -401,7 +401,7 @@ label315:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_fgt_gpr_gpr
 select_fgt_gpr_gpr:
 	addi sp, sp, -16
@@ -409,7 +409,7 @@ select_fgt_gpr_gpr:
 	mv t2, a3
 	flt.s t3, f11, f10
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label326
 	mv t1, a3
@@ -419,7 +419,7 @@ label326:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_fgt_fpr_fpr
 select_fgt_fpr_fpr:
 	addi sp, sp, -8
@@ -433,7 +433,7 @@ label339:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl select_fge_gpr_gpr
 select_fge_gpr_gpr:
 	addi sp, sp, -16
@@ -441,7 +441,7 @@ select_fge_gpr_gpr:
 	mv t2, a3
 	fle.s t3, f11, f10
 	mv t4, a2
-	sd t4, 0(sp)
+	sd a2, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label350
 	mv t1, a3
@@ -451,7 +451,7 @@ label350:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 16
-	jr ra
+	ret
 .globl select_fge_fpr_fpr
 select_fge_fpr_fpr:
 	addi sp, sp, -8
@@ -465,4 +465,4 @@ label363:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret

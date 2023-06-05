@@ -21,7 +21,7 @@ label2:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl my_fmin
 my_fmin:
 	addi sp, sp, -8
@@ -35,7 +35,7 @@ label24:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl my_fmax
 my_fmax:
 	addi sp, sp, -8
@@ -49,10 +49,10 @@ label33:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
-	jr ra
+	ret
 .globl my_trunc
 my_trunc:
 	fcvt.w.s t1, f10, rtz
 	fcvt.s.w f0, t1
 	fmv.s f10, f0
-	jr ra
+	ret

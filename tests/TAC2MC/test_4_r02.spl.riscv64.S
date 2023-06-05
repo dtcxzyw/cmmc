@@ -43,4 +43,4 @@ label3:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 16
-	jr ra
+	ret
