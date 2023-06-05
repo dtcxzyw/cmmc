@@ -690,7 +690,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOp($Op)
     Replace:
       SLTI:
         Rd: $Dst
@@ -703,7 +703,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOp($Op)
     Replace:
       SLTIU:
         Rd: $Dst
@@ -1083,6 +1083,28 @@ InstSelection:
             Rs: $Lhs
             Rt: $Rhs
         Flip: shouldInvertFCmp($Op)
+
+  - Pattern:
+      MFC1:
+        Rt: $Dst
+        Fs:
+          MTC1:
+            Rt: $Src
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
+
+  - Pattern:
+      MTC1:
+        Fs: $Dst
+        Rt:
+          MFC1:
+            Fs: $Src
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
 
 ScheduleModel:
   emulator:

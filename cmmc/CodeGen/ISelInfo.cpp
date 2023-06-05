@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <limits>
 #include <memory>
 #include <vector>
 CMMC_MIR_NAMESPACE_BEGIN
@@ -375,6 +376,26 @@ MIROperand getZExtMask(OperandType dstType, OperandType srcType) {
             reportUnreachable(CMMC_LOCATION());
     }
     return MIROperand::asImm(imm, dstType);
+}
+intmax_t getMaxSignedValue(OperandType type) {
+    switch(type) {
+        case OperandType::Int32:
+            return std::numeric_limits<int32_t>::max();
+        case OperandType::Int64:
+            return std::numeric_limits<int64_t>::max();
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+intmax_t getMinSignedValue(OperandType type) {
+    switch(type) {
+        case OperandType::Int32:
+            return std::numeric_limits<int32_t>::min();
+        case OperandType::Int64:
+            return std::numeric_limits<int64_t>::min();
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
 }
 
 CMMC_MIR_NAMESPACE_END

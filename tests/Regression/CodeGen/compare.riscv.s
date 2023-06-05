@@ -7,10 +7,9 @@ seqz:
 	ret
 .globl seqi
 seqi:
-	li t1, 1
-	xor t2, a0, t1
-	sltiu t3, t2, 1
-	mv a0, t3
+	xori t1, a0, 1
+	sltiu t2, t1, 1
+	mv a0, t2
 	ret
 .globl seq
 seq:
@@ -20,30 +19,25 @@ seq:
 	ret
 .globl snei
 snei:
-	li t1, 1
-	xor t2, a0, t1
-	sltiu t3, t2, 1
-	xori t4, t3, 1
-	mv a0, t4
+	xori t1, a0, 1
+	sltu t2, zero, t1
+	mv a0, t2
 	ret
 .globl sne
 sne:
 	xor t1, a0, a1
-	sltiu t2, t1, 1
-	xori t3, t2, 1
-	mv a0, t3
+	sltu t2, zero, t1
+	mv a0, t2
 	ret
 .globl snez
 snez:
-	sltiu t1, a0, 1
-	xori t2, t1, 1
-	mv a0, t2
+	sltu t1, 0, a0
+	mv a0, t1
 	ret
 .globl slti
 slti:
-	li t1, 1
-	slt t2, a0, t1
-	mv a0, t2
+	slti t1, a0, 1
+	mv a0, t1
 	ret
 .globl slt
 slt:
@@ -63,10 +57,8 @@ sgt:
 	ret
 .globl slei
 slei:
-	li t1, 1
-	slt t2, t1, a0
-	xori t3, t2, 1
-	mv a0, t3
+	slti t1, a0, 2
+	mv a0, t1
 	ret
 .globl sle
 sle:
@@ -76,10 +68,8 @@ sle:
 	ret
 .globl sgei
 sgei:
-	li t1, 1
-	slt t2, a0, t1
-	xori t3, t2, 1
-	mv a0, t3
+	slt t1, zero, a0
+	mv a0, t1
 	ret
 .globl sge
 sge:

@@ -74,6 +74,8 @@ public:
 
 uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
 MIROperand getZExtMask(OperandType dstType, OperandType srcType);
+intmax_t getMaxSignedValue(OperandType type);
+intmax_t getMinSignedValue(OperandType type);
 constexpr MIROperand getNeg(const MIROperand& operand) {
     return MIROperand::asImm(-operand.imm(), operand.type());
 }
@@ -86,4 +88,51 @@ inline MIROperand getLowBits(const MIROperand& operand) {
     return MIROperand{ operand.getStorage(), OperandType::LowBits };
 }
 
+constexpr bool isRationalOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op != CompareOp::Equal && op != CompareOp::NotEqual;
+}
+constexpr bool isEqualityOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::Equal || op == CompareOp::NotEqual;
+}
+
+constexpr bool isLessThanOrLessEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::LessThan || op == CompareOp::LessEqual;
+}
+
+constexpr bool isGreaterThanOrGreaterEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::GreaterThan || op == CompareOp::GreaterEqual;
+}
+
+constexpr bool isLessThanOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::LessThan;
+}
+
+constexpr bool isLessEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::LessEqual;
+}
+
+constexpr bool isGreaterThanOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::GreaterThan;
+}
+constexpr bool isGreaterEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::GreaterEqual;
+}
+
+constexpr bool isEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::Equal;
+}
+
+constexpr bool isNotEqualOp(const MIROperand& operand) {
+    const auto op = static_cast<CompareOp>(operand.imm());
+    return op == CompareOp::NotEqual;
+}
 CMMC_MIR_NAMESPACE_END

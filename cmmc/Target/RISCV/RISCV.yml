@@ -755,7 +755,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs) && isLessThanOp($Op)
     Replace:
       SLTI:
         Rd: $Dst
@@ -768,7 +768,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs) && isLessThanOrLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs) && isLessThanOp($Op)
     Replace:
       SLTIU:
         Rd: $Dst
@@ -796,14 +796,10 @@ InstSelection:
         Op: $Op
         $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
     Replace:
-      XORI:
+      SLTU:
         Rd: $Dst
-        Rs1:
-          SLTIU:
-            Rd: getVRegAs(ctx, $Dst)
-            Rs1: $Lhs
-            Imm: getOne($Lhs)
-        Imm: getOne($Dst)
+        Rs1: getZero($Rhs)
+        Rs2: $Lhs
 
   # x<=y -> !(y<x)
   - Pattern:

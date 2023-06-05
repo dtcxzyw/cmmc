@@ -49,9 +49,7 @@ my_fmax:
 .globl my_trunc
 my_trunc:
 	trunc.w.s $f4, $f12
-	mfc1 $t0, $f4
-	mtc1 $t0, $f6
-	cvt.s.w $f8, $f6
-	mov.s $f0, $f8
+	cvt.s.w $f6, $f4
+	mov.s $f0, $f6
 	jr $ra
 	nop

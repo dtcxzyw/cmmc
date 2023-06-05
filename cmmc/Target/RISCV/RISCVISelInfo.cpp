@@ -52,46 +52,6 @@ static RISCVInst getSignedBranchOpcode(const MIROperand& operand) {
     }
 }
 
-static bool isEqualityOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::Equal || op == CompareOp::NotEqual;
-}
-
-static bool isLessThanOrLessEqualOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessThan || op == CompareOp::LessEqual;
-}
-
-static bool isGreaterThanOrGreaterEqualOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::GreaterThan || op == CompareOp::GreaterEqual;
-}
-
-static bool isLessThanOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessThan;
-}
-
-static bool isLessEqualOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessEqual;
-}
-
-static bool isGreaterThanOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::GreaterThan;
-}
-
-static bool isEqualOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::Equal;
-}
-
-static bool isNotEqualOp(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::NotEqual;
-}
-
 static MIROperand getVRegAs(ISelContext& ctx, const MIROperand& ref) {
     return MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), ref.type());
 }
@@ -358,19 +318,32 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
 
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
+            // a <= c -> a < c + 1 (if no overflow occurs)
+            if(isLessEqualOp(op) && isOperandImm(rhs) && rhs.imm() < getMaxSignedValue(rhs.type())) {
+                op = MIROperand::asImm(CompareOp::LessThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
+                modified = true;
+            }
+            // a >= c -> a > c - 1 (if no overflow occurs)
+            if(isGreaterEqualOp(op) && isOperandImm(rhs) && rhs.imm() > getMinSignedValue(rhs.type())) {
+                op = MIROperand::asImm(CompareOp::GreaterThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
+                modified = true;
+            }
             if(isGreaterThanOrGreaterEqualOp(op)) {
                 std::swap(lhs, rhs);
                 op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
                 modified = true;
             }
             imm2reg(lhs);
-            imm2reg(rhs);
             if(isEqualityOp(op) && !isZero(rhs)) {
                 const auto dst = getVRegAs(ctx, lhs);
                 ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
                 lhs = dst;
                 rhs = getZero(rhs);
                 modified = true;
+            } else {
+                largeImm2reg(rhs);
             }
             break;
         }

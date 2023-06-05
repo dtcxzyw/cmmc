@@ -240,70 +240,70 @@ main:
 	jal read
 	nop
 	move $t2, $v0
-	sw $v0, 44($sp)
-	sw $t1, 32($sp)
+	sw $v0, 40($sp)
+	sw $t1, 24($sp)
 	sw $t0, 36($sp)
 	blez $v0, label159
 	nop
 	move $t0, $zero
-	sw $zero, 24($sp)
+	sw $zero, 44($sp)
 label157:
-	lw $t0, 24($sp)
+	lw $t0, 44($sp)
 	sll $t1, $t0, 2
-	lw $t2, 32($sp)
+	lw $t2, 24($sp)
 	addu $t3, $t2, $t1
 	jal read
 	nop
 	sw $v0, 0($t3)
 	addiu $t4, $t0, 1
-	lw $t5, 44($sp)
+	lw $t5, 40($sp)
 	subu $t6, $t4, $t5
-	sw $t4, 448($sp)
+	sw $t4, 32($sp)
 	bgez $t6, label159
 	nop
 	move $t0, $t4
 	move $t1, $t4
-	sw $t4, 24($sp)
+	sw $t4, 44($sp)
 	b label157
 	nop
-label215:
+label213:
 	move $t0, $zero
-	sw $zero, 40($sp)
+	sw $zero, 28($sp)
 	b label160
 	nop
 label159:
-	lw $t0, 32($sp)
+	lw $t0, 24($sp)
 	move $a0, $t0
 	lw $t1, 36($sp)
 	move $a1, $t1
 	move $a2, $zero
-	lw $t2, 44($sp)
+	lw $t2, 40($sp)
 	move $a3, $t2
 	jal merge
 	nop
-	lw $t3, 44($sp)
+	lw $t3, 40($sp)
 	blez $t3, label162
 	nop
-	b label215
+	b label213
 	nop
 label160:
-	lw $t0, 40($sp)
+	lw $t0, 28($sp)
 	sll $t1, $t0, 2
-	lw $t2, 32($sp)
+	lw $t2, 24($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 0($t3)
 	move $a0, $t4
 	jal write
 	nop
 	addiu $t5, $t0, 1
-	lw $t6, 44($sp)
+	lw $t6, 40($sp)
 	subu $t7, $t5, $t6
-	sw $t5, 28($sp)
+	sw $t5, 448($sp)
 	bgez $t7, label162
 	nop
 	move $t0, $t5
 	move $t1, $t5
-	sw $t5, 40($sp)
+	sw $t5, 28($sp)
 	b label160
 	nop
 label162:

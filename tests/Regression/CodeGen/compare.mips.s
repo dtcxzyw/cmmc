@@ -8,10 +8,9 @@ seqz:
 	nop
 .globl seqi
 seqi:
-	li $t0, 1
-	xor $t1, $a0, $t0
-	sltiu $t2, $t1, 1
-	move $v0, $t2
+	xori $t0, $a0, 1
+	sltiu $t1, $t0, 1
+	move $v0, $t1
 	jr $ra
 	nop
 .globl seq
@@ -23,11 +22,10 @@ seq:
 	nop
 .globl snei
 snei:
-	li $t0, 1
-	xor $t1, $a0, $t0
-	sltiu $t2, $t1, 1
-	xori $t3, $t2, 1
-	move $v0, $t3
+	xori $t0, $a0, 1
+	sltiu $t1, $t0, 1
+	xori $t2, $t1, 1
+	move $v0, $t2
 	jr $ra
 	nop
 .globl sne
@@ -47,9 +45,8 @@ snez:
 	nop
 .globl slti
 slti:
-	li $t0, 1
-	slt $t1, $a0, $t0
-	move $v0, $t1
+	slti $t0, $a0, 1
+	move $v0, $t0
 	jr $ra
 	nop
 .globl slt
@@ -73,10 +70,8 @@ sgt:
 	nop
 .globl slei
 slei:
-	li $t0, 1
-	slt $t1, $t0, $a0
-	xori $t2, $t1, 1
-	move $v0, $t2
+	slti $t0, $a0, 2
+	move $v0, $t0
 	jr $ra
 	nop
 .globl sle
@@ -88,10 +83,8 @@ sle:
 	nop
 .globl sgei
 sgei:
-	li $t0, 1
-	slt $t1, $a0, $t0
-	xori $t2, $t1, 1
-	move $v0, $t2
+	slt $t0, $zero, $a0
+	move $v0, $t0
 	jr $ra
 	nop
 .globl sge
