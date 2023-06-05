@@ -3,7 +3,6 @@
 .globl seqz
 seqz:
 	sltiu $t0, $a0, 1
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -12,7 +11,6 @@ seqi:
 	li $t0, 1
 	xor $t1, $a0, $t0
 	sltiu $t2, $t1, 1
-	move $t3, $t2
 	move $v0, $t2
 	jr $ra
 	nop
@@ -20,7 +18,6 @@ seqi:
 seq:
 	xor $t0, $a0, $a1
 	sltiu $t1, $t0, 1
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
@@ -30,7 +27,6 @@ snei:
 	xor $t1, $a0, $t0
 	sltiu $t2, $t1, 1
 	xori $t3, $t2, 1
-	move $t4, $t3
 	move $v0, $t3
 	jr $ra
 	nop
@@ -39,7 +35,6 @@ sne:
 	xor $t0, $a0, $a1
 	sltiu $t1, $t0, 1
 	xori $t2, $t1, 1
-	move $t3, $t2
 	move $v0, $t2
 	jr $ra
 	nop
@@ -47,7 +42,6 @@ sne:
 snez:
 	sltiu $t0, $a0, 1
 	xori $t1, $t0, 1
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
@@ -55,14 +49,12 @@ snez:
 slti:
 	li $t0, 1
 	slt $t1, $a0, $t0
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
 .globl slt
 slt:
 	slt $t0, $a0, $a1
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -70,14 +62,12 @@ slt:
 sgti:
 	li $t0, 1
 	slt $t1, $t0, $a0
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
 .globl sgt
 sgt:
 	slt $t0, $a1, $a0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -86,7 +76,6 @@ slei:
 	li $t0, 1
 	slt $t1, $t0, $a0
 	xori $t2, $t1, 1
-	move $t3, $t2
 	move $v0, $t2
 	jr $ra
 	nop
@@ -94,7 +83,6 @@ slei:
 sle:
 	slt $t0, $a1, $a0
 	xori $t1, $t0, 1
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
@@ -103,7 +91,6 @@ sgei:
 	li $t0, 1
 	slt $t1, $a0, $t0
 	xori $t2, $t1, 1
-	move $t3, $t2
 	move $v0, $t2
 	jr $ra
 	nop
@@ -111,7 +98,6 @@ sgei:
 sge:
 	slt $t0, $a0, $a1
 	xori $t1, $t0, 1
-	move $t2, $t1
 	move $v0, $t1
 	jr $ra
 	nop
@@ -120,7 +106,6 @@ feq:
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -129,7 +114,6 @@ fne:
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -138,7 +122,6 @@ flt:
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -147,7 +130,6 @@ fgt:
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -156,7 +138,6 @@ fle:
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop
@@ -165,7 +146,6 @@ fge:
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	move $t1, $t0
 	move $v0, $t0
 	jr $ra
 	nop

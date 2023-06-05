@@ -70,7 +70,6 @@ merge:
 	mv t1, s4
 	ld t2, 48(sp)
 	beq s4, t2, label37
-	mv t1, s4
 	ld t2, 32(sp)
 	beq s4, t2, label41
 	mv t1, s2
@@ -112,14 +111,13 @@ label21:
 	addiw s2, t1, 1
 	mv t1, s2
 	sd s2, 8(sp)
-	mv t1, s2
 	ld t2, 48(sp)
 	beq s2, t2, label2
 	j label21
 label41:
 	mv t1, zero
-	sd t1, 136(sp)
-	beq t1, zero, label17
+	sd zero, 136(sp)
+	beq zero, zero, label17
 	ld t1, 16(sp)
 	slli t2, t1, 2
 	ld t3, 104(sp)
@@ -158,7 +156,6 @@ label13:
 	sd t5, 16(sp)
 	sd t3, 24(sp)
 	sd t2, 40(sp)
-	mv t1, t2
 	ld t2, 48(sp)
 	beq t1, t2, label37
 	mv t1, t5
@@ -225,40 +222,47 @@ main:
 	addi sp, sp, -872
 	sd ra, 0(sp)
 	sd s0, 864(sp)
-	addi t1, sp, 456
-	addi t2, sp, 48
+	addi t1, sp, 464
+	addi t2, sp, 56
 	jal read
 	mv t3, a0
 	sd a0, 16(sp)
 	sd t2, 8(sp)
-	sd t1, 448(sp)
+	sd t1, 456(sp)
 	ble a0, zero, label161
 	mv t1, zero
+	sd zero, 24(sp)
+	slli t2, zero, 2
+	ld t3, 8(sp)
+	add t4, t3, t2
+	jal read
+	sw a0, 0(t4)
+	addiw t5, t1, 1
+	ld t6, 16(sp)
+	sd t5, 32(sp)
+	bge t5, t6, label161
+label179:
+	ld t1, 32(sp)
+	mv t2, t1
 	sd t1, 24(sp)
-label159:
-	ld t1, 24(sp)
 	slli t2, t1, 2
 	ld t3, 8(sp)
 	add t4, t3, t2
 	jal read
-	mv t5, a0
 	sw a0, 0(t4)
-	addiw t6, t1, 1
-	ld s0, 16(sp)
-	sd t6, 856(sp)
-	bge t6, s0, label161
-	mv t1, t6
-	mv t2, t6
-	sd t6, 24(sp)
-	j label159
+	addiw t5, t1, 1
+	ld t6, 16(sp)
+	sd t5, 32(sp)
+	bge t5, t6, label161
+	j label179
 label212:
 	mv t1, zero
-	sd t1, 32(sp)
+	sd zero, 40(sp)
 	j label162
 label161:
 	ld t1, 8(sp)
 	mv a0, t1
-	ld t2, 448(sp)
+	ld t2, 456(sp)
 	mv a1, t2
 	mv a2, zero
 	ld t3, 16(sp)
@@ -268,7 +272,7 @@ label161:
 	ble t4, zero, label164
 	j label212
 label162:
-	ld t1, 32(sp)
+	ld t1, 40(sp)
 	slli t2, t1, 2
 	ld t3, 8(sp)
 	add t4, t3, t2
@@ -277,11 +281,11 @@ label162:
 	jal write
 	addiw t6, t1, 1
 	ld s0, 16(sp)
-	sd t6, 40(sp)
+	sd t6, 48(sp)
 	bge t6, s0, label164
 	mv t1, t6
 	mv t2, t6
-	sd t6, 32(sp)
+	sd t6, 40(sp)
 	j label162
 label164:
 	mv a0, zero

@@ -65,18 +65,15 @@ v29 := #1
 IF v15 < v16 GOTO label31
 v29 := #0
 LABEL label31 :
-v19 := v29
-WRITE v19
+WRITE v29
 IF v15 >= v16 GOTO label21
 IF v16 >= v17 GOTO label21
 v32 := #1
 IF v15 < v16 GOTO label34
 v32 := #0
-v28 := v32
-WRITE v28
+WRITE v32
 RETURN #0
 LABEL label34 :
-v28 := v32
-WRITE v28
+WRITE v32
 LABEL label21 :
 RETURN #0

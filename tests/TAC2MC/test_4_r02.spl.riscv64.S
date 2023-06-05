@@ -35,9 +35,8 @@ main:
 label8:
 	ld t1, 8(sp)
 	slt t2, t1, zero
-	mv t3, t2
-	subw t4, zero, t2
-	mv a0, t4
+	subw t3, zero, t2
+	mv a0, t3
 	jal write
 label3:
 	mv a0, zero

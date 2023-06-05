@@ -45,11 +45,10 @@ hanoi:
 	sd a0, 80(sp)
 	bne s1, zero, label18
 	mv t1, a1
-	mv t2, a1
 	mv t3, zero
 	mv t4, zero
-	sd t4, 152(sp)
-	sd t3, 136(sp)
+	sd zero, 152(sp)
+	sd zero, 136(sp)
 	sd a1, 120(sp)
 	j label2
 label18:
@@ -61,8 +60,8 @@ label18:
 	mv t6, t5
 	mv s0, zero
 	mv s1, zero
-	sd s1, 176(sp)
-	sd s0, 32(sp)
+	sd zero, 176(sp)
+	sd zero, 32(sp)
 	sd t5, 56(sp)
 	sd t3, 88(sp)
 	sd t1, 24(sp)
@@ -81,7 +80,7 @@ label2:
 	sd t6, 168(sp)
 	bne s1, zero, label43
 	mv t1, zero
-	sd t1, 168(sp)
+	sd zero, 168(sp)
 label43:
 	ld t1, 168(sp)
 	mv a0, t1
@@ -120,7 +119,7 @@ label6:
 	sd s4, 8(sp)
 	bne s6, zero, label45
 	mv t1, zero
-	sd t1, 8(sp)
+	sd zero, 8(sp)
 label45:
 	li t1, 1
 	ld t2, 16(sp)

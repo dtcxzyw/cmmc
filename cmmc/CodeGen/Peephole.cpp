@@ -21,6 +21,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <iostream>
+#include <iterator>
 #include <queue>
 #include <variant>
 #include <vector>
@@ -250,28 +251,38 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
 */
 
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
+    // func.dump(std::cerr, ctx);
     bool modified = false;
 
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
         uint32_t versionId = 0;
-        std::unordered_map<MIROperand, std::pair<MIROperand, uint32_t>, MIROperandHasher> regValue;  // reg-><reg,version>
-        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> version;
+        std::unordered_map<uint32_t, std::pair<uint32_t, uint32_t>> regValue;  // reg-><reg,version>
+        std::unordered_map<uint32_t, uint32_t> version;
+
+        const auto getVersion = [&](const uint32_t reg) {
+            assert(isVirtualReg(reg) || isISAReg(reg));
+            if(auto iter = version.find(reg); iter != version.cend())
+                return iter->second;
+            return version[reg] = ++versionId;
+        };
 
         const auto defReg = [&](const MIROperand& reg) {
             if(!isOperandVRegOrISAReg(reg))
                 return;
-            version[reg] = ++versionId;
-            regValue.erase(reg);
+            version[reg.reg()] = ++versionId;
+            regValue.erase(reg.reg());
         };
 
         const auto replaceUse = [&](MIRInst& inst, MIROperand& reg) {
             if(!isOperandVRegOrISAReg(reg))
                 return;
-            if(auto iter = regValue.find(reg); iter != regValue.cend() && iter->second.second == version[iter->second.first]) {
+            if(auto iter = regValue.find(reg.reg());
+               iter != regValue.cend() && iter->second.second == getVersion(iter->second.first)) {
                 auto backup = reg;
-                reg = iter->second.first;
+                // NOTICE: Don't modify the type
+                reg = MIROperand::asISAReg(iter->second.first, backup.type());
                 if(reg == backup)
                     return;
                 auto backupInstOpcode = inst.opcode();
@@ -288,15 +299,10 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
             }
         };
 
-        const auto updateMap = [&](const MIROperand& reg, const MIROperand& value) {
-            defReg(reg);
-            if(!isOperandVRegOrISAReg(reg) || !isOperandVRegOrISAReg(value))
-                return;
+        for(auto iter = instructions.begin(); iter != instructions.end();) {
+            auto& inst = *iter;
+            auto next = std::next(iter);
 
-            regValue[reg] = { value, version[value] };
-        };
-
-        for(auto& inst : instructions) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
@@ -306,30 +312,39 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
 
             MIROperand dst, src;
             if(ctx.instInfo.matchCopy(inst, dst, src)) {
-                if(dst.type() == src.type()) {
-                    updateMap(dst, src);
-                } else
+                assert(isOperandVRegOrISAReg(dst) && isOperandVRegOrISAReg(src));
+                if(auto it = regValue.find(dst.reg());
+                   it != regValue.cend() && it->second.first == src.reg() && it->second.second == getVersion(it->second.first)) {
+                    instructions.erase(iter);
+                    modified = true;
+                } else {
                     defReg(dst);
+                    regValue[dst.reg()] = { src.reg(), getVersion(src.reg()) };
+                }
             } else {
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                         defReg(inst.getOperand(idx));
                     }
                 if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
-                    std::vector<MIROperand> nonVReg;
+                    std::vector<uint32_t> nonVReg;
                     for(auto [reg, ver] : version) {
                         CMMC_UNUSED(ver);
                         // TODO: use IPRA Info
-                        if(isISAReg(reg.reg()))
+                        if(isISAReg(reg))
                             nonVReg.push_back(reg);
                     }
-                    for(auto reg : nonVReg)
-                        defReg(reg);
+                    for(auto reg : nonVReg) {
+                        version[reg] = ++versionId;
+                        regValue.erase(reg);
+                    }
                 }
             }
+
+            iter = next;
         }
     }
-
+    // func.dump(std::cerr, ctx);
     return modified;
 }
 

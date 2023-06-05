@@ -5,168 +5,133 @@ __cmmc_fp_constant_pool:
 .text
 .globl add_imm
 add_imm:
-	mv t1, a0
-	addiw t2, a0, 1
-	mv a0, t2
+	addiw t1, a0, 1
+	mv a0, t1
 	ret
 .globl add_large_imm
 add_large_imm:
-	mv t1, a0
-	li t2, 262144
-	addw t3, a0, t2
-	mv a0, t3
+	li t1, 262144
+	addw t2, a0, t1
+	mv a0, t2
 	ret
 .globl add_reg
 add_reg:
-	mv t1, a0
-	mv t2, a1
-	addw t3, a0, a1
-	mv a0, t3
+	addw t1, a0, a1
+	mv a0, t1
 	ret
 .globl and_imm
 and_imm:
-	mv t1, a0
-	andi t2, a0, 1
-	mv a0, t2
+	andi t1, a0, 1
+	mv a0, t1
 	ret
 .globl and_large_imm
 and_large_imm:
-	mv t1, a0
-	li t2, 262144
-	and t3, a0, t2
-	mv a0, t3
+	li t1, 262144
+	and t2, a0, t1
+	mv a0, t2
 	ret
 .globl and_reg
 and_reg:
-	mv t1, a0
-	mv t2, a1
-	and t3, a0, a1
-	mv a0, t3
+	and t1, a0, a1
+	mv a0, t1
 	ret
 .globl or_imm
 or_imm:
-	mv t1, a0
-	ori t2, a0, 1
-	mv a0, t2
+	ori t1, a0, 1
+	mv a0, t1
 	ret
 .globl or_large_imm
 or_large_imm:
-	mv t1, a0
-	li t2, 262144
-	or t3, a0, t2
-	mv a0, t3
+	li t1, 262144
+	or t2, a0, t1
+	mv a0, t2
 	ret
 .globl or_reg
 or_reg:
-	mv t1, a0
-	mv t2, a1
-	or t3, a0, a1
-	mv a0, t3
+	or t1, a0, a1
+	mv a0, t1
 	ret
 .globl xor_imm
 xor_imm:
-	mv t1, a0
-	xori t2, a0, 1
-	mv a0, t2
+	xori t1, a0, 1
+	mv a0, t1
 	ret
 .globl xor_large_imm
 xor_large_imm:
-	mv t1, a0
-	li t2, 262144
-	xor t3, a0, t2
-	mv a0, t3
+	li t1, 262144
+	xor t2, a0, t1
+	mv a0, t2
 	ret
 .globl xor_reg
 xor_reg:
-	mv t1, a0
-	mv t2, a1
-	xor t3, a0, a1
-	mv a0, t3
+	xor t1, a0, a1
+	mv a0, t1
 	ret
 .globl sub_imm
 sub_imm:
-	mv t1, a0
-	addiw t2, a0, -1
-	mv a0, t2
+	addiw t1, a0, -1
+	mv a0, t1
 	ret
 .globl sub_reg
 sub_reg:
-	mv t1, a0
-	mv t2, a1
-	subw t3, a0, a1
-	mv a0, t3
+	subw t1, a0, a1
+	mv a0, t1
 	ret
 .globl mul_imm
 mul_imm:
-	mv t1, a0
-	li t2, 3
-	mulw t3, a0, t2
-	mv a0, t3
+	li t1, 3
+	mulw t2, a0, t1
+	mv a0, t2
 	ret
 .globl mul_reg
 mul_reg:
-	mv t1, a0
-	mv t2, a1
-	mulw t3, a0, a1
-	mv a0, t3
+	mulw t1, a0, a1
+	mv a0, t1
 	ret
 .globl div_imm
 div_imm:
-	mv t1, a0
-	li t2, 3
-	divw t3, a0, t2
-	mv a0, t3
+	li t1, 3
+	divw t2, a0, t1
+	mv a0, t2
 	ret
 .globl div_reg
 div_reg:
-	mv t1, a0
-	mv t2, a1
-	divw t3, a0, a1
-	mv a0, t3
+	divw t1, a0, a1
+	mv a0, t1
 	ret
 .globl mod_imm
 mod_imm:
-	mv t1, a0
-	li t2, 3
-	remw t3, a0, t2
-	mv a0, t3
+	li t1, 3
+	remw t2, a0, t1
+	mv a0, t2
 	ret
 .globl mod_reg
 mod_reg:
-	mv t1, a0
-	mv t2, a1
-	remw t3, a0, a1
-	mv a0, t3
+	remw t1, a0, a1
+	mv a0, t1
 	ret
 .globl shl_imm
 shl_imm:
-	mv t1, a0
-	slliw t2, a0, 3
-	mv a0, t2
+	slliw t1, a0, 3
+	mv a0, t1
 	ret
 .globl shl_reg
 shl_reg:
-	mv t1, a0
-	mv t2, a1
-	sllw t3, a0, a1
-	mv a0, t3
+	sllw t1, a0, a1
+	mv a0, t1
 	ret
 .globl ashr_imm
 ashr_imm:
-	mv t1, a0
-	sraiw t2, a0, 3
-	mv a0, t2
+	sraiw t1, a0, 3
+	mv a0, t1
 	ret
 .globl ashr_reg
 ashr_reg:
-	mv t1, a0
-	mv t2, a1
-	sraw t3, a0, a1
-	mv a0, t3
+	sraw t1, a0, a1
+	mv a0, t1
 	ret
 .globl s2f
 s2f:
-	mv t1, a0
 	fcvt.s.w f0, a0
 	fmv.s f10, f0
 	ret
@@ -258,9 +223,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel238:
+pcrel203:
 	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi t2, t1, %pcrel_lo(pcrel238)
+	addi t2, t1, %pcrel_lo(pcrel203)
 	flw f0, 0(t2)
 	fmv.s f10, f0
 	ret

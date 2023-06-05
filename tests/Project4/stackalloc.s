@@ -127,7 +127,6 @@ label12:
 	addiu $t8, $t0, -1
 	move $t0, $t8
 	sw $t8, 428($sp)
-	move $t0, $t8
 	addiu $t1, $t8, 1
 	blez $t1, label45
 	nop
@@ -170,8 +169,8 @@ label13:
 	nop
 label45:
 	move $t0, $zero
-	sw $t0, 452($sp)
-	beq $t0, $zero, label13
+	sw $zero, 452($sp)
+	beq $zero, $zero, label13
 	nop
 	b label12
 	nop

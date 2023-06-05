@@ -19,6 +19,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Dispatch.hpp>
 #include <cmmc/Support/Graph.hpp>
+#include <iostream>
 #include <limits>
 #include <queue>
 #include <unordered_map>
@@ -29,10 +30,9 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx) {
-    while(removeIndirectCopy(func, ctx))
+    while(genericPeepholeOpt(func, ctx))
         ;
-    removeIdentityCopies(func, ctx);
-    removeUnusedInsts(func, ctx);
+    // func.dump(std::cerr, ctx);
 }
 
 CMMC_MIR_NAMESPACE_END

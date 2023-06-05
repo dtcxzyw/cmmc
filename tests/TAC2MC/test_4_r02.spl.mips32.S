@@ -43,9 +43,8 @@ main:
 label9:
 	lw $t0, 24($sp)
 	slt $t1, $t0, $zero
-	move $t2, $t1
-	subu $t3, $zero, $t1
-	move $a0, $t3
+	subu $t2, $zero, $t1
+	move $a0, $t2
 	jal write
 	nop
 label3:

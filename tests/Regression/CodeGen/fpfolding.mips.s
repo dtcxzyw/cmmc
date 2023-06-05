@@ -11,7 +11,6 @@ my_fabs:
 	swc1 $f12, 4($sp)
 	bne $t0, $zero, label10
 	nop
-	mov.s $f4, $f12
 	mov.s $f6, $f12
 	swc1 $f12, 0($sp)
 	b label2

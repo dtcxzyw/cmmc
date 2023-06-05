@@ -43,11 +43,11 @@ main:
 	jal read
 	li t1, 10
 	mv t2, zero
-	sd t2, 24(sp)
+	sd zero, 24(sp)
 	sd t1, 32(sp)
 	addiw t2, t1, -1
-	ld t3, 24(sp)
-	addiw t4, t3, 1
+	mv t3, zero
+	addiw t4, zero, 1
 	sd t4, 8(sp)
 	sd t2, 16(sp)
 	bne t2, zero, label26

@@ -80,7 +80,6 @@ merge:
 	lw $t1, 76($sp)
 	beq $s1, $t1, label37
 	nop
-	move $t0, $s1
 	lw $t1, 20($sp)
 	beq $s1, $t1, label41
 	nop
@@ -116,7 +115,6 @@ label20:
 	addiu $t8, $t0, 1
 	move $t0, $t8
 	sw $t8, 12($sp)
-	move $t0, $t8
 	lw $t1, 76($sp)
 	beq $t8, $t1, label21
 	nop
@@ -124,8 +122,8 @@ label20:
 	nop
 label41:
 	move $t0, $zero
-	sw $t0, 48($sp)
-	beq $t0, $zero, label17
+	sw $zero, 48($sp)
+	beq $zero, $zero, label17
 	nop
 label11:
 	lw $t0, 16($sp)
@@ -153,7 +151,6 @@ label12:
 	sw $t4, 16($sp)
 	sw $t2, 24($sp)
 	sw $t1, 8($sp)
-	move $t0, $t1
 	lw $t1, 76($sp)
 	beq $t0, $t1, label37
 	nop

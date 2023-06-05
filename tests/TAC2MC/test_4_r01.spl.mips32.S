@@ -45,10 +45,9 @@ hanoi:
 	bne $a0, $t4, label18
 	nop
 	move $t0, $a1
-	move $t1, $a1
 	move $t2, $zero
 	move $t3, $zero
-	sw $t3, 64($sp)
+	sw $zero, 64($sp)
 	sw $zero, 92($sp)
 	sw $a1, 68($sp)
 	b label2
@@ -62,7 +61,7 @@ label18:
 	move $t5, $t4
 	move $t6, $zero
 	move $t7, $zero
-	sw $t7, 36($sp)
+	sw $zero, 36($sp)
 	sw $zero, 72($sp)
 	sw $t4, 40($sp)
 	sw $t2, 96($sp)
