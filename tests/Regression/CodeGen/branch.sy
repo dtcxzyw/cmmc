@@ -1,4 +1,96 @@
+void beqz(int x, int arr[]) {
+    if(x == 0)
+        arr[0] = 0;
+}
+void beqi(int x, int arr[]) {
+    if(x == 1)
+        arr[0] = 0;
+}
+void beq(int x, int y, int arr[]) {
+    if(x == y)
+        arr[0] = 0;
+}
+void bnez(int x, int arr[]) {
+    if(x != 0)
+        arr[0] = 0;
+}
+void bnei(int x, int arr[]) {
+    if(x != 1)
+        arr[0] = 0;
+}
+void bne(int x, int y, int arr[]) {
+    if(x != y)
+        arr[0] = 0;
+}
+void bltz(int x, int arr[]) {
+    if(x < 0)
+        arr[0] = 0;
+}
+void blti(int x, int arr[]) {
+    if(x < 1)
+        arr[0] = 0;
+}
 void blt(int x, int y, int arr[]) {
     if(x < y)
+        arr[0] = 0;
+}
+void bgez(int x, int arr[]) {
+    if(x >= 0)
+        arr[0] = 0;
+}
+void bgei(int x, int arr[]) {
+    if(x >= 1)
+        arr[0] = 0;
+}
+void bge(int x, int y, int arr[]) {
+    if(x >= y)
+        arr[0] = 0;
+}
+void bgtz(int x, int arr[]) {
+    if(x > 0)
+        arr[0] = 0;
+}
+void bgti(int x, int arr[]) {
+    if(x > 1)
+        arr[0] = 0;
+}
+void bgt(int x, int y, int arr[]) {
+    if(x > y)
+        arr[0] = 0;
+}
+void blez(int x, int arr[]) {
+    if(x <= 0)
+        arr[0] = 0;
+}
+void blei(int x, int arr[]) {
+    if(x <= 1)
+        arr[0] = 0;
+}
+void ble(int x, int y, int arr[]) {
+    if(x <= y)
+        arr[0] = 0;
+}
+void bfeq(float x, float y, int arr[]) {
+    if(x == y)
+        arr[0] = 0;
+}
+void bfne(float x, float y, int arr[]) {
+    if(x != y)
+        arr[0] = 0;
+}
+void bflt(float x, float y, int arr[]) {
+    if(x < y)
+        arr[0] = 0;
+}
+void bfle(float x, float y, int arr[]) {
+    if(x <= y)
+        arr[0] = 0;
+}
+void bfge(float x, float y, int arr[]) {
+    if(x >= y)
+        arr[0] = 0;
+}
+void bfgt(float x, float y, int arr[]) {
+    if(x > y)
         arr[0] = 0;
 }

@@ -27,13 +27,13 @@ main:
 	sd ra, 0(sp)
 	jal read
 	mv t1, a0
-	slti t2, a0, 2
+	li t2, 1
 	sd a0, 64(sp)
-	bne t2, zero, label14
-	xori t2, a0, 1
-	sltu t3, zero, t2
-	bne t3, zero, label18
-	j label43
+	ble a0, t2, label14
+	li t1, 1
+	mv t2, a0
+	bne a0, t1, label18
+	j label44
 label14:
 	li t1, 1
 	sd t1, 56(sp)
@@ -45,7 +45,7 @@ label9:
 	ld ra, 0(sp)
 	addi sp, sp, 72
 	ret
-label43:
+label44:
 	ld t1, 64(sp)
 	mv t2, t1
 	li t3, 1
@@ -64,11 +64,10 @@ label18:
 	sd t1, 32(sp)
 	addiw t2, t1, -1
 	mulw t4, t1, t3
-	xori t5, t2, 1
-	sltu t6, zero, t5
+	li t5, 1
 	sd t4, 8(sp)
 	sd t2, 16(sp)
-	bne t6, zero, label25
+	bne t2, t5, label25
 label24:
 	ld t1, 16(sp)
 	mv t2, t1
@@ -90,9 +89,8 @@ label25:
 	sd t1, 32(sp)
 	addiw t2, t1, -1
 	mulw t4, t1, t3
-	xori t5, t2, 1
-	sltu t6, zero, t5
+	li t5, 1
 	sd t4, 8(sp)
 	sd t2, 16(sp)
-	bne t6, zero, label25
+	bne t2, t5, label25
 	j label24

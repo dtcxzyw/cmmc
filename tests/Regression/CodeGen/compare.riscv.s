@@ -31,7 +31,7 @@ sne:
 	ret
 .globl snez
 snez:
-	sltu t1, 0, a0
+	sltu t1, zero, a0
 	mv a0, t1
 	ret
 .globl slti

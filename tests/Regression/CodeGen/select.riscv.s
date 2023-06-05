@@ -3,7 +3,7 @@
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
 	addi sp, sp, -8
-	sltu t1, 0, a0
+	sltu t1, zero, a0
 	mv t2, a1
 	sd a1, 0(sp)
 	bne t1, zero, label8
@@ -17,7 +17,7 @@ label8:
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
 	addi sp, sp, -8
-	sltu t1, 0, a0
+	sltu t1, zero, a0
 	fmv.s f0, f11
 	fsw f11, 0(sp)
 	bne t1, zero, label18

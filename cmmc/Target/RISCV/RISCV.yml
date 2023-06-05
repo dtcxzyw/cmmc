@@ -890,6 +890,28 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
+            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs)
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      Branch:
+        $Opcode: getSignedBranchOpcode($Op)
+        $Template: BLT
+        Rs1: $Lhs
+        Rs2:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Lhs)
+            Imm: $Rhs
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
+          InstSCmp:
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
             $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
         Tgt: $Reloc
         Prob: $Prob
