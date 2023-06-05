@@ -59,9 +59,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             // 0 - a -> -a
             if(sub(cint_(0), any(v1))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1);
             if(fsub(cfp_(0.0), any(v1))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1);
             // a - a -> 0
             if(sub(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return makeIntLike(0, inst);
@@ -85,9 +85,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::FAdd, v1, v1);
             // a * -1 -> -a
             if(mul(any(v1), cint_(-1))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1);
             if(fmul(any(v1), cfp_(-1.0))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1);
             // 0 / a -> 0
             if(sdiv(cint_(0), any(v1))(matchCtx) || udiv(cuint_(0), any(v1))(matchCtx))
                 return makeIntLike(0, inst);
@@ -105,9 +105,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             // a / -1 -> -a
             if(sdiv(any(v1), cint_(-1))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::Neg, v1);
             if(fdiv(any(v1), cfp_(1.0))(matchCtx))
-                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1->getType(), v1);
+                return builder.makeOp<UnaryInst>(InstructionID::FNeg, v1);
             // a / -a -> -1
             if(sdiv(any(v1), neg(any(v2)))(matchCtx) && v1 == v2)
                 return makeIntLike(-1, inst);
@@ -155,9 +155,28 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // a & a -> a
             if(and_(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return v1;
+            // a & 0 -> 0
+            if(and_(any(v1), cuint_(0))(matchCtx))
+                return makeIntLike(0, inst);
+            // a & -1 -> a
+            if(and_(any(v1), cint_(-1))(matchCtx))
+                return v1;
+            // bool a & 1 -> a
+            if(and_(any(v1), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
+                return v1;
             // a | a -> a
             if(or_(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return v1;
+            // a | 0 -> a
+            if(or_(any(v1), cuint_(0))(matchCtx))
+                return v1;
+            // a | -1 -> -1
+            if(or_(any(v1), cint_(-1))(matchCtx))
+                return makeIntLike(-1, inst);
+            // bool a | 1 -> 1
+            if(or_(any(v1), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
+                return makeIntLike(1, inst);
+
             CompareOp cmp;
             // uint >= 0 -> true
             // uint < 0 -> false
@@ -407,6 +426,21 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(ashr(ashr(any(v1), int_(i1)), int_(i2))(matchCtx)) {
                 return builder.makeOp<BinaryInst>(InstructionID::AShr, v1, makeIntLike(i1 + i2, v1));
             }
+
+            // select c1, c2, false -> c1 & c2
+            if(select(any(v1), any(v2), cint_(0))(matchCtx) && v2->getType()->isBoolean())
+                return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
+            // select c1, c2, true -> !c1 | c2
+            if(select(any(v1), any(v2), cint_(1))(matchCtx) && v2->getType()->isBoolean())
+                return builder.makeOp<BinaryInst>(InstructionID::Or,
+                                                  builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(1, v1)), v2);
+            // select c1, false, c2 -> !c1 & c2
+            if(select(any(v1), cint_(0), any(v2))(matchCtx) && v2->getType()->isBoolean())
+                return builder.makeOp<BinaryInst>(InstructionID::And,
+                                                  builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(1, v1)), v2);
+            // select c1, true, c2 -> c1 | c2
+            if(select(any(v1), cint_(1), any(v2))(matchCtx) && v2->getType()->isBoolean())
+                return builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2);
 
             return nullptr;
         });

@@ -475,7 +475,7 @@ public:
 
 class UnaryInst final : public Instruction {
 public:
-    UnaryInst(InstructionID instID, const Type* valueType, Value* val) : Instruction{ instID, valueType, { val } } {}
+    UnaryInst(InstructionID instID, Value* val) : Instruction{ instID, val->getType(), { val } } {}
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
 };

@@ -57,28 +57,9 @@
 
 # TODO
 + merge a + b with b + a
-+ ./tests/SysY2022/functional/55_sort_test1.sy DynamicLoopUnroll/LICM/Out-of-bound
-+ ./tests/SysY2022/functional/56_sort_test2.sy
-+ ./tests/SysY2022/functional/57_sort_test3.sy
-+ ./tests/SysY2022/functional/58_sort_test4.sy
-+ ./tests/SysY2022/functional/59_sort_test5.sy
 + ./tests/SysY2022/functional/61_sort_test7.sy memset
 + ./tests/SysY2022/functional/62_percolation.sy dup blocks
-+ ./tests/SysY2022/functional/66_exgcd.sy sroa
-+ ./tests/SysY2022/functional/67_reverse_output.sy tail call
++ ./tests/SysY2022/functional/66_exgcd.sy tests/CodeGenTAC/test04.spl sroa
 + ./tests/SysY2022/functional/82_long_func.sy subgraph
 + ./tests/SysY2022/functional/92_register_alloc.sy add_sub tree
 + https://gcc.gnu.org/onlinedocs/gccint/
-+ tests/CodeGenTAC/test04.spl merge Phi nodes
-+ tests/CodeGenTAC/test_3_b02.spl
-```
-^while.body1:
-    i32 %26 = phi [^b7, i32 %3] [^b11, i32 %27];
-    i32 %27 = add i32 %26, i32 1;
-    i1 %28 = scmp lt i32 %27, i32 %13;
-    cbr i1 %28(prob = 0.5), ^b9, ^b11; # ^b11 -> ^b8
-^b11:
-    i1 %41 = phi [^while.body1, i1 false] [^b9, i1 %36];
-    cbr i1 %41(prob = 0.97), ^while.body1, ^b8;
-```
-+ immutable scalar ref arg -> pass by value

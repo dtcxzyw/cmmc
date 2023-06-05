@@ -516,6 +516,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(const auto& pass : passesSource.collectModulePass({
                 "GlobalScalar2Local",
                 "DeadArgEliminate",
+                "ImmutableScalarRefArg2Value",
             }))
             root->addPass(pass);
         root->addPass(globalOpt);

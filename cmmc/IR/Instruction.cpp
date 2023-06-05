@@ -624,7 +624,7 @@ Instruction* CompareInst::clone() const {
 }
 
 Instruction* UnaryInst::clone() const {
-    return make<UnaryInst>(getInstID(), getType(), getOperand(0));
+    return make<UnaryInst>(getInstID(), getOperand(0));
 }
 
 Instruction* CastInst::clone() const {

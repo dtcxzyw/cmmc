@@ -658,8 +658,7 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     switch(mOp) {
         case OperatorID::Neg:
             return QualifiedValue::asRValue(
-                ctx.makeOp<UnaryInst>(value->getType()->isInteger() ? InstructionID::Neg : InstructionID::FNeg, value->getType(),
-                                      value),
+                ctx.makeOp<UnaryInst>(value->getType()->isInteger() ? InstructionID::Neg : InstructionID::FNeg, value),
                 valueQualifier);
         case OperatorID::BitwiseNot: {
             if(value->getType()->isInteger()) {
