@@ -44,12 +44,10 @@ main:
 label24:
 	li $t0, 1
 	sw $t0, 432($sp)
-	lw $t0, 432($sp)
 	lw $t1, 456($sp)
 	subu $t2, $t0, $t1
 	bgez $t2, label14
 	nop
-	lw $t0, 432($sp)
 	sll $t1, $t0, 2
 	lw $t2, 460($sp)
 	addu $t3, $t2, $t1
@@ -58,8 +56,8 @@ label24:
 	move $t6, $t5
 	sw $t5, 428($sp)
 	sw $t4, 444($sp)
-	lw $t0, 428($sp)
-	addiu $t1, $t0, 1
+	move $t0, $t5
+	addiu $t1, $t5, 1
 	blez $t1, label45
 	nop
 	b label44
@@ -78,15 +76,14 @@ label2:
 	sw $t4, 448($sp)
 	bgez $t6, label33
 	nop
-	lw $t0, 448($sp)
-	move $t1, $t0
-	sw $t0, 24($sp)
+	move $t0, $t4
+	move $t1, $t4
+	sw $t4, 24($sp)
 	b label2
 	nop
 label33:
 	li $t0, 1
 	sw $t0, 432($sp)
-	lw $t0, 432($sp)
 	lw $t1, 456($sp)
 	subu $t2, $t0, $t1
 	bgez $t2, label14
@@ -114,8 +111,8 @@ label44:
 	slt $t6, $t5, $t4
 	move $t7, $t6
 	sw $t6, 452($sp)
-	lw $t0, 452($sp)
-	beq $t0, $zero, label13
+	move $t0, $t6
+	beq $t6, $zero, label13
 	nop
 label12:
 	lw $t0, 428($sp)
@@ -130,8 +127,8 @@ label12:
 	addiu $t8, $t0, -1
 	move $t0, $t8
 	sw $t8, 428($sp)
-	lw $t0, 428($sp)
-	addiu $t1, $t0, 1
+	move $t0, $t8
+	addiu $t1, $t8, 1
 	blez $t1, label45
 	nop
 	b label44
@@ -146,8 +143,8 @@ label36:
 	move $t6, $t5
 	sw $t5, 428($sp)
 	sw $t4, 444($sp)
-	lw $t0, 428($sp)
-	addiu $t1, $t0, 1
+	move $t0, $t5
+	addiu $t1, $t5, 1
 	blez $t1, label45
 	nop
 	b label44
@@ -164,9 +161,9 @@ label13:
 	addiu $t7, $t6, 1
 	move $t6, $t7
 	sw $t7, 432($sp)
-	lw $t0, 432($sp)
+	move $t0, $t7
 	lw $t1, 456($sp)
-	subu $t2, $t0, $t1
+	subu $t2, $t7, $t1
 	bgez $t2, label14
 	nop
 	b label36
@@ -174,7 +171,6 @@ label13:
 label45:
 	move $t0, $zero
 	sw $t0, 452($sp)
-	lw $t0, 452($sp)
 	beq $t0, $zero, label13
 	nop
 	b label12
@@ -194,9 +190,9 @@ label15:
 	sw $t5, 436($sp)
 	bgez $t7, label17
 	nop
-	lw $t0, 436($sp)
-	move $t1, $t0
-	sw $t0, 440($sp)
+	move $t0, $t5
+	move $t1, $t5
+	sw $t5, 440($sp)
 	b label15
 	nop
 label17:

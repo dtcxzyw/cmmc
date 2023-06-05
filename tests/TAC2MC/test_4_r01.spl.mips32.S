@@ -44,13 +44,13 @@ hanoi:
 	sw $a0, 44($sp)
 	bne $a0, $t4, label18
 	nop
-	lw $t0, 84($sp)
-	move $t1, $t0
+	move $t0, $a1
+	move $t1, $a1
 	move $t2, $zero
 	move $t3, $zero
 	sw $t3, 64($sp)
 	sw $zero, 92($sp)
-	sw $t0, 68($sp)
+	sw $a1, 68($sp)
 	b label2
 	nop
 label18:
@@ -126,11 +126,11 @@ label6:
 	nop
 	lw $t0, 40($sp)
 	move $t1, $t0
-	lw $t2, 88($sp)
-	move $t3, $t2
+	move $t2, $s0
+	move $t3, $s0
 	li $t4, 1
 	sw $t4, 64($sp)
-	sw $t2, 92($sp)
+	sw $s0, 92($sp)
 	sw $t0, 68($sp)
 	b label2
 	nop

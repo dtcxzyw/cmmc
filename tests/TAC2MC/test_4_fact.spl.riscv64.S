@@ -35,27 +35,15 @@ main:
 	sd a0, 40(sp)
 	bne t4, zero, label14
 	li t1, 1
-	ld t2, 40(sp)
-	xor t3, t2, t1
+	mv t2, a0
+	xor t3, a0, t1
 	sltiu t4, t3, 1
 	xori t5, t4, 1
 	bne t5, zero, label18
-	j label17
+	j label57
 label14:
 	li t1, 1
 	sd t1, 32(sp)
-	j label9
-label17:
-	ld t1, 40(sp)
-	mv t2, t1
-	li t3, 1
-	sd t3, 16(sp)
-	sd t1, 24(sp)
-	ld t1, 24(sp)
-	ld t2, 16(sp)
-	mulw t3, t1, t2
-	mv t4, t3
-	sd t3, 32(sp)
 	j label9
 label18:
 	ld t1, 40(sp)
@@ -75,15 +63,12 @@ label6:
 	sd t4, 56(sp)
 	sd t2, 48(sp)
 	bne s1, zero, label25
-	ld t1, 48(sp)
-	mv t2, t1
-	ld t3, 56(sp)
-	mv t4, t3
-	sd t3, 16(sp)
-	sd t1, 24(sp)
-	ld t1, 24(sp)
-	ld t2, 16(sp)
-	mulw t3, t1, t2
+	mv t1, t2
+	mv t3, t4
+	sd t4, 16(sp)
+	sd t2, 24(sp)
+	mv t2, t4
+	mulw t3, t1, t4
 	mv t4, t3
 	sd t3, 32(sp)
 	j label9
@@ -105,3 +90,14 @@ label9:
 	ld ra, 0(sp)
 	addi sp, sp, 88
 	jr ra
+label57:
+	ld t1, 40(sp)
+	mv t2, t1
+	li t3, 1
+	sd t3, 16(sp)
+	sd t1, 24(sp)
+	mv t2, t3
+	mulw t3, t1, t3
+	mv t4, t3
+	sd t3, 32(sp)
+	j label9

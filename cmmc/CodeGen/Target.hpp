@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/DataLayout.hpp>
 #include <cmmc/CodeGen/FrameInfo.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
@@ -90,6 +89,8 @@ public:
 struct MIRFlags final {
     bool endsWithTerminator = true;
     bool inSSAForm = true;
+    bool preRA = true;
+    bool postSA = false;
 };
 
 struct CodeGenContext final {

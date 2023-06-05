@@ -328,6 +328,8 @@ static void removeUnusedSpillStackObjects(MIRFunction& func) {
 }
 
 void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel) {
+    while(genericPeepholeOpt(func, ctx))
+        ;
     removeUnusedSpillStackObjects(func);
     // func.dump(std::cerr, target);
 
@@ -395,20 +397,6 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
         assert(isStackObject(ref.reg()));
         if(stackObject.usage == StackObjectUsage::Argument) {
             stackObject.offset += stackSize;
-        }
-    }
-
-    for(auto& block : func.blocks()) {
-        auto& instructions = block->instructions();
-        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
-            auto& inst = *iter;
-            auto& instInfo = ctx.instInfo.getInstInfo(inst);
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                if(auto& op = inst.getOperand(idx); isOperandStackObject(op)) {
-                    ctx.iselInfo.legalizeInstWithStackOperand(InstLegalizeContext{ inst, instructions, iter, ctx }, op,
-                                                              func.stackObjects().at(op));
-                }
-            }
         }
     }
 

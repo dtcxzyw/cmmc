@@ -8,8 +8,8 @@ blt:
 	sw $a2, 0($sp)
 	bgez $t1, label3
 	nop
-	lw $t0, 0($sp)
-	sw $zero, 0($t0)
+	move $t0, $a2
+	sw $zero, 0($a2)
 label3:
 	addiu $sp, $sp, 8
 	jr $ra

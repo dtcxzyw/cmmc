@@ -37,8 +37,8 @@ main:
 	blez $t1, label15
 	nop
 	li $t0, 1
-	lw $t1, 24($sp)
-	bne $t1, $t0, label19
+	move $t1, $v0
+	bne $v0, $t0, label19
 	nop
 	b label18
 	nop
@@ -53,9 +53,8 @@ label18:
 	li $t2, 1
 	sw $t2, 40($sp)
 	sw $t0, 36($sp)
-	lw $t0, 36($sp)
-	lw $t1, 40($sp)
-	mult $t0, $t1
+	move $t1, $t2
+	mult $t0, $t2
 	mflo $t2
 	move $t3, $t2
 	sw $t2, 28($sp)
@@ -75,9 +74,7 @@ label19:
 	li $t2, 1
 	sw $t2, 52($sp)
 	sw $t0, 44($sp)
-	lw $t0, 44($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 52($sp)
 	mult $t0, $t2
 	mflo $t3
 	li $t4, 1
@@ -92,9 +89,8 @@ label25:
 	move $t3, $t2
 	sw $t2, 40($sp)
 	sw $t0, 36($sp)
-	lw $t0, 36($sp)
-	lw $t1, 40($sp)
-	mult $t0, $t1
+	move $t1, $t2
+	mult $t0, $t2
 	mflo $t2
 	move $t3, $t2
 	sw $t2, 28($sp)
@@ -107,9 +103,7 @@ label26:
 	move $t3, $t2
 	sw $t2, 52($sp)
 	sw $t0, 44($sp)
-	lw $t0, 44($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 52($sp)
 	mult $t0, $t2
 	mflo $t3
 	li $t4, 1

@@ -445,7 +445,6 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-
         // Stage 6: Pre-RA scheduling, minimize register pressure
         if(ctx.registerInfo && optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "Pre-RA scheduling"sv };
@@ -458,12 +457,14 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             Stage stage{ "Register allocation"sv };
             assignRegisters(mfunc, ctx, infoIPRA);  // vr -> GPR/FPR/Stack
             // dumpFunc(mfunc);
+            ctx.flags.preRA = false;
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 8: legalize stack objects, stack -> sp
         if(ctx.registerInfo) {
             Stage stage{ "Stack object allocation"sv };
             allocateStackObjects(mfunc, ctx, hasCall(func), optLevel);
+            ctx.flags.postSA = true;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }

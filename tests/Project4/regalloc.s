@@ -65,10 +65,9 @@ main:
 	move $t1, $zero
 	sw $zero, 24($sp)
 	sw $t0, 36($sp)
-	lw $t0, 36($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 24($sp)
-	addiu $t3, $t2, 1
+	move $t2, $zero
+	addiu $t3, $zero, 1
 	sw $t3, 28($sp)
 	sw $t1, 32($sp)
 	bne $t1, $zero, label42
@@ -82,9 +81,7 @@ label42:
 	move $t3, $t2
 	sw $t2, 24($sp)
 	sw $t0, 36($sp)
-	lw $t0, 36($sp)
 	addiu $t1, $t0, -1
-	lw $t2, 24($sp)
 	addiu $t3, $t2, 1
 	sw $t3, 28($sp)
 	sw $t1, 32($sp)

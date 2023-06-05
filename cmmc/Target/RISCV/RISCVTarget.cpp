@@ -14,9 +14,6 @@
 
 // RV64GC lp64d medlow
 
-#include "cmmc/CodeGen/ISelInfo.hpp"
-#include "cmmc/CodeGen/InstInfo.hpp"
-#include "cmmc/Config.hpp"
 #include <RISCV/ISelInfoDecl.hpp>
 #include <RISCV/InstInfoDecl.hpp>
 #include <RISCV/ScheduleModelDecl.hpp>

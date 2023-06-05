@@ -44,13 +44,13 @@ hanoi:
 	sd a1, 112(sp)
 	sd a0, 80(sp)
 	bne s1, zero, label18
-	ld t1, 112(sp)
-	mv t2, t1
+	mv t1, a1
+	mv t2, a1
 	mv t3, zero
 	mv t4, zero
 	sd t4, 152(sp)
 	sd t3, 136(sp)
-	sd t1, 120(sp)
+	sd a1, 120(sp)
 	j label2
 label18:
 	ld t1, 80(sp)

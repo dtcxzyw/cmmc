@@ -12,9 +12,9 @@ select_gpr_gpr_gpr:
 	sd t6, 0(sp)
 	sd a2, 8(sp)
 	bne t5, zero, label9
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a2
+	mv t2, a2
+	sd a2, 0(sp)
 label9:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -48,9 +48,9 @@ select_slt_gpr_gpr:
 	sd t6, 0(sp)
 	sd a3, 8(sp)
 	bne t5, zero, label37
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label37:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -86,9 +86,9 @@ select_sle_gpr_gpr:
 	sd s0, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label66
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label66:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -124,9 +124,9 @@ select_sgt_gpr_gpr:
 	sd t6, 0(sp)
 	sd a3, 8(sp)
 	bne t5, zero, label98
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label98:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -162,9 +162,9 @@ select_sge_gpr_gpr:
 	sd s0, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label127
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label127:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -202,9 +202,9 @@ select_eq_gpr_gpr:
 	sd s0, 0(sp)
 	sd a3, 8(sp)
 	bne t6, zero, label160
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label160:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -244,9 +244,9 @@ select_ne_gpr_gpr:
 	sd s1, 0(sp)
 	sd a3, 8(sp)
 	bne s0, zero, label194
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label194:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -282,9 +282,9 @@ select_feq_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label230
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label230:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -315,9 +315,9 @@ select_fne_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label254
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label254:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -348,9 +348,9 @@ select_flt_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label278
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label278:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -380,9 +380,9 @@ select_fle_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label302
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label302:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -412,9 +412,9 @@ select_fgt_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label326
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label326:
 	ld t1, 0(sp)
 	mv a0, t1
@@ -444,9 +444,9 @@ select_fge_gpr_gpr:
 	sd t4, 0(sp)
 	sd a3, 8(sp)
 	bne t3, zero, label350
-	ld t1, 8(sp)
-	mv t2, t1
-	sd t1, 0(sp)
+	mv t1, a3
+	mv t2, a3
+	sd a3, 0(sp)
 label350:
 	ld t1, 0(sp)
 	mv a0, t1

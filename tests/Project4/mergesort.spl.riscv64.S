@@ -42,16 +42,13 @@ merge:
 	sd a1, 120(sp)
 	sd a0, 104(sp)
 	bge t5, a3, label2
-	ld t1, 56(sp)
-	ld t2, 48(sp)
-	addw t3, t1, t2
+	mv t1, a2
+	mv t2, a3
+	addw t3, a2, a3
 	li t4, 2
 	divw t5, t3, t4
-	ld t6, 104(sp)
-	mv a0, t6
-	ld s0, 120(sp)
-	mv a1, s0
-	mv a2, t1
+	mv t6, a0
+	mv s0, a1
 	mv a3, t5
 	sd t5, 32(sp)
 	jal merge
@@ -70,28 +67,28 @@ merge:
 	sd s4, 16(sp)
 	sd s4, 40(sp)
 	sd s2, 24(sp)
-	ld t1, 40(sp)
+	mv t1, s4
 	ld t2, 48(sp)
-	beq t1, t2, label37
-	ld t1, 16(sp)
+	beq s4, t2, label37
+	mv t1, s4
 	ld t2, 32(sp)
-	beq t1, t2, label41
-	ld t1, 24(sp)
+	beq s4, t2, label41
+	mv t1, s2
 	ld t2, 48(sp)
-	xor t3, t1, t2
+	xor t3, s2, t2
 	sltiu t4, t3, 1
 	xori t5, t4, 1
 	mv t6, t5
 	sd t5, 136(sp)
-	ld t1, 136(sp)
-	beq t1, zero, label17
-	ld t1, 16(sp)
-	slli t2, t1, 2
+	mv t1, t5
+	beq t5, zero, label17
+	mv t1, s4
+	slli t2, s4, 2
 	ld t3, 104(sp)
 	add t4, t3, t2
 	lw t5, 0(t4)
-	ld t6, 24(sp)
-	slli s0, t6, 2
+	mv t6, s2
+	slli s0, s2, 2
 	add s1, t3, s0
 	lw s2, 0(s1)
 	bge t5, s2, label16
@@ -100,7 +97,6 @@ label37:
 	ld t1, 56(sp)
 	mv t2, t1
 	sd t1, 8(sp)
-	ld t1, 8(sp)
 	ld t2, 48(sp)
 	beq t1, t2, label2
 label21:
@@ -116,14 +112,13 @@ label21:
 	addiw s2, t1, 1
 	mv t1, s2
 	sd s2, 8(sp)
-	ld t1, 8(sp)
+	mv t1, s2
 	ld t2, 48(sp)
-	beq t1, t2, label2
+	beq s2, t2, label2
 	j label21
 label41:
 	mv t1, zero
 	sd t1, 136(sp)
-	ld t1, 136(sp)
 	beq t1, zero, label17
 	ld t1, 16(sp)
 	slli t2, t1, 2
@@ -163,21 +158,21 @@ label13:
 	sd t5, 16(sp)
 	sd t3, 24(sp)
 	sd t2, 40(sp)
-	ld t1, 40(sp)
+	mv t1, t2
 	ld t2, 48(sp)
 	beq t1, t2, label37
-	ld t1, 16(sp)
+	mv t1, t5
 	ld t2, 32(sp)
-	beq t1, t2, label41
-	ld t1, 24(sp)
+	beq t5, t2, label41
+	mv t1, t3
 	ld t2, 48(sp)
-	xor t3, t1, t2
+	xor t3, t3, t2
 	sltiu t4, t3, 1
 	xori t5, t4, 1
 	mv t6, t5
 	sd t5, 136(sp)
-	ld t1, 136(sp)
-	beq t1, zero, label17
+	mv t1, t5
+	beq t5, zero, label17
 	ld t1, 16(sp)
 	slli t2, t1, 2
 	ld t3, 104(sp)
@@ -252,9 +247,9 @@ label159:
 	ld s0, 16(sp)
 	sd t6, 856(sp)
 	bge t6, s0, label161
-	ld t1, 856(sp)
-	mv t2, t1
-	sd t1, 24(sp)
+	mv t1, t6
+	mv t2, t6
+	sd t6, 24(sp)
 	j label159
 label212:
 	mv t1, zero
@@ -284,9 +279,9 @@ label162:
 	ld s0, 16(sp)
 	sd t6, 40(sp)
 	bge t6, s0, label164
-	ld t1, 40(sp)
-	mv t2, t1
-	sd t1, 32(sp)
+	mv t1, t6
+	mv t2, t6
+	sd t6, 32(sp)
 	j label162
 label164:
 	mv a0, zero

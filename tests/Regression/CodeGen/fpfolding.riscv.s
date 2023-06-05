@@ -8,9 +8,9 @@ my_fabs:
 	flt.s t1, f10, f1
 	fsw f10, 4(sp)
 	bne t1, zero, label10
-	flw f0, 4(sp)
-	fmv.s f1, f0
-	fsw f0, 0(sp)
+	fmv.s f0, f10
+	fmv.s f1, f10
+	fsw f10, 0(sp)
 	j label2
 label10:
 	flw f0, 4(sp)

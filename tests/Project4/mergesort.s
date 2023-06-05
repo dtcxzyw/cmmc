@@ -46,17 +46,14 @@ merge:
 	sw $a0, 56($sp)
 	bgez $t5, label21
 	nop
-	lw $t0, 72($sp)
-	lw $t1, 76($sp)
-	addu $t2, $t0, $t1
+	move $t0, $a2
+	move $t1, $a3
+	addu $t2, $a2, $a3
 	li $t3, 2
 	div $zero, $t2, $t3
 	mflo $t4
-	lw $t5, 56($sp)
-	move $a0, $t5
-	lw $t6, 64($sp)
-	move $a1, $t6
-	move $a2, $t0
+	move $t5, $a0
+	move $t6, $a1
 	move $a3, $t4
 	sw $t4, 20($sp)
 	jal merge
@@ -79,23 +76,23 @@ merge:
 	sw $s3, 24($sp)
 	sw $s1, 8($sp)
 	sw $s1, 16($sp)
-	lw $t0, 8($sp)
+	move $t0, $s1
 	lw $t1, 76($sp)
-	beq $t0, $t1, label37
+	beq $s1, $t1, label37
 	nop
-	lw $t0, 16($sp)
+	move $t0, $s1
 	lw $t1, 20($sp)
-	beq $t0, $t1, label41
+	beq $s1, $t1, label41
 	nop
-	lw $t0, 24($sp)
+	move $t0, $s3
 	lw $t1, 76($sp)
-	xor $t2, $t0, $t1
+	xor $t2, $s3, $t1
 	sltiu $t3, $t2, 1
 	xori $t4, $t3, 1
 	move $t5, $t4
 	sw $t4, 48($sp)
-	lw $t0, 48($sp)
-	beq $t0, $zero, label17
+	move $t0, $t4
+	beq $t4, $zero, label17
 	nop
 	b label11
 	nop
@@ -103,7 +100,6 @@ label37:
 	lw $t0, 72($sp)
 	move $t1, $t0
 	sw $t0, 12($sp)
-	lw $t0, 12($sp)
 	lw $t1, 76($sp)
 	beq $t0, $t1, label21
 	nop
@@ -120,16 +116,15 @@ label20:
 	addiu $t8, $t0, 1
 	move $t0, $t8
 	sw $t8, 12($sp)
-	lw $t0, 12($sp)
+	move $t0, $t8
 	lw $t1, 76($sp)
-	beq $t0, $t1, label21
+	beq $t8, $t1, label21
 	nop
 	b label20
 	nop
 label41:
 	move $t0, $zero
 	sw $t0, 48($sp)
-	lw $t0, 48($sp)
 	beq $t0, $zero, label17
 	nop
 label11:
@@ -158,23 +153,23 @@ label12:
 	sw $t4, 16($sp)
 	sw $t2, 24($sp)
 	sw $t1, 8($sp)
-	lw $t0, 8($sp)
+	move $t0, $t1
 	lw $t1, 76($sp)
 	beq $t0, $t1, label37
 	nop
-	lw $t0, 16($sp)
+	move $t0, $t4
 	lw $t1, 20($sp)
-	beq $t0, $t1, label41
+	beq $t4, $t1, label41
 	nop
-	lw $t0, 24($sp)
+	move $t0, $t2
 	lw $t1, 76($sp)
-	xor $t2, $t0, $t1
+	xor $t2, $t2, $t1
 	sltiu $t3, $t2, 1
 	xori $t4, $t3, 1
 	move $t5, $t4
 	sw $t4, 48($sp)
-	lw $t0, 48($sp)
-	beq $t0, $zero, label17
+	move $t0, $t4
+	beq $t4, $zero, label17
 	nop
 	b label11
 	nop
@@ -265,9 +260,9 @@ label156:
 	sw $t4, 448($sp)
 	bgez $t6, label158
 	nop
-	lw $t0, 448($sp)
-	move $t1, $t0
-	sw $t0, 24($sp)
+	move $t0, $t4
+	move $t1, $t4
+	sw $t4, 24($sp)
 	b label156
 	nop
 label214:
@@ -305,9 +300,9 @@ label159:
 	sw $t5, 28($sp)
 	bgez $t7, label161
 	nop
-	lw $t0, 28($sp)
-	move $t1, $t0
-	sw $t0, 40($sp)
+	move $t0, $t5
+	move $t1, $t5
+	sw $t5, 40($sp)
 	b label159
 	nop
 label161:

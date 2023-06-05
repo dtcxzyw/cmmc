@@ -45,7 +45,6 @@ main:
 	mv t2, zero
 	sd t2, 24(sp)
 	sd t1, 32(sp)
-	ld t1, 32(sp)
 	addiw t2, t1, -1
 	ld t3, 24(sp)
 	addiw t4, t3, 1
@@ -60,9 +59,7 @@ label26:
 	mv t4, t3
 	sd t3, 24(sp)
 	sd t1, 32(sp)
-	ld t1, 32(sp)
 	addiw t2, t1, -1
-	ld t3, 24(sp)
 	addiw t4, t3, 1
 	sd t4, 8(sp)
 	sd t2, 16(sp)
