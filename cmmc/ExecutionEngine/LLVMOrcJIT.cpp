@@ -194,44 +194,10 @@ std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::
     options.setFPDenormalMode(llvm::DenormalMode::getIEEE());
     options.AllowFPOpFusion = llvm::FPOpFusion::Strict;
 
-    options.EnableAIXExtendedAltivecABI = true;
-    options.HonorSignDependentRoundingFPMathOption = false;
-    options.NoZerosInBSS = false;
-    options.GuaranteedTailCallOpt = true;
-    options.StackSymbolOrdering = true;
-    options.EnableFastISel = false;
-    options.EnableGlobalISel = false;
-    options.GlobalISelAbort = llvm::GlobalISelAbortMode::DisableWithDiag;  // Fallback to SelectionDAG
-    options.UseInitArray = false;
-    options.DisableIntegratedAS = false;
-    options.RelaxELFRelocations = true;
-    options.FunctionSections = false;
-    options.DataSections = false;
-    options.IgnoreXCOFFVisibility = false;
-    options.XCOFFTracebackTable = true;
-    options.UniqueSectionNames = true;
-    options.UniqueBasicBlockSectionNames = false;
-    options.TrapUnreachable = false;
-    options.NoTrapAfterNoreturn = false;
-    options.TLSSize = 0;
-    options.EmulatedTLS = false;
-    options.ExplicitEmulatedTLS = false;
     options.EnableIPRA = true;
-    options.EmitStackSizeSection = false;
     options.EnableMachineOutliner = false;
     options.EnableMachineFunctionSplitter = true;
     options.SupportsDefaultOutlining = false;
-    options.EmitAddrsig = false;
-    options.EmitCallSiteInfo = false;
-    options.SupportsDebugEntryValues = false;
-    options.EnableDebugEntryValues = false;
-    options.ValueTrackingVariableLocations = false;
-    options.ForceDwarfFrameSection = false;
-    options.XRayOmitFunctionIndex = false;
-    options.DebugStrictDwarf = false;
-    options.Hotpatch = false;
-    options.PPCGenScalarMASSEntries = false;
-    options.JMCInstrument = false;
     options.ExceptionModel = llvm::ExceptionHandling::None;
 
     // TODO: optimize for O0

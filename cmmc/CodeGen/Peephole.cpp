@@ -19,11 +19,89 @@
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 #include <iostream>
+#include <queue>
 #include <variant>
 #include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
+
+bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
+    std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> writers;
+    std::queue<MIRInst*> q;
+
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            bool special = false;
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
+                special = true;
+            }
+
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    auto op = inst.getOperand(idx);
+                    writers[op].push_back(&inst);
+                    if(op.isReg() && isISAReg(op.reg()))
+                        special = true;
+                }
+            }
+
+            if(special)
+                q.push(&inst);
+        }
+
+    while(!q.empty()) {
+        auto& inst = *q.front();
+        q.pop();
+
+        auto popSrc = [&](const MIROperand& operand) {
+            if(auto iter = writers.find(operand); iter != writers.cend()) {
+                for(auto writer : iter->second)
+                    q.push(writer);
+                writers.erase(iter);
+            }
+        };
+
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                popSrc(inst.getOperand(idx));
+            }
+        }
+    }
+
+    std::unordered_set<MIRInst*> remove;
+    for(auto& [op, writerList] : writers) {
+        if(!isVirtualReg(op.reg()))
+            continue;
+
+        for(auto writer : writerList) {
+            auto& instInfo = ctx.instInfo.getInstInfo(*writer);
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
+                continue;
+            remove.insert(writer);
+        }
+    }
+
+    for(auto& block : func.blocks())
+        block->instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
+    return !remove.empty();
+}
+
+bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx) {
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        block->instructions().remove_if([&](const MIRInst& inst) {
+            MIROperand dst, src;
+            const auto remove = ctx.instInfo.matchCopy(inst, dst, src) && dst.reg() == src.reg();
+            modified |= remove;
+            return remove;
+        });
+    }
+    return modified;
+}
 
 /*
 bool eliminateStackLoads(MIRFunction& func, const Target& target) {
@@ -114,6 +192,7 @@ bool eliminateStackLoads(MIRFunction& func, const Target& target) {
 }
 */
 
+/*
 bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     if(!ctx.flags.inSSAForm)
         return false;
@@ -174,8 +253,10 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     }
     return dirty;
 }
+*/
 
 // FIXME
+/*
 [[maybe_unused]] bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
     for(auto& block : func.blocks()) {
@@ -198,6 +279,7 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
     }
     return modified;
 }
+*/
 
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     bool modified = false;
@@ -205,27 +287,25 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
 
-        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> regValue;  // vreg->vreg/isareg
-        std::unordered_map<MIROperand, std::unordered_set<MIROperand, MIROperandHasher>, MIROperandHasher> invMap;
+        uint32_t versionId = 0;
+        std::unordered_map<MIROperand, std::pair<MIROperand, uint32_t>, MIROperandHasher> regValue;  // reg-><reg,version>
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> version;
 
-        const auto invalidateReg = [&](const MIROperand& reg) {
+        const auto defReg = [&](const MIROperand& reg) {
             if(!isOperandVRegOrISAReg(reg))
                 return;
-            if(auto iter = invMap.find(reg); iter != invMap.cend()) {
-                for(auto ref : iter->second)
-                    regValue.erase(ref);
-
-                invMap.erase(iter);
-            }
+            version[reg] = ++versionId;
             regValue.erase(reg);
         };
 
         const auto replaceUse = [&](MIRInst& inst, MIROperand& reg) {
-            if(!isOperandVReg(reg))
+            if(!isOperandVRegOrISAReg(reg))
                 return;
-            if(auto iter = regValue.find(reg); iter != regValue.cend()) {
+            if(auto iter = regValue.find(reg); iter != regValue.cend() && iter->second.second == version[iter->second.first]) {
                 auto backup = reg;
-                reg = iter->second;
+                reg = iter->second.first;
+                if(reg == backup)
+                    return;
                 auto backupInstOpcode = inst.opcode();
                 if(inst.opcode() == InstCopy) {
                     inst.setOpcode(selectCopyOpcode(inst.getOperand(0), reg));
@@ -241,12 +321,11 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
         };
 
         const auto updateMap = [&](const MIROperand& reg, const MIROperand& value) {
-            invalidateReg(reg);
-            if(!isOperandVReg(reg) || !isOperandVRegOrISAReg(value))
+            defReg(reg);
+            if(!isOperandVRegOrISAReg(reg) || !isOperandVRegOrISAReg(value))
                 return;
 
-            regValue[reg] = value;
-            invMap[value].insert(reg);
+            regValue[reg] = { value, version[value] };
         };
 
         for(auto& inst : instructions) {
@@ -264,22 +343,22 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 if(dst.type() == src.type()) {
                     updateMap(dst, src);
                 } else
-                    invalidateReg(dst);
+                    defReg(dst);
             } else {
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                        invalidateReg(inst.getOperand(idx));
+                        defReg(inst.getOperand(idx));
                     }
                 if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
                     std::vector<MIROperand> nonVReg;
-                    for(auto [reg, val] : invMap) {
-                        CMMC_UNUSED(val);
+                    for(auto [reg, ver] : version) {
+                        CMMC_UNUSED(ver);
                         // TODO: use IPRA Info
                         if(isISAReg(reg.reg()))
                             nonVReg.push_back(reg);
                     }
                     for(auto reg : nonVReg)
-                        invalidateReg(reg);
+                        defReg(reg);
                 }
             }
         }

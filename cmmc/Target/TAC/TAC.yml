@@ -1,6 +1,7 @@
 InstInfo:
   Assign:
     Format: $Dst:VReg[Def] := $Src:Val[Use]
+    Flag: [RegCopy]
 
   Binary:
     Format: $Dst:VReg[Def] := $Lhs:Val[Use] $Op:Template $Rhs:Val[Use]

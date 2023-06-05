@@ -32,7 +32,7 @@ main:
 	jal read
 	nop
 	move $t0, $v0
-	sw $t0, 24($sp)
+	sw $v0, 24($sp)
 	blez $v0, label9
 	nop
 	li $a0, 1
@@ -44,7 +44,7 @@ label9:
 	lw $t0, 24($sp)
 	slt $t1, $t0, $zero
 	move $t2, $t1
-	subu $t3, $zero, $t2
+	subu $t3, $zero, $t1
 	move $a0, $t3
 	jal write
 	nop

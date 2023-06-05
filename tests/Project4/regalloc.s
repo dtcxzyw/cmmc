@@ -63,7 +63,7 @@ main:
 	nop
 	li $t0, 10
 	move $t1, $zero
-	sw $t1, 24($sp)
+	sw $zero, 24($sp)
 	sw $t0, 36($sp)
 	lw $t0, 36($sp)
 	addiu $t1, $t0, -1
@@ -80,8 +80,8 @@ label42:
 	move $t1, $t0
 	lw $t2, 28($sp)
 	move $t3, $t2
-	sw $t3, 24($sp)
-	sw $t1, 36($sp)
+	sw $t2, 24($sp)
+	sw $t0, 36($sp)
 	lw $t0, 36($sp)
 	addiu $t1, $t0, -1
 	lw $t2, 24($sp)

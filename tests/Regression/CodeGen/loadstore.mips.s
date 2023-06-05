@@ -25,7 +25,7 @@ gep_const:
 lb:
 	lb $t0, 1($a0)
 	move $t1, $t0
-	move $v0, $t1
+	move $v0, $t0
 	jr $ra
 	nop
 .globl sb

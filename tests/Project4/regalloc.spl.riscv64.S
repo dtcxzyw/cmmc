@@ -58,8 +58,8 @@ label26:
 	mv t2, t1
 	ld t3, 8(sp)
 	mv t4, t3
-	sd t4, 24(sp)
-	sd t2, 32(sp)
+	sd t3, 24(sp)
+	sd t1, 32(sp)
 	ld t1, 32(sp)
 	addiw t2, t1, -1
 	ld t3, 24(sp)

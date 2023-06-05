@@ -39,7 +39,7 @@ jobs:
       - name: Build
         run: |
           mkdir build && cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMMC_LLVM_SUPPORT=OFF
           cmake --build . -j
 
       - name: Test

@@ -94,6 +94,7 @@ InstInfo:
     Format: FCast $Dst:FReg[Def], $Src:FReg[Use]
   Copy:
     Format: Copy $Dst:VRegOrISAReg[Def], $Src:VRegOrISAReg[Use]
+    Flag: [RegCopy]
   Select:
     Format: Select $Dst:VReg[Def], $Cond:Bool[Use], $Lhs:Val[Use], $Rhs:Val[Use]
   LoadGlobalAddress:

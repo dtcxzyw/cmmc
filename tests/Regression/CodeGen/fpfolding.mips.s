@@ -8,19 +8,19 @@ my_fabs:
 	c.olt.s $f12, $f6
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	swc1 $f4, 4($sp)
+	swc1 $f12, 4($sp)
 	bne $t0, $zero, label10
 	nop
 	lwc1 $f4, 4($sp)
 	mov.s $f6, $f4
-	swc1 $f6, 0($sp)
+	swc1 $f4, 0($sp)
 	b label2
 	nop
 label10:
 	lwc1 $f4, 4($sp)
 	neg.s $f6, $f4
 	mov.s $f8, $f6
-	swc1 $f8, 0($sp)
+	swc1 $f6, 0($sp)
 label2:
 	lwc1 $f4, 0($sp)
 	mov.s $f0, $f4

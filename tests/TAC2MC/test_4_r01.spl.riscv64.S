@@ -36,13 +36,13 @@ hanoi:
 	mv t3, a2
 	mv t4, a3
 	li t5, 1
-	xor t6, t1, t5
+	xor t6, a0, t5
 	sltiu s0, t6, 1
 	xori s1, s0, 1
-	sd t4, 64(sp)
-	sd t3, 40(sp)
-	sd t2, 112(sp)
-	sd t1, 80(sp)
+	sd a3, 64(sp)
+	sd a2, 40(sp)
+	sd a1, 112(sp)
+	sd a0, 80(sp)
 	bne s1, zero, label18
 	ld t1, 112(sp)
 	mv t2, t1
@@ -50,7 +50,7 @@ hanoi:
 	mv t4, zero
 	sd t4, 152(sp)
 	sd t3, 136(sp)
-	sd t2, 120(sp)
+	sd t1, 120(sp)
 	j label2
 label18:
 	ld t1, 80(sp)
@@ -63,9 +63,9 @@ label18:
 	mv s1, zero
 	sd s1, 176(sp)
 	sd s0, 32(sp)
-	sd t6, 56(sp)
-	sd t4, 88(sp)
-	sd t2, 24(sp)
+	sd t5, 56(sp)
+	sd t3, 88(sp)
+	sd t1, 24(sp)
 	j label6
 label2:
 	li t1, 10000
@@ -78,7 +78,7 @@ label2:
 	ld t6, 136(sp)
 	mv s0, t6
 	ld s1, 152(sp)
-	sd s0, 168(sp)
+	sd t6, 168(sp)
 	bne s1, zero, label43
 	mv t1, zero
 	sd t1, 168(sp)
@@ -117,7 +117,7 @@ label6:
 	ld s4, 32(sp)
 	mv s5, s4
 	ld s6, 176(sp)
-	sd s5, 8(sp)
+	sd s4, 8(sp)
 	bne s6, zero, label45
 	mv t1, zero
 	sd t1, 8(sp)
@@ -134,8 +134,8 @@ label45:
 	mv t4, t3
 	li t5, 1
 	sd t5, 152(sp)
-	sd t4, 136(sp)
-	sd t2, 120(sp)
+	sd t3, 136(sp)
+	sd t1, 120(sp)
 	j label2
 label30:
 	ld t1, 16(sp)
@@ -149,10 +149,10 @@ label30:
 	mv s0, t6
 	li s1, 1
 	sd s1, 176(sp)
-	sd s0, 32(sp)
-	sd t5, 56(sp)
+	sd t6, 32(sp)
+	sd t4, 56(sp)
 	sd t3, 88(sp)
-	sd t2, 24(sp)
+	sd t1, 24(sp)
 	j label6
 .globl main
 main:

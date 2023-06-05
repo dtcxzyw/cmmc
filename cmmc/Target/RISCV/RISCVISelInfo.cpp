@@ -566,9 +566,9 @@ MIROperand RISCVISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lower
                 MIRInst{ FMV_W_X }.setOperand<0>(dst).setOperand<1>(MIROperand::asISAReg(RISCV::X0, OperandType::Int32)));
             return dst;
         }
-        if((rep & 0xfffff) == 0) {
+        if((rep & 0xfff) == 0) {
             // lui + fmv.w.x
-            const auto high = rep >> 20;
+            const auto high = rep >> 12;
             const auto gpr = loweringCtx.newVReg(OperandType::Int32);
             const auto fpr = loweringCtx.newVReg(OperandType::Float32);
             loweringCtx.emitInst(MIRInst{ LUI }.setOperand<0>(gpr).setOperand<1>(MIROperand::asImm(high, OperandType::Int32)));

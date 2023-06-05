@@ -256,8 +256,7 @@ bool TargetInstInfo::matchCopy(const MIRInst& inst, MIROperand& dst, MIROperand&
         assert(instInfo.getOperandNum() == 2);
         dst = inst.getOperand(0);
         src = inst.getOperand(1);
-        assert((isOperandIReg(dst) && isOperandIReg(src)) || (Generic::isOperandFReg(dst) && Generic::isOperandFReg(src)));
-        return true;
+        return (isOperandIReg(dst) && isOperandIReg(src)) || (Generic::isOperandFReg(dst) && Generic::isOperandFReg(src));
     }
     return false;
 }

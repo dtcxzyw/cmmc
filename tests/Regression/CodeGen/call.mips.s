@@ -9,10 +9,8 @@ callee_cmmc_noinline:
 caller_cmmc_noinline:
 	addiu $sp, $sp, -24
 	sw $ra, 16($sp)
-	move $a0, $a0
 	jal callee_cmmc_noinline
 	nop
-	move $v0, $v0
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 24
 	jr $ra

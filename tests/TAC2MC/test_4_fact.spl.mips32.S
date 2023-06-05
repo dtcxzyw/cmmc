@@ -33,7 +33,7 @@ main:
 	nop
 	move $t0, $v0
 	addiu $t1, $v0, -1
-	sw $t0, 24($sp)
+	sw $v0, 24($sp)
 	blez $t1, label15
 	nop
 	li $t0, 1
@@ -52,13 +52,13 @@ label18:
 	move $t1, $t0
 	li $t2, 1
 	sw $t2, 40($sp)
-	sw $t1, 36($sp)
+	sw $t0, 36($sp)
 	lw $t0, 36($sp)
 	lw $t1, 40($sp)
 	mult $t0, $t1
 	mflo $t2
 	move $t3, $t2
-	sw $t3, 28($sp)
+	sw $t2, 28($sp)
 label9:
 	lw $t0, 28($sp)
 	move $a0, $t0
@@ -74,7 +74,7 @@ label19:
 	move $t1, $t0
 	li $t2, 1
 	sw $t2, 52($sp)
-	sw $t1, 44($sp)
+	sw $t0, 44($sp)
 	lw $t0, 44($sp)
 	addiu $t1, $t0, -1
 	lw $t2, 52($sp)
@@ -90,14 +90,14 @@ label25:
 	move $t1, $t0
 	lw $t2, 32($sp)
 	move $t3, $t2
-	sw $t3, 40($sp)
-	sw $t1, 36($sp)
+	sw $t2, 40($sp)
+	sw $t0, 36($sp)
 	lw $t0, 36($sp)
 	lw $t1, 40($sp)
 	mult $t0, $t1
 	mflo $t2
 	move $t3, $t2
-	sw $t3, 28($sp)
+	sw $t2, 28($sp)
 	b label9
 	nop
 label26:
@@ -105,8 +105,8 @@ label26:
 	move $t1, $t0
 	lw $t2, 32($sp)
 	move $t3, $t2
-	sw $t3, 52($sp)
-	sw $t1, 44($sp)
+	sw $t2, 52($sp)
+	sw $t0, 44($sp)
 	lw $t0, 44($sp)
 	addiu $t1, $t0, -1
 	lw $t2, 52($sp)

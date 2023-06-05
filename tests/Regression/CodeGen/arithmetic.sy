@@ -131,3 +131,25 @@ float fdiv_imm(float x) {
 float fneg(float x) {
     return -x;
 }
+
+int zero() {
+    return 0;
+}
+int imm() {
+    return 1;
+}
+int large_imm0() {
+    return 1<<20;
+}
+int large_imm1() {
+    return 19260817;
+}
+float fp_zero() {
+    return 0.0;
+}
+float fp_imm0() {
+    return 8.0;
+}
+float fp_imm1() {
+    return 3.1415926;
+}

@@ -3,6 +3,8 @@
 __cmmc_fp_constant_pool:
 	.4byte	1065353216
 	.4byte	1056964608
+	.4byte	1090519040
+	.4byte	1078530010
 .text
 .globl add_imm
 add_imm:
@@ -240,6 +242,48 @@ fdiv_imm:
 .globl fneg
 fneg:
 	neg.s $f4, $f12
+	mov.s $f0, $f4
+	jr $ra
+	nop
+.globl zero
+zero:
+	move $v0, $zero
+	jr $ra
+	nop
+.globl imm
+imm:
+	li $v0, 1
+	jr $ra
+	nop
+.globl large_imm0
+large_imm0:
+	li $v0, 1048576
+	jr $ra
+	nop
+.globl large_imm1
+large_imm1:
+	li $v0, 19260817
+	jr $ra
+	nop
+.globl fp_zero
+fp_zero:
+	mtc1 $zero, $f4
+	mov.s $f0, $f4
+	jr $ra
+	nop
+.globl fp_imm0
+fp_imm0:
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 8($t1)
+	mov.s $f0, $f4
+	jr $ra
+	nop
+.globl fp_imm1
+fp_imm1:
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 12($t1)
 	mov.s $f0, $f4
 	jr $ra
 	nop

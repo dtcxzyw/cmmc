@@ -44,7 +44,7 @@ gcd:
 label16:
 	lw $t0, 48($sp)
 	move $t1, $t0
-	sw $t1, 40($sp)
+	sw $t0, 40($sp)
 	b label3
 	nop
 label2:
@@ -62,7 +62,7 @@ label2:
 	jal gcd
 	nop
 	move $t6, $v0
-	sw $t6, 40($sp)
+	sw $v0, 40($sp)
 label3:
 	lw $t0, 40($sp)
 	move $v0, $t0

@@ -19,76 +19,8 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
-#include <queue>
-#include <unordered_map>
-#include <unordered_set>
-#include <variant>
-#include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
-
-bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
-    std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> writers;
-    std::queue<MIRInst*> q;
-
-    for(auto& block : func.blocks())
-        for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst);
-            bool special = false;
-            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
-                special = true;
-            }
-
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                    auto op = inst.getOperand(idx);
-                    writers[op].push_back(&inst);
-                    if(op.isReg() && isISAReg(op.reg()))
-                        special = true;
-                }
-            }
-
-            if(special)
-                q.push(&inst);
-        }
-
-    while(!q.empty()) {
-        auto& inst = *q.front();
-        q.pop();
-
-        auto popSrc = [&](const MIROperand& operand) {
-            if(auto iter = writers.find(operand); iter != writers.cend()) {
-                for(auto writer : iter->second)
-                    q.push(writer);
-                writers.erase(iter);
-            }
-        };
-
-        auto& instInfo = ctx.instInfo.getInstInfo(inst);
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                popSrc(inst.getOperand(idx));
-            }
-        }
-    }
-
-    std::unordered_set<MIRInst*> remove;
-    for(auto& [op, writerList] : writers) {
-        if(!isVirtualReg(op.reg()))
-            continue;
-
-        for(auto writer : writerList) {
-            auto& instInfo = ctx.instInfo.getInstInfo(*writer);
-            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
-                continue;
-            remove.insert(writer);
-        }
-    }
-
-    for(auto& block : func.blocks())
-        block->instructions().remove_if([&](auto& inst) { return remove.count(&inst); });
-    return !remove.empty();
-}
 
 void forEachOperands(MIRFunction& func, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor) {
     for(auto& param : func.args())
@@ -131,19 +63,6 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
                 functor(inst, inst.getOperand(idx));
         }
     }
-}
-
-bool removeIdentityCopies(MIRFunction& func, const CodeGenContext&) {
-    bool modified = false;
-    for(auto& block : func.blocks()) {
-        block->instructions().remove_if([&](const MIRInst& inst) {
-            // TODO: instInfo.matchCopy?
-            const auto remove = inst.opcode() == InstCopy && inst.getOperand(0) == inst.getOperand(1);
-            modified |= remove;
-            return remove;
-        });
-    }
-    return modified;
 }
 
 void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule& module, const std::function<void()>& emitData,

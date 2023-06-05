@@ -27,8 +27,8 @@ main:
 	sd ra, 0(sp)
 	jal read
 	mv t1, a0
-	sd t1, 8(sp)
-	ble t1, zero, label8
+	sd a0, 8(sp)
+	ble a0, zero, label8
 	li a0, 1
 	jal write
 	j label3
@@ -36,7 +36,7 @@ label8:
 	ld t1, 8(sp)
 	slt t2, t1, zero
 	mv t3, t2
-	subw t4, zero, t3
+	subw t4, zero, t2
 	mv a0, t4
 	jal write
 label3:

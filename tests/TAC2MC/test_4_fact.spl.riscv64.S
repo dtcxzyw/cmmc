@@ -30,9 +30,9 @@ main:
 	jal read
 	mv t1, a0
 	li t2, 1
-	slt t3, t2, t1
+	slt t3, t2, a0
 	xori t4, t3, 1
-	sd t1, 40(sp)
+	sd a0, 40(sp)
 	bne t4, zero, label14
 	li t1, 1
 	ld t2, 40(sp)
@@ -50,19 +50,19 @@ label17:
 	mv t2, t1
 	li t3, 1
 	sd t3, 16(sp)
-	sd t2, 24(sp)
+	sd t1, 24(sp)
 	ld t1, 24(sp)
 	ld t2, 16(sp)
 	mulw t3, t1, t2
 	mv t4, t3
-	sd t4, 32(sp)
+	sd t3, 32(sp)
 	j label9
 label18:
 	ld t1, 40(sp)
 	mv t2, t1
 	li t3, 1
 	sd t3, 64(sp)
-	sd t2, 8(sp)
+	sd t1, 8(sp)
 label6:
 	ld t1, 8(sp)
 	addiw t2, t1, -1
@@ -79,21 +79,21 @@ label6:
 	mv t2, t1
 	ld t3, 56(sp)
 	mv t4, t3
-	sd t4, 16(sp)
-	sd t2, 24(sp)
+	sd t3, 16(sp)
+	sd t1, 24(sp)
 	ld t1, 24(sp)
 	ld t2, 16(sp)
 	mulw t3, t1, t2
 	mv t4, t3
-	sd t4, 32(sp)
+	sd t3, 32(sp)
 	j label9
 label25:
 	ld t1, 48(sp)
 	mv t2, t1
 	ld t3, 56(sp)
 	mv t4, t3
-	sd t4, 64(sp)
-	sd t2, 8(sp)
+	sd t3, 64(sp)
+	sd t1, 8(sp)
 	j label6
 label9:
 	ld t1, 32(sp)

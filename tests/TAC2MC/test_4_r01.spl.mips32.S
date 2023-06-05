@@ -38,10 +38,10 @@ hanoi:
 	move $t2, $a2
 	move $t3, $a3
 	li $t4, 1
-	sw $t3, 76($sp)
-	sw $t2, 80($sp)
-	sw $t1, 84($sp)
-	sw $t0, 44($sp)
+	sw $a3, 76($sp)
+	sw $a2, 80($sp)
+	sw $a1, 84($sp)
+	sw $a0, 44($sp)
 	bne $a0, $t4, label18
 	nop
 	lw $t0, 84($sp)
@@ -49,8 +49,8 @@ hanoi:
 	move $t2, $zero
 	move $t3, $zero
 	sw $t3, 64($sp)
-	sw $t2, 92($sp)
-	sw $t1, 68($sp)
+	sw $zero, 92($sp)
+	sw $t0, 68($sp)
 	b label2
 	nop
 label18:
@@ -63,10 +63,10 @@ label18:
 	move $t6, $zero
 	move $t7, $zero
 	sw $t7, 36($sp)
-	sw $t6, 72($sp)
-	sw $t5, 40($sp)
-	sw $t3, 96($sp)
-	sw $t1, 60($sp)
+	sw $zero, 72($sp)
+	sw $t4, 40($sp)
+	sw $t2, 96($sp)
+	sw $t0, 60($sp)
 	b label6
 	nop
 label2:
@@ -130,8 +130,8 @@ label6:
 	move $t3, $t2
 	li $t4, 1
 	sw $t4, 64($sp)
-	sw $t3, 92($sp)
-	sw $t1, 68($sp)
+	sw $t2, 92($sp)
+	sw $t0, 68($sp)
 	b label2
 	nop
 label32:
@@ -146,10 +146,10 @@ label32:
 	move $t6, $t5
 	li $t7, 1
 	sw $t7, 36($sp)
-	sw $t6, 72($sp)
-	sw $t4, 40($sp)
+	sw $t5, 72($sp)
+	sw $t3, 40($sp)
 	sw $t2, 96($sp)
-	sw $t1, 60($sp)
+	sw $t0, 60($sp)
 	b label6
 	nop
 .globl main

@@ -40,7 +40,7 @@ gcd:
 label16:
 	ld t1, 48(sp)
 	mv t2, t1
-	sd t2, 32(sp)
+	sd t1, 32(sp)
 	j label3
 label2:
 	ld t1, 40(sp)
@@ -54,7 +54,7 @@ label2:
 	mv a0, t6
 	jal gcd
 	mv s0, a0
-	mv s1, s0
+	mv s1, a0
 	sd s1, 32(sp)
 label3:
 	ld t1, 32(sp)
@@ -71,14 +71,13 @@ main:
 	addi t1, sp, 8
 	jal read
 	mv t2, a0
-	sw t2, 8(sp)
+	sw a0, 8(sp)
 	jal read
 	mv t3, a0
-	sw t3, 4(t1)
+	sw a0, 4(t1)
 	mv a0, t1
 	jal gcd
 	mv t4, a0
-	mv a0, t4
 	jal write
 	mv a0, zero
 	ld ra, 0(sp)

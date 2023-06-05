@@ -31,9 +31,9 @@ main:
 	addi t1, sp, 8
 	jal read
 	mv t2, a0
-	sd t2, 448(sp)
+	sd a0, 448(sp)
 	sd t1, 432(sp)
-	ble t2, zero, label23
+	ble a0, zero, label23
 	mv t1, zero
 	sd t1, 456(sp)
 	j label2
@@ -50,7 +50,7 @@ label23:
 	lw t5, 0(t4)
 	addiw t6, t1, -1
 	mv s0, t6
-	sd s0, 496(sp)
+	sd t6, 496(sp)
 	sd t5, 488(sp)
 	li t1, -1
 	ld t2, 496(sp)
@@ -66,7 +66,7 @@ label34:
 	lw t5, 0(t4)
 	addiw t6, t1, -1
 	mv s0, t6
-	sd s0, 496(sp)
+	sd t6, 496(sp)
 	sd t5, 488(sp)
 	li t1, -1
 	ld t2, 496(sp)
@@ -91,7 +91,7 @@ label12:
 	ld s0, 464(sp)
 	addiw s1, s0, 1
 	mv s0, s1
-	sd s0, 464(sp)
+	sd s1, 464(sp)
 	ld t1, 464(sp)
 	ld t2, 448(sp)
 	bge t1, t2, label14
@@ -105,7 +105,7 @@ label42:
 	ld t6, 488(sp)
 	slt s0, t6, t5
 	mv s1, s0
-	sd s1, 472(sp)
+	sd s0, 472(sp)
 	ld t1, 472(sp)
 	beq t1, zero, label12
 label11:
@@ -120,7 +120,7 @@ label11:
 	sw s1, 0(t5)
 	addiw s2, t1, -1
 	mv t1, s2
-	sd t1, 496(sp)
+	sd s2, 496(sp)
 	li t1, -1
 	ld t2, 496(sp)
 	slt t3, t1, t2
@@ -134,14 +134,14 @@ label2:
 	add t4, t3, t2
 	jal read
 	mv t5, a0
-	sw t5, 0(t4)
+	sw a0, 0(t4)
 	addiw t6, t1, 1
 	ld s0, 448(sp)
 	sd t6, 504(sp)
 	bge t6, s0, label31
 	ld t1, 504(sp)
 	mv t2, t1
-	sd t2, 456(sp)
+	sd t1, 456(sp)
 	j label2
 label31:
 	li t1, 1
@@ -172,7 +172,7 @@ label15:
 	bge t6, s0, label17
 	ld t1, 480(sp)
 	mv t2, t1
-	sd t2, 416(sp)
+	sd t1, 416(sp)
 	j label15
 label17:
 	mv a0, zero

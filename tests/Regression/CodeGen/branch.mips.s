@@ -5,7 +5,7 @@ blt:
 	addiu $sp, $sp, -8
 	move $t0, $a2
 	subu $t1, $a0, $a1
-	sw $t0, 0($sp)
+	sw $a2, 0($sp)
 	bgez $t1, label3
 	nop
 	lw $t0, 0($sp)

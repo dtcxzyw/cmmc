@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include <iostream>
 #ifdef CMMC_WITH_LLVM_SUPPORT
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
@@ -33,6 +32,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
+#include <iostream>
 #include <llvm/ADT/APInt.h>
 #include <llvm/ADT/DenseMap.h>
 #include <llvm/ADT/SmallVector.h>
