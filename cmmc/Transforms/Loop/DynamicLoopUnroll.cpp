@@ -14,7 +14,6 @@
 
 // Loop unrolling without interval information (only apply for simple loops)
 
-#include "cmmc/IR/Value.hpp"
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
