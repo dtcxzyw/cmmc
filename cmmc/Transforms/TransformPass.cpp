@@ -521,7 +521,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             }))
             root->addPass(pass);
         root->addPass(globalOpt);
-        root->addPass(std::make_shared<FunctionPassWrapper>(perFunc));
+        root->addPass(std::make_shared<FunctionPassWrapper>(perFuncWithInline));
     }
 
     // final cleanup

@@ -14,6 +14,7 @@
 
 // Loop unrolling without interval information (only apply for simple loops)
 
+#include "cmmc/IR/Value.hpp"
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -25,6 +26,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdlib>
+#include <iostream>
 #include <new>
 
 constexpr intmax_t unrollBlockSize = 16U;  // must be signed integer
@@ -38,9 +40,12 @@ public:
         auto& loopInfo = analysis.get<LoopAnalysis>(func);
         auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& target = analysis.module().getTarget();
+        // func.dump(std::cerr, Noop{});
 
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
+            // loop.header->dump(std::cerr, Noop{});
+            // loop.latch->dump(std::cerr, Noop{});
             // innermost loop
             if(loop.header != loop.latch)
                 continue;

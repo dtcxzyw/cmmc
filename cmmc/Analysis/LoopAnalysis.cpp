@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -64,9 +65,11 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(indvar->getBlock() != header || !indvar->is<PhiInst>())
             continue;
 
-        // TODO: remove this constraint
-        if(!bound->isConstant())
-            continue;
+        if(!bound->isConstant() && !bound->isArgument()) {
+            // bound should be invariant
+            if(bound->getBlock() == header || !dom.dominate(bound->getBlock(), header))
+                continue;
+        }
 
         Value* initial = nullptr;
         bool uniqueInitial = true;
