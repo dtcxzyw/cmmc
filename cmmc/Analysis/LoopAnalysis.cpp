@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
