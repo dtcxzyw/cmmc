@@ -10,8 +10,7 @@ func @add([2 * i32]* %temp) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 ^entry:
-    [1 * [2 * i32]]* %r = alloc [1 * [2 * i32]];
-    [2 * i32]* %0 = getelementptr &([1 * [2 * i32]]* %r)[i32 0][i32 0];
+    [2 * i32]* %0 = alloc [2 * i32];
     ubr ^while.body;
 ^while.body:
     i32 %1 = phi [^entry, i32 0] [^while.body, i32 %2];

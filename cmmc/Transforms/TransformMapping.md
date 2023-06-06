@@ -51,15 +51,12 @@
 + [x] symbol-privatize -> -H
 + [x] topological-sort -> BlockSort
 + [x] buffer-deallocation -> ScalarMem2Reg
-+ [ ] buffer-hoisting
-+ [ ] buffer-loop-hoisting
 + [ ] scf-for-loop-peeling
 
 # TODO
 + merge a + b with b + a
 + ./tests/SysY2022/functional/61_sort_test7.sy memset
 + ./tests/SysY2022/functional/62_percolation.sy dup blocks
-+ ./tests/SysY2022/functional/66_exgcd.sy tests/CodeGenTAC/test04.spl sroa
 + ./tests/SysY2022/functional/82_long_func.sy subgraph
 + ./tests/SysY2022/functional/92_register_alloc.sy add_sub tree
 + https://gcc.gnu.org/onlinedocs/gccint/

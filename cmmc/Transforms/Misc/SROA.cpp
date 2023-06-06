@@ -36,14 +36,26 @@ class SROA final : public TransformPass<Function> {
                 case InstructionID::Load:
                 case InstructionID::Store:
                     break;
-                // TODO: case InstructionID::GetElementPtr:
+                case InstructionID::GetElementPtr: {
+                    // unbounded
+                    if(gep->getType()->as<PointerType>()->isPrimitive())
+                        return false;
+                    const auto arguments = user->arguments();
+                    if(!cint_(0)(MatchContext<Value>{ arguments.front() }))
+                        return false;
+                    break;
+                }
                 default:
                     return false;
             }
         }
         return true;
     }
-    static bool isIndexedByConstantIndices(const Instruction* inst, intmax_t bound) {
+    static bool isIndexedByConstantIndices(const Instruction* inst, const Type* type, intmax_t bound) {
+        if(type->isArray() && type->as<ArrayType>()->getElementCount() == 1)
+            return true;
+        if(type->isStruct() && type->as<StructType>()->fields().size() == 1)
+            return true;
         for(auto user : inst->users())
             if(user->getInstID() == InstructionID::GetElementPtr) {
                 auto arguments = user->arguments();
@@ -79,7 +91,7 @@ public:
                     const auto bound = type->isArray() ? type->as<ArrayType>()->getElementCount() : 0;
                     if(bound > 16U)
                         continue;
-                    if(isIndexedByConstantIndices(&inst, bound))
+                    if(isIndexedByConstantIndices(&inst, type, bound))
                         todo.push_back(&inst);
                 }
             }
