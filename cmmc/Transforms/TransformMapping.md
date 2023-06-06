@@ -35,7 +35,7 @@
 + [x] mergefunc -> Inlining & BlockOutliner
 + [x] partial-inliner -> Inlining
 + [x] reassociate
-+ [ ] sroa
++ [x] sroa
 + [x] sccp -> ConstantPropagation & SimplifyBranch & ConditionalPropagation
 + [x] simplifycfg -> BlockEliminate & BlockMerge
 + [x] sink -> CodeSink

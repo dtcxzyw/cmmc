@@ -58,6 +58,9 @@ class ScalarMem2RegContext final {
         auto& local = mCurrentDef[var];
         if(auto iter = local.find(block); iter != local.end())
             return iter->second;
+        if(block == mFunc.entryBlock()) {
+            return make<UndefinedValue>(var->getType()->as<PointerType>()->getPointee());
+        }
         return useVarRecursive(var, block);
     }
     Value* tryRemoveTrivalPhi(PhiInst* phi) {
@@ -116,6 +119,7 @@ class ScalarMem2RegContext final {
     }
     void sealBlock(Block* block) {
         if(auto iter = mIncompletePhis.find(block); iter != mIncompletePhis.end()) {
+            assert(block != mFunc.entryBlock());
             auto& pred = mCFG.predecessors(block);
             for(auto [var, phi] : iter->second) {
                 addPhiOperands(var, pred, phi);

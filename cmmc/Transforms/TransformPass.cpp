@@ -429,6 +429,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "BlockEliminate",         // clean up
                 "LoopGEPCombine",         //
                 "NoSideEffectEliminate",  // clean up
+                "SROA",
             }))
             basic->addPass(pass);
     }

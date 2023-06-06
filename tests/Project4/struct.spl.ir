@@ -5,30 +5,25 @@ internal func @write() -> void { NoMemoryRead NoMemoryWrite };
 func @gcd(struct foo* %p) -> i32 { NoMemoryWrite NoSideEffect } {
 ^entry:
     struct foo* %pn = alloc struct foo;
-    struct foo* %p1 = alloc struct foo;
-    i32* %0 = getelementptr &(struct foo* %p1)[i32 0].a;
-    i32* %1 = getelementptr &(struct foo* %p)[i32 0].a;
-    i32 %2 = load i32* %1;
-    store i32* %0 with i32 %2;
-    i32* %3 = getelementptr &(struct foo* %p1)[i32 0].b;
-    i32* %4 = getelementptr &(struct foo* %p)[i32 0].b;
-    i32 %5 = load i32* %4;
-    store i32* %3 with i32 %5;
-    i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^if.then, ^b;
+    i32* %0 = getelementptr &(struct foo* %p)[i32 0].a;
+    i32 %1 = load i32* %0;
+    i32* %2 = getelementptr &(struct foo* %p)[i32 0].b;
+    i32 %3 = load i32* %2;
+    i1 %4 = scmp neq i32 %3, i32 0;
+    cbr i1 %4(prob = 0.5), ^if.then, ^b;
 ^if.then:
-    i32* %7 = getelementptr &(struct foo* %pn)[i32 0].a;
-    store i32* %7 with i32 %5;
-    i32* %8 = getelementptr &(struct foo* %pn)[i32 0].b;
-    i32 %9 = sdiv i32 %2, i32 %5;
-    i32 %10 = mul i32 %5, i32 %9;
-    i32 %11 = sub i32 %2, i32 %10;
-    store i32* %8 with i32 %11;
-    i32 %12 = call (struct foo*) -> i32 @gcd(struct foo* %pn);
+    i32* %5 = getelementptr &(struct foo* %pn)[i32 0].a;
+    store i32* %5 with i32 %3;
+    i32* %6 = getelementptr &(struct foo* %pn)[i32 0].b;
+    i32 %7 = sdiv i32 %1, i32 %3;
+    i32 %8 = mul i32 %3, i32 %7;
+    i32 %9 = sub i32 %1, i32 %8;
+    store i32* %6 with i32 %9;
+    i32 %10 = call (struct foo*) -> i32 @gcd(struct foo* %pn);
     ubr ^b;
 ^b:
-    i32 %13 = phi [^entry, i32 %2] [^if.then, i32 %12];
-    ret i32 %13;
+    i32 %11 = phi [^entry, i32 %1] [^if.then, i32 %10];
+    ret i32 %11;
 }
 func @main() -> i32 { NoMemoryWrite NoRecurse } {
 ^entry:

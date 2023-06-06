@@ -1,21 +1,105 @@
 FUNCTION main :
-DEC x7 8
 DEC x5 8
-v9 := &x7 + #4
 v3 := #0
-LABEL label2 :
-x7 := v3
-v10 := v3 + #1
-*v9 := v10
-v11 := v3 * #4
-v12 := &x5 + v11
-v13 := x7
-v14 := *v9
-v15 := v13 + v14
-*v12 := v15
-WRITE v15
-IF v10 >= #2 GOTO label4
-v3 := v10
-GOTO label2
+v7 := v3 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+LABEL label24 :
+v3 := v7
+v7 := v7 + #1
+v8 := v3 * #4
+v9 := &x5 + v8
+v10 := v3 * #2
+v11 := v10 + #1
+*v9 := v11
+WRITE v11
+IF v7 >= #2 GOTO label4
+GOTO label24
 LABEL label4 :
 RETURN #0

@@ -26,48 +26,45 @@ write:
     jr $ra
     nop
 gcd:
-	addiu $sp, $sp, -56
+	addiu $sp, $sp, -48
 	sw $ra, 16($sp)
 	addiu $t0, $sp, 24
-	addiu $t1, $sp, 32
-	lw $t2, 0($a0)
-	sw $t2, 32($sp)
-	lw $t3, 4($a0)
-	sw $t3, 4($t1)
-	sw $t3, 44($sp)
-	sw $t2, 48($sp)
-	sw $t0, 52($sp)
-	beq $t3, $zero, label16
+	lw $t1, 0($a0)
+	lw $t2, 4($a0)
+	sw $t2, 36($sp)
+	sw $t1, 40($sp)
+	sw $t0, 44($sp)
+	beq $t2, $zero, label13
 	nop
 	b label2
 	nop
-label16:
-	lw $t0, 48($sp)
+label13:
+	lw $t0, 40($sp)
 	move $t1, $t0
-	sw $t0, 40($sp)
+	sw $t0, 32($sp)
 	b label3
 	nop
 label2:
-	lw $t0, 44($sp)
+	lw $t0, 36($sp)
 	sw $t0, 24($sp)
-	lw $t1, 48($sp)
+	lw $t1, 40($sp)
 	div $zero, $t1, $t0
 	mflo $t2
 	mult $t0, $t2
 	mflo $t3
 	subu $t4, $t1, $t3
-	lw $t5, 52($sp)
+	lw $t5, 44($sp)
 	sw $t4, 4($t5)
 	move $a0, $t5
 	jal gcd
 	nop
 	move $t6, $v0
-	sw $v0, 40($sp)
+	sw $v0, 32($sp)
 label3:
-	lw $t0, 40($sp)
+	lw $t0, 32($sp)
 	move $v0, $t0
 	lw $ra, 16($sp)
-	addiu $sp, $sp, 56
+	addiu $sp, $sp, 48
 	jr $ra
 	nop
 .globl main
