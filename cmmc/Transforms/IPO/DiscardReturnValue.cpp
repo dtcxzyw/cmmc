@@ -32,27 +32,13 @@
 CMMC_NAMESPACE_BEGIN
 
 class DiscardReturnValue final : public TransformPass<Function> {
-    // TODO: Use module level analysis to reduce compile time
-    static bool isUsed(Function& func, Module& module) {
-        for(auto global : module.globals()) {
-            if(global->isFunction()) {
-                auto callerFunc = global->as<Function>();
-                if(callerFunc->blocks().empty())
-                    continue;
-                for(auto block : callerFunc->blocks()) {
-                    for(auto& inst : block->instructions()) {
-                        for(auto operand : inst.operands()) {
-                            if(operand->is<FunctionCallInst>()) {
-                                const auto callee = operand->as<FunctionCallInst>()->operands().back();
-                                if(callee == &func) {
-                                    // TODO: generalize this case
-                                    if(inst.getInstID() == InstructionID::Ret && callerFunc == &func)
-                                        continue;
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+    static bool isUsed(Function& func) {
+        for(auto user : func.users()) {
+            if(user->isUsed()) {
+                for(auto ret : user->users()) {
+                    if(ret->getInstID() == InstructionID::Ret && ret->getBlock()->getFunction() == &func)
+                        continue;
+                    return true;
                 }
             }
         }
@@ -60,7 +46,7 @@ class DiscardReturnValue final : public TransformPass<Function> {
     }
 
 public:
-    bool run(Function& func, AnalysisPassManager& analysis) const override {
+    bool run(Function& func, AnalysisPassManager&) const override {
         if(func.attr().hasAttr(FunctionAttribute::NoReturn))
             return false;
         if(func.attr().hasAttr(FunctionAttribute::NoSideEffect))
@@ -72,10 +58,10 @@ public:
         const auto retType = func.getType()->as<FunctionType>()->getRetType();
         if(retType->isVoid())
             return false;
-        auto& module = analysis.module();
-        if(isUsed(func, module))
+        if(isUsed(func))
             return false;
 
+        // TODO: set retType to void?
         const auto undef = make<UndefinedValue>(retType);
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();

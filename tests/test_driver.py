@@ -91,16 +91,21 @@ def print_and_compare(suffix: str):
         print("Regressions:")
 
         testcases = []
+        score = 0
         for key in gcc_perf.log.keys():
             if key in cmmc_perf.log:
                 lhs = gcc_perf.log[key]
                 rhs = cmmc_perf.log[key]
                 if lhs < rhs:
                     testcases.append((rhs / lhs, lhs, rhs, key))
+                    score += lhs / rhs
+                else:
+                    score += 1.0
 
         testcases.sort(key=lambda x: -x[0])
         for ratio, lhs, rhs, key in testcases:
             print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
+        print("performance score: {:.6f} total {}".format(score, len(gcc_perf.log)))
 
 
 def parse_perf(result):

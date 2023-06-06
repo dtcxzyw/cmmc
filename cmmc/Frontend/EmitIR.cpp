@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Module.hpp"
 #include <cassert>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Frontend/AST.hpp>
@@ -42,6 +43,7 @@
 #include <limits>
 #include <ostream>
 #include <queue>
+#include <sstream>
 #include <string_view>
 #include <type_traits>
 #include <unordered_map>
@@ -1668,10 +1670,11 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
         return ptr;
     };
 
-    const auto memsetFunc = ctx.getIntrinsic(Intrinsic::memset);
+    const auto memsetFunc = ctx.getMemset(type->getScalarType());
     const auto& dataLayout = ctx.getModule()->getTarget().getDataLayout();
-    const auto i8ptr = PointerType::get(IntegerType::get(8U));
+    const auto ptrType = memsetFunc->getArg(0)->getType();
     const auto scalarSize = scalarType->getSize(dataLayout);
+    const auto memsetAtomicSize = static_cast<intmax_t>(ptrType->as<PointerType>()->getPointee()->getFixedSize());
 
     uint32_t lastNotAssigned = 0;
     const auto zeroTo = [&](uint32_t offset) -> Value* {
@@ -1690,13 +1693,10 @@ void ArrayInitializer::shapeAwareEmitDynamic(EmitContext& ctx, Value* storage, c
             }
         } else {
             const auto beg = getAddress(lastNotAssigned);
-            const auto ptr = ctx.makeOp<PtrCastInst>(beg, i8ptr);
-            const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize);
-            ctx.makeOp<FunctionCallInst>(memsetFunc,
-                                         std::vector<Value*>{
-                                             ptr,
-                                             size,
-                                         });
+            const auto ptr = beg->getType()->isSame(ptrType) ? beg : ctx.makeOp<PtrCastInst>(beg, ptrType);
+            assert(totalSize % memsetAtomicSize == 0);
+            const auto size = ConstantInteger::get(ctx.getIndexType(), totalSize / memsetAtomicSize);
+            ctx.makeOp<FunctionCallInst>(memsetFunc, std::vector<Value*>{ ptr, size });
         }
         return end;
     };
@@ -1811,7 +1811,7 @@ void StructDefinition::emit(EmitContext& ctx) const {
     EmitContext::popLoc();
 }
 
-static void emitMemset(Function* func, const mir::Target& target) {
+static void emitMemset(Function* func, uint32_t bitWidth, const mir::Target& target) {
     // void memset(i8* ptr, size_t size) (size > 0)
     // entry:
     //     br loop
@@ -1838,7 +1838,7 @@ static void emitMemset(Function* func, const mir::Target& target) {
     const auto idx = builder.createPhi(size->getType());
     idx->addIncoming(entry, ConstantInteger::get(size->getType(), 0));
     const auto cur = builder.makeOp<GetElementPtrInst>(ptr, std::vector<Value*>{ idx });
-    builder.makeOp<StoreInst>(cur, ConstantInteger::get(IntegerType::get(8U), 0));
+    builder.makeOp<StoreInst>(cur, ConstantInteger::get(IntegerType::get(bitWidth), 0));
     const auto nxt = builder.makeOp<BinaryInst>(InstructionID::Add, idx, ConstantInteger::get(size->getType(), 1));
     idx->addIncoming(loop, nxt);
     const auto cond = builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::LessThan, nxt, size);
@@ -1847,46 +1847,32 @@ static void emitMemset(Function* func, const mir::Target& target) {
     builder.makeOp<ReturnInst>();
     assert(func->verify(std::cerr));
 }
-
-Function* EmitContext::getIntrinsic(Intrinsic intrinsic) {
-    auto symbol = "__cmmc_builtin_" + std::string(enumName(intrinsic).substr("cmmc::Intrinsic::"sv.length()));
+Function* EmitContext::getMemcpy() {
+    auto symbol = String::get("__cmmc_builtin_memcpy");
     for(auto global : mModule->globals())
         if(global->getSymbol() == symbol)
             return global->as<Function>();
-    FunctionType* funcType = nullptr;
-    switch(intrinsic) {
-        case Intrinsic::none:
-            reportUnreachable(CMMC_LOCATION());
-        case Intrinsic::memset: {
-            const auto ptr = PointerType::get(IntegerType::get(8));
-            funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ ptr, getIndexType() });
-            break;
-        }
-        case Intrinsic::memcpy: {
-            const auto ptr = PointerType::get(IntegerType::get(8));
-            funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ ptr, ptr, getIndexType() });
-            break;
-        }
-        default:
-            reportNotImplemented(CMMC_LOCATION());
-    }
-    auto func = make<Function>(String::get(symbol), funcType, intrinsic);
+    const auto ptr = PointerType::get(IntegerType::get(8));
+    auto funcType = make<FunctionType>(VoidType::get(), Vector<const Type*>{ ptr, ptr, getIndexType() });
+    auto func = make<Function>(symbol, funcType, Intrinsic::memcpy);
     mModule->add(func);
-    switch(intrinsic) {
-        case Intrinsic::none:
-            reportUnreachable(CMMC_LOCATION());
-        case Intrinsic::memset: {
-            // TODO: more precise information
-            func->attr().addAttr(FunctionAttribute::NoMemoryRead);
-            emitMemset(func, mModule->getTarget());
-            break;
-        }
-        case Intrinsic::memcpy: {
-            break;
-        }
-        default:
-            reportNotImplemented(CMMC_LOCATION());
-    }
+    return func;
+}
+Function* EmitContext::getMemset(const Type* type) {
+    assert(type->isPrimitive());
+    std::stringstream ss;
+    type->dumpName(ss);
+    auto symbol = String::get("__cmmc_builtin_memset_" + ss.str());
+    for(auto global : mModule->globals())
+        if(global->getSymbol() == symbol)
+            return global->as<Function>();
+    const auto bitWidth = static_cast<uint32_t>(type->getFixedSize()) * 8;
+    auto funcType =
+        make<FunctionType>(VoidType::get(), Vector<const Type*>{ PointerType::get(IntegerType::get(bitWidth)), getIndexType() });
+    auto func = make<Function>(symbol, funcType, Intrinsic::memset);
+    mModule->add(func);
+    func->attr().addAttr(FunctionAttribute::NoMemoryRead).addAttr(FunctionAttribute::NoRecurse);
+    emitMemset(func, bitWidth, mModule->getTarget());
     return func;
 }
 
@@ -2059,7 +2045,7 @@ void EmitContext::copyStruct(Value* dest, Value* src) {
         };
         recursiveCopy(recursiveCopy, dest, src);
     } else {
-        const auto memcpyFunc = getIntrinsic(Intrinsic::memcpy);
+        const auto memcpyFunc = getMemcpy();
         const auto ptr = PointerType::get(IntegerType::get(8));
 
         const std::vector<Value*> args = { makeOp<PtrCastInst>(dest, ptr), makeOp<PtrCastInst>(src, ptr),

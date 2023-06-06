@@ -155,7 +155,8 @@ public:
     Block* getContinueTarget();
     Block* getBreakTarget();
 
-    Function* getIntrinsic(Intrinsic intrinsic);
+    Function* getMemcpy();
+    Function* getMemset(const Type* type);
     static void pushLoc(const SourceLocation& loc);
     static void popLoc();
 };

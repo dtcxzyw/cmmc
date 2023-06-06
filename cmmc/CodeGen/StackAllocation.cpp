@@ -90,15 +90,16 @@ calcIntervalPartition(std::vector<std::pair<MIROperand, StackObjectInterval>>& i
     return { colorCount, std::move(color) };
 }
 
-static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObjects(MIRFunction& func,
-                                                                                     OptimizationLevel optLevel) {
+// coloring
+static std::unordered_map<MIROperand, uint32_t, MIROperandHasher>
+renameStackObjects(MIRFunction& func, OptimizationLevel optLevel, const CodeGenContext& ctx) {
     std::unordered_map<MIROperand, uint32_t, MIROperandHasher> mapping;  // same size & alignment
-    CMMC_UNUSED(optLevel);
-    CMMC_UNUSED(calcIntervalPartition);
+
+    // FIXME
     /*
     if(optLevel >= OptimizationLevel::O1) {
         const auto getStorageKey = [&](const MIROperand& op) {
-            const auto type = op.type();
+            const auto type = ctx.registerInfo->getCanonicalizedRegisterType(op.type());
             const auto size = getOperandSize(type);
             const auto alignment = size;
             const auto key = static_cast<uint32_t>(size) * 1024 + static_cast<uint32_t>(alignment);
@@ -106,21 +107,22 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
         };
 
         // local reuse for spilled regs
-
         {
             std::unordered_set<MIROperand, MIROperandHasher> uniqueStackObjects;
             {
                 std::unordered_map<MIROperand, MIRBasicBlock*, MIROperandHasher> ownerOfStackObjectsForSpilledRegs;
                 for(auto& block : func.blocks()) {
-                    for(auto& stackObject : block->usedStackObjects()) {
-                        assert(stackObject.addressSpace == AddressSpace::Stack);
-                        const auto type = stack.getType(stackObject);
-                        if(!type->isStackStorage() && !stack.getMetadata(stackObject)) {
-                            if(auto iter = ownerOfStackObjectsForSpilledRegs.find(stackObject);
-                               iter != ownerOfStackObjectsForSpilledRegs.cend())
-                                iter->second = nullptr;
-                            else {
-                                ownerOfStackObjectsForSpilledRegs.emplace(stackObject, block.get());
+                    for(auto& inst : block->instructions()) {
+                        if(inst.opcode() == InstLoadRegFromStack || inst.opcode() == InstStoreRegToStack) {
+                            const auto stackObject = inst.getOperand(1);
+
+                            if(func.stackObjects().at(stackObject).usage == StackObjectUsage::RegSpill) {
+                                if(auto iter = ownerOfStackObjectsForSpilledRegs.find(stackObject);
+                                   iter != ownerOfStackObjectsForSpilledRegs.cend())
+                                    iter->second = nullptr;
+                                else {
+                                    ownerOfStackObjectsForSpilledRegs.emplace(stackObject, block.get());
+                                }
                             }
                         }
                     }
@@ -134,31 +136,21 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
             }
 
             uint32_t idx = 0;
+            for(auto& [ref, stackObject] : func.stackObjects()) {
+                assert(isStackObject(ref.reg()));
+                const auto usage = stackObject.usage;
+                if(usage != StackObjectUsage::Argument && usage != StackObjectUsage::CalleeArgument &&
+                   usage != StackObjectUsage::RegSpill) {
+                    mapping.emplace(ref, idx++);
+                }
+            }
             for(auto& block : func.blocks()) {
-
                 auto& instructions = block->instructions();
                 const StackObjectInterval initialInterval{ static_cast<uint32_t>(instructions.size()), 0 };
 
                 Intervals intervals;
-
-                for(auto& stackObject : block->usedStackObjects()) {
-                    if(mapping.count(stackObject))
-                        continue;
-                    assert(stackObject.addressSpace == AddressSpace::Stack);
-                    const auto type = stack.getType(stackObject);
-                    if(!type->isStackStorage()) {
-                        if(!uniqueStackObjects.count(stackObject)) {
-                            mapping.emplace(stackObject, idx++);
-                        } else {
-                            intervals.emplace(stackObject, initialInterval);
-                        }
-                    }
-                }
-
                 uint32_t id = 0;
                 auto updateInterval = [&](const MIROperand& obj) {
-                    if(obj.addressSpace != AddressSpace::Stack)
-                        return;
                     if(auto iter = intervals.find(obj); iter != intervals.cend()) {
                         auto& interval = iter->second;
                         interval.begin = std::min(interval.begin, id);
@@ -168,10 +160,16 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
 
                 // save/restore
                 for(auto& inst : instructions) {
-                    if(std::holds_alternative<CopyMInst>(inst)) {
-                        const auto& copy = std::get<CopyMInst>(inst);
-                        updateInterval(copy.src);
-                        updateInterval(copy.dst);
+                    if(inst.opcode() == InstLoadRegFromStack || inst.opcode() == InstStoreRegToStack) {
+                        const auto stackObject = inst.getOperand(1);
+                        if(mapping.count(stackObject))
+                            continue;
+                        if(!uniqueStackObjects.count(stackObject)) {
+                            mapping.emplace(stackObject, idx++);
+                        } else {
+                            intervals.emplace(stackObject, initialInterval);
+                        }
+                        updateInterval(stackObject);
                     }
                     ++id;
                 }
@@ -217,7 +215,7 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
             // build inference graph
             for(auto& [key, arr] : ids) {
                 if(arr.size() > maxGraphSize)
-                    return mapping;  // The inference graph will be too large
+                    return mapping;  // The inference graph is huge
 
                 auto& graph = inferenceGraph[key];
                 std::sort(arr.begin(), arr.end());
@@ -269,6 +267,7 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
             colorBase += colorCount;
         }
 
+
         std::unordered_map<MIROperand, uint32_t, MIROperandHasher> newMapping;
         for(auto& [obj, id] : mapping) {
             if(stack.getType(obj)->isStackStorage()) {
@@ -281,7 +280,9 @@ static std::unordered_map<MIROperand, uint32_t, MIROperandHasher> renameStackObj
         newMapping.swap(mapping);
     } else {
     */
-    // unique
+    CMMC_UNUSED(optLevel);
+    CMMC_UNUSED(ctx);
+    CMMC_UNUSED(calcIntervalPartition);
     uint32_t idx = 0;
     for(auto& [ref, stackObject] : func.stackObjects()) {
         assert(isStackObject(ref.reg()));
@@ -360,9 +361,8 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
     // locals
     // TODO: put frequently used locals in the bottom?
     {
-        const auto mapping = renameStackObjects(func, optLevel);
+        const auto mapping = renameStackObjects(func, optLevel, ctx);
         std::unordered_map<uint32_t, int32_t> slots;
-        // std::unordered_map<uint32_t, bool> isPrivate;
 
         for(auto& [stackObject, color] : mapping) {
             auto& obj = func.stackObjects().at(stackObject);
@@ -373,22 +373,8 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
                 slots.emplace(color, allocationBase);
                 obj.offset = allocationBase;
                 allocationBase += static_cast<int32_t>(obj.size);
-                // isPrivate[color] = true;
             }
-            /*
-            // TODO: stack address leak analysis?
-            if(stack.getMetadata(stackObject)) {
-                isPrivate[color] = false;
-            }
-            */
         }
-
-        /*
-        auto& privateStackOffsets = func.privateStackOffsets();
-        for(auto [color, attr] : isPrivate)
-            if(attr)
-                privateStackOffsets.insert(static_cast<int32_t>(slots.at(color)));
-        */
     }
 
     alignTo(spAlignment);
@@ -410,8 +396,6 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
             ctx.frameInfo.emitPostSAEpilogue(*block, ctx, stackSize, raOffset);
         }
     }
-
-    // eliminateStackLoads(func, target);
 }
 
 CMMC_MIR_NAMESPACE_END
