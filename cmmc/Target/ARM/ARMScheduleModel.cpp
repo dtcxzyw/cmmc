@@ -27,4 +27,3 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
 }
 
 CMMC_TARGET_NAMESPACE_END
-

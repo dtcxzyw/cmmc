@@ -17,7 +17,9 @@
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <cstdint>
@@ -45,6 +47,15 @@ static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInve
             return true;
     }
     return false;
+}
+
+static bool selectGenericImm32(const MIROperand& imm, MIROperand& hi, MIROperand& lo) {
+    if(!isOperandImm32(imm))
+        return false;
+    const auto val = static_cast<uint32_t>(imm.imm());
+    hi = MIROperand::asImm(val >> 16, OperandType::Int32);
+    lo = MIROperand::asImm(val & 0xFFFF, OperandType::Int32);
+    return true;
 }
 
 /*
@@ -460,11 +471,39 @@ MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lowerin
         uint32_t rep;
         memcpy(&rep, &val, sizeof(float));
         const auto dst = loweringCtx.newVReg(OperandType::Float32);
-        loweringCtx.emitInst(
-            MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
+        loweringCtx.emitInst(MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
         return dst;
     }
     return MIROperand{};
 }
+bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
+    if(inst->getInstID() == InstructionID::SRem) {
+        if(!inst->getType()->isSame(IntegerType::get(32)))
+            return false;
+        auto lhs = loweringCtx.mapOperand(inst->getOperand(0));
+        auto rhs = loweringCtx.mapOperand(inst->getOperand(1));
+        const auto ret = loweringCtx.newVReg(OperandType::Int32);
 
+        auto& globals = loweringCtx.getModule().globals();
+        const auto abiName = "__aeabi_idivmod";
+        MIRRelocable* func = nullptr;
+        for(auto& global : globals)
+            if(global->reloc->symbol() == abiName) {
+                func = global->reloc.get();
+            }
+        if(!func) {
+            globals.push_back(
+                std::make_unique<MIRGlobal>(Linkage::Internal, 0, std::make_unique<MIRFunction>(String::get(abiName))));
+            func = globals.back()->reloc.get();
+        }
+
+        loweringCtx.emitCopy(MIROperand::asISAReg(ARM::R0, OperandType::Int32), lhs);
+        loweringCtx.emitCopy(MIROperand::asISAReg(ARM::R1, OperandType::Int32), rhs);
+        loweringCtx.emitInst(MIRInst{ BL }.setOperand<0>(MIROperand::asReloc(func)));
+        loweringCtx.emitCopy(ret, MIROperand::asISAReg(ARM::R1, OperandType::Int32));
+        loweringCtx.addOperand(inst, ret);
+        return true;
+    }
+    return false;
+}
 CMMC_TARGET_NAMESPACE_END

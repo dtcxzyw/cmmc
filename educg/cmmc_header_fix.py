@@ -3,7 +3,7 @@
 import os
 import sys
 
-prefixes = ['cmmc', 'Spl', 'SysY', 'Generic', 'RISCV', 'TAC', 'MIPS']
+prefixes = ['cmmc', 'Spl', 'SysY', 'Generic', 'RISCV', 'TAC', 'MIPS', 'ARM']
 
 
 def is_owned_header(line: str):

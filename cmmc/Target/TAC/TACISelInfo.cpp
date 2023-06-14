@@ -93,4 +93,9 @@ MIROperand TACISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lowerin
     CMMC_UNUSED(loweringCtx);
     reportUnreachable(CMMC_LOCATION());
 }
+bool TACISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(loweringCtx);
+    return false;
+}
 CMMC_TARGET_NAMESPACE_END

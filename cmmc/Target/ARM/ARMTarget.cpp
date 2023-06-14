@@ -61,13 +61,13 @@ public:
     [[nodiscard]] bool isCallerSaved(const MIROperand& op) const noexcept override {
         const auto reg = op.reg();
         // $r0-$r3 $r12 $s0-$s15
-        return (ARM::R0 <= reg && reg <= ARM::R3) || (reg == ARM::R12) ||
-            (ARM::S0 <= reg && reg <= ARM::S15);
+        return (ARM::R0 <= reg && reg <= ARM::R3) || (reg == ARM::R12) || (ARM::S0 <= reg && reg <= ARM::S15);
     }
     [[nodiscard]] bool isCalleeSaved(const MIROperand& op) const noexcept override {
         const auto reg = op.reg();
         // $r4-$r11 $r13-$r15 $s16-$s31
-        return (ARM::R4 <= reg && reg <= ARM::R11) || (ARM::R13 <= reg && reg <= ARM::R15) || (ARM::S16 <= reg && reg <= ARM::S31);
+        return (ARM::R4 <= reg && reg <= ARM::R11) || (ARM::R13 <= reg && reg <= ARM::R15) ||
+            (ARM::S16 <= reg && reg <= ARM::S31);
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
         return 8U;  // 8-byte aligned
@@ -129,8 +129,8 @@ public:
             // prefer caller-saved registers
             static std::vector<uint32_t> list{
                 // $r4-$r11
-                ARM::R4, ARM::R5, ARM::R6, ARM::R7, ARM::R8,    //
-                ARM::R9, ARM::R10, ARM::R11,  //
+                ARM::R4, ARM::R5,  ARM::R6,  ARM::R7, ARM::R8,  //
+                ARM::R9, ARM::R10, ARM::R11,                    //
             };
             return list;
         }
@@ -140,10 +140,8 @@ public:
             // $f12, $f14 for arguments
             static std::vector<uint32_t> list{
                 // $s16-$s31
-                ARM::S16, ARM::S17, ARM::S18, ARM::S19,
-                ARM::S20, ARM::S21, ARM::S22, ARM::S23,
-                ARM::S24, ARM::S25, ARM::S26, ARM::S27,
-                ARM::S28, ARM::S29, ARM::S30, ARM::S31,
+                ARM::S16, ARM::S17, ARM::S18, ARM::S19, ARM::S20, ARM::S21, ARM::S22, ARM::S23,
+                ARM::S24, ARM::S25, ARM::S26, ARM::S27, ARM::S28, ARM::S29, ARM::S30, ARM::S31,
             };
             return list;
         }
@@ -157,6 +155,9 @@ class ARMTarget final : public Target {
     ARMRegisterInfo mRegisterInfo;
 
 public:
+    [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
+        return inst != InstructionID::SRem && inst != InstructionID::URem;
+    }
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }
@@ -186,13 +187,11 @@ public:
                             target.getFrameInfo(),
                             target.getRegisterInfo(),
                             MIRFlags{ false, false } };
-        
+
         out << ".arch armv7-a" << std::endl;
 
         cmmc::mir::dumpAssembly(
-            out, ctx, module,
-            [&] {
-            },
+            out, ctx, module, [&] {},
             [&] {
                 out << ".syntax unified" << std::endl;
                 out << ".arm" << std::endl;
@@ -347,7 +346,7 @@ void ARMFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
 }
 
 void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                       std::optional<int32_t> raOffset) const {
+                                      std::optional<int32_t> raOffset) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(stackSize);
     auto& instructions = entryBlock.instructions();
@@ -363,7 +362,7 @@ void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenCo
 }
 
 void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                       std::optional<int32_t> raOffset) const {
+                                      std::optional<int32_t> raOffset) const {
     CMMC_UNUSED(stackSize);
     CMMC_UNUSED(ctx);
     auto& instructions = exitBlock.instructions();
@@ -379,4 +378,3 @@ void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenCon
 }
 
 CMMC_MIR_NAMESPACE_END
-

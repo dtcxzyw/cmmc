@@ -568,4 +568,9 @@ MIROperand RISCVISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lower
     }
     return MIROperand{};
 }
+bool RISCVISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
+    CMMC_UNUSED(inst);
+    CMMC_UNUSED(loweringCtx);
+    return false;
+}
 CMMC_TARGET_NAMESPACE_END

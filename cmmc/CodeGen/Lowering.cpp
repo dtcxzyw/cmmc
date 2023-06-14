@@ -251,7 +251,8 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
         auto mblock = blockMap[block];
         ctx.setCurrentBasicBlock(mblock);
         for(auto& inst : block->instructions()) {
-            lowerInst(&inst, ctx);
+            if(!codeGenCtx.iselInfo.lowerInst(&inst, ctx))
+                lowerInst(&inst, ctx);
         }
     }
 

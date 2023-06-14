@@ -17,8 +17,8 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
-#include <ostream>
 #include <cstring>
+#include <ostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -29,7 +29,7 @@ struct OperandDumper final {
 static std::string_view getARMGPRTextualName(ARMRegister gpr) noexcept {
     // NOLINTNEXTLINE
     constexpr std::string_view name[] = {
-        "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",  //
+        "r0", "r1", "r2",  "r3",  "r4",  "r5", "r6", "r7",  //
         "r8", "r9", "r10", "r11", "r12", "sp", "lr", "pc",  //
     };
     return name[gpr - GPRBegin];
@@ -54,8 +54,8 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         return out;
     }
     if(op.isImm()) {
-        if (op.type() == OperandType::Float32) {
-            uint32_t u = static_cast<uint32_t>(op.imm());
+        if(op.type() == OperandType::Float32) {
+            auto u = static_cast<uint32_t>(op.imm());
             float f;
             memcpy(&f, &u, sizeof(float));
             out << '#' << f;
@@ -82,6 +82,10 @@ using mir::isOperandReloc;
 
 static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ B }.setOperand<0>(MIROperand::asReloc(targetBlock));
+}
+
+static bool verifyInstMOVT(const MIRInst& inst) {
+    return inst.getOperand(0) == inst.getOperand(2);
 }
 
 CMMC_TARGET_NAMESPACE_END

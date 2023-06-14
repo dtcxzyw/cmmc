@@ -76,13 +76,13 @@ constexpr bool isOperandShamt(const MIROperand& operand) {
 }
 
 constexpr bool isOperandOp2Constant(const MIROperand& operand) {
-    if (!operand.isImm() || !(isSignedImm<32>(operand.imm()) || isUnsignedImm<32>(operand.imm())))
+    if(!operand.isImm() || !(isSignedImm<32>(operand.imm()) || isUnsignedImm<32>(operand.imm())))
         return false;
 
     uint32_t imm = static_cast<uint32_t>(operand.imm());
     uint64_t immLong = static_cast<uint64_t>(imm) << 32 | imm;
-    for (int i = 0; i < 32; i++)
-        if (((immLong >> i) & 0xFFFFFFFF) < (1 << 8))
+    for(int i = 0; i < 32; i++)
+        if(((immLong >> i) & 0xFFFFFFFF) < (1 << 8))
             return true;
     return false;
 }
@@ -106,4 +106,3 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
                                   int64_t& imm);
 
 CMMC_TARGET_NAMESPACE_END
-

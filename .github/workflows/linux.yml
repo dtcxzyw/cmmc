@@ -32,7 +32,7 @@ jobs:
       # - name: Build qemu
       #   run: |
       #     cd qemu
-      #     ./configure --target-list=riscv64-linux-user,mipsel-linux-user --enable-plugins
+      #     ./configure --target-list=riscv64-linux-user,mipsel-linux-user,arm-linux-user --enable-plugins
       #     make -j
       #     echo "QEMU_PATH=$(pwd)/build" >> $GITHUB_ENV
 

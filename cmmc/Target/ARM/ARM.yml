@@ -65,11 +65,11 @@ InstInfo:
   B:
     Format: b $Tgt:Reloc[Metadata]
     Flag: [Terminator, Branch, NoFallthrough]
-  
+
   BL:
     Format: bl $Tgt:Reloc[Metadata]
     Flag: [Call]
-  
+
   BX:
     Format: bx $Rm:GPR[Use]
     Flag: [Terminator, NoFallthrough, Return]
@@ -117,45 +117,53 @@ InstInfo:
       STRB:
         Mnemonic: strb
 
-  MoveImmediate:
-    Format: $Mnemonic:Template $Rd:GPR[Def], $Imm:UImm16[Metadata]
-    Instances:
-      MOVW:
-        Mnemonic: movw
-      MOVT:
-        Mnemonic: movt
+  MOVW:
+    Format: movw $Rd:GPR[Def], $Imm:UImm16[Metadata]
+  MOVT:
+    Format: "movt $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $Rs:GPR[Use]"
+    CustomVerifier: true
 
   FloatingBinary:
     Format: $Mnemonic:Template $Fd:FPR[Def], $Fn:FPR[Use], $Fm:FPR[Use]
     Instances:
-      VADD:
-        Mnemonic: vadd
-      VSUB:
-        Mnemonic: vsub
-      VMUL:
-        Mnemonic: vmul
-      VDIV:
-        Mnemonic: vdiv
-      VNEG:
-        Mnemonic: vneg
-      VABS:
-        Mnemonic: vabs
+      VADD_F32:
+        Mnemonic: vadd.f32
+      VSUB_F32:
+        Mnemonic: vsub.f32
+      VMUL_F32:
+        Mnemonic: vmul.f32
+      VDIV_F32:
+        Mnemonic: vdiv.f32
 
-  VCMP:
-    Format: vcmp $Fd:FPR[Use], $Fm:FPR[Use]
+  FloatingUnary:
+    Format: $Mnemonic:Template $Fd:FPR[Def], $Fm:FPR[Use]
+    Instances:
+      VNEG_F32:
+        Mnemonic: vneg.f32
+      VABS_F32:
+        Mnemonic: vabs.f32
 
-  VCMP_WithZero:
-    Format: vcmp $Fd:FPR[Use], #0.0
+  VCMP_F32:
+    Format: vcmp.f32 $Fd:FPR[Use], $Fm:FPR[Use]
+
+  VCMP_F32_WithZero:
+    Format: vcmp.f32 $Fd:FPR[Use], #0.0
 
   VCVT_F32_S32:
-    Format: vcvt.f32.s32 $Fd:FPR[Def], $Rm:GPR[Use]
+    Format: vcvt.f32.s32 $Fd:FPR[Def], $Rm:FPR[Use]
 
   VCVT_S32_F32:
-    Format: vcvt.s32.f32 $Rd:GPR[Def], $Fm:FPR[Use]
+    Format: vcvt.s32.f32 $Rd:FPR[Def], $Fm:FPR[Use]
 
   VMOV:
     Format: vmov.f32 $Fd:FPR[Def], $Fm:FPR[Use]
-  
+
+  VMOV_GPR2FPR:
+    Format: vmov $Sn:FPR[Def], $Rd:GPR[Use]
+
+  VMOV_FPR2GPR:
+    Format: vmov $Rd:GPR[Def], $Sn:FPR[Use]
+
   VMOV_Constant:
     Format: vmov.f32 $Fd:FPR[Def], $Imm:FP32[Metadata]
 
@@ -189,6 +197,30 @@ InstSelection:
       MVN:
         Rd: $Dst
         Op2: $InvertedImm
+
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: selectInvertedOp2Constant($Imm, [$InvertedImm])
+    Replace:
+      MVN:
+        Rd: $Dst
+        Op2: $InvertedImm
+
+  - Pattern:
+      InstLoadImmToReg:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: selectGenericImm32($Imm, [$Hi], [$Lo])
+    Replace:
+      MOVT:
+        Rd: $Dst
+        Imm: $Hi
+        Rs:
+          MOVW:
+            Rd: $Dst
+            Imm: $Lo
 
   - Pattern:
       InstAdd:
@@ -273,7 +305,7 @@ InstSelection:
         Rd: $Dst
         Rn: $Lhs
         Rm: $Rhs
-  
+
   - Pattern:
       InstUDiv:
         Dst: $Dst
@@ -286,7 +318,126 @@ InstSelection:
         Rn: $Lhs
         Rm: $Rhs
 
+  - Pattern:
+      InstShl:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandShamt($Rhs)
+    Replace:
+      LSL:
+        Rd: $Dst
+        Rm: $Lhs
+        Sh: $Rhs
+
+  - Pattern:
+      InstLShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandShamt($Rhs)
+    Replace:
+      LSR:
+        Rd: $Dst
+        Rm: $Lhs
+        Sh: $Rhs
+
+  - Pattern:
+      InstAShr:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandShamt($Rhs)
+    Replace:
+      ASR:
+        Rd: $Dst
+        Rm: $Lhs
+        Sh: $Rhs
+
+  - Pattern:
+      InstS2F:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandFPR($Dst) && isOperandIReg($Src)
+    Replace:
+      VCVT_F32_S32:
+        Fd: $Dst
+        Rm:
+          VMOV_GPR2FPR:
+            Rd: getVRegAs(ctx, $Dst)
+            Sn: $Src
+
+  - Pattern:
+      InstF2S:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Dst) && isOperandFPR($Src)
+    Replace:
+      VMOV_FPR2GPR:
+        Rd: $Dst
+        Sn:
+          VCVT_S32_F32:
+            Rd: getVRegAs(ctx, $Src)
+            Fm: $Src
+
+  - Pattern:
+      InstFAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandFPR($Lhs) && isOperandFPR($Rhs)
+    Replace:
+      VADD_F32:
+        Fd: $Dst
+        Fn: $Lhs
+        Fm: $Rhs
+
+  - Pattern:
+      InstFSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandFPR($Lhs) && isOperandFPR($Rhs)
+    Replace:
+      VSUB_F32:
+        Fd: $Dst
+        Fn: $Lhs
+        Fm: $Rhs
+
+  - Pattern:
+      InstFMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandFPR($Lhs) && isOperandFPR($Rhs)
+    Replace:
+      VMUL_F32:
+        Fd: $Dst
+        Fn: $Lhs
+        Fm: $Rhs
+
+  - Pattern:
+      InstFDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandFPR($Lhs) && isOperandFPR($Rhs)
+    Replace:
+      VDIV_F32:
+        Fd: $Dst
+        Fn: $Lhs
+        Fm: $Rhs
+
+  - Pattern:
+      InstFNeg:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandFPR($Dst) && isOperandFPR($Src)
+    Replace:
+      VNEG_F32:
+        Fd: $Dst
+        Fm: $Src
+
 ScheduleModel:
   cortex_a72:
     CustomPeepholeOpt: true
- 
