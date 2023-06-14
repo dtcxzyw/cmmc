@@ -83,6 +83,7 @@ add_backend(Generic)
 add_backend(TAC)
 add_backend(RISCV)
 add_backend(MIPS)
+add_backend(ARM)
 
 option(CMMC_LLVM_SUPPORT "Enable LLVM support" ON)
 if(${CMAKE_BUILD_TYPE} MATCHES Debug)
