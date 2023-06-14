@@ -14,6 +14,7 @@
 
 // arm eabi
 
+#include "cmmc/Config.hpp"
 #include <ARM/ISelInfoDecl.hpp>
 #include <ARM/InstInfoDecl.hpp>
 #include <ARM/ScheduleModelDecl.hpp>
@@ -70,7 +71,7 @@ public:
             (ARM::S16 <= reg && reg <= ARM::S31);
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 8-byte aligned
+        return 4U;  // 4-byte aligned
     }
     void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
                             std::optional<int32_t> raOffset) const override;
@@ -135,13 +136,12 @@ public:
             return list;
         }
         if(classId == 1) {
-            // o32 nooddspreg
-            // $f0, $f2 for return value
-            // $f12, $f14 for arguments
             static std::vector<uint32_t> list{
-                // $s16-$s31
-                ARM::S16, ARM::S17, ARM::S18, ARM::S19, ARM::S20, ARM::S21, ARM::S22, ARM::S23,
-                ARM::S24, ARM::S25, ARM::S26, ARM::S27, ARM::S28, ARM::S29, ARM::S30, ARM::S31,
+                // $s0-$s31
+                ARM::S0,  ARM::S1,  ARM::S2,  ARM::S3,  ARM::S4,  ARM::S5,  ARM::S6,  ARM::S7,   //
+                ARM::S8,  ARM::S9,  ARM::S10, ARM::S11, ARM::S12, ARM::S13, ARM::S14, ARM::S15,  //
+                ARM::S16, ARM::S17, ARM::S18, ARM::S19, ARM::S20, ARM::S21, ARM::S22, ARM::S23,  //
+                ARM::S24, ARM::S25, ARM::S26, ARM::S27, ARM::S28, ARM::S29, ARM::S30, ARM::S31,  //
             };
             return list;
         }
@@ -232,16 +232,14 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
         const auto alignment = size;
 
         if(offset < passingByRegisterThreshold) {
-            // $a0-$a3, $f12/$f14
-            MIROperand src;
-            if(offset < 8 && isFPType(arg.type())) {  // pass by FPR
-                src = MIROperand::asISAReg(ARM::S0 + static_cast<uint32_t>(offset) / 2,
-                                           OperandType::Float32);  // 0 -> 12, 4 -> 14
-            } else {
-                src = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
-            }
-
-            ctx.emitCopy(arg, src);
+            // $r0-$r3
+            MIROperand src = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
+            if(arg.type() == OperandType::Int32)
+                ctx.emitCopy(arg, src);
+            else if(arg.type() == OperandType::Float32) {
+                ctx.emitInst(MIRInst{ ARM::VMOV_GPR2FPR }.setOperand<0>(arg).setOperand<1>(src));
+            } else
+                reportUnreachable(CMMC_LOCATION());
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
             ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
@@ -286,15 +284,14 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto alignment = size;
 
         if(offset < passingByRegisterThreshold) {
-            // $a0-$a3, $f12/$f14
-            MIROperand dst;
-            if(offset < 8 && arg->getType()->isFloatingPoint()) {  // pass by FPR
-                dst = MIROperand::asISAReg(ARM::S0 + static_cast<uint32_t>(offset) / 2U, OperandType::Float32);
-            } else {
-                dst = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4U, OperandType::Int32);
-            }
-
-            ctx.emitCopy(dst, val);
+            // $r0-$r3
+            MIROperand dst = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
+            if(val.type() == OperandType::Int32)
+                ctx.emitCopy(dst, val);
+            else if(val.type() == OperandType::Float32) {
+                ctx.emitInst(MIRInst{ ARM::VMOV_FPR2GPR }.setOperand<0>(dst).setOperand<1>(val));
+            } else
+                reportUnreachable(CMMC_LOCATION());
         } else {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
@@ -313,16 +310,13 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         return;
     }
     const auto retReg = ctx.newVReg(ret);
-    MIROperand val;
+    const auto val = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
     if(ret->isFloatingPoint()) {
-        // $f0
-        val = MIROperand::asISAReg(ARM::S0, OperandType::Float32);
+        ctx.emitInst(MIRInst{ ARM::VMOV_GPR2FPR }.setOperand<0>(retReg).setOperand<1>(val));
     } else {
-        // $v0
-        val = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
+        ctx.emitCopy(retReg, val);
     }
 
-    ctx.emitCopy(retReg, val);
     ctx.addOperand(inst, retReg);
 }
 
@@ -332,14 +326,13 @@ void ARMFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
         const auto& dataLayout = ctx.getDataLayout();
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 4) {
+            const auto retReg = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
             if(val->getType()->isFloatingPoint()) {
-                // return by $f0
-                ctx.emitCopy(MIROperand::asISAReg(ARM::S0, OperandType::Float32), ctx.mapOperand(val));
+                ctx.emitInst(MIRInst{ ARM::VMOV_FPR2GPR }.setOperand<0>(retReg).setOperand<1>(ctx.mapOperand(val)));
             } else {
-                // return by $v0
-                ctx.emitCopy(MIROperand::asISAReg(ARM::R0, OperandType::Int32), ctx.mapOperand(val));
+                ctx.emitCopy(retReg, ctx.mapOperand(val));
             }
-        } else  // return by $v0, $v1
+        } else
             reportNotImplemented(CMMC_LOCATION());
     }
     ctx.emitInst(MIRInst{ ARM::BX }.setOperand<0>(ARM::ra));
@@ -348,22 +341,21 @@ void ARMFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
 void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
                                       std::optional<int32_t> raOffset) const {
     CMMC_UNUSED(ctx);
-    CMMC_UNUSED(stackSize);
     auto& instructions = entryBlock.instructions();
     if(raOffset) {
         int64_t offset = *raOffset;
         MIROperand base = ARM::sp;
         const auto iter = instructions.begin();
         ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        // instructions.insert(iter,
-        //                     MIRInst{ ARM::SW }.setOperand<0>(ARM::ra).setOperand<2>(base).setOperand<1>(
-        //                         MIROperand::asImm(offset, OperandType::Int32)));
+        instructions.insert(iter,
+                            MIRInst{ ARM::STR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
+                                MIROperand::asImm(offset, OperandType::Int32)));
     }
+    ARM::adjustReg(instructions, instructions.begin(), ARM::sp, ARM::sp, -stackSize);
 }
 
 void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
                                       std::optional<int32_t> raOffset) const {
-    CMMC_UNUSED(stackSize);
     CMMC_UNUSED(ctx);
     auto& instructions = exitBlock.instructions();
     auto iter = std::prev(instructions.end());
@@ -371,10 +363,11 @@ void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenCon
         int64_t offset = *raOffset;
         MIROperand base = ARM::sp;
         ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        // instructions.insert(iter,
-        //                     MIRInst{ ARM::LW }.setOperand<0>(ARM::ra).setOperand<2>(base).setOperand<1>(
-        //                         MIROperand::asImm(offset, OperandType::Int32)));
+        instructions.insert(iter,
+                            MIRInst{ ARM::LDR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
+                                MIROperand::asImm(offset, OperandType::Int32)));
     }
+    ARM::adjustReg(instructions, iter, ARM::sp, ARM::sp, stackSize);
 }
 
 CMMC_MIR_NAMESPACE_END

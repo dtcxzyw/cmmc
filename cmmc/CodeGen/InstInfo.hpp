@@ -69,6 +69,7 @@ public:
     [[nodiscard]] virtual uint32_t getOperandNum() const noexcept = 0;
     [[nodiscard]] virtual OperandFlag getOperandFlag(uint32_t idx) const noexcept = 0;
     [[nodiscard]] virtual InstFlag getInstFlag() const noexcept = 0;
+    [[nodiscard]] virtual std::string_view getUniqueName() const noexcept = 0;
 };
 
 class TargetInstInfo {

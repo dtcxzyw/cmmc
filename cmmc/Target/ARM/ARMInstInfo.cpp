@@ -17,6 +17,7 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
+#include <cstdint>
 #include <cstring>
 #include <ostream>
 
@@ -59,6 +60,20 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             float f;
             memcpy(&f, &u, sizeof(float));
             out << '#' << f;
+        } else if(op.type() == OperandType::Special) {
+            // reg list
+            out << "{ ";
+            auto encode = static_cast<uint64_t>(op.imm());
+            const auto cnt = encode & 0xf;
+            for(uint32_t idx = 0; idx < cnt; ++idx) {
+                encode >>= 4;
+                const auto reg = encode & 0xf;
+                if(idx != 0) {
+                    out << ", ";
+                }
+                out << getARMGPRTextualName(static_cast<ARMRegister>(reg));
+            }
+            out << " }";
         } else {
             out << '#' << op.imm();
         }
@@ -86,6 +101,10 @@ static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
 
 static bool verifyInstMOVT(const MIRInst& inst) {
     return inst.getOperand(0) == inst.getOperand(2);
+}
+
+static bool isOperandRegList(const MIROperand& op) {
+    return op.isImm() && op.type() == OperandType::Special;
 }
 
 CMMC_TARGET_NAMESPACE_END

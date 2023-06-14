@@ -37,7 +37,7 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
     for(auto& inst : mInsts) {
         auto& info = ctx.instInfo.getInstInfo(inst);
         if(!info.verify(inst, ctx)) {
-            out << "Invalid inst: ";
+            out << "Invalid inst: [" << info.getUniqueName() << "]: ";
             info.print(out, inst, true);
             out << '\n';
             return false;

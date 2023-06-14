@@ -45,6 +45,9 @@ public:
     [[nodiscard]] InstFlag getInstFlag() const noexcept override {
         return InstFlagNone {% for flag in inst.Flag %}| InstFlag{{flag}}{% endfor %};
     }
+    [[nodiscard]] std::string_view getUniqueName() const noexcept override {
+        return "{{target}}.{{inst.name}}";
+    }
 };
 {% endfor %}
 

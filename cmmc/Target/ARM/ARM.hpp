@@ -62,6 +62,9 @@ constexpr bool isOperandImm13(const MIROperand& operand) {
 constexpr bool isOperandImm32(const MIROperand& operand) {
     return operand.isImm() && isSignedImm<32>(operand.imm());
 }
+constexpr bool isOperandUImm32(const MIROperand& operand) {
+    return operand.isImm() && isUnsignedImm<32>(operand.imm());
+}
 
 constexpr bool isOperandUImm16(const MIROperand& operand) {
     return operand.isImm() && isUnsignedImm<16>(operand.imm());
@@ -79,8 +82,8 @@ constexpr bool isOperandOp2Constant(const MIROperand& operand) {
     if(!operand.isImm() || !(isSignedImm<32>(operand.imm()) || isUnsignedImm<32>(operand.imm())))
         return false;
 
-    uint32_t imm = static_cast<uint32_t>(operand.imm());
-    uint64_t immLong = static_cast<uint64_t>(imm) << 32 | imm;
+    const auto imm = static_cast<uint32_t>(operand.imm());
+    const auto immLong = static_cast<uint64_t>(imm) << 32 | imm;
     for(int i = 0; i < 32; i++)
         if(((immLong >> i) & 0xFFFFFFFF) < (1 << 8))
             return true;
@@ -104,5 +107,7 @@ constexpr bool isOperandFPR(const MIROperand& operand) {
 
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm);
-
+// dst = src + imm
+void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
+               int64_t imm);
 CMMC_TARGET_NAMESPACE_END

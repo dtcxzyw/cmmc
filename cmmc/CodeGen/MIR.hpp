@@ -120,6 +120,9 @@ public:
     bool operator==(const MIROperand& rhs) const {
         return mOperand == rhs.mOperand;
     }
+    bool operator!=(const MIROperand& rhs) const {
+        return mOperand != rhs.mOperand;
+    }
     [[nodiscard]] constexpr OperandType type() const noexcept {
         return mType;
     }
@@ -135,7 +138,6 @@ public:
     template <typename T>
     [[nodiscard]] constexpr static MIROperand asImm(T val, OperandType type) {
         static_assert(std::is_integral_v<T> || std::is_enum_v<T>);
-        assert(isIntegerType(type) || type == OperandType::Special);
         return MIROperand{ static_cast<intmax_t>(val), type };
     }
     [[nodiscard]] constexpr static MIROperand asISAReg(uint32_t reg, OperandType type) {

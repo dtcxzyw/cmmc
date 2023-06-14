@@ -8,6 +8,7 @@ import copy
 import typing
 from typing import Dict, Any
 
+comment_sep = '#'
 
 def generate_from_template(template: Dict[str, Any], params: Dict[str, Any]):
     new_inst = copy.deepcopy(template)
@@ -71,7 +72,7 @@ def parse_inst_format(inst):
     inst['operands'] = operands
     comment_list = []
     for idx, fmt in enumerate(fmt_list):
-        if isinstance(fmt, str) and '#' in fmt:
+        if isinstance(fmt, str) and comment_sep in fmt:
             comment_list = fmt_list[idx:]
             fmt_list = fmt_list[:idx]
     inst['Format'] = fmt_list
@@ -85,6 +86,9 @@ def load_inst_info(isa_desc_file: str):
         isa_desc = yaml.load(f, Loader=yaml.FullLoader)
 
     target_name = os.path.basename(isa_desc_file).removesuffix('.yml')
+    if target_name == 'ARM':
+        global comment_sep
+        comment_sep = '@'
     inst_info: Dict[str, dict] = isa_desc['InstInfo']
     inst_templates = dict()
     insts = dict()

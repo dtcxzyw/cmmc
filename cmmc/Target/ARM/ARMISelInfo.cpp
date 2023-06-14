@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Config.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
@@ -25,6 +26,8 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <iterator>
+#include <unordered_map>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -50,7 +53,7 @@ static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInve
 }
 
 static bool selectGenericImm32(const MIROperand& imm, MIROperand& hi, MIROperand& lo) {
-    if(!isOperandImm32(imm))
+    if(!(isOperandImm32(imm) || isOperandUImm32(imm)))
         return false;
     const auto val = static_cast<uint32_t>(imm.imm());
     hi = MIROperand::asImm(val >> 16, OperandType::Int32);
@@ -401,6 +404,14 @@ void ARMISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
 void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
+        case MOVT_MOVW_PAIR: {
+            auto dst = inst.getOperand(0);
+            auto hi = inst.getOperand(1);
+            auto lo = inst.getOperand(2);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
+            *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
+            break;
+        }
         default:
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
     }
@@ -420,12 +431,12 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
         }
         case InstStoreRegToStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? STR : VSTR).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? STR : VSTR).setOperand<1>(base).setOperand<2>(imm);
             break;
         }
         case InstLoadRegFromStack: {
             assert(checkOpIdx(1));
-            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LDR : VLDR).setOperand<2>(base).setOperand<1>(imm);
+            inst.setOpcode(isOperandGPR(inst.getOperand(0)) ? LDR : VLDR).setOperand<1>(base).setOperand<2>(imm);
             break;
         }
         case STR:
@@ -457,13 +468,131 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
     assert(isSignedImm<32>(imm));
     if(isSignedImm<13>(imm)) {
         return;
-    } else {
-        reportNotImplemented(CMMC_LOCATION());
+    }
+
+    CMMC_UNUSED(scratch);
+    reportNotImplemented(CMMC_LOCATION());
+}
+void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
+               int64_t imm) {
+    if(dst == src && imm == 0)
+        return;
+
+    // FIXME
+    if(imm >= 0)
+        instructions.insert(
+            iter, MIRInst{ ADD }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(MIROperand::asImm(imm, OperandType::Int64)));
+    else {
+        instructions.insert(
+            iter,
+            MIRInst{ SUB }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(MIROperand::asImm(-imm, OperandType::Int64)));
     }
 }
 void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
     CMMC_UNUSED(ctx);
-    CMMC_UNUSED(instructions);
+    if(instructions.empty())
+        return;
+    auto matchAdjustSp = [](const MIRInst& inst, intmax_t& size) {
+        if(inst.opcode() != ADD && inst.opcode() != SUB)
+            return false;
+        if(inst.getOperand(0) != sp || inst.getOperand(1) != sp)
+            return false;
+        if(!isOperandOp2Constant(inst.getOperand(2)))
+            return false;
+        size = inst.getOperand(2).imm();
+        if(inst.opcode() == SUB)
+            size = -size;
+        return true;
+    };
+    auto matchStackPushPop = [](uint32_t opcode, const MIRInst& inst, MIROperand& reg, intmax_t& pos) {
+        if(inst.opcode() == opcode && inst.getOperand(1) == sp && isOperandImm13(inst.getOperand(2))) {
+            pos = inst.getOperand(2).imm();
+            reg = inst.getOperand(0);
+            return true;
+        }
+        return false;
+    };
+    // sub sp, sp, size
+    // backup
+    [&] {
+        intmax_t size;
+        if(!matchAdjustSp(instructions.front(), size))
+            return;
+        std::unordered_map<intmax_t, MIROperand> location;
+        auto iter = std::next(instructions.begin());
+        for(; iter != instructions.end(); ++iter) {
+            MIROperand reg;
+            intmax_t pos;
+            if(matchStackPushPop(STR, *iter, reg, pos)) {
+                location.emplace(pos, reg);
+            } else
+                break;
+        }
+        // TODO: support slots for locals/spilled registers
+        if(static_cast<intmax_t>(location.size()) * -4 != size)
+            return;
+        if(location.size() > 15)
+            return;
+        instructions.erase(instructions.begin(), iter);
+        uint64_t encode = location.size();
+        for(uint32_t idx = 0; idx < location.size(); ++idx) {
+            const auto reg = location.at(static_cast<intmax_t>(idx) * 4).reg();
+            encode |= static_cast<uint64_t>(reg) << ((idx + 1) * 4);
+        }
+        instructions.push_front(MIRInst{ PUSH }.setOperand<0>(MIROperand::asImm(encode, OperandType::Special)));
+    }();
+
+    // restore
+    // add sp, sp, size
+    // ret
+    for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+        if(iter->opcode() != BX)
+            continue;
+        if(iter == instructions.begin())
+            continue;
+        auto prev = std::prev(iter);
+        if(prev == instructions.begin())
+            continue;
+        intmax_t size;
+        if(!matchAdjustSp(*prev, size))
+            continue;
+
+        std::unordered_map<intmax_t, MIROperand> location;
+        auto it = std::prev(prev);
+        while(it != instructions.begin()) {
+            MIROperand reg;
+            intmax_t pos;
+            if(matchStackPushPop(LDR, *it, reg, pos)) {
+                location.emplace(pos, reg);
+                it = std::prev(it);
+            } else
+                break;
+        }
+
+        // TODO: support slots for locals/spilled registers
+        if(static_cast<intmax_t>(location.size()) * 4 != size)
+            continue;
+        if(location.size() > 15)
+            continue;
+        instructions.erase(std::next(it), iter);
+        uint64_t encode = location.size();
+        bool directRet = false;
+        for(uint32_t idx = 0; idx < location.size(); ++idx) {
+            auto reg = location.at(static_cast<intmax_t>(idx) * 4).reg();
+            // lr -> pc
+            if(reg == ARM::R14) {
+                reg = ARM::R15;
+                directRet = true;
+            }
+            encode |= static_cast<uint64_t>(reg) << ((idx + 1) * 4);
+        }
+        const auto popInst = MIRInst{ POP }.setOperand<0>(MIROperand::asImm(encode, OperandType::Special));
+        if(directRet)
+            *iter = popInst;
+        else {
+            instructions.insert(iter, popInst);
+        }
+    }
 }
 MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const {
     if(fp->getType()->getFixedSize() == sizeof(float)) {
@@ -471,7 +600,13 @@ MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lowerin
         uint32_t rep;
         memcpy(&rep, &val, sizeof(float));
         const auto dst = loweringCtx.newVReg(OperandType::Float32);
-        loweringCtx.emitInst(MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
+        const auto intermediate = loweringCtx.newVReg(OperandType::Int32);
+        loweringCtx.emitInst(
+            MIRInst{ InstLoadImm }.setOperand<0>(intermediate).setOperand<1>(MIROperand::asImm(rep, OperandType::Int32)));
+        loweringCtx.emitInst(MIRInst{ VMOV_GPR2FPR }.setOperand<0>(dst).setOperand<1>(intermediate));
+        // TODO: use VMOV_Constant
+        // loweringCtx.emitInst(
+        //     MIRInst{ VMOV_Constant }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
         return dst;
     }
     return MIROperand{};

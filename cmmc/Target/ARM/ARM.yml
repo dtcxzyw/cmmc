@@ -157,6 +157,7 @@ InstInfo:
 
   VMOV:
     Format: vmov.f32 $Fd:FPR[Def], $Fm:FPR[Use]
+    Flag: [RegCopy]
 
   VMOV_GPR2FPR:
     Format: vmov $Sn:FPR[Def], $Rd:GPR[Use]
@@ -166,6 +167,19 @@ InstInfo:
 
   VMOV_Constant:
     Format: vmov.f32 $Fd:FPR[Def], $Imm:FP32[Metadata]
+    Flag: [LoadConstant]
+
+  PUSH:
+    Format: push $List:RegList[Metadata]
+    Flag: [Store]
+
+  POP:
+    Format: pop $List:RegList[Metadata]
+    Flag: [Load]
+
+  MOVT_MOVW_PAIR:
+    Format: movt_movw_pair $Rd:GPR[Def], $Hi:UImm16[Metadata], $Lo:UImm16[Metadata]
+    Flag: [LegalizePreRA]
 
 InstSelection:
   - Pattern:
@@ -214,13 +228,21 @@ InstSelection:
         Imm: $Imm
         $Predicate: selectGenericImm32($Imm, [$Hi], [$Lo])
     Replace:
-      MOVT:
+      MOVT_MOVW_PAIR:
         Rd: $Dst
-        Imm: $Hi
-        Rs:
-          MOVW:
-            Rd: $Dst
-            Imm: $Lo
+        Hi: $Hi
+        Lo: $Lo
+
+  - Pattern:
+      InstLoadImm:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: selectGenericImm32($Imm, [$Hi], [$Lo])
+    Replace:
+      MOVT_MOVW_PAIR:
+        Rd: $Dst
+        Hi: $Hi
+        Lo: $Lo
 
   - Pattern:
       InstAdd:
@@ -364,8 +386,8 @@ InstSelection:
         Fd: $Dst
         Rm:
           VMOV_GPR2FPR:
-            Rd: getVRegAs(ctx, $Dst)
-            Sn: $Src
+            Sn: getVRegAs(ctx, $Dst)
+            Rd: $Src
 
   - Pattern:
       InstF2S:
@@ -435,6 +457,28 @@ InstSelection:
         $Predicate: isOperandFPR($Dst) && isOperandFPR($Src)
     Replace:
       VNEG_F32:
+        Fd: $Dst
+        Fm: $Src
+
+  - Pattern:
+      VMOV_FPR2GPR:
+        Rd: $Dst
+        Sn:
+          VMOV_GPR2FPR:
+            Rd: $Src
+    Replace:
+      InstCopyToReg:
+        Dst: $Dst
+        Src: $Src
+
+  - Pattern:
+      VMOV_GPR2FPR:
+        Sn: $Dst
+        Rd:
+          VMOV_FPR2GPR:
+            Sn: $Src
+    Replace:
+      VMOV:
         Fd: $Dst
         Fm: $Src
 

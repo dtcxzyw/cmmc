@@ -9,10 +9,12 @@ callee_cmmc_noinline:
 	bx lr
 .globl caller_cmmc_noinline
 caller_cmmc_noinline:
+	push { lr }
 	bl callee_cmmc_noinline
-	bx lr
+	pop { pc }
 .globl ret_forwarding
 ret_forwarding:
+	push { lr }
 	bl getint
 	bl putint
-	bx lr
+	pop { pc }
