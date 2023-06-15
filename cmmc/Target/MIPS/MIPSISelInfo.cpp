@@ -208,6 +208,7 @@ static MIROperand shouldInvertFCmp(const MIROperand& operand) {
     }
 }
 
+/*
 static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, const MIROperand& flip, MIROperand& outLhs,
                               MIROperand& outRhs) {
     if(!(isOperandFPR(lhs) && isOperandFPR(rhs))) {
@@ -220,6 +221,7 @@ static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, cons
     }
     return true;
 }
+*/
 
 CMMC_TARGET_NAMESPACE_END
 

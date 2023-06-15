@@ -15,6 +15,7 @@
 #pragma once
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cstdint>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -30,8 +31,10 @@ enum ARMRegister : uint32_t {
     S16, S17, S18, S19, S20, S21, S22, S23,
     S24, S25, S26, S27, S28, S29, S30, S31,
     FPREnd,
+    CC, FCC
 };
 // clang-format on
+enum class CondField : uint32_t { EQ, NE, HS, LO, MI, PL, HI, LS, GE, LT, GT, LE, AL };
 
 constexpr auto ra = MIROperand::asISAReg(ARM::R14, OperandType::Int32);
 constexpr auto sp = MIROperand::asISAReg(ARM::R13, OperandType::Int32);

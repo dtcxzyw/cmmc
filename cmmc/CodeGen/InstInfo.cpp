@@ -44,8 +44,9 @@ static std::string_view getType(OperandType type) {
             return "hi ";
         case OperandType::LowBits:
             return "lo ";
+        default:
+            reportUnreachable(CMMC_LOCATION());
     }
-    reportUnreachable(CMMC_LOCATION());
 };
 void dumpVirtualReg(std::ostream& out, const MIROperand& operand) {
     out << '[' << getType(operand.type()) << 'v' << (operand.reg() ^ virtualRegBegin) << ']';

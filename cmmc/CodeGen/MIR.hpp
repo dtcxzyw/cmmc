@@ -77,9 +77,13 @@ enum class OperandType : uint32_t {
     Int64,
     Float32,
     Special,
-    // %hi/%lo for absolute relocatable addresses
+    // %hi/%lo for relocatable addresses
     HighBits,
-    LowBits
+    LowBits,
+    // ARM condition field
+    CondField,
+    // ARM rlist
+    RegList,
 };
 
 constexpr bool isIntegerType(OperandType type) {

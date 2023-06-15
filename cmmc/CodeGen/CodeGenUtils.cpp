@@ -111,7 +111,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
 }
 
 [[noreturn]] void reportLegalizationFailure(const MIRInst& inst, const CodeGenContext& ctx, const DiagLocation& location) {
-    std::cerr << "Failed to legalizing inst: ";
+    std::cerr << "Failed to legalize inst: ";
     auto& instInfo = ctx.instInfo.getInstInfo(inst);
     instInfo.print(std::cerr, inst, true);
     std::cerr << '\n';

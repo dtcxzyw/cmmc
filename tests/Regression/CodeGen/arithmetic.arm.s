@@ -34,11 +34,10 @@ and_imm:
 	bx lr
 .globl and_large_imm
 and_large_imm:
-	push { r4, r5 }
-	mov r4, #262144
-	and r5, r0, r4
-	mov r0, r5
-	pop { r4, r5 }
+	push { r4 }
+	and r4, r0, #262144
+	mov r0, r4
+	pop { r4 }
 	bx lr
 .globl and_reg
 and_reg:
@@ -56,11 +55,10 @@ or_imm:
 	bx lr
 .globl or_large_imm
 or_large_imm:
-	push { r4, r5 }
-	mov r4, #262144
-	orr r5, r0, r4
-	mov r0, r5
-	pop { r4, r5 }
+	push { r4 }
+	orr r4, r0, #262144
+	mov r0, r4
+	pop { r4 }
 	bx lr
 .globl or_reg
 or_reg:
@@ -78,11 +76,10 @@ xor_imm:
 	bx lr
 .globl xor_large_imm
 xor_large_imm:
-	push { r4, r5 }
-	mov r4, #262144
-	eor r5, r0, r4
-	mov r0, r5
-	pop { r4, r5 }
+	push { r4 }
+	eor r4, r0, #262144
+	mov r0, r4
+	pop { r4 }
 	bx lr
 .globl xor_reg
 xor_reg:
@@ -277,7 +274,7 @@ large_imm0:
 .globl large_imm1
 large_imm1:
 	movw r0, #58769
-	movt r0, #293 @ Implicit Use: r0
+	movt r0, #293
 	bx lr
 .globl fp_zero
 fp_zero:
@@ -297,7 +294,7 @@ fp_imm0:
 fp_imm1:
 	push { r4 }
 	movw r4, #4058
-	movt r4, #16457 @ Implicit Use: r4
+	movt r4, #16457
 	mov r0, r4
 	pop { r4 }
 	bx lr

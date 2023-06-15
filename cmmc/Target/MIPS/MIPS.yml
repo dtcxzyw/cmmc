@@ -957,22 +957,23 @@ InstSelection:
         Rt: $Rhs
         Cond: $Cond
 
-  - Pattern:
-      InstSelect:
-        Dst: $Dst
-        Cond:
-          FCC2GPR:
-            Rs: $CC
-            Flip: $Flip
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
-    Replace:
-      Select_FCC_FPR_FPR:
-        Rd: $Dst
-        Rs: $OutLhs
-        Rt: $OutRhs
-        Cond: $CC
+  # - Pattern:
+  #     InstSelect:
+  #       Dst: $Dst
+  #       Cond:
+  #         # FIXME: CC should not be redefined
+  #         FCC2GPR:
+  #           Rs: $CC
+  #           Flip: $Flip
+  #       Lhs: $Lhs
+  #       Rhs: $Rhs
+  #       $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
+  #   Replace:
+  #     Select_FCC_FPR_FPR:
+  #       Rd: $Dst
+  #       Rs: $OutLhs
+  #       Rt: $OutRhs
+  #       Cond: $CC
 
   - Pattern:
       InstSelect:

@@ -13,6 +13,7 @@
 */
 
 #include <ARM/InstInfoDecl.hpp>
+#include <cassert>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
@@ -45,6 +46,10 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             out << getARMGPRTextualName(static_cast<ARMRegister>(op.reg()));
         else if(isOperandFPR(op))
             out << "s" << (op.reg() - FPRBegin);
+        else if(op.reg() == ARM::CC)
+            out << "APSR_nzcv";
+        else if(op.reg() == ARM::FCC)
+            out << "fpcsr";
         else if(op.reg() == invalidReg) {
             out << "invalid";
         } else if(isStackObject(op.reg())) {
@@ -60,7 +65,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             float f;
             memcpy(&f, &u, sizeof(float));
             out << '#' << f;
-        } else if(op.type() == OperandType::Special) {
+        } else if(op.type() == OperandType::RegList) {
             // reg list
             out << "{ ";
             auto encode = static_cast<uint64_t>(op.imm());
@@ -74,6 +79,10 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                 out << getARMGPRTextualName(static_cast<ARMRegister>(reg));
             }
             out << " }";
+        } else if(op.type() == OperandType::CondField) {
+            constexpr const char* lut[13] = { "eq", "ne", "hs", "lo", "mi", "pl", "hi", "ls", "ge", "lt", "gt", "le", "" };
+            assert(op.imm() <= static_cast<intmax_t>(CondField::AL));
+            out << lut[op.imm()];
         } else {
             out << '#' << op.imm();
         }
@@ -104,7 +113,19 @@ static bool verifyInstMOVT(const MIRInst& inst) {
 }
 
 static bool isOperandRegList(const MIROperand& op) {
-    return op.isImm() && op.type() == OperandType::Special;
+    return op.isImm() && op.type() == OperandType::RegList;
+}
+
+static bool isOperandCC(const MIROperand& op) {
+    return op.isReg() && op.reg() == ARMRegister::CC;
+}
+
+static bool isOperandFCC(const MIROperand& op) {
+    return op.isReg() && op.reg() == ARMRegister::FCC;
+}
+
+static bool isOperandCondField(const MIROperand& op) {
+    return op.isImm() && (0 <= op.imm() && op.imm() <= static_cast<intmax_t>(CondField::AL));
 }
 
 CMMC_TARGET_NAMESPACE_END

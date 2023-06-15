@@ -42,6 +42,7 @@ enum InstFlag : uint32_t {
     InstFlagLegalizePreRA = 1 << 11,
     InstFlagWithDelaySlot = 1 << 12,
     InstFlagRegCopy = 1 << 13,
+    InstFlagConditional = 1 << 14,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
         InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot
 };

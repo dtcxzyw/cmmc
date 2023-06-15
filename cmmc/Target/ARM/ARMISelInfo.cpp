@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Config.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
@@ -43,6 +42,10 @@ static MIROperand getZero(const MIROperand& operand) {
     return MIROperand::asImm(0, operand.type());
 }
 
+static MIROperand getOne(const MIROperand& operand) {
+    return MIROperand::asImm(1, operand.type());
+}
+
 static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInverted) {
     if(imm.isImm()) {
         immInverted = MIROperand::asImm(~imm.imm(), imm.type());
@@ -61,6 +64,66 @@ static bool selectGenericImm32(const MIROperand& imm, MIROperand& hi, MIROperand
     return true;
 }
 
+static MIROperand getCC() {
+    return MIROperand::asISAReg(ARM::CC, OperandType::Special);
+}
+
+static MIROperand getFCC() {
+    return MIROperand::asISAReg(ARM::FCC, OperandType::Special);
+}
+
+static MIROperand getCondFieldSCmp(const MIROperand& op) {
+    const auto cmp = static_cast<CompareOp>(op.imm());
+    CondField field = CondField::AL;
+    switch(cmp) {
+        case CompareOp::LessThan:
+            field = CondField::LT;
+            break;
+        case CompareOp::LessEqual:
+            field = CondField::LE;
+            break;
+        case CompareOp::GreaterThan:
+            field = CondField::GT;
+            break;
+        case CompareOp::GreaterEqual:
+            field = CondField::GE;
+            break;
+        case CompareOp::Equal:
+            field = CondField::EQ;
+            break;
+        case CompareOp::NotEqual:
+            field = CondField::NE;
+            break;
+    }
+    return MIROperand::asImm(field, OperandType::CondField);
+}
+
+static MIROperand getCondFieldFCmp(const MIROperand& op) {
+    const auto cmp = static_cast<CompareOp>(op.imm());
+    CondField field = CondField::AL;
+    switch(cmp) {
+        case CompareOp::LessThan:
+            field = CondField::MI;
+            break;
+        case CompareOp::LessEqual:
+            field = CondField::LS;
+            break;
+        case CompareOp::GreaterThan:
+            field = CondField::GT;
+            break;
+        case CompareOp::GreaterEqual:
+            field = CondField::GE;
+            break;
+        case CompareOp::Equal:
+            field = CondField::EQ;
+            break;
+        case CompareOp::NotEqual:
+            field = CondField::NE;
+            break;
+    }
+    return MIROperand::asImm(field, OperandType::CondField);
+}
+
 /*
 static ARMInst getBranchEqualityOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
@@ -73,10 +136,7 @@ static ARMInst getBranchEqualityOpcode(const MIROperand& operand) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
-
-static MIROperand getOne(const MIROperand& operand) {
-    return MIROperand::asImm(1, operand.type());
-}
+*/
 
 static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
     const auto addrInst = ctx.lookupDef(addr);
@@ -143,6 +203,7 @@ static ARMInst getStoreOpcode(const MIROperand& src) {
     }
 }
 
+/*
 static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
     if(isOperandIReg(src))
         return src;
@@ -200,18 +261,14 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
     }
     const auto imm2reg = [&](MIROperand& operand) {
         if(operand.isImm()) {
-            if(operand.imm() == 0) {
-                operand = getZero(operand);
-            } else {
-                const auto reg = getVRegAs(ctx, operand);
-                ctx.newInst(InstLoadImm).setOperand<0>(reg).setOperand<1>(operand);
-                operand = reg;
-            }
+            const auto reg = getVRegAs(ctx, operand);
+            ctx.newInst(InstLoadImm).setOperand<0>(reg).setOperand<1>(operand);
+            operand = reg;
             modified = true;
         }
     };
-    const auto largeImm2reg = [&](MIROperand& operand) {
-        if(operand.isImm() && !isOperandImm13(operand)) {
+    const auto nonOp2Imm2reg = [&](MIROperand& operand) {
+        if(!isOperandOp2Constant(operand)) {
             imm2reg(operand);
         }
     };
@@ -229,14 +286,14 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             MIRGenericInst symmetryOp = inst.opcode() == InstAdd ? InstSub : InstAdd;
             if(rhs.isImm()) {
                 auto neg = getNeg(rhs);
-                if(isOperandOp2(neg)) {
+                if(isOperandOp2Constant(neg)) {
                     rhs = neg;
                     inst.setOpcode(symmetryOp);
                     modified = true;
                     break;
                 }
             }
-            imm2reg(rhs);
+            nonOp2Imm2reg(rhs);
             break;
         }
         case InstAnd:
@@ -247,7 +304,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            largeImm2reg(rhs);
+            nonOp2Imm2reg(rhs);
             break;
         }
         case InstNeg: {
@@ -282,33 +339,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
 
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
-            // a <= c -> a < c + 1 (if no overflow occurs)
-            if(isLessEqualOp(op) && isOperandImm(rhs) && rhs.imm() < getMaxSignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::LessThan, OperandType::Special);
-                rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
-                modified = true;
-            }
-            // a >= c -> a > c - 1 (if no overflow occurs)
-            if(isGreaterEqualOp(op) && isOperandImm(rhs) && rhs.imm() > getMinSignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::GreaterThan, OperandType::Special);
-                rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
-                modified = true;
-            }
-            if(isGreaterThanOrGreaterEqualOp(op)) {
-                std::swap(lhs, rhs);
-                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
-                modified = true;
-            }
             imm2reg(lhs);
-            if(isEqualityOp(op) && !isZero(rhs)) {
-                const auto dst = getVRegAs(ctx, lhs);
-                ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
-                lhs = dst;
-                rhs = getZero(rhs);
-                modified = true;
-            } else {
-                largeImm2reg(rhs);
-            }
+            nonOp2Imm2reg(rhs);
             break;
         }
         case InstZExt: {
@@ -330,6 +362,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(cond);
             auto& lhs = inst.getOperand(2);
             imm2reg(lhs);
+            auto& rhs = inst.getOperand(3);
+            imm2reg(rhs);
             break;
         }
         case InstShl:
@@ -408,8 +442,40 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto dst = inst.getOperand(0);
             auto hi = inst.getOperand(1);
             auto lo = inst.getOperand(2);
-            ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
-            *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
+            if(hi.imm() != 0) {
+                ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
+                *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
+            } else {
+                *ctx.iter = MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo);
+            }
+            break;
+        }
+        case NZCVFlag2GPR: {
+            auto dst = inst.getOperand(0);
+            auto cc = inst.getOperand(1);
+            auto cf = inst.getOperand(2);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOV }.setOperand<0>(dst).setOperand<1>(getZero(dst)));
+            *ctx.iter = MIRInst{ MOVW_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(getOne(dst)).setOperand<3>(cc);
+            break;
+        }
+        case Select_GPR: {
+            auto dst = inst.getOperand(0);
+            auto lhs = inst.getOperand(1);
+            auto rhs = inst.getOperand(2);
+            auto cc = inst.getOperand(3);
+            auto cf = inst.getOperand(4);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOV }.setOperand<0>(dst).setOperand<1>(rhs));
+            *ctx.iter = MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
+            break;
+        }
+        case Select_FPR: {
+            auto dst = inst.getOperand(0);
+            auto lhs = inst.getOperand(1);
+            auto rhs = inst.getOperand(2);
+            auto cc = inst.getOperand(3);
+            auto cf = inst.getOperand(4);
+            ctx.instructions.insert(ctx.iter, MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(rhs));
+            *ctx.iter = MIRInst{ VMOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
             break;
         }
         default:
@@ -539,7 +605,7 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
             const auto reg = location.at(static_cast<intmax_t>(idx) * 4).reg();
             encode |= static_cast<uint64_t>(reg) << ((idx + 1) * 4);
         }
-        instructions.push_front(MIRInst{ PUSH }.setOperand<0>(MIROperand::asImm(encode, OperandType::Special)));
+        instructions.push_front(MIRInst{ PUSH }.setOperand<0>(MIROperand::asImm(encode, OperandType::RegList)));
     }();
 
     // restore
@@ -586,7 +652,7 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
             }
             encode |= static_cast<uint64_t>(reg) << ((idx + 1) * 4);
         }
-        const auto popInst = MIRInst{ POP }.setOperand<0>(MIROperand::asImm(encode, OperandType::Special));
+        const auto popInst = MIRInst{ POP }.setOperand<0>(MIROperand::asImm(encode, OperandType::RegList));
         if(directRet)
             *iter = popInst;
         else {

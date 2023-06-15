@@ -14,7 +14,6 @@
 
 // arm eabi
 
-#include "cmmc/Config.hpp"
 #include <ARM/ISelInfoDecl.hpp>
 #include <ARM/InstInfoDecl.hpp>
 #include <ARM/ScheduleModelDecl.hpp>
