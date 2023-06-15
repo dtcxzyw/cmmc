@@ -14,12 +14,18 @@ arr:
 .fpu neon
 .globl load
 load:
-	push { r4, r5, r6 }
+	sub sp, sp, #16
+	str r4, [sp, #0]
+	str r5, [sp, #4]
+	str r6, [sp, #8]
 	lsl r4, r1, #2
 	add r5, r0, r4
 	ldr r6, [r5, #0]
 	mov r0, r6
-	pop { r4, r5, r6 }
+	ldr r6, [sp, #8]
+	ldr r5, [sp, #4]
+	ldr r4, [sp, #0]
+	add sp, sp, #16
 	bx lr
 .globl store
 store:
@@ -31,17 +37,21 @@ store:
 	bx lr
 .globl gep_const
 gep_const:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	ldr r4, [r0, #12]
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl lb
 lb:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	ldrsb r4, [r0, #1]
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl sb
 sb:
@@ -50,7 +60,8 @@ sb:
 .globl global_addressing_scalar
 global_addressing_scalar:
 	push { r4, r5 }
-	adr r4, y
+	movw r4, #:lower16:y
+	movt r4, #:upper16:y
 	ldr r5, [r4, #0]
 	mov r0, r5
 	pop { r4, r5 }
@@ -58,7 +69,8 @@ global_addressing_scalar:
 .globl global_addressing_array
 global_addressing_array:
 	push { r4, r5, r6, r7 }
-	adr r4, arr
+	movw r4, #:lower16:arr
+	movt r4, #:upper16:arr
 	lsl r5, r0, #2
 	add r6, r4, r5
 	ldr r7, [r6, #0]

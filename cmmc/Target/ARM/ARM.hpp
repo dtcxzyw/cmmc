@@ -70,6 +70,8 @@ constexpr bool isOperandUImm32(const MIROperand& operand) {
 }
 
 constexpr bool isOperandUImm16(const MIROperand& operand) {
+    if(operand.isReloc() && operand.type() != OperandType::Special)
+        return true;
     return operand.isImm() && isUnsignedImm<16>(operand.imm());
 }
 
@@ -87,7 +89,7 @@ constexpr bool isOperandOp2Constant(const MIROperand& operand) {
 
     const auto imm = static_cast<uint32_t>(operand.imm());
     const auto immLong = static_cast<uint64_t>(imm) << 32 | imm;
-    for(int i = 0; i < 32; i++)
+    for(int i = 0; i < 32; i += 2)
         if(((immLong >> i) & 0xFFFFFFFF) < (1 << 8))
             return true;
     return false;
@@ -109,7 +111,7 @@ constexpr bool isOperandFPR(const MIROperand& operand) {
 }
 
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm);
+                                  int64_t& imm, bool isVFP);
 // dst = src + imm
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
                int64_t imm);

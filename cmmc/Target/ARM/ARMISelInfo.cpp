@@ -475,6 +475,13 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             *ctx.iter = MIRInst{ VMOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
             break;
         }
+        case LoadGlobalAddr: {
+            auto dst = inst.getOperand(0);
+            auto reloc = inst.getOperand(1);
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(getLowBits(reloc)));
+            *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(getHighBits(reloc)).setOperand<2>(dst);
+            break;
+        }
         default:
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
     }
@@ -484,12 +491,16 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
     int64_t immVal = obj.offset;
     MIROperand base = sp;
-    legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal);
+
+    if(inst.opcode() != InstLoadStackObjectAddr)
+        legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal, !isOperandGPR(inst.getOperand(0)));
+
     const auto imm = MIROperand::asImm(immVal, OperandType::Int32);
     switch(inst.opcode()) {
         case InstLoadStackObjectAddr: {
             assert(checkOpIdx(1));
-            inst.setOpcode(ADD).setOperand<1>(base).setOperand<2>(imm);
+            adjustReg(ctx.instructions, ctx.iter, inst.getOperand(0), base, imm.imm());
+            ctx.instructions.erase(ctx.iter);
             break;
         }
         case InstStoreRegToStack: {
@@ -524,17 +535,28 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
 
 constexpr auto scratch = MIROperand::asISAReg(ARM::R12, OperandType::Int32);  // use $v1
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm) {
-    CMMC_UNUSED(instructions);
-    CMMC_UNUSED(iter);
-    CMMC_UNUSED(base);
+                                  int64_t& imm, bool isVFP) {
     assert(isSignedImm<32>(imm));
-    if(isSignedImm<13>(imm)) {
-        return;
+    if(isVFP) {
+        if(0 <= imm && imm <= 1020 && imm % 4 == 0)
+            return;
+    } else {
+        if(isSignedImm<13>(imm)) {
+            return;
+        }
     }
 
-    CMMC_UNUSED(scratch);
-    reportNotImplemented(CMMC_LOCATION());
+    uint32_t immLiteral = static_cast<uint32_t>(imm);
+    instructions.insert(
+        iter, MIRInst{ MOVW }.setOperand<0>(scratch).setOperand<1>(MIROperand::asImm(immLiteral & 0xFFFF, OperandType::Int32)));
+    if(immLiteral >= (1 << 16))
+        instructions.insert(iter,
+                            MIRInst{ MOVT }
+                                .setOperand<0>(scratch)
+                                .setOperand<1>(MIROperand::asImm(immLiteral >> 16, OperandType::Int32))
+                                .setOperand<2>(scratch));
+    base = scratch;
+    imm = 0;
 }
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
                int64_t imm) {
@@ -542,14 +564,26 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
         return;
 
     // FIXME
-    if(imm >= 0)
-        instructions.insert(
-            iter, MIRInst{ ADD }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(MIROperand::asImm(imm, OperandType::Int64)));
-    else {
-        instructions.insert(
-            iter,
-            MIRInst{ SUB }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(MIROperand::asImm(-imm, OperandType::Int64)));
+    uint32_t inst = ADD;
+    if(imm < 0) {
+        inst = SUB;
+        imm = -imm;
     }
+    auto immOp = MIROperand::asImm(imm, OperandType::Int64);
+
+    if(!isOperandOp2Constant(immOp)) {
+        instructions.insert(
+            iter, MIRInst{ MOVW }.setOperand<0>(scratch).setOperand<1>(MIROperand::asImm(imm & 0xFFFF, OperandType::Int32)));
+        if(imm >= (1 << 16))
+            instructions.insert(iter,
+                                MIRInst{ MOVT }
+                                    .setOperand<0>(scratch)
+                                    .setOperand<1>(MIROperand::asImm(imm >> 16, OperandType::Int32))
+                                    .setOperand<2>(scratch));
+        immOp = scratch;
+    }
+
+    instructions.insert(iter, MIRInst{ inst }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(immOp));
 }
 void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
     CMMC_UNUSED(ctx);
@@ -581,13 +615,13 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
         intmax_t size;
         if(!matchAdjustSp(instructions.front(), size))
             return;
-        std::unordered_map<intmax_t, MIROperand> location;
+        std::vector<uint32_t> location;
         auto iter = std::next(instructions.begin());
         for(; iter != instructions.end(); ++iter) {
             MIROperand reg;
             intmax_t pos;
             if(matchStackPushPop(STR, *iter, reg, pos)) {
-                location.emplace(pos, reg);
+                location.push_back(reg.reg());
             } else
                 break;
         }
@@ -598,8 +632,9 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
             return;
         instructions.erase(instructions.begin(), iter);
         uint64_t encode = location.size();
+        std::sort(location.begin(), location.end());
         for(uint32_t idx = 0; idx < location.size(); ++idx) {
-            const auto reg = location.at(static_cast<intmax_t>(idx) * 4).reg();
+            const auto reg = location[idx];
             encode |= static_cast<uint64_t>(reg) << ((idx + 1) * 4);
         }
         instructions.push_front(MIRInst{ PUSH }.setOperand<0>(MIROperand::asImm(encode, OperandType::RegList)));
@@ -620,13 +655,13 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
         if(!matchAdjustSp(*prev, size))
             continue;
 
-        std::unordered_map<intmax_t, MIROperand> location;
+        std::vector<uint32_t> location;
         auto it = std::prev(prev);
         while(it != instructions.begin()) {
             MIROperand reg;
             intmax_t pos;
             if(matchStackPushPop(LDR, *it, reg, pos)) {
-                location.emplace(pos, reg);
+                location.push_back(reg.reg());
                 it = std::prev(it);
             } else
                 break;
@@ -639,9 +674,10 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
             continue;
         instructions.erase(std::next(it), iter);
         uint64_t encode = location.size();
+        std::sort(location.begin(), location.end());
         bool directRet = false;
         for(uint32_t idx = 0; idx < location.size(); ++idx) {
-            auto reg = location.at(static_cast<intmax_t>(idx) * 4).reg();
+            auto reg = location[idx];
             // lr -> pc
             if(reg == ARM::R14) {
                 reg = ARM::R15;

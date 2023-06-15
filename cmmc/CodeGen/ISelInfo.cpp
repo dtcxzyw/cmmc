@@ -225,7 +225,8 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     if(ctx.flags.postSA) {
         for(auto& block : func.blocks()) {
             auto& instructions = block->instructions();
-            for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            for(auto iter = instructions.begin(); iter != instructions.end();) {
+                auto nextIter = std::next(iter);
                 auto& inst = *iter;
                 auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
@@ -234,6 +235,7 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
                                                                   func.stackObjects().at(op));
                     }
                 }
+                iter = nextIter;
             }
         }
     }

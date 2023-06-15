@@ -70,7 +70,7 @@ public:
             (ARM::S16 <= reg && reg <= ARM::S31);
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 4U;  // 4-byte aligned
+        return 8U;  // 4-byte aligned
     }
     void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
                             std::optional<int32_t> raOffset) const override;
@@ -345,7 +345,7 @@ void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenCo
         int64_t offset = *raOffset;
         MIROperand base = ARM::sp;
         const auto iter = instructions.begin();
-        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
+        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset, false);
         instructions.insert(iter,
                             MIRInst{ ARM::STR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
                                 MIROperand::asImm(offset, OperandType::Int32)));
@@ -361,7 +361,7 @@ void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenCon
     if(raOffset) {
         int64_t offset = *raOffset;
         MIROperand base = ARM::sp;
-        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
+        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset, false);
         instructions.insert(iter,
                             MIRInst{ ARM::LDR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
                                 MIROperand::asImm(offset, OperandType::Int32)));

@@ -209,9 +209,9 @@ InstInfo:
     Format: select_fpr $Rd:FPR[Def], $Rn:FPR[Use], $Rm:FPR[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
 
-  ADR:
-    Format: adr $Rd:GPR[Def], $Reloc:Reloc[Metadata]
-    Flag: [LoadConstant]
+  LoadGlobalAddr:
+    Format: load_global_address $Rd:GPR[Def], $Reloc:Reloc[Metadata]
+    Flag: [LoadConstant, LegalizePreRA]
 
 InstSelection:
   - Pattern:
@@ -550,7 +550,7 @@ InstSelection:
         Dst: $Dst
         Addr: $Addr
     Replace:
-      ADR:
+      LoadGlobalAddr:
         Rd: $Dst
         Reloc: $Addr
 

@@ -49,7 +49,7 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         else if(op.reg() == ARM::CC)
             out << "APSR_nzcv";
         else if(op.reg() == ARM::FCC)
-            out << "fpcsr";
+            out << "FPSCR";
         else if(op.reg() == invalidReg) {
             out << "invalid";
         } else if(isStackObject(op.reg())) {
@@ -92,6 +92,11 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
         return out << op.prob();
     }
     if(op.isReloc()) {
+        if(op.type() == OperandType::HighBits) {
+            out << "#:upper16:";
+        } else if(op.type() == OperandType::LowBits) {
+            out << "#:lower16:";
+        }
         op.reloc()->dumpAsTarget(out);
         return out;
     }

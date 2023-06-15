@@ -6,101 +6,129 @@
 .fpu neon
 .globl add_imm
 add_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	add r4, r0, #1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl add_large_imm
 add_large_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	add r4, r0, #262144
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl add_reg
 add_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	add r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl and_imm
 and_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	and r4, r0, #1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl and_large_imm
 and_large_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	and r4, r0, #262144
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl and_reg
 and_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	and r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl or_imm
 or_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	orr r4, r0, #1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl or_large_imm
 or_large_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	orr r4, r0, #262144
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl or_reg
 or_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	orr r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl xor_imm
 xor_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	eor r4, r0, #1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl xor_large_imm
 xor_large_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	eor r4, r0, #262144
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl xor_reg
 xor_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	eor r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl sub_imm
 sub_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	sub r4, r0, #1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl sub_reg
 sub_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	sub r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl mul_imm
 mul_imm:
@@ -112,10 +140,12 @@ mul_imm:
 	bx lr
 .globl mul_reg
 mul_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	mul r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl div_imm
 div_imm:
@@ -139,31 +169,39 @@ mod_reg:
 	bx lr
 .globl shl_imm
 shl_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	lsl r4, r0, #3
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl shl_reg
 shl_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	lsl r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl ashr_imm
 ashr_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	asr r4, r0, #3
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl ashr_reg
 ashr_reg:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	asr r4, r0, r1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl s2f
 s2f:
@@ -173,12 +211,14 @@ s2f:
 	bx lr
 .globl f2s
 f2s:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	vmov s0, r0
 	vcvt.s32.f32 s1, s0
 	vmov r4, s1
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fadd
 fadd:
@@ -189,13 +229,15 @@ fadd:
 	bx lr
 .globl fadd_imm
 fadd_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	vmov s0, r0
 	mov r4, #1065353216
 	vmov s1, r4
 	vadd.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fadd_identity
 fadd_identity:
@@ -209,13 +251,15 @@ fsub:
 	bx lr
 .globl fsub_imm
 fsub_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	vmov s0, r0
 	mov r4, #1065353216
 	vmov s1, r4
 	vsub.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fmul
 fmul:
@@ -239,13 +283,15 @@ fdiv:
 	bx lr
 .globl fdiv_imm
 fdiv_imm:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	vmov s0, r0
 	mov r4, #1056964608
 	vmov s1, r4
 	vmul.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fneg
 fneg:
@@ -272,23 +318,29 @@ large_imm1:
 	bx lr
 .globl fp_zero
 fp_zero:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	mov r4, #0
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fp_imm0
 fp_imm0:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	mov r4, #1090519040
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl fp_imm1
 fp_imm1:
-	push { r4 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
 	movw r4, #4058
 	movt r4, #16457
 	mov r0, r4
-	pop { r4 }
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
