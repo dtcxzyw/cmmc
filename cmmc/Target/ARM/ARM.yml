@@ -110,14 +110,14 @@ InstInfo:
         Mnemonic: ldrsb
 
   VSTR:
-    Format: $Mnemonic:Template $Fd:FPR[Use] [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
     Flag: [Store]
     Instances:
       VSTR:
         Mnemonic: vstr
 
   Store:
-    Format: $Mnemonic:Template $Rd:GPR[Use] [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
     Flag: [Store]
     Instances:
       STR:
@@ -561,6 +561,64 @@ InstSelection:
       B:
         Tgt: $Tgt
 
+  - Pattern:
+      InstBranch:
+        Cond:
+          NZCVFlag2GPR:
+            Rd: $Cond
+            CC: $CC
+            CF: $CF
+            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+        Tgt: $Reloc
+        Prob: $Prob
+        $Predicate: isOperandIReg($Cond)
+    Replace:
+      B_Cond:
+        CC: $CC
+        CF: $CF
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          NZCVFlag2GPR:
+            Rd: $Cond
+            CC: $CC
+            CF: $CF
+            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst)
+    Replace:
+      Select_GPR:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Rhs
+        CC: $CC
+        CF: $CF
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          NZCVFlag2GPR:
+            Rd: $Cond
+            CC: $CC
+            CF: $CF
+            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandFPR($Dst)
+    Replace:
+      Select_FPR:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Rhs
+        CC: $CC
+        CF: $CF
+
   # Fallbacks for cmp/branch/select
   - Pattern:
       InstSCmp:
@@ -604,30 +662,12 @@ InstSelection:
         Cond: $Cond
         Tgt: $Reloc
         Prob: $Prob
-        $Predicate: isOperandIReg($Cond)
+        $Predicate: isOperandIReg($Cond) && isNotCmp(ctx, $Cond)
     Replace:
       CBNZ:
         Rn: $Cond
         Tgt: $Reloc
         Prob: $Prob
-
-  # - Pattern:
-  #     InstSelect:
-  #       Dst: $Dst
-  #       Cond:
-  #         # FIXME: CC should not be redefined
-  #         NZCVFlag2GPR:
-  #           CC: $CC
-  #           CF: $CF
-  #       Lhs: $Lhs
-  #       Rhs: $Rhs
-  #       $Predicate: isOperandIReg($Dst)
-  #   Replace:
-  #     Select_GPR:
-  #       Dst: $Dst
-  #       Lhs: $Lhs
-  #       Rhs: $Rhs
-  #       CF: $CF
 
   - Pattern:
       InstSelect:
@@ -635,7 +675,7 @@ InstSelection:
         Cond: $Cond
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotCmp(ctx, $Cond)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -654,7 +694,7 @@ InstSelection:
         Cond: $Cond
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandFPR($Dst)
+        $Predicate: isOperandFPR($Dst) && isNotCmp(ctx, $Cond)
     Replace:
       Select_FPR:
         Rd: $Dst

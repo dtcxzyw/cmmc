@@ -28,7 +28,7 @@ binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '3'
-fast_fail = False
+fast_fail = True
 generate_ref = False
 assert os.path.exists(rars_path)
 targets = ['mips', 'riscv', 'arm']

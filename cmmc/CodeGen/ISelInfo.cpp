@@ -204,6 +204,22 @@ void ISelContext::replaceOperand(const MIROperand& src, const MIROperand& dst) {
     assert(src.isReg());
     mReplaceList.emplace(src, dst);
 }
+bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst) const {
+    auto iter = mInsertPoint;
+    while(true) {
+        if(iter == mCurrentBlock->instructions().begin())
+            return false;
+        iter = std::prev(iter);
+        if(&(*iter) == &inst)
+            return false;
+        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
+            if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                if(operand == inst.getOperand(idx))
+                    return true;
+            }
+    }
+}
 
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     if(ctx.flags.postSA) {

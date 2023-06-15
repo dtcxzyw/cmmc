@@ -26,7 +26,7 @@ store:
 	push { r4, r5 }
 	lsl r4, r1, #2
 	add r5, r0, r4
-	str r2 [r5, #0]
+	str r2, [r5, #0]
 	pop { r4, r5 }
 	bx lr
 .globl gep_const
@@ -45,7 +45,7 @@ lb:
 	bx lr
 .globl sb
 sb:
-	strb r1 [r0, #1]
+	strb r1, [r0, #1]
 	bx lr
 .globl global_addressing_scalar
 global_addressing_scalar:

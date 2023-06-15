@@ -119,18 +119,12 @@ mul_reg:
 	bx lr
 .globl div_imm
 div_imm:
-	push { r4, r5 }
-	mov r4, #3
-	sdiv r5, r0, r4
-	mov r0, r5
-	pop { r4, r5 }
+	mov r1, #3
+	bl __aeabi_idiv
 	bx lr
 .globl div_reg
 div_reg:
-	push { r4 }
-	sdiv r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	bl __aeabi_idiv
 	bx lr
 .globl mod_imm
 mod_imm:

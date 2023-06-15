@@ -203,18 +203,15 @@ static ARMInst getStoreOpcode(const MIROperand& src) {
     }
 }
 
-/*
-static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
-    if(isOperandIReg(src))
-        return src;
-    if(isZero(src)) {
-        return getZero(src);
+static bool isNotCmp(const ISelContext& ctx, const MIROperand& cond) {
+    const auto inst = ctx.lookupDef(cond);
+    if(inst) {
+        const auto opcode = inst->opcode();
+        if(opcode == InstSCmp || opcode == InstUCmp || opcode == InstFCmp)
+            return false;
     }
-    auto dst = getVRegAs(ctx, src);
-    ctx.newInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(src);
-    return dst;
+    return true;
 }
-*/
 
 CMMC_TARGET_NAMESPACE_END
 
@@ -517,7 +514,7 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
             [[fallthrough]];
         case LDRB: {
             assert(checkOpIdx(2));
-            inst.setOperand<2>(base).setOperand<1>(imm);
+            inst.setOperand<1>(base).setOperand<2>(imm);
             break;
         }
         default:
@@ -702,6 +699,33 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         loweringCtx.emitCopy(MIROperand::asISAReg(ARM::R1, OperandType::Int32), rhs);
         loweringCtx.emitInst(MIRInst{ BL }.setOperand<0>(MIROperand::asReloc(func)));
         loweringCtx.emitCopy(ret, MIROperand::asISAReg(ARM::R1, OperandType::Int32));
+        loweringCtx.addOperand(inst, ret);
+        return true;
+    }
+    if(inst->getInstID() == InstructionID::SDiv) {
+        if(!inst->getType()->isSame(IntegerType::get(32)))
+            return false;
+        auto lhs = loweringCtx.mapOperand(inst->getOperand(0));
+        auto rhs = loweringCtx.mapOperand(inst->getOperand(1));
+        const auto ret = loweringCtx.newVReg(OperandType::Int32);
+
+        auto& globals = loweringCtx.getModule().globals();
+        const auto abiName = "__aeabi_idiv";
+        MIRRelocable* func = nullptr;
+        for(auto& global : globals)
+            if(global->reloc->symbol() == abiName) {
+                func = global->reloc.get();
+            }
+        if(!func) {
+            globals.push_back(
+                std::make_unique<MIRGlobal>(Linkage::Internal, 0, std::make_unique<MIRFunction>(String::get(abiName))));
+            func = globals.back()->reloc.get();
+        }
+
+        loweringCtx.emitCopy(MIROperand::asISAReg(ARM::R0, OperandType::Int32), lhs);
+        loweringCtx.emitCopy(MIROperand::asISAReg(ARM::R1, OperandType::Int32), rhs);
+        loweringCtx.emitInst(MIRInst{ BL }.setOperand<0>(MIROperand::asReloc(func)));
+        loweringCtx.emitCopy(ret, MIROperand::asISAReg(ARM::R0, OperandType::Int32));
         loweringCtx.addOperand(inst, ret);
         return true;
     }

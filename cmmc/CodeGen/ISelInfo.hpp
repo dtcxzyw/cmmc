@@ -36,6 +36,7 @@ public:
     explicit ISelContext(CodeGenContext& codeGenCtx);
     void runISel(MIRFunction& func);
     MIRInst* lookupDef(const MIROperand& operand) const;
+    bool isDefinedAfter(const MIROperand& operand, const MIRInst& inst) const;
     MIRInst& newInst(uint32_t opcode);
     MIROperand& getInstDef(MIRInst& inst) const;
     std::list<MIRInst>& getInstructions() const;
