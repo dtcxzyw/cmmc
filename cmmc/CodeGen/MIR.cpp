@@ -39,6 +39,9 @@ bool MIRBasicBlock::verify(std::ostream& out, const CodeGenContext& ctx) const {
         if(!info.verify(inst, ctx)) {
             out << "Invalid inst: [" << info.getUniqueName() << "]: ";
             info.print(out, inst, true);
+            if(!inst.checkOperandCount(info.getOperandNum())) {
+                out << " Operand count mismatch\n";
+            }
             out << '\n';
             return false;
         }

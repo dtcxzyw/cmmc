@@ -132,11 +132,15 @@ sub_reg:
 	bx lr
 .globl mul_imm
 mul_imm:
-	push { r4, r5 }
+	sub sp, sp, #8
+	str r4, [sp, #0]
+	str r5, [sp, #4]
 	mov r4, #3
 	mul r5, r0, r4
 	mov r0, r5
-	pop { r4, r5 }
+	ldr r5, [sp, #4]
+	ldr r4, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl mul_reg
 mul_reg:
@@ -149,23 +153,39 @@ mul_reg:
 	bx lr
 .globl div_imm
 div_imm:
+	sub sp, sp, #8
+	str lr, [sp, #0]
 	mov r1, #3
 	bl __aeabi_idiv
+	ldr lr, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl div_reg
 div_reg:
+	sub sp, sp, #8
+	str lr, [sp, #0]
 	bl __aeabi_idiv
+	ldr lr, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl mod_imm
 mod_imm:
+	sub sp, sp, #8
+	str lr, [sp, #0]
 	mov r1, #3
 	bl __aeabi_idivmod
 	mov r0, r1
+	ldr lr, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl mod_reg
 mod_reg:
+	sub sp, sp, #8
+	str lr, [sp, #0]
 	bl __aeabi_idivmod
 	mov r0, r1
+	ldr lr, [sp, #0]
+	add sp, sp, #8
 	bx lr
 .globl shl_imm
 shl_imm:

@@ -150,7 +150,8 @@ void ISelContext::runISel(MIRFunction& func) {
                 func.dump(std::cerr, mCodeGenCtx);
                 std::cerr << "First illegal inst:\n";
                 assert(firstIllegalInst);
-                mCodeGenCtx.instInfo.getInstInfo(*firstIllegalInst).print(std::cerr, *firstIllegalInst, true);
+                auto& info = mCodeGenCtx.instInfo.getInstInfo(*firstIllegalInst);
+                info.print(std::cerr, *firstIllegalInst, true);
                 std::cerr << '\n';
                 DiagnosticsContext::get().attach<Reason>("Failed to select instruction").reportFatal();
             } else {
@@ -213,6 +214,8 @@ bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst)
         if(&(*iter) == &inst)
             return false;
         auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        if(requireFlag(instInfo.getInstFlag(), InstFlag::InstFlagCall))
+            return true;
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
             if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                 if(operand == inst.getOperand(idx))

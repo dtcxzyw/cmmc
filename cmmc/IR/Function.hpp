@@ -72,6 +72,7 @@ class Function final : public GlobalValue {
 public:
     Function(String symbol, const FunctionType* type, Intrinsic intrinsic = Intrinsic::none)
         : GlobalValue{ symbol, type }, mIntrinsic{ intrinsic } {}
+    ~Function() override;
     [[nodiscard]] FuncArgument* getArg(uint32_t idx) const;
     FuncArgument* addArg(const Type* type);
     [[nodiscard]] auto& args() const noexcept {

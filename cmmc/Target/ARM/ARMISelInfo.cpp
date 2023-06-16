@@ -124,20 +124,6 @@ static MIROperand getCondFieldFCmp(const MIROperand& op) {
     return MIROperand::asImm(field, OperandType::CondField);
 }
 
-/*
-static ARMInst getBranchEqualityOpcode(const MIROperand& operand) {
-    const auto op = static_cast<CompareOp>(operand.imm());
-    switch(op) {
-        case CompareOp::Equal:
-            return CBZ;
-        case CompareOp::NotEqual:
-            return CBNZ;
-        default:
-            reportUnreachable(CMMC_LOCATION());
-    }
-}
-*/
-
 static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {
@@ -328,12 +314,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSCmp: {
-            auto& op = inst.getOperand(3);
-            if(!isLessThanOrLessEqualOp(op) && swapImmReg()) {
-                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
-                modified = true;
-            }
-
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
@@ -401,7 +381,7 @@ void ARMISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
             auto& dst = inst.getOperand(0);
             auto& src = inst.getOperand(1);
             if(isOperandIReg(dst) && isOperandIReg(src)) {
-                inst.setOpcode(MOV);
+                inst.setOpcode(MoveGPR);
             } else if(isOperandFPR(dst) && isOperandFPR(src)) {
                 inst.setOpcode(VMOV);
             } else {
@@ -461,7 +441,7 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto rhs = inst.getOperand(2);
             auto cc = inst.getOperand(3);
             auto cf = inst.getOperand(4);
-            ctx.instructions.insert(ctx.iter, MIRInst{ MOV }.setOperand<0>(dst).setOperand<1>(rhs));
+            ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(rhs));
             *ctx.iter = MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
             break;
         }
@@ -523,8 +503,10 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
             [[fallthrough]];
         case VLDR:
             [[fallthrough]];
-        case LDRB: {
-            assert(checkOpIdx(2));
+        case LDRB:
+            [[fallthrough]];
+        case LDRSB: {
+            assert(checkOpIdx(1));
             inst.setOperand<1>(base).setOperand<2>(imm);
             break;
         }
@@ -533,7 +515,7 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     }
 }
 
-constexpr auto scratch = MIROperand::asISAReg(ARM::R12, OperandType::Int32);  // use $v1
+constexpr auto scratch = MIROperand::asISAReg(ARM::R12, OperandType::Int32);
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm, bool isVFP) {
     assert(isSignedImm<32>(imm));
@@ -546,7 +528,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
         }
     }
 
-    uint32_t immLiteral = static_cast<uint32_t>(imm);
+    const auto immLiteral = static_cast<uint32_t>(imm);
     instructions.insert(
         iter, MIRInst{ MOVW }.setOperand<0>(scratch).setOperand<1>(MIROperand::asImm(immLiteral & 0xFFFF, OperandType::Int32)));
     if(immLiteral >= (1 << 16))
@@ -555,6 +537,7 @@ void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MI
                                 .setOperand<0>(scratch)
                                 .setOperand<1>(MIROperand::asImm(immLiteral >> 16, OperandType::Int32))
                                 .setOperand<2>(scratch));
+    instructions.insert(iter, MIRInst{ ADD }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(scratch));
     base = scratch;
     imm = 0;
 }
@@ -563,7 +546,6 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     if(dst == src && imm == 0)
         return;
 
-    // FIXME
     uint32_t inst = ADD;
     if(imm < 0) {
         inst = SUB;
@@ -586,6 +568,9 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
     instructions.insert(iter, MIRInst{ inst }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(immOp));
 }
 void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
+    // FIXME
+    return;
+
     CMMC_UNUSED(ctx);
     if(instructions.empty())
         return;

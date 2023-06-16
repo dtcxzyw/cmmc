@@ -121,14 +121,6 @@ static bool isOperandRegList(const MIROperand& op) {
     return op.isImm() && op.type() == OperandType::RegList;
 }
 
-static bool isOperandCC(const MIROperand& op) {
-    return op.isReg() && op.reg() == ARMRegister::CC;
-}
-
-static bool isOperandFCC(const MIROperand& op) {
-    return op.isReg() && op.reg() == ARMRegister::FCC;
-}
-
 static bool isOperandCondField(const MIROperand& op) {
     return op.isImm() && (0 <= op.imm() && op.imm() <= static_cast<intmax_t>(CondField::AL));
 }

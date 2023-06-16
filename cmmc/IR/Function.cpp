@@ -24,6 +24,7 @@
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <unordered_set>
@@ -49,6 +50,12 @@ FuncArgument* Function::getArg(uint32_t idx) const {
     return mArgs[idx];
 }
 
+Function::~Function() {
+    DisableValueRefCheckScope scope{};
+    for(auto block : mBlocks) {
+        std::destroy_at(block);
+    }
+}
 void Function::dump(std::ostream& out, const HighlightSelector& selector) const {
     if(getLinkage() == Linkage::Internal)
         out << "internal "sv;

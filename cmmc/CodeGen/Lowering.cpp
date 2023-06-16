@@ -381,10 +381,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
     const auto& cgscc = analysis.get<CallGraphSCCAnalysis>();
     IPRAUsageCache infoIPRA;
 
-    const auto hasCall = [](Function* func) {
-        for(auto block : func->blocks())
+    const auto hasCall = [&](MIRFunction& func) {
+        for(auto& block : func.blocks())
             for(auto& inst : block->instructions()) {
-                if(inst.getInstID() == InstructionID::Call)
+                auto& info = ctx.instInfo.getInstInfo(inst);
+                if(requireFlag(info.getInstFlag(), InstFlagCall))
                     return true;
             }
         return false;
@@ -463,7 +464,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         // Stage 8: legalize stack objects, stack -> sp
         if(ctx.registerInfo) {
             Stage stage{ "Stack object allocation"sv };
-            allocateStackObjects(mfunc, ctx, hasCall(func), optLevel);
+            allocateStackObjects(mfunc, ctx, hasCall(mfunc), optLevel);
             ctx.flags.postSA = true;
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));

@@ -32,6 +32,7 @@
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/StringFlyWeight.hpp>
+#include <cstdint>
 #include <iostream>
 #include <llvm/ADT/APInt.h>
 #include <llvm/ADT/DenseMap.h>
@@ -350,7 +351,13 @@ class LLVMConversionContext final {
                     }
                     case Intrinsic::memset:
                         return builder.CreateMemSet(
-                            getOperand(0), builder.getInt8(0), getOperand(1),
+                            getOperand(0), builder.getInt8(0),
+                            builder.CreateMul(
+                                getOperand(1),
+                                llvm::ConstantInt::get(
+                                    builder.getInt64Ty(),
+                                    static_cast<uint64_t>(
+                                        inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getFixedSize()))),
                             llvm::MaybeAlign{
                                 inst.getOperand(0)->getType()->as<PointerType>()->getPointee()->getAlignment(dataLayout) });
                     case Intrinsic::memcpy:

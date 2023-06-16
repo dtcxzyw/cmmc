@@ -22,6 +22,7 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <unordered_set>
 #include <vector>
@@ -119,18 +120,34 @@ public:
             for(auto inst : map)
                 inst->insertBefore(func.entryBlock(), func.entryBlock()->instructions().begin());
             for(auto user : alloc->users()) {
-                auto& operands = user->mutableOperands();
-                const auto idx = std::next(operands.begin())->get()->value;
-                intmax_t idxInt = 0;
-                Value* sub = nullptr;
-                if(int_(idxInt)(MatchContext<Value>{ idx })) {
-                    sub = map[static_cast<size_t>(idxInt)];
-                } else {
-                    sub = map[idx->as<ConstantOffset>()->index()];
+                if(user->getInstID() == InstructionID::GetElementPtr) {
+                    auto& operands = user->mutableOperands();
+                    const auto idx = std::next(operands.begin())->get()->value;
+                    intmax_t idxInt = 0;
+                    Value* sub = nullptr;
+                    if(int_(idxInt)(MatchContext<Value>{ idx })) {
+                        sub = map[static_cast<size_t>(idxInt)];
+                    } else {
+                        sub = map[idx->as<ConstantOffset>()->index()];
+                    }
+                    operands.erase(std::next(operands.begin()));
+                    operands.pop_back();
+                    user->addOperand(sub);
                 }
-                operands.erase(std::next(operands.begin()));
-                operands.pop_back();
-                user->addOperand(sub);
+            }
+
+            // [1 * type]
+            auto& users = alloc->users();
+            for(auto iter = users.begin(); iter != users.end();) {
+                auto next = std::next(iter);
+                auto ref = iter.ref();
+                assert(ref->user->getInstID() != InstructionID::GetElementPtr);
+
+                auto ptr = make<PtrCastInst>(map[0], alloc->getType());
+                ptr->insertBefore(ref->user->getBlock(), ref->user->asIterator());
+                ref->resetValue(ptr);
+
+                iter = next;
             }
         }
 

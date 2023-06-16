@@ -70,7 +70,7 @@ public:
             (ARM::S16 <= reg && reg <= ARM::S31);
     }
     [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 4-byte aligned
+        return 8U;  // 8-byte aligned
     }
     void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
                             std::optional<int32_t> raOffset) const override;
@@ -122,7 +122,7 @@ public:
             return isIntegerType(operand.type());
         if(ARM::isOperandFPR(operand))
             return isFPType(operand.type());
-        return false;
+        return ARM::isOperandCC(operand) || ARM::isOperandFCC(operand);
     }
     [[nodiscard]] const std::vector<uint32_t>& getAllocationList(uint32_t classId) const override {
         if(classId == 0) {

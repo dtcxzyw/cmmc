@@ -95,12 +95,12 @@ void UserList::removeRef(ValueRef& ref) {
     return UserIterator{ nullptr };
 }
 
-static bool disableRefCheck = false;
+static uint32_t disableRefCheck = 0;
 DisableValueRefCheckScope::DisableValueRefCheckScope() {
-    disableRefCheck = true;
+    ++disableRefCheck;
 }
 DisableValueRefCheckScope::~DisableValueRefCheckScope() {
-    disableRefCheck = false;
+    --disableRefCheck;
 }
 
 UserList::~UserList() {

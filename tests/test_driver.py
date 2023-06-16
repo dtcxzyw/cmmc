@@ -429,7 +429,7 @@ def compare_and_parse_perf(src, out):
 
     # print(standard_answer.encode('utf-8'))
     if output != standard_answer:
-        print("Output mismatch")
+        print(" Output mismatch")
         print("output:")
         if len(output) > 100:
             output = output[:100]

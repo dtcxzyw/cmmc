@@ -27,6 +27,8 @@
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
+#include <iostream>
+#include <memory>
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
@@ -68,6 +70,8 @@ public:
         std::vector<Function*> funcs;
 
         for(auto global : mod.globals()) {
+            // global->dumpAsOperand(std::cerr);
+            // std::cerr << '\n';
             if(auto func = dynamic_cast<Function*>(global)) {
                 if(func->blocks().empty())
                     continue;
@@ -207,6 +211,9 @@ public:
         auto& globals = mod.globals();
         globals.erase(std::remove_if(globals.begin(), globals.end(), [&](GlobalValue* var) { return globalVarSet.count(var); }),
                       globals.end());
+        for(auto global : globalVars) {
+            std::destroy_at(global);
+        }
 
         return true;
     }

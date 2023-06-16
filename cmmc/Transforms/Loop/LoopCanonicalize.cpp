@@ -42,7 +42,7 @@ public:
                 cmp->setOp(getReversedOp(cmp->getOp()));
                 modified = true;
             }
-            // le x c -> lt x c+1, ge x c -> ge x c-1
+            // le x c -> lt x c+1, ge x c -> gt x c-1
             if(cmp->getInstID() == InstructionID::SCmp) {
                 intmax_t x;
                 MatchContext<Value> matchCtx{ cmp->getOperand(1) };

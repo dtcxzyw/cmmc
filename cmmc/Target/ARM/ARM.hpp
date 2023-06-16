@@ -110,6 +110,14 @@ constexpr bool isOperandFPR(const MIROperand& operand) {
     return FPRBegin <= reg && reg < FPREnd;
 }
 
+constexpr bool isOperandCC(const MIROperand& op) {
+    return op.isReg() && op.reg() == ARMRegister::CC;
+}
+
+constexpr bool isOperandFCC(const MIROperand& op) {
+    return op.isReg() && op.reg() == ARMRegister::FCC;
+}
+
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm, bool isVFP);
 // dst = src + imm

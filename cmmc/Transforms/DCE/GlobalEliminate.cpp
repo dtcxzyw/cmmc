@@ -30,6 +30,7 @@
 #include <cmmc/IR/Value.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cstdint>
+#include <memory>
 #include <queue>
 #include <unordered_set>
 
@@ -81,6 +82,11 @@ public:
         auto& globals = mod.globals();
         globals.erase(std::remove_if(globals.begin(), globals.end(), [&](GlobalValue* global) { return unused.count(global); }),
                       globals.end());
+        DisableValueRefCheckScope scope{};
+        // remove references
+        for(auto global : unused) {
+            std::destroy_at(global);
+        }
         return !unused.empty();
     }
 

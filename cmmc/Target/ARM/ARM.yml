@@ -38,6 +38,10 @@ InstInfo:
       MVN:
         Mnemonic: mvn
 
+  MoveGPR:
+    Format: mov $Rd:GPR[Def], $Rs:GPR[Use]
+    Flag: [RegCopy]
+
   MoveCond:
     Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use]"
     Instances:
@@ -82,24 +86,15 @@ InstInfo:
     Format: bx $Rm:GPR[Use]
     Flag: [Terminator, NoFallthrough, Return]
 
-  BranchCompare:
-    Format: "$Mnemonic:Template $Rn:GPR[Use], $Tgt:Reloc[Metadata] @ Branch Prob: $Prob:Prob[Metadata]"
-    Flag: [Terminator, Branch]
-    Instances:
-      CBZ:
-        Mnemonic: cbz
-      CBNZ:
-        Mnemonic: cbnz
-
   VLDR:
-    Format: $Mnemonic:Template $Fd:FPR[Def], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
     Flag: [Load]
     Instances:
       VLDR:
         Mnemonic: vldr
 
   Load:
-    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
     Flag: [Load]
     Instances:
       LDR:
@@ -110,14 +105,14 @@ InstInfo:
         Mnemonic: ldrsb
 
   VSTR:
-    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
     Flag: [Store]
     Instances:
       VSTR:
         Mnemonic: vstr
 
   Store:
-    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:GPR[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
     Flag: [Store]
     Instances:
       STR:
@@ -212,6 +207,10 @@ InstInfo:
   LoadGlobalAddr:
     Format: load_global_address $Rd:GPR[Def], $Reloc:Reloc[Metadata]
     Flag: [LoadConstant, LegalizePreRA]
+
+  UNIMP:
+    Format: .inst 0xdeff
+    Flag: [Terminator, NoFallthrough]
 
 InstSelection:
   - Pattern:
@@ -664,10 +663,15 @@ InstSelection:
         Prob: $Prob
         $Predicate: isOperandIReg($Cond) && isNotCmp(ctx, $Cond)
     Replace:
-      CBNZ:
-        Rn: $Cond
+      B_Cond:
         Tgt: $Reloc
         Prob: $Prob
+        CC:
+          CMP:
+            CC: getCC()
+            Rn: $Cond
+            Op2: getZero($Cond)
+        CF: MIROperand::asImm(CondField::NE, OperandType::CondField)
 
   - Pattern:
       InstSelect:
@@ -765,6 +769,11 @@ InstSelection:
         Rd: $Src
         Rn: $Base
         Imm: $Offset
+
+  - Pattern:
+      InstUnreachable:
+    Replace:
+      UNIMP:
 
 ScheduleModel:
   cortex_a72:
