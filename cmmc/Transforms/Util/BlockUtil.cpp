@@ -45,6 +45,12 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
         // block.dump(std::cerr, HighlightInst{ &inst });
         builder.setInsertPoint(&block, iter);
         if(auto value = reducer(&inst)) {
+            /*
+            inst.dumpInst(std::cerr);
+            std::cerr << " => ";
+            value->dumpAsOperand(std::cerr);
+            std::cerr << '\n';
+            */
             modified |= inst.replaceWith(value);
         }
     }
@@ -101,7 +107,7 @@ Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBl
         terminator->getTrueTarget() = block;
     if(terminator->getFalseTarget() == targetBlock)
         terminator->getFalseTarget() = block;
-
+    block->getTransformMetadata() = sourceBlock->getTransformMetadata();
     retargetBlock(targetBlock, sourceBlock, block);
     return block;
 }
@@ -129,7 +135,7 @@ bool isNoSideEffectExpr(const Instruction& inst) {
 
     return true;
 }
-bool isMovableExpr(const Instruction& inst) {
+bool isMovableExpr(const Instruction& inst, bool relaxedCtx) {
     if(!isNoSideEffectExpr(inst))
         return false;
     switch(inst.getInstID()) {
@@ -139,6 +145,15 @@ bool isMovableExpr(const Instruction& inst) {
             [[fallthrough]];
         case InstructionID::Load:
             return false;
+        // It is not safe to speculate division, since SIGFPE may be raised.
+        case InstructionID::SDiv:
+            [[fallthrough]];
+        case InstructionID::UDiv:
+            [[fallthrough]];
+        case InstructionID::SRem:
+            [[fallthrough]];
+        case InstructionID::URem:
+            return !relaxedCtx;
         default:
             return true;
     }

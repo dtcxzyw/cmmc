@@ -1,29 +1,29 @@
 func @callee_cmmc_noinline(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     ret i32 %x;
 }
 func @caller(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call (i32) -> i32 @callee_cmmc_noinline(i32 %x);
     ret i32 %0;
 }
 func @callee_fibx_cmmc_noinline(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
-^entry:
+  ^entry:
     i1 %0 = scmp lt i32 %x, i32 3;
     cbr i1 %0(prob = 0.5), ^b1, ^b;
-^b:
+  ^b:
     i32 %1 = add i32 %x, i32 -1;
     i32 %2 = call (i32, i32) -> i32 @callee_fibx_cmmc_noinline(i32 %1, i32 %y);
     i32 %3 = add i32 %x, i32 -2;
     i32 %4 = call (i32, i32) -> i32 @callee_fibx_cmmc_noinline(i32 %3, i32 %y);
     i32 %5 = sub i32 %2, i32 %4;
     ubr ^b1;
-^b1:
+  ^b1:
     i32 %6 = phi [^entry, i32 1] [^b, i32 %5];
     ret i32 %6;
 }
 func @caller_fibx(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = add i32 %x, i32 10;
     i32 %1 = call (i32, i32) -> i32 @callee_fibx_cmmc_noinline(i32 %x, i32 %0);
     ret i32 %1;

@@ -186,8 +186,10 @@ class LLVMConversionContext final {
             }
             case InstructionID::ConditionalBranch: {
                 const auto branch = inst.as<BranchInst>();
-                const auto& trueTarget = branch->getTrueTarget();
-                const auto& falseTarget = branch->getFalseTarget();
+                const auto trueTarget = branch->getTrueTarget();
+                const auto falseTarget = branch->getFalseTarget();
+                if(trueTarget == falseTarget)
+                    return builder.CreateBr(blockMap.lookup(trueTarget));
                 return builder.CreateCondBr(getOperand(0), blockMap.lookup(trueTarget), blockMap.lookup(falseTarget));
             }
             case InstructionID::Unreachable:

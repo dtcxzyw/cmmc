@@ -127,8 +127,11 @@ public:
                     Value* sub = nullptr;
                     if(int_(idxInt)(MatchContext<Value>{ idx })) {
                         sub = map[static_cast<size_t>(idxInt)];
-                    } else {
+                    } else if(idx->is<ConstantOffset>()) {
                         sub = map[idx->as<ConstantOffset>()->index()];
+                    } else {
+                        // [1 * type]
+                        sub = map[0];
                     }
                     operands.erase(std::next(operands.begin()));
                     operands.pop_back();

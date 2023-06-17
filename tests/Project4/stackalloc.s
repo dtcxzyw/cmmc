@@ -33,129 +33,115 @@ main:
 	jal read
 	nop
 	move $t1, $v0
-	sw $v0, 452($sp)
-	sw $t0, 436($sp)
+	sw $v0, 444($sp)
+	sw $t0, 432($sp)
 	blez $v0, label24
 	nop
 	move $t0, $zero
-	sw $zero, 24($sp)
-	b label2
+	sw $zero, 456($sp)
+	b label16
 	nop
 label24:
 	li $t0, 1
-	sw $t0, 456($sp)
-	lw $t1, 452($sp)
+	sw $t0, 448($sp)
+	lw $t1, 444($sp)
 	subu $t2, $t0, $t1
-	bgez $t2, label14
+	bgez $t2, label12
 	nop
+label27:
+	lw $t0, 448($sp)
 	sll $t1, $t0, 2
-	lw $t2, 436($sp)
+	lw $t2, 432($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 0($t3)
 	addiu $t5, $t0, -1
 	move $t6, $t5
 	sw $t5, 460($sp)
-	sw $t4, 440($sp)
+	sw $t4, 452($sp)
 	move $t0, $t5
 	addiu $t1, $t5, 1
-	blez $t1, label45
+	blez $t1, label36
 	nop
-	b label44
+	b label35
 	nop
-label2:
-	lw $t0, 24($sp)
+label121:
+	move $t0, $zero
+	sw $zero, 24($sp)
+	b label13
+	nop
+label12:
+	lw $t0, 444($sp)
+	blez $t0, label15
+	nop
+	b label121
+	nop
+label16:
+	lw $t0, 456($sp)
 	sll $t1, $t0, 2
-	lw $t2, 436($sp)
+	lw $t2, 432($sp)
 	addu $t3, $t2, $t1
 	jal read
 	nop
 	sw $v0, 0($t3)
 	addiu $t4, $t0, 1
-	lw $t5, 452($sp)
+	lw $t5, 444($sp)
 	subu $t6, $t4, $t5
-	sw $t4, 444($sp)
-	bgez $t6, label33
+	sw $t4, 436($sp)
+	bgez $t6, label75
 	nop
 	move $t0, $t4
 	move $t1, $t4
-	sw $t4, 24($sp)
-	b label2
+	sw $t4, 456($sp)
+	b label16
 	nop
-label33:
+label75:
 	li $t0, 1
-	sw $t0, 456($sp)
-	lw $t1, 452($sp)
+	sw $t0, 448($sp)
+	lw $t1, 444($sp)
 	subu $t2, $t0, $t1
-	bgez $t2, label14
+	bgez $t2, label12
 	nop
-	b label36
-	nop
-label122:
-	move $t0, $zero
-	sw $zero, 428($sp)
-	b label15
-	nop
-label14:
-	lw $t0, 452($sp)
-	blez $t0, label17
-	nop
-	b label122
+	b label27
 	nop
 label36:
-	lw $t0, 456($sp)
-	sll $t1, $t0, 2
-	lw $t2, 436($sp)
-	addu $t3, $t2, $t1
-	lw $t4, 0($t3)
-	addiu $t5, $t0, -1
-	move $t6, $t5
-	sw $t5, 460($sp)
-	sw $t4, 440($sp)
-	move $t0, $t5
-	addiu $t1, $t5, 1
-	blez $t1, label45
-	nop
-	b label44
-	nop
-label45:
 	move $t0, $zero
-	sw $zero, 448($sp)
-label13:
+	sw $zero, 440($sp)
+label11:
 	lw $t0, 460($sp)
 	addiu $t1, $t0, 1
 	sll $t2, $t1, 2
-	lw $t3, 436($sp)
+	lw $t3, 432($sp)
 	addu $t4, $t3, $t2
-	lw $t5, 440($sp)
+	lw $t5, 452($sp)
 	sw $t5, 0($t4)
-	lw $t6, 456($sp)
+	lw $t6, 448($sp)
 	addiu $t7, $t6, 1
 	move $t6, $t7
-	sw $t7, 456($sp)
+	sw $t7, 448($sp)
 	move $t0, $t7
-	lw $t1, 452($sp)
+	lw $t1, 444($sp)
 	subu $t2, $t7, $t1
-	bgez $t2, label14
+	bgez $t2, label12
 	nop
-	b label36
+	b label27
 	nop
-label44:
+label35:
 	lw $t0, 460($sp)
 	sll $t1, $t0, 2
-	lw $t2, 436($sp)
+	lw $t2, 432($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 0($t3)
-	lw $t5, 440($sp)
+	lw $t5, 452($sp)
 	slt $t6, $t5, $t4
 	move $t7, $t6
-	sw $t6, 448($sp)
+	sw $t6, 440($sp)
 	move $t0, $t6
-	beq $t6, $zero, label13
+	beq $t6, $zero, label11
 	nop
 	lw $t0, 460($sp)
 	addiu $t1, $t0, 1
 	sll $t2, $t1, 2
-	lw $t3, 436($sp)
+	lw $t3, 432($sp)
 	addu $t4, $t3, $t2
 	sll $t5, $t0, 2
 	addu $t6, $t3, $t5
@@ -165,31 +151,31 @@ label44:
 	move $t0, $t8
 	sw $t8, 460($sp)
 	addiu $t1, $t8, 1
-	blez $t1, label45
+	blez $t1, label36
 	nop
-	b label44
+	b label35
 	nop
-label15:
-	lw $t0, 428($sp)
+label13:
+	lw $t0, 24($sp)
 	sll $t1, $t0, 2
-	lw $t2, 436($sp)
+	lw $t2, 432($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 0($t3)
 	move $a0, $t4
 	jal write
 	nop
 	addiu $t5, $t0, 1
-	lw $t6, 452($sp)
+	lw $t6, 444($sp)
 	subu $t7, $t5, $t6
-	sw $t5, 432($sp)
-	bgez $t7, label17
+	sw $t5, 428($sp)
+	bgez $t7, label15
 	nop
 	move $t0, $t5
 	move $t1, $t5
-	sw $t5, 428($sp)
-	b label15
+	sw $t5, 24($sp)
+	b label13
 	nop
-label17:
+label15:
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 464

@@ -27,6 +27,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <iostream>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -60,7 +61,7 @@ class ConstantPropagation final : public TransformPass<Function> {
     }
 
     static bool runOnBlock(IRBuilder& builder, Block& block) {
-        return reduceBlock(builder, block, [](Instruction* inst) -> Value* {
+        return reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
@@ -87,8 +88,6 @@ class ConstantPropagation final : public TransformPass<Function> {
 
             if(inst->isIntegerOp()) {
                 MatchContext<Value> matchCtx{ inst };
-                if(not_(int_(i1))(matchCtx))
-                    return makeInt(inst, !i1);
                 if(neg(int_(i1))(matchCtx))
                     return makeInt(inst, -i1);
                 if(add(int_(i1), int_(i2))(matchCtx))
@@ -223,7 +222,6 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return inst->getOperand(1);
                 }
             }
-
             return nullptr;
         });
     }

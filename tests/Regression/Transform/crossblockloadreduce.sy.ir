@@ -1,7 +1,7 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     [10000 * i32]* %x = alloc [10000 * i32];
     i32 %0 = call () -> i32 @getint();
     i32* %1 = getelementptr &([10000 * i32]* %x)[i64 0][i32 %0];
@@ -13,11 +13,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     store i32* %4 with i32 %5;
     i1 %6 = scmp lt i32 %2, i32 %5;
     cbr i1 %6(prob = 0.5), ^if.then, ^b;
-^if.then:
+  ^if.then:
     store i32* %1 with i32 %2;
     i32 %7 = load i32* %1;
     ubr ^b;
-^b:
+  ^b:
     i32 %8 = phi [^entry, i32 %2] [^if.then, i32 %7];
     call (i32) -> void @putint(i32 %8);
     i32* %9 = getelementptr &([10000 * i32]* %x)[i64 0][i32 %3];

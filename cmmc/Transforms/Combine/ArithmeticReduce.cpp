@@ -27,6 +27,7 @@
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <cstring>
+#include <iostream>
 #include <limits>
 #include <unordered_map>
 
@@ -130,7 +131,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 const auto val = i1 * i2;
                 const auto width = v1->getType()->as<IntegerType>()->getBitwidth();
                 const auto min = -(1LL << (width - 1));
-                const auto max = -(min - 1);
+                const auto max = -(min + 1);
                 if(min <= val && val <= max) {
                     return builder.makeOp<BinaryInst>(InstructionID::SDiv, v1, makeIntLike(val, inst));
                 }
@@ -258,7 +259,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     if(c == 1) {
                         return v1;
                     }
-                    return builder.getTrue();
+                    return builder.getFalse();
                 }
                 if(cmp == CompareOp::NotEqual) {
                     if(c == 0) {

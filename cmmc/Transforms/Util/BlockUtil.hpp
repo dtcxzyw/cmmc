@@ -32,7 +32,7 @@ bool applyReplace(Instruction* inst, const ReplaceMap& replace);
 bool replaceOperands(const std::vector<Instruction*>& insts, const ReplaceMap& replace);
 Block* createIndirectBlock(const Module& module, Function& func, Block* sourceBlock, Block* targetBlock);
 bool isNoSideEffectExpr(const Instruction& inst);
-bool isMovableExpr(const Instruction& inst);
+bool isMovableExpr(const Instruction& inst, bool relaxedCtx);
 bool hasCall(Block& block);
 void resetTarget(BranchInst* branch, Block* oldTarget, Block* newTarget);
 void retargetBlock(Block* target, Block* oldSource, Block* newSource);

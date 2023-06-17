@@ -1,19 +1,19 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
     i32 %2 = call () -> i32 @getint();
     i1 %3 = scmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-^if.then:
+  ^if.then:
     i32 %4 = mul i32 %0, i32 %1;
     ubr ^b;
-^if.else:
+  ^if.else:
     i32 %5 = mul i32 %0, i32 %1;
     i32 %6 = add i32 %5, i32 1;
     ubr ^b;
-^b:
+  ^b:
     i32 %7 = phi [^if.then, i32 %4] [^if.else, i32 %6];
     ret i32 %7;
 }

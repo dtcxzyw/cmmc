@@ -118,7 +118,7 @@ public:
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 auto next = std::next(iter);
                 auto& inst = *iter;
-                if(isMovableExpr(inst)) {
+                if(isMovableExpr(inst, false)) {
                     if(moveToTrueTarget) {
                         if(tryMove(&inst, trueTarget)) {
                             modified = true;

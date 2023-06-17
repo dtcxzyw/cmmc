@@ -51,6 +51,7 @@ void Block::dumpLabeled(std::ostream& out, const HighlightSelector& selector) co
     if(selector.highlight(this)) {
         out << "\033[1;33m";
     }
+    out << "  ";
     dumpAsTarget(out);
     if(selector.highlight(this)) {
         out << "\033[0m";
@@ -157,6 +158,7 @@ void Block::dumpAsTarget(std::ostream& out) const {
 Block* Block::clone(std::unordered_map<Value*, Value*>& replace, bool replaceAll) const {
     auto block = make<Block>(mFunction);
     block->setLabel(getLabel());
+    block->getTransformMetadata() = mTransformMetadata;
 
     for(auto& inst : mInstructions) {
         auto newInst = inst.clone();

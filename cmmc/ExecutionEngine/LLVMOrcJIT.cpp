@@ -165,6 +165,8 @@ std::variant<int, SimulationFailReason> llvmExecMain(Module& module, const std::
     llvmTranslate(module, *llvmMod);
 
     if(llvm::verifyModule(*llvmMod, &llvm::errs())) {
+        llvmMod->print(llvm::errs(), nullptr);
+        llvm::errs().flush();
         DiagnosticsContext::get().attach<ModuleAttachment>("cmmc IR", &module).reportFatal();
     }
 

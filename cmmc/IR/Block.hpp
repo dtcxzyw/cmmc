@@ -34,11 +34,16 @@ struct HighlightBlock final : public HighlightSelector {
     }
 };
 
+struct BlockTransformMetadata final {
+    uint32_t rotateCount = 0;
+};
+
 class Block final {
     Function* mFunction;
     String mLabel;
     uint32_t mBlockIdx;
     IntrusiveList<Instruction> mInstructions;
+    BlockTransformMetadata mTransformMetadata;
 
 public:
     explicit Block(Function* function) : mFunction{ function } {}
@@ -49,6 +54,9 @@ public:
     }
     void dumpLabeled(std::ostream& out, const HighlightSelector& selector) const;
     bool verify(std::ostream& out) const;
+    BlockTransformMetadata& getTransformMetadata() noexcept {
+        return mTransformMetadata;
+    }
 
     [[nodiscard]] Instruction* getTerminator() const noexcept {
         return mInstructions.back();

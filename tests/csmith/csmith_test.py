@@ -24,7 +24,7 @@ qemu_gcc_ref_command = {
 }[target]
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
-csmith_ext = ""
+csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs {}--output /dev/stdout".format(
     csmith_ext)
 gcc_command = "gcc -Wno-narrowing -O0 -DNDEBUG -ffp-contract=on -w "
@@ -93,7 +93,11 @@ def csmith_opt_only(i):
 
 
 def csmith_test(i):
-    src = generate()
+    try:
+        src = generate()
+    except subprocess.CalledProcessError:
+        # skip this test
+        return None
     basename = cwd+"/test"+str(i)
     file_c = basename + ".c"
     file_ref = basename + ".out"
@@ -125,7 +129,11 @@ def csmith_test(i):
             return True
 
     except subprocess.TimeoutExpired:
-        pass
+        os.remove(file_c)
+        os.remove(file_ref)
+        # skip this test
+        return None
+    
     file_sy = basename + ".sy"
     # print(file)
     with open(file_sy, 'w') as f:

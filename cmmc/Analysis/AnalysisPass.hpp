@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include <any>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/Support/Profiler.hpp>
@@ -85,6 +86,7 @@ class AnalysisPassManager final {
     std::unordered_map<const void*, std::unique_ptr<AnalysisPass<Module>>> mModuleLevelAnalysis;
     std::unordered_map<const void*, std::function<std::unique_ptr<AnalysisPass<Function>>()>> mFuncAnalysisBuilder;
     std::unordered_map<const void*, std::function<std::unique_ptr<AnalysisPass<Module>>()>> mModuleAnalysisBuilder;
+    std::unordered_map<const void*, std::any> mPassStorage;
 
     const void* getPassResult(Function& func, const void* id);
     const void* getPassResult(const void* id);
@@ -127,6 +129,9 @@ public:
     void invalidateFunc(Function& func);
     void invalidateModule();
 
+    std::any& getPassStorage(const void* key) {
+        return mPassStorage[key];
+    }
     Module& module() const {
         return *mModule;
     }

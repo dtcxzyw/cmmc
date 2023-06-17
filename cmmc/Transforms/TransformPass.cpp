@@ -154,6 +154,8 @@ static void cleanupUnusedInsts(Module& module) {
 template <typename Scope>
 std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& analysis, size_t lastStop) const {
     auto dumpItem = [&] {
+        if(runCount < skipCount.get())
+            return;
         if constexpr(std::is_same_v<Function, Scope>)
             item.dump(std::cerr, Noop{});
         else
@@ -295,7 +297,8 @@ public:
             if(mPass->run(*func, analysis)) {
                 if(debugTransform.get()) {
                     std::cerr << "\tmodified" << std::endl;
-                    func->dump(std::cerr, Noop{});
+                    if(runCount >= skipCount.get())
+                        func->dump(std::cerr, Noop{});
                 }
                 analysis.invalidateFunc(*func);
                 modified = true;

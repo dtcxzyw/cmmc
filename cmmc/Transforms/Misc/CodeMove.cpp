@@ -57,7 +57,7 @@ public:
             std::unordered_set<Value*> moveOutSet;
 
             for(auto& inst : block->instructions()) {
-                if(!isMovableExpr(inst))
+                if(!isMovableExpr(inst, true))
                     continue;
 
                 // don't touch not natively supported instructions as GVN does

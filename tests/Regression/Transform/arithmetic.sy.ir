@@ -1,6 +1,6 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @getint();
     i32 %1 = mul i32 %0, i32 3;
     i32 %2 = add i32 %1, i32 6;

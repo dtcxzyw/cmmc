@@ -95,6 +95,15 @@ class ShortCircuitCombine final : public TransformPass<Function> {
                 case InstructionID::Store:
                     [[fallthrough]];
                 case InstructionID::Call:
+                    [[fallthrough]];
+                // It is not safe to speculate division, since SIGFPE may be raised.
+                case InstructionID::SDiv:
+                    [[fallthrough]];
+                case InstructionID::UDiv:
+                    [[fallthrough]];
+                case InstructionID::SRem:
+                    [[fallthrough]];
+                case InstructionID::URem:
                     return false;
                 case InstructionID::Load: {
                     const auto addr = inst.getOperand(0);

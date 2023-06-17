@@ -12,6 +12,8 @@
     limitations under the License.
 */
 
+#include "cmmc/Analysis/AnalysisPass.hpp"
+#include <algorithm>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -20,6 +22,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cstdint>
 #include <iterator>
 #include <unordered_map>
 #include <unordered_set>
@@ -46,6 +49,8 @@ struct SimpleLoopInfo final {
     Block* header;
     Block* latch;
 };
+
+constexpr uint32_t maxRotateCount = 8;
 
 class LoopRotate final : public TransformPass<Function> {
     static std::vector<SimpleLoopInfo> detectLoops(Function& func, AnalysisPassManager& analysis) {
@@ -91,6 +96,12 @@ public:
             const auto exiting = succHeader.front() == loop.latch ? succHeader.back() : succHeader.front();
             // TODO: create new block for phi nodes
             if(cfg.predecessors(exiting).size() != 1)
+                continue;
+            auto& rotateCount = loop.latch->getTransformMetadata().rotateCount;
+            if(rotateCount < maxRotateCount) {
+                ++rotateCount;
+                rotateCount = std::max(loop.header->getTransformMetadata().rotateCount, rotateCount);
+            } else
                 continue;
 
             // duplicate instructions

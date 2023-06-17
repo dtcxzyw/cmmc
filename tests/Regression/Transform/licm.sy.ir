@@ -1,26 +1,26 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
-^entry:
+  ^entry:
     i32 %0 = call () -> i32 @getint();
     i1 %1 = scmp gt i32 %0, i32 0;
     cbr i1 %1(prob = 0.97), ^indirect, ^b;
-^indirect:
+  ^indirect:
     i32 %2 = mul i32 %0, i32 %0;
     i32 %3 = mul i32 %0, i32 %2;
     i32 %4 = shl i32 %3, i32 4;
     ubr ^super.header;
-^b:
+  ^b:
     i32 %5 = phi [^entry, i32 0] [^for.body2, i32 %114];
     call (i32) -> void @putint(i32 %5);
     ret i32 0;
-^super.header:
+  ^super.header:
     i32 %6 = phi [^indirect, i32 0] [^for.body, i32 %57];
     i32 %7 = phi [^indirect, i32 0] [^for.body, i32 %8];
     i32 %8 = add i32 %7, i32 16;
     i1 %9 = scmp lt i32 %8, i32 %0;
     cbr i1 %9(prob = 0.67), ^for.body, ^super.header1;
-^for.body:
+  ^for.body:
     i32 %10 = mul i32 %7, i32 %7;
     i32 %11 = add i32 %7, i32 1;
     i32 %12 = mul i32 %11, i32 %11;
@@ -70,13 +70,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %56 = add i32 %55, i32 %40;
     i32 %57 = add i32 %56, i32 %6;
     ubr ^super.header;
-^super.header1:
+  ^super.header1:
     i32 %58 = phi [^super.header, i32 %6] [^for.body1, i32 %109];
     i32 %59 = phi [^super.header, i32 %7] [^for.body1, i32 %60];
     i32 %60 = add i32 %59, i32 16;
     i1 %61 = scmp lt i32 %60, i32 %0;
     cbr i1 %61(prob = 0.67), ^for.body1, ^for.body2;
-^for.body1:
+  ^for.body1:
     i32 %62 = mul i32 %59, i32 %59;
     i32 %63 = add i32 %59, i32 1;
     i32 %64 = mul i32 %63, i32 %63;
@@ -126,7 +126,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %108 = add i32 %107, i32 %90;
     i32 %109 = add i32 %108, i32 %92;
     ubr ^super.header1;
-^for.body2:
+  ^for.body2:
     i32 %110 = phi [^super.header1, i32 %58] [^for.body2, i32 %114];
     i32 %111 = phi [^super.header1, i32 %59] [^for.body2, i32 %115];
     i32 %112 = mul i32 %111, i32 %111;
