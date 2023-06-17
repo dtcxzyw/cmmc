@@ -696,6 +696,30 @@ InstSelection:
         Rs1: $Lhs
         Rs2: $Rhs
 
+  - Pattern:
+      InstUDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      DIVUW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstURem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      REMUW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
   # Integer Compare
   - Pattern:
       InstSCmp:
@@ -789,7 +813,33 @@ InstSelection:
         Imm: getOne($Lhs)
 
   - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isEqualOp($Op)
+    Replace:
+      SLTIU:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: getOne($Lhs)
+
+  - Pattern:
       InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
+    Replace:
+      SLTU:
+        Rd: $Dst
+        Rs1: getZero($Rhs)
+        Rs2: $Lhs
+
+  - Pattern:
+      InstUCmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
@@ -814,6 +864,23 @@ InstSelection:
         Rd: $Dst
         Rs1:
           SLT:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs1: $Rhs
+            Rs2: $Lhs
+        Imm: getOne($Dst)
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs1:
+          SLTU:
             Rd: getVRegAs(ctx, $Dst)
             Rs1: $Rhs
             Rs2: $Lhs
@@ -1057,7 +1124,7 @@ InstSelection:
             $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
-        $Opcode: getZExtLoadOpcode($Dst)
+        $Opcode: getZExtLoadOpcode($Val)
         $Template: LBU
         Rd: $Dst
         Rs1: $Base
@@ -1196,6 +1263,60 @@ InstSelection:
             Rhs: $Rhs
             Op: getEqualOp()
         Imm: getOne($Dst)
+
+  # For csmith
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src:
+          ANDI:
+            Rd: $Val
+            Rs1: $Src
+            Imm: $Imm
+        $Predicate: ($Val).type() == OperandType::Int32 && ($Dst).type() == OperandType::Int64
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Val
+
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && (($Dst).type() == OperandType::Int32 || ($Dst).type() == OperandType::Int64)
+    Replace:
+      AND:
+        Rd: $Dst
+        Rs1: $Src
+        Rs2:
+          LoadImm32:
+            Rd: getVRegAs(ctx, $Src)
+            Imm: getZExtMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+    Replace:
+      AND:
+        Rd: $Dst
+        Rs1: $Src
+        Rs2:
+          LoadImm32:
+            Rd: getVRegAs(ctx, $Src)
+            Imm: getTruncMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
+    Replace:
+      ANDI:
+        Rd: $Dst
+        Rs1: $Src
+        Imm: getTruncMask(($Dst).type(), ($Src).type())
 
 ScheduleModel:
   sifive-u74:

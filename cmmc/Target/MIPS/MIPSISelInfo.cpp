@@ -208,7 +208,6 @@ static MIROperand shouldInvertFCmp(const MIROperand& operand) {
     }
 }
 
-/*
 static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, const MIROperand& flip, MIROperand& outLhs,
                               MIROperand& outRhs) {
     if(!(isOperandFPR(lhs) && isOperandFPR(rhs))) {
@@ -221,7 +220,6 @@ static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, cons
     }
     return true;
 }
-*/
 
 CMMC_TARGET_NAMESPACE_END
 
@@ -375,6 +373,47 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             }
             break;
         }
+        case InstUCmp: {
+            auto& op = inst.getOperand(3);
+            if(!isLessThanOrLessEqualOp(op) && swapImmReg()) {
+                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+                modified = true;
+            }
+
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            // a <= c -> a < c + 1 (if no overflow occurs)
+            if(isLessEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) < getMaxUnsignedValue(rhs.type())) {
+                op = MIROperand::asImm(CompareOp::LessThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
+                modified = true;
+            }
+            // a >= c -> a > c - 1 (if no overflow occurs)
+            if(isGreaterEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) > 0) {
+                op = MIROperand::asImm(CompareOp::GreaterThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
+                modified = true;
+            }
+            if(isGreaterThanOrGreaterEqualOp(op)) {
+                std::swap(lhs, rhs);
+                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+                modified = true;
+            }
+            imm2reg(lhs);
+            if(isEqualityOp(op) && !isZero(rhs)) {
+                const auto dst = getVRegAs(ctx, lhs);
+                ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
+                lhs = dst;
+                rhs = getZero(rhs);
+                modified = true;
+            } else {
+                if(isLessEqualOp(op))
+                    imm2reg(rhs);
+                else
+                    largeImm2reg(rhs, true);
+            }
+            break;
+        }
         case InstZExt: {
             auto& val = inst.getOperand(1);
             imm2reg(val);
@@ -382,6 +421,12 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 inst.setOpcode(InstCopy);
                 modified = true;
             }
+            break;
+        }
+        case InstSExt:
+            [[fallthrough]];
+        case InstTrunc: {
+            imm2reg(inst.getOperand(1));
             break;
         }
         case InstStore: {

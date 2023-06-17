@@ -724,6 +724,19 @@ InstSelection:
         Imm: getOne($Lhs)
 
   - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isEqualOp($Op)
+    Replace:
+      SLTIU:
+        Rd: $Dst
+        Rs: $Lhs
+        Imm: getOne($Lhs)
+
+  - Pattern:
       InstSCmp:
         Dst: $Dst
         Lhs: $Lhs
@@ -731,14 +744,23 @@ InstSelection:
         Op: $Op
         $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
     Replace:
-      XORI:
+      SLTU:
         Rd: $Dst
-        Rs:
-          SLTIU:
-            Rd: getVRegAs(ctx, $Dst)
-            Rs: $Lhs
-            Imm: getOne($Lhs)
-        Imm: getOne($Dst)
+        Rs: getZero($Rhs)
+        Rt: $Lhs
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
+    Replace:
+      SLTU:
+        Rd: $Dst
+        Rs: getZero($Rhs)
+        Rt: $Lhs
 
   # x<=y -> !(y<x)
   - Pattern:
@@ -753,6 +775,23 @@ InstSelection:
         Rd: $Dst
         Rs:
           SLT:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs: $Rhs
+            Rt: $Lhs
+        Imm: getOne($Dst)
+
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+    Replace:
+      XORI:
+        Rd: $Dst
+        Rs:
+          SLTU:
             Rd: getVRegAs(ctx, $Dst)
             Rs: $Rhs
             Rt: $Lhs
@@ -907,7 +946,7 @@ InstSelection:
             $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
-        $Opcode: getZExtLoadOpcode($Dst)
+        $Opcode: getZExtLoadOpcode($Val)
         $Template: LBU
         Rd: $Dst
         Rs: $Base
@@ -957,23 +996,24 @@ InstSelection:
         Rt: $Rhs
         Cond: $Cond
 
-  # - Pattern:
-  #     InstSelect:
-  #       Dst: $Dst
-  #       Cond:
-  #         # FIXME: CC should not be redefined
-  #         FCC2GPR:
-  #           Rs: $CC
-  #           Flip: $Flip
-  #       Lhs: $Lhs
-  #       Rhs: $Rhs
-  #       $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
-  #   Replace:
-  #     Select_FCC_FPR_FPR:
-  #       Rd: $Dst
-  #       Rs: $OutLhs
-  #       Rt: $OutRhs
-  #       Cond: $CC
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          FCC2GPR:
+            Rd: $Cond
+            Rs: $CC
+            Flip: $Flip
+            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
+    Replace:
+      Select_FCC_FPR_FPR:
+        Rd: $Dst
+        Rs: $OutLhs
+        Rt: $OutRhs
+        Cond: $CC
 
   - Pattern:
       InstSelect:
@@ -1091,6 +1131,8 @@ InstSelection:
         Fs:
           MTC1:
             Rt: $Src
+            Fs: $Intermediate
+            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
     Replace:
       InstCopy:
         Dst: $Dst
@@ -1102,10 +1144,52 @@ InstSelection:
         Rt:
           MFC1:
             Fs: $Src
+            Rt: $Intermediate
+            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
     Replace:
       InstCopy:
         Dst: $Dst
         Src: $Src
+
+  # For csmith
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32
+    Replace:
+      AND:
+        Rd: $Dst
+        Rs: $Src
+        Rt:
+          LoadImm32:
+            Rd: getVRegAs(ctx, $Src)
+            Imm: getZExtMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+    Replace:
+      AND:
+        Rd: $Dst
+        Rs: $Src
+        Rt:
+          LoadImm32:
+            Rd: getVRegAs(ctx, $Src)
+            Imm: getTruncMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
+    Replace:
+      ANDI:
+        Rd: $Dst
+        Rs: $Src
+        Imm: getTruncMask(($Dst).type(), ($Src).type())
 
 ScheduleModel:
   emulator:

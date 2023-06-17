@@ -40,6 +40,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <deque>
@@ -330,8 +331,17 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
                             data.push_back(static_cast<uint32_t>(value));
                         } else if(valType->getFixedSize() == sizeof(uint8_t)) {
                             data.push_back(static_cast<std::byte>(value));
-                        } else
-                            reportNotImplemented(CMMC_LOCATION());
+                        } else if(valType->getFixedSize() == sizeof(uint16_t)) {
+                            const auto val16 = static_cast<uint16_t>(value);
+                            const auto lo = static_cast<std::byte>(val16), hi = static_cast<std::byte>(val16 >> 8);
+                            if(dataLayout.getEndian() == Endian::Little) {
+                                data.push_back(lo);
+                                data.push_back(hi);
+                            } else {
+                                data.push_back(hi);
+                                data.push_back(lo);
+                            }
+                        }
                     } else if(valType->isFloatingPoint()) {
                         const auto value = val->as<ConstantFloatingPoint>()->getValue();
                         if(valType->getFixedSize() == sizeof(float)) {

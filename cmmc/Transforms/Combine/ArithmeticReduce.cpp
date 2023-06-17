@@ -339,7 +339,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // sub x + 1, (zext cond)
             if(target.isNativeSupported(InstructionID::SExt) &&
                ((select(any(v1), int_(i1), int_(i2))(matchCtx) && i1 + 1 == i2) ||
-                (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3))) {
+                (select(any(v1), any(v2), add(any(v3), cuint_(1)))(matchCtx) && v2 == v3)) &&
+               v2->getType()->getFixedSize() >= sizeof(int32_t)) {
                 auto val = v1;
                 const auto base = inst->getOperand(2);
                 const auto targetType = base->getType();

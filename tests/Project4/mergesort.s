@@ -40,10 +40,10 @@ merge:
 	move $t3, $a3
 	addiu $t4, $a2, 1
 	subu $t5, $t4, $a3
-	sw $a3, 76($sp)
-	sw $a2, 72($sp)
-	sw $a1, 64($sp)
-	sw $a0, 56($sp)
+	sw $a3, 72($sp)
+	sw $a2, 64($sp)
+	sw $a1, 56($sp)
+	sw $a0, 48($sp)
 	bgez $t5, label2
 	nop
 	move $t0, $a2
@@ -58,17 +58,17 @@ merge:
 	sw $t4, 12($sp)
 	jal merge
 	nop
-	lw $t7, 56($sp)
+	lw $t7, 48($sp)
 	move $a0, $t7
-	lw $t8, 64($sp)
+	lw $t8, 56($sp)
 	move $a1, $t8
 	lw $t9, 12($sp)
 	move $a2, $t9
-	lw $s0, 76($sp)
+	lw $s0, 72($sp)
 	move $a3, $s0
 	jal merge
 	nop
-	lw $s1, 72($sp)
+	lw $s1, 64($sp)
 	move $s2, $s1
 	lw $s3, 12($sp)
 	move $s4, $s3
@@ -77,52 +77,51 @@ merge:
 	sw $s1, 24($sp)
 	sw $s3, 8($sp)
 	move $t0, $s1
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	beq $s1, $t1, label37
 	nop
 	lw $t1, 12($sp)
 	beq $s1, $t1, label41
 	nop
 	move $t0, $s3
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	xor $t2, $s3, $t1
-	sltiu $t3, $t2, 1
-	xori $t4, $t3, 1
-	move $t5, $t4
-	sw $t4, 48($sp)
-	move $t0, $t4
-	beq $t4, $zero, label18
+	sltu $t3, $zero, $t2
+	move $t4, $t3
+	sw $t3, 40($sp)
+	move $t0, $t3
+	beq $t3, $zero, label18
 	nop
 	b label12
 	nop
 label37:
-	lw $t0, 72($sp)
+	lw $t0, 64($sp)
 	move $t1, $t0
 	sw $t0, 16($sp)
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	beq $t0, $t1, label2
 	nop
 label21:
 	lw $t0, 16($sp)
 	sll $t1, $t0, 2
-	lw $t2, 56($sp)
+	lw $t2, 48($sp)
 	addu $t3, $t2, $t1
 	sll $t4, $t0, 2
-	lw $t5, 64($sp)
+	lw $t5, 56($sp)
 	addu $t6, $t5, $t4
 	lw $t7, 0($t6)
 	sw $t7, 0($t3)
 	addiu $t8, $t0, 1
 	move $t0, $t8
 	sw $t8, 16($sp)
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	beq $t8, $t1, label2
 	nop
 	b label21
 	nop
 label41:
 	move $t0, $zero
-	sw $zero, 48($sp)
+	sw $zero, 40($sp)
 	lw $t0, 20($sp)
 	lw $t1, 12($sp)
 	beq $t0, $t1, label16
@@ -133,14 +132,14 @@ label13:
 	lw $t0, 24($sp)
 	addiu $t1, $t0, 1
 	move $t0, $t1
-	lw $t2, 40($sp)
+	lw $t2, 32($sp)
 	move $t3, $t2
-	lw $t4, 32($sp)
+	lw $t4, 76($sp)
 	move $t5, $t4
 	sw $t4, 20($sp)
 	sw $t2, 8($sp)
 	sw $t1, 24($sp)
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	beq $t0, $t1, label37
 	nop
 	move $t0, $t4
@@ -148,25 +147,24 @@ label13:
 	beq $t4, $t1, label41
 	nop
 	move $t0, $t2
-	lw $t1, 76($sp)
+	lw $t1, 72($sp)
 	xor $t2, $t2, $t1
-	sltiu $t3, $t2, 1
-	xori $t4, $t3, 1
-	move $t5, $t4
-	sw $t4, 48($sp)
-	move $t0, $t4
-	beq $t4, $zero, label18
+	sltu $t3, $zero, $t2
+	move $t4, $t3
+	sw $t3, 40($sp)
+	move $t0, $t3
+	beq $t3, $zero, label18
 	nop
 	b label12
 	nop
 label16:
 	lw $t0, 24($sp)
 	sll $t1, $t0, 2
-	lw $t2, 64($sp)
+	lw $t2, 56($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 8($sp)
 	sll $t5, $t4, 2
-	lw $t6, 56($sp)
+	lw $t6, 48($sp)
 	addu $t7, $t6, $t5
 	lw $t8, 0($t7)
 	sw $t8, 0($t3)
@@ -174,14 +172,14 @@ label16:
 	move $s0, $t9
 	lw $s1, 20($sp)
 	move $s2, $s1
-	sw $s1, 32($sp)
-	sw $t9, 40($sp)
+	sw $s1, 76($sp)
+	sw $t9, 32($sp)
 	b label13
 	nop
 label12:
 	lw $t0, 20($sp)
 	sll $t1, $t0, 2
-	lw $t2, 56($sp)
+	lw $t2, 48($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 0($t3)
 	lw $t5, 8($sp)
@@ -201,11 +199,11 @@ label18:
 label17:
 	lw $t0, 24($sp)
 	sll $t1, $t0, 2
-	lw $t2, 64($sp)
+	lw $t2, 56($sp)
 	addu $t3, $t2, $t1
 	lw $t4, 20($sp)
 	sll $t5, $t4, 2
-	lw $t6, 56($sp)
+	lw $t6, 48($sp)
 	addu $t7, $t6, $t5
 	lw $t8, 0($t7)
 	sw $t8, 0($t3)
@@ -213,8 +211,8 @@ label17:
 	lw $s0, 8($sp)
 	move $s1, $s0
 	move $s2, $t9
-	sw $t9, 32($sp)
-	sw $s0, 40($sp)
+	sw $t9, 76($sp)
+	sw $s0, 32($sp)
 	b label13
 	nop
 label2:
@@ -241,11 +239,11 @@ main:
 	sw $v0, 40($sp)
 	sw $t1, 24($sp)
 	sw $t0, 36($sp)
-	blez $v0, label157
+	blez $v0, label155
 	nop
 	move $t0, $zero
 	sw $zero, 28($sp)
-label161:
+label159:
 	lw $t0, 28($sp)
 	sll $t1, $t0, 2
 	lw $t2, 24($sp)
@@ -257,14 +255,14 @@ label161:
 	lw $t5, 40($sp)
 	subu $t6, $t4, $t5
 	sw $t4, 32($sp)
-	bgez $t6, label157
+	bgez $t6, label155
 	nop
 	move $t0, $t4
 	move $t1, $t4
 	sw $t4, 28($sp)
-	b label161
+	b label159
 	nop
-label157:
+label155:
 	lw $t0, 24($sp)
 	move $a0, $t0
 	lw $t1, 36($sp)
@@ -275,11 +273,11 @@ label157:
 	jal merge
 	nop
 	lw $t3, 40($sp)
-	blez $t3, label160
+	blez $t3, label158
 	nop
 	move $t0, $zero
 	sw $zero, 44($sp)
-label158:
+label156:
 	lw $t0, 44($sp)
 	sll $t1, $t0, 2
 	lw $t2, 24($sp)
@@ -292,14 +290,14 @@ label158:
 	lw $t6, 40($sp)
 	subu $t7, $t5, $t6
 	sw $t5, 448($sp)
-	bgez $t7, label160
+	bgez $t7, label158
 	nop
 	move $t0, $t5
 	move $t1, $t5
 	sw $t5, 44($sp)
-	b label158
+	b label156
 	nop
-label160:
+label158:
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 856

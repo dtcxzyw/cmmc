@@ -23,24 +23,21 @@ seq:
 .globl snei
 snei:
 	xori $t0, $a0, 1
-	sltiu $t1, $t0, 1
-	xori $t2, $t1, 1
-	move $v0, $t2
+	sltu $t1, $zero, $t0
+	move $v0, $t1
 	jr $ra
 	nop
 .globl sne
 sne:
 	xor $t0, $a0, $a1
-	sltiu $t1, $t0, 1
-	xori $t2, $t1, 1
-	move $v0, $t2
+	sltu $t1, $zero, $t0
+	move $v0, $t1
 	jr $ra
 	nop
 .globl snez
 snez:
-	sltiu $t0, $a0, 1
-	xori $t1, $t0, 1
-	move $v0, $t1
+	sltu $t0, $zero, $a0
+	move $v0, $t0
 	jr $ra
 	nop
 .globl slti

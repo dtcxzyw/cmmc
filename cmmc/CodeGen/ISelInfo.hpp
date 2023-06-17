@@ -76,8 +76,11 @@ public:
 
 uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src);
 MIROperand getZExtMask(OperandType dstType, OperandType srcType);
+MIROperand getTruncMask(OperandType dstType, OperandType srcType);
 intmax_t getMaxSignedValue(OperandType type);
 intmax_t getMinSignedValue(OperandType type);
+uintmax_t getMaxUnsignedValue(OperandType type);
+uintmax_t getUnsignedImm(const MIROperand& imm);
 constexpr MIROperand getNeg(const MIROperand& operand) {
     return MIROperand::asImm(-operand.imm(), operand.type());
 }

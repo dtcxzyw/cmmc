@@ -697,13 +697,19 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
             .attach<Reason>("Cannot apply self increment/decrement operator to an immutable left value")
             .reportFatal();
     const auto type = ptr->getType()->as<PointerType>()->getPointee();
-    const auto val = ctx.makeOp<LoadInst>(ptr);
+    Value* val = ctx.makeOp<LoadInst>(ptr);
     if(type->isBoolean()) {
         reportWarning() << "Apply self increment/decrement operator to a boolean"sv << std::endl;
     }
     InstructionID instID;
     Value* rhs;
+    const Type* sourceTypeForIntegerPromotion = nullptr;
     if(type->isInteger()) {
+        // integer promotion
+        if(val->getType()->getFixedSize() < sizeof(int32_t)) {
+            sourceTypeForIntegerPromotion = val->getType();
+            val = ctx.convertTo(val, IntegerType::get(32), qualifier, qualifier, ConversionUsage::Implicit);
+        }
         rhs = ConstantInteger::get(val->getType(), 1);
         instID = ((mOp == OperatorID::PrefixInc || mOp == OperatorID::SuffixInc) ? InstructionID::Add : InstructionID::Sub);
     } else if(type->isFloatingPoint()) {
@@ -713,7 +719,10 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
         DiagnosticsContext::get().attach<Reason>("Unsupported type for self increment/decrement operator").reportFatal();
     }
 
-    const auto newVal = ctx.makeOp<BinaryInst>(instID, val, rhs);
+    Value* newVal = ctx.makeOp<BinaryInst>(instID, val, rhs);
+    if(sourceTypeForIntegerPromotion) {
+        newVal = ctx.makeOp<CastInst>(InstructionID::Trunc, sourceTypeForIntegerPromotion, newVal);
+    }
     ctx.makeOp<StoreInst>(ptr, newVal);
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
         return QualifiedValue{ newVal, ValueQualifier::AsRValue, qualifier };

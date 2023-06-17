@@ -62,7 +62,7 @@ int main() {
     starttime();
     float vectorA[100000], vectorB[100000], Vectortmp[100000];
 
-    int i;
+    int i = 0;
     while(i < n) {
         vectorA[i] = 1;
         i=i+1;

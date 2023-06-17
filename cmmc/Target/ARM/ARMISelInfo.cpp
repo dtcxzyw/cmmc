@@ -97,6 +97,31 @@ static MIROperand getCondFieldSCmp(const MIROperand& op) {
     }
     return MIROperand::asImm(field, OperandType::CondField);
 }
+static MIROperand getCondFieldUCmp(const MIROperand& op) {
+    const auto cmp = static_cast<CompareOp>(op.imm());
+    CondField field = CondField::AL;
+    switch(cmp) {
+        case CompareOp::LessThan:
+            field = CondField::LO;
+            break;
+        case CompareOp::LessEqual:
+            field = CondField::LS;
+            break;
+        case CompareOp::GreaterThan:
+            field = CondField::HI;
+            break;
+        case CompareOp::GreaterEqual:
+            field = CondField::HS;
+            break;
+        case CompareOp::Equal:
+            field = CondField::EQ;
+            break;
+        case CompareOp::NotEqual:
+            field = CondField::NE;
+            break;
+    }
+    return MIROperand::asImm(field, OperandType::CondField);
+}
 
 static MIROperand getCondFieldFCmp(const MIROperand& op) {
     const auto cmp = static_cast<CompareOp>(op.imm());
@@ -156,6 +181,8 @@ static ARMInst getLoadOpcode(const MIROperand& dst) {
             [[fallthrough]];
         case OperandType::Int8:
             return LDRSB;
+        case OperandType::Int16:
+            return LDRSH;
         case OperandType::Int32:
             return LDR;
         case OperandType::Float32:
@@ -169,6 +196,8 @@ static ARMInst getZExtLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Int8:
             return LDRB;
+        case OperandType::Int16:
+            return LDRH;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -180,6 +209,8 @@ static ARMInst getStoreOpcode(const MIROperand& src) {
             [[fallthrough]];
         case OperandType::Int8:
             return STRB;
+        case OperandType::Int16:
+            return STRH;
         case OperandType::Int32:
             return STR;
         case OperandType::Float32:
@@ -313,7 +344,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(rhs);
             break;
         }
-        case InstSCmp: {
+        case InstSCmp:
+            [[fallthrough]];
+        case InstUCmp: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
@@ -327,6 +360,12 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 inst.setOpcode(InstCopy);
                 modified = true;
             }
+            break;
+        }
+        case InstSExt:
+            [[fallthrough]];
+        case InstTrunc: {
+            imm2reg(inst.getOperand(1));
             break;
         }
         case InstStore: {
@@ -497,6 +536,8 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
             [[fallthrough]];
         case STRB:
             [[fallthrough]];
+        case STRH:
+            [[fallthrough]];
         case VSTR:
             [[fallthrough]];
         case LDR:
@@ -505,7 +546,11 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
             [[fallthrough]];
         case LDRB:
             [[fallthrough]];
-        case LDRSB: {
+        case LDRSB:
+            [[fallthrough]];
+        case LDRH:
+            [[fallthrough]];
+        case LDRSH: {
             assert(checkOpIdx(1));
             inst.setOperand<1>(base).setOperand<2>(imm);
             break;
@@ -696,7 +741,7 @@ MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lowerin
     return MIROperand{};
 }
 bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
-    if(inst->getInstID() == InstructionID::SRem) {
+    if(inst->getInstID() == InstructionID::SRem || inst->getInstID() == InstructionID::URem) {
         if(!inst->getType()->isSame(IntegerType::get(32)))
             return false;
         auto lhs = loweringCtx.mapOperand(inst->getOperand(0));
@@ -704,7 +749,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         const auto ret = loweringCtx.newVReg(OperandType::Int32);
 
         auto& globals = loweringCtx.getModule().globals();
-        const auto abiName = "__aeabi_idivmod";
+        const auto abiName = inst->getInstID() == InstructionID::SRem ? "__aeabi_idivmod" : "__aeabi_udivmod";
         MIRRelocable* func = nullptr;
         for(auto& global : globals)
             if(global->reloc->symbol() == abiName) {
@@ -723,7 +768,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         loweringCtx.addOperand(inst, ret);
         return true;
     }
-    if(inst->getInstID() == InstructionID::SDiv) {
+    if(inst->getInstID() == InstructionID::SDiv || inst->getInstID() == InstructionID::UDiv) {
         if(!inst->getType()->isSame(IntegerType::get(32)))
             return false;
         auto lhs = loweringCtx.mapOperand(inst->getOperand(0));
@@ -731,7 +776,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         const auto ret = loweringCtx.newVReg(OperandType::Int32);
 
         auto& globals = loweringCtx.getModule().globals();
-        const auto abiName = "__aeabi_idiv";
+        const auto abiName = inst->getInstID() == InstructionID::SDiv ? "__aeabi_idiv" : "__aeabi_udiv";
         MIRRelocable* func = nullptr;
         for(auto& global : globals)
             if(global->reloc->symbol() == abiName) {

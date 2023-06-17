@@ -398,6 +398,9 @@ MIROperand getZExtMask(OperandType dstType, OperandType srcType) {
     }
     return MIROperand::asImm(imm, dstType);
 }
+MIROperand getTruncMask(OperandType dstType, OperandType srcType) {
+    return getZExtMask(srcType, dstType);  // NOLINT
+}
 intmax_t getMaxSignedValue(OperandType type) {
     switch(type) {
         case OperandType::Int32:
@@ -408,12 +411,33 @@ intmax_t getMaxSignedValue(OperandType type) {
             reportUnreachable(CMMC_LOCATION());
     }
 }
+uintmax_t getMaxUnsignedValue(OperandType type) {
+    switch(type) {
+        case OperandType::Int32:
+            return std::numeric_limits<uint32_t>::max();
+        case OperandType::Int64:
+            return std::numeric_limits<uint64_t>::max();
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
 intmax_t getMinSignedValue(OperandType type) {
     switch(type) {
         case OperandType::Int32:
             return std::numeric_limits<int32_t>::min();
         case OperandType::Int64:
             return std::numeric_limits<int64_t>::min();
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+uintmax_t getUnsignedImm(const MIROperand& imm) {
+    assert(imm.isImm());
+    switch(imm.type()) {
+        case OperandType::Int32:
+            return static_cast<uint32_t>(imm.imm());
+        case OperandType::Int64:
+            return static_cast<uint64_t>(imm.imm());
         default:
             reportUnreachable(CMMC_LOCATION());
     }

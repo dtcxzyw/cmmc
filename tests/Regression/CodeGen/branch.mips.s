@@ -18,10 +18,10 @@ beqi:
 	move $t0, $a1
 	li $t1, 1
 	sw $a1, 0($sp)
-	bne $a0, $t1, label14
+	bne $a0, $t1, label13
 	nop
 	sw $zero, 0($a1)
-label14:
+label13:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -30,10 +30,10 @@ beq:
 	addiu $sp, $sp, -8
 	move $t0, $a2
 	sw $a2, 0($sp)
-	bne $a0, $a1, label28
+	bne $a0, $a1, label26
 	nop
 	sw $zero, 0($a2)
-label28:
+label26:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -42,10 +42,10 @@ bnez:
 	addiu $sp, $sp, -8
 	move $t0, $a1
 	sw $a1, 0($sp)
-	beq $a0, $zero, label41
+	beq $a0, $zero, label38
 	nop
 	sw $zero, 0($a1)
-label41:
+label38:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -55,10 +55,10 @@ bnei:
 	move $t0, $a1
 	li $t1, 1
 	sw $a1, 0($sp)
-	beq $a0, $t1, label51
+	beq $a0, $t1, label48
 	nop
 	sw $zero, 0($a1)
-label51:
+label48:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -67,10 +67,10 @@ bne:
 	addiu $sp, $sp, -8
 	move $t0, $a2
 	sw $a2, 0($sp)
-	beq $a0, $a1, label64
+	beq $a0, $a1, label61
 	nop
 	sw $zero, 0($a2)
-label64:
+label61:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -79,10 +79,10 @@ bltz:
 	addiu $sp, $sp, -8
 	move $t0, $a1
 	sw $a1, 0($sp)
-	bgez $a0, label76
+	bgez $a0, label73
 	nop
 	sw $zero, 0($a1)
-label76:
+label73:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -92,10 +92,10 @@ blti1:
 	move $t0, $a1
 	addiu $t1, $a0, -1
 	sw $a1, 0($sp)
-	bgez $t1, label87
+	bgez $t1, label84
 	nop
 	sw $zero, 0($a1)
-label87:
+label84:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -105,10 +105,10 @@ blti2:
 	move $t0, $a1
 	addiu $t1, $a0, -10
 	sw $a1, 0($sp)
-	bgez $t1, label99
+	bgez $t1, label96
 	nop
 	sw $zero, 0($a1)
-label99:
+label96:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -118,10 +118,10 @@ blt:
 	move $t0, $a2
 	subu $t1, $a0, $a1
 	sw $a2, 0($sp)
-	bgez $t1, label112
+	bgez $t1, label109
 	nop
 	sw $zero, 0($a2)
-label112:
+label109:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -131,10 +131,10 @@ bgez:
 	move $t0, $a1
 	addiu $t1, $a0, 1
 	sw $a1, 0($sp)
-	blez $t1, label126
+	blez $t1, label123
 	nop
 	sw $zero, 0($a1)
-label126:
+label123:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -143,10 +143,10 @@ bgei1:
 	addiu $sp, $sp, -8
 	move $t0, $a1
 	sw $a1, 0($sp)
-	blez $a0, label138
+	blez $a0, label135
 	nop
 	sw $zero, 0($a1)
-label138:
+label135:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -156,10 +156,10 @@ bgei2:
 	move $t0, $a1
 	addiu $t1, $a0, -9
 	sw $a1, 0($sp)
-	blez $t1, label148
+	blez $t1, label145
 	nop
 	sw $zero, 0($a1)
-label148:
+label145:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -169,10 +169,10 @@ bge:
 	move $t0, $a2
 	subu $t1, $a0, $a1
 	sw $a2, 0($sp)
-	bltz $t1, label160
+	bltz $t1, label157
 	nop
 	sw $zero, 0($a2)
-label160:
+label157:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -181,10 +181,10 @@ bgtz:
 	addiu $sp, $sp, -8
 	move $t0, $a1
 	sw $a1, 0($sp)
-	blez $a0, label173
+	blez $a0, label170
 	nop
 	sw $zero, 0($a1)
-label173:
+label170:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -194,10 +194,10 @@ bgti1:
 	move $t0, $a1
 	addiu $t1, $a0, 1
 	sw $a1, 0($sp)
-	blez $t1, label183
+	blez $t1, label180
 	nop
 	sw $zero, 0($a1)
-label183:
+label180:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -207,10 +207,10 @@ bgti2:
 	move $t0, $a1
 	addiu $t1, $a0, -10
 	sw $a1, 0($sp)
-	blez $t1, label195
+	blez $t1, label192
 	nop
 	sw $zero, 0($a1)
-label195:
+label192:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -220,10 +220,10 @@ bgt:
 	move $t0, $a2
 	subu $t1, $a0, $a1
 	sw $a2, 0($sp)
-	blez $t1, label207
+	blez $t1, label204
 	nop
 	sw $zero, 0($a2)
-label207:
+label204:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -233,10 +233,10 @@ blez:
 	move $t0, $a1
 	addiu $t1, $a0, -1
 	sw $a1, 0($sp)
-	bgez $t1, label221
+	bgez $t1, label218
 	nop
 	sw $zero, 0($a1)
-label221:
+label218:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -245,10 +245,10 @@ blei1:
 	addiu $sp, $sp, -8
 	move $t0, $a1
 	sw $a1, 0($sp)
-	bgez $a0, label233
+	bgez $a0, label230
 	nop
 	sw $zero, 0($a1)
-label233:
+label230:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -258,10 +258,10 @@ blei2:
 	move $t0, $a1
 	addiu $t1, $a0, -11
 	sw $a1, 0($sp)
-	bgez $t1, label244
+	bgez $t1, label241
 	nop
 	sw $zero, 0($a1)
-label244:
+label241:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -271,10 +271,10 @@ ble:
 	move $t0, $a2
 	subu $t1, $a0, $a1
 	sw $a2, 0($sp)
-	bgtz $t1, label257
+	bgtz $t1, label254
 	nop
 	sw $zero, 0($a2)
-label257:
+label254:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -286,10 +286,10 @@ bfeq:
 	li $t1, 1
 	movt $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label270
+	bne $t1, $zero, label267
 	nop
 	sw $zero, 0($a2)
-label270:
+label267:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -301,10 +301,10 @@ bfne:
 	li $t1, 1
 	movf $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label282
+	bne $t1, $zero, label279
 	nop
 	sw $zero, 0($a2)
-label282:
+label279:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -316,10 +316,10 @@ bflt:
 	li $t1, 1
 	movt $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label294
+	bne $t1, $zero, label291
 	nop
 	sw $zero, 0($a2)
-label294:
+label291:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -331,10 +331,10 @@ bfle:
 	li $t1, 1
 	movt $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label306
+	bne $t1, $zero, label303
 	nop
 	sw $zero, 0($a2)
-label306:
+label303:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -346,10 +346,10 @@ bfge:
 	li $t1, 1
 	movf $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label318
+	bne $t1, $zero, label315
 	nop
 	sw $zero, 0($a2)
-label318:
+label315:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop
@@ -361,10 +361,10 @@ bfgt:
 	li $t1, 1
 	movf $t1, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label330
+	bne $t1, $zero, label327
 	nop
 	sw $zero, 0($a2)
-label330:
+label327:
 	addiu $sp, $sp, 8
 	jr $ra
 	nop

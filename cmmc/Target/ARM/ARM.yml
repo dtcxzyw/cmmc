@@ -103,6 +103,10 @@ InstInfo:
         Mnemonic: ldrb
       LDRSB:
         Mnemonic: ldrsb
+      LDRH:
+        Mnemonic: ldrh
+      LDRSH:
+        Mnemonic: ldrsh
 
   VSTR:
     Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
@@ -119,6 +123,8 @@ InstInfo:
         Mnemonic: str
       STRB:
         Mnemonic: strb
+      STRH:
+        Mnemonic: strh
 
   MOVW:
     Format: movw $Rd:GPR[Def], $Imm:UImm16[Metadata]
@@ -348,30 +354,6 @@ InstSelection:
         Rs: $Rhs
 
   - Pattern:
-      InstSDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      SDIV:
-        Rd: $Dst
-        Rn: $Lhs
-        Rm: $Rhs
-
-  - Pattern:
-      InstUDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      UDIV:
-        Rd: $Dst
-        Rn: $Lhs
-        Rm: $Rhs
-
-  - Pattern:
       InstShl:
         Dst: $Dst
         Lhs: $Lhs
@@ -497,6 +479,8 @@ InstSelection:
         Sn:
           VMOV_GPR2FPR:
             Rd: $Src
+            Sn: $Intermediate
+            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
     Replace:
       InstCopyToReg:
         Dst: $Dst
@@ -508,6 +492,8 @@ InstSelection:
         Rd:
           VMOV_FPR2GPR:
             Sn: $Src
+            Rd: $Intermediate
+            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
     Replace:
       VMOV:
         Fd: $Dst
@@ -635,6 +621,22 @@ InstSelection:
             Op2: $Rhs
             CC: getCC()
         CF: getCondFieldSCmp($Op)
+  - Pattern:
+      InstUCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
+    Replace:
+      NZCVFlag2GPR:
+        Rd: $Dst
+        CC:
+          CMP:
+            Rn: $Lhs
+            Op2: $Rhs
+            CC: getCC()
+        CF: getCondFieldUCmp($Op)
 
   - Pattern:
       InstFCmp:
@@ -735,7 +737,7 @@ InstSelection:
             $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
-        $Opcode: getZExtLoadOpcode($Dst)
+        $Opcode: getZExtLoadOpcode($Val)
         $Template: LDRB
         Rd: $Dst
         Rn: $Base
@@ -774,6 +776,46 @@ InstSelection:
       InstUnreachable:
     Replace:
       UNIMP:
+
+  # For csmith
+  - Pattern:
+      InstZExt:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32
+    Replace:
+      AND:
+        Rd: $Dst
+        Rn: $Src
+        Op2:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Src)
+            Imm: getZExtMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+    Replace:
+      AND:
+        Rd: $Dst
+        Rn: $Src
+        Op2:
+          InstLoadImm:
+            Dst: getVRegAs(ctx, $Src)
+            Imm: getTruncMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
+    Replace:
+      AND:
+        Rd: $Dst
+        Rn: $Src
+        Op2: getTruncMask(($Dst).type(), ($Src).type())
 
 ScheduleModel:
   cortex_a72:

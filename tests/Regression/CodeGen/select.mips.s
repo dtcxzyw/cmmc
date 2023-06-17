@@ -2,20 +2,18 @@
 .text
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
-	sltiu $t0, $a0, 1
-	xori $t1, $t0, 1
-	move $t2, $a2
-	movn $t2, $a1, $t1
-	move $v0, $t2
+	sltu $t0, $zero, $a0
+	move $t1, $a2
+	movn $t1, $a1, $t0
+	move $v0, $t1
 	jr $ra
 	nop
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
 	mtc1 $a2, $f4
-	sltiu $t0, $a0, 1
-	xori $t1, $t0, 1
+	sltu $t0, $zero, $a0
 	mov.s $f6, $f14
-	movz.s $f6, $f4, $t1
+	movz.s $f6, $f4, $t0
 	mov.s $f0, $f6
 	jr $ra
 	nop
@@ -118,11 +116,10 @@ select_eq_fpr_fpr:
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
 	xor $t0, $a0, $a1
-	sltiu $t1, $t0, 1
-	xori $t2, $t1, 1
-	move $t3, $a3
-	movn $t3, $a2, $t2
-	move $v0, $t3
+	sltu $t1, $zero, $t0
+	move $t2, $a3
+	movn $t2, $a2, $t1
+	move $v0, $t2
 	jr $ra
 	nop
 .globl select_ne_fpr_fpr
@@ -130,10 +127,9 @@ select_ne_fpr_fpr:
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
-	sltiu $t1, $t0, 1
-	xori $t2, $t1, 1
+	sltu $t1, $zero, $t0
 	mov.s $f8, $f4
-	movz.s $f8, $f6, $t2
+	movz.s $f8, $f6, $t1
 	mov.s $f0, $f8
 	jr $ra
 	nop

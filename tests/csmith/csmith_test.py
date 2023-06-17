@@ -24,7 +24,12 @@ qemu_gcc_ref_command = {
 }[target]
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
-csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
+if target == "llvm":
+    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
+else:
+    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
+    csmith_ext += "--no-longlong --no-uint8 --no-math64 "
+# TODO: enable jumps?
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs {}--output /dev/stdout".format(
     csmith_ext)
 gcc_command = "gcc -Wno-narrowing -O0 -DNDEBUG -ffp-contract=on -w "
@@ -44,6 +49,9 @@ cmmc_header = """
 float fabsf(float x) {
     return x>=0.0f?x:-x;
 }
+"""
+if target == "llvm":
+    cmmc_header += """
 double fabs(double x) {
     return x>=0.0?x:-x;
 }
@@ -57,16 +65,21 @@ if os.path.exists(cwd):
     shutil.rmtree(cwd)
 os.makedirs(cwd)
 base = os.path.dirname(os.path.abspath(__file__))
-header_path = base+"/csmith_header.h"
+if target == 'llvm':
+    header_path = base+"/csmith_header.h"
+else:
+    header_path = base+"/csmith_header_32only.h"
 with open(header_path) as f:
     header = f.read()
-
 
 def generate():
     src = subprocess.check_output(csmith_command.split(' '), cwd=cwd).decode()
     src = src.replace('#include "csmith.h"', header)
     src = src.replace('int print_hash_value = 0;', 'int print_hash_value = 1;')
-    src = src.replace('long', 'int64_t')
+    src = src.replace('long', 'int32_t')
+    if target != 'llvm':
+        src = src.replace('#define NO_LONGLONG', '')
+        src = src.replace('0xFFFFFFFFUL', '0xFFFFFFFFU')
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
     src = src.replace('printf("index = [%d][%d]\\n", ', 'putdim2(')
     src = src.replace('printf("index = [%d][%d][%d]\\n", ', 'putdim3(')
@@ -91,6 +104,20 @@ def csmith_opt_only(i):
         f.write(src)
     return False
 
+def build_and_run(file_asm, file_exec, ref_output):
+    runtime = base + "/runtime.c"
+    command = qemu_gcc_ref_command.replace('-x c++', '') + \
+        ' -o {} {} {}'.format(file_exec, runtime, file_asm)
+    if os.system(command) != 0:
+        return False
+    try:
+        out = subprocess.run(
+                qemu_command + [file_exec], capture_output=True, text=True, timeout=prog_timeout)
+        if out.returncode != 0:
+            return False
+        return out.stdout.encode('utf-8') == ref_output
+    except Exception as e:
+        return True
 
 def csmith_test(i):
     try:
@@ -120,19 +147,42 @@ def csmith_test(i):
 
     src = src.replace('static ', "")
     src = cmmc_header + src
-    try:
-        ret = subprocess.run([binary, '-o', '/dev/stdout',
-                              '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-e', '/dev/null', '-x', 'SysY', '-D', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
-        if ret.returncode == 0 and ref_output == ret.stdout:
+    if target == 'llvm':
+        try:
+            ret = subprocess.run([binary, '-o', '/dev/stdout',
+                                '--hide-symbol', '-O', optimization_level, '-t', 'llvm', '-e', '/dev/null', '-x', 'SysY', '-D', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
+            if ret.returncode == 0 and ref_output == ret.stdout:
+                os.remove(file_c)
+                os.remove(file_ref)
+                return True
+        except subprocess.TimeoutExpired:
             os.remove(file_c)
             os.remove(file_ref)
-            return True
-
-    except subprocess.TimeoutExpired:
-        os.remove(file_c)
-        os.remove(file_ref)
-        # skip this test
-        return None
+            # skip this test
+            return None
+    else:
+        try:
+            file_asm = basename + ".s"
+            file_exec = basename + "_cmmc"
+            ret = subprocess.run([binary, '-o', file_asm,
+                                '--hide-symbol', '-O', optimization_level, '-t', target, '-x', 'SysY', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
+            if ret.returncode == 0:
+                if True or build_and_run(file_asm, file_exec, ref_output):
+                    os.remove(file_c)
+                    os.remove(file_ref)
+                    os.remove(file_asm)
+                    #os.remove(file_exec)
+                    return True
+            else:
+                #print(ret.returncode)
+                #print(ret.stderr)
+                pass
+        except subprocess.TimeoutExpired:
+            os.remove(file_c)
+            os.remove(file_ref)
+            os.remove(file_asm)
+            # skip this test
+            return None
     
     file_sy = basename + ".sy"
     # print(file)

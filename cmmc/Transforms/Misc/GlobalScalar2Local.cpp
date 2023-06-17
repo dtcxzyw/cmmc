@@ -38,7 +38,7 @@ CMMC_NAMESPACE_BEGIN
 
 // FIXME: support multiple exported functions
 class GlobalScalar2Local final : public TransformPass<Module> {
-    static constexpr size_t maxSize = 1024;
+    static constexpr size_t maxSize = 128;
 
     void initializeArray(IRBuilder& builder, Value* storage, const ArrayType* type, Value* value, Value* zeroScalar) const {
         const auto subType = type->getElementType();
@@ -83,6 +83,8 @@ public:
             } else {
                 auto var = global->as<GlobalVariable>();
                 if(var->getLinkage() == Linkage::Global)
+                    continue;
+                if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))
                     continue;
 
                 const auto pointeeType = var->getType()->as<PointerType>()->getPointee();

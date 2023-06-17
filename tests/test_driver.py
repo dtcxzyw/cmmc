@@ -321,17 +321,9 @@ def sysy_semantic(src):
     return out.returncode == 0
 
 
-white_list = ["long_code", "vector_mul1", "vector_mul2", "vector_mul3"]
-
-
 def sysy_opt(src):
     args = [binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
             '/dev/stdout', src]
-
-    for key in white_list:
-        if key in src:
-            args.insert(-1, '--do-not-check-uninitialized-value')
-            break
 
     out = subprocess.run(args, capture_output=True, text=True)
     return out.returncode == 0
@@ -343,11 +335,6 @@ def sysy_test(src: str, opt=True):
         input_file = "/dev/null"
     args = [binary_path, '-t', 'sim', '--hide-symbol', '-O', optimization_level if opt else '0', '-o',
             '/dev/stdout', '-e', input_file, src]
-
-    for key in white_list:
-        if key in src:
-            args.insert(-1, '--do-not-check-uninitialized-value')
-            break
 
     out = subprocess.run(args, capture_output=True, text=True)
     output = out.stdout
@@ -762,7 +749,8 @@ if not generate_ref:
                                 "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
                                 "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
-                samples['cmmc_qemu_'+target].reset()
+                if ('cmmc_qemu_'+target) in samples:
+                    samples['cmmc_qemu_'+target].reset()
                 res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
                                 "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
                 

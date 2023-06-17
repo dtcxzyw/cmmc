@@ -233,7 +233,7 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
         if(offset < passingByRegisterThreshold) {
             // $r0-$r3
             MIROperand src = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
-            if(arg.type() == OperandType::Int32)
+            if(ctx.getCodeGenContext().registerInfo->getCanonicalizedRegisterType(arg.type()) == OperandType::Int32)
                 ctx.emitCopy(arg, src);
             else if(arg.type() == OperandType::Float32) {
                 ctx.emitInst(MIRInst{ ARM::VMOV_GPR2FPR }.setOperand<0>(arg).setOperand<1>(src));
@@ -285,7 +285,7 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         if(offset < passingByRegisterThreshold) {
             // $r0-$r3
             MIROperand dst = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
-            if(val.type() == OperandType::Int32)
+            if(ctx.getCodeGenContext().registerInfo->getCanonicalizedRegisterType(val.type()) == OperandType::Int32)
                 ctx.emitCopy(dst, val);
             else if(val.type() == OperandType::Float32) {
                 ctx.emitInst(MIRInst{ ARM::VMOV_FPR2GPR }.setOperand<0>(dst).setOperand<1>(val));

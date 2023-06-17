@@ -3,92 +3,92 @@ READ v15
 IF v15 >= #1 GOTO label4
 WRITE #0
 RETURN #0
+LABEL label4 :
+IF v15 != #1 GOTO label5
 LABEL label43 :
 WRITE #1
 RETURN #0
-LABEL label4 :
-IF v15 != #1 GOTO label6
+LABEL label5 :
+IF v15 != #2 GOTO label6
 GOTO label43
 LABEL label6 :
-IF v15 != #2 GOTO label7
-GOTO label43
-LABEL label7 :
 IF v15 <= #2 GOTO label3
 IF v15 <= #2 GOTO label34
+v9 := #1
 v10 := #1
-v11 := #1
-v12 := #3
-v36 := v11 + v10
-v37 := v12 + #1
+v11 := #3
+v36 := v10 + v9
+v37 := v11 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
 v37 := v37 + #1
 IF v37 > v15 GOTO label40
-LABEL label71 :
-v10 := v11
-v12 := v37
-v11 := v36
-v36 := v36 + v10
-v37 := v37 + #1
-IF v37 > v15 GOTO label40
-GOTO label71
+GOTO label70
 LABEL label34 :
-v14 := #0
-WRITE v14
+v13 := #0
+WRITE v13
 RETURN #0
+LABEL label70 :
+v9 := v10
+v11 := v37
+v10 := v36
+v36 := v36 + v9
+v37 := v37 + #1
+IF v37 > v15 GOTO label40
+GOTO label70
 LABEL label40 :
-v14 := v36
+v13 := v36
 WRITE v36
 RETURN #0
 LABEL label3 :
