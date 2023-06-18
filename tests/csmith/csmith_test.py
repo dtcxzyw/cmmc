@@ -25,11 +25,10 @@ qemu_gcc_ref_command = {
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
 if target == "llvm":
-    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
+    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 --jumps "
 else:
     csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
     csmith_ext += "--no-longlong --no-uint8 --no-math64 "
-# TODO: enable jumps?
 csmith_command = "csmith --no-pointers --quiet --no-packed-struct --no-unions --no-volatiles --no-volatile-pointers --no-const-pointers --no-builtins --no-jumps --no-bitfields --no-argc --no-structs {}--output /dev/stdout".format(
     csmith_ext)
 gcc_command = "gcc -Wno-narrowing -O0 -DNDEBUG -ffp-contract=on -w "
@@ -110,6 +109,7 @@ def build_and_run(file_asm, file_exec, ref_output):
         ' -o {} {} {}'.format(file_exec, runtime, file_asm)
     if os.system(command) != 0:
         return False
+    return True
     try:
         out = subprocess.run(
                 qemu_command + [file_exec], capture_output=True, text=True, timeout=prog_timeout)
@@ -167,11 +167,11 @@ def csmith_test(i):
             ret = subprocess.run([binary, '-o', file_asm,
                                 '--hide-symbol', '-O', optimization_level, '-t', target, '-x', 'SysY', '/dev/stdin'], input=src.encode(), capture_output=True, timeout=cmmc_timeout)
             if ret.returncode == 0:
-                if True or build_and_run(file_asm, file_exec, ref_output):
+                if build_and_run(file_asm, file_exec, ref_output):
                     os.remove(file_c)
                     os.remove(file_ref)
                     os.remove(file_asm)
-                    #os.remove(file_exec)
+                    os.remove(file_exec)
                     return True
             else:
                 #print(ret.returncode)

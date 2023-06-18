@@ -87,15 +87,16 @@ InstInfo:
     Flag: [Terminator, NoFallthrough, Return]
 
   VLDR:
-    Format: $Mnemonic:Template $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Load]
     Instances:
       VLDR:
         Mnemonic: vldr
 
   Load:
-    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImm13[Metadata]]
     Flag: [Load]
+    CustomVerifier: true
     Instances:
       LDR:
         Mnemonic: ldr
@@ -109,15 +110,16 @@ InstInfo:
         Mnemonic: ldrsh
 
   VSTR:
-    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Store]
     Instances:
       VSTR:
         Mnemonic: vstr
 
   Store:
-    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:BaseLike[Use], $Imm:Imm13[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImm13[Metadata]]
     Flag: [Store]
+    CustomVerifier: true
     Instances:
       STR:
         Mnemonic: str
@@ -718,7 +720,7 @@ InstSelection:
       InstLoad:
         Dst: $Dst
         Addr: $Addr
-        $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+        $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getLoadOpcode($Dst))
     Replace:
       Load:
         $Opcode: getLoadOpcode($Dst)
@@ -734,7 +736,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
-            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getZExtLoadOpcode($Val))
     Replace:
       Load:
         $Opcode: getZExtLoadOpcode($Val)
@@ -750,7 +752,7 @@ InstSelection:
             Dst: $Dst
             Src: $Src
         Addr: $Addr
-        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Dst))
     Replace:
       Store:
         $Opcode: getStoreOpcode($Dst)
@@ -763,7 +765,7 @@ InstSelection:
       InstStore:
         Src: $Src
         Addr: $Addr
-        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+        $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Src))
     Replace:
       Store:
         $Opcode: getStoreOpcode($Src)

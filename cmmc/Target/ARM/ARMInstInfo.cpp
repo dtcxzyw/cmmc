@@ -125,6 +125,67 @@ static bool isOperandCondField(const MIROperand& op) {
     return op.isImm() && (0 <= op.imm() && op.imm() <= static_cast<intmax_t>(CondField::AL));
 }
 
+AddressingImmRange getAddressingImmRange(uint32_t opcode) {
+    switch(opcode) {
+        case LDRH:
+            [[fallthrough]];
+        case STRH:
+            [[fallthrough]];
+        case LDRSH:
+            [[fallthrough]];
+        case LDRSB:
+            return AddressingImmRange::Imm9;
+        case VSTR:
+            [[fallthrough]];
+        case VLDR:
+            return AddressingImmRange::VFP;
+        default:
+            return AddressingImmRange::Imm13;
+    }
+}
+
+bool isLegalAddrImm(intmax_t imm, AddressingImmRange range) {
+    switch(range) {
+        case AddressingImmRange::Imm13: {
+            return isSignedImm<13>(imm);
+        }
+        case AddressingImmRange::Imm9: {
+            return isSignedImm<9>(imm);
+        }
+        default: {
+            return 0 <= imm && imm <= 1020 && imm % 4 == 0;
+        }
+    }
+}
+
+static bool verifyInstLDR(const MIRInst&) {
+    return true;
+}
+static bool verifyInstLDRB(const MIRInst&) {
+    return true;
+}
+static bool verifyInstSTR(const MIRInst&) {
+    return true;
+}
+static bool verifyInstSTRB(const MIRInst&) {
+    return true;
+}
+static bool verifyInstAddrImm9(const MIRInst& inst) {
+    return isOperandAddrImm9(inst.getOperand(2));
+}
+static bool verifyInstLDRSB(const MIRInst& inst) {
+    return verifyInstAddrImm9(inst);
+}
+static bool verifyInstLDRH(const MIRInst& inst) {
+    return verifyInstAddrImm9(inst);
+}
+static bool verifyInstLDRSH(const MIRInst& inst) {
+    return verifyInstAddrImm9(inst);
+}
+static bool verifyInstSTRH(const MIRInst& inst) {
+    return verifyInstAddrImm9(inst);
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/InstInfoImpl.hpp>

@@ -698,6 +698,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
             .reportFatal();
     const auto type = ptr->getType()->as<PointerType>()->getPointee();
     Value* val = ctx.makeOp<LoadInst>(ptr);
+    const auto oldVal = val;
     if(type->isBoolean()) {
         reportWarning() << "Apply self increment/decrement operator to a boolean"sv << std::endl;
     }
@@ -727,7 +728,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
         return QualifiedValue{ newVal, ValueQualifier::AsRValue, qualifier };
     }
-    return QualifiedValue{ val, ValueQualifier::AsRValue, qualifier };
+    return QualifiedValue{ oldVal, ValueQualifier::AsRValue, qualifier };
 }
 
 QualifiedValue AddressExpr::emit(EmitContext& ctx) const {

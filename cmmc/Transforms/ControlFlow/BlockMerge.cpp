@@ -61,6 +61,8 @@ public:
                     continue;
                 const auto branch = terminator->as<BranchInst>();
                 const auto target = branch->getTrueTarget();
+                if(block == target)
+                    continue;
 
                 assert(blockRef[target] >= 1);
                 if(blockRef.at(target) == 1) {

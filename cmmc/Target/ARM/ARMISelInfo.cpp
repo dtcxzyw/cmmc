@@ -149,7 +149,7 @@ static MIROperand getCondFieldFCmp(const MIROperand& op) {
     return MIROperand::asImm(field, OperandType::CondField);
 }
 
-static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset) {
+static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& offset, uint32_t opcode) {
     const auto addrInst = ctx.lookupDef(addr);
     if(addrInst) {
         if(addrInst->opcode() == InstLoadStackObjectAddr) {
@@ -160,7 +160,7 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
         if(addrInst->opcode() == InstAdd) {
             base = addrInst->getOperand(1);
             const auto off = addrInst->getOperand(2);
-            if(isOperandIReg(base) && isOperandImm13(off)) {
+            if(isOperandIReg(base) && isOperandImm(off) && isLegalAddrImm(off.imm(), getAddressingImmRange(opcode))) {
                 base = addrInst->getOperand(1);
                 offset = off;
                 return true;
@@ -511,8 +511,9 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     int64_t immVal = obj.offset;
     MIROperand base = sp;
 
-    if(inst.opcode() != InstLoadStackObjectAddr)
-        legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal, !isOperandGPR(inst.getOperand(0)));
+    if(inst.opcode() != InstLoadStackObjectAddr) {
+        legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal, getAddressingImmRange(inst.opcode()));
+    }
 
     const auto imm = MIROperand::asImm(immVal, OperandType::Int32);
     switch(inst.opcode()) {
@@ -562,16 +563,10 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
 
 constexpr auto scratch = MIROperand::asISAReg(ARM::R12, OperandType::Int32);
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm, bool isVFP) {
+                                  int64_t& imm, AddressingImmRange range) {
     assert(isSignedImm<32>(imm));
-    if(isVFP) {
-        if(0 <= imm && imm <= 1020 && imm % 4 == 0)
-            return;
-    } else {
-        if(isSignedImm<13>(imm)) {
-            return;
-        }
-    }
+    if(isLegalAddrImm(imm, range))
+        return;
 
     const auto immLiteral = static_cast<uint32_t>(imm);
     instructions.insert(
@@ -632,7 +627,7 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
         return true;
     };
     auto matchStackPushPop = [](uint32_t opcode, const MIRInst& inst, MIROperand& reg, intmax_t& pos) {
-        if(inst.opcode() == opcode && inst.getOperand(1) == sp && isOperandImm13(inst.getOperand(2))) {
+        if(inst.opcode() == opcode && inst.getOperand(1) == sp && isOperandAddrImm13(inst.getOperand(2))) {
             pos = inst.getOperand(2).imm();
             reg = inst.getOperand(0);
             return true;
@@ -749,7 +744,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         const auto ret = loweringCtx.newVReg(OperandType::Int32);
 
         auto& globals = loweringCtx.getModule().globals();
-        const auto abiName = inst->getInstID() == InstructionID::SRem ? "__aeabi_idivmod" : "__aeabi_udivmod";
+        const auto abiName = inst->getInstID() == InstructionID::SRem ? "__aeabi_idivmod" : "__aeabi_uidivmod";
         MIRRelocable* func = nullptr;
         for(auto& global : globals)
             if(global->reloc->symbol() == abiName) {
@@ -776,7 +771,7 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         const auto ret = loweringCtx.newVReg(OperandType::Int32);
 
         auto& globals = loweringCtx.getModule().globals();
-        const auto abiName = inst->getInstID() == InstructionID::SDiv ? "__aeabi_idiv" : "__aeabi_udiv";
+        const auto abiName = inst->getInstID() == InstructionID::SDiv ? "__aeabi_idiv" : "__aeabi_uidiv";
         MIRRelocable* func = nullptr;
         for(auto& global : globals)
             if(global->reloc->symbol() == abiName) {

@@ -18,6 +18,7 @@
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <queue>
 #include <unordered_map>
 
@@ -64,6 +65,9 @@ public:
                 block->instructions().pop_back();
                 IRBuilder builder{ target, block };
                 builder.makeOp<UnreachableInst>();
+                for(auto succ : cfg.successors(block)) {
+                    removePhi(block, succ);
+                }
             }
         }
 

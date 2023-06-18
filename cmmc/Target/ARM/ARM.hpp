@@ -58,8 +58,17 @@ constexpr bool isOperandUImm5(const MIROperand& operand) {
     return operand.isImm() && isUnsignedImm<5>(operand.imm());
 }
 
-constexpr bool isOperandImm13(const MIROperand& operand) {
+constexpr bool isOperandAddrImm13(const MIROperand& operand) {
     return operand.isImm() && isSignedImm<13>(operand.imm());
+}
+constexpr bool isOperandAddrImm9(const MIROperand& operand) {
+    return operand.isImm() && isSignedImm<9>(operand.imm());
+}
+constexpr bool isOperandAddrImmVFP(const MIROperand& operand) {
+    if(!operand.isImm())
+        return false;
+    const auto imm = operand.imm();
+    return 0 <= imm && imm <= 1020 && imm % 4 == 0;
 }
 
 constexpr bool isOperandImm32(const MIROperand& operand) {
@@ -117,9 +126,15 @@ constexpr bool isOperandCC(const MIROperand& op) {
 constexpr bool isOperandFCC(const MIROperand& op) {
     return op.isReg() && op.reg() == ARMRegister::FCC;
 }
-
+enum class AddressingImmRange {
+    Imm13,
+    Imm9,
+    VFP,
+};
+AddressingImmRange getAddressingImmRange(uint32_t opcode);
+bool isLegalAddrImm(intmax_t imm, AddressingImmRange range);
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
-                                  int64_t& imm, bool isVFP);
+                                  int64_t& imm, AddressingImmRange range);
 // dst = src + imm
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
                int64_t imm);

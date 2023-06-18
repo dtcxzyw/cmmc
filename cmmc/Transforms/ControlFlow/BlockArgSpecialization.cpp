@@ -81,8 +81,16 @@ public:
                 for(auto& inst : targetBlock->instructions()) {
                     if(inst.getInstID() == InstructionID::Phi) {
                         hasPhi = true;
-                        if(!inst.as<PhiInst>()->incomings().at(block)->value->isConstant())
+                        auto& incomings = inst.as<PhiInst>()->incomings();
+                        if(!incomings.at(block)->value->isConstant())
                             return;
+                        for(auto [b, val] : incomings) {
+                            CMMC_UNUSED(b);
+                            // use phi node
+                            if(val->value->getBlock() == targetBlock) {
+                                return;
+                            }
+                        }
                     } else
                         break;
                 }

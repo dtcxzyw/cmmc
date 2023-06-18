@@ -95,9 +95,9 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
 
             if((boundValue - initialValue) % step)
                 continue;
-            if(step > 0 && (initialValue > boundValue))
+            if(step > 0 && (initialValue >= boundValue))
                 continue;
-            if(step < 0 && (initialValue < boundValue))
+            if(step < 0 && (initialValue <= boundValue))
                 continue;
         } else if(cmp->getOp() == CompareOp::LessThan) {
             // increment
