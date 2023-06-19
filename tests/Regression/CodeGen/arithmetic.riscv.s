@@ -194,6 +194,18 @@ fneg:
 	fneg.s f0, f10
 	fmv.s f10, f0
 	ret
+.globl s2f2s
+s2f2s:
+	fcvt.s.w f0, a0
+	fcvt.w.s t1, f0, rtz
+	mv a0, t1
+	ret
+.globl f2s2f
+f2s2f:
+	fcvt.w.s t1, f10, rtz
+	fcvt.s.w f0, t1
+	fmv.s f10, f0
+	ret
 .globl zero
 zero:
 	mv a0, zero
@@ -223,9 +235,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel203:
+pcrel215:
 	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi t2, t1, %pcrel_lo(pcrel203)
+	addi t2, t1, %pcrel_lo(pcrel215)
 	flw f0, 0(t2)
 	fmv.s f10, f0
 	ret

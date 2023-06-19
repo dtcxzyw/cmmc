@@ -13,7 +13,10 @@
 */
 
 #include <chrono>
+#include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CallGraphSCC.hpp>
+#include <cmmc/CodeGen/Lowering.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/ExecutionEngine/Interpreter.hpp>
 #include <cmmc/IR/Attachments.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -28,6 +31,7 @@
 #include <cmmc/Support/StringFlyWeight.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -40,12 +44,17 @@
 
 CMMC_NAMESPACE_BEGIN
 
-Flag debugTransform;               // NOLINT
-static StringOpt referenceOutput;  // NOLINT
-extern StringOpt executeInput;     // NOLINT
-static IntegerOpt skipCount;       // NOLINT
-extern StringOpt targetName;       // NOLINT
-static StringOpt passFilter;       // NOLINT
+Flag debugTransform;                  // NOLINT
+static StringOpt referenceOutput;     // NOLINT
+extern StringOpt executeInput;        // NOLINT
+static IntegerOpt skipCount;          // NOLINT
+static StringOpt passFilter;          // NOLINT
+static StringOpt testScript;          // NOLINT
+extern IntegerOpt optimizationLevel;  // NOLINT
+
+namespace mir {
+    extern StringOpt targetName;  // NOLINT
+}
 
 static uint32_t runCount = 0;  // NOLINT
 
@@ -56,6 +65,7 @@ skipCount.withDefault(0)
     .setName("skip-transform-count", 'T')
     .setDesc("skip the correctness check for the first N transform runs");
 passFilter.withDefault("").setName("pass-filter", 'f').setDesc("only do correctness check for specified passes");
+testScript.withDefault("").setName("test-script", 'j').setDesc("test script for transform debugging");
 CMMC_INIT_OPTIONS_END
 
 template <>
@@ -87,7 +97,7 @@ static std::string loadString(const std::string& input) {
     in.read(str.data(), size);
     return str;
 }
-static void verifyModuleExec(Module& module, const std::string_view& passName) {
+static void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::string_view& passName) {
     if(!passFilter.get().empty()) {
         if(passFilter.get() != passName)
             return;
@@ -107,15 +117,31 @@ static void verifyModuleExec(Module& module, const std::string_view& passName) {
             return;
         }
 
-        InputStream in{ executeInput.get() };
-        OutputStream out{ tempOutput };
-        SimulationIOContext ctx{ in, out };
-        const auto ret = runMain(module, ctx, "unknown");
-        if(ret) {
-            retCode = ret.value() & 0xff;
+        if(mir::targetName.get() == "llvm" || mir::targetName.get() == "sim") {
+            InputStream in{ executeInput.get() };
+            OutputStream out{ tempOutput };
+            SimulationIOContext ctx{ in, out };
+            const auto ret = runMain(module, ctx, "unknown");
+            if(ret) {
+                retCode = ret.value() & 0xff;
+            } else {
+                std::cerr << " failed"sv << std::endl;
+                DiagnosticsContext::get().attach<Reason>("runtime error").attach<Reason>(passName).reportFatal();
+            }
         } else {
-            std::cerr << " failed"sv << std::endl;
-            DiagnosticsContext::get().attach<Reason>("runtime error").attach<Reason>(passName).reportFatal();
+            if(testScript.get().empty())
+                return;
+            const auto tempAsmOutput = "/tmp/cmmctmp.S";
+            std::ofstream out{ tempAsmOutput };
+            const auto machineModule =
+                mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
+            assert(machineModule->verify());
+            auto& target = module.getTarget();
+            target.emitAssembly(*machineModule, out, mir::RuntimeType::None);
+            const auto cmd = testScript.get() + " " + tempAsmOutput + " " + executeInput.get() + " " + tempOutput;
+            // std::cerr << '[' << cmd << ']' << std::endl;
+            retCode = system(cmd.c_str()) & 0xff;
+            // std::cerr << retCode << std::endl;
         }
     }
 
@@ -165,7 +191,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
     if(debugTransform.get()) {
         std::cerr << "Original" << std::endl;
         dumpItem();
-        verifyModuleExec(analysis.module(), name());
+        verifyModuleExec(analysis.module(), analysis, name());
     }
 
     bool modified = false;
@@ -199,7 +225,7 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
                 if(!item.verify(std::cerr))
                     DiagnosticsContext::get().attach<Attachment<Scope>>("item", &item).reportFatal();
                 if(debugTransform.get()) {
-                    verifyModuleExec(analysis.module(), pass->name());
+                    verifyModuleExec(analysis.module(), analysis, pass->name());
                 }
             }
             // else {
@@ -308,7 +334,7 @@ public:
                 modified = true;
                 assert(func->verify(std::cerr));
                 if(debugTransform.get()) {
-                    verifyModuleExec(module, mPass->name());
+                    verifyModuleExec(module, analysis, mPass->name());
                 }
             }
         }

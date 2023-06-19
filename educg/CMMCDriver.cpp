@@ -41,8 +41,9 @@ CMMC_NAMESPACE_BEGIN
 
 static_assert(!Config::debug);
 
-Flag strictMode;         // NOLINT
-StringOpt executeInput;  // NOLINT
+Flag strictMode;               // NOLINT
+StringOpt executeInput;        // NOLINT
+IntegerOpt optimizationLevel;  // NOLINT
 namespace mir {
     extern StringOpt targetName;  // NOLINT
 }

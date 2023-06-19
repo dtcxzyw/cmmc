@@ -39,18 +39,18 @@ using namespace cmmc;
 
 CMMC_NAMESPACE_BEGIN
 
-static Flag version;                  // NOLINT
-static Flag help;                     // NOLINT
-static Flag emitAST;                  // NOLINT
-static Flag emitIR;                   // NOLINT
-Flag strictMode;                      // NOLINT
-static IntegerOpt optimizationLevel;  // NOLINT
-static StringOpt outputPath;          // NOLINT
-StringOpt executeInput;               // NOLINT
-static Flag grammarCheck;             // NOLINT
-static Flag dumpOptPipeline;          // NOLINT
-static StringOpt language;            // NOLINT
-static Flag withRuntime;              // NOLINT
+static Flag version;           // NOLINT
+static Flag help;              // NOLINT
+static Flag emitAST;           // NOLINT
+static Flag emitIR;            // NOLINT
+Flag strictMode;               // NOLINT
+IntegerOpt optimizationLevel;  // NOLINT
+static StringOpt outputPath;   // NOLINT
+StringOpt executeInput;        // NOLINT
+static Flag grammarCheck;      // NOLINT
+static Flag dumpOptPipeline;   // NOLINT
+static StringOpt language;     // NOLINT
+static Flag withRuntime;       // NOLINT
 namespace mir {
     extern StringOpt targetName;  // NOLINT
 }
@@ -183,7 +183,7 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     std::ofstream out{ path };
     const auto machineModule =
         mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
-    // assert(machineModule->verify());
+    assert(machineModule->verify());
     {
         Stage stage{ "dump ASM"sv };
         target.emitAssembly(*machineModule, out,

@@ -319,6 +319,25 @@ fneg:
 	vneg.f32 s1, s0
 	vmov r0, s1
 	bx lr
+.globl s2f2s
+s2f2s:
+	sub sp, sp, #8
+	str r4, [sp, #0]
+	vmov s0, r0
+	vcvt.f32.s32 s1, s0
+	vcvt.s32.f32 s2, s1
+	vmov r4, s2
+	mov r0, r4
+	ldr r4, [sp, #0]
+	add sp, sp, #8
+	bx lr
+.globl f2s2f
+f2s2f:
+	vmov s0, r0
+	vcvt.s32.f32 s1, s0
+	vcvt.f32.s32 s2, s1
+	vmov r0, s2
+	bx lr
 .globl zero
 zero:
 	mov r0, #0

@@ -245,6 +245,22 @@ fneg:
 	mov.s $f0, $f4
 	jr $ra
 	nop
+.globl s2f2s
+s2f2s:
+	mtc1 $a0, $f4
+	cvt.s.w $f6, $f4
+	trunc.w.s $f8, $f6
+	mfc1 $t0, $f8
+	move $v0, $t0
+	jr $ra
+	nop
+.globl f2s2f
+f2s2f:
+	trunc.w.s $f4, $f12
+	cvt.s.w $f6, $f4
+	mov.s $f0, $f6
+	jr $ra
+	nop
 .globl zero
 zero:
 	move $v0, $zero

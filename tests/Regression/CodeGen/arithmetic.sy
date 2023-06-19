@@ -131,6 +131,14 @@ float fdiv_imm(float x) {
 float fneg(float x) {
     return -x;
 }
+int s2f2s(int x) {
+    float y = x;
+    return y;
+}
+float f2s2f(float x) {
+    int y = x;
+    return y;
+}
 
 int zero() {
     return 0;
