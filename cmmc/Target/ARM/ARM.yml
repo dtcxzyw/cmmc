@@ -185,9 +185,18 @@ InstInfo:
   PUSH:
     Format: push $List:RegList[Metadata]
     Flag: [Store]
+  VPUSH:
+    Format: vpush $List:RegListVFP[Metadata]
+    Flag: [Store]
 
   POP:
     Format: pop $List:RegList[Metadata]
+    Flag: [Load]
+  POP_RET:
+    Format: pop $List:RegList[Metadata]
+    Flag: [Load, Terminator, NoFallthrough, Return]
+  VPOP:
+    Format: vpop $List:RegListVFP[Metadata]
     Flag: [Load]
 
   MOVT_MOVW_PAIR:

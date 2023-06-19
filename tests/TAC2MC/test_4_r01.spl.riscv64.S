@@ -23,13 +23,13 @@ write:
     ret
 hanoi:
 	addi sp, sp, -128
-	sd ra, 0(sp)
-	sd s0, 72(sp)
-	sd s5, 24(sp)
-	sd s1, 56(sp)
+	sd s0, 24(sp)
+	sd s5, 32(sp)
+	sd s1, 40(sp)
 	sd s2, 48(sp)
-	sd s3, 40(sp)
-	sd s4, 32(sp)
+	sd s3, 56(sp)
+	sd s4, 64(sp)
+	sd ra, 72(sp)
 	mv t1, a0
 	mv t2, a1
 	mv t3, a2
@@ -50,8 +50,8 @@ label14:
 	mv t4, t3
 	ld t5, 104(sp)
 	mv t6, t5
-	sd t5, 8(sp)
-	sd t3, 16(sp)
+	sd t5, 0(sp)
+	sd t3, 8(sp)
 	sd t1, 80(sp)
 	j label4
 label2:
@@ -63,51 +63,51 @@ label2:
 	mv a0, t5
 	jal write
 	mv a0, zero
-	ld s4, 32(sp)
-	ld s3, 40(sp)
+	ld ra, 72(sp)
+	ld s4, 64(sp)
+	ld s3, 56(sp)
 	ld s2, 48(sp)
-	ld s1, 56(sp)
-	ld s5, 24(sp)
-	ld s0, 72(sp)
-	ld ra, 0(sp)
+	ld s1, 40(sp)
+	ld s5, 32(sp)
+	ld s0, 24(sp)
 	addi sp, sp, 128
 	ret
 label4:
 	ld t1, 80(sp)
 	addiw t2, t1, -1
 	mv a0, t2
-	ld t3, 16(sp)
+	ld t3, 8(sp)
 	mv a1, t3
 	ld t4, 112(sp)
 	mv a2, t4
-	ld t5, 8(sp)
+	ld t5, 0(sp)
 	mv a3, t5
-	sd t2, 64(sp)
+	sd t2, 16(sp)
 	jal hanoi
 	li t6, 10000
-	ld s0, 16(sp)
+	ld s0, 8(sp)
 	mulw s1, s0, t6
 	ld s2, 112(sp)
 	addw s3, s2, s1
 	mv a0, s3
 	jal write
 	li s4, 1
-	ld s5, 64(sp)
+	ld s5, 16(sp)
 	bne s5, s4, label24
-	ld t1, 8(sp)
+	ld t1, 0(sp)
 	mv t2, t1
 	sd t1, 120(sp)
 	j label2
 label24:
-	ld t1, 64(sp)
+	ld t1, 16(sp)
 	mv t2, t1
-	ld t3, 16(sp)
+	ld t3, 8(sp)
 	mv t4, t3
-	ld t5, 8(sp)
+	ld t5, 0(sp)
 	mv t3, t5
 	mv t5, t4
-	sd t4, 8(sp)
-	sd t3, 16(sp)
+	sd t4, 0(sp)
+	sd t3, 8(sp)
 	sd t1, 80(sp)
 	j label4
 .globl main

@@ -99,13 +99,11 @@ public:
         // $s0-$s7 $f20-$f30
         return (MIPS::X16 <= reg && reg <= MIPS::X23) || (MIPS::F20 <= reg && reg <= MIPS::F30);
     }
-    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 8-byte aligned
+    [[nodiscard]] size_t getStackPointerAlignment(bool isNonLeafFunc) const noexcept override {
+        return isNonLeafFunc ? 8U : 4U;
     }
-    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
-    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
+    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
+    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
 };
 
 class MIPSRegisterInfo final : public TargetRegisterInfo {
@@ -186,6 +184,9 @@ public:
             return list;
         }
         reportUnreachable(CMMC_LOCATION());
+    }
+    MIROperand getReturnAddressRegister() const noexcept override {
+        return MIPS::ra;
     }
 };
 
@@ -367,7 +368,7 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
     }
     // padding for arg0-arg4
     if(curOffset < 16) {
-        mfunc->addStackObject(ctx.getCodeGenContext(), 0, static_cast<uint32_t>(getStackPointerAlignment()), 16,
+        mfunc->addStackObject(ctx.getCodeGenContext(), 0, static_cast<uint32_t>(getStackPointerAlignment(true)), 16,
                               StackObjectUsage::CalleeArgument);
     }
 
@@ -408,34 +409,15 @@ void MIPSFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
     ctx.emitInst(MIRInst{ MIPS::JR }.setOperand<0>(MIPS::ra));
 }
 
-void MIPSFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                       std::optional<int32_t> raOffset) const {
+void MIPSFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     CMMC_UNUSED(ctx);
     auto& instructions = entryBlock.instructions();
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = MIPS::sp;
-        const auto iter = instructions.begin();
-        MIPS::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        instructions.insert(iter,
-                            MIRInst{ MIPS::SW }.setOperand<0>(MIPS::ra).setOperand<2>(base).setOperand<1>(
-                                MIROperand::asImm(offset, OperandType::Int32)));
-    }
     MIPS::adjustReg(instructions, instructions.begin(), MIPS::sp, MIPS::sp, -stackSize);
 }
-void MIPSFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                       std::optional<int32_t> raOffset) const {
+void MIPSFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     auto& instructions = exitBlock.instructions();
     auto iter = std::prev(instructions.end());
     CMMC_UNUSED(ctx);
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = MIPS::sp;
-        MIPS::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        instructions.insert(iter,
-                            MIRInst{ MIPS::LW }.setOperand<0>(MIPS::ra).setOperand<2>(base).setOperand<1>(
-                                MIROperand::asImm(offset, OperandType::Int32)));
-    }
     MIPS::adjustReg(instructions, iter, MIPS::sp, MIPS::sp, stackSize);
 }
 

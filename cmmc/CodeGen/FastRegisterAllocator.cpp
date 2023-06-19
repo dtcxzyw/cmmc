@@ -290,41 +290,6 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         assert(block->verify(std::cerr, ctx));
     }
 
-    // TODO: move to PEI
-    // callee saved
-    std::unordered_map<MIROperand, MIROperand, MIROperandHasher> overwrited;
-    for(auto& block : mfunc.blocks())
-        forEachDefOperands(*block, ctx, [&](const MIROperand& op) {
-            if(op.isUnused())
-                return;
-            if(op.isReg() && isISAReg(op.reg()) && ctx.frameInfo.isCalleeSaved(op)) {
-                if(!overwrited.count(op)) {
-                    const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(op.type()));
-                    const auto alignment = size;
-                    const auto storage = mfunc.addStackObject(ctx, size, alignment, 0, StackObjectUsage::CalleeSaved);
-                    overwrited.emplace(op, storage);
-                }
-            }
-        });
-
-    for(auto& block : mfunc.blocks()) {
-        auto& instructions = block->instructions();
-        if(&block == &mfunc.blocks().front()) {
-            // backup
-            for(auto [p, s] : overwrited)
-                instructions.push_front(MIRInst{ InstStoreRegToStack }.setOperand<0>(p).setOperand<1>(s));
-        }
-        // restore
-        auto& terminator = instructions.back();
-        auto& instInfo = ctx.instInfo.getInstInfo(terminator);
-        if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
-            const auto pos = std::prev(instructions.end());
-            for(auto [p, s] : overwrited) {
-                instructions.insert(pos, MIRInst{ InstLoadRegFromStack }.setOperand<0>(p).setOperand<1>(s));
-            }
-        }
-    }
-
     // mfunc.dump(std::cerr, ctx);
 }
 

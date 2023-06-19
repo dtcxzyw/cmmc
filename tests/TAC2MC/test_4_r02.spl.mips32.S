@@ -27,12 +27,12 @@ write:
     nop
 .globl main
 main:
-	addiu $sp, $sp, -32
-	sw $ra, 16($sp)
+	addiu $sp, $sp, -24
+	sw $ra, 20($sp)
 	jal read
 	nop
 	move $t0, $v0
-	sw $v0, 24($sp)
+	sw $v0, 16($sp)
 	blez $v0, label9
 	nop
 	li $a0, 1
@@ -41,7 +41,7 @@ main:
 	b label3
 	nop
 label9:
-	lw $t0, 24($sp)
+	lw $t0, 16($sp)
 	slti $t1, $t0, 0
 	subu $t2, $zero, $t1
 	move $a0, $t2
@@ -49,7 +49,7 @@ label9:
 	nop
 label3:
 	move $v0, $zero
-	lw $ra, 16($sp)
-	addiu $sp, $sp, 32
+	lw $ra, 20($sp)
+	addiu $sp, $sp, 24
 	jr $ra
 	nop

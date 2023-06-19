@@ -27,7 +27,7 @@ void simplifyCFG(MIRFunction& func, const CodeGenContext& ctx);
 void registerCoalescing(MIRFunction& func, const CodeGenContext& ctx);
 void optimizeBlockLayout(MIRFunction& func, CodeGenContext& ctx);
 void schedule(MIRFunction& func, const CodeGenContext& ctx, bool preRA);
-void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel);
+void allocateStackObjects(MIRFunction& func, CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel);
 void identicalCodeFolding(MIRFunction& func, const CodeGenContext& ctx);
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx);
 void simplifyCFGWithUniqueTerminator(MIRFunction& func, const CodeGenContext& ctx);

@@ -17,6 +17,7 @@
 #include <ARM/ISelInfoDecl.hpp>
 #include <ARM/InstInfoDecl.hpp>
 #include <ARM/ScheduleModelDecl.hpp>
+#include <algorithm>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -27,6 +28,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <cstdint>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -69,13 +71,14 @@ public:
         return (ARM::R4 <= reg && reg <= ARM::R11) || (ARM::R13 <= reg && reg <= ARM::R15) ||
             (ARM::S16 <= reg && reg <= ARM::S31);
     }
-    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 8-byte aligned
+    [[nodiscard]] size_t getStackPointerAlignment(bool isNonLeafFunc) const noexcept override {
+        return isNonLeafFunc ? 8U : 4U;
     }
-    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
-    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
+    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
+    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
+    int32_t insertPrologueEpilogue(MIRFunction& mfunc,
+                                   const std::unordered_set<MIROperand, MIROperandHasher>& calleeSavedRegister,
+                                   CodeGenContext& ctx, bool isNonLeafFunc, const MIROperand& ra) const override;
 };
 
 class ARMRegisterInfo final : public TargetRegisterInfo {
@@ -145,6 +148,9 @@ public:
             return list;
         }
         reportUnreachable(CMMC_LOCATION());
+    }
+    MIROperand getReturnAddressRegister() const noexcept override {
+        return ARM::ra;
     }
 };
 
@@ -341,36 +347,83 @@ void ARMFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
     ctx.emitInst(MIRInst{ ARM::BX }.setOperand<0>(ARM::ra));
 }
 
-void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                      std::optional<int32_t> raOffset) const {
+void ARMFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     CMMC_UNUSED(ctx);
     auto& instructions = entryBlock.instructions();
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = ARM::sp;
-        const auto iter = instructions.begin();
-        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset, ARM::AddressingImmRange::Imm13);
-        instructions.insert(iter,
-                            MIRInst{ ARM::STR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(offset, OperandType::Int32)));
-    }
-    ARM::adjustReg(instructions, instructions.begin(), ARM::sp, ARM::sp, -stackSize);
+    auto iter = instructions.begin();
+    while(iter->opcode() == ARM::PUSH || iter->opcode() == ARM::VPUSH)
+        ++iter;
+    ARM::adjustReg(instructions, iter, ARM::sp, ARM::sp, -stackSize);
 }
 
-void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                      std::optional<int32_t> raOffset) const {
+void ARMFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     CMMC_UNUSED(ctx);
     auto& instructions = exitBlock.instructions();
     auto iter = std::prev(instructions.end());
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = ARM::sp;
-        ARM::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset, ARM::AddressingImmRange::Imm13);
-        instructions.insert(iter,
-                            MIRInst{ ARM::LDR }.setOperand<0>(ARM::ra).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(offset, OperandType::Int32)));
+    while(iter != instructions.begin()) {
+        auto prev = std::prev(iter);
+        if(prev->opcode() == ARM::POP || prev->opcode() == ARM::VPOP)
+            iter = prev;
+        else
+            break;
     }
     ARM::adjustReg(instructions, iter, ARM::sp, ARM::sp, stackSize);
+}
+int32_t ARMFrameInfo::insertPrologueEpilogue(MIRFunction& mfunc,
+                                             const std::unordered_set<MIROperand, MIROperandHasher>& calleeSavedRegister,
+                                             CodeGenContext& ctx, bool isNonLeafFunc, const MIROperand&) const {
+    if(calleeSavedRegister.empty() && !isNonLeafFunc)
+        return 0;
+    /*
+    std::cerr << '[';
+    for(auto op : calleeSavedRegister)
+        std::cerr << op.reg() << ' ';
+    std::cerr << "]\n";
+    */
+    uint64_t regListCode = 0;
+    uint64_t regListVFPCode = 0;
+    for(auto op : calleeSavedRegister)
+        if(ARM::isOperandGPR(op))
+            regListCode |= 1 << (op.reg() - ARM::GPRBegin);
+        else
+            regListVFPCode |= 1 << (op.reg() - ARM::FPRBegin);
+    auto count = static_cast<int32_t>(calleeSavedRegister.size());
+    if(isNonLeafFunc) {
+        regListCode |= 1 << ARM::R14;
+        ++count;
+    }
+    const auto listCode = MIROperand::asImm(regListCode, OperandType::RegList);
+    const auto listCodeVFP = MIROperand::asImm(regListVFPCode, OperandType::RegListVFP);
+
+    for(auto& block : mfunc.blocks()) {
+        auto& instructions = block->instructions();
+        if(&block == &mfunc.blocks().front()) {
+            // backup
+            if(regListVFPCode)
+                instructions.push_front(MIRInst{ ARM::VPUSH }.setOperand<0>(listCodeVFP));
+            if(regListCode)
+                instructions.push_front(MIRInst{ ARM::PUSH }.setOperand<0>(listCode));
+        }
+        // restore
+        auto& terminator = instructions.back();
+        auto& instInfo = ctx.instInfo.getInstInfo(terminator);
+        if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
+            if(regListVFPCode) {
+                const auto pos = std::prev(instructions.end());
+                instructions.insert(pos, MIRInst{ ARM::VPOP }.setOperand<0>(listCodeVFP));
+            }
+            if(isNonLeafFunc) {
+                const auto oldMask = 1 << ARM::R14;
+                const auto newMask = 1 << ARM::R15;
+                const auto newCode = regListCode ^ oldMask ^ newMask;
+                instructions.back() = MIRInst{ ARM::POP_RET }.setOperand<0>(MIROperand::asImm(newCode, OperandType::RegList));
+            } else if(regListCode) {
+                const auto pos = std::prev(instructions.end());
+                instructions.insert(pos, MIRInst{ ARM::POP }.setOperand<0>(listCode));
+            }
+        }
+    }
+    return count * 4;
 }
 
 CMMC_MIR_NAMESPACE_END

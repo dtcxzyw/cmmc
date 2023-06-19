@@ -92,13 +92,12 @@ public:
         return reg == RISCV::X2 || (RISCV::X8 <= reg && reg <= RISCV::X9) || (RISCV::X18 <= reg && reg <= RISCV::X27) ||
             (RISCV::F8 <= reg && reg <= RISCV::F9) || (RISCV::F18 <= reg && reg <= RISCV::F27);
     }
-    [[nodiscard]] size_t getStackPointerAlignment() const noexcept override {
-        return 8U;  // 8-byte aligned
+    [[nodiscard]] size_t getStackPointerAlignment(bool isNonLeafFunc) const noexcept override {
+        CMMC_UNUSED(isNonLeafFunc);
+        return 8U;
     }
-    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
-    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                            std::optional<int32_t> raOffset) const override;
+    void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
+    void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const override;
 };
 
 class RISCVRegisterInfo final : public TargetRegisterInfo {
@@ -190,6 +189,9 @@ public:
             return list;
         }
         reportUnreachable(CMMC_LOCATION());
+    }
+    MIROperand getReturnAddressRegister() const noexcept override {
+        return RISCV::ra;
     }
 };
 
@@ -400,34 +402,15 @@ void RISCVFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
     ctx.emitInst(MIRInst{ RISCV::RET });
 }
 
-void RISCVFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                        std::optional<int32_t> raOffset) const {
+void RISCVFrameInfo::emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     CMMC_UNUSED(ctx);
     auto& instructions = entryBlock.instructions();
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = RISCV::sp;
-        const auto iter = instructions.begin();
-        RISCV::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        instructions.insert(iter,
-                            MIRInst{ RISCV::SD }.setOperand<0>(RISCV::ra).setOperand<2>(base).setOperand<1>(
-                                MIROperand::asImm(offset, OperandType::Int64)));
-    }
     RISCV::adjustReg(instructions, instructions.begin(), RISCV::sp, RISCV::sp, -stackSize);
 }
-void RISCVFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                        std::optional<int32_t> raOffset) const {
+void RISCVFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const {
     auto& instructions = exitBlock.instructions();
     auto iter = std::prev(instructions.end());
     CMMC_UNUSED(ctx);
-    if(raOffset) {
-        int64_t offset = *raOffset;
-        MIROperand base = RISCV::sp;
-        RISCV::legalizeAddrBaseOffsetPostRA(instructions, iter, base, offset);
-        instructions.insert(iter,
-                            MIRInst{ RISCV::LD }.setOperand<0>(RISCV::ra).setOperand<2>(base).setOperand<1>(
-                                MIROperand::asImm(offset, OperandType::Int64)));
-    }
     RISCV::adjustReg(instructions, iter, RISCV::sp, RISCV::sp, stackSize);
 }
 void RISCVTarget::postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const {

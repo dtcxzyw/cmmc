@@ -328,19 +328,31 @@ static void removeUnusedSpillStackObjects(MIRFunction& func) {
         func.stackObjects().erase(object);
 }
 
-void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel) {
+void allocateStackObjects(MIRFunction& func, CodeGenContext& ctx, bool isNonLeafFunc, OptimizationLevel optLevel) {
     while(genericPeepholeOpt(func, ctx))
         ;
+    // callee saved
+    std::unordered_set<MIROperand, MIROperandHasher> overwrited;
+    for(auto& block : func.blocks())
+        forEachDefOperands(*block, ctx, [&](const MIROperand& op) {
+            if(op.isUnused())
+                return;
+            if(op.isReg() && isISAReg(op.reg()) && ctx.frameInfo.isCalleeSaved(op)) {
+                overwrited.insert(MIROperand::asISAReg(op.reg(), ctx.registerInfo->getCanonicalizedRegisterType(op.type())));
+            }
+        });
+    const auto preAllocatedBase =
+        ctx.frameInfo.insertPrologueEpilogue(func, overwrited, ctx, isNonLeafFunc, ctx.registerInfo->getReturnAddressRegister());
     removeUnusedSpillStackObjects(func);
     // func.dump(std::cerr, target);
 
     int32_t allocationBase = 0;
-    const auto spAlignment = static_cast<int32_t>(ctx.frameInfo.getStackPointerAlignment());
+    const auto spAlignment = static_cast<int32_t>(ctx.frameInfo.getStackPointerAlignment(isNonLeafFunc));
 
-    const auto alignTo = [&](int32_t alignment) { allocationBase = (allocationBase + alignment - 1) / alignment * alignment; };
-
-    auto& dataLayout = ctx.target.getDataLayout();
-
+    const auto alignTo = [&](int32_t alignment) {
+        assert(alignment <= spAlignment);
+        allocationBase = (allocationBase + alignment - 1) / alignment * alignment;
+    };
     // callee arguments
     for(auto& [ref, stackObject] : func.stackObjects()) {
         assert(isStackObject(ref.reg()));
@@ -350,13 +362,6 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
     }
 
     alignTo(spAlignment);
-    // ra
-    std::optional<int32_t> raOffset;
-    if(isNonLeafFunc) {
-        raOffset = allocationBase;
-        allocationBase += static_cast<int32_t>(dataLayout.getPointerSize());
-        alignTo(spAlignment);
-    }
 
     // locals
     // TODO: put frequently used locals in the bottom?
@@ -378,22 +383,24 @@ void allocateStackObjects(MIRFunction& func, const CodeGenContext& ctx, bool isN
     }
 
     alignTo(spAlignment);
-    const auto stackSize = allocationBase;
+    const auto gap = (preAllocatedBase + spAlignment - 1) / spAlignment * spAlignment - preAllocatedBase;
+    auto stackSize = allocationBase + gap;
+    assert((stackSize + preAllocatedBase) % spAlignment == 0);
     for(auto& [ref, stackObject] : func.stackObjects()) {
         assert(isStackObject(ref.reg()));
         if(stackObject.usage == StackObjectUsage::Argument) {
-            stackObject.offset += stackSize;
+            stackObject.offset += stackSize + preAllocatedBase;
         }
     }
 
     // prolog & epilog
-    ctx.frameInfo.emitPostSAPrologue(*func.blocks().front(), ctx, stackSize, raOffset);
+    ctx.frameInfo.emitPostSAPrologue(*func.blocks().front(), ctx, stackSize);
 
     for(auto& block : func.blocks()) {
         const auto& terminator = block->instructions().back();
         auto& instInfo = ctx.instInfo.getInstInfo(terminator);
         if(requireFlag(instInfo.getInstFlag(), InstFlagReturn)) {
-            ctx.frameInfo.emitPostSAEpilogue(*block, ctx, stackSize, raOffset);
+            ctx.frameInfo.emitPostSAEpilogue(*block, ctx, stackSize);
         }
     }
 }

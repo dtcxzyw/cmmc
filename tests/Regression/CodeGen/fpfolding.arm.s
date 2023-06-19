@@ -6,8 +6,8 @@
 .fpu neon
 .globl my_fabs
 my_fabs:
-	sub sp, sp, #16
-	str r4, [sp, #8]
+	push { r4 }
+	sub sp, sp, #8
 	vmov s0, r0
 	mov r4, #0
 	vmov s1, r4
@@ -26,8 +26,8 @@ label12:
 label2:
 	vldr s0, [sp, #0]
 	vmov r0, s0
-	ldr r4, [sp, #8]
-	add sp, sp, #16
+	add sp, sp, #8
+	pop { r4 }
 	bx lr
 .globl my_fmin
 my_fmin:

@@ -65,18 +65,23 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             float f;
             memcpy(&f, &u, sizeof(float));
             out << '#' << f;
-        } else if(op.type() == OperandType::RegList) {
+        } else if(op.type() == OperandType::RegList || op.type() == OperandType::RegListVFP) {
             // reg list
             out << "{ ";
             auto encode = static_cast<uint64_t>(op.imm());
-            const auto cnt = encode & 0xf;
-            for(uint32_t idx = 0; idx < cnt; ++idx) {
-                encode >>= 4;
-                const auto reg = encode & 0xf;
-                if(idx != 0) {
+            bool isFirst = true;
+            for(uint32_t idx = 0; idx < 32; ++idx) {
+                if(!(encode & (1ULL << idx)))
+                    continue;
+                if(isFirst)
+                    isFirst = false;
+                else {
                     out << ", ";
                 }
-                out << getARMGPRTextualName(static_cast<ARMRegister>(reg));
+                if(op.type() == OperandType::RegList)
+                    out << getARMGPRTextualName(static_cast<ARMRegister>(idx));
+                else
+                    out << "s" << idx;
             }
             out << " }";
         } else if(op.type() == OperandType::CondField) {
@@ -119,6 +124,9 @@ static bool verifyInstMOVT(const MIRInst& inst) {
 
 static bool isOperandRegList(const MIROperand& op) {
     return op.isImm() && op.type() == OperandType::RegList;
+}
+static bool isOperandRegListVFP(const MIROperand& op) {
+    return op.isImm() && op.type() == OperandType::RegListVFP;
 }
 
 static bool isOperandCondField(const MIROperand& op) {

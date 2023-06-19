@@ -24,22 +24,22 @@ write:
 .globl main
 main:
 	addi sp, sp, -16
-	sd ra, 0(sp)
+	sd ra, 8(sp)
 	jal read
 	mv t1, a0
-	sd a0, 8(sp)
+	sd a0, 0(sp)
 	ble a0, zero, label8
 	li a0, 1
 	jal write
 	j label3
 label8:
-	ld t1, 8(sp)
+	ld t1, 0(sp)
 	slti t2, t1, 0
 	subw t3, zero, t2
 	mv a0, t3
 	jal write
 label3:
 	mv a0, zero
-	ld ra, 0(sp)
+	ld ra, 8(sp)
 	addi sp, sp, 16
 	ret

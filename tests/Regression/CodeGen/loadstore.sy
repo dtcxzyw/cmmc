@@ -7,11 +7,20 @@ void store(int x[], int idx, int y) {
 int gep_const(int x[]) {
     return x[3];
 }
+int gep1(int x[], int y) {
+    return x[y];
+}
+int gep2(int x[], int y) {
+    return x[y + 3];
+}
+int gepseq(int x[], int y) {
+    return x[y] + x[y + 1] + x[y + 2] + x[y + 3];
+}
 int lb(char x[]) {
     return x[1];
 }
 void sb(char x[], int y) {
-    x[1] = y; 
+    x[1] = y;
 }
 int y;
 int arr[100];

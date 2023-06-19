@@ -43,25 +43,25 @@ public:
         reportNotImplemented(CMMC_LOCATION());
     }
     // SA stage
-    [[nodiscard]] virtual size_t getStackPointerAlignment() const noexcept {
+    [[nodiscard]] virtual size_t getStackPointerAlignment(bool isNonLeafFunc) const noexcept {
+        CMMC_UNUSED(isNonLeafFunc);
         reportNotImplemented(CMMC_LOCATION());
     }
-    virtual void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                    std::optional<int32_t> raOffset) const {
+    virtual void emitPostSAPrologue(MIRBasicBlock& entryBlock, const CodeGenContext& ctx, int32_t stackSize) const {
         CMMC_UNUSED(entryBlock);
         CMMC_UNUSED(ctx);
         CMMC_UNUSED(stackSize);
-        CMMC_UNUSED(raOffset);
         reportNotImplemented(CMMC_LOCATION());
     }
-    virtual void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize,
-                                    std::optional<int32_t> raOffset) const {
+    virtual void emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenContext& ctx, int32_t stackSize) const {
         CMMC_UNUSED(exitBlock);
         CMMC_UNUSED(ctx);
         CMMC_UNUSED(stackSize);
-        CMMC_UNUSED(raOffset);
         reportNotImplemented(CMMC_LOCATION());
     }
+    virtual int32_t insertPrologueEpilogue(MIRFunction& mfunc,
+                                           const std::unordered_set<MIROperand, MIROperandHasher>& calleeSavedRegister,
+                                           CodeGenContext& ctx, bool isNonLeafFunc, const MIROperand& ra) const;
 };
 
 CMMC_MIR_NAMESPACE_END

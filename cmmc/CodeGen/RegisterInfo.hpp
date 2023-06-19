@@ -52,6 +52,7 @@ public:
         CMMC_UNUSED(symbol);
         CMMC_UNUSED(infoIPRA);
     }
+    [[nodiscard]] virtual MIROperand getReturnAddressRegister() const noexcept = 0;
 };
 
 CMMC_MIR_NAMESPACE_END
