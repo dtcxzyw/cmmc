@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/Support/LabelAllocator.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <functional>

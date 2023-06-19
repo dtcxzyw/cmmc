@@ -1,8 +1,503 @@
-internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+func @foo1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = call () -> i32 @getint();
-    i32 %1 = mul i32 %0, i32 3;
-    i32 %2 = add i32 %1, i32 6;
+    ret i32 %x;
+}
+func @foo2(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 %x;
+}
+func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo4(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 %x;
+}
+func @foo5(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sub i32 %y, i32 %x;
+    ret i32 %0;
+}
+func @foo6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo7(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fneg f32 %x;
+    ret f32 %0;
+}
+func @foo8() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo9() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo10() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 0;
+}
+func @foo11(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo12(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 %x;
+}
+func @foo13(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 16;
+    ret i32 %0;
+}
+func @foo14(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %x, f32 %x;
+    ret f32 %0;
+}
+func @foo15(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo16(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fneg f32 %x;
+    ret f32 %0;
+}
+func @foo17() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo18() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 0;
+}
+func @foo19() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo20() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 1;
+}
+func @foo21(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo22(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 %x;
+}
+func @foo23(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo24(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fneg f32 %x;
+    ret f32 %0;
+}
+func @foo25() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 -1;
+}
+func @foo26() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 -1;
+}
+func @foo27() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 -1;
+}
+func @foo28() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 -1;
+}
+func @foo29(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fmul f32 %x, f32 0.0625;
+    ret f32 %0;
+}
+func @foo30(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sdiv i32 %x, i32 160;
+    ret i32 %0;
+}
+func @foo31() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo32() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo33() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo34() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo35(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo36(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo37() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo38(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo39(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo40(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo41(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo42() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 -1;
+}
+func @foo43() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo44(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo45(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo46() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo47(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp le i32 %x, i32 -1;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo48() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo49(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo50(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sub i32 %x, i32 %y;
+    ret i32 %0;
+}
+func @foo51(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 %y;
+    ret i32 %0;
+}
+func @foo52(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo53(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @foo54() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 0;
+}
+func @foo55(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 2;
+    ret i32 %0;
+}
+func @foo56(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 4;
+    ret i32 %0;
+}
+func @foo57(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo58(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %x, i32 127;
+    ret i32 %0;
+}
+func @foo59(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp ge i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo60(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo61(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo62(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp ge i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo63(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo64(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo65(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo66(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 -1;
+    ret i32 %0;
+}
+func @foo67(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    ret i32 %0;
+}
+func @foo68(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 -3;
+    ret i32 %0;
+}
+func @foo69(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo70(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo71(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo72(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo73(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo74(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    ret i32 %0;
+}
+func @foo75(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %y, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
+  ^rhsBlock:
+    i32 %1 = add i32 %x, i32 1;
+    ubr ^b;
+  ^b:
+    i32 %2 = phi [^entry, i32 %x] [^rhsBlock, i32 %1];
     ret i32 %2;
+}
+func @foo76(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %z, i32 0;
+    i32 %1 = select i1 %0 ? i32 %x : i32 %y;
+    ret i32 %1;
+}
+func @foo77(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp ge i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo78() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo79() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo80() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo81() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo82() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo83() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo84(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    i1 %1 = scmp eq i32 %0, i32 %x;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}
+func @foo85(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    i1 %1 = scmp gt i32 %0, i32 2;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}
+func @foo86(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 -1, i32 %x;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo87(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = srem i32 %x, i32 1000;
+    i32 %1 = add i32 %0, i32 10;
+    i32 %2 = srem i32 %1, i32 1024;
+    ret i32 %2;
+}
+func @foo88(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^b1;
+  ^b:
+    i1 %1 = scmp eq i32 %y, i32 0;
+    ubr ^b1;
+  ^b1:
+    i1 %2 = phi [^entry, i1 false] [^b, i1 %1];
+    i32 %3 = zext i1 %2 to i32;
+    ret i32 %3;
+}
+func @foo89(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %x, i32 0;
+    cbr i1 %0(prob = 0.5), ^b1, ^b;
+  ^b:
+    i1 %1 = scmp neq i32 %y, i32 0;
+    ubr ^b1;
+  ^b1:
+    i1 %2 = phi [^entry, i1 true] [^b, i1 %1];
+    i32 %3 = zext i1 %2 to i32;
+    ret i32 %3;
+}
+func @foo90(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = shl i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo91(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = ashr i32 %x, i32 3;
+    ret i32 %0;
+}
+func @foo92(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = ashr i32 %x, i32 1;
+    i32 %1 = shl i32 %0, i32 1;
+    ret i32 %1;
+}
+func @foo93(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    cbr i1 %0(prob = 0.5), ^lhsBlock, ^b;
+  ^lhsBlock:
+    i1 %1 = scmp lt i32 %z, i32 %y;
+    i32 %2 = zext i1 %1 to i32;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 0] [^lhsBlock, i32 %2];
+    ret i32 %3;
+}
+func @foo94(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    cbr i1 %0(prob = 0.5), ^lhsBlock, ^b;
+  ^lhsBlock:
+    i1 %1 = scmp lt i32 %z, i32 %y;
+    i32 %2 = zext i1 %1 to i32;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 1] [^lhsBlock, i32 %2];
+    ret i32 %3;
+}
+func @foo95(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
+  ^rhsBlock:
+    i1 %1 = scmp lt i32 %z, i32 %y;
+    i32 %2 = zext i1 %1 to i32;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 1] [^rhsBlock, i32 %2];
+    ret i32 %3;
+}
+func @foo96(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 %y;
+    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
+  ^rhsBlock:
+    i1 %1 = scmp lt i32 %z, i32 %y;
+    i32 %2 = zext i1 %1 to i32;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 0] [^rhsBlock, i32 %2];
+    ret i32 %3;
 }

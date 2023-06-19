@@ -57,7 +57,9 @@ int sub_reg(int x, int y) {
 int mul_imm(int x) {
     return x * 3;
 }
-
+int mul_to_shl(int x) {
+    return x * 4;
+}
 int mul_reg(int x, int y) {
     return x * y;
 }

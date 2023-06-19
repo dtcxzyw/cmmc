@@ -360,6 +360,10 @@ public:
     }
 };
 
+std::shared_ptr<TransformPass<Module>> createWrapper(std::shared_ptr<TransformPass<Function>> funcPass) {
+    return std::make_shared<FunctionPassWrapper>(std::move(funcPass));
+}
+
 template <>
 std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel level) {
     auto root = std::make_shared<PassManager<Module>>();
@@ -635,5 +639,8 @@ void PassManager<Module>::printOptPipeline(OptimizationLevel level) {
     const auto last = pipeline->dump(out, start, allocator);
     out << last << " -> " << end << ";\n}\n";
 }
+
+template class PassManager<Function>;
+template class PassManager<Module>;
 
 CMMC_NAMESPACE_END

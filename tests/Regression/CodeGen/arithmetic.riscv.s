@@ -83,6 +83,11 @@ mul_imm:
 	mulw t2, a0, t1
 	mv a0, t2
 	ret
+.globl mul_to_shl
+mul_to_shl:
+	slliw t1, a0, 2
+	mv a0, t1
+	ret
 .globl mul_reg
 mul_reg:
 	mulw t1, a0, a1
@@ -235,9 +240,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel215:
+pcrel219:
 	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi t2, t1, %pcrel_lo(pcrel215)
+	addi t2, t1, %pcrel_lo(pcrel219)
 	flw f0, 0(t2)
 	fmv.s f10, f0
 	ret

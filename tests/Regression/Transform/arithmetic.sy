@@ -1,4 +1,289 @@
-int main() {
-    int x = getint();
-    return 1 + x + 2 + x*0 + (x^0) + (x/1) + 3;
+int foo1(int x) {
+    return x + 0;
+}
+float foo2(float x) {
+    return x + 0.0;
+}
+int foo3(int x) {
+    return x - 0;
+}
+float foo4(float x) {
+    return x - 0.0;
+}
+int foo5(int x, int y) {
+    return -(x - y);
+}
+int foo6(int x) {
+    return 0 - x;
+}
+float foo7(float x) {
+    return 0.0 - x;
+}
+int foo8(int x) {
+    return x - x;
+}
+int foo9(int x) {
+    return x * 0;
+}
+float foo10(float x) {
+    return x * 0.0;
+}
+int foo11(int x) {
+    return x * 1;
+}
+float foo12(float x) {
+    return x * 1.0;
+}
+int foo13(int x) {
+    return x * 16;
+}
+float foo14(float x) {
+    return x * 2.0;
+}
+int foo15(int x) {
+    return x * -1;
+}
+float foo16(float x) {
+    return x * -1.0;
+}
+int foo17(int x) {
+    return 0 / x;
+}
+float foo18(float x) {
+    return 0.0 / x;
+}
+int foo19(int x) {
+    return x / x;
+}
+float foo20(float x) {
+    return x / x;
+}
+int foo21(int x) {
+    return x / 1;
+}
+float foo22(float x) {
+    return x / 1.0;
+}
+int foo23(int x) {
+    return x / -1;
+}
+float foo24(float x) {
+    return x / -1.0;
+}
+int foo25(int x) {
+    return x / -x;
+}
+float foo26(float x) {
+    return x / -x;
+}
+int foo27(int x) {
+    return -x / x;
+}
+float foo28(float x) {
+    return -x / x;
+}
+float foo29(float x) {
+    return x / 16.0;
+}
+int foo30(int x) {
+    return x / 10 / 16;
+}
+int foo31(int x) {
+    return 0 % x;
+}
+int foo32(int x) {
+    return x % x;
+}
+int foo33(int x) {
+    return x % 1;
+}
+int foo34(int x) {
+    return x ^ x;
+}
+int foo35(int x) {
+    return x ^ 0;
+}
+int foo36(int x) {
+    return x & x;
+}
+int foo37(int x) {
+    return x & 0;
+}
+int foo38(int x) {
+    return x & -1;
+}
+int foo39(int x, int y) {
+    return (x > y) & 1;
+}
+int foo40(int x) {
+    return x | x;
+}
+int foo41(int x) {
+    return x | 0;
+}
+int foo42(int x) {
+    return x | -1;
+}
+int foo43(int x, int y) {
+    return (x > y) | 1;
+}
+int foo44(int x) {
+    return x << 0;
+}
+int foo45(int x) {
+    return x >> 0;
+}
+int foo46(uint32_t x) {
+    return x >= 0;
+}
+int foo47(uint32_t x) {
+    uint32_t y = -1;
+    return x <= y;
+}
+int foo48(uint32_t x) {
+    return x < 0;
+}
+int foo49(int x, int y) {
+    return !!(x < y);
+}
+int foo50(int x, int y) {
+    return x + -y;
+}
+int foo51(int x, int y) {
+    return x - -y;
+}
+int foo52(int x, int y) {
+    return (0 < 1) ? x : y;
+}
+int foo53(int x, int y) {
+    return y ? x : x;
+}
+float foo54(float x) {
+    return x - x;
+}
+int foo55(int x) {
+    return x + x;
+}
+int foo56(int x) {
+    return x * 3 + x;
+}
+int foo57(int x) {
+    return x * 3 - x * 4;
+}
+uint32_t foo58(uint32_t x) {
+    return x % 128;
+}
+int foo59(int x, int y) {
+    return (x < y) == 0;
+}
+int foo60(int x, int y) {
+    return (x < y) != 0;
+}
+int foo61(int x, int y) {
+    return (x < y) == 1;
+}
+int foo62(int x, int y) {
+    return (x < y) != 1;
+}
+int foo63(int x) {
+    return x ? 1 : 0;
+}
+int foo64(int x) {
+    return x ? 0 : 1;
+}
+int foo65(int x) {
+    return (x + 1) + 2;
+}
+int foo66(int x) {
+    return (x + 1) - 2;
+}
+int foo67(int x) {
+    return (x - 1) + 2;
+}
+int foo68(int x) {
+    return (x - 1) - 2;
+}
+int foo69(int x) {
+    return 3 + x;
+}
+int foo70(int x) {
+    return 3 * x;
+}
+int foo71(int x) {
+    return 3 & x;
+}
+int foo72(int x) {
+    return 3 | x;
+}
+int foo73(int x) {
+    return 3 ^ x;
+}
+int foo74(int x) {
+    return x - -1;
+}
+int foo75(int x, int y) {
+    return y ? x : x + 1;
+}
+int foo76(int x, int y, int z) {
+    return !z ? x : y;
+}
+int foo77(int x, int y) {
+    return !(x < y);
+}
+int foo78(int x) {
+    return x < x;
+}
+int foo79(int x) {
+    return x <= x;
+}
+int foo80(int x) {
+    return x > x;
+}
+int foo81(int x) {
+    return x >= x;
+}
+int foo82(int x) {
+    return x == x;
+}
+int foo83(int x) {
+    return x != x;
+}
+int foo84(int x) {
+    return x + 1 == x;
+}
+int foo85(int x) {
+    return x + 1 > 2;
+}
+int foo86(int x) {
+    return -x > 1;
+}
+int foo87(int x) {
+    return ((x % 1000) + 10) % 1024;
+}
+int foo88(int x, int y) {
+    return x == 0 && y == 0;
+}
+int foo89(int x, int y) {
+    return x != 0 || y != 0;
+}
+int foo90(int x) {
+    return x << 1 << 2;
+}
+int foo91(int x) {
+    return x >> 1 >> 2;
+}
+int foo92(int x) {
+    return x >> 1 << 1;
+}
+int foo93(int x, int y, int z) {
+    return (x < y) ? (z < y) : 0;
+}
+int foo94(int x, int y, int z) {
+    return (x < y) ? (z < y) : 1;
+}
+int foo95(int x, int y, int z) {
+    return (x < y) ? 1 : (z < y);
+}
+int foo96(int x, int y, int z) {
+    return (x < y) ? 0 : (z < y);
 }

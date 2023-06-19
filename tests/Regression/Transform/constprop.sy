@@ -1,3 +1,253 @@
-int main() {
-    return 1 + 2 + 3 + 4 + (5^10) - 10 - ((-10) ^ 31) - 7;
+int foo1() {
+    int x = 10;
+    return -x;
+}
+int foo2() {
+    int x = 1;
+    int y = 2;
+    return x + y;
+}
+int foo3() {
+    int x = 1;
+    int y = 2;
+    return x - y;
+}
+int foo4() {
+    int x = 2;
+    int y = 2;
+    return x * y;
+}
+int foo5() {
+    int x = 15;
+    int y = 4;
+    return x / y; 
+}
+int foo6() {
+    int x = 15;
+    int y = 0;
+    return x / y;
+}
+uint32_t foo7() {
+    uint32_t x = 10;
+    uint32_t y = 2;
+    return x / y;
+}
+uint32_t foo8() {
+    uint32_t x = 10;
+    uint32_t y = 0;
+    return x / y;
+}
+int foo9() {
+    int x = 10;
+    int y = 3;
+    return x % y;
+}
+int foo10() {
+    int x = 10;
+    int y = 0;
+    return x % y;
+}
+uint32_t foo11() {
+    uint32_t x = 10;
+    uint32_t y = 3;
+    return x % y;
+}
+uint32_t foo12() {
+    uint32_t x = 10;
+    uint32_t y = 0;
+    return x % y;
+}
+int foo13() {
+    int x = 10;
+    int y = 3;
+    return x << y;
+}
+int foo14() {
+    int x = 10;
+    int y = 1;
+    return x >> y;
+}
+uint32_t foo15() {
+    uint32_t x = 10;
+    uint32_t y = 2;
+    return x >> y;
+}
+uint32_t foo16() {
+    uint32_t x = 10;
+    uint32_t y = 8;
+    return x & y;
+}
+uint32_t foo17() {
+    uint32_t x = 10;
+    uint32_t y = 8;
+    return x | y;
+}
+uint32_t foo18() {
+    uint32_t x = 10;
+    uint32_t y = 8;
+    return x ^ y;
+}
+float foo19() {
+    float x = 10.0;
+    return -x;
+}
+float foo20() {
+    float x = 1.0;
+    float y = 2.0;
+    return x + y;
+}
+float foo21() {
+    float x = 1.0;
+    float y = 3.0;
+    return x - y;
+}
+float foo22() {
+    float x = 2.0;
+    float y = 3.0;
+    return x * y;
+}
+float foo23() {
+    float x = 15.0;
+    float y = 4.0;
+    return x / y;
+}
+int foo24() {
+    int x = 1;
+    int y = 0;
+    return x < y;
+}
+int foo25() {
+    int x = 1;
+    int y = 0;
+    return x <= y;
+}
+int foo26() {
+    int x = 1;
+    int y = 0;
+    return x > y;
+}
+int foo27() {
+    int x = 1;
+    int y = 0;
+    return x >= y;
+}
+int foo28() {
+    int x = 1;
+    int y = 0;
+    return x == y;
+}
+int foo29() {
+    int x = 1;
+    int y = 0;
+    return x != y;
+}
+int foo30() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x < y;
+}
+int foo31() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x <= y;
+}
+int foo32() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x > y;
+}
+int foo33() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x >= y;
+}
+int foo34() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x == y;
+}
+int foo35() {
+    uint32_t x = 1;
+    uint32_t y = 0;
+    return x != y;
+}
+int foo36() {
+    float x = 1.0;
+    float y = 0.0;
+    return x < y;
+}
+int foo37() {
+    float x = 1.0;
+    float y = 0.0;
+    return x <= y;
+}
+int foo38() {
+    float x = 1.0;
+    float y = 0.0;
+    return x > y;
+}
+int foo39() {
+    float x = 1.0;
+    float y = 0.0;
+    return x >= y;
+}
+int foo40() {
+    float x = 1.0;
+    float y = 0.0;
+    return x == y;
+}
+int foo41() {
+    float x = 1.0;
+    float y = 0.0;
+    return x != y;
+}
+int8_t foo42() {
+    int32_t x = 1000;
+    return x;
+}
+uint8_t foo43() {
+    int32_t x = 1000;
+    return x;
+}
+int16_t foo44() {
+    int32_t x = 1000;
+    return x;
+}
+uint16_t foo45() {
+    int32_t x = 1000;
+    return x;
+}
+int32_t foo46() {
+    int16_t x = -1;
+    return x;
+}
+uint32_t foo47() {
+    int16_t x = -1;
+    return x;
+}
+uint32_t foo48() {
+    uint16_t x = 0xffff;
+    return x;
+}
+int32_t foo49() {
+    uint16_t x = 0xffff;
+    return x;
+}
+int32_t foo50() {
+    float x = 1.5;
+    return x;
+}
+float foo51() {
+    int32_t x = 1;
+    return x;
+}
+int foo52(int z) {
+    int x = 1;
+    int y = 1;
+    return z ? x : y;
+}
+float foo53(int z) {
+    float x = 1;
+    float y = 1;
+    return z ? x : y;
 }

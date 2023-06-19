@@ -142,6 +142,15 @@ mul_imm:
 	ldr r4, [sp, #0]
 	add sp, sp, #8
 	bx lr
+.globl mul_to_shl
+mul_to_shl:
+	sub sp, sp, #8
+	str r4, [sp, #0]
+	lsl r4, r0, #2
+	mov r0, r4
+	ldr r4, [sp, #0]
+	add sp, sp, #8
+	bx lr
 .globl mul_reg
 mul_reg:
 	sub sp, sp, #8

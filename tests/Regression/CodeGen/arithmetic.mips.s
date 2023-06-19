@@ -102,6 +102,12 @@ mul_imm:
 	move $v0, $t1
 	jr $ra
 	nop
+.globl mul_to_shl
+mul_to_shl:
+	sll $t0, $a0, 2
+	move $v0, $t0
+	jr $ra
+	nop
 .globl mul_reg
 mul_reg:
 	mult $a0, $a1

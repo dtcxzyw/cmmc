@@ -197,9 +197,13 @@ public:
                 out << ".fpu neon" << std::endl;
             });
     }
-    void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const override {
-        CMMC_UNUSED(symbol);
-        CMMC_UNUSED(infoIPRA);
+    void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {
+        PassManager<Module> modulePassManager;
+        auto perFunc = std::make_shared<PassManager<Function>>();
+        for(auto& pass : PassRegistry::get().collectFunctionPass({ "Mul2Shl", "NoSideEffectEliminate" }))
+            perFunc->addPass(pass);
+        modulePassManager.addPass(createWrapper(std::move(perFunc)));
+        modulePassManager.run(module, analysis);
     }
 };
 

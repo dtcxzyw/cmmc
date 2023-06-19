@@ -62,6 +62,8 @@ public:
     String dump(std::ostream& out, String prev, LabelAllocator& allocator) const override;
 };
 
+std::shared_ptr<TransformPass<Module>> createWrapper(std::shared_ptr<TransformPass<Function>> funcPass);
+
 class PassRegistry final {
     std::unordered_map<std::string_view, std::shared_ptr<TransformPass<Function>>> mFunctionPasses;
     std::unordered_map<std::string_view, std::shared_ptr<TransformPass<Module>>> mModulePasses;

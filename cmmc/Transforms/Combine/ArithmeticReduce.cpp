@@ -37,7 +37,7 @@ CMMC_NAMESPACE_BEGIN
 // TODO: cross-block matching
 
 class ArithmeticReduce final : public TransformPass<Function> {
-    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target, bool useShl) {
+    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
         bool modified = false;
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             MatchContext<Value> matchCtx{ inst };
@@ -58,6 +58,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             if(fsub(any(v1), cfp_(0.0))(matchCtx))
                 return v1;
+            // - (a - b) -> b - a
+            if(neg(sub(any(v1), any(v2)))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, v2, v1);
             // 0 - a -> -a
             if(sub(cint_(0), any(v1))(matchCtx))
                 return builder.makeOp<UnaryInst>(InstructionID::Neg, v1);
@@ -78,9 +81,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             if(fmul(any(v1), cfp_(1.0))(matchCtx))
                 return v1;
+            // Move to CodeGenPrepare
             // a * (2^k) -> a << k
-            if(useShl && mul(any(v1), intLog2(v2))(matchCtx))
-                return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, v2);
+            // if(useShl && mul(any(v1), intLog2(v2))(matchCtx))
+            //     return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, v2);
             // a * 2 -> a + a
             if(fmul(any(v1), cfp_(2.0))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::FAdd, v1, v1);
@@ -112,7 +116,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // a / -a -> -1
             if(sdiv(any(v1), neg(any(v2)))(matchCtx) && v1 == v2)
                 return makeIntLike(-1, inst);
-            if(fdiv(any(v1), neg(any(v2)))(matchCtx) && v1 == v2)
+            if(fdiv(any(v1), fneg(any(v2)))(matchCtx) && v1 == v2)
+                return make<ConstantFloatingPoint>(inst->getType(), -1.0);
+            // -a / a -> -1
+            if(sdiv(neg(any(v1)), any(v2))(matchCtx) && v1 == v2)
+                return makeIntLike(-1, inst);
+            if(fdiv(fneg(any(v1)), any(v2))(matchCtx) && v1 == v2)
                 return make<ConstantFloatingPoint>(inst->getType(), -1.0);
             // a / (2^k) -> a * (2^(-k))
             auto isPowerOf2FP = [](double x) {
@@ -165,6 +174,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // bool a & 1 -> a
             if(and_(any(v1), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
                 return v1;
+            if(and_(capture(zext(any(v1)), v2), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
+                return v2;
             // a | a -> a
             if(or_(any(v1), any(v2))(matchCtx) && v1 == v2)
                 return v1;
@@ -176,6 +187,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return makeIntLike(-1, inst);
             // bool a | 1 -> 1
             if(or_(any(v1), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
+                return makeIntLike(1, inst);
+            if(or_(zext(any(v1)), cuint_(1))(matchCtx) && v1->getType()->isBoolean())
                 return makeIntLike(1, inst);
 
             CompareOp cmp;
@@ -240,6 +253,22 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
                 if(a && b && c)
                     return builder.makeOp<BinaryInst>(InstructionID::Mul, builder.makeOp<BinaryInst>(InstructionID::Add, b, c),
+                                                      a);
+            }
+            // b * a - c * a -> (b - c) * a
+            if(sub(mul(any(v1), any(v2)), mul(any(v3), any(v4)))(matchCtx)) {
+                Value *a = nullptr, *b = nullptr, *c = nullptr;
+                if(v1 == v3) {
+                    a = v1, b = v2, c = v4;
+                } else if(v1 == v4) {
+                    a = v1, b = v2, c = v3;
+                } else if(v2 == v3) {
+                    a = v2, b = v1, c = v4;
+                } else if(v2 == v4) {
+                    a = v2, b = v1, c = v3;
+                }
+                if(a && b && c)
+                    return builder.makeOp<BinaryInst>(InstructionID::Mul, builder.makeOp<BinaryInst>(InstructionID::Sub, b, c),
                                                       a);
             }
 
@@ -444,6 +473,25 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(any(v1), cint_(1), any(v2))(matchCtx) && v2->getType()->isBoolean())
                 return builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2);
 
+            // a << 0 -> a
+            if(shl(any(v1), cuint_(0))(matchCtx))
+                return v1;
+            // a << c, c >= width -> 0
+            if(shl(any(v1), uint_(u1))(matchCtx) && u1 >= v1->getType()->getFixedSize() * 8)
+                return makeIntLike(0, inst);
+            // a >> 0 -> a
+            if(ashr(any(v1), cuint_(0))(matchCtx))
+                return v1;
+            if(lshr(any(v1), cuint_(0))(matchCtx))
+                return v1;
+
+            // 1 - bool x -> not x
+            if(sub(cint_(1), any(v1))(matchCtx) && v1->getType()->isBoolean())
+                return builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(1, v1));
+            if(sub(cint_(1), zext(any(v1)))(matchCtx) && v1->getType()->isBoolean())
+                return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(1, v1)));
+
             return nullptr;
         });
         return ret || modified;
@@ -453,11 +501,9 @@ public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
-        const auto useShl = target.isNativeSupported(InstructionID::Shl);
-
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(builder, *block, target, useShl);
+            modified |= runOnBlock(builder, *block, target);
         }
         return modified;
     }

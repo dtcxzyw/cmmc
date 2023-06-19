@@ -1,4 +1,216 @@
-func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo1() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^b:
-    ret i32 31;
+    ret i32 -10;
+}
+func @foo2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 3;
+}
+func @foo3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 -1;
+}
+func @foo4() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 4;
+}
+func @foo5() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 3;
+}
+func @foo6() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sdiv i32 15, i32 0;
+    ret i32 %0;
+}
+func @foo7() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 5;
+}
+func @foo8() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = udiv i32 10, i32 0;
+    ret i32 %0;
+}
+func @foo9() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo10() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = srem i32 10, i32 0;
+    ret i32 %0;
+}
+func @foo11() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo12() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = urem i32 10, i32 0;
+    ret i32 %0;
+}
+func @foo13() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 80;
+}
+func @foo14() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 5;
+}
+func @foo15() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 2;
+}
+func @foo16() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 8;
+}
+func @foo17() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 10;
+}
+func @foo18() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 2;
+}
+func @foo19() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 -10;
+}
+func @foo20() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 3;
+}
+func @foo21() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 -2;
+}
+func @foo22() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 6;
+}
+func @foo23() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 3.75;
+}
+func @foo24() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo25() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo26() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo27() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo28() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo29() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo30() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo31() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo32() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo33() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo34() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo35() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo36() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo37() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo38() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo39() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo40() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @foo41() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo42() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i8 -24;
+}
+func @foo43() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i8 -24;
+}
+func @foo44() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i16 1000;
+}
+func @foo45() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i16 1000;
+}
+func @foo46() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 -1;
+}
+func @foo47() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 -1;
+}
+func @foo48() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 65535;
+}
+func @foo49() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 65535;
+}
+func @foo50() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @foo51() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret f32 1;
+}
+func @foo52() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo53() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret f32 1;
 }
