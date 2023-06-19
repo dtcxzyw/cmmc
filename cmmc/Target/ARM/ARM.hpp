@@ -131,7 +131,7 @@ enum class AddressingImmRange {
     Imm9,
     VFP,
 };
-AddressingImmRange getAddressingImmRange(uint32_t opcode);
+AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode);
 bool isLegalAddrImm(intmax_t imm, AddressingImmRange range);
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm, AddressingImmRange range);

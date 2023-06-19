@@ -28,7 +28,7 @@ binary_dir = os.path.dirname(binary_path)
 tests_path = sys.argv[2]
 rars_path = tests_path + "/TAC2MC/rars.jar"
 optimization_level = '3'
-fast_fail = True
+fast_fail = False
 generate_ref = False
 assert os.path.exists(rars_path)
 targets = ['mips', 'riscv', 'arm']
@@ -512,8 +512,6 @@ def sysy_gcc_qemu(src, target):
 def sysy_cmmc_qemu(src, target):
     # FIXME
     if 'vector_mul' in src:
-        return True
-    if 'rotate' not in src:
         return True
     runtime = tests_path + "/SysY2022/sylib.c"
     rel = os.path.relpath(src[:-3], tests_path)

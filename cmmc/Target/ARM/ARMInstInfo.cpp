@@ -125,7 +125,9 @@ static bool isOperandCondField(const MIROperand& op) {
     return op.isImm() && (0 <= op.imm() && op.imm() <= static_cast<intmax_t>(CondField::AL));
 }
 
-AddressingImmRange getAddressingImmRange(uint32_t opcode) {
+AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode) {
+    if(type == OperandType::Float32)
+        return AddressingImmRange::VFP;
     switch(opcode) {
         case LDRH:
             [[fallthrough]];
@@ -135,10 +137,6 @@ AddressingImmRange getAddressingImmRange(uint32_t opcode) {
             [[fallthrough]];
         case LDRSB:
             return AddressingImmRange::Imm9;
-        case VSTR:
-            [[fallthrough]];
-        case VLDR:
-            return AddressingImmRange::VFP;
         default:
             return AddressingImmRange::Imm13;
     }

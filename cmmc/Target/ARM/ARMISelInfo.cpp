@@ -160,7 +160,8 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
         if(addrInst->opcode() == InstAdd) {
             base = addrInst->getOperand(1);
             const auto off = addrInst->getOperand(2);
-            if(isOperandIReg(base) && isOperandImm(off) && isLegalAddrImm(off.imm(), getAddressingImmRange(opcode))) {
+            if(isOperandIReg(base) && isOperandImm(off) &&
+               isLegalAddrImm(off.imm(), getAddressingImmRange(OperandType::Int32, opcode))) {
                 base = addrInst->getOperand(1);
                 offset = off;
                 return true;
@@ -512,7 +513,8 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
     MIROperand base = sp;
 
     if(inst.opcode() != InstLoadStackObjectAddr) {
-        legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal, getAddressingImmRange(inst.opcode()));
+        legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal,
+                                     getAddressingImmRange(inst.getOperand(0).type(), inst.opcode()));
     }
 
     const auto imm = MIROperand::asImm(immVal, OperandType::Int32);

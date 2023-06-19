@@ -87,11 +87,8 @@ InstInfo:
     Flag: [Terminator, NoFallthrough, Return]
 
   VLDR:
-    Format: $Mnemonic:Template $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
+    Format: vldr $Fd:FPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Load]
-    Instances:
-      VLDR:
-        Mnemonic: vldr
 
   Load:
     Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:BaseLike[Use], $Imm:AddrImm13[Metadata]]
@@ -110,11 +107,8 @@ InstInfo:
         Mnemonic: ldrsh
 
   VSTR:
-    Format: $Mnemonic:Template $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
+    Format: vstr $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Store]
-    Instances:
-      VSTR:
-        Mnemonic: vstr
 
   Store:
     Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImm13[Metadata]]
