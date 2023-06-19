@@ -248,11 +248,11 @@ public:
                     block->instructions().clear();
                     const auto branchInst = make<BranchInst>(exitBlock);
                     branchInst->insertBefore(block, block->instructions().end());
+                    modified = true;
                     if(hasPhiNodes) {
                         if(exitBlock->instructions().front()->as<PhiInst>()->incomings().count(block))
                             continue;
                         copyTarget(exitBlock, refBlock, block);
-                        modified = true;
                     }
                 }
             }

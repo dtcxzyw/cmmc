@@ -147,7 +147,11 @@ public:
 
                 if(terminator->getInstID() == InstructionID::ConditionalBranch) {
                     const auto cond = terminator->getOperand(0);
-                    e.push_back({ cond, next == terminator->getTrueTarget() });
+                    const auto branch = terminator->as<BranchInst>();
+                    if(branch->getTrueTarget() == branch->getFalseTarget()) {
+                        e.push_back({ nullptr, false });
+                    } else
+                        e.push_back({ cond, next == terminator->getTrueTarget() });
                 } else {
                     e.push_back({ nullptr, false });
                 }

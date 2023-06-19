@@ -40,6 +40,7 @@ CMMC_NAMESPACE_BEGIN
 class LoopUnroll final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        // func.dump(std::cerr, Noop{});
         const auto& loopInfo = analysis.get<LoopAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& target = analysis.module().getTarget();

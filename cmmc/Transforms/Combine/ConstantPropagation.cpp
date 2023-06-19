@@ -28,6 +28,7 @@
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -96,8 +97,12 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeInt(inst, i1 - i2);
                 if(mul(int_(i1), int_(i2))(matchCtx))
                     return makeInt(inst, i1 * i2);
-                if(sdiv(int_(i1), int_(i2))(matchCtx) && i2)
+                if(sdiv(int_(i1), int_(i2))(matchCtx) && i2) {
+                    /* Fuck you X86*/
+                    if(i1 == std::numeric_limits<intmax_t>::min() && i2 == -1)
+                        return makeInt(inst, i1);
                     return makeInt(inst, i1 / i2);
+                }
                 if(udiv(uint_(u1), uint_(u2))(matchCtx) && u2)
                     return makeUInt(inst, u1 / u2);
                 if(srem(int_(i1), int_(i2))(matchCtx) && i2)

@@ -202,6 +202,10 @@ std::optional<size_t> PassManager<Scope>::run(Scope& item, AnalysisPassManager& 
                     verifyModuleExec(analysis.module(), pass->name());
                 }
             }
+            // else {
+            //     if constexpr(std::is_same_v<Scope, Function>)
+            //         item.dump(std::cerr, Noop{});
+            // }
         }
 
         ++idx;

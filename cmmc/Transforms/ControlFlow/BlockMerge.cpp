@@ -25,6 +25,7 @@
 //     return c;
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -39,7 +40,8 @@ CMMC_NAMESPACE_BEGIN
 
 class BlockMerge final : public TransformPass<Function> {
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        const auto& dom = analysis.get<DominateAnalysis>(func);
         auto tryMerge = [&] {
             std::unordered_map<Block*, uint32_t> blockRef;
             for(auto& block : func.blocks()) {
@@ -62,6 +64,8 @@ public:
                 const auto branch = terminator->as<BranchInst>();
                 const auto target = branch->getTrueTarget();
                 if(block == target)
+                    continue;
+                if(!dom.dominate(block, target))
                     continue;
 
                 assert(blockRef[target] >= 1);
