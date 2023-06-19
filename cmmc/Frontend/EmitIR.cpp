@@ -1239,7 +1239,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
         if(srcType->getFixedSize() < type->getFixedSize()) {
             id = srcQualifier.isSigned ? InstructionID::SExt : InstructionID::ZExt;
         } else {
-            return truncTo(*this, value, type, srcQualifier);
+            return truncTo(*this, value, type, dstQualifier);
         }
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
         if(strictMode.get())
