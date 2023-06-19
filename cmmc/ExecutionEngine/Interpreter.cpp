@@ -847,18 +847,15 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getFP(0), getFP(1)));
                 break;
             }
-            case InstructionID::SExt: {
-                addInt(getInt(0));
-                --instructionCount;
-                break;
-            }
-            case InstructionID::ZExt:
+            case InstructionID::SExt:
                 [[fallthrough]];
             case InstructionID::SignedTrunc: {
                 addInt(getInt(0));
                 --instructionCount;
                 break;
             }
+            case InstructionID::ZExt:
+                [[fallthrough]];
             case InstructionID::UnsignedTrunc: {
                 addUInt(getUInt(0));
                 --instructionCount;
