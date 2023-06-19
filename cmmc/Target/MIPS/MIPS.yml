@@ -1170,26 +1170,16 @@ InstSelection:
       InstTrunc:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+        $Predicate: isOperandIReg($Src)
     Replace:
-      AND:
+      SRA:
         Rd: $Dst
-        Rs: $Src
-        Rt:
-          LoadImm32:
+        Rs:
+          SLL:
             Rd: getVRegAs(ctx, $Src)
-            Imm: getTruncMask(($Dst).type(), ($Src).type())
-
-  - Pattern:
-      InstTrunc:
-        Dst: $Dst
-        Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
-    Replace:
-      ANDI:
-        Rd: $Dst
-        Rs: $Src
-        Imm: getTruncMask(($Dst).type(), ($Src).type())
+            Rs: $Src
+            Imm: getTruncShift(($Dst).type())
+        Imm: getTruncShift(($Dst).type())
 
 ScheduleModel:
   emulator:

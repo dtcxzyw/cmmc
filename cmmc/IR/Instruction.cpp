@@ -296,8 +296,10 @@ static std::string_view getInstName(InstructionID instID) {
             return "sext"sv;
         case InstructionID::ZExt:
             return "zext"sv;
-        case InstructionID::Trunc:
-            return "trunc"sv;
+        case InstructionID::SignedTrunc:
+            return "strunc"sv;
+        case InstructionID::UnsignedTrunc:
+            return "ztrunc"sv;
         case InstructionID::Bitcast:
             return "bitcast"sv;
         case InstructionID::F2U:

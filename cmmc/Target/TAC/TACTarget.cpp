@@ -147,7 +147,9 @@ public:
                 [[fallthrough]];
             case InstructionID::ZExt:
                 [[fallthrough]];
-            case InstructionID::Trunc:
+            case InstructionID::UnsignedTrunc:
+                [[fallthrough]];
+            case InstructionID::SignedTrunc:
                 [[fallthrough]];
             case InstructionID::Bitcast:
                 [[fallthrough]];

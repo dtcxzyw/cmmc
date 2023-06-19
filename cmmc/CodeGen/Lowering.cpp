@@ -634,32 +634,37 @@ static void lower(CastInst* inst, LoweringContext& ctx) {
     const auto src = ctx.mapOperand(inst->getOperand(0));
     const auto dst = ctx.newVReg(inst->getType());
 
-    const auto id = [instID = inst->getInstID()] {
-        switch(instID) {
-            case InstructionID::ZExt:
-                return InstZExt;
-            case InstructionID::SExt:
-                return InstSExt;
-            case InstructionID::Bitcast:
-                return InstCopy;
-            case InstructionID::Trunc:
-                return InstTrunc;
-            case InstructionID::F2U:
-                return InstF2U;
-            case InstructionID::F2S:
-                return InstF2S;
-            case InstructionID::U2F:
-                return InstU2F;
-            case InstructionID::S2F:
-                return InstS2F;
-            case InstructionID::FCast:
-                [[fallthrough]];
-            default:
-                reportUnreachable(CMMC_LOCATION());
-        }
-    }();
+    if(inst->getInstID() == InstructionID::UnsignedTrunc) {
+        ctx.emitInst(
+            MIRInst{ InstAnd }.setOperand<0>(dst).setOperand<1>(src).setOperand<2>(getTruncMask(dst.type(), src.type())));
+    } else {
+        const auto id = [instID = inst->getInstID()] {
+            switch(instID) {
+                case InstructionID::ZExt:
+                    return InstZExt;
+                case InstructionID::SExt:
+                    return InstSExt;
+                case InstructionID::Bitcast:
+                    return InstCopy;
+                case InstructionID::SignedTrunc:
+                    return InstTrunc;
+                case InstructionID::F2U:
+                    return InstF2U;
+                case InstructionID::F2S:
+                    return InstF2S;
+                case InstructionID::U2F:
+                    return InstU2F;
+                case InstructionID::S2F:
+                    return InstS2F;
+                case InstructionID::FCast:
+                    [[fallthrough]];
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
+        }();
+        ctx.emitInst(MIRInst{ id }.setOperand<0>(dst).setOperand<1>(src));
+    }
 
-    ctx.emitInst(MIRInst{ id }.setOperand<0>(dst).setOperand<1>(src));
     ctx.addOperand(inst, dst);
 }
 static void lower(LoadInst* inst, LoweringContext& ctx) {
@@ -960,7 +965,9 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
             [[fallthrough]];
         case InstructionID::ZExt:
             [[fallthrough]];
-        case InstructionID::Trunc:
+        case InstructionID::SignedTrunc:
+            [[fallthrough]];
+        case InstructionID::UnsignedTrunc:
             [[fallthrough]];
         case InstructionID::Bitcast:
             [[fallthrough]];

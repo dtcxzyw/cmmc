@@ -854,7 +854,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
             }
             case InstructionID::ZExt:
                 [[fallthrough]];
-            case InstructionID::Trunc: {
+            case InstructionID::SignedTrunc: {
+                addInt(getInt(0));
+                --instructionCount;
+                break;
+            }
+            case InstructionID::UnsignedTrunc: {
                 addUInt(getUInt(0));
                 --instructionCount;
                 break;

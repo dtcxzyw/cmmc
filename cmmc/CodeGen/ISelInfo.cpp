@@ -443,4 +443,15 @@ uintmax_t getUnsignedImm(const MIROperand& imm) {
     }
 }
 
+MIROperand getTruncShift(const OperandType type) {
+    switch(type) {
+        case OperandType::Int8:
+            return MIROperand::asImm(32 - 8, OperandType::Int32);
+        case OperandType::Int16:
+            return MIROperand::asImm(32 - 16, OperandType::Int32);
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 CMMC_MIR_NAMESPACE_END

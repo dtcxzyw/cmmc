@@ -792,26 +792,16 @@ InstSelection:
       InstTrunc:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+        $Predicate: isOperandIReg($Src)
     Replace:
-      AND:
+      ASR:
         Rd: $Dst
-        Rn: $Src
-        Op2:
-          InstLoadImm:
-            Dst: getVRegAs(ctx, $Src)
-            Imm: getTruncMask(($Dst).type(), ($Src).type())
-
-  - Pattern:
-      InstTrunc:
-        Dst: $Dst
-        Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
-    Replace:
-      AND:
-        Rd: $Dst
-        Rn: $Src
-        Op2: getTruncMask(($Dst).type(), ($Src).type())
+        Rm:
+          LSL:
+            Rd: getVRegAs(ctx, $Src)
+            Rm: $Src
+            Sh: getTruncShift(($Dst).type())
+        Sh: getTruncShift(($Dst).type())
 
 ScheduleModel:
   cortex_a72:

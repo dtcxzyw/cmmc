@@ -81,6 +81,8 @@ intmax_t getMaxSignedValue(OperandType type);
 intmax_t getMinSignedValue(OperandType type);
 uintmax_t getMaxUnsignedValue(OperandType type);
 uintmax_t getUnsignedImm(const MIROperand& imm);
+MIROperand getTruncShift(const OperandType type);
+
 constexpr MIROperand getNeg(const MIROperand& operand) {
     return MIROperand::asImm(-operand.imm(), operand.type());
 }

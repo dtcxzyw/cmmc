@@ -294,7 +294,9 @@ class LLVMConversionContext final {
                 return builder.CreateSExt(getOperand(0), getInstType());
             case InstructionID::ZExt:
                 return builder.CreateZExt(getOperand(0), getInstType());
-            case InstructionID::Trunc:
+            case InstructionID::UnsignedTrunc:
+                [[fallthrough]];
+            case InstructionID::SignedTrunc:
                 return builder.CreateTrunc(getOperand(0), getInstType());
             case InstructionID::Bitcast:
                 return builder.CreateBitCast(getOperand(0), getInstType());

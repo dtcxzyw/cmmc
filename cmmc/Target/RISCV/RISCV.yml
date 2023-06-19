@@ -1297,26 +1297,16 @@ InstSelection:
       InstTrunc:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int16
+        $Predicate: isOperandIReg($Src)
     Replace:
-      AND:
+      SRAI:
         Rd: $Dst
-        Rs1: $Src
-        Rs2:
-          LoadImm32:
+        Rs1:
+          SLLI:
             Rd: getVRegAs(ctx, $Src)
-            Imm: getTruncMask(($Dst).type(), ($Src).type())
-
-  - Pattern:
-      InstTrunc:
-        Dst: $Dst
-        Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int8
-    Replace:
-      ANDI:
-        Rd: $Dst
-        Rs1: $Src
-        Imm: getTruncMask(($Dst).type(), ($Src).type())
+            Rs1: $Src
+            Imm: getTruncShift(($Dst).type())
+        Imm: getTruncShift(($Dst).type())
 
 ScheduleModel:
   sifive-u74:

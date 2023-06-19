@@ -690,6 +690,10 @@ QualifiedValue UnaryExpr::emit(EmitContext& ctx) const {
     }
 }
 
+static Value* truncTo(EmitContext& ctx, Value* value, const Type* dstType, Qualifier qualifier) {
+    return ctx.makeOp<CastInst>(qualifier.isSigned ? InstructionID::SignedTrunc : InstructionID::UnsignedTrunc, dstType, value);
+}
+
 QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
     auto [ptr, qualifier] = ctx.getLValue(mValue, AsLValueUsage::SelfIncDec);
     if(qualifier.isConst)
@@ -722,7 +726,7 @@ QualifiedValue SelfIncDecExpr::emit(EmitContext& ctx) const {
 
     Value* newVal = ctx.makeOp<BinaryInst>(instID, val, rhs);
     if(sourceTypeForIntegerPromotion) {
-        newVal = ctx.makeOp<CastInst>(InstructionID::Trunc, sourceTypeForIntegerPromotion, newVal);
+        newVal = truncTo(ctx, newVal, sourceTypeForIntegerPromotion, qualifier);
     }
     ctx.makeOp<StoreInst>(ptr, newVal);
     if(mOp == OperatorID::PrefixInc || mOp == OperatorID::PrefixDec) {
@@ -1234,8 +1238,9 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
 
         if(srcType->getFixedSize() < type->getFixedSize()) {
             id = srcQualifier.isSigned ? InstructionID::SExt : InstructionID::ZExt;
-        } else
-            id = InstructionID::Trunc;
+        } else {
+            return truncTo(*this, value, type, srcQualifier);
+        }
     } else if(srcType->isInteger() && type->isFloatingPoint()) {
         if(strictMode.get())
             return reportConversionErrorSpl(*this, type, usage);  // implicit I2F is not allowed
