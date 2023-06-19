@@ -20,6 +20,18 @@ InstInfo:
   MUL:
     Format: mul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
 
+  IntegerExt:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rm:GPR[Use]
+    Instances:
+      SXTB:
+        Mnemonic: sxtb
+      SXTH:
+        Mnemonic: sxth
+      UXTB:
+        Mnemonic: uxtb
+      UXTH:
+        Mnemonic: uxth
+
   IntegerBinary:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use]
     Instances:
@@ -515,17 +527,6 @@ InstSelection:
         Src: $Src
 
   - Pattern:
-      InstZExt:
-        Dst: $Dst
-        Src: $Src
-        $Predicate: isOperandIReg($Src)
-    Replace:
-      InstAnd:
-        Dst: $Dst
-        Lhs: $Src
-        Rhs: getZExtMask(($Dst).type(), ($Src).type())
-
-  - Pattern:
       InstSExt:
         Dst: $Dst
         Src: $Src
@@ -787,15 +788,13 @@ InstSelection:
       InstZExt:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32
+        $Predicate: isOperandIReg($Src)
     Replace:
-      AND:
+      ZExt:
+        $Opcode: getZExtOpcode(($Src).type())
+        $Template: UXTB
         Rd: $Dst
-        Rn: $Src
-        Op2:
-          InstLoadImm:
-            Dst: getVRegAs(ctx, $Src)
-            Imm: getZExtMask(($Dst).type(), ($Src).type())
+        Rm: $Src
 
   - Pattern:
       InstTrunc:
@@ -803,14 +802,11 @@ InstSelection:
         Src: $Src
         $Predicate: isOperandIReg($Src)
     Replace:
-      ASR:
+      ZExt:
+        $Opcode: getSExtOpcode(($Dst).type())
+        $Template: SXTB
         Rd: $Dst
-        Rm:
-          LSL:
-            Rd: getVRegAs(ctx, $Src)
-            Rm: $Src
-            Sh: getTruncShift(($Dst).type())
-        Sh: getTruncShift(($Dst).type())
+        Rm: $Src
 
 ScheduleModel:
   cortex_a72:

@@ -330,6 +330,16 @@ auto sext(Value value) {
     return CastMatcher{ InstructionID::SExt, value };
 }
 
+template <typename Value>
+auto f2s(Value value) {
+    return CastMatcher{ InstructionID::F2S, value };
+}
+
+template <typename Value>
+auto s2f(Value value) {
+    return CastMatcher{ InstructionID::S2F, value };
+}
+
 // x*y+z
 template <typename XMatcher, typename YMatcher, typename ZMatcher>
 class FMAMatcher final : public GenericMatcher<FMAInst, FMAMatcher<XMatcher, YMatcher, ZMatcher>> {

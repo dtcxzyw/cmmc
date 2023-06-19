@@ -51,6 +51,7 @@ namespace mir {
 std::optional<int> runMain(Module&, SimulationIOContext&, const std::string&) {
     return std::nullopt;
 }
+void verifyModuleExec(Module&, AnalysisPassManager&, const std::string_view&) {}
 
 CMMC_NAMESPACE_END
 

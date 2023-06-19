@@ -491,6 +491,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(sub(cint_(1), zext(any(v1)))(matchCtx) && v1->getType()->isBoolean())
                 return builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(),
                                                 builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(1, v1)));
+            // fixed point
+            if(f2s(s2f(capture(f2s(any(v1)), v2)))(matchCtx)) {
+                return v2;
+            }
 
             return nullptr;
         });

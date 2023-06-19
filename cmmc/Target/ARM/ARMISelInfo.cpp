@@ -13,6 +13,7 @@
 */
 
 #include <ARM/InstInfoDecl.hpp>
+#include <cmath>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -229,6 +230,28 @@ static bool isNotCmp(const ISelContext& ctx, const MIROperand& cond) {
             return false;
     }
     return true;
+}
+
+static uint32_t getZExtOpcode(OperandType type) {
+    switch(type) {
+        case OperandType::Int8:
+            return UXTB;
+        case OperandType::Int16:
+            return UXTH;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static uint32_t getSExtOpcode(OperandType type) {
+    switch(type) {
+        case OperandType::Int8:
+            return SXTB;
+        case OperandType::Int16:
+            return SXTH;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -614,19 +637,35 @@ void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRIn
     CMMC_UNUSED(instructions);
     return;
 }
+// fpconst (8bit fp) = +/- m * 2^-n where m is a 4-bit mantissa and n is a 3-bit exponent.
+static bool isLegalFPConst(uint32_t rep) {
+    const auto exp = static_cast<int32_t>((rep >> 23) & 0xff) - 127;  // 8 bits (-126 - 127)
+    const auto mantissa = rep & 0x7fffff;                             // 23 bits mantissa
+
+    // m = 16 + mantissa[19:16]
+    if(mantissa & 0x7ffff)
+        return false;
+
+    // n = 4 - exp
+    return -3 <= exp && exp <= 4;
+}
 MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, LoweringContext& loweringCtx) const {
     if(fp->getType()->getFixedSize() == sizeof(float)) {
         const auto val = static_cast<float>(fp->getValue());
         uint32_t rep;
         memcpy(&rep, &val, sizeof(float));
         const auto dst = loweringCtx.newVReg(OperandType::Float32);
-        const auto intermediate = loweringCtx.newVReg(OperandType::Int32);
-        loweringCtx.emitInst(
-            MIRInst{ InstLoadImm }.setOperand<0>(intermediate).setOperand<1>(MIROperand::asImm(rep, OperandType::Int32)));
-        loweringCtx.emitInst(MIRInst{ VMOV_GPR2FPR }.setOperand<0>(dst).setOperand<1>(intermediate));
-        // TODO: use VMOV_Constant
-        // loweringCtx.emitInst(
-        //     MIRInst{ VMOV_Constant }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
+        // TODO: directly emit LoadFP32Imm?
+        // VMOV_FPR2GPR(LoadFP32Imm) -> LoadImm
+        if(isLegalFPConst(rep)) {
+            loweringCtx.emitInst(
+                MIRInst{ VMOV_Constant }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
+        } else {
+            const auto intermediate = loweringCtx.newVReg(OperandType::Int32);
+            loweringCtx.emitInst(
+                MIRInst{ InstLoadImm }.setOperand<0>(intermediate).setOperand<1>(MIROperand::asImm(rep, OperandType::Int32)));
+            loweringCtx.emitInst(MIRInst{ VMOV_GPR2FPR }.setOperand<0>(dst).setOperand<1>(intermediate));
+        }
         return dst;
     }
     return MIROperand{};
@@ -684,6 +723,20 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
         loweringCtx.emitInst(MIRInst{ BL }.setOperand<0>(MIROperand::asReloc(func)));
         loweringCtx.emitCopy(ret, MIROperand::asISAReg(ARM::R0, OperandType::Int32));
         loweringCtx.addOperand(inst, ret);
+        return true;
+    }
+    if(inst->getInstID() == InstructionID::UnsignedTrunc) {
+        auto src = loweringCtx.mapOperand(inst->getOperand(0));
+        const auto type = inst->getType();
+        const auto dst = loweringCtx.newVReg(type);
+        if(dst.type() == OperandType::Int8) {
+            loweringCtx.emitInst(MIRInst{ UXTB }.setOperand<0>(dst).setOperand<1>(src));
+        } else if(dst.type() == OperandType::Int16) {
+            loweringCtx.emitInst(MIRInst{ UXTH }.setOperand<0>(dst).setOperand<1>(src));
+        } else
+            reportUnreachable(CMMC_LOCATION());
+
+        loweringCtx.addOperand(inst, dst);
         return true;
     }
     return false;

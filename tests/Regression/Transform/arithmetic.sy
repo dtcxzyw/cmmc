@@ -287,3 +287,15 @@ int foo95(int x, int y, int z) {
 int foo96(int x, int y, int z) {
     return (x < y) ? 0 : (z < y);
 }
+float foo97(int x) {
+    float y = x;
+    int z = y;
+    float w = z;
+    int xx = w;
+    return xx;
+}
+int foo98(float x) {
+    int y = x;
+    float z = y;
+    return z;
+}

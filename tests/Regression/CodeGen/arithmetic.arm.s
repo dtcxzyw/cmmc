@@ -208,13 +208,10 @@ fadd:
 	bx lr
 .globl fadd_imm
 fadd_imm:
-	push { r4 }
 	vmov s0, r0
-	mov r4, #1065353216
-	vmov s1, r4
+	vmov.f32 s1, #1
 	vadd.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
 	bx lr
 .globl fadd_identity
 fadd_identity:
@@ -228,13 +225,10 @@ fsub:
 	bx lr
 .globl fsub_imm
 fsub_imm:
-	push { r4 }
 	vmov s0, r0
-	mov r4, #1065353216
-	vmov s1, r4
+	vmov.f32 s1, #1
 	vsub.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
 	bx lr
 .globl fmul
 fmul:
@@ -258,13 +252,10 @@ fdiv:
 	bx lr
 .globl fdiv_imm
 fdiv_imm:
-	push { r4 }
 	vmov s0, r0
-	mov r4, #1056964608
-	vmov s1, r4
+	vmov.f32 s1, #0.5
 	vmul.f32 s2, s0, s1
 	vmov r0, s2
-	pop { r4 }
 	bx lr
 .globl fneg
 fneg:
@@ -315,10 +306,8 @@ fp_zero:
 	bx lr
 .globl fp_imm0
 fp_imm0:
-	push { r4 }
-	mov r4, #1090519040
-	mov r0, r4
-	pop { r4 }
+	vmov.f32 s0, #8
+	vmov r0, s0
 	bx lr
 .globl fp_imm1
 fp_imm1:
