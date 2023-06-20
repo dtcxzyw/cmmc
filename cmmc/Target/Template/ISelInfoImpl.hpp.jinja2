@@ -28,6 +28,7 @@ static bool match{{inst}}(MIRInst& inst{% for operand in inst_map[inst].operands
 
 {% for patterns in isel_patterns.values() %}{% for pattern in patterns %}
 static bool matchAndSelectPattern{{pattern.match_id}}(MIRInst& inst{{pattern.match_id}}, ISelContext& ctx) {
+    constexpr uint32_t rootOpcode = {{pattern.match_inst}};CMMC_UNUSED(rootOpcode);
     // Match
     {% for match in pattern.match_list %}{% if match.type == 'match_inst' %}{% for operand_idx in match.capture_list %} MIROperand op{{operand_idx}}; {% endfor %}if(!match{{match.inst}}(inst{{match.root}}{% for operand_idx in match.capture_list %},op{{operand_idx}}{% endfor %}))return false;{% for lookup_idx in match.lookup_list %} auto instptr{{lookup_idx}} = ctx.lookupDef(op{{lookup_idx}}); if(!instptr{{lookup_idx}}) return false; auto& inst{{lookup_idx}} = *instptr{{lookup_idx}}; {% endfor %}{% else %} {% for op in match.new_ops %} MIROperand op{{op}}; {% endfor %} if(!({{match.code}}))return false;{% endif %}{% endfor %}
     // Select

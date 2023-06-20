@@ -236,6 +236,18 @@ def parse_isel_pattern(pattern, insts, match_insts):
     p = pattern['Pattern']
     r = pattern['Replace']
 
+    if '$Instances' in p:
+        instances = p['$Instances']
+        ret = []
+        template = p['$Template']
+        p.pop('$Template')
+        p.pop('$Instances')
+        for inst in instances:
+            p[inst] = template
+            ret.append(parse_isel_pattern(pattern, insts, match_insts))
+            p.pop(inst)
+        return ret
+
     pattern_info = dict()
     match_info = list()
     select_info = list()
@@ -304,8 +316,13 @@ if __name__ == "__main__":
     isel_patterns_info = []
     match_insts = set()
     for pattern in isel_patterns:
-        isel_patterns_info.append(
-            parse_isel_pattern(pattern, insts, match_insts))
+        ret = parse_isel_pattern(pattern, insts, match_insts)
+        if isinstance(ret, list):
+            for parsed_pattern in ret:
+                isel_patterns_info.append(parsed_pattern)
+        else:
+            isel_patterns_info.append(ret)
+
     isel_patterns_map = dict()
     for pattern in isel_patterns_info:
         key = pattern['match_inst']
