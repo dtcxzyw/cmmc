@@ -50,6 +50,10 @@ int sub_imm(int x) {
     return x - 1;
 }
 
+int sub_inverted_imm(int x) {
+    return 1 - x;
+}
+
 int sub_reg(int x, int y) {
     return x - y;
 }

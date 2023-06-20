@@ -19,9 +19,27 @@ load:
 	mov r0, r4
 	pop { r4 }
 	bx lr
+.globl load_float
+load_float:
+	push { r4, r5 }
+	lsl r4, r1, #2
+	add r5, r0, r4
+	vldr s0, [r5, #0]
+	vmov r0, s0
+	pop { r4, r5 }
+	bx lr
 .globl store
 store:
 	str r2, [r0, r1, lsl #2]
+	bx lr
+.globl store_float
+store_float:
+	push { r4, r5 }
+	vmov s0, r2
+	lsl r4, r1, #2
+	add r5, r0, r4
+	vstr s0, [r5, #0]
+	pop { r4, r5 }
 	bx lr
 .globl gep_const
 gep_const:

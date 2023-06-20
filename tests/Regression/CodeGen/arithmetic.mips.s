@@ -88,6 +88,13 @@ sub_imm:
 	move $v0, $t0
 	jr $ra
 	nop
+.globl sub_inverted_imm
+sub_inverted_imm:
+	li $t0, 1
+	subu $t1, $t0, $a0
+	move $v0, $t1
+	jr $ra
+	nop
 .globl sub_reg
 sub_reg:
 	subu $t0, $a0, $a1

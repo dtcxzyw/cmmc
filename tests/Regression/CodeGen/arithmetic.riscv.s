@@ -72,6 +72,12 @@ sub_imm:
 	addiw t1, a0, -1
 	mv a0, t1
 	ret
+.globl sub_inverted_imm
+sub_inverted_imm:
+	li t1, 1
+	subw t2, t1, a0
+	mv a0, t2
+	ret
 .globl sub_reg
 sub_reg:
 	subw t1, a0, a1
@@ -240,9 +246,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel219:
+pcrel225:
 	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi t2, t1, %pcrel_lo(pcrel219)
+	addi t2, t1, %pcrel_lo(pcrel225)
 	flw f0, 0(t2)
 	fmv.s f10, f0
 	ret

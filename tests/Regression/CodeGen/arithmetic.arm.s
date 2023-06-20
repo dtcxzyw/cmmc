@@ -95,6 +95,14 @@ sub_imm:
 	mov r0, r4
 	pop { r4 }
 	bx lr
+.globl sub_inverted_imm
+sub_inverted_imm:
+	push { r4, r5 }
+	mov r4, #1
+	sub r5, r4, r0
+	mov r0, r5
+	pop { r4, r5 }
+	bx lr
 .globl sub_reg
 sub_reg:
 	push { r4 }

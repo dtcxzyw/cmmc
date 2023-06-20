@@ -15,11 +15,24 @@ load:
 	lw t3, 0(t2)
 	mv a0, t3
 	ret
+.globl load_float
+load_float:
+	slliw t1, a1, 2
+	add t2, a0, t1
+	flw f0, 0(t2)
+	fmv.s f10, f0
+	ret
 .globl store
 store:
 	slliw t1, a1, 2
 	add t2, a0, t1
 	sw a2, 0(t2)
+	ret
+.globl store_float
+store_float:
+	slliw t1, a1, 2
+	add t2, a0, t1
+	fsw f12, 0(t2)
 	ret
 .globl gep_const
 gep_const:
@@ -73,16 +86,16 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel89:
+pcrel106:
 	auipc t1, %pcrel_hi(y)
-	lw t2, %pcrel_lo(pcrel89)(t1)
+	lw t2, %pcrel_lo(pcrel106)(t1)
 	mv a0, t2
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel102:
+pcrel119:
 	auipc t1, %pcrel_hi(arr)
-	addi t2, t1, %pcrel_lo(pcrel102)
+	addi t2, t1, %pcrel_lo(pcrel119)
 	slli t3, a0, 2
 	add t4, t2, t3
 	lw t5, 0(t4)

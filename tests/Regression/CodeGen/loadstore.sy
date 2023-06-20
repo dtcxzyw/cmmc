@@ -1,7 +1,13 @@
 int load(int x[], int idx) {
     return x[idx];
 }
+float load_float(float x[], int idx) {
+    return x[idx];
+}
 void store(int x[], int idx, int y) {
+    x[idx] = y;
+}
+void store_float(float x[], int idx, float y) {
     x[idx] = y;
 }
 int gep_const(int x[]) {

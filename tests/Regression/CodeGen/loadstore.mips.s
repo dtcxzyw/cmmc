@@ -16,11 +16,27 @@ load:
 	move $v0, $t2
 	jr $ra
 	nop
+.globl load_float
+load_float:
+	sll $t0, $a1, 2
+	addu $t1, $a0, $t0
+	lwc1 $f4, 0($t1)
+	mov.s $f0, $f4
+	jr $ra
+	nop
 .globl store
 store:
 	sll $t0, $a1, 2
 	addu $t1, $a0, $t0
 	sw $a2, 0($t1)
+	jr $ra
+	nop
+.globl store_float
+store_float:
+	mtc1 $a2, $f4
+	sll $t0, $a1, 2
+	addu $t1, $a0, $t0
+	swc1 $f4, 0($t1)
 	jr $ra
 	nop
 .globl gep_const
