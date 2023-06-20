@@ -37,7 +37,8 @@ public:
     void runISel(MIRFunction& func);
     MIRInst* lookupDef(const MIROperand& operand) const;
     bool isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
-                        std::optional<std::list<MIRInst>::iterator>* iterPtr = nullptr) const;
+                        std::optional<std::list<MIRInst>::iterator>* iterPtr) const;
+    bool isSafeToUse(const MIROperand& val, const MIROperand& def) const;
     std::optional<MIROperand> getRegRef(const MIROperand& reg, const MIRInst& inst);
     MIRInst& newInst(uint32_t opcode);
     MIROperand& getInstDef(MIRInst& inst) const;

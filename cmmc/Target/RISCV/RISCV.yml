@@ -893,10 +893,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isZero($Rhs)
+            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -913,10 +914,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isGreaterEqualOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isGreaterEqualOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -931,10 +933,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isGreaterThanOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isGreaterThanOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -949,10 +952,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isLessThanOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOne($Rhs) && isLessThanOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -967,10 +971,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isLessEqualOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isNegativeOne($Rhs) && isLessEqualOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -984,10 +989,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs)
+            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -1006,10 +1012,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -1030,7 +1037,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isNotEqualOp($Op)
+            $Predicate: isNotEqualOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -1079,7 +1086,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
-            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+            $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
         $Opcode: getZExtLoadOpcode($Val)
@@ -1094,6 +1101,7 @@ InstSelection:
           InstTrunc:
             Dst: $Dst
             Src: $Src
+            $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:

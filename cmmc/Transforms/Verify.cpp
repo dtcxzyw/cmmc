@@ -102,7 +102,7 @@ void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::
             return;
     }
 
-    const auto tempOutput = "/tmp/cmmcsim";
+    const auto tempOutput = "/tmp/cmmcsim" + std::to_string(runCount);
     int retCode = 0;
 
     {
@@ -131,7 +131,7 @@ void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::
             if(testScript.get().empty())
                 return;
 
-            const auto tempAsmOutput = "/tmp/cmmctmp.S";
+            const auto tempAsmOutput = "/tmp/cmmctmp" + std::to_string(runCount) + ".S";
             {
                 std::ofstream out{ tempAsmOutput };
                 const auto machineModule =

@@ -164,7 +164,10 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                isLegalAddrImm(off.imm(), getAddressingImmRange(OperandType::Int32, opcode))) {
                 base = addrInst->getOperand(1);
                 offset = off;
-                return true;
+                if(auto baseReg = ctx.getRegRef(base, *addrInst)) {
+                    base = *baseReg;
+                    return true;
+                }
             }
         }
     }

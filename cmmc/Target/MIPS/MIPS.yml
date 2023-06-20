@@ -397,10 +397,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isRationalOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -415,10 +416,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && isOperandImm16(getNeg($Rhs)) && isRationalOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && isOperandImm16(getNeg($Rhs)) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -437,10 +439,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandImm32($Rhs) && isRationalOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOperandImm32($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -462,10 +465,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isRationalOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -484,10 +488,11 @@ InstSelection:
       InstBranch:
         Cond:
           InstSCmp:
+            Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isEqualityOp($Op)
+            $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isEqualityOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -823,7 +828,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
-            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset])
+            $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
       Load:
         $Opcode: getZExtLoadOpcode($Val)
@@ -838,6 +843,7 @@ InstSelection:
           InstTrunc:
             Dst: $Dst
             Src: $Src
+            $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset])
     Replace:
@@ -884,7 +890,7 @@ InstSelection:
             Rd: $Cond
             Rs: $CC
             Flip: $Flip
-            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+            $Predicate: ctx.isSafeToUse($CC, $Cond)
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: selectFCC_FPR_FPR($Lhs, $Rhs, $Flip, [$OutLhs], [$OutRhs])
@@ -982,7 +988,7 @@ InstSelection:
           MTC1:
             Rt: $Src
             Fs: $Intermediate
-            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
     Replace:
       InstCopy:
         Dst: $Dst
@@ -995,7 +1001,7 @@ InstSelection:
           MFC1:
             Fs: $Src
             Rt: $Intermediate
-            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
     Replace:
       InstCopy:
         Dst: $Dst

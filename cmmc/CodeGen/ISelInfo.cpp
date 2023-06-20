@@ -265,6 +265,12 @@ std::optional<MIROperand> ISelContext::getRegRef(const MIROperand& reg, const MI
     return copy;
 }
 
+bool ISelContext::isSafeToUse(const MIROperand& val, const MIROperand& def) const {
+    if(!isOperandISAReg(val))
+        return true;
+    return !isDefinedAfter(val, *lookupDef(def), nullptr);
+}
+
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
     if(ctx.flags.postSA) {
         for(auto& block : func.blocks()) {

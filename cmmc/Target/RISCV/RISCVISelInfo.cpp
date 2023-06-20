@@ -78,7 +78,10 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
             if(isOperandIReg(base) && isOperandImm12(off)) {
                 base = addrInst->getOperand(1);
                 offset = off;
-                return true;
+                if(auto baseReg = ctx.getRegRef(base, *addrInst)) {
+                    base = *baseReg;
+                    return true;
+                }
             }
         }
         // TODO: move to emitLoadGlobalAddress?

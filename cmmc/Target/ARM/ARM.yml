@@ -295,7 +295,7 @@ InstSelection:
         Dst: $Dst
         Imm: $Imm
         $Predicate: isOperandOp2Constant($Imm)
-      $Instances: [ InstLoadImmToReg, InstLoadImm ]
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       MOV_Constant:
         Rd: $Dst
@@ -306,7 +306,7 @@ InstSelection:
         Dst: $Dst
         Imm: $Imm
         $Predicate: selectInvertedOp2Constant($Imm, [$InvertedImm])
-      $Instances: [ InstLoadImmToReg, InstLoadImm ]
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       MVN_Constant:
         Rd: $Dst
@@ -317,7 +317,7 @@ InstSelection:
         Dst: $Dst
         Imm: $Imm
         $Predicate: selectGenericImm32($Imm, [$UImm])
-      $Instances: [ InstLoadImmToReg, InstLoadImm ]
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       MOVT_MOVW_PAIR:
         Rd: $Dst
@@ -329,7 +329,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && selectFusedIntegerBinaryOperand($Rhs, ctx, [$Out], [$ShOp], [$Sh])
-      $Instances: [ InstAdd, InstSub, InstAnd, InstOr, InstXor ]
+      $Instances: [InstAdd, InstSub, InstAnd, InstOr, InstXor]
     Replace:
       IntegerBinaryWithFullOp2:
         $Opcode: getFusedIntegerBinaryOpcode(rootOpcode)
@@ -346,7 +346,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
-      $Instances: [ InstAdd, InstSub, InstAnd, InstOr, InstXor ]
+      $Instances: [InstAdd, InstSub, InstAnd, InstOr, InstXor]
     Replace:
       IntegerBinaryWithOp2:
         $Opcode: getIntegerBinaryOpcode(rootOpcode)
@@ -373,7 +373,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandShamt($Rhs)
-      $Instances: [ InstShl, InstLShr, InstAShr ]
+      $Instances: [InstShl, InstLShr, InstAShr]
     Replace:
       ShiftOperation:
         $Opcode: getShiftOpcode(rootOpcode)
@@ -414,7 +414,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandFPR($Lhs) && isOperandFPR($Rhs)
-      $Instances: [ InstFAdd, InstFSub, InstFMul, InstFDiv ]
+      $Instances: [InstFAdd, InstFSub, InstFMul, InstFDiv]
     Replace:
       FloatingBinary:
         $Opcode: getFloatingBinaryOpcode(rootOpcode)
@@ -440,7 +440,7 @@ InstSelection:
           VMOV_GPR2FPR:
             Rd: $Src
             Sn: $Intermediate
-            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
     Replace:
       InstCopyToReg:
         Dst: $Dst
@@ -453,7 +453,7 @@ InstSelection:
           VMOV_FPR2GPR:
             Sn: $Src
             Rd: $Intermediate
-            $Predicate: "!ctx.isDefinedAfter($Intermediate, *ctx.lookupDef($Intermediate))"
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
     Replace:
       VMOV:
         Fd: $Dst
@@ -502,7 +502,7 @@ InstSelection:
             Rd: $Cond
             CC: $CC
             CF: $CF
-            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+            $Predicate: ctx.isSafeToUse($CC, $Cond)
         Tgt: $Reloc
         Prob: $Prob
         $Predicate: isOperandIReg($Cond)
@@ -521,7 +521,7 @@ InstSelection:
             Rd: $Cond
             CC: $CC
             CF: $CF
-            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+            $Predicate: ctx.isSafeToUse($CC, $Cond)
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Dst)
@@ -541,7 +541,7 @@ InstSelection:
             Rd: $Cond
             CC: $CC
             CF: $CF
-            $Predicate: "!ctx.isDefinedAfter($CC, *ctx.lookupDef($Cond))"
+            $Predicate: ctx.isSafeToUse($CC, $Cond)
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandFPR($Dst)
@@ -698,7 +698,7 @@ InstSelection:
           InstLoad:
             Dst: $Val
             Addr: $Addr
-            $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getZExtLoadOpcode($Val))
+            $Predicate: ctx.isSafeToUse($Addr, $Val) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getZExtLoadOpcode($Val))
     Replace:
       Load:
         $Opcode: getZExtLoadOpcode($Val)
@@ -713,6 +713,7 @@ InstSelection:
           InstTrunc:
             Dst: $Dst
             Src: $Src
+            $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
         $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
     Replace:
@@ -744,6 +745,7 @@ InstSelection:
           InstTrunc:
             Dst: $Dst
             Src: $Src
+            $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
         $Predicate: isOperandVRegOrISAReg($Src) && selectAddrOffset($Addr, ctx, [$Base], [$Offset], getStoreOpcode($Dst))
     Replace:
