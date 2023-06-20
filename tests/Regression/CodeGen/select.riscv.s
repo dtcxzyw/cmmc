@@ -1,4 +1,8 @@
 .data
+.align 4
+__cmmc_fp_constant_pool:
+	.4byte	3226013648
+	.4byte	1086918628
 .text
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
@@ -432,4 +436,70 @@ label323:
 	ld t1, 8(sp)
 	mv a0, t1
 	addi sp, sp, 32
+	ret
+.globl select_cross_fpr
+select_cross_fpr:
+	addi sp, sp, -32
+	slt t1, a0, a1
+	mv t2, t1
+	sd t1, 16(sp)
+	sd t1, 24(sp)
+	bge a1, a2, label355
+	lui t1, 260096
+	fmv.w.x f0, t1
+	lui t2, 266752
+	fmv.w.x f1, t2
+	fmv.s f2, f0
+	ld t3, 24(sp)
+	fsw f0, 0(sp)
+	fsw f1, 4(sp)
+	bne t3, zero, label365
+	fmv.s f0, f1
+	fsw f1, 0(sp)
+	fsw f1, 8(sp)
+	j label345
+label355:
+	ld t1, 16(sp)
+	fcvt.s.w f0, t1
+	fmv.s f1, f0
+	fsw f0, 8(sp)
+	j label345
+label365:
+	flw f0, 0(sp)
+	fmv.s f1, f0
+	fsw f0, 8(sp)
+label345:
+	flw f0, 8(sp)
+	fmv.s f10, f0
+	addi sp, sp, 32
+	ret
+.globl select_round
+select_round:
+	addi sp, sp, -8
+	fmv.s f0, f10
+pcrel408:
+	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi t2, t1, %pcrel_lo(pcrel408)
+	flw f1, 0(t2)
+	flw f2, 0(t2)
+	fle.s t3, f2, f10
+	fsw f10, 4(sp)
+	bne t3, zero, label389
+pcrel409:
+	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi t2, t1, %pcrel_lo(pcrel409)
+	flw f0, 4(t2)
+	fmv.s f1, f10
+	fadd.s f2, f10, f0
+	fmv.s f3, f2
+	fsw f2, 0(sp)
+	j label378
+label389:
+	flw f0, 4(sp)
+	fmv.s f1, f0
+	fsw f0, 0(sp)
+label378:
+	flw f0, 0(sp)
+	fmv.s f10, f0
+	addi sp, sp, 8
 	ret

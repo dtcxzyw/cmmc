@@ -79,7 +79,24 @@ static std::string loadString(const std::string& input) {
     in.read(str.data(), size);
     return str;
 }
+static bool underVerifying = false;  // NOLINT
+struct UnderVerifyingGuard final {
+    UnderVerifyingGuard() {
+        underVerifying = true;
+        debugTransform.handle("false");
+    }
+    ~UnderVerifyingGuard() {
+        underVerifying = false;
+        debugTransform.handle("true");
+    }
+};
 void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::string_view& passName) {
+    if(underVerifying) {
+        // transform -> verify -> codegen -> transformBeforeCodeGen -> verify
+        return;
+    }
+    UnderVerifyingGuard guard;
+
     if(!passFilter.get().empty()) {
         if(passFilter.get() != passName)
             return;
@@ -113,12 +130,15 @@ void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::
         } else {
             if(testScript.get().empty())
                 return;
+
             const auto tempAsmOutput = "/tmp/cmmctmp.S";
-            std::ofstream out{ tempAsmOutput };
-            const auto machineModule =
-                mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
-            auto& target = module.getTarget();
-            target.emitAssembly(*machineModule, out, mir::RuntimeType::None);
+            {
+                std::ofstream out{ tempAsmOutput };
+                const auto machineModule =
+                    mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
+                auto& target = module.getTarget();
+                target.emitAssembly(*machineModule, out, mir::RuntimeType::None);
+            }
             const auto cmd = testScript.get() + " " + tempAsmOutput + " " + executeInput.get() + " " + tempOutput;
             // std::cerr << '[' << cmd << ']' << std::endl;
             retCode = system(cmd.c_str()) & 0xff;

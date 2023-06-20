@@ -725,7 +725,7 @@ InstSelection:
             Rn: $Cond
             Op2: getZero($Cond)
             CC: getCC()
-        CF: MIROperand::asImm(CondField::EQ, OperandType::CondField)
+        CF: MIROperand::asImm(CondField::NE, OperandType::CondField)
 
   # Load/Store
   - Pattern:

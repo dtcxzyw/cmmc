@@ -91,3 +91,15 @@ int select_cross(int x, int y, int z) {
         return c;
     }
 }
+float select_cross_fpr(int x, int y, int z) {
+    int c = x < y;
+    if(y < z) {
+        return c ? 1.0 : 10.0;
+    }
+    else {
+        return c;
+    }
+}
+float select_round(float x, float y) {
+    return x < -3.14159 ? (x + 6.28319) : x;
+}

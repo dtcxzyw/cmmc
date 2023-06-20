@@ -1,4 +1,10 @@
 .data
+.align 4
+__cmmc_fp_constant_pool:
+	.4byte	1065353216
+	.4byte	1092616192
+	.4byte	3226013648
+	.4byte	1086918628
 .text
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
@@ -308,5 +314,71 @@ label293:
 	lw $t0, 0($sp)
 	move $v0, $t0
 	addiu $sp, $sp, 12
+	jr $ra
+	nop
+.globl select_cross_fpr
+select_cross_fpr:
+	addiu $sp, $sp, -12
+	slt $t0, $a0, $a1
+	move $t1, $t0
+	subu $t2, $a1, $a2
+	sw $t0, 4($sp)
+	sw $t0, 8($sp)
+	bgez $t2, label326
+	nop
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 0($t1)
+	lwc1 $f6, 4($t1)
+	mov.s $f8, $f4
+	lw $t2, 8($sp)
+	movz.s $f8, $f6, $t2
+	mov.s $f10, $f8
+	swc1 $f8, 0($sp)
+	b label316
+	nop
+label326:
+	lw $t0, 4($sp)
+	mtc1 $t0, $f4
+	cvt.s.w $f6, $f4
+	mov.s $f8, $f6
+	swc1 $f6, 0($sp)
+label316:
+	lwc1 $f4, 0($sp)
+	mov.s $f0, $f4
+	addiu $sp, $sp, 12
+	jr $ra
+	nop
+.globl select_round
+select_round:
+	addiu $sp, $sp, -8
+	mov.s $f4, $f12
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f6, 8($t1)
+	lwc1 $f8, 8($t1)
+	c.ult.s $f12, $f8
+	li $t2, 1
+	movt $t2, $zero, $fcc0
+	swc1 $f12, 4($sp)
+	bne $t2, $zero, label364
+	nop
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 12($t1)
+	mov.s $f6, $f12
+	add.s $f8, $f12, $f4
+	mov.s $f10, $f8
+	swc1 $f8, 0($sp)
+	b label353
+	nop
+label364:
+	lwc1 $f4, 4($sp)
+	mov.s $f6, $f4
+	swc1 $f4, 0($sp)
+label353:
+	lwc1 $f4, 0($sp)
+	mov.s $f0, $f4
+	addiu $sp, $sp, 8
 	jr $ra
 	nop

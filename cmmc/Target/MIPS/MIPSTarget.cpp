@@ -162,7 +162,7 @@ public:
                 // $t0-$t9
                 MIPS::X8, MIPS::X9, MIPS::X10, MIPS::X11, MIPS::X12,    //
                 MIPS::X13, MIPS::X14, MIPS::X15, MIPS::X24, MIPS::X25,  //
-                // $v0 $a0-$a3
+                // $v0 $a0-$a3 //
                 // MIPS::X2, MIPS::X4, MIPS::X5, MIPS::X6, MIPS::X7,  //
                 // $s0-$s7
                 MIPS::X16, MIPS::X17, MIPS::X18, MIPS::X19,  //

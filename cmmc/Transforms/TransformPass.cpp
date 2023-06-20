@@ -48,10 +48,6 @@ Flag debugTransform;    // NOLINT
 IntegerOpt skipCount;   // NOLINT
 uint32_t runCount = 0;  // NOLINT
 
-CMMC_INIT_OPTIONS_BEGIN
-debugTransform.setName("debug-transform", 'd').setDesc("print transform pass result step-by-step");
-CMMC_INIT_OPTIONS_END
-
 template <>
 TransformPass<Function>::~TransformPass() = default;
 template <>
