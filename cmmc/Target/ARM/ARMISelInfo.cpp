@@ -212,6 +212,51 @@ static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIRO
     return false;
 }
 
+constexpr ARMInst getIntegerBinaryOpcode(const uint32_t opcode) {
+    switch(opcode) {
+        case InstAdd:
+            return ADD;
+        case InstSub:
+            return SUB;
+        case InstAnd:
+            return AND;
+        case InstOr:
+            return ORR;
+        case InstXor:
+            return EOR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr ARMInst getShiftOpcode(const uint32_t opcode) {
+    switch(opcode) {
+        case InstShl:
+            return LSL;
+        case InstLShr:
+            return LSR;
+        case InstAShr:
+            return ASR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr ARMInst getFloatingBinaryOpcode(const uint32_t opcode) {
+    switch(opcode) {
+        case InstFAdd:
+            return VADD_F32;
+        case InstFSub:
+            return VSUB_F32;
+        case InstFMul:
+            return VMUL_F32;
+        case InstFDiv:
+            return VDIV_F32;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 static ARMInst getFusedLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
