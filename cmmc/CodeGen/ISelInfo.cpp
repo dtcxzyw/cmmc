@@ -215,23 +215,54 @@ void ISelContext::replaceOperand(const MIROperand& src, const MIROperand& dst) {
     assert(src.isReg());
     mReplaceList.emplace(src, dst);
 }
-bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst) const {
+bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
+                                 std::optional<std::list<MIRInst>::iterator>* iterPtr) const {
     auto iter = mInsertPoint;
+    auto getIter = [&] {
+        if(iterPtr) {
+            while(&(*iter) != &inst) {
+                if(iter == mCurrentBlock->instructions().begin()) {
+                    *iterPtr = std::nullopt;
+                    return true;
+                }
+                iter = std::prev(iter);
+            }
+            *iterPtr = iter;
+        }
+        return true;
+    };
     while(true) {
         if(iter == mCurrentBlock->instructions().begin())
             return false;
         iter = std::prev(iter);
         if(&(*iter) == &inst)
             return false;
-        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(iter->opcode());
         if(requireFlag(instInfo.getInstFlag(), InstFlag::InstFlagCall))
-            return true;
+            return getIter();
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
             if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
-                if(operand == inst.getOperand(idx))
-                    return true;
+                if(operand == iter->getOperand(idx))
+                    return getIter();
             }
     }
+}
+
+std::optional<MIROperand> ISelContext::getRegRef(const MIROperand& reg, const MIRInst& inst) {
+    assert(isOperandVRegOrISAReg(reg));
+    if(isOperandVReg(reg))
+        return reg;
+    std::optional<std::list<MIRInst>::iterator> iter;
+    if(!isDefinedAfter(reg, inst, &iter)) {
+        // auto& instInfo = mCodeGenCtx.instInfo.getInstInfo(inst.opcode());
+        // instInfo.print(std::cerr, inst, true);
+        return reg;
+    }
+    if(!iter)
+        return std::nullopt;
+    auto copy = MIROperand::asVReg(mCodeGenCtx.nextId(), reg.type());
+    mCurrentBlock->instructions().emplace(*iter, MIRInst{ InstCopyFromReg }.setOperand<0>(copy).setOperand<1>(reg));
+    return copy;
 }
 
 void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {

@@ -176,6 +176,57 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
     return false;
 }
 
+static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& index,
+                                  MIROperand& scale) {
+    const auto addrInst = ctx.lookupDef(addr);
+    if(!addrInst || addrInst->opcode() != InstAdd)
+        return false;
+    base = addrInst->getOperand(1);
+    const auto off = addrInst->getOperand(2);
+    if(!isOperandGPR(off) || !isOperandGPR(base))
+        return false;
+    if(auto baseReg = ctx.getRegRef(base, *addrInst))
+        base = *baseReg;
+    else
+        return false;
+
+    const auto offInst = ctx.lookupDef(off);
+    if(offInst && offInst->opcode() == InstShl) {
+        index = offInst->getOperand(1);
+        scale = offInst->getOperand(2);
+
+        if(isOperandShamt2(scale) && isOperandGPR(index)) {
+            if(auto indexReg = ctx.getRegRef(index, *offInst)) {
+                index = *indexReg;
+                return true;
+            }
+        }
+    }
+
+    // fallback
+    if(auto offReg = ctx.getRegRef(off, *addrInst)) {
+        index = *offReg;
+        scale = MIROperand::asImm(0, OperandType::Int32);
+        return true;
+    }
+    return false;
+}
+
+static ARMInst getFusedLoadOpcode(const MIROperand& dst) {
+    switch(dst.type()) {
+        case OperandType::Bool:
+            [[fallthrough]];
+        case OperandType::Int8:
+            return LDRSB_Fused;
+        case OperandType::Int16:
+            return LDRSH_Fused;
+        case OperandType::Int32:
+            return LDR_Fused;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 static ARMInst getLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
@@ -216,6 +267,21 @@ static ARMInst getStoreOpcode(const MIROperand& src) {
             return STR;
         case OperandType::Float32:
             return VSTR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+static ARMInst getFusedStoreOpcode(const MIROperand& src) {
+    switch(src.type()) {
+        case OperandType::Bool:
+            [[fallthrough]];
+        case OperandType::Int8:
+            return STRB_Fused;
+        case OperandType::Int16:
+            return STRH_Fused;
+        case OperandType::Int32:
+            return STR_Fused;
         default:
             reportUnreachable(CMMC_LOCATION());
     }

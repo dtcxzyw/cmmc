@@ -108,6 +108,10 @@ constexpr bool isOperandOp2(const MIROperand& operand) {
     return isOperandOp2Constant(operand) || isOperandGPR(operand);
 }
 
+constexpr bool isOperandShamt2(const MIROperand& op) {
+    return op.isImm() && isUnsignedImm<2>(op.imm());
+}
+
 constexpr bool isOperandFPR(const MIROperand& operand) {
     if(!operand.isReg())
         return false;

@@ -14,20 +14,14 @@ arr:
 .fpu neon
 .globl load
 load:
-	push { r4, r5, r6 }
-	lsl r4, r1, #2
-	add r5, r0, r4
-	ldr r6, [r5, #0]
-	mov r0, r6
-	pop { r4, r5, r6 }
+	push { r4 }
+	ldr r4, [r0, r1, lsl #2]
+	mov r0, r4
+	pop { r4 }
 	bx lr
 .globl store
 store:
-	push { r4, r5 }
-	lsl r4, r1, #2
-	add r5, r0, r4
-	str r2, [r5, #0]
-	pop { r4, r5 }
+	str r2, [r0, r1, lsl #2]
 	bx lr
 .globl gep_const
 gep_const:
@@ -38,51 +32,33 @@ gep_const:
 	bx lr
 .globl gep1
 gep1:
-	push { r4, r5, r6 }
-	lsl r4, r1, #2
-	add r5, r0, r4
-	ldr r6, [r5, #0]
-	mov r0, r6
-	pop { r4, r5, r6 }
+	push { r4 }
+	ldr r4, [r0, r1, lsl #2]
+	mov r0, r4
+	pop { r4 }
 	bx lr
 .globl gep2
 gep2:
-	push { r4, r5, r6, r7 }
+	push { r4, r5 }
 	add r4, r1, #3
-	lsl r5, r4, #2
-	add r6, r0, r5
-	ldr r7, [r6, #0]
-	mov r0, r7
-	pop { r4, r5, r6, r7 }
+	ldr r5, [r0, r4, lsl #2]
+	mov r0, r5
+	pop { r4, r5 }
 	bx lr
 .globl gepseq
 gepseq:
 	push { r4, r5, r6, r7, r8, r9, r10, r11 }
-	sub sp, sp, #8
-	lsl r4, r1, #2
-	add r5, r0, r4
-	ldr r6, [r5, #0]
-	add r7, r1, #1
-	lsl r8, r7, #2
-	add r9, r0, r8
-	ldr r10, [r9, #0]
-	add r11, r1, #2
-	lsl r4, r11, #2
-	add r5, r0, r4
-	str r6, [sp, #4]
-	ldr r6, [r5, #0]
-	add r7, r1, #3
-	lsl r8, r7, #2
-	add r9, r0, r8
-	str r10, [sp, #0]
-	ldr r10, [r9, #0]
-	ldr r11, [sp, #4]
-	ldr r4, [sp, #0]
-	add r5, r11, r4
-	add r6, r5, r6
-	add r7, r6, r10
-	mov r0, r7
-	add sp, sp, #8
+	ldr r4, [r0, r1, lsl #2]
+	add r5, r1, #1
+	ldr r6, [r0, r5, lsl #2]
+	add r7, r1, #2
+	ldr r8, [r0, r7, lsl #2]
+	add r9, r1, #3
+	ldr r10, [r0, r9, lsl #2]
+	add r11, r4, r6
+	add r4, r11, r8
+	add r5, r4, r10
+	mov r0, r5
 	pop { r4, r5, r6, r7, r8, r9, r10, r11 }
 	bx lr
 .globl lb
@@ -107,12 +83,10 @@ global_addressing_scalar:
 	bx lr
 .globl global_addressing_array
 global_addressing_array:
-	push { r4, r5, r6, r7 }
+	push { r4, r5 }
 	movw r4, #:lower16:arr
 	movt r4, #:upper16:arr
-	lsl r5, r0, #2
-	add r6, r4, r5
-	ldr r7, [r6, #0]
-	mov r0, r7
-	pop { r4, r5, r6, r7 }
+	ldr r5, [r4, r0, lsl #2]
+	mov r0, r5
+	pop { r4, r5 }
 	bx lr

@@ -127,9 +127,35 @@ InstInfo:
       LDRSH:
         Mnemonic: ldrsh
 
+  LoadFused:
+    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:GPR[Use], $Rm:GPR[Use], lsl $Sh:Shamt2[Metadata]]
+    Flag: [Load]
+    Instances:
+      LDR_Fused:
+        Mnemonic: ldr
+      LDRB_Fused:
+        Mnemonic: ldrb
+      LDRSB_Fused:
+        Mnemonic: ldrsb
+      LDRH_Fused:
+        Mnemonic: ldrh
+      LDRSH_Fused:
+        Mnemonic: ldrsh
+
   VSTR:
     Format: vstr $Fd:FPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImmVFP[Metadata]]
     Flag: [Store]
+
+  StoreFused:
+    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:GPR[Use], $Rm:GPR[Use], lsl $Sh:Shamt2[Metadata]]
+    Flag: [Store]
+    Instances:
+      STR_Fused:
+        Mnemonic: str
+      STRB_Fused:
+        Mnemonic: strb
+      STRH_Fused:
+        Mnemonic: strh
 
   Store:
     Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:BaseLike[Use], $Imm:AddrImm13[Metadata]]
@@ -732,6 +758,20 @@ InstSelection:
       InstLoad:
         Dst: $Dst
         Addr: $Addr
+        $Predicate: isOperandIReg($Dst) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+    Replace:
+      LoadFused:
+        $Opcode: getFusedLoadOpcode($Dst)
+        $Template: LDR_Fused
+        Rd: $Dst
+        Rn: $Base
+        Rm: $Index
+        Sh: $Scale
+
+  - Pattern:
+      InstLoad:
+        Dst: $Dst
+        Addr: $Addr
         $Predicate: selectAddrOffset($Addr, ctx, [$Base], [$Offset], getLoadOpcode($Dst))
     Replace:
       Load:
@@ -756,6 +796,37 @@ InstSelection:
         Rd: $Dst
         Rn: $Base
         Imm: $Offset
+
+  - Pattern:
+      InstStore:
+        Src:
+          InstTrunc:
+            Dst: $Dst
+            Src: $Src
+        Addr: $Addr
+        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+    Replace:
+      StoreFused:
+        $Opcode: getFusedStoreOpcode($Dst)
+        $Template: STR_Fused
+        Rd: $Src
+        Rn: $Base
+        Rm: $Index
+        Sh: $Scale
+
+  - Pattern:
+      InstStore:
+        Src: $Src
+        Addr: $Addr
+        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+    Replace:
+      StoreFused:
+        $Opcode: getFusedStoreOpcode($Src)
+        $Template: STR_Fused
+        Rd: $Src
+        Rn: $Base
+        Rm: $Index
+        Sh: $Scale
 
   - Pattern:
       InstStore:
