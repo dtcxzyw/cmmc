@@ -14,16 +14,44 @@ label8:
 	mv a0, t1
 	addi sp, sp, 8
 	ret
+.globl select_not_gpr_gpr_gpr
+select_not_gpr_gpr_gpr:
+	addi sp, sp, -8
+	sltiu t1, a0, 1
+	mv t2, a1
+	sd a1, 0(sp)
+	bne t1, zero, label18
+	mv t1, a2
+	sd a2, 0(sp)
+label18:
+	ld t1, 0(sp)
+	mv a0, t1
+	addi sp, sp, 8
+	ret
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
 	addi sp, sp, -8
 	sltu t1, zero, a0
 	fmv.s f0, f11
 	fsw f11, 0(sp)
-	bne t1, zero, label18
+	bne t1, zero, label28
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-label18:
+label28:
+	flw f0, 0(sp)
+	fmv.s f10, f0
+	addi sp, sp, 8
+	ret
+.globl select_not_gpr_fpr_fpr
+select_not_gpr_fpr_fpr:
+	addi sp, sp, -8
+	sltiu t1, a0, 1
+	fmv.s f0, f11
+	fsw f11, 0(sp)
+	bne t1, zero, label38
+	fmv.s f0, f12
+	fsw f12, 0(sp)
+label38:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -34,10 +62,10 @@ select_slt_gpr_gpr:
 	slt t1, a0, a1
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label29
+	bne t1, zero, label49
 	mv t1, a3
 	sd a3, 0(sp)
-label29:
+label49:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -48,10 +76,10 @@ select_slt_fpr_fpr:
 	slt t1, a0, a1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label40
+	bne t1, zero, label60
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label40:
+label60:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -63,10 +91,10 @@ select_sle_gpr_gpr:
 	xori t2, t1, 1
 	mv t3, a2
 	sd a2, 0(sp)
-	bne t2, zero, label52
+	bne t2, zero, label72
 	mv t1, a3
 	sd a3, 0(sp)
-label52:
+label72:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -78,10 +106,10 @@ select_sle_fpr_fpr:
 	xori t2, t1, 1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t2, zero, label65
+	bne t2, zero, label85
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label65:
+label85:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -92,10 +120,10 @@ select_sgt_gpr_gpr:
 	slt t1, a1, a0
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label77
+	bne t1, zero, label97
 	mv t1, a3
 	sd a3, 0(sp)
-label77:
+label97:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -106,10 +134,10 @@ select_sgt_fpr_fpr:
 	slt t1, a1, a0
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label88
+	bne t1, zero, label108
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label88:
+label108:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -121,10 +149,10 @@ select_sge_gpr_gpr:
 	xori t2, t1, 1
 	mv t3, a2
 	sd a2, 0(sp)
-	bne t2, zero, label100
+	bne t2, zero, label120
 	mv t1, a3
 	sd a3, 0(sp)
-label100:
+label120:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -136,10 +164,10 @@ select_sge_fpr_fpr:
 	xori t2, t1, 1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t2, zero, label113
+	bne t2, zero, label133
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label113:
+label133:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -151,10 +179,10 @@ select_eq_gpr_gpr:
 	sltiu t2, t1, 1
 	mv t3, a2
 	sd a2, 0(sp)
-	bne t2, zero, label126
+	bne t2, zero, label146
 	mv t1, a3
 	sd a3, 0(sp)
-label126:
+label146:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -166,10 +194,10 @@ select_eq_fpr_fpr:
 	sltiu t2, t1, 1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t2, zero, label139
+	bne t2, zero, label159
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label139:
+label159:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -181,10 +209,10 @@ select_ne_gpr_gpr:
 	sltu t2, zero, t1
 	mv t3, a2
 	sd a2, 0(sp)
-	bne t2, zero, label152
+	bne t2, zero, label172
 	mv t1, a3
 	sd a3, 0(sp)
-label152:
+label172:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -196,10 +224,10 @@ select_ne_fpr_fpr:
 	sltu t2, zero, t1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t2, zero, label165
+	bne t2, zero, label185
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label165:
+label185:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -210,10 +238,10 @@ select_feq_gpr_gpr:
 	feq.s t1, f10, f11
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label177
+	bne t1, zero, label197
 	mv t1, a3
 	sd a3, 0(sp)
-label177:
+label197:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -224,10 +252,10 @@ select_feq_fpr_fpr:
 	feq.s t1, f10, f11
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label188
+	bne t1, zero, label208
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label188:
+label208:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -239,10 +267,10 @@ select_fne_gpr_gpr:
 	xori t1, t1, 1
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label199
+	bne t1, zero, label219
 	mv t1, a3
 	sd a3, 0(sp)
-label199:
+label219:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -254,10 +282,10 @@ select_fne_fpr_fpr:
 	xori t1, t1, 1
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label210
+	bne t1, zero, label230
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label210:
+label230:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -268,10 +296,10 @@ select_flt_gpr_gpr:
 	flt.s t1, f10, f11
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label221
+	bne t1, zero, label241
 	mv t1, a3
 	sd a3, 0(sp)
-label221:
+label241:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -282,10 +310,10 @@ select_flt_fpr_fpr:
 	flt.s t1, f10, f11
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label232
+	bne t1, zero, label252
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label232:
+label252:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -296,10 +324,10 @@ select_fle_gpr_gpr:
 	fle.s t1, f10, f11
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label243
+	bne t1, zero, label263
 	mv t1, a3
 	sd a3, 0(sp)
-label243:
+label263:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -310,10 +338,10 @@ select_fle_fpr_fpr:
 	fle.s t1, f10, f11
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label254
+	bne t1, zero, label274
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label254:
+label274:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -324,10 +352,10 @@ select_fgt_gpr_gpr:
 	flt.s t1, f11, f10
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label265
+	bne t1, zero, label285
 	mv t1, a3
 	sd a3, 0(sp)
-label265:
+label285:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -338,10 +366,10 @@ select_fgt_fpr_fpr:
 	flt.s t1, f11, f10
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label276
+	bne t1, zero, label296
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label276:
+label296:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
@@ -352,10 +380,10 @@ select_fge_gpr_gpr:
 	fle.s t1, f11, f10
 	mv t2, a2
 	sd a2, 0(sp)
-	bne t1, zero, label287
+	bne t1, zero, label307
 	mv t1, a3
 	sd a3, 0(sp)
-label287:
+label307:
 	ld t1, 0(sp)
 	mv a0, t1
 	addi sp, sp, 8
@@ -366,11 +394,42 @@ select_fge_fpr_fpr:
 	fle.s t1, f11, f10
 	fmv.s f0, f12
 	fsw f12, 0(sp)
-	bne t1, zero, label298
+	bne t1, zero, label318
 	fmv.s f0, f13
 	fsw f13, 0(sp)
-label298:
+label318:
 	flw f0, 0(sp)
 	fmv.s f10, f0
 	addi sp, sp, 8
+	ret
+.globl select_cross
+select_cross:
+	addi sp, sp, -32
+	slt t1, a0, a1
+	mv t2, t1
+	sd t1, 16(sp)
+	sd t1, 24(sp)
+	bge a1, a2, label332
+	li t1, 1
+	ld t2, 24(sp)
+	sd t1, 0(sp)
+	bne t2, zero, label337
+	li t1, 10
+	sd t1, 0(sp)
+	mv t2, t1
+	sd t1, 8(sp)
+	j label323
+label332:
+	ld t1, 16(sp)
+	mv t2, t1
+	sd t1, 8(sp)
+	j label323
+label337:
+	ld t1, 0(sp)
+	mv t2, t1
+	sd t1, 8(sp)
+label323:
+	ld t1, 8(sp)
+	mv a0, t1
+	addi sp, sp, 32
 	ret

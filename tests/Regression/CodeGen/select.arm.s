@@ -13,6 +13,15 @@ select_gpr_gpr_gpr:
 	mov r0, r4
 	pop { r4 }
 	bx lr
+.globl select_not_gpr_gpr_gpr
+select_not_gpr_gpr_gpr:
+	push { r4 }
+	cmp r0, #0
+	mov r4, r2
+	moveq r4, r1
+	mov r0, r4
+	pop { r4 }
+	bx lr
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
 	vmov s0, r1
@@ -20,6 +29,15 @@ select_gpr_fpr_fpr:
 	cmp r0, #0
 	vmov.f32 s2, s1
 	vmovne.f32 s2, s0
+	vmov r0, s2
+	bx lr
+.globl select_not_gpr_fpr_fpr
+select_not_gpr_fpr_fpr:
+	vmov s0, r1
+	vmov s1, r2
+	cmp r0, #0
+	vmov.f32 s2, s1
+	vmoveq.f32 s2, s0
 	vmov r0, s2
 	bx lr
 .globl select_slt_gpr_gpr
@@ -273,4 +291,35 @@ select_fge_fpr_fpr:
 	vmov.f32 s4, s3
 	vmovge.f32 s4, s2
 	vmov r0, s4
+	bx lr
+.globl select_cross
+select_cross:
+	push { r4, r5, r6, r7, r8 }
+	sub sp, sp, #12
+	cmp r0, r1
+	mov r4, #0
+	movwlt r4, #1
+	mov r5, r4
+	cmp r1, r2
+	str r4, [sp, #4]
+	str r4, [sp, #8]
+	bge label284
+	mov r4, #1
+	mov r5, #10
+	ldr r6, [sp, #8]
+	cmp r6, #0
+	mov r7, r5
+	movne r7, r4
+	mov r8, r7
+	str r7, [sp, #0]
+	b label275
+label284:
+	ldr r4, [sp, #4]
+	mov r5, r4
+	str r4, [sp, #0]
+label275:
+	ldr r4, [sp, #0]
+	mov r0, r4
+	add sp, sp, #12
+	pop { r4, r5, r6, r7, r8 }
 	bx lr

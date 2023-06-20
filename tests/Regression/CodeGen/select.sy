@@ -1,8 +1,14 @@
 int select_gpr_gpr_gpr(int x, int y, int z) {
     return x ? y : z;
 }
+int select_not_gpr_gpr_gpr(int x, int y, int z) {
+    return !x ? y : z;
+}
 float select_gpr_fpr_fpr(int x, float y, float z) {
     return x ? y : z;
+}
+float select_not_gpr_fpr_fpr(int x, float y, float z) {
+    return !x ? y : z;
 }
 int select_slt_gpr_gpr(int x, int y, int z, int w) {
     return x < y ? z : w;
@@ -75,4 +81,13 @@ int select_fge_gpr_gpr(float x, float y, int z, int w) {
 }
 float select_fge_fpr_fpr(float x, float y, float z, float w) {
     return x >= y ? z : w;
+}
+int select_cross(int x, int y, int z) {
+    int c = x < y;
+    if(y < z) {
+        return c ? 1 : 10;
+    }
+    else {
+        return c;
+    }
 }
