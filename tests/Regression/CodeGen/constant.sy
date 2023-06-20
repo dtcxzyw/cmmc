@@ -1,0 +1,10 @@
+int cse_imm(int x, int y, int z) {
+    return x * 10 + ((y * 10) ^ z);
+}
+int x[10];
+int cse_global() {
+    return x[0] + x[1];
+}
+float cse_fp(float x, float y) {
+    return x * 4.0 + y * 4.0;
+}

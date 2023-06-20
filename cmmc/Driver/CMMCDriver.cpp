@@ -183,7 +183,6 @@ static int runIRPipeline(Module& module, const std::string& base, const std::str
     std::ofstream out{ path };
     const auto machineModule =
         mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
-    assert(machineModule->verify());
     {
         Stage stage{ "dump ASM"sv };
         target.emitAssembly(*machineModule, out,

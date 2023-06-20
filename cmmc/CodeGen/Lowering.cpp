@@ -451,8 +451,8 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         {
             // Stage 6: Pre-RA legalization
             Stage stage{ "Pre-RA legalization"sv };
-            preRALegalizeFunc(mfunc, ctx);
             ctx.flags.inSSAForm = false;
+            preRALegalizeFunc(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
@@ -532,6 +532,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         if(ctx.registerInfo)
             infoIPRA.add(ctx, symbol->reloc.get(), mfunc);
     }
+    assert(machineModule.verify(std::cerr, ctx));
 }
 
 std::unique_ptr<MIRModule> lowerToMachineModule(Module& module, AnalysisPassManager& analysis, OptimizationLevel optLevel) {

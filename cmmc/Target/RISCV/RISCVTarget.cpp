@@ -190,7 +190,7 @@ public:
         }
         reportUnreachable(CMMC_LOCATION());
     }
-    MIROperand getReturnAddressRegister() const noexcept override {
+    [[nodiscard]] MIROperand getReturnAddressRegister() const noexcept override {
         return RISCV::ra;
     }
 };
@@ -456,7 +456,7 @@ void RISCVTarget::postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const
                                 }
                             };
                             if(operand.type() == OperandType::LowBits) {
-                                operand = auipcMap.at(getHighBits(operand)).at(getBase());
+                                operand = auipcMap.at(MIROperand{ operand.getStorage(), OperandType::HighBits }).at(getBase());
                             }
                         }
                     }

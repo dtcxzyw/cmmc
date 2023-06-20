@@ -224,9 +224,12 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
 }
 */
 
-// FIXME
-/*
-[[maybe_unused]] bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
+bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
+    if(!ctx.flags.inSSAForm)
+        return false;
+
+    // std::cerr << "before\n";
+    // func.dump(std::cerr, ctx);
     bool modified = false;
     for(auto& block : func.blocks()) {
         auto& instructions = block->instructions();
@@ -241,14 +244,17 @@ bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx) {
                     auto& lastDef = iter->second;
                     inst = MIRInst{ selectCopyOpcode(dst, lastDef) }.setOperand<0>(dst).setOperand<1>(lastDef);
                     modified = true;
-                } else
+                } else if(!isISAReg(dst.reg()))
                     map.emplace(src, dst);
             }
         }
     }
+    // if(modified) {
+    //     std::cerr << "after\n";
+    //     func.dump(std::cerr, ctx);
+    // }
     return modified;
 }
-*/
 
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     // func.dump(std::cerr, ctx);
@@ -358,7 +364,7 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     // FIXME: incompatible with expanded Phi value setup
     // modified |= applySSAPropagation(func, ctx);
     // func.dump(std::cerr, ctx);
-    // modified |= machineInstCSE(func, ctx);
+    modified |= machineInstCSE(func, ctx);
     modified |= ctx.scheduleModel.peepholeOpt(func, ctx);
     return modified;
 }

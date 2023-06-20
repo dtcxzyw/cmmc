@@ -27,6 +27,7 @@
 #include <iterator>
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 CMMC_MIR_NAMESPACE_BEGIN
 extern Flag debugISel;
@@ -94,11 +95,17 @@ void ISelContext::runISel(MIRFunction& func) {
             mCurrentBlock = block.get();
 
             auto& instructions = block->instructions();
-            auto it = instructions.end();
-            while(it != instructions.begin()) {
-                auto prev = std::prev(it);
-                mInsertPoint = prev;
-                auto& inst = *prev;
+            if(instructions.empty())
+                continue;
+
+            auto it = std::prev(instructions.end());
+            while(true) {
+                mInsertPoint = it;
+                auto& inst = *it;
+                std::optional<std::list<MIRInst>::iterator> prev = std::nullopt;
+                if(it != instructions.begin())
+                    prev = std::prev(it);
+
                 if(!mRemoveWorkList.count(&inst)) {
                     const auto opcode = inst.opcode();
                     const auto isIllegal = opcode < ISASpecificBegin && !iselInfo.isLegalGenericInst(opcode);
@@ -113,7 +120,10 @@ void ISelContext::runISel(MIRFunction& func) {
                         }
                     }
                 }
-                it = prev;
+                if(prev)
+                    it = *prev;
+                else
+                    break;
             }
         }
 

@@ -56,12 +56,11 @@ static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInve
     return false;
 }
 
-static bool selectGenericImm32(const MIROperand& imm, MIROperand& hi, MIROperand& lo) {
+static bool selectGenericImm32(const MIROperand& imm, MIROperand& uimm) {
     if(!(isOperandImm32(imm) || isOperandUImm32(imm)))
         return false;
     const auto val = static_cast<uint32_t>(imm.imm());
-    hi = MIROperand::asImm(val >> 16, OperandType::Int32);
-    lo = MIROperand::asImm(val & 0xFFFF, OperandType::Int32);
+    uimm = MIROperand::asImm(val, OperandType::Int32);
     return true;
 }
 
@@ -457,7 +456,7 @@ void ARMISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
             auto& src = inst.getOperand(1);
             if(isOperandIReg(dst)) {
                 if(isZero(src)) {
-                    inst.setOpcode(MOV);
+                    inst.setOpcode(MOV_Constant);
                     src = getZero(src);
                     return;
                 }
@@ -480,8 +479,9 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
     switch(inst.opcode()) {
         case MOVT_MOVW_PAIR: {
             auto dst = inst.getOperand(0);
-            auto hi = inst.getOperand(1);
-            auto lo = inst.getOperand(2);
+            auto imm = static_cast<uint32_t>(inst.getOperand(1).imm());
+            auto hi = MIROperand::asImm(imm >> 16, OperandType::Int32);
+            auto lo = MIROperand::asImm(imm & 0xffff, OperandType::Int32);
             if(hi.imm() != 0) {
                 ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(lo));
                 *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(hi).setOperand<2>(dst);
@@ -494,7 +494,7 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto dst = inst.getOperand(0);
             auto cc = inst.getOperand(1);
             auto cf = inst.getOperand(2);
-            ctx.instructions.insert(ctx.iter, MIRInst{ MOV }.setOperand<0>(dst).setOperand<1>(getZero(dst)));
+            ctx.instructions.insert(ctx.iter, MIRInst{ MOV_Constant }.setOperand<0>(dst).setOperand<1>(getZero(dst)));
             *ctx.iter = MIRInst{ MOVW_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(getOne(dst)).setOperand<3>(cc);
             break;
         }

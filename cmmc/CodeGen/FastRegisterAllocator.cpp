@@ -174,6 +174,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                     // evict
                     isaReg = q.front();
                     while(protect.count(isaReg)) {
+                        assert(q.size() != 1);
+                        q.pop();
                         q.push(isaReg);
                         isaReg = q.front();
                     }
@@ -183,12 +185,13 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                         evictVReg(it->second);
                 }
 
+                // std::cerr << (operand.reg() - virtualRegBegin) << " -> " << isaReg.reg() << std::endl;
+
                 // if(auto it = isaRegStackMap.find(isaReg); it != isaRegStackMap.cend()) {
                 //     // spill arguments/retval to stack
                 //     instructions.insert(iter, MIRInst{ InstStoreRegToStack }.setOperand<0>(isaReg).setOperand<1>(it->second));
                 // }
 
-                protect.insert(isaReg);
                 q.push(isaReg);
                 physMap[isaReg] = operand;
                 selector.markAsUsed(isaReg);
@@ -200,11 +203,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 //     // load arguments/retval from stack
                 //     instructions.insert(iter, MIRInst{ InstLoadRegFromStack }.setOperand<0>(op).setOperand<1>(it->second));
                 // }
-                if(!isOperandVReg(op)) {
-                    if(isOperandISAReg(op))
-                        protect.insert(op);
+                if(!isOperandVReg(op))
                     return;
-                }
 
                 auto& map = getDataMap(op);
                 MIROperand stackStorage;
@@ -212,6 +212,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                     if(!isStackObject(reg.reg())) {
                         // loaded
                         op = reg;
+                        protect.insert(reg);
                         return;
                     }
                     stackStorage = reg;
@@ -222,6 +223,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 instructions.insert(iter, MIRInst{ InstLoadRegFromStack }.setOperand<0>(reg).setOperand<1>(stackStorage));
                 map.push_back(reg);
                 op = reg;
+                protect.insert(reg);
             };
 
             const auto def = [&](MIROperand& op) {
@@ -256,6 +258,17 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
             auto& inst = *iter;
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            // instInfo.print(std::cerr, inst, true);
+            // std::cerr << '\n';
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(auto flag = instInfo.getOperandFlag(idx); (flag & OperandFlagUse) || (flag & OperandFlagDef)) {
+                    auto& op = inst.getOperand(idx);
+                    if(!isOperandVReg(op)) {
+                        if(isOperandISAReg(op))
+                            protect.insert(op);
+                    }
+                }
+            }
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse)
                     use(inst.getOperand(idx));
@@ -276,6 +289,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 for(auto v : savedVRegs)
                     evictVReg(v);
             }
+            protect.clear();
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                     def(inst.getOperand(idx));

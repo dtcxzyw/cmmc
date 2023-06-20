@@ -42,6 +42,15 @@ InstInfo:
       SEL:
         Mnemonic: sel
 
+  MoveConstant:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Op2:Op2Constant[Use]
+    Flag: [LoadConstant]
+    Instances:
+      MOV_Constant:
+        Mnemonic: mov
+      MVN_Constant:
+        Mnemonic: mvn
+
   Move:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Op2:Op2[Use]
     Instances:
@@ -136,6 +145,7 @@ InstInfo:
 
   MOVW:
     Format: movw $Rd:GPR[Def], $Imm:UImm16[Metadata]
+    Flag: [LoadConstant]
   MOVW_Cond:
     Format: "movw$CF:CondField[Metadata] $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $CC:CC[Use]"
   MOVT:
@@ -212,8 +222,8 @@ InstInfo:
     Flag: [Load]
 
   MOVT_MOVW_PAIR:
-    Format: movt_movw_pair $Rd:GPR[Def], $Hi:UImm16[Metadata], $Lo:UImm16[Metadata]
-    Flag: [LegalizePreRA]
+    Format: movt_movw_pair $Rd:GPR[Def], $Imm:UImm32[Metadata]
+    Flag: [LegalizePreRA, LoadConstant]
 
   NZCVFlag2GPR:
     Format: nzcvflag2gpr $Rd:GPR[Def], $CC:CC[Use], $CF:CondField[Metadata]
@@ -242,7 +252,7 @@ InstSelection:
         Imm: $Imm
         $Predicate: isOperandOp2Constant($Imm)
     Replace:
-      MOV:
+      MOV_Constant:
         Rd: $Dst
         Op2: $Imm
 
@@ -252,7 +262,7 @@ InstSelection:
         Imm: $Imm
         $Predicate: isOperandOp2Constant($Imm)
     Replace:
-      MOV:
+      MOV_Constant:
         Rd: $Dst
         Op2: $Imm
 
@@ -262,7 +272,7 @@ InstSelection:
         Imm: $Imm
         $Predicate: selectInvertedOp2Constant($Imm, [$InvertedImm])
     Replace:
-      MVN:
+      MVN_Constant:
         Rd: $Dst
         Op2: $InvertedImm
 
@@ -272,7 +282,7 @@ InstSelection:
         Imm: $Imm
         $Predicate: selectInvertedOp2Constant($Imm, [$InvertedImm])
     Replace:
-      MVN:
+      MVN_Constant:
         Rd: $Dst
         Op2: $InvertedImm
 
@@ -280,23 +290,21 @@ InstSelection:
       InstLoadImmToReg:
         Dst: $Dst
         Imm: $Imm
-        $Predicate: selectGenericImm32($Imm, [$Hi], [$Lo])
+        $Predicate: selectGenericImm32($Imm, [$UImm])
     Replace:
       MOVT_MOVW_PAIR:
         Rd: $Dst
-        Hi: $Hi
-        Lo: $Lo
+        Imm: $UImm
 
   - Pattern:
       InstLoadImm:
         Dst: $Dst
         Imm: $Imm
-        $Predicate: selectGenericImm32($Imm, [$Hi], [$Lo])
+        $Predicate: selectGenericImm32($Imm, [$UImm])
     Replace:
       MOVT_MOVW_PAIR:
         Rd: $Dst
-        Hi: $Hi
-        Lo: $Lo
+        Imm: $UImm
 
   - Pattern:
       InstAdd:

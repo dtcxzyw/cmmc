@@ -117,7 +117,6 @@ void verifyModuleExec(Module& module, AnalysisPassManager& analysis, const std::
             std::ofstream out{ tempAsmOutput };
             const auto machineModule =
                 mir::lowerToMachineModule(module, analysis, static_cast<OptimizationLevel>(optimizationLevel.get()));
-            assert(machineModule->verify());
             auto& target = module.getTarget();
             target.emitAssembly(*machineModule, out, mir::RuntimeType::None);
             const auto cmd = testScript.get() + " " + tempAsmOutput + " " + executeInput.get() + " " + tempOutput;

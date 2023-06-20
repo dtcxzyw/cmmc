@@ -117,4 +117,15 @@ void MIRRelocable::dumpAsTarget(std::ostream& out) const {
     out << mSymbol;
 }
 
+bool MIRGlobal::verify(std::ostream& out, const CodeGenContext& ctx) const {
+    return reloc->verify(out, ctx);
+}
+
+bool MIRModule::verify(std::ostream& out, const CodeGenContext& ctx) const {
+    for(auto& global : mGlobals)
+        if(!global->verify(out, ctx))
+            return false;
+    return true;
+}
+
 CMMC_MIR_NAMESPACE_END

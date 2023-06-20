@@ -84,13 +84,12 @@ public:
                 auto var = global->as<GlobalVariable>();
                 if(var->getLinkage() == Linkage::Global)
                     continue;
-                if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))
-                    continue;
 
                 const auto pointeeType = var->getType()->as<PointerType>()->getPointee();
                 if(pointeeType->isPrimitive() ||
                    (pointeeType->isArray() && pointeeType->as<ArrayType>()->getScalarType()->isPrimitive() &&
-                    pointeeType->getSize(mod.getTarget().getDataLayout()) <= maxSize)) {
+                    pointeeType->getSize(mod.getTarget().getDataLayout()) <= maxSize &&
+                    !var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))) {
                     globalVars.push_back(var);
                 }
             }

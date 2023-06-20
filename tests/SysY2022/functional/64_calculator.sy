@@ -154,7 +154,7 @@ int main()
     {
         if (get2[i] == 43 || get2[i] == 45 || get2[i] == 42 || get2[i] == 47 || get2[i] == 37 || get2[i] == 94)
         {
-            int a=intpop();int b=intpop();int c;
+            int a=intpop();int b=intpop();int c = 0;
             if (get2[i] == 43) c = a + b;
             if (get2[i] == 45) c = b - a;
             if (get2[i] == 42) c = a * b;

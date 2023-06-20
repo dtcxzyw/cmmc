@@ -185,7 +185,7 @@ public:
         }
         reportUnreachable(CMMC_LOCATION());
     }
-    MIROperand getReturnAddressRegister() const noexcept override {
+    [[nodiscard]] MIROperand getReturnAddressRegister() const noexcept override {
         return MIPS::ra;
     }
 };
