@@ -177,45 +177,15 @@ InstSelection:
         Src: $Src
 
   - Pattern:
-      InstAdd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+      $Instances: [InstAdd, InstSub, InstMul, InstSDiv]
     Replace:
-      Add:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-
-  - Pattern:
-      InstSub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      Sub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-
-  - Pattern:
-      InstMul:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      Mul:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-
-  - Pattern:
-      InstSDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      Div:
+      IntegerBinary:
+        $Opcode: getIntegerBinaryOpcode(rootOpcode)
+        $Template: Add
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs

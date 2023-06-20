@@ -221,6 +221,79 @@ static bool selectFCC_FPR_FPR(const MIROperand& lhs, const MIROperand& rhs, cons
     return true;
 }
 
+constexpr MIPSInst getIntegerBinaryOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstAdd:
+            return ADDU;
+        case InstSub:
+            return SUBU;
+        case InstAnd:
+            return AND;
+        case InstOr:
+            return OR;
+        case InstXor:
+            return XOR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr MIPSInst getIntegerBinaryImmOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstAdd:
+            return ADDIU;
+        case InstAnd:
+            return ANDI;
+        case InstOr:
+            return ORI;
+        case InstXor:
+            return XORI;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr MIPSInst getShiftImmOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstShl:
+            return SLL;
+        case InstLShr:
+            return SRL;
+        case InstAShr:
+            return SRA;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr MIPSInst getShiftRegOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstShl:
+            return SLLV;
+        case InstLShr:
+            return SRLV;
+        case InstAShr:
+            return SRAV;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr MIPSInst getFloatingPointBinaryOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstFAdd:
+            return ADD_S;
+        case InstFSub:
+            return SUB_S;
+        case InstFMul:
+            return MUL_S;
+        case InstFDiv:
+            return DIV_S;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/ISelInfoImpl.hpp>

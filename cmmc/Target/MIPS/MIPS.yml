@@ -321,181 +321,61 @@ InstSelection:
 
   # Integer Arithmetic
   - Pattern:
-      InstAdd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+      $Instances: [InstAdd, InstAnd, InstOr, InstXor, InstSub]
     Replace:
-      ADDU:
+      IntegerBinary:
+        $Opcode: getIntegerBinaryOpcode(rootOpcode)
+        $Template: ADDU
         Rd: $Dst
         Rs: $Lhs
         Rt: $Rhs
 
   - Pattern:
-      InstAdd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs)
+        $Predicate: "isOperandIReg($Lhs) && (rootOpcode == InstAdd ? isOperandImm16($Rhs) : isOperandUImm16($Rhs))"
+      $Instances: [InstAdd, InstAnd, InstOr, InstXor]
     Replace:
-      ADDIU:
+      IntegerBinaryImm:
+        $Opcode: getIntegerBinaryImmOpcode(rootOpcode)
+        $Template: ADDIU
         Rd: $Dst
         Rs: $Lhs
         Imm: $Rhs
 
   - Pattern:
-      InstSub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      SUBU:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstAnd:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
-    Replace:
-      ANDI:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstAnd:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      AND:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstOr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
-    Replace:
-      ORI:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstOr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      OR:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstXor:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm16($Rhs)
-    Replace:
-      XORI:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstXor:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      XOR:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstShl:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
+      $Instances: [InstShl, InstLShr, InstAShr]
     Replace:
-      SLL:
+      ShiftImm:
+        $Opcode: getShiftImmOpcode(rootOpcode)
+        $Template: SLL
         Rd: $Dst
         Rs: $Lhs
         Imm: $Rhs
 
   - Pattern:
-      InstAShr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
-    Replace:
-      SRA:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstLShr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandUImm5($Rhs)
-    Replace:
-      SRL:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstShl:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+      $Instances: [InstShl, InstLShr, InstAShr]
     Replace:
-      SLLV:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstAShr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      SRAV:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstLShr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      SRLV:
+      ShiftImm:
+        $Opcode: getShiftRegOpcode(rootOpcode)
+        $Template: SLLV
         Rd: $Dst
         Rs: $Lhs
         Rt: $Rhs
@@ -1055,45 +935,15 @@ InstSelection:
             Rt: $Src
 
   - Pattern:
-      InstFAdd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+      $Instances: [InstFAdd, InstFSub, InstFMul, InstFDiv]
     Replace:
-      ADD_S:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstFSub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      SUB_S:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstFMul:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      MUL_S:
-        Rd: $Dst
-        Rs: $Lhs
-        Rt: $Rhs
-
-  - Pattern:
-      InstFDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      DIV_S:
+      FloatingPointBinary:
+        $Opcode: getFloatingPointBinaryOpcode(rootOpcode)
+        $Template: ADD_S
         Rd: $Dst
         Rs: $Lhs
         Rt: $Rhs

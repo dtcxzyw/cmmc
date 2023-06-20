@@ -409,73 +409,31 @@ InstSelection:
         Rs2: $Rhs
 
   - Pattern:
-      InstAnd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs)
+      $Instances: [InstAnd, InstOr, InstXor]
     Replace:
-      ANDI:
+      IntegerBinaryImm:
+        $Opcode: getIntegerBinaryImmOpcode(rootOpcode)
+        $Template: ANDI
         Rd: $Dst
         Rs1: $Lhs
         Imm: $Rhs
 
   - Pattern:
-      InstAnd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+      $Instances: [InstAnd, InstOr, InstXor]
     Replace:
-      AND:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-
-  - Pattern:
-      InstOr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs)
-    Replace:
-      ORI:
-        Rd: $Dst
-        Rs1: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstOr:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      OR:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-
-  - Pattern:
-      InstXor:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm12($Rhs)
-    Replace:
-      XORI:
-        Rd: $Dst
-        Rs1: $Lhs
-        Imm: $Rhs
-
-  - Pattern:
-      InstXor:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
-    Replace:
-      XOR:
+      IntegerBinaryReg:
+        $Opcode: getIntegerBinaryRegOpcode(rootOpcode)
+        $Template: AND
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
@@ -1179,45 +1137,15 @@ InstSelection:
         Rs1: $Src
 
   - Pattern:
-      InstFAdd:
+      $Template:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+      $Instances: [InstFAdd, InstFSub, InstFMul, InstFDiv]
     Replace:
-      FADD_S:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-
-  - Pattern:
-      InstFSub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      FSUB_S:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-
-  - Pattern:
-      InstFMul:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      FMUL_S:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-
-  - Pattern:
-      InstFDiv:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-    Replace:
-      FDIV_S:
+      FloatingPointBinary:
+        $Opcode: getFloatingPointBinaryOpcode(rootOpcode)
+        $Template: FADD_S
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs

@@ -16,6 +16,7 @@
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -41,6 +42,21 @@ constexpr uint32_t directStackAccessOffset = 1 << 20;
 static MIROperand convertToVal(const MIROperand& obj) {
     assert(isStackObject(obj.reg()));
     return MIROperand::asVReg((obj.reg() ^ stackObjectBegin) + directStackAccessOffset, obj.type());
+}
+
+constexpr TACInst getIntegerBinaryOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstAdd:
+            return Add;
+        case InstSub:
+            return Sub;
+        case InstMul:
+            return Mul;
+        case InstSDiv:
+            return Div;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
 }
 
 CMMC_TARGET_NAMESPACE_END

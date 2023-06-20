@@ -203,6 +203,47 @@ static bool isNegativeOne(const MIROperand& op) {
     return op.isImm() && static_cast<uint32_t>(op.imm()) == 0xffffffff;
 }
 
+constexpr RISCVInst getIntegerBinaryImmOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstAnd:
+            return ANDI;
+        case InstOr:
+            return ORI;
+        case InstXor:
+            return XORI;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr RISCVInst getIntegerBinaryRegOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstAnd:
+            return AND;
+        case InstOr:
+            return OR;
+        case InstXor:
+            return XOR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr RISCVInst getFloatingPointBinaryOpcode(uint32_t opcode) {
+    switch(opcode) {
+        case InstFAdd:
+            return FADD_S;
+        case InstFSub:
+            return FSUB_S;
+        case InstFMul:
+            return FMUL_S;
+        case InstFDiv:
+            return FDIV_S;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
