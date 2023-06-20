@@ -176,6 +176,47 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
     return false;
 }
 
+static bool selectFusedIntegerBinaryOperand(const MIROperand& rhs, ISelContext& ctx, MIROperand& out, MIROperand& shOp,
+                                            MIROperand& shamt) {
+    const auto rhsInst = ctx.lookupDef(rhs);
+    if(!rhsInst)
+        return false;
+    switch(rhsInst->opcode()) {
+        case InstShl:
+            shOp = MIROperand::asImm(LSL, OperandType::ShiftType);
+            break;
+        case InstLShr:
+            shOp = MIROperand::asImm(LSR, OperandType::ShiftType);
+            break;
+        case InstAShr:
+            shOp = MIROperand::asImm(ASR, OperandType::ShiftType);
+            break;
+        default:
+            return false;
+    }
+
+    out = rhsInst->getOperand(1);
+    shamt = rhsInst->getOperand(2);
+
+    if(!isOperandGPR(out))
+        return false;
+    if(auto outReg = ctx.getRegRef(out, *rhsInst))
+        out = *outReg;
+    else
+        return false;
+    
+    if(!shamt.isImm()) {
+        if(!isOperandGPR(shamt))
+            return false;
+        if(auto shamtReg = ctx.getRegRef(shamt, *rhsInst))
+            shamt = *shamtReg;
+        else
+            return false;
+    }
+
+    return true;
+}
+
 static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& index,
                                   MIROperand& scale) {
     const auto addrInst = ctx.lookupDef(addr);
@@ -224,6 +265,23 @@ constexpr ARMInst getIntegerBinaryOpcode(const uint32_t opcode) {
             return ORR;
         case InstXor:
             return EOR;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
+constexpr ARMInst getFusedIntegerBinaryOpcode(const uint32_t opcode) {
+    switch(opcode) {
+        case InstAdd:
+            return ADD_Fused;
+        case InstSub:
+            return SUB_Fused;
+        case InstAnd:
+            return AND_Fused;
+        case InstOr:
+            return ORR_Fused;
+        case InstXor:
+            return EOR_Fused;
         default:
             reportUnreachable(CMMC_LOCATION());
     }

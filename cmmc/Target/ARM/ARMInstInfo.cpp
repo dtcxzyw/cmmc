@@ -88,6 +88,20 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
             constexpr const char* lut[13] = { "eq", "ne", "hs", "lo", "mi", "pl", "hi", "ls", "ge", "lt", "gt", "le", "" };
             assert(op.imm() <= static_cast<intmax_t>(CondField::AL));
             out << lut[op.imm()];
+        } else if(op.type() == OperandType::ShiftType) {
+            switch(op.imm()) {
+                case LSL:
+                    out << "lsl";
+                    break;
+                case LSR:
+                    out << "lsr";
+                    break;
+                case ASR:
+                    out << "asr";
+                    break;
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
         } else {
             out << '#' << op.imm();
         }
@@ -131,6 +145,22 @@ static bool isOperandRegListVFP(const MIROperand& op) {
 
 static bool isOperandCondField(const MIROperand& op) {
     return op.isImm() && (0 <= op.imm() && op.imm() <= static_cast<intmax_t>(CondField::AL));
+}
+
+static bool isOperandShOp(const MIROperand& op) {
+    if(!op.isImm() || op.type() != OperandType::ShiftType)
+        return false;
+
+    switch(op.imm()) {
+        case LSL:
+            [[fallthrough]];
+        case LSR:
+            [[fallthrough]];
+        case ASR:
+            return true;
+        default:
+            return false;
+    }
 }
 
 AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode) {

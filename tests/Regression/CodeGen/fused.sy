@@ -1,0 +1,71 @@
+int32_t add_after_lsl(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs + (rhs << shamt);
+}
+
+int32_t add_after_lsl_imm(int32_t lhs, int32_t rhs) {
+    return lhs + (rhs << 3);
+}
+
+uint32_t add_after_lsr(uint32_t lhs, uint32_t rhs, int32_t shamt) {
+    return lhs + (rhs >> shamt);
+}
+
+uint32_t add_after_lsr_imm(uint32_t lhs, uint32_t rhs) {
+    return lhs + (rhs >> 3);
+}
+
+int32_t add_after_asr(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs + (rhs >> shamt);
+}
+
+int32_t add_after_asr_imm(int32_t lhs, int32_t rhs) {
+    return lhs + (rhs >> 3);
+}
+
+int32_t sub_after_lsl(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs - (rhs << shamt);
+}
+
+int32_t sub_after_lsl_imm(int32_t lhs, int32_t rhs) {
+    return lhs - (rhs << 3);
+}
+
+uint32_t sub_after_lsr(uint32_t lhs, uint32_t rhs, int32_t shamt) {
+    return lhs - (rhs >> shamt);
+}
+
+uint32_t sub_after_lsr_imm(uint32_t lhs, uint32_t rhs) {
+    return lhs - (rhs >> 3);
+}
+
+int32_t sub_after_asr(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs - (rhs >> shamt);
+}
+
+int32_t sub_after_asr_imm(int32_t lhs, int32_t rhs) {
+    return lhs - (rhs >> 3);
+}
+
+int32_t and_after_lsl(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs & (rhs << shamt);
+}
+
+int32_t and_after_lsl_imm(int32_t lhs, int32_t rhs) {
+    return lhs & (rhs << 3);
+}
+
+uint32_t and_after_lsr(uint32_t lhs, uint32_t rhs, int32_t shamt) {
+    return lhs & (rhs >> shamt);
+}
+
+uint32_t and_after_lsr_imm(uint32_t lhs, uint32_t rhs) {
+    return lhs & (rhs >> 3);
+}
+
+int32_t and_after_asr(int32_t lhs, int32_t rhs, int32_t shamt) {
+    return lhs & (rhs >> shamt);
+}
+
+int32_t and_after_asr_imm(int32_t lhs, int32_t rhs) {
+    return lhs & (rhs >> 3);
+}

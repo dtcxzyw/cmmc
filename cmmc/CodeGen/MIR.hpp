@@ -84,7 +84,9 @@ enum class OperandType : uint32_t {
     CondField,
     // ARM rlist
     RegList,
-    RegListVFP
+    RegListVFP,
+    // ARM shift type
+    ShiftType,
 };
 
 constexpr bool isIntegerType(OperandType type) {

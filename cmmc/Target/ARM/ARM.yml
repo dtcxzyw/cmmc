@@ -17,6 +17,24 @@ InstInfo:
       BIC:
         Mnemonic: bic
 
+  IntegerBinaryWithFullOp2:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use], $Op:ShOp[Metadata] $Sh:Shamt[Use]
+    Instances:
+      ADD_Fused:
+        Mnemonic: add
+      SUB_Fused:
+        Mnemonic: sub
+      AND_Fused:
+        Mnemonic: and
+      ORR_Fused:
+        Mnemonic: orr
+      EOR_Fused:
+        Mnemonic: eor
+      ORN_Fused:
+        Mnemonic: orn
+      BIC_Fused:
+        Mnemonic: bic
+
   MUL:
     Format: mul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
 
@@ -304,6 +322,23 @@ InstSelection:
       MOVT_MOVW_PAIR:
         Rd: $Dst
         Imm: $UImm
+
+  - Pattern:
+      $Template:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && selectFusedIntegerBinaryOperand($Rhs, ctx, [$Out], [$ShOp], [$Sh])
+      $Instances: [ InstAdd, InstSub, InstAnd, InstOr, InstXor ]
+    Replace:
+      IntegerBinaryWithFullOp2:
+        $Opcode: getFusedIntegerBinaryOpcode(rootOpcode)
+        $Template: ADD_Fused
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Out
+        Op: $ShOp
+        Sh: $Sh
 
   - Pattern:
       $Template:
