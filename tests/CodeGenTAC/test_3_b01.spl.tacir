@@ -66,14 +66,14 @@ IF v31 > v23 GOTO label34
 GOTO label107
 LABEL label27 :
 v5 := #0
-v6 := #0
+v6 := v5
 v7 := #1
 IF v7 > v23 GOTO label95
 v40 := v7 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
-v47 := v6 + v42
+v47 := v5 + v42
 IF v47 != v24 GOTO label50
 WRITE v7
 *v41 := #0
@@ -92,14 +92,14 @@ IF v31 > v23 GOTO label34
 GOTO label107
 LABEL label34 :
 v5 := #0
-v6 := #0
+v6 := v5
 v7 := #1
 IF v7 > v23 GOTO label95
 v40 := v7 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
-v47 := v6 + v42
+v47 := v5 + v42
 IF v47 != v24 GOTO label50
 WRITE v7
 *v41 := #0

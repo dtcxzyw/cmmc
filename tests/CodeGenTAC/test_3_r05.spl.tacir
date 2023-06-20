@@ -15,12 +15,11 @@ LABEL label6 :
 IF v15 <= #2 GOTO label3
 IF v15 <= #2 GOTO label34
 v9 := #1
-v10 := #1
+v10 := v9
 v11 := #3
-v36 := v10 + v9
+v36 := v9 + v9
 v37 := v11 + #1
 IF v37 > v15 GOTO label40
-v9 := v10
 v11 := v37
 v10 := v36
 v36 := v36 + v9

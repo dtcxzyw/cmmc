@@ -1,7 +1,7 @@
 FUNCTION main :
 DEC x6 640
 v3 := #0
-v4 := #0
+v4 := v3
 LABEL label2 :
 v8 := v3 * #128
 v9 := &x6 + v8
@@ -38,17 +38,24 @@ v29 := v9 + #116
 v30 := v10 + #4350
 *v29 := v30
 v31 := v9 + #124
-v32 := v3 * #1000
-v33 := v32 + #36750
-v34 := v33 / #10
-*v31 := v34
-v35 := v4 + v34
-v36 := v3 + #1
-IF v36 >= #5 GOTO label5
-v3 := v36
-v4 := v35
+v32 := v14 + v11
+v33 := v16 + v32
+v34 := v18 + v33
+v35 := v20 + v34
+v36 := v22 + v35
+v37 := v24 + v36
+v38 := v26 + v37
+v39 := v28 + v38
+v40 := v39 + v30
+v41 := v40 / #10
+*v31 := v41
+v42 := v41 + v4
+v43 := v3 + #1
+IF v43 >= #5 GOTO label5
+v3 := v43
+v4 := v42
 GOTO label2
 LABEL label5 :
-v41 := v35 / #5
-WRITE v41
+v48 := v42 / #5
+WRITE v48
 RETURN #0
