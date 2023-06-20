@@ -204,7 +204,7 @@ static bool selectFusedIntegerBinaryOperand(const MIROperand& rhs, ISelContext& 
         out = *outReg;
     else
         return false;
-    
+
     if(!shamt.isImm()) {
         if(!isOperandGPR(shamt))
             return false;
