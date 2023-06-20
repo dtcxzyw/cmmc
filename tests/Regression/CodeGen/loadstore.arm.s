@@ -58,16 +58,31 @@ gep2:
 .globl gepseq
 gepseq:
 	push { r4, r5, r6, r7, r8, r9, r10, r11 }
+	sub sp, sp, #8
 	lsl r4, r1, #2
 	add r5, r0, r4
 	ldr r6, [r5, #0]
-	ldr r7, [r5, #4]
-	ldr r8, [r5, #8]
-	ldr r9, [r5, #12]
-	add r10, r6, r7
-	add r11, r10, r8
-	add r4, r11, r9
-	mov r0, r4
+	add r7, r1, #1
+	lsl r8, r7, #2
+	add r9, r0, r8
+	ldr r10, [r9, #0]
+	add r11, r1, #2
+	lsl r4, r11, #2
+	add r5, r0, r4
+	str r6, [sp, #4]
+	ldr r6, [r5, #0]
+	add r7, r1, #3
+	lsl r8, r7, #2
+	add r9, r0, r8
+	str r10, [sp, #0]
+	ldr r10, [r9, #0]
+	ldr r11, [sp, #4]
+	ldr r4, [sp, #0]
+	add r5, r11, r4
+	add r6, r5, r6
+	add r7, r6, r10
+	mov r0, r7
+	add sp, sp, #8
 	pop { r4, r5, r6, r7, r8, r9, r10, r11 }
 	bx lr
 .globl lb

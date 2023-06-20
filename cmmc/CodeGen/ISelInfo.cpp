@@ -401,7 +401,7 @@ MIROperand getZExtMask(OperandType dstType, OperandType srcType) {
             imm = 0xffff;
             break;
         case OperandType::Int32:
-            imm = 0xfffffff;
+            imm = 0xffffffff;
             break;
         default:
             reportUnreachable(CMMC_LOCATION());

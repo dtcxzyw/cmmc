@@ -59,7 +59,7 @@ constexpr bool isOperandUImm20(const MIROperand& operand) {
 }
 
 constexpr bool isOperandImm32(const MIROperand& operand) {
-    return operand.isImm() && isSignedImm<32>(operand.imm());
+    return operand.isImm() && (isSignedImm<32>(operand.imm()) || isUnsignedImm<32>(operand.imm()));
 }
 
 constexpr bool isOperandNonZeroImm12(const MIROperand& operand) {

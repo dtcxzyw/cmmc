@@ -1,0 +1,174 @@
+func @u8_to_u8(i8 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 %x;
+}
+func @u8_to_u16(i8 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = zext i8 %x to i16;
+    ret i16 %0;
+}
+func @u8_to_u32(i8 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %x to i32;
+    ret i32 %0;
+}
+func @u16_to_u8(i16 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = ztrunc i16 %x to i8;
+    ret i8 %0;
+}
+func @u16_to_u16(i16 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i16 %x;
+}
+func @u16_to_u32(i16 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i16 %x to i32;
+    ret i32 %0;
+}
+func @u32_to_u8(i32 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = ztrunc i32 %x to i8;
+    ret i8 %0;
+}
+func @u32_to_u16(i32 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = ztrunc i32 %x to i16;
+    ret i16 %0;
+}
+func @u32_to_u32(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @i8_to_u8(i8 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = ztrunc i8 %x to i8;
+    ret i8 %0;
+}
+func @i8_to_u16(i8 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = sext i8 %x to i16;
+    ret i16 %0;
+}
+func @i8_to_u32(i8 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sext i8 %x to i32;
+    ret i32 %0;
+}
+func @i16_to_u8(i16 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = ztrunc i16 %x to i8;
+    ret i8 %0;
+}
+func @i16_to_u16(i16 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = ztrunc i16 %x to i16;
+    ret i16 %0;
+}
+func @i16_to_u32(i16 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sext i16 %x to i32;
+    ret i32 %0;
+}
+func @i32_to_u8(i32 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = ztrunc i32 %x to i8;
+    ret i8 %0;
+}
+func @i32_to_u16(i32 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = ztrunc i32 %x to i16;
+    ret i16 %0;
+}
+func @i32_to_u32(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = ztrunc i32 %x to i32;
+    ret i32 %0;
+}
+func @u8_to_i8(i8 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %x to i8;
+    ret i8 %0;
+}
+func @u8_to_i16(i8 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = zext i8 %x to i16;
+    ret i16 %0;
+}
+func @u8_to_i32(i8 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %x to i32;
+    ret i32 %0;
+}
+func @u16_to_i8(i16 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i16 %x to i8;
+    ret i8 %0;
+}
+func @u16_to_i16(i16 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = strunc i16 %x to i16;
+    ret i16 %0;
+}
+func @u16_to_i32(i16 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i16 %x to i32;
+    ret i32 %0;
+}
+func @u32_to_i8(i32 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i32 %x to i8;
+    ret i8 %0;
+}
+func @u32_to_i16(i32 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = strunc i32 %x to i16;
+    ret i16 %0;
+}
+func @u32_to_i32(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %x to i32;
+    ret i32 %0;
+}
+func @i8_to_i8(i8 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 %x;
+}
+func @i8_to_i16(i8 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = sext i8 %x to i16;
+    ret i16 %0;
+}
+func @i8_to_i32(i8 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sext i8 %x to i32;
+    ret i32 %0;
+}
+func @i16_to_i8(i16 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i16 %x to i8;
+    ret i8 %0;
+}
+func @i16_to_i16(i16 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i16 %x;
+}
+func @i16_to_i32(i16 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sext i16 %x to i32;
+    ret i32 %0;
+}
+func @i32_to_i8(i32 %x) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i32 %x to i8;
+    ret i8 %0;
+}
+func @i32_to_i16(i32 %x) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = strunc i32 %x to i16;
+    ret i16 %0;
+}
+func @i32_to_i32(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}

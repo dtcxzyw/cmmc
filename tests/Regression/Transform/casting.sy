@@ -1,0 +1,143 @@
+uint8_t u8_to_u8(uint8_t x) {
+    return x;
+}
+
+uint16_t u8_to_u16(uint8_t x) {
+    return x;
+}
+
+uint32_t u8_to_u32(uint8_t x) {
+    return x;
+}
+
+uint8_t u16_to_u8(uint16_t x) {
+    return x;
+}
+
+uint16_t u16_to_u16(uint16_t x) {
+    return x;
+}
+
+uint32_t u16_to_u32(uint16_t x) {
+    return x;
+}
+
+uint8_t u32_to_u8(uint32_t x) {
+    return x;
+}
+
+uint16_t u32_to_u16(uint32_t x) {
+    return x;
+}
+
+uint32_t u32_to_u32(uint32_t x) {
+    return x;
+}
+
+uint8_t i8_to_u8(int8_t x) {
+    return x;
+}
+
+uint16_t i8_to_u16(int8_t x) {
+    return x;
+}
+
+uint32_t i8_to_u32(int8_t x) {
+    return x;
+}
+
+uint8_t i16_to_u8(int16_t x) {
+    return x;
+}
+
+uint16_t i16_to_u16(int16_t x) {
+    return x;
+}
+
+uint32_t i16_to_u32(int16_t x) {
+    return x;
+}
+
+uint8_t i32_to_u8(int32_t x) {
+    return x;
+}
+
+uint16_t i32_to_u16(int32_t x) {
+    return x;
+}
+
+uint32_t i32_to_u32(int32_t x) {
+    return x;
+}
+
+int8_t u8_to_i8(uint8_t x) {
+    return x;
+}
+
+int16_t u8_to_i16(uint8_t x) {
+    return x;
+}
+
+int32_t u8_to_i32(uint8_t x) {
+    return x;
+}
+
+int8_t u16_to_i8(uint16_t x) {
+    return x;
+}
+
+int16_t u16_to_i16(uint16_t x) {
+    return x;
+}
+
+int32_t u16_to_i32(uint16_t x) {
+    return x;
+}
+
+int8_t u32_to_i8(uint32_t x) {
+    return x;
+}
+
+int16_t u32_to_i16(uint32_t x) {
+    return x;
+}
+
+int32_t u32_to_i32(uint32_t x) {
+    return x;
+}
+
+int8_t i8_to_i8(int8_t x) {
+    return x;
+}
+
+int16_t i8_to_i16(int8_t x) {
+    return x;
+}
+
+int32_t i8_to_i32(int8_t x) {
+    return x;
+}
+
+int8_t i16_to_i8(int16_t x) {
+    return x;
+}
+
+int16_t i16_to_i16(int16_t x) {
+    return x;
+}
+
+int32_t i16_to_i32(int16_t x) {
+    return x;
+}
+
+int8_t i32_to_i8(int32_t x) {
+    return x;
+}
+
+int16_t i32_to_i16(int32_t x) {
+    return x;
+}
+
+int32_t i32_to_i32(int32_t x) {
+    return x;
+}

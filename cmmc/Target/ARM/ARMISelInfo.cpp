@@ -733,11 +733,21 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
             loweringCtx.emitInst(MIRInst{ UXTB }.setOperand<0>(dst).setOperand<1>(src));
         } else if(dst.type() == OperandType::Int16) {
             loweringCtx.emitInst(MIRInst{ UXTH }.setOperand<0>(dst).setOperand<1>(src));
+        } else if(dst.type() == OperandType::Int32) {
+            loweringCtx.addOperand(inst, src);
+            return true;
         } else
             reportUnreachable(CMMC_LOCATION());
 
         loweringCtx.addOperand(inst, dst);
         return true;
+    }
+    if(inst->getInstID() == InstructionID::SignedTrunc) {
+        auto src = loweringCtx.mapOperand(inst->getOperand(0));
+        if(src.type() == OperandType::Int32 && inst->getType()->isSame(inst->getOperand(0)->getType())) {
+            loweringCtx.addOperand(inst, src);
+            return true;
+        }
     }
     return false;
 }

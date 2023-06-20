@@ -1297,6 +1297,16 @@ InstSelection:
       InstTrunc:
         Dst: $Dst
         Src: $Src
+        $Predicate: isOperandIReg($Src) && (($Dst).type() == OperandType::Int32 && ($Src).type() == OperandType::Int32)
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
         $Predicate: isOperandIReg($Src)
     Replace:
       SRAI:

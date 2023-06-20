@@ -1197,7 +1197,7 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
     if(srcType->isPointer() && srcQualifier.isConst && !dstQualifier.isConst)
         DiagnosticsContext::get().attach<Reason>("cannot remove the const qualifier").reportFatal();
 
-    if(srcType->isSame(type))
+    if(srcType->isSame(type) && (!(srcType->isInteger() && type->isInteger()) || srcQualifier.isSigned == dstQualifier.isSigned))
         return value;
     if(srcType->isPointer() && type->isPointer()) {
         const auto pointee = srcType->as<PointerType>()->getPointee();

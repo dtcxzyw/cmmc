@@ -680,8 +680,13 @@ MIROperand MIPSISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Loweri
     return MIROperand{};
 }
 bool MIPSISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) const {
-    CMMC_UNUSED(inst);
-    CMMC_UNUSED(loweringCtx);
+    if(inst->getInstID() == InstructionID::UnsignedTrunc || inst->getInstID() == InstructionID::SignedTrunc) {
+        auto src = loweringCtx.mapOperand(inst->getOperand(0));
+        if(src.type() == OperandType::Int32 && inst->getType()->isSame(inst->getOperand(0)->getType())) {
+            loweringCtx.addOperand(inst, src);
+            return true;
+        }
+    }
     return false;
 }
 CMMC_TARGET_NAMESPACE_END

@@ -53,7 +53,8 @@ u32_to_u32:
 	nop
 .globl i8_to_u8
 i8_to_u8:
-	move $v0, $a0
+	andi $t0, $a0, 255
+	move $v0, $t0
 	jr $ra
 	nop
 .globl i8_to_u16
@@ -74,7 +75,8 @@ i16_to_u8:
 	nop
 .globl i16_to_u16
 i16_to_u16:
-	move $v0, $a0
+	andi $t0, $a0, 65535
+	move $v0, $t0
 	jr $ra
 	nop
 .globl i16_to_u32
@@ -101,7 +103,9 @@ i32_to_u32:
 	nop
 .globl u8_to_i8
 u8_to_i8:
-	move $v0, $a0
+	sll $t0, $a0, 24
+	sra $t1, $t0, 24
+	move $v0, $t1
 	jr $ra
 	nop
 .globl u8_to_i16
@@ -125,7 +129,9 @@ u16_to_i8:
 	nop
 .globl u16_to_i16
 u16_to_i16:
-	move $v0, $a0
+	sll $t0, $a0, 16
+	sra $t1, $t0, 16
+	move $v0, $t1
 	jr $ra
 	nop
 .globl u16_to_i32

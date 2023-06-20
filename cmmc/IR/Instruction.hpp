@@ -486,6 +486,7 @@ public:
     CastInst(InstructionID instID, const Type* valueType, Value* srcValue) : Instruction{ instID, valueType, { srcValue } } {}
     void dumpInst(std::ostream& out) const override;
     [[nodiscard]] Instruction* clone() const override;
+    bool verify(std::ostream& out) const override;
 };
 
 class LoadInst final : public Instruction {

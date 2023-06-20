@@ -48,16 +48,43 @@ gep2:
 	nop
 .globl gepseq
 gepseq:
+	addiu $sp, $sp, -32
+	sw $s0, 28($sp)
+	sw $s1, 24($sp)
+	sw $s2, 20($sp)
+	sw $s3, 16($sp)
+	sw $s4, 12($sp)
+	sw $s5, 8($sp)
+	sw $s6, 4($sp)
+	sw $s7, 0($sp)
 	sll $t0, $a1, 2
 	addu $t1, $a0, $t0
 	lw $t2, 0($t1)
-	lw $t3, 4($t1)
-	lw $t4, 8($t1)
-	lw $t5, 12($t1)
-	addu $t6, $t2, $t3
-	addu $t7, $t6, $t4
-	addu $t8, $t7, $t5
-	move $v0, $t8
+	addiu $t3, $a1, 1
+	sll $t4, $t3, 2
+	addu $t5, $a0, $t4
+	lw $t6, 0($t5)
+	addiu $t7, $a1, 2
+	sll $t8, $t7, 2
+	addu $t9, $a0, $t8
+	lw $s0, 0($t9)
+	addiu $s1, $a1, 3
+	sll $s2, $s1, 2
+	addu $s3, $a0, $s2
+	lw $s4, 0($s3)
+	addu $s5, $t2, $t6
+	addu $s6, $s5, $s0
+	addu $s7, $s6, $s4
+	move $v0, $s7
+	lw $s7, 0($sp)
+	lw $s6, 4($sp)
+	lw $s5, 8($sp)
+	lw $s4, 12($sp)
+	lw $s3, 16($sp)
+	lw $s2, 20($sp)
+	lw $s1, 24($sp)
+	lw $s0, 28($sp)
+	addiu $sp, $sp, 32
 	jr $ra
 	nop
 .globl lb

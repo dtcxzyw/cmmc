@@ -811,7 +811,7 @@ InstSelection:
       InstZExt:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src)
+        $Predicate: isOperandIReg($Src) && ($Src).type() != OperandType::Int32
     Replace:
       ANDI:
         Rd: $Dst
@@ -1156,7 +1156,7 @@ InstSelection:
       InstZExt:
         Dst: $Dst
         Src: $Src
-        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32 && ($Src).type() != OperandType::Int32
     Replace:
       AND:
         Rd: $Dst
@@ -1165,6 +1165,16 @@ InstSelection:
           LoadImm32:
             Rd: getVRegAs(ctx, $Src)
             Imm: getZExtMask(($Dst).type(), ($Src).type())
+
+  - Pattern:
+      InstTrunc:
+        Dst: $Dst
+        Src: $Src
+        $Predicate: isOperandIReg($Src) && ($Dst).type() == OperandType::Int32
+    Replace:
+      InstCopy:
+        Dst: $Dst
+        Src: $Src
 
   - Pattern:
       InstTrunc:

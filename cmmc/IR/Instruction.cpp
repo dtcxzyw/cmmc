@@ -891,5 +891,25 @@ void PhiInst::clear() {
     mutableOperands().clear();
     mIncomings.clear();
 }
+
+bool CastInst::verify(std::ostream& out) const {
+    CMMC_UNUSED(out);
+
+    auto src = getOperand(0);
+    switch(getInstID()) {
+        case InstructionID::SignedTrunc:
+            [[fallthrough]];
+        case InstructionID::UnsignedTrunc: {
+            return src->getType()->getFixedSize() >= getType()->getFixedSize();
+        }
+        case InstructionID::SExt:
+            [[fallthrough]];
+        case InstructionID::ZExt: {
+            return src->getType()->getFixedSize() < getType()->getFixedSize();
+        }
+        default:
+            return true;
+    }
+}
 CMMC_NAMESPACE_END
 cmmc::TrackableValue::TrackableValue(const Type* type) : Value{ type }, mUsers{ this } {}
