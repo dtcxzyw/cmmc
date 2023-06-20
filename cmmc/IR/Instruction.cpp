@@ -905,6 +905,8 @@ bool CastInst::verify(std::ostream& out) const {
         case InstructionID::SExt:
             [[fallthrough]];
         case InstructionID::ZExt: {
+            if(src->getType()->isBoolean() && !getType()->isBoolean())
+                return true;
             return src->getType()->getFixedSize() < getType()->getFixedSize();
         }
         default:
