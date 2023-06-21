@@ -145,9 +145,7 @@ fge:
 .globl fltz
 fltz:
 	vmov s0, r0
-	mov r0, #0
-	vmov s1, r0
-	vcmp.f32 s0, s1
+	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
 	movwmi r0, #1

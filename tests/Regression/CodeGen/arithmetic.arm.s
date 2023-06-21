@@ -58,8 +58,7 @@ sub_imm:
 	bx lr
 .globl sub_inverted_imm
 sub_inverted_imm:
-	mov r1, #1
-	sub r0, r1, r0
+	rsb r0, r0, #1
 	bx lr
 .globl sub_reg
 sub_reg:

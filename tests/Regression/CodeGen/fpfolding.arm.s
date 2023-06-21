@@ -8,9 +8,7 @@
 my_fabs:
 	sub sp, sp, #8
 	vmov s0, r0
-	mov r0, #0
-	vmov s1, r0
-	vcmp.f32 s0, s1
+	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
 	vstr s0, [sp, #4]
 	bmi label12

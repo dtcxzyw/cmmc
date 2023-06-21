@@ -88,6 +88,10 @@ constexpr bool isOperandFP32(const MIROperand& operand) {
     return operand.isImm() && isUnsignedImm<32>(operand.imm()) && operand.type() == OperandType::Float32;
 }
 
+constexpr bool isOperandFP32Zero(const MIROperand& operand) {
+    return operand.isImm() && operand.imm() == 0 && operand.type() == OperandType::Float32;
+}
+
 constexpr bool isOperandShamt(const MIROperand& operand) {
     return isOperandUImm5(operand) || isOperandGPR(operand);
 }

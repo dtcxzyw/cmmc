@@ -493,7 +493,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         case InstSub: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
-            imm2reg(lhs);
+            if(inst.opcode() != InstSub || !isOperandOp2(lhs))
+                imm2reg(lhs);
 
             if(isOperandOp2(rhs))
                 break;

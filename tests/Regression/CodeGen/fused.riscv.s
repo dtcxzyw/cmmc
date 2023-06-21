@@ -42,6 +42,11 @@ sub_after_lsl_imm:
 	slliw a1, a1, 3
 	subw a0, a0, a1
 	ret
+.globl rsb_after_lsl_imm
+rsb_after_lsl_imm:
+	slliw a0, a0, 3
+	subw a0, a0, a1
+	ret
 .globl sub_after_lsr
 sub_after_lsr:
 	li a3, 4294967295

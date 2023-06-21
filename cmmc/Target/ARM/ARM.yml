@@ -16,6 +16,8 @@ InstInfo:
         Mnemonic: orn
       BIC:
         Mnemonic: bic
+      RSB:
+        Mnemonic: rsb
 
   IntegerBinaryWithFullOp2:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use], $Op:ShOp[Metadata] $Sh:Shamt[Use]
@@ -34,6 +36,8 @@ InstInfo:
         Mnemonic: orn
       BIC_Fused:
         Mnemonic: bic
+      RSB_Fused:
+        Mnemonic: rsb
 
   MUL:
     Format: mul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
@@ -220,7 +224,7 @@ InstInfo:
     Format: "vcmp.f32 $Fd:FPR[Use], $Fm:FPR[Use] @ Implicit Def: $CC:FCC[Def]"
 
   VCMP_F32_WithZero:
-    Format: "vcmp.f32 $Fd:FPR[Use], #0.0 @ Implicit Def: $CC:FCC[Def]"
+    Format: "vcmp.f32 $Fd:FPR[Use], $Imm:FP32Zero[Metadata] @ Implicit Def: $CC:FCC[Def]"
 
   TRANSFER_FPSCR_FLAG:
     Format: vmrs $CC:CC[Def], $FCC:FCC[Use]
@@ -341,6 +345,20 @@ InstSelection:
         Sh: $Sh
 
   - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: selectFusedIntegerBinaryOperand($Lhs, ctx, [$Out], [$ShOp], [$Sh]) && isOperandIReg($Rhs)
+    Replace:
+      RSB_Fused:
+        Rd: $Dst
+        Rn: $Rhs
+        Rm: $Out
+        Op: $ShOp
+        Sh: $Sh
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
@@ -354,6 +372,18 @@ InstSelection:
         Rd: $Dst
         Rn: $Lhs
         Op2: $Rhs
+
+  - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandOp2($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      RSB:
+        Rd: $Dst
+        Rn: $Rhs
+        Op2: $Lhs
 
   - Pattern:
       InstMul:
@@ -587,6 +617,30 @@ InstSelection:
             Op2: $Rhs
             CC: getCC()
         CF: getCondFieldUCmp($Op)
+
+  - Pattern:
+      InstFCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          VMOV_GPR2FPR:
+            Rd:
+              InstLoadImm:
+                Imm: $Imm
+        Op: $Op
+        $Predicate: isOperandFPR($Lhs) && isZero($Imm)
+    Replace:
+      NZCVFlag2GPR:
+        Rd: $Dst
+        CC:
+          TRANSFER_FPSCR_FLAG:
+            CC: getCC()
+            FCC:
+              VCMP_F32_WithZero:
+                Fd: $Lhs
+                CC: getFCC()
+                Imm: MIROperand::asImm(0, OperandType::Float32)
+        CF: getCondFieldFCmp($Op)
 
   - Pattern:
       InstFCmp:

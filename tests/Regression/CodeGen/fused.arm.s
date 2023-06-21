@@ -36,6 +36,10 @@ sub_after_lsl:
 sub_after_lsl_imm:
 	sub r0, r0, r1, lsl #3
 	bx lr
+.globl rsb_after_lsl_imm
+rsb_after_lsl_imm:
+	rsb r0, r1, r0, lsl #3
+	bx lr
 .globl sub_after_lsr
 sub_after_lsr:
 	sub r0, r0, r1, lsr r2

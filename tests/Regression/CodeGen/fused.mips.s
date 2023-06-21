@@ -48,6 +48,12 @@ sub_after_lsl_imm:
 	subu $v0, $a0, $t0
 	jr $ra
 	nop
+.globl rsb_after_lsl_imm
+rsb_after_lsl_imm:
+	sll $t0, $a0, 3
+	subu $v0, $t0, $a1
+	jr $ra
+	nop
 .globl sub_after_lsr
 sub_after_lsr:
 	srlv $t0, $a1, $a2

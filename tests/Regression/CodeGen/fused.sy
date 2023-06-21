@@ -30,6 +30,10 @@ int32_t sub_after_lsl_imm(int32_t lhs, int32_t rhs) {
     return lhs - (rhs << 3);
 }
 
+int32_t rsb_after_lsl_imm(int32_t lhs, int32_t rhs) {
+    return (lhs << 3) - rhs;
+}
+
 uint32_t sub_after_lsr(uint32_t lhs, uint32_t rhs, int32_t shamt) {
     return lhs - (rhs >> shamt);
 }
