@@ -668,7 +668,7 @@ InstSelection:
       InstLoad:
         Dst: $Dst
         Addr: $Addr
-        $Predicate: isOperandIReg($Dst) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+        $Predicate: isOperandIReg($Dst) && selectFusedAddrOffset($Addr, ctx, $Dst, [$Base], [$Index], [$Scale])
     Replace:
       LoadFused:
         $Opcode: getFusedLoadOpcode($Dst)
@@ -715,7 +715,7 @@ InstSelection:
             Src: $Src
             $Predicate: ctx.isSafeToUse($Src, $Dst)
         Addr: $Addr
-        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, $Dst, [$Base], [$Index], [$Scale])
     Replace:
       StoreFused:
         $Opcode: getFusedStoreOpcode($Dst)
@@ -729,7 +729,7 @@ InstSelection:
       InstStore:
         Src: $Src
         Addr: $Addr
-        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, [$Base], [$Index], [$Scale])
+        $Predicate: isOperandIReg($Src) && selectFusedAddrOffset($Addr, ctx, $Src, [$Base], [$Index], [$Scale])
     Replace:
       StoreFused:
         $Opcode: getFusedStoreOpcode($Src)

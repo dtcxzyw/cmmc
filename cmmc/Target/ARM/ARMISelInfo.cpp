@@ -222,8 +222,11 @@ static bool selectFusedIntegerBinaryOperand(const MIROperand& rhs, ISelContext& 
     return true;
 }
 
-static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperand& base, MIROperand& index,
-                                  MIROperand& scale) {
+static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, const MIROperand& dst, MIROperand& base,
+                                  MIROperand& index, MIROperand& scale) {
+    if(dst.type() == OperandType::Int16)
+        return false;
+
     const auto addrInst = ctx.lookupDef(addr);
     if(!addrInst || addrInst->opcode() != InstAdd)
         return false;
