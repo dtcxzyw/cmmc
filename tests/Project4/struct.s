@@ -31,8 +31,7 @@ gcd:
 	addiu $t0, $sp, 16
 	lw $t1, 0($a0)
 	lw $t2, 4($a0)
-	move $t3, $t1
-	move $t4, $t2
+	move $t3, $t2
 	sw $t2, 32($sp)
 	sw $t1, 28($sp)
 	sw $t0, 24($sp)
@@ -53,13 +52,12 @@ label2:
 	div $zero, $t1, $t0
 	mflo $t2
 	mult $t0, $t2
-	mflo $t3
-	subu $t4, $t1, $t3
+	mflo $t0
+	subu $t0, $t1, $t0
 	lw $a0, 24($sp)
-	sw $t4, 4($a0)
+	sw $t0, 4($a0)
 	jal gcd
 	nop
-	move $t5, $v0
 	sw $v0, 36($sp)
 label3:
 	lw $t0, 36($sp)
@@ -79,13 +77,12 @@ main:
 	sw $v0, 16($sp)
 	jal read
 	nop
-	move $t0, $v0
-	lw $t1, 24($sp)
-	sw $v0, 4($t1)
-	move $a0, $t1
+	lw $t0, 24($sp)
+	sw $v0, 4($t0)
+	move $a0, $t0
 	jal gcd
 	nop
-	move $t2, $v0
+	move $t0, $v0
 	move $a0, $v0
 	jal write
 	nop

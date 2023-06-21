@@ -58,3 +58,6 @@ int fle(float x, float y) {
 int fge(float x, float y) {
     return x >= y;
 }
+int fltz(float x) {
+    return x < 0.0;
+}

@@ -67,8 +67,7 @@ label26:
 label5:
 	ld a0, 8(sp)
 	ld a1, 0(sp)
-	addw a2, a0, a1
-	mv a0, a2
+	addw a0, a0, a1
 	jal write
 	mv a0, zero
 	ld ra, 32(sp)

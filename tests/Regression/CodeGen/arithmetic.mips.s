@@ -170,8 +170,8 @@ fadd:
 .globl fadd_imm
 fadd_imm:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 0($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 0($t0)
 	add.s $f0, $f12, $f4
 	jr $ra
 	nop
@@ -188,8 +188,8 @@ fsub:
 .globl fsub_imm
 fsub_imm:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 0($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 0($t0)
 	sub.s $f0, $f12, $f4
 	jr $ra
 	nop
@@ -211,8 +211,8 @@ fdiv:
 .globl fdiv_imm
 fdiv_imm:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 4($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 4($t0)
 	mul.s $f0, $f12, $f4
 	jr $ra
 	nop
@@ -224,9 +224,9 @@ fneg:
 .globl s2f2s
 s2f2s:
 	mtc1 $a0, $f4
-	cvt.s.w $f6, $f4
-	trunc.w.s $f8, $f6
-	mfc1 $v0, $f8
+	cvt.s.w $f4, $f4
+	trunc.w.s $f4, $f4
+	mfc1 $v0, $f4
 	jr $ra
 	nop
 .globl f2s2f
@@ -263,14 +263,14 @@ fp_zero:
 .globl fp_imm0
 fp_imm0:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f0, 8($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f0, 8($t0)
 	jr $ra
 	nop
 .globl fp_imm1
 fp_imm1:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f0, 12($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f0, 12($t0)
 	jr $ra
 	nop

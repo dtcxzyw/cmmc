@@ -19,9 +19,8 @@ my_fabs:
 	b label2
 label12:
 	vldr s0, [sp, #4]
-	vneg.f32 s1, s0
-	vmov.f32 s2, s1
-	vstr s1, [sp, #0]
+	vneg.f32 s0, s0
+	vstr s0, [sp, #0]
 label2:
 	vldr s0, [sp, #0]
 	vmov r0, s0
@@ -33,9 +32,8 @@ my_fmin:
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s2, s1
-	vmovmi.f32 s2, s0
-	vmov r0, s2
+	vmovmi.f32 s1, s0
+	vmov r0, s1
 	bx lr
 .globl my_fmax
 my_fmax:
@@ -43,14 +41,13 @@ my_fmax:
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s2, s1
-	vmovgt.f32 s2, s0
-	vmov r0, s2
+	vmovgt.f32 s1, s0
+	vmov r0, s1
 	bx lr
 .globl my_trunc
 my_trunc:
 	vmov s0, r0
-	vcvt.s32.f32 s1, s0
-	vcvt.f32.s32 s2, s1
-	vmov r0, s2
+	vcvt.s32.f32 s0, s0
+	vcvt.f32.s32 s0, s0
+	vmov r0, s0
 	bx lr

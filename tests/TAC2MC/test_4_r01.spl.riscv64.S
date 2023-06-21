@@ -35,22 +35,19 @@ hanoi:
 	j label2
 label14:
 	ld a0, 56(sp)
-	mv a1, a0
-	ld a2, 48(sp)
+	ld a1, 48(sp)
+	ld a2, 40(sp)
 	mv a3, a2
-	ld a4, 40(sp)
-	mv a5, a4
-	sd a4, 0(sp)
-	sd a2, 8(sp)
+	sd a2, 0(sp)
+	sd a1, 8(sp)
 	sd a0, 64(sp)
 	j label4
 label2:
 	li a0, 10000
 	ld a1, 24(sp)
-	mulw a2, a1, a0
-	ld a3, 32(sp)
-	addw a4, a3, a2
-	mv a0, a4
+	mulw a0, a1, a0
+	ld a2, 32(sp)
+	addw a0, a2, a0
 	jal write
 	mv a0, zero
 	ld ra, 72(sp)
@@ -70,28 +67,27 @@ label4:
 	jal hanoi
 	li a5, 10000
 	ld t1, 8(sp)
-	mulw t2, t1, a5
-	ld t3, 32(sp)
-	addw t4, t3, t2
-	mv a0, t4
+	mulw a5, t1, a5
+	ld t2, 32(sp)
+	addw a5, t2, a5
+	mv a0, a5
 	jal write
-	li t5, 1
-	ld t6, 16(sp)
-	bne t6, t5, label24
+	li a5, 1
+	ld t3, 16(sp)
+	bne t3, a5, label24
 	ld a3, 0(sp)
 	mv a0, a3
 	sd a3, 24(sp)
 	j label2
 label24:
 	ld a0, 16(sp)
-	mv a1, a0
-	ld a2, 8(sp)
+	ld a1, 8(sp)
+	mv a2, a1
+	ld a3, 0(sp)
+	mv a1, a3
 	mv a3, a2
-	ld a4, 0(sp)
-	mv a2, a4
-	mv a4, a3
-	sd a3, 0(sp)
-	sd a2, 8(sp)
+	sd a2, 0(sp)
+	sd a1, 8(sp)
 	sd a0, 64(sp)
 	j label4
 .globl main

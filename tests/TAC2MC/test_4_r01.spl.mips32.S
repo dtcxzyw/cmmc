@@ -44,7 +44,6 @@ label14:
 	lw $a0, 40($sp)
 	move $t0, $a0
 	lw $a1, 36($sp)
-	move $t1, $a1
 	lw $a2, 32($sp)
 	move $a3, $a2
 	sw $a2, 44($sp)
@@ -56,9 +55,9 @@ label2:
 	li $t0, 10000
 	lw $t1, 20($sp)
 	mult $t1, $t0
-	mflo $t2
+	mflo $t0
 	lw $a2, 28($sp)
-	addu $a0, $a2, $t2
+	addu $a0, $a2, $t0
 	jal write
 	nop
 	move $v0, $zero
@@ -81,15 +80,15 @@ label4:
 	li $t4, 10000
 	lw $a1, 48($sp)
 	mult $a1, $t4
-	mflo $t5
+	mflo $t4
 	lw $a2, 28($sp)
-	addu $t6, $a2, $t5
-	move $a0, $t6
+	addu $t4, $a2, $t4
+	move $a0, $t4
 	jal write
 	nop
-	li $t7, 1
-	lw $t8, 16($sp)
-	bne $t8, $t7, label26
+	li $t4, 1
+	lw $t5, 16($sp)
+	bne $t5, $t4, label26
 	nop
 	lw $a3, 44($sp)
 	move $t0, $a3

@@ -26,13 +26,12 @@ gcd:
 	sd ra, 40(sp)
 	addi a1, sp, 0
 	lw a2, 0(a0)
-	lw a3, 4(a0)
-	mv a4, a2
-	mv a5, a3
-	sd a3, 16(sp)
+	lw a0, 4(a0)
+	mv a3, a0
+	sd a0, 16(sp)
 	sd a2, 32(sp)
 	sd a1, 24(sp)
-	beq a3, zero, label15
+	beq a0, zero, label15
 	j label2
 label15:
 	ld a0, 32(sp)
@@ -44,17 +43,15 @@ label2:
 	ld a1, 16(sp)
 	and a2, a1, a0
 	sw a2, 0(sp)
-	ld a3, 32(sp)
-	divw a4, a3, a1
-	mulw a5, a1, a4
-	subw t1, a3, a5
-	and t2, t1, a0
-	ld t3, 24(sp)
-	sw t2, 4(t3)
-	mv a0, t3
+	ld a2, 32(sp)
+	divw a3, a2, a1
+	mulw a1, a1, a3
+	subw a1, a2, a1
+	and a0, a1, a0
+	ld a1, 24(sp)
+	sw a0, 4(a1)
+	mv a0, a1
 	jal gcd
-	mv t4, a0
-	mv t5, a0
 	sd a0, 8(sp)
 label3:
 	ld a1, 8(sp)
@@ -71,16 +68,16 @@ main:
 	jal read
 	mv a1, a0
 	li a2, 4294967295
-	and a3, a0, a2
-	sw a3, 0(sp)
+	and a1, a0, a2
+	sw a1, 0(sp)
 	jal read
-	mv a4, a0
-	and a5, a0, a2
-	ld t1, 8(sp)
-	sw a5, 4(t1)
-	mv a0, t1
+	mv a1, a0
+	and a1, a0, a2
+	ld a2, 8(sp)
+	sw a1, 4(a2)
+	mv a0, a2
 	jal gcd
-	mv t2, a0
+	mv a1, a0
 	jal write
 	mv a0, zero
 	ld ra, 16(sp)

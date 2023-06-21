@@ -12,9 +12,8 @@ my_fabs:
 	j label2
 label10:
 	flw f10, 4(sp)
-	fneg.s f11, f10
-	fmv.s f12, f11
-	fsw f11, 0(sp)
+	fneg.s f10, f10
+	fsw f10, 0(sp)
 label2:
 	flw f11, 0(sp)
 	fmv.s f10, f11
@@ -24,7 +23,6 @@ label2:
 my_fmin:
 	addi sp, sp, -8
 	flt.s a0, f10, f11
-	fmv.s f12, f10
 	fsw f10, 0(sp)
 	fsw f11, 4(sp)
 	bne a0, zero, label24
@@ -39,7 +37,6 @@ label24:
 my_fmax:
 	addi sp, sp, -8
 	flt.s a0, f11, f10
-	fmv.s f12, f10
 	fsw f10, 0(sp)
 	fsw f11, 4(sp)
 	bne a0, zero, label35
@@ -53,6 +50,5 @@ label35:
 .globl my_trunc
 my_trunc:
 	fcvt.w.s a0, f10, rtz
-	fcvt.s.w f11, a0
-	fmv.s f10, f11
+	fcvt.s.w f10, a0
 	ret

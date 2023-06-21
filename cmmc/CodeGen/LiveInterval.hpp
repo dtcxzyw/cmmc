@@ -25,7 +25,9 @@ CMMC_MIR_NAMESPACE_BEGIN
 using RegNum = uint32_t;
 using InstNum = uint64_t;
 constexpr uint64_t defaultIncrement = 4;
+static_assert(defaultIncrement >= 2 && (defaultIncrement % 2) == 0);
 
+// instnum i: use i+1: def
 // i in [beg, end): this register should be available just before issuing instruction $i$.
 struct LiveSegment final {
     InstNum beg, end;

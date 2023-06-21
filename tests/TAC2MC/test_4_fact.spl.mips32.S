@@ -96,12 +96,11 @@ label25:
 	nop
 label26:
 	lw $t0, 36($sp)
-	move $t1, $t0
-	lw $t2, 20($sp)
-	move $t3, $t2
-	sw $t2, 32($sp)
+	lw $t1, 20($sp)
+	sw $t1, 32($sp)
 	sw $t0, 28($sp)
 	addiu $t1, $t0, -1
+	lw $t2, 32($sp)
 	mult $t0, $t2
 	mflo $t3
 	li $t4, 1

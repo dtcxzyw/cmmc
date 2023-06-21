@@ -55,9 +55,9 @@ select_slt_fpr_fpr:
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
 	slt $t0, $a1, $a0
-	xori $t1, $t0, 1
+	xori $t0, $t0, 1
 	move $v0, $a3
-	movn $v0, $a2, $t1
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_sle_fpr_fpr
@@ -65,9 +65,9 @@ select_sle_fpr_fpr:
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a1, $a0
-	xori $t1, $t0, 1
+	xori $t0, $t0, 1
 	mov.s $f0, $f4
-	movz.s $f0, $f6, $t1
+	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
 .globl select_sgt_gpr_gpr
@@ -89,9 +89,9 @@ select_sgt_fpr_fpr:
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
 	slt $t0, $a0, $a1
-	xori $t1, $t0, 1
+	xori $t0, $t0, 1
 	move $v0, $a3
-	movn $v0, $a2, $t1
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_sge_fpr_fpr
@@ -99,17 +99,17 @@ select_sge_fpr_fpr:
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	slt $t0, $a0, $a1
-	xori $t1, $t0, 1
+	xori $t0, $t0, 1
 	mov.s $f0, $f4
-	movz.s $f0, $f6, $t1
+	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
 	xor $t0, $a0, $a1
-	sltiu $t1, $t0, 1
+	sltiu $t0, $t0, 1
 	move $v0, $a3
-	movn $v0, $a2, $t1
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_eq_fpr_fpr
@@ -117,17 +117,17 @@ select_eq_fpr_fpr:
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
-	sltiu $t1, $t0, 1
+	sltiu $t0, $t0, 1
 	mov.s $f0, $f4
-	movz.s $f0, $f6, $t1
+	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
 	xor $t0, $a0, $a1
-	sltu $t1, $zero, $t0
+	sltu $t0, $zero, $t0
 	move $v0, $a3
-	movn $v0, $a2, $t1
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_ne_fpr_fpr
@@ -135,9 +135,9 @@ select_ne_fpr_fpr:
 	mtc1 $a2, $f4
 	mtc1 $a3, $f6
 	xor $t0, $a0, $a1
-	sltu $t1, $zero, $t0
+	sltu $t0, $zero, $t0
 	mov.s $f0, $f4
-	movz.s $f0, $f6, $t1
+	movz.s $f0, $f6, $t0
 	jr $ra
 	nop
 .globl select_feq_gpr_gpr
@@ -299,22 +299,21 @@ select_cross_fpr:
 	bgez $t2, label411
 	nop
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 0($t1)
-	lwc1 $f6, 4($t1)
-	mov.s $f8, $f4
-	lw $t2, 8($sp)
-	movz.s $f8, $f6, $t2
-	mov.s $f0, $f8
-	swc1 $f8, 0($sp)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 0($t0)
+	lwc1 $f6, 4($t0)
+	lw $t0, 8($sp)
+	movz.s $f4, $f6, $t0
+	mov.s $f0, $f4
+	swc1 $f4, 0($sp)
 	b label401
 	nop
 label411:
 	lw $t0, 4($sp)
 	mtc1 $t0, $f4
-	cvt.s.w $f6, $f4
-	mov.s $f0, $f6
-	swc1 $f6, 0($sp)
+	cvt.s.w $f4, $f4
+	mov.s $f0, $f4
+	swc1 $f4, 0($sp)
 label401:
 	lwc1 $f4, 0($sp)
 	mov.s $f0, $f4
@@ -325,21 +324,21 @@ label401:
 select_round:
 	addiu $sp, $sp, -8
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 8($t1)
-	lwc1 $f6, 8($t1)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 8($t0)
+	lwc1 $f6, 8($t0)
 	c.ult.s $f12, $f6
-	li $t2, 1
-	movt $t2, $zero, $fcc0
+	li $t0, 1
+	movt $t0, $zero, $fcc0
 	swc1 $f12, 4($sp)
-	bne $t2, $zero, label452
+	bne $t0, $zero, label452
 	nop
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 12($t1)
-	add.s $f6, $f12, $f4
-	mov.s $f0, $f6
-	swc1 $f6, 0($sp)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 12($t0)
+	add.s $f4, $f12, $f4
+	mov.s $f0, $f4
+	swc1 $f4, 0($sp)
 	b label441
 	nop
 label452:

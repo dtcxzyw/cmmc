@@ -6,95 +6,77 @@
 .fpu neon
 .globl add_imm
 add_imm:
-	add r1, r0, #1
-	mov r0, r1
+	add r0, r0, #1
 	bx lr
 .globl add_large_imm
 add_large_imm:
-	add r1, r0, #262144
-	mov r0, r1
+	add r0, r0, #262144
 	bx lr
 .globl add_reg
 add_reg:
-	add r2, r0, r1
-	mov r0, r2
+	add r0, r0, r1
 	bx lr
 .globl and_imm
 and_imm:
-	and r1, r0, #1
-	mov r0, r1
+	and r0, r0, #1
 	bx lr
 .globl and_large_imm
 and_large_imm:
-	and r1, r0, #262144
-	mov r0, r1
+	and r0, r0, #262144
 	bx lr
 .globl and_reg
 and_reg:
-	and r2, r0, r1
-	mov r0, r2
+	and r0, r0, r1
 	bx lr
 .globl or_imm
 or_imm:
-	orr r1, r0, #1
-	mov r0, r1
+	orr r0, r0, #1
 	bx lr
 .globl or_large_imm
 or_large_imm:
-	orr r1, r0, #262144
-	mov r0, r1
+	orr r0, r0, #262144
 	bx lr
 .globl or_reg
 or_reg:
-	orr r2, r0, r1
-	mov r0, r2
+	orr r0, r0, r1
 	bx lr
 .globl xor_imm
 xor_imm:
-	eor r1, r0, #1
-	mov r0, r1
+	eor r0, r0, #1
 	bx lr
 .globl xor_large_imm
 xor_large_imm:
-	eor r1, r0, #262144
-	mov r0, r1
+	eor r0, r0, #262144
 	bx lr
 .globl xor_reg
 xor_reg:
-	eor r2, r0, r1
-	mov r0, r2
+	eor r0, r0, r1
 	bx lr
 .globl sub_imm
 sub_imm:
-	sub r1, r0, #1
-	mov r0, r1
+	sub r0, r0, #1
 	bx lr
 .globl sub_inverted_imm
 sub_inverted_imm:
 	mov r1, #1
-	sub r2, r1, r0
-	mov r0, r2
+	sub r0, r1, r0
 	bx lr
 .globl sub_reg
 sub_reg:
-	sub r2, r0, r1
-	mov r0, r2
+	sub r0, r0, r1
 	bx lr
 .globl mul_imm
 mul_imm:
 	mov r1, #3
-	mul r2, r0, r1
-	mov r0, r2
+	mul r0, r0, r1
 	bx lr
 .globl mul_to_shl
 mul_to_shl:
-	lsl r1, r0, #2
-	mov r0, r1
+	lsl r0, r0, #2
 	bx lr
 .globl mul_reg
 mul_reg:
-	mul r2, r0, r1
-	mov r0, r2
+	mul r0, r0, r1
 	bx lr
 .globl div_imm
 div_imm:
@@ -102,7 +84,6 @@ div_imm:
 	sub sp, sp, #4
 	mov r1, #3
 	bl __aeabi_idiv
-	mov r1, r0
 	add sp, sp, #4
 	pop { pc }
 .globl div_reg
@@ -110,7 +91,6 @@ div_reg:
 	push { lr }
 	sub sp, sp, #4
 	bl __aeabi_idiv
-	mov r2, r0
 	add sp, sp, #4
 	pop { pc }
 .globl mod_imm
@@ -127,55 +107,50 @@ mod_reg:
 	push { lr }
 	sub sp, sp, #4
 	bl __aeabi_idivmod
-	mov r2, r1
 	mov r0, r1
 	add sp, sp, #4
 	pop { pc }
 .globl shl_imm
 shl_imm:
-	lsl r1, r0, #3
-	mov r0, r1
+	lsl r0, r0, #3
 	bx lr
 .globl shl_reg
 shl_reg:
-	lsl r2, r0, r1
-	mov r0, r2
+	lsl r0, r0, r1
 	bx lr
 .globl ashr_imm
 ashr_imm:
-	asr r1, r0, #3
-	mov r0, r1
+	asr r0, r0, #3
 	bx lr
 .globl ashr_reg
 ashr_reg:
-	asr r2, r0, r1
-	mov r0, r2
+	asr r0, r0, r1
 	bx lr
 .globl s2f
 s2f:
 	vmov s0, r0
-	vcvt.f32.s32 s1, s0
-	vmov r0, s1
+	vcvt.f32.s32 s0, s0
+	vmov r0, s0
 	bx lr
 .globl f2s
 f2s:
 	vmov s0, r0
-	vcvt.s32.f32 s1, s0
-	vmov r0, s1
+	vcvt.s32.f32 s0, s0
+	vmov r0, s0
 	bx lr
 .globl fadd
 fadd:
 	vmov s0, r0
 	vmov s1, r1
-	vadd.f32 s2, s0, s1
-	vmov r0, s2
+	vadd.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fadd_imm
 fadd_imm:
 	vmov s0, r0
 	vmov.f32 s1, #1
-	vadd.f32 s2, s0, s1
-	vmov r0, s2
+	vadd.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fadd_identity
 fadd_identity:
@@ -186,63 +161,62 @@ fadd_identity:
 fsub:
 	vmov s0, r0
 	vmov s1, r1
-	vsub.f32 s2, s0, s1
-	vmov r0, s2
+	vsub.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fsub_imm
 fsub_imm:
 	vmov s0, r0
 	vmov.f32 s1, #1
-	vsub.f32 s2, s0, s1
-	vmov r0, s2
+	vsub.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fmul
 fmul:
 	vmov s0, r0
 	vmov s1, r1
-	vmul.f32 s2, s0, s1
-	vmov r0, s2
+	vmul.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fmul_imm
 fmul_imm:
 	vmov s0, r0
-	vadd.f32 s1, s0, s0
-	vmov r0, s1
+	vadd.f32 s0, s0, s0
+	vmov r0, s0
 	bx lr
 .globl fdiv
 fdiv:
 	vmov s0, r0
 	vmov s1, r1
-	vdiv.f32 s2, s0, s1
-	vmov r0, s2
+	vdiv.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fdiv_imm
 fdiv_imm:
 	vmov s0, r0
 	vmov.f32 s1, #0.5
-	vmul.f32 s2, s0, s1
-	vmov r0, s2
+	vmul.f32 s0, s0, s1
+	vmov r0, s0
 	bx lr
 .globl fneg
 fneg:
 	vmov s0, r0
-	vneg.f32 s1, s0
-	vmov r0, s1
+	vneg.f32 s0, s0
+	vmov r0, s0
 	bx lr
 .globl s2f2s
 s2f2s:
 	vmov s0, r0
-	vcvt.f32.s32 s1, s0
-	vcvt.s32.f32 s2, s1
-	vmov r1, s2
-	mov r0, r1
+	vcvt.f32.s32 s0, s0
+	vcvt.s32.f32 s0, s0
+	vmov r0, s0
 	bx lr
 .globl f2s2f
 f2s2f:
 	vmov s0, r0
-	vcvt.s32.f32 s1, s0
-	vcvt.f32.s32 s2, s1
-	vmov r0, s2
+	vcvt.s32.f32 s0, s0
+	vcvt.f32.s32 s0, s0
+	vmov r0, s0
 	bx lr
 .globl zero
 zero:

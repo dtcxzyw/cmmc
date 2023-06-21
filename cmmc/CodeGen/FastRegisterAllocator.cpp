@@ -233,6 +233,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 return isaReg;
             };
 
+            std::unordered_set<MIROperand, MIROperandHasher> releaseCheck;
+
             const auto use = [&](MIROperand& op) {
                 if(!isOperandVReg(op)) {
                     if(isOperandISAReg(op) && isAllocatableType(op.type())) {
@@ -240,6 +242,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                     }
                     return;
                 }
+                releaseCheck.insert(op);
 
                 auto& map = getDataMap(op);
                 MIROperand stackStorage;
@@ -299,6 +302,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
             auto& inst = *iter;
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            const auto instNum = liveInterval.instNum.at(&inst);
             // instInfo.print(std::cerr, inst, true);
             // std::cerr << '\n';
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
@@ -333,6 +337,21 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 collectUnderRenamedISARegs(next);
             }
             protect.clear();
+            for(auto operand : releaseCheck)
+                if(auto it = liveInterval.interval.find(operand.reg()); it != liveInterval.interval.end()) {
+                    const auto nextUse = it->second.nextUse(instNum);
+                    if(nextUse == std::numeric_limits<InstNum>::max()) {
+                        // dead
+                        auto& map = getDataMap(operand);
+                        for(auto& reg : map) {
+                            if(isISAReg(reg.reg())) {
+                                physMap.erase(reg);
+                                selector.markAsDiscarded(reg);
+                            }
+                        }
+                        map.clear();
+                    }
+                }
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                     def(inst.getOperand(idx));

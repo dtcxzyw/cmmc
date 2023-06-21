@@ -119,3 +119,11 @@ fge:
 	movt $v0, $zero, $fcc0
 	jr $ra
 	nop
+.globl fltz
+fltz:
+	mtc1 $zero, $f4
+	c.olt.s $f12, $f4
+	li $v0, 1
+	movf $v0, $zero, $fcc0
+	jr $ra
+	nop

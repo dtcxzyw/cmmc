@@ -125,37 +125,44 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
                 if(!isOperandVRegOrISAReg(operand))
                     continue;
                 const auto id = regNum(operand);
-                if(flag & OperandFlagDef) {
-                    if(currentSegment.count(id)) {
-                        auto& segment = currentSegment[id];
-                        if(segment.end == instNum) {
-                            segment.end = instNum + 1;
-                        } else {
-                            info.interval[id].appendSegment(segment);
-                            segment = { instNum, instNum + 1 };
-                        }
-                    } else {
-                        currentSegment[id] = { instNum, instNum + 1 };
-                    }
-                } else if(flag & OperandFlagUse) {
+                if(flag & OperandFlagUse) {
                     if(auto iter = currentSegment.find(id); iter != currentSegment.end()) {
                         iter->second.end = instNum + 1;
                     } else {
                         currentSegment[id] = { firstInstNum, instNum + 1 };
                     }
-                } else
-                    reportUnreachable(CMMC_LOCATION());
+                }
+            }
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                const auto flag = instInfo.getOperandFlag(idx);
+                auto& operand = inst.getOperand(idx);
+                if(!isOperandVRegOrISAReg(operand))
+                    continue;
+                const auto id = regNum(operand);
+                if(flag & OperandFlagDef) {
+                    if(currentSegment.count(id)) {
+                        auto& segment = currentSegment[id];
+                        if(segment.end == instNum + 1) {
+                            segment.end = instNum + 2;
+                        } else {
+                            info.interval[id].appendSegment(segment);
+                            segment = { instNum + 1, instNum + 2 };
+                        }
+                    } else {
+                        currentSegment[id] = { instNum + 1, instNum + 2 };
+                    }
+                }
             }
         }
         for(auto& [id, segment] : currentSegment) {
             if(blockInfo.outs.count(id)) {
-                segment.end = lastInstNum + 1;
+                segment.end = lastInstNum + 2;
             }
             info.interval[id].appendSegment(segment);
         }
         for(auto id : blockInfo.outs)
             if(blockInfo.ins.count(id) && !currentSegment.count(id))
-                info.interval[id].appendSegment({ firstInstNum, lastInstNum + 1 });
+                info.interval[id].appendSegment({ firstInstNum, lastInstNum + 2 });
     }
 
     for(auto& [k, v] : info.interval) {
@@ -200,11 +207,12 @@ void LiveInterval::optimize() {
     return true;
 }
 InstNum LiveInterval::nextUse(InstNum beg) const {
-    auto iter = std::upper_bound(segments.cbegin(), segments.cend(), LiveSegment{ 0, beg },
+    auto iter = std::upper_bound(segments.cbegin(), segments.cend(), LiveSegment{ 0, beg + 1 },
                                  [](const LiveSegment& lhs, const LiveSegment& rhs) { return lhs.end < rhs.end; });
     if(iter == segments.cend())
         return std::numeric_limits<InstNum>::max();
-    return std::max(iter->beg, beg);
+    assert(iter->beg > beg);
+    return iter->beg;
 }
 
 CMMC_MIR_NAMESPACE_END

@@ -52,22 +52,21 @@ label45:
 	sd a0, 40(sp)
 	mv a1, a2
 	mulw a2, a0, a2
-	mv a3, a2
 	sd a2, 48(sp)
 	j label9
 label18:
 	ld a0, 56(sp)
-	mv a1, a0
-	li a2, 1
-	sd a2, 16(sp)
+	li a1, 1
+	sd a1, 16(sp)
 	sd a0, 24(sp)
 	addiw a1, a0, -1
+	ld a2, 16(sp)
 	mulw a3, a0, a2
 	li a4, 1
 	sd a3, 0(sp)
 	sd a1, 8(sp)
 	bne a1, a4, label25
-label24:
+label46:
 	ld a0, 8(sp)
 	mv a1, a0
 	ld a2, 0(sp)
@@ -76,20 +75,18 @@ label24:
 	sd a0, 40(sp)
 	mv a1, a2
 	mulw a2, a0, a2
-	mv a3, a2
 	sd a2, 48(sp)
 	j label9
 label25:
 	ld a0, 8(sp)
-	mv a1, a0
-	ld a2, 0(sp)
-	mv a3, a2
-	sd a2, 16(sp)
+	ld a1, 0(sp)
+	sd a1, 16(sp)
 	sd a0, 24(sp)
 	addiw a1, a0, -1
+	ld a2, 16(sp)
 	mulw a3, a0, a2
 	li a4, 1
 	sd a3, 0(sp)
 	sd a1, 8(sp)
 	bne a1, a4, label25
-	j label24
+	j label46
