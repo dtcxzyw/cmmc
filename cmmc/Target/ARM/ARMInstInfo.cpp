@@ -102,6 +102,9 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                 default:
                     reportUnreachable(CMMC_LOCATION());
             }
+        } else if(op.type() == OperandType::LoadStoreShamt) {
+            if(op.imm() > 0)
+                out << ", lsl #" << op.imm();
         } else {
             out << '#' << op.imm();
         }

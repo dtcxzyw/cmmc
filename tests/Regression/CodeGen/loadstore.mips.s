@@ -16,6 +16,13 @@ load:
 	move $v0, $t2
 	jr $ra
 	nop
+.globl load_byte
+load_byte:
+	addu $t0, $a0, $a1
+	lb $t1, 0($t0)
+	move $v0, $t1
+	jr $ra
+	nop
 .globl load_float
 load_float:
 	sll $t0, $a1, 2

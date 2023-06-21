@@ -1,6 +1,9 @@
 int load(int x[], int idx) {
     return x[idx];
 }
+int8_t load_byte(int8_t x[], int idx) {
+    return x[idx];
+}
 float load_float(float x[], int idx) {
     return x[idx];
 }

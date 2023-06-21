@@ -146,7 +146,7 @@ InstInfo:
         Mnemonic: ldrsh
 
   LoadFused:
-    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:GPR[Use], $Rm:GPR[Use], lsl $Sh:Shamt2[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Def], [$Rn:GPR[Use], $Rm:GPR[Use]$Sh:LoadStoreShamt[Metadata]]
     Flag: [Load]
     Instances:
       LDR_Fused:
@@ -165,7 +165,7 @@ InstInfo:
     Flag: [Store]
 
   StoreFused:
-    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:GPR[Use], $Rm:GPR[Use], lsl $Sh:Shamt2[Metadata]]
+    Format: $Mnemonic:Template $Rd:GPR[Use], [$Rn:GPR[Use], $Rm:GPR[Use]$Sh:LoadStoreShamt[Metadata]]
     Flag: [Store]
     Instances:
       STR_Fused:

@@ -215,6 +215,8 @@ static bool selectFusedIntegerBinaryOperand(const MIROperand& rhs, ISelContext& 
             shamt = *shamtReg;
         else
             return false;
+    } else if(shamt.imm() == 0) {
+        return false;
     }
 
     return true;
@@ -239,9 +241,10 @@ static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIRO
         index = offInst->getOperand(1);
         scale = offInst->getOperand(2);
 
-        if(isOperandShamt2(scale) && isOperandGPR(index)) {
+        if(isOperandLoadStoreShamt(scale) && isOperandGPR(index)) {
             if(auto indexReg = ctx.getRegRef(index, *offInst)) {
                 index = *indexReg;
+                scale = MIROperand::asImm(scale.imm(), OperandType::LoadStoreShamt);
                 return true;
             }
         }
@@ -250,7 +253,7 @@ static bool selectFusedAddrOffset(const MIROperand& addr, ISelContext& ctx, MIRO
     // fallback
     if(auto offReg = ctx.getRegRef(off, *addrInst)) {
         index = *offReg;
-        scale = MIROperand::asImm(0, OperandType::Int32);
+        scale = MIROperand::asImm(0, OperandType::LoadStoreShamt);
         return true;
     }
     return false;

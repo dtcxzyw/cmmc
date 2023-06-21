@@ -19,6 +19,13 @@ load:
 	mov r0, r4
 	pop { r4 }
 	bx lr
+.globl load_byte
+load_byte:
+	push { r4 }
+	ldrsb r4, [r0, r1]
+	mov r0, r4
+	pop { r4 }
+	bx lr
 .globl load_float
 load_float:
 	push { r4 }

@@ -87,6 +87,7 @@ enum class OperandType : uint32_t {
     RegListVFP,
     // ARM shift type
     ShiftType,
+    LoadStoreShamt,
 };
 
 constexpr bool isIntegerType(OperandType type) {
