@@ -254,7 +254,10 @@ enum MIRGenericInst : uint32_t {
     ISASpecificBegin,
 };
 class MIRInst final {
+public:
     static constexpr uint32_t maxOperandCount = 6;
+
+private:
     uint32_t mOpcode;
     std::array<MIROperand, maxOperandCount> mOperands;
 

@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <array>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/ISelInfo.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
@@ -22,6 +23,7 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <optional>
 #include <queue>
 #include <variant>
 #include <vector>
@@ -256,6 +258,58 @@ bool machineInstCSE(MIRFunction& func, const CodeGenContext& ctx) {
     return modified;
 }
 
+bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        auto& instructions = block->instructions();
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> version;
+        uint32_t versionIdx = 0;
+        auto getVersion = [&](const MIROperand& op) -> uint32_t {
+            if(!isOperandVRegOrISAReg(op))
+                return 0;
+            if(auto iter = version.find(op); iter != version.cend())
+                return iter->second;
+            return version[op] = ++versionIdx;
+        };
+        using VersionArray = std::array<uint32_t, MIRInst::maxOperandCount>;
+        std::unordered_map<MIROperand, std::pair<MIRInst*, VersionArray>, MIROperandHasher> lastDefine;
+
+        instructions.remove_if([&](MIRInst& inst) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            VersionArray ver{};
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                    ver[idx] = getVersion(inst.getOperand(idx));
+                }
+            }
+            if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                // TODO: use IPRA info
+                lastDefine.clear();
+                return false;
+            }
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
+                    auto& op = inst.getOperand(idx);
+                    if(isOperandVRegOrISAReg(op)) {
+                        if(auto it = lastDefine.find(op); it != lastDefine.cend()) {
+                            if(!requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect | InstFlagPCRel) &&
+                               *it->second.first == inst && it->second.second == ver) {
+                                return true;
+                            }
+                            it->second = { &inst, ver };
+                        } else
+                            lastDefine[op] = { &inst, ver };
+                        version[op] = ++versionIdx;
+                    }
+                    return false;
+                }
+            }
+            return false;
+        });
+    }
+    return modified;
+}
+
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
     // func.dump(std::cerr, ctx);
     bool modified = false;
@@ -367,6 +421,7 @@ bool genericPeepholeOpt(MIRFunction& func, const CodeGenContext& ctx) {
     // modified |= applySSAPropagation(func, ctx);
     // func.dump(std::cerr, ctx);
     modified |= machineInstCSE(func, ctx);
+    modified |= deadInstElimination(func, ctx);
     modified |= ctx.scheduleModel.peepholeOpt(func, ctx);
     return modified;
 }

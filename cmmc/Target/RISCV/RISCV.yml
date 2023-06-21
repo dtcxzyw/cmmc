@@ -35,8 +35,10 @@ InstInfo:
     Template: UType
     LUI:
       Mnemonic: lui
+      Flag: [LoadConstant]
     AUIPC:
       Mnemonic: auipc
+      Flag: [PCRel, LoadConstant]
   InstanceRRR:
     Template: RType
     ADD:
