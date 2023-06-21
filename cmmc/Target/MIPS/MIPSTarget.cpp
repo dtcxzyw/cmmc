@@ -163,7 +163,7 @@ public:
                 MIPS::X8, MIPS::X9, MIPS::X10, MIPS::X11, MIPS::X12,    //
                 MIPS::X13, MIPS::X14, MIPS::X15, MIPS::X24, MIPS::X25,  //
                 // $v0 $a0-$a3 //
-                // MIPS::X2, MIPS::X4, MIPS::X5, MIPS::X6, MIPS::X7,  //
+                MIPS::X2, MIPS::X4, MIPS::X5, MIPS::X6, MIPS::X7,  //
                 // $s0-$s7
                 MIPS::X16, MIPS::X17, MIPS::X18, MIPS::X19,  //
                 MIPS::X20, MIPS::X21, MIPS::X22, MIPS::X23,  //
@@ -177,8 +177,8 @@ public:
             static std::vector<uint32_t> list{
                 MIPS::F4, MIPS::F6, MIPS::F8, MIPS::F10,     //
                 MIPS::F16, MIPS::F18, MIPS::F20, MIPS::F22,  //
-                // $f0 $f2 $f12 $f14
-                // MIPS::F0, MIPS::F2, MIPS::F12, MIPS::F14,    //
+                // $f0 $f2 $f12 $f14 //
+                MIPS::F0, MIPS::F2, MIPS::F12, MIPS::F14,    //
                 MIPS::F24, MIPS::F26, MIPS::F28, MIPS::F30,  //
             };
             return list;

@@ -286,6 +286,8 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                 return;
             if(auto iter = regValue.find(reg.reg());
                iter != regValue.cend() && iter->second.second == getVersion(iter->second.first)) {
+                if(ctx.flags.preRA && !isVirtualReg(iter->second.first))
+                    return;  // should be handled after RA
                 auto backup = reg;
                 // NOTICE: Don't modify the type
                 reg = MIROperand{ iter->second.first, backup.type() };

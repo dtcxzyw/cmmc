@@ -89,18 +89,6 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
             stackMap[reg] = storage;
         }
-
-        /*
-        for(auto& [vreg, isaReg] : isaRegHint) {
-            CMMC_UNUSED(vreg);
-            assert(isOperandISAReg(isaReg));
-            if(isaRegStackMap.count(isaReg))
-                continue;
-            const auto size = getOperandSize(ctx.registerInfo->getCanonicalizedRegisterType(isaReg.type()));
-            const auto storage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
-            isaRegStackMap[isaReg] = storage;
-        }
-        */
     }
 
     for(auto& block : mfunc.blocks()) {
@@ -108,6 +96,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
         std::unordered_map<MIROperand, std::vector<MIROperand>, MIROperandHasher> currentMap;
         std::unordered_map<MIROperand, MIROperand, MIROperandHasher> physMap;
         std::unordered_map<uint32_t, std::queue<MIROperand>> allocationQueue;
+        std::unordered_set<MIROperand, MIROperandHasher> protectedLockedISAReg;  // retvals/callee arguments
+        std::unordered_set<MIROperand, MIROperandHasher> underRenamedISAReg;     // callee retvals/arguments
 
         MultiClassRegisterSelector selector{ *ctx.registerInfo };
 
@@ -134,6 +124,28 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
         std::unordered_set<MIROperand, MIROperandHasher> dirtyVRegs;
         auto& liveIntervalInfo = liveInterval.blockInfo[block.get()];
+
+        const auto isAllocatableType = [](OperandType type) { return type <= OperandType::Float32; };
+        const auto collectUnderRenamedISARegs = [&](std::list<MIRInst>::iterator it) {
+            while(it != instructions.end()) {
+                const auto& inst = *it;
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                bool hasReg = false;
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    const auto& op = inst.getOperand(idx);
+                    if(isOperandISAReg(op) && isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                        underRenamedISAReg.insert(op);
+                        hasReg = true;
+                    }
+                }
+                if(hasReg)
+                    ++it;
+                else
+                    break;
+            }
+        };
+
+        collectUnderRenamedISARegs(instructions.begin());
 
         for(auto iter = instructions.begin(); iter != instructions.end();) {
             const auto next = std::next(iter);
@@ -162,18 +174,45 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             std::unordered_set<MIROperand, MIROperandHasher> protect;
+            const auto isProtected = [&](const MIROperand& isaReg) {
+                assert(isOperandISAReg(isaReg));
+                return protect.count(isaReg) || protectedLockedISAReg.count(isaReg) || underRenamedISAReg.count(isaReg);
+            };
             const auto getFreeReg = [&](const MIROperand& operand) -> MIROperand {
                 const auto regClass = ctx.registerInfo->getAllocationClass(operand.type());
                 auto& q = allocationQueue[regClass];
                 MIROperand isaReg;
-                if(auto hintIter = isaRegHint.find(operand); hintIter != isaRegHint.end() && selector.isFree(hintIter->second)) {
+
+                const auto getFreeRegister = [&] {
+                    std::vector<MIROperand> temp;
+                    do {
+                        auto reg = selector.getFreeRegister(operand.type());
+                        if(reg.isUnused()) {
+                            for(auto op : temp)
+                                selector.markAsDiscarded(op);
+                            return MIROperand{};
+                        }
+                        if(isProtected(reg)) {
+                            temp.push_back(reg);
+                            selector.markAsUsed(reg);
+                        } else {
+                            for(auto op : temp)
+                                selector.markAsDiscarded(op);
+                            return reg;
+                        }
+                    } while(true);
+                };
+
+                if(auto hintIter = isaRegHint.find(operand);
+                   hintIter != isaRegHint.end() && selector.isFree(hintIter->second) && !isProtected(hintIter->second)) {
                     isaReg = hintIter->second;
-                } else if(auto reg = selector.getFreeRegister(operand.type()); !reg.isUnused()) {
+                } else if(auto reg = getFreeRegister(); !reg.isUnused()) {
                     isaReg = reg;
                 } else {
                     // evict
+                    assert(!q.empty());
                     isaReg = q.front();
-                    while(protect.count(isaReg)) {
+                    while(isProtected(isaReg)) {
                         assert(q.size() != 1);
                         q.pop();
                         q.push(isaReg);
@@ -181,16 +220,12 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                     }
                     q.pop();
                     selector.markAsDiscarded(isaReg);
-                    if(auto it = physMap.find(isaReg); it != physMap.cend())
-                        evictVReg(it->second);
                 }
+                if(auto it = physMap.find(isaReg); it != physMap.cend())
+                    evictVReg(it->second);
+                assert(!isProtected(isaReg));
 
                 // std::cerr << (operand.reg() - virtualRegBegin) << " -> " << isaReg.reg() << std::endl;
-
-                // if(auto it = isaRegStackMap.find(isaReg); it != isaRegStackMap.cend()) {
-                //     // spill arguments/retval to stack
-                //     instructions.insert(iter, MIRInst{ InstStoreRegToStack }.setOperand<0>(isaReg).setOperand<1>(it->second));
-                // }
 
                 q.push(isaReg);
                 physMap[isaReg] = operand;
@@ -199,12 +234,12 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             const auto use = [&](MIROperand& op) {
-                // if(auto it = isaRegStackMap.find(op); it != isaRegStackMap.cend()) {
-                //     // load arguments/retval from stack
-                //     instructions.insert(iter, MIRInst{ InstLoadRegFromStack }.setOperand<0>(op).setOperand<1>(it->second));
-                // }
-                if(!isOperandVReg(op))
+                if(!isOperandVReg(op)) {
+                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                        underRenamedISAReg.erase(op);
+                    }
                     return;
+                }
 
                 auto& map = getDataMap(op);
                 MIROperand stackStorage;
@@ -227,8 +262,14 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
             };
 
             const auto def = [&](MIROperand& op) {
-                if(!isOperandVReg(op))
+                if(!isOperandVReg(op)) {
+                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                        protectedLockedISAReg.insert(op);
+                        if(auto it = physMap.find(op); it != physMap.cend())
+                            evictVReg(it->second);
+                    }
                     return;
+                }
 
                 if(stackMap.count(op))
                     dirtyVRegs.insert(op);
@@ -288,6 +329,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 }
                 for(auto v : savedVRegs)
                     evictVReg(v);
+                protectedLockedISAReg.clear();
+                collectUnderRenamedISARegs(next);
             }
             protect.clear();
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {

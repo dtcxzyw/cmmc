@@ -221,6 +221,17 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
     }
 
     {
+        auto& args = mfunc.args();
+        for(auto arg : func->args()) {
+            auto vreg = ctx.newVReg(arg->getType());
+            ctx.addOperand(arg, vreg);
+            args.push_back(vreg);
+        }
+        ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
+        codeGenCtx.frameInfo.emitPrologue(mfunc, ctx);
+    }
+
+    {
         ctx.setCurrentBasicBlock(blockMap.at(func->entryBlock()));
         for(auto& inst : func->entryBlock()->instructions()) {
             if(inst.getInstID() == InstructionID::Alloc) {
@@ -235,17 +246,6 @@ static void lowerToMachineFunction(MIRFunction& mfunc, Function* func, CodeGenCo
             } else
                 break;
         }
-    }
-
-    {
-        auto& args = mfunc.args();
-        for(auto arg : func->args()) {
-            auto vreg = ctx.newVReg(arg->getType());
-            ctx.addOperand(arg, vreg);
-            args.push_back(vreg);
-        }
-        ctx.setCurrentBasicBlock(mfunc.blocks().front().get());
-        codeGenCtx.frameInfo.emitPrologue(mfunc, ctx);
     }
 
     for(auto block : dom.blocks()) {
@@ -464,11 +464,11 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 7: register allocation
+        ctx.flags.preRA = false;
         if(ctx.registerInfo) {
             Stage stage{ "Register allocation"sv };
             assignRegisters(mfunc, ctx, infoIPRA);  // vr -> GPR/FPR/Stack
             // dumpFunc(mfunc);
-            ctx.flags.preRA = false;
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 8: legalize stack objects, stack -> sp

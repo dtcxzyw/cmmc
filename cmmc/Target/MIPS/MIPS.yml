@@ -217,7 +217,7 @@ InstInfo:
 
   MoveGPR:
     Format: "move $Rd:GPR[Def], $Rs:GPR[Use]"
-    Flag: [RegDef, RegCopy]
+    Flag: [RegCopy]
 
   # Conditional Move Instructions
   MOVN:

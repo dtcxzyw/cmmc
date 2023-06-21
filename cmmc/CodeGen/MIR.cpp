@@ -63,7 +63,7 @@ void MIRFunction::dump(std::ostream& out, const CodeGenContext& ctx) const {
     out << ":\nstack objects:\n";
     uint32_t idx = 0;
     for(auto& [ref, obj] : mStackObjects) {
-        out << "  s" << (ref.reg() ^ stackObjectBegin) << " size = " << obj.size << " align = " << obj.alignment
+        out << "  so" << (ref.reg() ^ stackObjectBegin) << " size = " << obj.size << " align = " << obj.alignment
             << " offset = " << obj.offset << " usage = " << enumName(obj.usage) << '\n';
         ++idx;
     }

@@ -280,7 +280,7 @@ InstInfo:
 
   MoveGPR:
     Format: "mv $Rd:GPR[Def], $Rs1:GPR[Use]"
-    Flag: [RegDef, RegCopy]
+    Flag: [RegCopy]
 
 InstSelection:
   # Constants

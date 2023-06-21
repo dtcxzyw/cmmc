@@ -131,9 +131,11 @@ public:
         if(classId == 0) {
             // prefer caller-saved registers
             static std::vector<uint32_t> list{
+                // $r0-$r3
+                ARM::R0, ARM::R1, ARM::R2, ARM::R3,  //
                 // $r4-$r11
-                ARM::R4, ARM::R5,  ARM::R6,  ARM::R7, ARM::R8,  //
-                ARM::R9, ARM::R10, ARM::R11,                    //
+                ARM::R4, ARM::R5, ARM::R6, ARM::R7, ARM::R8,  //
+                ARM::R9, ARM::R10, ARM::R11,                  //
             };
             return list;
         }
