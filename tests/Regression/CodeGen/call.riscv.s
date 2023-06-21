@@ -8,6 +8,7 @@ caller_cmmc_noinline:
 	addi sp, sp, -8
 	sd ra, 0(sp)
 	jal callee_cmmc_noinline
+	mv a1, a0
 	ld ra, 0(sp)
 	addi sp, sp, 8
 	ret

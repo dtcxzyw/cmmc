@@ -3,7 +3,6 @@
 .globl beqz
 beqz:
 	addiu $sp, $sp, -4
-	move $t0, $a1
 	sw $a1, 0($sp)
 	bne $a0, $zero, label3
 	nop
@@ -15,356 +14,329 @@ label3:
 .globl beqi
 beqi:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	li $t1, 1
+	li $t0, 1
 	sw $a1, 0($sp)
-	bne $a0, $t1, label13
+	bne $a0, $t0, label14
 	nop
 	sw $zero, 0($a1)
-label13:
+label14:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl beq
 beq:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	sw $a2, 0($sp)
-	bne $a0, $a1, label26
+	bne $a0, $a1, label28
 	nop
 	sw $zero, 0($a2)
-label26:
+label28:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bnez
 bnez:
 	addiu $sp, $sp, -4
-	move $t0, $a1
 	sw $a1, 0($sp)
-	beq $a0, $zero, label38
+	beq $a0, $zero, label42
 	nop
 	sw $zero, 0($a1)
-label38:
+label42:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bnei
 bnei:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	li $t1, 1
+	li $t0, 1
 	sw $a1, 0($sp)
-	beq $a0, $t1, label48
+	beq $a0, $t0, label53
 	nop
 	sw $zero, 0($a1)
-label48:
+label53:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bne
 bne:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	sw $a2, 0($sp)
-	beq $a0, $a1, label61
+	beq $a0, $a1, label67
 	nop
 	sw $zero, 0($a2)
-label61:
+label67:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bltz
 bltz:
 	addiu $sp, $sp, -4
-	move $t0, $a1
 	sw $a1, 0($sp)
-	bgez $a0, label73
+	bgez $a0, label81
 	nop
 	sw $zero, 0($a1)
-label73:
+label81:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl blti1
 blti1:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -1
+	addiu $t0, $a0, -1
 	sw $a1, 0($sp)
-	bgez $t1, label84
+	bgez $t0, label93
 	nop
 	sw $zero, 0($a1)
-label84:
+label93:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl blti2
 blti2:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -10
+	addiu $t0, $a0, -10
 	sw $a1, 0($sp)
-	bgez $t1, label96
+	bgez $t0, label106
 	nop
 	sw $zero, 0($a1)
-label96:
+label106:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl blt
 blt:
 	addiu $sp, $sp, -4
-	move $t0, $a2
-	subu $t1, $a0, $a1
+	subu $t0, $a0, $a1
 	sw $a2, 0($sp)
-	bgez $t1, label109
+	bgez $t0, label120
 	nop
 	sw $zero, 0($a2)
-label109:
+label120:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgez
 bgez:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, 1
+	addiu $t0, $a0, 1
 	sw $a1, 0($sp)
-	blez $t1, label123
+	blez $t0, label136
 	nop
 	sw $zero, 0($a1)
-label123:
+label136:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgei1
 bgei1:
 	addiu $sp, $sp, -4
-	move $t0, $a1
 	sw $a1, 0($sp)
-	blez $a0, label135
+	blez $a0, label149
 	nop
 	sw $zero, 0($a1)
-label135:
+label149:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgei2
 bgei2:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -9
+	addiu $t0, $a0, -9
 	sw $a1, 0($sp)
-	blez $t1, label145
+	blez $t0, label160
 	nop
 	sw $zero, 0($a1)
-label145:
+label160:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bge
 bge:
 	addiu $sp, $sp, -4
-	move $t0, $a2
-	subu $t1, $a0, $a1
+	subu $t0, $a0, $a1
 	sw $a2, 0($sp)
-	bltz $t1, label157
+	bltz $t0, label173
 	nop
 	sw $zero, 0($a2)
-label157:
+label173:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgtz
 bgtz:
 	addiu $sp, $sp, -4
-	move $t0, $a1
 	sw $a1, 0($sp)
-	blez $a0, label170
+	blez $a0, label188
 	nop
 	sw $zero, 0($a1)
-label170:
+label188:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgti1
 bgti1:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, 1
+	addiu $t0, $a0, 1
 	sw $a1, 0($sp)
-	blez $t1, label180
+	blez $t0, label199
 	nop
 	sw $zero, 0($a1)
-label180:
+label199:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgti2
 bgti2:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -10
+	addiu $t0, $a0, -10
 	sw $a1, 0($sp)
-	blez $t1, label192
+	blez $t0, label212
 	nop
 	sw $zero, 0($a1)
-label192:
+label212:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bgt
 bgt:
 	addiu $sp, $sp, -4
-	move $t0, $a2
-	subu $t1, $a0, $a1
+	subu $t0, $a0, $a1
 	sw $a2, 0($sp)
-	blez $t1, label204
+	blez $t0, label225
 	nop
 	sw $zero, 0($a2)
-label204:
+label225:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl blez
 blez:
 	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -1
+	addiu $t0, $a0, -1
 	sw $a1, 0($sp)
-	bgez $t1, label218
-	nop
-	sw $zero, 0($a1)
-label218:
-	addiu $sp, $sp, 4
-	jr $ra
-	nop
-.globl blei1
-blei1:
-	addiu $sp, $sp, -4
-	move $t0, $a1
-	sw $a1, 0($sp)
-	bgez $a0, label230
-	nop
-	sw $zero, 0($a1)
-label230:
-	addiu $sp, $sp, 4
-	jr $ra
-	nop
-.globl blei2
-blei2:
-	addiu $sp, $sp, -4
-	move $t0, $a1
-	addiu $t1, $a0, -11
-	sw $a1, 0($sp)
-	bgez $t1, label241
+	bgez $t0, label241
 	nop
 	sw $zero, 0($a1)
 label241:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
+.globl blei1
+blei1:
+	addiu $sp, $sp, -4
+	sw $a1, 0($sp)
+	bgez $a0, label254
+	nop
+	sw $zero, 0($a1)
+label254:
+	addiu $sp, $sp, 4
+	jr $ra
+	nop
+.globl blei2
+blei2:
+	addiu $sp, $sp, -4
+	addiu $t0, $a0, -11
+	sw $a1, 0($sp)
+	bgez $t0, label266
+	nop
+	sw $zero, 0($a1)
+label266:
+	addiu $sp, $sp, 4
+	jr $ra
+	nop
 .globl ble
 ble:
 	addiu $sp, $sp, -4
-	move $t0, $a2
-	subu $t1, $a0, $a1
+	subu $t0, $a0, $a1
 	sw $a2, 0($sp)
-	bgtz $t1, label254
+	bgtz $t0, label280
 	nop
 	sw $zero, 0($a2)
-label254:
+label280:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bfeq
 bfeq:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.eq.s $f12, $f14
-	li $t1, 1
-	movt $t1, $zero, $fcc0
+	li $t0, 1
+	movt $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label267
+	bne $t0, $zero, label295
 	nop
 	sw $zero, 0($a2)
-label267:
+label295:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bfne
 bfne:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.eq.s $f12, $f14
-	li $t1, 1
-	movf $t1, $zero, $fcc0
+	li $t0, 1
+	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label279
+	bne $t0, $zero, label309
 	nop
 	sw $zero, 0($a2)
-label279:
+label309:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bflt
 bflt:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.ult.s $f12, $f14
-	li $t1, 1
-	movt $t1, $zero, $fcc0
+	li $t0, 1
+	movt $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label291
+	bne $t0, $zero, label323
 	nop
 	sw $zero, 0($a2)
-label291:
+label323:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bfle
 bfle:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.ule.s $f12, $f14
-	li $t1, 1
-	movt $t1, $zero, $fcc0
+	li $t0, 1
+	movt $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label303
+	bne $t0, $zero, label337
 	nop
 	sw $zero, 0($a2)
-label303:
+label337:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bfge
 bfge:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.olt.s $f12, $f14
-	li $t1, 1
-	movf $t1, $zero, $fcc0
+	li $t0, 1
+	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label315
+	bne $t0, $zero, label351
 	nop
 	sw $zero, 0($a2)
-label315:
+label351:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl bfgt
 bfgt:
 	addiu $sp, $sp, -4
-	move $t0, $a2
 	c.ole.s $f12, $f14
-	li $t1, 1
-	movf $t1, $zero, $fcc0
+	li $t0, 1
+	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t1, $zero, label327
+	bne $t0, $zero, label365
 	nop
 	sw $zero, 0($a2)
-label327:
+label365:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop

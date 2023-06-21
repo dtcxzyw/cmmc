@@ -90,8 +90,7 @@ label42:
 label5:
 	lw $t0, 24($sp)
 	lw $t1, 28($sp)
-	addu $t2, $t0, $t1
-	move $a0, $t2
+	addu $a0, $t0, $t1
 	jal write
 	nop
 	move $v0, $zero

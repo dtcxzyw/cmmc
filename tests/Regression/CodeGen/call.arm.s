@@ -12,6 +12,7 @@ caller_cmmc_noinline:
 	push { lr }
 	sub sp, sp, #4
 	bl callee_cmmc_noinline
+	mov r1, r0
 	add sp, sp, #4
 	pop { pc }
 .globl ret_forwarding

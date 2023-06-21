@@ -26,96 +26,87 @@ write:
     jr $ra
     nop
 hanoi:
-	addiu $sp, $sp, -64
-	sw $s0, 60($sp)
-	sw $s1, 52($sp)
-	sw $ra, 44($sp)
-	move $t0, $a0
-	move $t1, $a1
-	move $t2, $a2
-	move $t3, $a3
-	li $t4, 1
-	sw $a3, 20($sp)
-	sw $a2, 24($sp)
-	sw $a1, 28($sp)
-	sw $a0, 32($sp)
-	bne $a0, $t4, label14
+	addiu $sp, $sp, -56
+	sw $ra, 52($sp)
+	move $t0, $a3
+	li $t1, 1
+	sw $a3, 28($sp)
+	sw $a2, 32($sp)
+	sw $a1, 36($sp)
+	sw $a0, 40($sp)
+	bne $a0, $t1, label14
 	nop
 	move $t0, $a1
-	sw $a1, 48($sp)
+	sw $a1, 20($sp)
 	b label2
 	nop
 label14:
-	lw $t0, 32($sp)
-	move $t1, $t0
-	lw $t2, 28($sp)
-	move $t3, $t2
-	lw $t4, 24($sp)
-	move $t5, $t4
-	sw $t4, 36($sp)
-	sw $t2, 40($sp)
-	sw $t0, 16($sp)
+	lw $a0, 40($sp)
+	move $t0, $a0
+	lw $a1, 36($sp)
+	move $t1, $a1
+	lw $a2, 32($sp)
+	move $a3, $a2
+	sw $a2, 44($sp)
+	sw $a1, 48($sp)
+	sw $a0, 24($sp)
 	b label4
 	nop
 label2:
 	li $t0, 10000
-	lw $t1, 48($sp)
+	lw $t1, 20($sp)
 	mult $t1, $t0
 	mflo $t2
-	lw $t3, 20($sp)
-	addu $t4, $t3, $t2
-	move $a0, $t4
+	lw $a2, 28($sp)
+	addu $a0, $a2, $t2
 	jal write
 	nop
 	move $v0, $zero
-	lw $ra, 44($sp)
-	lw $s1, 52($sp)
-	lw $s0, 60($sp)
-	addiu $sp, $sp, 64
+	lw $ra, 52($sp)
+	addiu $sp, $sp, 56
 	jr $ra
 	nop
 label4:
-	lw $t0, 16($sp)
-	addiu $t1, $t0, -1
-	move $a0, $t1
-	lw $t2, 40($sp)
-	move $a1, $t2
-	lw $t3, 20($sp)
-	move $a2, $t3
-	lw $t4, 36($sp)
-	move $a3, $t4
-	sw $t1, 56($sp)
+	lw $t0, 24($sp)
+	addiu $a0, $t0, -1
+	sw $a0, 16($sp)
+	lw $t1, 48($sp)
+	move $a1, $t1
+	lw $t2, 28($sp)
+	move $a2, $t2
+	lw $t3, 44($sp)
+	move $a3, $t3
 	jal hanoi
 	nop
-	li $t5, 10000
-	lw $t6, 40($sp)
-	mult $t6, $t5
-	mflo $t7
-	lw $t8, 20($sp)
-	addu $t9, $t8, $t7
-	move $a0, $t9
+	li $t4, 10000
+	lw $a1, 48($sp)
+	mult $a1, $t4
+	mflo $t5
+	lw $a2, 28($sp)
+	addu $t6, $a2, $t5
+	move $a0, $t6
 	jal write
 	nop
-	li $s0, 1
-	lw $s1, 56($sp)
-	bne $s1, $s0, label26
+	li $t7, 1
+	lw $t8, 16($sp)
+	bne $t8, $t7, label26
 	nop
-	lw $t0, 36($sp)
-	move $t1, $t0
-	sw $t0, 48($sp)
+	lw $a3, 44($sp)
+	move $t0, $a3
+	sw $a3, 20($sp)
 	b label2
 	nop
 label26:
-	lw $t0, 56($sp)
-	move $t1, $t0
-	lw $t2, 40($sp)
-	move $t3, $t2
-	lw $t4, 36($sp)
-	move $t2, $t4
-	move $t4, $t3
-	sw $t3, 36($sp)
-	sw $t2, 40($sp)
-	sw $t0, 16($sp)
+	lw $a0, 16($sp)
+	move $t0, $a0
+	lw $a1, 48($sp)
+	move $t1, $a1
+	lw $a3, 44($sp)
+	move $a1, $a3
+	move $a3, $t1
+	sw $t1, 44($sp)
+	sw $a1, 48($sp)
+	sw $a0, 24($sp)
 	b label4
 	nop
 .globl main

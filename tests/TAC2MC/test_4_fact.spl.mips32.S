@@ -31,33 +31,18 @@ main:
 	sw $ra, 48($sp)
 	jal read
 	nop
-	move $t0, $v0
-	addiu $t1, $v0, -1
+	addiu $t0, $v0, -1
 	sw $v0, 40($sp)
-	blez $t1, label15
+	blez $t0, label15
 	nop
 	li $t0, 1
-	move $t1, $v0
 	bne $v0, $t0, label19
 	nop
-	b label18
+	b label47
 	nop
 label15:
-	li $t0, 1
-	sw $t0, 16($sp)
-	b label9
-	nop
-label18:
-	lw $t0, 40($sp)
-	move $t1, $t0
-	li $t2, 1
-	sw $t2, 44($sp)
-	sw $t0, 24($sp)
-	move $t1, $t2
-	mult $t0, $t2
-	mflo $t2
-	move $t3, $t2
-	sw $t2, 16($sp)
+	li $a0, 1
+	sw $a0, 16($sp)
 label9:
 	lw $t0, 16($sp)
 	move $a0, $t0
@@ -68,14 +53,27 @@ label9:
 	addiu $sp, $sp, 56
 	jr $ra
 	nop
+label47:
+	lw $v0, 40($sp)
+	move $t0, $v0
+	li $t1, 1
+	sw $t1, 44($sp)
+	sw $v0, 24($sp)
+	mult $v0, $t1
+	mflo $t2
+	move $a0, $t2
+	sw $t2, 16($sp)
+	b label9
+	nop
 label19:
-	lw $t0, 40($sp)
-	move $t1, $t0
-	li $t2, 1
-	sw $t2, 32($sp)
-	sw $t0, 28($sp)
-	addiu $t1, $t0, -1
-	mult $t0, $t2
+	lw $v0, 40($sp)
+	move $t0, $v0
+	li $t1, 1
+	sw $t1, 32($sp)
+	sw $v0, 28($sp)
+	addiu $t1, $v0, -1
+	lw $t2, 32($sp)
+	mult $v0, $t2
 	mflo $t3
 	li $t4, 1
 	sw $t3, 20($sp)
@@ -92,7 +90,7 @@ label25:
 	move $t1, $t2
 	mult $t0, $t2
 	mflo $t2
-	move $t3, $t2
+	move $a0, $t2
 	sw $t2, 16($sp)
 	b label9
 	nop

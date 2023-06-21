@@ -10,81 +10,72 @@ arr:
 .text
 .globl load
 load:
-	slliw t1, a1, 2
-	add t2, a0, t1
-	lw t3, 0(t2)
-	mv a0, t3
+	slliw a2, a1, 2
+	add a3, a0, a2
+	lw a4, 0(a3)
+	mv a0, a4
 	ret
 .globl load_byte
 load_byte:
-	add t1, a0, a1
-	lb t2, 0(t1)
-	mv a0, t2
+	add a2, a0, a1
+	lb a3, 0(a2)
+	mv a0, a3
 	ret
 .globl load_float
 load_float:
-	slliw t1, a1, 2
-	add t2, a0, t1
-	flw f0, 0(t2)
-	fmv.s f10, f0
+	slliw a2, a1, 2
+	add a3, a0, a2
+	flw f10, 0(a3)
 	ret
 .globl store
 store:
-	slliw t1, a1, 2
-	add t2, a0, t1
-	sw a2, 0(t2)
+	slliw a3, a1, 2
+	add a4, a0, a3
+	sw a2, 0(a4)
 	ret
 .globl store_float
 store_float:
-	slliw t1, a1, 2
-	add t2, a0, t1
-	fsw f12, 0(t2)
+	slliw a2, a1, 2
+	add a3, a0, a2
+	fsw f12, 0(a3)
 	ret
 .globl gep_const
 gep_const:
-	lw t1, 12(a0)
-	mv a0, t1
+	lw a1, 12(a0)
+	mv a0, a1
 	ret
 .globl gep1
 gep1:
-	slliw t1, a1, 2
-	add t2, a0, t1
-	lw t3, 0(t2)
-	mv a0, t3
+	slliw a2, a1, 2
+	add a3, a0, a2
+	lw a4, 0(a3)
+	mv a0, a4
 	ret
 .globl gep2
 gep2:
-	addiw t1, a1, 3
-	slliw t2, t1, 2
-	add t3, a0, t2
-	lw t4, 0(t3)
-	mv a0, t4
+	addiw a2, a1, 3
+	slliw a3, a2, 2
+	add a4, a0, a3
+	lw a5, 0(a4)
+	mv a0, a5
 	ret
 .globl gepseq
 gepseq:
-	addi sp, sp, -24
-	sd s0, 16(sp)
-	sd s1, 8(sp)
-	sd s2, 0(sp)
-	slliw t1, a1, 2
-	add t2, a0, t1
-	lw t3, 0(t2)
-	lw t4, 4(t2)
-	lw t5, 8(t2)
-	lw t6, 12(t2)
-	addw s0, t3, t4
-	addw s1, s0, t5
-	addw s2, s1, t6
-	mv a0, s2
-	ld s2, 0(sp)
-	ld s1, 8(sp)
-	ld s0, 16(sp)
-	addi sp, sp, 24
+	slliw a2, a1, 2
+	add a3, a0, a2
+	lw a4, 0(a3)
+	lw a5, 4(a3)
+	lw t1, 8(a3)
+	lw t2, 12(a3)
+	addw t3, a4, a5
+	addw t4, t3, t1
+	addw t5, t4, t2
+	mv a0, t5
 	ret
 .globl lb
 lb:
-	lb t1, 1(a0)
-	mv a0, t1
+	lb a1, 1(a0)
+	mv a0, a1
 	ret
 .globl sb
 sb:
@@ -92,18 +83,18 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel114:
-	auipc t1, %pcrel_hi(y)
-	lw t2, %pcrel_lo(pcrel114)(t1)
-	mv a0, t2
+pcrel133:
+	auipc a0, %pcrel_hi(y)
+	lw a1, %pcrel_lo(pcrel133)(a0)
+	mv a0, a1
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel127:
-	auipc t1, %pcrel_hi(arr)
-	addi t2, t1, %pcrel_lo(pcrel127)
-	slli t3, a0, 2
-	add t4, t2, t3
-	lw t5, 0(t4)
-	mv a0, t5
+pcrel147:
+	auipc a1, %pcrel_hi(arr)
+	addi a2, a1, %pcrel_lo(pcrel147)
+	slli a3, a0, 2
+	add a4, a2, a3
+	lw a5, 0(a4)
+	mv a0, a5
 	ret

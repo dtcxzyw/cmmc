@@ -6,131 +6,95 @@
 .fpu neon
 .globl add_imm
 add_imm:
-	push { r4 }
-	add r4, r0, #1
-	mov r0, r4
-	pop { r4 }
+	add r1, r0, #1
+	mov r0, r1
 	bx lr
 .globl add_large_imm
 add_large_imm:
-	push { r4 }
-	add r4, r0, #262144
-	mov r0, r4
-	pop { r4 }
+	add r1, r0, #262144
+	mov r0, r1
 	bx lr
 .globl add_reg
 add_reg:
-	push { r4 }
-	add r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	add r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl and_imm
 and_imm:
-	push { r4 }
-	and r4, r0, #1
-	mov r0, r4
-	pop { r4 }
+	and r1, r0, #1
+	mov r0, r1
 	bx lr
 .globl and_large_imm
 and_large_imm:
-	push { r4 }
-	and r4, r0, #262144
-	mov r0, r4
-	pop { r4 }
+	and r1, r0, #262144
+	mov r0, r1
 	bx lr
 .globl and_reg
 and_reg:
-	push { r4 }
-	and r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	and r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl or_imm
 or_imm:
-	push { r4 }
-	orr r4, r0, #1
-	mov r0, r4
-	pop { r4 }
+	orr r1, r0, #1
+	mov r0, r1
 	bx lr
 .globl or_large_imm
 or_large_imm:
-	push { r4 }
-	orr r4, r0, #262144
-	mov r0, r4
-	pop { r4 }
+	orr r1, r0, #262144
+	mov r0, r1
 	bx lr
 .globl or_reg
 or_reg:
-	push { r4 }
-	orr r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	orr r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl xor_imm
 xor_imm:
-	push { r4 }
-	eor r4, r0, #1
-	mov r0, r4
-	pop { r4 }
+	eor r1, r0, #1
+	mov r0, r1
 	bx lr
 .globl xor_large_imm
 xor_large_imm:
-	push { r4 }
-	eor r4, r0, #262144
-	mov r0, r4
-	pop { r4 }
+	eor r1, r0, #262144
+	mov r0, r1
 	bx lr
 .globl xor_reg
 xor_reg:
-	push { r4 }
-	eor r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	eor r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl sub_imm
 sub_imm:
-	push { r4 }
-	sub r4, r0, #1
-	mov r0, r4
-	pop { r4 }
+	sub r1, r0, #1
+	mov r0, r1
 	bx lr
 .globl sub_inverted_imm
 sub_inverted_imm:
-	push { r4, r5 }
-	mov r4, #1
-	sub r5, r4, r0
-	mov r0, r5
-	pop { r4, r5 }
+	mov r1, #1
+	sub r2, r1, r0
+	mov r0, r2
 	bx lr
 .globl sub_reg
 sub_reg:
-	push { r4 }
-	sub r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	sub r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl mul_imm
 mul_imm:
-	push { r4, r5 }
-	mov r4, #3
-	mul r5, r0, r4
-	mov r0, r5
-	pop { r4, r5 }
+	mov r1, #3
+	mul r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl mul_to_shl
 mul_to_shl:
-	push { r4 }
-	lsl r4, r0, #2
-	mov r0, r4
-	pop { r4 }
+	lsl r1, r0, #2
+	mov r0, r1
 	bx lr
 .globl mul_reg
 mul_reg:
-	push { r4 }
-	mul r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	mul r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl div_imm
 div_imm:
@@ -138,6 +102,7 @@ div_imm:
 	sub sp, sp, #4
 	mov r1, #3
 	bl __aeabi_idiv
+	mov r1, r0
 	add sp, sp, #4
 	pop { pc }
 .globl div_reg
@@ -145,6 +110,7 @@ div_reg:
 	push { lr }
 	sub sp, sp, #4
 	bl __aeabi_idiv
+	mov r2, r0
 	add sp, sp, #4
 	pop { pc }
 .globl mod_imm
@@ -161,36 +127,29 @@ mod_reg:
 	push { lr }
 	sub sp, sp, #4
 	bl __aeabi_idivmod
+	mov r2, r1
 	mov r0, r1
 	add sp, sp, #4
 	pop { pc }
 .globl shl_imm
 shl_imm:
-	push { r4 }
-	lsl r4, r0, #3
-	mov r0, r4
-	pop { r4 }
+	lsl r1, r0, #3
+	mov r0, r1
 	bx lr
 .globl shl_reg
 shl_reg:
-	push { r4 }
-	lsl r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	lsl r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl ashr_imm
 ashr_imm:
-	push { r4 }
-	asr r4, r0, #3
-	mov r0, r4
-	pop { r4 }
+	asr r1, r0, #3
+	mov r0, r1
 	bx lr
 .globl ashr_reg
 ashr_reg:
-	push { r4 }
-	asr r4, r0, r1
-	mov r0, r4
-	pop { r4 }
+	asr r2, r0, r1
+	mov r0, r2
 	bx lr
 .globl s2f
 s2f:
@@ -200,12 +159,9 @@ s2f:
 	bx lr
 .globl f2s
 f2s:
-	push { r4 }
 	vmov s0, r0
 	vcvt.s32.f32 s1, s0
-	vmov r4, s1
-	mov r0, r4
-	pop { r4 }
+	vmov r0, s1
 	bx lr
 .globl fadd
 fadd:
@@ -223,6 +179,8 @@ fadd_imm:
 	bx lr
 .globl fadd_identity
 fadd_identity:
+	vmov s0, r0
+	vmov r0, s0
 	bx lr
 .globl fsub
 fsub:
@@ -273,13 +231,11 @@ fneg:
 	bx lr
 .globl s2f2s
 s2f2s:
-	push { r4 }
 	vmov s0, r0
 	vcvt.f32.s32 s1, s0
 	vcvt.s32.f32 s2, s1
-	vmov r4, s2
-	mov r0, r4
-	pop { r4 }
+	vmov r1, s2
+	mov r0, r1
 	bx lr
 .globl f2s2f
 f2s2f:
@@ -307,10 +263,7 @@ large_imm1:
 	bx lr
 .globl fp_zero
 fp_zero:
-	push { r4 }
-	mov r4, #0
-	mov r0, r4
-	pop { r4 }
+	mov r0, #0
 	bx lr
 .globl fp_imm0
 fp_imm0:
@@ -319,9 +272,6 @@ fp_imm0:
 	bx lr
 .globl fp_imm1
 fp_imm1:
-	push { r4 }
-	movw r4, #4058
-	movt r4, #16457
-	mov r0, r4
-	pop { r4 }
+	movw r0, #4058
+	movt r0, #16457
 	bx lr

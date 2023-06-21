@@ -2,104 +2,104 @@ FUNCTION main :
 DEC x5 8
 v3 := #0
 v7 := v3 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
-LABEL label24 :
+LABEL label25 :
 v3 := v7
 v7 := v7 + #1
-v8 := v3 * #4
-v9 := &x5 + v8
-v10 := v3 * #2
-v11 := v10 + #1
-*v9 := v11
-WRITE v11
+v9 := v3 * #4
+v10 := &x5 + v9
+v11 := v3 * #2
+v12 := v11 + #1
+*v10 := v12
+WRITE v12
 IF v7 >= #2 GOTO label4
-GOTO label24
+GOTO label25
 LABEL label4 :
 RETURN #0

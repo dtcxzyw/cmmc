@@ -31,7 +31,6 @@ main:
 	sw $ra, 20($sp)
 	jal read
 	nop
-	move $t0, $v0
 	sw $v0, 16($sp)
 	blez $v0, label9
 	nop
@@ -41,10 +40,9 @@ main:
 	b label3
 	nop
 label9:
-	lw $t0, 16($sp)
-	slti $t1, $t0, 0
-	subu $t2, $zero, $t1
-	move $a0, $t2
+	lw $v0, 16($sp)
+	slti $t0, $v0, 0
+	subu $a0, $zero, $t0
 	jal write
 	nop
 label3:

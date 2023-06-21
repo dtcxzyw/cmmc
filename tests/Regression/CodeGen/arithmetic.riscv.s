@@ -5,217 +5,215 @@ __cmmc_fp_constant_pool:
 .text
 .globl add_imm
 add_imm:
-	addiw t1, a0, 1
-	mv a0, t1
+	addiw a1, a0, 1
+	mv a0, a1
 	ret
 .globl add_large_imm
 add_large_imm:
-	li t1, 262144
-	addw t2, a0, t1
-	mv a0, t2
+	li a1, 262144
+	addw a2, a0, a1
+	mv a0, a2
 	ret
 .globl add_reg
 add_reg:
-	addw t1, a0, a1
-	mv a0, t1
+	addw a2, a0, a1
+	mv a0, a2
 	ret
 .globl and_imm
 and_imm:
-	andi t1, a0, 1
-	mv a0, t1
+	andi a1, a0, 1
+	mv a0, a1
 	ret
 .globl and_large_imm
 and_large_imm:
-	li t1, 262144
-	and t2, a0, t1
-	mv a0, t2
+	li a1, 262144
+	and a2, a0, a1
+	mv a0, a2
 	ret
 .globl and_reg
 and_reg:
-	and t1, a0, a1
-	mv a0, t1
+	and a2, a0, a1
+	mv a0, a2
 	ret
 .globl or_imm
 or_imm:
-	ori t1, a0, 1
-	mv a0, t1
+	ori a1, a0, 1
+	mv a0, a1
 	ret
 .globl or_large_imm
 or_large_imm:
-	li t1, 262144
-	or t2, a0, t1
-	mv a0, t2
+	li a1, 262144
+	or a2, a0, a1
+	mv a0, a2
 	ret
 .globl or_reg
 or_reg:
-	or t1, a0, a1
-	mv a0, t1
+	or a2, a0, a1
+	mv a0, a2
 	ret
 .globl xor_imm
 xor_imm:
-	xori t1, a0, 1
-	mv a0, t1
+	xori a1, a0, 1
+	mv a0, a1
 	ret
 .globl xor_large_imm
 xor_large_imm:
-	li t1, 262144
-	xor t2, a0, t1
-	mv a0, t2
+	li a1, 262144
+	xor a2, a0, a1
+	mv a0, a2
 	ret
 .globl xor_reg
 xor_reg:
-	xor t1, a0, a1
-	mv a0, t1
+	xor a2, a0, a1
+	mv a0, a2
 	ret
 .globl sub_imm
 sub_imm:
-	addiw t1, a0, -1
-	mv a0, t1
+	addiw a1, a0, -1
+	mv a0, a1
 	ret
 .globl sub_inverted_imm
 sub_inverted_imm:
-	li t1, 1
-	subw t2, t1, a0
-	mv a0, t2
+	li a1, 1
+	subw a2, a1, a0
+	mv a0, a2
 	ret
 .globl sub_reg
 sub_reg:
-	subw t1, a0, a1
-	mv a0, t1
+	subw a2, a0, a1
+	mv a0, a2
 	ret
 .globl mul_imm
 mul_imm:
-	li t1, 3
-	mulw t2, a0, t1
-	mv a0, t2
+	li a1, 3
+	mulw a2, a0, a1
+	mv a0, a2
 	ret
 .globl mul_to_shl
 mul_to_shl:
-	slliw t1, a0, 2
-	mv a0, t1
+	slliw a1, a0, 2
+	mv a0, a1
 	ret
 .globl mul_reg
 mul_reg:
-	mulw t1, a0, a1
-	mv a0, t1
+	mulw a2, a0, a1
+	mv a0, a2
 	ret
 .globl div_imm
 div_imm:
-	li t1, 3
-	divw t2, a0, t1
-	mv a0, t2
+	li a1, 3
+	divw a2, a0, a1
+	mv a0, a2
 	ret
 .globl div_reg
 div_reg:
-	divw t1, a0, a1
-	mv a0, t1
+	divw a2, a0, a1
+	mv a0, a2
 	ret
 .globl mod_imm
 mod_imm:
-	li t1, 3
-	remw t2, a0, t1
-	mv a0, t2
+	li a1, 3
+	remw a2, a0, a1
+	mv a0, a2
 	ret
 .globl mod_reg
 mod_reg:
-	remw t1, a0, a1
-	mv a0, t1
+	remw a2, a0, a1
+	mv a0, a2
 	ret
 .globl shl_imm
 shl_imm:
-	slliw t1, a0, 3
-	mv a0, t1
+	slliw a1, a0, 3
+	mv a0, a1
 	ret
 .globl shl_reg
 shl_reg:
-	sllw t1, a0, a1
-	mv a0, t1
+	sllw a2, a0, a1
+	mv a0, a2
 	ret
 .globl ashr_imm
 ashr_imm:
-	sraiw t1, a0, 3
-	mv a0, t1
+	sraiw a1, a0, 3
+	mv a0, a1
 	ret
 .globl ashr_reg
 ashr_reg:
-	sraw t1, a0, a1
-	mv a0, t1
+	sraw a2, a0, a1
+	mv a0, a2
 	ret
 .globl s2f
 s2f:
-	fcvt.s.w f0, a0
-	fmv.s f10, f0
+	fcvt.s.w f10, a0
 	ret
 .globl f2s
 f2s:
-	fcvt.w.s t1, f10, rtz
-	mv a0, t1
+	fcvt.w.s a0, f10, rtz
 	ret
 .globl fadd
 fadd:
-	fadd.s f0, f10, f11
-	fmv.s f10, f0
+	fadd.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fadd_imm
 fadd_imm:
-	lui t1, 260096
-	fmv.w.x f0, t1
-	fadd.s f1, f10, f0
-	fmv.s f10, f1
+	lui a0, 260096
+	fmv.w.x f11, a0
+	fadd.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fadd_identity
 fadd_identity:
 	ret
 .globl fsub
 fsub:
-	fsub.s f0, f10, f11
-	fmv.s f10, f0
+	fsub.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fsub_imm
 fsub_imm:
-	lui t1, 260096
-	fmv.w.x f0, t1
-	fsub.s f1, f10, f0
-	fmv.s f10, f1
+	lui a0, 260096
+	fmv.w.x f11, a0
+	fsub.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fmul
 fmul:
-	fmul.s f0, f10, f11
-	fmv.s f10, f0
+	fmul.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fmul_imm
 fmul_imm:
-	fadd.s f0, f10, f10
-	fmv.s f10, f0
+	fadd.s f11, f10, f10
+	fmv.s f10, f11
 	ret
 .globl fdiv
 fdiv:
-	fdiv.s f0, f10, f11
-	fmv.s f10, f0
+	fdiv.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fdiv_imm
 fdiv_imm:
-	lui t1, 258048
-	fmv.w.x f0, t1
-	fmul.s f1, f10, f0
-	fmv.s f10, f1
+	lui a0, 258048
+	fmv.w.x f11, a0
+	fmul.s f12, f10, f11
+	fmv.s f10, f12
 	ret
 .globl fneg
 fneg:
-	fneg.s f0, f10
-	fmv.s f10, f0
+	fneg.s f11, f10
+	fmv.s f10, f11
 	ret
 .globl s2f2s
 s2f2s:
-	fcvt.s.w f0, a0
-	fcvt.w.s t1, f0, rtz
-	mv a0, t1
+	fcvt.s.w f10, a0
+	fcvt.w.s a1, f10, rtz
+	mv a0, a1
 	ret
 .globl f2s2f
 f2s2f:
-	fcvt.w.s t1, f10, rtz
-	fcvt.s.w f0, t1
-	fmv.s f10, f0
+	fcvt.w.s a0, f10, rtz
+	fcvt.s.w f11, a0
+	fmv.s f10, f11
 	ret
 .globl zero
 zero:
@@ -235,20 +233,17 @@ large_imm1:
 	ret
 .globl fp_zero
 fp_zero:
-	fmv.w.x f0, zero
-	fmv.s f10, f0
+	fmv.w.x f10, zero
 	ret
 .globl fp_imm0
 fp_imm0:
-	lui t1, 266240
-	fmv.w.x f0, t1
-	fmv.s f10, f0
+	lui a0, 266240
+	fmv.w.x f10, a0
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel225:
-	auipc t1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi t2, t1, %pcrel_lo(pcrel225)
-	flw f0, 0(t2)
-	fmv.s f10, f0
+pcrel279:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a1, a0, %pcrel_lo(pcrel279)
+	flw f10, 0(a1)
 	ret

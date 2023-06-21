@@ -10,25 +10,23 @@ x:
 .fpu neon
 .globl cse_imm
 cse_imm:
-	push { r4, r5, r6, r7, r8 }
-	mov r4, #10
-	mul r5, r0, r4
-	mul r6, r1, r4
-	eor r7, r2, r6
-	add r8, r5, r7
-	mov r0, r8
-	pop { r4, r5, r6, r7, r8 }
+	push { r4, r5, r6, r7 }
+	mov r3, #10
+	mul r4, r0, r3
+	mul r5, r1, r3
+	eor r6, r2, r5
+	add r7, r4, r6
+	mov r0, r7
+	pop { r4, r5, r6, r7 }
 	bx lr
 .globl cse_global
 cse_global:
-	push { r4, r5, r6, r7 }
-	movw r4, #:lower16:x
-	movt r4, #:upper16:x
-	ldr r5, [r4, #0]
-	ldr r6, [r4, #4]
-	add r7, r5, r6
-	mov r0, r7
-	pop { r4, r5, r6, r7 }
+	movw r0, #:lower16:x
+	movt r0, #:upper16:x
+	ldr r1, [r0, #0]
+	ldr r2, [r0, #4]
+	add r3, r1, r2
+	mov r0, r3
 	bx lr
 .globl cse_fp
 cse_fp:
