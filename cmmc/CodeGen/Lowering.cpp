@@ -680,28 +680,30 @@ static void lower(StoreInst* inst, LoweringContext& ctx) {
                      .setOperand<1>(ctx.mapOperand(inst->getOperand(1))));
 }
 static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
-    std::vector<Value*> dst;
-    std::vector<Value*> src;
-    std::unordered_set<Value*> needStagingRegister;
+    std::vector<MIROperand> dst;
+    std::vector<MIROperand> src;
 
     for(auto& inst : dstBlock->instructions()) {
         if(inst.getInstID() == InstructionID::Phi) {
             const auto phi = inst.as<PhiInst>();
             const auto val = phi->incomings().at(srcBlock)->value;
-            src.push_back(val);
-            if(val->is<PhiInst>() && val->getBlock() == dstBlock) {
-                needStagingRegister.insert(val);
-            }
-            dst.push_back(phi);
+            src.push_back(ctx.mapOperand(val));
+            dst.push_back(ctx.mapOperand(phi));
         } else
             break;
     }
 
     if(!src.empty()) {
+        std::unordered_set<MIROperand, MIROperandHasher> needStagingRegister;
+        std::unordered_set<MIROperand, MIROperandHasher> dstSet(dst.begin(), dst.end());
+        for(auto op : src)
+            if(dstSet.count(op))
+                needStagingRegister.insert(op);
+
         // setup phi values
         // calcuates the best order and create temporary variables for args
 
-        std::unordered_map<Value*, uint32_t> nodeMap;
+        std::unordered_map<MIROperand, uint32_t, MIROperandHasher> nodeMap;
         for(uint32_t idx = 0; idx < dst.size(); ++idx)
             nodeMap.emplace(dst[idx], idx);
 
@@ -751,7 +753,7 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
 
         assert(order.size() == dst.size());
 
-        std::unordered_map<Value*, MIROperand> dirtyRegRemapping;
+        std::unordered_map<MIROperand, MIROperand, MIROperandHasher> dirtyRegRemapping;
 
         for(size_t i = 0; i < dst.size(); ++i) {
             const auto idx = order[i];
@@ -759,17 +761,15 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
             if(auto iter = dirtyRegRemapping.find(src[idx]); iter != dirtyRegRemapping.cend()) {
                 arg = iter->second;  // use copy
             } else
-                arg = ctx.mapOperand(src[idx]);
-            const auto dstArg = ctx.mapOperand(dst[idx]);
+                arg = src[idx];
+            const auto dstArg = dst[idx];
 
             if(arg == dstArg)
                 continue;  // identical copy
 
-            const auto type = src[idx]->getType();
-
             // create copy
             if(needStagingRegister.count(dst[idx])) {
-                const auto intermediate = ctx.newVReg(type);
+                const auto intermediate = ctx.newVReg(src[idx].type());
                 ctx.emitCopy(intermediate, dstArg);  // NOLINT
                 dirtyRegRemapping.emplace(dst[idx], intermediate);
             }
