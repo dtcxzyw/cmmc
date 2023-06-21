@@ -440,7 +440,7 @@ InstSelection:
           VMOV_GPR2FPR:
             Rd: $Src
             Sn: $Intermediate
-            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate) && isOperandVReg($Src)
     Replace:
       InstCopyToReg:
         Dst: $Dst
@@ -453,7 +453,7 @@ InstSelection:
           VMOV_FPR2GPR:
             Sn: $Src
             Rd: $Intermediate
-            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate) && isOperandVReg($Src)
     Replace:
       VMOV:
         Fd: $Dst

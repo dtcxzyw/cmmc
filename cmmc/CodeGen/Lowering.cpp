@@ -881,14 +881,20 @@ static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {
     }
     ctx.addOperand(inst, ptr);
 }
+static void emitCopy(Instruction* inst, LoweringContext& ctx) {
+    auto vreg = ctx.newVReg(inst->getType());
+    const auto src = ctx.mapOperand(inst->getOperand(0));
+    ctx.emitCopy(vreg, src);
+    ctx.addOperand(inst, vreg);
+}
 static void lower(PtrCastInst* inst, LoweringContext& ctx) {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+    emitCopy(inst, ctx);
 }
 static void lower(PtrToIntInst* inst, LoweringContext& ctx) {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+    emitCopy(inst, ctx);
 }
 static void lower(IntToPtrInst* inst, LoweringContext& ctx) {
-    ctx.addOperand(inst, ctx.mapOperand(inst->getOperand(0)));
+    emitCopy(inst, ctx);
 }
 static void lower(ReturnInst* inst, LoweringContext& ctx) {
     ctx.getCodeGenContext().frameInfo.emitReturn(inst, ctx);

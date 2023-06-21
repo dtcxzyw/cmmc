@@ -759,7 +759,9 @@ bool MIPSISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) co
     if(inst->getInstID() == InstructionID::UnsignedTrunc || inst->getInstID() == InstructionID::SignedTrunc) {
         auto src = loweringCtx.mapOperand(inst->getOperand(0));
         if(src.type() == OperandType::Int32 && inst->getType()->isSame(inst->getOperand(0)->getType())) {
-            loweringCtx.addOperand(inst, src);
+            auto dst = loweringCtx.newVReg(OperandType::Int32);
+            loweringCtx.emitCopy(dst, src);
+            loweringCtx.addOperand(inst, dst);
             return true;
         }
     }

@@ -988,7 +988,7 @@ InstSelection:
           MTC1:
             Rt: $Src
             Fs: $Intermediate
-            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate) && isOperandVReg($Src)
     Replace:
       InstCopy:
         Dst: $Dst
@@ -1001,7 +1001,7 @@ InstSelection:
           MFC1:
             Fs: $Src
             Rt: $Intermediate
-            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate)
+            $Predicate: ctx.isSafeToUse($Intermediate, $Intermediate) && ctx.isSafeToUse($Src, $Intermediate) && isOperandVReg($Src)
     Replace:
       InstCopy:
         Dst: $Dst
