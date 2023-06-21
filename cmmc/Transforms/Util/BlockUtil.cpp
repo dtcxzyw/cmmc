@@ -45,12 +45,11 @@ bool reduceBlock(IRBuilder& builder, Block& block, const BlockReducer& reducer) 
         // block.dump(std::cerr, HighlightInst{ &inst });
         builder.setInsertPoint(&block, iter);
         if(auto value = reducer(&inst)) {
-            /*
-            inst.dumpInst(std::cerr);
-            std::cerr << " => ";
-            value->dumpAsOperand(std::cerr);
-            std::cerr << '\n';
-            */
+            // inst.dumpInst(std::cerr);
+            // std::cerr << " => ";
+            // value->dump(std::cerr, Noop{});
+            // std::cerr << '\n';
+
             modified |= inst.replaceWith(value);
         }
     }

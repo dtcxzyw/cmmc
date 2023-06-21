@@ -137,7 +137,13 @@ class Reassociate final : public TransformPass<Function> {
                     reportUnreachable(CMMC_LOCATION());
             }
             assert(reduction);
-            map[reduction] = std::move(map[inst]);
+            assert(reduction != inst);
+            if(reduction->isInstruction() && !map.count(reduction)) {
+                auto reductionInst = reduction->as<Instruction>();
+                if(reductionInst->getInstID() == inst->getInstID()) {
+                    map[reduction] = std::move(map[inst]);
+                }
+            }
             map.erase(inst);
             return reduction;
         });
