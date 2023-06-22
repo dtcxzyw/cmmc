@@ -783,7 +783,8 @@ static void emitBranch(Block* dstBlock, Block* srcBlock, LoweringContext& ctx) {
 }
 static void lower(BranchInst* inst, LoweringContext& ctx) {
     const auto srcBlock = inst->getBlock();
-    const auto emitCondBranch = [&](const MIROperand& lhs, const MIROperand& rhs, uint32_t instID, CompareOp op) {
+    const auto emitCondBranch = [&](const MIROperand& lhs, const MIROperand& rhs, uint32_t instID, CompareOp op,
+                                    bool invertBlock) {
         // beqz %cond, else_label
         // then_label:
         // ...
@@ -807,10 +808,15 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
                          .setOperand<2>(MIROperand::asProb(1.0 - inst->getBranchProb())));
 
         ctx.setCurrentBasicBlock(thenPrepareBlock);
-        emitBranch(inst->getTrueTarget(), srcBlock, ctx);
+        auto thenTarget = inst->getTrueTarget();
+        auto elseTarget = inst->getFalseTarget();
+        if(invertBlock)
+            std::swap(thenTarget, elseTarget);
+
+        emitBranch(thenTarget, srcBlock, ctx);
 
         ctx.setCurrentBasicBlock(elsePrepareBlock);
-        emitBranch(inst->getFalseTarget(), srcBlock, ctx);
+        emitBranch(elseTarget, srcBlock, ctx);
     };
     if(inst->getInstID() == InstructionID::Branch) {
         emitBranch(inst->getTrueTarget(), srcBlock, ctx);
@@ -828,12 +834,16 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
             }
         }();
 
-        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
-                       getInvertedOp(condInst->getOp()));
+        if(id == InstFCmp) {
+            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                           condInst->getOp(), true);
+        } else
+            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                           getInvertedOp(condInst->getOp()), false);
     } else {
         // beqz %cond, false_label
         const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::Equal);
+        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::Equal, false);
     }
 }
 static void lower(UnreachableInst*, LoweringContext& ctx) {

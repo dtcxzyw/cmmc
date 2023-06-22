@@ -209,58 +209,76 @@ bfeq:
 	addi sp, sp, -8
 	feq.s a0, f10, f11
 	sd a2, 0(sp)
-	beq a0, zero, label279
-	sw zero, 0(a2)
+	bne a0, zero, label278
 label279:
 	addi sp, sp, 8
 	ret
+label278:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label279
 .globl bfne
 bfne:
 	addi sp, sp, -8
 	feq.s a0, f10, f11
 	sd a2, 0(sp)
-	bne a0, zero, label294
-	sw zero, 0(a2)
-label294:
+	beq a0, zero, label292
+label293:
 	addi sp, sp, 8
 	ret
+label292:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label293
 .globl bflt
 bflt:
 	addi sp, sp, -8
-	fle.s a0, f11, f10
+	flt.s a0, f10, f11
 	sd a2, 0(sp)
-	bne a0, zero, label308
-	sw zero, 0(a2)
+	bne a0, zero, label307
 label308:
 	addi sp, sp, 8
 	ret
+label307:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label308
 .globl bfle
 bfle:
 	addi sp, sp, -8
-	flt.s a0, f11, f10
+	fle.s a0, f10, f11
 	sd a2, 0(sp)
-	bne a0, zero, label322
-	sw zero, 0(a2)
+	bne a0, zero, label321
 label322:
 	addi sp, sp, 8
 	ret
+label321:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label322
 .globl bfge
 bfge:
 	addi sp, sp, -8
-	flt.s a0, f10, f11
+	fle.s a0, f11, f10
 	sd a2, 0(sp)
-	bne a0, zero, label336
-	sw zero, 0(a2)
+	bne a0, zero, label335
 label336:
 	addi sp, sp, 8
 	ret
+label335:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label336
 .globl bfgt
 bfgt:
 	addi sp, sp, -8
-	fle.s a0, f10, f11
+	flt.s a0, f11, f10
 	sd a2, 0(sp)
-	bne a0, zero, label350
-	sw zero, 0(a2)
+	bne a0, zero, label349
 label350:
 	addi sp, sp, 8
 	ret
+label349:
+	ld a2, 0(sp)
+	sw zero, 0(a2)
+	j label350

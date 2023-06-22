@@ -70,8 +70,9 @@ public:
                             reuse = true;
                             break;
                         }
-                        if((getInvertedOp(lhsOp) == rhsOp && match(0, 1)) ||
-                           (getReversedOp(getInvertedOp(lhsOp)) == rhsOp && match(1, 0))) {
+                        if(cmp->getInstID() != InstructionID::FCmp &&
+                           ((getInvertedOp(lhsOp) == rhsOp && match(0, 1)) ||
+                            (getReversedOp(getInvertedOp(lhsOp)) == rhsOp && match(1, 0)))) {
                             IRBuilder builder{ analysis.module().getTarget() };
                             builder.setInsertPoint(block, cmp);
                             const auto invert = builder.makeOp<BinaryInst>(InstructionID::Xor, rhs, builder.getTrue());

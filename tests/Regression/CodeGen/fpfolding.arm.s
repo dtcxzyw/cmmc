@@ -11,12 +11,12 @@ my_fabs:
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
 	vstr s0, [sp, #4]
-	bmi label12
+	bge label12
+	vneg.f32 s0, s0
 	vstr s0, [sp, #0]
 	b label2
 label12:
 	vldr s0, [sp, #4]
-	vneg.f32 s0, s0
 	vstr s0, [sp, #0]
 label2:
 	vldr s0, [sp, #0]

@@ -256,12 +256,15 @@ bfeq:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	bne label305
-	mov r0, #0
-	str r0, [r2, #0]
+	beq label304
 label305:
 	add sp, sp, #4
 	bx lr
+label304:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label305
 .globl bfne
 bfne:
 	sub sp, sp, #4
@@ -270,12 +273,15 @@ bfne:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	beq label320
-	mov r0, #0
-	str r0, [r2, #0]
+	bne label319
 label320:
 	add sp, sp, #4
 	bx lr
+label319:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label320
 .globl bflt
 bflt:
 	sub sp, sp, #4
@@ -284,12 +290,15 @@ bflt:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	bge label335
-	mov r0, #0
-	str r0, [r2, #0]
+	bmi label334
 label335:
 	add sp, sp, #4
 	bx lr
+label334:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label335
 .globl bfle
 bfle:
 	sub sp, sp, #4
@@ -298,12 +307,15 @@ bfle:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	bgt label350
-	mov r0, #0
-	str r0, [r2, #0]
+	bls label349
 label350:
 	add sp, sp, #4
 	bx lr
+label349:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label350
 .globl bfge
 bfge:
 	sub sp, sp, #4
@@ -312,12 +324,15 @@ bfge:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	bmi label365
-	mov r0, #0
-	str r0, [r2, #0]
+	bge label364
 label365:
 	add sp, sp, #4
 	bx lr
+label364:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label365
 .globl bfgt
 bfgt:
 	sub sp, sp, #4
@@ -326,9 +341,12 @@ bfgt:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	str r2, [sp, #0]
-	bls label380
-	mov r0, #0
-	str r0, [r2, #0]
+	bgt label379
 label380:
 	add sp, sp, #4
 	bx lr
+label379:
+	mov r0, #0
+	ldr r2, [sp, #0]
+	str r0, [r2, #0]
+	b label380

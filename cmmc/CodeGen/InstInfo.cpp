@@ -49,7 +49,8 @@ static std::string_view getType(OperandType type) {
     }
 };
 void dumpVirtualReg(std::ostream& out, const MIROperand& operand) {
-    out << '[' << getType(operand.type()) << 'v' << (operand.reg() ^ virtualRegBegin) << ']';
+    out << '[' << getType(operand.type()) << 'v' << (operand.reg() ^ virtualRegBegin)
+        << (operand.regFlag() & RegisterFlagDead ? " <dead>" : "") << ']';
 }
 
 CMMC_MIR_NAMESPACE_END

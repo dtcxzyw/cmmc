@@ -4,14 +4,14 @@
 my_fabs:
 	addi sp, sp, -8
 	fmv.w.x f11, zero
-	flt.s a0, f10, f11
+	fle.s a0, f11, f10
 	fsw f10, 4(sp)
 	bne a0, zero, label10
+	fneg.s f10, f10
 	fsw f10, 0(sp)
 	j label2
 label10:
 	flw f10, 4(sp)
-	fneg.s f10, f10
 	fsw f10, 0(sp)
 label2:
 	flw f11, 0(sp)

@@ -501,22 +501,20 @@ pcrel522:
 	addi a0, a0, %pcrel_lo(pcrel522)
 	flw f11, 0(a0)
 	flw f12, 0(a0)
-	fle.s a0, f12, f10
+	flt.s a0, f10, f12
 	fsw f10, 4(sp)
-	bne a0, zero, label503
-pcrel523:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel523)
-	flw f10, 4(a0)
-	flw f11, 4(sp)
-	fadd.s f10, f11, f10
-	fsw f10, 0(sp)
-	j label492
-label503:
-	flw f10, 4(sp)
+	bne a0, zero, label491
 	fsw f10, 0(sp)
 label492:
 	flw f11, 0(sp)
 	fmv.s f10, f11
 	addi sp, sp, 8
 	ret
+label491:
+	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a0, a0, %pcrel_lo(label491)
+	flw f10, 4(a0)
+	flw f11, 4(sp)
+	fadd.s f10, f11, f10
+	fsw f10, 0(sp)
+	j label492

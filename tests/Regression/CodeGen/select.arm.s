@@ -307,7 +307,14 @@ select_round:
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	vstr s0, [sp, #4]
-	bge label395
+	bmi label385
+	vstr s0, [sp, #0]
+label386:
+	vldr s0, [sp, #0]
+	vmov r0, s0
+	add sp, sp, #8
+	bx lr
+label385:
 	movw r0, #4068
 	movt r0, #16585
 	vmov s0, r0
@@ -315,11 +322,3 @@ select_round:
 	vadd.f32 s0, s1, s0
 	vstr s0, [sp, #0]
 	b label386
-label395:
-	vldr s0, [sp, #4]
-	vstr s0, [sp, #0]
-label386:
-	vldr s0, [sp, #0]
-	vmov r0, s0
-	add sp, sp, #8
-	bx lr

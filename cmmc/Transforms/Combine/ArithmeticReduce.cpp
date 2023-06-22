@@ -393,7 +393,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // not cmp
             if(xor_(capture(xcmp(cmp, any(v1), any(v2)), v3), cuint_(1))(matchCtx)) {
                 const auto cmpInst = v3->as<CompareInst>();
-                return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
+                if(cmpInst->getInstID() != InstructionID::FCmp)
+                    return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
             }
 
             // a >/</!= a -> false

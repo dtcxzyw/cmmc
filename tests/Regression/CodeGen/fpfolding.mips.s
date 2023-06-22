@@ -4,21 +4,21 @@
 my_fabs:
 	addiu $sp, $sp, -8
 	mtc1 $zero, $f4
-	c.olt.s $f12, $f4
+	c.ult.s $f12, $f4
 	li $t0, 1
-	movf $t0, $zero, $fcc0
+	movt $t0, $zero, $fcc0
 	swc1 $f12, 4($sp)
 	bne $t0, $zero, label10
 	nop
-	mov.s $f0, $f12
-	swc1 $f12, 0($sp)
+	neg.s $f4, $f12
+	mov.s $f0, $f4
+	swc1 $f4, 0($sp)
 	b label2
 	nop
 label10:
 	lwc1 $f12, 4($sp)
-	neg.s $f4, $f12
-	mov.s $f0, $f4
-	swc1 $f4, 0($sp)
+	mov.s $f0, $f12
+	swc1 $f12, 0($sp)
 label2:
 	lwc1 $f4, 0($sp)
 	mov.s $f0, $f4

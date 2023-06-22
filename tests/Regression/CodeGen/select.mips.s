@@ -327,22 +327,12 @@ select_round:
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 8($t0)
 	lwc1 $f6, 8($t0)
-	c.ult.s $f12, $f6
+	c.olt.s $f12, $f6
 	li $t0, 1
-	movt $t0, $zero, $fcc0
+	movf $t0, $zero, $fcc0
 	swc1 $f12, 4($sp)
-	bne $t0, $zero, label452
+	bne $t0, $zero, label440
 	nop
-	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 12($t0)
-	add.s $f4, $f12, $f4
-	mov.s $f0, $f4
-	swc1 $f4, 0($sp)
-	b label441
-	nop
-label452:
-	lwc1 $f12, 4($sp)
 	mov.s $f0, $f12
 	swc1 $f12, 0($sp)
 label441:
@@ -350,4 +340,14 @@ label441:
 	mov.s $f0, $f4
 	addiu $sp, $sp, 8
 	jr $ra
+	nop
+label440:
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 12($t0)
+	lwc1 $f12, 4($sp)
+	add.s $f4, $f12, $f4
+	mov.s $f0, $f4
+	swc1 $f4, 0($sp)
+	b label441
 	nop

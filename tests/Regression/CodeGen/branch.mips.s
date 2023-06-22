@@ -261,82 +261,106 @@ bfeq:
 	addiu $sp, $sp, -4
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movt $t0, $zero, $fcc0
+	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t0, $zero, label295
+	bne $t0, $zero, label294
 	nop
-	sw $zero, 0($a2)
 label295:
 	addiu $sp, $sp, 4
 	jr $ra
+	nop
+label294:
+	lw $a2, 0($sp)
+	sw $zero, 0($a2)
+	b label295
 	nop
 .globl bfne
 bfne:
 	addiu $sp, $sp, -4
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movf $t0, $zero, $fcc0
+	movt $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t0, $zero, label309
+	bne $t0, $zero, label308
 	nop
-	sw $zero, 0($a2)
 label309:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
+label308:
+	lw $a2, 0($sp)
+	sw $zero, 0($a2)
+	b label309
+	nop
 .globl bflt
 bflt:
-	addiu $sp, $sp, -4
-	c.ult.s $f12, $f14
-	li $t0, 1
-	movt $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label323
-	nop
-	sw $zero, 0($a2)
-label323:
-	addiu $sp, $sp, 4
-	jr $ra
-	nop
-.globl bfle
-bfle:
-	addiu $sp, $sp, -4
-	c.ule.s $f12, $f14
-	li $t0, 1
-	movt $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label337
-	nop
-	sw $zero, 0($a2)
-label337:
-	addiu $sp, $sp, 4
-	jr $ra
-	nop
-.globl bfge
-bfge:
 	addiu $sp, $sp, -4
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t0, $zero, label351
+	bne $t0, $zero, label322
 	nop
-	sw $zero, 0($a2)
-label351:
+label323:
 	addiu $sp, $sp, 4
 	jr $ra
 	nop
-.globl bfgt
-bfgt:
+label322:
+	lw $a2, 0($sp)
+	sw $zero, 0($a2)
+	b label323
+	nop
+.globl bfle
+bfle:
 	addiu $sp, $sp, -4
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
 	sw $a2, 0($sp)
-	bne $t0, $zero, label365
+	bne $t0, $zero, label336
 	nop
+label337:
+	addiu $sp, $sp, 4
+	jr $ra
+	nop
+label336:
+	lw $a2, 0($sp)
 	sw $zero, 0($a2)
+	b label337
+	nop
+.globl bfge
+bfge:
+	addiu $sp, $sp, -4
+	c.ult.s $f12, $f14
+	li $t0, 1
+	movt $t0, $zero, $fcc0
+	sw $a2, 0($sp)
+	bne $t0, $zero, label350
+	nop
+label351:
+	addiu $sp, $sp, 4
+	jr $ra
+	nop
+label350:
+	lw $a2, 0($sp)
+	sw $zero, 0($a2)
+	b label351
+	nop
+.globl bfgt
+bfgt:
+	addiu $sp, $sp, -4
+	c.ule.s $f12, $f14
+	li $t0, 1
+	movt $t0, $zero, $fcc0
+	sw $a2, 0($sp)
+	bne $t0, $zero, label364
+	nop
 label365:
 	addiu $sp, $sp, 4
 	jr $ra
+	nop
+label364:
+	lw $a2, 0($sp)
+	sw $zero, 0($a2)
+	b label365
 	nop

@@ -36,9 +36,9 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& infoIPRA) {
+    auto liveInterval = calcLiveIntervals(mfunc, ctx);
     // mfunc.dump(std::cerr, ctx);
 
-    auto liveInterval = calcLiveIntervals(mfunc, ctx);
     struct VirtualRegUseInfo final {
         std::unordered_set<MIRBasicBlock*> uses;
         std::unordered_set<MIRBasicBlock*> defs;
