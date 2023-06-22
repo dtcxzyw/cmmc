@@ -58,6 +58,17 @@ void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& ca
             }
         }
     }
+    // cleanup flags
+    for(auto& block : mfunc.blocks()) {
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                auto& op = inst.getOperand(idx);
+                if(op.isReg())
+                    op.regFlag() = RegisterFlagNone;
+            }
+        }
+    }
 }
 
 void IPRAUsageCache::add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFunction& func) {

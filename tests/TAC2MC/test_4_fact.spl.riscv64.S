@@ -46,13 +46,11 @@ label9:
 	ret
 label45:
 	ld a0, 56(sp)
-	mv a1, a0
-	li a2, 1
-	sd a2, 32(sp)
+	li a1, 1
+	sd a1, 32(sp)
 	sd a0, 40(sp)
-	mv a1, a2
-	mulw a2, a0, a2
-	sd a2, 48(sp)
+	mulw a0, a0, a1
+	sd a0, 48(sp)
 	j label9
 label18:
 	ld a0, 56(sp)
@@ -61,21 +59,18 @@ label18:
 	sd a0, 24(sp)
 	addiw a1, a0, -1
 	ld a2, 16(sp)
-	mulw a3, a0, a2
-	li a4, 1
-	sd a3, 0(sp)
+	mulw a0, a0, a2
+	li a2, 1
+	sd a0, 0(sp)
 	sd a1, 8(sp)
-	bne a1, a4, label25
+	bne a1, a2, label25
 label46:
 	ld a0, 8(sp)
-	mv a1, a0
-	ld a2, 0(sp)
-	mv a3, a2
-	sd a2, 32(sp)
+	ld a1, 0(sp)
+	sd a1, 32(sp)
 	sd a0, 40(sp)
-	mv a1, a2
-	mulw a2, a0, a2
-	sd a2, 48(sp)
+	mulw a0, a0, a1
+	sd a0, 48(sp)
 	j label9
 label25:
 	ld a0, 8(sp)
@@ -84,9 +79,9 @@ label25:
 	sd a0, 24(sp)
 	addiw a1, a0, -1
 	ld a2, 16(sp)
-	mulw a3, a0, a2
-	li a4, 1
-	sd a3, 0(sp)
+	mulw a0, a0, a2
+	li a2, 1
+	sd a0, 0(sp)
 	sd a1, 8(sp)
-	bne a1, a4, label25
+	bne a1, a2, label25
 	j label46

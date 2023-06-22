@@ -69,26 +69,26 @@ label4:
 	lw $t0, 24($sp)
 	addiu $a0, $t0, -1
 	sw $a0, 16($sp)
-	lw $t1, 48($sp)
-	move $a1, $t1
-	lw $t2, 28($sp)
-	move $a2, $t2
-	lw $t3, 44($sp)
-	move $a3, $t3
+	lw $t0, 48($sp)
+	move $a1, $t0
+	lw $t1, 28($sp)
+	move $a2, $t1
+	lw $t2, 44($sp)
+	move $a3, $t2
 	jal hanoi
 	nop
-	li $t4, 10000
+	li $t3, 10000
 	lw $a1, 48($sp)
-	mult $a1, $t4
-	mflo $t4
+	mult $a1, $t3
+	mflo $t3
 	lw $a2, 28($sp)
-	addu $t4, $a2, $t4
-	move $a0, $t4
+	addu $t3, $a2, $t3
+	move $a0, $t3
 	jal write
 	nop
-	li $t4, 1
-	lw $t5, 16($sp)
-	bne $t5, $t4, label26
+	li $t3, 1
+	lw $t4, 16($sp)
+	bne $t4, $t3, label26
 	nop
 	lw $a3, 44($sp)
 	move $t0, $a3

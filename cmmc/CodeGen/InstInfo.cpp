@@ -64,7 +64,8 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     const auto& op = operand.operand;
     out << '[';
     std::visit(Overload{
-                   [&](uint32_t reg) {
+                   [&](const MIRRegister& regInfo) {
+                       const auto [reg, flag] = regInfo;
                        out << getType(op.type());
                        if(reg == invalidReg) {
                            out << "invalid";
@@ -74,6 +75,9 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
                            out << "so" << (reg ^ stackObjectBegin);
                        } else {
                            out << "isa " << reg;
+                       }
+                       if(flag & RegisterFlagDead) {
+                           out << " <dead>";
                        }
                    },
                    [&](intmax_t imm) {

@@ -35,7 +35,6 @@ gcd:
 	j label2
 label15:
 	ld a0, 32(sp)
-	mv a1, a0
 	sd a0, 8(sp)
 	j label3
 label2:

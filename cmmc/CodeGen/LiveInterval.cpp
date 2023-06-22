@@ -18,7 +18,9 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <iostream>
 #include <iterator>
+#include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
 
@@ -44,7 +46,7 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 const auto flag = instInfo.getOperandFlag(idx);
                 auto& operand = inst.getOperand(idx);
-                if(!isOperandVRegOrISAReg(operand))
+                if(!isOperandVReg(operand))
                     continue;
                 const auto id = regNum(operand);
                 if(flag & OperandFlagDef) {
@@ -111,6 +113,7 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
     for(auto& block : mfunc.blocks()) {
         auto& blockInfo = info.blockInfo[block.get()];
         std::unordered_map<RegNum, LiveSegment> currentSegment;
+        std::unordered_map<RegNum, std::pair<MIRInst*, std::vector<MIRRegisterFlag*>>> lastUse;
         InstNum firstInstNum = 0;
         InstNum lastInstNum = 0;
         for(auto& inst : block->instructions()) {
@@ -122,7 +125,7 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 const auto flag = instInfo.getOperandFlag(idx);
                 auto& operand = inst.getOperand(idx);
-                if(!isOperandVRegOrISAReg(operand))
+                if(!isOperandVReg(operand))
                     continue;
                 const auto id = regNum(operand);
                 if(flag & OperandFlagUse) {
@@ -131,12 +134,21 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
                     } else {
                         currentSegment[id] = { firstInstNum, instNum + 1 };
                     }
+
+                    if(auto iter = lastUse.find(id); iter != lastUse.cend()) {
+                        if(iter->second.first == &inst)
+                            iter->second.second.push_back(&operand.regFlag());
+                        else
+                            iter->second = { &inst, { &operand.regFlag() } };
+                    } else {
+                        lastUse[id] = { &inst, { &operand.regFlag() } };
+                    }
                 }
             }
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 const auto flag = instInfo.getOperandFlag(idx);
                 auto& operand = inst.getOperand(idx);
-                if(!isOperandVRegOrISAReg(operand))
+                if(!isOperandVReg(operand))
                     continue;
                 const auto id = regNum(operand);
                 if(flag & OperandFlagDef) {
@@ -144,9 +156,18 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
                         auto& segment = currentSegment[id];
                         if(segment.end == instNum + 1) {
                             segment.end = instNum + 2;
+
+                            // NOTICE: don't set dead flag in this case.
+                            // Counterexamples: ARM.MOVT MIPS.CMOV
                         } else {
                             info.interval[id].appendSegment(segment);
                             segment = { instNum + 1, instNum + 2 };
+
+                            if(auto iter = lastUse.find(id); iter != lastUse.cend()) {
+                                for(auto flagRef : iter->second.second)
+                                    *flagRef = RegisterFlagDead;
+                                lastUse.erase(iter);
+                            }
                         }
                     } else {
                         currentSegment[id] = { instNum + 1, instNum + 2 };
@@ -159,6 +180,13 @@ LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
                 segment.end = lastInstNum + 2;
             }
             info.interval[id].appendSegment(segment);
+        }
+        for(auto& [id, flags] : lastUse) {
+            if(blockInfo.outs.count(id))
+                continue;
+
+            for(auto flagRef : flags.second)
+                *flagRef = RegisterFlagDead;
         }
         for(auto id : blockInfo.outs)
             if(blockInfo.ins.count(id) && !currentSegment.count(id))

@@ -114,8 +114,38 @@ constexpr uint32_t getOperandSize(const OperandType type) {
     }
 }
 
+enum MIRRegisterFlag : uint32_t {
+    RegisterFlagNone = 0,
+    RegisterFlagDead = 1 << 1,
+};
+
+struct MIRRegister final {
+    uint32_t reg;
+    MIRRegisterFlag flag = RegisterFlagNone;
+
+    bool operator==(const MIRRegister& rhs) const noexcept {
+        return reg == rhs.reg;
+    }
+    bool operator!=(const MIRRegister& rhs) const noexcept {
+        return reg != rhs.reg;
+    }
+};
+
+CMMC_MIR_NAMESPACE_END
+
+namespace std {
+    template <>
+    struct hash<cmmc::mir::MIRRegister> {
+        size_t operator()(const cmmc::mir::MIRRegister& reg) const noexcept {
+            return hash<uint32_t>{}(reg.reg);
+        }
+    };
+}  // namespace std
+
+CMMC_MIR_NAMESPACE_BEGIN
+
 class MIROperand final {
-    std::variant<std::monostate, uint32_t, intmax_t, MIRRelocable*, double> mOperand{ std::monostate{} };
+    std::variant<std::monostate, MIRRegister, intmax_t, MIRRelocable*, double> mOperand{ std::monostate{} };
     OperandType mType = OperandType::Special;
 
 public:
@@ -150,16 +180,16 @@ public:
     }
     [[nodiscard]] constexpr static MIROperand asISAReg(uint32_t reg, OperandType type) {
         assert(isISAReg(reg));
-        return MIROperand{ reg, type };
+        return MIROperand{ MIRRegister{ reg }, type };
     }
     [[nodiscard]] constexpr static MIROperand asVReg(uint32_t reg, OperandType type) {
-        return MIROperand{ reg + virtualRegBegin, type };
+        return MIROperand{ MIRRegister{ reg + virtualRegBegin }, type };
     }
     [[nodiscard]] constexpr static MIROperand asStackObject(uint32_t reg, OperandType type) {
-        return MIROperand{ reg + stackObjectBegin, type };
+        return MIROperand{ MIRRegister{ reg + stackObjectBegin }, type };
     }
     [[nodiscard]] constexpr static MIROperand asInvalidReg() {
-        return MIROperand{ invalidReg, OperandType::Special };
+        return MIROperand{ MIRRegister{ invalidReg }, OperandType::Special };
     }
     [[nodiscard]] constexpr static MIROperand asReloc(MIRRelocable* val) {
         return MIROperand{ val, OperandType::Special };
@@ -168,10 +198,16 @@ public:
         return MIROperand{ val, OperandType::Special };
     }
     [[nodiscard]] constexpr uint32_t reg() const {
-        return std::get<uint32_t>(mOperand);
+        return std::get<MIRRegister>(mOperand).reg;
+    }
+    [[nodiscard]] MIRRegisterFlag& regFlag() {
+        return std::get<MIRRegister>(mOperand).flag;
+    }
+    [[nodiscard]] MIRRegisterFlag regFlag() const {
+        return std::get<MIRRegister>(mOperand).flag;
     }
     [[nodiscard]] constexpr bool isReg() const {
-        return std::holds_alternative<uint32_t>(mOperand);
+        return std::holds_alternative<MIRRegister>(mOperand);
     }
     [[nodiscard]] constexpr MIRRelocable* reloc() const {
         return std::get<MIRRelocable*>(mOperand);

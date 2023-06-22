@@ -12,7 +12,6 @@ my_fabs:
 	vmrs APSR_nzcv, FPSCR
 	vstr s0, [sp, #4]
 	bmi label12
-	vmov.f32 s1, s0
 	vstr s0, [sp, #0]
 	b label2
 label12:

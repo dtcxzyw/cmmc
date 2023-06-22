@@ -45,25 +45,22 @@ main:
 	mv a1, zero
 	sd zero, 16(sp)
 	sd a0, 24(sp)
-	addiw a1, a0, -1
-	mv a2, zero
-	addiw a3, zero, 1
-	sd a3, 0(sp)
-	sd a1, 8(sp)
-	bne a1, zero, label26
+	addiw a0, a0, -1
+	addiw a1, zero, 1
+	sd a1, 0(sp)
+	sd a0, 8(sp)
+	bne a0, zero, label26
 	j label5
 label26:
 	ld a0, 8(sp)
-	mv a1, a0
-	ld a2, 0(sp)
-	mv a3, a2
-	sd a2, 16(sp)
+	ld a1, 0(sp)
+	sd a1, 16(sp)
 	sd a0, 24(sp)
-	addiw a1, a0, -1
-	addiw a3, a2, 1
-	sd a3, 0(sp)
-	sd a1, 8(sp)
-	bne a1, zero, label26
+	addiw a0, a0, -1
+	addiw a1, a1, 1
+	sd a1, 0(sp)
+	sd a0, 8(sp)
+	bne a0, zero, label26
 label5:
 	ld a0, 8(sp)
 	ld a1, 0(sp)

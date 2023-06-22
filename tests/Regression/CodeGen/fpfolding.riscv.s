@@ -7,7 +7,6 @@ my_fabs:
 	flt.s a0, f10, f11
 	fsw f10, 4(sp)
 	bne a0, zero, label10
-	fmv.s f11, f10
 	fsw f10, 0(sp)
 	j label2
 label10:

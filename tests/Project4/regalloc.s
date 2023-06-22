@@ -65,27 +65,24 @@ main:
 	move $t1, $zero
 	sw $zero, 32($sp)
 	sw $t0, 20($sp)
-	addiu $t1, $t0, -1
-	move $t2, $zero
-	addiu $t3, $zero, 1
-	sw $t3, 28($sp)
-	sw $t1, 24($sp)
-	bne $t1, $zero, label42
+	addiu $t0, $t0, -1
+	addiu $t1, $zero, 1
+	sw $t1, 28($sp)
+	sw $t0, 24($sp)
+	bne $t0, $zero, label42
 	nop
 	b label5
 	nop
 label42:
 	lw $t0, 24($sp)
-	move $t1, $t0
-	lw $t2, 28($sp)
-	move $t3, $t2
-	sw $t2, 32($sp)
+	lw $t1, 28($sp)
+	sw $t1, 32($sp)
 	sw $t0, 20($sp)
-	addiu $t1, $t0, -1
-	addiu $t3, $t2, 1
-	sw $t3, 28($sp)
-	sw $t1, 24($sp)
-	bne $t1, $zero, label42
+	addiu $t0, $t0, -1
+	addiu $t1, $t1, 1
+	sw $t1, 28($sp)
+	sw $t0, 24($sp)
+	bne $t0, $zero, label42
 	nop
 label5:
 	lw $t0, 24($sp)

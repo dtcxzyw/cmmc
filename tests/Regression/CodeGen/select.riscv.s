@@ -514,7 +514,6 @@ pcrel523:
 	j label492
 label503:
 	flw f10, 4(sp)
-	fmv.s f11, f10
 	fsw f10, 0(sp)
 label492:
 	flw f11, 0(sp)

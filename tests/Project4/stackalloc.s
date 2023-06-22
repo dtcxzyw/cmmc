@@ -78,14 +78,13 @@ label2:
 	jal read
 	nop
 	sw $v0, 0($t1)
-	addiu $t1, $t0, 1
+	addiu $t0, $t0, 1
 	lw $v0, 444($sp)
-	subu $t3, $t1, $v0
-	sw $t1, 428($sp)
-	bgez $t3, label34
+	subu $t1, $t0, $v0
+	sw $t0, 428($sp)
+	bgez $t1, label34
 	nop
-	move $t0, $t1
-	sw $t1, 452($sp)
+	sw $t0, 452($sp)
 	b label2
 	nop
 label34:
@@ -116,14 +115,13 @@ label15:
 	lw $a0, 0($t1)
 	jal write
 	nop
-	addiu $t1, $t0, 1
+	addiu $t0, $t0, 1
 	lw $v0, 444($sp)
-	subu $t3, $t1, $v0
-	sw $t1, 432($sp)
-	bgez $t3, label17
+	subu $t1, $t0, $v0
+	sw $t0, 432($sp)
+	bgez $t1, label17
 	nop
-	move $t0, $t1
-	sw $t1, 436($sp)
+	sw $t0, 436($sp)
 	b label15
 	nop
 label37:
@@ -163,11 +161,10 @@ label13:
 	lw $t2, 440($sp)
 	sw $t2, 0($t0)
 	lw $t0, 16($sp)
-	addiu $t2, $t0, 1
-	move $t0, $t2
-	sw $t2, 16($sp)
+	addiu $t0, $t0, 1
+	sw $t0, 16($sp)
 	lw $v0, 444($sp)
-	subu $t1, $t2, $v0
+	subu $t1, $t0, $v0
 	bgez $t1, label14
 	nop
 	b label37
@@ -182,13 +179,11 @@ label12:
 	addu $t3, $t2, $t3
 	lw $t3, 0($t3)
 	sw $t3, 0($t1)
-	addiu $t1, $t0, -1
-	move $t0, $t1
-	sw $t1, 448($sp)
-	addiu $t1, $t1, 1
+	addiu $t0, $t0, -1
+	sw $t0, 448($sp)
+	addiu $t1, $t0, 1
 	blez $t1, label47
 	nop
-	lw $t0, 448($sp)
 	sll $t1, $t0, 2
 	lw $t2, 420($sp)
 	addu $t1, $t2, $t1

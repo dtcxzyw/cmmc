@@ -317,7 +317,6 @@ select_round:
 	b label386
 label395:
 	vldr s0, [sp, #4]
-	vmov.f32 s1, s0
 	vstr s0, [sp, #0]
 label386:
 	vldr s0, [sp, #0]

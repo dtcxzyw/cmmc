@@ -55,26 +55,25 @@ label2:
 	ret
 label4:
 	ld a0, 64(sp)
-	addiw a1, a0, -1
-	mv a0, a1
+	addiw a0, a0, -1
+	sd a0, 16(sp)
 	ld a2, 8(sp)
-	sd a1, 16(sp)
 	mv a1, a2
 	ld a3, 32(sp)
 	mv a2, a3
 	ld a4, 0(sp)
 	mv a3, a4
 	jal hanoi
-	li a5, 10000
-	ld t1, 8(sp)
-	mulw a5, t1, a5
-	ld t2, 32(sp)
-	addw a5, t2, a5
-	mv a0, a5
+	li a1, 10000
+	ld a5, 8(sp)
+	mulw a1, a5, a1
+	ld t1, 32(sp)
+	addw a1, t1, a1
+	mv a0, a1
 	jal write
-	li a5, 1
-	ld t3, 16(sp)
-	bne t3, a5, label24
+	li a1, 1
+	ld t2, 16(sp)
+	bne t2, a1, label24
 	ld a3, 0(sp)
 	mv a0, a3
 	sd a3, 24(sp)
@@ -82,12 +81,11 @@ label4:
 label24:
 	ld a0, 16(sp)
 	ld a1, 8(sp)
-	mv a2, a1
 	ld a3, 0(sp)
-	mv a1, a3
-	mv a3, a2
-	sd a2, 0(sp)
-	sd a1, 8(sp)
+	mv a2, a3
+	mv a3, a1
+	sd a1, 0(sp)
+	sd a2, 8(sp)
 	sd a0, 64(sp)
 	j label4
 .globl main

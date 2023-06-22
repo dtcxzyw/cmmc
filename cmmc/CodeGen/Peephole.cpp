@@ -344,7 +344,7 @@ bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
                     return;  // should be handled after RA
                 auto backup = reg;
                 // NOTICE: Don't modify the type
-                reg = MIROperand{ iter->second.first, backup.type() };
+                reg = MIROperand{ MIRRegister{ iter->second.first }, backup.type() };
                 if(reg == backup)
                     return;
                 auto backupInstOpcode = inst.opcode();
