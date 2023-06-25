@@ -143,6 +143,9 @@ public:
                 reportUnreachable(CMMC_LOCATION());
         }
     }
+    [[nodiscard]] OperandType getCanonicalizedRegisterTypeForClass(uint32_t classId) const override {
+        return classId == 0 ? OperandType::Int32 : OperandType::Float32;
+    }
     [[nodiscard]] bool isLegalISARegOperand(const MIROperand& operand, OperandFlag flag) const override {
         if(flag & OperandFlagMetadata)
             return false;

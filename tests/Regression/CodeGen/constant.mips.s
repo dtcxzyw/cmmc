@@ -9,22 +9,22 @@ __cmmc_fp_constant_pool:
 .text
 .globl cse_imm
 cse_imm:
-	li $t0, 10
-	mult $a0, $t0
-	mflo $t1
-	mult $a1, $t0
+	li $t1, 10
+	mult $a0, $t1
 	mflo $t0
-	xor $t0, $a2, $t0
-	addu $v0, $t1, $t0
+	mult $a1, $t1
+	mflo $t1
+	xor $t1, $a2, $t1
+	addu $v0, $t0, $t1
 	jr $ra
 	nop
 .globl cse_global
 cse_global:
-	lui $t0, %hi(x)
-	addiu $t1, $t0, %lo(x)
-	lw $t0, %lo(x)($t0)
-	lw $t1, 4($t1)
-	addu $v0, $t0, $t1
+	lui $t1, %hi(x)
+	addiu $t0, $t1, %lo(x)
+	lw $t1, %lo(x)($t1)
+	lw $t0, 4($t0)
+	addu $v0, $t1, $t0
 	jr $ra
 	nop
 .globl cse_fp

@@ -2,283 +2,193 @@
 .text
 .globl beqz
 beqz:
-	addi sp, sp, -8
-	sd a1, 0(sp)
 	bne a0, zero, label3
 	sw zero, 0(a1)
 label3:
-	addi sp, sp, 8
 	ret
 .globl beqi
 beqi:
-	addi sp, sp, -8
 	li a2, 1
-	sd a1, 0(sp)
-	bne a0, a2, label14
+	bne a0, a2, label12
 	sw zero, 0(a1)
-label14:
-	addi sp, sp, 8
+label12:
 	ret
 .globl beq
 beq:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	bne a0, a1, label28
+	bne a0, a1, label23
 	sw zero, 0(a2)
-label28:
-	addi sp, sp, 8
+label23:
 	ret
 .globl bnez
 bnez:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	beq a0, zero, label42
+	beq a0, zero, label34
 	sw zero, 0(a1)
-label42:
-	addi sp, sp, 8
+label34:
 	ret
 .globl bnei
 bnei:
-	addi sp, sp, -8
 	li a2, 1
-	sd a1, 0(sp)
-	beq a0, a2, label53
+	beq a0, a2, label43
 	sw zero, 0(a1)
-label53:
-	addi sp, sp, 8
+label43:
 	ret
 .globl bne
 bne:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	beq a0, a1, label67
+	beq a0, a1, label54
 	sw zero, 0(a2)
-label67:
-	addi sp, sp, 8
+label54:
 	ret
 .globl bltz
 bltz:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	bge a0, zero, label81
+	bge a0, zero, label65
 	sw zero, 0(a1)
-label81:
-	addi sp, sp, 8
+label65:
 	ret
 .globl blti1
 blti1:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	bgt a0, zero, label93
+	bgt a0, zero, label75
 	sw zero, 0(a1)
-label93:
-	addi sp, sp, 8
+label75:
 	ret
 .globl blti2
 blti2:
-	addi sp, sp, -8
 	li a2, 10
-	sd a1, 0(sp)
-	bge a0, a2, label104
+	bge a0, a2, label84
 	sw zero, 0(a1)
-label104:
-	addi sp, sp, 8
+label84:
 	ret
 .globl blt
 blt:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	bge a0, a1, label118
+	bge a0, a1, label95
 	sw zero, 0(a2)
-label118:
-	addi sp, sp, 8
+label95:
 	ret
 .globl bgez
 bgez:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	blt a0, zero, label132
+	blt a0, zero, label106
 	sw zero, 0(a1)
-label132:
-	addi sp, sp, 8
+label106:
 	ret
 .globl bgei1
 bgei1:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	ble a0, zero, label143
+	ble a0, zero, label115
 	sw zero, 0(a1)
-label143:
-	addi sp, sp, 8
+label115:
 	ret
 .globl bgei2
 bgei2:
-	addi sp, sp, -8
 	li a2, 9
-	sd a1, 0(sp)
-	ble a0, a2, label154
+	ble a0, a2, label124
 	sw zero, 0(a1)
-label154:
-	addi sp, sp, 8
+label124:
 	ret
 .globl bge
 bge:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	blt a0, a1, label167
+	blt a0, a1, label134
 	sw zero, 0(a2)
-label167:
-	addi sp, sp, 8
+label134:
 	ret
 .globl bgtz
 bgtz:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	ble a0, zero, label180
+	ble a0, zero, label144
 	sw zero, 0(a1)
-label180:
-	addi sp, sp, 8
+label144:
 	ret
 .globl bgti1
 bgti1:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	blt a0, zero, label191
+	blt a0, zero, label153
 	sw zero, 0(a1)
-label191:
-	addi sp, sp, 8
+label153:
 	ret
 .globl bgti2
 bgti2:
-	addi sp, sp, -8
 	li a2, 10
-	sd a1, 0(sp)
-	ble a0, a2, label202
+	ble a0, a2, label162
 	sw zero, 0(a1)
-label202:
-	addi sp, sp, 8
+label162:
 	ret
 .globl bgt
 bgt:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	ble a0, a1, label215
+	ble a0, a1, label172
 	sw zero, 0(a2)
-label215:
-	addi sp, sp, 8
+label172:
 	ret
 .globl blez
 blez:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	bgt a0, zero, label229
+	bgt a0, zero, label183
 	sw zero, 0(a1)
-label229:
-	addi sp, sp, 8
+label183:
 	ret
 .globl blei1
 blei1:
-	addi sp, sp, -8
-	sd a1, 0(sp)
-	bge a0, zero, label240
+	bge a0, zero, label192
 	sw zero, 0(a1)
-label240:
-	addi sp, sp, 8
+label192:
 	ret
 .globl blei2
 blei2:
-	addi sp, sp, -8
 	li a2, 11
-	sd a1, 0(sp)
-	bge a0, a2, label252
+	bge a0, a2, label202
 	sw zero, 0(a1)
-label252:
-	addi sp, sp, 8
+label202:
 	ret
 .globl ble
 ble:
-	addi sp, sp, -8
-	sd a2, 0(sp)
-	bgt a0, a1, label266
+	bgt a0, a1, label213
 	sw zero, 0(a2)
-label266:
-	addi sp, sp, 8
+label213:
 	ret
 .globl bfeq
 bfeq:
-	addi sp, sp, -8
 	feq.s a0, f10, f11
-	sd a2, 0(sp)
-	bne a0, zero, label278
-label279:
-	addi sp, sp, 8
+	bne a0, zero, label222
+label223:
 	ret
-label278:
-	ld a2, 0(sp)
+label222:
 	sw zero, 0(a2)
-	j label279
+	j label223
 .globl bfne
 bfne:
-	addi sp, sp, -8
 	feq.s a0, f10, f11
-	sd a2, 0(sp)
-	beq a0, zero, label292
-label293:
-	addi sp, sp, 8
+	beq a0, zero, label232
+label233:
 	ret
-label292:
-	ld a2, 0(sp)
+label232:
 	sw zero, 0(a2)
-	j label293
+	j label233
 .globl bflt
 bflt:
-	addi sp, sp, -8
 	flt.s a0, f10, f11
-	sd a2, 0(sp)
-	bne a0, zero, label307
-label308:
-	addi sp, sp, 8
+	bne a0, zero, label243
+label244:
 	ret
-label307:
-	ld a2, 0(sp)
+label243:
 	sw zero, 0(a2)
-	j label308
+	j label244
 .globl bfle
 bfle:
-	addi sp, sp, -8
 	fle.s a0, f10, f11
-	sd a2, 0(sp)
-	bne a0, zero, label321
-label322:
-	addi sp, sp, 8
+	bne a0, zero, label253
+label254:
 	ret
-label321:
-	ld a2, 0(sp)
+label253:
 	sw zero, 0(a2)
-	j label322
+	j label254
 .globl bfge
 bfge:
-	addi sp, sp, -8
 	fle.s a0, f11, f10
-	sd a2, 0(sp)
-	bne a0, zero, label335
-label336:
-	addi sp, sp, 8
+	bne a0, zero, label263
+label264:
 	ret
-label335:
-	ld a2, 0(sp)
+label263:
 	sw zero, 0(a2)
-	j label336
+	j label264
 .globl bfgt
 bfgt:
-	addi sp, sp, -8
 	flt.s a0, f11, f10
-	sd a2, 0(sp)
-	bne a0, zero, label349
-label350:
-	addi sp, sp, 8
+	bne a0, zero, label273
+label274:
 	ret
-label349:
-	ld a2, 0(sp)
+label273:
 	sw zero, 0(a2)
-	j label350
+	j label274

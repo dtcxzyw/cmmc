@@ -2,365 +2,275 @@
 .text
 .globl beqz
 beqz:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
 	bne $a0, $zero, label3
 	nop
 	sw $zero, 0($a1)
 label3:
-	addiu $sp, $sp, 4
 	jr $ra
 	nop
 .globl beqi
 beqi:
-	addiu $sp, $sp, -4
 	li $t0, 1
-	sw $a1, 0($sp)
-	bne $a0, $t0, label14
+	bne $a0, $t0, label12
 	nop
 	sw $zero, 0($a1)
-label14:
-	addiu $sp, $sp, 4
+label12:
 	jr $ra
 	nop
 .globl beq
 beq:
-	addiu $sp, $sp, -4
-	sw $a2, 0($sp)
-	bne $a0, $a1, label28
+	bne $a0, $a1, label23
 	nop
 	sw $zero, 0($a2)
-label28:
-	addiu $sp, $sp, 4
+label23:
 	jr $ra
 	nop
 .globl bnez
 bnez:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
-	beq $a0, $zero, label42
+	beq $a0, $zero, label34
 	nop
 	sw $zero, 0($a1)
-label42:
-	addiu $sp, $sp, 4
+label34:
 	jr $ra
 	nop
 .globl bnei
 bnei:
-	addiu $sp, $sp, -4
 	li $t0, 1
-	sw $a1, 0($sp)
-	beq $a0, $t0, label53
+	beq $a0, $t0, label43
 	nop
 	sw $zero, 0($a1)
-label53:
-	addiu $sp, $sp, 4
+label43:
 	jr $ra
 	nop
 .globl bne
 bne:
-	addiu $sp, $sp, -4
-	sw $a2, 0($sp)
-	beq $a0, $a1, label67
+	beq $a0, $a1, label54
 	nop
 	sw $zero, 0($a2)
-label67:
-	addiu $sp, $sp, 4
+label54:
 	jr $ra
 	nop
 .globl bltz
 bltz:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
-	bgez $a0, label81
+	bgez $a0, label65
 	nop
 	sw $zero, 0($a1)
-label81:
-	addiu $sp, $sp, 4
+label65:
 	jr $ra
 	nop
 .globl blti1
 blti1:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -1
-	sw $a1, 0($sp)
-	bgez $t0, label93
+	bgez $t0, label75
 	nop
 	sw $zero, 0($a1)
-label93:
-	addiu $sp, $sp, 4
+label75:
 	jr $ra
 	nop
 .globl blti2
 blti2:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -10
-	sw $a1, 0($sp)
-	bgez $t0, label106
+	bgez $t0, label85
 	nop
 	sw $zero, 0($a1)
-label106:
-	addiu $sp, $sp, 4
+label85:
 	jr $ra
 	nop
 .globl blt
 blt:
-	addiu $sp, $sp, -4
 	subu $t0, $a0, $a1
-	sw $a2, 0($sp)
-	bgez $t0, label120
+	bgez $t0, label96
 	nop
 	sw $zero, 0($a2)
-label120:
-	addiu $sp, $sp, 4
+label96:
 	jr $ra
 	nop
 .globl bgez
 bgez:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, 1
-	sw $a1, 0($sp)
-	blez $t0, label136
+	blez $t0, label108
 	nop
 	sw $zero, 0($a1)
-label136:
-	addiu $sp, $sp, 4
+label108:
 	jr $ra
 	nop
 .globl bgei1
 bgei1:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
-	blez $a0, label149
+	blez $a0, label118
 	nop
 	sw $zero, 0($a1)
-label149:
-	addiu $sp, $sp, 4
+label118:
 	jr $ra
 	nop
 .globl bgei2
 bgei2:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -9
-	sw $a1, 0($sp)
-	blez $t0, label160
+	blez $t0, label127
 	nop
 	sw $zero, 0($a1)
-label160:
-	addiu $sp, $sp, 4
+label127:
 	jr $ra
 	nop
 .globl bge
 bge:
-	addiu $sp, $sp, -4
 	subu $t0, $a0, $a1
-	sw $a2, 0($sp)
-	bltz $t0, label173
+	bltz $t0, label137
 	nop
 	sw $zero, 0($a2)
-label173:
-	addiu $sp, $sp, 4
+label137:
 	jr $ra
 	nop
 .globl bgtz
 bgtz:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
-	blez $a0, label188
+	blez $a0, label148
 	nop
 	sw $zero, 0($a1)
-label188:
-	addiu $sp, $sp, 4
+label148:
 	jr $ra
 	nop
 .globl bgti1
 bgti1:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, 1
-	sw $a1, 0($sp)
-	blez $t0, label199
+	blez $t0, label157
 	nop
 	sw $zero, 0($a1)
-label199:
-	addiu $sp, $sp, 4
+label157:
 	jr $ra
 	nop
 .globl bgti2
 bgti2:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -10
-	sw $a1, 0($sp)
-	blez $t0, label212
+	blez $t0, label167
 	nop
 	sw $zero, 0($a1)
-label212:
-	addiu $sp, $sp, 4
+label167:
 	jr $ra
 	nop
 .globl bgt
 bgt:
-	addiu $sp, $sp, -4
 	subu $t0, $a0, $a1
-	sw $a2, 0($sp)
-	blez $t0, label225
+	blez $t0, label177
 	nop
 	sw $zero, 0($a2)
-label225:
-	addiu $sp, $sp, 4
+label177:
 	jr $ra
 	nop
 .globl blez
 blez:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -1
-	sw $a1, 0($sp)
-	bgez $t0, label241
+	bgez $t0, label189
 	nop
 	sw $zero, 0($a1)
-label241:
-	addiu $sp, $sp, 4
+label189:
 	jr $ra
 	nop
 .globl blei1
 blei1:
-	addiu $sp, $sp, -4
-	sw $a1, 0($sp)
-	bgez $a0, label254
+	bgez $a0, label199
 	nop
 	sw $zero, 0($a1)
-label254:
-	addiu $sp, $sp, 4
+label199:
 	jr $ra
 	nop
 .globl blei2
 blei2:
-	addiu $sp, $sp, -4
 	addiu $t0, $a0, -11
-	sw $a1, 0($sp)
-	bgez $t0, label266
+	bgez $t0, label209
 	nop
 	sw $zero, 0($a1)
-label266:
-	addiu $sp, $sp, 4
+label209:
 	jr $ra
 	nop
 .globl ble
 ble:
-	addiu $sp, $sp, -4
 	subu $t0, $a0, $a1
-	sw $a2, 0($sp)
-	bgtz $t0, label280
+	bgtz $t0, label220
 	nop
 	sw $zero, 0($a2)
-label280:
-	addiu $sp, $sp, 4
+label220:
 	jr $ra
 	nop
 .globl bfeq
 bfeq:
-	addiu $sp, $sp, -4
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label294
+	bne $t0, $zero, label230
 	nop
-label295:
-	addiu $sp, $sp, 4
+label231:
 	jr $ra
 	nop
-label294:
-	lw $a2, 0($sp)
+label230:
 	sw $zero, 0($a2)
-	b label295
+	b label231
 	nop
 .globl bfne
 bfne:
-	addiu $sp, $sp, -4
 	c.eq.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label308
+	bne $t0, $zero, label240
 	nop
-label309:
-	addiu $sp, $sp, 4
+label241:
 	jr $ra
 	nop
-label308:
-	lw $a2, 0($sp)
+label240:
 	sw $zero, 0($a2)
-	b label309
+	b label241
 	nop
 .globl bflt
 bflt:
-	addiu $sp, $sp, -4
 	c.olt.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label322
+	bne $t0, $zero, label250
 	nop
-label323:
-	addiu $sp, $sp, 4
+label251:
 	jr $ra
 	nop
-label322:
-	lw $a2, 0($sp)
+label250:
 	sw $zero, 0($a2)
-	b label323
+	b label251
 	nop
 .globl bfle
 bfle:
-	addiu $sp, $sp, -4
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label336
+	bne $t0, $zero, label260
 	nop
-label337:
-	addiu $sp, $sp, 4
+label261:
 	jr $ra
 	nop
-label336:
-	lw $a2, 0($sp)
+label260:
 	sw $zero, 0($a2)
-	b label337
+	b label261
 	nop
 .globl bfge
 bfge:
-	addiu $sp, $sp, -4
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label350
+	bne $t0, $zero, label270
 	nop
-label351:
-	addiu $sp, $sp, 4
+label271:
 	jr $ra
 	nop
-label350:
-	lw $a2, 0($sp)
+label270:
 	sw $zero, 0($a2)
-	b label351
+	b label271
 	nop
 .globl bfgt
 bfgt:
-	addiu $sp, $sp, -4
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	sw $a2, 0($sp)
-	bne $t0, $zero, label364
+	bne $t0, $zero, label280
 	nop
-label365:
-	addiu $sp, $sp, 4
+label281:
 	jr $ra
 	nop
-label364:
-	lw $a2, 0($sp)
+label280:
 	sw $zero, 0($a2)
-	b label365
+	b label281
 	nop

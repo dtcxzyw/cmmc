@@ -14,12 +14,12 @@ cse_imm:
 	ret
 .globl cse_global
 cse_global:
-pcrel33:
-	auipc a0, %pcrel_hi(x)
-	addi a1, a0, %pcrel_lo(pcrel33)
-	lw a0, %pcrel_lo(pcrel33)(a0)
-	lw a1, 4(a1)
-	addw a0, a0, a1
+pcrel20:
+	auipc a1, %pcrel_hi(x)
+	addi a0, a1, %pcrel_lo(pcrel20)
+	lw a1, %pcrel_lo(pcrel20)(a1)
+	lw a0, 4(a0)
+	addw a0, a1, a0
 	ret
 .globl cse_fp
 cse_fp:

@@ -242,5 +242,39 @@ InstNum LiveInterval::nextUse(InstNum beg) const {
     assert(iter->beg > beg);
     return iter->beg;
 }
+bool LiveInterval::intersectWith(const LiveInterval& rhs) const {
+    auto iter = rhs.segments.cbegin();
+    for(auto& [beg, end] : segments) {
+        while(true) {
+            if(iter == rhs.segments.cend())
+                return false;
+            if(iter->end <= beg) {
+                ++iter;
+            } else
+                break;
+        }
+        if(iter->beg < end)
+            return true;
+    }
+    return false;
+}
+void LiveInterval::dump(std::ostream& out) const {
+    for(auto [beg, end] : segments) {
+        out << '[' << beg << ',' << end << ") ";
+    }
+}
+
+void cleanupRegFlags(MIRFunction& mfunc, const CodeGenContext& ctx) {
+    for(auto& block : mfunc.blocks()) {
+        for(auto& inst : block->instructions()) {
+            auto& instInfo = ctx.instInfo.getInstInfo(inst);
+            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                auto& op = inst.getOperand(idx);
+                if(op.isReg())
+                    op.regFlag() = RegisterFlagNone;
+            }
+        }
+    }
+}
 
 CMMC_MIR_NAMESPACE_END

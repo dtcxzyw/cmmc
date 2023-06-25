@@ -57,14 +57,14 @@ gep2:
 .globl gepseq
 gepseq:
 	slliw a1, a1, 2
-	add a0, a0, a1
-	lw a1, 0(a0)
-	lw a2, 4(a0)
-	lw a3, 8(a0)
-	lw a0, 12(a0)
-	addw a1, a1, a2
-	addw a1, a1, a3
-	addw a0, a1, a0
+	add a1, a0, a1
+	lw a0, 0(a1)
+	lw a3, 4(a1)
+	lw a2, 8(a1)
+	lw a1, 12(a1)
+	addw a0, a0, a3
+	addw a0, a0, a2
+	addw a0, a0, a1
 	ret
 .globl lb
 lb:
@@ -76,15 +76,15 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel133:
+pcrel79:
 	auipc a0, %pcrel_hi(y)
-	lw a0, %pcrel_lo(pcrel133)(a0)
+	lw a0, %pcrel_lo(pcrel79)(a0)
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel147:
+pcrel87:
 	auipc a1, %pcrel_hi(arr)
-	addi a1, a1, %pcrel_lo(pcrel147)
+	addi a1, a1, %pcrel_lo(pcrel87)
 	slli a0, a0, 2
 	add a0, a1, a0
 	lw a0, 0(a0)

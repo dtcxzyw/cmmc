@@ -205,8 +205,8 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel279:
+pcrel164:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel279)
+	addi a0, a0, %pcrel_lo(pcrel164)
 	flw f10, 0(a0)
 	ret

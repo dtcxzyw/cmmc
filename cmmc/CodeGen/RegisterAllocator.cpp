@@ -14,6 +14,7 @@
 
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
+#include <cmmc/CodeGen/LiveInterval.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
 #include <cmmc/CodeGen/Target.hpp>
@@ -26,7 +27,7 @@ CMMC_MIR_NAMESPACE_BEGIN
 StringOpt regAllocMethod;  // NOLINT
 
 CMMC_INIT_OPTIONS_BEGIN
-regAllocMethod.withDefault("fast").setName("register-alloc", 'r').setDesc("method for register allocation");
+regAllocMethod.withDefault("graph-coloring").setName("register-alloc", 'r').setDesc("method for register allocation");
 CMMC_INIT_OPTIONS_END
 
 void RegisterAllocatorRegistry::addMethod(std::string_view name, RegisterAllocFunc func) {
@@ -58,17 +59,7 @@ void assignRegisters(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache& ca
             }
         }
     }
-    // cleanup flags
-    for(auto& block : mfunc.blocks()) {
-        for(auto& inst : block->instructions()) {
-            auto& instInfo = ctx.instInfo.getInstInfo(inst);
-            for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-                auto& op = inst.getOperand(idx);
-                if(op.isReg())
-                    op.regFlag() = RegisterFlagNone;
-            }
-        }
-    }
+    cleanupRegFlags(mfunc, ctx);
 }
 
 void IPRAUsageCache::add(const CodeGenContext& ctx, MIRRelocable* symbol, MIRFunction& func) {

@@ -6,347 +6,257 @@
 .fpu neon
 .globl beqz
 beqz:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
 	bne label3
 	mov r0, #0
 	str r0, [r1, #0]
 label3:
-	add sp, sp, #4
 	bx lr
 .globl beqi
 beqi:
-	sub sp, sp, #4
 	cmp r0, #1
-	str r1, [sp, #0]
-	bne label16
+	bne label13
 	mov r0, #0
 	str r0, [r1, #0]
-label16:
-	add sp, sp, #4
+label13:
 	bx lr
 .globl beq
 beq:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	bne label29
+	bne label23
 	mov r0, #0
 	str r0, [r2, #0]
-label29:
-	add sp, sp, #4
+label23:
 	bx lr
 .globl bnez
 bnez:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
+	beq label34
+	mov r0, #0
+	str r0, [r1, #0]
+label34:
+	bx lr
+.globl bnei
+bnei:
+	cmp r0, #1
 	beq label44
 	mov r0, #0
 	str r0, [r1, #0]
 label44:
-	add sp, sp, #4
-	bx lr
-.globl bnei
-bnei:
-	sub sp, sp, #4
-	cmp r0, #1
-	str r1, [sp, #0]
-	beq label57
-	mov r0, #0
-	str r0, [r1, #0]
-label57:
-	add sp, sp, #4
 	bx lr
 .globl bne
 bne:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	beq label70
+	beq label54
 	mov r0, #0
 	str r0, [r2, #0]
-label70:
-	add sp, sp, #4
+label54:
 	bx lr
 .globl bltz
 bltz:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
+	bge label65
+	mov r0, #0
+	str r0, [r1, #0]
+label65:
+	bx lr
+.globl blti1
+blti1:
+	cmp r0, #1
+	bge label75
+	mov r0, #0
+	str r0, [r1, #0]
+label75:
+	bx lr
+.globl blti2
+blti2:
+	cmp r0, #10
 	bge label85
 	mov r0, #0
 	str r0, [r1, #0]
 label85:
-	add sp, sp, #4
-	bx lr
-.globl blti1
-blti1:
-	sub sp, sp, #4
-	cmp r0, #1
-	str r1, [sp, #0]
-	bge label98
-	mov r0, #0
-	str r0, [r1, #0]
-label98:
-	add sp, sp, #4
-	bx lr
-.globl blti2
-blti2:
-	sub sp, sp, #4
-	cmp r0, #10
-	str r1, [sp, #0]
-	bge label111
-	mov r0, #0
-	str r0, [r1, #0]
-label111:
-	add sp, sp, #4
 	bx lr
 .globl blt
 blt:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	bge label124
+	bge label95
 	mov r0, #0
 	str r0, [r2, #0]
-label124:
-	add sp, sp, #4
+label95:
 	bx lr
 .globl bgez
 bgez:
-	sub sp, sp, #4
 	mvn r2, #0
 	cmp r0, r2
-	str r1, [sp, #0]
-	ble label139
+	ble label106
 	mov r0, #0
 	str r0, [r1, #0]
-label139:
-	add sp, sp, #4
+label106:
 	bx lr
 .globl bgei1
 bgei1:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
-	ble label154
+	ble label117
 	mov r0, #0
 	str r0, [r1, #0]
-label154:
-	add sp, sp, #4
+label117:
 	bx lr
 .globl bgei2
 bgei2:
-	sub sp, sp, #4
 	cmp r0, #9
-	str r1, [sp, #0]
-	ble label167
+	ble label127
 	mov r0, #0
 	str r0, [r1, #0]
-label167:
-	add sp, sp, #4
+label127:
 	bx lr
 .globl bge
 bge:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	blt label180
+	blt label137
 	mov r0, #0
 	str r0, [r2, #0]
-label180:
-	add sp, sp, #4
+label137:
 	bx lr
 .globl bgtz
 bgtz:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
-	ble label195
+	ble label148
 	mov r0, #0
 	str r0, [r1, #0]
-label195:
-	add sp, sp, #4
+label148:
 	bx lr
 .globl bgti1
 bgti1:
-	sub sp, sp, #4
 	mvn r2, #0
 	cmp r0, r2
-	str r1, [sp, #0]
-	ble label208
+	ble label158
 	mov r0, #0
 	str r0, [r1, #0]
-label208:
-	add sp, sp, #4
+label158:
 	bx lr
 .globl bgti2
 bgti2:
-	sub sp, sp, #4
 	cmp r0, #10
-	str r1, [sp, #0]
-	ble label223
+	ble label169
 	mov r0, #0
 	str r0, [r1, #0]
-label223:
-	add sp, sp, #4
+label169:
 	bx lr
 .globl bgt
 bgt:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	ble label236
+	ble label179
 	mov r0, #0
 	str r0, [r2, #0]
-label236:
-	add sp, sp, #4
+label179:
 	bx lr
 .globl blez
 blez:
-	sub sp, sp, #4
 	cmp r0, #1
-	str r1, [sp, #0]
-	bge label251
+	bge label190
 	mov r0, #0
 	str r0, [r1, #0]
-label251:
-	add sp, sp, #4
+label190:
 	bx lr
 .globl blei1
 blei1:
-	sub sp, sp, #4
 	cmp r0, #0
-	str r1, [sp, #0]
-	bge label264
+	bge label200
 	mov r0, #0
 	str r0, [r1, #0]
-label264:
-	add sp, sp, #4
+label200:
 	bx lr
 .globl blei2
 blei2:
-	sub sp, sp, #4
 	cmp r0, #11
-	str r1, [sp, #0]
-	bge label277
+	bge label210
 	mov r0, #0
 	str r0, [r1, #0]
-label277:
-	add sp, sp, #4
+label210:
 	bx lr
 .globl ble
 ble:
-	sub sp, sp, #4
 	cmp r0, r1
-	str r2, [sp, #0]
-	bgt label290
+	bgt label220
 	mov r0, #0
 	str r0, [r2, #0]
-label290:
-	add sp, sp, #4
+label220:
 	bx lr
 .globl bfeq
 bfeq:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	beq label304
-label305:
-	add sp, sp, #4
+	beq label230
+label231:
 	bx lr
-label304:
+label230:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label305
+	b label231
 .globl bfne
 bfne:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	bne label319
-label320:
-	add sp, sp, #4
+	bne label241
+label242:
 	bx lr
-label319:
+label241:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label320
+	b label242
 .globl bflt
 bflt:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	bmi label334
-label335:
-	add sp, sp, #4
+	bmi label252
+label253:
 	bx lr
-label334:
+label252:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label335
+	b label253
 .globl bfle
 bfle:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	bls label349
-label350:
-	add sp, sp, #4
+	bls label263
+label264:
 	bx lr
-label349:
+label263:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label350
+	b label264
 .globl bfge
 bfge:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	bge label364
-label365:
-	add sp, sp, #4
+	bge label274
+label275:
 	bx lr
-label364:
+label274:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label365
+	b label275
 .globl bfgt
 bfgt:
-	sub sp, sp, #4
 	vmov s0, r0
 	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	str r2, [sp, #0]
-	bgt label379
-label380:
-	add sp, sp, #4
+	bgt label285
+label286:
 	bx lr
-label379:
+label285:
 	mov r0, #0
-	ldr r2, [sp, #0]
 	str r0, [r2, #0]
-	b label380
+	b label286

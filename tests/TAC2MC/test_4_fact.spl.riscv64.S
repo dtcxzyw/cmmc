@@ -23,65 +23,39 @@ write:
     ret
 .globl main
 main:
-	addi sp, sp, -72
-	sd ra, 64(sp)
+	addi sp, sp, -8
+	sd ra, 0(sp)
 	jal read
 	li a1, 1
-	sd a0, 56(sp)
 	ble a0, a1, label14
-	li a0, 1
-	ld a1, 56(sp)
-	bne a1, a0, label18
-	j label45
+	bne a0, a1, label18
+	j label33
 label14:
 	li a0, 1
-	sd a0, 48(sp)
 label9:
-	ld a1, 48(sp)
-	mv a0, a1
 	jal write
 	mv a0, zero
-	ld ra, 64(sp)
-	addi sp, sp, 72
+	ld ra, 0(sp)
+	addi sp, sp, 8
 	ret
-label45:
-	ld a0, 56(sp)
+label33:
 	li a1, 1
-	sd a1, 32(sp)
-	sd a0, 40(sp)
 	mulw a0, a0, a1
-	sd a0, 48(sp)
 	j label9
 label18:
-	ld a0, 56(sp)
 	li a1, 1
-	sd a1, 16(sp)
-	sd a0, 24(sp)
-	addiw a1, a0, -1
-	ld a2, 16(sp)
-	mulw a0, a0, a2
-	li a2, 1
-	sd a0, 0(sp)
-	sd a1, 8(sp)
-	bne a1, a2, label25
-label46:
-	ld a0, 8(sp)
-	ld a1, 0(sp)
-	sd a1, 32(sp)
-	sd a0, 40(sp)
-	mulw a0, a0, a1
-	sd a0, 48(sp)
+	addiw a2, a0, -1
+	mulw a1, a0, a1
+	li a0, 1
+	bne a2, a0, label25
+label34:
+	mv a0, a2
+	mulw a0, a2, a1
 	j label9
 label25:
-	ld a0, 8(sp)
-	ld a1, 0(sp)
-	sd a1, 16(sp)
-	sd a0, 24(sp)
-	addiw a1, a0, -1
-	ld a2, 16(sp)
-	mulw a0, a0, a2
-	li a2, 1
-	sd a0, 0(sp)
-	sd a1, 8(sp)
-	bne a1, a2, label25
-	j label46
+	mv a0, a2
+	addiw a2, a2, -1
+	mulw a1, a0, a1
+	li a0, 1
+	bne a2, a0, label25
+	j label34

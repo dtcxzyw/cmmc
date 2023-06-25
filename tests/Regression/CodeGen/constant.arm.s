@@ -26,11 +26,11 @@ cse_global:
 	bx lr
 .globl cse_fp
 cse_fp:
-	vmov s0, r0
-	vmov s1, r1
+	vmov s1, r0
+	vmov s0, r1
 	vmov.f32 s2, #4
-	vmul.f32 s0, s0, s2
 	vmul.f32 s1, s1, s2
-	vadd.f32 s0, s0, s1
+	vmul.f32 s0, s0, s2
+	vadd.f32 s0, s1, s0
 	vmov r0, s0
 	bx lr

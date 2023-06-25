@@ -2,49 +2,25 @@
 .text
 .globl my_fabs
 my_fabs:
-	addi sp, sp, -8
 	fmv.w.x f11, zero
 	fle.s a0, f11, f10
-	fsw f10, 4(sp)
-	bne a0, zero, label10
+	bne a0, zero, label2
 	fneg.s f10, f10
-	fsw f10, 0(sp)
-	j label2
-label10:
-	flw f10, 4(sp)
-	fsw f10, 0(sp)
 label2:
-	flw f11, 0(sp)
-	fmv.s f10, f11
-	addi sp, sp, 8
 	ret
 .globl my_fmin
 my_fmin:
-	addi sp, sp, -8
 	flt.s a0, f10, f11
-	fsw f10, 0(sp)
-	fsw f11, 4(sp)
-	bne a0, zero, label24
+	bne a0, zero, label19
 	fmv.s f10, f11
-	fsw f11, 0(sp)
-label24:
-	flw f11, 0(sp)
-	fmv.s f10, f11
-	addi sp, sp, 8
+label19:
 	ret
 .globl my_fmax
 my_fmax:
-	addi sp, sp, -8
 	flt.s a0, f11, f10
-	fsw f10, 0(sp)
-	fsw f11, 4(sp)
-	bne a0, zero, label35
+	bne a0, zero, label26
 	fmv.s f10, f11
-	fsw f11, 0(sp)
-label35:
-	flw f11, 0(sp)
-	fmv.s f10, f11
-	addi sp, sp, 8
+label26:
 	ret
 .globl my_trunc
 my_trunc:

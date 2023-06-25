@@ -47,6 +47,7 @@ public:
     [[nodiscard]] virtual uint32_t getAllocationClass(OperandType type) const = 0;
     [[nodiscard]] virtual bool isLegalISARegOperand(const MIROperand& operand, OperandFlag flag) const = 0;
     [[nodiscard]] virtual OperandType getCanonicalizedRegisterType(OperandType type) const = 0;
+    [[nodiscard]] virtual OperandType getCanonicalizedRegisterTypeForClass(uint32_t classId) const = 0;
     [[nodiscard]] virtual const std::vector<uint32_t>& getAllocationList(uint32_t classId) const = 0;
     virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
         CMMC_UNUSED(symbol);

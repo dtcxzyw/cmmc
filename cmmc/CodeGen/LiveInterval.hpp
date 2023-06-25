@@ -15,8 +15,10 @@
 #pragma once
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cstdint>
 #include <deque>
+#include <ostream>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -43,8 +45,10 @@ struct LiveInterval final {
     void appendSegment(const LiveSegment& segment);
     void insertSegment(const LiveSegment& segment);
     void optimize();
+    void dump(std::ostream& out) const;
     [[nodiscard]] bool verify() const;
     [[nodiscard]] InstNum nextUse(InstNum beg) const;
+    [[nodiscard]] bool intersectWith(const LiveInterval& rhs) const;
 };
 
 struct LiveVariablesBlockInfo final {
@@ -66,5 +70,6 @@ inline RegNum regNum(const MIROperand& operand) {
 }
 
 LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx);
+void cleanupRegFlags(MIRFunction& mfunc, const CodeGenContext& ctx);
 
 CMMC_MIR_NAMESPACE_END
