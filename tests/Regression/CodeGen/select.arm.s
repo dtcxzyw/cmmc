@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
 	cmp r0, #0
@@ -264,8 +264,11 @@ select_cross_fpr:
 	mov r3, r0
 	cmp r1, r2
 	bge label221
-	vmov.f32 s1, #1
-	vmov.f32 s0, #10
+	mov r1, #1065353216
+	vmov s1, r1
+	movw r1, #0
+	movt r1, #16672
+	vmov s0, r1
 	cmp r0, #0
 	vmovne.f32 s0, s1
 	b label211
@@ -283,13 +286,13 @@ select_round:
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bmi label229
-label230:
+	bmi label231
+label232:
 	vmov r0, s0
 	bx lr
-label229:
+label231:
 	movw r0, #4068
 	movt r0, #16585
 	vmov s1, r0
 	vadd.f32 s0, s0, s1
-	b label230
+	b label232

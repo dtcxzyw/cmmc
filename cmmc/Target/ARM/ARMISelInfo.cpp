@@ -835,16 +835,19 @@ MIROperand ARMISelInfo::materializeFPConstant(ConstantFloatingPoint* fp, Lowerin
         memcpy(&rep, &val, sizeof(float));
         const auto dst = loweringCtx.newVReg(OperandType::Float32);
         // TODO: directly emit LoadFP32Imm?
+        // Not supported by .fpu vfp
         // VMOV_FPR2GPR(LoadFP32Imm) -> LoadImm
-        if(isLegalFPConst(rep)) {
-            loweringCtx.emitInst(
-                MIRInst{ VMOV_Constant }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
-        } else {
-            const auto intermediate = loweringCtx.newVReg(OperandType::Int32);
-            loweringCtx.emitInst(
-                MIRInst{ InstLoadImm }.setOperand<0>(intermediate).setOperand<1>(MIROperand::asImm(rep, OperandType::Int32)));
-            loweringCtx.emitInst(MIRInst{ VMOV_GPR2FPR }.setOperand<0>(dst).setOperand<1>(intermediate));
-        }
+        CMMC_UNUSED(isLegalFPConst);
+        // if(isLegalFPConst(rep)) {
+        //     loweringCtx.emitInst(
+        //         MIRInst{ VMOV_Constant }.setOperand<0>(dst).setOperand<1>(MIROperand::asImm(rep, OperandType::Float32)));
+        //     return dst;
+        // }
+        const auto intermediate = loweringCtx.newVReg(OperandType::Int32);
+        loweringCtx.emitInst(
+            MIRInst{ InstLoadImm }.setOperand<0>(intermediate).setOperand<1>(MIROperand::asImm(rep, OperandType::Int32)));
+        loweringCtx.emitInst(MIRInst{ VMOV_GPR2FPR }.setOperand<0>(dst).setOperand<1>(intermediate));
+
         return dst;
     }
     return MIROperand{};

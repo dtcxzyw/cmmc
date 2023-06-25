@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl callee_cmmc_noinline
 callee_cmmc_noinline:
 	bx lr

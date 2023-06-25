@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl seqz
 seqz:
 	cmp r0, #0

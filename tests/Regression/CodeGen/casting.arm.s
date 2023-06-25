@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl u8_to_u8
 u8_to_u8:
 	bx lr

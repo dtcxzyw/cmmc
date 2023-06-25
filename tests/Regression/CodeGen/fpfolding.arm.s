@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl my_fabs
 my_fabs:
 	vmov s0, r0

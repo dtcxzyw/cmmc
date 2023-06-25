@@ -205,7 +205,7 @@ public:
             [&] {
                 out << ".syntax unified" << std::endl;
                 out << ".arm" << std::endl;
-                out << ".fpu neon" << std::endl;
+                out << ".fpu vfp" << std::endl;
             });
     }
     void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {

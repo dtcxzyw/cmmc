@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl add_imm
 add_imm:
 	add r0, r0, #1
@@ -147,7 +147,8 @@ fadd:
 .globl fadd_imm
 fadd_imm:
 	vmov s0, r0
-	vmov.f32 s1, #1
+	mov r0, #1065353216
+	vmov s1, r0
 	vadd.f32 s0, s0, s1
 	vmov r0, s0
 	bx lr
@@ -166,7 +167,8 @@ fsub:
 .globl fsub_imm
 fsub_imm:
 	vmov s0, r0
-	vmov.f32 s1, #1
+	mov r0, #1065353216
+	vmov s1, r0
 	vsub.f32 s0, s0, s1
 	vmov r0, s0
 	bx lr
@@ -193,7 +195,8 @@ fdiv:
 .globl fdiv_imm
 fdiv_imm:
 	vmov s0, r0
-	vmov.f32 s1, #0.5
+	mov r0, #1056964608
+	vmov s1, r0
 	vmul.f32 s0, s0, s1
 	vmov r0, s0
 	bx lr
@@ -240,8 +243,7 @@ fp_zero:
 	bx lr
 .globl fp_imm0
 fp_imm0:
-	vmov.f32 s0, #8
-	vmov r0, s0
+	mov r0, #1090519040
 	bx lr
 .globl fp_imm1
 fp_imm1:

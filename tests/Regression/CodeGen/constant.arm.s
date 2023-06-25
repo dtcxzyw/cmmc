@@ -7,7 +7,7 @@ x:
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl cse_imm
 cse_imm:
 	mov r3, #10
@@ -28,7 +28,9 @@ cse_global:
 cse_fp:
 	vmov s1, r0
 	vmov s0, r1
-	vmov.f32 s2, #4
+	movw r0, #0
+	movt r0, #16512
+	vmov s2, r0
 	vmul.f32 s1, s1, s2
 	vmul.f32 s0, s0, s2
 	vadd.f32 s0, s1, s0

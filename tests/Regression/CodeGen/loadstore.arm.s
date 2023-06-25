@@ -11,7 +11,7 @@ arr:
 .text
 .syntax unified
 .arm
-.fpu neon
+.fpu vfp
 .globl load
 load:
 	ldr r0, [r0, r1, lsl #2]
