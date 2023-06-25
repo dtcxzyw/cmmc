@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl add_imm
 add_imm:
 	add r0, r0, #1
@@ -129,82 +129,56 @@ ashr_reg:
 s2f:
 	vmov s0, r0
 	vcvt.f32.s32 s0, s0
-	vmov r0, s0
 	bx lr
 .globl f2s
 f2s:
-	vmov s0, r0
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
 	bx lr
 .globl fadd
 fadd:
-	vmov s0, r0
-	vmov s1, r1
 	vadd.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fadd_imm
 fadd_imm:
-	vmov s0, r0
 	mov r0, #1065353216
 	vmov s1, r0
 	vadd.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fadd_identity
 fadd_identity:
-	vmov s0, r0
-	vmov r0, s0
 	bx lr
 .globl fsub
 fsub:
-	vmov s0, r0
-	vmov s1, r1
 	vsub.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fsub_imm
 fsub_imm:
-	vmov s0, r0
 	mov r0, #1065353216
 	vmov s1, r0
 	vsub.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fmul
 fmul:
-	vmov s0, r0
-	vmov s1, r1
 	vmul.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fmul_imm
 fmul_imm:
-	vmov s0, r0
 	vadd.f32 s0, s0, s0
-	vmov r0, s0
 	bx lr
 .globl fdiv
 fdiv:
-	vmov s0, r0
-	vmov s1, r1
 	vdiv.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fdiv_imm
 fdiv_imm:
-	vmov s0, r0
 	mov r0, #1056964608
 	vmov s1, r0
 	vmul.f32 s0, s0, s1
-	vmov r0, s0
 	bx lr
 .globl fneg
 fneg:
-	vmov s0, r0
 	vneg.f32 s0, s0
-	vmov r0, s0
 	bx lr
 .globl s2f2s
 s2f2s:
@@ -215,10 +189,8 @@ s2f2s:
 	bx lr
 .globl f2s2f
 f2s2f:
-	vmov s0, r0
 	vcvt.s32.f32 s0, s0
 	vcvt.f32.s32 s0, s0
-	vmov r0, s0
 	bx lr
 .globl zero
 zero:
@@ -240,13 +212,16 @@ large_imm1:
 .globl fp_zero
 fp_zero:
 	mov r0, #0
+	vmov s0, r0
 	bx lr
 .globl fp_imm0
 fp_imm0:
 	mov r0, #1090519040
+	vmov s0, r0
 	bx lr
 .globl fp_imm1
 fp_imm1:
 	movw r0, #4058
 	movt r0, #16457
+	vmov s0, r0
 	bx lr

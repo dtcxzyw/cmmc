@@ -14,14 +14,14 @@ stack_size = 128 << 20  # 128M
 qemu_command = {
     'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
     'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
-    'arm': '{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabi -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
+    'arm': '{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
 }
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
 clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
 qemu_gcc_ref_command = {
     'riscv': "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ",
     'mips': "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -Wa,--relax-branch -mhard-float -ffp-contract=on -w ",
-    'arm': "arm-linux-gnueabi-gcc -x c++ -O2 -DNDEBUG -march=armv7 -ffp-contract=on -w ",
+    'arm': "arm-linux-gnueabihf-gcc-12 -x c++ -O2 -DNDEBUG -march=armv7 -mfpu=vfpv4 -ffp-contract=on -w -no-pie ",
 }
 binary_path = sys.argv[1]
 binary_dir = os.path.dirname(binary_path)

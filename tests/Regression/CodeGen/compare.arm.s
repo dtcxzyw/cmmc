@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl seqz
 seqz:
 	cmp r0, #0
@@ -90,8 +90,6 @@ sge:
 	bx lr
 .globl feq
 feq:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -99,8 +97,6 @@ feq:
 	bx lr
 .globl fne
 fne:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -108,8 +104,6 @@ fne:
 	bx lr
 .globl flt
 flt:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -117,8 +111,6 @@ flt:
 	bx lr
 .globl fgt
 fgt:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -126,8 +118,6 @@ fgt:
 	bx lr
 .globl fle
 fle:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -135,8 +125,6 @@ fle:
 	bx lr
 .globl fge
 fge:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
@@ -144,7 +132,6 @@ fge:
 	bx lr
 .globl fltz
 fltz:
-	vmov s0, r0
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
 	mov r0, #0

@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl add_after_lsl
 add_after_lsl:
 	add r0, r0, r1, lsl r2

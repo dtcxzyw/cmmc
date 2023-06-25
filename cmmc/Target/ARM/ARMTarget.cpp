@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// arm eabi
+// arm gnueabihf
 
 #include <ARM/ISelInfoDecl.hpp>
 #include <ARM/InstInfoDecl.hpp>
@@ -205,7 +205,7 @@ public:
             [&] {
                 out << ".syntax unified" << std::endl;
                 out << ".arm" << std::endl;
-                out << ".fpu vfp" << std::endl;
+                out << ".fpu vfpv4" << std::endl;
             });
     }
     void transformModuleBeforeCodeGen(Module& module, AnalysisPassManager& analysis) const override {
@@ -215,6 +215,11 @@ public:
             perFunc->addPass(pass);
         modulePassManager.addPass(createWrapper(std::move(perFunc)));
         modulePassManager.run(module, analysis);
+        for(auto global : module.globals())
+            if(!global->isFunction()) {
+                // mark all global variables as exported to use relocation R_ARM_MOVW_ABS_NC
+                global->setLinkage(Linkage::Global);
+            }
     }
 };
 
@@ -246,14 +251,11 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
         const auto alignment = size;
 
         if(offset < passingByRegisterThreshold) {
-            // $r0-$r3
-            MIROperand src = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
-            if(ctx.getCodeGenContext().registerInfo->getCanonicalizedRegisterType(arg.type()) == OperandType::Int32)
-                ctx.emitCopy(arg, src);
-            else if(arg.type() == OperandType::Float32) {
-                ctx.emitInst(MIRInst{ ARM::VMOV_GPR2FPR }.setOperand<0>(arg).setOperand<1>(src));
-            } else
-                reportUnreachable(CMMC_LOCATION());
+            // $r0-$r3 $s0-$s3
+            MIROperand src =
+                MIROperand::asISAReg((ARM::isOperandFPR(arg) ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
+                                     ARM::isOperandFPR(arg) ? OperandType::Float32 : OperandType::Int32);
+            ctx.emitCopy(arg, src);
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
             ctx.emitInst(MIRInst{ InstLoadRegFromStack }.setOperand<0>(arg).setOperand<1>(obj));
@@ -298,14 +300,11 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto alignment = size;
 
         if(offset < passingByRegisterThreshold) {
-            // $r0-$r3
-            MIROperand dst = MIROperand::asISAReg(ARM::R0 + static_cast<uint32_t>(offset) / 4, OperandType::Int32);
-            if(ctx.getCodeGenContext().registerInfo->getCanonicalizedRegisterType(val.type()) == OperandType::Int32)
-                ctx.emitCopy(dst, val);
-            else if(val.type() == OperandType::Float32) {
-                ctx.emitInst(MIRInst{ ARM::VMOV_FPR2GPR }.setOperand<0>(dst).setOperand<1>(val));
-            } else
-                reportUnreachable(CMMC_LOCATION());
+            // $r0-$r3 $s0-$s3
+            MIROperand dst =
+                MIROperand::asISAReg((arg->getType()->isFloatingPoint() ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
+                                     arg->getType()->isFloatingPoint() ? OperandType::Float32 : OperandType::Int32);
+            ctx.emitCopy(dst, val);
         } else {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
@@ -324,12 +323,13 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         return;
     }
     const auto retReg = ctx.newVReg(ret);
-    const auto val = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
+    MIROperand val;
     if(ret->isFloatingPoint()) {
-        ctx.emitInst(MIRInst{ ARM::VMOV_GPR2FPR }.setOperand<0>(retReg).setOperand<1>(val));
+        val = MIROperand::asISAReg(ARM::S0, OperandType::Float32);
     } else {
-        ctx.emitCopy(retReg, val);
+        val = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
     }
+    ctx.emitCopy(retReg, val);
 
     ctx.addOperand(inst, retReg);
 }
@@ -340,12 +340,13 @@ void ARMFrameInfo::emitReturn(ReturnInst* inst, LoweringContext& ctx) const {
         const auto& dataLayout = ctx.getDataLayout();
         const auto size = val->getType()->getSize(dataLayout);
         if(size <= 4) {
-            const auto retReg = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
+            MIROperand retReg;
             if(val->getType()->isFloatingPoint()) {
-                ctx.emitInst(MIRInst{ ARM::VMOV_FPR2GPR }.setOperand<0>(retReg).setOperand<1>(ctx.mapOperand(val)));
+                retReg = MIROperand::asISAReg(ARM::S0, OperandType::Float32);
             } else {
-                ctx.emitCopy(retReg, ctx.mapOperand(val));
+                retReg = MIROperand::asISAReg(ARM::R0, OperandType::Int32);
             }
+            ctx.emitCopy(retReg, ctx.mapOperand(val));
         } else
             reportNotImplemented(CMMC_LOCATION());
     }

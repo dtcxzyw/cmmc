@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
 	cmp r0, #0
@@ -18,19 +18,15 @@ select_not_gpr_gpr_gpr:
 	bx lr
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
-	vmov s0, r1
-	vmov s1, r2
 	cmp r0, #0
-	vmovne.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s2
+	vmovne.f32 s0, s1
 	bx lr
 .globl select_not_gpr_fpr_fpr
 select_not_gpr_fpr_fpr:
-	vmov s0, r1
-	vmov s1, r2
 	cmp r0, #0
-	vmoveq.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s2
+	vmoveq.f32 s0, s1
 	bx lr
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
@@ -40,11 +36,9 @@ select_slt_gpr_gpr:
 	bx lr
 .globl select_slt_fpr_fpr
 select_slt_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmovlt.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovlt.f32 s0, s2
 	bx lr
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
@@ -54,11 +48,9 @@ select_sle_gpr_gpr:
 	bx lr
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmovle.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovle.f32 s0, s2
 	bx lr
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
@@ -68,11 +60,9 @@ select_sgt_gpr_gpr:
 	bx lr
 .globl select_sgt_fpr_fpr
 select_sgt_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmovgt.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovgt.f32 s0, s2
 	bx lr
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
@@ -82,11 +72,9 @@ select_sge_gpr_gpr:
 	bx lr
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmovge.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovge.f32 s0, s2
 	bx lr
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
@@ -96,11 +84,9 @@ select_eq_gpr_gpr:
 	bx lr
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmoveq.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmoveq.f32 s0, s2
 	bx lr
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
@@ -110,16 +96,12 @@ select_ne_gpr_gpr:
 	bx lr
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
-	vmov s0, r2
-	vmov s1, r3
 	cmp r0, r1
-	vmovne.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovne.f32 s0, s2
 	bx lr
 .globl select_feq_gpr_gpr
 select_feq_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -127,20 +109,13 @@ select_feq_gpr_gpr:
 	bx lr
 .globl select_feq_fpr_fpr
 select_feq_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmoveq.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmoveq.f32 s0, s2
 	bx lr
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -148,20 +123,13 @@ select_fne_gpr_gpr:
 	bx lr
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmovne.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovne.f32 s0, s2
 	bx lr
 .globl select_flt_gpr_gpr
 select_flt_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -169,20 +137,13 @@ select_flt_gpr_gpr:
 	bx lr
 .globl select_flt_fpr_fpr
 select_flt_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmovmi.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovmi.f32 s0, s2
 	bx lr
 .globl select_fle_gpr_gpr
 select_fle_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -190,20 +151,13 @@ select_fle_gpr_gpr:
 	bx lr
 .globl select_fle_fpr_fpr
 select_fle_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmovls.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovls.f32 s0, s2
 	bx lr
 .globl select_fgt_gpr_gpr
 select_fgt_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -211,20 +165,13 @@ select_fgt_gpr_gpr:
 	bx lr
 .globl select_fgt_fpr_fpr
 select_fgt_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmovgt.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovgt.f32 s0, s2
 	bx lr
 .globl select_fge_gpr_gpr
 select_fge_gpr_gpr:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	mov r0, r3
@@ -232,15 +179,10 @@ select_fge_gpr_gpr:
 	bx lr
 .globl select_fge_fpr_fpr
 select_fge_fpr_fpr:
-	vmov s1, r0
-	vmov s2, r1
-	vmov s0, r2
-	vmov s3, r3
-	vcmp.f32 s1, s2
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	vmov.f32 s1, s3
-	vmovge.f32 s1, s0
-	vmov r0, s1
+	vmov.f32 s0, s3
+	vmovge.f32 s0, s2
 	bx lr
 .globl select_cross
 select_cross:
@@ -276,11 +218,9 @@ label221:
 	vmov s0, r3
 	vcvt.f32.s32 s0, s0
 label211:
-	vmov r0, s0
 	bx lr
 .globl select_round
 select_round:
-	vmov s0, r0
 	movw r0, #4048
 	movt r0, #49225
 	vmov s1, r0
@@ -288,7 +228,6 @@ select_round:
 	vmrs APSR_nzcv, FPSCR
 	bmi label231
 label232:
-	vmov r0, s0
 	bx lr
 label231:
 	movw r0, #4068

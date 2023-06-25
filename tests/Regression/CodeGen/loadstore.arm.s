@@ -11,7 +11,7 @@ arr:
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl load
 load:
 	ldr r0, [r0, r1, lsl #2]
@@ -24,7 +24,6 @@ load_byte:
 load_float:
 	add r0, r0, r1, lsl #2
 	vldr s0, [r0, #0]
-	vmov r0, s0
 	bx lr
 .globl store
 store:
@@ -32,9 +31,8 @@ store:
 	bx lr
 .globl store_float
 store_float:
-	vmov s0, r2
 	add r0, r0, r1, lsl #2
-	vstr s0, [r0, #0]
+	vstr s2, [r0, #0]
 	bx lr
 .globl gep_const
 gep_const:

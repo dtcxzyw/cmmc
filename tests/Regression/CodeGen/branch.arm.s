@@ -3,7 +3,7 @@
 .text
 .syntax unified
 .arm
-.fpu vfp
+.fpu vfpv4
 .globl beqz
 beqz:
 	cmp r0, #0
@@ -184,8 +184,6 @@ label220:
 	bx lr
 .globl bfeq
 bfeq:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	beq label230
@@ -197,8 +195,6 @@ label230:
 	b label231
 .globl bfne
 bfne:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bne label241
@@ -210,8 +206,6 @@ label241:
 	b label242
 .globl bflt
 bflt:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bmi label252
@@ -223,8 +217,6 @@ label252:
 	b label253
 .globl bfle
 bfle:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bls label263
@@ -236,8 +228,6 @@ label263:
 	b label264
 .globl bfge
 bfge:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bge label274
@@ -249,8 +239,6 @@ label274:
 	b label275
 .globl bfgt
 bfgt:
-	vmov s0, r0
-	vmov s1, r1
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	bgt label285
