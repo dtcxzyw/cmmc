@@ -6,7 +6,7 @@ cd ..
 rm -rf cmmc_submit/src
 cp -r build/educg_submit cmmc_submit/src
 rm -rf cmmc_submit/src/compiler cmmc_submit/src/build
-cp cmmc_submit/src/Driver/Target_$1.hpp cmmc_submit/src/Driver/Target.hpp
+cp cmmc_submit/src/cmmc/Driver/Target_$1.hpp cmmc_submit/src/cmmc/Driver/Target.hpp
 date > cmmc_submit/timestamp
 cd cmmc_submit
 git add .
