@@ -1,0 +1,36 @@
+name: linux
+
+on: workflow_dispatch
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Env
+        run: sudo apt install ninja-build
+
+      - name: Build
+        run: |
+          mkdir build && cd build
+          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMMC_LLVM_SUPPORT=OFF
+          cmake --build . -j
+
+      - name: Update repo
+        env:
+            URL: ${{ secrets.REPO_URL }}
+        
+        run: |
+            git config --global user.name "CMMC Authors"
+            git config --global user.email "dtcxzyw@qq.com"
+            git clone $URL
+            ./educg/sync_repo.sh arm
+            ./educg/sync_repo.sh riscv
+        

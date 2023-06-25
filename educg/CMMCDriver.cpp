@@ -73,13 +73,9 @@ static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::
 
 int main(int argc, char** argv) {
     strictMode.handle("false");
-#if defined(__riscv)
-    mir::targetName.handle("riscv");
-#elif defined(__aarch64__)
-    mir::targetName.handle("arm");
-#else
-    mir::targetName.handle("riscv");
-#endif
+
+#include <cmmc/Driver/Target.hpp>
+
     if(argc != 5 && argc != 6) {
         reportInfo() << "CMMC " CMMC_VERSION << std::endl;
         reportInfo() << "Build time: " __TIME__ " " __DATE__ << std::endl;
@@ -104,7 +100,8 @@ int main(int argc, char** argv) {
             driver.emit(module);
         }
 
-        return runIRPipeline(module, opt ? OptimizationLevel::O3 : OptimizationLevel::O0, outputPath);
+        CMMC_UNUSED(opt);
+        return runIRPipeline(module, OptimizationLevel::O3 /* opt ? OptimizationLevel::O3 : OptimizationLevel::O0 */, outputPath);
     } catch(const std::exception& ex) {
         std::cerr << "Unexpected exception: "sv << ex.what() << std::endl;
     } catch(...) {
