@@ -409,7 +409,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: selectInvertedOp2Constant($Rhs, [$InvertedImm]) && isOperandIReg($Lhs)
-      $Instances: [InstAnd, InstOr]
+      $Instances: [InstAnd]
     Replace:
       BitwiseAndOrVariant:
         $Opcode: getBitwiseVariantOpcode(rootOpcode)

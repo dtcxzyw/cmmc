@@ -205,6 +205,7 @@ public:
             [&] {
                 out << ".syntax unified" << std::endl;
                 out << ".arm" << std::endl;
+                // out << ".thumb" << std::endl;
                 out << ".fpu vfpv4" << std::endl;
             });
     }

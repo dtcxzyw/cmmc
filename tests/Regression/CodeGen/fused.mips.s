@@ -152,9 +152,15 @@ fused_div_rem_constant:
 	addu $v0, $t0, $t1
 	jr $ra
 	nop
-.globl mvn_and_is_bics
-mvn_and_is_bics:
+.globl fused_mvn_and
+fused_mvn_and:
 	li $t0, -17
 	and $v0, $a0, $t0
+	jr $ra
+	nop
+.globl fused_mvn_or
+fused_mvn_or:
+	li $t0, -17
+	or $v0, $a0, $t0
 	jr $ra
 	nop

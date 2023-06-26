@@ -601,8 +601,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
 
-            // bypass for and -> bic, or -> orn
-            if(inst.opcode() == InstXor || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type()))))
+            // bypass for and -> bic
+            if(inst.opcode() != InstAnd || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type()))))
                 nonOp2Imm2reg(rhs);
             break;
         }

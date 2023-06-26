@@ -89,6 +89,10 @@ int32_t fused_div_rem_constant(int32_t x) {
     return x / 3 + x % 3;
 }
 
-uint32_t mvn_and_is_bics(uint32_t x){
+uint32_t fused_mvn_and(uint32_t x){
     return x & -17;
+}
+
+uint32_t fused_mvn_or(uint32_t x){
+    return x | -17;
 }
