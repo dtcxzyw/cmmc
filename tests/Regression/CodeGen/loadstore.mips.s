@@ -66,23 +66,14 @@ gep2:
 .globl gepseq
 gepseq:
 	sll $t0, $a1, 2
-	addu $t0, $a0, $t0
-	lw $t0, 0($t0)
-	addiu $t1, $a1, 1
-	sll $t1, $t1, 2
-	addu $t1, $a0, $t1
-	lw $t1, 0($t1)
-	addiu $t2, $a1, 2
-	sll $t2, $t2, 2
-	addu $t2, $a0, $t2
-	lw $t2, 0($t2)
-	addiu $t3, $a1, 3
-	sll $t3, $t3, 2
-	addu $t3, $a0, $t3
-	lw $t3, 0($t3)
-	addu $t0, $t0, $t1
+	addu $t1, $a0, $t0
+	lw $t0, 0($t1)
+	lw $t3, 4($t1)
+	lw $t2, 8($t1)
+	lw $t1, 12($t1)
+	addu $t0, $t0, $t3
 	addu $t0, $t0, $t2
-	addu $v0, $t0, $t3
+	addu $v0, $t0, $t1
 	jr $ra
 	nop
 .globl lb

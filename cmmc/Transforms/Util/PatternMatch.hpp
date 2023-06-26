@@ -331,6 +331,11 @@ auto sext(Value value) {
 }
 
 template <typename Value>
+auto ztrunc(Value value) {
+    return CastMatcher{ InstructionID::UnsignedTrunc, value };
+}
+
+template <typename Value>
 auto f2s(Value value) {
     return CastMatcher{ InstructionID::F2S, value };
 }

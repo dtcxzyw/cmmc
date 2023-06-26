@@ -49,18 +49,14 @@ gep2:
 	bx lr
 .globl gepseq
 gepseq:
-	push { r4 }
-	ldr r2, [r0, r1, lsl #2]
-	add r3, r1, #1
-	ldr r3, [r0, r3, lsl #2]
-	add r4, r1, #2
-	ldr r4, [r0, r4, lsl #2]
-	add r1, r1, #3
+	add r2, r0, r1, lsl #2
 	ldr r0, [r0, r1, lsl #2]
-	add r1, r2, r3
-	add r1, r1, r4
-	add r0, r1, r0
-	pop { r4 }
+	ldr r3, [r2, #4]
+	ldr r1, [r2, #8]
+	ldr r2, [r2, #12]
+	add r0, r0, r3
+	add r0, r0, r1
+	add r0, r0, r2
 	bx lr
 .globl lb
 lb:

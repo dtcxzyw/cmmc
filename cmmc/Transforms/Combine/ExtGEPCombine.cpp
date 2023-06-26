@@ -13,6 +13,7 @@
 */
 
 // sext index -> index
+// ztrunc index -> index
 
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
@@ -38,6 +39,9 @@ class ExtGEPCombine final : public TransformPass<Function> {
                 if(operand->value->getType()->isInteger()) {
                     Value* idx;
                     if(sext(any(idx))(MatchContext<Value>{ operand->value })) {
+                        operand->resetValue(idx);
+                        modified = true;
+                    } else if(ztrunc(any(idx))(MatchContext<Value>{ operand->value }) && operand->value->getType() == indexType) {
                         operand->resetValue(idx);
                         modified = true;
                     }
