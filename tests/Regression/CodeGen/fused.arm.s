@@ -112,3 +112,7 @@ fused_div_rem_constant:
 	sub r0, r0, r2
 	add r0, r1, r0
 	bx lr
+.globl mvn_and_is_bics
+mvn_and_is_bics:
+	bic r0, r0, #16
+	bx lr

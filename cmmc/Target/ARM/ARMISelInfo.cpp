@@ -296,6 +296,17 @@ constexpr ARMInst getFusedIntegerBinaryOpcode(const uint32_t opcode) {
     }
 }
 
+constexpr ARMInst getBitwiseVariantOpcode(const uint32_t opcode) {
+    switch(opcode) {
+        case InstAnd:
+            return BIC;
+        case InstOr:
+            return ORN;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 constexpr ARMInst getShiftOpcode(const uint32_t opcode) {
     switch(opcode) {
         case InstShl:
@@ -568,7 +579,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            nonOp2Imm2reg(rhs);
+
+            // bypass for and -> bic, or -> orn
+            if(inst.opcode() == InstXor || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type()))))
+                nonOp2Imm2reg(rhs);
             break;
         }
         case InstNeg: {

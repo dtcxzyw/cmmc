@@ -138,3 +138,7 @@ fused_div_rem_constant:
 	subw a0, a0, a2
 	addw a0, a1, a0
 	ret
+.globl mvn_and_is_bics
+mvn_and_is_bics:
+	andi a0, a0, -17
+	ret

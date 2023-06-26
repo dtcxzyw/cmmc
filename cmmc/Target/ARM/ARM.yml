@@ -404,6 +404,21 @@ InstSelection:
         Op2: $Rhs
 
   - Pattern:
+      $Template:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: selectInvertedOp2Constant($Rhs, [$InvertedImm]) && isOperandIReg($Lhs)
+      $Instances: [InstAnd, InstOr]
+    Replace:
+      BitwiseAndOrVariant:
+        $Opcode: getBitwiseVariantOpcode(rootOpcode)
+        $Template: BIC
+        Rd: $Dst
+        Rn: $Lhs
+        Op2: $InvertedImm
+
+  - Pattern:
       InstSub:
         Dst: $Dst
         Lhs: $Lhs
