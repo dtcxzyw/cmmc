@@ -47,7 +47,7 @@ void forEachUseOperands(MIRBasicBlock& block, const CodeGenContext& ctx,
 void forEachDefOperands(MIRBasicBlock& block, const CodeGenContext& ctx, const std::function<void(MIROperand& op)>& functor);
 bool removeIdentityCopies(MIRFunction& func, const CodeGenContext& ctx);
 void useZeroRegister(MIRFunction& func, MIROperand zero, uint32_t size);
-bool eliminateStackLoads(MIRFunction& func, const Target& target);
+bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx);
 bool applySSAPropagation(MIRFunction& func, const CodeGenContext& ctx);
 bool redirectGoto(MIRFunction& func, const CodeGenContext& ctx);
 
