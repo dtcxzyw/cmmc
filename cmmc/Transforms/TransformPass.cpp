@@ -319,6 +319,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ConditionalPropagation",  //
             "SimpleCSE",               //
             "GEPCombine",              //
+            "GlobalUse2PlaceHolder",   //
             "NoSideEffectEliminate",   // clean up
             // Arithmetic
             "ConstantPropagation",       //

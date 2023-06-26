@@ -76,15 +76,15 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel79:
+pcrel80:
 	auipc a0, %pcrel_hi(y)
-	lw a0, %pcrel_lo(pcrel79)(a0)
+	lw a0, %pcrel_lo(pcrel80)(a0)
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel87:
+pcrel89:
 	auipc a1, %pcrel_hi(arr)
-	addi a1, a1, %pcrel_lo(pcrel87)
+	addi a1, a1, %pcrel_lo(pcrel89)
 	slli a0, a0, 2
 	add a0, a1, a0
 	lw a0, 0(a0)

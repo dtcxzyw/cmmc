@@ -130,7 +130,9 @@ mod_imm:
 	movt r1, #21845
 	smmul r1, r0, r1
 	add r1, r1, r1, lsr #31
-	mls r0, r1, #3, r0
+	mov r2, #3
+	mul r1, r1, r2
+	sub r0, r0, r1
 	bx lr
 .globl mod_reg
 mod_reg:

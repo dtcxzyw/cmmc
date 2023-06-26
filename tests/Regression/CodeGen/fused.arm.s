@@ -107,6 +107,8 @@ fused_div_rem_constant:
 	add r1, r1, r1, lsr #31
 	smmul r2, r0, r2
 	add r2, r2, r2, lsr #31
-	mls r0, r2, #3, r0
+	mov r3, #3
+	mul r2, r2, r3
+	sub r0, r0, r2
 	add r0, r1, r0
 	bx lr

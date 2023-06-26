@@ -38,6 +38,8 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
 
             switch(inst.getInstID()) {
                 case InstructionID::GetElementPtr:
+                    [[fallthrough]];
+                case InstructionID::PtrCast:
                     graph[inst.lastOperand()].push_back(&inst);
                     break;
                 case InstructionID::Select:
@@ -57,14 +59,14 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
     std::queue<Instruction*> q;
     std::unordered_set<Instruction*> visiting;  // in queue + visited
     const auto setStorage = [&](Value* dst, Value* src, Instruction* inst) {
+        assert(!storage.count(dst));
         storage[dst] = src;
         if(inst)
             visiting.insert(inst);
 
         for(auto child : graph[dst])
-            if(!visiting.count(child)) {
+            if(visiting.insert(child).second) {
                 q.push(child);
-                visiting.insert(child);
             }
     };
 
@@ -84,7 +86,9 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
 
         switch(inst->getInstID()) {
             case InstructionID::GetElementPtr:
-                setStorage(inst, storage[inst->lastOperand()], inst);  // guranteed to be in storage
+                [[fallthrough]];
+            case InstructionID::PtrCast:
+                setStorage(inst, storage.at(inst->lastOperand()), inst);  // guranteed to be in storage
                 break;
             case InstructionID::Select:
                 if(auto iter1 = storage.find(inst->getOperand(1)); iter1 != storage.end()) {
