@@ -88,9 +88,10 @@ void ISelContext::runISel(MIRFunction& func) {
                         auto& operand = inst.getOperand(idx);
                         if(operand.isReg() && isVirtualReg(operand.reg())) {
                             if(mInstMapping.count(operand)) {
+                                std::cerr << "Invalid SSA form during ISel!!!" << std::endl;
                                 instInfo.print(std::cerr, inst, true);
+                                reportUnreachable(CMMC_LOCATION());
                             }
-                            assert(!mInstMapping.count(operand));  // SSA Form
                             mInstMapping.emplace(operand, &inst);
                         }
                     }

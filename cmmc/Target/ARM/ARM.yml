@@ -510,6 +510,26 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs)
+    Replace:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstMul:
+            Dst: getVRegAs(ctx, $Dst)
+            Lhs:
+              InstSDiv:
+                Dst: getVRegAs(ctx, $Dst)
+                Lhs: $Lhs
+                Rhs: $Rhs
+            Rhs: $Rhs
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MLS:

@@ -402,7 +402,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            if(inst.opcode() != InstSDiv || !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
+            if((inst.opcode() != InstSDiv && inst.opcode() != InstSRem) ||
+               !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
                 imm2reg(rhs);
             }
             break;

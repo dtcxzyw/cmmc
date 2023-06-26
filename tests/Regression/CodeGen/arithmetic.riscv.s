@@ -136,8 +136,14 @@ div_reg:
 	ret
 .globl mod_imm
 mod_imm:
-	li a1, 3
-	remw a0, a0, a1
+	li a1, 1431655766
+	mul a2, a0, a1
+	srli a1, a2, 32
+	srli a2, a2, 63
+	add a1, a2, a1
+	li a2, 3
+	mulw a1, a1, a2
+	subw a0, a0, a1
 	ret
 .globl mod_reg
 mod_reg:
@@ -249,8 +255,8 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel204:
+pcrel210:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel204)
+	addi a0, a0, %pcrel_lo(pcrel210)
 	flw f10, 0(a0)
 	ret
