@@ -21,6 +21,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <queue>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -29,70 +30,94 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
     PointerBaseAnalysisResult result;
     auto& storage = result.storage();
 
-    for(auto global : analysis.module().globals()) {
-        if(!global->isFunction()) {
-            storage[global] = global;
-        }
-    }
+    std::unordered_map<Value*, std::vector<Instruction*>> graph;
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions()) {
+            if(!inst.getType()->isPointer())
+                continue;
 
-    while(true) {
-        size_t before = storage.size();
-
-        for(auto& block : func.blocks()) {
-            for(auto& inst : block->instructions()) {
-                Value* dst = &inst;
-                if(!inst.getType()->isPointer() || storage.count(dst))
-                    continue;
-
-                switch(inst.getInstID()) {
-                    case InstructionID::Alloc:
-                        storage[dst] = dst;
-                        break;
-                    case InstructionID::GetElementPtr: {
-                        Value* src = inst.lastOperand();
-                        if(auto iter = storage.find(src); iter != storage.end()) {
-                            storage[dst] = iter->second;
-                        }
-                    } break;
-                    case InstructionID::Select:
-                        if(auto iter1 = storage.find(inst.getOperand(1)); iter1 != storage.end()) {
-                            if(auto iter2 = storage.find(inst.getOperand(2)); iter2 != storage.end()) {
-                                if(iter1->second == iter2->second) {
-                                    storage[dst] = iter1->second;
-                                }
-                            }
-                        }
-                        break;
-                    case InstructionID::Phi: {
-                        Value* src = nullptr;
-                        bool same = true;
-
-                        for(auto [pred, val] : inst.as<PhiInst>()->incomings()) {
-                            if(val->value == dst)
-                                continue;
-                            if(auto iter = storage.find(val->value); iter != storage.end()) {
-                                if(!src || iter->second == src) {
-                                    src = iter->second;
-                                    continue;
-                                }
-                            }
-
-                            same = false;
-                            break;
-                        }
-
-                        if(same && src) {
-                            storage[dst] = src;
-                        }
-                    } break;
-                    default:
-                        break;
-                }
+            switch(inst.getInstID()) {
+                case InstructionID::GetElementPtr:
+                    graph[inst.lastOperand()].push_back(&inst);
+                    break;
+                case InstructionID::Select:
+                    graph[inst.getOperand(1)].push_back(&inst);
+                    graph[inst.getOperand(2)].push_back(&inst);
+                    break;
+                case InstructionID::Phi:
+                    for(auto [pred, val] : inst.as<PhiInst>()->incomings())
+                        if(val->value != &inst)
+                            graph[val->value].push_back(&inst);
+                    break;
+                default:
+                    break;
             }
         }
 
-        if(storage.size() == before)
-            break;
+    std::queue<Instruction*> q;
+    std::unordered_set<Instruction*> visiting;  // in queue + visited
+    const auto setStorage = [&](Value* dst, Value* src, Instruction* inst) {
+        storage[dst] = src;
+        if(inst)
+            visiting.insert(inst);
+
+        for(auto child : graph[dst])
+            if(!visiting.count(child)) {
+                q.push(child);
+                visiting.insert(child);
+            }
+    };
+
+    for(auto global : analysis.module().globals())
+        if(!global->isFunction())
+            setStorage(global, global, nullptr);
+
+    for(auto& block : func.blocks())
+        for(auto& inst : block->instructions())
+            if(inst.getType()->isPointer() && inst.getInstID() == InstructionID::Alloc)
+                setStorage(&inst, &inst, &inst);
+
+    while(!q.empty()) {
+        auto inst = q.front();
+        q.pop();
+        visiting.erase(inst);
+
+        switch(inst->getInstID()) {
+            case InstructionID::GetElementPtr:
+                setStorage(inst, storage[inst->lastOperand()], inst);  // guranteed to be in storage
+                break;
+            case InstructionID::Select:
+                if(auto iter1 = storage.find(inst->getOperand(1)); iter1 != storage.end()) {
+                    if(auto iter2 = storage.find(inst->getOperand(2)); iter2 != storage.end()) {
+                        if(iter1->second == iter2->second)
+                            setStorage(inst, iter1->second, inst);
+                    }
+                }
+                break;
+            case InstructionID::Phi: {
+                Value* src = nullptr;
+                bool same = true;
+
+                for(auto [pred, val] : inst->as<PhiInst>()->incomings()) {
+                    if(val->value == inst)
+                        continue;
+                    if(auto iter = storage.find(val->value); iter != storage.end()) {
+                        if(!src || iter->second == src) {
+                            src = iter->second;
+                            continue;
+                        }
+                    }
+
+                    same = false;
+                    break;
+                }
+
+                if(same && src)
+                    setStorage(inst, src, inst);
+            } break;
+            default:
+                break;
+        }
     }
 
     return result;
