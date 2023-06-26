@@ -13,22 +13,33 @@
 */
 
 #pragma once
-#include <cmmc/Analysis/AliasAnalysis.hpp>
-#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
+#include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/IR/Block.hpp>
+#include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
-#include <cmmc/IR/Value.hpp>
+#include <cstdint>
+#include <vector>
 
 CMMC_NAMESPACE_BEGIN
 
-class SimpleValueAnalysis final {
-    const AliasAnalysisResult& mAliasSet;
-    const PointerBaseAnalysisResult& mPointerBase;
-    std::unordered_map<Value*, std::unordered_map<Value*, Value*>> mLastValue;  // <base pointer, <pointer, value>>
+struct BlockPointerBaseInfo final {
+    std::vector<Block*> predecessors;
+    std::vector<Block*> successors;
+};
+
+class PointerBaseAnalysisResult final {
+    std::unordered_map<Value*, Value*> mInfo;
 
 public:
-    explicit SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet, const PointerBaseAnalysisResult& pointerBase);
-    void next(Instruction* inst);
-    Value* getLastValue(Value* pointer) const;
+    std::unordered_map<Value*, Value*>& storage() {
+        return mInfo;
+    }
+    Value* lookup(Value* pointer) const;
+};
+
+class PointerBaseAnalysis final : public FuncAnalysisPassWrapper<PointerBaseAnalysis, PointerBaseAnalysisResult> {
+public:
+    static PointerBaseAnalysisResult run(Function& func, AnalysisPassManager& analysis);
 };
 
 CMMC_NAMESPACE_END

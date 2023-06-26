@@ -25,42 +25,10 @@
 
 CMMC_NAMESPACE_BEGIN
 
-SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet) : mAliasSet{ aliasSet } {
-    std::vector<Value*> args;
-    for(auto arg : block->getFunction()->args()) {
-        if(arg->getType()->isPointer()) {
-            args.push_back(arg);
-        }
-    }
-
-    bool allDistinct = true;
-
-    for(uint32_t idx1 = 0; idx1 < args.size(); ++idx1) {
-        for(uint32_t idx2 = idx1 + 1; idx2 < args.size(); ++idx2) {
-            if(!aliasSet.isDistinct(args[idx1], args[idx2])) {
-                allDistinct = false;
-                break;
-            }
-        }
-        if(!allDistinct)
-            break;
-    }
-
-    if(allDistinct) {
-        for(auto arg : args)
-            mBasePointer.emplace(arg, arg);
-    } else {
-        for(auto arg : args)
-            mBasePointer.emplace(arg, nullptr);
-    }
-
-    const auto entryBlock = block->getFunction()->entryBlock();
-    for(auto& inst : entryBlock->instructions()) {
-        if(inst.getInstID() == InstructionID::Alloc) {
-            mBasePointer.emplace(&inst, &inst);
-        } else
-            break;
-    }
+SimpleValueAnalysis::SimpleValueAnalysis(Block* block, const AliasAnalysisResult& aliasSet,
+                                         const PointerBaseAnalysisResult& pointerBase)
+    : mAliasSet{ aliasSet }, mPointerBase{ pointerBase } {
+    CMMC_UNUSED(block);
 }
 
 static Value* extractConstant(ConstantValue* initialValue, GetElementPtrInst* inst, uint32_t index) {
@@ -144,7 +112,6 @@ void SimpleValueAnalysis::next(Instruction* inst) {
     // globals
     for(auto operand : inst->operands())
         if(operand->isGlobal() && operand->getType()->isPointer()) {
-            mBasePointer.emplace(operand, operand);
             // read-only globals
             const auto var = operand->as<GlobalVariable>();
             if(var->attr().hasAttr(GlobalVariableAttribute::ReadOnly) && var->initialValue()) {
@@ -156,18 +123,13 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         case InstructionID::Load: {
             assert(!inst->getType()->isArray());
             const auto addr = inst->getOperand(0);
-            const auto base = mBasePointer.find(addr);
-            if(base != mBasePointer.cend())
-                update(base->second, addr, inst, false);
-
-            if(inst->getType()->isPointer())
-                mBasePointer.emplace(inst, nullptr);
+            if(const auto base = mPointerBase.lookup(addr))
+                update(base, addr, inst, false);
         } break;
         case InstructionID::Store: {
             const auto addr = inst->getOperand(0);
-            const auto base = mBasePointer.find(addr);
-            if(base != mBasePointer.cend())
-                update(base->second, addr, inst->getOperand(1), true);
+            if(const auto base = mPointerBase.lookup(addr))
+                update(base, addr, inst->getOperand(1), true);
             else
                 mLastValue.clear();  // discard all cached values
         } break;
@@ -182,10 +144,6 @@ void SimpleValueAnalysis::next(Instruction* inst) {
         } break;
         case InstructionID::GetElementPtr: {
             const auto root = inst->lastOperand();
-            if(const auto iter = mBasePointer.find(root); iter != mBasePointer.cend())
-                mBasePointer.emplace(inst, iter->second);
-            else
-                mBasePointer.emplace(inst, nullptr);
             MatchContext<Value> matchCtx{ inst->getOperand(0) };
             if(inst->getType()->as<PointerType>()->getPointee()->isPrimitive() && cuint_(0)(matchCtx)) {
                 if(const auto globalVar = dynamic_cast<GlobalVariable*>(root);
@@ -193,24 +151,22 @@ void SimpleValueAnalysis::next(Instruction* inst) {
                     const auto initialValue = globalVar->initialValue();
                     auto value = extractConstant(initialValue, inst->as<GetElementPtrInst>(), 1);
                     if(value) {
-                        auto& lastValue = mLastValue[mBasePointer[inst]];
+                        auto& lastValue = mLastValue[mPointerBase.lookup(inst)];
                         lastValue[inst] = value;
                     }
                 }
             }
         } break;
-        default: {
-            if(inst->getType()->isPointer())
-                mBasePointer.emplace(inst, nullptr);
-        } break;
+        default:
+            break;
     }
 }
 
 Value* SimpleValueAnalysis::getLastValue(Value* pointer) const {
-    const auto iter = mBasePointer.find(pointer);
-    if(iter == mBasePointer.cend())
+    Value* base = mPointerBase.lookup(pointer);
+    if(base == nullptr)
         return nullptr;
-    const auto it = mLastValue.find(iter->second);
+    const auto it = mLastValue.find(base);
     if(it == mLastValue.cend())
         return nullptr;
     const auto val = it->second.find(pointer);
