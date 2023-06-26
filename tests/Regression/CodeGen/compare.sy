@@ -40,6 +40,24 @@ int sgei(int x) {
 int sge(int x, int y) {
     return x >= y;
 }
+int seq_all_one(int x) {
+    return x == -1;
+}
+int sne_all_one(int x) {
+    return x != -1;
+}
+int slt_all_one(int x) {
+    return x < -1;
+}
+int sgt_all_one(int x) {
+    return x > -1;
+}
+int sle_all_one(int x) {
+    return x <= -1;
+}
+int sge_all_one(int x) {
+    return x >= -1;
+}
 int feq(float x, float y) {
     return x == y;
 }

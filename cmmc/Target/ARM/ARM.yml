@@ -767,14 +767,16 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
+        $Predicate: isOperandIReg($Lhs) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
     Replace:
       NZCVFlag2GPR:
         Rd: $Dst
         CC:
-          CMP:
+          Compare:
+            $Opcode: getCompareOpcode(($IsOpposite).imm())
+            $Template: CMP
             Rn: $Lhs
-            Op2: $Rhs
+            Op2: $Out
             CC: getCC()
         CF: getCondFieldSCmp($Op)
 
@@ -784,14 +786,16 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
+        $Predicate: isOperandIReg($Lhs) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
     Replace:
       NZCVFlag2GPR:
         Rd: $Dst
         CC:
-          CMP:
+          Compare:
+            $Opcode: getCompareOpcode(($IsOpposite).imm())
+            $Template: CMP
             Rn: $Lhs
-            Op2: $Rhs
+            Op2: $Out
             CC: getCC()
         CF: getCondFieldUCmp($Op)
 

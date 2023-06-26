@@ -88,6 +88,42 @@ sge:
 	mov r0, #0
 	movwge r0, #1
 	bx lr
+.globl seq_all_one
+seq_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movweq r0, #1
+	bx lr
+.globl sne_all_one
+sne_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movwne r0, #1
+	bx lr
+.globl slt_all_one
+slt_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movwlt r0, #1
+	bx lr
+.globl sgt_all_one
+sgt_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movwgt r0, #1
+	bx lr
+.globl sle_all_one
+sle_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movwle r0, #1
+	bx lr
+.globl sge_all_one
+sge_all_one:
+	cmn r0, #1
+	mov r0, #0
+	movwge r0, #1
+	bx lr
 .globl feq
 feq:
 	vcmp.f32 s0, s1

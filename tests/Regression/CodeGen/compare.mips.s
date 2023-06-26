@@ -77,6 +77,42 @@ sge:
 	xori $v0, $t0, 1
 	jr $ra
 	nop
+.globl seq_all_one
+seq_all_one:
+	li $t0, -1
+	xor $t0, $a0, $t0
+	sltiu $v0, $t0, 1
+	jr $ra
+	nop
+.globl sne_all_one
+sne_all_one:
+	li $t0, -1
+	xor $t0, $a0, $t0
+	sltu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl slt_all_one
+slt_all_one:
+	slti $v0, $a0, -1
+	jr $ra
+	nop
+.globl sgt_all_one
+sgt_all_one:
+	li $t0, -1
+	slt $v0, $t0, $a0
+	jr $ra
+	nop
+.globl sle_all_one
+sle_all_one:
+	slti $v0, $a0, 0
+	jr $ra
+	nop
+.globl sge_all_one
+sge_all_one:
+	li $t0, -2
+	slt $v0, $t0, $a0
+	jr $ra
+	nop
 .globl feq
 feq:
 	c.eq.s $f12, $f14

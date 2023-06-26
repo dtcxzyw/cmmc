@@ -56,6 +56,23 @@ static bool selectInvertedOp2Constant(const MIROperand& imm, MIROperand& immInve
     return false;
 }
 
+static bool selectCompareOp2(const MIROperand& rhs, MIROperand& out, MIROperand& isOpposite) {
+    if(isOperandOp2(rhs)) {
+        out = rhs;
+        isOpposite = MIROperand::asImm(false, OperandType::Bool);
+        return true;
+    }
+
+    if(rhs.isImm()) {
+        out = MIROperand::asImm(-rhs.imm(), rhs.type());
+        if(isOperandOp2Constant(out)) {
+            isOpposite = MIROperand::asImm(true, OperandType::Bool);
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool selectGenericImm32(const MIROperand& imm, MIROperand& uimm) {
     if(!(isOperandImm32(imm) || isOperandUImm32(imm)))
         return false;
@@ -333,6 +350,10 @@ constexpr ARMInst getFloatingBinaryOpcode(const uint32_t opcode) {
         default:
             reportUnreachable(CMMC_LOCATION());
     }
+}
+
+static ARMInst getCompareOpcode(const bool isOpposite) {
+    return isOpposite ? CMN : CMP;
 }
 
 static ARMInst getFusedLoadOpcode(const MIROperand& dst) {
@@ -617,7 +638,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            nonOp2Imm2reg(rhs);
+            if(!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(-rhs.imm(), rhs.type())))
+                nonOp2Imm2reg(rhs);
             break;
         }
         case InstZExt: {
