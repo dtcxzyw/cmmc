@@ -114,3 +114,41 @@ and_after_asr_imm:
 	and $v0, $a0, $t0
 	jr $ra
 	nop
+.globl fused_mul_add1
+fused_mul_add1:
+	mult $a1, $a2
+	mflo $t0
+	addu $v0, $t0, $a0
+	jr $ra
+	nop
+.globl fused_mul_add2
+fused_mul_add2:
+	mult $a1, $a2
+	mflo $t0
+	addu $v0, $t0, $a0
+	jr $ra
+	nop
+.globl fused_mul_sub
+fused_mul_sub:
+	mult $a1, $a2
+	mflo $t0
+	subu $v0, $a0, $t0
+	jr $ra
+	nop
+.globl fused_div_rem
+fused_div_rem:
+	div $zero, $a0, $a1
+	mflo $t0
+	mfhi $t1
+	addu $v0, $t0, $t1
+	jr $ra
+	nop
+.globl fused_div_rem_constant
+fused_div_rem_constant:
+	li $t0, 3
+	div $zero, $a0, $t0
+	mflo $t0
+	mfhi $t1
+	addu $v0, $t0, $t1
+	jr $ra
+	nop

@@ -101,3 +101,31 @@ and_after_asr_imm:
 	sraiw a1, a1, 3
 	and a0, a0, a1
 	ret
+.globl fused_mul_add1
+fused_mul_add1:
+	mulw a1, a1, a2
+	addw a0, a1, a0
+	ret
+.globl fused_mul_add2
+fused_mul_add2:
+	mulw a1, a1, a2
+	addw a0, a1, a0
+	ret
+.globl fused_mul_sub
+fused_mul_sub:
+	mulw a1, a1, a2
+	subw a0, a0, a1
+	ret
+.globl fused_div_rem
+fused_div_rem:
+	divw a2, a0, a1
+	remw a0, a0, a1
+	addw a0, a2, a0
+	ret
+.globl fused_div_rem_constant
+fused_div_rem_constant:
+	li a1, 3
+	divw a2, a0, a1
+	remw a0, a0, a1
+	addw a0, a2, a0
+	ret

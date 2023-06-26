@@ -73,3 +73,18 @@ int32_t and_after_asr(int32_t lhs, int32_t rhs, int32_t shamt) {
 int32_t and_after_asr_imm(int32_t lhs, int32_t rhs) {
     return lhs & (rhs >> 3);
 }
+int32_t fused_mul_add1(int32_t x, int32_t y, int32_t z) {
+    return x + y * z;
+}
+int32_t fused_mul_add2(int32_t x, int32_t y, int32_t z) {
+    return y * z + x;
+}
+int32_t fused_mul_sub(int32_t x, int32_t y, int32_t z) {
+    return x - y * z;
+}
+int32_t fused_div_rem(int32_t x, int32_t y) {
+    return x / y + x % y;
+}
+int32_t fused_div_rem_constant(int32_t x) {
+    return x / 3 + x % 3;
+}

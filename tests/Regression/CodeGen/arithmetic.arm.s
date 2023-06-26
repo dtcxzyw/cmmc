@@ -1,4 +1,4 @@
-.arch armv7-a
+.arch armv7ve
 .data
 .text
 .syntax unified
@@ -79,36 +79,24 @@ mul_reg:
 	bx lr
 .globl div_imm
 div_imm:
-	push { lr }
-	sub sp, sp, #4
 	mov r1, #3
-	bl __aeabi_idiv
-	add sp, sp, #4
-	pop { pc }
+	sdiv r0, r0, r1
+	bx lr
 .globl div_reg
 div_reg:
-	push { lr }
-	sub sp, sp, #4
-	bl __aeabi_idiv
-	add sp, sp, #4
-	pop { pc }
+	sdiv r0, r0, r1
+	bx lr
 .globl mod_imm
 mod_imm:
-	push { lr }
-	sub sp, sp, #4
 	mov r1, #3
-	bl __aeabi_idivmod
-	mov r0, r1
-	add sp, sp, #4
-	pop { pc }
+	sdiv r2, r0, r1
+	mls r0, r2, r1, r0
+	bx lr
 .globl mod_reg
 mod_reg:
-	push { lr }
-	sub sp, sp, #4
-	bl __aeabi_idivmod
-	mov r0, r1
-	add sp, sp, #4
-	pop { pc }
+	sdiv r2, r0, r1
+	mls r0, r2, r1, r0
+	bx lr
 .globl shl_imm
 shl_imm:
 	lsl r0, r0, #3

@@ -1,4 +1,4 @@
-.arch armv7-a
+.arch armv7ve
 .data
 .align 4
 .globl x
@@ -14,7 +14,7 @@ cse_imm:
 	mul r0, r0, r3
 	mul r1, r1, r3
 	eor r1, r2, r1
-	add r0, r0, r1
+	add r0, r1, r0
 	bx lr
 .globl cse_global
 cse_global:

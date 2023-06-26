@@ -198,7 +198,7 @@ public:
                             target.getRegisterInfo(),
                             MIRFlags{ false, false } };
 
-        out << ".arch armv7-a" << std::endl;
+        out << ".arch armv7ve" << std::endl;
 
         cmmc::mir::dumpAssembly(
             out, ctx, module, [&] {},

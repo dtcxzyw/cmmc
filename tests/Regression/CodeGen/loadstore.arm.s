@@ -1,4 +1,4 @@
-.arch armv7-a
+.arch armv7ve
 .data
 .align 4
 .globl y

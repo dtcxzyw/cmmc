@@ -41,6 +41,13 @@ InstInfo:
 
   MUL:
     Format: mul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
+  FusedMulAddSub:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Ry:GPR[Use], $Rz:GPR[Use], $Rw:GPR[Use]
+    Instances:
+      MLA:
+        Mnemonic: mla
+      MLS:
+        Mnemonic: mls
 
   IntegerExt:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rm:GPR[Use]
@@ -331,6 +338,25 @@ InstSelection:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
+        Rhs:
+          InstMul:
+            Lhs: $MulLhs
+            Rhs: $MulRhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($MulLhs) && isOperandIReg($MulRhs)
+      $Instances: [InstAdd, InstSub]
+    Replace:
+      FusedMulAddSub:
+        $Opcode: "(rootOpcode == InstAdd? MLA: MLS)"
+        $Template: MLA
+        Rd: $Dst
+        Rw: $Lhs
+        Ry: $MulLhs
+        Rz: $MulRhs
+
+  - Pattern:
+      $Template:
+        Dst: $Dst
+        Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && selectFusedIntegerBinaryOperand($Rhs, ctx, [$Out], [$ShOp], [$Sh])
       $Instances: [InstAdd, InstSub, InstAnd, InstOr, InstXor]
@@ -396,6 +422,64 @@ InstSelection:
         Rd: $Dst
         Rm: $Lhs
         Rs: $Rhs
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      SDIV:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Rhs
+
+  - Pattern:
+      InstUDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      UDIV:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Rhs
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MLS:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry:
+          SDIV:
+            Rd: getVRegAs(ctx, $Dst)
+            Rn: $Lhs
+            Rm: $Rhs
+        Rz: $Rhs
+
+  - Pattern:
+      InstURem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MLS:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry:
+          UDIV:
+            Rd: getVRegAs(ctx, $Dst)
+            Rn: $Lhs
+            Rm: $Rhs
+        Rz: $Rhs
 
   - Pattern:
       $Template:
