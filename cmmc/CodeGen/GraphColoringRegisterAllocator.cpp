@@ -77,7 +77,10 @@ public:
             }
         }
     }
-
+    auto& adj(RegNum u) {
+        assert(isVirtualReg(u));
+        return mAdj[u];
+    }
     RegNum pickToAssign(uint32_t k) {
         if(mQueue.empty())
             return invalidReg;
@@ -112,10 +115,7 @@ public:
         assert(best != invalidReg && isVirtualReg(best));
         return best;
     }
-    auto& adj(RegNum u) {
-        assert(isVirtualReg(u));
-        return mAdj[u];
-    }
+
     void dump(std::ostream& out) {
         for(auto& [vreg, degree] : mDegree) {
             out << (vreg ^ virtualRegBegin) << "[" << degree << "]: ";
@@ -157,7 +157,10 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             mfunc.dump(std::cerr, ctx);
 
         std::unordered_map<RegNum, std::unordered_map<RegNum, double>> copyHint;
-        auto updateCopyHint = [&](RegNum dst, RegNum src, double weight) { copyHint[dst][src] += weight; };
+        auto updateCopyHint = [&](RegNum dst, RegNum src, double weight) {
+            assert(isVirtualReg(dst));
+            copyHint[dst][src] += weight;
+        };
         // Construct interference graph
         InterferenceGraph graph;
         // ISA specific reg
@@ -207,12 +210,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 } else if(inst.opcode() == InstCopyToReg && allocableISARegs.count(inst.getOperand(0).reg())) {
                     updateCopyHint(inst.getOperand(1).reg(), inst.getOperand(0).reg(), tripCount);
                 } else if(inst.opcode() == InstCopy) {
-                    assert(isOperandVReg(inst.getOperand(0)) && isOperandVReg(inst.getOperand(1)));
                     const auto u = inst.getOperand(0).reg();
                     const auto v = inst.getOperand(1).reg();
                     if(u != v) {
-                        updateCopyHint(u, v, tripCount);
-                        updateCopyHint(v, u, tripCount);
+                        if(isVirtualReg(u))
+                            updateCopyHint(u, v, tripCount);
+                        if(isVirtualReg(v))
+                            updateCopyHint(v, u, tripCount);
                     }
                 }
 
@@ -314,11 +318,12 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         std::vector<std::pair<InstNum, double>> freq;
         for(auto& block : mfunc.blocks()) {
             auto endInst = liveInterval.instNum.at(&block->instructions().back());
-            freq.emplace_back(endInst, block->getTripCount());
+            freq.emplace_back(endInst + 2, block->getTripCount());
         }
         auto getBlockFreq = [&](InstNum inst) {
             const auto it =
                 std::lower_bound(freq.begin(), freq.end(), inst, [](const auto& a, const auto& b) { return a.first < b; });
+            assert(it != freq.end());
             return it->second;
         };
         std::unordered_map<RegNum, double> weights;

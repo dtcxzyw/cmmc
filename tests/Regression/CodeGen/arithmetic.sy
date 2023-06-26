@@ -68,8 +68,28 @@ int mul_reg(int x, int y) {
     return x * y;
 }
 
-int div_imm(int x) {
+int div2(int x) {
+    return x / 2;
+}
+
+int div4(int x) {
+    return x / 4;
+}
+
+int div3(int x) {
     return x / 3;
+}
+
+int div11(int x) {
+    return x / 11;
+}
+
+int div30(int x) {
+    return x / 30;
+}
+
+int divNeg30(int x) {
+    return x / -30;
 }
 
 int div_reg(int x, int y) {

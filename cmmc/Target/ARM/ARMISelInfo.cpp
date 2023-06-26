@@ -431,6 +431,44 @@ static uint32_t getSExtOpcode(OperandType type) {
     }
 }
 
+static bool buildMulHiImm(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, const MIROperand& factor,
+                          MIROperand& out) {
+    out = getVRegAs(ctx, lhs);
+    const auto imm = getVRegAs(ctx, lhs);
+    ctx.newInst(InstLoadImm).setOperand<0>(imm).setOperand<1>(rhsImm);
+    switch(factor.imm()) {
+        case 0: {
+            ctx.newInst(SMMUL).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(imm);
+            break;
+        }
+        case 1: {
+            ctx.newInst(SMMLA).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(imm).setOperand<3>(lhs);
+            break;
+        }
+        case -1: {
+            ctx.newInst(SMMUL).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(imm);
+            const auto ret = getVRegAs(ctx, lhs);
+            ctx.newInst(SUB).setOperand<0>(ret).setOperand<1>(out).setOperand<2>(lhs);
+            out = ret;
+            break;
+        }
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+
+    return true;
+}
+
+static bool buildASR(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, MIROperand& out) {
+    if(isZero(rhsImm)) {
+        out = lhs;
+    } else {
+        out = getVRegAs(ctx, lhs);
+        ctx.newInst(ASR).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(rhsImm);
+    }
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/ISelInfoImpl.hpp>
@@ -553,7 +591,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            imm2reg(rhs);
+            if(inst.opcode() != InstSDiv || !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
+                imm2reg(rhs);
+            }
             break;
         }
         case InstSCmp:

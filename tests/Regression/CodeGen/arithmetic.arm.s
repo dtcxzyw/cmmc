@@ -77,10 +77,48 @@ mul_to_shl:
 mul_reg:
 	mul r0, r0, r1
 	bx lr
-.globl div_imm
-div_imm:
-	mov r1, #3
-	sdiv r0, r0, r1
+.globl div2
+div2:
+	add r0, r0, r0, lsr #31
+	asr r0, r0, #1
+	bx lr
+.globl div4
+div4:
+	asr r1, r0, #31
+	add r0, r0, r1, lsr #30
+	asr r0, r0, #2
+	bx lr
+.globl div3
+div3:
+	movw r1, #21846
+	movt r1, #21845
+	smmul r0, r0, r1
+	add r0, r0, r0, lsr #31
+	bx lr
+.globl div11
+div11:
+	movw r1, #41705
+	movt r1, #11915
+	smmul r0, r0, r1
+	asr r1, r0, #1
+	add r0, r1, r0, lsr #31
+	bx lr
+.globl div30
+div30:
+	movw r1, #34953
+	movt r1, #34952
+	smmla r0, r0, r1, r0
+	asr r1, r0, #4
+	add r0, r1, r0, lsr #31
+	bx lr
+.globl divNeg30
+divNeg30:
+	movw r1, #30583
+	movt r1, #30583
+	smmul r1, r0, r1
+	sub r0, r1, r0
+	asr r1, r0, #4
+	add r0, r1, r0, lsr #31
 	bx lr
 .globl div_reg
 div_reg:

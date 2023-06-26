@@ -81,10 +81,54 @@ mul_to_shl:
 mul_reg:
 	mulw a0, a0, a1
 	ret
-.globl div_imm
-div_imm:
-	li a1, 3
-	divw a0, a0, a1
+.globl div2
+div2:
+	srliw a1, a0, 31
+	add a0, a0, a1
+	sraiw a0, a0, 1
+	ret
+.globl div4
+div4:
+	slli a1, a0, 1
+	srli a1, a1, 62
+	add a0, a0, a1
+	sraiw a0, a0, 2
+	ret
+.globl div3
+div3:
+	li a1, 1431655766
+	mul a0, a0, a1
+	srli a1, a0, 32
+	srli a0, a0, 63
+	add a0, a0, a1
+	ret
+.globl div11
+div11:
+	li a1, 780903145
+	mul a0, a0, a1
+	srai a1, a0, 33
+	srli a0, a0, 63
+	add a0, a0, a1
+	ret
+.globl div30
+div30:
+	li a1, -2004318071
+	mul a1, a0, a1
+	srli a1, a1, 32
+	add a0, a1, a0
+	sraiw a1, a0, 4
+	srliw a0, a0, 31
+	add a0, a0, a1
+	ret
+.globl divNeg30
+divNeg30:
+	li a1, 2004318071
+	mul a1, a0, a1
+	srli a1, a1, 32
+	sub a0, a1, a0
+	sraiw a1, a0, 4
+	srliw a0, a0, 31
+	add a0, a0, a1
 	ret
 .globl div_reg
 div_reg:
@@ -205,8 +249,8 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel164:
+pcrel204:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel164)
+	addi a0, a0, %pcrel_lo(pcrel204)
 	flw f10, 0(a0)
 	ret

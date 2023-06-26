@@ -18,6 +18,7 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/Config.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
@@ -40,7 +41,6 @@ void ISelContext::runISel(MIRFunction& func) {
 
     while(true) {
         MIRInst* firstIllegalInst = nullptr;
-        // TODO: apply CSE
 
         // func.dump(std::cerr, mCodeGenCtx);
         assert(func.verify(std::cerr, mCodeGenCtx));
@@ -87,6 +87,9 @@ void ISelContext::runISel(MIRFunction& func) {
                     if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                         auto& operand = inst.getOperand(idx);
                         if(operand.isReg() && isVirtualReg(operand.reg())) {
+                            if(mInstMapping.count(operand)) {
+                                instInfo.print(std::cerr, inst, true);
+                            }
                             assert(!mInstMapping.count(operand));  // SSA Form
                             mInstMapping.emplace(operand, &inst);
                         }
@@ -499,6 +502,72 @@ MIROperand getTruncShift(const OperandType type) {
         default:
             reportUnreachable(CMMC_LOCATION());
     }
+}
+
+// Please refer to Hacker's Delight 2nd Edition, Cheaper 10, Integer Division By Constants, Figure 10-1
+bool isOperandSDiv32ByConstantDivisor(const MIROperand& rhs) {
+    return isOperandImm(rhs) && rhs.type() == OperandType::Int32 && isSignedImm<32>(rhs.imm()) &&
+        !(-1 <= rhs.imm() && rhs.imm() <= 1);
+}
+bool selectSDiv32ByConstant(const MIROperand& rhs, MIROperand& magic, MIROperand& shift, MIROperand& factor) {
+    // only available for [-2^31, -2) U [2, 2^31)
+    if(!isOperandSDiv32ByConstantDivisor(rhs))
+        return false;
+    const auto d = static_cast<int32_t>(rhs.imm());
+    constexpr uint32_t two31 = 0x80000000;
+
+    const auto ad = static_cast<uint32_t>(std::abs(d));
+    const auto t = two31 + (static_cast<uint32_t>(d) >> 31);
+    const auto anc = t - 1 - t % ad;
+    int32_t p = 31;
+    auto q1 = two31 / anc;
+    auto r1 = two31 - q1 * anc;
+    auto q2 = two31 / ad;
+    auto r2 = two31 - q2 * ad;
+    uint32_t delta;
+
+    do {
+        ++p;
+        q1 *= 2;
+        r1 *= 2;
+        if(r1 >= anc) {
+            ++q1;
+            r1 -= anc;
+        }
+
+        q2 *= 2;
+        r2 *= 2;
+        if(r2 >= ad) {
+            q2 += 1;
+            r2 -= ad;
+        }
+        delta = ad - r2;
+    } while(q1 < delta || (q1 == delta && r1 == 0));
+
+    const auto mUnsigned = q2 + 1;
+    auto m = static_cast<intmax_t>(static_cast<int32_t>(mUnsigned));
+    int32_t factorVal = 0;
+    if(d < 0) {
+        m = -m;
+        if(m > 0)
+            factorVal = -1;
+    } else if(d > 0 && m < 0)
+        factorVal = 1;
+    magic = MIROperand::asImm(m, OperandType::Int32);
+    shift = MIROperand::asImm(p - 32, OperandType::Int32);
+    factor = MIROperand::asImm(factorVal, OperandType::Int32);
+    return true;
+}
+
+bool isPowerOf2Divisor(const MIROperand& rhs) {
+    return rhs.isImm() && rhs.type() == OperandType::Int32 && isSignedImm<32>(rhs.imm()) && rhs.imm() > 1 &&
+        isPowerOf2(static_cast<size_t>(rhs.imm()));
+}
+bool selectSDiv32ByPowerOf2(const MIROperand& rhs, MIROperand& shift) {
+    if(!isPowerOf2Divisor(rhs))
+        return false;
+    shift = MIROperand::asImm(ilog2(static_cast<size_t>(rhs.imm())), OperandType::Int32);
+    return true;
 }
 
 CMMC_MIR_NAMESPACE_END

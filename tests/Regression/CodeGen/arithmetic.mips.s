@@ -104,9 +104,44 @@ mul_reg:
 	mflo $v0
 	jr $ra
 	nop
-.globl div_imm
-div_imm:
+.globl div2
+div2:
+	li $t0, 2
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl div4
+div4:
+	li $t0, 4
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl div3
+div3:
 	li $t0, 3
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl div11
+div11:
+	li $t0, 11
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl div30
+div30:
+	li $t0, 30
+	div $zero, $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl divNeg30
+divNeg30:
+	li $t0, -30
 	div $zero, $a0, $t0
 	mflo $v0
 	jr $ra

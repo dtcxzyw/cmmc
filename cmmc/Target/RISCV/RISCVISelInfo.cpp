@@ -56,6 +56,12 @@ static MIROperand getVRegAs(ISelContext& ctx, const MIROperand& ref) {
     return MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), ref.type());
 }
 
+static MIROperand getVReg64As(ISelContext& ctx, const MIROperand& ref) {
+    CMMC_UNUSED(ref);
+    assert(isIntegerType(ref.type()));
+    return MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), OperandType::Int64);
+}
+
 static MIROperand getZero(const MIROperand& operand) {
     return MIROperand::asISAReg(RISCV::X0, operand.type());
 }
@@ -247,6 +253,45 @@ constexpr RISCVInst getFloatingPointBinaryOpcode(uint32_t opcode) {
     }
 }
 
+static bool buildMul64Imm(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, const MIROperand& factor,
+                          MIROperand& out) {
+    const auto imm = getVRegAs(ctx, lhs);
+    ctx.newInst(InstLoadImm).setOperand<0>(imm).setOperand<1>(rhsImm);
+    const auto mulRes = getVReg64As(ctx, lhs);
+    ctx.newInst(MUL).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(imm);
+    out = getVReg64As(ctx, lhs);
+    ctx.newInst(SRLI).setOperand<0>(out).setOperand<1>(mulRes).setOperand<2>(MIROperand::asImm(32, OperandType::Int32));
+    switch(factor.imm()) {
+        case 0:
+            break;
+        case 1: {
+            const auto sum = getVReg64As(ctx, lhs);
+            ctx.newInst(ADD).setOperand<0>(sum).setOperand<1>(out).setOperand<2>(lhs);
+            out = sum;
+            break;
+        }
+        case -1: {
+            const auto sum = getVReg64As(ctx, lhs);
+            ctx.newInst(SUB).setOperand<0>(sum).setOperand<1>(out).setOperand<2>(lhs);
+            out = sum;
+            break;
+        }
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+    return true;
+}
+
+static bool buildSRAIW(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, MIROperand& out) {
+    if(isZero(rhsImm)) {
+        out = lhs;
+    } else {
+        out = getVRegAs(ctx, lhs);
+        ctx.newInst(SRAIW).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(rhsImm);
+    }
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
@@ -357,7 +402,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
-            imm2reg(rhs);
+            if(inst.opcode() != InstSDiv || !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
+                imm2reg(rhs);
+            }
             break;
         }
         case InstSCmp: {

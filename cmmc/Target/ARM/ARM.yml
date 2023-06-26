@@ -41,6 +41,10 @@ InstInfo:
 
   MUL:
     Format: mul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
+  SMMUL:
+    Format: smmul $Rd:GPR[Def], $Rm:GPR[Use], $Rs:GPR[Use]
+  SMMLA:
+    Format: smmla $Rd:GPR[Def], $Ry:GPR[Use], $Rz:GPR[Use], $Rw:GPR[Use]
   FusedMulAddSub:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Ry:GPR[Use], $Rz:GPR[Use], $Rw:GPR[Use]
     Instances:
@@ -422,6 +426,60 @@ InstSelection:
         Rd: $Dst
         Rm: $Lhs
         Rs: $Rhs
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && ($Rhs).isImm() && ($Rhs).imm() == 2
+    Replace:
+      ASR:
+        Rd: $Dst
+        Rm:
+          ADD_Fused:
+            Rd: getVRegAs(ctx, $Dst)
+            Rn: $Lhs
+            Rm: $Lhs
+            Op: MIROperand::asImm(LSR, OperandType::ShiftType)
+            Sh: MIROperand::asImm(31, OperandType::Int32)
+        Sh: MIROperand::asImm(1, OperandType::Int32)
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && selectSDiv32ByPowerOf2($Rhs, [$Shift])
+    Replace:
+      ASR:
+        Rd: $Dst
+        Rm:
+          ADD_Fused:
+            Rd: getVRegAs(ctx, $Dst)
+            Rn: $Lhs
+            Rm:
+              ASR:
+                Rd: getVRegAs(ctx, $Dst)
+                Rm: $Lhs
+                Sh: MIROperand::asImm(31, OperandType::Int32)
+            Op: MIROperand::asImm(LSR, OperandType::ShiftType)
+            Sh: MIROperand::asImm(32 - ($Shift).imm(), OperandType::Int32)
+        Sh: $Shift
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && buildMulHiImm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildASR(ctx, $Out, $Shift, [$ASROut])
+    Replace:
+      ADD_Fused:
+        Rd: $Dst
+        Rn: $ASROut
+        Rm: $Out
+        Op: MIROperand::asImm(LSR, OperandType::ShiftType)
+        Sh: MIROperand::asImm(31, OperandType::Int32)
 
   - Pattern:
       InstSDiv:

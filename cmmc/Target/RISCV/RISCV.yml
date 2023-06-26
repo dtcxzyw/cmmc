@@ -249,8 +249,6 @@ InstInfo:
       Mnemonic: fcvt.wu.s
   InstanceFIF:
     Template: FIFType
-    FMV_W_X:
-      Mnemonic: fmv.w.x
     FCLASS_S:
       Mnemonic: fclass.s
   InstanceFIFF:
@@ -263,6 +261,8 @@ InstInfo:
       Mnemonic: fle.s
   InstanceFFI:
     Template: FFIType
+    FMV_W_X:
+      Mnemonic: fmv.w.x
     FCVT_S_W:
       Mnemonic: fcvt.s.w
     FCVT_S_WU:
@@ -631,6 +631,98 @@ InstSelection:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandI32($Rhs) && ($Rhs).isImm() && ($Rhs).imm() == 2
+    Replace:
+      SRAIW:
+        Rd: $Dst
+        Rs1:
+          ADD:
+            Rd: getVReg64As(ctx, $Dst)
+            Rs1: $Lhs
+            Rs2:
+              SRLIW:
+                Rd: getVRegAs(ctx, $Dst)
+                Rs1: $Lhs
+                Imm: MIROperand::asImm(31, OperandType::Int32)
+        Imm: MIROperand::asImm(1, OperandType::Int32)
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByPowerOf2($Rhs, [$Shift])
+    Replace:
+      SRAIW:
+        Rd: $Dst
+        Rs1:
+          ADD:
+            Rd: getVReg64As(ctx, $Dst)
+            Rs1: $Lhs
+            Rs2:
+              SRLI:
+                Rd: getVReg64As(ctx, $Dst)
+                Rs1:
+                  SLLI:
+                    Rd: getVReg64As(ctx, $Dst)
+                    Rs1: $Lhs
+                    Imm: MIROperand::asImm(1, OperandType::Int32)
+                Imm: MIROperand::asImm(64 - ($Shift).imm(), OperandType::Int32)
+        Imm: $Shift
+
+  - Pattern:
+      InstSDiv:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && selectSDiv32ByConstant($Rhs, [$Magic], [$Shift], [$Factor]) && buildMul64Imm(ctx, $Lhs, $Magic, $Factor, [$Out]) && buildSRAIW(ctx, $Out, $Shift, [$SRAOut])
+    Replace:
+      ADD:
+        Rd: $Dst
+        Rs1:
+          SRLIW:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs1: $Out
+            Imm: MIROperand::asImm(31, OperandType::Int32)
+        Rs2: $SRAOut
+
+  - Pattern:
+      SRLIW:
+        Rd: $Dst
+        Rs1:
+          SRLI:
+            Rd: $Intermediate
+            Rs1: $Lhs
+            Imm: $Shift1
+            $Predicate: ($Shift1).imm() == 32 && ctx.isSafeToUse($Lhs, $Intermediate)
+        Imm: $Shift2
+    Replace:
+      SRLI:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: MIROperand::asImm(($Shift2).imm() + 32, OperandType::Int32)
+
+  - Pattern:
+      SRAIW:
+        Rd: $Dst
+        Rs1:
+          SRLI:
+            Rd: $Intermediate
+            Rs1: $Lhs
+            Imm: $Shift1
+            $Predicate: ($Shift1).imm() == 32 && ctx.isSafeToUse($Lhs, $Intermediate)
+        Imm: $Shift2
+    Replace:
+      SRAI:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: MIROperand::asImm(($Shift2).imm() + 32, OperandType::Int32)
 
   - Pattern:
       InstSDiv:
@@ -1196,7 +1288,7 @@ InstSelection:
         Rd: $Dst
         Rs1:
           InstFCmp:
-            Dst: $Dst
+            Dst: getVRegAs(ctx, $Dst)
             Lhs: $Lhs
             Rhs: $Rhs
             Op: getEqualOp()

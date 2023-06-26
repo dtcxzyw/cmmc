@@ -124,8 +124,12 @@ fused_div_rem:
 	ret
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	li a1, 3
-	divw a2, a0, a1
-	remw a0, a0, a1
-	addw a0, a2, a0
+	li a1, 1431655766
+	mul a2, a0, a1
+	srli a1, a2, 32
+	srli a2, a2, 63
+	add a1, a2, a1
+	li a2, 3
+	remw a0, a0, a2
+	addw a0, a1, a0
 	ret

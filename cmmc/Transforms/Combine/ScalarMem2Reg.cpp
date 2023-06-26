@@ -69,22 +69,26 @@ class ScalarMem2RegContext final {
         for(auto val : phi->operands()) {
             if(val == common || val == phi)
                 continue;
-            if(!common)
+            if(common)
                 return phi;
             common = val;
         }
         if(common == nullptr)
             common = make<UndefinedValue>(phi->getType());
+        std::vector<PhiInst*> phiUsers;
+        for(auto user : phi->users()) {
+            if(user != phi && user->getInstID() == InstructionID::Phi)
+                phiUsers.push_back(user->as<PhiInst>());
+        }
         for(auto iter = phi->users().begin(); iter != phi->users().end();) {
             auto next = std::next(iter);
             auto ref = iter.ref();
-            if(ref->user != phi) {
-                ref->resetValue(common);
-                if(ref->user->getInstID() == InstructionID::Phi)
-                    tryRemoveTrivalPhi(ref->user->as<PhiInst>());
-            }
-            next = iter;
+            ref->resetValue(common);
+            iter = next;
         }
+
+        for(auto user : phiUsers)
+            tryRemoveTrivalPhi(user);
         return common;
     }
     Value* addPhiOperands(Value* var, const std::vector<Block*>& pred, PhiInst* phi) {

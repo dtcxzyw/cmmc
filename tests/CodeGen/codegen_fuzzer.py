@@ -302,8 +302,8 @@ def codegen_test(id):
             print(out.stdout)
         return False
 
-    #os.remove(src)
-    #os.remove(output_asm)
+    os.remove(src)
+    os.remove(output_asm)
     os.remove(output)
     return True
 

@@ -82,7 +82,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
 
         for(auto writer : writerList) {
             auto& instInfo = ctx.instInfo.getInstInfo(*writer);
-            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect))
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect | InstFlagMultiDef))
                 continue;
             remove.insert(writer);
         }
@@ -292,7 +292,7 @@ bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
                     auto& op = inst.getOperand(idx);
                     if(isOperandVRegOrISAReg(op)) {
                         if(auto it = lastDefine.find(op); it != lastDefine.cend()) {
-                            if(!requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect | InstFlagPCRel) &&
+                            if(!requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect | InstFlagPCRel | InstFlagMultiDef) &&
                                *it->second.first == inst && it->second.second == ver) {
                                 return true;
                             }

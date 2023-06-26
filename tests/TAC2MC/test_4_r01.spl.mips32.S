@@ -28,9 +28,9 @@ write:
 hanoi:
 	addiu $sp, $sp, -40
 	sw $s2, 32($sp)
-	sw $s1, 28($sp)
-	sw $s0, 24($sp)
-	sw $s3, 20($sp)
+	sw $s3, 28($sp)
+	sw $s1, 24($sp)
+	sw $s0, 20($sp)
 	sw $ra, 16($sp)
 	move $s2, $a3
 	li $t0, 1
@@ -39,6 +39,7 @@ hanoi:
 	b label2
 	nop
 label14:
+	move $s3, $a0
 	move $s1, $a1
 	move $s0, $a2
 	b label4
@@ -52,15 +53,15 @@ label2:
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
-	lw $s3, 20($sp)
-	lw $s0, 24($sp)
-	lw $s1, 28($sp)
+	lw $s0, 20($sp)
+	lw $s1, 24($sp)
+	lw $s3, 28($sp)
 	lw $s2, 32($sp)
 	addiu $sp, $sp, 40
 	jr $ra
 	nop
 label4:
-	addiu $s3, $a0, -1
+	addiu $s3, $s3, -1
 	move $a0, $s3
 	move $a1, $s1
 	move $a2, $s2
@@ -80,7 +81,6 @@ label4:
 	b label2
 	nop
 label26:
-	move $a0, $s3
 	move $t0, $s1
 	move $s1, $s0
 	move $s0, $t0

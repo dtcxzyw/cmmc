@@ -101,9 +101,12 @@ fused_div_rem:
 	bx lr
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	mov r1, #3
-	sdiv r2, r0, r1
-	sdiv r3, r0, r1
-	mls r0, r3, r1, r0
-	add r0, r2, r0
+	movw r1, #21846
+	movt r1, #21845
+	smmul r1, r0, r1
+	add r1, r1, r1, lsr #31
+	mov r2, #3
+	sdiv r3, r0, r2
+	mls r0, r3, r2, r0
+	add r0, r1, r0
 	bx lr

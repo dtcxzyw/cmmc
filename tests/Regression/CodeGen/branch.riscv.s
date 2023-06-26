@@ -159,36 +159,36 @@ label232:
 .globl bflt
 bflt:
 	flt.s a0, f10, f11
-	bne a0, zero, label243
-label244:
+	bne a0, zero, label244
+label245:
 	ret
-label243:
+label244:
 	sw zero, 0(a2)
-	j label244
+	j label245
 .globl bfle
 bfle:
 	fle.s a0, f10, f11
-	bne a0, zero, label253
-label254:
+	bne a0, zero, label254
+label255:
 	ret
-label253:
+label254:
 	sw zero, 0(a2)
-	j label254
+	j label255
 .globl bfge
 bfge:
 	fle.s a0, f11, f10
-	bne a0, zero, label263
-label264:
+	bne a0, zero, label264
+label265:
 	ret
-label263:
+label264:
 	sw zero, 0(a2)
-	j label264
+	j label265
 .globl bfgt
 bfgt:
 	flt.s a0, f11, f10
-	bne a0, zero, label273
-label274:
+	bne a0, zero, label274
+label275:
 	ret
-label273:
+label274:
 	sw zero, 0(a2)
-	j label274
+	j label275
