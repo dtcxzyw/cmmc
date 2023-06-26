@@ -31,6 +31,7 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
     auto& storage = result.storage();
 
     std::unordered_map<Value*, std::vector<Instruction*>> graph;
+    std::unordered_map<Instruction*, size_t> degree;
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
             if(!inst.getType()->isPointer())
@@ -41,60 +42,64 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
                     [[fallthrough]];
                 case InstructionID::PtrCast:
                     graph[inst.lastOperand()].push_back(&inst);
+                    degree[&inst] = 1;
                     break;
                 case InstructionID::Select:
                     graph[inst.getOperand(1)].push_back(&inst);
                     graph[inst.getOperand(2)].push_back(&inst);
+                    degree[&inst] = 2;
                     break;
-                case InstructionID::Phi:
+                case InstructionID::Phi: {
+                    size_t size = 0;
                     for(auto [pred, val] : inst.as<PhiInst>()->incomings())
-                        if(val->value != &inst)
+                        if(val->value != &inst) {
                             graph[val->value].push_back(&inst);
-                    break;
+                            size++;
+                        }
+                    degree[&inst] = size;
+                } break;
                 default:
                     break;
             }
         }
 
     std::queue<Instruction*> q;
-    std::unordered_set<Instruction*> visiting;  // in queue + visited
-    const auto setStorage = [&](Value* dst, Value* src, Instruction* inst) {
+    const auto setStorage = [&](Value* dst, Value* src) {
         assert(!storage.count(dst));
         storage[dst] = src;
-        if(inst)
-            visiting.insert(inst);
 
-        for(auto child : graph[dst])
-            if(visiting.insert(child).second) {
+        for(auto child : graph[dst]) {
+            assert(degree.at(child) > 0);
+            if(--degree.at(child) == 0) {
                 q.push(child);
             }
+        }
     };
 
     for(auto global : analysis.module().globals())
         if(!global->isFunction())
-            setStorage(global, global, nullptr);
+            setStorage(global, global);
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions())
             if(inst.getType()->isPointer() && inst.getInstID() == InstructionID::Alloc)
-                setStorage(&inst, &inst, &inst);
+                setStorage(&inst, &inst);
 
     while(!q.empty()) {
         auto inst = q.front();
         q.pop();
-        visiting.erase(inst);
 
         switch(inst->getInstID()) {
             case InstructionID::GetElementPtr:
                 [[fallthrough]];
             case InstructionID::PtrCast:
-                setStorage(inst, storage.at(inst->lastOperand()), inst);  // guranteed to be in storage
+                setStorage(inst, storage.at(inst->lastOperand()));  // guranteed to be in storage
                 break;
             case InstructionID::Select:
                 if(auto iter1 = storage.find(inst->getOperand(1)); iter1 != storage.end()) {
                     if(auto iter2 = storage.find(inst->getOperand(2)); iter2 != storage.end()) {
                         if(iter1->second == iter2->second)
-                            setStorage(inst, iter1->second, inst);
+                            setStorage(inst, iter1->second);
                     }
                 }
                 break;
@@ -117,7 +122,7 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
                 }
 
                 if(same && src)
-                    setStorage(inst, src, inst);
+                    setStorage(inst, src);
             } break;
             default:
                 break;
