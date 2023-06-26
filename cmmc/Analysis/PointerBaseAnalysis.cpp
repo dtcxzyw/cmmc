@@ -93,16 +93,14 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
             case InstructionID::GetElementPtr:
                 [[fallthrough]];
             case InstructionID::PtrCast:
-                setStorage(inst, storage.at(inst->lastOperand()));  // guranteed to be in storage
+                setStorage(inst, storage.at(inst->lastOperand()));
                 break;
-            case InstructionID::Select:
-                if(auto iter1 = storage.find(inst->getOperand(1)); iter1 != storage.end()) {
-                    if(auto iter2 = storage.find(inst->getOperand(2)); iter2 != storage.end()) {
-                        if(iter1->second == iter2->second)
-                            setStorage(inst, iter1->second);
-                    }
-                }
-                break;
+            case InstructionID::Select: {
+                Value* src1 = storage.at(inst->getOperand(1));
+                Value* src2 = storage.at(inst->getOperand(2));
+                if(src1 == src2)
+                    setStorage(inst, src1);
+            } break;
             case InstructionID::Phi: {
                 Value* src = nullptr;
                 bool same = true;
@@ -110,15 +108,13 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
                 for(auto [pred, val] : inst->as<PhiInst>()->incomings()) {
                     if(val->value == inst)
                         continue;
-                    if(auto iter = storage.find(val->value); iter != storage.end()) {
-                        if(!src || iter->second == src) {
-                            src = iter->second;
-                            continue;
-                        }
+                    Value* from = storage.at(val->value);
+                    if(!src || from == src)
+                        src = from;
+                    else {
+                        same = false;
+                        break;
                     }
-
-                    same = false;
-                    break;
                 }
 
                 if(same && src)
