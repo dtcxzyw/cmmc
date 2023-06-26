@@ -497,6 +497,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v2;
             }
 
+            // mul (add x, c1) c2 -> add (mul x, c2) (mul c1, c2)
+            // if(mul(add(any(v1), int_(i1)), capture(int_(i2), v2))(matchCtx)) {
+            //     return builder.makeOp<BinaryInst>(InstructionID::Add, builder.makeOp<BinaryInst>(InstructionID::Mul, v1, v2),
+            //                                       makeIntLike(i1 * i2, inst));
+            // }
+
             return nullptr;
         });
         return ret || modified;

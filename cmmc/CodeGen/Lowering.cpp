@@ -459,7 +459,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         // Stage 6: Pre-RA scheduling, minimize register pressure
         if(ctx.registerInfo && optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "Pre-RA scheduling"sv };
-            schedule(mfunc, ctx, true);
+            preRASchedule(mfunc, ctx);
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
@@ -483,7 +483,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         // TODO: after post legalization?
         if(ctx.registerInfo && optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
             Stage stage{ "Post-RA scheduling"sv };
-            schedule(mfunc, ctx, false);
+            postRASchedule(mfunc, ctx);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 5: ICF & Tail duplication

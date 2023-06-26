@@ -42,8 +42,8 @@ CMMC_NAMESPACE_BEGIN
 static_assert(!Config::debug);
 
 Flag strictMode;               // NOLINT
-StringOpt executeInput;        // NOLINT
 IntegerOpt optimizationLevel;  // NOLINT
+extern Flag hideSymbol;
 namespace mir {
     extern StringOpt targetName;  // NOLINT
 }
@@ -73,6 +73,7 @@ static int runIRPipeline(Module& module, OptimizationLevel optLevel, const std::
 
 int main(int argc, char** argv) {
     strictMode.handle("false");
+    hideSymbol.handle("true");
 
 #include <cmmc/Driver/Target.hpp>
 

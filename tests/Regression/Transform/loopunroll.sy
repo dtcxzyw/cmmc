@@ -1,49 +1,112 @@
-int main() {
+int large() {
     int s = 0;
-    // large
     for(int i = 0; i < 2000; ++i)
         s += i;
-    // large with epilogue
+    putint(s);
+    return s;
+}
+int large_with_epilogue() {
+    int s = 0;
     for(int i = 0; i < 101; ++i)
         s += i;
-    // small
+    putint(s);
+    return s;
+}
+int small() {
+    int s = 0;
     for(int i = 0; i < 5; ++i)
         s += i;
-    // small2
+    putint(s);
+    return s;
+}
+int small2() {
+    int s = 0;
     for(int i = 0; i < 1; ++i)
         s += i;
+    putint(s);
+    return s;
+}
+int noop1() {
+    int s = 0;
     for(int i = 0; i < 0; ++i)
         s += i;
+    putint(s);
+    return s;
+}
+int noop2() {
+    int s = 0;
     for(int i = 0; i < -1; ++i)
         s += i;
+    putint(s);
+    return s;
+}
+int while1() {
+    int s = 0;
     int i = 0;
     while(i < 15) {
         s += i;
         ++i;
     }
-    i = 0;
+    putint(s);
+    return s;
+}
+int while2() {
+    int s = 0;
+    int i = 0;
     while(i < 16) {
         s += i * i;
         ++i;
     }
-    i = 0;
+    putint(s);
+    return s;
+}
+int while3() {
+    int s = 0;
+    int i = 0;
     while(i < 32) {
         s += i + 1;
         ++i;
     }
-    i = 0;
+    putint(s);
+    return s;
+}
+int while4() {
+    int s = 0;
+    int i = 0;
     while(i < 64) {
         s += i * 2;
         ++i;
     }
+    putint(s);
+    return s;
+}
+int while5() {
+    int s = 0;
+    int i = 0;
     while(i < 65) {
         s += i * 3;
         ++i;
     }
+    putint(s);
+    return s;
+}
+int while6() {
+    int s = 0;
+    int i = 0;
     while(i < 67) {
         s += i * i * i;
         ++i;
     }
+    putint(s);
+    return s;
+}
+int multi_loop() {
+    int s = 0;
+    int i = 127;
+    for(; i < 1000; ++i)
+        s += i * i;
+    for(; i > 0; --i)
+        s += i;
     putint(s);
     return s;
 }

@@ -475,13 +475,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 if(hasUse) {
                     instructions.insert(iter,
                                         MIRInst{ InstLoadRegFromStack }
-                                            .setOperand<0>(MIROperand::asISAReg(u, canonicalizedType))
+                                            .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
                                             .setOperand<1>(stackStorage));
                 }
                 if(hasDef) {
                     instructions.insert(next,
                                         MIRInst{ InstStoreRegToStack }
-                                            .setOperand<0>(MIROperand::asISAReg(u, canonicalizedType))
+                                            .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
                                             .setOperand<1>(stackStorage));
                 }
 

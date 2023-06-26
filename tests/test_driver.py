@@ -583,6 +583,11 @@ def sysy_regression_ref_codegen(src,target):
     cmmc_command = binary_path + ' -O {} -t {} -o '.format(optimization_level, target) + output_asm + ' ' + src
     return os.system(cmmc_command) == 0
 
+def sysy_perf_ref_codegen(src,target):
+    output_asm = src[:-2] + target + '.s'
+    cmmc_command = binary_path + ' -H -O {} -t {} -o '.format(optimization_level, target) + output_asm + ' ' + src
+    return os.system(cmmc_command) == 0
+
 def sysy_codegen_llvm(src):
     inputs = src[:-3]+".in"
     if not os.path.exists(inputs):
@@ -789,6 +794,10 @@ if generate_ref:
         for target in targets:
             if target in test_cases:
                 test("SysY regression {}".format(target), tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_ref_codegen(x, target))
+    if 'perf' in test_cases:
+        for target in targets:
+            if target in test_cases:
+                test("SysY performance {}".format(target), tests_path +"/SysY2022/performance", ".sy", lambda x: sysy_perf_ref_codegen(x, target))
 
 end = time.perf_counter()
 
