@@ -12,8 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/CodeGen/MIR.hpp"
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/CodeGen/Target.hpp>
