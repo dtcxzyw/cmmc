@@ -9,7 +9,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
     i32 %5 = call () -> i32 @getint();
-    i32 %6 = add i32 %5, i32 %2;
+    i32 %6 = add i32 %2, i32 %5;
     ubr ^b;
   ^b:
     i32 %7 = phi [^entry, i32 %2] [^if.then, i32 %6];

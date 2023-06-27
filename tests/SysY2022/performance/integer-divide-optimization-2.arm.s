@@ -344,7 +344,7 @@ label10:
 	smmul r2, r2, r3
 	asr r3, r2, #5
 	add r2, r3, r2, lsr #31
-	add r1, r2, r1
+	add r1, r1, r2
 	movw r2, #49153
 	movt r2, #16384
 	smmul r2, r1, r2

@@ -90,7 +90,7 @@ label5:
 	sraiw t3, t2, 5
 	srliw t2, t2, 31
 	add t2, t2, t3
-	addw t1, t2, t1
+	addw t1, t1, t2
 	mul t3, t1, a1
 	srai t2, t3, 55
 	srli t3, t3, 63
@@ -377,7 +377,7 @@ label9:
 	sraiw t2, t3, 5
 	srliw t3, t3, 31
 	add t2, t3, t2
-	addw t1, t2, t1
+	addw t1, t1, t2
 	mul t3, t1, a1
 	srai t2, t3, 55
 	srli t3, t3, 63

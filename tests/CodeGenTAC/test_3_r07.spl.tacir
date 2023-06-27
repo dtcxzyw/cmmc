@@ -2,7 +2,7 @@ FUNCTION main :
 READ v17
 READ v18
 v19 := v17 / v18
-v20 := v19 * v18
+v20 := v18 * v19
 v21 := v17 - v20
 IF v21 == #0 GOTO label24
 v15 := v18

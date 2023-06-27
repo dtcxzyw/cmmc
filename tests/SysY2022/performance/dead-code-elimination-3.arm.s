@@ -80,7 +80,7 @@ label5:
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
-	add r7, r8, r7
+	add r7, r7, r8
 	smmul r8, r7, r1
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
@@ -307,7 +307,7 @@ label9:
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
-	add r7, r8, r7
+	add r7, r7, r8
 	smmul r8, r7, r1
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31

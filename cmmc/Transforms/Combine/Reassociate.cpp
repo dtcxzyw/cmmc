@@ -30,6 +30,18 @@ CMMC_NAMESPACE_BEGIN
 class Reassociate final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block) {
         std::unordered_map<Value*, std::vector<std::pair<uint32_t, Value*>>> map;
+        std::unordered_map<Value*, uint32_t> number;
+        uint32_t numberCount = 0;
+
+        for(auto& inst : block.instructions())
+            number[&inst] = ++numberCount;
+
+        auto getNumber = [&](Value* v) -> uint32_t {
+            assert(v->isConstant());
+            if(auto iter = number.find(v); iter != number.cend())
+                return iter->second;
+            return 0;
+        };
 
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             switch(inst->getInstID()) {
@@ -61,12 +73,16 @@ class Reassociate final : public TransformPass<Function> {
             }
 
             std::sort(args.begin(), args.end(),
-                      [](const std::pair<uint32_t, Value*>& lhs, const std::pair<uint32_t, Value*>& rhs) {
+                      [&](const std::pair<uint32_t, Value*>& lhs, const std::pair<uint32_t, Value*>& rhs) {
                           const auto lv = lhs.second;
                           const auto rv = rhs.second;
                           if(lv->isConstant() != rv->isConstant())
                               return lv->isConstant();
-                          return lv < rv;
+                          const auto lid = getNumber(lv);
+                          const auto rid = getNumber(rv);
+                          if(!lid && !rid)
+                              return lv < rv;
+                          return lid < rid;
                       });
 
             auto last = args.begin();

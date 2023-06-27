@@ -4,8 +4,8 @@ func @main() -> i32 { NoMemoryRead NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
-    i32* %2 = ptrcast i32* @a to i32*;
-    store i32* %2 with i32 %1;
-    i32 %3 = add i32 %0, i32 %1;
-    ret i32 %3;
+    i32 %2 = add i32 %0, i32 %1;
+    i32* %3 = ptrcast i32* @a to i32*;
+    store i32* %3 with i32 %1;
+    ret i32 %2;
 }

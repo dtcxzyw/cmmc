@@ -581,11 +581,13 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             }
 
             if(inst.opcode() == InstAdd && isOperandIReg(lhs) && isOperandIReg(rhs)) {
-                const auto isMul = [&](const MIROperand& op) {
+                const auto isMulShift = [&](const MIROperand& op) {
                     const auto defInst = ctx.lookupDef(op);
-                    return defInst && defInst->opcode() == InstMul;
+                    return defInst &&
+                        (defInst->opcode() == InstMul || defInst->opcode() == InstShl || defInst->opcode() == InstLShr ||
+                         defInst->opcode() == InstAShr);
                 };
-                if(isMul(lhs) && !isMul(rhs)) {
+                if(isMulShift(lhs) && !isMulShift(rhs)) {
                     std::swap(lhs, rhs);
                     modified = true;
                 }
@@ -604,6 +606,17 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             // bypass for and -> bic
             if(inst.opcode() != InstAnd || (!rhs.isImm() || !isOperandOp2Constant(MIROperand::asImm(~rhs.imm(), rhs.type()))))
                 nonOp2Imm2reg(rhs);
+            if(isOperandIReg(lhs) && isOperandIReg(rhs)) {
+                const auto isShift = [&](const MIROperand& op) {
+                    const auto defInst = ctx.lookupDef(op);
+                    return defInst &&
+                        (defInst->opcode() == InstShl || defInst->opcode() == InstLShr || defInst->opcode() == InstAShr);
+                };
+                if(isShift(lhs) && !isShift(rhs)) {
+                    std::swap(lhs, rhs);
+                    modified = true;
+                }
+            }
             break;
         }
         case InstNeg: {

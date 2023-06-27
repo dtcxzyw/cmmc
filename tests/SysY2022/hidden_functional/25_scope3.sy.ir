@@ -1,6 +1,6 @@
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry:
+  ^entry:
     call (i32) -> void @putch(i32 97);
     call (i32) -> void @putch(i32 10);
     ret i32 46;

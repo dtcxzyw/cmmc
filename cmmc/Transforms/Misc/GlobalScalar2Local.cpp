@@ -88,8 +88,9 @@ public:
                 const auto pointeeType = var->getType()->as<PointerType>()->getPointee();
                 if(pointeeType->isPrimitive() ||
                    (pointeeType->isArray() && pointeeType->as<ArrayType>()->getScalarType()->isPrimitive() &&
-                    pointeeType->getSize(mod.getTarget().getDataLayout()) <= maxSize &&
-                    !var->attr().hasAttr(GlobalVariableAttribute::ReadOnly))) {
+                    pointeeType->getSize(mod.getTarget().getDataLayout()) <= maxSize
+                    // &&!var->attr().hasAttr(GlobalVariableAttribute::ReadOnly)
+                    )) {
                     globalVars.push_back(var);
                 }
             }

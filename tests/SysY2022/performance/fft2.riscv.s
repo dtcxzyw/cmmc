@@ -139,19 +139,19 @@ label78:
 	bge a2, s4, label86
 	j label94
 label79:
-	srliw a0, s4, 31
-	add a0, s4, a0
-	sraiw s5, a0, 1
 	mv a0, s0
 	mv a1, s0
 	jal multiply
 	mv s1, a0
+	srliw a0, s4, 31
+	add a0, s4, a0
+	sraiw s5, a0, 1
 	mv a0, s2
 	mv a1, s3
 	mv a2, s5
 	mv a3, s1
 	jal fft
-	addw a1, s5, s3
+	addw a1, s3, s5
 	mv a0, s2
 	mv a2, s5
 	mv a3, s1
@@ -228,16 +228,16 @@ label76:
 	subw a2, a0, a2
 	bne a2, zero, label76
 label75:
-	srliw a2, a0, 31
-	add a2, a0, a2
-	sraiw a2, a2, 1
-	slli a2, a2, 2
-	add a2, a1, a2
-	addw a3, a0, s3
-	slliw a3, a3, 2
-	add a3, s2, a3
-	lw a3, 0(a3)
-	sw a3, 0(a2)
+	addw a2, a0, s3
+	slliw a2, a2, 2
+	add a2, s2, a2
+	lw a2, 0(a2)
+	srliw a3, a0, 31
+	add a3, a0, a3
+	sraiw a3, a3, 1
+	slli a3, a3, 2
+	add a3, a1, a3
+	sw a2, 0(a3)
 	addiw a0, a0, 1
 	bge a0, s4, label78
 	srliw a2, a0, 31
@@ -358,7 +358,7 @@ label90:
 	bge a2, s4, label91
 	j label90
 label91:
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -367,7 +367,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -376,7 +376,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -385,7 +385,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -394,7 +394,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -403,7 +403,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -412,7 +412,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -421,7 +421,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -430,7 +430,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -439,7 +439,7 @@ label91:
 	sw a3, 0(a2)
 	addiw a0, a0, 1
 	bge a0, s4, label79
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -449,7 +449,7 @@ label91:
 	addiw a0, a0, 1
 	bge a0, s4, label79
 label555:
-	addw a2, a0, s3
+	addw a2, s3, a0
 	slliw a2, a2, 2
 	add a2, s2, a2
 	slliw a3, a0, 2
@@ -676,28 +676,25 @@ label94:
 	j label94
 .globl main
 main:
-	addi sp, sp, -40
-	sd s0, 32(sp)
-	sd s2, 24(sp)
-	sd s1, 16(sp)
-	sd s3, 8(sp)
+	addi sp, sp, -32
+	sd s0, 24(sp)
+	sd s2, 16(sp)
+	sd s1, 8(sp)
 	sd ra, 0(sp)
-pcrel737:
+pcrel736:
 	auipc a0, %pcrel_hi(a)
-	addi a0, a0, %pcrel_lo(pcrel737)
+	addi a0, a0, %pcrel_lo(pcrel736)
 	mv s0, a0
 	jal getarray
-	mv s2, a0
-pcrel738:
+	addiw s2, a0, -1
+pcrel737:
 	auipc a0, %pcrel_hi(b)
-	addi a0, a0, %pcrel_lo(pcrel738)
+	addi a0, a0, %pcrel_lo(pcrel737)
 	mv s1, a0
 	jal getarray
-	mv s3, a0
+	addw s2, s2, a0
 	li a0, 60
 	jal _sysy_starttime
-	addiw a0, s2, -1
-	addw s2, a0, s3
 	li a0, 1
 	ble s2, a0, label613
 	li t5, 1
@@ -721,14 +718,14 @@ pcrel738:
 	bge t5, s2, label594
 	slliw t5, t5, 1
 	bge t5, s2, label594
-	j label724
+	j label723
 label613:
 	li t5, 1
 	j label594
-label724:
+label723:
 	slliw t5, t5, 1
 	bge t5, s2, label594
-	j label724
+	j label723
 label594:
 	li a0, 998244352
 	divw a6, a0, t5
@@ -848,7 +845,7 @@ label594:
 	sw a0, 0(a4)
 	addiw a3, a3, 1
 	bge a3, t5, label598
-	j label727
+	j label726
 label598:
 	li a0, 998244352
 	subw a1, a0, a6
@@ -945,7 +942,7 @@ label598:
 	sw a0, 0(a5)
 	addiw a4, a4, 1
 	bge a4, t5, label602
-label729:
+label728:
 	slli a0, a4, 2
 	add a5, s0, a0
 	lw a0, 0(a5)
@@ -954,8 +951,8 @@ label729:
 	sw a0, 0(a5)
 	addiw a4, a4, 1
 	bge a4, t5, label602
-	j label729
-label727:
+	j label728
+label726:
 	slli a0, a3, 2
 	add a4, s0, a0
 	lw a0, 0(a4)
@@ -966,7 +963,7 @@ label727:
 	sw a0, 0(a4)
 	addiw a3, a3, 1
 	bge a3, t5, label598
-	j label727
+	j label726
 label602:
 	li a0, 79
 	jal _sysy_stoptime
@@ -975,9 +972,8 @@ label602:
 	jal putarray
 	mv a0, zero
 	ld ra, 0(sp)
-	ld s3, 8(sp)
-	ld s1, 16(sp)
-	ld s2, 24(sp)
-	ld s0, 32(sp)
-	addi sp, sp, 40
+	ld s1, 8(sp)
+	ld s2, 16(sp)
+	ld s0, 24(sp)
+	addi sp, sp, 32
 	ret

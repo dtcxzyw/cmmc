@@ -30,63 +30,63 @@ main:
 	mv a1, a0
 	ble a0, zero, label23
 	mv a2, zero
-	slli a0, zero, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31
@@ -428,9 +428,9 @@ label31:
 	blt a0, zero, label43
 	j label188
 label185:
-	slli a0, a2, 2
-	add a3, a4, a0
 	jal read
+	slli a3, a2, 2
+	add a3, a4, a3
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	bge a2, a1, label31

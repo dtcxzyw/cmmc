@@ -93,6 +93,10 @@ main:
 	vmov.f32 s16, s0
 	bl getfloat
 	vmov.f32 s2, s0
+	vmov.f32 s0, s17
+	vmov.f32 s1, s16
+	bl takFP
+	vmov.f32 s16, s0
 	vmov s0, r4
 	vcvt.f32.s32 s0, s0
 	movw r0, #0
@@ -100,15 +104,10 @@ main:
 	vmov s1, r0
 	vadd.f32 s0, s1, s0
 	bl fibFP
-	vmov.f32 s3, s0
-	vmov.f32 s0, s17
-	vmov.f32 s1, s16
-	bl takFP
-	vmov.f32 s16, s0
 	movw r0, #17320
 	movt r0, #19569
-	vmov s0, r0
-	vcmp.f32 s3, s0
+	vmov s1, r0
+	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
 	beq label56
 	mov r0, #1

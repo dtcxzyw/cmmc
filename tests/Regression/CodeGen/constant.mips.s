@@ -9,12 +9,12 @@ __cmmc_fp_constant_pool:
 .text
 .globl cse_imm
 cse_imm:
-	li $t1, 10
-	mult $a0, $t1
-	mflo $t0
-	mult $a1, $t1
+	li $t0, 10
+	mult $a1, $t0
 	mflo $t1
 	xor $t1, $a2, $t1
+	mult $a0, $t0
+	mflo $t0
 	addu $v0, $t0, $t1
 	jr $ra
 	nop

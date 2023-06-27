@@ -1,48 +1,48 @@
 FUNCTION main :
 v3 := #0
-WRITE v3
 v8 := v3 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 LABEL label46 :
 v3 := v8
-WRITE v8
 v8 := v8 + #1
+WRITE v3
 IF v8 >= #10 GOTO label11
 GOTO label46
 LABEL label11 :

@@ -15,15 +15,16 @@ main:
 	mov r4, r0
 	bl getarray
 	mov r5, r0
+	sub r7, r0, #1
+	add r0, r0, r0, lsr #31
+	asr r6, r0, #1
 	mov r0, #59
 	bl _sysy_starttime
-	sub r3, r5, #1
-	add r0, r5, r5, lsr #31
-	asr r6, r0, #1
+	mov r3, r7
 	mov r2, #0
 	add r7, r4, r2, lsl #2
-	ldr r8, [r7, #0]
 	add r1, r3, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 label7:
 	cmp r0, r1
@@ -55,8 +56,8 @@ label167:
 	b label180
 label128:
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -81,8 +82,8 @@ label10:
 	cmp r0, r6
 	ble label17
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -115,8 +116,8 @@ label14:
 	cmp r0, r6
 	ble label17
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -139,8 +140,8 @@ label14:
 	cmp r0, r6
 	ble label17
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -160,8 +161,8 @@ label17:
 	bge label19
 	add r2, r0, #1
 	add r7, r4, r2, lsl #2
-	ldr r8, [r7, #0]
 	add r1, r3, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -184,8 +185,8 @@ label17:
 	cmp r0, r6
 	ble label17
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
@@ -230,8 +231,8 @@ label20:
 	cmp r0, r6
 	ble label17
 	mov r3, r0
-	ldr r8, [r7, #0]
 	add r1, r0, #1
+	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10

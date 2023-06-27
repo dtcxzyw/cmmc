@@ -1,1349 +1,1323 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @fib(i32 %n) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
-^entry:
+  ^entry:
     i1 %0 = scmp lt i32 %n, i32 3;
     cbr i1 %0(prob = 0.5), ^b1, ^b;
-^b:
+  ^b:
     i32 %1 = srem i32 %n, i32 2;
     i1 %2 = scmp lt i32 %1, i32 0;
     cbr i1 %2(prob = 0.5), ^if.then, ^b2;
-^b1:
-    i32 %3 = phi [^entry, i32 1] [^b159, i32 %871];
+  ^b1:
+    i32 %3 = phi [^entry, i32 1] [^b159, i32 %845];
     ret i32 %3;
-^if.then:
+  ^if.then:
     i32 %4 = neg i32 %1;
     ubr ^b2;
-^b2:
+  ^b2:
     i32 %5 = phi [^b, i32 %1] [^if.then, i32 %4];
     i32 %6 = sdiv i32 %n, i32 2;
     i32 %7 = srem i32 %6, i32 2;
     i1 %8 = scmp lt i32 %7, i32 0;
     cbr i1 %8(prob = 0.5), ^if.then1, ^b3;
-^if.then1:
+  ^if.then1:
     i32 %9 = neg i32 %7;
     ubr ^b3;
-^b3:
+  ^b3:
     i32 %10 = phi [^b2, i32 %7] [^if.then1, i32 %9];
     i32 %11 = sdiv i32 %n, i32 4;
     i32 %12 = srem i32 %11, i32 2;
     i1 %13 = scmp lt i32 %12, i32 0;
     cbr i1 %13(prob = 0.5), ^if.then2, ^b4;
-^if.then2:
+  ^if.then2:
     i32 %14 = neg i32 %12;
     ubr ^b4;
-^b4:
+  ^b4:
     i32 %15 = phi [^b3, i32 %12] [^if.then2, i32 %14];
     i32 %16 = sdiv i32 %n, i32 8;
     i32 %17 = srem i32 %16, i32 2;
     i1 %18 = scmp lt i32 %17, i32 0;
     cbr i1 %18(prob = 0.5), ^if.then3, ^b5;
-^if.then3:
+  ^if.then3:
     i32 %19 = neg i32 %17;
     ubr ^b5;
-^b5:
+  ^b5:
     i32 %20 = phi [^b4, i32 %17] [^if.then3, i32 %19];
     i32 %21 = sdiv i32 %n, i32 16;
     i32 %22 = srem i32 %21, i32 2;
     i1 %23 = scmp lt i32 %22, i32 0;
     cbr i1 %23(prob = 0.5), ^if.then4, ^b6;
-^if.then4:
+  ^if.then4:
     i32 %24 = neg i32 %22;
     ubr ^b6;
-^b6:
+  ^b6:
     i32 %25 = phi [^b5, i32 %22] [^if.then4, i32 %24];
     i32 %26 = sdiv i32 %n, i32 32;
     i32 %27 = srem i32 %26, i32 2;
     i1 %28 = scmp lt i32 %27, i32 0;
     cbr i1 %28(prob = 0.5), ^if.then5, ^b7;
-^if.then5:
+  ^if.then5:
     i32 %29 = neg i32 %27;
     ubr ^b7;
-^b7:
+  ^b7:
     i32 %30 = phi [^b6, i32 %27] [^if.then5, i32 %29];
     i32 %31 = sdiv i32 %n, i32 64;
     i32 %32 = srem i32 %31, i32 2;
     i1 %33 = scmp lt i32 %32, i32 0;
     cbr i1 %33(prob = 0.5), ^if.then6, ^b8;
-^if.then6:
+  ^if.then6:
     i32 %34 = neg i32 %32;
     ubr ^b8;
-^b8:
+  ^b8:
     i32 %35 = phi [^b7, i32 %32] [^if.then6, i32 %34];
     i32 %36 = sdiv i32 %n, i32 128;
     i32 %37 = srem i32 %36, i32 2;
     i1 %38 = scmp lt i32 %37, i32 0;
     cbr i1 %38(prob = 0.5), ^if.then7, ^b9;
-^if.then7:
+  ^if.then7:
     i32 %39 = neg i32 %37;
     ubr ^b9;
-^b9:
+  ^b9:
     i32 %40 = phi [^b8, i32 %37] [^if.then7, i32 %39];
     i32 %41 = sdiv i32 %n, i32 256;
     i32 %42 = srem i32 %41, i32 2;
     i1 %43 = scmp lt i32 %42, i32 0;
     cbr i1 %43(prob = 0.5), ^if.then8, ^b10;
-^if.then8:
+  ^if.then8:
     i32 %44 = neg i32 %42;
     ubr ^b10;
-^b10:
+  ^b10:
     i32 %45 = phi [^b9, i32 %42] [^if.then8, i32 %44];
     i32 %46 = sdiv i32 %n, i32 512;
     i32 %47 = srem i32 %46, i32 2;
     i1 %48 = scmp lt i32 %47, i32 0;
     cbr i1 %48(prob = 0.5), ^if.then9, ^b11;
-^if.then9:
+  ^if.then9:
     i32 %49 = neg i32 %47;
     ubr ^b11;
-^b11:
+  ^b11:
     i32 %50 = phi [^b10, i32 %47] [^if.then9, i32 %49];
     i32 %51 = sdiv i32 %n, i32 1024;
     i32 %52 = srem i32 %51, i32 2;
     i1 %53 = scmp lt i32 %52, i32 0;
     cbr i1 %53(prob = 0.5), ^if.then10, ^b12;
-^if.then10:
+  ^if.then10:
     i32 %54 = neg i32 %52;
     ubr ^b12;
-^b12:
+  ^b12:
     i32 %55 = phi [^b11, i32 %52] [^if.then10, i32 %54];
     i32 %56 = sdiv i32 %n, i32 2048;
     i32 %57 = srem i32 %56, i32 2;
     i1 %58 = scmp lt i32 %57, i32 0;
     cbr i1 %58(prob = 0.5), ^if.then11, ^b13;
-^if.then11:
+  ^if.then11:
     i32 %59 = neg i32 %57;
     ubr ^b13;
-^b13:
+  ^b13:
     i32 %60 = phi [^b12, i32 %57] [^if.then11, i32 %59];
     i32 %61 = sdiv i32 %n, i32 4096;
     i32 %62 = srem i32 %61, i32 2;
     i1 %63 = scmp lt i32 %62, i32 0;
     cbr i1 %63(prob = 0.5), ^if.then12, ^b14;
-^if.then12:
+  ^if.then12:
     i32 %64 = neg i32 %62;
     ubr ^b14;
-^b14:
+  ^b14:
     i32 %65 = phi [^b13, i32 %62] [^if.then12, i32 %64];
     i32 %66 = sdiv i32 %n, i32 8192;
     i32 %67 = srem i32 %66, i32 2;
     i1 %68 = scmp lt i32 %67, i32 0;
     cbr i1 %68(prob = 0.5), ^if.then13, ^b15;
-^if.then13:
+  ^if.then13:
     i32 %69 = neg i32 %67;
     ubr ^b15;
-^b15:
+  ^b15:
     i32 %70 = phi [^b14, i32 %67] [^if.then13, i32 %69];
     i32 %71 = sdiv i32 %n, i32 16384;
     i32 %72 = srem i32 %71, i32 2;
     i1 %73 = scmp lt i32 %72, i32 0;
     cbr i1 %73(prob = 0.5), ^if.then14, ^b16;
-^if.then14:
+  ^if.then14:
     i32 %74 = neg i32 %72;
     ubr ^b16;
-^b16:
+  ^b16:
     i32 %75 = phi [^b15, i32 %72] [^if.then14, i32 %74];
     i32 %76 = sdiv i32 %n, i32 32768;
     i32 %77 = srem i32 %76, i32 2;
     i1 %78 = scmp lt i32 %77, i32 0;
     cbr i1 %78(prob = 0.5), ^if.then15, ^b17;
-^if.then15:
+  ^if.then15:
     i32 %79 = neg i32 %77;
     ubr ^b17;
-^b17:
+  ^b17:
     i32 %80 = phi [^b16, i32 %77] [^if.then15, i32 %79];
     i1 %81 = scmp neq i32 %5, i32 0;
-    i1 %82 = scmp eq i32 %5, i32 0;
-    i32 %83 = zext i1 %82 to i32;
+    i1 %82 = scmp eq i32 %10, i32 0;
+    i1 %83 = and i1 %81, i1 %82;
     i1 %84 = scmp neq i32 %10, i32 0;
-    i1 %85 = scmp eq i32 %10, i32 0;
-    i1 %86 = or i1 %85, i1 %81;
-    i1 %87 = and i1 %85, i1 %81;
-    i1 %88 = xor i1 %87, i1 true;
-    i1 %89 = and i1 %86, i1 %88;
-    i32 %90 = zext i1 %89 to i32;
-    i1 %91 = or i1 %87, i1 %84;
-    i1 %92 = scmp neq i32 %15, i32 0;
-    i1 %93 = scmp eq i32 %15, i32 0;
-    i1 %94 = or i1 %93, i1 %87;
-    i1 %95 = or i1 %94, i1 %84;
-    i1 %96 = and i1 %93, i1 %91;
-    i1 %97 = xor i1 %96, i1 true;
-    i1 %98 = and i1 %95, i1 %97;
-    i32 %99 = zext i1 %98 to i32;
-    i1 %100 = or i1 %96, i1 %92;
-    i1 %101 = scmp neq i32 %20, i32 0;
-    i1 %102 = scmp eq i32 %20, i32 0;
-    i1 %103 = or i1 %102, i1 %96;
-    i1 %104 = or i1 %103, i1 %92;
-    i1 %105 = and i1 %102, i1 %100;
-    i1 %106 = xor i1 %105, i1 true;
-    i1 %107 = and i1 %104, i1 %106;
-    i32 %108 = zext i1 %107 to i32;
-    i1 %109 = or i1 %105, i1 %101;
-    i1 %110 = scmp neq i32 %25, i32 0;
-    i1 %111 = scmp eq i32 %25, i32 0;
-    i1 %112 = or i1 %111, i1 %105;
-    i1 %113 = or i1 %112, i1 %101;
-    i1 %114 = and i1 %111, i1 %109;
-    i1 %115 = xor i1 %114, i1 true;
-    i1 %116 = and i1 %113, i1 %115;
-    i32 %117 = zext i1 %116 to i32;
-    i1 %118 = or i1 %114, i1 %110;
-    i1 %119 = scmp neq i32 %30, i32 0;
-    i1 %120 = scmp eq i32 %30, i32 0;
-    i1 %121 = or i1 %120, i1 %114;
-    i1 %122 = or i1 %121, i1 %110;
-    i1 %123 = and i1 %120, i1 %118;
-    i1 %124 = xor i1 %123, i1 true;
-    i1 %125 = and i1 %122, i1 %124;
-    i32 %126 = zext i1 %125 to i32;
-    i1 %127 = or i1 %123, i1 %119;
-    i1 %128 = scmp neq i32 %35, i32 0;
-    i1 %129 = scmp eq i32 %35, i32 0;
-    i1 %130 = or i1 %129, i1 %123;
-    i1 %131 = or i1 %130, i1 %119;
-    i1 %132 = and i1 %129, i1 %127;
-    i1 %133 = xor i1 %132, i1 true;
-    i1 %134 = and i1 %131, i1 %133;
-    i32 %135 = zext i1 %134 to i32;
-    i1 %136 = or i1 %132, i1 %128;
-    i1 %137 = scmp neq i32 %40, i32 0;
-    i1 %138 = scmp eq i32 %40, i32 0;
-    i1 %139 = or i1 %138, i1 %132;
-    i1 %140 = or i1 %139, i1 %128;
-    i1 %141 = and i1 %138, i1 %136;
-    i1 %142 = xor i1 %141, i1 true;
-    i1 %143 = and i1 %140, i1 %142;
-    i32 %144 = zext i1 %143 to i32;
-    i1 %145 = or i1 %141, i1 %137;
-    i1 %146 = scmp neq i32 %45, i32 0;
-    i1 %147 = scmp eq i32 %45, i32 0;
-    i1 %148 = or i1 %147, i1 %141;
-    i1 %149 = or i1 %148, i1 %137;
-    i1 %150 = and i1 %147, i1 %145;
-    i1 %151 = xor i1 %150, i1 true;
-    i1 %152 = and i1 %149, i1 %151;
-    i32 %153 = zext i1 %152 to i32;
-    i1 %154 = or i1 %150, i1 %146;
-    i1 %155 = scmp neq i32 %50, i32 0;
-    i1 %156 = scmp eq i32 %50, i32 0;
-    i1 %157 = or i1 %156, i1 %150;
-    i1 %158 = or i1 %157, i1 %146;
-    i1 %159 = and i1 %156, i1 %154;
-    i1 %160 = xor i1 %159, i1 true;
-    i1 %161 = and i1 %158, i1 %160;
-    i32 %162 = zext i1 %161 to i32;
-    i1 %163 = or i1 %159, i1 %155;
-    i1 %164 = scmp neq i32 %55, i32 0;
-    i1 %165 = scmp eq i32 %55, i32 0;
-    i1 %166 = or i1 %165, i1 %159;
-    i1 %167 = or i1 %166, i1 %155;
-    i1 %168 = and i1 %165, i1 %163;
-    i1 %169 = xor i1 %168, i1 true;
-    i1 %170 = and i1 %167, i1 %169;
-    i32 %171 = zext i1 %170 to i32;
-    i1 %172 = or i1 %168, i1 %164;
-    i1 %173 = scmp neq i32 %60, i32 0;
-    i1 %174 = scmp eq i32 %60, i32 0;
-    i1 %175 = or i1 %174, i1 %168;
-    i1 %176 = or i1 %175, i1 %164;
-    i1 %177 = and i1 %174, i1 %172;
-    i1 %178 = xor i1 %177, i1 true;
-    i1 %179 = and i1 %176, i1 %178;
-    i32 %180 = zext i1 %179 to i32;
-    i1 %181 = or i1 %177, i1 %173;
-    i1 %182 = scmp neq i32 %65, i32 0;
-    i1 %183 = scmp eq i32 %65, i32 0;
-    i1 %184 = or i1 %183, i1 %177;
-    i1 %185 = or i1 %184, i1 %173;
-    i1 %186 = and i1 %183, i1 %181;
-    i1 %187 = xor i1 %186, i1 true;
-    i1 %188 = and i1 %185, i1 %187;
-    i32 %189 = zext i1 %188 to i32;
-    i1 %190 = or i1 %186, i1 %182;
-    i1 %191 = scmp neq i32 %70, i32 0;
-    i1 %192 = scmp eq i32 %70, i32 0;
-    i1 %193 = or i1 %192, i1 %186;
-    i1 %194 = or i1 %193, i1 %182;
-    i1 %195 = and i1 %192, i1 %190;
-    i1 %196 = xor i1 %195, i1 true;
-    i1 %197 = and i1 %194, i1 %196;
-    i32 %198 = zext i1 %197 to i32;
-    i1 %199 = or i1 %195, i1 %191;
-    i1 %200 = scmp neq i32 %75, i32 0;
-    i1 %201 = scmp eq i32 %75, i32 0;
-    i1 %202 = or i1 %201, i1 %195;
-    i1 %203 = or i1 %202, i1 %191;
-    i1 %204 = and i1 %201, i1 %199;
-    i1 %205 = xor i1 %204, i1 true;
-    i1 %206 = and i1 %203, i1 %205;
-    i32 %207 = zext i1 %206 to i32;
-    i1 %208 = or i1 %204, i1 %200;
-    i1 %209 = scmp eq i32 %80, i32 0;
-    i1 %210 = or i1 %209, i1 %204;
-    i1 %211 = or i1 %210, i1 %200;
-    i1 %212 = and i1 %209, i1 %208;
-    i1 %213 = xor i1 %212, i1 true;
-    i1 %214 = and i1 %211, i1 %213;
-    i32 %215 = zext i1 %214 to i32;
-    i32 %216 = shl i32 %215, i32 1;
-    i32 %217 = add i32 %207, i32 %216;
-    i32 %218 = shl i32 %217, i32 1;
-    i32 %219 = add i32 %198, i32 %218;
-    i32 %220 = shl i32 %219, i32 1;
-    i32 %221 = add i32 %189, i32 %220;
-    i32 %222 = shl i32 %221, i32 1;
-    i32 %223 = add i32 %180, i32 %222;
-    i32 %224 = shl i32 %223, i32 1;
-    i32 %225 = add i32 %171, i32 %224;
-    i32 %226 = shl i32 %225, i32 1;
-    i32 %227 = add i32 %226, i32 %162;
-    i32 %228 = shl i32 %227, i32 1;
-    i32 %229 = add i32 %228, i32 %153;
-    i32 %230 = shl i32 %229, i32 1;
-    i32 %231 = add i32 %230, i32 %144;
-    i32 %232 = shl i32 %231, i32 1;
-    i32 %233 = add i32 %232, i32 %135;
-    i32 %234 = shl i32 %233, i32 1;
-    i32 %235 = add i32 %234, i32 %126;
-    i32 %236 = shl i32 %235, i32 1;
-    i32 %237 = add i32 %236, i32 %117;
-    i32 %238 = shl i32 %237, i32 1;
-    i32 %239 = add i32 %238, i32 %108;
-    i32 %240 = shl i32 %239, i32 1;
-    i32 %241 = add i32 %240, i32 %99;
-    i32 %242 = shl i32 %241, i32 1;
-    i32 %243 = add i32 %242, i32 %90;
-    i32 %244 = shl i32 %243, i32 1;
-    i32 %245 = add i32 %244, i32 %83;
-    i32 %246 = call (i32) -> i32 @fib(i32 %245);
+    i1 %85 = or i1 %83, i1 %84;
+    i1 %86 = scmp eq i32 %15, i32 0;
+    i1 %87 = and i1 %85, i1 %86;
+    i1 %88 = scmp neq i32 %15, i32 0;
+    i1 %89 = or i1 %87, i1 %88;
+    i1 %90 = scmp eq i32 %20, i32 0;
+    i1 %91 = and i1 %89, i1 %90;
+    i1 %92 = scmp neq i32 %20, i32 0;
+    i1 %93 = or i1 %91, i1 %92;
+    i1 %94 = scmp eq i32 %25, i32 0;
+    i1 %95 = and i1 %93, i1 %94;
+    i1 %96 = scmp neq i32 %25, i32 0;
+    i1 %97 = or i1 %95, i1 %96;
+    i1 %98 = scmp eq i32 %30, i32 0;
+    i1 %99 = and i1 %97, i1 %98;
+    i1 %100 = scmp neq i32 %30, i32 0;
+    i1 %101 = or i1 %99, i1 %100;
+    i1 %102 = scmp eq i32 %35, i32 0;
+    i1 %103 = and i1 %101, i1 %102;
+    i1 %104 = scmp neq i32 %35, i32 0;
+    i1 %105 = or i1 %103, i1 %104;
+    i1 %106 = scmp eq i32 %40, i32 0;
+    i1 %107 = and i1 %105, i1 %106;
+    i1 %108 = scmp neq i32 %40, i32 0;
+    i1 %109 = or i1 %107, i1 %108;
+    i1 %110 = scmp eq i32 %45, i32 0;
+    i1 %111 = and i1 %109, i1 %110;
+    i1 %112 = scmp neq i32 %45, i32 0;
+    i1 %113 = or i1 %111, i1 %112;
+    i1 %114 = scmp eq i32 %50, i32 0;
+    i1 %115 = and i1 %113, i1 %114;
+    i1 %116 = scmp neq i32 %50, i32 0;
+    i1 %117 = or i1 %115, i1 %116;
+    i1 %118 = scmp eq i32 %55, i32 0;
+    i1 %119 = and i1 %117, i1 %118;
+    i1 %120 = scmp neq i32 %55, i32 0;
+    i1 %121 = or i1 %119, i1 %120;
+    i1 %122 = scmp eq i32 %60, i32 0;
+    i1 %123 = and i1 %121, i1 %122;
+    i1 %124 = scmp neq i32 %60, i32 0;
+    i1 %125 = or i1 %123, i1 %124;
+    i1 %126 = scmp eq i32 %65, i32 0;
+    i1 %127 = and i1 %125, i1 %126;
+    i1 %128 = scmp neq i32 %65, i32 0;
+    i1 %129 = or i1 %127, i1 %128;
+    i1 %130 = scmp eq i32 %70, i32 0;
+    i1 %131 = and i1 %129, i1 %130;
+    i1 %132 = scmp neq i32 %70, i32 0;
+    i1 %133 = or i1 %131, i1 %132;
+    i1 %134 = scmp eq i32 %75, i32 0;
+    i1 %135 = and i1 %133, i1 %134;
+    i1 %136 = scmp neq i32 %75, i32 0;
+    i1 %137 = or i1 %135, i1 %136;
+    i1 %138 = scmp eq i32 %80, i32 0;
+    i1 %139 = and i1 %137, i1 %138;
+    i1 %140 = xor i1 %139, i1 true;
+    i1 %141 = or i1 %137, i1 %138;
+    i1 %142 = and i1 %141, i1 %140;
+    i32 %143 = zext i1 %142 to i32;
+    i32 %144 = mul i32 %143, i32 2;
+    i1 %145 = xor i1 %135, i1 true;
+    i1 %146 = or i1 %133, i1 %134;
+    i1 %147 = and i1 %146, i1 %145;
+    i32 %148 = zext i1 %147 to i32;
+    i32 %149 = add i32 %144, i32 %148;
+    i32 %150 = mul i32 %149, i32 2;
+    i1 %151 = xor i1 %131, i1 true;
+    i1 %152 = or i1 %129, i1 %130;
+    i1 %153 = and i1 %152, i1 %151;
+    i32 %154 = zext i1 %153 to i32;
+    i32 %155 = add i32 %150, i32 %154;
+    i32 %156 = mul i32 %155, i32 2;
+    i1 %157 = xor i1 %127, i1 true;
+    i1 %158 = or i1 %125, i1 %126;
+    i1 %159 = and i1 %158, i1 %157;
+    i32 %160 = zext i1 %159 to i32;
+    i32 %161 = add i32 %156, i32 %160;
+    i32 %162 = mul i32 %161, i32 2;
+    i1 %163 = xor i1 %123, i1 true;
+    i1 %164 = or i1 %121, i1 %122;
+    i1 %165 = and i1 %164, i1 %163;
+    i32 %166 = zext i1 %165 to i32;
+    i32 %167 = add i32 %162, i32 %166;
+    i32 %168 = mul i32 %167, i32 2;
+    i1 %169 = xor i1 %119, i1 true;
+    i1 %170 = or i1 %117, i1 %118;
+    i1 %171 = and i1 %170, i1 %169;
+    i32 %172 = zext i1 %171 to i32;
+    i32 %173 = add i32 %168, i32 %172;
+    i32 %174 = mul i32 %173, i32 2;
+    i1 %175 = xor i1 %115, i1 true;
+    i1 %176 = or i1 %113, i1 %114;
+    i1 %177 = and i1 %176, i1 %175;
+    i32 %178 = zext i1 %177 to i32;
+    i32 %179 = add i32 %174, i32 %178;
+    i32 %180 = mul i32 %179, i32 2;
+    i1 %181 = xor i1 %111, i1 true;
+    i1 %182 = or i1 %109, i1 %110;
+    i1 %183 = and i1 %182, i1 %181;
+    i32 %184 = zext i1 %183 to i32;
+    i32 %185 = add i32 %180, i32 %184;
+    i32 %186 = mul i32 %185, i32 2;
+    i1 %187 = xor i1 %107, i1 true;
+    i1 %188 = or i1 %105, i1 %106;
+    i1 %189 = and i1 %188, i1 %187;
+    i32 %190 = zext i1 %189 to i32;
+    i32 %191 = add i32 %186, i32 %190;
+    i32 %192 = mul i32 %191, i32 2;
+    i1 %193 = xor i1 %103, i1 true;
+    i1 %194 = or i1 %101, i1 %102;
+    i1 %195 = and i1 %194, i1 %193;
+    i32 %196 = zext i1 %195 to i32;
+    i32 %197 = add i32 %192, i32 %196;
+    i32 %198 = mul i32 %197, i32 2;
+    i1 %199 = xor i1 %99, i1 true;
+    i1 %200 = or i1 %97, i1 %98;
+    i1 %201 = and i1 %200, i1 %199;
+    i32 %202 = zext i1 %201 to i32;
+    i32 %203 = add i32 %198, i32 %202;
+    i32 %204 = mul i32 %203, i32 2;
+    i1 %205 = xor i1 %95, i1 true;
+    i1 %206 = or i1 %93, i1 %94;
+    i1 %207 = and i1 %206, i1 %205;
+    i32 %208 = zext i1 %207 to i32;
+    i32 %209 = add i32 %204, i32 %208;
+    i32 %210 = mul i32 %209, i32 2;
+    i1 %211 = xor i1 %91, i1 true;
+    i1 %212 = or i1 %89, i1 %90;
+    i1 %213 = and i1 %212, i1 %211;
+    i32 %214 = zext i1 %213 to i32;
+    i32 %215 = add i32 %210, i32 %214;
+    i32 %216 = mul i32 %215, i32 2;
+    i1 %217 = xor i1 %87, i1 true;
+    i1 %218 = or i1 %85, i1 %86;
+    i1 %219 = and i1 %218, i1 %217;
+    i32 %220 = zext i1 %219 to i32;
+    i32 %221 = add i32 %216, i32 %220;
+    i32 %222 = mul i32 %221, i32 2;
+    i1 %223 = xor i1 %83, i1 true;
+    i1 %224 = or i1 %81, i1 %82;
+    i1 %225 = and i1 %224, i1 %223;
+    i32 %226 = zext i1 %225 to i32;
+    i32 %227 = add i32 %222, i32 %226;
+    i32 %228 = mul i32 %227, i32 2;
+    i1 %229 = scmp eq i32 %5, i32 0;
+    i32 %230 = zext i1 %229 to i32;
+    i32 %231 = add i32 %228, i32 %230;
+    i32 %232 = call (i32) -> i32 @fib(i32 %231);
     cbr i1 %2(prob = 0.5), ^if.then16, ^b18;
-^if.then16:
-    i32 %247 = neg i32 %1;
+  ^if.then16:
+    i32 %233 = neg i32 %1;
     ubr ^b18;
-^b18:
-    i32 %248 = phi [^b17, i32 %1] [^if.then16, i32 %247];
+  ^b18:
+    i32 %234 = phi [^b17, i32 %1] [^if.then16, i32 %233];
     cbr i1 %8(prob = 0.5), ^if.then17, ^b19;
-^if.then17:
-    i32 %249 = neg i32 %7;
+  ^if.then17:
+    i32 %235 = neg i32 %7;
     ubr ^b19;
-^b19:
-    i32 %250 = phi [^b18, i32 %7] [^if.then17, i32 %249];
+  ^b19:
+    i32 %236 = phi [^b18, i32 %7] [^if.then17, i32 %235];
     cbr i1 %13(prob = 0.5), ^if.then18, ^b20;
-^if.then18:
-    i32 %251 = neg i32 %12;
+  ^if.then18:
+    i32 %237 = neg i32 %12;
     ubr ^b20;
-^b20:
-    i32 %252 = phi [^b19, i32 %12] [^if.then18, i32 %251];
+  ^b20:
+    i32 %238 = phi [^b19, i32 %12] [^if.then18, i32 %237];
     cbr i1 %18(prob = 0.5), ^if.then19, ^b21;
-^if.then19:
-    i32 %253 = neg i32 %17;
+  ^if.then19:
+    i32 %239 = neg i32 %17;
     ubr ^b21;
-^b21:
-    i32 %254 = phi [^b20, i32 %17] [^if.then19, i32 %253];
+  ^b21:
+    i32 %240 = phi [^b20, i32 %17] [^if.then19, i32 %239];
     cbr i1 %23(prob = 0.5), ^if.then20, ^b22;
-^if.then20:
-    i32 %255 = neg i32 %22;
+  ^if.then20:
+    i32 %241 = neg i32 %22;
     ubr ^b22;
-^b22:
-    i32 %256 = phi [^b21, i32 %22] [^if.then20, i32 %255];
+  ^b22:
+    i32 %242 = phi [^b21, i32 %22] [^if.then20, i32 %241];
     cbr i1 %28(prob = 0.5), ^if.then21, ^b23;
-^if.then21:
-    i32 %257 = neg i32 %27;
+  ^if.then21:
+    i32 %243 = neg i32 %27;
     ubr ^b23;
-^b23:
-    i32 %258 = phi [^b22, i32 %27] [^if.then21, i32 %257];
+  ^b23:
+    i32 %244 = phi [^b22, i32 %27] [^if.then21, i32 %243];
     cbr i1 %33(prob = 0.5), ^if.then22, ^b24;
-^if.then22:
-    i32 %259 = neg i32 %32;
+  ^if.then22:
+    i32 %245 = neg i32 %32;
     ubr ^b24;
-^b24:
-    i32 %260 = phi [^b23, i32 %32] [^if.then22, i32 %259];
+  ^b24:
+    i32 %246 = phi [^b23, i32 %32] [^if.then22, i32 %245];
     cbr i1 %38(prob = 0.5), ^if.then23, ^b25;
-^if.then23:
-    i32 %261 = neg i32 %37;
+  ^if.then23:
+    i32 %247 = neg i32 %37;
     ubr ^b25;
-^b25:
-    i32 %262 = phi [^b24, i32 %37] [^if.then23, i32 %261];
+  ^b25:
+    i32 %248 = phi [^b24, i32 %37] [^if.then23, i32 %247];
     cbr i1 %43(prob = 0.5), ^if.then24, ^b26;
-^if.then24:
-    i32 %263 = neg i32 %42;
+  ^if.then24:
+    i32 %249 = neg i32 %42;
     ubr ^b26;
-^b26:
-    i32 %264 = phi [^b25, i32 %42] [^if.then24, i32 %263];
+  ^b26:
+    i32 %250 = phi [^b25, i32 %42] [^if.then24, i32 %249];
     cbr i1 %48(prob = 0.5), ^if.then25, ^b27;
-^if.then25:
-    i32 %265 = neg i32 %47;
+  ^if.then25:
+    i32 %251 = neg i32 %47;
     ubr ^b27;
-^b27:
-    i32 %266 = phi [^b26, i32 %47] [^if.then25, i32 %265];
+  ^b27:
+    i32 %252 = phi [^b26, i32 %47] [^if.then25, i32 %251];
     cbr i1 %53(prob = 0.5), ^if.then26, ^b28;
-^if.then26:
-    i32 %267 = neg i32 %52;
+  ^if.then26:
+    i32 %253 = neg i32 %52;
     ubr ^b28;
-^b28:
-    i32 %268 = phi [^b27, i32 %52] [^if.then26, i32 %267];
+  ^b28:
+    i32 %254 = phi [^b27, i32 %52] [^if.then26, i32 %253];
     cbr i1 %58(prob = 0.5), ^if.then27, ^b29;
-^if.then27:
-    i32 %269 = neg i32 %57;
+  ^if.then27:
+    i32 %255 = neg i32 %57;
     ubr ^b29;
-^b29:
-    i32 %270 = phi [^b28, i32 %57] [^if.then27, i32 %269];
+  ^b29:
+    i32 %256 = phi [^b28, i32 %57] [^if.then27, i32 %255];
     cbr i1 %63(prob = 0.5), ^if.then28, ^b30;
-^if.then28:
-    i32 %271 = neg i32 %62;
+  ^if.then28:
+    i32 %257 = neg i32 %62;
     ubr ^b30;
-^b30:
-    i32 %272 = phi [^b29, i32 %62] [^if.then28, i32 %271];
+  ^b30:
+    i32 %258 = phi [^b29, i32 %62] [^if.then28, i32 %257];
     cbr i1 %68(prob = 0.5), ^if.then29, ^b31;
-^if.then29:
-    i32 %273 = neg i32 %67;
+  ^if.then29:
+    i32 %259 = neg i32 %67;
     ubr ^b31;
-^b31:
-    i32 %274 = phi [^b30, i32 %67] [^if.then29, i32 %273];
+  ^b31:
+    i32 %260 = phi [^b30, i32 %67] [^if.then29, i32 %259];
     cbr i1 %73(prob = 0.5), ^if.then30, ^b32;
-^if.then30:
-    i32 %275 = neg i32 %72;
+  ^if.then30:
+    i32 %261 = neg i32 %72;
     ubr ^b32;
-^b32:
-    i32 %276 = phi [^b31, i32 %72] [^if.then30, i32 %275];
+  ^b32:
+    i32 %262 = phi [^b31, i32 %72] [^if.then30, i32 %261];
     cbr i1 %78(prob = 0.5), ^if.then31, ^b33;
-^if.then31:
-    i32 %277 = neg i32 %77;
+  ^if.then31:
+    i32 %263 = neg i32 %77;
     ubr ^b33;
-^b33:
-    i32 %278 = phi [^b32, i32 %77] [^if.then31, i32 %277];
-    i1 %279 = scmp neq i32 %248, i32 0;
-    i32 %280 = zext i1 %279 to i32;
-    i1 %281 = scmp neq i32 %250, i32 0;
-    i1 %282 = scmp eq i32 %250, i32 0;
-    i32 %283 = zext i1 %282 to i32;
-    i1 %284 = scmp neq i32 %252, i32 0;
-    i1 %285 = scmp eq i32 %252, i32 0;
-    i1 %286 = or i1 %285, i1 %281;
-    i1 %287 = and i1 %285, i1 %281;
-    i1 %288 = xor i1 %287, i1 true;
-    i1 %289 = and i1 %286, i1 %288;
-    i32 %290 = zext i1 %289 to i32;
-    i1 %291 = or i1 %287, i1 %284;
-    i1 %292 = scmp neq i32 %254, i32 0;
-    i1 %293 = scmp eq i32 %254, i32 0;
-    i1 %294 = or i1 %293, i1 %287;
-    i1 %295 = or i1 %294, i1 %284;
-    i1 %296 = and i1 %293, i1 %291;
-    i1 %297 = xor i1 %296, i1 true;
-    i1 %298 = and i1 %295, i1 %297;
-    i32 %299 = zext i1 %298 to i32;
-    i1 %300 = or i1 %296, i1 %292;
-    i1 %301 = scmp neq i32 %256, i32 0;
+  ^b33:
+    i32 %264 = phi [^b32, i32 %77] [^if.then31, i32 %263];
+    i1 %265 = scmp neq i32 %236, i32 0;
+    i1 %266 = scmp eq i32 %238, i32 0;
+    i1 %267 = and i1 %265, i1 %266;
+    i1 %268 = scmp neq i32 %238, i32 0;
+    i1 %269 = or i1 %267, i1 %268;
+    i1 %270 = scmp eq i32 %240, i32 0;
+    i1 %271 = and i1 %269, i1 %270;
+    i1 %272 = scmp neq i32 %240, i32 0;
+    i1 %273 = or i1 %271, i1 %272;
+    i1 %274 = scmp eq i32 %242, i32 0;
+    i1 %275 = and i1 %273, i1 %274;
+    i1 %276 = scmp neq i32 %242, i32 0;
+    i1 %277 = or i1 %275, i1 %276;
+    i1 %278 = scmp eq i32 %244, i32 0;
+    i1 %279 = and i1 %277, i1 %278;
+    i1 %280 = scmp neq i32 %244, i32 0;
+    i1 %281 = or i1 %279, i1 %280;
+    i1 %282 = scmp eq i32 %246, i32 0;
+    i1 %283 = and i1 %281, i1 %282;
+    i1 %284 = scmp neq i32 %246, i32 0;
+    i1 %285 = or i1 %283, i1 %284;
+    i1 %286 = scmp eq i32 %248, i32 0;
+    i1 %287 = and i1 %285, i1 %286;
+    i1 %288 = scmp neq i32 %248, i32 0;
+    i1 %289 = or i1 %287, i1 %288;
+    i1 %290 = scmp eq i32 %250, i32 0;
+    i1 %291 = and i1 %289, i1 %290;
+    i1 %292 = scmp neq i32 %250, i32 0;
+    i1 %293 = or i1 %291, i1 %292;
+    i1 %294 = scmp eq i32 %252, i32 0;
+    i1 %295 = and i1 %293, i1 %294;
+    i1 %296 = scmp neq i32 %252, i32 0;
+    i1 %297 = or i1 %295, i1 %296;
+    i1 %298 = scmp eq i32 %254, i32 0;
+    i1 %299 = and i1 %297, i1 %298;
+    i1 %300 = scmp neq i32 %254, i32 0;
+    i1 %301 = or i1 %299, i1 %300;
     i1 %302 = scmp eq i32 %256, i32 0;
-    i1 %303 = or i1 %302, i1 %296;
-    i1 %304 = or i1 %303, i1 %292;
-    i1 %305 = and i1 %302, i1 %300;
-    i1 %306 = xor i1 %305, i1 true;
-    i1 %307 = and i1 %304, i1 %306;
-    i32 %308 = zext i1 %307 to i32;
-    i1 %309 = or i1 %305, i1 %301;
-    i1 %310 = scmp neq i32 %258, i32 0;
-    i1 %311 = scmp eq i32 %258, i32 0;
-    i1 %312 = or i1 %311, i1 %305;
-    i1 %313 = or i1 %312, i1 %301;
-    i1 %314 = and i1 %311, i1 %309;
-    i1 %315 = xor i1 %314, i1 true;
-    i1 %316 = and i1 %313, i1 %315;
-    i32 %317 = zext i1 %316 to i32;
-    i1 %318 = or i1 %314, i1 %310;
-    i1 %319 = scmp neq i32 %260, i32 0;
-    i1 %320 = scmp eq i32 %260, i32 0;
-    i1 %321 = or i1 %320, i1 %314;
-    i1 %322 = or i1 %321, i1 %310;
-    i1 %323 = and i1 %320, i1 %318;
-    i1 %324 = xor i1 %323, i1 true;
-    i1 %325 = and i1 %322, i1 %324;
-    i32 %326 = zext i1 %325 to i32;
-    i1 %327 = or i1 %323, i1 %319;
-    i1 %328 = scmp neq i32 %262, i32 0;
-    i1 %329 = scmp eq i32 %262, i32 0;
-    i1 %330 = or i1 %329, i1 %323;
-    i1 %331 = or i1 %330, i1 %319;
-    i1 %332 = and i1 %329, i1 %327;
-    i1 %333 = xor i1 %332, i1 true;
-    i1 %334 = and i1 %331, i1 %333;
-    i32 %335 = zext i1 %334 to i32;
-    i1 %336 = or i1 %332, i1 %328;
-    i1 %337 = scmp neq i32 %264, i32 0;
-    i1 %338 = scmp eq i32 %264, i32 0;
-    i1 %339 = or i1 %338, i1 %332;
-    i1 %340 = or i1 %339, i1 %328;
-    i1 %341 = and i1 %338, i1 %336;
-    i1 %342 = xor i1 %341, i1 true;
-    i1 %343 = and i1 %340, i1 %342;
-    i32 %344 = zext i1 %343 to i32;
-    i1 %345 = or i1 %341, i1 %337;
-    i1 %346 = scmp neq i32 %266, i32 0;
-    i1 %347 = scmp eq i32 %266, i32 0;
-    i1 %348 = or i1 %347, i1 %341;
-    i1 %349 = or i1 %348, i1 %337;
-    i1 %350 = and i1 %347, i1 %345;
-    i1 %351 = xor i1 %350, i1 true;
-    i1 %352 = and i1 %349, i1 %351;
-    i32 %353 = zext i1 %352 to i32;
-    i1 %354 = or i1 %350, i1 %346;
-    i1 %355 = scmp neq i32 %268, i32 0;
-    i1 %356 = scmp eq i32 %268, i32 0;
-    i1 %357 = or i1 %356, i1 %350;
-    i1 %358 = or i1 %357, i1 %346;
-    i1 %359 = and i1 %356, i1 %354;
-    i1 %360 = xor i1 %359, i1 true;
-    i1 %361 = and i1 %358, i1 %360;
-    i32 %362 = zext i1 %361 to i32;
-    i1 %363 = or i1 %359, i1 %355;
-    i1 %364 = scmp neq i32 %270, i32 0;
-    i1 %365 = scmp eq i32 %270, i32 0;
-    i1 %366 = or i1 %365, i1 %359;
-    i1 %367 = or i1 %366, i1 %355;
-    i1 %368 = and i1 %365, i1 %363;
-    i1 %369 = xor i1 %368, i1 true;
-    i1 %370 = and i1 %367, i1 %369;
-    i32 %371 = zext i1 %370 to i32;
-    i1 %372 = or i1 %368, i1 %364;
-    i1 %373 = scmp neq i32 %272, i32 0;
-    i1 %374 = scmp eq i32 %272, i32 0;
-    i1 %375 = or i1 %374, i1 %368;
-    i1 %376 = or i1 %375, i1 %364;
-    i1 %377 = and i1 %374, i1 %372;
-    i1 %378 = xor i1 %377, i1 true;
-    i1 %379 = and i1 %376, i1 %378;
-    i32 %380 = zext i1 %379 to i32;
-    i1 %381 = or i1 %377, i1 %373;
-    i1 %382 = scmp neq i32 %274, i32 0;
-    i1 %383 = scmp eq i32 %274, i32 0;
-    i1 %384 = or i1 %383, i1 %377;
-    i1 %385 = or i1 %384, i1 %373;
-    i1 %386 = and i1 %383, i1 %381;
-    i1 %387 = xor i1 %386, i1 true;
-    i1 %388 = and i1 %385, i1 %387;
-    i32 %389 = zext i1 %388 to i32;
-    i1 %390 = or i1 %386, i1 %382;
-    i1 %391 = scmp neq i32 %276, i32 0;
-    i1 %392 = scmp eq i32 %276, i32 0;
-    i1 %393 = or i1 %392, i1 %386;
-    i1 %394 = or i1 %393, i1 %382;
-    i1 %395 = and i1 %392, i1 %390;
-    i1 %396 = xor i1 %395, i1 true;
-    i1 %397 = and i1 %394, i1 %396;
-    i32 %398 = zext i1 %397 to i32;
-    i1 %399 = or i1 %395, i1 %391;
-    i1 %400 = scmp eq i32 %278, i32 0;
-    i1 %401 = or i1 %400, i1 %395;
-    i1 %402 = or i1 %401, i1 %391;
-    i1 %403 = and i1 %400, i1 %399;
-    i1 %404 = xor i1 %403, i1 true;
-    i1 %405 = and i1 %402, i1 %404;
-    i32 %406 = zext i1 %405 to i32;
-    i32 %407 = shl i32 %406, i32 1;
-    i32 %408 = add i32 %407, i32 %398;
-    i32 %409 = shl i32 %408, i32 1;
-    i32 %410 = add i32 %409, i32 %389;
-    i32 %411 = shl i32 %410, i32 1;
-    i32 %412 = add i32 %411, i32 %380;
-    i32 %413 = shl i32 %412, i32 1;
-    i32 %414 = add i32 %413, i32 %371;
-    i32 %415 = shl i32 %414, i32 1;
-    i32 %416 = add i32 %415, i32 %362;
-    i32 %417 = shl i32 %416, i32 1;
-    i32 %418 = add i32 %417, i32 %353;
-    i32 %419 = shl i32 %418, i32 1;
-    i32 %420 = add i32 %419, i32 %344;
-    i32 %421 = shl i32 %420, i32 1;
-    i32 %422 = add i32 %421, i32 %335;
-    i32 %423 = shl i32 %422, i32 1;
-    i32 %424 = add i32 %423, i32 %326;
-    i32 %425 = shl i32 %424, i32 1;
-    i32 %426 = add i32 %317, i32 %425;
-    i32 %427 = shl i32 %426, i32 1;
-    i32 %428 = add i32 %308, i32 %427;
-    i32 %429 = shl i32 %428, i32 1;
-    i32 %430 = add i32 %299, i32 %429;
-    i32 %431 = shl i32 %430, i32 1;
-    i32 %432 = add i32 %290, i32 %431;
-    i32 %433 = shl i32 %432, i32 1;
-    i32 %434 = add i32 %283, i32 %433;
-    i32 %435 = shl i32 %434, i32 1;
-    i32 %436 = add i32 %280, i32 %435;
-    i32 %437 = call (i32) -> i32 @fib(i32 %436);
-    i32 %438 = srem i32 %246, i32 2;
-    i1 %439 = scmp lt i32 %438, i32 0;
-    cbr i1 %439(prob = 0.5), ^if.then32, ^b34;
-^if.then32:
-    i32 %440 = neg i32 %438;
+    i1 %303 = and i1 %301, i1 %302;
+    i1 %304 = scmp neq i32 %256, i32 0;
+    i1 %305 = or i1 %303, i1 %304;
+    i1 %306 = scmp eq i32 %258, i32 0;
+    i1 %307 = and i1 %305, i1 %306;
+    i1 %308 = scmp neq i32 %258, i32 0;
+    i1 %309 = or i1 %307, i1 %308;
+    i1 %310 = scmp eq i32 %260, i32 0;
+    i1 %311 = and i1 %309, i1 %310;
+    i1 %312 = scmp neq i32 %260, i32 0;
+    i1 %313 = or i1 %311, i1 %312;
+    i1 %314 = scmp eq i32 %262, i32 0;
+    i1 %315 = and i1 %313, i1 %314;
+    i1 %316 = scmp neq i32 %262, i32 0;
+    i1 %317 = or i1 %315, i1 %316;
+    i1 %318 = scmp eq i32 %264, i32 0;
+    i1 %319 = and i1 %317, i1 %318;
+    i1 %320 = xor i1 %319, i1 true;
+    i1 %321 = or i1 %317, i1 %318;
+    i1 %322 = and i1 %321, i1 %320;
+    i32 %323 = zext i1 %322 to i32;
+    i32 %324 = mul i32 %323, i32 2;
+    i1 %325 = xor i1 %315, i1 true;
+    i1 %326 = or i1 %313, i1 %314;
+    i1 %327 = and i1 %326, i1 %325;
+    i32 %328 = zext i1 %327 to i32;
+    i32 %329 = add i32 %324, i32 %328;
+    i32 %330 = mul i32 %329, i32 2;
+    i1 %331 = xor i1 %311, i1 true;
+    i1 %332 = or i1 %309, i1 %310;
+    i1 %333 = and i1 %332, i1 %331;
+    i32 %334 = zext i1 %333 to i32;
+    i32 %335 = add i32 %330, i32 %334;
+    i32 %336 = mul i32 %335, i32 2;
+    i1 %337 = xor i1 %307, i1 true;
+    i1 %338 = or i1 %305, i1 %306;
+    i1 %339 = and i1 %338, i1 %337;
+    i32 %340 = zext i1 %339 to i32;
+    i32 %341 = add i32 %336, i32 %340;
+    i32 %342 = mul i32 %341, i32 2;
+    i1 %343 = xor i1 %303, i1 true;
+    i1 %344 = or i1 %301, i1 %302;
+    i1 %345 = and i1 %344, i1 %343;
+    i32 %346 = zext i1 %345 to i32;
+    i32 %347 = add i32 %342, i32 %346;
+    i32 %348 = mul i32 %347, i32 2;
+    i1 %349 = xor i1 %299, i1 true;
+    i1 %350 = or i1 %297, i1 %298;
+    i1 %351 = and i1 %350, i1 %349;
+    i32 %352 = zext i1 %351 to i32;
+    i32 %353 = add i32 %348, i32 %352;
+    i32 %354 = mul i32 %353, i32 2;
+    i1 %355 = xor i1 %295, i1 true;
+    i1 %356 = or i1 %293, i1 %294;
+    i1 %357 = and i1 %356, i1 %355;
+    i32 %358 = zext i1 %357 to i32;
+    i32 %359 = add i32 %354, i32 %358;
+    i32 %360 = mul i32 %359, i32 2;
+    i1 %361 = xor i1 %291, i1 true;
+    i1 %362 = or i1 %289, i1 %290;
+    i1 %363 = and i1 %362, i1 %361;
+    i32 %364 = zext i1 %363 to i32;
+    i32 %365 = add i32 %360, i32 %364;
+    i32 %366 = mul i32 %365, i32 2;
+    i1 %367 = xor i1 %287, i1 true;
+    i1 %368 = or i1 %285, i1 %286;
+    i1 %369 = and i1 %368, i1 %367;
+    i32 %370 = zext i1 %369 to i32;
+    i32 %371 = add i32 %366, i32 %370;
+    i32 %372 = mul i32 %371, i32 2;
+    i1 %373 = xor i1 %283, i1 true;
+    i1 %374 = or i1 %281, i1 %282;
+    i1 %375 = and i1 %374, i1 %373;
+    i32 %376 = zext i1 %375 to i32;
+    i32 %377 = add i32 %372, i32 %376;
+    i32 %378 = mul i32 %377, i32 2;
+    i1 %379 = xor i1 %279, i1 true;
+    i1 %380 = or i1 %277, i1 %278;
+    i1 %381 = and i1 %380, i1 %379;
+    i32 %382 = zext i1 %381 to i32;
+    i32 %383 = add i32 %378, i32 %382;
+    i32 %384 = mul i32 %383, i32 2;
+    i1 %385 = xor i1 %275, i1 true;
+    i1 %386 = or i1 %273, i1 %274;
+    i1 %387 = and i1 %386, i1 %385;
+    i32 %388 = zext i1 %387 to i32;
+    i32 %389 = add i32 %384, i32 %388;
+    i32 %390 = mul i32 %389, i32 2;
+    i1 %391 = xor i1 %271, i1 true;
+    i1 %392 = or i1 %269, i1 %270;
+    i1 %393 = and i1 %392, i1 %391;
+    i32 %394 = zext i1 %393 to i32;
+    i32 %395 = add i32 %390, i32 %394;
+    i32 %396 = mul i32 %395, i32 2;
+    i1 %397 = xor i1 %267, i1 true;
+    i1 %398 = or i1 %265, i1 %266;
+    i1 %399 = and i1 %398, i1 %397;
+    i32 %400 = zext i1 %399 to i32;
+    i32 %401 = add i32 %396, i32 %400;
+    i32 %402 = mul i32 %401, i32 2;
+    i1 %403 = scmp eq i32 %236, i32 0;
+    i32 %404 = zext i1 %403 to i32;
+    i32 %405 = add i32 %402, i32 %404;
+    i32 %406 = mul i32 %405, i32 2;
+    i1 %407 = scmp neq i32 %234, i32 0;
+    i32 %408 = zext i1 %407 to i32;
+    i32 %409 = add i32 %406, i32 %408;
+    i32 %410 = call (i32) -> i32 @fib(i32 %409);
+    i32 %411 = srem i32 %232, i32 2;
+    i1 %412 = scmp lt i32 %411, i32 0;
+    cbr i1 %412(prob = 0.5), ^if.then32, ^b34;
+  ^if.then32:
+    i32 %413 = neg i32 %411;
     ubr ^b34;
-^b34:
-    i32 %441 = phi [^b33, i32 %438] [^if.then32, i32 %440];
-    i32 %442 = sdiv i32 %246, i32 2;
-    i32 %443 = srem i32 %442, i32 2;
-    i1 %444 = scmp lt i32 %443, i32 0;
-    cbr i1 %444(prob = 0.5), ^if.then33, ^b35;
-^if.then33:
-    i32 %445 = neg i32 %443;
+  ^b34:
+    i32 %414 = phi [^b33, i32 %411] [^if.then32, i32 %413];
+    i32 %415 = sdiv i32 %232, i32 2;
+    i32 %416 = srem i32 %415, i32 2;
+    i1 %417 = scmp lt i32 %416, i32 0;
+    cbr i1 %417(prob = 0.5), ^if.then33, ^b35;
+  ^if.then33:
+    i32 %418 = neg i32 %416;
     ubr ^b35;
-^b35:
-    i32 %446 = phi [^b34, i32 %443] [^if.then33, i32 %445];
-    i32 %447 = sdiv i32 %246, i32 4;
-    i32 %448 = srem i32 %447, i32 2;
-    i1 %449 = scmp lt i32 %448, i32 0;
-    cbr i1 %449(prob = 0.5), ^if.then34, ^b36;
-^if.then34:
-    i32 %450 = neg i32 %448;
+  ^b35:
+    i32 %419 = phi [^b34, i32 %416] [^if.then33, i32 %418];
+    i32 %420 = sdiv i32 %232, i32 4;
+    i32 %421 = srem i32 %420, i32 2;
+    i1 %422 = scmp lt i32 %421, i32 0;
+    cbr i1 %422(prob = 0.5), ^if.then34, ^b36;
+  ^if.then34:
+    i32 %423 = neg i32 %421;
     ubr ^b36;
-^b36:
-    i32 %451 = phi [^b35, i32 %448] [^if.then34, i32 %450];
-    i32 %452 = sdiv i32 %246, i32 8;
-    i32 %453 = srem i32 %452, i32 2;
-    i1 %454 = scmp lt i32 %453, i32 0;
-    cbr i1 %454(prob = 0.5), ^if.then35, ^b37;
-^if.then35:
-    i32 %455 = neg i32 %453;
+  ^b36:
+    i32 %424 = phi [^b35, i32 %421] [^if.then34, i32 %423];
+    i32 %425 = sdiv i32 %232, i32 8;
+    i32 %426 = srem i32 %425, i32 2;
+    i1 %427 = scmp lt i32 %426, i32 0;
+    cbr i1 %427(prob = 0.5), ^if.then35, ^b37;
+  ^if.then35:
+    i32 %428 = neg i32 %426;
     ubr ^b37;
-^b37:
-    i32 %456 = phi [^b36, i32 %453] [^if.then35, i32 %455];
-    i32 %457 = sdiv i32 %246, i32 16;
-    i32 %458 = srem i32 %457, i32 2;
-    i1 %459 = scmp lt i32 %458, i32 0;
-    cbr i1 %459(prob = 0.5), ^if.then36, ^b38;
-^if.then36:
-    i32 %460 = neg i32 %458;
+  ^b37:
+    i32 %429 = phi [^b36, i32 %426] [^if.then35, i32 %428];
+    i32 %430 = sdiv i32 %232, i32 16;
+    i32 %431 = srem i32 %430, i32 2;
+    i1 %432 = scmp lt i32 %431, i32 0;
+    cbr i1 %432(prob = 0.5), ^if.then36, ^b38;
+  ^if.then36:
+    i32 %433 = neg i32 %431;
     ubr ^b38;
-^b38:
-    i32 %461 = phi [^b37, i32 %458] [^if.then36, i32 %460];
-    i32 %462 = sdiv i32 %246, i32 32;
-    i32 %463 = srem i32 %462, i32 2;
-    i1 %464 = scmp lt i32 %463, i32 0;
-    cbr i1 %464(prob = 0.5), ^if.then37, ^b39;
-^if.then37:
-    i32 %465 = neg i32 %463;
+  ^b38:
+    i32 %434 = phi [^b37, i32 %431] [^if.then36, i32 %433];
+    i32 %435 = sdiv i32 %232, i32 32;
+    i32 %436 = srem i32 %435, i32 2;
+    i1 %437 = scmp lt i32 %436, i32 0;
+    cbr i1 %437(prob = 0.5), ^if.then37, ^b39;
+  ^if.then37:
+    i32 %438 = neg i32 %436;
     ubr ^b39;
-^b39:
-    i32 %466 = phi [^b38, i32 %463] [^if.then37, i32 %465];
-    i32 %467 = sdiv i32 %246, i32 64;
-    i32 %468 = srem i32 %467, i32 2;
-    i1 %469 = scmp lt i32 %468, i32 0;
-    cbr i1 %469(prob = 0.5), ^if.then38, ^b40;
-^if.then38:
-    i32 %470 = neg i32 %468;
+  ^b39:
+    i32 %439 = phi [^b38, i32 %436] [^if.then37, i32 %438];
+    i32 %440 = sdiv i32 %232, i32 64;
+    i32 %441 = srem i32 %440, i32 2;
+    i1 %442 = scmp lt i32 %441, i32 0;
+    cbr i1 %442(prob = 0.5), ^if.then38, ^b40;
+  ^if.then38:
+    i32 %443 = neg i32 %441;
     ubr ^b40;
-^b40:
-    i32 %471 = phi [^b39, i32 %468] [^if.then38, i32 %470];
-    i32 %472 = sdiv i32 %246, i32 128;
-    i32 %473 = srem i32 %472, i32 2;
-    i1 %474 = scmp lt i32 %473, i32 0;
-    cbr i1 %474(prob = 0.5), ^if.then39, ^b41;
-^if.then39:
-    i32 %475 = neg i32 %473;
+  ^b40:
+    i32 %444 = phi [^b39, i32 %441] [^if.then38, i32 %443];
+    i32 %445 = sdiv i32 %232, i32 128;
+    i32 %446 = srem i32 %445, i32 2;
+    i1 %447 = scmp lt i32 %446, i32 0;
+    cbr i1 %447(prob = 0.5), ^if.then39, ^b41;
+  ^if.then39:
+    i32 %448 = neg i32 %446;
     ubr ^b41;
-^b41:
-    i32 %476 = phi [^b40, i32 %473] [^if.then39, i32 %475];
-    i32 %477 = sdiv i32 %246, i32 256;
-    i32 %478 = srem i32 %477, i32 2;
-    i1 %479 = scmp lt i32 %478, i32 0;
-    cbr i1 %479(prob = 0.5), ^if.then40, ^b42;
-^if.then40:
-    i32 %480 = neg i32 %478;
+  ^b41:
+    i32 %449 = phi [^b40, i32 %446] [^if.then39, i32 %448];
+    i32 %450 = sdiv i32 %232, i32 256;
+    i32 %451 = srem i32 %450, i32 2;
+    i1 %452 = scmp lt i32 %451, i32 0;
+    cbr i1 %452(prob = 0.5), ^if.then40, ^b42;
+  ^if.then40:
+    i32 %453 = neg i32 %451;
     ubr ^b42;
-^b42:
-    i32 %481 = phi [^b41, i32 %478] [^if.then40, i32 %480];
-    i32 %482 = sdiv i32 %246, i32 512;
-    i32 %483 = srem i32 %482, i32 2;
-    i1 %484 = scmp lt i32 %483, i32 0;
-    cbr i1 %484(prob = 0.5), ^if.then41, ^b43;
-^if.then41:
-    i32 %485 = neg i32 %483;
+  ^b42:
+    i32 %454 = phi [^b41, i32 %451] [^if.then40, i32 %453];
+    i32 %455 = sdiv i32 %232, i32 512;
+    i32 %456 = srem i32 %455, i32 2;
+    i1 %457 = scmp lt i32 %456, i32 0;
+    cbr i1 %457(prob = 0.5), ^if.then41, ^b43;
+  ^if.then41:
+    i32 %458 = neg i32 %456;
     ubr ^b43;
-^b43:
-    i32 %486 = phi [^b42, i32 %483] [^if.then41, i32 %485];
-    i32 %487 = sdiv i32 %246, i32 1024;
-    i32 %488 = srem i32 %487, i32 2;
-    i1 %489 = scmp lt i32 %488, i32 0;
-    cbr i1 %489(prob = 0.5), ^if.then42, ^b44;
-^if.then42:
-    i32 %490 = neg i32 %488;
+  ^b43:
+    i32 %459 = phi [^b42, i32 %456] [^if.then41, i32 %458];
+    i32 %460 = sdiv i32 %232, i32 1024;
+    i32 %461 = srem i32 %460, i32 2;
+    i1 %462 = scmp lt i32 %461, i32 0;
+    cbr i1 %462(prob = 0.5), ^if.then42, ^b44;
+  ^if.then42:
+    i32 %463 = neg i32 %461;
     ubr ^b44;
-^b44:
-    i32 %491 = phi [^b43, i32 %488] [^if.then42, i32 %490];
-    i32 %492 = sdiv i32 %246, i32 2048;
-    i32 %493 = srem i32 %492, i32 2;
-    i1 %494 = scmp lt i32 %493, i32 0;
-    cbr i1 %494(prob = 0.5), ^if.then43, ^b45;
-^if.then43:
-    i32 %495 = neg i32 %493;
+  ^b44:
+    i32 %464 = phi [^b43, i32 %461] [^if.then42, i32 %463];
+    i32 %465 = sdiv i32 %232, i32 2048;
+    i32 %466 = srem i32 %465, i32 2;
+    i1 %467 = scmp lt i32 %466, i32 0;
+    cbr i1 %467(prob = 0.5), ^if.then43, ^b45;
+  ^if.then43:
+    i32 %468 = neg i32 %466;
     ubr ^b45;
-^b45:
-    i32 %496 = phi [^b44, i32 %493] [^if.then43, i32 %495];
-    i32 %497 = sdiv i32 %246, i32 4096;
-    i32 %498 = srem i32 %497, i32 2;
-    i1 %499 = scmp lt i32 %498, i32 0;
-    cbr i1 %499(prob = 0.5), ^if.then44, ^b46;
-^if.then44:
-    i32 %500 = neg i32 %498;
+  ^b45:
+    i32 %469 = phi [^b44, i32 %466] [^if.then43, i32 %468];
+    i32 %470 = sdiv i32 %232, i32 4096;
+    i32 %471 = srem i32 %470, i32 2;
+    i1 %472 = scmp lt i32 %471, i32 0;
+    cbr i1 %472(prob = 0.5), ^if.then44, ^b46;
+  ^if.then44:
+    i32 %473 = neg i32 %471;
     ubr ^b46;
-^b46:
-    i32 %501 = phi [^b45, i32 %498] [^if.then44, i32 %500];
-    i32 %502 = sdiv i32 %246, i32 8192;
-    i32 %503 = srem i32 %502, i32 2;
-    i1 %504 = scmp lt i32 %503, i32 0;
-    cbr i1 %504(prob = 0.5), ^if.then45, ^b47;
-^if.then45:
-    i32 %505 = neg i32 %503;
+  ^b46:
+    i32 %474 = phi [^b45, i32 %471] [^if.then44, i32 %473];
+    i32 %475 = sdiv i32 %232, i32 8192;
+    i32 %476 = srem i32 %475, i32 2;
+    i1 %477 = scmp lt i32 %476, i32 0;
+    cbr i1 %477(prob = 0.5), ^if.then45, ^b47;
+  ^if.then45:
+    i32 %478 = neg i32 %476;
     ubr ^b47;
-^b47:
-    i32 %506 = phi [^b46, i32 %503] [^if.then45, i32 %505];
-    i32 %507 = sdiv i32 %246, i32 16384;
-    i32 %508 = srem i32 %507, i32 2;
-    i1 %509 = scmp lt i32 %508, i32 0;
-    cbr i1 %509(prob = 0.5), ^if.then46, ^b48;
-^if.then46:
-    i32 %510 = neg i32 %508;
+  ^b47:
+    i32 %479 = phi [^b46, i32 %476] [^if.then45, i32 %478];
+    i32 %480 = sdiv i32 %232, i32 16384;
+    i32 %481 = srem i32 %480, i32 2;
+    i1 %482 = scmp lt i32 %481, i32 0;
+    cbr i1 %482(prob = 0.5), ^if.then46, ^b48;
+  ^if.then46:
+    i32 %483 = neg i32 %481;
     ubr ^b48;
-^b48:
-    i32 %511 = phi [^b47, i32 %508] [^if.then46, i32 %510];
-    i32 %512 = sdiv i32 %246, i32 32768;
-    i32 %513 = srem i32 %512, i32 2;
-    i1 %514 = scmp lt i32 %513, i32 0;
-    cbr i1 %514(prob = 0.5), ^if.then47, ^b49;
-^if.then47:
-    i32 %515 = neg i32 %513;
+  ^b48:
+    i32 %484 = phi [^b47, i32 %481] [^if.then46, i32 %483];
+    i32 %485 = sdiv i32 %232, i32 32768;
+    i32 %486 = srem i32 %485, i32 2;
+    i1 %487 = scmp lt i32 %486, i32 0;
+    cbr i1 %487(prob = 0.5), ^if.then47, ^b49;
+  ^if.then47:
+    i32 %488 = neg i32 %486;
     ubr ^b49;
-^b49:
-    i32 %516 = phi [^b48, i32 %513] [^if.then47, i32 %515];
-    i32 %517 = srem i32 %437, i32 2;
-    i1 %518 = scmp lt i32 %517, i32 0;
-    cbr i1 %518(prob = 0.5), ^if.then48, ^b50;
-^if.then48:
-    i32 %519 = neg i32 %517;
+  ^b49:
+    i32 %489 = phi [^b48, i32 %486] [^if.then47, i32 %488];
+    i32 %490 = srem i32 %410, i32 2;
+    i1 %491 = scmp lt i32 %490, i32 0;
+    cbr i1 %491(prob = 0.5), ^if.then48, ^b50;
+  ^if.then48:
+    i32 %492 = neg i32 %490;
     ubr ^b50;
-^b50:
-    i32 %520 = phi [^b49, i32 %517] [^if.then48, i32 %519];
-    i32 %521 = sdiv i32 %437, i32 2;
-    i32 %522 = srem i32 %521, i32 2;
-    i1 %523 = scmp lt i32 %522, i32 0;
-    cbr i1 %523(prob = 0.5), ^if.then49, ^b51;
-^if.then49:
-    i32 %524 = neg i32 %522;
+  ^b50:
+    i32 %493 = phi [^b49, i32 %490] [^if.then48, i32 %492];
+    i32 %494 = sdiv i32 %410, i32 2;
+    i32 %495 = srem i32 %494, i32 2;
+    i1 %496 = scmp lt i32 %495, i32 0;
+    cbr i1 %496(prob = 0.5), ^if.then49, ^b51;
+  ^if.then49:
+    i32 %497 = neg i32 %495;
     ubr ^b51;
-^b51:
-    i32 %525 = phi [^b50, i32 %522] [^if.then49, i32 %524];
-    i32 %526 = sdiv i32 %437, i32 4;
-    i32 %527 = srem i32 %526, i32 2;
-    i1 %528 = scmp lt i32 %527, i32 0;
-    cbr i1 %528(prob = 0.5), ^if.then50, ^b52;
-^if.then50:
-    i32 %529 = neg i32 %527;
+  ^b51:
+    i32 %498 = phi [^b50, i32 %495] [^if.then49, i32 %497];
+    i32 %499 = sdiv i32 %410, i32 4;
+    i32 %500 = srem i32 %499, i32 2;
+    i1 %501 = scmp lt i32 %500, i32 0;
+    cbr i1 %501(prob = 0.5), ^if.then50, ^b52;
+  ^if.then50:
+    i32 %502 = neg i32 %500;
     ubr ^b52;
-^b52:
-    i32 %530 = phi [^b51, i32 %527] [^if.then50, i32 %529];
-    i32 %531 = sdiv i32 %437, i32 8;
-    i32 %532 = srem i32 %531, i32 2;
-    i1 %533 = scmp lt i32 %532, i32 0;
-    cbr i1 %533(prob = 0.5), ^if.then51, ^b53;
-^if.then51:
-    i32 %534 = neg i32 %532;
+  ^b52:
+    i32 %503 = phi [^b51, i32 %500] [^if.then50, i32 %502];
+    i32 %504 = sdiv i32 %410, i32 8;
+    i32 %505 = srem i32 %504, i32 2;
+    i1 %506 = scmp lt i32 %505, i32 0;
+    cbr i1 %506(prob = 0.5), ^if.then51, ^b53;
+  ^if.then51:
+    i32 %507 = neg i32 %505;
     ubr ^b53;
-^b53:
-    i32 %535 = phi [^b52, i32 %532] [^if.then51, i32 %534];
-    i32 %536 = sdiv i32 %437, i32 16;
-    i32 %537 = srem i32 %536, i32 2;
-    i1 %538 = scmp lt i32 %537, i32 0;
-    cbr i1 %538(prob = 0.5), ^if.then52, ^b54;
-^if.then52:
-    i32 %539 = neg i32 %537;
+  ^b53:
+    i32 %508 = phi [^b52, i32 %505] [^if.then51, i32 %507];
+    i32 %509 = sdiv i32 %410, i32 16;
+    i32 %510 = srem i32 %509, i32 2;
+    i1 %511 = scmp lt i32 %510, i32 0;
+    cbr i1 %511(prob = 0.5), ^if.then52, ^b54;
+  ^if.then52:
+    i32 %512 = neg i32 %510;
     ubr ^b54;
-^b54:
-    i32 %540 = phi [^b53, i32 %537] [^if.then52, i32 %539];
-    i32 %541 = sdiv i32 %437, i32 32;
-    i32 %542 = srem i32 %541, i32 2;
-    i1 %543 = scmp lt i32 %542, i32 0;
-    cbr i1 %543(prob = 0.5), ^if.then53, ^b55;
-^if.then53:
-    i32 %544 = neg i32 %542;
+  ^b54:
+    i32 %513 = phi [^b53, i32 %510] [^if.then52, i32 %512];
+    i32 %514 = sdiv i32 %410, i32 32;
+    i32 %515 = srem i32 %514, i32 2;
+    i1 %516 = scmp lt i32 %515, i32 0;
+    cbr i1 %516(prob = 0.5), ^if.then53, ^b55;
+  ^if.then53:
+    i32 %517 = neg i32 %515;
     ubr ^b55;
-^b55:
-    i32 %545 = phi [^b54, i32 %542] [^if.then53, i32 %544];
-    i32 %546 = sdiv i32 %437, i32 64;
-    i32 %547 = srem i32 %546, i32 2;
-    i1 %548 = scmp lt i32 %547, i32 0;
-    cbr i1 %548(prob = 0.5), ^if.then54, ^b56;
-^if.then54:
-    i32 %549 = neg i32 %547;
+  ^b55:
+    i32 %518 = phi [^b54, i32 %515] [^if.then53, i32 %517];
+    i32 %519 = sdiv i32 %410, i32 64;
+    i32 %520 = srem i32 %519, i32 2;
+    i1 %521 = scmp lt i32 %520, i32 0;
+    cbr i1 %521(prob = 0.5), ^if.then54, ^b56;
+  ^if.then54:
+    i32 %522 = neg i32 %520;
     ubr ^b56;
-^b56:
-    i32 %550 = phi [^b55, i32 %547] [^if.then54, i32 %549];
-    i32 %551 = sdiv i32 %437, i32 128;
-    i32 %552 = srem i32 %551, i32 2;
-    i1 %553 = scmp lt i32 %552, i32 0;
-    cbr i1 %553(prob = 0.5), ^if.then55, ^b57;
-^if.then55:
-    i32 %554 = neg i32 %552;
+  ^b56:
+    i32 %523 = phi [^b55, i32 %520] [^if.then54, i32 %522];
+    i32 %524 = sdiv i32 %410, i32 128;
+    i32 %525 = srem i32 %524, i32 2;
+    i1 %526 = scmp lt i32 %525, i32 0;
+    cbr i1 %526(prob = 0.5), ^if.then55, ^b57;
+  ^if.then55:
+    i32 %527 = neg i32 %525;
     ubr ^b57;
-^b57:
-    i32 %555 = phi [^b56, i32 %552] [^if.then55, i32 %554];
-    i32 %556 = sdiv i32 %437, i32 256;
-    i32 %557 = srem i32 %556, i32 2;
-    i1 %558 = scmp lt i32 %557, i32 0;
-    cbr i1 %558(prob = 0.5), ^if.then56, ^b58;
-^if.then56:
-    i32 %559 = neg i32 %557;
+  ^b57:
+    i32 %528 = phi [^b56, i32 %525] [^if.then55, i32 %527];
+    i32 %529 = sdiv i32 %410, i32 256;
+    i32 %530 = srem i32 %529, i32 2;
+    i1 %531 = scmp lt i32 %530, i32 0;
+    cbr i1 %531(prob = 0.5), ^if.then56, ^b58;
+  ^if.then56:
+    i32 %532 = neg i32 %530;
     ubr ^b58;
-^b58:
-    i32 %560 = phi [^b57, i32 %557] [^if.then56, i32 %559];
-    i32 %561 = sdiv i32 %437, i32 512;
-    i32 %562 = srem i32 %561, i32 2;
-    i1 %563 = scmp lt i32 %562, i32 0;
-    cbr i1 %563(prob = 0.5), ^if.then57, ^b59;
-^if.then57:
-    i32 %564 = neg i32 %562;
+  ^b58:
+    i32 %533 = phi [^b57, i32 %530] [^if.then56, i32 %532];
+    i32 %534 = sdiv i32 %410, i32 512;
+    i32 %535 = srem i32 %534, i32 2;
+    i1 %536 = scmp lt i32 %535, i32 0;
+    cbr i1 %536(prob = 0.5), ^if.then57, ^b59;
+  ^if.then57:
+    i32 %537 = neg i32 %535;
     ubr ^b59;
-^b59:
-    i32 %565 = phi [^b58, i32 %562] [^if.then57, i32 %564];
-    i32 %566 = sdiv i32 %437, i32 1024;
-    i32 %567 = srem i32 %566, i32 2;
-    i1 %568 = scmp lt i32 %567, i32 0;
-    cbr i1 %568(prob = 0.5), ^if.then58, ^b60;
-^if.then58:
-    i32 %569 = neg i32 %567;
+  ^b59:
+    i32 %538 = phi [^b58, i32 %535] [^if.then57, i32 %537];
+    i32 %539 = sdiv i32 %410, i32 1024;
+    i32 %540 = srem i32 %539, i32 2;
+    i1 %541 = scmp lt i32 %540, i32 0;
+    cbr i1 %541(prob = 0.5), ^if.then58, ^b60;
+  ^if.then58:
+    i32 %542 = neg i32 %540;
     ubr ^b60;
-^b60:
-    i32 %570 = phi [^b59, i32 %567] [^if.then58, i32 %569];
-    i32 %571 = sdiv i32 %437, i32 2048;
-    i32 %572 = srem i32 %571, i32 2;
-    i1 %573 = scmp lt i32 %572, i32 0;
-    cbr i1 %573(prob = 0.5), ^if.then59, ^b61;
-^if.then59:
-    i32 %574 = neg i32 %572;
+  ^b60:
+    i32 %543 = phi [^b59, i32 %540] [^if.then58, i32 %542];
+    i32 %544 = sdiv i32 %410, i32 2048;
+    i32 %545 = srem i32 %544, i32 2;
+    i1 %546 = scmp lt i32 %545, i32 0;
+    cbr i1 %546(prob = 0.5), ^if.then59, ^b61;
+  ^if.then59:
+    i32 %547 = neg i32 %545;
     ubr ^b61;
-^b61:
-    i32 %575 = phi [^b60, i32 %572] [^if.then59, i32 %574];
-    i32 %576 = sdiv i32 %437, i32 4096;
-    i32 %577 = srem i32 %576, i32 2;
-    i1 %578 = scmp lt i32 %577, i32 0;
-    cbr i1 %578(prob = 0.5), ^if.then60, ^b62;
-^if.then60:
-    i32 %579 = neg i32 %577;
+  ^b61:
+    i32 %548 = phi [^b60, i32 %545] [^if.then59, i32 %547];
+    i32 %549 = sdiv i32 %410, i32 4096;
+    i32 %550 = srem i32 %549, i32 2;
+    i1 %551 = scmp lt i32 %550, i32 0;
+    cbr i1 %551(prob = 0.5), ^if.then60, ^b62;
+  ^if.then60:
+    i32 %552 = neg i32 %550;
     ubr ^b62;
-^b62:
-    i32 %580 = phi [^b61, i32 %577] [^if.then60, i32 %579];
-    i32 %581 = sdiv i32 %437, i32 8192;
-    i32 %582 = srem i32 %581, i32 2;
-    i1 %583 = scmp lt i32 %582, i32 0;
-    cbr i1 %583(prob = 0.5), ^if.then61, ^b63;
-^if.then61:
-    i32 %584 = neg i32 %582;
+  ^b62:
+    i32 %553 = phi [^b61, i32 %550] [^if.then60, i32 %552];
+    i32 %554 = sdiv i32 %410, i32 8192;
+    i32 %555 = srem i32 %554, i32 2;
+    i1 %556 = scmp lt i32 %555, i32 0;
+    cbr i1 %556(prob = 0.5), ^if.then61, ^b63;
+  ^if.then61:
+    i32 %557 = neg i32 %555;
     ubr ^b63;
-^b63:
-    i32 %585 = phi [^b62, i32 %582] [^if.then61, i32 %584];
-    i32 %586 = sdiv i32 %437, i32 16384;
-    i32 %587 = srem i32 %586, i32 2;
-    i1 %588 = scmp lt i32 %587, i32 0;
-    cbr i1 %588(prob = 0.5), ^if.then62, ^b64;
-^if.then62:
-    i32 %589 = neg i32 %587;
+  ^b63:
+    i32 %558 = phi [^b62, i32 %555] [^if.then61, i32 %557];
+    i32 %559 = sdiv i32 %410, i32 16384;
+    i32 %560 = srem i32 %559, i32 2;
+    i1 %561 = scmp lt i32 %560, i32 0;
+    cbr i1 %561(prob = 0.5), ^if.then62, ^b64;
+  ^if.then62:
+    i32 %562 = neg i32 %560;
     ubr ^b64;
-^b64:
-    i32 %590 = phi [^b63, i32 %587] [^if.then62, i32 %589];
-    i32 %591 = sdiv i32 %437, i32 32768;
-    i32 %592 = srem i32 %591, i32 2;
-    i1 %593 = scmp lt i32 %592, i32 0;
-    cbr i1 %593(prob = 0.5), ^if.then63, ^b65;
-^if.then63:
-    i32 %594 = neg i32 %592;
+  ^b64:
+    i32 %563 = phi [^b63, i32 %560] [^if.then62, i32 %562];
+    i32 %564 = sdiv i32 %410, i32 32768;
+    i32 %565 = srem i32 %564, i32 2;
+    i1 %566 = scmp lt i32 %565, i32 0;
+    cbr i1 %566(prob = 0.5), ^if.then63, ^b65;
+  ^if.then63:
+    i32 %567 = neg i32 %565;
     ubr ^b65;
-^b65:
-    i32 %595 = phi [^b64, i32 %592] [^if.then63, i32 %594];
-    i1 %596 = scmp neq i32 %441, i32 0;
-    cbr i1 %596(prob = 0.5), ^b67, ^b66;
-^b66:
-    i1 %597 = scmp neq i32 %520, i32 0;
+  ^b65:
+    i32 %568 = phi [^b64, i32 %565] [^if.then63, i32 %567];
+    i1 %569 = scmp neq i32 %414, i32 0;
+    cbr i1 %569(prob = 0.5), ^b67, ^b66;
+  ^b66:
+    i1 %570 = scmp neq i32 %493, i32 0;
     ubr ^b67;
-^b67:
-    i1 %598 = phi [^b65, i1 true] [^b66, i1 %597];
-    cbr i1 %596(prob = 0.5), ^b68, ^b69;
-^b68:
-    i1 %599 = scmp neq i32 %520, i32 0;
+  ^b67:
+    i1 %571 = phi [^b65, i1 true] [^b66, i1 %570];
+    cbr i1 %569(prob = 0.5), ^b68, ^b69;
+  ^b68:
+    i1 %572 = scmp neq i32 %493, i32 0;
     ubr ^b69;
-^b69:
-    i1 %600 = phi [^b67, i1 false] [^b68, i1 %599];
-    i1 %601 = xor i1 %600, i1 true;
-    i1 %602 = and i1 %601, i1 %598;
-    i32 %603 = zext i1 %602 to i32;
-    cbr i1 %596(prob = 0.5), ^b70, ^b71;
-^b70:
-    i1 %604 = scmp neq i32 %520, i32 0;
+  ^b69:
+    i1 %573 = phi [^b67, i1 false] [^b68, i1 %572];
+    i1 %574 = xor i1 %573, i1 true;
+    i1 %575 = and i1 %574, i1 %571;
+    i32 %576 = zext i1 %575 to i32;
+    cbr i1 %569(prob = 0.5), ^b70, ^b71;
+  ^b70:
+    i1 %577 = scmp neq i32 %493, i32 0;
     ubr ^b71;
-^b71:
-    i1 %605 = phi [^b69, i1 false] [^b70, i1 %604];
-    i1 %606 = scmp neq i32 %446, i32 0;
-    cbr i1 %606(prob = 0.5), ^b73, ^b72;
-^b72:
-    i1 %607 = scmp neq i32 %525, i32 0;
+  ^b71:
+    i1 %578 = phi [^b69, i1 false] [^b70, i1 %577];
+    i1 %579 = scmp neq i32 %419, i32 0;
+    cbr i1 %579(prob = 0.5), ^b73, ^b72;
+  ^b72:
+    i1 %580 = scmp neq i32 %498, i32 0;
     ubr ^b73;
-^b73:
-    i1 %608 = phi [^b71, i1 true] [^b72, i1 %607];
-    cbr i1 %606(prob = 0.5), ^b74, ^b75;
-^b74:
-    i1 %609 = scmp neq i32 %525, i32 0;
+  ^b73:
+    i1 %581 = phi [^b71, i1 true] [^b72, i1 %580];
+    cbr i1 %579(prob = 0.5), ^b74, ^b75;
+  ^b74:
+    i1 %582 = scmp neq i32 %498, i32 0;
     ubr ^b75;
-^b75:
-    i1 %610 = phi [^b73, i1 false] [^b74, i1 %609];
-    i1 %611 = xor i1 %610, i1 true;
-    i1 %612 = and i1 %611, i1 %608;
-    i1 %613 = or i1 %612, i1 %605;
-    i1 %614 = and i1 %612, i1 %605;
-    i1 %615 = xor i1 %614, i1 true;
-    i1 %616 = and i1 %613, i1 %615;
-    i32 %617 = zext i1 %616 to i32;
-    cbr i1 %606(prob = 0.5), ^b76, ^b77;
-^b76:
-    i1 %618 = scmp neq i32 %525, i32 0;
+  ^b75:
+    i1 %583 = phi [^b73, i1 false] [^b74, i1 %582];
+    i1 %584 = xor i1 %583, i1 true;
+    i1 %585 = and i1 %584, i1 %578;
+    i1 %586 = and i1 %585, i1 %581;
+    i1 %587 = xor i1 %586, i1 true;
+    i1 %588 = and i1 %584, i1 %581;
+    i1 %589 = or i1 %588, i1 %578;
+    i1 %590 = and i1 %589, i1 %587;
+    i32 %591 = zext i1 %590 to i32;
+    cbr i1 %579(prob = 0.5), ^b76, ^b77;
+  ^b76:
+    i1 %592 = scmp neq i32 %498, i32 0;
     ubr ^b77;
-^b77:
-    i1 %619 = phi [^b75, i1 false] [^b76, i1 %618];
-    i1 %620 = or i1 %614, i1 %619;
-    i1 %621 = scmp neq i32 %451, i32 0;
-    cbr i1 %621(prob = 0.5), ^b79, ^b78;
-^b78:
-    i1 %622 = scmp neq i32 %530, i32 0;
+  ^b77:
+    i1 %593 = phi [^b75, i1 false] [^b76, i1 %592];
+    i1 %594 = or i1 %586, i1 %593;
+    i1 %595 = scmp neq i32 %424, i32 0;
+    cbr i1 %595(prob = 0.5), ^b79, ^b78;
+  ^b78:
+    i1 %596 = scmp neq i32 %503, i32 0;
     ubr ^b79;
-^b79:
-    i1 %623 = phi [^b77, i1 true] [^b78, i1 %622];
-    cbr i1 %621(prob = 0.5), ^b80, ^b81;
-^b80:
-    i1 %624 = scmp neq i32 %530, i32 0;
+  ^b79:
+    i1 %597 = phi [^b77, i1 true] [^b78, i1 %596];
+    cbr i1 %595(prob = 0.5), ^b80, ^b81;
+  ^b80:
+    i1 %598 = scmp neq i32 %503, i32 0;
     ubr ^b81;
-^b81:
-    i1 %625 = phi [^b79, i1 false] [^b80, i1 %624];
-    i1 %626 = xor i1 %625, i1 true;
-    i1 %627 = and i1 %626, i1 %623;
-    i1 %628 = or i1 %620, i1 %627;
-    i1 %629 = and i1 %620, i1 %626;
-    i1 %630 = and i1 %629, i1 %623;
-    i1 %631 = xor i1 %630, i1 true;
-    i1 %632 = and i1 %628, i1 %631;
-    i32 %633 = zext i1 %632 to i32;
-    cbr i1 %621(prob = 0.5), ^b82, ^b83;
-^b82:
-    i1 %634 = scmp neq i32 %530, i32 0;
+  ^b81:
+    i1 %599 = phi [^b79, i1 false] [^b80, i1 %598];
+    i1 %600 = xor i1 %599, i1 true;
+    i1 %601 = and i1 %594, i1 %600;
+    i1 %602 = and i1 %601, i1 %597;
+    i1 %603 = xor i1 %602, i1 true;
+    i1 %604 = and i1 %600, i1 %597;
+    i1 %605 = or i1 %594, i1 %604;
+    i1 %606 = and i1 %605, i1 %603;
+    i32 %607 = zext i1 %606 to i32;
+    cbr i1 %595(prob = 0.5), ^b82, ^b83;
+  ^b82:
+    i1 %608 = scmp neq i32 %503, i32 0;
     ubr ^b83;
-^b83:
-    i1 %635 = phi [^b81, i1 false] [^b82, i1 %634];
-    i1 %636 = or i1 %630, i1 %635;
-    i1 %637 = scmp neq i32 %456, i32 0;
-    cbr i1 %637(prob = 0.5), ^b85, ^b84;
-^b84:
-    i1 %638 = scmp neq i32 %535, i32 0;
+  ^b83:
+    i1 %609 = phi [^b81, i1 false] [^b82, i1 %608];
+    i1 %610 = or i1 %602, i1 %609;
+    i1 %611 = scmp neq i32 %429, i32 0;
+    cbr i1 %611(prob = 0.5), ^b85, ^b84;
+  ^b84:
+    i1 %612 = scmp neq i32 %508, i32 0;
     ubr ^b85;
-^b85:
-    i1 %639 = phi [^b83, i1 true] [^b84, i1 %638];
-    cbr i1 %637(prob = 0.5), ^b86, ^b87;
-^b86:
-    i1 %640 = scmp neq i32 %535, i32 0;
+  ^b85:
+    i1 %613 = phi [^b83, i1 true] [^b84, i1 %612];
+    cbr i1 %611(prob = 0.5), ^b86, ^b87;
+  ^b86:
+    i1 %614 = scmp neq i32 %508, i32 0;
     ubr ^b87;
-^b87:
-    i1 %641 = phi [^b85, i1 false] [^b86, i1 %640];
-    i1 %642 = xor i1 %641, i1 true;
-    i1 %643 = and i1 %642, i1 %639;
-    i1 %644 = or i1 %636, i1 %643;
-    i1 %645 = and i1 %636, i1 %642;
-    i1 %646 = and i1 %645, i1 %639;
-    i1 %647 = xor i1 %646, i1 true;
-    i1 %648 = and i1 %644, i1 %647;
-    i32 %649 = zext i1 %648 to i32;
-    cbr i1 %637(prob = 0.5), ^b88, ^b89;
-^b88:
-    i1 %650 = scmp neq i32 %535, i32 0;
+  ^b87:
+    i1 %615 = phi [^b85, i1 false] [^b86, i1 %614];
+    i1 %616 = xor i1 %615, i1 true;
+    i1 %617 = and i1 %610, i1 %616;
+    i1 %618 = and i1 %617, i1 %613;
+    i1 %619 = xor i1 %618, i1 true;
+    i1 %620 = and i1 %616, i1 %613;
+    i1 %621 = or i1 %610, i1 %620;
+    i1 %622 = and i1 %621, i1 %619;
+    i32 %623 = zext i1 %622 to i32;
+    cbr i1 %611(prob = 0.5), ^b88, ^b89;
+  ^b88:
+    i1 %624 = scmp neq i32 %508, i32 0;
     ubr ^b89;
-^b89:
-    i1 %651 = phi [^b87, i1 false] [^b88, i1 %650];
-    i1 %652 = or i1 %646, i1 %651;
-    i1 %653 = scmp neq i32 %461, i32 0;
-    cbr i1 %653(prob = 0.5), ^b91, ^b90;
-^b90:
-    i1 %654 = scmp neq i32 %540, i32 0;
+  ^b89:
+    i1 %625 = phi [^b87, i1 false] [^b88, i1 %624];
+    i1 %626 = or i1 %618, i1 %625;
+    i1 %627 = scmp neq i32 %434, i32 0;
+    cbr i1 %627(prob = 0.5), ^b91, ^b90;
+  ^b90:
+    i1 %628 = scmp neq i32 %513, i32 0;
     ubr ^b91;
-^b91:
-    i1 %655 = phi [^b89, i1 true] [^b90, i1 %654];
-    cbr i1 %653(prob = 0.5), ^b92, ^b93;
-^b92:
-    i1 %656 = scmp neq i32 %540, i32 0;
+  ^b91:
+    i1 %629 = phi [^b89, i1 true] [^b90, i1 %628];
+    cbr i1 %627(prob = 0.5), ^b92, ^b93;
+  ^b92:
+    i1 %630 = scmp neq i32 %513, i32 0;
     ubr ^b93;
-^b93:
-    i1 %657 = phi [^b91, i1 false] [^b92, i1 %656];
-    i1 %658 = xor i1 %657, i1 true;
-    i1 %659 = and i1 %658, i1 %655;
-    i1 %660 = or i1 %652, i1 %659;
-    i1 %661 = and i1 %652, i1 %658;
-    i1 %662 = and i1 %661, i1 %655;
-    i1 %663 = xor i1 %662, i1 true;
-    i1 %664 = and i1 %660, i1 %663;
-    i32 %665 = zext i1 %664 to i32;
-    cbr i1 %653(prob = 0.5), ^b94, ^b95;
-^b94:
-    i1 %666 = scmp neq i32 %540, i32 0;
+  ^b93:
+    i1 %631 = phi [^b91, i1 false] [^b92, i1 %630];
+    i1 %632 = xor i1 %631, i1 true;
+    i1 %633 = and i1 %626, i1 %632;
+    i1 %634 = and i1 %633, i1 %629;
+    i1 %635 = xor i1 %634, i1 true;
+    i1 %636 = and i1 %632, i1 %629;
+    i1 %637 = or i1 %626, i1 %636;
+    i1 %638 = and i1 %637, i1 %635;
+    i32 %639 = zext i1 %638 to i32;
+    cbr i1 %627(prob = 0.5), ^b94, ^b95;
+  ^b94:
+    i1 %640 = scmp neq i32 %513, i32 0;
     ubr ^b95;
-^b95:
-    i1 %667 = phi [^b93, i1 false] [^b94, i1 %666];
-    i1 %668 = or i1 %662, i1 %667;
-    i1 %669 = scmp neq i32 %466, i32 0;
-    cbr i1 %669(prob = 0.5), ^b97, ^b96;
-^b96:
-    i1 %670 = scmp neq i32 %545, i32 0;
+  ^b95:
+    i1 %641 = phi [^b93, i1 false] [^b94, i1 %640];
+    i1 %642 = or i1 %634, i1 %641;
+    i1 %643 = scmp neq i32 %439, i32 0;
+    cbr i1 %643(prob = 0.5), ^b97, ^b96;
+  ^b96:
+    i1 %644 = scmp neq i32 %518, i32 0;
     ubr ^b97;
-^b97:
-    i1 %671 = phi [^b95, i1 true] [^b96, i1 %670];
-    cbr i1 %669(prob = 0.5), ^b98, ^b99;
-^b98:
-    i1 %672 = scmp neq i32 %545, i32 0;
+  ^b97:
+    i1 %645 = phi [^b95, i1 true] [^b96, i1 %644];
+    cbr i1 %643(prob = 0.5), ^b98, ^b99;
+  ^b98:
+    i1 %646 = scmp neq i32 %518, i32 0;
     ubr ^b99;
-^b99:
-    i1 %673 = phi [^b97, i1 false] [^b98, i1 %672];
-    i1 %674 = xor i1 %673, i1 true;
-    i1 %675 = and i1 %674, i1 %671;
-    i1 %676 = or i1 %668, i1 %675;
-    i1 %677 = and i1 %668, i1 %674;
-    i1 %678 = and i1 %677, i1 %671;
-    i1 %679 = xor i1 %678, i1 true;
-    i1 %680 = and i1 %676, i1 %679;
-    i32 %681 = zext i1 %680 to i32;
-    cbr i1 %669(prob = 0.5), ^b100, ^b101;
-^b100:
-    i1 %682 = scmp neq i32 %545, i32 0;
+  ^b99:
+    i1 %647 = phi [^b97, i1 false] [^b98, i1 %646];
+    i1 %648 = xor i1 %647, i1 true;
+    i1 %649 = and i1 %642, i1 %648;
+    i1 %650 = and i1 %649, i1 %645;
+    i1 %651 = xor i1 %650, i1 true;
+    i1 %652 = and i1 %648, i1 %645;
+    i1 %653 = or i1 %642, i1 %652;
+    i1 %654 = and i1 %653, i1 %651;
+    i32 %655 = zext i1 %654 to i32;
+    cbr i1 %643(prob = 0.5), ^b100, ^b101;
+  ^b100:
+    i1 %656 = scmp neq i32 %518, i32 0;
     ubr ^b101;
-^b101:
-    i1 %683 = phi [^b99, i1 false] [^b100, i1 %682];
-    i1 %684 = or i1 %678, i1 %683;
-    i1 %685 = scmp neq i32 %471, i32 0;
-    cbr i1 %685(prob = 0.5), ^b103, ^b102;
-^b102:
-    i1 %686 = scmp neq i32 %550, i32 0;
+  ^b101:
+    i1 %657 = phi [^b99, i1 false] [^b100, i1 %656];
+    i1 %658 = or i1 %650, i1 %657;
+    i1 %659 = scmp neq i32 %444, i32 0;
+    cbr i1 %659(prob = 0.5), ^b103, ^b102;
+  ^b102:
+    i1 %660 = scmp neq i32 %523, i32 0;
     ubr ^b103;
-^b103:
-    i1 %687 = phi [^b101, i1 true] [^b102, i1 %686];
-    cbr i1 %685(prob = 0.5), ^b104, ^b105;
-^b104:
-    i1 %688 = scmp neq i32 %550, i32 0;
+  ^b103:
+    i1 %661 = phi [^b101, i1 true] [^b102, i1 %660];
+    cbr i1 %659(prob = 0.5), ^b104, ^b105;
+  ^b104:
+    i1 %662 = scmp neq i32 %523, i32 0;
     ubr ^b105;
-^b105:
-    i1 %689 = phi [^b103, i1 false] [^b104, i1 %688];
-    i1 %690 = xor i1 %689, i1 true;
-    i1 %691 = and i1 %690, i1 %687;
-    i1 %692 = or i1 %684, i1 %691;
-    i1 %693 = and i1 %684, i1 %690;
-    i1 %694 = and i1 %693, i1 %687;
-    i1 %695 = xor i1 %694, i1 true;
-    i1 %696 = and i1 %692, i1 %695;
-    i32 %697 = zext i1 %696 to i32;
-    cbr i1 %685(prob = 0.5), ^b106, ^b107;
-^b106:
-    i1 %698 = scmp neq i32 %550, i32 0;
+  ^b105:
+    i1 %663 = phi [^b103, i1 false] [^b104, i1 %662];
+    i1 %664 = xor i1 %663, i1 true;
+    i1 %665 = and i1 %658, i1 %664;
+    i1 %666 = and i1 %665, i1 %661;
+    i1 %667 = xor i1 %666, i1 true;
+    i1 %668 = and i1 %664, i1 %661;
+    i1 %669 = or i1 %658, i1 %668;
+    i1 %670 = and i1 %669, i1 %667;
+    i32 %671 = zext i1 %670 to i32;
+    cbr i1 %659(prob = 0.5), ^b106, ^b107;
+  ^b106:
+    i1 %672 = scmp neq i32 %523, i32 0;
     ubr ^b107;
-^b107:
-    i1 %699 = phi [^b105, i1 false] [^b106, i1 %698];
-    i1 %700 = or i1 %694, i1 %699;
-    i1 %701 = scmp neq i32 %476, i32 0;
-    cbr i1 %701(prob = 0.5), ^b109, ^b108;
-^b108:
-    i1 %702 = scmp neq i32 %555, i32 0;
+  ^b107:
+    i1 %673 = phi [^b105, i1 false] [^b106, i1 %672];
+    i1 %674 = or i1 %666, i1 %673;
+    i1 %675 = scmp neq i32 %449, i32 0;
+    cbr i1 %675(prob = 0.5), ^b109, ^b108;
+  ^b108:
+    i1 %676 = scmp neq i32 %528, i32 0;
     ubr ^b109;
-^b109:
-    i1 %703 = phi [^b107, i1 true] [^b108, i1 %702];
-    cbr i1 %701(prob = 0.5), ^b110, ^b111;
-^b110:
-    i1 %704 = scmp neq i32 %555, i32 0;
+  ^b109:
+    i1 %677 = phi [^b107, i1 true] [^b108, i1 %676];
+    cbr i1 %675(prob = 0.5), ^b110, ^b111;
+  ^b110:
+    i1 %678 = scmp neq i32 %528, i32 0;
     ubr ^b111;
-^b111:
-    i1 %705 = phi [^b109, i1 false] [^b110, i1 %704];
-    i1 %706 = xor i1 %705, i1 true;
-    i1 %707 = and i1 %706, i1 %703;
-    i1 %708 = or i1 %700, i1 %707;
-    i1 %709 = and i1 %700, i1 %706;
-    i1 %710 = and i1 %709, i1 %703;
-    i1 %711 = xor i1 %710, i1 true;
-    i1 %712 = and i1 %708, i1 %711;
-    i32 %713 = zext i1 %712 to i32;
-    cbr i1 %701(prob = 0.5), ^b112, ^b113;
-^b112:
-    i1 %714 = scmp neq i32 %555, i32 0;
+  ^b111:
+    i1 %679 = phi [^b109, i1 false] [^b110, i1 %678];
+    i1 %680 = xor i1 %679, i1 true;
+    i1 %681 = and i1 %674, i1 %680;
+    i1 %682 = and i1 %681, i1 %677;
+    i1 %683 = xor i1 %682, i1 true;
+    i1 %684 = and i1 %680, i1 %677;
+    i1 %685 = or i1 %674, i1 %684;
+    i1 %686 = and i1 %685, i1 %683;
+    i32 %687 = zext i1 %686 to i32;
+    cbr i1 %675(prob = 0.5), ^b112, ^b113;
+  ^b112:
+    i1 %688 = scmp neq i32 %528, i32 0;
     ubr ^b113;
-^b113:
-    i1 %715 = phi [^b111, i1 false] [^b112, i1 %714];
-    i1 %716 = or i1 %710, i1 %715;
-    i1 %717 = scmp neq i32 %481, i32 0;
-    cbr i1 %717(prob = 0.5), ^b115, ^b114;
-^b114:
-    i1 %718 = scmp neq i32 %560, i32 0;
+  ^b113:
+    i1 %689 = phi [^b111, i1 false] [^b112, i1 %688];
+    i1 %690 = or i1 %682, i1 %689;
+    i1 %691 = scmp neq i32 %454, i32 0;
+    cbr i1 %691(prob = 0.5), ^b115, ^b114;
+  ^b114:
+    i1 %692 = scmp neq i32 %533, i32 0;
     ubr ^b115;
-^b115:
-    i1 %719 = phi [^b113, i1 true] [^b114, i1 %718];
-    cbr i1 %717(prob = 0.5), ^b116, ^b117;
-^b116:
-    i1 %720 = scmp neq i32 %560, i32 0;
+  ^b115:
+    i1 %693 = phi [^b113, i1 true] [^b114, i1 %692];
+    cbr i1 %691(prob = 0.5), ^b116, ^b117;
+  ^b116:
+    i1 %694 = scmp neq i32 %533, i32 0;
     ubr ^b117;
-^b117:
-    i1 %721 = phi [^b115, i1 false] [^b116, i1 %720];
-    i1 %722 = xor i1 %721, i1 true;
-    i1 %723 = and i1 %722, i1 %719;
-    i1 %724 = or i1 %716, i1 %723;
-    i1 %725 = and i1 %716, i1 %722;
-    i1 %726 = and i1 %725, i1 %719;
-    i1 %727 = xor i1 %726, i1 true;
-    i1 %728 = and i1 %724, i1 %727;
-    i32 %729 = zext i1 %728 to i32;
-    cbr i1 %717(prob = 0.5), ^b118, ^b119;
-^b118:
-    i1 %730 = scmp neq i32 %560, i32 0;
+  ^b117:
+    i1 %695 = phi [^b115, i1 false] [^b116, i1 %694];
+    i1 %696 = xor i1 %695, i1 true;
+    i1 %697 = and i1 %690, i1 %696;
+    i1 %698 = and i1 %697, i1 %693;
+    i1 %699 = xor i1 %698, i1 true;
+    i1 %700 = and i1 %696, i1 %693;
+    i1 %701 = or i1 %690, i1 %700;
+    i1 %702 = and i1 %701, i1 %699;
+    i32 %703 = zext i1 %702 to i32;
+    cbr i1 %691(prob = 0.5), ^b118, ^b119;
+  ^b118:
+    i1 %704 = scmp neq i32 %533, i32 0;
     ubr ^b119;
-^b119:
-    i1 %731 = phi [^b117, i1 false] [^b118, i1 %730];
-    i1 %732 = or i1 %726, i1 %731;
-    i1 %733 = scmp neq i32 %486, i32 0;
-    cbr i1 %733(prob = 0.5), ^b121, ^b120;
-^b120:
-    i1 %734 = scmp neq i32 %565, i32 0;
+  ^b119:
+    i1 %705 = phi [^b117, i1 false] [^b118, i1 %704];
+    i1 %706 = or i1 %698, i1 %705;
+    i1 %707 = scmp neq i32 %459, i32 0;
+    cbr i1 %707(prob = 0.5), ^b121, ^b120;
+  ^b120:
+    i1 %708 = scmp neq i32 %538, i32 0;
     ubr ^b121;
-^b121:
-    i1 %735 = phi [^b119, i1 true] [^b120, i1 %734];
-    cbr i1 %733(prob = 0.5), ^b122, ^b123;
-^b122:
-    i1 %736 = scmp neq i32 %565, i32 0;
+  ^b121:
+    i1 %709 = phi [^b119, i1 true] [^b120, i1 %708];
+    cbr i1 %707(prob = 0.5), ^b122, ^b123;
+  ^b122:
+    i1 %710 = scmp neq i32 %538, i32 0;
     ubr ^b123;
-^b123:
-    i1 %737 = phi [^b121, i1 false] [^b122, i1 %736];
-    i1 %738 = xor i1 %737, i1 true;
-    i1 %739 = and i1 %738, i1 %735;
-    i1 %740 = or i1 %732, i1 %739;
-    i1 %741 = and i1 %732, i1 %738;
-    i1 %742 = and i1 %741, i1 %735;
-    i1 %743 = xor i1 %742, i1 true;
-    i1 %744 = and i1 %740, i1 %743;
-    i32 %745 = zext i1 %744 to i32;
-    cbr i1 %733(prob = 0.5), ^b124, ^b125;
-^b124:
-    i1 %746 = scmp neq i32 %565, i32 0;
+  ^b123:
+    i1 %711 = phi [^b121, i1 false] [^b122, i1 %710];
+    i1 %712 = xor i1 %711, i1 true;
+    i1 %713 = and i1 %706, i1 %712;
+    i1 %714 = and i1 %713, i1 %709;
+    i1 %715 = xor i1 %714, i1 true;
+    i1 %716 = and i1 %712, i1 %709;
+    i1 %717 = or i1 %706, i1 %716;
+    i1 %718 = and i1 %717, i1 %715;
+    i32 %719 = zext i1 %718 to i32;
+    cbr i1 %707(prob = 0.5), ^b124, ^b125;
+  ^b124:
+    i1 %720 = scmp neq i32 %538, i32 0;
     ubr ^b125;
-^b125:
-    i1 %747 = phi [^b123, i1 false] [^b124, i1 %746];
-    i1 %748 = or i1 %742, i1 %747;
-    i1 %749 = scmp neq i32 %491, i32 0;
-    cbr i1 %749(prob = 0.5), ^b127, ^b126;
-^b126:
-    i1 %750 = scmp neq i32 %570, i32 0;
+  ^b125:
+    i1 %721 = phi [^b123, i1 false] [^b124, i1 %720];
+    i1 %722 = or i1 %714, i1 %721;
+    i1 %723 = scmp neq i32 %464, i32 0;
+    cbr i1 %723(prob = 0.5), ^b127, ^b126;
+  ^b126:
+    i1 %724 = scmp neq i32 %543, i32 0;
     ubr ^b127;
-^b127:
-    i1 %751 = phi [^b125, i1 true] [^b126, i1 %750];
-    cbr i1 %749(prob = 0.5), ^b128, ^b129;
-^b128:
-    i1 %752 = scmp neq i32 %570, i32 0;
+  ^b127:
+    i1 %725 = phi [^b125, i1 true] [^b126, i1 %724];
+    cbr i1 %723(prob = 0.5), ^b128, ^b129;
+  ^b128:
+    i1 %726 = scmp neq i32 %543, i32 0;
     ubr ^b129;
-^b129:
-    i1 %753 = phi [^b127, i1 false] [^b128, i1 %752];
-    i1 %754 = xor i1 %753, i1 true;
-    i1 %755 = and i1 %754, i1 %751;
-    i1 %756 = or i1 %748, i1 %755;
-    i1 %757 = and i1 %748, i1 %754;
-    i1 %758 = and i1 %757, i1 %751;
-    i1 %759 = xor i1 %758, i1 true;
-    i1 %760 = and i1 %756, i1 %759;
-    i32 %761 = zext i1 %760 to i32;
-    cbr i1 %749(prob = 0.5), ^b130, ^b131;
-^b130:
-    i1 %762 = scmp neq i32 %570, i32 0;
+  ^b129:
+    i1 %727 = phi [^b127, i1 false] [^b128, i1 %726];
+    i1 %728 = xor i1 %727, i1 true;
+    i1 %729 = and i1 %722, i1 %728;
+    i1 %730 = and i1 %729, i1 %725;
+    i1 %731 = xor i1 %730, i1 true;
+    i1 %732 = and i1 %728, i1 %725;
+    i1 %733 = or i1 %722, i1 %732;
+    i1 %734 = and i1 %733, i1 %731;
+    i32 %735 = zext i1 %734 to i32;
+    cbr i1 %723(prob = 0.5), ^b130, ^b131;
+  ^b130:
+    i1 %736 = scmp neq i32 %543, i32 0;
     ubr ^b131;
-^b131:
-    i1 %763 = phi [^b129, i1 false] [^b130, i1 %762];
-    i1 %764 = or i1 %758, i1 %763;
-    i1 %765 = scmp neq i32 %496, i32 0;
-    cbr i1 %765(prob = 0.5), ^b133, ^b132;
-^b132:
-    i1 %766 = scmp neq i32 %575, i32 0;
+  ^b131:
+    i1 %737 = phi [^b129, i1 false] [^b130, i1 %736];
+    i1 %738 = or i1 %730, i1 %737;
+    i1 %739 = scmp neq i32 %469, i32 0;
+    cbr i1 %739(prob = 0.5), ^b133, ^b132;
+  ^b132:
+    i1 %740 = scmp neq i32 %548, i32 0;
     ubr ^b133;
-^b133:
-    i1 %767 = phi [^b131, i1 true] [^b132, i1 %766];
-    cbr i1 %765(prob = 0.5), ^b134, ^b135;
-^b134:
-    i1 %768 = scmp neq i32 %575, i32 0;
+  ^b133:
+    i1 %741 = phi [^b131, i1 true] [^b132, i1 %740];
+    cbr i1 %739(prob = 0.5), ^b134, ^b135;
+  ^b134:
+    i1 %742 = scmp neq i32 %548, i32 0;
     ubr ^b135;
-^b135:
-    i1 %769 = phi [^b133, i1 false] [^b134, i1 %768];
-    i1 %770 = xor i1 %769, i1 true;
-    i1 %771 = and i1 %770, i1 %767;
-    i1 %772 = or i1 %764, i1 %771;
-    i1 %773 = and i1 %764, i1 %770;
-    i1 %774 = and i1 %773, i1 %767;
-    i1 %775 = xor i1 %774, i1 true;
-    i1 %776 = and i1 %772, i1 %775;
-    i32 %777 = zext i1 %776 to i32;
-    cbr i1 %765(prob = 0.5), ^b136, ^b137;
-^b136:
-    i1 %778 = scmp neq i32 %575, i32 0;
+  ^b135:
+    i1 %743 = phi [^b133, i1 false] [^b134, i1 %742];
+    i1 %744 = xor i1 %743, i1 true;
+    i1 %745 = and i1 %738, i1 %744;
+    i1 %746 = and i1 %745, i1 %741;
+    i1 %747 = xor i1 %746, i1 true;
+    i1 %748 = and i1 %744, i1 %741;
+    i1 %749 = or i1 %738, i1 %748;
+    i1 %750 = and i1 %749, i1 %747;
+    i32 %751 = zext i1 %750 to i32;
+    cbr i1 %739(prob = 0.5), ^b136, ^b137;
+  ^b136:
+    i1 %752 = scmp neq i32 %548, i32 0;
     ubr ^b137;
-^b137:
-    i1 %779 = phi [^b135, i1 false] [^b136, i1 %778];
-    i1 %780 = or i1 %774, i1 %779;
-    i1 %781 = scmp neq i32 %501, i32 0;
-    cbr i1 %781(prob = 0.5), ^b139, ^b138;
-^b138:
-    i1 %782 = scmp neq i32 %580, i32 0;
+  ^b137:
+    i1 %753 = phi [^b135, i1 false] [^b136, i1 %752];
+    i1 %754 = or i1 %746, i1 %753;
+    i1 %755 = scmp neq i32 %474, i32 0;
+    cbr i1 %755(prob = 0.5), ^b139, ^b138;
+  ^b138:
+    i1 %756 = scmp neq i32 %553, i32 0;
     ubr ^b139;
-^b139:
-    i1 %783 = phi [^b137, i1 true] [^b138, i1 %782];
-    cbr i1 %781(prob = 0.5), ^b140, ^b141;
-^b140:
-    i1 %784 = scmp neq i32 %580, i32 0;
+  ^b139:
+    i1 %757 = phi [^b137, i1 true] [^b138, i1 %756];
+    cbr i1 %755(prob = 0.5), ^b140, ^b141;
+  ^b140:
+    i1 %758 = scmp neq i32 %553, i32 0;
     ubr ^b141;
-^b141:
-    i1 %785 = phi [^b139, i1 false] [^b140, i1 %784];
-    i1 %786 = xor i1 %785, i1 true;
-    i1 %787 = and i1 %786, i1 %783;
-    i1 %788 = or i1 %780, i1 %787;
-    i1 %789 = and i1 %780, i1 %786;
-    i1 %790 = and i1 %789, i1 %783;
-    i1 %791 = xor i1 %790, i1 true;
-    i1 %792 = and i1 %788, i1 %791;
-    i32 %793 = zext i1 %792 to i32;
-    cbr i1 %781(prob = 0.5), ^b142, ^b143;
-^b142:
-    i1 %794 = scmp neq i32 %580, i32 0;
+  ^b141:
+    i1 %759 = phi [^b139, i1 false] [^b140, i1 %758];
+    i1 %760 = xor i1 %759, i1 true;
+    i1 %761 = and i1 %754, i1 %760;
+    i1 %762 = and i1 %761, i1 %757;
+    i1 %763 = xor i1 %762, i1 true;
+    i1 %764 = and i1 %760, i1 %757;
+    i1 %765 = or i1 %754, i1 %764;
+    i1 %766 = and i1 %765, i1 %763;
+    i32 %767 = zext i1 %766 to i32;
+    cbr i1 %755(prob = 0.5), ^b142, ^b143;
+  ^b142:
+    i1 %768 = scmp neq i32 %553, i32 0;
     ubr ^b143;
-^b143:
-    i1 %795 = phi [^b141, i1 false] [^b142, i1 %794];
-    i1 %796 = or i1 %790, i1 %795;
-    i1 %797 = scmp neq i32 %506, i32 0;
-    cbr i1 %797(prob = 0.5), ^b145, ^b144;
-^b144:
-    i1 %798 = scmp neq i32 %585, i32 0;
+  ^b143:
+    i1 %769 = phi [^b141, i1 false] [^b142, i1 %768];
+    i1 %770 = or i1 %762, i1 %769;
+    i1 %771 = scmp neq i32 %479, i32 0;
+    cbr i1 %771(prob = 0.5), ^b145, ^b144;
+  ^b144:
+    i1 %772 = scmp neq i32 %558, i32 0;
     ubr ^b145;
-^b145:
-    i1 %799 = phi [^b143, i1 true] [^b144, i1 %798];
-    cbr i1 %797(prob = 0.5), ^b146, ^b147;
-^b146:
-    i1 %800 = scmp neq i32 %585, i32 0;
+  ^b145:
+    i1 %773 = phi [^b143, i1 true] [^b144, i1 %772];
+    cbr i1 %771(prob = 0.5), ^b146, ^b147;
+  ^b146:
+    i1 %774 = scmp neq i32 %558, i32 0;
     ubr ^b147;
-^b147:
-    i1 %801 = phi [^b145, i1 false] [^b146, i1 %800];
-    i1 %802 = xor i1 %801, i1 true;
-    i1 %803 = and i1 %802, i1 %799;
-    i1 %804 = or i1 %796, i1 %803;
-    i1 %805 = and i1 %796, i1 %802;
-    i1 %806 = and i1 %805, i1 %799;
-    i1 %807 = xor i1 %806, i1 true;
-    i1 %808 = and i1 %804, i1 %807;
-    i32 %809 = zext i1 %808 to i32;
-    cbr i1 %797(prob = 0.5), ^b148, ^b149;
-^b148:
-    i1 %810 = scmp neq i32 %585, i32 0;
+  ^b147:
+    i1 %775 = phi [^b145, i1 false] [^b146, i1 %774];
+    i1 %776 = xor i1 %775, i1 true;
+    i1 %777 = and i1 %770, i1 %776;
+    i1 %778 = and i1 %777, i1 %773;
+    i1 %779 = xor i1 %778, i1 true;
+    i1 %780 = and i1 %776, i1 %773;
+    i1 %781 = or i1 %770, i1 %780;
+    i1 %782 = and i1 %781, i1 %779;
+    i32 %783 = zext i1 %782 to i32;
+    cbr i1 %771(prob = 0.5), ^b148, ^b149;
+  ^b148:
+    i1 %784 = scmp neq i32 %558, i32 0;
     ubr ^b149;
-^b149:
-    i1 %811 = phi [^b147, i1 false] [^b148, i1 %810];
-    i1 %812 = or i1 %806, i1 %811;
-    i1 %813 = scmp neq i32 %511, i32 0;
-    cbr i1 %813(prob = 0.5), ^b151, ^b150;
-^b150:
-    i1 %814 = scmp neq i32 %590, i32 0;
+  ^b149:
+    i1 %785 = phi [^b147, i1 false] [^b148, i1 %784];
+    i1 %786 = or i1 %778, i1 %785;
+    i1 %787 = scmp neq i32 %484, i32 0;
+    cbr i1 %787(prob = 0.5), ^b151, ^b150;
+  ^b150:
+    i1 %788 = scmp neq i32 %563, i32 0;
     ubr ^b151;
-^b151:
-    i1 %815 = phi [^b149, i1 true] [^b150, i1 %814];
-    cbr i1 %813(prob = 0.5), ^b152, ^b153;
-^b152:
-    i1 %816 = scmp neq i32 %590, i32 0;
+  ^b151:
+    i1 %789 = phi [^b149, i1 true] [^b150, i1 %788];
+    cbr i1 %787(prob = 0.5), ^b152, ^b153;
+  ^b152:
+    i1 %790 = scmp neq i32 %563, i32 0;
     ubr ^b153;
-^b153:
-    i1 %817 = phi [^b151, i1 false] [^b152, i1 %816];
-    i1 %818 = xor i1 %817, i1 true;
-    i1 %819 = and i1 %818, i1 %815;
-    i1 %820 = or i1 %812, i1 %819;
-    i1 %821 = and i1 %812, i1 %818;
-    i1 %822 = and i1 %821, i1 %815;
-    i1 %823 = xor i1 %822, i1 true;
-    i1 %824 = and i1 %820, i1 %823;
-    i32 %825 = zext i1 %824 to i32;
-    cbr i1 %813(prob = 0.5), ^b154, ^b155;
-^b154:
-    i1 %826 = scmp neq i32 %590, i32 0;
+  ^b153:
+    i1 %791 = phi [^b151, i1 false] [^b152, i1 %790];
+    i1 %792 = xor i1 %791, i1 true;
+    i1 %793 = and i1 %786, i1 %792;
+    i1 %794 = and i1 %793, i1 %789;
+    i1 %795 = xor i1 %794, i1 true;
+    i1 %796 = and i1 %792, i1 %789;
+    i1 %797 = or i1 %786, i1 %796;
+    i1 %798 = and i1 %797, i1 %795;
+    i32 %799 = zext i1 %798 to i32;
+    cbr i1 %787(prob = 0.5), ^b154, ^b155;
+  ^b154:
+    i1 %800 = scmp neq i32 %563, i32 0;
     ubr ^b155;
-^b155:
-    i1 %827 = phi [^b153, i1 false] [^b154, i1 %826];
-    i1 %828 = or i1 %822, i1 %827;
-    i1 %829 = scmp neq i32 %516, i32 0;
-    cbr i1 %829(prob = 0.5), ^b157, ^b156;
-^b156:
-    i1 %830 = scmp neq i32 %595, i32 0;
+  ^b155:
+    i1 %801 = phi [^b153, i1 false] [^b154, i1 %800];
+    i1 %802 = or i1 %794, i1 %801;
+    i1 %803 = scmp neq i32 %489, i32 0;
+    cbr i1 %803(prob = 0.5), ^b157, ^b156;
+  ^b156:
+    i1 %804 = scmp neq i32 %568, i32 0;
     ubr ^b157;
-^b157:
-    i1 %831 = phi [^b155, i1 true] [^b156, i1 %830];
-    cbr i1 %829(prob = 0.5), ^b158, ^b159;
-^b158:
-    i1 %832 = scmp neq i32 %595, i32 0;
+  ^b157:
+    i1 %805 = phi [^b155, i1 true] [^b156, i1 %804];
+    cbr i1 %803(prob = 0.5), ^b158, ^b159;
+  ^b158:
+    i1 %806 = scmp neq i32 %568, i32 0;
     ubr ^b159;
-^b159:
-    i1 %833 = phi [^b157, i1 false] [^b158, i1 %832];
-    i1 %834 = xor i1 %833, i1 true;
-    i1 %835 = and i1 %834, i1 %831;
-    i1 %836 = or i1 %828, i1 %835;
-    i1 %837 = and i1 %828, i1 %834;
-    i1 %838 = and i1 %837, i1 %831;
-    i1 %839 = xor i1 %838, i1 true;
-    i1 %840 = and i1 %836, i1 %839;
-    i32 %841 = zext i1 %840 to i32;
-    i32 %842 = shl i32 %841, i32 1;
-    i32 %843 = add i32 %842, i32 %825;
-    i32 %844 = shl i32 %843, i32 1;
-    i32 %845 = add i32 %844, i32 %809;
-    i32 %846 = shl i32 %845, i32 1;
-    i32 %847 = add i32 %846, i32 %793;
-    i32 %848 = shl i32 %847, i32 1;
-    i32 %849 = add i32 %848, i32 %777;
-    i32 %850 = shl i32 %849, i32 1;
-    i32 %851 = add i32 %850, i32 %761;
-    i32 %852 = shl i32 %851, i32 1;
-    i32 %853 = add i32 %852, i32 %745;
-    i32 %854 = shl i32 %853, i32 1;
-    i32 %855 = add i32 %854, i32 %729;
-    i32 %856 = shl i32 %855, i32 1;
-    i32 %857 = add i32 %856, i32 %713;
-    i32 %858 = shl i32 %857, i32 1;
-    i32 %859 = add i32 %858, i32 %697;
-    i32 %860 = shl i32 %859, i32 1;
-    i32 %861 = add i32 %860, i32 %681;
-    i32 %862 = shl i32 %861, i32 1;
-    i32 %863 = add i32 %862, i32 %665;
-    i32 %864 = shl i32 %863, i32 1;
-    i32 %865 = add i32 %864, i32 %649;
-    i32 %866 = shl i32 %865, i32 1;
-    i32 %867 = add i32 %866, i32 %633;
-    i32 %868 = shl i32 %867, i32 1;
-    i32 %869 = add i32 %868, i32 %617;
-    i32 %870 = shl i32 %869, i32 1;
-    i32 %871 = add i32 %870, i32 %603;
+  ^b159:
+    i1 %807 = phi [^b157, i1 false] [^b158, i1 %806];
+    i1 %808 = xor i1 %807, i1 true;
+    i1 %809 = and i1 %802, i1 %808;
+    i1 %810 = and i1 %809, i1 %805;
+    i1 %811 = xor i1 %810, i1 true;
+    i1 %812 = and i1 %808, i1 %805;
+    i1 %813 = or i1 %802, i1 %812;
+    i1 %814 = and i1 %813, i1 %811;
+    i32 %815 = zext i1 %814 to i32;
+    i32 %816 = mul i32 %815, i32 2;
+    i32 %817 = add i32 %799, i32 %816;
+    i32 %818 = mul i32 %817, i32 2;
+    i32 %819 = add i32 %783, i32 %818;
+    i32 %820 = mul i32 %819, i32 2;
+    i32 %821 = add i32 %767, i32 %820;
+    i32 %822 = mul i32 %821, i32 2;
+    i32 %823 = add i32 %751, i32 %822;
+    i32 %824 = mul i32 %823, i32 2;
+    i32 %825 = add i32 %735, i32 %824;
+    i32 %826 = mul i32 %825, i32 2;
+    i32 %827 = add i32 %719, i32 %826;
+    i32 %828 = mul i32 %827, i32 2;
+    i32 %829 = add i32 %703, i32 %828;
+    i32 %830 = mul i32 %829, i32 2;
+    i32 %831 = add i32 %687, i32 %830;
+    i32 %832 = mul i32 %831, i32 2;
+    i32 %833 = add i32 %671, i32 %832;
+    i32 %834 = mul i32 %833, i32 2;
+    i32 %835 = add i32 %655, i32 %834;
+    i32 %836 = mul i32 %835, i32 2;
+    i32 %837 = add i32 %639, i32 %836;
+    i32 %838 = mul i32 %837, i32 2;
+    i32 %839 = add i32 %623, i32 %838;
+    i32 %840 = mul i32 %839, i32 2;
+    i32 %841 = add i32 %607, i32 %840;
+    i32 %842 = mul i32 %841, i32 2;
+    i32 %843 = add i32 %591, i32 %842;
+    i32 %844 = mul i32 %843, i32 2;
+    i32 %845 = add i32 %576, i32 %844;
     ubr ^b1;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry:
+  ^entry:
     ubr ^while.body;
-^while.body:
+  ^while.body:
     i32 %0 = phi [^entry, i32 1] [^while.body, i32 %2];
     call (i32) -> void @putch(i32 102);
     call (i32) -> void @putch(i32 105);
     call (i32) -> void @putch(i32 98);
     call (i32) -> void @putch(i32 40);
     call (i32) -> void @putint(i32 %0);
+    i32 %1 = call (i32) -> i32 @fib(i32 %0);
     call (i32) -> void @putch(i32 41);
     call (i32) -> void @putch(i32 32);
     call (i32) -> void @putch(i32 61);
     call (i32) -> void @putch(i32 32);
-    i32 %1 = call (i32) -> i32 @fib(i32 %0);
     call (i32) -> void @putint(i32 %1);
     call (i32) -> void @putch(i32 10);
     i32 %2 = add i32 %0, i32 1;
     i1 %3 = scmp lt i32 %2, i32 21;
     cbr i1 %3(prob = 0.95), ^while.body, ^b;
-^b:
+  ^b:
     ret i32 0;
 }

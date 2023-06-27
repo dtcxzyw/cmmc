@@ -36,91 +36,91 @@ main:
 	blez $v0, label24
 	nop
 	move $t0, $zero
-	sll $t2, $zero, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
 	bgez $t2, label33
 	nop
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1
@@ -564,10 +564,10 @@ label33:
 	b label195
 	nop
 label192:
-	sll $t2, $t0, 2
-	addu $t2, $t4, $t2
 	jal read
 	nop
+	sll $t2, $t0, 2
+	addu $t2, $t4, $t2
 	sw $v0, 0($t2)
 	addiu $t0, $t0, 1
 	subu $t2, $t0, $t1

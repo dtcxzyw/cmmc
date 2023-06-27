@@ -106,22 +106,21 @@ main:
 	fmv.s f8, f10
 	jal getfloat
 	fmv.s f12, f10
+	fmv.s f10, f9
+	fmv.s f11, f8
+	jal takFP
+	fmv.s f8, f10
 	fcvt.s.w f10, s0
 	lui a0, 269824
 	fmv.w.x f11, a0
 	fadd.s f10, f11, f10
 	jal fibFP
-	fmv.s f13, f10
-	fmv.s f10, f9
-	fmv.s f11, f8
-	jal takFP
-	fmv.s f8, f10
 pcrel107:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a0, a0, %pcrel_lo(pcrel107)
-	flw f10, 0(a0)
-	flw f10, 0(a0)
-	feq.s a0, f13, f10
+	flw f11, 0(a0)
+	flw f11, 0(a0)
+	feq.s a0, f10, f11
 	bne a0, zero, label66
 	li a0, 1
 	jal putint

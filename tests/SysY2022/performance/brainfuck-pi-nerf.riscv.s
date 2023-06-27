@@ -15,13 +15,11 @@ output:
 .globl main
 main:
 	addi t0, sp, -2048
-	addi sp, t0, -64
+	addi sp, t0, -56
 	addi t0, sp, 2047
-	sd s3, 57(t0)
+	sd s3, 49(t0)
 	addi t0, sp, 2047
-	sd s1, 49(t0)
-	addi t0, sp, 2047
-	sd s6, 41(t0)
+	sd s1, 41(t0)
 	addi t0, sp, 2047
 	sd s2, 33(t0)
 	addi t0, sp, 2047
@@ -57,19 +55,19 @@ main:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label146
-	j label977
+	j label976
 label122:
 	mv a1, zero
 label125:
 	mv a1, zero
 label128:
 	mv a1, zero
-pcrel1299:
+pcrel1298:
 	auipc a1, %pcrel_hi(program)
-	addi s1, a1, %pcrel_lo(pcrel1299)
-pcrel1300:
+	addi s1, a1, %pcrel_lo(pcrel1298)
+pcrel1299:
 	auipc a1, %pcrel_hi(input)
-	addi s2, a1, %pcrel_lo(pcrel1300)
+	addi s2, a1, %pcrel_lo(pcrel1299)
 	li a1, 35
 	beq a0, a1, label159
 	mv s0, zero
@@ -85,11 +83,11 @@ pcrel1300:
 	xori a1, a0, 43
 	sltu a1, zero, a1
 	beq a1, zero, label336
-label809:
+label808:
 	xori a1, a0, 45
 	sltu a1, zero, a1
 	beq a1, zero, label339
-	j label900
+	j label899
 label159:
 	mv s4, zero
 	jal getch
@@ -135,11 +133,11 @@ label348:
 	xori a1, a0, 46
 	sltu a1, zero, a1
 	beq a1, zero, label348
-label1058:
+label1057:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label352
-	j label1151
+	j label1150
 label163:
 	mv s5, zero
 	li a0, 116
@@ -152,55 +150,55 @@ label28:
 	jal getch
 	mv s0, zero
 	bge zero, s5, label170
-	slli a0, zero, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	slli a0, s0, 2
-	add s6, s2, a0
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	j label1093
+	j label1092
 label352:
 	mv a1, zero
 	addiw s0, s0, 1
@@ -233,11 +231,11 @@ label352:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label352
-label1151:
+label1150:
 	xori a1, a0, 35
 	sltu a1, zero, a1
 	beq a1, zero, label106
-	j label1133
+	j label1132
 label361:
 	mv s4, s0
 	jal getch
@@ -272,15 +270,15 @@ label106:
 	xori a1, a0, 46
 	sltu a1, zero, a1
 	beq a1, zero, label348
-	j label1058
+	j label1057
 label146:
 	mv a1, zero
-pcrel1301:
+pcrel1300:
 	auipc a1, %pcrel_hi(program)
-	addi s1, a1, %pcrel_lo(pcrel1301)
-pcrel1302:
+	addi s1, a1, %pcrel_lo(pcrel1300)
+pcrel1301:
 	auipc a1, %pcrel_hi(input)
-	addi s2, a1, %pcrel_lo(pcrel1302)
+	addi s2, a1, %pcrel_lo(pcrel1301)
 	li a1, 35
 	beq a0, a1, label159
 	mv s0, zero
@@ -311,11 +309,11 @@ pcrel1302:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label352
-label1092:
+label1091:
 	xori a1, a0, 35
 	sltu a1, zero, a1
 	beq a1, zero, label106
-label1133:
+label1132:
 	jal getch
 	li a1, 62
 	beq a0, a1, label329
@@ -331,28 +329,67 @@ label1133:
 	xori a1, a0, 91
 	sltu a1, zero, a1
 	beq a1, zero, label342
-	j label1143
-label1147:
+	j label1142
+label1146:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label352
 	xori a1, a0, 35
 	sltu a1, zero, a1
 	beq a1, zero, label106
-	j label1133
-label1143:
+	j label1132
+label1142:
 	xori a1, a0, 93
 	sltu a1, zero, a1
 	beq a1, zero, label329
 	xori a1, a0, 46
 	sltu a1, zero, a1
 	beq a1, zero, label348
-	j label1147
+	j label1146
 label132:
 	mv a1, zero
-pcrel1303:
+pcrel1302:
 	auipc a1, %pcrel_hi(program)
-	addi s1, a1, %pcrel_lo(pcrel1303)
+	addi s1, a1, %pcrel_lo(pcrel1302)
+pcrel1303:
+	auipc a1, %pcrel_hi(input)
+	addi s2, a1, %pcrel_lo(pcrel1303)
+	li a1, 35
+	beq a0, a1, label159
+	mv s0, zero
+	slli a1, zero, 2
+	add a1, s1, a1
+	sw a0, 0(a1)
+	jal getch
+	li a1, 62
+	beq a0, a1, label329
+	xori a1, a0, 60
+	sltu a1, zero, a1
+	beq a1, zero, label333
+	xori a1, a0, 43
+	sltu a1, zero, a1
+	beq a1, zero, label336
+	xori a1, a0, 45
+	sltu a1, zero, a1
+	beq a1, zero, label339
+label899:
+	xori a1, a0, 91
+	sltu a1, zero, a1
+	beq a1, zero, label342
+	xori a1, a0, 93
+	sltu a1, zero, a1
+	beq a1, zero, label329
+	xori a1, a0, 46
+	sltu a1, zero, a1
+	beq a1, zero, label348
+label999:
+	xori a1, a0, 44
+	sltu a1, zero, a1
+	beq a1, zero, label352
+	j label1091
+label25:
+	auipc a1, %pcrel_hi(program)
+	addi s1, a1, %pcrel_lo(label25)
 pcrel1304:
 	auipc a1, %pcrel_hi(input)
 	addi s2, a1, %pcrel_lo(pcrel1304)
@@ -374,7 +411,6 @@ pcrel1304:
 	xori a1, a0, 45
 	sltu a1, zero, a1
 	beq a1, zero, label339
-label900:
 	xori a1, a0, 91
 	sltu a1, zero, a1
 	beq a1, zero, label342
@@ -384,57 +420,19 @@ label900:
 	xori a1, a0, 46
 	sltu a1, zero, a1
 	beq a1, zero, label348
-label1000:
-	xori a1, a0, 44
-	sltu a1, zero, a1
-	beq a1, zero, label352
-	j label1092
-label25:
-	auipc a1, %pcrel_hi(program)
-	addi s1, a1, %pcrel_lo(label25)
-pcrel1305:
-	auipc a1, %pcrel_hi(input)
-	addi s2, a1, %pcrel_lo(pcrel1305)
-	li a1, 35
-	beq a0, a1, label159
-	mv s0, zero
-	slli a1, zero, 2
-	add a1, s1, a1
-	sw a0, 0(a1)
-	jal getch
-	li a1, 62
-	beq a0, a1, label329
-	xori a1, a0, 60
-	sltu a1, zero, a1
-	beq a1, zero, label333
-	xori a1, a0, 43
-	sltu a1, zero, a1
-	beq a1, zero, label336
-	xori a1, a0, 45
-	sltu a1, zero, a1
-	beq a1, zero, label339
-	xori a1, a0, 91
-	sltu a1, zero, a1
-	beq a1, zero, label342
-	xori a1, a0, 93
-	sltu a1, zero, a1
-	beq a1, zero, label329
-	xori a1, a0, 46
-	sltu a1, zero, a1
-	beq a1, zero, label348
-	j label1000
+	j label999
 label136:
 	mv a1, zero
 label139:
 	mv a1, zero
 label142:
 	mv a1, zero
-pcrel1306:
+pcrel1305:
 	auipc a1, %pcrel_hi(program)
-	addi s1, a1, %pcrel_lo(pcrel1306)
-pcrel1307:
+	addi s1, a1, %pcrel_lo(pcrel1305)
+pcrel1306:
 	auipc a1, %pcrel_hi(input)
-	addi s2, a1, %pcrel_lo(pcrel1307)
+	addi s2, a1, %pcrel_lo(pcrel1306)
 	li a1, 35
 	beq a0, a1, label159
 	mv s0, zero
@@ -450,7 +448,7 @@ pcrel1307:
 	xori a1, a0, 43
 	sltu a1, zero, a1
 	beq a1, zero, label336
-	j label809
+	j label808
 label34:
 	slli a1, a0, 2
 	add a1, s3, a1
@@ -512,13 +510,13 @@ label36:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1095
+	j label1094
 label43:
 	li a0, 118
 	jal _sysy_stoptime
-pcrel1308:
+pcrel1307:
 	auipc a0, %pcrel_hi(output)
-	addi s1, a0, %pcrel_lo(pcrel1308)
+	addi s1, a0, %pcrel_lo(pcrel1307)
 	ble s0, zero, label44
 	mv s2, zero
 	slli a0, zero, 2
@@ -581,49 +579,49 @@ pcrel1308:
 	jal putch
 	addiw s2, s2, 1
 	bge s2, s0, label44
-	j label1097
-label1095:
+	j label1096
+label1094:
 	slli a4, a0, 2
 	add a4, s1, a4
 	lw a4, 0(a4)
 	li t1, 62
 	bne a4, t1, label49
-label1040:
+label1039:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-label1132:
+label1131:
 	slli a4, a0, 2
 	add a4, s1, a4
 	lw a4, 0(a4)
 	li t1, 62
 	bne a4, t1, label49
-	j label1040
-label1097:
+	j label1039
+label1096:
 	slli a0, s2, 2
 	add a0, s1, a0
 	lw a0, 0(a0)
 	jal putch
 	addiw s2, s2, 1
 	bge s2, s0, label44
-	j label1097
-label1069:
+	j label1096
+label1068:
 	jal getch
 	li a1, 62
 	beq a0, a1, label122
 	xori a1, a0, 60
 	sltu a1, zero, a1
 	beq a1, zero, label125
-	j label1071
-label1086:
+	j label1070
+label1085:
 	xori a1, a0, 44
 	sltu a1, zero, a1
 	beq a1, zero, label146
 	xori a1, a0, 35
 	sltu a1, zero, a1
 	beq a1, zero, label25
-	j label1069
-label1076:
+	j label1068
+label1075:
 	xori a1, a0, 45
 	sltu a1, zero, a1
 	beq a1, zero, label132
@@ -636,17 +634,17 @@ label1076:
 	xori a1, a0, 46
 	sltu a1, zero, a1
 	beq a1, zero, label142
-	j label1086
-label1071:
+	j label1085
+label1070:
 	xori a1, a0, 43
 	sltu a1, zero, a1
 	beq a1, zero, label128
-	j label1076
-label977:
+	j label1075
+label976:
 	xori a1, a0, 35
 	sltu a1, zero, a1
 	beq a1, zero, label25
-	j label1069
+	j label1068
 label49:
 	li t1, 60
 	bne a4, t1, label51
@@ -682,14 +680,14 @@ label49:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1132
+	j label1131
 label72:
-	slli a4, a2, 2
-	add a4, a5, a4
-	slli t1, a3, 2
-	add t1, s2, t1
-	lw t1, 0(t1)
-	sw t1, 0(a4)
+	slli a4, a3, 2
+	add a4, s2, a4
+	lw a4, 0(a4)
+	slli t1, a2, 2
+	add t1, a5, t1
+	sw a4, 0(t1)
 	addiw a3, a3, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
@@ -722,7 +720,7 @@ label72:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1095
+	j label1094
 label51:
 	li t1, 43
 	bne a4, t1, label52
@@ -762,7 +760,7 @@ label51:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1132
+	j label1131
 label52:
 	li t1, 45
 	bne a4, t1, label54
@@ -802,7 +800,7 @@ label52:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1132
+	j label1131
 label54:
 	li t1, 91
 	bne a4, t1, label65
@@ -842,7 +840,7 @@ label54:
 	add a4, s1, a4
 	lw a4, 0(a4)
 	bne a4, t1, label49
-	j label1040
+	j label1039
 label252:
 	li a4, 1
 label56:
@@ -878,7 +876,7 @@ label56:
 	addiw a4, a4, -1
 	li t2, 91
 	bne t1, t2, label56
-	j label1111
+	j label1110
 label61:
 	li t2, 91
 	bne t1, t2, label56
@@ -906,7 +904,7 @@ label61:
 	bne t1, t2, label56
 	addiw a4, a4, 1
 	ble a4, zero, label76
-	j label1023
+	j label1022
 label76:
 	addiw a0, a0, 1
 	bge a0, s4, label43
@@ -932,13 +930,13 @@ label76:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label948
+	j label947
 label69:
 	li t1, 46
 	bne a4, t1, label70
-pcrel1309:
+pcrel1308:
 	auipc a4, %pcrel_hi(output)
-	addi a4, a4, %pcrel_lo(pcrel1309)
+	addi a4, a4, %pcrel_lo(pcrel1308)
 	slli t1, s0, 2
 	add a4, a4, t1
 	slli t1, a2, 2
@@ -977,22 +975,22 @@ pcrel1309:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1132
-label948:
+	j label1131
+label947:
 	slli a4, a0, 2
 	add a4, s1, a4
 	lw a4, 0(a4)
 	li t1, 62
 	bne a4, t1, label49
-	j label1040
-label1023:
+	j label1039
+label1022:
 	addiw a0, a0, 1
 	slli t1, a0, 2
 	add t1, s1, t1
 	lw t1, 0(t1)
 	li t2, 93
 	bne t1, t2, label61
-	j label1115
+	j label1114
 label65:
 	li t1, 93
 	bne a4, t1, label69
@@ -1029,7 +1027,7 @@ label65:
 	add a4, s1, a4
 	lw a4, 0(a4)
 	bne a4, t1, label49
-	j label1040
+	j label1039
 label68:
 	addiw a0, a1, -1
 	slli a0, a0, 2
@@ -1066,7 +1064,7 @@ label68:
 	addiw a2, a2, 1
 	addiw a0, a0, 1
 	bge a0, s4, label43
-	j label1095
+	j label1094
 label70:
 	li t1, 44
 	bne a4, t1, label76
@@ -1102,24 +1100,24 @@ label70:
 	add a4, s1, a4
 	lw a4, 0(a4)
 	bne a4, t1, label49
-	j label1040
-label1093:
-	slli a0, s0, 2
-	add s6, s2, a0
+	j label1039
+label1092:
 	jal getch
-	sw a0, 0(s6)
+	slli a1, s0, 2
+	add a1, s2, a1
+	sw a0, 0(a1)
 	addiw s0, s0, 1
 	bge s0, s5, label170
-	j label1093
-label1111:
+	j label1092
+label1110:
 	addiw a4, a4, 1
 	ble a4, zero, label76
-	j label1023
-label1115:
+	j label1022
+label1114:
 	addiw a4, a4, -1
 	li t2, 91
 	bne t1, t2, label56
-	j label1111
+	j label1110
 label44:
 	mv a0, zero
 	addi t0, sp, 2047
@@ -1133,13 +1131,11 @@ label44:
 	addi t0, sp, 2047
 	ld s2, 33(t0)
 	addi t0, sp, 2047
-	ld s6, 41(t0)
+	ld s1, 41(t0)
 	addi t0, sp, 2047
-	ld s1, 49(t0)
+	ld s3, 49(t0)
 	addi t0, sp, 2047
-	ld s3, 57(t0)
-	addi t0, sp, 2047
-	addi sp, t0, 65
+	addi sp, t0, 57
 	ret
 label170:
 	li a0, 116

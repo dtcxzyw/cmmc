@@ -1,19 +1,19 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry:
+  ^entry:
     ubr ^while.header;
-^while.header:
+  ^while.header:
     i32 %0 = phi [^entry, i32 112] [^while.body, i32 %2] [^if.then, i32 %4];
     i1 %1 = scmp gt i32 %0, i32 10;
     cbr i1 %1(prob = 0.97), ^while.body, ^b;
-^while.body:
+  ^while.body:
     i32 %2 = add i32 %0, i32 -88;
     i1 %3 = scmp lt i32 %2, i32 1000;
     cbr i1 %3(prob = 0.5), ^if.then, ^while.header;
-^b:
+  ^b:
     call (i32) -> void @putint(i32 %0);
     ret i32 3390;
-^if.then:
+  ^if.then:
     i32 %4 = add i32 %0, i32 -76;
     ubr ^while.header;
 }

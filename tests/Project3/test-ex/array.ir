@@ -4,10 +4,10 @@ READ v3
 READ v4
 READ v5
 READ v6
-READ v7
-v8 := v2 + v3
-WRITE v8
-v9 := v4 + v5
-v10 := v9 + v6
-v11 := v10 + v7
+v7 := v4 + v5
+READ v8
+v9 := v7 + v6
+v10 := v2 + v3
+WRITE v10
+v11 := v9 + v8
 RETURN v11

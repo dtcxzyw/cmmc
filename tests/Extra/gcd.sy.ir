@@ -1,4 +1,4 @@
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse Entry } {
-^b:
+  ^b:
     ret i32 1;
 }

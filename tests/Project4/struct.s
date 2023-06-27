@@ -35,13 +35,13 @@ gcd:
 	move $t0, $t1
 	beq $t1, $zero, label3
 	nop
-	sw $t1, 16($sp)
 	div $zero, $v0, $t1
 	mflo $t1
 	mult $t0, $t1
-	mflo $t0
-	subu $t0, $v0, $t0
-	sw $t0, 4($a0)
+	mflo $t1
+	subu $t1, $v0, $t1
+	sw $t0, 16($sp)
+	sw $t1, 4($a0)
 	jal gcd
 	nop
 label3:

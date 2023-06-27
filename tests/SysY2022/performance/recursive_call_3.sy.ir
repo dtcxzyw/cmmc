@@ -3,32 +3,32 @@ internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @func(f32 %data, i32 %num) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
-^entry:
+  ^entry:
     i1 %0 = scmp lt i32 %num, i32 0;
     cbr i1 %0(prob = 0.5), ^b1, ^b;
-^b:
+  ^b:
     i32 %1 = add i32 %num, i32 -1;
     f32 %2 = call (f32, i32) -> f32 @func(f32 %data, i32 %1);
     f32 %3 = fadd f32 %data, f32 %2;
     f32 %4 = call (f32, i32) -> f32 @func(f32 %3, i32 %1);
     f32 %5 = fsub f32 %3, f32 %4;
     ubr ^b1;
-^b1:
+  ^b1:
     f32 %6 = phi [^entry, f32 0] [^b, f32 %5];
     ret f32 %6;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry:
+  ^entry:
     call (i32) -> void @starttime(i32 21);
     i32 %0 = call () -> i32 @getint();
     f32 %1 = call (f32, i32) -> f32 @func(f32 1.001, i32 %0);
     f32 %2 = fsub f32 %1, f32 1.001;
     i1 %3 = fcmp eq f32 %2, f32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^b;
-^if.then:
+  ^if.then:
     call (i32) -> void @putch(i32 112);
     ubr ^b;
-^b:
+  ^b:
     call (i32) -> void @stoptime(i32 32);
     ret i32 0;
 }

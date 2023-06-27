@@ -57,25 +57,23 @@ label35:
 	nop
 label19:
 	li $t0, 1
-	addiu $t1, $v0, -1
 	mult $v0, $t0
 	mflo $t0
-	li $t2, 1
-	bne $t1, $t2, label26
-	nop
-label36:
-	move $v0, $t1
-	mult $t1, $t0
-	mflo $a0
-	b label9
-	nop
-label26:
-	move $v0, $t1
-	addiu $t1, $t1, -1
-	mult $v0, $t0
-	mflo $t0
-	li $t2, 1
-	bne $t1, $t2, label26
+	addiu $v0, $v0, -1
+	li $t1, 1
+	bne $v0, $t1, label6
 	nop
 	b label36
+	nop
+label6:
+	mult $v0, $t0
+	mflo $t0
+	addiu $v0, $v0, -1
+	li $t1, 1
+	bne $v0, $t1, label6
+	nop
+label36:
+	mult $v0, $t0
+	mflo $a0
+	b label9
 	nop

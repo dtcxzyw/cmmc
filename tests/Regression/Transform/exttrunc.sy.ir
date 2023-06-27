@@ -3,13 +3,13 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i32 %1 = call () -> i32 @getch();
-    i8 %2 = strunc i32 %1 to i8;
-    i8 %3 = strunc i32 %0 to i8;
+    i8 %1 = strunc i32 %0 to i8;
+    i32 %2 = sext i8 %1 to i32;
+    i8 %3 = strunc i32 %2 to i8;
     i32 %4 = sext i8 %3 to i32;
-    i8 %5 = strunc i32 %4 to i8;
-    i32 %6 = sext i8 %2 to i32;
-    i32 %7 = sext i8 %5 to i32;
-    i32 %8 = add i32 %6, i32 %7;
+    i32 %5 = call () -> i32 @getch();
+    i8 %6 = strunc i32 %5 to i8;
+    i32 %7 = sext i8 %6 to i32;
+    i32 %8 = add i32 %7, i32 %4;
     ret i32 %8;
 }

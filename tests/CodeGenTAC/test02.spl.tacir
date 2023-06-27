@@ -8,18 +8,16 @@ v10 := #1
 WRITE v10
 RETURN #0
 LABEL label18 :
-v7 := v11
 v8 := #1
-v21 := v11 + #-1
-v22 := v11 * v8
-IF v21 != #1 GOTO label25
+v21 := v11 * v8
+v22 := v11 + #-1
+IF v22 != #1 GOTO label25
 GOTO label28
 LABEL label25 :
-v7 := v21
-v8 := v22
-v21 := v21 + #-1
-v22 := v7 * v22
-IF v21 != #1 GOTO label25
+v8 := v21
+v21 := v22 * v21
+v22 := v22 + #-1
+IF v22 != #1 GOTO label25
 GOTO label28
 LABEL label27 :
 v5 := #1
@@ -28,8 +26,8 @@ v10 := v20
 WRITE v20
 RETURN #0
 LABEL label28 :
-v5 := v22
-v20 := v21 * v22
+v5 := v21
+v20 := v22 * v21
 v10 := v20
 WRITE v20
 RETURN #0

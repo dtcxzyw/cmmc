@@ -57,14 +57,14 @@ gep2:
 .globl gepseq
 gepseq:
 	slliw a1, a1, 2
-	add a1, a0, a1
-	lw a0, 0(a1)
-	lw a3, 4(a1)
-	lw a2, 8(a1)
-	lw a1, 12(a1)
-	addw a0, a0, a3
-	addw a0, a0, a2
-	addw a0, a0, a1
+	add a0, a0, a1
+	lw a1, 0(a0)
+	lw a2, 4(a0)
+	addw a1, a1, a2
+	lw a2, 8(a0)
+	addw a1, a1, a2
+	lw a0, 12(a0)
+	addw a0, a1, a0
 	ret
 .globl lb
 lb:

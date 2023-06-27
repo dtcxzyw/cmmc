@@ -1,7 +1,7 @@
 internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
-^entry:
+  ^entry:
     [10 * i32]* %a = alloc [10 * i32];
     i32* %0 = getelementptr &([10 * i32]* %a)[i64 0][i64 0];
     store i32* %0 with i32 4;
@@ -24,16 +24,16 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %9 = getelementptr &([10 * i32]* %a)[i64 0][i64 9];
     store i32* %9 with i32 8;
     ubr ^while.header;
-^while.header:
+  ^while.header:
     i32 %10 = phi [^entry, i32 1] [^b3, i32 %33];
     i1 %11 = scmp lt i32 %10, i32 10;
     cbr i1 %11(prob = 0.97), ^while.body, ^while.body1;
-^while.body:
+  ^while.body:
     i32* %12 = getelementptr &(i32* %0)[i32 %10];
     i32 %13 = load i32* %12;
     i32 %14 = add i32 %10, i32 -1;
     ubr ^while.header1;
-^while.body1:
+  ^while.body1:
     i32 %15 = phi [^while.header, i32 0] [^while.body1, i32 %18];
     i32* %16 = getelementptr &([10 * i32]* %a)[i64 0][i32 %15];
     i32 %17 = load i32* %16;
@@ -42,21 +42,21 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %18 = add i32 %15, i32 1;
     i1 %19 = scmp lt i32 %18, i32 10;
     cbr i1 %19(prob = 0.9), ^while.body1, ^b;
-^while.header1:
+  ^while.header1:
     i32 %20 = phi [^while.body, i32 %14] [^while.body2, i32 %30];
     i1 %21 = scmp gt i32 %20, i32 -1;
     cbr i1 %21(prob = 0.5), ^b1, ^b2;
-^b:
+  ^b:
     ret i32 0;
-^b1:
+  ^b1:
     i32* %22 = getelementptr &(i32* %0)[i32 %20];
     i32 %23 = load i32* %22;
     i1 %24 = scmp lt i32 %13, i32 %23;
     ubr ^b2;
-^b2:
+  ^b2:
     i1 %25 = phi [^while.header1, i1 false] [^b1, i1 %24];
     cbr i1 %25(prob = 0.97), ^while.body2, ^b3;
-^while.body2:
+  ^while.body2:
     i32 %26 = add i32 %20, i32 1;
     i32* %27 = getelementptr &(i32* %0)[i32 %26];
     i32* %28 = getelementptr &(i32* %0)[i32 %20];
@@ -64,7 +64,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store i32* %27 with i32 %29;
     i32 %30 = add i32 %20, i32 -1;
     ubr ^while.header1;
-^b3:
+  ^b3:
     i32 %31 = add i32 %20, i32 1;
     i32* %32 = getelementptr &(i32* %0)[i32 %31];
     store i32* %32 with i32 %13;

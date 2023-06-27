@@ -483,6 +483,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(auto& pass : passesSource.collectFunctionPass({ "DumpCFG" }))
             root->addPass(std::make_shared<FunctionPassWrapper>(pass));
     }
+    for(auto& pass : passesSource.collectFunctionPass({ "InstReorder" }))
+        root->addPass(std::make_shared<FunctionPassWrapper>(pass));
     return root;
 }
 

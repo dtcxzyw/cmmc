@@ -51,12 +51,12 @@ gep2:
 gepseq:
 	add r2, r0, r1, lsl #2
 	ldr r0, [r0, r1, lsl #2]
-	ldr r3, [r2, #4]
-	ldr r1, [r2, #8]
-	ldr r2, [r2, #12]
-	add r0, r0, r3
+	ldr r1, [r2, #4]
 	add r0, r0, r1
-	add r0, r0, r2
+	ldr r1, [r2, #8]
+	add r0, r0, r1
+	ldr r1, [r2, #12]
+	add r0, r0, r1
 	bx lr
 .globl lb
 lb:

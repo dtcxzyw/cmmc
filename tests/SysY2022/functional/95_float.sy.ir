@@ -5,7 +5,7 @@ internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfloat() -> void { NoMemoryRead NoMemoryWrite };
 internal func @putfarray() -> void { NoMemoryWrite };
 func @main() -> i32 { NoRecurse Entry } {
-^entry:
+  ^entry:
     [10 * f32]* %arr = alloc [10 * f32];
     call (i32) -> void @putch(i32 111);
     call (i32) -> void @putch(i32 107);
@@ -53,37 +53,37 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %9 with f32 0;
     i32 %10 = call (f32*) -> i32 @getfarray(f32* %0);
     ubr ^while.body;
-^while.body:
-    i32 %11 = phi [^entry, i32 0] [^while.body, i32 %32];
+  ^while.body:
+    i32 %11 = phi [^entry, i32 0] [^while.body, i32 %33];
     i32 %12 = phi [^entry, i32 1] [^while.body, i32 %31];
     f32 %13 = call () -> f32 @getfloat();
-    f32 %14 = fmul f32 3.14159, f32 %13;
-    f32 %15 = fmul f32 %14, f32 %13;
-    i32 %16 = f2s f32 %13 to i32;
-    f32 %17 = s2f i32 %16 to f32;
-    f32 %18 = fmul f32 3.14159, f32 %17;
-    f32 %19 = fmul f32 %18, f32 %17;
-    i32 %20 = mul i32 %16, i32 %16;
-    f32 %21 = s2f i32 %20 to f32;
-    f32 %22 = fmul f32 %21, f32 3.14159;
-    f32 %23 = fadd f32 %19, f32 %22;
-    f32 %24 = fmul f32 %23, f32 0.5;
-    f32* %25 = getelementptr &([10 * f32]* %arr)[i64 0][i32 %11];
-    f32 %26 = load f32* %25;
-    f32 %27 = fadd f32 %26, f32 %13;
-    store f32* %25 with f32 %27;
-    call (f32) -> void @putfloat(f32 %15);
+    i32 %14 = f2s f32 %13 to i32;
+    f32 %15 = s2f i32 %14 to f32;
+    f32 %16 = fmul f32 3.14159, f32 %15;
+    f32 %17 = fmul f32 %16, f32 %15;
+    i32 %18 = mul i32 %14, i32 %14;
+    f32 %19 = s2f i32 %18 to f32;
+    f32 %20 = fmul f32 %19, f32 3.14159;
+    f32 %21 = fadd f32 %17, f32 %20;
+    f32 %22 = fmul f32 %21, f32 0.5;
+    i32 %23 = f2s f32 %22 to i32;
+    f32 %24 = fmul f32 3.14159, f32 %13;
+    f32 %25 = fmul f32 %24, f32 %13;
+    f32* %26 = getelementptr &([10 * f32]* %arr)[i64 0][i32 %11];
+    f32 %27 = load f32* %26;
+    f32 %28 = fadd f32 %27, f32 %13;
+    store f32* %26 with f32 %28;
+    call (f32) -> void @putfloat(f32 %25);
     call (i32) -> void @putch(i32 32);
-    i32 %28 = f2s f32 %24 to i32;
-    call (i32) -> void @putint(i32 %28);
+    call (i32) -> void @putint(i32 %23);
     call (i32) -> void @putch(i32 10);
     f32 %29 = s2f i32 %12 to f32;
     f32 %30 = fmul f32 %29, f32 10;
     i32 %31 = f2s f32 %30 to i32;
-    i32 %32 = add i32 %11, i32 1;
-    i1 %33 = scmp lt i32 %31, i32 1000000000;
-    cbr i1 %33(prob = 0.97), ^while.body, ^b;
-^b:
+    i1 %32 = scmp lt i32 %31, i32 1000000000;
+    i32 %33 = add i32 %11, i32 1;
+    cbr i1 %32(prob = 0.97), ^while.body, ^b;
+  ^b:
     call (i32, f32*) -> void @putfarray(i32 %10, f32* %0);
     ret i32 0;
 }

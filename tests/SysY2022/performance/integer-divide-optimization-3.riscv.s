@@ -399,7 +399,7 @@ label10:
 	srai a3, a2, 37
 	srli a2, a2, 63
 	add a2, a2, a3
-	addw a1, a2, a1
+	addw a1, a1, a2
 	li a2, 1073790977
 	mul a3, a1, a2
 	srai a2, a3, 61
