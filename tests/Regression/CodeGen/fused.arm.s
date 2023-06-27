@@ -92,6 +92,11 @@ fused_mul_add2:
 fused_mul_sub:
 	mls r0, r1, r2, r0
 	bx lr
+.globl fused_mul_sub_imm
+fused_mul_sub_imm:
+	movw r2, #777
+	mls r0, r1, r2, r0
+	bx lr
 .globl fused_div_rem
 fused_div_rem:
 	sdiv r2, r0, r1
@@ -101,16 +106,15 @@ fused_div_rem:
 	bx lr
 .globl fused_div_rem_constant
 fused_div_rem_constant:
-	movw r2, #21846
-	movt r2, #21845
-	smmul r1, r0, r2
-	add r1, r1, r1, lsr #31
-	smmul r2, r0, r2
+	movw r1, #21846
+	movt r1, #21845
+	smmul r2, r0, r1
 	add r2, r2, r2, lsr #31
 	mov r3, #3
-	mul r2, r2, r3
-	sub r0, r0, r2
-	add r0, r1, r0
+	smmul r1, r0, r1
+	add r1, r1, r1, lsr #31
+	mls r0, r1, r3, r0
+	add r0, r2, r0
 	bx lr
 .globl fused_mvn_and
 fused_mvn_and:

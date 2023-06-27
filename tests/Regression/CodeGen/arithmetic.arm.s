@@ -126,13 +126,12 @@ div_reg:
 	bx lr
 .globl mod_imm
 mod_imm:
-	movw r1, #21846
-	movt r1, #21845
-	smmul r1, r0, r1
-	add r1, r1, r1, lsr #31
-	mov r2, #3
-	mul r1, r1, r2
-	sub r0, r0, r1
+	mov r1, #3
+	movw r2, #21846
+	movt r2, #21845
+	smmul r2, r0, r2
+	add r2, r2, r2, lsr #31
+	mls r0, r2, r1, r0
 	bx lr
 .globl mod_reg
 mod_reg:

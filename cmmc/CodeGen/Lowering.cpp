@@ -40,6 +40,7 @@
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Profiler.hpp>
 #include <cmmc/Transforms/Hyperparameters.hpp>
+#include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -851,11 +852,22 @@ static void lower(UnreachableInst*, LoweringContext& ctx) {
 }
 static void lower(SelectInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
-    ctx.emitInst(MIRInst{ InstSelect }
-                     .setOperand<0>(ret)
-                     .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
-                     .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
-                     .setOperand<3>(ctx.mapOperand(inst->getOperand(2))));
+    // select x, y, 0 -> -x & y
+    if(cuint_(0)(MatchContext<Value>(inst->getOperand(2))) &&
+       ctx.getCodeGenContext().target.isNativeSupported(InstructionID::And)) {
+        const auto mask = ctx.newVReg(inst->getType());
+        const auto cond = ctx.mapOperand(inst->getOperand(0));
+        const auto trueV = ctx.mapOperand(inst->getOperand(1));
+        ctx.emitInst(
+            MIRInst{ InstSub }.setOperand<0>(mask).setOperand<1>(MIROperand::asImm(0, trueV.type())).setOperand<2>(cond));
+        ctx.emitInst(MIRInst{ InstAnd }.setOperand<0>(ret).setOperand<1>(trueV).setOperand<2>(mask));
+    } else {
+        ctx.emitInst(MIRInst{ InstSelect }
+                         .setOperand<0>(ret)
+                         .setOperand<1>(ctx.mapOperand(inst->getOperand(0)))
+                         .setOperand<2>(ctx.mapOperand(inst->getOperand(1)))
+                         .setOperand<3>(ctx.mapOperand(inst->getOperand(2))));
+    }
     ctx.addOperand(inst, ret);
 }
 static void lower(GetElementPtrInst* inst, LoweringContext& ctx) {

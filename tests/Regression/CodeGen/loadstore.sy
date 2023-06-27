@@ -13,6 +13,9 @@ void store(int x[], int idx, int y) {
 void store_float(float x[], int idx, float y) {
     x[idx] = y;
 }
+void store_float_constant(float x[], int idx) {
+    x[idx] = 1.0;
+}
 int gep_const(int x[]) {
     return x[3];
 }

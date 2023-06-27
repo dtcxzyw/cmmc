@@ -9,3 +9,6 @@ int main() {
     }
     return 0;
 }
+int select_bitset(int x, int y, int z) {
+    return (x == 0 && y == 1) ? z : 0;
+}

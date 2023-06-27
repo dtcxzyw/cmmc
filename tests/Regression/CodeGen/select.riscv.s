@@ -282,3 +282,26 @@ label302:
 	flw f11, 4(a0)
 	fadd.s f10, f10, f11
 	j label303
+.globl select_bitset
+select_bitset:
+	sltiu a0, a0, 1
+	xori a1, a1, 1
+	sltiu a1, a1, 1
+	and a0, a0, a1
+	subw a0, zero, a0
+	and a0, a2, a0
+	ret
+.globl select_imax
+select_imax:
+	slt a2, a1, a0
+	bne a2, zero, label339
+	mv a0, a1
+label339:
+	ret
+.globl select_imin
+select_imin:
+	slt a2, a0, a1
+	bne a2, zero, label346
+	mv a0, a1
+label346:
+	ret

@@ -21,3 +21,15 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^b1:
     ret i32 0;
 }
+func @select_bitset(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^b1;
+  ^b:
+    i1 %1 = scmp eq i32 %y, i32 1;
+    ubr ^b1;
+  ^b1:
+    i1 %2 = phi [^entry, i1 false] [^b, i1 %1];
+    i32 %3 = select i1 %2 ? i32 %z : i32 0;
+    ret i32 %3;
+}

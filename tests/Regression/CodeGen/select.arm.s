@@ -235,3 +235,27 @@ label231:
 	vmov s1, r0
 	vadd.f32 s0, s0, s1
 	b label232
+.globl select_bitset
+select_bitset:
+	cmp r0, #0
+	mov r0, #0
+	movweq r0, #1
+	cmp r1, #1
+	mov r1, #0
+	movweq r1, #1
+	and r0, r0, r1
+	rsb r0, r0, #0
+	and r0, r2, r0
+	bx lr
+.globl select_imax
+select_imax:
+	cmp r0, r1
+	movgt r1, r0
+	mov r0, r1
+	bx lr
+.globl select_imin
+select_imin:
+	cmp r0, r1
+	movlt r1, r0
+	mov r0, r1
+	bx lr

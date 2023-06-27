@@ -67,6 +67,21 @@ inline auto any(Value*& val) {
     return AnyMatcher{ val };
 }
 
+class BooleanMatcher {
+    Value*& mValue;
+
+public:
+    explicit BooleanMatcher(Value*& value) noexcept : mValue{ value } {}
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        mValue = ctx.value;
+        return mValue->getType()->isBoolean();
+    }
+};
+
+inline auto boolean(Value*& val) {
+    return BooleanMatcher{ val };
+}
+
 template <bool IsSigned>
 class ConstantIntegerMatcher final : public GenericMatcher<ConstantInteger, ConstantIntegerMatcher<IsSigned>> {
     using Value = std::conditional_t<IsSigned, intmax_t, uintmax_t>;

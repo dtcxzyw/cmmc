@@ -316,3 +316,27 @@ label245:
 	add.s $f0, $f12, $f4
 	b label246
 	nop
+.globl select_bitset
+select_bitset:
+	sltiu $t0, $a0, 1
+	xori $t1, $a1, 1
+	sltiu $t1, $t1, 1
+	and $t0, $t0, $t1
+	subu $t0, $zero, $t0
+	and $v0, $a2, $t0
+	jr $ra
+	nop
+.globl select_imax
+select_imax:
+	slt $t0, $a1, $a0
+	movn $a1, $a0, $t0
+	move $v0, $a1
+	jr $ra
+	nop
+.globl select_imin
+select_imin:
+	slt $t0, $a0, $a1
+	movn $a1, $a0, $t0
+	move $v0, $a1
+	jr $ra
+	nop

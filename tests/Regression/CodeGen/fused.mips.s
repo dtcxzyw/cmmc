@@ -135,6 +135,14 @@ fused_mul_sub:
 	subu $v0, $a0, $t0
 	jr $ra
 	nop
+.globl fused_mul_sub_imm
+fused_mul_sub_imm:
+	li $t0, 777
+	mult $a1, $t0
+	mflo $t0
+	subu $v0, $a0, $t0
+	jr $ra
+	nop
 .globl fused_div_rem
 fused_div_rem:
 	div $zero, $a0, $a1

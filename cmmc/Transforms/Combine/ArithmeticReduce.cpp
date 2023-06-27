@@ -503,6 +503,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
             //                                       makeIntLike(i1 * i2, inst));
             // }
 
+            // ((zext a) & (zext b)) != 0 -> a & b
+            if(scmp(cmp, and_(zext(boolean(v1)), zext(boolean(v2))), cuint_(0))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
+            }
+
             return nullptr;
         });
         return ret || modified;

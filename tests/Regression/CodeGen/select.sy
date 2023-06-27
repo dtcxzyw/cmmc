@@ -103,3 +103,12 @@ float select_cross_fpr(int x, int y, int z) {
 float select_round(float x, float y) {
     return x < -3.14159 ? (x + 6.28319) : x;
 }
+int select_bitset(int x, int y, int z) {
+    return ((x == 0) & (y == 1)) ? z : 0;
+}
+int select_imax(int x, int y) {
+    return x > y ? x : y;
+}
+int select_imin(int x, int y) {
+    return x < y ? x : y;
+}

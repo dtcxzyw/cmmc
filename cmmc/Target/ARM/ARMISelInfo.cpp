@@ -501,6 +501,26 @@ static bool buildASR(ISelContext& ctx, const MIROperand& lhs, const MIROperand& 
     return true;
 }
 
+[[maybe_unused]] static bool buildSub(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhs, MIROperand& out) {
+    if(isZero(rhs)) {
+        out = lhs;
+    } else {
+        out = getVRegAs(ctx, lhs);
+        ctx.newInst(InstSub).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(rhs);
+    }
+    return true;
+}
+
+static bool buildIReg(ISelContext& ctx, const MIROperand& val, MIROperand& out) {
+    if(isOperandIReg(val)) {
+        out = val;
+    } else {
+        out = getVRegAs(ctx, val);
+        ctx.newInst(InstLoadImm).setOperand<0>(out).setOperand<1>(val);
+    }
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/ISelInfoImpl.hpp>

@@ -92,6 +92,9 @@ InstInfo:
       MVN:
         Mnemonic: mvn
 
+  CLZ:
+    Format: clz $Rd:GPR[Def], $Rm:GPR[Use]
+
   MoveGPR:
     Format: mov $Rd:GPR[Def], $Rs:GPR[Use]
     Flag: [RegCopy]
@@ -346,7 +349,7 @@ InstSelection:
           InstMul:
             Lhs: $MulLhs
             Rhs: $MulRhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($MulLhs) && isOperandIReg($MulRhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($MulLhs) && buildIReg(ctx, $MulRhs, [$OutMulRhs])
       $Instances: [InstAdd, InstSub]
     Replace:
       FusedMulAddSub:
@@ -355,7 +358,7 @@ InstSelection:
         Rd: $Dst
         Rw: $Lhs
         Ry: $MulLhs
-        Rz: $MulRhs
+        Rz: $OutMulRhs
 
   - Pattern:
       $Template:
@@ -525,20 +528,17 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIReg(ctx, $Rhs, [$RegRhs])
     Replace:
-      InstSub:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs:
-          InstMul:
+      MLS:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry:
+          InstSDiv:
             Dst: getVRegAs(ctx, $Dst)
-            Lhs:
-              InstSDiv:
-                Dst: getVRegAs(ctx, $Dst)
-                Lhs: $Lhs
-                Rhs: $Rhs
+            Lhs: $Lhs
             Rhs: $Rhs
+        Rz: $RegRhs
 
   - Pattern:
       InstSRem:
@@ -759,6 +759,22 @@ InstSelection:
         Rm: $Rhs
         CC: $CC
         CF: $CF
+
+  # - Pattern:
+  #     InstSCmp:
+  #       Dst: $Dst
+  #       Lhs: $Lhs
+  #       Rhs: $Rhs
+  #       Op: $Op
+  #       $Predicate: isEqualOp($Op) && buildSub(ctx, $Lhs, $Rhs, [$Out])
+  #   Replace:
+  #     LSR:
+  #       Rd: $Dst
+  #       Rm:
+  #         CLZ:
+  #           Rd: getVRegAs(ctx, $Dst)
+  #           Rm: $Out
+  #       Sh: MIROperand::asImm(5, OperandType::Int32)
 
   # Fallbacks for cmp/branch/select
   - Pattern:

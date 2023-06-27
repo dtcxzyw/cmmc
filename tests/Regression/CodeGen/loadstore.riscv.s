@@ -37,6 +37,14 @@ store_float:
 	add a0, a0, a1
 	fsw f12, 0(a0)
 	ret
+.globl store_float_constant
+store_float_constant:
+	slliw a1, a1, 2
+	add a0, a0, a1
+	lui a1, 260096
+	fmv.w.x f10, a1
+	fsw f10, 0(a0)
+	ret
 .globl gep_const
 gep_const:
 	lw a0, 12(a0)
@@ -76,15 +84,15 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel80:
+pcrel87:
 	auipc a0, %pcrel_hi(y)
-	lw a0, %pcrel_lo(pcrel80)(a0)
+	lw a0, %pcrel_lo(pcrel87)(a0)
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel89:
+pcrel96:
 	auipc a1, %pcrel_hi(arr)
-	addi a1, a1, %pcrel_lo(pcrel89)
+	addi a1, a1, %pcrel_lo(pcrel96)
 	slli a0, a0, 2
 	add a0, a1, a0
 	lw a0, 0(a0)

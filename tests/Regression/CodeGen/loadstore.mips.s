@@ -7,6 +7,9 @@ y:
 .globl arr
 arr:
 	.zero	400
+.align 4
+__cmmc_fp_constant_pool:
+	.4byte	1065353216
 .text
 .globl load
 load:
@@ -40,6 +43,16 @@ store_float:
 	mtc1 $a2, $f4
 	sll $t0, $a1, 2
 	addu $t0, $a0, $t0
+	swc1 $f4, 0($t0)
+	jr $ra
+	nop
+.globl store_float_constant
+store_float_constant:
+	sll $t0, $a1, 2
+	addu $t0, $a0, $t0
+	lui $t1, %hi(__cmmc_fp_constant_pool)
+	addiu $t1, $t1, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 0($t1)
 	swc1 $f4, 0($t0)
 	jr $ra
 	nop
