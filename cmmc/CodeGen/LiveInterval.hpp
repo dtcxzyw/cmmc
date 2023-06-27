@@ -69,7 +69,7 @@ inline RegNum regNum(const MIROperand& operand) {
     return static_cast<RegNum>(operand.reg());
 }
 
-LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx);
+LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, const CodeGenContext& ctx);
 void cleanupRegFlags(MIRFunction& mfunc, const CodeGenContext& ctx);
 
 CMMC_MIR_NAMESPACE_END

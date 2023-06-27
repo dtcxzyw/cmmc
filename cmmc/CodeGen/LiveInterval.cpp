@@ -35,7 +35,7 @@ static void assignInstNum(MIRFunction& mfunc, LiveVariablesInfo& info) {
     }
 }
 
-LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, CodeGenContext& ctx) {
+LiveVariablesInfo calcLiveIntervals(MIRFunction& mfunc, const CodeGenContext& ctx) {
     LiveVariablesInfo info;
     const auto cfg = calcCFG(mfunc, ctx);
     // Stage 1: collect use/def
