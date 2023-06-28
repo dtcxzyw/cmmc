@@ -1,4 +1,9 @@
 .data
+.section .rodata
+.align 4
+__cmmc_fp_constant_pool:
+	.4byte	1065353216
+.bss
 .align 4
 .globl y
 y:
@@ -7,9 +12,6 @@ y:
 .globl arr
 arr:
 	.zero	400
-.align 4
-__cmmc_fp_constant_pool:
-	.4byte	1065353216
 .text
 .globl load
 load:

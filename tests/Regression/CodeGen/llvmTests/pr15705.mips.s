@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl PR15705
 PR15705:

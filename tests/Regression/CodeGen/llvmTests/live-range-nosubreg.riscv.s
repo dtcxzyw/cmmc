@@ -16,6 +16,8 @@ d:
 .globl b
 b:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl main
 main:

@@ -1,6 +1,8 @@
 .data
 _prompt: .asciz "Enter an integer:"
 _ret: .asciz "\n"
+.section .rodata
+.bss
 .text
 _entry:
     call main

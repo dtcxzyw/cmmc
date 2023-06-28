@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl sext_16_32
 sext_16_32:

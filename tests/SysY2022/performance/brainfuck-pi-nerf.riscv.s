@@ -11,6 +11,8 @@ input:
 .align 4
 output:
 	.zero	262144
+.section .rodata
+.bss
 .text
 .globl main
 main:

@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl no_sat0_incorrect_constant
 no_sat0_incorrect_constant:

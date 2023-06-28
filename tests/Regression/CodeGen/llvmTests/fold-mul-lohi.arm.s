@@ -1,5 +1,7 @@
 .arch armv7ve
 .data
+.section .rodata
+.bss
 .align 1
 .globl B
 B:

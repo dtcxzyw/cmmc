@@ -1,11 +1,13 @@
 .data
+.section .rodata
+.align 4
+__cmmc_fp_constant_pool:
+	.4byte	1082130432
+.bss
 .align 4
 .globl x
 x:
 	.zero	40
-.align 4
-__cmmc_fp_constant_pool:
-	.4byte	1082130432
 .text
 .globl cse_imm
 cse_imm:

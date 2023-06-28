@@ -3,6 +3,8 @@
 .globl a
 a:
 	.4byte	0
+.section .rodata
+.bss
 .align 4
 .globl b
 b:

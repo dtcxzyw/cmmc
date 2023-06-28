@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl Test_get_quotient
 Test_get_quotient:

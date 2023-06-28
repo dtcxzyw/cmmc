@@ -13,6 +13,8 @@ b:
 .globl c
 c:
 	.4byte	4
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

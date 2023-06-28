@@ -2,6 +2,8 @@
 .align 4
 a:
 	.zero	40000
+.section .rodata
+.bss
 .text
 .globl main
 main:
@@ -21,19 +23,19 @@ main:
 pcrel228:
 	auipc a0, %pcrel_hi(a)
 	addi s0, a0, %pcrel_lo(pcrel228)
-	ble s1, zero, label2
+	ble s1, zero, label18
 	mv a1, s2
 	mv a0, s1
-label3:
+label2:
 	li a2, 19971231
 	mulw a1, a1, a2
 	li a2, 19981013
 	addw a1, a1, a2
 	li a2, 1152921497
-	mul a2, a1, a2
-	srai a3, a2, 60
-	srli a2, a2, 63
-	add a2, a2, a3
+	mul a3, a1, a2
+	srai a2, a3, 60
+	srli a3, a3, 63
+	add a2, a3, a2
 	li a3, 1000000007
 	mulw a2, a2, a3
 	subw a1, a1, a2
@@ -42,24 +44,24 @@ label3:
 	j label34
 label35:
 	mv a0, a1
-label6:
+label5:
 	li a1, 19971231
 	mulw a1, a0, a1
 	li a3, 19981013
 	addw a1, a1, a3
 	li a3, 1152921497
-	mul a3, a1, a3
-	srai a4, a3, 60
-	srli a3, a3, 63
-	add a3, a3, a4
+	mul a4, a1, a3
+	srai a3, a4, 60
+	srli a4, a4, 63
+	add a3, a4, a3
 	li a4, 1000000007
 	mulw a3, a3, a4
 	subw a1, a1, a3
 	li a3, 1876499845
-	mul a3, a0, a3
-	srai a4, a3, 49
-	srli a3, a3, 63
-	add a3, a3, a4
+	mul a4, a0, a3
+	srai a3, a4, 49
+	srli a4, a4, 63
+	add a3, a4, a3
 	li a4, 300000
 	mulw a3, a3, a4
 	subw a4, a0, a3
@@ -67,7 +69,7 @@ label6:
 	j label42
 label43:
 	mv a0, a1
-label9:
+label8:
 	li a1, -2004318071
 	mul a1, a4, a1
 	srli a1, a1, 32
@@ -138,13 +140,13 @@ label9:
 	li a1, 1073741824
 	sw a1, 120(s3)
 	li a1, 9999
-	ble a3, a1, label12
-	ble a2, zero, label2
+	ble a3, a1, label11
+	ble a2, zero, label18
 label220:
 	mv a1, a0
 	mv a0, a2
-	j label3
-label12:
+	j label2
+label11:
 	slliw a1, a3, 2
 	add a1, s0, a1
 	lw a1, 0(a1)
@@ -173,7 +175,7 @@ label12:
 	sraiw t3, t3, 1
 	mulw t2, t3, t2
 	subw t2, a0, t2
-	beq t1, t2, label17
+	beq t1, t2, label16
 	sltiu a1, t1, 1
 	xori t3, t2, 1
 	sltiu t3, t3, 1
@@ -184,7 +186,7 @@ label12:
 	sltiu a5, a5, 1
 	sltiu t1, t2, 1
 	and a5, a5, t1
-	beq a5, zero, label15
+	beq a5, zero, label14
 	slli a4, a4, 2
 	add a4, s3, a4
 	lw a4, 0(a4)
@@ -194,31 +196,31 @@ label12:
 	lw a4, 0(a3)
 	addw a1, a1, a4
 	sw a1, 0(a3)
-	ble a2, zero, label2
+	ble a2, zero, label18
 	j label220
-label15:
+label14:
 	slliw a3, a3, 2
 	add a3, s0, a3
 	lw a4, 0(a3)
 	addw a1, a1, a4
 	sw a1, 0(a3)
-	ble a2, zero, label2
+	ble a2, zero, label18
 	j label220
-label17:
+label16:
 	slliw a3, a3, 2
 	add a3, s0, a3
 	sw a1, 0(a3)
-	ble a2, zero, label2
+	ble a2, zero, label18
 	j label220
 label34:
 	li a0, 1000000007
 	addw a0, a1, a0
-	j label6
+	j label5
 label42:
 	li a0, 1000000007
 	addw a0, a1, a0
-	j label9
-label2:
+	j label8
+label18:
 	li a0, 64
 	jal _sysy_stoptime
 	li a0, 10000

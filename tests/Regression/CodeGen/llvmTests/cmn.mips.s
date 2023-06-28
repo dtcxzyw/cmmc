@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl compare_i_gt
 compare_i_gt:

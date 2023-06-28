@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl test_mul_by_1
 test_mul_by_1:

@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl foo_no_fn_attr
 foo_no_fn_attr:

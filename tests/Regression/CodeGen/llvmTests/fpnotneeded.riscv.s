@@ -7,6 +7,8 @@ i:
 .globl f
 f:
 	.4byte	1065353216
+.section .rodata
+.bss
 .text
 .globl foo
 foo:

@@ -4,6 +4,8 @@
 X:
 	.byte	0
 	.byte	0
+.section .rodata
+.bss
 .text
 .globl foo
 foo:

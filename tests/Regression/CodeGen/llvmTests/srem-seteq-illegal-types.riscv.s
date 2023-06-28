@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl test_srem_even
 test_srem_even:

@@ -3,6 +3,8 @@
 .align 4
 a:
 	.zero	40000
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

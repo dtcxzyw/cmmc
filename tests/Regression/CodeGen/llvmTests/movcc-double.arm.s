@@ -4,6 +4,8 @@
 .globl var32
 var32:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

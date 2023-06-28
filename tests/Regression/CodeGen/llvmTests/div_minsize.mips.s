@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl testsize1
 testsize1:

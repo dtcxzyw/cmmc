@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl neg_only_one_truncation
 neg_only_one_truncation:

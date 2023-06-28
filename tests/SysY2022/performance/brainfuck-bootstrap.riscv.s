@@ -11,6 +11,8 @@ input:
 .align 4
 output:
 	.zero	262144
+.section .rodata
+.bss
 .text
 .globl main
 main:
@@ -476,8 +478,8 @@ label36:
 	auipc a0, %pcrel_hi(tape)
 	addi a5, a0, %pcrel_lo(label36)
 	mv s0, zero
-	mv a3, zero
 	mv a1, zero
+	mv a3, zero
 	mv a2, zero
 	mv a0, zero
 	bge zero, s4, label43

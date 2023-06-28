@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl add_after_lsl
 add_after_lsl:

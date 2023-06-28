@@ -8,6 +8,8 @@ bar:
 .globl foo
 foo:
 	.4byte	42
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

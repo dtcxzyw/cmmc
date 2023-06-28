@@ -1,5 +1,7 @@
 .arch armv7ve
 .data
+.section .rodata
+.bss
 .align 4
 matrix:
 	.zero	80000000
@@ -190,10 +192,10 @@ label14:
 label87:
 	mov r4, #0
 	cmp r4, #0
-	bge label18
+	bge label17
 label90:
 	rsb r4, r4, #0
-	b label18
+	b label17
 label23:
 	add r3, r1, #16
 	ldr r6, [sp, #0]
@@ -345,7 +347,7 @@ label26:
 label113:
 	mov r4, r2
 	cmp r2, #0
-	bge label18
+	bge label17
 	b label90
 label506:
 	ldr r3, [r0, r1, lsl #2]
@@ -554,7 +556,7 @@ label33:
 	cmp r2, r4
 	bge label34
 	b label33
-label18:
+label17:
 	mov r0, #47
 	bl _sysy_stoptime
 	mov r0, r4

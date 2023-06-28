@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl add_i1
 add_i1:

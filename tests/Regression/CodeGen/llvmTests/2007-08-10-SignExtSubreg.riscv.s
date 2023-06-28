@@ -3,6 +3,8 @@
 .globl X
 X:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl _Z3fooi
 _Z3fooi:

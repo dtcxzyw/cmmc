@@ -1,7 +1,9 @@
 .data
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1065361605
+.bss
 .text
 func:
 	addi sp, sp, -24

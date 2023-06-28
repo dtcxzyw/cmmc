@@ -36,6 +36,8 @@ z3:
 .globl z4
 z4:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

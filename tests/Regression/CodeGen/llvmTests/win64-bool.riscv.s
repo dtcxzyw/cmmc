@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl pass_bool
 pass_bool:

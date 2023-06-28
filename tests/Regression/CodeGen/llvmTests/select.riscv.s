@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl select_add_1
 select_add_1:

@@ -6,6 +6,8 @@ sheet1:
 .align 4
 sheet2:
 	.zero	1000000
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

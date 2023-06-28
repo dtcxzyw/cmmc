@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .align 4
 image_in:
 	.zero	4194304

@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl test_movb
 test_movb:

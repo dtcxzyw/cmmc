@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl my_fabs
 my_fabs:

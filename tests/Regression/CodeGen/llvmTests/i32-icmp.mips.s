@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl icmp_eq
 icmp_eq:

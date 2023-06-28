@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl u8_to_u8
 u8_to_u8:

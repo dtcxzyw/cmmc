@@ -1,7 +1,9 @@
 .data
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1078530010
+.bss
 .text
 .globl add_imm
 add_imm:

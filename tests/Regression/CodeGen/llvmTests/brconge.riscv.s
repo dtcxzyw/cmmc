@@ -19,6 +19,8 @@ result1:
 .globl result2
 result2:
 	.4byte	1
+.section .rodata
+.bss
 .text
 .globl test
 test:

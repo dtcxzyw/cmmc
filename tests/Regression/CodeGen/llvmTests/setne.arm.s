@@ -20,6 +20,8 @@ r1:
 .globl r2
 r2:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

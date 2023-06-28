@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl ret1
 ret1:

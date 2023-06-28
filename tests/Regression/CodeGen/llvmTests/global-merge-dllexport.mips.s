@@ -7,6 +7,8 @@ x:
 .globl y
 y:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl f1
 f1:

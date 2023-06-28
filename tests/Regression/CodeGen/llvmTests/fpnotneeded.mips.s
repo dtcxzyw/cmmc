@@ -7,10 +7,12 @@ i:
 .globl f
 f:
 	.4byte	1065353216
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1073741824
 	.4byte	1065353216
+.bss
 .text
 .globl foo
 foo:

@@ -3,6 +3,8 @@
 .globl a
 a:
 	.4byte	1
+.section .rodata
+.bss
 .text
 .globl ext
 ext:

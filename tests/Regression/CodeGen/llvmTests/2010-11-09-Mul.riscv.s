@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl mul1
 mul1:

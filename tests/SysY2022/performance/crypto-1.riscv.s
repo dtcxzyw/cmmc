@@ -3,6 +3,8 @@
 buffer:
 	.4byte	0
 	.zero	131068
+.section .rodata
+.bss
 .text
 .globl main
 main:

@@ -1,5 +1,7 @@
 .arch armv7ve
 .data
+.section .rodata
+.bss
 .align 4
 x:
 	.zero	864000000
@@ -77,26 +79,26 @@ label18:
 	ldr r1, [sp, #40]
 	ldr r0, [sp, #32]
 	cmp r0, r1
-	bge label21
+	bge label35
 	mov r0, #1
 	str r0, [sp, #16]
 	ldr r1, [sp, #40]
 	cmp r0, r1
-	bge label24
+	bge label23
 	ldr r1, [sp, #40]
 	cmp r1, #1
-	ble label35
-	b label26
+	ble label34
+	b label25
 label31:
 	ldr r1, [sp, #0]
 	ldr r1, [r1, r0, lsl #2]
 	ldr r2, [sp, #52]
 	ldr r2, [r2, r0, lsl #2]
 	add r1, r1, r2
-	ldr r2, [sp, #12]
+	ldr r2, [sp, #4]
 	ldr r2, [r2, r0, lsl #2]
 	add r1, r1, r2
-	ldr r2, [sp, #4]
+	ldr r2, [sp, #12]
 	ldr r2, [r2, r0, lsl #2]
 	add r1, r1, r2
 	ldr r2, [sp, #8]
@@ -112,19 +114,19 @@ label31:
 	add r0, r0, #1
 	ldr r1, [sp, #40]
 	cmp r0, r1
-	bge label35
+	bge label34
 	b label31
-label35:
+label34:
 	ldr r0, [sp, #16]
 	add r0, r0, #1
 	str r0, [sp, #16]
 	ldr r1, [sp, #40]
 	cmp r0, r1
-	bge label24
+	bge label23
 	ldr r1, [sp, #40]
 	cmp r1, #1
-	ble label35
-	b label26
+	ble label34
+	b label25
 label67:
 	mov r6, r7
 	add r7, r7, #16
@@ -309,696 +311,6 @@ label10:
 	cmp r6, r8
 	bge label67
 	b label10
-label26:
-	mov r3, #2400
-	ldr r1, [sp, #28]
-	ldr r0, [sp, #16]
-	mla r2, r0, r3, r1
-	str r2, [sp, #8]
-	sub r2, r2, #2400
-	str r2, [sp, #12]
-	ldr r2, [sp, #8]
-	add r2, r2, #2400
-	str r2, [sp, #4]
-	ldr r1, [sp, #24]
-	ldr r0, [sp, #16]
-	mla r1, r0, r3, r1
-	str r1, [sp, #0]
-	ldr r1, [sp, #20]
-	ldr r0, [sp, #16]
-	mla r2, r0, r3, r1
-	str r2, [sp, #52]
-	mov r0, #1
-	add r2, r0, #16
-	str r2, [sp, #104]
-	ldr r1, [sp, #40]
-	cmp r2, r1
-	bge label29
-	b label34
-label29:
-	add r2, r0, #16
-	str r2, [sp, #100]
-	ldr r1, [sp, #40]
-	cmp r2, r1
-	bge label31
-label33:
-	ldr r1, [sp, #0]
-	add r1, r1, r0, lsl #2
-	str r1, [sp, #68]
-	ldr r1, [sp, #0]
-	ldr r3, [r1, r0, lsl #2]
-	ldr r2, [sp, #52]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #84]
-	ldr r2, [sp, #52]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #12]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #72]
-	ldr r2, [sp, #12]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #4]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #60]
-	ldr r2, [sp, #4]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #8]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #88]
-	ldr r1, [r1, #-4]
-	add r2, r3, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #4]
-	add r2, r2, r1
-	ldr r1, [sp, #36]
-	sdiv r3, r2, r1
-	ldr r2, [sp, #8]
-	str r3, [r2, r0, lsl #2]
-	ldr r1, [sp, #68]
-	ldr r0, [r1, #4]
-	add r0, r3, r0
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #4]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #8]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #12]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #16]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #20]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #24]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #28]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #32]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #36]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #40]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #44]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #48]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #52]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #56]
-	ldr r1, [sp, #68]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #84]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #72]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #60]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #88]
-	ldr r1, [r1, #64]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #88]
-	str r0, [r1, #60]
-	ldr r2, [sp, #100]
-	mov r0, r2
-	add r2, r2, #16
-	str r2, [sp, #100]
-	ldr r1, [sp, #40]
-	cmp r2, r1
-	bge label31
-	b label33
-label34:
-	ldr r1, [sp, #0]
-	add r1, r1, r0, lsl #2
-	str r1, [sp, #76]
-	ldr r1, [sp, #0]
-	ldr r3, [r1, r0, lsl #2]
-	ldr r2, [sp, #52]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #92]
-	ldr r2, [sp, #52]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #12]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #80]
-	ldr r2, [sp, #12]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #4]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #64]
-	ldr r2, [sp, #4]
-	ldr r1, [r2, r0, lsl #2]
-	add r3, r3, r1
-	ldr r2, [sp, #8]
-	add r1, r2, r0, lsl #2
-	str r1, [sp, #96]
-	ldr r1, [r1, #-4]
-	add r2, r3, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #4]
-	add r2, r2, r1
-	ldr r1, [sp, #36]
-	sdiv r3, r2, r1
-	ldr r2, [sp, #8]
-	str r3, [r2, r0, lsl #2]
-	ldr r1, [sp, #76]
-	ldr r0, [r1, #4]
-	add r0, r3, r0
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #4]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #4]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #8]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #8]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #12]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #12]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #16]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #16]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #20]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #20]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #24]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #24]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #28]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #28]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #32]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #32]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #36]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #36]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #40]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #40]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #44]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #44]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #48]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #48]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #52]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #52]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #56]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #56]
-	ldr r1, [sp, #76]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #92]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #80]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #64]
-	ldr r1, [r1, #60]
-	add r0, r0, r1
-	ldr r1, [sp, #96]
-	ldr r1, [r1, #64]
-	add r0, r0, r1
-	ldr r1, [sp, #36]
-	sdiv r0, r0, r1
-	ldr r1, [sp, #96]
-	str r0, [r1, #60]
-	ldr r2, [sp, #104]
-	mov r0, r2
-	add r2, r2, #16
-	str r2, [sp, #104]
-	ldr r1, [sp, #40]
-	cmp r2, r1
-	bge label29
-	b label34
 label17:
 	add r0, r0, #1
 	movw r3, #63744
@@ -1026,6 +338,695 @@ label17:
 	cmp r6, r8
 	bge label67
 	b label10
+label25:
+	mov r3, #2400
+	ldr r1, [sp, #28]
+	ldr r0, [sp, #16]
+	mla r2, r0, r3, r1
+	str r2, [sp, #8]
+	sub r2, r2, #2400
+	str r2, [sp, #4]
+	ldr r2, [sp, #8]
+	add r2, r2, #2400
+	str r2, [sp, #12]
+	ldr r1, [sp, #24]
+	ldr r0, [sp, #16]
+	mla r1, r0, r3, r1
+	str r1, [sp, #0]
+	ldr r1, [sp, #20]
+	ldr r0, [sp, #16]
+	mla r2, r0, r3, r1
+	str r2, [sp, #52]
+	mov r0, #1
+	add r2, r0, #16
+	str r2, [sp, #100]
+	ldr r1, [sp, #40]
+	cmp r2, r1
+	bge label28
+label33:
+	ldr r1, [sp, #0]
+	add r1, r1, r0, lsl #2
+	str r1, [sp, #76]
+	ldr r1, [sp, #0]
+	ldr r3, [r1, r0, lsl #2]
+	ldr r2, [sp, #52]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #84]
+	ldr r2, [sp, #52]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #4]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #80]
+	ldr r2, [sp, #4]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #12]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #64]
+	ldr r2, [sp, #12]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #8]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #96]
+	ldr r1, [r1, #-4]
+	add r2, r3, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #4]
+	add r2, r2, r1
+	ldr r1, [sp, #36]
+	sdiv r3, r2, r1
+	ldr r2, [sp, #8]
+	str r3, [r2, r0, lsl #2]
+	ldr r1, [sp, #76]
+	ldr r0, [r1, #4]
+	add r0, r3, r0
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #4]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #8]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #12]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #16]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #20]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #24]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #28]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #32]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #36]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #40]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #44]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #48]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #52]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #56]
+	ldr r1, [sp, #76]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #84]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #80]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #64]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #96]
+	ldr r1, [r1, #64]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #96]
+	str r0, [r1, #60]
+	ldr r2, [sp, #100]
+	mov r0, r2
+	add r2, r2, #16
+	str r2, [sp, #100]
+	ldr r1, [sp, #40]
+	cmp r2, r1
+	bge label28
+	b label33
+label28:
+	add r2, r0, #16
+	str r2, [sp, #104]
+	ldr r1, [sp, #40]
+	cmp r2, r1
+	bge label31
+label30:
+	ldr r1, [sp, #0]
+	add r1, r1, r0, lsl #2
+	str r1, [sp, #72]
+	ldr r1, [sp, #0]
+	ldr r3, [r1, r0, lsl #2]
+	ldr r2, [sp, #52]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #88]
+	ldr r2, [sp, #52]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #4]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #68]
+	ldr r2, [sp, #4]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #12]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #60]
+	ldr r2, [sp, #12]
+	ldr r1, [r2, r0, lsl #2]
+	add r3, r3, r1
+	ldr r2, [sp, #8]
+	add r1, r2, r0, lsl #2
+	str r1, [sp, #92]
+	ldr r1, [r1, #-4]
+	add r2, r3, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #4]
+	add r2, r2, r1
+	ldr r1, [sp, #36]
+	sdiv r3, r2, r1
+	ldr r2, [sp, #8]
+	str r3, [r2, r0, lsl #2]
+	ldr r1, [sp, #72]
+	ldr r0, [r1, #4]
+	add r0, r3, r0
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #4]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #4]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #8]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #8]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #12]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #12]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #16]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #16]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #20]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #20]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #24]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #24]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #28]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #28]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #32]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #32]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #36]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #36]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #40]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #40]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #44]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #44]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #48]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #48]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #52]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #52]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #56]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #56]
+	ldr r1, [sp, #72]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #88]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #68]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #60]
+	ldr r1, [r1, #60]
+	add r0, r0, r1
+	ldr r1, [sp, #92]
+	ldr r1, [r1, #64]
+	add r0, r0, r1
+	ldr r1, [sp, #36]
+	sdiv r0, r0, r1
+	ldr r1, [sp, #92]
+	str r0, [r1, #60]
+	ldr r2, [sp, #104]
+	mov r0, r2
+	add r2, r2, #16
+	str r2, [sp, #104]
+	ldr r1, [sp, #40]
+	cmp r2, r1
+	bge label31
+	b label30
 label16:
 	add r1, r1, #1
 	ldr r8, [sp, #48]
@@ -1043,7 +1044,7 @@ label16:
 	cmp r6, r8
 	bge label67
 	b label10
-label24:
+label23:
 	ldr r0, [sp, #32]
 	add r1, r0, #1
 	ldr r0, [sp, #16]
@@ -1051,7 +1052,7 @@ label24:
 	mov r0, r1
 	str r1, [sp, #32]
 	b label18
-label21:
+label35:
 	mov r0, #53
 	bl _sysy_stoptime
 	ldr r8, [sp, #48]

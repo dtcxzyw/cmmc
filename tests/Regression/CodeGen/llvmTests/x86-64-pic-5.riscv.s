@@ -3,6 +3,8 @@
 .globl a
 a:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl get_a
 get_a:

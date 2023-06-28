@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl shl16sar15
 shl16sar15:

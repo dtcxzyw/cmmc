@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl t0
 t0:

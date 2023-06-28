@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl rot0
 rot0:

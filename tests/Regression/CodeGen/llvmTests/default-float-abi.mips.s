@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl test_abi
 test_abi:

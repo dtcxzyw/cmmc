@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl _Z3barv
 _Z3barv:

@@ -4,6 +4,8 @@
 .globl baz
 baz:
 	.4byte	4
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

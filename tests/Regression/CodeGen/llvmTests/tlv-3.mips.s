@@ -3,6 +3,8 @@
 .globl foo
 foo:
 	.byte	1
+.section .rodata
+.bss
 .text
 .globl main
 main:

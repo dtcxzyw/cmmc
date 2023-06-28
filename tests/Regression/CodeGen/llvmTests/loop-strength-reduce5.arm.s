@@ -10,6 +10,8 @@ X:
 Y:
 	.byte	0
 	.byte	0
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

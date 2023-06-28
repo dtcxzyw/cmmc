@@ -15,6 +15,8 @@ c:
 .globl a
 a:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl PR37060
 PR37060:

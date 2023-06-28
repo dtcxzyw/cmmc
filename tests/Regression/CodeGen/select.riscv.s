@@ -1,8 +1,10 @@
 .data
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	3226013648
 	.4byte	1086918628
+.bss
 .text
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:

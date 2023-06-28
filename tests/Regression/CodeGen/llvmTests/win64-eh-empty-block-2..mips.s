@@ -11,6 +11,8 @@ y:
 .globl z
 z:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .globl PR35761
 PR35761:

@@ -1,7 +1,9 @@
 .data
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1293805782
+.bss
 .text
 fibFP:
 	addi sp, sp, -16

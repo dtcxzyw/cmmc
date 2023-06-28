@@ -8,6 +8,8 @@ g0:
 .globl g1
 g1:
 	.4byte	0
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl test_ExplicitSectionForGlobal
 test_ExplicitSectionForGlobal:

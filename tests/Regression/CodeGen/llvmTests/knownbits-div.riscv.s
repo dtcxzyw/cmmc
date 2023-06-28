@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl sdiv_exact_even_even_fail_unknown
 sdiv_exact_even_even_fail_unknown:

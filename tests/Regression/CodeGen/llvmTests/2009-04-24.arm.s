@@ -4,6 +4,8 @@
 .globl i
 i:
 	.4byte	15
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm

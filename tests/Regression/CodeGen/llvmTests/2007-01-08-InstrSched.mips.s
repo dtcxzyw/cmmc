@@ -1,10 +1,12 @@
 .data
+.section .rodata
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1077936128
 	.4byte	1084227584
 	.4byte	1088421888
 	.4byte	1093664768
+.bss
 .text
 .globl foo
 foo:

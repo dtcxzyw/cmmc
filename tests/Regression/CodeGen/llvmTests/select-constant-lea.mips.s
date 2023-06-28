@@ -1,4 +1,6 @@
 .data
+.section .rodata
+.bss
 .text
 .globl select_unsigned_lt_10_8_13
 select_unsigned_lt_10_8_13:

@@ -79,8 +79,38 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             out << ".globl "sv << symbol << '\n';
         out << symbol << ":\n"sv;
     };
+    const auto isDataSection = [](MIRRelocable* reloc) {
+        const auto data = dynamic_cast<MIRDataStorage*>(reloc);
+        if(data)
+            return !data->isReadOnly();
+        return false;
+    };
+    const auto isRoDataSection = [](MIRRelocable* reloc) {
+        const auto data = dynamic_cast<MIRDataStorage*>(reloc);
+        if(data)
+            return data->isReadOnly();
+        return false;
+    };
+    const auto isBssSection = [](MIRRelocable* reloc) {
+        const auto data = dynamic_cast<MIRZeroStorage*>(reloc);
+        return data != nullptr;
+    };
     for(auto& global : module.globals()) {
-        if(!global->reloc->isFunc()) {
+        if(!global->reloc->isFunc() && isDataSection(global->reloc.get())) {
+            dumpSymbol(*global);
+            global->reloc->dump(out, ctx);
+        }
+    }
+    out << ".section .rodata\n"sv;
+    for(auto& global : module.globals()) {
+        if(!global->reloc->isFunc() && isRoDataSection(global->reloc.get())) {
+            dumpSymbol(*global);
+            global->reloc->dump(out, ctx);
+        }
+    }
+    out << ".bss\n"sv;
+    for(auto& global : module.globals()) {
+        if(!global->reloc->isFunc() && isBssSection(global->reloc.get())) {
             dumpSymbol(*global);
             global->reloc->dump(out, ctx);
         }

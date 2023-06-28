@@ -3,6 +3,8 @@
 .align 4
 a:
 	.zero	40000
+.section .rodata
+.bss
 .text
 .syntax unified
 .arm
@@ -21,10 +23,10 @@ main:
 	movw r4, #:lower16:a
 	movt r4, #:upper16:a
 	cmp r5, #0
-	ble label18
+	ble label2
 	mov r1, r7
 	mov r0, r5
-label2:
+label3:
 	movw r2, #58069
 	movt r2, #304
 	movw r3, #48287
@@ -44,10 +46,10 @@ label2:
 	movw r0, #51719
 	movt r0, #15258
 	add r0, r1, r0
-	b label5
+	b label6
 label35:
 	mov r0, r1
-label5:
+label6:
 	movw r1, #58069
 	movt r1, #304
 	movw r3, #48287
@@ -74,7 +76,7 @@ label5:
 	b label42
 label43:
 	mov r0, r1
-label7:
+label8:
 	movw r1, #34953
 	movt r1, #34952
 	smmla r1, r5, r1, r5
@@ -144,11 +146,11 @@ label7:
 	str r1, [r6, #120]
 	movw r1, #9999
 	cmp r3, r1
-	ble label9
+	ble label10
 	cmp r2, #0
-	ble label18
+	ble label2
 	b label203
-label9:
+label10:
 	ldr r1, [r4, r3, lsl #2]
 	mov r7, #30
 	movw r8, #34953
@@ -167,7 +169,7 @@ label9:
 	asr r11, r11, #1
 	mls r9, r11, r9, r0
 	cmp r10, r9
-	beq label14
+	beq label15
 	mov r1, #2
 	add r10, r8, r8, lsr #31
 	asr r10, r10, #1
@@ -187,36 +189,36 @@ label9:
 	lsr r8, r8, #5
 	and r7, r7, r8
 	cmp r7, #0
-	beq label12
+	beq label13
 	ldr r5, [r6, r5, lsl #2]
 	sub r1, r1, r5
 	ldr r5, [r4, r3, lsl #2]
 	add r1, r1, r5
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label18
+	ble label2
 	b label203
-label12:
+label13:
 	ldr r5, [r4, r3, lsl #2]
 	add r1, r1, r5
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label18
+	ble label2
 	b label203
-label14:
+label15:
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label18
+	ble label2
 label203:
 	mov r1, r0
 	mov r0, r2
-	b label2
+	b label3
 label42:
 	movw r0, #51719
 	movt r0, #15258
 	add r0, r1, r0
-	b label7
-label18:
+	b label8
+label2:
 	mov r0, #64
 	bl _sysy_stoptime
 	movw r0, #10000
