@@ -1056,8 +1056,8 @@ label36:
 	movw r7, #:lower16:tape
 	movt r7, #:upper16:tape
 	mov r4, #0
-	mov r3, r4
 	mov r1, r4
+	mov r3, r4
 	mov r2, r4
 	mov r0, r4
 	cmp r4, r5

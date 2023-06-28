@@ -186,15 +186,16 @@ select_fge_fpr_fpr:
 	bx lr
 .globl select_cross
 select_cross:
+	mov r3, r2
 	cmp r0, r1
-	mov r3, #0
-	movwlt r3, #1
-	mov r0, r3
-	cmp r1, r2
+	mov r2, #0
+	movwlt r2, #1
+	mov r0, r2
+	cmp r1, r3
 	bge label201
 	mov r1, #1
 	mov r0, #10
-	cmp r3, #0
+	cmp r2, #0
 	movne r0, r1
 label201:
 	bx lr

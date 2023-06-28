@@ -21,10 +21,10 @@ main:
 	movw r4, #:lower16:a
 	movt r4, #:upper16:a
 	cmp r5, #0
-	ble label2
+	ble label18
 	mov r1, r7
 	mov r0, r5
-label3:
+label2:
 	movw r2, #58069
 	movt r2, #304
 	movw r3, #48287
@@ -44,10 +44,10 @@ label3:
 	movw r0, #51719
 	movt r0, #15258
 	add r0, r1, r0
-	b label6
+	b label5
 label35:
 	mov r0, r1
-label6:
+label5:
 	movw r1, #58069
 	movt r1, #304
 	movw r3, #48287
@@ -74,7 +74,7 @@ label6:
 	b label42
 label43:
 	mov r0, r1
-label8:
+label7:
 	movw r1, #34953
 	movt r1, #34952
 	smmla r1, r5, r1, r5
@@ -144,11 +144,11 @@ label8:
 	str r1, [r6, #120]
 	movw r1, #9999
 	cmp r3, r1
-	ble label10
+	ble label9
 	cmp r2, #0
-	ble label2
+	ble label18
 	b label203
-label10:
+label9:
 	ldr r1, [r4, r3, lsl #2]
 	mov r7, #30
 	movw r8, #34953
@@ -167,7 +167,7 @@ label10:
 	asr r11, r11, #1
 	mls r9, r11, r9, r0
 	cmp r10, r9
-	beq label15
+	beq label14
 	mov r1, #2
 	add r10, r8, r8, lsr #31
 	asr r10, r10, #1
@@ -187,36 +187,36 @@ label10:
 	lsr r8, r8, #5
 	and r7, r7, r8
 	cmp r7, #0
-	beq label13
+	beq label12
 	ldr r5, [r6, r5, lsl #2]
 	sub r1, r1, r5
 	ldr r5, [r4, r3, lsl #2]
 	add r1, r1, r5
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label2
+	ble label18
 	b label203
-label13:
+label12:
 	ldr r5, [r4, r3, lsl #2]
 	add r1, r1, r5
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label2
+	ble label18
 	b label203
-label15:
+label14:
 	str r1, [r4, r3, lsl #2]
 	cmp r2, #0
-	ble label2
+	ble label18
 label203:
 	mov r1, r0
 	mov r0, r2
-	b label3
+	b label2
 label42:
 	movw r0, #51719
 	movt r0, #15258
 	add r0, r1, r0
-	b label8
-label2:
+	b label7
+label18:
 	mov r0, #64
 	bl _sysy_stoptime
 	movw r0, #10000

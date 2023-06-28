@@ -40,8 +40,7 @@ label7:
 	asr r9, r8, #27
 	add r8, r9, r8, lsr #31
 	mls r7, r8, r1, r7
-	add r8, r0, #1
-	mul r8, r8, r3
+	mla r8, r3, r0, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
@@ -250,8 +249,7 @@ label11:
 	asr r9, r8, #27
 	add r8, r9, r8, lsr #31
 	mls r7, r8, r1, r7
-	add r8, r0, #1
-	mul r8, r8, r3
+	mla r8, r3, r0, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
