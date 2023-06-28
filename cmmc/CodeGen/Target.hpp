@@ -25,6 +25,7 @@
 #include <cmmc/IR/Module.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string_view>
@@ -38,10 +39,21 @@ class MIRRelocable;
 
 enum class RuntimeType { None, SplRuntime };
 
+struct TargetOptHeuristic final {
+    // loop unrolling
+    intmax_t unrollBlockSize = 16U;
+    uint32_t maxUnrollSize = 32U;  // static loop unrolling only
+    uint32_t maxUnrollBodySize = 32U;
+    // tail duplication
+    uint32_t duplicationThreshold = 10U;
+    uint32_t duplicationIterations = 10U;
+};
+
 class Target {
 public:
     virtual ~Target() = default;
 
+    [[nodiscard]] virtual const TargetOptHeuristic& getOptHeuristic() const noexcept;
     [[nodiscard]] virtual const DataLayout& getDataLayout() const noexcept = 0;
     [[nodiscard]] virtual const TargetScheduleModel& getScheduleModel() const noexcept {
         reportUnreachable(CMMC_LOCATION());

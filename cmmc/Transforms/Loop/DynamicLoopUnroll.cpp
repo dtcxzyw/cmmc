@@ -16,6 +16,7 @@
 
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -28,7 +29,6 @@
 #include <iostream>
 #include <new>
 
-constexpr intmax_t unrollBlockSize = 16U;  // must be signed integer
 constexpr intmax_t maxStep = 65536;
 
 CMMC_NAMESPACE_BEGIN
@@ -40,6 +40,7 @@ public:
         auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& target = analysis.module().getTarget();
         // func.dump(std::cerr, Noop{});
+        const auto& heuristic = target.getOptHeuristic();
 
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
@@ -50,7 +51,7 @@ public:
                 continue;
             if(std::abs(loop.step) > maxStep)
                 continue;
-            if(loop.header->instructions().size() > maxUnrollBodySize)
+            if(loop.header->instructions().size() > heuristic.maxUnrollBodySize)
                 continue;
             if(hasCall(*loop.header))
                 continue;
@@ -166,7 +167,7 @@ public:
                 const auto batchEnd = builder.makeOp<BinaryInst>(
                     InstructionID::Add, replace.at(indvar),
                     ConstantInteger::get(indvar->getType(),
-                                         loop.step * unrollBlockSize));  // larger bound to keep one exiting edge
+                                         loop.step * heuristic.unrollBlockSize));  // larger bound to keep one exiting edge
                 replaceMap[head] = std::move(replace);
 
                 const auto batchCond = cond->as<CompareInst>()->clone();
@@ -176,13 +177,13 @@ public:
                 batchCond->mutableOperands()[1]->resetValue(bound);
                 builder.setInsertPoint(head, head->instructions().end());
 
-                constexpr auto exitProb =
-                    1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(unrollBlockSize));
+                auto exitProb =
+                    1.0 / (1 + static_cast<double>(estimatedLoopTripCount) / static_cast<double>(heuristic.unrollBlockSize));
                 builder.makeOp<BranchInst>(batchCond, 1.0 - exitProb, loop.latch /*place holder*/, loop.latch);
                 prev = head;
             }
 
-            for(uint32_t idx = 0; idx < unrollBlockSize; ++idx)
+            for(uint32_t idx = 0; idx < heuristic.unrollBlockSize; ++idx)
                 append(idx != 0);
 
             // reset terminator

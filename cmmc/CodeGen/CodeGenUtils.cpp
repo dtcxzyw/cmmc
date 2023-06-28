@@ -143,4 +143,9 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
     reportNotImplemented(location);
 }
 
+const TargetOptHeuristic& Target::getOptHeuristic() const noexcept {
+    static TargetOptHeuristic defaultHeuristic;
+    return defaultHeuristic;
+}
+
 CMMC_MIR_NAMESPACE_END

@@ -16,6 +16,7 @@
 
 #include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/LoopAnalysis.hpp>
+#include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
@@ -30,9 +31,6 @@
 #include <new>
 #include <unordered_map>
 
-constexpr uint32_t unrollBlockSize = 16U;
-static_assert(unrollBlockSize >= 2);
-constexpr uint32_t maxUnrollSize = 32U;
 constexpr intmax_t maxStep = 65536;
 
 CMMC_NAMESPACE_BEGIN
@@ -44,6 +42,7 @@ public:
         const auto& loopInfo = analysis.get<LoopAnalysis>(func);
         const auto& cfg = analysis.get<CFGAnalysis>(func);
         const auto& target = analysis.module().getTarget();
+        const auto& heuristic = target.getOptHeuristic();
 
         bool modified = false;
         for(auto& loop : loopInfo.loops) {
@@ -52,7 +51,7 @@ public:
                 continue;
             if(std::abs(loop.step) > maxStep)
                 continue;
-            if(loop.header->instructions().size() > maxUnrollBodySize)  // TODO: only count non-phi instructions?
+            if(loop.header->instructions().size() > heuristic.maxUnrollBodySize)  // TODO: only count non-phi instructions?
                 continue;
             if(hasCall(*loop.header))
                 continue;
@@ -69,7 +68,7 @@ public:
             const auto size = (bound - initial + loop.step + (loop.step > 0 ? -1 : 1)) / loop.step;
             assert(size >= 0);
 
-            const auto epilogueSize = size > maxUnrollSize ? size % unrollBlockSize : size;
+            const auto epilogueSize = size > heuristic.maxUnrollSize ? size % heuristic.unrollBlockSize : size;
             // std::cerr << size << " " << epilogueSize << std::endl;
             const auto epilogueStart = initial + (size - epilogueSize) * loop.step;
             assert(epilogueStart != initial || epilogueSize > 0);
@@ -135,7 +134,7 @@ public:
                     prev = head;
                 }
 
-                for(uint32_t idx = epilogueSize ? 1 : 2; idx < unrollBlockSize; ++idx)
+                for(uint32_t idx = epilogueSize ? 1 : 2; idx < heuristic.unrollBlockSize; ++idx)
                     append();
 
                 if(!epilogueSize) {
@@ -162,7 +161,7 @@ public:
                         break;
                 }
 
-                const auto tripCount = (size - epilogueSize) / unrollBlockSize;
+                const auto tripCount = (size - epilogueSize) / heuristic.unrollBlockSize;
                 const auto exitProb = 1.0 / static_cast<double>(tripCount);
                 terminator->updateBranchProb(1.0 - exitProb);
             }

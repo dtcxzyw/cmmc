@@ -24,15 +24,13 @@
 CMMC_MIR_NAMESPACE_BEGIN
 
 // FIXME: TailDuplication defeats BlockLayout opt.
-// TODO: provided by schedule model?
-constexpr size_t duplicationThreshold = 10;
-constexpr size_t duplicationIterations = 10;
 
 void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
     assert(ctx.flags.endsWithTerminator);
     simplifyCFGWithUniqueTerminator(func, ctx);
+    auto& heuristic = ctx.target.getOptHeuristic();
 
-    for(uint32_t k = 0; k < duplicationIterations; ++k) {
+    for(uint32_t k = 0; k < heuristic.duplicationIterations; ++k) {
         const auto cfg = calcCFG(func, ctx);
         std::unordered_map<MIRBasicBlock*, std::vector<MIRBasicBlock*>> successors;
         for(auto& block : func.blocks()) {
@@ -59,7 +57,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                 if(targetBlock != block &&
                    !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
-                   targetBlock->instructions().size() <= duplicationThreshold) {
+                   targetBlock->instructions().size() <= heuristic.duplicationThreshold) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());

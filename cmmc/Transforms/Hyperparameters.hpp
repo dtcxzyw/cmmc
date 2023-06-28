@@ -27,6 +27,5 @@ constexpr double defaultLoopProb =
 constexpr double coldBlockThreshold = 0.05;
 constexpr double primaryPathThreshold = 8.0;
 constexpr double significantBlockTripCountDifference = 0.05;
-constexpr uint32_t maxUnrollBodySize = 32U;
 
 CMMC_NAMESPACE_END
