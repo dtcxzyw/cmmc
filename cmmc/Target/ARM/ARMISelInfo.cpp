@@ -521,6 +521,10 @@ static bool buildIReg(ISelContext& ctx, const MIROperand& val, MIROperand& out) 
     return true;
 }
 
+[[maybe_unused]] static bool isOne(const MIROperand& val) {
+    return val.isImm() && val.imm() == 1;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/ISelInfoImpl.hpp>

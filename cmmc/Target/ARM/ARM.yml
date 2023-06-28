@@ -347,9 +347,11 @@ InstSelection:
         Lhs: $Lhs
         Rhs:
           InstMul:
+            Dst: $MulDst
             Lhs: $MulLhs
             Rhs: $MulRhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($MulLhs) && buildIReg(ctx, $MulRhs, [$OutMulRhs])
+            $Predicate: isOperandIReg($MulLhs) && ctx.isSafeToUse($MulLhs, $MulDst) && (!isOperandIReg($MulRhs) || ctx.isSafeToUse($MulRhs, $MulDst))
+        $Predicate: isOperandIReg($Lhs) && buildIReg(ctx, $MulRhs, [$OutMulRhs])
       $Instances: [InstAdd, InstSub]
     Replace:
       FusedMulAddSub:
@@ -432,6 +434,82 @@ InstSelection:
         Rd: $Dst
         Rn: $Rhs
         Op2: $Lhs
+
+  # x * (y + 1) -> x * y + x
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstAdd:
+            Dst: $AddDst
+            Lhs: $AddLhs
+            Rhs: $AddRhs
+            $Predicate: isOperandIReg($AddLhs) && isOne($AddRhs) && ctx.isSafeToUse($AddLhs, $AddDst)
+        $Predicate: isOperandIReg($Lhs)
+    Replace:
+      MLA:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry: $Lhs
+        Rz: $AddLhs
+
+  # x * (y + 1) -> x * y + x
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Rhs: $Lhs
+        Lhs:
+          InstAdd:
+            Dst: $AddDst
+            Lhs: $AddLhs
+            Rhs: $AddRhs
+            $Predicate: isOperandIReg($AddLhs)&& isOne($AddRhs) && ctx.isSafeToUse($AddLhs, $AddDst)
+        $Predicate: isOperandIReg($Lhs)
+    Replace:
+      MLA:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry: $Lhs
+        Rz: $AddLhs
+
+  # x * (1 - y) -> x - x * y
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstSub:
+            Dst: $SubDst
+            Lhs: $SubLhs
+            Rhs: $SubRhs
+            $Predicate: isOperandIReg($SubRhs) && isOne($SubLhs) && ctx.isSafeToUse($SubRhs, $SubDst)
+        $Predicate: isOperandIReg($Lhs)
+    Replace:
+      MLS:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry: $Lhs
+        Rz: $SubRhs
+
+  # x * (1 - y) -> x - x * y
+  - Pattern:
+      InstMul:
+        Dst: $Dst
+        Rhs: $Lhs
+        Lhs:
+          InstSub:
+            Dst: $SubDst
+            Lhs: $SubLhs
+            Rhs: $SubRhs
+            $Predicate: isOperandIReg($SubRhs) && isOne($SubLhs) && ctx.isSafeToUse($SubRhs, $SubDst)
+        $Predicate: isOperandIReg($Lhs)
+    Replace:
+      MLS:
+        Rd: $Dst
+        Rw: $Lhs
+        Ry: $Lhs
+        Rz: $SubRhs
 
   - Pattern:
       InstMul:

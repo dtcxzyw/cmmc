@@ -89,7 +89,7 @@ int32_t fused_mul_sub_imm(int32_t x, int32_t y) {
     return x - y * 777;
 }
 int32_t fused_mul_sub2(int32_t x, int32_t y) {
-    return x * (y - 1);
+    return x * (1 - y);
 }
 int32_t fused_div_rem(int32_t x, int32_t y) {
     return x / y + x % y;
