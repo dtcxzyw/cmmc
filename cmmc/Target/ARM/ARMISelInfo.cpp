@@ -920,6 +920,10 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
                int64_t imm) {
     if(dst == src && imm == 0)
         return;
+    if(imm == 0) {
+        instructions.insert(iter, MIRInst{ MOV }.setOperand<0>(dst).setOperand<1>(src));
+        return;
+    }
 
     uint32_t inst = ADD;
     if(imm < 0) {
