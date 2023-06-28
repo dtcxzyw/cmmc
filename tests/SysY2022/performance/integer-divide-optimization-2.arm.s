@@ -42,15 +42,14 @@ label5:
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r9, r1, r8
-	movw r1, #49153
-	movt r1, #16384
-	smmul r8, r9, r1
-	asr r10, r8, #29
-	add r10, r10, r8, lsr #31
-	movw r8, #32771
-	movt r8, #32766
-	mul r10, r10, r8
-	sub r9, r9, r10
+	movw r1, #32771
+	movt r1, #32766
+	movw r8, #49153
+	movt r8, #16384
+	smmul r10, r9, r8
+	asr r11, r10, #29
+	add r10, r11, r10, lsr #31
+	mls r9, r10, r1, r9
 	add r10, r0, #1
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -64,11 +63,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #2
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -82,11 +80,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #3
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -100,11 +97,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #4
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -118,11 +114,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #5
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -136,11 +131,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #6
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -154,11 +148,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #7
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -172,11 +165,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #8
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -190,11 +182,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #9
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -208,11 +199,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #10
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -226,11 +216,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #11
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -244,11 +233,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #12
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -262,11 +250,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #13
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -280,11 +267,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #14
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -298,11 +284,10 @@ label5:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r0, r0, #15
 	lsl r0, r0, #1
 	add r0, r0, r0, lsr #31
@@ -316,11 +301,10 @@ label5:
 	asr r3, r0, #5
 	add r0, r3, r0, lsr #31
 	add r0, r9, r0
-	smmul r1, r0, r1
-	asr r3, r1, #29
-	add r1, r3, r1, lsr #31
-	mul r1, r1, r8
-	sub r1, r0, r1
+	smmul r3, r0, r8
+	asr r5, r3, #29
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r1, r0
 	mov r0, r2
 	add r2, r2, #16
 	cmp r2, r4
@@ -345,15 +329,14 @@ label10:
 	asr r3, r2, #5
 	add r2, r3, r2, lsr #31
 	add r1, r1, r2
-	movw r2, #49153
-	movt r2, #16384
-	smmul r2, r1, r2
-	asr r3, r2, #29
-	add r2, r3, r2, lsr #31
-	movw r3, #32771
-	movt r3, #32766
-	mul r2, r2, r3
-	sub r1, r1, r2
+	movw r2, #32771
+	movt r2, #32766
+	movw r3, #49153
+	movt r3, #16384
+	smmul r3, r1, r3
+	asr r5, r3, #29
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r2, r1
 	add r0, r0, #1
 	cmp r0, r4
 	bge label327
@@ -393,15 +376,14 @@ label9:
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r9, r1, r8
-	movw r1, #49153
-	movt r1, #16384
-	smmul r8, r9, r1
-	asr r10, r8, #29
-	add r10, r10, r8, lsr #31
-	movw r8, #32771
-	movt r8, #32766
-	mul r10, r10, r8
-	sub r9, r9, r10
+	movw r1, #32771
+	movt r1, #32766
+	movw r8, #49153
+	movt r8, #16384
+	smmul r10, r9, r8
+	asr r11, r10, #29
+	add r10, r11, r10, lsr #31
+	mls r9, r10, r1, r9
 	add r10, r0, #1
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -415,11 +397,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #2
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -433,11 +414,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #3
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -451,11 +431,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #4
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -469,11 +448,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #5
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -487,11 +465,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #6
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -505,11 +482,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #7
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -523,11 +499,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #8
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -541,11 +516,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #9
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -559,11 +533,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #10
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -577,11 +550,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #11
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -595,11 +567,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #12
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -613,11 +584,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #13
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -631,11 +601,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r10, r0, #14
 	lsl r10, r10, #1
 	add r10, r10, r10, lsr #31
@@ -649,11 +618,10 @@ label9:
 	asr r11, r10, #5
 	add r10, r11, r10, lsr #31
 	add r9, r9, r10
-	smmul r10, r9, r1
+	smmul r10, r9, r8
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
-	mul r10, r10, r8
-	sub r9, r9, r10
+	mls r9, r10, r1, r9
 	add r0, r0, #15
 	lsl r0, r0, #1
 	add r0, r0, r0, lsr #31
@@ -667,11 +635,10 @@ label9:
 	asr r3, r0, #5
 	add r0, r3, r0, lsr #31
 	add r0, r9, r0
-	smmul r1, r0, r1
-	asr r3, r1, #29
-	add r1, r3, r1, lsr #31
-	mul r1, r1, r8
-	sub r1, r0, r1
+	smmul r3, r0, r8
+	asr r5, r3, #29
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r1, r0
 	mov r0, r2
 	add r2, r2, #16
 	cmp r2, r4

@@ -191,12 +191,12 @@ select_cross:
 	movwlt r3, #1
 	mov r0, r3
 	cmp r1, r2
-	bge label195
+	bge label201
 	mov r1, #1
 	mov r0, #10
 	cmp r3, #0
 	movne r0, r1
-label195:
+label201:
 	bx lr
 .globl select_cross_fpr
 select_cross_fpr:
@@ -205,7 +205,7 @@ select_cross_fpr:
 	movwlt r0, #1
 	mov r3, r0
 	cmp r1, r2
-	bge label221
+	bge label227
 	mov r1, #1065353216
 	vmov s1, r1
 	movw r1, #0
@@ -213,11 +213,11 @@ select_cross_fpr:
 	vmov s0, r1
 	cmp r0, #0
 	vmovne.f32 s0, s1
-	b label211
-label221:
+	b label217
+label227:
 	vmov s0, r3
 	vcvt.f32.s32 s0, s0
-label211:
+label217:
 	bx lr
 .globl select_round
 select_round:
@@ -226,23 +226,22 @@ select_round:
 	vmov s1, r0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	bmi label231
-label232:
+	bmi label237
+label238:
 	bx lr
-label231:
+label237:
 	movw r0, #4068
 	movt r0, #16585
 	vmov s1, r0
 	vadd.f32 s0, s0, s1
-	b label232
+	b label238
 .globl select_bitset
 select_bitset:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
-	cmp r1, #1
-	mov r1, #0
-	movweq r1, #1
+	clz r0, r0
+	lsr r0, r0, #5
+	sub r1, r1, #1
+	clz r1, r1
+	lsr r1, r1, #5
 	and r0, r0, r1
 	rsb r0, r0, #0
 	and r0, r2, r0

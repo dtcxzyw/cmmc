@@ -6,21 +6,20 @@
 .fpu vfpv4
 .globl seqz
 seqz:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl seqi
 seqi:
-	cmp r0, #1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl seq
 seq:
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl snei
 snei:
@@ -90,9 +89,9 @@ sge:
 	bx lr
 .globl seq_all_one
 seq_all_one:
-	cmn r0, #1
-	mov r0, #0
-	movweq r0, #1
+	add r0, r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl sne_all_one
 sne_all_one:

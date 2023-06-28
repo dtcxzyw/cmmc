@@ -705,20 +705,97 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
+          InstSCmp:
+            Dst: $Cond
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+        Tgt: $Reloc
+        Prob: $Prob
+    Replace:
+      B_Cond:
+        CC:
+          Compare:
+            $Opcode: getCompareOpcode(($IsOpposite).imm())
+            $Template: CMP
+            Rn: $Lhs
+            Op2: $Out
+            CC: getCC()
+        CF: getCondFieldSCmp($Op)
+        Tgt: $Reloc
+        Prob: $Prob
+
+  - Pattern:
+      InstBranch:
+        Cond:
           NZCVFlag2GPR:
             Rd: $Cond
             CC: $CC
             CF: $CF
-            $Predicate: ctx.isSafeToUse($CC, $Cond)
+            $Predicate: isOperandIReg($Cond) && ctx.isSafeToUse($CC, $Cond)
         Tgt: $Reloc
         Prob: $Prob
-        $Predicate: isOperandIReg($Cond)
     Replace:
       B_Cond:
         CC: $CC
         CF: $CF
         Tgt: $Reloc
         Prob: $Prob
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          InstSCmp:
+            Dst: $Cond
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+        Lhs: $LVal
+        Rhs: $RVal
+        $Predicate: isOperandIReg($Dst)
+    Replace:
+      Select_GPR:
+        Rd: $Dst
+        Rn: $LVal
+        Rm: $RVal
+        CC:
+          Compare:
+            $Opcode: getCompareOpcode(($IsOpposite).imm())
+            $Template: CMP
+            Rn: $Lhs
+            Op2: $Out
+            CC: getCC()
+        CF: getCondFieldSCmp($Op)
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond:
+          InstSCmp:
+            Dst: $Cond
+            Lhs: $Lhs
+            Rhs: $Rhs
+            Op: $Op
+            $Predicate: ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+        Lhs: $LVal
+        Rhs: $RVal
+        $Predicate: isOperandFPR($Dst)
+    Replace:
+      Select_FPR:
+        Rd: $Dst
+        Rn: $LVal
+        Rm: $RVal
+        CC:
+          Compare:
+            $Opcode: getCompareOpcode(($IsOpposite).imm())
+            $Template: CMP
+            Rn: $Lhs
+            Op2: $Out
+            CC: getCC()
+        CF: getCondFieldSCmp($Op)
 
   - Pattern:
       InstSelect:
@@ -760,21 +837,21 @@ InstSelection:
         CC: $CC
         CF: $CF
 
-  # - Pattern:
-  #     InstSCmp:
-  #       Dst: $Dst
-  #       Lhs: $Lhs
-  #       Rhs: $Rhs
-  #       Op: $Op
-  #       $Predicate: isEqualOp($Op) && buildSub(ctx, $Lhs, $Rhs, [$Out])
-  #   Replace:
-  #     LSR:
-  #       Rd: $Dst
-  #       Rm:
-  #         CLZ:
-  #           Rd: getVRegAs(ctx, $Dst)
-  #           Rm: $Out
-  #       Sh: MIROperand::asImm(5, OperandType::Int32)
+  - Pattern:
+      InstSCmp:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        Op: $Op
+        $Predicate: isEqualOp($Op) && buildSub(ctx, $Lhs, $Rhs, [$Out])
+    Replace:
+      LSR:
+        Rd: $Dst
+        Rm:
+          CLZ:
+            Rd: getVRegAs(ctx, $Dst)
+            Rm: $Out
+        Sh: MIROperand::asImm(5, OperandType::Int32)
 
   # Fallbacks for cmp/branch/select
   - Pattern:

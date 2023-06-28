@@ -47,25 +47,25 @@ label7:
 	str r8, [r4, r0, lsl #2]
 	cmp r0, r6
 	ble label17
-	b label128
-label167:
+	b label127
+label166:
 	add r0, r0, #1
 	ldr r9, [r4, r0, lsl #2]
 	cmp r9, r8
 	blt label10
-	b label180
-label128:
+	b label179
+label127:
 	mov r3, r0
 	add r1, r0, #1
 	ldr r8, [r7, #0]
 	mov r0, r2
 	cmp r2, r1
 	bge label10
-	b label141
-label154:
+	b label140
+label153:
 	cmp r0, r1
 	bge label14
-	b label167
+	b label166
 label10:
 	cmp r0, r1
 	bge label14
@@ -105,7 +105,7 @@ label10:
 	str r8, [r4, r0, lsl #2]
 	cmp r0, r6
 	ble label17
-	b label128
+	b label127
 label14:
 	cmp r0, r1
 	bne label20
@@ -149,13 +149,13 @@ label14:
 	ldr r9, [r4, r1, lsl #2]
 	cmp r9, r8
 	bge label7
-	b label154
-label141:
+	b label153
+label140:
 	sub r1, r1, #1
 	ldr r9, [r4, r1, lsl #2]
 	cmp r9, r8
 	bge label7
-	b label154
+	b label153
 label17:
 	cmp r0, r6
 	bge label19
@@ -190,7 +190,7 @@ label17:
 	mov r0, r2
 	cmp r2, r1
 	bge label10
-	b label141
+	b label140
 label19:
 	mov r0, #61
 	bl _sysy_stoptime
@@ -198,12 +198,11 @@ label19:
 	mov r1, r4
 	bl putarray
 	ldr r0, [r4, r6, lsl #2]
-	asr r1, r0, #31
-	add r1, r0, r1, lsr #24
-	asr r1, r1, #8
-	mov r2, #256
-	mul r1, r1, r2
-	sub r0, r0, r1
+	mov r1, #256
+	asr r2, r0, #31
+	add r2, r0, r2, lsr #24
+	asr r2, r2, #8
+	mls r0, r2, r1, r0
 	pop { r4, r5, r6, r7, r8, r9, r10, pc }
 label20:
 	ldr r9, [r4, r0, lsl #2]
@@ -246,7 +245,7 @@ label20:
 	ldr r9, [r4, r0, lsl #2]
 	cmp r9, r8
 	blt label10
-label180:
+label179:
 	cmp r0, r1
 	bne label20
 	str r8, [r7, #0]
@@ -255,4 +254,4 @@ label180:
 	str r8, [r4, r0, lsl #2]
 	cmp r0, r6
 	ble label17
-	b label128
+	b label127
