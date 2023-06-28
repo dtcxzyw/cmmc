@@ -256,9 +256,11 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
 
+        // func.dump(std::cerr, Noop{});
         for(auto block : func.blocks()) {
             modified |= reorderBlock(block);
         }
+        // func.dump(std::cerr, Noop{});
 
         return modified;
     }

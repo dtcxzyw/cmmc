@@ -37,7 +37,8 @@ class Reassociate final : public TransformPass<Function> {
             number[&inst] = ++numberCount;
 
         auto getNumber = [&](Value* v) -> uint32_t {
-            assert(v->isConstant());
+            if(v->isConstant())
+                return 0;
             if(auto iter = number.find(v); iter != number.cend())
                 return iter->second;
             return 0;

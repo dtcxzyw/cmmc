@@ -798,7 +798,12 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto cc = inst.getOperand(1);
             auto cf = inst.getOperand(2);
             ctx.instructions.insert(ctx.iter, MIRInst{ MOV_Constant }.setOperand<0>(dst).setOperand<1>(getZero(dst)));
-            *ctx.iter = MIRInst{ MOVW_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(getOne(dst)).setOperand<3>(cc);
+            *ctx.iter = MIRInst{ MOVW_Cond }
+                            .setOperand<0>(cf)
+                            .setOperand<1>(dst)
+                            .setOperand<2>(getOne(dst))
+                            .setOperand<3>(cc)
+                            .setOperand<4>(dst);
             break;
         }
         case Select_GPR: {
@@ -808,7 +813,8 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto cc = inst.getOperand(3);
             auto cf = inst.getOperand(4);
             ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(rhs));
-            *ctx.iter = MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
+            *ctx.iter =
+                MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc).setOperand<4>(dst);
             break;
         }
         case Select_FPR: {
@@ -818,7 +824,8 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto cc = inst.getOperand(3);
             auto cf = inst.getOperand(4);
             ctx.instructions.insert(ctx.iter, MIRInst{ VMOV }.setOperand<0>(dst).setOperand<1>(rhs));
-            *ctx.iter = MIRInst{ VMOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc);
+            *ctx.iter =
+                MIRInst{ VMOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc).setOperand<4>(dst);
             break;
         }
         case LoadGlobalAddr: {

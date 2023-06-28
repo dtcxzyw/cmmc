@@ -100,7 +100,7 @@ InstInfo:
     Flag: [RegCopy]
 
   MoveCond:
-    Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use]"
+    Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
     Instances:
       MOV_Cond:
         Mnemonic: mov
@@ -209,7 +209,7 @@ InstInfo:
     Format: movw $Rd:GPR[Def], $Imm:UImm16[Metadata]
     Flag: [LoadConstant]
   MOVW_Cond:
-    Format: "movw$CF:CondField[Metadata] $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $CC:CC[Use]"
+    Format: "movw$CF:CondField[Metadata] $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
   MOVT:
     Format: "movt $Rd:GPR[Def], $Imm:UImm16[Metadata] @ Implicit Use: $Rs:GPR[Use]"
     CustomVerifier: true
@@ -254,7 +254,7 @@ InstInfo:
     Flag: [RegCopy]
 
   VMOV_Cond:
-    Format: "vmov$CF:CondField[Metadata].f32 $Fd:FPR[Def], $Fm:FPR[Use] @ Implicit Use: $CC:CC[Use]"
+    Format: "vmov$CF:CondField[Metadata].f32 $Fd:FPR[Def], $Fm:FPR[Use] @ Implicit Use: $CC:CC[Use], $FdUse:FPR[Use]"
 
   VMOV_GPR2FPR:
     Format: vmov $Sn:FPR[Def], $Rd:GPR[Use]
