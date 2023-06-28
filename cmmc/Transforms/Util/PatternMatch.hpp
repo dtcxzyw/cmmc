@@ -259,6 +259,14 @@ template <typename Lhs, typename Rhs>
 auto xor_(Lhs lhs, Rhs rhs) {  // NOLINT
     return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::Xor, lhs, rhs };
 }
+template <typename Lhs, typename Rhs>
+auto smin(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::SMin, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto smax(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<true, Lhs, Rhs>{ InstructionID::SMax, lhs, rhs };
+}
 
 template <typename T>
 auto not_(T value) noexcept {  // NOLINT

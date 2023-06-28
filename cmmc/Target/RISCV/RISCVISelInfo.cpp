@@ -519,6 +519,13 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 imm2reg(shamt);
             break;
         }
+        case InstSMin: {
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            imm2reg(lhs);
+            imm2reg(rhs);
+            break;
+        }
         default:
             break;
     }

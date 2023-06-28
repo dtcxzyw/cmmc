@@ -811,6 +811,14 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addInt(getInt(0) >> getInt(1));
                 break;
             }
+            case InstructionID::SMin: {
+                addInt(std::min(getInt(0), getInt(1)));
+                break;
+            }
+            case InstructionID::SMax: {
+                addInt(std::max(getInt(0), getInt(1)));
+                break;
+            }
             case InstructionID::FAdd: {
                 addFP(getFP(0) + getFP(1));
                 break;

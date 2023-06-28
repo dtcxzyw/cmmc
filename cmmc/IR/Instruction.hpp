@@ -66,6 +66,8 @@ enum class InstructionID {
     Shl,
     LShr,
     AShr,
+    SMin,
+    SMax,
     IntegerOpEnd,
     // floating point ops
     FloatingPointOpBegin,

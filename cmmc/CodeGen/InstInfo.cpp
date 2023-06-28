@@ -180,6 +180,8 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(Shl);
     CMMC_ASSERT_OFFSET(LShr);
     CMMC_ASSERT_OFFSET(AShr);
+    CMMC_ASSERT_OFFSET(SMin);
+    CMMC_ASSERT_OFFSET(SMax);
     CMMC_ASSERT_OFFSET(Neg);
     CMMC_ASSERT_OFFSET(FAdd);
     CMMC_ASSERT_OFFSET(FSub);

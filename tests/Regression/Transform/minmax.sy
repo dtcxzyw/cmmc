@@ -1,0 +1,68 @@
+int smin_lt(int a, int b) {
+	return a < b ? a : b;
+}
+
+int smax_lt(int a, int b) {
+	return a < b ? b : a;
+}
+
+int smin_le(int a, int b) {
+	return a <= b ? a : b;
+}
+
+int smax_le(int a, int b) {
+	return a <= b ? b : a;
+}
+
+int smin_gt(int a, int b) {
+    return a > b ? b : a;
+}
+
+int smax_gt(int a, int b) {
+    return a > b ? a : b;
+}
+
+int smin_ge(int a, int b) {
+    return a >= b ? b : a;
+}
+
+int smax_ge(int a, int b) {
+    return a >= b ? a : b;
+}
+
+int smin_constprop() {
+    return smin_lt(1, 2);
+}
+
+int smax_constprop() {
+    return smax_lt(1, 2);
+}
+
+int smin_int_min(int x) {
+    int min = -2147483647 - 1;
+    return smin_lt(x, min);
+}
+
+int smax_int_max(int x) {
+    int max = 2147483647;
+    return smax_lt(x, max);
+}
+
+int smin_int_max(int x) {
+    int max = 2147483647;
+    return smin_lt(x, max);
+}
+
+int smax_int_min(int x) {
+    int min = -2147483647 - 1;
+    return smax_lt(x, min);
+}
+
+int smin_associate(int x, int y) {
+    return smin_lt(x, smin_lt(y,x ));
+}
+
+int smax_associate(int x, int y) {
+    return smax_lt(x, smax_lt(y,x ));
+}
+

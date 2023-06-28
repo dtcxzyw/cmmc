@@ -2,6 +2,8 @@ InstInfo:
   # RV32I Base Integer Instruction Set
   RType:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Rs2:GPR[Use]
+  R2Type:
+    Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use]
   IType:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rs1:GPR[Use], $Imm:Imm12[Metadata]
   UType:
@@ -269,6 +271,79 @@ InstInfo:
       Mnemonic: fcvt.s.wu
     FMV_X_W:
       Mnemonic: fmv.x.w
+  # Bitmanip Extension
+  InstanceBRR:
+    Template: RType
+    # Zba
+    ADD_UW:
+      Mnemonic: add.uw
+    SH1ADD:
+      Mnemonic: sh1add
+    SH1ADD_UW:
+      Mnemonic: sh1add.uw
+    SH2ADD:
+      Mnemonic: sh2add
+    SH2ADD_UW:
+      Mnemonic: sh2add.uw
+    SH3ADD:
+      Mnemonic: sh3add
+    SH3ADD_UW:
+      Mnemonic: sh3add.uw
+    SLLI_UW:
+      Mnemonic: slli.uw
+    # Zbb
+    ANDN:
+      Mnemonic: andn
+    ORN:
+      Mnemonic: orn
+    XNOR:
+      Mnemonic: xnor
+    MIN:
+      Mnemonic: min
+    MINU:
+      Mnemonic: minu
+    MAX:
+      Mnemonic: max
+    MAXU:
+      Mnemonic: maxu
+    SEXT_B:
+      Mnemonic: sext.b
+    SEXT_H:
+      Mnemonic: sext.h
+    ZEXT_H:
+      Mnemonic: zext.h
+    ROL:
+      Mnemonic: rol
+    ROLW:
+      Mnemonic: rolw
+    ROR:
+      Mnemonic: ror
+    RORI:
+      Mnemonic: rori
+    RORIW:
+      Mnemonic: roriw
+    RORW:
+      Mnemonic: rorw
+  InstanceBR:
+    Template: R2Type
+    # Zba
+    CLZ:
+      Mnemonic: clz
+    CLZW:
+      Mnemonic: clzw
+    CTZ:
+      Mnemonic: ctz
+    CTZW:
+      Mnemonic: ctzw
+    CPOP:
+      Mnemonic: cpop
+    CPOPW:
+      Mnemonic: cpopw
+    # Zbb
+    ORC_B:
+      Mnemonic: orc.b
+    REV8:
+      Mnemonic: rev8
 
   # Pseudo Instructions
   LoadImm12:
@@ -604,6 +679,30 @@ InstSelection:
         $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       SRLW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstSMin:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MIN:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+    Replace:
+      MAX:
         Rd: $Dst
         Rs1: $Lhs
         Rs2: $Rhs

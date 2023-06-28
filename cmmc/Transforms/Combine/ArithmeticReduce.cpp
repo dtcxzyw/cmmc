@@ -508,6 +508,57 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
             }
 
+            if (target.isNativeSupported(InstructionID::SMin) && target.isNativeSupported(InstructionID::SMax)) {
+                // smin(smin(a, b), c) -> smin(a, b) if a == c or b == c
+                if(smin(smin(any(v1), any(v2)), any(v3))(matchCtx)) {
+                    if(v1 == v3 || v2 == v3)
+                        return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
+                }
+                // smax(smax(a, b), c) -> smax(a, b) if a == c or b == c
+                if(smax(smax(any(v1), any(v2)), any(v3))(matchCtx)) {
+                    if(v1 == v3 || v2 == v3)
+                        return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
+                }
+                // smin(smax(a, b), c) -> c if a == c or b == c
+                if(smin(smax(any(v1), any(v2)), any(v3))(matchCtx)) {
+                    if(v1 == v3 || v2 == v3)
+                        return v3;
+                }
+                // smax(smin(a, b), c) -> c if a == c or b == c
+                if(smax(smin(any(v1), any(v2)), any(v3))(matchCtx)) {
+                    if(v1 == v3 || v2 == v3)
+                        return v3;
+                }
+
+                // smin(a, INT_MIN) -> INT_MIN
+                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx)) {
+                    return makeIntLike(std::numeric_limits<int32_t>::min(), inst);
+                }
+                // smin(a, INT_MAX) -> a
+                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx)) {
+                    return v1;
+                }
+                // smax(a, INT_MAX) -> INT_MAX
+                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx)) {
+                    return makeIntLike(std::numeric_limits<int32_t>::max(), inst);
+                }
+                // smax(a, INT_MIN) -> a
+                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx)) {
+                    return v1;
+                }
+
+                // Signed a <(=) b ? a : b -> smin a, b
+                if(select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
+                    if (v1 == v3 && v2 == v4)
+                        return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
+                }
+                // Signed a < b ? b : a -> smax a, b
+                if(select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
+                    if (v1 == v4 && v2 == v3)
+                        return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

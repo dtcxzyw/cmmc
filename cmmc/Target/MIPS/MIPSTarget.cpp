@@ -199,6 +199,9 @@ class MIPSTarget final : public Target {
     MIPSRegisterInfo mRegisterInfo;
 
 public:
+    [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
+        return inst != InstructionID::SMin && inst != InstructionID::SMax;
+    }
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }

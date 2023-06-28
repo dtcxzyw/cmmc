@@ -1,0 +1,31 @@
+int smin_lt(int a, int b) {
+	return a < b ? a : b;
+}
+
+int smax_lt(int a, int b) {
+	return a < b ? b : a;
+}
+
+int smin_le(int a, int b) {
+	return a <= b ? a : b;
+}
+
+int smax_le(int a, int b) {
+	return a <= b ? b : a;
+}
+
+int smin_gt(int a, int b) {
+    return a > b ? b : a;
+}
+
+int smax_gt(int a, int b) {
+    return a > b ? a : b;
+}
+
+int smin_ge(int a, int b) {
+    return a >= b ? b : a;
+}
+
+int smax_ge(int a, int b) {
+    return a >= b ? a : b;
+}

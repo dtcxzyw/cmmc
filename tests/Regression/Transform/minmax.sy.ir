@@ -1,0 +1,74 @@
+func @smin_lt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smax_lt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smin_le(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smax_le(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smin_gt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smax_gt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smin_ge(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smax_ge(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %a, i32 %b;
+    ret i32 %0;
+}
+func @smin_constprop() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 1;
+}
+func @smax_constprop() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 2;
+}
+func @smin_int_min() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 -2147483648;
+}
+func @smax_int_max() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 2147483647;
+}
+func @smin_int_max(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @smax_int_min(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @smin_associate(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %y, i32 %x;
+    ret i32 %0;
+}
+func @smax_associate(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %y, i32 %x;
+    ret i32 %0;
+}

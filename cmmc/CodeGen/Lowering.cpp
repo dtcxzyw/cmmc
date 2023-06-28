@@ -576,6 +576,10 @@ static void lower(BinaryInst* inst, LoweringContext& ctx) {
                 return InstLShr;
             case InstructionID::AShr:
                 return InstAShr;
+            case InstructionID::SMin:
+                return InstSMin;
+            case InstructionID::SMax:
+                return InstSMax;
             case InstructionID::FAdd:
                 return InstFAdd;
             case InstructionID::FSub:
@@ -952,6 +956,10 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
         case InstructionID::LShr:
             [[fallthrough]];
         case InstructionID::AShr:
+            [[fallthrough]];
+        case InstructionID::SMin:
+            [[fallthrough]];
+        case InstructionID::SMax:
             [[fallthrough]];
         case InstructionID::FAdd:
             [[fallthrough]];

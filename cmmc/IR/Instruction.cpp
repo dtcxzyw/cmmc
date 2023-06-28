@@ -274,6 +274,10 @@ static std::string_view getInstName(InstructionID instID) {
             return "lshr"sv;
         case InstructionID::AShr:
             return "ashr"sv;
+        case InstructionID::SMin:
+            return "smin"sv;
+        case InstructionID::SMax:
+            return "smax"sv;
         case InstructionID::FAdd:
             return "fadd"sv;
         case InstructionID::FSub:

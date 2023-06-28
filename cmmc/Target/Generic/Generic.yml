@@ -48,6 +48,14 @@ InstInfo:
         Op: LShr
       AShr:
         Op: AShr
+  MinMax:
+    Format: $Op:Template $Dst:IReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use]
+    Flag: [Commutative]
+    Instances:
+      SMin:
+        Op: SMin
+      SMax:
+        Op: SMax
   IntegerUnary:
     Format: $Op:Template $Dst:IReg[Def], $Src:IVal[Use]
     Instances:

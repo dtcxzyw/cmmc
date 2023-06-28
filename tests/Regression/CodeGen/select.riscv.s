@@ -295,15 +295,9 @@ select_bitset:
 	ret
 .globl select_imax
 select_imax:
-	slt a2, a1, a0
-	bne a2, zero, label327
-	mv a0, a1
-label327:
+	min a0, a0, a1
 	ret
 .globl select_imin
 select_imin:
-	slt a2, a0, a1
-	bne a2, zero, label334
-	mv a0, a1
-label334:
+	min a0, a0, a1
 	ret

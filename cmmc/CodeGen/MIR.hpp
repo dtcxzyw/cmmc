@@ -253,6 +253,9 @@ enum MIRGenericInst : uint32_t {
     InstShl,
     InstLShr,
     InstAShr,
+    // MinMax
+    InstSMin,
+    InstSMax,
     // Int Unary
     InstNeg,
     // FP
