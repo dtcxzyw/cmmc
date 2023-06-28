@@ -111,6 +111,11 @@ fused_mul_add2:
 	mulw a1, a1, a2
 	addw a0, a1, a0
 	ret
+.globl fused_mul_add3
+fused_mul_add3:
+	addiw a1, a1, 1
+	mulw a0, a1, a0
+	ret
 .globl fused_mul_sub
 fused_mul_sub:
 	mulw a1, a1, a2
@@ -121,6 +126,11 @@ fused_mul_sub_imm:
 	li a2, 777
 	mulw a1, a1, a2
 	subw a0, a0, a1
+	ret
+.globl fused_mul_sub2
+fused_mul_sub2:
+	addiw a1, a1, -1
+	mulw a0, a1, a0
 	ret
 .globl fused_div_rem
 fused_div_rem:

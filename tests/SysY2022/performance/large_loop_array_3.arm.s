@@ -40,7 +40,7 @@ main:
 	vmov s1, r2
 	cmp r0, r5
 	bge label14
-	b label446
+	b label447
 label32:
 	movw r2, #52429
 	movt r2, #15820
@@ -89,7 +89,7 @@ label34:
 	add sp, sp, #65536
 	vpop { s16 }
 	pop { r5, r6, r7, r8, pc }
-label446:
+label447:
 	vmov s2, r1
 	vcvt.f32.s32 s2, s2
 	vadd.f32 s3, s1, s2
@@ -136,7 +136,7 @@ label15:
 	vmov s1, r2
 	cmp r1, r5
 	bge label14
-	b label446
+	b label447
 label64:
 	vmov s2, r1
 	vcvt.f32.s32 s2, s2
@@ -153,14 +153,85 @@ label64:
 label20:
 	add r3, r2, #16
 	cmp r3, r5
-	bge label23
-	b label30
+	bge label24
 label23:
+	add r8, r7, r2, lsl #2
+	vldr s3, [r8, #0]
+	add r2, r6, r2, lsl #2
+	vldr s4, [r2, #0]
+	vldr s5, [r8, #4]
+	vldr s6, [r2, #4]
+	vmul.f32 s5, s5, s6
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vadd.f32 s2, s2, s5
+	vldr s3, [r8, #8]
+	vldr s4, [r2, #8]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #12]
+	vldr s4, [r2, #12]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #16]
+	vldr s4, [r2, #16]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #20]
+	vldr s4, [r2, #20]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #24]
+	vldr s4, [r2, #24]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #28]
+	vldr s4, [r2, #28]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #32]
+	vldr s4, [r2, #32]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #36]
+	vldr s4, [r2, #36]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #40]
+	vldr s4, [r2, #40]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #44]
+	vldr s4, [r2, #44]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #48]
+	vldr s4, [r2, #48]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #52]
+	vldr s4, [r2, #52]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #56]
+	vldr s4, [r2, #56]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	vldr s3, [r8, #60]
+	vldr s4, [r2, #60]
+	vmul.f32 s3, s3, s4
+	vadd.f32 s2, s2, s3
+	mov r2, r3
+	add r3, r3, #16
+	cmp r3, r5
+	bge label24
+	b label23
+label24:
 	add r3, r2, #16
 	cmp r3, r5
-	bge label26
-	b label29
-label26:
+	bge label27
+	b label30
+label27:
 	add r3, r7, r2, lsl #2
 	vldr s3, [r3, #0]
 	add r3, r6, r2, lsl #2
@@ -251,7 +322,7 @@ label26:
 	add r2, r2, #1
 	cmp r2, r5
 	bge label15
-label462:
+label463:
 	add r3, r7, r2, lsl #2
 	vldr s3, [r3, #0]
 	add r3, r6, r2, lsl #2
@@ -261,7 +332,7 @@ label462:
 	add r2, r2, #1
 	cmp r2, r5
 	bge label15
-	b label462
+	b label463
 label30:
 	add r8, r7, r2, lsl #2
 	vldr s3, [r8, #0]
@@ -332,80 +403,8 @@ label30:
 	mov r2, r3
 	add r3, r3, #16
 	cmp r3, r5
-	bge label23
+	bge label27
 	b label30
-label29:
-	add r8, r7, r2, lsl #2
-	vldr s3, [r8, #0]
-	add r2, r6, r2, lsl #2
-	vldr s4, [r2, #0]
-	vldr s5, [r8, #4]
-	vldr s6, [r2, #4]
-	vmul.f32 s5, s5, s6
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vadd.f32 s2, s2, s5
-	vldr s3, [r8, #8]
-	vldr s4, [r2, #8]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #12]
-	vldr s4, [r2, #12]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #16]
-	vldr s4, [r2, #16]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #20]
-	vldr s4, [r2, #20]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #24]
-	vldr s4, [r2, #24]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #28]
-	vldr s4, [r2, #28]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #32]
-	vldr s4, [r2, #32]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #36]
-	vldr s4, [r2, #36]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #40]
-	vldr s4, [r2, #40]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #44]
-	vldr s4, [r2, #44]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #48]
-	vldr s4, [r2, #48]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #52]
-	vldr s4, [r2, #52]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #56]
-	vldr s4, [r2, #56]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	vldr s3, [r8, #60]
-	vldr s4, [r2, #60]
-	vmul.f32 s3, s3, s4
-	vadd.f32 s2, s2, s3
-	mov r2, r3
-	add r3, r3, #16
-	cmp r3, r5
-	bge label26
-	b label29
 label31:
 	add r8, r7, r2, lsl #2
 	vldr s3, [r8, #0]

@@ -33,180 +33,164 @@ label5:
 	asr r7, r6, #5
 	add r6, r7, r6, lsr #31
 	add r7, r1, r6
-	movw r1, #16383
-	movt r1, #4096
-	smmul r6, r7, r1
-	asr r8, r6, #23
-	add r8, r8, r6, lsr #31
-	movw r6, #57345
-	movt r6, #2047
-	mul r8, r8, r6
-	sub r7, r7, r8
+	movw r1, #57345
+	movt r1, #2047
+	movw r6, #16383
+	movt r6, #4096
+	smmul r8, r7, r6
+	asr r9, r8, #23
+	add r8, r9, r8, lsr #31
+	mls r7, r8, r1, r7
 	add r8, r0, #1
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #2
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #3
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #4
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #5
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #6
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #7
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #8
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #9
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #10
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #11
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #12
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #13
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #14
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r0, r0, #15
 	mul r0, r0, r3
 	smmla r0, r0, r5, r0
 	asr r3, r0, #5
 	add r0, r3, r0, lsr #31
 	add r0, r7, r0
-	smmul r1, r0, r1
-	asr r3, r1, #23
-	add r1, r3, r1, lsr #31
-	mul r1, r1, r6
-	sub r1, r0, r1
+	smmul r3, r0, r6
+	asr r5, r3, #23
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r1, r0
 	mov r0, r2
 	add r2, r2, #16
 	cmp r2, r4
@@ -221,15 +205,14 @@ label10:
 	asr r3, r2, #5
 	add r2, r3, r2, lsr #31
 	add r1, r1, r2
-	movw r2, #16383
-	movt r2, #4096
-	smmul r2, r1, r2
-	asr r3, r2, #23
-	add r2, r3, r2, lsr #31
-	movw r3, #57345
-	movt r3, #2047
-	mul r2, r2, r3
-	sub r1, r1, r2
+	movw r2, #57345
+	movt r2, #2047
+	movw r3, #16383
+	movt r3, #4096
+	smmul r3, r1, r3
+	asr r5, r3, #23
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r2, r1
 	add r0, r0, #1
 	cmp r0, r4
 	bge label195
@@ -260,180 +243,164 @@ label9:
 	asr r7, r6, #5
 	add r6, r7, r6, lsr #31
 	add r7, r1, r6
-	movw r1, #16383
-	movt r1, #4096
-	smmul r6, r7, r1
-	asr r8, r6, #23
-	add r8, r8, r6, lsr #31
-	movw r6, #57345
-	movt r6, #2047
-	mul r8, r8, r6
-	sub r7, r7, r8
+	movw r1, #57345
+	movt r1, #2047
+	movw r6, #16383
+	movt r6, #4096
+	smmul r8, r7, r6
+	asr r9, r8, #23
+	add r8, r9, r8, lsr #31
+	mls r7, r8, r1, r7
 	add r8, r0, #1
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #2
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #3
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #4
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #5
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #6
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #7
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #8
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #9
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #10
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #11
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #12
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #13
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r8, r0, #14
 	mul r8, r8, r3
 	smmla r8, r8, r5, r8
 	asr r9, r8, #5
 	add r8, r9, r8, lsr #31
 	add r7, r7, r8
-	smmul r8, r7, r1
+	smmul r8, r7, r6
 	asr r9, r8, #23
 	add r8, r9, r8, lsr #31
-	mul r8, r8, r6
-	sub r7, r7, r8
+	mls r7, r8, r1, r7
 	add r0, r0, #15
 	mul r0, r0, r3
 	smmla r0, r0, r5, r0
 	asr r3, r0, #5
 	add r0, r3, r0, lsr #31
 	add r0, r7, r0
-	smmul r1, r0, r1
-	asr r3, r1, #23
-	add r1, r3, r1, lsr #31
-	mul r1, r1, r6
-	sub r1, r0, r1
+	smmul r3, r0, r6
+	asr r5, r3, #23
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r1, r0
 	mov r0, r2
 	add r2, r2, #16
 	cmp r2, r4

@@ -24,19 +24,19 @@ main:
 	jal getint
 	mv s4, a0
 	jal getch
-pcrel379:
+pcrel380:
 	auipc a0, %pcrel_hi(sheet1)
-	addi s0, a0, %pcrel_lo(pcrel379)
+	addi s0, a0, %pcrel_lo(pcrel380)
 	li s1, 1
 	bgt s1, s3, label4
-	ble s2, zero, label39
+	ble s2, zero, label42
 	j label231
 label4:
 	li a0, 95
 	jal _sysy_starttime
-pcrel380:
+pcrel381:
 	auipc a0, %pcrel_hi(sheet2)
-	addi s1, a0, %pcrel_lo(pcrel380)
+	addi s1, a0, %pcrel_lo(pcrel381)
 	ble s4, zero, label58
 	mv a0, s4
 	li a2, 1
@@ -334,11 +334,6 @@ label135:
 	bgt s1, s3, label25
 	ble s2, zero, label27
 	j label242
-label159:
-	li s1, 1
-	bgt s1, s3, label25
-	ble s2, zero, label27
-	j label242
 label318:
 	slli a4, a1, 2
 	add a4, a3, a4
@@ -361,7 +356,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -369,7 +364,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -377,7 +372,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -385,7 +380,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -393,7 +388,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -401,7 +396,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -409,7 +404,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -417,7 +412,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -425,7 +420,15 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
+	j label344
+label42:
+	jal getch
+	addiw s1, s1, 1
+	bgt s1, s3, label4
+	ble s2, zero, label42
+	j label231
+label344:
 	jal getch
 	xori a0, a0, 35
 	sltiu a0, a0, 1
@@ -433,7 +436,7 @@ label231:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 label358:
 	jal getch
 	xori a0, a0, 35
@@ -442,7 +445,7 @@ label358:
 	add a1, s6, a1
 	sw a0, 0(a1)
 	addiw s5, s5, 1
-	bgt s5, s2, label39
+	bgt s5, s2, label42
 	j label358
 label242:
 	li a0, 2000
@@ -661,12 +664,11 @@ label339:
 	li a0, 35
 	bne a1, zero, label218
 	j label339
-label39:
-	jal getch
-	addiw s1, s1, 1
-	bgt s1, s3, label4
-	ble s2, zero, label39
-	j label231
+label159:
+	li s1, 1
+	bgt s1, s3, label25
+	ble s2, zero, label27
+	j label242
 label25:
 	mv a0, zero
 	ld ra, 0(sp)

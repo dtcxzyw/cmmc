@@ -71,11 +71,10 @@ label4:
 	sub r7, r7, r9
 	ldr r8, [r8, #4]
 	sub r7, r7, r8
-	add r2, r4, r2, lsl #2
 	cmp r7, #0
 	bge label9
 	mov r7, #0
-	str r7, [r2, #0]
+	str r7, [r4, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8
@@ -84,13 +83,13 @@ label9:
 	cmp r7, #255
 	ble label6
 	mov r7, #255
-	str r7, [r2, #0]
+	str r7, [r4, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8
 	b label4
 label6:
-	str r7, [r2, #0]
+	str r7, [r4, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8

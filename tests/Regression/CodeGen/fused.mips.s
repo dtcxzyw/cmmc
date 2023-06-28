@@ -128,6 +128,13 @@ fused_mul_add2:
 	addu $v0, $t0, $a0
 	jr $ra
 	nop
+.globl fused_mul_add3
+fused_mul_add3:
+	addiu $t0, $a1, 1
+	mult $t0, $a0
+	mflo $v0
+	jr $ra
+	nop
 .globl fused_mul_sub
 fused_mul_sub:
 	mult $a1, $a2
@@ -141,6 +148,13 @@ fused_mul_sub_imm:
 	mult $a1, $t0
 	mflo $t0
 	subu $v0, $a0, $t0
+	jr $ra
+	nop
+.globl fused_mul_sub2
+fused_mul_sub2:
+	addiu $t0, $a1, -1
+	mult $t0, $a0
+	mflo $v0
 	jr $ra
 	nop
 .globl fused_div_rem

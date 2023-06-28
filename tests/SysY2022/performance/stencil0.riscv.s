@@ -83,10 +83,10 @@ label4:
 	subw a4, a4, t1
 	lw a5, 4(a5)
 	subw a4, a4, a5
-	slli a2, a2, 2
-	add a2, s0, a2
 	bge a4, zero, label9
 	mv a4, zero
+	slli a2, a2, 2
+	add a2, s0, a2
 	sw zero, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8
@@ -95,11 +95,15 @@ label9:
 	li a5, 255
 	ble a4, a5, label6
 	li a4, 255
+	slli a2, a2, 2
+	add a2, s0, a2
 	sw a4, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8
 	j label4
 label6:
+	slli a2, a2, 2
+	add a2, s0, a2
 	sw a4, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8

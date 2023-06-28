@@ -88,6 +88,11 @@ fused_mul_add1:
 fused_mul_add2:
 	mla r0, r1, r2, r0
 	bx lr
+.globl fused_mul_add3
+fused_mul_add3:
+	add r1, r1, #1
+	mul r0, r1, r0
+	bx lr
 .globl fused_mul_sub
 fused_mul_sub:
 	mls r0, r1, r2, r0
@@ -96,6 +101,11 @@ fused_mul_sub:
 fused_mul_sub_imm:
 	movw r2, #777
 	mls r0, r1, r2, r0
+	bx lr
+.globl fused_mul_sub2
+fused_mul_sub2:
+	sub r1, r1, #1
+	mul r0, r1, r0
 	bx lr
 .globl fused_div_rem
 fused_div_rem:

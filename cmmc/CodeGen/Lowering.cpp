@@ -375,6 +375,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
         Stage stage{ "Pre-lowering legalization"sv };
         target.transformModuleBeforeCodeGen(module, analysis);
         analysis.invalidateModule();
+        // module.dump(std::cerr);
     }
 
     CodeGenContext ctx{ target,

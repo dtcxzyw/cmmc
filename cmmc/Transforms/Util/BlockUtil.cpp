@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/IRBuilder.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Module.hpp>
@@ -134,6 +135,13 @@ bool isNoSideEffectExpr(const Instruction& inst) {
 
     return true;
 }
+static bool isNonZero(const Value* x) {
+    if(x->is<ConstantInteger>()) {
+        return x->as<ConstantInteger>()->getZeroExtended() != 0;
+    }
+    return false;
+}
+
 bool isMovableExpr(const Instruction& inst, bool relaxedCtx) {
     if(!isNoSideEffectExpr(inst))
         return false;
@@ -152,7 +160,7 @@ bool isMovableExpr(const Instruction& inst, bool relaxedCtx) {
         case InstructionID::SRem:
             [[fallthrough]];
         case InstructionID::URem:
-            return !relaxedCtx;
+            return !relaxedCtx || isNonZero(inst.getOperand(1));
         default:
             return true;
     }

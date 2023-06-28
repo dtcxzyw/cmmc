@@ -2,721 +2,341 @@
 .text
 .globl main
 main:
-	addi sp, sp, -1144
-	sd s10, 496(sp)
-	sd s0, 520(sp)
-	sd s5, 528(sp)
-	sd s1, 536(sp)
-	sd s6, 544(sp)
-	sd s2, 552(sp)
-	sd s3, 1136(sp)
-	sd s4, 560(sp)
-	sd s7, 576(sp)
-	sd s8, 592(sp)
-	sd s9, 608(sp)
-	sd s11, 624(sp)
-	sd ra, 640(sp)
-	addi s10, sp, 736
-	sd s10, 712(sp)
+	addi sp, sp, -416
+	sd s0, 408(sp)
+	sd ra, 400(sp)
+	addi s0, sp, 0
 	li a0, 324
 	jal _sysy_starttime
 	jal getint
 	mv a2, a0
-	sd a0, 656(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 4
-	sd s10, 480(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 8
-	sd s10, 280(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 12
-	sd s10, 296(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 16
-	sd s10, 312(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 20
-	sd s10, 320(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 24
-	sd s10, 328(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 28
-	sd s10, 336(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 32
-	sd s10, 344(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 36
-	sd s10, 672(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 40
-	sd s10, 688(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 44
-	sd s10, 704(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 48
-	sd s10, 720(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 52
-	sd s10, 0(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 56
-	sd s10, 8(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 60
-	sd s10, 16(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 64
-	sd s10, 24(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 68
-	sd s10, 32(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 72
-	sd s10, 40(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 76
-	sd s10, 48(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 80
-	sd s10, 56(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 84
-	sd s10, 64(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 88
-	sd s10, 80(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 92
-	sd s10, 96(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 96
-	sd s10, 112(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 100
-	sd s10, 72(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 104
-	sd s10, 88(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 108
-	sd s10, 104(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 112
-	sd s10, 352(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 116
-	sd s10, 368(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 120
-	sd s10, 384(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 124
-	sd s10, 400(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 128
-	sd s10, 416(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 132
-	sd s10, 432(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 136
-	sd s10, 448(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 140
-	sd s10, 464(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 144
-	sd s10, 504(sp)
-	ld s10, 712(sp)
-	addi a3, s10, 148
-	ld s10, 712(sp)
-	addi a4, s10, 152
-	ld s10, 712(sp)
-	addi a5, s10, 156
-	ld s10, 712(sp)
-	addi t1, s10, 160
-	ld s10, 712(sp)
-	addi t2, s10, 164
-	ld s10, 712(sp)
-	addi t3, s10, 168
-	ld s10, 712(sp)
-	addi t4, s10, 172
-	ld s10, 712(sp)
-	addi t5, s10, 176
-	ld s10, 712(sp)
-	addi t6, s10, 180
-	ld s10, 712(sp)
-	addi a6, s10, 184
-	ld s10, 712(sp)
-	addi a7, s10, 188
-	ld s10, 712(sp)
-	addi s0, s10, 192
-	ld s10, 712(sp)
-	addi s1, s10, 196
-	ld s10, 712(sp)
-	addi s2, s10, 200
-	ld s10, 712(sp)
-	addi s3, s10, 204
-	ld s10, 712(sp)
-	addi s4, s10, 208
-	ld s10, 712(sp)
-	addi s5, s10, 212
-	ld s10, 712(sp)
-	addi s6, s10, 216
-	ld s10, 712(sp)
-	addi s7, s10, 220
-	ld s10, 712(sp)
-	addi s8, s10, 224
-	ld s10, 712(sp)
-	addi s9, s10, 228
-	ld s10, 712(sp)
-	addi s10, s10, 232
-	sd s10, 120(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 236
-	sd s10, 128(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 240
-	sd s10, 136(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 244
-	sd s10, 144(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 248
-	sd s10, 152(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 252
-	sd s10, 160(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 256
-	sd s10, 168(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 260
-	sd s10, 176(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 264
-	sd s10, 184(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 268
-	sd s10, 192(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 272
-	sd s10, 200(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 276
-	sd s10, 208(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 280
-	sd s10, 216(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 284
-	sd s10, 224(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 288
-	sd s10, 232(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 292
-	sd s10, 728(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 296
-	sd s10, 568(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 300
-	sd s10, 584(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 304
-	sd s10, 600(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 308
-	sd s10, 616(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 312
-	sd s10, 632(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 316
-	sd s10, 648(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 320
-	sd s10, 512(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 324
-	sd s10, 472(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 328
-	sd s10, 456(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 332
-	sd s10, 440(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 336
-	sd s10, 424(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 340
-	sd s10, 408(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 344
-	sd s10, 392(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 348
-	sd s10, 376(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 352
-	sd s10, 360(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 356
-	sd s10, 240(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 360
-	sd s10, 248(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 364
-	sd s10, 256(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 368
-	sd s10, 264(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 372
-	sd s10, 272(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 376
-	sd s10, 304(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 380
-	sd s10, 288(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 384
-	sd s10, 488(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 388
-	sd s10, 664(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 392
-	sd s10, 680(sp)
-	ld s10, 712(sp)
-	addi s10, s10, 396
-	sd s10, 696(sp)
 	mv a0, zero
 	li a1, 100
-	bge zero, a1, label118
+	bge zero, a1, label19
 	slli a1, zero, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, zero, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
+	bge a0, a1, label19
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
-	j label419
-label118:
+	bge a0, a1, label19
+	j label328
+label19:
 	mv a0, zero
 	mv a1, zero
-	ld a2, 656(sp)
 	bge zero, a2, label13
 label8:
-	li a2, 1
-	ld s10, 480(sp)
-	sw a2, 0(s10)
-	li a2, 2
-	ld s10, 280(sp)
-	sw a2, 0(s10)
-	li a2, 3
-	ld s10, 296(sp)
-	sw a2, 0(s10)
-	li a2, 4
-	ld s10, 312(sp)
-	sw a2, 0(s10)
-	li a2, 5
-	ld s10, 320(sp)
-	sw a2, 0(s10)
-	li a2, 6
-	ld s10, 328(sp)
-	sw a2, 0(s10)
-	li a2, 7
-	ld s10, 336(sp)
-	sw a2, 0(s10)
-	li a2, 8
-	ld s10, 344(sp)
-	sw a2, 0(s10)
-	li a2, 9
-	ld s10, 672(sp)
-	sw a2, 0(s10)
-	li a2, 10
-	ld s10, 688(sp)
-	sw a2, 0(s10)
-	li a2, 11
-	ld s10, 704(sp)
-	sw a2, 0(s10)
-	li a2, 12
-	ld s10, 720(sp)
-	sw a2, 0(s10)
-	li a2, 13
-	ld s10, 0(sp)
-	sw a2, 0(s10)
-	li a2, 14
-	ld s10, 8(sp)
-	sw a2, 0(s10)
-	li a2, 15
-	ld s10, 16(sp)
-	sw a2, 0(s10)
-	li a2, 16
-	ld s10, 24(sp)
-	sw a2, 0(s10)
-	li a2, 17
-	ld s10, 32(sp)
-	sw a2, 0(s10)
-	li a2, 18
-	ld s10, 40(sp)
-	sw a2, 0(s10)
-	li a2, 19
-	ld s10, 48(sp)
-	sw a2, 0(s10)
-	li a2, 20
-	ld s10, 56(sp)
-	sw a2, 0(s10)
-	li a2, 21
-	ld s10, 64(sp)
-	sw a2, 0(s10)
-	li a2, 22
-	ld s10, 80(sp)
-	sw a2, 0(s10)
-	li a2, 23
-	ld s10, 96(sp)
-	sw a2, 0(s10)
-	li a2, 24
-	ld s10, 112(sp)
-	sw a2, 0(s10)
-	li a2, 25
-	ld s10, 72(sp)
-	sw a2, 0(s10)
-	li a2, 26
-	ld s10, 88(sp)
-	sw a2, 0(s10)
-	li a2, 27
-	ld s10, 104(sp)
-	sw a2, 0(s10)
-	li a2, 28
-	ld s10, 352(sp)
-	sw a2, 0(s10)
-	li a2, 29
-	ld s10, 368(sp)
-	sw a2, 0(s10)
-	li a2, 30
-	ld s10, 384(sp)
-	sw a2, 0(s10)
-	li a2, 31
-	ld s10, 400(sp)
-	sw a2, 0(s10)
-	li a2, 32
-	ld s10, 416(sp)
-	sw a2, 0(s10)
-	li a2, 33
-	ld s10, 432(sp)
-	sw a2, 0(s10)
-	li a2, 34
-	ld s10, 448(sp)
-	sw a2, 0(s10)
-	li a2, 35
-	ld s10, 464(sp)
-	sw a2, 0(s10)
-	li a2, 36
-	ld s10, 504(sp)
-	sw a2, 0(s10)
-	li a2, 37
-	sw a2, 0(a3)
-	li a2, 38
-	sw a2, 0(a4)
-	li a2, 39
-	sw a2, 0(a5)
-	li a2, 40
-	sw a2, 0(t1)
-	li a2, 41
-	sw a2, 0(t2)
-	li a2, 42
-	sw a2, 0(t3)
-	li a2, 43
-	sw a2, 0(t4)
-	li a2, 44
-	sw a2, 0(t5)
-	li a2, 45
-	sw a2, 0(t6)
-	li a2, 46
-	sw a2, 0(a6)
-	li a2, 47
-	sw a2, 0(a7)
-	li a2, 48
-	sw a2, 0(s0)
-	li a2, 49
-	sw a2, 0(s1)
-	li a2, 50
-	sw a2, 0(s2)
-	li a2, 51
-	sw a2, 0(s3)
-	li a2, 52
-	sw a2, 0(s4)
-	li a2, 53
-	sw a2, 0(s5)
-	li a2, 54
-	sw a2, 0(s6)
-	li a2, 55
-	sw a2, 0(s7)
-	li a2, 56
-	sw a2, 0(s8)
-	li a2, 57
-	sw a2, 0(s9)
-	li a2, 58
-	ld s10, 120(sp)
-	sw a2, 0(s10)
-	li a2, 59
-	ld s10, 128(sp)
-	sw a2, 0(s10)
-	li a2, 60
-	ld s10, 136(sp)
-	sw a2, 0(s10)
-	li a2, 61
-	ld s10, 144(sp)
-	sw a2, 0(s10)
-	li a2, 62
-	ld s10, 152(sp)
-	sw a2, 0(s10)
-	li a2, 63
-	ld s10, 160(sp)
-	sw a2, 0(s10)
-	li a2, 64
-	ld s10, 168(sp)
-	sw a2, 0(s10)
-	li a2, 65
-	ld s10, 176(sp)
-	sw a2, 0(s10)
-	li a2, 66
-	ld s10, 184(sp)
-	sw a2, 0(s10)
-	li a2, 67
-	ld s10, 192(sp)
-	sw a2, 0(s10)
-	li a2, 68
-	ld s10, 200(sp)
-	sw a2, 0(s10)
-	li a2, 69
-	ld s10, 208(sp)
-	sw a2, 0(s10)
-	li a2, 70
-	ld s10, 216(sp)
-	sw a2, 0(s10)
-	li a2, 71
-	ld s10, 224(sp)
-	sw a2, 0(s10)
-	li a2, 72
-	ld s10, 232(sp)
-	sw a2, 0(s10)
-	li a2, 73
-	ld s10, 728(sp)
-	sw a2, 0(s10)
-	li a2, 74
-	ld s10, 568(sp)
-	sw a2, 0(s10)
-	li a2, 75
-	ld s10, 584(sp)
-	sw a2, 0(s10)
-	li a2, 76
-	ld s10, 600(sp)
-	sw a2, 0(s10)
-	li a2, 77
-	ld s10, 616(sp)
-	sw a2, 0(s10)
-	li a2, 78
-	ld s10, 632(sp)
-	sw a2, 0(s10)
-	li a2, 79
-	ld s10, 648(sp)
-	sw a2, 0(s10)
-	li a2, 80
-	ld s10, 512(sp)
-	sw a2, 0(s10)
-	li a2, 81
-	ld s10, 472(sp)
-	sw a2, 0(s10)
-	li a2, 82
-	ld s10, 456(sp)
-	sw a2, 0(s10)
-	li a2, 83
-	ld s10, 440(sp)
-	sw a2, 0(s10)
-	li a2, 84
-	ld s10, 424(sp)
-	sw a2, 0(s10)
-	li a2, 85
-	ld s10, 408(sp)
-	sw a2, 0(s10)
-	li a2, 86
-	ld s10, 392(sp)
-	sw a2, 0(s10)
-	li a2, 87
-	ld s10, 376(sp)
-	sw a2, 0(s10)
-	li a2, 88
-	ld s10, 360(sp)
-	sw a2, 0(s10)
-	li a2, 89
-	ld s10, 240(sp)
-	sw a2, 0(s10)
-	li a2, 90
-	ld s10, 248(sp)
-	sw a2, 0(s10)
-	li a2, 91
-	ld s10, 256(sp)
-	sw a2, 0(s10)
-	li a2, 92
-	ld s10, 264(sp)
-	sw a2, 0(s10)
-	li a2, 93
-	ld s10, 272(sp)
-	sw a2, 0(s10)
-	li a2, 94
-	ld s10, 304(sp)
-	sw a2, 0(s10)
-	li a2, 95
-	ld s10, 288(sp)
-	sw a2, 0(s10)
-	li a2, 96
-	ld s10, 488(sp)
-	sw a2, 0(s10)
-	li a2, 97
-	ld s10, 664(sp)
-	sw a2, 0(s10)
-	li a2, 98
-	ld s10, 680(sp)
-	sw a2, 0(s10)
-	li a2, 99
-	ld s10, 696(sp)
-	sw a2, 0(s10)
+	li a3, 1
+	sw a3, 4(s0)
+	li a3, 2
+	sw a3, 8(s0)
+	li a3, 3
+	sw a3, 12(s0)
+	li a3, 4
+	sw a3, 16(s0)
+	li a3, 5
+	sw a3, 20(s0)
+	li a3, 6
+	sw a3, 24(s0)
+	li a3, 7
+	sw a3, 28(s0)
+	li a3, 8
+	sw a3, 32(s0)
+	li a3, 9
+	sw a3, 36(s0)
+	li a3, 10
+	sw a3, 40(s0)
+	li a3, 11
+	sw a3, 44(s0)
+	li a3, 12
+	sw a3, 48(s0)
+	li a3, 13
+	sw a3, 52(s0)
+	li a3, 14
+	sw a3, 56(s0)
+	li a3, 15
+	sw a3, 60(s0)
+	li a3, 16
+	sw a3, 64(s0)
+	li a3, 17
+	sw a3, 68(s0)
+	li a3, 18
+	sw a3, 72(s0)
+	li a3, 19
+	sw a3, 76(s0)
+	li a3, 20
+	sw a3, 80(s0)
+	li a3, 21
+	sw a3, 84(s0)
+	li a3, 22
+	sw a3, 88(s0)
+	li a3, 23
+	sw a3, 92(s0)
+	li a3, 24
+	sw a3, 96(s0)
+	li a3, 25
+	sw a3, 100(s0)
+	li a3, 26
+	sw a3, 104(s0)
+	li a3, 27
+	sw a3, 108(s0)
+	li a3, 28
+	sw a3, 112(s0)
+	li a3, 29
+	sw a3, 116(s0)
+	li a3, 30
+	sw a3, 120(s0)
+	li a3, 31
+	sw a3, 124(s0)
+	li a3, 32
+	sw a3, 128(s0)
+	li a3, 33
+	sw a3, 132(s0)
+	li a3, 34
+	sw a3, 136(s0)
+	li a3, 35
+	sw a3, 140(s0)
+	li a3, 36
+	sw a3, 144(s0)
+	li a3, 37
+	sw a3, 148(s0)
+	li a3, 38
+	sw a3, 152(s0)
+	li a3, 39
+	sw a3, 156(s0)
+	li a3, 40
+	sw a3, 160(s0)
+	li a3, 41
+	sw a3, 164(s0)
+	li a3, 42
+	sw a3, 168(s0)
+	li a3, 43
+	sw a3, 172(s0)
+	li a3, 44
+	sw a3, 176(s0)
+	li a3, 45
+	sw a3, 180(s0)
+	li a3, 46
+	sw a3, 184(s0)
+	li a3, 47
+	sw a3, 188(s0)
+	li a3, 48
+	sw a3, 192(s0)
+	li a3, 49
+	sw a3, 196(s0)
+	li a3, 50
+	sw a3, 200(s0)
+	li a3, 51
+	sw a3, 204(s0)
+	li a3, 52
+	sw a3, 208(s0)
+	li a3, 53
+	sw a3, 212(s0)
+	li a3, 54
+	sw a3, 216(s0)
+	li a3, 55
+	sw a3, 220(s0)
+	li a3, 56
+	sw a3, 224(s0)
+	li a3, 57
+	sw a3, 228(s0)
+	li a3, 58
+	sw a3, 232(s0)
+	li a3, 59
+	sw a3, 236(s0)
+	li a3, 60
+	sw a3, 240(s0)
+	li a3, 61
+	sw a3, 244(s0)
+	li a3, 62
+	sw a3, 248(s0)
+	li a3, 63
+	sw a3, 252(s0)
+	li a3, 64
+	sw a3, 256(s0)
+	li a3, 65
+	sw a3, 260(s0)
+	li a3, 66
+	sw a3, 264(s0)
+	li a3, 67
+	sw a3, 268(s0)
+	li a3, 68
+	sw a3, 272(s0)
+	li a3, 69
+	sw a3, 276(s0)
+	li a3, 70
+	sw a3, 280(s0)
+	li a3, 71
+	sw a3, 284(s0)
+	li a3, 72
+	sw a3, 288(s0)
+	li a3, 73
+	sw a3, 292(s0)
+	li a3, 74
+	sw a3, 296(s0)
+	li a3, 75
+	sw a3, 300(s0)
+	li a3, 76
+	sw a3, 304(s0)
+	li a3, 77
+	sw a3, 308(s0)
+	li a3, 78
+	sw a3, 312(s0)
+	li a3, 79
+	sw a3, 316(s0)
+	li a3, 80
+	sw a3, 320(s0)
+	li a3, 81
+	sw a3, 324(s0)
+	li a3, 82
+	sw a3, 328(s0)
+	li a3, 83
+	sw a3, 332(s0)
+	li a3, 84
+	sw a3, 336(s0)
+	li a3, 85
+	sw a3, 340(s0)
+	li a3, 86
+	sw a3, 344(s0)
+	li a3, 87
+	sw a3, 348(s0)
+	li a3, 88
+	sw a3, 352(s0)
+	li a3, 89
+	sw a3, 356(s0)
+	li a3, 90
+	sw a3, 360(s0)
+	li a3, 91
+	sw a3, 364(s0)
+	li a3, 92
+	sw a3, 368(s0)
+	li a3, 93
+	sw a3, 372(s0)
+	li a3, 94
+	sw a3, 376(s0)
+	li a3, 95
+	sw a3, 380(s0)
+	li a3, 96
+	sw a3, 384(s0)
+	li a3, 97
+	sw a3, 388(s0)
+	li a3, 98
+	sw a3, 392(s0)
+	li a3, 99
+	sw a3, 396(s0)
 	addiw a1, a1, 1
-	mv a2, zero
+	mv a3, zero
 label9:
-	slli s11, a2, 2
-	ld s10, 712(sp)
-	add s10, s10, s11
-	lw s11, 0(s10)
-	addw a0, a0, s11
-	lw s11, 4(s10)
-	addw a0, a0, s11
-	lw s11, 8(s10)
-	addw a0, a0, s11
-	lw s11, 12(s10)
-	addw a0, a0, s11
-	lw s11, 16(s10)
-	addw a0, a0, s11
-	lw s11, 20(s10)
-	addw a0, a0, s11
-	lw s11, 24(s10)
-	addw a0, a0, s11
-	lw s11, 28(s10)
-	addw a0, a0, s11
-	lw s11, 32(s10)
-	addw a0, a0, s11
-	lw s11, 36(s10)
-	addw a0, a0, s11
-	lw s11, 40(s10)
-	addw a0, a0, s11
-	lw s11, 44(s10)
-	addw a0, a0, s11
-	lw s11, 48(s10)
-	addw a0, a0, s11
-	lw s11, 52(s10)
-	addw a0, a0, s11
-	lw s11, 56(s10)
-	addw a0, a0, s11
-	lw s10, 60(s10)
-	addw a0, a0, s10
-	addiw a2, a2, 16
-	li s10, 96
-	bge a2, s10, label12
+	slli a4, a3, 2
+	add a4, s0, a4
+	lw a5, 0(a4)
+	addw a0, a0, a5
+	lw a5, 4(a4)
+	addw a0, a0, a5
+	lw a5, 8(a4)
+	addw a0, a0, a5
+	lw a5, 12(a4)
+	addw a0, a0, a5
+	lw a5, 16(a4)
+	addw a0, a0, a5
+	lw a5, 20(a4)
+	addw a0, a0, a5
+	lw a5, 24(a4)
+	addw a0, a0, a5
+	lw a5, 28(a4)
+	addw a0, a0, a5
+	lw a5, 32(a4)
+	addw a0, a0, a5
+	lw a5, 36(a4)
+	addw a0, a0, a5
+	lw a5, 40(a4)
+	addw a0, a0, a5
+	lw a5, 44(a4)
+	addw a0, a0, a5
+	lw a5, 48(a4)
+	addw a0, a0, a5
+	lw a5, 52(a4)
+	addw a0, a0, a5
+	lw a5, 56(a4)
+	addw a0, a0, a5
+	lw a4, 60(a4)
+	addw a0, a0, a4
+	addiw a3, a3, 16
+	li a4, 96
+	bge a3, a4, label12
 	j label9
 label12:
-	slli a2, a2, 2
-	ld s10, 712(sp)
-	add a2, s10, a2
-	lw s10, 0(a2)
-	lw s11, 4(a2)
-	addw a0, a0, s10
-	addw a0, a0, s11
-	lw s10, 8(a2)
-	addw a0, a0, s10
-	lw a2, 12(a2)
-	addw a0, a0, a2
-	li a2, -2147450879
-	mul a2, a0, a2
-	srli a2, a2, 32
-	add s10, a2, a0
-	sraiw a2, s10, 15
-	srliw s10, s10, 31
-	add a2, s10, a2
-	li s10, 65535
-	mulw a2, a2, s10
-	subw a0, a0, a2
-	ld a2, 656(sp)
+	slli a3, a3, 2
+	add a3, s0, a3
+	lw a5, 0(a3)
+	lw a4, 4(a3)
+	addw a0, a0, a5
+	addw a0, a0, a4
+	lw a4, 8(a3)
+	addw a0, a0, a4
+	lw a3, 12(a3)
+	addw a0, a0, a3
+	li a3, -2147450879
+	mul a3, a0, a3
+	srli a3, a3, 32
+	add a4, a3, a0
+	sraiw a3, a4, 15
+	srliw a4, a4, 31
+	add a3, a4, a3
+	li a4, 65535
+	mulw a3, a3, a4
+	subw a0, a0, a3
 	bge a1, a2, label13
 	j label8
-label419:
+label328:
 	slli a1, a0, 2
-	ld s10, 712(sp)
-	add a1, s10, a1
+	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
-	bge a0, a1, label118
-	j label419
+	bge a0, a1, label19
+	j label328
 label13:
 	jal putint
 	li a0, 10
@@ -724,18 +344,7 @@ label13:
 	li a0, 328
 	jal _sysy_stoptime
 	mv a0, zero
-	ld ra, 640(sp)
-	ld s11, 624(sp)
-	ld s9, 608(sp)
-	ld s8, 592(sp)
-	ld s7, 576(sp)
-	ld s4, 560(sp)
-	ld s3, 1136(sp)
-	ld s2, 552(sp)
-	ld s6, 544(sp)
-	ld s1, 536(sp)
-	ld s5, 528(sp)
-	ld s0, 520(sp)
-	ld s10, 496(sp)
-	addi sp, sp, 1144
+	ld ra, 400(sp)
+	ld s0, 408(sp)
+	addi sp, sp, 416
 	ret

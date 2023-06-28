@@ -12,7 +12,7 @@ x:
 cse_imm:
 	mov r3, #10
 	mul r1, r1, r3
-	eor r1, r2, r1
+	eor r1, r1, r2
 	mla r0, r0, r3, r1
 	bx lr
 .globl cse_global
@@ -31,4 +31,111 @@ cse_fp:
 	vmul.f32 s0, s0, s2
 	vmul.f32 s1, s1, s2
 	vadd.f32 s0, s0, s1
+	bx lr
+.globl imm_build_pattern1
+imm_build_pattern1:
+	mov r1, #1
+	str r1, [r0, #0]
+	mov r1, #2
+	str r1, [r0, #4]
+	mov r1, #4
+	str r1, [r0, #8]
+	mov r1, #8
+	str r1, [r0, #12]
+	mov r1, #16
+	str r1, [r0, #16]
+	mov r1, #32
+	str r1, [r0, #20]
+	mov r1, #64
+	str r1, [r0, #24]
+	mov r1, #128
+	str r1, [r0, #28]
+	mov r1, #256
+	str r1, [r0, #32]
+	mov r1, #512
+	str r1, [r0, #36]
+	mov r1, #1024
+	str r1, [r0, #40]
+	mov r1, #2048
+	str r1, [r0, #44]
+	mov r1, #4096
+	str r1, [r0, #48]
+	mov r1, #8192
+	str r1, [r0, #52]
+	mov r1, #16384
+	str r1, [r0, #56]
+	mov r1, #32768
+	str r1, [r0, #60]
+	mov r1, #65536
+	str r1, [r0, #64]
+	mov r1, #131072
+	str r1, [r0, #68]
+	mov r1, #262144
+	str r1, [r0, #72]
+	mov r1, #524288
+	str r1, [r0, #76]
+	mov r1, #1048576
+	str r1, [r0, #80]
+	mov r1, #2097152
+	str r1, [r0, #84]
+	mov r1, #4194304
+	str r1, [r0, #88]
+	mov r1, #8388608
+	str r1, [r0, #92]
+	mov r1, #16777216
+	str r1, [r0, #96]
+	mov r1, #33554432
+	str r1, [r0, #100]
+	mov r1, #67108864
+	str r1, [r0, #104]
+	mov r1, #134217728
+	str r1, [r0, #108]
+	mov r1, #268435456
+	str r1, [r0, #112]
+	mov r1, #536870912
+	str r1, [r0, #116]
+	mov r1, #1073741824
+	str r1, [r0, #120]
+	bx lr
+.globl imm_build_pattern2
+imm_build_pattern2:
+	mov r1, #1024
+	str r1, [r0, #0]
+	mov r1, #512
+	str r1, [r0, #4]
+	mov r1, #256
+	str r1, [r0, #8]
+	mov r1, #128
+	str r1, [r0, #12]
+	mov r1, #64
+	str r1, [r0, #16]
+	mov r1, #32
+	str r1, [r0, #20]
+	mov r1, #16
+	str r1, [r0, #24]
+	mov r1, #8
+	str r1, [r0, #28]
+	mov r1, #4
+	str r1, [r0, #32]
+	bx lr
+.globl imm_build_pattern3
+imm_build_pattern3:
+	mov r1, #0
+	str r1, [r0, #0]
+	mov r1, #4
+	str r1, [r0, #4]
+	mov r1, #8
+	str r1, [r0, #8]
+	mov r1, #12
+	str r1, [r0, #12]
+	mov r1, #16
+	str r1, [r0, #16]
+	mov r1, #20
+	str r1, [r0, #20]
+	mov r1, #24
+	str r1, [r0, #24]
+	mov r1, #28
+	str r1, [r0, #28]
+	mov r1, #32
+	str r1, [r0, #32]
 	bx lr

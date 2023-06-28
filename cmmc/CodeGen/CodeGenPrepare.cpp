@@ -23,6 +23,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
 #include <cstdint>
+#include <limits>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -53,5 +54,64 @@ public:
 };
 
 CMMC_TRANSFORM_PASS(Mul2Shl);
+
+class DuplicateGEP final : public TransformPass<Function> {
+public:
+    bool run(Function& func, AnalysisPassManager&) const override {
+        bool modified = false;
+        // TODO: common base opt
+        for(auto block : func.blocks()) {
+            std::unordered_map<Instruction*, uint64_t> instId;
+            const auto increasement = std::numeric_limits<uint64_t>::max() / 2 / (block->instructions().size() + 2);
+            uint64_t idx = increasement;
+            for(auto& inst : block->instructions()) {
+                instId[&inst] = idx;
+                idx += increasement;
+            }
+
+            for(auto& inst : block->instructions()) {
+                if(inst.getInstID() == InstructionID::Load || inst.getInstID() == InstructionID::Store) {
+                    const auto addr = inst.getOperand(0);
+                    if(addr->isInstruction() && addr->getBlock() != block) {
+                        const auto addrInst = addr->as<Instruction>();
+                        if(addrInst->getInstID() != InstructionID::GetElementPtr)
+                            continue;
+
+                        const auto dup = addrInst->clone();
+                        uint64_t minId = std::numeric_limits<uint64_t>::max();
+                        Instruction* firstUse = nullptr;
+                        for(auto user : addrInst->users()) {
+                            if(user->getBlock() == block) {
+                                if(user->getInstID() == InstructionID::Phi)
+                                    continue;
+                                auto id = instId.at(user);
+                                if(id < minId) {
+                                    minId = id;
+                                    firstUse = user;
+                                }
+                            }
+                        }
+
+                        dup->insertBefore(block, firstUse->asIterator());
+                        const auto l =
+                            dup->asIterator() == block->instructions().begin() ? 0 : instId.at(&*std::prev(dup->asIterator()));
+                        const auto r = instId.at(firstUse);
+                        instId[dup] = (l + r) / 2;
+                        addrInst->replaceWithInBlock(block, dup);
+                        modified = true;
+                    }
+                }
+            }
+        }
+
+        return modified;
+    }
+
+    [[nodiscard]] std::string_view name() const noexcept override {
+        return "DuplicateGEP"sv;
+    }
+};
+
+CMMC_TRANSFORM_PASS(DuplicateGEP);
 
 CMMC_NAMESPACE_END
