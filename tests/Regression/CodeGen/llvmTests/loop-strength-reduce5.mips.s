@@ -1,0 +1,34 @@
+.data
+.align 2
+.globl X
+X:
+	.byte	0
+	.byte	0
+.align 2
+.globl Y
+Y:
+	.byte	0
+	.byte	0
+.text
+.globl foo
+foo:
+	blez $a0, label4
+	nop
+	move $t0, $zero
+label2:
+	andi $t1, $t0, 65535
+	lui $t2, %hi(X)
+	sh $t1, %lo(X)($t2)
+	andi $t1, $t1, 65535
+	sll $t1, $t1, 2
+	andi $t1, $t1, 65535
+	lui $t2, %hi(Y)
+	sh $t1, %lo(Y)($t2)
+	addiu $t0, $t0, 1
+	xor $t1, $t0, $a0
+	sltu $t1, $zero, $t1
+	bne $t1, $zero, label2
+	nop
+label4:
+	jr $ra
+	nop
