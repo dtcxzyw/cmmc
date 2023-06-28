@@ -12,15 +12,17 @@
     limitations under the License.
 */
 
+#include <RISCV/InstInfoDecl.hpp>
 #include <RISCV/ScheduleModelImpl.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
+#include <cstdint>
+#include <deque>
 #include <iostream>
 #include <iterator>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
-    CMMC_UNUSED(ctx);
+static bool branch2jump(MIRFunction& func, const CodeGenContext& ctx) {
     // bxx zero, zero -> j
     bool modified = false;
     for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
@@ -70,6 +72,81 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGen
 
         iter = next;
     }
+    return modified;
+}
+
+static bool largeImmMaterialize(MIRBasicBlock& block) {
+    constexpr uint32_t windowSize = 4;
+    std::deque<std::pair<intmax_t, MIROperand>> immQueue;
+    const auto addImm = [&](intmax_t val, const MIROperand& imm) {
+        if(isOperandVReg(imm)) {
+            immQueue.emplace_back(val, imm);
+            while(immQueue.size() > windowSize)
+                immQueue.pop_front();
+        }
+    };
+    const auto reuseImm = [&](const intmax_t val, MIRInst& inst) {
+        for(auto iter = immQueue.rbegin(); iter != immQueue.rend(); ++iter) {
+            auto& [rhs, rhsOp] = *iter;
+            // eq
+            if(val == rhs) {
+                inst.setOpcode(InstCopy).setOperand<1>(rhsOp);
+                return true;
+            }
+            // shift
+            {
+                const int32_t maxK = 8;
+                for(auto k = 1; k <= maxK; ++k) {
+                    if((rhs << k) == val) {
+                        inst.setOpcode(SLLI).setOperand<1>(rhsOp).setOperand<2>(MIROperand::asImm(k, OperandType::Int32));
+                        return true;
+                    }
+                }
+                for(auto k = 1; k <= maxK; ++k) {
+                    if((rhs >> k) == val) {
+                        inst.setOpcode(SRLI).setOperand<1>(rhsOp).setOperand<2>(MIROperand::asImm(k, OperandType::Int32));
+                        return true;
+                    }
+                }
+            }
+            // bias
+            {
+                const auto offset = val - rhs;
+                if(isSignedImm<12>(offset)) {
+                    inst.setOpcode(ADDI).setOperand<1>(rhsOp).setOperand<2>(MIROperand::asImm(offset, OperandType::Int32));
+                    return true;
+                }
+            }
+            // neg
+            if(-rhs == val) {
+                inst.setOpcode(SUB).setOperand<1>(MIROperand::asISAReg(X0, rhsOp.type())).setOperand<2>(rhsOp);
+                return true;
+            }
+        }
+
+        return false;
+    };
+    bool modified = false;
+    for(auto& inst : block.instructions()) {
+        if(inst.opcode() == LoadImm12) {
+            addImm(inst.getOperand(1).imm(), inst.getOperand(0));
+        } else if(inst.opcode() == LoadImm32) {
+            const auto val = inst.getOperand(1).imm();
+            if(reuseImm(val, inst))
+                modified = true;
+            addImm(val, inst.getOperand(0));
+        }
+    }
+    return modified;
+}
+
+bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
+    bool modified = false;
+    if(ctx.flags.preRA) {
+        for(auto& block : func.blocks())
+            modified |= largeImmMaterialize(*block);
+    }
+    modified |= branch2jump(func, ctx);
     return modified;
 }
 

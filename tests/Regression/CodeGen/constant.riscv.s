@@ -55,85 +55,85 @@ imm_build_pattern1:
 	sw a1, 36(a0)
 	li a1, 1024
 	sw a1, 40(a0)
-	li a1, 2048
+	slli a1, a1, 1
 	sw a1, 44(a0)
-	li a1, 4096
+	slli a1, a1, 1
 	sw a1, 48(a0)
-	li a1, 8192
+	slli a1, a1, 1
 	sw a1, 52(a0)
-	li a1, 16384
+	slli a1, a1, 1
 	sw a1, 56(a0)
-	li a1, 32768
+	slli a1, a1, 1
 	sw a1, 60(a0)
-	li a1, 65536
+	slli a1, a1, 1
 	sw a1, 64(a0)
-	li a1, 131072
+	slli a1, a1, 1
 	sw a1, 68(a0)
-	li a1, 262144
+	slli a1, a1, 1
 	sw a1, 72(a0)
-	li a1, 524288
+	slli a1, a1, 1
 	sw a1, 76(a0)
-	li a1, 1048576
+	slli a1, a1, 1
 	sw a1, 80(a0)
-	li a1, 2097152
+	slli a1, a1, 1
 	sw a1, 84(a0)
-	li a1, 4194304
+	slli a1, a1, 1
 	sw a1, 88(a0)
-	li a1, 8388608
+	slli a1, a1, 1
 	sw a1, 92(a0)
-	li a1, 16777216
+	slli a1, a1, 1
 	sw a1, 96(a0)
-	li a1, 33554432
+	slli a1, a1, 1
 	sw a1, 100(a0)
-	li a1, 67108864
+	slli a1, a1, 1
 	sw a1, 104(a0)
-	li a1, 134217728
+	slli a1, a1, 1
 	sw a1, 108(a0)
-	li a1, 268435456
+	slli a1, a1, 1
 	sw a1, 112(a0)
-	li a1, 536870912
+	slli a1, a1, 1
 	sw a1, 116(a0)
-	li a1, 1073741824
+	slli a1, a1, 1
 	sw a1, 120(a0)
 	ret
 .globl imm_build_pattern2
 imm_build_pattern2:
-	li a1, 1024
+	li a1, 1024000
 	sw a1, 0(a0)
-	li a1, 512
+	srli a1, a1, 1
 	sw a1, 4(a0)
-	li a1, 256
+	srli a1, a1, 1
 	sw a1, 8(a0)
-	li a1, 128
+	srli a1, a1, 1
 	sw a1, 12(a0)
-	li a1, 64
+	srli a1, a1, 1
 	sw a1, 16(a0)
-	li a1, 32
+	srli a1, a1, 1
 	sw a1, 20(a0)
-	li a1, 16
+	srli a1, a1, 1
 	sw a1, 24(a0)
-	li a1, 8
+	srli a1, a1, 1
 	sw a1, 28(a0)
-	li a1, 4
+	srli a1, a1, 1
 	sw a1, 32(a0)
 	ret
 .globl imm_build_pattern3
 imm_build_pattern3:
 	sw zero, 0(a0)
-	li a1, 4
+	li a1, 400
 	sw a1, 4(a0)
-	li a1, 8
+	li a1, 800
 	sw a1, 8(a0)
-	li a1, 12
+	li a1, 1200
 	sw a1, 12(a0)
-	li a1, 16
+	li a1, 1600
 	sw a1, 16(a0)
-	li a1, 20
+	li a1, 2000
 	sw a1, 20(a0)
-	li a1, 24
+	addi a1, a1, 400
 	sw a1, 24(a0)
-	li a1, 28
+	addi a1, a1, 400
 	sw a1, 28(a0)
-	li a1, 32
+	addi a1, a1, 400
 	sw a1, 32(a0)
 	ret

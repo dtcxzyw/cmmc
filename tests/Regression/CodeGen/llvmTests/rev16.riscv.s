@@ -27,7 +27,7 @@ different_op:
 	li a2, 16711936
 	addw a1, a1, a2
 	srliw a0, a0, 8
-	li a2, 16711935
+	addi a2, a2, -1
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
@@ -65,18 +65,18 @@ extra_maskop_uses2:
 	ret
 .globl f2
 f2:
-	slliw a1, a0, 8
-	li a2, 65280
-	and a2, a1, a2
+	slliw a2, a0, 8
+	li a1, 65280
+	and a3, a2, a1
 	srliw a0, a0, 8
-	andi a3, a0, 255
-	or a2, a2, a3
-	li a3, -16777216
-	and a1, a1, a3
-	or a1, a2, a1
-	li a2, 16711680
-	and a0, a0, a2
-	or a0, a1, a0
+	andi a4, a0, 255
+	or a3, a3, a4
+	li a4, -16777216
+	and a2, a2, a4
+	or a2, a3, a2
+	slli a1, a1, 8
+	and a0, a0, a1
+	or a0, a2, a0
 	ret
 .globl not_rev16
 not_rev16:

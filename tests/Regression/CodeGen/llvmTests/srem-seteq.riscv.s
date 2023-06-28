@@ -45,12 +45,12 @@ test_srem_even_100:
 .globl test_srem_even_bit30
 test_srem_even_bit30:
 	li a1, 1073741721
-	mul a1, a0, a1
-	srai a2, a1, 60
-	srli a1, a1, 63
-	add a1, a1, a2
-	li a2, 1073741928
-	mulw a1, a1, a2
+	mul a2, a0, a1
+	srai a3, a2, 60
+	srli a2, a2, 63
+	add a2, a2, a3
+	addi a1, a1, 207
+	mulw a1, a2, a1
 	subw a0, a0, a1
 	sltiu a0, a0, 1
 	li a1, 4294967295
