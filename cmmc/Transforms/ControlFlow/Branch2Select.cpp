@@ -15,15 +15,18 @@
 // S:
 //   cbr cond, A, B
 // A:
-//   nothing
+//   xxx
 //   br B
 // B:
 //   val = phi [A, v1], [S, v2]
 // ->
 // S:
+//   br A
+// A:
+//   xxx
 //   br B
 // B:
-// val = select cond, v1, v2
+//   val = select cond, v1, v2
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
@@ -40,10 +43,50 @@
 
 CMMC_NAMESPACE_BEGIN
 
+constexpr size_t inlineInstThreshold = 4;
+constexpr size_t inlineLoadThreshold = 1;
+
 class Branch2Select final : public TransformPass<Function> {
-    static bool isForwardBlock(Block& block) {
-        return block.instructions().size() == 1 && block.getTerminator()->getInstID() == InstructionID::Branch &&
-            block.getTerminator()->as<BranchInst>()->getTrueTarget() != &block;
+    static bool canFold(Block& block) {
+        if(block.instructions().size() > inlineInstThreshold)
+            return false;
+        if(block.getTerminator()->getInstID() != InstructionID::Branch)
+            return false;
+        if(block.getTerminator()->as<BranchInst>()->getTrueTarget() == &block)
+            return false;
+
+        // TODO: check by costs of instructions
+        size_t loadCount = 0;
+        for(auto& inst : block.instructions()) {
+            switch(inst.getInstID()) {
+                case InstructionID::Phi:
+                    [[fallthrough]];
+                case InstructionID::Store:
+                    [[fallthrough]];
+                case InstructionID::Call:
+                    [[fallthrough]];
+                // It is not safe to speculate division, since SIGFPE may be raised.
+                case InstructionID::SDiv:
+                    [[fallthrough]];
+                case InstructionID::UDiv:
+                    [[fallthrough]];
+                case InstructionID::SRem:
+                    [[fallthrough]];
+                case InstructionID::URem:
+                    return false;
+                case InstructionID::Load: {
+                    const auto addr = inst.getOperand(0);
+                    if(addr->isGlobal() || addr->is<StackAllocInst>()) {
+                        if(++loadCount > inlineLoadThreshold)
+                            return false;
+                    } else
+                        return false;
+                } break;
+                default:
+                    break;
+            }
+        }
+        return true;
     }
 
 public:
@@ -54,7 +97,7 @@ public:
 
         bool modified = false;
         for(auto block : func.blocks()) {
-            if(!isForwardBlock(*block))
+            if(!canFold(*block))
                 continue;
 
             const auto blockA = block;
@@ -100,7 +143,7 @@ public:
 
             auto& instsBlockS = blockS->instructions();
             instsBlockS.pop_back();
-            auto newTermiantor = make<BranchInst>(blockB);
+            auto newTermiantor = make<BranchInst>(blockA);
             newTermiantor->insertBefore(blockS, instsBlockS.end());
 
             modified = true;

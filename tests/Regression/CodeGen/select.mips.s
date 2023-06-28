@@ -264,15 +264,12 @@ select_fge_fpr_fpr:
 	nop
 .globl select_cross
 select_cross:
-	slt $t0, $a0, $a1
-	move $v0, $t0
-	subu $t1, $a1, $a2
-	bgez $t1, label203
-	nop
+	slt $v0, $a0, $a1
 	li $t1, 1
-	li $v0, 10
-	movn $v0, $t1, $t0
-label203:
+	li $t0, 10
+	movn $t0, $t1, $v0
+	slt $t1, $a1, $a2
+	movn $v0, $t0, $t1
 	jr $ra
 	nop
 .globl select_cross_fpr
@@ -280,7 +277,7 @@ select_cross_fpr:
 	slt $t0, $a0, $a1
 	move $t1, $t0
 	subu $t2, $a1, $a2
-	bgez $t2, label230
+	bgez $t2, label223
 	nop
 	lui $t1, %hi(__cmmc_fp_constant_pool)
 	addiu $t1, $t1, %lo(__cmmc_fp_constant_pool)
@@ -288,35 +285,27 @@ select_cross_fpr:
 	lwc1 $f4, 4($t1)
 	mov.s $f0, $f6
 	movz.s $f0, $f4, $t0
-	b label220
+	b label213
 	nop
-label230:
+label223:
 	mtc1 $t1, $f4
 	cvt.s.w $f0, $f4
-label220:
+label213:
 	jr $ra
 	nop
 .globl select_round
 select_round:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 8($t0)
-	lwc1 $f4, 8($t0)
+	addiu $t1, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f4, 8($t1)
 	c.olt.s $f12, $f4
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label245
-	nop
-	mov.s $f0, $f12
-label246:
+	lwc1 $f4, 12($t1)
+	add.s $f4, $f12, $f4
+	mov.s $f0, $f4
+	movz.s $f0, $f12, $t0
 	jr $ra
-	nop
-label245:
-	lui $t0, %hi(__cmmc_fp_constant_pool)
-	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
-	lwc1 $f4, 12($t0)
-	add.s $f0, $f12, $f4
-	b label246
 	nop
 .globl select_bitset
 select_bitset:

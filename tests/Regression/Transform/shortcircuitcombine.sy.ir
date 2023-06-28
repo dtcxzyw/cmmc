@@ -7,14 +7,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %2 = call () -> i32 @getint();
     i1 %3 = scmp neq i32 %2, i32 0;
     i1 %4 = and i1 %1, i1 %3;
-    cbr i1 %4(prob = 0.25), ^if.then, ^b;
+    cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
     call (i32) -> void @putint(i32 1);
     ubr ^b;
   ^b:
     i32 %5 = or i32 %0, i32 %2;
     i1 %6 = scmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.75), ^if.then1, ^b1;
+    cbr i1 %6(prob = 0.5), ^if.then1, ^b1;
   ^if.then1:
     call (i32) -> void @putint(i32 2);
     ubr ^b1;
@@ -24,12 +24,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 func @select_bitset(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = scmp eq i32 %x, i32 0;
-    cbr i1 %0(prob = 0.5), ^b, ^b1;
-  ^b:
     i1 %1 = scmp eq i32 %y, i32 1;
-    ubr ^b1;
-  ^b1:
-    i1 %2 = phi [^entry, i1 false] [^b, i1 %1];
+    i1 %2 = and i1 %0, i1 %1;
     i32 %3 = select i1 %2 ? i32 %z : i32 0;
     ret i32 %3;
 }

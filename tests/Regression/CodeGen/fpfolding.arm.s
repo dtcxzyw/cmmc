@@ -10,9 +10,9 @@
 my_fabs:
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR
-	bge label2
-	vneg.f32 s0, s0
-label2:
+	vneg.f32 s1, s0
+	vmovge.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl my_fmin
 my_fmin:

@@ -242,48 +242,49 @@ label258:
 	ret
 .globl select_cross
 select_cross:
-	mv a3, a2
-	slt a2, a0, a1
-	mv a0, a2
-	bge a1, a3, label261
-	li a0, 1
-	bne a2, zero, label261
-	li a0, 10
-label261:
+	mv a3, a0
+	mv a0, a1
+	slt a1, a3, a1
+	li a3, 1
+	bne a1, zero, label271
+	li a3, 10
+label271:
+	slt a2, a0, a2
+	mv a0, a3
+	bne a2, zero, label269
+	mv a0, a1
+label269:
 	ret
 .globl select_cross_fpr
 select_cross_fpr:
 	slt a0, a0, a1
 	mv a3, a0
-	bge a1, a2, label289
+	bge a1, a2, label284
 	lui a1, 260096
 	fmv.w.x f10, a1
 	lui a1, 266752
 	fmv.w.x f11, a1
-	bne a0, zero, label279
+	bne a0, zero, label274
 	fmv.s f10, f11
-	j label279
-label289:
+	j label274
+label284:
 	fcvt.s.w f10, a3
-label279:
+label274:
 	ret
 .globl select_round
 select_round:
-pcrel322:
+	fmv.s f11, f10
+pcrel310:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel322)
-	flw f11, 0(a0)
-	flw f11, 0(a0)
-	flt.s a0, f10, f11
-	bne a0, zero, label302
-label303:
+	addi a1, a0, %pcrel_lo(pcrel310)
+	flw f10, 0(a1)
+	flt.s a0, f11, f10
+	flw f10, 4(a1)
+	fadd.s f10, f11, f10
+	bne a0, zero, label309
+	fmv.s f10, f11
+label309:
 	ret
-label302:
-	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(label302)
-	flw f11, 4(a0)
-	fadd.s f10, f10, f11
-	j label303
 .globl select_bitset
 select_bitset:
 	sltiu a0, a0, 1
@@ -296,14 +297,14 @@ select_bitset:
 .globl select_imax
 select_imax:
 	slt a2, a1, a0
-	bne a2, zero, label339
+	bne a2, zero, label327
 	mv a0, a1
-label339:
+label327:
 	ret
 .globl select_imin
 select_imin:
 	slt a2, a0, a1
-	bne a2, zero, label346
+	bne a2, zero, label334
 	mv a0, a1
-label346:
+label334:
 	ret

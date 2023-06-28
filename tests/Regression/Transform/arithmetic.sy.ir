@@ -342,13 +342,10 @@ func @foo74(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 func @foo75(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = scmp neq i32 %y, i32 0;
-    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
-  ^rhsBlock:
-    i32 %1 = add i32 %x, i32 1;
-    ubr ^b;
-  ^b:
-    i32 %2 = phi [^entry, i32 %x] [^rhsBlock, i32 %1];
-    ret i32 %2;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = add i32 %x, i32 1;
+    i32 %3 = sub i32 %2, i32 %1;
+    ret i32 %3;
 }
 func @foo76(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -415,27 +412,17 @@ func @foo87(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo88(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 0;
-    cbr i1 %0(prob = 0.5), ^b, ^b1;
-  ^b:
-    i1 %1 = scmp eq i32 %y, i32 0;
-    ubr ^b1;
-  ^b1:
-    i1 %2 = phi [^entry, i1 false] [^b, i1 %1];
-    i32 %3 = zext i1 %2 to i32;
-    ret i32 %3;
+    i32 %0 = or i32 %x, i32 %y;
+    i1 %1 = scmp eq i32 %0, i32 0;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
 }
 func @foo89(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %x, i32 0;
-    cbr i1 %0(prob = 0.5), ^b1, ^b;
-  ^b:
-    i1 %1 = scmp neq i32 %y, i32 0;
-    ubr ^b1;
-  ^b1:
-    i1 %2 = phi [^entry, i1 true] [^b, i1 %1];
-    i32 %3 = zext i1 %2 to i32;
-    ret i32 %3;
+    i32 %0 = or i32 %x, i32 %y;
+    i1 %1 = scmp neq i32 %0, i32 0;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
 }
 func @foo90(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -455,50 +442,34 @@ func @foo92(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo93(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
-    cbr i1 %0(prob = 0.5), ^lhsBlock, ^b;
-  ^lhsBlock:
-    i1 %1 = scmp lt i32 %z, i32 %y;
-    i32 %2 = zext i1 %1 to i32;
-    ubr ^b;
-  ^b:
-    i32 %3 = phi [^entry, i32 0] [^lhsBlock, i32 %2];
+    i1 %0 = scmp lt i32 %z, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = scmp lt i32 %x, i32 %y;
+    i32 %3 = select i1 %2 ? i32 %1 : i32 0;
     ret i32 %3;
 }
 func @foo94(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
-    cbr i1 %0(prob = 0.5), ^lhsBlock, ^b;
-  ^lhsBlock:
-    i1 %1 = scmp lt i32 %z, i32 %y;
-    i32 %2 = zext i1 %1 to i32;
-    ubr ^b;
-  ^b:
-    i32 %3 = phi [^entry, i32 1] [^lhsBlock, i32 %2];
+    i1 %0 = scmp lt i32 %z, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = scmp lt i32 %x, i32 %y;
+    i32 %3 = select i1 %2 ? i32 %1 : i32 1;
     ret i32 %3;
 }
 func @foo95(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
-    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
-  ^rhsBlock:
-    i1 %1 = scmp lt i32 %z, i32 %y;
-    i32 %2 = zext i1 %1 to i32;
-    ubr ^b;
-  ^b:
-    i32 %3 = phi [^entry, i32 1] [^rhsBlock, i32 %2];
+    i1 %0 = scmp lt i32 %z, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = scmp lt i32 %x, i32 %y;
+    i32 %3 = select i1 %2 ? i32 1 : i32 %1;
     ret i32 %3;
 }
 func @foo96(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
-    cbr i1 %0(prob = 0.5), ^b, ^rhsBlock;
-  ^rhsBlock:
-    i1 %1 = scmp lt i32 %z, i32 %y;
-    i32 %2 = zext i1 %1 to i32;
-    ubr ^b;
-  ^b:
-    i32 %3 = phi [^entry, i32 0] [^rhsBlock, i32 %2];
+    i1 %0 = scmp lt i32 %z, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    i1 %2 = scmp lt i32 %x, i32 %y;
+    i32 %3 = select i1 %2 ? i32 0 : i32 %1;
     ret i32 %3;
 }
 func @foo97(i32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

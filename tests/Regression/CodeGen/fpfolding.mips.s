@@ -8,14 +8,9 @@ my_fabs:
 	c.ult.s $f12, $f4
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label10
-	nop
-	neg.s $f0, $f12
-	b label2
-	nop
-label10:
+	neg.s $f4, $f12
 	mov.s $f0, $f12
-label2:
+	movz.s $f0, $f4, $t0
 	jr $ra
 	nop
 .globl my_fmin
