@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -94,7 +93,7 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             return DataSection::Bss;
         reportUnreachable(CMMC_LOCATION());
     };
-    static const char* directives[3] = { ".data", ".section .rodata", ".bss" };
+    static const char* directives[3] = { ".data", ".section .rodata", ".bss" };  // NOLINT
     std::unordered_map<DataSection, std::vector<MIRGlobal*>> globals;
     for(auto& global : module.globals()) {
         if(!global->reloc->isFunc())
