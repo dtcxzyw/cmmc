@@ -7,7 +7,7 @@
 .globl f
 f:
 	mul r2, r1, r1
-	lsl r3, r0, #1
-	mla r0, r0, r0, r2
-	mla r0, r1, r3, r0
+	mla r2, r0, r0, r2
+	lsl r0, r0, #1
+	mla r0, r1, r0, r2
 	bx lr

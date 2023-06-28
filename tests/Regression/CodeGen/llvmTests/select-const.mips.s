@@ -38,9 +38,8 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 	sltu $t0, $zero, $a0
-	li $t1, 4
-	move $v0, $zero
-	movn $v0, $t1, $t0
+	subu $t0, $zero, $t0
+	andi $v0, $t0, 4
 	jr $ra
 	nop
 .globl select_eq_10000_10001

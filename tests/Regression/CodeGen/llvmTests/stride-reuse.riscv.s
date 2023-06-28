@@ -20,17 +20,16 @@ label2:
 	li a2, 4294967295
 	and a2, a1, a2
 pcrel38:
-	auipc a3, %pcrel_hi(A)
+	auipc a3, %pcrel_hi(B)
 	addi a3, a3, %pcrel_lo(pcrel38)
 	slli a4, a2, 2
 	add a3, a3, a4
-pcrel39:
-	auipc a4, %pcrel_hi(B)
-	addi a4, a4, %pcrel_lo(pcrel39)
-	slli a5, a2, 2
-	add a4, a4, a5
-	flw f10, 0(a4)
+	flw f10, 0(a3)
 	fadd.s f10, f10, f10
+pcrel39:
+	auipc a3, %pcrel_hi(A)
+	addi a3, a3, %pcrel_lo(pcrel39)
+	add a3, a3, a4
 	fsw f10, 0(a3)
 pcrel40:
 	auipc a3, %pcrel_hi(P)

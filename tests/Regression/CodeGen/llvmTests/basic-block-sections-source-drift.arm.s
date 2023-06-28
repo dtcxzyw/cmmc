@@ -12,8 +12,9 @@ foo:
 	b label2
 label9:
 	cmp r1, #0
-	mov r1, #2
 	mov r0, #0
-	movne r0, r1
+	movwne r0, #1
+	rsb r0, r0, #0
+	and r0, r0, #2
 label2:
 	bx lr

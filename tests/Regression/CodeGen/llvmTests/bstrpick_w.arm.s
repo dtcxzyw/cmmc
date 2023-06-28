@@ -36,9 +36,8 @@ and8191:
 	bx lr
 .globl ashr20_and511
 ashr20_and511:
-	lsr r0, r0, #20
 	movw r1, #511
-	and r0, r0, r1
+	and r0, r1, r0, lsr #20
 	bx lr
 .globl lshr10_and255
 lshr10_and255:

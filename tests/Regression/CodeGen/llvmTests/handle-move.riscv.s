@@ -20,13 +20,13 @@ f2:
 f3:
 	addw a2, a0, a1
 	subw a0, a0, a1
-	mulw a0, a0, a2
+	mulw a0, a2, a0
 	ret
 .globl f4
 f4:
-	subw a3, a2, a3
 	subw a0, a0, a1
 	subw a1, a1, a2
 	divuw a0, a0, a1
-	mulw a0, a3, a0
+	subw a1, a2, a3
+	mulw a0, a1, a0
 	ret

@@ -35,9 +35,9 @@ unsigned_i1:
 unsigned_i16:
 	lui $t0, %hi(b)
 	lh $t0, %lo(b)($t0)
+	andi $t0, $t0, 65535
 	lui $t1, %hi(a)
 	lh $t1, %lo(a)($t1)
-	andi $t0, $t0, 65535
 	andi $t1, $t1, 65535
 	addu $t0, $t0, $t1
 	andi $v0, $t0, 65535
@@ -64,9 +64,9 @@ use_i1:
 use_i16:
 	lui $t0, %hi(b)
 	lh $t0, %lo(b)($t0)
+	andi $t0, $t0, 65535
 	lui $t1, %hi(a)
 	lh $t1, %lo(a)($t1)
-	andi $t0, $t0, 65535
 	andi $t1, $t1, 65535
 	addu $t0, $t0, $t1
 	andi $t0, $t0, 65535

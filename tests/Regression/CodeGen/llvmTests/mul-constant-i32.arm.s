@@ -7,8 +7,7 @@
 .globl mul_neg_fold
 mul_neg_fold:
 	mvn r2, #8
-	mul r0, r0, r2
-	add r0, r1, r0
+	mla r0, r0, r2, r1
 	bx lr
 .globl test_mul_by_1
 test_mul_by_1:

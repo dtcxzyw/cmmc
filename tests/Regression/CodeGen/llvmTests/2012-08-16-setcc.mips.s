@@ -6,8 +6,8 @@ and_1:
 	andi $t1, $a0, 255
 	and $t0, $t0, $t1
 	sltu $t0, $zero, $t0
-	move $v0, $zero
-	movn $v0, $a2, $t0
+	subu $t0, $zero, $t0
+	and $v0, $a2, $t0
 	jr $ra
 	nop
 .globl and_2
@@ -24,8 +24,8 @@ xor_1:
 	andi $t1, $a0, 255
 	xor $t0, $t0, $t1
 	sltu $t0, $zero, $t0
-	move $v0, $zero
-	movn $v0, $a2, $t0
+	subu $t0, $zero, $t0
+	and $v0, $a2, $t0
 	jr $ra
 	nop
 .globl xor_2

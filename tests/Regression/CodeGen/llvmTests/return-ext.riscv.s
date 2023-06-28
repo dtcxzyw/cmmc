@@ -38,10 +38,10 @@ unsigned_i16:
 pcrel42:
 	auipc a0, %pcrel_hi(b)
 	lh a1, %pcrel_lo(pcrel42)(a0)
+	lhu a0, %pcrel_lo(pcrel42)(a0)
 pcrel43:
 	auipc a1, %pcrel_hi(a)
 	lh a2, %pcrel_lo(pcrel43)(a1)
-	lhu a0, %pcrel_lo(pcrel42)(a0)
 	lhu a1, %pcrel_lo(pcrel43)(a1)
 	addw a0, a0, a1
 	li a1, 65535
@@ -71,10 +71,10 @@ use_i16:
 pcrel87:
 	auipc a0, %pcrel_hi(b)
 	lh a1, %pcrel_lo(pcrel87)(a0)
+	lhu a0, %pcrel_lo(pcrel87)(a0)
 pcrel88:
 	auipc a1, %pcrel_hi(a)
 	lh a2, %pcrel_lo(pcrel88)(a1)
-	lhu a0, %pcrel_lo(pcrel87)(a0)
 	lhu a1, %pcrel_lo(pcrel88)(a1)
 	addw a0, a0, a1
 	li a1, 65535

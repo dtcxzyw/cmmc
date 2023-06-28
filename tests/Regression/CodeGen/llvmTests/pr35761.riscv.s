@@ -17,14 +17,14 @@ PR35761:
 pcrel26:
 	auipc a1, %pcrel_hi(x)
 	lb a1, %pcrel_lo(pcrel26)(a1)
-	andi a1, a1, 255
-	li a2, 32767
-	or a0, a0, a2
 pcrel27:
 	auipc a2, %pcrel_hi(y)
 	lw a2, %pcrel_lo(pcrel27)(a2)
-	xor a0, a2, a0
-	or a0, a1, a0
+	li a3, 32767
+	or a0, a0, a3
+	xor a0, a0, a2
+	andi a1, a1, 255
+	or a0, a0, a1
 	andi a0, a0, 255
 	andi a0, a0, 255
 	li a1, 4194303

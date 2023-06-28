@@ -41,9 +41,8 @@ test14:
 	bx lr
 .globl test15
 test15:
-	lsr r0, r0, #8
 	movw r2, #65535
-	and r0, r0, r2
+	and r0, r2, r0, lsr #8
 	add r0, r0, r1
 	bx lr
 .globl test16

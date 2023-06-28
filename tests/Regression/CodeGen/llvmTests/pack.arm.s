@@ -19,10 +19,9 @@ test10:
 	bx lr
 .globl test2
 test2:
-	lsl r1, r1, #12
 	movw r2, #0
 	movt r2, #65535
-	and r1, r1, r2
+	and r1, r2, r1, lsl #12
 	movw r2, #65535
 	and r0, r0, r2
 	orr r0, r1, r0
@@ -58,9 +57,8 @@ test5a:
 	bx lr
 .globl test6
 test6:
-	lsr r1, r1, #12
 	movw r2, #65535
-	and r1, r1, r2
+	and r1, r2, r1, lsr #12
 	movw r2, #0
 	movt r2, #65535
 	and r0, r0, r2
@@ -68,9 +66,8 @@ test6:
 	bx lr
 .globl test7
 test7:
-	lsr r1, r1, #18
 	movw r2, #65535
-	and r1, r1, r2
+	and r1, r2, r1, lsr #18
 	movw r2, #0
 	movt r2, #65535
 	and r0, r0, r2

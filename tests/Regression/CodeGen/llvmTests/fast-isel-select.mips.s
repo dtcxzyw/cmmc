@@ -4,8 +4,8 @@
 fastisel_select:
 	subu $t0, $a0, $a1
 	sltu $t0, $zero, $t0
+	subu $t0, $zero, $t0
 	li $t1, 1204476887
-	move $v0, $zero
-	movn $v0, $t1, $t0
+	and $v0, $t0, $t1
 	jr $ra
 	nop

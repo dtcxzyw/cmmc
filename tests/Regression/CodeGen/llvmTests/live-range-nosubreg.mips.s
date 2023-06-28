@@ -33,16 +33,16 @@ main:
 label3:
 	andi $t0, $t0, 65535
 	addiu $t0, $t0, -1
+	andi $t0, $t0, 65535
 	andi $t2, $t0, 65535
-	sh $t2, 0($t1)
+	sh $t0, 0($t1)
 	lui $t1, %hi(d)
 	addiu $t0, $t1, %lo(d)
 	lb $t1, %lo(d)($t1)
 	andi $t1, $t1, 255
 	subu $t1, $zero, $t1
 	andi $t3, $t1, 255
-	andi $t1, $t2, 65535
-	bne $t1, $zero, label33
+	bne $t2, $zero, label33
 	nop
 	move $t1, $zero
 	b label5

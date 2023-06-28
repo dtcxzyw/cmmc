@@ -7,9 +7,8 @@
 .globl foo
 foo:
 	uxtb r0, r0
-	cmp r0, #0
-	mov r1, #0
-	movweq r1, #1
+	clz r0, r0
+	lsr r1, r0, #5
 	mov r0, r1
 	uxth r2, r1
 	cmp r1, #0

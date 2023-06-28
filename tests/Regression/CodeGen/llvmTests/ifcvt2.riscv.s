@@ -2,12 +2,12 @@
 .text
 .globl t1
 t1:
+	slti a4, a3, 4
+	li a5, 10
+	slt a5, a5, a2
+	or a4, a4, a5
 	addw a0, a0, a1
-	slti a1, a3, 4
-	li a4, 10
-	slt a4, a4, a2
-	or a1, a1, a4
-	beq a1, zero, label3
+	beq a4, zero, label3
 	addw a0, a2, a0
 	subw a0, a0, a3
 label3:

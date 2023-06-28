@@ -87,7 +87,7 @@ label17:
 	sxth r1, r1
 	uxth r1, r1
 	uxth r1, r1
-	add r0, r1, r0
+	add r0, r0, r1
 	uxth r0, r0
 	mov r2, #1
 	mov r1, #0
@@ -101,8 +101,8 @@ label18:
 	mov r5, #0
 	movweq r5, #1
 	uxth r5, r5
-	uxth r0, r0
 	uxth r5, r5
+	uxth r0, r0
 	add r0, r0, r5
 	uxth r0, r0
 	uxth r0, r0

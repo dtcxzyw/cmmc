@@ -37,11 +37,9 @@ select_const_int_one_away:
 	ret
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
-	sltu a1, zero, a0
-	li a0, 4
-	bne a1, zero, label40
-	mv a0, zero
-label40:
+	sltu a0, zero, a0
+	subw a0, zero, a0
+	andi a0, a0, 4
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
@@ -110,9 +108,9 @@ select_sgt_negative_one_constant1_constant2:
 	li a1, -1
 	slt a1, a1, a0
 	li a0, 7
-	bne a1, zero, label119
+	bne a1, zero, label118
 	li a0, -3
-label119:
+label118:
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
@@ -135,9 +133,9 @@ select_sle_zero_negone:
 select_slt_zero_constant1_constant2:
 	slti a1, a0, 0
 	li a0, 7
-	bne a1, zero, label149
+	bne a1, zero, label148
 	li a0, -3
-label149:
+label148:
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

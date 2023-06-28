@@ -7,6 +7,5 @@
 .globl test
 test:
 	lsl r0, r0, #1
-	add r0, r0, #1
-	mul r0, r1, r0
+	mla r0, r1, r0, r1
 	bx lr

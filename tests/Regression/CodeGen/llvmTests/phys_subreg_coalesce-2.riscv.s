@@ -24,9 +24,9 @@ label5:
 label23:
 	li a3, 1
 	mv a1, a0
+	subw a4, a0, a3
+	mulw a1, a0, a4
 	addiw a4, a3, 1
-	subw a5, a0, a3
-	mulw a1, a5, a0
 	divuw a1, a1, a4
 	addiw a3, a3, 2
 	sltu a3, a2, a3
@@ -37,9 +37,9 @@ label38:
 	j label2
 label32:
 	mv a3, a4
-	addiw a4, a4, 1
-	subw a5, a0, a3
-	mulw a1, a5, a1
+	subw a4, a0, a4
+	mulw a1, a1, a4
+	addiw a4, a3, 1
 	divuw a1, a1, a4
 	addiw a3, a3, 2
 	sltu a3, a2, a3

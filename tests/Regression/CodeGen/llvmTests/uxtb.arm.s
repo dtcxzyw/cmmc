@@ -12,14 +12,12 @@ test1:
 	bx lr
 .globl test10
 test10:
-	lsr r1, r0, #12
-	movw r2, #7
-	movt r2, #7
-	and r1, r1, r2
-	lsr r0, r0, #7
+	movw r1, #7
+	movt r1, #7
+	and r1, r1, r0, lsr #12
 	movw r2, #248
 	movt r2, #248
-	and r0, r0, r2
+	and r0, r2, r0, lsr #7
 	orr r0, r1, r0
 	bx lr
 .globl test11
@@ -28,38 +26,33 @@ test11:
 	movw r1, #1
 	movt r1, #1
 	lsl r0, r1, r0
-	asr r0, r0, #1
 	movw r1, #7
 	movt r1, #7
-	and r0, r0, r1
+	and r0, r1, r0, asr #1
 	bx lr
 .globl test2
 test2:
-	lsr r0, r0, #8
 	movw r1, #255
 	movt r1, #255
-	and r0, r0, r1
+	and r0, r1, r0, lsr #8
 	bx lr
 .globl test3
 test3:
-	lsr r0, r0, #8
 	movw r1, #255
 	movt r1, #255
-	and r0, r0, r1
+	and r0, r1, r0, lsr #8
 	bx lr
 .globl test4
 test4:
-	lsr r0, r0, #8
 	movw r1, #255
 	movt r1, #255
-	and r0, r0, r1
+	and r0, r1, r0, lsr #8
 	bx lr
 .globl test5
 test5:
-	lsr r0, r0, #8
 	movw r1, #255
 	movt r1, #255
-	and r0, r0, r1
+	and r0, r1, r0, lsr #8
 	bx lr
 .globl test6
 test6:

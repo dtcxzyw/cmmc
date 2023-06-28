@@ -36,8 +36,9 @@ label3:
 	li a2, 65535
 	and a0, a0, a2
 	addiw a0, a0, -1
-	and a4, a0, a2
-	sh a4, 0(a1)
+	and a0, a0, a2
+	and a2, a0, a2
+	sh a0, 0(a1)
 pcrel62:
 	auipc a1, %pcrel_hi(d)
 	addi a0, a1, %pcrel_lo(pcrel62)
@@ -45,8 +46,7 @@ pcrel62:
 	andi a1, a1, 255
 	subw a1, zero, a1
 	andi a3, a1, 255
-	and a1, a4, a2
-	bne a1, zero, label33
+	bne a2, zero, label33
 	mv a1, zero
 	j label5
 label33:

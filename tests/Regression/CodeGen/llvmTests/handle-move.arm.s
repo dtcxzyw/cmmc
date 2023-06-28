@@ -23,13 +23,13 @@ f2:
 f3:
 	add r2, r0, r1
 	sub r0, r0, r1
-	mul r0, r0, r2
+	mul r0, r2, r0
 	bx lr
 .globl f4
 f4:
-	sub r3, r2, r3
 	sub r0, r0, r1
 	sub r1, r1, r2
 	udiv r0, r0, r1
-	mul r0, r3, r0
+	sub r1, r2, r3
+	mul r0, r1, r0
 	bx lr

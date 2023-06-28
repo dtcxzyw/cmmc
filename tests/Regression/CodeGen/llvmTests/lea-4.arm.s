@@ -15,7 +15,6 @@ t1:
 .globl t2
 t2:
 	sub r0, r0, #1
-	lsl r0, r0, #1
 	movw r1, #65535
-	and r0, r0, r1
+	and r0, r1, r0, lsl #1
 	bx lr

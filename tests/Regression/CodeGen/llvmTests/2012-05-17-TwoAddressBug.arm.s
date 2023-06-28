@@ -9,7 +9,6 @@ t:
 	movw r1, #1
 	movt r1, #65535
 	add r1, r0, r1
-	lsr r1, r1, #23
 	and r0, r0, #1
-	add r0, r1, r0
+	add r0, r0, r1, lsr #23
 	bx lr

@@ -7,6 +7,5 @@
 .globl test
 test:
 	sub r0, r0, #1
-	add r1, r1, #1
-	mul r0, r0, r1
+	mla r0, r0, r1, r0
 	bx lr

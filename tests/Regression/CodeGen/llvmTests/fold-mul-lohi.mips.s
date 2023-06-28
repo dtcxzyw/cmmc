@@ -18,17 +18,17 @@ foo:
 	nop
 	move $t0, $zero
 label2:
-	lui $t1, %hi(A)
-	addiu $t1, $t1, %lo(A)
+	lui $t1, %hi(B)
+	addiu $t1, $t1, %lo(B)
 	addu $t1, $t1, $t0
-	lui $t2, %hi(B)
-	addiu $t2, $t2, %lo(B)
+	lb $t1, 0($t1)
+	andi $t1, $t1, 255
+	sll $t1, $t1, 1
+	andi $t1, $t1, 255
+	lui $t2, %hi(A)
+	addiu $t2, $t2, %lo(A)
 	addu $t2, $t2, $t0
-	lb $t2, 0($t2)
-	andi $t2, $t2, 255
-	sll $t2, $t2, 1
-	andi $t2, $t2, 255
-	sb $t2, 0($t1)
+	sb $t1, 0($t2)
 	li $t1, 9
 	mult $t0, $t1
 	mflo $t1

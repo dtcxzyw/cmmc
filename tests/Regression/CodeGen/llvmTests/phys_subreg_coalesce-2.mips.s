@@ -30,10 +30,10 @@ label5:
 label23:
 	li $t1, 1
 	move $t0, $a0
-	addiu $t2, $t1, 1
-	subu $t3, $a0, $t1
-	mult $t3, $a0
+	subu $t2, $a0, $t1
+	mult $a0, $t2
 	mflo $t0
+	addiu $t2, $t1, 1
 	divu $zero, $t0, $t2
 	mflo $t0
 	addiu $t1, $t1, 2
@@ -48,10 +48,10 @@ label38:
 	nop
 label32:
 	move $t1, $t2
-	addiu $t2, $t2, 1
-	subu $t3, $a0, $t1
-	mult $t3, $t0
+	subu $t2, $a0, $t2
+	mult $t0, $t2
 	mflo $t0
+	addiu $t2, $t1, 1
 	divu $zero, $t0, $t2
 	mflo $t0
 	addiu $t1, $t1, 2

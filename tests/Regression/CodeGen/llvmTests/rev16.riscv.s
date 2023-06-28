@@ -63,17 +63,17 @@ extra_maskop_uses2:
 	ret
 .globl f2
 f2:
-	slliw a2, a0, 8
+	slliw a1, a0, 8
+	li a2, 65280
+	and a2, a1, a2
 	srliw a0, a0, 8
-	li a1, 65280
-	and a1, a2, a1
 	andi a3, a0, 255
-	li a4, -16777216
-	and a2, a2, a4
-	li a4, 16711680
-	and a0, a0, a4
-	or a1, a1, a3
-	or a1, a1, a2
+	or a2, a2, a3
+	li a3, -16777216
+	and a1, a1, a3
+	or a1, a2, a1
+	li a2, 16711680
+	and a0, a0, a2
 	or a0, a1, a0
 	ret
 .globl not_rev16

@@ -16,10 +16,10 @@ dst:
 imm32_cse:
 	movw r0, #:lower16:src
 	movt r0, #:upper16:src
-	ldr r1, [r0, #0]
-	movw r0, #:lower16:dst
-	movt r0, #:upper16:dst
-	movw r2, #4099
-	add r1, r1, r2
-	str r1, [r0, #0]
+	ldr r0, [r0, #0]
+	movw r1, #4099
+	add r0, r0, r1
+	movw r1, #:lower16:dst
+	movt r1, #:upper16:dst
+	str r0, [r1, #0]
 	bx lr

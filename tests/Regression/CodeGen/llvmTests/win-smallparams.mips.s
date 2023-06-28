@@ -11,15 +11,15 @@ manyargs:
 	sll $t2, $a0, 24
 	sra $t2, $t2, 24
 	sll $t3, $a1, 16
-	sra $t4, $t3, 16
-	andi $t3, $a2, 255
-	andi $t5, $a3, 65535
-	andi $t1, $t1, 255
-	andi $t0, $t0, 65535
-	addu $t2, $t2, $t4
+	sra $t3, $t3, 16
 	addu $t2, $t2, $t3
-	addu $t2, $t2, $t5
+	andi $t3, $a2, 255
+	addu $t2, $t2, $t3
+	andi $t3, $a3, 65535
+	addu $t2, $t2, $t3
+	andi $t1, $t1, 255
 	addu $t1, $t2, $t1
+	andi $t0, $t0, 65535
 	addu $v0, $t1, $t0
 	jr $ra
 	nop

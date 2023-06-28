@@ -64,6 +64,5 @@ test8:
 .globl test9
 test9:
 	lsl r0, r0, #16
-	lsr r0, r0, #16
-	add r0, r0, r1
+	add r0, r1, r0, lsr #16
 	bx lr

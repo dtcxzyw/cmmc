@@ -8,7 +8,7 @@
 extend2bit_v2:
 	uxtb r0, r0
 	sxtb r0, r0
-	cmp r0, #3
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #3
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr

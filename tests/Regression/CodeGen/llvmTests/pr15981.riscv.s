@@ -15,26 +15,25 @@ c:
 .globl fn1
 fn1:
 	sltu a1, zero, a1
-	bne a1, zero, label7
-	mv a0, zero
-label7:
+	subw a1, zero, a1
+	and a0, a0, a1
 	ret
 .globl fn2
 fn2:
-pcrel32:
+pcrel30:
 	auipc a0, %pcrel_hi(b)
-	lw a0, %pcrel_lo(pcrel32)(a0)
-pcrel33:
-	auipc a1, %pcrel_hi(a)
-	lw a2, %pcrel_lo(pcrel33)(a1)
+	lw a1, %pcrel_lo(pcrel30)(a0)
+pcrel31:
+	auipc a0, %pcrel_hi(a)
+	lw a2, %pcrel_lo(pcrel31)(a0)
 	addiw a2, a2, -1
+	sltu a3, zero, a2
+	subw a3, zero, a3
+	and a1, a1, a3
 	li a3, 4294967295
-	and a3, a2, a3
-	sw a3, %pcrel_lo(pcrel33)(a1)
-	sltu a1, zero, a2
-	bne a1, zero, label31
-	mv a0, zero
-label31:
-	auipc a1, %pcrel_hi(c)
-	sw a0, %pcrel_lo(label31)(a1)
+	and a2, a2, a3
+	sw a2, %pcrel_lo(pcrel31)(a0)
+pcrel32:
+	auipc a0, %pcrel_hi(c)
+	sw a1, %pcrel_lo(pcrel32)(a0)
 	ret

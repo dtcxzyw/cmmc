@@ -90,5 +90,5 @@ test8:
 test9:
 	slliw a0, a0, 16
 	srliw a0, a0, 16
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret

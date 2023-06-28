@@ -22,14 +22,14 @@ foo:
 	ble label4
 	mov r1, #0
 label2:
+	movw r2, #:lower16:B
+	movt r2, #:upper16:B
+	add r2, r2, r1, lsl #2
+	vldr s0, [r2, #0]
+	vadd.f32 s0, s0, s0
 	movw r2, #:lower16:A
 	movt r2, #:upper16:A
 	add r2, r2, r1, lsl #2
-	movw r3, #:lower16:B
-	movt r3, #:upper16:B
-	add r3, r3, r1, lsl #2
-	vldr s0, [r3, #0]
-	vadd.f32 s0, s0, s0
 	vstr s0, [r2, #0]
 	movw r2, #:lower16:P
 	movt r2, #:upper16:P

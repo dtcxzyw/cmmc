@@ -45,18 +45,19 @@ Test_use_div_reg_imm:
 	bx lr
 .globl Test_use_divrem_reg_imm
 Test_use_divrem_reg_imm:
+	push { r4 }
 	movw r2, #33761
 	movt r2, #15887
 	smmul r1, r0, r2
 	asr r3, r1, #3
 	add r1, r3, r1, lsr #31
-	smmul r2, r0, r2
-	asr r3, r2, #3
-	add r2, r3, r2, lsr #31
 	mov r3, #33
-	mul r2, r2, r3
-	sub r0, r0, r2
+	smmul r2, r0, r2
+	asr r4, r2, #3
+	add r2, r4, r2, lsr #31
+	mls r0, r2, r3, r0
 	add r0, r1, r0
+	pop { r4 }
 	bx lr
 .globl Test_use_rem_imm_reg
 Test_use_rem_imm_reg:
@@ -65,12 +66,11 @@ Test_use_rem_imm_reg:
 	bx lr
 .globl Test_use_rem_reg_imm
 Test_use_rem_reg_imm:
-	movw r1, #33761
-	movt r1, #15887
-	smmul r1, r0, r1
-	asr r2, r1, #3
-	add r1, r2, r1, lsr #31
-	mov r2, #33
-	mul r1, r1, r2
-	sub r0, r0, r1
+	mov r1, #33
+	movw r2, #33761
+	movt r2, #15887
+	smmul r2, r0, r2
+	asr r3, r2, #3
+	add r2, r3, r2, lsr #31
+	mls r0, r2, r1, r0
 	bx lr

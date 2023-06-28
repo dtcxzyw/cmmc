@@ -38,8 +38,9 @@ main:
 label3:
 	uxth r0, r0
 	sub r0, r0, #1
+	uxth r0, r0
 	uxth r3, r0
-	strh r3, [r1, #0]
+	strh r0, [r1, #0]
 	movw r1, #:lower16:d
 	movt r1, #:upper16:d
 	mov r0, r1
@@ -47,8 +48,7 @@ label3:
 	ldrb r1, [r1, #0]
 	rsb r1, r1, #0
 	uxtb r2, r1
-	uxth r1, r3
-	cmp r1, #0
+	cmp r3, #0
 	bne label33
 	mov r1, #0
 	b label5

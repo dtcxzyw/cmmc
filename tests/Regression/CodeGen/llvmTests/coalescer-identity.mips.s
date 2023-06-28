@@ -85,7 +85,7 @@ label17:
 	sra $t1, $t1, 16
 	andi $t1, $t1, 65535
 	andi $t1, $t1, 65535
-	addu $t0, $t1, $t0
+	addu $t0, $t0, $t1
 	andi $t0, $t0, 65535
 	li $t2, 1
 	move $t1, $zero
@@ -98,8 +98,8 @@ label15:
 label18:
 	sltiu $t5, $t1, 1
 	andi $t5, $t5, 65535
-	andi $t0, $t0, 65535
 	andi $t5, $t5, 65535
+	andi $t0, $t0, 65535
 	addu $t0, $t0, $t5
 	andi $t0, $t0, 65535
 	andi $t0, $t0, 65535

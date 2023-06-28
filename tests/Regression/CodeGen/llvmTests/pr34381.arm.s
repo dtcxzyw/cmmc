@@ -40,9 +40,8 @@ _Z3foov:
 	sub r0, r0, #1
 	uxtb r0, r0
 	uxtb r0, r0
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	movw r1, #:lower16:var_390
 	movt r1, #:upper16:var_390
 	str r0, [r1, #0]

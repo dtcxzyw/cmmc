@@ -28,12 +28,12 @@ fn1:
 label10:
 	move $t1, $zero
 label3:
-	li $t2, 2
-	div $zero, $t1, $t2
-	mflo $t1
 	lui $t2, %hi(c)
 	lw $t2, %lo(c)($t2)
 	sltiu $t2, $t2, 1
+	li $t3, 2
+	div $zero, $t1, $t3
+	mflo $t1
 	addu $t1, $t1, $t2
 	sw $t1, 0($t0)
 	jr $ra

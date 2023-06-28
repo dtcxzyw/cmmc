@@ -69,12 +69,12 @@ calc_seleq:
 calc_seleqk:
 	lui $t0, %hi(a)
 	lw $t3, %lo(a)($t0)
+	xori $t0, $t3, 1
+	sltiu $t4, $t0, 1
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
 	lui $t1, %hi(f)
 	lw $t1, %lo(f)($t1)
-	xori $t2, $t3, 1
-	sltiu $t4, $t2, 1
 	move $t2, $t1
 	movn $t2, $t0, $t4
 	lui $t4, %hi(z1)
@@ -136,12 +136,12 @@ calc_selge:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	slt $t0, $t3, $t4
+	xori $t5, $t0, 1
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
 	lui $t1, %hi(t)
 	lw $t1, %lo(t)($t1)
-	slt $t2, $t3, $t4
-	xori $t5, $t2, 1
 	move $t2, $t1
 	movn $t2, $t0, $t5
 	lui $t5, %hi(z1)
@@ -173,11 +173,11 @@ calc_selgt:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	slt $t5, $t4, $t3
 	lui $t0, %hi(f)
 	lw $t1, %lo(f)($t0)
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
-	slt $t5, $t4, $t3
 	move $t2, $t0
 	movn $t2, $t1, $t5
 	lui $t5, %hi(z1)
@@ -207,12 +207,12 @@ calc_selle:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	slt $t0, $t4, $t3
+	xori $t5, $t0, 1
 	lui $t0, %hi(t)
 	lw $t1, %lo(t)($t0)
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
-	slt $t2, $t4, $t3
-	xori $t5, $t2, 1
 	move $t2, $t0
 	movn $t2, $t1, $t5
 	lui $t5, %hi(z1)
@@ -242,11 +242,11 @@ calc_selle:
 calc_selltk:
 	lui $t0, %hi(a)
 	lw $t3, %lo(a)($t0)
+	slti $t4, $t3, 10
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
 	lui $t1, %hi(f)
 	lw $t1, %lo(f)($t1)
-	slti $t4, $t3, 10
 	move $t2, $t1
 	movn $t2, $t0, $t4
 	lui $t4, %hi(z1)
@@ -305,12 +305,12 @@ calc_selne:
 calc_selnek:
 	lui $t0, %hi(a)
 	lw $t3, %lo(a)($t0)
+	xori $t0, $t3, 1
+	sltu $t4, $zero, $t0
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
 	lui $t1, %hi(t)
 	lw $t1, %lo(t)($t1)
-	xori $t2, $t3, 1
-	sltu $t4, $zero, $t2
 	move $t2, $t1
 	movn $t2, $t0, $t4
 	lui $t4, %hi(z1)
@@ -402,12 +402,12 @@ calc_seluge:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	sltu $t0, $t3, $t4
+	xori $t5, $t0, 1
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
 	lui $t1, %hi(t)
 	lw $t1, %lo(t)($t1)
-	sltu $t2, $t3, $t4
-	xori $t5, $t2, 1
 	move $t2, $t1
 	movn $t2, $t0, $t5
 	lui $t5, %hi(z1)
@@ -439,11 +439,11 @@ calc_selugt:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	sltu $t5, $t4, $t3
 	lui $t0, %hi(f)
 	lw $t1, %lo(f)($t0)
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
-	sltu $t5, $t4, $t3
 	move $t2, $t0
 	movn $t2, $t1, $t5
 	lui $t5, %hi(z1)
@@ -472,12 +472,12 @@ calc_selule:
 	lw $t3, %lo(a)($t0)
 	lui $t0, %hi(b)
 	lw $t4, %lo(b)($t0)
+	sltu $t0, $t4, $t3
+	xori $t5, $t0, 1
 	lui $t0, %hi(t)
 	lw $t1, %lo(t)($t0)
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
-	sltu $t2, $t4, $t3
-	xori $t5, $t2, 1
 	move $t2, $t0
 	movn $t2, $t1, $t5
 	lui $t5, %hi(z1)

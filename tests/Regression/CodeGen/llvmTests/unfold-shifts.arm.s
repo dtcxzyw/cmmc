@@ -6,9 +6,8 @@
 .fpu vfpv4
 .globl unfold1
 unfold1:
-	lsl r0, r0, #1
 	movw r2, #510
-	orr r0, r0, r2
+	orr r0, r2, r0, lsl #1
 	add r0, r0, r1
 	bx lr
 .globl unfold10
@@ -41,10 +40,9 @@ unfold3:
 	bx lr
 .globl unfold4
 unfold4:
-	lsl r0, r0, #5
 	movw r2, #0
 	movt r2, #510
-	orr r0, r0, r2
+	orr r0, r2, r0, lsl #5
 	eor r0, r0, r1
 	bx lr
 .globl unfold5
@@ -73,8 +71,7 @@ unfold8:
 	bx lr
 .globl unfold9
 unfold9:
-	lsl r0, r0, #1
 	movw r2, #510
-	eor r0, r0, r2
+	eor r0, r2, r0, lsl #1
 	add r0, r0, r1
 	bx lr

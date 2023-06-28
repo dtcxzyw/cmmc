@@ -84,7 +84,7 @@ label17:
 	srai a1, a1, 16
 	and a1, a1, a2
 	and a1, a1, a2
-	addw a0, a1, a0
+	addw a0, a0, a1
 	and a0, a0, a2
 	li a2, 1
 	mv a1, zero
@@ -96,8 +96,8 @@ label18:
 	sltiu t1, a1, 1
 	li a5, 65535
 	and t1, t1, a5
-	and a0, a0, a5
 	and t1, t1, a5
+	and a0, a0, a5
 	addw a0, a0, t1
 	and a0, a0, a5
 	and a0, a0, a5

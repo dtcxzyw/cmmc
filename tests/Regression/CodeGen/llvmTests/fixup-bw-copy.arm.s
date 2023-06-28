@@ -15,13 +15,13 @@ test_movb_Oz:
 	bx lr
 .globl test_movb_hreg
 test_movb_hreg:
-	uxtb r1, r0
-	uxth r0, r0
-	asr r0, r0, #8
-	uxtb r0, r0
+	uxth r1, r0
+	asr r1, r1, #8
+	uxtb r1, r1
 	uxtb r1, r1
 	uxtb r0, r0
-	add r0, r1, r0
+	uxtb r0, r0
+	add r0, r0, r1
 	uxtb r0, r0
 	bx lr
 .globl test_movw

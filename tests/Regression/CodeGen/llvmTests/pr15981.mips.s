@@ -15,8 +15,8 @@ c:
 .globl fn1
 fn1:
 	sltu $t0, $zero, $a1
-	move $v0, $zero
-	movn $v0, $a0, $t0
+	subu $t0, $zero, $t0
+	and $v0, $a0, $t0
 	jr $ra
 	nop
 .globl fn2
@@ -26,11 +26,11 @@ fn2:
 	lui $t1, %hi(a)
 	lw $t2, %lo(a)($t1)
 	addiu $t2, $t2, -1
+	sltu $t3, $zero, $t2
+	subu $t3, $zero, $t3
+	and $t0, $t0, $t3
 	sw $t2, %lo(a)($t1)
-	sltu $t2, $zero, $t2
-	move $t1, $zero
-	movn $t1, $t0, $t2
-	lui $t0, %hi(c)
-	sw $t1, %lo(c)($t0)
+	lui $t1, %hi(c)
+	sw $t0, %lo(c)($t1)
 	jr $ra
 	nop

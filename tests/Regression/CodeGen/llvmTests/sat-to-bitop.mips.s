@@ -55,8 +55,8 @@ label34:
 .globl sat0_lower_1
 sat0_lower_1:
 	slt $t0, $zero, $a0
-	move $v0, $zero
-	movn $v0, $a0, $t0
+	subu $t0, $zero, $t0
+	and $v0, $a0, $t0
 	jr $ra
 	nop
 .globl sat1_base_16bit
@@ -64,14 +64,14 @@ sat1_base_16bit:
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
 	addiu $t0, $t0, 1
-	bgez $t0, label62
+	bgez $t0, label63
 	nop
 	li $t0, -1
-	b label54
+	b label55
 	nop
-label62:
+label63:
 	andi $t0, $a0, 65535
-label54:
+label55:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -88,14 +88,14 @@ sat1_base_8bit:
 	sll $t0, $a0, 24
 	sra $t0, $t0, 24
 	addiu $t0, $t0, 1
-	bgez $t0, label84
+	bgez $t0, label85
 	nop
 	li $t0, -1
-	b label76
+	b label77
 	nop
-label84:
+label85:
 	andi $t0, $a0, 255
-label76:
+label77:
 	andi $v0, $t0, 255
 	jr $ra
 	nop

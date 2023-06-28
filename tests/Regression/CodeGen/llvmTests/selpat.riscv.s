@@ -80,14 +80,14 @@ calc_seleqk:
 pcrel117:
 	auipc a0, %pcrel_hi(a)
 	lw a3, %pcrel_lo(pcrel117)(a0)
+	xori a0, a3, 1
+	sltiu a4, a0, 1
 pcrel118:
 	auipc a0, %pcrel_hi(t)
 	lw a0, %pcrel_lo(pcrel118)(a0)
 pcrel119:
 	auipc a1, %pcrel_hi(f)
 	lw a1, %pcrel_lo(pcrel119)(a1)
-	xori a2, a3, 1
-	sltiu a4, a2, 1
 	mv a2, a0
 	bne a4, zero, label116
 	mv a2, a1
@@ -170,14 +170,14 @@ pcrel246:
 pcrel247:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel247)(a0)
+	slt a0, a3, a4
+	xori a5, a0, 1
 pcrel248:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel248)(a0)
 pcrel249:
 	auipc a1, %pcrel_hi(t)
 	lw a1, %pcrel_lo(pcrel249)(a1)
-	slt a2, a3, a4
-	xori a5, a2, 1
 	mv a2, a0
 	bne a5, zero, label245
 	mv a2, a1
@@ -219,13 +219,13 @@ pcrel312:
 pcrel313:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel313)(a0)
+	slt a5, a4, a3
 pcrel314:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel314)(a0)
 pcrel315:
 	auipc a1, %pcrel_hi(t)
 	lw a1, %pcrel_lo(pcrel315)(a1)
-	slt a5, a4, a3
 	mv a2, a0
 	bne a5, zero, label311
 	mv a2, a1
@@ -265,14 +265,14 @@ pcrel382:
 pcrel383:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel383)(a0)
+	slt a0, a4, a3
+	xori a5, a0, 1
 pcrel384:
 	auipc a0, %pcrel_hi(t)
 	lw a0, %pcrel_lo(pcrel384)(a0)
 pcrel385:
 	auipc a1, %pcrel_hi(f)
 	lw a1, %pcrel_lo(pcrel385)(a1)
-	slt a2, a4, a3
-	xori a5, a2, 1
 	mv a2, a0
 	bne a5, zero, label381
 	mv a2, a1
@@ -311,13 +311,13 @@ calc_selltk:
 pcrel450:
 	auipc a0, %pcrel_hi(a)
 	lw a3, %pcrel_lo(pcrel450)(a0)
+	slti a4, a3, 10
 pcrel451:
 	auipc a0, %pcrel_hi(t)
 	lw a0, %pcrel_lo(pcrel451)(a0)
 pcrel452:
 	auipc a1, %pcrel_hi(f)
 	lw a1, %pcrel_lo(pcrel452)(a1)
-	slti a4, a3, 10
 	mv a2, a0
 	bne a4, zero, label449
 	mv a2, a1
@@ -396,14 +396,14 @@ calc_selnek:
 pcrel571:
 	auipc a0, %pcrel_hi(a)
 	lw a3, %pcrel_lo(pcrel571)(a0)
+	xori a0, a3, 1
+	sltu a4, zero, a0
 pcrel572:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel572)(a0)
 pcrel573:
 	auipc a1, %pcrel_hi(t)
 	lw a1, %pcrel_lo(pcrel573)(a1)
-	xori a2, a3, 1
-	sltu a4, zero, a2
 	mv a2, a0
 	bne a4, zero, label570
 	mv a2, a1
@@ -527,14 +527,14 @@ pcrel757:
 pcrel758:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel758)(a0)
+	sltu a0, a3, a4
+	xori a5, a0, 1
 pcrel759:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel759)(a0)
 pcrel760:
 	auipc a1, %pcrel_hi(t)
 	lw a1, %pcrel_lo(pcrel760)(a1)
-	sltu a2, a3, a4
-	xori a5, a2, 1
 	mv a2, a0
 	bne a5, zero, label756
 	mv a2, a1
@@ -576,13 +576,13 @@ pcrel820:
 pcrel821:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel821)(a0)
+	sltu a5, a4, a3
 pcrel822:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel822)(a0)
 pcrel823:
 	auipc a1, %pcrel_hi(t)
 	lw a1, %pcrel_lo(pcrel823)(a1)
-	sltu a5, a4, a3
 	mv a2, a0
 	bne a5, zero, label819
 	mv a2, a1
@@ -621,14 +621,14 @@ pcrel887:
 pcrel888:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel888)(a0)
+	sltu a0, a4, a3
+	xori a5, a0, 1
 pcrel889:
 	auipc a0, %pcrel_hi(t)
 	lw a0, %pcrel_lo(pcrel889)(a0)
 pcrel890:
 	auipc a1, %pcrel_hi(f)
 	lw a1, %pcrel_lo(pcrel890)(a1)
-	sltu a2, a4, a3
-	xori a5, a2, 1
 	mv a2, a0
 	bne a5, zero, label886
 	mv a2, a1

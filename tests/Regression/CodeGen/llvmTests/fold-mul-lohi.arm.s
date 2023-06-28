@@ -23,16 +23,16 @@ foo:
 	ble label4
 	mov r1, #0
 label2:
-	movw r2, #:lower16:A
-	movt r2, #:upper16:A
-	movw r3, #:lower16:B
-	movt r3, #:upper16:B
-	add r4, r3, r1
-	ldrsb r3, [r3, r1]
-	ldrb r3, [r4, #0]
-	lsl r3, r3, #1
-	uxtb r3, r3
-	strb r3, [r2, r1]
+	movw r2, #:lower16:B
+	movt r2, #:upper16:B
+	add r3, r2, r1
+	ldrsb r2, [r2, r1]
+	ldrb r2, [r3, #0]
+	lsl r2, r2, #1
+	uxtb r2, r2
+	movw r3, #:lower16:A
+	movt r3, #:upper16:A
+	strb r2, [r3, r1]
 	mov r2, #9
 	mul r2, r1, r2
 	movw r3, #:lower16:P

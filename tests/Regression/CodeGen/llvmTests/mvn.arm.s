@@ -22,42 +22,36 @@ f2:
 	bx lr
 .globl f3
 f3:
-	lsl r0, r0, #2
 	mvn r1, #0
-	eor r0, r0, r1
+	eor r0, r1, r0, lsl #2
 	bx lr
 .globl f4
 f4:
 	uxtb r1, r1
-	lsl r0, r0, r1
-	mvn r1, #0
-	eor r0, r0, r1
+	mvn r2, #0
+	eor r0, r2, r0, lsl r1
 	bx lr
 .globl f5
 f5:
-	lsr r0, r0, #2
 	mvn r1, #0
-	eor r0, r0, r1
+	eor r0, r1, r0, lsr #2
 	bx lr
 .globl f6
 f6:
 	uxtb r1, r1
-	lsr r0, r0, r1
-	mvn r1, #0
-	eor r0, r0, r1
+	mvn r2, #0
+	eor r0, r2, r0, lsr r1
 	bx lr
 .globl f7
 f7:
-	lsr r0, r0, #2
 	mvn r1, #0
-	eor r0, r0, r1
+	eor r0, r1, r0, lsr #2
 	bx lr
 .globl f8
 f8:
 	uxtb r1, r1
-	lsr r0, r0, r1
-	mvn r1, #0
-	eor r0, r0, r1
+	mvn r2, #0
+	eor r0, r2, r0, lsr r1
 	bx lr
 .globl f9
 f9:

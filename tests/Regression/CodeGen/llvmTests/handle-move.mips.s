@@ -20,18 +20,18 @@ f2:
 f3:
 	addu $t0, $a0, $a1
 	subu $t1, $a0, $a1
-	mult $t1, $t0
+	mult $t0, $t1
 	mflo $v0
 	jr $ra
 	nop
 .globl f4
 f4:
-	subu $t0, $a2, $a3
-	subu $t1, $a0, $a1
-	subu $t2, $a1, $a2
-	divu $zero, $t1, $t2
-	mflo $t1
-	mult $t0, $t1
+	subu $t0, $a0, $a1
+	subu $t1, $a1, $a2
+	divu $zero, $t0, $t1
+	mflo $t0
+	subu $t1, $a2, $a3
+	mult $t1, $t0
 	mflo $v0
 	jr $ra
 	nop

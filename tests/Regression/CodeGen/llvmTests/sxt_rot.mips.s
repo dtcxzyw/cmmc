@@ -83,6 +83,6 @@ test8:
 test9:
 	sll $t0, $a0, 16
 	srl $t0, $t0, 16
-	addu $v0, $t0, $a1
+	addu $v0, $a1, $t0
 	jr $ra
 	nop

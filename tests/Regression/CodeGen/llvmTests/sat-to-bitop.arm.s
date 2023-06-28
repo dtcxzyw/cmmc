@@ -51,8 +51,9 @@ label34:
 sat0_lower_1:
 	cmp r0, #0
 	mov r1, #0
-	movgt r1, r0
-	mov r0, r1
+	movwgt r1, #1
+	rsb r1, r1, #0
+	and r0, r0, r1
 	bx lr
 .globl sat1_base_16bit
 sat1_base_16bit:

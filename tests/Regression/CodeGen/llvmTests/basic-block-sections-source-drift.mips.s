@@ -9,9 +9,8 @@ foo:
 	nop
 label9:
 	sltu $t0, $zero, $a1
-	li $t1, 2
-	move $v0, $zero
-	movn $v0, $t1, $t0
+	subu $t0, $zero, $t0
+	andi $v0, $t0, 2
 label2:
 	jr $ra
 	nop

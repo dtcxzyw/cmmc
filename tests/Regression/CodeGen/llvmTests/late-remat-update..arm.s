@@ -27,19 +27,18 @@ foo:
 	ble label4
 	mov r2, #0
 label2:
-	movw r3, #:lower16:A
-	movt r3, #:upper16:A
-	movw r4, #:lower16:B
-	movt r4, #:upper16:B
-	add r5, r4, r2
-	ldrsb r4, [r4, r2]
-	ldrb r4, [r5, #0]
-	lsl r4, r4, #1
-	uxtb r4, r4
-	strb r4, [r3, r2]
+	movw r3, #:lower16:B
+	movt r3, #:upper16:B
+	add r4, r3, r2
+	ldrsb r3, [r3, r2]
+	ldrb r3, [r4, #0]
+	lsl r3, r3, #1
+	uxtb r3, r3
+	movw r4, #:lower16:A
+	movt r4, #:upper16:A
+	strb r3, [r4, r2]
 	mov r3, #9
-	mul r3, r2, r3
-	add r3, r1, r3
+	mla r3, r2, r3, r1
 	movw r4, #:lower16:P
 	movt r4, #:upper16:P
 	mov r5, #17

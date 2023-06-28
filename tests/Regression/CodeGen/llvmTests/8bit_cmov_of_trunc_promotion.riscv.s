@@ -3,16 +3,16 @@
 .globl neg_only_one_truncation
 neg_only_one_truncation:
 	andi a3, a2, 255
-	andi a1, a1, 255
 	andi a3, a3, 255
+	andi a1, a1, 255
 	addw a1, a1, a3
 	andi a1, a1, 255
+	slli a3, a1, 24
+	srai a3, a3, 24
 	addw a0, a0, a2
 	andi a0, a0, 255
 	slli a2, a0, 24
 	srai a2, a2, 24
-	slli a3, a1, 24
-	srai a3, a3, 24
 	ble a2, a3, label22
 	andi a0, a0, 255
 	j label3
@@ -23,18 +23,18 @@ label3:
 	ret
 .globl neg_type_mismatch
 neg_type_mismatch:
-	addw a0, a0, a2
-	andi a0, a0, 255
 	li a3, 65535
-	and a2, a2, a3
+	and a4, a2, a3
+	and a4, a4, a3
 	and a1, a1, a3
-	and a2, a2, a3
-	addw a1, a1, a2
+	addw a1, a1, a4
 	andi a1, a1, 255
-	slli a2, a0, 24
-	srai a2, a2, 24
 	slli a3, a1, 24
 	srai a3, a3, 24
+	addw a0, a0, a2
+	andi a0, a0, 255
+	slli a2, a0, 24
+	srai a2, a2, 24
 	ble a2, a3, label51
 	andi a0, a0, 255
 	j label32
@@ -45,14 +45,14 @@ label32:
 	ret
 .globl negative_CopyFromReg
 negative_CopyFromReg:
-	andi a0, a0, 255
 	addw a1, a1, a2
 	andi a1, a1, 255
-	slli a2, a0, 24
+	slli a2, a1, 24
 	srai a2, a2, 24
-	slli a3, a1, 24
+	andi a0, a0, 255
+	slli a3, a0, 24
 	srai a3, a3, 24
-	ble a2, a3, label79
+	ble a3, a2, label79
 	andi a0, a0, 255
 	j label64
 label79:
@@ -63,9 +63,9 @@ label64:
 .globl negative_CopyFromRegs
 negative_CopyFromRegs:
 	andi a0, a0, 255
-	andi a1, a1, 255
 	slli a2, a0, 24
 	srai a2, a2, 24
+	andi a1, a1, 255
 	slli a3, a1, 24
 	srai a3, a3, 24
 	ble a2, a3, label102
@@ -80,13 +80,13 @@ label89:
 t0:
 	addw a0, a0, a2
 	andi a0, a0, 255
+	slli a3, a0, 24
+	srai a3, a3, 24
 	addw a1, a1, a2
 	andi a1, a1, 255
-	slli a2, a0, 24
+	slli a2, a1, 24
 	srai a2, a2, 24
-	slli a3, a1, 24
-	srai a3, a3, 24
-	ble a2, a3, label128
+	ble a3, a2, label128
 	andi a0, a0, 255
 	j label112
 label128:
