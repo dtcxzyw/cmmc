@@ -11,7 +11,7 @@ import tqdm
 target = sys.argv[3]
 qemu_path = os.environ.get('QEMU_PATH', '')
 qemu_command = {
-'riscv':'{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
+'riscv':'{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64,zba=true,zbb=true -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
 'mips':'{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
 'arm': '{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(qemu_path=qemu_path).split(),
 'llvm': ''

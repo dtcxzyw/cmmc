@@ -228,6 +228,10 @@ class LLVMConversionContext final {
                 return builder.CreateLShr(getOperand(0), getOperand(1));
             case InstructionID::AShr:
                 return builder.CreateAShr(getOperand(0), getOperand(1));
+            case InstructionID::SMin:
+                return builder.CreateBinaryIntrinsic(llvm::Intrinsic::smin, getOperand(0), getOperand(1));
+            case InstructionID::SMax:
+                return builder.CreateBinaryIntrinsic(llvm::Intrinsic::smax, getOperand(0), getOperand(1));
             case InstructionID::FAdd:
                 return builder.CreateFAdd(getOperand(0), getOperand(1));
             case InstructionID::FSub:

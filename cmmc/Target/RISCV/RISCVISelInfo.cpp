@@ -519,10 +519,12 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
                 imm2reg(shamt);
             break;
         }
-        case InstSMin: {
+        case InstSMin:
+            [[fallthrough]];
+        case InstSMax: {
             auto& lhs = inst.getOperand(1);
-            auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
+            auto& rhs = inst.getOperand(2);
             imm2reg(rhs);
             break;
         }

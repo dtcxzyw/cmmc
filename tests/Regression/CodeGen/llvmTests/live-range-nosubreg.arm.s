@@ -48,16 +48,8 @@ main:
 	rsb r1, r1, #0
 	uxtb r2, r1
 	cmp r3, #0
-	bne label28
+	bne label4
 	mov r1, #0
-	b label2
-label28:
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r1, [r1, #0]
-	cmp r1, #0
-	mov r1, #0
-	movwne r1, #1
 label2:
 	uxtb r1, r1
 	uxtb r1, r1
@@ -67,3 +59,11 @@ label2:
 	strb r1, [r0, #0]
 	mov r0, #0
 	bx lr
+label4:
+	movw r1, #:lower16:b
+	movt r1, #:upper16:b
+	ldr r1, [r1, #0]
+	cmp r1, #0
+	mov r1, #0
+	movwne r1, #1
+	b label2

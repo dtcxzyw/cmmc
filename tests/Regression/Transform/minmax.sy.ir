@@ -20,22 +20,22 @@ func @smax_le(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect S
 }
 func @smin_gt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = smax i32 %a, i32 %b;
+    i32 %0 = smin i32 %a, i32 %b;
     ret i32 %0;
 }
 func @smax_gt(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = smin i32 %a, i32 %b;
+    i32 %0 = smax i32 %a, i32 %b;
     ret i32 %0;
 }
 func @smin_ge(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = smax i32 %a, i32 %b;
+    i32 %0 = smin i32 %a, i32 %b;
     ret i32 %0;
 }
 func @smax_ge(i32 %a, i32 %b) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = smin i32 %a, i32 %b;
+    i32 %0 = smax i32 %a, i32 %b;
     ret i32 %0;
 }
 func @smin_constprop() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

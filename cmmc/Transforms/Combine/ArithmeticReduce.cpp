@@ -508,7 +508,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
             }
 
-            if (target.isNativeSupported(InstructionID::SMin) && target.isNativeSupported(InstructionID::SMax)) {
+            if(target.isNativeSupported(InstructionID::SMin) && target.isNativeSupported(InstructionID::SMax)) {
                 // smin(smin(a, b), c) -> smin(a, b) if a == c or b == c
                 if(smin(smin(any(v1), any(v2)), any(v3))(matchCtx)) {
                     if(v1 == v3 || v2 == v3)
@@ -531,31 +531,36 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
 
                 // smin(a, INT_MIN) -> INT_MIN
-                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx)) {
+                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx) &&
+                   inst->getType()->getFixedSize() == sizeof(int32_t)) {
                     return makeIntLike(std::numeric_limits<int32_t>::min(), inst);
                 }
                 // smin(a, INT_MAX) -> a
-                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx)) {
+                if(smin(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx) &&
+                   inst->getType()->getFixedSize() == sizeof(int32_t)) {
                     return v1;
                 }
                 // smax(a, INT_MAX) -> INT_MAX
-                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx)) {
+                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::max()))(matchCtx) &&
+                   inst->getType()->getFixedSize() == sizeof(int32_t)) {
                     return makeIntLike(std::numeric_limits<int32_t>::max(), inst);
                 }
                 // smax(a, INT_MIN) -> a
-                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx)) {
+                if(smax(any(v1), cint_(std::numeric_limits<int32_t>::min()))(matchCtx) &&
+                   inst->getType()->getFixedSize() == sizeof(int32_t)) {
                     return v1;
                 }
 
                 // Signed a <(=) b ? a : b -> smin a, b
                 if(select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
-                    if (v1 == v3 && v2 == v4)
+                    if(v1 == v3 && v2 == v4 && (cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
-                }
-                // Signed a < b ? b : a -> smax a, b
-                if(select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
-                    if (v1 == v4 && v2 == v3)
+                    if(v1 == v3 && v2 == v4 && (cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
+                    if(v1 == v4 && v2 == v3 && (cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual))
+                        return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
+                    if(v1 == v4 && v2 == v3 && (cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual))
+                        return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
                 }
             }
 

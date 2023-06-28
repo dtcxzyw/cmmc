@@ -205,6 +205,12 @@ select_cross_fpr:
 	mov r3, r0
 	cmp r1, r2
 	bge label222
+	b label211
+label222:
+	vmov s0, r3
+	vcvt.f32.s32 s0, s0
+	b label212
+label211:
 	mov r1, #1065353216
 	vmov s1, r1
 	movw r1, #0
@@ -212,10 +218,6 @@ select_cross_fpr:
 	vmov s0, r1
 	cmp r0, #0
 	vmovne.f32 s0, s1
-	b label212
-label222:
-	vmov s0, r3
-	vcvt.f32.s32 s0, s0
 label212:
 	bx lr
 .globl select_round

@@ -25,15 +25,17 @@ fn1:
 	ldr r1, [r1, #0]
 	cmp r1, #0
 	beq label10
+	b label2
+label10:
+	mov r1, #0
+	b label3
+label2:
 	movw r1, #:lower16:b
 	movt r1, #:upper16:b
 	ldr r1, [r1, #0]
 	cmp r1, #0
 	mov r1, #0
 	movwne r1, #1
-	b label3
-label10:
-	mov r1, #0
 label3:
 	movw r2, #:lower16:c
 	movt r2, #:upper16:c

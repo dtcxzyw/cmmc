@@ -12,7 +12,7 @@ import math
 qemu_path = os.environ.get('QEMU_PATH', '')
 stack_size = 128 << 20  # 128M
 qemu_command = {
-    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
+    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64,zba=true,zbb=true -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
     'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
     'arm': '{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
 }

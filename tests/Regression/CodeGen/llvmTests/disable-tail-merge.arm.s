@@ -21,16 +21,8 @@ test1:
 	mov r0, r2
 	ldr r2, [r2, #0]
 	cmp r1, #0
-	bne label12
+	bne label5
 	add r1, r2, #11
-	str r1, [r0, #0]
-	movw r0, #:lower16:g1
-	movt r0, #:upper16:g1
-	ldr r0, [r0, #0]
-	add r0, r0, #23
-	b label3
-label12:
-	add r1, r2, #1
 	str r1, [r0, #0]
 	movw r0, #:lower16:g1
 	movt r0, #:upper16:g1
@@ -41,3 +33,11 @@ label3:
 	movt r1, #:upper16:g1
 	str r0, [r1, #0]
 	bx lr
+label5:
+	add r1, r2, #1
+	str r1, [r0, #0]
+	movw r0, #:lower16:g1
+	movt r0, #:upper16:g1
+	ldr r0, [r0, #0]
+	add r0, r0, #23
+	b label3

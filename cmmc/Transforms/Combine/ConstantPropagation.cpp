@@ -115,6 +115,10 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeUInt(inst, u1 >> u2);
                 if(ashr(int_(i1), uint_(u2))(matchCtx))
                     return makeInt(inst, i1 >> u2);
+                if(smin(int_(i1), int_(i2))(matchCtx))
+                    return makeInt(inst, std::min(i1, i2));
+                if(smax(int_(i1), int_(i2))(matchCtx))
+                    return makeInt(inst, std::max(i1, i2));
                 if(and_(uint_(u1), uint_(u2))(matchCtx))
                     return makeUInt(inst, u1 & u2);
                 if(or_(uint_(u1), uint_(u2))(matchCtx))

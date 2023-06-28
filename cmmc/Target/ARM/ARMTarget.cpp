@@ -14,7 +14,6 @@
 
 // arm gnueabihf
 
-#include "cmmc/IR/Instruction.hpp"
 #include <ARM/ISelInfoDecl.hpp>
 #include <ARM/InstInfoDecl.hpp>
 #include <ARM/ScheduleModelDecl.hpp>
@@ -166,19 +165,9 @@ class ARMTarget final : public Target {
     ARMRegisterInfo mRegisterInfo;
 
 public:
-    [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
-        static TargetOptHeuristic heuristic{
-            /* unrollBlockSize = */ 8U,
-            /* maxUnrollSize = */ 16U,
-            /* maxUnrollBodySize = */ 16U,
-            /* duplicationThreshold = */ 5U,
-            /* duplicationIterations = */ 5U,
-        };
-        return heuristic;
-    }
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
-        return inst != InstructionID::SRem && inst != InstructionID::URem
-            && inst != InstructionID::SMin && inst != InstructionID::SMax;
+        return inst != InstructionID::SRem && inst != InstructionID::URem && inst != InstructionID::SMin &&
+            inst != InstructionID::SMax;
     }
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;

@@ -688,7 +688,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MIN:
         Rd: $Dst
@@ -700,7 +700,7 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandI32($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
       MAX:
         Rd: $Dst
