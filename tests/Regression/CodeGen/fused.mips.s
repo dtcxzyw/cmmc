@@ -152,8 +152,9 @@ fused_mul_sub_imm:
 	nop
 .globl fused_mul_sub2
 fused_mul_sub2:
-	addiu $t0, $a1, -1
-	mult $t0, $a0
+	li $t0, 1
+	subu $t0, $t0, $a1
+	mult $a0, $t0
 	mflo $v0
 	jr $ra
 	nop

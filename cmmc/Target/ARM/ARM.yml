@@ -788,7 +788,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && (!isOperandIReg($Rhs) || ctx.isSafeToUse($Rhs, $Cond)) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -830,7 +830,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && (!isOperandIReg($Rhs) || ctx.isSafeToUse($Rhs, $Cond)) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
         Lhs: $LVal
         Rhs: $RVal
         $Predicate: isOperandIReg($Dst)
@@ -857,7 +857,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && ctx.isSafeToUse($Rhs, $Cond) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
+            $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && (!isOperandIReg($Rhs) || ctx.isSafeToUse($Rhs, $Cond)) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
         Lhs: $LVal
         Rhs: $RVal
         $Predicate: isOperandFPR($Dst)

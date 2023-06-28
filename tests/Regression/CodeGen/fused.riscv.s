@@ -129,8 +129,9 @@ fused_mul_sub_imm:
 	ret
 .globl fused_mul_sub2
 fused_mul_sub2:
-	addiw a1, a1, -1
-	mulw a0, a1, a0
+	li a2, 1
+	subw a1, a2, a1
+	mulw a0, a0, a1
 	ret
 .globl fused_div_rem
 fused_div_rem:
