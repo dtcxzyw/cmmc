@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl a
 a:
@@ -31,8 +32,6 @@ m:
 .globl n
 n:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl shift_left
 shift_left:

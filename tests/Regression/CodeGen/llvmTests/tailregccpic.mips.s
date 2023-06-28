@@ -1,10 +1,9 @@
 .data
+.data
 .align 4
 .globl a0
 a0:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl __regcall3__func
 __regcall3__func:

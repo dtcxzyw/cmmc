@@ -1,5 +1,4 @@
 .data
-.section .rodata
 .bss
 .align 4
 .globl G

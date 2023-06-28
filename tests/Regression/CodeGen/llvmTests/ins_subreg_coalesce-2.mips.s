@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test5
 test5:

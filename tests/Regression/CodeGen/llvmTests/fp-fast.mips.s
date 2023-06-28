@@ -3,7 +3,6 @@
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1082130432
-.bss
 .text
 .globl test1
 test1:

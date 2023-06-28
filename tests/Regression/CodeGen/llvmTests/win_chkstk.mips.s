@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl dont_crash
 dont_crash:

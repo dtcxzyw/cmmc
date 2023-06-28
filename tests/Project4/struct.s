@@ -1,8 +1,6 @@
 .data
 _prompt: .asciiz "Enter an integer:"
 _ret: .asciiz "\n"
-.section .rodata
-.bss
 .text
 _entry:
     jal main

@@ -1,6 +1,5 @@
 .arch armv7ve
 .data
-.section .rodata
 .bss
 .align 4
 .globl var_21

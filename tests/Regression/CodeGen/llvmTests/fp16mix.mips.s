@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl foo1
 foo1:

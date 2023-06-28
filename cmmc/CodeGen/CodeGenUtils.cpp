@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Diagnostics.hpp"
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
@@ -19,6 +20,8 @@
 #include <cstdint>
 #include <iostream>
 #include <iterator>
+#include <unordered_map>
+#include <vector>
 
 CMMC_MIR_NAMESPACE_BEGIN
 
@@ -79,38 +82,30 @@ void dumpAssembly(std::ostream& out, const CodeGenContext& ctx, const MIRModule&
             out << ".globl "sv << symbol << '\n';
         out << symbol << ":\n"sv;
     };
-    const auto isDataSection = [](MIRRelocable* reloc) {
-        const auto data = dynamic_cast<MIRDataStorage*>(reloc);
-        if(data)
-            return !data->isReadOnly();
-        return false;
+    enum class DataSection {
+        Data,
+        RoData,
+        Bss,
     };
-    const auto isRoDataSection = [](MIRRelocable* reloc) {
-        const auto data = dynamic_cast<MIRDataStorage*>(reloc);
-        if(data)
-            return data->isReadOnly();
-        return false;
+    const auto selectDataSection = [](MIRRelocable* reloc) {
+        if(const auto data = dynamic_cast<MIRDataStorage*>(reloc))
+            return data->isReadOnly() ? DataSection::RoData : DataSection::Data;
+        if(const auto zero = dynamic_cast<MIRZeroStorage*>(reloc))
+            return DataSection::Bss;
+        reportUnreachable(CMMC_LOCATION());
     };
-    const auto isBssSection = [](MIRRelocable* reloc) {
-        const auto data = dynamic_cast<MIRZeroStorage*>(reloc);
-        return data != nullptr;
-    };
+    static const char* directives[3] = { ".data", ".section .rodata", ".bss" };
+    std::unordered_map<DataSection, std::vector<MIRGlobal*>> globals;
     for(auto& global : module.globals()) {
-        if(!global->reloc->isFunc() && isDataSection(global->reloc.get())) {
-            dumpSymbol(*global);
-            global->reloc->dump(out, ctx);
-        }
+        if(!global->reloc->isFunc())
+            globals[selectDataSection(global->reloc.get())].push_back(global.get());
     }
-    out << ".section .rodata\n"sv;
-    for(auto& global : module.globals()) {
-        if(!global->reloc->isFunc() && isRoDataSection(global->reloc.get())) {
-            dumpSymbol(*global);
-            global->reloc->dump(out, ctx);
-        }
-    }
-    out << ".bss\n"sv;
-    for(auto& global : module.globals()) {
-        if(!global->reloc->isFunc() && isBssSection(global->reloc.get())) {
+    for(uint32_t idx = 0; idx < 3; ++idx) {
+        auto& group = globals[static_cast<DataSection>(idx)];
+        if(group.empty())
+            continue;
+        out << directives[idx] << '\n';
+        for(auto global : group) {
             dumpSymbol(*global);
             global->reloc->dump(out, ctx);
         }

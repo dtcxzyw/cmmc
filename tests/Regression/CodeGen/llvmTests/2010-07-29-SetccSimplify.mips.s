@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl extend2bit_v2
 extend2bit_v2:

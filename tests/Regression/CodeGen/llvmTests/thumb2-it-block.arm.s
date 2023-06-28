@@ -1,29 +1,16 @@
 .arch armv7ve
 .data
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm
 .fpu vfpv4
 .globl test
 test:
-	mov r2, r0
+	rsb r2, r0, #0
 	cmp r0, #0
-	bge label3
-	rsb r0, r0, #0
-	mov r2, r1
+	movlt r0, r2
+	rsb r2, r1, #0
 	cmp r1, #0
-	bge label6
-	b label29
-label3:
-	mov r2, r1
-	cmp r1, #0
-	bge label6
-	b label29
-label6:
+	movlt r1, r2
 	add r0, r0, r1
 	bx lr
-label29:
-	rsb r1, r2, #0
-	b label6

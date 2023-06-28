@@ -1,14 +1,14 @@
 .data
-.section .rodata
-.bss
 .text
 .globl function
 function:
-	xor a1, a0, a1
-	sltu a1, zero, a1
-	bne a1, zero, label3
+	mv a2, a0
 	mulw a0, a0, a0
-	li a1, 4294967295
-	and a0, a0, a1
-label3:
+	li a3, 4294967295
+	and a0, a0, a3
+	xor a1, a2, a1
+	sltiu a1, a1, 1
+	bne a1, zero, label12
+	mv a0, a2
+label12:
 	ret

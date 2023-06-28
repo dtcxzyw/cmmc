@@ -1,291 +1,184 @@
 .data
-.section .rodata
-.bss
 .text
 .globl select_add_1
 select_add_1:
-	beq $a0, $zero, label10
-	nop
-	addu $v0, $a1, $a2
-	b label3
-	nop
-label10:
+	sltu $t0, $zero, $a0
+	addu $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label3:
 	jr $ra
 	nop
 .globl select_add_2
 select_add_2:
-	beq $a0, $zero, label22
-	nop
-	move $v0, $a1
-	b label14
-	nop
-label22:
+	sltu $t0, $zero, $a0
 	addu $v0, $a1, $a2
-label14:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_add_3
 select_add_3:
-	beq $a0, $zero, label33
-	nop
-	move $v0, $a1
-	b label26
-	nop
-label33:
+	sltu $t0, $zero, $a0
 	addiu $v0, $a1, 42
-label26:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_and_1
 select_and_1:
-	beq $a0, $zero, label45
-	nop
-	and $v0, $a1, $a2
-	b label38
-	nop
-label45:
+	sltu $t0, $zero, $a0
+	and $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label38:
 	jr $ra
 	nop
 .globl select_and_2
 select_and_2:
-	beq $a0, $zero, label57
-	nop
-	move $v0, $a1
-	b label49
-	nop
-label57:
+	sltu $t0, $zero, $a0
 	and $v0, $a1, $a2
-label49:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_and_3
 select_and_3:
-	beq $a0, $zero, label68
-	nop
-	move $v0, $a1
-	b label61
-	nop
-label68:
+	sltu $t0, $zero, $a0
 	andi $v0, $a1, 42
-label61:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_ashr_1
 select_ashr_1:
-	beq $a0, $zero, label80
-	nop
-	srlv $v0, $a1, $a2
-	b label73
-	nop
-label80:
+	sltu $t0, $zero, $a0
+	srlv $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label73:
 	jr $ra
 	nop
 .globl select_ashr_2
 select_ashr_2:
-	beq $a0, $zero, label92
-	nop
-	move $v0, $a1
-	b label84
-	nop
-label92:
+	sltu $t0, $zero, $a0
 	srlv $v0, $a1, $a2
-label84:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_ashr_3
 select_ashr_3:
-	beq $a0, $zero, label103
-	nop
-	move $v0, $a1
-	b label96
-	nop
-label103:
-	li $t0, 42
-	srlv $v0, $a1, $t0
-label96:
+	sltu $t0, $zero, $a0
+	li $t1, 42
+	srlv $v0, $a1, $t1
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_lshr_1
 select_lshr_1:
-	beq $a0, $zero, label116
-	nop
-	srlv $v0, $a1, $a2
-	b label109
-	nop
-label116:
+	sltu $t0, $zero, $a0
+	srlv $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label109:
 	jr $ra
 	nop
 .globl select_lshr_2
 select_lshr_2:
-	beq $a0, $zero, label128
-	nop
-	move $v0, $a1
-	b label120
-	nop
-label128:
+	sltu $t0, $zero, $a0
 	srlv $v0, $a1, $a2
-label120:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_lshr_3
 select_lshr_3:
-	beq $a0, $zero, label139
-	nop
-	move $v0, $a1
-	b label132
-	nop
-label139:
-	li $t0, 42
-	srlv $v0, $a1, $t0
-label132:
+	sltu $t0, $zero, $a0
+	li $t1, 42
+	srlv $v0, $a1, $t1
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_or
 select_or:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label154
-	nop
-	move $v0, $a0
-	b label144
-	nop
-label154:
+	sltiu $t0, $t0, 1
 	or $v0, $a0, $a1
-label144:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_or_1
 select_or_1:
 	andi $t0, $a2, 1
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label167
-	nop
-	move $v0, $a0
-	b label158
-	nop
-label167:
+	sltiu $t0, $t0, 1
 	or $v0, $a0, $a1
-label158:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_or_1b
 select_or_1b:
 	andi $t0, $a2, 1
 	xori $t0, $t0, 1
-	sltiu $t0, $t0, 1
-	bne $t0, $zero, label180
-	nop
-	move $v0, $a0
-	b label171
-	nop
-label180:
+	sltu $t0, $zero, $t0
 	or $v0, $a0, $a1
-label171:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_or_2
 select_or_2:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label195
-	nop
-	or $v0, $a0, $a1
-	b label186
-	nop
-label195:
+	sltiu $t0, $t0, 1
+	or $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label186:
 	jr $ra
 	nop
 .globl select_or_2b
 select_or_2b:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	beq $t0, $t1, label209
-	nop
-	or $v0, $a0, $a1
-	b label200
-	nop
-label209:
+	xori $t0, $t0, 1
+	sltu $t0, $zero, $t0
+	or $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label200:
 	jr $ra
 	nop
 .globl select_or_3
 select_or_3:
 	andi $t0, $a2, 1
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label224
-	nop
-	or $v0, $a0, $a1
-	b label216
-	nop
-label224:
+	sltiu $t0, $t0, 1
+	or $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label216:
 	jr $ra
 	nop
 .globl select_or_3b
 select_or_3b:
 	andi $t0, $a2, 1
 	xori $t0, $t0, 1
-	sltiu $t0, $t0, 1
-	bne $t0, $zero, label237
-	nop
-	or $v0, $a0, $a1
-	b label229
-	nop
-label237:
+	sltu $t0, $zero, $t0
+	or $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label229:
 	jr $ra
 	nop
 .globl select_or_b
 select_or_b:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	beq $t0, $t1, label252
-	nop
-	move $v0, $a0
-	b label242
-	nop
-label252:
+	xori $t0, $t0, 1
+	sltu $t0, $zero, $t0
 	or $v0, $a0, $a1
-label242:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_shl_1
 select_shl_1:
-	beq $a0, $zero, label266
-	nop
-	sllv $v0, $a1, $a2
-	b label259
-	nop
-label266:
+	sltu $t0, $zero, $a0
+	sllv $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label259:
 	jr $ra
 	nop
 .globl select_shl_2
 select_shl_2:
-	beq $a0, $zero, label278
-	nop
-	move $v0, $a1
-	b label270
-	nop
-label278:
+	sltu $t0, $zero, $a0
 	sllv $v0, $a1, $a2
-label270:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_shl_3
@@ -297,93 +190,79 @@ select_shl_3:
 	nop
 .globl select_sub_1
 select_sub_1:
-	beq $a0, $zero, label296
-	nop
-	subu $v0, $a1, $a2
-	b label289
-	nop
-label296:
+	sltu $t0, $zero, $a0
+	subu $t1, $a1, $a2
+	movn $a2, $t1, $t0
 	move $v0, $a2
-label289:
 	jr $ra
 	nop
 .globl select_sub_2
 select_sub_2:
-	beq $a0, $zero, label308
-	nop
-	move $v0, $a1
-	b label300
-	nop
-label308:
+	sltu $t0, $zero, $a0
 	subu $v0, $a1, $a2
-label300:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_sub_3
 select_sub_3:
-	beq $a0, $zero, label319
-	nop
-	move $v0, $a1
-	b label312
-	nop
-label319:
+	sltu $t0, $zero, $a0
 	addiu $v0, $a1, -42
-label312:
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_udiv_1
 select_udiv_1:
-	beq $a0, $zero, label331
+	beq $a0, $zero, label204
 	nop
 	divu $zero, $a1, $a2
 	mflo $v0
-	b label324
+	b label197
 	nop
-label331:
+label204:
 	move $v0, $a2
-label324:
+label197:
 	jr $ra
 	nop
 .globl select_udiv_2
 select_udiv_2:
-	beq $a0, $zero, label343
+	beq $a0, $zero, label216
 	nop
 	move $v0, $a1
-	b label335
+	b label208
 	nop
-label343:
+label216:
 	divu $zero, $a1, $a2
 	mflo $v0
-label335:
+label208:
 	jr $ra
 	nop
 .globl select_udiv_3
 select_udiv_3:
-	beq $a0, $zero, label354
+	beq $a0, $zero, label227
 	nop
 	move $v0, $a1
-	b label347
+	b label220
 	nop
-label354:
+label227:
 	li $t0, 42
 	divu $zero, $a1, $t0
 	mflo $v0
-label347:
+label220:
 	jr $ra
 	nop
 .globl select_xor_1
 select_xor_1:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label369
+	bne $t0, $zero, label242
 	nop
 	andi $t0, $a0, 65535
-	b label360
+	b label233
 	nop
-label369:
+label242:
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
-label360:
+label233:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -392,15 +271,15 @@ select_xor_1b:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
 	li $t1, 1
-	beq $t0, $t1, label386
+	beq $t0, $t1, label259
 	nop
 	andi $t0, $a0, 65535
-	b label377
+	b label250
 	nop
-label386:
+label259:
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
-label377:
+label250:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -408,44 +287,34 @@ label377:
 select_xor_2:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label405
-	nop
-	move $v0, $a0
-	b label395
-	nop
-label405:
+	sltiu $t0, $t0, 1
 	xor $v0, $a0, $a1
-label395:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_xor_2b
 select_xor_2b:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	beq $t0, $t1, label419
-	nop
-	move $v0, $a0
-	b label409
-	nop
-label419:
+	xori $t0, $t0, 1
+	sltu $t0, $zero, $t0
 	xor $v0, $a0, $a1
-label409:
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_xor_3
 select_xor_3:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label435
+	bne $t0, $zero, label297
 	nop
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
-	b label426
+	b label288
 	nop
-label435:
+label297:
 	andi $t0, $a0, 65535
-label426:
+label288:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -454,15 +323,15 @@ select_xor_3b:
 	andi $t0, $a1, 255
 	andi $t0, $t0, 1
 	li $t1, 1
-	beq $t0, $t1, label452
+	beq $t0, $t1, label314
 	nop
 	andi $t0, $a0, 65535
 	xori $t0, $t0, 43
-	b label443
+	b label305
 	nop
-label452:
+label314:
 	andi $t0, $a0, 65535
-label443:
+label305:
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -470,28 +339,20 @@ label443:
 select_xor_4:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	bne $t0, $zero, label471
-	nop
-	xor $v0, $a0, $a1
-	b label462
-	nop
-label471:
+	sltiu $t0, $t0, 1
+	xor $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label462:
 	jr $ra
 	nop
 .globl select_xor_4b
 select_xor_4b:
 	andi $t0, $a2, 255
 	andi $t0, $t0, 1
-	li $t1, 1
-	beq $t0, $t1, label485
-	nop
-	xor $v0, $a0, $a1
-	b label476
-	nop
-label485:
+	xori $t0, $t0, 1
+	sltu $t0, $zero, $t0
+	xor $t1, $a0, $a1
+	movn $a0, $t1, $t0
 	move $v0, $a0
-label476:
 	jr $ra
 	nop

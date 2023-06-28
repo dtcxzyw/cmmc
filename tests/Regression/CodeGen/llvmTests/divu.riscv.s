@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl iiii
 iiii:
@@ -11,8 +12,6 @@ jjjj:
 .globl kkkk
 kkkk:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl test
 test:

@@ -4,7 +4,6 @@
 __cmmc_fp_constant_pool:
 	.4byte	1078530011
 	.4byte	1065353216
-.bss
 .text
 .globl float_imm
 float_imm:

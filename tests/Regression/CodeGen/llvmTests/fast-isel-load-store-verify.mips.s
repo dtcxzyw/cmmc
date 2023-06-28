@@ -1,4 +1,5 @@
 .data
+.data
 .align 1
 .globl a
 a:
@@ -12,8 +13,6 @@ b:
 .globl c
 c:
 	.4byte	4
-.section .rodata
-.bss
 .text
 .globl t1
 t1:

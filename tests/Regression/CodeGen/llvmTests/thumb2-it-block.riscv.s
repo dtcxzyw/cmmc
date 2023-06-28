@@ -1,28 +1,20 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test
 test:
+	subw a2, zero, a0
+	li a3, 4294967295
+	and a2, a2, a3
+	slti a4, a0, 0
+	bne a4, zero, label24
 	mv a2, a0
-	bge a0, zero, label3
-	subw a0, zero, a0
-	li a2, 4294967295
-	and a0, a0, a2
-	mv a2, a1
-	bge a1, zero, label6
-	j label34
-label3:
-	mv a2, a1
-	bge a1, zero, label6
-	j label34
-label6:
-	addw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+label24:
+	subw a0, zero, a1
+	and a0, a0, a3
+	slti a4, a1, 0
+	bne a4, zero, label22
+	mv a0, a1
+label22:
+	addw a0, a2, a0
+	and a0, a0, a3
 	ret
-label34:
-	subw a1, zero, a2
-	li a2, 4294967295
-	and a1, a1, a2
-	j label6

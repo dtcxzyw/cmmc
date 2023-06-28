@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl i
 i:
@@ -7,8 +8,6 @@ i:
 .globl j
 j:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl main
 main:

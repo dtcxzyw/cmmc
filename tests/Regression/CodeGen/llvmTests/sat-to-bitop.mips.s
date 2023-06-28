@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl no_sat0_incorrect_constant
 no_sat0_incorrect_constant:
@@ -21,14 +19,9 @@ no_sat0_incorrect_variable:
 sat0_base_16bit:
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
-	bgez $t0, label22
-	nop
-	move $t0, $zero
-	b label14
-	nop
-label22:
+	slti $t1, $t0, 0
 	andi $t0, $a0, 65535
-label14:
+	movn $t0, $zero, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -43,14 +36,9 @@ sat0_base_32bit:
 sat0_base_8bit:
 	sll $t0, $a0, 24
 	sra $t0, $t0, 24
-	bgez $t0, label42
-	nop
-	move $t0, $zero
-	b label34
-	nop
-label42:
+	slti $t1, $t0, 0
 	andi $t0, $a0, 255
-label34:
+	movn $t0, $zero, $t1
 	andi $v0, $t0, 255
 	jr $ra
 	nop
@@ -65,15 +53,10 @@ sat0_lower_1:
 sat1_base_16bit:
 	sll $t0, $a0, 16
 	sra $t0, $t0, 16
-	addiu $t0, $t0, 1
-	bgez $t0, label63
-	nop
-	li $t0, -1
-	b label55
-	nop
-label63:
+	slti $t1, $t0, -1
 	andi $t0, $a0, 65535
-label55:
+	li $t2, -1
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -89,15 +72,10 @@ sat1_base_32bit:
 sat1_base_8bit:
 	sll $t0, $a0, 24
 	sra $t0, $t0, 24
-	addiu $t0, $t0, 1
-	bgez $t0, label85
-	nop
-	li $t0, -1
-	b label77
-	nop
-label85:
+	slti $t1, $t0, -1
 	andi $t0, $a0, 255
-label77:
+	li $t2, -1
+	movn $t0, $t2, $t1
 	andi $v0, $t0, 255
 	jr $ra
 	nop

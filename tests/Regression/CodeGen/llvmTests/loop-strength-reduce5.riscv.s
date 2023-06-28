@@ -1,4 +1,5 @@
 .data
+.data
 .align 2
 .globl X
 X:
@@ -9,8 +10,6 @@ X:
 Y:
 	.byte	0
 	.byte	0
-.section .rodata
-.bss
 .text
 .globl foo
 foo:

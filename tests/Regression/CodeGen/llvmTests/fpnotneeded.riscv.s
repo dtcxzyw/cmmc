@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl i
 i:
@@ -7,8 +8,6 @@ i:
 .globl f
 f:
 	.4byte	1065353216
-.section .rodata
-.bss
 .text
 .globl foo
 foo:

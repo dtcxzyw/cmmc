@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl Y
 Y:
@@ -7,8 +8,6 @@ Y:
 .globl X
 X:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl fn1
 fn1:

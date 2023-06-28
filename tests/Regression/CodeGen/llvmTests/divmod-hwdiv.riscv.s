@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test_i32_srem
 test_i32_srem:

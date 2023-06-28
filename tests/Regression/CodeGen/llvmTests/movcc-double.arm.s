@@ -1,11 +1,10 @@
 .arch armv7ve
 .data
+.data
 .align 4
 .globl var32
 var32:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm
@@ -16,14 +15,12 @@ select_and:
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #28]
 	cmp r0, r1
-	bhs label15
-	cmp r2, r3
 	mov r0, #0
 	movwlo r0, #1
-	b label3
-label15:
-	mov r0, #0
-label3:
+	cmp r2, r3
+	mov r1, #0
+	movwlo r1, #1
+	and r0, r0, r1
 	cmp r0, #0
 	mov r0, r5
 	movne r0, r4

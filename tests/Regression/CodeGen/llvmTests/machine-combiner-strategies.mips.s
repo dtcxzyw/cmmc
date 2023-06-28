@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test_local_strategy
 test_local_strategy:

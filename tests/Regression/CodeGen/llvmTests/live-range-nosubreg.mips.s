@@ -1,4 +1,5 @@
 .data
+.data
 .align 2
 .globl a
 a:
@@ -16,47 +17,42 @@ d:
 .globl b
 b:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl main
 main:
-	lui $t0, %hi(a)
-	addiu $t1, $t0, %lo(a)
-	lh $t0, %lo(a)($t0)
-	lui $t2, %hi(c)
-	lw $t2, %lo(c)($t2)
-	sltu $t2, $zero, $t2
-	bne $t2, $zero, label3
-	nop
-	andi $t0, $t0, 65535
-	addiu $t0, $t0, 1
-	andi $t0, $t0, 65535
-label3:
+	lui $t1, %hi(a)
+	lh $t0, %lo(a)($t1)
+	andi $t2, $t0, 65535
+	addiu $t2, $t2, 1
+	andi $t2, $t2, 65535
+	lui $t3, %hi(c)
+	lw $t3, %lo(c)($t3)
+	sltiu $t3, $t3, 1
+	movn $t0, $t2, $t3
 	andi $t0, $t0, 65535
 	addiu $t0, $t0, -1
 	andi $t0, $t0, 65535
-	andi $t2, $t0, 65535
-	sh $t0, 0($t1)
-	lui $t1, %hi(d)
-	addiu $t0, $t1, %lo(d)
-	lb $t1, %lo(d)($t1)
-	andi $t1, $t1, 255
-	subu $t1, $zero, $t1
-	andi $t3, $t1, 255
-	bne $t2, $zero, label33
+	sh $t0, %lo(a)($t1)
+	andi $t1, $t0, 65535
+	lui $t2, %hi(d)
+	addiu $t0, $t2, %lo(d)
+	lb $t2, %lo(d)($t2)
+	andi $t2, $t2, 255
+	subu $t2, $zero, $t2
+	andi $t2, $t2, 255
+	bne $t1, $zero, label28
 	nop
 	move $t1, $zero
-	b label5
+	b label2
 	nop
-label33:
+label28:
 	lui $t1, %hi(b)
 	lw $t1, %lo(b)($t1)
 	sltu $t1, $zero, $t1
-label5:
+label2:
 	andi $t1, $t1, 255
 	andi $t1, $t1, 255
-	andi $t2, $t3, 255
+	andi $t2, $t2, 255
 	or $t1, $t1, $t2
 	andi $t1, $t1, 255
 	sb $t1, 0($t0)

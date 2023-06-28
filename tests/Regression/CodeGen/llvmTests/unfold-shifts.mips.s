@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl unfold1
 unfold1:

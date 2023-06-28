@@ -1,5 +1,6 @@
 .arch armv7ve
 .data
+.data
 .align 1
 .globl a
 a:
@@ -13,8 +14,6 @@ b:
 .globl c
 c:
 	.4byte	4
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm

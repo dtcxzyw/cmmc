@@ -1,6 +1,5 @@
 .arch armv7ve
 .data
-.section .rodata
 .bss
 .align 4
 .globl x
@@ -101,43 +100,43 @@ imm_build_pattern1:
 	bx lr
 .globl imm_build_pattern2
 imm_build_pattern2:
-	mov r1, #1024
+	mov r1, #1024000
 	str r1, [r0, #0]
-	mov r1, #512
+	mov r1, #512000
 	str r1, [r0, #4]
-	mov r1, #256
+	mov r1, #256000
 	str r1, [r0, #8]
-	mov r1, #128
+	mov r1, #128000
 	str r1, [r0, #12]
-	mov r1, #64
+	mov r1, #64000
 	str r1, [r0, #16]
-	mov r1, #32
+	mov r1, #32000
 	str r1, [r0, #20]
-	mov r1, #16
+	mov r1, #16000
 	str r1, [r0, #24]
-	mov r1, #8
+	mov r1, #8000
 	str r1, [r0, #28]
-	mov r1, #4
+	mov r1, #4000
 	str r1, [r0, #32]
 	bx lr
 .globl imm_build_pattern3
 imm_build_pattern3:
 	mov r1, #0
 	str r1, [r0, #0]
-	mov r1, #4
+	mov r1, #400
 	str r1, [r0, #4]
-	mov r1, #8
+	mov r1, #800
 	str r1, [r0, #8]
-	mov r1, #12
+	mov r1, #1200
 	str r1, [r0, #12]
-	mov r1, #16
+	mov r1, #1600
 	str r1, [r0, #16]
-	mov r1, #20
+	mov r1, #2000
 	str r1, [r0, #20]
-	mov r1, #24
+	mov r1, #2400
 	str r1, [r0, #24]
-	mov r1, #28
+	mov r1, #2800
 	str r1, [r0, #28]
-	mov r1, #32
+	mov r1, #3200
 	str r1, [r0, #32]
 	bx lr

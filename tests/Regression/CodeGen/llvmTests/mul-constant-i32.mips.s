@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl mul_neg_fold
 mul_neg_fold:

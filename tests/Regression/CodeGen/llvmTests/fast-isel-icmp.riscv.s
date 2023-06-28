@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl icmp_i16_signed
 icmp_i16_signed:

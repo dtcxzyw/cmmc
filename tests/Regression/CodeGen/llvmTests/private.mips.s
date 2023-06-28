@@ -1,10 +1,9 @@
 .data
+.data
 .align 4
 .globl baz
 baz:
 	.4byte	4
-.section .rodata
-.bss
 .text
 .globl bar
 bar:

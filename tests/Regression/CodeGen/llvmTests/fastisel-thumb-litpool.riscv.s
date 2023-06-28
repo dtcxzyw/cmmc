@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test_thumb_ldrlit
 test_thumb_ldrlit:

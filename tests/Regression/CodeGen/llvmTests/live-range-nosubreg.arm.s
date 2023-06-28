@@ -1,5 +1,6 @@
 .arch armv7ve
 .data
+.data
 .align 2
 .globl a
 a:
@@ -17,8 +18,6 @@ d:
 .globl b
 b:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm
@@ -27,22 +26,20 @@ b:
 main:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
-	mov r1, r0
-	ldrsh r0, [r0, #0]
-	movw r2, #:lower16:c
-	movt r2, #:upper16:c
-	ldr r2, [r2, #0]
-	cmp r2, #0
-	bne label3
-	uxth r0, r0
-	add r0, r0, #1
-	uxth r0, r0
-label3:
-	uxth r0, r0
-	sub r0, r0, #1
-	uxth r0, r0
-	uxth r3, r0
-	strh r0, [r1, #0]
+	ldrsh r1, [r0, #0]
+	ldrh r2, [r0, #0]
+	add r2, r2, #1
+	uxth r2, r2
+	movw r3, #:lower16:c
+	movt r3, #:upper16:c
+	ldr r3, [r3, #0]
+	cmp r3, #0
+	moveq r1, r2
+	uxth r1, r1
+	sub r1, r1, #1
+	uxth r1, r1
+	strh r1, [r0, #0]
+	uxth r3, r1
 	movw r1, #:lower16:d
 	movt r1, #:upper16:d
 	mov r0, r1
@@ -51,17 +48,17 @@ label3:
 	rsb r1, r1, #0
 	uxtb r2, r1
 	cmp r3, #0
-	bne label33
+	bne label28
 	mov r1, #0
-	b label5
-label33:
+	b label2
+label28:
 	movw r1, #:lower16:b
 	movt r1, #:upper16:b
 	ldr r1, [r1, #0]
 	cmp r1, #0
 	mov r1, #0
 	movwne r1, #1
-label5:
+label2:
 	uxtb r1, r1
 	uxtb r1, r1
 	uxtb r2, r2

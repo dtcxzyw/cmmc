@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl select_const_fp
 select_const_fp:

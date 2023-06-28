@@ -1,18 +1,10 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test
 test:
 	sltu $t0, $a0, $a1
-	xori $t0, $t0, 1
-	bne $t0, $zero, label9
-	nop
-	addiu $v0, $a1, 2
-	b label3
-	nop
-label9:
+	addiu $t1, $a1, 2
 	li $v0, 1
-label3:
+	movn $v0, $t1, $t0
 	jr $ra
 	nop

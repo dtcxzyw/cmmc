@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl and0xf30_lshr4
 and0xf30_lshr4:

@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl bar
 bar:
@@ -7,6 +8,4 @@ bar:
 .globl foo
 foo:
 	.4byte	42
-.section .rodata
-.bss
 .text

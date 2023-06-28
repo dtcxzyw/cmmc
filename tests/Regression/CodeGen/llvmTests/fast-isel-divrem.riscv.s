@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test_sdiv16
 test_sdiv16:

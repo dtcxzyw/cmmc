@@ -1,19 +1,12 @@
 .data
-.section .rodata
-.bss
 .text
 .globl function
 function:
-	xor $t0, $a0, $a1
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label9
-	nop
 	mult $a0, $a0
-	mflo $v0
-	b label3
-	nop
-label9:
+	mflo $t0
+	xor $t1, $a0, $a1
+	sltiu $t1, $t1, 1
+	movn $a0, $t0, $t1
 	move $v0, $a0
-label3:
 	jr $ra
 	nop

@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl src
 src:
@@ -7,8 +8,6 @@ src:
 .globl dst
 dst:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl imm32_cse
 imm32_cse:

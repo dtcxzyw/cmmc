@@ -1,6 +1,5 @@
 .arch armv7ve
 .data
-.section .rodata
 .bss
 .align 4
 .globl handler_installed_6144_b

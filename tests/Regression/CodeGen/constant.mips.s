@@ -108,44 +108,44 @@ imm_build_pattern1:
 	nop
 .globl imm_build_pattern2
 imm_build_pattern2:
-	li $t0, 1024
+	li $t0, 1024000
 	sw $t0, 0($a0)
-	li $t0, 512
+	li $t0, 512000
 	sw $t0, 4($a0)
-	li $t0, 256
+	li $t0, 256000
 	sw $t0, 8($a0)
-	li $t0, 128
+	li $t0, 128000
 	sw $t0, 12($a0)
-	li $t0, 64
+	li $t0, 64000
 	sw $t0, 16($a0)
-	li $t0, 32
+	li $t0, 32000
 	sw $t0, 20($a0)
-	li $t0, 16
+	li $t0, 16000
 	sw $t0, 24($a0)
-	li $t0, 8
+	li $t0, 8000
 	sw $t0, 28($a0)
-	li $t0, 4
+	li $t0, 4000
 	sw $t0, 32($a0)
 	jr $ra
 	nop
 .globl imm_build_pattern3
 imm_build_pattern3:
 	sw $zero, 0($a0)
-	li $t0, 4
+	li $t0, 400
 	sw $t0, 4($a0)
-	li $t0, 8
+	li $t0, 800
 	sw $t0, 8($a0)
-	li $t0, 12
+	li $t0, 1200
 	sw $t0, 12($a0)
-	li $t0, 16
+	li $t0, 1600
 	sw $t0, 16($a0)
-	li $t0, 20
+	li $t0, 2000
 	sw $t0, 20($a0)
-	li $t0, 24
+	li $t0, 2400
 	sw $t0, 24($a0)
-	li $t0, 28
+	li $t0, 2800
 	sw $t0, 28($a0)
-	li $t0, 32
+	li $t0, 3200
 	sw $t0, 32($a0)
 	jr $ra
 	nop

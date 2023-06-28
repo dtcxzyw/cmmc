@@ -3,7 +3,6 @@
 .align 4
 __cmmc_fp_constant_pool:
 	.4byte	1065353216
-.bss
 .text
 .globl select_icmp_eq
 select_icmp_eq:

@@ -1,4 +1,5 @@
 .data
+.data
 .align 4
 .globl i
 i:
@@ -12,7 +13,6 @@ f:
 __cmmc_fp_constant_pool:
 	.4byte	1073741824
 	.4byte	1065353216
-.bss
 .text
 .globl foo
 foo:

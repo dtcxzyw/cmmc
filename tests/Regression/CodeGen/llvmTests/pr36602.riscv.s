@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl fn2
 fn2:

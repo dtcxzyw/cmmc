@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl bswap_ror_commuted
 bswap_ror_commuted:

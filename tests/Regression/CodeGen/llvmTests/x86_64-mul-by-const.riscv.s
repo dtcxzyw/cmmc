@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl f9188_mul365384439_shift27
 f9188_mul365384439_shift27:

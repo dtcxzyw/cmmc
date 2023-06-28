@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl i32_select_0_or_neg1
 i32_select_0_or_neg1:

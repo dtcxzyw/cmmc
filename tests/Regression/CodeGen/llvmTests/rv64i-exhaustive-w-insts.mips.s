@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl aext_addiw_aext
 aext_addiw_aext:

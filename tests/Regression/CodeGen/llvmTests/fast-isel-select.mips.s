@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl fastisel_select
 fastisel_select:

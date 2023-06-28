@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl _Z1fv
 _Z1fv:

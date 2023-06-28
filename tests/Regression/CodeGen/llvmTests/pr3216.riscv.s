@@ -1,10 +1,9 @@
 .data
+.data
 .align 1
 .globl foo
 foo:
 	.byte	127
-.section .rodata
-.bss
 .text
 .globl main
 main:

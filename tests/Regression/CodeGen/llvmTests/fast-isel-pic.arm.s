@@ -1,10 +1,10 @@
 .arch armv7ve
 .data
+.data
 .align 4
 .globl g
 g:
 	.4byte	0
-.section .rodata
 .bss
 .align 4
 .globl i

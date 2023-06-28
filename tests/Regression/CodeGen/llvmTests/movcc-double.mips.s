@@ -1,26 +1,18 @@
 .data
+.data
 .align 4
 .globl var32
 var32:
 	.4byte	0
-.section .rodata
-.bss
 .text
 .globl select_and
 select_and:
-	lw $t1, 16($sp)
+	lw $t0, 16($sp)
 	lw $v0, 20($sp)
-	sltu $t0, $a0, $a1
-	xori $t0, $t0, 1
-	bne $t0, $zero, label15
-	nop
-	sltu $t0, $a2, $a3
-	b label3
-	nop
-label15:
-	move $t0, $zero
-label3:
-	movn $v0, $t1, $t0
+	sltu $t1, $a0, $a1
+	sltu $t2, $a2, $a3
+	and $t1, $t1, $t2
+	movn $v0, $t0, $t1
 	jr $ra
 	nop
 .globl select_noopt

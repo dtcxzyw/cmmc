@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl callee_cmmc_noinline
 callee_cmmc_noinline:

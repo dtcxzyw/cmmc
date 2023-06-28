@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl test_srem_allones
 test_srem_allones:

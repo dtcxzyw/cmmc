@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl PR28968
 PR28968:

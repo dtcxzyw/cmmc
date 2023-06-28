@@ -1,6 +1,4 @@
 .data
-.section .rodata
-.bss
 .text
 .globl _Z2f1ii
 _Z2f1ii:
