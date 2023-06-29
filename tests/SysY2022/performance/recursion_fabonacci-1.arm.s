@@ -35,7 +35,7 @@ label4:
 	vadd.f32 s0, s17, s0
 	b label2
 takFP:
-	push { r7, lr }
+	push { r4, lr }
 	vpush { s16, s17, s18, s19, s20 }
 	sub sp, sp, #4
 	vcmp.f32 s1, s0
@@ -48,20 +48,20 @@ label37:
 	vmov.f32 s17, s1
 	vmov.f32 s18, s2
 label26:
-	mov r7, #1065353216
-	vmov s0, r7
+	mov r4, #1065353216
+	vmov s0, r4
 	vsub.f32 s0, s16, s0
 	vmov.f32 s1, s17
 	vmov.f32 s2, s18
 	bl takFP
 	vmov.f32 s19, s0
-	vmov s0, r7
+	vmov s0, r4
 	vsub.f32 s0, s17, s0
 	vmov.f32 s1, s18
 	vmov.f32 s2, s16
 	bl takFP
 	vmov.f32 s20, s0
-	vmov s0, r7
+	vmov s0, r4
 	vsub.f32 s0, s18, s0
 	vmov.f32 s1, s16
 	vmov.f32 s2, s17
@@ -78,7 +78,7 @@ label53:
 label30:
 	add sp, sp, #4
 	vpop { s16, s17, s18, s19, s20 }
-	pop { r7, pc }
+	pop { r4, pc }
 .globl main
 main:
 	push { r4, lr }

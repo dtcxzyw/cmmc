@@ -42,7 +42,7 @@ takFP:
 	fsw f8, 32(sp)
 	fsw f9, 28(sp)
 	fsw f18, 24(sp)
-	sd s3, 16(sp)
+	sd s0, 16(sp)
 	fsw f19, 12(sp)
 	fsw f20, 8(sp)
 	sd ra, 0(sp)
@@ -55,20 +55,20 @@ label40:
 	fmv.s f9, f11
 	fmv.s f18, f12
 label29:
-	lui s3, 260096
-	fmv.w.x f10, s3
+	lui s0, 260096
+	fmv.w.x f10, s0
 	fsub.s f10, f8, f10
 	fmv.s f11, f9
 	fmv.s f12, f18
 	jal takFP
 	fmv.s f19, f10
-	fmv.w.x f10, s3
+	fmv.w.x f10, s0
 	fsub.s f10, f9, f10
 	fmv.s f11, f18
 	fmv.s f12, f8
 	jal takFP
 	fmv.s f20, f10
-	fmv.w.x f10, s3
+	fmv.w.x f10, s0
 	fsub.s f10, f18, f10
 	fmv.s f11, f8
 	fmv.s f12, f9
@@ -85,7 +85,7 @@ label33:
 	ld ra, 0(sp)
 	flw f20, 8(sp)
 	flw f19, 12(sp)
-	ld s3, 16(sp)
+	ld s0, 16(sp)
 	flw f18, 24(sp)
 	flw f9, 28(sp)
 	flw f8, 32(sp)

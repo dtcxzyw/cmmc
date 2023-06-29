@@ -11,14 +11,46 @@ main:
 	li a0, 121
 	jal _sysy_starttime
 	ble s0, zero, label22
-	mv a0, zero
+	mv a1, zero
 	mv a2, zero
-	addiw a1, zero, 4
-	bge a1, s0, label5
+	addiw a0, zero, 4
+	bge a0, s0, label5
 	j label16
 label22:
 	mv s0, zero
 	j label17
+label5:
+	addiw a0, a2, 4
+	bge a0, s0, label9
+	j label8
+label9:
+	addiw a0, a2, 4
+	bge a0, s0, label41
+	j label12
+label41:
+	mv a0, a2
+	j label13
+label12:
+	addiw a2, a1, 15
+	li a1, 12009599
+	mul a3, a2, a1
+	srai a4, a3, 54
+	srli a3, a3, 63
+	add a4, a3, a4
+	li a3, 1500000001
+	mulw a4, a4, a3
+	subw a2, a2, a4
+	addiw a2, a2, 45
+	mul a1, a2, a1
+	srai a4, a1, 54
+	srli a1, a1, 63
+	add a1, a1, a4
+	mulw a1, a1, a3
+	subw a1, a2, a1
+	mv a2, a0
+	addiw a0, a0, 4
+	bge a0, s0, label41
+	j label12
 label13:
 	addiw a1, a1, 15
 	li a2, 12009599
@@ -46,76 +78,45 @@ label17:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
-label5:
-	addiw a1, a2, 4
-	bge a1, s0, label32
-	j label8
-label32:
-	mv a1, a0
-	mv a0, a2
-	addiw a2, a2, 4
-	bge a2, s0, label13
-	j label12
 label16:
-	addiw a2, a0, 15
-	li a0, 12009599
-	mul a3, a2, a0
-	srai a4, a3, 54
-	srli a3, a3, 63
-	add a4, a3, a4
-	li a3, 1500000001
-	mulw a4, a4, a3
-	subw a2, a2, a4
-	addiw a2, a2, 45
-	mul a4, a2, a0
-	srai a0, a4, 54
-	srli a4, a4, 63
-	add a0, a4, a0
-	mulw a0, a0, a3
-	subw a0, a2, a0
-	mv a2, a1
-	addiw a1, a1, 4
-	bge a1, s0, label5
-	j label16
-label12:
-	addiw a1, a1, 15
-	li a0, 12009599
-	mul a3, a1, a0
-	srai a4, a3, 54
-	srli a3, a3, 63
-	add a4, a3, a4
-	li a3, 1500000001
-	mulw a4, a4, a3
-	subw a1, a1, a4
-	addiw a1, a1, 45
-	mul a4, a1, a0
-	srai a0, a4, 54
-	srli a4, a4, 63
-	add a0, a4, a0
-	mulw a0, a0, a3
-	subw a1, a1, a0
-	mv a0, a2
-	addiw a2, a2, 4
-	bge a2, s0, label13
-	j label12
-label8:
-	addiw a3, a0, 15
-	li a0, 12009599
-	mul a4, a3, a0
-	srai a2, a4, 54
-	srli a4, a4, 63
-	add a4, a4, a2
+	addiw a3, a1, 15
+	li a1, 12009599
+	mul a2, a3, a1
+	srai a4, a2, 54
+	srli a2, a2, 63
+	add a4, a2, a4
 	li a2, 1500000001
 	mulw a4, a4, a2
 	subw a3, a3, a4
 	addiw a3, a3, 45
-	mul a0, a3, a0
-	srai a4, a0, 54
-	srli a0, a0, 63
-	add a0, a0, a4
-	mulw a0, a0, a2
-	subw a0, a3, a0
-	mv a2, a1
-	addiw a1, a1, 4
-	bge a1, s0, label32
+	mul a1, a3, a1
+	srai a4, a1, 54
+	srli a1, a1, 63
+	add a1, a1, a4
+	mulw a1, a1, a2
+	subw a1, a3, a1
+	mv a2, a0
+	addiw a0, a0, 4
+	bge a0, s0, label5
+	j label16
+label8:
+	addiw a3, a1, 15
+	li a1, 12009599
+	mul a2, a3, a1
+	srai a4, a2, 54
+	srli a2, a2, 63
+	add a4, a2, a4
+	li a2, 1500000001
+	mulw a4, a4, a2
+	subw a3, a3, a4
+	addiw a3, a3, 45
+	mul a1, a3, a1
+	srai a4, a1, 54
+	srli a1, a1, 63
+	add a1, a1, a4
+	mulw a1, a1, a2
+	subw a1, a3, a1
+	mv a2, a0
+	addiw a0, a0, 4
+	bge a0, s0, label9
 	j label8

@@ -10,63 +10,62 @@ main:
 	li a0, 324
 	jal _sysy_starttime
 	jal getint
-	mv a2, a0
-	mv a0, zero
-	li a1, 100
-	bge zero, a1, label19
-	slli a1, zero, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, zero, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
+	mv a1, zero
+	li a2, 100
+	bge zero, a2, label19
+	slli a2, zero, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, zero, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
 	j label327
 label19:
-	mv a0, zero
+	mv a2, zero
 	mv a1, zero
-	bge zero, a2, label12
+	bge zero, a0, label12
 label7:
 	li a3, 1
 	sw a3, 4(s0)
@@ -267,78 +266,80 @@ label7:
 	li a3, 99
 	sw a3, 396(s0)
 	addiw a1, a1, 1
-	mv a3, zero
+	mv a4, a2
+	mv a2, zero
 label8:
-	slli a4, a3, 2
-	add a4, s0, a4
-	lw a5, 0(a4)
-	addw a0, a0, a5
-	lw a5, 4(a4)
-	addw a0, a0, a5
-	lw a5, 8(a4)
-	addw a0, a0, a5
-	lw a5, 12(a4)
-	addw a0, a0, a5
-	lw a5, 16(a4)
-	addw a0, a0, a5
-	lw a5, 20(a4)
-	addw a0, a0, a5
-	lw a5, 24(a4)
-	addw a0, a0, a5
-	lw a5, 28(a4)
-	addw a0, a0, a5
-	lw a5, 32(a4)
-	addw a0, a0, a5
-	lw a5, 36(a4)
-	addw a0, a0, a5
-	lw a5, 40(a4)
-	addw a0, a0, a5
-	lw a5, 44(a4)
-	addw a0, a0, a5
-	lw a5, 48(a4)
-	addw a0, a0, a5
-	lw a5, 52(a4)
-	addw a0, a0, a5
-	lw a5, 56(a4)
-	addw a0, a0, a5
-	lw a4, 60(a4)
-	addw a0, a0, a4
-	addiw a3, a3, 16
-	li a4, 96
-	bge a3, a4, label11
-	j label8
-label11:
-	slli a3, a3, 2
+	slli a3, a2, 2
 	add a3, s0, a3
 	lw a5, 0(a3)
-	lw a4, 4(a3)
-	addw a0, a0, a5
-	addw a0, a0, a4
-	lw a4, 8(a3)
-	addw a0, a0, a4
-	lw a3, 12(a3)
-	addw a0, a0, a3
+	addw a4, a4, a5
+	lw a5, 4(a3)
+	addw a4, a4, a5
+	lw a5, 8(a3)
+	addw a4, a4, a5
+	lw a5, 12(a3)
+	addw a4, a4, a5
+	lw a5, 16(a3)
+	addw a4, a4, a5
+	lw a5, 20(a3)
+	addw a4, a4, a5
+	lw a5, 24(a3)
+	addw a4, a4, a5
+	lw a5, 28(a3)
+	addw a4, a4, a5
+	lw a5, 32(a3)
+	addw a4, a4, a5
+	lw a5, 36(a3)
+	addw a4, a4, a5
+	lw a5, 40(a3)
+	addw a4, a4, a5
+	lw a5, 44(a3)
+	addw a4, a4, a5
+	lw a5, 48(a3)
+	addw a4, a4, a5
+	lw a5, 52(a3)
+	addw a4, a4, a5
+	lw a5, 56(a3)
+	addw a4, a4, a5
+	lw a3, 60(a3)
+	addw a4, a4, a3
+	addiw a2, a2, 16
+	li a3, 96
+	bge a2, a3, label11
+	j label8
+label11:
+	slli a2, a2, 2
+	add a2, s0, a2
+	lw a5, 0(a2)
+	lw a3, 4(a2)
+	addw a4, a4, a5
+	addw a3, a4, a3
+	lw a4, 8(a2)
+	addw a3, a3, a4
+	lw a2, 12(a2)
+	addw a2, a3, a2
 	li a3, -2147450879
-	mul a3, a0, a3
+	mul a3, a2, a3
 	srli a3, a3, 32
-	add a3, a3, a0
+	add a3, a3, a2
 	sraiw a4, a3, 15
 	srliw a3, a3, 31
 	add a3, a3, a4
 	li a4, 65535
 	mulw a3, a3, a4
-	subw a0, a0, a3
-	bge a1, a2, label12
+	subw a2, a2, a3
+	bge a1, a0, label12
 	j label7
 label327:
-	slli a1, a0, 2
-	add a1, s0, a1
-	sw zero, 0(a1)
-	addiw a0, a0, 1
-	li a1, 100
-	bge a0, a1, label19
+	slli a2, a1, 2
+	add a2, s0, a2
+	sw zero, 0(a2)
+	addiw a1, a1, 1
+	li a2, 100
+	bge a1, a2, label19
 	j label327
 label12:
+	mv a0, a2
 	jal putint
 	li a0, 10
 	jal putch

@@ -37,9 +37,10 @@ main:
 	li a0, 21
 	jal _sysy_starttime
 	jal getint
-pcrel41:
+pcrel44:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a2, a1, %pcrel_lo(pcrel41)
+	addi a2, a1, %pcrel_lo(pcrel44)
+	flw f11, 0(a2)
 	flw f10, 0(a2)
 	mv a1, a0
 	jal func

@@ -506,8 +506,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         const auto stackStorage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
 
         std::unordered_set<MIRInst*> newInsts;
+        const uint32_t minimizeIntervalThreshold = 8;
+        const auto fallback = blockList.size() >= minimizeIntervalThreshold;
+
         for(auto& block : mfunc.blocks()) {
             auto& instructions = block->instructions();
+
+            bool loaded = false;
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 const auto next = std::next(iter);
                 auto& inst = *iter;
@@ -532,7 +537,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                     }
                 }
 
-                if(hasUse) {
+                if(hasUse && !loaded) {
                     // should be placed before locked inst block
                     auto it = iter;
                     while(it != instructions.begin()) {
@@ -556,6 +561,8 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                                         MIRInst{ InstLoadRegFromStack }
                                             .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
                                             .setOperand<1>(stackStorage));
+                    if(!fallback)
+                        loaded = true;
                 }
                 if(hasDef) {
                     // should be placed after rename inst block
@@ -582,6 +589,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                                                 .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
                                                 .setOperand<1>(stackStorage));
                     newInsts.insert(&*newInst);
+                    loaded = false;
                 }
 
                 iter = next;

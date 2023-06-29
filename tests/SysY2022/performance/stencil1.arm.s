@@ -17,13 +17,13 @@ main:
 	sub sp, sp, #4
 	movw r0, #:lower16:image_in
 	movt r0, #:upper16:image_in
-	mov r6, r0
+	mov r4, r0
 	bl getarray
-	mov r5, r0
+	mov r6, r0
 	mov r0, #23
 	bl _sysy_starttime
-	movw r4, #:lower16:image_out
-	movt r4, #:upper16:image_out
+	movw r5, #:lower16:image_out
+	movt r5, #:upper16:image_out
 	mov r0, #1
 	sub r1, r0, #1
 	movw r2, #1023
@@ -45,37 +45,37 @@ label8:
 	b label23
 label4:
 	add r2, r0, r3, lsl #10
-	ldr r7, [r6, r2, lsl #2]
-	sub r8, r3, #1
-	add r9, r1, r8, lsl #10
-	ldr r9, [r6, r9, lsl #2]
-	rsb r7, r9, r7, lsl #3
-	add r9, r0, r8, lsl #10
-	add r8, r6, r9, lsl #2
-	ldr r9, [r6, r9, lsl #2]
-	sub r7, r7, r9
-	ldr r8, [r8, #4]
-	sub r7, r7, r8
+	ldr r8, [r4, r2, lsl #2]
+	sub r7, r3, #1
+	add r9, r1, r7, lsl #10
+	ldr r9, [r4, r9, lsl #2]
+	rsb r8, r9, r8, lsl #3
+	add r9, r0, r7, lsl #10
+	add r7, r4, r9, lsl #2
+	ldr r9, [r4, r9, lsl #2]
+	sub r8, r8, r9
+	ldr r7, [r7, #4]
+	sub r7, r8, r7
 	add r9, r1, r3, lsl #10
-	add r8, r6, r9, lsl #2
-	ldr r9, [r6, r9, lsl #2]
+	add r8, r4, r9, lsl #2
+	ldr r9, [r4, r9, lsl #2]
 	sub r7, r7, r9
 	ldr r8, [r8, #8]
 	sub r7, r7, r8
 	add r3, r3, #1
 	add r8, r1, r3, lsl #10
-	ldr r8, [r6, r8, lsl #2]
+	ldr r8, [r4, r8, lsl #2]
 	sub r7, r7, r8
 	add r9, r0, r3, lsl #10
-	add r8, r6, r9, lsl #2
-	ldr r9, [r6, r9, lsl #2]
+	add r8, r4, r9, lsl #2
+	ldr r9, [r4, r9, lsl #2]
 	sub r7, r7, r9
 	ldr r8, [r8, #4]
 	sub r7, r7, r8
 	cmp r7, #0
 	bge label9
 	mov r7, #0
-	str r7, [r4, r2, lsl #2]
+	str r7, [r5, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8
@@ -84,57 +84,57 @@ label9:
 	cmp r7, #255
 	ble label6
 	mov r7, #255
-	str r7, [r4, r2, lsl #2]
+	str r7, [r5, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8
 	b label4
 label6:
-	str r7, [r4, r2, lsl #2]
+	str r7, [r5, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
 	bge label8
 	b label4
 label11:
 	lsl r1, r0, #10
-	ldr r2, [r6, r1, lsl #2]
-	str r2, [r4, r1, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
 	add r1, r0, #1
 	lsl r1, r1, #10
 	sub r2, r1, #1
-	ldr r3, [r6, r2, lsl #2]
-	str r3, [r4, r2, lsl #2]
-	ldr r2, [r6, r1, lsl #2]
-	str r2, [r4, r1, lsl #2]
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
 	add r1, r0, #2
 	lsl r1, r1, #10
 	sub r2, r1, #1
-	ldr r3, [r6, r2, lsl #2]
-	str r3, [r4, r2, lsl #2]
-	ldr r2, [r6, r1, lsl #2]
-	str r2, [r4, r1, lsl #2]
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
 	add r1, r0, #3
 	lsl r1, r1, #10
 	sub r2, r1, #1
-	ldr r3, [r6, r2, lsl #2]
-	str r3, [r4, r2, lsl #2]
-	ldr r2, [r6, r1, lsl #2]
-	str r2, [r4, r1, lsl #2]
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
 	add r0, r0, #4
 	lsl r1, r0, #10
 	sub r1, r1, #1
-	ldr r2, [r6, r1, lsl #2]
-	str r2, [r4, r1, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
 	cmp r0, #1024
 	bge label140
 	b label11
 label140:
 	mov r0, #0
 label13:
-	add r2, r6, r0, lsl #2
-	ldr r3, [r6, r0, lsl #2]
-	add r1, r4, r0, lsl #2
-	str r3, [r4, r0, lsl #2]
+	add r2, r4, r0, lsl #2
+	ldr r3, [r4, r0, lsl #2]
+	add r1, r5, r0, lsl #2
+	str r3, [r5, r0, lsl #2]
 	movw r3, #61440
 	movt r3, #63
 	add r7, r2, r3
@@ -173,8 +173,8 @@ label15:
 	mov r0, #59
 	bl _sysy_stoptime
 	mov r0, #1048576
-	mov r1, r4
+	mov r1, r5
 	bl putarray
-	mov r0, r5
+	mov r0, r6
 	add sp, sp, #4
 	pop { r4, r5, r6, r7, r8, r9, pc }
