@@ -1,7 +1,5 @@
 .arch armv7ve
 .data
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm
@@ -10,7 +8,7 @@
 main:
 	push { r4, r5, r6, lr }
 	sub sp, sp, #400
-	add r4, sp, #0
+	mov r4, sp
 	mov r0, #324
 	bl _sysy_starttime
 	bl getint
@@ -31,32 +29,20 @@ main:
 	add r0, r0, #1
 	cmp r0, #100
 	bge label19
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	b label318
+	b label284
 label19:
 	mov r0, #0
 	mov r1, r0
 	cmp r0, r2
 	bge label13
+	b label8
+label284:
+	mov r1, #0
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	b label284
 label8:
 	mov r3, #1
 	str r3, [r4, #4]
@@ -274,25 +260,9 @@ label9:
 	add r0, r0, r6
 	ldr r6, [r5, #24]
 	add r0, r0, r6
-	ldr r6, [r5, #28]
-	add r0, r0, r6
-	ldr r6, [r5, #32]
-	add r0, r0, r6
-	ldr r6, [r5, #36]
-	add r0, r0, r6
-	ldr r6, [r5, #40]
-	add r0, r0, r6
-	ldr r6, [r5, #44]
-	add r0, r0, r6
-	ldr r6, [r5, #48]
-	add r0, r0, r6
-	ldr r6, [r5, #52]
-	add r0, r0, r6
-	ldr r6, [r5, #56]
-	add r0, r0, r6
-	ldr r5, [r5, #60]
+	ldr r5, [r5, #28]
 	add r0, r0, r5
-	add r3, r3, #16
+	add r3, r3, #8
 	cmp r3, #96
 	bge label12
 	b label9
@@ -316,13 +286,6 @@ label12:
 	cmp r1, r2
 	bge label13
 	b label8
-label318:
-	mov r1, #0
-	str r1, [r4, r0, lsl #2]
-	add r0, r0, #1
-	cmp r0, #100
-	bge label19
-	b label318
 label13:
 	bl putint
 	mov r0, #10

@@ -1,5 +1,5 @@
+.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
-.section .rodata
 .bss
 .align 4
 x:
@@ -27,12 +27,12 @@ main:
 	mv s2, a0
 	li a0, 13
 	jal _sysy_starttime
-pcrel880:
+pcrel882:
 	auipc a0, %pcrel_hi(x)
-	addi s0, a0, %pcrel_lo(pcrel880)
-pcrel881:
+	addi s0, a0, %pcrel_lo(pcrel882)
+pcrel883:
 	auipc a0, %pcrel_hi(y)
-	addi a0, a0, %pcrel_lo(pcrel881)
+	addi a0, a0, %pcrel_lo(pcrel883)
 	mv a1, zero
 	li a2, 1440000
 	mul a3, zero, a2
@@ -58,7 +58,7 @@ label51:
 	li a0, 1440000
 	mul a1, s5, a0
 	add a1, s0, a1
-	li a2, -1440000
+	sub a2, zero, a0
 	add a2, a1, a2
 	add a3, a1, a0
 	bge s5, s3, label21
@@ -67,10 +67,26 @@ label51:
 	li a4, 1
 	ble s3, a4, label26
 	j label27
-label11:
-	addiw t2, t3, 16
-	bge t2, s1, label106
-	j label15
+label17:
+	addiw a1, a1, 1
+	li a2, 1440000
+	mul a3, a1, a2
+	add a3, s0, a3
+	mul a2, a1, a2
+	add a4, a0, a2
+	bge a1, s1, label51
+	mv a2, zero
+	bge zero, s1, label17
+	ble s1, zero, label16
+	li t1, 2400
+	mul a5, zero, t1
+	add a5, a3, a5
+	mul t1, zero, t1
+	add t1, a4, t1
+	mv t3, zero
+	addiw t2, zero, 16
+	bge t2, s1, label11
+	j label10
 label106:
 	mv t2, t3
 	slli t3, t3, 2
@@ -154,17 +170,7 @@ label106:
 	sw zero, 0(t3)
 	addiw t2, t2, 1
 	bge t2, s1, label16
-label878:
-	slli t3, t2, 2
-	add t3, a5, t3
-	li t4, 1
-	sw t4, 0(t3)
-	slli t3, t2, 2
-	add t3, t1, t3
-	sw zero, 0(t3)
-	addiw t2, t2, 1
-	bge t2, s1, label16
-	j label878
+	j label879
 label16:
 	addiw a2, a2, 1
 	bge a2, s1, label17
@@ -178,6 +184,20 @@ label16:
 	addiw t2, zero, 16
 	bge t2, s1, label11
 	j label10
+label879:
+	slli t3, t2, 2
+	add t3, a5, t3
+	li t4, 1
+	sw t4, 0(t3)
+	slli t3, t2, 2
+	add t3, t1, t3
+	sw zero, 0(t3)
+	addiw t2, t2, 1
+	bge t2, s1, label16
+	j label879
+label11:
+	addiw t2, t3, 16
+	bge t2, s1, label106
 label15:
 	slli t4, t3, 2
 	add t4, a5, t4
@@ -266,7 +286,7 @@ label27:
 	li t3, 2400
 	mul a4, a0, t3
 	add a4, a1, a4
-	li a5, -2400
+	sub a5, zero, t3
 	add a5, a4, a5
 	add t1, a4, t3
 	mul t2, a0, t3
@@ -275,7 +295,11 @@ label27:
 	add t3, a3, t3
 	li a7, 1
 	addiw t4, a7, 16
-	bge t4, s3, label30
+	bge t4, s3, label31
+	j label30
+label31:
+	addiw t4, a7, 16
+	bge t4, s3, label461
 label35:
 	slli t5, a7, 2
 	add t5, t2, t5
@@ -482,13 +506,9 @@ label35:
 	sw t5, 60(a7)
 	mv a7, t4
 	addiw t4, t4, 16
-	bge t4, s3, label30
+	bge t4, s3, label461
 	j label35
-label30:
-	addiw t4, a7, 16
-	bge t4, s3, label197
-	j label32
-label197:
+label461:
 	mv t4, a7
 label33:
 	slli t5, t4, 2
@@ -517,7 +537,7 @@ label33:
 	addiw t4, t4, 1
 	bge t4, s3, label26
 	j label33
-label32:
+label30:
 	slli t5, a7, 2
 	add t5, t2, t5
 	lw a6, 0(t5)
@@ -723,45 +743,25 @@ label32:
 	sw t5, 60(a7)
 	mv a7, t4
 	addiw t4, t4, 16
-	bge t4, s3, label197
-	j label32
-label17:
-	addiw a1, a1, 1
-	li a2, 1440000
-	mul a3, a1, a2
-	add a3, s0, a3
-	mul a2, a1, a2
-	add a4, a0, a2
-	bge a1, s1, label51
-	mv a2, zero
-	bge zero, s1, label17
-	ble s1, zero, label16
-	li t1, 2400
-	mul a5, zero, t1
-	add a5, a3, a5
-	mul t1, zero, t1
-	add t1, a4, t1
-	mv t3, zero
-	addiw t2, zero, 16
-	bge t2, s1, label11
-	j label10
-label26:
-	addiw a0, a0, 1
-	bge a0, s3, label24
-	li a4, 1
-	ble s3, a4, label26
-	j label27
+	bge t4, s3, label31
+	j label30
 label24:
 	addiw s4, s4, 1
 	mv s5, a0
 	li a0, 1440000
 	mul a1, s4, a0
 	add a1, s0, a1
-	li a2, -1440000
+	sub a2, zero, a0
 	add a2, a1, a2
 	add a3, a1, a0
 	bge s4, s3, label21
 	li a0, 1
+	bge a0, s3, label24
+	li a4, 1
+	ble s3, a4, label26
+	j label27
+label26:
+	addiw a0, a0, 1
 	bge a0, s3, label24
 	li a4, 1
 	ble s3, a4, label26

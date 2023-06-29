@@ -1,5 +1,5 @@
+.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
-.section .rodata
 .bss
 .align 4
 image_in:
@@ -290,109 +290,109 @@ label13:
 	li a3, 2095104
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 4(a1)
-	sw a3, 4(a2)
-	li a3, 2095108
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 4(a1)
+	sw a4, 4(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 8(a1)
-	sw a3, 8(a2)
-	li a3, 2095112
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 8(a1)
+	sw a4, 8(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 12(a1)
-	sw a3, 12(a2)
-	li a3, 2095116
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 12(a1)
+	sw a4, 12(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 16(a1)
-	sw a3, 16(a2)
-	li a3, 2095120
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 16(a1)
+	sw a4, 16(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 20(a1)
-	sw a3, 20(a2)
-	li a3, 2095124
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 20(a1)
+	sw a4, 20(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 24(a1)
-	sw a3, 24(a2)
-	li a3, 2095128
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 24(a1)
+	sw a4, 24(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 28(a1)
-	sw a3, 28(a2)
-	li a3, 2095132
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 28(a1)
+	sw a4, 28(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 32(a1)
-	sw a3, 32(a2)
-	li a3, 2095136
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 32(a1)
+	sw a4, 32(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 36(a1)
-	sw a3, 36(a2)
-	li a3, 2095140
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 36(a1)
+	sw a4, 36(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 40(a1)
-	sw a3, 40(a2)
-	li a3, 2095144
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 40(a1)
+	sw a4, 40(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 44(a1)
-	sw a3, 44(a2)
-	li a3, 2095148
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 44(a1)
+	sw a4, 44(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 48(a1)
-	sw a3, 48(a2)
-	li a3, 2095152
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 48(a1)
+	sw a4, 48(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 52(a1)
-	sw a3, 52(a2)
-	li a3, 2095156
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 52(a1)
+	sw a4, 52(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 56(a1)
-	sw a3, 56(a2)
-	li a3, 2095160
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 56(a1)
+	sw a4, 56(a2)
+	addi a3, a3, 4
 	add a4, a1, a3
 	lw a4, 0(a4)
-	add a3, a2, a3
-	sw a4, 0(a3)
-	lw a3, 60(a1)
-	sw a3, 60(a2)
-	li a3, 2095164
+	add a5, a2, a3
+	sw a4, 0(a5)
+	lw a4, 60(a1)
+	sw a4, 60(a2)
+	addi a3, a3, 4
 	add a1, a1, a3
 	lw a1, 0(a1)
 	add a2, a2, a3

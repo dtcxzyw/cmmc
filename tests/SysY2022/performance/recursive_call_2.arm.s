@@ -1,7 +1,5 @@
 .arch armv7ve
 .data
-.section .rodata
-.bss
 .text
 .syntax unified
 .arm
@@ -12,11 +10,14 @@ func:
 	sub sp, sp, #4
 	vmov.f32 s16, s0
 	cmp r1, #0
-	bge label9
+	bge label4
 	mov r0, #0
 	vmov s0, r0
-	b label2
-label9:
+label2:
+	add sp, sp, #4
+	vpop { s16 }
+	pop { r4, pc }
+label4:
 	sub r4, r1, #1
 	vmov.f32 s0, s16
 	mov r1, r4
@@ -26,10 +27,7 @@ label9:
 	mov r1, r4
 	bl func
 	vsub.f32 s0, s16, s0
-label2:
-	add sp, sp, #4
-	vpop { s16 }
-	pop { r4, pc }
+	b label2
 .globl main
 main:
 	push { lr }

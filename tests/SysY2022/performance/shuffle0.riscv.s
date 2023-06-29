@@ -1,5 +1,5 @@
+.attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
-.section .rodata
 .bss
 .align 4
 head:
@@ -157,7 +157,7 @@ label13:
 	bge a1, s5, label14
 	j label2
 label14:
-	ble s3, zero, label29
+	ble s3, zero, label15
 	mv a2, zero
 	slli a0, zero, 2
 	add a0, s2, a0
@@ -170,7 +170,7 @@ label14:
 	slli t3, a0, 2
 	add t3, a4, t3
 	lw t3, 0(t3)
-	bne t3, a1, label22
+	bne t3, a1, label23
 	beq a0, zero, label153
 	mv a1, zero
 	slli t3, a0, 2
@@ -180,7 +180,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -188,7 +188,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -196,7 +196,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -204,7 +204,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -212,7 +212,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -220,7 +220,7 @@ label14:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 label278:
 	slli t3, a0, 2
 	add t3, a5, t3
@@ -229,7 +229,7 @@ label278:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 label290:
 	slli t3, a0, 2
 	add t3, a5, t3
@@ -238,7 +238,7 @@ label290:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -246,9 +246,9 @@ label290:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	j label294
-label22:
+label23:
 	slli a0, a0, 2
 	add a0, t2, a0
 	lw a0, 0(a0)
@@ -256,7 +256,7 @@ label22:
 	slli t3, a0, 2
 	add t3, a4, t3
 	lw t3, 0(t3)
-	bne t3, a1, label22
+	bne t3, a1, label23
 	beq a0, zero, label153
 	mv a1, zero
 	slli t3, a0, 2
@@ -266,7 +266,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -274,7 +274,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -282,7 +282,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -290,7 +290,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -298,7 +298,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -306,7 +306,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -314,7 +314,7 @@ label22:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	j label290
 label294:
 	slli t3, a0, 2
@@ -324,7 +324,7 @@ label294:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 label296:
 	slli t3, a0, 2
 	add t3, a5, t3
@@ -333,16 +333,16 @@ label296:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	j label296
 label133:
 	mv a1, zero
-label19:
+label20:
 	slli a0, a2, 2
 	add a0, s0, a0
 	sw a1, 0(a0)
 	addiw a2, a2, 1
-	bge a2, s3, label29
+	bge a2, s3, label15
 	slli a0, a2, 2
 	add a0, s2, a0
 	lw a1, 0(a0)
@@ -354,7 +354,7 @@ label19:
 	slli t3, a0, 2
 	add t3, a4, t3
 	lw t3, 0(t3)
-	bne t3, a1, label22
+	bne t3, a1, label23
 	beq a0, zero, label153
 	mv a1, zero
 	slli t3, a0, 2
@@ -364,7 +364,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -372,7 +372,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -380,7 +380,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -388,7 +388,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -396,7 +396,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -404,7 +404,7 @@ label19:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	j label278
 label153:
 	mv a1, zero
@@ -412,7 +412,7 @@ label153:
 	add a0, s0, a0
 	sw zero, 0(a0)
 	addiw a2, a2, 1
-	bge a2, s3, label29
+	bge a2, s3, label15
 	slli a0, a2, 2
 	add a0, s2, a0
 	lw a1, 0(a0)
@@ -424,7 +424,7 @@ label153:
 	slli t3, a0, 2
 	add t3, a4, t3
 	lw t3, 0(t3)
-	bne t3, a1, label22
+	bne t3, a1, label23
 	beq a0, zero, label153
 	mv a1, zero
 	slli t3, a0, 2
@@ -434,7 +434,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -442,7 +442,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -450,7 +450,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -458,7 +458,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -466,7 +466,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	slli t3, a0, 2
 	add t3, a5, t3
 	lw t3, 0(t3)
@@ -474,7 +474,7 @@ label153:
 	slli a0, a0, 2
 	add a0, t1, a0
 	lw a0, 0(a0)
-	beq a0, zero, label19
+	beq a0, zero, label20
 	j label278
 label12:
 	slli a2, a2, 2
@@ -486,7 +486,7 @@ label12:
 	lw t6, 0(t6)
 	bne t6, t4, label12
 	j label13
-label29:
+label15:
 	li a0, 90
 	jal _sysy_stoptime
 	mv a0, s3
