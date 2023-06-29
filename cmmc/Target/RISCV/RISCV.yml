@@ -486,6 +486,21 @@ InstSelection:
         Rs2: $Rhs
 
   - Pattern:
+      InstAnd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstXor:
+            Lhs: $Rhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+    Replace:
+      ANDN:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
