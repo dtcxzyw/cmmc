@@ -147,8 +147,9 @@ class InstReorder final : public TransformPass<Function> {
         if(order == instMap)
             return false;
 
-        for(auto& inst : block->instructions())
+        for(auto& inst : block->instructions()) {
             block->instructions().erase(inst.asNode(), false);
+        }
         for(auto inst : order) {
             block->instructions().insert(block->instructions().end(), inst->asNode());
         }

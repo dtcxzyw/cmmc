@@ -25,6 +25,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <functional>
+#include <iostream>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -103,6 +104,9 @@ class BlockOutliner final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
+        // func.dump(std::cerr, Noop{});
+        if(func.blocks().size() <= 1)
+            return false;
         const auto& moduleTarget = analysis.module().getTarget();
         const auto& cfg = analysis.get<CFGAnalysis>(func);
 
@@ -110,6 +114,17 @@ public:
         // block-level merge
         std::unordered_map<size_t, std::vector<Block*>> blocks;
         const auto entry = func.entryBlock();
+        std::vector<Instruction*> allocs;
+        for(auto& inst : entry->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc) {
+                allocs.push_back(&inst);
+            } else
+                break;
+        }
+        for(auto alloc : allocs) {
+            entry->instructions().erase(alloc->asNode(), false);
+        }
+
         for(auto block : func.blocks()) {
             if(block == entry)
                 continue;
@@ -142,7 +157,7 @@ public:
                 const auto dst = block;
                 for(auto lhsIter = src->instructions().begin(), rhsIter = dst->instructions().begin();
                     lhsIter != src->instructions().end(); ++lhsIter, ++rhsIter) {
-                    lhsIter.get()->replaceWith(rhsIter.get());
+                    lhsIter->replaceWith(rhsIter.get());
                 }
             }
         }
@@ -178,6 +193,14 @@ public:
                 handleTarget(branch->getFalseTarget());
             }
         }
+
+        if(!allocs.empty()) {
+            const auto iter = entry->instructions().begin();
+            for(auto alloc : allocs) {
+                entry->instructions().insert(iter, alloc->asNode());
+            }
+        }
+        // func.dump(std::cerr, Noop{});
         return modified;
     }
 
