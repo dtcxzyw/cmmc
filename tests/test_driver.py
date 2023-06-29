@@ -548,6 +548,46 @@ def sysy_cmmc_qemu(src, target):
 
     return True
 
+
+def sysy_cmmc_native(src, target):
+    runtime = tests_path + "/SysY2022/sylib.c"
+    rel = os.path.relpath(src[:-3], tests_path)
+    output = os.path.join(binary_dir, rel)+"_cmmc"
+    output_path = os.path.dirname(output)
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+    output_asm = output + '.s'
+    cmmc_command = binary_path + \
+        ' -t {} -O {} -H -o '.format(target,
+                                     optimization_level) + output_asm + ' ' + src
+    if os.system(cmmc_command) != 0:
+        return False
+    command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
+        ' -o {} {} {}'.format(output, runtime, output_asm)
+    if os.system(command) != 0:
+        return False
+
+    inputs = src[:-3]+".in"
+    out = None
+    try:
+        if os.path.exists(inputs):
+            with open(inputs, 'r', encoding='utf-8') as input_file:
+                out = subprocess.run([output], stdin=input_file,
+                                     capture_output=True, text=True)
+        else:
+            out = subprocess.run([output], capture_output=True, text=True)
+    except Exception as e:
+        return False
+
+    used = compare_and_parse_perf(src, out)
+    if used is None:
+        return False
+
+    add_sample("cmmc_native_"+target, src, used)
+
+    return True
+
+
 def compare_with_ref_file(answer_file, output):
     if not os.path.exists(answer_file):
         return False
@@ -755,7 +795,19 @@ if not generate_ref:
                     samples['cmmc_qemu_'+target].reset()
                 res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
                                 "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
-                
+
+    if "native" in test_cases:
+        for target in targets:
+            if target in test_cases:
+                res.append(test("SysY codegen functional (native-{})".format(target), tests_path +
+                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_native(x, target)))
+                res.append(test("SysY codegen hidden_functional (native-{})".format(target), tests_path +
+                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_native(x, target)))
+                if ('cmmc_qemu_'+target) in samples:
+                    samples['cmmc_qemu_'+target].reset()
+                res.append(test("SysY codegen performance (native-{})".format(target), tests_path +
+                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_native(x, target)))
+
     if "regression" in test_cases:
         res.append(test("SysY regression", tests_path +"/Regression/Transform", ".sy", sysy_regression))
 
