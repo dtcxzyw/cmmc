@@ -516,6 +516,49 @@ InstSelection:
         Rs2: $Rhs
 
   - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs:
+          InstXor:
+            Lhs: $Lhs
+            Rhs: $Rhs
+        Rhs: $Imm
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+    Replace:
+      XNOR:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+  - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstXor:
+            Lhs: $Rhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+    Replace:
+      XNOR:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+  - Pattern:
+      InstXor:
+        Dst: $Dst
+        Lhs:
+          InstXor:
+            Lhs: $Lhs
+            Rhs: $Imm
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+    Replace:
+      XNOR:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
