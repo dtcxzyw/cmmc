@@ -118,13 +118,13 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.body1;
   ^if.then:
     i32 %64 = and i32 %60, i32 1;
-    i1 %65 = scmp eq i32 %64, i32 0;
-    i1 %66 = scmp eq i32 %62, i32 1;
-    i1 %67 = and i1 %65, i1 %66;
+    i32 %65 = xor i32 %62, i32 1;
+    i32 %66 = or i32 %64, i32 %65;
+    i1 %67 = scmp eq i32 %66, i32 0;
     i32 %68 = select i1 %67 ? i32 %59 : i32 0;
-    i1 %69 = scmp eq i32 %61, i32 1;
-    i1 %70 = scmp eq i32 %62, i32 0;
-    i1 %71 = and i1 %69, i1 %70;
+    i32 %69 = xor i32 %61, i32 1;
+    i32 %70 = or i32 %69, i32 %62;
+    i1 %71 = scmp eq i32 %70, i32 0;
     cbr i1 %71(prob = 0.25), ^if.then1, ^b3;
   ^if.then1:
     i32 %72 = load i32* %58;

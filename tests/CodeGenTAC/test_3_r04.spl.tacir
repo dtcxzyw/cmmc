@@ -1,8 +1,8 @@
 FUNCTION main :
 READ v2
 v3 := v2 * v2
+v4 := v2 * v3
 WRITE v2
 WRITE v3
-v4 := v2 * v3
 WRITE v4
 RETURN #0

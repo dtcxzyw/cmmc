@@ -55,7 +55,6 @@
 
 # TODO
 + merge a + b with b + a
-+ (c1 SLE v) && (v SLE c2) -> (v - c1) ULT (c2 - c1 + 1)
 + ./tests/SysY2022/functional/61_sort_test7.sy memset
 + ./tests/SysY2022/functional/62_percolation.sy dup blocks
 + ./tests/SysY2022/functional/82_long_func.sy subgraph

@@ -316,3 +316,20 @@ and_trunc:
 	and $v0, $t0, $a1
 	jr $ra
 	nop
+.globl ucmp1
+ucmp1:
+	addiu $t0, $a0, -48
+	sltiu $v0, $t0, 10
+	jr $ra
+	nop
+.globl ucmp2
+ucmp2:
+	xori $t0, $a0, 1
+	sltiu $v0, $t0, 1
+	jr $ra
+	nop
+.globl ucmp3
+ucmp3:
+	sltiu $v0, $a0, 100
+	jr $ra
+	nop

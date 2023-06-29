@@ -1,68 +1,68 @@
 FUNCTION main :
 DEC x21 400
 READ v23
-READ v24
+READ v25
 IF v23 <= #0 GOTO label27
 v3 := #1
-v29 := v3 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
+v29 := v3 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v3 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
 GOTO label107
 LABEL label27 :
 v5 := #0
@@ -74,7 +74,7 @@ v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v5 + v42
-IF v47 != v24 GOTO label50
+IF v47 != v25 GOTO label50
 WRITE v7
 *v41 := #0
 v52 := v5 + #1
@@ -83,12 +83,12 @@ v13 := #0
 IF v52 != v23 GOTO label55
 GOTO label95
 LABEL label107 :
-v3 := v29
-v29 := v29 + #1
-v30 := v3 * #4
-v31 := &x21 + v30
-*v31 := #1
-IF v29 > v23 GOTO label34
+v3 := v31
+v29 := v31 * #4
+v30 := &x21 + v29
+*v30 := #1
+v31 := v31 + #1
+IF v31 > v23 GOTO label34
 GOTO label107
 LABEL label34 :
 v5 := #0
@@ -100,7 +100,7 @@ v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v5 + v42
-IF v47 != v24 GOTO label50
+IF v47 != v25 GOTO label50
 WRITE v7
 *v41 := #0
 v52 := v5 + #1
@@ -128,7 +128,7 @@ v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v13 + v42
-IF v47 != v24 GOTO label50
+IF v47 != v25 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v12 + #1
@@ -149,7 +149,7 @@ v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v6 + v42
-IF v47 != v24 GOTO label50
+IF v47 != v25 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v5 + #1
@@ -169,7 +169,7 @@ v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v16 + v42
-IF v47 != v24 GOTO label50
+IF v47 != v25 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v15 + #1

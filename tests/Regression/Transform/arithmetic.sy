@@ -314,3 +314,15 @@ int foo102(int x, int y) {
 int foo103(int x) {
     return '0' <= x && x <= '9';
 }
+int foo104(int x) {
+    return x > 47 && x <= '9';
+}
+int foo105(int x) {
+    return 40 < x && x < 40;
+}
+int foo106(int x) {
+    return 0 < x && x <= 1;
+}
+int foo107(int x) {
+    return 0 <= x && x < 100;
+}

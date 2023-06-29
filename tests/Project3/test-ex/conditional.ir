@@ -1,73 +1,73 @@
 FUNCTION main :
 v3 := #14
 v4 := #0
-v9 := v3 + #-1
-v10 := v3 + v4
+v9 := v3 + v4
+v10 := v3 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
 LABEL label46 :
-v3 := v9
-v4 := v10
-v9 := v9 + #-1
-v10 := v3 + v10
+v3 := v10
+v4 := v9
+v9 := v10 + v9
+v10 := v10 + #-1
 IF v3 == #0 GOTO label5
 GOTO label46
 LABEL label5 :
-WRITE v10
+WRITE v9
 READ v15
 READ v16
 v29 := #1
 IF v15 < v16 GOTO label31
 v29 := #0
 LABEL label31 :
-READ v18
+READ v19
 WRITE v29
 IF v15 >= v16 GOTO label21
-IF v16 >= v18 GOTO label21
+IF v16 >= v19 GOTO label21
 v32 := #1
 IF v15 < v16 GOTO label34
 v32 := #0

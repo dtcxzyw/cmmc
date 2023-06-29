@@ -259,3 +259,22 @@ and_trunc:
 	and r0, r0, #1
 	and r0, r0, r1
 	bx lr
+.globl ucmp1
+ucmp1:
+	sub r0, r0, #48
+	cmp r0, #10
+	mov r0, #0
+	movwlo r0, #1
+	bx lr
+.globl ucmp2
+ucmp2:
+	sub r0, r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
+	bx lr
+.globl ucmp3
+ucmp3:
+	cmp r0, #100
+	mov r0, #0
+	movwlo r0, #1
+	bx lr

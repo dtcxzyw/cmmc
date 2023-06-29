@@ -517,9 +517,31 @@ func @foo102(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect St
 }
 func @foo103(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %x, i32 47;
-    i1 %1 = scmp le i32 %x, i32 57;
-    i1 %2 = and i1 %0, i1 %1;
-    i32 %3 = zext i1 %2 to i32;
-    ret i32 %3;
+    i32 %0 = add i32 %x, i32 -48;
+    i1 %1 = ucmp lt i32 %0, i32 10;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}
+func @foo104(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 -48;
+    i1 %1 = ucmp lt i32 %0, i32 10;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}
+func @foo105() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo106(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 1;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @foo107(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %x, i32 100;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
 }

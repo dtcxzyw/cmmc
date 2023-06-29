@@ -600,6 +600,51 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(mask, inst));
             }
 
+            // (v SGE c1) && (v SLE c2) -> (v - c1) ULT (c2 - c1 + 1)
+            if(and_(scmp(cmp1, any(v1), int_(i1)), scmp(cmp2, any(v2), int_(i2)))(matchCtx) && v1 == v2) {
+                bool valid = false;
+
+                auto legalize = [](CompareOp& op, intmax_t& val) {
+                    if(op == CompareOp::LessThan) {
+                        // TODO: check overflow?
+                        op = CompareOp::LessEqual;
+                        --val;
+                    }
+                    if(op == CompareOp::GreaterThan) {
+                        // TODO: check overflow?
+                        op = CompareOp::GreaterEqual;
+                        ++val;
+                    }
+                };
+
+                legalize(cmp1, i1);
+                legalize(cmp2, i2);
+
+                if(cmp1 == CompareOp::GreaterEqual && cmp2 == CompareOp::LessEqual) {
+                    valid = true;
+                } else if(cmp1 == CompareOp::LessEqual && cmp2 == CompareOp::GreaterEqual) {
+                    std::swap(i1, i2);
+                    valid = true;
+                }
+
+                if(valid) {
+                    // i1 <= x <= i2
+                    if(i1 > i2) {
+                        return builder.getFalse();
+                    }
+                    if(i1 == i2) {
+                        // i1 == i2 -> v == i1
+                        return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal, v1, makeIntLike(i1, v1));
+                    }
+                    if(i1 < i2 && i1 + 65536 >= i2 && target.isNativeSupported(InstructionID::UCmp)) {
+                        return builder.makeOp<CompareInst>(
+                            InstructionID::UCmp, CompareOp::LessThan,
+                            builder.makeOp<BinaryInst>(InstructionID::Sub, v1, makeIntLike(i1, v1)),
+                            makeIntLike(i2 - i1 + 1, v1));
+                    }
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

@@ -191,3 +191,13 @@ float fp_imm1() {
 int and_trunc(int x, int y) {
     return (x & 1) && (y & 1);
 }
+
+int ucmp1(int x) {
+    return x > 47 && x <= '9';
+}
+int ucmp2(int x) {
+    return 0 < x && x <= 1;
+}
+int ucmp3(int x) {
+    return 0 <= x && x < 100;
+}
