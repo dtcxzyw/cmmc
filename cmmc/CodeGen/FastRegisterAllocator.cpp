@@ -284,12 +284,14 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                     if(!isStackObject(reg.reg())) {
                         op = reg;
                         map = { reg };  // mark other storage dirty
+                        protect.insert(reg);
                         return;
                     }
                     stackStorage = reg;
                 }
                 const auto reg = getFreeReg(op);
                 map = { reg };
+                protect.insert(reg);
                 op = reg;
             };
 
