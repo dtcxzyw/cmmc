@@ -436,6 +436,94 @@ InstSelection:
         Rd: $Dst
         Imm: $Imm
 
+  # Fuse address generation
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs:
+          InstShl:
+            Lhs: $Lhs
+            Rhs: $Imm
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 1
+    Replace:
+      SH1ADD:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstShl:
+            Lhs: $Rhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 1
+    Replace:
+      SH1ADD:
+        Rd: $Dst
+        Rs1: $Rhs
+        Rs2: $Lhs
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs:
+          InstShl:
+            Lhs: $Lhs
+            Rhs: $Imm
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 2
+    Replace:
+      SH2ADD:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstShl:
+            Lhs: $Rhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 2
+    Replace:
+      SH2ADD:
+        Rd: $Dst
+        Rs1: $Rhs
+        Rs2: $Lhs
+
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs:
+          InstShl:
+            Lhs: $Lhs
+            Rhs: $Imm
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 3
+    Replace:
+      SH3ADD:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2: $Rhs
+  - Pattern:
+      InstAdd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstShl:
+            Lhs: $Rhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && ($Imm).isImm() && ($Imm).imm() == 3
+    Replace:
+      SH3ADD:
+        Rd: $Dst
+        Rs1: $Rhs
+        Rs2: $Lhs
+
   # Integer Instructions
   - Pattern:
       InstAdd:
