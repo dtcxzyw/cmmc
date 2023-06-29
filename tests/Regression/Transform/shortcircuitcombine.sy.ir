@@ -23,9 +23,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
 }
 func @select_bitset(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 0;
-    i1 %1 = scmp eq i32 %y, i32 1;
-    i1 %2 = and i1 %0, i1 %1;
+    i32 %0 = xor i32 %y, i32 1;
+    i32 %1 = or i32 %x, i32 %0;
+    i1 %2 = scmp eq i32 %1, i32 0;
     i32 %3 = select i1 %2 ? i32 %z : i32 0;
     ret i32 %3;
 }

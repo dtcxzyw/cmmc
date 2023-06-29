@@ -435,12 +435,16 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     InstructionID::SRem, builder.makeOp<BinaryInst>(InstructionID::Add, v2, makeIntLike((i2 + i4) % i1, v2)), v3);
             }
 
-            // (a == 0) & (b == 0) -> (a | b) == 0
+            // (a == c1) & (b == c2) -> ((a^c1) | (b^c2)) == 0
             CompareOp cmp1, cmp2;
-            if(and_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::Equal &&
+            if(and_(scmp(cmp1, any(v1), int_(i1)), scmp(cmp2, any(v2), int_(i2)))(matchCtx) && cmp1 == CompareOp::Equal &&
                cmp2 == CompareOp::Equal && v1->getType()->isSame(v2->getType())) {
-                return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal,
-                                                   builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
+                return builder.makeOp<CompareInst>(
+                    InstructionID::SCmp, CompareOp::Equal,
+                    builder.makeOp<BinaryInst>(
+                        InstructionID::Or, i1 == 0 ? v1 : builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(i1, v1)),
+                        i2 == 0 ? v2 : builder.makeOp<BinaryInst>(InstructionID::Xor, v2, makeIntLike(i2, v2))),
+                    makeIntLike(0, v1));
             }
             // (a & 1 != 0) & (b & 1 != 0) -> trunc (a & 1 & b) to i1
             if(and_(scmp(cmp1, capture(and_(any(v1), cuint_(1)), v3), cint_(0)),

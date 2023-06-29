@@ -308,3 +308,9 @@ int foo100(int x, int y) {
 int foo101(int x, int y) {
     return x % (1<<y) == 0;
 }
+int foo102(int x, int y) {
+    return (x == 324) && (y == 32);
+}
+int foo103(int x) {
+    return '0' <= x && x <= '9';
+}

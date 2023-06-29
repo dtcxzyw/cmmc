@@ -506,3 +506,20 @@ func @foo101(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect St
     i32 %4 = zext i1 %3 to i32;
     ret i32 %4;
 }
+func @foo102(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %y, i32 32;
+    i32 %1 = xor i32 %x, i32 324;
+    i32 %2 = or i32 %0, i32 %1;
+    i1 %3 = scmp eq i32 %2, i32 0;
+    i32 %4 = zext i1 %3 to i32;
+    ret i32 %4;
+}
+func @foo103(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 47;
+    i1 %1 = scmp le i32 %x, i32 57;
+    i1 %2 = and i1 %0, i1 %1;
+    i32 %3 = zext i1 %2 to i32;
+    ret i32 %3;
+}

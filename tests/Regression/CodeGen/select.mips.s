@@ -308,10 +308,9 @@ select_round:
 	nop
 .globl select_bitset
 select_bitset:
-	sltiu $t0, $a0, 1
-	xori $t1, $a1, 1
-	sltiu $t1, $t1, 1
-	and $t0, $t0, $t1
+	xori $t0, $a1, 1
+	or $t0, $t0, $a0
+	sltiu $t0, $t0, 1
 	subu $t0, $zero, $t0
 	and $v0, $a2, $t0
 	jr $ra

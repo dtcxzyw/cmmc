@@ -233,12 +233,10 @@ select_round:
 	bx lr
 .globl select_bitset
 select_bitset:
+	eor r1, r1, #1
+	orr r0, r1, r0
 	clz r0, r0
 	lsr r0, r0, #5
-	sub r1, r1, #1
-	clz r1, r1
-	lsr r1, r1, #5
-	and r0, r0, r1
 	rsb r0, r0, #0
 	and r0, r2, r0
 	bx lr
