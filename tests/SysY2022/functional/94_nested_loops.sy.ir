@@ -321,11 +321,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %195 = scmp lt i32 %194, i32 4;
     cbr i1 %195(prob = 0.75), ^indirect3, ^while.header9;
   ^while.header12:
-    i32 %196 = phi [^while.header11, i32 0] [^b11, i32 %216];
-    i32 %197 = phi [^while.header11, i32 %129] [^b11, i32 %215];
-    i1 %198 = scmp lt i32 %196, i32 100000;
-    [6 * [2 * i32]]* %199 = getelementptr &([5 * [6 * [2 * i32]]]* %131)[i64 0][i32 %196];
-    [8 * [7 * i32]]* %200 = getelementptr &([4 * [8 * [7 * i32]]]* %132)[i64 0][i32 %196];
+    i32 %196 = phi [^while.header11, i32 %129] [^b11, i32 %215];
+    i32 %197 = phi [^while.header11, i32 0] [^b11, i32 %216];
+    i1 %198 = scmp lt i32 %197, i32 100000;
+    [6 * [2 * i32]]* %199 = getelementptr &([5 * [6 * [2 * i32]]]* %131)[i64 0][i32 %197];
+    [8 * [7 * i32]]* %200 = getelementptr &([4 * [8 * [7 * i32]]]* %132)[i64 0][i32 %197];
     cbr i1 %198(prob = 0.97), ^while.header13, ^b10;
   ^b9:
     i32 %201 = phi [^while.header11, i32 %129] [^b10, i32 %209];
@@ -333,14 +333,14 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %203 = scmp ge i32 %202, i32 %4;
     cbr i1 %203(prob = 0.5), ^b8, ^while.header10;
   ^while.header13:
-    i32 %204 = phi [^while.header12, i32 %197] [^b12, i32 %227];
+    i32 %204 = phi [^while.header12, i32 %196] [^b12, i32 %227];
     i32 %205 = phi [^while.header12, i32 0] [^b12, i32 %228];
     i1 %206 = scmp lt i32 %205, i32 1000000;
     [2 * i32]* %207 = getelementptr &([6 * [2 * i32]]* %199)[i64 0][i32 %205];
     [7 * i32]* %208 = getelementptr &([8 * [7 * i32]]* %200)[i64 0][i32 %205];
     cbr i1 %206(prob = 0.97), ^while.header14, ^b11;
   ^b10:
-    i32 %209 = phi [^while.header12, i32 %197] [^b11, i32 %215];
+    i32 %209 = phi [^while.header12, i32 %196] [^b11, i32 %215];
     i32 %210 = add i32 %128, i32 1;
     i1 %211 = scmp ge i32 %210, i32 %5;
     cbr i1 %211(prob = 0.5), ^b9, ^while.header11;
@@ -351,7 +351,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %214(prob = 0.97), ^while.body, ^b12;
   ^b11:
     i32 %215 = phi [^while.header13, i32 %204] [^b12, i32 %227];
-    i32 %216 = add i32 %196, i32 1;
+    i32 %216 = add i32 %197, i32 1;
     i1 %217 = scmp ge i32 %216, i32 %6;
     cbr i1 %217(prob = 0.5), ^b10, ^while.header12;
   ^while.body:

@@ -29,21 +29,33 @@ main:
 	add r0, r0, #1
 	cmp r0, #100
 	bge label19
-	b label284
-label19:
-	mov r0, #0
-	mov r1, r0
-	cmp r0, r2
-	bge label13
-	b label8
-label284:
-	mov r1, #0
 	str r1, [r4, r0, lsl #2]
 	add r0, r0, #1
 	cmp r0, #100
 	bge label19
-	b label284
-label8:
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	b label317
+label19:
+	mov r0, #0
+	mov r1, r0
+	cmp r0, r2
+	bge label12
+label7:
 	mov r3, #1
 	str r3, [r4, #4]
 	mov r3, #2
@@ -244,7 +256,7 @@ label8:
 	str r3, [r4, #396]
 	add r1, r1, #1
 	mov r3, #0
-label9:
+label8:
 	add r5, r4, r3, lsl #2
 	ldr r6, [r4, r3, lsl #2]
 	add r0, r0, r6
@@ -260,18 +272,34 @@ label9:
 	add r0, r0, r6
 	ldr r6, [r5, #24]
 	add r0, r0, r6
-	ldr r5, [r5, #28]
-	add r0, r0, r5
-	add r3, r3, #8
-	cmp r3, #96
-	bge label12
-	b label9
-label12:
-	add r5, r4, r3, lsl #2
-	ldr r6, [r4, r3, lsl #2]
-	ldr r3, [r5, #4]
+	ldr r6, [r5, #28]
 	add r0, r0, r6
+	ldr r6, [r5, #32]
+	add r0, r0, r6
+	ldr r6, [r5, #36]
+	add r0, r0, r6
+	ldr r6, [r5, #40]
+	add r0, r0, r6
+	ldr r6, [r5, #44]
+	add r0, r0, r6
+	ldr r6, [r5, #48]
+	add r0, r0, r6
+	ldr r6, [r5, #52]
+	add r0, r0, r6
+	ldr r6, [r5, #56]
+	add r0, r0, r6
+	ldr r5, [r5, #60]
+	add r0, r0, r5
+	add r3, r3, #16
+	cmp r3, #96
+	bge label11
+	b label8
+label11:
+	add r5, r4, r3, lsl #2
+	ldr r3, [r4, r3, lsl #2]
+	ldr r6, [r5, #4]
 	add r0, r0, r3
+	add r0, r0, r6
 	ldr r3, [r5, #8]
 	add r0, r0, r3
 	ldr r3, [r5, #12]
@@ -284,9 +312,16 @@ label12:
 	add r5, r6, r5, lsr #31
 	mls r0, r5, r3, r0
 	cmp r1, r2
-	bge label13
-	b label8
-label13:
+	bge label12
+	b label7
+label317:
+	mov r1, #0
+	str r1, [r4, r0, lsl #2]
+	add r0, r0, #1
+	cmp r0, #100
+	bge label19
+	b label317
+label12:
 	bl putint
 	mov r0, #10
 	bl putch

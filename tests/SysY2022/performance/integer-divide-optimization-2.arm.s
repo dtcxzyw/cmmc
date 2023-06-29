@@ -16,27 +16,14 @@ main:
 	ble label18
 	mov r0, #0
 	mov r1, r0
-	add r2, r0, #8
+	add r2, r0, #4
 	cmp r2, r4
-	bge label5
-	b label12
+	bge label6
+	b label5
 label18:
 	mov r4, #0
-label13:
-	movw r0, #1031
-	bl _sysy_stoptime
-	mov r0, r4
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r0, #0
-	add sp, sp, #4
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	b label13
 label5:
-	add r2, r0, #8
-	cmp r2, r4
-	bge label9
-label8:
 	lsl r3, r0, #1
 	add r3, r3, r3, lsr #31
 	asr r5, r3, #1
@@ -97,75 +84,7 @@ label8:
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
 	mls r9, r10, r1, r9
-	add r10, r0, #3
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #4
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #5
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #6
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r0, r0, #7
+	add r0, r0, #3
 	lsl r0, r0, #1
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1
@@ -183,11 +102,11 @@ label8:
 	add r3, r5, r3, lsr #31
 	mls r1, r3, r1, r0
 	mov r0, r2
-	add r2, r2, #8
+	add r2, r2, #4
 	cmp r2, r4
-	bge label9
-	b label8
-label9:
+	bge label6
+	b label5
+label10:
 	lsl r2, r0, #1
 	add r2, r2, r2, lsr #31
 	asr r2, r2, #1
@@ -216,12 +135,25 @@ label9:
 	mls r1, r3, r2, r1
 	add r0, r0, #1
 	cmp r0, r4
-	bge label112
-	b label9
-label112:
+	bge label111
+	b label10
+label111:
 	mov r4, r1
-	b label13
-label12:
+label13:
+	movw r0, #1031
+	bl _sysy_stoptime
+	mov r0, r4
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r0, #0
+	add sp, sp, #4
+	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+label6:
+	add r2, r0, #4
+	cmp r2, r4
+	bge label10
+label9:
 	lsl r3, r0, #1
 	add r3, r3, r3, lsr #31
 	asr r5, r3, #1
@@ -282,75 +214,7 @@ label12:
 	asr r11, r10, #29
 	add r10, r11, r10, lsr #31
 	mls r9, r10, r1, r9
-	add r10, r0, #3
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #4
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #5
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r10, r0, #6
-	lsl r10, r10, #1
-	add r10, r10, r10, lsr #31
-	asr r10, r10, #1
-	mul r10, r10, r3
-	smmul r10, r10, r5
-	asr r11, r10, #6
-	add r10, r11, r10, lsr #31
-	mul r10, r10, r6
-	smmul r10, r10, r7
-	asr r11, r10, #5
-	add r10, r11, r10, lsr #31
-	add r9, r9, r10
-	smmul r10, r9, r8
-	asr r11, r10, #29
-	add r10, r11, r10, lsr #31
-	mls r9, r10, r1, r9
-	add r0, r0, #7
+	add r0, r0, #3
 	lsl r0, r0, #1
 	add r0, r0, r0, lsr #31
 	asr r0, r0, #1
@@ -368,7 +232,7 @@ label12:
 	add r3, r5, r3, lsr #31
 	mls r1, r3, r1, r0
 	mov r0, r2
-	add r2, r2, #8
+	add r2, r2, #4
 	cmp r2, r4
-	bge label5
-	b label12
+	bge label10
+	b label9

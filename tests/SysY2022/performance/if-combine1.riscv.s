@@ -62,12 +62,12 @@ main:
 	addiw a0, a0, 1
 	li a1, 100
 	bge a0, a1, label19
-	j label328
+	j label327
 label19:
 	mv a0, zero
 	mv a1, zero
-	bge zero, a2, label13
-label8:
+	bge zero, a2, label12
+label7:
 	li a3, 1
 	sw a3, 4(s0)
 	li a3, 2
@@ -268,7 +268,7 @@ label8:
 	sw a3, 396(s0)
 	addiw a1, a1, 1
 	mv a3, zero
-label9:
+label8:
 	slli a4, a3, 2
 	add a4, s0, a4
 	lw a5, 0(a4)
@@ -305,9 +305,9 @@ label9:
 	addw a0, a0, a4
 	addiw a3, a3, 16
 	li a4, 96
-	bge a3, a4, label12
-	j label9
-label12:
+	bge a3, a4, label11
+	j label8
+label11:
 	slli a3, a3, 2
 	add a3, s0, a3
 	lw a5, 0(a3)
@@ -321,24 +321,24 @@ label12:
 	li a3, -2147450879
 	mul a3, a0, a3
 	srli a3, a3, 32
-	add a4, a3, a0
-	sraiw a3, a4, 15
-	srliw a4, a4, 31
-	add a3, a4, a3
+	add a3, a3, a0
+	sraiw a4, a3, 15
+	srliw a3, a3, 31
+	add a3, a3, a4
 	li a4, 65535
 	mulw a3, a3, a4
 	subw a0, a0, a3
-	bge a1, a2, label13
-	j label8
-label328:
+	bge a1, a2, label12
+	j label7
+label327:
 	slli a1, a0, 2
 	add a1, s0, a1
 	sw zero, 0(a1)
 	addiw a0, a0, 1
 	li a1, 100
 	bge a0, a1, label19
-	j label328
-label13:
+	j label327
+label12:
 	jal putint
 	li a0, 10
 	jal putch

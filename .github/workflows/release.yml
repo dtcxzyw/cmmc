@@ -13,7 +13,9 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Env
-        run: sudo apt install ninja-build
+        run: |
+          sudo apt update
+          sudo apt install ninja-build
 
       - name: Build
         run: |
@@ -23,12 +25,11 @@ jobs:
 
       - name: Update repo
         env:
-            URL: ${{ secrets.REPO_URL }}
-        
+          URL: ${{ secrets.REPO_URL }}
+
         run: |
-            git config --global user.name "CMMC Authors"
-            git config --global user.email "dtcxzyw@qq.com"
-            git clone $URL
-            ./educg/sync_repo.sh arm
-            ./educg/sync_repo.sh riscv
-        
+          git config --global user.name "CMMC Authors"
+          git config --global user.email "dtcxzyw@qq.com"
+          git clone $URL
+          ./educg/sync_repo.sh arm
+          ./educg/sync_repo.sh riscv
