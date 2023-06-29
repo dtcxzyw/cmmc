@@ -586,10 +586,10 @@ def sysy_cmmc_native_given_assembly(src, target):
     try:
         if os.path.exists(inputs):
             with open(inputs, 'r', encoding='utf-8') as input_file:
-                out = subprocess.run(qemu_command[target] + [output], stdin=input_file,
+                out = subprocess.run([output], stdin=input_file,
                                      capture_output=True, text=True)
         else:
-            out = subprocess.run(qemu_command[target] + [output], capture_output=True, text=True)
+            out = subprocess.run([output], capture_output=True, text=True)
     except Exception as e:
         return False
 

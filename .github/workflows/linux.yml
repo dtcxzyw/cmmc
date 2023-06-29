@@ -46,10 +46,10 @@ jobs:
 
       - name: Test
         run: cd build && ctest --verbose
-      
+
       - name: Generate Performance Source
         run: cd build && python3 ../tests/test_driver.py bin/cmmc ../tests arm,compile
-      
+
       - name: Upload Performance Source
         uses: actions/upload-artifact@v2
         with:
@@ -64,12 +64,12 @@ jobs:
       - uses: actions/checkout@v3
         with:
           lfs: true
-      
+
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
           name: PerformanceSource
-          path: ${{github.workspace}}/bin/
+          path: ${{github.workspace}}/bin/SysY2022/
 
       - name: Run
         run: |
