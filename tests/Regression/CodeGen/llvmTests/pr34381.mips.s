@@ -33,7 +33,6 @@ _Z3foov:
 	sltu $t0, $t0, $t1
 	addiu $t0, $t0, -1
 	andi $t0, $t0, 255
-	andi $t0, $t0, 255
 	sltiu $t0, $t0, 1
 	lui $t1, %hi(var_390)
 	sw $t0, %lo(var_390)($t1)

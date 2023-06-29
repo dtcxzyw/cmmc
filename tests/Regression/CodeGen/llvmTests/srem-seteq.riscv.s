@@ -193,13 +193,7 @@ test_srem_one:
 	ret
 .globl test_srem_pow2
 test_srem_pow2:
-	slli a1, a0, 1
-	srli a1, a1, 60
-	add a1, a0, a1
-	sraiw a1, a1, 4
-	li a2, 16
-	mulw a1, a1, a2
-	subw a0, a0, a1
+	andi a0, a0, 15
 	sltiu a0, a0, 1
 	li a1, 4294967295
 	and a0, a0, a1

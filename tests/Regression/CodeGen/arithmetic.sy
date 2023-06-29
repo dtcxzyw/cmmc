@@ -187,3 +187,7 @@ float fp_imm0() {
 float fp_imm1() {
     return 3.1415926;
 }
+
+int and_trunc(int x, int y) {
+    return (x & 1) && (y & 1);
+}

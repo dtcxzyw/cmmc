@@ -38,13 +38,7 @@ test_srem_odd:
 test_srem_pow2_setne:
 	slli a0, a0, 24
 	srai a0, a0, 24
-	slli a1, a0, 1
-	srli a1, a1, 62
-	add a1, a0, a1
-	sraiw a1, a1, 2
-	li a2, 4
-	mulw a1, a1, a2
-	subw a0, a0, a1
+	andi a0, a0, 3
 	sltu a0, zero, a0
 	li a1, 4294967295
 	and a0, a0, a1

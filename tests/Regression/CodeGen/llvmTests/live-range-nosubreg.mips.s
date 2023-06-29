@@ -31,26 +31,24 @@ main:
 	movn $t0, $t2, $t3
 	andi $t0, $t0, 65535
 	addiu $t0, $t0, -1
-	andi $t0, $t0, 65535
-	sh $t0, %lo(a)($t1)
+	andi $t2, $t0, 65535
+	sh $t2, %lo(a)($t1)
 	andi $t1, $t0, 65535
 	lui $t2, %hi(d)
 	addiu $t0, $t2, %lo(d)
 	lb $t2, %lo(d)($t2)
 	andi $t2, $t2, 255
 	subu $t2, $zero, $t2
-	andi $t2, $t2, 255
-	bne $t1, $zero, label28
+	bne $t1, $zero, label27
 	nop
 	move $t1, $zero
 	b label2
 	nop
-label28:
+label27:
 	lui $t1, %hi(b)
 	lw $t1, %lo(b)($t1)
 	sltu $t1, $zero, $t1
 label2:
-	andi $t1, $t1, 255
 	andi $t1, $t1, 255
 	andi $t2, $t2, 255
 	or $t1, $t1, $t2

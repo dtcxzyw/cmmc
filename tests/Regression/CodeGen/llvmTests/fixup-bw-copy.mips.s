@@ -20,10 +20,9 @@ test_movb_hreg:
 	andi $t0, $a0, 65535
 	sra $t0, $t0, 8
 	andi $t0, $t0, 255
-	andi $t0, $t0, 255
 	andi $t1, $a0, 255
 	andi $t1, $t1, 255
-	addu $t0, $t1, $t0
+	addu $t0, $t0, $t1
 	andi $v0, $t0, 255
 	jr $ra
 	nop

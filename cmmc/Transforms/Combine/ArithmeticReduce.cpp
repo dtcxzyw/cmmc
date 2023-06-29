@@ -17,6 +17,7 @@
 // a == a -> 1
 // etc.
 
+#include "cmmc/IR/Type.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -442,6 +443,13 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal,
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }
+            // (a & 1 != 0) & (b & 1 != 0) -> trunc (a & 1 & b) to i1
+            if(and_(scmp(cmp1, capture(and_(any(v1), cuint_(1)), v3), cint_(0)),
+                    scmp(cmp2, and_(any(v2), cuint_(1)), cint_(0)))(matchCtx) &&
+               cmp1 == CompareOp::NotEqual && cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
+                return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, IntegerType::getBoolean(),
+                                                builder.makeOp<BinaryInst>(InstructionID::And, v3, v2));
+            }
             // (a != 0) | (b != 0) -> (a | b) != 0
             if(or_(scmp(cmp1, any(v1), cint_(0)), scmp(cmp2, any(v2), cint_(0)))(matchCtx) && cmp1 == CompareOp::NotEqual &&
                cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
@@ -562,6 +570,31 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     if(v1 == v4 && v2 == v3 && (cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
                 }
+            }
+
+            // x % (2^k) only used by scmp eq/neq with 0 -> (x & (2^k-1))
+            if(srem(any(v1), capture(intLog2(v2), v3))(matchCtx)) {
+                auto usedByCompareWithZero = [&] {
+                    for(auto user : inst->users()) {
+                        if(scmp(cmp, any(v4), cuint_(0))(MatchContext<Value>{ user })) {
+                            if(cmp == CompareOp::Equal || cmp == CompareOp::NotEqual)
+                                continue;
+                        }
+                        return false;
+                    }
+                    return true;
+                };
+
+                if(usedByCompareWithZero()) {
+                    return builder.makeOp<BinaryInst>(InstructionID::And, v1,
+                                                      builder.makeOp<BinaryInst>(InstructionID::Sub, v3, makeIntLike(1, inst)));
+                }
+            }
+
+            // zext (ztrunc x) -> x & mask
+            if(zext(capture(ztrunc(any(v1)), v2))(matchCtx) && v1->getType()->isSame(inst->getType())) {
+                auto mask = (1LL << v2->getType()->as<IntegerType>()->getBitwidth()) - 1;
+                return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(mask, inst));
             }
 
             return nullptr;

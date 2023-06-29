@@ -310,3 +310,9 @@ fp_imm1:
 	lwc1 $f0, 12($t0)
 	jr $ra
 	nop
+.globl and_trunc
+and_trunc:
+	andi $t0, $a0, 1
+	and $v0, $t0, $a1
+	jr $ra
+	nop

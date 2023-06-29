@@ -435,6 +435,9 @@ uint32_t selectCopyOpcode(const MIROperand& dst, const MIROperand& src) {
 MIROperand getZExtMask(OperandType dstType, OperandType srcType) {
     intmax_t imm;
     switch(srcType) {
+        case OperandType::Bool:
+            imm = 1;
+            break;
         case OperandType::Int8:
             imm = 0xff;
             break;

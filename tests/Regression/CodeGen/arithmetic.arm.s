@@ -254,3 +254,8 @@ fp_imm1:
 	movt r0, #16457
 	vmov s0, r0
 	bx lr
+.globl and_trunc
+and_trunc:
+	and r0, r0, #1
+	and r0, r0, r1
+	bx lr

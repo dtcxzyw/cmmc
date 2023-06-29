@@ -11,8 +11,7 @@ test10:
 	sll $t1, $a0, 8
 	or $t0, $t0, $t1
 	andi $t0, $t0, 65535
-	andi $t0, $t0, 65535
-	addu $v0, $a1, $t0
+	addu $v0, $t0, $a1
 	jr $ra
 	nop
 .globl test11
@@ -60,8 +59,7 @@ test16:
 .globl test2
 test2:
 	andi $t0, $a1, 255
-	andi $t0, $t0, 255
-	addu $v0, $a0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl test3
@@ -69,7 +67,6 @@ test3:
 	srl $t0, $a0, 8
 	sll $t1, $a0, 24
 	or $t0, $t0, $t1
-	andi $t0, $t0, 65535
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -78,7 +75,6 @@ test4:
 	srl $t0, $a0, 8
 	sll $t1, $a0, 24
 	or $t0, $t0, $t1
-	andi $t0, $t0, 255
 	andi $v0, $t0, 255
 	jr $ra
 	nop
@@ -90,8 +86,7 @@ test5:
 .globl test6
 test6:
 	andi $t0, $a1, 65535
-	andi $t0, $t0, 65535
-	addu $v0, $a0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl test7
@@ -100,8 +95,7 @@ test7:
 	sll $t1, $a0, 24
 	or $t0, $t0, $t1
 	andi $t0, $t0, 255
-	andi $t0, $t0, 255
-	addu $v0, $a1, $t0
+	addu $v0, $t0, $a1
 	jr $ra
 	nop
 .globl test8
@@ -110,8 +104,7 @@ test8:
 	sll $t1, $a0, 16
 	or $t0, $t0, $t1
 	andi $t0, $t0, 255
-	andi $t0, $t0, 255
-	addu $v0, $a1, $t0
+	addu $v0, $t0, $a1
 	jr $ra
 	nop
 .globl test9
@@ -120,7 +113,6 @@ test9:
 	sll $t1, $a0, 24
 	or $t0, $t0, $t1
 	andi $t0, $t0, 65535
-	andi $t0, $t0, 65535
-	addu $v0, $a1, $t0
+	addu $v0, $t0, $a1
 	jr $ra
 	nop

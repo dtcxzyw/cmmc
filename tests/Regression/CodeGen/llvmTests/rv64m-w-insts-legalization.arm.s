@@ -29,21 +29,41 @@ mulw:
 	add r1, r1, #1
 	cmp r1, r3
 	bge label8
-	b label44
+	mul r0, r1, r0
+	add r1, r1, #1
+	cmp r1, r3
+	bge label8
+	mul r0, r1, r0
+	add r1, r1, #1
+	cmp r1, r3
+	bge label8
+	mul r0, r1, r0
+	add r1, r1, #1
+	cmp r1, r3
+	bge label8
+	mul r0, r1, r0
+	add r1, r1, #1
+	cmp r1, r3
+	bge label8
+	mul r0, r1, r0
+	add r1, r1, #1
+	cmp r1, r3
+	bge label8
+	b label59
 label16:
 	mov r0, #1
 	b label8
-label44:
+label59:
 	mul r0, r1, r0
 	add r1, r1, #1
 	cmp r1, r3
 	bge label8
-	b label45
+	b label60
 label8:
 	bx lr
-label45:
+label60:
 	mul r0, r1, r0
 	add r1, r1, #1
 	cmp r1, r3
 	bge label8
-	b label45
+	b label60

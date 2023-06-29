@@ -23,9 +23,7 @@ test_srem_odd:
 test_srem_pow2_setne:
 	sll $t0, $a0, 24
 	sra $t0, $t0, 24
-	li $t1, 4
-	div $zero, $t0, $t1
-	mfhi $t0
+	andi $t0, $t0, 3
 	sltu $v0, $zero, $t0
 	jr $ra
 	nop

@@ -30,11 +30,7 @@ PR35761:
 	eor r0, r0, r2
 	ldrb r1, [r1, #0]
 	orr r0, r0, r1
-	uxtb r0, r0
-	uxtb r0, r0
-	movw r1, #65535
-	movt r1, #63
-	and r0, r0, r1
+	and r0, r0, #255
 	movw r1, #:lower16:z
 	movt r1, #:upper16:z
 	str r0, [r1, #0]

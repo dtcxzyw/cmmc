@@ -6,10 +6,8 @@ PR32316:
 	sltiu $t0, $t0, 1
 	sltu $t0, $a1, $t0
 	andi $t0, $t0, 255
-	andi $t0, $t0, 255
 	andi $t1, $a2, 255
 	sltu $t1, $zero, $t1
-	andi $t1, $t1, 255
 	andi $t1, $t1, 255
 	addu $t0, $t0, $t1
 	andi $v0, $t0, 255

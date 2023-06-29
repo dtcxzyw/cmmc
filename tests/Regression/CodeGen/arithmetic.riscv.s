@@ -262,3 +262,8 @@ pcrel210:
 	addi a0, a0, %pcrel_lo(pcrel210)
 	flw f10, 0(a0)
 	ret
+.globl and_trunc
+and_trunc:
+	andi a0, a0, 1
+	and a0, a0, a1
+	ret

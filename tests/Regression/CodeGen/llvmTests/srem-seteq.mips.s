@@ -114,9 +114,7 @@ test_srem_one:
 	nop
 .globl test_srem_pow2
 test_srem_pow2:
-	li $t0, 16
-	div $zero, $a0, $t0
-	mfhi $t0
+	andi $t0, $a0, 15
 	sltiu $v0, $t0, 1
 	jr $ra
 	nop

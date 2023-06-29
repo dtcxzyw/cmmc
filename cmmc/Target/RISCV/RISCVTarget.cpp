@@ -422,6 +422,52 @@ void RISCVFrameInfo::emitPostSAEpilogue(MIRBasicBlock& exitBlock, const CodeGenC
     RISCV::adjustReg(instructions, iter, RISCV::sp, RISCV::sp, stackSize);
 }
 void RISCVTarget::postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) const {
+    // func.dump(std::cerr, ctx);
+    // insert auipc (maybe separated when expanding the select pseudo inst)
+    for(auto& block : func.blocks()) {
+        std::unordered_map<MIROperand, std::unordered_set<MIROperand, MIROperandHasher>, MIROperandHasher>
+            auipcMap;  // global -> hi
+
+        auto& instructions = block->instructions();
+        for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
+            auto& inst = *iter;
+            if(inst.opcode() == RISCV::AUIPC) {
+                assert(inst.getOperand(1).type() == OperandType::HighBits);
+                auipcMap[inst.getOperand(1)].insert(inst.getOperand(0));
+            } else {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    auto& operand = inst.getOperand(idx);
+                    if(operand.isReloc()) {
+                        auto getBase = [&] {
+                            switch(inst.opcode()) {
+                                case RISCV::ADDI:
+                                    return inst.getOperand(1);
+                                // load/store
+                                default: {
+                                    assert(requireOneFlag(instInfo.getInstFlag(), InstFlagLoad | InstFlagStore));
+                                    return inst.getOperand(2);
+                                }
+                            }
+                        };
+                        if(operand.type() == OperandType::LowBits) {
+                            const auto hiBits = MIROperand{ operand.getStorage(), OperandType::HighBits };
+                            const auto& base = getBase();
+                            if(auto it = auipcMap.find(hiBits); it != auipcMap.cend()) {
+                                if(it->second.count(base))
+                                    continue;
+                            }
+
+                            // insert immediately before the use
+                            instructions.insert(iter, MIRInst{ RISCV::AUIPC }.setOperand<0>(base).setOperand<1>(hiBits));
+                            auipcMap[hiBits].insert(base);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     // fix pcrel addressing
     for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
         auto next = std::next(iter);

@@ -7,9 +7,8 @@
 .globl t1
 t1:
 	sub r0, r0, #1
-	lsl r0, r0, #1
-	uxth r0, r0
-	uxth r0, r0
+	movw r1, #65535
+	and r0, r1, r0, lsl #1
 	uxth r0, r0
 	bx lr
 .globl t2

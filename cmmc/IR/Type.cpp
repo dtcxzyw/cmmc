@@ -304,20 +304,4 @@ size_t InvalidType::getAlignment(const DataLayout&) const noexcept {
     reportUnreachable(CMMC_LOCATION());
 }
 
-bool StackStorageType::isSame(const Type*) const {
-    reportUnreachable(CMMC_LOCATION());
-}
-void StackStorageType::dumpName(std::ostream& out) const {
-    out << "storage["sv << mSize << ']';
-}
-size_t StackStorageType::getFixedSize() const noexcept {
-    return mSize;
-}
-size_t StackStorageType::getSize(const DataLayout&) const noexcept {
-    return mSize;
-}
-size_t StackStorageType::getAlignment(const DataLayout&) const noexcept {
-    return mAlignment;
-}
-
 CMMC_NAMESPACE_END

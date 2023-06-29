@@ -70,26 +70,24 @@ pcrel66:
 	ret
 .globl use_i16
 use_i16:
-pcrel87:
+pcrel85:
 	auipc a0, %pcrel_hi(b)
-	lh a1, %pcrel_lo(pcrel87)(a0)
-	lhu a0, %pcrel_lo(pcrel87)(a0)
-pcrel88:
+	lh a1, %pcrel_lo(pcrel85)(a0)
+	lhu a0, %pcrel_lo(pcrel85)(a0)
+pcrel86:
 	auipc a1, %pcrel_hi(a)
-	lh a2, %pcrel_lo(pcrel88)(a1)
-	lhu a1, %pcrel_lo(pcrel88)(a1)
+	lh a2, %pcrel_lo(pcrel86)(a1)
+	lhu a1, %pcrel_lo(pcrel86)(a1)
 	addw a0, a0, a1
 	li a1, 65535
-	and a0, a0, a1
 	and a0, a0, a1
 	ret
 .globl use_i8
 use_i8:
-pcrel100:
+pcrel97:
 	auipc a0, %pcrel_hi(x)
-	lw a0, %pcrel_lo(pcrel100)(a0)
+	lw a0, %pcrel_lo(pcrel97)(a0)
 	xori a0, a0, 42
 	sltiu a0, a0, 1
-	andi a0, a0, 255
 	andi a0, a0, 255
 	ret

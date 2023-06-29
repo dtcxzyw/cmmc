@@ -81,8 +81,8 @@ use_i16:
 	ldrsh r2, [r1, #0]
 	ldrh r1, [r1, #0]
 	add r0, r0, r1
-	uxth r0, r0
-	uxth r0, r0
+	movw r1, #65535
+	and r0, r0, r1
 	bx lr
 .globl use_i8
 use_i8:
@@ -92,6 +92,5 @@ use_i8:
 	cmp r0, #42
 	mov r0, #0
 	movweq r0, #1
-	uxtb r0, r0
-	uxtb r0, r0
+	and r0, r0, #255
 	bx lr

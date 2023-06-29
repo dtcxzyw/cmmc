@@ -16,10 +16,9 @@ test_movb_hreg:
 	and a1, a0, a1
 	sraiw a1, a1, 8
 	andi a1, a1, 255
-	andi a1, a1, 255
 	andi a0, a0, 255
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	andi a0, a0, 255
 	ret
 .globl test_movw

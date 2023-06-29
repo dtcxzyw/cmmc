@@ -170,11 +170,7 @@ test_srem_one:
 	bx lr
 .globl test_srem_pow2
 test_srem_pow2:
-	mov r1, #16
-	asr r2, r0, #31
-	add r2, r0, r2, lsr #28
-	asr r2, r2, #4
-	mls r0, r2, r1, r0
+	and r0, r0, #15
 	clz r0, r0
 	lsr r0, r0, #5
 	bx lr

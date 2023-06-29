@@ -28,16 +28,23 @@ label5:
 label23:
 	mov r3, #1
 	mov r1, r0
-label8:
 	sub r4, r0, r3
+	mul r1, r0, r4
+	add r4, r3, #1
+	udiv r1, r1, r4
+	add r3, r3, #2
+	cmp r3, r2
+	bls label32
+label35:
+	mov r0, r1
+	b label2
+label32:
+	mov r3, r4
+	sub r4, r0, r4
 	mul r1, r1, r4
 	add r4, r3, #1
 	udiv r1, r1, r4
 	add r3, r3, #2
 	cmp r3, r2
 	bls label32
-	mov r0, r1
-	b label2
-label32:
-	mov r3, r4
-	b label8
+	b label35

@@ -283,20 +283,4 @@ public:
     [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
 };
 
-// Only used by CodeGen
-class StackStorageType final : public Type {
-    size_t mSize, mAlignment;
-
-public:
-    explicit StackStorageType(size_t size, size_t alignment) : mSize{ size }, mAlignment{ alignment } {}
-    [[nodiscard]] TypeRank rank() const noexcept override {
-        return TypeRank::StackStorage;
-    }
-    bool isSame(const Type* rhs) const override;
-    void dumpName(std::ostream& out) const override;
-    [[nodiscard]] size_t getFixedSize() const noexcept override;
-    [[nodiscard]] size_t getSize(const DataLayout& dataLayout) const noexcept override;
-    [[nodiscard]] size_t getAlignment(const DataLayout& dataLayout) const noexcept override;
-};
-
 CMMC_NAMESPACE_END

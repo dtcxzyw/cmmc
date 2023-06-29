@@ -299,3 +299,12 @@ int foo98(float x) {
     float z = y;
     return z;
 }
+int foo99(int x) {
+    return x % 8 != 0;
+}
+int foo100(int x, int y) {
+    return (x & 1) && (y & 1);
+}
+int foo101(int x, int y) {
+    return x % (1<<y) == 0;
+}

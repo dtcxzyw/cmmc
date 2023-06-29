@@ -70,7 +70,6 @@ use_i16:
 	lh $t1, %lo(a)($t1)
 	andi $t1, $t1, 65535
 	addu $t0, $t0, $t1
-	andi $t0, $t0, 65535
 	andi $v0, $t0, 65535
 	jr $ra
 	nop
@@ -80,7 +79,6 @@ use_i8:
 	lw $t0, %lo(x)($t0)
 	xori $t0, $t0, 42
 	sltiu $t0, $t0, 1
-	andi $t0, $t0, 255
 	andi $v0, $t0, 255
 	jr $ra
 	nop
