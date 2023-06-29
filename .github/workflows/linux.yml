@@ -46,22 +46,32 @@ jobs:
 
       - name: Test
         run: cd build && ctest --verbose
+      
+      - name: Generate Performance Source
+        run: cd build && python3 ../tests/test_driver.py bin/cmmc ../tests arm,compile
+      
+      - name: Upload Performance Source
+        uses: actions/upload-artifact@v2
+        with:
+          name: PerformanceSource
+          path: build/bin/SysY2022/
 
   test:
     runs-on: self-hosted
+    needs: build
 
     steps:
       - uses: actions/checkout@v3
         with:
           lfs: true
+      
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: PerformanceSource
+          path: ${{github.workspace}}/bin/
 
-      - name: Build
+      - name: Run
         run: |
-          mkdir build && cd build
-          cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMMC_LLVM_SUPPORT=OFF
-          cmake --build . -j 4 -t cmmc
-
-      - name: Test
-        run: |
-          cd build
-          python3 ../tests/test_driver.py bin/cmmc ../tests arm,native
+          cd bin
+          python3 ../tests/test_driver.py cmmc ../tests arm,run
