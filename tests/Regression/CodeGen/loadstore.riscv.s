@@ -12,8 +12,7 @@ arr:
 .text
 .globl load
 load:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	lw a0, 0(a0)
 	ret
 .globl load_byte
@@ -23,26 +22,22 @@ load_byte:
 	ret
 .globl load_float
 load_float:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	flw f10, 0(a0)
 	ret
 .globl store
 store:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	sw a2, 0(a0)
 	ret
 .globl store_float
 store_float:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	fsw f12, 0(a0)
 	ret
 .globl store_float_constant
 store_float_constant:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	lui a1, 260096
 	fmv.w.x f10, a1
 	fsw f10, 0(a0)
@@ -53,21 +48,18 @@ gep_const:
 	ret
 .globl gep1
 gep1:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	lw a0, 0(a0)
 	ret
 .globl gep2
 gep2:
 	addiw a1, a1, 3
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	lw a0, 0(a0)
 	ret
 .globl gepseq
 gepseq:
-	slliw a1, a1, 2
-	add a0, a0, a1
+	sh2add a0, a1, a0
 	lw a1, 0(a0)
 	lw a2, 4(a0)
 	addw a1, a1, a2
@@ -95,7 +87,6 @@ global_addressing_array:
 pcrel96:
 	auipc a1, %pcrel_hi(arr)
 	addi a1, a1, %pcrel_lo(pcrel96)
-	slli a0, a0, 2
-	add a0, a1, a0
+	sh2add a0, a0, a1
 	lw a0, 0(a0)
 	ret

@@ -46,27 +46,23 @@ label8:
 label4:
 	slliw a4, a3, 10
 	addw a2, a0, a4
-	slli a5, a2, 2
-	add a5, s0, a5
+	sh2add a5, a2, s0
 	lw a5, 0(a5)
 	slliw a5, a5, 3
 	addiw t1, a3, -1
 	slliw t1, t1, 10
 	addw t2, a1, t1
-	slli t2, t2, 2
-	add t2, s0, t2
+	sh2add t2, t2, s0
 	lw t2, 0(t2)
 	subw a5, a5, t2
 	addw t1, a0, t1
-	slli t1, t1, 2
-	add t1, s0, t1
+	sh2add t1, t1, s0
 	lw t2, 0(t1)
 	subw a5, a5, t2
 	lw t1, 4(t1)
 	subw a5, a5, t1
 	addw a4, a1, a4
-	slli a4, a4, 2
-	add a4, s0, a4
+	sh2add a4, a4, s0
 	lw t1, 0(a4)
 	subw a5, a5, t1
 	lw a4, 8(a4)
@@ -74,21 +70,18 @@ label4:
 	addiw a3, a3, 1
 	slliw a5, a3, 10
 	addw t1, a1, a5
-	slli t1, t1, 2
-	add t1, s0, t1
+	sh2add t1, t1, s0
 	lw t1, 0(t1)
 	subw a4, a4, t1
 	addw a5, a0, a5
-	slli a5, a5, 2
-	add a5, s0, a5
+	sh2add a5, a5, s0
 	lw t1, 0(a5)
 	subw a4, a4, t1
 	lw a5, 4(a5)
 	subw a4, a4, a5
 	bge a4, zero, label9
 	mv a4, zero
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw zero, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8
@@ -97,80 +90,62 @@ label9:
 	li a5, 255
 	ble a4, a5, label6
 	li a4, 255
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a4, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8
 	j label4
 label6:
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a4, 0(a2)
 	li a2, 1023
 	bge a3, a2, label8
 	j label4
 label11:
 	slliw a1, a0, 10
-	slli a2, a1, 2
-	add a2, s0, a2
+	sh2add a2, a1, s0
 	lw a2, 0(a2)
-	slli a1, a1, 2
-	add a1, s1, a1
+	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	addiw a1, a0, 1
 	slliw a1, a1, 10
 	addiw a2, a1, -1
-	slli a3, a2, 2
-	add a3, s0, a3
+	sh2add a3, a2, s0
 	lw a3, 0(a3)
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a3, 0(a2)
-	slli a2, a1, 2
-	add a2, s0, a2
+	sh2add a2, a1, s0
 	lw a2, 0(a2)
-	slli a1, a1, 2
-	add a1, s1, a1
+	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	addiw a1, a0, 2
 	slliw a1, a1, 10
 	addiw a2, a1, -1
-	slli a3, a2, 2
-	add a3, s0, a3
+	sh2add a3, a2, s0
 	lw a3, 0(a3)
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a3, 0(a2)
-	slli a2, a1, 2
-	add a2, s0, a2
+	sh2add a2, a1, s0
 	lw a2, 0(a2)
-	slli a1, a1, 2
-	add a1, s1, a1
+	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	addiw a1, a0, 3
 	slliw a1, a1, 10
 	addiw a2, a1, -1
-	slli a3, a2, 2
-	add a3, s0, a3
+	sh2add a3, a2, s0
 	lw a3, 0(a3)
-	slli a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a3, 0(a2)
-	slli a2, a1, 2
-	add a2, s0, a2
+	sh2add a2, a1, s0
 	lw a2, 0(a2)
-	slli a1, a1, 2
-	add a1, s1, a1
+	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	addiw a0, a0, 4
 	slliw a1, a0, 10
 	addiw a1, a1, -1
-	slli a2, a1, 2
-	add a2, s0, a2
+	sh2add a2, a1, s0
 	lw a2, 0(a2)
-	slli a1, a1, 2
-	add a1, s1, a1
+	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	li a1, 1024
 	bge a0, a1, label140
@@ -178,38 +153,36 @@ label11:
 label140:
 	mv a0, zero
 label13:
-	slli a1, a0, 2
-	add a1, s0, a1
-	lw a3, 0(a1)
-	slli a2, a0, 2
-	add a2, s1, a2
-	sw a3, 0(a2)
+	sh2add a2, a0, s0
+	lw a3, 0(a2)
+	sh2add a1, a0, s1
+	sw a3, 0(a1)
 	li a3, 4190208
-	add a4, a1, a3
+	add a4, a2, a3
 	lw a4, 0(a4)
-	add a5, a2, a3
+	add a5, a1, a3
 	sw a4, 0(a5)
-	lw a4, 4(a1)
-	sw a4, 4(a2)
+	lw a4, 4(a2)
+	sw a4, 4(a1)
 	addi a3, a3, 4
-	add a4, a1, a3
+	add a4, a2, a3
 	lw a4, 0(a4)
-	add a5, a2, a3
+	add a5, a1, a3
 	sw a4, 0(a5)
-	lw a4, 8(a1)
-	sw a4, 8(a2)
+	lw a4, 8(a2)
+	sw a4, 8(a1)
 	addi a3, a3, 4
-	add a4, a1, a3
+	add a4, a2, a3
 	lw a4, 0(a4)
-	add a5, a2, a3
+	add a5, a1, a3
 	sw a4, 0(a5)
-	lw a4, 12(a1)
-	sw a4, 12(a2)
+	lw a4, 12(a2)
+	sw a4, 12(a1)
 	addi a3, a3, 4
-	add a1, a1, a3
-	lw a1, 0(a1)
 	add a2, a2, a3
-	sw a1, 0(a2)
+	lw a2, 0(a2)
+	add a1, a1, a3
+	sw a2, 0(a1)
 	addiw a0, a0, 4
 	li a1, 1024
 	bge a0, a1, label15

@@ -13,7 +13,6 @@
 */
 
 #pragma once
-#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>

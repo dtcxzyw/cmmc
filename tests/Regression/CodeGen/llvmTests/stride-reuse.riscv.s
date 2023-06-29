@@ -24,20 +24,18 @@ label2:
 pcrel38:
 	auipc a3, %pcrel_hi(B)
 	addi a3, a3, %pcrel_lo(pcrel38)
-	slli a4, a2, 2
-	add a3, a3, a4
+	sh2add a3, a2, a3
 	flw f10, 0(a3)
 	fadd.s f10, f10, f10
 pcrel39:
 	auipc a3, %pcrel_hi(A)
 	addi a3, a3, %pcrel_lo(pcrel39)
-	add a3, a3, a4
+	sh2add a3, a2, a3
 	fsw f10, 0(a3)
 pcrel40:
 	auipc a3, %pcrel_hi(P)
 	addi a3, a3, %pcrel_lo(pcrel40)
-	slli a2, a2, 2
-	add a2, a3, a2
+	sh2add a2, a2, a3
 	slliw a3, a1, 1
 	addiw a3, a3, 64
 	sw a3, 0(a2)

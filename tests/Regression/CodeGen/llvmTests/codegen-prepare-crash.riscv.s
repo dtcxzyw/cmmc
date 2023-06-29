@@ -14,7 +14,6 @@ f:
 pcrel11:
 	auipc a2, %pcrel_hi(g)
 	addi a2, a2, %pcrel_lo(pcrel11)
-	slli a1, a1, 2
-	add a1, a2, a1
+	sh2add a1, a1, a2
 	sw a0, 0(a1)
 	ret

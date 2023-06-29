@@ -8,8 +8,7 @@ add_after_lsl:
 	ret
 .globl add_after_lsl_imm
 add_after_lsl_imm:
-	slliw a1, a1, 3
-	addw a0, a0, a1
+	sh3add a0, a1, a0
 	ret
 .globl add_after_lsr
 add_after_lsr:

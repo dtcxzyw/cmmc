@@ -140,8 +140,7 @@ label203:
 	ble a1, zero, label12
 	j label2
 label6:
-	slliw a4, a2, 2
-	add a4, s1, a4
+	sh2add a4, a2, s1
 	lw a4, 0(a4)
 	li a5, -2004318071
 	mul a5, a3, a5
@@ -153,8 +152,7 @@ label6:
 	li t1, 30
 	mulw a5, a5, t1
 	subw a3, a3, a5
-	slli a5, a3, 2
-	add a5, s0, a5
+	sh2add a5, a3, s0
 	lw a5, 0(a5)
 	divw t1, a4, a5
 	srliw t2, t1, 31
@@ -178,27 +176,23 @@ label6:
 	xori a5, t2, 1
 	or a5, a5, t3
 	bne a5, zero, label100
-	slli a3, a3, 2
-	add a3, s0, a3
+	sh2add a3, a3, s0
 	lw a3, 0(a3)
 	subw a3, a4, a3
-	slliw a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
 	ble a1, zero, label12
 	j label2
 label11:
-	slliw a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	sw a4, 0(a2)
 	ble a1, zero, label12
 	j label2
 label100:
 	mv a3, a4
-	slliw a2, a2, 2
-	add a2, s1, a2
+	sh2add a2, a2, s1
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
