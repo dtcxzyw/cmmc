@@ -13,10 +13,10 @@ testsize1:
 .globl testsize2
 testsize2:
 	li a1, 1041204193
-	mul a1, a0, a1
-	srai a0, a1, 35
-	srli a1, a1, 63
-	add a0, a1, a0
+	mul a0, a0, a1
+	srai a1, a0, 35
+	srli a0, a0, 63
+	add a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

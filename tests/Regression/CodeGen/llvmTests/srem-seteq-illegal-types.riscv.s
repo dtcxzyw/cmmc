@@ -6,10 +6,10 @@ test_srem_even:
 	slli a0, a0, 24
 	srai a0, a0, 24
 	li a1, 715827883
-	mul a2, a0, a1
-	srli a1, a2, 32
-	srli a2, a2, 63
-	add a1, a2, a1
+	mul a1, a0, a1
+	srli a2, a1, 32
+	srli a1, a1, 63
+	add a1, a1, a2
 	li a2, 6
 	mulw a1, a1, a2
 	subw a0, a0, a1

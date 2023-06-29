@@ -23,10 +23,10 @@ f1:
 .globl f2
 f2:
 	li a1, 1717986919
-	mul a1, a0, a1
-	srai a0, a1, 33
-	srli a1, a1, 63
-	add a0, a1, a0
+	mul a0, a0, a1
+	srai a1, a0, 33
+	srli a0, a0, 63
+	add a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

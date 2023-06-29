@@ -133,7 +133,8 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
                 bool hasReg = false;
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                     const auto& op = inst.getOperand(idx);
-                    if(isOperandISAReg(op) && isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                    if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) && isAllocatableType(op.type()) &&
+                       (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
                         underRenamedISAReg.insert(op);
                         hasReg = true;
                     }
@@ -237,7 +238,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
             const auto use = [&](MIROperand& op) {
                 if(!isOperandVReg(op)) {
-                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                    if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) && isAllocatableType(op.type())) {
                         underRenamedISAReg.erase(op);
                     }
                     return;
@@ -267,7 +268,7 @@ static void fastAllocate(MIRFunction& mfunc, CodeGenContext& ctx, IPRAUsageCache
 
             const auto def = [&](MIROperand& op) {
                 if(!isOperandVReg(op)) {
-                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                    if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) && isAllocatableType(op.type())) {
                         protectedLockedISAReg.insert(op);
                         if(auto it = physMap.find(op); it != physMap.cend())
                             evictVReg(it->second);

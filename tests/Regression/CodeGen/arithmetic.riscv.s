@@ -139,10 +139,10 @@ div_reg:
 .globl mod_imm
 mod_imm:
 	li a1, 1431655766
-	mul a2, a0, a1
-	srli a1, a2, 32
-	srli a2, a2, 63
-	add a1, a2, a1
+	mul a1, a0, a1
+	srli a2, a1, 32
+	srli a1, a1, 63
+	add a1, a1, a2
 	li a2, 3
 	mulw a1, a1, a2
 	subw a0, a0, a1

@@ -20,11 +20,11 @@ t:
 	lui $t1, %hi(j)
 	lw $t1, %lo(j)($t1)
 	xor $t0, $t0, $t1
-	sltu $t0, $zero, $t0
+	sltu $t1, $zero, $t0
 	li $t2, 1
-	li $t1, 3
-	movn $t1, $t2, $t0
-	lui $t0, %hi(k)
-	sw $t1, %lo(k)($t0)
+	li $t0, 3
+	movn $t0, $t2, $t1
+	lui $t1, %hi(k)
+	sw $t0, %lo(k)($t1)
 	jr $ra
 	nop

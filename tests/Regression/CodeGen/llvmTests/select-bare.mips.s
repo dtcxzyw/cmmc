@@ -3,8 +3,8 @@
 .globl bare_select
 bare_select:
 	sltu $t0, $zero, $a0
-	movn $a2, $a1, $t0
 	move $v0, $a2
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl bare_select_float

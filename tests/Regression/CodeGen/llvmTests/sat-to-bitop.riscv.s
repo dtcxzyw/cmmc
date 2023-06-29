@@ -24,12 +24,12 @@ sat0_base_16bit:
 	srai a1, a1, 16
 	slti a3, a1, 0
 	li a2, 65535
-	and a0, a0, a2
-	mv a1, zero
+	and a1, a0, a2
+	mv a0, zero
 	bne a3, zero, label28
-	mv a1, a0
+	mv a0, a1
 label28:
-	and a0, a1, a2
+	and a0, a0, a2
 	ret
 .globl sat0_base_32bit
 sat0_base_32bit:
@@ -45,12 +45,12 @@ sat0_base_8bit:
 	slli a1, a0, 24
 	srai a1, a1, 24
 	slti a2, a1, 0
-	andi a0, a0, 255
-	mv a1, zero
+	andi a1, a0, 255
+	mv a0, zero
 	bne a2, zero, label46
-	mv a1, a0
+	mv a0, a1
 label46:
-	andi a0, a1, 255
+	andi a0, a0, 255
 	ret
 .globl sat0_lower_1
 sat0_lower_1:
@@ -64,12 +64,12 @@ sat1_base_16bit:
 	srai a1, a1, 16
 	slti a3, a1, -1
 	li a2, 65535
-	and a0, a0, a2
-	li a1, -1
+	and a1, a0, a2
+	li a0, -1
 	bne a3, zero, label65
-	mv a1, a0
+	mv a0, a1
 label65:
-	and a0, a1, a2
+	and a0, a0, a2
 	ret
 .globl sat1_base_32bit
 sat1_base_32bit:
@@ -85,12 +85,12 @@ sat1_base_8bit:
 	slli a1, a0, 24
 	srai a1, a1, 24
 	slti a2, a1, -1
-	andi a0, a0, 255
-	li a1, -1
+	andi a1, a0, 255
+	li a0, -1
 	bne a2, zero, label83
-	mv a1, a0
+	mv a0, a1
 label83:
-	andi a0, a1, 255
+	andi a0, a0, 255
 	ret
 .globl sat1_lower_1
 sat1_lower_1:

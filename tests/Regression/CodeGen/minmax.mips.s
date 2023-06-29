@@ -3,8 +3,8 @@
 .globl smin_lt
 smin_lt:
 	slt $t0, $a0, $a1
-	movn $a1, $a0, $t0
 	move $v0, $a1
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl smax_lt
@@ -40,8 +40,8 @@ smin_gt:
 .globl smax_gt
 smax_gt:
 	slt $t0, $a1, $a0
-	movn $a1, $a0, $t0
 	move $v0, $a1
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl smin_ge

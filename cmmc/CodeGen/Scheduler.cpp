@@ -58,7 +58,8 @@ static void preRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) 
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
                     auto& op = inst.getOperand(idx);
-                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                    if(isOperandISAReg(op) && (!ctx.registerInfo || !ctx.registerInfo->isZeroRegister(op.reg())) &&
+                       isAllocatableType(op.type())) {
                         return true;
                     }
                 }
@@ -69,7 +70,8 @@ static void preRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) 
             for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                     auto& op = inst.getOperand(idx);
-                    if(isOperandISAReg(op) && isAllocatableType(op.type())) {
+                    if(isOperandISAReg(op) && (!ctx.registerInfo || !ctx.registerInfo->isZeroRegister(op.reg())) &&
+                       isAllocatableType(op.type())) {
                         return true;
                     }
                 }

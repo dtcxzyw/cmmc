@@ -294,6 +294,7 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
     }
 
     auto mfunc = ctx.getCurrentBasicBlock()->getFunction();
+
     for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
         const auto offset = offsets[idx];
         const auto arg = inst->getOperand(idx);
@@ -301,13 +302,7 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
-        if(offset < passingByRegisterThreshold) {
-            // $r0-$r3 $s0-$s3
-            MIROperand dst =
-                MIROperand::asISAReg((arg->getType()->isFloatingPoint() ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
-                                     arg->getType()->isFloatingPoint() ? OperandType::Float32 : OperandType::Int32);
-            ctx.emitCopy(dst, val);
-        } else {
+        if(offset >= passingByRegisterThreshold) {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
             if(!isOperandVRegOrISAReg(val)) {
@@ -316,6 +311,19 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
                 val = reg;
             }
             ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
+        }
+    }
+    for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
+        const auto offset = offsets[idx];
+        const auto arg = inst->getOperand(idx);
+        auto val = ctx.mapOperand(arg);
+
+        if(offset < passingByRegisterThreshold) {
+            // $r0-$r3 $s0-$s3
+            MIROperand dst =
+                MIROperand::asISAReg((arg->getType()->isFloatingPoint() ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
+                                     arg->getType()->isFloatingPoint() ? OperandType::Float32 : OperandType::Int32);
+            ctx.emitCopy(dst, val);
         }
     }
 

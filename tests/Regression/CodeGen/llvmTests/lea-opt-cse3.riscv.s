@@ -3,23 +3,23 @@
 .text
 .globl foo
 foo:
-	slliw a3, a1, 1
-	addiw a2, a0, 4
-	addw a0, a2, a3
+	slliw a2, a1, 1
+	addiw a0, a0, 4
+	addw a2, a0, a2
 	slliw a1, a1, 2
-	addw a1, a2, a1
-	mulw a0, a0, a1
+	addw a0, a0, a1
+	mulw a0, a2, a0
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl foo1
 foo1:
-	slliw a3, a1, 2
-	addiw a2, a0, 4
-	addw a0, a2, a3
+	slliw a2, a1, 2
+	addiw a0, a0, 4
+	addw a2, a0, a2
 	slliw a1, a1, 3
-	addw a1, a2, a1
-	mulw a0, a0, a1
+	addw a0, a0, a1
+	mulw a0, a2, a0
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

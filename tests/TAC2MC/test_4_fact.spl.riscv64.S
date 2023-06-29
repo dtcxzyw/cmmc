@@ -39,23 +39,21 @@ label9:
 	addi sp, sp, 8
 	ret
 label33:
-	mv a1, a0
-	li a0, 1
-	mulw a0, a1, a0
+	li a1, 1
+	mulw a0, a0, a1
 	j label9
 label18:
-	mv a1, a0
-	li a0, 1
-	mulw a0, a1, a0
-	addiw a1, a1, -1
+	li a1, 1
+	mulw a1, a0, a1
+	addiw a0, a0, -1
 	li a2, 1
-	bne a1, a2, label6
+	bne a0, a2, label6
 	j label34
 label6:
-	mulw a0, a1, a0
-	addiw a1, a1, -1
+	mulw a1, a0, a1
+	addiw a0, a0, -1
 	li a2, 1
-	bne a1, a2, label6
+	bne a0, a2, label6
 label34:
-	mulw a0, a1, a0
+	mulw a0, a0, a1
 	j label9

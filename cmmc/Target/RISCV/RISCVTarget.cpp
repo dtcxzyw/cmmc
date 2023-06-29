@@ -102,6 +102,9 @@ public:
 
 class RISCVRegisterInfo final : public TargetRegisterInfo {
 public:
+    [[nodiscard]] bool isZeroRegister(const uint32_t x) const noexcept override {
+        return x == RISCV::X0;
+    }
     [[nodiscard]] uint32_t getAllocationClassCount() const noexcept override {
         return 2;  // GPR/FPR
     }
@@ -352,16 +355,7 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
-        if(offset < passingByRegisterThreshold) {
-            // TODO: fp
-            MIROperand dst;
-            if(isFPType(val.type())) {
-                dst = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset) / 8U, OperandType::Float32);
-            } else {
-                dst = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset) / 8U, OperandType::Int64);
-            }
-            ctx.emitCopy(dst, val);
-        } else {
+        if(offset >= passingByRegisterThreshold) {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
             if(!isOperandVRegOrISAReg(val)) {
@@ -370,6 +364,21 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
                 val = reg;
             }
             ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
+        }
+    }
+    for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
+        const auto offset = offsets[idx];
+        const auto arg = inst->getOperand(idx);
+        auto val = ctx.mapOperand(arg);
+
+        if(offset < passingByRegisterThreshold) {
+            MIROperand dst;
+            if(isFPType(val.type())) {
+                dst = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset) / 8U, OperandType::Float32);
+            } else {
+                dst = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset) / 8U, OperandType::Int64);
+            }
+            ctx.emitCopy(dst, val);
         }
     }
 

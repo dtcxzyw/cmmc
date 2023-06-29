@@ -24,15 +24,15 @@ write:
 gcd:
 	addi sp, sp, -16
 	sd ra, 8(sp)
-	mv a2, a0
 	addi a1, sp, 0
-	lw a0, 0(a0)
-	lw a3, 4(a2)
+	lw a4, 0(a0)
+	lw a3, 4(a0)
 	mv a2, a3
+	mv a0, a4
 	beq a3, zero, label3
-	divw a3, a0, a3
+	divw a3, a4, a3
 	mulw a3, a2, a3
-	subw a0, a0, a3
+	subw a0, a4, a3
 	li a3, 4294967295
 	and a0, a0, a3
 	and a2, a2, a3

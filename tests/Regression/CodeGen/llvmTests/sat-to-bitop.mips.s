@@ -11,8 +11,8 @@ no_sat0_incorrect_constant:
 .globl no_sat0_incorrect_variable
 no_sat0_incorrect_variable:
 	slti $t0, $a0, 0
-	movn $a1, $zero, $t0
 	move $v0, $a1
+	movn $v0, $zero, $t0
 	jr $ra
 	nop
 .globl sat0_base_16bit
@@ -28,8 +28,8 @@ sat0_base_16bit:
 .globl sat0_base_32bit
 sat0_base_32bit:
 	slti $t0, $a0, 0
-	movn $a0, $zero, $t0
 	move $v0, $a0
+	movn $v0, $zero, $t0
 	jr $ra
 	nop
 .globl sat0_base_8bit

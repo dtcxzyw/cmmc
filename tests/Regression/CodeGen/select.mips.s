@@ -10,15 +10,15 @@ __cmmc_fp_constant_pool:
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
 	sltu $t0, $zero, $a0
-	movn $a2, $a1, $t0
 	move $v0, $a2
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_not_gpr_gpr_gpr
 select_not_gpr_gpr_gpr:
 	sltiu $t0, $a0, 1
-	movn $a2, $a1, $t0
 	move $v0, $a2
+	movn $v0, $a1, $t0
 	jr $ra
 	nop
 .globl select_gpr_fpr_fpr
@@ -40,8 +40,8 @@ select_not_gpr_fpr_fpr:
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
 	slt $t0, $a0, $a1
-	movn $a3, $a2, $t0
 	move $v0, $a3
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_slt_fpr_fpr
@@ -74,8 +74,8 @@ select_sle_fpr_fpr:
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
 	slt $t0, $a1, $a0
-	movn $a3, $a2, $t0
 	move $v0, $a3
+	movn $v0, $a2, $t0
 	jr $ra
 	nop
 .globl select_sgt_fpr_fpr
@@ -318,14 +318,14 @@ select_bitset:
 .globl select_imax
 select_imax:
 	slt $t0, $a1, $a0
-	movn $a1, $a0, $t0
 	move $v0, $a1
+	movn $v0, $a0, $t0
 	jr $ra
 	nop
 .globl select_imin
 select_imin:
 	slt $t0, $a0, $a1
-	movn $a1, $a0, $t0
 	move $v0, $a1
+	movn $v0, $a0, $t0
 	jr $ra
 	nop

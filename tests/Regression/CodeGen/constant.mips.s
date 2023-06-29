@@ -22,11 +22,11 @@ cse_imm:
 	nop
 .globl cse_global
 cse_global:
-	lui $t1, %hi(x)
-	addiu $t0, $t1, %lo(x)
-	lw $t1, %lo(x)($t1)
-	lw $t0, 4($t0)
-	addu $v0, $t1, $t0
+	lui $t0, %hi(x)
+	addiu $t1, $t0, %lo(x)
+	lw $t0, %lo(x)($t0)
+	lw $t1, 4($t1)
+	addu $v0, $t0, $t1
 	jr $ra
 	nop
 .globl cse_fp

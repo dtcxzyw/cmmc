@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/Config.hpp"
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/RegisterAllocator.hpp>
@@ -52,6 +53,10 @@ public:
     virtual void addExternalFuncIPRAInfo(MIRRelocable* symbol, IPRAUsageCache& infoIPRA) const {
         CMMC_UNUSED(symbol);
         CMMC_UNUSED(infoIPRA);
+    }
+    [[nodiscard]] virtual bool isZeroRegister(const uint32_t x) const noexcept {
+        CMMC_UNUSED(x);
+        return false;
     }
     [[nodiscard]] virtual MIROperand getReturnAddressRegister() const noexcept = 0;
 };

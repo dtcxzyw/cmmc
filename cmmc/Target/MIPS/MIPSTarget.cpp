@@ -108,6 +108,9 @@ public:
 
 class MIPSRegisterInfo final : public TargetRegisterInfo {
 public:
+    [[nodiscard]] bool isZeroRegister(const uint32_t x) const noexcept override {
+        return x == MIPS::X0;
+    }
     [[nodiscard]] uint32_t getAllocationClassCount() const noexcept override {
         return 2;  // GPR/FPR
     }
@@ -348,6 +351,22 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
+        if(offset >= passingByRegisterThreshold) {
+            const auto obj =
+                mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
+            if(!isOperandVRegOrISAReg(val)) {
+                const auto reg = ctx.newVReg(val.type());
+                ctx.emitCopy(reg, val);
+                val = reg;
+            }
+            ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
+        }
+    }
+    for(uint32_t idx = 0; idx + 1 < inst->operands().size(); ++idx) {
+        const auto offset = offsets[idx];
+        const auto arg = inst->getOperand(idx);
+        auto val = ctx.mapOperand(arg);
+
         if(offset < passingByRegisterThreshold) {
             // $a0-$a3, $f12/$f14
             MIROperand dst;
@@ -361,17 +380,9 @@ void MIPSFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const
                 ctx.emitInst(MIRInst{ MIPS::MFC1 }.setOperand<0>(dst).setOperand<1>(val));
             } else
                 ctx.emitCopy(dst, val);
-        } else {
-            const auto obj =
-                mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
-            if(!isOperandVRegOrISAReg(val)) {
-                const auto reg = ctx.newVReg(val.type());
-                ctx.emitCopy(reg, val);
-                val = reg;
-            }
-            ctx.emitInst(MIRInst{ InstStoreRegToStack }.setOperand<0>(val).setOperand<1>(obj));
         }
     }
+
     // padding for arg0-arg4
     if(curOffset < 16) {
         mfunc->addStackObject(ctx.getCodeGenContext(), 0, static_cast<uint32_t>(getStackPointerAlignment(true)), 16,

@@ -4,15 +4,15 @@
 .globl test1
 test1:
 	andi a1, a0, 255
-	slliw a1, a1, 8
-	li a2, 65280
-	and a3, a0, a2
+	slliw a2, a1, 8
+	li a1, 65280
+	and a3, a0, a1
 	srliw a3, a3, 8
-	or a1, a1, a3
-	slli a2, a2, 8
-	and a2, a0, a2
-	slliw a2, a2, 8
-	or a1, a1, a2
+	or a2, a2, a3
+	slli a1, a1, 8
+	and a1, a0, a1
+	slliw a1, a1, 8
+	or a1, a2, a1
 	li a2, -16777216
 	or a0, a0, a2
 	srliw a0, a0, 8

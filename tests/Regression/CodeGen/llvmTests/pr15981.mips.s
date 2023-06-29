@@ -23,15 +23,15 @@ fn1:
 .globl fn2
 fn2:
 	lui $t0, %hi(b)
-	lw $t0, %lo(b)($t0)
-	lui $t1, %hi(a)
-	lw $t2, %lo(a)($t1)
+	lw $t1, %lo(b)($t0)
+	lui $t0, %hi(a)
+	lw $t2, %lo(a)($t0)
 	addiu $t2, $t2, -1
 	sltu $t3, $zero, $t2
 	subu $t3, $zero, $t3
-	and $t0, $t0, $t3
-	sw $t2, %lo(a)($t1)
-	lui $t1, %hi(c)
-	sw $t0, %lo(c)($t1)
+	and $t1, $t1, $t3
+	sw $t2, %lo(a)($t0)
+	lui $t0, %hi(c)
+	sw $t1, %lo(c)($t0)
 	jr $ra
 	nop

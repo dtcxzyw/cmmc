@@ -44,20 +44,20 @@ Test_use_div_imm_reg:
 .globl Test_use_div_reg_imm
 Test_use_div_reg_imm:
 	li a1, 1041204193
-	mul a1, a0, a1
-	srai a0, a1, 35
-	srli a1, a1, 63
-	add a0, a1, a0
+	mul a0, a0, a1
+	srai a1, a0, 35
+	srli a0, a0, 63
+	add a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl Test_use_divrem_reg_imm
 Test_use_divrem_reg_imm:
 	li a3, 1041204193
-	mul a2, a0, a3
-	srai a1, a2, 35
-	srli a2, a2, 63
-	add a2, a2, a1
+	mul a1, a0, a3
+	srai a2, a1, 35
+	srli a1, a1, 63
+	add a2, a1, a2
 	li a1, 4294967295
 	and a2, a2, a1
 	mul a3, a0, a3
@@ -80,10 +80,10 @@ Test_use_rem_imm_reg:
 .globl Test_use_rem_reg_imm
 Test_use_rem_reg_imm:
 	li a1, 1041204193
-	mul a2, a0, a1
-	srai a1, a2, 35
-	srli a2, a2, 63
-	add a1, a2, a1
+	mul a1, a0, a1
+	srai a2, a1, 35
+	srli a1, a1, 63
+	add a1, a1, a2
 	li a2, 33
 	mulw a1, a1, a2
 	subw a0, a0, a1

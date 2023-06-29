@@ -103,13 +103,29 @@ public:
         mDegree.erase(u);
         return u;
     }
-    RegNum pickToSpill(const std::unordered_set<uint32_t>& blockList) const {
-        uint32_t maxDegree = 0;
+    RegNum pickToSpill(const std::unordered_set<uint32_t>& blockList, const std::unordered_map<RegNum, double>& weights,
+                       uint32_t k) const {
+        constexpr uint32_t fallbackThreshold = 0;
         RegNum best = invalidReg;
-        for(auto& [reg, degree] : mDegree) {
-            if(degree > maxDegree && !blockList.count(reg)) {
-                best = reg;
-                maxDegree = degree;
+        if(blockList.size() >= fallbackThreshold) {
+            double minWeight = 1e40;
+            uint32_t maxDegree = 0;
+            for(auto& [reg, degree] : mDegree) {
+                if(degree >= maxDegree && !blockList.count(reg)) {
+                    if(maxDegree == degree && weights.at(reg) >= minWeight)
+                        continue;
+                    maxDegree = degree;
+                    minWeight = weights.at(reg);
+                    best = reg;
+                }
+            }
+        } else {
+            double minWeight = 1e40;
+            for(auto& [reg, degree] : mDegree) {
+                if(degree >= k && !blockList.count(reg) && weights.at(reg) < minWeight) {
+                    best = reg;
+                    minWeight = weights.at(reg);
+                }
             }
         }
         assert(best != invalidReg && isVirtualReg(best));
@@ -120,6 +136,10 @@ public:
         for(auto& [vreg, degree] : mDegree) {
             out << (vreg ^ virtualRegBegin) << "[" << degree << "]: ";
             for(auto adj : mAdj[vreg]) {
+                if(isVirtualReg(adj))
+                    out << 'v';
+                else
+                    out << 'i';
                 out << (isVirtualReg(adj) ? adj ^ virtualRegBegin : adj) << ' ';
             }
             out << '\n';
@@ -151,10 +171,33 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
     std::unordered_set<uint32_t> blockList;
     constexpr auto debugRA = false;
 
+    if(debugRA) {
+        std::cerr << "allocate for class " << allocationClass << std::endl;
+    }
+
     while(true) {
         auto liveInterval = calcLiveIntervals(mfunc, ctx);
         if(debugRA)
             mfunc.dump(std::cerr, ctx);
+
+        const auto isAllocatableType = [&](OperandType type) {
+            return (type <= OperandType::Float32) && (ctx.registerInfo->getAllocationClass(type) == allocationClass);
+        };
+        std::unordered_set<RegNum> vregSet;
+        for(auto& block : mfunc.blocks()) {
+            for(auto& inst : block->instructions()) {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    const auto flag = instInfo.getOperandFlag(idx);
+                    if(!((flag & OperandFlagUse) || (flag & OperandFlagDef)))
+                        continue;
+                    auto& op = inst.getOperand(idx);
+                    if(!(isOperandVReg(op) && isAllocatableType(op.type())))
+                        continue;
+                    vregSet.insert(op.reg());
+                }
+            }
+        }
 
         std::unordered_map<RegNum, std::unordered_map<RegNum, double>> copyHint;
         auto updateCopyHint = [&](RegNum dst, RegNum src, double weight) {
@@ -164,9 +207,6 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         // Construct interference graph
         InterferenceGraph graph;
         // ISA specific reg
-        const auto isAllocatableType = [&](OperandType type) {
-            return type <= OperandType::Float32 && ctx.registerInfo->getAllocationClass(type) == allocationClass;
-        };
         for(auto& block : mfunc.blocks()) {
             auto& instructions = block->instructions();
             std::unordered_set<uint32_t> underRenamedISAReg;
@@ -179,15 +219,13 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                     bool hasReg = false;
                     for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                         const auto& op = inst.getOperand(idx);
-                        if(isOperandISAReg(op) && isAllocatableType(op.type()) &&
+                        if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) && isAllocatableType(op.type()) &&
                            (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
                             underRenamedISAReg.insert(op.reg());
                             hasReg = true;
                         }
                     }
-                    if(hasReg ||
-                       (inst.opcode() == InstStoreRegToStack &&
-                        mfunc.stackObjects().at(inst.getOperand(1)).usage == StackObjectUsage::RegSpill))
+                    if(hasReg)
                         ++it;
                     else
                         break;
@@ -198,7 +236,8 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
             std::unordered_set<uint32_t> liveVRegs;
             for(auto vreg : liveInterval.blockInfo.at(block.get()).ins) {
                 assert(isVirtualReg(vreg));
-                liveVRegs.insert(vreg);
+                if(vregSet.count(vreg))
+                    liveVRegs.insert(vreg);
             }
             const auto tripCount = block->getTripCount();
             for(auto iter = instructions.begin(); iter != instructions.end();) {
@@ -225,7 +264,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         auto& op = inst.getOperand(idx);
                         if(!isAllocatableType(op.type()))
                             continue;
-                        if(isOperandISAReg(op)) {
+                        if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg())) {
                             underRenamedISAReg.erase(op.reg());
                         } else if(isOperandVReg(op)) {
                             graph.touch(op.reg());
@@ -262,7 +301,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         auto& op = inst.getOperand(idx);
                         if(!isAllocatableType(op.type()))
                             continue;
-                        if(isOperandISAReg(op)) {
+                        if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg())) {
                             lockedISAReg.insert(op.reg());
                             for(auto vreg : liveVRegs)
                                 graph.addEdge(vreg, op.reg());
@@ -282,6 +321,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         }
 
         auto vregs = graph.collectNodes();
+        assert(vregs.size() == vregSet.size());
         if(debugRA) {
             std::cerr << vregs.size() << std::endl;
         }
@@ -314,19 +354,19 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
 
         // Calculate weights for virtual registers
 
-        // Weight = \sum LiveRange * Freq
+        // Weight = \sum (number of use/def) * Freq
         std::vector<std::pair<InstNum, double>> freq;
         for(auto& block : mfunc.blocks()) {
             auto endInst = liveInterval.instNum.at(&block->instructions().back());
             freq.emplace_back(endInst + 2, block->getTripCount());
         }
+        std::unordered_map<RegNum, double> weights;
         auto getBlockFreq = [&](InstNum inst) {
             const auto it =
                 std::lower_bound(freq.begin(), freq.end(), inst, [](const auto& a, const auto& b) { return a.first < b; });
             assert(it != freq.end());
             return it->second;
         };
-        std::unordered_map<RegNum, double> weights;
         for(auto vreg : vregs) {
             auto& liveRange = liveInterval.interval.at(vreg);
             double weight = 0;
@@ -334,10 +374,24 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 weight += static_cast<double>(end - beg) * getBlockFreq(end);
             }
             if(auto iter = copyHint.find(vreg); iter != copyHint.end())
-                weight += 1e5 * static_cast<double>(iter->second.size());
+                weight += 100.0 * static_cast<double>(iter->second.size());
             weights.emplace(vreg, weight);
         }
-
+        for(auto& block : mfunc.blocks()) {
+            const auto w = block->getTripCount();
+            for(auto& inst : block->instructions()) {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                    const auto flag = instInfo.getOperandFlag(idx);
+                    if(!((flag & OperandFlagUse) || (flag & OperandFlagDef)))
+                        continue;
+                    auto& op = inst.getOperand(idx);
+                    if(!(isOperandVReg(op) && isAllocatableType(op.type())))
+                        continue;
+                    weights[op.reg()] += w;
+                }
+            }
+        }
         // Assign registers
 
         const auto k = static_cast<uint32_t>(list.size());
@@ -438,11 +492,12 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
             }
 
+            // mfunc.dump(std::cerr, ctx);
             return;
         }
 
         // Spill register
-        auto u = graph.pickToSpill(blockList);
+        auto u = graph.pickToSpill(blockList, weights, k);
         blockList.insert(u);
         if(debugRA) {
             std::cerr << "spill " << (u ^ virtualRegBegin) << std::endl;
@@ -450,11 +505,16 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
         const auto size = getOperandSize(canonicalizedType);
         const auto stackStorage = mfunc.addStackObject(ctx, size, size, 0, StackObjectUsage::RegSpill);
 
+        std::unordered_set<MIRInst*> newInsts;
         for(auto& block : mfunc.blocks()) {
             auto& instructions = block->instructions();
             for(auto iter = instructions.begin(); iter != instructions.end();) {
                 const auto next = std::next(iter);
                 auto& inst = *iter;
+                if(newInsts.count(&inst)) {
+                    iter = next;
+                    continue;
+                }
                 auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 bool hasUse = false, hasDef = false;
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
@@ -473,16 +533,55 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
 
                 if(hasUse) {
-                    instructions.insert(iter,
+                    // should be placed before locked inst block
+                    auto it = iter;
+                    while(it != instructions.begin()) {
+                        auto& lockedInst = *std::prev(it);
+                        auto& lockedInstInfo = ctx.instInfo.getInstInfo(lockedInst);
+                        bool hasReg = false;
+                        for(uint32_t idx = 0; idx < lockedInstInfo.getOperandNum(); ++idx) {
+                            const auto& op = lockedInst.getOperand(idx);
+                            if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
+                               isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagDef)) {
+                                hasReg = true;
+                                break;
+                            }
+                        }
+                        if(!hasReg)
+                            break;
+                        --it;
+                    }
+
+                    instructions.insert(it,
                                         MIRInst{ InstLoadRegFromStack }
                                             .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
                                             .setOperand<1>(stackStorage));
                 }
                 if(hasDef) {
-                    instructions.insert(next,
-                                        MIRInst{ InstStoreRegToStack }
-                                            .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
-                                            .setOperand<1>(stackStorage));
+                    // should be placed after rename inst block
+                    auto it = next;
+                    while(it != instructions.end()) {
+                        auto& renameInst = *it;
+                        auto& renameInstInfo = ctx.instInfo.getInstInfo(renameInst);
+                        bool hasReg = false;
+                        for(uint32_t idx = 0; idx < renameInstInfo.getOperandNum(); ++idx) {
+                            const auto& op = renameInst.getOperand(idx);
+                            if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg()) &&
+                               isAllocatableType(op.type()) && (instInfo.getOperandFlag(idx) & OperandFlagUse)) {
+                                hasReg = true;
+                                break;
+                            }
+                        }
+                        if(!hasReg)
+                            break;
+                        ++it;
+                    }
+                    auto newInst =
+                        instructions.insert(it,
+                                            MIRInst{ InstStoreRegToStack }
+                                                .setOperand<0>(MIROperand::asVReg(u - virtualRegBegin, canonicalizedType))
+                                                .setOperand<1>(stackStorage));
+                    newInsts.insert(&*newInst);
                 }
 
                 iter = next;
