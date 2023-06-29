@@ -31,32 +31,31 @@ internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
     i1 %14 = scmp neq i32 %13, i32 0;
     cbr i1 %14(prob = 0.5), ^if.then, ^b2;
   ^while.header2:
-    i32 %15 = phi [^while.body1, i32 %12] [^b3, i32 %30];
+    i32 %15 = phi [^while.body1, i32 %12] [^b3, i32 %29];
     i1 %16 = scmp lt i32 %15, i32 %3;
     cbr i1 %16(prob = 0.97), ^while.body2, ^while.header1;
   ^b2:
-    i32 %17 = phi [^b1, i32 %5] [^if.then, i32 %19] [^indirect, i32 %21];
+    i32 %17 = phi [^b1, i32 %5] [^if.then, i32 %19] [^indirect, i32 %20];
     i32 %18 = add i32 %6, i32 1;
     ubr ^while.header;
   ^if.then:
     i32 %19 = call (i32, [30 * i32]*, i32*) -> i32 @maxCliques(i32 %3, [30 * i32]* %0, i32* %1);
-    i1 %20 = scmp gt i32 %k, i32 %5;
-    i32 %21 = select i1 %20 ? i32 %k : i32 %5;
-    i1 %22 = scmp gt i32 %19, i32 %21;
-    cbr i1 %22(prob = 0.5), ^b2, ^indirect;
+    i32 %20 = smax i32 %k, i32 %5;
+    i1 %21 = scmp gt i32 %19, i32 %20;
+    cbr i1 %21(prob = 0.5), ^b2, ^indirect;
   ^while.body2:
-    i32 %23 = load i32* %11;
-    [30 * i32]* %24 = getelementptr &([30 * [30 * i32]]* %4)[i64 0][i32 %23];
-    i32* %25 = getelementptr &([30 * i32]* %0)[i64 0][i32 %15];
-    i32 %26 = load i32* %25;
-    i32* %27 = getelementptr &([30 * i32]* %24)[i64 0][i32 %26];
-    i32 %28 = load i32* %27;
-    i1 %29 = scmp eq i32 %28, i32 0;
-    cbr i1 %29(prob = 0.5), ^b1, ^b3;
+    i32 %22 = load i32* %11;
+    [30 * i32]* %23 = getelementptr &([30 * [30 * i32]]* %4)[i64 0][i32 %22];
+    i32* %24 = getelementptr &([30 * i32]* %0)[i64 0][i32 %15];
+    i32 %25 = load i32* %24;
+    i32* %26 = getelementptr &([30 * i32]* %23)[i64 0][i32 %25];
+    i32 %27 = load i32* %26;
+    i1 %28 = scmp eq i32 %27, i32 0;
+    cbr i1 %28(prob = 0.5), ^b1, ^b3;
   ^indirect:
     ubr ^b2;
   ^b3:
-    i32 %30 = add i32 %15, i32 1;
+    i32 %29 = add i32 %15, i32 1;
     ubr ^while.header2;
 }
 func @main() -> i32 { NoRecurse Entry } {

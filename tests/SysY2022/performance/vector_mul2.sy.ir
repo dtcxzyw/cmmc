@@ -53,27 +53,27 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %22 = phi [^while.body, i32 0] [^while.body5, i32 %644];
     ubr ^while.header;
   ^while.header:
-    f32 %23 = phi [^while.body1, f32 0] [^b, f32 %47];
-    i32 %24 = phi [^while.body1, i32 0] [^b, i32 %41];
+    i32 %23 = phi [^while.body1, i32 0] [^b, i32 %41];
+    f32 %24 = phi [^while.body1, f32 0] [^b, f32 %47];
     i32 %25 = phi [^while.body1, i32 0] [^b, i32 %48];
-    i1 %26 = scmp lt i32 %24, i32 100000;
+    i1 %26 = scmp lt i32 %23, i32 100000;
     cbr i1 %26(prob = 0.97), ^indirect, ^while.header1;
   ^indirect:
-    i32 %27 = add i32 %24, i32 15;
-    i32 %28 = add i32 %24, i32 14;
-    i32 %29 = add i32 %24, i32 13;
-    i32 %30 = add i32 %24, i32 12;
-    i32 %31 = add i32 %24, i32 11;
-    i32 %32 = add i32 %24, i32 10;
-    i32 %33 = add i32 %24, i32 9;
-    i32 %34 = add i32 %24, i32 8;
-    i32 %35 = add i32 %24, i32 7;
-    i32 %36 = add i32 %24, i32 6;
-    i32 %37 = add i32 %24, i32 5;
-    i32 %38 = add i32 %24, i32 4;
-    i32 %39 = add i32 %24, i32 3;
-    i32 %40 = add i32 %24, i32 2;
-    i32 %41 = add i32 %24, i32 1;
+    i32 %27 = add i32 %23, i32 15;
+    i32 %28 = add i32 %23, i32 14;
+    i32 %29 = add i32 %23, i32 13;
+    i32 %30 = add i32 %23, i32 12;
+    i32 %31 = add i32 %23, i32 11;
+    i32 %32 = add i32 %23, i32 10;
+    i32 %33 = add i32 %23, i32 9;
+    i32 %34 = add i32 %23, i32 8;
+    i32 %35 = add i32 %23, i32 7;
+    i32 %36 = add i32 %23, i32 6;
+    i32 %37 = add i32 %23, i32 5;
+    i32 %38 = add i32 %23, i32 4;
+    i32 %39 = add i32 %23, i32 3;
+    i32 %40 = add i32 %23, i32 2;
+    i32 %41 = add i32 %23, i32 1;
     i1 %42 = scmp lt i32 %25, i32 100000;
     cbr i1 %42(prob = 0.97), ^super.header, ^b;
   ^while.header1:
@@ -83,13 +83,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %46 = scmp lt i32 %43, i32 100000;
     cbr i1 %46(prob = 0.97), ^indirect1, ^while.header2;
   ^b:
-    f32 %47 = phi [^indirect, f32 %23] [^while.body13, f32 %1881];
+    f32 %47 = phi [^indirect, f32 %24] [^while.body13, f32 %1881];
     i32 %48 = phi [^indirect, i32 %25] [^while.body13, i32 %1882];
-    f32* %49 = getelementptr &(f32* %2)[i32 %24];
+    f32* %49 = getelementptr &(f32* %2)[i32 %23];
     store f32* %49 with f32 %47;
     ubr ^while.header;
   ^super.header:
-    f32 %50 = phi [^indirect, f32 %23] [^while.body2, f32 %247];
+    f32 %50 = phi [^indirect, f32 %24] [^while.body2, f32 %247];
     i32 %51 = phi [^indirect, i32 %25] [^while.body2, i32 %52];
     i32 %52 = add i32 %51, i32 16;
     i1 %53 = scmp lt i32 %52, i32 100000;
@@ -113,10 +113,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %69 = scmp lt i32 %45, i32 100000;
     cbr i1 %69(prob = 0.97), ^super.header2, ^b1;
   ^while.header2:
-    f32 %70 = phi [^while.header1, f32 0] [^b2, f32 %613];
-    i32 %71 = phi [^while.header1, i32 0] [^b2, i32 %273];
+    i32 %70 = phi [^while.header1, i32 0] [^b2, i32 %273];
+    f32 %71 = phi [^while.header1, f32 0] [^b2, f32 %613];
     i32 %72 = phi [^while.header1, i32 0] [^b2, i32 %614];
-    i1 %73 = scmp lt i32 %71, i32 100000;
+    i1 %73 = scmp lt i32 %70, i32 100000;
     cbr i1 %73(prob = 0.97), ^indirect2, ^while.header3;
   ^while.body2:
     i32 %74 = add i32 %51, i32 1;
@@ -131,7 +131,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %83 = getelementptr &(f32* %81)[i64 1];
     f32 %84 = load f32* %83;
     f32 %85 = fdiv f32 %84, f32 %80;
-    i32 %86 = add i32 %24, i32 %51;
+    i32 %86 = add i32 %23, i32 %51;
     i32 %87 = mul i32 %86, i32 %76;
     i32 %88 = sdiv i32 %87, i32 2;
     i32 %89 = add i32 %41, i32 %88;
@@ -313,21 +313,21 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %258 = scmp lt i32 %257, i32 100000;
     cbr i1 %258(prob = 0.67), ^while.body4, ^super.header4;
   ^indirect2:
-    i32 %259 = add i32 %71, i32 15;
-    i32 %260 = add i32 %71, i32 14;
-    i32 %261 = add i32 %71, i32 13;
-    i32 %262 = add i32 %71, i32 12;
-    i32 %263 = add i32 %71, i32 11;
-    i32 %264 = add i32 %71, i32 10;
-    i32 %265 = add i32 %71, i32 9;
-    i32 %266 = add i32 %71, i32 8;
-    i32 %267 = add i32 %71, i32 7;
-    i32 %268 = add i32 %71, i32 6;
-    i32 %269 = add i32 %71, i32 5;
-    i32 %270 = add i32 %71, i32 4;
-    i32 %271 = add i32 %71, i32 3;
-    i32 %272 = add i32 %71, i32 2;
-    i32 %273 = add i32 %71, i32 1;
+    i32 %259 = add i32 %70, i32 15;
+    i32 %260 = add i32 %70, i32 14;
+    i32 %261 = add i32 %70, i32 13;
+    i32 %262 = add i32 %70, i32 12;
+    i32 %263 = add i32 %70, i32 11;
+    i32 %264 = add i32 %70, i32 10;
+    i32 %265 = add i32 %70, i32 9;
+    i32 %266 = add i32 %70, i32 8;
+    i32 %267 = add i32 %70, i32 7;
+    i32 %268 = add i32 %70, i32 6;
+    i32 %269 = add i32 %70, i32 5;
+    i32 %270 = add i32 %70, i32 4;
+    i32 %271 = add i32 %70, i32 3;
+    i32 %272 = add i32 %70, i32 2;
+    i32 %273 = add i32 %70, i32 1;
     i1 %274 = scmp lt i32 %72, i32 100000;
     cbr i1 %274(prob = 0.97), ^super.header5, ^b2;
   ^while.header3:
@@ -349,7 +349,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %288 = getelementptr &(f32* %286)[i64 1];
     f32 %289 = load f32* %288;
     f32 %290 = fdiv f32 %289, f32 %285;
-    i32 %291 = add i32 %24, i32 %252;
+    i32 %291 = add i32 %23, i32 %252;
     i32 %292 = mul i32 %291, i32 %281;
     i32 %293 = sdiv i32 %292, i32 2;
     i32 %294 = add i32 %41, i32 %293;
@@ -675,9 +675,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %612 = fadd f32 %603, f32 %611;
     ubr ^super.header2;
   ^b2:
-    f32 %613 = phi [^indirect2, f32 %70] [^while.body22, f32 %3001];
+    f32 %613 = phi [^indirect2, f32 %71] [^while.body22, f32 %3001];
     i32 %614 = phi [^indirect2, i32 %72] [^while.body22, i32 %3002];
-    f32* %615 = getelementptr &(f32* %2)[i32 %71];
+    f32* %615 = getelementptr &(f32* %2)[i32 %70];
     store f32* %615 with f32 %613;
     ubr ^while.header2;
   ^super.header3:
@@ -693,7 +693,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %623 = scmp lt i32 %622, i32 100000;
     cbr i1 %623(prob = 0.67), ^while.body7, ^super.header7;
   ^super.header5:
-    f32 %624 = phi [^indirect2, f32 %70] [^while.body8, f32 %1167];
+    f32 %624 = phi [^indirect2, f32 %71] [^while.body8, f32 %1167];
     i32 %625 = phi [^indirect2, i32 %72] [^while.body8, i32 %626];
     i32 %626 = add i32 %625, i32 16;
     i1 %627 = scmp lt i32 %626, i32 100000;
@@ -733,7 +733,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %655 = getelementptr &(f32* %653)[i64 1];
     f32 %656 = load f32* %655;
     f32 %657 = fdiv f32 %656, f32 %652;
-    i32 %658 = add i32 %24, i32 %617;
+    i32 %658 = add i32 %23, i32 %617;
     i32 %659 = mul i32 %658, i32 %648;
     i32 %660 = sdiv i32 %659, i32 2;
     i32 %661 = add i32 %41, i32 %660;
@@ -1085,7 +1085,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %1003 = getelementptr &(f32* %1001)[i64 1];
     f32 %1004 = load f32* %1003;
     f32 %1005 = fdiv f32 %1004, f32 %1000;
-    i32 %1006 = add i32 %71, i32 %625;
+    i32 %1006 = add i32 %70, i32 %625;
     i32 %1007 = mul i32 %1006, i32 %996;
     i32 %1008 = sdiv i32 %1007, i32 2;
     i32 %1009 = add i32 %273, i32 %1008;
@@ -1294,7 +1294,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %1196 = getelementptr &(f32* %1194)[i64 1];
     f32 %1197 = load f32* %1196;
     f32 %1198 = fdiv f32 %1197, f32 %1193;
-    i32 %1199 = add i32 %24, i32 %1172;
+    i32 %1199 = add i32 %23, i32 %1172;
     i32 %1200 = add i32 %1172, i32 %41;
     i32 %1201 = mul i32 %1199, i32 %1200;
     i32 %1202 = sdiv i32 %1201, i32 2;
@@ -1647,7 +1647,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %1545 = getelementptr &(f32* %1543)[i64 1];
     f32 %1546 = load f32* %1545;
     f32 %1547 = fdiv f32 %1546, f32 %1542;
-    i32 %1548 = add i32 %71, i32 %1180;
+    i32 %1548 = add i32 %70, i32 %1180;
     i32 %1549 = mul i32 %1548, i32 %1538;
     i32 %1550 = sdiv i32 %1549, i32 2;
     i32 %1551 = add i32 %273, i32 %1550;
@@ -1975,7 +1975,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.body13:
     f32 %1870 = phi [^super.header6, f32 %1171] [^while.body13, f32 %1881];
     i32 %1871 = phi [^super.header6, i32 %1172] [^while.body13, i32 %1882];
-    i32 %1872 = add i32 %24, i32 %1871;
+    i32 %1872 = add i32 %23, i32 %1871;
     i32 %1873 = add i32 %41, i32 %1871;
     i32 %1874 = mul i32 %1872, i32 %1873;
     i32 %1875 = sdiv i32 %1874, i32 2;
@@ -2202,7 +2202,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %2084 = getelementptr &(f32* %2082)[i64 1];
     f32 %2085 = load f32* %2084;
     f32 %2086 = fdiv f32 %2085, f32 %2081;
-    i32 %2087 = add i32 %71, i32 %1889;
+    i32 %2087 = add i32 %70, i32 %1889;
     i32 %2088 = mul i32 %2087, i32 %2077;
     i32 %2089 = sdiv i32 %2088, i32 2;
     i32 %2090 = add i32 %273, i32 %2089;
@@ -2686,7 +2686,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32* %2554 = getelementptr &(f32* %2552)[i64 1];
     f32 %2555 = load f32* %2554;
     f32 %2556 = fdiv f32 %2555, f32 %2551;
-    i32 %2557 = add i32 %71, i32 %2534;
+    i32 %2557 = add i32 %70, i32 %2534;
     i32 %2558 = add i32 %2534, i32 %273;
     i32 %2559 = mul i32 %2557, i32 %2558;
     i32 %2560 = sdiv i32 %2559, i32 2;
@@ -3127,7 +3127,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.body22:
     f32 %2990 = phi [^super.header14, f32 %2533] [^while.body22, f32 %3001];
     i32 %2991 = phi [^super.header14, i32 %2534] [^while.body22, i32 %3002];
-    i32 %2992 = add i32 %71, i32 %2991;
+    i32 %2992 = add i32 %70, i32 %2991;
     i32 %2993 = add i32 %273, i32 %2991;
     i32 %2994 = mul i32 %2992, i32 %2993;
     i32 %2995 = sdiv i32 %2994, i32 2;
@@ -3683,34 +3683,30 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %3518(prob = 0.97), ^while.body30, ^b5;
   ^b5:
     f32 %3519 = fdiv f32 %3304, f32 %3516;
-    ubr ^while.header4;
-  ^while.header4:
-    f32 %3520 = phi [^b5, f32 1] [^while.body31, f32 %3527];
-    f32 %3521 = fdiv f32 %3519, f32 %3520;
-    f32 %3522 = fsub f32 %3520, f32 %3521;
-    i1 %3523 = fcmp gt f32 %3522, f32 1e-06;
-    cbr i1 %3523(prob = 0.5), ^b7, ^b6;
-  ^b6:
-    i1 %3524 = fcmp lt f32 %3522, f32 -1e-06;
-    ubr ^b7;
-  ^b7:
-    i1 %3525 = phi [^while.header4, i1 true] [^b6, i1 %3524];
-    cbr i1 %3525(prob = 0.97), ^while.body31, ^b8;
+    f32 %3520 = fsub f32 1, f32 %3519;
+    i1 %3521 = fcmp gt f32 %3520, f32 1e-06;
+    i1 %3522 = fcmp lt f32 %3520, f32 -1e-06;
+    i1 %3523 = or i1 %3521, i1 %3522;
+    cbr i1 %3523(prob = 0.97), ^while.body31, ^b6;
   ^while.body31:
-    f32 %3526 = fadd f32 %3520, f32 %3521;
+    f32 %3524 = phi [^b5, f32 %3519] [^while.body31, f32 %3528];
+    f32 %3525 = phi [^b5, f32 1] [^while.body31, f32 %3527];
+    f32 %3526 = fadd f32 %3525, f32 %3524;
     f32 %3527 = fmul f32 %3526, f32 0.5;
-    ubr ^while.header4;
-  ^b8:
-    f32 %3528 = fsub f32 %3520, f32 1;
-    i1 %3529 = fcmp le f32 %3528, f32 1e-06;
-    cbr i1 %3529(prob = 0.5), ^b9, ^b10;
-  ^b9:
-    i1 %3530 = fcmp ge f32 %3528, f32 -1e-06;
-    ubr ^b10;
-  ^b10:
-    i1 %3531 = phi [^b8, i1 false] [^b9, i1 %3530];
-    i32 %3532 = zext i1 %3531 to i32;
-    call (i32) -> void @putint(i32 %3532);
+    f32 %3528 = fdiv f32 %3519, f32 %3527;
+    f32 %3529 = fsub f32 %3527, f32 %3528;
+    i1 %3530 = fcmp gt f32 %3529, f32 1e-06;
+    i1 %3531 = fcmp lt f32 %3529, f32 -1e-06;
+    i1 %3532 = or i1 %3530, i1 %3531;
+    cbr i1 %3532(prob = 0.97), ^while.body31, ^b6;
+  ^b6:
+    f32 %3533 = phi [^b5, f32 1] [^while.body31, f32 %3527];
+    f32 %3534 = fsub f32 %3533, f32 1;
+    i1 %3535 = fcmp le f32 %3534, f32 1e-06;
+    i1 %3536 = fcmp ge f32 %3534, f32 -1e-06;
+    i1 %3537 = and i1 %3535, i1 %3536;
+    i32 %3538 = zext i1 %3537 to i32;
+    call (i32) -> void @putint(i32 %3538);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }

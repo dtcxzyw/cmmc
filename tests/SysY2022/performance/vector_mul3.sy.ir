@@ -3683,34 +3683,30 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %3518(prob = 0.97), ^while.body30, ^b5;
   ^b5:
     f32 %3519 = fdiv f32 %3304, f32 %3516;
-    ubr ^while.header4;
-  ^while.header4:
-    f32 %3520 = phi [^b5, f32 1] [^while.body31, f32 %3527];
-    f32 %3521 = fdiv f32 %3519, f32 %3520;
-    f32 %3522 = fsub f32 %3520, f32 %3521;
-    i1 %3523 = fcmp gt f32 %3522, f32 1e-06;
-    cbr i1 %3523(prob = 0.5), ^b7, ^b6;
-  ^b6:
-    i1 %3524 = fcmp lt f32 %3522, f32 -1e-06;
-    ubr ^b7;
-  ^b7:
-    i1 %3525 = phi [^while.header4, i1 true] [^b6, i1 %3524];
-    cbr i1 %3525(prob = 0.97), ^while.body31, ^b8;
+    f32 %3520 = fsub f32 1, f32 %3519;
+    i1 %3521 = fcmp gt f32 %3520, f32 1e-06;
+    i1 %3522 = fcmp lt f32 %3520, f32 -1e-06;
+    i1 %3523 = or i1 %3521, i1 %3522;
+    cbr i1 %3523(prob = 0.97), ^while.body31, ^b6;
   ^while.body31:
-    f32 %3526 = fadd f32 %3520, f32 %3521;
+    f32 %3524 = phi [^b5, f32 %3519] [^while.body31, f32 %3528];
+    f32 %3525 = phi [^b5, f32 1] [^while.body31, f32 %3527];
+    f32 %3526 = fadd f32 %3525, f32 %3524;
     f32 %3527 = fmul f32 %3526, f32 0.5;
-    ubr ^while.header4;
-  ^b8:
-    f32 %3528 = fsub f32 %3520, f32 1;
-    i1 %3529 = fcmp le f32 %3528, f32 1e-06;
-    cbr i1 %3529(prob = 0.5), ^b9, ^b10;
-  ^b9:
-    i1 %3530 = fcmp ge f32 %3528, f32 -1e-06;
-    ubr ^b10;
-  ^b10:
-    i1 %3531 = phi [^b8, i1 false] [^b9, i1 %3530];
-    i32 %3532 = zext i1 %3531 to i32;
-    call (i32) -> void @putint(i32 %3532);
+    f32 %3528 = fdiv f32 %3519, f32 %3527;
+    f32 %3529 = fsub f32 %3527, f32 %3528;
+    i1 %3530 = fcmp gt f32 %3529, f32 1e-06;
+    i1 %3531 = fcmp lt f32 %3529, f32 -1e-06;
+    i1 %3532 = or i1 %3530, i1 %3531;
+    cbr i1 %3532(prob = 0.97), ^while.body31, ^b6;
+  ^b6:
+    f32 %3533 = phi [^b5, f32 1] [^while.body31, f32 %3527];
+    f32 %3534 = fsub f32 %3533, f32 1;
+    i1 %3535 = fcmp le f32 %3534, f32 1e-06;
+    i1 %3536 = fcmp ge f32 %3534, f32 -1e-06;
+    i1 %3537 = and i1 %3535, i1 %3536;
+    i32 %3538 = zext i1 %3537 to i32;
+    call (i32) -> void @putint(i32 %3538);
     call (i32) -> void @putch(i32 10);
     ret i32 0;
 }

@@ -529,18 +529,14 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %441 = add i32 %131, i32 1;
     ubr ^while.header5;
   ^while.header6:
-    f32 %442 = phi [^while.body10, f32 0] [^if.then1, f32 %442] [^if.else, f32 %444];
-    f32 %443 = phi [^while.body10, f32 %315] [^if.then1, f32 %444] [^if.else, f32 %443];
-    f32 %444 = phi [^while.body10, f32 %316] [^if.then1, f32 %454] [^if.else, f32 %456];
+    f32 %442 = phi [^while.body10, f32 0] [^if.then, f32 %442] [^if.else, f32 %444];
+    f32 %443 = phi [^while.body10, f32 %315] [^if.then, f32 %444] [^if.else, f32 %443];
+    f32 %444 = phi [^while.body10, f32 %316] [^if.then, f32 %454] [^if.else, f32 %456];
     f32 %445 = fmul f32 %444, f32 %444;
     f32 %446 = fsub f32 %445, f32 %315;
     i1 %447 = fcmp lt f32 %446, f32 0;
-    cbr i1 %447(prob = 0.5), ^if.then, ^b5;
-  ^if.then:
     f32 %448 = fneg f32 %446;
-    ubr ^b5;
-  ^b5:
-    f32 %449 = phi [^while.header6, f32 %446] [^if.then, f32 %448];
+    f32 %449 = select i1 %447 ? f32 %448 : f32 %446;
     i1 %450 = fcmp gt f32 %449, f32 0.001;
     cbr i1 %450(prob = 0.97), ^while.body14, ^while.body13;
   ^while.body13:
@@ -549,8 +545,8 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header4;
   ^while.body14:
     i1 %452 = fcmp gt f32 %445, f32 %315;
-    cbr i1 %452(prob = 0.5), ^if.then1, ^if.else;
-  ^if.then1:
+    cbr i1 %452(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
     f32 %453 = fadd f32 %444, f32 %442;
     f32 %454 = fmul f32 %453, f32 0.5;
     ubr ^while.header6;

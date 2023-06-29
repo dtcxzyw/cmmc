@@ -4,12 +4,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
     i1 %2 = scmp eq i32 %0, i32 %1;
-    cbr i1 %2(prob = 0.5), ^b, ^b1;
-  ^b:
     i1 %3 = scmp neq i32 %0, i32 3;
-    ubr ^b1;
-  ^b1:
-    i1 %4 = phi [^entry, i1 false] [^b, i1 %3];
+    i1 %4 = and i1 %2, i1 %3;
     i32 %5 = zext i1 %4 to i32;
     ret i32 %5;
 }

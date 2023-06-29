@@ -4,77 +4,69 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     ubr ^while.header;
   ^while.header:
-    i32 %0 = phi [^entry, i32 1] [^b5, i32 %29];
-    i32 %1 = phi [^entry, i32 -1] [^b5, i32 %30];
-    i32 %2 = phi [^entry, i32 5] [^b5, i32 %31];
+    i32 %0 = phi [^entry, i32 1] [^b3, i32 %29];
+    i32 %1 = phi [^entry, i32 -1] [^b3, i32 %30];
+    i32 %2 = phi [^entry, i32 5] [^b3, i32 %31];
     i1 %3 = scmp gt i32 %2, i32 -1;
     cbr i1 %3(prob = 0.97), ^entry1, ^b;
   ^entry1:
     i32 %4 = add i32 %1, i32 1;
     i1 %5 = scmp neq i32 %4, i32 0;
-    cbr i1 %5(prob = 0.5), ^entry2, ^b1;
+    i32 %6 = add i32 %1, i32 2;
+    i32 %7 = select i1 %5 ? i32 %6 : i32 %4;
+    i32 %8 = add i32 %7, i32 1;
+    i1 %9 = scmp neq i32 %6, i32 0;
+    i1 %10 = and i1 %5, i1 %9;
+    i32 %11 = select i1 %10 ? i32 %8 : i32 %7;
+    i1 %12 = scmp neq i32 %8, i32 0;
+    i1 %13 = and i1 %10, i1 %12;
+    cbr i1 %13(prob = 0.5), ^if.then, ^entry2;
   ^b:
     call (i32) -> void @putint(i32 %1);
     call (i32) -> void @putch(i32 32);
     call (i32) -> void @putint(i32 %0);
     call (i32) -> void @putch(i32 10);
     ret i32 %1;
-  ^entry2:
-    i32 %6 = add i32 %1, i32 2;
-    i1 %7 = scmp neq i32 %6, i32 0;
-    ubr ^b1;
-  ^b1:
-    i32 %8 = phi [^entry1, i32 %4] [^entry2, i32 %6];
-    i1 %9 = phi [^entry1, i1 false] [^entry2, i1 %7];
-    cbr i1 %9(prob = 0.5), ^entry3, ^b2;
-  ^entry3:
-    i32 %10 = add i32 %8, i32 1;
-    i1 %11 = scmp neq i32 %10, i32 0;
-    ubr ^b2;
-  ^b2:
-    i32 %12 = phi [^b1, i32 %8] [^entry3, i32 %10];
-    i1 %13 = phi [^b1, i1 false] [^entry3, i1 %11];
-    cbr i1 %13(prob = 0.5), ^if.then, ^entry4;
   ^if.then:
-    call (i32) -> void @putint(i32 %12);
+    call (i32) -> void @putint(i32 %11);
     call (i32) -> void @putch(i32 32);
     call (i32) -> void @putint(i32 %0);
     call (i32) -> void @putch(i32 10);
-    ubr ^entry4;
-  ^entry4:
-    i32 %14 = add i32 %12, i32 1;
+    ubr ^entry2;
+  ^entry2:
+    i32 %14 = add i32 %11, i32 1;
     i1 %15 = scmp lt i32 %14, i32 14;
-    cbr i1 %15(prob = 0.5), ^b3, ^entry5;
-  ^b3:
-    i32 %16 = phi [^entry4, i32 %14] [^b4, i32 %27];
-    i1 %17 = phi [^entry4, i1 true] [^b4, i1 %28];
-    cbr i1 %17(prob = 0.5), ^if.then1, ^entry6;
-  ^entry5:
-    i32 %18 = add i32 %12, i32 2;
+    cbr i1 %15(prob = 0.5), ^b1, ^entry3;
+  ^b1:
+    i32 %16 = phi [^entry2, i32 %14] [^b2, i32 %27];
+    i1 %17 = phi [^entry2, i1 true] [^b2, i1 %28];
+    cbr i1 %17(prob = 0.5), ^if.then1, ^entry4;
+  ^entry3:
+    i32 %18 = add i32 %11, i32 2;
     i1 %19 = scmp neq i32 %18, i32 0;
-    cbr i1 %19(prob = 0.5), ^entry7, ^b4;
+    cbr i1 %19(prob = 0.5), ^entry5, ^b2;
   ^if.then1:
     call (i32) -> void @putint(i32 %16);
     call (i32) -> void @putch(i32 10);
     i32 %20 = mul i32 %0, i32 2;
-    ubr ^b5;
-  ^entry6:
+    ubr ^b3;
+  ^entry4:
     i32 %21 = add i32 %16, i32 1;
-    ubr ^b5;
-  ^entry7:
-    i32 %22 = add i32 %12, i32 3;
-    i32 %23 = add i32 %12, i32 4;
+    ubr ^b3;
+  ^entry5:
+    i32 %22 = add i32 %11, i32 3;
+    i32 %23 = add i32 %11, i32 4;
     i32 %24 = sub i32 %22, i32 %23;
     i32 %25 = add i32 %24, i32 1;
     i1 %26 = scmp neq i32 %25, i32 0;
-    ubr ^b4;
-  ^b4:
-    i32 %27 = phi [^entry5, i32 %18] [^entry7, i32 %23];
-    i1 %28 = phi [^entry5, i1 false] [^entry7, i1 %26];
-    ubr ^b3;
-  ^b5:
-    i32 %29 = phi [^if.then1, i32 %20] [^entry6, i32 %0];
-    i32 %30 = phi [^if.then1, i32 %16] [^entry6, i32 %21];
+    ubr ^b2;
+  ^b2:
+    i32 %27 = phi [^entry3, i32 %18] [^entry5, i32 %23];
+    i1 %28 = phi [^entry3, i1 false] [^entry5, i1 %26];
+    ubr ^b1;
+  ^b3:
+    i32 %29 = phi [^if.then1, i32 %20] [^entry4, i32 %0];
+    i32 %30 = phi [^if.then1, i32 %16] [^entry4, i32 %21];
     i32 %31 = add i32 %2, i32 -1;
     ubr ^while.header;
 }

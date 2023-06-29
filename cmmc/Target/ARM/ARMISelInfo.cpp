@@ -1043,8 +1043,10 @@ bool ARMISelInfo::lowerInst(Instruction* inst, LoweringContext& loweringCtx) con
     //     return true;
     // }
     if(inst->getInstID() == InstructionID::UnsignedTrunc) {
-        auto src = loweringCtx.mapOperand(inst->getOperand(0));
         const auto type = inst->getType();
+        if(type->isBoolean())
+            return false;
+        auto src = loweringCtx.mapOperand(inst->getOperand(0));
         const auto dst = loweringCtx.newVReg(type);
         if(dst.type() == OperandType::Int8) {
             loweringCtx.emitInst(MIRInst{ UXTB }.setOperand<0>(dst).setOperand<1>(src));
