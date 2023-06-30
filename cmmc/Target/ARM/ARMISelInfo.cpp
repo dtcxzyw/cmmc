@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/Support/Bits.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmath>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
@@ -22,6 +21,7 @@
 #include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <cstdint>
