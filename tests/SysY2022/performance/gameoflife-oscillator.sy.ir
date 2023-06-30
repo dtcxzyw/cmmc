@@ -22,9 +22,9 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %1(prob = 0.97), ^indirect, ^b;
   ^entry1:
     call (i32) -> void @starttime(i32 95);
-    [500 * [500 * i32]]* %8 = ptrcast [500 * [500 * i32]]* @sheet2 to [500 * [500 * i32]]*;
-    i1 %9 = scmp gt i32 %3, i32 0;
-    cbr i1 %9(prob = 0.97), ^while.body1, ^b1;
+    i1 %8 = scmp gt i32 %3, i32 0;
+    [500 * [500 * i32]]* %9 = ptrcast [500 * [500 * i32]]* @sheet2 to [500 * [500 * i32]]*;
+    cbr i1 %8(prob = 0.97), ^while.body1, ^b1;
   ^indirect:
     [500 * i32]* %10 = getelementptr &([500 * [500 * i32]]* %5)[i64 0][i32 %6];
     ubr ^while.body2;
@@ -36,9 +36,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %13 = phi [^entry1, i32 %3] [^while.body3, i32 %43];
     i32 %14 = phi [^entry1, i32 1] [^while.body3, i32 %20];
     i1 %15 = scmp eq i32 %14, i32 1;
-    [500 * [500 * i32]]* %16 = select i1 %15 ? [500 * [500 * i32]]* %5 : [500 * [500 * i32]]* %8;
+    [500 * [500 * i32]]* %16 = select i1 %15 ? [500 * [500 * i32]]* %5 : [500 * [500 * i32]]* %9;
     [500 * i32]* %17 = getelementptr &([500 * [500 * i32]]* %16)[i64 0][i64 0];
-    [500 * [500 * i32]]* %18 = select i1 %15 ? [500 * [500 * i32]]* %8 : [500 * [500 * i32]]* %5;
+    [500 * [500 * i32]]* %18 = select i1 %15 ? [500 * [500 * i32]]* %9 : [500 * [500 * i32]]* %5;
     [500 * i32]* %19 = getelementptr &([500 * [500 * i32]]* %18)[i64 0][i64 0];
     i32 %20 = select i1 %15 ? i32 2 : i32 1;
     ubr ^while.header1;
@@ -93,7 +93,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header1;
   ^indirect1:
     [500 * i32]* %46 = getelementptr &([500 * [500 * i32]]* %5)[i64 0][i32 %37];
-    [500 * i32]* %47 = getelementptr &([500 * [500 * i32]]* %8)[i64 0][i32 %37];
+    [500 * i32]* %47 = getelementptr &([500 * [500 * i32]]* %9)[i64 0][i32 %37];
     ubr ^while.body7;
   ^while.body6:
     i32 %48 = add i32 %41, i32 -1;

@@ -36,13 +36,13 @@ select_noopt:
 	cmp r1, r2
 	mov r1, #0
 	movwlo r1, #1
-	orr r0, r0, r1
-	movw r1, #:lower16:var32
-	movt r1, #:upper16:var32
-	str r0, [r1, #0]
-	cmp r0, #0
+	orr r1, r0, r1
+	cmp r1, #0
 	mov r0, r4
 	movne r0, r3
+	movw r2, #:lower16:var32
+	movt r2, #:upper16:var32
+	str r1, [r2, #0]
 	pop { r4 }
 	bx lr
 .globl select_or

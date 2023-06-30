@@ -118,20 +118,20 @@ and_after_asr_imm:
 fused_mul_add1:
 	mult $a1, $a2
 	mflo $t0
-	addu $v0, $t0, $a0
+	addu $v0, $a0, $t0
 	jr $ra
 	nop
 .globl fused_mul_add2
 fused_mul_add2:
 	mult $a1, $a2
 	mflo $t0
-	addu $v0, $t0, $a0
+	addu $v0, $a0, $t0
 	jr $ra
 	nop
 .globl fused_mul_add3
 fused_mul_add3:
 	addiu $t0, $a1, 1
-	mult $t0, $a0
+	mult $a0, $t0
 	mflo $v0
 	jr $ra
 	nop

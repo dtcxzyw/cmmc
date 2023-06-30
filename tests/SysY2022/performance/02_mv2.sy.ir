@@ -132,11 +132,11 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %61 with i32 0;
     ubr ^super.header2;
   ^if.else:
-    i32 %62 = load i32* %29;
-    i32* %63 = getelementptr &(i32* %5)[i32 %37];
-    i32 %64 = load i32* %63;
+    i32* %62 = getelementptr &(i32* %5)[i32 %37];
+    i32 %63 = load i32* %29;
+    i32 %64 = load i32* %62;
     i32 %65 = mul i32 %45, i32 %64;
-    i32 %66 = add i32 %65, i32 %62;
+    i32 %66 = add i32 %63, i32 %65;
     store i32* %29 with i32 %66;
     ubr ^b4;
   ^while.body9:
@@ -210,11 +210,11 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %97 with i32 0;
     ubr ^super.header5;
   ^if.else1:
-    i32 %98 = load i32* %56;
-    i32* %99 = getelementptr &(i32* %7)[i32 %78];
-    i32 %100 = load i32* %99;
+    i32* %98 = getelementptr &(i32* %7)[i32 %78];
+    i32 %99 = load i32* %56;
+    i32 %100 = load i32* %98;
     i32 %101 = mul i32 %88, i32 %100;
-    i32 %102 = add i32 %101, i32 %98;
+    i32 %102 = add i32 %99, i32 %101;
     store i32* %56 with i32 %102;
     ubr ^b7;
   ^while.body15:

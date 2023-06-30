@@ -5,7 +5,7 @@
 neg_only_one_truncation:
 	andi a1, a1, 255
 	andi a3, a2, 255
-	addw a1, a3, a1
+	addw a1, a1, a3
 	andi a3, a1, 255
 	slli a3, a3, 24
 	srai a3, a3, 24
@@ -26,7 +26,7 @@ neg_type_mismatch:
 	li a3, 65535
 	and a1, a1, a3
 	and a3, a2, a3
-	addw a1, a3, a1
+	addw a1, a1, a3
 	andi a3, a1, 255
 	slli a3, a3, 24
 	srai a3, a3, 24

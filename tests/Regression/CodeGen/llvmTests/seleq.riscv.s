@@ -82,7 +82,7 @@ pcrel83:
 pcrel84:
 	auipc a2, %pcrel_hi(c)
 	lw a4, %pcrel_lo(pcrel84)(a2)
-	xor a2, a4, a3
+	xor a2, a3, a4
 	sltiu a5, a2, 1
 	mv a2, a1
 	bne a5, zero, label75

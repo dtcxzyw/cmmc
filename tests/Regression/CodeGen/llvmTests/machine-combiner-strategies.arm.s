@@ -15,7 +15,7 @@ test_local_strategy:
 	cmp r1, #0
 	bne label3
 	add r1, r3, r4
-	add r1, r1, r5
+	add r1, r5, r1
 	add r0, r1, r0
 label3:
 	pop { r4, r5 }

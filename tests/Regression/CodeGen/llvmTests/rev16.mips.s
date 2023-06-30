@@ -65,7 +65,7 @@ extra_maskop_uses2:
 	or $t1, $t0, $t2
 	mult $t0, $t2
 	mflo $t0
-	mult $t0, $t1
+	mult $t1, $t0
 	mflo $v0
 	jr $ra
 	nop

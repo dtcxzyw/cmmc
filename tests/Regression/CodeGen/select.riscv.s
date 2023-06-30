@@ -288,7 +288,7 @@ label309:
 .globl select_bitset
 select_bitset:
 	xori a1, a1, 1
-	or a0, a1, a0
+	or a0, a0, a1
 	sltiu a0, a0, 1
 	subw a0, zero, a0
 	and a0, a2, a0

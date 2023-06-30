@@ -43,7 +43,7 @@ z4:
 .fpu vfpv4
 .globl calc_seleq
 calc_seleq:
-	push { r4, r5 }
+	push { r4 }
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	mov r1, r0
@@ -66,15 +66,15 @@ label3:
 	movw r3, #:lower16:z1
 	movt r3, #:upper16:z1
 	str r0, [r3, #0]
-	ldr r2, [r2, #0]
-	ldr r0, [r1, #0]
-	cmp r2, r0
-	movw r1, #:lower16:f
-	movt r1, #:upper16:f
-	movw r2, #:lower16:t
-	movt r2, #:upper16:t
-	mov r3, r2
-	moveq r3, r1
+	ldr r0, [r2, #0]
+	ldr r2, [r1, #0]
+	cmp r0, r2
+	movw r0, #:lower16:f
+	movt r0, #:upper16:f
+	movw r1, #:lower16:t
+	movt r1, #:upper16:t
+	mov r3, r1
+	moveq r3, r0
 	ldr r3, [r3, #0]
 	movw r4, #:lower16:z2
 	movt r4, #:upper16:z2
@@ -82,19 +82,17 @@ label3:
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r1
-	moveq r4, r2
-	ldr r4, [r4, #0]
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
-	cmp r0, r3
-	mov r0, r1
-	moveq r0, r2
+	cmp r2, r3
+	mov r2, r0
+	moveq r2, r1
+	ldr r2, [r2, #0]
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r2, [r3, #0]
+	moveq r0, r1
 	ldr r0, [r0, #0]
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4
 	str r0, [r1, #0]
-	pop { r4, r5 }
+	pop { r4 }
 	bx lr

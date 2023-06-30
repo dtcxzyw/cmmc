@@ -21,10 +21,10 @@ select_noopt:
 	sltu $t0, $a0, $a1
 	sltu $t1, $a1, $a2
 	or $t0, $t0, $t1
+	sltu $t1, $zero, $t0
+	movn $v0, $a3, $t1
 	lui $t1, %hi(var32)
 	sw $t0, %lo(var32)($t1)
-	sltu $t0, $zero, $t0
-	movn $v0, $a3, $t0
 	jr $ra
 	nop
 .globl select_or

@@ -60,7 +60,7 @@ extra_maskop_uses2:
 	and a0, a0, a2
 	or a2, a1, a0
 	mulw a0, a1, a0
-	mulw a0, a0, a2
+	mulw a0, a2, a0
 	ret
 .globl f2
 f2:

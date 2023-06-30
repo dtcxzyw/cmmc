@@ -38,7 +38,7 @@ label2:
 	add r3, r3, #64
 	str r3, [r2, r1, lsl #2]
 	add r1, r1, #1
-	cmp r1, r0
+	cmp r0, r1
 	bne label2
 label4:
 	bx lr

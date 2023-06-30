@@ -57,7 +57,7 @@ calc_seleq:
 	sw $t2, %lo(z2)($t4)
 	lui $t2, %hi(c)
 	lw $t2, %lo(c)($t2)
-	xor $t2, $t2, $t3
+	xor $t2, $t3, $t2
 	sltiu $t2, $t2, 1
 	movn $t0, $t1, $t2
 	lui $t1, %hi(z3)
@@ -293,7 +293,7 @@ calc_selne:
 	sw $t2, %lo(z2)($t4)
 	lui $t2, %hi(c)
 	lw $t2, %lo(c)($t2)
-	xor $t2, $t2, $t3
+	xor $t2, $t3, $t2
 	sltu $t2, $zero, $t2
 	movn $t0, $t1, $t2
 	lui $t1, %hi(z3)

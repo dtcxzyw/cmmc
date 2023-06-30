@@ -43,6 +43,6 @@ label3:
 	movweq r2, #1
 	add r1, r1, r1, lsr #31
 	asr r1, r1, #1
-	add r1, r1, r2
+	add r1, r2, r1
 	str r1, [r0, #0]
 	bx lr

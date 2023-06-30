@@ -17,7 +17,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %8(prob = 0.9), ^while.body, ^entry1;
   ^entry1:
     i1 %9 = scmp eq i32 %0, i32 0;
-    i1 %10 = scmp neq i32 0, i32 %1;
+    i1 %10 = scmp neq i32 %1, i32 0;
     i1 %11 = and i1 %9, i1 %10;
     i32 %12 = zext i1 %11 to i32;
     i1 %13 = scmp neq i32 %2, i32 0;
@@ -45,7 +45,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %31 = load i32* %30;
     i1 %32 = scmp eq i32 %31, i32 0;
     i32 %33 = select i1 %32 ? i32 0 : i32 %29;
-    i1 %34 = scmp neq i32 0, i32 %19;
+    i1 %34 = scmp neq i32 %19, i32 0;
     i32 %35 = select i1 %34 ? i32 %27 : i32 %33;
     i32* %36 = getelementptr &([10 * i32]* %arr)[i64 0][i64 6];
     i32 %37 = load i32* %36;
@@ -79,7 +79,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %61 = sub i32 %60, i32 %0;
     i32 %62 = select i1 %9 ? i32 %60 : i32 %61;
     i32 %63 = mul i32 %50, i32 %62;
-    i1 %64 = scmp neq i32 0, i32 %45;
+    i1 %64 = scmp neq i32 %45, i32 0;
     i32 %65 = select i1 %64 ? i32 %17 : i32 %63;
     i1 %66 = scmp eq i32 %2, i32 0;
     i32 %67 = zext i1 %66 to i32;
@@ -93,13 +93,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b2;
   ^b2:
     i32 %73 = phi [^b1, i32 %1] [^if.then2, i32 %72];
-    i1 %74 = scmp eq i32 %73, i32 0;
-    i32 %75 = add i32 %65, i32 %73;
-    i32 %76 = select i1 %74 ? i32 %65 : i32 %75;
+    i32 %74 = add i32 %65, i32 %73;
+    i1 %75 = scmp eq i32 %73, i32 0;
+    i32 %76 = select i1 %75 ? i32 %65 : i32 %74;
     i32 %77 = add i32 %76, i32 1;
-    i1 %78 = scmp eq i32 %19, i32 0;
-    i32 %79 = sub i32 %17, i32 %19;
-    i32 %80 = select i1 %78 ? i32 %17 : i32 %79;
+    i32 %78 = sub i32 %17, i32 %19;
+    i1 %79 = scmp eq i32 %19, i32 0;
+    i32 %80 = select i1 %79 ? i32 %17 : i32 %78;
     i32 %81 = mul i32 %77, i32 %80;
     cbr i1 %25(prob = 0.5), ^if.then3, ^b3;
   ^if.then3:
@@ -107,9 +107,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b3;
   ^b3:
     i32 %83 = phi [^b2, i32 %81] [^if.then3, i32 %82];
-    i1 %84 = scmp eq i32 0, i32 %31;
-    i32 %85 = sub i32 %29, i32 %31;
-    i32 %86 = select i1 %84 ? i32 %29 : i32 %85;
+    i32 %84 = sub i32 %29, i32 %31;
+    i1 %85 = scmp eq i32 %31, i32 0;
+    i32 %86 = select i1 %85 ? i32 %29 : i32 %84;
     i32 %87 = add i32 %86, i32 1;
     i1 %88 = scmp neq i32 %37, i32 0;
     cbr i1 %88(prob = 0.5), ^if.then4, ^b4;
@@ -135,9 +135,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %101 = add i32 %0, i32 %100;
     i32 %102 = select i1 %9 ? i32 %100 : i32 %101;
     i32 %103 = add i32 %102, i32 1;
-    i1 %104 = scmp eq i32 %103, i32 0;
-    i32 %105 = sub i32 %23, i32 %103;
-    i32 %106 = select i1 %104 ? i32 %23 : i32 %105;
+    i32 %104 = sub i32 %23, i32 %103;
+    i1 %105 = scmp eq i32 %103, i32 0;
+    i32 %106 = select i1 %105 ? i32 %23 : i32 %104;
     i32 %107 = mul i32 %83, i32 %106;
     ret i32 %107;
 }

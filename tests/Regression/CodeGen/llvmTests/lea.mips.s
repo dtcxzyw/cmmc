@@ -17,7 +17,7 @@ test2:
 	mult $t0, $t1
 	mflo $t0
 	addiu $t1, $a0, -4
-	addu $v0, $t1, $t0
+	addu $v0, $t0, $t1
 	b label7
 	nop
 label13:

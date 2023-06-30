@@ -34,12 +34,12 @@ test3:
 	bx lr
 .globl test4
 test4:
+	movw r2, #65535
+	and r0, r0, r2
 	movw r2, #0
 	movt r2, #65535
 	and r1, r1, r2
-	movw r2, #65535
-	and r0, r0, r2
-	orr r0, r1, r0
+	orr r0, r0, r1
 	bx lr
 .globl test5
 test5:

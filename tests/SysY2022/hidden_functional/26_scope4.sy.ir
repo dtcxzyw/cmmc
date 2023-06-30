@@ -10,11 +10,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %4 = scmp lt i32 %2, i32 3;
     cbr i1 %4(prob = 0.97), ^entry1, ^b;
   ^entry1:
-    i32 %5 = add i32 %0, i32 1;
-    i32 %6 = mul i32 %5, i32 2;
-    i32 %7 = add i32 %3, i32 10;
-    i32 %8 = add i32 %7, i32 %1;
-    i32 %9 = add i32 %8, i32 %6;
+    i32 %5 = add i32 %3, i32 10;
+    i32 %6 = add i32 %1, i32 %5;
+    i32 %7 = add i32 %0, i32 1;
+    i32 %8 = mul i32 %7, i32 2;
+    i32 %9 = add i32 %6, i32 %8;
     i32 %10 = mul i32 %0, i32 2;
     i32 %11 = add i32 %9, i32 %10;
     i32 %12 = add i32 %0, i32 3;
@@ -27,11 +27,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 %1);
     ret i32 0;
   ^entry2:
-    i32 %17 = add i32 %0, i32 8;
-    i32 %18 = mul i32 %17, i32 2;
-    i32 %19 = add i32 %0, i32 17;
-    i32 %20 = add i32 %19, i32 %14;
-    i32 %21 = add i32 %20, i32 %18;
+    i32 %17 = add i32 %0, i32 17;
+    i32 %18 = add i32 %14, i32 %17;
+    i32 %19 = add i32 %0, i32 8;
+    i32 %20 = mul i32 %19, i32 2;
+    i32 %21 = add i32 %18, i32 %20;
     i32 %22 = add i32 %0, i32 7;
     i32 %23 = mul i32 %22, i32 2;
     i32 %24 = add i32 %21, i32 %23;
@@ -44,8 +44,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry3:
     i32 %30 = add i32 %0, i32 7;
     i32 %31 = mul i32 %30, i32 2;
-    i32 %32 = add i32 %7, i32 %14;
-    i32 %33 = add i32 %32, i32 %31;
+    i32 %32 = add i32 %5, i32 %14;
+    i32 %33 = add i32 %31, i32 %32;
     i32 %34 = mul i32 %15, i32 2;
     i32 %35 = add i32 %33, i32 %34;
     i32 %36 = add i32 %0, i32 9;

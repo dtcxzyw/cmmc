@@ -24,7 +24,7 @@ pcrel24:
 	lw a2, %pcrel_lo(pcrel24)(a2)
 	li a3, 32767
 	or a0, a0, a3
-	xor a0, a0, a2
+	xor a0, a2, a0
 	andi a1, a1, 255
 	or a0, a0, a1
 	andi a0, a0, 255

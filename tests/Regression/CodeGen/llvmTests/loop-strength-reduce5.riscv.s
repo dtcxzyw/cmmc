@@ -28,7 +28,7 @@ pcrel33:
 	auipc a3, %pcrel_hi(Y)
 	sh a2, %pcrel_lo(pcrel33)(a3)
 	addiw a1, a1, 1
-	xor a2, a1, a0
+	xor a2, a0, a1
 	sltu a2, zero, a2
 	bne a2, zero, label2
 label4:

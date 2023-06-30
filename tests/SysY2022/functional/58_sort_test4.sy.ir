@@ -49,7 +49,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %22(prob = 0.89), ^while.body2, ^super.header1;
   ^b:
     i32 %23 = phi [^while.body, i32 %10] [^while.body5, i32 %125];
-    i1 %24 = scmp neq i32 %23, i32 %10;
+    i1 %24 = scmp neq i32 %10, i32 %23;
     cbr i1 %24(prob = 0.5), ^if.then, ^while.header;
   ^b1:
     ret i32 0;

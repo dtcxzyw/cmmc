@@ -5,8 +5,8 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     ubr ^entry;
   ^entry:
     i1 %1 = phi [^0, i1 false] [^b1, i1 true];
-    i32 %2 = phi [^0, i32 undef] [^b1, i32 %16];
-    i32 %3 = phi [^0, i32 %low] [^b1, i32 %15];
+    i32 %2 = phi [^0, i32 undef] [^b1, i32 %15];
+    i32 %3 = phi [^0, i32 %low] [^b1, i32 %16];
     i1 %4 = scmp lt i32 %3, i32 %high;
     cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
@@ -27,8 +27,8 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     store i32* %12 with i32 %6;
     i32 %13 = add i32 %9, i32 -1;
     i32 %14 = call (i32*, i32, i32) -> i32 @QuickSort(i32* %arr, i32 %3, i32 %13);
-    i32 %15 = add i32 %9, i32 1;
-    i32 %16 = select i1 %1 ? i32 %2 : i32 0;
+    i32 %15 = select i1 %1 ? i32 %2 : i32 0;
+    i32 %16 = add i32 %9, i32 1;
     ubr ^entry;
   ^while.header1:
     i32 %17 = phi [^while.header, i32 %10] [^while.body, i32 %23];

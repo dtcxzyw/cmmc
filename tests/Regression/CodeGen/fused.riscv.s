@@ -104,17 +104,17 @@ and_after_asr_imm:
 .globl fused_mul_add1
 fused_mul_add1:
 	mulw a1, a1, a2
-	addw a0, a1, a0
+	addw a0, a0, a1
 	ret
 .globl fused_mul_add2
 fused_mul_add2:
 	mulw a1, a1, a2
-	addw a0, a1, a0
+	addw a0, a0, a1
 	ret
 .globl fused_mul_add3
 fused_mul_add3:
 	addiw a1, a1, 1
-	mulw a0, a1, a0
+	mulw a0, a0, a1
 	ret
 .globl fused_mul_sub
 fused_mul_sub:

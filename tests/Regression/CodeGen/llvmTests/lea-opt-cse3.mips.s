@@ -2,8 +2,8 @@
 .text
 .globl foo
 foo:
-	sll $t1, $a1, 1
 	addiu $t0, $a0, 4
+	sll $t1, $a1, 1
 	addu $t1, $t0, $t1
 	sll $t2, $a1, 2
 	addu $t0, $t0, $t2
@@ -13,8 +13,8 @@ foo:
 	nop
 .globl foo1
 foo1:
-	sll $t1, $a1, 2
 	addiu $t0, $a0, 4
+	sll $t1, $a1, 2
 	addu $t1, $t0, $t1
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
@@ -33,7 +33,7 @@ foo1_mult_basic_blocks:
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
-	mult $t1, $t0
+	mult $t0, $t1
 	mflo $v0
 	b label27
 	nop
@@ -53,7 +53,7 @@ foo1_mult_basic_blocks_illegal_scale:
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
-	mult $t1, $t0
+	mult $t0, $t1
 	mflo $v0
 	b label47
 	nop

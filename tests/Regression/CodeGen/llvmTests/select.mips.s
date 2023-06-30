@@ -2,16 +2,16 @@
 .text
 .globl select_add_1
 select_add_1:
-	sltu $t0, $zero, $a0
-	addu $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	addu $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_add_2
 select_add_2:
-	sltu $t0, $zero, $a0
 	addu $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
@@ -24,16 +24,16 @@ select_add_3:
 	nop
 .globl select_and_1
 select_and_1:
-	sltu $t0, $zero, $a0
-	and $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	and $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_and_2
 select_and_2:
-	sltu $t0, $zero, $a0
 	and $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
@@ -46,16 +46,16 @@ select_and_3:
 	nop
 .globl select_ashr_1
 select_ashr_1:
-	sltu $t0, $zero, $a0
-	srlv $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	srlv $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_ashr_2
 select_ashr_2:
-	sltu $t0, $zero, $a0
 	srlv $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
@@ -69,16 +69,16 @@ select_ashr_3:
 	nop
 .globl select_lshr_1
 select_lshr_1:
-	sltu $t0, $zero, $a0
-	srlv $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	srlv $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_lshr_2
 select_lshr_2:
-	sltu $t0, $zero, $a0
 	srlv $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
@@ -168,16 +168,16 @@ select_or_b:
 	nop
 .globl select_shl_1
 select_shl_1:
-	sltu $t0, $zero, $a0
-	sllv $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	sllv $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_shl_2
 select_shl_2:
-	sltu $t0, $zero, $a0
 	sllv $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop
@@ -190,16 +190,16 @@ select_shl_3:
 	nop
 .globl select_sub_1
 select_sub_1:
-	sltu $t0, $zero, $a0
-	subu $t1, $a1, $a2
-	movn $a2, $t1, $t0
+	subu $t0, $a1, $a2
+	sltu $t1, $zero, $a0
+	movn $a2, $t0, $t1
 	move $v0, $a2
 	jr $ra
 	nop
 .globl select_sub_2
 select_sub_2:
-	sltu $t0, $zero, $a0
 	subu $v0, $a1, $a2
+	sltu $t0, $zero, $a0
 	movn $v0, $a1, $t0
 	jr $ra
 	nop

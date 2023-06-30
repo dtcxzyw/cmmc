@@ -77,7 +77,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %24 = ucmp lt i32 %23, i32 10;
     i32 %25 = mul i32 %20, i32 10;
     i32 %26 = add i32 %25, i32 -48;
-    i32 %27 = add i32 %26, i32 %21;
+    i32 %27 = add i32 %21, i32 %26;
     cbr i1 %24(prob = 0.97), ^while.body1, ^b;
   ^b:
     i32 %28 = phi [^indirect, i32 0] [^while.body1, i32 %27];
@@ -85,9 +85,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %30 = scmp lt i32 %29, i32 48;
     i1 %31 = scmp gt i32 %29, i32 57;
     i1 %32 = or i1 %30, i1 %31;
-    i32 %33 = neg i32 %28;
-    i1 %34 = scmp neq i32 %17, i32 0;
-    i32 %35 = select i1 %34 ? i32 %33 : i32 %28;
+    i1 %33 = scmp neq i32 %17, i32 0;
+    i32 %34 = neg i32 %28;
+    i32 %35 = select i1 %33 ? i32 %34 : i32 %28;
     i1 %36 = scmp gt i32 %35, i32 0;
     cbr i1 %32(prob = 0.97), ^while.body2, ^indirect1;
   ^while.body2:
@@ -108,9 +108,9 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %48(prob = 0.97), ^while.body3, ^b1;
   ^b1:
     i32 %49 = phi [^indirect1, i32 0] [^while.body3, i32 %60];
-    i32 %50 = neg i32 %49;
-    i1 %51 = scmp neq i32 %46, i32 0;
-    i32 %52 = select i1 %51 ? i32 %50 : i32 %49;
+    i1 %50 = scmp neq i32 %46, i32 0;
+    i32 %51 = neg i32 %49;
+    i32 %52 = select i1 %50 ? i32 %51 : i32 %49;
     ubr ^while.body4;
   ^while.body3:
     i32 %53 = phi [^indirect1, i32 0] [^while.body3, i32 %60];
@@ -120,7 +120,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %57 = ucmp lt i32 %56, i32 10;
     i32 %58 = mul i32 %53, i32 10;
     i32 %59 = add i32 %58, i32 -48;
-    i32 %60 = add i32 %59, i32 %54;
+    i32 %60 = add i32 %54, i32 %59;
     cbr i1 %57(prob = 0.97), ^while.body3, ^b1;
   ^while.body4:
     i32 %61 = phi [^b1, i32 0] [^while.body4, i32 %78];
@@ -262,7 +262,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %142 = ucmp lt i32 %141, i32 10;
     i32 %143 = mul i32 %138, i32 10;
     i32 %144 = add i32 %143, i32 -48;
-    i32 %145 = add i32 %144, i32 %139;
+    i32 %145 = add i32 %139, i32 %144;
     cbr i1 %142(prob = 0.97), ^while.body10, ^b4;
   ^b4:
     i32 %146 = phi [^indirect2, i32 0] [^while.body10, i32 %145];
@@ -270,9 +270,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %148 = scmp lt i32 %147, i32 48;
     i1 %149 = scmp gt i32 %147, i32 57;
     i1 %150 = or i1 %148, i1 %149;
-    i32 %151 = neg i32 %146;
-    i1 %152 = scmp neq i32 %123, i32 0;
-    i32 %153 = select i1 %152 ? i32 %151 : i32 %146;
+    i1 %151 = scmp neq i32 %123, i32 0;
+    i32 %152 = neg i32 %146;
+    i32 %153 = select i1 %151 ? i32 %152 : i32 %146;
     cbr i1 %150(prob = 0.97), ^while.body12, ^indirect4;
   ^while.body11:
     i32 %154 = phi [^indirect3, i32 0] [^while.body11, i32 %161];
@@ -282,7 +282,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %158 = ucmp lt i32 %157, i32 10;
     i32 %159 = mul i32 %154, i32 10;
     i32 %160 = add i32 %159, i32 -48;
-    i32 %161 = add i32 %160, i32 %155;
+    i32 %161 = add i32 %155, i32 %160;
     cbr i1 %158(prob = 0.97), ^while.body11, ^b5;
   ^b5:
     i32 %162 = phi [^indirect3, i32 0] [^while.body11, i32 %161];
@@ -290,9 +290,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %164 = scmp lt i32 %163, i32 48;
     i1 %165 = scmp gt i32 %163, i32 57;
     i1 %166 = or i1 %164, i1 %165;
-    i32 %167 = neg i32 %162;
-    i1 %168 = scmp neq i32 %135, i32 0;
-    i32 %169 = select i1 %168 ? i32 %167 : i32 %162;
+    i1 %167 = scmp neq i32 %135, i32 0;
+    i32 %168 = neg i32 %162;
+    i32 %169 = select i1 %167 ? i32 %168 : i32 %162;
     cbr i1 %166(prob = 0.97), ^while.body13, ^indirect5;
   ^while.body12:
     i32 %170 = phi [^b4, i32 %147] [^while.body12, i32 %172];
@@ -334,35 +334,35 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %198 = ucmp lt i32 %197, i32 10;
     i32 %199 = mul i32 %194, i32 10;
     i32 %200 = add i32 %199, i32 -48;
-    i32 %201 = add i32 %200, i32 %195;
+    i32 %201 = add i32 %195, i32 %200;
     cbr i1 %198(prob = 0.97), ^while.body14, ^b7;
   ^b6:
     i32 %202 = phi [^indirect5, i32 0] [^while.body15, i32 %227];
-    i32 %203 = neg i32 %202;
-    i1 %204 = scmp neq i32 %191, i32 0;
-    i32 %205 = select i1 %204 ? i32 %203 : i32 %202;
+    i1 %203 = scmp neq i32 %191, i32 0;
+    i32 %204 = neg i32 %202;
+    i32 %205 = select i1 %203 ? i32 %204 : i32 %202;
     i32* %206 = getelementptr &([5005 * i32]* %5)[i64 0][i32 %94];
     store i32* %206 with i32 %205;
-    i32* %207 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %205];
-    i32* %208 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %169];
-    i32 %209 = load i32* %208;
-    i32* %210 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %94];
-    store i32* %210 with i32 %209;
-    store i32* %208 with i32 %94;
+    i32* %207 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %169];
+    i32 %208 = load i32* %207;
+    i32* %209 = getelementptr &([5005 * i32]* %6)[i64 0][i32 %94];
+    store i32* %209 with i32 %208;
+    i32* %210 = getelementptr &([1005 * i32]* %7)[i64 0][i32 %205];
+    store i32* %207 with i32 %94;
     i32* %211 = getelementptr &(i32* %206)[i64 1];
     store i32* %211 with i32 %169;
-    i32 %212 = load i32* %207;
-    i32* %213 = getelementptr &(i32* %210)[i64 1];
+    i32 %212 = load i32* %210;
+    i32* %213 = getelementptr &(i32* %209)[i64 1];
     store i32* %213 with i32 %212;
     i32 %214 = add i32 %94, i32 1;
-    store i32* %207 with i32 %214;
+    store i32* %210 with i32 %214;
     i32 %215 = add i32 %94, i32 2;
     ubr ^b8;
   ^b7:
     i32 %216 = phi [^indirect4, i32 0] [^while.body14, i32 %201];
-    i32 %217 = neg i32 %216;
-    i1 %218 = scmp neq i32 %179, i32 0;
-    i32 %219 = select i1 %218 ? i32 %217 : i32 %216;
+    i1 %217 = scmp neq i32 %179, i32 0;
+    i32 %218 = neg i32 %216;
+    i32 %219 = select i1 %217 ? i32 %218 : i32 %216;
     cbr i1 %36(prob = 0.97), ^while.body16, ^if.then;
   ^while.body15:
     i32 %220 = phi [^indirect5, i32 0] [^while.body15, i32 %227];
@@ -372,7 +372,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %224 = ucmp lt i32 %223, i32 10;
     i32 %225 = mul i32 %220, i32 10;
     i32 %226 = add i32 %225, i32 -48;
-    i32 %227 = add i32 %226, i32 %221;
+    i32 %227 = add i32 %221, i32 %226;
     cbr i1 %224(prob = 0.97), ^while.body15, ^b6;
   ^if.then:
     i32 %228 = call (i32, i32) -> i32 @same(i32 %153, i32 %219);

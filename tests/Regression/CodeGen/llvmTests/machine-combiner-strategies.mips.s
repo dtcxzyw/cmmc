@@ -11,7 +11,7 @@ test_local_strategy:
 	bne $t0, $zero, label3
 	nop
 	addu $t0, $a3, $t1
-	addu $t0, $t0, $t2
+	addu $t0, $t2, $t0
 	addu $v0, $t0, $v0
 label3:
 	jr $ra

@@ -63,7 +63,7 @@ extra_maskop_uses2:
 	and r0, r2, r0, lsr #8
 	orr r2, r1, r0
 	mul r0, r1, r0
-	mul r0, r0, r2
+	mul r0, r2, r0
 	bx lr
 .globl f2
 f2:

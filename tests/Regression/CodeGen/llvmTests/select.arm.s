@@ -6,15 +6,16 @@
 .fpu vfpv4
 .globl select_add_1
 select_add_1:
-	cmp r0, #0
 	add r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_add_2
 select_add_2:
+	add r2, r1, r2
 	cmp r0, #0
-	add r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_add_3
@@ -25,15 +26,16 @@ select_add_3:
 	bx lr
 .globl select_and_1
 select_and_1:
-	cmp r0, #0
 	and r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_and_2
 select_and_2:
+	and r2, r1, r2
 	cmp r0, #0
-	and r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_and_3
@@ -44,15 +46,16 @@ select_and_3:
 	bx lr
 .globl select_ashr_1
 select_ashr_1:
-	cmp r0, #0
 	lsr r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_ashr_2
 select_ashr_2:
+	lsr r2, r1, r2
 	cmp r0, #0
-	lsr r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_ashr_3
@@ -64,15 +67,16 @@ select_ashr_3:
 	bx lr
 .globl select_lshr_1
 select_lshr_1:
-	cmp r0, #0
 	lsr r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_lshr_2
 select_lshr_2:
+	lsr r2, r1, r2
 	cmp r0, #0
-	lsr r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_lshr_3
@@ -148,15 +152,16 @@ select_or_b:
 	bx lr
 .globl select_shl_1
 select_shl_1:
-	cmp r0, #0
 	lsl r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_shl_2
 select_shl_2:
+	lsl r2, r1, r2
 	cmp r0, #0
-	lsl r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_shl_3
@@ -169,15 +174,16 @@ select_shl_3:
 	bx lr
 .globl select_sub_1
 select_sub_1:
-	cmp r0, #0
 	sub r1, r1, r2
+	cmp r0, #0
 	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_sub_2
 select_sub_2:
+	sub r2, r1, r2
 	cmp r0, #0
-	sub r0, r1, r2
+	mov r0, r2
 	movne r0, r1
 	bx lr
 .globl select_sub_3

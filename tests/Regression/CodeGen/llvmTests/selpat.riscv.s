@@ -66,7 +66,7 @@ pcrel57:
 pcrel58:
 	auipc a2, %pcrel_hi(c)
 	lw a2, %pcrel_lo(pcrel58)(a2)
-	xor a2, a2, a3
+	xor a2, a3, a2
 	sltiu a2, a2, 1
 	bne a2, zero, label50
 	mv a1, a0
@@ -382,7 +382,7 @@ pcrel511:
 pcrel512:
 	auipc a2, %pcrel_hi(c)
 	lw a2, %pcrel_lo(pcrel512)(a2)
-	xor a2, a2, a3
+	xor a2, a3, a2
 	sltu a2, zero, a2
 	bne a2, zero, label504
 	mv a1, a0

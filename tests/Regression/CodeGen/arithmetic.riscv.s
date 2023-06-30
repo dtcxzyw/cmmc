@@ -265,7 +265,7 @@ pcrel210:
 .globl and_trunc
 and_trunc:
 	andi a0, a0, 1
-	and a0, a0, a1
+	and a0, a1, a0
 	ret
 .globl ucmp1
 ucmp1:

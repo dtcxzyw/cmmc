@@ -2,7 +2,7 @@
 .text
 .globl f
 f:
-	mult $a1, $a0
+	mult $a0, $a1
 	mflo $t0
 	srl $t1, $t0, 2
 	andi $t1, $t1, 15

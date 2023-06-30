@@ -22,15 +22,14 @@ select_noopt:
 	sltu a1, a1, a2
 	or a0, a0, a1
 	li a1, 4294967295
-	and a0, a0, a1
-pcrel35:
-	auipc a1, %pcrel_hi(var32)
-	sw a0, %pcrel_lo(pcrel35)(a1)
-	sltu a1, zero, a0
+	and a1, a0, a1
+	sltu a2, zero, a1
 	mv a0, a3
-	bne a1, zero, label34
+	bne a2, zero, label34
 	mv a0, a4
 label34:
+	auipc a2, %pcrel_hi(var32)
+	sw a1, %pcrel_lo(label34)(a2)
 	ret
 .globl select_or
 select_or:
@@ -39,7 +38,7 @@ select_or:
 	or a0, a0, a1
 	sltu a1, zero, a0
 	mv a0, a4
-	bne a1, zero, label51
+	bne a1, zero, label50
 	mv a0, a5
-label51:
+label50:
 	ret

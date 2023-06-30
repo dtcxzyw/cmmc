@@ -33,7 +33,7 @@ label2:
 	movt r3, #:upper16:Y
 	strh r2, [r3, #0]
 	add r1, r1, #1
-	cmp r1, r0
+	cmp r0, r1
 	bne label2
 label4:
 	bx lr

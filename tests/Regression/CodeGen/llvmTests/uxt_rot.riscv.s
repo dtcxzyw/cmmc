@@ -12,37 +12,37 @@ test10:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test11
 test11:
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test12
 test12:
 	srliw a0, a0, 8
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test13
 test13:
 	srliw a0, a0, 16
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test14
 test14:
 	li a2, 65535
 	and a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test15
 test15:
 	srliw a0, a0, 8
 	li a2, 65535
 	and a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test16
 test16:
@@ -51,12 +51,12 @@ test16:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test2
 test2:
 	andi a1, a1, 255
-	addw a0, a1, a0
+	addw a0, a0, a1
 	ret
 .globl test3
 test3:
@@ -82,7 +82,7 @@ test5:
 test6:
 	li a2, 65535
 	and a1, a1, a2
-	addw a0, a1, a0
+	addw a0, a0, a1
 	ret
 .globl test7
 test7:
@@ -90,7 +90,7 @@ test7:
 	slliw a0, a0, 24
 	or a0, a2, a0
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test8
 test8:
@@ -98,7 +98,7 @@ test8:
 	slliw a0, a0, 16
 	or a0, a2, a0
 	andi a0, a0, 255
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test9
 test9:
@@ -107,5 +107,5 @@ test9:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret

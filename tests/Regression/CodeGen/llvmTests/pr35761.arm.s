@@ -27,7 +27,7 @@ PR35761:
 	ldr r2, [r2, #0]
 	movw r3, #32767
 	orr r0, r0, r3
-	eor r0, r0, r2
+	eor r0, r2, r0
 	ldrb r1, [r1, #0]
 	orr r0, r0, r1
 	and r0, r0, #255

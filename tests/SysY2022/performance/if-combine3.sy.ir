@@ -286,10 +286,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.body2:
     i32* %160 = getelementptr &([100 * i32]* %s)[i64 0][i32 %158];
     i32 %161 = load i32* %160;
-    i32* %162 = getelementptr &(i32* %160)[i64 1];
-    i32 %163 = load i32* %162;
-    i32 %164 = add i32 %157, i32 %161;
-    i32 %165 = add i32 %164, i32 %163;
+    i32 %162 = add i32 %157, i32 %161;
+    i32* %163 = getelementptr &(i32* %160)[i64 1];
+    i32 %164 = load i32* %163;
+    i32 %165 = add i32 %162, i32 %164;
     i32* %166 = getelementptr &(i32* %160)[i64 2];
     i32 %167 = load i32* %166;
     i32 %168 = add i32 %165, i32 %167;

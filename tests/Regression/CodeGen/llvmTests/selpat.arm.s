@@ -68,7 +68,7 @@ calc_seleq:
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
-	cmp r3, r0
+	cmp r0, r3
 	mov r0, r1
 	moveq r0, r2
 	movw r1, #:lower16:z3
@@ -363,7 +363,7 @@ calc_selne:
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
-	cmp r3, r0
+	cmp r0, r3
 	mov r0, r1
 	movne r0, r2
 	movw r1, #:lower16:z3

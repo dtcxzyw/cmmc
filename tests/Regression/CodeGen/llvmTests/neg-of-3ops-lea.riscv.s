@@ -22,6 +22,6 @@ t2:
 .globl t3
 t3:
 	addiw a0, a0, -32
-	addw a0, a0, a1
+	addw a0, a1, a0
 	subw a0, zero, a0
 	ret

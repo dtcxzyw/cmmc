@@ -36,26 +36,26 @@ unfold2:
 unfold3:
 	lsl r0, r0, #4
 	orr r0, r0, #1044480
-	and r0, r0, r1
+	and r0, r1, r0
 	bx lr
 .globl unfold4
 unfold4:
 	movw r2, #0
 	movt r2, #510
 	orr r0, r2, r0, lsl #5
-	eor r0, r0, r1
+	eor r0, r1, r0
 	bx lr
 .globl unfold5
 unfold5:
 	lsl r0, r0, #6
 	add r0, r0, #31744
-	orr r0, r0, r1
+	orr r0, r1, r0
 	bx lr
 .globl unfold6
 unfold6:
 	lsl r0, r0, #8
 	add r0, r0, #2031616
-	and r0, r0, r1
+	and r0, r1, r0
 	bx lr
 .globl unfold7
 unfold7:
@@ -67,7 +67,7 @@ unfold7:
 unfold8:
 	lsl r0, r0, #9
 	add r0, r0, #65011712
-	eor r0, r0, r1
+	eor r0, r1, r0
 	bx lr
 .globl unfold9
 unfold9:

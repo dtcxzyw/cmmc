@@ -8,7 +8,7 @@
 neg_only_one_truncation:
 	uxtb r1, r1
 	and r3, r2, #255
-	add r1, r3, r1
+	add r1, r1, r3
 	uxtb r3, r1
 	sxtb r3, r3
 	add r0, r0, r2
@@ -28,7 +28,7 @@ neg_type_mismatch:
 	uxth r1, r1
 	movw r3, #65535
 	and r3, r2, r3
-	add r1, r3, r1
+	add r1, r1, r3
 	uxtb r3, r1
 	sxtb r3, r3
 	add r0, r0, r2

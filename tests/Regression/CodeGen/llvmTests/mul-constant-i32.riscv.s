@@ -5,7 +5,7 @@
 mul_neg_fold:
 	li a2, -9
 	mulw a0, a0, a2
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl test_mul_by_1
 test_mul_by_1:

@@ -21,7 +21,7 @@ label16:
 	cmp r2, r3
 	ble label11
 	sub r2, r2, r0
-	cmp r2, r0
+	cmp r0, r2
 	bne label10
 	b label44
 label2:
@@ -36,7 +36,7 @@ label10:
 	cmp r2, r3
 	ble label11
 	sub r2, r2, r0
-	cmp r2, r0
+	cmp r0, r2
 	bne label10
 	b label44
 label11:
@@ -53,6 +53,6 @@ label36:
 	cmp r2, r0
 	ble label11
 	sub r2, r2, r0
-	cmp r2, r0
+	cmp r0, r2
 	bne label10
 	b label44

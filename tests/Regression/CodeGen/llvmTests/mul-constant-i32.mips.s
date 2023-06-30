@@ -5,7 +5,7 @@ mul_neg_fold:
 	li $t0, -9
 	mult $a0, $t0
 	mflo $t0
-	addu $v0, $t0, $a1
+	addu $v0, $a1, $t0
 	jr $ra
 	nop
 .globl test_mul_by_1

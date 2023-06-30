@@ -15,6 +15,6 @@ test2:
 	li a2, -4
 	mulw a1, a1, a2
 	addiw a0, a0, -4
-	addw a0, a0, a1
+	addw a0, a1, a0
 label7:
 	ret

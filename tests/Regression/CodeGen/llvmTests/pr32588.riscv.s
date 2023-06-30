@@ -38,7 +38,7 @@ label3:
 	srliw a4, a1, 31
 	add a1, a1, a4
 	sraiw a1, a1, 1
-	addw a1, a1, a3
+	addw a1, a3, a1
 	and a1, a1, a2
 	sw a1, 0(a0)
 	ret

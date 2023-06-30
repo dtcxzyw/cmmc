@@ -23,7 +23,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %11 = add i32 %10, i32 -48;
     i1 %12 = ucmp lt i32 %11, i32 10;
     i32 %13 = mul i32 %9, i32 10;
-    i32 %14 = add i32 %13, i32 %8;
+    i32 %14 = add i32 %8, i32 %13;
     cbr i1 %12(prob = 0.5), ^if.then, ^b1;
   ^b1:
     i32 %15 = phi [^while.body1, i32 %1] [^if.then, i32 %14];
@@ -53,7 +53,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %29 = add i32 %28, i32 -48;
     i1 %30 = ucmp lt i32 %29, i32 10;
     i32 %31 = mul i32 %27, i32 10;
-    i32 %32 = add i32 %31, i32 %26;
+    i32 %32 = add i32 %26, i32 %31;
     cbr i1 %30(prob = 0.5), ^if.then1, ^b3;
   ^b3:
     i32 %33 = phi [^while.body4, i32 %19] [^if.then1, i32 %32];
@@ -62,10 +62,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.body5:
     i32 %35 = phi [^b3, i32 0] [^while.body5, i32 %42];
     i32 %36 = phi [^b3, i32 %33] [^while.body5, i32 %40];
-    i32 %37 = srem i32 %36, i32 10;
-    i32 %38 = add i32 %37, i32 48;
-    i32* %39 = getelementptr &([16 * i32]* %b)[i64 0][i32 %35];
-    store i32* %39 with i32 %38;
+    i32* %37 = getelementptr &([16 * i32]* %b)[i64 0][i32 %35];
+    i32 %38 = srem i32 %36, i32 10;
+    i32 %39 = add i32 %38, i32 48;
+    store i32* %37 with i32 %39;
     i32 %40 = sdiv i32 %36, i32 10;
     i1 %41 = scmp gt i32 %40, i32 0;
     i32 %42 = add i32 %35, i32 1;

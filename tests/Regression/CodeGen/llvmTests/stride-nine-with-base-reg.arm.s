@@ -49,7 +49,7 @@ label2:
 	mov r5, #19
 	strb r5, [r4, r3]
 	add r2, r2, #1
-	cmp r2, r0
+	cmp r0, r2
 	bne label2
 label4:
 	pop { r4, r5 }

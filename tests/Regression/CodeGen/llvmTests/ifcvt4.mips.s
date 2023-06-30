@@ -21,7 +21,7 @@ label16:
 	blez $t4, label11
 	nop
 	subu $v0, $v0, $a1
-	xor $t4, $v0, $a1
+	xor $t4, $a1, $v0
 	sltu $t4, $zero, $t4
 	bne $t4, $zero, label10
 	nop
@@ -37,7 +37,7 @@ label10:
 	blez $t4, label11
 	nop
 	subu $v0, $v0, $t0
-	xor $t4, $v0, $t0
+	xor $t4, $t0, $v0
 	sltu $t4, $zero, $t4
 	bne $t4, $zero, label10
 	nop
@@ -63,7 +63,7 @@ label36:
 	blez $t4, label11
 	nop
 	subu $v0, $v0, $t0
-	xor $t4, $v0, $t0
+	xor $t4, $t0, $v0
 	sltu $t4, $zero, $t4
 	bne $t4, $zero, label10
 	nop

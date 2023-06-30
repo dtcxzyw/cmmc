@@ -18,7 +18,7 @@ label16:
 	addw a2, a1, a2
 	ble a2, a3, label11
 	subw a2, a2, a0
-	xor t1, a2, a0
+	xor t1, a0, a2
 	sltu t1, zero, t1
 	bne t1, zero, label10
 	j label48
@@ -33,7 +33,7 @@ label10:
 	addw a2, a1, a2
 	ble a2, a3, label11
 	subw a2, a2, a0
-	xor t1, a2, a0
+	xor t1, a0, a2
 	sltu t1, zero, t1
 	bne t1, zero, label10
 	j label48
@@ -52,7 +52,7 @@ label36:
 	addw a2, a1, a2
 	ble a2, a0, label11
 	subw a2, a2, a0
-	xor t1, a2, a0
+	xor t1, a0, a2
 	sltu t1, zero, t1
 	bne t1, zero, label10
 	j label48

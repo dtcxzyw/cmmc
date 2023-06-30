@@ -6,7 +6,7 @@ internal func @find(i32 %root) -> i32 {
     [1005 * i32]* %0 = ptrcast [1005 * i32]* @parent to [1005 * i32]*;
     i32* %1 = getelementptr &([1005 * i32]* %0)[i64 0][i32 %root];
     i32 %2 = load i32* %1;
-    i1 %3 = scmp eq i32 %2, i32 %root;
+    i1 %3 = scmp eq i32 %root, i32 %2;
     cbr i1 %3(prob = 0.5), ^b, ^if.else;
   ^if.else:
     i32 %4 = call (i32) -> i32 @find(i32 %2);
@@ -82,7 +82,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body3:
     i32* %35 = getelementptr &([1005 * i32]* %3)[i64 0][i32 %25];
     i32 %36 = load i32* %35;
-    i1 %37 = scmp eq i32 %36, i32 %25;
+    i1 %37 = scmp eq i32 %25, i32 %36;
     i32 %38 = add i32 %24, i32 1;
     i32 %39 = select i1 %37 ? i32 %38 : i32 %24;
     i32 %40 = add i32 %25, i32 1;

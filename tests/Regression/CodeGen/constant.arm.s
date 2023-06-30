@@ -13,7 +13,7 @@ x:
 cse_imm:
 	mov r3, #10
 	mul r1, r1, r3
-	eor r1, r1, r2
+	eor r1, r2, r1
 	mla r0, r0, r3, r1
 	bx lr
 .globl cse_global

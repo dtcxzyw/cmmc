@@ -35,7 +35,7 @@ label3:
 	li $t3, 2
 	div $zero, $t1, $t3
 	mflo $t1
-	addu $t1, $t1, $t2
+	addu $t1, $t2, $t1
 	sw $t1, 0($t0)
 	jr $ra
 	nop

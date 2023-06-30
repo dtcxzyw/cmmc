@@ -32,7 +32,7 @@ label19:
 	and a3, a0, a3
 	sh a3, 0(a2)
 	addiw a0, a0, 1
-	xor a3, a0, a1
+	xor a3, a1, a0
 	sltu a3, zero, a3
 	bne a3, zero, label5
 	j label7
@@ -41,7 +41,7 @@ label5:
 	and a3, a0, a3
 	sh a3, 0(a2)
 	addiw a0, a0, 1
-	xor a3, a0, a1
+	xor a3, a1, a0
 	sltu a3, zero, a3
 	bne a3, zero, label5
 	j label7

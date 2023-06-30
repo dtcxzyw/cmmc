@@ -341,7 +341,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %166 = getelementptr &([25 * i32]* %c1)[i64 0][i32 %154];
     i32 %167 = load i32* %166;
     i32 %168 = mul i32 %151, i32 %167;
-    i32 %169 = add i32 %168, i32 %165;
+    i32 %169 = add i32 %165, i32 %168;
     i1 %170 = scmp gt i32 %169, i32 9;
     cbr i1 %170(prob = 0.5), ^if.then1, ^if.else;
   ^b2:

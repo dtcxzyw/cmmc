@@ -33,7 +33,7 @@ label19:
 	andi $t2, $t0, 65535
 	sh $t2, 0($t1)
 	addiu $t0, $t0, 1
-	xor $t2, $t0, $a0
+	xor $t2, $a0, $t0
 	sltu $t2, $zero, $t2
 	bne $t2, $zero, label5
 	nop
@@ -43,7 +43,7 @@ label5:
 	andi $t2, $t0, 65535
 	sh $t2, 0($t1)
 	addiu $t0, $t0, 1
-	xor $t2, $t0, $a0
+	xor $t2, $a0, $t0
 	sltu $t2, $zero, $t2
 	bne $t2, $zero, label5
 	nop

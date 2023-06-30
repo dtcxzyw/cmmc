@@ -3,16 +3,17 @@
 .text
 .globl select_add_1
 select_add_1:
+	addw a1, a1, a2
 	sltu a3, zero, a0
-	addw a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label9
 	mv a0, a2
 label9:
 	ret
 .globl select_add_2
 select_add_2:
-	sltu a3, zero, a0
 	addw a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label18
 	mv a0, a2
@@ -29,16 +30,17 @@ label26:
 	ret
 .globl select_and_1
 select_and_1:
+	and a1, a1, a2
 	sltu a3, zero, a0
-	and a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label35
 	mv a0, a2
 label35:
 	ret
 .globl select_and_2
 select_and_2:
-	sltu a3, zero, a0
 	and a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label44
 	mv a0, a2
@@ -55,16 +57,17 @@ label52:
 	ret
 .globl select_ashr_1
 select_ashr_1:
+	srlw a1, a1, a2
 	sltu a3, zero, a0
-	srlw a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label61
 	mv a0, a2
 label61:
 	ret
 .globl select_ashr_2
 select_ashr_2:
-	sltu a3, zero, a0
 	srlw a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label70
 	mv a0, a2
@@ -82,16 +85,17 @@ label79:
 	ret
 .globl select_lshr_1
 select_lshr_1:
+	srlw a1, a1, a2
 	sltu a3, zero, a0
-	srlw a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label88
 	mv a0, a2
 label88:
 	ret
 .globl select_lshr_2
 select_lshr_2:
-	sltu a3, zero, a0
 	srlw a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label97
 	mv a0, a2
@@ -193,16 +197,17 @@ label194:
 	ret
 .globl select_shl_1
 select_shl_1:
+	sllw a1, a1, a2
 	sltu a3, zero, a0
-	sllw a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label203
 	mv a0, a2
 label203:
 	ret
 .globl select_shl_2
 select_shl_2:
-	sltu a3, zero, a0
 	sllw a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label212
 	mv a0, a2
@@ -216,16 +221,17 @@ select_shl_3:
 	ret
 .globl select_sub_1
 select_sub_1:
+	subw a1, a1, a2
 	sltu a3, zero, a0
-	subw a0, a1, a2
+	mv a0, a1
 	bne a3, zero, label227
 	mv a0, a2
 label227:
 	ret
 .globl select_sub_2
 select_sub_2:
-	sltu a3, zero, a0
 	subw a2, a1, a2
+	sltu a3, zero, a0
 	mv a0, a1
 	bne a3, zero, label236
 	mv a0, a2

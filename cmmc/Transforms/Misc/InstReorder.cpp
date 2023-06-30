@@ -47,6 +47,7 @@ class InstReorder final : public TransformPass<Function> {
         // build DAG
         std::unordered_map<Instruction*, std::unordered_set<Instruction*>> pred;
         std::unordered_map<Instruction*, std::unordered_set<Instruction*>> uses;
+        std::unordered_map<Value*, std::unordered_set<Instruction*>> usesOfOuter;
         std::unordered_map<Instruction*, uint32_t> degrees;
         Instruction* latesetLocked = nullptr;
         auto addDep = [&](Instruction* u, Instruction* v) {
@@ -79,16 +80,31 @@ class InstReorder final : public TransformPass<Function> {
                 if(operand->getBlock() == block) {
                     addDep(&inst, operand->as<Instruction>());
                     uses[operand->as<Instruction>()].insert(&inst);
+                } else if(operand->isInstruction() || operand->isArgument()) {
+                    usesOfOuter[operand].insert(&inst);
                 }
-                // else if(operand->isInstruction() || operand->isArgument()) {
-                //     uses[operand].insert(&inst);
-                // }
             }
         }
 
         // calc weight
-        // TODO: consider (block) arguments?
+
         std::unordered_map<Instruction*, double> weight;
+        for(auto& [val, usesOfVal] : usesOfOuter) {
+            CMMC_UNUSED(val);
+            double w = 1.0;
+            if(val->isArgument()) {
+                uint32_t idx = 1;
+                for(auto arg : block->getFunction()->args()) {
+                    if(arg == val) {
+                        break;
+                    }
+                    ++idx;
+                }
+                w -= 0.1 * static_cast<double>(idx) / static_cast<double>(block->getFunction()->args().size());
+            }
+            for(auto use : usesOfVal)
+                weight[use] += w;
+        }
         for(auto& inst : block->instructions()) {
             auto& w = weight[&inst];
             w += 1.0;
@@ -253,6 +269,61 @@ class InstReorder final : public TransformPass<Function> {
     //     return modified;
     // }
 
+    static bool rearrangeCommutative(Function& func) {
+        std::unordered_map<Value*, uint32_t> order;
+        uint32_t idCnt = 0;
+        for(auto arg : func.args())
+            order[arg] = ++idCnt;
+        for(auto block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                order[&inst] = ++idCnt;
+            }
+        }
+        auto getOrder = [&](Value* val) {
+            if(auto iter = order.find(val); iter != order.end()) {
+                return iter->second;
+            }
+            return std::numeric_limits<uint32_t>::max();
+        };
+        bool modified = false;
+        for(auto block : func.blocks()) {
+            for(auto& inst : block->instructions()) {
+                bool isCommutative = false;
+                switch(inst.getInstID()) {
+                    case InstructionID::Add:
+                    case InstructionID::Mul:
+                    case InstructionID::And:
+                    case InstructionID::Or:
+                    case InstructionID::Xor: {
+                        isCommutative = true;
+                        break;
+                    }
+                    case InstructionID::SCmp:
+                    case InstructionID::UCmp: {
+                        if(auto op = inst.as<CompareInst>()->getOp(); op == CompareOp::Equal || op == CompareOp::NotEqual) {
+                            isCommutative = true;
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+
+                if(isCommutative) {
+                    auto& lhs = inst.mutableOperands()[0];
+                    auto& rhs = inst.mutableOperands()[1];
+                    if(lhs->value == rhs->value)
+                        continue;
+                    if(getOrder(lhs->value) > getOrder(rhs->value)) {
+                        std::swap(lhs, rhs);
+                        modified = true;
+                    }
+                }
+            }
+        }
+        return modified;
+    }
+
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
         bool modified = false;
@@ -261,6 +332,7 @@ public:
         for(auto block : func.blocks()) {
             modified |= reorderBlock(block);
         }
+        modified |= rearrangeCommutative(func);
         // func.dump(std::cerr, Noop{});
 
         return modified;

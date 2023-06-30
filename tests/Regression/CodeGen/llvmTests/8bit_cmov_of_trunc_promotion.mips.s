@@ -4,7 +4,7 @@
 neg_only_one_truncation:
 	andi $t0, $a1, 255
 	andi $t1, $a2, 255
-	addu $t0, $t1, $t0
+	addu $t0, $t0, $t1
 	andi $t1, $t0, 255
 	sll $t1, $t1, 24
 	sra $t2, $t1, 24
@@ -28,7 +28,7 @@ label3:
 neg_type_mismatch:
 	andi $t0, $a1, 65535
 	andi $t1, $a2, 65535
-	addu $t0, $t1, $t0
+	addu $t0, $t0, $t1
 	andi $t1, $t0, 255
 	sll $t1, $t1, 24
 	sra $t2, $t1, 24

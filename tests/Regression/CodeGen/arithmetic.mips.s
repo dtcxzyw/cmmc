@@ -313,7 +313,7 @@ fp_imm1:
 .globl and_trunc
 and_trunc:
 	andi $t0, $a0, 1
-	and $v0, $t0, $a1
+	and $v0, $a1, $t0
 	jr $ra
 	nop
 .globl ucmp1

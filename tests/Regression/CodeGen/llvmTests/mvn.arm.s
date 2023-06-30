@@ -10,8 +10,7 @@ f1:
 	bx lr
 .globl f10
 f10:
-	mvn r1, #1
-	cmp r1, r0
+	cmn r0, #2
 	mov r0, #0
 	movweq r0, #1
 	bx lr

@@ -41,28 +41,28 @@ unfold3:
 	slliw a0, a0, 4
 	li a2, 1044480
 	or a0, a0, a2
-	and a0, a0, a1
+	and a0, a1, a0
 	ret
 .globl unfold4
 unfold4:
 	slliw a0, a0, 5
 	li a2, 33423360
 	or a0, a0, a2
-	xor a0, a0, a1
+	xor a0, a1, a0
 	ret
 .globl unfold5
 unfold5:
 	slliw a0, a0, 6
 	li a2, 31744
 	addw a0, a0, a2
-	or a0, a0, a1
+	or a0, a1, a0
 	ret
 .globl unfold6
 unfold6:
 	slliw a0, a0, 8
 	li a2, 2031616
 	addw a0, a0, a2
-	and a0, a0, a1
+	and a0, a1, a0
 	ret
 .globl unfold7
 unfold7:
@@ -77,7 +77,7 @@ unfold8:
 	slliw a0, a0, 9
 	li a2, 65011712
 	addw a0, a0, a2
-	xor a0, a0, a1
+	xor a0, a1, a0
 	ret
 .globl unfold9
 unfold9:

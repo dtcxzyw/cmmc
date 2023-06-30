@@ -10,5 +10,5 @@ mul1:
 	bx lr
 .globl mul2
 mul2:
-	mul r0, r1, r0
+	mul r0, r0, r1
 	bx lr

@@ -35,13 +35,13 @@ label19:
 	uxth r3, r0
 	strh r3, [r2, #0]
 	add r0, r0, #1
-	cmp r0, r1
+	cmp r1, r0
 	bne label5
 	b label7
 label5:
 	uxth r3, r0
 	strh r3, [r2, #0]
 	add r0, r0, #1
-	cmp r0, r1
+	cmp r1, r0
 	bne label5
 	b label7

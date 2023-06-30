@@ -6,9 +6,9 @@
 .fpu vfpv4
 .globl f1
 f1:
-	add r2, r2, #1
 	udiv r0, r1, r0
-	add r0, r2, r0
+	add r1, r2, #1
+	add r0, r0, r1
 	bx lr
 .globl f2
 f2:
@@ -31,5 +31,5 @@ f4:
 	sub r1, r1, r2
 	udiv r0, r0, r1
 	sub r1, r2, r3
-	mul r0, r1, r0
+	mul r0, r0, r1
 	bx lr

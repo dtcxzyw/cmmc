@@ -142,8 +142,8 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %74 = fsub f32 %73, f32 %68;
     f32 %75 = fadd f32 %74, f32 %17;
     i32 %76 = f2s f32 %75 to i32;
-    i1 %77 = scmp lt i32 %76, i32 0;
-    i1 %78 = scmp ge i32 %76, i32 %7;
+    i1 %77 = scmp ge i32 %76, i32 %7;
+    i1 %78 = scmp lt i32 %76, i32 0;
     i1 %79 = or i1 %77, i1 %78;
     f32 %80 = fmul f32 %72, f32 %54;
     f32 %81 = fadd f32 %80, f32 %67;

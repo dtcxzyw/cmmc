@@ -19,19 +19,19 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^entry1;
   ^entry1:
     i32 %9 = phi [^5, i32 %6] [^b1, i32 %26];
-    i32 %10 = add i32 %9, i32 1;
-    i32 %11 = load i32* %8;
+    i32 %10 = load i32* %8;
+    i32 %11 = add i32 %9, i32 1;
     ubr ^while.header;
   ^while.header:
     i32 %12 = phi [^entry1, i32 %7] [^while.body, i32 %12] [^entry2, i32 %26];
-    i32 %13 = phi [^entry1, i32 %10] [^while.body, i32 %15] [^entry2, i32 %19];
+    i32 %13 = phi [^entry1, i32 %11] [^while.body, i32 %15] [^entry2, i32 %19];
     i1 %14 = scmp lt i32 %12, i32 %13;
     cbr i1 %14(prob = 0.97), ^while.body, ^while.header1;
   ^while.body:
     i32 %15 = add i32 %13, i32 -1;
     i32* %16 = getelementptr &(i32* %1)[i32 %15];
     i32 %17 = load i32* %16;
-    i1 %18 = scmp lt i32 %17, i32 %11;
+    i1 %18 = scmp lt i32 %17, i32 %10;
     cbr i1 %18(prob = 0.5), ^while.header1, ^while.header;
   ^while.header1:
     i32 %19 = phi [^while.header, i32 %13] [^while.body, i32 %15] [^while.body1, i32 %19];
@@ -42,11 +42,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %22 = add i32 %20, i32 1;
     i32* %23 = getelementptr &(i32* %1)[i32 %22];
     i32 %24 = load i32* %23;
-    i1 %25 = scmp ge i32 %24, i32 %11;
+    i1 %25 = scmp ge i32 %24, i32 %10;
     cbr i1 %25(prob = 0.5), ^b, ^while.header1;
   ^b:
     i32 %26 = phi [^while.header1, i32 %20] [^while.body1, i32 %22];
-    i1 %27 = scmp eq i32 %26, i32 %19;
+    i1 %27 = scmp eq i32 %19, i32 %26;
     cbr i1 %27(prob = 0.5), ^b1, ^entry2;
   ^entry2:
     i32* %28 = getelementptr &(i32* %1)[i32 %26];
@@ -57,11 +57,11 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %30 with i32 %29;
     ubr ^while.header;
   ^b1:
-    store i32* %8 with i32 %11;
+    store i32* %8 with i32 %10;
     i32* %32 = getelementptr &(i32* %1)[i32 %26];
     i32 %33 = load i32* %32;
     store i32* %8 with i32 %33;
-    store i32* %32 with i32 %11;
+    store i32* %32 with i32 %10;
     i1 %34 = scmp gt i32 %26, i32 %4;
     cbr i1 %34(prob = 0.5), ^entry1, ^b2;
   ^b2:

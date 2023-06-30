@@ -10,9 +10,9 @@ x:
 cse_imm:
 	li a3, 10
 	mulw a1, a1, a3
-	xor a1, a1, a2
+	xor a1, a2, a1
 	mulw a0, a0, a3
-	addw a0, a0, a1
+	addw a0, a1, a0
 	ret
 .globl cse_global
 cse_global:

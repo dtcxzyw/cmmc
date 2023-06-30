@@ -267,7 +267,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %161 = getelementptr &(i32* %9)[i32 %120];
     i32 %162 = load i32* %161;
     i32 %163 = mul i32 %62, i32 %162;
-    i32 %164 = add i32 %163, i32 %160;
+    i32 %164 = add i32 %160, i32 %163;
     store i32* %159 with i32 %164;
     i32* %165 = getelementptr &(i32* %157)[i64 1];
     i32 %166 = load i32* %165;
@@ -276,7 +276,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %169 = getelementptr &(i32* %161)[i64 1];
     i32 %170 = load i32* %169;
     i32 %171 = mul i32 %62, i32 %170;
-    i32 %172 = add i32 %171, i32 %168;
+    i32 %172 = add i32 %168, i32 %171;
     store i32* %167 with i32 %172;
     i32* %173 = getelementptr &(i32* %157)[i64 2];
     i32 %174 = load i32* %173;
@@ -285,7 +285,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %177 = getelementptr &(i32* %161)[i64 2];
     i32 %178 = load i32* %177;
     i32 %179 = mul i32 %62, i32 %178;
-    i32 %180 = add i32 %179, i32 %176;
+    i32 %180 = add i32 %176, i32 %179;
     store i32* %175 with i32 %180;
     i32* %181 = getelementptr &(i32* %157)[i64 3];
     i32 %182 = load i32* %181;
@@ -294,7 +294,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %185 = getelementptr &(i32* %161)[i64 3];
     i32 %186 = load i32* %185;
     i32 %187 = mul i32 %62, i32 %186;
-    i32 %188 = add i32 %187, i32 %184;
+    i32 %188 = add i32 %184, i32 %187;
     store i32* %183 with i32 %188;
     ubr ^super.header7;
   ^while.body14:
@@ -350,7 +350,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %220 = getelementptr &(i32* %9)[i32 %206];
     i32 %221 = load i32* %220;
     i32 %222 = mul i32 %62, i32 %221;
-    i32 %223 = add i32 %222, i32 %219;
+    i32 %223 = add i32 %219, i32 %222;
     store i32* %218 with i32 %223;
     i32* %224 = getelementptr &(i32* %216)[i64 1];
     i32 %225 = load i32* %224;
@@ -359,7 +359,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %228 = getelementptr &(i32* %220)[i64 1];
     i32 %229 = load i32* %228;
     i32 %230 = mul i32 %62, i32 %229;
-    i32 %231 = add i32 %230, i32 %227;
+    i32 %231 = add i32 %227, i32 %230;
     store i32* %226 with i32 %231;
     i32* %232 = getelementptr &(i32* %216)[i64 2];
     i32 %233 = load i32* %232;
@@ -368,7 +368,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %236 = getelementptr &(i32* %220)[i64 2];
     i32 %237 = load i32* %236;
     i32 %238 = mul i32 %62, i32 %237;
-    i32 %239 = add i32 %238, i32 %235;
+    i32 %239 = add i32 %235, i32 %238;
     store i32* %234 with i32 %239;
     i32* %240 = getelementptr &(i32* %216)[i64 3];
     i32 %241 = load i32* %240;
@@ -377,7 +377,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %244 = getelementptr &(i32* %220)[i64 3];
     i32 %245 = load i32* %244;
     i32 %246 = mul i32 %62, i32 %245;
-    i32 %247 = add i32 %246, i32 %243;
+    i32 %247 = add i32 %243, i32 %246;
     store i32* %242 with i32 %247;
     ubr ^super.header9;
   ^while.body18:
@@ -427,7 +427,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %283 = getelementptr &(i32* %9)[i32 %278];
     i32 %284 = load i32* %283;
     i32 %285 = mul i32 %62, i32 %284;
-    i32 %286 = add i32 %285, i32 %282;
+    i32 %286 = add i32 %282, i32 %285;
     store i32* %281 with i32 %286;
     i32 %287 = add i32 %278, i32 1;
     i1 %288 = scmp lt i32 %287, i32 %63;
@@ -484,7 +484,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %327 = getelementptr &(i32* %9)[i32 %292];
     i32 %328 = load i32* %327;
     i32 %329 = mul i32 %194, i32 %328;
-    i32 %330 = add i32 %329, i32 %326;
+    i32 %330 = add i32 %326, i32 %329;
     store i32* %325 with i32 %330;
     i32* %331 = getelementptr &(i32* %323)[i64 1];
     i32 %332 = load i32* %331;
@@ -493,7 +493,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %335 = getelementptr &(i32* %327)[i64 1];
     i32 %336 = load i32* %335;
     i32 %337 = mul i32 %194, i32 %336;
-    i32 %338 = add i32 %337, i32 %334;
+    i32 %338 = add i32 %334, i32 %337;
     store i32* %333 with i32 %338;
     i32* %339 = getelementptr &(i32* %323)[i64 2];
     i32 %340 = load i32* %339;
@@ -502,7 +502,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %343 = getelementptr &(i32* %327)[i64 2];
     i32 %344 = load i32* %343;
     i32 %345 = mul i32 %194, i32 %344;
-    i32 %346 = add i32 %345, i32 %342;
+    i32 %346 = add i32 %342, i32 %345;
     store i32* %341 with i32 %346;
     i32* %347 = getelementptr &(i32* %323)[i64 3];
     i32 %348 = load i32* %347;
@@ -511,7 +511,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %351 = getelementptr &(i32* %327)[i64 3];
     i32 %352 = load i32* %351;
     i32 %353 = mul i32 %194, i32 %352;
-    i32 %354 = add i32 %353, i32 %350;
+    i32 %354 = add i32 %350, i32 %353;
     store i32* %349 with i32 %354;
     ubr ^super.header12;
   ^while.body22:
@@ -540,7 +540,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %372 = getelementptr &(i32* %9)[i32 %365];
     i32 %373 = load i32* %372;
     i32 %374 = mul i32 %194, i32 %373;
-    i32 %375 = add i32 %374, i32 %371;
+    i32 %375 = add i32 %371, i32 %374;
     store i32* %370 with i32 %375;
     i32* %376 = getelementptr &(i32* %368)[i64 1];
     i32 %377 = load i32* %376;
@@ -549,7 +549,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %380 = getelementptr &(i32* %372)[i64 1];
     i32 %381 = load i32* %380;
     i32 %382 = mul i32 %194, i32 %381;
-    i32 %383 = add i32 %382, i32 %379;
+    i32 %383 = add i32 %379, i32 %382;
     store i32* %378 with i32 %383;
     i32* %384 = getelementptr &(i32* %368)[i64 2];
     i32 %385 = load i32* %384;
@@ -558,7 +558,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %388 = getelementptr &(i32* %372)[i64 2];
     i32 %389 = load i32* %388;
     i32 %390 = mul i32 %194, i32 %389;
-    i32 %391 = add i32 %390, i32 %387;
+    i32 %391 = add i32 %387, i32 %390;
     store i32* %386 with i32 %391;
     i32* %392 = getelementptr &(i32* %368)[i64 3];
     i32 %393 = load i32* %392;
@@ -567,7 +567,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %396 = getelementptr &(i32* %372)[i64 3];
     i32 %397 = load i32* %396;
     i32 %398 = mul i32 %194, i32 %397;
-    i32 %399 = add i32 %398, i32 %395;
+    i32 %399 = add i32 %395, i32 %398;
     store i32* %394 with i32 %399;
     ubr ^super.header13;
   ^indirect5:
@@ -583,7 +583,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %407 = getelementptr &(i32* %9)[i32 %402];
     i32 %408 = load i32* %407;
     i32 %409 = mul i32 %194, i32 %408;
-    i32 %410 = add i32 %409, i32 %406;
+    i32 %410 = add i32 %406, i32 %409;
     store i32* %405 with i32 %410;
     i32 %411 = add i32 %402, i32 1;
     i1 %412 = scmp lt i32 %411, i32 %195;

@@ -14,10 +14,10 @@ cse_imm:
 	li $t0, 10
 	mult $a1, $t0
 	mflo $t1
-	xor $t1, $t1, $a2
+	xor $t1, $a2, $t1
 	mult $a0, $t0
 	mflo $t0
-	addu $v0, $t0, $t1
+	addu $v0, $t1, $t0
 	jr $ra
 	nop
 .globl cse_global

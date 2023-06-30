@@ -49,7 +49,7 @@ label2:
 	li $t2, 19
 	sb $t2, 0($t1)
 	addiu $t0, $t0, 1
-	xor $t1, $t0, $a0
+	xor $t1, $a0, $t0
 	sltu $t1, $zero, $t1
 	bne $t1, $zero, label2
 	nop

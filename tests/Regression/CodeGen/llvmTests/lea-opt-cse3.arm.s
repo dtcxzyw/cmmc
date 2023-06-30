@@ -25,7 +25,7 @@ foo1_mult_basic_blocks:
 	cmp r2, #10
 	beq label36
 	add r0, r0, r1, lsl #3
-	mul r0, r2, r0
+	mul r0, r0, r2
 	b label27
 label36:
 	mov r0, #0
@@ -38,7 +38,7 @@ foo1_mult_basic_blocks_illegal_scale:
 	cmp r2, #10
 	beq label55
 	add r0, r0, r1, lsl #3
-	mul r0, r2, r0
+	mul r0, r0, r2
 	b label46
 label55:
 	mov r0, #0

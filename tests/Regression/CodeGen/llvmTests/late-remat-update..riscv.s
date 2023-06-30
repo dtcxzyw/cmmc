@@ -55,7 +55,7 @@ pcrel54:
 	li a4, 19
 	sb a4, 0(a3)
 	addiw a2, a2, 1
-	xor a3, a2, a0
+	xor a3, a0, a2
 	sltu a3, zero, a3
 	bne a3, zero, label2
 label4:

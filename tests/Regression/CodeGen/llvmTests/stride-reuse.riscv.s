@@ -40,7 +40,7 @@ pcrel40:
 	addiw a3, a3, 64
 	sw a3, 0(a2)
 	addiw a1, a1, 1
-	xor a2, a1, a0
+	xor a2, a0, a1
 	sltu a2, zero, a2
 	bne a2, zero, label2
 label4:

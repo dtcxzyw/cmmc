@@ -44,7 +44,7 @@ pcrel45:
 	li a3, 17
 	sb a3, 0(a2)
 	addiw a1, a1, 1
-	xor a2, a1, a0
+	xor a2, a0, a1
 	sltu a2, zero, a2
 	bne a2, zero, label2
 label4:

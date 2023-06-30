@@ -386,7 +386,7 @@ func @foo83() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
 func @foo84(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 1;
-    i1 %1 = scmp eq i32 %0, i32 %x;
+    i1 %1 = scmp eq i32 %x, i32 %0;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
@@ -494,14 +494,14 @@ func @foo99(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 func @foo100(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %x, i32 1;
-    i32 %1 = and i32 %0, i32 %y;
+    i32 %1 = and i32 %y, i32 %0;
     ret i32 %1;
 }
 func @foo101(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = shl i32 1, i32 %y;
     i32 %1 = add i32 %0, i32 -1;
-    i32 %2 = and i32 %1, i32 %x;
+    i32 %2 = and i32 %x, i32 %1;
     i1 %3 = scmp eq i32 %2, i32 0;
     i32 %4 = zext i1 %3 to i32;
     ret i32 %4;
@@ -668,16 +668,11 @@ func @select_two_no_fold(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryW
 }
 func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 %a;
-    cbr i1 %0(prob = 0.5), ^b1, ^if.else;
-  ^if.else:
-    i1 %1 = scmp eq i32 %x, i32 %b;
-    cbr i1 %1(prob = 0.5), ^b1, ^if.else1;
-  ^b1:
-    i32 %2 = phi [^entry, i32 %b] [^if.else, i32 %c] [^if.else1, i32 %a];
-    ret i32 %2;
-  ^if.else1:
-    ubr ^b1;
+    i1 %0 = scmp eq i32 %x, i32 %b;
+    i32 %1 = select i1 %0 ? i32 %c : i32 %a;
+    i1 %2 = scmp eq i32 %x, i32 %a;
+    i32 %3 = select i1 %2 ? i32 %b : i32 %1;
+    ret i32 %3;
 }
 func @mul_with_constant1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

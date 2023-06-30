@@ -74,7 +74,7 @@ label3:
 	sw $t2, %lo(z2)($t4)
 	lui $t2, %hi(c)
 	lw $t4, %lo(c)($t2)
-	xor $t2, $t4, $t3
+	xor $t2, $t3, $t4
 	sltiu $t5, $t2, 1
 	move $t2, $t0
 	movn $t2, $t1, $t5

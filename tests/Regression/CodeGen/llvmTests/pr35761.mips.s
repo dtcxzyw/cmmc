@@ -20,7 +20,7 @@ PR35761:
 	lui $t1, %hi(y)
 	lw $t1, %lo(y)($t1)
 	ori $t2, $a0, 32767
-	xor $t1, $t2, $t1
+	xor $t1, $t1, $t2
 	andi $t0, $t0, 255
 	or $t0, $t1, $t0
 	andi $t0, $t0, 255

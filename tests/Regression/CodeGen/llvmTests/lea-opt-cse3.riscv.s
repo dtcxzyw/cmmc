@@ -27,7 +27,7 @@ foo1_mult_basic_blocks:
 	sltiu a3, a3, 1
 	bne a3, zero, label38
 	sh3add a0, a1, a0
-	mulw a0, a2, a0
+	mulw a0, a0, a2
 	li a1, 4294967295
 	and a0, a0, a1
 	j label29
@@ -43,7 +43,7 @@ foo1_mult_basic_blocks_illegal_scale:
 	sltiu a3, a3, 1
 	bne a3, zero, label59
 	sh3add a0, a1, a0
-	mulw a0, a2, a0
+	mulw a0, a0, a2
 	li a1, 4294967295
 	and a0, a0, a1
 	j label50
