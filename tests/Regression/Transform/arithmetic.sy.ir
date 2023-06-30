@@ -679,3 +679,118 @@ func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemor
   ^if.else1:
     ubr ^b1;
 }
+func @mul_with_constant1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 100;
+    ret i32 %0;
+}
+func @mul_with_constant2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 1000;
+    ret i32 %0;
+}
+func @mul_with_constant3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 400;
+    ret i32 %0;
+}
+func @mul_with_constant4(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 1000000;
+    ret i32 %0;
+}
+func @mul_with_constant5(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 10;
+    ret i32 %0;
+}
+func @mul_with_constant6(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 3;
+    ret i32 %0;
+}
+func @mul_with_constant7(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 85;
+    ret i32 %0;
+}
+func @mul_with_constant8(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 23;
+    ret i32 %0;
+}
+func @mul_with_constant9(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 -82;
+    ret i32 %0;
+}
+func @mul_with_constant10(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 -103;
+    ret i32 %0;
+}
+func @mul_with_constant11(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 -59;
+    ret i32 %0;
+}
+func @mul_with_constant12(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 17;
+    ret i32 %0;
+}
+func @mul_with_constant13(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 128875;
+    ret i32 %0;
+}
+func @mul_with_constant14(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 19980130;
+    ret i32 %0;
+}
+func @mul_with_constant15(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 19971231;
+    ret i32 %0;
+}
+func @mul_with_constant16(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 8193;
+    ret i32 %0;
+}
+func @mul_with_constant17(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 270369;
+    ret i32 %0;
+}
+func @mul_with_constant18(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 33;
+    ret i32 %0;
+}
+func @mul_with_constant19(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 16777216;
+    ret i32 %0;
+}
+func @mul_with_constant20(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 1073741824;
+    ret i32 %0;
+}
+func @mul_with_constant21(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 60;
+    ret i32 %0;
+}
+func @mul_with_constant22(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 300;
+    ret i32 %0;
+}
+func @mul_with_constant23(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 10000;
+    ret i32 %0;
+}
