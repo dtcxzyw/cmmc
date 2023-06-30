@@ -90,3 +90,47 @@ pcrel96:
 	sh2add a0, a0, a1
 	lw a0, 0(a0)
 	ret
+.globl memset_impl
+memset_impl:
+	sw zero, 0(a0)
+	li a1, 1
+label98:
+	sh2add a2, a1, a0
+	sw zero, 0(a2)
+	sw zero, 4(a2)
+	sw zero, 8(a2)
+	sw zero, 12(a2)
+	sw zero, 16(a2)
+	sw zero, 20(a2)
+	sw zero, 24(a2)
+	sw zero, 28(a2)
+	sw zero, 32(a2)
+	sw zero, 36(a2)
+	sw zero, 40(a2)
+	sw zero, 44(a2)
+	sw zero, 48(a2)
+	sw zero, 52(a2)
+	sw zero, 56(a2)
+	sw zero, 60(a2)
+	addiw a1, a1, 16
+	li a2, 113
+	bge a1, a2, label100
+	j label98
+label100:
+	sh2add a0, a1, a0
+	sw zero, 0(a0)
+	sw zero, 4(a0)
+	sw zero, 8(a0)
+	sw zero, 12(a0)
+	sw zero, 16(a0)
+	sw zero, 20(a0)
+	sw zero, 24(a0)
+	sw zero, 28(a0)
+	sw zero, 32(a0)
+	sw zero, 36(a0)
+	sw zero, 40(a0)
+	sw zero, 44(a0)
+	sw zero, 48(a0)
+	sw zero, 52(a0)
+	sw zero, 56(a0)
+	ret

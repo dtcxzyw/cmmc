@@ -86,3 +86,50 @@ global_addressing_array:
 	movt r1, #:upper16:arr
 	ldr r0, [r1, r0, lsl #2]
 	bx lr
+.globl memset_impl
+memset_impl:
+	mov r1, #0
+	str r1, [r0, #0]
+	mov r1, #1
+label92:
+	add r2, r0, r1, lsl #2
+	mov r3, #0
+	str r3, [r0, r1, lsl #2]
+	str r3, [r2, #4]
+	str r3, [r2, #8]
+	str r3, [r2, #12]
+	str r3, [r2, #16]
+	str r3, [r2, #20]
+	str r3, [r2, #24]
+	str r3, [r2, #28]
+	str r3, [r2, #32]
+	str r3, [r2, #36]
+	str r3, [r2, #40]
+	str r3, [r2, #44]
+	str r3, [r2, #48]
+	str r3, [r2, #52]
+	str r3, [r2, #56]
+	str r3, [r2, #60]
+	add r1, r1, #16
+	cmp r1, #113
+	bge label94
+	b label92
+label94:
+	add r2, r0, r1, lsl #2
+	mov r3, #0
+	str r3, [r0, r1, lsl #2]
+	str r3, [r2, #4]
+	str r3, [r2, #8]
+	str r3, [r2, #12]
+	str r3, [r2, #16]
+	str r3, [r2, #20]
+	str r3, [r2, #24]
+	str r3, [r2, #28]
+	str r3, [r2, #32]
+	str r3, [r2, #36]
+	str r3, [r2, #40]
+	str r3, [r2, #44]
+	str r3, [r2, #48]
+	str r3, [r2, #52]
+	str r3, [r2, #56]
+	bx lr

@@ -42,3 +42,8 @@ int global_addressing_scalar() {
 int global_addressing_array(int x) {
     return arr[x];
 }
+void memset_impl(int x[], int n) {
+    for(int i = 0; i < 128; ++i) {
+        x[i] = 0;
+    }
+}
