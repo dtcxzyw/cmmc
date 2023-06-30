@@ -43,7 +43,15 @@ class ArithmeticReduce final : public TransformPass<Function> {
             MatchContext<Value> matchCtx{ inst };
 
             auto makeIntLike = [](intmax_t val, const Value* like) { return ConstantInteger::get(like->getType(), val); };
-            auto makeNot = [&](Value* val) { return builder.makeOp<BinaryInst>(InstructionID::Xor, val, builder.getTrue()); };
+            auto makeNot = [&](Value* val) {
+                if(val->getType()->isBoolean())
+                    return builder.makeOp<BinaryInst>(InstructionID::Xor, val, builder.getTrue());
+                return builder.makeOp<BinaryInst>(InstructionID::Xor, val, makeIntLike(-1, val));
+            };
+            auto makeNeg = [&](Value* val) {
+                assert(val->getType()->isInteger() && !val->getType()->isBoolean());
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, makeIntLike(0, val), val);
+            };
 
             Value *v1, *v2, *v3, *v4;
             intmax_t i1, i2;
@@ -58,6 +66,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v1;
             if(fsub(any(v1), cfp_(0.0))(matchCtx))
                 return v1;
+            // a - c -> a + (-c)
+            if(sub(any(v1), int_(i2))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(-i2, inst));
             // - (a - b) -> b - a
             if(neg(sub(any(v1), any(v2)))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Sub, v2, v1);
@@ -600,6 +611,87 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(mask, inst));
             }
 
+            // Hacker's Delight 2nd Edition
+            // 2.1 De Morgan's Laws Extended
+            // ~x | ~y -> ~(x & y)
+            if(or_(not_(any(v1)), not_(any(v2)))(matchCtx)) {
+                return makeNot(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
+            }
+
+            // ~x & ~y -> ~(x | y)
+            if(and_(not_(any(v1)), not_(any(v2)))(matchCtx)) {
+                return makeNot(builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2));
+            }
+
+            // 2.2 Addition Combined with Logical Operations
+            // ~x + 1 -> -x
+            if(add(not_(any(v1)), cint_(1))(matchCtx)) {
+                return makeNeg(v1);
+            }
+
+            // ~(x - 1) -> -x
+            if(not_(add(any(v1), cint_(-1)))(matchCtx)) {
+                return makeNeg(v1);
+            }
+
+            // -x - 1 -> ~x
+            // if(add(neg(any(v1)), cint_(-1))(matchCtx)) {
+            //     return makeNot(v1);
+            // }
+
+            // ~(-x) -> x - 1
+            if(not_(neg(any(v1)))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(-1, inst));
+            }
+
+            // -(~x) -> x + 1
+            if(neg(not_(any(v1)))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(1, inst));
+            }
+
+            // (x | y) - (x & y) -> x ^ y
+            if(sub(or_(any(v1), any(v2)), and_(any(v3), any(v4)))(matchCtx) &&
+               ((v1 == v3 && v2 == v4) || (v1 == v4 && v2 == v3))) {
+                return builder.makeOp<BinaryInst>(InstructionID::Xor, v1, v2);
+            }
+
+            // TODO: 2-4 Absolute Value Function
+
+            // 2-5 Average of Two Integers
+            // (x + y) / 2 -> (x | y) - ((x ^ y) >s> 1)
+            // NOTICE: SDiv by 2 is cheap
+            // if(target.isNativeSupported(InstructionID::Or) && target.isNativeSupported(InstructionID::Xor) &&
+            //    target.isNativeSupported(InstructionID::AShr)) {
+            //     if(sdiv(add(any(v1), any(v2)), cint_(2))(matchCtx)) {
+            //         return builder.makeOp<BinaryInst>(
+            //             InstructionID::Sub, builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2),
+            //             builder.makeOp<BinaryInst>(InstructionID::AShr, builder.makeOp<BinaryInst>(InstructionID::Xor, v1, v2),
+            //                                        makeIntLike(1, inst)));
+            //     }
+            // }
+
+            // TODO: 2-8 Sign Function
+
+            // TODO: 2-9 Three-Valued Compare Function
+
+            // TODO: 2-10 Transfer of Sign Function
+
+            // TODO: 2-15 Rotate Shifts
+
+            // 2-21 Alternating among Two or More Values
+            // x == a ? b : a -> a ^ b ^ x / a + b - x
+            if(inst->getType()->isBoolean() && select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx) &&
+               ((v1 == v4 || v2 == v4) && cmp == CompareOp::Equal)) {
+                auto x = (v1 == v4 ? v2 : v1);
+                auto b = v3;
+                auto a = v4;
+                if(target.isNativeSupported(InstructionID::Xor))
+                    return builder.makeOp<BinaryInst>(InstructionID::Xor, builder.makeOp<BinaryInst>(InstructionID::Xor, a, b),
+                                                      x);
+                return builder.makeOp<BinaryInst>(InstructionID::Sub, builder.makeOp<BinaryInst>(InstructionID::Add, a, b), x);
+            }
+
+            // 4-1 Checking Bounds of Integers
             // (v SGE c1) && (v SLE c2) -> (v - c1) ULT (c2 - c1 + 1)
             if(and_(scmp(cmp1, any(v1), int_(i1)), scmp(cmp2, any(v2), int_(i2)))(matchCtx) && v1 == v2) {
                 bool valid = false;
@@ -644,6 +736,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     }
                 }
             }
+
+            // TODO: 8–4 Multiplication by Constants
 
             return nullptr;
         });

@@ -545,3 +545,137 @@ func @foo107(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
+func @foo108(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 %y;
+    i32 %1 = mul i32 %0, i32 2;
+    ret i32 %1;
+}
+func @foo109(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 -100;
+    ret i32 %0;
+}
+func @foo110(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %x, i32 %y;
+    i32 %1 = xor i32 %0, i32 -1;
+    ret i32 %1;
+}
+func @foo111(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %x, i32 %y;
+    i32 %1 = xor i32 %0, i32 -1;
+    ret i32 %1;
+}
+func @foo112(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo113(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %x;
+    ret i32 %0;
+}
+func @foo114(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sub i32 -1, i32 %x;
+    ret i32 %0;
+}
+func @foo115(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 -1;
+    ret i32 %0;
+}
+func @foo116(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    ret i32 %0;
+}
+func @foo117(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %x, i32 %y;
+    ret i32 %0;
+}
+func @iabs1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 0;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %x : i32 %1;
+    ret i32 %2;
+}
+func @iabs2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 -1;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %x : i32 %1;
+    ret i32 %2;
+}
+func @iabs3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 0;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %1 : i32 %x;
+    ret i32 %2;
+}
+func @iabs4(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 1;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %1 : i32 %x;
+    ret i32 %2;
+}
+func @nabs1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 0;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %x : i32 %1;
+    ret i32 %2;
+}
+func @nabs2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp lt i32 %x, i32 1;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %x : i32 %1;
+    ret i32 %2;
+}
+func @nabs3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 0;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %1 : i32 %x;
+    ret i32 %2;
+}
+func @nabs4(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp gt i32 %x, i32 -1;
+    i32 %1 = neg i32 %x;
+    i32 %2 = select i1 %0 ? i32 %1 : i32 %x;
+    ret i32 %2;
+}
+func @average(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 %y;
+    i32 %1 = sdiv i32 %0, i32 2;
+    ret i32 %1;
+}
+func @select_two_no_fold(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 %y;
+    i32 %1 = select i1 %0 ? i32 %z : i32 %y;
+    ret i32 %1;
+}
+func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 %a;
+    cbr i1 %0(prob = 0.5), ^b1, ^if.else;
+  ^if.else:
+    i1 %1 = scmp eq i32 %x, i32 %b;
+    cbr i1 %1(prob = 0.5), ^b1, ^if.else1;
+  ^b1:
+    i32 %2 = phi [^entry, i32 %b] [^if.else, i32 %c] [^if.else1, i32 %a];
+    ret i32 %2;
+  ^if.else1:
+    ubr ^b1;
+}

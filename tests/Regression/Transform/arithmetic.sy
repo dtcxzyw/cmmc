@@ -326,3 +326,69 @@ int foo106(int x) {
 int foo107(int x) {
     return 0 <= x && x < 100;
 }
+int foo108(int x, int y) {
+    return (x + y) + (y + x);
+}
+int foo109(int x) {
+    return x - 100;
+}
+int foo110(int x, int y) {
+    return ~x | ~y;
+}
+int foo111(int x, int y) {
+    return ~x & ~y;
+}
+int foo112(int x) {
+    return ~x + 1;
+}
+int foo113(int x) {
+    return ~(x - 1);
+}
+int foo114(int x) {
+    return - x - 1;
+}
+int foo115(int x) {
+    return ~(-x);
+}
+int foo116(int x) {
+    return -(~x);
+}
+int foo117(int x, int y) {
+    return (x | y) - (y & x);
+}
+int iabs1(int x) {
+    return x > 0 ? x : -x;
+}
+int iabs2(int x) {
+    return x >= 0 ? x : -x;
+}
+int iabs3(int x) {
+    return x < 0 ? -x : x;
+}
+int iabs4(int x) {
+    return x <= 0 ? -x : x;
+}
+int nabs1(int x) {
+    return x < 0 ? x : -x;
+}
+int nabs2(int x) {
+    return x <= 0 ? x : -x;
+}
+int nabs3(int x) {
+    return x > 0 ? -x : x;
+}
+int nabs4(int x) {
+    return x >= 0 ? -x : x;
+}
+int average(int x, int y) {
+    return (x + y) / 2;
+}
+int select_two_no_fold(int x, int y, int z) {
+    return x == y ? z : y;
+}
+int select_three(int x, int a, int b, int c) {
+    if (x == a) x = b;
+    else if (x == b) x = c;
+    else x = a;
+    return x;
+}
