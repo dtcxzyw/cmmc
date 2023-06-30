@@ -29,3 +29,25 @@ func @select_bitset(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite 
     i32 %3 = select i1 %2 ? i32 %z : i32 0;
     ret i32 %3;
 }
+func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 %b;
+    i32 %1 = select i1 %0 ? i32 %c : i32 %a;
+    i1 %2 = scmp eq i32 %x, i32 %a;
+    i32 %3 = select i1 %2 ? i32 %b : i32 %1;
+    ret i32 %3;
+}
+func @select_four(i32 %x, i32 %a, i32 %b, i32 %c, i32 %d) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 %a;
+    cbr i1 %0(prob = 0.5), ^b1, ^if.else;
+  ^if.else:
+    i1 %1 = scmp eq i32 %x, i32 %c;
+    i32 %2 = select i1 %1 ? i32 %d : i32 %a;
+    i1 %3 = scmp eq i32 %x, i32 %b;
+    i32 %4 = select i1 %3 ? i32 %c : i32 %2;
+    ubr ^b1;
+  ^b1:
+    i32 %5 = phi [^entry, i32 %b] [^if.else, i32 %4];
+    ret i32 %5;
+}

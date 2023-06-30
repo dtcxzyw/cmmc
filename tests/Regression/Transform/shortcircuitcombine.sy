@@ -12,3 +12,16 @@ int main() {
 int select_bitset(int x, int y, int z) {
     return (x == 0 && y == 1) ? z : 0;
 }
+int select_three(int x, int a, int b, int c) {
+    if (x == a) x = b;
+    else if (x == b) x = c;
+    else x = a;
+    return x;
+}
+int select_four(int x, int a, int b, int c, int d) {
+    if (x == a) x = b;
+    else if (x == b) x = c;
+    else if (x == c) x = d;
+    else x = a;
+    return x;
+}

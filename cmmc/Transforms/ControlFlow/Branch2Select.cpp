@@ -18,15 +18,16 @@
 //   xxx
 //   br B
 // B:
-//   val = phi [A, v1], [S, v2]
+//   val = phi [A, v1], [S, v2], ...
 // ->
 // S:
 //   br A
 // A:
 //   xxx
+//   t = select cond, v1, v2
 //   br B
 // B:
-//   val = select cond, v1, v2
+//   val = phi [A, t], ...
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/Analysis/CFGAnalysis.hpp>
@@ -121,9 +122,6 @@ public:
             auto& instsBlockB = blockB->instructions();
             if(instsBlockB.front()->getInstID() != InstructionID::Phi)
                 continue;
-            auto& predBlockB = cfg.predecessors(blockB);
-            if(predBlockB.size() != 2)
-                continue;
 
             for(auto iter = instsBlockB.begin(); iter != instsBlockB.end();) {
                 auto next = std::next(iter);
@@ -132,9 +130,11 @@ public:
                     auto phi = iter->as<PhiInst>();
                     auto select = make<SelectInst>(terminatorBlockS->getOperand(0), phi->incomings().at(trueTarget)->value,
                                                    phi->incomings().at(falseTarget)->value);
-                    phi->replaceWith(select);
-                    select->insertBefore(blockB, next);
-                    instsBlockB.erase(phi->asNode(), true);
+
+                    select->insertBefore(blockA, std::prev(blockA->instructions().end()));
+                    phi->removeSource(falseTarget);
+                    phi->removeSource(trueTarget);
+                    phi->addIncoming(blockA, select);
                 } else
                     break;
 
