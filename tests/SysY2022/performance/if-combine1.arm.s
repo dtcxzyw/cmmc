@@ -296,10 +296,10 @@ label8:
 	b label8
 label11:
 	add r3, r4, r2, lsl #2
-	ldr r6, [r4, r2, lsl #2]
-	ldr r2, [r3, #4]
-	add r5, r5, r6
+	ldr r2, [r4, r2, lsl #2]
 	add r2, r5, r2
+	ldr r5, [r3, #4]
+	add r2, r2, r5
 	ldr r5, [r3, #8]
 	add r2, r2, r5
 	ldr r3, [r3, #12]

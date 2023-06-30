@@ -301,9 +301,9 @@ label8:
 label11:
 	sh2add a2, a2, s0
 	lw a3, 0(a2)
-	lw a5, 4(a2)
 	addw a3, a4, a3
-	addw a3, a3, a5
+	lw a4, 4(a2)
+	addw a3, a3, a4
 	lw a4, 8(a2)
 	addw a3, a3, a4
 	lw a2, 12(a2)

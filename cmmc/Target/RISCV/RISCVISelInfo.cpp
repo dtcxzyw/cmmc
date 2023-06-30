@@ -18,6 +18,7 @@
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
@@ -255,10 +256,15 @@ constexpr RISCVInst getFloatingPointBinaryOpcode(uint32_t opcode) {
 
 static bool buildMul64Imm(ISelContext& ctx, const MIROperand& lhs, const MIROperand& rhsImm, const MIROperand& factor,
                           MIROperand& out) {
-    const auto imm = getVRegAs(ctx, lhs);
-    ctx.newInst(InstLoadImm).setOperand<0>(imm).setOperand<1>(rhsImm);
     const auto mulRes = getVReg64As(ctx, lhs);
-    ctx.newInst(MUL).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(imm);
+    if(isPowerOf2(static_cast<size_t>(rhsImm.imm()))) {
+        const auto shift = ilog2(static_cast<size_t>(rhsImm.imm()));
+        ctx.newInst(SLLI).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(MIROperand::asImm(shift, OperandType::Int32));
+    } else {
+        const auto imm = getVRegAs(ctx, lhs);
+        ctx.newInst(InstLoadImm).setOperand<0>(imm).setOperand<1>(rhsImm);
+        ctx.newInst(MUL).setOperand<0>(mulRes).setOperand<1>(lhs).setOperand<2>(imm);
+    }
     out = getVReg64As(ctx, lhs);
     ctx.newInst(SRLI).setOperand<0>(out).setOperand<1>(mulRes).setOperand<2>(MIROperand::asImm(32, OperandType::Int32));
     switch(factor.imm()) {
@@ -290,6 +296,15 @@ static bool buildSRAIW(ISelContext& ctx, const MIROperand& lhs, const MIROperand
         ctx.newInst(SRAIW).setOperand<0>(out).setOperand<1>(lhs).setOperand<2>(rhsImm);
     }
     return true;
+}
+
+static bool selectShiftImm12Mask(const MIROperand& shiftImm, MIROperand& maskImm) {
+    const auto val = shiftImm.imm();
+    if(0 < val && val < 32) {
+        maskImm = MIROperand::asImm(-(1LL << val), OperandType::Int32);
+        return isOperandImm12(maskImm);
+    }
+    return false;
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -402,10 +417,18 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             imm2reg(lhs);
+            if(inst.opcode() == InstMul && isOperandImm(rhs) && isPowerOf2(static_cast<size_t>(rhs.imm()))) {
+                auto shift = ilog2(static_cast<size_t>(rhs.imm()));
+                inst.setOpcode(InstShl);
+                inst.setOperand<2>(MIROperand::asImm(shift, OperandType::Special));
+                break;
+            }
+
             if((inst.opcode() != InstSDiv && inst.opcode() != InstSRem) ||
                !(isPowerOf2Divisor(rhs) || isOperandSDiv32ByConstantDivisor(rhs))) {
                 imm2reg(rhs);
             }
+
             break;
         }
         case InstSCmp: {

@@ -21,9 +21,7 @@ test2:
 	slli a1, a0, 1
 	srli a1, a1, 56
 	add a1, a0, a1
-	sraiw a1, a1, 8
-	li a2, 256
-	mulw a1, a1, a2
+	andi a1, a1, -256
 	subw a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1

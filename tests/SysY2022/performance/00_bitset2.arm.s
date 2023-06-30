@@ -10,8 +10,8 @@ a:
 .fpu vfpv4
 .globl main
 main:
-	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #132
+	push { r4, r5, r6, r7, r8, r9, r10, lr }
+	sub sp, sp, #128
 	mov r4, sp
 	bl getint
 	mov r6, r0
@@ -22,10 +22,10 @@ main:
 	movw r5, #:lower16:a
 	movt r5, #:upper16:a
 	cmp r6, #0
-	ble label12
+	ble label2
 	mov r0, r7
 	mov r1, r6
-label2:
+label3:
 	movw r3, #58069
 	movt r3, #304
 	movw r6, #48287
@@ -129,11 +129,11 @@ label2:
 	str r6, [r4, #120]
 	movw r6, #9999
 	cmp r2, r6
-	ble label6
+	ble label7
 	cmp r1, #0
-	ble label12
-	b label2
-label6:
+	ble label2
+	b label3
+label7:
 	ldr r6, [r5, r2, lsl #2]
 	mov r7, #30
 	movw r8, #34953
@@ -144,15 +144,14 @@ label6:
 	mls r3, r8, r7, r3
 	ldr r8, [r4, r3, lsl #2]
 	sdiv r7, r6, r8
-	mov r9, #2
-	add r10, r7, r7, lsr #31
-	asr r10, r10, #1
-	mls r10, r10, r9, r7
-	add r11, r0, r0, lsr #31
-	asr r11, r11, #1
-	mls r9, r11, r9, r0
+	add r9, r7, r7, lsr #31
+	asr r9, r9, #1
+	sub r10, r7, r9, lsl #1
+	add r9, r0, r0, lsr #31
+	asr r9, r9, #1
+	sub r9, r0, r9, lsl #1
 	cmp r10, r9
-	beq label11
+	beq label12
 	and r6, r7, #1
 	eor r10, r9, #1
 	orr r6, r6, r10
@@ -160,40 +159,39 @@ label6:
 	lsr r6, r6, #5
 	rsb r6, r6, #0
 	and r6, r8, r6
-	mov r8, #2
-	add r10, r7, r7, lsr #31
-	asr r10, r10, #1
-	mls r7, r10, r8, r7
+	add r8, r7, r7, lsr #31
+	asr r8, r8, #1
+	sub r7, r7, r8, lsl #1
 	eor r7, r7, #1
-	orr r7, r7, r9
+	orr r7, r9, r7
 	cmp r7, #0
-	bne label9
+	bne label10
 	ldr r3, [r4, r3, lsl #2]
 	sub r6, r6, r3
 	ldr r3, [r5, r2, lsl #2]
 	add r3, r6, r3
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
-	ble label12
-	b label2
-label9:
+	ble label2
+	b label3
+label10:
 	ldr r3, [r5, r2, lsl #2]
 	add r3, r6, r3
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
-	ble label12
-	b label2
-label11:
+	ble label2
+	b label3
+label12:
 	str r6, [r5, r2, lsl #2]
 	cmp r1, #0
-	ble label12
-	b label2
-label12:
+	ble label2
+	b label3
+label2:
 	mov r0, #64
 	bl _sysy_stoptime
 	movw r0, #10000
 	mov r1, r5
 	bl putarray
 	mov r0, #0
-	add sp, sp, #132
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	add sp, sp, #128
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }

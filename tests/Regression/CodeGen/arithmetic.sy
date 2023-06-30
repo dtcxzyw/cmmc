@@ -104,6 +104,22 @@ int mod_reg(int x, int y) {
     return x % y;
 }
 
+int mod2(int x) {
+    return x % 2;
+}
+
+int mod30(int x) {
+    return x % 30; 
+}
+
+int mod_large1(int x) {
+    return x % 1000000007;
+}
+
+int mod_large2(int x) {
+    return x % 300000;
+}
+
 int shl_imm(int x) {
     return x << 3;
 }

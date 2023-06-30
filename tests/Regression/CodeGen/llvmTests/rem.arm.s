@@ -16,11 +16,10 @@ test1:
 	bx lr
 .globl test2
 test2:
-	mov r1, #256
-	asr r2, r0, #31
-	add r2, r0, r2, lsr #24
-	asr r2, r2, #8
-	mls r0, r2, r1, r0
+	asr r1, r0, #31
+	add r1, r0, r1, lsr #24
+	asr r1, r1, #8
+	sub r0, r0, r1, lsl #8
 	bx lr
 .globl test3
 test3:

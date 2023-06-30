@@ -151,6 +151,48 @@ mod_imm:
 mod_reg:
 	remw a0, a0, a1
 	ret
+.globl mod2
+mod2:
+	srliw a1, a0, 31
+	add a1, a0, a1
+	andi a1, a1, -2
+	subw a0, a0, a1
+	ret
+.globl mod30
+mod30:
+	li a1, -2004318071
+	mul a1, a0, a1
+	srli a1, a1, 32
+	add a1, a1, a0
+	sraiw a2, a1, 4
+	srliw a1, a1, 31
+	add a1, a1, a2
+	li a2, 30
+	mulw a1, a1, a2
+	subw a0, a0, a1
+	ret
+.globl mod_large1
+mod_large1:
+	li a1, 1152921497
+	mul a1, a0, a1
+	srai a2, a1, 60
+	srli a1, a1, 63
+	add a1, a1, a2
+	li a2, 1000000007
+	mulw a1, a1, a2
+	subw a0, a0, a1
+	ret
+.globl mod_large2
+mod_large2:
+	li a1, 1876499845
+	mul a1, a0, a1
+	srai a2, a1, 49
+	srli a1, a1, 63
+	add a1, a1, a2
+	li a2, 300000
+	mulw a1, a1, a2
+	subw a0, a0, a1
+	ret
 .globl shl_imm
 shl_imm:
 	slliw a0, a0, 3
@@ -257,9 +299,9 @@ fp_imm0:
 	ret
 .globl fp_imm1
 fp_imm1:
-pcrel210:
+pcrel251:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel210)
+	addi a0, a0, %pcrel_lo(pcrel251)
 	flw f10, 0(a0)
 	ret
 .globl and_trunc

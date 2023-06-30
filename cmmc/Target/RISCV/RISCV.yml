@@ -1052,6 +1052,22 @@ InstSelection:
         Rs1: $Lhs
         Rs2: $Rhs
 
+  - Pattern:
+      SLLIW:
+        Rd: $Dst
+        Rs1:
+          SRAIW:
+            Rd: $Intermediate
+            Rs1: $Lhs
+            Imm: $Shift1
+        Imm: $Shift2
+        $Predicate: ($Shift1) == ($Shift2) && selectShiftImm12Mask($Shift1, [$Mask])
+    Replace:
+      ANDI:
+        Rd: $Dst
+        Rs1: $Lhs
+        Imm: $Mask
+
   # Integer Compare
   - Pattern:
       InstSCmp:

@@ -166,6 +166,34 @@ mod_reg:
 	mfhi $v0
 	jr $ra
 	nop
+.globl mod2
+mod2:
+	li $t0, 2
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop
+.globl mod30
+mod30:
+	li $t0, 30
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop
+.globl mod_large1
+mod_large1:
+	li $t0, 1000000007
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop
+.globl mod_large2
+mod_large2:
+	li $t0, 300000
+	div $zero, $a0, $t0
+	mfhi $v0
+	jr $ra
+	nop
 .globl shl_imm
 shl_imm:
 	sll $v0, $a0, 3

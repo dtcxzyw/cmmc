@@ -8,9 +8,9 @@ a:
 .globl main
 main:
 	addi sp, sp, -168
-	sd s0, 160(sp)
-	sd s2, 152(sp)
-	sd s3, 128(sp)
+	sd s0, 128(sp)
+	sd s2, 160(sp)
+	sd s3, 152(sp)
 	sd s1, 144(sp)
 	sd ra, 136(sp)
 	addi s0, sp, 0
@@ -20,13 +20,13 @@ main:
 	mv s3, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel219:
+pcrel217:
 	auipc a0, %pcrel_hi(a)
-	addi s1, a0, %pcrel_lo(pcrel219)
-	ble s2, zero, label2
+	addi s1, a0, %pcrel_lo(pcrel217)
+	ble s2, zero, label12
 	mv a0, s3
 	mv a1, s2
-label3:
+label2:
 	li a3, 19971231
 	mulw a0, a0, a3
 	li a4, 19981013
@@ -41,9 +41,9 @@ label3:
 	subw t1, a2, t1
 	slti t2, t1, 0
 	addw a2, t1, a0
-	bne t2, zero, label205
+	bne t2, zero, label203
 	mv a2, t1
-label205:
+label203:
 	mulw a3, a2, a3
 	addw a3, a3, a4
 	mul a4, a3, a5
@@ -54,9 +54,9 @@ label205:
 	subw a3, a3, a4
 	slti a4, a3, 0
 	addw a0, a3, a0
-	bne a4, zero, label203
+	bne a4, zero, label201
 	mv a0, a3
-label203:
+label201:
 	li a3, 1876499845
 	mul a3, a2, a3
 	srai a4, a3, 49
@@ -136,10 +136,10 @@ label203:
 	slli a4, a4, 1
 	sw a4, 120(s0)
 	li a4, 9999
-	ble a2, a4, label7
-	ble a1, zero, label2
-	j label3
-label7:
+	ble a2, a4, label6
+	ble a1, zero, label12
+	j label2
+label6:
 	sh2add a4, a2, s1
 	lw a4, 0(a4)
 	li a5, -2004318071
@@ -157,16 +157,13 @@ label7:
 	divw t1, a4, a5
 	srliw t2, t1, 31
 	add t2, t1, t2
-	sraiw t2, t2, 1
-	li t3, 2
-	mulw t2, t2, t3
+	andi t2, t2, -2
 	subw t2, t1, t2
-	srliw t4, a0, 31
-	add t4, a0, t4
-	sraiw t4, t4, 1
-	mulw t3, t4, t3
+	srliw t3, a0, 31
+	add t3, a0, t3
+	andi t3, t3, -2
 	subw t3, a0, t3
-	beq t2, t3, label12
+	beq t2, t3, label11
 	andi a4, t1, 1
 	xori t1, t3, 1
 	or a4, a4, t1
@@ -174,7 +171,7 @@ label7:
 	subw a4, zero, a4
 	and a4, a5, a4
 	xori a5, t2, 1
-	or a5, a5, t3
+	or a5, t3, a5
 	bne a5, zero, label100
 	sh2add a3, a3, s0
 	lw a3, 0(a3)
@@ -183,22 +180,22 @@ label7:
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
-	ble a1, zero, label2
-	j label3
-label12:
+	ble a1, zero, label12
+	j label2
+label11:
 	sh2add a2, a2, s1
 	sw a4, 0(a2)
-	ble a1, zero, label2
-	j label3
+	ble a1, zero, label12
+	j label2
 label100:
 	mv a3, a4
 	sh2add a2, a2, s1
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
-	ble a1, zero, label2
-	j label3
-label2:
+	ble a1, zero, label12
+	j label2
+label12:
 	li a0, 64
 	jal _sysy_stoptime
 	li a0, 10000
@@ -207,8 +204,8 @@ label2:
 	mv a0, zero
 	ld ra, 136(sp)
 	ld s1, 144(sp)
-	ld s3, 128(sp)
-	ld s2, 152(sp)
-	ld s0, 160(sp)
+	ld s3, 152(sp)
+	ld s2, 160(sp)
+	ld s0, 128(sp)
 	addi sp, sp, 168
 	ret

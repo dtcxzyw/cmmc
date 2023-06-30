@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/Support/Bits.hpp"
 #include <ARM/InstInfoDecl.hpp>
 #include <cmath>
 #include <cmmc/CodeGen/CodeGenUtils.hpp>
@@ -518,6 +519,17 @@ static bool buildIReg(ISelContext& ctx, const MIROperand& val, MIROperand& out) 
         out = getVRegAs(ctx, val);
         ctx.newInst(InstLoadImm).setOperand<0>(out).setOperand<1>(val);
     }
+    return true;
+}
+
+static bool buildIRegShift(ISelContext& ctx, const MIROperand& val, MIROperand& out, MIROperand& shift) {
+    assert(val.isImm());
+    if(!isPowerOf2(static_cast<size_t>(val.imm())))
+        return false;
+
+    out = getVRegAs(ctx, val);
+    ctx.newInst(InstLoadImm).setOperand<0>(out).setOperand<1>(val);
+    shift = MIROperand::asImm(static_cast<int32_t>(ilog2(static_cast<size_t>(val.imm()))), OperandType::Int32);
     return true;
 }
 

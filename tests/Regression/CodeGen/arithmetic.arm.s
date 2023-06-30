@@ -138,6 +138,44 @@ mod_reg:
 	sdiv r2, r0, r1
 	mls r0, r2, r1, r0
 	bx lr
+.globl mod2
+mod2:
+	add r1, r0, r0, lsr #31
+	asr r1, r1, #1
+	sub r0, r0, r1, lsl #1
+	bx lr
+.globl mod30
+mod30:
+	mov r1, #30
+	movw r2, #34953
+	movt r2, #34952
+	smmla r2, r0, r2, r0
+	asr r3, r2, #4
+	add r2, r3, r2, lsr #31
+	mls r0, r2, r1, r0
+	bx lr
+.globl mod_large1
+mod_large1:
+	movw r1, #51719
+	movt r1, #15258
+	movw r2, #12185
+	movt r2, #17592
+	smmul r2, r0, r2
+	asr r3, r2, #28
+	add r2, r3, r2, lsr #31
+	mls r0, r2, r1, r0
+	bx lr
+.globl mod_large2
+mod_large2:
+	movw r1, #37856
+	movt r1, #4
+	movw r2, #7557
+	movt r2, #28633
+	smmul r2, r0, r2
+	asr r3, r2, #17
+	add r2, r3, r2, lsr #31
+	mls r0, r2, r1, r0
+	bx lr
 .globl shl_imm
 shl_imm:
 	lsl r0, r0, #3

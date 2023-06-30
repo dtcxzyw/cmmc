@@ -87,12 +87,12 @@ label17:
 	ldr r11, [r1, r0, lsl #2]
 	add r10, r10, r11
 	ldr r9, [r9, #4]
-	add r10, r10, r9
-	add r9, r2, r8, lsl #2
-	ldr r11, [r2, r8, lsl #2]
-	add r10, r10, r11
-	ldr r9, [r9, #8]
 	add r9, r10, r9
+	add r10, r2, r8, lsl #2
+	ldr r11, [r2, r8, lsl #2]
+	add r9, r9, r11
+	ldr r10, [r10, #8]
+	add r9, r9, r10
 	ldr r8, [r3, r8, lsl #2]
 	add r8, r9, r8
 	add r9, r3, r0, lsl #2

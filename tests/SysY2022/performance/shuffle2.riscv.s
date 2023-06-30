@@ -90,42 +90,16 @@ pcrel333:
 	lw t2, 0(t2)
 	lw t5, 0(t5)
 	bne t5, zero, label8
-	j label7
-label8:
-	beq t5, zero, label10
-	sh2add t6, t5, a2
-	lw t6, 0(t6)
-	bne t6, t3, label12
+label5:
 	addiw t1, t1, 1
-	sh2add t4, t1, a0
-	sh2add t3, t5, a0
-	lw t5, 0(t3)
-	sw t5, 0(t4)
-	sw t1, 0(t3)
-	sh2add t3, t1, a1
-	sw t2, 0(t3)
-	addiw a5, a5, 1
-	bge a5, s5, label14
-	sh2add t2, a5, s4
-	lw t3, 0(t2)
-	remw t4, t3, s0
-	sh2add t5, t4, a3
-	sh2add t2, a5, s6
-	lw t2, 0(t2)
-	lw t5, 0(t5)
-	bne t5, zero, label8
-	j label7
-label10:
-	addiw t1, t1, 1
-	sh2add t5, t1, a4
 	sh2add t4, t4, a3
-	lw t6, 0(t4)
-	sw t6, 0(t5)
 	sw t1, 0(t4)
 	sh2add t4, t1, a2
 	sw t3, 0(t4)
 	sh2add t3, t1, a1
 	sw t2, 0(t3)
+	sh2add t2, t1, a4
+	sw zero, 0(t2)
 	sh2add t2, t1, a0
 	sw zero, 0(t2)
 	addiw a5, a5, 1
@@ -138,7 +112,7 @@ label10:
 	lw t2, 0(t2)
 	lw t5, 0(t5)
 	bne t5, zero, label8
-	j label7
+	j label5
 label14:
 	ble s2, zero, label29
 	mv a5, zero
@@ -150,7 +124,7 @@ label14:
 	beq t2, zero, label133
 	sh2add t3, t2, a2
 	lw t3, 0(t3)
-	bne t3, t1, label22
+	bne t1, t3, label22
 	beq t2, zero, label153
 	mv t1, zero
 	sh2add t3, t2, a1
@@ -199,11 +173,12 @@ label289:
 	j label301
 label153:
 	mv t1, zero
-	sh2add t2, a5, s1
-	sw zero, 0(t2)
-	addiw a5, a5, 1
-	bge a5, s2, label29
-	sh2add t1, a5, s3
+	addiw t2, a5, 1
+	sh2add a5, a5, s1
+	sw zero, 0(a5)
+	bge t2, s2, label29
+	mv a5, t2
+	sh2add t1, t2, s3
 	lw t1, 0(t1)
 	remw t2, t1, s0
 	sh2add t2, t2, a3
@@ -211,7 +186,7 @@ label153:
 	beq t2, zero, label133
 	sh2add t3, t2, a2
 	lw t3, 0(t3)
-	bne t3, t1, label22
+	bne t1, t3, label22
 	beq t2, zero, label153
 	mv t1, zero
 	sh2add t3, t2, a1
@@ -271,7 +246,7 @@ label22:
 	beq t2, zero, label133
 	sh2add t3, t2, a2
 	lw t3, 0(t3)
-	bne t3, t1, label22
+	bne t1, t3, label22
 	beq t2, zero, label153
 	mv t1, zero
 	sh2add t3, t2, a1
@@ -335,11 +310,12 @@ label307:
 label133:
 	mv t1, zero
 label19:
-	sh2add t2, a5, s1
-	sw t1, 0(t2)
-	addiw a5, a5, 1
-	bge a5, s2, label29
-	sh2add t1, a5, s3
+	addiw t2, a5, 1
+	sh2add a5, a5, s1
+	sw t1, 0(a5)
+	bge t2, s2, label29
+	mv a5, t2
+	sh2add t1, t2, s3
 	lw t1, 0(t1)
 	remw t2, t1, s0
 	sh2add t2, t2, a3
@@ -347,7 +323,7 @@ label19:
 	beq t2, zero, label133
 	sh2add t3, t2, a2
 	lw t3, 0(t3)
-	bne t3, t1, label22
+	bne t1, t3, label22
 	beq t2, zero, label153
 	mv t1, zero
 	sh2add t3, t2, a1
@@ -387,36 +363,11 @@ label19:
 	lw t2, 0(t2)
 	beq t2, zero, label19
 	j label289
-label7:
-	addiw t1, t1, 1
-	sh2add t4, t4, a3
-	sw t1, 0(t4)
-	sh2add t4, t1, a2
-	sw t3, 0(t4)
-	sh2add t3, t1, a1
-	sw t2, 0(t3)
-	sh2add t2, t1, a4
-	sw zero, 0(t2)
-	sh2add t2, t1, a0
-	sw zero, 0(t2)
-	addiw a5, a5, 1
-	bge a5, s5, label14
-	sh2add t2, a5, s4
-	lw t3, 0(t2)
-	remw t4, t3, s0
-	sh2add t5, t4, a3
-	sh2add t2, a5, s6
-	lw t2, 0(t2)
-	lw t5, 0(t5)
-	bne t5, zero, label8
-	j label7
-label12:
-	sh2add t5, t5, a4
-	lw t5, 0(t5)
+label8:
 	beq t5, zero, label10
 	sh2add t6, t5, a2
 	lw t6, 0(t6)
-	bne t6, t3, label12
+	bne t3, t6, label12
 	addiw t1, t1, 1
 	sh2add t4, t1, a0
 	sh2add t3, t5, a0
@@ -435,7 +386,57 @@ label12:
 	lw t2, 0(t2)
 	lw t5, 0(t5)
 	bne t5, zero, label8
-	j label7
+	j label5
+label10:
+	addiw t1, t1, 1
+	sh2add t5, t1, a4
+	sh2add t4, t4, a3
+	lw t6, 0(t4)
+	sw t6, 0(t5)
+	sw t1, 0(t4)
+	sh2add t4, t1, a2
+	sw t3, 0(t4)
+	sh2add t3, t1, a1
+	sw t2, 0(t3)
+	sh2add t2, t1, a0
+	sw zero, 0(t2)
+	addiw a5, a5, 1
+	bge a5, s5, label14
+	sh2add t2, a5, s4
+	lw t3, 0(t2)
+	remw t4, t3, s0
+	sh2add t5, t4, a3
+	sh2add t2, a5, s6
+	lw t2, 0(t2)
+	lw t5, 0(t5)
+	bne t5, zero, label8
+	j label5
+label12:
+	sh2add t5, t5, a4
+	lw t5, 0(t5)
+	beq t5, zero, label10
+	sh2add t6, t5, a2
+	lw t6, 0(t6)
+	bne t3, t6, label12
+	addiw t1, t1, 1
+	sh2add t4, t1, a0
+	sh2add t3, t5, a0
+	lw t5, 0(t3)
+	sw t5, 0(t4)
+	sw t1, 0(t3)
+	sh2add t3, t1, a1
+	sw t2, 0(t3)
+	addiw a5, a5, 1
+	bge a5, s5, label14
+	sh2add t2, a5, s4
+	lw t3, 0(t2)
+	remw t4, t3, s0
+	sh2add t5, t4, a3
+	sh2add t2, a5, s6
+	lw t2, 0(t2)
+	lw t5, 0(t5)
+	bne t5, zero, label8
+	j label5
 label29:
 	li a0, 90
 	jal _sysy_stoptime

@@ -22,6 +22,32 @@ main:
 label22:
 	mov r4, #0
 	b label17
+label13:
+	add r0, r2, #1
+	add r1, r1, #15
+	movw r2, #12033
+	movt r2, #22888
+	movw r3, #16511
+	movt r3, #183
+	smmul r3, r1, r3
+	asr r5, r3, #22
+	add r3, r5, r3, lsr #31
+	mls r1, r3, r2, r1
+	cmp r0, r4
+	bge label52
+	mov r2, r0
+	b label13
+label52:
+	mov r4, r1
+label17:
+	mov r0, #123
+	bl _sysy_stoptime
+	mov r0, r4
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r0, #0
+	pop { r4, r5, r6, pc }
 label5:
 	add r0, r2, #4
 	cmp r0, r4
@@ -30,11 +56,7 @@ label5:
 label9:
 	add r0, r2, #4
 	cmp r0, r4
-	bge label41
-	b label12
-label41:
-	mov r0, r2
-	b label13
+	bge label13
 label12:
 	add r2, r1, #15
 	movw r1, #12033
@@ -53,33 +75,8 @@ label12:
 	mov r2, r0
 	add r0, r0, #4
 	cmp r0, r4
-	bge label41
+	bge label13
 	b label12
-label13:
-	add r1, r1, #15
-	movw r2, #12033
-	movt r2, #22888
-	movw r3, #16511
-	movt r3, #183
-	smmul r3, r1, r3
-	asr r5, r3, #22
-	add r3, r5, r3, lsr #31
-	mls r1, r3, r2, r1
-	add r0, r0, #1
-	cmp r0, r4
-	bge label52
-	b label13
-label52:
-	mov r4, r1
-label17:
-	mov r0, #123
-	bl _sysy_stoptime
-	mov r0, r4
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r0, #0
-	pop { r4, r5, r6, pc }
 label16:
 	add r2, r1, #15
 	movw r1, #12033

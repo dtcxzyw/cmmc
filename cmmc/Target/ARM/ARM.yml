@@ -606,6 +606,24 @@ InstSelection:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIRegShift(ctx, $Rhs, [$RegRhs], [$Shift])
+    Replace:
+      SUB_Fused:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm:
+          InstSDiv:
+            Dst: getVRegAs(ctx, $Dst)
+            Lhs: $Lhs
+            Rhs: $Rhs
+        Op: MIROperand::asImm(LSL, OperandType::ShiftType)
+        Sh: $Shift
+
+  - Pattern:
+      InstSRem:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
         $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && buildIReg(ctx, $Rhs, [$RegRhs])
     Replace:
       MLS:

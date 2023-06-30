@@ -15,34 +15,27 @@ main:
 	sd s2, 16(sp)
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-pcrel205:
+pcrel191:
 	auipc a0, %pcrel_hi(image_in)
-	addi a0, a0, %pcrel_lo(pcrel205)
+	addi a0, a0, %pcrel_lo(pcrel191)
 	mv s0, a0
 	jal getarray
 	mv s2, a0
 	li a0, 23
 	jal _sysy_starttime
-pcrel206:
+pcrel192:
 	auipc a0, %pcrel_hi(image_out)
-	addi s1, a0, %pcrel_lo(pcrel206)
+	addi s1, a0, %pcrel_lo(pcrel192)
 	li a0, 1
 	addiw a1, a0, -1
 	li a2, 1023
-	bge a0, a2, label24
-	j label23
-label24:
+	bge a0, a2, label20
+	j label19
+label20:
 	mv a0, zero
-	j label11
-label23:
+	j label7
+label19:
 	li a3, 1
-	j label4
-label8:
-	addiw a0, a0, 1
-	addiw a1, a0, -1
-	li a2, 1023
-	bge a0, a2, label24
-	j label23
 label4:
 	slliw a4, a3, 10
 	addw a2, a0, a4
@@ -78,30 +71,26 @@ label4:
 	lw t1, 0(a5)
 	subw a4, a4, t1
 	lw a5, 4(a5)
-	subw a4, a4, a5
-	bge a4, zero, label9
-	mv a4, zero
+	subw a5, a4, a5
+	slti a4, a5, 0
+	li t1, 255
+	min t1, a5, t1
+	mv a5, zero
+	bne a4, zero, label184
+	mv a5, t1
+label184:
 	sh2add a2, a2, s1
-	sw zero, 0(a2)
+	sw a5, 0(a2)
 	li a2, 1023
-	bge a3, a2, label8
-	j label4
-label9:
-	li a5, 255
-	ble a4, a5, label6
-	li a4, 255
-	sh2add a2, a2, s1
-	sw a4, 0(a2)
-	li a2, 1023
-	bge a3, a2, label8
+	bge a3, a2, label6
 	j label4
 label6:
-	sh2add a2, a2, s1
-	sw a4, 0(a2)
+	addiw a0, a0, 1
+	addiw a1, a0, -1
 	li a2, 1023
-	bge a3, a2, label8
-	j label4
-label11:
+	bge a0, a2, label20
+	j label19
+label7:
 	slliw a1, a0, 10
 	sh2add a2, a1, s0
 	lw a2, 0(a2)
@@ -148,11 +137,11 @@ label11:
 	sh2add a1, a1, s1
 	sw a2, 0(a1)
 	li a1, 1024
-	bge a0, a1, label140
-	j label11
-label140:
+	bge a0, a1, label131
+	j label7
+label131:
 	mv a0, zero
-label13:
+label9:
 	sh2add a2, a0, s0
 	lw a3, 0(a2)
 	sh2add a1, a0, s1
@@ -185,9 +174,9 @@ label13:
 	sw a2, 0(a1)
 	addiw a0, a0, 4
 	li a1, 1024
-	bge a0, a1, label15
-	j label13
-label15:
+	bge a0, a1, label11
+	j label9
+label11:
 	li a0, 59
 	jal _sysy_stoptime
 	li a0, 1048576

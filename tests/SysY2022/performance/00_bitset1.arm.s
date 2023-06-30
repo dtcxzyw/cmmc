@@ -10,8 +10,8 @@ a:
 .fpu vfpv4
 .globl main
 main:
-	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
-	sub sp, sp, #132
+	push { r4, r5, r6, r7, r8, r9, r10, lr }
+	sub sp, sp, #128
 	mov r4, sp
 	bl getint
 	mov r6, r0
@@ -144,13 +144,12 @@ label6:
 	mls r3, r8, r7, r3
 	ldr r8, [r4, r3, lsl #2]
 	sdiv r7, r6, r8
-	mov r9, #2
-	add r10, r7, r7, lsr #31
-	asr r10, r10, #1
-	mls r10, r10, r9, r7
-	add r11, r0, r0, lsr #31
-	asr r11, r11, #1
-	mls r9, r11, r9, r0
+	add r9, r7, r7, lsr #31
+	asr r9, r9, #1
+	sub r10, r7, r9, lsl #1
+	add r9, r0, r0, lsr #31
+	asr r9, r9, #1
+	sub r9, r0, r9, lsl #1
 	cmp r10, r9
 	beq label11
 	and r6, r7, #1
@@ -160,12 +159,11 @@ label6:
 	lsr r6, r6, #5
 	rsb r6, r6, #0
 	and r6, r8, r6
-	mov r8, #2
-	add r10, r7, r7, lsr #31
-	asr r10, r10, #1
-	mls r7, r10, r8, r7
+	add r8, r7, r7, lsr #31
+	asr r8, r8, #1
+	sub r7, r7, r8, lsl #1
 	eor r7, r7, #1
-	orr r7, r7, r9
+	orr r7, r9, r7
 	cmp r7, #0
 	bne label9
 	ldr r3, [r4, r3, lsl #2]
@@ -195,5 +193,5 @@ label12:
 	mov r1, r5
 	bl putarray
 	mov r0, #0
-	add sp, sp, #132
-	pop { r4, r5, r6, r7, r8, r9, r10, r11, pc }
+	add sp, sp, #128
+	pop { r4, r5, r6, r7, r8, r9, r10, pc }
