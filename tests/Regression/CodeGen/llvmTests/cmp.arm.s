@@ -55,17 +55,17 @@ swap_cmp_ashr:
 .globl swap_cmp_lshr
 swap_cmp_lshr:
 	lsr r0, r0, #11
-	cmp r0, r1
+	cmp r1, r0
 	mov r0, #0
-	movwlo r0, #1
+	movwhi r0, #1
 	bx lr
 .globl swap_cmp_rotr
 swap_cmp_rotr:
 	lsr r2, r0, #11
 	orr r0, r2, r0, lsl #21
-	cmp r0, r1
+	cmp r1, r0
 	mov r0, #0
-	movwhs r0, #1
+	movwls r0, #1
 	bx lr
 .globl swap_cmp_shl
 swap_cmp_shl:

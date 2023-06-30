@@ -11,44 +11,44 @@ mulw:
 	cmp r0, r1
 	bge label16
 	add r1, r0, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	b label59
 label16:
 	mov r0, #1
@@ -56,14 +56,14 @@ label16:
 label59:
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	b label60
 label8:
 	bx lr
 label60:
 	mul r0, r1, r0
 	add r1, r1, #1
-	cmp r1, r3
-	bge label8
+	cmp r3, r1
+	ble label8
 	b label60

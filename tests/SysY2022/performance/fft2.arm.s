@@ -505,44 +505,44 @@ main:
 	mov r6, #1
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
+	bge label356
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
-	b label476
+	bge label356
+	b label481
 label377:
 	mov r6, #1
-	b label358
-label476:
+	b label356
+label481:
 	lsl r6, r6, #1
 	cmp r6, r5
-	bge label358
-	b label476
-label358:
+	bge label356
+	b label481
+label356:
 	mov r0, #998244352
 	sdiv r8, r0, r6
 	mov r0, #3
@@ -560,7 +560,7 @@ label358:
 	mov r3, r9
 	bl fft
 	cmp r6, #0
-	ble label362
+	ble label360
 	mov r9, #0
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
@@ -568,72 +568,80 @@ label358:
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
+	bge label360
 	ldr r0, [r4, r9, lsl #2]
 	ldr r1, [r7, r9, lsl #2]
 	bl multiply
 	str r0, [r4, r9, lsl #2]
 	add r9, r9, #1
 	cmp r9, r6
-	bge label362
-	b label479
-label362:
+	bge label360
+label478:
+	ldr r0, [r4, r9, lsl #2]
+	ldr r1, [r7, r9, lsl #2]
+	bl multiply
+	str r0, [r4, r9, lsl #2]
+	add r9, r9, #1
+	cmp r9, r6
+	bge label360
+	b label478
+label360:
 	rsb r1, r8, #998244352
 	mov r0, #3
 	bl power
@@ -643,7 +651,7 @@ label362:
 	mov r2, r6
 	bl fft
 	cmp r6, #0
-	ble label363
+	ble label364
 	mov r0, r6
 	movw r1, #65535
 	movt r1, #15231
@@ -656,89 +664,80 @@ label362:
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
+	bge label364
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
-label481:
+	bge label364
+label480:
 	ldr r0, [r4, r8, lsl #2]
 	mov r1, r7
 	bl multiply
 	str r0, [r4, r8, lsl #2]
 	add r8, r8, #1
 	cmp r8, r6
-	bge label363
-	b label481
-label479:
-	ldr r0, [r4, r9, lsl #2]
-	ldr r1, [r7, r9, lsl #2]
-	bl multiply
-	str r0, [r4, r9, lsl #2]
-	add r9, r9, #1
-	cmp r9, r6
-	bge label362
-	b label479
-label363:
+	bge label364
+	b label480
+label364:
 	mov r0, #79
 	bl _sysy_stoptime
 	mov r0, r5

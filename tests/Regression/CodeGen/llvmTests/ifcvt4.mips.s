@@ -17,8 +17,8 @@ label16:
 	mult $t3, $zero
 	mflo $t4
 	addu $v0, $a0, $t4
-	subu $t4, $v0, $a1
-	blez $t4, label11
+	subu $t4, $a1, $v0
+	bgez $t4, label11
 	nop
 	subu $v0, $v0, $a1
 	xor $t4, $a1, $v0
@@ -33,8 +33,8 @@ label10:
 	mult $t3, $t2
 	mflo $t4
 	addu $v0, $a0, $t4
-	subu $t4, $v0, $t1
-	blez $t4, label11
+	subu $t4, $t1, $v0
+	bgez $t4, label11
 	nop
 	subu $v0, $v0, $t0
 	xor $t4, $t0, $v0
@@ -59,8 +59,8 @@ label36:
 	mult $t3, $zero
 	mflo $t4
 	addu $v0, $v0, $t4
-	subu $t4, $v0, $t0
-	blez $t4, label11
+	subu $t4, $t0, $v0
+	bgez $t4, label11
 	nop
 	subu $v0, $v0, $t0
 	xor $t4, $t0, $v0

@@ -24,9 +24,9 @@ main:
 	mla r0, r7, r0, r4
 	bl getfarray
 	cmp r0, #1000
-	beq label7
-	b label4
-label7:
+	beq label5
+	b label6
+label5:
 	add r7, r7, #1
 	cmp r7, #1000
 	bge label8
@@ -34,8 +34,8 @@ label7:
 	mla r0, r7, r0, r4
 	bl getfarray
 	cmp r0, #1000
-	beq label7
-	b label4
+	beq label5
+	b label6
 label8:
 	mov r0, #42
 	bl _sysy_starttime
@@ -241,7 +241,7 @@ label26:
 label30:
 	vcmp.f32 s5, s2
 	vmrs APSR_nzcv, FPSCR
-	bgt label31
+	bgt label342
 	vadd.f32 s3, s1, s4
 	mov r2, #1056964608
 	vmov s5, r2
@@ -249,7 +249,7 @@ label30:
 	vmov.f32 s3, s1
 	vmov.f32 s1, s5
 	b label26
-label31:
+label342:
 	vadd.f32 s4, s1, s3
 	mov r2, #1056964608
 	vmov s5, r2
@@ -524,7 +524,7 @@ label42:
 	cmp r2, #1000
 	bge label37
 	b label608
-label4:
+label6:
 	add sp, sp, #8000
 	vpop { s16 }
 	pop { r4, r5, r6, r7, pc }
@@ -534,4 +534,4 @@ label46:
 	vmov.f32 s0, s16
 	bl putfloat
 	mov r0, #0
-	b label4
+	b label6

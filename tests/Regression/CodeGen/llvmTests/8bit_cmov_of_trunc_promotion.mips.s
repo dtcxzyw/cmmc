@@ -12,8 +12,8 @@ neg_only_one_truncation:
 	andi $t3, $t1, 255
 	sll $t3, $t3, 24
 	sra $t3, $t3, 24
-	subu $t2, $t3, $t2
-	blez $t2, label21
+	subu $t2, $t2, $t3
+	bgez $t2, label21
 	nop
 	andi $t0, $t1, 255
 	b label3
@@ -36,8 +36,8 @@ neg_type_mismatch:
 	andi $t3, $t1, 255
 	sll $t3, $t3, 24
 	sra $t3, $t3, 24
-	subu $t2, $t3, $t2
-	blez $t2, label50
+	subu $t2, $t2, $t3
+	bgez $t2, label50
 	nop
 	andi $t0, $t1, 255
 	b label32
@@ -57,8 +57,8 @@ negative_CopyFromReg:
 	andi $t2, $a0, 255
 	sll $t2, $t2, 24
 	sra $t2, $t2, 24
-	subu $t1, $t2, $t1
-	blez $t1, label76
+	subu $t1, $t1, $t2
+	bgez $t1, label76
 	nop
 	andi $t0, $a0, 255
 	b label61

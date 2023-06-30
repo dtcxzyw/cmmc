@@ -7,9 +7,9 @@
 .globl test1
 test1:
 	add r0, r0, r1
-	cmp r0, r1
+	cmp r1, r0
 	mov r1, #0
-	movwlo r1, #1
+	movwhi r1, #1
 	add r0, r0, r1
 	bx lr
 .globl test2

@@ -13,7 +13,7 @@ neg_only_one_truncation:
 	andi a2, a0, 255
 	slli a2, a2, 24
 	srai a2, a2, 24
-	ble a2, a3, label21
+	bge a3, a2, label21
 	andi a0, a0, 255
 	j label3
 label21:
@@ -34,7 +34,7 @@ neg_type_mismatch:
 	andi a2, a0, 255
 	slli a2, a2, 24
 	srai a2, a2, 24
-	ble a2, a3, label49
+	bge a3, a2, label49
 	andi a0, a0, 255
 	j label31
 label49:
@@ -51,7 +51,7 @@ negative_CopyFromReg:
 	andi a3, a0, 255
 	slli a3, a3, 24
 	srai a3, a3, 24
-	ble a3, a2, label76
+	bge a2, a3, label76
 	andi a0, a0, 255
 	j label61
 label76:

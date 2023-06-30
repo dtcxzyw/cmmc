@@ -8,62 +8,62 @@ mulw:
 	bgez $t1, label16
 	nop
 	addiu $t1, $a0, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $a0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $a1
-	bgez $t3, label21
+	subu $t3, $a1, $t1
+	blez $t3, label21
 	nop
 	b label65
 	nop
@@ -75,8 +75,8 @@ label65:
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $t2
-	bgez $t3, label21
+	subu $t3, $t2, $t1
+	blez $t3, label21
 	nop
 	b label66
 	nop
@@ -91,8 +91,8 @@ label66:
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
-	subu $t3, $t1, $t2
-	bgez $t3, label21
+	subu $t3, $t2, $t1
+	blez $t3, label21
 	nop
 	b label66
 	nop

@@ -50,9 +50,9 @@ test:
 	movw r1, #:lower16:m
 	movt r1, #:upper16:m
 	ldr r1, [r1, #0]
-	cmp r1, r0
+	cmp r0, r1
 	mov r0, #0
-	movwle r0, #1
+	movwge r0, #1
 	movw r1, #:lower16:r2
 	movt r1, #:upper16:r2
 	str r0, [r1, #0]

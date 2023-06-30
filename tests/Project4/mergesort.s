@@ -38,8 +38,8 @@ merge:
 	move $s3, $a2
 	move $s1, $a3
 	addiu $t0, $a2, 1
-	subu $t0, $t0, $a3
-	bgez $t0, label18
+	subu $t0, $a3, $t0
+	blez $t0, label18
 	nop
 	addu $t0, $a2, $a3
 	li $t1, 2
@@ -474,8 +474,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -483,8 +483,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -492,8 +492,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -501,8 +501,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -510,8 +510,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -519,8 +519,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -528,8 +528,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -537,8 +537,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -546,8 +546,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	jal read
 	nop
@@ -555,8 +555,8 @@ main:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 label297:
 	jal read
@@ -565,8 +565,8 @@ label297:
 	addu $t1, $t6, $t1
 	sw $v0, 0($t1)
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label214
+	subu $t1, $t5, $t0
+	blez $t1, label214
 	nop
 	b label297
 	nop
@@ -585,8 +585,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -594,8 +594,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -603,8 +603,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -612,8 +612,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -621,8 +621,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -630,8 +630,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -639,8 +639,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -648,8 +648,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -657,8 +657,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
@@ -666,8 +666,8 @@ label214:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 label299:
 	sll $t1, $t0, 2
@@ -676,8 +676,8 @@ label299:
 	jal write
 	nop
 	addiu $t0, $t0, 1
-	subu $t1, $t0, $t5
-	bgez $t1, label217
+	subu $t1, $t5, $t0
+	blez $t1, label217
 	nop
 	b label299
 	nop

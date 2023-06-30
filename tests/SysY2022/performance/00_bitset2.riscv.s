@@ -23,10 +23,10 @@ main:
 pcrel217:
 	auipc a0, %pcrel_hi(a)
 	addi s1, a0, %pcrel_lo(pcrel217)
-	ble s2, zero, label12
+	ble s2, zero, label2
 	mv a0, s3
 	mv a1, s2
-label2:
+label3:
 	li a3, 19971231
 	mulw a0, a0, a3
 	li a4, 19981013
@@ -136,10 +136,10 @@ label201:
 	slli a4, a4, 1
 	sw a4, 120(s0)
 	li a4, 9999
-	ble a2, a4, label6
-	ble a1, zero, label12
-	j label2
-label6:
+	ble a2, a4, label7
+	ble a1, zero, label2
+	j label3
+label7:
 	sh2add a4, a2, s1
 	lw a4, 0(a4)
 	li a5, -2004318071
@@ -163,7 +163,7 @@ label6:
 	add t3, a0, t3
 	andi t3, t3, -2
 	subw t3, a0, t3
-	beq t2, t3, label11
+	beq t2, t3, label12
 	andi a4, t1, 1
 	xori t1, t3, 1
 	or a4, a4, t1
@@ -180,22 +180,22 @@ label6:
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
-	ble a1, zero, label12
-	j label2
-label11:
+	ble a1, zero, label2
+	j label3
+label12:
 	sh2add a2, a2, s1
 	sw a4, 0(a2)
-	ble a1, zero, label12
-	j label2
+	ble a1, zero, label2
+	j label3
 label100:
 	mv a3, a4
 	sh2add a2, a2, s1
 	lw a4, 0(a2)
 	addw a3, a3, a4
 	sw a3, 0(a2)
-	ble a1, zero, label12
-	j label2
-label12:
+	ble a1, zero, label2
+	j label3
+label2:
 	li a0, 64
 	jal _sysy_stoptime
 	li a0, 10000

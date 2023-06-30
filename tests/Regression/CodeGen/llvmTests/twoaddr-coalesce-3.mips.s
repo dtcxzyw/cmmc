@@ -32,80 +32,80 @@ foo:
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	li $t4, 2
 	div $zero, $t3, $t4
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	b label71
 	nop
@@ -122,8 +122,8 @@ label71:
 	mflo $t4
 	addu $t0, $t4, $t0
 	addiu $t3, $t3, 1
-	subu $t4, $t3, $t1
-	bgez $t4, label23
+	subu $t4, $t1, $t3
+	blez $t4, label23
 	nop
 	b label71
 	nop
@@ -151,8 +151,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -160,8 +160,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -169,8 +169,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -178,8 +178,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -187,8 +187,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -196,8 +196,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -205,8 +205,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -214,8 +214,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -223,8 +223,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	li $t5, 2
 	div $zero, $t4, $t5
@@ -232,8 +232,8 @@ goo:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	b label151
 	nop
@@ -251,8 +251,8 @@ label151:
 	addu $t0, $t5, $t0
 	sw $t0, 0($t3)
 	addiu $t4, $t4, 1
-	subu $t5, $t4, $t1
-	bgez $t5, label100
+	subu $t5, $t1, $t4
+	blez $t5, label100
 	nop
 	b label151
 	nop

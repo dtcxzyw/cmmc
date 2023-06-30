@@ -117,16 +117,6 @@ label9:
 	li t1, 60
 	beq a5, t1, label12
 	j label109
-label12:
-	sh2add a4, a4, a0
-	sw zero, 0(a4)
-	sw zero, 4(a4)
-	li a5, 125
-	sw a5, 8(a4)
-	sw zero, 12(a4)
-	addiw a5, a2, 5
-	mv a4, zero
-	j label13
 label56:
 	lw t3, 320(sp)
 	addw a5, t4, t3
@@ -174,6 +164,15 @@ label109:
 	li t1, 60
 	beq a5, t1, label12
 	j label109
+label12:
+	sh2add a4, a4, a0
+	sw zero, 0(a4)
+	sw zero, 4(a4)
+	li a5, 125
+	sw a5, 8(a4)
+	sw zero, 12(a4)
+	addiw a5, a2, 5
+	mv a4, zero
 label13:
 	sh2add a2, a4, s0
 	sw zero, 0(a2)
@@ -270,27 +269,6 @@ label24:
 	bge a7, a6, label26
 	mv a6, a7
 	j label24
-label26:
-	li a6, 80
-	bge a7, a6, label227
-	addiw a6, a7, 4
-	li s2, 80
-	bge a6, s2, label29
-	j label34
-label227:
-	mv s4, t6
-	mv s5, t5
-	mv t5, zero
-	mv s3, a2
-	mv t6, a4
-	mv a6, t1
-	mv s2, t2
-	mv a7, t4
-	li s6, 80
-	bge zero, s6, label44
-	li s6, 20
-	bge zero, s6, label49
-	j label55
 label44:
 	addw t4, t4, a7
 	addw t2, t2, s2
@@ -318,90 +296,15 @@ label55:
 	addw s4, s4, s6
 	subw s5, s4, s5
 	li s4, 1518500249
-label46:
-	slliw s6, a7, 5
-	addw s3, s3, s6
-	addw s3, s4, s3
-	addw s3, s5, s3
-	slli s6, a7, 1
-	srli s6, s6, 59
-	add s6, a7, s6
-	andi s6, s6, -32
-	subw s6, a7, s6
-	addw s3, s3, s6
-	sh2add s6, t5, s0
-	lw s6, 0(s6)
-	addw s6, s3, s6
-	slliw s3, s2, 30
-	slli s7, s2, 1
-	srli s7, s7, 34
-	add s7, s2, s7
-	sraiw s7, s7, 30
-	slliw s7, s7, 30
-	subw s2, s2, s7
-	addw s7, s3, s2
-	addiw t5, t5, 1
-	mv s3, t6
-	mv s2, a7
-	mv t6, a6
-	mv a7, s6
-	mv a6, s7
-	li s6, 80
-	bge t5, s6, label44
-	li s6, 20
-	bge t5, s6, label49
-	j label55
-label712:
-	addw s4, a6, s2
-	subw s5, s2, s4
-	addw s5, a6, s5
-	subw s5, s5, s4
-	addw s4, t6, s5
-	subw s5, s5, s4
-	addw s5, t6, s5
-	subw s5, s5, s4
-	li s4, 1859775361
 	j label46
-label49:
-	li s6, 40
-	bge t5, s6, label50
-	j label712
-label29:
+label26:
+	li a6, 80
+	bge a7, a6, label227
 	addiw a6, a7, 4
 	li s2, 80
-	bge a6, s2, label237
-	j label33
-label237:
-	mv a6, a7
-label31:
-	sh2add a7, a6, s0
-	lw s3, -12(a7)
-	lw s2, -32(a7)
-	addw s4, s3, s2
-	subw s3, s3, s4
-	addw s2, s2, s3
-	subw s2, s2, s4
-	lw s4, -56(a7)
-	addw s3, s2, s4
-	subw s2, s2, s3
-	addw s2, s4, s2
-	subw s3, s2, s3
-	lw s2, -64(a7)
-	addw s4, s3, s2
-	subw s3, s3, s4
-	addw s2, s2, s3
-	subw s2, s2, s4
-	srliw s3, s2, 31
-	add s3, s2, s3
-	andi s3, s3, -2
-	subw s3, s2, s3
-	sh1add s2, s2, s3
-	sw s2, 0(a7)
-	addiw a6, a6, 1
-	li a7, 80
-	bge a6, a7, label267
-	j label31
-label267:
+	bge a6, s2, label29
+	j label34
+label227:
 	mv s4, t6
 	mv s5, t5
 	mv t5, zero
@@ -415,139 +318,19 @@ label267:
 	li s6, 20
 	bge zero, s6, label49
 	j label55
-label50:
-	li s6, 60
-	bge t5, s6, label52
-	addw s4, t6, a6
-	sh1add s5, s2, s4
-	addw s6, a6, s2
-	subw s6, s6, s5
-	addw s7, t6, s2
-	addw s6, s6, s7
-	subw s7, s6, s5
-	addw s6, s5, s7
-	subw s7, s7, s6
-	addw s5, s5, s7
-	subw s6, s5, s6
-	addw s5, s4, s6
-	subw s6, s6, s5
-	addw s4, s4, s6
-	subw s6, s4, s5
-	addw s4, s5, s6
-	subw s6, s6, s4
-	addw s5, s5, s6
-	subw s5, s5, s4
-	li s4, -1894007588
-	j label46
-label52:
-	li s6, 80
-	bge t5, s6, label46
-	j label714
-label33:
-	sh2add a7, a7, s0
-	lw s2, -12(a7)
-	lw s4, -32(a7)
-	addw s3, s2, s4
-	subw s2, s2, s3
-	addw s2, s4, s2
-	subw s3, s2, s3
-	lw s2, -56(a7)
-	addw s4, s3, s2
-	subw s3, s3, s4
-	addw s3, s2, s3
-	subw s4, s3, s4
-	lw s5, -64(a7)
-	addw s3, s4, s5
-	subw s4, s4, s3
-	addw s4, s5, s4
-	subw s3, s4, s3
-	srliw s4, s3, 31
-	add s4, s3, s4
-	andi s4, s4, -2
-	subw s4, s3, s4
-	sh1add s4, s3, s4
-	sw s4, 0(a7)
-	lw s5, -8(a7)
-	lw s3, -28(a7)
-	addw s6, s5, s3
-	subw s5, s5, s6
-	addw s3, s3, s5
-	subw s5, s3, s6
-	lw s3, -52(a7)
-	addw s6, s5, s3
-	subw s5, s5, s6
-	addw s5, s3, s5
-	subw s7, s5, s6
-	lw s5, -60(a7)
-	addw s6, s7, s5
-	subw s7, s7, s6
-	addw s5, s5, s7
-	subw s5, s5, s6
-	srliw s6, s5, 31
-	add s6, s5, s6
-	andi s6, s6, -2
-	subw s6, s5, s6
-	sh1add s5, s5, s6
-	sw s5, 4(a7)
-	lw s7, -4(a7)
-	lw s6, -24(a7)
-	addw s5, s7, s6
-	subw s7, s7, s5
-	addw s6, s6, s7
-	subw s5, s6, s5
-	lw s6, -48(a7)
-	addw s7, s5, s6
-	subw s5, s5, s7
-	addw s5, s6, s5
-	subw s6, s5, s7
-	addw s5, s2, s6
-	subw s6, s6, s5
-	addw s2, s2, s6
-	subw s2, s2, s5
-	srliw s5, s2, 31
-	add s5, s2, s5
-	andi s5, s5, -2
-	subw s5, s2, s5
-	sh1add s2, s2, s5
-	sw s2, 8(a7)
-	lw s5, -20(a7)
-	addw s2, s4, s5
-	subw s4, s4, s2
-	addw s4, s5, s4
-	subw s2, s4, s2
-	lw s4, -44(a7)
-	addw s5, s2, s4
-	subw s2, s2, s5
-	addw s2, s4, s2
-	subw s4, s2, s5
-	addw s2, s3, s4
-	subw s4, s4, s2
-	addw s3, s3, s4
-	subw s2, s3, s2
-	srliw s3, s2, 31
-	add s3, s2, s3
-	andi s3, s3, -2
-	subw s3, s2, s3
-	sh1add s2, s2, s3
-	sw s2, 12(a7)
-	mv a7, a6
-	addiw a6, a6, 4
-	li s2, 80
-	bge a6, s2, label237
-	j label33
 label34:
 	sh2add a7, a7, s0
-	lw s3, -12(a7)
-	lw s4, -32(a7)
-	addw s2, s3, s4
-	subw s3, s3, s2
-	addw s3, s4, s3
-	subw s3, s3, s2
+	lw s4, -12(a7)
+	lw s3, -32(a7)
+	addw s2, s4, s3
+	subw s4, s4, s2
+	addw s3, s3, s4
+	subw s4, s3, s2
 	lw s2, -56(a7)
-	addw s4, s3, s2
-	subw s3, s3, s4
-	addw s3, s2, s3
-	subw s5, s3, s4
+	addw s3, s4, s2
+	subw s4, s4, s3
+	addw s4, s2, s4
+	subw s5, s4, s3
 	lw s4, -64(a7)
 	addw s3, s5, s4
 	subw s5, s5, s3
@@ -560,11 +343,11 @@ label34:
 	sh1add s4, s3, s4
 	sw s4, 0(a7)
 	lw s6, -8(a7)
-	lw s3, -28(a7)
-	addw s5, s6, s3
-	subw s6, s6, s5
-	addw s3, s3, s6
-	subw s5, s3, s5
+	lw s5, -28(a7)
+	addw s3, s6, s5
+	subw s6, s6, s3
+	addw s5, s5, s6
+	subw s5, s5, s3
 	lw s3, -52(a7)
 	addw s6, s5, s3
 	subw s5, s5, s6
@@ -627,6 +410,223 @@ label34:
 	li s2, 80
 	bge a6, s2, label29
 	j label34
+label46:
+	slliw s6, a7, 5
+	addw s3, s3, s6
+	addw s3, s4, s3
+	addw s3, s5, s3
+	slli s6, a7, 1
+	srli s6, s6, 59
+	add s6, a7, s6
+	andi s6, s6, -32
+	subw s6, a7, s6
+	addw s3, s3, s6
+	sh2add s6, t5, s0
+	lw s6, 0(s6)
+	addw s6, s3, s6
+	slliw s3, s2, 30
+	slli s7, s2, 1
+	srli s7, s7, 34
+	add s7, s2, s7
+	sraiw s7, s7, 30
+	slliw s7, s7, 30
+	subw s2, s2, s7
+	addw s7, s3, s2
+	addiw t5, t5, 1
+	mv s3, t6
+	mv s2, a7
+	mv t6, a6
+	mv a7, s6
+	mv a6, s7
+	li s6, 80
+	bge t5, s6, label44
+	li s6, 20
+	bge t5, s6, label49
+	j label55
+label49:
+	li s6, 40
+	bge t5, s6, label50
+	j label712
+label29:
+	addiw a6, a7, 4
+	li s2, 80
+	bge a6, s2, label237
+	j label31
+label237:
+	mv a6, a7
+label32:
+	sh2add a7, a6, s0
+	lw s2, -12(a7)
+	lw s3, -32(a7)
+	addw s4, s2, s3
+	subw s2, s2, s4
+	addw s2, s3, s2
+	subw s2, s2, s4
+	lw s3, -56(a7)
+	addw s4, s2, s3
+	subw s2, s2, s4
+	addw s2, s3, s2
+	subw s2, s2, s4
+	lw s4, -64(a7)
+	addw s3, s2, s4
+	subw s2, s2, s3
+	addw s2, s4, s2
+	subw s2, s2, s3
+	srliw s3, s2, 31
+	add s3, s2, s3
+	andi s3, s3, -2
+	subw s3, s2, s3
+	sh1add s2, s2, s3
+	sw s2, 0(a7)
+	addiw a6, a6, 1
+	li a7, 80
+	bge a6, a7, label358
+	j label32
+label358:
+	mv s4, t6
+	mv s5, t5
+	mv t5, zero
+	mv s3, a2
+	mv t6, a4
+	mv a6, t1
+	mv s2, t2
+	mv a7, t4
+	li s6, 80
+	bge zero, s6, label44
+	li s6, 20
+	bge zero, s6, label49
+	j label55
+label50:
+	li s6, 60
+	bge t5, s6, label52
+	addw s4, t6, a6
+	sh1add s5, s2, s4
+	addw s6, a6, s2
+	subw s6, s6, s5
+	addw s7, t6, s2
+	addw s6, s6, s7
+	subw s7, s6, s5
+	addw s6, s5, s7
+	subw s7, s7, s6
+	addw s5, s5, s7
+	subw s6, s5, s6
+	addw s5, s4, s6
+	subw s6, s6, s5
+	addw s4, s4, s6
+	subw s6, s4, s5
+	addw s4, s5, s6
+	subw s6, s6, s4
+	addw s5, s5, s6
+	subw s5, s5, s4
+	li s4, -1894007588
+	j label46
+label52:
+	li s6, 80
+	bge t5, s6, label46
+	j label714
+label712:
+	addw s4, a6, s2
+	subw s5, s2, s4
+	addw s5, a6, s5
+	subw s5, s5, s4
+	addw s4, t6, s5
+	subw s5, s5, s4
+	addw s5, t6, s5
+	subw s5, s5, s4
+	li s4, 1859775361
+	j label46
+label31:
+	sh2add a7, a7, s0
+	lw s3, -12(a7)
+	lw s2, -32(a7)
+	addw s4, s3, s2
+	subw s3, s3, s4
+	addw s2, s2, s3
+	subw s4, s2, s4
+	lw s2, -56(a7)
+	addw s3, s4, s2
+	subw s4, s4, s3
+	addw s4, s2, s4
+	subw s3, s4, s3
+	lw s4, -64(a7)
+	addw s5, s3, s4
+	subw s3, s3, s5
+	addw s3, s4, s3
+	subw s3, s3, s5
+	srliw s4, s3, 31
+	add s4, s3, s4
+	andi s4, s4, -2
+	subw s4, s3, s4
+	sh1add s4, s3, s4
+	sw s4, 0(a7)
+	lw s6, -8(a7)
+	lw s3, -28(a7)
+	addw s5, s6, s3
+	subw s6, s6, s5
+	addw s3, s3, s6
+	subw s5, s3, s5
+	lw s3, -52(a7)
+	addw s6, s5, s3
+	subw s5, s5, s6
+	addw s5, s3, s5
+	subw s7, s5, s6
+	lw s6, -60(a7)
+	addw s5, s7, s6
+	subw s7, s7, s5
+	addw s6, s6, s7
+	subw s5, s6, s5
+	srliw s6, s5, 31
+	add s6, s5, s6
+	andi s6, s6, -2
+	subw s6, s5, s6
+	sh1add s5, s5, s6
+	sw s5, 4(a7)
+	lw s6, -4(a7)
+	lw s5, -24(a7)
+	addw s7, s6, s5
+	subw s6, s6, s7
+	addw s5, s5, s6
+	subw s6, s5, s7
+	lw s5, -48(a7)
+	addw s7, s6, s5
+	subw s6, s6, s7
+	addw s5, s5, s6
+	subw s6, s5, s7
+	addw s5, s2, s6
+	subw s6, s6, s5
+	addw s2, s2, s6
+	subw s2, s2, s5
+	srliw s5, s2, 31
+	add s5, s2, s5
+	andi s5, s5, -2
+	subw s5, s2, s5
+	sh1add s2, s2, s5
+	sw s2, 8(a7)
+	lw s5, -20(a7)
+	addw s2, s4, s5
+	subw s4, s4, s2
+	addw s4, s5, s4
+	subw s2, s4, s2
+	lw s5, -44(a7)
+	addw s4, s2, s5
+	subw s2, s2, s4
+	addw s2, s5, s2
+	subw s4, s2, s4
+	addw s2, s3, s4
+	subw s4, s4, s2
+	addw s3, s3, s4
+	subw s2, s3, s2
+	srliw s3, s2, 31
+	add s3, s2, s3
+	andi s3, s3, -2
+	subw s3, s2, s3
+	sh1add s2, s2, s3
+	sw s2, 12(a7)
+	mv a7, a6
+	addiw a6, a6, 4
+	li s2, 80
+	bge a6, s2, label237
+	j label31
 label714:
 	addw s4, a6, s2
 	subw s5, s2, s4

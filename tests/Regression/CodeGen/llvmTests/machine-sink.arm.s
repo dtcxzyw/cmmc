@@ -6,8 +6,8 @@
 .fpu vfpv4
 .globl test
 test:
-	cmp r1, r0
+	cmp r0, r1
 	add r1, r1, #2
 	mov r0, #1
-	movhi r0, r1
+	movlo r0, r1
 	bx lr

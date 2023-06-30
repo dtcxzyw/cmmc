@@ -161,115 +161,25 @@ calc_seleqz:
 	bx lr
 .globl calc_selge
 calc_selge:
-	push { r4, r5 }
+	push { r4 }
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r0, [r0, #0]
 	movw r1, #:lower16:b
 	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
+	ldr r1, [r1, #0]
+	cmp r0, r1
 	movw r1, #:lower16:f
 	movt r1, #:upper16:f
 	ldr r1, [r1, #0]
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r4, r2
-	movge r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
-	mov r3, r1
-	movge r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
+	mov r3, r2
+	movge r3, r1
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
 	str r3, [r4, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
-	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r1
-	movge r4, r2
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
-	cmp r0, r3
-	mov r0, r1
-	movge r0, r2
-	movw r1, #:lower16:z4
-	movt r1, #:upper16:z4
-	str r0, [r1, #0]
-	pop { r4, r5 }
-	bx lr
-.globl calc_selgt
-calc_selgt:
-	push { r4, r5 }
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
-	movw r1, #:lower16:f
-	movt r1, #:upper16:f
-	ldr r1, [r1, #0]
-	movw r2, #:lower16:t
-	movt r2, #:upper16:t
-	ldr r2, [r2, #0]
-	mov r4, r2
-	movgt r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
-	mov r3, r1
-	movgt r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
-	str r3, [r4, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
-	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r2
-	movgt r4, r1
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
-	cmp r0, r3
-	mov r0, r2
-	movgt r0, r1
-	movw r1, #:lower16:z4
-	movt r1, #:upper16:z4
-	str r0, [r1, #0]
-	mov r0, #0
-	pop { r4, r5 }
-	bx lr
-.globl calc_selle
-calc_selle:
-	push { r4, r5 }
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
-	movw r1, #:lower16:t
-	movt r1, #:upper16:t
-	ldr r1, [r1, #0]
-	movw r2, #:lower16:f
-	movt r2, #:upper16:f
-	ldr r2, [r2, #0]
-	mov r4, r2
-	movle r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
 	mov r3, r1
 	movle r3, r2
 	movw r4, #:lower16:z2
@@ -278,19 +188,103 @@ calc_selle:
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r2
-	movle r4, r1
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
 	cmp r0, r3
-	mov r0, r2
-	movle r0, r1
+	mov r0, r1
+	movle r0, r2
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r0, [r3, #0]
+	mov r0, r1
+	movge r0, r2
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4
 	str r0, [r1, #0]
-	pop { r4, r5 }
+	pop { r4 }
+	bx lr
+.globl calc_selgt
+calc_selgt:
+	push { r4 }
+	movw r0, #:lower16:a
+	movt r0, #:upper16:a
+	ldr r1, [r0, #0]
+	movw r0, #:lower16:b
+	movt r0, #:upper16:b
+	ldr r0, [r0, #0]
+	cmp r1, r0
+	movw r0, #:lower16:f
+	movt r0, #:upper16:f
+	ldr r0, [r0, #0]
+	movw r2, #:lower16:t
+	movt r2, #:upper16:t
+	ldr r2, [r2, #0]
+	mov r3, r2
+	movgt r3, r0
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
+	str r3, [r4, #0]
+	mov r3, r0
+	movlt r3, r2
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
+	str r3, [r4, #0]
+	movw r3, #:lower16:c
+	movt r3, #:upper16:c
+	ldr r3, [r3, #0]
+	cmp r1, r3
+	mov r1, r2
+	movlt r1, r0
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
+	mov r1, r2
+	movgt r1, r0
+	movw r0, #:lower16:z4
+	movt r0, #:upper16:z4
+	str r1, [r0, #0]
+	mov r0, #0
+	pop { r4 }
+	bx lr
+.globl calc_selle
+calc_selle:
+	push { r4 }
+	movw r0, #:lower16:a
+	movt r0, #:upper16:a
+	ldr r1, [r0, #0]
+	movw r0, #:lower16:b
+	movt r0, #:upper16:b
+	ldr r0, [r0, #0]
+	cmp r1, r0
+	movw r0, #:lower16:t
+	movt r0, #:upper16:t
+	ldr r0, [r0, #0]
+	movw r2, #:lower16:f
+	movt r2, #:upper16:f
+	ldr r2, [r2, #0]
+	mov r3, r2
+	movle r3, r0
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
+	str r3, [r4, #0]
+	mov r3, r0
+	movge r3, r2
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
+	str r3, [r4, #0]
+	movw r3, #:lower16:c
+	movt r3, #:upper16:c
+	ldr r3, [r3, #0]
+	cmp r1, r3
+	mov r1, r2
+	movge r1, r0
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
+	mov r1, r2
+	movle r1, r0
+	movw r0, #:lower16:z4
+	movt r0, #:upper16:z4
+	str r1, [r0, #0]
+	pop { r4 }
 	bx lr
 .globl calc_selltk
 calc_selltk:
@@ -496,114 +490,25 @@ calc_selnez2:
 	bx lr
 .globl calc_seluge
 calc_seluge:
-	push { r4, r5 }
+	push { r4 }
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r0, [r0, #0]
 	movw r1, #:lower16:b
 	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
+	ldr r1, [r1, #0]
+	cmp r0, r1
 	movw r1, #:lower16:f
 	movt r1, #:upper16:f
 	ldr r1, [r1, #0]
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r4, r2
-	movhs r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
-	mov r3, r1
-	movhs r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
+	mov r3, r2
+	movhs r3, r1
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
 	str r3, [r4, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
-	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r1
-	movhs r4, r2
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
-	cmp r0, r3
-	mov r0, r1
-	movhs r0, r2
-	movw r1, #:lower16:z4
-	movt r1, #:upper16:z4
-	str r0, [r1, #0]
-	pop { r4, r5 }
-	bx lr
-.globl calc_selugt
-calc_selugt:
-	push { r4, r5 }
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
-	movw r1, #:lower16:f
-	movt r1, #:upper16:f
-	ldr r1, [r1, #0]
-	movw r2, #:lower16:t
-	movt r2, #:upper16:t
-	ldr r2, [r2, #0]
-	mov r4, r2
-	movhi r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
-	mov r3, r1
-	movhi r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
-	str r3, [r4, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
-	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r2
-	movhi r4, r1
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
-	cmp r0, r3
-	mov r0, r2
-	movhi r0, r1
-	movw r1, #:lower16:z4
-	movt r1, #:upper16:z4
-	str r0, [r1, #0]
-	pop { r4, r5 }
-	bx lr
-.globl calc_selule
-calc_selule:
-	push { r4, r5 }
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r3, [r1, #0]
-	cmp r0, r3
-	movw r1, #:lower16:t
-	movt r1, #:upper16:t
-	ldr r1, [r1, #0]
-	movw r2, #:lower16:f
-	movt r2, #:upper16:f
-	ldr r2, [r2, #0]
-	mov r4, r2
-	movls r4, r1
-	movw r5, #:lower16:z1
-	movt r5, #:upper16:z1
-	str r4, [r5, #0]
-	cmp r3, r0
 	mov r3, r1
 	movls r3, r2
 	movw r4, #:lower16:z2
@@ -612,17 +517,100 @@ calc_selule:
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
-	cmp r3, r0
-	mov r4, r2
-	movls r4, r1
-	movw r5, #:lower16:z3
-	movt r5, #:upper16:z3
-	str r4, [r5, #0]
 	cmp r0, r3
-	mov r0, r2
-	movls r0, r1
+	mov r0, r1
+	movls r0, r2
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r0, [r3, #0]
+	mov r0, r1
+	movhs r0, r2
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4
 	str r0, [r1, #0]
-	pop { r4, r5 }
+	pop { r4 }
+	bx lr
+.globl calc_selugt
+calc_selugt:
+	push { r4 }
+	movw r0, #:lower16:a
+	movt r0, #:upper16:a
+	ldr r1, [r0, #0]
+	movw r0, #:lower16:b
+	movt r0, #:upper16:b
+	ldr r0, [r0, #0]
+	cmp r1, r0
+	movw r0, #:lower16:f
+	movt r0, #:upper16:f
+	ldr r0, [r0, #0]
+	movw r2, #:lower16:t
+	movt r2, #:upper16:t
+	ldr r2, [r2, #0]
+	mov r3, r2
+	movhi r3, r0
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
+	str r3, [r4, #0]
+	mov r3, r0
+	movlo r3, r2
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
+	str r3, [r4, #0]
+	movw r3, #:lower16:c
+	movt r3, #:upper16:c
+	ldr r3, [r3, #0]
+	cmp r1, r3
+	mov r1, r2
+	movlo r1, r0
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
+	mov r1, r2
+	movhi r1, r0
+	movw r0, #:lower16:z4
+	movt r0, #:upper16:z4
+	str r1, [r0, #0]
+	pop { r4 }
+	bx lr
+.globl calc_selule
+calc_selule:
+	push { r4 }
+	movw r0, #:lower16:a
+	movt r0, #:upper16:a
+	ldr r1, [r0, #0]
+	movw r0, #:lower16:b
+	movt r0, #:upper16:b
+	ldr r0, [r0, #0]
+	cmp r1, r0
+	movw r0, #:lower16:t
+	movt r0, #:upper16:t
+	ldr r0, [r0, #0]
+	movw r2, #:lower16:f
+	movt r2, #:upper16:f
+	ldr r2, [r2, #0]
+	mov r3, r2
+	movls r3, r0
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
+	str r3, [r4, #0]
+	mov r3, r0
+	movhs r3, r2
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
+	str r3, [r4, #0]
+	movw r3, #:lower16:c
+	movt r3, #:upper16:c
+	ldr r3, [r3, #0]
+	cmp r1, r3
+	mov r1, r2
+	movhs r1, r0
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
+	mov r1, r2
+	movls r1, r0
+	movw r0, #:lower16:z4
+	movt r0, #:upper16:z4
+	str r1, [r0, #0]
+	pop { r4 }
 	bx lr

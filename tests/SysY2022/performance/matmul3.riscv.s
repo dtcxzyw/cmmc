@@ -62,7 +62,10 @@ label60:
 	mv a0, zero
 	li a4, 1000
 	bge zero, a4, label15
-	j label646
+label646:
+	mv a4, zero
+	mv a5, zero
+	j label11
 label68:
 	mv a1, zero
 	li a0, 4000
@@ -117,6 +120,19 @@ label68:
 	li a4, 1000
 	bge a3, a4, label371
 	j label687
+label15:
+	addiw a2, a2, 1
+	li a0, 4000
+	mul a1, a2, a0
+	add a1, s2, a1
+	mul a0, a2, a0
+	add a3, s0, a0
+	li a0, 1000
+	bge a2, a0, label68
+	mv a0, zero
+	li a4, 1000
+	bge zero, a4, label15
+	j label646
 label121:
 	mv a0, zero
 	li a1, 1000
@@ -151,23 +167,6 @@ label46:
 	ld s2, 32(sp)
 	addi sp, sp, 40
 	ret
-label646:
-	mv a4, zero
-	mv a5, zero
-	j label11
-label15:
-	addiw a2, a2, 1
-	li a0, 4000
-	mul a1, a2, a0
-	add a1, s2, a1
-	mul a0, a2, a0
-	add a3, s0, a0
-	li a0, 1000
-	bge a2, a0, label68
-	mv a0, zero
-	li a4, 1000
-	bge zero, a4, label15
-	j label646
 label11:
 	li t3, 4000
 	mul t1, a5, t3
@@ -185,10 +184,10 @@ label11:
 	addw t4, t6, t4
 	slli t3, t3, 1
 	add t3, t1, t3
-	sh2add t3, a0, t3
-	lw t5, 8(t2)
-	lw t3, 0(t3)
-	mulw t3, t5, t3
+	sh2add t5, a0, t3
+	lw t3, 8(t2)
+	lw t5, 0(t5)
+	mulw t3, t3, t5
 	addw t3, t4, t3
 	li t4, 12000
 	add t1, t1, t4
@@ -202,16 +201,17 @@ label11:
 	li t1, 1000
 	bge a5, t1, label14
 	j label11
-label14:
-	sh2add a5, a0, a3
-	sw a4, 0(a5)
-	addiw a0, a0, 1
+label692:
+	sh2add a4, a3, a2
+	lw a4, 0(a4)
+	min a0, a4, a0
+	addiw a3, a3, 1
 	li a4, 1000
-	bge a0, a4, label15
-	j label646
+	bge a3, a4, label371
+	j label697
 label371:
 	mv a3, zero
-label36:
+label37:
 	sh2add a4, a3, a2
 	sw a0, 0(a4)
 	sw a0, 4(a4)
@@ -231,9 +231,9 @@ label36:
 	sw a0, 60(a4)
 	addiw a3, a3, 16
 	li a4, 992
-	bge a3, a4, label38
-	j label36
-label38:
+	bge a3, a4, label39
+	j label37
+label39:
 	sh2add a2, a3, a2
 	sw a0, 0(a2)
 	sw a0, 4(a2)
@@ -388,13 +388,13 @@ label41:
 	li a3, 992
 	bge a2, a3, label43
 	j label41
-label692:
-	sh2add a4, a3, a2
-	lw a4, 0(a4)
-	min a0, a4, a0
-	addiw a3, a3, 1
+label14:
+	sh2add a5, a0, a3
+	sw a4, 0(a5)
+	addiw a0, a0, 1
 	li a4, 1000
-	bge a3, a4, label371
+	bge a0, a4, label15
+	j label646
 label697:
 	sh2add a4, a3, a2
 	lw a4, 0(a4)
@@ -409,6 +409,29 @@ label651:
 	add a1, s0, a1
 	mv a4, s1
 	mv a2, zero
+	j label29
+label32:
+	sh2add a1, a2, a1
+	lw a2, 0(a1)
+	addw a2, a4, a2
+	lw a3, 4(a1)
+	addw a2, a2, a3
+	lw a3, 8(a1)
+	addw a2, a2, a3
+	lw a3, 12(a1)
+	addw a2, a2, a3
+	lw a3, 16(a1)
+	addw a2, a2, a3
+	lw a3, 20(a1)
+	addw a2, a2, a3
+	lw a3, 24(a1)
+	addw a2, a2, a3
+	lw a1, 28(a1)
+	addw s1, a2, a1
+	addiw a0, a0, 1
+	li a1, 1000
+	bge a0, a1, label27
+	j label651
 label29:
 	sh2add a3, a2, a1
 	lw a5, 0(a3)
@@ -447,28 +470,6 @@ label29:
 	li a3, 992
 	bge a2, a3, label32
 	j label29
-label32:
-	sh2add a1, a2, a1
-	lw a2, 0(a1)
-	addw a2, a4, a2
-	lw a3, 4(a1)
-	addw a2, a2, a3
-	lw a3, 8(a1)
-	addw a2, a2, a3
-	lw a3, 12(a1)
-	addw a2, a2, a3
-	lw a3, 16(a1)
-	addw a2, a2, a3
-	lw a3, 20(a1)
-	addw a2, a2, a3
-	lw a3, 24(a1)
-	addw a2, a2, a3
-	lw a1, 28(a1)
-	addw s1, a2, a1
-	addiw a0, a0, 1
-	li a1, 1000
-	bge a0, a1, label27
-	j label651
 label124:
 	li a1, 4000
 	mul a1, a0, a1

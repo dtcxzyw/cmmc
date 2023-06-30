@@ -8,8 +8,8 @@
 binomial:
 	push { r4 }
 	mov r2, r1
-	cmp r1, r0
-	bls label4
+	cmp r0, r1
+	bhs label4
 	mov r0, #0
 	b label2
 label34:
@@ -33,8 +33,8 @@ label23:
 	add r4, r3, #1
 	udiv r1, r1, r4
 	add r3, r3, #2
-	cmp r3, r2
-	bls label32
+	cmp r2, r3
+	bhs label32
 label35:
 	mov r0, r1
 	b label2
@@ -45,6 +45,6 @@ label32:
 	add r4, r3, #1
 	udiv r1, r1, r4
 	add r3, r3, #2
-	cmp r3, r2
-	bls label32
+	cmp r2, r3
+	bhs label32
 	b label35

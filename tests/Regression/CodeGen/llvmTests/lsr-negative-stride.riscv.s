@@ -16,7 +16,7 @@ label16:
 	mv a4, zero
 	mulw a2, a5, zero
 	addw a2, a1, a2
-	ble a2, a3, label11
+	bge a3, a2, label11
 	subw a2, a2, a0
 	xor t1, a0, a2
 	sltu t1, zero, t1
@@ -31,7 +31,7 @@ label10:
 	addiw a4, a4, 1
 	mulw a2, a5, a4
 	addw a2, a1, a2
-	ble a2, a3, label11
+	bge a3, a2, label11
 	subw a2, a2, a0
 	xor t1, a0, a2
 	sltu t1, zero, t1
@@ -50,7 +50,7 @@ label36:
 	mv a4, zero
 	mulw a2, a5, zero
 	addw a2, a1, a2
-	ble a2, a0, label11
+	bge a0, a2, label11
 	subw a2, a2, a0
 	xor t1, a0, a2
 	sltu t1, zero, t1

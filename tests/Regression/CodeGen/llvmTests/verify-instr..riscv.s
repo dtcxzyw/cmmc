@@ -7,53 +7,53 @@ mulw:
 	mv a3, a1
 	bge a0, a1, label16
 	addiw a1, a0, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	li a2, 4294967295
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	and a1, a1, a2
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	j label65
 label16:
 	li a0, 1
@@ -64,7 +64,7 @@ label65:
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	j label66
 label8:
 	ret
@@ -78,5 +78,5 @@ label66:
 	and a0, a0, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
-	bge a1, a3, label21
+	ble a3, a1, label21
 	j label66

@@ -18,8 +18,8 @@ label16:
 	mov r3, r2
 	mov r4, #0
 	mla r2, r5, r4, r1
-	cmp r2, r3
-	ble label11
+	cmp r3, r2
+	bge label11
 	sub r2, r2, r0
 	cmp r0, r2
 	bne label10
@@ -33,8 +33,8 @@ label44:
 label10:
 	add r4, r4, #1
 	mla r2, r5, r4, r1
-	cmp r2, r3
-	ble label11
+	cmp r3, r2
+	bge label11
 	sub r2, r2, r0
 	cmp r0, r2
 	bne label10
@@ -50,8 +50,8 @@ label36:
 	mov r3, r0
 	mov r4, #0
 	mla r2, r5, r4, r2
-	cmp r2, r0
-	ble label11
+	cmp r0, r2
+	bge label11
 	sub r2, r2, r0
 	cmp r0, r2
 	bne label10

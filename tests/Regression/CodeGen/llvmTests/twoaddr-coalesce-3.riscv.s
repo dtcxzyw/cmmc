@@ -35,7 +35,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -43,7 +43,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -51,7 +51,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -59,7 +59,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -67,7 +67,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -75,7 +75,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -83,7 +83,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -91,7 +91,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -99,7 +99,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	and a3, a3, a4
 	srliw a5, a3, 31
 	add a5, a3, a5
@@ -107,7 +107,7 @@ pcrel79:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	j label74
 label8:
 	ret
@@ -125,7 +125,7 @@ label74:
 	and a0, a0, a4
 	addw a0, a5, a0
 	addiw a3, a3, 1
-	bge a3, a1, label23
+	ble a1, a3, label23
 	j label74
 .globl goo
 goo:
@@ -158,7 +158,7 @@ label82:
 	and a5, a0, a5
 	sw a5, 0(a3)
 	addiw a4, a4, 1
-	bge a4, a1, label105
+	ble a1, a4, label105
 	j label82
 label87:
 	ret

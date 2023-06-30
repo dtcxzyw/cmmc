@@ -14,8 +14,8 @@ neg_only_one_truncation:
 	add r0, r0, r2
 	uxtb r2, r0
 	sxtb r2, r2
-	cmp r2, r3
-	ble label21
+	cmp r3, r2
+	bge label21
 	and r0, r0, #255
 	b label3
 label21:
@@ -34,8 +34,8 @@ neg_type_mismatch:
 	add r0, r0, r2
 	uxtb r2, r0
 	sxtb r2, r2
-	cmp r2, r3
-	ble label46
+	cmp r3, r2
+	bge label46
 	and r0, r0, #255
 	b label28
 label46:
@@ -50,8 +50,8 @@ negative_CopyFromReg:
 	sxtb r2, r2
 	uxtb r3, r0
 	sxtb r3, r3
-	cmp r3, r2
-	ble label69
+	cmp r2, r3
+	bge label69
 	and r0, r0, #255
 	b label54
 label69:

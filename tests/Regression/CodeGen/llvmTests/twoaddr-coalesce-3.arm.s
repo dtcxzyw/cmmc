@@ -37,62 +37,62 @@ foo:
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	add r4, r3, r3, lsr #31
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	b label64
 label8:
 	pop { r4 }
@@ -105,8 +105,8 @@ label64:
 	asr r4, r4, #1
 	add r0, r4, r0
 	add r3, r3, #1
-	cmp r3, r1
-	bge label23
+	cmp r1, r3
+	ble label23
 	b label64
 .globl goo
 goo:
@@ -134,79 +134,79 @@ goo:
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 label126:
 	add r5, r4, r4, lsr #31
 	asr r5, r5, #1
 	add r0, r5, r0
 	str r0, [r3, #0]
 	add r4, r4, #1
-	cmp r4, r1
-	bge label93
+	cmp r1, r4
+	ble label93
 	b label126
 label75:
 	pop { r4, r5 }
