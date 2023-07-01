@@ -34,8 +34,7 @@ label2:
 	movw r3, #:lower16:A
 	movt r3, #:upper16:A
 	strb r2, [r3, r1]
-	mov r2, #9
-	mul r2, r1, r2
+	add r2, r1, r1, lsl #3
 	movw r3, #:lower16:P
 	movt r3, #:upper16:P
 	mov r4, #17

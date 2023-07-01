@@ -38,8 +38,8 @@ label2:
 	movw r4, #:lower16:A
 	movt r4, #:upper16:A
 	strb r3, [r4, r2]
-	mov r3, #9
-	mla r3, r2, r3, r1
+	add r3, r2, r2, lsl #3
+	add r3, r1, r3
 	movw r4, #:lower16:P
 	movt r4, #:upper16:P
 	mov r5, #17

@@ -3,8 +3,7 @@
 .globl main
 main:
 	addiu $t0, $a0, 1
-	li $t1, 5
-	mult $t0, $t1
-	mflo $v0
+	sll $t1, $t0, 2
+	addu $v0, $t1, $t0
 	jr $ra
 	nop

@@ -66,8 +66,7 @@ sub_reg:
 	bx lr
 .globl mul_imm
 mul_imm:
-	lsl r1, r0, #1
-	add r0, r1, r0, lsl #1
+	add r0, r0, r0, lsl #1
 	bx lr
 .globl mul_to_shl
 mul_to_shl:
@@ -338,10 +337,8 @@ mul_with_constant_0:
 	bx lr
 .globl mul_with_constant_100
 mul_with_constant_100:
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
+	add r0, r0, r0, lsl #2
+	add r0, r0, r0, lsl #2
 	lsl r0, r0, #2
 	bx lr
 .globl mul_with_constant_1000
@@ -352,63 +349,51 @@ mul_with_constant_1000:
 	bx lr
 .globl mul_with_constant_400
 mul_with_constant_400:
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
+	add r0, r0, r0, lsl #2
+	add r0, r0, r0, lsl #2
 	lsl r0, r0, #4
 	bx lr
 .globl mul_with_constant_1000000
 mul_with_constant_1000000:
 	rsb r1, r0, r0, lsl #5
-	lsl r2, r1, #6
-	sub r1, r2, r1, lsl #6
+	rsb r1, r1, r1, lsl #6
 	add r0, r0, r1, lsl #3
 	lsl r0, r0, #6
 	bx lr
 .globl mul_with_constant_10
 mul_with_constant_10:
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
+	add r0, r0, r0, lsl #2
 	lsl r0, r0, #1
 	bx lr
 .globl mul_with_constant_270
 mul_with_constant_270:
-	lsl r1, r0, #3
-	add r0, r1, r0, lsl #3
-	lsl r1, r0, #4
-	sub r0, r1, r0, lsl #4
+	add r0, r0, r0, lsl #3
+	rsb r0, r0, r0, lsl #4
 	lsl r0, r0, #1
 	bx lr
 .globl mul_with_constant_3
 mul_with_constant_3:
-	lsl r1, r0, #1
-	add r0, r1, r0, lsl #1
+	add r0, r0, r0, lsl #1
 	bx lr
 .globl mul_with_constant_85
 mul_with_constant_85:
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
-	lsl r1, r0, #4
-	add r0, r1, r0, lsl #4
+	add r0, r0, r0, lsl #2
+	add r0, r0, r0, lsl #4
 	bx lr
 .globl mul_with_constant_23
 mul_with_constant_23:
-	lsl r1, r0, #1
-	add r1, r1, r0, lsl #1
+	add r1, r0, r0, lsl #1
 	rsb r0, r0, r1, lsl #3
 	bx lr
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
-	lsl r1, r0, #1
-	add r1, r1, r0, lsl #1
+	add r1, r0, r0, lsl #1
 	rsb r0, r0, r1, lsl #3
 	rsb r0, r0, #0
 	bx lr
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
-	lsl r1, r0, #2
-	add r1, r1, r0, lsl #2
+	add r1, r0, r0, lsl #2
 	add r0, r0, r1, lsl #3
 	lsl r0, r0, #1
 	rsb r0, r0, #0
@@ -428,8 +413,7 @@ mul_with_constant_neg_59:
 	bx lr
 .globl mul_with_constant_17
 mul_with_constant_17:
-	lsl r1, r0, #4
-	add r0, r1, r0, lsl #4
+	add r0, r0, r0, lsl #4
 	bx lr
 .globl mul_with_constant_128875
 mul_with_constant_128875:
@@ -451,20 +435,16 @@ mul_with_constant_19971231:
 	bx lr
 .globl mul_with_constant_8193
 mul_with_constant_8193:
-	lsl r1, r0, #13
-	add r0, r1, r0, lsl #13
+	add r0, r0, r0, lsl #13
 	bx lr
 .globl mul_with_constant_270369
 mul_with_constant_270369:
-	lsl r1, r0, #5
-	add r0, r1, r0, lsl #5
-	lsl r1, r0, #13
-	add r0, r1, r0, lsl #13
+	add r0, r0, r0, lsl #5
+	add r0, r0, r0, lsl #13
 	bx lr
 .globl mul_with_constant_33
 mul_with_constant_33:
-	lsl r1, r0, #5
-	add r0, r1, r0, lsl #5
+	add r0, r0, r0, lsl #5
 	bx lr
 .globl mul_with_constant_16777216
 mul_with_constant_16777216:
@@ -481,17 +461,14 @@ mul_with_constant_60:
 	bx lr
 .globl mul_with_constant_300
 mul_with_constant_300:
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
-	lsl r1, r0, #4
-	sub r0, r1, r0, lsl #4
+	add r0, r0, r0, lsl #2
+	rsb r0, r0, r0, lsl #4
 	lsl r0, r0, #2
 	bx lr
 .globl mul_with_constant_10000
 mul_with_constant_10000:
 	rsb r1, r0, r0, lsl #6
 	rsb r0, r0, r1, lsl #1
-	lsl r1, r0, #2
-	add r0, r1, r0, lsl #2
+	add r0, r0, r0, lsl #2
 	lsl r0, r0, #4
 	bx lr

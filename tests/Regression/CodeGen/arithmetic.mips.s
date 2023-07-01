@@ -90,7 +90,7 @@ sub_reg:
 .globl mul_imm
 mul_imm:
 	sll $t0, $a0, 1
-	addu $v0, $t0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl mul_to_shl
@@ -390,9 +390,9 @@ mul_with_constant_0:
 .globl mul_with_constant_100
 mul_with_constant_100:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 2
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 2
+	addu $t0, $t1, $t0
 	sll $v0, $t0, 2
 	jr $ra
 	nop
@@ -408,9 +408,9 @@ mul_with_constant_1000:
 .globl mul_with_constant_400
 mul_with_constant_400:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 2
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 2
+	addu $t0, $t1, $t0
 	sll $v0, $t0, 4
 	jr $ra
 	nop
@@ -424,37 +424,37 @@ mul_with_constant_1000000:
 .globl mul_with_constant_10
 mul_with_constant_10:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
 	sll $v0, $t0, 1
 	jr $ra
 	nop
 .globl mul_with_constant_270
 mul_with_constant_270:
 	sll $t0, $a0, 3
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 4
-	subu $t0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 4
+	subu $t0, $t1, $t0
 	sll $v0, $t0, 1
 	jr $ra
 	nop
 .globl mul_with_constant_3
 mul_with_constant_3:
 	sll $t0, $a0, 1
-	addu $v0, $t0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl mul_with_constant_85
 mul_with_constant_85:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 4
-	addu $v0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 4
+	addu $v0, $t1, $t0
 	jr $ra
 	nop
 .globl mul_with_constant_23
 mul_with_constant_23:
 	sll $t0, $a0, 1
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
 	sll $t0, $t0, 3
 	subu $v0, $t0, $a0
 	jr $ra
@@ -462,7 +462,7 @@ mul_with_constant_23:
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
 	sll $t0, $a0, 1
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
 	sll $t0, $t0, 3
 	subu $t0, $t0, $a0
 	subu $v0, $zero, $t0
@@ -471,7 +471,7 @@ mul_with_constant_neg_23:
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a0
 	sll $t0, $t0, 3
 	addu $t0, $t0, $a0
 	sll $t0, $t0, 1
@@ -501,7 +501,7 @@ mul_with_constant_neg_59:
 .globl mul_with_constant_17
 mul_with_constant_17:
 	sll $t0, $a0, 4
-	addu $v0, $t0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl mul_with_constant_128875
@@ -528,21 +528,21 @@ mul_with_constant_19971231:
 .globl mul_with_constant_8193
 mul_with_constant_8193:
 	sll $t0, $a0, 13
-	addu $v0, $t0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl mul_with_constant_270369
 mul_with_constant_270369:
 	sll $t0, $a0, 5
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 13
-	addu $v0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 13
+	addu $v0, $t1, $t0
 	jr $ra
 	nop
 .globl mul_with_constant_33
 mul_with_constant_33:
 	sll $t0, $a0, 5
-	addu $v0, $t0, $t0
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl mul_with_constant_16777216
@@ -565,9 +565,9 @@ mul_with_constant_60:
 .globl mul_with_constant_300
 mul_with_constant_300:
 	sll $t0, $a0, 2
-	addu $t0, $t0, $t0
-	sll $t0, $t0, 4
-	subu $t0, $t0, $t0
+	addu $t0, $t0, $a0
+	sll $t1, $t0, 4
+	subu $t0, $t1, $t0
 	sll $v0, $t0, 2
 	jr $ra
 	nop

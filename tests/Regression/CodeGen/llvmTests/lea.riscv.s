@@ -12,8 +12,8 @@ test2:
 	ble a0, a1, label7
 	addiw a1, a0, -5
 	srliw a1, a1, 2
-	li a2, -4
-	mulw a1, a1, a2
+	slliw a1, a1, 2
+	subw a1, zero, a1
 	addiw a0, a0, -4
 	addw a0, a1, a0
 label7:

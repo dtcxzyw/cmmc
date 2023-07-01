@@ -34,8 +34,7 @@ pcrel44:
 	addi a5, a5, %pcrel_lo(pcrel44)
 	add a3, a5, a3
 	sb a4, 0(a3)
-	li a3, 9
-	mulw a3, a1, a3
+	sh3add a3, a1, a1
 	and a2, a3, a2
 pcrel45:
 	auipc a3, %pcrel_hi(P)

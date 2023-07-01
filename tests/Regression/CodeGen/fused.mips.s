@@ -148,8 +148,8 @@ fused_mul_sub_imm:
 	subu $t0, $t0, $a1
 	sll $t0, $t0, 4
 	subu $t0, $t0, $a1
-	sll $t0, $t0, 3
-	subu $t0, $t0, $t0
+	sll $t1, $t0, 3
+	subu $t0, $t1, $t0
 	subu $v0, $a0, $t0
 	jr $ra
 	nop

@@ -12,11 +12,11 @@ x:
 .globl cse_imm
 cse_imm:
 	sll $t0, $a1, 2
-	addu $t0, $t0, $t0
+	addu $t0, $t0, $a1
 	sll $t0, $t0, 1
 	xor $t0, $a2, $t0
 	sll $t1, $a0, 2
-	addu $t1, $t1, $t1
+	addu $t1, $t1, $a0
 	sll $t1, $t1, 1
 	addu $v0, $t0, $t1
 	jr $ra

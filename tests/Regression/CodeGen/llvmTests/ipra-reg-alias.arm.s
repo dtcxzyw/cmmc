@@ -6,6 +6,6 @@
 .fpu vfpv4
 .globl main
 main:
-	mov r1, #5
-	mla r0, r1, r0, r1
+	add r0, r0, #1
+	add r0, r0, r0, lsl #2
 	bx lr

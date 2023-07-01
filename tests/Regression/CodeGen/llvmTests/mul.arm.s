@@ -14,8 +14,7 @@ f2:
 	bx lr
 .globl f3
 f3:
-	mov r1, #5
-	mul r0, r0, r1
+	add r0, r0, r0, lsl #2
 	bx lr
 .globl f4
 f4:

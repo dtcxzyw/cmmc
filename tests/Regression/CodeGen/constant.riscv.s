@@ -8,12 +8,10 @@ x:
 .text
 .globl cse_imm
 cse_imm:
-	slliw a3, a1, 2
-	sh2add a1, a1, a3
+	sh2add a1, a1, a1
 	slliw a1, a1, 1
 	xor a1, a2, a1
-	slliw a2, a0, 2
-	sh2add a0, a0, a2
+	sh2add a0, a0, a0
 	sh1add a0, a0, a1
 	ret
 .globl cse_global

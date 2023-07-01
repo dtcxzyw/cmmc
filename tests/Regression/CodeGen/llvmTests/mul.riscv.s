@@ -11,8 +11,7 @@ f2:
 	ret
 .globl f3
 f3:
-	li a1, 5
-	mulw a0, a0, a1
+	sh2add a0, a0, a0
 	ret
 .globl f4
 f4:

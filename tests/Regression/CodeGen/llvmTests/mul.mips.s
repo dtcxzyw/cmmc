@@ -14,9 +14,8 @@ f2:
 	nop
 .globl f3
 f3:
-	li $t0, 5
-	mult $a0, $t0
-	mflo $v0
+	sll $t0, $a0, 2
+	addu $v0, $t0, $a0
 	jr $ra
 	nop
 .globl f4

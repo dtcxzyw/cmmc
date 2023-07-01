@@ -38,8 +38,7 @@ pcrel52:
 	addi t1, t1, %pcrel_lo(pcrel52)
 	add a4, t1, a4
 	sb a5, 0(a4)
-	li a4, 9
-	mulw a4, a2, a4
+	sh3add a4, a2, a2
 	addw a4, a1, a4
 	and a3, a4, a3
 pcrel53:

@@ -11,11 +11,9 @@ x:
 .fpu vfpv4
 .globl cse_imm
 cse_imm:
-	lsl r3, r1, #2
-	add r1, r3, r1, lsl #2
+	add r1, r1, r1, lsl #2
 	eor r1, r2, r1, lsl #1
-	lsl r2, r0, #2
-	add r0, r2, r0, lsl #2
+	add r0, r0, r0, lsl #2
 	add r0, r1, r0, lsl #1
 	bx lr
 .globl cse_global

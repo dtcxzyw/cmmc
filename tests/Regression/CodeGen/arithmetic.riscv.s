@@ -72,8 +72,7 @@ sub_reg:
 	ret
 .globl mul_imm
 mul_imm:
-	slliw a1, a0, 1
-	sh1add a0, a0, a1
+	sh1add a0, a0, a0
 	ret
 .globl mul_to_shl
 mul_to_shl:
@@ -345,10 +344,8 @@ mul_with_constant_0:
 	ret
 .globl mul_with_constant_100
 mul_with_constant_100:
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
+	sh2add a0, a0, a0
+	sh2add a0, a0, a0
 	slliw a0, a0, 2
 	ret
 .globl mul_with_constant_1000
@@ -361,10 +358,8 @@ mul_with_constant_1000:
 	ret
 .globl mul_with_constant_400
 mul_with_constant_400:
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
+	sh2add a0, a0, a0
+	sh2add a0, a0, a0
 	slliw a0, a0, 4
 	ret
 .globl mul_with_constant_1000000
@@ -374,48 +369,41 @@ mul_with_constant_1000000:
 	ret
 .globl mul_with_constant_10
 mul_with_constant_10:
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
+	sh2add a0, a0, a0
 	slliw a0, a0, 1
 	ret
 .globl mul_with_constant_270
 mul_with_constant_270:
-	slliw a1, a0, 3
-	sh3add a0, a0, a1
-	slliw a0, a0, 4
-	subw a0, a0, a0
+	sh3add a0, a0, a0
+	slliw a1, a0, 4
+	subw a0, a1, a0
 	slliw a0, a0, 1
 	ret
 .globl mul_with_constant_3
 mul_with_constant_3:
-	slliw a1, a0, 1
-	sh1add a0, a0, a1
+	sh1add a0, a0, a0
 	ret
 .globl mul_with_constant_85
 mul_with_constant_85:
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
-	slliw a0, a0, 4
-	addw a0, a0, a0
+	sh2add a0, a0, a0
+	slliw a1, a0, 4
+	addw a0, a1, a0
 	ret
 .globl mul_with_constant_23
 mul_with_constant_23:
-	slliw a1, a0, 1
-	sh1add a1, a0, a1
+	sh1add a1, a0, a0
 	slliw a1, a1, 3
 	subw a0, a1, a0
 	ret
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
-	slliw a1, a0, 1
-	sh1add a1, a0, a1
+	sh1add a1, a0, a0
 	slliw a1, a1, 3
 	subw a0, a0, a1
 	ret
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
-	slliw a1, a0, 2
-	sh2add a1, a0, a1
+	sh2add a1, a0, a0
 	sh3add a0, a1, a0
 	slliw a0, a0, 1
 	subw a0, zero, a0
@@ -438,8 +426,8 @@ mul_with_constant_neg_59:
 	ret
 .globl mul_with_constant_17
 mul_with_constant_17:
-	slliw a0, a0, 4
-	addw a0, a0, a0
+	slliw a1, a0, 4
+	addw a0, a1, a0
 	ret
 .globl mul_with_constant_128875
 mul_with_constant_128875:
@@ -458,20 +446,20 @@ mul_with_constant_19971231:
 	ret
 .globl mul_with_constant_8193
 mul_with_constant_8193:
-	slliw a0, a0, 13
-	addw a0, a0, a0
+	slliw a1, a0, 13
+	addw a0, a1, a0
 	ret
 .globl mul_with_constant_270369
 mul_with_constant_270369:
-	slliw a0, a0, 5
-	addw a0, a0, a0
-	slliw a0, a0, 13
-	addw a0, a0, a0
+	slliw a1, a0, 5
+	addw a0, a1, a0
+	slliw a1, a0, 13
+	addw a0, a1, a0
 	ret
 .globl mul_with_constant_33
 mul_with_constant_33:
-	slliw a0, a0, 5
-	addw a0, a0, a0
+	slliw a1, a0, 5
+	addw a0, a1, a0
 	ret
 .globl mul_with_constant_16777216
 mul_with_constant_16777216:
@@ -489,10 +477,9 @@ mul_with_constant_60:
 	ret
 .globl mul_with_constant_300
 mul_with_constant_300:
-	slliw a1, a0, 2
-	sh2add a0, a0, a1
-	slliw a0, a0, 4
-	subw a0, a0, a0
+	sh2add a0, a0, a0
+	slliw a1, a0, 4
+	subw a0, a1, a0
 	slliw a0, a0, 2
 	ret
 .globl mul_with_constant_10000

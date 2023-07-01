@@ -34,9 +34,8 @@ label2:
 	addiu $t2, $t2, %lo(A)
 	addu $t2, $t2, $t0
 	sb $t1, 0($t2)
-	li $t1, 9
-	mult $t0, $t1
-	mflo $t1
+	sll $t1, $t0, 3
+	addu $t1, $t1, $t0
 	addu $t1, $a1, $t1
 	lui $t2, %hi(P)
 	addiu $t2, $t2, %lo(P)

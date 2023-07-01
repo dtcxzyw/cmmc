@@ -50,23 +50,24 @@ public:
                             return v1;
 
                         auto v = self(self, plan->parent);
+                        auto ret = v;
                         if(plan->shamt > 0)
-                            v = builder.makeOp<BinaryInst>(InstructionID::Shl, v,
+                            ret = builder.makeOp<BinaryInst>(InstructionID::Shl, ret,
                                                            ConstantInteger::get(v1->getType(), plan->shamt));
 
                         auto rhs = plan->rhs == ShiftArithNode::RhsType::CHAIN ? v : v1;
                         switch(plan->artihmetic) {
                             case ShiftArithNode::ArtihType::ADD:
-                                v = builder.makeOp<BinaryInst>(InstructionID::Add, v, rhs);
+                                ret = builder.makeOp<BinaryInst>(InstructionID::Add, ret, rhs);
                                 break;
                             case ShiftArithNode::ArtihType::SUB:
-                                v = builder.makeOp<BinaryInst>(InstructionID::Sub, v, rhs);
+                                ret = builder.makeOp<BinaryInst>(InstructionID::Sub, ret, rhs);
                                 break;
                             case ShiftArithNode::ArtihType::NOP:
                                 break;
                         }
 
-                        return v;
+                        return ret;
                     };
 
                     const auto plan = findMultiplyPlan(std::abs(v2), target.getOptHeuristic().mulByConstThreshold);
