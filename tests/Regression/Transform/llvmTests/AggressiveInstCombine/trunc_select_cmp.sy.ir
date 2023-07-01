@@ -79,11 +79,9 @@ func @my_abs_sext(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Sta
   ^entry:
     i8 %0 = strunc i8 %var0 to i8;
     i32 %1 = sext i8 %0 to i32;
-    i1 %2 = scmp lt i32 %1, i32 0;
-    i32 %3 = neg i32 %1;
-    i32 %4 = select i1 %2 ? i32 %3 : i32 %1;
-    i16 %5 = ztrunc i32 %4 to i16;
-    ret i16 %5;
+    i32 %2 = abs i32 %1;
+    i16 %3 = ztrunc i32 %2 to i16;
+    ret i16 %3;
 }
 func @my_abs_zext(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

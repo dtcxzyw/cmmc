@@ -22,9 +22,7 @@ func @fmul_1(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
 }
 func @mul_1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = neg i32 %var0;
-    i32 %1 = neg i32 %0;
-    ret i32 %1;
+    ret i32 %var0;
 }
 func @or_0(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

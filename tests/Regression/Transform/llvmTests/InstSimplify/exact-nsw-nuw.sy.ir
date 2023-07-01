@@ -8,10 +8,9 @@ func @div1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
 func @div2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i32 %1 = neg i32 %0;
-    i32 %2 = sdiv i32 %1, i32 -2147483648;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i32 %1 = sdiv i32 %0, i32 -2147483648;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
 }
 func @shift1(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
