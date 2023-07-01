@@ -13,5 +13,10 @@
     "message": "test: add transform test from llvm project",
     "parent": "377826e4b87e1b09d4f811708c15375e9d09a15f",
     "time": "2023-07-01 21:34:20 +0800"
+  },
+  "56c9086846a535e80a65c5d5b88c5b2f7398c1bf": {
+    "message": "test(perf): execute perf with root privilege",
+    "parent": "3e4564a6705cbe0a844e11403b448d3a25fd763c",
+    "time": "2023-07-01 22:12:31 +0800"
   }
 }
