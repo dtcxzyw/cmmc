@@ -3,5 +3,10 @@
     "message": "ci: fix bugs and update gcc perf",
     "parent": "71187b7611df4fa5063e651ca3cb95d7472fc70f",
     "time": "2023-07-01 17:56:41 +0800"
+  },
+  "377826e4b87e1b09d4f811708c15375e9d09a15f": {
+    "message": "ci: fix typos",
+    "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
+    "time": "2023-07-01 21:30:30 +0800"
   }
 }
