@@ -1,0 +1,21 @@
+func @test1(f32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 5;
+    f32 %1 = fadd f32 %var1, f32 -5;
+    f32 %2 = fadd f32 %1, f32 %0;
+    ret f32 %2;
+}
+func @test1_reassoc(f32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 5;
+    f32 %1 = fadd f32 %var1, f32 -5;
+    f32 %2 = fadd f32 %1, f32 %0;
+    ret f32 %2;
+}
+func @test1_reassoc_nsz(f32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 5;
+    f32 %1 = fadd f32 %var1, f32 -5;
+    f32 %2 = fadd f32 %1, f32 %0;
+    ret f32 %2;
+}

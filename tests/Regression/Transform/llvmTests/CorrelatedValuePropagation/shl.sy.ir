@@ -1,0 +1,215 @@
+func @nsw_range1(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = add i32 %1, i32 -3;
+    i8 %3 = strunc i32 %2 to i8;
+    i32 %4 = sext i8 %3 to i32;
+    i32 %5 = shl i32 %4, i32 2;
+    i1 %6 = scmp lt i32 %4, i32 %5;
+    i32 %7 = zext i1 %6 to i32;
+    i32 %8 = ztrunc i32 %7 to i32;
+    ret i32 %8;
+}
+func @nuw_range1(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = add i32 %1, i32 1;
+    i32 %3 = shl i32 %2, i32 2;
+    i1 %4 = scmp eq i32 %3, i32 0;
+    i32 %5 = zext i1 %4 to i32;
+    i32 %6 = ztrunc i32 %5 to i32;
+    ret i32 %6;
+}
+func @nuw_range2(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = add i32 %1, i32 3;
+    i32 %3 = shl i32 %2, i32 2;
+    i32 %4 = and i32 %3, i32 255;
+    i1 %5 = scmp lt i32 %4, i32 2;
+    i32 %6 = zext i1 %5 to i32;
+    i32 %7 = ztrunc i32 %6 to i32;
+    ret i32 %7;
+}
+func @test0(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = shl i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    ret i8 %3;
+}
+func @test1(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = shl i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    i1 %4 = scmp lt i32 %1, i32 8;
+    i8 %5 = select i1 %4 ? i8 %3 : i8 0;
+    ret i8 %5;
+}
+func @test10(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @test11(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 2;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test12(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 3;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test13(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 4;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test14(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 -42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @test15(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 -42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 2;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test16(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 -42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 3;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test17(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i1 %2 = scmp lt i32 %1, i32 2;
+    i32 %3 = zext i8 %var0 to i32;
+    i32 %4 = shl i32 42, i32 %3;
+    i8 %5 = ztrunc i32 %4 to i8;
+    i8 %6 = select i1 %2 ? i8 %5 : i8 0;
+    ret i8 %6;
+}
+func @test18(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i1 %2 = scmp lt i32 %1, i32 3;
+    i32 %3 = zext i8 %var0 to i32;
+    i32 %4 = shl i32 42, i32 %3;
+    i8 %5 = ztrunc i32 %4 to i8;
+    i8 %6 = select i1 %2 ? i8 %5 : i8 0;
+    ret i8 %6;
+}
+func @test19(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i1 %2 = scmp lt i32 %1, i32 4;
+    i32 %3 = zext i8 %var0 to i32;
+    i32 %4 = shl i32 42, i32 %3;
+    i8 %5 = ztrunc i32 %4 to i8;
+    i8 %6 = select i1 %2 ? i8 %5 : i8 0;
+    ret i8 %6;
+}
+func @test2(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = shl i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    i1 %4 = scmp lt i32 %1, i32 9;
+    i8 %5 = select i1 %4 ? i8 %3 : i8 0;
+    ret i8 %5;
+}
+func @test3(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = shl i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    i1 %4 = scmp gt i32 %1, i32 6;
+    i8 %5 = select i1 %4 ? i8 %3 : i8 0;
+    ret i8 %5;
+}
+func @test4(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = shl i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    i1 %4 = scmp gt i32 %1, i32 7;
+    i8 %5 = select i1 %4 ? i8 %3 : i8 0;
+    ret i8 %5;
+}
+func @test5(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 0, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @test6(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 1, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @test7(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 1, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp lt i32 %0, i32 7;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}
+func @test8(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 -1, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @test9(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = shl i32 -1, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    i1 %3 = scmp eq i32 %0, i32 0;
+    i8 %4 = select i1 %3 ? i8 %2 : i8 0;
+    ret i8 %4;
+}

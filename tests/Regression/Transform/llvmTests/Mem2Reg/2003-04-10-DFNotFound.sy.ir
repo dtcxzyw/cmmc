@@ -1,0 +1,4 @@
+func @_Z3barv() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

@@ -1,0 +1,11 @@
+func @foo(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 -9;
+    ret i32 %0;
+}
+func @foo2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 2;
+    i32 %1 = add i32 %0, i32 -129;
+    ret i32 %1;
+}

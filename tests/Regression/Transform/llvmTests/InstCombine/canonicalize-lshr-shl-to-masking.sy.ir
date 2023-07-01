@@ -1,0 +1,2 @@
+func @negative_oneuse() -> i8;
+func @negative_twovars() -> i8;

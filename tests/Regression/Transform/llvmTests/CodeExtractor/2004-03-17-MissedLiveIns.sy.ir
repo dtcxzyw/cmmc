@@ -1,0 +1,4 @@
+func @sendMTFValues() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

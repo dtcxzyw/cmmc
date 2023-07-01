@@ -1,0 +1,4 @@
+func @_Z13func_31585107li(i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %var1;
+}

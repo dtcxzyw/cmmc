@@ -1,0 +1,274 @@
+func @not_sdiv_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_dividend_known_smaller_than_neg_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_sext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 128;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_sext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -128;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_zext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 255;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_sdiv_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -255;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_dividend_known_smaller_than_neg_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 253;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_sext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = srem i32 %1, i32 128;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_sext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -128;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_zext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 255;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @not_srem_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -255;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_dividend_known_smaller_than_neg_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_min_dividend(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = zext i8 %var0 to i16;
+    i16 %1 = strunc i16 %0 to i16;
+    i32 %2 = sext i16 %1 to i32;
+    i32 %3 = sdiv i32 -32768, i32 %2;
+    i16 %4 = ztrunc i32 %3 to i16;
+    ret i16 %4;
+}
+func @sdiv_min_divisor(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = zext i8 %var0 to i16;
+    i16 %1 = strunc i16 %0 to i16;
+    i32 %2 = sext i16 %1 to i32;
+    i32 %3 = sdiv i32 %2, i32 -32768;
+    i16 %4 = ztrunc i32 %3 to i16;
+    ret i16 %4;
+}
+func @sdiv_sext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 129;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_sext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -129;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_zext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 256;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @sdiv_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = sdiv i32 %1, i32 -256;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_dividend_known_smaller_than_neg_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -253;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 254;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_sext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = srem i32 %1, i32 129;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_sext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -129;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_zext_big_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 256;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @srem_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = strunc i32 %0 to i32;
+    i32 %2 = srem i32 %1, i32 -256;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}

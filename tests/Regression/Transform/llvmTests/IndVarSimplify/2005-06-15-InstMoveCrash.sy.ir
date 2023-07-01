@@ -1,0 +1,4 @@
+func @main() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

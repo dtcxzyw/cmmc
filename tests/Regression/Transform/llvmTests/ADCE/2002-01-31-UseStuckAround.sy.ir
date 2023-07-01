@@ -1,0 +1,7 @@
+func @main(i32 %argc) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = ztrunc i32 %argc to i32;
+    i32 %1 = mul i32 %0, i32 2;
+    i32 %2 = strunc i32 %1 to i32;
+    ret i32 %2;
+}

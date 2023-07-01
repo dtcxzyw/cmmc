@@ -1,0 +1,26 @@
+func @callee_with_branch(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = sub i32 2, i32 %1;
+    ret i32 %2;
+}
+func @callee_with_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    i32 %1 = select i1 %0 ? i32 %var1 : i32 %var2;
+    ret i32 %1;
+}
+func @caller_of_branch(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = sub i32 2, i32 %1;
+    ret i32 %2;
+}
+func @caller_of_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    i32 %1 = select i1 %0 ? i32 %var1 : i32 %var2;
+    ret i32 %1;
+}

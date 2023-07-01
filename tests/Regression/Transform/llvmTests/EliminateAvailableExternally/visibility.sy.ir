@@ -1,0 +1,8 @@
+func @f() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @g() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

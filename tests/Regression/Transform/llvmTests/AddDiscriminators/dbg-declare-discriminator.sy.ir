@@ -1,0 +1,4 @@
+func @test_valid_metadata() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

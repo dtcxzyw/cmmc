@@ -1,0 +1,8 @@
+func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}
+func @wibble() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i16 0;
+}

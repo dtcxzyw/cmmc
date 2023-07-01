@@ -1,0 +1,14 @@
+func @bar() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @foo();
+    ret;
+}
+func @foo() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    store i32* @i with i32 1;
+    call () -> void @bar();
+    ret;
+}
+i32* @i = 0;

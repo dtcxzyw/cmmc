@@ -1,0 +1,4 @@
+func @tre_tnfa_run_backtrack() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

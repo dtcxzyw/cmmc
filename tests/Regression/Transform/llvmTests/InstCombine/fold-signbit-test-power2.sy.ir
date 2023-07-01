@@ -1,0 +1,3 @@
+func @pow2_or_zero_is_negative() -> i32;
+func @pow2_or_zero_is_negative_commute() -> i32;
+func @pow2_or_zero_is_negative_extra_use() -> i32;

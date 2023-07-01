@@ -1,0 +1,4 @@
+func @test() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 0;
+}

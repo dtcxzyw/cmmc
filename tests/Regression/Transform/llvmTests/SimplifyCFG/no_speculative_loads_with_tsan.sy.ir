@@ -1,0 +1,25 @@
+func @TestNoTsan(i32 %var0) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp eq i32 %var0, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^if.else;
+  ^if.else:
+    i32* %1 = ptrcast i32* @g to i32*;
+    i32 %2 = load i32* %1;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 0] [^if.else, i32 %2];
+    ret i32 %3;
+}
+func @TestTsan(i32 %var0) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp eq i32 %var0, i32 0;
+    cbr i1 %0(prob = 0.5), ^b, ^if.else;
+  ^if.else:
+    i32* %1 = ptrcast i32* @g to i32*;
+    i32 %2 = load i32* %1;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 0] [^if.else, i32 %2];
+    ret i32 %3;
+}
+i32* @g = 0;

@@ -1,0 +1,7 @@
+func @weightadj() -> void { NoMemoryRead NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @resonant to i32*;
+    store i32* %0 with i32 0;
+    ret;
+}
+i32* @resonant;

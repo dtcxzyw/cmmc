@@ -1,0 +1,5 @@
+func @test() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+i16* @c = 0;

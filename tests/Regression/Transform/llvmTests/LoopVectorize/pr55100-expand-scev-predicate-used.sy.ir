@@ -1,0 +1,4 @@
+func @test_pr55100() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

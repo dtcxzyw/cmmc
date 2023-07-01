@@ -1,0 +1,10 @@
+func @bar() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @foo(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+  ^entry:
+    i32 %0 = call (i32) -> i32 @foo(i32 %var0);
+    i32 %1 = add i32 %0, i32 1;
+    ret i32 %1;
+}

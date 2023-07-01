@@ -1,0 +1,4 @@
+func @_Z26recursive_partial_inliningi() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

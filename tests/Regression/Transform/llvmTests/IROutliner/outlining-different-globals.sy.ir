@@ -1,0 +1,12 @@
+func @outline_globals1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @outline_globals2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+i32* @global1 = 1;
+i32* @global2 = 2;
+i32* @global3 = 3;
+i32* @global4 = 4;

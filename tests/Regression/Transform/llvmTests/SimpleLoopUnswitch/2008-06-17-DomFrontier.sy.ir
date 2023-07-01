@@ -1,0 +1,5 @@
+func @func_67() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+i16* @g_56;

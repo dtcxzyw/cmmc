@@ -1,0 +1,26 @@
+func @icmp_select_const() -> i32;
+func @icmp_select_implied_cond() -> i32;
+func @icmp_select_implied_cond_ne() -> i32;
+func @icmp_select_implied_cond_relational() -> i32;
+func @icmp_select_implied_cond_relational_off_by_one() -> i32;
+func @icmp_select_implied_cond_swapped_select() -> i32;
+func @icmp_select_implied_cond_swapped_select_with_inv_cond() -> i32;
+func @icmp_select_var() -> i32;
+func @icmp_select_var_both_fold() -> i32;
+func @icmp_select_var_both_fold_extra_use() -> i32;
+func @icmp_select_var_commuted() -> i32;
+func @icmp_select_var_extra_use() -> i32;
+func @icmp_select_var_pred_ne() -> i32;
+func @icmp_select_var_pred_uge() -> i32;
+func @icmp_select_var_pred_uge_commuted() -> i32;
+func @icmp_select_var_pred_ult() -> i32;
+func @icmp_select_var_select() -> i32;
+func @llvm_umin_i8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 0;
+}
+func @select_constants_and_icmp_eq0() -> i32;
+func @select_constants_and_icmp_eq0_common_bit() -> i32;
+func @select_constants_and_icmp_eq0_no_common_op1() -> i32;
+func @select_constants_and_icmp_eq0_no_common_op2() -> i32;
+func @select_constants_and_icmp_eq0_uses() -> i32;

@@ -1,0 +1,8 @@
+func @test21(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = ashr i32 %0, i32 7;
+    i32 %2 = and i32 %1, i32 1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    ret i8 %3;
+}

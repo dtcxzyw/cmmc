@@ -1,0 +1,23 @@
+func @iv_hoist_nsw_poison(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i1 %1 = scmp gt i32 %0, i32 1;
+    cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
+  ^if.else:
+    i8 %2 = phi [^entry, i8 2] [^if.else, i8 %8];
+    i8 %3 = phi [^entry, i8 2] [^if.else, i8 %13];
+    i8 %4 = ztrunc i8 %2 to i8;
+    i8 %5 = strunc i8 %4 to i8;
+    i32 %6 = sext i8 %5 to i32;
+    i32 %7 = add i32 %6, i32 1;
+    i8 %8 = strunc i32 %7 to i8;
+    i32 %9 = zext i8 %4 to i32;
+    i1 %10 = scmp gt i32 %0, i32 %9;
+    i32 %11 = zext i8 %3 to i32;
+    i32 %12 = add i32 %11, i32 1;
+    i8 %13 = ztrunc i32 %12 to i8;
+    cbr i1 %10(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
+    i8 %14 = phi [^entry, i8 2] [^if.else, i8 %13];
+    ret i8 %14;
+}

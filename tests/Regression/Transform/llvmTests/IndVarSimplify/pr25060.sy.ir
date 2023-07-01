@@ -1,0 +1,8 @@
+func @fn1() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i16 10;
+}
+func @fn2() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i16 1;
+}

@@ -1,0 +1,17 @@
+func @test1() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @test1_scc1();
+    ret;
+}
+func @test1_scc0() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @test1_scc1();
+    ret;
+}
+func @test1_scc1() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    call () -> void @test1_scc0();
+    ret;
+}

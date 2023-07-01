@@ -1,0 +1,4 @@
+func @vorbis_encode_noisebias_setup() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

@@ -1,0 +1,41 @@
+func @test1(i64 %var0, i64 %var1) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i64 %0 = and i64 %var0, i64 -70368744177664;
+    i64 %1 = and i64 %var1, i64 70368744177661;
+    i64 %2 = xor i64 %0, i64 %1;
+    ret i64 %2;
+}
+func @test2(i16 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i16 %var0 to i32;
+    i16 %1 = ztrunc i32 %0 to i16;
+    ret i16 %1;
+}
+func @test3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @test4() -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i64 -1;
+}
+func @test5(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = or i32 %0, i32 23;
+    i32 %2 = xor i32 %1, i32 23;
+    i8 %3 = ztrunc i32 %2 to i8;
+    ret i8 %3;
+}
+func @test6(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i8 %1 = ztrunc i32 %0 to i8;
+    ret i8 %1;
+}
+func @test7(i64 %var0) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i64 %0 = or i64 %var0, i64 70368744177663;
+    i64 %1 = xor i64 %0, i64 703687463;
+    ret i64 %1;
+}

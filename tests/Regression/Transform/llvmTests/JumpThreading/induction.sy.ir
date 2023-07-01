@@ -1,0 +1,4 @@
+func @test() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 0;
+}

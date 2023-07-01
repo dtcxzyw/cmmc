@@ -1,0 +1,12 @@
+func @test1_pr58811() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}
+func @test2_pr58811() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}
+func @test3_pr58811() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

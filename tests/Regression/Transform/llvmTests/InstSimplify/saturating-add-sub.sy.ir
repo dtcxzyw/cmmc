@@ -1,0 +1,4 @@
+func @llvm_sadd_sat_i8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 0;
+}

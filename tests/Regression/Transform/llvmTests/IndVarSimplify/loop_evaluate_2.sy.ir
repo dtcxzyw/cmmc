@@ -1,0 +1,23 @@
+func @ltst(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i1 %1 = scmp gt i32 %0, i32 0;
+    cbr i1 %1(prob = 0.5), ^block2, ^b;
+  ^block2:
+    i1 %2 = scmp gt i32 %0, i32 1;
+    cbr i1 %2(prob = 0.5), ^if.then, ^if.else;
+  ^b:
+    i32 %3 = phi [^entry, i32 0] [^if.else, i32 %4];
+    ret i32 %3;
+  ^if.else:
+    i32 %4 = phi [^block2, i32 1] [^if.then, i32 %10];
+    ubr ^b;
+  ^if.then:
+    i32 %5 = phi [^block2, i32 1] [^if.then, i32 %7];
+    i32 %6 = phi [^block2, i32 1] [^if.then, i32 %10];
+    i32 %7 = add i32 %5, i32 1;
+    i32 %8 = strunc i32 %7 to i32;
+    i1 %9 = scmp gt i32 %0, i32 %8;
+    i32 %10 = add i32 %6, i32 1;
+    cbr i1 %9(prob = 0.5), ^if.then, ^if.else;
+}

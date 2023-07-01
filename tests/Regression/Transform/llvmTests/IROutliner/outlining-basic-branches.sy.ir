@@ -1,0 +1,4 @@
+func @outline_outputs1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

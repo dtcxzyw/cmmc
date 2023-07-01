@@ -1,0 +1,88 @@
+func @allclear(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 255;
+    i32 %1 = ashr i32 %0, i32 1;
+    i32 %2 = and i32 %1, i32 1;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i32 %4 = and i32 %var0, i32 1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    i32 %6 = or i32 %3, i32 %5;
+    i32 %7 = ashr i32 %0, i32 2;
+    i32 %8 = and i32 %7, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
+    i32 %10 = or i32 %6, i32 %9;
+    i32 %11 = ashr i32 %0, i32 3;
+    i32 %12 = and i32 %11, i32 1;
+    i32 %13 = ztrunc i32 %12 to i32;
+    i32 %14 = or i32 %10, i32 %13;
+    i1 %15 = ucmp eq i32 %14, i32 0;
+    i32 %16 = zext i1 %15 to i32;
+    i32 %17 = ztrunc i32 %16 to i32;
+    ret i32 %17;
+}
+func @allset(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 255;
+    i32 %1 = ashr i32 %0, i32 1;
+    i32 %2 = and i32 %1, i32 1;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i32 %4 = and i32 %var0, i32 1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    i32 %6 = and i32 %3, i32 %5;
+    i32 %7 = ashr i32 %0, i32 2;
+    i32 %8 = and i32 %7, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
+    i32 %10 = and i32 %6, i32 %9;
+    i32 %11 = ashr i32 %0, i32 3;
+    i32 %12 = and i32 %11, i32 1;
+    i32 %13 = ztrunc i32 %12 to i32;
+    i32 %14 = and i32 %10, i32 %13;
+    i1 %15 = ucmp neq i32 %14, i32 0;
+    i32 %16 = zext i1 %15 to i32;
+    i32 %17 = ztrunc i32 %16 to i32;
+    ret i32 %17;
+}
+func @anyclear(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 255;
+    i32 %1 = ashr i32 %0, i32 1;
+    i32 %2 = and i32 %1, i32 1;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i32 %4 = and i32 %var0, i32 1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    i32 %6 = and i32 %3, i32 %5;
+    i32 %7 = ashr i32 %0, i32 2;
+    i32 %8 = and i32 %7, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
+    i32 %10 = and i32 %6, i32 %9;
+    i32 %11 = ashr i32 %0, i32 3;
+    i32 %12 = and i32 %11, i32 1;
+    i32 %13 = ztrunc i32 %12 to i32;
+    i32 %14 = and i32 %10, i32 %13;
+    i1 %15 = ucmp eq i32 %14, i32 0;
+    i32 %16 = zext i1 %15 to i32;
+    i32 %17 = ztrunc i32 %16 to i32;
+    ret i32 %17;
+}
+func @anyset(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 255;
+    i32 %1 = ashr i32 %0, i32 1;
+    i32 %2 = and i32 %1, i32 1;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i32 %4 = and i32 %var0, i32 1;
+    i32 %5 = ztrunc i32 %4 to i32;
+    i32 %6 = or i32 %3, i32 %5;
+    i32 %7 = ashr i32 %0, i32 2;
+    i32 %8 = and i32 %7, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
+    i32 %10 = or i32 %6, i32 %9;
+    i32 %11 = ashr i32 %0, i32 3;
+    i32 %12 = and i32 %11, i32 1;
+    i32 %13 = ztrunc i32 %12 to i32;
+    i32 %14 = or i32 %10, i32 %13;
+    i1 %15 = ucmp neq i32 %14, i32 0;
+    i32 %16 = zext i1 %15 to i32;
+    i32 %17 = ztrunc i32 %16 to i32;
+    ret i32 %17;
+}

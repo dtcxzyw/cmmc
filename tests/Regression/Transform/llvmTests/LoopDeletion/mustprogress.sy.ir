@@ -1,0 +1,32 @@
+func @known_tripcount_mustprogress_attr_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @known_tripcount_mustprogress_attr_no_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @known_tripcount_no_mustprogress_attr_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @known_tripcount_no_mustprogress_attr_no_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @unknown_tripcount_mustprogress_attr_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}
+func @unknown_tripcount_mustprogress_attr_no_mustprogess_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}
+func @unknown_tripcount_no_mustprogress_attr_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @unknown_tripcount_no_mustprogress_attr_no_mustprogress_loopmd() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

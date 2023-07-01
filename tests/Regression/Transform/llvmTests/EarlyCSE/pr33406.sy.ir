@@ -1,0 +1,8 @@
+func @patatino() -> void { NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @b to i32*;
+    i32 %1 = load i32* %0;
+    store i32* %0 with i32 %1;
+    ret;
+}
+i32* @b;

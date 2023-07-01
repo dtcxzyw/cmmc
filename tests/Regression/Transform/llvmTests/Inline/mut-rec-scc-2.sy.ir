@@ -1,0 +1,19 @@
+func @samescc1() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @samescc2();
+    ret;
+}
+func @samescc2() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    call () -> void @samescc3();
+    ret;
+}
+func @samescc3() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    call () -> void @samescc1();
+    ret;
+}

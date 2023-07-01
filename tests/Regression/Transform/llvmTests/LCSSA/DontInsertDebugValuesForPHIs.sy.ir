@@ -1,0 +1,7 @@
+func @_Z5lcssab(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %var0, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = add i32 %1, i32 3;
+    ret i32 %2;
+}

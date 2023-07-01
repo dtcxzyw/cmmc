@@ -1,0 +1,23 @@
+func @PR38781(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = lshr i32 %var0, i32 31;
+    i32 %1 = xor i32 %0, i32 1;
+    i32 %2 = lshr i32 %var1, i32 31;
+    i32 %3 = xor i32 %2, i32 1;
+    i32 %4 = and i32 %1, i32 %3;
+    ret i32 %4;
+}
+func @test1(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 %var2;
+    i32 %1 = and i32 %var1, i32 %var2;
+    i32 %2 = xor i32 %0, i32 %1;
+    ret i32 %2;
+}
+func @test2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 %var1;
+    i32 %1 = or i32 %var0, i32 %var1;
+    i32 %2 = xor i32 %0, i32 %1;
+    ret i32 %2;
+}

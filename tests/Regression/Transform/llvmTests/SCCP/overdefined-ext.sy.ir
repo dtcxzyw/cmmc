@@ -1,0 +1,2 @@
+func @sext_ashr() -> i32;
+func @sext_icmp() -> i32;

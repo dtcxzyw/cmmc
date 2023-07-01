@@ -1,0 +1,6 @@
+func @eq_and_lshr_minval_commute() -> i32;
+func @eq_and_shl_one() -> i32;
+func @eq_and_shl_two() -> i32;
+func @icmp_eq_and1_lshr_pow2() -> i32;
+func @icmp_eq_and1_lshr_pow2_negative1() -> i32;
+func @icmp_eq_and1_lshr_pow2_negative2() -> i32;

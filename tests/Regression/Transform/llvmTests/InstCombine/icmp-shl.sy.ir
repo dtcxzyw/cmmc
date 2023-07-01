@@ -1,0 +1,2 @@
+func @shl_eq_0_fail_missing_flags() -> i32;
+func @shl_ne_1_fail_nonzero() -> i32;

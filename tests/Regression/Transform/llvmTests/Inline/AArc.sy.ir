@@ -1,0 +1,20 @@
+func @OptnoneFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 2;
+    i32 %1 = mul i32 %var0, i32 %0;
+    ret i32 %1;
+}
+func @alwaysInlineFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 %var0;
+    ret i32 %0;
+}
+func @bar() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^b:
+    ret i32 47;
+}
+func @simpleFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 2;
+    ret i32 %0;
+}

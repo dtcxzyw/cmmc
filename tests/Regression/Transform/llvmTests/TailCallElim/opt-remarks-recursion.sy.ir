@@ -1,0 +1,21 @@
+func @fib(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i1 %1 = scmp lt i32 %0, i32 2;
+    cbr i1 %1(prob = 0.5), ^b, ^if.else;
+  ^if.else:
+    i32 %2 = add i32 %0, i32 -2;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i32 %4 = call (i32) -> i32 @fib(i32 %3);
+    i32 %5 = strunc i32 %4 to i32;
+    i32 %6 = add i32 %0, i32 -1;
+    i32 %7 = ztrunc i32 %6 to i32;
+    i32 %8 = call (i32) -> i32 @fib(i32 %7);
+    i32 %9 = strunc i32 %8 to i32;
+    i32 %10 = add i32 %5, i32 %9;
+    i32 %11 = ztrunc i32 %10 to i32;
+    ubr ^b;
+  ^b:
+    i32 %12 = phi [^entry, i32 1] [^if.else, i32 %11];
+    ret i32 %12;
+}

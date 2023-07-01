@@ -1,0 +1,4 @@
+func @test1(i64 %var0) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i64 %var0;
+}

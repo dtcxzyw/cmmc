@@ -1,0 +1,4 @@
+func @fsub_optimize() -> f32;
+func @fsub_optnone() -> f32;
+func @iadd_optimize() -> i32;
+func @iadd_optnone() -> i32;

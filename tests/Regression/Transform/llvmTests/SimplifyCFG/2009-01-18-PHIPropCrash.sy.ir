@@ -1,0 +1,4 @@
+func @func_105() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

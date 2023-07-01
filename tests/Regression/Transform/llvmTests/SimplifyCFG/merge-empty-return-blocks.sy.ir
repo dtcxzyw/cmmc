@@ -1,0 +1,14 @@
+func @t0() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @t1(i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 %var1;
+}
+func @t2(i32 %var0, i8 %var1, i8 %var2) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    i8 %1 = select i1 %0 ? i8 %var1 : i8 %var2;
+    ret i8 %1;
+}

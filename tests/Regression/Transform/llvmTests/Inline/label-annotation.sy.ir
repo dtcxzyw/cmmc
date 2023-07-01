@@ -1,0 +1,2 @@
+func @caller() -> void;
+func @inlinee() -> void;

@@ -1,0 +1,5 @@
+func @icmp_eq1() -> i32;
+func @icmp_ne1() -> i32;
+func @icmp_sgt1() -> i32;
+func @icmp_sgt10() -> i32;
+func @icmp_sgt11() -> i32;

@@ -1,0 +1,4 @@
+func @test_eq() -> i32;
+func @test_ne() -> i32;
+func @test_ne_float() -> i32;
+func @test_ne_float_undef() -> i32;

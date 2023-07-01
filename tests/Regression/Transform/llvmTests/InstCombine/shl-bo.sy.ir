@@ -1,0 +1,2 @@
+func @lshr_add() -> i8;
+func @lshr_add_and_shl() -> i32;

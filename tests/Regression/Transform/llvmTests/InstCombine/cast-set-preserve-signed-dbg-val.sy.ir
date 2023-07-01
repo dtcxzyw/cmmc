@@ -1,0 +1,8 @@
+func @test5(i16 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i16 %0 = strunc i16 %var0 to i16;
+    i32 %1 = sext i16 %0 to i32;
+    i32 %2 = and i32 %1, i32 15;
+    i16 %3 = ztrunc i32 %2 to i16;
+    ret i16 %3;
+}

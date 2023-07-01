@@ -1,0 +1,22 @@
+func @extend_value(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sub i32 32, i32 %var1;
+    i32 %1 = lshr i32 %var0, i32 %0;
+    i32 %2 = strunc i32 %var0 to i32;
+    i1 %3 = scmp gt i32 %2, i32 -1;
+    cbr i1 %3(prob = 0.5), ^if.then, ^b;
+  ^if.then:
+    i32 %4 = strunc i32 %var1 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    i32 %6 = strunc i32 %5 to i32;
+    i32 %7 = shl i32 -1, i32 %6;
+    i32 %8 = add i32 %7, i32 1;
+    i32 %9 = ztrunc i32 %8 to i32;
+    i32 %10 = add i32 %1, i32 %9;
+    i32 %11 = strunc i32 %10 to i32;
+    i32 %12 = ztrunc i32 %11 to i32;
+    ubr ^b;
+  ^b:
+    i32 %13 = phi [^entry, i32 %1] [^if.then, i32 %12];
+    ret i32 %13;
+}

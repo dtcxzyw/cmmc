@@ -1,0 +1,35 @@
+func @fun(i32 %var0) -> i32 { NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    cbr i1 %0(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
+    i32* %1 = ptrcast i32* @B to i32*;
+    store i32* %1 with i32 1;
+    i32* %2 = ptrcast i32* @A to i32*;
+    i32 %3 = load i32* %2;
+    i32* %4 = ptrcast i32* @C to i32*;
+    store i32* %4 with i32 2;
+    ubr ^b;
+  ^if.else:
+    i32* %5 = ptrcast i32* @D to i32*;
+    store i32* %5 with i32 2;
+    i32* %6 = ptrcast i32* @A to i32*;
+    i32 %7 = load i32* %6;
+    i32* %8 = ptrcast i32* @E to i32*;
+    store i32* %8 with i32 1;
+    ubr ^b;
+  ^b:
+    i32 %9 = phi [^if.then, i32 %3] [^if.else, i32 %7];
+    ret i32 %9;
+}
+func @loadA() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @A to i32*;
+    i32 %1 = load i32* %0;
+    ret i32 %1;
+}
+i32* @A;
+i32* @B;
+i32* @C;
+i32* @D;
+i32* @E;

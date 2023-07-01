@@ -1,0 +1,3 @@
+func @canonicalize_oeq_arg_f32() -> i32;
+func @canonicalize_oeq_arg_f32_commute() -> i32;
+func @canonicalize_oeq_arg_f32_flags() -> i32;

@@ -1,0 +1,16 @@
+func @bar() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @a to i32*;
+    i32 %1 = load i32* %0;
+    i32 %2 = mul i32 %1, i32 2;
+    i32 %3 = add i32 %2, i32 6;
+    ret i32 %3;
+}
+func @simpleFunction(i32 %var0) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @a to i32*;
+    i32 %1 = load i32* %0;
+    i32 %2 = add i32 %var0, i32 %1;
+    ret i32 %2;
+}
+i32* @a = 4;

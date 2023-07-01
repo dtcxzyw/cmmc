@@ -1,0 +1,7 @@
+func @n10() -> i8;
+func @n11() -> i8;
+func @n12() -> i8;
+func @n6_extrause() -> i8;
+func @n9_wrongly_masked_extrause() -> i8;
+func @t0() -> i8;
+func @t1_otherbitwidth() -> i16;

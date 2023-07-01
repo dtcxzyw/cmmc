@@ -1,0 +1,8 @@
+func @test(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = udiv i32 %var0, i32 4;
+    i1 %1 = ucmp lt i32 %0, i32 1073741824;
+    i32 %2 = zext i1 %1 to i32;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}

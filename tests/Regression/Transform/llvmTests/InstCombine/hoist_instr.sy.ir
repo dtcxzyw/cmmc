@@ -1,0 +1,13 @@
+func @foo(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %var0, i32 0;
+    cbr i1 %0(prob = 0.5), ^if.then, ^b;
+  ^if.then:
+    i32 %1 = strunc i32 %var1 to i32;
+    i32 %2 = sdiv i32 %1, i32 42;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ubr ^b;
+  ^b:
+    i32 %4 = phi [^entry, i32 0] [^if.then, i32 %3];
+    ret i32 %4;
+}

@@ -1,0 +1,10 @@
+func @PR2330(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = shl i32 1, i32 %0;
+    i32 %2 = and i32 %1, i32 1;
+    i1 %3 = scmp eq i32 %2, i32 0;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}

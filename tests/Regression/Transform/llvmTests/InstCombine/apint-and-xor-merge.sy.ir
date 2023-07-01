@@ -1,0 +1,14 @@
+func @test1(i64 %var0, i64 %var1, i64 %var2) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i64 %0 = and i64 %var0, i64 %var2;
+    i64 %1 = and i64 %var1, i64 %var2;
+    i64 %2 = xor i64 %0, i64 %1;
+    ret i64 %2;
+}
+func @test2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 %var1;
+    i32 %1 = or i32 %var0, i32 %var1;
+    i32 %2 = xor i32 %0, i32 %1;
+    ret i32 %2;
+}

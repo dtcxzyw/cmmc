@@ -1,0 +1,4 @@
+func @zero_branch_weights() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

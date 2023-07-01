@@ -1,0 +1,57 @@
+func @add(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = strunc i32 %var1 to i32;
+    i32 %2 = add i32 %0, i32 %1;
+    i32 %3 = ztrunc i32 %2 to i32;
+    ret i32 %3;
+}
+func @addf(f32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 %var1;
+    ret f32 %0;
+}
+func @f0(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %var0;
+}
+func @f1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = neg i32 %0;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}
+func @g0(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = add i32 %0, i32 1;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}
+func @g1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = add i32 %0, i32 2;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}
+func @h0(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 1;
+    ret f32 %0;
+}
+func @h1(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fadd f32 %var0, f32 2;
+    ret f32 %0;
+}
+func @neg(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = neg i32 %0;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i1 %3 = scmp neq i32 %var1, i32 0;
+    i32 %4 = select i1 %3 ? i32 %2 : i32 %var0;
+    ret i32 %4;
+}

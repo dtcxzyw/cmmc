@@ -1,0 +1,7 @@
+func @n3() -> i16;
+func @same_source_shifted_signbit() -> i32;
+func @same_source_shifted_signbit_use1() -> i32;
+func @same_source_shifted_signbit_use2() -> i32;
+func @t0() -> i16;
+func @t1() -> i16;
+func @t10_extrause2() -> i16;

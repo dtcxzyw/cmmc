@@ -1,0 +1,4 @@
+func @_ZNK15PolynomialSpaceILi3EE13compute_indexEjRA3_j() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

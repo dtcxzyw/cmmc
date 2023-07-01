@@ -1,0 +1,4 @@
+func @arbitrary_mask_sub_high_bit_dont_care_i8() -> i8;
+func @arbitrary_mask_sub_i8() -> i8;
+func @arbitrary_mask_sub_nsw_high_bit_dont_care_i8() -> i8;
+func @arbitrary_mask_sub_nuw_high_bit_dont_care_i8() -> i8;

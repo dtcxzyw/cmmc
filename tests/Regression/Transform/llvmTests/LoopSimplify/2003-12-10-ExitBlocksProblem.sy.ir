@@ -1,0 +1,7 @@
+func @main() -> i32 { NoMemoryRead NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @G to i32*;
+    store i32* %0 with i32 0;
+    ret i32 0;
+}
+i32* @G = 0;

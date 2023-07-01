@@ -1,0 +1,7 @@
+func @f() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @g to i32*;
+    i32 %1 = load i32* %0;
+    ret i32 %1;
+}
+i32* @g = 0;

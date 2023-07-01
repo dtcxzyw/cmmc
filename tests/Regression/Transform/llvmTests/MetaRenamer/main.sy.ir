@@ -1,0 +1,12 @@
+func @main() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @patatino();
+    ret;
+}
+func @patatino() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    call () -> void @main();
+    ret;
+}

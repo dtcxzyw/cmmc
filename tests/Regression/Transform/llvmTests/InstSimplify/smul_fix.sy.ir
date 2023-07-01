@@ -1,0 +1,8 @@
+func @llvm_smul_fix_i16() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i16 0;
+}
+func @llvm_smul_fix_sat_i16() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i16 0;
+}

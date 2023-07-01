@@ -1,0 +1,4 @@
+func @c0() -> i32;
+func @cv0() -> i32;
+func @cv1() -> i32;
+func @cv2() -> i32;

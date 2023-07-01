@@ -1,0 +1,7 @@
+func @abs_is_not_negative_reduced_range() -> i32;
+func @abs_is_positive_reduced_range() -> i32;
+func @abs_no_intersection() -> i32;
+func @abs_nsw_is_not_negative() -> i32;
+func @abs_nsw_is_not_negative_reduced_range() -> i32;
+func @abs_nsw_is_not_negative_sle() -> i32;
+func @abs_nsw_is_not_negative_ugt() -> i32;

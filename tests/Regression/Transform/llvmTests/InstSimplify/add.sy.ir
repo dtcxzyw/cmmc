@@ -1,0 +1,2 @@
+func @common_sub_operand() -> i32;
+func @knownnegation() -> i8;

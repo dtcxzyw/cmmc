@@ -1,0 +1,93 @@
+func @f() -> void { NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @a to i32*;
+    i32 %1 = load i32* %0;
+    i1 %2 = ucmp eq i32 %1, i32 0;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    i1 %5 = scmp neq i32 %4, i32 0;
+    ubr ^block1;
+  ^block1:
+    i8 %6 = phi [^entry, i8 -14] [^if.then, i8 %18];
+    cbr i1 %5(prob = 0.5), ^block47, ^if.else;
+  ^block47:
+    i32 %7 = zext i8 %6 to i32;
+    i32 %8 = add i32 %7, i32 1;
+    i32 %9 = and i32 %8, i32 255;
+    i1 %10 = scmp gt i32 %9, i32 50;
+    cbr i1 %10(prob = 0.5), ^if.then, ^if.else2;
+  ^if.else:
+    i32 %11 = zext i8 %6 to i32;
+    i1 %12 = scmp eq i32 %11, i32 0;
+    i32 %13 = zext i1 %12 to i32;
+    i32 %14 = ztrunc i32 %13 to i32;
+    i1 %15 = scmp neq i32 %14, i32 0;
+    i8 %16 = strunc i8 %6 to i8;
+    i32 %17 = sext i8 %16 to i32;
+    cbr i1 %15(prob = 0.5), ^if.then1, ^if.else1;
+  ^if.then:
+    i8 %18 = ztrunc i32 %8 to i8;
+    ubr ^block1;
+  ^if.then1:
+    i32 %19 = add i32 %17, i32 1;
+    i32 %20 = ztrunc i32 %19 to i32;
+    i1 %21 = ucmp lt i32 %20, i32 3;
+    i32 %22 = select i1 %21 ? i32 %17 : i32 0;
+    i32 %23 = ztrunc i32 %22 to i32;
+    i32* %24 = ptrcast i32* @b to i32*;
+    i32 %25 = load i32* %24;
+    i32 %26 = strunc i32 %25 to i32;
+    i1 %27 = scmp lt i32 %26, i32 1;
+    cbr i1 %27(prob = 0.5), ^block13, ^block46;
+  ^if.else1:
+    i32* %28 = ptrcast i32* @b to i32*;
+    i32 %29 = load i32* %28;
+    i32 %30 = strunc i32 %29 to i32;
+    i1 %31 = scmp lt i32 %30, i32 1;
+    i32 %32 = ztrunc i32 %17 to i32;
+    cbr i1 %31(prob = 0.5), ^block31, ^block46;
+  ^if.else2:
+    ret;
+  ^block46:
+    i32 %33 = phi [^if.then1, i32 %23] [^if.else1, i32 %32] [^if.else3, i32 %23] [^if.else4, i32 %32];
+    i32* %34 = ptrcast i32* @c to i32*;
+    store i32* %34 with i32 %33;
+    ubr ^block47;
+  ^block13:
+    i32 %35 = add i32 %26, i32 1;
+    i1 %36 = scmp lt i32 %35, i32 1;
+    cbr i1 %36(prob = 0.5), ^if.then2, ^if.else3;
+  ^block31:
+    i32 %37 = add i32 %30, i32 1;
+    i1 %38 = scmp lt i32 %37, i32 1;
+    cbr i1 %38(prob = 0.5), ^if.then3, ^if.else4;
+  ^if.else3:
+    i32 %39 = phi [^block13, i32 %35] [^if.then2, i32 %45];
+    i32 %40 = ztrunc i32 %39 to i32;
+    i32* %41 = ptrcast i32* @b to i32*;
+    store i32* %41 with i32 %40;
+    ubr ^block46;
+  ^if.then2:
+    i32 %42 = phi [^block13, i32 %35] [^if.then2, i32 %45];
+    i32 %43 = ztrunc i32 %42 to i32;
+    i32 %44 = strunc i32 %43 to i32;
+    i32 %45 = add i32 %44, i32 1;
+    i1 %46 = scmp lt i32 %45, i32 1;
+    cbr i1 %46(prob = 0.5), ^if.then2, ^if.else3;
+  ^if.else4:
+    i32 %47 = phi [^block31, i32 %37] [^if.then3, i32 %53];
+    i32 %48 = ztrunc i32 %47 to i32;
+    i32* %49 = ptrcast i32* @b to i32*;
+    store i32* %49 with i32 %48;
+    ubr ^block46;
+  ^if.then3:
+    i32 %50 = phi [^block31, i32 %37] [^if.then3, i32 %53];
+    i32 %51 = ztrunc i32 %50 to i32;
+    i32 %52 = strunc i32 %51 to i32;
+    i32 %53 = add i32 %52, i32 1;
+    i1 %54 = scmp lt i32 %53, i32 1;
+    cbr i1 %54(prob = 0.5), ^if.then3, ^if.else4;
+}
+i32* @a = 0;
+i32* @c = 0;
+i32* @b = 0;

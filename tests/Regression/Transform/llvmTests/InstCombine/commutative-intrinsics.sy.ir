@@ -1,0 +1,12 @@
+func @llvm_smax_i35() -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i64 0;
+}
+func @llvm_smin_i5() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i8 0;
+}
+func @llvm_smul_fix_i35() -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i64 0;
+}

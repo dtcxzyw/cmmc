@@ -1,0 +1,2 @@
+func @poison() -> i32;
+func @xor_and_or_not_commute0() -> i8;

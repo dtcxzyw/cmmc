@@ -1,0 +1,5 @@
+func @foo(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 7;
+    ret i32 %0;
+}

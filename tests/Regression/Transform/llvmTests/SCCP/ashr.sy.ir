@@ -1,0 +1,47 @@
+func @ashr_and(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = and i32 %0, i32 127;
+    i32 %2 = ashr i32 %1, i32 1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    ret i8 %3;
+}
+func @ashr_const(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = ashr i32 42, i32 %0;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
+}
+func @ashr_not_nonneg(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i8 %0 = strunc i8 %var0 to i8;
+    i32 %1 = sext i8 %0 to i32;
+    i32 %2 = zext i8 %var1 to i32;
+    i32 %3 = ashr i32 %1, i32 %2;
+    i8 %4 = ztrunc i32 %3 to i8;
+    ret i8 %4;
+}
+func @ashr_zext(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = zext i8 %var1 to i32;
+    i32 %2 = ashr i32 %0, i32 %1;
+    i8 %3 = ztrunc i32 %2 to i8;
+    ret i8 %3;
+}
+func @dominating_condition(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i1 %1 = scmp gt i32 %0, i32 -1;
+    i32 %2 = lshr i32 %var0, i32 16;
+    i32 %3 = select i1 %1 ? i32 %2 : i32 42;
+    ret i32 %3;
+}
+func @dominating_condition_alt(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = lshr i32 %var0, i32 %var1;
+    i1 %1 = ucmp gt i32 %var0, i32 2000000000;
+    i32 %2 = select i1 %1 ? i32 -42 : i32 %0;
+    ret i32 %2;
+}

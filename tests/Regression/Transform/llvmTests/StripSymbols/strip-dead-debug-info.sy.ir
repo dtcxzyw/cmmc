@@ -1,0 +1,11 @@
+func @fn() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo() -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @xyz to i32*;
+    i32 %1 = load i32* %0;
+    ret i32 %1;
+}
+i32* @xyz = 2;

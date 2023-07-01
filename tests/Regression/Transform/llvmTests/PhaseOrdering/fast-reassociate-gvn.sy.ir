@@ -1,0 +1,59 @@
+func @test3() -> void { NoRecurse } {
+  ^entry:
+    f32* %0 = ptrcast f32* @fa to f32*;
+    f32 %1 = load f32* %0;
+    f32* %2 = ptrcast f32* @fb to f32*;
+    f32 %3 = load f32* %2;
+    f32 %4 = fadd f32 %1, f32 %3;
+    f32* %5 = ptrcast f32* @fc to f32*;
+    f32 %6 = load f32* %5;
+    f32 %7 = fadd f32 %4, f32 %6;
+    f32* %8 = ptrcast f32* @fe to f32*;
+    store f32* %8 with f32 %7;
+    f32 %9 = fadd f32 %1, f32 %6;
+    f32 %10 = fadd f32 %9, f32 %3;
+    f32* %11 = ptrcast f32* @ff to f32*;
+    store f32* %11 with f32 %10;
+    ret;
+}
+func @test4() -> void { NoRecurse } {
+  ^entry:
+    f32* %0 = ptrcast f32* @fa to f32*;
+    f32 %1 = load f32* %0;
+    f32* %2 = ptrcast f32* @fb to f32*;
+    f32 %3 = load f32* %2;
+    f32 %4 = fadd f32 %1, f32 %3;
+    f32* %5 = ptrcast f32* @fc to f32*;
+    f32 %6 = load f32* %5;
+    f32 %7 = fadd f32 %6, f32 %4;
+    f32* %8 = ptrcast f32* @fe to f32*;
+    store f32* %8 with f32 %7;
+    f32 %9 = fadd f32 %6, f32 %1;
+    f32 %10 = fadd f32 %9, f32 %3;
+    f32* %11 = ptrcast f32* @ff to f32*;
+    store f32* %11 with f32 %10;
+    ret;
+}
+func @test5() -> void { NoRecurse } {
+  ^entry:
+    f32* %0 = ptrcast f32* @fa to f32*;
+    f32 %1 = load f32* %0;
+    f32* %2 = ptrcast f32* @fb to f32*;
+    f32 %3 = load f32* %2;
+    f32 %4 = fadd f32 %3, f32 %1;
+    f32* %5 = ptrcast f32* @fc to f32*;
+    f32 %6 = load f32* %5;
+    f32 %7 = fadd f32 %6, f32 %4;
+    f32* %8 = ptrcast f32* @fe to f32*;
+    store f32* %8 with f32 %7;
+    f32 %9 = fadd f32 %6, f32 %1;
+    f32 %10 = fadd f32 %9, f32 %3;
+    f32* %11 = ptrcast f32* @ff to f32*;
+    store f32* %11 with f32 %10;
+    ret;
+}
+f32* @fe;
+f32* @fa;
+f32* @fb;
+f32* @fc;
+f32* @ff;

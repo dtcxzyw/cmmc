@@ -1,0 +1,22 @@
+func @add(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 2;
+    ret i32 %0;
+}
+func @mul(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 %var0;
+    ret i32 %0;
+}
+func @ne(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp neq i32 %var0, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}
+func @sub(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = neg i32 %var0;
+    ret i32 %0;
+}

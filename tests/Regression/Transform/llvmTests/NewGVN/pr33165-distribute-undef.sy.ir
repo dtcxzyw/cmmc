@@ -1,0 +1,11 @@
+func @f(i8 %var0, i32 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = xor i32 %0, i32 -1;
+    i32 %2 = and i32 %1, i32 255;
+    i1 %3 = scmp neq i32 %var1, i32 0;
+    i32 %4 = select i1 %3 ? i32 %2 : i32 0;
+    i32 %5 = and i32 %2, i32 %4;
+    i8 %6 = ztrunc i32 %5 to i8;
+    ret i8 %6;
+}

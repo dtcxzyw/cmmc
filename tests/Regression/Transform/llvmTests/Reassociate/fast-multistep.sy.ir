@@ -1,0 +1,17 @@
+func @fmultistep1(f32 %var0, f32 %var1, f32 %var2) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fmul f32 %var0, f32 %var1;
+    f32 %1 = fmul f32 %var0, f32 %0;
+    f32 %2 = fmul f32 %var0, f32 %var2;
+    f32 %3 = fmul f32 %var0, f32 %2;
+    f32 %4 = fadd f32 %1, f32 %3;
+    ret f32 %4;
+}
+func @fmultistep2(f32 %var0, f32 %var1, f32 %var2, f32 %var3) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fmul f32 %var0, f32 %var2;
+    f32 %1 = fadd f32 %0, f32 %var3;
+    f32 %2 = fmul f32 %var0, f32 %var1;
+    f32 %3 = fadd f32 %2, f32 %1;
+    ret f32 %3;
+}

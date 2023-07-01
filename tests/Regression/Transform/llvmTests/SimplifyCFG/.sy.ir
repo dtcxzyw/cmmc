@@ -1,0 +1,4 @@
+func @n4_extrause() -> i8;
+func @n5() -> i8;
+func @n6() -> i8;
+func @t0() -> i8;

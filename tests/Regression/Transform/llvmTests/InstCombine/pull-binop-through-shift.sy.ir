@@ -1,0 +1,144 @@
+func @add_nosignbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @add_nosignbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @add_nosignbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 2147418112;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @add_signbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @add_signbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @add_signbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %var0, i32 -65536;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_nosignbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_nosignbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_nosignbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 2147418112;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_signbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_signbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @and_signbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %var0, i32 -65536;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_nosignbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_nosignbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_nosignbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 2147418112;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_signbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_signbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @or_signbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %var0, i32 -65536;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_nosignbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_nosignbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 2147418112;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_nosignbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 2147418112;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_signbit_ashr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_signbit_lshr(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 -65536;
+    i32 %1 = lshr i32 %0, i32 8;
+    ret i32 %1;
+}
+func @xor_signbit_shl(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = xor i32 %var0, i32 -65536;
+    i32 %1 = shl i32 %0, i32 8;
+    ret i32 %1;
+}

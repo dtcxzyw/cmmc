@@ -1,0 +1,37 @@
+func @test(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = fmul f32 %var0, f32 -0.8;
+    f32 %1 = fadd f32 %0, f32 1;
+    f32 %2 = fmul f32 %var0, f32 %1;
+    f32 %3 = fmul f32 %2, f32 %1;
+    f32 %4 = fadd f32 %var0, f32 %3;
+    f32 %5 = fmul f32 %4, f32 %var0;
+    f32 %6 = fadd f32 %5, f32 %var0;
+    f32 %7 = fmul f32 %6, f32 %var0;
+    f32 %8 = fadd f32 %var0, f32 %7;
+    f32 %9 = fmul f32 %8, f32 %var0;
+    f32 %10 = fadd f32 %9, f32 %var0;
+    f32 %11 = fmul f32 %10, f32 %var0;
+    f32 %12 = fadd f32 %11, f32 %var0;
+    f32 %13 = fmul f32 %12, f32 %var0;
+    f32 %14 = fadd f32 %var0, f32 %13;
+    f32 %15 = fmul f32 %14, f32 %var0;
+    f32 %16 = fadd f32 %15, f32 %var0;
+    f32 %17 = fmul f32 %16, f32 %var0;
+    f32 %18 = fadd f32 %17, f32 %var0;
+    f32 %19 = fmul f32 %18, f32 %var0;
+    f32 %20 = fadd f32 %19, f32 %var0;
+    f32 %21 = fmul f32 %20, f32 %var0;
+    f32 %22 = fadd f32 %21, f32 %var0;
+    f32 %23 = fmul f32 %var0, f32 %22;
+    f32 %24 = fmul f32 %23, f32 %var0;
+    f32 %25 = fadd f32 %var0, f32 %24;
+    f32 %26 = fmul f32 %var0, f32 %25;
+    f32 %27 = fadd f32 %26, f32 %var0;
+    f32 %28 = fmul f32 %var0, f32 %27;
+    f32 %29 = fmul f32 %28, f32 %var0;
+    f32 %30 = fmul f32 %29, f32 0.909091;
+    f32 %31 = fmul f32 %30, f32 0.9;
+    f32 %32 = fadd f32 %var0, f32 %31;
+    ret f32 %32;
+}

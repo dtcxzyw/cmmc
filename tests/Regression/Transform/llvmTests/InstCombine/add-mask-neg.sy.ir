@@ -1,0 +1,3 @@
+func @dec_commute_mask_neg_i32() -> i32;
+func @dec_mask_commute_neg_i32() -> i32;
+func @dec_mask_multiuse_neg_i32() -> i32;

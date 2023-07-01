@@ -1,0 +1,21 @@
+func @bar() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 1;
+}
+func @foo() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @unswitch_trivial_select() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @unswitch_trivial_select_cmp_outside(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 100;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i1 %3 = scmp neq i32 %2, i32 0;
+    i32 %4 = select i1 %3 ? i32 35 : i32 0;
+    ret i32 %4;
+}

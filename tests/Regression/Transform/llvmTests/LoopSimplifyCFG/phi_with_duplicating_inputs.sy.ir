@@ -1,0 +1,5 @@
+func @f1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}
+i16* @a;

@@ -1,0 +1,11 @@
+func @test1(i32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i1 %1 = scmp lt i32 %0, i32 1;
+    i32 %2 = select i1 %1 ? i32 1 : i32 %var0;
+    i32 %3 = strunc i32 %2 to i32;
+    i1 %4 = scmp gt i32 %3, i32 0;
+    f32 %5 = u2f i32 %2 to f32;
+    f32 %6 = select i1 %4 ? f32 %5 : f32 0;
+    ret f32 %6;
+}

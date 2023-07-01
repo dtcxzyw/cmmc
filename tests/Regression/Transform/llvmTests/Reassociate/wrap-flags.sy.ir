@@ -1,0 +1,50 @@
+func @pr23926(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i8 %var0 to i32;
+    i32 %1 = add i32 %0, i32 1;
+    i8 %2 = strunc i32 %1 to i8;
+    i32 %3 = sext i8 %2 to i32;
+    i8 %4 = strunc i8 %var1 to i8;
+    i32 %5 = sext i8 %4 to i32;
+    i32 %6 = sub i32 %5, i32 %3;
+    i8 %7 = ztrunc i32 %6 to i8;
+    ret i8 %7;
+}
+func @shl_to_mul_nsw(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = shl i32 %0, i32 31;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i32 %3 = add i32 %2, i32 1;
+    ret i32 %3;
+}
+func @shl_to_mul_nsw_2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = shl i32 %0, i32 30;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i32 %3 = add i32 %2, i32 1;
+    ret i32 %3;
+}
+func @shl_to_mul_nuw(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = shl i32 %var0, i32 2;
+    i32 %1 = add i32 %0, i32 1;
+    ret i32 %1;
+}
+func @shl_to_mul_nuw_nsw(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = shl i32 %0, i32 2;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i32 %3 = add i32 %2, i32 1;
+    ret i32 %3;
+}
+func @shl_to_mul_nuw_nsw_bitwidth_m1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = shl i32 %0, i32 31;
+    i32 %2 = ztrunc i32 %1 to i32;
+    i32 %3 = add i32 %2, i32 1;
+    ret i32 %3;
+}

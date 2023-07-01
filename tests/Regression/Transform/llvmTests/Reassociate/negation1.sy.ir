@@ -1,0 +1,7 @@
+func @test1(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %var0, i32 %var1;
+    i32 %1 = add i32 %var2, i32 %0;
+    i32 %2 = sub i32 %1, i32 %0;
+    ret i32 %2;
+}

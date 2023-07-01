@@ -1,0 +1,7 @@
+func @sub_to_xor() -> i32;
+func @sub_to_xor_and_commuted() -> i32;
+func @sub_to_xor_extra_use_and() -> i32;
+func @sub_to_xor_extra_use_and_or() -> i32;
+func @sub_to_xor_extra_use_or() -> i32;
+func @sub_to_xor_extra_use_sub() -> i32;
+func @sub_to_xor_or_commuted() -> i32;

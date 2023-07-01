@@ -1,0 +1,14 @@
+func @callee(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = add i32 %0, i32 1;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}
+func @caller(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = strunc i32 %var0 to i32;
+    i32 %1 = add i32 %0, i32 1;
+    i32 %2 = ztrunc i32 %1 to i32;
+    ret i32 %2;
+}

@@ -1,0 +1,4 @@
+func @n() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+  ^entry:
+    unreachable;
+}

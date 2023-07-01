@@ -1,0 +1,2 @@
+func @n3_extrause() -> i32;
+func @t0_basic() -> i32;

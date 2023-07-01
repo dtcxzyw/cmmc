@@ -1,0 +1,6 @@
+func @inflate() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+i32* @bk;
+i32* @hufts;

@@ -1,0 +1,4 @@
+func @_ZN17CoinFactorization7cleanupEv() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

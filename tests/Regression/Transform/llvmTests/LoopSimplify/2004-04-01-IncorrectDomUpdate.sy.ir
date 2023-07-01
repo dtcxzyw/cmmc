@@ -1,0 +1,4 @@
+func @NormalizeCoeffsVecFFE() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}

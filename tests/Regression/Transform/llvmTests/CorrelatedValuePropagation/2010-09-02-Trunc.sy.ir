@@ -1,0 +1,19 @@
+func @test(i32 %var0, i32 %var1) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp eq i32 %var0, i32 0;
+    cbr i1 %0(prob = 0.5), ^if.then, ^if.else;
+  ^if.then:
+    i1 %1 = scmp neq i32 %var1, i32 0;
+    i32 %2 = zext i1 %1 to i32;
+    i16 %3 = ztrunc i32 %2 to i16;
+    i16 %4 = select i1 %1 ? i16 %3 : i16 23;
+    ubr ^b;
+  ^if.else:
+    i1 %5 = scmp neq i32 %var0, i32 0;
+    i32 %6 = zext i1 %5 to i32;
+    i16 %7 = ztrunc i32 %6 to i16;
+    ubr ^b;
+  ^b:
+    i16 %8 = phi [^if.then, i16 %4] [^if.else, i16 %7];
+    ret i16 %8;
+}

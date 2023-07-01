@@ -1,0 +1,114 @@
+func @test_smax1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 -10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 -10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp gt i32 %2, i32 -11;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_smax2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 -10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 -10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp gt i32 %2, i32 -10;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_smax3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 -10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 -10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp gt i32 %2, i32 -9;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_smin1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp lt i32 %2, i32 11;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_smin2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp lt i32 %2, i32 10;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_smin3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i32 %2 = strunc i32 %1 to i32;
+    i1 %3 = scmp lt i32 %2, i32 9;
+    i32 %4 = zext i1 %3 to i32;
+    i32 %5 = ztrunc i32 %4 to i32;
+    ret i32 %5;
+}
+func @test_umax1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp gt i32 %1, i32 9;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_umax2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp gt i32 %1, i32 10;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_umax3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp gt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp gt i32 %1, i32 11;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_umin1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp lt i32 %1, i32 11;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_umin2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp lt i32 %1, i32 10;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}
+func @test_umin3(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = ucmp lt i32 %var0, i32 10;
+    i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
+    i1 %2 = ucmp lt i32 %1, i32 9;
+    i32 %3 = zext i1 %2 to i32;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
+}

@@ -1,0 +1,35 @@
+func @aef() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @f() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @f_with_alias() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @f_with_var() -> void { NoRecurse } {
+  ^entry:
+    i32* %0 = ptrcast i32* @var to i32*;
+    i32 %1 = load i32* %0;
+    i32 %2 = strunc i32 %1 to i32;
+    i32 %3 = add i32 %2, i32 1;
+    i32 %4 = ztrunc i32 %3 to i32;
+    store i32* %0 with i32 %4;
+    ret;
+}
+func @nf() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @tf() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+func @tf2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret;
+}
+i32* @var = 0;

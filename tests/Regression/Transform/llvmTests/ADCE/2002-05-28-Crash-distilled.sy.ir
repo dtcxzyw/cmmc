@@ -1,0 +1,5 @@
+func @test(i32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    f32 %0 = u2f i32 %var0 to f32;
+    ret f32 %0;
+}

@@ -1,0 +1,3 @@
+func @sext_sext_ne() -> i32;
+func @sext_sext_sge_op0_narrow() -> i32;
+func @sext_sext_slt() -> i32;

@@ -1,0 +1,3 @@
+func @smax_of_smax_smin_commute0() -> i32;
+func @smax_of_smax_smin_commute1() -> i32;
+func @smax_of_smax_smin_commute2() -> i32;

@@ -1,0 +1,14 @@
+func @a() -> void { NoRecurse } {
+  ^entry:
+    call () -> void @b();
+    ret;
+}
+func @b() -> void {
+  ^entry:
+    ubr ^block0;
+  ^block0:
+    ubr ^block1;
+  ^block1:
+    call () -> void @a();
+    ubr ^block1;
+}

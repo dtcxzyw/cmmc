@@ -1,0 +1,15 @@
+func @bar(i16 %var0, i16 %var1) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i16 %var0 to i32;
+    i32 %1 = zext i16 %var1 to i32;
+    i32 %2 = mul i32 %0, i32 %1;
+    i16 %3 = ztrunc i32 %2 to i16;
+    ret i16 %3;
+}
+func @foo(i16 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = zext i16 %var0 to i32;
+    i1 %1 = scmp neq i32 %0, i32 0;
+    i16 %2 = select i1 %1 ? i16 5 : i16 0;
+    ret i16 %2;
+}

@@ -1,0 +1,2 @@
+func @n10_ashr_lshr() -> i16;
+func @t0() -> i16;

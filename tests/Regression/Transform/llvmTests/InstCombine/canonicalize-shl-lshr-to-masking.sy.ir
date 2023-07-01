@@ -1,0 +1,2 @@
+func @negative_oneuse() -> i32;
+func @negative_twovars() -> i32;
