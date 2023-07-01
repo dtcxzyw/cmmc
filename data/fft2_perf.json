@@ -21,6 +21,17 @@
       "instructions:u": 13858422390,
       "sysy_time": 6.478337,
       "task-clock:u": 6468.82
+    },
+    "48d1d909299606555ee6fd868cbcd8648fe7ee9d": {
+      "branch-load-misses:u": 100461110,
+      "branch-loads:u": 2302267083,
+      "cycles:u": 9123768350,
+      "iTLB-load-misses:u": 397,
+      "inst_retired:u": 13068821750,
+      "inst_spec:u": 14729745133,
+      "instructions:u": 13068827797,
+      "sysy_time": 6.120624,
+      "task-clock:u": 6111.32
     }
   },
   "arm_gcc": {
