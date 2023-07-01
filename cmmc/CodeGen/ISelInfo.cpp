@@ -61,6 +61,7 @@ void ISelContext::runISel(MIRFunction& func) {
 
         // TODO: cross block isel?
         mConstantMapping.clear();
+        mUseCount.clear();
         {
             std::vector<MIROperand> removeList;
             for(auto& block : func.blocks()) {
@@ -72,6 +73,15 @@ void ISelContext::runISel(MIRFunction& func) {
                             removeList.push_back(def);
                         } else
                             mConstantMapping.emplace(def, &inst);
+                    }
+
+                    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+                        if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                            auto& operand = inst.getOperand(idx);
+                            if(isOperandVReg(operand)) {
+                                ++mUseCount[operand];
+                            }
+                        }
                     }
                 }
             }
@@ -217,7 +227,13 @@ void ISelContext::blockReplace(MIRInst& inst) {
 }
 void ISelContext::replaceOperand(const MIROperand& src, const MIROperand& dst) {
     assert(src.isReg());
-    mReplaceList.emplace(src, dst);
+    if(src != dst)
+        mReplaceList.emplace(src, dst);
+}
+bool ISelContext::hasOneUse(const MIROperand& operand) const {
+    if(auto iter = mUseCount.find(operand); iter != mUseCount.cend())
+        return iter->second == 1;
+    return true;
 }
 bool ISelContext::isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
                                  std::optional<std::list<MIRInst>::iterator>* iterPtr) const {

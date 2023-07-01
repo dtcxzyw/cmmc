@@ -31,10 +31,12 @@ class ISelContext final {
     std::list<MIRInst>::iterator mInsertPoint;
     std::unordered_map<MIROperand, MIROperand, MIROperandHasher> mReplaceList;
     std::unordered_set<MIRInst*> mRemoveWorkList, mReplaceBlockList;
+    std::unordered_map<MIROperand, uint32_t, MIROperandHasher> mUseCount;
 
 public:
     explicit ISelContext(CodeGenContext& codeGenCtx);
     void runISel(MIRFunction& func);
+    bool hasOneUse(const MIROperand& operand) const;
     MIRInst* lookupDef(const MIROperand& operand) const;
     bool isDefinedAfter(const MIROperand& operand, const MIRInst& inst,
                         std::optional<std::list<MIRInst>::iterator>* iterPtr) const;
