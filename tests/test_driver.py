@@ -208,7 +208,11 @@ def spl_parse(src, strict=True):
     with open(ref, encoding="utf-8") as f:
         ref_content = f.read()
     is_error = "Error" in ref_content
-    return (out.returncode != 0) == is_error and ref_content == out.stdout
+    if out.returncode == 0 and not is_error:
+        return ref_content == out.stdout
+    elif out.returncode != 0 and is_error:
+        return ref_content == out.stderr
+    return False
 
 def spl_parse_ext(src):
     return spl_parse(src, strict=False)
