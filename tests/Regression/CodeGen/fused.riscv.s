@@ -123,8 +123,12 @@ fused_mul_sub:
 	ret
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
-	li a2, 777
-	mulw a1, a1, a2
+	slliw a2, a1, 3
+	subw a2, a2, a1
+	slliw a2, a2, 4
+	subw a1, a2, a1
+	slliw a1, a1, 3
+	subw a1, a1, a1
 	subw a0, a0, a1
 	ret
 .globl fused_mul_sub2

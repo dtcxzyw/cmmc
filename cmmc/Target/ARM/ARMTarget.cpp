@@ -165,6 +165,19 @@ class ARMTarget final : public Target {
     ARMRegisterInfo mRegisterInfo;
 
 public:
+    const TargetOptHeuristic& getOptHeuristic() const noexcept override {
+        static TargetOptHeuristic defaultHeuristic{
+            // .unrollBlockSize = 4U,
+            // .maxUnrollSize = 0U,
+            // .maxUnrollBodySize = 16U,
+            // .duplicationThreshold = 8U,
+            // .duplicationIterations = 2U,
+            .mulByConstThreshold = 7U,
+        };
+
+        return defaultHeuristic;
+    }
+
     [[nodiscard]] bool isNativeSupported(InstructionID inst) const noexcept override {
         return inst != InstructionID::SRem && inst != InstructionID::URem && inst != InstructionID::SMin &&
             inst != InstructionID::SMax;

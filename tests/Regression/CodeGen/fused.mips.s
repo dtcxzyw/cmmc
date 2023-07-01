@@ -144,9 +144,12 @@ fused_mul_sub:
 	nop
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
-	li $t0, 777
-	mult $a1, $t0
-	mflo $t0
+	sll $t0, $a1, 3
+	subu $t0, $t0, $a1
+	sll $t0, $t0, 4
+	subu $t0, $t0, $a1
+	sll $t0, $t0, 3
+	subu $t0, $t0, $t0
 	subu $v0, $a0, $t0
 	jr $ra
 	nop

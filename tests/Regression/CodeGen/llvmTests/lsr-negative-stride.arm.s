@@ -20,30 +20,22 @@ label16:
 	mla r2, r5, r4, r1
 	cmp r3, r2
 	bge label11
-	sub r2, r2, r0
-	cmp r0, r2
-	bne label10
-	b label44
+	b label24
 label2:
 	pop { r4, r5 }
 	bx lr
-label44:
-	mov r0, r2
-	b label2
-label10:
-	add r4, r4, #1
-	mla r2, r5, r4, r1
-	cmp r3, r2
-	bge label11
+label24:
 	sub r2, r2, r0
 	cmp r0, r2
 	bne label10
-	b label44
+label38:
+	mov r0, r2
+	b label2
 label11:
 	sub r0, r0, r2
 	cmp r2, r0
 	bne label36
-	b label44
+	b label38
 label36:
 	mov r1, r2
 	rsb r5, r0, #0
@@ -52,7 +44,13 @@ label36:
 	mla r2, r5, r4, r2
 	cmp r0, r2
 	bge label11
+	b label24
+label10:
+	add r4, r4, #1
+	mla r2, r5, r4, r1
+	cmp r3, r2
+	bge label11
 	sub r2, r2, r0
 	cmp r0, r2
 	bne label10
-	b label44
+	b label38

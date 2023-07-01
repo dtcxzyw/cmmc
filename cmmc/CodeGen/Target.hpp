@@ -47,6 +47,8 @@ struct TargetOptHeuristic final {
     // tail duplication
     uint32_t duplicationThreshold = 10U;
     uint32_t duplicationIterations = 10U;
+    // multiplication by constant
+    uint32_t mulByConstThreshold = 5U;
 };
 
 class Target {

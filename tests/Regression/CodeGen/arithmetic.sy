@@ -226,3 +226,81 @@ int nabs(int x) {
 int absdiff(int x, int y) {
     return abs(x - y);
 }
+int mul_with_constant_0(int x) {
+    return x * 0;
+}
+int mul_with_constant_100(int x) {
+    return x * 100;
+}
+int mul_with_constant_1000(int x) {
+    return x * 1000;
+}
+int mul_with_constant_400(int x) {
+    return x * 400;
+}
+int mul_with_constant_1000000(int x) {
+    return x * 1000000;
+}
+int mul_with_constant_10(int x) {
+    return x * 10;
+}
+int mul_with_constant_270(int x) {
+    return x * 270;
+}
+int mul_with_constant_3(int x) {
+    return x * 3;
+}
+int mul_with_constant_85(int x) {
+    return x * 85;
+}
+int mul_with_constant_23(int x) {
+    return x * 23;
+}
+int mul_with_constant_neg_23(int x) {
+    return x * -23;
+}
+int mul_with_constant_neg_82(int x) {
+    return x * -82;
+}
+int mul_with_constant_neg_103(int x) {
+    return x * -103;
+}
+int mul_with_constant_neg_59(int x) {
+    return x * -59;
+}
+int mul_with_constant_17(int x) {
+    return x * 17;
+}
+int mul_with_constant_128875(int x) {
+    return x * 128875;
+}
+int mul_with_constant_19980130(int x) {
+    return x * 19980130;
+}
+int mul_with_constant_19971231(int x) {
+    return x * 19971231;
+}
+int mul_with_constant_8193(int x) {
+    return x * 8193;
+}
+int mul_with_constant_270369(int x) {
+    return x * 270369;
+}
+int mul_with_constant_33(int x) {
+    return x * 33;
+}
+int mul_with_constant_16777216(int x) {
+    return x * 16777216;
+}
+int mul_with_constant_1073741824(int x) {
+    return x * 1073741824;
+}
+int mul_with_constant_60(int x) {
+    return x * 60;
+}
+int mul_with_constant_300(int x) {
+    return x * 300;
+}
+int mul_with_constant_10000(int x) {
+    return x * 10000;
+}

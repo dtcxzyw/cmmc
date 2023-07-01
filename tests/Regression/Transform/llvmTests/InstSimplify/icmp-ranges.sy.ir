@@ -1,8 +1,8 @@
 func @and_eq_eq(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = xor i32 %0, i32 17;
-    i32 %2 = xor i32 %0, i32 13;
+    i32 %1 = xor i32 %0, i32 13;
+    i32 %2 = xor i32 %0, i32 17;
     i32 %3 = or i32 %1, i32 %2;
     i1 %4 = scmp eq i32 %3, i32 0;
     i32 %5 = zext i1 %4 to i32;
@@ -12,8 +12,8 @@ func @and_eq_eq(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
 func @and_eq_eq_swap(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = xor i32 %0, i32 17;
-    i32 %2 = xor i32 %0, i32 23;
+    i32 %1 = xor i32 %0, i32 23;
+    i32 %2 = xor i32 %0, i32 17;
     i32 %3 = or i32 %1, i32 %2;
     i1 %4 = scmp eq i32 %3, i32 0;
     i32 %5 = zext i1 %4 to i32;

@@ -98,8 +98,11 @@ fused_mul_sub:
 	bx lr
 .globl fused_mul_sub_imm
 fused_mul_sub_imm:
-	movw r2, #777
-	mls r0, r1, r2, r0
+	rsb r2, r1, r1, lsl #3
+	rsb r1, r1, r2, lsl #4
+	lsl r2, r1, #3
+	sub r1, r2, r1, lsl #3
+	sub r0, r0, r1
 	bx lr
 .globl fused_mul_sub2
 fused_mul_sub2:

@@ -89,9 +89,8 @@ sub_reg:
 	nop
 .globl mul_imm
 mul_imm:
-	li $t0, 3
-	mult $a0, $t0
-	mflo $v0
+	sll $t0, $a0, 1
+	addu $v0, $t0, $t0
 	jr $ra
 	nop
 .globl mul_to_shl
@@ -381,5 +380,201 @@ absdiff:
 	sra $t1, $t0, 31
 	xor $t0, $t0, $t1
 	subu $v0, $t0, $t1
+	jr $ra
+	nop
+.globl mul_with_constant_0
+mul_with_constant_0:
+	move $v0, $zero
+	jr $ra
+	nop
+.globl mul_with_constant_100
+mul_with_constant_100:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 2
+	addu $t0, $t0, $t0
+	sll $v0, $t0, 2
+	jr $ra
+	nop
+.globl mul_with_constant_1000
+mul_with_constant_1000:
+	sll $t0, $a0, 6
+	subu $t0, $t0, $a0
+	sll $t0, $t0, 1
+	subu $t0, $t0, $a0
+	sll $v0, $t0, 3
+	jr $ra
+	nop
+.globl mul_with_constant_400
+mul_with_constant_400:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 2
+	addu $t0, $t0, $t0
+	sll $v0, $t0, 4
+	jr $ra
+	nop
+.globl mul_with_constant_1000000
+mul_with_constant_1000000:
+	li $t0, 1000000
+	mult $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl mul_with_constant_10
+mul_with_constant_10:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $v0, $t0, 1
+	jr $ra
+	nop
+.globl mul_with_constant_270
+mul_with_constant_270:
+	sll $t0, $a0, 3
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 4
+	subu $t0, $t0, $t0
+	sll $v0, $t0, 1
+	jr $ra
+	nop
+.globl mul_with_constant_3
+mul_with_constant_3:
+	sll $t0, $a0, 1
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_85
+mul_with_constant_85:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 4
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_23
+mul_with_constant_23:
+	sll $t0, $a0, 1
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 3
+	subu $v0, $t0, $a0
+	jr $ra
+	nop
+.globl mul_with_constant_neg_23
+mul_with_constant_neg_23:
+	sll $t0, $a0, 1
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 3
+	subu $t0, $t0, $a0
+	subu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_neg_82
+mul_with_constant_neg_82:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 3
+	addu $t0, $t0, $a0
+	sll $t0, $t0, 1
+	subu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_neg_103
+mul_with_constant_neg_103:
+	sll $t0, $a0, 3
+	subu $t0, $t0, $a0
+	sll $t0, $t0, 1
+	subu $t0, $t0, $a0
+	sll $t0, $t0, 3
+	subu $t0, $t0, $a0
+	subu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_neg_59
+mul_with_constant_neg_59:
+	sll $t0, $a0, 4
+	subu $t0, $t0, $a0
+	sll $t0, $t0, 2
+	subu $t0, $t0, $a0
+	subu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_17
+mul_with_constant_17:
+	sll $t0, $a0, 4
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_128875
+mul_with_constant_128875:
+	li $t0, 128875
+	mult $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl mul_with_constant_19980130
+mul_with_constant_19980130:
+	li $t0, 19980130
+	mult $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl mul_with_constant_19971231
+mul_with_constant_19971231:
+	li $t0, 19971231
+	mult $a0, $t0
+	mflo $v0
+	jr $ra
+	nop
+.globl mul_with_constant_8193
+mul_with_constant_8193:
+	sll $t0, $a0, 13
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_270369
+mul_with_constant_270369:
+	sll $t0, $a0, 5
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 13
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_33
+mul_with_constant_33:
+	sll $t0, $a0, 5
+	addu $v0, $t0, $t0
+	jr $ra
+	nop
+.globl mul_with_constant_16777216
+mul_with_constant_16777216:
+	sll $v0, $a0, 24
+	jr $ra
+	nop
+.globl mul_with_constant_1073741824
+mul_with_constant_1073741824:
+	sll $v0, $a0, 30
+	jr $ra
+	nop
+.globl mul_with_constant_60
+mul_with_constant_60:
+	sll $t0, $a0, 4
+	subu $t0, $t0, $a0
+	sll $v0, $t0, 2
+	jr $ra
+	nop
+.globl mul_with_constant_300
+mul_with_constant_300:
+	sll $t0, $a0, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 4
+	subu $t0, $t0, $t0
+	sll $v0, $t0, 2
+	jr $ra
+	nop
+.globl mul_with_constant_10000
+mul_with_constant_10000:
+	li $t0, 10000
+	mult $a0, $t0
+	mflo $v0
 	jr $ra
 	nop

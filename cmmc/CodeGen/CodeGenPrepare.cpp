@@ -15,6 +15,7 @@
 // Utils before lowering
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/CodeGen/MultiplyByConstant.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
@@ -38,9 +39,43 @@ public:
         bool modified = false;
         for(auto block : func.blocks()) {
             reduceBlock(builder, *block, [&](Instruction* inst) -> Value* {
-                Value *v1, *v2;
-                if(mul(any(v1), intLog2(v2))(MatchContext<Value>{ inst })) {
-                    return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, v2);
+                Value* v1;
+                intmax_t v2;
+                if(mul(any(v1), int_(v2))(MatchContext<Value>{ inst })) {
+                    if(v2 == 0)
+                        return nullptr;
+
+                    const auto& expand = [&](auto& self, const auto plan) {
+                        if(!plan)
+                            return v1;
+
+                        auto v = self(self, plan->parent);
+                        if(plan->shamt > 0)
+                            v = builder.makeOp<BinaryInst>(InstructionID::Shl, v,
+                                                           ConstantInteger::get(v1->getType(), plan->shamt));
+
+                        auto rhs = plan->rhs == ShiftArithNode::RhsType::CHAIN ? v : v1;
+                        switch(plan->artihmetic) {
+                            case ShiftArithNode::ArtihType::ADD:
+                                v = builder.makeOp<BinaryInst>(InstructionID::Add, v, rhs);
+                                break;
+                            case ShiftArithNode::ArtihType::SUB:
+                                v = builder.makeOp<BinaryInst>(InstructionID::Sub, v, rhs);
+                                break;
+                            case ShiftArithNode::ArtihType::NOP:
+                                break;
+                        }
+
+                        return v;
+                    };
+
+                    const auto plan = findMultiplyPlan(std::abs(v2), target.getOptHeuristic().mulByConstThreshold);
+                    if(!plan)
+                        return nullptr;
+                    auto value = expand(expand, plan);
+                    if(v2 < 0)
+                        value = builder.makeOp<UnaryInst>(InstructionID::Neg, value);
+                    return value;
                 }
                 return nullptr;
             });

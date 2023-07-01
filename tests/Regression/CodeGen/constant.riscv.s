@@ -8,18 +8,20 @@ x:
 .text
 .globl cse_imm
 cse_imm:
-	li a3, 10
-	mulw a1, a1, a3
+	slliw a3, a1, 2
+	sh2add a1, a1, a3
+	slliw a1, a1, 1
 	xor a1, a2, a1
-	mulw a0, a0, a3
-	addw a0, a1, a0
+	slliw a2, a0, 2
+	sh2add a0, a0, a2
+	sh1add a0, a0, a1
 	ret
 .globl cse_global
 cse_global:
-pcrel20:
+pcrel22:
 	auipc a0, %pcrel_hi(x)
-	addi a1, a0, %pcrel_lo(pcrel20)
-	lw a0, %pcrel_lo(pcrel20)(a0)
+	addi a1, a0, %pcrel_lo(pcrel22)
+	lw a0, %pcrel_lo(pcrel22)(a0)
 	lw a1, 4(a1)
 	addw a0, a0, a1
 	ret

@@ -11,13 +11,14 @@ x:
 .text
 .globl cse_imm
 cse_imm:
-	li $t0, 10
-	mult $a1, $t0
-	mflo $t1
-	xor $t1, $a2, $t1
-	mult $a0, $t0
-	mflo $t0
-	addu $v0, $t1, $t0
+	sll $t0, $a1, 2
+	addu $t0, $t0, $t0
+	sll $t0, $t0, 1
+	xor $t0, $a2, $t0
+	sll $t1, $a0, 2
+	addu $t1, $t1, $t1
+	sll $t1, $t1, 1
+	addu $v0, $t0, $t1
 	jr $ra
 	nop
 .globl cse_global

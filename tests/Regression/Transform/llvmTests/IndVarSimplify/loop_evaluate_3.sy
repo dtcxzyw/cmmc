@@ -15,7 +15,7 @@ uint32_t foo(void){
     block1:
     var2 = (var0_phi + 3);
     var3 = (var1_phi + 1);
-    if (((int)var3) < ((int)200000)) {
+    if (((int)var3) < ((int)20000)) {
         var0_phi = var2;
         var1_phi = var3;
         goto block1;
