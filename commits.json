@@ -74,6 +74,11 @@
     "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
     "time": "2023-07-02 03:27:32 +0800"
   },
+  "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104": {
+    "message": "ci: change steps' order to reduce conflict",
+    "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
+    "time": "2023-07-02 03:31:52 +0800"
+  },
   "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
     "message": "misc: update ref",
     "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
