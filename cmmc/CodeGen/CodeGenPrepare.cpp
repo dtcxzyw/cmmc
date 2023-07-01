@@ -53,7 +53,7 @@ public:
                         auto ret = v;
                         if(plan->shamt > 0)
                             ret = builder.makeOp<BinaryInst>(InstructionID::Shl, ret,
-                                                           ConstantInteger::get(v1->getType(), plan->shamt));
+                                                             ConstantInteger::get(v1->getType(), plan->shamt));
 
                         auto rhs = plan->rhs == ShiftArithNode::RhsType::CHAIN ? v : v1;
                         switch(plan->artihmetic) {
