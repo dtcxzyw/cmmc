@@ -336,7 +336,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %218 = phi [^b6, i32 1] [^while.header2, i32 %230];
     i32 %219 = phi [^b6, i32 0] [^while.header2, i32 %222];
     i32 %220 = phi [^b6, i32 0] [^while.header2, i32 %226];
-    i1 %221 = scmp lt i32 %219, i32 %218;
+    i1 %221 = scmp gt i32 %218, i32 %219;
     cbr i1 %221(prob = 0.97), ^entry3, ^b9;
   ^entry3:
     i32 %222 = add i32 %219, i32 1;
@@ -366,7 +366,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %236 = getelementptr &([1005 * i32]* %6)[i64 0][i32 %235];
     store i32* %236 with i32 0;
     i32 %237 = add i32 %233, i32 1;
-    i1 %238 = scmp le i32 %237, i32 %218;
+    i1 %238 = scmp ge i32 %218, i32 %237;
     cbr i1 %238(prob = 0.97), ^while.body16, ^if.then;
   ^while.body17:
     i32* %239 = getelementptr &([5005 * i32]* %8)[i64 0][i32 %231];

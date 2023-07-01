@@ -32,7 +32,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %13(prob = 0.97), ^while.header1, ^while.body;
   ^while.header1:
     i32 %14 = phi [^while.header, i32 0] [^b2, i32 %30];
-    i1 %15 = scmp lt i32 %14, i32 %12;
+    i1 %15 = scmp gt i32 %12, i32 %14;
     cbr i1 %15(prob = 0.97), ^while.body1, ^b;
   ^while.body:
     i32 %16 = phi [^while.header, i32 0] [^while.body, i32 %19];

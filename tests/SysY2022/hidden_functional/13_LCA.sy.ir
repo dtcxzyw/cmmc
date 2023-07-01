@@ -138,7 +138,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %64 = getelementptr &([10005 * i32]* %6)[i64 0][i32 %63];
     store i32* %64 with i32 -1;
     i32 %65 = add i32 %63, i32 1;
-    i1 %66 = scmp le i32 %65, i32 %36;
+    i1 %66 = scmp ge i32 %36, i32 %65;
     cbr i1 %66(prob = 0.97), ^while.body4, ^entry1;
   ^entry1:
     i1 %67 = scmp neq i32 %36, i32 1;

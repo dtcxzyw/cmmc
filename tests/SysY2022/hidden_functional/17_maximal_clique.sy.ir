@@ -20,7 +20,7 @@ internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
     ret i32 %5;
   ^while.header1:
     i32 %9 = phi [^while.body, i32 1] [^while.header2, i32 %12];
-    i1 %10 = scmp lt i32 %9, i32 %3;
+    i1 %10 = scmp gt i32 %3, i32 %9;
     cbr i1 %10(prob = 0.97), ^while.body1, ^b1;
   ^while.body1:
     i32* %11 = getelementptr &([30 * i32]* %0)[i64 0][i32 %9];
@@ -37,7 +37,7 @@ internal func @maxCliques(i32 %k, [30 * i32]* %0, i32* %1) -> i32 {
     ubr ^b2;
   ^while.header2:
     i32 %18 = phi [^while.body1, i32 %12] [^b3, i32 %29];
-    i1 %19 = scmp lt i32 %18, i32 %3;
+    i1 %19 = scmp gt i32 %3, i32 %18;
     cbr i1 %19(prob = 0.97), ^while.body2, ^while.header1;
   ^b2:
     i32 %20 = phi [^b1, i32 %5] [^if.then, i32 %17];
@@ -137,14 +137,14 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %39 = getelementptr &([2 * i32]* %36)[i64 0][i64 1];
     store i32* %39 with i32 %38;
     i32 %40 = add i32 %34, i32 1;
-    i1 %41 = scmp lt i32 %40, i32 %31;
+    i1 %41 = scmp gt i32 %31, i32 %40;
     cbr i1 %41(prob = 0.97), ^while.body, ^b;
   ^b:
     cbr i1 %32(prob = 0.97), ^super.header, ^b1;
   ^super.header:
     i32 %42 = phi [^b, i32 0] [^while.body1, i32 %43];
     i32 %43 = add i32 %42, i32 4;
-    i1 %44 = scmp lt i32 %43, i32 %31;
+    i1 %44 = scmp gt i32 %31, i32 %43;
     cbr i1 %44(prob = 0.89), ^while.body1, ^super.header1;
   ^b1:
     i32 %45 = call (i32, [30 * i32]*, i32*) -> i32 @maxCliques(i32 1, [30 * i32]* %store, i32* %n);
@@ -196,7 +196,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^super.header1:
     i32 %79 = phi [^super.header, i32 %42] [^while.body2, i32 %80];
     i32 %80 = add i32 %79, i32 4;
-    i1 %81 = scmp lt i32 %80, i32 %31;
+    i1 %81 = scmp gt i32 %31, i32 %80;
     cbr i1 %81(prob = 0.89), ^while.body2, ^while.body3;
   ^while.body2:
     [2 * i32]* %82 = getelementptr &([600 * [2 * i32]]* %edges)[i64 0][i32 %79];
@@ -255,6 +255,6 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %124 = getelementptr &([30 * i32]* %123)[i64 0][i32 %118];
     store i32* %124 with i32 1;
     i32 %125 = add i32 %115, i32 1;
-    i1 %126 = scmp lt i32 %125, i32 %31;
+    i1 %126 = scmp gt i32 %31, i32 %125;
     cbr i1 %126(prob = 0.97), ^while.body3, ^b1;
 }

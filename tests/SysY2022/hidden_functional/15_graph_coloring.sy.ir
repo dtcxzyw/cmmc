@@ -12,7 +12,7 @@ internal func @graphColoring([4 * i32]* %graph, i32 %m, i32 %i, i32* %color) -> 
     cbr i1 %4(prob = 0.97), ^while.body, ^while.body2;
   ^while.header1:
     i32 %5 = phi [^entry, i32 1] [^b1, i32 %18];
-    i1 %6 = scmp le i32 %5, i32 %m;
+    i1 %6 = scmp ge i32 %m, i32 %5;
     cbr i1 %6(prob = 0.97), ^while.body1, ^b;
   ^while.body:
     i32 %7 = add i32 %1, i32 1;

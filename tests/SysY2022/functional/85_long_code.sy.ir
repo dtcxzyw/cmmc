@@ -4,7 +4,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     ubr ^entry;
   ^entry:
     i32 %1 = phi [^0, i32 %low] [^b1, i32 %12];
-    i1 %2 = scmp lt i32 %1, i32 %high;
+    i1 %2 = scmp gt i32 %high, i32 %1;
     cbr i1 %2(prob = 0.5), ^if.then, ^b;
   ^if.then:
     i32* %3 = getelementptr &(i32* %arr)[i32 %1];
@@ -16,7 +16,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^while.header:
     i32 %6 = phi [^if.then, i32 %high] [^b7, i32 %13] [^if.then2, i32 %34];
     i32 %7 = phi [^if.then, i32 %1] [^b7, i32 %24] [^if.then2, i32 %24];
-    i1 %8 = scmp lt i32 %7, i32 %6;
+    i1 %8 = scmp gt i32 %6, i32 %7;
     cbr i1 %8(prob = 0.97), ^while.header1, ^b1;
   ^b1:
     i32* %9 = getelementptr &(i32* %arr)[i32 %7];
@@ -32,7 +32,7 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
   ^b2:
     i32* %15 = getelementptr &(i32* %arr)[i32 %13];
     i32 %16 = load i32* %15;
-    i1 %17 = scmp gt i32 %16, i32 %5;
+    i1 %17 = scmp lt i32 %5, i32 %16;
     ubr ^b3;
   ^b3:
     i1 %18 = phi [^while.header1, i1 false] [^b2, i1 %17];
@@ -51,12 +51,12 @@ internal func @QuickSort(i32* %arr, i32 %low, i32 %high) -> i32 {
     ubr ^while.header2;
   ^while.header2:
     i32 %24 = phi [^b4, i32 %7] [^if.then1, i32 %23] [^while.body1, i32 %30];
-    i1 %25 = scmp lt i32 %24, i32 %13;
+    i1 %25 = scmp gt i32 %13, i32 %24;
     cbr i1 %25(prob = 0.5), ^b5, ^b6;
   ^b5:
     i32* %26 = getelementptr &(i32* %arr)[i32 %24];
     i32 %27 = load i32* %26;
-    i1 %28 = scmp lt i32 %27, i32 %4;
+    i1 %28 = scmp gt i32 %4, i32 %27;
     ubr ^b6;
   ^b6:
     i1 %29 = phi [^while.header2, i1 false] [^b5, i1 %28];
@@ -224,7 +224,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %72(prob = 0.97), ^while.header1, ^while.body1;
   ^while.header1:
     i32 %73 = phi [^while.header, i32 0] [^b1, i32 %93];
-    i1 %74 = scmp lt i32 %73, i32 %71;
+    i1 %74 = scmp gt i32 %71, i32 %73;
     cbr i1 %74(prob = 0.97), ^while.body2, ^b;
   ^while.body1:
     i32 %75 = phi [^while.header, i32 0] [^while.body1, i32 %78];
@@ -336,8 +336,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %134 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %133];
     i32 %135 = load i32* %134;
     i32 %136 = add i32 %135, i32 1;
-    i1 %137 = scmp gt i32 %136, i32 %131;
-    i1 %138 = scmp gt i32 %130, i32 %122;
+    i1 %137 = scmp lt i32 %131, i32 %136;
+    i1 %138 = scmp lt i32 %122, i32 %130;
     i32 %139 = select i1 %138 ? i32 %127 : i32 %123;
     i32 %140 = select i1 %137 ? i32 %133 : i32 %139;
     i32 %141 = smax i32 %136, i32 %131;
@@ -347,7 +347,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %144 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %143];
     i32 %145 = load i32* %144;
     i32 %146 = add i32 %145, i32 1;
-    i1 %147 = scmp gt i32 %146, i32 %141;
+    i1 %147 = scmp lt i32 %141, i32 %146;
     i32 %148 = select i1 %147 ? i32 %143 : i32 %140;
     i32 %149 = smax i32 %146, i32 %141;
     store i32* %144 with i32 %146;
@@ -356,7 +356,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %152 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %151];
     i32 %153 = load i32* %152;
     i32 %154 = add i32 %153, i32 1;
-    i1 %155 = scmp gt i32 %154, i32 %149;
+    i1 %155 = scmp lt i32 %149, i32 %154;
     i32 %156 = select i1 %155 ? i32 %151 : i32 %148;
     i32 %157 = smax i32 %154, i32 %149;
     store i32* %152 with i32 %154;
@@ -381,8 +381,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %171 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %170];
     i32 %172 = load i32* %171;
     i32 %173 = add i32 %172, i32 1;
-    i1 %174 = scmp gt i32 %173, i32 %168;
-    i1 %175 = scmp gt i32 %167, i32 %159;
+    i1 %174 = scmp lt i32 %168, i32 %173;
+    i1 %175 = scmp lt i32 %159, i32 %167;
     i32 %176 = select i1 %175 ? i32 %164 : i32 %160;
     i32 %177 = select i1 %174 ? i32 %170 : i32 %176;
     i32 %178 = smax i32 %173, i32 %168;
@@ -392,7 +392,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %181 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %180];
     i32 %182 = load i32* %181;
     i32 %183 = add i32 %182, i32 1;
-    i1 %184 = scmp gt i32 %183, i32 %178;
+    i1 %184 = scmp lt i32 %178, i32 %183;
     i32 %185 = select i1 %184 ? i32 %180 : i32 %177;
     i32 %186 = smax i32 %183, i32 %178;
     store i32* %181 with i32 %183;
@@ -401,7 +401,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %189 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %188];
     i32 %190 = load i32* %189;
     i32 %191 = add i32 %190, i32 1;
-    i1 %192 = scmp gt i32 %191, i32 %186;
+    i1 %192 = scmp lt i32 %186, i32 %191;
     i32 %193 = select i1 %192 ? i32 %188 : i32 %185;
     i32 %194 = smax i32 %191, i32 %186;
     store i32* %189 with i32 %191;
@@ -426,8 +426,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %208 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %207];
     i32 %209 = load i32* %208;
     i32 %210 = add i32 %209, i32 1;
-    i1 %211 = scmp gt i32 %210, i32 %205;
-    i1 %212 = scmp gt i32 %204, i32 %196;
+    i1 %211 = scmp lt i32 %205, i32 %210;
+    i1 %212 = scmp lt i32 %196, i32 %204;
     i32 %213 = select i1 %212 ? i32 %201 : i32 %197;
     i32 %214 = select i1 %211 ? i32 %207 : i32 %213;
     i32 %215 = smax i32 %210, i32 %205;
@@ -437,7 +437,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %218 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %217];
     i32 %219 = load i32* %218;
     i32 %220 = add i32 %219, i32 1;
-    i1 %221 = scmp gt i32 %220, i32 %215;
+    i1 %221 = scmp lt i32 %215, i32 %220;
     i32 %222 = select i1 %221 ? i32 %217 : i32 %214;
     i32 %223 = smax i32 %220, i32 %215;
     store i32* %218 with i32 %220;
@@ -446,7 +446,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %226 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %225];
     i32 %227 = load i32* %226;
     i32 %228 = add i32 %227, i32 1;
-    i1 %229 = scmp gt i32 %228, i32 %223;
+    i1 %229 = scmp lt i32 %223, i32 %228;
     i32 %230 = select i1 %229 ? i32 %225 : i32 %222;
     i32 %231 = smax i32 %228, i32 %223;
     store i32* %226 with i32 %228;
@@ -460,7 +460,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %237 = getelementptr &([1000 * i32]* %count)[i64 0][i32 %236];
     i32 %238 = load i32* %237;
     i32 %239 = add i32 %238, i32 1;
-    i1 %240 = scmp gt i32 %239, i32 %233;
+    i1 %240 = scmp lt i32 %233, i32 %239;
     i32 %241 = select i1 %240 ? i32 %236 : i32 %234;
     store i32* %237 with i32 %239;
     i32 %242 = smax i32 %239, i32 %233;
@@ -533,7 +533,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %284(prob = 0.97), ^while.header3, ^while.body12;
   ^while.header3:
     i32 %285 = phi [^while.header2, i32 0] [^b4, i32 %304];
-    i1 %286 = scmp lt i32 %285, i32 %283;
+    i1 %286 = scmp gt i32 %283, i32 %285;
     cbr i1 %286(prob = 0.97), ^while.body13, ^b3;
   ^while.body12:
     i32 %287 = phi [^while.header2, i32 0] [^while.body12, i32 %290];

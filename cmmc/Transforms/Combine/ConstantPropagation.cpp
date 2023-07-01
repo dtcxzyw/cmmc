@@ -77,12 +77,6 @@ class ConstantPropagation final : public TransformPass<Function> {
                 return make<ConstantFloatingPoint>(mappedInst->getType(), val);
             };
 
-            // TODO: handle select?
-            // c = select x a b
-            // d = add c 1
-            // ->
-            // d = select x a+1 b+1
-
             for(auto operand : inst->operands())
                 if(!operand->isConstant())
                     return nullptr;

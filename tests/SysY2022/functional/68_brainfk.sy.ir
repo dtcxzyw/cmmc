@@ -22,7 +22,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %9 = getelementptr &([32768 * i32]* %2)[i64 0][i32 %7];
     store i32* %9 with i32 %8;
     i32 %10 = add i32 %7, i32 1;
-    i1 %11 = scmp lt i32 %10, i32 %0;
+    i1 %11 = scmp gt i32 %0, i32 %10;
     cbr i1 %11(prob = 0.97), ^while.body, ^b;
   ^while.header:
     i32 %12 = phi [^b, i32 0] [^b1, i32 %20];

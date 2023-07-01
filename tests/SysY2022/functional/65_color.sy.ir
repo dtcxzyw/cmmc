@@ -177,7 +177,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %39 = add i32 %38, i32 1;
     store i32* %37 with i32 %39;
     i32 %40 = add i32 %34, i32 1;
-    i1 %41 = scmp lt i32 %40, i32 %20;
+    i1 %41 = scmp gt i32 %20, i32 %40;
     cbr i1 %41(prob = 0.97), ^while.body, ^b2;
   ^b2:
     i32 %42 = load i32* %1;

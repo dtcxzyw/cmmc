@@ -486,4 +486,24 @@ inline auto intLog2(Value*& val) noexcept {
     return IntegerLog2Matcher{ val };
 }
 
+template <typename Matcher>
+class OneUseMatcher {
+    Matcher mMatcher;
+
+public:
+    explicit OneUseMatcher(Matcher matcher) noexcept : mMatcher{ matcher } {}
+    bool operator()(const MatchContext<Value>& ctx) const noexcept {
+        if(auto ptr = dynamic_cast<TrackableValue*>(ctx.value)) {
+            if(!ptr->hasExactlyOneUse())
+                return false;
+        }
+        return mMatcher(ctx);
+    }
+};
+
+template <typename Matcher>
+auto oneUse(Matcher matcher) noexcept {
+    return OneUseMatcher{ matcher };
+}
+
 CMMC_NAMESPACE_END

@@ -90,7 +90,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %40(prob = 0.5), ^entry4, ^b11;
   ^b5:
     i32 %41 = add i32 %33, i32 -1;
-    i1 %42 = scmp ge i32 %41, i32 %33;
+    i1 %42 = scmp le i32 %33, i32 %41;
     i1 %43 = scmp ge i32 %41, i32 20;
     i1 %44 = or i1 %42, i1 %43;
     i32 %45 = add i32 %32, i32 1;

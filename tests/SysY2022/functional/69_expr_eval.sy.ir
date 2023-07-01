@@ -361,7 +361,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     cbr i1 %205(prob = 0.5), ^if.then2, ^b17;
   ^b15:
     i32 %206 = phi [^entry22, i32 10] [^b16, i32 %213];
-    i1 %207 = scmp ge i32 %206, i32 %119;
+    i1 %207 = scmp le i32 %119, i32 %206;
     ubr ^b13;
   ^b16:
     i1 %208 = scmp eq i32 %200, i32 42;

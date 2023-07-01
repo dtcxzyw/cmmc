@@ -16,8 +16,8 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header;
   ^while.header:
     i32 %10 = phi [^entry, i32 0] [^b, i32 %20];
-    i1 %11 = scmp lt i32 %10, i32 %0;
-    i1 %12 = scmp lt i32 %10, i32 %1;
+    i1 %11 = scmp gt i32 %0, i32 %10;
+    i1 %12 = scmp gt i32 %1, i32 %10;
     i1 %13 = and i1 %11, i1 %12;
     [2 * [3 * [4 * [5 * [6 * [2 * i32]]]]]]* %14 = getelementptr &([10 * [2 * [3 * [4 * [5 * [6 * [2 * i32]]]]]]]* %9)[i64 0][i32 %10];
     cbr i1 %13(prob = 0.97), ^while.header1, ^entry1;
@@ -169,7 +169,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b6:
     i32 %110 = phi [^while.header8, i32 %74] [^b8, i32 %133];
     i32 %111 = add i32 %35, i32 1;
-    i1 %112 = scmp ge i32 %111, i32 %2;
+    i1 %112 = scmp le i32 %2, i32 %111;
     cbr i1 %112(prob = 0.5), ^b4, ^while.header6;
   ^indirect2:
     i32 %113 = add i32 %103, i32 1;
@@ -200,7 +200,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^b8:
     i32 %133 = phi [^while.header10, i32 %106] [^b9, i32 %201];
     i32 %134 = add i32 %73, i32 1;
-    i1 %135 = scmp ge i32 %134, i32 %3;
+    i1 %135 = scmp le i32 %3, i32 %134;
     cbr i1 %135(prob = 0.5), ^b6, ^while.header8;
   ^indirect3:
     i32 %136 = phi [^indirect2, i32 0] [^indirect3, i32 %194];
@@ -321,38 +321,38 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %195 = scmp lt i32 %194, i32 4;
     cbr i1 %195(prob = 0.75), ^indirect3, ^while.header9;
   ^while.header12:
-    i32 %196 = phi [^while.header11, i32 %129] [^b11, i32 %215];
-    i32 %197 = phi [^while.header11, i32 0] [^b11, i32 %216];
-    [6 * [2 * i32]]* %198 = getelementptr &([5 * [6 * [2 * i32]]]* %130)[i64 0][i32 %197];
-    [8 * [7 * i32]]* %199 = getelementptr &([4 * [8 * [7 * i32]]]* %131)[i64 0][i32 %197];
-    i1 %200 = scmp lt i32 %197, i32 100000;
+    i32 %196 = phi [^while.header11, i32 0] [^b11, i32 %216];
+    i32 %197 = phi [^while.header11, i32 %129] [^b11, i32 %215];
+    [6 * [2 * i32]]* %198 = getelementptr &([5 * [6 * [2 * i32]]]* %130)[i64 0][i32 %196];
+    [8 * [7 * i32]]* %199 = getelementptr &([4 * [8 * [7 * i32]]]* %131)[i64 0][i32 %196];
+    i1 %200 = scmp lt i32 %196, i32 100000;
     cbr i1 %200(prob = 0.97), ^while.header13, ^b10;
   ^b9:
     i32 %201 = phi [^while.header11, i32 %129] [^b10, i32 %209];
     i32 %202 = add i32 %105, i32 1;
-    i1 %203 = scmp ge i32 %202, i32 %4;
+    i1 %203 = scmp le i32 %4, i32 %202;
     cbr i1 %203(prob = 0.5), ^b8, ^while.header10;
   ^while.header13:
-    i32 %204 = phi [^while.header12, i32 0] [^b12, i32 %228];
-    i32 %205 = phi [^while.header12, i32 %196] [^b12, i32 %227];
-    [2 * i32]* %206 = getelementptr &([6 * [2 * i32]]* %198)[i64 0][i32 %204];
-    [7 * i32]* %207 = getelementptr &([8 * [7 * i32]]* %199)[i64 0][i32 %204];
-    i1 %208 = scmp lt i32 %204, i32 1000000;
+    i32 %204 = phi [^while.header12, i32 %197] [^b12, i32 %227];
+    i32 %205 = phi [^while.header12, i32 0] [^b12, i32 %228];
+    [2 * i32]* %206 = getelementptr &([6 * [2 * i32]]* %198)[i64 0][i32 %205];
+    [7 * i32]* %207 = getelementptr &([8 * [7 * i32]]* %199)[i64 0][i32 %205];
+    i1 %208 = scmp lt i32 %205, i32 1000000;
     cbr i1 %208(prob = 0.97), ^while.header14, ^b11;
   ^b10:
-    i32 %209 = phi [^while.header12, i32 %196] [^b11, i32 %215];
+    i32 %209 = phi [^while.header12, i32 %197] [^b11, i32 %215];
     i32 %210 = add i32 %128, i32 1;
-    i1 %211 = scmp ge i32 %210, i32 %5;
+    i1 %211 = scmp le i32 %5, i32 %210;
     cbr i1 %211(prob = 0.5), ^b9, ^while.header11;
   ^while.header14:
     i32 %212 = phi [^while.header13, i32 0] [^while.body, i32 %225];
-    i32 %213 = phi [^while.header13, i32 %205] [^while.body, i32 %224];
+    i32 %213 = phi [^while.header13, i32 %204] [^while.body, i32 %224];
     i1 %214 = scmp lt i32 %212, i32 10000000;
     cbr i1 %214(prob = 0.97), ^while.body, ^b12;
   ^b11:
-    i32 %215 = phi [^while.header13, i32 %205] [^b12, i32 %227];
-    i32 %216 = add i32 %197, i32 1;
-    i1 %217 = scmp ge i32 %216, i32 %6;
+    i32 %215 = phi [^while.header13, i32 %204] [^b12, i32 %227];
+    i32 %216 = add i32 %196, i32 1;
+    i1 %217 = scmp le i32 %6, i32 %216;
     cbr i1 %217(prob = 0.5), ^b10, ^while.header12;
   ^while.body:
     i32* %218 = getelementptr &([2 * i32]* %206)[i64 0][i32 %212];
@@ -363,11 +363,11 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %223 = load i32* %222;
     i32 %224 = add i32 %221, i32 %223;
     i32 %225 = add i32 %212, i32 1;
-    i1 %226 = scmp ge i32 %225, i32 %8;
+    i1 %226 = scmp le i32 %8, i32 %225;
     cbr i1 %226(prob = 0.5), ^b12, ^while.header14;
   ^b12:
     i32 %227 = phi [^while.header14, i32 %213] [^while.body, i32 %224];
-    i32 %228 = add i32 %204, i32 1;
-    i1 %229 = scmp ge i32 %228, i32 %7;
+    i32 %228 = add i32 %205, i32 1;
+    i1 %229 = scmp le i32 %7, i32 %228;
     cbr i1 %229(prob = 0.5), ^b11, ^while.header13;
 }

@@ -109,10 +109,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^while.header2:
     i32 %60 = phi [^while.body2, i32 0] [^entry3, i32 %72];
     i32 %61 = phi [^while.body2, i32 1] [^entry3, i32 %85];
-    i1 %62 = scmp lt i32 %61, i32 %44;
+    i1 %62 = scmp gt i32 %44, i32 %61;
     cbr i1 %62(prob = 0.97), ^while.body3, ^while.body4;
   ^while.body3:
-    i1 %63 = scmp lt i32 %61, i32 %48;
+    i1 %63 = scmp gt i32 %48, i32 %61;
     cbr i1 %63(prob = 0.5), ^b4, ^b5;
   ^while.body4:
     i1 %64 = scmp gt i32 %48, i32 0;

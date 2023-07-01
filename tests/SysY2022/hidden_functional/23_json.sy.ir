@@ -10,11 +10,11 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^entry:
     i32 %5 = phi [^2, i32 %4] [^if.then1, i32 %17];
     i32 %6 = phi [^2, i32 %3] [^if.then1, i32 4];
-    i1 %7 = scmp ge i32 %5, i32 %len;
+    i1 %7 = scmp le i32 %len, i32 %5;
     cbr i1 %7(prob = 0.5), ^b, ^while.body;
   ^while.body:
     i32 %8 = phi [^entry, i32 %5] [^if.then, i32 %16] [^if.then2, i32 %25] [^if.then6, i32 %40] [^if.then9, i32 %57];
-    i1 %9 = scmp ge i32 %8, i32 %len;
+    i1 %9 = scmp le i32 %len, i32 %8;
     cbr i1 %9(prob = 0.5), ^b1, ^b2;
   ^b:
     i32 %10 = phi [^entry, i32 0] [^if.then7, i32 %50] [^b3, i32 0] [^if.then10, i32 %68] [^if.else11, i32 0] [^b5, i32 0] [^if.then12, i32 %96] [^if.then14, i32 0] [^if.else16, i32 0] [^if.then17, i32 %130] [^b7, i32 0] [^if.else18, i32 0] [^if.then19, i32 0] [^if.else20, i32 0] [^if.then20, i32 1] [^b9, i32 1] [^if.then24, i32 %166] [^b12, i32 0] [^if.else23, i32 0] [^if.else24, i32 0] [^if.then25, i32 0] [^if.then26, i32 1] [^if.then30, i32 %199] [^if.else28, i32 0] [^if.else29, i32 0] [^if.else30, i32 0] [^if.else31, i32 0] [^b13, i32 1] [^if.then34, i32 %236] [^if.else33, i32 0] [^if.else34, i32 0] [^if.else35, i32 0] [^if.then35, i32 1] [^b16, i32 0] [^b18, i32 1] [^if.else37, i32 0] [^if.else38, i32 0] [^b19, i32 0] [^b20, i32 0] [^if.else41, i32 0] [^if.else42, i32 0] [^while.body11, i32 0] [^b25, i32 0] [^b26, i32 1] [^while.header2, i32 1] [^b27, i32 0] [^while.body13, i32 1] [^b31, i32 0] [^while.body18, i32 0] [^if.else57, i32 0] [^b34, i32 0] [^b36, i32 0] [^b38, i32 0];
@@ -104,7 +104,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^b;
   ^b3:
     i32 %51 = phi [^if.then4, i32 %37] [^indirect, i32 %53];
-    i1 %52 = scmp ge i32 %51, i32 %len;
+    i1 %52 = scmp le i32 %len, i32 %51;
     cbr i1 %52(prob = 0.5), ^b, ^if.else11;
   ^indirect:
     i32 %53 = load i32* %0;
@@ -121,7 +121,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body;
   ^while.header:
     i32 %58 = phi [^if.then5, i32 %39] [^b4, i32 %93];
-    i1 %59 = scmp lt i32 %58, i32 %len;
+    i1 %59 = scmp gt i32 %len, i32 %58;
     cbr i1 %59(prob = 0.97), ^while.body1, ^indirect1;
   ^if.else9:
     i32 %60 = load i32* %42;
@@ -163,7 +163,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body3;
   ^while.body2:
     i32 %83 = phi [^if.then8, i32 %55] [^if.then15, i32 %113] [^if.then21, i32 %158] [^if.then28, i32 %195] [^if.then32, i32 %230];
-    i1 %84 = scmp ge i32 %83, i32 %len;
+    i1 %84 = scmp le i32 %len, i32 %83;
     cbr i1 %84(prob = 0.5), ^if.then13, ^b6;
   ^if.else12:
     i32 %85 = load i32* %0;
@@ -183,18 +183,18 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.header;
   ^b5:
     i32 %94 = phi [^indirect1, i32 %67] [^while.body1, i32 %77];
-    i1 %95 = scmp ge i32 %94, i32 %len;
+    i1 %95 = scmp le i32 %len, i32 %94;
     cbr i1 %95(prob = 0.5), ^b, ^if.else16;
   ^if.then12:
     i32 %96 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 1, i32* %buf, i32 %len, i32* %0);
     ubr ^b;
   ^if.then13:
     i32 %97 = load i32* %0;
-    i1 %98 = scmp lt i32 %97, i32 %len;
+    i1 %98 = scmp gt i32 %len, i32 %97;
     cbr i1 %98(prob = 0.5), ^if.then16, ^b7;
   ^while.header1:
     i32 %99 = phi [^if.else11, i32 %69] [^b10, i32 %156];
-    i1 %100 = scmp lt i32 %99, i32 %len;
+    i1 %100 = scmp gt i32 %len, i32 %99;
     cbr i1 %100(prob = 0.97), ^while.body4, ^indirect2;
   ^b6:
     i32 %101 = load i32* %0;
@@ -204,12 +204,12 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     cbr i1 %104(prob = 0.5), ^if.then15, ^if.else17;
   ^while.body3:
     i32 %105 = phi [^if.then11, i32 %82] [^if.then22, i32 %159] [^if.then29, i32 %197] [^if.then33, i32 %231] [^if.then37, i32 %273];
-    i1 %106 = scmp ge i32 %105, i32 %len;
+    i1 %106 = scmp le i32 %len, i32 %105;
     cbr i1 %106(prob = 0.5), ^if.then18, ^b8;
   ^if.then14:
     i32 %107 = load i32* %0;
     i32 %108 = add i32 %107, i32 3;
-    i1 %109 = scmp ge i32 %108, i32 %len;
+    i1 %109 = scmp le i32 %len, i32 %108;
     cbr i1 %109(prob = 0.5), ^b, ^if.else18;
   ^if.else14:
     i32 %110 = load i32* %86;
@@ -251,7 +251,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^b;
   ^if.then18:
     i32 %131 = load i32* %0;
-    i1 %132 = scmp lt i32 %131, i32 %len;
+    i1 %132 = scmp gt i32 %len, i32 %131;
     cbr i1 %132(prob = 0.5), ^if.then23, ^b12;
   ^b7:
     i32 %133 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
@@ -275,7 +275,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^if.then19:
     i32 %144 = load i32* %0;
     i32 %145 = add i32 %144, i32 4;
-    i1 %146 = scmp ge i32 %145, i32 %len;
+    i1 %146 = scmp le i32 %len, i32 %145;
     cbr i1 %146(prob = 0.5), ^b, ^if.else24;
   ^if.else19:
     i32 %147 = load i32* %0;
@@ -311,7 +311,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body3;
   ^b11:
     i32 %160 = phi [^indirect2, i32 %114] [^while.body4, i32 %119];
-    i1 %161 = scmp lt i32 %160, i32 %len;
+    i1 %161 = scmp gt i32 %len, i32 %160;
     cbr i1 %161(prob = 0.5), ^if.then27, ^indirect3;
   ^entry1:
     i32 %162 = load i32* %0;
@@ -353,7 +353,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^if.then25:
     i32 %183 = load i32* %0;
     i32 %184 = add i32 %183, i32 3;
-    i1 %185 = scmp ge i32 %184, i32 %len;
+    i1 %185 = scmp le i32 %len, i32 %184;
     cbr i1 %185(prob = 0.5), ^b, ^if.else30;
   ^if.else25:
     i32 %186 = load i32* %148;
@@ -390,7 +390,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^b;
   ^while.body5:
     i32 %200 = phi [^entry1, i32 %162] [^if.then36, i32 %271] [^if.then39, i32 %298] [^if.then43, i32 %334] [^if.then49, i32 %368];
-    i1 %201 = scmp ge i32 %200, i32 %len;
+    i1 %201 = scmp le i32 %len, i32 %200;
     cbr i1 %201(prob = 0.5), ^b14, ^b15;
   ^if.else26:
     i32 %202 = load i32* %170;
@@ -429,12 +429,12 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
   ^if.then31:
     i32 %224 = phi [^if.then27, i32 %191] [^while.body7, i32 %225];
     i32 %225 = add i32 %224, i32 1;
-    i1 %226 = scmp lt i32 %225, i32 %len;
+    i1 %226 = scmp gt i32 %len, i32 %225;
     store i32* %0 with i32 %225;
     cbr i1 %226(prob = 0.97), ^while.body7, ^b13;
   ^b13:
     i32 %227 = phi [^indirect3, i32 %190] [^if.then27, i32 %191] [^if.then31, i32 %225] [^while.body7, i32 %225];
-    i1 %228 = scmp lt i32 %227, i32 %len;
+    i1 %228 = scmp gt i32 %len, i32 %227;
     cbr i1 %228(prob = 0.5), ^if.then35, ^b;
   ^if.then32:
     i32 %229 = load i32* %0;
@@ -462,7 +462,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     cbr i1 %240(prob = 0.5), ^if.then36, ^if.else36;
   ^while.body6:
     i32 %241 = phi [^entry2, i32 %198] [^if.then40, i32 %299] [^if.then44, i32 %336] [^if.then50, i32 %369] [^if.then54, i32 %388];
-    i1 %242 = scmp ge i32 %241, i32 %len;
+    i1 %242 = scmp le i32 %len, i32 %241;
     cbr i1 %242(prob = 0.5), ^b16, ^b17;
   ^if.else32:
     i32 %243 = load i32* %205;
@@ -518,11 +518,11 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body3;
   ^b16:
     i32 %274 = load i32* %0;
-    i1 %275 = scmp ge i32 %274, i32 %len;
+    i1 %275 = scmp le i32 %len, i32 %274;
     cbr i1 %275(prob = 0.5), ^b, ^b20;
   ^while.body9:
     i32 %276 = phi [^b14, i32 %232] [^if.then42, i32 %333] [^if.then48, i32 %366] [^if.then53, i32 %386] [^if.then57, i32 %413];
-    i1 %277 = scmp ge i32 %276, i32 %len;
+    i1 %277 = scmp le i32 %len, i32 %276;
     cbr i1 %277(prob = 0.5), ^b19, ^b21;
   ^if.else36:
     i32 %278 = load i32* %238;
@@ -554,7 +554,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     cbr i1 %294(prob = 0.5), ^b, ^if.else42;
   ^if.then38:
     i32 %295 = add i32 %267, i32 1;
-    i1 %296 = scmp lt i32 %295, i32 %len;
+    i1 %296 = scmp gt i32 %len, i32 %295;
     store i32* %0 with i32 %295;
     cbr i1 %296(prob = 0.5), ^if.then41, ^b22;
   ^if.then39:
@@ -568,11 +568,11 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body6;
   ^while.body10:
     i32 %300 = phi [^while.body8, i32 %266] [^if.then46, i32 %360] [^if.then52, i32 %383] [^if.then55, i32 %409] [^if.then58, i32 %419];
-    i1 %301 = scmp ge i32 %300, i32 %len;
+    i1 %301 = scmp le i32 %len, i32 %300;
     cbr i1 %301(prob = 0.5), ^while.body11, ^b24;
   ^b19:
     i32 %302 = load i32* %0;
-    i1 %303 = scmp ge i32 %302, i32 %len;
+    i1 %303 = scmp le i32 %len, i32 %302;
     cbr i1 %303(prob = 0.5), ^b, ^b25;
   ^b20:
     i32* %304 = getelementptr &(i32* %buf)[i32 %274];
@@ -615,7 +615,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     cbr i1 %328(prob = 0.5), ^if.then45, ^indirect4;
   ^b22:
     i32 %329 = phi [^if.then38, i32 %295] [^if.then45, i32 %357] [^indirect4, i32 %358];
-    i1 %330 = scmp lt i32 %329, i32 %len;
+    i1 %330 = scmp gt i32 %len, i32 %329;
     cbr i1 %330(prob = 0.5), ^if.then47, ^indirect5;
   ^while.body11:
     i32 %331 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %buf, i32 %len, i32* %0);
@@ -710,7 +710,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     cbr i1 %371(prob = 0.5), ^if.then52, ^if.else49;
   ^while.body12:
     i32 %372 = phi [^b23, i32 %338] [^if.then56, i32 %410] [^if.then59, i32 %421] [^if.then60, i32 %428] [^if.then62, i32 %442];
-    i1 %373 = scmp ge i32 %372, i32 %len;
+    i1 %373 = scmp le i32 %len, i32 %372;
     cbr i1 %373(prob = 0.5), ^b27, ^b28;
   ^if.else47:
     i32 %374 = load i32* %0;
@@ -734,7 +734,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body10;
   ^while.header2:
     i32 %384 = phi [^indirect5, i32 %359] [^if.then47, i32 %361] [^if.then51, i32 %381];
-    i1 %385 = scmp lt i32 %384, i32 %len;
+    i1 %385 = scmp gt i32 %len, i32 %384;
     cbr i1 %385(prob = 0.97), ^while.body13, ^b;
   ^if.then53:
     i32 %386 = add i32 %374, i32 1;
@@ -811,7 +811,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body12;
   ^while.body14:
     i32 %422 = phi [^entry3, i32 %411] [^if.then61, i32 %440] [^if.then63, i32 %448] [^if.then65, i32 %464] [^if.then68, i32 %481];
-    i1 %423 = scmp ge i32 %422, i32 %len;
+    i1 %423 = scmp le i32 %len, i32 %422;
     cbr i1 %423(prob = 0.5), ^b29, ^b30;
   ^if.else53:
     i32 %424 = load i32* %0;
@@ -854,7 +854,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body12;
   ^while.body16:
     i32 %443 = phi [^b29, i32 %429] [^if.then64, i32 %463] [^if.then67, i32 %479] [^if.then70, i32 %492] [^if.then72, i32 %507];
-    i1 %444 = scmp ge i32 %443, i32 %len;
+    i1 %444 = scmp le i32 %len, i32 %443;
     cbr i1 %444(prob = 0.5), ^b31, ^b32;
   ^if.else55:
     i32 %445 = load i32* %434;
@@ -867,11 +867,11 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body14;
   ^while.body17:
     i32 %449 = phi [^while.body15, i32 %439] [^if.then66, i32 %476] [^if.then69, i32 %489] [^if.then71, i32 %499] [^if.then74, i32 %512];
-    i1 %450 = scmp ge i32 %449, i32 %len;
+    i1 %450 = scmp le i32 %len, i32 %449;
     cbr i1 %450(prob = 0.5), ^while.body18, ^b33;
   ^b31:
     i32 %451 = load i32* %0;
-    i1 %452 = scmp ge i32 %451, i32 %len;
+    i1 %452 = scmp le i32 %len, i32 %451;
     cbr i1 %452(prob = 0.5), ^b, ^if.else57;
   ^b32:
     i32 %453 = load i32* %0;
@@ -950,7 +950,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body17;
   ^while.body19:
     i32 %490 = phi [^entry4, i32 %477] [^if.then73, i32 %510] [^if.then75, i32 %519] [^if.then76, i32 %526] [^if.then77, i32 %532];
-    i1 %491 = scmp ge i32 %490, i32 %len;
+    i1 %491 = scmp le i32 %len, i32 %490;
     cbr i1 %491(prob = 0.5), ^b34, ^b35;
   ^if.then70:
     i32 %492 = add i32 %484, i32 1;
@@ -972,7 +972,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body17;
   ^b34:
     i32 %500 = load i32* %0;
-    i1 %501 = scmp ge i32 %500, i32 %len;
+    i1 %501 = scmp le i32 %len, i32 %500;
     cbr i1 %501(prob = 0.5), ^b, ^b36;
   ^b35:
     i32 %502 = load i32* %0;
@@ -1029,7 +1029,7 @@ internal func @detect_item(i32 %type, i32* %buf, i32 %len, i32* %0) -> i32 {
     ubr ^while.body19;
   ^while.body20:
     i32 %527 = phi [^b37, i32 %521] [^if.then78, i32 %539] [^if.then79, i32 %543] [^if.then80, i32 %548] [^if.then81, i32 %552];
-    i1 %528 = scmp ge i32 %527, i32 %len;
+    i1 %528 = scmp le i32 %len, i32 %527;
     cbr i1 %528(prob = 0.5), ^b38, ^b39;
   ^if.else67:
     i32 %529 = load i32* %523;
@@ -1111,7 +1111,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^b;
   ^while.body1:
     i32 %13 = phi [^b, i32 %3] [^if.then, i32 %21] [^if.then1, i32 %26] [^if.then4, i32 %37] [^if.then6, i32 %43];
-    i1 %14 = scmp ge i32 %13, i32 %4;
+    i1 %14 = scmp le i32 %4, i32 %13;
     cbr i1 %14(prob = 0.5), ^b1, ^b2;
   ^b1:
     i32 %15 = call (i32, i32*, i32, i32*) -> i32 @detect_item(i32 0, i32* %5, i32 %4, i32* %pos);
@@ -1129,7 +1129,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.body1;
   ^while.body2:
     i32 %22 = phi [^b1, i32 %16] [^if.then3, i32 %36] [^if.then5, i32 %41] [^if.then7, i32 %49] [^if.then8, i32 %52];
-    i1 %23 = scmp ge i32 %22, i32 %4;
+    i1 %23 = scmp le i32 %4, i32 %22;
     cbr i1 %23(prob = 0.5), ^b3, ^b4;
   ^if.else:
     i1 %24 = scmp eq i32 %19, i32 9;
