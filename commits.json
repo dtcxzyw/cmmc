@@ -1,4 +1,9 @@
 {
+  "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c": {
+    "message": "feat(codegen): update ARM parameters",
+    "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
+    "time": "2023-07-02 00:20:28 +0800"
+  },
   "2a8d4a9919993d68163f8deca8328c69c80db012": {
     "message": "feat(codegen): optimize constant multiplication with shifts and arithmetics",
     "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
