@@ -18,5 +18,10 @@
     "message": "test(perf): execute perf with root privilege",
     "parent": "3e4564a6705cbe0a844e11403b448d3a25fd763c",
     "time": "2023-07-01 22:12:31 +0800"
+  },
+  "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
+    "message": "misc: update ref",
+    "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
+    "time": "2023-07-01 23:13:26 +0800"
   }
 }
