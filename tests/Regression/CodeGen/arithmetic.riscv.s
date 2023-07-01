@@ -342,6 +342,13 @@ absdiff:
 mul_with_constant_0:
 	mv a0, zero
 	ret
+.globl mul_with_constant_1
+mul_with_constant_1:
+	ret
+.globl mul_with_constant_neg_1
+mul_with_constant_neg_1:
+	subw a0, zero, a0
+	ret
 .globl mul_with_constant_100
 mul_with_constant_100:
 	sh2add a0, a0, a0

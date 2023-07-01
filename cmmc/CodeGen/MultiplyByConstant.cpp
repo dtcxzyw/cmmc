@@ -38,7 +38,7 @@ static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, con
                   ShiftArithNode::RhsType::ORIGIN);
     tryUpdatePlan(findMultiplyPlan(n + 1, currentUpper() - 1), 0, ShiftArithNode::ArtihType::SUB,
                   ShiftArithNode::RhsType::ORIGIN);
-    for(int i = 0; (1LL << i) <= n; i++) {
+    for(int i = 1; (1LL << i) <= n; i++) {
         intmax_t p1 = (1LL << i) + 1;
         intmax_t p2 = (1LL << i) - 1;
         if(n % p1 == 0)

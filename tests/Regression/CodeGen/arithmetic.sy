@@ -229,6 +229,12 @@ int absdiff(int x, int y) {
 int mul_with_constant_0(int x) {
     return x * 0;
 }
+int mul_with_constant_1(int x) {
+    return x * 1;
+}
+int mul_with_constant_neg_1(int x) {
+    return x * -1;
+}
 int mul_with_constant_100(int x) {
     return x * 100;
 }

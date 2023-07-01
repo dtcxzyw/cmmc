@@ -335,6 +335,13 @@ absdiff:
 mul_with_constant_0:
 	mov r0, #0
 	bx lr
+.globl mul_with_constant_1
+mul_with_constant_1:
+	bx lr
+.globl mul_with_constant_neg_1
+mul_with_constant_neg_1:
+	rsb r0, r0, #0
+	bx lr
 .globl mul_with_constant_100
 mul_with_constant_100:
 	add r0, r0, r0, lsl #2

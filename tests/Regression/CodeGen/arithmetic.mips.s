@@ -387,6 +387,16 @@ mul_with_constant_0:
 	move $v0, $zero
 	jr $ra
 	nop
+.globl mul_with_constant_1
+mul_with_constant_1:
+	move $v0, $a0
+	jr $ra
+	nop
+.globl mul_with_constant_neg_1
+mul_with_constant_neg_1:
+	subu $v0, $zero, $a0
+	jr $ra
+	nop
 .globl mul_with_constant_100
 mul_with_constant_100:
 	sll $t0, $a0, 2
