@@ -167,11 +167,11 @@ class ARMTarget final : public Target {
 public:
     const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
-            // .unrollBlockSize = 4U,
-            // .maxUnrollSize = 0U,
-            // .maxUnrollBodySize = 16U,
-            // .duplicationThreshold = 8U,
-            // .duplicationIterations = 2U,
+            .unrollBlockSize = 4U,
+            .maxUnrollSize = 0U,
+            .maxUnrollBodySize = 16U,
+            .duplicationThreshold = 8U,
+            .duplicationIterations = 2U,
             .mulByConstThreshold = 7U,
         };
 
