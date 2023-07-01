@@ -1263,6 +1263,27 @@ InstSelection:
             Op2: getZero($Val)
             CC: getCC()
 
+  - Pattern:
+      RSB:
+        Rd: $Dst
+        Rn:
+          RSB_Fused:
+            Rd: $Val
+            Rn: $Rn
+            Rm: $Rm
+            Op: $Op
+            Sh: $Sh
+            $Predicate: ctx.hasOneUse($Val)
+        Op2: $Zero
+        $Predicate: isZero($Zero)
+    Replace:
+      SUB_Fused:
+        Rd: $Dst
+        Rn: $Rn
+        Rm: $Rm
+        Op: $Op
+        Sh: $Sh
+
   # For csmith
   - Pattern:
       InstZExt:

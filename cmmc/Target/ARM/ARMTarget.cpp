@@ -165,7 +165,7 @@ class ARMTarget final : public Target {
     ARMRegisterInfo mRegisterInfo;
 
 public:
-    const TargetOptHeuristic& getOptHeuristic() const noexcept override {
+    [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
             .unrollBlockSize = 4U,
             .maxUnrollSize = 8U,

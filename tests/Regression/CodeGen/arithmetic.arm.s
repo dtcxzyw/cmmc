@@ -395,8 +395,7 @@ mul_with_constant_23:
 .globl mul_with_constant_neg_23
 mul_with_constant_neg_23:
 	add r1, r0, r0, lsl #1
-	rsb r0, r0, r1, lsl #3
-	rsb r0, r0, #0
+	sub r0, r0, r1, lsl #3
 	bx lr
 .globl mul_with_constant_neg_82
 mul_with_constant_neg_82:
@@ -409,14 +408,12 @@ mul_with_constant_neg_82:
 mul_with_constant_neg_103:
 	rsb r1, r0, r0, lsl #3
 	rsb r1, r0, r1, lsl #1
-	rsb r0, r0, r1, lsl #3
-	rsb r0, r0, #0
+	sub r0, r0, r1, lsl #3
 	bx lr
 .globl mul_with_constant_neg_59
 mul_with_constant_neg_59:
 	rsb r1, r0, r0, lsl #4
-	rsb r0, r0, r1, lsl #2
-	rsb r0, r0, #0
+	sub r0, r0, r1, lsl #2
 	bx lr
 .globl mul_with_constant_17
 mul_with_constant_17:
