@@ -2,6 +2,9 @@
   "arm": {
     "346de76b54aa92b9bd5fa523ad686c48ee9b6af6": {
       "sysy_time": 0.000224
+    },
+    "377826e4b87e1b09d4f811708c15375e9d09a15f": {
+      "sysy_time": 0.000229
     }
   },
   "arm_gcc": {

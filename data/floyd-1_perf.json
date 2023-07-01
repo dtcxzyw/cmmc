@@ -10,6 +10,9 @@
       "instructions": 4962187,
       "sysy_time": 0.021853,
       "task-clock": 1.45
+    },
+    "377826e4b87e1b09d4f811708c15375e9d09a15f": {
+      "sysy_time": 0.019874
     }
   },
   "arm_gcc": {
