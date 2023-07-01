@@ -90,7 +90,13 @@ global_addressing_array:
 memset_impl:
 	mov r1, #0
 	str r1, [r0, #0]
-	mov r1, #1
+	str r1, [r0, #4]
+	str r1, [r0, #8]
+	str r1, [r0, #12]
+	str r1, [r0, #16]
+	str r1, [r0, #20]
+	str r1, [r0, #24]
+	mov r1, #7
 label92:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
@@ -111,7 +117,7 @@ label92:
 	str r3, [r2, #56]
 	str r3, [r2, #60]
 	add r1, r1, #16
-	cmp r1, #113
+	cmp r1, #119
 	bge label94
 	b label92
 label94:
@@ -126,10 +132,4 @@ label94:
 	str r3, [r2, #24]
 	str r3, [r2, #28]
 	str r3, [r2, #32]
-	str r3, [r2, #36]
-	str r3, [r2, #40]
-	str r3, [r2, #44]
-	str r3, [r2, #48]
-	str r3, [r2, #52]
-	str r3, [r2, #56]
 	bx lr

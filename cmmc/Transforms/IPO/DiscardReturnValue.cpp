@@ -61,13 +61,16 @@ public:
         if(isUsed(func))
             return false;
 
-        // TODO: set retType to void?
-        const auto undef = make<UndefinedValue>(retType);
+        auto funcType = func.getType()->as<FunctionType>();
+        func.setType(make<FunctionType>(VoidType::get(), funcType->getArgTypes()));
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() == InstructionID::Ret) {
-                terminator->mutableOperands().front()->resetValue(undef);
+                terminator->mutableOperands().clear();
             }
+        }
+        for(auto call : func.users()) {
+            call->setType(VoidType::get());
         }
 
         return true;

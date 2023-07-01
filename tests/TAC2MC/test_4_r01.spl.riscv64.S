@@ -42,7 +42,6 @@ label2:
 	mulw a0, a1, a0
 	addw a0, s2, a0
 	jal write
-	mv a0, zero
 	ld ra, 0(sp)
 	ld s0, 8(sp)
 	ld s1, 16(sp)
@@ -62,10 +61,10 @@ label4:
 	addw a0, s2, a0
 	jal write
 	li a0, 1
-	bne s3, a0, label24
+	bne s3, a0, label23
 	mv a1, s0
 	j label2
-label24:
+label23:
 	mv a0, s1
 	mv s1, s0
 	mv s0, a0

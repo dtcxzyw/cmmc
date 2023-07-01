@@ -51,7 +51,6 @@ label2:
 	addu $a0, $s2, $t0
 	jal write
 	nop
-	move $v0, $zero
 	lw $ra, 16($sp)
 	lw $s0, 20($sp)
 	lw $s1, 24($sp)
@@ -75,12 +74,12 @@ label4:
 	jal write
 	nop
 	li $t0, 1
-	bne $s3, $t0, label26
+	bne $s3, $t0, label25
 	nop
 	move $a1, $s0
 	b label2
 	nop
-label26:
+label25:
 	move $t0, $s1
 	move $s1, $s0
 	move $s0, $t0

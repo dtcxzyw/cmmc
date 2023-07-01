@@ -21,6 +21,7 @@
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cstdint>
 #include <iterator>
+#include <limits>
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
@@ -38,7 +39,7 @@ class Reassociate final : public TransformPass<Function> {
 
         auto getNumber = [&](Value* v) -> uint32_t {
             if(v->isConstant())
-                return 0;
+                return std::numeric_limits<uint32_t>::max();
             if(auto iter = number.find(v); iter != number.cend())
                 return iter->second;
             return 0;

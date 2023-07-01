@@ -22,6 +22,7 @@
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
+#include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -118,7 +119,8 @@ class StoreEliminate final : public TransformPass<Function> {
     }
 
     static bool runOnBlock(Block& block, const AliasAnalysisResult& aliasSet, const DominateAnalysisResult& dom,
-                           const PointerAddressSpaceAnalysisResult& addressSpace, const StackAddressLeakAnalysisResult& leak) {
+                           const PointerAddressSpaceAnalysisResult& addressSpace, const StackAddressLeakAnalysisResult& leak,
+                           const PointerBaseAnalysisResult& pointerBase) {
         auto& insts = block.instructions();
         const auto size = insts.size();
         insts.remove_if([&](Instruction* inst) {
@@ -129,6 +131,20 @@ class StoreEliminate final : public TransformPass<Function> {
             uint32_t lookaheadCount = 0;
             return isInvisible(addr, block, aliasSet, dom, addressSpace, inst, visited, leak, lookaheadCount);
         });
+        // remove self assign
+        SimpleValueAnalysis valueAnalysis{ &block, aliasSet, pointerBase };
+        std::unordered_set<Instruction*> removeList;
+        for(auto& inst : insts) {
+            if(inst.getInstID() == InstructionID::Store) {
+                const auto pointer = inst.getOperand(0);
+                const auto val = inst.getOperand(1);
+                if(valueAnalysis.getLastValue(pointer) == val) {
+                    removeList.insert(&inst);
+                }
+            }
+            valueAnalysis.next(&inst);
+        }
+        insts.remove_if([&](Instruction* inst) { return removeList.count(inst); });
         return insts.size() != size;
     }
 
@@ -189,10 +205,11 @@ public:
         auto& addressSpace = analysis.get<PointerAddressSpaceAnalysis>(func);
         auto& leak = analysis.get<StackAddressLeakAnalysis>(func);
         auto& dom = analysis.get<DominateAnalysis>(func);
+        auto& pointerBase = analysis.get<PointerBaseAnalysis>(func);
 
         bool modified = removeStoreOnlyAlloca(func);
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak);
+            modified |= runOnBlock(*block, aliasSet, dom, addressSpace, leak, pointerBase);
         }
         return modified;
     }

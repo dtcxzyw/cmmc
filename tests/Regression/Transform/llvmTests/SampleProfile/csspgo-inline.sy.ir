@@ -5,7 +5,7 @@ func @_Z3fibi() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRec
 func @_Z5funcAi(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i32 %1 = add i32 %0, i32 100000;
+    i32 %1 = add i32 %0, i32 100;
     i32 %2 = ztrunc i32 %1 to i32;
     i32 %3 = strunc i32 %2 to i32;
     i1 %4 = scmp gt i32 %3, i32 0;
@@ -38,7 +38,7 @@ func @_Z5funcAi(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stat
 func @_Z5funcBi(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i32 %1 = add i32 %0, i32 -100000;
+    i32 %1 = add i32 %0, i32 -100;
     i32 %2 = ztrunc i32 %1 to i32;
     i32 %3 = strunc i32 %2 to i32;
     i1 %4 = scmp gt i32 %3, i32 0;
@@ -102,7 +102,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ubr ^if.then;
   ^if.then:
-    i32 %0 = phi [^entry, i32 200000] [^if.then, i32 %2];
+    i32 %0 = phi [^entry, i32 200] [^if.then, i32 %2];
     i32 %1 = ztrunc i32 %0 to i32;
     i32 %2 = strunc i32 %1 to i32;
     i1 %3 = scmp gt i32 %2, i32 0;
@@ -111,7 +111,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     i32 %4 = ztrunc i32 %2 to i32;
     ubr ^if.then1;
   ^if.then1:
-    i32 %5 = phi [^if.else, i32 400001] [^if.then1, i32 %7];
+    i32 %5 = phi [^if.else, i32 401] [^if.then1, i32 %7];
     i32 %6 = ztrunc i32 %5 to i32;
     i32 %7 = strunc i32 %6 to i32;
     i1 %8 = scmp gt i32 %7, i32 0;
@@ -121,11 +121,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     i32 %10 = add i32 %4, i32 %9;
     ubr ^if.else2;
   ^if.else2:
-    i32 %11 = phi [^if.else1, i32 299999] [^b1, i32 %51];
+    i32 %11 = phi [^if.else1, i32 299] [^b1, i32 %51];
     i32 %12 = phi [^if.else1, i32 %10] [^b1, i32 %50];
     i32 %13 = ztrunc i32 %11 to i32;
     i32 %14 = strunc i32 %13 to i32;
-    i32 %15 = add i32 %14, i32 -100000;
+    i32 %15 = add i32 %14, i32 -100;
     i32 %16 = ztrunc i32 %15 to i32;
     i32 %17 = strunc i32 %16 to i32;
     i1 %18 = scmp gt i32 %17, i32 0;
@@ -153,7 +153,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
     i32 %30 = add i32 %14, i32 1;
     i32 %31 = ztrunc i32 %30 to i32;
     i32 %32 = strunc i32 %31 to i32;
-    i32 %33 = add i32 %32, i32 100000;
+    i32 %33 = add i32 %32, i32 100;
     i32 %34 = ztrunc i32 %33 to i32;
     i32 %35 = strunc i32 %34 to i32;
     i1 %36 = scmp gt i32 %35, i32 0;

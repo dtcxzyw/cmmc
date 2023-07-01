@@ -145,9 +145,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^b5;
   ^b4:
-    i32 %72 = phi [^entry5, i32 %28] [^entry24, i32 %187];
-    i32 %73 = phi [^entry5, i32 %29] [^entry24, i32 %188];
-    i32 %74 = phi [^entry5, i32 %30] [^entry24, i32 %189];
+    i32 %72 = phi [^entry5, i32 %28] [^entry24, i32 %185];
+    i32 %73 = phi [^entry5, i32 %29] [^entry24, i32 %186];
+    i32 %74 = phi [^entry5, i32 %30] [^entry24, i32 %187];
     i32 %75 = load i32* %2;
     i32 %76 = add i32 %75, i32 1;
     store i32* %2 with i32 %76;
@@ -158,10 +158,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %80 = or i1 %78, i1 %79;
     cbr i1 %80(prob = 0.97), ^entry7, ^entry8;
   ^b5:
-    i32 %81 = phi [^entry6, i32 %28] [^entry18, i32 %151] [^entry25, i32 %187];
-    i32 %82 = phi [^entry6, i32 %29] [^entry18, i32 %152] [^entry25, i32 %188];
-    i32 %83 = phi [^entry6, i32 %30] [^entry18, i32 %153] [^entry25, i32 %189];
-    i32 %84 = phi [^entry6, i32 %31] [^entry18, i32 %154] [^entry25, i32 %190];
+    i32 %81 = phi [^entry6, i32 %28] [^entry18, i32 %151] [^entry25, i32 %185];
+    i32 %82 = phi [^entry6, i32 %29] [^entry18, i32 %152] [^entry25, i32 %186];
+    i32 %83 = phi [^entry6, i32 %30] [^entry18, i32 %153] [^entry25, i32 %187];
+    i32 %84 = phi [^entry6, i32 %31] [^entry18, i32 %154] [^entry25, i32 %188];
     i32 %85 = phi [^entry6, i32 -1] [^entry18, i32 %160] [^entry25, i32 -1];
     call (i32) -> void @putint(i32 %85);
     call (i32) -> void @putch(i32 10);
@@ -298,115 +298,110 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %167 = load i32* %2;
     i32* %168 = getelementptr &(i32* %2)[i32 %167];
     i32 %169 = load i32* %168;
-    i32 %170 = load i32* %2;
-    i32 %171 = add i32 %170, i32 -1;
-    store i32* %2 with i32 %171;
-    i32* %172 = getelementptr &(i32* %2)[i32 %171];
-    i32 %173 = load i32* %172;
-    i32 %174 = load i32* %2;
-    i32 %175 = add i32 %174, i32 -1;
-    store i32* %2 with i32 %175;
-    i1 %176 = scmp eq i32 %165, i32 43;
-    cbr i1 %176(prob = 0.5), ^if.then, ^b11;
+    i32 %170 = add i32 %167, i32 -1;
+    store i32* %2 with i32 %170;
+    i32* %171 = getelementptr &(i32* %168)[i64 -1];
+    i32 %172 = load i32* %171;
+    i32 %173 = add i32 %167, i32 -2;
+    store i32* %2 with i32 %173;
+    i1 %174 = scmp eq i32 %165, i32 43;
+    cbr i1 %174(prob = 0.5), ^if.then, ^b11;
   ^if.then:
-    i32 %177 = add i32 %169, i32 %173;
+    i32 %175 = add i32 %169, i32 %172;
     ubr ^b12;
   ^b10:
-    i32 %178 = phi [^entry19, i32 %161] [^while.body5, i32 %182];
-    i32 %179 = phi [^entry19, i32 %142] [^while.body5, i32 %186];
+    i32 %176 = phi [^entry19, i32 %161] [^while.body5, i32 %180];
+    i32 %177 = phi [^entry19, i32 %142] [^while.body5, i32 %184];
     ubr ^entry21;
   ^while.body5:
-    i32 %180 = phi [^entry19, i32 %162] [^while.body5, i32 %183];
-    i32 %181 = phi [^entry19, i32 %142] [^while.body5, i32 %186];
-    i32 %182 = call () -> i32 @getch();
-    i32 %183 = add i32 %182, i32 -48;
-    i1 %184 = ucmp lt i32 %183, i32 10;
-    i32 %185 = mul i32 %181, i32 10;
-    i32 %186 = add i32 %180, i32 %185;
-    cbr i1 %184(prob = 0.97), ^while.body5, ^b10;
+    i32 %178 = phi [^entry19, i32 %162] [^while.body5, i32 %181];
+    i32 %179 = phi [^entry19, i32 %142] [^while.body5, i32 %184];
+    i32 %180 = call () -> i32 @getch();
+    i32 %181 = add i32 %180, i32 -48;
+    i1 %182 = ucmp lt i32 %181, i32 10;
+    i32 %183 = mul i32 %179, i32 10;
+    i32 %184 = add i32 %178, i32 %183;
+    cbr i1 %182(prob = 0.97), ^while.body5, ^b10;
   ^entry21:
-    i32 %187 = phi [^if.else3, i32 %141] [^b10, i32 %104] [^b20, i32 %187];
-    i32 %188 = phi [^if.else3, i32 %157] [^b10, i32 %178] [^b20, i32 %188];
-    i32 %189 = phi [^if.else3, i32 %102] [^b10, i32 %179] [^b20, i32 %189];
-    i32 %190 = phi [^if.else3, i32 1] [^b10, i32 0] [^b20, i32 %190];
-    i32 %191 = load i32* %3;
-    i1 %192 = scmp neq i32 %191, i32 0;
-    cbr i1 %192(prob = 0.5), ^entry22, ^b13;
+    i32 %185 = phi [^if.else3, i32 %141] [^b10, i32 %104] [^b20, i32 %185];
+    i32 %186 = phi [^if.else3, i32 %157] [^b10, i32 %176] [^b20, i32 %186];
+    i32 %187 = phi [^if.else3, i32 %102] [^b10, i32 %177] [^b20, i32 %187];
+    i32 %188 = phi [^if.else3, i32 1] [^b10, i32 0] [^b20, i32 %188];
+    i32 %189 = load i32* %3;
+    i1 %190 = scmp neq i32 %189, i32 0;
+    cbr i1 %190(prob = 0.5), ^entry22, ^b13;
   ^b11:
-    i1 %193 = scmp eq i32 %165, i32 45;
-    cbr i1 %193(prob = 0.5), ^if.then1, ^b14;
+    i1 %191 = scmp eq i32 %165, i32 45;
+    cbr i1 %191(prob = 0.5), ^if.then1, ^b14;
   ^b12:
-    i32 %194 = phi [^if.then, i32 %177] [^if.then1, i32 %198] [^if.then2, i32 %214] [^if.then4, i32 %236] [^b19, i32 0] [^if.then6, i32 %244];
-    i32 %195 = load i32* %2;
-    i32 %196 = add i32 %195, i32 1;
-    store i32* %2 with i32 %196;
-    i32* %197 = getelementptr &(i32* %2)[i32 %196];
-    store i32* %197 with i32 %194;
+    i32 %192 = phi [^if.then, i32 %175] [^if.then1, i32 %196] [^if.then2, i32 %212] [^if.then4, i32 %231] [^b19, i32 0] [^if.then6, i32 %239];
+    i32 %193 = load i32* %2;
+    i32 %194 = add i32 %193, i32 1;
+    store i32* %2 with i32 %194;
+    i32* %195 = getelementptr &(i32* %2)[i32 %194];
+    store i32* %195 with i32 %192;
     ubr ^entry17;
   ^if.then1:
-    i32 %198 = sub i32 %173, i32 %169;
+    i32 %196 = sub i32 %172, i32 %169;
     ubr ^b12;
   ^entry22:
-    i32* %199 = getelementptr &(i32* %3)[i32 %191];
-    i32 %200 = load i32* %199;
-    i1 %201 = scmp eq i32 %200, i32 43;
-    i1 %202 = scmp eq i32 %200, i32 45;
-    i1 %203 = or i1 %201, i1 %202;
-    cbr i1 %203(prob = 0.5), ^b15, ^b16;
+    i32* %197 = getelementptr &(i32* %3)[i32 %189];
+    i32 %198 = load i32* %197;
+    i1 %199 = scmp eq i32 %198, i32 43;
+    i1 %200 = scmp eq i32 %198, i32 45;
+    i1 %201 = or i1 %199, i1 %200;
+    cbr i1 %201(prob = 0.5), ^b15, ^b16;
   ^b13:
-    i1 %204 = phi [^entry21, i1 false] [^b15, i1 %207];
-    cbr i1 %204(prob = 0.97), ^entry23, ^entry24;
+    i1 %202 = phi [^entry21, i1 false] [^b15, i1 %205];
+    cbr i1 %202(prob = 0.97), ^entry23, ^entry24;
   ^b14:
-    i1 %205 = scmp eq i32 %165, i32 42;
-    cbr i1 %205(prob = 0.5), ^if.then2, ^b17;
+    i1 %203 = scmp eq i32 %165, i32 42;
+    cbr i1 %203(prob = 0.5), ^if.then2, ^b17;
   ^b15:
-    i32 %206 = phi [^entry22, i32 10] [^b16, i32 %213];
-    i1 %207 = scmp le i32 %119, i32 %206;
+    i32 %204 = phi [^entry22, i32 10] [^b16, i32 %211];
+    i1 %205 = scmp le i32 %119, i32 %204;
     ubr ^b13;
   ^b16:
-    i1 %208 = scmp eq i32 %200, i32 42;
-    i1 %209 = scmp eq i32 %200, i32 47;
+    i1 %206 = scmp eq i32 %198, i32 42;
+    i1 %207 = scmp eq i32 %198, i32 47;
+    i1 %208 = or i1 %206, i1 %207;
+    i1 %209 = scmp eq i32 %198, i32 37;
     i1 %210 = or i1 %208, i1 %209;
-    i1 %211 = scmp eq i32 %200, i32 37;
-    i1 %212 = or i1 %210, i1 %211;
-    i32 %213 = select i1 %212 ? i32 20 : i32 0;
+    i32 %211 = select i1 %210 ? i32 20 : i32 0;
     ubr ^b15;
   ^if.then2:
-    i32 %214 = mul i32 %169, i32 %173;
+    i32 %212 = mul i32 %169, i32 %172;
     ubr ^b12;
   ^entry23:
-    i32 %215 = load i32* %3;
-    i32* %216 = getelementptr &(i32* %3)[i32 %215];
-    i32 %217 = load i32* %216;
-    i32 %218 = load i32* %3;
-    i32 %219 = add i32 %218, i32 -1;
-    store i32* %3 with i32 %219;
-    i32 %220 = load i32* %2;
-    i32* %221 = getelementptr &(i32* %2)[i32 %220];
+    i32 %213 = load i32* %3;
+    i32* %214 = getelementptr &(i32* %3)[i32 %213];
+    i32 %215 = load i32* %214;
+    i32 %216 = add i32 %213, i32 -1;
+    store i32* %3 with i32 %216;
+    i32 %217 = load i32* %2;
+    i32* %218 = getelementptr &(i32* %2)[i32 %217];
+    i32 %219 = load i32* %218;
+    i32 %220 = add i32 %217, i32 -1;
+    store i32* %2 with i32 %220;
+    i32* %221 = getelementptr &(i32* %218)[i64 -1];
     i32 %222 = load i32* %221;
-    i32 %223 = load i32* %2;
-    i32 %224 = add i32 %223, i32 -1;
+    i1 %223 = scmp eq i32 %215, i32 43;
+    i32 %224 = add i32 %217, i32 -2;
     store i32* %2 with i32 %224;
-    i32* %225 = getelementptr &(i32* %2)[i32 %224];
-    i32 %226 = load i32* %225;
-    i1 %227 = scmp eq i32 %217, i32 43;
-    i32 %228 = load i32* %2;
-    i32 %229 = add i32 %228, i32 -1;
-    store i32* %2 with i32 %229;
-    cbr i1 %227(prob = 0.5), ^if.then3, ^b18;
+    cbr i1 %223(prob = 0.5), ^if.then3, ^b18;
   ^entry24:
-    i32 %230 = load i32* %3;
-    i32 %231 = add i32 %230, i32 1;
-    store i32* %3 with i32 %231;
-    i32* %232 = getelementptr &(i32* %3)[i32 %231];
-    store i32* %232 with i32 %104;
-    i1 %233 = scmp neq i32 %190, i32 0;
-    cbr i1 %233(prob = 0.5), ^entry25, ^b4;
+    i32 %225 = load i32* %3;
+    i32 %226 = add i32 %225, i32 1;
+    store i32* %3 with i32 %226;
+    i32* %227 = getelementptr &(i32* %3)[i32 %226];
+    store i32* %227 with i32 %104;
+    i1 %228 = scmp neq i32 %188, i32 0;
+    cbr i1 %228(prob = 0.5), ^entry25, ^b4;
   ^b17:
-    i1 %234 = scmp eq i32 %165, i32 47;
-    cbr i1 %234(prob = 0.5), ^if.then4, ^b19;
+    i1 %229 = scmp eq i32 %165, i32 47;
+    cbr i1 %229(prob = 0.5), ^if.then4, ^b19;
   ^if.then3:
-    i32 %235 = add i32 %222, i32 %226;
+    i32 %230 = add i32 %219, i32 %222;
     ubr ^b20;
   ^entry25:
     call (i32) -> void @putch(i32 112);
@@ -418,44 +413,44 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putch(i32 10);
     ubr ^b5;
   ^if.then4:
-    i32 %236 = sdiv i32 %173, i32 %169;
+    i32 %231 = sdiv i32 %172, i32 %169;
     ubr ^b12;
   ^b18:
-    i1 %237 = scmp eq i32 %217, i32 45;
-    cbr i1 %237(prob = 0.5), ^if.then5, ^b21;
+    i1 %232 = scmp eq i32 %215, i32 45;
+    cbr i1 %232(prob = 0.5), ^if.then5, ^b21;
   ^b19:
-    i1 %238 = scmp eq i32 %165, i32 37;
-    cbr i1 %238(prob = 0.5), ^if.then6, ^b12;
+    i1 %233 = scmp eq i32 %165, i32 37;
+    cbr i1 %233(prob = 0.5), ^if.then6, ^b12;
   ^b20:
-    i32 %239 = phi [^if.then3, i32 %235] [^if.then5, i32 %243] [^if.then7, i32 %246] [^if.then8, i32 %248] [^b23, i32 0] [^if.then9, i32 %250];
-    i32 %240 = load i32* %2;
-    i32 %241 = add i32 %240, i32 1;
-    store i32* %2 with i32 %241;
-    i32* %242 = getelementptr &(i32* %2)[i32 %241];
-    store i32* %242 with i32 %239;
+    i32 %234 = phi [^if.then3, i32 %230] [^if.then5, i32 %238] [^if.then7, i32 %241] [^if.then8, i32 %243] [^b23, i32 0] [^if.then9, i32 %245];
+    i32 %235 = load i32* %2;
+    i32 %236 = add i32 %235, i32 1;
+    store i32* %2 with i32 %236;
+    i32* %237 = getelementptr &(i32* %2)[i32 %236];
+    store i32* %237 with i32 %234;
     ubr ^entry21;
   ^if.then5:
-    i32 %243 = sub i32 %226, i32 %222;
+    i32 %238 = sub i32 %222, i32 %219;
     ubr ^b20;
   ^if.then6:
-    i32 %244 = srem i32 %173, i32 %169;
+    i32 %239 = srem i32 %172, i32 %169;
     ubr ^b12;
   ^b21:
-    i1 %245 = scmp eq i32 %217, i32 42;
-    cbr i1 %245(prob = 0.5), ^if.then7, ^b22;
+    i1 %240 = scmp eq i32 %215, i32 42;
+    cbr i1 %240(prob = 0.5), ^if.then7, ^b22;
   ^if.then7:
-    i32 %246 = mul i32 %222, i32 %226;
+    i32 %241 = mul i32 %219, i32 %222;
     ubr ^b20;
   ^b22:
-    i1 %247 = scmp eq i32 %217, i32 47;
-    cbr i1 %247(prob = 0.5), ^if.then8, ^b23;
+    i1 %242 = scmp eq i32 %215, i32 47;
+    cbr i1 %242(prob = 0.5), ^if.then8, ^b23;
   ^if.then8:
-    i32 %248 = sdiv i32 %226, i32 %222;
+    i32 %243 = sdiv i32 %222, i32 %219;
     ubr ^b20;
   ^b23:
-    i1 %249 = scmp eq i32 %217, i32 37;
-    cbr i1 %249(prob = 0.5), ^if.then9, ^b20;
+    i1 %244 = scmp eq i32 %215, i32 37;
+    cbr i1 %244(prob = 0.5), ^if.then9, ^b20;
   ^if.then9:
-    i32 %250 = srem i32 %226, i32 %222;
+    i32 %245 = srem i32 %222, i32 %219;
     ubr ^b20;
 }

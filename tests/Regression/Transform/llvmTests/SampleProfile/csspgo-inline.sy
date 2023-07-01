@@ -14,12 +14,12 @@ uint32_t factor = 3;
 
 uint32_t _Z5funcAi(uint32_t var0){
     block0:
-    return _Z8funcLeafi(((int)var0) + ((int)100000));
+    return _Z8funcLeafi(((int)var0) + ((int)100));
 }
 
 uint32_t _Z5funcBi(uint32_t var0){
     block0:
-    return _Z8funcLeafi(((int)var0) + ((int)-100000));
+    return _Z8funcLeafi(((int)var0) + ((int)-100));
 }
 
 uint32_t _Z8funcLeafi(uint32_t var0){
@@ -68,7 +68,7 @@ int main(void){
     uint32_t var3;
     int var4;
     block0:
-    var0_phi = 300000;
+    var0_phi = 300;
     var1_phi = 0;
     goto block2;
     block2:
@@ -83,4 +83,3 @@ int main(void){
         goto block2;
     }
 }
-

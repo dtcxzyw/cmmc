@@ -1,0 +1,16 @@
+int test_dse1(int x[], int y) {
+    x[y] = x[y];
+    return x[y];
+}
+int test_dse2(int x[], int y, int z) {
+    int val = x[y];
+    x[z] = val;
+    x[y] = val;
+    return x[y];
+}
+void swap(int x[], int y, int z) {
+    int v1 = x[y];
+    int v2 = x[z];
+    x[y] = v2;
+    x[z] = v1;
+}

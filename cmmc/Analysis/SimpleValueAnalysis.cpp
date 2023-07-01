@@ -66,11 +66,10 @@ void SimpleValueAnalysis::next(Instruction* inst) {
     // inst->dump(std::cerr);
     // std::cerr << std::endl;
 
-    const auto invalidate = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr) {
+    const auto invalidate = [&](std::unordered_map<Value*, Value*>& lastValue, Value* addr, Value* overridedVal) {
         std::vector<Value*> outdated;
         for(auto [ptr, val] : lastValue) {
-            CMMC_UNUSED(val);
-            if(ptr != addr && !mAliasSet.isDistinct(ptr, addr))
+            if(ptr != addr && val != overridedVal && !mAliasSet.isDistinct(ptr, addr))
                 outdated.push_back(ptr);
         }
         for(auto key : outdated) {
@@ -98,13 +97,13 @@ void SimpleValueAnalysis::next(Instruction* inst) {
             for(auto& [rhsBase, values] : mLastValue) {
                 if(rhsBase != nullptr && mAliasSet.isDistinct(rhsBase, addr))
                     continue;
-                invalidate(values, addr);
+                invalidate(values, addr, val);
             }
             replace(mLastValue[nullptr], addr, val, forceReplace);
         } else {
             auto& lastValue = mLastValue[base];
-            invalidate(lastValue, addr);
-            invalidate(mLastValue[nullptr], addr);
+            invalidate(lastValue, addr, val);
+            invalidate(mLastValue[nullptr], addr, val);
             replace(lastValue, addr, val, forceReplace);
         }
     };

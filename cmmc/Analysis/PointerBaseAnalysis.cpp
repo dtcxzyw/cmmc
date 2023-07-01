@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
@@ -25,6 +26,91 @@
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
+
+constexpr uint32_t maxTraceDepth = 8;
+static Value* traceInterProceduralInst(Instruction* inst, uint32_t depth);
+static Value* traceInterProceduralVal(Value* val, uint32_t depth);
+static Value* traceInterProceduralArg(Function& func, FuncArgument* arg, uint32_t idx, uint32_t depth) {
+    if(depth > maxTraceDepth)
+        return nullptr;
+    Value* commonSrc = nullptr;
+
+    for(auto user : func.users()) {
+        assert(user->getInstID() == InstructionID::Call);
+        const auto argVal = user->getOperand(idx);
+        if(argVal == arg) {
+            continue;
+        }
+        const auto src = traceInterProceduralVal(arg, depth + 1);
+        if(!src)
+            return nullptr;
+        if(!commonSrc)
+            commonSrc = src;
+        else if(commonSrc != src)
+            return nullptr;
+    }
+
+    return commonSrc;
+}
+static Value* traceInterProceduralVal(Value* val, uint32_t depth) {
+    if(val->isGlobal() || val->is<StackAllocInst>())
+        return val;
+    if(val->isInstruction()) {
+        return traceInterProceduralInst(val->as<Instruction>(), depth);
+    }
+    if(val->isArgument()) {
+        uint32_t idx = 0;
+        auto& func = *val->as<FuncArgument>()->getFunc();
+        for(auto arg : func.args()) {
+            if(arg == val) {
+                return traceInterProceduralArg(func, arg, idx, depth);
+            }
+            ++idx;
+        }
+    }
+    return nullptr;
+}
+static Value* traceInterProceduralInst(Instruction* inst, uint32_t depth) {
+    if(depth > maxTraceDepth)
+        return nullptr;
+
+    switch(inst->getInstID()) {
+        case InstructionID::GetElementPtr:
+            [[fallthrough]];
+        case InstructionID::PtrCast:
+            return traceInterProceduralVal(inst->lastOperand(), depth + 1);
+        case InstructionID::Select: {
+            auto src1 = traceInterProceduralVal(inst->getOperand(1), depth + 1);
+            if(!src1)
+                return nullptr;
+            auto src2 = traceInterProceduralVal(inst->getOperand(2), depth + 1);
+            if(src1 == src2)
+                return src1;
+        } break;
+        case InstructionID::Phi: {
+            Value* commonSrc = nullptr;
+
+            for(auto [pred, val] : inst->as<PhiInst>()->incomings()) {
+                if(val->value == inst)
+                    continue;
+                auto src = traceInterProceduralVal(val->value, depth + 1);
+                if(!src)
+                    return nullptr;
+                if(commonSrc == nullptr)
+                    commonSrc = src;
+                else if(commonSrc != src) {
+                    return nullptr;
+                }
+            }
+
+            return commonSrc;
+        } break;
+        default:
+            break;
+    }
+
+    return nullptr;
+}
 
 PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     PointerBaseAnalysisResult result;
@@ -79,6 +165,25 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
     for(auto global : analysis.module().globals())
         if(!global->isFunction())
             setStorage(global, global);
+    bool directlyUseGlobal = !q.empty();
+
+    uint32_t argIdx = 0;
+    Value* uniquePointerArg = nullptr;
+    uint32_t argCount = 0;
+    for(auto arg : func.args()) {
+        if(arg->getType()->isPointer()) {
+            if(auto base = traceInterProceduralArg(func, arg, argIdx, 0)) {
+                setStorage(arg, base);
+            }
+            uniquePointerArg = arg;
+            ++argCount;
+        }
+        ++argIdx;
+    }
+
+    if(!directlyUseGlobal && argCount == 1) {
+        setStorage(uniquePointerArg, uniquePointerArg);
+    }
 
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions())

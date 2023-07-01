@@ -68,12 +68,10 @@ public:
             ctx.emitInst(MIRInst{ TAC::Arg }.setOperand<0>(ctx.mapOperand(inst->getOperand(idx))));
         }
         auto calleeOperand = MIROperand::asReloc(ctx.mapGlobal(callee)->reloc.get());
+        auto ret = ctx.newVReg(inst->getType());
+        ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(ret).setOperand<1>(calleeOperand));
         if(!inst->getType()->isVoid()) {
-            auto ret = ctx.newVReg(inst->getType());
-            ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(ret).setOperand<1>(calleeOperand));
             ctx.addOperand(inst, ret);
-        } else {
-            ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(MIROperand::asInvalidReg()).setOperand<1>(calleeOperand));
         }
     }
     void emitPrologue(MIRFunction& func, LoweringContext& ctx) const override {

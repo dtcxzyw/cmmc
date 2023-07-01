@@ -1,0 +1,24 @@
+func @test_dse1(i32* %x, i32 %y) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = getelementptr &(i32* %x)[i32 %y];
+    i32 %1 = load i32* %0;
+    ret i32 %1;
+}
+func @test_dse2(i32* %x, i32 %y, i32 %z) -> i32 { NoRecurse } {
+  ^entry:
+    i32* %0 = getelementptr &(i32* %x)[i32 %y];
+    i32 %1 = load i32* %0;
+    i32* %2 = getelementptr &(i32* %x)[i32 %z];
+    store i32* %2 with i32 %1;
+    ret i32 %1;
+}
+func @swap(i32* %x, i32 %y, i32 %z) -> void { NoRecurse } {
+  ^entry:
+    i32* %0 = getelementptr &(i32* %x)[i32 %y];
+    i32 %1 = load i32* %0;
+    i32* %2 = getelementptr &(i32* %x)[i32 %z];
+    i32 %3 = load i32* %2;
+    store i32* %0 with i32 %3;
+    store i32* %2 with i32 %1;
+    ret;
+}

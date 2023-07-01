@@ -181,7 +181,6 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %115 = getelementptr &(i32* %6)[i32 %114];
     i32 %116 = load i32* %115;
     store i32* %113 with i32 %116;
-    store i32* %115 with i32 %116;
     i32 %117 = add i32 %68, i32 1;
     ubr ^while.header1;
 }
