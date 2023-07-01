@@ -488,8 +488,8 @@ def test(name, path, filter, tester):
     print("Collecting tests...")
     test_set = []
     for r, ds, fs in os.walk(path):
-        if 'llvmTests' in r:
-            continue
+        # if 'llvmTests' in r:
+        #     continue
         for f in fs:
             if f.endswith(filter) and not f.endswith(".spl.ir") and not f.endswith(".sy.ir"):
                 skip = any(name in f for name in skip_list)
