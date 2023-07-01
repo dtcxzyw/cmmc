@@ -4,7 +4,7 @@ import os
 import subprocess
 import sys
 
-collected_perf_data_path = sys.argv[2]
+collected_perf_data_path = sys.argv[1]
 os.makedirs(os.path.join(collected_perf_data_path, 'data'), exist_ok=True)
 
 
