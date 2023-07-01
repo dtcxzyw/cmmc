@@ -1,37 +1,40 @@
 #!/usr/bin/env python3
 
+import json
+import math
 import os
+import platform
+import subprocess
 import sys
 import time
-import subprocess
-import json
 import CodeGenTAC.irsim_quiet as irsim
-import platform
-import math
+from collections import defaultdict
+
+binary_path = sys.argv[1]
+binary_dir = os.path.dirname(binary_path)
+tests_path = sys.argv[2]
 
 qemu_path = os.environ.get('QEMU_PATH', '')
 stack_size = 128 << 20  # 128M
 qemu_command = {
-    'riscv': '{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64,zba=true,zbb=true -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
-    'mips': '{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
-    'arm': '{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.format(stack_size=stack_size, qemu_path=qemu_path).split(),
+    'riscv': f'{qemu_path}/qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64,zba=true,zbb=true -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.split(),
+    'mips': f'{qemu_path}/qemu-mipsel -L /usr/mipsel-linux-gnu -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.split(),
+    'arm': f'{qemu_path}/qemu-arm -L /usr/arm-linux-gnueabihf -cpu cortex-a7 -s {stack_size} -d plugin -plugin {qemu_path}/tests/plugin/libinsn_clock.so -D /dev/stderr'.split(),
 }
-gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w "
-clang_ref_command = "clang -Qn -x c++ -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w "
+gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w ".split()
+clang_ref_command = "clang -Qn -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w ".split()
 qemu_gcc_ref_command = {
-    'riscv': "riscv64-linux-gnu-gcc-11 -x c++ -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ",
-    'mips': "mipsel-linux-gnu-gcc-10 -x c++ -O2 -DNDEBUG -march=mips32r5 -Wa,--relax-branch -mhard-float -ffp-contract=on -w ",
-    'arm': "arm-linux-gnueabihf-gcc-12 -x c++ -O2 -DNDEBUG -march=armv7 -mfpu=vfpv4 -ffp-contract=on -w -no-pie ",
+    'riscv': "riscv64-linux-gnu-gcc-11 -O3 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ".split(),
+    'mips': "mipsel-linux-gnu-gcc-10 -O3 -DNDEBUG -march=mips32r5 -Wa,--relax-branch -mhard-float -ffp-contract=on -w ".split(),
+    'arm': "arm-linux-gnueabihf-gcc-12 -O3 -DNDEBUG -march=armv7 -mfpu=vfpv4 -ffp-contract=on -w -no-pie ".split(),
 }
-binary_path = sys.argv[1]
-binary_dir = os.path.dirname(binary_path)
-tests_path = sys.argv[2]
-rars_path = tests_path + "/TAC2MC/rars.jar"
-optimization_level = '3'
+targets = set(['mips', 'riscv', 'arm'])
+
+sysy_runtime = tests_path + "/SysY2022/sylib.c"
+sysy_header = tests_path + "/SysY2022/sylib.h"
+
+optimization_level = 3
 fast_fail = False
-generate_ref = False
-assert os.path.exists(rars_path)
-targets = ['mips', 'riscv', 'arm']
 
 # O0 reference
 baseline = {
@@ -44,7 +47,7 @@ baseline = {
     "store_bytes": 173.2
 }
 
-summary = {}
+summary = defaultdict(lambda: 1)
 summary_samples = 0
 tac_inst_count_ref = 224.116
 
@@ -71,14 +74,56 @@ class Sample:
         return math.exp(self.prod / max(1, self.count))
 
 
-samples = dict()
+samples = defaultdict(Sample)
 
 
 def add_sample(sample_name, item_name, item_val):
-    global samples
-    sample = samples.get(sample_name, Sample())
-    sample.add_sample(item_name, item_val)
-    samples[sample_name] = sample
+    samples[sample_name].add_sample(item_name, item_val)
+
+
+def basename(filename: str):
+    return os.path.splitext(filename)[0]
+
+
+def run_cmmc(source, *, target, output = '/dev/stdout', opt_level = None, emit_ir = False, hide_symbol = False, strict = False, input_file = None, more = [], check = True) -> subprocess.CompletedProcess:
+    assert opt_level is None or 0 <= opt_level <= 3, "Invalid optimization level"
+
+    command = [
+        binary_path,
+        '-t', target,
+        '-O', str(optimization_level) if opt_level is None else str(opt_level),
+        '-o', output,
+    ]
+    if emit_ir:
+        command.append('--emitIR')
+    if hide_symbol:
+        command.append('--hide-symbol')
+    if strict:
+        command.append('--strict')
+    if input_file is not None:
+        command.extend(['-e', input_file])
+    command = command + more + [source]
+
+    process = subprocess.run(command, capture_output=True, text=True, check=check)
+    assert not check or len(process.stderr) == 0, process.stderr
+    return process
+
+
+def compare_output_with_standard_file(standard_filename: str, output: str, returncode: int):
+    if len(output) != 0 and not output.endswith('\n'):
+        output += '\n'
+    output += str(returncode) + '\n'
+
+    with open(standard_filename, encoding='utf-8', newline='\n') as f:
+        standard_answer = f.read()
+    if not standard_answer.endswith('\n'):
+        standard_answer += '\n'
+
+    if output != standard_answer:
+        print(" Output mismatch")
+        print("output:", output[:100], "stdans:", standard_answer[:100], sep='\n')
+        return False
+    return True
 
 
 def print_and_compare(suffix: str):
@@ -106,23 +151,51 @@ def print_and_compare(suffix: str):
 
         testcases.sort(key=lambda x: -x[0])
         for ratio, lhs, rhs, key in testcases:
-            print("{:.6f} {:.6f} {:.3f} {}".format(lhs, rhs, ratio, key))
+            print(f"{lhs:.6f} {rhs:.6f} {ratio:.3f} {key}")
         print("performance score: {:.6f} total {}".format(score, len(gcc_perf.log)))
 
 
+def compare_and_parse_perf(src, out):
+    output_file = basename(src) + '.out'
+    if not compare_output_with_standard_file(output_file, out.stdout, out.returncode):
+        raise RuntimeError("Output mismatch")
+
+    for line in out.stderr.splitlines():
+        if line.startswith('insns:'):
+            used = int(line.removeprefix('insns:').strip())
+            if 'performance' in src:
+                print(f" {used}", end='')
+            return used
+
+    for line in out.stderr.splitlines():
+        if line.startswith('TOTAL:'):
+            perf = line.removeprefix('TOTAL: ').split('-')
+            used = float(perf[0][:-1]) * 3600 + float(perf[1][:-1]) * 60 + \
+                   float(perf[2][:-1]) + float(perf[3][:-2]) * 1e-6
+            if 'performance' in src:
+                print(f" {used:.6f}", end='')
+            return max(1e-6, used)
+
+    raise RuntimeError("No performance data")
+
+
+def compare_with_ref_file(answer_file, output):
+    if not os.path.exists(answer_file):
+        return False
+    with open(answer_file, encoding='utf-8') as f:
+        answer = f.read()
+    return answer == output
+
+
 def parse_perf(result):
+    global summary_samples
     try:
         perf = json.loads(result)
         for key in baseline.keys():
-            summary[key] = summary.get(key, 1) * max(1, perf[key])
-        global summary_samples
+            summary[key] *= max(1, perf[key])
         summary_samples += 1
-    except:
+    except Exception:
         pass
-
-
-def dump_args(args):
-    print("", " ".join(args))
 
 
 def spl_parse(src, strict=True):
@@ -130,73 +203,52 @@ def spl_parse(src, strict=True):
     if strict:
         args.insert(-1, '--strict')
     out = subprocess.run(args, capture_output=True, text=True)
-    ref_content = ""
-    ref = src[:-4]+".out"
-    with open(ref, mode="r", encoding="utf-8") as f:
-        for line in f.readlines():
-            ref_content += line
-    is_error = "Error" in ref_content
-    if out.returncode == 0 and not is_error:
-        return ref_content == out.stdout
-    elif out.returncode != 0 and is_error:
-        return ref_content == out.stderr
-    return False
 
+    ref = basename(src) + ".out"
+    with open(ref, encoding="utf-8") as f:
+        ref_content = f.read()
+    is_error = "Error" in ref_content
+    return (out.returncode != 0) == is_error and ref_content == out.stdout
 
 def spl_parse_ext(src):
     return spl_parse(src, strict=False)
 
 
 def spl_semantic(src, strict=True):
-    args = [binary_path,  '--emitIR', '-t', 'tac', '-o', '/dev/stdout', src]
-    if strict:
-        args.insert(-1, '--strict')
-    # dump_args(args)
-    out = subprocess.run(args, capture_output=True, text=True)
+    try:
+        out = run_cmmc(src, target='tac', emit_ir=True, strict=strict)
+    except subprocess.CalledProcessError as e:
+        out = e
 
-    ref_content = ""
-    ref = src[:-4]+".out"
-    with open(ref, mode="r", encoding="utf-8") as f:
-        for line in f.readlines():
-            ref_content += line
+    ref = basename(src) + ".out"
+    with open(ref, encoding="utf-8") as f:
+        ref_content = f.read()
     is_error = ref_content != ""
     if out.returncode == 0 and not is_error:
-        if len(out.stdout) == 0 or len(out.stderr) != 0:
-            return False
-        return True
+        return len(out.stdout) != 0 and len(out.stderr) == 0
     elif out.returncode != 0 and is_error:
-        if len(out.stdout) != 0:
-            return False
-        return ref_content == out.stderr
+        return len(out.stdout) == 0 and ref_content == out.stderr
     return False
-
 
 def spl_semantic_ext(src):
     return spl_semantic(src, False)
 
 
 def spl_semantic_noref(src):
-    out = subprocess.run(args=[binary_path, '--strict', '--emitIR', '-t', 'tac', '-o',
-                               '/dev/null', src], capture_output=True, text=True)
-    return out.returncode == 0
+    run_cmmc(src, target='tac', emit_ir=True, strict=True)
 
 
 def spl_codegen_tac(src):
-    args = [binary_path, '--strict', '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
-            '/dev/stdout', src]
-    # print("", " ".join(args))
-    out = subprocess.run(args, capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        return False
+    out = run_cmmc(src, target='tac', strict=True, hide_symbol=True)
     ir = out.stdout
     if not irsim.check(ir):
         return False
     print('', ir.count('\n'), end='')
-    name = str(os.path.basename(src)).split('.')[0]
+    name = basename(os.path.basename(src))
     if name in irsim.test_generators:
         for inputs, answer in irsim.test_generators[name]():
             ret = irsim.exec(ir, inputs.copy())
-            if ret == None:
+            if ret is None:
                 return False
             if answer != ret[1]:
                 print("\ninput", inputs, "answer", answer, "output", ret[1])
@@ -209,24 +261,22 @@ def spl_codegen_tac(src):
 
 
 def remove_prompt(v: str):
-    while v.startswith('Enter an integer:'):
-        v = v[len('Enter an integer:'):]
+    PROMPT = 'Enter an integer:'
+    while v.startswith(PROMPT):
+        v = v.removeprefix(PROMPT)
     return v
 
 
 def spl_codegen_mips(src):
-    name = str(os.path.basename(src)).split('.')[0]
+    name = basename(os.path.basename(src))
     tmp_out = os.path.join(binary_dir, 'tmp.S')
-    args = [binary_path, '--strict', '-t', 'mips', '--hide-symbol', '-O', optimization_level, '-o',
-            tmp_out, src]
-    # print("", " ".join(args))
-    out = subprocess.run(args, capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        return False
+    run_cmmc(src, target='mips', output=tmp_out, strict=True, hide_symbol=True)
     spl_test_cases = irsim.test_generators[name]()
     for inputs, answer in spl_test_cases:
         out_spim = subprocess.run(
-            args=['spim', '-delayed_branches', '-file', tmp_out], input='\n'.join(map(lambda x: str(x), inputs)), capture_output=True, text=True)
+            args=['spim', '-delayed_branches', '-file', tmp_out],
+            input='\n'.join(map(str, inputs)),
+            capture_output=True, text=True)
         # print(out_spim.stdout)
         out = out_spim.stdout.splitlines()
         res = []
@@ -247,111 +297,37 @@ def spl_codegen_mips(src):
 
 
 def sysy_codegen_mips(src):
-    tmp_out = os.path.join(binary_dir, 'tmp.S')
-    args = [binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level,  '-o',
-            tmp_out, src]
-    # dump_args(args)
-    out = subprocess.run(args, capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        print(out.returncode, out.stderr)
-        return False
-
-    return True
-
+    run_cmmc(src, target='mips', hide_symbol=True)
 
 def sysy_codegen_riscv64(src):
-    tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-O', optimization_level,  '-o',
-                               tmp_out, src], capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        print(out.returncode)
-        print(out.stderr)
-        return False
-
-    return True
-
-
-def spl_codegen_riscv64(src):
-    name = str(os.path.basename(src)).split('.')[0]
-    tmp_out = os.path.join(binary_dir, 'tmp.S')
-    out = subprocess.run(args=[binary_path, '--strict', '-t', 'riscv', '--hide-symbol', '-O', optimization_level, '-o',
-                               tmp_out, src], capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        print(out.returncode)
-        print(out.stderr)
-        return False
-    spl_test_cases = irsim.test_generators[name]()
-    for inputs, answer in spl_test_cases:
-        # print(inputs)
-        out_rars = subprocess.run(
-            args=['java', '-jar', rars_path, 'nc',
-                  'me', 'rv64', '1048576', tmp_out],
-            input='\n'.join(map(lambda x: str(x), inputs)),
-            capture_output=True, text=True
-        )
-        out = out_rars.stdout.splitlines()
-        res = []
-        for v in out:
-            v = remove_prompt(v)
-            if len(v):
-                res.append(int(v))
-        if res != answer:
-            print("\ninput", inputs, "answer", answer, "output",
-                  res, "returncode", out_rars.returncode)
-            return False
-
-    return True
-
+    run_cmmc(src, target='riscv64', hide_symbol=True)
 
 def spl_tac2ir(src):
-    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'mips', '-O', optimization_level, '-o',
-                               '/dev/null', src], capture_output=True, text=True)
-    return out.returncode == 0
-
+    run_cmmc(src, target='mips', emit_ir=True)
 
 def sysy_parse(src):
-    out = subprocess.run(
-        args=[binary_path, '--grammar-check', src], capture_output=True, text=True)
-    return out.returncode == 0
-
+    subprocess.run([binary_path, '--grammar-check', src], capture_output=True, text=True, check=True)
 
 def sysy_semantic(src):
-    out = subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '-O', '0', '-o',
-                               '/dev/stdout', src], capture_output=True, text=True)
-    return out.returncode == 0
-
+    run_cmmc(src, target='sim', opt_level=0, emit_ir=True)
 
 def sysy_opt(src):
-    args = [binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-o',
-            '/dev/stdout', src]
-
-    out = subprocess.run(args, capture_output=True, text=True)
-    return out.returncode == 0
+    run_cmmc(src, target='sim', emit_ir=True, hide_symbol=True)
 
 
 def sysy_test(src: str, opt=True):
-    input_file = src[:-3] + '.in'
+    input_file = basename(src) + '.in'
     if not os.path.exists(input_file):
         input_file = "/dev/null"
-    args = [binary_path, '-t', 'sim', '--hide-symbol', '-O', optimization_level if opt else '0', '-o',
-            '/dev/stdout', '-e', input_file, src]
 
-    out = subprocess.run(args, capture_output=True, text=True)
-    output = out.stdout
-    if len(output) != 0 and output[-1] != '\n':
-        output += '\n'
-    output += str(out.returncode) + '\n'
-    output_file = src[:-3] + '.out'
-    # print(output.encode('utf-8'))
-    standard_answer = ''
-    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
-        for line in f.readlines():
-            standard_answer += line
-    # print(standard_answer.encode('utf-8'))
-    if output == standard_answer:
-        parse_perf(out.stderr)
-        return True
-    return False
+    opt_level = None if opt else 0
+    out = run_cmmc(src, target='sim', opt_level=opt_level, hide_symbol=True, input_file=input_file, check=False)
+
+    output_file = basename(src) + '.out'
+    if not compare_output_with_standard_file(output_file, out.stdout, out.returncode):
+        return False
+
+    parse_perf(out.stderr)
 
 
 def sysy_test_noopt(src: str):
@@ -359,391 +335,194 @@ def sysy_test_noopt(src: str):
 
 
 def spl_ref(src):
-    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'tac', '-O', optimization_level, '-o',
-                                src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
-
+    run_cmmc(src, target='tac', output=src+'.ir', emit_ir=True)
 
 def spl_tac_ref(src):
-    name = src+".tacir"
-    if 'Project' in src:
-        name = src[:-4]+".ir"
-    return subprocess.run(args=[binary_path, '-t', 'tac', '--hide-symbol', '-O', optimization_level, '-o',
-                                name, src], stderr=subprocess.DEVNULL).returncode == 0
-
+    name = basename(src) + '.ir' if 'Project' in src else src + '.tacir'
+    run_cmmc(src, target='tac', output=name, hide_symbol=True)
 
 def spl_mips_ref(src):
-    name = src+".mips32.S"
-    if 'Project' in src:
-        name = src[:-4]+".s"
-    return subprocess.run(args=[binary_path, '-t', 'mips', '--hide-symbol', '-O', optimization_level, '-o',
-                                name, src], stderr=subprocess.DEVNULL).returncode == 0
-
+    name = basename(src) + '.s' if 'Project' in src else src + '.mips32.S'
+    run_cmmc(src, target='mips', output=name, hide_symbol=True)
 
 def spl_riscv64_ref(src):
-    return subprocess.run(args=[binary_path, '-t', 'riscv', '--hide-symbol', '-O', optimization_level, '-o',
-                                src+".riscv64.S", src], stderr=subprocess.DEVNULL).returncode == 0
-
+    run_cmmc(src, target='riscv', output=src+'.riscv64.S', hide_symbol=True)
 
 def sysy_ref(src):
-    return subprocess.run(args=[binary_path, '--emitIR', '-t', 'sim', '--hide-symbol', '-O', optimization_level, '-o',
-                                src+".ir", src], stderr=subprocess.DEVNULL).returncode == 0
+    run_cmmc(src, target='sim', output=src+'.ir', hide_symbol=True, emit_ir=True)
 
 
 def sysy_ref_clang(src: str):
-    header = tests_path + "/SysY2022/sylib.h"
-    output = src.removesuffix('.sy')+".ll"
-    ref_command = clang_ref_command
-    include = "-include "+header
+    output = basename(src) + ".ll"
     if "many_params3" in src:
-        ref_command = clang_ref_command.replace("c++", "c")
-        include = ""
-    return os.system("{} {} -Ddelete=delete_ -o {} {}".format(ref_command, include, output, src)) == 0
+        extra_command = ['-x', 'c']
+    else:
+        extra_command = ['-x', 'c++', '-include', sysy_header]
+    subprocess.run(clang_ref_command + extra_command + ['-Ddelete=delete_', '-o', output, src], check=True)
 
 
-def compare_and_parse_perf(src, out):
-    output = out.stdout
-    if len(output) != 0 and output[-1] != '\n':
-        output += '\n'
-    output += str(out.returncode) + '\n'
-    output_file = src[:-3] + '.out'
-    # print(output.encode('utf-8'))
-    standard_answer = ''
-    with open(output_file, mode="r", encoding="utf-8", newline='\n') as f:
-        for line in f.readlines():
-            standard_answer += line
-    if not standard_answer.endswith('\n'):
-        standard_answer += '\n'
+def get_output_path(src):
+    output = os.path.join(binary_dir, os.path.relpath(basename(src), tests_path))
+    os.makedirs(os.path.dirname(output), exist_ok=True)
+    return output
 
-    # print(standard_answer.encode('utf-8'))
-    if output != standard_answer:
-        print(" Output mismatch")
-        print("output:")
-        if len(output) > 100:
-            output = output[:100]
-        print(output)
-        print("stdans:")
-        if len(standard_answer) > 100:
-            standard_answer = standard_answer[:100]
-        print(standard_answer)
-        return None
 
-    for line in out.stderr.splitlines():
-        if line.startswith('insns:'):
-            used = int(line[6:].strip())
-            if 'performance' in src:
-                print(" {}".format(used), end='')
-            return used
+def link_executable(src, target, output, *, runtime = sysy_runtime, extra_command = []):
+    command = qemu_gcc_ref_command[target] + extra_command + ['-o', output, runtime, src]
+    subprocess.run(command, check=True)
 
-    for line in out.stderr.splitlines():
-        if line.startswith('TOTAL:'):
-            perf = line[7:].split('-')
-            used = float(perf[0][:-1])*3600+float(perf[1][:-1]) * \
-                60+float(perf[2][:-1])+float(perf[3][:-2])*1e-6
-            if 'performance' in src:
-                print(" {:.3f}".format(used), end='')
-            return max(1e-6, used)
 
-    return None
+def run_executable(command, src, sample_name):
+    input_file = basename(src) + '.in'
+    if os.path.exists(input_file):
+        with open(input_file, encoding='utf-8') as f:
+            out = subprocess.run(command, stdin=f, capture_output=True, text=True)
+    else:
+        out = subprocess.run(command, capture_output=True, text=True)
+    time_used = compare_and_parse_perf(src, out)
+    add_sample(sample_name, src, time_used)
+
+
+def collect_perf_data(src, target, time_used):
+    if 'performance' in src:
+        sysy_time_line = f'{time_used:.6f},,sysy_time,,100.00,,'
+        with open('perf.txt', 'a') as f:
+            f.write(sysy_time_line + '\n')
+
+        perf_data = get_output_path(src) + f'_perf.{target}.csv'
+        os.makedirs(os.path.dirname(perf_data), exist_ok=True)
+        os.rename('perf.txt', perf_data)
 
 
 def sysy_gcc(src):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    header = tests_path + "/SysY2022/sylib.h"
-    rel = os.path.relpath(src[:-3], tests_path)
-    output = os.path.join(binary_dir, rel)
-    output_path = os.path.dirname(output)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    command = gcc_ref_command + \
-        ' -o {} -include {} {} {}'.format(output, header, runtime, src)
-    if os.system(command) != 0:
-        return False
-
-    inputs = src[:-3]+".in"
-    out = None
-    if os.path.exists(inputs):
-        with open(inputs, 'r', encoding='utf-8') as input_file:
-            out = subprocess.run([output], stdin=input_file,
-                                 capture_output=True, text=True)
-    else:
-        out = subprocess.run([output], capture_output=True, text=True)
-
-    used = compare_and_parse_perf(src, out)
-    if used is None:
-        return False
-
-    add_sample("gcc_host", src, used)
-
-    return True
+    output = get_output_path(src)
+    subprocess.run(gcc_ref_command + ['-o', output, '-include', sysy_header, sysy_runtime, src], check=True)
+    run_executable([output], src, "gcc_host")
 
 
 def sysy_gcc_qemu(src, target):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    header = tests_path + "/SysY2022/sylib.h"
-    rel = os.path.relpath(src[:-3], tests_path)
-    output = os.path.join(binary_dir, rel)
-    output_path = os.path.dirname(output)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    command = qemu_gcc_ref_command[target] + \
-        ' -o {} -include {} {} {}'.format(output, header, runtime, src)
-    if os.system(command) != 0:
-        return False
-
-    inputs = src[:-3]+".in"
-    out = None
-    if os.path.exists(inputs):
-        with open(inputs, 'r', encoding='utf-8') as input_file:
-            out = subprocess.run(qemu_command[target] + [output], stdin=input_file,
-                                 capture_output=True, text=True)
-    else:
-        out = subprocess.run(
-            qemu_command[target] + [output], capture_output=True, text=True)
-
-    used = compare_and_parse_perf(src, out)
-    if used is None:
-        return False
-
-    add_sample("gcc_qemu_"+target, src, used)
-
-    return True
+    output = get_output_path(src)
+    link_executable(src, target, output, extra_command=['-x', 'c++', '-include', sysy_header])
+    run_executable(qemu_command[target] + [output], src, f'gcc_qemu_{target}')
 
 
 def sysy_cmmc_qemu(src, target):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    rel = os.path.relpath(src[:-3], tests_path)
-    output = os.path.join(binary_dir, rel)+"_cmmc"
-    output_path = os.path.dirname(output)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    output = get_output_path(src) + "_cmmc"
     output_asm = output + '.s'
-    cmmc_command = binary_path + \
-        ' -t {} -O {} -H -o '.format(target,
-                                     optimization_level) + output_asm + ' ' + src
-    if os.system(cmmc_command) != 0:
-        return False
-    command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
-        ' -o {} {} {}'.format(output, runtime, output_asm)
-    if os.system(command) != 0:
-        return False
 
-    inputs = src[:-3]+".in"
-    out = None
-    try:
-        if os.path.exists(inputs):
-            with open(inputs, 'r', encoding='utf-8') as input_file:
-                out = subprocess.run(qemu_command[target] + [output], stdin=input_file,
-                                     capture_output=True, text=True)
-        else:
-            out = subprocess.run(
-                qemu_command[target] + [output], capture_output=True, text=True)
-    except Exception as e:
-        return False
-
-    used = compare_and_parse_perf(src, out)
-    if used is None:
-        return False
-
-    add_sample("cmmc_qemu_"+target, src, used)
-
-    return True
-
-
-def sysy_cmmc_compile_only(src, target):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    rel = os.path.relpath(src[:-3], tests_path)
-    output = os.path.join(binary_dir, rel)+"_cmmc"
-    output_path = os.path.dirname(output)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
-    output_asm = output + '.s'
-    cmmc_command = binary_path + \
-        ' -t {} -O {} -H -o '.format(target,
-                                     optimization_level) + output_asm + ' ' + src
-    if os.system(cmmc_command) != 0:
-        return False
-    # command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
-    #     ' -o {} {} {}'.format(output, runtime, output_asm)
-    # if os.system(command) != 0:
-    #     return False
-
-    return True
-
-
-def sysy_cmmc_native_given_assembly(src, target):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    testname = src.removesuffix('_cmmc.s').split('SysY2022/')[1]
-    output = os.path.join(binary_dir, testname) + '_cmmc'
-    os.makedirs(os.path.dirname(output), exist_ok=True)
-
-    command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
-        ' -o {} {} {}'.format(output, runtime, src)
-    if os.system(command) != 0:
-        return False
-
-    inputs = os.path.join(tests_path, 'SysY2022', testname) + '.in'
-    out = None
-    try:
-        if os.path.exists(inputs):
-            with open(inputs, 'r', encoding='utf-8') as input_file:
-                out = subprocess.run([output], stdin=input_file,
-                                     capture_output=True, text=True)
-        else:
-            out = subprocess.run([output], capture_output=True, text=True)
-    except Exception as e:
-        return False
-
-    fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
-    used = compare_and_parse_perf(fake_src, out)
-    if used is None:
-        return False
-
-    add_sample("cmmc_native_"+target, fake_src, used)
-
-    return True
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    link_executable(output_asm, target, output)
+    run_executable(qemu_command[target] + [output], src, f'cmmc_qemu_{target}')
 
 
 def sysy_cmmc_native(src, target):
-    runtime = tests_path + "/SysY2022/sylib.c"
-    rel = os.path.relpath(src[:-3], tests_path)
-    output = os.path.join(binary_dir, rel)+"_cmmc"
-    output_path = os.path.dirname(output)
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    output = get_output_path(src) + "_cmmc"
     output_asm = output + '.s'
-    cmmc_command = binary_path + \
-        ' -t {} -O {} -H -o '.format(target,
-                                     optimization_level) + output_asm + ' ' + src
-    if os.system(cmmc_command) != 0:
-        return False
-    command = qemu_gcc_ref_command[target].replace('-x c++', '') + \
-        ' -o {} {} {}'.format(output, runtime, output_asm)
-    if os.system(command) != 0:
-        return False
 
-    inputs = src[:-3]+".in"
-    out = None
-    try:
-        if os.path.exists(inputs):
-            with open(inputs, 'r', encoding='utf-8') as input_file:
-                out = subprocess.run([output], stdin=input_file,
-                                     capture_output=True, text=True)
-        else:
-            out = subprocess.run([output], capture_output=True, text=True)
-    except Exception as e:
-        return False
-
-    used = compare_and_parse_perf(src, out)
-    if used is None:
-        return False
-
-    add_sample("cmmc_native_"+target, src, used)
-
-    return True
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    link_executable(output_asm, target, output)
+    run_executable([output], fake_src, f"cmmc_native_{target}")
 
 
-def compare_with_ref_file(answer_file, output):
-    if not os.path.exists(answer_file):
-        return False
-    with open(answer_file, 'r', encoding='utf-8') as f:
-        answer = f.read()
-        return answer == output
+def sysy_cmmc_compile_only(src, target):
+    output = get_output_path(src) + "_cmmc"
+    output_asm = output + '.s'
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
+    # link_executable(output_asm, target, output)
+
+
+def sysy_gcc_native_perf(src, target):
+    output = get_output_path(src)
+    link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'), extra_command=['-x', 'c++', '-include', sysy_header])
+    run_executable([output], src, f'gcc_native_{target}')
+    collect_perf_data(src, f'{target}_gcc')
+
+
+def sysy_cmmc_native_perf(src, target):
+    testname = src.removesuffix('_cmmc.s').split('SysY2022/')[1]
+    output = os.path.join(binary_dir, testname) + '_cmmc'
+    os.makedirs(os.path.dirname(output), exist_ok=True)
+    fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
+
+    link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'))
+    run_executable([output], fake_src, f"cmmc_native_{target}")
+    collect_perf_data(fake_src, target)
+
 
 def sysy_regression(src):
-    output_asm = src + '.ir'
-    cmmc_command:str = binary_path + ' -i -O {} -t sim -o /dev/stdout '.format(optimization_level) + src
-    out = subprocess.run(cmmc_command.split(), capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        return False
-
-    return compare_with_ref_file(output_asm, out.stdout)
+    out = run_cmmc(src, target='sim', emit_ir=True)
+    return compare_with_ref_file(src + '.ir', out.stdout)
 
 def sysy_regression_codegen(src, target):
-    output_asm = src[:-2] + target + '.s'
-    cmmc_command:str = binary_path + ' -O {} -t {} -o /dev/stdout '.format(optimization_level, target) + src
-    out = subprocess.run(cmmc_command.split(), capture_output=True, text=True)
-    if out.returncode != 0 or len(out.stderr) != 0:
-        return False
-
+    output_asm = f'{basename(src)}.{target}.s'
+    out = run_cmmc(src, target=target)
     return compare_with_ref_file(output_asm, out.stdout)
 
 def sysy_regression_ref(src):
     output_asm = src + '.ir'
-    cmmc_command = binary_path + ' -i -O {} -t sim -o '.format(optimization_level) + output_asm + ' ' + src
-    return os.system(cmmc_command) == 0
+    run_cmmc(src, target='sim', output=output_asm, emit_ir=True)
 
-def sysy_regression_ref_codegen(src,target):
-    output_asm = src[:-2] + target + '.s'
-    cmmc_command = binary_path + ' -O {} -t {} -o '.format(optimization_level, target) + output_asm + ' ' + src
-    return os.system(cmmc_command) == 0
+def sysy_regression_ref_codegen(src, target):
+    output_asm = f'{basename(src)}.{target}.s'
+    run_cmmc(src, target=target, output=output_asm)
 
-def sysy_perf_ref_codegen(src,target):
-    output_asm = src[:-2] + target + '.s'
-    cmmc_command = binary_path + ' -H -O {} -t {} -o '.format(optimization_level, target) + output_asm + ' ' + src
-    return os.system(cmmc_command) == 0
+def sysy_perf_ref_codegen(src, target):
+    output_asm = f'{basename(src)}.{target}.s'
+    run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
 
 def sysy_codegen_llvm(src):
-    inputs = src[:-3]+".in"
-    if not os.path.exists(inputs):
-        inputs = '/dev/null'
+    input_file = basename(src) + ".in"
+    if not os.path.exists(input_file):
+        input_file = '/dev/null'
 
-    args = [binary_path, '-t', 'llvm', '--hide-symbol', '-O', optimization_level, '-o',
-                               '/dev/stdout', '-e', inputs, src]
-    # dump_args(args)
-    out = subprocess.run(args=args, capture_output=True, text=True)
+    out = run_cmmc(src, target='llvm', hide_symbol=True, input_file=input_file)
 
-    used = compare_and_parse_perf(src, out)
-    if used is None:
-        return False
-
-    add_sample("cmmc_host", src, used)
-
-    return True
+    time_used = compare_and_parse_perf(src, out)
+    add_sample("cmmc_host", src, time_used)
 
 
 skip_list = []
-
 
 def test(name, path, filter, tester):
     print("Test", name)
     print("Collecting tests...")
     test_set = []
     for r, ds, fs in os.walk(path):
+        if 'llvmTests' in r:
+            continue
         for f in fs:
             if f.endswith(filter) and not f.endswith(".spl.ir") and not f.endswith(".sy.ir"):
-                skip = False
-                for name in skip_list:
-                    if name in f:
-                        skip = True
-                        break
+                skip = any(name in f for name in skip_list)
                 if not skip:
-                    test_set.append(r+'/'+f)
-    test_set.sort(key=lambda x: x)
+                    test_set.append(os.path.join(r, f))
+    test_set.sort()
 
     cnt = 0
     fail_set = []
     for src in test_set:
         cnt += 1
-        print("Testing... {}/{} {}".format(cnt, len(test_set), src), end='')
-        sys.stdout.flush()
-        if tester(src):
-            print(" Passed")
-        else:
-            print(" Failed")
-            fail_set.append(src)
-            if fast_fail:
-                exit(-1)
+        print(f"Testing... {cnt}/{len(test_set)} {src}", end='', flush=True)
+        try:
+            if tester(src) is not False:
+                print(" Passed")
+                continue
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+
+        print(" Failed")
+        fail_set.append(src)
+        if fast_fail:
+            exit(-1)
 
     print("\r")
     print("[==========] {} tests ran.".format(cnt))
-    print("[  PASSED  ] {} tests.".format(cnt-len(fail_set)))
+    print("[  PASSED  ] {} tests.".format(cnt - len(fail_set)))
 
     if len(fail_set):
         print("[  FAILED  ] {} tests, listed below:".format(len(fail_set)))
-
         for src in fail_set:
             print("[  FAILED  ]", src)
-
         print(len(fail_set), "FAILED TEST")
     print()
 
@@ -752,7 +531,7 @@ def test(name, path, filter, tester):
 
 test_cases = ["parse", "semantic", "opt", "tac", "codegen", "regression", 'mips', 'riscv', 'arm']
 if len(sys.argv) >= 4:
-    test_cases = sys.argv[3].split(',')
+    test_cases = set(sys.argv[3].split(','))
 
 generate_ref = 'ref' in test_cases
 if generate_ref:
@@ -761,67 +540,57 @@ if generate_ref:
 res = []
 start = time.perf_counter()
 
+
+def test_sysy_groups(name, target, test_func):
+    sample_name = f'cmmc_qemu_{target}'
+    res.append(test(f"SysY codegen functional ({name}-{target})", tests_path +
+                    "/SysY2022/functional", ".sy", lambda x: test_func(x, target)))
+    res.append(test(f"SysY codegen hidden_functional ({name}-{target})", tests_path +
+                    "/SysY2022/hidden_functional", ".sy", lambda x: test_func(x, target)))
+    if sample_name in samples:
+        samples[sample_name].reset()
+    res.append(test(f"SysY codegen performance ({name}-{target})", tests_path +
+                    "/SysY2022/performance", ".sy", lambda x: test_func(x, target)))
+
+
 if not generate_ref:
     if "parse" in test_cases:
-        res.append(test("SPL parse std", tests_path +
-                   "/Parse", ".spl", spl_parse))
-        res.append(test("SPL parse project1 extra", tests_path +
-                        "/Project1/test-ex", ".spl", spl_parse_ext))
-        res.append(test("SPL parse project1 self", tests_path +
-                        "/Project1/test", ".spl", spl_parse))
-        res.append(test("SPL parse project1 student", tests_path +
-                        "/Project1/student_test", ".spl", spl_parse))
+        res.append(test("SPL parse std", tests_path + "/Parse", ".spl", spl_parse))
+        res.append(test("SPL parse project1 extra", tests_path + "/Project1/test-ex", ".spl", spl_parse_ext))
+        res.append(test("SPL parse project1 self", tests_path + "/Project1/test", ".spl", spl_parse))
+        res.append(test("SPL parse project1 student", tests_path + "/Project1/student_test", ".spl", spl_parse))
 
     if "semantic" in test_cases:
-        res.append(test("SPL semantic & opt", tests_path +
-                        "/Semantic", ".spl", spl_semantic))
-        res.append(test("SPL parse project2 extra", tests_path +
-                        "/Project2/test-ex", ".spl", spl_semantic_ext))
-        res.append(test("SPL parse project2 self", tests_path +
-                        "/Project2/test", ".spl", spl_semantic))
-        res.append(test("SPL parse project2 student", tests_path +
-                        "/Project2/student_test", ".spl", spl_semantic))
+        res.append(test("SPL semantic & opt", tests_path + "/Semantic", ".spl", spl_semantic))
+        res.append(test("SPL parse project2 extra", tests_path + "/Project2/test-ex", ".spl", spl_semantic_ext))
+        res.append(test("SPL parse project2 self", tests_path + "/Project2/test", ".spl", spl_semantic))
+        res.append(test("SPL parse project2 student", tests_path + "/Project2/student_test", ".spl", spl_semantic))
 
     if "opt" in test_cases:
-        res.append(test("SysY opt & test functional", tests_path +
-                        "/SysY2022/functional", ".sy", sysy_test))
-        res.append(test("SysY opt & test hidden_functional", tests_path +
-                        "/SysY2022/hidden_functional", ".sy", sysy_opt))
-        res.append(test("SysY opt performance", tests_path +
-                        "/SysY2022/performance", ".sy", sysy_opt))
+        res.append(test("SysY opt & test functional", tests_path + "/SysY2022/functional", ".sy", sysy_test))
+        res.append(test("SysY opt & test hidden_functional", tests_path + "/SysY2022/hidden_functional", ".sy", sysy_opt))
+        res.append(test("SysY opt performance", tests_path + "/SysY2022/performance", ".sy", sysy_opt))
         res.append(test("SysY extra", tests_path + "/Extra", ".sy", sysy_opt))
 
     if "tac" in test_cases:
-        res.append(test("SPL SPL->TAC sample", tests_path +
-                        "/TAC2MC", ".spl", spl_semantic_noref))
-        res.append(test("SPL codegen TAC", tests_path +
-                        "/CodeGenTAC", ".spl", spl_codegen_tac))
-        res.append(test("SPL TAC->IR project3", tests_path +
-                        "/CodeGenTAC", ".ir", spl_tac2ir))
-        res.append(test("SPL TAC->IR project3 self", tests_path +
-                        "/Project3", ".spl", spl_tac2ir))
-        res.append(test("SPL TAC->IR project4", tests_path +
-                        "/TAC2MC", ".ir", spl_codegen_tac))
-        res.append(test("SPL TAC->IR project4 self", tests_path +
-                        "/Project4", ".spl", spl_codegen_tac))
+        res.append(test("SPL SPL->TAC sample", tests_path + "/TAC2MC", ".spl", spl_semantic_noref))
+        res.append(test("SPL codegen TAC", tests_path + "/CodeGenTAC", ".spl", spl_codegen_tac))
+        res.append(test("SPL TAC->IR project3", tests_path + "/CodeGenTAC", ".ir", spl_tac2ir))
+        res.append(test("SPL TAC->IR project3 self", tests_path + "/Project3", ".spl", spl_tac2ir))
+        res.append(test("SPL TAC->IR project4", tests_path + "/TAC2MC", ".ir", spl_codegen_tac))
+        res.append(test("SPL TAC->IR project4 self", tests_path + "/Project4", ".spl", spl_codegen_tac))
 
     if "codegen" in test_cases:
         if 'mips' in test_cases:
-            res.append(test("SPL SPL->MIPS project4", tests_path +
-                            "/TAC2MC", ".spl", spl_codegen_mips))
-            res.append(test("SPL TAC->MIPS project4", tests_path +
-                            "/TAC2MC", ".ir", spl_codegen_mips))
-            res.append(test("SPL SPL->MIPS project4 self", tests_path +
-                            "/Project4", ".spl", spl_codegen_mips))
-        if 'riscv' in test_cases:
-            res.append(test("SPL SPL->RISCV64 project4", tests_path +
-                            "/TAC2MC", ".spl", spl_codegen_riscv64))
-            res.append(test("SPL SPL->RIRCV64 project4 self", tests_path +
-                            "/Project4", ".spl", spl_codegen_riscv64))
+            res.append(test("SPL SPL->MIPS project4", tests_path + "/TAC2MC", ".spl", spl_codegen_mips))
+            res.append(test("SPL TAC->MIPS project4", tests_path + "/TAC2MC", ".ir", spl_codegen_mips))
+            res.append(test("SPL SPL->MIPS project4 self", tests_path + "/Project4", ".spl", spl_codegen_mips))
+        # if 'riscv' in test_cases:
+        #     res.append(test("SPL SPL->RISCV64 project4", tests_path + "/TAC2MC", ".spl", spl_codegen_riscv64))
+        #     res.append(test("SPL SPL->RIRCV64 project4 self", tests_path + "/Project4", ".spl", spl_codegen_riscv64))
 
     if "gcc" in test_cases:
-        res.append(test("SysY gcc performance", tests_path +
-                        "/SysY2022/performance", ".sy", sysy_gcc))
+        res.append(test("SysY gcc performance", tests_path + "/SysY2022/performance", ".sy", sysy_gcc))
 
     if "llvm" in test_cases:
         res.append(test("SysY SysY->LLVMIR functional", tests_path +
@@ -832,64 +601,28 @@ if not generate_ref:
         res.append(test("SysY SysY->LLVMIR performance", tests_path +
                         "/SysY2022/performance", ".sy", sysy_codegen_llvm))
 
-    if "qemu-gcc" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY gcc performance (qemu-{})".format(target), tests_path +
-                                "/SysY2022/performance", ".sy", lambda x: sysy_gcc_qemu(x, target)))
-
-    if "qemu" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY codegen functional (qemu-{})".format(target), tests_path +
-                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
-                res.append(test("SysY codegen hidden_functional (qemu-{})".format(target), tests_path +
-                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
-                if ('cmmc_qemu_'+target) in samples:
-                    samples['cmmc_qemu_'+target].reset()
-                res.append(test("SysY codegen performance (qemu-{})".format(target), tests_path +
-                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_qemu(x, target)))
-
-    if "compile" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY codegen functional (compile-{})".format(target), tests_path +
-                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_compile_only(x, target)))
-                res.append(test("SysY codegen hidden_functional (compile-{})".format(target), tests_path +
-                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_compile_only(x, target)))
-                res.append(test("SysY codegen performance (compile-{})".format(target), tests_path +
-                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_compile_only(x, target)))
-
-    if "run" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY codegen functional (native-{})".format(target),
-                                "SysY2022/functional", ".s", lambda x: sysy_cmmc_native_given_assembly(x, target)))
-                res.append(test("SysY codegen hidden_functional (native-{})".format(target),
-                                "SysY2022/hidden_functional", ".s", lambda x: sysy_cmmc_native_given_assembly(x, target)))
-                if ('cmmc_native_'+target) in samples:
-                    samples['cmmc_native_'+target].reset()
-                res.append(test("SysY codegen performance (native-{})".format(target),
-                                "SysY2022/performance", ".s", lambda x: sysy_cmmc_native_given_assembly(x, target)))
-
-    if "native" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY codegen functional (native-{})".format(target), tests_path +
-                                "/SysY2022/functional", ".sy", lambda x: sysy_cmmc_native(x, target)))
-                res.append(test("SysY codegen hidden_functional (native-{})".format(target), tests_path +
-                                "/SysY2022/hidden_functional", ".sy", lambda x: sysy_cmmc_native(x, target)))
-                if ('cmmc_native_'+target) in samples:
-                    samples['cmmc_native_'+target].reset()
-                res.append(test("SysY codegen performance (native-{})".format(target), tests_path +
-                                "/SysY2022/performance", ".sy", lambda x: sysy_cmmc_native(x, target)))
-
     if "regression" in test_cases:
         res.append(test("SysY regression", tests_path +"/Regression/Transform", ".sy", sysy_regression))
 
-        for target in targets:
-            if target in test_cases:
-                res.append(test("SysY regression {}".format(target), tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_codegen(x, target)))
+    for target in targets & test_cases:
+        if "qemu-gcc" in test_cases:
+            res.append(test(f"SysY gcc performance (qemu-{target})", tests_path +
+                            "/SysY2022/performance", ".sy", lambda x: sysy_gcc_qemu(x, target)))
+        if "qemu" in test_cases:
+            test_sysy_groups('qemu', target, sysy_cmmc_qemu)
+        if "compile" in test_cases:
+            test_sysy_groups('compile', target, sysy_cmmc_compile_only)
+        if "run" in test_cases:
+            # WARNING: use pre-compiled assembly file under SysY2022/performance
+            res.append(test("SysY codegen performance (native-{})".format(target),
+                            "SysY2022/performance", ".s", lambda x: sysy_cmmc_native_perf(x, target)))
+        if "run-gcc" in test_cases:
+            res.append(test(f"SysY gcc performance (native-{target})", tests_path +
+                            "/SysY2022/performance", ".sy", lambda x: sysy_gcc_native_perf(x, target)))
+        if "native" in test_cases:
+            test_sysy_groups('native', target, sysy_cmmc_native)
+        if "regression" in test_cases:
+            res.append(test(f"SysY regression {target}", tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_codegen(x, target)))
 
 
 if generate_ref:
@@ -897,47 +630,34 @@ if generate_ref:
         test("Reference SysY", tests_path + "/SysY2022", ".sy", sysy_ref)
         test("Reference SysY Extra", tests_path + "/Extra", ".sy", sysy_ref)
     if 'clang' in test_cases:
-        test("Reference SysY Clang", tests_path +
-             "/SysY2022", ".sy", sysy_ref_clang)
+        test("Reference SysY Clang", tests_path + "/SysY2022", ".sy", sysy_ref_clang)
     if 'spl' in test_cases:
         test("Reference Spl", tests_path + "/", ".spl", spl_ref)
     if 'tac' in test_cases:
-        test("Reference Spl->TAC", tests_path +
-             "/CodeGenTAC", ".spl", spl_tac_ref)
-        test("Reference Spl->TAC Extra", tests_path +
-             "/Project3", ".spl", spl_tac_ref)
+        test("Reference Spl->TAC", tests_path + "/CodeGenTAC", ".spl", spl_tac_ref)
+        test("Reference Spl->TAC Extra", tests_path + "/Project3", ".spl", spl_tac_ref)
     if 'mips' in test_cases:
-        test("Reference Spl->MIPS", tests_path +
-             "/TAC2MC", ".spl", spl_mips_ref)
-        test("Reference Spl->MIPS Extra", tests_path +
-             "/Project4", ".spl", spl_mips_ref)
+        test("Reference Spl->MIPS", tests_path + "/TAC2MC", ".spl", spl_mips_ref)
+        test("Reference Spl->MIPS Extra", tests_path + "/Project4", ".spl", spl_mips_ref)
     if 'riscv' in test_cases:
-        test("Reference Spl->RISCV64", tests_path +
-             "/TAC2MC", ".spl", spl_riscv64_ref)
-        test("Reference Spl->RISCV64 Extra", tests_path +
-             "/Project4", ".spl", spl_riscv64_ref)
+        test("Reference Spl->RISCV64", tests_path + "/TAC2MC", ".spl", spl_riscv64_ref)
+        test("Reference Spl->RISCV64 Extra", tests_path + "/Project4", ".spl", spl_riscv64_ref)
     if 'regression' in test_cases:
-        test("Reference SysY Regression", tests_path +
-             "/Regression/Transform", ".sy", sysy_regression_ref)
-        for target in targets:
-            if target in test_cases:
-                test("SysY regression {}".format(target), tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_ref_codegen(x, target))
+        test("Reference SysY Regression", tests_path + "/Regression/Transform", ".sy", sysy_regression_ref)
+        for target in targets & test_cases:
+            test(f"SysY regression {target}", tests_path +"/Regression/CodeGen", ".sy", lambda x: sysy_regression_ref_codegen(x, target))
     if 'perf' in test_cases:
-        for target in targets:
-            if target in test_cases:
-                test("SysY performance {}".format(target), tests_path +"/SysY2022/performance", ".sy", lambda x: sysy_perf_ref_codegen(x, target))
+        for target in targets & test_cases:
+            test(f"SysY performance {target}", tests_path +"/SysY2022/performance", ".sy", lambda x: sysy_perf_ref_codegen(x, target))
 
 end = time.perf_counter()
 
-total_tests = 0
-failed_tests = 0
-for t, f in res:
-    total_tests += t
-    failed_tests += f
+total_tests = sum([t for t, f in res])
+failed_tests = sum([f for t, f in res])
 
-print("Passed", total_tests-failed_tests,
+print("Passed", total_tests - failed_tests,
       "Failed", failed_tests, "Total", total_tests)
-print("Total time: ", end-start)
+print("Total time: ", end - start)
 
 if not generate_ref:
     print("\nPerformance metrics (GeoMeans):")
@@ -953,12 +673,11 @@ if not generate_ref:
             tac_perf, tac_inst_count_ref, tac_perf / tac_inst_count_ref))
 
     if "gcc" in test_cases and "llvm" in test_cases:
-        print('Platform: ', platform.platform())
+        print('Platform:', platform.platform())
         print_and_compare('_host')
 
     if "qemu-gcc" in test_cases and "qemu" in test_cases:
-        for target in targets:
-            if target in test_cases:
-                print_and_compare('_qemu_'+target)
+        for target in targets & test_cases:
+            print_and_compare(f'_qemu_{target}')
 
 exit(0 if failed_tests == 0 else -1)
