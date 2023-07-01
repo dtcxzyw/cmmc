@@ -470,3 +470,29 @@ int doubleNeg(int x) {
 int absSRem2(int x) {
     return iabs1(x % 2);
 }
+int sdivmul1(int x) {
+    return x * 2 / 2;
+}
+int sdivmul2(int x) {
+    return x * -4 / 2;
+}
+int multi_select(int x, int y) {
+    int v1 = (x == 93 ? y - 1: y);
+    int v2 = (x == 91 ? v1 + 1: v1);
+    return v2;
+}
+int sub_add(int a, int b) {
+    return b - (a + b);
+}
+int sremmul(int x) {
+    return x * -2 % 2;
+}
+int sremneg(int x) {
+    return (-x) % 2;
+}
+int sdivneg(int x) {
+    return (-x) / 2;
+}
+int srem2eq(int x) {
+    return x % 2 == 1;
+}

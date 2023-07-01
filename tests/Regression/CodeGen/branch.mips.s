@@ -274,3 +274,13 @@ label280:
 	sw $zero, 0($a2)
 	b label281
 	nop
+.globl normal_srem
+normal_srem:
+	li $t0, 1000000007
+	div $zero, $a0, $t0
+	mfhi $v0
+	slti $t1, $v0, 0
+	addu $t0, $v0, $t0
+	movn $v0, $t0, $t1
+	jr $ra
+	nop

@@ -152,7 +152,7 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %82(prob = 0.5), ^b12, ^while.body2;
   ^while.body8:
     i32 %83 = sdiv i32 %35, i32 %73;
-    i32 %84 = srem i32 %83, i32 2;
+    i32 %84 = and i32 %83, i32 -2147483647;
     i1 %85 = scmp eq i32 %84, i32 1;
     cbr i1 %85(prob = 0.5), ^if.then3, ^b13;
   ^while.header2:
@@ -170,12 +170,12 @@ func @main() -> i32 { NoRecurse Entry } {
     cbr i1 %92(prob = 0.5), ^while.body10, ^while.body1;
   ^b13:
     i32 %93 = sdiv i32 %44, i32 %73;
-    i32 %94 = srem i32 %93, i32 2;
+    i32 %94 = and i32 %93, i32 -2147483647;
     i1 %95 = scmp eq i32 %94, i32 1;
     cbr i1 %95(prob = 0.5), ^if.then3, ^if.else1;
   ^while.body9:
     i32 %96 = sdiv i32 %35, i32 %86;
-    i32 %97 = srem i32 %96, i32 2;
+    i32 %97 = and i32 %96, i32 -2147483647;
     i1 %98 = scmp eq i32 %97, i32 1;
     cbr i1 %98(prob = 0.5), ^b15, ^if.else2;
   ^b14:
@@ -192,7 +192,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^b16;
   ^b15:
     i32 %103 = sdiv i32 %44, i32 %86;
-    i32 %104 = srem i32 %103, i32 2;
+    i32 %104 = and i32 %103, i32 -2147483647;
     i1 %105 = scmp eq i32 %104, i32 1;
     cbr i1 %105(prob = 0.5), ^if.then4, ^if.else2;
   ^if.then4:

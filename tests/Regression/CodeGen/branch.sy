@@ -110,3 +110,9 @@ void bfgt(float x, float y, int arr[]) {
     if(x > y)
         arr[0] = 0;
 }
+int normal_srem(int x) {
+    int y = x % 1000000007;
+    if(y < 0)
+        y += 1000000007;
+    return y;
+}

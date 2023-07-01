@@ -193,3 +193,19 @@ label275:
 label274:
 	sw zero, 0(a2)
 	j label275
+.globl normal_srem
+normal_srem:
+	li a1, 1152921497
+	mul a1, a0, a1
+	srai a2, a1, 60
+	srli a1, a1, 63
+	add a1, a1, a2
+	li a2, 1000000007
+	mulw a1, a1, a2
+	subw a1, a0, a1
+	slti a3, a1, 0
+	addw a0, a1, a2
+	bne a3, zero, label299
+	mv a0, a1
+label299:
+	ret

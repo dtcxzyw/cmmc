@@ -520,8 +520,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return v2;
             }
 
+            // FIXME
             // mul (add x, c1) c2 -> add (mul x, c2) (mul c1, c2)
-            // if(mul(add(any(v1), int_(i1)), capture(int_(i2), v2))(matchCtx)) {
+            // if(mul(oneUse(add(any(v1), int_(i1))), capture(int_(i2), v2))(matchCtx)) {
             //     return builder.makeOp<BinaryInst>(InstructionID::Add, builder.makeOp<BinaryInst>(InstructionID::Mul, v1, v2),
             //                                       makeIntLike(i1 * i2, inst));
             // }
@@ -803,6 +804,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(abs(srem(any(v1), cint_(2)))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(1, v1));
 
+            // (srem x, 2) == 1 -> (and x, -max) == 1
+            if(scmp(cmp, oneUse(srem(any(v1), cint_(2))), capture(cint_(1), v2))(matchCtx) && cmp == CompareOp::Equal) {
+                const auto val = builder.makeOp<BinaryInst>(
+                    InstructionID::And, v1,
+                    makeIntLike(-((static_cast<intmax_t>(1) << (v1->getType()->as<IntegerType>()->getBitwidth() - 1)) - 1), v1));
+                return builder.makeOp<CompareInst>(inst->getInstID(), CompareOp::Equal, val, v2);
+            }
+
             // (and x, 1) != 0 -> trunc x to i1
             if(scmp(cmp, and_(any(v1), cint_(1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual) {
                 return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(), v1);
@@ -812,6 +821,32 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(inst->getType()->isBoolean() && and_(oneUse(ztrunc(any(v1))), oneUse(ztrunc(any(v2))))(matchCtx)) {
                 return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(),
                                                 builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
+            }
+
+            // sdiv (mul x, c1) c2 where c1 % c2 == 0 -> mul x (c1/c2)
+            if(sdiv(mul(any(v1), int_(i1)), int_(i2))(matchCtx) && i2 && i1 % i2 == 0 &&
+               !(i1 == std::numeric_limits<intmax_t>::min() && i2 == -1)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Mul, v1, makeIntLike(i1 / i2, v1));
+            }
+
+            // srem (mul x, c1) c2 where c1 % c2 == 0 -> 0
+            if(srem(mul(any(v1), int_(i1)), int_(i2))(matchCtx) && i2 && i1 % i2 == 0) {
+                return makeIntLike(0, inst);
+            }
+
+            // sdiv (neg x), c1 -> sdiv x, -c1
+            if(sdiv(oneUse(neg(any(v1))), int_(i1))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::SDiv, v1, makeIntLike(-i1, v1));
+            }
+
+            // srem (neg x), c1 -> neg (srem x, c1)
+            if(srem(oneUse(neg(any(v1))), int_(i1))(matchCtx)) {
+                return makeNeg(builder.makeOp<BinaryInst>(InstructionID::SRem, v1, makeIntLike(i1, v1)));
+            }
+
+            // b - (a + b) -> -a
+            if(sub(any(v1), add(any(v2), any(v3)))(matchCtx) && (v1 == v2 || v1 == v3)) {
+                return makeNeg(v1 == v2 ? v3 : v2);
             }
 
             return nullptr;
