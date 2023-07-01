@@ -8,79 +8,79 @@ v29 := v3 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v3 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 v3 := v31
 v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 GOTO label107
 LABEL label27 :
 v5 := #0
 v6 := v5
 v7 := #1
-IF v7 > v23 GOTO label95
+IF v23 < v7 GOTO label95
 v40 := v7 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v5 + v42
-IF v47 != v25 GOTO label50
+IF v25 != v47 GOTO label50
 WRITE v7
 *v41 := #0
 v52 := v5 + #1
 v12 := v52
 v13 := #0
-IF v52 != v23 GOTO label55
+IF v23 != v52 GOTO label55
 GOTO label95
 LABEL label107 :
 v3 := v31
@@ -88,74 +88,74 @@ v29 := v31 * #4
 v30 := &x21 + v29
 *v30 := #1
 v31 := v31 + #1
-IF v31 > v23 GOTO label34
+IF v23 < v31 GOTO label34
 GOTO label107
 LABEL label34 :
 v5 := #0
 v6 := v5
 v7 := #1
-IF v7 > v23 GOTO label95
+IF v23 < v7 GOTO label95
 v40 := v7 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v5 + v42
-IF v47 != v25 GOTO label50
+IF v25 != v47 GOTO label50
 WRITE v7
 *v41 := #0
 v52 := v5 + #1
 v12 := v52
 v13 := #0
-IF v52 != v23 GOTO label55
+IF v23 != v52 GOTO label55
 GOTO label95
 LABEL label50 :
 v12 := v5
 v13 := v47
-IF v5 != v23 GOTO label55
+IF v23 != v5 GOTO label55
 GOTO label95
 LABEL label55 :
 v15 := v12
 v16 := v13
-IF v7 != v23 GOTO label19
+IF v23 != v7 GOTO label19
 v18 := #0
 v61 := v18 + #1
 v5 := v12
 v6 := v13
 v7 := v61
-IF v61 > v23 GOTO label95
+IF v23 < v61 GOTO label95
 v40 := v61 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v13 + v42
-IF v47 != v25 GOTO label50
+IF v25 != v47 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v12 + #1
 v12 := v52
 v13 := #0
-IF v52 != v23 GOTO label55
+IF v23 != v52 GOTO label55
 GOTO label95
 LABEL label45 :
 v15 := v5
 v16 := v6
-IF v7 != v23 GOTO label19
+IF v23 != v7 GOTO label19
 v18 := #0
 v61 := v18 + #1
 v7 := v61
-IF v61 > v23 GOTO label95
+IF v23 < v61 GOTO label95
 v40 := v61 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v6 + v42
-IF v47 != v25 GOTO label50
+IF v25 != v47 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v5 + #1
 v12 := v52
 v13 := #0
-IF v52 != v23 GOTO label55
+IF v23 != v52 GOTO label55
 GOTO label95
 LABEL label19 :
 v18 := v7
@@ -163,18 +163,18 @@ v61 := v7 + #1
 v5 := v15
 v6 := v16
 v7 := v61
-IF v61 > v23 GOTO label95
+IF v23 < v61 GOTO label95
 v40 := v61 * #4
 v41 := &x21 + v40
 v42 := *v41
 IF v42 != #1 GOTO label45
 v47 := v16 + v42
-IF v47 != v25 GOTO label50
+IF v25 != v47 GOTO label50
 WRITE v61
 *v41 := #0
 v52 := v15 + #1
 v12 := v52
 v13 := #0
-IF v52 != v23 GOTO label55
+IF v23 != v52 GOTO label55
 LABEL label95 :
 RETURN #0

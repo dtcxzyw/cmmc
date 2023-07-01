@@ -70,7 +70,7 @@ LABEL label24 :
 WRITE v18
 v8 := v18
 v9 := v17
-IF v17 <= v18 GOTO label13
+IF v18 >= v17 GOTO label13
 v30 := v17 / v18
 v31 := v18 * v30
 v32 := v17 - v31
@@ -88,7 +88,7 @@ LABEL label50 :
 WRITE v16
 v8 := v18
 v9 := v17
-IF v17 <= v18 GOTO label13
+IF v18 >= v17 GOTO label13
 v30 := v17 / v18
 v31 := v18 * v30
 v32 := v17 - v31
@@ -102,7 +102,7 @@ RETURN #0
 LABEL label35 :
 v9 := v8
 v8 := v32
-IF v9 <= v32 GOTO label13
+IF v32 >= v9 GOTO label13
 v30 := v9 / v32
 v31 := v32 * v30
 v32 := v9 - v31
@@ -116,7 +116,7 @@ IF v40 != #0 GOTO label43
 GOTO label55
 LABEL label43 :
 v8 := v40
-IF v9 <= v40 GOTO label13
+IF v40 >= v9 GOTO label13
 v30 := v9 / v40
 v31 := v40 * v30
 v32 := v9 - v31

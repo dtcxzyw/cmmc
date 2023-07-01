@@ -3,7 +3,7 @@ PARAM v26
 PARAM v25
 PARAM v24
 v3 := v25
-IF v25 >= v26 GOTO label29
+IF v26 <= v25 GOTO label29
 v31 := v25 * #4
 v32 := v24 + v31
 v33 := *v32
@@ -15,7 +15,7 @@ v73 := v26 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -26,7 +26,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -37,7 +37,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 GOTO label174
 LABEL label8 :
 v38 := v6 + #-1
@@ -47,7 +47,7 @@ ARG v38
 v39 := CALL QuickSort
 v40 := v6 + #1
 v3 := v40
-IF v40 >= v26 GOTO label29
+IF v26 <= v40 GOTO label29
 v31 := v40 * #4
 v32 := v24 + v31
 v33 := *v32
@@ -59,7 +59,7 @@ v73 := v26 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -70,7 +70,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -81,7 +81,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 GOTO label174
 LABEL label43 :
 v12 := #0
@@ -93,7 +93,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -104,7 +104,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -115,7 +115,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -130,75 +130,75 @@ v53 := *v52
 *v49 := v53
 *v52 := v50
 v15 := v6
-IF v6 >= v10 GOTO label56
+IF v10 <= v6 GOTO label56
 v68 := v6 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v6 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v67 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 LABEL label178 :
 v67 := v15 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 GOTO label170
 LABEL label56 :
 v17 := #0
 IF v17 == #0 GOTO label18
 v67 := v15 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v67 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v67 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
@@ -219,7 +219,7 @@ v73 := v10 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -230,7 +230,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -241,7 +241,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -251,29 +251,29 @@ v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v15 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v67 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 v68 := v67 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
 v67 := v67 + #1
 v15 := v67
-IF v67 >= v10 GOTO label56
+IF v10 <= v67 GOTO label56
 GOTO label170
 LABEL label160 :
 v72 := v10 + #-1
@@ -289,7 +289,7 @@ v73 := v10 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -304,7 +304,7 @@ v68 := v15 * #4
 v69 := v24 + v68
 v70 := *v69
 v77 := #1
-IF v70 <= v33 GOTO label79
+IF v33 >= v70 GOTO label79
 v77 := #0
 v17 := v77
 IF v77 == #0 GOTO label18
@@ -319,7 +319,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13
@@ -330,7 +330,7 @@ v73 := v72 * #4
 v74 := v24 + v73
 v75 := *v74
 v80 := #1
-IF v75 >= v33 GOTO label82
+IF v33 <= v75 GOTO label82
 v80 := #0
 v12 := v80
 IF v80 == #0 GOTO label13

@@ -68,7 +68,7 @@ public:
             ctx.emitInst(MIRInst{ TAC::Arg }.setOperand<0>(ctx.mapOperand(inst->getOperand(idx))));
         }
         auto calleeOperand = MIROperand::asReloc(ctx.mapGlobal(callee)->reloc.get());
-        auto ret = ctx.newVReg(inst->getType());
+        auto ret = ctx.newVReg(OperandType::Int32);
         ctx.emitInst(MIRInst{ TAC::Call }.setOperand<0>(ret).setOperand<1>(calleeOperand));
         if(!inst->getType()->isVoid()) {
             ctx.addOperand(inst, ret);
