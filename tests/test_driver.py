@@ -24,9 +24,9 @@ qemu_command = {
 gcc_ref_command = "gcc -x c++ -O3 -DNDEBUG -march=native -s -funroll-loops -ffp-contract=on -w ".split()
 clang_ref_command = "clang -Qn -O3 -DNDEBUG -emit-llvm -fno-slp-vectorize -fno-vectorize -mllvm -vectorize-loops=false -S -ffp-contract=on -w ".split()
 qemu_gcc_ref_command = {
-    'riscv': "riscv64-linux-gnu-gcc-11 -O3 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ".split(),
-    'mips': "mipsel-linux-gnu-gcc-10 -O3 -DNDEBUG -march=mips32r5 -Wa,--relax-branch -mhard-float -ffp-contract=on -w ".split(),
-    'arm': "arm-linux-gnueabihf-gcc-12 -O3 -DNDEBUG -march=armv7 -mfpu=vfpv4 -ffp-contract=on -w -no-pie ".split(),
+    'riscv': "riscv64-linux-gnu-gcc-11 -O2 -DNDEBUG -march=rv64gc -mabi=lp64d -mcmodel=medlow -ffp-contract=on -w ".split(),
+    'mips': "mipsel-linux-gnu-gcc-10 -O2 -DNDEBUG -march=mips32r5 -Wa,--relax-branch -mhard-float -ffp-contract=on -w ".split(),
+    'arm': "arm-linux-gnueabihf-gcc-12 -O2 -DNDEBUG -march=armv7 -mfpu=vfpv4 -ffp-contract=on -w -no-pie ".split(),
 }
 targets = set(['mips', 'riscv', 'arm'])
 
@@ -381,6 +381,7 @@ def run_executable(command, src, sample_name):
         out = subprocess.run(command, capture_output=True, text=True)
     time_used = compare_and_parse_perf(src, out)
     add_sample(sample_name, src, time_used)
+    return time_used
 
 
 def collect_perf_data(src, target, time_used):
@@ -433,9 +434,9 @@ def sysy_cmmc_compile_only(src, target):
 
 def sysy_gcc_native_perf(src, target):
     output = get_output_path(src)
-    link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'), extra_command=['-x', 'c++', '-include', sysy_header])
-    run_executable([output], src, f'gcc_native_{target}')
-    collect_perf_data(src, f'{target}_gcc')
+    subprocess.run(gcc_ref_command + ['-o', output, '-include', sysy_header, os.path.join(tests_path, 'SysY2022/perf/runtime.c'), src], check=True)
+    time_used = run_executable([output], src, f'gcc_native_{target}')
+    collect_perf_data(src, f'{target}_gcc', time_used)
 
 
 def sysy_cmmc_native_perf(src, target):
@@ -445,8 +446,8 @@ def sysy_cmmc_native_perf(src, target):
     fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
 
     link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'))
-    run_executable([output], fake_src, f"cmmc_native_{target}")
-    collect_perf_data(fake_src, target)
+    time_used = run_executable([output], fake_src, f"cmmc_native_{target}")
+    collect_perf_data(fake_src, target, time_used)
 
 
 def sysy_regression(src):
@@ -529,7 +530,7 @@ def test(name, path, filter, tester):
     return len(test_set), len(fail_set)
 
 
-test_cases = ["parse", "semantic", "opt", "tac", "codegen", "regression", 'mips', 'riscv', 'arm']
+test_cases = set(["parse", "semantic", "opt", "tac", "codegen", "regression", 'mips', 'riscv', 'arm'])
 if len(sys.argv) >= 4:
     test_cases = set(sys.argv[3].split(','))
 
@@ -602,7 +603,7 @@ if not generate_ref:
                         "/SysY2022/performance", ".sy", sysy_codegen_llvm))
 
     if "regression" in test_cases:
-        res.append(test("SysY regression", tests_path +"/Regression/Transform", ".sy", sysy_regression))
+        res.append(test("SysY regression", tests_path + "/Regression/Transform", ".sy", sysy_regression))
 
     for target in targets & test_cases:
         if "qemu-gcc" in test_cases:
