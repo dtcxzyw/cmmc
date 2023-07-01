@@ -1,0 +1,18 @@
+{
+  "arm": {
+    "346de76b54aa92b9bd5fa523ad686c48ee9b6af6": {
+      "branch-load-misses": 8755,
+      "branch-loads": 1352786,
+      "cycles": 14302528,
+      "iTLB-load-misses": 1733,
+      "inst_retired": 14802063,
+      "inst_spec": 15336195,
+      "instructions": 14809080,
+      "sysy_time": 0.010247,
+      "task-clock": 9.6
+    }
+  },
+  "arm_gcc": {
+    "sysy_time": 0.009821
+  }
+}
