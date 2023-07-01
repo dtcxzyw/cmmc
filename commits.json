@@ -34,6 +34,11 @@
     "parent": "569de15b0c73b5c4753a65e91196ec62cefc3958",
     "time": "2023-07-01 23:47:11 +0800"
   },
+  "48d1d909299606555ee6fd868cbcd8648fe7ee9d": {
+    "message": "revert: revert executing perf with root privilege",
+    "parent": "99c96ab3877598e40db347786b94293026922ee6",
+    "time": "2023-07-02 03:27:33 +0800"
+  },
   "4d6d8fc8749723ae232ca54588f127c495075ac8": {
     "message": "feat(transform): remove zeros from global variables",
     "parent": "84648e12b6bda57ce06277c9d225d6f6c00a1481",
@@ -63,6 +68,11 @@
     "message": "misc: update ref",
     "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
     "time": "2023-07-02 00:59:38 +0800"
+  },
+  "99c96ab3877598e40db347786b94293026922ee6": {
+    "message": "ci: support collecting multiple commits at one push",
+    "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
+    "time": "2023-07-02 03:27:32 +0800"
   },
   "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
     "message": "misc: update ref",
