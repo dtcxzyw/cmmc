@@ -66,3 +66,11 @@ int smax_associate(int x, int y) {
     return smax_lt(x, smax_lt(y,x ));
 }
 
+int clamp_mask(int x) {
+    int y = x > 0 ? x : 0;
+    return x > 127 ? 127 : y;
+}
+
+int smax_zero(int x) {
+    return x > 0 ? x : 0;
+}

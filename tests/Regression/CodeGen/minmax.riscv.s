@@ -33,3 +33,13 @@ smin_ge:
 smax_ge:
 	max a0, a0, a1
 	ret
+.globl clamp_mask
+clamp_mask:
+	max a0, a0, zero
+	li a1, 127
+	min a0, a0, a1
+	ret
+.globl smax_zero
+smax_zero:
+	max a0, a0, zero
+	ret

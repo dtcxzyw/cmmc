@@ -1,6 +1,6 @@
 .arch armv7ve
 .data
-.data
+.bss
 .align 4
 a:
 	.zero	40000
@@ -22,7 +22,7 @@ main:
 	movw r5, #:lower16:a
 	movt r5, #:upper16:a
 	cmp r6, #0
-	ble label12
+	ble label13
 	mov r0, r7
 	mov r1, r6
 label2:
@@ -131,7 +131,7 @@ label2:
 	cmp r2, r6
 	ble label6
 	cmp r1, #0
-	ble label12
+	ble label13
 	b label2
 label6:
 	ldr r6, [r5, r2, lsl #2]
@@ -151,42 +151,45 @@ label6:
 	asr r9, r9, #1
 	sub r9, r0, r9, lsl #1
 	cmp r10, r9
-	beq label11
+	beq label89
+	b label10
+label89:
+	mov r3, #0
+	add r3, r6, r3
+	str r3, [r5, r2, lsl #2]
+	cmp r1, #0
+	ble label13
+	b label2
+label10:
 	and r6, r7, #1
 	eor r10, r9, #1
 	orr r6, r6, r10
 	clz r6, r6
 	lsr r6, r6, #5
 	rsb r6, r6, #0
-	and r6, r8, r6
-	add r8, r7, r7, lsr #31
-	asr r8, r8, #1
-	sub r7, r7, r8, lsl #1
-	eor r7, r7, #1
-	orr r7, r9, r7
-	cmp r7, #0
-	bne label9
+	and r8, r8, r6
+	and r6, r7, #-2147483647
+	eor r6, r6, #1
+	orr r6, r9, r6
+	cmp r6, #0
+	bne label12
 	ldr r3, [r4, r3, lsl #2]
-	sub r6, r6, r3
-	ldr r3, [r5, r2, lsl #2]
+	sub r3, r8, r3
+	ldr r6, [r5, r2, lsl #2]
 	add r3, r6, r3
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
-	ble label12
-	b label2
-label9:
-	ldr r3, [r5, r2, lsl #2]
-	add r3, r6, r3
-	str r3, [r5, r2, lsl #2]
-	cmp r1, #0
-	ble label12
-	b label2
-label11:
-	str r6, [r5, r2, lsl #2]
-	cmp r1, #0
-	ble label12
+	ble label13
 	b label2
 label12:
+	ldr r6, [r5, r2, lsl #2]
+	mov r3, r8
+	add r3, r6, r8
+	str r3, [r5, r2, lsl #2]
+	cmp r1, #0
+	ble label13
+	b label2
+label13:
 	mov r0, #64
 	bl _sysy_stoptime
 	movw r0, #10000

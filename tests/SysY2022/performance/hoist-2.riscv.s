@@ -14,7 +14,7 @@ main:
 	mv a1, zero
 	mv a2, zero
 	addiw a0, zero, 4
-	bge a0, s0, label5
+	ble s0, a0, label5
 	j label16
 label22:
 	mv s0, zero
@@ -30,7 +30,7 @@ label13:
 	li a3, 1500000001
 	mulw a2, a2, a3
 	subw a1, a1, a2
-	bge a0, s0, label52
+	ble s0, a0, label52
 	mv a2, a0
 	j label13
 label52:
@@ -49,11 +49,11 @@ label17:
 	ret
 label5:
 	addiw a0, a2, 4
-	bge a0, s0, label9
+	ble s0, a0, label9
 	j label8
 label9:
 	addiw a0, a2, 4
-	bge a0, s0, label13
+	ble s0, a0, label13
 label12:
 	addiw a2, a1, 15
 	li a1, 12009599
@@ -73,7 +73,7 @@ label12:
 	subw a1, a2, a1
 	mv a2, a0
 	addiw a0, a0, 4
-	bge a0, s0, label13
+	ble s0, a0, label13
 	j label12
 label16:
 	addiw a2, a1, 15
@@ -94,7 +94,7 @@ label16:
 	subw a1, a2, a1
 	mv a2, a0
 	addiw a0, a0, 4
-	bge a0, s0, label5
+	ble s0, a0, label5
 	j label16
 label8:
 	addiw a3, a1, 15
@@ -115,5 +115,5 @@ label8:
 	subw a1, a3, a1
 	mv a2, a0
 	addiw a0, a0, 4
-	bge a0, s0, label9
+	ble s0, a0, label9
 	j label8

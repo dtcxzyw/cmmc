@@ -473,7 +473,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     // final cleanup
     for(const auto& pass : passesSource.collectModulePass({
             "UnusedTypeEliminate",  //
-            "GlobalEliminate"       //
+            "GlobalEliminate",      //
+            "GlobalZeroEliminate",  //
             //"UninitializedCheck"
         }))
         root->addPass(pass);

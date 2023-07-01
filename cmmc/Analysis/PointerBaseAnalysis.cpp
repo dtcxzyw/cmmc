@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-#include "cmmc/IR/Function.hpp"
 #include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>

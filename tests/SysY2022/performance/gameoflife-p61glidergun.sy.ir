@@ -3,8 +3,8 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [500 * [500 * i32]]* @sheet1 = [];
-internal [500 * [500 * i32]]* @sheet2 = [];
+internal [500 * [500 * i32]]* @sheet1;
+internal [500 * [500 * i32]]* @sheet2;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();

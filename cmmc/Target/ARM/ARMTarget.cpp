@@ -168,10 +168,10 @@ public:
     const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
             .unrollBlockSize = 4U,
-            .maxUnrollSize = 0U,
-            .maxUnrollBodySize = 16U,
-            .duplicationThreshold = 8U,
-            .duplicationIterations = 2U,
+            .maxUnrollSize = 8U,
+            .maxUnrollBodySize = 32U,
+            .duplicationThreshold = 10U,
+            .duplicationIterations = 10U,
             .mulByConstThreshold = 7U,
         };
 

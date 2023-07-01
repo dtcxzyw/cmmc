@@ -1,7 +1,7 @@
 #include <memory>
+#include <utility>
 
-class ShiftArithNode {
-public:
+struct ShiftArithNode {
     enum class ArtihType {
         ADD,
         SUB,
@@ -12,14 +12,14 @@ public:
         ORIGIN,
     };
 
-    int cost;
-    int shamt;
+    int32_t cost;
+    int32_t shamt;
     ArtihType artihmetic;
     RhsType rhs;
     std::shared_ptr<ShiftArithNode> parent;
 
-    ShiftArithNode(int shamt_, ArtihType artihmetic_, RhsType rhs_, std::shared_ptr<ShiftArithNode> parent_)
-        : shamt(shamt_), artihmetic(artihmetic_), rhs(rhs_), parent(parent_) {
+    ShiftArithNode(int32_t shamtVal, ArtihType artihmeticVal, RhsType rhsVal, std::shared_ptr<ShiftArithNode> parentVal)
+        : shamt(shamtVal), artihmetic(artihmeticVal), rhs(rhsVal), parent(std::move(parentVal)) {
         cost = (parent ? parent->cost : 0) + (artihmetic != ArtihType::NOP) + (shamt > 0);
     }
 

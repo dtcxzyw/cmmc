@@ -16,7 +16,7 @@ static std::shared_ptr<ShiftArithNode> minPlan(std::shared_ptr<ShiftArithNode> l
     return *lhs < *rhs ? lhs : rhs;
 }
 
-static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, const int upper) {
+static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, const int32_t upper) {
     if(upper < 0)
         return nullptr;
     if(auto it = memo[upper].find(n); it != memo[upper].end())
@@ -26,7 +26,7 @@ static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, con
 
     std::shared_ptr<ShiftArithNode> plan = nullptr;
     const auto currentUpper = [&]() { return plan ? std::min(upper, plan->cost) : upper; };
-    const auto tryUpdatePlan = [&](std::shared_ptr<ShiftArithNode> newPlan, int shamt, ShiftArithNode::ArtihType artihmetic,
+    const auto tryUpdatePlan = [&](std::shared_ptr<ShiftArithNode> newPlan, int32_t shamt, ShiftArithNode::ArtihType artihmetic,
                                    ShiftArithNode::RhsType rhs) {
         if(!newPlan)
             return;
@@ -38,7 +38,7 @@ static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, con
                   ShiftArithNode::RhsType::ORIGIN);
     tryUpdatePlan(findMultiplyPlan(n + 1, currentUpper() - 1), 0, ShiftArithNode::ArtihType::SUB,
                   ShiftArithNode::RhsType::ORIGIN);
-    for(int i = 1; (1LL << i) <= n; i++) {
+    for(int32_t i = 1; (1LL << i) <= n; i++) {
         intmax_t p1 = (1LL << i) + 1;
         intmax_t p2 = (1LL << i) - 1;
         if(n % p1 == 0)
@@ -55,8 +55,8 @@ static std::shared_ptr<ShiftArithNode> findMultiplyPlanOdd(const intmax_t n, con
     return plan;
 }
 
-std::shared_ptr<ShiftArithNode> findMultiplyPlan(const intmax_t n, const int upper) {
-    assert(upper < sizeof(memo) / sizeof(memo[0]) && "Please increase the size of memo");
+std::shared_ptr<ShiftArithNode> findMultiplyPlan(const intmax_t n, const int32_t upper) {
+    assert(upper < static_cast<int32_t>(sizeof(memo) / sizeof(memo[0])) && "Please increase the size of memo");
 
     if(upper < 0)
         return nullptr;
@@ -64,7 +64,7 @@ std::shared_ptr<ShiftArithNode> findMultiplyPlan(const intmax_t n, const int upp
         return it->second;
 
     intmax_t m = n;
-    int shamt = 0;
+    int32_t shamt = 0;
     while(m % 2 == 0) {
         m >>= 1;
         shamt++;

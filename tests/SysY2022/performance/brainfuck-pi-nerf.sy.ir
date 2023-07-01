@@ -3,10 +3,10 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [65536 * i32]* @program = [];
-internal [65536 * i32]* @tape = [];
-internal [65536 * i32]* @input = [];
-internal [65536 * i32]* @output = [];
+internal [65536 * i32]* @program;
+internal [65536 * i32]* @tape;
+internal [65536 * i32]* @input;
+internal [65536 * i32]* @output;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [512 * i32]* %return_a = alloc [512 * i32];

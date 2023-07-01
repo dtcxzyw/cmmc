@@ -141,6 +141,9 @@ public:
     [[nodiscard]] const Vector<ConstantValue*>& values() const noexcept {
         return mValues;
     }
+    [[nodiscard]] Vector<ConstantValue*>& values() noexcept {
+        return mValues;
+    }
     bool isEqual(const ConstantValue* rhs) const override;
     [[nodiscard]] size_t hash() const override;
 };

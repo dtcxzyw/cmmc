@@ -48,3 +48,23 @@ smax_ge:
 	movge r1, r0
 	mov r0, r1
 	bx lr
+.globl clamp_mask
+clamp_mask:
+	cmp r0, #0
+	mov r1, #0
+	movwgt r1, #1
+	rsb r1, r1, #0
+	and r1, r0, r1
+	cmp r0, #127
+	mov r2, #127
+	mov r0, r1
+	movgt r0, r2
+	bx lr
+.globl smax_zero
+smax_zero:
+	cmp r0, #0
+	mov r1, #0
+	movwgt r1, #1
+	rsb r1, r1, #0
+	and r0, r0, r1
+	bx lr

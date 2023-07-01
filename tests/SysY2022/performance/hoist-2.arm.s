@@ -16,8 +16,8 @@ main:
 	mov r1, #0
 	mov r2, r1
 	add r0, r1, #4
-	cmp r0, r4
-	bge label5
+	cmp r4, r0
+	ble label5
 	b label16
 label22:
 	mov r4, #0
@@ -33,8 +33,8 @@ label13:
 	asr r5, r3, #22
 	add r3, r5, r3, lsr #31
 	mls r1, r3, r2, r1
-	cmp r0, r4
-	bge label52
+	cmp r4, r0
+	ble label52
 	mov r2, r0
 	b label13
 label52:
@@ -50,13 +50,13 @@ label17:
 	pop { r4, r5, r6, pc }
 label5:
 	add r0, r2, #4
-	cmp r0, r4
-	bge label9
+	cmp r4, r0
+	ble label9
 	b label8
 label9:
 	add r0, r2, #4
-	cmp r0, r4
-	bge label13
+	cmp r4, r0
+	ble label13
 label12:
 	add r2, r1, #15
 	movw r1, #12033
@@ -74,8 +74,8 @@ label12:
 	mls r1, r3, r1, r2
 	mov r2, r0
 	add r0, r0, #4
-	cmp r0, r4
-	bge label13
+	cmp r4, r0
+	ble label13
 	b label12
 label16:
 	add r2, r1, #15
@@ -94,8 +94,8 @@ label16:
 	mls r1, r3, r1, r2
 	mov r2, r0
 	add r0, r0, #4
-	cmp r0, r4
-	bge label5
+	cmp r4, r0
+	ble label5
 	b label16
 label8:
 	add r2, r1, #15
@@ -114,6 +114,6 @@ label8:
 	mls r1, r3, r1, r2
 	mov r2, r0
 	add r0, r0, #4
-	cmp r0, r4
-	bge label9
+	cmp r4, r0
+	ble label9
 	b label8

@@ -29,3 +29,12 @@ int smin_ge(int a, int b) {
 int smax_ge(int a, int b) {
     return a >= b ? a : b;
 }
+
+int clamp_mask(int x) {
+    int y = x > 0 ? x : 0;
+    return x > 127 ? 127 : y;
+}
+
+int smax_zero(int x) {
+    return x > 0 ? x : 0;
+}

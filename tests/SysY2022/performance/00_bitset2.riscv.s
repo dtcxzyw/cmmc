@@ -1,6 +1,6 @@
 .attribute arch, "rv64i2p1_m2p0_a2p1_f2p2_d2p2_c2p0_zicsr2p0_zifencei2p0_zba1p0_zbb1p0"
 .data
-.data
+.bss
 .align 4
 a:
 	.zero	40000
@@ -8,11 +8,11 @@ a:
 .globl main
 main:
 	addi sp, sp, -168
-	sd s0, 128(sp)
-	sd s2, 160(sp)
-	sd s3, 152(sp)
-	sd s1, 144(sp)
-	sd ra, 136(sp)
+	sd s0, 160(sp)
+	sd s2, 152(sp)
+	sd s3, 144(sp)
+	sd s1, 136(sp)
+	sd ra, 128(sp)
 	addi s0, sp, 0
 	jal getint
 	mv s2, a0
@@ -20,9 +20,9 @@ main:
 	mv s3, a0
 	li a0, 56
 	jal _sysy_starttime
-pcrel217:
+pcrel221:
 	auipc a0, %pcrel_hi(a)
-	addi s1, a0, %pcrel_lo(pcrel217)
+	addi s1, a0, %pcrel_lo(pcrel221)
 	ble s2, zero, label2
 	mv a0, s3
 	mv a1, s2
@@ -41,9 +41,9 @@ label3:
 	subw t1, a2, t1
 	slti t2, t1, 0
 	addw a2, t1, a0
-	bne t2, zero, label203
+	bne t2, zero, label209
 	mv a2, t1
-label203:
+label209:
 	mulw a3, a2, a3
 	addw a3, a3, a4
 	mul a4, a3, a5
@@ -54,9 +54,9 @@ label203:
 	subw a3, a3, a4
 	slti a4, a3, 0
 	addw a0, a3, a0
-	bne a4, zero, label201
+	bne a4, zero, label207
 	mv a0, a3
-label201:
+label207:
 	li a3, 1876499845
 	mul a3, a2, a3
 	srai a4, a3, 49
@@ -153,45 +153,52 @@ label7:
 	mulw a5, a5, t1
 	subw a3, a3, a5
 	sh2add a5, a3, s0
-	lw a5, 0(a5)
-	divw t1, a4, a5
-	srliw t2, t1, 31
-	add t2, t1, t2
+	lw t1, 0(a5)
+	divw a5, a4, t1
+	srliw t2, a5, 31
+	add t2, a5, t2
 	andi t2, t2, -2
-	subw t2, t1, t2
-	srliw t3, a0, 31
-	add t3, a0, t3
-	andi t3, t3, -2
-	subw t3, a0, t3
-	beq t2, t3, label12
-	andi a4, t1, 1
-	xori t1, t3, 1
-	or a4, a4, t1
-	sltiu a4, a4, 1
-	subw a4, zero, a4
-	and a4, a5, a4
-	xori a5, t2, 1
-	or a5, t3, a5
-	bne a5, zero, label100
-	sh2add a3, a3, s0
-	lw a3, 0(a3)
-	subw a3, a4, a3
+	subw t3, a5, t2
+	srliw t2, a0, 31
+	add t2, a0, t2
+	andi t2, t2, -2
+	subw t2, a0, t2
+	beq t3, t2, label89
+	j label11
+label89:
+	mv t1, zero
+	addw a3, a4, zero
 	sh2add a2, a2, s1
-	lw a4, 0(a2)
-	addw a3, a3, a4
 	sw a3, 0(a2)
 	ble a1, zero, label2
 	j label3
-label12:
+label11:
+	andi a4, a5, 1
+	xori t3, t2, 1
+	or a4, a4, t3
+	sltiu a4, a4, 1
+	subw a4, zero, a4
+	and t1, t1, a4
+	li a4, -2147483647
+	and a4, a5, a4
+	xori a4, a4, 1
+	or a4, t2, a4
+	bne a4, zero, label13
+	sh2add a3, a3, s0
+	lw a3, 0(a3)
+	subw t1, t1, a3
+	sh2add a3, a2, s1
+	lw a4, 0(a3)
+	addw a3, a4, t1
 	sh2add a2, a2, s1
-	sw a4, 0(a2)
+	sw a3, 0(a2)
 	ble a1, zero, label2
 	j label3
-label100:
-	mv a3, a4
+label13:
+	sh2add a3, a2, s1
+	lw a4, 0(a3)
+	addw a3, a4, t1
 	sh2add a2, a2, s1
-	lw a4, 0(a2)
-	addw a3, a3, a4
 	sw a3, 0(a2)
 	ble a1, zero, label2
 	j label3
@@ -202,10 +209,10 @@ label2:
 	mv a1, s1
 	jal putarray
 	mv a0, zero
-	ld ra, 136(sp)
-	ld s1, 144(sp)
-	ld s3, 152(sp)
-	ld s2, 160(sp)
-	ld s0, 128(sp)
+	ld ra, 128(sp)
+	ld s1, 136(sp)
+	ld s3, 144(sp)
+	ld s2, 152(sp)
+	ld s0, 160(sp)
 	addi sp, sp, 168
 	ret

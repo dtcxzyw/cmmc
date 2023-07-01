@@ -72,3 +72,14 @@ func @smax_associate(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideE
     i32 %0 = smax i32 %y, i32 %x;
     ret i32 %0;
 }
+func @clamp_mask(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %x, i32 0;
+    i32 %1 = smin i32 %0, i32 127;
+    ret i32 %1;
+}
+func @smax_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smax i32 %x, i32 0;
+    ret i32 %0;
+}

@@ -60,3 +60,20 @@ smax_ge:
 	move $v0, $a1
 	jr $ra
 	nop
+.globl clamp_mask
+clamp_mask:
+	slt $t0, $zero, $a0
+	subu $t0, $zero, $t0
+	and $v0, $a0, $t0
+	li $t0, 127
+	slt $t1, $t0, $a0
+	movn $v0, $t0, $t1
+	jr $ra
+	nop
+.globl smax_zero
+smax_zero:
+	slt $t0, $zero, $a0
+	subu $t0, $zero, $t0
+	and $v0, $a0, $t0
+	jr $ra
+	nop

@@ -588,6 +588,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // x >/>= c1 ? c1 : smax(x, c2) where c1 > c2 -> clamp(x, c2, c1)
+            Value* v5;
+            if(select(scmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smax(any(v4), int_(i2)), v5))(matchCtx)) {
+                if((cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) && v2 == v3 && v1 == v4 && i1 > i2) {
+                    return builder.makeOp<BinaryInst>(InstructionID::SMin, v5, v2);
+                }
+            }
+
             // x % (2^k) only used by scmp eq/neq with 0 -> (x & (2^k-1))
             if(srem(any(v1), capture(intLog2(v2), v3))(matchCtx)) {
                 auto usedByCompareWithZero = [&] {

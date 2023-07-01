@@ -52,8 +52,8 @@ main:
 label19:
 	mov r2, #0
 	mov r1, r2
-	cmp r2, r0
-	bge label12
+	cmp r0, r2
+	ble label12
 label7:
 	mov r3, #1
 	str r3, [r4, #4]
@@ -311,8 +311,8 @@ label11:
 	asr r6, r5, #15
 	add r5, r6, r5, lsr #31
 	mls r2, r5, r3, r2
-	cmp r1, r0
-	bge label12
+	cmp r0, r1
+	ble label12
 	b label7
 label317:
 	mov r2, #0

@@ -39,9 +39,9 @@ pcrel434:
 	add a2, s3, a1
 	mul a0, zero, a0
 	add a5, a3, a0
-	bge zero, s1, label51
+	ble s1, zero, label51
 	mv t1, zero
-	bge zero, s1, label17
+	ble s1, zero, label17
 	ble s1, zero, label16
 	li a1, 2400
 	mul a0, zero, a1
@@ -50,7 +50,7 @@ pcrel434:
 	add a1, a5, a1
 	mv t5, zero
 	addiw t2, zero, 4
-	bge t2, s1, label67
+	ble s1, t2, label67
 	j label10
 label51:
 	li s5, 1
@@ -61,15 +61,15 @@ label51:
 	sub a1, zero, a0
 	add a3, a2, a1
 	add a4, a2, a0
-	bge s5, s2, label21
+	ble s2, s5, label21
 	li a1, 1
-	bge a1, s2, label24
+	ble s2, a1, label24
 	li a0, 1
 	ble s2, a0, label35
 	j label26
 label29:
 	addiw t4, t5, 4
-	bge t4, s2, label148
+	ble s2, t4, label148
 	j label33
 label148:
 	mv t4, t5
@@ -93,18 +93,18 @@ label31:
 	divw t6, t6, s0
 	sw t6, 0(t5)
 	addiw t4, t4, 1
-	bge t4, s2, label35
+	ble s2, t4, label35
 	j label31
 label35:
 	addiw a1, a1, 1
-	bge a1, s2, label24
+	ble s2, a1, label24
 	li a0, 1
 	ble s2, a0, label35
 	j label26
 label67:
 	mv t3, t5
 	addiw t2, t5, 4
-	bge t2, s1, label82
+	ble s1, t2, label82
 	j label13
 label82:
 	mv t2, t3
@@ -114,61 +114,61 @@ label82:
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	sh2add t3, t2, a0
 	sw t4, 0(t3)
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 label430:
 	sh2add t3, t2, a0
 	li t4, 1
@@ -176,7 +176,7 @@ label430:
 	sh2add t3, t2, a1
 	sw zero, 0(t3)
 	addiw t2, t2, 1
-	bge t2, s1, label16
+	ble s1, t2, label16
 	j label430
 label13:
 	sh2add t4, t3, a0
@@ -192,7 +192,7 @@ label13:
 	sw zero, 12(t3)
 	mv t3, t2
 	addiw t2, t2, 4
-	bge t2, s1, label82
+	ble s1, t2, label82
 	j label13
 label10:
 	sh2add t3, t5, a0
@@ -208,7 +208,7 @@ label10:
 	sw zero, 12(t5)
 	mv t5, t2
 	addiw t2, t2, 4
-	bge t2, s1, label67
+	ble s1, t2, label67
 	j label10
 label26:
 	li t3, 2400
@@ -223,7 +223,7 @@ label26:
 	add t3, a4, t3
 	li t5, 1
 	addiw t4, t5, 4
-	bge t4, s2, label29
+	ble s2, t4, label29
 label34:
 	sh2add t6, t5, t2
 	lw a7, 0(t6)
@@ -281,7 +281,7 @@ label34:
 	sw t6, 12(t5)
 	mv t5, t4
 	addiw t4, t4, 4
-	bge t4, s2, label29
+	ble s2, t4, label29
 	j label34
 label33:
 	sh2add a6, t5, t2
@@ -340,7 +340,7 @@ label33:
 	sw t6, 12(t5)
 	mv t5, t4
 	addiw t4, t4, 4
-	bge t4, s2, label148
+	ble s2, t4, label148
 	j label33
 label17:
 	addiw a4, a4, 1
@@ -349,9 +349,9 @@ label17:
 	add a2, s3, a1
 	mul a0, a4, a0
 	add a5, a3, a0
-	bge a4, s1, label51
+	ble s1, a4, label51
 	mv t1, zero
-	bge zero, s1, label17
+	ble s1, zero, label17
 	ble s1, zero, label16
 	li a1, 2400
 	mul a0, zero, a1
@@ -360,11 +360,11 @@ label17:
 	add a1, a5, a1
 	mv t5, zero
 	addiw t2, zero, 4
-	bge t2, s1, label67
+	ble s1, t2, label67
 	j label10
 label16:
 	addiw t1, t1, 1
-	bge t1, s1, label17
+	ble s1, t1, label17
 	ble s1, zero, label16
 	li a1, 2400
 	mul a0, t1, a1
@@ -373,7 +373,7 @@ label16:
 	add a1, a5, a1
 	mv t5, zero
 	addiw t2, zero, 4
-	bge t2, s1, label67
+	ble s1, t2, label67
 	j label10
 label24:
 	addiw s4, s4, 1
@@ -384,9 +384,9 @@ label24:
 	sub a1, zero, a0
 	add a3, a2, a1
 	add a4, a2, a0
-	bge s4, s2, label21
+	ble s2, s4, label21
 	li a1, 1
-	bge a1, s2, label24
+	ble s2, a1, label24
 	li a0, 1
 	ble s2, a0, label35
 	j label26

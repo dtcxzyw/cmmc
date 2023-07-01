@@ -3,10 +3,10 @@ internal func @getch() -> i32 { NoMemoryRead NoMemoryWrite };
 internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
-internal [65536 * i32]* @program = [];
-internal [65536 * i32]* @tape = [];
-internal [65536 * i32]* @input = [];
-internal [65536 * i32]* @output = [];
+internal [65536 * i32]* @program;
+internal [65536 * i32]* @tape;
+internal [65536 * i32]* @input;
+internal [65536 * i32]* @output;
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
     [512 * i32]* %return_a = alloc [512 * i32];
@@ -204,8 +204,8 @@ func @main() -> i32 { NoRecurse Entry } {
     ret i32 0;
   ^b5:
     i32 %132 = phi [^if.then, i32 %114] [^if.then1, i32 %114] [^if.then2, i32 %114] [^if.then3, i32 %114] [^if.then5, i32 %114] [^while.header2, i32 %114] [^if.then7, i32 %114] [^if.else6, i32 %114] [^if.then8, i32 %178] [^if.else7, i32 %114] [^if.then10, i32 %114] [^if.else8, i32 %114];
-    i32 %133 = phi [^if.then, i32 %115] [^if.then1, i32 %115] [^if.then2, i32 %115] [^if.then3, i32 %115] [^if.then5, i32 %153] [^while.header2, i32 %115] [^if.then7, i32 %161] [^if.else6, i32 %115] [^if.then8, i32 %115] [^if.else7, i32 %115] [^if.then10, i32 %115] [^if.else8, i32 %115];
-    i32 %134 = phi [^if.then, i32 %116] [^if.then1, i32 %116] [^if.then2, i32 %116] [^if.then3, i32 %116] [^if.then5, i32 %116] [^while.header2, i32 %116] [^if.then7, i32 %116] [^if.else6, i32 %116] [^if.then8, i32 %116] [^if.else7, i32 %116] [^if.then10, i32 %116] [^if.else8, i32 %185];
+    i32 %133 = phi [^if.then, i32 %115] [^if.then1, i32 %115] [^if.then2, i32 %115] [^if.then3, i32 %115] [^if.then5, i32 %115] [^while.header2, i32 %115] [^if.then7, i32 %115] [^if.else6, i32 %115] [^if.then8, i32 %115] [^if.else7, i32 %115] [^if.then10, i32 %115] [^if.else8, i32 %185];
+    i32 %134 = phi [^if.then, i32 %116] [^if.then1, i32 %116] [^if.then2, i32 %116] [^if.then3, i32 %116] [^if.then5, i32 %153] [^while.header2, i32 %116] [^if.then7, i32 %161] [^if.else6, i32 %116] [^if.then8, i32 %116] [^if.else7, i32 %116] [^if.then10, i32 %116] [^if.else8, i32 %116];
     i32 %135 = phi [^if.then, i32 %125] [^if.then1, i32 %138] [^if.then2, i32 %117] [^if.then3, i32 %117] [^if.then5, i32 %117] [^while.header2, i32 %117] [^if.then7, i32 %117] [^if.else6, i32 %117] [^if.then8, i32 %117] [^if.else7, i32 %117] [^if.then10, i32 %117] [^if.else8, i32 %117];
     i32 %136 = phi [^if.then, i32 %118] [^if.then1, i32 %118] [^if.then2, i32 %118] [^if.then3, i32 %118] [^if.then5, i32 %118] [^while.header2, i32 %158] [^if.then7, i32 %118] [^if.else6, i32 %173] [^if.then8, i32 %118] [^if.else7, i32 %118] [^if.then10, i32 %118] [^if.else8, i32 %118];
     i32 %137 = add i32 %136, i32 1;
@@ -243,9 +243,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %151 = scmp eq i32 %121, i32 93;
     cbr i1 %151(prob = 0.5), ^if.then6, ^if.else5;
   ^if.then5:
-    i32* %152 = getelementptr &([512 * i32]* %return_a)[i64 0][i32 %115];
+    i32* %152 = getelementptr &([512 * i32]* %return_a)[i64 0][i32 %116];
     store i32* %152 with i32 %118;
-    i32 %153 = add i32 %115, i32 1;
+    i32 %153 = add i32 %116, i32 1;
     ubr ^b5;
   ^if.then6:
     i32* %154 = getelementptr &([65536 * i32]* %113)[i64 0][i32 %117];
@@ -261,7 +261,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %160 = scmp eq i32 %121, i32 46;
     cbr i1 %160(prob = 0.5), ^if.then8, ^if.else7;
   ^if.then7:
-    i32 %161 = add i32 %115, i32 -1;
+    i32 %161 = add i32 %116, i32 -1;
     ubr ^b5;
   ^while.body6:
     i32 %162 = add i32 %158, i32 1;
@@ -275,7 +275,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %170 = select i1 %169 ? i32 %168 : i32 %167;
     ubr ^while.header2;
   ^if.else6:
-    i32 %171 = add i32 %115, i32 -1;
+    i32 %171 = add i32 %116, i32 -1;
     i32* %172 = getelementptr &([512 * i32]* %return_a)[i64 0][i32 %171];
     i32 %173 = load i32* %172;
     ubr ^b5;
@@ -291,17 +291,17 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %179 = scmp eq i32 %121, i32 44;
     cbr i1 %179(prob = 0.5), ^if.then9, ^b5;
   ^if.then9:
-    i1 %180 = scmp le i32 %64, i32 %116;
+    i1 %180 = scmp le i32 %64, i32 %115;
     cbr i1 %180(prob = 0.5), ^if.then10, ^if.else8;
   ^if.then10:
     i32* %181 = getelementptr &([65536 * i32]* %113)[i64 0][i32 %117];
     store i32* %181 with i32 0;
     ubr ^b5;
   ^if.else8:
-    i32* %182 = getelementptr &([65536 * i32]* %39)[i64 0][i32 %116];
+    i32* %182 = getelementptr &([65536 * i32]* %39)[i64 0][i32 %115];
     i32 %183 = load i32* %182;
     i32* %184 = getelementptr &([65536 * i32]* %113)[i64 0][i32 %117];
     store i32* %184 with i32 %183;
-    i32 %185 = add i32 %116, i32 1;
+    i32 %185 = add i32 %115, i32 1;
     ubr ^b5;
 }

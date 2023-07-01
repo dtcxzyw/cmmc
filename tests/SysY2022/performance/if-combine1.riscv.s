@@ -57,7 +57,7 @@ main:
 label19:
 	mv a2, zero
 	mv a1, zero
-	bge zero, a0, label12
+	ble a0, zero, label12
 label7:
 	li a3, 1
 	sw a3, 4(s0)
@@ -318,7 +318,7 @@ label11:
 	li a4, 65535
 	mulw a3, a3, a4
 	subw a2, a2, a3
-	bge a1, a0, label12
+	ble a0, a1, label12
 	j label7
 label327:
 	sh2add a2, a1, s0
