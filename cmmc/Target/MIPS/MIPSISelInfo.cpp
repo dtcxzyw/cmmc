@@ -297,6 +297,12 @@ constexpr MIPSInst getFloatingPointBinaryOpcode(uint32_t opcode) {
     }
 }
 
+static bool buildSRA31(ISelContext& ctx, const MIROperand& val, MIROperand& sign) {
+    sign = getVRegAs(ctx, val);
+    ctx.newInst(SRA).setOperand<0>(sign).setOperand<1>(val).setOperand<2>(MIROperand::asImm(31, OperandType::Int32));
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <MIPS/ISelInfoImpl.hpp>
@@ -394,6 +400,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             inst.setOperand<2>(val);
             val = getZero(val);
             modified = true;
+            break;
+        }
+        case InstAbs: {
+            imm2reg(inst.getOperand(1));
             break;
         }
         case InstMul:

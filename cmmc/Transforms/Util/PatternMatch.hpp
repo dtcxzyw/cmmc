@@ -176,6 +176,10 @@ template <typename T>
 auto neg(T value) noexcept {
     return UnaryOpMatcher{ InstructionID::Neg, value };
 }
+template <typename T>
+auto abs(T value) noexcept {
+    return UnaryOpMatcher{ InstructionID::Abs, value };
+}
 
 template <typename T>
 auto fneg(T value) noexcept {

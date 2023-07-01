@@ -746,6 +746,46 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // ->
             // d = select x a+1 b+1
 
+            // x >s 0 ? x : -x -> abs(x)
+            if(target.isNativeSupported(InstructionID::Abs)) {
+                if(select(scmp(cmp, any(v1), cint_(0)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) {
+                        return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+                    }
+                    if(cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual) {
+                        return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
+                    }
+                }
+                if(select(scmp(cmp, any(v1), cint_(0)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) {
+                        return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
+                    }
+                    if(cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual) {
+                        return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+                    }
+                }
+                if(select(scmp(cmp, any(v1), cint_(1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::LessThan) {
+                        return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
+                    }
+                }
+                if(select(scmp(cmp, any(v1), cint_(1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::LessThan) {
+                        return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+                    }
+                }
+                if(select(scmp(cmp, any(v1), cint_(-1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::GreaterThan) {
+                        return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+                    }
+                }
+                if(select(scmp(cmp, any(v1), cint_(-1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::GreaterThan) {
+                        return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
+                    }
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

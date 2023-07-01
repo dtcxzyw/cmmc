@@ -217,3 +217,12 @@ int ucmp2(int x) {
 int ucmp3(int x) {
     return 0 <= x && x < 100;
 }
+int abs(int x) {
+    return x > 0 ? x : -x;
+}
+int nabs(int x) {
+    return x > 0 ? -x : x;
+}
+int absdiff(int x, int y) {
+    return abs(x - y);
+}

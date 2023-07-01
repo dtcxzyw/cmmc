@@ -361,3 +361,25 @@ ucmp3:
 	sltiu $v0, $a0, 100
 	jr $ra
 	nop
+.globl abs
+abs:
+	sra $t0, $a0, 31
+	xor $t1, $a0, $t0
+	subu $v0, $t1, $t0
+	jr $ra
+	nop
+.globl nabs
+nabs:
+	sra $t0, $a0, 31
+	xor $t1, $a0, $t0
+	subu $v0, $t0, $t1
+	jr $ra
+	nop
+.globl absdiff
+absdiff:
+	subu $t0, $a0, $a1
+	sra $t1, $t0, 31
+	xor $t0, $t0, $t1
+	subu $v0, $t0, $t1
+	jr $ra
+	nop

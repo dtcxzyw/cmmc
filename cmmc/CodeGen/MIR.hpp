@@ -258,6 +258,7 @@ enum MIRGenericInst : uint32_t {
     InstSMax,
     // Int Unary
     InstNeg,
+    InstAbs,
     // FP
     InstFAdd,
     InstFSub,
@@ -294,7 +295,7 @@ enum MIRGenericInst : uint32_t {
 };
 class MIRInst final {
 public:
-    static constexpr uint32_t maxOperandCount = 6;
+    static constexpr uint32_t maxOperandCount = 7;
 
 private:
     uint32_t mOpcode;

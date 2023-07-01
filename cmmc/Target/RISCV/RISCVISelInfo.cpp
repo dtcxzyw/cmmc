@@ -405,6 +405,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             modified = true;
             break;
         }
+        case InstAbs: {
+            imm2reg(inst.getOperand(1));
+            break;
+        }
         case InstMul:
             [[fallthrough]];
         case InstSDiv:

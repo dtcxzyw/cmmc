@@ -216,6 +216,8 @@ class LLVMConversionContext final {
                 return builder.CreateURem(getOperand(0), getOperand(1));
             case InstructionID::Neg:
                 return builder.CreateNeg(getOperand(0));
+            case InstructionID::Abs:
+                return builder.CreateBinaryIntrinsic(llvm::Intrinsic::abs, getOperand(0), builder.getFalse());
             case InstructionID::And:
                 return builder.CreateAnd(getOperand(0), getOperand(1));
             case InstructionID::Or:

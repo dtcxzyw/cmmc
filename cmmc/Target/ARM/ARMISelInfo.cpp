@@ -663,6 +663,10 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             modified = true;
             break;
         }
+        case InstAbs: {
+            imm2reg(inst.getOperand(1));
+            break;
+        }
         case InstMul:
             [[fallthrough]];
         case InstSDiv:
@@ -845,6 +849,28 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto reloc = inst.getOperand(1);
             ctx.instructions.insert(ctx.iter, MIRInst{ MOVW }.setOperand<0>(dst).setOperand<1>(getLowBits(reloc)));
             *ctx.iter = MIRInst{ MOVT }.setOperand<0>(dst).setOperand<1>(getHighBits(reloc)).setOperand<2>(dst);
+            break;
+        }
+        case PseudoIntOpWithOp2_Cond: {
+            auto cf = inst.getOperand(0);
+            auto dst = inst.getOperand(1);
+            auto rn = inst.getOperand(2);
+            auto op2 = inst.getOperand(3);
+            auto rm = inst.getOperand(4);
+            auto op = static_cast<uint32_t>(inst.getOperand(5).imm());
+            auto cc = inst.getOperand(6);
+            if(rn == rm)
+                rn = dst;
+            if(op2 == rm)
+                op2 = dst;
+            ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(rm));
+            *ctx.iter = MIRInst{ op }
+                            .setOperand<0>(cf)
+                            .setOperand<1>(dst)
+                            .setOperand<2>(rn)
+                            .setOperand<3>(op2)
+                            .setOperand<4>(cc)
+                            .setOperand<5>(dst);
             break;
         }
         default:

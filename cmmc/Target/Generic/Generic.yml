@@ -61,6 +61,8 @@ InstInfo:
     Instances:
       Neg:
         Op: Neg
+      Abs:
+        Op: Abs
   FloatArithmetic:
     Format: $Op:Template $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use]
     Instances:

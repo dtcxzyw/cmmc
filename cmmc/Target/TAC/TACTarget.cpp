@@ -135,6 +135,8 @@ public:
                 [[fallthrough]];
             case InstructionID::SMax:
                 [[fallthrough]];
+            case InstructionID::Abs:
+                [[fallthrough]];
             case InstructionID::FAdd:
                 [[fallthrough]];
             case InstructionID::FSub:

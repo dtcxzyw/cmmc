@@ -262,6 +262,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "urem"sv;
         case InstructionID::Neg:
             return "neg"sv;
+        case InstructionID::Abs:
+            return "abs"sv;
         case InstructionID::And:
             return "and"sv;
         case InstructionID::Or:

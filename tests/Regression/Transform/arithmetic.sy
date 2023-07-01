@@ -461,4 +461,3 @@ int mul_with_constant22(int x) {
 int mul_with_constant23(int x) {
     return x * 10000;
 }
-

@@ -323,3 +323,19 @@ ucmp2:
 ucmp3:
 	sltiu a0, a0, 100
 	ret
+.globl abs
+abs:
+	subw a1, zero, a0
+	max a0, a1, a0
+	ret
+.globl nabs
+nabs:
+	subw a1, zero, a0
+	min a0, a1, a0
+	ret
+.globl absdiff
+absdiff:
+	subw a2, a0, a1
+	subw a0, a1, a0
+	max a0, a0, a2
+	ret

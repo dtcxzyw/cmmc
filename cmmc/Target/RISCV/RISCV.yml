@@ -680,6 +680,24 @@ InstSelection:
       InstSub:
         Dst: $Dst
         Lhs: $Lhs
+        Rhs:
+          InstAbs:
+            Src: $Val
+        $Predicate: isOperandIReg($Val) && isZero($Lhs) && isOperandI32($Dst)
+    Replace:
+      MIN:
+        Rd: $Dst
+        Rs1:
+          SUBW:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs1: getZero($Dst)
+            Rs2: $Val
+        Rs2: $Val
+
+  - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
         Rhs: $Rhs
         $Predicate: isOperandI64($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs)
     Replace:
@@ -1589,6 +1607,36 @@ InstSelection:
             Rhs: $Rhs
             Op: getEqualOp()
         Imm: getOne($Dst)
+
+  - Pattern:
+      InstAbs:
+        Dst: $Dst
+        Src: $Val
+        $Predicate: isOperandIReg($Val) && isOperandI32($Dst)
+    Replace:
+      MAX:
+        Rd: $Dst
+        Rs1:
+          SUBW:
+            Rd: getVRegAs(ctx, $Dst)
+            Rs1: getZero($Dst)
+            Rs2: $Val
+        Rs2: $Val
+
+  - Pattern:
+      SUBW:
+        Rd: $Dst
+        Rs1: $Lhs
+        Rs2:
+          SUBW:
+            Rs1: $SubLhs
+            Rs2: $SubRhs
+        $Predicate: isZero($Lhs)
+    Replace:
+      SUBW:
+        Rd: $Dst
+        Rs1: $SubRhs
+        Rs2: $SubLhs
 
   # For csmith
   - Pattern:

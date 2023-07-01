@@ -321,6 +321,24 @@ InstSelection:
 
   # Integer Arithmetic
   - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstAbs:
+            Src: $Val
+        $Predicate: isOperandIReg($Val) && isZero($Lhs) && buildSRA31(ctx, $Val, [$Sign])
+    Replace:
+      SUBU:
+        Rd: $Dst
+        Rt:
+          XOR:
+            Rd: getVRegAs(ctx, $Val)
+            Rs: $Val
+            Rt: $Sign
+        Rs: $Sign
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
@@ -1006,6 +1024,21 @@ InstSelection:
       InstCopy:
         Dst: $Dst
         Src: $Src
+
+  - Pattern:
+      InstAbs:
+        Dst: $Dst
+        Src: $Val
+        $Predicate: isOperandIReg($Val) && buildSRA31(ctx, $Val, [$Sign])
+    Replace:
+      SUBU:
+        Rd: $Dst
+        Rs:
+          XOR:
+            Rd: getVRegAs(ctx, $Val)
+            Rs: $Val
+            Rt: $Sign
+        Rt: $Sign
 
   # For csmith
   - Pattern:

@@ -316,3 +316,19 @@ ucmp3:
 	mov r0, #0
 	movwlo r0, #1
 	bx lr
+.globl abs
+abs:
+	cmp r0, #0
+	rsbmi r0, r0, #0
+	bx lr
+.globl nabs
+nabs:
+	cmp r0, #0
+	rsbpl r0, r0, #0
+	bx lr
+.globl absdiff
+absdiff:
+	sub r0, r0, r1
+	cmp r0, #0
+	rsbmi r0, r0, #0
+	bx lr

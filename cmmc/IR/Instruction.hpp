@@ -59,6 +59,7 @@ enum class InstructionID {
     SRem,
     URem,
     Neg,
+    Abs,
     // bitwise ops
     And,
     Or,
@@ -149,7 +150,7 @@ public:
         assert(mRef->user);
         return mRef->user;
     }
-    ValueRef* ref() const noexcept {
+    [[nodiscard]] ValueRef* ref() const noexcept {
         return mRef;
     }
 };
@@ -228,7 +229,7 @@ public:
         assert(mRef);
         return mRef;
     }
-    ValueRef* get() const noexcept {
+    [[nodiscard]] ValueRef* get() const noexcept {
         assert(mRef);
         return mRef;
     }

@@ -85,6 +85,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                 MatchContext<Value> matchCtx{ inst };
                 if(neg(int_(i1))(matchCtx))
                     return makeInt(inst, -i1);
+                if(abs(int_(i1))(matchCtx))
+                    return makeInt(inst, std::abs(i1));
                 if(add(int_(i1), int_(i2))(matchCtx))
                     return makeInt(inst, i1 + i2);
                 if(sub(int_(i1), int_(i2))(matchCtx))

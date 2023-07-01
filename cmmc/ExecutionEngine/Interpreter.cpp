@@ -787,6 +787,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addInt(-getInt(0));
                 break;
             }
+            case InstructionID::Abs: {
+                addInt(std::abs(getInt(0)));
+                break;
+            }
             case InstructionID::And: {
                 addUInt(getUInt(0) & getUInt(1));
                 break;

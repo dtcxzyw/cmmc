@@ -19,6 +19,26 @@ InstInfo:
       RSB:
         Mnemonic: rsb
 
+  IntegerBinaryWithOp2_Cond:
+    Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
+    Instances:
+      ADD_Cond:
+        Mnemonic: add
+      SUB_Cond:
+        Mnemonic: sub
+      AND_Cond:
+        Mnemonic: and
+      ORR_Cond:
+        Mnemonic: orr
+      EOR_Cond:
+        Mnemonic: eor
+      ORN_Cond:
+        Mnemonic: orn
+      BIC_Cond:
+        Mnemonic: bic
+      RSB_Cond:
+        Mnemonic: rsb
+
   IntegerBinaryWithFullOp2:
     Format: $Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use], $Op:ShOp[Metadata] $Sh:Shamt[Use]
     Instances:
@@ -303,6 +323,10 @@ InstInfo:
     Format: load_global_address $Rd:GPR[Def], $Reloc:Reloc[Metadata]
     Flag: [LoadConstant, LegalizePreRA]
 
+  PseudoIntOpWithOp2_Cond:
+    Format: pseudo_int_op_with_op2$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use], $Rm:GPR[Use], $Op:Imm[Metadata], $CC:CC[Use]
+    Flag: [LegalizePreRA]
+
   UNIMP:
     Format: .inst 0xdeff
     Flag: [Terminator, NoFallthrough]
@@ -340,6 +364,28 @@ InstSelection:
       MOVT_MOVW_PAIR:
         Rd: $Dst
         Imm: $UImm
+
+  - Pattern:
+      InstSub:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstAbs:
+            Src: $Val
+        $Predicate: isOperandIReg($Val) && isZero($Lhs)
+    Replace:
+      PseudoIntOpWithOp2_Cond:
+        Rd: $Dst
+        CF: MIROperand::asImm(CondField::PL, OperandType::CondField)
+        Rn: $Val
+        Op2: getZero($Val)
+        Rm: $Val
+        Op: MIROperand::asImm(RSB_Cond, OperandType::Special)
+        CC:
+          CMP:
+            Rn: $Val
+            Op2: getZero($Val)
+            CC: getCC()
 
   - Pattern:
       $Template:
@@ -1197,6 +1243,25 @@ InstSelection:
       InstUnreachable:
     Replace:
       UNIMP:
+
+  - Pattern:
+      InstAbs:
+        Dst: $Dst
+        Src: $Val
+        $Predicate: isOperandIReg($Val)
+    Replace:
+      PseudoIntOpWithOp2_Cond:
+        Rd: $Dst
+        CF: MIROperand::asImm(CondField::MI, OperandType::CondField)
+        Rn: $Val
+        Op2: getZero($Val)
+        Rm: $Val
+        Op: MIROperand::asImm(RSB_Cond, OperandType::Special)
+        CC:
+          CMP:
+            Rn: $Val
+            Op2: getZero($Val)
+            CC: getCC()
 
   # For csmith
   - Pattern:

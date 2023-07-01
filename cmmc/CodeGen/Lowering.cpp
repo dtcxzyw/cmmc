@@ -626,6 +626,8 @@ static void lower(UnaryInst* inst, LoweringContext& ctx) {
         switch(instID) {
             case InstructionID::Neg:
                 return InstNeg;
+            case InstructionID::Abs:
+                return InstAbs;
             case InstructionID::FNeg:
                 return InstFNeg;
             default:
@@ -971,6 +973,8 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
             lower(inst->as<BinaryInst>(), ctx);
             break;
         case InstructionID::Neg:
+            [[fallthrough]];
+        case InstructionID::Abs:
             [[fallthrough]];
         case InstructionID::FNeg:
             lower(inst->as<UnaryInst>(), ctx);
