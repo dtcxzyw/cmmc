@@ -33,6 +33,7 @@ void _sysy_starttime(int lineno) {
             sprintf(fifo_arg_buffer, "fifo:%s", perf_ctl_fifo);
 
             char *args[] = {
+                "sudo"
                 "perf", "stat",
                 "-x", ",",
                 "-D", "-1",
@@ -41,7 +42,7 @@ void _sysy_starttime(int lineno) {
                 "--pid", pid_buffer,
                 "-o", "perf.txt",
                 NULL};
-            execve("/usr/bin/perf", args, NULL);
+            execve("/usr/bin/sudo", args, NULL);
             // unreachable
         }
 
