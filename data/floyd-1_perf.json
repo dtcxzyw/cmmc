@@ -24,6 +24,9 @@
       "instructions:u": 2632397,
       "sysy_time": 0.023412,
       "task-clock:u": 0.91
+    },
+    "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104": {
+      "sysy_time": 0.021684
     }
   },
   "arm_gcc": {
