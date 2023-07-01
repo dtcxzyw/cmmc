@@ -34,6 +34,11 @@
     "parent": "569de15b0c73b5c4753a65e91196ec62cefc3958",
     "time": "2023-07-01 23:47:11 +0800"
   },
+  "4d6d8fc8749723ae232ca54588f127c495075ac8": {
+    "message": "feat(transform): remove zeros from global variables",
+    "parent": "84648e12b6bda57ce06277c9d225d6f6c00a1481",
+    "time": "2023-07-02 02:00:59 +0800"
+  },
   "569de15b0c73b5c4753a65e91196ec62cefc3958": {
     "message": "fix(codegen): fix constant multiplication and update llvm reference",
     "parent": "2a8d4a9919993d68163f8deca8328c69c80db012",
