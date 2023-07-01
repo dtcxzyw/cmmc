@@ -642,6 +642,11 @@ func @nabs4(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %1 = neg i32 %0;
     ret i32 %1;
 }
+func @absNeg(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = abs i32 %x;
+    ret i32 %0;
+}
 func @average(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 %y;
@@ -775,5 +780,14 @@ func @mul_with_constant22(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffe
 func @mul_with_constant23(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = mul i32 %x, i32 10000;
+    ret i32 %0;
+}
+func @doubleNeg(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 %x;
+}
+func @absSRem2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %x, i32 1;
     ret i32 %0;
 }

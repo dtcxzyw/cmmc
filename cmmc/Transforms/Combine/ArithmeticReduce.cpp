@@ -786,6 +786,34 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // abs(abs(x)) -> abs(x)
+            if(abs(abs(any(v1)))(matchCtx)) {
+                return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+            }
+            // abs(-x) -> abs(x)
+            if(abs(neg(any(v1)))(matchCtx)) {
+                return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
+            }
+
+            // -(-x) -> x
+            if(neg(neg(any(v1)))(matchCtx))
+                return v1;
+
+            // abs(srem(x, 2)) -> and x, 1
+            if(abs(srem(any(v1), cint_(2)))(matchCtx))
+                return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(1, v1));
+
+            // (and x, 1) != 0 -> trunc x to i1
+            if(scmp(cmp, and_(any(v1), cint_(1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual) {
+                return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(), v1);
+            }
+
+            // and(ztrunc x1 to i1, ztrunc x2 to i2) -> ztrunc (x1 and x2) to i1
+            if(inst->getType()->isBoolean() && and_(oneUse(ztrunc(any(v1))), oneUse(ztrunc(any(v2))))(matchCtx)) {
+                return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(),
+                                                builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
+            }
+
             return nullptr;
         });
         return ret || modified;

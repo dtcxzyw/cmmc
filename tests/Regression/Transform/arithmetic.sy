@@ -380,6 +380,9 @@ int nabs3(int x) {
 int nabs4(int x) {
     return x >= 0 ? -x : x;
 }
+int absNeg(int x) {
+    return iabs1(-x);
+}
 int average(int x, int y) {
     return (x + y) / 2;
 }
@@ -460,4 +463,10 @@ int mul_with_constant22(int x) {
 }
 int mul_with_constant23(int x) {
     return x * 10000;
+}
+int doubleNeg(int x) {
+    return -(-x);
+}
+int absSRem2(int x) {
+    return iabs1(x % 2);
 }

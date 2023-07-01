@@ -54,14 +54,14 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %24 = scmp lt i32 %20, i32 16;
     cbr i1 %24(prob = 0.97), ^while.body, ^b1;
   ^while.body:
-    i32 %25 = and i32 %22, i32 1;
-    i32 %26 = and i32 %23, i32 %25;
-    i1 %27 = ztrunc i32 %26 to i1;
+    i1 %25 = ztrunc i32 %23 to i1;
+    i1 %26 = ztrunc i32 %22 to i1;
+    i1 %27 = and i1 %25, i1 %26;
     cbr i1 %27(prob = 0.5), ^if.then, ^b2;
   ^while.header2:
     i32 %28 = phi [^b, i32 2] [^b30, i32 %126];
     i32 %29 = phi [^b, i32 1] [^b30, i32 %72];
-    i32 %30 = phi [^b, i32 1] [^b30, i32 %243];
+    i32 %30 = phi [^b, i32 1] [^b30, i32 %242];
     i1 %31 = scmp gt i32 %30, i32 0;
     cbr i1 %31(prob = 0.97), ^while.header3, ^b3;
   ^b1:
@@ -86,22 +86,22 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %40 = phi [^b1, i32 %18] [^while.header4, i32 %48];
     ubr ^while.header7;
   ^while.header3:
-    i32 %41 = phi [^while.header2, i32 0] [^b6, i32 %71];
-    i32 %42 = phi [^while.header2, i32 0] [^b6, i32 %68];
+    i32 %41 = phi [^while.header2, i32 0] [^b6, i32 %68];
+    i32 %42 = phi [^while.header2, i32 0] [^b6, i32 %71];
     i32 %43 = phi [^while.header2, i32 1] [^b6, i32 %70];
     i32 %44 = phi [^while.header2, i32 %30] [^b6, i32 %69];
-    i1 %45 = scmp lt i32 %41, i32 16;
+    i1 %45 = scmp lt i32 %42, i32 16;
     cbr i1 %45(prob = 0.97), ^while.body1, ^b5;
   ^while.header4:
     i32 %46 = phi [^b1, i32 %18] [^b38, i32 %162];
-    i32 %47 = phi [^b1, i32 %16] [^b38, i32 %324];
+    i32 %47 = phi [^b1, i32 %16] [^b38, i32 %320];
     i32 %48 = phi [^b1, i32 0] [^b38, i32 %106];
     i1 %49 = scmp neq i32 %47, i32 0;
     cbr i1 %49(prob = 0.97), ^while.header5, ^b4;
   ^while.body1:
-    i32 %50 = and i32 %43, i32 1;
-    i32 %51 = and i32 %44, i32 %50;
-    i1 %52 = ztrunc i32 %51 to i1;
+    i1 %50 = ztrunc i32 %44 to i1;
+    i1 %51 = ztrunc i32 %43 to i1;
+    i1 %52 = and i1 %50, i1 %51;
     cbr i1 %52(prob = 0.5), ^if.then1, ^b6;
   ^while.header5:
     i32 %53 = phi [^while.header4, i32 0] [^b10, i32 %99];
@@ -115,36 +115,36 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %59 = scmp lt i32 %58, i32 16;
     cbr i1 %59(prob = 0.97), ^while.header8, ^while.header11;
   ^while.header7:
-    i32 %60 = phi [^b4, i32 %16] [^b48, i32 %232];
-    i32 %61 = phi [^b4, i32 %16] [^b48, i32 %433];
+    i32 %60 = phi [^b4, i32 %16] [^b48, i32 %231];
+    i32 %61 = phi [^b4, i32 %16] [^b48, i32 %425];
     i32 %62 = phi [^b4, i32 0] [^b48, i32 %146];
     i1 %63 = scmp neq i32 %61, i32 0;
     cbr i1 %63(prob = 0.97), ^while.header9, ^b9;
   ^b5:
-    i1 %64 = scmp neq i32 %42, i32 0;
+    i1 %64 = scmp neq i32 %41, i32 0;
     cbr i1 %64(prob = 0.5), ^while.header10, ^b7;
   ^if.then1:
-    i32* %65 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %41];
+    i32* %65 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %42];
     i32 %66 = load i32* %65;
-    i32 %67 = add i32 %42, i32 %66;
+    i32 %67 = add i32 %41, i32 %66;
     ubr ^b6;
   ^b6:
-    i32 %68 = phi [^while.body1, i32 %42] [^if.then1, i32 %67];
+    i32 %68 = phi [^while.body1, i32 %41] [^if.then1, i32 %67];
     i32 %69 = sdiv i32 %44, i32 2;
     i32 %70 = sdiv i32 %43, i32 2;
-    i32 %71 = add i32 %41, i32 1;
+    i32 %71 = add i32 %42, i32 1;
     ubr ^while.header3;
   ^b7:
     i32 %72 = phi [^b5, i32 %29] [^while.header10, i32 %86];
     ubr ^while.header15;
   ^while.body2:
-    i32 %73 = and i32 %54, i32 1;
-    i32 %74 = and i32 %55, i32 %73;
-    i1 %75 = ztrunc i32 %74 to i1;
+    i1 %73 = ztrunc i32 %55 to i1;
+    i1 %74 = ztrunc i32 %54 to i1;
+    i1 %75 = and i1 %73, i1 %74;
     cbr i1 %75(prob = 0.5), ^if.then2, ^b10;
   ^while.header8:
-    i32 %76 = phi [^while.header6, i32 2] [^b59, i32 %286];
-    i32 %77 = phi [^while.header6, i32 %58] [^b59, i32 %547];
+    i32 %76 = phi [^while.header6, i32 2] [^b59, i32 %282];
+    i32 %77 = phi [^while.header6, i32 %58] [^b59, i32 %535];
     i32 %78 = phi [^while.header6, i32 1] [^b59, i32 %196];
     i1 %79 = scmp gt i32 %77, i32 0;
     cbr i1 %79(prob = 0.97), ^while.header12, ^b11;
@@ -156,9 +156,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %84 = scmp lt i32 %80, i32 16;
     cbr i1 %84(prob = 0.97), ^while.body3, ^b13;
   ^while.header10:
-    i32 %85 = phi [^b5, i32 %29] [^b62, i32 %294];
+    i32 %85 = phi [^b5, i32 %29] [^b62, i32 %290];
     i32 %86 = phi [^b5, i32 0] [^b62, i32 %197];
-    i32 %87 = phi [^b5, i32 %28] [^b62, i32 %556];
+    i32 %87 = phi [^b5, i32 %28] [^b62, i32 %544];
     i1 %88 = scmp neq i32 %87, i32 0;
     cbr i1 %88(prob = 0.97), ^while.header13, ^b7;
   ^b8:
@@ -168,7 +168,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %90 = scmp gt i32 %17, i32 32767;
     cbr i1 %90(prob = 0.5), ^if.then3, ^if.else;
   ^while.header11:
-    i32 %91 = phi [^while.header6, i32 0] [^b26, i32 %205];
+    i32 %91 = phi [^while.header6, i32 0] [^b26, i32 %204];
     i1 %92 = scmp lt i32 %91, i32 16;
     cbr i1 %92(prob = 0.97), ^while.header16, ^b14;
   ^if.then2:
@@ -202,9 +202,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %108 = sdiv i32 %17, i32 %107;
     ubr ^b15;
   ^while.body3:
-    i32 %109 = and i32 %81, i32 1;
-    i32 %110 = and i32 %82, i32 %109;
-    i1 %111 = ztrunc i32 %110 to i1;
+    i1 %109 = ztrunc i32 %82 to i1;
+    i1 %110 = ztrunc i32 %81 to i1;
+    i1 %111 = and i1 %109, i1 %110;
     cbr i1 %111(prob = 0.5), ^if.then4, ^b16;
   ^while.header12:
     i32 %112 = phi [^while.header8, i32 0] [^b22, i32 %186];
@@ -221,23 +221,23 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %121 = scmp lt i32 %117, i32 16;
     cbr i1 %121(prob = 0.97), ^while.body5, ^b19;
   ^while.header14:
-    i32 %122 = phi [^b8, i32 %46] [^while.header42, i32 %387];
+    i32 %122 = phi [^b8, i32 %46] [^while.header42, i32 %379];
     i32 %123 = phi [^b8, i32 %48] [^while.header42, i32 %150];
     i1 %124 = scmp neq i32 %122, i32 0;
     cbr i1 %124(prob = 0.97), ^while.header17, ^b12;
   ^while.header15:
-    i32 %125 = phi [^b7, i32 %28] [^b74, i32 %393];
-    i32 %126 = phi [^b7, i32 0] [^b74, i32 %261];
-    i32 %127 = phi [^b7, i32 %28] [^b74, i32 %680];
+    i32 %125 = phi [^b7, i32 %28] [^b74, i32 %385];
+    i32 %126 = phi [^b7, i32 0] [^b74, i32 %260];
+    i32 %127 = phi [^b7, i32 %28] [^b74, i32 %665];
     i1 %128 = scmp neq i32 %127, i32 0;
     cbr i1 %128(prob = 0.97), ^while.header18, ^b20;
   ^b13:
     i1 %129 = scmp neq i32 %83, i32 0;
     cbr i1 %129(prob = 0.5), ^while.header20, ^b17;
   ^while.header16:
-    i32 %130 = phi [^while.header11, i32 2] [^b75, i32 %399];
-    i32 %131 = phi [^while.header11, i32 %91] [^b75, i32 %681];
-    i32 %132 = phi [^while.header11, i32 1] [^b75, i32 %262];
+    i32 %130 = phi [^while.header11, i32 2] [^b75, i32 %391];
+    i32 %131 = phi [^while.header11, i32 %91] [^b75, i32 %666];
+    i32 %132 = phi [^while.header11, i32 1] [^b75, i32 %261];
     i1 %133 = scmp gt i32 %131, i32 0;
     cbr i1 %133(prob = 0.97), ^while.header21, ^b21;
   ^b14:
@@ -258,42 +258,42 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %142 = add i32 %80, i32 1;
     ubr ^while.header9;
   ^while.body4:
-    i32 %143 = and i32 %113, i32 1;
-    i32 %144 = and i32 %114, i32 %143;
-    i1 %145 = ztrunc i32 %144 to i1;
+    i1 %143 = ztrunc i32 %114 to i1;
+    i1 %144 = ztrunc i32 %113 to i1;
+    i1 %145 = and i1 %143, i1 %144;
     cbr i1 %145(prob = 0.5), ^if.then5, ^b22;
   ^b17:
     i32 %146 = phi [^b13, i32 %62] [^while.header20, i32 %165];
     ubr ^while.header27;
   ^while.body5:
-    i32 %147 = and i32 %119, i32 1;
-    i32 %148 = and i32 %120, i32 %147;
-    i1 %149 = ztrunc i32 %148 to i1;
+    i1 %147 = ztrunc i32 %120 to i1;
+    i1 %148 = ztrunc i32 %119 to i1;
+    i1 %149 = and i1 %147, i1 %148;
     cbr i1 %149(prob = 0.5), ^if.then6, ^b23;
   ^while.header17:
-    i32 %150 = phi [^while.header14, i32 0] [^b37, i32 %317];
-    i32 %151 = phi [^while.header14, i32 0] [^b37, i32 %320];
-    i32 %152 = phi [^while.header14, i32 %122] [^b37, i32 %319];
-    i32 %153 = phi [^while.header14, i32 %123] [^b37, i32 %318];
+    i32 %150 = phi [^while.header14, i32 0] [^b37, i32 %313];
+    i32 %151 = phi [^while.header14, i32 0] [^b37, i32 %316];
+    i32 %152 = phi [^while.header14, i32 %122] [^b37, i32 %315];
+    i32 %153 = phi [^while.header14, i32 %123] [^b37, i32 %314];
     i1 %154 = scmp lt i32 %151, i32 16;
     cbr i1 %154(prob = 0.97), ^while.body6, ^while.header26;
   ^while.header18:
-    i32 %155 = phi [^while.header15, i32 0] [^b31, i32 %247];
-    i32 %156 = phi [^while.header15, i32 1] [^b31, i32 %246];
-    i32 %157 = phi [^while.header15, i32 %127] [^b31, i32 %245];
-    i32 %158 = phi [^while.header15, i32 0] [^b31, i32 %244];
+    i32 %155 = phi [^while.header15, i32 0] [^b31, i32 %246];
+    i32 %156 = phi [^while.header15, i32 1] [^b31, i32 %245];
+    i32 %157 = phi [^while.header15, i32 %127] [^b31, i32 %244];
+    i32 %158 = phi [^while.header15, i32 0] [^b31, i32 %243];
     i1 %159 = scmp lt i32 %155, i32 16;
     cbr i1 %159(prob = 0.97), ^while.body7, ^b27;
   ^b18:
     i1 %160 = scmp neq i32 %115, i32 0;
     cbr i1 %160(prob = 0.5), ^while.header22, ^b24;
   ^while.header19:
-    i32 %161 = phi [^b12, i32 %46] [^while.header51, i32 %515];
-    i32 %162 = phi [^b12, i32 %46] [^while.header51, i32 %216];
+    i32 %161 = phi [^b12, i32 %46] [^while.header51, i32 %503];
+    i32 %162 = phi [^b12, i32 %46] [^while.header51, i32 %215];
     i1 %163 = scmp neq i32 %161, i32 0;
     cbr i1 %163(prob = 0.97), ^while.header23, ^b28;
   ^while.header20:
-    i32 %164 = phi [^b13, i32 %60] [^while.header52, i32 %518];
+    i32 %164 = phi [^b13, i32 %60] [^while.header52, i32 %506];
     i32 %165 = phi [^b13, i32 %62] [^while.header52, i32 %218];
     i1 %166 = scmp neq i32 %164, i32 0;
     cbr i1 %166(prob = 0.97), ^while.header24, ^b17;
@@ -301,10 +301,10 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %167 = scmp neq i32 %118, i32 0;
     cbr i1 %167(prob = 0.5), ^while.header25, ^b25;
   ^while.header21:
-    i32 %168 = phi [^while.header16, i32 0] [^b32, i32 %256];
-    i32 %169 = phi [^while.header16, i32 0] [^b32, i32 %253];
-    i32 %170 = phi [^while.header16, i32 1] [^b32, i32 %255];
-    i32 %171 = phi [^while.header16, i32 %131] [^b32, i32 %254];
+    i32 %168 = phi [^while.header16, i32 0] [^b32, i32 %255];
+    i32 %169 = phi [^while.header16, i32 0] [^b32, i32 %252];
+    i32 %170 = phi [^while.header16, i32 1] [^b32, i32 %254];
+    i32 %171 = phi [^while.header16, i32 %131] [^b32, i32 %253];
     i1 %172 = scmp lt i32 %168, i32 16;
     cbr i1 %172(prob = 0.97), ^while.body8, ^b29;
   ^b20:
@@ -345,1711 +345,1679 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %195 = sub i32 %193, i32 %194;
     ubr ^b30;
   ^b24:
-    i32 %196 = phi [^b18, i32 %78] [^while.header22, i32 %210];
+    i32 %196 = phi [^b18, i32 %78] [^while.header22, i32 %209];
     ubr ^while.header30;
   ^b25:
-    i32 %197 = phi [^b19, i32 %86] [^while.header25, i32 %224];
+    i32 %197 = phi [^b19, i32 %86] [^while.header25, i32 %223];
     ubr ^while.header32;
   ^while.body6:
-    i32 %198 = and i32 %153, i32 1;
-    i1 %199 = scmp neq i32 %198, i32 0;
-    cbr i1 %199(prob = 0.5), ^if.then11, ^if.else3;
+    i1 %198 = ztrunc i32 %153 to i1;
+    cbr i1 %198(prob = 0.5), ^if.then11, ^if.else3;
   ^if.else1:
-    i32 %200 = load i32* %1;
-    i32 %201 = sdiv i32 %30, i32 %200;
+    i32 %199 = load i32* %1;
+    i32 %200 = sdiv i32 %30, i32 %199;
     ubr ^b30;
   ^while.body7:
-    i32 %202 = and i32 %156, i32 1;
-    i32 %203 = and i32 %157, i32 %202;
-    i1 %204 = ztrunc i32 %203 to i1;
-    cbr i1 %204(prob = 0.5), ^if.then8, ^b31;
+    i1 %201 = ztrunc i32 %157 to i1;
+    i1 %202 = ztrunc i32 %156 to i1;
+    i1 %203 = and i1 %201, i1 %202;
+    cbr i1 %203(prob = 0.5), ^if.then8, ^b31;
   ^b26:
-    i32 %205 = add i32 %91, i32 1;
+    i32 %204 = add i32 %91, i32 1;
     ubr ^while.header11;
   ^while.body8:
-    i32 %206 = and i32 %170, i32 1;
-    i32 %207 = and i32 %171, i32 %206;
-    i1 %208 = ztrunc i32 %207 to i1;
-    cbr i1 %208(prob = 0.5), ^if.then9, ^b32;
+    i1 %205 = ztrunc i32 %171 to i1;
+    i1 %206 = ztrunc i32 %170 to i1;
+    i1 %207 = and i1 %205, i1 %206;
+    cbr i1 %207(prob = 0.5), ^if.then9, ^b32;
   ^while.header22:
-    i32 %209 = phi [^b18, i32 %78] [^b92, i32 %614];
-    i32 %210 = phi [^b18, i32 0] [^b92, i32 %444];
-    i32 %211 = phi [^b18, i32 %76] [^b92, i32 %866];
-    i1 %212 = scmp neq i32 %211, i32 0;
-    cbr i1 %212(prob = 0.97), ^while.header28, ^b24;
+    i32 %208 = phi [^b18, i32 %78] [^b92, i32 %599];
+    i32 %209 = phi [^b18, i32 0] [^b92, i32 %436];
+    i32 %210 = phi [^b18, i32 %76] [^b92, i32 %845];
+    i1 %211 = scmp neq i32 %210, i32 0;
+    cbr i1 %211(prob = 0.97), ^while.header28, ^b24;
   ^while.header23:
-    i32 %213 = phi [^while.header19, i32 0] [^b47, i32 %426];
-    i32 %214 = phi [^while.header19, i32 %161] [^b47, i32 %425];
-    i32 %215 = phi [^while.header19, i32 %162] [^b47, i32 %424];
-    i32 %216 = phi [^while.header19, i32 0] [^b47, i32 %423];
-    i1 %217 = scmp lt i32 %213, i32 16;
-    cbr i1 %217(prob = 0.97), ^while.body9, ^while.header35;
+    i32 %212 = phi [^while.header19, i32 0] [^b47, i32 %418];
+    i32 %213 = phi [^while.header19, i32 %161] [^b47, i32 %417];
+    i32 %214 = phi [^while.header19, i32 %162] [^b47, i32 %416];
+    i32 %215 = phi [^while.header19, i32 0] [^b47, i32 %415];
+    i1 %216 = scmp lt i32 %212, i32 16;
+    cbr i1 %216(prob = 0.97), ^while.body9, ^while.header35;
   ^while.header24:
-    i32 %218 = phi [^while.header20, i32 0] [^b46, i32 %419];
-    i32 %219 = phi [^while.header20, i32 0] [^b46, i32 %422];
-    i32 %220 = phi [^while.header20, i32 %164] [^b46, i32 %421];
-    i32 %221 = phi [^while.header20, i32 %165] [^b46, i32 %420];
-    i1 %222 = scmp lt i32 %219, i32 16;
-    cbr i1 %222(prob = 0.97), ^while.body10, ^while.header36;
+    i32 %217 = phi [^while.header20, i32 0] [^b45, i32 %410];
+    i32 %218 = phi [^while.header20, i32 0] [^b45, i32 %407];
+    i32 %219 = phi [^while.header20, i32 %164] [^b45, i32 %409];
+    i32 %220 = phi [^while.header20, i32 %165] [^b45, i32 %408];
+    i1 %221 = scmp lt i32 %217, i32 16;
+    cbr i1 %221(prob = 0.97), ^while.body10, ^while.header36;
   ^while.header25:
-    i32 %223 = phi [^b19, i32 %85] [^while.header57, i32 %635];
-    i32 %224 = phi [^b19, i32 %86] [^while.header57, i32 %277];
-    i1 %225 = scmp neq i32 %223, i32 0;
-    cbr i1 %225(prob = 0.97), ^while.header29, ^b25;
+    i32 %222 = phi [^b19, i32 %85] [^while.header57, i32 %620];
+    i32 %223 = phi [^b19, i32 %86] [^while.header57, i32 %273];
+    i1 %224 = scmp neq i32 %222, i32 0;
+    cbr i1 %224(prob = 0.97), ^while.header29, ^b25;
   ^while.header26:
-    i32 %226 = phi [^while.header17, i32 0] [^b39, i32 %328];
-    i32 %227 = phi [^while.header17, i32 0] [^b39, i32 %325];
-    i32 %228 = phi [^while.header17, i32 %122] [^b39, i32 %327];
-    i32 %229 = phi [^while.header17, i32 %123] [^b39, i32 %326];
-    i1 %230 = scmp lt i32 %226, i32 16;
-    cbr i1 %230(prob = 0.97), ^while.body11, ^b33;
+    i32 %225 = phi [^while.header17, i32 0] [^b39, i32 %324];
+    i32 %226 = phi [^while.header17, i32 0] [^b39, i32 %321];
+    i32 %227 = phi [^while.header17, i32 %122] [^b39, i32 %323];
+    i32 %228 = phi [^while.header17, i32 %123] [^b39, i32 %322];
+    i1 %229 = scmp lt i32 %225, i32 16;
+    cbr i1 %229(prob = 0.97), ^while.body11, ^b33;
   ^while.header27:
-    i32 %231 = phi [^b17, i32 %60] [^while.header59, i32 %648];
-    i32 %232 = phi [^b17, i32 %60] [^while.header59, i32 %291];
-    i1 %233 = scmp neq i32 %231, i32 0;
-    cbr i1 %233(prob = 0.97), ^while.header31, ^b36;
+    i32 %230 = phi [^b17, i32 %60] [^while.header59, i32 %631];
+    i32 %231 = phi [^b17, i32 %60] [^while.header59, i32 %287];
+    i1 %232 = scmp neq i32 %230, i32 0;
+    cbr i1 %232(prob = 0.97), ^while.header31, ^b36;
   ^b27:
-    i1 %234 = scmp neq i32 %158, i32 0;
-    cbr i1 %234(prob = 0.5), ^while.header33, ^b34;
+    i1 %233 = scmp neq i32 %158, i32 0;
+    cbr i1 %233(prob = 0.5), ^while.header33, ^b34;
   ^b28:
-    i1 %235 = scmp gt i32 %47, i32 32767;
-    cbr i1 %235(prob = 0.5), ^if.then10, ^if.else2;
+    i1 %234 = scmp gt i32 %47, i32 32767;
+    cbr i1 %234(prob = 0.5), ^if.then10, ^if.else2;
   ^b29:
-    i1 %236 = scmp neq i32 %169, i32 0;
-    cbr i1 %236(prob = 0.5), ^while.header34, ^b35;
+    i1 %235 = scmp neq i32 %169, i32 0;
+    cbr i1 %235(prob = 0.5), ^while.header34, ^b35;
   ^if.then8:
-    i32* %237 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %155];
-    i32 %238 = load i32* %237;
-    i32 %239 = add i32 %158, i32 %238;
+    i32* %236 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %155];
+    i32 %237 = load i32* %236;
+    i32 %238 = add i32 %158, i32 %237;
     ubr ^b31;
   ^if.then9:
-    i32* %240 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %168];
-    i32 %241 = load i32* %240;
-    i32 %242 = add i32 %169, i32 %241;
+    i32* %239 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %168];
+    i32 %240 = load i32* %239;
+    i32 %241 = add i32 %169, i32 %240;
     ubr ^b32;
   ^b30:
-    i32 %243 = phi [^if.then7, i32 %195] [^if.else1, i32 %201];
+    i32 %242 = phi [^if.then7, i32 %195] [^if.else1, i32 %200];
     ubr ^while.header2;
   ^b31:
-    i32 %244 = phi [^while.body7, i32 %158] [^if.then8, i32 %239];
-    i32 %245 = sdiv i32 %157, i32 2;
-    i32 %246 = sdiv i32 %156, i32 2;
-    i32 %247 = add i32 %155, i32 1;
+    i32 %243 = phi [^while.body7, i32 %158] [^if.then8, i32 %238];
+    i32 %244 = sdiv i32 %157, i32 2;
+    i32 %245 = sdiv i32 %156, i32 2;
+    i32 %246 = add i32 %155, i32 1;
     ubr ^while.header18;
   ^if.then10:
-    i32 %248 = load i32* %1;
-    i32 %249 = sdiv i32 %47, i32 %248;
-    i32 %250 = add i32 %249, i32 65536;
-    i32 %251 = load i32* %15;
-    i32 %252 = sub i32 %250, i32 %251;
+    i32 %247 = load i32* %1;
+    i32 %248 = sdiv i32 %47, i32 %247;
+    i32 %249 = add i32 %248, i32 65536;
+    i32 %250 = load i32* %15;
+    i32 %251 = sub i32 %249, i32 %250;
     ubr ^b38;
   ^b32:
-    i32 %253 = phi [^while.body8, i32 %169] [^if.then9, i32 %242];
-    i32 %254 = sdiv i32 %171, i32 2;
-    i32 %255 = sdiv i32 %170, i32 2;
-    i32 %256 = add i32 %168, i32 1;
+    i32 %252 = phi [^while.body8, i32 %169] [^if.then9, i32 %241];
+    i32 %253 = sdiv i32 %171, i32 2;
+    i32 %254 = sdiv i32 %170, i32 2;
+    i32 %255 = add i32 %168, i32 1;
     ubr ^while.header21;
   ^if.then11:
-    i32 %257 = and i32 %152, i32 1;
-    i1 %258 = scmp eq i32 %257, i32 0;
-    cbr i1 %258(prob = 0.5), ^if.then12, ^b37;
+    i32 %256 = and i32 %152, i32 1;
+    i1 %257 = scmp eq i32 %256, i32 0;
+    cbr i1 %257(prob = 0.5), ^if.then12, ^b37;
   ^b33:
-    i32 %259 = load i32* %1;
-    i32 %260 = mul i32 %227, i32 %259;
+    i32 %258 = load i32* %1;
+    i32 %259 = mul i32 %226, i32 %258;
     ubr ^while.header42;
   ^b34:
-    i32 %261 = phi [^b27, i32 %126] [^while.header33, i32 %297];
+    i32 %260 = phi [^b27, i32 %126] [^while.header33, i32 %293];
     ubr ^while.header43;
   ^b35:
-    i32 %262 = phi [^b29, i32 %132] [^while.header34, i32 %300];
+    i32 %261 = phi [^b29, i32 %132] [^while.header34, i32 %296];
     ubr ^while.header44;
   ^if.else2:
-    i32 %263 = load i32* %1;
-    i32 %264 = sdiv i32 %47, i32 %263;
+    i32 %262 = load i32* %1;
+    i32 %263 = sdiv i32 %47, i32 %262;
     ubr ^b38;
   ^while.body9:
-    i32 %265 = and i32 %215, i32 1;
-    i1 %266 = scmp neq i32 %265, i32 0;
-    cbr i1 %266(prob = 0.5), ^if.then15, ^if.else5;
+    i1 %264 = ztrunc i32 %214 to i1;
+    cbr i1 %264(prob = 0.5), ^if.then15, ^if.else5;
   ^while.body10:
-    i32 %267 = and i32 %221, i32 1;
-    i1 %268 = scmp neq i32 %267, i32 0;
-    cbr i1 %268(prob = 0.5), ^if.then16, ^if.else6;
+    i1 %265 = ztrunc i32 %220 to i1;
+    cbr i1 %265(prob = 0.5), ^if.then16, ^if.else6;
   ^while.header28:
-    i32 %269 = phi [^while.header22, i32 0] [^b45, i32 %418];
-    i32 %270 = phi [^while.header22, i32 0] [^b45, i32 %415];
-    i32 %271 = phi [^while.header22, i32 1] [^b45, i32 %417];
-    i32 %272 = phi [^while.header22, i32 %211] [^b45, i32 %416];
-    i1 %273 = scmp lt i32 %269, i32 16;
-    cbr i1 %273(prob = 0.97), ^while.body12, ^b42;
+    i32 %266 = phi [^while.header22, i32 0] [^b46, i32 %414];
+    i32 %267 = phi [^while.header22, i32 0] [^b46, i32 %411];
+    i32 %268 = phi [^while.header22, i32 1] [^b46, i32 %413];
+    i32 %269 = phi [^while.header22, i32 %210] [^b46, i32 %412];
+    i1 %270 = scmp lt i32 %266, i32 16;
+    cbr i1 %270(prob = 0.97), ^while.body12, ^b42;
   ^if.else3:
-    i32 %274 = and i32 %152, i32 1;
-    i1 %275 = scmp neq i32 %274, i32 0;
-    cbr i1 %275(prob = 0.5), ^if.then12, ^b37;
+    i1 %271 = ztrunc i32 %152 to i1;
+    cbr i1 %271(prob = 0.5), ^if.then12, ^b37;
   ^while.header29:
-    i32 %276 = phi [^while.header25, i32 0] [^b58, i32 %537];
-    i32 %277 = phi [^while.header25, i32 0] [^b58, i32 %534];
-    i32 %278 = phi [^while.header25, i32 %223] [^b58, i32 %536];
-    i32 %279 = phi [^while.header25, i32 %224] [^b58, i32 %535];
-    i1 %280 = scmp lt i32 %276, i32 16;
-    cbr i1 %280(prob = 0.97), ^while.body13, ^while.header41;
+    i32 %272 = phi [^while.header25, i32 0] [^b58, i32 %525];
+    i32 %273 = phi [^while.header25, i32 0] [^b58, i32 %522];
+    i32 %274 = phi [^while.header25, i32 %222] [^b58, i32 %524];
+    i32 %275 = phi [^while.header25, i32 %223] [^b58, i32 %523];
+    i1 %276 = scmp lt i32 %272, i32 16;
+    cbr i1 %276(prob = 0.97), ^while.body13, ^while.header41;
   ^while.body11:
-    i32 %281 = and i32 %228, i32 1;
-    i32 %282 = and i32 %229, i32 %281;
-    i1 %283 = ztrunc i32 %282 to i1;
-    cbr i1 %283(prob = 0.5), ^if.then13, ^b39;
+    i1 %277 = ztrunc i32 %228 to i1;
+    i1 %278 = ztrunc i32 %227 to i1;
+    i1 %279 = and i1 %277, i1 %278;
+    cbr i1 %279(prob = 0.5), ^if.then13, ^b39;
   ^while.header30:
-    i32 %284 = phi [^b24, i32 %76] [^b103, i32 %734];
-    i32 %285 = phi [^b24, i32 %76] [^b103, i32 %991];
-    i32 %286 = phi [^b24, i32 0] [^b103, i32 %577];
-    i1 %287 = scmp neq i32 %285, i32 0;
-    cbr i1 %287(prob = 0.97), ^while.header37, ^b43;
+    i32 %280 = phi [^b24, i32 %76] [^b103, i32 %717];
+    i32 %281 = phi [^b24, i32 %76] [^b103, i32 %964];
+    i32 %282 = phi [^b24, i32 0] [^b103, i32 %565];
+    i1 %283 = scmp neq i32 %281, i32 0;
+    cbr i1 %283(prob = 0.97), ^while.header37, ^b43;
   ^while.header31:
-    i32 %288 = phi [^while.header27, i32 0] [^b60, i32 %551];
-    i32 %289 = phi [^while.header27, i32 %231] [^b60, i32 %550];
-    i32 %290 = phi [^while.header27, i32 %232] [^b60, i32 %549];
-    i32 %291 = phi [^while.header27, i32 0] [^b60, i32 %548];
-    i1 %292 = scmp lt i32 %288, i32 16;
-    cbr i1 %292(prob = 0.97), ^while.body14, ^while.header45;
+    i32 %284 = phi [^while.header27, i32 0] [^b60, i32 %539];
+    i32 %285 = phi [^while.header27, i32 %230] [^b60, i32 %538];
+    i32 %286 = phi [^while.header27, i32 %231] [^b60, i32 %537];
+    i32 %287 = phi [^while.header27, i32 0] [^b60, i32 %536];
+    i1 %288 = scmp lt i32 %284, i32 16;
+    cbr i1 %288(prob = 0.97), ^while.body14, ^while.header45;
   ^while.header32:
-    i32 %293 = phi [^b25, i32 %85] [^while.header67, i32 %750];
-    i32 %294 = phi [^b25, i32 %85] [^while.header67, i32 %363];
-    i1 %295 = scmp neq i32 %293, i32 0;
-    cbr i1 %295(prob = 0.97), ^while.header38, ^b44;
+    i32 %289 = phi [^b25, i32 %85] [^while.header67, i32 %733];
+    i32 %290 = phi [^b25, i32 %85] [^while.header67, i32 %355];
+    i1 %291 = scmp neq i32 %289, i32 0;
+    cbr i1 %291(prob = 0.97), ^while.header38, ^b44;
   ^while.header33:
-    i32 %296 = phi [^b27, i32 %125] [^while.header68, i32 %755];
-    i32 %297 = phi [^b27, i32 %126] [^while.header68, i32 %366];
-    i1 %298 = scmp neq i32 %296, i32 0;
-    cbr i1 %298(prob = 0.97), ^while.header39, ^b34;
+    i32 %292 = phi [^b27, i32 %125] [^while.header68, i32 %738];
+    i32 %293 = phi [^b27, i32 %126] [^while.header68, i32 %358];
+    i1 %294 = scmp neq i32 %292, i32 0;
+    cbr i1 %294(prob = 0.97), ^while.header39, ^b34;
   ^while.header34:
-    i32 %299 = phi [^b29, i32 %132] [^b104, i32 %744];
-    i32 %300 = phi [^b29, i32 0] [^b104, i32 %591];
-    i32 %301 = phi [^b29, i32 %130] [^b104, i32 %995];
-    i1 %302 = scmp neq i32 %301, i32 0;
-    cbr i1 %302(prob = 0.97), ^while.header40, ^b35;
+    i32 %295 = phi [^b29, i32 %132] [^b104, i32 %727];
+    i32 %296 = phi [^b29, i32 0] [^b104, i32 %579];
+    i32 %297 = phi [^b29, i32 %130] [^b104, i32 %968];
+    i1 %298 = scmp neq i32 %297, i32 0;
+    cbr i1 %298(prob = 0.97), ^while.header40, ^b35;
   ^while.header35:
-    i32 %303 = phi [^while.header23, i32 0] [^b50, i32 %450];
-    i32 %304 = phi [^while.header23, i32 %161] [^b50, i32 %449];
-    i32 %305 = phi [^while.header23, i32 %162] [^b50, i32 %448];
-    i32 %306 = phi [^while.header23, i32 0] [^b50, i32 %447];
-    i1 %307 = scmp lt i32 %303, i32 16;
-    cbr i1 %307(prob = 0.97), ^while.body15, ^b40;
+    i32 %299 = phi [^while.header23, i32 0] [^b50, i32 %442];
+    i32 %300 = phi [^while.header23, i32 %161] [^b50, i32 %441];
+    i32 %301 = phi [^while.header23, i32 %162] [^b50, i32 %440];
+    i32 %302 = phi [^while.header23, i32 0] [^b50, i32 %439];
+    i1 %303 = scmp lt i32 %299, i32 16;
+    cbr i1 %303(prob = 0.97), ^while.body15, ^b40;
   ^while.header36:
-    i32 %308 = phi [^while.header24, i32 0] [^b51, i32 %454];
-    i32 %309 = phi [^while.header24, i32 0] [^b51, i32 %451];
-    i32 %310 = phi [^while.header24, i32 %164] [^b51, i32 %453];
-    i32 %311 = phi [^while.header24, i32 %165] [^b51, i32 %452];
-    i1 %312 = scmp lt i32 %308, i32 16;
-    cbr i1 %312(prob = 0.97), ^while.body16, ^b41;
+    i32 %304 = phi [^while.header24, i32 0] [^b51, i32 %446];
+    i32 %305 = phi [^while.header24, i32 0] [^b51, i32 %443];
+    i32 %306 = phi [^while.header24, i32 %164] [^b51, i32 %445];
+    i32 %307 = phi [^while.header24, i32 %165] [^b51, i32 %444];
+    i1 %308 = scmp lt i32 %304, i32 16;
+    cbr i1 %308(prob = 0.97), ^while.body16, ^b41;
   ^b36:
-    i1 %313 = scmp gt i32 %61, i32 32767;
-    cbr i1 %313(prob = 0.5), ^if.then14, ^if.else4;
+    i1 %309 = scmp gt i32 %61, i32 32767;
+    cbr i1 %309(prob = 0.5), ^if.then14, ^if.else4;
   ^if.then12:
-    i32* %314 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %151];
-    i32 %315 = load i32* %314;
-    i32 %316 = add i32 %150, i32 %315;
+    i32* %310 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %151];
+    i32 %311 = load i32* %310;
+    i32 %312 = add i32 %150, i32 %311;
     ubr ^b37;
   ^b37:
-    i32 %317 = phi [^if.then11, i32 %150] [^if.else3, i32 %150] [^if.then12, i32 %316];
-    i32 %318 = sdiv i32 %153, i32 2;
-    i32 %319 = sdiv i32 %152, i32 2;
-    i32 %320 = add i32 %151, i32 1;
+    i32 %313 = phi [^if.then11, i32 %150] [^if.else3, i32 %150] [^if.then12, i32 %312];
+    i32 %314 = sdiv i32 %153, i32 2;
+    i32 %315 = sdiv i32 %152, i32 2;
+    i32 %316 = add i32 %151, i32 1;
     ubr ^while.header17;
   ^if.then13:
-    i32* %321 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %226];
-    i32 %322 = load i32* %321;
-    i32 %323 = add i32 %227, i32 %322;
+    i32* %317 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %225];
+    i32 %318 = load i32* %317;
+    i32 %319 = add i32 %226, i32 %318;
     ubr ^b39;
   ^b38:
-    i32 %324 = phi [^if.then10, i32 %252] [^if.else2, i32 %264];
+    i32 %320 = phi [^if.then10, i32 %251] [^if.else2, i32 %263];
     ubr ^while.header4;
   ^b39:
-    i32 %325 = phi [^while.body11, i32 %227] [^if.then13, i32 %323];
-    i32 %326 = sdiv i32 %229, i32 2;
-    i32 %327 = sdiv i32 %228, i32 2;
-    i32 %328 = add i32 %226, i32 1;
+    i32 %321 = phi [^while.body11, i32 %226] [^if.then13, i32 %319];
+    i32 %322 = sdiv i32 %228, i32 2;
+    i32 %323 = sdiv i32 %227, i32 2;
+    i32 %324 = add i32 %225, i32 1;
     ubr ^while.header26;
   ^if.then14:
-    i32 %329 = load i32* %1;
-    i32 %330 = sdiv i32 %61, i32 %329;
-    i32 %331 = add i32 %330, i32 65536;
-    i32 %332 = load i32* %15;
-    i32 %333 = sub i32 %331, i32 %332;
+    i32 %325 = load i32* %1;
+    i32 %326 = sdiv i32 %61, i32 %325;
+    i32 %327 = add i32 %326, i32 65536;
+    i32 %328 = load i32* %15;
+    i32 %329 = sub i32 %327, i32 %328;
     ubr ^b48;
   ^while.body12:
-    i32 %334 = and i32 %271, i32 1;
-    i32 %335 = and i32 %272, i32 %334;
-    i1 %336 = ztrunc i32 %335 to i1;
-    cbr i1 %336(prob = 0.5), ^if.then19, ^b45;
+    i1 %330 = ztrunc i32 %269 to i1;
+    i1 %331 = ztrunc i32 %268 to i1;
+    i1 %332 = and i1 %330, i1 %331;
+    cbr i1 %332(prob = 0.5), ^if.then19, ^b46;
   ^if.then15:
-    i32 %337 = and i32 %214, i32 1;
-    i1 %338 = scmp eq i32 %337, i32 0;
-    cbr i1 %338(prob = 0.5), ^if.then17, ^b47;
+    i32 %333 = and i32 %213, i32 1;
+    i1 %334 = scmp eq i32 %333, i32 0;
+    cbr i1 %334(prob = 0.5), ^if.then17, ^b47;
   ^if.then16:
-    i32 %339 = and i32 %220, i32 1;
-    i1 %340 = scmp eq i32 %339, i32 0;
-    cbr i1 %340(prob = 0.5), ^if.then18, ^b46;
+    i32 %335 = and i32 %219, i32 1;
+    i1 %336 = scmp eq i32 %335, i32 0;
+    cbr i1 %336(prob = 0.5), ^if.then18, ^b45;
   ^while.body13:
-    i32 %341 = and i32 %279, i32 1;
-    i1 %342 = scmp neq i32 %341, i32 0;
-    cbr i1 %342(prob = 0.5), ^if.then24, ^if.else9;
+    i1 %337 = ztrunc i32 %275 to i1;
+    cbr i1 %337(prob = 0.5), ^if.then24, ^if.else9;
   ^b40:
-    i32 %343 = load i32* %1;
-    i32 %344 = mul i32 %306, i32 %343;
+    i32 %338 = load i32* %1;
+    i32 %339 = mul i32 %302, i32 %338;
     ubr ^while.header51;
   ^b41:
-    i32 %345 = load i32* %1;
-    i32 %346 = mul i32 %309, i32 %345;
+    i32 %340 = load i32* %1;
+    i32 %341 = mul i32 %305, i32 %340;
     ubr ^while.header52;
   ^if.else4:
-    i32 %347 = load i32* %1;
-    i32 %348 = sdiv i32 %61, i32 %347;
+    i32 %342 = load i32* %1;
+    i32 %343 = sdiv i32 %61, i32 %342;
     ubr ^b48;
   ^while.body14:
-    i32 %349 = and i32 %290, i32 1;
-    i1 %350 = scmp neq i32 %349, i32 0;
-    cbr i1 %350(prob = 0.5), ^if.then25, ^if.else10;
+    i1 %344 = ztrunc i32 %286 to i1;
+    cbr i1 %344(prob = 0.5), ^if.then25, ^if.else10;
   ^while.header37:
-    i32 %351 = phi [^while.header30, i32 0] [^b61, i32 %555];
-    i32 %352 = phi [^while.header30, i32 0] [^b61, i32 %552];
-    i32 %353 = phi [^while.header30, i32 1] [^b61, i32 %554];
-    i32 %354 = phi [^while.header30, i32 %285] [^b61, i32 %553];
-    i1 %355 = scmp lt i32 %351, i32 16;
-    cbr i1 %355(prob = 0.97), ^while.body17, ^b54;
+    i32 %345 = phi [^while.header30, i32 0] [^b61, i32 %543];
+    i32 %346 = phi [^while.header30, i32 0] [^b61, i32 %540];
+    i32 %347 = phi [^while.header30, i32 1] [^b61, i32 %542];
+    i32 %348 = phi [^while.header30, i32 %281] [^b61, i32 %541];
+    i1 %349 = scmp lt i32 %345, i32 16;
+    cbr i1 %349(prob = 0.97), ^while.body17, ^b54;
   ^if.else5:
-    i32 %356 = and i32 %214, i32 1;
-    i1 %357 = scmp neq i32 %356, i32 0;
-    cbr i1 %357(prob = 0.5), ^if.then17, ^b47;
+    i1 %350 = ztrunc i32 %213 to i1;
+    cbr i1 %350(prob = 0.5), ^if.then17, ^b47;
   ^if.else6:
-    i32 %358 = and i32 %220, i32 1;
-    i1 %359 = scmp neq i32 %358, i32 0;
-    cbr i1 %359(prob = 0.5), ^if.then18, ^b46;
+    i1 %351 = ztrunc i32 %219 to i1;
+    cbr i1 %351(prob = 0.5), ^if.then18, ^b45;
   ^while.header38:
-    i32 %360 = phi [^while.header32, i32 0] [^b72, i32 %660];
-    i32 %361 = phi [^while.header32, i32 %293] [^b72, i32 %659];
-    i32 %362 = phi [^while.header32, i32 %294] [^b72, i32 %658];
-    i32 %363 = phi [^while.header32, i32 0] [^b72, i32 %657];
-    i1 %364 = scmp lt i32 %360, i32 16;
-    cbr i1 %364(prob = 0.97), ^while.body18, ^while.header49;
+    i32 %352 = phi [^while.header32, i32 0] [^b72, i32 %645];
+    i32 %353 = phi [^while.header32, i32 %289] [^b72, i32 %644];
+    i32 %354 = phi [^while.header32, i32 %290] [^b72, i32 %643];
+    i32 %355 = phi [^while.header32, i32 0] [^b72, i32 %642];
+    i1 %356 = scmp lt i32 %352, i32 16;
+    cbr i1 %356(prob = 0.97), ^while.body18, ^while.header49;
   ^while.header39:
-    i32 %365 = phi [^while.header33, i32 0] [^b73, i32 %664];
-    i32 %366 = phi [^while.header33, i32 0] [^b73, i32 %661];
-    i32 %367 = phi [^while.header33, i32 %296] [^b73, i32 %663];
-    i32 %368 = phi [^while.header33, i32 %297] [^b73, i32 %662];
-    i1 %369 = scmp lt i32 %365, i32 16;
-    cbr i1 %369(prob = 0.97), ^while.body19, ^while.header50;
+    i32 %357 = phi [^while.header33, i32 0] [^b73, i32 %649];
+    i32 %358 = phi [^while.header33, i32 0] [^b73, i32 %646];
+    i32 %359 = phi [^while.header33, i32 %292] [^b73, i32 %648];
+    i32 %360 = phi [^while.header33, i32 %293] [^b73, i32 %647];
+    i1 %361 = scmp lt i32 %357, i32 16;
+    cbr i1 %361(prob = 0.97), ^while.body19, ^while.header50;
   ^b42:
-    i1 %370 = scmp neq i32 %270, i32 0;
-    cbr i1 %370(prob = 0.5), ^while.header46, ^b49;
+    i1 %362 = scmp neq i32 %267, i32 0;
+    cbr i1 %362(prob = 0.5), ^while.header46, ^b49;
   ^while.body15:
-    i32 %371 = and i32 %304, i32 1;
-    i32 %372 = and i32 %305, i32 %371;
-    i1 %373 = ztrunc i32 %372 to i1;
-    cbr i1 %373(prob = 0.5), ^if.then20, ^b50;
+    i1 %363 = ztrunc i32 %301 to i1;
+    i1 %364 = ztrunc i32 %300 to i1;
+    i1 %365 = and i1 %363, i1 %364;
+    cbr i1 %365(prob = 0.5), ^if.then20, ^b50;
   ^while.body16:
-    i32 %374 = and i32 %310, i32 1;
-    i32 %375 = and i32 %311, i32 %374;
-    i1 %376 = ztrunc i32 %375 to i1;
-    cbr i1 %376(prob = 0.5), ^if.then21, ^b51;
+    i1 %366 = ztrunc i32 %307 to i1;
+    i1 %367 = ztrunc i32 %306 to i1;
+    i1 %368 = and i1 %366, i1 %367;
+    cbr i1 %368(prob = 0.5), ^if.then21, ^b51;
   ^while.header40:
-    i32 %377 = phi [^while.header34, i32 0] [^b63, i32 %560];
-    i32 %378 = phi [^while.header34, i32 1] [^b63, i32 %562];
-    i32 %379 = phi [^while.header34, i32 %301] [^b63, i32 %561];
-    i32 %380 = phi [^while.header34, i32 0] [^b63, i32 %563];
-    i1 %381 = scmp lt i32 %380, i32 16;
-    cbr i1 %381(prob = 0.97), ^while.body20, ^b55;
+    i32 %369 = phi [^while.header34, i32 0] [^b63, i32 %548];
+    i32 %370 = phi [^while.header34, i32 1] [^b63, i32 %550];
+    i32 %371 = phi [^while.header34, i32 %297] [^b63, i32 %549];
+    i32 %372 = phi [^while.header34, i32 0] [^b63, i32 %551];
+    i1 %373 = scmp lt i32 %372, i32 16;
+    cbr i1 %373(prob = 0.97), ^while.body20, ^b55;
   ^while.header41:
-    i32 %382 = phi [^while.header29, i32 %223] [^b64, i32 %566];
-    i32 %383 = phi [^while.header29, i32 %224] [^b64, i32 %565];
-    i32 %384 = phi [^while.header29, i32 0] [^b64, i32 %564];
-    i32 %385 = phi [^while.header29, i32 0] [^b64, i32 %567];
-    i1 %386 = scmp lt i32 %385, i32 16;
-    cbr i1 %386(prob = 0.97), ^while.body21, ^b52;
+    i32 %374 = phi [^while.header29, i32 %222] [^b64, i32 %554];
+    i32 %375 = phi [^while.header29, i32 %223] [^b64, i32 %553];
+    i32 %376 = phi [^while.header29, i32 0] [^b64, i32 %552];
+    i32 %377 = phi [^while.header29, i32 0] [^b64, i32 %555];
+    i1 %378 = scmp lt i32 %377, i32 16;
+    cbr i1 %378(prob = 0.97), ^while.body21, ^b52;
   ^while.header42:
-    i32 %387 = phi [^b33, i32 0] [^b65, i32 %568];
-    i32 %388 = phi [^b33, i32 65535] [^b65, i32 %570];
-    i32 %389 = phi [^b33, i32 %260] [^b65, i32 %569];
-    i32 %390 = phi [^b33, i32 0] [^b65, i32 %571];
-    i1 %391 = scmp lt i32 %390, i32 16;
-    cbr i1 %391(prob = 0.97), ^while.body22, ^while.header14;
+    i32 %379 = phi [^b33, i32 0] [^b65, i32 %556];
+    i32 %380 = phi [^b33, i32 65535] [^b65, i32 %558];
+    i32 %381 = phi [^b33, i32 %259] [^b65, i32 %557];
+    i32 %382 = phi [^b33, i32 0] [^b65, i32 %559];
+    i1 %383 = scmp lt i32 %382, i32 16;
+    cbr i1 %383(prob = 0.97), ^while.body22, ^while.header14;
   ^while.header43:
-    i32 %392 = phi [^b34, i32 %125] [^while.header76, i32 %850];
-    i32 %393 = phi [^b34, i32 %125] [^while.header76, i32 %489];
-    i1 %394 = scmp neq i32 %392, i32 0;
-    cbr i1 %394(prob = 0.97), ^while.header47, ^b56;
+    i32 %384 = phi [^b34, i32 %125] [^while.header76, i32 %829];
+    i32 %385 = phi [^b34, i32 %125] [^while.header76, i32 %477];
+    i1 %386 = scmp neq i32 %384, i32 0;
+    cbr i1 %386(prob = 0.97), ^while.header47, ^b56;
   ^b43:
-    i1 %395 = scmp gt i32 %77, i32 32767;
-    cbr i1 %395(prob = 0.5), ^if.then22, ^if.else7;
+    i1 %387 = scmp gt i32 %77, i32 32767;
+    cbr i1 %387(prob = 0.5), ^if.then22, ^if.else7;
   ^b44:
-    i1 %396 = scmp gt i32 %87, i32 32767;
-    cbr i1 %396(prob = 0.5), ^if.then23, ^if.else8;
+    i1 %388 = scmp gt i32 %87, i32 32767;
+    cbr i1 %388(prob = 0.5), ^if.then23, ^if.else8;
   ^while.header44:
-    i32 %397 = phi [^b35, i32 %130] [^b116, i32 %847];
-    i32 %398 = phi [^b35, i32 %130] [^b116, i32 %1108];
-    i32 %399 = phi [^b35, i32 0] [^b116, i32 %706];
-    i1 %400 = scmp neq i32 %398, i32 0;
-    cbr i1 %400(prob = 0.97), ^while.header48, ^b57;
+    i32 %389 = phi [^b35, i32 %130] [^b116, i32 %826];
+    i32 %390 = phi [^b35, i32 %130] [^b116, i32 %1077];
+    i32 %391 = phi [^b35, i32 0] [^b116, i32 %690];
+    i1 %392 = scmp neq i32 %390, i32 0;
+    cbr i1 %392(prob = 0.97), ^while.header48, ^b57;
   ^while.header45:
-    i32 %401 = phi [^while.header31, i32 0] [^b67, i32 %590];
-    i32 %402 = phi [^while.header31, i32 %231] [^b67, i32 %589];
-    i32 %403 = phi [^while.header31, i32 %232] [^b67, i32 %588];
-    i32 %404 = phi [^while.header31, i32 0] [^b67, i32 %587];
-    i1 %405 = scmp lt i32 %401, i32 16;
-    cbr i1 %405(prob = 0.97), ^while.body23, ^b53;
+    i32 %393 = phi [^while.header31, i32 0] [^b67, i32 %578];
+    i32 %394 = phi [^while.header31, i32 %230] [^b67, i32 %577];
+    i32 %395 = phi [^while.header31, i32 %231] [^b67, i32 %576];
+    i32 %396 = phi [^while.header31, i32 0] [^b67, i32 %575];
+    i1 %397 = scmp lt i32 %393, i32 16;
+    cbr i1 %397(prob = 0.97), ^while.body23, ^b53;
   ^if.then17:
-    i32* %406 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %213];
-    i32 %407 = load i32* %406;
-    i32 %408 = add i32 %216, i32 %407;
+    i32* %398 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %212];
+    i32 %399 = load i32* %398;
+    i32 %400 = add i32 %215, i32 %399;
     ubr ^b47;
   ^if.then18:
-    i32* %409 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %219];
-    i32 %410 = load i32* %409;
-    i32 %411 = add i32 %218, i32 %410;
-    ubr ^b46;
-  ^if.then19:
-    i32* %412 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %269];
-    i32 %413 = load i32* %412;
-    i32 %414 = add i32 %270, i32 %413;
+    i32* %401 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %217];
+    i32 %402 = load i32* %401;
+    i32 %403 = add i32 %218, i32 %402;
     ubr ^b45;
+  ^if.then19:
+    i32* %404 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %266];
+    i32 %405 = load i32* %404;
+    i32 %406 = add i32 %267, i32 %405;
+    ubr ^b46;
   ^b45:
-    i32 %415 = phi [^while.body12, i32 %270] [^if.then19, i32 %414];
-    i32 %416 = sdiv i32 %272, i32 2;
-    i32 %417 = sdiv i32 %271, i32 2;
-    i32 %418 = add i32 %269, i32 1;
-    ubr ^while.header28;
-  ^b46:
-    i32 %419 = phi [^if.then16, i32 %218] [^if.else6, i32 %218] [^if.then18, i32 %411];
-    i32 %420 = sdiv i32 %221, i32 2;
-    i32 %421 = sdiv i32 %220, i32 2;
-    i32 %422 = add i32 %219, i32 1;
+    i32 %407 = phi [^if.then16, i32 %218] [^if.else6, i32 %218] [^if.then18, i32 %403];
+    i32 %408 = sdiv i32 %220, i32 2;
+    i32 %409 = sdiv i32 %219, i32 2;
+    i32 %410 = add i32 %217, i32 1;
     ubr ^while.header24;
+  ^b46:
+    i32 %411 = phi [^while.body12, i32 %267] [^if.then19, i32 %406];
+    i32 %412 = sdiv i32 %269, i32 2;
+    i32 %413 = sdiv i32 %268, i32 2;
+    i32 %414 = add i32 %266, i32 1;
+    ubr ^while.header28;
   ^b47:
-    i32 %423 = phi [^if.then15, i32 %216] [^if.else5, i32 %216] [^if.then17, i32 %408];
-    i32 %424 = sdiv i32 %215, i32 2;
-    i32 %425 = sdiv i32 %214, i32 2;
-    i32 %426 = add i32 %213, i32 1;
+    i32 %415 = phi [^if.then15, i32 %215] [^if.else5, i32 %215] [^if.then17, i32 %400];
+    i32 %416 = sdiv i32 %214, i32 2;
+    i32 %417 = sdiv i32 %213, i32 2;
+    i32 %418 = add i32 %212, i32 1;
     ubr ^while.header23;
   ^if.then20:
-    i32* %427 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %303];
-    i32 %428 = load i32* %427;
-    i32 %429 = add i32 %306, i32 %428;
+    i32* %419 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %299];
+    i32 %420 = load i32* %419;
+    i32 %421 = add i32 %302, i32 %420;
     ubr ^b50;
   ^if.then21:
-    i32* %430 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %308];
-    i32 %431 = load i32* %430;
-    i32 %432 = add i32 %309, i32 %431;
+    i32* %422 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %304];
+    i32 %423 = load i32* %422;
+    i32 %424 = add i32 %305, i32 %423;
     ubr ^b51;
   ^b48:
-    i32 %433 = phi [^if.then14, i32 %333] [^if.else4, i32 %348];
+    i32 %425 = phi [^if.then14, i32 %329] [^if.else4, i32 %343];
     ubr ^while.header7;
   ^if.then22:
-    i32 %434 = load i32* %1;
-    i32 %435 = sdiv i32 %77, i32 %434;
-    i32 %436 = add i32 %435, i32 65536;
-    i32 %437 = load i32* %15;
-    i32 %438 = sub i32 %436, i32 %437;
+    i32 %426 = load i32* %1;
+    i32 %427 = sdiv i32 %77, i32 %426;
+    i32 %428 = add i32 %427, i32 65536;
+    i32 %429 = load i32* %15;
+    i32 %430 = sub i32 %428, i32 %429;
     ubr ^b59;
   ^if.then23:
-    i32 %439 = load i32* %1;
-    i32 %440 = sdiv i32 %87, i32 %439;
-    i32 %441 = add i32 %440, i32 65536;
-    i32 %442 = load i32* %15;
-    i32 %443 = sub i32 %441, i32 %442;
+    i32 %431 = load i32* %1;
+    i32 %432 = sdiv i32 %87, i32 %431;
+    i32 %433 = add i32 %432, i32 65536;
+    i32 %434 = load i32* %15;
+    i32 %435 = sub i32 %433, i32 %434;
     ubr ^b62;
   ^b49:
-    i32 %444 = phi [^b42, i32 %210] [^while.header46, i32 %477];
+    i32 %436 = phi [^b42, i32 %209] [^while.header46, i32 %466];
     ubr ^while.header54;
   ^if.then24:
-    i32 %445 = and i32 %278, i32 1;
-    i1 %446 = scmp eq i32 %445, i32 0;
-    cbr i1 %446(prob = 0.5), ^if.then26, ^b58;
+    i32 %437 = and i32 %274, i32 1;
+    i1 %438 = scmp eq i32 %437, i32 0;
+    cbr i1 %438(prob = 0.5), ^if.then26, ^b58;
   ^b50:
-    i32 %447 = phi [^while.body15, i32 %306] [^if.then20, i32 %429];
-    i32 %448 = sdiv i32 %305, i32 2;
-    i32 %449 = sdiv i32 %304, i32 2;
-    i32 %450 = add i32 %303, i32 1;
+    i32 %439 = phi [^while.body15, i32 %302] [^if.then20, i32 %421];
+    i32 %440 = sdiv i32 %301, i32 2;
+    i32 %441 = sdiv i32 %300, i32 2;
+    i32 %442 = add i32 %299, i32 1;
     ubr ^while.header35;
   ^b51:
-    i32 %451 = phi [^while.body16, i32 %309] [^if.then21, i32 %432];
-    i32 %452 = sdiv i32 %311, i32 2;
-    i32 %453 = sdiv i32 %310, i32 2;
-    i32 %454 = add i32 %308, i32 1;
+    i32 %443 = phi [^while.body16, i32 %305] [^if.then21, i32 %424];
+    i32 %444 = sdiv i32 %307, i32 2;
+    i32 %445 = sdiv i32 %306, i32 2;
+    i32 %446 = add i32 %304, i32 1;
     ubr ^while.header36;
   ^b52:
-    i32 %455 = load i32* %1;
-    i32 %456 = mul i32 %384, i32 %455;
+    i32 %447 = load i32* %1;
+    i32 %448 = mul i32 %376, i32 %447;
     ubr ^while.header57;
   ^if.else7:
-    i32 %457 = load i32* %1;
-    i32 %458 = sdiv i32 %77, i32 %457;
+    i32 %449 = load i32* %1;
+    i32 %450 = sdiv i32 %77, i32 %449;
     ubr ^b59;
   ^while.body17:
-    i32 %459 = and i32 %353, i32 1;
-    i32 %460 = and i32 %354, i32 %459;
-    i1 %461 = ztrunc i32 %460 to i1;
-    cbr i1 %461(prob = 0.5), ^if.then28, ^b61;
+    i1 %451 = ztrunc i32 %348 to i1;
+    i1 %452 = ztrunc i32 %347 to i1;
+    i1 %453 = and i1 %451, i1 %452;
+    cbr i1 %453(prob = 0.5), ^if.then28, ^b61;
   ^if.then25:
-    i32 %462 = and i32 %289, i32 1;
-    i1 %463 = scmp eq i32 %462, i32 0;
-    cbr i1 %463(prob = 0.5), ^if.then27, ^b60;
+    i32 %454 = and i32 %285, i32 1;
+    i1 %455 = scmp eq i32 %454, i32 0;
+    cbr i1 %455(prob = 0.5), ^if.then27, ^b60;
   ^if.else8:
-    i32 %464 = load i32* %1;
-    i32 %465 = sdiv i32 %87, i32 %464;
+    i32 %456 = load i32* %1;
+    i32 %457 = sdiv i32 %87, i32 %456;
     ubr ^b62;
   ^while.body18:
-    i32 %466 = and i32 %362, i32 1;
-    i1 %467 = scmp neq i32 %466, i32 0;
-    cbr i1 %467(prob = 0.5), ^if.then35, ^if.else13;
+    i1 %458 = ztrunc i32 %354 to i1;
+    cbr i1 %458(prob = 0.5), ^if.then35, ^if.else13;
   ^while.body19:
-    i32 %468 = and i32 %368, i32 1;
-    i1 %469 = scmp neq i32 %468, i32 0;
-    cbr i1 %469(prob = 0.5), ^if.then36, ^if.else14;
+    i1 %459 = ztrunc i32 %360 to i1;
+    cbr i1 %459(prob = 0.5), ^if.then36, ^if.else14;
   ^b53:
-    i32 %470 = load i32* %1;
-    i32 %471 = mul i32 %404, i32 %470;
+    i32 %460 = load i32* %1;
+    i32 %461 = mul i32 %396, i32 %460;
     ubr ^while.header59;
   ^while.body20:
-    i32 %472 = and i32 %378, i32 1;
-    i32 %473 = and i32 %379, i32 %472;
-    i1 %474 = ztrunc i32 %473 to i1;
-    cbr i1 %474(prob = 0.5), ^if.then29, ^b63;
+    i1 %462 = ztrunc i32 %371 to i1;
+    i1 %463 = ztrunc i32 %370 to i1;
+    i1 %464 = and i1 %462, i1 %463;
+    cbr i1 %464(prob = 0.5), ^if.then29, ^b63;
   ^if.else9:
-    i32 %475 = and i32 %278, i32 1;
-    i1 %476 = scmp neq i32 %475, i32 0;
-    cbr i1 %476(prob = 0.5), ^if.then26, ^b58;
+    i1 %465 = ztrunc i32 %274 to i1;
+    cbr i1 %465(prob = 0.5), ^if.then26, ^b58;
   ^while.header46:
-    i32 %477 = phi [^b42, i32 %210] [^while.header77, i32 %598];
-    i32 %478 = phi [^b42, i32 %209] [^while.header77, i32 %931];
-    i1 %479 = scmp neq i32 %478, i32 0;
-    cbr i1 %479(prob = 0.97), ^while.header53, ^b49;
+    i32 %466 = phi [^b42, i32 %209] [^while.header77, i32 %586];
+    i32 %467 = phi [^b42, i32 %208] [^while.header77, i32 %904];
+    i1 %468 = scmp neq i32 %467, i32 0;
+    cbr i1 %468(prob = 0.97), ^while.header53, ^b49;
   ^while.body21:
-    i32 %480 = and i32 %382, i32 1;
-    i32 %481 = and i32 %383, i32 %480;
-    i1 %482 = ztrunc i32 %481 to i1;
-    cbr i1 %482(prob = 0.5), ^if.then30, ^b64;
+    i1 %469 = ztrunc i32 %375 to i1;
+    i1 %470 = ztrunc i32 %374 to i1;
+    i1 %471 = and i1 %469, i1 %470;
+    cbr i1 %471(prob = 0.5), ^if.then30, ^b64;
   ^while.body22:
-    i32 %483 = and i32 %388, i32 1;
-    i32 %484 = and i32 %389, i32 %483;
-    i1 %485 = ztrunc i32 %484 to i1;
-    cbr i1 %485(prob = 0.5), ^if.then31, ^b65;
+    i1 %472 = ztrunc i32 %381 to i1;
+    i1 %473 = ztrunc i32 %380 to i1;
+    i1 %474 = and i1 %472, i1 %473;
+    cbr i1 %474(prob = 0.5), ^if.then31, ^b65;
   ^if.else10:
-    i32 %486 = and i32 %289, i32 1;
-    i1 %487 = scmp neq i32 %486, i32 0;
-    cbr i1 %487(prob = 0.5), ^if.then27, ^b60;
+    i1 %475 = ztrunc i32 %285 to i1;
+    cbr i1 %475(prob = 0.5), ^if.then27, ^b60;
   ^while.header47:
-    i32 %488 = phi [^while.header43, i32 0] [^b84, i32 %769];
-    i32 %489 = phi [^while.header43, i32 0] [^b84, i32 %766];
-    i32 %490 = phi [^while.header43, i32 %392] [^b84, i32 %768];
-    i32 %491 = phi [^while.header43, i32 %393] [^b84, i32 %767];
-    i1 %492 = scmp lt i32 %488, i32 16;
-    cbr i1 %492(prob = 0.97), ^while.body24, ^while.header58;
+    i32 %476 = phi [^while.header43, i32 0] [^b84, i32 %752];
+    i32 %477 = phi [^while.header43, i32 0] [^b84, i32 %749];
+    i32 %478 = phi [^while.header43, i32 %384] [^b84, i32 %751];
+    i32 %479 = phi [^while.header43, i32 %385] [^b84, i32 %750];
+    i1 %480 = scmp lt i32 %476, i32 16;
+    cbr i1 %480(prob = 0.97), ^while.body24, ^while.header58;
   ^b54:
-    i1 %493 = scmp neq i32 %352, i32 0;
-    cbr i1 %493(prob = 0.5), ^while.header55, ^b66;
+    i1 %481 = scmp neq i32 %346, i32 0;
+    cbr i1 %481(prob = 0.5), ^while.header55, ^b66;
   ^while.body23:
-    i32 %494 = and i32 %402, i32 1;
-    i32 %495 = and i32 %403, i32 %494;
-    i1 %496 = ztrunc i32 %495 to i1;
-    cbr i1 %496(prob = 0.5), ^if.then32, ^b67;
+    i1 %482 = ztrunc i32 %395 to i1;
+    i1 %483 = ztrunc i32 %394 to i1;
+    i1 %484 = and i1 %482, i1 %483;
+    cbr i1 %484(prob = 0.5), ^if.then32, ^b67;
   ^while.header48:
-    i32 %497 = phi [^while.header44, i32 1] [^b76, i32 %684];
-    i32 %498 = phi [^while.header44, i32 %398] [^b76, i32 %683];
-    i32 %499 = phi [^while.header44, i32 0] [^b76, i32 %682];
-    i32 %500 = phi [^while.header44, i32 0] [^b76, i32 %685];
-    i1 %501 = scmp lt i32 %500, i32 16;
-    cbr i1 %501(prob = 0.97), ^while.body25, ^b71;
+    i32 %485 = phi [^while.header44, i32 1] [^b76, i32 %669];
+    i32 %486 = phi [^while.header44, i32 %390] [^b76, i32 %668];
+    i32 %487 = phi [^while.header44, i32 0] [^b76, i32 %667];
+    i32 %488 = phi [^while.header44, i32 0] [^b76, i32 %670];
+    i1 %489 = scmp lt i32 %488, i32 16;
+    cbr i1 %489(prob = 0.97), ^while.body25, ^b71;
   ^while.header49:
-    i32 %502 = phi [^while.header38, i32 %293] [^b77, i32 %688];
-    i32 %503 = phi [^while.header38, i32 %294] [^b77, i32 %687];
-    i32 %504 = phi [^while.header38, i32 0] [^b77, i32 %686];
-    i32 %505 = phi [^while.header38, i32 0] [^b77, i32 %689];
-    i1 %506 = scmp lt i32 %505, i32 16;
-    cbr i1 %506(prob = 0.97), ^while.body26, ^b69;
+    i32 %490 = phi [^while.header38, i32 %289] [^b77, i32 %673];
+    i32 %491 = phi [^while.header38, i32 %290] [^b77, i32 %672];
+    i32 %492 = phi [^while.header38, i32 0] [^b77, i32 %671];
+    i32 %493 = phi [^while.header38, i32 0] [^b77, i32 %674];
+    i1 %494 = scmp lt i32 %493, i32 16;
+    cbr i1 %494(prob = 0.97), ^while.body26, ^b69;
   ^while.header50:
-    i32 %507 = phi [^while.header39, i32 0] [^b78, i32 %690];
-    i32 %508 = phi [^while.header39, i32 %296] [^b78, i32 %692];
-    i32 %509 = phi [^while.header39, i32 %297] [^b78, i32 %691];
-    i32 %510 = phi [^while.header39, i32 0] [^b78, i32 %693];
-    i1 %511 = scmp lt i32 %510, i32 16;
-    cbr i1 %511(prob = 0.97), ^while.body27, ^b70;
+    i32 %495 = phi [^while.header39, i32 0] [^b78, i32 %675];
+    i32 %496 = phi [^while.header39, i32 %292] [^b78, i32 %677];
+    i32 %497 = phi [^while.header39, i32 %293] [^b78, i32 %676];
+    i32 %498 = phi [^while.header39, i32 0] [^b78, i32 %678];
+    i1 %499 = scmp lt i32 %498, i32 16;
+    cbr i1 %499(prob = 0.97), ^while.body27, ^b70;
   ^b55:
-    i1 %512 = scmp neq i32 %377, i32 0;
-    cbr i1 %512(prob = 0.5), ^while.header56, ^b68;
+    i1 %500 = scmp neq i32 %369, i32 0;
+    cbr i1 %500(prob = 0.5), ^while.header56, ^b68;
   ^while.header51:
-    i32 %513 = phi [^b40, i32 65535] [^b79, i32 %696];
-    i32 %514 = phi [^b40, i32 %344] [^b79, i32 %695];
-    i32 %515 = phi [^b40, i32 0] [^b79, i32 %694];
-    i32 %516 = phi [^b40, i32 0] [^b79, i32 %697];
-    i1 %517 = scmp lt i32 %516, i32 16;
-    cbr i1 %517(prob = 0.97), ^while.body28, ^while.header19;
+    i32 %501 = phi [^b40, i32 65535] [^b79, i32 %681];
+    i32 %502 = phi [^b40, i32 %339] [^b79, i32 %680];
+    i32 %503 = phi [^b40, i32 0] [^b79, i32 %679];
+    i32 %504 = phi [^b40, i32 0] [^b79, i32 %682];
+    i1 %505 = scmp lt i32 %504, i32 16;
+    cbr i1 %505(prob = 0.97), ^while.body28, ^while.header19;
   ^while.header52:
-    i32 %518 = phi [^b41, i32 0] [^b80, i32 %698];
-    i32 %519 = phi [^b41, i32 65535] [^b80, i32 %700];
-    i32 %520 = phi [^b41, i32 %346] [^b80, i32 %699];
-    i32 %521 = phi [^b41, i32 0] [^b80, i32 %701];
-    i1 %522 = scmp lt i32 %521, i32 16;
-    cbr i1 %522(prob = 0.97), ^while.body29, ^while.header20;
+    i32 %506 = phi [^b41, i32 0] [^b80, i32 %683];
+    i32 %507 = phi [^b41, i32 65535] [^b80, i32 %685];
+    i32 %508 = phi [^b41, i32 %341] [^b80, i32 %684];
+    i32 %509 = phi [^b41, i32 0] [^b80, i32 %686];
+    i1 %510 = scmp lt i32 %509, i32 16;
+    cbr i1 %510(prob = 0.97), ^while.body29, ^while.header20;
   ^b56:
-    i1 %523 = scmp gt i32 %127, i32 32767;
-    cbr i1 %523(prob = 0.5), ^if.then33, ^if.else11;
+    i1 %511 = scmp gt i32 %127, i32 32767;
+    cbr i1 %511(prob = 0.5), ^if.then33, ^if.else11;
   ^b57:
-    i1 %524 = scmp gt i32 %131, i32 32767;
-    cbr i1 %524(prob = 0.5), ^if.then34, ^if.else12;
+    i1 %512 = scmp gt i32 %131, i32 32767;
+    cbr i1 %512(prob = 0.5), ^if.then34, ^if.else12;
   ^if.then26:
-    i32* %525 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %276];
-    i32 %526 = load i32* %525;
-    i32 %527 = add i32 %277, i32 %526;
+    i32* %513 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %272];
+    i32 %514 = load i32* %513;
+    i32 %515 = add i32 %273, i32 %514;
     ubr ^b58;
   ^if.then27:
-    i32* %528 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %288];
-    i32 %529 = load i32* %528;
-    i32 %530 = add i32 %291, i32 %529;
+    i32* %516 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %284];
+    i32 %517 = load i32* %516;
+    i32 %518 = add i32 %287, i32 %517;
     ubr ^b60;
   ^if.then28:
-    i32* %531 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %351];
-    i32 %532 = load i32* %531;
-    i32 %533 = add i32 %352, i32 %532;
+    i32* %519 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %345];
+    i32 %520 = load i32* %519;
+    i32 %521 = add i32 %346, i32 %520;
     ubr ^b61;
   ^b58:
-    i32 %534 = phi [^if.then24, i32 %277] [^if.else9, i32 %277] [^if.then26, i32 %527];
-    i32 %535 = sdiv i32 %279, i32 2;
-    i32 %536 = sdiv i32 %278, i32 2;
-    i32 %537 = add i32 %276, i32 1;
+    i32 %522 = phi [^if.then24, i32 %273] [^if.else9, i32 %273] [^if.then26, i32 %515];
+    i32 %523 = sdiv i32 %275, i32 2;
+    i32 %524 = sdiv i32 %274, i32 2;
+    i32 %525 = add i32 %272, i32 1;
     ubr ^while.header29;
   ^if.then29:
-    i32* %538 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %380];
-    i32 %539 = load i32* %538;
-    i32 %540 = add i32 %377, i32 %539;
+    i32* %526 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %372];
+    i32 %527 = load i32* %526;
+    i32 %528 = add i32 %369, i32 %527;
     ubr ^b63;
   ^if.then30:
-    i32* %541 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %385];
-    i32 %542 = load i32* %541;
-    i32 %543 = add i32 %384, i32 %542;
+    i32* %529 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %377];
+    i32 %530 = load i32* %529;
+    i32 %531 = add i32 %376, i32 %530;
     ubr ^b64;
   ^if.then31:
-    i32* %544 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %390];
-    i32 %545 = load i32* %544;
-    i32 %546 = add i32 %387, i32 %545;
+    i32* %532 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %382];
+    i32 %533 = load i32* %532;
+    i32 %534 = add i32 %379, i32 %533;
     ubr ^b65;
   ^b59:
-    i32 %547 = phi [^if.then22, i32 %438] [^if.else7, i32 %458];
+    i32 %535 = phi [^if.then22, i32 %430] [^if.else7, i32 %450];
     ubr ^while.header8;
   ^b60:
-    i32 %548 = phi [^if.then25, i32 %291] [^if.else10, i32 %291] [^if.then27, i32 %530];
-    i32 %549 = sdiv i32 %290, i32 2;
-    i32 %550 = sdiv i32 %289, i32 2;
-    i32 %551 = add i32 %288, i32 1;
+    i32 %536 = phi [^if.then25, i32 %287] [^if.else10, i32 %287] [^if.then27, i32 %518];
+    i32 %537 = sdiv i32 %286, i32 2;
+    i32 %538 = sdiv i32 %285, i32 2;
+    i32 %539 = add i32 %284, i32 1;
     ubr ^while.header31;
   ^b61:
-    i32 %552 = phi [^while.body17, i32 %352] [^if.then28, i32 %533];
-    i32 %553 = sdiv i32 %354, i32 2;
-    i32 %554 = sdiv i32 %353, i32 2;
-    i32 %555 = add i32 %351, i32 1;
+    i32 %540 = phi [^while.body17, i32 %346] [^if.then28, i32 %521];
+    i32 %541 = sdiv i32 %348, i32 2;
+    i32 %542 = sdiv i32 %347, i32 2;
+    i32 %543 = add i32 %345, i32 1;
     ubr ^while.header37;
   ^b62:
-    i32 %556 = phi [^if.then23, i32 %443] [^if.else8, i32 %465];
+    i32 %544 = phi [^if.then23, i32 %435] [^if.else8, i32 %457];
     ubr ^while.header10;
   ^if.then32:
-    i32* %557 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %401];
-    i32 %558 = load i32* %557;
-    i32 %559 = add i32 %404, i32 %558;
+    i32* %545 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %393];
+    i32 %546 = load i32* %545;
+    i32 %547 = add i32 %396, i32 %546;
     ubr ^b67;
   ^b63:
-    i32 %560 = phi [^while.body20, i32 %377] [^if.then29, i32 %540];
-    i32 %561 = sdiv i32 %379, i32 2;
-    i32 %562 = sdiv i32 %378, i32 2;
-    i32 %563 = add i32 %380, i32 1;
+    i32 %548 = phi [^while.body20, i32 %369] [^if.then29, i32 %528];
+    i32 %549 = sdiv i32 %371, i32 2;
+    i32 %550 = sdiv i32 %370, i32 2;
+    i32 %551 = add i32 %372, i32 1;
     ubr ^while.header40;
   ^b64:
-    i32 %564 = phi [^while.body21, i32 %384] [^if.then30, i32 %543];
-    i32 %565 = sdiv i32 %383, i32 2;
-    i32 %566 = sdiv i32 %382, i32 2;
-    i32 %567 = add i32 %385, i32 1;
+    i32 %552 = phi [^while.body21, i32 %376] [^if.then30, i32 %531];
+    i32 %553 = sdiv i32 %375, i32 2;
+    i32 %554 = sdiv i32 %374, i32 2;
+    i32 %555 = add i32 %377, i32 1;
     ubr ^while.header41;
   ^b65:
-    i32 %568 = phi [^while.body22, i32 %387] [^if.then31, i32 %546];
-    i32 %569 = sdiv i32 %389, i32 2;
-    i32 %570 = sdiv i32 %388, i32 2;
-    i32 %571 = add i32 %390, i32 1;
+    i32 %556 = phi [^while.body22, i32 %379] [^if.then31, i32 %534];
+    i32 %557 = sdiv i32 %381, i32 2;
+    i32 %558 = sdiv i32 %380, i32 2;
+    i32 %559 = add i32 %382, i32 1;
     ubr ^while.header42;
   ^if.then33:
-    i32 %572 = load i32* %1;
-    i32 %573 = sdiv i32 %127, i32 %572;
-    i32 %574 = add i32 %573, i32 65536;
-    i32 %575 = load i32* %15;
-    i32 %576 = sub i32 %574, i32 %575;
+    i32 %560 = load i32* %1;
+    i32 %561 = sdiv i32 %127, i32 %560;
+    i32 %562 = add i32 %561, i32 65536;
+    i32 %563 = load i32* %15;
+    i32 %564 = sub i32 %562, i32 %563;
     ubr ^b74;
   ^b66:
-    i32 %577 = phi [^b54, i32 %286] [^while.header55, i32 %617];
+    i32 %565 = phi [^b54, i32 %282] [^while.header55, i32 %602];
     ubr ^while.header64;
   ^if.then34:
-    i32 %578 = load i32* %1;
-    i32 %579 = sdiv i32 %131, i32 %578;
-    i32 %580 = add i32 %579, i32 65536;
-    i32 %581 = load i32* %15;
-    i32 %582 = sub i32 %580, i32 %581;
+    i32 %566 = load i32* %1;
+    i32 %567 = sdiv i32 %131, i32 %566;
+    i32 %568 = add i32 %567, i32 65536;
+    i32 %569 = load i32* %15;
+    i32 %570 = sub i32 %568, i32 %569;
     ubr ^b75;
   ^if.then35:
-    i32 %583 = and i32 %361, i32 1;
-    i1 %584 = scmp eq i32 %583, i32 0;
-    cbr i1 %584(prob = 0.5), ^if.then37, ^b72;
+    i32 %571 = and i32 %353, i32 1;
+    i1 %572 = scmp eq i32 %571, i32 0;
+    cbr i1 %572(prob = 0.5), ^if.then37, ^b72;
   ^if.then36:
-    i32 %585 = and i32 %367, i32 1;
-    i1 %586 = scmp eq i32 %585, i32 0;
-    cbr i1 %586(prob = 0.5), ^if.then38, ^b73;
+    i32 %573 = and i32 %359, i32 1;
+    i1 %574 = scmp eq i32 %573, i32 0;
+    cbr i1 %574(prob = 0.5), ^if.then38, ^b73;
   ^b67:
-    i32 %587 = phi [^while.body23, i32 %404] [^if.then32, i32 %559];
-    i32 %588 = sdiv i32 %403, i32 2;
-    i32 %589 = sdiv i32 %402, i32 2;
-    i32 %590 = add i32 %401, i32 1;
+    i32 %575 = phi [^while.body23, i32 %396] [^if.then32, i32 %547];
+    i32 %576 = sdiv i32 %395, i32 2;
+    i32 %577 = sdiv i32 %394, i32 2;
+    i32 %578 = add i32 %393, i32 1;
     ubr ^while.header45;
   ^b68:
-    i32 %591 = phi [^b55, i32 %300] [^while.header56, i32 %632];
+    i32 %579 = phi [^b55, i32 %296] [^while.header56, i32 %617];
     ubr ^while.header65;
   ^b69:
-    i32 %592 = load i32* %1;
-    i32 %593 = mul i32 %504, i32 %592;
+    i32 %580 = load i32* %1;
+    i32 %581 = mul i32 %492, i32 %580;
     ubr ^while.header67;
   ^b70:
-    i32 %594 = load i32* %1;
-    i32 %595 = mul i32 %507, i32 %594;
+    i32 %582 = load i32* %1;
+    i32 %583 = mul i32 %495, i32 %582;
     ubr ^while.header68;
   ^while.header53:
-    i32 %596 = phi [^while.header46, i32 %478] [^b91, i32 %861];
-    i32 %597 = phi [^while.header46, i32 %477] [^b91, i32 %860];
-    i32 %598 = phi [^while.header46, i32 0] [^b91, i32 %859];
-    i32 %599 = phi [^while.header46, i32 0] [^b91, i32 %862];
-    i1 %600 = scmp lt i32 %599, i32 16;
-    cbr i1 %600(prob = 0.97), ^while.body30, ^while.header62;
+    i32 %584 = phi [^while.header46, i32 %467] [^b91, i32 %840];
+    i32 %585 = phi [^while.header46, i32 %466] [^b91, i32 %839];
+    i32 %586 = phi [^while.header46, i32 0] [^b91, i32 %838];
+    i32 %587 = phi [^while.header46, i32 0] [^b91, i32 %841];
+    i1 %588 = scmp lt i32 %587, i32 16;
+    cbr i1 %588(prob = 0.97), ^while.body30, ^while.header62;
   ^if.else11:
-    i32 %601 = load i32* %1;
-    i32 %602 = sdiv i32 %127, i32 %601;
+    i32 %589 = load i32* %1;
+    i32 %590 = sdiv i32 %127, i32 %589;
     ubr ^b74;
   ^while.body24:
-    i32 %603 = and i32 %491, i32 1;
-    i1 %604 = scmp neq i32 %603, i32 0;
-    cbr i1 %604(prob = 0.5), ^if.then44, ^if.else15;
+    i1 %591 = ztrunc i32 %479 to i1;
+    cbr i1 %591(prob = 0.5), ^if.then44, ^if.else15;
   ^if.else12:
-    i32 %605 = load i32* %1;
-    i32 %606 = sdiv i32 %131, i32 %605;
+    i32 %592 = load i32* %1;
+    i32 %593 = sdiv i32 %131, i32 %592;
     ubr ^b75;
   ^while.body25:
-    i32 %607 = and i32 %497, i32 1;
-    i32 %608 = and i32 %498, i32 %607;
-    i1 %609 = ztrunc i32 %608 to i1;
-    cbr i1 %609(prob = 0.5), ^if.then39, ^b76;
+    i1 %594 = ztrunc i32 %486 to i1;
+    i1 %595 = ztrunc i32 %485 to i1;
+    i1 %596 = and i1 %594, i1 %595;
+    cbr i1 %596(prob = 0.5), ^if.then39, ^b76;
   ^if.else13:
-    i32 %610 = and i32 %361, i32 1;
-    i1 %611 = scmp neq i32 %610, i32 0;
-    cbr i1 %611(prob = 0.5), ^if.then37, ^b72;
+    i1 %597 = ztrunc i32 %353 to i1;
+    cbr i1 %597(prob = 0.5), ^if.then37, ^b72;
   ^if.else14:
-    i32 %612 = and i32 %367, i32 1;
-    i1 %613 = scmp neq i32 %612, i32 0;
-    cbr i1 %613(prob = 0.5), ^if.then38, ^b73;
+    i1 %598 = ztrunc i32 %359 to i1;
+    cbr i1 %598(prob = 0.5), ^if.then38, ^b73;
   ^while.header54:
-    i32 %614 = phi [^b49, i32 %209] [^while.header82, i32 %711];
-    i32 %615 = phi [^b49, i32 %209] [^while.header82, i32 %1045];
-    i1 %616 = scmp neq i32 %615, i32 0;
-    cbr i1 %616(prob = 0.97), ^while.header60, ^b83;
+    i32 %599 = phi [^b49, i32 %208] [^while.header82, i32 %695];
+    i32 %600 = phi [^b49, i32 %208] [^while.header82, i32 %1014];
+    i1 %601 = scmp neq i32 %600, i32 0;
+    cbr i1 %601(prob = 0.97), ^while.header60, ^b83;
   ^while.header55:
-    i32 %617 = phi [^b54, i32 %286] [^while.header83, i32 %716];
-    i32 %618 = phi [^b54, i32 %284] [^while.header83, i32 %1052];
-    i1 %619 = scmp neq i32 %618, i32 0;
-    cbr i1 %619(prob = 0.97), ^while.header61, ^b66;
+    i32 %602 = phi [^b54, i32 %282] [^while.header83, i32 %700];
+    i32 %603 = phi [^b54, i32 %280] [^while.header83, i32 %1021];
+    i1 %604 = scmp neq i32 %603, i32 0;
+    cbr i1 %604(prob = 0.97), ^while.header61, ^b66;
   ^while.body26:
-    i32 %620 = and i32 %502, i32 1;
-    i32 %621 = and i32 %503, i32 %620;
-    i1 %622 = ztrunc i32 %621 to i1;
-    cbr i1 %622(prob = 0.5), ^if.then40, ^b77;
+    i1 %605 = ztrunc i32 %491 to i1;
+    i1 %606 = ztrunc i32 %490 to i1;
+    i1 %607 = and i1 %605, i1 %606;
+    cbr i1 %607(prob = 0.5), ^if.then40, ^b77;
   ^while.body27:
-    i32 %623 = and i32 %508, i32 1;
-    i32 %624 = and i32 %509, i32 %623;
-    i1 %625 = ztrunc i32 %624 to i1;
-    cbr i1 %625(prob = 0.5), ^if.then41, ^b78;
+    i1 %608 = ztrunc i32 %497 to i1;
+    i1 %609 = ztrunc i32 %496 to i1;
+    i1 %610 = and i1 %608, i1 %609;
+    cbr i1 %610(prob = 0.5), ^if.then41, ^b78;
   ^while.body28:
-    i32 %626 = and i32 %513, i32 1;
-    i32 %627 = and i32 %514, i32 %626;
-    i1 %628 = ztrunc i32 %627 to i1;
-    cbr i1 %628(prob = 0.5), ^if.then42, ^b79;
+    i1 %611 = ztrunc i32 %502 to i1;
+    i1 %612 = ztrunc i32 %501 to i1;
+    i1 %613 = and i1 %611, i1 %612;
+    cbr i1 %613(prob = 0.5), ^if.then42, ^b79;
   ^while.body29:
-    i32 %629 = and i32 %519, i32 1;
-    i32 %630 = and i32 %520, i32 %629;
-    i1 %631 = ztrunc i32 %630 to i1;
-    cbr i1 %631(prob = 0.5), ^if.then43, ^b80;
+    i1 %614 = ztrunc i32 %508 to i1;
+    i1 %615 = ztrunc i32 %507 to i1;
+    i1 %616 = and i1 %614, i1 %615;
+    cbr i1 %616(prob = 0.5), ^if.then43, ^b80;
   ^while.header56:
-    i32 %632 = phi [^b55, i32 %300] [^while.header84, i32 %727];
-    i32 %633 = phi [^b55, i32 %299] [^while.header84, i32 %1061];
-    i1 %634 = scmp neq i32 %633, i32 0;
-    cbr i1 %634(prob = 0.97), ^while.header63, ^b68;
+    i32 %617 = phi [^b55, i32 %296] [^while.header84, i32 %711];
+    i32 %618 = phi [^b55, i32 %295] [^while.header84, i32 %1030];
+    i1 %619 = scmp neq i32 %618, i32 0;
+    cbr i1 %619(prob = 0.97), ^while.header63, ^b68;
   ^while.header57:
-    i32 %635 = phi [^b52, i32 0] [^b85, i32 %783];
-    i32 %636 = phi [^b52, i32 65535] [^b85, i32 %785];
-    i32 %637 = phi [^b52, i32 %456] [^b85, i32 %784];
-    i32 %638 = phi [^b52, i32 0] [^b85, i32 %786];
-    i1 %639 = scmp lt i32 %638, i32 16;
-    cbr i1 %639(prob = 0.97), ^while.body31, ^while.header25;
+    i32 %620 = phi [^b52, i32 0] [^b85, i32 %766];
+    i32 %621 = phi [^b52, i32 65535] [^b85, i32 %768];
+    i32 %622 = phi [^b52, i32 %448] [^b85, i32 %767];
+    i32 %623 = phi [^b52, i32 0] [^b85, i32 %769];
+    i1 %624 = scmp lt i32 %623, i32 16;
+    cbr i1 %624(prob = 0.97), ^while.body31, ^while.header25;
   ^while.header58:
-    i32 %640 = phi [^while.header47, i32 0] [^b87, i32 %789];
-    i32 %641 = phi [^while.header47, i32 %392] [^b87, i32 %791];
-    i32 %642 = phi [^while.header47, i32 %393] [^b87, i32 %790];
-    i32 %643 = phi [^while.header47, i32 0] [^b87, i32 %792];
-    i1 %644 = scmp lt i32 %643, i32 16;
-    cbr i1 %644(prob = 0.97), ^while.body32, ^b82;
+    i32 %625 = phi [^while.header47, i32 0] [^b87, i32 %772];
+    i32 %626 = phi [^while.header47, i32 %384] [^b87, i32 %774];
+    i32 %627 = phi [^while.header47, i32 %385] [^b87, i32 %773];
+    i32 %628 = phi [^while.header47, i32 0] [^b87, i32 %775];
+    i1 %629 = scmp lt i32 %628, i32 16;
+    cbr i1 %629(prob = 0.97), ^while.body32, ^b82;
   ^b71:
-    i1 %645 = scmp neq i32 %499, i32 0;
-    cbr i1 %645(prob = 0.5), ^while.header66, ^b81;
+    i1 %630 = scmp neq i32 %487, i32 0;
+    cbr i1 %630(prob = 0.5), ^while.header66, ^b81;
   ^while.header59:
-    i32 %646 = phi [^b53, i32 65535] [^b88, i32 %795];
-    i32 %647 = phi [^b53, i32 %471] [^b88, i32 %794];
-    i32 %648 = phi [^b53, i32 0] [^b88, i32 %793];
-    i32 %649 = phi [^b53, i32 0] [^b88, i32 %796];
-    i1 %650 = scmp lt i32 %649, i32 16;
-    cbr i1 %650(prob = 0.97), ^while.body33, ^while.header27;
+    i32 %631 = phi [^b53, i32 0] [^b88, i32 %776];
+    i32 %632 = phi [^b53, i32 65535] [^b88, i32 %778];
+    i32 %633 = phi [^b53, i32 %461] [^b88, i32 %777];
+    i32 %634 = phi [^b53, i32 0] [^b88, i32 %779];
+    i1 %635 = scmp lt i32 %634, i32 16;
+    cbr i1 %635(prob = 0.97), ^while.body33, ^while.header27;
   ^if.then37:
-    i32* %651 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %360];
-    i32 %652 = load i32* %651;
-    i32 %653 = add i32 %363, i32 %652;
+    i32* %636 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %352];
+    i32 %637 = load i32* %636;
+    i32 %638 = add i32 %355, i32 %637;
     ubr ^b72;
   ^if.then38:
-    i32* %654 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %365];
-    i32 %655 = load i32* %654;
-    i32 %656 = add i32 %366, i32 %655;
+    i32* %639 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %357];
+    i32 %640 = load i32* %639;
+    i32 %641 = add i32 %358, i32 %640;
     ubr ^b73;
   ^b72:
-    i32 %657 = phi [^if.then35, i32 %363] [^if.else13, i32 %363] [^if.then37, i32 %653];
-    i32 %658 = sdiv i32 %362, i32 2;
-    i32 %659 = sdiv i32 %361, i32 2;
-    i32 %660 = add i32 %360, i32 1;
+    i32 %642 = phi [^if.then35, i32 %355] [^if.else13, i32 %355] [^if.then37, i32 %638];
+    i32 %643 = sdiv i32 %354, i32 2;
+    i32 %644 = sdiv i32 %353, i32 2;
+    i32 %645 = add i32 %352, i32 1;
     ubr ^while.header38;
   ^b73:
-    i32 %661 = phi [^if.then36, i32 %366] [^if.else14, i32 %366] [^if.then38, i32 %656];
-    i32 %662 = sdiv i32 %368, i32 2;
-    i32 %663 = sdiv i32 %367, i32 2;
-    i32 %664 = add i32 %365, i32 1;
+    i32 %646 = phi [^if.then36, i32 %358] [^if.else14, i32 %358] [^if.then38, i32 %641];
+    i32 %647 = sdiv i32 %360, i32 2;
+    i32 %648 = sdiv i32 %359, i32 2;
+    i32 %649 = add i32 %357, i32 1;
     ubr ^while.header39;
   ^if.then39:
-    i32* %665 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %500];
-    i32 %666 = load i32* %665;
-    i32 %667 = add i32 %499, i32 %666;
+    i32* %650 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %488];
+    i32 %651 = load i32* %650;
+    i32 %652 = add i32 %487, i32 %651;
     ubr ^b76;
   ^if.then40:
-    i32* %668 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %505];
-    i32 %669 = load i32* %668;
-    i32 %670 = add i32 %504, i32 %669;
+    i32* %653 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %493];
+    i32 %654 = load i32* %653;
+    i32 %655 = add i32 %492, i32 %654;
     ubr ^b77;
   ^if.then41:
-    i32* %671 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %510];
-    i32 %672 = load i32* %671;
-    i32 %673 = add i32 %507, i32 %672;
+    i32* %656 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %498];
+    i32 %657 = load i32* %656;
+    i32 %658 = add i32 %495, i32 %657;
     ubr ^b78;
   ^if.then42:
-    i32* %674 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %516];
-    i32 %675 = load i32* %674;
-    i32 %676 = add i32 %515, i32 %675;
+    i32* %659 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %504];
+    i32 %660 = load i32* %659;
+    i32 %661 = add i32 %503, i32 %660;
     ubr ^b79;
   ^if.then43:
-    i32* %677 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %521];
-    i32 %678 = load i32* %677;
-    i32 %679 = add i32 %518, i32 %678;
+    i32* %662 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %509];
+    i32 %663 = load i32* %662;
+    i32 %664 = add i32 %506, i32 %663;
     ubr ^b80;
   ^b74:
-    i32 %680 = phi [^if.then33, i32 %576] [^if.else11, i32 %602];
+    i32 %665 = phi [^if.then33, i32 %564] [^if.else11, i32 %590];
     ubr ^while.header15;
   ^b75:
-    i32 %681 = phi [^if.then34, i32 %582] [^if.else12, i32 %606];
+    i32 %666 = phi [^if.then34, i32 %570] [^if.else12, i32 %593];
     ubr ^while.header16;
   ^b76:
-    i32 %682 = phi [^while.body25, i32 %499] [^if.then39, i32 %667];
-    i32 %683 = sdiv i32 %498, i32 2;
-    i32 %684 = sdiv i32 %497, i32 2;
-    i32 %685 = add i32 %500, i32 1;
+    i32 %667 = phi [^while.body25, i32 %487] [^if.then39, i32 %652];
+    i32 %668 = sdiv i32 %486, i32 2;
+    i32 %669 = sdiv i32 %485, i32 2;
+    i32 %670 = add i32 %488, i32 1;
     ubr ^while.header48;
   ^b77:
-    i32 %686 = phi [^while.body26, i32 %504] [^if.then40, i32 %670];
-    i32 %687 = sdiv i32 %503, i32 2;
-    i32 %688 = sdiv i32 %502, i32 2;
-    i32 %689 = add i32 %505, i32 1;
+    i32 %671 = phi [^while.body26, i32 %492] [^if.then40, i32 %655];
+    i32 %672 = sdiv i32 %491, i32 2;
+    i32 %673 = sdiv i32 %490, i32 2;
+    i32 %674 = add i32 %493, i32 1;
     ubr ^while.header49;
   ^b78:
-    i32 %690 = phi [^while.body27, i32 %507] [^if.then41, i32 %673];
-    i32 %691 = sdiv i32 %509, i32 2;
-    i32 %692 = sdiv i32 %508, i32 2;
-    i32 %693 = add i32 %510, i32 1;
+    i32 %675 = phi [^while.body27, i32 %495] [^if.then41, i32 %658];
+    i32 %676 = sdiv i32 %497, i32 2;
+    i32 %677 = sdiv i32 %496, i32 2;
+    i32 %678 = add i32 %498, i32 1;
     ubr ^while.header50;
   ^b79:
-    i32 %694 = phi [^while.body28, i32 %515] [^if.then42, i32 %676];
-    i32 %695 = sdiv i32 %514, i32 2;
-    i32 %696 = sdiv i32 %513, i32 2;
-    i32 %697 = add i32 %516, i32 1;
+    i32 %679 = phi [^while.body28, i32 %503] [^if.then42, i32 %661];
+    i32 %680 = sdiv i32 %502, i32 2;
+    i32 %681 = sdiv i32 %501, i32 2;
+    i32 %682 = add i32 %504, i32 1;
     ubr ^while.header51;
   ^b80:
-    i32 %698 = phi [^while.body29, i32 %518] [^if.then43, i32 %679];
-    i32 %699 = sdiv i32 %520, i32 2;
-    i32 %700 = sdiv i32 %519, i32 2;
-    i32 %701 = add i32 %521, i32 1;
+    i32 %683 = phi [^while.body29, i32 %506] [^if.then43, i32 %664];
+    i32 %684 = sdiv i32 %508, i32 2;
+    i32 %685 = sdiv i32 %507, i32 2;
+    i32 %686 = add i32 %509, i32 1;
     ubr ^while.header52;
   ^while.body30:
-    i32 %702 = and i32 %597, i32 1;
-    i1 %703 = scmp neq i32 %702, i32 0;
-    cbr i1 %703(prob = 0.5), ^if.then50, ^if.else17;
+    i1 %687 = ztrunc i32 %585 to i1;
+    cbr i1 %687(prob = 0.5), ^if.then50, ^if.else17;
   ^if.then44:
-    i32 %704 = and i32 %490, i32 1;
-    i1 %705 = scmp eq i32 %704, i32 0;
-    cbr i1 %705(prob = 0.5), ^if.then45, ^b84;
+    i32 %688 = and i32 %478, i32 1;
+    i1 %689 = scmp eq i32 %688, i32 0;
+    cbr i1 %689(prob = 0.5), ^if.then45, ^b84;
   ^b81:
-    i32 %706 = phi [^b71, i32 %399] [^while.header66, i32 %747];
+    i32 %690 = phi [^b71, i32 %391] [^while.header66, i32 %730];
     ubr ^while.header75;
   ^b82:
-    i32 %707 = load i32* %1;
-    i32 %708 = mul i32 %640, i32 %707;
+    i32 %691 = load i32* %1;
+    i32 %692 = mul i32 %625, i32 %691;
     ubr ^while.header76;
   ^while.header60:
-    i32 %709 = phi [^while.header54, i32 %615] [^b100, i32 %972];
-    i32 %710 = phi [^while.header54, i32 %614] [^b100, i32 %971];
-    i32 %711 = phi [^while.header54, i32 0] [^b100, i32 %970];
-    i32 %712 = phi [^while.header54, i32 0] [^b100, i32 %973];
-    i1 %713 = scmp lt i32 %712, i32 16;
-    cbr i1 %713(prob = 0.97), ^while.body34, ^while.header70;
+    i32 %693 = phi [^while.header54, i32 %600] [^b100, i32 %945];
+    i32 %694 = phi [^while.header54, i32 %599] [^b100, i32 %944];
+    i32 %695 = phi [^while.header54, i32 0] [^b100, i32 %943];
+    i32 %696 = phi [^while.header54, i32 0] [^b100, i32 %946];
+    i1 %697 = scmp lt i32 %696, i32 16;
+    cbr i1 %697(prob = 0.97), ^while.body34, ^while.header70;
   ^while.header61:
-    i32 %714 = phi [^while.header55, i32 %618] [^b101, i32 %976];
-    i32 %715 = phi [^while.header55, i32 %617] [^b101, i32 %975];
-    i32 %716 = phi [^while.header55, i32 0] [^b101, i32 %974];
-    i32 %717 = phi [^while.header55, i32 0] [^b101, i32 %977];
-    i1 %718 = scmp lt i32 %717, i32 16;
-    cbr i1 %718(prob = 0.97), ^while.body35, ^while.header71;
+    i32 %698 = phi [^while.header55, i32 %603] [^b101, i32 %949];
+    i32 %699 = phi [^while.header55, i32 %602] [^b101, i32 %948];
+    i32 %700 = phi [^while.header55, i32 0] [^b101, i32 %947];
+    i32 %701 = phi [^while.header55, i32 0] [^b101, i32 %950];
+    i1 %702 = scmp lt i32 %701, i32 16;
+    cbr i1 %702(prob = 0.97), ^while.body35, ^while.header71;
   ^while.body31:
-    i32 %719 = and i32 %636, i32 1;
-    i32 %720 = and i32 %637, i32 %719;
-    i1 %721 = ztrunc i32 %720 to i1;
-    cbr i1 %721(prob = 0.5), ^if.then46, ^b85;
+    i1 %703 = ztrunc i32 %622 to i1;
+    i1 %704 = ztrunc i32 %621 to i1;
+    i1 %705 = and i1 %703, i1 %704;
+    cbr i1 %705(prob = 0.5), ^if.then46, ^b85;
   ^while.header62:
-    i32 %722 = phi [^while.header53, i32 %478] [^b93, i32 %875];
-    i32 %723 = phi [^while.header53, i32 %477] [^b93, i32 %874];
-    i32 %724 = phi [^while.header53, i32 0] [^b93, i32 %873];
-    i32 %725 = phi [^while.header53, i32 0] [^b93, i32 %876];
-    i1 %726 = scmp lt i32 %725, i32 16;
-    cbr i1 %726(prob = 0.97), ^while.body36, ^b86;
+    i32 %706 = phi [^while.header53, i32 %467] [^b93, i32 %854];
+    i32 %707 = phi [^while.header53, i32 %466] [^b93, i32 %853];
+    i32 %708 = phi [^while.header53, i32 0] [^b93, i32 %852];
+    i32 %709 = phi [^while.header53, i32 0] [^b93, i32 %855];
+    i1 %710 = scmp lt i32 %709, i32 16;
+    cbr i1 %710(prob = 0.97), ^while.body36, ^b86;
   ^while.header63:
-    i32 %727 = phi [^while.header56, i32 0] [^b102, i32 %984];
-    i32 %728 = phi [^while.header56, i32 %633] [^b102, i32 %986];
-    i32 %729 = phi [^while.header56, i32 %632] [^b102, i32 %985];
-    i32 %730 = phi [^while.header56, i32 0] [^b102, i32 %987];
-    i1 %731 = scmp lt i32 %730, i32 16;
-    cbr i1 %731(prob = 0.97), ^while.body37, ^while.header74;
+    i32 %711 = phi [^while.header56, i32 0] [^b102, i32 %957];
+    i32 %712 = phi [^while.header56, i32 %618] [^b102, i32 %959];
+    i32 %713 = phi [^while.header56, i32 %617] [^b102, i32 %958];
+    i32 %714 = phi [^while.header56, i32 0] [^b102, i32 %960];
+    i1 %715 = scmp lt i32 %714, i32 16;
+    cbr i1 %715(prob = 0.97), ^while.body37, ^while.header74;
   ^if.else15:
-    i32 %732 = and i32 %490, i32 1;
-    i1 %733 = scmp neq i32 %732, i32 0;
-    cbr i1 %733(prob = 0.5), ^if.then45, ^b84;
+    i1 %716 = ztrunc i32 %478 to i1;
+    cbr i1 %716(prob = 0.5), ^if.then45, ^b84;
   ^while.header64:
-    i32 %734 = phi [^b66, i32 %284] [^while.header86, i32 %810];
-    i32 %735 = phi [^b66, i32 %284] [^while.header86, i32 %1136];
-    i1 %736 = scmp neq i32 %735, i32 0;
-    cbr i1 %736(prob = 0.97), ^while.header69, ^b89;
+    i32 %717 = phi [^b66, i32 %280] [^while.header86, i32 %789];
+    i32 %718 = phi [^b66, i32 %280] [^while.header86, i32 %1104];
+    i1 %719 = scmp neq i32 %718, i32 0;
+    cbr i1 %719(prob = 0.97), ^while.header69, ^b89;
   ^while.body32:
-    i32 %737 = and i32 %641, i32 1;
-    i32 %738 = and i32 %642, i32 %737;
-    i1 %739 = ztrunc i32 %738 to i1;
-    cbr i1 %739(prob = 0.5), ^if.then47, ^b87;
+    i1 %720 = ztrunc i32 %627 to i1;
+    i1 %721 = ztrunc i32 %626 to i1;
+    i1 %722 = and i1 %720, i1 %721;
+    cbr i1 %722(prob = 0.5), ^if.then47, ^b87;
   ^while.body33:
-    i32 %740 = and i32 %646, i32 1;
-    i32 %741 = and i32 %647, i32 %740;
-    i1 %742 = ztrunc i32 %741 to i1;
-    cbr i1 %742(prob = 0.5), ^if.then48, ^b88;
+    i1 %723 = ztrunc i32 %633 to i1;
+    i1 %724 = ztrunc i32 %632 to i1;
+    i1 %725 = and i1 %723, i1 %724;
+    cbr i1 %725(prob = 0.5), ^if.then48, ^b88;
   ^b83:
-    i1 %743 = scmp gt i32 %211, i32 32767;
-    cbr i1 %743(prob = 0.5), ^if.then49, ^if.else16;
+    i1 %726 = scmp gt i32 %210, i32 32767;
+    cbr i1 %726(prob = 0.5), ^if.then49, ^if.else16;
   ^while.header65:
-    i32 %744 = phi [^b68, i32 %299] [^while.header87, i32 %831];
-    i32 %745 = phi [^b68, i32 %299] [^while.header87, i32 %1144];
-    i1 %746 = scmp neq i32 %745, i32 0;
-    cbr i1 %746(prob = 0.97), ^while.header72, ^b90;
+    i32 %727 = phi [^b68, i32 %295] [^while.header87, i32 %810];
+    i32 %728 = phi [^b68, i32 %295] [^while.header87, i32 %1112];
+    i1 %729 = scmp neq i32 %728, i32 0;
+    cbr i1 %729(prob = 0.97), ^while.header72, ^b90;
   ^while.header66:
-    i32 %747 = phi [^b71, i32 %399] [^while.header88, i32 %838];
-    i32 %748 = phi [^b71, i32 %397] [^while.header88, i32 %1149];
-    i1 %749 = scmp neq i32 %748, i32 0;
-    cbr i1 %749(prob = 0.97), ^while.header73, ^b81;
+    i32 %730 = phi [^b71, i32 %391] [^while.header88, i32 %817];
+    i32 %731 = phi [^b71, i32 %389] [^while.header88, i32 %1117];
+    i1 %732 = scmp neq i32 %731, i32 0;
+    cbr i1 %732(prob = 0.97), ^while.header73, ^b81;
   ^while.header67:
-    i32 %750 = phi [^b69, i32 0] [^b94, i32 %886];
-    i32 %751 = phi [^b69, i32 65535] [^b94, i32 %888];
-    i32 %752 = phi [^b69, i32 %593] [^b94, i32 %887];
-    i32 %753 = phi [^b69, i32 0] [^b94, i32 %889];
-    i1 %754 = scmp lt i32 %753, i32 16;
-    cbr i1 %754(prob = 0.97), ^while.body38, ^while.header32;
+    i32 %733 = phi [^b69, i32 0] [^b94, i32 %865];
+    i32 %734 = phi [^b69, i32 65535] [^b94, i32 %867];
+    i32 %735 = phi [^b69, i32 %581] [^b94, i32 %866];
+    i32 %736 = phi [^b69, i32 0] [^b94, i32 %868];
+    i1 %737 = scmp lt i32 %736, i32 16;
+    cbr i1 %737(prob = 0.97), ^while.body38, ^while.header32;
   ^while.header68:
-    i32 %755 = phi [^b70, i32 0] [^b95, i32 %890];
-    i32 %756 = phi [^b70, i32 65535] [^b95, i32 %892];
-    i32 %757 = phi [^b70, i32 %595] [^b95, i32 %891];
-    i32 %758 = phi [^b70, i32 0] [^b95, i32 %893];
-    i1 %759 = scmp lt i32 %758, i32 16;
-    cbr i1 %759(prob = 0.97), ^while.body39, ^while.header33;
+    i32 %738 = phi [^b70, i32 0] [^b95, i32 %869];
+    i32 %739 = phi [^b70, i32 65535] [^b95, i32 %871];
+    i32 %740 = phi [^b70, i32 %583] [^b95, i32 %870];
+    i32 %741 = phi [^b70, i32 0] [^b95, i32 %872];
+    i1 %742 = scmp lt i32 %741, i32 16;
+    cbr i1 %742(prob = 0.97), ^while.body39, ^while.header33;
   ^if.then45:
-    i32* %760 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %488];
-    i32 %761 = load i32* %760;
-    i32 %762 = add i32 %489, i32 %761;
+    i32* %743 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %476];
+    i32 %744 = load i32* %743;
+    i32 %745 = add i32 %477, i32 %744;
     ubr ^b84;
   ^if.then46:
-    i32* %763 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %638];
-    i32 %764 = load i32* %763;
-    i32 %765 = add i32 %635, i32 %764;
+    i32* %746 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %623];
+    i32 %747 = load i32* %746;
+    i32 %748 = add i32 %620, i32 %747;
     ubr ^b85;
   ^b84:
-    i32 %766 = phi [^if.then44, i32 %489] [^if.else15, i32 %489] [^if.then45, i32 %762];
-    i32 %767 = sdiv i32 %491, i32 2;
-    i32 %768 = sdiv i32 %490, i32 2;
-    i32 %769 = add i32 %488, i32 1;
+    i32 %749 = phi [^if.then44, i32 %477] [^if.else15, i32 %477] [^if.then45, i32 %745];
+    i32 %750 = sdiv i32 %479, i32 2;
+    i32 %751 = sdiv i32 %478, i32 2;
+    i32 %752 = add i32 %476, i32 1;
     ubr ^while.header47;
   ^if.then47:
-    i32* %770 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %643];
-    i32 %771 = load i32* %770;
-    i32 %772 = add i32 %640, i32 %771;
+    i32* %753 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %628];
+    i32 %754 = load i32* %753;
+    i32 %755 = add i32 %625, i32 %754;
     ubr ^b87;
   ^if.then48:
-    i32* %773 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %649];
-    i32 %774 = load i32* %773;
-    i32 %775 = add i32 %648, i32 %774;
+    i32* %756 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %634];
+    i32 %757 = load i32* %756;
+    i32 %758 = add i32 %631, i32 %757;
     ubr ^b88;
   ^if.then49:
-    i32 %776 = load i32* %1;
-    i32 %777 = sdiv i32 %211, i32 %776;
-    i32 %778 = add i32 %777, i32 65536;
-    i32 %779 = load i32* %15;
-    i32 %780 = sub i32 %778, i32 %779;
+    i32 %759 = load i32* %1;
+    i32 %760 = sdiv i32 %210, i32 %759;
+    i32 %761 = add i32 %760, i32 65536;
+    i32 %762 = load i32* %15;
+    i32 %763 = sub i32 %761, i32 %762;
     ubr ^b92;
   ^if.then50:
-    i32 %781 = and i32 %596, i32 1;
-    i1 %782 = scmp eq i32 %781, i32 0;
-    cbr i1 %782(prob = 0.5), ^if.then51, ^b91;
+    i32 %764 = and i32 %584, i32 1;
+    i1 %765 = scmp eq i32 %764, i32 0;
+    cbr i1 %765(prob = 0.5), ^if.then51, ^b91;
   ^b85:
-    i32 %783 = phi [^while.body31, i32 %635] [^if.then46, i32 %765];
-    i32 %784 = sdiv i32 %637, i32 2;
-    i32 %785 = sdiv i32 %636, i32 2;
-    i32 %786 = add i32 %638, i32 1;
+    i32 %766 = phi [^while.body31, i32 %620] [^if.then46, i32 %748];
+    i32 %767 = sdiv i32 %622, i32 2;
+    i32 %768 = sdiv i32 %621, i32 2;
+    i32 %769 = add i32 %623, i32 1;
     ubr ^while.header57;
   ^b86:
-    i32 %787 = load i32* %1;
-    i32 %788 = mul i32 %724, i32 %787;
+    i32 %770 = load i32* %1;
+    i32 %771 = mul i32 %708, i32 %770;
     ubr ^while.header77;
   ^b87:
-    i32 %789 = phi [^while.body32, i32 %640] [^if.then47, i32 %772];
-    i32 %790 = sdiv i32 %642, i32 2;
-    i32 %791 = sdiv i32 %641, i32 2;
-    i32 %792 = add i32 %643, i32 1;
+    i32 %772 = phi [^while.body32, i32 %625] [^if.then47, i32 %755];
+    i32 %773 = sdiv i32 %627, i32 2;
+    i32 %774 = sdiv i32 %626, i32 2;
+    i32 %775 = add i32 %628, i32 1;
     ubr ^while.header58;
   ^b88:
-    i32 %793 = phi [^while.body33, i32 %648] [^if.then48, i32 %775];
-    i32 %794 = sdiv i32 %647, i32 2;
-    i32 %795 = sdiv i32 %646, i32 2;
-    i32 %796 = add i32 %649, i32 1;
+    i32 %776 = phi [^while.body33, i32 %631] [^if.then48, i32 %758];
+    i32 %777 = sdiv i32 %633, i32 2;
+    i32 %778 = sdiv i32 %632, i32 2;
+    i32 %779 = add i32 %634, i32 1;
     ubr ^while.header59;
   ^if.else16:
-    i32 %797 = load i32* %1;
-    i32 %798 = sdiv i32 %211, i32 %797;
+    i32 %780 = load i32* %1;
+    i32 %781 = sdiv i32 %210, i32 %780;
     ubr ^b92;
   ^while.body34:
-    i32 %799 = and i32 %710, i32 1;
-    i1 %800 = scmp neq i32 %799, i32 0;
-    cbr i1 %800(prob = 0.5), ^if.then56, ^if.else19;
+    i1 %782 = ztrunc i32 %694 to i1;
+    cbr i1 %782(prob = 0.5), ^if.then56, ^if.else19;
   ^while.body35:
-    i32 %801 = and i32 %715, i32 1;
-    i1 %802 = scmp neq i32 %801, i32 0;
-    cbr i1 %802(prob = 0.5), ^if.then57, ^if.else20;
+    i1 %783 = ztrunc i32 %699 to i1;
+    cbr i1 %783(prob = 0.5), ^if.then57, ^if.else20;
   ^if.else17:
-    i32 %803 = and i32 %596, i32 1;
-    i1 %804 = scmp neq i32 %803, i32 0;
-    cbr i1 %804(prob = 0.5), ^if.then51, ^b91;
+    i1 %784 = ztrunc i32 %584 to i1;
+    cbr i1 %784(prob = 0.5), ^if.then51, ^b91;
   ^while.body36:
-    i32 %805 = and i32 %722, i32 1;
-    i32 %806 = and i32 %723, i32 %805;
-    i1 %807 = ztrunc i32 %806 to i1;
-    cbr i1 %807(prob = 0.5), ^if.then52, ^b93;
+    i1 %785 = ztrunc i32 %707 to i1;
+    i1 %786 = ztrunc i32 %706 to i1;
+    i1 %787 = and i1 %785, i1 %786;
+    cbr i1 %787(prob = 0.5), ^if.then52, ^b93;
   ^while.body37:
-    i32 %808 = and i32 %729, i32 1;
-    i1 %809 = scmp neq i32 %808, i32 0;
-    cbr i1 %809(prob = 0.5), ^if.then59, ^if.else22;
+    i1 %788 = ztrunc i32 %713 to i1;
+    cbr i1 %788(prob = 0.5), ^if.then59, ^if.else22;
   ^while.header69:
-    i32 %810 = phi [^while.header64, i32 0] [^b112, i32 %1083];
-    i32 %811 = phi [^while.header64, i32 %735] [^b112, i32 %1085];
-    i32 %812 = phi [^while.header64, i32 %734] [^b112, i32 %1084];
-    i32 %813 = phi [^while.header64, i32 0] [^b112, i32 %1086];
-    i1 %814 = scmp lt i32 %813, i32 16;
-    cbr i1 %814(prob = 0.97), ^while.body40, ^while.header78;
+    i32 %789 = phi [^while.header64, i32 0] [^b112, i32 %1052];
+    i32 %790 = phi [^while.header64, i32 %718] [^b112, i32 %1054];
+    i32 %791 = phi [^while.header64, i32 %717] [^b112, i32 %1053];
+    i32 %792 = phi [^while.header64, i32 0] [^b112, i32 %1055];
+    i1 %793 = scmp lt i32 %792, i32 16;
+    cbr i1 %793(prob = 0.97), ^while.body40, ^while.header78;
   ^while.body38:
-    i32 %815 = and i32 %751, i32 1;
-    i32 %816 = and i32 %752, i32 %815;
-    i1 %817 = ztrunc i32 %816 to i1;
-    cbr i1 %817(prob = 0.5), ^if.then53, ^b94;
+    i1 %794 = ztrunc i32 %735 to i1;
+    i1 %795 = ztrunc i32 %734 to i1;
+    i1 %796 = and i1 %794, i1 %795;
+    cbr i1 %796(prob = 0.5), ^if.then53, ^b94;
   ^while.body39:
-    i32 %818 = and i32 %756, i32 1;
-    i32 %819 = and i32 %757, i32 %818;
-    i1 %820 = ztrunc i32 %819 to i1;
-    cbr i1 %820(prob = 0.5), ^if.then54, ^b95;
+    i1 %797 = ztrunc i32 %740 to i1;
+    i1 %798 = ztrunc i32 %739 to i1;
+    i1 %799 = and i1 %797, i1 %798;
+    cbr i1 %799(prob = 0.5), ^if.then54, ^b95;
   ^while.header70:
-    i32 %821 = phi [^while.header60, i32 0] [^b105, i32 %996];
-    i32 %822 = phi [^while.header60, i32 %615] [^b105, i32 %998];
-    i32 %823 = phi [^while.header60, i32 %614] [^b105, i32 %997];
-    i32 %824 = phi [^while.header60, i32 0] [^b105, i32 %999];
-    i1 %825 = scmp lt i32 %824, i32 16;
-    cbr i1 %825(prob = 0.97), ^while.body41, ^b96;
+    i32 %800 = phi [^while.header60, i32 0] [^b105, i32 %969];
+    i32 %801 = phi [^while.header60, i32 %600] [^b105, i32 %971];
+    i32 %802 = phi [^while.header60, i32 %599] [^b105, i32 %970];
+    i32 %803 = phi [^while.header60, i32 0] [^b105, i32 %972];
+    i1 %804 = scmp lt i32 %803, i32 16;
+    cbr i1 %804(prob = 0.97), ^while.body41, ^b96;
   ^while.header71:
-    i32 %826 = phi [^while.header61, i32 %618] [^b106, i32 %1002];
-    i32 %827 = phi [^while.header61, i32 %617] [^b106, i32 %1001];
-    i32 %828 = phi [^while.header61, i32 0] [^b106, i32 %1000];
-    i32 %829 = phi [^while.header61, i32 0] [^b106, i32 %1003];
-    i1 %830 = scmp lt i32 %829, i32 16;
-    cbr i1 %830(prob = 0.97), ^while.body42, ^b97;
+    i32 %805 = phi [^while.header61, i32 %603] [^b106, i32 %975];
+    i32 %806 = phi [^while.header61, i32 %602] [^b106, i32 %974];
+    i32 %807 = phi [^while.header61, i32 0] [^b106, i32 %973];
+    i32 %808 = phi [^while.header61, i32 0] [^b106, i32 %976];
+    i1 %809 = scmp lt i32 %808, i32 16;
+    cbr i1 %809(prob = 0.97), ^while.body42, ^b97;
   ^while.header72:
-    i32 %831 = phi [^while.header65, i32 0] [^b113, i32 %1090];
-    i32 %832 = phi [^while.header65, i32 %745] [^b113, i32 %1092];
-    i32 %833 = phi [^while.header65, i32 %744] [^b113, i32 %1091];
-    i32 %834 = phi [^while.header65, i32 0] [^b113, i32 %1093];
-    i1 %835 = scmp lt i32 %834, i32 16;
-    cbr i1 %835(prob = 0.97), ^while.body43, ^while.header80;
+    i32 %810 = phi [^while.header65, i32 0] [^b113, i32 %1059];
+    i32 %811 = phi [^while.header65, i32 %728] [^b113, i32 %1061];
+    i32 %812 = phi [^while.header65, i32 %727] [^b113, i32 %1060];
+    i32 %813 = phi [^while.header65, i32 0] [^b113, i32 %1062];
+    i1 %814 = scmp lt i32 %813, i32 16;
+    cbr i1 %814(prob = 0.97), ^while.body43, ^while.header80;
   ^while.header73:
-    i32 %836 = phi [^while.header66, i32 %748] [^b114, i32 %1096];
-    i32 %837 = phi [^while.header66, i32 %747] [^b114, i32 %1095];
-    i32 %838 = phi [^while.header66, i32 0] [^b114, i32 %1094];
-    i32 %839 = phi [^while.header66, i32 0] [^b114, i32 %1097];
-    i1 %840 = scmp lt i32 %839, i32 16;
-    cbr i1 %840(prob = 0.97), ^while.body44, ^while.header81;
+    i32 %815 = phi [^while.header66, i32 %731] [^b114, i32 %1065];
+    i32 %816 = phi [^while.header66, i32 %730] [^b114, i32 %1064];
+    i32 %817 = phi [^while.header66, i32 0] [^b114, i32 %1063];
+    i32 %818 = phi [^while.header66, i32 0] [^b114, i32 %1066];
+    i1 %819 = scmp lt i32 %818, i32 16;
+    cbr i1 %819(prob = 0.97), ^while.body44, ^while.header81;
   ^while.header74:
-    i32 %841 = phi [^while.header63, i32 0] [^b107, i32 %1004];
-    i32 %842 = phi [^while.header63, i32 %633] [^b107, i32 %1006];
-    i32 %843 = phi [^while.header63, i32 %632] [^b107, i32 %1005];
-    i32 %844 = phi [^while.header63, i32 0] [^b107, i32 %1007];
-    i1 %845 = scmp lt i32 %844, i32 16;
-    cbr i1 %845(prob = 0.97), ^while.body45, ^b98;
+    i32 %820 = phi [^while.header63, i32 %618] [^b107, i32 %979];
+    i32 %821 = phi [^while.header63, i32 %617] [^b107, i32 %978];
+    i32 %822 = phi [^while.header63, i32 0] [^b107, i32 %977];
+    i32 %823 = phi [^while.header63, i32 0] [^b107, i32 %980];
+    i1 %824 = scmp lt i32 %823, i32 16;
+    cbr i1 %824(prob = 0.97), ^while.body45, ^b98;
   ^b89:
-    i1 %846 = scmp gt i32 %285, i32 32767;
-    cbr i1 %846(prob = 0.5), ^if.then55, ^if.else18;
+    i1 %825 = scmp gt i32 %281, i32 32767;
+    cbr i1 %825(prob = 0.5), ^if.then55, ^if.else18;
   ^while.header75:
-    i32 %847 = phi [^b81, i32 %397] [^while.header89, i32 %945];
-    i32 %848 = phi [^b81, i32 %397] [^while.header89, i32 %1198];
-    i1 %849 = scmp neq i32 %848, i32 0;
-    cbr i1 %849(prob = 0.97), ^while.header79, ^b99;
+    i32 %826 = phi [^b81, i32 %389] [^while.header89, i32 %918];
+    i32 %827 = phi [^b81, i32 %389] [^while.header89, i32 %1166];
+    i1 %828 = scmp neq i32 %827, i32 0;
+    cbr i1 %828(prob = 0.97), ^while.header79, ^b99;
   ^while.header76:
-    i32 %850 = phi [^b82, i32 0] [^b108, i32 %1010];
-    i32 %851 = phi [^b82, i32 65535] [^b108, i32 %1012];
-    i32 %852 = phi [^b82, i32 %708] [^b108, i32 %1011];
-    i32 %853 = phi [^b82, i32 0] [^b108, i32 %1013];
-    i1 %854 = scmp lt i32 %853, i32 16;
-    cbr i1 %854(prob = 0.97), ^while.body46, ^while.header43;
+    i32 %829 = phi [^b82, i32 0] [^b108, i32 %983];
+    i32 %830 = phi [^b82, i32 65535] [^b108, i32 %985];
+    i32 %831 = phi [^b82, i32 %692] [^b108, i32 %984];
+    i32 %832 = phi [^b82, i32 0] [^b108, i32 %986];
+    i1 %833 = scmp lt i32 %832, i32 16;
+    cbr i1 %833(prob = 0.97), ^while.body46, ^while.header43;
   ^b90:
-    i1 %855 = scmp gt i32 %301, i32 32767;
-    cbr i1 %855(prob = 0.5), ^if.then58, ^if.else21;
+    i1 %834 = scmp gt i32 %297, i32 32767;
+    cbr i1 %834(prob = 0.5), ^if.then58, ^if.else21;
   ^if.then51:
-    i32* %856 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %599];
-    i32 %857 = load i32* %856;
-    i32 %858 = add i32 %598, i32 %857;
+    i32* %835 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %587];
+    i32 %836 = load i32* %835;
+    i32 %837 = add i32 %586, i32 %836;
     ubr ^b91;
   ^b91:
-    i32 %859 = phi [^if.then50, i32 %598] [^if.else17, i32 %598] [^if.then51, i32 %858];
-    i32 %860 = sdiv i32 %597, i32 2;
-    i32 %861 = sdiv i32 %596, i32 2;
-    i32 %862 = add i32 %599, i32 1;
+    i32 %838 = phi [^if.then50, i32 %586] [^if.else17, i32 %586] [^if.then51, i32 %837];
+    i32 %839 = sdiv i32 %585, i32 2;
+    i32 %840 = sdiv i32 %584, i32 2;
+    i32 %841 = add i32 %587, i32 1;
     ubr ^while.header53;
   ^if.then52:
-    i32* %863 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %725];
-    i32 %864 = load i32* %863;
-    i32 %865 = add i32 %724, i32 %864;
+    i32* %842 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %709];
+    i32 %843 = load i32* %842;
+    i32 %844 = add i32 %708, i32 %843;
     ubr ^b93;
   ^b92:
-    i32 %866 = phi [^if.then49, i32 %780] [^if.else16, i32 %798];
+    i32 %845 = phi [^if.then49, i32 %763] [^if.else16, i32 %781];
     ubr ^while.header22;
   ^if.then53:
-    i32* %867 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %753];
-    i32 %868 = load i32* %867;
-    i32 %869 = add i32 %750, i32 %868;
+    i32* %846 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %736];
+    i32 %847 = load i32* %846;
+    i32 %848 = add i32 %733, i32 %847;
     ubr ^b94;
   ^if.then54:
-    i32* %870 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %758];
-    i32 %871 = load i32* %870;
-    i32 %872 = add i32 %755, i32 %871;
+    i32* %849 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %741];
+    i32 %850 = load i32* %849;
+    i32 %851 = add i32 %738, i32 %850;
     ubr ^b95;
   ^b93:
-    i32 %873 = phi [^while.body36, i32 %724] [^if.then52, i32 %865];
-    i32 %874 = sdiv i32 %723, i32 2;
-    i32 %875 = sdiv i32 %722, i32 2;
-    i32 %876 = add i32 %725, i32 1;
+    i32 %852 = phi [^while.body36, i32 %708] [^if.then52, i32 %844];
+    i32 %853 = sdiv i32 %707, i32 2;
+    i32 %854 = sdiv i32 %706, i32 2;
+    i32 %855 = add i32 %709, i32 1;
     ubr ^while.header62;
   ^if.then55:
-    i32 %877 = load i32* %1;
-    i32 %878 = sdiv i32 %285, i32 %877;
-    i32 %879 = add i32 %878, i32 65536;
-    i32 %880 = load i32* %15;
-    i32 %881 = sub i32 %879, i32 %880;
+    i32 %856 = load i32* %1;
+    i32 %857 = sdiv i32 %281, i32 %856;
+    i32 %858 = add i32 %857, i32 65536;
+    i32 %859 = load i32* %15;
+    i32 %860 = sub i32 %858, i32 %859;
     ubr ^b103;
   ^if.then56:
-    i32 %882 = and i32 %709, i32 1;
-    i1 %883 = scmp eq i32 %882, i32 0;
-    cbr i1 %883(prob = 0.5), ^if.then60, ^b100;
+    i32 %861 = and i32 %693, i32 1;
+    i1 %862 = scmp eq i32 %861, i32 0;
+    cbr i1 %862(prob = 0.5), ^if.then60, ^b100;
   ^if.then57:
-    i32 %884 = and i32 %714, i32 1;
-    i1 %885 = scmp eq i32 %884, i32 0;
-    cbr i1 %885(prob = 0.5), ^if.then61, ^b101;
+    i32 %863 = and i32 %698, i32 1;
+    i1 %864 = scmp eq i32 %863, i32 0;
+    cbr i1 %864(prob = 0.5), ^if.then61, ^b101;
   ^b94:
-    i32 %886 = phi [^while.body38, i32 %750] [^if.then53, i32 %869];
-    i32 %887 = sdiv i32 %752, i32 2;
-    i32 %888 = sdiv i32 %751, i32 2;
-    i32 %889 = add i32 %753, i32 1;
+    i32 %865 = phi [^while.body38, i32 %733] [^if.then53, i32 %848];
+    i32 %866 = sdiv i32 %735, i32 2;
+    i32 %867 = sdiv i32 %734, i32 2;
+    i32 %868 = add i32 %736, i32 1;
     ubr ^while.header67;
   ^b95:
-    i32 %890 = phi [^while.body39, i32 %755] [^if.then54, i32 %872];
-    i32 %891 = sdiv i32 %757, i32 2;
-    i32 %892 = sdiv i32 %756, i32 2;
-    i32 %893 = add i32 %758, i32 1;
+    i32 %869 = phi [^while.body39, i32 %738] [^if.then54, i32 %851];
+    i32 %870 = sdiv i32 %740, i32 2;
+    i32 %871 = sdiv i32 %739, i32 2;
+    i32 %872 = add i32 %741, i32 1;
     ubr ^while.header68;
   ^if.then58:
-    i32 %894 = load i32* %1;
-    i32 %895 = sdiv i32 %301, i32 %894;
-    i32 %896 = add i32 %895, i32 65536;
-    i32 %897 = load i32* %15;
-    i32 %898 = sub i32 %896, i32 %897;
+    i32 %873 = load i32* %1;
+    i32 %874 = sdiv i32 %297, i32 %873;
+    i32 %875 = add i32 %874, i32 65536;
+    i32 %876 = load i32* %15;
+    i32 %877 = sub i32 %875, i32 %876;
     ubr ^b104;
   ^b96:
-    i32 %899 = load i32* %1;
-    i32 %900 = mul i32 %821, i32 %899;
+    i32 %878 = load i32* %1;
+    i32 %879 = mul i32 %800, i32 %878;
     ubr ^while.header82;
   ^b97:
-    i32 %901 = load i32* %1;
-    i32 %902 = mul i32 %828, i32 %901;
+    i32 %880 = load i32* %1;
+    i32 %881 = mul i32 %807, i32 %880;
     ubr ^while.header83;
   ^if.then59:
-    i32 %903 = and i32 %728, i32 1;
-    i1 %904 = scmp eq i32 %903, i32 0;
-    cbr i1 %904(prob = 0.5), ^if.then62, ^b102;
+    i32 %882 = and i32 %712, i32 1;
+    i1 %883 = scmp eq i32 %882, i32 0;
+    cbr i1 %883(prob = 0.5), ^if.then62, ^b102;
   ^b98:
-    i32 %905 = load i32* %1;
-    i32 %906 = mul i32 %841, i32 %905;
+    i32 %884 = load i32* %1;
+    i32 %885 = mul i32 %822, i32 %884;
     ubr ^while.header84;
   ^if.else18:
-    i32 %907 = load i32* %1;
-    i32 %908 = sdiv i32 %285, i32 %907;
+    i32 %886 = load i32* %1;
+    i32 %887 = sdiv i32 %281, i32 %886;
     ubr ^b103;
   ^while.body40:
-    i32 %909 = and i32 %812, i32 1;
-    i1 %910 = scmp neq i32 %909, i32 0;
-    cbr i1 %910(prob = 0.5), ^if.then67, ^if.else23;
+    i1 %888 = ztrunc i32 %791 to i1;
+    cbr i1 %888(prob = 0.5), ^if.then67, ^if.else23;
   ^if.else19:
-    i32 %911 = and i32 %709, i32 1;
-    i1 %912 = scmp neq i32 %911, i32 0;
-    cbr i1 %912(prob = 0.5), ^if.then60, ^b100;
+    i1 %889 = ztrunc i32 %693 to i1;
+    cbr i1 %889(prob = 0.5), ^if.then60, ^b100;
   ^if.else20:
-    i32 %913 = and i32 %714, i32 1;
-    i1 %914 = scmp neq i32 %913, i32 0;
-    cbr i1 %914(prob = 0.5), ^if.then61, ^b101;
+    i1 %890 = ztrunc i32 %698 to i1;
+    cbr i1 %890(prob = 0.5), ^if.then61, ^b101;
   ^if.else21:
-    i32 %915 = load i32* %1;
-    i32 %916 = sdiv i32 %301, i32 %915;
+    i32 %891 = load i32* %1;
+    i32 %892 = sdiv i32 %297, i32 %891;
     ubr ^b104;
   ^while.body41:
-    i32 %917 = and i32 %822, i32 1;
-    i32 %918 = and i32 %823, i32 %917;
-    i1 %919 = ztrunc i32 %918 to i1;
-    cbr i1 %919(prob = 0.5), ^if.then63, ^b105;
+    i1 %893 = ztrunc i32 %802 to i1;
+    i1 %894 = ztrunc i32 %801 to i1;
+    i1 %895 = and i1 %893, i1 %894;
+    cbr i1 %895(prob = 0.5), ^if.then63, ^b105;
   ^while.body42:
-    i32 %920 = and i32 %826, i32 1;
-    i32 %921 = and i32 %827, i32 %920;
-    i1 %922 = ztrunc i32 %921 to i1;
-    cbr i1 %922(prob = 0.5), ^if.then64, ^b106;
+    i1 %896 = ztrunc i32 %806 to i1;
+    i1 %897 = ztrunc i32 %805 to i1;
+    i1 %898 = and i1 %896, i1 %897;
+    cbr i1 %898(prob = 0.5), ^if.then64, ^b106;
   ^while.body43:
-    i32 %923 = and i32 %833, i32 1;
-    i1 %924 = scmp neq i32 %923, i32 0;
-    cbr i1 %924(prob = 0.5), ^if.then69, ^if.else25;
+    i1 %899 = ztrunc i32 %812 to i1;
+    cbr i1 %899(prob = 0.5), ^if.then69, ^if.else25;
   ^while.body44:
-    i32 %925 = and i32 %837, i32 1;
-    i1 %926 = scmp neq i32 %925, i32 0;
-    cbr i1 %926(prob = 0.5), ^if.then70, ^if.else26;
+    i1 %900 = ztrunc i32 %816 to i1;
+    cbr i1 %900(prob = 0.5), ^if.then70, ^if.else26;
   ^if.else22:
-    i32 %927 = and i32 %728, i32 1;
-    i1 %928 = scmp neq i32 %927, i32 0;
-    cbr i1 %928(prob = 0.5), ^if.then62, ^b102;
+    i1 %901 = ztrunc i32 %712 to i1;
+    cbr i1 %901(prob = 0.5), ^if.then62, ^b102;
   ^while.header77:
-    i32 %929 = phi [^b86, i32 65535] [^b115, i32 %1106];
-    i32 %930 = phi [^b86, i32 %788] [^b115, i32 %1105];
-    i32 %931 = phi [^b86, i32 0] [^b115, i32 %1104];
-    i32 %932 = phi [^b86, i32 0] [^b115, i32 %1107];
-    i1 %933 = scmp lt i32 %932, i32 16;
-    cbr i1 %933(prob = 0.97), ^while.body47, ^while.header46;
+    i32 %902 = phi [^b86, i32 65535] [^b115, i32 %1075];
+    i32 %903 = phi [^b86, i32 %771] [^b115, i32 %1074];
+    i32 %904 = phi [^b86, i32 0] [^b115, i32 %1073];
+    i32 %905 = phi [^b86, i32 0] [^b115, i32 %1076];
+    i1 %906 = scmp lt i32 %905, i32 16;
+    cbr i1 %906(prob = 0.97), ^while.body47, ^while.header46;
   ^while.body45:
-    i32 %934 = and i32 %842, i32 1;
-    i32 %935 = and i32 %843, i32 %934;
-    i1 %936 = ztrunc i32 %935 to i1;
-    cbr i1 %936(prob = 0.5), ^if.then65, ^b107;
+    i1 %907 = ztrunc i32 %821 to i1;
+    i1 %908 = ztrunc i32 %820 to i1;
+    i1 %909 = and i1 %907, i1 %908;
+    cbr i1 %909(prob = 0.5), ^if.then65, ^b107;
   ^while.body46:
-    i32 %937 = and i32 %851, i32 1;
-    i32 %938 = and i32 %852, i32 %937;
-    i1 %939 = ztrunc i32 %938 to i1;
-    cbr i1 %939(prob = 0.5), ^if.then66, ^b108;
+    i1 %910 = ztrunc i32 %831 to i1;
+    i1 %911 = ztrunc i32 %830 to i1;
+    i1 %912 = and i1 %910, i1 %911;
+    cbr i1 %912(prob = 0.5), ^if.then66, ^b108;
   ^while.header78:
-    i32 %940 = phi [^while.header69, i32 0] [^b117, i32 %1109];
-    i32 %941 = phi [^while.header69, i32 %735] [^b117, i32 %1111];
-    i32 %942 = phi [^while.header69, i32 %734] [^b117, i32 %1110];
-    i32 %943 = phi [^while.header69, i32 0] [^b117, i32 %1112];
-    i1 %944 = scmp lt i32 %943, i32 16;
-    cbr i1 %944(prob = 0.97), ^while.body48, ^b109;
+    i32 %913 = phi [^while.header69, i32 0] [^b117, i32 %1078];
+    i32 %914 = phi [^while.header69, i32 %718] [^b117, i32 %1080];
+    i32 %915 = phi [^while.header69, i32 %717] [^b117, i32 %1079];
+    i32 %916 = phi [^while.header69, i32 0] [^b117, i32 %1081];
+    i1 %917 = scmp lt i32 %916, i32 16;
+    cbr i1 %917(prob = 0.97), ^while.body48, ^b109;
   ^while.header79:
-    i32 %945 = phi [^while.header75, i32 0] [^b121, i32 %1166];
-    i32 %946 = phi [^while.header75, i32 %848] [^b121, i32 %1168];
-    i32 %947 = phi [^while.header75, i32 %847] [^b121, i32 %1167];
-    i32 %948 = phi [^while.header75, i32 0] [^b121, i32 %1169];
-    i1 %949 = scmp lt i32 %948, i32 16;
-    cbr i1 %949(prob = 0.97), ^while.body49, ^while.header85;
+    i32 %918 = phi [^while.header75, i32 0] [^b121, i32 %1134];
+    i32 %919 = phi [^while.header75, i32 %827] [^b121, i32 %1136];
+    i32 %920 = phi [^while.header75, i32 %826] [^b121, i32 %1135];
+    i32 %921 = phi [^while.header75, i32 0] [^b121, i32 %1137];
+    i1 %922 = scmp lt i32 %921, i32 16;
+    cbr i1 %922(prob = 0.97), ^while.body49, ^while.header85;
   ^while.header80:
-    i32 %950 = phi [^while.header72, i32 0] [^b118, i32 %1113];
-    i32 %951 = phi [^while.header72, i32 %745] [^b118, i32 %1115];
-    i32 %952 = phi [^while.header72, i32 %744] [^b118, i32 %1114];
-    i32 %953 = phi [^while.header72, i32 0] [^b118, i32 %1116];
-    i1 %954 = scmp lt i32 %953, i32 16;
-    cbr i1 %954(prob = 0.97), ^while.body50, ^b110;
+    i32 %923 = phi [^while.header72, i32 0] [^b118, i32 %1082];
+    i32 %924 = phi [^while.header72, i32 %728] [^b118, i32 %1084];
+    i32 %925 = phi [^while.header72, i32 %727] [^b118, i32 %1083];
+    i32 %926 = phi [^while.header72, i32 0] [^b118, i32 %1085];
+    i1 %927 = scmp lt i32 %926, i32 16;
+    cbr i1 %927(prob = 0.97), ^while.body50, ^b110;
   ^while.header81:
-    i32 %955 = phi [^while.header73, i32 %748] [^b119, i32 %1119];
-    i32 %956 = phi [^while.header73, i32 %747] [^b119, i32 %1118];
-    i32 %957 = phi [^while.header73, i32 0] [^b119, i32 %1117];
-    i32 %958 = phi [^while.header73, i32 0] [^b119, i32 %1120];
-    i1 %959 = scmp lt i32 %958, i32 16;
-    cbr i1 %959(prob = 0.97), ^while.body51, ^b111;
+    i32 %928 = phi [^while.header73, i32 %731] [^b119, i32 %1088];
+    i32 %929 = phi [^while.header73, i32 %730] [^b119, i32 %1087];
+    i32 %930 = phi [^while.header73, i32 0] [^b119, i32 %1086];
+    i32 %931 = phi [^while.header73, i32 0] [^b119, i32 %1089];
+    i1 %932 = scmp lt i32 %931, i32 16;
+    cbr i1 %932(prob = 0.97), ^while.body51, ^b111;
   ^b99:
-    i1 %960 = scmp gt i32 %398, i32 32767;
-    cbr i1 %960(prob = 0.5), ^if.then68, ^if.else24;
+    i1 %933 = scmp gt i32 %390, i32 32767;
+    cbr i1 %933(prob = 0.5), ^if.then68, ^if.else24;
   ^if.then60:
-    i32* %961 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %712];
-    i32 %962 = load i32* %961;
-    i32 %963 = add i32 %711, i32 %962;
+    i32* %934 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %696];
+    i32 %935 = load i32* %934;
+    i32 %936 = add i32 %695, i32 %935;
     ubr ^b100;
   ^if.then61:
-    i32* %964 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %717];
-    i32 %965 = load i32* %964;
-    i32 %966 = add i32 %716, i32 %965;
+    i32* %937 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %701];
+    i32 %938 = load i32* %937;
+    i32 %939 = add i32 %700, i32 %938;
     ubr ^b101;
   ^if.then62:
-    i32* %967 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %730];
-    i32 %968 = load i32* %967;
-    i32 %969 = add i32 %727, i32 %968;
+    i32* %940 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %714];
+    i32 %941 = load i32* %940;
+    i32 %942 = add i32 %711, i32 %941;
     ubr ^b102;
   ^b100:
-    i32 %970 = phi [^if.then56, i32 %711] [^if.else19, i32 %711] [^if.then60, i32 %963];
-    i32 %971 = sdiv i32 %710, i32 2;
-    i32 %972 = sdiv i32 %709, i32 2;
-    i32 %973 = add i32 %712, i32 1;
+    i32 %943 = phi [^if.then56, i32 %695] [^if.else19, i32 %695] [^if.then60, i32 %936];
+    i32 %944 = sdiv i32 %694, i32 2;
+    i32 %945 = sdiv i32 %693, i32 2;
+    i32 %946 = add i32 %696, i32 1;
     ubr ^while.header60;
   ^b101:
-    i32 %974 = phi [^if.then57, i32 %716] [^if.else20, i32 %716] [^if.then61, i32 %966];
-    i32 %975 = sdiv i32 %715, i32 2;
-    i32 %976 = sdiv i32 %714, i32 2;
-    i32 %977 = add i32 %717, i32 1;
+    i32 %947 = phi [^if.then57, i32 %700] [^if.else20, i32 %700] [^if.then61, i32 %939];
+    i32 %948 = sdiv i32 %699, i32 2;
+    i32 %949 = sdiv i32 %698, i32 2;
+    i32 %950 = add i32 %701, i32 1;
     ubr ^while.header61;
   ^if.then63:
-    i32* %978 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %824];
-    i32 %979 = load i32* %978;
-    i32 %980 = add i32 %821, i32 %979;
+    i32* %951 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %803];
+    i32 %952 = load i32* %951;
+    i32 %953 = add i32 %800, i32 %952;
     ubr ^b105;
   ^if.then64:
-    i32* %981 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %829];
-    i32 %982 = load i32* %981;
-    i32 %983 = add i32 %828, i32 %982;
+    i32* %954 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %808];
+    i32 %955 = load i32* %954;
+    i32 %956 = add i32 %807, i32 %955;
     ubr ^b106;
   ^b102:
-    i32 %984 = phi [^if.then59, i32 %727] [^if.else22, i32 %727] [^if.then62, i32 %969];
-    i32 %985 = sdiv i32 %729, i32 2;
-    i32 %986 = sdiv i32 %728, i32 2;
-    i32 %987 = add i32 %730, i32 1;
+    i32 %957 = phi [^if.then59, i32 %711] [^if.else22, i32 %711] [^if.then62, i32 %942];
+    i32 %958 = sdiv i32 %713, i32 2;
+    i32 %959 = sdiv i32 %712, i32 2;
+    i32 %960 = add i32 %714, i32 1;
     ubr ^while.header63;
   ^if.then65:
-    i32* %988 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %844];
-    i32 %989 = load i32* %988;
-    i32 %990 = add i32 %841, i32 %989;
+    i32* %961 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %823];
+    i32 %962 = load i32* %961;
+    i32 %963 = add i32 %822, i32 %962;
     ubr ^b107;
   ^b103:
-    i32 %991 = phi [^if.then55, i32 %881] [^if.else18, i32 %908];
+    i32 %964 = phi [^if.then55, i32 %860] [^if.else18, i32 %887];
     ubr ^while.header30;
   ^if.then66:
-    i32* %992 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %853];
-    i32 %993 = load i32* %992;
-    i32 %994 = add i32 %850, i32 %993;
+    i32* %965 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %832];
+    i32 %966 = load i32* %965;
+    i32 %967 = add i32 %829, i32 %966;
     ubr ^b108;
   ^b104:
-    i32 %995 = phi [^if.then58, i32 %898] [^if.else21, i32 %916];
+    i32 %968 = phi [^if.then58, i32 %877] [^if.else21, i32 %892];
     ubr ^while.header34;
   ^b105:
-    i32 %996 = phi [^while.body41, i32 %821] [^if.then63, i32 %980];
-    i32 %997 = sdiv i32 %823, i32 2;
-    i32 %998 = sdiv i32 %822, i32 2;
-    i32 %999 = add i32 %824, i32 1;
+    i32 %969 = phi [^while.body41, i32 %800] [^if.then63, i32 %953];
+    i32 %970 = sdiv i32 %802, i32 2;
+    i32 %971 = sdiv i32 %801, i32 2;
+    i32 %972 = add i32 %803, i32 1;
     ubr ^while.header70;
   ^b106:
-    i32 %1000 = phi [^while.body42, i32 %828] [^if.then64, i32 %983];
-    i32 %1001 = sdiv i32 %827, i32 2;
-    i32 %1002 = sdiv i32 %826, i32 2;
-    i32 %1003 = add i32 %829, i32 1;
+    i32 %973 = phi [^while.body42, i32 %807] [^if.then64, i32 %956];
+    i32 %974 = sdiv i32 %806, i32 2;
+    i32 %975 = sdiv i32 %805, i32 2;
+    i32 %976 = add i32 %808, i32 1;
     ubr ^while.header71;
   ^b107:
-    i32 %1004 = phi [^while.body45, i32 %841] [^if.then65, i32 %990];
-    i32 %1005 = sdiv i32 %843, i32 2;
-    i32 %1006 = sdiv i32 %842, i32 2;
-    i32 %1007 = add i32 %844, i32 1;
+    i32 %977 = phi [^while.body45, i32 %822] [^if.then65, i32 %963];
+    i32 %978 = sdiv i32 %821, i32 2;
+    i32 %979 = sdiv i32 %820, i32 2;
+    i32 %980 = add i32 %823, i32 1;
     ubr ^while.header74;
   ^if.then67:
-    i32 %1008 = and i32 %811, i32 1;
-    i1 %1009 = scmp eq i32 %1008, i32 0;
-    cbr i1 %1009(prob = 0.5), ^if.then71, ^b112;
+    i32 %981 = and i32 %790, i32 1;
+    i1 %982 = scmp eq i32 %981, i32 0;
+    cbr i1 %982(prob = 0.5), ^if.then71, ^b112;
   ^b108:
-    i32 %1010 = phi [^while.body46, i32 %850] [^if.then66, i32 %994];
-    i32 %1011 = sdiv i32 %852, i32 2;
-    i32 %1012 = sdiv i32 %851, i32 2;
-    i32 %1013 = add i32 %853, i32 1;
+    i32 %983 = phi [^while.body46, i32 %829] [^if.then66, i32 %967];
+    i32 %984 = sdiv i32 %831, i32 2;
+    i32 %985 = sdiv i32 %830, i32 2;
+    i32 %986 = add i32 %832, i32 1;
     ubr ^while.header76;
   ^if.then68:
-    i32 %1014 = load i32* %1;
-    i32 %1015 = sdiv i32 %398, i32 %1014;
-    i32 %1016 = add i32 %1015, i32 65536;
-    i32 %1017 = load i32* %15;
-    i32 %1018 = sub i32 %1016, i32 %1017;
+    i32 %987 = load i32* %1;
+    i32 %988 = sdiv i32 %390, i32 %987;
+    i32 %989 = add i32 %988, i32 65536;
+    i32 %990 = load i32* %15;
+    i32 %991 = sub i32 %989, i32 %990;
     ubr ^b116;
   ^b109:
-    i32 %1019 = load i32* %1;
-    i32 %1020 = mul i32 %940, i32 %1019;
+    i32 %992 = load i32* %1;
+    i32 %993 = mul i32 %913, i32 %992;
     ubr ^while.header86;
   ^if.then69:
-    i32 %1021 = and i32 %832, i32 1;
-    i1 %1022 = scmp eq i32 %1021, i32 0;
-    cbr i1 %1022(prob = 0.5), ^if.then72, ^b113;
+    i32 %994 = and i32 %811, i32 1;
+    i1 %995 = scmp eq i32 %994, i32 0;
+    cbr i1 %995(prob = 0.5), ^if.then72, ^b113;
   ^if.then70:
-    i32 %1023 = and i32 %836, i32 1;
-    i1 %1024 = scmp eq i32 %1023, i32 0;
-    cbr i1 %1024(prob = 0.5), ^if.then73, ^b114;
+    i32 %996 = and i32 %815, i32 1;
+    i1 %997 = scmp eq i32 %996, i32 0;
+    cbr i1 %997(prob = 0.5), ^if.then73, ^b114;
   ^while.body47:
-    i32 %1025 = and i32 %929, i32 1;
-    i32 %1026 = and i32 %930, i32 %1025;
-    i1 %1027 = ztrunc i32 %1026 to i1;
-    cbr i1 %1027(prob = 0.5), ^if.then74, ^b115;
+    i1 %998 = ztrunc i32 %903 to i1;
+    i1 %999 = ztrunc i32 %902 to i1;
+    i1 %1000 = and i1 %998, i1 %999;
+    cbr i1 %1000(prob = 0.5), ^if.then74, ^b115;
   ^b110:
-    i32 %1028 = load i32* %1;
-    i32 %1029 = mul i32 %950, i32 %1028;
+    i32 %1001 = load i32* %1;
+    i32 %1002 = mul i32 %923, i32 %1001;
     ubr ^while.header87;
   ^b111:
-    i32 %1030 = load i32* %1;
-    i32 %1031 = mul i32 %957, i32 %1030;
+    i32 %1003 = load i32* %1;
+    i32 %1004 = mul i32 %930, i32 %1003;
     ubr ^while.header88;
   ^if.else23:
-    i32 %1032 = and i32 %811, i32 1;
-    i1 %1033 = scmp neq i32 %1032, i32 0;
-    cbr i1 %1033(prob = 0.5), ^if.then71, ^b112;
+    i1 %1005 = ztrunc i32 %790 to i1;
+    cbr i1 %1005(prob = 0.5), ^if.then71, ^b112;
   ^if.else24:
-    i32 %1034 = load i32* %1;
-    i32 %1035 = sdiv i32 %398, i32 %1034;
+    i32 %1006 = load i32* %1;
+    i32 %1007 = sdiv i32 %390, i32 %1006;
     ubr ^b116;
   ^while.body48:
-    i32 %1036 = and i32 %941, i32 1;
-    i32 %1037 = and i32 %942, i32 %1036;
-    i1 %1038 = ztrunc i32 %1037 to i1;
-    cbr i1 %1038(prob = 0.5), ^if.then75, ^b117;
+    i1 %1008 = ztrunc i32 %915 to i1;
+    i1 %1009 = ztrunc i32 %914 to i1;
+    i1 %1010 = and i1 %1008, i1 %1009;
+    cbr i1 %1010(prob = 0.5), ^if.then75, ^b117;
   ^while.body49:
-    i32 %1039 = and i32 %947, i32 1;
-    i1 %1040 = scmp neq i32 %1039, i32 0;
-    cbr i1 %1040(prob = 0.5), ^if.then78, ^if.else27;
+    i1 %1011 = ztrunc i32 %920 to i1;
+    cbr i1 %1011(prob = 0.5), ^if.then78, ^if.else27;
   ^if.else25:
-    i32 %1041 = and i32 %832, i32 1;
-    i1 %1042 = scmp neq i32 %1041, i32 0;
-    cbr i1 %1042(prob = 0.5), ^if.then72, ^b113;
+    i1 %1012 = ztrunc i32 %811 to i1;
+    cbr i1 %1012(prob = 0.5), ^if.then72, ^b113;
   ^if.else26:
-    i32 %1043 = and i32 %836, i32 1;
-    i1 %1044 = scmp neq i32 %1043, i32 0;
-    cbr i1 %1044(prob = 0.5), ^if.then73, ^b114;
+    i1 %1013 = ztrunc i32 %815 to i1;
+    cbr i1 %1013(prob = 0.5), ^if.then73, ^b114;
   ^while.header82:
-    i32 %1045 = phi [^b96, i32 0] [^b122, i32 %1173];
-    i32 %1046 = phi [^b96, i32 65535] [^b122, i32 %1175];
-    i32 %1047 = phi [^b96, i32 %900] [^b122, i32 %1174];
-    i32 %1048 = phi [^b96, i32 0] [^b122, i32 %1176];
-    i1 %1049 = scmp lt i32 %1048, i32 16;
-    cbr i1 %1049(prob = 0.97), ^while.body52, ^while.header54;
+    i32 %1014 = phi [^b96, i32 0] [^b122, i32 %1141];
+    i32 %1015 = phi [^b96, i32 65535] [^b122, i32 %1143];
+    i32 %1016 = phi [^b96, i32 %879] [^b122, i32 %1142];
+    i32 %1017 = phi [^b96, i32 0] [^b122, i32 %1144];
+    i1 %1018 = scmp lt i32 %1017, i32 16;
+    cbr i1 %1018(prob = 0.97), ^while.body52, ^while.header54;
   ^while.header83:
-    i32 %1050 = phi [^b97, i32 65535] [^b123, i32 %1179];
-    i32 %1051 = phi [^b97, i32 %902] [^b123, i32 %1178];
-    i32 %1052 = phi [^b97, i32 0] [^b123, i32 %1177];
-    i32 %1053 = phi [^b97, i32 0] [^b123, i32 %1180];
-    i1 %1054 = scmp lt i32 %1053, i32 16;
-    cbr i1 %1054(prob = 0.97), ^while.body53, ^while.header55;
+    i32 %1019 = phi [^b97, i32 65535] [^b123, i32 %1147];
+    i32 %1020 = phi [^b97, i32 %881] [^b123, i32 %1146];
+    i32 %1021 = phi [^b97, i32 0] [^b123, i32 %1145];
+    i32 %1022 = phi [^b97, i32 0] [^b123, i32 %1148];
+    i1 %1023 = scmp lt i32 %1022, i32 16;
+    cbr i1 %1023(prob = 0.97), ^while.body53, ^while.header55;
   ^while.body50:
-    i32 %1055 = and i32 %951, i32 1;
-    i32 %1056 = and i32 %952, i32 %1055;
-    i1 %1057 = ztrunc i32 %1056 to i1;
-    cbr i1 %1057(prob = 0.5), ^if.then76, ^b118;
+    i1 %1024 = ztrunc i32 %925 to i1;
+    i1 %1025 = ztrunc i32 %924 to i1;
+    i1 %1026 = and i1 %1024, i1 %1025;
+    cbr i1 %1026(prob = 0.5), ^if.then76, ^b118;
   ^while.body51:
-    i32 %1058 = and i32 %955, i32 1;
-    i32 %1059 = and i32 %956, i32 %1058;
-    i1 %1060 = ztrunc i32 %1059 to i1;
-    cbr i1 %1060(prob = 0.5), ^if.then77, ^b119;
+    i1 %1027 = ztrunc i32 %929 to i1;
+    i1 %1028 = ztrunc i32 %928 to i1;
+    i1 %1029 = and i1 %1027, i1 %1028;
+    cbr i1 %1029(prob = 0.5), ^if.then77, ^b119;
   ^while.header84:
-    i32 %1061 = phi [^b98, i32 0] [^b124, i32 %1181];
-    i32 %1062 = phi [^b98, i32 65535] [^b124, i32 %1183];
-    i32 %1063 = phi [^b98, i32 %906] [^b124, i32 %1182];
-    i32 %1064 = phi [^b98, i32 0] [^b124, i32 %1184];
-    i1 %1065 = scmp lt i32 %1064, i32 16;
-    cbr i1 %1065(prob = 0.97), ^while.body54, ^while.header56;
+    i32 %1030 = phi [^b98, i32 0] [^b124, i32 %1149];
+    i32 %1031 = phi [^b98, i32 65535] [^b124, i32 %1151];
+    i32 %1032 = phi [^b98, i32 %885] [^b124, i32 %1150];
+    i32 %1033 = phi [^b98, i32 0] [^b124, i32 %1152];
+    i1 %1034 = scmp lt i32 %1033, i32 16;
+    cbr i1 %1034(prob = 0.97), ^while.body54, ^while.header56;
   ^while.header85:
-    i32 %1066 = phi [^while.header79, i32 %848] [^b125, i32 %1187];
-    i32 %1067 = phi [^while.header79, i32 %847] [^b125, i32 %1186];
-    i32 %1068 = phi [^while.header79, i32 0] [^b125, i32 %1185];
-    i32 %1069 = phi [^while.header79, i32 0] [^b125, i32 %1188];
-    i1 %1070 = scmp lt i32 %1069, i32 16;
-    cbr i1 %1070(prob = 0.97), ^while.body55, ^b120;
+    i32 %1035 = phi [^while.header79, i32 %827] [^b125, i32 %1155];
+    i32 %1036 = phi [^while.header79, i32 %826] [^b125, i32 %1154];
+    i32 %1037 = phi [^while.header79, i32 0] [^b125, i32 %1153];
+    i32 %1038 = phi [^while.header79, i32 0] [^b125, i32 %1156];
+    i1 %1039 = scmp lt i32 %1038, i32 16;
+    cbr i1 %1039(prob = 0.97), ^while.body55, ^b120;
   ^if.then71:
-    i32* %1071 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %813];
-    i32 %1072 = load i32* %1071;
-    i32 %1073 = add i32 %810, i32 %1072;
+    i32* %1040 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %792];
+    i32 %1041 = load i32* %1040;
+    i32 %1042 = add i32 %789, i32 %1041;
     ubr ^b112;
   ^if.then72:
-    i32* %1074 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %834];
-    i32 %1075 = load i32* %1074;
-    i32 %1076 = add i32 %831, i32 %1075;
+    i32* %1043 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %813];
+    i32 %1044 = load i32* %1043;
+    i32 %1045 = add i32 %810, i32 %1044;
     ubr ^b113;
   ^if.then73:
-    i32* %1077 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %839];
-    i32 %1078 = load i32* %1077;
-    i32 %1079 = add i32 %838, i32 %1078;
+    i32* %1046 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %818];
+    i32 %1047 = load i32* %1046;
+    i32 %1048 = add i32 %817, i32 %1047;
     ubr ^b114;
   ^if.then74:
-    i32* %1080 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %932];
-    i32 %1081 = load i32* %1080;
-    i32 %1082 = add i32 %931, i32 %1081;
+    i32* %1049 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %905];
+    i32 %1050 = load i32* %1049;
+    i32 %1051 = add i32 %904, i32 %1050;
     ubr ^b115;
   ^b112:
-    i32 %1083 = phi [^if.then67, i32 %810] [^if.else23, i32 %810] [^if.then71, i32 %1073];
-    i32 %1084 = sdiv i32 %812, i32 2;
-    i32 %1085 = sdiv i32 %811, i32 2;
-    i32 %1086 = add i32 %813, i32 1;
+    i32 %1052 = phi [^if.then67, i32 %789] [^if.else23, i32 %789] [^if.then71, i32 %1042];
+    i32 %1053 = sdiv i32 %791, i32 2;
+    i32 %1054 = sdiv i32 %790, i32 2;
+    i32 %1055 = add i32 %792, i32 1;
     ubr ^while.header69;
   ^if.then75:
-    i32* %1087 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %943];
-    i32 %1088 = load i32* %1087;
-    i32 %1089 = add i32 %940, i32 %1088;
+    i32* %1056 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %916];
+    i32 %1057 = load i32* %1056;
+    i32 %1058 = add i32 %913, i32 %1057;
     ubr ^b117;
   ^b113:
-    i32 %1090 = phi [^if.then69, i32 %831] [^if.else25, i32 %831] [^if.then72, i32 %1076];
-    i32 %1091 = sdiv i32 %833, i32 2;
-    i32 %1092 = sdiv i32 %832, i32 2;
-    i32 %1093 = add i32 %834, i32 1;
+    i32 %1059 = phi [^if.then69, i32 %810] [^if.else25, i32 %810] [^if.then72, i32 %1045];
+    i32 %1060 = sdiv i32 %812, i32 2;
+    i32 %1061 = sdiv i32 %811, i32 2;
+    i32 %1062 = add i32 %813, i32 1;
     ubr ^while.header72;
   ^b114:
-    i32 %1094 = phi [^if.then70, i32 %838] [^if.else26, i32 %838] [^if.then73, i32 %1079];
-    i32 %1095 = sdiv i32 %837, i32 2;
-    i32 %1096 = sdiv i32 %836, i32 2;
-    i32 %1097 = add i32 %839, i32 1;
+    i32 %1063 = phi [^if.then70, i32 %817] [^if.else26, i32 %817] [^if.then73, i32 %1048];
+    i32 %1064 = sdiv i32 %816, i32 2;
+    i32 %1065 = sdiv i32 %815, i32 2;
+    i32 %1066 = add i32 %818, i32 1;
     ubr ^while.header73;
   ^if.then76:
-    i32* %1098 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %953];
-    i32 %1099 = load i32* %1098;
-    i32 %1100 = add i32 %950, i32 %1099;
+    i32* %1067 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %926];
+    i32 %1068 = load i32* %1067;
+    i32 %1069 = add i32 %923, i32 %1068;
     ubr ^b118;
   ^if.then77:
-    i32* %1101 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %958];
-    i32 %1102 = load i32* %1101;
-    i32 %1103 = add i32 %957, i32 %1102;
+    i32* %1070 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %931];
+    i32 %1071 = load i32* %1070;
+    i32 %1072 = add i32 %930, i32 %1071;
     ubr ^b119;
   ^b115:
-    i32 %1104 = phi [^while.body47, i32 %931] [^if.then74, i32 %1082];
-    i32 %1105 = sdiv i32 %930, i32 2;
-    i32 %1106 = sdiv i32 %929, i32 2;
-    i32 %1107 = add i32 %932, i32 1;
+    i32 %1073 = phi [^while.body47, i32 %904] [^if.then74, i32 %1051];
+    i32 %1074 = sdiv i32 %903, i32 2;
+    i32 %1075 = sdiv i32 %902, i32 2;
+    i32 %1076 = add i32 %905, i32 1;
     ubr ^while.header77;
   ^b116:
-    i32 %1108 = phi [^if.then68, i32 %1018] [^if.else24, i32 %1035];
+    i32 %1077 = phi [^if.then68, i32 %991] [^if.else24, i32 %1007];
     ubr ^while.header44;
   ^b117:
-    i32 %1109 = phi [^while.body48, i32 %940] [^if.then75, i32 %1089];
-    i32 %1110 = sdiv i32 %942, i32 2;
-    i32 %1111 = sdiv i32 %941, i32 2;
-    i32 %1112 = add i32 %943, i32 1;
+    i32 %1078 = phi [^while.body48, i32 %913] [^if.then75, i32 %1058];
+    i32 %1079 = sdiv i32 %915, i32 2;
+    i32 %1080 = sdiv i32 %914, i32 2;
+    i32 %1081 = add i32 %916, i32 1;
     ubr ^while.header78;
   ^b118:
-    i32 %1113 = phi [^while.body50, i32 %950] [^if.then76, i32 %1100];
-    i32 %1114 = sdiv i32 %952, i32 2;
-    i32 %1115 = sdiv i32 %951, i32 2;
-    i32 %1116 = add i32 %953, i32 1;
+    i32 %1082 = phi [^while.body50, i32 %923] [^if.then76, i32 %1069];
+    i32 %1083 = sdiv i32 %925, i32 2;
+    i32 %1084 = sdiv i32 %924, i32 2;
+    i32 %1085 = add i32 %926, i32 1;
     ubr ^while.header80;
   ^b119:
-    i32 %1117 = phi [^while.body51, i32 %957] [^if.then77, i32 %1103];
-    i32 %1118 = sdiv i32 %956, i32 2;
-    i32 %1119 = sdiv i32 %955, i32 2;
-    i32 %1120 = add i32 %958, i32 1;
+    i32 %1086 = phi [^while.body51, i32 %930] [^if.then77, i32 %1072];
+    i32 %1087 = sdiv i32 %929, i32 2;
+    i32 %1088 = sdiv i32 %928, i32 2;
+    i32 %1089 = add i32 %931, i32 1;
     ubr ^while.header81;
   ^if.then78:
-    i32 %1121 = and i32 %946, i32 1;
-    i1 %1122 = scmp eq i32 %1121, i32 0;
-    cbr i1 %1122(prob = 0.5), ^if.then79, ^b121;
+    i32 %1090 = and i32 %919, i32 1;
+    i1 %1091 = scmp eq i32 %1090, i32 0;
+    cbr i1 %1091(prob = 0.5), ^if.then79, ^b121;
   ^while.body52:
-    i32 %1123 = and i32 %1046, i32 1;
-    i32 %1124 = and i32 %1047, i32 %1123;
-    i1 %1125 = ztrunc i32 %1124 to i1;
-    cbr i1 %1125(prob = 0.5), ^if.then80, ^b122;
+    i1 %1092 = ztrunc i32 %1016 to i1;
+    i1 %1093 = ztrunc i32 %1015 to i1;
+    i1 %1094 = and i1 %1092, i1 %1093;
+    cbr i1 %1094(prob = 0.5), ^if.then80, ^b122;
   ^while.body53:
-    i32 %1126 = and i32 %1050, i32 1;
-    i32 %1127 = and i32 %1051, i32 %1126;
-    i1 %1128 = ztrunc i32 %1127 to i1;
-    cbr i1 %1128(prob = 0.5), ^if.then81, ^b123;
+    i1 %1095 = ztrunc i32 %1020 to i1;
+    i1 %1096 = ztrunc i32 %1019 to i1;
+    i1 %1097 = and i1 %1095, i1 %1096;
+    cbr i1 %1097(prob = 0.5), ^if.then81, ^b123;
   ^b120:
-    i32 %1129 = load i32* %1;
-    i32 %1130 = mul i32 %1068, i32 %1129;
+    i32 %1098 = load i32* %1;
+    i32 %1099 = mul i32 %1037, i32 %1098;
     ubr ^while.header89;
   ^while.body54:
-    i32 %1131 = and i32 %1062, i32 1;
-    i32 %1132 = and i32 %1063, i32 %1131;
-    i1 %1133 = ztrunc i32 %1132 to i1;
-    cbr i1 %1133(prob = 0.5), ^if.then82, ^b124;
+    i1 %1100 = ztrunc i32 %1032 to i1;
+    i1 %1101 = ztrunc i32 %1031 to i1;
+    i1 %1102 = and i1 %1100, i1 %1101;
+    cbr i1 %1102(prob = 0.5), ^if.then82, ^b124;
   ^if.else27:
-    i32 %1134 = and i32 %946, i32 1;
-    i1 %1135 = scmp neq i32 %1134, i32 0;
-    cbr i1 %1135(prob = 0.5), ^if.then79, ^b121;
+    i1 %1103 = ztrunc i32 %919 to i1;
+    cbr i1 %1103(prob = 0.5), ^if.then79, ^b121;
   ^while.header86:
-    i32 %1136 = phi [^b109, i32 0] [^b126, i32 %1212];
-    i32 %1137 = phi [^b109, i32 65535] [^b126, i32 %1214];
-    i32 %1138 = phi [^b109, i32 %1020] [^b126, i32 %1213];
-    i32 %1139 = phi [^b109, i32 0] [^b126, i32 %1215];
-    i1 %1140 = scmp lt i32 %1139, i32 16;
-    cbr i1 %1140(prob = 0.97), ^while.body56, ^while.header64;
+    i32 %1104 = phi [^b109, i32 0] [^b126, i32 %1180];
+    i32 %1105 = phi [^b109, i32 65535] [^b126, i32 %1182];
+    i32 %1106 = phi [^b109, i32 %993] [^b126, i32 %1181];
+    i32 %1107 = phi [^b109, i32 0] [^b126, i32 %1183];
+    i1 %1108 = scmp lt i32 %1107, i32 16;
+    cbr i1 %1108(prob = 0.97), ^while.body56, ^while.header64;
   ^while.body55:
-    i32 %1141 = and i32 %1066, i32 1;
-    i32 %1142 = and i32 %1067, i32 %1141;
-    i1 %1143 = ztrunc i32 %1142 to i1;
-    cbr i1 %1143(prob = 0.5), ^if.then83, ^b125;
+    i1 %1109 = ztrunc i32 %1036 to i1;
+    i1 %1110 = ztrunc i32 %1035 to i1;
+    i1 %1111 = and i1 %1109, i1 %1110;
+    cbr i1 %1111(prob = 0.5), ^if.then83, ^b125;
   ^while.header87:
-    i32 %1144 = phi [^b110, i32 0] [^b127, i32 %1216];
-    i32 %1145 = phi [^b110, i32 65535] [^b127, i32 %1218];
-    i32 %1146 = phi [^b110, i32 %1029] [^b127, i32 %1217];
-    i32 %1147 = phi [^b110, i32 0] [^b127, i32 %1219];
-    i1 %1148 = scmp lt i32 %1147, i32 16;
-    cbr i1 %1148(prob = 0.97), ^while.body57, ^while.header65;
+    i32 %1112 = phi [^b110, i32 0] [^b127, i32 %1184];
+    i32 %1113 = phi [^b110, i32 65535] [^b127, i32 %1186];
+    i32 %1114 = phi [^b110, i32 %1002] [^b127, i32 %1185];
+    i32 %1115 = phi [^b110, i32 0] [^b127, i32 %1187];
+    i1 %1116 = scmp lt i32 %1115, i32 16;
+    cbr i1 %1116(prob = 0.97), ^while.body57, ^while.header65;
   ^while.header88:
-    i32 %1149 = phi [^b111, i32 0] [^b128, i32 %1220];
-    i32 %1150 = phi [^b111, i32 65535] [^b128, i32 %1222];
-    i32 %1151 = phi [^b111, i32 %1031] [^b128, i32 %1221];
-    i32 %1152 = phi [^b111, i32 0] [^b128, i32 %1223];
-    i1 %1153 = scmp lt i32 %1152, i32 16;
-    cbr i1 %1153(prob = 0.97), ^while.body58, ^while.header66;
+    i32 %1117 = phi [^b111, i32 0] [^b128, i32 %1188];
+    i32 %1118 = phi [^b111, i32 65535] [^b128, i32 %1190];
+    i32 %1119 = phi [^b111, i32 %1004] [^b128, i32 %1189];
+    i32 %1120 = phi [^b111, i32 0] [^b128, i32 %1191];
+    i1 %1121 = scmp lt i32 %1120, i32 16;
+    cbr i1 %1121(prob = 0.97), ^while.body58, ^while.header66;
   ^if.then79:
-    i32* %1154 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %948];
-    i32 %1155 = load i32* %1154;
-    i32 %1156 = add i32 %945, i32 %1155;
+    i32* %1122 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %921];
+    i32 %1123 = load i32* %1122;
+    i32 %1124 = add i32 %918, i32 %1123;
     ubr ^b121;
   ^if.then80:
-    i32* %1157 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1048];
-    i32 %1158 = load i32* %1157;
-    i32 %1159 = add i32 %1045, i32 %1158;
+    i32* %1125 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1017];
+    i32 %1126 = load i32* %1125;
+    i32 %1127 = add i32 %1014, i32 %1126;
     ubr ^b122;
   ^if.then81:
-    i32* %1160 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1053];
-    i32 %1161 = load i32* %1160;
-    i32 %1162 = add i32 %1052, i32 %1161;
+    i32* %1128 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1022];
+    i32 %1129 = load i32* %1128;
+    i32 %1130 = add i32 %1021, i32 %1129;
     ubr ^b123;
   ^if.then82:
-    i32* %1163 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1064];
-    i32 %1164 = load i32* %1163;
-    i32 %1165 = add i32 %1061, i32 %1164;
+    i32* %1131 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1033];
+    i32 %1132 = load i32* %1131;
+    i32 %1133 = add i32 %1030, i32 %1132;
     ubr ^b124;
   ^b121:
-    i32 %1166 = phi [^if.then78, i32 %945] [^if.else27, i32 %945] [^if.then79, i32 %1156];
-    i32 %1167 = sdiv i32 %947, i32 2;
-    i32 %1168 = sdiv i32 %946, i32 2;
-    i32 %1169 = add i32 %948, i32 1;
+    i32 %1134 = phi [^if.then78, i32 %918] [^if.else27, i32 %918] [^if.then79, i32 %1124];
+    i32 %1135 = sdiv i32 %920, i32 2;
+    i32 %1136 = sdiv i32 %919, i32 2;
+    i32 %1137 = add i32 %921, i32 1;
     ubr ^while.header79;
   ^if.then83:
-    i32* %1170 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1069];
-    i32 %1171 = load i32* %1170;
-    i32 %1172 = add i32 %1068, i32 %1171;
+    i32* %1138 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1038];
+    i32 %1139 = load i32* %1138;
+    i32 %1140 = add i32 %1037, i32 %1139;
     ubr ^b125;
   ^b122:
-    i32 %1173 = phi [^while.body52, i32 %1045] [^if.then80, i32 %1159];
-    i32 %1174 = sdiv i32 %1047, i32 2;
-    i32 %1175 = sdiv i32 %1046, i32 2;
-    i32 %1176 = add i32 %1048, i32 1;
+    i32 %1141 = phi [^while.body52, i32 %1014] [^if.then80, i32 %1127];
+    i32 %1142 = sdiv i32 %1016, i32 2;
+    i32 %1143 = sdiv i32 %1015, i32 2;
+    i32 %1144 = add i32 %1017, i32 1;
     ubr ^while.header82;
   ^b123:
-    i32 %1177 = phi [^while.body53, i32 %1052] [^if.then81, i32 %1162];
-    i32 %1178 = sdiv i32 %1051, i32 2;
-    i32 %1179 = sdiv i32 %1050, i32 2;
-    i32 %1180 = add i32 %1053, i32 1;
+    i32 %1145 = phi [^while.body53, i32 %1021] [^if.then81, i32 %1130];
+    i32 %1146 = sdiv i32 %1020, i32 2;
+    i32 %1147 = sdiv i32 %1019, i32 2;
+    i32 %1148 = add i32 %1022, i32 1;
     ubr ^while.header83;
   ^b124:
-    i32 %1181 = phi [^while.body54, i32 %1061] [^if.then82, i32 %1165];
-    i32 %1182 = sdiv i32 %1063, i32 2;
-    i32 %1183 = sdiv i32 %1062, i32 2;
-    i32 %1184 = add i32 %1064, i32 1;
+    i32 %1149 = phi [^while.body54, i32 %1030] [^if.then82, i32 %1133];
+    i32 %1150 = sdiv i32 %1032, i32 2;
+    i32 %1151 = sdiv i32 %1031, i32 2;
+    i32 %1152 = add i32 %1033, i32 1;
     ubr ^while.header84;
   ^b125:
-    i32 %1185 = phi [^while.body55, i32 %1068] [^if.then83, i32 %1172];
-    i32 %1186 = sdiv i32 %1067, i32 2;
-    i32 %1187 = sdiv i32 %1066, i32 2;
-    i32 %1188 = add i32 %1069, i32 1;
+    i32 %1153 = phi [^while.body55, i32 %1037] [^if.then83, i32 %1140];
+    i32 %1154 = sdiv i32 %1036, i32 2;
+    i32 %1155 = sdiv i32 %1035, i32 2;
+    i32 %1156 = add i32 %1038, i32 1;
     ubr ^while.header85;
   ^while.body56:
-    i32 %1189 = and i32 %1137, i32 1;
-    i32 %1190 = and i32 %1138, i32 %1189;
-    i1 %1191 = ztrunc i32 %1190 to i1;
-    cbr i1 %1191(prob = 0.5), ^if.then84, ^b126;
+    i1 %1157 = ztrunc i32 %1106 to i1;
+    i1 %1158 = ztrunc i32 %1105 to i1;
+    i1 %1159 = and i1 %1157, i1 %1158;
+    cbr i1 %1159(prob = 0.5), ^if.then84, ^b126;
   ^while.body57:
-    i32 %1192 = and i32 %1145, i32 1;
-    i32 %1193 = and i32 %1146, i32 %1192;
-    i1 %1194 = ztrunc i32 %1193 to i1;
-    cbr i1 %1194(prob = 0.5), ^if.then85, ^b127;
+    i1 %1160 = ztrunc i32 %1114 to i1;
+    i1 %1161 = ztrunc i32 %1113 to i1;
+    i1 %1162 = and i1 %1160, i1 %1161;
+    cbr i1 %1162(prob = 0.5), ^if.then85, ^b127;
   ^while.body58:
-    i32 %1195 = and i32 %1150, i32 1;
-    i32 %1196 = and i32 %1151, i32 %1195;
-    i1 %1197 = ztrunc i32 %1196 to i1;
-    cbr i1 %1197(prob = 0.5), ^if.then86, ^b128;
+    i1 %1163 = ztrunc i32 %1119 to i1;
+    i1 %1164 = ztrunc i32 %1118 to i1;
+    i1 %1165 = and i1 %1163, i1 %1164;
+    cbr i1 %1165(prob = 0.5), ^if.then86, ^b128;
   ^while.header89:
-    i32 %1198 = phi [^b120, i32 0] [^b129, i32 %1230];
-    i32 %1199 = phi [^b120, i32 65535] [^b129, i32 %1232];
-    i32 %1200 = phi [^b120, i32 %1130] [^b129, i32 %1231];
-    i32 %1201 = phi [^b120, i32 0] [^b129, i32 %1233];
-    i1 %1202 = scmp lt i32 %1201, i32 16;
-    cbr i1 %1202(prob = 0.97), ^while.body59, ^while.header75;
+    i32 %1166 = phi [^b120, i32 0] [^b129, i32 %1198];
+    i32 %1167 = phi [^b120, i32 65535] [^b129, i32 %1200];
+    i32 %1168 = phi [^b120, i32 %1099] [^b129, i32 %1199];
+    i32 %1169 = phi [^b120, i32 0] [^b129, i32 %1201];
+    i1 %1170 = scmp lt i32 %1169, i32 16;
+    cbr i1 %1170(prob = 0.97), ^while.body59, ^while.header75;
   ^if.then84:
-    i32* %1203 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1139];
-    i32 %1204 = load i32* %1203;
-    i32 %1205 = add i32 %1136, i32 %1204;
+    i32* %1171 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1107];
+    i32 %1172 = load i32* %1171;
+    i32 %1173 = add i32 %1104, i32 %1172;
     ubr ^b126;
   ^if.then85:
-    i32* %1206 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1147];
-    i32 %1207 = load i32* %1206;
-    i32 %1208 = add i32 %1144, i32 %1207;
+    i32* %1174 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1115];
+    i32 %1175 = load i32* %1174;
+    i32 %1176 = add i32 %1112, i32 %1175;
     ubr ^b127;
   ^if.then86:
-    i32* %1209 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1152];
-    i32 %1210 = load i32* %1209;
-    i32 %1211 = add i32 %1149, i32 %1210;
+    i32* %1177 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1120];
+    i32 %1178 = load i32* %1177;
+    i32 %1179 = add i32 %1117, i32 %1178;
     ubr ^b128;
   ^b126:
-    i32 %1212 = phi [^while.body56, i32 %1136] [^if.then84, i32 %1205];
-    i32 %1213 = sdiv i32 %1138, i32 2;
-    i32 %1214 = sdiv i32 %1137, i32 2;
-    i32 %1215 = add i32 %1139, i32 1;
+    i32 %1180 = phi [^while.body56, i32 %1104] [^if.then84, i32 %1173];
+    i32 %1181 = sdiv i32 %1106, i32 2;
+    i32 %1182 = sdiv i32 %1105, i32 2;
+    i32 %1183 = add i32 %1107, i32 1;
     ubr ^while.header86;
   ^b127:
-    i32 %1216 = phi [^while.body57, i32 %1144] [^if.then85, i32 %1208];
-    i32 %1217 = sdiv i32 %1146, i32 2;
-    i32 %1218 = sdiv i32 %1145, i32 2;
-    i32 %1219 = add i32 %1147, i32 1;
+    i32 %1184 = phi [^while.body57, i32 %1112] [^if.then85, i32 %1176];
+    i32 %1185 = sdiv i32 %1114, i32 2;
+    i32 %1186 = sdiv i32 %1113, i32 2;
+    i32 %1187 = add i32 %1115, i32 1;
     ubr ^while.header87;
   ^b128:
-    i32 %1220 = phi [^while.body58, i32 %1149] [^if.then86, i32 %1211];
-    i32 %1221 = sdiv i32 %1151, i32 2;
-    i32 %1222 = sdiv i32 %1150, i32 2;
-    i32 %1223 = add i32 %1152, i32 1;
+    i32 %1188 = phi [^while.body58, i32 %1117] [^if.then86, i32 %1179];
+    i32 %1189 = sdiv i32 %1119, i32 2;
+    i32 %1190 = sdiv i32 %1118, i32 2;
+    i32 %1191 = add i32 %1120, i32 1;
     ubr ^while.header88;
   ^while.body59:
-    i32 %1224 = and i32 %1199, i32 1;
-    i32 %1225 = and i32 %1200, i32 %1224;
-    i1 %1226 = ztrunc i32 %1225 to i1;
-    cbr i1 %1226(prob = 0.5), ^if.then87, ^b129;
+    i1 %1192 = ztrunc i32 %1168 to i1;
+    i1 %1193 = ztrunc i32 %1167 to i1;
+    i1 %1194 = and i1 %1192, i1 %1193;
+    cbr i1 %1194(prob = 0.5), ^if.then87, ^b129;
   ^if.then87:
-    i32* %1227 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1201];
-    i32 %1228 = load i32* %1227;
-    i32 %1229 = add i32 %1198, i32 %1228;
+    i32* %1195 = getelementptr &([16 * i32]* %SHIFT_TABLE)[i64 0][i32 %1169];
+    i32 %1196 = load i32* %1195;
+    i32 %1197 = add i32 %1166, i32 %1196;
     ubr ^b129;
   ^b129:
-    i32 %1230 = phi [^while.body59, i32 %1198] [^if.then87, i32 %1229];
-    i32 %1231 = sdiv i32 %1200, i32 2;
-    i32 %1232 = sdiv i32 %1199, i32 2;
-    i32 %1233 = add i32 %1201, i32 1;
+    i32 %1198 = phi [^while.body59, i32 %1166] [^if.then87, i32 %1197];
+    i32 %1199 = sdiv i32 %1168, i32 2;
+    i32 %1200 = sdiv i32 %1167, i32 2;
+    i32 %1201 = add i32 %1169, i32 1;
     ubr ^while.header89;
 }
