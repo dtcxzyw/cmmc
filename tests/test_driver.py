@@ -52,6 +52,21 @@ summary_samples = 0
 tac_inst_count_ref = 224.116
 
 
+class PerformanceEnv:
+    def __enter__(self):
+        self.old_value = [None, None]
+        for i, core in enumerate(range(2, 4)):
+            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'r') as f:
+                self.old_value[i] = f.read()
+            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'w') as f:
+                f.write('performance\n')
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        for i, core in enumerate(range(2, 4)):
+            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'w') as f:
+                f.write(self.old_value[i])
+
+
 def geo_means(prod, count):
     return math.exp(math.log(float(prod)) / max(1, count))
 
@@ -439,7 +454,7 @@ def sysy_cmmc_compile_only(src, target):
 def sysy_gcc_native_perf(src, target):
     output = get_output_path(src)
     subprocess.run(gcc_ref_command + ['-o', output, '-include', sysy_header, os.path.join(tests_path, 'SysY2022/perf/runtime.c'), src], check=True)
-    time_used = run_executable([output], src, f'gcc_native_{target}')
+    time_used = run_executable(['taskset', '-c', '2,3', output], src, f'gcc_native_{target}')
     collect_perf_data(src, f'{target}_gcc', time_used)
 
 
@@ -450,7 +465,7 @@ def sysy_cmmc_native_perf(src, target):
     fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
 
     link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'))
-    time_used = run_executable([output], fake_src, f"cmmc_native_{target}")
+    time_used = run_executable(['taskset', '-c', '2,3', output], fake_src, f"cmmc_native_{target}")
     collect_perf_data(fake_src, target, time_used)
 
 
@@ -619,11 +634,13 @@ if not generate_ref:
             test_sysy_groups('compile', target, sysy_cmmc_compile_only)
         if "run" in test_cases:
             # WARNING: use pre-compiled assembly file under SysY2022/performance
-            res.append(test("SysY codegen performance (native-{})".format(target),
-                            "SysY2022/performance", ".s", lambda x: sysy_cmmc_native_perf(x, target)))
+            with PerformanceEnv():
+                res.append(test("SysY codegen performance (native-{})".format(target),
+                                "SysY2022/performance", ".s", lambda x: sysy_cmmc_native_perf(x, target)))
         if "run-gcc" in test_cases:
-            res.append(test(f"SysY gcc performance (native-{target})", tests_path +
-                            "/SysY2022/performance", ".sy", lambda x: sysy_gcc_native_perf(x, target)))
+            with PerformanceEnv():
+                res.append(test(f"SysY gcc performance (native-{target})", tests_path +
+                                "/SysY2022/performance", ".sy", lambda x: sysy_gcc_native_perf(x, target)))
         if "native" in test_cases:
             test_sysy_groups('native', target, sysy_cmmc_native)
         if "regression" in test_cases:

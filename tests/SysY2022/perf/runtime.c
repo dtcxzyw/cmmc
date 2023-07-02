@@ -36,7 +36,7 @@ void _sysy_starttime(int lineno) {
                 "perf", "stat",
                 "-x", ",",
                 "-D", "-1",
-                "-e", "task-clock,cycles,instructions,inst_retired,inst_spec,branch-load-misses,branch-loads,iTLB-load-misses",
+                "-e", "task-clock,cycles,instructions,inst_retired,inst_spec,branch-load-misses,branch-loads,iTLB-load-misses,context-switches",
                 "--control", fifo_arg_buffer,
                 "--pid", pid_buffer,
                 "-o", "perf.txt",
