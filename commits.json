@@ -135,6 +135,11 @@
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
     },
+    "ee9bfa4ff796c33883811cb7dc142ee64e4f8042": {
+      "message": "ci: use sudo to set CPU frequency policy",
+      "parent": "fa954375b25c648c0d9469b2f5ce25015248317f",
+      "time": "2023-07-03 01:44:34 +0800"
+    },
     "f5456db3e19187aa4d028032103b60006886a52b": {
       "message": "feat(transform): optimize for clamp",
       "parent": "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104",
@@ -151,5 +156,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "fa954375b25c648c0d9469b2f5ce25015248317f"
+  "head": "ee9bfa4ff796c33883811cb7dc142ee64e4f8042"
 }
