@@ -10,6 +10,11 @@
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
       "time": "2023-07-02 15:37:48 +0800"
     },
+    "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41": {
+      "message": "feat(transform): optimize select with constants",
+      "parent": "8a442367ad14b632eadb8d0719bb9237ab864a62",
+      "time": "2023-07-02 21:25:06 +0800"
+    },
     "2a8d4a9919993d68163f8deca8328c69c80db012": {
       "message": "feat(codegen): optimize constant multiplication with shifts and arithmetics",
       "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
@@ -90,6 +95,11 @@
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
       "time": "2023-07-02 00:59:38 +0800"
     },
+    "8a442367ad14b632eadb8d0719bb9237ab864a62": {
+      "message": "feat(transform): fold constant arguments",
+      "parent": "70a3c44eef43f6781909d868fb8132a3678a2c66",
+      "time": "2023-07-02 21:25:05 +0800"
+    },
     "99c96ab3877598e40db347786b94293026922ee6": {
       "message": "ci: support collecting multiple commits at one push",
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
@@ -131,5 +141,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "70a3c44eef43f6781909d868fb8132a3678a2c66"
+  "head": "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41"
 }
