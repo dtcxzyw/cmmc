@@ -86,3 +86,31 @@ smax_zero:
 	and $v0, $a0, $t0
 	jr $ra
 	nop
+.globl smax_imm
+smax_imm:
+	li $t0, 127
+	slt $t0, $t0, $a0
+	li $v0, 127
+	movn $v0, $a0, $t0
+	jr $ra
+	nop
+.globl smin_imm
+smin_imm:
+	slti $t0, $a0, 255
+	li $v0, 255
+	movn $v0, $a0, $t0
+	jr $ra
+	nop
+.globl ssat
+ssat:
+	li $t0, 254
+	slt $t1, $t0, $a0
+	li $t2, 255
+	move $t0, $a0
+	movn $t0, $t2, $t1
+	slti $t1, $t0, -255
+	li $t2, -256
+	movn $t0, $t2, $t1
+	move $v0, $t0
+	jr $ra
+	nop

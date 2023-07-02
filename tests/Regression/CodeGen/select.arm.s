@@ -243,12 +243,10 @@ select_bitset:
 .globl select_imax
 select_imax:
 	cmp r0, r1
-	movgt r1, r0
-	mov r0, r1
+	movle r0, r1
 	bx lr
 .globl select_imin
 select_imin:
 	cmp r0, r1
-	movlt r1, r0
-	mov r0, r1
+	movge r0, r1
 	bx lr

@@ -34,6 +34,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
     std::unordered_map<MIROperand, std::vector<MIRInst*>, MIROperandHasher> writers;
     std::queue<MIRInst*> q;
 
+    auto isAllocableType = [](OperandType type) { return type <= OperandType::Float32; };
     for(auto& block : func.blocks())
         for(auto& inst : block->instructions()) {
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
@@ -46,7 +47,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
                 if(instInfo.getOperandFlag(idx) & OperandFlagDef) {
                     auto op = inst.getOperand(idx);
                     writers[op].push_back(&inst);
-                    if(op.isReg() && isISAReg(op.reg()))
+                    if(op.isReg() && isISAReg(op.reg()) && isAllocableType(op.type()))
                         special = true;
                 }
             }
@@ -77,7 +78,7 @@ bool removeUnusedInsts(MIRFunction& func, const CodeGenContext& ctx) {
 
     std::unordered_set<MIRInst*> remove;
     for(auto& [op, writerList] : writers) {
-        if(!isVirtualReg(op.reg()))
+        if(isISAReg(op.reg()) && isAllocableType(op.type()))
             continue;
 
         for(auto writer : writerList) {

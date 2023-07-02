@@ -7,19 +7,17 @@
 .globl smin_lt
 smin_lt:
 	cmp r0, r1
-	movlt r1, r0
-	mov r0, r1
+	movge r0, r1
 	bx lr
 .globl smax_lt
 smax_lt:
 	cmp r0, r1
-	movlt r0, r1
+	movle r0, r1
 	bx lr
 .globl smin_le
 smin_le:
 	cmp r0, r1
-	movle r1, r0
-	mov r0, r1
+	movge r0, r1
 	bx lr
 .globl smax_le
 smax_le:
@@ -29,13 +27,12 @@ smax_le:
 .globl smin_gt
 smin_gt:
 	cmp r0, r1
-	movgt r0, r1
+	movge r0, r1
 	bx lr
 .globl smax_gt
 smax_gt:
 	cmp r0, r1
-	movgt r1, r0
-	mov r0, r1
+	movle r0, r1
 	bx lr
 .globl smin_ge
 smin_ge:
@@ -45,36 +42,31 @@ smin_ge:
 .globl smax_ge
 smax_ge:
 	cmp r0, r1
-	movge r1, r0
-	mov r0, r1
+	movle r0, r1
 	bx lr
 .globl clamp_mask
 clamp_mask:
-	cmp r0, #0
-	mov r1, #0
-	movwgt r1, #1
-	rsb r1, r1, #0
-	and r1, r0, r1
-	cmp r0, #127
-	mov r2, #127
-	mov r0, r1
-	movgt r0, r2
+	usat r0, #7, r0
 	bx lr
 .globl clamp_mask2
 clamp_mask2:
-	cmp r0, #255
-	mov r1, #255
-	movlt r1, r0
-	cmp r0, #0
-	mov r2, #0
-	mov r0, r1
-	movlt r0, r2
+	usat r0, #8, r0
 	bx lr
 .globl smax_zero
 smax_zero:
-	cmp r0, #0
-	mov r1, #0
-	movwgt r1, #1
-	rsb r1, r1, #0
-	and r0, r0, r1
+	bic r0, r0, r0, asr #31
+	bx lr
+.globl smax_imm
+smax_imm:
+	cmp r0, #127
+	movle r0, #127
+	bx lr
+.globl smin_imm
+smin_imm:
+	cmp r0, #255
+	movge r0, #255
+	bx lr
+.globl ssat
+ssat:
+	ssat r0, #8, r0
 	bx lr

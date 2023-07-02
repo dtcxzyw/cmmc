@@ -117,7 +117,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %60 = load i32* %59;
     i32 %61 = add i32 %55, i32 %60;
     i1 %62 = scmp eq i32 %58, i32 %61;
-    i32 %63 = smax i32 %61, i32 %58;
+    i32 %63 = smax i32 %58, i32 %61;
     i32 %64 = select i1 %62 ? i32 %61 : i32 %63;
     i32* %65 = getelementptr &(i32* %48)[i64 1];
     store i32* %65 with i32 %64;
@@ -125,7 +125,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %67 = load i32* %66;
     i32 %68 = add i32 %58, i32 %67;
     i1 %69 = scmp eq i32 %64, i32 %68;
-    i32 %70 = smax i32 %68, i32 %64;
+    i32 %70 = smax i32 %64, i32 %68;
     i32 %71 = select i1 %69 ? i32 %68 : i32 %70;
     i32* %72 = getelementptr &(i32* %48)[i64 2];
     store i32* %72 with i32 %71;
@@ -133,7 +133,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %74 = load i32* %73;
     i32 %75 = add i32 %64, i32 %74;
     i1 %76 = scmp eq i32 %71, i32 %75;
-    i32 %77 = smax i32 %75, i32 %71;
+    i32 %77 = smax i32 %71, i32 %75;
     i32 %78 = select i1 %76 ? i32 %75 : i32 %77;
     i32* %79 = getelementptr &(i32* %48)[i64 3];
     store i32* %79 with i32 %78;
@@ -160,7 +160,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %95 = load i32* %94;
     i32 %96 = add i32 %90, i32 %95;
     i1 %97 = scmp eq i32 %93, i32 %96;
-    i32 %98 = smax i32 %96, i32 %93;
+    i32 %98 = smax i32 %93, i32 %96;
     i32 %99 = select i1 %97 ? i32 %96 : i32 %98;
     i32* %100 = getelementptr &(i32* %83)[i64 1];
     store i32* %100 with i32 %99;
@@ -168,7 +168,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %102 = load i32* %101;
     i32 %103 = add i32 %93, i32 %102;
     i1 %104 = scmp eq i32 %99, i32 %103;
-    i32 %105 = smax i32 %103, i32 %99;
+    i32 %105 = smax i32 %99, i32 %103;
     i32 %106 = select i1 %104 ? i32 %103 : i32 %105;
     i32* %107 = getelementptr &(i32* %83)[i64 2];
     store i32* %107 with i32 %106;
@@ -176,7 +176,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %109 = load i32* %108;
     i32 %110 = add i32 %99, i32 %109;
     i1 %111 = scmp eq i32 %106, i32 %110;
-    i32 %112 = smax i32 %110, i32 %106;
+    i32 %112 = smax i32 %106, i32 %110;
     i32 %113 = select i1 %111 ? i32 %110 : i32 %112;
     i32* %114 = getelementptr &(i32* %83)[i64 3];
     store i32* %114 with i32 %113;
@@ -203,7 +203,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %130 = load i32* %129;
     i32 %131 = add i32 %125, i32 %130;
     i1 %132 = scmp eq i32 %128, i32 %131;
-    i32 %133 = smax i32 %131, i32 %128;
+    i32 %133 = smax i32 %128, i32 %131;
     i32 %134 = select i1 %132 ? i32 %131 : i32 %133;
     i32* %135 = getelementptr &(i32* %118)[i64 1];
     store i32* %135 with i32 %134;
@@ -211,7 +211,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %137 = load i32* %136;
     i32 %138 = add i32 %128, i32 %137;
     i1 %139 = scmp eq i32 %134, i32 %138;
-    i32 %140 = smax i32 %138, i32 %134;
+    i32 %140 = smax i32 %134, i32 %138;
     i32 %141 = select i1 %139 ? i32 %138 : i32 %140;
     i32* %142 = getelementptr &(i32* %118)[i64 2];
     store i32* %142 with i32 %141;
@@ -219,7 +219,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %144 = load i32* %143;
     i32 %145 = add i32 %134, i32 %144;
     i1 %146 = scmp eq i32 %141, i32 %145;
-    i32 %147 = smax i32 %145, i32 %141;
+    i32 %147 = smax i32 %141, i32 %145;
     i32 %148 = select i1 %146 ? i32 %145 : i32 %147;
     i32* %149 = getelementptr &(i32* %118)[i64 3];
     store i32* %149 with i32 %148;

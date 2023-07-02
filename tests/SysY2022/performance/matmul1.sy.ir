@@ -229,7 +229,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body5:
     i32* %161 = getelementptr &([1000 * i32]* %88)[i64 0][i32 %156];
     i32 %162 = load i32* %161;
-    i32 %163 = smin i32 %162, i32 %157;
+    i32 %163 = smin i32 %157, i32 %162;
     i32 %164 = add i32 %156, i32 1;
     ubr ^while.header5;
   ^b4:

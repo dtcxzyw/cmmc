@@ -49,3 +49,20 @@ clamp_mask2:
 smax_zero:
 	max a0, a0, zero
 	ret
+.globl smax_imm
+smax_imm:
+	li a1, 127
+	max a0, a0, a1
+	ret
+.globl smin_imm
+smin_imm:
+	li a1, 255
+	min a0, a0, a1
+	ret
+.globl ssat
+ssat:
+	li a1, 255
+	min a0, a0, a1
+	li a1, -256
+	max a0, a0, a1
+	ret

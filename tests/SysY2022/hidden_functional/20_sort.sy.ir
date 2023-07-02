@@ -124,7 +124,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %81 = load i32* %80;
     i32 %82 = add i32 %81, i32 1;
     store i32* %80 with i32 %82;
-    i32 %83 = smax i32 %79, i32 %76;
+    i32 %83 = smax i32 %76, i32 %79;
     i32 %84 = add i32 %75, i32 1;
     ubr ^while.header2;
   ^while.body7:

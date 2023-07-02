@@ -24,6 +24,7 @@
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
@@ -537,6 +538,25 @@ static bool buildIRegShift(ISelContext& ctx, const MIROperand& val, MIROperand& 
     return val.isImm() && val.imm() == 1;
 }
 
+static bool selectUnsignedRange(const MIROperand& upper, MIROperand& shift) {
+    if(!upper.isImm())
+        return false;
+    const auto val = static_cast<size_t>(upper.imm() + 1);
+    if(isPowerOf2(val)) {
+        shift = MIROperand::asImm(ilog2(val), OperandType::Int32);
+        return true;
+    }
+    return false;
+}
+
+static bool selectSignedRange(const MIROperand& lower, const MIROperand& upper, MIROperand& shift) {
+    if(!lower.isImm() || !upper.isImm())
+        return false;
+    if(!(lower.imm() == -upper.imm() - 1))
+        return false;
+    return selectUnsignedRange(upper, shift);
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/ISelInfoImpl.hpp>
@@ -724,6 +744,18 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(rhs);
             break;
         }
+        case InstSMin:
+            [[fallthrough]];
+        case InstSMax: {
+            auto& lhs = inst.getOperand(1);
+            auto& rhs = inst.getOperand(2);
+            imm2reg(lhs);
+            MIROperand rhsImmInverted;
+            if(rhs.isImm() && !isOperandOp2Constant(rhs) && !selectInvertedOp2Constant(rhs, rhsImmInverted)) {
+                imm2reg(lhs);
+            }
+            break;
+        }
         case InstShl:
             [[fallthrough]];
         case InstAShr:
@@ -873,6 +905,20 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
                             .setOperand<5>(dst);
             break;
         }
+        case PseudoSMax:
+            [[fallthrough]];
+        case PseudoSMin: {
+            auto dst = inst.getOperand(0);
+            auto lhs = inst.getOperand(1);
+            auto op2 = inst.getOperand(2);
+            auto cc = inst.getOperand(3);
+
+            ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(lhs));
+            auto cf = MIROperand::asImm(inst.opcode() == PseudoSMin ? CondField::GE : CondField::LE, OperandType::CondField);
+            *ctx.iter =
+                MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(op2).setOperand<3>(cc).setOperand<4>(dst);
+            break;
+        }
         default:
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
     }
@@ -987,7 +1033,6 @@ void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator it
 void ARMISelInfo::postLegalizeInstSeq(const CodeGenContext& ctx, std::list<MIRInst>& instructions) const {
     CMMC_UNUSED(ctx);
     CMMC_UNUSED(instructions);
-    return;
 }
 // fpconst (8bit fp) = +/- m * 2^-n where m is a 4-bit mantissa and n is a 3-bit exponent.
 static bool isLegalFPConst(uint32_t rep) {

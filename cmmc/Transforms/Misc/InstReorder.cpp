@@ -296,7 +296,9 @@ class InstReorder final : public TransformPass<Function> {
                     case InstructionID::Or:
                     case InstructionID::Xor:
                     case InstructionID::SCmp:
-                    case InstructionID::UCmp: {
+                    case InstructionID::UCmp:
+                    case InstructionID::SMax:
+                    case InstructionID::SMin: {
                         isCommutative = true;
                         break;
                     }

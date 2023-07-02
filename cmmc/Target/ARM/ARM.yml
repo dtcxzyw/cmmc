@@ -303,6 +303,11 @@ InstInfo:
     Format: vpop $List:RegListVFP[Metadata]
     Flag: [Load]
 
+  USAT:
+    Format: usat $Rd:GPR[Def], $Shift:UImm32[Metadata], $Rm:GPR[Use]
+  SSAT:
+    Format: ssat $Rd:GPR[Def], $Shift:UImm32[Metadata], $Rm:GPR[Use]
+
   MOVT_MOVW_PAIR:
     Format: movt_movw_pair $Rd:GPR[Def], $Imm:UImm32[Metadata]
     Flag: [LegalizePreRA, LoadConstant]
@@ -326,6 +331,24 @@ InstInfo:
   PseudoIntOpWithOp2_Cond:
     Format: pseudo_int_op_with_op2$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use], $Rm:GPR[Use], $Op:Imm[Metadata], $CC:CC[Use]
     Flag: [LegalizePreRA]
+
+  PseudoSMaxMin:
+    Format: pseudo_$Mnemonic:Template $Dst:GPR[Def], $Lhs:GPR[Use], $Rhs:Op2[Use], $CC:CC[Use]
+    Flag: [LegalizePreRA]
+    Instances:
+      PseudoSMax:
+        Mnemonic: smax
+      PseudoSMin:
+        Mnemonic: smin
+
+  PseudoSMaxMin_Inverted:
+    Format: pseudo_$Mnemonic:Template $Dst:GPR[Def], $Lhs:GPR[Use], $RhsInverted:Op2[Use], $CC:CC[Use]
+    Flag: [LegalizePreRA]
+    Instances:
+      PseudoSMax_Inverted:
+        Mnemonic: smax_inverted
+      PseudoSMin_Inverted:
+        Mnemonic: smin_inverted
 
   UNIMP:
     Format: .inst 0xdeff
@@ -1283,6 +1306,148 @@ InstSelection:
         Rm: $Rm
         Op: $Op
         Sh: $Sh
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs:
+          InstSMin:
+            Lhs: $Src
+            Rhs: $Upper
+        Rhs: $Lower
+        $Predicate: isOperandIReg($Src) && isZero($Lower) && selectUnsignedRange($Upper, [$Shift])
+    Replace:
+      USAT:
+        Rd: $Dst
+        Shift: $Shift
+        Rm: $Src
+
+  - Pattern:
+      InstSMin:
+        Dst: $Dst
+        Lhs:
+          InstSMax:
+            Lhs: $Src
+            Rhs: $Lower
+        Rhs: $Upper
+        $Predicate: isOperandIReg($Src) && isZero($Lower) && selectUnsignedRange($Upper, [$Shift])
+    Replace:
+      USAT:
+        Rd: $Dst
+        Shift: $Shift
+        Rm: $Src
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs:
+          InstSMin:
+            Lhs: $Src
+            Rhs: $Upper
+        Rhs: $Lower
+        $Predicate: isOperandIReg($Src) && selectSignedRange($Lower, $Upper, [$Shift])
+    Replace:
+      SSAT:
+        Rd: $Dst
+        Shift: $Shift
+        Rm: $Src
+
+  - Pattern:
+      InstSMin:
+        Dst: $Dst
+        Lhs:
+          InstSMax:
+            Lhs: $Src
+            Rhs: $Lower
+        Rhs: $Upper
+        $Predicate: isOperandIReg($Src) && selectSignedRange($Lower, $Upper, [$Shift])
+    Replace:
+      SSAT:
+        Rd: $Dst
+        Shift: $Shift
+        Rm: $Src
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs)
+    Replace:
+      BIC_Fused:
+        Rd: $Dst
+        Rn: $Lhs
+        Rm: $Lhs
+        Op: MIROperand::asImm(ASR, OperandType::ShiftType)
+        Sh: MIROperand::asImm(31, OperandType::Int32)
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
+    Replace:
+      PseudoSMax:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC:
+          CMP:
+            Rn: $Lhs
+            Op2: $Rhs
+            CC: getCC()
+
+  - Pattern:
+      InstSMin:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && isOperandOp2($Rhs)
+    Replace:
+      PseudoSMin:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC:
+          CMP:
+            Rn: $Lhs
+            Op2: $Rhs
+            CC: getCC()
+
+  - Pattern:
+      InstSMax:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && selectInvertedOp2Constant($Rhs, [$InvertedRhs])
+    Replace:
+      PseudoSMax_Inverted:
+        Dst: $Dst
+        Lhs: $Lhs
+        RhsInverted: $InvertedRhs
+        CC:
+          CMN:
+            Rn: $Lhs
+            Op2: $InvertedRhs
+            CC: getCC()
+
+  - Pattern:
+      InstSMin:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs: $Rhs
+        $Predicate: isOperandIReg($Lhs) && selectInvertedOp2Constant($Rhs, [$InvertedRhs])
+    Replace:
+      PseudoSMin_Inverted:
+        Dst: $Dst
+        Lhs: $Lhs
+        RhsInverted: $InvertedRhs
+        CC:
+          CMN:
+            Rn: $Lhs
+            Op2: $InvertedRhs
+            CC: getCC()
 
   # For csmith
   - Pattern:

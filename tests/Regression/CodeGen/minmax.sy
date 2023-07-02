@@ -43,3 +43,15 @@ int clamp_mask2(int x) {
 int smax_zero(int x) {
     return x > 0 ? x : 0;
 }
+
+int smax_imm(int x) {
+    return x > 127 ? x: 127;
+}
+
+int smin_imm(int x) {
+    return x < 255 ? x : 255;
+}
+
+int ssat(int x) {
+    return smax_ge(-256, smin_ge(x, 255));
+}

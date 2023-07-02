@@ -330,7 +330,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %130 = load i32* %129;
     i32 %131 = add i32 %130, i32 1;
     store i32* %129 with i32 %131;
-    i32 %132 = smax i32 %131, i32 %123;
+    i32 %132 = smax i32 %123, i32 %131;
     i32* %133 = getelementptr &(i32* %127)[i64 1];
     i32 %134 = load i32* %133;
     i32* %135 = getelementptr &([1000 * i32]* %64)[i64 0][i32 %134];
@@ -340,7 +340,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %139 = scmp lt i32 %123, i32 %131;
     i32 %140 = select i1 %139 ? i32 %128 : i32 %124;
     i32 %141 = select i1 %138 ? i32 %134 : i32 %140;
-    i32 %142 = smax i32 %137, i32 %132;
+    i32 %142 = smax i32 %132, i32 %137;
     store i32* %135 with i32 %137;
     i32* %143 = getelementptr &(i32* %127)[i64 2];
     i32 %144 = load i32* %143;
@@ -349,7 +349,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %147 = add i32 %146, i32 1;
     i1 %148 = scmp lt i32 %142, i32 %147;
     i32 %149 = select i1 %148 ? i32 %144 : i32 %141;
-    i32 %150 = smax i32 %147, i32 %142;
+    i32 %150 = smax i32 %142, i32 %147;
     store i32* %145 with i32 %147;
     i32* %151 = getelementptr &(i32* %127)[i64 3];
     i32 %152 = load i32* %151;
@@ -358,7 +358,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %155 = add i32 %154, i32 1;
     i1 %156 = scmp lt i32 %150, i32 %155;
     i32 %157 = select i1 %156 ? i32 %152 : i32 %149;
-    i32 %158 = smax i32 %155, i32 %150;
+    i32 %158 = smax i32 %150, i32 %155;
     store i32* %153 with i32 %155;
     ubr ^super.header;
   ^super.header1:
@@ -375,7 +375,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %167 = load i32* %166;
     i32 %168 = add i32 %167, i32 1;
     store i32* %166 with i32 %168;
-    i32 %169 = smax i32 %168, i32 %160;
+    i32 %169 = smax i32 %160, i32 %168;
     i32* %170 = getelementptr &(i32* %164)[i64 1];
     i32 %171 = load i32* %170;
     i32* %172 = getelementptr &([1000 * i32]* %64)[i64 0][i32 %171];
@@ -385,7 +385,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %176 = scmp lt i32 %160, i32 %168;
     i32 %177 = select i1 %176 ? i32 %165 : i32 %161;
     i32 %178 = select i1 %175 ? i32 %171 : i32 %177;
-    i32 %179 = smax i32 %174, i32 %169;
+    i32 %179 = smax i32 %169, i32 %174;
     store i32* %172 with i32 %174;
     i32* %180 = getelementptr &(i32* %164)[i64 2];
     i32 %181 = load i32* %180;
@@ -394,7 +394,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %184 = add i32 %183, i32 1;
     i1 %185 = scmp lt i32 %179, i32 %184;
     i32 %186 = select i1 %185 ? i32 %181 : i32 %178;
-    i32 %187 = smax i32 %184, i32 %179;
+    i32 %187 = smax i32 %179, i32 %184;
     store i32* %182 with i32 %184;
     i32* %188 = getelementptr &(i32* %164)[i64 3];
     i32 %189 = load i32* %188;
@@ -403,7 +403,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %192 = add i32 %191, i32 1;
     i1 %193 = scmp lt i32 %187, i32 %192;
     i32 %194 = select i1 %193 ? i32 %189 : i32 %186;
-    i32 %195 = smax i32 %192, i32 %187;
+    i32 %195 = smax i32 %187, i32 %192;
     store i32* %190 with i32 %192;
     ubr ^super.header1;
   ^super.header2:
@@ -420,7 +420,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %204 = load i32* %203;
     i32 %205 = add i32 %204, i32 1;
     store i32* %203 with i32 %205;
-    i32 %206 = smax i32 %205, i32 %197;
+    i32 %206 = smax i32 %197, i32 %205;
     i32* %207 = getelementptr &(i32* %201)[i64 1];
     i32 %208 = load i32* %207;
     i32* %209 = getelementptr &([1000 * i32]* %64)[i64 0][i32 %208];
@@ -430,7 +430,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %213 = scmp lt i32 %197, i32 %205;
     i32 %214 = select i1 %213 ? i32 %202 : i32 %198;
     i32 %215 = select i1 %212 ? i32 %208 : i32 %214;
-    i32 %216 = smax i32 %211, i32 %206;
+    i32 %216 = smax i32 %206, i32 %211;
     store i32* %209 with i32 %211;
     i32* %217 = getelementptr &(i32* %201)[i64 2];
     i32 %218 = load i32* %217;
@@ -439,7 +439,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %221 = add i32 %220, i32 1;
     i1 %222 = scmp lt i32 %216, i32 %221;
     i32 %223 = select i1 %222 ? i32 %218 : i32 %215;
-    i32 %224 = smax i32 %221, i32 %216;
+    i32 %224 = smax i32 %216, i32 %221;
     store i32* %219 with i32 %221;
     i32* %225 = getelementptr &(i32* %201)[i64 3];
     i32 %226 = load i32* %225;
@@ -448,7 +448,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %229 = add i32 %228, i32 1;
     i1 %230 = scmp lt i32 %224, i32 %229;
     i32 %231 = select i1 %230 ? i32 %226 : i32 %223;
-    i32 %232 = smax i32 %229, i32 %224;
+    i32 %232 = smax i32 %224, i32 %229;
     store i32* %227 with i32 %229;
     ubr ^super.header2;
   ^while.body8:
@@ -463,7 +463,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %241 = scmp lt i32 %234, i32 %240;
     i32 %242 = select i1 %241 ? i32 %237 : i32 %235;
     store i32* %238 with i32 %240;
-    i32 %243 = smax i32 %240, i32 %234;
+    i32 %243 = smax i32 %234, i32 %240;
     i32 %244 = add i32 %233, i32 1;
     i1 %245 = scmp lt i32 %244, i32 32;
     cbr i1 %245(prob = 0.97), ^while.body8, ^b2;
