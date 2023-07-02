@@ -140,11 +140,16 @@
       "parent": "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104",
       "time": "2023-07-02 13:27:49 +0800"
     },
+    "fa954375b25c648c0d9469b2f5ce25015248317f": {
+      "message": "ci: tweak benchmarking environment",
+      "parent": "7bae69aa5a88f0f49632223013714fa862acab9d",
+      "time": "2023-07-03 01:31:00 +0800"
+    },
     "fd09d81a7f01e2eea69cfec9e186c92b254fc584": {
       "message": "misc: update ref",
       "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "7bae69aa5a88f0f49632223013714fa862acab9d"
+  "head": "fa954375b25c648c0d9469b2f5ce25015248317f"
 }
