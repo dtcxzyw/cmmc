@@ -34,9 +34,9 @@ pcrel51:
 	slliw a5, a5, 1
 	andi a5, a5, 255
 pcrel52:
-	auipc t1, %pcrel_hi(A)
-	addi t1, t1, %pcrel_lo(pcrel52)
-	add a4, t1, a4
+	auipc t0, %pcrel_hi(A)
+	addi t0, t0, %pcrel_lo(pcrel52)
+	add a4, t0, a4
 	sb a5, 0(a4)
 	sh3add a4, a2, a2
 	addw a4, a1, a4

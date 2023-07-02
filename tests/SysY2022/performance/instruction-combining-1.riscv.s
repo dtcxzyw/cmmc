@@ -32,17 +32,17 @@ label5:
 	addiw a5, a0, 1
 	addw a4, a4, a5
 	mul a5, a4, a2
-	srai t1, a5, 59
+	srai t0, a5, 59
 	srli a5, a5, 63
-	add a5, a5, t1
+	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a5, a0, 2
 	addw a4, a4, a5
 	mul a5, a4, a2
-	srai t1, a5, 59
+	srai t0, a5, 59
 	srli a5, a5, 63
-	add a5, a5, t1
+	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a0, a0, 3
@@ -101,17 +101,17 @@ label9:
 	addiw a5, a0, 1
 	addw a4, a4, a5
 	mul a5, a4, a2
-	srai t1, a5, 59
+	srai t0, a5, 59
 	srli a5, a5, 63
-	add a5, a5, t1
+	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a5, a0, 2
 	addw a4, a4, a5
 	mul a5, a4, a2
-	srai t1, a5, 59
+	srai t0, a5, 59
 	srli a5, a5, 63
-	add a5, a5, t1
+	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a0, a0, 3

@@ -93,34 +93,34 @@ label4:
 	sh2add a5, a2, s0
 	lw a5, 0(a5)
 	slliw a5, a5, 3
-	addiw t1, a3, -1
-	slliw t1, t1, 10
-	addw t2, a1, t1
-	sh2add t2, t2, s0
-	lw t2, 0(t2)
-	subw a5, a5, t2
-	addw t1, a0, t1
+	addiw t0, a3, -1
+	slliw t0, t0, 10
+	addw t1, a1, t0
 	sh2add t1, t1, s0
-	lw t2, 0(t1)
-	subw a5, a5, t2
-	lw t1, 4(t1)
+	lw t1, 0(t1)
 	subw a5, a5, t1
+	addw t0, a0, t0
+	sh2add t0, t0, s0
+	lw t1, 0(t0)
+	subw a5, a5, t1
+	lw t0, 4(t0)
+	subw a5, a5, t0
 	addw a4, a1, a4
 	sh2add a4, a4, s0
-	lw t1, 0(a4)
-	subw a5, a5, t1
+	lw t0, 0(a4)
+	subw a5, a5, t0
 	lw a4, 8(a4)
 	subw a4, a5, a4
 	addiw a3, a3, 1
 	slliw a5, a3, 10
-	addw t1, a1, a5
-	sh2add t1, t1, s0
-	lw t1, 0(t1)
-	subw a4, a4, t1
+	addw t0, a1, a5
+	sh2add t0, t0, s0
+	lw t0, 0(t0)
+	subw a4, a4, t0
 	addw a5, a0, a5
 	sh2add a5, a5, s0
-	lw t1, 0(a5)
-	subw a4, a4, t1
+	lw t0, 0(a5)
+	subw a4, a4, t0
 	lw a5, 4(a5)
 	subw a4, a4, a5
 	li a5, 255

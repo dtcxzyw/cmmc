@@ -150,11 +150,11 @@ pcrel137:
 label82:
 	li a5, 4294967295
 	and a4, a4, a5
-	srliw t1, a4, 31
-	add t1, a4, t1
-	sraiw t1, t1, 1
+	srliw t0, a4, 31
+	add t0, a4, t0
+	sraiw t0, t0, 1
 	and a0, a0, a5
-	addw a0, t1, a0
+	addw a0, t0, a0
 	and a5, a0, a5
 	sw a5, 0(a3)
 	addiw a4, a4, 1

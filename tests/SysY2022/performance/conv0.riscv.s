@@ -13,252 +13,248 @@ kernelid:
 .text
 .globl main
 main:
-	addi sp, sp, -112
-	sd s3, 8(sp)
-	sd s2, 0(sp)
-	sd s1, 104(sp)
-	sd s6, 96(sp)
-	sd s0, 88(sp)
-	sd s5, 80(sp)
-	sd s4, 72(sp)
-	sd s7, 64(sp)
-	sd s8, 56(sp)
-	sd s9, 48(sp)
-	sd s10, 40(sp)
-	sd s11, 32(sp)
-	sd ra, 24(sp)
+	addi sp, sp, -104
+	sd s4, 96(sp)
+	sd s3, 88(sp)
+	sd s2, 80(sp)
+	sd s1, 72(sp)
+	sd s6, 64(sp)
+	sd s0, 56(sp)
+	sd s5, 48(sp)
+	sd s7, 40(sp)
+	sd s8, 32(sp)
+	sd s9, 24(sp)
+	sd s10, 16(sp)
+	sd s11, 8(sp)
+	sd ra, 0(sp)
+	jal getint
+	mv s4, a0
 	jal getint
 	mv s3, a0
 	jal getint
-	mv t6, a0
-	sd a0, 16(sp)
-	jal getint
 	mv s2, a0
-	ld t6, 16(sp)
-	mulw s1, t6, a0
-pcrel758:
+	mulw s1, s3, a0
+pcrel757:
 	auipc a0, %pcrel_hi(a)
-	addi a0, a0, %pcrel_lo(pcrel758)
+	addi a0, a0, %pcrel_lo(pcrel757)
 	mv s0, a0
 	jal getarray
-pcrel759:
+pcrel758:
 	auipc a0, %pcrel_hi(kernelid)
-	addi a0, a0, %pcrel_lo(pcrel759)
-	mv s4, a0
-	jal getarray
+	addi a0, a0, %pcrel_lo(pcrel758)
 	mv s5, a0
-	srliw a0, s3, 31
-	add a0, s3, a0
-	sraiw s3, a0, 1
+	jal getarray
+	mv s6, a0
+	srliw a0, s4, 31
+	add a0, s4, a0
+	sraiw s4, a0, 1
 	li a0, 109
 	jal _sysy_starttime
-pcrel760:
+pcrel759:
 	auipc a0, %pcrel_hi(b)
-	addi a0, a0, %pcrel_lo(pcrel760)
-	ble s5, zero, label75
+	addi a0, a0, %pcrel_lo(pcrel759)
+	ble s6, zero, label75
 	mv a1, zero
-	sh2add a2, zero, s4
+	sh2add a2, zero, s5
 	lw a2, 0(a2)
 	mv a3, zero
-	subw a4, zero, s3
-	addw a5, s3, zero
-	mulw t1, s2, zero
-	mv t2, zero
-	subw t3, zero, s3
-	addw t4, s3, zero
-	mv t5, a4
+	subw a4, zero, s4
+	addw a5, s4, zero
+	mulw t0, s2, zero
+	mv t1, zero
+	subw t2, zero, s4
+	addw t3, s4, zero
+	mv t4, a4
+	mv a6, zero
+	slt t5, a4, s3
+	xori t5, t5, 1
+	slti t6, a4, 0
+	or t5, t5, t6
+	mv t6, t2
+	slti a7, t2, 0
+	or a7, t5, a7
+	slt s7, t2, s2
+	xori s7, s7, 1
+	or a7, a7, s7
+	beq a7, zero, label74
 	mv a7, zero
-	ld t6, 16(sp)
-	slt t6, a4, t6
-	xori t6, t6, 1
-	slti a6, a4, 0
-	or t6, t6, a6
-	mv a6, t3
-	slti s6, t3, 0
-	or s6, t6, s6
-	slt s7, t3, s2
-	xori s7, s7, 1
-	or s6, s6, s7
-	beq s6, zero, label74
-	mv s6, zero
 	bne a2, zero, label43
-	addw a7, zero, zero
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label536
+	addw a6, zero, zero
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label535
 label4:
-	subw a4, a3, s3
-	addw a5, s3, a3
-	mulw t1, s2, a3
-	mv t2, zero
+	subw a4, a3, s4
+	addw a5, s4, a3
+	mulw t0, s2, a3
+	mv t1, zero
 	j label6
+label684:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
 label685:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-label686:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label690
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label689
 label141:
-	mv a7, s8
-	slti s6, a6, 0
-	or s6, t6, s6
-	slt s7, a6, s2
+	mv a6, s8
+	slti a7, t6, 0
+	or a7, t5, a7
+	slt s7, t6, s2
 	xori s7, s7, 1
-	or s6, s6, s7
-	beq s6, zero, label74
-	mv s6, zero
+	or a7, a7, s7
+	beq a7, zero, label74
+	mv a7, zero
 	bne a2, zero, label43
-	addw a7, s8, zero
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label685
+	addw a6, s8, zero
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label684
 label74:
-	mulw s6, s2, t5
-	addw s6, a6, s6
-	sh2add s6, s6, s0
-	lw s6, 0(s6)
+	mulw a7, s2, t4
+	addw a7, t6, a7
+	sh2add a7, a7, s0
+	lw a7, 0(a7)
 	bne a2, zero, label43
-	addw a7, a7, s6
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label686
-label690:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label690
-label652:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
+	addw a6, a6, a7
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
 	j label685
+label689:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label689
+label651:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label684
 label146:
-	mv a7, s8
-	ld t6, 16(sp)
-	slt t6, t5, t6
-	xori t6, t6, 1
-	slti a6, t5, 0
-	or t6, t6, a6
-	mv a6, t3
-	slti s6, t3, 0
-	or s6, t6, s6
-	slt s7, t3, s2
+	mv a6, s8
+	slt t5, t4, s3
+	xori t5, t5, 1
+	slti t6, t4, 0
+	or t5, t5, t6
+	mv t6, t2
+	slti a7, t2, 0
+	or a7, t5, a7
+	slt s7, t2, s2
 	xori s7, s7, 1
-	or s6, s6, s7
-	beq s6, zero, label74
-	mv s6, zero
+	or a7, a7, s7
+	beq a7, zero, label74
+	mv a7, zero
 	bne a2, zero, label43
-	addw a7, s8, zero
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label652
+	addw a6, s8, zero
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label651
 label41:
 	sh2add a3, a4, a0
 	lw a5, 0(a3)
@@ -274,12 +270,12 @@ label41:
 	addiw a2, a2, 4
 	ble s1, a2, label167
 	j label41
-label576:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label617
+label575:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label616
 label43:
 	li s7, 1
 	bne a2, s7, label52
@@ -287,18 +283,18 @@ label43:
 	li s9, 1073741824
 	bge s7, s9, label25
 	j label47
-label617:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label652
-label536:
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label576
+label616:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label651
+label535:
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label575
 label35:
 	addiw a2, a3, 4
 	ble s1, a2, label177
@@ -365,7 +361,7 @@ label177:
 	sw a3, 0(a4)
 	addiw a2, a2, 1
 	ble s1, a2, label42
-	j label697
+	j label696
 label39:
 	sh2add a4, a3, a0
 	lw a5, 0(a4)
@@ -383,118 +379,116 @@ label39:
 	j label39
 label42:
 	addiw a1, a1, 1
-	ble s5, a1, label75
-	sh2add a2, a1, s4
+	ble s6, a1, label75
+	sh2add a2, a1, s5
 	lw a2, 0(a2)
 	mv a3, zero
-	subw a4, zero, s3
-	addw a5, s3, zero
-	mulw t1, s2, zero
-	mv t2, zero
-	subw t3, zero, s3
-	addw t4, s3, zero
-	mv t5, a4
-	mv a7, zero
-	ld t6, 16(sp)
-	slt t6, a4, t6
-	xori t6, t6, 1
-	slti a6, a4, 0
-	or t6, t6, a6
-	mv a6, t3
-	slti s6, t3, 0
-	or s6, t6, s6
-	slt s7, t3, s2
+	subw a4, zero, s4
+	addw a5, s4, zero
+	mulw t0, s2, zero
+	mv t1, zero
+	subw t2, zero, s4
+	addw t3, s4, zero
+	mv t4, a4
+	mv a6, zero
+	slt t5, a4, s3
+	xori t5, t5, 1
+	slti t6, a4, 0
+	or t5, t5, t6
+	mv t6, t2
+	slti a7, t2, 0
+	or a7, t5, a7
+	slt s7, t2, s2
 	xori s7, s7, 1
-	or s6, s6, s7
-	beq s6, zero, label74
-	mv s6, zero
+	or a7, a7, s7
+	beq a7, zero, label74
+	mv a7, zero
 	bne a2, zero, label43
-	addw a7, zero, zero
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label536
+	addw a6, zero, zero
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label535
 label17:
-	bge a7, zero, label21
-	li s6, 1073741824
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-	addw a7, a7, s6
-	bge a7, zero, label21
-label689:
-	li s6, 1073741824
-	addw a7, a7, s6
-	bge a7, zero, label21
-	j label689
+	bge a6, zero, label21
+	li a7, 1073741824
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+	addw a6, a6, a7
+	bge a6, zero, label21
+label688:
+	li a7, 1073741824
+	addw a6, a6, a7
+	bge a6, zero, label21
+	j label688
 label6:
-	subw t3, t2, s3
-	addw t4, s3, t2
-	mv t5, a4
-	mv a7, zero
-	ld t6, 16(sp)
-	slt t6, a4, t6
-	xori t6, t6, 1
-	slti a6, a4, 0
-	or t6, t6, a6
-	mv a6, t3
-	slti s6, t3, 0
-	or s6, t6, s6
-	slt s7, t3, s2
+	subw t2, t1, s4
+	addw t3, s4, t1
+	mv t4, a4
+	mv a6, zero
+	slt t5, a4, s3
+	xori t5, t5, 1
+	slti t6, a4, 0
+	or t5, t5, t6
+	mv t6, t2
+	slti a7, t2, 0
+	or a7, t5, a7
+	slt s7, t2, s2
 	xori s7, s7, 1
-	or s6, s6, s7
-	beq s6, zero, label74
-	mv s6, zero
+	or a7, a7, s7
+	beq a7, zero, label74
+	mv a7, zero
 	bne a2, zero, label43
-	addw a7, zero, zero
-	li s6, 1073741824
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	li s6, -1073741824
-	addw a7, a7, s6
-	sub s6, zero, s6
-	ble a7, s6, label17
-	j label536
+	addw a6, zero, zero
+	li a7, 1073741824
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	li a7, -1073741824
+	addw a6, a6, a7
+	sub a7, zero, a7
+	ble a6, a7, label17
+	j label535
 label47:
-	divw s9, a7, s7
+	divw s9, a6, s7
 	srliw s10, s9, 31
 	add s10, s9, s10
 	andi s10, s10, -2
 	subw s9, s9, s10
-	divw s10, s6, s7
+	divw s10, a7, s7
 	srliw s11, s10, 31
 	add s11, s10, s11
 	andi s11, s11, -2
@@ -513,18 +507,17 @@ label48:
 	bge s7, s9, label25
 	j label47
 label25:
-	addiw a6, a6, 1
-	bgt t4, a6, label141
-	addiw t5, t5, 1
-	bgt a5, t5, label146
-	addw t3, t1, t2
-	sh2add t3, t3, a0
-	sw s8, 0(t3)
-	addiw t2, t2, 1
-	bgt s2, t2, label6
+	addiw t6, t6, 1
+	bgt t3, t6, label141
+	addiw t4, t4, 1
+	bgt a5, t4, label146
+	addw t2, t0, t1
+	sh2add t2, t2, a0
+	sw s8, 0(t2)
+	addiw t1, t1, 1
+	bgt s2, t1, label6
 	addiw a3, a3, 1
-	ld t6, 16(sp)
-	bgt t6, a3, label4
+	bgt s3, a3, label4
 	ble s1, zero, label42
 	mv a4, zero
 	addiw a2, zero, 4
@@ -533,19 +526,18 @@ label25:
 label52:
 	li s7, 2
 	bne a2, s7, label53
-	max s8, a7, s6
-	addiw a6, a6, 1
-	bgt t4, a6, label141
-	addiw t5, t5, 1
-	bgt a5, t5, label146
-	addw t3, t1, t2
-	sh2add t3, t3, a0
-	sw s8, 0(t3)
-	addiw t2, t2, 1
-	bgt s2, t2, label6
+	max s8, a6, a7
+	addiw t6, t6, 1
+	bgt t3, t6, label141
+	addiw t4, t4, 1
+	bgt a5, t4, label146
+	addw t2, t0, t1
+	sh2add t2, t2, a0
+	sw s8, 0(t2)
+	addiw t1, t1, 1
+	bgt s2, t1, label6
 	addiw a3, a3, 1
-	ld t6, 16(sp)
-	bgt t6, a3, label4
+	bgt s3, a3, label4
 	ble s1, zero, label42
 	mv a4, zero
 	addiw a2, zero, 4
@@ -558,7 +550,7 @@ label53:
 	mv s8, zero
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -568,7 +560,7 @@ label53:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -578,7 +570,7 @@ label53:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -588,7 +580,7 @@ label53:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -598,26 +590,26 @@ label53:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label71
-label680:
+label679:
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-label712:
-	divw s9, a7, s7
+label711:
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label71
-	j label680
+	j label679
 label71:
-	divw s9, s6, s7
+	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -627,7 +619,7 @@ label71:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -637,7 +629,7 @@ label71:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -647,7 +639,7 @@ label71:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -657,7 +649,7 @@ label71:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -667,21 +659,21 @@ label71:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	j label712
-label697:
+	j label711
+label696:
 	sh2add a3, a2, a0
 	lw a3, 0(a3)
 	sh2add a4, a2, s0
 	sw a3, 0(a4)
 	addiw a2, a2, 1
 	ble s1, a2, label42
-	j label697
+	j label696
 label72:
 	slliw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -691,7 +683,7 @@ label72:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -701,7 +693,7 @@ label72:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -711,7 +703,7 @@ label72:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -721,12 +713,12 @@ label72:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label71
-	j label680
+	j label679
 label54:
 	li s7, 4
 	bne a2, s7, label263
@@ -734,12 +726,12 @@ label54:
 	mv s8, zero
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
+	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -749,12 +741,12 @@ label54:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	divw s9, a7, s7
+	divw s9, a6, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
+	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
@@ -764,106 +756,105 @@ label54:
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
+	divw s9, a6, s7
+	li s10, -2147483647
+	and s9, s9, s10
+	li s10, 1
+	bne s9, s10, label61
 	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
-	li s10, -2147483647
-	and s9, s9, s10
-	li s10, 1
-	bne s9, s10, label61
-	j label602
+	j label601
 label263:
 	mv s8, zero
-	addiw a6, a6, 1
-	bgt t4, a6, label141
-	addiw t5, t5, 1
-	bgt a5, t5, label146
-	addw t3, t1, t2
-	sh2add t3, t3, a0
-	sw zero, 0(t3)
-	addiw t2, t2, 1
-	bgt s2, t2, label6
+	addiw t6, t6, 1
+	bgt t3, t6, label141
+	addiw t4, t4, 1
+	bgt a5, t4, label146
+	addw t2, t0, t1
+	sh2add t2, t2, a0
+	sw zero, 0(t2)
+	addiw t1, t1, 1
+	bgt s2, t1, label6
 	addiw a3, a3, 1
-	ld t6, 16(sp)
-	bgt t6, a3, label4
+	bgt s3, a3, label4
 	ble s1, zero, label42
 	mv a4, zero
 	addiw a2, zero, 4
 	ble s1, a2, label167
 	j label41
-label639:
+label638:
+	divw s9, a6, s7
+	li s10, -2147483647
+	and s9, s9, s10
+	li s10, 1
+	bne s9, s10, label61
 	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
-	li s10, -2147483647
-	and s9, s9, s10
-	li s10, 1
-	bne s9, s10, label61
-	j label704
+	j label703
 label61:
 	slliw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
+	divw s9, a6, s7
+	li s10, -2147483647
+	and s9, s9, s10
+	li s10, 1
+	bne s9, s10, label61
 	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
-	li s10, -2147483647
-	and s9, s9, s10
-	li s10, 1
-	bne s9, s10, label61
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
+	divw s9, a6, s7
+	li s10, -2147483647
+	and s9, s9, s10
+	li s10, 1
+	bne s9, s10, label61
 	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
-	li s10, -2147483647
-	and s9, s9, s10
-	li s10, 1
-	bne s9, s10, label61
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
+	divw s9, a6, s7
+	li s10, -2147483647
+	and s9, s9, s10
+	li s10, 1
+	bne s9, s10, label61
 	divw s9, a7, s7
 	li s10, -2147483647
 	and s9, s9, s10
 	li s10, 1
 	bne s9, s10, label61
-	divw s9, s6, s7
-	li s10, -2147483647
-	and s9, s9, s10
-	li s10, 1
-	bne s9, s10, label61
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	j label639
-label602:
+	j label638
+label601:
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	j label639
+	j label638
 label167:
 	mv a3, a4
 	addiw a2, a4, 4
@@ -884,31 +875,30 @@ label40:
 	ble s1, a2, label35
 	j label40
 label21:
-	mv s8, a7
-	addiw a6, a6, 1
-	bgt t4, a6, label141
-	addiw t5, t5, 1
-	bgt a5, t5, label146
-	addw t3, t1, t2
-	sh2add t3, t3, a0
-	sw a7, 0(t3)
-	addiw t2, t2, 1
-	bgt s2, t2, label6
+	mv s8, a6
+	addiw t6, t6, 1
+	bgt t3, t6, label141
+	addiw t4, t4, 1
+	bgt a5, t4, label146
+	addw t2, t0, t1
+	sh2add t2, t2, a0
+	sw a6, 0(t2)
+	addiw t1, t1, 1
+	bgt s2, t1, label6
 	addiw a3, a3, 1
-	ld t6, 16(sp)
-	bgt t6, a3, label4
+	bgt s3, a3, label4
 	ble s1, zero, label42
 	mv a4, zero
 	addiw a2, zero, 4
 	ble s1, a2, label167
 	j label41
-label704:
+label703:
 	slliw s8, s8, 1
 	addiw s8, s8, 1
 	slliw s7, s7, 1
 	li s9, 1073741824
 	bge s7, s9, label25
-	j label639
+	j label638
 label75:
 	li a0, 116
 	jal _sysy_stoptime
@@ -916,18 +906,18 @@ label75:
 	mv a1, s0
 	jal putarray
 	mv a0, zero
-	ld ra, 24(sp)
-	ld s11, 32(sp)
-	ld s10, 40(sp)
-	ld s9, 48(sp)
-	ld s8, 56(sp)
-	ld s7, 64(sp)
-	ld s4, 72(sp)
-	ld s5, 80(sp)
-	ld s0, 88(sp)
-	ld s6, 96(sp)
-	ld s1, 104(sp)
-	ld s2, 0(sp)
-	ld s3, 8(sp)
-	addi sp, sp, 112
+	ld ra, 0(sp)
+	ld s11, 8(sp)
+	ld s10, 16(sp)
+	ld s9, 24(sp)
+	ld s8, 32(sp)
+	ld s7, 40(sp)
+	ld s5, 48(sp)
+	ld s0, 56(sp)
+	ld s6, 64(sp)
+	ld s1, 72(sp)
+	ld s2, 80(sp)
+	ld s3, 88(sp)
+	ld s4, 96(sp)
+	addi sp, sp, 104
 	ret

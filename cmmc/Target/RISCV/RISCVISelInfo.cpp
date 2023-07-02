@@ -675,41 +675,46 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
     }
 }
 
-constexpr auto scratch = MIROperand::asISAReg(RISCV::X5, OperandType::Int64);  // use $t0, never allocated
+// constexpr auto scratch = MIROperand::asISAReg(RISCV::X5, OperandType::Int64);  // use $t0, never allocated
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm) {
     assert(isSignedImm<32>(imm));
     if(isSignedImm<12>(imm)) {
         return;
     }
-    if(imm < -4096 || imm > 4094) {
-        // lui $scratch, %hi(imm)
-        // add $scratch, $scratch, base
-        // addr = $scratch + %lo(imm)
-        auto lo = imm & 0xfff;
-        if(lo > 2047)
-            lo -= 4096;
-        const auto hi = (static_cast<uint32_t>(imm - lo) >> 12) & 0xfffff;
-        assert(isSignedImm<12>(lo));
-        assert(isUnsignedImm<20>(static_cast<intmax_t>(hi)));
-        assert(static_cast<int32_t>(hi << 12) + lo == imm);
-        instructions.insert(iter,
-                            MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
-                                MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int64)));
-        instructions.insert(iter, MIRInst{ ADD }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
-        base = scratch;
-        imm = static_cast<int64_t>(lo);
-    } else {
-        // addiu $scratch, base, -2048/2047
-        // addr = $scratch + %lo(imm)
-        const auto adjust = imm < 0 ? -2048 : 2047;
-        instructions.insert(iter,
-                            MIRInst{ ADDI }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(adjust, OperandType::Int64)));
-        base = scratch;
-        imm -= adjust;
-        assert(isSignedImm<12>(imm));
-    }
+    CMMC_UNUSED(instructions);
+    CMMC_UNUSED(iter);
+    CMMC_UNUSED(base);
+    CMMC_UNUSED(imm);
+    reportUnreachable(CMMC_LOCATION());
+    // if(imm < -4096 || imm > 4094) {
+    //     // lui $scratch, %hi(imm)
+    //     // add $scratch, $scratch, base
+    //     // addr = $scratch + %lo(imm)
+    //     auto lo = imm & 0xfff;
+    //     if(lo > 2047)
+    //         lo -= 4096;
+    //     const auto hi = (static_cast<uint32_t>(imm - lo) >> 12) & 0xfffff;
+    //     assert(isSignedImm<12>(lo));
+    //     assert(isUnsignedImm<20>(static_cast<intmax_t>(hi)));
+    //     assert(static_cast<int32_t>(hi << 12) + lo == imm);
+    //     instructions.insert(iter,
+    //                         MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
+    //                             MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int64)));
+    //     instructions.insert(iter, MIRInst{ ADD }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
+    //     base = scratch;
+    //     imm = static_cast<int64_t>(lo);
+    // } else {
+    //     // addiu $scratch, base, -2048/2047
+    //     // addr = $scratch + %lo(imm)
+    //     const auto adjust = imm < 0 ? -2048 : 2047;
+    //     instructions.insert(iter,
+    //                         MIRInst{ ADDI }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
+    //                             MIROperand::asImm(adjust, OperandType::Int64)));
+    //     base = scratch;
+    //     imm -= adjust;
+    //     assert(isSignedImm<12>(imm));
+    // }
 }
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
                int64_t imm) {

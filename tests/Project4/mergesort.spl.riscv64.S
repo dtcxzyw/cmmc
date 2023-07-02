@@ -330,127 +330,127 @@ main:
 	addi sp, sp, -808
 	sd ra, 800(sp)
 	addi a1, sp, 0
-	addi t1, sp, 400
+	addi t0, sp, 400
 	jal read
 	mv a5, a0
 	ble a0, zero, label211
 	mv a2, zero
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 label288:
 	jal read
-	sh2add a3, a2, t1
+	sh2add a3, a2, t0
 	sw a0, 0(a3)
 	addiw a2, a2, 1
 	ble a5, a2, label211
 	j label288
 label211:
-	mv a0, t1
+	mv a0, t0
 	mv a2, zero
 	mv a3, a5
 	jal merge
 	ble a5, zero, label214
 	mv a1, zero
-	sh2add a0, zero, t1
+	sh2add a0, zero, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
 	ble a5, a1, label214
 label290:
-	sh2add a0, a1, t1
+	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1

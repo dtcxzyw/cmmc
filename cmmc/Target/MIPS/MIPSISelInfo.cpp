@@ -688,38 +688,43 @@ void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, 
     }
 }
 
-constexpr auto scratch = MIROperand::asISAReg(MIPS::X3, OperandType::Int32);  // use $v1
+// constexpr auto scratch = MIROperand::asISAReg(MIPS::X3, OperandType::Int32);  // use $v1
 void legalizeAddrBaseOffsetPostRA(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, MIROperand& base,
                                   int64_t& imm) {
     assert(isSignedImm<32>(imm));
     if(isSignedImm<16>(imm)) {
         return;
     }
-    if(imm < -65536 || imm > 65534) {
-        // lui $scratch, %hi(imm)
-        // addu $scratch, $scratch, base
-        // addr = $scratch + %lo(imm)
-        const auto lo = static_cast<int16_t>(imm);
-        const auto hi = static_cast<uint16_t>((imm - lo) >> 16);
-        assert(isSignedImm<16>(lo));
-        assert(isUnsignedImm<16>(static_cast<intmax_t>(hi)));
-        instructions.insert(iter,
-                            MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
-                                MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int32)));
-        instructions.insert(iter, MIRInst{ ADDU }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
-        base = scratch;
-        imm = static_cast<int64_t>(lo);
-    } else {
-        // addiu $scratch, base, -32768/32767
-        // addr = $scratch + %lo(imm)
-        const auto adjust = imm < 0 ? -32768 : 32767;
-        instructions.insert(iter,
-                            MIRInst{ ADDIU }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
-                                MIROperand::asImm(adjust, OperandType ::Int32)));
-        base = scratch;
-        imm -= adjust;
-        assert(isSignedImm<16>(imm));
-    }
+    CMMC_UNUSED(instructions);
+    CMMC_UNUSED(iter);
+    CMMC_UNUSED(base);
+    CMMC_UNUSED(imm);
+    reportUnreachable(CMMC_LOCATION());
+    // if(imm < -65536 || imm > 65534) {
+    //     // lui $scratch, %hi(imm)
+    //     // addu $scratch, $scratch, base
+    //     // addr = $scratch + %lo(imm)
+    //     const auto lo = static_cast<int16_t>(imm);
+    //     const auto hi = static_cast<uint16_t>((imm - lo) >> 16);
+    //     assert(isSignedImm<16>(lo));
+    //     assert(isUnsignedImm<16>(static_cast<intmax_t>(hi)));
+    //     instructions.insert(iter,
+    //                         MIRInst{ LUI }.setOperand<0>(scratch).setOperand<1>(
+    //                             MIROperand::asImm(static_cast<intmax_t>(hi), OperandType::Int32)));
+    //     instructions.insert(iter, MIRInst{ ADDU }.setOperand<0>(scratch).setOperand<1>(scratch).setOperand<2>(base));
+    //     base = scratch;
+    //     imm = static_cast<int64_t>(lo);
+    // } else {
+    //     // addiu $scratch, base, -32768/32767
+    //     // addr = $scratch + %lo(imm)
+    //     const auto adjust = imm < 0 ? -32768 : 32767;
+    //     instructions.insert(iter,
+    //                         MIRInst{ ADDIU }.setOperand<0>(scratch).setOperand<1>(base).setOperand<2>(
+    //                             MIROperand::asImm(adjust, OperandType ::Int32)));
+    //     base = scratch;
+    //     imm -= adjust;
+    //     assert(isSignedImm<16>(imm));
+    // }
 }
 void adjustReg(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst, const MIROperand& src,
                int64_t imm) {

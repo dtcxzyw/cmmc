@@ -165,8 +165,8 @@ public:
             static std::vector<uint32_t> list{
                 // $a0-$a5 for RVC
                 RISCV::X10, RISCV::X11, RISCV::X12, RISCV::X13, RISCV::X14, RISCV::X15,  //
-                // $t1-$t6 $a6-$a7
-                RISCV::X6, RISCV::X7, RISCV::X28, RISCV::X29, RISCV::X30, RISCV::X31, RISCV::X16, RISCV::X17,  //
+                // $t0-$t6 $a6-$a7
+                RISCV::X5, RISCV::X6, RISCV::X7, RISCV::X28, RISCV::X29, RISCV::X30, RISCV::X31, RISCV::X16, RISCV::X17,  //
                 // $s0-$s1 for RVC
                 RISCV::X8, RISCV::X9,
                 // $s2-$s11

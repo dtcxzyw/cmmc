@@ -45,8 +45,8 @@ pcrel236:
 	sh2add a3, zero, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -74,8 +74,8 @@ label14:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -97,8 +97,8 @@ label14:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -133,8 +133,8 @@ label17:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -178,8 +178,8 @@ label10:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -201,8 +201,8 @@ label10:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 label149:
@@ -218,11 +218,11 @@ label205:
 	j label216
 label20:
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sh2add t2, a3, s0
-	lw t3, 0(t2)
-	sw t3, 0(a5)
-	sw t1, 0(t2)
+	lw t0, 0(a5)
+	sh2add t1, a3, s0
+	lw t2, 0(t1)
+	sw t2, 0(a5)
+	sw t0, 0(t1)
 	bge a4, a3, label10
 	addiw a3, a3, -1
 	sh2add a5, a3, s0
@@ -237,8 +237,8 @@ label20:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	mv a1, a4
@@ -261,8 +261,8 @@ label216:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	j label149
@@ -287,8 +287,8 @@ label7:
 	sh2add a3, a0, s0
 	sw a2, 0(a3)
 	sh2add a5, a4, s0
-	lw t1, 0(a5)
-	sw t1, 0(a3)
+	lw t0, 0(a5)
+	sw t0, 0(a3)
 	sw a2, 0(a5)
 	bge s2, a4, label17
 	j label149
