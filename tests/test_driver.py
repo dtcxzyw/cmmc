@@ -54,17 +54,10 @@ tac_inst_count_ref = 224.116
 
 class PerformanceEnv:
     def __enter__(self):
-        self.old_value = [None, None]
-        for i, core in enumerate(range(2, 4)):
-            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'r') as f:
-                self.old_value[i] = f.read()
-            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'w') as f:
-                f.write('performance\n')
-    
+        os.system('sudo cpupower frequency-set -g performance')
+
     def __exit__(self, exc_type, exc_value, traceback):
-        for i, core in enumerate(range(2, 4)):
-            with open(f'/sys/devices/system/cpu/cpu{core}/cpufreq/scaling_governor', 'w') as f:
-                f.write(self.old_value[i])
+        os.system('sudo cpupower frequency-set -g ondemand')
 
 
 def geo_means(prod, count):
