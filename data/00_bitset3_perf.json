@@ -1,5 +1,16 @@
 {
   "arm": {
+    "113483ade1c34ea82f3db51a354e1176dad083e4": {
+      "branch-load-misses:u": 824778,
+      "branch-loads:u": 122219982,
+      "cycles:u": 1624595504,
+      "iTLB-load-misses:u": 17,
+      "inst_retired:u": 3845671688,
+      "inst_spec:u": 3884644784,
+      "instructions:u": 3845678359,
+      "sysy_time": 1.089168,
+      "task-clock:u": 1086.75
+    },
     "346de76b54aa92b9bd5fa523ad686c48ee9b6af6": {
       "branch-load-misses": 855597,
       "branch-loads": 153954405,
