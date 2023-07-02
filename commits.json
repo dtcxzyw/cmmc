@@ -4,6 +4,11 @@
     "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
     "time": "2023-07-02 00:20:28 +0800"
   },
+  "113483ade1c34ea82f3db51a354e1176dad083e4": {
+    "message": "feat(codegen): remove scratch register for rv/mips",
+    "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
+    "time": "2023-07-02 15:37:48 +0800"
+  },
   "2a8d4a9919993d68163f8deca8328c69c80db012": {
     "message": "feat(codegen): optimize constant multiplication with shifts and arithmetics",
     "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
@@ -78,6 +83,11 @@
     "message": "ci: support collecting multiple commits at one push",
     "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
     "time": "2023-07-02 03:27:32 +0800"
+  },
+  "a398fc69ea29911ee35d3ef481e077fc10e79317": {
+    "message": "feat(transform): move large allocas to global",
+    "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
+    "time": "2023-07-02 14:55:49 +0800"
   },
   "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104": {
     "message": "ci: change steps' order to reduce conflict",
