@@ -33,9 +33,6 @@
 
 CMMC_NAMESPACE_BEGIN
 
-// TODO: fuse sext/zext/trunc
-// TODO: cross-block matching
-
 class ArithmeticReduce final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
         bool modified = false;
@@ -861,6 +858,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // b - (a + b) -> -a
             if(sub(any(v1), add(any(v2), any(v3)))(matchCtx) && (v1 == v2 || v1 == v3)) {
                 return makeNeg(v1 == v2 ? v3 : v2);
+            }
+
+            // a == b ? a : smax(a, b) -> smax(a, b)
+            Value* v6;
+            if(select(scmp(cmp, any(v1), any(v2)), any(v3), capture(smax(any(v4), any(v5)), v6))(matchCtx)) {
+                if(cmp == CompareOp::Equal && v1 == v3 && v1 == v4 && v2 == v5) {
+                    return v6;
+                }
             }
 
             return nullptr;

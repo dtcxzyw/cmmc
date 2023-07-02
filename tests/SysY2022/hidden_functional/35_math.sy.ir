@@ -88,104 +88,48 @@ internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemo
     f32 %0 = fsub f32 %b, f32 %a;
     f32 %1 = fmul f32 %0, f32 0.5;
     f32 %2 = fadd f32 %a, f32 %1;
-    f32 %3 = fsub f32 %2, f32 %a;
+    f32 %3 = fsub f32 %b, f32 %2;
     f32 %4 = fmul f32 %3, f32 0.5;
-    f32 %5 = fadd f32 %a, f32 %4;
-    i1 %6 = scmp eq i32 %flag, i32 1;
-    cbr i1 %6(prob = 0.5), ^entry1, ^b1;
-  ^entry1:
-    f32 %7 = fdiv f32 1, f32 %5;
-    f32 %8 = fmul f32 4, f32 %7;
-    f32 %9 = fdiv f32 1, f32 %a;
-    f32 %10 = fadd f32 %9, f32 %8;
-    f32 %11 = fdiv f32 1, f32 %2;
-    f32 %12 = fadd f32 %10, f32 %11;
-    f32 %13 = fmul f32 %12, f32 %3;
-    f32 %14 = fdiv f32 %13, f32 6;
+    f32 %5 = fadd f32 %2, f32 %4;
+    f32 %6 = fdiv f32 1, f32 %5;
+    f32 %7 = fmul f32 4, f32 %6;
+    f32 %8 = fdiv f32 1, f32 %2;
+    f32 %9 = fadd f32 %8, f32 %7;
+    f32 %10 = fdiv f32 1, f32 %b;
+    f32 %11 = fadd f32 %9, f32 %10;
+    f32 %12 = fmul f32 %11, f32 %3;
+    f32 %13 = fdiv f32 %12, f32 6;
+    f32 %14 = fsub f32 %2, f32 %a;
+    f32 %15 = fmul f32 %14, f32 0.5;
+    f32 %16 = fadd f32 %a, f32 %15;
+    f32 %17 = fdiv f32 1, f32 %16;
+    f32 %18 = fmul f32 4, f32 %17;
+    f32 %19 = fdiv f32 1, f32 %a;
+    f32 %20 = fadd f32 %19, f32 %18;
+    f32 %21 = fadd f32 %20, f32 %8;
+    f32 %22 = fmul f32 %21, f32 %14;
+    f32 %23 = fdiv f32 %22, f32 6;
+    f32 %24 = fadd f32 %23, f32 %13;
+    f32 %25 = fsub f32 %24, f32 %A;
+    i1 %26 = fcmp gt f32 %25, f32 0;
+    f32 %27 = fneg f32 %25;
+    f32 %28 = select i1 %26 ? f32 %25 : f32 %27;
+    f32 %29 = fmul f32 15, f32 %eps;
+    i1 %30 = fcmp le f32 %28, f32 %29;
+    cbr i1 %30(prob = 0.5), ^if.then, ^b1;
+  ^if.then:
+    f32 %31 = fdiv f32 %25, f32 15;
+    f32 %32 = fadd f32 %24, f32 %31;
     ubr ^b2;
   ^b1:
-    i1 %15 = scmp eq i32 %flag, i32 2;
-    cbr i1 %15(prob = 0.5), ^entry2, ^b2;
-  ^entry2:
-    f32 %16 = fmul f32 %5, f32 %5;
-    f32 %17 = fsub f32 1, f32 %16;
-    f32 %18 = call (f32) -> f32 @my_sqrt(f32 %17);
-    f32 %19 = fdiv f32 1, f32 %18;
-    f32 %20 = fmul f32 4, f32 %19;
-    f32 %21 = fmul f32 %a, f32 %a;
-    f32 %22 = fsub f32 1, f32 %21;
-    f32 %23 = call (f32) -> f32 @my_sqrt(f32 %22);
-    f32 %24 = fdiv f32 1, f32 %23;
-    f32 %25 = fadd f32 %24, f32 %20;
-    f32 %26 = fmul f32 %2, f32 %2;
-    f32 %27 = fsub f32 1, f32 %26;
-    f32 %28 = call (f32) -> f32 @my_sqrt(f32 %27);
-    f32 %29 = fdiv f32 1, f32 %28;
-    f32 %30 = fadd f32 %25, f32 %29;
-    f32 %31 = fmul f32 %30, f32 %3;
-    f32 %32 = fdiv f32 %31, f32 6;
+    f32 %33 = fmul f32 %eps, f32 0.5;
+    f32 %34 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %a, f32 %2, f32 %33, f32 %23, i32 1);
+    f32 %35 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %2, f32 %b, f32 %33, f32 %13, i32 1);
+    f32 %36 = fadd f32 %34, f32 %35;
     ubr ^b2;
   ^b2:
-    f32 %33 = phi [^entry1, f32 %14] [^b1, f32 0] [^entry2, f32 %32];
-    f32 %34 = fsub f32 %b, f32 %2;
-    f32 %35 = fmul f32 %34, f32 0.5;
-    f32 %36 = fadd f32 %2, f32 %35;
-    cbr i1 %6(prob = 0.5), ^entry3, ^b3;
-  ^entry3:
-    f32 %37 = fdiv f32 1, f32 %36;
-    f32 %38 = fmul f32 4, f32 %37;
-    f32 %39 = fdiv f32 1, f32 %2;
-    f32 %40 = fadd f32 %39, f32 %38;
-    f32 %41 = fdiv f32 1, f32 %b;
-    f32 %42 = fadd f32 %40, f32 %41;
-    f32 %43 = fmul f32 %42, f32 %34;
-    f32 %44 = fdiv f32 %43, f32 6;
-    ubr ^b4;
-  ^b3:
-    i1 %45 = scmp eq i32 %flag, i32 2;
-    cbr i1 %45(prob = 0.5), ^entry4, ^b4;
-  ^entry4:
-    f32 %46 = fmul f32 %36, f32 %36;
-    f32 %47 = fsub f32 1, f32 %46;
-    f32 %48 = call (f32) -> f32 @my_sqrt(f32 %47);
-    f32 %49 = fdiv f32 1, f32 %48;
-    f32 %50 = fmul f32 4, f32 %49;
-    f32 %51 = fmul f32 %2, f32 %2;
-    f32 %52 = fsub f32 1, f32 %51;
-    f32 %53 = call (f32) -> f32 @my_sqrt(f32 %52);
-    f32 %54 = fdiv f32 1, f32 %53;
-    f32 %55 = fadd f32 %54, f32 %50;
-    f32 %56 = fmul f32 %b, f32 %b;
-    f32 %57 = fsub f32 1, f32 %56;
-    f32 %58 = call (f32) -> f32 @my_sqrt(f32 %57);
-    f32 %59 = fdiv f32 1, f32 %58;
-    f32 %60 = fadd f32 %55, f32 %59;
-    f32 %61 = fmul f32 %60, f32 %34;
-    f32 %62 = fdiv f32 %61, f32 6;
-    ubr ^b4;
-  ^b4:
-    f32 %63 = phi [^entry3, f32 %44] [^b3, f32 0] [^entry4, f32 %62];
-    f32 %64 = fadd f32 %33, f32 %63;
-    f32 %65 = fsub f32 %64, f32 %A;
-    i1 %66 = fcmp gt f32 %65, f32 0;
-    f32 %67 = fneg f32 %65;
-    f32 %68 = select i1 %66 ? f32 %65 : f32 %67;
-    f32 %69 = fmul f32 15, f32 %eps;
-    i1 %70 = fcmp le f32 %68, f32 %69;
-    cbr i1 %70(prob = 0.5), ^if.then, ^b5;
-  ^if.then:
-    f32 %71 = fdiv f32 %65, f32 15;
-    f32 %72 = fadd f32 %64, f32 %71;
-    ubr ^b6;
-  ^b5:
-    f32 %73 = fmul f32 %eps, f32 0.5;
-    f32 %74 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %a, f32 %2, f32 %73, f32 %33, i32 %flag);
-    f32 %75 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %2, f32 %b, f32 %73, f32 %63, i32 %flag);
-    f32 %76 = fadd f32 %74, f32 %75;
-    ubr ^b6;
-  ^b6:
-    f32 %77 = phi [^if.then, f32 %72] [^b5, f32 %76];
-    ret f32 %77;
+    f32 %37 = phi [^if.then, f32 %32] [^b1, f32 %36];
+    ret f32 %37;
 }
 internal func @eee(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:

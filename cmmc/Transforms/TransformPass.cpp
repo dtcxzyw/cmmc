@@ -287,6 +287,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "GlobalVarAttrInfer",        //
             "StoreOnlyGlobalEliminate",  //
             "GlobalEliminate",           //
+            "DeadArgEliminate",          //
         }))
         globalOpt->addPass(pass);
 
@@ -323,6 +324,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "GlobalUse2PlaceHolder",   //
             "NoSideEffectEliminate",   // clean up
             // Arithmetic
+            "IPConstantPropagation",     //
             "ConstantPropagation",       //
             "PointerArithmeticCombine",  //
             "ArithmeticReduce",          //
@@ -464,7 +466,6 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
         for(const auto& pass : passesSource.collectModulePass({
                 "GlobalScalar2Local",
                 "LargeLocal2Global",
-                "DeadArgEliminate",
                 "ImmutableScalarRefArg2Value",
             }))
             root->addPass(pass);

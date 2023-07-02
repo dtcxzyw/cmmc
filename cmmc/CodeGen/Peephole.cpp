@@ -312,6 +312,9 @@ bool deadInstElimination(MIRFunction& func, const CodeGenContext& ctx) {
 }
 
 bool removeIndirectCopy(MIRFunction& func, const CodeGenContext& ctx) {
+    if(ctx.flags.dontForward)
+        return false;
+
     // func.dump(std::cerr, ctx);
     bool modified = false;
 

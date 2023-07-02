@@ -105,6 +105,7 @@ struct MIRFlags final {
     bool inSSAForm = true;
     bool preRA = true;
     bool postSA = false;
+    bool dontForward = false;
 };
 
 struct CodeGenContext final {

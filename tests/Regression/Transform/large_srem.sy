@@ -1,0 +1,11 @@
+int normal_srem1(int x) {
+    int y = x % 1000000007;
+    if(y < 0)
+        y += 1000000007;
+    return y;
+}
+int normal_srem2(int x) {
+    while(x > 1000000007) x -= 1000000007;
+    while(x < 0) x += 1000000007;
+    return x;
+}

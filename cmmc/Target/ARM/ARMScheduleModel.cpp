@@ -12,17 +12,69 @@
     limitations under the License.
 */
 
+#include <ARM/InstInfoDecl.hpp>
 #include <ARM/ScheduleModelImpl.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/Target/ARM/ARM.hpp>
 #include <iostream>
 #include <iterator>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
+[[maybe_unused]] static bool optimizeConditionalCopyOfComputationalInst(MIRBasicBlock& block) {
+    bool modified = false;
+    auto& insts = block.instructions();
+
+    for(auto iter = insts.begin(); iter != insts.end(); ++iter) {
+        if(iter == insts.begin())
+            continue;
+        auto& curInst = *iter;
+        if(curInst.opcode() != MOV_Cond)
+            continue;
+        auto dst = curInst.getOperand(1);
+        auto src = curInst.getOperand(2);
+        auto cc = curInst.getOperand(3);
+
+        auto prev = std::prev(iter);
+        switch(prev->opcode()) {
+            case ADD:
+            case SUB:
+            case AND:
+            case ORR:
+            case EOR:
+            case ORN:
+            case BIC:
+            case RSB: {
+                auto& prevInst = *prev;
+                auto dstPrev = prevInst.getOperand(0);
+                auto lhs = prevInst.getOperand(1);
+                auto rhs = prevInst.getOperand(2);
+                if(dstPrev != src || dstPrev == lhs || dstPrev == rhs || dstPrev == dst)
+                    continue;
+                curInst = MIRInst{ prev->opcode() - ADD + ADD_Cond }
+                              .setOperand<2>(lhs)
+                              .setOperand<3>(rhs)
+                              .setOperand<4>(cc)
+                              .setOperand<5>(dst);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    return modified;
+}
+
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     CMMC_UNUSED(func);
     CMMC_UNUSED(ctx);
-
+    // bool modified = false;
+    // for(auto& block : func.blocks()) {
+    //     if(ctx.flags.preRA)
+    //         modified |= optimizeConditionalCopyOfComputationalInst(*block);
+    // }
+    // return modified;
     return false;
 }
 

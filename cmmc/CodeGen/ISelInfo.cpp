@@ -359,6 +359,14 @@ void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
             }
         }
     }
+    if(!debugISel.get()) {
+        // func.dump(std::cerr, ctx);
+        ctx.flags.dontForward = true;
+        while(genericPeepholeOpt(func, ctx))
+            ;
+        ctx.flags.dontForward = false;
+        // func.dump(std::cerr, ctx);
+    }
 }
 
 bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
