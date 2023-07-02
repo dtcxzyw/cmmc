@@ -64,6 +64,11 @@
     "parent": "4d6d8fc8749723ae232ca54588f127c495075ac8",
     "time": "2023-07-02 02:26:54 +0800"
   },
+  "791d799938ed2429ceaf4f7f52e5a38e47e055e0": {
+    "message": "feat(transfrom): remove unused store-only globals",
+    "parent": "f5456db3e19187aa4d028032103b60006886a52b",
+    "time": "2023-07-02 14:22:39 +0800"
+  },
   "84648e12b6bda57ce06277c9d225d6f6c00a1481": {
     "message": "misc: update ref",
     "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
