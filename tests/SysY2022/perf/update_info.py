@@ -38,7 +38,7 @@ for i in range(16):
 else:
     print('WARNING: too many commits at one push')
 
-commit_hash = subprocess.check_output(['git', 'rev-parse', head]).decode('utf-8').strip()
+commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
 commits_data['head'] = commit_hash
 
 with open(commit_json_file, 'w') as f:
