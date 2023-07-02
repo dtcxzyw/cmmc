@@ -90,6 +90,11 @@
       "parent": "f5456db3e19187aa4d028032103b60006886a52b",
       "time": "2023-07-02 14:22:39 +0800"
     },
+    "7bae69aa5a88f0f49632223013714fa862acab9d": {
+      "message": "feat(codegen): optimize comparison with zero for arm",
+      "parent": "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41",
+      "time": "2023-07-02 21:53:19 +0800"
+    },
     "84648e12b6bda57ce06277c9d225d6f6c00a1481": {
       "message": "misc: update ref",
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
@@ -141,5 +146,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41"
+  "head": "7bae69aa5a88f0f49632223013714fa862acab9d"
 }
