@@ -12,12 +12,11 @@
     limitations under the License.
 */
 
-#include "cmmc/Analysis/AliasAnalysis.hpp"
-#include "cmmc/Analysis/PointerBaseAnalysis.hpp"
-#include "cmmc/IR/GlobalValue.hpp"
-#include "cmmc/IR/Type.hpp"
 #include <algorithm>
+#include <cmmc/Analysis/AliasAnalysis.hpp>
+#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/GlobalValue.hpp>
 #include <cmmc/IR/GlobalVariable.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>

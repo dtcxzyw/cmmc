@@ -4,6 +4,12 @@
 .align 4
 a:
 	.zero	4000000
+.align 4
+var:
+	.zero	4000
+.align 4
+mean:
+	.zero	4000
 .text
 .syntax unified
 .arm
@@ -12,11 +18,12 @@ a:
 main:
 	push { r4, r5, r6, r7, lr }
 	vpush { s16 }
-	sub sp, sp, #8000
-	mov r6, sp
-	add r5, sp, #4000
 	movw r4, #:lower16:a
 	movt r4, #:upper16:a
+	movw r5, #:lower16:mean
+	movt r5, #:upper16:mean
+	movw r6, #:lower16:var
+	movt r6, #:upper16:var
 	mov r7, #0
 	cmp r7, #1000
 	bge label8
@@ -515,7 +522,6 @@ label78:
 	bge label173
 	b label606
 label6:
-	add sp, sp, #8000
 	vpop { s16 }
 	pop { r4, r5, r6, r7, pc }
 label5:
