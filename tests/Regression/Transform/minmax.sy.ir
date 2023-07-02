@@ -78,6 +78,12 @@ func @clamp_mask(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
     i32 %1 = smin i32 %0, i32 127;
     ret i32 %1;
 }
+func @clamp_mask2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = smin i32 %x, i32 255;
+    i32 %1 = smax i32 %0, i32 0;
+    ret i32 %1;
+}
 func @smax_zero(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = smax i32 %x, i32 0;

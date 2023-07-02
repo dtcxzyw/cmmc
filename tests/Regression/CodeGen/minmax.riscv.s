@@ -39,6 +39,12 @@ clamp_mask:
 	li a1, 127
 	min a0, a0, a1
 	ret
+.globl clamp_mask2
+clamp_mask2:
+	li a1, 255
+	min a0, a0, a1
+	max a0, a0, zero
+	ret
 .globl smax_zero
 smax_zero:
 	max a0, a0, zero

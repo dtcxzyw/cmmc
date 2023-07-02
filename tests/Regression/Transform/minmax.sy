@@ -71,6 +71,11 @@ int clamp_mask(int x) {
     return x > 127 ? 127 : y;
 }
 
+int clamp_mask2(int x) {
+    int y = x < 255 ? x : 255;
+    return x < 0 ? 0 : y;
+}
+
 int smax_zero(int x) {
     return x > 0 ? x : 0;
 }

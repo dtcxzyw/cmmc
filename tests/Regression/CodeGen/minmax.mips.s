@@ -70,6 +70,15 @@ clamp_mask:
 	movn $v0, $t0, $t1
 	jr $ra
 	nop
+.globl clamp_mask2
+clamp_mask2:
+	slti $t0, $a0, 255
+	li $v0, 255
+	movn $v0, $a0, $t0
+	slti $t0, $a0, 0
+	movn $v0, $zero, $t0
+	jr $ra
+	nop
 .globl smax_zero
 smax_zero:
 	slt $t0, $zero, $a0

@@ -60,6 +60,16 @@ clamp_mask:
 	mov r0, r1
 	movgt r0, r2
 	bx lr
+.globl clamp_mask2
+clamp_mask2:
+	cmp r0, #255
+	mov r1, #255
+	movlt r1, r0
+	cmp r0, #0
+	mov r2, #0
+	mov r0, r1
+	movlt r0, r2
+	bx lr
 .globl smax_zero
 smax_zero:
 	cmp r0, #0
