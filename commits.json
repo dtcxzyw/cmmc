@@ -89,6 +89,11 @@
     "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
     "time": "2023-07-02 14:55:49 +0800"
   },
+  "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1": {
+    "message": "feat(codegen): optimize clamp/smax/smin for arm",
+    "parent": "113483ade1c34ea82f3db51a354e1176dad083e4",
+    "time": "2023-07-02 17:34:41 +0800"
+  },
   "dd9b2f32d438b1ffef8fbfaa80e9fbf25e2cd104": {
     "message": "ci: change steps' order to reduce conflict",
     "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
