@@ -327,8 +327,7 @@ nabs:
 	bx lr
 .globl absdiff
 absdiff:
-	sub r0, r0, r1
-	cmp r0, #0
+	subs r0, r0, r1
 	rsbmi r0, r0, #0
 	bx lr
 .globl mul_with_constant_0

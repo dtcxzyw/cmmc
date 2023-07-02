@@ -134,6 +134,11 @@ constexpr bool isOperandCC(const MIROperand& op) {
 constexpr bool isOperandFCC(const MIROperand& op) {
     return op.isReg() && op.reg() == ARMRegister::FCC;
 }
+
+constexpr bool isZero(const MIROperand& operand) {
+    return operand.isImm() && operand.imm() == 0;
+}
+
 enum class AddressingImmRange {
     Imm13,
     Imm9,

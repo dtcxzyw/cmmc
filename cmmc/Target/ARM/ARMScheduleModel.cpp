@@ -66,15 +66,64 @@ CMMC_TARGET_NAMESPACE_BEGIN
     return modified;
 }
 
+static bool optimizeFusedCompareWithZero(MIRBasicBlock& block) {
+    bool modified = false;
+    auto& insts = block.instructions();
+
+    for(auto iter = insts.begin(); iter != insts.end();) {
+        auto next = std::next(iter);
+        if(iter == insts.begin()) {
+            iter = next;
+            continue;
+        }
+        auto& curInst = *iter;
+        if(curInst.opcode() != CMP || !isZero(curInst.getOperand(1))) {
+            iter = next;
+            continue;
+        }
+        auto src = curInst.getOperand(0);
+        auto cc = curInst.getOperand(2);
+
+        auto prev = std::prev(iter);
+        switch(prev->opcode()) {
+            case ADD:
+            case SUB:
+            case AND:
+            case ORR:
+            case EOR:
+            case ORN:
+            case BIC:
+            case RSB: {
+                auto& prevInst = *prev;
+                auto& dst = prevInst.getOperand(0);
+                if(dst == src) {
+                    prevInst.setOpcode(prevInst.opcode() - ADD + ADDS);
+                    prevInst.setOperand<3>(cc);
+                    insts.erase(iter);
+                    modified = true;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+
+        iter = next;
+    }
+
+    return modified;
+}
+
 bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
-    CMMC_UNUSED(func);
+    // CMMC_UNUSED(func);
     CMMC_UNUSED(ctx);
-    // bool modified = false;
-    // for(auto& block : func.blocks()) {
-    //     if(ctx.flags.preRA)
-    //         modified |= optimizeConditionalCopyOfComputationalInst(*block);
-    // }
-    // return modified;
+    bool modified = false;
+    for(auto& block : func.blocks()) {
+        // if(ctx.flags.preRA)
+        //     modified |= optimizeConditionalCopyOfComputationalInst(*block);
+        modified |= optimizeFusedCompareWithZero(*block);
+    }
+    return modified;
     return false;
 }
 

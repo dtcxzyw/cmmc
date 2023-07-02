@@ -32,8 +32,7 @@ fn2:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r2, [r0, #0]
-	sub r3, r2, #1
-	cmp r3, #0
+	subs r3, r2, #1
 	mov r2, #0
 	movne r2, r1
 	str r3, [r0, #0]

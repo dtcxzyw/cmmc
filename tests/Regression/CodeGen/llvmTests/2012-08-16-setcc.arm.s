@@ -8,8 +8,7 @@
 and_1:
 	uxtb r0, r0
 	uxtb r1, r1
-	and r0, r0, r1
-	cmp r0, #0
+	ands r1, r0, r1
 	mov r0, #0
 	movne r0, r2
 	bx lr
@@ -17,8 +16,7 @@ and_1:
 and_2:
 	uxtb r0, r0
 	uxtb r1, r1
-	and r0, r0, r1
-	cmp r0, #0
+	ands r1, r0, r1
 	mov r0, #0
 	movwne r0, #1
 	bx lr
@@ -26,8 +24,7 @@ and_2:
 xor_1:
 	uxtb r0, r0
 	uxtb r1, r1
-	eor r0, r0, r1
-	cmp r0, #0
+	eors r1, r0, r1
 	mov r0, #0
 	movne r0, r2
 	bx lr
@@ -35,8 +32,7 @@ xor_1:
 xor_2:
 	uxtb r0, r0
 	uxtb r1, r1
-	eor r0, r0, r1
-	cmp r0, #0
+	eors r1, r0, r1
 	mov r0, #0
 	movwne r0, #1
 	bx lr

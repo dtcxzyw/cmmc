@@ -33,10 +33,6 @@
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
-static bool isZero(const MIROperand& operand) {
-    return operand.isImm() && operand.imm() == 0;
-}
-
 static MIROperand getVRegAs(ISelContext& ctx, const MIROperand& ref) {
     return MIROperand::asVReg(ctx.getCodeGenCtx().nextId(), ref.type());
 }

@@ -79,8 +79,7 @@ label10:
 	b label18
 label15:
 	ldr r4, [sp, #16]
-	sub r4, r4, #1
-	cmp r4, #0
+	subs r4, r4, #1
 	ble label23
 	str r4, [sp, #16]
 	b label10
@@ -154,12 +153,12 @@ label293:
 	b label302
 label18:
 	sub r8, r0, #1
-	ldr r9, [r1, r8, lsl #2]
-	add r10, r1, r0, lsl #2
+	ldr r10, [r1, r8, lsl #2]
+	add r9, r1, r0, lsl #2
 	ldr r11, [r1, r0, lsl #2]
-	add r9, r9, r11
-	ldr r10, [r10, #4]
-	add r10, r9, r10
+	add r10, r10, r11
+	ldr r9, [r9, #4]
+	add r10, r10, r9
 	add r9, r2, r8, lsl #2
 	ldr r11, [r2, r8, lsl #2]
 	add r10, r10, r11
@@ -175,8 +174,7 @@ label18:
 	eor r9, r8, #2
 	ldr r10, [r2, r0, lsl #2]
 	eor r10, r10, #1
-	orr r9, r9, r10
-	cmp r9, #0
+	orrs r9, r9, r10
 	bne label19
 	mov r8, #1
 	str r8, [r7, r0, lsl #2]

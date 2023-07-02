@@ -6,8 +6,7 @@
 .fpu vfpv4
 .globl fastisel_select
 fastisel_select:
-	sub r0, r0, r1
-	cmp r0, #0
+	subs r1, r0, r1
 	movw r1, #56279
 	movt r1, #18378
 	mov r0, #0

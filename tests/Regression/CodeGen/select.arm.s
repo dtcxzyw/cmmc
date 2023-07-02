@@ -234,8 +234,7 @@ select_round:
 .globl select_bitset
 select_bitset:
 	eor r1, r1, #1
-	orr r0, r0, r1
-	cmp r0, #0
+	orrs r1, r0, r1
 	mov r0, #0
 	moveq r0, r2
 	bx lr

@@ -13,8 +13,7 @@ t1:
 	cmp r3, #4
 	mov r5, #0
 	movwlt r5, #1
-	orr r4, r4, r5
-	cmp r4, #0
+	orrs r4, r4, r5
 	add r0, r0, r1
 	add r1, r2, r0
 	sub r1, r1, r3

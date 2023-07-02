@@ -97,8 +97,7 @@ select_or:
 	bx lr
 .globl select_or_1
 select_or_1:
-	and r2, r2, #1
-	cmp r2, #0
+	ands r2, r2, #1
 	orr r1, r0, r1
 	moveq r1, r0
 	mov r0, r1
@@ -129,8 +128,7 @@ select_or_2b:
 	bx lr
 .globl select_or_3
 select_or_3:
-	and r2, r2, #1
-	cmp r2, #0
+	ands r2, r2, #1
 	orr r1, r0, r1
 	moveq r0, r1
 	bx lr
@@ -224,8 +222,7 @@ label219:
 .globl select_xor_1
 select_xor_1:
 	uxtb r1, r1
-	and r1, r1, #1
-	cmp r1, #0
+	ands r1, r1, #1
 	bne label242
 	uxth r0, r0
 	b label233
@@ -270,8 +267,7 @@ select_xor_2b:
 .globl select_xor_3
 select_xor_3:
 	uxtb r1, r1
-	and r1, r1, #1
-	cmp r1, #0
+	ands r1, r1, #1
 	bne label297
 	uxth r0, r0
 	eor r0, r0, #43

@@ -32,8 +32,7 @@ test_srem_odd:
 .globl test_srem_pow2_setne
 test_srem_pow2_setne:
 	sxtb r0, r0
-	and r0, r0, #3
-	cmp r0, #0
+	ands r1, r0, #3
 	mov r0, #0
 	movwne r0, #1
 	bx lr

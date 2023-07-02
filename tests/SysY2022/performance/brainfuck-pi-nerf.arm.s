@@ -59,8 +59,7 @@ main:
 	cmp r0, #35
 	mov r2, #0
 	movwne r2, #1
-	and r1, r1, r2
-	cmp r1, #0
+	ands r1, r1, r2
 	beq label3
 label2:
 	bl getch
@@ -98,8 +97,7 @@ label2:
 	cmp r0, #35
 	mov r2, #0
 	movwne r2, #1
-	and r1, r1, r2
-	cmp r1, #0
+	ands r1, r1, r2
 	beq label3
 	b label2
 label358:
@@ -216,8 +214,7 @@ label5:
 	cmp r0, #35
 	mov r2, #0
 	movwne r2, #1
-	and r1, r1, r2
-	cmp r1, #0
+	ands r1, r1, r2
 	beq label9
 label8:
 	bl getch
@@ -255,8 +252,7 @@ label8:
 	cmp r0, #35
 	mov r2, #0
 	movwne r2, #1
-	and r1, r1, r2
-	cmp r1, #0
+	ands r1, r1, r2
 	beq label9
 	b label8
 label9:

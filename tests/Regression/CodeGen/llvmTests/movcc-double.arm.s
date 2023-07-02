@@ -20,8 +20,7 @@ select_and:
 	cmp r2, r3
 	mov r1, #0
 	movwlo r1, #1
-	and r0, r0, r1
-	cmp r0, #0
+	ands r1, r0, r1
 	mov r0, r5
 	movne r0, r4
 	pop { r4, r5 }
@@ -36,8 +35,7 @@ select_noopt:
 	cmp r1, r2
 	mov r1, #0
 	movwlo r1, #1
-	orr r1, r0, r1
-	cmp r1, #0
+	orrs r1, r0, r1
 	mov r0, r4
 	movne r0, r3
 	movw r2, #:lower16:var32
@@ -56,8 +54,7 @@ select_or:
 	cmp r2, r3
 	mov r1, #0
 	movwlo r1, #1
-	orr r0, r0, r1
-	cmp r0, #0
+	orrs r1, r0, r1
 	mov r0, r5
 	movne r0, r4
 	pop { r4, r5 }

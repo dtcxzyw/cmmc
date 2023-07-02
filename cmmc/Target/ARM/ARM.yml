@@ -19,6 +19,27 @@ InstInfo:
       RSB:
         Mnemonic: rsb
 
+  IntegerBinaryWithOp2_FlagSet:
+    Format: "$Mnemonic:Template $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use] @ Implicit Def: $CC:CC[Def]"
+    Flag: [MultiDef]
+    Instances:
+      ADDS:
+        Mnemonic: adds
+      SUBS:
+        Mnemonic: subs
+      ANDS:
+        Mnemonic: ands
+      ORRS:
+        Mnemonic: orrs
+      EORS:
+        Mnemonic: eors
+      ORNS:
+        Mnemonic: orns
+      BICS:
+        Mnemonic: bics
+      RSBS:
+        Mnemonic: rsbs
+
   IntegerBinaryWithOp2_Cond:
     Format: "$Mnemonic:Template$CF:CondField[Metadata] $Rd:GPR[Def], $Rn:GPR[Use], $Op2:Op2[Use] @ Implicit Use: $CC:CC[Use], $RdUse:GPR[Use]"
     Instances:
