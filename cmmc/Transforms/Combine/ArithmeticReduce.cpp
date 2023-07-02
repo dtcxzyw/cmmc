@@ -357,7 +357,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     [[fallthrough]];
                 case InstructionID::Xor:
                     [[fallthrough]];
-                case InstructionID::And: {
+                case InstructionID::And:
+                    [[fallthrough]];
+                case InstructionID::SMax:
+                    [[fallthrough]];
+                case InstructionID::SMin: {
                     if(inst->getOperand(0)->isConstant() && !inst->getOperand(1)->isConstant()) {
                         auto& operands = inst->mutableOperands();
                         std::swap(operands[0], operands[1]);
@@ -865,6 +869,18 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(scmp(cmp, any(v1), any(v2)), any(v3), capture(smax(any(v4), any(v5)), v6))(matchCtx)) {
                 if(cmp == CompareOp::Equal && v1 == v3 && v1 == v4 && v2 == v5) {
                     return v6;
+                }
+            }
+
+            // select x, c1, c1+/-1 -> add c1/c2, (zext x)
+            if(select(any(v1), capture(int_(i1), v2), capture(int_(i2), v3))(matchCtx) && !inst->getType()->isBoolean()) {
+                if(i2 == i1 + 1) {
+                    auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
+                    return builder.makeOp<BinaryInst>(InstructionID::Add, zext, v2);
+                }
+                if(i2 == i1 - 1) {
+                    auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
+                    return builder.makeOp<BinaryInst>(InstructionID::Add, zext, v3);
                 }
             }
 

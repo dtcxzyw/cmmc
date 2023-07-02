@@ -38,10 +38,9 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 	cmp r0, #0
+	mov r1, #4
 	mov r0, #0
-	movwne r0, #1
-	rsb r0, r0, #0
-	and r0, r0, #4
+	movne r0, r1
 	bx lr
 .globl select_eq_10000_10001
 select_eq_10000_10001:

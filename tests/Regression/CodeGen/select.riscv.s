@@ -301,3 +301,14 @@ select_imax:
 select_imin:
 	min a0, a0, a1
 	ret
+.globl select_zero
+select_zero:
+	sltiu a0, a0, 1
+	subw a0, zero, a0
+	and a0, a1, a0
+	ret
+.globl select_imm
+select_imm:
+	sltu a0, zero, a0
+	addiw a0, a0, 1
+	ret

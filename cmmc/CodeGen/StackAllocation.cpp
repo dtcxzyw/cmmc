@@ -298,7 +298,7 @@ renameStackObjects(MIRFunction& func, OptimizationLevel optLevel, const CodeGenC
 
 // Stack Layout
 // ------------------------ <----- Last sp
-// Locals & Spliis
+// Locals & Spills
 // ------------------------
 // Return Address
 // ------------------------

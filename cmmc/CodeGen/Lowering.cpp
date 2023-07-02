@@ -859,9 +859,10 @@ static void lower(UnreachableInst*, LoweringContext& ctx) {
 }
 static void lower(SelectInst* inst, LoweringContext& ctx) {
     const auto ret = ctx.newVReg(inst->getType());
+    auto& target = ctx.getCodeGenContext().target;
     // select x, y, 0 -> -x & y
-    if(cuint_(0)(MatchContext<Value>(inst->getOperand(2))) &&
-       ctx.getCodeGenContext().target.isNativeSupported(InstructionID::And)) {
+    if(target.isNativeSupported(InstructionID::And) && !target.getOptHeuristic().disableSelectionOpt &&
+       cuint_(0)(MatchContext<Value>(inst->getOperand(2)))) {
         const auto mask = ctx.newVReg(inst->getType());
         const auto cond = ctx.mapOperand(inst->getOperand(0));
         const auto trueV = ctx.mapOperand(inst->getOperand(1));

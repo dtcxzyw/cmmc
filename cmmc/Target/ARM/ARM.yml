@@ -317,7 +317,7 @@ InstInfo:
     Flag: [LegalizePreRA]
 
   Select_GPR:
-    Format: select_gpr $Rd:GPR[Def], $Rn:GPR[Use], $Rm:GPR[Use], $CC:CC[Use], $CF:CondField[Metadata]
+    Format: select_gpr $Rd:GPR[Def], $Rn:GPR[Use], $Rm:Op2[Use], $CC:CC[Use], $CF:CondField[Metadata]
     Flag: [LegalizePreRA]
 
   Select_FPR:
@@ -920,7 +920,7 @@ InstSelection:
             $Predicate: isOperandIReg($Lhs) && ctx.isSafeToUse($Lhs, $Cond) && (!isOperandIReg($Rhs) || ctx.isSafeToUse($Rhs, $Cond)) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
         Lhs: $LVal
         Rhs: $RVal
-        $Predicate: isOperandIReg($Dst)
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($LVal) && isOperandOp2($RVal)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -973,7 +973,7 @@ InstSelection:
             $Predicate: ctx.isSafeToUse($CC, $Cond)
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst)
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandOp2($Rhs)
     Replace:
       Select_GPR:
         Rd: $Dst
@@ -1124,7 +1124,7 @@ InstSelection:
         Cond: $Cond
         Lhs: $Lhs
         Rhs: $Rhs
-        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotCmp(ctx, $Cond)
+        $Predicate: isOperandIReg($Dst) && isOperandIReg($Lhs) && isOperandOp2($Rhs) && isNotCmp(ctx, $Cond)
     Replace:
       Select_GPR:
         Rd: $Dst

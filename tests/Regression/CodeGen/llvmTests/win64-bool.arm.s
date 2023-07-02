@@ -7,10 +7,9 @@
 .globl pass_bool
 pass_bool:
 	cmp r0, #0
+	mov r1, #66
 	mov r0, #0
-	movwne r0, #1
-	rsb r0, r0, #0
-	and r0, r0, #66
+	movne r0, r1
 	bx lr
 .globl ret_true
 ret_true:

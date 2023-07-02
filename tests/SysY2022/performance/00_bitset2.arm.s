@@ -154,8 +154,8 @@ label6:
 	beq label89
 	b label10
 label89:
-	mov r3, #0
-	add r3, r6, r3
+	mov r10, #0
+	add r3, r6, r10
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
 	ble label13
@@ -164,27 +164,25 @@ label10:
 	and r6, r7, #1
 	eor r10, r9, #1
 	orr r6, r6, r10
-	clz r6, r6
-	lsr r6, r6, #5
-	rsb r6, r6, #0
-	and r8, r8, r6
+	cmp r6, #0
+	mov r10, #0
+	moveq r10, r8
 	and r6, r7, #-2147483647
 	eor r6, r6, #1
 	orr r6, r9, r6
 	cmp r6, #0
 	bne label12
 	ldr r3, [r4, r3, lsl #2]
-	sub r3, r8, r3
+	sub r10, r10, r3
 	ldr r6, [r5, r2, lsl #2]
-	add r3, r6, r3
+	add r3, r6, r10
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
 	ble label13
 	b label2
 label12:
 	ldr r6, [r5, r2, lsl #2]
-	mov r3, r8
-	add r3, r6, r8
+	add r3, r6, r10
 	str r3, [r5, r2, lsl #2]
 	cmp r1, #0
 	ble label13

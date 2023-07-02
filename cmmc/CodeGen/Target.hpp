@@ -49,6 +49,8 @@ struct TargetOptHeuristic final {
     uint32_t duplicationIterations = 10U;
     // multiplication by constant
     uint32_t mulByConstThreshold = 5U;
+    // don't fold select x, y, 0 into -x & y
+    bool disableSelectionOpt = false;
 };
 
 class Target {

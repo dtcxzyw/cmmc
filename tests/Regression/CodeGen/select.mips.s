@@ -329,3 +329,16 @@ select_imin:
 	movn $v0, $a0, $t0
 	jr $ra
 	nop
+.globl select_zero
+select_zero:
+	sltiu $t0, $a0, 1
+	subu $t0, $zero, $t0
+	and $v0, $a1, $t0
+	jr $ra
+	nop
+.globl select_imm
+select_imm:
+	sltu $t0, $zero, $a0
+	addiu $v0, $t0, 1
+	jr $ra
+	nop

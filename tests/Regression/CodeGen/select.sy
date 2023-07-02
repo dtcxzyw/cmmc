@@ -112,3 +112,9 @@ int select_imax(int x, int y) {
 int select_imin(int x, int y) {
     return x < y ? x : y;
 }
+int select_zero(int x, int y) {
+    return x == 0 ? y : 0;
+} 
+int select_imm(int x) {
+    return x ? 2 : 1;
+}

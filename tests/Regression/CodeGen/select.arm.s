@@ -204,7 +204,7 @@ select_cross_fpr:
 	movwlt r0, #1
 	mov r3, r0
 	cmp r1, r2
-	bge label222
+	bge label221
 	mov r1, #1065353216
 	vmov s1, r1
 	movw r1, #0
@@ -212,11 +212,11 @@ select_cross_fpr:
 	vmov s0, r1
 	cmp r0, #0
 	vmovne.f32 s0, s1
-	b label212
-label222:
+	b label211
+label221:
 	vmov s0, r3
 	vcvt.f32.s32 s0, s0
-label212:
+label211:
 	bx lr
 .globl select_round
 select_round:
@@ -235,10 +235,9 @@ select_round:
 select_bitset:
 	eor r1, r1, #1
 	orr r0, r0, r1
-	clz r0, r0
-	lsr r0, r0, #5
-	rsb r0, r0, #0
-	and r0, r2, r0
+	cmp r0, #0
+	mov r0, #0
+	moveq r0, r2
 	bx lr
 .globl select_imax
 select_imax:
@@ -249,4 +248,17 @@ select_imax:
 select_imin:
 	cmp r0, r1
 	movge r0, r1
+	bx lr
+.globl select_zero
+select_zero:
+	cmp r0, #0
+	mov r0, #0
+	moveq r0, r1
+	bx lr
+.globl select_imm
+select_imm:
+	cmp r0, #0
+	mov r0, #0
+	movwne r0, #1
+	add r0, r0, #1
 	bx lr

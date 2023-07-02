@@ -741,7 +741,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(2);
             imm2reg(lhs);
             auto& rhs = inst.getOperand(3);
-            imm2reg(rhs);
+            nonOp2Imm2reg(rhs);
             break;
         }
         case InstSMin:
@@ -860,7 +860,8 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             auto rhs = inst.getOperand(2);
             auto cc = inst.getOperand(3);
             auto cf = inst.getOperand(4);
-            ctx.instructions.insert(ctx.iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(rhs));
+            ctx.instructions.insert(
+                ctx.iter, MIRInst{ isOperandOp2Constant(rhs) ? MOV_Constant : MoveGPR }.setOperand<0>(dst).setOperand<1>(rhs));
             *ctx.iter =
                 MIRInst{ MOV_Cond }.setOperand<0>(cf).setOperand<1>(dst).setOperand<2>(lhs).setOperand<3>(cc).setOperand<4>(dst);
             break;

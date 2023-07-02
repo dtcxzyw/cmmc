@@ -1,18 +1,20 @@
 func @test_no_sign_bit_conflict1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = scmp neq i32 %var0, i32 0;
-    i32 %1 = select i1 %0 ? i32 8193 : i32 8192;
-    i32 %2 = shl i32 %1, i32 18;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = add i32 %1, i32 8192;
+    i32 %3 = shl i32 %2, i32 18;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
 }
 func @test_no_sign_bit_conflict2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = scmp neq i32 %var0, i32 0;
-    i32 %1 = select i1 %0 ? i32 -8193 : i32 -8194;
-    i32 %2 = shl i32 %1, i32 18;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = add i32 %1, i32 -8194;
+    i32 %3 = shl i32 %2, i32 18;
+    i32 %4 = ztrunc i32 %3 to i32;
+    ret i32 %4;
 }
 func @test_shift_negative(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

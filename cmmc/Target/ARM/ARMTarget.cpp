@@ -173,6 +173,7 @@ public:
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
             .mulByConstThreshold = 7U,
+            .disableSelectionOpt = true,
         };
 
         return defaultHeuristic;
