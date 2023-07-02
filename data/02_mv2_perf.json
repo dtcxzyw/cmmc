@@ -136,14 +136,15 @@
     }
   },
   "arm_gcc": {
-    "branch-load-misses": 46197537,
-    "branch-loads": 449753705,
-    "cycles": 1824356467,
-    "iTLB-load-misses": 2135,
-    "inst_retired": 1438665227,
-    "inst_spec": 2220182124,
-    "instructions": 1438669110,
-    "sysy_time": 1.248365,
-    "task-clock": 1217.21
+    "branch-load-misses:u": 45703642,
+    "branch-loads:u": 444179416,
+    "context-switches:u": 0,
+    "cycles:u": 1787710069,
+    "iTLB-load-misses:u": 17,
+    "inst_retired:u": 1419473313,
+    "inst_spec:u": 2192132598,
+    "instructions:u": 1419473313,
+    "sysy_time": 1.238338,
+    "task-clock:u": 1197.84
   }
 }

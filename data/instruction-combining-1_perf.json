@@ -38,6 +38,6 @@
     }
   },
   "arm_gcc": {
-    "sysy_time": 1e-06
+    "sysy_time": 2e-06
   }
 }
