@@ -21,7 +21,7 @@ commits_data = read_json(commit_json_file)
 for i in range(16):
     head = f'HEAD~{i}'
     commit_hash = subprocess.check_output(['git', 'rev-parse', head]).decode('utf-8').strip()
-    if commit_hash in commits_data:
+    if commit_hash in commits_data['data']:
         break
 
     commit_time = subprocess.check_output(['git', 'show', '-s', '--format=%ci', head]).decode('utf-8').strip()
@@ -30,13 +30,16 @@ for i in range(16):
 
     print(f'{commit_parent[:7]} -> {commit_hash[:7]}, {commit_msg}')
 
-    commits_data[commit_hash] = {
+    commits_data['data'][commit_hash] = {
         'time': commit_time,
         'message': commit_msg,
         'parent': commit_parent,
     }
 else:
     print('WARNING: too many commits at one push')
+
+commit_hash = subprocess.check_output(['git', 'rev-parse', head]).decode('utf-8').strip()
+commits_data['head'] = commit_hash
 
 with open(commit_json_file, 'w') as f:
     json.dump(commits_data, f, indent=2, sort_keys=True)
