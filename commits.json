@@ -65,6 +65,11 @@
       "parent": "477105dd55329c239391b78522aea5e8ff4e855c",
       "time": "2023-07-01 23:48:36 +0800"
     },
+    "70a3c44eef43f6781909d868fb8132a3678a2c66": {
+      "message": "ci: fix typo",
+      "parent": "7723c3f8edd1fa9c76bcbdca70e504aecd661775",
+      "time": "2023-07-02 17:59:31 +0800"
+    },
     "7723c3f8edd1fa9c76bcbdca70e504aecd661775": {
       "message": "ci: update format of `commits.json`",
       "parent": "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1",
@@ -126,5 +131,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1"
+  "head": "70a3c44eef43f6781909d868fb8132a3678a2c66"
 }
