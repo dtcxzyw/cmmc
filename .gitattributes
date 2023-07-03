@@ -2,3 +2,10 @@
 irsim -text
 *.jar -text
 *.in filter=lfs diff=lfs merge=lfs
+
+# Generated files for reference
+tests/**/*.s linguist-generated
+tests/**/*.S linguist-generated
+tests/**/*.ir linguist-generated
+tests/**/*.ll linguist-generated
+tests/**/*.tacir linguist-generated
