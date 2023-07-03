@@ -1,5 +1,10 @@
 {
   "data": {
+    "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7": {
+      "message": "fix(codegen): fix compilation error with clang++",
+      "parent": "31b662379aa1db01ecb8bda98ee1e81ac76921d4",
+      "time": "2023-07-03 22:21:17 +0800"
+    },
     "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c": {
       "message": "feat(codegen): update ARM parameters",
       "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
@@ -176,5 +181,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "31b662379aa1db01ecb8bda98ee1e81ac76921d4"
+  "head": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7"
 }
