@@ -10,6 +10,11 @@
       "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
       "time": "2023-07-02 00:20:28 +0800"
     },
+    "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26": {
+      "message": "misc: update ref",
+      "parent": "ba8d0441b4ccfd5968fa774ec920241e88008dbc",
+      "time": "2023-07-04 03:02:32 +0800"
+    },
     "113483ade1c34ea82f3db51a354e1176dad083e4": {
       "message": "feat(codegen): remove scratch register for rv/mips",
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
@@ -191,5 +196,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "ba8d0441b4ccfd5968fa774ec920241e88008dbc"
+  "head": "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26"
 }
