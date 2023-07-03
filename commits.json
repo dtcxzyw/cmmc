@@ -145,6 +145,11 @@
       "parent": "113483ade1c34ea82f3db51a354e1176dad083e4",
       "time": "2023-07-02 17:34:41 +0800"
     },
+    "ba8d0441b4ccfd5968fa774ec920241e88008dbc": {
+      "message": "feat(codegen): add post-RA scheduler for ARM",
+      "parent": "e65a04c5d006866fb356411e3978a98e19f6a0b4",
+      "time": "2023-07-04 02:46:27 +0800"
+    },
     "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700": {
       "message": "feat(transform): remove self-assign stores",
       "parent": "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c",
@@ -159,6 +164,11 @@
       "message": "ci: change steps' order to reduce conflict",
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
+    },
+    "e65a04c5d006866fb356411e3978a98e19f6a0b4": {
+      "message": "misc: update `.gitattributes` for generated references",
+      "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
+      "time": "2023-07-03 22:26:57 +0800"
     },
     "ee9bfa4ff796c33883811cb7dc142ee64e4f8042": {
       "message": "ci: use sudo to set CPU frequency policy",
@@ -181,5 +191,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7"
+  "head": "ba8d0441b4ccfd5968fa774ec920241e88008dbc"
 }
