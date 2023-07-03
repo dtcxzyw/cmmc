@@ -15,7 +15,7 @@ compare_i_gt:
 compare_r_eq:
 	rsb r1, r1, #0
 	cmp r0, r1
-	mov r1, #42
 	mov r0, #24
+	mov r1, #42
 	moveq r0, r1
 	bx lr

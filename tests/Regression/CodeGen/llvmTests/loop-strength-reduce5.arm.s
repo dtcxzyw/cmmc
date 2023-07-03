@@ -25,12 +25,12 @@ label2:
 	movw r3, #:lower16:X
 	movt r3, #:upper16:X
 	strh r2, [r3, #0]
+	movw r3, #:lower16:Y
 	movw r2, #65535
+	movt r3, #:upper16:Y
 	and r2, r1, r2
 	lsl r2, r2, #2
 	uxth r2, r2
-	movw r3, #:lower16:Y
-	movt r3, #:upper16:Y
 	strh r2, [r3, #0]
 	add r1, r1, #1
 	cmp r0, r1

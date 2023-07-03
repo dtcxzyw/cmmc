@@ -56,11 +56,11 @@ calc_seleq:
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
 	cmp r0, r3
 	mov r3, r2
 	moveq r3, r1
-	movw r4, #:lower16:z1
-	movt r4, #:upper16:z1
 	str r3, [r4, #0]
 	movw r4, #:lower16:z2
 	movt r4, #:upper16:z2
@@ -85,32 +85,32 @@ calc_seleqk:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r2, [r0, #0]
-	cmp r2, #1
 	movw r0, #:lower16:t
 	movt r0, #:upper16:t
 	ldr r0, [r0, #0]
+	cmp r2, #1
 	movw r1, #:lower16:f
 	movt r1, #:upper16:f
 	ldr r1, [r1, #0]
-	mov r3, r1
-	moveq r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r1
+	moveq r3, r0
 	str r3, [r4, #0]
+	movw r3, #:lower16:z2
 	cmp r2, #10
+	movt r3, #:upper16:z2
 	mov r2, r0
 	moveq r2, r1
-	movw r3, #:lower16:z2
-	movt r3, #:upper16:z2
 	str r2, [r3, #0]
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
 	ldr r2, [r2, #0]
-	cmp r2, #3
-	mov r3, r0
-	moveq r3, r1
 	movw r4, #:lower16:z3
+	mov r3, r0
 	movt r4, #:upper16:z3
+	cmp r2, #3
+	moveq r3, r1
 	str r3, [r4, #0]
 	cmp r2, #10
 	moveq r1, r0
@@ -131,20 +131,20 @@ calc_seleqz:
 	movw r1, #:lower16:a
 	movt r1, #:upper16:a
 	ldr r1, [r1, #0]
+	movw r3, #:lower16:z1
+	movt r3, #:upper16:z1
 	cmp r1, #0
 	mov r1, r2
 	moveq r1, r0
-	movw r3, #:lower16:z1
-	movt r3, #:upper16:z1
 	str r1, [r3, #0]
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
 	cmp r3, #0
 	mov r3, r0
 	moveq r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
@@ -175,24 +175,24 @@ calc_selge:
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movge r3, r1
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movge r3, r1
 	str r3, [r4, #0]
-	mov r3, r1
-	movle r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r1
 	movt r4, #:upper16:z2
+	movle r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r0, r3
-	mov r0, r1
-	movle r0, r2
 	movw r3, #:lower16:z3
+	mov r0, r1
 	movt r3, #:upper16:z3
+	movle r0, r2
 	str r0, [r3, #0]
 	mov r0, r1
 	movge r0, r2
@@ -217,24 +217,24 @@ calc_selgt:
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movgt r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movgt r3, r0
 	str r3, [r4, #0]
-	mov r3, r0
-	movlt r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r0
 	movt r4, #:upper16:z2
+	movlt r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r1, r3
-	mov r1, r2
-	movlt r1, r0
 	movw r3, #:lower16:z3
+	mov r1, r2
 	movt r3, #:upper16:z3
+	movlt r1, r0
 	str r1, [r3, #0]
 	mov r1, r2
 	movgt r1, r0
@@ -260,24 +260,24 @@ calc_selle:
 	movw r2, #:lower16:f
 	movt r2, #:upper16:f
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movle r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movle r3, r0
 	str r3, [r4, #0]
-	mov r3, r0
-	movge r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r0
 	movt r4, #:upper16:z2
+	movge r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r1, r3
-	mov r1, r2
-	movge r1, r0
 	movw r3, #:lower16:z3
+	mov r1, r2
 	movt r3, #:upper16:z3
+	movge r1, r0
 	str r1, [r3, #0]
 	mov r1, r2
 	movle r1, r0
@@ -292,35 +292,35 @@ calc_selltk:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r0, [r0, #0]
-	cmp r0, #10
 	movw r1, #:lower16:t
 	movt r1, #:upper16:t
 	ldr r1, [r1, #0]
+	cmp r0, #10
 	movw r2, #:lower16:f
 	movt r2, #:upper16:f
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movlt r3, r1
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movlt r3, r1
 	str r3, [r4, #0]
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
 	cmp r3, #2
 	mov r3, r1
 	movlt r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z3
+	movt r4, #:upper16:z3
 	cmp r3, #2
 	mov r3, r1
 	movgt r3, r2
-	movw r4, #:lower16:z3
-	movt r4, #:upper16:z3
 	str r3, [r4, #0]
 	cmp r0, #2
 	mov r0, r1
@@ -345,11 +345,11 @@ calc_selne:
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z1
+	movt r4, #:upper16:z1
 	cmp r0, r3
 	mov r3, r2
 	movne r3, r1
-	movw r4, #:lower16:z1
-	movt r4, #:upper16:z1
 	str r3, [r4, #0]
 	movw r4, #:lower16:z2
 	movt r4, #:upper16:z2
@@ -374,32 +374,32 @@ calc_selnek:
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
 	ldr r2, [r0, #0]
-	cmp r2, #1
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
 	ldr r0, [r0, #0]
+	cmp r2, #1
 	movw r1, #:lower16:t
 	movt r1, #:upper16:t
 	ldr r1, [r1, #0]
-	mov r3, r1
-	movne r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r1
+	movne r3, r0
 	str r3, [r4, #0]
+	movw r3, #:lower16:z2
 	cmp r2, #10
+	movt r3, #:upper16:z2
 	mov r2, r0
 	movne r2, r1
-	movw r3, #:lower16:z2
-	movt r3, #:upper16:z2
 	str r2, [r3, #0]
 	movw r2, #:lower16:b
 	movt r2, #:upper16:b
 	ldr r2, [r2, #0]
-	cmp r2, #3
 	mov r3, r0
-	movne r3, r1
 	movw r4, #:lower16:z3
 	movt r4, #:upper16:z3
+	cmp r2, #3
+	movne r3, r1
 	str r3, [r4, #0]
 	cmp r2, #10
 	movne r1, r0
@@ -420,20 +420,20 @@ calc_selnez:
 	movw r1, #:lower16:a
 	movt r1, #:upper16:a
 	ldr r1, [r1, #0]
+	movw r3, #:lower16:z1
+	movt r3, #:upper16:z1
 	cmp r1, #0
 	mov r1, r2
 	movne r1, r0
-	movw r3, #:lower16:z1
-	movt r3, #:upper16:z1
 	str r1, [r3, #0]
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
 	cmp r3, #0
 	mov r3, r0
 	movne r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
@@ -460,20 +460,20 @@ calc_selnez2:
 	movw r1, #:lower16:a
 	movt r1, #:upper16:a
 	ldr r1, [r1, #0]
+	movw r3, #:lower16:z1
+	movt r3, #:upper16:z1
 	cmp r1, #0
 	mov r1, r2
 	movne r1, r0
-	movw r3, #:lower16:z1
-	movt r3, #:upper16:z1
 	str r1, [r3, #0]
 	movw r3, #:lower16:b
 	movt r3, #:upper16:b
 	ldr r3, [r3, #0]
+	movw r4, #:lower16:z2
+	movt r4, #:upper16:z2
 	cmp r3, #0
 	mov r3, r0
 	movne r3, r2
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
@@ -504,24 +504,24 @@ calc_seluge:
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movhs r3, r1
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movhs r3, r1
 	str r3, [r4, #0]
-	mov r3, r1
-	movls r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r1
 	movt r4, #:upper16:z2
+	movls r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r0, r3
-	mov r0, r1
-	movls r0, r2
 	movw r3, #:lower16:z3
+	mov r0, r1
 	movt r3, #:upper16:z3
+	movls r0, r2
 	str r0, [r3, #0]
 	mov r0, r1
 	movhs r0, r2
@@ -546,24 +546,24 @@ calc_selugt:
 	movw r2, #:lower16:t
 	movt r2, #:upper16:t
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movhi r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movhi r3, r0
 	str r3, [r4, #0]
-	mov r3, r0
-	movlo r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r0
 	movt r4, #:upper16:z2
+	movlo r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r1, r3
-	mov r1, r2
-	movlo r1, r0
 	movw r3, #:lower16:z3
+	mov r1, r2
 	movt r3, #:upper16:z3
+	movlo r1, r0
 	str r1, [r3, #0]
 	mov r1, r2
 	movhi r1, r0
@@ -588,24 +588,24 @@ calc_selule:
 	movw r2, #:lower16:f
 	movt r2, #:upper16:f
 	ldr r2, [r2, #0]
-	mov r3, r2
-	movls r3, r0
 	movw r4, #:lower16:z1
 	movt r4, #:upper16:z1
+	mov r3, r2
+	movls r3, r0
 	str r3, [r4, #0]
-	mov r3, r0
-	movhs r3, r2
 	movw r4, #:lower16:z2
+	mov r3, r0
 	movt r4, #:upper16:z2
+	movhs r3, r2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r1, r3
-	mov r1, r2
-	movhs r1, r0
 	movw r3, #:lower16:z3
+	mov r1, r2
 	movt r3, #:upper16:z3
+	movhs r1, r0
 	str r1, [r3, #0]
 	mov r1, r2
 	movls r1, r0

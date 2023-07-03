@@ -203,8 +203,8 @@ test_mul_by_neg36:
 .globl test_mul_spec
 test_mul_spec:
 	add r1, r0, r0, lsl #3
-	add r1, r1, #42
 	add r0, r0, r0, lsl #2
+	add r1, r1, #42
 	add r0, r0, #2
 	mul r0, r1, r0
 	bx lr

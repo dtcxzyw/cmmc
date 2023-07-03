@@ -12,8 +12,8 @@ manyargs:
 	push { r4, r5 }
 	ldr r5, [sp, #24]
 	ldr r4, [sp, #28]
-	sxtb r0, r0
 	sxth r1, r1
+	sxtb r0, r0
 	add r0, r0, r1
 	uxtb r1, r2
 	add r0, r0, r1

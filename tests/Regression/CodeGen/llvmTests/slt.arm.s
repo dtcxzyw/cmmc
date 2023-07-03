@@ -8,8 +8,8 @@
 sgt:
 	movw r1, #32767
 	cmp r0, r1
-	mov r1, #7
 	mov r0, #5
+	mov r1, #7
 	movgt r0, r1
 	bx lr
 .globl slt

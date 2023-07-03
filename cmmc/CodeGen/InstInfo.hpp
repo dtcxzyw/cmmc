@@ -45,8 +45,9 @@ enum InstFlag : uint32_t {
     InstFlagConditional = 1 << 14,
     InstFlagPCRel = 1 << 15,
     InstFlagMultiDef = 1 << 16,
+    InstFlagInOrder = 1 << 17,
     InstFlagSideEffect = InstFlagLoad | InstFlagStore | InstFlagTerminator | InstFlagBranch | InstFlagCall | InstFlagPush |
-        InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot
+        InstFlagRegDef | InstFlagReturn | InstFlagWithDelaySlot,
 };
 
 constexpr InstFlag operator|(InstFlag lhs, InstFlag rhs) noexcept {

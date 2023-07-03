@@ -16,8 +16,8 @@ f:
 .globl foo
 foo:
 	movw r0, #:lower16:f
-	movt r0, #:upper16:f
 	mov r1, #1073741824
+	movt r0, #:upper16:f
 	vmov s0, r1
 	vstr s0, [r0, #0]
 	bx lr

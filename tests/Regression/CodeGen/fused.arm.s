@@ -117,11 +117,11 @@ fused_div_rem:
 .globl fused_div_rem_constant
 fused_div_rem_constant:
 	movw r1, #21846
+	mov r3, #3
 	movt r1, #21845
 	smmul r2, r0, r1
-	add r2, r2, r2, lsr #31
-	mov r3, #3
 	smmul r1, r0, r1
+	add r2, r2, r2, lsr #31
 	add r1, r1, r1, lsr #31
 	mls r0, r1, r3, r0
 	add r0, r2, r0

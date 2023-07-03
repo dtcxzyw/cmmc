@@ -42,8 +42,8 @@ test_srem_even_100:
 .globl test_srem_even_bit30
 test_srem_even_bit30:
 	movw r1, #104
-	movt r1, #16384
 	movw r2, #65433
+	movt r1, #16384
 	movt r2, #16383
 	smmul r2, r0, r2
 	asr r3, r2, #28
@@ -55,8 +55,8 @@ test_srem_even_bit30:
 .globl test_srem_even_bit31
 test_srem_even_bit31:
 	movw r1, #102
-	movt r1, #32768
 	movw r2, #65433
+	movt r1, #32768
 	movt r2, #32767
 	smmul r2, r0, r2
 	sub r2, r2, r0

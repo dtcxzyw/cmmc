@@ -21,8 +21,8 @@ main:
 	cmp r0, #0
 	bne label3
 	movw r0, #:lower16:j
-	movt r0, #:upper16:j
 	mov r1, #10
+	movt r0, #:upper16:j
 	str r1, [r0, #0]
 label3:
 	mov r0, #0

@@ -260,8 +260,10 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
             auto flag = instInfo.getOperandFlag(idx);
             auto op = inst.getOperand(idx);
             if(op.isReg()) {
-                if(isOperandStackObject(op))
+                if(isOperandStackObject(op)) {
                     op = ctx.registerInfo->getStackPointerRegister();
+                    flag = OperandFlagUse;
+                }
 
                 const auto reg = op.reg();
                 // TODO: regRenaming
@@ -297,7 +299,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
         }
         if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
             lastSideEffect = &inst;
-            if(requireOneFlag(instInfo.getInstFlag(), InstFlagCall | InstFlagTerminator)) {
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagInOrder | InstFlagCall | InstFlagTerminator)) {
                 for(auto& prevInst : block.instructions()) {
                     if(&prevInst == &inst)
                         break;
@@ -402,15 +404,17 @@ ScheduleState::ScheduleState(const std::unordered_map<const MIRInst*, std::unord
     : mCycleCount{ 0U }, mRegRenameMap{ regRenameMap }, mIssuedFlag{ 0U } {}
 
 uint32_t ScheduleState::queryRegisterLatency(const MIRInst& inst, uint32_t idx) const {
+    if(!inst.getOperand(idx).isReg())
+        return 0;
     auto reg = mRegRenameMap.at(&inst).at(idx);
     if(auto iter = mRegisterAvailableTime.find(reg); iter != mRegisterAvailableTime.end())
         if(iter->second > mCycleCount)
             return iter->second - mCycleCount;
     return 0;
 }
-bool ScheduleState::isPipelineReady(uint32_t pipelineId, uint32_t repeatRate) const {
-    if(auto iter = mLastPipelineUsed.find(pipelineId); iter != mLastPipelineUsed.end())
-        return mCycleCount - iter->second >= repeatRate;
+bool ScheduleState::isPipelineReady(uint32_t pipelineId) const {
+    if(auto iter = mNextPipelineAvailable.find(pipelineId); iter != mNextPipelineAvailable.end())
+        return mCycleCount >= iter->second;
     return true;
 }
 bool ScheduleState::isAvailable(uint32_t mask) const {
@@ -420,8 +424,8 @@ bool ScheduleState::isAvailable(uint32_t mask) const {
 void ScheduleState::setIssued(uint32_t mask) {
     mIssuedFlag |= mask;
 }
-void ScheduleState::resetPipeline(uint32_t pipelineId) {
-    mLastPipelineUsed[pipelineId] = mCycleCount;
+void ScheduleState::resetPipeline(uint32_t pipelineId, uint32_t duration) {
+    mNextPipelineAvailable[pipelineId] = mCycleCount + duration;
 }
 void ScheduleState::makeRegisterReady(const MIRInst& inst, uint32_t idx, uint32_t latency) {
     auto reg = mRegRenameMap.at(&inst).at(idx);

@@ -18,8 +18,8 @@ main:
 	movw r0, #:lower16:i
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
-	cmp r0, #0
 	mov r1, #10
+	cmp r0, #0
 	mov r0, #55
 	moveq r0, r1
 	movw r1, #:lower16:j

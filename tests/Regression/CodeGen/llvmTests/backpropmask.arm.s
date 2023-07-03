@@ -33,8 +33,8 @@ PR37060:
 	sdiv r3, r2, r1
 	mls r1, r3, r1, r2
 	eor r0, r0, r1
-	and r0, r0, #255
 	movw r1, #:lower16:a
+	and r0, r0, #255
 	movt r1, #:upper16:a
 	str r0, [r1, #0]
 	bx lr
@@ -52,8 +52,8 @@ PR37667:
 	movt r1, #:upper16:c
 	ldr r1, [r1, #0]
 	orr r0, r0, r1
-	and r0, r0, #255
 	movw r1, #:lower16:a
+	and r0, r0, #255
 	movt r1, #:upper16:a
 	str r0, [r1, #0]
 	bx lr

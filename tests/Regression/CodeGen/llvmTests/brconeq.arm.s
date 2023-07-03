@@ -30,8 +30,8 @@ test:
 	b label2
 label12:
 	movw r0, #:lower16:result
-	movt r0, #:upper16:result
 	mov r1, #1
+	movt r0, #:upper16:result
 	str r1, [r0, #0]
 label2:
 	bx lr

@@ -29,9 +29,9 @@ test:
 	movw r1, #:lower16:jjjj
 	movt r1, #:upper16:jjjj
 	ldr r1, [r1, #0]
-	sdiv r2, r0, r1
 	movw r3, #:lower16:kkkk
 	movt r3, #:upper16:kkkk
+	sdiv r2, r0, r1
 	str r2, [r3, #0]
 	mls r0, r2, r1, r0
 	movw r1, #:lower16:llll

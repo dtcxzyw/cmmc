@@ -7,8 +7,8 @@
 .globl my_fabs
 my_fabs:
 	vcmp.f32 s0, #0
-	vmrs APSR_nzcv, FPSCR
 	vneg.f32 s1, s0
+	vmrs APSR_nzcv, FPSCR
 	vmovge.f32 s1, s0
 	vmov.f32 s0, s1
 	bx lr

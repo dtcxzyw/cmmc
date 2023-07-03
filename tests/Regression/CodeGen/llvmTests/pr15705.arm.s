@@ -7,8 +7,8 @@
 .globl PR15705
 PR15705:
 	push { r4 }
-	cmp r0, r2
 	mov r4, r1
+	cmp r0, r2
 	moveq r4, r3
 	cmp r0, r1
 	mov r0, r4

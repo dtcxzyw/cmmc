@@ -25,13 +25,13 @@ PR35761:
 	movw r2, #:lower16:y
 	movt r2, #:upper16:y
 	ldr r2, [r2, #0]
+	ldrb r1, [r1, #0]
 	movw r3, #32767
 	orr r0, r0, r3
 	eor r0, r2, r0
-	ldrb r1, [r1, #0]
 	orr r0, r0, r1
-	and r0, r0, #255
 	movw r1, #:lower16:z
+	and r0, r0, #255
 	movt r1, #:upper16:z
 	str r0, [r1, #0]
 	bx lr

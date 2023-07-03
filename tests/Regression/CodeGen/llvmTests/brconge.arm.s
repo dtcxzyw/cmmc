@@ -30,15 +30,15 @@ test:
 	movw r0, #:lower16:i
 	movt r0, #:upper16:i
 	ldr r1, [r0, #0]
-	mov r0, r1
 	movw r2, #:lower16:j
 	movt r2, #:upper16:j
 	ldr r2, [r2, #0]
+	mov r0, r1
 	cmp r1, r2
 	bge label3
 	movw r1, #:lower16:result1
-	movt r1, #:upper16:result1
 	mov r2, #1
+	movt r1, #:upper16:result1
 	str r2, [r1, #0]
 	movw r1, #:lower16:k
 	movt r1, #:upper16:k
@@ -57,7 +57,7 @@ label5:
 	bx lr
 label33:
 	movw r0, #:lower16:result1
-	movt r0, #:upper16:result1
 	mov r1, #1
+	movt r0, #:upper16:result1
 	str r1, [r0, #0]
 	b label5

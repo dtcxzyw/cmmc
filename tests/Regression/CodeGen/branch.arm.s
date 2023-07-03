@@ -249,14 +249,14 @@ label288:
 .globl normal_srem
 normal_srem:
 	movw r1, #51719
-	movt r1, #15258
 	movw r2, #12185
+	movt r1, #15258
 	movt r2, #17592
 	smmul r2, r0, r2
 	asr r3, r2, #28
 	add r2, r3, r2, lsr #31
 	mls r0, r2, r1, r0
-	cmp r0, #0
 	add r1, r0, r1
+	cmp r0, #0
 	movlt r0, r1
 	bx lr

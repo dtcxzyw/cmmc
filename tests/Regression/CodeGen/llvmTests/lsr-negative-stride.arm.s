@@ -7,8 +7,8 @@
 .globl t
 t:
 	push { r4, r5 }
-	mov r2, r1
 	cmp r0, r1
+	mov r2, r1
 	bne label16
 	b label2
 label16:

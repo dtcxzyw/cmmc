@@ -36,21 +36,21 @@ _Z3foov:
 	sxtb r1, r1
 	rsb r1, r1, #0
 	cmp r0, r1
+	movw r1, #:lower16:var_390
 	mov r0, #0
+	movt r1, #:upper16:var_390
 	movwlo r0, #1
 	sub r0, r0, #1
 	and r0, r0, #255
 	clz r0, r0
 	lsr r0, r0, #5
-	movw r1, #:lower16:var_390
-	movt r1, #:upper16:var_390
 	str r0, [r1, #0]
 	movw r0, #:lower16:var_11
 	movt r0, #:upper16:var_11
 	ldrsb r0, [r0, #0]
-	sxtb r0, r0
-	uxtb r0, r0
 	movw r1, #:lower16:var_370
 	movt r1, #:upper16:var_370
+	sxtb r0, r0
+	uxtb r0, r0
 	strb r0, [r1, #0]
 	bx lr

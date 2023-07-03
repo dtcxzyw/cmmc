@@ -15,10 +15,10 @@ select_and:
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #28]
 	cmp r0, r1
+	mov r1, #0
 	mov r0, #0
 	movwlo r0, #1
 	cmp r2, r3
-	mov r1, #0
 	movwlo r1, #1
 	ands r1, r0, r1
 	mov r0, r5
@@ -33,14 +33,14 @@ select_noopt:
 	mov r0, #0
 	movwlo r0, #1
 	cmp r1, r2
+	movw r2, #:lower16:var32
 	mov r1, #0
+	movt r2, #:upper16:var32
 	movwlo r1, #1
 	orrs r1, r0, r1
+	str r1, [r2, #0]
 	mov r0, r4
 	movne r0, r3
-	movw r2, #:lower16:var32
-	movt r2, #:upper16:var32
-	str r1, [r2, #0]
 	pop { r4 }
 	bx lr
 .globl select_or
@@ -49,10 +49,10 @@ select_or:
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #28]
 	cmp r0, r1
+	mov r1, #0
 	mov r0, #0
 	movwlo r0, #1
 	cmp r2, r3
-	mov r1, #0
 	movwlo r1, #1
 	orrs r1, r0, r1
 	mov r0, r5

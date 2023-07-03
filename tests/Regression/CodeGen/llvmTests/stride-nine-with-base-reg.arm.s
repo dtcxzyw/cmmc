@@ -33,20 +33,20 @@ label2:
 	add r4, r3, r2
 	ldrsb r3, [r3, r2]
 	ldrb r3, [r4, #0]
-	lsl r3, r3, #1
-	uxtb r3, r3
 	movw r4, #:lower16:A
 	movt r4, #:upper16:A
+	lsl r3, r3, #1
+	uxtb r3, r3
 	strb r3, [r4, r2]
-	add r3, r2, r2, lsl #3
-	add r3, r1, r3
-	movw r4, #:lower16:P
-	movt r4, #:upper16:P
 	mov r5, #17
+	movw r4, #:lower16:P
+	add r3, r2, r2, lsl #3
+	movt r4, #:upper16:P
+	add r3, r1, r3
 	strb r5, [r4, r3]
+	mov r5, #19
 	movw r4, #:lower16:Q
 	movt r4, #:upper16:Q
-	mov r5, #19
 	strb r5, [r4, r3]
 	add r2, r2, #1
 	cmp r0, r2

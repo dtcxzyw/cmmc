@@ -156,8 +156,8 @@ mod30:
 .globl mod_large1
 mod_large1:
 	movw r1, #51719
-	movt r1, #15258
 	movw r2, #12185
+	movt r1, #15258
 	movt r2, #17592
 	smmul r2, r0, r2
 	asr r3, r2, #28
@@ -167,8 +167,8 @@ mod_large1:
 .globl mod_large2
 mod_large2:
 	movw r1, #37856
-	movt r1, #4
 	movw r2, #7557
+	movt r1, #4
 	movt r2, #28633
 	smmul r2, r0, r2
 	asr r3, r2, #17

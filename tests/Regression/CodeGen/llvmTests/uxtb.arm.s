@@ -13,10 +13,10 @@ test1:
 .globl test10
 test10:
 	movw r1, #7
-	movt r1, #7
-	and r1, r1, r0, lsr #12
 	movw r2, #248
+	movt r1, #7
 	movt r2, #248
+	and r1, r1, r0, lsr #12
 	and r0, r2, r0, lsr #7
 	orr r0, r1, r0
 	bx lr
@@ -57,16 +57,16 @@ test5:
 .globl test6
 test6:
 	lsr r1, r0, #16
-	and r1, r1, #255
 	lsl r0, r0, #16
+	and r1, r1, #255
 	and r0, r0, #16711680
 	orr r0, r1, r0
 	bx lr
 .globl test7
 test7:
 	lsr r1, r0, #16
-	and r1, r1, #255
 	lsl r0, r0, #16
+	and r1, r1, #255
 	and r0, r0, #16711680
 	orr r0, r1, r0
 	bx lr

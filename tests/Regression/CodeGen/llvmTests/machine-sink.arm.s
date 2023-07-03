@@ -7,7 +7,7 @@
 .globl test
 test:
 	cmp r0, r1
-	add r1, r1, #2
 	mov r0, #1
+	add r1, r1, #2
 	movlo r0, r1
 	bx lr

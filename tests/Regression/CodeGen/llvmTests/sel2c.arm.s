@@ -26,8 +26,8 @@ t:
 	movt r1, #:upper16:j
 	ldr r1, [r1, #0]
 	cmp r0, r1
-	mov r1, #1
 	mov r0, #3
+	mov r1, #1
 	movne r0, r1
 	movw r1, #:lower16:k
 	movt r1, #:upper16:k

@@ -126,49 +126,49 @@ sge_all_one:
 .globl feq
 feq:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movweq r0, #1
 	bx lr
 .globl fne
 fne:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwne r0, #1
 	bx lr
 .globl flt
 flt:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwmi r0, #1
 	bx lr
 .globl fgt
 fgt:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwgt r0, #1
 	bx lr
 .globl fle
 fle:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwls r0, #1
 	bx lr
 .globl fge
 fge:
 	vcmp.f32 s0, s1
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwge r0, #1
 	bx lr
 .globl fltz
 fltz:
 	vcmp.f32 s0, #0
-	vmrs APSR_nzcv, FPSCR
 	mov r0, #0
+	vmrs APSR_nzcv, FPSCR
 	movwmi r0, #1
 	bx lr

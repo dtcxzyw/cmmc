@@ -16,6 +16,7 @@
 #include <{{target}}/ScheduleModelDecl.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <iostream>
 
 CMMC_MIR_NAMESPACE_BEGIN
 extern StringOpt targetMachine;
@@ -31,6 +32,7 @@ public:
         switch(opcode) {
             {% for class in model.classes %}{% for op in model.classes[class] %}case {{op}}:{% endfor %} return mScheduleClass_{{class}};{% endfor %}
             default:
+                std::cerr << "getInstScheClass() failed: unknown op: " << opcode << std::endl;
                 reportNotImplemented(CMMC_LOCATION());
         }
     }

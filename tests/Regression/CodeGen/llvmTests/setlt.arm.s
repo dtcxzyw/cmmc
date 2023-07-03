@@ -42,9 +42,9 @@ test:
 	movt r1, #:upper16:k
 	ldr r1, [r1, #0]
 	cmp r0, r1
-	mov r0, #0
-	movwlt r0, #1
 	movw r1, #:lower16:r1
+	mov r0, #0
 	movt r1, #:upper16:r1
+	movwlt r0, #1
 	str r0, [r1, #0]
 	bx lr

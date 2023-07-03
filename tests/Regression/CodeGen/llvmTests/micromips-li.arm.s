@@ -20,16 +20,16 @@ z:
 .globl main
 main:
 	movw r0, #:lower16:x
-	movt r0, #:upper16:x
 	mov r1, #1
+	movt r0, #:upper16:x
 	str r1, [r0, #0]
+	movw r1, #2148
 	movw r0, #:lower16:y
 	movt r0, #:upper16:y
-	movw r1, #2148
 	str r1, [r0, #0]
+	movw r1, #33332
 	movw r0, #:lower16:z
 	movt r0, #:upper16:z
-	movw r1, #33332
 	str r1, [r0, #0]
 	mov r0, #0
 	bx lr

@@ -12,21 +12,21 @@ a:
 .globl ext
 ext:
 	movw r0, #:lower16:a
-	movt r0, #:upper16:a
 	mov r1, #0
+	movt r0, #:upper16:a
 	str r1, [r0, #0]
 	bx lr
 .globl foo
 foo:
 	movw r0, #:lower16:a
-	movt r0, #:upper16:a
 	mov r1, #0
+	movt r0, #:upper16:a
 	str r1, [r0, #0]
 	bx lr
 .globl main
 main:
 	movw r1, #:lower16:a
-	movt r1, #:upper16:a
 	mov r0, #0
+	movt r1, #:upper16:a
 	str r0, [r1, #0]
 	bx lr

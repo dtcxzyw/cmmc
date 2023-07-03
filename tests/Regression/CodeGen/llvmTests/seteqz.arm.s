@@ -26,19 +26,19 @@ test:
 	movw r0, #:lower16:i
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
+	movw r1, #:lower16:r1
+	movt r1, #:upper16:r1
 	cmp r0, #0
 	mov r0, #0
 	movweq r0, #1
-	movw r1, #:lower16:r1
-	movt r1, #:upper16:r1
 	str r0, [r1, #0]
 	movw r0, #:lower16:j
 	movt r0, #:upper16:j
 	ldr r0, [r0, #0]
+	movw r1, #:lower16:r2
+	movt r1, #:upper16:r2
 	cmp r0, #99
 	mov r0, #0
 	movweq r0, #1
-	movw r1, #:lower16:r2
-	movt r1, #:upper16:r2
 	str r0, [r1, #0]
 	bx lr

@@ -16,10 +16,10 @@ foo:
 	cmp r0, #0
 	ble label13
 	movw r0, #:lower16:X
-	movt r0, #:upper16:X
-	mov r2, r0
 	mov r3, #0
+	movt r0, #:upper16:X
 	strh r3, [r0, #0]
+	mov r2, r0
 	cmp r1, #1
 	bne label19
 	b label28

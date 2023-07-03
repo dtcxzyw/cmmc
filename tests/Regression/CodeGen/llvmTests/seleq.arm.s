@@ -46,8 +46,8 @@ calc_seleq:
 	push { r4 }
 	movw r0, #:lower16:a
 	movt r0, #:upper16:a
-	mov r1, r0
 	ldr r3, [r0, #0]
+	mov r1, r0
 	movw r0, #:lower16:b
 	movt r0, #:upper16:b
 	mov r2, r0
@@ -68,12 +68,12 @@ label3:
 	str r0, [r3, #0]
 	ldr r0, [r2, #0]
 	ldr r2, [r1, #0]
-	cmp r0, r2
-	movw r0, #:lower16:f
-	movt r0, #:upper16:f
 	movw r1, #:lower16:t
 	movt r1, #:upper16:t
 	mov r3, r1
+	cmp r0, r2
+	movw r0, #:lower16:f
+	movt r0, #:upper16:f
 	moveq r3, r0
 	ldr r3, [r3, #0]
 	movw r4, #:lower16:z2

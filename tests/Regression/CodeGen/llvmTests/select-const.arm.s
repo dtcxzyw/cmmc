@@ -45,9 +45,9 @@ select_const_int_pow2_zero:
 .globl select_eq_10000_10001
 select_eq_10000_10001:
 	cmp r0, r1
+	movw r1, #10002
 	mov r0, #0
 	movweq r0, #1
-	movw r1, #10002
 	sub r0, r1, r0
 	bx lr
 .globl select_eq_1_2
@@ -67,9 +67,9 @@ select_eq_zero_negone:
 .globl select_ne_10001_10002
 select_ne_10001_10002:
 	cmp r0, r1
+	movw r1, #10002
 	mov r0, #0
 	movwne r0, #1
-	movw r1, #10002
 	sub r0, r1, r0
 	bx lr
 .globl select_ne_1_2

@@ -54,7 +54,7 @@ public:
 
 class ScheduleState final {
     uint32_t mCycleCount;
-    std::unordered_map<uint32_t, uint32_t> mLastPipelineUsed;
+    std::unordered_map<uint32_t, uint32_t> mNextPipelineAvailable;
     std::unordered_map<uint32_t, uint32_t> mRegisterAvailableTime;
     const std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>>& mRegRenameMap;  // idx -> register
     uint32_t mIssuedFlag;
@@ -63,11 +63,11 @@ public:
     ScheduleState(const std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>>& regRenameMap);
     // query
     uint32_t queryRegisterLatency(const MIRInst& inst, uint32_t idx) const;
-    [[nodiscard]] bool isPipelineReady(uint32_t pipelineId, uint32_t repeatRate) const;
+    [[nodiscard]] bool isPipelineReady(uint32_t pipelineId) const;
     [[nodiscard]] bool isAvailable(uint32_t mask) const;
     // issue
     void setIssued(uint32_t mask);
-    void resetPipeline(uint32_t pipelineId);
+    void resetPipeline(uint32_t pipelineId, uint32_t duration);
     void makeRegisterReady(const MIRInst& inst, uint32_t idx, uint32_t latency);
 
     uint32_t nextCycle();

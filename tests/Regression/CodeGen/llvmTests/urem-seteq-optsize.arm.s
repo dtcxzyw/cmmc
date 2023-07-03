@@ -9,8 +9,8 @@ test_minsize:
 	mov r1, #5
 	udiv r2, r0, r1
 	mls r0, r2, r1, r0
-	cmp r0, #0
 	mov r1, #42
+	cmp r0, #0
 	mvn r0, #9
 	moveq r0, r1
 	bx lr
@@ -19,8 +19,8 @@ test_optsize:
 	mov r1, #5
 	udiv r2, r0, r1
 	mls r0, r2, r1, r0
-	cmp r0, #0
 	mov r1, #42
+	cmp r0, #0
 	mvn r0, #9
 	moveq r0, r1
 	bx lr

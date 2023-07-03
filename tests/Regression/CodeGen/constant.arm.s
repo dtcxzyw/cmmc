@@ -12,8 +12,8 @@ x:
 .globl cse_imm
 cse_imm:
 	add r1, r1, r1, lsl #2
-	eor r1, r2, r1, lsl #1
 	add r0, r0, r0, lsl #2
+	eor r1, r2, r1, lsl #1
 	add r0, r1, r0, lsl #1
 	bx lr
 .globl cse_global
@@ -29,8 +29,8 @@ cse_fp:
 	movw r0, #0
 	movt r0, #16512
 	vmov s2, r0
-	vmul.f32 s0, s0, s2
 	vmul.f32 s1, s1, s2
+	vmul.f32 s0, s0, s2
 	vadd.f32 s0, s0, s1
 	bx lr
 .globl imm_build_pattern1

@@ -28,9 +28,9 @@ test:
 	ldr r0, [r0, #0]
 	mvn r1, #32768
 	cmp r0, r1
-	mov r0, #0
-	movwgt r0, #1
 	movw r1, #:lower16:r1
+	mov r0, #0
 	movt r1, #:upper16:r1
+	movwgt r0, #1
 	str r0, [r1, #0]
 	bx lr

@@ -13,8 +13,8 @@ test_minsize:
 	asr r3, r2, #1
 	add r2, r3, r2, lsr #31
 	mls r0, r2, r1, r0
-	mov r1, #42
 	mvn r2, #9
+	mov r1, #42
 	cmp r0, #0
 	mov r0, r2
 	moveq r0, r1
@@ -28,8 +28,8 @@ test_optsize:
 	asr r3, r2, #1
 	add r2, r3, r2, lsr #31
 	mls r0, r2, r1, r0
-	mov r1, #42
 	mvn r2, #9
+	mov r1, #42
 	cmp r0, #0
 	mov r0, r2
 	moveq r0, r1

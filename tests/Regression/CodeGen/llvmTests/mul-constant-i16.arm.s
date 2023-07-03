@@ -278,12 +278,12 @@ test_mul_by_neg36:
 test_mul_spec:
 	sxth r0, r0
 	add r1, r0, r0, lsl #3
-	sxth r1, r1
-	add r1, r1, #42
-	sxth r1, r1
 	add r0, r0, r0, lsl #2
+	sxth r1, r1
 	sxth r0, r0
+	add r1, r1, #42
 	add r0, r0, #2
+	sxth r1, r1
 	sxth r0, r0
 	mul r0, r1, r0
 	uxth r0, r0

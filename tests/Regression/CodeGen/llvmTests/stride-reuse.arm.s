@@ -27,15 +27,15 @@ label2:
 	movt r2, #:upper16:B
 	add r2, r2, r1, lsl #2
 	vldr s0, [r2, #0]
-	vadd.f32 s0, s0, s0
 	movw r2, #:lower16:A
 	movt r2, #:upper16:A
 	add r2, r2, r1, lsl #2
+	vadd.f32 s0, s0, s0
 	vstr s0, [r2, #0]
-	movw r2, #:lower16:P
-	movt r2, #:upper16:P
 	lsl r3, r1, #1
+	movw r2, #:lower16:P
 	add r3, r3, #64
+	movt r2, #:upper16:P
 	str r3, [r2, r1, lsl #2]
 	add r1, r1, #1
 	cmp r0, r1

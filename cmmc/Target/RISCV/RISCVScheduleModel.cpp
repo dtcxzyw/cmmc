@@ -152,7 +152,7 @@ public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
         if(!state.isAvailable(RISCVPipelineB))
             return false;
-        if(!state.isPipelineReady(RISCVIDivPipeline, 65))
+        if(!state.isPipelineReady(RISCVIDivPipeline))
             return false;
 
         // consumes operands in the AG stage
@@ -164,7 +164,7 @@ public:
         }
 
         // TODO: estimate latency using the range info?
-        state.resetPipeline(RISCVIDivPipeline);
+        state.resetPipeline(RISCVIDivPipeline, 65);
         state.makeRegisterReady(inst, 0, 68);
         state.setIssued(RISCVPipelineB);
         return true;
@@ -201,7 +201,7 @@ public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
         if(!state.isAvailable(RISCVPipelineB))
             return false;
-        if(!state.isPipelineReady(RISCVFPDivPipeline, 33))
+        if(!state.isPipelineReady(RISCVFPDivPipeline))
             return false;
 
         // consumes operands in the AG stage
@@ -212,7 +212,7 @@ public:
             }
         }
 
-        state.resetPipeline(RISCVFPDivPipeline);
+        state.resetPipeline(RISCVFPDivPipeline, 33);
         state.makeRegisterReady(inst, 0, 36);
         state.setIssued(RISCVPipelineB);
         return true;

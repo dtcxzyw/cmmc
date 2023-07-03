@@ -49,12 +49,12 @@ Test_use_divrem_reg_imm:
 	movw r1, #33761
 	movt r1, #15887
 	smmul r2, r0, r1
-	asr r3, r2, #3
-	add r2, r3, r2, lsr #31
-	mov r3, #33
 	smmul r1, r0, r1
+	asr r3, r2, #3
 	asr r4, r1, #3
+	add r2, r3, r2, lsr #31
 	add r1, r4, r1, lsr #31
+	mov r3, #33
 	mls r0, r1, r3, r0
 	add r0, r2, r0
 	pop { r4 }

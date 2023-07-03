@@ -7,8 +7,8 @@
 .globl binomial
 binomial:
 	push { r4 }
-	mov r2, r1
 	cmp r0, r1
+	mov r2, r1
 	bhs label4
 	mov r0, #0
 	b label2
@@ -31,8 +31,8 @@ label23:
 	sub r4, r0, r3
 	mul r1, r0, r4
 	add r4, r3, #1
-	udiv r1, r1, r4
 	add r3, r3, #2
+	udiv r1, r1, r4
 	cmp r2, r3
 	bhs label32
 label35:
@@ -43,8 +43,8 @@ label32:
 	sub r4, r0, r4
 	mul r1, r1, r4
 	add r4, r3, #1
-	udiv r1, r1, r4
 	add r3, r3, #2
+	udiv r1, r1, r4
 	cmp r2, r3
 	bhs label32
 	b label35
