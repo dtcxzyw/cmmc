@@ -22,151 +22,91 @@
 CMMC_TARGET_NAMESPACE_BEGIN
 
 enum ARMPipeline : uint32_t {
-    ARMMultiCyclePipeline,
-    ARMFP0Pipeline,
-    ARMFP1Pipeline,
-    ARMLoadPipeline,
-    ARMStorePipeline,
+    ARMPipelineBranch = 1,
+    ARMPipelineInteger0,
+    ARMPipelineInteger1,
+    ARMPipelineMultiCycle,
+    ARMPipelineFP0,
+    ARMPipelineFP1,
+    ARMPipelineLoad,
+    ARMPipelineStore,
+    ARMPipelineNop,
 };
 
-enum ARMIssueMask : uint32_t {
-    ARMPipelineBranch = 1 << 0,
-    ARMPipelineInteger0 = 1 << 1,
-    ARMPipelineInteger1 = 1 << 2,
-    ARMPipelineMultiCycle = 1 << 3,
-    ARMPipelineFP0 = 1 << 4,
-    ARMPipelineFP1 = 1 << 5,
-    ARMPipelineLoad = 1 << 6,
-    ARMPipelineStore = 1 << 7,
-    ARMPipelineNop = 1 << 8,
-};
-
-constexpr uint32_t ARMPipelineInteger = ARMPipelineInteger0 | ARMPipelineInteger1;
-constexpr uint32_t ARMPipelineFP = ARMPipelineFP0 | ARMPipelineFP1;
-
-static bool issueToAny(ScheduleState& state, uint32_t available) {
-    for(uint32_t i = available; i; i = i & (i - 1)) {
-        uint32_t pipeline = i & -i;
-        if(state.isAvailable(pipeline)) {
-            state.setIssued(pipeline);
-            return true;
+static bool checkRegisterDependency(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) {
+    for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+        if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+            if(state.queryRegisterLatency(inst, idx) > 0)
+                return false;
         }
     }
-    return false;
+    return true;
 }
 
-template <uint32_t ValidPipeline, uint32_t OccupyPipeline, uint32_t Latency>
+template <uint32_t ValidPipeline1, uint32_t ValidPipeline2, uint32_t Latency, uint32_t Duration>
 class ARMScheduleClassSimpleGeneric final : public ScheduleClass {
-    static_assert(ValidPipeline != 0);
+    static_assert(ValidPipeline1 != 0);
 
 public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(!state.isAvailable(ValidPipeline))
+        if(!state.isPipelineReady(ValidPipeline1) && (ValidPipeline2 == 0 || !state.isPipelineReady(ValidPipeline2)))
             return false;
-        if constexpr(OccupyPipeline != 0)
-            if(!state.isPipelineReady(OccupyPipeline))
-                return false;
-
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                if(state.queryRegisterLatency(inst, idx) > 0)
-                    return false;
-            }
-        }
-
-        if(!issueToAny(state, ValidPipeline))
+        if(!checkRegisterDependency(state, inst, instInfo))
             return false;
 
+        state.resetPipeline(state.isPipelineReady(ValidPipeline1) ? ValidPipeline1 : ValidPipeline2, Duration);
         for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
             if(instInfo.getOperandFlag(idx) & OperandFlagDef)
                 state.makeRegisterReady(inst, idx, Latency);
-        if constexpr(OccupyPipeline != 0)
-            state.resetPipeline(OccupyPipeline, 1);
+
         return true;
     }
 };
 
-using ARMScheduleClassIntegerArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineInteger, 0, 1>;
-using ARMScheduleClassIntegerArithmeticConditional = ARMScheduleClassSimpleGeneric<ARMPipelineInteger, 0, 2>;
-using ARMScheduleClassIntegerArithmeticFused = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, ARMMultiCyclePipeline, 2>;
-using ARMScheduleClassSaturate = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, ARMMultiCyclePipeline, 2>;
-using ARMScheduleClassMultiply = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, ARMMultiCyclePipeline, 3>;
-using ARMScheduleClassBranch = ARMScheduleClassSimpleGeneric<ARMPipelineBranch, 0, 1>;
-using ARMScheduleClassLoad = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, ARMLoadPipeline, 4>;
-using ARMScheduleClassLoadScaledLSL2 = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, ARMLoadPipeline, 4>;
-using ARMScheduleClassLoadScaledOther = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, ARMLoadPipeline, 5>;
-using ARMScheduleClassStore = ARMScheduleClassSimpleGeneric<ARMPipelineStore, ARMStorePipeline, 1>;
-using ARMScheduleClassFPArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineFP, 0, 4>;  // TODO: FP0
-using ARMScheduleClassFPUnaryArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineFP, 0, 3>;
-using ARMScheduleClassFPCompare = ARMScheduleClassSimpleGeneric<ARMPipelineFP1, 0, 3>;
-using ARMScheduleClassFPConvert = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, ARMFP0Pipeline, 3>;
-using ARMScheduleClassFPMoveWithCore = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, ARMLoadPipeline, 5>;
-using ARMScheduleClassMisc = ARMScheduleClassSimpleGeneric<ARMPipelineNop, 0, 0>;
+using ARMScheduleClassIntegerArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineInteger0, ARMPipelineInteger1, 1, 1>;
+using ARMScheduleClassIntegerArithmeticConditional = ARMScheduleClassSimpleGeneric<ARMPipelineInteger0, ARMPipelineInteger1, 2, 1>;
+using ARMScheduleClassIntegerArithmeticFused = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 2, 1>;
+using ARMScheduleClassSaturate = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 2, 1>;
+using ARMScheduleClassMultiply = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 3, 1>;
+using ARMScheduleClassDivide = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 12, 12>;
+using ARMScheduleClassBranch = ARMScheduleClassSimpleGeneric<ARMPipelineBranch, 0, 1, 1>;
+using ARMScheduleClassLoad = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 4, 1>;
+using ARMScheduleClassLoadScaledLSL2 = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 4, 1>;
+using ARMScheduleClassLoadScaledOther = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 5, 1>;
+using ARMScheduleClassFPLoad = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 4, 1>;
+using ARMScheduleClassStore = ARMScheduleClassSimpleGeneric<ARMPipelineStore, 0, 1, 1>;
+using ARMScheduleClassFPArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, ARMPipelineFP1, 4, 1>;
+using ARMScheduleClassFPUnaryArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, ARMPipelineFP1, 3, 1>;
+using ARMScheduleClassFPDivide = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, 0, 11, 5>;  // inv(2/9) ≈ 5
+using ARMScheduleClassFPCompare = ARMScheduleClassSimpleGeneric<ARMPipelineFP1, 0, 3, 1>;
+using ARMScheduleClassFPConvert = ARMScheduleClassSimpleGeneric<ARMPipelineFP0, 0, 3, 1>;
+using ARMScheduleClassFPMoveWithCore = ARMScheduleClassSimpleGeneric<ARMPipelineLoad, 0, 5, 1>;
+using ARMScheduleClassMisc = ARMScheduleClassSimpleGeneric<ARMPipelineNop, 0, 0, 0>;
 
 class ARMScheduleClassBranchLink final : public ScheduleClass {
 public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(!state.isAvailable(ARMPipelineBranch) || !state.isAvailable(ARMPipelineInteger))
+        if(!state.isPipelineReady(ARMPipelineBranch))
+            return false;
+        if(!state.isPipelineReady(ARMPipelineInteger0) && !state.isPipelineReady(ARMPipelineInteger1))
             return false;
 
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                if(state.queryRegisterLatency(inst, idx) > 0)
-                    return false;
-            }
-        }
+        if(!checkRegisterDependency(state, inst, instInfo))
+            return false;
 
-        state.setIssued(ARMPipelineBranch);
-        [[maybe_unused]] bool result = issueToAny(state, ARMPipelineInteger);
-        assert(result);
+        state.resetPipeline(ARMPipelineBranch, 1);
+        state.resetPipeline(state.isPipelineReady(ARMPipelineInteger0) ? ARMPipelineInteger0 : ARMPipelineInteger1, 1);
 
         return true;
     }
 };
-
-template <uint32_t MainPipeline, uint32_t BaseLatency, uint32_t FixedRegistersNumber>
-class ARMScheduleClassPushPopGeneric final : public ScheduleClass {
-public:
-    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(!state.isAvailable(MainPipeline) || !state.isAvailable(ARMPipelineInteger))
-            return false;
-
-        int registersNumber = 0;
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            registersNumber++;
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                if(state.queryRegisterLatency(inst, idx) > 0)
-                    return false;
-            }
-        }
-        if constexpr(FixedRegistersNumber != 0)
-            registersNumber = FixedRegistersNumber;
-
-        state.setIssued(MainPipeline);
-        [[maybe_unused]] bool result = issueToAny(state, ARMPipelineInteger);
-        assert(result);
-
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx)
-            if(instInfo.getOperandFlag(idx) & OperandFlagDef)
-                state.makeRegisterReady(inst, idx, BaseLatency + registersNumber);
-        state.resetPipeline(ARMPipelineInteger, registersNumber);
-        state.resetPipeline(MainPipeline, registersNumber);
-
-        return true;
-    }
-};
-
-using ARMScheduleClassFPLoad = ARMScheduleClassPushPopGeneric<ARMPipelineLoad, 4, 1>;
-using ARMScheduleClassFPLoadPop = ARMScheduleClassPushPopGeneric<ARMPipelineLoad, 4, 0>;
-using ARMScheduleClassPush = ARMScheduleClassPushPopGeneric<ARMPipelineStore, 1, 0>;
-using ARMScheduleClassPop = ARMScheduleClassPushPopGeneric<ARMPipelineLoad, 3, 0>;
 
 class ARMScheduleClassMultiplyAccumulate final : public ScheduleClass {
 public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
         CMMC_UNUSED(instInfo);
 
-        if(!state.isAvailable(ARMPipelineMultiCycle))
+        if(!state.isPipelineReady(ARMPipelineMultiCycle))
             return false;
 
         if(state.queryRegisterLatency(inst, 1) > 0 || state.queryRegisterLatency(inst, 2) > 0)
@@ -174,52 +114,7 @@ public:
         if(state.queryRegisterLatency(inst, 3) > 3)
             return false;
 
-        state.setIssued(ARMPipelineMultiCycle);
         state.makeRegisterReady(inst, 0, 4);
-        return true;
-    }
-};
-
-class ARMScheduleClassDivide final : public ScheduleClass {
-public:
-    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(!state.isAvailable(ARMPipelineMultiCycle))
-            return false;
-        if(!state.isPipelineReady(ARMMultiCyclePipeline))
-            return false;
-
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                if(state.queryRegisterLatency(inst, idx) > 0)
-                    return false;
-            }
-        }
-
-        state.resetPipeline(ARMMultiCyclePipeline, 12);
-        state.makeRegisterReady(inst, 0, 12);
-        state.setIssued(ARMPipelineMultiCycle);
-        return true;
-    }
-};
-
-class ARMScheduleClassFPDivide final : public ScheduleClass {
-public:
-    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(!state.isAvailable(ARMPipelineFP0))
-            return false;
-        if(!state.isPipelineReady(ARMFP0Pipeline))
-            return false;
-
-        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
-            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
-                if(state.queryRegisterLatency(inst, idx) > 0)
-                    return false;
-            }
-        }
-
-        state.resetPipeline(ARMFP0Pipeline, 5);
-        state.makeRegisterReady(inst, 0, 11);
-        state.setIssued(ARMPipelineFP0);
         return true;
     }
 };
@@ -255,6 +150,20 @@ public:
         }
     }
 };
+
+class ARMScheduleClassInOrder final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        CMMC_UNUSED(state);
+        CMMC_UNUSED(inst);
+        CMMC_UNUSED(instInfo);
+        return true;
+    }
+};
+
+using ARMScheduleClassFPLoadPop = ARMScheduleClassInOrder;
+using ARMScheduleClassPush = ARMScheduleClassInOrder;
+using ARMScheduleClassPop = ARMScheduleClassInOrder;
 
 CMMC_TARGET_NAMESPACE_END
 
