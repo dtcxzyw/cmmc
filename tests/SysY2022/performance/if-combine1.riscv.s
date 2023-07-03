@@ -11,54 +11,18 @@ main:
 	jal _sysy_starttime
 	jal getint
 	mv a1, zero
-	li a2, 100
-	bge zero, a2, label19
-	sh2add a2, zero, s0
-	sw zero, 0(a2)
-	addiw a1, zero, 1
+label2:
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
 	sw zero, 0(a2)
 	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	j label327
+	j label2
 label19:
 	mv a2, zero
 	mv a1, zero
-	ble a0, zero, label12
-label7:
+label4:
+	ble a0, a1, label12
 	li a3, 1
 	sw a3, 4(s0)
 	li a3, 2
@@ -260,6 +224,19 @@ label7:
 	addiw a1, a1, 1
 	mv a4, a2
 	mv a2, zero
+	j label8
+label12:
+	mv a0, a2
+	jal putint
+	li a0, 10
+	jal putch
+	li a0, 328
+	jal _sysy_stoptime
+	mv a0, zero
+	ld ra, 400(sp)
+	ld s0, 408(sp)
+	addi sp, sp, 416
+	ret
 label8:
 	sh2add a3, a2, s0
 	lw a5, 0(a3)
@@ -318,24 +295,4 @@ label11:
 	li a4, 65535
 	mulw a3, a3, a4
 	subw a2, a2, a3
-	ble a0, a1, label12
-	j label7
-label327:
-	sh2add a2, a1, s0
-	sw zero, 0(a2)
-	addiw a1, a1, 1
-	li a2, 100
-	bge a1, a2, label19
-	j label327
-label12:
-	mv a0, a2
-	jal putint
-	li a0, 10
-	jal putch
-	li a0, 328
-	jal _sysy_stoptime
-	mv a0, zero
-	ld ra, 400(sp)
-	ld s0, 408(sp)
-	addi sp, sp, 416
-	ret
+	j label4

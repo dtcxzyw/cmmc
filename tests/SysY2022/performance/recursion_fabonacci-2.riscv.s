@@ -117,31 +117,27 @@ main:
 	fmv.w.x f11, a0
 	fadd.s f10, f11, f10
 	jal fibFP
-pcrel107:
+pcrel105:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel107)
+	addi a0, a0, %pcrel_lo(pcrel105)
 	flw f11, 0(a0)
 	flw f11, 0(a0)
 	feq.s a0, f10, f11
 	bne a0, zero, label66
 	li a0, 1
 	jal putint
-	lui a0, 260096
-	fmv.w.x f10, a0
-	feq.s a0, f8, f10
-	bne a0, zero, label68
-label106:
-	li a0, 1
-	jal putint
-	j label69
+	j label67
 label66:
 	li a0, 112
 	jal putch
+label67:
 	lui a0, 260096
 	fmv.w.x f10, a0
 	feq.s a0, f8, f10
 	bne a0, zero, label68
-	j label106
+	li a0, 1
+	jal putint
+	j label69
 label68:
 	li a0, 112
 	jal putch

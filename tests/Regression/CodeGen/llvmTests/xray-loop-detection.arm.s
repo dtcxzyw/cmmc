@@ -13,9 +13,7 @@ foo:
 	b label2
 label9:
 	mov r0, #0
-	add r0, r0, #1
-	cmp r1, r0
-	bne label4
+	b label4
 label2:
 	bx lr
 label4:

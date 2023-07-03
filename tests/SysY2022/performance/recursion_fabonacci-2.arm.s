@@ -112,24 +112,19 @@ main:
 	beq label56
 	mov r0, #1
 	bl putint
-	mov r0, #1065353216
-	vmov s0, r0
-	vcmp.f32 s16, s0
-	vmrs APSR_nzcv, FPSCR
-	beq label58
-label90:
-	mov r0, #1
-	bl putint
-	b label59
+	b label57
 label56:
 	mov r0, #112
 	bl putch
+label57:
 	mov r0, #1065353216
 	vmov s0, r0
 	vcmp.f32 s16, s0
 	vmrs APSR_nzcv, FPSCR
 	beq label58
-	b label90
+	mov r0, #1
+	bl putint
+	b label59
 label58:
 	mov r0, #112
 	bl putch

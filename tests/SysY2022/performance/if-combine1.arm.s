@@ -13,48 +13,19 @@ main:
 	bl _sysy_starttime
 	bl getint
 	mov r1, #0
+label2:
 	cmp r1, #100
 	bge label19
 	mov r2, #0
 	str r2, [r4, r1, lsl #2]
 	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	b label317
+	b label2
 label19:
 	mov r2, #0
 	mov r1, r2
-	cmp r0, r2
+label4:
+	cmp r0, r1
 	ble label12
-label7:
 	mov r3, #1
 	str r3, [r4, #4]
 	mov r3, #2
@@ -256,6 +227,17 @@ label7:
 	add r1, r1, #1
 	mov r5, r2
 	mov r2, #0
+	b label8
+label12:
+	mov r0, r2
+	bl putint
+	mov r0, #10
+	bl putch
+	mov r0, #328
+	bl _sysy_stoptime
+	mov r0, #0
+	add sp, sp, #400
+	pop { r4, r5, r6, pc }
 label8:
 	add r3, r4, r2, lsl #2
 	ldr r6, [r4, r2, lsl #2]
@@ -311,23 +293,4 @@ label11:
 	asr r6, r5, #15
 	add r5, r6, r5, lsr #31
 	mls r2, r5, r3, r2
-	cmp r0, r1
-	ble label12
-	b label7
-label317:
-	mov r2, #0
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	b label317
-label12:
-	mov r0, r2
-	bl putint
-	mov r0, #10
-	bl putch
-	mov r0, #328
-	bl _sysy_stoptime
-	mov r0, #0
-	add sp, sp, #400
-	pop { r4, r5, r6, pc }
+	b label4

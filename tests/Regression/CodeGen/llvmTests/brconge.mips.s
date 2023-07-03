@@ -34,27 +34,15 @@ test:
 	li $t1, 1
 	lui $t2, %hi(result1)
 	sw $t1, %lo(result1)($t2)
-	lui $t1, %hi(k)
-	lw $t1, %lo(k)($t1)
-	subu $t0, $t0, $t1
-	bgez $t0, label5
-	nop
-	b label47
-	nop
 label3:
 	lui $t1, %hi(k)
 	lw $t1, %lo(k)($t1)
 	subu $t0, $t0, $t1
 	bgez $t0, label5
 	nop
-	b label47
-	nop
-label5:
-	jr $ra
-	nop
-label47:
 	li $t0, 1
 	lui $t1, %hi(result1)
 	sw $t0, %lo(result1)($t1)
-	b label5
+label5:
+	jr $ra
 	nop

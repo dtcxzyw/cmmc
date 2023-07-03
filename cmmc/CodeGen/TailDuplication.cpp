@@ -45,6 +45,11 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             return ctx.registerInfo && requireFlag(ctx.instInfo.getInstInfo(inst).getInstFlag(), InstFlagReturn);
         };
 
+        auto isUnconditionalBranch = [&](const MIRInst& inst) {
+            MIRBasicBlock* tmp;
+            return ctx.instInfo.matchUnconditionalBranch(inst, tmp);
+        };
+
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
             const auto nextIter = std::next(iter);
@@ -57,7 +62,11 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                 if(targetBlock != block &&
                    !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
-                   targetBlock->instructions().size() <= heuristic.duplicationThreshold) {
+                   targetBlock->instructions().size() <= heuristic.duplicationThreshold &&
+                   (!heuristic.isBPUAware ||
+                    isUnconditionalBranch(
+                        targetBlock->instructions().back()))  // don't duplicate branch jumps that needs BTB/RAS entries
+                ) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());

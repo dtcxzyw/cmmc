@@ -88,9 +88,9 @@ public:
     }
     [[nodiscard]] bool isCalleeSaved(const MIROperand& op) const noexcept override {
         const auto reg = op.reg();
-        // $sp $s0-$s7 $f20-$f30
+        // $sp $s0-$s7 $f20-$f30 $gp
         return reg == RISCV::X2 || (RISCV::X8 <= reg && reg <= RISCV::X9) || (RISCV::X18 <= reg && reg <= RISCV::X27) ||
-            (RISCV::F8 <= reg && reg <= RISCV::F9) || (RISCV::F18 <= reg && reg <= RISCV::F27);
+            (RISCV::F8 <= reg && reg <= RISCV::F9) || (RISCV::F18 <= reg && reg <= RISCV::F27) || (reg == RISCV::X3);
     }
     [[nodiscard]] size_t getStackPointerAlignment(bool isNonLeafFunc) const noexcept override {
         CMMC_UNUSED(isNonLeafFunc);
@@ -173,6 +173,8 @@ public:
                 RISCV::X18, RISCV::X19,                          //
                 RISCV::X20, RISCV::X21, RISCV::X22, RISCV::X23,  //
                 RISCV::X24, RISCV::X25, RISCV::X26, RISCV::X27,  //
+                // $gp
+                RISCV::X3,  //
             };
             return list;
         }

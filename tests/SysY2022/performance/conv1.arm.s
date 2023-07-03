@@ -87,166 +87,7 @@ label4:
 	movwlt r4, #1
 	orr r3, r3, r4
 	mov r4, r0
-	cmp r0, #0
-	mov r6, #0
-	movwlt r6, #1
-	orr r6, r3, r6
-	ldr r7, [sp, #12]
-	cmp r7, r0
-	mov r7, #0
-	movwle r7, #1
-	orrs r6, r6, r7
-	beq label74
-	mov r6, #0
-	ldr r7, [sp, #52]
-	cmp r7, #0
-	bne label34
-	add r5, r5, r6
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label589
-label140:
-	str r0, [sp, #16]
-	b label4
-label34:
-	ldr r7, [sp, #52]
-	cmp r7, #1
-	bne label43
-	mov r7, #1
-	mov r8, #0
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	b label637
-label43:
-	ldr r7, [sp, #52]
-	cmp r7, #2
-	bne label44
-	cmp r5, r6
-	mov r8, r5
-	movle r8, r6
-	add r4, r4, #1
-	cmp r1, r4
-	bgt label122
-	add r2, r2, #1
-	ldr r3, [sp, #4]
-	cmp r3, r2
-	bgt label127
-	ldr r0, [sp, #56]
-	ldr r1, [sp, #8]
-	add r0, r0, r1
-	ldr r2, [sp, #44]
-	str r8, [r2, r0, lsl #2]
-	ldr r1, [sp, #8]
-	add r1, r1, #1
-	ldr r7, [sp, #12]
-	cmp r7, r1
-	bgt label135
-	ldr r0, [sp, #16]
-	add r0, r0, #1
-	ldr r3, [sp, #20]
-	cmp r3, r0
-	bgt label140
-	ldr r2, [sp, #24]
-	cmp r2, #0
-	ble label33
-	mov r1, #0
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label25
-	b label24
-label659:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-label660:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label686
-label122:
-	mov r5, r8
+label11:
 	cmp r4, #0
 	mov r6, #0
 	movwlt r6, #1
@@ -256,94 +97,35 @@ label122:
 	mov r7, #0
 	movwle r7, #1
 	orrs r6, r6, r7
-	beq label74
+	beq label14
 	mov r6, #0
+label15:
 	ldr r7, [sp, #52]
 	cmp r7, #0
-	bne label34
-	add r5, r8, r6
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label659
-label25:
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label27
-	b label32
-label686:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label689
-label74:
-	ldr r7, [sp, #12]
-	mla r7, r7, r2, r4
-	ldr r6, [sp, #28]
-	ldr r6, [r6, r7, lsl #2]
-	ldr r7, [sp, #52]
-	cmp r7, #0
-	bne label34
+	bne label44
 	add r5, r5, r6
 	cmp r5, #1073741824
-	ble label66
+	ble label18
+label24:
 	add r5, r5, #-1073741824
 	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label660
-label689:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label689
-label625:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label659
-label127:
+	ble label18
+	b label24
+label26:
+	add r4, r4, #1
+	cmp r1, r4
+	bgt label146
+	b label28
+label146:
+	mov r5, r8
+	b label11
+label28:
+	add r2, r2, #1
+	ldr r3, [sp, #4]
+	cmp r3, r2
+	bgt label151
+	b label29
+label151:
 	mov r5, r8
 	ldr r3, [sp, #20]
 	cmp r3, r2
@@ -354,55 +136,8 @@ label127:
 	movwlt r4, #1
 	orr r3, r3, r4
 	mov r4, r0
-	cmp r0, #0
-	mov r6, #0
-	movwlt r6, #1
-	orr r6, r3, r6
-	ldr r7, [sp, #12]
-	cmp r7, r0
-	mov r7, #0
-	movwle r7, #1
-	orrs r6, r6, r7
-	beq label74
-	mov r6, #0
-	ldr r7, [sp, #52]
-	cmp r7, #0
-	bne label34
-	add r5, r8, r6
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label625
-label589:
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label625
-label16:
-	add r4, r4, #1
-	cmp r1, r4
-	bgt label122
-	add r2, r2, #1
-	ldr r3, [sp, #4]
-	cmp r3, r2
-	bgt label127
+	b label11
+label29:
 	ldr r0, [sp, #56]
 	ldr r1, [sp, #8]
 	add r0, r0, r1
@@ -412,22 +147,9 @@ label16:
 	add r1, r1, #1
 	ldr r7, [sp, #12]
 	cmp r7, r1
-	bgt label135
-	ldr r0, [sp, #16]
-	add r0, r0, #1
-	ldr r3, [sp, #20]
-	cmp r3, r0
-	bgt label140
-	ldr r2, [sp, #24]
-	cmp r2, #0
-	ble label33
-	mov r1, #0
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label25
-	b label24
-label135:
+	bgt label159
+	b label30
+label159:
 	str r1, [sp, #8]
 	ldr r2, [sp, #40]
 	sub r0, r1, r2
@@ -444,311 +166,212 @@ label135:
 	movwlt r4, #1
 	orr r3, r3, r4
 	mov r4, r0
-	cmp r0, #0
-	mov r6, #0
-	movwlt r6, #1
-	orr r6, r3, r6
-	ldr r7, [sp, #12]
-	cmp r7, r0
-	mov r7, #0
-	movwle r7, #1
-	orrs r6, r6, r7
-	beq label74
-	mov r6, #0
-	ldr r7, [sp, #52]
-	cmp r7, #0
-	bne label34
-	add r5, r5, r6
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	add r5, r5, #-1073741824
-	cmp r5, #1073741824
-	ble label66
-	b label589
-label66:
-	cmp r5, #0
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-	adds r5, r5, #1073741824
-	bge label70
-label688:
-	adds r5, r5, #1073741824
-	bge label70
-	b label688
-label667:
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	b label637
-label39:
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	b label667
-label637:
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	add r10, r9, r9, lsr #31
-	asr r10, r10, #1
-	sub r9, r9, r10, lsl #1
-	sdiv r10, r6, r7
-	add r11, r10, r10, lsr #31
-	asr r11, r11, #1
-	sub r10, r10, r11, lsl #1
-	cmp r9, r10
-	bne label39
-	b label637
+	b label11
+label30:
+	ldr r0, [sp, #16]
+	add r0, r0, #1
+	ldr r3, [sp, #20]
+	cmp r3, r0
+	bgt label164
+	b label31
+label164:
+	str r0, [sp, #16]
+	b label4
+label31:
+	ldr r2, [sp, #24]
+	cmp r2, #0
+	ble label43
+	mov r1, #0
+label32:
+	add r0, r1, #4
+	ldr r2, [sp, #24]
+	cmp r2, r0
+	ble label34
+	ldr r2, [sp, #44]
+	add r3, r2, r1, lsl #2
+	ldr r2, [sp, #44]
+	ldr r4, [r2, r1, lsl #2]
+	ldr r6, [sp, #28]
+	add r2, r6, r1, lsl #2
+	str r4, [r6, r1, lsl #2]
+	ldr r1, [r3, #4]
+	str r1, [r2, #4]
+	ldr r1, [r3, #8]
+	str r1, [r2, #8]
+	ldr r1, [r3, #12]
+	str r1, [r2, #12]
+	mov r1, r0
+	b label32
 label44:
 	ldr r7, [sp, #52]
-	cmp r7, #3
-	bne label45
+	cmp r7, #1
+	bne label53
 	mov r7, #1
 	mov r8, #0
+label45:
 	cmp r7, #1073741824
-	bge label16
+	bge label26
 	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
+	add r10, r9, r9, lsr #31
+	asr r10, r10, #1
+	sub r9, r9, r10, lsl #1
+	sdiv r10, r6, r7
+	add r11, r10, r10, lsr #31
+	asr r11, r11, #1
+	sub r10, r10, r11, lsl #1
+	cmp r9, r10
+	bne label49
+	lsl r8, r8, #1
+	lsl r7, r7, #1
+	b label45
+label49:
 	lsl r8, r8, #1
 	add r8, r8, #1
 	lsl r7, r7, #1
+	b label45
+label18:
+	cmp r5, #0
+	bge label131
+label20:
+	adds r5, r5, #1073741824
+	bge label131
+	b label20
+label53:
+	ldr r7, [sp, #52]
+	cmp r7, #2
+	bne label54
+	b label260
+label54:
+	ldr r7, [sp, #52]
+	cmp r7, #3
+	bne label55
+	mov r7, #1
+	mov r8, #0
+label65:
 	cmp r7, #1073741824
-	bge label16
+	bge label26
 	sdiv r9, r5, r7
 	and r9, r9, #-2147483647
 	cmp r9, #1
-	bne label61
+	bne label72
+label297:
 	lsl r8, r8, #1
 	add r8, r8, #1
 	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-label649:
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-label682:
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	b label649
-label61:
+	b label65
+label72:
 	sdiv r9, r6, r7
 	and r9, r9, #-2147483647
 	cmp r9, #1
-	bne label62
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
+	bne label73
+	b label297
+label55:
+	ldr r7, [sp, #52]
+	cmp r7, #4
+	bne label268
+	mov r7, #1
+	mov r8, #0
+	b label56
+label268:
+	mov r8, #0
+	b label26
+label56:
 	cmp r7, #1073741824
-	bge label16
+	bge label26
 	sdiv r9, r5, r7
 	and r9, r9, #-2147483647
 	cmp r9, #1
-	bne label61
+	bne label60
+	sdiv r9, r6, r7
+	and r9, r9, #-2147483647
+	cmp r9, #1
+	bne label60
 	lsl r8, r8, #1
 	add r8, r8, #1
 	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	b label682
-label62:
+	b label56
+label60:
 	lsl r8, r8, #1
 	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
+	b label56
+label34:
+	add r0, r1, #4
+	ldr r2, [sp, #24]
+	cmp r2, r0
+	ble label36
+	ldr r2, [sp, #44]
+	add r3, r2, r1, lsl #2
+	ldr r2, [sp, #44]
+	ldr r4, [r2, r1, lsl #2]
+	ldr r6, [sp, #28]
+	add r2, r6, r1, lsl #2
+	str r4, [r6, r1, lsl #2]
+	ldr r1, [r3, #4]
+	str r1, [r2, #4]
+	ldr r1, [r3, #8]
+	str r1, [r2, #8]
+	ldr r1, [r3, #12]
+	str r1, [r2, #12]
+	mov r1, r0
+	b label34
+label36:
+	add r0, r1, #4
+	ldr r2, [sp, #24]
+	cmp r2, r0
+	ble label182
+	b label40
+label182:
+	mov r0, r1
+label38:
+	ldr r2, [sp, #44]
+	ldr r1, [r2, r0, lsl #2]
+	ldr r6, [sp, #28]
+	str r1, [r6, r0, lsl #2]
+	add r0, r0, #1
+	ldr r2, [sp, #24]
+	cmp r2, r0
+	ble label43
+	b label38
+label40:
+	ldr r2, [sp, #44]
+	add r3, r2, r1, lsl #2
+	ldr r2, [sp, #44]
+	ldr r4, [r2, r1, lsl #2]
+	ldr r6, [sp, #28]
+	add r2, r6, r1, lsl #2
+	str r4, [r6, r1, lsl #2]
+	ldr r1, [r3, #4]
+	str r1, [r2, #4]
+	ldr r1, [r3, #8]
+	str r1, [r2, #8]
+	ldr r1, [r3, #12]
+	str r1, [r2, #12]
+	mov r1, r0
+	b label36
+label73:
 	lsl r8, r8, #1
-	add r8, r8, #1
 	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label61
-	b label649
-label343:
+	b label65
+label131:
+	mov r8, r5
+	b label26
+label14:
+	ldr r7, [sp, #12]
+	mla r7, r7, r2, r4
+	ldr r6, [sp, #28]
+	ldr r6, [r6, r7, lsl #2]
+	b label15
+label260:
+	cmp r5, r6
+	mov r8, r5
+	movle r8, r6
+	b label26
+label43:
+	ldr r0, [sp, #48]
+	add r0, r0, #1
+	ldr r1, [sp, #36]
+	cmp r1, r0
+	ble label75
 	str r0, [sp, #48]
 	ldr r1, [sp, #32]
 	ldr r7, [r1, r0, lsl #2]
@@ -756,346 +379,6 @@ label343:
 	mov r0, #0
 	str r0, [sp, #16]
 	b label4
-label27:
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label172
-	b label31
-label172:
-	mov r0, r1
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r1, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	b label665
-label31:
-	ldr r2, [sp, #44]
-	add r3, r2, r1, lsl #2
-	ldr r2, [sp, #44]
-	ldr r4, [r2, r1, lsl #2]
-	ldr r6, [sp, #28]
-	add r2, r6, r1, lsl #2
-	str r4, [r6, r1, lsl #2]
-	ldr r1, [r3, #4]
-	str r1, [r2, #4]
-	ldr r1, [r3, #8]
-	str r1, [r2, #8]
-	ldr r1, [r3, #12]
-	str r1, [r2, #12]
-	mov r1, r0
-	add r0, r0, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label172
-	b label31
-label33:
-	ldr r0, [sp, #48]
-	add r0, r0, #1
-	ldr r1, [sp, #36]
-	cmp r1, r0
-	ble label75
-	b label343
-label665:
-	ldr r2, [sp, #44]
-	ldr r1, [r2, r0, lsl #2]
-	ldr r6, [sp, #28]
-	str r1, [r6, r0, lsl #2]
-	add r0, r0, #1
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label33
-	b label665
-label45:
-	ldr r7, [sp, #52]
-	cmp r7, #4
-	bne label244
-	mov r7, #1
-	mov r8, #0
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	b label568
-label244:
-	mov r8, #0
-	add r4, r4, #1
-	cmp r1, r4
-	bgt label122
-	add r2, r2, #1
-	ldr r3, [sp, #4]
-	cmp r3, r2
-	bgt label127
-	ldr r0, [sp, #56]
-	ldr r1, [sp, #8]
-	add r0, r0, r1
-	ldr r2, [sp, #44]
-	str r8, [r2, r0, lsl #2]
-	ldr r1, [sp, #8]
-	add r1, r1, #1
-	ldr r7, [sp, #12]
-	cmp r7, r1
-	bgt label135
-	ldr r0, [sp, #16]
-	add r0, r0, #1
-	ldr r3, [sp, #20]
-	cmp r3, r0
-	bgt label140
-	ldr r2, [sp, #24]
-	cmp r2, #0
-	ble label33
-	mov r1, #0
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label25
-	b label24
-label568:
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-label607:
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	b label607
-label52:
-	lsl r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	sdiv r9, r5, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	sdiv r9, r6, r7
-	and r9, r9, #-2147483647
-	cmp r9, #1
-	bne label52
-	lsl r8, r8, #1
-	add r8, r8, #1
-	lsl r7, r7, #1
-	cmp r7, #1073741824
-	bge label16
-	b label607
-label70:
-	mov r8, r5
-	add r4, r4, #1
-	cmp r1, r4
-	bgt label122
-	add r2, r2, #1
-	ldr r3, [sp, #4]
-	cmp r3, r2
-	bgt label127
-	ldr r0, [sp, #56]
-	ldr r1, [sp, #8]
-	add r0, r0, r1
-	ldr r2, [sp, #44]
-	str r5, [r2, r0, lsl #2]
-	ldr r1, [sp, #8]
-	add r1, r1, #1
-	ldr r7, [sp, #12]
-	cmp r7, r1
-	bgt label135
-	ldr r0, [sp, #16]
-	add r0, r0, #1
-	ldr r3, [sp, #20]
-	cmp r3, r0
-	bgt label140
-	ldr r2, [sp, #24]
-	cmp r2, #0
-	ble label33
-	mov r1, #0
-	add r0, r1, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label25
-label24:
-	ldr r2, [sp, #44]
-	add r3, r2, r1, lsl #2
-	ldr r2, [sp, #44]
-	ldr r4, [r2, r1, lsl #2]
-	ldr r6, [sp, #28]
-	add r2, r6, r1, lsl #2
-	str r4, [r6, r1, lsl #2]
-	ldr r1, [r3, #4]
-	str r1, [r2, #4]
-	ldr r1, [r3, #8]
-	str r1, [r2, #8]
-	ldr r1, [r3, #12]
-	str r1, [r2, #12]
-	mov r1, r0
-	add r0, r0, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label25
-	b label24
-label32:
-	ldr r2, [sp, #44]
-	add r3, r2, r1, lsl #2
-	ldr r2, [sp, #44]
-	ldr r4, [r2, r1, lsl #2]
-	ldr r6, [sp, #28]
-	add r2, r6, r1, lsl #2
-	str r4, [r6, r1, lsl #2]
-	ldr r1, [r3, #4]
-	str r1, [r2, #4]
-	ldr r1, [r3, #8]
-	str r1, [r2, #8]
-	ldr r1, [r3, #12]
-	str r1, [r2, #12]
-	mov r1, r0
-	add r0, r0, #4
-	ldr r2, [sp, #24]
-	cmp r2, r0
-	ble label27
-	b label32
 label75:
 	mov r0, #116
 	bl _sysy_stoptime

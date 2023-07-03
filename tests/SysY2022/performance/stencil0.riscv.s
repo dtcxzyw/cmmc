@@ -15,24 +15,74 @@ main:
 	sd s2, 16(sp)
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-pcrel188:
+pcrel186:
 	auipc a0, %pcrel_hi(image_in)
-	addi a0, a0, %pcrel_lo(pcrel188)
+	addi a0, a0, %pcrel_lo(pcrel186)
 	mv s0, a0
 	jal getarray
 	mv s2, a0
 	li a0, 23
 	jal _sysy_starttime
-pcrel189:
+pcrel187:
 	auipc a0, %pcrel_hi(image_out)
-	addi s1, a0, %pcrel_lo(pcrel189)
+	addi s1, a0, %pcrel_lo(pcrel187)
 	li a0, 1
+label2:
 	addiw a1, a0, -1
 	li a2, 511
 	bge a0, a2, label20
-	j label19
+	li a3, 1
+	j label4
 label20:
 	mv a0, zero
+	j label7
+label4:
+	slliw a4, a3, 9
+	addw a2, a0, a4
+	sh2add a5, a2, s0
+	lw a5, 0(a5)
+	slliw a5, a5, 3
+	addiw t0, a3, -1
+	slliw t0, t0, 9
+	addw t1, a1, t0
+	sh2add t1, t1, s0
+	lw t1, 0(t1)
+	subw a5, a5, t1
+	addw t0, a0, t0
+	sh2add t0, t0, s0
+	lw t1, 0(t0)
+	subw a5, a5, t1
+	lw t0, 4(t0)
+	subw a5, a5, t0
+	addw a4, a1, a4
+	sh2add a4, a4, s0
+	lw t0, 0(a4)
+	subw a5, a5, t0
+	lw a4, 8(a4)
+	subw a4, a5, a4
+	addiw a3, a3, 1
+	slliw a5, a3, 9
+	addw t0, a1, a5
+	sh2add t0, t0, s0
+	lw t0, 0(t0)
+	subw a4, a4, t0
+	addw a5, a0, a5
+	sh2add a5, a5, s0
+	lw t0, 0(a5)
+	subw a4, a4, t0
+	lw a5, 4(a5)
+	subw a4, a4, a5
+	li a5, 255
+	min a4, a4, a5
+	max a4, a4, zero
+	sh2add a2, a2, s1
+	sw a4, 0(a2)
+	li a2, 1023
+	bge a3, a2, label6
+	j label4
+label6:
+	addiw a0, a0, 1
+	j label2
 label7:
 	slliw a1, a0, 9
 	sh2add a2, a1, s0
@@ -84,59 +134,6 @@ label7:
 	j label7
 label130:
 	mv a0, zero
-	j label9
-label19:
-	li a3, 1
-label4:
-	slliw a4, a3, 9
-	addw a2, a0, a4
-	sh2add a5, a2, s0
-	lw a5, 0(a5)
-	slliw a5, a5, 3
-	addiw t0, a3, -1
-	slliw t0, t0, 9
-	addw t1, a1, t0
-	sh2add t1, t1, s0
-	lw t1, 0(t1)
-	subw a5, a5, t1
-	addw t0, a0, t0
-	sh2add t0, t0, s0
-	lw t1, 0(t0)
-	subw a5, a5, t1
-	lw t0, 4(t0)
-	subw a5, a5, t0
-	addw a4, a1, a4
-	sh2add a4, a4, s0
-	lw t0, 0(a4)
-	subw a5, a5, t0
-	lw a4, 8(a4)
-	subw a4, a5, a4
-	addiw a3, a3, 1
-	slliw a5, a3, 9
-	addw t0, a1, a5
-	sh2add t0, t0, s0
-	lw t0, 0(t0)
-	subw a4, a4, t0
-	addw a5, a0, a5
-	sh2add a5, a5, s0
-	lw t0, 0(a5)
-	subw a4, a4, t0
-	lw a5, 4(a5)
-	subw a4, a4, a5
-	li a5, 255
-	min a4, a4, a5
-	max a4, a4, zero
-	sh2add a2, a2, s1
-	sw a4, 0(a2)
-	li a2, 1023
-	bge a3, a2, label6
-	j label4
-label6:
-	addiw a0, a0, 1
-	addiw a1, a0, -1
-	li a2, 511
-	bge a0, a2, label20
-	j label19
 label9:
 	sh2add a2, a0, s0
 	lw a3, 0(a2)

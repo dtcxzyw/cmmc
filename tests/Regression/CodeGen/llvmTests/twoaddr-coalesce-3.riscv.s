@@ -16,17 +16,18 @@ g:
 .text
 .globl foo
 foo:
-pcrel78:
+pcrel48:
 	auipc a0, %pcrel_hi(M)
-	lw a0, %pcrel_lo(pcrel78)(a0)
+	lw a0, %pcrel_lo(pcrel48)(a0)
 	mv a1, a0
 	ble a0, zero, label8
-pcrel79:
+pcrel49:
 	auipc a0, %pcrel_hi(total)
-	addi a2, a0, %pcrel_lo(pcrel79)
-	lw a0, %pcrel_lo(pcrel79)(a0)
+	addi a2, a0, %pcrel_lo(pcrel49)
+	lw a0, %pcrel_lo(pcrel49)(a0)
 	li a3, 1
 	ble a1, a3, label23
+label3:
 	li a4, 4294967295
 	and a3, a3, a4
 	srliw a5, a3, 31
@@ -36,79 +37,7 @@ pcrel79:
 	addw a0, a5, a0
 	addiw a3, a3, 1
 	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	j label74
+	j label3
 label8:
 	ret
 label23:
@@ -116,38 +45,27 @@ label23:
 	and a0, a0, a1
 	sw a0, 0(a2)
 	j label8
-label74:
-	li a4, 4294967295
-	and a3, a3, a4
-	srliw a5, a3, 31
-	add a5, a3, a5
-	sraiw a5, a5, 1
-	and a0, a0, a4
-	addw a0, a5, a0
-	addiw a3, a3, 1
-	ble a1, a3, label23
-	j label74
 .globl goo
 goo:
-pcrel135:
+pcrel105:
 	auipc a0, %pcrel_hi(M)
-	lw a0, %pcrel_lo(pcrel135)(a0)
+	lw a0, %pcrel_lo(pcrel105)(a0)
 	mv a1, a0
-	ble a0, zero, label87
-pcrel136:
+	ble a0, zero, label57
+pcrel106:
 	auipc a0, %pcrel_hi(total)
-	addi a2, a0, %pcrel_lo(pcrel136)
-	lw a3, %pcrel_lo(pcrel136)(a0)
+	addi a2, a0, %pcrel_lo(pcrel106)
+	lw a3, %pcrel_lo(pcrel106)(a0)
 	mv a0, a3
 	li a4, 4294967295
 	and a4, a3, a4
-pcrel137:
+pcrel107:
 	auipc a5, %pcrel_hi(g)
-	addi a3, a5, %pcrel_lo(pcrel137)
-	sw a4, %pcrel_lo(pcrel137)(a5)
+	addi a3, a5, %pcrel_lo(pcrel107)
+	sw a4, %pcrel_lo(pcrel107)(a5)
 	li a4, 1
-	ble a1, a4, label105
-label82:
+	ble a1, a4, label75
+label52:
 	li a5, 4294967295
 	and a4, a4, a5
 	srliw t0, a4, 31
@@ -158,12 +76,12 @@ label82:
 	and a5, a0, a5
 	sw a5, 0(a3)
 	addiw a4, a4, 1
-	ble a1, a4, label105
-	j label82
-label87:
+	ble a1, a4, label75
+	j label52
+label57:
 	ret
-label105:
+label75:
 	li a1, 4294967295
 	and a0, a0, a1
 	sw a0, 0(a2)
-	j label87
+	j label57

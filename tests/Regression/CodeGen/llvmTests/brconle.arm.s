@@ -40,23 +40,15 @@ test:
 	movt r1, #:upper16:result1
 	mov r2, #1
 	str r2, [r1, #0]
-	movw r1, #:lower16:k
-	movt r1, #:upper16:k
-	ldr r1, [r1, #0]
-	cmp r0, r1
-	ble label4
-label33:
-	movw r0, #:lower16:result1
-	movt r0, #:upper16:result1
-	mov r1, #0
-	str r1, [r0, #0]
-	b label4
 label2:
 	movw r1, #:lower16:k
 	movt r1, #:upper16:k
 	ldr r1, [r1, #0]
 	cmp r0, r1
 	ble label4
-	b label33
+	movw r0, #:lower16:result1
+	movt r0, #:upper16:result1
+	mov r1, #0
+	str r1, [r0, #0]
 label4:
 	bx lr
