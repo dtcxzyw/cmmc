@@ -105,6 +105,11 @@
       "parent": "70a3c44eef43f6781909d868fb8132a3678a2c66",
       "time": "2023-07-02 21:25:05 +0800"
     },
+    "9281299f68c3f217140406e04f046824bfe4bd33": {
+      "message": "feat(codegen): don't apply tail duplication for target blocks that end with conditional branches",
+      "parent": "ee9bfa4ff796c33883811cb7dc142ee64e4f8042",
+      "time": "2023-07-03 12:09:04 +0800"
+    },
     "99c96ab3877598e40db347786b94293026922ee6": {
       "message": "ci: support collecting multiple commits at one push",
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
@@ -156,5 +161,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "ee9bfa4ff796c33883811cb7dc142ee64e4f8042"
+  "head": "9281299f68c3f217140406e04f046824bfe4bd33"
 }
