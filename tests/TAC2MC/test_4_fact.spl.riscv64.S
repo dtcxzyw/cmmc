@@ -34,8 +34,8 @@ label14:
 	li a0, 1
 label9:
 	jal write
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	addi sp, sp, 8
 	ret
 label33:
@@ -45,14 +45,14 @@ label33:
 label18:
 	li a1, 1
 	mulw a1, a0, a1
-	addiw a0, a0, -1
 	li a2, 1
+	addiw a0, a0, -1
 	bne a0, a2, label6
 	j label34
 label6:
 	mulw a1, a0, a1
-	addiw a0, a0, -1
 	li a2, 1
+	addiw a0, a0, -1
 	bne a0, a2, label6
 label34:
 	mulw a0, a0, a1

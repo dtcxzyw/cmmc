@@ -10,8 +10,8 @@ fibFP:
 	fsw f8, 12(sp)
 	fsw f9, 8(sp)
 	sd ra, 0(sp)
-	fmv.s f8, f10
 	lui a0, 262144
+	fmv.s f8, f10
 	fmv.w.x f10, a0
 	flt.s a0, f8, f10
 	bne a0, zero, label12
@@ -30,8 +30,8 @@ label4:
 	fmv.w.x f10, a0
 	fsub.s f10, f8, f10
 	jal fibFP
-	fmv.s f9, f10
 	lui a0, 260096
+	fmv.s f9, f10
 	fmv.w.x f10, a0
 	fsub.s f10, f8, f10
 	jal fibFP
@@ -56,22 +56,22 @@ label40:
 	fmv.s f18, f12
 label29:
 	lui s0, 260096
-	fmv.w.x f10, s0
-	fsub.s f10, f8, f10
 	fmv.s f11, f9
+	fmv.w.x f10, s0
 	fmv.s f12, f18
+	fsub.s f10, f8, f10
 	jal takFP
+	fmv.s f11, f18
 	fmv.s f19, f10
+	fmv.s f12, f8
 	fmv.w.x f10, s0
 	fsub.s f10, f9, f10
-	fmv.s f11, f18
-	fmv.s f12, f8
 	jal takFP
+	fmv.s f11, f8
 	fmv.s f20, f10
+	fmv.s f12, f9
 	fmv.w.x f10, s0
 	fsub.s f10, f18, f10
-	fmv.s f11, f8
-	fmv.s f12, f9
 	jal takFP
 	flt.s a0, f20, f19
 	bne a0, zero, label56
@@ -111,10 +111,10 @@ main:
 	fmv.s f10, f9
 	fmv.s f11, f8
 	jal takFP
-	fmv.s f8, f10
-	fcvt.s.w f10, s0
 	lui a0, 269824
+	fmv.s f8, f10
 	fmv.w.x f11, a0
+	fcvt.s.w f10, s0
 	fadd.s f10, f11, f10
 	jal fibFP
 pcrel107:
@@ -148,8 +148,8 @@ label68:
 label69:
 	li a0, 41
 	jal _sysy_stoptime
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	flw f8, 8(sp)
 	flw f9, 12(sp)
 	ld s0, 16(sp)

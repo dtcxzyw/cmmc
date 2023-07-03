@@ -6,8 +6,8 @@ main:
 	addi sp, sp, -416
 	sd s0, 408(sp)
 	sd ra, 400(sp)
-	addi s0, sp, 0
 	li a0, 324
+	addi s0, sp, 0
 	jal _sysy_starttime
 	jal getint
 	mv a1, zero
@@ -257,8 +257,8 @@ label7:
 	sw a3, 392(s0)
 	li a3, 99
 	sw a3, 396(s0)
-	addiw a1, a1, 1
 	mv a4, a2
+	addiw a1, a1, 1
 	mv a2, zero
 label8:
 	sh2add a3, a2, s0
@@ -291,10 +291,10 @@ label8:
 	lw a5, 52(a3)
 	addw a4, a4, a5
 	lw a5, 56(a3)
-	addw a4, a4, a5
 	lw a3, 60(a3)
-	addw a4, a4, a3
+	addw a4, a4, a5
 	addiw a2, a2, 16
+	addw a4, a4, a3
 	li a3, 96
 	bge a2, a3, label11
 	j label8
@@ -305,8 +305,8 @@ label11:
 	lw a4, 4(a2)
 	addw a3, a3, a4
 	lw a4, 8(a2)
-	addw a3, a3, a4
 	lw a2, 12(a2)
+	addw a3, a3, a4
 	addw a2, a3, a2
 	li a3, -2147450879
 	mul a3, a2, a3
@@ -334,8 +334,8 @@ label12:
 	jal putch
 	li a0, 328
 	jal _sysy_stoptime
-	mv a0, zero
 	ld ra, 400(sp)
+	mv a0, zero
 	ld s0, 408(sp)
 	addi sp, sp, 416
 	ret

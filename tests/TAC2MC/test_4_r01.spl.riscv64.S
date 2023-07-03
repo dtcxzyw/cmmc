@@ -73,12 +73,12 @@ label23:
 main:
 	addi sp, sp, -8
 	sd ra, 0(sp)
-	li a0, 3
-	li a1, 1
-	li a2, 2
 	li a3, 3
+	li a2, 2
+	li a1, 1
+	li a0, 3
 	jal hanoi
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	addi sp, sp, 8
 	ret

@@ -11,8 +11,8 @@ A:
 .globl B
 B:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	addw a0, a0, a1
 	and a0, a0, a2
 	ret

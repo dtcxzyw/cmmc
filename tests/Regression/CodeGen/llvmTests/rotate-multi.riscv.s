@@ -7,8 +7,8 @@ f0:
 	srliw a2, a0, 25
 	or a1, a1, a2
 	slliw a2, a0, 9
-	or a1, a1, a2
 	srliw a0, a0, 23
+	or a1, a1, a2
 	or a0, a1, a0
 	ret
 .globl f1
@@ -16,18 +16,18 @@ f1:
 	slliw a2, a0, 7
 	or a1, a1, a2
 	slliw a2, a0, 9
-	or a1, a1, a2
 	srliw a0, a0, 23
+	or a1, a1, a2
 	or a0, a1, a0
 	ret
 .globl f2
 f2:
 	slliw a2, a0, 11
 	slliw a3, a1, 19
-	or a2, a2, a3
 	srliw a0, a0, 21
-	or a0, a2, a0
 	srliw a1, a1, 13
+	or a2, a2, a3
+	or a0, a2, a0
 	or a0, a0, a1
 	ret
 .globl f3
@@ -48,7 +48,7 @@ f3:
 	srliw a2, a0, 23
 	or a1, a1, a2
 	srliw a2, a0, 25
-	or a1, a1, a2
 	srliw a0, a0, 30
+	or a1, a1, a2
 	or a0, a1, a0
 	ret

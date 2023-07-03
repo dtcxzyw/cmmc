@@ -10,8 +10,8 @@ test_local_strategy:
 	mv a0, a1
 	bne a1, zero, label20
 	addw a1, a3, a4
-	addw a1, a5, a1
 	li a2, 4294967295
+	addw a1, a5, a1
 	and a0, a0, a2
 	addw a0, a1, a0
 	j label3

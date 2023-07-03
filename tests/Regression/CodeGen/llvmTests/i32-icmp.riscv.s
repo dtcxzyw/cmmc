@@ -4,45 +4,45 @@
 .globl icmp_eq
 icmp_eq:
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eq_constant
 icmp_eq_constant:
 	xori a0, a0, 42
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eq_constant_2048
 icmp_eq_constant_2048:
 	li a1, 2048
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eq_constant_2049
 icmp_eq_constant_2049:
 	li a1, 2049
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eq_constant_neg_2047
 icmp_eq_constant_neg_2047:
 	xori a0, a0, -2047
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eq_constant_neg_2048
 icmp_eq_constant_neg_2048:
 	xori a0, a0, -2048
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_eqz
@@ -54,52 +54,52 @@ icmp_eqz:
 .globl icmp_ne
 icmp_ne:
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_constant
 icmp_ne_constant:
 	xori a0, a0, 42
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_constant_2048
 icmp_ne_constant_2048:
 	li a1, 2048
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_constant_2049
 icmp_ne_constant_2049:
 	li a1, 2049
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_constant_neg_2047
 icmp_ne_constant_neg_2047:
 	xori a0, a0, -2047
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_constant_neg_2048
 icmp_ne_constant_neg_2048:
 	xori a0, a0, -2048
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_ne_neg_1
 icmp_ne_neg_1:
 	xori a0, a0, -1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl icmp_nez
@@ -111,8 +111,8 @@ icmp_nez:
 .globl icmp_sge
 icmp_sge:
 	slt a0, a0, a1
-	xori a0, a0, 1
 	li a1, 4294967295
+	xori a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_sge_constant_2047
@@ -193,8 +193,8 @@ icmp_sgt_constant_zero:
 .globl icmp_sle
 icmp_sle:
 	slt a0, a1, a0
-	xori a0, a0, 1
 	li a1, 4294967295
+	xori a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_sle_constant_2046
@@ -270,8 +270,8 @@ icmp_slt_constant_zero:
 .globl icmp_uge
 icmp_uge:
 	sltu a0, a0, a1
-	xori a0, a0, 1
 	li a1, 4294967295
+	xori a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_uge_constant_2047
@@ -349,8 +349,8 @@ icmp_ugt_constant_zero:
 .globl icmp_ule
 icmp_ule:
 	sltu a0, a1, a0
-	xori a0, a0, 1
 	li a1, 4294967295
+	xori a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl icmp_ule_constant_2046

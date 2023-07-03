@@ -26,9 +26,9 @@ pcrel22:
 pcrel23:
 	auipc a1, %pcrel_hi(jjjj)
 	lw a1, %pcrel_lo(pcrel23)(a1)
-	divuw a2, a0, a1
 pcrel24:
 	auipc a3, %pcrel_hi(kkkk)
+	divuw a2, a0, a1
 	sw a2, %pcrel_lo(pcrel24)(a3)
 	remuw a0, a0, a1
 pcrel25:

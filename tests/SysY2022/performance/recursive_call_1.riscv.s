@@ -50,8 +50,8 @@ pcrel40:
 label23:
 	li a0, 32
 	jal _sysy_stoptime
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	addi sp, sp, 8
 	ret
 label22:

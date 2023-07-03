@@ -13,8 +13,10 @@
 */
 
 #include <cmmc/CodeGen/InstInfo.hpp>
+#include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/ScheduleModel.hpp>
 #include <cmmc/CodeGen/Target.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <iostream>
 #include <iterator>
@@ -92,7 +94,6 @@ static void preRAScheduleBlock(MIRBasicBlock& block, const CodeGenContext& ctx) 
             addDep(&inst, lastInst);
         }
 
-        // TODO: reorder load/store/call?
         if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect) || isLock) {
             if(lastSideEffect)
                 addDep(&inst, lastSideEffect);
@@ -227,9 +228,209 @@ void preRASchedule(MIRFunction& func, const CodeGenContext& ctx) {
     // func.dump(std::cerr, ctx);
 }
 
+static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel& model, const MicroarchitectureInfo& info,
+                                const CodeGenContext& ctx) {
+    // build DAG & rename map
+    std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>> renameMap;
+    std::unordered_map<MIRInst*, std::unordered_set<MIRInst*>> antiDeps;
+    std::unordered_map<uint32_t, std::vector<MIRInst*>> lastTouch;
+    std::unordered_map<uint32_t, MIRInst*> lastDef;
+    std::unordered_map<MIRInst*, uint32_t> degrees;
+
+    auto addDep = [&](MIRInst* u, MIRInst* v) {
+        if(u == v)
+            return;
+        if(antiDeps[v].insert(u).second) {
+            ++degrees[u];
+
+            // auto& instInfoU = ctx.instInfo.getInstInfo(*u);
+            // auto& instInfoV = ctx.instInfo.getInstInfo(*v);
+            // instInfoU.print(std::cerr, *u, true);
+            // std::cerr << " -> ";
+            // instInfoV.print(std::cerr, *v, true);
+            // std::cerr << std::endl;
+        }
+    };
+
+    MIRInst* lastSideEffect = nullptr;
+    for(auto& inst : block.instructions()) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            auto flag = instInfo.getOperandFlag(idx);
+            auto op = inst.getOperand(idx);
+            if(op.isReg()) {
+                if(isOperandStackObject(op))
+                    op = ctx.registerInfo->getStackPointerRegister();
+
+                const auto reg = op.reg();
+                // TODO: regRenaming
+                renameMap[&inst][idx] = reg;
+
+                if(flag & OperandFlagUse) {
+                    if(auto it = lastDef.find(reg); it != lastDef.end())
+                        addDep(&inst, it->second);
+
+                    lastTouch[reg].push_back(&inst);
+                }
+            }
+        }
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            auto flag = instInfo.getOperandFlag(idx);
+            auto op = inst.getOperand(idx);
+            if(op.isReg()) {
+                if(isOperandStackObject(op))
+                    op = ctx.registerInfo->getStackPointerRegister();
+                const auto reg = op.reg();
+                if(flag & OperandFlagDef) {
+                    for(auto use : lastTouch[reg])
+                        addDep(&inst, use);
+
+                    lastTouch[reg] = { &inst };
+                    lastDef[reg] = &inst;
+                }
+            }
+        }
+
+        if(lastSideEffect) {
+            addDep(&inst, lastSideEffect);
+        }
+        if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
+            lastSideEffect = &inst;
+            if(requireOneFlag(instInfo.getInstFlag(), InstFlagCall | InstFlagTerminator)) {
+                for(auto& prevInst : block.instructions()) {
+                    if(&prevInst == &inst)
+                        break;
+                    addDep(&inst, &prevInst);
+                }
+            }
+        }
+    }
+
+    // top-down scheduling
+    constexpr bool debugSched = false;
+    [[maybe_unused]] auto dumpIssue = [&](const MIRInst& inst) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        instInfo.print(std::cerr << "issue ", inst, true);
+        std::cerr << std::endl;
+    };
+    [[maybe_unused]] auto dumpReady = [&](const MIRInst& inst) {
+        auto& instInfo = ctx.instInfo.getInstInfo(inst);
+        instInfo.print(std::cerr << "ready ", inst, true);
+        std::cerr << std::endl;
+    };
+
+    ScheduleState state{ renameMap };
+    std::list<MIRInst> newList;
+    std::queue<MIRInst*> schedulePlane;
+    if constexpr(debugSched) {
+        block.dump(std::cerr, ctx);
+        std::cerr << "Cycle 0" << std::endl;
+    }
+    for(auto& inst : block.instructions())
+        if(degrees[&inst] == 0) {
+            if constexpr(debugSched)
+                dumpReady(inst);
+            schedulePlane.push(&inst);
+        }
+
+    constexpr uint32_t maxBusyCycles = 200;
+    uint32_t busyCycle = 0;
+    while(newList.size() != block.instructions().size()) {
+        std::vector<MIRInst*> newReadyInsts;
+        for(uint32_t idx = 0; idx < info.issueWidth; ++idx) {
+            uint32_t cnt = 0;
+            bool success = false;
+            while(cnt < schedulePlane.size()) {
+                auto& inst = *schedulePlane.front();
+                auto& scheduleClass = model.getInstScheClass(inst.opcode());
+                schedulePlane.pop();
+                if(scheduleClass.schedule(state, inst, ctx.instInfo.getInstInfo(inst))) {
+                    if constexpr(debugSched)
+                        dumpIssue(inst);
+                    newList.push_back(inst);
+
+                    busyCycle = 0;
+                    for(auto v : antiDeps[&inst]) {
+                        if(--degrees[v] == 0) {
+                            // Don't push to schedulePlane here, because there are data/control harzards.
+                            // It should be scheduled in next cycle.
+                            newReadyInsts.push_back(v);
+                        }
+                    }
+                    success = true;
+                    break;
+                }
+                ++cnt;
+                schedulePlane.push(&inst);
+            }
+            if(!success)
+                break;
+        }
+        [[maybe_unused]] auto cycle = state.nextCycle();
+        if constexpr(debugSched) {
+            std::cerr << "Cycle " << cycle << std::endl;
+        }
+        ++busyCycle;
+        if(busyCycle > maxBusyCycles) {
+            std::cerr << "Failed to schedule instructions" << std::endl;
+            reportUnreachable(CMMC_LOCATION());
+        }
+
+        for(auto inst : newReadyInsts) {
+            if constexpr(debugSched)
+                dumpReady(*inst);
+            schedulePlane.push(inst);
+        }
+    }
+
+    block.instructions().swap(newList);
+}
+
 void postRASchedule(MIRFunction& func, const CodeGenContext& ctx) {
-    CMMC_UNUSED(func);
-    CMMC_UNUSED(ctx);
-    return;
+    auto& model = ctx.scheduleModel;
+    auto& info = model.getInfo();
+    if(!info.enablePostRAScheduling)
+        return;
+
+    for(auto& block : func.blocks()) {
+        postRAScheduleBlock(*block, model, info, ctx);
+    }
+}
+
+ScheduleState::ScheduleState(const std::unordered_map<const MIRInst*, std::unordered_map<uint32_t, uint32_t>>& regRenameMap)
+    : mCycleCount{ 0U }, mRegRenameMap{ regRenameMap }, mIssuedFlag{ 0U } {}
+
+uint32_t ScheduleState::queryRegisterLatency(const MIRInst& inst, uint32_t idx) const {
+    auto reg = mRegRenameMap.at(&inst).at(idx);
+    if(auto iter = mRegisterAvailableTime.find(reg); iter != mRegisterAvailableTime.end())
+        if(iter->second > mCycleCount)
+            return iter->second - mCycleCount;
+    return 0;
+}
+bool ScheduleState::isPipelineReady(uint32_t pipelineId, uint32_t repeatRate) const {
+    if(auto iter = mLastPipelineUsed.find(pipelineId); iter != mLastPipelineUsed.end())
+        return mCycleCount - iter->second >= repeatRate;
+    return true;
+}
+bool ScheduleState::isAvailable(uint32_t mask) const {
+    return (mIssuedFlag & mask) != mask;
+}
+
+void ScheduleState::setIssued(uint32_t mask) {
+    mIssuedFlag |= mask;
+}
+void ScheduleState::resetPipeline(uint32_t pipelineId) {
+    mLastPipelineUsed[pipelineId] = mCycleCount;
+}
+void ScheduleState::makeRegisterReady(const MIRInst& inst, uint32_t idx, uint32_t latency) {
+    auto reg = mRegRenameMap.at(&inst).at(idx);
+    mRegisterAvailableTime[reg] = mCycleCount + latency;
+}
+
+uint32_t ScheduleState::nextCycle() {
+    ++mCycleCount;
+    mIssuedFlag = 0;
+    return mCycleCount;
 }
 CMMC_MIR_NAMESPACE_END

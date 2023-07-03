@@ -35,8 +35,8 @@ test:
 pcrel15:
 	auipc a0, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel15)(a0)
-	sltiu a0, a0, 10
 	li a1, 4294967295
+	sltiu a0, a0, 10
 	and a0, a0, a1
 pcrel16:
 	auipc a1, %pcrel_hi(r1)

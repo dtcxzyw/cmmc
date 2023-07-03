@@ -12,9 +12,9 @@ test_srem_even:
 	li a2, 6
 	mulw a1, a1, a2
 	subw a0, a0, a1
+	li a1, 4294967295
 	xori a0, a0, 1
 	sltiu a0, a0, 1
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl test_srem_odd
@@ -29,15 +29,15 @@ test_srem_odd:
 	li a2, 99
 	mulw a1, a1, a2
 	subw a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_srem_pow2_setne
 test_srem_pow2_setne:
 	sext.b a0, a0
+	li a1, 4294967295
 	andi a0, a0, 3
 	sltu a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret

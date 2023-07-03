@@ -92,41 +92,41 @@ label4:
 	addw a2, a0, a4
 	sh2add a5, a2, s0
 	lw a5, 0(a5)
-	slliw a5, a5, 3
 	addiw t0, a3, -1
+	slliw a5, a5, 3
 	slliw t0, t0, 10
 	addw t1, a1, t0
 	sh2add t1, t1, s0
 	lw t1, 0(t1)
-	subw a5, a5, t1
 	addw t0, a0, t0
+	subw a5, a5, t1
 	sh2add t0, t0, s0
 	lw t1, 0(t0)
-	subw a5, a5, t1
 	lw t0, 4(t0)
-	subw a5, a5, t0
+	subw a5, a5, t1
 	addw a4, a1, a4
+	subw a5, a5, t0
 	sh2add a4, a4, s0
 	lw t0, 0(a4)
-	subw a5, a5, t0
 	lw a4, 8(a4)
-	subw a4, a5, a4
+	subw a5, a5, t0
 	addiw a3, a3, 1
+	subw a4, a5, a4
 	slliw a5, a3, 10
 	addw t0, a1, a5
 	sh2add t0, t0, s0
 	lw t0, 0(t0)
-	subw a4, a4, t0
 	addw a5, a0, a5
+	subw a4, a4, t0
 	sh2add a5, a5, s0
 	lw t0, 0(a5)
-	subw a4, a4, t0
 	lw a5, 4(a5)
+	subw a4, a4, t0
+	sh2add a2, a2, s1
 	subw a4, a4, a5
 	li a5, 255
 	min a4, a4, a5
 	max a4, a4, zero
-	sh2add a2, a2, s1
 	sw a4, 0(a2)
 	li a2, 1023
 	bge a3, a2, label6
@@ -168,15 +168,15 @@ label9:
 	lw a2, 0(a2)
 	add a1, a1, a3
 	sw a2, 0(a1)
-	addiw a0, a0, 4
 	li a1, 1024
+	addiw a0, a0, 4
 	bge a0, a1, label11
 	j label9
 label11:
 	li a0, 59
 	jal _sysy_stoptime
-	li a0, 1048576
 	mv a1, s1
+	li a0, 1048576
 	jal putarray
 	mv a0, s2
 	ld ra, 0(sp)

@@ -23,8 +23,8 @@ select_noopt:
 	or a0, a0, a1
 	li a1, 4294967295
 	and a1, a0, a1
-	sltu a2, zero, a1
 	mv a0, a3
+	sltu a2, zero, a1
 	bne a2, zero, label34
 	mv a0, a4
 label34:

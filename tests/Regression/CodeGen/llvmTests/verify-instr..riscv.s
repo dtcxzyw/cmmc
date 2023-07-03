@@ -9,48 +9,48 @@ mulw:
 	addiw a1, a0, 1
 	ble a3, a1, label21
 	li a2, 4294967295
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
@@ -60,8 +60,8 @@ label16:
 	j label8
 label65:
 	li a2, 4294967295
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
@@ -74,8 +74,8 @@ label21:
 	j label8
 label66:
 	li a2, 4294967295
-	and a1, a1, a2
 	and a0, a0, a2
+	and a1, a1, a2
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21

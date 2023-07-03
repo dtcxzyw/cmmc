@@ -38,6 +38,7 @@ label5:
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a5, a0, 2
+	addiw a0, a0, 3
 	addw a4, a4, a5
 	mul a5, a4, a2
 	srai t0, a5, 61
@@ -45,7 +46,6 @@ label5:
 	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
-	addiw a0, a0, 3
 	addw a0, a4, a0
 	mul a2, a0, a2
 	srai a4, a2, 61
@@ -59,6 +59,7 @@ label5:
 	j label5
 label10:
 	addw a1, a0, a2
+	addiw a0, a0, 1
 	li a2, 1073790977
 	mul a2, a1, a2
 	srai a3, a2, 61
@@ -67,7 +68,6 @@ label10:
 	li a3, 2147385347
 	mulw a2, a2, a3
 	subw a1, a1, a2
-	addiw a0, a0, 1
 	ble s0, a0, label57
 	mv a2, a1
 	j label10
@@ -80,8 +80,8 @@ label13:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
@@ -107,6 +107,7 @@ label9:
 	mulw a5, a5, a3
 	subw a4, a4, a5
 	addiw a5, a0, 2
+	addiw a0, a0, 3
 	addw a4, a4, a5
 	mul a5, a4, a2
 	srai t0, a5, 61
@@ -114,7 +115,6 @@ label9:
 	add a5, a5, t0
 	mulw a5, a5, a3
 	subw a4, a4, a5
-	addiw a0, a0, 3
 	addw a0, a4, a0
 	mul a2, a0, a2
 	srai a4, a2, 61

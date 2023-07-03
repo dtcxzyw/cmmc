@@ -31,9 +31,9 @@ pcrel24:
 	li a2, 4294967295
 	and a1, a1, a2
 	xor a0, a0, a1
-	andi a0, a0, 255
 pcrel25:
 	auipc a1, %pcrel_hi(a)
+	andi a0, a0, 255
 	sw a0, %pcrel_lo(pcrel25)(a1)
 	ret
 .globl PR37667
@@ -49,8 +49,8 @@ pcrel51:
 	auipc a1, %pcrel_hi(c)
 	lw a1, %pcrel_lo(pcrel51)(a1)
 	or a0, a0, a1
-	andi a0, a0, 255
 pcrel52:
 	auipc a1, %pcrel_hi(a)
+	andi a0, a0, 255
 	sw a0, %pcrel_lo(pcrel52)(a1)
 	ret

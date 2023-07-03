@@ -11,10 +11,10 @@ test2:
 	li a1, 4
 	ble a0, a1, label7
 	addiw a1, a0, -5
+	addiw a0, a0, -4
 	srliw a1, a1, 2
 	slliw a1, a1, 2
 	subw a1, zero, a1
-	addiw a0, a0, -4
 	addw a0, a1, a0
 label7:
 	ret

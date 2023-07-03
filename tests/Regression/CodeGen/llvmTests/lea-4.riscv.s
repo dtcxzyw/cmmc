@@ -12,7 +12,7 @@ t1:
 .globl t2
 t2:
 	addiw a0, a0, -1
-	slliw a0, a0, 1
 	li a1, 65535
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret

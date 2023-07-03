@@ -10,8 +10,8 @@ A:
 test5:
 	andi a1, a1, 255
 	li a2, 32
-	subw a2, a2, a1
 	li a3, 4294967295
+	subw a2, a2, a1
 	and a2, a2, a3
 	srlw a0, a0, a2
 pcrel18:

@@ -46,8 +46,8 @@ test_srem8:
 .globl test_udiv16
 test_udiv16:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	divw a0, a0, a1
 	and a0, a0, a2
 	ret
@@ -65,8 +65,8 @@ test_udiv8:
 .globl test_urem16
 test_urem16:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	remw a0, a0, a1
 	and a0, a0, a2
 	ret

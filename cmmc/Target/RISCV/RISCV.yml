@@ -65,13 +65,13 @@ InstInfo:
       Mnemonic: sra
   ## 2.5 Control Transfer Instructions
   JAL:
-    Format: jal $Tgt:Reloc[Use]
+    Format: jal $Tgt:Reloc[Metadata]
     Flag: [Call]
   RET:
     Format: ret
     Flag: [Terminator, Return, NoFallthrough]
   Branches:
-    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Use] # $Prob:Prob[Metadata]"
+    Format: "$Mnemonic:Template $Rs1:GPR[Use], $Rs2:GPR[Use], $Tgt:Reloc[Metadata] # $Prob:Prob[Metadata]"
     Flag: [Terminator, Branch]
     Instances:
       BEQ:
@@ -1696,3 +1696,105 @@ InstSelection:
 ScheduleModel:
   sifive-u74:
     CustomPeepholeOpt: true
+    Classes:
+      IntegerArithmetic:
+        [
+          ADDI,
+          SLTI,
+          SLTIU,
+          ANDI,
+          ORI,
+          XORI,
+          SLLI,
+          SRLI,
+          SRAI,
+          LUI,
+          AUIPC,
+          ADD,
+          SLT,
+          SLTU,
+          AND,
+          OR,
+          XOR,
+          SLL,
+          SRL,
+          SUB,
+          SRA,
+          ADDIW,
+          SLLIW,
+          SRLIW,
+          SRAIW,
+          ADDW,
+          SUBW,
+          SLLW,
+          SRLW,
+          SRAW,
+          ADD_UW,
+          SLLI_UW,
+          ANDN,
+          ORN,
+          XNOR,
+          MIN,
+          MINU,
+          MAX,
+          MAXU,
+          SEXT_B,
+          SEXT_H,
+          SEXT_W,
+          ZEXT_H,
+          LoadImm12,
+          MoveGPR,
+          InstLoadStackObjectAddr,
+          InstCopy,
+          InstCopyFromReg,
+          InstCopyToReg,
+        ]
+      SlowLoadImm: [InstLoadImm, LoadImm32]
+      IntegerArithmeticLateB:
+        [ROL, ROLW, ROR, RORI, RORIW, RORW, CLZ, CLZW, CTZ, CTZW, ORC_B]
+      IntegerArithmeticEarlyB: [CPOP, CPOPW]
+      IntegerArithmeticLateAB: [REV8]
+      IntegerArithmeticEarlyLateB:
+        [SH1ADD, SH1ADD_UW, SH2ADD, SH2ADD_UW, SH3ADD, SH3ADD_UW]
+      Branch:
+        [
+          JAL,
+          RET,
+          BEQ,
+          BNE,
+          BLT,
+          BLE,
+          BGT,
+          BGE,
+          BLTU,
+          BLEU,
+          BGTU,
+          BGEU,
+          J,
+          UNIMP,
+        ]
+      LoadStore:
+        [
+          LB,
+          LH,
+          LW,
+          LBU,
+          LHU,
+          SB,
+          SH,
+          SW,
+          LD,
+          LWU,
+          SD,
+          InstStoreRegToStack,
+          InstLoadRegFromStack,
+        ]
+      Multi: [MUL, MULH, MULHSU, MULHU, MULW]
+      DivRem: [DIV, DIVU, REM, REMU, DIVW, DIVUW, REMW, REMUW]
+      FPCycle1: [FMV_X_W]
+      FPCycle2:
+        [FNEG_S, FCVT_S_W, FCVT_S_WU, FMV_S, FMV_W_X, FMIN_S, FMAX_S, FSGNJ_S]
+      FPCycle4: [FEQ_S, FLT_S, FLE_S, FCVT_W_S, FCVT_WU_S]
+      FPCycle5: [FADD_S, FSUB_S, FMUL_S]
+      FPDiv: [FDIV_S]
+      FPLoadStore: [FLW, FSW]

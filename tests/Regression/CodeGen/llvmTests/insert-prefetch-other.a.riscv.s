@@ -13,8 +13,8 @@ foo:
 	ble a0, zero, label13
 pcrel36:
 	auipc a0, %pcrel_hi(X)
-	addi a2, a0, %pcrel_lo(pcrel36)
 	sh zero, %pcrel_lo(pcrel36)(a0)
+	addi a2, a0, %pcrel_lo(pcrel36)
 	xori a0, a1, 1
 	sltu a0, zero, a0
 	bne a0, zero, label19

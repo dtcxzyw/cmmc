@@ -30,9 +30,9 @@ unsigned_i1:
 pcrel23:
 	auipc a0, %pcrel_hi(x)
 	lw a0, %pcrel_lo(pcrel23)(a0)
+	li a1, 4294967295
 	xori a0, a0, 42
 	sltiu a0, a0, 1
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl unsigned_i16
@@ -63,9 +63,9 @@ use_i1:
 pcrel66:
 	auipc a0, %pcrel_hi(x)
 	lw a0, %pcrel_lo(pcrel66)(a0)
+	li a1, 4294967295
 	xori a0, a0, 42
 	sltiu a0, a0, 1
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl use_i16

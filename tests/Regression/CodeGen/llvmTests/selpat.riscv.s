@@ -221,9 +221,9 @@ pcrel312:
 pcrel313:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel313)(a0)
-	slt a5, a4, a3
 pcrel314:
 	auipc a0, %pcrel_hi(f)
+	slt a5, a4, a3
 	lw a0, %pcrel_lo(pcrel314)(a0)
 pcrel315:
 	auipc a1, %pcrel_hi(t)
@@ -234,8 +234,8 @@ pcrel315:
 label311:
 	auipc a5, %pcrel_hi(z1)
 	sw a2, %pcrel_lo(label311)(a5)
-	slt a4, a3, a4
 	mv a2, a1
+	slt a4, a3, a4
 	bne a4, zero, label309
 	mv a2, a0
 label309:
@@ -244,8 +244,8 @@ label309:
 pcrel316:
 	auipc a2, %pcrel_hi(c)
 	lw a4, %pcrel_lo(pcrel316)(a2)
-	slt a5, a3, a4
 	mv a2, a0
+	slt a5, a3, a4
 	bne a5, zero, label307
 	mv a2, a1
 label307:
@@ -313,9 +313,9 @@ calc_selltk:
 pcrel450:
 	auipc a0, %pcrel_hi(a)
 	lw a3, %pcrel_lo(pcrel450)(a0)
-	slti a4, a3, 10
 pcrel451:
 	auipc a0, %pcrel_hi(t)
+	slti a4, a3, 10
 	lw a0, %pcrel_lo(pcrel451)(a0)
 pcrel452:
 	auipc a1, %pcrel_hi(f)
@@ -578,9 +578,9 @@ pcrel820:
 pcrel821:
 	auipc a0, %pcrel_hi(b)
 	lw a4, %pcrel_lo(pcrel821)(a0)
-	sltu a5, a4, a3
 pcrel822:
 	auipc a0, %pcrel_hi(f)
+	sltu a5, a4, a3
 	lw a0, %pcrel_lo(pcrel822)(a0)
 pcrel823:
 	auipc a1, %pcrel_hi(t)
@@ -591,8 +591,8 @@ pcrel823:
 label819:
 	auipc a5, %pcrel_hi(z1)
 	sw a2, %pcrel_lo(label819)(a5)
-	sltu a4, a3, a4
 	mv a2, a1
+	sltu a4, a3, a4
 	bne a4, zero, label817
 	mv a2, a0
 label817:
@@ -601,8 +601,8 @@ label817:
 pcrel824:
 	auipc a2, %pcrel_hi(c)
 	lw a4, %pcrel_lo(pcrel824)(a2)
-	sltu a5, a3, a4
 	mv a2, a0
+	sltu a5, a3, a4
 	bne a5, zero, label815
 	mv a2, a1
 label815:

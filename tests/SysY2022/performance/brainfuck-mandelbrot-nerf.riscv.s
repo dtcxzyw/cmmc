@@ -28,8 +28,8 @@ main:
 	sd ra, 0(sp)
 	jal getch
 	xori a1, a0, 62
-	sltu a1, zero, a1
 	xori a2, a0, 60
+	sltu a1, zero, a1
 	sltu a2, zero, a2
 	and a1, a1, a2
 	xori a2, a0, 43
@@ -57,8 +57,8 @@ main:
 label2:
 	jal getch
 	xori a1, a0, 62
-	sltu a1, zero, a1
 	xori a2, a0, 60
+	sltu a1, zero, a1
 	sltu a2, zero, a2
 	and a1, a1, a2
 	xori a2, a0, 43
@@ -134,8 +134,8 @@ label5:
 	sw a0, 0(a1)
 	jal getch
 	xori a1, a0, 62
-	sltu a1, zero, a1
 	xori a2, a0, 60
+	sltu a1, zero, a1
 	sltu a2, zero, a2
 	and a1, a1, a2
 	xori a2, a0, 43
@@ -163,8 +163,8 @@ label5:
 label8:
 	jal getch
 	xori a1, a0, 62
-	sltu a1, zero, a1
 	xori a2, a0, 60
+	sltu a1, zero, a1
 	sltu a2, zero, a2
 	and a1, a1, a2
 	xori a2, a0, 43
@@ -206,10 +206,10 @@ label405:
 	mv s3, zero
 	li a0, 116
 	jal _sysy_starttime
+	mv a2, zero
 pcrel618:
 	auipc a0, %pcrel_hi(return_a)
 	addi a0, a0, %pcrel_lo(pcrel618)
-	mv a2, zero
 	j label15
 label11:
 	jal getch
@@ -234,15 +234,15 @@ label15:
 	sw zero, 52(a1)
 	sw zero, 56(a1)
 	sw zero, 60(a1)
-	addi a2, a2, 16
 	li a1, 512
+	addi a2, a2, 16
 	bge a2, a1, label17
 	j label15
 label17:
 	auipc a1, %pcrel_hi(tape)
-	addi a1, a1, %pcrel_lo(label17)
 	mv s4, zero
 	mv a4, zero
+	addi a1, a1, %pcrel_lo(label17)
 	mv a2, zero
 	mv a3, zero
 	mv a5, zero
@@ -636,8 +636,8 @@ label58:
 label13:
 	li a0, 116
 	jal _sysy_starttime
+	mv a2, zero
 pcrel621:
 	auipc a0, %pcrel_hi(return_a)
 	addi a0, a0, %pcrel_lo(pcrel621)
-	mv a2, zero
 	j label15

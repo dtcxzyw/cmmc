@@ -157,6 +157,9 @@ public:
     [[nodiscard]] MIROperand getReturnAddressRegister() const noexcept override {
         return ARM::ra;
     }
+    [[nodiscard]] MIROperand getStackPointerRegister() const noexcept override {
+        return ARM::sp;
+    }
 };
 
 class ARMTarget final : public Target {

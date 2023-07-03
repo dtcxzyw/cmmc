@@ -4,8 +4,8 @@
 .globl f
 f:
 	ori a1, a0, 1
-	slliw a1, a1, 5
 	srliw a0, a0, 27
+	slliw a1, a1, 5
 	andi a0, a0, 1
 	or a0, a1, a0
 	ret

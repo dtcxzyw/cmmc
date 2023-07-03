@@ -12,8 +12,8 @@ icmp_i16_signed:
 .globl icmp_i16_unsigned
 icmp_i16_unsigned:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	slt a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1

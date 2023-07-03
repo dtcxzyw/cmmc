@@ -4,8 +4,8 @@
 .globl foo
 foo:
 	andi a0, a0, 255
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	li a1, 65535
 	and a1, a0, a1
@@ -13,15 +13,15 @@ foo:
 	divw a0, a0, zero
 	li a1, 65535
 	and a0, a0, a1
+	li a1, 4294967295
 	andi a0, a0, 255
 	sext.b a0, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	j label3
 label14:
 	andi a0, a1, 255
-	sext.b a0, a0
 	li a1, 4294967295
+	sext.b a0, a0
 	and a0, a0, a1
 label3:
 	ret

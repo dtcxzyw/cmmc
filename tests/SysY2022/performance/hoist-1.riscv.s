@@ -42,8 +42,8 @@ label17:
 	jal putint
 	li a0, 10
 	jal putch
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
@@ -71,8 +71,8 @@ label9:
 	srli a1, a1, 63
 	add a1, a1, a4
 	mulw a1, a1, a2
-	subw a1, a3, a1
 	mv a2, a0
+	subw a1, a3, a1
 	addiw a0, a0, 4
 	ble s0, a0, label10
 	j label9
@@ -92,8 +92,8 @@ label13:
 	srli a1, a1, 63
 	add a1, a1, a4
 	mulw a1, a1, a2
-	subw a1, a3, a1
 	mv a2, a0
+	subw a1, a3, a1
 	addiw a0, a0, 4
 	ble s0, a0, label14
 	j label13
@@ -113,8 +113,8 @@ label5:
 	srli a1, a1, 63
 	add a1, a1, a4
 	mulw a1, a1, a2
-	subw a1, a3, a1
 	mv a2, a0
+	subw a1, a3, a1
 	addiw a0, a0, 4
 	ble s0, a0, label6
 	j label5

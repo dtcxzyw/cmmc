@@ -34,11 +34,11 @@ pcrel40:
 pcrel41:
 	auipc a1, %pcrel_hi(c)
 	lw a1, %pcrel_lo(pcrel41)(a1)
+pcrel42:
+	auipc a2, %pcrel_hi(a)
 	mulw a1, a0, a1
 	li a0, 4294967295
 	and a1, a1, a0
-pcrel42:
-	auipc a2, %pcrel_hi(a)
 	sw a1, %pcrel_lo(pcrel42)(a2)
 pcrel43:
 	auipc a1, %pcrel_hi(e)

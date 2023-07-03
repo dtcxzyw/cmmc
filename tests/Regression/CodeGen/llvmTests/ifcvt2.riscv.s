@@ -4,13 +4,13 @@
 .globl t1
 t1:
 	li a4, 10
-	slt a4, a4, a2
 	slti a5, a3, 4
-	or a4, a4, a5
-	sltu a4, zero, a4
 	addw a1, a0, a1
+	slt a4, a4, a2
 	addw a0, a2, a1
+	or a4, a4, a5
 	subw a0, a0, a3
+	sltu a4, zero, a4
 	bne a4, zero, label20
 	mv a0, a1
 label20:
@@ -18,11 +18,11 @@ label20:
 .globl t2
 t2:
 	li a4, 10
-	slt a4, a4, a2
 	slti a5, a3, 4
-	and a4, a4, a5
 	addw a1, a0, a1
+	slt a4, a4, a2
 	addw a0, a2, a1
+	and a4, a4, a5
 	subw a0, a0, a3
 	bne a4, zero, label37
 	mv a0, a1

@@ -66,8 +66,8 @@ label60:
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
 	slt a0, a1, a0
-	xori a0, a0, 1
 	fmv.s f10, f12
+	xori a0, a0, 1
 	bne a0, zero, label70
 	fmv.s f10, f13
 label70:
@@ -100,8 +100,8 @@ label98:
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
 	slt a0, a0, a1
-	xori a0, a0, 1
 	fmv.s f10, f12
+	xori a0, a0, 1
 	bne a0, zero, label108
 	fmv.s f10, f13
 label108:
@@ -118,8 +118,8 @@ label118:
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	fmv.s f10, f12
+	sltiu a0, a0, 1
 	bne a0, zero, label128
 	fmv.s f10, f13
 label128:
@@ -136,8 +136,8 @@ label138:
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	fmv.s f10, f12
+	sltu a0, zero, a0
 	bne a0, zero, label148
 	fmv.s f10, f13
 label148:
@@ -170,8 +170,8 @@ label176:
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
 	feq.s a0, f10, f11
-	xori a0, a0, 1
 	fmv.s f10, f12
+	xori a0, a0, 1
 	bne a0, zero, label186
 	fmv.s f10, f13
 label186:

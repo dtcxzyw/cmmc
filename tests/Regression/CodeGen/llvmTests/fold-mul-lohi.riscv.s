@@ -20,19 +20,19 @@ foo:
 	mv a1, zero
 label2:
 	li a2, 4294967295
-	and a3, a1, a2
 pcrel43:
 	auipc a4, %pcrel_hi(B)
+	and a3, a1, a2
 	addi a4, a4, %pcrel_lo(pcrel43)
 	add a4, a4, a3
 	lb a4, 0(a4)
-	andi a4, a4, 255
-	slliw a4, a4, 1
-	andi a4, a4, 255
 pcrel44:
 	auipc a5, %pcrel_hi(A)
+	andi a4, a4, 255
 	addi a5, a5, %pcrel_lo(pcrel44)
+	slliw a4, a4, 1
 	add a3, a5, a3
+	andi a4, a4, 255
 	sb a4, 0(a3)
 	sh3add a3, a1, a1
 	and a2, a3, a2

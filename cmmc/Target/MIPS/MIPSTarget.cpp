@@ -194,6 +194,9 @@ public:
     [[nodiscard]] MIROperand getReturnAddressRegister() const noexcept override {
         return MIPS::ra;
     }
+    [[nodiscard]] MIROperand getStackPointerRegister() const noexcept override {
+        return MIPS::sp;
+    }
 };
 
 class MIPSTarget final : public Target {

@@ -38,12 +38,12 @@ pcrel35:
 pcrel36:
 	auipc a1, %pcrel_hi(j)
 	lw a1, %pcrel_lo(pcrel36)(a1)
+pcrel37:
+	auipc a3, %pcrel_hi(r1)
 	sltu a1, a0, a1
 	xori a2, a1, 1
 	li a1, 4294967295
 	and a2, a2, a1
-pcrel37:
-	auipc a3, %pcrel_hi(r1)
 	sw a2, %pcrel_lo(pcrel37)(a3)
 pcrel38:
 	auipc a2, %pcrel_hi(m)

@@ -13,13 +13,237 @@
 */
 
 #include <RISCV/InstInfoDecl.hpp>
-#include <RISCV/ScheduleModelImpl.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
 #include <cstdint>
 #include <deque>
 #include <iostream>
 #include <iterator>
 
+CMMC_TARGET_NAMESPACE_BEGIN
+
+enum RISCVPipeline : uint32_t { RISCVIDivPipeline, RISCVFPDivPipeline };
+enum RISCVIssueMask : uint32_t {
+    RISCVPipelineA = 1 << 0,
+    RISCVPipelineB = 1 << 1,
+    RISCVPipelineAB = RISCVPipelineA | RISCVPipelineB
+};
+
+template <uint32_t ValidPipeline, bool Early, bool Late>
+class RISCVScheduleClassIntegerArithmeticGeneric final : public ScheduleClass {
+    static_assert(ValidPipeline != 0 && (Early || Late));
+
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(ValidPipeline))
+            return false;
+        bool availableInAG = true;
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(auto latency = state.queryRegisterLatency(inst, idx); latency <= 2) {
+                    availableInAG &= (latency == 0);
+                } else
+                    return false;
+            }
+        }
+
+        if constexpr(Early) {
+            if(availableInAG) {
+                if constexpr(ValidPipeline == RISCVPipelineAB) {
+                    state.setIssued(state.isAvailable(RISCVPipelineA) ? RISCVPipelineA : RISCVPipelineB);
+                } else {
+                    state.setIssued(ValidPipeline);
+                }
+                state.makeRegisterReady(inst, 0, 1);
+                return true;
+            }
+        }
+
+        if constexpr(Late) {
+            if constexpr(ValidPipeline == RISCVPipelineAB) {
+                state.setIssued(state.isAvailable(RISCVPipelineA) ? RISCVPipelineA : RISCVPipelineB);
+            } else {
+                state.setIssued(ValidPipeline);
+            }
+            state.makeRegisterReady(inst, 0, 3);
+            return true;
+        }
+
+        return false;
+    }
+};
+
+using RISCVScheduleClassIntegerArithmetic = RISCVScheduleClassIntegerArithmeticGeneric<RISCVPipelineAB, true, true>;
+using RISCVScheduleClassIntegerArithmeticLateB = RISCVScheduleClassIntegerArithmeticGeneric<RISCVPipelineB, false, true>;
+using RISCVScheduleClassIntegerArithmeticEarlyB = RISCVScheduleClassIntegerArithmeticGeneric<RISCVPipelineB, true, false>;
+using RISCVScheduleClassIntegerArithmeticLateAB = RISCVScheduleClassIntegerArithmeticGeneric<RISCVPipelineAB, false, true>;
+using RISCVScheduleClassIntegerArithmeticEarlyLateB = RISCVScheduleClassIntegerArithmeticGeneric<RISCVPipelineB, true, true>;
+
+class RISCVScheduleClassSlowLoadImm final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo&) const override {
+        auto& imm = inst.getOperand(1);
+        if(isOperandImm12(imm)) {
+            state.makeRegisterReady(inst, 0, 1);
+        } else {
+            // LUI + ADDI
+            state.makeRegisterReady(inst, 0, 3);
+        }
+        return true;
+    }
+};
+class RISCVScheduleClassBranch final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 2)
+                    return false;
+            }
+        }
+
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+class RISCVScheduleClassLoadStore final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineA))
+            return false;
+        // require effective addresses to be ready in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        if(instInfo.getOperandFlag(0) & OperandFlagDef) {
+            state.makeRegisterReady(inst, 0, 3);
+        }
+
+        state.setIssued(RISCVPipelineA);
+        return true;
+    }
+};
+class RISCVScheduleClassMulti final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+        // consumes operands in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        state.makeRegisterReady(inst, 0, 3);
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+class RISCVScheduleClassDivRem final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+        if(!state.isPipelineReady(RISCVIDivPipeline, 65))
+            return false;
+
+        // consumes operands in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        // TODO: estimate latency using the range info?
+        state.resetPipeline(RISCVIDivPipeline);
+        state.makeRegisterReady(inst, 0, 68);
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+template <uint32_t Latency>
+class RISCVScheduleClassFP final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+
+        // consumes operands in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        state.makeRegisterReady(inst, 0, Latency);
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+
+using RISCVScheduleClassFPCycle1 = RISCVScheduleClassFP<1>;
+using RISCVScheduleClassFPCycle2 = RISCVScheduleClassFP<2>;
+using RISCVScheduleClassFPCycle4 = RISCVScheduleClassFP<4>;
+using RISCVScheduleClassFPCycle5 = RISCVScheduleClassFP<5>;
+
+class RISCVScheduleClassFPDiv final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineB))
+            return false;
+        if(!state.isPipelineReady(RISCVFPDivPipeline, 33))
+            return false;
+
+        // consumes operands in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        state.resetPipeline(RISCVFPDivPipeline);
+        state.makeRegisterReady(inst, 0, 36);
+        state.setIssued(RISCVPipelineB);
+        return true;
+    }
+};
+class RISCVScheduleClassFPLoadStore final : public ScheduleClass {
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(!state.isAvailable(RISCVPipelineA))
+            return false;
+        // require effective addresses to be ready in the AG stage
+        for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
+            if(instInfo.getOperandFlag(idx) & OperandFlagUse) {
+                if(state.queryRegisterLatency(inst, idx) > 0)
+                    return false;
+            }
+        }
+
+        if(instInfo.getOperandFlag(0) & OperandFlagDef) {
+            // 2 cycles to use for FLW
+            state.makeRegisterReady(inst, 0, 2);
+        }
+
+        state.setIssued(RISCVPipelineA);
+        return true;
+    }
+};
+
+CMMC_TARGET_NAMESPACE_END
+
+#include <RISCV/ScheduleModelImpl.hpp>
 CMMC_TARGET_NAMESPACE_BEGIN
 
 static bool branch2jump(MIRFunction& func, const CodeGenContext& ctx) {
@@ -148,6 +372,20 @@ bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGen
     }
     modified |= branch2jump(func, ctx);
     return modified;
+}
+
+const MicroarchitectureInfo& RISCVScheduleModel_sifive_u74::getInfo() const {
+    static MicroarchitectureInfo info{
+        .enablePostRAScheduling = true,
+        .hasRegRenaming = false,
+        .hasMacroFusion = false,
+        .issueWidth = 2,
+        .outOfOrder = false,
+        .hardwarePrefetch = true,
+        .maxDataStreams = 8,
+        .maxStrideByBytes = 256,
+    };
+    return info;
 }
 
 CMMC_TARGET_NAMESPACE_END

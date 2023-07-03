@@ -15,8 +15,8 @@ and_2:
 	andi a0, a0, 255
 	andi a1, a1, 255
 	and a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl xor_1
@@ -33,7 +33,7 @@ xor_2:
 	andi a0, a0, 255
 	andi a1, a1, 255
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 4294967295
+	sltu a0, zero, a0
 	and a0, a0, a1
 	ret

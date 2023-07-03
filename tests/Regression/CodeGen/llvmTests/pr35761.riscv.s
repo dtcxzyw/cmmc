@@ -22,13 +22,13 @@ pcrel23:
 pcrel24:
 	auipc a2, %pcrel_hi(y)
 	lw a2, %pcrel_lo(pcrel24)(a2)
+	andi a1, a1, 255
 	li a3, 32767
 	or a0, a0, a3
 	xor a0, a2, a0
-	andi a1, a1, 255
 	or a0, a0, a1
-	andi a0, a0, 255
 pcrel25:
 	auipc a1, %pcrel_hi(z)
+	andi a0, a0, 255
 	sw a0, %pcrel_lo(pcrel25)(a1)
 	ret

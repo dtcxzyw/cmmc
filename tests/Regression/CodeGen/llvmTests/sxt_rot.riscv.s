@@ -19,9 +19,9 @@ test2:
 	srliw a2, a0, 8
 	slliw a0, a0, 24
 	or a0, a2, a0
+	li a2, 4294967295
 	andi a0, a0, 255
 	sext.b a0, a0
-	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
 	ret
@@ -30,9 +30,9 @@ test3:
 	srliw a2, a0, 16
 	slliw a0, a0, 16
 	or a0, a2, a0
+	li a2, 4294967295
 	andi a0, a0, 255
 	sext.b a0, a0
-	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
 	ret
@@ -43,8 +43,8 @@ test4:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	sext.h a0, a0
 	li a2, 4294967295
+	sext.h a0, a0
 	and a0, a0, a2
 	addw a0, a1, a0
 	ret
@@ -55,8 +55,8 @@ test5:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	sext.h a0, a0
 	li a2, 4294967295
+	sext.h a0, a0
 	and a0, a0, a2
 	addw a0, a1, a0
 	ret

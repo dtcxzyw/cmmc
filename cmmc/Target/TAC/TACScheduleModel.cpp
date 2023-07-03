@@ -17,4 +17,18 @@
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
+const MicroarchitectureInfo& TACScheduleModel_emulator::getInfo() const {
+    static MicroarchitectureInfo info{
+        .enablePostRAScheduling = false,
+        .hasRegRenaming = false,
+        .hasMacroFusion = false,
+        .issueWidth = 1,
+        .outOfOrder = false,
+        .hardwarePrefetch = false,
+        .maxDataStreams = 1,
+        .maxStrideByBytes = 1024,
+    };
+    return info;
+}
+
 CMMC_TARGET_NAMESPACE_END

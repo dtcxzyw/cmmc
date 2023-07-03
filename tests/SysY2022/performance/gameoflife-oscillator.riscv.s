@@ -26,10 +26,10 @@ main:
 	jal getint
 	mv s4, a0
 	jal getch
+	li s3, 1
 pcrel380:
 	auipc a0, %pcrel_hi(sheet1)
 	addi s2, a0, %pcrel_lo(pcrel380)
-	li s3, 1
 	blt s1, s3, label9
 	ble s0, zero, label5
 	j label223
@@ -43,8 +43,8 @@ pcrel381:
 	mv t0, s4
 	li t2, 1
 	xori a0, t2, 1
-	sltiu a0, a0, 1
 	mv a4, s2
+	sltiu a0, a0, 1
 	bne a0, zero, label214
 	mv a4, s3
 	mv t1, s3
@@ -54,12 +54,12 @@ pcrel381:
 	li a5, 1
 	addiw a1, a5, -1
 	li a0, 2000
-	mulw a1, a1, a0
-	add a1, s3, a1
 	mulw a2, a5, a0
+	mulw a1, a1, a0
 	add a2, s3, a2
-	addi a3, a2, 2000
 	mulw a0, a5, a0
+	add a1, s3, a1
+	addi a3, a2, 2000
 	add t3, s2, a0
 	blt s1, a5, label32
 	li a0, 1
@@ -81,25 +81,25 @@ label35:
 	lw t6, 0(t5)
 	sh2add t5, a0, a1
 	lw a6, 0(t5)
-	addw t6, t6, a6
 	lw t5, 4(t5)
+	addw t6, t6, a6
 	addw t6, t6, t5
 	sh2add t5, t4, a2
 	lw a6, 0(t5)
-	addw t6, t6, a6
 	lw t5, 8(t5)
-	addw t5, t6, t5
+	addw t6, t6, a6
 	sh2add t4, t4, a3
+	addw t5, t6, t5
 	lw t4, 0(t4)
 	addw t5, t5, t4
 	sh2add t4, a0, a3
 	lw t6, 0(t4)
-	addw t5, t5, t6
 	lw t4, 4(t4)
-	addw t4, t5, t4
-	xori t5, t4, 2
+	addw t5, t5, t6
 	sh2add t6, a0, a2
+	addw t4, t5, t4
 	lw t6, 0(t6)
+	xori t5, t4, 2
 	xori t6, t6, 1
 	or t5, t5, t6
 	bne t5, zero, label36
@@ -113,12 +113,12 @@ label39:
 	addiw a5, a5, 1
 	addiw a1, a5, -1
 	li a0, 2000
-	mulw a1, a1, a0
-	add a1, a4, a1
 	mulw a2, a5, a0
+	mulw a1, a1, a0
 	add a2, a4, a2
-	addi a3, a2, 2000
 	mulw a0, a5, a0
+	add a1, a4, a1
+	addi a3, a2, 2000
 	add t3, t1, a0
 	blt s1, a5, label32
 	li a0, 1
@@ -126,11 +126,11 @@ label39:
 	j label35
 label250:
 	li a2, 2000
-	mul a1, a0, a2
-	add a1, s2, a1
-	mul a2, a0, a2
-	add a2, s3, a2
 	li a3, 1
+	mul a1, a0, a2
+	mul a2, a0, a2
+	add a1, s2, a1
+	add a2, s3, a2
 	sh2add a4, a3, a2
 	lw a4, 0(a4)
 	sh2add a5, a3, a1
@@ -179,9 +179,9 @@ label76:
 	blt s1, s3, label14
 	ble s0, zero, label16
 	li a0, 2000
+	li s5, 1
 	mul a0, s3, a0
 	add s4, s2, a0
-	li s5, 1
 	sh2add a0, s5, s4
 	lw a0, 0(a0)
 	xori a0, a0, 1
@@ -242,9 +242,9 @@ label100:
 	blt s1, s3, label14
 	ble s0, zero, label16
 	li a0, 2000
+	li s5, 1
 	mul a0, s3, a0
 	add s4, s2, a0
-	li s5, 1
 	sh2add a0, s5, s4
 	lw a0, 0(a0)
 	xori a0, a0, 1
@@ -299,12 +299,12 @@ label212:
 	li a5, 1
 	addiw a1, a5, -1
 	li a0, 2000
-	mulw a1, a1, a0
-	add a1, a4, a1
 	mulw a2, a5, a0
+	mulw a1, a1, a0
 	add a2, a4, a2
-	addi a3, a2, 2000
 	mulw a0, a5, a0
+	add a1, a4, a1
+	addi a3, a2, 2000
 	add t3, t1, a0
 	blt s1, a5, label32
 	li a0, 1
@@ -314,8 +314,8 @@ label32:
 	addiw t0, t0, -1
 	ble t0, zero, label140
 	xori a0, t2, 1
-	sltiu a0, a0, 1
 	mv a4, s2
+	sltiu a0, a0, 1
 	bne a0, zero, label214
 	mv a4, s3
 	mv t1, s3
@@ -325,12 +325,12 @@ label32:
 	li a5, 1
 	addiw a1, a5, -1
 	li a0, 2000
-	mulw a1, a1, a0
-	add a1, s3, a1
 	mulw a2, a5, a0
+	mulw a1, a1, a0
 	add a2, s3, a2
-	addi a3, a2, 2000
 	mulw a0, a5, a0
+	add a1, s3, a1
+	addi a3, a2, 2000
 	add t3, s2, a0
 	blt s1, a5, label32
 	li a0, 1
@@ -348,8 +348,8 @@ label140:
 	j label250
 label36:
 	xori t4, t4, 3
-	sltiu t4, t4, 1
 	sh2add t5, a0, t3
+	sltiu t4, t4, 1
 	sw t4, 0(t5)
 	addiw a0, a0, 1
 	blt s0, a0, label39
@@ -364,84 +364,84 @@ label325:
 	j label340
 label223:
 	li a0, 2000
+	li s6, 1
 	mul a0, s3, a0
 	add s5, s2, a0
-	li s6, 1
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
 label348:
 	jal getch
+	sh2add a1, s6, s5
 	xori a0, a0, 35
 	sltiu a0, a0, 1
-	sh2add a1, s6, s5
 	sw a0, 0(a1)
 	addiw s6, s6, 1
 	blt s0, s6, label5
@@ -453,9 +453,9 @@ label16:
 	blt s1, s3, label14
 	ble s0, zero, label16
 	li a0, 2000
+	li s5, 1
 	mul a0, s3, a0
 	add s4, s2, a0
-	li s5, 1
 	sh2add a0, s5, s4
 	lw a0, 0(a0)
 	xori a0, a0, 1
@@ -526,11 +526,11 @@ label210:
 	j label309
 label234:
 	li a2, 2000
-	mul a1, a0, a2
-	add a1, s2, a1
-	mul a2, a0, a2
-	add a2, s3, a2
 	li a3, 1
+	mul a1, a0, a2
+	mul a2, a0, a2
+	add a1, s2, a1
+	add a2, s3, a2
 	sh2add a4, a3, a2
 	lw a4, 0(a4)
 	sh2add a5, a3, a1

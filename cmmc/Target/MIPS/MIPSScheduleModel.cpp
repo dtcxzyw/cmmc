@@ -18,6 +18,20 @@
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
+const MicroarchitectureInfo& MIPSScheduleModel_emulator::getInfo() const {
+    static MicroarchitectureInfo info{
+        .enablePostRAScheduling = false,
+        .hasRegRenaming = false,
+        .hasMacroFusion = false,
+        .issueWidth = 1,
+        .outOfOrder = false,
+        .hardwarePrefetch = false,
+        .maxDataStreams = 1,
+        .maxStrideByBytes = 1024,
+    };
+    return info;
+}
+
 bool MIPSScheduleModel_emulator::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     CMMC_UNUSED(ctx);
     // bxx zero, zero -> b

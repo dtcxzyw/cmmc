@@ -21,8 +21,8 @@ label15:
 .globl sat0_base_16bit
 sat0_base_16bit:
 	sext.h a1, a0
-	slti a3, a1, 0
 	li a2, 65535
+	slti a3, a1, 0
 	and a1, a0, a2
 	mv a0, zero
 	bne a3, zero, label27
@@ -59,8 +59,8 @@ sat0_lower_1:
 .globl sat1_base_16bit
 sat1_base_16bit:
 	sext.h a1, a0
-	slti a3, a1, -1
 	li a2, 65535
+	slti a3, a1, -1
 	and a1, a0, a2
 	li a0, -1
 	bne a3, zero, label62

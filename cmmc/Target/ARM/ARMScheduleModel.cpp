@@ -127,4 +127,18 @@ bool ARMScheduleModel_cortex_a72::peepholeOpt(MIRFunction& func, const CodeGenCo
     return false;
 }
 
+const MicroarchitectureInfo& ARMScheduleModel_cortex_a72::getInfo() const {
+    static MicroarchitectureInfo info{
+        .enablePostRAScheduling = false,  // Not available
+        .hasRegRenaming = true,
+        .hasMacroFusion = true,
+        .issueWidth = 3,
+        .outOfOrder = false,
+        .hardwarePrefetch = true,
+        .maxDataStreams = 2,
+        .maxStrideByBytes = 32,
+    };
+    return info;
+}
+
 CMMC_TARGET_NAMESPACE_END

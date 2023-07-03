@@ -14,10 +14,10 @@ test_movb_Oz:
 test_movb_hreg:
 	li a1, 65535
 	and a1, a0, a1
+	andi a0, a0, 255
 	sraiw a1, a1, 8
+	andi a0, a0, 255
 	andi a1, a1, 255
-	andi a0, a0, 255
-	andi a0, a0, 255
 	addw a0, a1, a0
 	andi a0, a0, 255
 	ret

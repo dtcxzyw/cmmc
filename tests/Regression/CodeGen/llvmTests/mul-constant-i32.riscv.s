@@ -15,8 +15,8 @@ test_mul_by_1:
 .globl test_mul_by_10
 test_mul_by_10:
 	sh2add a0, a0, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_11
@@ -30,8 +30,8 @@ test_mul_by_11:
 .globl test_mul_by_12
 test_mul_by_12:
 	sh1add a0, a0, a0
-	slliw a0, a0, 2
 	li a1, 4294967295
+	slliw a0, a0, 2
 	and a0, a0, a1
 	ret
 .globl test_mul_by_13
@@ -47,8 +47,8 @@ test_mul_by_13:
 test_mul_by_14:
 	slliw a1, a0, 3
 	subw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_15
@@ -74,8 +74,8 @@ test_mul_by_17:
 .globl test_mul_by_18
 test_mul_by_18:
 	sh3add a0, a0, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_19
@@ -95,8 +95,8 @@ test_mul_by_2:
 .globl test_mul_by_20
 test_mul_by_20:
 	sh2add a0, a0, a0
-	slliw a0, a0, 2
 	li a1, 4294967295
+	slliw a0, a0, 2
 	and a0, a0, a1
 	ret
 .globl test_mul_by_21
@@ -112,8 +112,8 @@ test_mul_by_22:
 	sh1add a1, a0, a0
 	slliw a1, a1, 2
 	subw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_23
@@ -127,15 +127,15 @@ test_mul_by_23:
 .globl test_mul_by_24
 test_mul_by_24:
 	sh1add a0, a0, a0
-	slliw a0, a0, 3
 	li a1, 4294967295
+	slliw a0, a0, 3
 	and a0, a0, a1
 	ret
 .globl test_mul_by_25
 test_mul_by_25:
 	sh2add a0, a0, a0
-	sh2add a0, a0, a0
 	li a1, 4294967295
+	sh2add a0, a0, a0
 	and a0, a0, a1
 	ret
 .globl test_mul_by_26
@@ -144,23 +144,23 @@ test_mul_by_26:
 	subw a1, a1, a0
 	slliw a1, a1, 1
 	subw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_27
 test_mul_by_27:
 	sh1add a0, a0, a0
-	sh3add a0, a0, a0
 	li a1, 4294967295
+	sh3add a0, a0, a0
 	and a0, a0, a1
 	ret
 .globl test_mul_by_28
 test_mul_by_28:
 	slliw a1, a0, 3
 	subw a0, a1, a0
-	slliw a0, a0, 2
 	li a1, 4294967295
+	slliw a0, a0, 2
 	and a0, a0, a1
 	ret
 .globl test_mul_by_29
@@ -182,8 +182,8 @@ test_mul_by_3:
 test_mul_by_30:
 	slliw a1, a0, 4
 	subw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_31
@@ -229,31 +229,31 @@ test_mul_by_5:
 test_mul_by_520:
 	slliw a1, a0, 6
 	addw a0, a1, a0
-	slliw a0, a0, 3
 	li a1, 4294967295
+	slliw a0, a0, 3
 	and a0, a0, a1
 	ret
 .globl test_mul_by_6
 test_mul_by_6:
 	sh1add a0, a0, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_62
 test_mul_by_62:
 	slliw a1, a0, 5
 	subw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_66
 test_mul_by_66:
 	slliw a1, a0, 5
 	addw a0, a1, a0
-	slliw a0, a0, 1
 	li a1, 4294967295
+	slliw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl test_mul_by_7
@@ -285,24 +285,24 @@ test_mul_by_9:
 .globl test_mul_by_neg10
 test_mul_by_neg10:
 	sh2add a0, a0, a0
+	li a1, 4294967295
 	slliw a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl test_mul_by_neg36
 test_mul_by_neg36:
 	sh3add a0, a0, a0
+	li a1, 4294967295
 	slliw a0, a0, 2
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl test_mul_spec
 test_mul_spec:
 	sh3add a1, a0, a0
-	addiw a1, a1, 42
 	sh2add a0, a0, a0
+	addiw a1, a1, 42
 	addiw a0, a0, 2
 	mulw a0, a1, a0
 	li a1, 4294967295

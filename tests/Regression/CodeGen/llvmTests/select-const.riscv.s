@@ -39,16 +39,16 @@ select_const_int_one_away:
 .globl select_const_int_pow2_zero
 select_const_int_pow2_zero:
 	sltu a0, zero, a0
+	li a1, 4294967295
 	subw a0, zero, a0
 	andi a0, a0, 4
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_eq_10000_10001
 select_eq_10000_10001:
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 10002
+	sltiu a0, a0, 1
 	subw a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1
@@ -56,8 +56,8 @@ select_eq_10000_10001:
 .globl select_eq_1_2
 select_eq_1_2:
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 2
+	sltiu a0, a0, 1
 	subw a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1
@@ -65,16 +65,16 @@ select_eq_1_2:
 .globl select_eq_zero_negone
 select_eq_zero_negone:
 	xor a0, a0, a1
+	li a1, 4294967295
 	sltiu a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_ne_10001_10002
 select_ne_10001_10002:
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 10002
+	sltu a0, zero, a0
 	subw a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1
@@ -82,8 +82,8 @@ select_ne_10001_10002:
 .globl select_ne_1_2
 select_ne_1_2:
 	xor a0, a0, a1
-	sltu a0, zero, a0
 	li a1, 2
+	sltu a0, zero, a0
 	subw a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1
@@ -91,17 +91,17 @@ select_ne_1_2:
 .globl select_ne_zero_negone
 select_ne_zero_negone:
 	xor a0, a0, a1
+	li a1, 4294967295
 	sltu a0, zero, a0
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_sge_zero_negone
 select_sge_zero_negone:
 	slt a0, a0, a1
+	li a1, 4294967295
 	xori a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_sgt_negative_one_constant1_constant2
@@ -118,16 +118,16 @@ label118:
 .globl select_sgt_zero_negone
 select_sgt_zero_negone:
 	slt a0, a1, a0
-	subw a0, zero, a0
 	li a1, 4294967295
+	subw a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl select_sle_zero_negone
 select_sle_zero_negone:
 	slt a0, a1, a0
+	li a1, 4294967295
 	xori a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_slt_zero_constant1_constant2
@@ -143,37 +143,37 @@ label148:
 .globl select_slt_zero_negone
 select_slt_zero_negone:
 	slt a0, a0, a1
-	subw a0, zero, a0
 	li a1, 4294967295
+	subw a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl select_uge_zero_negone
 select_uge_zero_negone:
 	sltu a0, a0, a1
+	li a1, 4294967295
 	xori a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_ugt_zero_negone
 select_ugt_zero_negone:
 	sltu a0, a1, a0
-	subw a0, zero, a0
 	li a1, 4294967295
+	subw a0, zero, a0
 	and a0, a0, a1
 	ret
 .globl select_ule_zero_negone
 select_ule_zero_negone:
 	sltu a0, a1, a0
+	li a1, 4294967295
 	xori a0, a0, 1
 	subw a0, zero, a0
-	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl select_ult_zero_negone
 select_ult_zero_negone:
 	sltu a0, a0, a1
-	subw a0, zero, a0
 	li a1, 4294967295
+	subw a0, zero, a0
 	and a0, a0, a1
 	ret

@@ -6,8 +6,8 @@ foo:
 	addiw a0, a0, 4
 	sh1add a2, a1, a0
 	sh2add a0, a1, a0
-	mulw a0, a2, a0
 	li a1, 4294967295
+	mulw a0, a2, a0
 	and a0, a0, a1
 	ret
 .globl foo1
@@ -15,8 +15,8 @@ foo1:
 	addiw a0, a0, 4
 	sh2add a2, a1, a0
 	sh3add a0, a1, a0
-	mulw a0, a2, a0
 	li a1, 4294967295
+	mulw a0, a2, a0
 	and a0, a0, a1
 	ret
 .globl foo1_mult_basic_blocks
@@ -27,8 +27,8 @@ foo1_mult_basic_blocks:
 	sltiu a3, a3, 1
 	bne a3, zero, label38
 	sh3add a0, a1, a0
-	mulw a0, a0, a2
 	li a1, 4294967295
+	mulw a0, a0, a2
 	and a0, a0, a1
 	j label29
 label38:
@@ -43,8 +43,8 @@ foo1_mult_basic_blocks_illegal_scale:
 	sltiu a3, a3, 1
 	bne a3, zero, label59
 	sh3add a0, a1, a0
-	mulw a0, a0, a2
 	li a1, 4294967295
+	mulw a0, a0, a2
 	and a0, a0, a1
 	j label50
 label59:

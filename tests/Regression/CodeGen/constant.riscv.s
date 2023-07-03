@@ -9,9 +9,9 @@ x:
 .globl cse_imm
 cse_imm:
 	sh2add a1, a1, a1
+	sh2add a0, a0, a0
 	slliw a1, a1, 1
 	xor a1, a2, a1
-	sh2add a0, a0, a0
 	sh1add a0, a0, a1
 	ret
 .globl cse_global
@@ -27,8 +27,8 @@ pcrel22:
 cse_fp:
 	lui a0, 264192
 	fmv.w.x f12, a0
-	fmul.s f10, f10, f12
 	fmul.s f11, f11, f12
+	fmul.s f10, f10, f12
 	fadd.s f10, f10, f11
 	ret
 .globl imm_build_pattern1

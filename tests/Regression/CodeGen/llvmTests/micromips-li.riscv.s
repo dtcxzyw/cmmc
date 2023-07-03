@@ -20,13 +20,13 @@ main:
 pcrel17:
 	auipc a1, %pcrel_hi(x)
 	sw a0, %pcrel_lo(pcrel17)(a1)
-	li a0, 2148
 pcrel18:
 	auipc a1, %pcrel_hi(y)
+	li a0, 2148
 	sw a0, %pcrel_lo(pcrel18)(a1)
-	li a0, 33332
 pcrel19:
 	auipc a1, %pcrel_hi(z)
+	li a0, 33332
 	sw a0, %pcrel_lo(pcrel19)(a1)
 	mv a0, zero
 	ret

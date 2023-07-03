@@ -64,8 +64,8 @@ gepseq:
 	lw a2, 4(a0)
 	addw a1, a1, a2
 	lw a2, 8(a0)
-	addw a1, a1, a2
 	lw a0, 12(a0)
+	addw a1, a1, a2
 	addw a0, a1, a0
 	ret
 .globl lb
@@ -118,8 +118,8 @@ label97:
 	sw zero, 52(a2)
 	sw zero, 56(a2)
 	sw zero, 60(a2)
-	addiw a1, a1, 16
 	li a2, 119
+	addiw a1, a1, 16
 	bge a1, a2, label99
 	j label97
 label99:

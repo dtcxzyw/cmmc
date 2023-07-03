@@ -12,7 +12,7 @@
     limitations under the License.
 */
 
-// RV64GC lp64d medlow
+// RV64GC lp64d medany
 
 #include <RISCV/ISelInfoDecl.hpp>
 #include <RISCV/InstInfoDecl.hpp>
@@ -200,6 +200,9 @@ public:
     }
     [[nodiscard]] MIROperand getReturnAddressRegister() const noexcept override {
         return RISCV::ra;
+    }
+    [[nodiscard]] MIROperand getStackPointerRegister() const noexcept override {
+        return RISCV::sp;
     }
 };
 

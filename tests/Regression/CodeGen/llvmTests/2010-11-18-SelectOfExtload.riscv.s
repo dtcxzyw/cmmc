@@ -21,8 +21,8 @@ pcrel26:
 label9:
 	auipc a0, %pcrel_hi(s)
 	lb a0, %pcrel_lo(label9)(a0)
-	sext.b a0, a0
 	li a1, 4294967295
+	sext.b a0, a0
 	and a0, a0, a1
 label3:
 	ret

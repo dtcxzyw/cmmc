@@ -334,8 +334,8 @@ sext_i32_remw_sext_zext_i16:
 .globl sext_i32_remw_zext_sext_i16
 sext_i32_remw_zext_sext_i16:
 	li a2, 65535
-	and a0, a0, a2
 	sext.h a1, a1
+	and a0, a0, a2
 	remw a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
@@ -520,8 +520,8 @@ zext_divuw_zext_zext:
 .globl zext_divuw_zext_zext_i16
 zext_divuw_zext_zext_i16:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	divw a0, a0, a1
 	and a0, a0, a2
 	ret
@@ -661,8 +661,8 @@ zext_remuw_zext_zext:
 .globl zext_remuw_zext_zext_i16
 zext_remuw_zext_zext_i16:
 	li a2, 65535
-	and a0, a0, a2
 	and a1, a1, a2
+	and a0, a0, a2
 	remw a0, a0, a1
 	and a0, a0, a2
 	ret

@@ -31,8 +31,8 @@ pcrel22:
 	auipc a1, %pcrel_hi(k)
 	lw a1, %pcrel_lo(pcrel22)(a1)
 	xor a0, a0, a1
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 pcrel23:
 	auipc a1, %pcrel_hi(r1)

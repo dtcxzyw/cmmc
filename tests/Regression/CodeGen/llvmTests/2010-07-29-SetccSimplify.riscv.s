@@ -4,9 +4,9 @@
 .globl extend2bit_v2
 extend2bit_v2:
 	andi a0, a0, 255
+	li a1, 4294967295
 	sext.b a0, a0
 	xori a0, a0, 3
 	sltiu a0, a0, 1
-	li a1, 4294967295
 	and a0, a0, a1
 	ret

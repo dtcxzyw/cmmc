@@ -29,10 +29,10 @@ merge:
 	sd s1, 16(sp)
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	mv s0, a0
-	mv s2, a1
-	mv s3, a2
 	mv s1, a3
+	mv s3, a2
+	mv s2, a1
+	mv s0, a0
 	addiw a0, a2, 1
 	ble a3, a0, label18
 	addw a0, a2, a3
@@ -48,13 +48,13 @@ merge:
 	mv a2, s4
 	mv a3, s1
 	jal merge
-	mv a0, s3
-	mv a1, s4
 	mv a2, s3
+	mv a1, s4
+	mv a0, s3
 	beq s1, s3, label15
 	xor a3, s4, s3
-	sltu a3, zero, a3
 	xor a4, s1, s4
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -71,8 +71,8 @@ merge:
 	addiw a0, s3, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, s4
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -89,8 +89,8 @@ merge:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, s4
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -154,8 +154,8 @@ label15:
 	j label180
 label163:
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -182,8 +182,8 @@ label14:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -200,8 +200,8 @@ label14:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -218,8 +218,8 @@ label14:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -253,8 +253,8 @@ label13:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -271,8 +271,8 @@ label13:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -289,8 +289,8 @@ label13:
 	addiw a0, a0, 1
 	beq s1, a0, label15
 	xor a3, s4, a2
-	sltu a3, zero, a3
 	xor a4, s1, a1
+	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label14
@@ -329,8 +329,8 @@ label18:
 main:
 	addi sp, sp, -808
 	sd ra, 800(sp)
-	addi a1, sp, 0
 	addi t0, sp, 400
+	addi a1, sp, 0
 	jal read
 	mv a5, a0
 	ble a0, zero, label211
@@ -394,8 +394,8 @@ label288:
 	j label288
 label211:
 	mv a0, t0
-	mv a2, zero
 	mv a3, a5
+	mv a2, zero
 	jal merge
 	ble a5, zero, label214
 	mv a1, zero

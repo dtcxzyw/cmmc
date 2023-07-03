@@ -9,8 +9,8 @@ X:
 .globl _Z3fooi
 _Z3fooi:
 	andi a1, a0, 255
-	sext.b a1, a1
 	li a2, 4294967295
+	sext.b a1, a1
 	and a1, a1, a2
 pcrel12:
 	auipc a2, %pcrel_hi(X)

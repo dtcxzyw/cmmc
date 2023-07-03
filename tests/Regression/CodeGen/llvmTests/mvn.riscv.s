@@ -8,8 +8,8 @@ f1:
 .globl f10
 f10:
 	xori a0, a0, -2
-	sltiu a0, a0, 1
 	li a1, 4294967295
+	sltiu a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl f2

@@ -114,9 +114,9 @@ label106:
 .globl select_or
 select_or:
 	andi a2, a2, 255
+	or a1, a0, a1
 	andi a2, a2, 1
 	sltiu a2, a2, 1
-	or a1, a0, a1
 	bne a2, zero, label117
 	mv a0, a1
 label117:
@@ -124,8 +124,8 @@ label117:
 .globl select_or_1
 select_or_1:
 	andi a2, a2, 1
-	sltiu a2, a2, 1
 	or a1, a0, a1
+	sltiu a2, a2, 1
 	bne a2, zero, label127
 	mv a0, a1
 label127:
@@ -133,9 +133,9 @@ label127:
 .globl select_or_1b
 select_or_1b:
 	andi a2, a2, 1
+	or a1, a0, a1
 	xori a2, a2, 1
 	sltu a2, zero, a2
-	or a1, a0, a1
 	bne a2, zero, label138
 	mv a0, a1
 label138:
@@ -187,10 +187,10 @@ label182:
 .globl select_or_b
 select_or_b:
 	andi a2, a2, 255
+	or a1, a0, a1
 	andi a2, a2, 1
 	xori a2, a2, 1
 	sltu a2, zero, a2
-	or a1, a0, a1
 	bne a2, zero, label194
 	mv a0, a1
 label194:
@@ -293,8 +293,8 @@ label283:
 .globl select_xor_1b
 select_xor_1b:
 	andi a1, a1, 255
-	andi a1, a1, 1
 	li a2, 1
+	andi a1, a1, 1
 	beq a1, a2, label312
 	li a1, 65535
 	and a0, a0, a1
@@ -310,9 +310,9 @@ label303:
 .globl select_xor_2
 select_xor_2:
 	andi a2, a2, 255
+	xor a1, a0, a1
 	andi a2, a2, 1
 	sltiu a2, a2, 1
-	xor a1, a0, a1
 	bne a2, zero, label333
 	mv a0, a1
 label333:
@@ -320,10 +320,10 @@ label333:
 .globl select_xor_2b
 select_xor_2b:
 	andi a2, a2, 255
+	xor a1, a0, a1
 	andi a2, a2, 1
 	xori a2, a2, 1
 	sltu a2, zero, a2
-	xor a1, a0, a1
 	bne a2, zero, label345
 	mv a0, a1
 label345:
@@ -347,8 +347,8 @@ label348:
 .globl select_xor_3b
 select_xor_3b:
 	andi a1, a1, 255
-	andi a1, a1, 1
 	li a2, 1
+	andi a1, a1, 1
 	beq a1, a2, label377
 	li a1, 65535
 	and a0, a0, a1

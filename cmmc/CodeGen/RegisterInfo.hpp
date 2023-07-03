@@ -58,6 +58,7 @@ public:
         return false;
     }
     [[nodiscard]] virtual MIROperand getReturnAddressRegister() const noexcept = 0;
+    [[nodiscard]] virtual MIROperand getStackPointerRegister() const noexcept = 0;
 };
 
 CMMC_MIR_NAMESPACE_END

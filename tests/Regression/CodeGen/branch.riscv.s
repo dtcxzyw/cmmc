@@ -203,8 +203,8 @@ normal_srem:
 	li a2, 1000000007
 	mulw a1, a1, a2
 	subw a1, a0, a1
-	slti a3, a1, 0
 	addw a0, a1, a2
+	slti a3, a1, 0
 	bne a3, zero, label299
 	mv a0, a1
 label299:

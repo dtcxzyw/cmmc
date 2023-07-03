@@ -63,14 +63,14 @@ label3:
 	sw a0, %pcrel_lo(label3)(a3)
 	lw a0, 0(a2)
 	lw a3, 0(a1)
-	xor a0, a0, a3
-	sltiu a4, a0, 1
 pcrel81:
-	auipc a0, %pcrel_hi(f)
-	addi a0, a0, %pcrel_lo(pcrel81)
-pcrel82:
 	auipc a1, %pcrel_hi(t)
-	addi a1, a1, %pcrel_lo(pcrel82)
+	xor a0, a0, a3
+	addi a1, a1, %pcrel_lo(pcrel81)
+	sltiu a4, a0, 1
+pcrel82:
+	auipc a0, %pcrel_hi(f)
+	addi a0, a0, %pcrel_lo(pcrel82)
 	mv a2, a0
 	bne a4, zero, label77
 	mv a2, a1

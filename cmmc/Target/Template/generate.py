@@ -275,7 +275,7 @@ def load_schedule_info(isa_desc_file):
     models_info = []
     for name, info in models.items():
         models_info.append({'name': name, 'class_name': name.replace('-', '_'), 'peephole': info.get(
-            'CustomPeepholeOpt', False), 'post_peephole':  info.get('CustomPostPeepholeOpt', False)})
+            'CustomPeepholeOpt', False), 'post_peephole':  info.get('CustomPostPeepholeOpt', False), 'classes': info.get('Classes', dict())})
     return models_info
 
 

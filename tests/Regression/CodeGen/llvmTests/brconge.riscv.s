@@ -27,9 +27,9 @@ test:
 pcrel47:
 	auipc a0, %pcrel_hi(i)
 	lw a1, %pcrel_lo(pcrel47)(a0)
-	mv a0, a1
 pcrel48:
 	auipc a2, %pcrel_hi(j)
+	mv a0, a1
 	lw a2, %pcrel_lo(pcrel48)(a2)
 	bge a1, a2, label3
 	li a1, 1

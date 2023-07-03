@@ -62,32 +62,32 @@ pcrel324:
 	li a0, 78
 	jal _sysy_starttime
 pcrel325:
-	auipc a0, %pcrel_hi(ans)
-	addi s1, a0, %pcrel_lo(pcrel325)
-pcrel326:
-	auipc a0, %pcrel_hi(head)
-	addi a3, a0, %pcrel_lo(pcrel326)
-pcrel327:
-	auipc a0, %pcrel_hi(key)
-	addi a2, a0, %pcrel_lo(pcrel327)
-pcrel328:
-	auipc a0, %pcrel_hi(value)
-	addi a1, a0, %pcrel_lo(pcrel328)
-pcrel329:
-	auipc a0, %pcrel_hi(nextvalue)
-	addi a0, a0, %pcrel_lo(pcrel329)
-pcrel330:
 	auipc a4, %pcrel_hi(next)
-	addi a4, a4, %pcrel_lo(pcrel330)
+pcrel326:
+	auipc a0, %pcrel_hi(ans)
+	addi a4, a4, %pcrel_lo(pcrel325)
+	addi s1, a0, %pcrel_lo(pcrel326)
+pcrel327:
+	auipc a0, %pcrel_hi(head)
+	addi a3, a0, %pcrel_lo(pcrel327)
+pcrel328:
+	auipc a0, %pcrel_hi(key)
+	addi a2, a0, %pcrel_lo(pcrel328)
+pcrel329:
+	auipc a0, %pcrel_hi(value)
+	addi a1, a0, %pcrel_lo(pcrel329)
+pcrel330:
+	auipc a0, %pcrel_hi(nextvalue)
+	addi a0, a0, %pcrel_lo(pcrel330)
 	ble s5, zero, label14
 	mv t0, zero
 	mv a5, zero
 	sh2add t1, zero, s4
 	lw t2, 0(t1)
-	remw t3, t2, s0
-	sh2add t4, t3, a3
 	sh2add t1, zero, s6
 	lw t1, 0(t1)
+	remw t3, t2, s0
+	sh2add t4, t3, a3
 	lw t4, 0(t4)
 	bne t4, zero, label8
 label5:
@@ -106,10 +106,10 @@ label5:
 	ble s5, a5, label14
 	sh2add t1, a5, s4
 	lw t2, 0(t1)
-	remw t3, t2, s0
-	sh2add t4, t3, a3
 	sh2add t1, a5, s6
 	lw t1, 0(t1)
+	remw t3, t2, s0
+	sh2add t4, t3, a3
 	lw t4, 0(t4)
 	bne t4, zero, label8
 	j label5
@@ -119,8 +119,8 @@ label8:
 	lw t5, 0(t5)
 	bne t2, t5, label12
 	addiw t0, t0, 1
-	sh2add t3, t0, a0
 	sh2add t2, t4, a0
+	sh2add t3, t0, a0
 	lw t4, 0(t2)
 	sw t4, 0(t3)
 	sw t0, 0(t2)
@@ -130,10 +130,10 @@ label8:
 	ble s5, a5, label14
 	sh2add t1, a5, s4
 	lw t2, 0(t1)
-	remw t3, t2, s0
-	sh2add t4, t3, a3
 	sh2add t1, a5, s6
 	lw t1, 0(t1)
+	remw t3, t2, s0
+	sh2add t4, t3, a3
 	lw t4, 0(t4)
 	bne t4, zero, label8
 	j label5
@@ -145,8 +145,8 @@ label12:
 	lw t5, 0(t5)
 	bne t2, t5, label12
 	addiw t0, t0, 1
-	sh2add t3, t0, a0
 	sh2add t2, t4, a0
+	sh2add t3, t0, a0
 	lw t4, 0(t2)
 	sw t4, 0(t3)
 	sw t0, 0(t2)
@@ -156,10 +156,10 @@ label12:
 	ble s5, a5, label14
 	sh2add t1, a5, s4
 	lw t2, 0(t1)
-	remw t3, t2, s0
-	sh2add t4, t3, a3
 	sh2add t1, a5, s6
 	lw t1, 0(t1)
+	remw t3, t2, s0
+	sh2add t4, t3, a3
 	lw t4, 0(t4)
 	bne t4, zero, label8
 	j label5
@@ -179,52 +179,52 @@ label14:
 	mv t0, zero
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
+	sh2add t1, t1, a0
 	addw t0, zero, t2
-	sh2add t1, t1, a0
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label286
 label298:
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label302
@@ -239,60 +239,60 @@ label20:
 	mv t0, zero
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
+	sh2add t1, t1, a0
 	addw t0, zero, t2
-	sh2add t1, t1, a0
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label298
 label302:
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label305
 label286:
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label298
@@ -315,46 +315,46 @@ label27:
 	mv t0, zero
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
+	sh2add t1, t1, a0
 	addw t0, zero, t2
-	sh2add t1, t1, a0
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label286
 label305:
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label305
@@ -378,32 +378,32 @@ label133:
 	mv t0, zero
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
+	sh2add t1, t1, a0
 	addw t0, zero, t2
-	sh2add t1, t1, a0
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label274
@@ -427,46 +427,46 @@ label146:
 	mv t0, zero
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
+	sh2add t1, t1, a0
 	addw t0, zero, t2
-	sh2add t1, t1, a0
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 label274:
 	sh2add t2, t1, a1
 	lw t2, 0(t2)
-	addw t0, t0, t2
 	sh2add t1, t1, a0
+	addw t0, t0, t2
 	lw t1, 0(t1)
 	beq t1, zero, label27
 	j label286
 label10:
 	addiw t0, t0, 1
-	sh2add t4, t0, a4
 	sh2add t3, t3, a3
+	sh2add t4, t0, a4
 	lw t5, 0(t3)
 	sw t5, 0(t4)
 	sw t0, 0(t3)
@@ -480,10 +480,10 @@ label10:
 	ble s5, a5, label14
 	sh2add t1, a5, s4
 	lw t2, 0(t1)
-	remw t3, t2, s0
-	sh2add t4, t3, a3
 	sh2add t1, a5, s6
 	lw t1, 0(t1)
+	remw t3, t2, s0
+	sh2add t4, t3, a3
 	lw t4, 0(t4)
 	bne t4, zero, label8
 	j label5
@@ -493,8 +493,8 @@ label29:
 	mv a0, s2
 	mv a1, s1
 	jal putarray
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	ld s2, 8(sp)
 	ld s3, 16(sp)
 	ld s1, 24(sp)

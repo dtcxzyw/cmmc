@@ -27,7 +27,7 @@ main:
 	sd ra, 0(sp)
 	li a0, 19
 	jal write
-	mv a0, zero
 	ld ra, 0(sp)
+	mv a0, zero
 	addi sp, sp, 8
 	ret

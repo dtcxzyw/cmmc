@@ -28,10 +28,10 @@ pcrel221:
 	mv a1, s2
 label2:
 	li a3, 19971231
-	mulw a0, a0, a3
 	li a4, 19981013
-	addw a2, a0, a4
 	li a5, 1152921497
+	mulw a0, a0, a3
+	addw a2, a0, a4
 	mul a0, a2, a5
 	srai t0, a0, 60
 	srli a0, a0, 63
@@ -39,8 +39,8 @@ label2:
 	li a0, 1000000007
 	mulw t0, t0, a0
 	subw t0, a2, t0
-	slti t1, t0, 0
 	addw a2, t0, a0
+	slti t1, t0, 0
 	bne t1, zero, label209
 	mv a2, t0
 label209:
@@ -52,12 +52,13 @@ label209:
 	add a4, a4, a5
 	mulw a4, a4, a0
 	subw a3, a3, a4
-	slti a4, a3, 0
 	addw a0, a3, a0
+	slti a4, a3, 0
 	bne a4, zero, label207
 	mv a0, a3
 label207:
 	li a3, 1876499845
+	addiw a1, a1, -1
 	mul a3, a2, a3
 	srai a4, a3, 49
 	srli a3, a3, 63
@@ -72,7 +73,6 @@ label207:
 	sraiw a4, a2, 4
 	srliw a2, a2, 31
 	add a2, a2, a4
-	addiw a1, a1, -1
 	li a4, 1
 	sw a4, 0(sp)
 	li a4, 2
@@ -205,11 +205,11 @@ label12:
 label13:
 	li a0, 64
 	jal _sysy_stoptime
-	li a0, 10000
 	mv a1, s1
+	li a0, 10000
 	jal putarray
-	mv a0, zero
 	ld ra, 128(sp)
+	mv a0, zero
 	ld s1, 136(sp)
 	ld s3, 144(sp)
 	ld s2, 152(sp)

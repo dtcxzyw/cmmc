@@ -6,8 +6,8 @@ testsize1:
 	slli a1, a0, 1
 	srli a1, a1, 59
 	add a0, a0, a1
-	sraiw a0, a0, 5
 	li a1, 4294967295
+	sraiw a0, a0, 5
 	and a0, a0, a1
 	ret
 .globl testsize2

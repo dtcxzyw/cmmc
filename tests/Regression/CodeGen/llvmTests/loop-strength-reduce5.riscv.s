@@ -18,9 +18,9 @@ foo:
 	mv a1, zero
 label2:
 	li a2, 65535
-	and a3, a1, a2
 pcrel32:
 	auipc a4, %pcrel_hi(X)
+	and a3, a1, a2
 	sh a3, %pcrel_lo(pcrel32)(a4)
 	slliw a3, a3, 2
 	and a2, a3, a2

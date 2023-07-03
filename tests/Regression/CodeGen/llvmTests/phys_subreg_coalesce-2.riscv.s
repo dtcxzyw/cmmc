@@ -28,8 +28,8 @@ label23:
 	subw a4, a0, a3
 	mulw a1, a0, a4
 	addiw a4, a3, 1
-	divuw a1, a1, a4
 	addiw a3, a3, 2
+	divuw a1, a1, a4
 	sltu a3, a2, a3
 	xori a3, a3, 1
 	bne a3, zero, label32
@@ -41,8 +41,8 @@ label32:
 	subw a4, a0, a4
 	mulw a1, a1, a4
 	addiw a4, a3, 1
-	divuw a1, a1, a4
 	addiw a3, a3, 2
+	divuw a1, a1, a4
 	sltu a3, a2, a3
 	xori a3, a3, 1
 	bne a3, zero, label32

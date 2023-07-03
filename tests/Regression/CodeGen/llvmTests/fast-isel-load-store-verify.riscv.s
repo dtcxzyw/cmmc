@@ -29,9 +29,9 @@ t2:
 pcrel23:
 	auipc a0, %pcrel_hi(b)
 	lh a0, %pcrel_lo(pcrel23)(a0)
+	li a1, 65535
 	sext.h a0, a0
 	addiw a0, a0, 1
-	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl t3
@@ -39,24 +39,24 @@ t3:
 pcrel34:
 	auipc a0, %pcrel_hi(c)
 	lw a0, %pcrel_lo(pcrel34)(a0)
-	addiw a0, a0, 1
 	li a1, 4294967295
+	addiw a0, a0, 1
 	and a0, a0, a1
 	ret
 .globl t4
 t4:
 	sext.b a0, a0
-	addiw a0, a0, 1
-	andi a0, a0, 255
 pcrel45:
 	auipc a1, %pcrel_hi(a)
+	addiw a0, a0, 1
+	andi a0, a0, 255
 	sb a0, %pcrel_lo(pcrel45)(a1)
 	ret
 .globl t5
 t5:
 	sext.h a0, a0
-	addiw a0, a0, 1
 	li a1, 65535
+	addiw a0, a0, 1
 	and a0, a0, a1
 pcrel57:
 	auipc a1, %pcrel_hi(b)
