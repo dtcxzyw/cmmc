@@ -30,6 +30,11 @@
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
       "time": "2023-07-01 21:30:30 +0800"
     },
+    "3e248a8ab400477fc93e1fcc384824d4347a3217": {
+      "message": "feat(codegen): emit sext.b/h/w instructions for riscv",
+      "parent": "9281299f68c3f217140406e04f046824bfe4bd33",
+      "time": "2023-07-03 12:48:07 +0800"
+    },
     "3e4564a6705cbe0a844e11403b448d3a25fd763c": {
       "message": "test: add transform test from llvm project",
       "parent": "377826e4b87e1b09d4f811708c15375e9d09a15f",
@@ -89,6 +94,11 @@
       "message": "feat(transfrom): remove unused store-only globals",
       "parent": "f5456db3e19187aa4d028032103b60006886a52b",
       "time": "2023-07-02 14:22:39 +0800"
+    },
+    "7aede7c6d709e297c4656116f21caeeec62fa9ab": {
+      "message": "feat(codegen): allow copying branches when the size of BTB is large enough",
+      "parent": "3e248a8ab400477fc93e1fcc384824d4347a3217",
+      "time": "2023-07-03 13:01:15 +0800"
     },
     "7bae69aa5a88f0f49632223013714fa862acab9d": {
       "message": "feat(codegen): optimize comparison with zero for arm",
@@ -161,5 +171,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "9281299f68c3f217140406e04f046824bfe4bd33"
+  "head": "7aede7c6d709e297c4656116f21caeeec62fa9ab"
 }
