@@ -7,12 +7,10 @@ neg_only_one_truncation:
 	andi a3, a2, 255
 	addw a1, a1, a3
 	andi a3, a1, 255
-	slli a3, a3, 24
-	srai a3, a3, 24
+	sext.b a3, a3
 	addw a0, a0, a2
 	andi a2, a0, 255
-	slli a2, a2, 24
-	srai a2, a2, 24
+	sext.b a2, a2
 	bge a3, a2, label21
 	andi a0, a0, 255
 	j label3
@@ -28,68 +26,60 @@ neg_type_mismatch:
 	and a3, a2, a3
 	addw a1, a1, a3
 	andi a3, a1, 255
-	slli a3, a3, 24
-	srai a3, a3, 24
+	sext.b a3, a3
 	addw a0, a0, a2
 	andi a2, a0, 255
-	slli a2, a2, 24
-	srai a2, a2, 24
-	bge a3, a2, label49
+	sext.b a2, a2
+	bge a3, a2, label47
 	andi a0, a0, 255
-	j label31
-label49:
+	j label29
+label47:
 	andi a0, a1, 255
-label31:
+label29:
 	andi a0, a0, 255
 	ret
 .globl negative_CopyFromReg
 negative_CopyFromReg:
 	addw a1, a1, a2
 	andi a2, a1, 255
-	slli a2, a2, 24
-	srai a2, a2, 24
+	sext.b a2, a2
 	andi a3, a0, 255
-	slli a3, a3, 24
-	srai a3, a3, 24
-	bge a2, a3, label76
+	sext.b a3, a3
+	bge a2, a3, label72
 	andi a0, a0, 255
-	j label61
-label76:
+	j label57
+label72:
 	andi a0, a1, 255
-label61:
+label57:
 	andi a0, a0, 255
 	ret
 .globl negative_CopyFromRegs
 negative_CopyFromRegs:
 	andi a2, a0, 255
-	slli a2, a2, 24
-	srai a2, a2, 24
+	sext.b a2, a2
 	andi a3, a1, 255
-	slli a3, a3, 24
-	srai a3, a3, 24
-	ble a2, a3, label99
+	sext.b a3, a3
+	ble a2, a3, label93
 	andi a0, a0, 255
-	j label86
-label99:
+	j label80
+label93:
 	andi a0, a1, 255
-label86:
+label80:
 	andi a0, a0, 255
 	ret
 .globl t0
 t0:
 	addw a0, a0, a2
 	andi a3, a0, 255
-	slli a3, a3, 24
-	srai a3, a3, 24
+	sext.b a3, a3
 	addw a1, a1, a2
 	andi a2, a1, 255
-	slli a2, a2, 24
-	srai a2, a2, 24
-	ble a3, a2, label125
+	sext.b a2, a2
+	ble a3, a2, label117
 	andi a0, a0, 255
-	j label109
-label125:
+	j label101
+label117:
 	andi a0, a1, 255
-label109:
+label101:
 	andi a0, a0, 255
 	ret

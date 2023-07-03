@@ -74,8 +74,7 @@ i32_to_u32:
 	ret
 .globl u8_to_i8
 u8_to_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	ret
 .globl u8_to_i16
 u8_to_i16:
@@ -87,13 +86,11 @@ u8_to_i32:
 	ret
 .globl u16_to_i8
 u16_to_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	ret
 .globl u16_to_i16
 u16_to_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	ret
 .globl u16_to_i32
 u16_to_i32:
@@ -102,13 +99,11 @@ u16_to_i32:
 	ret
 .globl u32_to_i8
 u32_to_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	ret
 .globl u32_to_i16
 u32_to_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	ret
 .globl u32_to_i32
 u32_to_i32:
@@ -124,8 +119,7 @@ i8_to_i32:
 	ret
 .globl i16_to_i8
 i16_to_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	ret
 .globl i16_to_i16
 i16_to_i16:
@@ -135,13 +129,11 @@ i16_to_i32:
 	ret
 .globl i32_to_i8
 i32_to_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	ret
 .globl i32_to_i16
 i32_to_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	ret
 .globl i32_to_i32
 i32_to_i32:

@@ -3,8 +3,7 @@
 .text
 .globl f0
 f0:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	srliw a1, a0, 31
 	add a0, a0, a1
 	sraiw a0, a0, 1
@@ -41,8 +40,7 @@ f3:
 	ret
 .globl f4
 f4:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	srliw a1, a0, 31
 	add a0, a0, a1
 	sraiw a0, a0, 1

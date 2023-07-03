@@ -3,10 +3,8 @@
 .text
 .globl icmp_i16_signed
 icmp_i16_signed:
-	slli a0, a0, 16
-	srai a0, a0, 16
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a0, a0
+	sext.h a1, a1
 	slt a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
@@ -28,10 +26,8 @@ icmp_i1_unsigned:
 	ret
 .globl icmp_i8_signed
 icmp_i8_signed:
-	slli a0, a0, 24
-	srai a0, a0, 24
-	slli a1, a1, 24
-	srai a1, a1, 24
+	sext.b a0, a0
+	sext.b a1, a1
 	slt a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1

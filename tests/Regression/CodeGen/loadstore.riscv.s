@@ -78,15 +78,15 @@ sb:
 	ret
 .globl global_addressing_scalar
 global_addressing_scalar:
-pcrel87:
+pcrel86:
 	auipc a0, %pcrel_hi(y)
-	lw a0, %pcrel_lo(pcrel87)(a0)
+	lw a0, %pcrel_lo(pcrel86)(a0)
 	ret
 .globl global_addressing_array
 global_addressing_array:
-pcrel96:
+pcrel95:
 	auipc a1, %pcrel_hi(arr)
-	addi a1, a1, %pcrel_lo(pcrel96)
+	addi a1, a1, %pcrel_lo(pcrel95)
 	sh2add a0, a0, a1
 	lw a0, 0(a0)
 	ret
@@ -100,7 +100,7 @@ memset_impl:
 	sw zero, 20(a0)
 	sw zero, 24(a0)
 	li a1, 7
-label98:
+label97:
 	sh2add a2, a1, a0
 	sw zero, 0(a2)
 	sw zero, 4(a2)
@@ -120,9 +120,9 @@ label98:
 	sw zero, 60(a2)
 	addiw a1, a1, 16
 	li a2, 119
-	bge a1, a2, label100
-	j label98
-label100:
+	bge a1, a2, label99
+	j label97
+label99:
 	sh2add a0, a1, a0
 	sw zero, 0(a0)
 	sw zero, 4(a0)

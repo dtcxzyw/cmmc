@@ -306,12 +306,6 @@ InstInfo:
       Mnemonic: max
     MAXU:
       Mnemonic: maxu
-    SEXT_B:
-      Mnemonic: sext.b
-    SEXT_H:
-      Mnemonic: sext.h
-    ZEXT_H:
-      Mnemonic: zext.h
     ROL:
       Mnemonic: rol
     ROLW:
@@ -324,6 +318,16 @@ InstInfo:
       Mnemonic: roriw
     RORW:
       Mnemonic: rorw
+  InstanceBRSExt:
+    Template: R2Type
+    SEXT_B:
+      Mnemonic: sext.b
+    SEXT_H:
+      Mnemonic: sext.h
+    SEXT_W:
+      Mnemonic: sext.w
+    ZEXT_H:
+      Mnemonic: zext.h
   InstanceBR:
     Template: R2Type
     # Zba
@@ -1683,14 +1687,11 @@ InstSelection:
         Src: $Src
         $Predicate: isOperandIReg($Src)
     Replace:
-      SRAI:
+      SEXT:
+        $Opcode: selectSExtOpcode(($Dst).type())
+        $Template: SEXT_W
         Rd: $Dst
-        Rs1:
-          SLLI:
-            Rd: getVRegAs(ctx, $Src)
-            Rs1: $Src
-            Imm: getTruncShift(($Dst).type())
-        Imm: getTruncShift(($Dst).type())
+        Rs1: $Src
 
 ScheduleModel:
   sifive-u74:

@@ -3,10 +3,8 @@
 .text
 .globl test_sdiv16
 test_sdiv16:
-	slli a0, a0, 16
-	srai a0, a0, 16
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a0, a0
+	sext.h a1, a1
 	divw a0, a0, a1
 	li a1, 65535
 	and a0, a0, a1
@@ -19,19 +17,15 @@ test_sdiv32:
 	ret
 .globl test_sdiv8
 test_sdiv8:
-	slli a0, a0, 24
-	srai a0, a0, 24
-	slli a1, a1, 24
-	srai a1, a1, 24
+	sext.b a0, a0
+	sext.b a1, a1
 	divw a0, a0, a1
 	andi a0, a0, 255
 	ret
 .globl test_srem16
 test_srem16:
-	slli a0, a0, 16
-	srai a0, a0, 16
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a0, a0
+	sext.h a1, a1
 	remw a0, a0, a1
 	li a1, 65535
 	and a0, a0, a1
@@ -44,10 +38,8 @@ test_srem32:
 	ret
 .globl test_srem8
 test_srem8:
-	slli a0, a0, 24
-	srai a0, a0, 24
-	slli a1, a1, 24
-	srai a1, a1, 24
+	sext.b a0, a0
+	sext.b a1, a1
 	remw a0, a0, a1
 	andi a0, a0, 255
 	ret

@@ -3,15 +3,13 @@
 .text
 .globl sext_16_32
 sext_16_32:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl sext_1_16
 sext_1_16:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a1, 65535
 	and a0, a0, a1
 	ret
@@ -22,21 +20,18 @@ sext_1_32:
 	ret
 .globl sext_1_8
 sext_1_8:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	andi a0, a0, 255
 	ret
 .globl sext_8_16
 sext_8_16:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl sext_8_32
 sext_8_32:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

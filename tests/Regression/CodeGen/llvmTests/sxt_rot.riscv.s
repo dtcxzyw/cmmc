@@ -3,8 +3,7 @@
 .text
 .globl test0
 test0:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
@@ -21,8 +20,7 @@ test2:
 	slliw a0, a0, 24
 	or a0, a2, a0
 	andi a0, a0, 255
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
@@ -33,8 +31,7 @@ test3:
 	slliw a0, a0, 16
 	or a0, a2, a0
 	andi a0, a0, 255
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
@@ -46,8 +43,7 @@ test4:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
@@ -59,16 +55,14 @@ test5:
 	or a0, a2, a0
 	li a2, 65535
 	and a0, a0, a2
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
 	ret
 .globl test6
 test6:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0
@@ -81,8 +75,7 @@ test7:
 	ret
 .globl test8
 test8:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a2, 4294967295
 	and a0, a0, a2
 	addw a0, a1, a0

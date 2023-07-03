@@ -285,20 +285,16 @@ sext_divw_sext_sext:
 	ret
 .globl sext_divw_sext_sext_i16
 sext_divw_sext_sext_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a0, a0
+	sext.h a1, a1
 	divw a0, a0, a1
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl sext_divw_sext_sext_i8
 sext_divw_sext_sext_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
-	slli a1, a1, 24
-	srai a1, a1, 24
+	sext.b a0, a0
+	sext.b a1, a1
 	divw a0, a0, a1
 	andi a0, a0, 255
 	ret
@@ -328,8 +324,7 @@ sext_divw_zext_zext:
 	ret
 .globl sext_i32_remw_sext_zext_i16
 sext_i32_remw_sext_zext_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a2, 65535
 	and a1, a1, a2
 	remw a0, a0, a1
@@ -340,8 +335,7 @@ sext_i32_remw_sext_zext_i16:
 sext_i32_remw_zext_sext_i16:
 	li a2, 65535
 	and a0, a0, a2
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a1, a1
 	remw a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
@@ -450,20 +444,16 @@ sext_remw_sext_sext:
 	ret
 .globl sext_remw_sext_sext_i16
 sext_remw_sext_sext_i16:
-	slli a0, a0, 16
-	srai a0, a0, 16
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a0, a0
+	sext.h a1, a1
 	remw a0, a0, a1
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl sext_remw_sext_sext_i8
 sext_remw_sext_sext_i8:
-	slli a0, a0, 24
-	srai a0, a0, 24
-	slli a1, a1, 24
-	srai a1, a1, 24
+	sext.b a0, a0
+	sext.b a1, a1
 	remw a0, a0, a1
 	andi a0, a0, 255
 	ret

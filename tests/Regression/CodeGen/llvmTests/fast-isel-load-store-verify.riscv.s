@@ -17,61 +17,57 @@ c:
 .text
 .globl t1
 t1:
-pcrel12:
+pcrel11:
 	auipc a0, %pcrel_hi(a)
-	lb a0, %pcrel_lo(pcrel12)(a0)
-	slli a0, a0, 24
-	srai a0, a0, 24
+	lb a0, %pcrel_lo(pcrel11)(a0)
+	sext.b a0, a0
 	addiw a0, a0, 1
 	andi a0, a0, 255
 	ret
 .globl t2
 t2:
-pcrel25:
+pcrel23:
 	auipc a0, %pcrel_hi(b)
-	lh a0, %pcrel_lo(pcrel25)(a0)
-	slli a0, a0, 16
-	srai a0, a0, 16
+	lh a0, %pcrel_lo(pcrel23)(a0)
+	sext.h a0, a0
 	addiw a0, a0, 1
 	li a1, 65535
 	and a0, a0, a1
 	ret
 .globl t3
 t3:
-pcrel36:
+pcrel34:
 	auipc a0, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel36)(a0)
+	lw a0, %pcrel_lo(pcrel34)(a0)
 	addiw a0, a0, 1
 	li a1, 4294967295
 	and a0, a0, a1
 	ret
 .globl t4
 t4:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	addiw a0, a0, 1
 	andi a0, a0, 255
-pcrel48:
+pcrel45:
 	auipc a1, %pcrel_hi(a)
-	sb a0, %pcrel_lo(pcrel48)(a1)
+	sb a0, %pcrel_lo(pcrel45)(a1)
 	ret
 .globl t5
 t5:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	addiw a0, a0, 1
 	li a1, 65535
 	and a0, a0, a1
-pcrel61:
+pcrel57:
 	auipc a1, %pcrel_hi(b)
-	sh a0, %pcrel_lo(pcrel61)(a1)
+	sh a0, %pcrel_lo(pcrel57)(a1)
 	ret
 .globl t6
 t6:
 	addiw a0, a0, 1
 	li a1, 4294967295
 	and a0, a0, a1
-pcrel72:
+pcrel68:
 	auipc a1, %pcrel_hi(c)
-	sw a0, %pcrel_lo(pcrel72)(a1)
+	sw a0, %pcrel_lo(pcrel68)(a1)
 	ret

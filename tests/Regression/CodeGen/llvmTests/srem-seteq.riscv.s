@@ -11,8 +11,7 @@ test_srem_allones:
 	ret
 .globl test_srem_even
 test_srem_even:
-	slli a0, a0, 16
-	srai a0, a0, 16
+	sext.h a0, a0
 	li a1, -1840700269
 	mul a1, a0, a1
 	srli a1, a1, 32

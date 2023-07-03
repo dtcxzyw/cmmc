@@ -3,8 +3,7 @@
 .text
 .globl test_srem_even
 test_srem_even:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	li a1, 715827883
 	mul a1, a0, a1
 	srli a2, a1, 32
@@ -36,8 +35,7 @@ test_srem_odd:
 	ret
 .globl test_srem_pow2_setne
 test_srem_pow2_setne:
-	slli a0, a0, 24
-	srai a0, a0, 24
+	sext.b a0, a0
 	andi a0, a0, 3
 	sltu a0, zero, a0
 	li a1, 4294967295

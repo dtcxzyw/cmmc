@@ -307,6 +307,19 @@ static bool selectShiftImm12Mask(const MIROperand& shiftImm, MIROperand& maskImm
     return false;
 }
 
+static uint32_t selectSExtOpcode(OperandType type) {
+    switch(type) {
+        case OperandType::Int8:
+            return SEXT_B;
+        case OperandType::Int16:
+            return SEXT_H;
+        case OperandType::Int32:
+            return SEXT_W;
+        default:
+            reportUnreachable(CMMC_LOCATION());
+    }
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>

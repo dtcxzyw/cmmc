@@ -6,12 +6,10 @@ call:
 	ret
 .globl manyargs
 manyargs:
-	slli a0, a0, 24
-	srai t0, a0, 24
+	sext.b t0, a0
 	li a0, 4294967295
 	and t0, t0, a0
-	slli a1, a1, 16
-	srai a1, a1, 16
+	sext.h a1, a1
 	and a0, a1, a0
 	addw a0, t0, a0
 	andi a1, a2, 255
