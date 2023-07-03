@@ -25,7 +25,7 @@ CMMC_TARGET_NAMESPACE_BEGIN
 
 {% for model in models %}
 class {{target}}ScheduleModel_{{model.class_name}} final: public TargetScheduleModel {
-    {% for class in model.classes %}const {{target}}ScheduleClass{{class}} mScheduleClass_{{class}};{% endfor %}
+    {% for class in model.classes %} {{target}}ScheduleClass{{class}} mScheduleClass_{{class}};{% endfor %}
 public:
     const ScheduleClass& getInstScheClass(uint32_t opcode) const override {
         switch(opcode) {
