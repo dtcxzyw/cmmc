@@ -25,6 +25,11 @@
       "parent": "6f138f87fa3ea11c75c258342c4a49a897c2b7cb",
       "time": "2023-07-02 00:07:09 +0800"
     },
+    "31b662379aa1db01ecb8bda98ee1e81ac76921d4": {
+      "message": "feat(codegen): add post-RA scheduler for riscv",
+      "parent": "7aede7c6d709e297c4656116f21caeeec62fa9ab",
+      "time": "2023-07-03 22:03:46 +0800"
+    },
     "377826e4b87e1b09d4f811708c15375e9d09a15f": {
       "message": "ci: fix typos",
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
@@ -171,5 +176,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "7aede7c6d709e297c4656116f21caeeec62fa9ab"
+  "head": "31b662379aa1db01ecb8bda98ee1e81ac76921d4"
 }
