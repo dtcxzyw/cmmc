@@ -10,8 +10,13 @@ foo:
 	nop
 label9:
 	move $t0, $zero
-	b label4
+	addiu $t0, $zero, 1
+	xor $t1, $a0, $t0
+	sltu $t1, $zero, $t1
+	bne $t1, $zero, label4
 	nop
+label17:
+	move $v0, $t0
 label2:
 	jr $ra
 	nop
@@ -21,6 +26,5 @@ label4:
 	sltu $t1, $zero, $t1
 	bne $t1, $zero, label4
 	nop
-	move $v0, $t0
-	b label2
+	b label17
 	nop

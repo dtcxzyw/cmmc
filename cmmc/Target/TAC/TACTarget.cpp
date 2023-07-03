@@ -24,6 +24,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Support/Options.hpp>
 #include <cstdint>
+#include <limits>
 #include <memory>
 
 CMMC_MIR_NAMESPACE_BEGIN
@@ -97,7 +98,7 @@ public:
             .maxUnrollBodySize = 32U,
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
-            .isBPUAware = false,
+            .branchLimit = std::numeric_limits<uint32_t>::max(),
             .mulByConstThreshold = 5U,
             .disableSelectionOpt = true,
         };

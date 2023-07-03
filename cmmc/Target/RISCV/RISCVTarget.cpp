@@ -209,6 +209,21 @@ class RISCVTarget final : public Target {
     RISCVRegisterInfo mRegisterInfo;
 
 public:
+    [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
+        static TargetOptHeuristic defaultHeuristic{
+            .unrollBlockSize = 4U,
+            .maxUnrollSize = 8U,
+            .maxUnrollBodySize = 32U,
+            .duplicationThreshold = 10U,
+            .duplicationIterations = 10U,
+            .branchLimit = 400U,
+            .mulByConstThreshold = 5U,
+            .disableSelectionOpt = false,
+        };
+
+        return defaultHeuristic;
+    }
+
     [[nodiscard]] const DataLayout& getDataLayout() const noexcept override {
         return mDataLayout;
     }

@@ -14,12 +14,22 @@ label16:
 	subu $t3, $zero, $a1
 	move $t1, $a1
 	move $t2, $zero
-	b label7
+	mult $t3, $zero
+	mflo $t4
+	addu $v0, $a0, $t4
+	subu $t4, $a1, $v0
+	bgez $t4, label11
+	nop
+	subu $v0, $v0, $a1
+	xor $t4, $a1, $v0
+	sltu $t4, $zero, $t4
+	bne $t4, $zero, label10
 	nop
 label2:
 	jr $ra
 	nop
-label7:
+label10:
+	addiu $t2, $t2, 1
 	mult $t3, $t2
 	mflo $t4
 	addu $v0, $a0, $t4
@@ -32,10 +42,6 @@ label7:
 	bne $t4, $zero, label10
 	nop
 	b label2
-	nop
-label10:
-	addiu $t2, $t2, 1
-	b label7
 	nop
 label11:
 	subu $t0, $t0, $v0
@@ -50,5 +56,16 @@ label36:
 	subu $t3, $zero, $t0
 	move $t1, $t0
 	move $t2, $zero
-	b label7
+	mult $t3, $zero
+	mflo $t4
+	addu $v0, $v0, $t4
+	subu $t4, $t0, $v0
+	bgez $t4, label11
+	nop
+	subu $v0, $v0, $t0
+	xor $t4, $t0, $v0
+	sltu $t4, $zero, $t4
+	bne $t4, $zero, label10
+	nop
+	b label2
 	nop

@@ -25,16 +25,51 @@ main:
 	movw r5, #:lower16:image_out
 	movt r5, #:upper16:image_out
 	mov r0, #1
-label2:
 	sub r1, r0, #1
 	movw r2, #1023
 	cmp r0, r2
 	bge label20
-	mov r3, #1
-	b label4
+	b label19
 label20:
 	mov r0, #0
+label7:
+	lsl r1, r0, #10
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	add r1, r0, #1
+	lsl r1, r1, #10
+	sub r2, r1, #1
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	add r1, r0, #2
+	lsl r1, r1, #10
+	sub r2, r1, #1
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	add r1, r0, #3
+	lsl r1, r1, #10
+	sub r2, r1, #1
+	ldr r3, [r4, r2, lsl #2]
+	str r3, [r5, r2, lsl #2]
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	add r0, r0, #4
+	lsl r1, r0, #10
+	sub r1, r1, #1
+	ldr r2, [r4, r1, lsl #2]
+	str r2, [r5, r1, lsl #2]
+	cmp r0, #1024
+	bge label130
 	b label7
+label130:
+	mov r0, #0
+	b label9
+label19:
+	mov r3, #1
 label4:
 	add r2, r0, r3, lsl #10
 	ldr r8, [r4, r2, lsl #2]
@@ -73,42 +108,11 @@ label4:
 	b label4
 label6:
 	add r0, r0, #1
-	b label2
-label7:
-	lsl r1, r0, #10
-	ldr r2, [r4, r1, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	add r1, r0, #1
-	lsl r1, r1, #10
-	sub r2, r1, #1
-	ldr r3, [r4, r2, lsl #2]
-	str r3, [r5, r2, lsl #2]
-	ldr r2, [r4, r1, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	add r1, r0, #2
-	lsl r1, r1, #10
-	sub r2, r1, #1
-	ldr r3, [r4, r2, lsl #2]
-	str r3, [r5, r2, lsl #2]
-	ldr r2, [r4, r1, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	add r1, r0, #3
-	lsl r1, r1, #10
-	sub r2, r1, #1
-	ldr r3, [r4, r2, lsl #2]
-	str r3, [r5, r2, lsl #2]
-	ldr r2, [r4, r1, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	add r0, r0, #4
-	lsl r1, r0, #10
-	sub r1, r1, #1
-	ldr r2, [r4, r1, lsl #2]
-	str r2, [r5, r1, lsl #2]
-	cmp r0, #1024
-	bge label130
-	b label7
-label130:
-	mov r0, #0
+	sub r1, r0, #1
+	movw r2, #1023
+	cmp r0, r2
+	bge label20
+	b label19
 label9:
 	add r1, r4, r0, lsl #2
 	ldr r3, [r4, r0, lsl #2]

@@ -14,10 +14,21 @@ label16:
 	subw a5, zero, a2
 	mv a3, a2
 	mv a4, zero
-	j label7
+	mulw a2, a5, zero
+	addw a2, a1, a2
+	bge a3, a2, label11
+	subw a2, a2, a0
+	xor t0, a0, a2
+	sltu t0, zero, t0
+	bne t0, zero, label10
+	j label48
 label2:
 	ret
-label7:
+label48:
+	mv a0, a2
+	j label2
+label10:
+	addiw a4, a4, 1
 	mulw a2, a5, a4
 	addw a2, a1, a2
 	bge a3, a2, label11
@@ -25,21 +36,23 @@ label7:
 	xor t0, a0, a2
 	sltu t0, zero, t0
 	bne t0, zero, label10
-label29:
-	mv a0, a2
-	j label2
-label10:
-	addiw a4, a4, 1
-	j label7
+	j label48
 label11:
 	subw a0, a0, a2
 	xor a1, a2, a0
 	sltu a1, zero, a1
 	bne a1, zero, label36
-	j label29
+	j label48
 label36:
 	mv a1, a2
 	subw a5, zero, a0
 	mv a3, a0
 	mv a4, zero
-	j label7
+	mulw a2, a5, zero
+	addw a2, a1, a2
+	bge a0, a2, label11
+	subw a2, a2, a0
+	xor t0, a0, a2
+	sltu t0, zero, t0
+	bne t0, zero, label10
+	j label48

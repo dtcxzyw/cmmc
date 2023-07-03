@@ -13,13 +13,13 @@ main:
 	ble s0, zero, label18
 	mv a0, zero
 	mv a2, zero
-	j label2
+	addiw a1, zero, 4
+	ble s0, a1, label6
+	j label5
 label18:
 	mv s0, zero
 	j label13
-label2:
-	addiw a1, a0, 4
-	ble s0, a1, label6
+label5:
 	addw a4, a0, a2
 	li a2, 1073790977
 	mul a3, a4, a2
@@ -54,7 +54,9 @@ label2:
 	mulw a2, a2, a3
 	subw a2, a0, a2
 	mv a0, a1
-	j label2
+	addiw a1, a1, 4
+	ble s0, a1, label6
+	j label5
 label10:
 	addw a1, a0, a2
 	li a2, 1073790977
@@ -86,6 +88,7 @@ label13:
 label6:
 	addiw a1, a0, 4
 	ble s0, a1, label10
+label9:
 	addw a4, a0, a2
 	li a2, 1073790977
 	mul a3, a4, a2
@@ -120,4 +123,6 @@ label6:
 	mulw a2, a2, a3
 	subw a2, a0, a2
 	mv a0, a1
-	j label6
+	addiw a1, a1, 4
+	ble s0, a1, label10
+	j label9

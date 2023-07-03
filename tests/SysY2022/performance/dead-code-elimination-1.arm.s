@@ -17,14 +17,14 @@ main:
 	ble label18
 	mov r0, #0
 	mov r2, r0
-	b label2
-label18:
-	mov r4, #0
-	b label13
-label2:
 	add r1, r0, #4
 	cmp r4, r1
 	ble label6
+	b label5
+label18:
+	mov r4, #0
+	b label13
+label5:
 	add r5, r0, r2
 	movw r2, #57345
 	movt r2, #2047
@@ -53,7 +53,10 @@ label2:
 	add r3, r5, r3, lsr #31
 	mls r2, r3, r2, r0
 	mov r0, r1
-	b label2
+	add r1, r1, #4
+	cmp r4, r1
+	ble label6
+	b label5
 label10:
 	add r1, r0, r2
 	movw r2, #57345
@@ -86,6 +89,7 @@ label6:
 	add r1, r0, #4
 	cmp r4, r1
 	ble label10
+label9:
 	add r5, r0, r2
 	movw r2, #57345
 	movt r2, #2047
@@ -114,4 +118,7 @@ label6:
 	add r3, r5, r3, lsr #31
 	mls r2, r3, r2, r0
 	mov r0, r1
-	b label6
+	add r1, r1, #4
+	cmp r4, r1
+	ble label10
+	b label9

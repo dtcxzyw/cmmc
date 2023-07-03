@@ -172,7 +172,7 @@ public:
             .maxUnrollBodySize = 32U,
             .duplicationThreshold = 10U,
             .duplicationIterations = 10U,
-            .isBPUAware = true,
+            .branchLimit = 1000U,
             .mulByConstThreshold = 7U,
             .disableSelectionOpt = true,
         };

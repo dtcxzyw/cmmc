@@ -18,7 +18,9 @@
 #include <cmmc/CodeGen/MIR.hpp>
 #include <cmmc/CodeGen/MIRCFGAnalysis.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
+#include <cstdint>
 #include <iostream>
+#include <limits>
 #include <variant>
 
 CMMC_MIR_NAMESPACE_BEGIN
@@ -49,6 +51,25 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             MIRBasicBlock* tmp;
             return ctx.instInfo.matchUnconditionalBranch(inst, tmp);
         };
+        auto isConditionalBranch = [&](const MIRInst& inst) {
+            MIRBasicBlock* tmp;
+            double prob;
+            return ctx.instInfo.matchConditionalBranch(inst, tmp, prob);
+        };
+
+        bool dontCopyBranchJumps = false;
+        if(heuristic.branchLimit != std::numeric_limits<uint32_t>::max()) {
+            uint32_t branchCount = 0;
+            for(auto& block : func.blocks()) {
+                if(isConditionalBranch(block->instructions().back())) {
+                    ++branchCount;
+                    if(branchCount >= heuristic.branchLimit / 2) {
+                        dontCopyBranchJumps = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
@@ -63,7 +84,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                    !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
                    targetBlock->instructions().size() <= heuristic.duplicationThreshold &&
-                   (!heuristic.isBPUAware ||
+                   (!dontCopyBranchJumps ||
                     isUnconditionalBranch(
                         targetBlock->instructions().back()))  // don't duplicate branch jumps that needs BTB/RAS entries
                 ) {

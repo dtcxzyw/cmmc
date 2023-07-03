@@ -130,7 +130,6 @@ label2:
 	movw r6, #9999
 	cmp r2, r6
 	ble label6
-label5:
 	cmp r1, #0
 	ble label13
 	b label2
@@ -153,13 +152,6 @@ label6:
 	sub r9, r0, r9, lsl #1
 	cmp r10, r9
 	beq label89
-	b label10
-label89:
-	mov r10, #0
-	add r3, r6, r10
-	str r3, [r5, r2, lsl #2]
-	b label5
-label10:
 	and r6, r7, #1
 	eor r10, r9, #1
 	orrs r6, r6, r10
@@ -168,20 +160,29 @@ label10:
 	and r6, r7, #-2147483647
 	eor r6, r6, #1
 	orrs r6, r9, r6
-	bne label104
-	b label103
-label104:
-	ldr r6, [r5, r2, lsl #2]
-	add r3, r6, r10
-	str r3, [r5, r2, lsl #2]
-	b label5
-label103:
+	bne label12
 	ldr r3, [r4, r3, lsl #2]
 	sub r10, r10, r3
 	ldr r6, [r5, r2, lsl #2]
 	add r3, r6, r10
 	str r3, [r5, r2, lsl #2]
-	b label5
+	cmp r1, #0
+	ble label13
+	b label2
+label89:
+	mov r10, #0
+	add r3, r6, r10
+	str r3, [r5, r2, lsl #2]
+	cmp r1, #0
+	ble label13
+	b label2
+label12:
+	ldr r6, [r5, r2, lsl #2]
+	add r3, r6, r10
+	str r3, [r5, r2, lsl #2]
+	cmp r1, #0
+	ble label13
+	b label2
 label13:
 	mov r0, #64
 	bl _sysy_stoptime
