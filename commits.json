@@ -35,6 +35,11 @@
       "parent": "1f59ecf03b60013c8fede43a47937e42df1bfca6",
       "time": "2023-07-04 23:09:07 +0800"
     },
+    "169ca45c333c980ad64271f0522d6f9a82c220cc": {
+      "message": "feat(analysis): add basic integer range analysis",
+      "parent": "1292361bcc4707b210683cac907bbcdc03ca0e14",
+      "time": "2023-07-05 02:09:54 +0800"
+    },
     "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41": {
       "message": "feat(transform): optimize select with constants",
       "parent": "8a442367ad14b632eadb8d0719bb9237ab864a62",
@@ -251,5 +256,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "1292361bcc4707b210683cac907bbcdc03ca0e14"
+  "head": "169ca45c333c980ad64271f0522d6f9a82c220cc"
 }
