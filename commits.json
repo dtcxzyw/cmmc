@@ -200,6 +200,11 @@
       "parent": "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c",
       "time": "2023-07-02 00:48:30 +0800"
     },
+    "cb2bacbaa905b3a86d42ec948cba23be3058ae1f": {
+      "message": "test(perf): add summary",
+      "parent": "3c9bfc69a8452250b22638e3e6231f85e7f64a85",
+      "time": "2023-07-04 20:34:37 +0800"
+    },
     "dab395f5471c2e2abcc130aed1055c5f889f99a1": {
       "message": "feat(transform): add more optimizations for arithmetic reduce",
       "parent": "4b7168be87eea9ff5ddf64cec1114c0450920b8f",
@@ -236,5 +241,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "3c9bfc69a8452250b22638e3e6231f85e7f64a85"
+  "head": "cb2bacbaa905b3a86d42ec948cba23be3058ae1f"
 }
