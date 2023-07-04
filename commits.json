@@ -60,6 +60,11 @@
       "parent": "377826e4b87e1b09d4f811708c15375e9d09a15f",
       "time": "2023-07-01 21:34:20 +0800"
     },
+    "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b": {
+      "message": "refactor(codegen): rename for style",
+      "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
+      "time": "2023-07-04 18:25:34 +0800"
+    },
     "477105dd55329c239391b78522aea5e8ff4e855c": {
       "message": "test(transform): decrease loop count of `loop_evaluate_3.sy`",
       "parent": "569de15b0c73b5c4753a65e91196ec62cefc3958",
@@ -201,5 +206,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "11b5dd1333286ce15e75aad7dda613c2d560d589"
+  "head": "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b"
 }
