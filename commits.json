@@ -30,10 +30,20 @@
       "parent": "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26",
       "time": "2023-07-04 16:11:46 +0800"
     },
+    "1292361bcc4707b210683cac907bbcdc03ca0e14": {
+      "message": "feat(transform): add shrink warpping",
+      "parent": "1f59ecf03b60013c8fede43a47937e42df1bfca6",
+      "time": "2023-07-04 23:09:07 +0800"
+    },
     "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41": {
       "message": "feat(transform): optimize select with constants",
       "parent": "8a442367ad14b632eadb8d0719bb9237ab864a62",
       "time": "2023-07-02 21:25:06 +0800"
+    },
+    "1f59ecf03b60013c8fede43a47937e42df1bfca6": {
+      "message": "feat(codegen): fix cgscc analysis",
+      "parent": "cb2bacbaa905b3a86d42ec948cba23be3058ae1f",
+      "time": "2023-07-04 23:09:07 +0800"
     },
     "1f60be052e1eab78833111815c276620c43bc1a5": {
       "message": "feat(codegen): relax constraints for postRA scheduler",
@@ -241,5 +251,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "cb2bacbaa905b3a86d42ec948cba23be3058ae1f"
+  "head": "1292361bcc4707b210683cac907bbcdc03ca0e14"
 }
