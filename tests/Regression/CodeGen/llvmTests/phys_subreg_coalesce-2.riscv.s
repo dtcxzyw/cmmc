@@ -9,20 +9,20 @@ binomial:
 	bne a1, zero, label4
 	mv a0, zero
 	j label2
-label37:
+label35:
 	li a0, 1
 label2:
 	ret
 label4:
 	sltu a1, zero, a2
 	bne a1, zero, label5
-	j label37
+	j label35
 label5:
 	li a1, 1
 	sltu a1, a1, a2
-	bne a1, zero, label23
+	bne a1, zero, label21
 	j label2
-label23:
+label21:
 	li a3, 1
 	mv a1, a0
 	subw a4, a0, a3
@@ -32,11 +32,11 @@ label23:
 	divuw a1, a1, a4
 	sltu a3, a2, a3
 	xori a3, a3, 1
-	bne a3, zero, label32
-label38:
+	bne a3, zero, label30
+label29:
 	mv a0, a1
 	j label2
-label32:
+label30:
 	mv a3, a4
 	subw a4, a0, a4
 	mulw a1, a1, a4
@@ -45,5 +45,5 @@ label32:
 	divuw a1, a1, a4
 	sltu a3, a2, a3
 	xori a3, a3, 1
-	bne a3, zero, label32
-	j label38
+	bne a3, zero, label30
+	j label29

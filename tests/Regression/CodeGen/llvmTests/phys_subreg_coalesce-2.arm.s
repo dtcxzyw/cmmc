@@ -12,7 +12,7 @@ binomial:
 	bhs label4
 	mov r0, #0
 	b label2
-label34:
+label32:
 	mov r0, #1
 label2:
 	pop { r4 }
@@ -20,12 +20,12 @@ label2:
 label4:
 	cmp r2, #0
 	bne label5
-	b label34
+	b label32
 label5:
 	cmp r2, #2
-	bhs label23
+	bhs label21
 	b label2
-label23:
+label21:
 	mov r3, #1
 	mov r1, r0
 	sub r4, r0, r3
@@ -34,11 +34,11 @@ label23:
 	add r3, r3, #2
 	udiv r1, r1, r4
 	cmp r2, r3
-	bhs label32
-label35:
+	bhs label30
+label29:
 	mov r0, r1
 	b label2
-label32:
+label30:
 	mov r3, r4
 	sub r4, r0, r4
 	mul r1, r1, r4
@@ -46,5 +46,5 @@ label32:
 	add r3, r3, #2
 	udiv r1, r1, r4
 	cmp r2, r3
-	bhs label32
-	b label35
+	bhs label30
+	b label29

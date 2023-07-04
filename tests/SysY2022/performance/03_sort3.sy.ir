@@ -295,7 +295,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i1 %164 = scmp gt i32 %bitround, i32 %163;
     cbr i1 %164(prob = 0.89), ^while.body9, ^super.header4;
   ^b6:
-    i32 %165 = phi [^while.body7, i32 %146] [^while.body14, i32 %207];
+    i32 %165 = phi [^while.body7, i32 %146] [^while.body14, i32 %206];
     i32 %166 = srem i32 %165, i32 16;
     i1 %167 = scmp neq i32 %125, i32 %166;
     cbr i1 %167(prob = 0.97), ^while.body10, ^b7;
@@ -303,8 +303,8 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %168 = sdiv i32 %161, i32 65536;
     ubr ^super.header3;
   ^b7:
-    i32 %169 = phi [^b6, i32 %144] [^indirect1, i32 %197];
-    i32 %170 = phi [^b6, i32 %146] [^indirect1, i32 %196];
+    i32 %169 = phi [^b6, i32 %144] [^indirect1, i32 %196] [^indirect3, i32 %243];
+    i32 %170 = phi [^b6, i32 %146] [^indirect1, i32 %180] [^indirect3, i32 %221];
     i32* %171 = getelementptr &(i32* %a)[i32 %169];
     store i32* %171 with i32 %170;
     i32 %172 = add i32 %169, i32 1;
@@ -341,7 +341,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i1 %190 = scmp gt i32 %bitround, i32 %189;
     cbr i1 %190(prob = 0.89), ^while.body13, ^while.body14;
   ^b8:
-    i32 %191 = phi [^while.body10, i32 %180] [^while.body18, i32 %238];
+    i32 %191 = phi [^while.body10, i32 %180] [^while.body18, i32 %237];
     i32 %192 = srem i32 %191, i32 16;
     i1 %193 = scmp neq i32 %125, i32 %192;
     cbr i1 %193(prob = 0.97), ^indirect2, ^indirect1;
@@ -352,96 +352,98 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %195 = sdiv i32 %187, i32 65536;
     ubr ^super.header6;
   ^indirect1:
-    i32 %196 = phi [^b8, i32 %180] [^b10, i32 %222];
-    i32 %197 = load i32* %127;
+    i32 %196 = load i32* %127;
     ubr ^b7;
   ^super.header7:
-    i32 %198 = phi [^super.header5, i32 %183] [^while.body15, i32 %208];
-    i32 %199 = phi [^super.header5, i32 %184] [^while.body15, i32 %200];
-    i32 %200 = add i32 %199, i32 4;
-    i1 %201 = scmp gt i32 %bitround, i32 %200;
-    cbr i1 %201(prob = 0.89), ^while.body15, ^super.header9;
+    i32 %197 = phi [^super.header5, i32 %183] [^while.body15, i32 %207];
+    i32 %198 = phi [^super.header5, i32 %184] [^while.body15, i32 %199];
+    i32 %199 = add i32 %198, i32 4;
+    i1 %200 = scmp gt i32 %bitround, i32 %199;
+    cbr i1 %200(prob = 0.89), ^while.body15, ^super.header9;
   ^indirect2:
-    i32 %202 = phi [^b8, i32 %180] [^b10, i32 %222];
+    i32 %201 = phi [^b8, i32 %180] [^b10, i32 %221];
     cbr i1 %53(prob = 0.97), ^super.header8, ^b9;
   ^while.body14:
-    i32 %203 = phi [^super.header6, i32 %187] [^while.body14, i32 %207];
-    i32 %204 = phi [^super.header6, i32 %188] [^while.body14, i32 %205];
-    i32 %205 = add i32 %204, i32 1;
-    i1 %206 = scmp gt i32 %bitround, i32 %205;
-    i32 %207 = sdiv i32 %203, i32 16;
-    cbr i1 %206(prob = 0.97), ^while.body14, ^b6;
+    i32 %202 = phi [^super.header6, i32 %187] [^while.body14, i32 %206];
+    i32 %203 = phi [^super.header6, i32 %188] [^while.body14, i32 %204];
+    i32 %204 = add i32 %203, i32 1;
+    i1 %205 = scmp gt i32 %bitround, i32 %204;
+    i32 %206 = sdiv i32 %202, i32 16;
+    cbr i1 %205(prob = 0.97), ^while.body14, ^b6;
   ^while.body15:
-    i32 %208 = sdiv i32 %198, i32 65536;
+    i32 %207 = sdiv i32 %197, i32 65536;
     ubr ^super.header7;
   ^super.header8:
-    i32 %209 = phi [^indirect2, i32 %202] [^while.body16, i32 %224];
-    i32 %210 = phi [^indirect2, i32 0] [^while.body16, i32 %211];
-    i32 %211 = add i32 %210, i32 4;
-    i1 %212 = scmp gt i32 %bitround, i32 %211;
-    cbr i1 %212(prob = 0.89), ^while.body16, ^super.header10;
+    i32 %208 = phi [^indirect2, i32 %201] [^while.body16, i32 %223];
+    i32 %209 = phi [^indirect2, i32 0] [^while.body16, i32 %210];
+    i32 %210 = add i32 %209, i32 4;
+    i1 %211 = scmp gt i32 %bitround, i32 %210;
+    cbr i1 %211(prob = 0.89), ^while.body16, ^super.header10;
   ^super.header9:
-    i32 %213 = phi [^super.header7, i32 %198] [^while.body17, i32 %225];
-    i32 %214 = phi [^super.header7, i32 %199] [^while.body17, i32 %215];
-    i32 %215 = add i32 %214, i32 4;
-    i1 %216 = scmp gt i32 %bitround, i32 %215;
-    cbr i1 %216(prob = 0.89), ^while.body17, ^while.body18;
+    i32 %212 = phi [^super.header7, i32 %197] [^while.body17, i32 %224];
+    i32 %213 = phi [^super.header7, i32 %198] [^while.body17, i32 %214];
+    i32 %214 = add i32 %213, i32 4;
+    i1 %215 = scmp gt i32 %bitround, i32 %214;
+    cbr i1 %215(prob = 0.89), ^while.body17, ^while.body18;
   ^b9:
-    i32 %217 = phi [^indirect2, i32 %202] [^while.body23, i32 %258];
-    i32 %218 = srem i32 %217, i32 16;
-    i32* %219 = getelementptr &([16 * i32]* %head)[i64 0][i32 %218];
-    i32 %220 = load i32* %219;
-    i32* %221 = getelementptr &(i32* %a)[i32 %220];
-    i32 %222 = load i32* %221;
-    store i32* %221 with i32 %202;
-    i32 %223 = add i32 %220, i32 1;
-    store i32* %219 with i32 %223;
+    i32 %216 = phi [^indirect2, i32 %201] [^while.body23, i32 %258];
+    i32 %217 = srem i32 %216, i32 16;
+    i32* %218 = getelementptr &([16 * i32]* %head)[i64 0][i32 %217];
+    i32 %219 = load i32* %218;
+    i32* %220 = getelementptr &(i32* %a)[i32 %219];
+    i32 %221 = load i32* %220;
+    store i32* %220 with i32 %201;
+    i32 %222 = add i32 %219, i32 1;
+    store i32* %218 with i32 %222;
     cbr i1 %53(prob = 0.97), ^super.header11, ^b10;
   ^while.body16:
-    i32 %224 = sdiv i32 %209, i32 65536;
+    i32 %223 = sdiv i32 %208, i32 65536;
     ubr ^super.header8;
   ^while.body17:
-    i32 %225 = sdiv i32 %213, i32 65536;
+    i32 %224 = sdiv i32 %212, i32 65536;
     ubr ^super.header9;
   ^super.header10:
-    i32 %226 = phi [^super.header8, i32 %209] [^while.body20, i32 %243];
-    i32 %227 = phi [^super.header8, i32 %210] [^while.body20, i32 %228];
-    i32 %228 = add i32 %227, i32 4;
-    i1 %229 = scmp gt i32 %bitround, i32 %228;
-    cbr i1 %229(prob = 0.89), ^while.body20, ^super.header12;
+    i32 %225 = phi [^super.header8, i32 %208] [^while.body20, i32 %242];
+    i32 %226 = phi [^super.header8, i32 %209] [^while.body20, i32 %227];
+    i32 %227 = add i32 %226, i32 4;
+    i1 %228 = scmp gt i32 %bitround, i32 %227;
+    cbr i1 %228(prob = 0.89), ^while.body20, ^super.header12;
   ^super.header11:
-    i32 %230 = phi [^b9, i32 %222] [^while.body19, i32 %242];
-    i32 %231 = phi [^b9, i32 0] [^while.body19, i32 %232];
-    i32 %232 = add i32 %231, i32 4;
-    i1 %233 = scmp gt i32 %bitround, i32 %232;
-    cbr i1 %233(prob = 0.89), ^while.body19, ^super.header13;
+    i32 %229 = phi [^b9, i32 %221] [^while.body19, i32 %241];
+    i32 %230 = phi [^b9, i32 0] [^while.body19, i32 %231];
+    i32 %231 = add i32 %230, i32 4;
+    i1 %232 = scmp gt i32 %bitround, i32 %231;
+    cbr i1 %232(prob = 0.89), ^while.body19, ^super.header13;
   ^while.body18:
-    i32 %234 = phi [^super.header9, i32 %213] [^while.body18, i32 %238];
-    i32 %235 = phi [^super.header9, i32 %214] [^while.body18, i32 %236];
-    i32 %236 = add i32 %235, i32 1;
-    i1 %237 = scmp gt i32 %bitround, i32 %236;
-    i32 %238 = sdiv i32 %234, i32 16;
-    cbr i1 %237(prob = 0.97), ^while.body18, ^b8;
+    i32 %233 = phi [^super.header9, i32 %212] [^while.body18, i32 %237];
+    i32 %234 = phi [^super.header9, i32 %213] [^while.body18, i32 %235];
+    i32 %235 = add i32 %234, i32 1;
+    i1 %236 = scmp gt i32 %bitround, i32 %235;
+    i32 %237 = sdiv i32 %233, i32 16;
+    cbr i1 %236(prob = 0.97), ^while.body18, ^b8;
   ^b10:
-    i32 %239 = phi [^b9, i32 %222] [^while.body25, i32 %268];
-    i32 %240 = srem i32 %239, i32 16;
-    i1 %241 = scmp neq i32 %125, i32 %240;
-    cbr i1 %241(prob = 0.97), ^indirect2, ^indirect1;
+    i32 %238 = phi [^b9, i32 %221] [^while.body25, i32 %268];
+    i32 %239 = srem i32 %238, i32 16;
+    i1 %240 = scmp neq i32 %125, i32 %239;
+    cbr i1 %240(prob = 0.97), ^indirect2, ^indirect3;
   ^while.body19:
-    i32 %242 = sdiv i32 %230, i32 65536;
+    i32 %241 = sdiv i32 %229, i32 65536;
     ubr ^super.header11;
   ^while.body20:
-    i32 %243 = sdiv i32 %226, i32 65536;
+    i32 %242 = sdiv i32 %225, i32 65536;
     ubr ^super.header10;
+  ^indirect3:
+    i32 %243 = load i32* %127;
+    ubr ^b7;
   ^super.header12:
-    i32 %244 = phi [^super.header10, i32 %226] [^while.body22, i32 %253];
-    i32 %245 = phi [^super.header10, i32 %227] [^while.body22, i32 %246];
+    i32 %244 = phi [^super.header10, i32 %225] [^while.body22, i32 %253];
+    i32 %245 = phi [^super.header10, i32 %226] [^while.body22, i32 %246];
     i32 %246 = add i32 %245, i32 4;
     i1 %247 = scmp gt i32 %bitround, i32 %246;
     cbr i1 %247(prob = 0.89), ^while.body22, ^while.body23;
   ^super.header13:
-    i32 %248 = phi [^super.header11, i32 %230] [^while.body21, i32 %252];
-    i32 %249 = phi [^super.header11, i32 %231] [^while.body21, i32 %250];
+    i32 %248 = phi [^super.header11, i32 %229] [^while.body21, i32 %252];
+    i32 %249 = phi [^super.header11, i32 %230] [^while.body21, i32 %250];
     i32 %250 = add i32 %249, i32 4;
     i1 %251 = scmp gt i32 %bitround, i32 %250;
     cbr i1 %251(prob = 0.89), ^while.body21, ^super.header14;
