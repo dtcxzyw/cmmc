@@ -65,6 +65,11 @@
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
       "time": "2023-07-01 21:30:30 +0800"
     },
+    "3c9bfc69a8452250b22638e3e6231f85e7f64a85": {
+      "message": "fix(transform): fix phi merge",
+      "parent": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25",
+      "time": "2023-07-04 20:32:36 +0800"
+    },
     "3e248a8ab400477fc93e1fcc384824d4347a3217": {
       "message": "feat(codegen): emit sext.b/h/w instructions for riscv",
       "parent": "9281299f68c3f217140406e04f046824bfe4bd33",
@@ -231,5 +236,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25"
+  "head": "3c9bfc69a8452250b22638e3e6231f85e7f64a85"
 }
