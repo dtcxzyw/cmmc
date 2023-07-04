@@ -494,3 +494,8 @@ mul_with_constant_10000:
 	li a1, 10000
 	mulw a0, a0, a1
 	ret
+.globl mul_neg2
+mul_neg2:
+	slliw a0, a0, 1
+	subw a0, zero, a0
+	ret

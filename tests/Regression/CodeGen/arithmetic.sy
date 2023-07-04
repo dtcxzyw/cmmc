@@ -310,3 +310,6 @@ int mul_with_constant_300(int x) {
 int mul_with_constant_10000(int x) {
     return x * 10000;
 }
+int mul_neg2(int x) {
+    return x * -2;
+}

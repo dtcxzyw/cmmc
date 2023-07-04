@@ -722,3 +722,8 @@ func @srem2eq(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
+func @mul_neg2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = mul i32 %x, i32 -2;
+    ret i32 %0;
+}

@@ -427,3 +427,6 @@ int sdivneg(int x) {
 int srem2eq(int x) {
     return x % 2 == 1;
 }
+int mul_neg2(int x) {
+    return (-x) * 2;
+}

@@ -887,6 +887,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // neg(x) * c -> x * -c
+            if(mul(oneUse(neg(any(v1))), int_(i1))(matchCtx)) {
+                return builder.makeOp<BinaryInst>(InstructionID::Mul, v1, makeIntLike(-i1, v1));
+            }
+
             return nullptr;
         });
         return ret || modified;

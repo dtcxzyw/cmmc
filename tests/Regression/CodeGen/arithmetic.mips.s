@@ -588,3 +588,9 @@ mul_with_constant_10000:
 	mflo $v0
 	jr $ra
 	nop
+.globl mul_neg2
+mul_neg2:
+	sll $t0, $a0, 1
+	subu $v0, $zero, $t0
+	jr $ra
+	nop

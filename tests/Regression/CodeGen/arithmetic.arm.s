@@ -475,3 +475,8 @@ mul_with_constant_10000:
 	add r0, r0, r0, lsl #2
 	lsl r0, r0, #4
 	bx lr
+.globl mul_neg2
+mul_neg2:
+	lsl r0, r0, #1
+	rsb r0, r0, #0
+	bx lr
