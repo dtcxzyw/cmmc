@@ -150,6 +150,11 @@
       "parent": "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41",
       "time": "2023-07-02 21:53:19 +0800"
     },
+    "80d6e89e289ec70a1f33edcd9a24c093f2a50a25": {
+      "message": "feat(transform): merge blocks with phi insts",
+      "parent": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4",
+      "time": "2023-07-04 20:02:55 +0800"
+    },
     "84648e12b6bda57ce06277c9d225d6f6c00a1481": {
       "message": "misc: update ref",
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
@@ -226,5 +231,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4"
+  "head": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25"
 }
