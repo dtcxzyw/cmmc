@@ -5,6 +5,11 @@
       "parent": "31b662379aa1db01ecb8bda98ee1e81ac76921d4",
       "time": "2023-07-03 22:21:17 +0800"
     },
+    "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4": {
+      "message": "fix(codegen): fix arithmetic reduce",
+      "parent": "26714d9d6988bee0ab3fee76f2c56aec14c5b2af",
+      "time": "2023-07-04 19:55:33 +0800"
+    },
     "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c": {
       "message": "feat(codegen): update ARM parameters",
       "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
@@ -221,5 +226,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "26714d9d6988bee0ab3fee76f2c56aec14c5b2af"
+  "head": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4"
 }
