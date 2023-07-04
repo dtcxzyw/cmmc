@@ -35,6 +35,11 @@
       "parent": "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b",
       "time": "2023-07-04 18:27:17 +0800"
     },
+    "26714d9d6988bee0ab3fee76f2c56aec14c5b2af": {
+      "message": "misc: update ref",
+      "parent": "4879ee3b9e8e13bac01a62a89051b394eae37ace",
+      "time": "2023-07-04 18:45:19 +0800"
+    },
     "2a8d4a9919993d68163f8deca8328c69c80db012": {
       "message": "feat(codegen): optimize constant multiplication with shifts and arithmetics",
       "parent": "fd09d81a7f01e2eea69cfec9e186c92b254fc584",
@@ -216,5 +221,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "4879ee3b9e8e13bac01a62a89051b394eae37ace"
+  "head": "26714d9d6988bee0ab3fee76f2c56aec14c5b2af"
 }
