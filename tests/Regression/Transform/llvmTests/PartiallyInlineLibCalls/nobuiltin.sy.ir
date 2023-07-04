@@ -1,4 +1,4 @@
-func @f(f32 %var0) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @f() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret f32 0;
 }

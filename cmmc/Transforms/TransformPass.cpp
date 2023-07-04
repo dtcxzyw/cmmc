@@ -445,7 +445,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 "DiscardReturnValue",  //
-                "FuncInlining",        //
+                //"ShrinkWrapping",      //
+                "FuncInlining",  //
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(iter);

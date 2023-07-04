@@ -37,6 +37,7 @@ public:
 
             auto& insts = block->instructions();
             modified |= insts.size() != 1;
+            DisableValueRefCheckScope scope;
             insts.erase(insts.begin(), std::prev(insts.end()));
         }
         return modified;

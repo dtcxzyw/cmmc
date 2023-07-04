@@ -1,12 +1,10 @@
-func @a() -> i32 { NoRecurse } {
+func @a() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @b();
     ret i32 %0;
 }
-func @b() -> i32 {
+func @b() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    i32 %0 = call () -> i32 @a();
+    i32 %0 = call () -> i32 @b();
     ret i32 %0;
 }

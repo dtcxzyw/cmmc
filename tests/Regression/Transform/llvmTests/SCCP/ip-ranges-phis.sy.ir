@@ -1,4 +1,4 @@
-func @caller1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @caller1() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 2;
 }

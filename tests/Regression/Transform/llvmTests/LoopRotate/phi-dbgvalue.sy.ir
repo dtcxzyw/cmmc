@@ -1,4 +1,4 @@
-func @func(i32 %var0) -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @func() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret;
 }

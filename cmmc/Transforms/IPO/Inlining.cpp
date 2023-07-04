@@ -35,6 +35,7 @@
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <cstdint>
 #include <iostream>
 #include <queue>
 #include <string_view>
@@ -188,7 +189,7 @@ class FuncInlining final : public TransformPass<Function> {
                 if(inst.getInstID() == InstructionID::Call) {
                     const auto callee = inst.lastOperand();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
-                        if(!calleeFunc->blocks().empty() && shouldInline(*calleeFunc)) {
+                        if(!calleeFunc->blocks().empty() && (&func != calleeFunc) && shouldInline(*calleeFunc)) {
                             applyInline(block, iter, &func, calleeFunc);
                             return true;
                         }
@@ -201,16 +202,22 @@ class FuncInlining final : public TransformPass<Function> {
 
 public:
     bool run(Function& func, AnalysisPassManager&) const override {
-        bool modified = false;
-        while(tryInline(func)) {
-            modified = true;
-            /*
-            func.dump(std::cerr, Noop{});
-            if(!func.verify(std::cerr)) {
-                reportUnreachable(CMMC_LOCATION());
-            }
-            */
+        if(func.getSymbol().prefix().find("_inline_wrapped") != std::string_view::npos) {
+            return false;
         }
+
+        constexpr uint32_t maxTrial = 16;
+        bool modified = false;
+        for(uint32_t k = 0; k < maxTrial; ++k)
+            if(tryInline(func)) {
+                modified = true;
+                /*
+                func.dump(std::cerr, Noop{});
+                if(!func.verify(std::cerr)) {
+                    reportUnreachable(CMMC_LOCATION());
+                }
+                */
+            }
         return modified;
     }
 

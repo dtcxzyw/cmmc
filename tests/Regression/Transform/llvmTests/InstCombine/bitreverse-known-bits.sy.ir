@@ -1,4 +1,4 @@
-func @add_bitreverse(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @add_bitreverse() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i8 -16;
 }

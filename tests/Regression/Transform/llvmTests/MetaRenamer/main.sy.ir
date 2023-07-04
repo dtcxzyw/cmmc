@@ -1,12 +1,8 @@
-func @main() -> void { NoRecurse } {
+func @main() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    call () -> void @patatino();
     ret;
 }
-func @patatino() -> void {
+func @patatino() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    call () -> void @main();
     ret;
 }

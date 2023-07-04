@@ -1,14 +1,15 @@
-func @bar() -> void { NoRecurse } {
+func @bar() -> void { NoMemoryRead NoRecurse } {
   ^entry:
+    i32* %0 = ptrcast i32* @i to i32*;
+    store i32* %0 with i32 1;
     call () -> void @foo();
     ret;
 }
-func @foo() -> void {
+func @foo() -> void { NoMemoryRead NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    store i32* @i with i32 1;
-    call () -> void @bar();
+    i32* %0 = ptrcast i32* @i to i32*;
+    store i32* %0 with i32 1;
+    call () -> void @foo();
     ret;
 }
 i32* @i = 0;

@@ -16,6 +16,7 @@
 #include <cmmc/Analysis/CallGraphSCC.hpp>
 #include <cmmc/Support/Graph.hpp>
 #include <cstdint>
+#include <iostream>
 #include <iterator>
 #include <queue>
 #include <unordered_map>
@@ -60,7 +61,8 @@ CallGraphSCCAnalysisResult CallGraphSCCAnalysis::run(Module& module, AnalysisPas
                 const auto callee = inst.lastOperand();
                 if(auto calleeFunc = dynamic_cast<Function*>(callee)) {
                     const auto v = idxMap.at(calleeFunc);
-                    graph[u].emplace_back(v);
+                    if(u != v)
+                        graph[u].emplace_back(v);
                 }
             }
         }
@@ -94,7 +96,9 @@ CallGraphSCCAnalysisResult CallGraphSCCAnalysis::run(Module& module, AnalysisPas
 
     while(!q.empty()) {
         const auto u = q.front();
-        order.emplace_back(funcMap[u]);
+        for(auto k : scc[u]) {
+            order.emplace_back(funcMap[k]);
+        }
         q.pop();
 
         for(auto v : dag[u]) {
@@ -102,6 +106,8 @@ CallGraphSCCAnalysisResult CallGraphSCCAnalysis::run(Module& module, AnalysisPas
                 q.push(v);
         }
     }
+
+    assert(order.size() == funcMap.size());
 
     return CallGraphSCCAnalysisResult{ std::move(order) };
 }

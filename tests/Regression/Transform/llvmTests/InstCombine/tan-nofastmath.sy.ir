@@ -3,7 +3,7 @@ func @atanf() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
     ret f32 0;
 }
 func @mytan() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^b:
+  ^entry:
     ret f32 0;
 }
 func @tanf() -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

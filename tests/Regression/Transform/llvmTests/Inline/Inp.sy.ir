@@ -1,12 +1,8 @@
-func @f() -> void { NoRecurse } {
+func @f() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    call () -> void @g();
     ret;
 }
-func @g() -> void {
+func @g() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    call () -> void @f();
     ret;
 }

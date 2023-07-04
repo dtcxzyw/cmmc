@@ -1,19 +1,12 @@
-func @samescc1() -> void { NoRecurse } {
+func @samescc1() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    call () -> void @samescc2();
     ret;
 }
-func @samescc2() -> void {
+func @samescc2() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    call () -> void @samescc3();
     ret;
 }
-func @samescc3() -> void {
+func @samescc3() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    ubr ^block0;
-  ^block0:
-    call () -> void @samescc1();
     ret;
 }

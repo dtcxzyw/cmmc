@@ -10,7 +10,7 @@ func @alwaysInlineFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSide
     ret i32 %0;
 }
 func @bar() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
-  ^b:
+  ^entry:
     ret i32 47;
 }
 func @simpleFunction(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
