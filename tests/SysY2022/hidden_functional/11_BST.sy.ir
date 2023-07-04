@@ -32,12 +32,42 @@ internal func @insert(i32 %root, i32 %x, i32* %0) -> i32 {
     [10000 * i32]* %16 = select i1 %13 ? [10000 * i32]* %14 : [10000 * i32]* %15;
     i32* %17 = getelementptr &([10000 * i32]* %16)[i64 0][i32 %root];
     i32 %18 = load i32* %17;
-    i32 %19 = call (i32, i32, i32*) -> i32 @insert(i32 %18, i32 %x, i32* %0);
-    store i32* %17 with i32 %19;
-    ubr ^b;
+    i1 %19 = scmp eq i32 %18, i32 -1;
+    cbr i1 %19(prob = 0.5), ^entry2, ^if.else1;
+  ^entry2:
+    i32 %20 = load i32* %0;
+    [10000 * i32]* %21 = ptrcast [10000 * i32]* @value to [10000 * i32]*;
+    i32* %22 = getelementptr &([10000 * i32]* %21)[i64 0][i32 %20];
+    store i32* %22 with i32 %x;
+    [10000 * i32]* %23 = ptrcast [10000 * i32]* @left_child to [10000 * i32]*;
+    i32* %24 = getelementptr &([10000 * i32]* %23)[i64 0][i32 %20];
+    store i32* %24 with i32 -1;
+    [10000 * i32]* %25 = ptrcast [10000 * i32]* @right_child to [10000 * i32]*;
+    i32* %26 = getelementptr &([10000 * i32]* %25)[i64 0][i32 %20];
+    store i32* %26 with i32 -1;
+    i32 %27 = add i32 %20, i32 1;
+    store i32* %0 with i32 %27;
+    ubr ^if.else2;
+  ^if.else1:
+    [10000 * i32]* %28 = ptrcast [10000 * i32]* @value to [10000 * i32]*;
+    i32* %29 = getelementptr &([10000 * i32]* %28)[i64 0][i32 %18];
+    i32 %30 = load i32* %29;
+    i1 %31 = scmp gt i32 %x, i32 %30;
+    [10000 * i32]* %32 = ptrcast [10000 * i32]* @right_child to [10000 * i32]*;
+    [10000 * i32]* %33 = ptrcast [10000 * i32]* @left_child to [10000 * i32]*;
+    [10000 * i32]* %34 = select i1 %31 ? [10000 * i32]* %32 : [10000 * i32]* %33;
+    i32* %35 = getelementptr &([10000 * i32]* %34)[i64 0][i32 %18];
+    i32 %36 = load i32* %35;
+    i32 %37 = call (i32, i32, i32*) -> i32 @insert(i32 %36, i32 %x, i32* %0);
+    store i32* %35 with i32 %37;
+    ubr ^if.else2;
   ^b:
-    i32 %20 = phi [^entry1, i32 %2] [^if.else, i32 %root];
-    ret i32 %20;
+    i32 %38 = phi [^entry1, i32 %2] [^if.else2, i32 %root];
+    ret i32 %38;
+  ^if.else2:
+    i32 %39 = phi [^entry2, i32 %20] [^if.else1, i32 %18];
+    store i32* %17 with i32 %39;
+    ubr ^b;
 }
 internal func @delete(i32 %root, i32 %x) -> i32 {
   ^entry:

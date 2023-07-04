@@ -8,14 +8,33 @@ internal func @func(f32 %data, i32 %num) -> f32 { NoMemoryRead NoMemoryWrite NoS
     cbr i1 %0(prob = 0.5), ^b1, ^b;
   ^b:
     i32 %1 = add i32 %num, i32 -1;
-    f32 %2 = call (f32, i32) -> f32 @func(f32 %data, i32 %1);
-    f32 %3 = fadd f32 %data, f32 %2;
-    f32 %4 = call (f32, i32) -> f32 @func(f32 %3, i32 %1);
-    f32 %5 = fsub f32 %3, f32 %4;
-    ubr ^b1;
+    i1 %2 = scmp lt i32 %1, i32 0;
+    cbr i1 %2(prob = 0.5), ^b3, ^b2;
   ^b1:
-    f32 %6 = phi [^entry, f32 0] [^b, f32 %5];
-    ret f32 %6;
+    f32 %3 = phi [^entry, f32 0] [^b4, f32 %12];
+    ret f32 %3;
+  ^b2:
+    i32 %4 = add i32 %num, i32 -2;
+    f32 %5 = call (f32, i32) -> f32 @func(f32 %data, i32 %4);
+    f32 %6 = fadd f32 %data, f32 %5;
+    f32 %7 = call (f32, i32) -> f32 @func(f32 %6, i32 %4);
+    f32 %8 = fsub f32 %6, f32 %7;
+    ubr ^b3;
+  ^b3:
+    f32 %9 = phi [^b, f32 0] [^b2, f32 %8];
+    f32 %10 = fadd f32 %data, f32 %9;
+    cbr i1 %2(prob = 0.5), ^b4, ^b5;
+  ^b4:
+    f32 %11 = phi [^b3, f32 0] [^b5, f32 %17];
+    f32 %12 = fsub f32 %10, f32 %11;
+    ubr ^b1;
+  ^b5:
+    i32 %13 = add i32 %num, i32 -2;
+    f32 %14 = call (f32, i32) -> f32 @func(f32 %10, i32 %13);
+    f32 %15 = fadd f32 %10, f32 %14;
+    f32 %16 = call (f32, i32) -> f32 @func(f32 %15, i32 %13);
+    f32 %17 = fsub f32 %15, f32 %16;
+    ubr ^b4;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:

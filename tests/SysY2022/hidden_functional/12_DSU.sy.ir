@@ -8,14 +8,41 @@ internal func @find(i32 %x) -> i32 {
     i32* %1 = getelementptr &([100005 * i32]* %0)[i64 0][i32 %x];
     i32 %2 = load i32* %1;
     i1 %3 = scmp eq i32 %x, i32 %2;
-    cbr i1 %3(prob = 0.5), ^b, ^if.else;
-  ^if.else:
-    i32 %4 = call (i32) -> i32 @find(i32 %2);
-    store i32* %1 with i32 %4;
-    ubr ^b;
+    cbr i1 %3(prob = 0.5), ^b, ^entry1;
+  ^entry1:
+    i32* %4 = getelementptr &([100005 * i32]* %0)[i64 0][i32 %2];
+    i32 %5 = load i32* %4;
+    i1 %6 = scmp eq i32 %2, i32 %5;
+    cbr i1 %6(prob = 0.5), ^if.else, ^entry2;
   ^b:
-    i32 %5 = phi [^entry, i32 %x] [^if.else, i32 %4];
-    ret i32 %5;
+    i32 %7 = phi [^entry, i32 %x] [^if.else, i32 %8];
+    ret i32 %7;
+  ^if.else:
+    i32 %8 = phi [^entry1, i32 %2] [^b1, i32 %12];
+    store i32* %1 with i32 %8;
+    ubr ^b;
+  ^entry2:
+    i32* %9 = getelementptr &([100005 * i32]* %0)[i64 0][i32 %5];
+    i32 %10 = load i32* %9;
+    i1 %11 = scmp eq i32 %5, i32 %10;
+    cbr i1 %11(prob = 0.5), ^b1, ^entry3;
+  ^b1:
+    i32 %12 = phi [^entry2, i32 %5] [^if.else1, i32 %16];
+    store i32* %4 with i32 %12;
+    ubr ^if.else;
+  ^entry3:
+    i32* %13 = getelementptr &([100005 * i32]* %0)[i64 0][i32 %10];
+    i32 %14 = load i32* %13;
+    i1 %15 = scmp eq i32 %10, i32 %14;
+    cbr i1 %15(prob = 0.5), ^if.else1, ^if.else2;
+  ^if.else1:
+    i32 %16 = phi [^entry3, i32 %10] [^if.else2, i32 %17];
+    store i32* %9 with i32 %16;
+    ubr ^b1;
+  ^if.else2:
+    i32 %17 = call (i32) -> i32 @find(i32 %14);
+    store i32* %13 with i32 %17;
+    ubr ^if.else1;
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

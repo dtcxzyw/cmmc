@@ -9,16 +9,31 @@ internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEff
     cbr i1 %3(prob = 0.5), ^b1, ^b;
   ^b:
     f32 %4 = fdiv f32 %x, f32 3;
-    f32 %5 = call (f32) -> f32 @my_sin_impl(f32 %4);
-    f32 %6 = fmul f32 4, f32 %5;
-    f32 %7 = fmul f32 %6, f32 %5;
-    f32 %8 = fmul f32 %7, f32 %5;
-    f32 %9 = fmul f32 3, f32 %5;
-    f32 %10 = fsub f32 %9, f32 %8;
-    ubr ^b1;
+    i1 %5 = fcmp gt f32 %4, f32 0;
+    f32 %6 = fneg f32 %4;
+    f32 %7 = select i1 %5 ? f32 %4 : f32 %6;
+    i1 %8 = fcmp le f32 %7, f32 1e-06;
+    cbr i1 %8(prob = 0.5), ^b2, ^b3;
   ^b1:
-    f32 %11 = phi [^entry, f32 %x] [^b, f32 %10];
-    ret f32 %11;
+    f32 %9 = phi [^entry, f32 %x] [^b2, f32 %15];
+    ret f32 %9;
+  ^b2:
+    f32 %10 = phi [^b, f32 %4] [^b3, f32 %22];
+    f32 %11 = fmul f32 4, f32 %10;
+    f32 %12 = fmul f32 %11, f32 %10;
+    f32 %13 = fmul f32 %12, f32 %10;
+    f32 %14 = fmul f32 3, f32 %10;
+    f32 %15 = fsub f32 %14, f32 %13;
+    ubr ^b1;
+  ^b3:
+    f32 %16 = fdiv f32 %4, f32 3;
+    f32 %17 = call (f32) -> f32 @my_sin_impl(f32 %16);
+    f32 %18 = fmul f32 4, f32 %17;
+    f32 %19 = fmul f32 %18, f32 %17;
+    f32 %20 = fmul f32 %19, f32 %17;
+    f32 %21 = fmul f32 3, f32 %17;
+    f32 %22 = fsub f32 %21, f32 %20;
+    ubr ^b2;
 }
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:

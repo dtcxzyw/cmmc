@@ -105,12 +105,20 @@ public:
                 return false;
         }
 
-        constexpr uint32_t callCountThreshold = 3;
-        uint32_t callCount = 0;
+        constexpr uint32_t codeSizeThreshold = 64;
+        uint32_t bodySize = 0;
+        for(auto block : func.blocks()) {
+            bodySize += static_cast<uint32_t>(block->instructions().size());
+        }
+        uint32_t size = bodySize;
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
                 if(inst.getInstID() == InstructionID::Call) {
-                    if(++callCount > callCountThreshold)
+                    if(inst.lastOperand() == &func) {
+                        size += bodySize;
+                        if(size > codeSizeThreshold)
+                            return false;
+                    } else
                         return false;
                 }
             }

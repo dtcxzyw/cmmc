@@ -445,8 +445,9 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O3) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 "DiscardReturnValue",  //
-                //"ShrinkWrapping",      //
-                "FuncInlining",  //
+                "TailCallEliminate",   //
+                "ShrinkWrapping",      //
+                "FuncInlining",        //
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(iter);
@@ -455,10 +456,17 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "DynamicLoopUnroll",  //
                 "BlockMerge",         // clean up
                 "BlockEliminate",     // clean up
-                "TailCallEliminate",  // TODO: move above inlining
             }))
             perFuncWithInline->addPass(pass);
         perFuncWithInline->addPass(perFunc);  // after inlining
+
+        for(const auto& pass : passesSource.collectFunctionPass({
+                "DiscardReturnValue",  //
+                "TailCallEliminate",   //
+                "FuncInlining",        //
+            }))
+            perFuncWithInline->addPass(pass);
+        perFuncWithInline->addPass(iter);
     }
 
     root->addPass(globalOpt);

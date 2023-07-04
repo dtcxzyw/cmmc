@@ -206,7 +206,7 @@ public:
             return false;
         }
 
-        constexpr uint32_t maxTrial = 16;
+        constexpr uint32_t maxTrial = 128;
         bool modified = false;
         for(uint32_t k = 0; k < maxTrial; ++k)
             if(tryInline(func)) {
@@ -217,7 +217,8 @@ public:
                     reportUnreachable(CMMC_LOCATION());
                 }
                 */
-            }
+            } else
+                break;
         return modified;
     }
 

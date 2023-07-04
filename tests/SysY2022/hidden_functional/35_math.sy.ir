@@ -8,26 +8,47 @@ internal func @my_pow(f32 %a, i32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSide
     cbr i1 %0(prob = 0.5), ^if.then, ^while.header;
   ^if.then:
     i32 %1 = neg i32 %n;
-    f32 %2 = call (f32, i32) -> f32 @my_pow(f32 %a, i32 %1);
-    f32 %3 = fdiv f32 1, f32 %2;
-    ubr ^b;
+    i1 %2 = scmp gt i32 %n, i32 0;
+    cbr i1 %2(prob = 0.5), ^if.then1, ^while.header1;
   ^while.header:
-    i1 %4 = scmp neq i32 %n, i32 0;
-    cbr i1 %4(prob = 0.97), ^while.body, ^b;
+    i1 %3 = scmp neq i32 %n, i32 0;
+    cbr i1 %3(prob = 0.97), ^while.body, ^b;
+  ^if.then1:
+    f32 %4 = call (f32, i32) -> f32 @my_pow(f32 %a, i32 %n);
+    f32 %5 = fdiv f32 1, f32 %4;
+    ubr ^if.then2;
   ^while.body:
-    i32 %5 = phi [^while.header, i32 %n] [^while.body, i32 %11];
-    f32 %6 = phi [^while.header, f32 1] [^while.body, f32 %10];
-    f32 %7 = phi [^while.header, f32 %a] [^while.body, f32 %13];
-    f32 %8 = fmul f32 %6, f32 %7;
-    i1 %9 = ztrunc i32 %5 to i1;
-    f32 %10 = select i1 %9 ? f32 %8 : f32 %6;
-    i32 %11 = sdiv i32 %5, i32 2;
-    i1 %12 = scmp neq i32 %11, i32 0;
-    f32 %13 = fmul f32 %7, f32 %7;
-    cbr i1 %12(prob = 0.97), ^while.body, ^b;
+    i32 %6 = phi [^while.header, i32 %n] [^while.body, i32 %12];
+    f32 %7 = phi [^while.header, f32 1] [^while.body, f32 %11];
+    f32 %8 = phi [^while.header, f32 %a] [^while.body, f32 %14];
+    f32 %9 = fmul f32 %7, f32 %8;
+    i1 %10 = ztrunc i32 %6 to i1;
+    f32 %11 = select i1 %10 ? f32 %9 : f32 %7;
+    i32 %12 = sdiv i32 %6, i32 2;
+    i1 %13 = scmp neq i32 %12, i32 0;
+    f32 %14 = fmul f32 %8, f32 %8;
+    cbr i1 %13(prob = 0.97), ^while.body, ^b;
+  ^while.header1:
+    i1 %15 = scmp neq i32 %n, i32 0;
+    cbr i1 %15(prob = 0.97), ^while.body1, ^if.then2;
   ^b:
-    f32 %14 = phi [^if.then, f32 %3] [^while.header, f32 1] [^while.body, f32 %10];
-    ret f32 %14;
+    f32 %16 = phi [^while.header, f32 1] [^while.body, f32 %11] [^if.then2, f32 %18];
+    ret f32 %16;
+  ^if.then2:
+    f32 %17 = phi [^if.then1, f32 %5] [^while.header1, f32 1] [^while.body1, f32 %24];
+    f32 %18 = fdiv f32 1, f32 %17;
+    ubr ^b;
+  ^while.body1:
+    i32 %19 = phi [^while.header1, i32 %1] [^while.body1, i32 %25];
+    f32 %20 = phi [^while.header1, f32 1] [^while.body1, f32 %24];
+    f32 %21 = phi [^while.header1, f32 %a] [^while.body1, f32 %27];
+    f32 %22 = fmul f32 %20, f32 %21;
+    i1 %23 = ztrunc i32 %19 to i1;
+    f32 %24 = select i1 %23 ? f32 %22 : f32 %20;
+    i32 %25 = sdiv i32 %19, i32 2;
+    i1 %26 = scmp neq i32 %25, i32 0;
+    f32 %27 = fmul f32 %21, f32 %21;
+    cbr i1 %26(prob = 0.97), ^while.body1, ^if.then2;
 }
 internal func @my_sqrt(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:

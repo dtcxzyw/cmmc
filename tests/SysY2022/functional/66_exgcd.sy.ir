@@ -9,19 +9,38 @@ internal func @exgcd(i32 %a, i32 %b, i32* %x, i32* %y) -> i32 {
     ubr ^b1;
   ^if.else:
     i32 %1 = srem i32 %a, i32 %b;
-    i32 %2 = call (i32, i32, i32*, i32*) -> i32 @exgcd(i32 %b, i32 %1, i32* %x, i32* %y);
-    i32 %3 = load i32* %x;
-    i32 %4 = load i32* %y;
-    store i32* %x with i32 %4;
-    i32 %5 = sdiv i32 %a, i32 %b;
+    i1 %2 = scmp eq i32 %1, i32 0;
+    cbr i1 %2(prob = 0.5), ^if.then1, ^if.else1;
+  ^if.then1:
+    store i32* %x with i32 1;
+    store i32* %y with i32 0;
+    ubr ^if.else2;
+  ^if.else1:
+    i32 %3 = srem i32 %b, i32 %1;
+    i32 %4 = call (i32, i32, i32*, i32*) -> i32 @exgcd(i32 %1, i32 %3, i32* %x, i32* %y);
+    i32 %5 = load i32* %x;
     i32 %6 = load i32* %y;
-    i32 %7 = mul i32 %5, i32 %6;
-    i32 %8 = sub i32 %3, i32 %7;
-    store i32* %y with i32 %8;
-    ubr ^b1;
+    store i32* %x with i32 %6;
+    i32 %7 = sdiv i32 %b, i32 %1;
+    i32 %8 = load i32* %y;
+    i32 %9 = mul i32 %7, i32 %8;
+    i32 %10 = sub i32 %5, i32 %9;
+    store i32* %y with i32 %10;
+    ubr ^if.else2;
   ^b1:
-    i32 %9 = phi [^if.then, i32 %a] [^if.else, i32 %2];
-    ret i32 %9;
+    i32 %11 = phi [^if.then, i32 %a] [^if.else2, i32 %12];
+    ret i32 %11;
+  ^if.else2:
+    i32 %12 = phi [^if.then1, i32 %b] [^if.else1, i32 %4];
+    i32 %13 = load i32* %x;
+    i32 %14 = load i32* %y;
+    store i32* %x with i32 %14;
+    i32 %15 = sdiv i32 %a, i32 %b;
+    i32 %16 = load i32* %y;
+    i32 %17 = mul i32 %15, i32 %16;
+    i32 %18 = sub i32 %13, i32 %17;
+    store i32* %y with i32 %18;
+    ubr ^b1;
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:
