@@ -23,8 +23,8 @@ CMMC_TARGET_NAMESPACE_BEGIN
 
 enum ARMPipeline : uint32_t {
     ARMPipelineBranch = 1,
-    ARMPipelineInteger0,
-    ARMPipelineInteger1,
+    ARMPipelineInt0,
+    ARMPipelineInt1,
     ARMPipelineMultiCycle,
     ARMPipelineFP0,
     ARMPipelineFP1,
@@ -63,8 +63,8 @@ public:
     }
 };
 
-using ARMScheduleClassIntegerArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineInteger0, ARMPipelineInteger1, 1, 1>;
-using ARMScheduleClassIntegerArithmeticConditional = ARMScheduleClassSimpleGeneric<ARMPipelineInteger0, ARMPipelineInteger1, 2, 1>;
+using ARMScheduleClassIntegerArithmetic = ARMScheduleClassSimpleGeneric<ARMPipelineInt0, ARMPipelineInt1, 1, 1>;
+using ARMScheduleClassIntegerArithmeticConditional = ARMScheduleClassSimpleGeneric<ARMPipelineInt0, ARMPipelineInt1, 2, 2>;
 using ARMScheduleClassIntegerArithmeticFused = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 2, 1>;
 using ARMScheduleClassSaturate = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 2, 1>;
 using ARMScheduleClassMultiply = ARMScheduleClassSimpleGeneric<ARMPipelineMultiCycle, 0, 3, 1>;
@@ -88,14 +88,14 @@ public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
         if(!state.isPipelineReady(ARMPipelineBranch))
             return false;
-        if(!state.isPipelineReady(ARMPipelineInteger0) && !state.isPipelineReady(ARMPipelineInteger1))
+        if(!state.isPipelineReady(ARMPipelineInt0) && !state.isPipelineReady(ARMPipelineInt1))
             return false;
 
         if(!checkRegisterDependency(state, inst, instInfo))
             return false;
 
         state.resetPipeline(ARMPipelineBranch, 1);
-        state.resetPipeline(state.isPipelineReady(ARMPipelineInteger0) ? ARMPipelineInteger0 : ARMPipelineInteger1, 1);
+        state.resetPipeline(state.isPipelineReady(ARMPipelineInt0) ? ARMPipelineInt0 : ARMPipelineInt1, 1);
 
         return true;
     }
