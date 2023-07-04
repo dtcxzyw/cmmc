@@ -18,9 +18,9 @@ k:
 t:
 pcrel23:
 	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel23)(a0)
 pcrel24:
 	auipc a1, %pcrel_hi(j)
+	lw a0, %pcrel_lo(pcrel23)(a0)
 	lw a1, %pcrel_lo(pcrel24)(a1)
 	xor a0, a0, a1
 	sltiu a1, a0, 1

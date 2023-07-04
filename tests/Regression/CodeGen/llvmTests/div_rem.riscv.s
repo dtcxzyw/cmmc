@@ -22,19 +22,19 @@ llll:
 test:
 pcrel28:
 	auipc a0, %pcrel_hi(iiii)
-	lw a0, %pcrel_lo(pcrel28)(a0)
 pcrel29:
 	auipc a1, %pcrel_hi(jjjj)
-	lw a1, %pcrel_lo(pcrel29)(a1)
+	li a2, 4294967295
 pcrel30:
 	auipc a4, %pcrel_hi(kkkk)
-	li a2, 4294967295
+	lw a0, %pcrel_lo(pcrel28)(a0)
+	lw a1, %pcrel_lo(pcrel29)(a1)
 	divw a3, a0, a1
-	and a3, a3, a2
-	sw a3, %pcrel_lo(pcrel30)(a4)
 	remw a0, a0, a1
+	and a3, a3, a2
 pcrel31:
 	auipc a1, %pcrel_hi(llll)
+	sw a3, %pcrel_lo(pcrel30)(a4)
 	and a0, a0, a2
 	sw a0, %pcrel_lo(pcrel31)(a1)
 	ret

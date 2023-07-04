@@ -34,12 +34,12 @@ r3:
 test:
 pcrel35:
 	auipc a0, %pcrel_hi(k)
-	lw a0, %pcrel_lo(pcrel35)(a0)
 pcrel36:
 	auipc a1, %pcrel_hi(j)
-	lw a1, %pcrel_lo(pcrel36)(a1)
 pcrel37:
 	auipc a3, %pcrel_hi(r1)
+	lw a0, %pcrel_lo(pcrel35)(a0)
+	lw a1, %pcrel_lo(pcrel36)(a1)
 	sltu a1, a0, a1
 	xori a2, a1, 1
 	li a1, 4294967295

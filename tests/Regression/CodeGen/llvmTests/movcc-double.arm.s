@@ -12,11 +12,11 @@ var32:
 .globl select_and
 select_and:
 	push { r4, r5 }
-	ldr r4, [sp, #24]
-	ldr r5, [sp, #28]
 	cmp r0, r1
+	ldr r4, [sp, #24]
 	mov r1, #0
 	mov r0, #0
+	ldr r5, [sp, #28]
 	movwlo r0, #1
 	cmp r2, r3
 	movwlo r1, #1
@@ -28,8 +28,8 @@ select_and:
 .globl select_noopt
 select_noopt:
 	push { r4 }
-	ldr r4, [sp, #20]
 	cmp r0, r1
+	ldr r4, [sp, #20]
 	mov r0, #0
 	movwlo r0, #1
 	cmp r1, r2
@@ -46,11 +46,11 @@ select_noopt:
 .globl select_or
 select_or:
 	push { r4, r5 }
-	ldr r4, [sp, #24]
-	ldr r5, [sp, #28]
 	cmp r0, r1
+	ldr r4, [sp, #24]
 	mov r1, #0
 	mov r0, #0
+	ldr r5, [sp, #28]
 	movwlo r0, #1
 	cmp r2, r3
 	movwlo r1, #1

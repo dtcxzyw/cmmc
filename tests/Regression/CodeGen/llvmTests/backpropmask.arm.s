@@ -24,12 +24,12 @@ a:
 .globl PR37060
 PR37060:
 	movw r0, #:lower16:b
-	movt r0, #:upper16:b
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:c
-	movt r1, #:upper16:c
-	ldr r1, [r1, #0]
 	mvn r2, #0
+	movt r0, #:upper16:b
+	movt r1, #:upper16:c
+	ldr r0, [r0, #0]
+	ldr r1, [r1, #0]
 	sdiv r3, r2, r1
 	mls r1, r3, r1, r2
 	eor r0, r0, r1
@@ -41,10 +41,10 @@ PR37060:
 .globl PR37667
 PR37667:
 	movw r0, #:lower16:b
-	movt r0, #:upper16:b
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:d
+	movt r0, #:upper16:b
 	movt r1, #:upper16:d
+	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	udiv r2, r0, r1
 	mls r0, r2, r1, r0

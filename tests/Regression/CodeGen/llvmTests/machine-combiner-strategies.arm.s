@@ -7,9 +7,9 @@
 .globl test_local_strategy
 test_local_strategy:
 	push { r4, r5 }
+	sdiv r0, r0, r1
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #28]
-	sdiv r0, r0, r1
 	subs r1, r0, r2
 	mov r0, r1
 	bne label3

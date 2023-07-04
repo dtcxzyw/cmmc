@@ -22,11 +22,11 @@ a:
 PR37060:
 pcrel23:
 	auipc a0, %pcrel_hi(b)
-	lw a0, %pcrel_lo(pcrel23)(a0)
 pcrel24:
 	auipc a1, %pcrel_hi(c)
-	lw a1, %pcrel_lo(pcrel24)(a1)
 	li a2, -1
+	lw a0, %pcrel_lo(pcrel23)(a0)
+	lw a1, %pcrel_lo(pcrel24)(a1)
 	remw a1, a2, a1
 	li a2, 4294967295
 	and a1, a1, a2
@@ -40,9 +40,9 @@ pcrel25:
 PR37667:
 pcrel49:
 	auipc a0, %pcrel_hi(b)
-	lw a0, %pcrel_lo(pcrel49)(a0)
 pcrel50:
 	auipc a1, %pcrel_hi(d)
+	lw a0, %pcrel_lo(pcrel49)(a0)
 	lw a1, %pcrel_lo(pcrel50)(a1)
 	remuw a0, a0, a1
 pcrel51:

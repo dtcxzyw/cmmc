@@ -15,9 +15,9 @@ test1:
 	mv a1, a0
 pcrel46:
 	auipc a2, %pcrel_hi(g0)
+	sltu a1, zero, a0
 	addi a0, a2, %pcrel_lo(pcrel46)
 	lw a2, %pcrel_lo(pcrel46)(a2)
-	sltu a1, zero, a1
 	bne a1, zero, label12
 	addiw a2, a2, 11
 	li a1, 4294967295

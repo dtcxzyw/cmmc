@@ -22,9 +22,9 @@ result:
 test:
 pcrel26:
 	auipc a0, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel26)(a0)
 pcrel27:
 	auipc a1, %pcrel_hi(i)
+	lw a0, %pcrel_lo(pcrel26)(a0)
 	lw a1, %pcrel_lo(pcrel27)(a1)
 	bge a0, a1, label14
 	j label2

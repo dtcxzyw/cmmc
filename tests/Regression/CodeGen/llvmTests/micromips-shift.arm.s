@@ -40,17 +40,17 @@ n:
 .globl shift_left
 shift_left:
 	movw r0, #:lower16:a
-	movt r0, #:upper16:a
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:b
+	movt r0, #:upper16:a
 	movt r1, #:upper16:b
+	ldr r0, [r0, #0]
 	lsl r0, r0, #4
 	str r0, [r1, #0]
+	movw r1, #:lower16:d
 	movw r0, #:lower16:c
+	movt r1, #:upper16:d
 	movt r0, #:upper16:c
 	ldr r0, [r0, #0]
-	movw r1, #:lower16:d
-	movt r1, #:upper16:d
 	lsl r0, r0, #10
 	str r0, [r1, #0]
 	mov r0, #0
@@ -58,17 +58,17 @@ shift_left:
 .globl shift_right
 shift_right:
 	movw r0, #:lower16:i
-	movt r0, #:upper16:i
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:j
+	movt r0, #:upper16:i
 	movt r1, #:upper16:j
+	ldr r0, [r0, #0]
 	lsr r0, r0, #4
 	str r0, [r1, #0]
+	movw r1, #:lower16:n
 	movw r0, #:lower16:m
+	movt r1, #:upper16:n
 	movt r0, #:upper16:m
 	ldr r0, [r0, #0]
-	movw r1, #:lower16:n
-	movt r1, #:upper16:n
 	lsr r0, r0, #10
 	str r0, [r1, #0]
 	mov r0, #0

@@ -22,9 +22,9 @@ r2:
 test:
 pcrel29:
 	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel29)(a0)
 pcrel30:
 	auipc a2, %pcrel_hi(r1)
+	lw a0, %pcrel_lo(pcrel29)(a0)
 	sltiu a1, a0, 1
 	li a0, 4294967295
 	and a1, a1, a0

@@ -34,9 +34,9 @@ r3:
 test:
 pcrel22:
 	auipc a0, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel22)(a0)
 pcrel23:
 	auipc a1, %pcrel_hi(k)
+	lw a0, %pcrel_lo(pcrel22)(a0)
 	lw a1, %pcrel_lo(pcrel23)(a1)
 	slt a0, a0, a1
 	li a1, 4294967295

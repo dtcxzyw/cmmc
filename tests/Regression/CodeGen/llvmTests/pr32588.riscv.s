@@ -31,12 +31,12 @@ label10:
 	mv a1, zero
 label3:
 	auipc a2, %pcrel_hi(c)
-	lw a2, %pcrel_lo(label3)(a2)
 	srliw a4, a1, 31
-	sltiu a3, a2, 1
+	lw a2, %pcrel_lo(label3)(a2)
 	add a1, a1, a4
-	li a2, 4294967295
+	sltiu a3, a2, 1
 	sraiw a1, a1, 1
+	li a2, 4294967295
 	and a3, a3, a2
 	addw a1, a3, a1
 	and a1, a1, a2

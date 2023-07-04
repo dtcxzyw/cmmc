@@ -24,12 +24,12 @@ write:
 hanoi:
 	addi sp, sp, -40
 	sd s2, 32(sp)
+	mv s2, a3
 	sd s3, 24(sp)
+	li a3, 1
 	sd s1, 16(sp)
 	sd s0, 8(sp)
 	sd ra, 0(sp)
-	mv s2, a3
-	li a3, 1
 	bne a0, a3, label14
 	j label2
 label14:
@@ -72,11 +72,11 @@ label23:
 .globl main
 main:
 	addi sp, sp, -8
-	sd ra, 0(sp)
-	li a3, 3
-	li a2, 2
-	li a1, 1
 	li a0, 3
+	li a1, 1
+	li a2, 2
+	li a3, 3
+	sd ra, 0(sp)
 	jal hanoi
 	ld ra, 0(sp)
 	mv a0, zero

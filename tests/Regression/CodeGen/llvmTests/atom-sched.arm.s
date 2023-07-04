@@ -32,20 +32,20 @@ f:
 .globl func
 func:
 	movw r0, #:lower16:b
-	movt r0, #:upper16:b
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:c
+	movt r0, #:upper16:b
 	movt r1, #:upper16:c
+	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	mul r0, r0, r1
 	movw r1, #:lower16:a
 	movt r1, #:upper16:a
 	str r0, [r1, #0]
+	movw r1, #:lower16:f
 	movw r0, #:lower16:e
+	movt r1, #:upper16:f
 	movt r0, #:upper16:e
 	ldr r0, [r0, #0]
-	movw r1, #:lower16:f
-	movt r1, #:upper16:f
 	ldr r1, [r1, #0]
 	mul r0, r0, r1
 	movw r1, #:lower16:d

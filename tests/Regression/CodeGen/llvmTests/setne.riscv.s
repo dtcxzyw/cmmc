@@ -26,9 +26,9 @@ r2:
 test:
 pcrel21:
 	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel21)(a0)
 pcrel22:
 	auipc a1, %pcrel_hi(k)
+	lw a0, %pcrel_lo(pcrel21)(a0)
 	lw a1, %pcrel_lo(pcrel22)(a1)
 	xor a0, a0, a1
 	li a1, 4294967295

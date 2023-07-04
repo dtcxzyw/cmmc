@@ -24,16 +24,16 @@ llll:
 .globl test
 test:
 	movw r0, #:lower16:iiii
-	movt r0, #:upper16:iiii
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:jjjj
-	movt r1, #:upper16:jjjj
-	ldr r1, [r1, #0]
 	movw r3, #:lower16:kkkk
+	movt r0, #:upper16:iiii
+	movt r1, #:upper16:jjjj
 	movt r3, #:upper16:kkkk
+	ldr r0, [r0, #0]
+	ldr r1, [r1, #0]
 	sdiv r2, r0, r1
-	str r2, [r3, #0]
 	mls r0, r2, r1, r0
+	str r2, [r3, #0]
 	movw r1, #:lower16:llll
 	movt r1, #:upper16:llll
 	str r0, [r1, #0]

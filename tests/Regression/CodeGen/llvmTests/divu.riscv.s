@@ -18,9 +18,9 @@ kkkk:
 test:
 pcrel17:
 	auipc a0, %pcrel_hi(iiii)
-	lw a0, %pcrel_lo(pcrel17)(a0)
 pcrel18:
 	auipc a1, %pcrel_hi(jjjj)
+	lw a0, %pcrel_lo(pcrel17)(a0)
 	lw a1, %pcrel_lo(pcrel18)(a1)
 	divuw a0, a0, a1
 pcrel19:

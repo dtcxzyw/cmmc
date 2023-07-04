@@ -44,11 +44,11 @@ pcrel46:
 	auipc a1, %pcrel_hi(var_390)
 	sw a0, %pcrel_lo(pcrel46)(a1)
 pcrel47:
-	auipc a0, %pcrel_hi(var_11)
-	lb a0, %pcrel_lo(pcrel47)(a0)
-pcrel48:
 	auipc a1, %pcrel_hi(var_370)
+pcrel48:
+	auipc a0, %pcrel_hi(var_11)
+	lb a0, %pcrel_lo(pcrel48)(a0)
 	sext.b a0, a0
 	andi a0, a0, 255
-	sb a0, %pcrel_lo(pcrel48)(a1)
+	sb a0, %pcrel_lo(pcrel47)(a1)
 	ret

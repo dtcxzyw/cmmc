@@ -20,10 +20,10 @@ result:
 .globl test
 test:
 	movw r0, #:lower16:i
-	movt r0, #:upper16:i
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:j
+	movt r0, #:upper16:i
 	movt r1, #:upper16:j
+	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	cmp r0, r1
 	bne label12

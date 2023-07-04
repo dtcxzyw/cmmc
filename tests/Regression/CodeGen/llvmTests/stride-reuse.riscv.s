@@ -37,9 +37,9 @@ pcrel40:
 	addi a3, a3, %pcrel_lo(pcrel40)
 	sh2add a2, a2, a3
 	slliw a3, a1, 1
+	addiw a1, a1, 1
 	addiw a3, a3, 64
 	sw a3, 0(a2)
-	addiw a1, a1, 1
 	xor a2, a0, a1
 	sltu a2, zero, a2
 	bne a2, zero, label2

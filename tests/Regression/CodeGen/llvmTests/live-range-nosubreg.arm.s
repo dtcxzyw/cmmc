@@ -25,28 +25,27 @@ b:
 .globl main
 main:
 	movw r0, #:lower16:a
+	movw r3, #:lower16:c
 	movt r0, #:upper16:a
+	movt r3, #:upper16:c
 	ldrsh r1, [r0, #0]
 	ldrh r2, [r0, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	add r2, r2, #1
-	uxth r2, r2
 	cmp r3, #0
+	uxth r2, r2
 	moveq r1, r2
 	uxth r1, r1
 	sub r1, r1, #1
 	uxth r2, r1
 	strh r2, [r0, #0]
 	movw r0, #65535
-	and r3, r1, r0
+	ands r3, r1, r0
 	movw r1, #:lower16:d
 	movt r1, #:upper16:d
 	ldrsb r2, [r1, #0]
 	mov r0, r1
 	ldrb r1, [r1, #0]
-	cmp r3, #0
 	rsb r2, r1, #0
 	bne label27
 	mov r1, #0

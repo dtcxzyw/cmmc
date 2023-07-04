@@ -16,9 +16,9 @@ j:
 .globl main
 main:
 	movw r0, #:lower16:i
+	mov r1, #10
 	movt r0, #:upper16:i
 	ldr r0, [r0, #0]
-	mov r1, #10
 	cmp r0, #0
 	mov r0, #55
 	moveq r0, r1

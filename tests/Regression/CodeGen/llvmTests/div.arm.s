@@ -20,10 +20,10 @@ kkkk:
 .globl test
 test:
 	movw r0, #:lower16:iiii
-	movt r0, #:upper16:iiii
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:jjjj
+	movt r0, #:upper16:iiii
 	movt r1, #:upper16:jjjj
+	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
 	sdiv r0, r0, r1
 	movw r1, #:lower16:kkkk

@@ -30,8 +30,8 @@ label19:
 	li a0, 1
 	li a3, 65535
 	and a3, a0, a3
-	sh a3, 0(a2)
 	addiw a0, a0, 1
+	sh a3, 0(a2)
 	xor a3, a1, a0
 	sltu a3, zero, a3
 	bne a3, zero, label5
@@ -39,8 +39,8 @@ label19:
 label5:
 	li a3, 65535
 	and a3, a0, a3
-	sh a3, 0(a2)
 	addiw a0, a0, 1
+	sh a3, 0(a2)
 	xor a3, a1, a0
 	sltu a3, zero, a3
 	bne a3, zero, label5

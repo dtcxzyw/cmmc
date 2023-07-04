@@ -22,8 +22,8 @@ r3:
 test:
 pcrel17:
 	auipc a0, %pcrel_hi(k)
-	lw a0, %pcrel_lo(pcrel17)(a0)
 	li a1, -32769
+	lw a0, %pcrel_lo(pcrel17)(a0)
 	slt a0, a1, a0
 	li a1, 4294967295
 	and a0, a0, a1

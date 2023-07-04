@@ -18,13 +18,13 @@ z:
 PR35761:
 pcrel23:
 	auipc a1, %pcrel_hi(x)
-	lb a1, %pcrel_lo(pcrel23)(a1)
 pcrel24:
 	auipc a2, %pcrel_hi(y)
-	lw a2, %pcrel_lo(pcrel24)(a2)
-	andi a1, a1, 255
 	li a3, 32767
+	lb a1, %pcrel_lo(pcrel23)(a1)
 	or a0, a0, a3
+	andi a1, a1, 255
+	lw a2, %pcrel_lo(pcrel24)(a2)
 	xor a0, a2, a0
 	or a0, a0, a1
 pcrel25:

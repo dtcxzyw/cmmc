@@ -22,16 +22,16 @@ llll:
 test:
 pcrel22:
 	auipc a0, %pcrel_hi(iiii)
-	lw a0, %pcrel_lo(pcrel22)(a0)
 pcrel23:
 	auipc a1, %pcrel_hi(jjjj)
-	lw a1, %pcrel_lo(pcrel23)(a1)
 pcrel24:
 	auipc a3, %pcrel_hi(kkkk)
+	lw a0, %pcrel_lo(pcrel22)(a0)
+	lw a1, %pcrel_lo(pcrel23)(a1)
 	divuw a2, a0, a1
-	sw a2, %pcrel_lo(pcrel24)(a3)
 	remuw a0, a0, a1
 pcrel25:
 	auipc a1, %pcrel_hi(llll)
+	sw a2, %pcrel_lo(pcrel24)(a3)
 	sw a0, %pcrel_lo(pcrel25)(a1)
 	ret

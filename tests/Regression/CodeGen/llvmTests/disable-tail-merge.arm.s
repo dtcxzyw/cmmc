@@ -17,10 +17,10 @@ g1:
 test1:
 	mov r1, r0
 	movw r2, #:lower16:g0
+	cmp r0, #0
 	movt r2, #:upper16:g0
 	mov r0, r2
 	ldr r2, [r2, #0]
-	cmp r1, #0
 	bne label12
 	add r1, r2, #11
 	str r1, [r0, #0]

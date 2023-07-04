@@ -28,8 +28,8 @@ pcrel11:
 t2:
 pcrel23:
 	auipc a0, %pcrel_hi(b)
-	lh a0, %pcrel_lo(pcrel23)(a0)
 	li a1, 65535
+	lh a0, %pcrel_lo(pcrel23)(a0)
 	sext.h a0, a0
 	addiw a0, a0, 1
 	and a0, a0, a1
@@ -38,8 +38,8 @@ pcrel23:
 t3:
 pcrel34:
 	auipc a0, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel34)(a0)
 	li a1, 4294967295
+	lw a0, %pcrel_lo(pcrel34)(a0)
 	addiw a0, a0, 1
 	and a0, a0, a1
 	ret

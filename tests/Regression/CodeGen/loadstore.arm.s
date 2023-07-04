@@ -101,7 +101,9 @@ label92:
 	add r2, r0, r1, lsl #2
 	mov r3, #0
 	str r3, [r0, r1, lsl #2]
+	add r1, r1, #16
 	str r3, [r2, #4]
+	cmp r1, #119
 	str r3, [r2, #8]
 	str r3, [r2, #12]
 	str r3, [r2, #16]
@@ -116,8 +118,6 @@ label92:
 	str r3, [r2, #52]
 	str r3, [r2, #56]
 	str r3, [r2, #60]
-	add r1, r1, #16
-	cmp r1, #119
 	bge label94
 	b label92
 label94:

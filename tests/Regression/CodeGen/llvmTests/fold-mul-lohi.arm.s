@@ -25,6 +25,7 @@ foo:
 	mov r1, #0
 label2:
 	movw r2, #:lower16:B
+	mov r4, #17
 	movt r2, #:upper16:B
 	add r3, r2, r1
 	ldrsb r2, [r2, r1]
@@ -34,12 +35,11 @@ label2:
 	lsl r2, r2, #1
 	uxtb r2, r2
 	strb r2, [r3, r1]
-	mov r4, #17
 	movw r3, #:lower16:P
 	add r2, r1, r1, lsl #3
 	movt r3, #:upper16:P
-	strb r4, [r3, r2]
 	add r1, r1, #1
+	strb r4, [r3, r2]
 	cmp r0, r1
 	bne label2
 label4:

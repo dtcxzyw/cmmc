@@ -24,8 +24,8 @@ write:
 .globl main
 main:
 	addi sp, sp, -8
-	sd ra, 0(sp)
 	li a0, 19
+	sd ra, 0(sp)
 	jal write
 	ld ra, 0(sp)
 	mv a0, zero

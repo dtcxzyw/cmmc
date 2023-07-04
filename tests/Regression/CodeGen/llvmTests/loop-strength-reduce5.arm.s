@@ -29,11 +29,11 @@ label2:
 	movw r2, #65535
 	movt r3, #:upper16:Y
 	and r2, r1, r2
+	add r1, r1, #1
 	lsl r2, r2, #2
+	cmp r0, r1
 	uxth r2, r2
 	strh r2, [r3, #0]
-	add r1, r1, #1
-	cmp r0, r1
 	bne label2
 label4:
 	bx lr

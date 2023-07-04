@@ -23,9 +23,9 @@ write:
     ret
 gcd:
 	addi sp, sp, -16
+	addi a1, sp, 0
 	sd ra, 8(sp)
 	lw a4, 0(a0)
-	addi a1, sp, 0
 	lw a3, 4(a0)
 	mv a0, a4
 	mv a2, a3
@@ -47,8 +47,8 @@ label3:
 .globl main
 main:
 	addi sp, sp, -16
-	sd ra, 8(sp)
 	addi a1, sp, 0
+	sd ra, 8(sp)
 	jal read
 	li a2, 4294967295
 	and a0, a0, a2

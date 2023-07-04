@@ -24,9 +24,9 @@ r3:
 .globl test
 test:
 	movw r0, #:lower16:k
+	mvn r1, #32768
 	movt r0, #:upper16:k
 	ldr r0, [r0, #0]
-	mvn r1, #32768
 	cmp r0, r1
 	movw r1, #:lower16:r1
 	mov r0, #0

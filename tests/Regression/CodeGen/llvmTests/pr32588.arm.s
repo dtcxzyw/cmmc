@@ -36,10 +36,10 @@ label10:
 	mov r1, #0
 label3:
 	movw r2, #:lower16:c
-	movt r2, #:upper16:c
-	ldr r2, [r2, #0]
 	add r1, r1, r1, lsr #31
+	movt r2, #:upper16:c
 	asr r1, r1, #1
+	ldr r2, [r2, #0]
 	cmp r2, #0
 	mov r2, #0
 	movweq r2, #1

@@ -42,11 +42,11 @@ z4:
 calc_seleq:
 pcrel78:
 	auipc a0, %pcrel_hi(a)
-	addi a1, a0, %pcrel_lo(pcrel78)
-	lw a0, %pcrel_lo(pcrel78)(a0)
 pcrel79:
 	auipc a3, %pcrel_hi(b)
+	addi a1, a0, %pcrel_lo(pcrel78)
 	addi a2, a3, %pcrel_lo(pcrel79)
+	lw a0, %pcrel_lo(pcrel78)(a0)
 	lw a3, %pcrel_lo(pcrel79)(a3)
 	xor a0, a0, a3
 	sltu a0, zero, a0

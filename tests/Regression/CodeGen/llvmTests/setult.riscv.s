@@ -34,9 +34,9 @@ r3:
 test:
 pcrel20:
 	auipc a0, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel20)(a0)
 pcrel21:
 	auipc a1, %pcrel_hi(k)
+	lw a0, %pcrel_lo(pcrel20)(a0)
 	lw a1, %pcrel_lo(pcrel21)(a1)
 	sltu a0, a0, a1
 	li a1, 4294967295

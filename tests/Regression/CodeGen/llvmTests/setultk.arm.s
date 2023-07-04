@@ -36,10 +36,10 @@ r3:
 .globl test
 test:
 	movw r0, #:lower16:j
-	movt r0, #:upper16:j
-	ldr r0, [r0, #0]
 	movw r1, #:lower16:r1
+	movt r0, #:upper16:j
 	movt r1, #:upper16:r1
+	ldr r0, [r0, #0]
 	cmp r0, #10
 	mov r0, #0
 	movwlo r0, #1

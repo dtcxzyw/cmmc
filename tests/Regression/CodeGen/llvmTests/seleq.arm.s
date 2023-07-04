@@ -64,7 +64,9 @@ label14:
 	ldr r0, [r0, #0]
 label3:
 	movw r3, #:lower16:z1
+	movw r4, #:lower16:z2
 	movt r3, #:upper16:z1
+	movt r4, #:upper16:z2
 	str r0, [r3, #0]
 	ldr r0, [r2, #0]
 	ldr r2, [r1, #0]
@@ -76,23 +78,21 @@ label3:
 	movt r0, #:upper16:f
 	moveq r3, r0
 	ldr r3, [r3, #0]
-	movw r4, #:lower16:z2
-	movt r4, #:upper16:z2
 	str r3, [r4, #0]
 	movw r3, #:lower16:c
 	movt r3, #:upper16:c
 	ldr r3, [r3, #0]
 	cmp r2, r3
-	mov r2, r0
-	moveq r2, r1
-	ldr r2, [r2, #0]
 	movw r3, #:lower16:z3
+	mov r2, r0
 	movt r3, #:upper16:z3
-	str r2, [r3, #0]
+	moveq r2, r1
 	moveq r0, r1
-	ldr r0, [r0, #0]
+	ldr r2, [r2, #0]
 	movw r1, #:lower16:z4
 	movt r1, #:upper16:z4
+	str r2, [r3, #0]
+	ldr r0, [r0, #0]
 	str r0, [r1, #0]
 	pop { r4 }
 	bx lr
