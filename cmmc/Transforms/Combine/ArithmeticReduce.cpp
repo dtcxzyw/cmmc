@@ -530,7 +530,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // ((zext a) & (zext b)) != 0 -> a & b
             if(scmp(cmp, and_(zext(boolean(v1)), zext(boolean(v2))), cuint_(0))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
+                if(cmp == CompareOp::NotEqual)
+                    return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
+                else if(cmp == CompareOp::Equal)
+                    return makeNot(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
             }
 
             if(target.isNativeSupported(InstructionID::SMin) && target.isNativeSupported(InstructionID::SMax)) {
