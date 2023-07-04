@@ -37,6 +37,11 @@ def load_perf_data(file):
 
 commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('utf-8').strip()
 
+dataset = {}
+
+events = ['branch-load-misses:u', 'branch-loads:u', 'cycles:u', 'iTLB-load-misses:u', 'inst_retired:u', 'inst_spec:u', 'instructions:u', 'task-clock:u']
+def is_full_event(data):
+    return all(event in data for event in events)
 
 for file in os.listdir(raw_perf_data_path):
     if not file.endswith('.csv'):
@@ -55,3 +60,18 @@ for file in os.listdir(raw_perf_data_path):
         data[target][commit_hash] = perf_data
     with open(data_file, 'w') as f:
         json.dump(data, f, indent=2, sort_keys=True)
+    
+    if is_full_event(perf_data):
+        dataset[name] = perf_data
+
+
+with open(os.path.join(collected_perf_data_path, 'summary.json')) as f:
+    summary = json.load(f)
+
+summary['previous'] = summary['current']
+summary['previous_commit'] = summary['current_commit']
+summary['current'] = dataset
+summary['current_commit'] = commit_hash
+
+with open(os.path.join(collected_perf_data_path, 'summary.json'), 'w') as f:
+    json.dump(summary, f, indent=2, sort_keys=True)
