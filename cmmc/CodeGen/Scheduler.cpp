@@ -253,6 +253,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
     };
 
     MIRInst* lastSideEffect = nullptr;
+    MIRInst* lastInOrder = nullptr;
     for(auto& inst : block.instructions()) {
         auto& instInfo = ctx.instInfo.getInstInfo(inst);
 
@@ -294,10 +295,13 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
             }
         }
 
-        if(lastSideEffect) {
-            addDep(&inst, lastSideEffect);
+        if(lastInOrder) {
+            addDep(&inst, lastInOrder);
         }
         if(requireOneFlag(instInfo.getInstFlag(), InstFlagSideEffect)) {
+            if(lastSideEffect) {
+                addDep(&inst, lastSideEffect);
+            }
             lastSideEffect = &inst;
             if(requireOneFlag(instInfo.getInstFlag(), InstFlagInOrder | InstFlagCall | InstFlagTerminator)) {
                 for(auto& prevInst : block.instructions()) {
@@ -305,6 +309,7 @@ static void postRAScheduleBlock(MIRBasicBlock& block, const TargetScheduleModel&
                         break;
                     addDep(&inst, &prevInst);
                 }
+                lastInOrder = &inst;
             }
         }
     }
