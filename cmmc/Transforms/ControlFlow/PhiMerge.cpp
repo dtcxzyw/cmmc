@@ -91,6 +91,17 @@ public:
                     continue;
 
                 for(auto prev : cfg.predecessors(block)) {
+                    for(auto prevSucc : cfg.successors(prev)) {
+                        if(prevSucc == targetBlock) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+                if(!valid)
+                    continue;
+
+                for(auto prev : cfg.predecessors(block)) {
                     resetTarget(prev->getTerminator()->as<BranchInst>(), block, targetBlock);
 
                     for(auto& inst : targetBlock->instructions()) {
