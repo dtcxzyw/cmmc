@@ -20,6 +20,11 @@
       "parent": "a398fc69ea29911ee35d3ef481e077fc10e79317",
       "time": "2023-07-02 15:37:48 +0800"
     },
+    "11b5dd1333286ce15e75aad7dda613c2d560d589": {
+      "message": "refactor(codegen): refactor ARM scheduler for better logic",
+      "parent": "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26",
+      "time": "2023-07-04 16:11:46 +0800"
+    },
     "17da56a33ceef5f2b4cabdb4a6cbccd43f8c9d41": {
       "message": "feat(transform): optimize select with constants",
       "parent": "8a442367ad14b632eadb8d0719bb9237ab864a62",
@@ -196,5 +201,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26"
+  "head": "11b5dd1333286ce15e75aad7dda613c2d560d589"
 }
