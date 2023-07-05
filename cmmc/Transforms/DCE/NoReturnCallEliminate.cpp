@@ -24,6 +24,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
+#include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <queue>
 
 CMMC_NAMESPACE_BEGIN
@@ -40,6 +41,12 @@ public:
                     const auto callee = inst.lastOperand();
                     if(auto calleeFunc = dynamic_cast<Function*>(callee);
                        calleeFunc && calleeFunc->attr().hasAttr(FunctionAttribute::NoReturn)) {
+                        const auto terminator = block->getTerminator();
+                        if(terminator->isBranch()) {
+                            const auto branch = terminator->as<BranchInst>();
+                            applyForSuccessors(branch, [&](Block* target) { removePhi(block, target); });
+                        }
+                        DisableValueRefCheckScope scope;
                         insts.erase(std::next(iter), insts.end());
                         auto newTerminator = make<UnreachableInst>();
                         newTerminator->insertBefore(block, block->instructions().end());

@@ -12,11 +12,6 @@
     limitations under the License.
 */
 
-// a * b + a * c -> a * (b + c)
-// a - a -> 0
-// a == a -> 1
-// etc.
-
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
