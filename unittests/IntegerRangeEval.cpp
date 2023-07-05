@@ -21,6 +21,14 @@
 
 CMMC_NAMESPACE_BEGIN
 
+enum MatchRequirement {
+    MatchNone = 0,
+    MatchSigned = 1 << 0,
+    MatchUnsigned = 1 << 1,
+    MatchBits = 1 << 2,
+    MatchAll = MatchSigned | MatchUnsigned | MatchBits
+};
+
 struct RealRange final {
     int64_t minSignedValue = std::numeric_limits<int64_t>::max(), maxSignedValue = std::numeric_limits<int64_t>::min();
     uint64_t minUnsignedValue = std::numeric_limits<uint64_t>::max(), maxUnsignedValue = 0;
@@ -35,6 +43,9 @@ struct RealRange final {
         maxUnsignedValue = std::max(maxUnsignedValue, zval);
         knownZeros &= ~val;
         knownOnes &= val;
+    }
+    bool empty() const {
+        return minSignedValue > maxSignedValue;
     }
     [[nodiscard]] bool within(const IntegerRange& rhs) const {
         return rhs.minSignedValue() <= minSignedValue && maxSignedValue <= rhs.maxSignedValue() &&
@@ -51,6 +62,21 @@ struct RealRange final {
     void print(std::ostream& out) const {
         toRange().print(out);
     }
+    bool match(const IntegerRange& rhs, uint32_t matchReq) const {
+        if(matchReq & MatchSigned) {
+            if(!(minSignedValue == rhs.minSignedValue() && maxSignedValue == rhs.maxSignedValue()))
+                return false;
+        }
+        if(matchReq & MatchUnsigned) {
+            if(!(minUnsignedValue == rhs.minUnsignedValue() && maxUnsignedValue == rhs.maxUnsignedValue()))
+                return false;
+        }
+        if(matchReq & MatchBits) {
+            if(!(knownOnes == rhs.knownOnes() && knownZeros == rhs.knownZeros()))
+                return false;
+        }
+        return true;
+    }
 };
 
 static std::ostream& operator<<(std::ostream& out, const RealRange& range) {
@@ -64,7 +90,7 @@ static std::ostream& operator<<(std::ostream& out, const IntegerRange& range) {
 }
 
 template <typename C1, typename C2>
-void testUnary(C1 eval, C2 rangeEval) {
+void testUnary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
     int64_t beg = -128, end = 128;
     // op [i, i]
     for(int64_t i = beg; i < end; ++i) {
@@ -73,11 +99,11 @@ void testUnary(C1 eval, C2 rangeEval) {
             real.update(static_cast<int32_t>(*res));
         IntegerRange valRange{ i };
         const auto evalRange = rangeEval(valRange);
-        ASSERT_TRUE(real.within(evalRange)) << "op " << i << '\n'
-                                            << "val:\n"
-                                            << valRange << "expected:\n"
-                                            << real << "result:\n"
-                                            << evalRange;
+        ASSERT_TRUE(real.within(evalRange) && real.match(evalRange, matchReq)) << "op " << i << '\n'
+                                                                               << "val:\n"
+                                                                               << valRange << "expected:\n"
+                                                                               << real << "result:\n"
+                                                                               << evalRange;
     }
     // op [i, j]
     for(int64_t i = beg; i < end; ++i) {
@@ -89,19 +115,21 @@ void testUnary(C1 eval, C2 rangeEval) {
                 if(std::optional<int64_t> res = eval(x))
                     real.update(static_cast<int32_t>(*res));
             }
+            if(real.empty())
+                continue;
             IntegerRange valRange = val.toRange();
             const auto evalRange = rangeEval(valRange);
-            ASSERT_TRUE(real.within(evalRange)) << "op [" << i << ", " << j << "]\n"
-                                                << "val:\n"
-                                                << valRange << "expected:\n"
-                                                << real << "result:\n"
-                                                << evalRange;
+            ASSERT_TRUE(real.within(evalRange) && real.match(evalRange, matchReq)) << "op [" << i << ", " << j << "]\n"
+                                                                                   << "val:\n"
+                                                                                   << valRange << "expected:\n"
+                                                                                   << real << "result:\n"
+                                                                                   << evalRange;
         }
     }
 }
 
 template <typename C1, typename C2>
-void testBinary(C1 eval, C2 rangeEval) {
+void testBinary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
     int64_t beg = -16, end = 16;
     // [i, i] op [j, j]
     for(int64_t i = beg; i < end; ++i) {
@@ -109,15 +137,17 @@ void testBinary(C1 eval, C2 rangeEval) {
             RealRange real;
             if(std::optional<int64_t> res = eval(i, j))
                 real.update(static_cast<int32_t>(*res));
+            if(real.empty())
+                continue;
             IntegerRange lhsRange{ i };
             IntegerRange rhsRange{ j };
             const auto evalRange = rangeEval(lhsRange, rhsRange);
-            ASSERT_TRUE(real.within(evalRange)) << i << " op " << j << '\n'
-                                                << "lhs:\n"
-                                                << lhsRange << "rhs:\n"
-                                                << rhsRange << "expected:\n"
-                                                << real << "result:\n"
-                                                << evalRange;
+            ASSERT_TRUE(real.within(evalRange) && real.match(evalRange, matchReq)) << i << " op " << j << '\n'
+                                                                                   << "lhs:\n"
+                                                                                   << lhsRange << "rhs:\n"
+                                                                                   << rhsRange << "expected:\n"
+                                                                                   << real << "result:\n"
+                                                                                   << evalRange;
         }
     }
     // [i, j] op [k, l]
@@ -136,15 +166,18 @@ void testBinary(C1 eval, C2 rangeEval) {
                                 real.update(static_cast<int32_t>(*res));
                         }
                     }
+                    if(real.empty())
+                        continue;
                     IntegerRange lhsRange = lhs.toRange();
                     IntegerRange rhsRange = rhs.toRange();
                     const auto evalRange = rangeEval(lhsRange, rhsRange);
-                    ASSERT_TRUE(real.within(evalRange)) << '[' << i << ", " << j << "] op [" << k << ", " << l << "]\n"
-                                                        << "lhs:\n"
-                                                        << lhsRange << "rhs:\n"
-                                                        << rhsRange << "expected:\n"
-                                                        << real << "result:\n"
-                                                        << evalRange;
+                    ASSERT_TRUE(real.within(evalRange) && real.match(evalRange, matchReq))
+                        << '[' << i << ", " << j << "] op [" << k << ", " << l << "]\n"
+                        << "lhs:\n"
+                        << lhsRange << "rhs:\n"
+                        << rhsRange << "expected:\n"
+                        << real << "result:\n"
+                        << evalRange;
                 }
             }
         }
@@ -163,7 +196,7 @@ TEST(IntegerRangeEval, Sub) {
 
 TEST(IntegerRangeEval, Mul) {
     testBinary([](int64_t x, int64_t y) { return x * y; },
-               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs * rhs; });
+               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs * rhs; }, MatchSigned);
 }
 
 TEST(IntegerRangeEval, SDiv) {
@@ -173,7 +206,7 @@ TEST(IntegerRangeEval, SDiv) {
                 return std::nullopt;
             return x / y;
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.sdiv(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.sdiv(rhs); }, MatchSigned);
 }
 
 TEST(IntegerRangeEval, UDiv) {
@@ -183,7 +216,7 @@ TEST(IntegerRangeEval, UDiv) {
                 return std::nullopt;
             return static_cast<int64_t>(static_cast<uint32_t>(x) / static_cast<uint32_t>(y));
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.udiv(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.udiv(rhs); }, MatchNone);
 }
 
 TEST(IntegerRangeEval, SRem) {
@@ -193,7 +226,7 @@ TEST(IntegerRangeEval, SRem) {
                 return std::nullopt;
             return x % y;
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.srem(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.srem(rhs); }, MatchNone);
 }
 
 TEST(IntegerRangeEval, URem) {
@@ -203,52 +236,52 @@ TEST(IntegerRangeEval, URem) {
                 return std::nullopt;
             return static_cast<int64_t>(static_cast<uint32_t>(x) % static_cast<uint32_t>(y));
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.urem(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.urem(rhs); }, MatchNone);
 }
 
 TEST(IntegerRangeEval, And) {
     testBinary([](int64_t x, int64_t y) { return x & y; },
-               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs & rhs; });
+               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs & rhs; }, MatchBits);
 }
 
 TEST(IntegerRangeEval, Or) {
     testBinary([](int64_t x, int64_t y) { return x | y; },
-               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs | rhs; });
+               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs | rhs; }, MatchBits);
 }
 
 TEST(IntegerRangeEval, Xor) {
     testBinary([](int64_t x, int64_t y) { return x ^ y; },
-               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs ^ rhs; });
+               [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs ^ rhs; }, MatchBits);
 }
 
 TEST(IntegerRangeEval, Shl) {
     testBinary(
         [](int64_t x, int64_t y) -> std::optional<int64_t> {
-            if(0 <= y && y <= 32)
+            if(0 <= y && y <= 31)
                 return x << y;
             return std::nullopt;
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.shl(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.shl(rhs); }, MatchBits);
 }
 
 TEST(IntegerRangeEval, LShr) {
     testBinary(
         [](int64_t x, int64_t y) -> std::optional<int64_t> {
-            if(0 <= y && y <= 32)
+            if(0 <= y && y <= 31)
                 return static_cast<int64_t>(static_cast<uint32_t>(x) >> static_cast<uint32_t>(y));
             return std::nullopt;
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.lshr(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.lshr(rhs); }, MatchBits);
 }
 
 TEST(IntegerRangeEval, AShr) {
     testBinary(
         [](int64_t x, int64_t y) -> std::optional<int64_t> {
-            if(0 <= y && y <= 32)
+            if(0 <= y && y <= 31)
                 return x >> y;
             return std::nullopt;
         },
-        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.ashr(rhs); });
+        [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs.ashr(rhs); }, MatchBits);
 }
 
 TEST(IntegerRangeEval, SMax) {

@@ -174,12 +174,9 @@ func @test4(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect 
     i8 %5 = select i1 %4 ? i8 %3 : i8 0;
     ret i8 %5;
 }
-func @test5(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @test5() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = shl i32 0, i32 %0;
-    i8 %2 = ztrunc i32 %1 to i8;
-    ret i8 %2;
+    ret i8 0;
 }
 func @test6(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

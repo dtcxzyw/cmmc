@@ -13,6 +13,7 @@
 */
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cmmc/Analysis/IntegerRange.hpp>
 #include <cstdint>
@@ -39,26 +40,59 @@ void IntegerRange::print(std::ostream& out) const {
 
 void IntegerRange::bit2Unsigned() {
     const auto determined = mKnownOnes | mKnownZeros;
-    const auto lcpLength = __builtin_clz(~determined);
-    const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
-    const uint64_t minV = mKnownOnes & mask;
-    const uint64_t maxV = minV | (~mask);
-    mMinUnsignedValue = std::max(mMinUnsignedValue, minV);
-    mMaxUnsignedValue = std::min(mMaxUnsignedValue, maxV);
+    if(determined == 0xffffffff) {
+        const uint64_t val = mKnownOnes;
+        mMinUnsignedValue = std::max(mMinUnsignedValue, val);
+        mMaxUnsignedValue = std::min(mMaxUnsignedValue, val);
+    } else {
+        const auto lcpLength = static_cast<uint32_t>(__builtin_clz(~determined));
+        const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
+        const uint64_t minV = mKnownOnes & mask;
+        const uint64_t maxV = minV | (~mask);
+        mMinUnsignedValue = std::max(mMinUnsignedValue, minV);
+        mMaxUnsignedValue = std::min(mMaxUnsignedValue, maxV);
+    }
+
+    auto [suffix, suffixLength] = inferSuffix();
+    const auto mask = suffixLength == 32U ? 0xffffffff : ((1U << suffixLength) - 1);
+    if((mMinUnsignedValue & mask) != suffix) {
+        auto next = (mMinUnsignedValue & (~mask)) | suffix;
+        if(next < mMinUnsignedValue)
+            next += mask + 1;
+        mMinUnsignedValue = next;
+    }
+
+    if((mMaxUnsignedValue & mask) != suffix) {
+        auto next = (mMaxUnsignedValue & (~mask)) | suffix;
+        if(next > mMaxUnsignedValue)
+            next -= mask + 1;
+        mMaxUnsignedValue = next;
+    }
+    assert(mMinUnsignedValue <= mMaxUnsignedValue);
 }
 void IntegerRange::unsigned2Bit() {
     const auto common = static_cast<uint32_t>(mMinUnsignedValue ^ mMaxUnsignedValue);
-    const auto lcpLength = __builtin_clz(common);
-    const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
-    mKnownOnes |= static_cast<uint32_t>(mMinUnsignedValue) & mask;
-    mKnownZeros |= (~static_cast<uint32_t>(mMinUnsignedValue)) & mask;
+    if(common == 0) {
+        mKnownOnes |= static_cast<uint32_t>(mMinUnsignedValue);
+        mKnownZeros |= ~static_cast<uint32_t>(mMinUnsignedValue);
+    } else {
+        const auto lcpLength = static_cast<uint32_t>(__builtin_clz(common));
+        const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
+        mKnownOnes |= static_cast<uint32_t>(mMinUnsignedValue) & mask;
+        mKnownZeros |= (~static_cast<uint32_t>(mMinUnsignedValue)) & mask;
+    }
 }
 void IntegerRange::signed2Bit() {
     const auto common = static_cast<uint32_t>(mMinSignedValue ^ mMaxSignedValue);
-    const auto lcpLength = __builtin_clz(common);
-    const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
-    mKnownOnes |= static_cast<uint32_t>(mMinSignedValue) & mask;
-    mKnownZeros |= (~static_cast<uint32_t>(mMinSignedValue)) & mask;
+    if(common == 0) {
+        mKnownOnes |= static_cast<uint32_t>(mMinSignedValue);
+        mKnownZeros |= ~static_cast<uint32_t>(mMinSignedValue);
+    } else {
+        const auto lcpLength = static_cast<uint32_t>(__builtin_clz(common));
+        const auto mask = ~((0xffffffff << lcpLength) >> lcpLength);
+        mKnownOnes |= static_cast<uint32_t>(mMinSignedValue) & mask;
+        mKnownZeros |= (~static_cast<uint32_t>(mMinSignedValue)) & mask;
+    }
 }
 void IntegerRange::unsigned2Signed() {
     if(mMaxUnsignedValue <= std::numeric_limits<int32_t>::max()) {
@@ -153,6 +187,13 @@ std::optional<int64_t> IntegerRange::inferConstant() const {
         return static_cast<int32_t>(mKnownOnes);
     return std::nullopt;
 }
+std::pair<uint32_t, uint32_t> IntegerRange::inferSuffix() const {
+    const auto determined = mKnownOnes | mKnownZeros;
+    if(determined == 0xffffffff)
+        return { mKnownOnes, 32U };
+    const auto length = __builtin_ctz(~determined);
+    return { mKnownOnes & ((1U << length) - 1), length };
+}
 IntegerRange IntegerRange::intersectSet(const IntegerRange& rhs) const {
     IntegerRange ret;
     ret.setSignedRange(std::max(mMinSignedValue, rhs.mMinSignedValue), std::min(mMaxSignedValue, rhs.mMaxSignedValue));
@@ -201,39 +242,103 @@ IntegerRange IntegerRange::operator*(const IntegerRange& rhs) const {
     const auto unsignedLow = mMinUnsignedValue * rhs.mMinUnsignedValue, unsignedHigh = mMaxUnsignedValue * rhs.mMaxUnsignedValue;
     if(!unsignedOverflow(unsignedLow) && !unsignedOverflow(unsignedHigh))
         ret.setUnsignedRange(unsignedLow, unsignedHigh);
+
+    auto [lhsSuffix, lhsSuffixLength] = inferSuffix();
+    auto [rhsSuffix, rhsSuffixLength] = rhs.inferSuffix();
+
+    if(lhsSuffixLength && rhsSuffixLength) {
+        const auto length = std::min(lhsSuffixLength, rhsSuffixLength);
+        const auto mask = (length >= 32U ? 0xffffffff : ((1U << length) - 1));
+        const auto val = lhsSuffix * rhsSuffix;
+        ret.setKnownBits((~val) & mask, val & mask);
+    } else if(lhsSuffixLength) {
+        const auto length = lhsSuffix ? static_cast<uint32_t>(__builtin_ctz(lhsSuffix)) : lhsSuffixLength;
+        const auto mask = (length >= 32U ? 0xffffffff : ((1U << length) - 1));
+        ret.setKnownBits(mask, 0);
+    } else if(rhsSuffixLength) {
+        const auto length = rhsSuffix ? static_cast<uint32_t>(__builtin_ctz(rhsSuffix)) : rhsSuffixLength;
+        const auto mask = (length >= 32U ? 0xffffffff : ((1U << length) - 1));
+        ret.setKnownBits(mask, 0);
+    }
+
     ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::sdiv(const IntegerRange& rhs) const {
     IntegerRange ret;
-    if(rhs.mMinSignedValue <= 0)
+    if(rhs.mMinSignedValue == 0 && rhs.mMaxSignedValue == 0)
         return ret;
-    const auto s1 = mMinSignedValue / rhs.mMinSignedValue, s2 = mMinSignedValue / rhs.mMaxSignedValue,
-               s3 = mMaxSignedValue / rhs.mMinSignedValue, s4 = mMaxSignedValue / rhs.mMaxSignedValue;
-    ret.setSignedRange(std::min(std::min(s1, s2), std::min(s3, s4)), std::max(std::max(s1, s2), std::max(s3, s4)));
+
+    const auto wrap = [](int64_t& x) {
+        if(x == -static_cast<int64_t>(std::numeric_limits<int32_t>::min()))
+            x = std::numeric_limits<int32_t>::min();
+    };
+    if(rhs.mMinSignedValue >= 0) {
+        const auto s1 = mMinSignedValue / std::max(static_cast<int64_t>(1), rhs.mMinSignedValue),
+                   s2 = mMinSignedValue / std::max(static_cast<int64_t>(1), rhs.mMaxSignedValue),
+                   s3 = mMaxSignedValue / std::max(static_cast<int64_t>(1), rhs.mMinSignedValue),
+                   s4 = mMaxSignedValue / std::max(static_cast<int64_t>(1), rhs.mMaxSignedValue);
+        ret.setSignedRange(std::min(std::min(s1, s2), std::min(s3, s4)), std::max(std::max(s1, s2), std::max(s3, s4)));
+    } else if(rhs.mMaxSignedValue <= 0) {
+        auto s1 = mMinSignedValue / std::min(static_cast<int64_t>(-1), rhs.mMinSignedValue),
+             s2 = mMinSignedValue / std::min(static_cast<int64_t>(-1), rhs.mMaxSignedValue),
+             s3 = mMaxSignedValue / std::min(static_cast<int64_t>(-1), rhs.mMinSignedValue),
+             s4 = mMaxSignedValue / std::min(static_cast<int64_t>(-1), rhs.mMaxSignedValue);
+        wrap(s1);
+        wrap(s2);
+        wrap(s3);
+        wrap(s4);
+        ret.setSignedRange(std::min(std::min(s1, s2), std::min(s3, s4)), std::max(std::max(s1, s2), std::max(s3, s4)));
+    } else {
+        std::array<int64_t, 2> lhs = { mMinSignedValue, mMaxSignedValue };
+        std::array<int64_t, 4> rhsList{ rhs.mMinSignedValue, -1, 1, rhs.mMaxSignedValue };
+        int64_t minV = ret.maxSignedValue(), maxV = ret.minSignedValue();
+        for(auto lhsVal : lhs)
+            for(auto rhsVal : rhsList) {
+                if(!rhsVal)
+                    continue;
+                auto val = lhsVal / rhsVal;
+                wrap(val);
+                minV = std::min(minV, val);
+                maxV = std::max(maxV, val);
+            }
+        ret.setSignedRange(minV, maxV);
+    }
+
     ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::udiv(const IntegerRange& rhs) const {
     IntegerRange ret;
-    if(rhs.mMinUnsignedValue == 0)
+    if(rhs.mMinUnsignedValue == 0 && rhs.mMaxUnsignedValue == 0)
         return ret;
-    const auto unsignedLow = mMinUnsignedValue / rhs.mMaxUnsignedValue, unsignedHigh = mMaxUnsignedValue / rhs.mMinUnsignedValue;
+    const auto unsignedLow = mMinUnsignedValue / std::max(static_cast<uint64_t>(1), rhs.mMaxUnsignedValue),
+               unsignedHigh = mMaxUnsignedValue / std::max(static_cast<uint64_t>(1), rhs.mMinUnsignedValue);
     ret.setUnsignedRange(unsignedLow, unsignedHigh);
     ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::srem(const IntegerRange& rhs) const {
     IntegerRange ret;
-    if(rhs.mMinSignedValue <= 0)
+
+    if(rhs.mMinSignedValue == 0 && rhs.mMaxSignedValue == 0)
         return ret;
-    ret.setSignedRange(-rhs.mMaxSignedValue + 1, rhs.mMaxSignedValue - 1);
+
+    if(rhs.mMinSignedValue >= 0) {
+        ret.setSignedRange(-rhs.mMaxSignedValue + 1, rhs.mMaxSignedValue - 1);
+    } else if(rhs.mMaxSignedValue <= 0) {
+        ret.setSignedRange(rhs.mMinSignedValue + 1, -rhs.mMinSignedValue - 1);
+    } else {
+        const auto val = std::max(-rhs.mMinSignedValue, rhs.mMaxSignedValue);
+        ret.setSignedRange(-val + 1, val - 1);
+    }
+
     ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::urem(const IntegerRange& rhs) const {
     IntegerRange ret;
-    if(rhs.mMinUnsignedValue == 0)
+    if(rhs.mMinUnsignedValue == 0 && rhs.mMaxUnsignedValue == 0)
         return ret;
     ret.setUnsignedRange(0, rhs.mMaxUnsignedValue - 1);
     ret.sync();
@@ -261,21 +366,70 @@ IntegerRange IntegerRange::operator^(const IntegerRange& rhs) const {
 }
 
 IntegerRange IntegerRange::shl(const IntegerRange& rhs) const {
-    // TODO
-    CMMC_UNUSED(rhs);
+    const auto beg = std::max(static_cast<int64_t>(0), rhs.mMinSignedValue);
+    const auto end = std::min(static_cast<int64_t>(31), rhs.mMaxSignedValue);
+    std::optional<IntegerRange> retRange;
+    for(auto i = beg; i <= end; ++i) {
+        const auto mask = (1U << i) - 1;
+        IntegerRange subRange;
+        subRange.setKnownBits((mKnownZeros << i) | mask, mKnownOnes << i);
+        if(retRange.has_value()) {
+            retRange = retRange->unionSet(subRange);
+        } else {
+            retRange = subRange;
+        }
+    }
+
     IntegerRange ret;
+    if(retRange.has_value()) {
+        ret = *retRange;
+    }
+    ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::lshr(const IntegerRange& rhs) const {
-    // TODO
-    CMMC_UNUSED(rhs);
+    const auto beg = std::max(static_cast<int64_t>(0), rhs.mMinSignedValue);
+    const auto end = std::min(static_cast<int64_t>(31), rhs.mMaxSignedValue);
+    std::optional<IntegerRange> retRange;
+    for(auto i = beg; i <= end; ++i) {
+        const auto mask = ~((0xffffffff << i) >> i);
+        IntegerRange subRange;
+        subRange.setKnownBits((mKnownZeros >> i) | mask, mKnownOnes >> i);
+        if(retRange.has_value()) {
+            retRange = retRange->unionSet(subRange);
+        } else {
+            retRange = subRange;
+        }
+    }
+
     IntegerRange ret;
+    if(retRange.has_value()) {
+        ret = *retRange;
+    }
+    ret.sync();
     return ret;
 }
 IntegerRange IntegerRange::ashr(const IntegerRange& rhs) const {
-    // TODO
-    CMMC_UNUSED(rhs);
+    const auto beg = std::max(static_cast<int64_t>(0), rhs.mMinSignedValue);
+    const auto end = std::min(static_cast<int64_t>(31), rhs.mMaxSignedValue);
+    std::optional<IntegerRange> retRange;
+    for(auto i = beg; i <= end; ++i) {
+        const auto mask = ~((0xffffffff << i) >> i);
+        IntegerRange subRange;
+        subRange.setKnownBits((mKnownZeros >> i) | (mKnownZeros & 0x70000000 ? mask : 0),
+                              mKnownOnes >> i | (mKnownOnes & 0x70000000 ? mask : 0));
+        if(retRange.has_value()) {
+            retRange = retRange->unionSet(subRange);
+        } else {
+            retRange = subRange;
+        }
+    }
+
     IntegerRange ret;
+    if(retRange.has_value()) {
+        ret = *retRange;
+    }
+    ret.sync();
     return ret;
 }
 

@@ -18,6 +18,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -33,7 +34,11 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                            const IntegerRangeAnalysisResult& rangeAnalysis) {
         CMMC_UNUSED(target);
         bool modified = false;
+        const auto i64 = IntegerType::get(64);
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
+            const auto type = inst->getType();
+            if(!type->isInteger() || type->isSame(i64))
+                return nullptr;
             auto range = rangeAnalysis.query(inst);
             if(auto c = range.inferConstant())
                 return ConstantInteger::get(inst->getType(), *c);

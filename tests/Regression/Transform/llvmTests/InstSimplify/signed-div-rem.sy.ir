@@ -180,25 +180,17 @@ func @sdiv_sext_big_divisor() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect S
   ^entry:
     ret i32 0;
 }
-func @sdiv_sext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sdiv_sext_small_divisor() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i8 %0 = strunc i8 %var0 to i8;
-    i32 %1 = sext i8 %0 to i32;
-    i32 %2 = sdiv i32 %1, i32 -129;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    ret i32 0;
 }
 func @sdiv_zext_big_divisor() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     ret i32 0;
 }
-func @sdiv_zext_small_divisor(i8 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sdiv_zext_small_divisor() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = sdiv i32 %1, i32 -256;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    ret i32 0;
 }
 func @srem_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

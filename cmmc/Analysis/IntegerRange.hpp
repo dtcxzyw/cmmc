@@ -48,6 +48,8 @@ public:
 
     [[nodiscard]] bool intersectWith(const IntegerRange& rhs) const;
     [[nodiscard]] std::optional<int64_t> inferConstant() const;
+    // [suffix, length]
+    [[nodiscard]] std::pair<uint32_t, uint32_t> inferSuffix() const;
     [[nodiscard]] uint32_t knownZeros() const noexcept {
         return mKnownZeros;
     }

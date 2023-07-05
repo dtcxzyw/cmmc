@@ -17,6 +17,7 @@
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <optional>
 #include <queue>
@@ -67,6 +68,11 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
     };
     auto update = [&](Instruction* inst, const IntegerRange& newRange) {
         auto& range = ret[inst];
+
+        // inst->dumpInst(std::cerr);
+        // std::cerr << " -> \n";
+        // newRange.print(std::cerr);
+
         const auto intersection = range.intersectSet(newRange);
         if(range != intersection) {
             range = intersection;
