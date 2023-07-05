@@ -220,6 +220,11 @@
       "parent": "3c9bfc69a8452250b22638e3e6231f85e7f64a85",
       "time": "2023-07-04 20:34:37 +0800"
     },
+    "d704adc43cc2208d15df5443ba72a7be262aeb0c": {
+      "message": "feat(transform): add range-aware arith reduce",
+      "parent": "169ca45c333c980ad64271f0522d6f9a82c220cc",
+      "time": "2023-07-05 17:19:34 +0800"
+    },
     "dab395f5471c2e2abcc130aed1055c5f889f99a1": {
       "message": "feat(transform): add more optimizations for arithmetic reduce",
       "parent": "4b7168be87eea9ff5ddf64cec1114c0450920b8f",
@@ -256,5 +261,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "169ca45c333c980ad64271f0522d6f9a82c220cc"
+  "head": "d704adc43cc2208d15df5443ba72a7be262aeb0c"
 }
