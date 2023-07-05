@@ -39,7 +39,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!cond->is<CompareInst>())
             continue;
         const auto cmp = cond->as<CompareInst>();
-        if(cmp->getInstID() != InstructionID::SCmp)
+        if(cmp->getInstID() != InstructionID::ICmp)
             continue;
         const auto next = cmp->getOperand(0);
         auto bound = cmp->getOperand(1);
@@ -84,7 +84,7 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
         if(!uniqueInitial || !initial)
             continue;
 
-        if(cmp->getOp() == CompareOp::NotEqual) {
+        if(cmp->getOp() == CompareOp::ICmpNotEqual) {
             intmax_t boundValue;
             if(!int_(boundValue)(MatchContext<Value>{ bound }))
                 continue;
@@ -99,11 +99,11 @@ LoopAnalysisResult LoopAnalysis::run(Function& func, AnalysisPassManager& analys
                 continue;
             if(step < 0 && (initialValue <= boundValue))
                 continue;
-        } else if(cmp->getOp() == CompareOp::LessThan) {
+        } else if(cmp->getOp() == CompareOp::ICmpSignedLessThan) {
             // increment
             if(step <= 0)
                 continue;
-        } else if(cmp->getOp() == CompareOp::GreaterThan) {
+        } else if(cmp->getOp() == CompareOp::ICmpSignedGreaterThan) {
             // decrement
             if(step >= 0)
                 continue;

@@ -642,7 +642,7 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
         const auto addPtr = [&](uintptr_t val) { addValue(inst, val); };
         const auto addFP = [&](double val) { addValue(inst, ConstantFloatingPoint{ inst.getType(), val }); };
 
-        const auto doCompare = [&](CompareOp cmp, auto lhs, auto rhs) {
+        const auto doCompare = [&](CompareOp cmp, intmax_t lhs, intmax_t rhs) {
             if(step.get()) {
                 auto& out = std::cerr;
                 out << "compare "sv;
@@ -652,20 +652,64 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 out << '\n';
             }
             switch(cmp) {
-                case CompareOp::LessThan:
-                    return lhs < rhs;
-                case CompareOp::LessEqual:
-                    return lhs <= rhs;
-                case CompareOp::GreaterThan:
-                    return lhs > rhs;
-                case CompareOp::GreaterEqual:
-                    return lhs >= rhs;
-                case CompareOp::Equal:
+                case CompareOp::ICmpEqual:
                     return lhs == rhs;
-                case CompareOp::NotEqual:
+                case CompareOp::ICmpNotEqual:
                     return lhs != rhs;
+                case CompareOp::ICmpSignedLessThan:
+                    return lhs < rhs;
+                case CompareOp::ICmpSignedLessEqual:
+                    return lhs <= rhs;
+                case CompareOp::ICmpSignedGreaterThan:
+                    return lhs > rhs;
+                case CompareOp::ICmpSignedGreaterEqual:
+                    return lhs >= rhs;
+                case CompareOp::ICmpUnsignedLessThan:
+                    return static_cast<uintmax_t>(lhs) < static_cast<uintmax_t>(rhs);
+                case CompareOp::ICmpUnsignedLessEqual:
+                    return static_cast<uintmax_t>(lhs) <= static_cast<uintmax_t>(rhs);
+                case CompareOp::ICmpUnsignedGreaterThan:
+                    return static_cast<uintmax_t>(lhs) > static_cast<uintmax_t>(rhs);
+                case CompareOp::ICmpUnsignedGreaterEqual:
+                    return static_cast<uintmax_t>(lhs) >= static_cast<uintmax_t>(rhs);
+                default:
+                    reportUnreachable(CMMC_LOCATION());
             }
-            reportUnreachable(CMMC_LOCATION());
+        };
+
+        const auto doCompareFP = [&](CompareOp cmp, double lhs, double rhs) {
+            if(step.get()) {
+                auto& out = std::cerr;
+                out << "compare "sv;
+                std::cerr << lhs;
+                out << ' ' << enumName(cmp) << ' ';
+                std::cerr << rhs;
+                out << '\n';
+            }
+            switch(cmp) {
+                case CompareOp::FCmpOrderedEqual:
+                    return lhs == rhs;
+                case CompareOp::FCmpOrderedLessThan:
+                    return lhs < rhs;
+                case CompareOp::FCmpOrderedLessEqual:
+                    return lhs <= rhs;
+                case CompareOp::FCmpOrderedGreaterThan:
+                    return lhs > rhs;
+                case CompareOp::FCmpOrderedGreaterEqual:
+                    return lhs >= rhs;
+                case CompareOp::FCmpUnorderedNotEqual:
+                    return lhs != rhs;
+                case CompareOp::FCmpUnorderedLessThan:
+                    return !(lhs >= rhs);
+                case CompareOp::FCmpUnorderedLessEqual:
+                    return !(lhs > rhs);
+                case CompareOp::FCmpUnorderedGreaterThan:
+                    return !(lhs <= rhs);
+                case CompareOp::FCmpUnorderedGreaterEqual:
+                    return !(lhs < rhs);
+                default:
+                    reportUnreachable(CMMC_LOCATION());
+            }
         };
 
         switch(inst.getInstID()) {
@@ -847,16 +891,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addFP(fma(getFP(0), getFP(1), getFP(2)));
                 break;
             }
-            case InstructionID::SCmp: {
+            case InstructionID::ICmp: {
                 addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getInt(0), getInt(1)));
                 break;
             }
-            case InstructionID::UCmp: {
-                addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getUInt(0), getUInt(1)));
-                break;
-            }
             case InstructionID::FCmp: {
-                addBoolean(doCompare(inst.as<CompareInst>()->getOp(), getFP(0), getFP(1)));
+                addBoolean(doCompareFP(inst.as<CompareInst>()->getOp(), getFP(0), getFP(1)));
                 break;
             }
             case InstructionID::SExt:
@@ -925,7 +965,9 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                             baseType = baseType->as<ArrayType>()->getElementType();
                         } else
                             reportUnreachable(CMMC_LOCATION());
-                        basePtr += static_cast<intptr_t>(getInt(idx)) * baseType->getSize(dataLayout);
+                        basePtr = static_cast<uintptr_t>(static_cast<intptr_t>(basePtr) +
+                                                         static_cast<intptr_t>(getInt(idx)) *
+                                                             static_cast<intptr_t>(baseType->getSize(dataLayout)));
                     } else if(auto offset = dynamic_cast<ConstantOffset*>(operand)) {
                         const auto structType = baseType->as<StructType>();
                         baseType = structType->getFieldType(offset);

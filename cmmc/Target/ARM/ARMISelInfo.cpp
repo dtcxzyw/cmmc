@@ -91,24 +91,26 @@ static MIROperand getCondFieldSCmp(const MIROperand& op) {
     const auto cmp = static_cast<CompareOp>(op.imm());
     CondField field = CondField::AL;
     switch(cmp) {
-        case CompareOp::LessThan:
+        case CompareOp::ICmpSignedLessThan:
             field = CondField::LT;
             break;
-        case CompareOp::LessEqual:
+        case CompareOp::ICmpSignedLessEqual:
             field = CondField::LE;
             break;
-        case CompareOp::GreaterThan:
+        case CompareOp::ICmpSignedGreaterThan:
             field = CondField::GT;
             break;
-        case CompareOp::GreaterEqual:
+        case CompareOp::ICmpSignedGreaterEqual:
             field = CondField::GE;
             break;
-        case CompareOp::Equal:
+        case CompareOp::ICmpEqual:
             field = CondField::EQ;
             break;
-        case CompareOp::NotEqual:
+        case CompareOp::ICmpNotEqual:
             field = CondField::NE;
             break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
     }
     return MIROperand::asImm(field, OperandType::CondField);
 }
@@ -116,24 +118,26 @@ static MIROperand getCondFieldUCmp(const MIROperand& op) {
     const auto cmp = static_cast<CompareOp>(op.imm());
     CondField field = CondField::AL;
     switch(cmp) {
-        case CompareOp::LessThan:
+        case CompareOp::ICmpUnsignedLessThan:
             field = CondField::LO;
             break;
-        case CompareOp::LessEqual:
+        case CompareOp::ICmpUnsignedLessEqual:
             field = CondField::LS;
             break;
-        case CompareOp::GreaterThan:
+        case CompareOp::ICmpUnsignedGreaterThan:
             field = CondField::HI;
             break;
-        case CompareOp::GreaterEqual:
+        case CompareOp::ICmpUnsignedGreaterEqual:
             field = CondField::HS;
             break;
-        case CompareOp::Equal:
+        case CompareOp::ICmpEqual:
             field = CondField::EQ;
             break;
-        case CompareOp::NotEqual:
+        case CompareOp::ICmpNotEqual:
             field = CondField::NE;
             break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
     }
     return MIROperand::asImm(field, OperandType::CondField);
 }
@@ -142,24 +146,26 @@ static MIROperand getCondFieldFCmp(const MIROperand& op) {
     const auto cmp = static_cast<CompareOp>(op.imm());
     CondField field = CondField::AL;
     switch(cmp) {
-        case CompareOp::LessThan:
+        case CompareOp::FCmpOrderedLessThan:
             field = CondField::MI;
             break;
-        case CompareOp::LessEqual:
+        case CompareOp::FCmpOrderedLessEqual:
             field = CondField::LS;
             break;
-        case CompareOp::GreaterThan:
+        case CompareOp::FCmpOrderedGreaterThan:
             field = CondField::GT;
             break;
-        case CompareOp::GreaterEqual:
+        case CompareOp::FCmpOrderedGreaterEqual:
             field = CondField::GE;
             break;
-        case CompareOp::Equal:
+        case CompareOp::FCmpOrderedEqual:
             field = CondField::EQ;
             break;
-        case CompareOp::NotEqual:
+        case CompareOp::FCmpOrderedNotEqual:
             field = CondField::NE;
             break;
+        default:
+            reportUnreachable(CMMC_LOCATION());
     }
     return MIROperand::asImm(field, OperandType::CondField);
 }

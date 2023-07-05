@@ -249,47 +249,63 @@ class LLVMConversionContext final {
                 return builder.CreateIntrinsic(llvm::Intrinsic::fma, { type, type, type },
                                                { getOperand(0), getOperand(1), getOperand(2) });
             }
-            case InstructionID::SCmp:
-                [[fallthrough]];
-            case InstructionID::UCmp: {
-
-                const auto getPred = [](CompareOp op, bool isSigned) {
+            case InstructionID::ICmp: {
+                const auto getPred = [](CompareOp op) {
                     switch(op) {
-                        case CompareOp::Equal:
+                        case CompareOp::ICmpEqual:
                             return llvm::CmpInst::ICMP_EQ;
-                        case CompareOp::NotEqual:
+                        case CompareOp::ICmpNotEqual:
                             return llvm::CmpInst::ICMP_NE;
-                        case CompareOp::LessThan:
-                            return isSigned ? llvm::CmpInst::ICMP_SLT : llvm::CmpInst::ICMP_ULT;
-                        case CompareOp::LessEqual:
-                            return isSigned ? llvm::CmpInst::ICMP_SLE : llvm::CmpInst::ICMP_ULE;
-                        case CompareOp::GreaterThan:
-                            return isSigned ? llvm::CmpInst::ICMP_SGT : llvm::CmpInst::ICMP_UGT;
-                        case CompareOp::GreaterEqual:
-                            return isSigned ? llvm::CmpInst::ICMP_SGE : llvm::CmpInst::ICMP_UGE;
+                        case CompareOp::ICmpSignedLessThan:
+                            return llvm::CmpInst::ICMP_SLT;
+                        case CompareOp::ICmpSignedLessEqual:
+                            return llvm::CmpInst::ICMP_SLE;
+                        case CompareOp::ICmpSignedGreaterThan:
+                            return llvm::CmpInst::ICMP_SGT;
+                        case CompareOp::ICmpSignedGreaterEqual:
+                            return llvm::CmpInst::ICMP_SGE;
+                        case CompareOp::ICmpUnsignedLessThan:
+                            return llvm::CmpInst::ICMP_ULT;
+                        case CompareOp::ICmpUnsignedLessEqual:
+                            return llvm::CmpInst::ICMP_ULE;
+                        case CompareOp::ICmpUnsignedGreaterThan:
+                            return llvm::CmpInst::ICMP_UGT;
+                        case CompareOp::ICmpUnsignedGreaterEqual:
+                            return llvm::CmpInst::ICMP_UGE;
                         default:
                             reportUnreachable(CMMC_LOCATION());
                     }
                 };
 
-                return builder.CreateICmp(getPred(inst.as<CompareInst>()->getOp(), inst.getInstID() == InstructionID::SCmp),
-                                          getOperand(0), getOperand(1));
+                return builder.CreateICmp(getPred(inst.as<CompareInst>()->getOp()), getOperand(0), getOperand(1));
             }
             case InstructionID::FCmp: {
                 const auto getPred = [](CompareOp op) {
                     switch(op) {
-                        case CompareOp::Equal:
+                        case CompareOp::FCmpOrderedEqual:
                             return llvm::CmpInst::FCMP_OEQ;
-                        case CompareOp::NotEqual:
+                        case CompareOp::FCmpOrderedNotEqual:
                             return llvm::CmpInst::FCMP_ONE;
-                        case CompareOp::LessThan:
+                        case CompareOp::FCmpOrderedLessThan:
                             return llvm::CmpInst::FCMP_OLT;
-                        case CompareOp::LessEqual:
+                        case CompareOp::FCmpOrderedLessEqual:
                             return llvm::CmpInst::FCMP_OLE;
-                        case CompareOp::GreaterThan:
+                        case CompareOp::FCmpOrderedGreaterThan:
                             return llvm::CmpInst::FCMP_OGT;
-                        case CompareOp::GreaterEqual:
+                        case CompareOp::FCmpOrderedGreaterEqual:
                             return llvm::CmpInst::FCMP_OGE;
+                        case CompareOp::FCmpUnorderedEqual:
+                            return llvm::CmpInst::FCMP_UEQ;
+                        case CompareOp::FCmpUnorderedNotEqual:
+                            return llvm::CmpInst::FCMP_UNE;
+                        case CompareOp::FCmpUnorderedLessThan:
+                            return llvm::CmpInst::FCMP_ULT;
+                        case CompareOp::FCmpUnorderedLessEqual:
+                            return llvm::CmpInst::FCMP_ULE;
+                        case CompareOp::FCmpUnorderedGreaterThan:
+                            return llvm::CmpInst::FCMP_UGT;
+                        case CompareOp::FCmpUnorderedGreaterEqual:
+                            return llvm::CmpInst::FCMP_UGE;
                         default:
                             reportUnreachable(CMMC_LOCATION());
                     }

@@ -153,19 +153,19 @@ static TACInstStorage parseTACLine(std::string_view line) {
             t2 = parseTACOperand(tokens[3]);
             t3 = parseTACOperand(tokens[5]);
 
-            TACConditionalGoto inst{ CompareOp::Equal, t1, t2, t3 };
+            TACConditionalGoto inst{ CompareOp::ICmpEqual, t1, t2, t3 };
             if(tokens[2] == "<"sv)
-                inst.cmp = CompareOp::LessThan;
+                inst.cmp = CompareOp::ICmpSignedLessThan;
             else if(tokens[2] == ">"sv)
-                inst.cmp = CompareOp::GreaterThan;
+                inst.cmp = CompareOp::ICmpSignedGreaterThan;
             else if(tokens[2] == "<="sv)
-                inst.cmp = CompareOp::LessEqual;
+                inst.cmp = CompareOp::ICmpSignedLessEqual;
             else if(tokens[2] == ">="sv)
-                inst.cmp = CompareOp::GreaterEqual;
+                inst.cmp = CompareOp::ICmpSignedGreaterEqual;
             else if(tokens[2] == "!="sv)
-                inst.cmp = CompareOp::NotEqual;
+                inst.cmp = CompareOp::ICmpNotEqual;
             else if(tokens[2] == "=="sv)
-                inst.cmp = CompareOp::Equal;
+                inst.cmp = CompareOp::ICmpEqual;
             else
                 reportUnreachable(CMMC_LOCATION());
             return inst;

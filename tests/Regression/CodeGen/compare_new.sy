@@ -1,0 +1,60 @@
+int32_t icmp_eq(int32_t x, int32_t y) {
+    return x == y;
+}
+int32_t icmp_ne(int32_t x, int32_t y) {
+    return x != y;
+}
+int32_t icmp_slt(int32_t x, int32_t y) {
+    return x < y;
+}
+int32_t icmp_sle(int32_t x, int32_t y) {
+    return x <= y;
+}
+int32_t icmp_sgt(int32_t x, int32_t y) {
+    return x > y;
+}
+int32_t icmp_sge(int32_t x, int32_t y) {
+    return x >= y;
+}
+int32_t icmp_ult(uint32_t x, uint32_t y) {
+    return x < y;
+}
+int32_t icmp_ule(uint32_t x, uint32_t y) {
+    return x <= y;
+}
+int32_t icmp_ugt(uint32_t x, uint32_t y) {
+    return x > y;
+}
+int32_t icmp_uge(uint32_t x, uint32_t y) {
+    return x >= y;
+}
+int32_t fcmp_oeq(float x, float y) {
+    return x == y;
+}
+int32_t fcmp_olt(float x, float y) {
+    return x < y;
+}
+int32_t fcmp_ole(float x, float y) {
+    return x <= y;
+}
+int32_t fcmp_ogt(float x, float y) {
+    return x > y;
+}
+int32_t fcmp_oge(float x, float y) {
+    return x >= y;
+}
+int32_t fcmp_une(float x, float y) {
+    return x != y;
+}
+int32_t fcmp_ult(float x, float y) {
+    return !(x >= y);
+}
+int32_t fcmp_ule(float x, float y) {
+    return !(x > y);
+}
+int32_t fcmp_ogt(float x, float y) {
+    return !(x <= y);
+}
+int32_t fcmp_oge(float x, float y) {
+    return !(x < y);
+}

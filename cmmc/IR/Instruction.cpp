@@ -292,10 +292,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "fneg"sv;
         case InstructionID::FFma:
             return "ffma"sv;
-        case InstructionID::SCmp:
-            return "scmp"sv;
-        case InstructionID::UCmp:
-            return "ucmp"sv;
+        case InstructionID::ICmp:
+            return "icmp"sv;
         case InstructionID::FCmp:
             return "fcmp"sv;
         case InstructionID::SExt:
@@ -363,18 +361,50 @@ void BinaryInst::dumpInst(std::ostream& out) const {
 
 static std::string_view getCompareName(CompareOp op) {
     switch(op) {
-        case CompareOp::LessThan:
-            return "lt"sv;
-        case CompareOp::LessEqual:
-            return "le"sv;
-        case CompareOp::GreaterThan:
-            return "gt"sv;
-        case CompareOp::GreaterEqual:
-            return "ge"sv;
-        case CompareOp::Equal:
+        case CompareOp::ICmpEqual:
             return "eq"sv;
-        case CompareOp::NotEqual:
+        case CompareOp::ICmpNotEqual:
             return "neq"sv;
+        case CompareOp::ICmpSignedLessThan:
+            return "slt"sv;
+        case CompareOp::ICmpSignedLessEqual:
+            return "sle"sv;
+        case CompareOp::ICmpSignedGreaterThan:
+            return "sgt"sv;
+        case CompareOp::ICmpSignedGreaterEqual:
+            return "sge"sv;
+        case CompareOp::ICmpUnsignedLessThan:
+            return "ult"sv;
+        case CompareOp::ICmpUnsignedLessEqual:
+            return "ule"sv;
+        case CompareOp::ICmpUnsignedGreaterThan:
+            return "ugt"sv;
+        case CompareOp::ICmpUnsignedGreaterEqual:
+            return "uge"sv;
+        case CompareOp::FCmpOrderedEqual:
+            return "oeq"sv;
+        case CompareOp::FCmpOrderedNotEqual:
+            return "one"sv;
+        case CompareOp::FCmpOrderedLessThan:
+            return "olt"sv;
+        case CompareOp::FCmpOrderedLessEqual:
+            return "ole"sv;
+        case CompareOp::FCmpOrderedGreaterThan:
+            return "ogt"sv;
+        case CompareOp::FCmpOrderedGreaterEqual:
+            return "oge"sv;
+        case CompareOp::FCmpUnorderedEqual:
+            return "ueq"sv;
+        case CompareOp::FCmpUnorderedNotEqual:
+            return "une"sv;
+        case CompareOp::FCmpUnorderedLessThan:
+            return "ult"sv;
+        case CompareOp::FCmpUnorderedLessEqual:
+            return "ule"sv;
+        case CompareOp::FCmpUnorderedGreaterThan:
+            return "ugt"sv;
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return "uge"sv;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -499,9 +529,7 @@ bool FunctionCallInst::verify(std::ostream&) const {
         if(!arg->getType()->isSame(type->getArgTypes()[idx++]))
             return false;
     }
-    if(idx != type->getArgTypes().size())
-        return false;
-    return true;
+    return idx == type->getArgTypes().size();
 }
 
 void SelectInst::dumpInst(std::ostream& out) const {

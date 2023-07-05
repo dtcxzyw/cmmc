@@ -106,7 +106,7 @@ void loadTAC(Module& module, const std::string& path) {
             } else if(std::holds_alternative<TACConditionalGoto>(*node)) {
                 auto& branch = std::get<TACConditionalGoto>(*node);
                 const auto ret =
-                    builder.makeOp<CompareInst>(InstructionID::SCmp, branch.cmp, getRValue(branch.lhs), getRValue(branch.rhs));
+                    builder.makeOp<CompareInst>(InstructionID::ICmp, branch.cmp, getRValue(branch.lhs), getRValue(branch.rhs));
                 const auto targetBlock = blockMap.find(std::get<int>(branch.label.val))->second;
                 constexpr auto defaultGotoProb = 0.3;  // prefer fallthrough
                 builder.makeOp<BranchInst>(ret, defaultGotoProb, targetBlock, next);

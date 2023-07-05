@@ -66,7 +66,6 @@ class ConstantPropagation final : public TransformPass<Function> {
             intmax_t i1, i2;
             uintmax_t u1, u2;
             double f1, f2;
-            CompareOp cmp;
             auto makeInt = [&](Instruction* mappedInst, intmax_t val) {
                 return ConstantInteger::get(mappedInst->getType(), val);
             };
@@ -138,34 +137,70 @@ class ConstantPropagation final : public TransformPass<Function> {
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(matchCtx))
                     return makeFP(inst, fma(f1, f2, f3));
             } else if(inst->isCompareOp()) {
-                auto doCompare = [&](CompareOp cmpOp, auto lhs, auto rhs) {
-                    switch(cmpOp) {
-                        case CompareOp::LessThan:
-                            return lhs < rhs;
-                        case CompareOp::LessEqual:
-                            return lhs <= rhs;
-                        case CompareOp::GreaterThan:
-                            return lhs > rhs;
-                        case CompareOp::GreaterEqual:
-                            return lhs >= rhs;
-                        case CompareOp::Equal:
+                const auto doCompare = [&](CompareOp cmp, intmax_t lhs, intmax_t rhs) {
+                    switch(cmp) {
+                        case CompareOp::ICmpEqual:
                             return lhs == rhs;
-                        case CompareOp::NotEqual:
+                        case CompareOp::ICmpNotEqual:
                             return lhs != rhs;
+                        case CompareOp::ICmpSignedLessThan:
+                            return lhs < rhs;
+                        case CompareOp::ICmpSignedLessEqual:
+                            return lhs <= rhs;
+                        case CompareOp::ICmpSignedGreaterThan:
+                            return lhs > rhs;
+                        case CompareOp::ICmpSignedGreaterEqual:
+                            return lhs >= rhs;
+                        case CompareOp::ICmpUnsignedLessThan:
+                            return static_cast<uintmax_t>(lhs) < static_cast<uintmax_t>(rhs);
+                        case CompareOp::ICmpUnsignedLessEqual:
+                            return static_cast<uintmax_t>(lhs) <= static_cast<uintmax_t>(rhs);
+                        case CompareOp::ICmpUnsignedGreaterThan:
+                            return static_cast<uintmax_t>(lhs) > static_cast<uintmax_t>(rhs);
+                        case CompareOp::ICmpUnsignedGreaterEqual:
+                            return static_cast<uintmax_t>(lhs) >= static_cast<uintmax_t>(rhs);
+                        default:
+                            reportUnreachable(CMMC_LOCATION());
                     }
-                    reportUnreachable(CMMC_LOCATION());
                 };
+
+                const auto doCompareFP = [&](CompareOp cmp, double lhs, double rhs) {
+                    switch(cmp) {
+                        case CompareOp::FCmpOrderedEqual:
+                            return lhs == rhs;
+                        case CompareOp::FCmpOrderedLessThan:
+                            return lhs < rhs;
+                        case CompareOp::FCmpOrderedLessEqual:
+                            return lhs <= rhs;
+                        case CompareOp::FCmpOrderedGreaterThan:
+                            return lhs > rhs;
+                        case CompareOp::FCmpOrderedGreaterEqual:
+                            return lhs >= rhs;
+                        case CompareOp::FCmpUnorderedNotEqual:
+                            return lhs != rhs;
+                        case CompareOp::FCmpUnorderedLessThan:
+                            return !(lhs >= rhs);
+                        case CompareOp::FCmpUnorderedLessEqual:
+                            return !(lhs > rhs);
+                        case CompareOp::FCmpUnorderedGreaterThan:
+                            return !(lhs <= rhs);
+                        case CompareOp::FCmpUnorderedGreaterEqual:
+                            return !(lhs < rhs);
+                        default:
+                            reportUnreachable(CMMC_LOCATION());
+                    }
+                };
+
                 auto makeBool = [&](Instruction* mappedInst, bool val) {
                     return ConstantInteger::get(mappedInst->getType(), val);
                 };
 
                 MatchContext<Value> matchCtx{ inst };
-                if(scmp(cmp, int_(i1), int_(i2))(matchCtx))
+                CompareOp cmp;
+                if(icmp(cmp, int_(i1), int_(i2))(matchCtx))
                     return makeBool(inst, doCompare(cmp, i1, i2));
-                if(ucmp(cmp, uint_(u1), uint_(u2))(matchCtx))
-                    return makeBool(inst, doCompare(cmp, u1, u2));
                 if(fcmp(cmp, fp_(f1), fp_(f2))(matchCtx))
-                    return makeBool(inst, doCompare(cmp, f1, f2));
+                    return makeBool(inst, doCompareFP(cmp, f1, f2));
             } else if(inst->isConvertOp()) {
                 uintmax_t uval;
                 intmax_t sval;

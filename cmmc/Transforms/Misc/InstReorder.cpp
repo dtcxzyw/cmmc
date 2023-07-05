@@ -295,8 +295,7 @@ class InstReorder final : public TransformPass<Function> {
                     case InstructionID::And:
                     case InstructionID::Or:
                     case InstructionID::Xor:
-                    case InstructionID::SCmp:
-                    case InstructionID::UCmp:
+                    case InstructionID::ICmp:
                     case InstructionID::SMax:
                     case InstructionID::SMin: {
                         isCommutative = true;
@@ -313,7 +312,7 @@ class InstReorder final : public TransformPass<Function> {
                         continue;
                     if(getOrder(lhs->value) > getOrder(rhs->value)) {
                         std::swap(lhs, rhs);
-                        if(inst.getInstID() == InstructionID::SCmp || inst.getInstID() == InstructionID::UCmp) {
+                        if(inst.getInstID() == InstructionID::ICmp) {
                             const auto cmp = inst.as<CompareInst>();
                             cmp->setOp(getReversedOp(cmp->getOp()));
                         }

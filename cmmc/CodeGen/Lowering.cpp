@@ -604,9 +604,8 @@ static void lower(CompareInst* inst, LoweringContext& ctx) {
         switch(instID) {
             case InstructionID::FCmp:
                 return InstFCmp;
-            case InstructionID::UCmp:
-                return InstUCmp;
-            case InstructionID::SCmp:
+            // FIXME
+            case InstructionID::ICmp:
                 return InstSCmp;
             default:
                 reportUnreachable(CMMC_LOCATION());
@@ -831,9 +830,8 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
     } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0))) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
-                case InstructionID::UCmp:
-                    return InstUCmp;
-                case InstructionID::SCmp:
+                // FIXME
+                case InstructionID::ICmp:
                     return InstSCmp;
                 case InstructionID::FCmp:
                     return InstFCmp;
@@ -851,7 +849,7 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
     } else {
         // beqz %cond, false_label
         const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::Equal, false);
+        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::ICmpEqual, false);
     }
 }
 static void lower(UnreachableInst*, LoweringContext& ctx) {
@@ -980,9 +978,7 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
         case InstructionID::FNeg:
             lower(inst->as<UnaryInst>(), ctx);
             break;
-        case InstructionID::SCmp:
-            [[fallthrough]];
-        case InstructionID::UCmp:
+        case InstructionID::ICmp:
             [[fallthrough]];
         case InstructionID::FCmp:
             lower(inst->as<CompareInst>(), ctx);

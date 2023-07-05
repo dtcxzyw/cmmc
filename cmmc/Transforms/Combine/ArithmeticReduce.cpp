@@ -202,11 +202,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
             CompareOp cmp;
             // uint >= 0 -> true
             // uint < 0 -> false
-            if(ucmp(cmp, any(v1), cuint_(0))(matchCtx)) {
+            if(icmp(cmp, any(v1), cuint_(0))(matchCtx)) {
                 switch(cmp) {
-                    case CompareOp::GreaterEqual:
+                    case CompareOp::ICmpUnsignedGreaterEqual:
                         return builder.getTrue();
-                    case CompareOp::LessThan:
+                    case CompareOp::ICmpUnsignedLessThan:
                         return builder.getFalse();
                     default:
                         break;
@@ -289,8 +289,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // (zext i1 a) != 0 -> a
             // (zext i1 a) == 1 -> a
-            if(scmp(cmp, zext(any(v1)), uint_(c))(matchCtx) && v1->getType()->isBoolean()) {
-                if(cmp == CompareOp::Equal) {
+            if(icmp(cmp, zext(any(v1)), uint_(c))(matchCtx) && v1->getType()->isBoolean()) {
+                if(cmp == CompareOp::ICmpEqual) {
                     if(c == 0) {
                         return makeNot(v1);
                     }
@@ -299,7 +299,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     }
                     return builder.getFalse();
                 }
-                if(cmp == CompareOp::NotEqual) {
+                if(cmp == CompareOp::ICmpNotEqual) {
                     if(c == 0) {
                         return v1;
                     }
@@ -311,12 +311,12 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // zext i1 v1 == 1 -> v1
-            if(scmp(cmp, zext(any(v1)), cuint_(1))(matchCtx) && cmp == CompareOp::Equal && v1->getType()->isBoolean()) {
+            if(icmp(cmp, zext(any(v1)), cuint_(1))(matchCtx) && cmp == CompareOp::ICmpEqual && v1->getType()->isBoolean()) {
                 return v1;
             }
 
             // i1 v1 == true -> v1
-            if(scmp(cmp, any(v1), cuint_(1))(matchCtx) && cmp == CompareOp::Equal && v1->getType()->isBoolean()) {
+            if(icmp(cmp, any(v1), cuint_(1))(matchCtx) && cmp == CompareOp::ICmpEqual && v1->getType()->isBoolean()) {
                 return v1;
             }
 
@@ -413,7 +413,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // a >/</!= a -> false
             // a >=/<=/== a -> true
             if(xcmp(cmp, any(v1), any(v2))(matchCtx) && v1 == v2) {
-                return (cmp == CompareOp::Equal || cmp == CompareOp::LessEqual || cmp == CompareOp::GreaterEqual) ?
+                return (cmp == CompareOp::ICmpEqual || cmp == CompareOp::ICmpSignedLessEqual ||
+                        cmp == CompareOp::ICmpSignedGreaterEqual || cmp == CompareOp::ICmpUnsignedLessEqual ||
+                        cmp == CompareOp::ICmpUnsignedGreaterEqual) ?
                     builder.getTrue() :
                     builder.getFalse();
             }
@@ -434,7 +436,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             */
 
             // -x cmp c -> -c cmp x
-            if(scmp(cmp, neg(any(v1)), int_(i1))(matchCtx)) {
+            if(icmp(cmp, neg(any(v1)), int_(i1))(matchCtx)) {
                 return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(-i1, v1), v1);
             }
 
@@ -450,26 +452,26 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // (a == c1) & (b == c2) -> ((a^c1) | (b^c2)) == 0
             CompareOp cmp1, cmp2;
-            if(and_(oneUse(scmp(cmp1, any(v1), int_(i1))), oneUse(scmp(cmp2, any(v2), int_(i2))))(matchCtx) &&
-               cmp1 == CompareOp::Equal && cmp2 == CompareOp::Equal && v1->getType()->isSame(v2->getType())) {
+            if(and_(oneUse(icmp(cmp1, any(v1), int_(i1))), oneUse(icmp(cmp2, any(v2), int_(i2))))(matchCtx) &&
+               cmp1 == CompareOp::ICmpEqual && cmp2 == CompareOp::ICmpEqual && v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CompareInst>(
-                    InstructionID::SCmp, CompareOp::Equal,
+                    InstructionID::ICmp, CompareOp::ICmpEqual,
                     builder.makeOp<BinaryInst>(
                         InstructionID::Or, i1 == 0 ? v1 : builder.makeOp<BinaryInst>(InstructionID::Xor, v1, makeIntLike(i1, v1)),
                         i2 == 0 ? v2 : builder.makeOp<BinaryInst>(InstructionID::Xor, v2, makeIntLike(i2, v2))),
                     makeIntLike(0, v1));
             }
             // (a & 1 != 0) & (b & 1 != 0) -> trunc (a & 1 & b) to i1
-            if(and_(oneUse(scmp(cmp1, capture(and_(any(v1), cuint_(1)), v3), cint_(0))),
-                    oneUse(scmp(cmp2, and_(any(v2), cuint_(1)), cint_(0))))(matchCtx) &&
-               cmp1 == CompareOp::NotEqual && cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
+            if(and_(oneUse(icmp(cmp1, capture(and_(any(v1), cuint_(1)), v3), cint_(0))),
+                    oneUse(icmp(cmp2, and_(any(v2), cuint_(1)), cint_(0))))(matchCtx) &&
+               cmp1 == CompareOp::ICmpNotEqual && cmp2 == CompareOp::ICmpNotEqual && v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, IntegerType::getBoolean(),
                                                 builder.makeOp<BinaryInst>(InstructionID::And, v3, v2));
             }
             // (a != 0) | (b != 0) -> (a | b) != 0
-            if(or_(oneUse(scmp(cmp1, any(v1), cint_(0))), oneUse(scmp(cmp2, any(v2), cint_(0))))(matchCtx) &&
-               cmp1 == CompareOp::NotEqual && cmp2 == CompareOp::NotEqual && v1->getType()->isSame(v2->getType())) {
-                return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual,
+            if(or_(oneUse(icmp(cmp1, any(v1), cint_(0))), oneUse(icmp(cmp2, any(v2), cint_(0))))(matchCtx) &&
+               cmp1 == CompareOp::ICmpNotEqual && cmp2 == CompareOp::ICmpNotEqual && v1->getType()->isSame(v2->getType())) {
+                return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpNotEqual,
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }
 
@@ -529,10 +531,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // }
 
             // ((zext a) & (zext b)) != 0 -> a & b
-            if(scmp(cmp, and_(zext(boolean(v1)), zext(boolean(v2))), cuint_(0))(matchCtx)) {
-                if(cmp == CompareOp::NotEqual)
+            if(icmp(cmp, and_(zext(boolean(v1)), zext(boolean(v2))), cuint_(0))(matchCtx)) {
+                if(cmp == CompareOp::ICmpNotEqual)
                     return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
-                else if(cmp == CompareOp::Equal)
+                else if(cmp == CompareOp::ICmpEqual)
                     return makeNot(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
             }
 
@@ -580,28 +582,32 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
 
                 // Signed a <(=) b ? a : b -> smin a, b
-                if(select(scmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
-                    if(v1 == v3 && v2 == v4 && (cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual))
+                if(select(icmp(cmp, any(v1), any(v2)), any(v3), any(v4))(matchCtx)) {
+                    if(v1 == v3 && v2 == v4 && (cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
-                    if(v1 == v3 && v2 == v4 && (cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual))
+                    if(v1 == v3 && v2 == v4 &&
+                       (cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
-                    if(v1 == v4 && v2 == v3 && (cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual))
+                    if(v1 == v4 && v2 == v3 && (cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMax, v1, v2);
-                    if(v1 == v4 && v2 == v3 && (cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual))
+                    if(v1 == v4 && v2 == v3 &&
+                       (cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual))
                         return builder.makeOp<BinaryInst>(InstructionID::SMin, v1, v2);
                 }
             }
 
             // x >/>= c1 ? c1 : smax(x, c2) where c1 > c2 -> clamp(x, c2, c1)
             Value* v5;
-            if(select(scmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smax(any(v4), int_(i2)), v5))(matchCtx)) {
-                if((cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) && v2 == v3 && v1 == v4 && i1 > i2) {
+            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smax(any(v4), int_(i2)), v5))(matchCtx)) {
+                if((cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) && v2 == v3 &&
+                   v1 == v4 && i1 > i2) {
                     return builder.makeOp<BinaryInst>(InstructionID::SMin, v5, v2);
                 }
             }
             // x </<= c1 ? c1 : smin(x, c2) where c1 < c2 -> clamp(x, c1, c2)
-            if(select(scmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smin(any(v4), int_(i2)), v5))(matchCtx)) {
-                if((cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual) && v2 == v3 && v1 == v4 && i1 < i2) {
+            if(select(icmp(cmp, any(v1), capture(int_(i1), v2)), any(v3), capture(smin(any(v4), int_(i2)), v5))(matchCtx)) {
+                if((cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual) && v2 == v3 && v1 == v4 &&
+                   i1 < i2) {
                     return builder.makeOp<BinaryInst>(InstructionID::SMax, v5, v2);
                 }
             }
@@ -610,8 +616,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(srem(any(v1), capture(intLog2(v2), v3))(matchCtx)) {
                 auto usedByCompareWithZero = [&] {
                     for(auto user : inst->users()) {
-                        if(scmp(cmp, any(v4), cuint_(0))(MatchContext<Value>{ user })) {
-                            if(cmp == CompareOp::Equal || cmp == CompareOp::NotEqual)
+                        if(icmp(cmp, any(v4), cuint_(0))(MatchContext<Value>{ user })) {
+                            if(cmp == CompareOp::ICmpEqual || cmp == CompareOp::ICmpNotEqual)
                                 continue;
                         }
                         return false;
@@ -700,8 +706,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // 2-21 Alternating among Two or More Values
             // x == a ? b : a -> a ^ b ^ x / a + b - x
-            if(inst->getType()->isBoolean() && select(oneUse(scmp(cmp, any(v1), any(v2))), any(v3), any(v4))(matchCtx) &&
-               ((v1 == v4 || v2 == v4) && cmp == CompareOp::Equal)) {
+            if(inst->getType()->isBoolean() && select(oneUse(icmp(cmp, any(v1), any(v2))), any(v3), any(v4))(matchCtx) &&
+               ((v1 == v4 || v2 == v4) && cmp == CompareOp::ICmpEqual)) {
                 auto x = (v1 == v4 ? v2 : v1);
                 auto b = v3;
                 auto a = v4;
@@ -713,18 +719,18 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // 4-1 Checking Bounds of Integers
             // (v SGE c1) && (v SLE c2) -> (v - c1) ULT (c2 - c1 + 1)
-            if(and_(oneUse(scmp(cmp1, any(v1), int_(i1))), oneUse(scmp(cmp2, any(v2), int_(i2))))(matchCtx) && v1 == v2) {
+            if(and_(oneUse(icmp(cmp1, any(v1), int_(i1))), oneUse(icmp(cmp2, any(v2), int_(i2))))(matchCtx) && v1 == v2) {
                 bool valid = false;
 
                 auto legalize = [](CompareOp& op, intmax_t& val) {
-                    if(op == CompareOp::LessThan) {
+                    if(op == CompareOp::ICmpSignedLessThan) {
                         // TODO: check overflow?
-                        op = CompareOp::LessEqual;
+                        op = CompareOp::ICmpSignedLessEqual;
                         --val;
                     }
-                    if(op == CompareOp::GreaterThan) {
+                    if(op == CompareOp::ICmpSignedGreaterThan) {
                         // TODO: check overflow?
-                        op = CompareOp::GreaterEqual;
+                        op = CompareOp::ICmpSignedGreaterEqual;
                         ++val;
                     }
                 };
@@ -732,9 +738,9 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 legalize(cmp1, i1);
                 legalize(cmp2, i2);
 
-                if(cmp1 == CompareOp::GreaterEqual && cmp2 == CompareOp::LessEqual) {
+                if(cmp1 == CompareOp::ICmpSignedGreaterEqual && cmp2 == CompareOp::ICmpSignedLessEqual) {
                     valid = true;
-                } else if(cmp1 == CompareOp::LessEqual && cmp2 == CompareOp::GreaterEqual) {
+                } else if(cmp1 == CompareOp::ICmpSignedLessEqual && cmp2 == CompareOp::ICmpSignedGreaterEqual) {
                     std::swap(i1, i2);
                     valid = true;
                 }
@@ -746,11 +752,11 @@ class ArithmeticReduce final : public TransformPass<Function> {
                     }
                     if(i1 == i2) {
                         // i1 == i2 -> v == i1
-                        return builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::Equal, v1, makeIntLike(i1, v1));
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpEqual, v1, makeIntLike(i1, v1));
                     }
-                    if(i1 < i2 && i1 + 65536 >= i2 && target.isNativeSupported(InstructionID::UCmp)) {
+                    if(i1 < i2 && i1 + 65536 >= i2) {
                         return builder.makeOp<CompareInst>(
-                            InstructionID::UCmp, CompareOp::LessThan,
+                            InstructionID::ICmp, CompareOp::ICmpUnsignedLessThan,
                             builder.makeOp<BinaryInst>(InstructionID::Sub, v1, makeIntLike(i1, v1)),
                             makeIntLike(i2 - i1 + 1, v1));
                     }
@@ -767,39 +773,39 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // x >s 0 ? x : -x -> abs(x)
             if(target.isNativeSupported(InstructionID::Abs)) {
-                if(select(scmp(cmp, any(v1), cint_(0)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) {
+                if(select(icmp(cmp, any(v1), cint_(0)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
-                    if(cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual) {
+                    if(cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
                 }
-                if(select(scmp(cmp, any(v1), cint_(0)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::GreaterThan || cmp == CompareOp::GreaterEqual) {
+                if(select(icmp(cmp, any(v1), cint_(0)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedGreaterThan || cmp == CompareOp::ICmpSignedGreaterEqual) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
-                    if(cmp == CompareOp::LessThan || cmp == CompareOp::LessEqual) {
+                    if(cmp == CompareOp::ICmpSignedLessThan || cmp == CompareOp::ICmpSignedLessEqual) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(scmp(cmp, any(v1), cint_(1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::LessThan) {
+                if(select(icmp(cmp, any(v1), cint_(1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedLessThan) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
                 }
-                if(select(scmp(cmp, any(v1), cint_(1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::LessThan) {
+                if(select(icmp(cmp, any(v1), cint_(1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedLessThan) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(scmp(cmp, any(v1), cint_(-1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::GreaterThan) {
+                if(select(icmp(cmp, any(v1), cint_(-1)), any(v2), neg(any(v3)))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedGreaterThan) {
                         return builder.makeOp<UnaryInst>(InstructionID::Abs, v1);
                     }
                 }
-                if(select(scmp(cmp, any(v1), cint_(-1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
-                    if(cmp == CompareOp::GreaterThan) {
+                if(select(icmp(cmp, any(v1), cint_(-1)), neg(any(v2)), any(v3))(matchCtx) && v1 == v2 && v1 == v3) {
+                    if(cmp == CompareOp::ICmpSignedGreaterThan) {
                         return makeNeg(builder.makeOp<UnaryInst>(InstructionID::Abs, v1));
                     }
                 }
@@ -823,15 +829,15 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::And, v1, makeIntLike(1, v1));
 
             // (srem x, 2) == 1 -> (and x, -max) == 1
-            if(scmp(cmp, oneUse(srem(any(v1), cint_(2))), capture(cint_(1), v2))(matchCtx) && cmp == CompareOp::Equal) {
+            if(icmp(cmp, oneUse(srem(any(v1), cint_(2))), capture(cint_(1), v2))(matchCtx) && cmp == CompareOp::ICmpEqual) {
                 const auto val = builder.makeOp<BinaryInst>(
                     InstructionID::And, v1,
                     makeIntLike(-((static_cast<intmax_t>(1) << (v1->getType()->as<IntegerType>()->getBitwidth() - 1)) - 1), v1));
-                return builder.makeOp<CompareInst>(inst->getInstID(), CompareOp::Equal, val, v2);
+                return builder.makeOp<CompareInst>(inst->getInstID(), CompareOp::ICmpEqual, val, v2);
             }
 
             // (and x, 1) != 0 -> trunc x to i1
-            if(scmp(cmp, and_(any(v1), cint_(1)), cint_(0))(matchCtx) && cmp == CompareOp::NotEqual) {
+            if(icmp(cmp, and_(any(v1), cint_(1)), cint_(0))(matchCtx) && cmp == CompareOp::ICmpNotEqual) {
                 return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(), v1);
             }
 
@@ -869,8 +875,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // a == b ? a : smax(a, b) -> smax(a, b)
             Value* v6;
-            if(select(scmp(cmp, any(v1), any(v2)), any(v3), capture(smax(any(v4), any(v5)), v6))(matchCtx)) {
-                if(cmp == CompareOp::Equal && v1 == v3 && v1 == v4 && v2 == v5) {
+            if(select(icmp(cmp, any(v1), any(v2)), any(v3), capture(smax(any(v4), any(v5)), v6))(matchCtx)) {
+                if(cmp == CompareOp::ICmpEqual && v1 == v3 && v1 == v4 && v2 == v5) {
                     return v6;
                 }
             }

@@ -65,7 +65,7 @@ public:
             {
                 const auto op = cond->as<CompareInst>()->getOp();
                 // doesn't support NotEqual
-                if(op != CompareOp::LessThan && op != CompareOp::GreaterThan)
+                if(op != CompareOp::ICmpSignedLessThan && op != CompareOp::ICmpSignedGreaterThan)
                     continue;
             }
 

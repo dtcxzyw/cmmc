@@ -107,49 +107,139 @@ inline MIROperand getLowBits(const MIROperand& operand) {
 
 constexpr bool isRationalOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op != CompareOp::Equal && op != CompareOp::NotEqual;
+    switch(op) {
+        case CompareOp::ICmpEqual:
+        case CompareOp::ICmpNotEqual:
+        case CompareOp::FCmpOrderedEqual:
+        case CompareOp::FCmpOrderedNotEqual:
+        case CompareOp::FCmpUnorderedEqual:
+        case CompareOp::FCmpUnorderedNotEqual:
+            return false;
+        default:
+            return true;
+    }
 }
 constexpr bool isEqualityOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::Equal || op == CompareOp::NotEqual;
+    switch(op) {
+        case CompareOp::ICmpEqual:
+        case CompareOp::ICmpNotEqual:
+        case CompareOp::FCmpOrderedEqual:
+        case CompareOp::FCmpOrderedNotEqual:
+        case CompareOp::FCmpUnorderedEqual:
+        case CompareOp::FCmpUnorderedNotEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isLessThanOrLessEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessThan || op == CompareOp::LessEqual;
+    switch(op) {
+        case CompareOp::ICmpSignedLessThan:
+        case CompareOp::ICmpSignedLessEqual:
+        case CompareOp::ICmpUnsignedLessThan:
+        case CompareOp::ICmpUnsignedLessEqual:
+        case CompareOp::FCmpOrderedLessThan:
+        case CompareOp::FCmpOrderedLessEqual:
+        case CompareOp::FCmpUnorderedLessThan:
+        case CompareOp::FCmpUnorderedLessEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isGreaterThanOrGreaterEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::GreaterThan || op == CompareOp::GreaterEqual;
+    switch(op) {
+        case CompareOp::ICmpSignedGreaterThan:
+        case CompareOp::ICmpSignedGreaterEqual:
+        case CompareOp::ICmpUnsignedGreaterThan:
+        case CompareOp::ICmpUnsignedGreaterEqual:
+        case CompareOp::FCmpOrderedGreaterThan:
+        case CompareOp::FCmpOrderedGreaterEqual:
+        case CompareOp::FCmpUnorderedGreaterThan:
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isLessThanOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessThan;
+    switch(op) {
+        case CompareOp::ICmpSignedLessThan:
+        case CompareOp::ICmpUnsignedLessThan:
+        case CompareOp::FCmpOrderedLessThan:
+        case CompareOp::FCmpUnorderedLessThan:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isLessEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::LessEqual;
+    switch(op) {
+        case CompareOp::ICmpSignedLessEqual:
+        case CompareOp::ICmpUnsignedLessEqual:
+        case CompareOp::FCmpOrderedLessEqual:
+        case CompareOp::FCmpUnorderedLessEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isGreaterThanOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::GreaterThan;
+    switch(op) {
+        case CompareOp::ICmpSignedGreaterThan:
+        case CompareOp::ICmpUnsignedGreaterThan:
+        case CompareOp::FCmpOrderedGreaterThan:
+        case CompareOp::FCmpUnorderedGreaterThan:
+            return true;
+        default:
+            return false;
+    }
 }
 constexpr bool isGreaterEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::GreaterEqual;
+    switch(op) {
+        case CompareOp::ICmpSignedGreaterEqual:
+        case CompareOp::ICmpUnsignedGreaterEqual:
+        case CompareOp::FCmpOrderedGreaterEqual:
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::Equal;
+    switch(op) {
+        case CompareOp::ICmpEqual:
+        case CompareOp::FCmpOrderedEqual:
+        case CompareOp::FCmpUnorderedEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 
 constexpr bool isNotEqualOp(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    return op == CompareOp::NotEqual;
+    switch(op) {
+        case CompareOp::ICmpNotEqual:
+        case CompareOp::FCmpOrderedNotEqual:
+        case CompareOp::FCmpUnorderedNotEqual:
+            return true;
+        default:
+            return false;
+    }
 }
 CMMC_MIR_NAMESPACE_END

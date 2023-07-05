@@ -48,24 +48,24 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             CompareOp cmp;
             Value *v1, *v2;
 
-            if(scmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
+            if(icmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
                 auto lhs = rangeAnalysis.query(v1);
                 auto rhs = rangeAnalysis.query(v2);
 
                 switch(cmp) {
-                    case CompareOp::Equal: {
+                    case CompareOp::ICmpEqual: {
                         if(!lhs.intersectWith(rhs)) {
                             return builder.getFalse();
                         }
                         break;
                     }
-                    case CompareOp::NotEqual: {
+                    case CompareOp::ICmpNotEqual: {
                         if(!lhs.intersectWith(rhs)) {
                             return builder.getTrue();
                         }
                         break;
                     }
-                    case CompareOp::LessThan: {
+                    case CompareOp::ICmpSignedLessThan: {
                         if(lhs.maxSignedValue() < rhs.minSignedValue())
                             return builder.getTrue();
                         if(lhs.minSignedValue() >= rhs.maxSignedValue())
@@ -73,50 +73,28 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
 
                         break;
                     }
-                    case CompareOp::LessEqual: {
+                    case CompareOp::ICmpSignedLessEqual: {
                         if(lhs.maxSignedValue() <= rhs.minSignedValue())
                             return builder.getTrue();
                         if(lhs.minSignedValue() > rhs.maxSignedValue())
                             return builder.getFalse();
                         break;
                     }
-                    case CompareOp::GreaterThan: {
+                    case CompareOp::ICmpSignedGreaterThan: {
                         if(lhs.minSignedValue() > rhs.maxSignedValue())
                             return builder.getTrue();
                         if(lhs.maxSignedValue() <= rhs.minSignedValue())
                             return builder.getFalse();
                         break;
                     }
-                    case CompareOp::GreaterEqual: {
+                    case CompareOp::ICmpSignedGreaterEqual: {
                         if(lhs.minSignedValue() >= rhs.maxSignedValue())
                             return builder.getTrue();
                         if(lhs.maxSignedValue() < rhs.minSignedValue())
                             return builder.getFalse();
                         break;
                     }
-                    default:
-                        break;
-                }
-            }
-
-            if(ucmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
-                auto lhs = rangeAnalysis.query(v1);
-                auto rhs = rangeAnalysis.query(v2);
-
-                switch(cmp) {
-                    case CompareOp::Equal: {
-                        if(!lhs.intersectWith(rhs)) {
-                            return builder.getFalse();
-                        }
-                        break;
-                    }
-                    case CompareOp::NotEqual: {
-                        if(!lhs.intersectWith(rhs)) {
-                            return builder.getTrue();
-                        }
-                        break;
-                    }
-                    case CompareOp::LessThan: {
+                    case CompareOp::ICmpUnsignedLessThan: {
                         if(lhs.maxUnsignedValue() < rhs.minUnsignedValue())
                             return builder.getTrue();
                         if(lhs.minUnsignedValue() >= rhs.maxUnsignedValue())
@@ -124,21 +102,21 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
 
                         break;
                     }
-                    case CompareOp::LessEqual: {
+                    case CompareOp::ICmpUnsignedLessEqual: {
                         if(lhs.maxUnsignedValue() <= rhs.minUnsignedValue())
                             return builder.getTrue();
                         if(lhs.minUnsignedValue() > rhs.maxUnsignedValue())
                             return builder.getFalse();
                         break;
                     }
-                    case CompareOp::GreaterThan: {
+                    case CompareOp::ICmpUnsignedGreaterThan: {
                         if(lhs.minUnsignedValue() > rhs.maxUnsignedValue())
                             return builder.getTrue();
                         if(lhs.maxUnsignedValue() <= rhs.minUnsignedValue())
                             return builder.getFalse();
                         break;
                     }
-                    case CompareOp::GreaterEqual: {
+                    case CompareOp::ICmpUnsignedGreaterEqual: {
                         if(lhs.minUnsignedValue() >= rhs.maxUnsignedValue())
                             return builder.getTrue();
                         if(lhs.maxUnsignedValue() < rhs.minUnsignedValue())

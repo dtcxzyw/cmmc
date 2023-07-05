@@ -185,9 +185,7 @@ public:
                 [[fallthrough]];
             case InstructionID::Select:
                 [[fallthrough]];
-            case InstructionID::SCmp:
-                [[fallthrough]];
-            case InstructionID::UCmp:
+            case InstructionID::ICmp:
                 [[fallthrough]];
             case InstructionID::FCmp:
                 return false;

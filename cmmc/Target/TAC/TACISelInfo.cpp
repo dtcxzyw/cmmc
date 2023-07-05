@@ -22,20 +22,21 @@ CMMC_TARGET_NAMESPACE_BEGIN
 
 static TACInst getBranchOpcode(const MIROperand& op) {
     switch(static_cast<CompareOp>(op.imm())) {
-        case CompareOp::LessThan:
+        case CompareOp::ICmpSignedLessThan:
             return BranchLt;
-        case CompareOp::LessEqual:
+        case CompareOp::ICmpSignedLessEqual:
             return BranchLe;
-        case CompareOp::GreaterThan:
+        case CompareOp::ICmpSignedGreaterThan:
             return BranchGt;
-        case CompareOp::GreaterEqual:
+        case CompareOp::ICmpSignedGreaterEqual:
             return BranchGe;
-        case CompareOp::Equal:
+        case CompareOp::ICmpEqual:
             return BranchEq;
-        case CompareOp::NotEqual:
+        case CompareOp::ICmpNotEqual:
             return BranchNe;
+        default:
+            reportUnreachable(CMMC_LOCATION());
     }
-    reportUnreachable(CMMC_LOCATION());
 }
 
 constexpr uint32_t directStackAccessOffset = 1 << 20;

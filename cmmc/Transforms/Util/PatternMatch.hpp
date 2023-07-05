@@ -319,12 +319,8 @@ public:
 };
 
 template <typename Lhs, typename Rhs>
-auto scmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
-    return CompareMatcher{ InstructionID::SCmp, compare, lhs, rhs };
-}
-template <typename Lhs, typename Rhs>
-auto ucmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
-    return CompareMatcher{ InstructionID::UCmp, compare, lhs, rhs };
+auto icmp(CompareOp& compare, Lhs lhs, Rhs rhs) {
+    return CompareMatcher{ InstructionID::ICmp, compare, lhs, rhs };
 }
 template <typename Lhs, typename Rhs>
 auto fcmp(CompareOp& compare, Lhs lhs, Rhs rhs) {

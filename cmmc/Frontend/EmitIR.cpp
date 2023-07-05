@@ -308,7 +308,7 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
             case OperatorID::Equal:
                 [[fallthrough]];
             case OperatorID::NotEqual:
-                return isSigned ? InstructionID::SCmp : InstructionID::UCmp;
+                return InstructionID::ICmp;
 
             case OperatorID::BitwiseAnd:
                 return InstructionID::And;
@@ -327,11 +327,42 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
     }
 }
 
-static CompareOp getCompareOp(OperatorID op) {
-    assert(static_cast<uint32_t>(op) >= static_cast<uint32_t>(OperatorID::LessThan) &&
-           static_cast<uint32_t>(op) <= static_cast<uint32_t>(OperatorID::NotEqual));
-    return static_cast<CompareOp>(static_cast<uint32_t>(op) - static_cast<uint32_t>(OperatorID::LessThan) +
-                                  static_cast<uint32_t>(CompareOp::LessThan));
+static CompareOp getCompareOp(OperatorID op, bool isFloatingPoint, bool isSigned) {
+    if(isFloatingPoint) {
+        switch(op) {
+            case OperatorID::Equal:
+                return CompareOp::FCmpOrderedEqual;
+            case OperatorID::NotEqual:
+                return CompareOp::FCmpUnorderedNotEqual;
+            case OperatorID::LessThan:
+                return CompareOp::FCmpOrderedLessThan;
+            case OperatorID::LessEqual:
+                return CompareOp::FCmpOrderedLessEqual;
+            case OperatorID::GreaterThan:
+                return CompareOp::FCmpOrderedGreaterThan;
+            case OperatorID::GreaterEqual:
+                return CompareOp::FCmpOrderedGreaterEqual;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    } else {
+        switch(op) {
+            case OperatorID::Equal:
+                return CompareOp::ICmpEqual;
+            case OperatorID::NotEqual:
+                return CompareOp::ICmpNotEqual;
+            case OperatorID::LessThan:
+                return isSigned ? CompareOp::ICmpSignedLessThan : CompareOp::ICmpUnsignedLessThan;
+            case OperatorID::LessEqual:
+                return isSigned ? CompareOp::ICmpSignedLessEqual : CompareOp::ICmpUnsignedLessEqual;
+            case OperatorID::GreaterThan:
+                return isSigned ? CompareOp::ICmpSignedGreaterThan : CompareOp::ICmpUnsignedGreaterThan;
+            case OperatorID::GreaterEqual:
+                return isSigned ? CompareOp::ICmpSignedGreaterEqual : CompareOp::ICmpUnsignedGreaterEqual;
+            default:
+                reportUnreachable(CMMC_LOCATION());
+        }
+    }
 }
 
 // TODO: [un]signed ops
@@ -396,8 +427,8 @@ static Value* makeBinaryOp(EmitContext& ctx, OperatorID op, bool isFloatingPoint
 
     auto inst = getBinaryOp(op, isSigned, isFloatingPoint);
 
-    if(inst == InstructionID::FCmp || inst == InstructionID::SCmp || inst == InstructionID::UCmp) {
-        return ctx.booleanToInt(ctx.makeOp<CompareInst>(inst, getCompareOp(op), lhs, rhs));
+    if(inst == InstructionID::FCmp || inst == InstructionID::ICmp) {
+        return ctx.booleanToInt(ctx.makeOp<CompareInst>(inst, getCompareOp(op, isFloatingPoint, isSigned), lhs, rhs));
     }
     return ctx.makeOp<BinaryInst>(inst, lhs, rhs);
 }
@@ -1218,12 +1249,12 @@ Value* EmitContext::convertTo(Value* value, const Type* type, Qualifier srcQuali
     InstructionID id = InstructionID::None;
     if(type->isBoolean()) {
         if(srcType->isInteger()) {
-            return makeOp<CompareInst>(InstructionID::SCmp, CompareOp::NotEqual, value, ConstantInteger::get(srcType, 0));
+            return makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpNotEqual, value, ConstantInteger::get(srcType, 0));
         }
         if(srcType->isFloatingPoint()) {
             if(strictMode.get())
                 return reportConversionErrorSpl(*this, type, usage);  // implicit f2b is not allowed
-            return makeOp<CompareInst>(InstructionID::FCmp, CompareOp::NotEqual, value,
+            return makeOp<CompareInst>(InstructionID::FCmp, CompareOp::FCmpUnorderedNotEqual, value,
                                        make<ConstantFloatingPoint>(srcType, 0.0));
         }
     } else if(srcType->isInteger() && type->isInteger()) {
@@ -1856,7 +1887,7 @@ static void emitMemset(Function* func, uint32_t bitWidth, const mir::Target& tar
     builder.makeOp<StoreInst>(cur, ConstantInteger::get(IntegerType::get(bitWidth), 0));
     const auto nxt = builder.makeOp<BinaryInst>(InstructionID::Add, idx, ConstantInteger::get(size->getType(), 1));
     idx->addIncoming(loop, nxt);
-    const auto cond = builder.makeOp<CompareInst>(InstructionID::SCmp, CompareOp::LessThan, nxt, size);
+    const auto cond = builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpSignedLessThan, nxt, size);
     builder.makeOp<BranchInst>(cond, defaultLoopProb, loop, exit);
     builder.setCurrentBlock(exit);
     builder.makeOp<ReturnInst>();

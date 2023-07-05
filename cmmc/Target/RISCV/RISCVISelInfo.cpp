@@ -36,17 +36,17 @@ static bool isZero(const MIROperand& operand) {
 static RISCVInst getSignedBranchOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     switch(op) {
-        case CompareOp::LessThan:
+        case CompareOp::ICmpSignedLessThan:
             return BLT;
-        case CompareOp::LessEqual:
+        case CompareOp::ICmpSignedLessEqual:
             return BLE;
-        case CompareOp::GreaterThan:
+        case CompareOp::ICmpSignedGreaterThan:
             return BGT;
-        case CompareOp::GreaterEqual:
+        case CompareOp::ICmpSignedGreaterEqual:
             return BGE;
-        case CompareOp::Equal:
+        case CompareOp::ICmpEqual:
             return BEQ;
-        case CompareOp::NotEqual:
+        case CompareOp::ICmpNotEqual:
             return BNE;
         default:
             reportUnreachable(CMMC_LOCATION());
@@ -164,27 +164,27 @@ static RISCVInst getStoreOpcode(const MIROperand& src) {
 static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, const MIROperand& rhs, MIROperand& outLhs,
                              MIROperand& outRhs, MIROperand& outOp) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    if(!isOperandFPR(lhs) || !isOperandFPR(rhs) || op == CompareOp::NotEqual)
+    if(!isOperandFPR(lhs) || !isOperandFPR(rhs) || op == CompareOp::FCmpUnorderedNotEqual)
         return false;
     outLhs = lhs;
     outRhs = rhs;
     RISCVInst opcode;
     switch(op) {
-        case CompareOp::LessThan:
+        case CompareOp::FCmpOrderedLessThan:
             opcode = FLT_S;
             break;
-        case CompareOp::LessEqual:
+        case CompareOp::FCmpOrderedLessEqual:
             opcode = FLE_S;
             break;
-        case CompareOp::GreaterThan:
+        case CompareOp::FCmpOrderedGreaterThan:
             std::swap(outLhs, outRhs);
             opcode = FLT_S;
             break;
-        case CompareOp::GreaterEqual:
+        case CompareOp::FCmpOrderedGreaterEqual:
             std::swap(outLhs, outRhs);
             opcode = FLE_S;
             break;
-        case CompareOp::Equal:
+        case CompareOp::FCmpOrderedEqual:
             opcode = FEQ_S;
             break;
         default:
@@ -195,7 +195,7 @@ static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, c
 }
 
 static MIROperand getEqualOp() {
-    return MIROperand::asImm(CompareOp::Equal, OperandType::Special);
+    return MIROperand::asImm(CompareOp::ICmpEqual, OperandType::Special);
 }
 
 static bool isOperandI64(const MIROperand& op) {
@@ -479,13 +479,13 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& rhs = inst.getOperand(2);
             // a <= c -> a < c + 1 (if no overflow occurs)
             if(isLessEqualOp(op) && isOperandImm(rhs) && rhs.imm() < getMaxSignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::LessThan, OperandType::Special);
+                op = MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
                 modified = true;
             }
             // a >= c -> a > c - 1 (if no overflow occurs)
             if(isGreaterEqualOp(op) && isOperandImm(rhs) && rhs.imm() > getMinSignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::GreaterThan, OperandType::Special);
+                op = MIROperand::asImm(CompareOp::ICmpSignedGreaterThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
                 modified = true;
             }
@@ -517,13 +517,13 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& rhs = inst.getOperand(2);
             // a <= c -> a < c + 1 (if no overflow occurs)
             if(isLessEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) < getMaxUnsignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::LessThan, OperandType::Special);
+                op = MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
                 modified = true;
             }
             // a >= c -> a > c - 1 (if no overflow occurs)
             if(isGreaterEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) > 0) {
-                op = MIROperand::asImm(CompareOp::GreaterThan, OperandType::Special);
+                op = MIROperand::asImm(CompareOp::ICmpSignedGreaterThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
                 modified = true;
             }

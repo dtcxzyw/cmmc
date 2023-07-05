@@ -43,24 +43,24 @@ public:
                 modified = true;
             }
             // le x c -> lt x c+1, ge x c -> gt x c-1
-            if(cmp->getInstID() == InstructionID::SCmp) {
+            if(cmp->getInstID() == InstructionID::ICmp) {
                 intmax_t x;
                 MatchContext<Value> matchCtx{ cmp->getOperand(1) };
                 if(int_(x)(matchCtx)) {
                     const auto type = cmp->getOperand(1)->getType();
-                    if(cmp->getOp() == CompareOp::LessEqual) {
+                    if(cmp->getOp() == CompareOp::ICmpSignedLessEqual) {
                         const auto xn = ConstantInteger::get(type, x + 1);
                         // check overflow
                         if(x < xn->getSignExtended()) {
-                            cmp->setOp(CompareOp::LessThan);
+                            cmp->setOp(CompareOp::ICmpSignedLessThan);
                             cmp->mutableOperands()[1]->resetValue(xn);
                             modified = true;
                         }
-                    } else if(cmp->getOp() == CompareOp::GreaterEqual) {
+                    } else if(cmp->getOp() == CompareOp::ICmpSignedGreaterEqual) {
                         const auto xn = ConstantInteger::get(type, x - 1);
                         // check underflow
                         if(x > xn->getSignExtended()) {
-                            cmp->setOp(CompareOp::GreaterThan);
+                            cmp->setOp(CompareOp::ICmpSignedGreaterThan);
                             cmp->mutableOperands()[1]->resetValue(xn);
                             modified = true;
                         }

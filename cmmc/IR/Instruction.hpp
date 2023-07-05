@@ -81,8 +81,7 @@ enum class InstructionID {
     FloatingPointOpEnd,
     // compare ops
     CompareOpBegin,
-    SCmp,
-    UCmp,
+    ICmp,
     FCmp,
     CompareOpEnd,
     // convert ops
@@ -418,23 +417,80 @@ public:
     bool verify(std::ostream& out) const override;
 };
 
-enum class CompareOp { LessThan, LessEqual, GreaterThan, GreaterEqual, Equal, NotEqual };
+enum class CompareOp {
+    ICmpEqual,
+    ICmpNotEqual,
+    ICmpSignedLessThan,
+    ICmpSignedLessEqual,
+    ICmpSignedGreaterThan,
+    ICmpSignedGreaterEqual,
+    ICmpUnsignedLessThan,
+    ICmpUnsignedLessEqual,
+    ICmpUnsignedGreaterThan,
+    ICmpUnsignedGreaterEqual,
+
+    FCmpOrderedEqual,
+    FCmpOrderedNotEqual,
+    FCmpOrderedLessThan,
+    FCmpOrderedLessEqual,
+    FCmpOrderedGreaterThan,
+    FCmpOrderedGreaterEqual,
+    FCmpUnorderedEqual,
+    FCmpUnorderedNotEqual,
+    FCmpUnorderedLessThan,
+    FCmpUnorderedLessEqual,
+    FCmpUnorderedGreaterThan,
+    FCmpUnorderedGreaterEqual
+};
 
 // a < b => b > a
 constexpr auto getReversedOp(CompareOp op) {
     switch(op) {
-        case CompareOp::LessThan:
-            return CompareOp::GreaterThan;
-        case CompareOp::LessEqual:
-            return CompareOp::GreaterEqual;
-        case CompareOp::GreaterThan:
-            return CompareOp::LessThan;
-        case CompareOp::GreaterEqual:
-            return CompareOp::LessEqual;
-        case CompareOp::Equal:
-            return CompareOp::Equal;
-        case CompareOp::NotEqual:
-            return CompareOp::NotEqual;
+        case CompareOp::ICmpEqual:
+            return CompareOp::ICmpEqual;
+        case CompareOp::ICmpNotEqual:
+            return CompareOp::ICmpNotEqual;
+        case CompareOp::ICmpSignedLessThan:
+            return CompareOp::ICmpSignedGreaterThan;
+        case CompareOp::ICmpSignedLessEqual:
+            return CompareOp::ICmpSignedGreaterEqual;
+        case CompareOp::ICmpSignedGreaterThan:
+            return CompareOp::ICmpSignedLessThan;
+        case CompareOp::ICmpSignedGreaterEqual:
+            return CompareOp::ICmpSignedLessEqual;
+        case CompareOp::ICmpUnsignedLessThan:
+            return CompareOp::ICmpUnsignedGreaterThan;
+        case CompareOp::ICmpUnsignedLessEqual:
+            return CompareOp::ICmpUnsignedGreaterEqual;
+        case CompareOp::ICmpUnsignedGreaterThan:
+            return CompareOp::ICmpUnsignedLessThan;
+        case CompareOp::ICmpUnsignedGreaterEqual:
+            return CompareOp::ICmpUnsignedLessEqual;
+        case CompareOp::FCmpOrderedEqual:
+            return CompareOp::FCmpOrderedEqual;
+        case CompareOp::FCmpOrderedNotEqual:
+            return CompareOp::FCmpOrderedNotEqual;
+        case CompareOp::FCmpOrderedLessThan:
+            return CompareOp::FCmpOrderedGreaterThan;
+        case CompareOp::FCmpOrderedLessEqual:
+            return CompareOp::FCmpOrderedGreaterEqual;
+        case CompareOp::FCmpOrderedGreaterThan:
+            return CompareOp::FCmpOrderedLessThan;
+        case CompareOp::FCmpOrderedGreaterEqual:
+            return CompareOp::FCmpOrderedLessEqual;
+        case CompareOp::FCmpUnorderedEqual:
+            return CompareOp::FCmpUnorderedEqual;
+        case CompareOp::FCmpUnorderedNotEqual:
+            return CompareOp::FCmpUnorderedNotEqual;
+        case CompareOp::FCmpUnorderedLessThan:
+            return CompareOp::FCmpUnorderedGreaterThan;
+        case CompareOp::FCmpUnorderedLessEqual:
+            return CompareOp::FCmpUnorderedGreaterEqual;
+        case CompareOp::FCmpUnorderedGreaterThan:
+            return CompareOp::FCmpUnorderedLessThan;
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return CompareOp::FCmpUnorderedLessEqual;
+            break;
     }
     // unreachable
     return static_cast<CompareOp>(-1);
@@ -442,18 +498,51 @@ constexpr auto getReversedOp(CompareOp op) {
 
 constexpr auto getInvertedOp(CompareOp op) {
     switch(op) {
-        case CompareOp::LessThan:
-            return CompareOp::GreaterEqual;
-        case CompareOp::LessEqual:
-            return CompareOp::GreaterThan;
-        case CompareOp::GreaterThan:
-            return CompareOp::LessEqual;
-        case CompareOp::GreaterEqual:
-            return CompareOp::LessThan;
-        case CompareOp::Equal:
-            return CompareOp::NotEqual;
-        case CompareOp::NotEqual:
-            return CompareOp::Equal;
+        case CompareOp::ICmpEqual:
+            return CompareOp::ICmpNotEqual;
+        case CompareOp::ICmpNotEqual:
+            return CompareOp::ICmpEqual;
+        case CompareOp::ICmpSignedLessThan:
+            return CompareOp::ICmpSignedGreaterEqual;
+        case CompareOp::ICmpSignedLessEqual:
+            return CompareOp::ICmpSignedGreaterThan;
+        case CompareOp::ICmpSignedGreaterThan:
+            return CompareOp::ICmpSignedLessEqual;
+        case CompareOp::ICmpSignedGreaterEqual:
+            return CompareOp::ICmpSignedLessThan;
+        case CompareOp::ICmpUnsignedLessThan:
+            return CompareOp::ICmpUnsignedGreaterEqual;
+        case CompareOp::ICmpUnsignedLessEqual:
+            return CompareOp::ICmpUnsignedGreaterThan;
+        case CompareOp::ICmpUnsignedGreaterThan:
+            return CompareOp::ICmpUnsignedLessEqual;
+        case CompareOp::ICmpUnsignedGreaterEqual:
+            return CompareOp::ICmpUnsignedLessThan;
+        case CompareOp::FCmpOrderedEqual:
+            return CompareOp::FCmpUnorderedNotEqual;
+        case CompareOp::FCmpOrderedNotEqual:
+            return CompareOp::FCmpUnorderedEqual;
+        case CompareOp::FCmpOrderedLessThan:
+            return CompareOp::FCmpUnorderedGreaterEqual;
+        case CompareOp::FCmpOrderedLessEqual:
+            return CompareOp::FCmpUnorderedGreaterThan;
+        case CompareOp::FCmpOrderedGreaterThan:
+            return CompareOp::FCmpUnorderedLessEqual;
+        case CompareOp::FCmpOrderedGreaterEqual:
+            return CompareOp::FCmpUnorderedLessThan;
+        case CompareOp::FCmpUnorderedEqual:
+            return CompareOp::FCmpOrderedNotEqual;
+        case CompareOp::FCmpUnorderedNotEqual:
+            return CompareOp::FCmpOrderedEqual;
+        case CompareOp::FCmpUnorderedLessThan:
+            return CompareOp::FCmpOrderedGreaterEqual;
+        case CompareOp::FCmpUnorderedLessEqual:
+            return CompareOp::FCmpOrderedGreaterThan;
+        case CompareOp::FCmpUnorderedGreaterThan:
+            return CompareOp::FCmpOrderedLessEqual;
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return CompareOp::FCmpOrderedLessThan;
+            break;
     }
     // unreachable
     return static_cast<CompareOp>(-1);
