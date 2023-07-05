@@ -38,7 +38,7 @@ jobs:
       - name: Env
         run: |
           sudo apt update
-          sudo apt install spim ninja-build googletest # llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu
+          sudo apt install spim ninja-build libgtest-dev # llvm-15-dev gcc-11-riscv64-linux-gnu g++-11-riscv64-linux-gnu gcc-10-mipsel-linux-gnu g++-10-mipsel-linux-gnu
 
       - name: Format
         run: make format-check
