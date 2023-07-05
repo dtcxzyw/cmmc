@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include <ostream>
+#include <random>
 
 CMMC_NAMESPACE_BEGIN
 
@@ -89,6 +90,10 @@ static std::ostream& operator<<(std::ostream& out, const IntegerRange& range) {
     return out;
 }
 
+constexpr uint32_t seed = 998244353;
+constexpr uint32_t testCnt = 1 << 20;
+constexpr uint32_t randCnt = 2;
+
 template <typename C1, typename C2>
 void testUnary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
     int64_t beg = -128, end = 128;
@@ -125,6 +130,22 @@ void testUnary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
                                                                                    << real << "result:\n"
                                                                                    << evalRange;
         }
+    }
+
+    std::minstd_rand gen(seed);
+    for(uint32_t idx = 0; idx < testCnt; ++idx) {
+        RealRange val, real;
+        for(int64_t x = 0; x <= randCnt; ++x) {
+            auto v = gen();
+            val.update(v);
+            if(std::optional<int64_t> res = eval(v))
+                real.update(static_cast<int32_t>(*res));
+        }
+        if(real.empty())
+            continue;
+        IntegerRange valRange = val.toRange();
+        const auto evalRange = rangeEval(valRange);
+        ASSERT_TRUE(real.within(evalRange)) << "val:\n" << valRange << "expected:\n" << real << "result:\n" << evalRange;
     }
 }
 
@@ -181,6 +202,28 @@ void testBinary(C1 eval, C2 rangeEval, uint32_t matchReq = MatchAll) {
                 }
             }
         }
+    }
+
+    std::minstd_rand gen(seed);
+    for(uint32_t idx = 0; idx < testCnt; ++idx) {
+        RealRange lhs, rhs, real;
+        for(int64_t x = 0; x <= randCnt; ++x) {
+            auto v1 = gen();
+            lhs.update(v1);
+            auto v2 = gen();
+            rhs.update(v2);
+            if(std::optional<int64_t> res = eval(v1, v2)) {
+                real.update(static_cast<int32_t>(*res));
+            }
+        }
+        if(real.empty())
+            continue;
+        const auto evalRange = rangeEval(lhs.toRange(), rhs.toRange());
+        ASSERT_TRUE(real.within(evalRange)) << "lhs:\n"
+                                            << lhs.toRange() << "rhs:\n"
+                                            << rhs.toRange() << "expected:\n"
+                                            << real << "result:\n"
+                                            << evalRange;
     }
 }
 

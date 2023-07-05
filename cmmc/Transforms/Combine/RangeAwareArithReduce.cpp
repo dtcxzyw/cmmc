@@ -48,7 +48,7 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             CompareOp cmp;
             Value *v1, *v2;
 
-            if(scmp(cmp, any(v1), any(v2))(matchCtx)) {
+            if(scmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
                 auto lhs = rangeAnalysis.query(v1);
                 auto rhs = rangeAnalysis.query(v2);
 
@@ -99,7 +99,7 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 }
             }
 
-            if(ucmp(cmp, any(v1), any(v2))(matchCtx)) {
+            if(ucmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
                 auto lhs = rangeAnalysis.query(v1);
                 auto rhs = rangeAnalysis.query(v2);
 

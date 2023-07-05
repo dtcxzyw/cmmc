@@ -488,7 +488,7 @@ def sysy_codegen_llvm(src):
     if not os.path.exists(input_file):
         input_file = '/dev/null'
 
-    out = run_cmmc(src, target='llvm', hide_symbol=True, input_file=input_file)
+    out = run_cmmc(src, target='llvm', hide_symbol=True, input_file=input_file, check=False)
 
     time_used = compare_and_parse_perf(src, out)
     add_sample("cmmc_host", src, time_used)
