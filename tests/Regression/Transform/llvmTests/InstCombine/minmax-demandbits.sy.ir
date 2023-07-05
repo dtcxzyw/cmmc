@@ -1,26 +1,14 @@
-func @and_min_7_7(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_7() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smin i32 %0, i32 -7;
-    i32 %2 = and i32 %1, i32 -8;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    ret i8 -8;
 }
-func @and_min_7_8(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_8() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smin i32 %0, i32 -8;
-    i32 %2 = and i32 %1, i32 -8;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    ret i8 -8;
 }
-func @and_min_7_9(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_min_7_9() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smin i32 %0, i32 -9;
-    i32 %2 = and i32 %1, i32 -8;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    ret i8 -16;
 }
 func @and_umax_less(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -61,10 +49,9 @@ func @f_10_1(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
 func @f_191_192(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smax i32 %0, i32 -65;
-    i32 %2 = and i32 %1, i32 -64;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    i32 %1 = and i32 %0, i32 -64;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
 }
 func @f_1_1(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -82,13 +69,9 @@ func @f_32_32(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
     i8 %3 = ztrunc i32 %2 to i8;
     ret i8 %3;
 }
-func @or_min_31_30(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @or_min_31_30() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smin i32 %0, i32 -30;
-    i32 %2 = or i32 %1, i32 31;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    ret i8 -1;
 }
 func @or_umin(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

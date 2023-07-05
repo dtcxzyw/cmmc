@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -22,54 +23,6 @@
 #include <unordered_map>
 
 CMMC_NAMESPACE_BEGIN
-
-// only support i32
-class IntegerRange final {
-    uint64_t mKnownZeros, mKnownOnes;
-    uint64_t mMaxUnsignedValue, mMinUnsignedValue;
-    int64_t mMaxSignedValue, mMinSignedValue;
-
-    void bit2Unsigned();
-    void unsigned2Bit();
-    void signed2Bit();
-    void unsigned2Signed();
-    void signed2Unsigned();
-
-public:
-    explicit IntegerRange();
-    explicit IntegerRange(ConstantInteger* integer);
-
-    void setUnsignedRange(uint64_t min, uint64_t max);
-    void setSignedRange(int64_t min, int64_t max);
-    void setKnownBits(uint64_t zeros, uint64_t ones);
-    void sync();
-
-    bool operator==(const IntegerRange& rhs) const;
-    bool operator!=(const IntegerRange& rhs) const;
-
-    [[nodiscard]] IntegerRange intersectSet(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange unionSet(const IntegerRange& rhs) const;
-
-    [[nodiscard]] IntegerRange operator+(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange operator-(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange operator*(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange sdiv(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange udiv(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange srem(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange urem(const IntegerRange& rhs) const;
-
-    [[nodiscard]] IntegerRange operator&(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange operator|(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange operator^(const IntegerRange& rhs) const;
-
-    [[nodiscard]] IntegerRange shl(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange lshr(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange ashr(const IntegerRange& rhs) const;
-
-    [[nodiscard]] IntegerRange smax(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange smin(const IntegerRange& rhs) const;
-    [[nodiscard]] IntegerRange abs() const;
-};
 
 class IntegerRangeAnalysisResult final {
     std::unordered_map<Value*, IntegerRange> mRanges;

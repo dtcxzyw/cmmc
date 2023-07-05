@@ -19,30 +19,13 @@ d:
 .fpu vfpv4
 .globl fn1
 fn1:
+	movw r0, #:lower16:c
 	movw r1, #:lower16:d
+	movt r0, #:upper16:c
 	movt r1, #:upper16:d
-	mov r0, r1
-	ldr r1, [r1, #0]
-	cmp r1, #0
-	beq label10
-	movw r1, #:lower16:b
-	movt r1, #:upper16:b
-	ldr r1, [r1, #0]
-	cmp r1, #0
-	mov r1, #0
-	movwne r1, #1
-	b label3
-label10:
-	mov r1, #0
-label3:
-	movw r2, #:lower16:c
-	add r1, r1, r1, lsr #31
-	movt r2, #:upper16:c
-	asr r1, r1, #1
-	ldr r2, [r2, #0]
-	cmp r2, #0
-	mov r2, #0
-	movweq r2, #1
-	add r1, r2, r1
-	str r1, [r0, #0]
+	ldr r0, [r0, #0]
+	cmp r0, #0
+	mov r0, #0
+	movweq r0, #1
+	str r0, [r1, #0]
 	bx lr

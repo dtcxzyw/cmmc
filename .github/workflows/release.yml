@@ -15,7 +15,7 @@ jobs:
       - name: Env
         run: |
           sudo apt update
-          sudo apt install ninja-build
+          sudo apt install ninja-build googletest
 
       - name: Build
         run: |

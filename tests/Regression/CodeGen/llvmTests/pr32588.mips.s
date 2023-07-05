@@ -15,27 +15,10 @@ d:
 .text
 .globl fn1
 fn1:
+	lui $t0, %hi(c)
+	lw $t0, %lo(c)($t0)
+	sltiu $t0, $t0, 1
 	lui $t1, %hi(d)
-	addiu $t0, $t1, %lo(d)
-	lw $t1, %lo(d)($t1)
-	sltiu $t1, $t1, 1
-	bne $t1, $zero, label10
-	nop
-	lui $t1, %hi(b)
-	lw $t1, %lo(b)($t1)
-	sltu $t1, $zero, $t1
-	b label3
-	nop
-label10:
-	move $t1, $zero
-label3:
-	lui $t2, %hi(c)
-	lw $t2, %lo(c)($t2)
-	sltiu $t2, $t2, 1
-	li $t3, 2
-	div $zero, $t1, $t3
-	mflo $t1
-	addu $t1, $t2, $t1
-	sw $t1, 0($t0)
+	sw $t0, %lo(d)($t1)
 	jr $ra
 	nop

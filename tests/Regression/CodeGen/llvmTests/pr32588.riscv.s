@@ -16,29 +16,14 @@ d:
 .text
 .globl fn1
 fn1:
-pcrel37:
+pcrel18:
+	auipc a0, %pcrel_hi(c)
+	lw a0, %pcrel_lo(pcrel18)(a0)
+	sltiu a1, a0, 1
+	li a0, 4294967295
+	and a1, a1, a0
+	and a0, a1, a0
+pcrel19:
 	auipc a1, %pcrel_hi(d)
-	addi a0, a1, %pcrel_lo(pcrel37)
-	lw a1, %pcrel_lo(pcrel37)(a1)
-	sltiu a1, a1, 1
-	bne a1, zero, label10
-pcrel38:
-	auipc a1, %pcrel_hi(b)
-	lw a1, %pcrel_lo(pcrel38)(a1)
-	sltu a1, zero, a1
-	j label3
-label10:
-	mv a1, zero
-label3:
-	auipc a2, %pcrel_hi(c)
-	srliw a4, a1, 31
-	lw a2, %pcrel_lo(label3)(a2)
-	add a1, a1, a4
-	sltiu a3, a2, 1
-	sraiw a1, a1, 1
-	li a2, 4294967295
-	and a3, a3, a2
-	addw a1, a3, a1
-	and a1, a1, a2
-	sw a1, 0(a0)
+	sw a0, %pcrel_lo(pcrel19)(a1)
 	ret

@@ -1,30 +1,9 @@
-func @func() -> void { NoRecurse } {
+func @func() -> void { NoMemoryRead NoRecurse } {
   ^entry:
-    i8* %0 = ptrcast i8* @c to i8*;
-    i8 %1 = load i8* %0;
-    i32 %2 = zext i8 %1 to i32;
-    i32 %3 = or i32 %2, i32 1;
-    i32 %4 = and i32 %3, i32 255;
-    i32 %5 = xor i32 %4, i32 -1;
-    i32 %6 = and i32 %5, i32 1;
-    i8 %7 = ztrunc i32 %6 to i8;
-    i8* %8 = ptrcast i8* @b to i8*;
-    store i8* %8 with i8 %7;
-    i1 %9 = ucmp neq i32 %4, i32 0;
-    i8* %10 = ptrcast i8* @a to i8*;
-    cbr i1 %9(prob = 0.5), ^if.then, ^block2;
-  ^if.then:
-    i32 %11 = and i32 %6, i32 255;
-    i1 %12 = ucmp neq i32 %11, i32 0;
-    i32 %13 = zext i1 %12 to i32;
-    i32 %14 = ztrunc i32 %13 to i32;
-    ubr ^block2;
-  ^block2:
-    i32 %15 = phi [^entry, i32 0] [^if.then, i32 %14];
-    i32 %16 = strunc i32 %15 to i32;
-    i32 %17 = mul i32 %16, i32 3;
-    i8 %18 = ztrunc i32 %17 to i8;
-    store i8* %10 with i8 %18;
+    i8* %0 = ptrcast i8* @b to i8*;
+    store i8* %0 with i8 0;
+    i8* %1 = ptrcast i8* @a to i8*;
+    store i8* %1 with i8 0;
     ret;
 }
 i8* @c = 0;

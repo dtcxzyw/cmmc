@@ -1,8 +1,6 @@
-func @or_test1(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @or_test1() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = and i32 %var0, i32 1;
-    i32 %1 = or i32 %0, i32 1;
-    ret i32 %1;
+    ret i32 1;
 }
 func @or_test2(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

@@ -1,0 +1,5 @@
+find_package(GTest)
+add_executable(cmmc_unittest IntegerRangeEval.cpp ../cmmc/Analysis/IntegerRange.cpp)
+target_include_directories(cmmc_unittest PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../)
+target_link_libraries(cmmc_unittest PRIVATE GTest::gtest_main)
+gtest_add_tests(TARGET cmmc_unittest)

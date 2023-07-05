@@ -328,6 +328,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ConstantPropagation",       //
             "PointerArithmeticCombine",  //
             "ArithmeticReduce",          //
+            "RangeAwareArithReduce",     //
             "ExtGEPCombine",             //
             "NoSideEffectEliminate",     // clean up
             // Loop

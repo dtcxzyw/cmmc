@@ -1,9 +1,4 @@
-func @x(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @x() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = strunc i32 %var0 to i32;
-    i32 %1 = sdiv i32 %0, i32 65536;
-    i1 %2 = scmp lt i32 %1, i32 -65536;
-    i32 %3 = zext i1 %2 to i32;
-    i32 %4 = ztrunc i32 %3 to i32;
-    ret i32 %4;
+    ret i32 0;
 }

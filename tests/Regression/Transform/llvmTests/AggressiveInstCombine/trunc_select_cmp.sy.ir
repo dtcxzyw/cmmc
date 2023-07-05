@@ -16,13 +16,9 @@ func @cmp_select_sext_const(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSide
     i16 %3 = ztrunc i32 %2 to i16;
     ret i16 %3;
 }
-func @cmp_select_signed_const_i16Const_noTransformation(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @cmp_select_signed_const_i16Const_noTransformation() -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i8 %0 = strunc i8 %var0 to i8;
-    i32 %1 = sext i8 %0 to i32;
-    i32 %2 = smax i32 %1, i32 32768;
-    i16 %3 = ztrunc i32 %2 to i16;
-    ret i16 %3;
+    ret i16 -32768;
 }
 func @cmp_select_unsigned_const_i16Const(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -86,13 +82,8 @@ func @my_abs_sext(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Sta
 func @my_abs_zext(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = neg i32 %1;
-    i32 %3 = ztrunc i32 %2 to i32;
-    i1 %4 = scmp lt i32 %1, i32 0;
-    i32 %5 = select i1 %4 ? i32 %3 : i32 %0;
-    i16 %6 = ztrunc i32 %5 to i16;
-    ret i16 %6;
+    i16 %1 = ztrunc i32 %0 to i16;
+    ret i16 %1;
 }
 func @select_sext(i8 %var0, i32 %var1) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

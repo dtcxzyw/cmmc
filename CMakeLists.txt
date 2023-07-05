@@ -161,3 +161,4 @@ DEPENDS cmmc
 )
 
 add_test(NAME cmmc_test COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_LIST_DIR}/tests/test_driver.py $<TARGET_FILE:cmmc> ${CMAKE_CURRENT_LIST_DIR}/tests)
+add_subdirectory(unittests)
