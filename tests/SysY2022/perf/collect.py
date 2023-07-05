@@ -75,3 +75,5 @@ summary['current_commit'] = commit_hash
 
 with open(os.path.join(collected_perf_data_path, 'summary.json'), 'w') as f:
     json.dump(summary, f, indent=2, sort_keys=True)
+with open(os.path.join(collected_perf_data_path, f'summary_{commit_hash[:7]}.json'), 'w') as f:
+    json.dump(summary, f, indent=2, sort_keys=True)
