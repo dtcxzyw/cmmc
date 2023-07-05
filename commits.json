@@ -135,6 +135,11 @@
       "parent": "84648e12b6bda57ce06277c9d225d6f6c00a1481",
       "time": "2023-07-02 02:00:59 +0800"
     },
+    "53380379f6f03d5950eb3de091380278c20ee681": {
+      "message": "feat(transform): eliminate redundant function calls",
+      "parent": "84ec2b3394ff6aecb740769207da5b06edac6cf9",
+      "time": "2023-07-05 23:43:18 +0800"
+    },
     "569de15b0c73b5c4753a65e91196ec62cefc3958": {
       "message": "fix(codegen): fix constant multiplication and update llvm reference",
       "parent": "2a8d4a9919993d68163f8deca8328c69c80db012",
@@ -215,6 +220,11 @@
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
       "time": "2023-07-02 14:55:49 +0800"
     },
+    "aab1a0a63041678fdafb3988b7e797ea536758ec": {
+      "message": "ci: record historical summary data",
+      "parent": "53380379f6f03d5950eb3de091380278c20ee681",
+      "time": "2023-07-05 23:43:19 +0800"
+    },
     "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
       "message": "feat(codegen): add and-not folding on riscv and arm",
       "parent": "c486fc2beb3aa47793bb2b73d8de6496dac4e292",
@@ -291,5 +301,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "84ec2b3394ff6aecb740769207da5b06edac6cf9"
+  "head": "aab1a0a63041678fdafb3988b7e797ea536758ec"
 }
