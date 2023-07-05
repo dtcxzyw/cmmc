@@ -304,7 +304,12 @@
       "message": "misc: update ref",
       "parent": "dab395f5471c2e2abcc130aed1055c5f889f99a1",
       "time": "2023-07-01 23:13:26 +0800"
+    },
+    "fff5d50daaa4fdf0b5dfbf75446966c0d0861dab": {
+      "message": "fix(transform): remove dead phis in NoReturnCallEliminate",
+      "parent": "49e29bb90dac47096baa55c815d5cd71d0d6fd45",
+      "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "49e29bb90dac47096baa55c815d5cd71d0d6fd45"
+  "head": "fff5d50daaa4fdf0b5dfbf75446966c0d0861dab"
 }
