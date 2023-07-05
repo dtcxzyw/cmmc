@@ -20,35 +20,31 @@ test1:
 	ret
 .globl test2
 test2:
-	slliw a1, a0, 8
-	li a3, 65280
-	srliw a0, a0, 8
-	andi a2, a1, 255
-	and a4, a0, a3
-	slli a3, a3, 8
-	or a2, a2, a4
-	and a0, a0, a3
-	or a0, a2, a0
-	li a2, -16777216
+	srliw a1, a0, 8
+	li a2, 65280
+	li a4, -16777216
+	slliw a0, a0, 8
+	and a3, a1, a2
+	and a0, a0, a4
+	slli a2, a2, 8
+	or a0, a3, a0
 	and a1, a1, a2
 	or a0, a0, a1
 	ret
 .globl test3
 test3:
-	fcvt.w.s a0, f10, rtz
-	li a1, 4294967295
-	and a3, a0, a1
-	srliw a5, a3, 8
-	slliw a2, a3, 8
-	li a3, 16711680
-	andi a4, a2, 255
-	and a5, a5, a3
-	srli a3, a3, 8
-	or a4, a4, a5
-	and a0, a0, a3
+	fcvt.w.s a1, f10, rtz
+	li a0, 4294967295
+	li a2, 16711680
 	li a5, -16777216
-	and a0, a0, a1
-	and a2, a2, a5
-	or a2, a4, a2
-	or a0, a2, a0
+	and a3, a1, a0
+	srliw a4, a3, 8
+	slliw a3, a3, 8
+	and a4, a4, a2
+	and a3, a3, a5
+	srli a2, a2, 8
+	or a3, a4, a3
+	and a1, a1, a2
+	and a0, a1, a0
+	or a0, a3, a0
 	ret

@@ -134,13 +134,9 @@ func @sdiv_dividend_known_smaller_than_neg_divisor_clear_bits(i32 %var0) -> i32 
     i32 %3 = ztrunc i32 %2 to i32;
     ret i32 %3;
 }
-func @sdiv_dividend_known_smaller_than_neg_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sdiv_dividend_known_smaller_than_neg_divisor_set_bits() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = or i32 %var0, i32 -253;
-    i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = sdiv i32 %1, i32 -254;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    ret i32 0;
 }
 func @sdiv_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -150,13 +146,9 @@ func @sdiv_dividend_known_smaller_than_pos_divisor_clear_bits(i32 %var0) -> i32 
     i32 %3 = ztrunc i32 %2 to i32;
     ret i32 %3;
 }
-func @sdiv_dividend_known_smaller_than_pos_divisor_set_bits(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @sdiv_dividend_known_smaller_than_pos_divisor_set_bits() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = or i32 %var0, i32 -253;
-    i32 %1 = strunc i32 %0 to i32;
-    i32 %2 = sdiv i32 %1, i32 254;
-    i32 %3 = ztrunc i32 %2 to i32;
-    ret i32 %3;
+    ret i32 0;
 }
 func @sdiv_min_dividend(i8 %var0) -> i16 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

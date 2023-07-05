@@ -13,12 +13,9 @@ bswap_ror_commuted:
 	nop
 .globl different_constant
 different_constant:
-	sll $t0, $a0, 8
-	andi $t0, $t0, 42
-	srl $t1, $a0, 8
-	li $t2, 16711935
-	and $t1, $t1, $t2
-	or $v0, $t0, $t1
+	srl $t0, $a0, 8
+	li $t1, 16711935
+	and $v0, $t0, $t1
 	jr $ra
 	nop
 .globl different_op

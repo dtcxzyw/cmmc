@@ -6,11 +6,7 @@
 .fpu vfpv4
 .globl test_srem_allones
 test_srem_allones:
-	mvn r1, #0
-	sdiv r2, r0, r1
-	mls r0, r2, r1, r0
-	clz r0, r0
-	lsr r0, r0, #5
+	mov r0, #1
 	bx lr
 .globl test_srem_even
 test_srem_even:

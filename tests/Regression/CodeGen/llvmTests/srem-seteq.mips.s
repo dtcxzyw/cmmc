@@ -2,10 +2,7 @@
 .text
 .globl test_srem_allones
 test_srem_allones:
-	li $t0, -1
-	div $zero, $a0, $t0
-	mfhi $t0
-	sltiu $v0, $t0, 1
+	li $v0, 1
 	jr $ra
 	nop
 .globl test_srem_even

@@ -16,12 +16,9 @@ bswap_ror_commuted:
 	bx lr
 .globl different_constant
 different_constant:
-	lsl r1, r0, #8
-	movw r2, #255
-	and r1, r1, #42
-	movt r2, #255
-	and r0, r2, r0, lsr #8
-	orr r0, r1, r0
+	movw r1, #255
+	movt r1, #255
+	and r0, r1, r0, lsr #8
 	bx lr
 .globl different_op
 different_op:

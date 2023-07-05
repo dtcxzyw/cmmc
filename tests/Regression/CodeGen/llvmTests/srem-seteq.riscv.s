@@ -3,11 +3,7 @@
 .text
 .globl test_srem_allones
 test_srem_allones:
-	li a1, -1
-	remw a0, a0, a1
-	li a1, 4294967295
-	sltiu a0, a0, 1
-	and a0, a0, a1
+	li a0, 1
 	ret
 .globl test_srem_even
 test_srem_even:

@@ -17,13 +17,11 @@ test1:
 	bx lr
 .globl test2
 test2:
-	lsl r1, r0, #8
-	lsr r0, r0, #8
-	and r2, r1, #255
-	and r3, r0, #65280
-	and r1, r1, #-16777216
-	and r0, r0, #16711680
-	orr r2, r2, r3
+	lsr r1, r0, #8
+	lsl r0, r0, #8
+	and r2, r1, #65280
+	and r0, r0, #-16777216
+	and r1, r1, #16711680
 	orr r0, r2, r0
 	orr r0, r0, r1
 	bx lr
@@ -31,13 +29,11 @@ test2:
 test3:
 	vcvt.s32.f32 s0, s0
 	vmov r0, s0
-	lsr r3, r0, #8
-	lsl r1, r0, #8
-	and r3, r3, #16711680
+	lsl r2, r0, #8
+	lsr r1, r0, #8
+	and r2, r2, #-16777216
 	and r0, r0, #65280
-	and r2, r1, #255
-	and r1, r1, #-16777216
-	orr r2, r2, r3
-	orr r1, r2, r1
+	and r1, r1, #16711680
+	orr r1, r1, r2
 	orr r0, r1, r0
 	bx lr

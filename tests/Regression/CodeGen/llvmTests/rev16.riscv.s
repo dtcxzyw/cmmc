@@ -13,12 +13,9 @@ bswap_ror_commuted:
 	ret
 .globl different_constant
 different_constant:
-	slliw a1, a0, 8
-	li a2, 16711935
 	srliw a0, a0, 8
-	andi a1, a1, 42
-	and a0, a0, a2
-	or a0, a1, a0
+	li a1, 16711935
+	and a0, a0, a1
 	ret
 .globl different_op
 different_op:
