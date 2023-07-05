@@ -436,3 +436,6 @@ int32_t fused_div_rem(int32_t x, int32_t y) {
 int32_t fused_div_rem_constant(int32_t x) {
     return x / 3 + x % 3;
 }
+int select_imm(int c) {
+    return c ? -1 : 0;
+}

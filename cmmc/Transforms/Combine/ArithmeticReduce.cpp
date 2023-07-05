@@ -879,7 +879,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(select(any(v1), capture(int_(i1), v2), capture(int_(i2), v3))(matchCtx) && !inst->getType()->isBoolean()) {
                 if(i2 == i1 + 1) {
                     auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);
-                    return builder.makeOp<BinaryInst>(InstructionID::Add, zext, v2);
+                    return builder.makeOp<BinaryInst>(InstructionID::Sub, v3, zext);
                 }
                 if(i2 == i1 - 1) {
                     auto zext = builder.makeOp<CastInst>(InstructionID::ZExt, inst->getType(), v1);

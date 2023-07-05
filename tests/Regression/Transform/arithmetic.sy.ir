@@ -739,3 +739,10 @@ func @fused_div_rem_constant(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideE
     i32 %2 = add i32 %0, i32 %1;
     ret i32 %2;
 }
+func @select_imm(i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = scmp neq i32 %c, i32 0;
+    i32 %1 = zext i1 %0 to i32;
+    i32 %2 = neg i32 %1;
+    ret i32 %2;
+}
