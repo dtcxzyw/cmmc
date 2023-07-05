@@ -220,6 +220,11 @@
       "parent": "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c",
       "time": "2023-07-02 00:48:30 +0800"
     },
+    "c486fc2beb3aa47793bb2b73d8de6496dac4e292": {
+      "message": "ci: install libgtest-dev",
+      "parent": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45",
+      "time": "2023-07-05 17:38:34 +0800"
+    },
     "cb2bacbaa905b3a86d42ec948cba23be3058ae1f": {
       "message": "test(perf): add summary",
       "parent": "3c9bfc69a8452250b22638e3e6231f85e7f64a85",
@@ -266,5 +271,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45"
+  "head": "c486fc2beb3aa47793bb2b73d8de6496dac4e292"
 }
