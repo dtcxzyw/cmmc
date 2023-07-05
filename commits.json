@@ -255,6 +255,11 @@
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
     },
+    "e08641d29e96a13eb5410e28160018520c77dfcb": {
+      "message": "test: add random tests for range analysis",
+      "parent": "06a1668979545faf5da61846bca1aa7c8bbe3728",
+      "time": "2023-07-05 23:22:57 +0800"
+    },
     "e65a04c5d006866fb356411e3978a98e19f6a0b4": {
       "message": "misc: update `.gitattributes` for generated references",
       "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
@@ -281,5 +286,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "06a1668979545faf5da61846bca1aa7c8bbe3728"
+  "head": "e08641d29e96a13eb5410e28160018520c77dfcb"
 }
