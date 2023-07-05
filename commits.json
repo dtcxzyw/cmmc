@@ -205,6 +205,11 @@
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
       "time": "2023-07-02 14:55:49 +0800"
     },
+    "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
+      "message": "feat(codegen): add and-not folding on riscv and arm",
+      "parent": "c486fc2beb3aa47793bb2b73d8de6496dac4e292",
+      "time": "2023-07-05 19:31:36 +0800"
+    },
     "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1": {
       "message": "feat(codegen): optimize clamp/smax/smin for arm",
       "parent": "113483ade1c34ea82f3db51a354e1176dad083e4",
@@ -271,5 +276,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "c486fc2beb3aa47793bb2b73d8de6496dac4e292"
+  "head": "b642f635bd39964b79138897e82d1cd1ca8de9f6"
 }
