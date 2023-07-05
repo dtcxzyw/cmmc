@@ -1,0 +1,27 @@
+internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
+func @foo1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
+  ^entry:
+    i1 %0 = scmp eq i32 %x, i32 10;
+    cbr i1 %0(prob = 0.5), ^if.then, ^b;
+  ^if.then:
+    call (i32) -> void @putint(i32 %x);
+    ubr ^b;
+  ^b:
+    ret i32 0;
+}
+func @foo2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 0;
+}
+func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 10;
+    i1 %1 = ucmp lt i32 %0, i32 21;
+    cbr i1 %1(prob = 0.5), ^if.then, ^b;
+  ^if.then:
+    i32 %2 = srem i32 %x, i32 100;
+    ubr ^b;
+  ^b:
+    i32 %3 = phi [^entry, i32 %x] [^if.then, i32 %2];
+    ret i32 %3;
+}
