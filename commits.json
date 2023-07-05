@@ -120,6 +120,11 @@
       "parent": "56c9086846a535e80a65c5d5b88c5b2f7398c1bf",
       "time": "2023-07-01 23:10:49 +0800"
     },
+    "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45": {
+      "message": "feat(transform): add range-aware ucmp folding",
+      "parent": "d704adc43cc2208d15df5443ba72a7be262aeb0c",
+      "time": "2023-07-05 17:35:34 +0800"
+    },
     "4d6d8fc8749723ae232ca54588f127c495075ac8": {
       "message": "feat(transform): remove zeros from global variables",
       "parent": "84648e12b6bda57ce06277c9d225d6f6c00a1481",
@@ -261,5 +266,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "d704adc43cc2208d15df5443ba72a7be262aeb0c"
+  "head": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45"
 }
