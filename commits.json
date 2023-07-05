@@ -5,6 +5,11 @@
       "parent": "31b662379aa1db01ecb8bda98ee1e81ac76921d4",
       "time": "2023-07-03 22:21:17 +0800"
     },
+    "06a1668979545faf5da61846bca1aa7c8bbe3728": {
+      "message": "feat(analysis): add range analysis for shl/shr",
+      "parent": "b642f635bd39964b79138897e82d1cd1ca8de9f6",
+      "time": "2023-07-05 22:53:08 +0800"
+    },
     "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4": {
       "message": "fix(codegen): fix arithmetic reduce",
       "parent": "26714d9d6988bee0ab3fee76f2c56aec14c5b2af",
@@ -276,5 +281,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "b642f635bd39964b79138897e82d1cd1ca8de9f6"
+  "head": "06a1668979545faf5da61846bca1aa7c8bbe3728"
 }
