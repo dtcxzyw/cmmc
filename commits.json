@@ -120,6 +120,11 @@
       "parent": "99c96ab3877598e40db347786b94293026922ee6",
       "time": "2023-07-02 03:27:33 +0800"
     },
+    "49e29bb90dac47096baa55c815d5cd71d0d6fd45": {
+      "message": "fix(transform): fix select folding",
+      "parent": "aab1a0a63041678fdafb3988b7e797ea536758ec",
+      "time": "2023-07-05 23:54:00 +0800"
+    },
     "4b7168be87eea9ff5ddf64cec1114c0450920b8f": {
       "message": "feat(transform): add more optimizations for trunc/bitwise ops",
       "parent": "56c9086846a535e80a65c5d5b88c5b2f7398c1bf",
@@ -301,5 +306,5 @@
       "time": "2023-07-01 23:13:26 +0800"
     }
   },
-  "head": "aab1a0a63041678fdafb3988b7e797ea536758ec"
+  "head": "49e29bb90dac47096baa55c815d5cd71d0d6fd45"
 }
