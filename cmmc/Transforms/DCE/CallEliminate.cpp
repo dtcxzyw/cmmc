@@ -117,7 +117,7 @@ class CallEliminate final : public TransformPass<Function> {
         for(auto iter = block->instructions().rbegin(); iter != block->instructions().rend(); ++iter) {
             Instruction* inst = &*iter;
             if(inst == start)
-                break;
+                return { true, isBeforeEnd };
             if(isBeforeEnd && hasSideEffect(start, end, inst))
                 return { true, false };
             if(!isBeforeEnd && inst == end)
