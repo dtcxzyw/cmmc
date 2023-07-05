@@ -1,3 +1,9 @@
 int foo1(int x) {
     return (x % 10) < 100;
 }
+int foo2(int x) {
+    int c1 = x | 0xff;
+    int c2 = x & 0xffff;
+    int c3 = x | 0xff00;
+    return ((c1 | c3) & 0xffff) | c2;
+}

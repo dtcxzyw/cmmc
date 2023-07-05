@@ -2,3 +2,7 @@ func @foo1() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret i32 1;
 }
+func @foo2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    ret i32 65535;
+}

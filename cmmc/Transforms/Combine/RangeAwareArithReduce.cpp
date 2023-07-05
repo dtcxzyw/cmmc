@@ -94,6 +94,57 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 }
             }
 
+            if(ucmp(cmp, any(v1), any(v2))(matchCtx)) {
+                auto lhs = rangeAnalysis.query(v1);
+                auto rhs = rangeAnalysis.query(v2);
+
+                switch(cmp) {
+                    case CompareOp::Equal: {
+                        if(!lhs.intersectWith(rhs)) {
+                            return builder.getFalse();
+                        }
+                        break;
+                    }
+                    case CompareOp::NotEqual: {
+                        if(!lhs.intersectWith(rhs)) {
+                            return builder.getTrue();
+                        }
+                        break;
+                    }
+                    case CompareOp::LessThan: {
+                        if(lhs.maxUnsignedValue() < rhs.minUnsignedValue())
+                            return builder.getTrue();
+                        if(lhs.minUnsignedValue() >= rhs.maxUnsignedValue())
+                            return builder.getFalse();
+
+                        break;
+                    }
+                    case CompareOp::LessEqual: {
+                        if(lhs.maxUnsignedValue() <= rhs.minUnsignedValue())
+                            return builder.getTrue();
+                        if(lhs.minUnsignedValue() > rhs.maxUnsignedValue())
+                            return builder.getFalse();
+                        break;
+                    }
+                    case CompareOp::GreaterThan: {
+                        if(lhs.minUnsignedValue() > rhs.maxUnsignedValue())
+                            return builder.getTrue();
+                        if(lhs.maxUnsignedValue() <= rhs.minUnsignedValue())
+                            return builder.getFalse();
+                        break;
+                    }
+                    case CompareOp::GreaterEqual: {
+                        if(lhs.minUnsignedValue() >= rhs.maxUnsignedValue())
+                            return builder.getTrue();
+                        if(lhs.maxUnsignedValue() < rhs.minUnsignedValue())
+                            return builder.getFalse();
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

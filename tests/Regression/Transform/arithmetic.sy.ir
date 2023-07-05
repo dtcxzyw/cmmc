@@ -195,11 +195,9 @@ func @foo46() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
   ^entry:
     ret i32 1;
 }
-func @foo47(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo47() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = ucmp le i32 %x, i32 -1;
-    i32 %1 = zext i1 %0 to i32;
-    ret i32 %1;
+    ret i32 1;
 }
 func @foo48() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
