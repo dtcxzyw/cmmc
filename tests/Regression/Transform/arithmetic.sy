@@ -430,3 +430,9 @@ int srem2eq(int x) {
 int mul_neg2(int x) {
     return (-x) * 2;
 }
+int32_t fused_div_rem(int32_t x, int32_t y) {
+    return x / y + x % y;
+}
+int32_t fused_div_rem_constant(int32_t x) {
+    return x / 3 + x % 3;
+}

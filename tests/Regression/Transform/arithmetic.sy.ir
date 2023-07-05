@@ -725,3 +725,17 @@ func @mul_neg2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
     i32 %0 = mul i32 %x, i32 -2;
     ret i32 %0;
 }
+func @fused_div_rem(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sdiv i32 %x, i32 %y;
+    i32 %1 = srem i32 %x, i32 %y;
+    i32 %2 = add i32 %0, i32 %1;
+    ret i32 %2;
+}
+func @fused_div_rem_constant(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = sdiv i32 %x, i32 3;
+    i32 %1 = srem i32 %x, i32 3;
+    i32 %2 = add i32 %0, i32 %1;
+    ret i32 %2;
+}

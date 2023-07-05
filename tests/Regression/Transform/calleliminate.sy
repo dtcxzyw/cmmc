@@ -1,0 +1,13 @@
+int x[100];
+int load(int y) {
+    return x[y];
+}
+
+int duplicate_loads(int flag) {
+    int y = load(1);
+    if (flag) {
+        int z = load(1);
+        return y + z;
+    }
+    return y;
+}

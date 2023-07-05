@@ -1,0 +1,18 @@
+[100 * i32]* @x;
+func @load(i32 %y) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    [100 * i32]* %0 = ptrcast [100 * i32]* @x to [100 * i32]*;
+    i32* %1 = getelementptr &([100 * i32]* %0)[i64 0][i32 %y];
+    i32 %2 = load i32* %1;
+    ret i32 %2;
+}
+func @duplicate_loads(i32 %flag) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    [100 * i32]* %0 = ptrcast [100 * i32]* @x to [100 * i32]*;
+    i32* %1 = getelementptr &([100 * i32]* %0)[i64 0][i64 1];
+    i32 %2 = load i32* %1;
+    i32 %3 = mul i32 %2, i32 2;
+    i1 %4 = scmp neq i32 %flag, i32 0;
+    i32 %5 = select i1 %4 ? i32 %3 : i32 %2;
+    ret i32 %5;
+}
