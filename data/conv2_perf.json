@@ -183,6 +183,17 @@
       "sysy_time": 11.109352,
       "task-clock:u": 11076.02
     },
+    "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
+      "branch-load-misses:u": 366861821,
+      "branch-loads:u": 3321959200,
+      "cycles:u": 15855237393,
+      "iTLB-load-misses:u": 21,
+      "inst_retired:u": 14012811965,
+      "inst_spec:u": 24039270405,
+      "instructions:u": 14012811965,
+      "sysy_time": 10.624963,
+      "task-clock:u": 10593.59
+    },
     "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1": {
       "branch-load-misses:u": 367462685,
       "branch-loads:u": 3642262804,
