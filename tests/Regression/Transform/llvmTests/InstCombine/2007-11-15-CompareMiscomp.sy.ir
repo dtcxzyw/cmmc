@@ -1,8 +1,8 @@
 func @test(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp gt i32 %0, i32 -1;
-    i1 %2 = ucmp eq i32 %var0, i32 1;
+    i1 %1 = icmp sgt i32 %0, i32 -1;
+    i1 %2 = icmp eq i32 %var0, i32 1;
     i1 %3 = and i1 %1, i1 %2;
     i32 %4 = zext i1 %3 to i32;
     i32 %5 = ztrunc i32 %4 to i32;
@@ -11,8 +11,8 @@ func @test(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
 func @test_logical(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp gt i32 %0, i32 -1;
-    i1 %2 = ucmp eq i32 %var0, i32 1;
+    i1 %1 = icmp sgt i32 %0, i32 -1;
+    i1 %2 = icmp eq i32 %var0, i32 1;
     i32 %3 = zext i1 %2 to i32;
     i32 %4 = select i1 %1 ? i32 %3 : i32 0;
     i32 %5 = ztrunc i32 %4 to i32;

@@ -3,13 +3,13 @@ func @analyzeable_early_exit(i32 %var0) -> void { NoMemoryRead NoRecurse } {
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then, i32 %3];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %2 = ptrcast i32* @A to i32*;
     store i32* %2 with i32 %0;
     i32 %3 = add i32 %0, i32 1;
-    i1 %4 = ucmp lt i32 %3, i32 1000;
+    i1 %4 = icmp ult i32 %3, i32 1000;
     cbr i1 %4(prob = 0.5), ^block1, ^if.else;
   ^if.else:
     ret;
@@ -20,13 +20,13 @@ func @combine_ivs(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^block1:
     i32 %0 = phi [^entry, i32 1] [^if.then1, i32 %4];
     i32 %1 = phi [^entry, i32 0] [^if.then1, i32 %6];
-    i1 %2 = ucmp gt i32 %var0, i32 %1;
+    i1 %2 = icmp ugt i32 %var0, i32 %1;
     cbr i1 %2(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %3 = ptrcast i32* @A to i32*;
     store i32* %3 with i32 %1;
     i32 %4 = add i32 %0, i32 1;
-    i1 %5 = ucmp lt i32 %4, i32 1000;
+    i1 %5 = icmp ult i32 %4, i32 1000;
     cbr i1 %5(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
@@ -40,13 +40,13 @@ func @combine_ivs2(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^block1:
     i32 %0 = phi [^entry, i32 1000] [^if.then1, i32 %4];
     i32 %1 = phi [^entry, i32 0] [^if.then1, i32 %6];
-    i1 %2 = ucmp gt i32 %var0, i32 %1;
+    i1 %2 = icmp ugt i32 %var0, i32 %1;
     cbr i1 %2(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %3 = ptrcast i32* @A to i32*;
     store i32* %3 with i32 %1;
     i32 %4 = add i32 %0, i32 -1;
-    i1 %5 = ucmp gt i32 %4, i32 0;
+    i1 %5 = icmp ugt i32 %4, i32 0;
     cbr i1 %5(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
@@ -59,15 +59,15 @@ func @compound_early_exit(i32 %var0, i32 %var1) -> void { NoMemoryRead NoRecurse
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then, i32 %5];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
-    i1 %2 = ucmp gt i32 %var1, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
+    i1 %2 = icmp ugt i32 %var1, i32 %0;
     i1 %3 = and i1 %1, i1 %2;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %4 = ptrcast i32* @A to i32*;
     store i32* %4 with i32 %0;
     i32 %5 = add i32 %0, i32 1;
-    i1 %6 = ucmp lt i32 %5, i32 1000;
+    i1 %6 = icmp ult i32 %5, i32 1000;
     cbr i1 %6(prob = 0.5), ^block1, ^if.else;
   ^if.else:
     ret;
@@ -77,19 +77,19 @@ func @multiple_early_exits(i32 %var0, i32 %var1) -> void { NoMemoryRead NoRecurs
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then1, i32 %4];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %2 = ptrcast i32* @A to i32*;
     store i32* %2 with i32 %0;
-    i1 %3 = ucmp gt i32 %var1, i32 %0;
+    i1 %3 = icmp ugt i32 %var1, i32 %0;
     cbr i1 %3(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
   ^if.then1:
     store i32* %2 with i32 %0;
     i32 %4 = add i32 %0, i32 1;
-    i1 %5 = ucmp lt i32 %4, i32 1000;
+    i1 %5 = icmp ult i32 %4, i32 1000;
     cbr i1 %5(prob = 0.5), ^block1, ^if.else;
 }
 func @nested(i32 %var0) -> void { NoMemoryRead NoRecurse } {
@@ -103,16 +103,16 @@ func @nested(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^block2:
     i32 %3 = phi [^block1, i32 0] [^if.then, i32 %6];
     store i32* %0 with i32 %3;
-    i1 %4 = ucmp lt i32 %3, i32 20;
+    i1 %4 = icmp ult i32 %3, i32 20;
     cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
-    i1 %5 = ucmp gt i32 %var0, i32 %3;
+    i1 %5 = icmp ugt i32 %var0, i32 %3;
     i32 %6 = add i32 %3, i32 1;
     cbr i1 %5(prob = 0.5), ^block2, ^if.else1;
   ^if.else:
     ret;
   ^if.else1:
-    i1 %7 = ucmp lt i32 %1, i32 20;
+    i1 %7 = icmp ult i32 %1, i32 20;
     cbr i1 %7(prob = 0.5), ^block1, ^if.else;
 }
 func @no_latch_exit(i32 %var0, i32 %var1) -> void { NoMemoryRead NoRecurse } {
@@ -120,12 +120,12 @@ func @no_latch_exit(i32 %var0, i32 %var1) -> void { NoMemoryRead NoRecurse } {
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then1, i32 %4];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %2 = ptrcast i32* @A to i32*;
     store i32* %2 with i32 %0;
-    i1 %3 = ucmp gt i32 %var1, i32 %0;
+    i1 %3 = icmp ugt i32 %var1, i32 %0;
     cbr i1 %3(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
@@ -139,13 +139,13 @@ func @simplify_exit_test(i32 %var0) -> void { NoMemoryRead NoRecurse } {
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then1, i32 %5];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %2 = ptrcast i32* @A to i32*;
     store i32* %2 with i32 %0;
     i32 %3 = shl i32 %0, i32 4;
-    i1 %4 = ucmp lt i32 %3, i32 1024;
+    i1 %4 = icmp ult i32 %3, i32 1024;
     cbr i1 %4(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
@@ -160,12 +160,12 @@ func @simplify_exit_test2() -> void { NoRecurse } {
   ^block1:
     i32 %1 = phi [^entry, i32 0] [^if.then1, i32 %6];
     i32 %2 = load i32* %0;
-    i1 %3 = ucmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     store i32* %0 with i32 %1;
     i32 %4 = udiv i32 %1, i32 4;
-    i1 %5 = ucmp lt i32 %4, i32 1024;
+    i1 %5 = icmp ult i32 %4, i32 1024;
     cbr i1 %5(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;
@@ -175,12 +175,12 @@ func @simplify_exit_test2() -> void { NoRecurse } {
 }
 func @single_exit_no_latch(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^entry:
-    i1 %0 = ucmp gt i32 %var0, i32 0;
+    i1 %0 = icmp ugt i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32 %1 = phi [^entry, i32 0] [^if.then, i32 %2];
     i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp gt i32 %var0, i32 %2;
+    i1 %3 = icmp ugt i32 %var0, i32 %2;
     i32* %4 = ptrcast i32* @A to i32*;
     store i32* %4 with i32 %1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -195,12 +195,12 @@ func @unanalyzeable_early_exit() -> void { NoRecurse } {
   ^block1:
     i32 %2 = phi [^entry, i32 %1] [^if.then, i32 %3];
     i32 %3 = phi [^entry, i32 0] [^if.then, i32 %5];
-    i1 %4 = ucmp neq i32 %2, i32 0;
+    i1 %4 = icmp neq i32 %2, i32 0;
     cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     store i32* %0 with i32 %3;
     i32 %5 = add i32 %3, i32 1;
-    i1 %6 = ucmp lt i32 %5, i32 1000;
+    i1 %6 = icmp ult i32 %5, i32 1000;
     cbr i1 %6(prob = 0.5), ^block1, ^if.else;
   ^if.else:
     ret;
@@ -210,12 +210,12 @@ func @unanalyzeable_latch(i32 %var0) -> void { NoMemoryRead NoRecurse } {
     ubr ^block1;
   ^block1:
     i32 %0 = phi [^entry, i32 0] [^if.then1, i32 %4];
-    i1 %1 = ucmp gt i32 %var0, i32 %0;
+    i1 %1 = icmp ugt i32 %var0, i32 %0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %2 = ptrcast i32* @A to i32*;
     store i32* %2 with i32 %0;
-    i1 %3 = ucmp lt i32 %0, i32 1000;
+    i1 %3 = icmp ult i32 %0, i32 1000;
     cbr i1 %3(prob = 0.5), ^if.then1, ^if.else;
   ^if.else:
     ret;

@@ -1,0 +1,120 @@
+func @icmp_eq(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp eq i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_ne(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp neq i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_slt(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp slt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_sle(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sle i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_sgt(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sgt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_sge(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp sge i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_ult(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp ult i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_ule(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp ule i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_ugt(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp ugt i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @icmp_uge(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = icmp uge i32 %x, i32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_oeq(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp oeq f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_olt(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp olt f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_ole(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp ole f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_ogt(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp ogt f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_oge(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp oge f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_une(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp une f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_ult(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp ult f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_ule(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp ule f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_ugt(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp ugt f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}
+func @fcmp_uge(f32 %x, f32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i1 %0 = fcmp uge f32 %x, f32 %y;
+    i32 %1 = zext i1 %0 to i32;
+    ret i32 %1;
+}

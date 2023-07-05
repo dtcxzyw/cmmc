@@ -1,6 +1,6 @@
 func @fun(i32 %var0) -> i32 { NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32* %1 = ptrcast i32* @B to i32*;

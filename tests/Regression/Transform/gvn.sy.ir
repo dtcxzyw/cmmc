@@ -4,7 +4,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %0 = call () -> i32 @getint();
     i32 %1 = call () -> i32 @getint();
     i32 %2 = call () -> i32 @getint();
-    i1 %3 = scmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32 %4 = mul i32 %0, i32 %1;

@@ -2,7 +2,7 @@ func @bar(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
   ^entry:
     i32 %0 = sub i32 99, i32 %var0;
     i32 %1 = strunc i32 %0 to i32;
-    i1 %2 = scmp lt i32 %1, i32 0;
+    i1 %2 = icmp slt i32 %1, i32 0;
     i32 %3 = select i1 %2 ? i32 0 : i32 %0;
     i32 %4 = add i32 %var0, i32 %3;
     ret i32 %4;
@@ -11,7 +11,7 @@ func @foo(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
   ^entry:
     i32 %0 = sub i32 99, i32 %var0;
     i32 %1 = strunc i32 %0 to i32;
-    i1 %2 = scmp lt i32 %1, i32 0;
+    i1 %2 = icmp slt i32 %1, i32 0;
     i32 %3 = select i1 %2 ? i32 0 : i32 %0;
     i32 %4 = add i32 %var0, i32 1;
     i32 %5 = add i32 %3, i32 %4;

@@ -163,7 +163,7 @@ func @foo38(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo39(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %x, i32 %y;
+    i1 %0 = icmp sgt i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -205,7 +205,7 @@ func @foo48() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
 }
 func @foo49(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
+    i1 %0 = icmp slt i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -253,37 +253,37 @@ func @foo58(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo59(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp ge i32 %x, i32 %y;
+    i1 %0 = icmp sge i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo60(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
+    i1 %0 = icmp slt i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo61(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 %y;
+    i1 %0 = icmp slt i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo62(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp ge i32 %x, i32 %y;
+    i1 %0 = icmp sge i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo63(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %x, i32 0;
+    i1 %0 = icmp neq i32 %x, i32 0;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo64(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 0;
+    i1 %0 = icmp eq i32 %x, i32 0;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -339,7 +339,7 @@ func @foo74(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo75(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %y, i32 0;
+    i1 %0 = icmp neq i32 %y, i32 0;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = add i32 %x, i32 1;
     i32 %3 = sub i32 %2, i32 %1;
@@ -347,13 +347,13 @@ func @foo75(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Sta
 }
 func @foo76(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %z, i32 0;
+    i1 %0 = icmp eq i32 %z, i32 0;
     i32 %1 = select i1 %0 ? i32 %x : i32 %y;
     ret i32 %1;
 }
 func @foo77(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp ge i32 %x, i32 %y;
+    i1 %0 = icmp sge i32 %x, i32 %y;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -384,20 +384,20 @@ func @foo83() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecur
 func @foo84(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 1;
-    i1 %1 = scmp eq i32 %x, i32 %0;
+    i1 %1 = icmp eq i32 %x, i32 %0;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
 func @foo85(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 1;
-    i1 %1 = scmp gt i32 %0, i32 2;
+    i1 %1 = icmp sgt i32 %0, i32 2;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
 func @foo86(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp lt i32 %x, i32 -1;
+    i1 %0 = icmp slt i32 %x, i32 -1;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -411,14 +411,14 @@ func @foo87(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 func @foo88(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %x, i32 %y;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
 func @foo89(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %x, i32 %y;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
@@ -440,33 +440,33 @@ func @foo92(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 }
 func @foo93(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %y, i32 %z;
+    i1 %0 = icmp sgt i32 %y, i32 %z;
     i32 %1 = zext i1 %0 to i32;
-    i1 %2 = scmp lt i32 %x, i32 %y;
+    i1 %2 = icmp slt i32 %x, i32 %y;
     i32 %3 = select i1 %2 ? i32 %1 : i32 0;
     ret i32 %3;
 }
 func @foo94(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %y, i32 %z;
+    i1 %0 = icmp sgt i32 %y, i32 %z;
     i32 %1 = zext i1 %0 to i32;
-    i1 %2 = scmp lt i32 %x, i32 %y;
+    i1 %2 = icmp slt i32 %x, i32 %y;
     i32 %3 = select i1 %2 ? i32 %1 : i32 1;
     ret i32 %3;
 }
 func @foo95(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %y, i32 %z;
+    i1 %0 = icmp sgt i32 %y, i32 %z;
     i32 %1 = zext i1 %0 to i32;
-    i1 %2 = scmp lt i32 %x, i32 %y;
+    i1 %2 = icmp slt i32 %x, i32 %y;
     i32 %3 = select i1 %2 ? i32 1 : i32 %1;
     ret i32 %3;
 }
 func @foo96(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp gt i32 %y, i32 %z;
+    i1 %0 = icmp sgt i32 %y, i32 %z;
     i32 %1 = zext i1 %0 to i32;
-    i1 %2 = scmp lt i32 %x, i32 %y;
+    i1 %2 = icmp slt i32 %x, i32 %y;
     i32 %3 = select i1 %2 ? i32 0 : i32 %1;
     ret i32 %3;
 }
@@ -485,7 +485,7 @@ func @foo98(f32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
 func @foo99(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %x, i32 7;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
@@ -500,7 +500,7 @@ func @foo101(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect St
     i32 %0 = shl i32 1, i32 %y;
     i32 %1 = add i32 %0, i32 -1;
     i32 %2 = and i32 %x, i32 %1;
-    i1 %3 = scmp eq i32 %2, i32 0;
+    i1 %3 = icmp eq i32 %2, i32 0;
     i32 %4 = zext i1 %3 to i32;
     ret i32 %4;
 }
@@ -509,21 +509,21 @@ func @foo102(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect St
     i32 %0 = xor i32 %x, i32 324;
     i32 %1 = xor i32 %y, i32 32;
     i32 %2 = or i32 %0, i32 %1;
-    i1 %3 = scmp eq i32 %2, i32 0;
+    i1 %3 = icmp eq i32 %2, i32 0;
     i32 %4 = zext i1 %3 to i32;
     ret i32 %4;
 }
 func @foo103(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 -48;
-    i1 %1 = ucmp lt i32 %0, i32 10;
+    i1 %1 = icmp ult i32 %0, i32 10;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
 func @foo104(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %x, i32 -48;
-    i1 %1 = ucmp lt i32 %0, i32 10;
+    i1 %1 = icmp ult i32 %0, i32 10;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
@@ -533,13 +533,13 @@ func @foo105() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecu
 }
 func @foo106(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 1;
+    i1 %0 = icmp eq i32 %x, i32 1;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
 func @foo107(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = ucmp lt i32 %x, i32 100;
+    i1 %0 = icmp ult i32 %x, i32 100;
     i32 %1 = zext i1 %0 to i32;
     ret i32 %1;
 }
@@ -653,15 +653,15 @@ func @average(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect S
 }
 func @select_two_no_fold(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 %y;
+    i1 %0 = icmp eq i32 %x, i32 %y;
     i32 %1 = select i1 %0 ? i32 %z : i32 %y;
     ret i32 %1;
 }
 func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 %b;
+    i1 %0 = icmp eq i32 %x, i32 %b;
     i32 %1 = select i1 %0 ? i32 %c : i32 %a;
-    i1 %2 = scmp eq i32 %x, i32 %a;
+    i1 %2 = icmp eq i32 %x, i32 %a;
     i32 %3 = select i1 %2 ? i32 %b : i32 %1;
     ret i32 %3;
 }
@@ -685,11 +685,11 @@ func @sdivmul2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
 }
 func @multi_select(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 93;
+    i1 %0 = icmp eq i32 %x, i32 93;
     i32 %1 = add i32 %y, i32 -1;
     i32 %2 = select i1 %0 ? i32 %1 : i32 %y;
     i32 %3 = add i32 %2, i32 1;
-    i1 %4 = scmp eq i32 %x, i32 91;
+    i1 %4 = icmp eq i32 %x, i32 91;
     i32 %5 = select i1 %4 ? i32 %3 : i32 %2;
     ret i32 %5;
 }
@@ -716,7 +716,7 @@ func @sdivneg(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
 func @srem2eq(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %x, i32 -2147483647;
-    i1 %1 = scmp eq i32 %0, i32 1;
+    i1 %1 = icmp eq i32 %0, i32 1;
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
@@ -741,7 +741,7 @@ func @fused_div_rem_constant(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideE
 }
 func @select_imm(i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %c, i32 0;
+    i1 %0 = icmp neq i32 %c, i32 0;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = neg i32 %1;
     ret i32 %2;

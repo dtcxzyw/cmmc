@@ -10,7 +10,7 @@ func @mul(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
 }
 func @ne(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = ucmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = ztrunc i32 %1 to i32;
     ret i32 %2;

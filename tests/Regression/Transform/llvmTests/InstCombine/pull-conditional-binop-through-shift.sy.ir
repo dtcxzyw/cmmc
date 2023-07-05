@@ -1,7 +1,7 @@
 func @add_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -9,7 +9,7 @@ func @add_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @add_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -17,7 +17,7 @@ func @add_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @add_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -25,7 +25,7 @@ func @add_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMem
 func @add_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -33,7 +33,7 @@ func @add_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @add_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -41,7 +41,7 @@ func @add_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @add_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = add i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -49,7 +49,7 @@ func @add_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemor
 func @and_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -57,7 +57,7 @@ func @and_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @and_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -65,7 +65,7 @@ func @and_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @and_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -73,7 +73,7 @@ func @and_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMem
 func @and_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -81,7 +81,7 @@ func @and_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @and_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -89,7 +89,7 @@ func @and_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @and_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = and i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -97,7 +97,7 @@ func @and_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemor
 func @or_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -105,7 +105,7 @@ func @or_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMem
 func @or_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -113,7 +113,7 @@ func @or_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMem
 func @or_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -121,7 +121,7 @@ func @or_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @or_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -129,7 +129,7 @@ func @or_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemor
 func @or_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -137,7 +137,7 @@ func @or_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemor
 func @or_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = or i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -145,7 +145,7 @@ func @or_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemory
 func @xor_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -153,7 +153,7 @@ func @xor_nosignbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @xor_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -161,7 +161,7 @@ func @xor_nosignbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMe
 func @xor_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 2147418112;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;
@@ -169,7 +169,7 @@ func @xor_nosignbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMem
 func @xor_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -177,7 +177,7 @@ func @xor_signbit_select_ashr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @xor_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = lshr i32 %2, i32 8;
     ret i32 %3;
@@ -185,7 +185,7 @@ func @xor_signbit_select_lshr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemo
 func @xor_signbit_select_shl(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = xor i32 %var0, i32 -65536;
-    i1 %1 = scmp neq i32 %var1, i32 0;
+    i1 %1 = icmp neq i32 %var1, i32 0;
     i32 %2 = select i1 %1 ? i32 %0 : i32 %var0;
     i32 %3 = shl i32 %2, i32 8;
     ret i32 %3;

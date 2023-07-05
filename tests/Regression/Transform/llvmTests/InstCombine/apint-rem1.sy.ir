@@ -10,7 +10,7 @@ func @test2(i64 %var0) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
 }
 func @test3(i64 %var0, i32 %var1) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var1, i32 0;
+    i1 %0 = icmp neq i32 %var1, i32 0;
     i64 %1 = select i1 %0 ? i64 70368744177664 : i64 4096;
     i64 %2 = ztrunc i64 %1 to i64;
     i64 %3 = urem i64 %var0, i64 %2;

@@ -1,12 +1,12 @@
 func @and_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = or i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %4, i32 0;
-    i1 %6 = scmp eq i32 %0, i32 1;
+    i1 %5 = icmp neq i32 %4, i32 0;
+    i1 %6 = icmp eq i32 %0, i32 1;
     i1 %7 = and i1 %5, i1 %6;
     i32 %8 = zext i1 %7 to i32;
     i32 %9 = ztrunc i32 %8 to i32;
@@ -15,14 +15,14 @@ func @and_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSid
 func @and_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 1;
+    i1 %1 = icmp eq i32 %0, i32 1;
     cbr i1 %1(prob = 0.5), ^b, ^b1;
   ^b:
-    i1 %2 = scmp neq i32 %0, i32 0;
+    i1 %2 = icmp neq i32 %0, i32 0;
     i32 %3 = zext i1 %2 to i32;
     i32 %4 = ztrunc i32 %3 to i32;
     i32 %5 = or i32 %var1, i32 %4;
-    i1 %6 = scmp neq i32 %5, i32 0;
+    i1 %6 = icmp neq i32 %5, i32 0;
     ubr ^b1;
   ^b1:
     i1 %7 = phi [^entry, i1 false] [^b, i1 %6];
@@ -33,11 +33,11 @@ func @and_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite
 func @and_implied_comm2(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = or i32 %var1, i32 %3;
-    i1 %5 = scmp eq i32 %0, i32 1;
+    i1 %5 = icmp eq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = and i32 %4, i32 %7;
@@ -46,11 +46,11 @@ func @and_implied_comm2(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite
 func @and_implied_comm3(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = or i32 %var1, i32 %3;
-    i1 %5 = scmp eq i32 %0, i32 1;
+    i1 %5 = icmp eq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = and i32 %4, i32 %7;
@@ -59,12 +59,12 @@ func @and_implied_comm3(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite
 func @and_not_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = or i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %4, i32 0;
-    i1 %6 = scmp eq i32 %0, i32 0;
+    i1 %5 = icmp neq i32 %4, i32 0;
+    i1 %6 = icmp eq i32 %0, i32 0;
     i1 %7 = and i1 %5, i1 %6;
     i32 %8 = zext i1 %7 to i32;
     i32 %9 = ztrunc i32 %8 to i32;
@@ -73,11 +73,11 @@ func @and_not_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite N
 func @or_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = and i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %0, i32 1;
+    i1 %5 = icmp neq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = or i32 %4, i32 %7;
@@ -86,11 +86,11 @@ func @or_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSide
 func @or_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = and i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %0, i32 1;
+    i1 %5 = icmp neq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = or i32 %4, i32 %7;
@@ -99,11 +99,11 @@ func @or_implied_comm1(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite 
 func @or_implied_comm2(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = and i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %0, i32 1;
+    i1 %5 = icmp neq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = or i32 %4, i32 %7;
@@ -112,11 +112,11 @@ func @or_implied_comm2(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite 
 func @or_implied_comm3(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = and i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %0, i32 1;
+    i1 %5 = icmp neq i32 %0, i32 1;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = or i32 %4, i32 %7;
@@ -125,11 +125,11 @@ func @or_implied_comm3(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite 
 func @or_not_implied(i8 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i1 %1 = scmp eq i32 %0, i32 0;
+    i1 %1 = icmp eq i32 %0, i32 0;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     i32 %4 = and i32 %var1, i32 %3;
-    i1 %5 = scmp neq i32 %0, i32 0;
+    i1 %5 = icmp neq i32 %0, i32 0;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = ztrunc i32 %6 to i32;
     i32 %8 = or i32 %4, i32 %7;

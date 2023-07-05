@@ -6,7 +6,7 @@ func @main() -> i32 { NoRecurse } {
   ^block1:
     i32 %2 = phi [^entry, i32 %1] [^if.else1, i32 %10];
     i32 %3 = strunc i32 %2 to i32;
-    i1 %4 = scmp lt i32 %3, i32 1;
+    i1 %4 = icmp slt i32 %3, i32 1;
     cbr i1 %4(prob = 0.5), ^indirect, ^if.else;
   ^indirect:
     i32 %5 = load i32* %0;
@@ -16,7 +16,7 @@ func @main() -> i32 { NoRecurse } {
   ^block2:
     i32 %6 = phi [^indirect, i32 %5] [^block5, i32 %18];
     i32 %7 = strunc i32 %6 to i32;
-    i1 %8 = scmp lt i32 %7, i32 1;
+    i1 %8 = icmp slt i32 %7, i32 1;
     cbr i1 %8(prob = 0.5), ^if.then, ^if.else1;
   ^if.else1:
     i32 %9 = add i32 %7, i32 1;
@@ -24,7 +24,7 @@ func @main() -> i32 { NoRecurse } {
     store i32* %0 with i32 %10;
     ubr ^block1;
   ^if.then:
-    i1 %11 = ucmp neq i32 %6, i32 0;
+    i1 %11 = icmp neq i32 %6, i32 0;
     cbr i1 %11(prob = 0.5), ^if.then1, ^indirect1;
   ^if.then1:
     i32 %12 = add i32 %7, i32 1;

@@ -15,7 +15,7 @@ func @allclear(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i32 %12 = and i32 %11, i32 1;
     i32 %13 = ztrunc i32 %12 to i32;
     i32 %14 = or i32 %10, i32 %13;
-    i1 %15 = ucmp eq i32 %14, i32 0;
+    i1 %15 = icmp eq i32 %14, i32 0;
     i32 %16 = zext i1 %15 to i32;
     i32 %17 = ztrunc i32 %16 to i32;
     ret i32 %17;
@@ -37,7 +37,7 @@ func @allset(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
     i32 %12 = and i32 %11, i32 1;
     i32 %13 = ztrunc i32 %12 to i32;
     i32 %14 = and i32 %10, i32 %13;
-    i1 %15 = ucmp neq i32 %14, i32 0;
+    i1 %15 = icmp neq i32 %14, i32 0;
     i32 %16 = zext i1 %15 to i32;
     i32 %17 = ztrunc i32 %16 to i32;
     ret i32 %17;
@@ -59,7 +59,7 @@ func @anyclear(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i32 %12 = and i32 %11, i32 1;
     i32 %13 = ztrunc i32 %12 to i32;
     i32 %14 = and i32 %10, i32 %13;
-    i1 %15 = ucmp eq i32 %14, i32 0;
+    i1 %15 = icmp eq i32 %14, i32 0;
     i32 %16 = zext i1 %15 to i32;
     i32 %17 = ztrunc i32 %16 to i32;
     ret i32 %17;
@@ -81,7 +81,7 @@ func @anyset(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
     i32 %12 = and i32 %11, i32 1;
     i32 %13 = ztrunc i32 %12 to i32;
     i32 %14 = or i32 %10, i32 %13;
-    i1 %15 = ucmp neq i32 %14, i32 0;
+    i1 %15 = icmp neq i32 %14, i32 0;
     i32 %16 = zext i1 %15 to i32;
     i32 %17 = ztrunc i32 %16 to i32;
     ret i32 %17;

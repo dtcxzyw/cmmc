@@ -2,7 +2,7 @@ func @test(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffec
   ^entry:
     i32 %0 = neg i32 %var0;
     i32 %1 = neg i32 %var1;
-    i1 %2 = ucmp eq i32 %0, i32 %1;
+    i1 %2 = icmp eq i32 %0, i32 %1;
     i32 %3 = zext i1 %2 to i32;
     i32 %4 = ztrunc i32 %3 to i32;
     ret i32 %4;

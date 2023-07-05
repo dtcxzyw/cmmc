@@ -1,7 +1,7 @@
 func @PR2539_A(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp lt i32 %0, i32 1;
+    i1 %1 = icmp slt i32 %0, i32 1;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     ret i32 %3;
@@ -9,7 +9,7 @@ func @PR2539_A(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
 func @PR2539_B(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp lt i32 %0, i32 1;
+    i1 %1 = icmp slt i32 %0, i32 1;
     i32 %2 = zext i1 %1 to i32;
     i32 %3 = ztrunc i32 %2 to i32;
     ret i32 %3;

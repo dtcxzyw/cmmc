@@ -1,6 +1,6 @@
 func @sdiv_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -23,7 +23,7 @@ func @sdiv_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMe
 }
 func @sdiv_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -46,7 +46,7 @@ func @sdiv_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3)
 }
 func @sdiv_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -69,7 +69,7 @@ func @sdiv_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMem
 }
 func @sdiv_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -92,7 +92,7 @@ func @sdiv_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) 
 }
 func @srem_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -115,7 +115,7 @@ func @srem_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMe
 }
 func @srem_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -138,7 +138,7 @@ func @srem_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3)
 }
 func @srem_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -161,7 +161,7 @@ func @srem_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMem
 }
 func @srem_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i8 %1 = strunc i8 %var1 to i8;
@@ -184,7 +184,7 @@ func @srem_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) 
 }
 func @udiv_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -203,7 +203,7 @@ func @udiv_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMe
 }
 func @udiv_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -222,7 +222,7 @@ func @udiv_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3)
 }
 func @udiv_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -241,7 +241,7 @@ func @udiv_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMem
 }
 func @udiv_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -260,7 +260,7 @@ func @udiv_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) 
 }
 func @urem_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -279,7 +279,7 @@ func @urem_common_dividend(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMe
 }
 func @urem_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -298,7 +298,7 @@ func @urem_common_dividend_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3)
 }
 func @urem_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;
@@ -317,7 +317,7 @@ func @urem_common_divisor(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMem
 }
 func @urem_common_divisor_defined_cond(i32 %var0, i8 %var1, i8 %var2, i8 %var3) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     cbr i1 %0(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %1 = zext i8 %var1 to i32;

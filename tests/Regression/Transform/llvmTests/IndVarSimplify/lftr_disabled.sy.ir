@@ -6,7 +6,7 @@ func @quadratic_setlt() -> i32 { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 8] [^if.then, i32 %5];
     i32 %2 = mul i32 %1, i32 %1;
     i32 %3 = strunc i32 %2 to i32;
-    i1 %4 = scmp lt i32 %3, i32 1000;
+    i1 %4 = icmp slt i32 %3, i32 1000;
     store i32* %0 with i32 %1;
     i32 %5 = add i32 %1, i32 1;
     cbr i1 %4(prob = 0.5), ^if.then, ^if.else;

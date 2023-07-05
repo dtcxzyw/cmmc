@@ -34,7 +34,7 @@ func @cmp_select_zext(i8 %var0, i8 %var1) -> i16 { NoMemoryRead NoMemoryWrite No
     i32 %1 = strunc i32 %0 to i32;
     i32 %2 = zext i8 %var1 to i32;
     i32 %3 = strunc i32 %2 to i32;
-    i1 %4 = scmp lt i32 %1, i32 %3;
+    i1 %4 = icmp slt i32 %1, i32 %3;
     i32 %5 = select i1 %4 ? i32 %2 : i32 %0;
     i16 %6 = ztrunc i32 %5 to i16;
     ret i16 %6;
@@ -45,7 +45,7 @@ func @cmp_select_zext_sext(i8 %var0, i8 %var1) -> i16 { NoMemoryRead NoMemoryWri
     i32 %1 = strunc i32 %0 to i32;
     i8 %2 = strunc i8 %var1 to i8;
     i32 %3 = sext i8 %2 to i32;
-    i1 %4 = scmp lt i32 %1, i32 %3;
+    i1 %4 = icmp slt i32 %1, i32 %3;
     i32 %5 = ztrunc i32 %3 to i32;
     i32 %6 = select i1 %4 ? i32 %5 : i32 %0;
     i16 %7 = ztrunc i32 %6 to i16;
@@ -57,7 +57,7 @@ func @cmp_select_zext_sext_diffOrigTy(i8 %var0, i16 %var1) -> i16 { NoMemoryRead
     i32 %1 = strunc i32 %0 to i32;
     i16 %2 = strunc i16 %var1 to i16;
     i32 %3 = sext i16 %2 to i32;
-    i1 %4 = scmp lt i32 %1, i32 %3;
+    i1 %4 = icmp slt i32 %1, i32 %3;
     i32 %5 = ztrunc i32 %3 to i32;
     i32 %6 = select i1 %4 ? i32 %5 : i32 %0;
     i16 %7 = ztrunc i32 %6 to i16;
@@ -82,7 +82,7 @@ func @select_sext(i8 %var0, i32 %var1) -> i16 { NoMemoryRead NoMemoryWrite NoSid
     i8 %0 = strunc i8 %var0 to i8;
     i32 %1 = sext i8 %0 to i32;
     i32 %2 = neg i32 %1;
-    i1 %3 = scmp neq i32 %var1, i32 0;
+    i1 %3 = icmp neq i32 %var1, i32 0;
     i32 %4 = select i1 %3 ? i32 %2 : i32 %1;
     i16 %5 = ztrunc i32 %4 to i16;
     ret i16 %5;
@@ -93,7 +93,7 @@ func @select_zext(i8 %var0, i32 %var1) -> i16 { NoMemoryRead NoMemoryWrite NoSid
     i32 %1 = strunc i32 %0 to i32;
     i32 %2 = neg i32 %1;
     i32 %3 = ztrunc i32 %2 to i32;
-    i1 %4 = scmp neq i32 %var1, i32 0;
+    i1 %4 = icmp neq i32 %var1, i32 0;
     i32 %5 = select i1 %4 ? i32 %3 : i32 %0;
     i16 %6 = ztrunc i32 %5 to i16;
     ret i16 %6;

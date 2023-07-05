@@ -4,7 +4,7 @@ func @infinite_linear() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statele
   ^if.then:
     i32 %0 = phi [^entry, i32 3] [^if.then, i32 %1];
     i32 %1 = add i32 %0, i32 2;
-    i1 %2 = ucmp neq i32 %0, i32 100;
+    i1 %2 = icmp neq i32 %0, i32 100;
     cbr i1 %2(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret i32 %0;
@@ -15,7 +15,7 @@ func @infinite_quadratic() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stat
   ^if.then:
     i32 %0 = phi [^entry, i32 2] [^if.then, i32 %3];
     i32 %1 = mul i32 %0, i32 %0;
-    i1 %2 = ucmp neq i32 %1, i32 63;
+    i1 %2 = icmp neq i32 %1, i32 63;
     i32 %3 = add i32 %0, i32 1;
     cbr i1 %2(prob = 0.5), ^if.then, ^if.else;
   ^if.else:

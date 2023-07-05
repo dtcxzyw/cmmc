@@ -5,7 +5,7 @@ func @cycled_phis(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSi
     i32 %0 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %1 = phi [^entry, i32 %var0] [^if.then, i32 %4];
     i32 %2 = strunc i32 %0 to i32;
-    i1 %3 = scmp lt i32 %2, i32 1000;
+    i1 %3 = icmp slt i32 %2, i32 1000;
     i32 %4 = add i32 %var1, i32 %1;
     i32 %5 = add i32 %0, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -19,7 +19,7 @@ func @invariant_backedge_1(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryW
     i32 %0 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %1 = phi [^entry, i32 %var0] [^if.then, i32 %4];
     i32 %2 = strunc i32 %0 to i32;
-    i1 %3 = scmp lt i32 %2, i32 1000;
+    i1 %3 = icmp slt i32 %2, i32 1000;
     i32 %4 = add i32 %var1, i32 %1;
     i32 %5 = add i32 %0, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -33,7 +33,7 @@ func @invariant_backedge_2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryW
     i32 %0 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %1 = phi [^entry, i32 %var0] [^if.then, i32 %4];
     i32 %2 = strunc i32 %0 to i32;
-    i1 %3 = scmp lt i32 %2, i32 1000;
+    i1 %3 = icmp slt i32 %2, i32 1000;
     i32 %4 = add i32 %var1, i32 %1;
     i32 %5 = add i32 %0, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -47,7 +47,7 @@ func @invariant_backedge_3(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryW
     i32 %0 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %1 = phi [^entry, i32 %var0] [^if.then, i32 %4];
     i32 %2 = strunc i32 %0 to i32;
-    i1 %3 = scmp lt i32 %2, i32 1000;
+    i1 %3 = icmp slt i32 %2, i32 1000;
     i32 %4 = add i32 %var1, i32 %1;
     i32 %5 = add i32 %0, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -61,7 +61,7 @@ func @invariant_backedge_limited_by_size(i32 %var0, i32 %var1) -> i32 { NoMemory
     i32 %0 = phi [^entry, i32 1] [^if.then, i32 %5];
     i32 %1 = phi [^entry, i32 %var0] [^if.then, i32 %4];
     i32 %2 = strunc i32 %0 to i32;
-    i1 %3 = scmp lt i32 %2, i32 1000;
+    i1 %3 = icmp slt i32 %2, i32 1000;
     i32 %4 = add i32 %var1, i32 %1;
     i32 %5 = add i32 %0, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
@@ -78,7 +78,7 @@ func @invariant_backedge_negative(i32 %var0, i32 %var1) -> i32 { NoMemoryRead No
     i32 %3 = phi [^entry, i32 %0] [^if.then, i32 %4];
     i32 %4 = add i32 %1, i32 %3;
     i32 %5 = strunc i32 %2 to i32;
-    i1 %6 = scmp lt i32 %5, i32 1000;
+    i1 %6 = icmp slt i32 %5, i32 1000;
     i32 %7 = add i32 %2, i32 1;
     cbr i1 %6(prob = 0.5), ^if.then, ^if.else;
   ^if.else:

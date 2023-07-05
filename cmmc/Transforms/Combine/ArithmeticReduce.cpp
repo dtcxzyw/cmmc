@@ -406,18 +406,22 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // not cmp
             if(xor_(capture(xcmp(cmp, any(v1), any(v2)), v3), cuint_(1))(matchCtx)) {
                 const auto cmpInst = v3->as<CompareInst>();
-                if(cmpInst->getInstID() != InstructionID::FCmp)
-                    return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
+                return builder.makeOp<CompareInst>(cmpInst->getInstID(), getInvertedOp(cmp), v1, v2);
             }
 
             // a >/</!= a -> false
             // a >=/<=/== a -> true
-            if(xcmp(cmp, any(v1), any(v2))(matchCtx) && v1 == v2) {
-                return (cmp == CompareOp::ICmpEqual || cmp == CompareOp::ICmpSignedLessEqual ||
-                        cmp == CompareOp::ICmpSignedGreaterEqual || cmp == CompareOp::ICmpUnsignedLessEqual ||
-                        cmp == CompareOp::ICmpUnsignedGreaterEqual) ?
-                    builder.getTrue() :
-                    builder.getFalse();
+            if(icmp(cmp, any(v1), any(v2))(matchCtx) && v1 == v2) {
+                switch(cmp) {
+                    case CompareOp::ICmpEqual:
+                    case CompareOp::ICmpSignedLessEqual:
+                    case CompareOp::ICmpSignedGreaterEqual:
+                    case CompareOp::ICmpUnsignedLessEqual:
+                    case CompareOp::ICmpUnsignedGreaterEqual:
+                        return builder.getTrue();
+                    default:
+                        return builder.getFalse();
+                }
             }
 
             // FIXME: conflict with loop analysis

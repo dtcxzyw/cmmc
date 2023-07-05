@@ -4,7 +4,7 @@ func @test1(i64 %var0) -> i64 { NoMemoryRead NoMemoryWrite NoSideEffect Stateles
 }
 func @test2(i64 %var0, i64 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = ucmp gt i64 %var0, i64 %var1;
+    i1 %0 = icmp ugt i64 %var0, i64 %var1;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = ztrunc i32 %1 to i32;
     ret i32 %2;

@@ -1,6 +1,6 @@
 func @testfunc(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var0, i32 0;
+    i1 %0 = icmp neq i32 %var0, i32 0;
     i32 %1 = select i1 %0 ? i32 %var1 : i32 0;
     ret i32 %1;
 }

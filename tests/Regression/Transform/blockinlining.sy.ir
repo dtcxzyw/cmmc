@@ -1,14 +1,14 @@
 internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @fac(i32 %a) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^0:
-    i1 %1 = scmp eq i32 %a, i32 1;
+    i1 %1 = icmp eq i32 %a, i32 1;
     cbr i1 %1(prob = 0.5), ^b, ^if.else;
   ^if.else:
     i32 %2 = phi [^0, i32 %a] [^if.else, i32 %5];
     i32 %3 = phi [^0, i32 1] [^if.else, i32 %4];
     i32 %4 = mul i32 %2, i32 %3;
     i32 %5 = add i32 %2, i32 -1;
-    i1 %6 = scmp eq i32 %5, i32 1;
+    i1 %6 = icmp eq i32 %5, i32 1;
     cbr i1 %6(prob = 0.5), ^b, ^if.else;
   ^b:
     i32 %7 = phi [^0, i32 1] [^if.else, i32 %4];
@@ -17,14 +17,14 @@ func @fac(i32 %a) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoR
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp eq i32 %0, i32 1;
+    i1 %1 = icmp eq i32 %0, i32 1;
     cbr i1 %1(prob = 0.5), ^b, ^if.else;
   ^if.else:
     i32 %2 = phi [^entry, i32 %0] [^if.else, i32 %5];
     i32 %3 = phi [^entry, i32 1] [^if.else, i32 %4];
     i32 %4 = mul i32 %2, i32 %3;
     i32 %5 = add i32 %2, i32 -1;
-    i1 %6 = scmp eq i32 %5, i32 1;
+    i1 %6 = icmp eq i32 %5, i32 1;
     cbr i1 %6(prob = 0.5), ^b, ^if.else;
   ^b:
     i32 %7 = phi [^entry, i32 1] [^if.else, i32 %4];

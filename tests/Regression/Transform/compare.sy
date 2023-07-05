@@ -52,9 +52,9 @@ int32_t fcmp_ult(float x, float y) {
 int32_t fcmp_ule(float x, float y) {
     return !(x > y);
 }
-int32_t fcmp_ogt(float x, float y) {
+int32_t fcmp_ugt(float x, float y) {
     return !(x <= y);
 }
-int32_t fcmp_oge(float x, float y) {
+int32_t fcmp_uge(float x, float y) {
     return !(x < y);
 }

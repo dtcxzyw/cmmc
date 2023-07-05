@@ -1,7 +1,7 @@
 func @test_asr(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp lt i32 %0, i32 0;
+    i1 %1 = icmp slt i32 %0, i32 0;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32 %2 = sub i32 -1, i32 %var0;

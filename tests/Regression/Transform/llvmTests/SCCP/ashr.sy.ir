@@ -33,7 +33,7 @@ func @ashr_zext(i8 %var0, i8 %var1) -> i8 { NoMemoryRead NoMemoryWrite NoSideEff
 func @dominating_condition(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = strunc i32 %var0 to i32;
-    i1 %1 = scmp gt i32 %0, i32 -1;
+    i1 %1 = icmp sgt i32 %0, i32 -1;
     i32 %2 = lshr i32 %var0, i32 16;
     i32 %3 = select i1 %1 ? i32 %2 : i32 42;
     ret i32 %3;
@@ -41,7 +41,7 @@ func @dominating_condition(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSide
 func @dominating_condition_alt(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = lshr i32 %var0, i32 %var1;
-    i1 %1 = ucmp gt i32 %var0, i32 2000000000;
+    i1 %1 = icmp ugt i32 %var0, i32 2000000000;
     i32 %2 = select i1 %1 ? i32 -42 : i32 %0;
     ret i32 %2;
 }

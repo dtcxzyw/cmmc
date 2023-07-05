@@ -1,6 +1,6 @@
 func @test(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var1, i32 0;
+    i1 %0 = icmp neq i32 %var1, i32 0;
     ubr ^block2;
   ^block2:
     i32 %1 = phi [^entry, i32 0] [^block2, i32 0] [^if.then, i32 %8];
@@ -9,7 +9,7 @@ func @test(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffec
   ^if.else:
     i32 %3 = or i32 %var0, i32 %2;
     i32 %4 = xor i32 %3, i32 6;
-    i1 %5 = ucmp lt i32 %1, i32 3;
+    i1 %5 = icmp ult i32 %1, i32 3;
     cbr i1 %5(prob = 0.5), ^if.then, ^if.else1;
   ^if.then:
     i32 %6 = strunc i32 %1 to i32;

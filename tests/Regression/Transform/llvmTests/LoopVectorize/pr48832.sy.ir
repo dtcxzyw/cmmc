@@ -11,7 +11,7 @@ func @foo() -> void { NoMemoryRead NoRecurse } {
     i16 %6 = ztrunc i16 %5 to i16;
     i16 %7 = strunc i16 %6 to i16;
     i32 %8 = sext i16 %7 to i32;
-    i1 %9 = scmp lt i32 %8, i32 15;
+    i1 %9 = icmp slt i32 %8, i32 15;
     i64 %10 = zext i16 %1 to i64;
     i32* %11 = getelementptr &([64 * i32]* %0)[i64 0][i64 %10];
     store i32* %11 with i32 0;

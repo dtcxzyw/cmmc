@@ -1,9 +1,9 @@
 func @f(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %var1, i32 0;
+    i1 %0 = icmp eq i32 %var1, i32 0;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = ztrunc i32 %1 to i32;
-    i1 %3 = scmp neq i32 %var0, i32 0;
+    i1 %3 = icmp neq i32 %var0, i32 0;
     cbr i1 %3(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %4 = and i32 %var2, i32 %2;
@@ -13,7 +13,7 @@ func @f(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemo
     ubr ^b;
   ^b:
     i32 %6 = phi [^lhsBlock, i32 %4] [^rhsBlock, i32 %5];
-    i1 %7 = scmp eq i32 %6, i32 0;
+    i1 %7 = icmp eq i32 %6, i32 0;
     i32 %8 = zext i1 %7 to i32;
     i32 %9 = ztrunc i32 %8 to i32;
     i32 %10 = and i32 %var1, i32 %9;
@@ -21,10 +21,10 @@ func @f(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemo
 }
 func @f_dontfold(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %var1, i32 0;
+    i1 %0 = icmp eq i32 %var1, i32 0;
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = ztrunc i32 %1 to i32;
-    i1 %3 = scmp neq i32 %var0, i32 0;
+    i1 %3 = icmp neq i32 %var0, i32 0;
     cbr i1 %3(prob = 0.5), ^lhsBlock, ^rhsBlock;
   ^lhsBlock:
     i32 %4 = and i32 %var2, i32 %2;
@@ -34,7 +34,7 @@ func @f_dontfold(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRe
     ubr ^b;
   ^b:
     i32 %6 = phi [^lhsBlock, i32 %4] [^rhsBlock, i32 %5];
-    i1 %7 = scmp eq i32 %6, i32 0;
+    i1 %7 = icmp eq i32 %6, i32 0;
     i32 %8 = zext i1 %7 to i32;
     i32 %9 = ztrunc i32 %8 to i32;
     i32 %10 = and i32 %var1, i32 %9;

@@ -1,17 +1,17 @@
 func @f2(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp neq i32 %var1, i32 0;
+    i1 %0 = icmp neq i32 %var1, i32 0;
     i32 %1 = select i1 %0 ? i32 %var0 : i32 10;
     i32 %2 = strunc i32 %1 to i32;
-    i1 %3 = scmp gt i32 %2, i32 300;
+    i1 %3 = icmp sgt i32 %2, i32 300;
     i32 %4 = zext i1 %3 to i32;
-    i1 %5 = scmp gt i32 %2, i32 100;
+    i1 %5 = icmp sgt i32 %2, i32 100;
     i32 %6 = zext i1 %5 to i32;
     i32 %7 = add i32 %4, i32 %6;
-    i1 %8 = ucmp eq i32 %1, i32 50;
+    i1 %8 = icmp eq i32 %1, i32 50;
     i32 %9 = zext i1 %8 to i32;
     i32 %10 = add i32 %7, i32 %9;
-    i1 %11 = scmp lt i32 %2, i32 9;
+    i1 %11 = icmp slt i32 %2, i32 9;
     i32 %12 = zext i1 %11 to i32;
     i32 %13 = add i32 %10, i32 %12;
     i32 %14 = ztrunc i32 %13 to i32;

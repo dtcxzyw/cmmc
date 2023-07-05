@@ -3,9 +3,9 @@ internal func @putint() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp neq i32 %0, i32 0;
+    i1 %1 = icmp neq i32 %0, i32 0;
     i32 %2 = call () -> i32 @getint();
-    i1 %3 = scmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     i1 %4 = and i1 %1, i1 %3;
     cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
@@ -13,7 +13,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     ubr ^b;
   ^b:
     i32 %5 = or i32 %0, i32 %2;
-    i1 %6 = scmp neq i32 %5, i32 0;
+    i1 %6 = icmp neq i32 %5, i32 0;
     cbr i1 %6(prob = 0.5), ^if.then1, ^b1;
   ^if.then1:
     call (i32) -> void @putint(i32 2);
@@ -25,26 +25,26 @@ func @select_bitset(i32 %x, i32 %y, i32 %z) -> i32 { NoMemoryRead NoMemoryWrite 
   ^entry:
     i32 %0 = xor i32 %y, i32 1;
     i32 %1 = or i32 %x, i32 %0;
-    i1 %2 = scmp eq i32 %1, i32 0;
+    i1 %2 = icmp eq i32 %1, i32 0;
     i32 %3 = select i1 %2 ? i32 %z : i32 0;
     ret i32 %3;
 }
 func @select_three(i32 %x, i32 %a, i32 %b, i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 %b;
+    i1 %0 = icmp eq i32 %x, i32 %b;
     i32 %1 = select i1 %0 ? i32 %c : i32 %a;
-    i1 %2 = scmp eq i32 %x, i32 %a;
+    i1 %2 = icmp eq i32 %x, i32 %a;
     i32 %3 = select i1 %2 ? i32 %b : i32 %1;
     ret i32 %3;
 }
 func @select_four(i32 %x, i32 %a, i32 %b, i32 %c, i32 %d) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = scmp eq i32 %x, i32 %a;
+    i1 %0 = icmp eq i32 %x, i32 %a;
     cbr i1 %0(prob = 0.5), ^b1, ^if.else;
   ^if.else:
-    i1 %1 = scmp eq i32 %x, i32 %c;
+    i1 %1 = icmp eq i32 %x, i32 %c;
     i32 %2 = select i1 %1 ? i32 %d : i32 %a;
-    i1 %3 = scmp eq i32 %x, i32 %b;
+    i1 %3 = icmp eq i32 %x, i32 %b;
     i32 %4 = select i1 %3 ? i32 %c : i32 %2;
     ubr ^b1;
   ^b1:

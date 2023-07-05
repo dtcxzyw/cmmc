@@ -6,7 +6,7 @@ func @add_cr_none() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 11] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -14,27 +14,13 @@ func @add_cr_none() -> void { NoMemoryRead NoRecurse } {
 func @add_cr_nsw() -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
-    ubr ^if.then;
-  ^if.then:
-    i32 %1 = phi [^entry, i32 -9] [^if.then, i32 %2];
-    store i32* %0 with i32 %1;
-    i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 10;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-  ^if.else:
+    store i32* %0 with i32 9;
     ret;
 }
 func @add_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
-    ubr ^if.then;
-  ^if.then:
-    i32 %1 = phi [^entry, i32 1] [^if.then, i32 %2];
-    store i32* %0 with i32 %1;
-    i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 1000;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-  ^if.else:
+    store i32* %0 with i32 999;
     ret;
 }
 func @add_cr_nuw() -> void { NoMemoryRead NoRecurse } {
@@ -45,7 +31,7 @@ func @add_cr_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 1] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 -1;
+    i1 %3 = icmp neq i32 %2, i32 -1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -54,12 +40,12 @@ func @add_unknown_none(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
     store i32* %0 with i32 0;
-    i1 %1 = ucmp neq i32 %var0, i32 1;
+    i1 %1 = icmp neq i32 %var0, i32 1;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32 %2 = phi [^entry, i32 1] [^if.then, i32 %3];
     i32 %3 = add i32 %2, i32 1;
-    i1 %4 = ucmp neq i32 %var0, i32 %3;
+    i1 %4 = icmp neq i32 %var0, i32 %3;
     store i32* %0 with i32 %2;
     cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
@@ -73,7 +59,7 @@ func @ashr_cr_nsw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 2147483136] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = lshr i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 1;
+    i1 %3 = icmp neq i32 %2, i32 1;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -86,7 +72,7 @@ func @ashr_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 512] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = lshr i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -99,7 +85,7 @@ func @lshr_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 512] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = lshr i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -112,7 +98,7 @@ func @lshr_cr_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 2147483647] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = lshr i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 0;
+    i1 %3 = icmp neq i32 %2, i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -125,7 +111,7 @@ func @mul_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 2] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = mul i32 %1, i32 2;
-    i1 %3 = ucmp neq i32 %2, i32 1024;
+    i1 %3 = icmp neq i32 %2, i32 1024;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -138,7 +124,7 @@ func @shl_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 2] [^if.then, i32 %2];
     store i32* %0 with i32 %1;
     i32 %2 = shl i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 1024;
+    i1 %3 = icmp neq i32 %2, i32 1024;
     cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
     ret;
@@ -146,26 +132,19 @@ func @shl_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
 func @sub_cr_nsw_nuw() -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
-    ubr ^if.then;
-  ^if.then:
-    i32 %1 = phi [^entry, i32 1] [^if.then, i32 %2];
-    store i32* %0 with i32 %1;
-    i32 %2 = add i32 %1, i32 1;
-    i1 %3 = ucmp neq i32 %2, i32 1000;
-    cbr i1 %3(prob = 0.5), ^if.then, ^if.else;
-  ^if.else:
+    store i32* %0 with i32 999;
     ret;
 }
 func @sub_unknown_none(i32 %var0) -> void { NoMemoryRead NoRecurse } {
   ^entry:
     i32* %0 = ptrcast i32* @A to i32*;
     store i32* %0 with i32 0;
-    i1 %1 = ucmp neq i32 %var0, i32 1;
+    i1 %1 = icmp neq i32 %var0, i32 1;
     cbr i1 %1(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     i32 %2 = phi [^entry, i32 1] [^if.then, i32 %3];
     i32 %3 = add i32 %2, i32 1;
-    i1 %4 = ucmp neq i32 %var0, i32 %3;
+    i1 %4 = icmp neq i32 %var0, i32 %3;
     store i32* %0 with i32 %2;
     cbr i1 %4(prob = 0.5), ^if.then, ^if.else;
   ^if.else:
