@@ -6,3 +6,9 @@ func @foo2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret i32 65535;
 }
+func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = abs i32 %x;
+    i32 %1 = and i32 %0, i32 1879048192;
+    ret i32 %1;
+}

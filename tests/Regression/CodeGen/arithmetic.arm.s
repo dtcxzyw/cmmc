@@ -480,3 +480,19 @@ mul_neg2:
 	lsl r0, r0, #1
 	rsb r0, r0, #0
 	bx lr
+.globl andn
+andn:
+	vmov s0, r1
+	movw r1, #0
+	movt r1, #16672
+	vmov s1, r1
+	mov r1, #0
+	vcvt.f32.s32 s0, s0
+	vcmp.f32 s0, s1
+	vmrs APSR_nzcv, FPSCR
+	movweq r1, #1
+	cmp r0, #0
+	mov r0, #0
+	movwne r0, #1
+	bic r0, r0, r1
+	bx lr

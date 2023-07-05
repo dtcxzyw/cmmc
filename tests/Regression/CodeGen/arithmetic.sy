@@ -313,3 +313,6 @@ int mul_with_constant_10000(int x) {
 int mul_neg2(int x) {
     return x * -2;
 }
+int andn(int x, int y) {
+    return x && !(y==10.0);
+}

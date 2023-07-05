@@ -499,3 +499,12 @@ mul_neg2:
 	slliw a0, a0, 1
 	subw a0, zero, a0
 	ret
+.globl andn
+andn:
+	fcvt.s.w f10, a1
+	sltu a0, zero, a0
+	lui a1, 266752
+	fmv.w.x f11, a1
+	feq.s a1, f10, f11
+	andn a0, a0, a1
+	ret

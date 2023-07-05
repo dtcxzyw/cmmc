@@ -453,6 +453,21 @@ InstSelection:
         Rz: $OutMulRhs
 
   - Pattern:
+      InstAnd:
+        Dst: $Dst
+        Lhs: $Lhs
+        Rhs:
+          InstXor:
+            Lhs: $XorLhs
+            Rhs: $Imm
+        $Predicate: isOperandIReg($Lhs) && isOperandOp2($XorLhs) && isNotImm(($Dst).type(), $Imm)
+    Replace:
+      BIC:
+        Rd: $Dst
+        Rn: $Lhs
+        Op2: $XorLhs
+
+  - Pattern:
       $Template:
         Dst: $Dst
         Lhs: $Lhs
@@ -1499,7 +1514,7 @@ ScheduleModel:
   cortex_a72:
     CustomPeepholeOpt: true
     Classes:
-      IntegerArithmetic:  # latency: 1, throughput: 2, pipeline: I0/I1
+      IntegerArithmetic: # latency: 1, throughput: 2, pipeline: I0/I1
         # 3.3 Arithmetic and Logical Instructions
         - ADD
         - SUB
@@ -1540,7 +1555,7 @@ ScheduleModel:
         - UXTH
         - SEL
         - CLZ
-      IntegerArithmeticConditional:  # latency: 2, throughput: 1, pipeline: I0/I1
+      IntegerArithmeticConditional: # latency: 2, throughput: 1, pipeline: I0/I1
         # 3.3 Arithmetic and Logical Instructions
         - ADD_Cond
         - SUB_Cond
@@ -1554,7 +1569,7 @@ ScheduleModel:
         - MOV_Cond
         - MVN_Cond
         - MOVW_Cond
-      IntegerArithmeticFused:  # latency: 2, throughput: 1, pipeline: M
+      IntegerArithmeticFused: # latency: 2, throughput: 1, pipeline: M
         # 3.3 Arithmetic and Logical Instructions
         - ADD_Fused
         - SUB_Fused
@@ -1564,34 +1579,34 @@ ScheduleModel:
         - ORN_Fused
         - BIC_Fused
         - RSB_Fused
-      Saturate:  # latency: 2, throughput: 1, pipeline: M
+      Saturate: # latency: 2, throughput: 1, pipeline: M
         # 3.6 Saturating and Parallel Arithmetic Instructions
         - USAT
         - SSAT
-      Multiply:  # latency: 3, throughput: 1, pipeline: M
+      Multiply: # latency: 3, throughput: 1, pipeline: M
         # 3.5 Divide and Multiply Instructions
         - MUL
         - SMMUL
-      MultiplyAccumulate:  # latency: 3(1), throughput: 1, pipeline: M
+      MultiplyAccumulate: # latency: 3(1), throughput: 1, pipeline: M
         - MLA
         - MLS
         - SMMLA
-      Divide:  # latency: 4-12, throughput: 1/latency, pipeline: M
+      Divide: # latency: 4-12, throughput: 1/latency, pipeline: M
         - SDIV
         - UDIV
-      Branch:  # latency: 1, throughput: 1, pipeline: B
+      Branch: # latency: 1, throughput: 1, pipeline: B
         # 3.2 Branch Instructions
         - B
         - B_Cond
         - BX
-      BranchLink:  # latency: 1, throughput: 1, pipeline: B + I0/I1
+      BranchLink: # latency: 1, throughput: 1, pipeline: B + I0/I1
         - BL
-      FPLoad:  # latency: 4+N, throughput: 1/N, pipeline: L
+      FPLoad: # latency: 4+N, throughput: 1/N, pipeline: L
         # 3.12 FP Load Instructions
-        - VLDR  # N=1
-      FPLoadPop:  # same as above
+        - VLDR # N=1
+      FPLoadPop: # same as above
         - VPOP
-      Load:  # latency: 4, throughput: 1, pipeline: L
+      Load: # latency: 4, throughput: 1, pipeline: L
         # 3.8 Load Instructions
         #   Load, immed offset
         - LDR
@@ -1599,20 +1614,20 @@ ScheduleModel:
         - LDRH
         - LDRSB
         - LDRSH
-      LoadScaledLSL2:  # latency: 4, throughput: 1, pipeline: L
+      LoadScaledLSL2: # latency: 4, throughput: 1, pipeline: L
         #   Load, scaled register offset, plus immed/LSL2 (minus +1)
         - LDR_Fused
         - LDRB_Fused
-      LoadScaledOther:  # latency: 5, throughput: 1, pipeline: L
+      LoadScaledOther: # latency: 5, throughput: 1, pipeline: L
         #   Load, scaled register offset, other
         - LDRH_Fused
         - LDRSB_Fused
         - LDRSH_Fused
-      Pop:  # latency: 3+N(1), throughput: 1/N, pipeline: L + I0/I1
+      Pop: # latency: 3+N(1), throughput: 1/N, pipeline: L + I0/I1
         #   Load multiple, writeback
         - POP
         - POP_RET
-      Store:  # latency: 1, throughput: 1, pipeline: S
+      Store: # latency: 1, throughput: 1, pipeline: S
         # 3.9 Store Instructions
         #   Store, immed offset, or plus, ...
         - STR
@@ -1622,15 +1637,15 @@ ScheduleModel:
         - STRB_Fused
         - STRH_Fused
         # 3.13 FP Store Instructions
-        - VSTR  # N=1
+        - VSTR # N=1
         # general
         - InstStoreRegToStack
-      Push:  # latency: N(1), throughput: 1/N, pipeline: S + I0/I1
+      Push: # latency: N(1), throughput: 1/N, pipeline: S + I0/I1
         #   Store multiple, writeback
         - PUSH
         # 3.13 FP Store Instructions
         - VPUSH
-      FPArithmetic:  # latency: 4, throughput: 2, pipeline: F0/F1
+      FPArithmetic: # latency: 4, throughput: 2, pipeline: F0/F1
         # 3.10 FP Data Processing Instructions
         - VADD_F32
         - VSUB_F32
@@ -1639,23 +1654,23 @@ ScheduleModel:
         - VMOV
         - VMOV_Cond
         - VMOV_Constant
-      FPUnaryArithmetic:  # latency: 3, throughput: 2, pipeline: F0/F1
+      FPUnaryArithmetic: # latency: 3, throughput: 2, pipeline: F0/F1
         # 3.10 FP Data Processing Instructions
         - VABS_F32
         - VNEG_F32
-      FPDivide:  # S-form, latency: 6-11, throughput: 2/9-1/2, pipeline: F0
+      FPDivide: # S-form, latency: 6-11, throughput: 2/9-1/2, pipeline: F0
         - VDIV_F32
-      FPCompare:  # latency: 3, throughput: 1, pipeline: F1
+      FPCompare: # latency: 3, throughput: 1, pipeline: F1
         - VCMP_F32
         - VCMP_F32_WithZero
-      FPConvert:  # latency: 3, throughput: 1, pipeline: F0
+      FPConvert: # latency: 3, throughput: 1, pipeline: F0
         - VCVT_F32_S32
         - VCVT_S32_F32
-      FPMoveWithCore:  # latency: 5, throughput: 1, pipeline: L
+      FPMoveWithCore: # latency: 5, throughput: 1, pipeline: L
         # 3.11 FP Miscellaneous Instructions
         - VMOV_GPR2FPR
         - VMOV_FPR2GPR
-      Misc:  # unknown
+      Misc: # unknown
         - TRANSFER_FPSCR_FLAG
         - UNIMP
       GeneralMove:

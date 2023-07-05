@@ -585,7 +585,7 @@ InstSelection:
           InstXor:
             Lhs: $Rhs
             Rhs: $Imm
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotImm(($Dst).type(), $Imm)
     Replace:
       ANDN:
         Rd: $Dst
@@ -600,7 +600,7 @@ InstSelection:
           InstXor:
             Lhs: $Rhs
             Rhs: $Imm
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotImm(($Dst).type(), $Imm)
     Replace:
       ORN:
         Rd: $Dst
@@ -615,7 +615,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
         Rhs: $Imm
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotImm(($Dst).type(), $Imm)
     Replace:
       XNOR:
         Rd: $Dst
@@ -629,21 +629,7 @@ InstSelection:
           InstXor:
             Lhs: $Rhs
             Rhs: $Imm
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
-    Replace:
-      XNOR:
-        Rd: $Dst
-        Rs1: $Lhs
-        Rs2: $Rhs
-  - Pattern:
-      InstXor:
-        Dst: $Dst
-        Lhs:
-          InstXor:
-            Lhs: $Lhs
-            Rhs: $Imm
-        Rhs: $Rhs
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotImm(($Dst).type(), $Imm)
     Replace:
       XNOR:
         Rd: $Dst

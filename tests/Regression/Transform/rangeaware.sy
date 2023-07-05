@@ -7,3 +7,7 @@ int foo2(int x) {
     int c3 = x | 0xff00;
     return ((c1 | c3) & 0xffff) | c2;
 }
+int foo3(int x) {
+    int absv = x > 0 ? x : -x;
+    return absv & 0x70000000;
+}

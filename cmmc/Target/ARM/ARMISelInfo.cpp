@@ -553,6 +553,10 @@ static bool selectSignedRange(const MIROperand& lower, const MIROperand& upper, 
     return selectUnsignedRange(upper, shift);
 }
 
+static bool isNotImm(OperandType type, const MIROperand& op) {
+    return op.isImm() && static_cast<uint32_t>(op.imm()) == (type == OperandType::Bool ? 1 : 0xffffffff);
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <ARM/ISelInfoImpl.hpp>
@@ -653,6 +657,23 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
+
+            auto isNot = [&](const MIROperand& val) {
+                auto def = ctx.lookupDef(val);
+                if(!def)
+                    return false;
+                if(def->opcode() != InstXor)
+                    return false;
+                const auto imm = def->getOperand(2);
+                if(!isOperandImm(imm))
+                    return false;
+                return isNotImm(val.type(), imm);
+            };
+            if(inst.opcode() != InstAdd && isOperandIReg(lhs) && isOperandIReg(rhs) && isNot(lhs) && !isNot(rhs)) {
+                std::swap(lhs, rhs);
+                modified = true;
+            }
+
             imm2reg(lhs);
 
             // bypass for and -> bic

@@ -6,6 +6,7 @@ __cmmc_fp_constant_pool:
 	.4byte	1056964608
 	.4byte	1090519040
 	.4byte	1078530010
+	.4byte	1092616192
 .text
 .globl add_imm
 add_imm:
@@ -592,5 +593,20 @@ mul_with_constant_10000:
 mul_neg2:
 	sll $t0, $a0, 1
 	subu $v0, $zero, $t0
+	jr $ra
+	nop
+.globl andn
+andn:
+	mtc1 $a1, $f4
+	cvt.s.w $f4, $f4
+	lui $t0, %hi(__cmmc_fp_constant_pool)
+	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
+	lwc1 $f6, 16($t0)
+	c.eq.s $f4, $f6
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	xori $t0, $t0, 1
+	sltu $t1, $zero, $a0
+	and $v0, $t0, $t1
 	jr $ra
 	nop

@@ -212,6 +212,9 @@ static bool isOne(const MIROperand& op) {
 static bool isNegativeOne(const MIROperand& op) {
     return op.isImm() && static_cast<uint32_t>(op.imm()) == 0xffffffff;
 }
+static bool isNotImm(OperandType type, const MIROperand& op) {
+    return op.isImm() && static_cast<uint32_t>(op.imm()) == (type == OperandType::Bool ? 1 : 0xffffffff);
+}
 
 constexpr RISCVInst getIntegerBinaryImmOpcode(uint32_t opcode) {
     switch(opcode) {
@@ -390,6 +393,23 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
+
+            auto isNot = [&](const MIROperand& val) {
+                auto def = ctx.lookupDef(val);
+                if(!def)
+                    return false;
+                if(def->opcode() != InstXor)
+                    return false;
+                const auto imm = def->getOperand(2);
+                if(!isOperandImm(imm))
+                    return false;
+                return isNotImm(val.type(), imm);
+            };
+            if(inst.opcode() != InstAdd && isOperandIReg(lhs) && isOperandIReg(rhs) && isNot(lhs) && !isNot(rhs)) {
+                std::swap(lhs, rhs);
+                modified = true;
+            }
+
             imm2reg(lhs);
             largeImm2reg(rhs);
             break;
