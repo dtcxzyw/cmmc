@@ -55,6 +55,11 @@
       "parent": "8a442367ad14b632eadb8d0719bb9237ab864a62",
       "time": "2023-07-02 21:25:06 +0800"
     },
+    "1a70f2f04fced16774cb9c947638742a1066ff32": {
+      "message": "feat(codegen): do post-RA scheduling after CFG simplification",
+      "parent": "c9c373ab7eefd99835ddc5441c452517ef6c17ad",
+      "time": "2023-07-07 00:43:43 +0800"
+    },
     "1f59ecf03b60013c8fede43a47937e42df1bfca6": {
       "message": "feat(codegen): fix cgscc analysis",
       "parent": "cb2bacbaa905b3a86d42ec948cba23be3058ae1f",
@@ -391,5 +396,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "c9c373ab7eefd99835ddc5441c452517ef6c17ad"
+  "head": "1a70f2f04fced16774cb9c947638742a1066ff32"
 }
