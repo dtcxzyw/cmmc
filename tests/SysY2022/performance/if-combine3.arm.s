@@ -7,9 +7,9 @@
 .globl main
 main:
 	push { r4, r5, r6, lr }
+	mov r0, #324
 	sub sp, sp, #400
 	mov r4, sp
-	mov r0, #324
 	bl _sysy_starttime
 	bl getint
 	mov r1, #0
@@ -56,7 +56,10 @@ label19:
 	ble label12
 label7:
 	mov r3, #1
+	add r1, r1, #1
+	mov r5, r2
 	str r3, [r4, #4]
+	mov r2, #0
 	mov r3, #2
 	str r3, [r4, #8]
 	mov r3, #3
@@ -253,12 +256,11 @@ label7:
 	str r3, [r4, #392]
 	mov r3, #99
 	str r3, [r4, #396]
-	add r1, r1, #1
-	mov r5, r2
-	mov r2, #0
 label8:
 	add r3, r4, r2, lsl #2
 	ldr r6, [r4, r2, lsl #2]
+	add r2, r2, #16
+	cmp r2, #96
 	add r5, r5, r6
 	ldr r6, [r3, #4]
 	add r5, r5, r6
@@ -287,11 +289,9 @@ label8:
 	ldr r6, [r3, #52]
 	add r5, r5, r6
 	ldr r6, [r3, #56]
-	add r5, r5, r6
 	ldr r3, [r3, #60]
+	add r5, r5, r6
 	add r5, r5, r3
-	add r2, r2, #16
-	cmp r2, #96
 	bge label11
 	b label8
 label11:
@@ -301,12 +301,12 @@ label11:
 	ldr r5, [r3, #4]
 	add r2, r2, r5
 	ldr r5, [r3, #8]
-	add r2, r2, r5
 	ldr r3, [r3, #12]
-	add r2, r2, r3
-	movw r3, #65535
+	add r2, r2, r5
 	movw r5, #32769
+	add r2, r2, r3
 	movt r5, #32768
+	movw r3, #65535
 	smmla r5, r2, r5, r2
 	asr r6, r5, #15
 	add r5, r6, r5, lsr #31
@@ -328,6 +328,6 @@ label12:
 	bl putch
 	mov r0, #328
 	bl _sysy_stoptime
-	mov r0, #0
 	add sp, sp, #400
+	mov r0, #0
 	pop { r4, r5, r6, pc }

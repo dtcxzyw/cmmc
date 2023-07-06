@@ -4,53 +4,53 @@
 .globl main
 main:
 	addi sp, sp, -416
-	sd s0, 408(sp)
-	sd ra, 400(sp)
 	li a0, 324
+	sd s0, 408(sp)
 	addi s0, sp, 0
+	sd ra, 400(sp)
 	jal _sysy_starttime
 	jal getint
 	mv a1, zero
 	li a2, 100
 	bge zero, a2, label19
 	sh2add a2, zero, s0
-	sw zero, 0(a2)
 	addiw a1, zero, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	j label327
@@ -60,7 +60,10 @@ label19:
 	ble a0, zero, label12
 label7:
 	li a3, 1
+	addiw a1, a1, 1
+	mv a4, a2
 	sw a3, 4(s0)
+	mv a2, zero
 	li a3, 2
 	sw a3, 8(s0)
 	li a3, 3
@@ -257,12 +260,10 @@ label7:
 	sw a3, 392(s0)
 	li a3, 99
 	sw a3, 396(s0)
-	mv a4, a2
-	addiw a1, a1, 1
-	mv a2, zero
 label8:
 	sh2add a3, a2, s0
 	lw a5, 0(a3)
+	addiw a2, a2, 16
 	addw a4, a4, a5
 	lw a5, 4(a3)
 	addw a4, a4, a5
@@ -293,7 +294,6 @@ label8:
 	lw a5, 56(a3)
 	lw a3, 60(a3)
 	addw a4, a4, a5
-	addiw a2, a2, 16
 	addw a4, a4, a3
 	li a3, 96
 	bge a2, a3, label11
@@ -322,8 +322,8 @@ label11:
 	j label7
 label327:
 	sh2add a2, a1, s0
-	sw zero, 0(a2)
 	addiw a1, a1, 1
+	sw zero, 0(a2)
 	li a2, 100
 	bge a1, a2, label19
 	j label327
