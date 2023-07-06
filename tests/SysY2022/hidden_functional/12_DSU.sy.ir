@@ -129,7 +129,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %61 = icmp sge i32 %31, i32 %60;
     cbr i1 %61(prob = 0.97), ^while.body4, ^while.header;
   ^while.header:
-    i32 %62 = phi [^b1, i32 %55] [^while.body4, i32 %55] [^b8, i32 %193];
+    i32 %62 = phi [^b1, i32 %55] [^while.body4, i32 %55] [^b6, i32 %171] [^b7, i32 %186];
     i1 %63 = icmp neq i32 %62, i32 0;
     cbr i1 %63(prob = 0.97), ^while.body5, ^b2;
   ^while.body5:
@@ -268,7 +268,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %162 = icmp ult i32 %161, i32 10;
     cbr i1 %162(prob = 0.97), ^while.body14, ^b7;
   ^b6:
-    i32 %163 = phi [^indirect4, i32 0] [^while.body13, i32 %178];
+    i32 %163 = phi [^indirect4, i32 0] [^while.body13, i32 %179];
     i32 %164 = call (i32) -> i32 @find(i32 %121);
     i1 %165 = icmp neq i32 %148, i32 0;
     i32 %166 = neg i32 %163;
@@ -278,37 +278,36 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %170 = zext i1 %169 to i32;
     call (i32) -> void @putint(i32 %170);
     call (i32) -> void @putch(i32 10);
-    ubr ^b8;
-  ^while.body13:
-    i32 %171 = phi [^indirect4, i32 0] [^while.body13, i32 %178];
-    i32 %172 = phi [^indirect4, i32 %147] [^while.body13, i32 %173];
-    i32 %173 = call () -> i32 @getch();
-    i32 %174 = add i32 %173, i32 -48;
-    i1 %175 = icmp ult i32 %174, i32 10;
-    i32 %176 = mul i32 %171, i32 10;
-    i32 %177 = add i32 %176, i32 -48;
-    i32 %178 = add i32 %172, i32 %177;
-    cbr i1 %175(prob = 0.97), ^while.body13, ^b6;
-  ^b7:
-    i32 %179 = phi [^indirect5, i32 0] [^while.body14, i32 %192];
-    i1 %180 = icmp neq i32 %160, i32 0;
-    i32 %181 = neg i32 %179;
-    i32 %182 = select i1 %180 ? i32 %181 : i32 %179;
-    i32 %183 = call (i32) -> i32 @find(i32 %182);
-    i32* %184 = getelementptr &([100005 * i32]* %57)[i64 0][i32 %134];
-    store i32* %184 with i32 %183;
-    ubr ^b8;
-  ^while.body14:
-    i32 %185 = phi [^indirect5, i32 0] [^while.body14, i32 %192];
-    i32 %186 = phi [^indirect5, i32 %159] [^while.body14, i32 %187];
-    i32 %187 = call () -> i32 @getch();
-    i32 %188 = add i32 %187, i32 -48;
-    i1 %189 = icmp ult i32 %188, i32 10;
-    i32 %190 = mul i32 %185, i32 10;
-    i32 %191 = add i32 %190, i32 -48;
-    i32 %192 = add i32 %186, i32 %191;
-    cbr i1 %189(prob = 0.97), ^while.body14, ^b7;
-  ^b8:
-    i32 %193 = add i32 %62, i32 -1;
+    i32 %171 = add i32 %62, i32 -1;
     ubr ^while.header;
+  ^while.body13:
+    i32 %172 = phi [^indirect4, i32 0] [^while.body13, i32 %179];
+    i32 %173 = phi [^indirect4, i32 %147] [^while.body13, i32 %174];
+    i32 %174 = call () -> i32 @getch();
+    i32 %175 = add i32 %174, i32 -48;
+    i1 %176 = icmp ult i32 %175, i32 10;
+    i32 %177 = mul i32 %172, i32 10;
+    i32 %178 = add i32 %177, i32 -48;
+    i32 %179 = add i32 %173, i32 %178;
+    cbr i1 %176(prob = 0.97), ^while.body13, ^b6;
+  ^b7:
+    i32 %180 = phi [^indirect5, i32 0] [^while.body14, i32 %194];
+    i1 %181 = icmp neq i32 %160, i32 0;
+    i32 %182 = neg i32 %180;
+    i32 %183 = select i1 %181 ? i32 %182 : i32 %180;
+    i32 %184 = call (i32) -> i32 @find(i32 %183);
+    i32* %185 = getelementptr &([100005 * i32]* %57)[i64 0][i32 %134];
+    store i32* %185 with i32 %184;
+    i32 %186 = add i32 %62, i32 -1;
+    ubr ^while.header;
+  ^while.body14:
+    i32 %187 = phi [^indirect5, i32 0] [^while.body14, i32 %194];
+    i32 %188 = phi [^indirect5, i32 %159] [^while.body14, i32 %189];
+    i32 %189 = call () -> i32 @getch();
+    i32 %190 = add i32 %189, i32 -48;
+    i1 %191 = icmp ult i32 %190, i32 10;
+    i32 %192 = mul i32 %187, i32 10;
+    i32 %193 = add i32 %192, i32 -48;
+    i32 %194 = add i32 %188, i32 %193;
+    cbr i1 %191(prob = 0.97), ^while.body14, ^b7;
 }

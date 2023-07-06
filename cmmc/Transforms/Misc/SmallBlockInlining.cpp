@@ -40,6 +40,7 @@
 //     return c;
 
 #include <algorithm>
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Value.hpp>
@@ -57,43 +58,94 @@ class SmallBlockInlining final : public TransformPass<Function> {
     static constexpr size_t sizeThreshold = 5;  // TODO: better threshold?
 
 public:
-    bool run(Function& func, AnalysisPassManager&) const override {
+    bool run(Function& func, AnalysisPassManager& analysis) const override {
+        auto& cfg = analysis.get<CFGAnalysis>(func);
+
         bool modified = false;
         for(auto block : func.blocks()) {
             const auto terminator = block->getTerminator();
             if(terminator->getInstID() != InstructionID::Branch)
                 continue;
-            const auto& target = terminator->as<BranchInst>()->getTrueTarget();
-            const auto nextBlock = target;
-            // Cannot inline blocks which end with branches since we don't use argumented SSA now.
-            if(nextBlock->getTerminator()->isBranch())
-                continue;
-            if(nextBlock->instructions().size() > sizeThreshold)  // TODO: only count non-phi instructions?
-                continue;
-            if(hasCall(*block))
-                continue;
 
-            modified = true;
-            auto& insts = block->instructions();
-            insts.pop_back();
-
-            ReplaceMap replace;
-            std::vector<Instruction*> newInsts;
-            for(auto& inst : nextBlock->instructions()) {
-                if(inst.getInstID() == InstructionID::Phi) {
-                    auto phi = inst.as<PhiInst>();
-                    replace.emplace(&inst, phi->incomings().at(block)->value);
-                    phi->removeSource(block);
-                } else {
-                    const auto newInst = inst.clone();
-                    newInst->setLabel(inst.getLabel());
-                    newInsts.push_back(newInst);
-                    replace.emplace(&inst, newInst);
+            auto& preds = cfg.predecessors(block);
+            if(preds.empty())
+                continue;
+            bool valid = true;
+            for(auto pred : preds) {
+                if(pred == block || cfg.successors(pred).size() != 1) {
+                    valid = false;
+                    break;
                 }
             }
-            replaceOperands(newInsts, replace);
-            for(auto inst : newInsts)
-                inst->insertBefore(block, insts.end());
+
+            if(!valid)
+                continue;
+
+            uint32_t instCount = 0;
+            for(auto& inst : block->instructions()) {
+                if(inst.isTerminator() || inst.getInstID() == InstructionID::Phi)
+                    continue;
+                ++instCount;
+                if(instCount > sizeThreshold) {
+                    valid = false;
+                    break;
+                }
+            }
+            if(!valid)
+                continue;
+            if(instCount == 0)
+                continue;
+
+            auto usedByOuterOrTerminator = [&](const Instruction& inst) {
+                for(auto user : inst.users()) {
+                    if(user->getBlock() != block)
+                        return true;
+                    if(user->isTerminator())
+                        return true;
+                }
+                return false;
+            };
+
+            std::unordered_map<Block*, std::unordered_map<Value*, Value*>> maps;
+            std::vector<std::pair<Instruction*, PhiInst*>> newPhis;
+            for(auto& inst : block->instructions()) {
+                if(inst.isTerminator())
+                    continue;
+                if(inst.getInstID() == InstructionID::Phi) {
+                    auto phi = inst.as<PhiInst>();
+                    for(auto pred : preds) {
+                        maps[pred].emplace(&inst, phi->incomings().at(pred)->value);
+                    }
+                    continue;
+                }
+                PhiInst* phi = nullptr;
+                if(inst.canbeOperand() && usedByOuterOrTerminator(inst)) {
+                    phi = make<PhiInst>(inst.getType());
+                }
+                for(auto pred : preds) {
+                    const auto clonedInst = inst.clone();
+                    for(auto& operand : clonedInst->mutableOperands()) {
+                        if(operand->value->getBlock() == block) {
+                            operand->resetValue(maps.at(pred).at(operand->value));
+                        }
+                    }
+                    clonedInst->insertBefore(pred, std::prev(pred->instructions().end()));
+                    if(phi)
+                        phi->addIncoming(pred, clonedInst);
+                    maps[pred].emplace(&inst, clonedInst);
+                }
+                if(phi) {
+                    newPhis.emplace_back(&inst, phi);
+                }
+            }
+
+            for(auto [inst, phi] : newPhis) {
+                inst->replaceWith(phi);
+                phi->insertBefore(block, std::prev(block->instructions().end()));
+            }
+            block->instructions().remove_if(
+                [](const Instruction* inst) { return !inst->isTerminator() && inst->getInstID() != InstructionID::Phi; });
+            modified = true;
         }
         return modified;
     }

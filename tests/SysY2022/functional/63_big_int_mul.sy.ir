@@ -319,8 +319,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 %152);
     ubr ^while.body3;
   ^while.header1:
-    i32 %154 = phi [^while.body2, i32 19] [^b3, i32 %175];
-    i32 %155 = phi [^while.body2, i32 %147] [^b3, i32 %176];
+    i32 %154 = phi [^while.body2, i32 19] [^if.then1, i32 %175] [^if.else, i32 %177];
+    i32 %155 = phi [^while.body2, i32 %147] [^if.then1, i32 %176] [^if.else, i32 %178];
     i1 %156 = icmp sgt i32 %154, i32 -1;
     cbr i1 %156(prob = 0.97), ^while.body4, ^b1;
   ^while.body3:
@@ -353,12 +353,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %173 = sdiv i32 %169, i32 10;
     i32 %174 = add i32 %172, i32 %173;
     store i32* %171 with i32 %174;
-    ubr ^b3;
-  ^if.else:
-    store i32* %164 with i32 %169;
-    ubr ^b3;
-  ^b3:
     i32 %175 = add i32 %154, i32 -1;
     i32 %176 = add i32 %155, i32 -1;
+    ubr ^while.header1;
+  ^if.else:
+    store i32* %164 with i32 %169;
+    i32 %177 = add i32 %154, i32 -1;
+    i32 %178 = add i32 %155, i32 -1;
     ubr ^while.header1;
 }

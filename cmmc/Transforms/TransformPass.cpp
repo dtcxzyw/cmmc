@@ -403,10 +403,11 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectFunctionPass({
                 "ScalarMem2Reg",          //
+                "SmallBlockInlining",     //
+                "NoSideEffectEliminate",  // clean up
                 "PhiEliminate",           //
                 "StoreEliminate",         // clean up
                 "NoSideEffectEliminate",  // clean up
-                //"SmallBlockInlining",     //
             }))
             perFunc->addPass(pass);
         perFunc->addPass(iter);  // middle-1 optimization

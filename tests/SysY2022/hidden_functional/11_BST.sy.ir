@@ -47,7 +47,8 @@ internal func @insert(i32 %root, i32 %x, i32* %0) -> i32 {
     store i32* %26 with i32 -1;
     i32 %27 = add i32 %20, i32 1;
     store i32* %0 with i32 %27;
-    ubr ^if.else2;
+    store i32* %17 with i32 %20;
+    ubr ^b;
   ^if.else1:
     [10000 * i32]* %28 = ptrcast [10000 * i32]* @value to [10000 * i32]*;
     i32* %29 = getelementptr &([10000 * i32]* %28)[i64 0][i32 %18];
@@ -60,14 +61,11 @@ internal func @insert(i32 %root, i32 %x, i32* %0) -> i32 {
     i32 %36 = load i32* %35;
     i32 %37 = call (i32, i32, i32*) -> i32 @insert(i32 %36, i32 %x, i32* %0);
     store i32* %35 with i32 %37;
-    ubr ^if.else2;
-  ^b:
-    i32 %38 = phi [^entry1, i32 %2] [^if.else2, i32 %root];
-    ret i32 %38;
-  ^if.else2:
-    i32 %39 = phi [^entry2, i32 %20] [^if.else1, i32 %18];
-    store i32* %17 with i32 %39;
+    store i32* %17 with i32 %18;
     ubr ^b;
+  ^b:
+    i32 %38 = phi [^entry1, i32 %2] [^entry2, i32 %root] [^if.else1, i32 %root];
+    ret i32 %38;
 }
 internal func @delete(i32 %root, i32 %x) -> i32 {
   ^entry:

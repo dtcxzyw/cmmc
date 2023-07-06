@@ -14,7 +14,7 @@ func @main() -> i32 { NoRecurse } {
   ^if.else:
     ret i32 %3;
   ^block2:
-    i32 %6 = phi [^indirect, i32 %5] [^block5, i32 %18];
+    i32 %6 = phi [^indirect, i32 %5] [^if.then1, i32 %16] [^indirect1, i32 %20];
     i32 %7 = strunc i32 %6 to i32;
     i1 %8 = icmp slt i32 %7, i32 1;
     cbr i1 %8(prob = 0.5), ^if.then, ^if.else1;
@@ -29,16 +29,17 @@ func @main() -> i32 { NoRecurse } {
   ^if.then1:
     i32 %12 = add i32 %7, i32 1;
     i32 %13 = ztrunc i32 %12 to i32;
-    ubr ^block5;
+    i32 %14 = strunc i32 %13 to i32;
+    i32 %15 = add i32 %14, i32 1;
+    i32 %16 = ztrunc i32 %15 to i32;
+    store i32* %0 with i32 %16;
+    ubr ^block2;
   ^indirect1:
-    i32 %14 = load i32* %0;
-    ubr ^block5;
-  ^block5:
-    i32 %15 = phi [^if.then1, i32 %13] [^indirect1, i32 %14];
-    i32 %16 = strunc i32 %15 to i32;
-    i32 %17 = add i32 %16, i32 1;
-    i32 %18 = ztrunc i32 %17 to i32;
-    store i32* %0 with i32 %18;
+    i32 %17 = load i32* %0;
+    i32 %18 = strunc i32 %17 to i32;
+    i32 %19 = add i32 %18, i32 1;
+    i32 %20 = ztrunc i32 %19 to i32;
+    store i32* %0 with i32 %20;
     ubr ^block2;
 }
 i32* @a = 0;
