@@ -600,7 +600,7 @@ InstSelection:
           InstXor:
             Lhs: $Rhs
             Rhs: $Imm
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNotImm(($Dst).type(), $Imm)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isNegativeOne($Imm)
     Replace:
       ORN:
         Rd: $Dst

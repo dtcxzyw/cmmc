@@ -172,7 +172,7 @@ static RISCVInst getStoreOpcode(const MIROperand& src) {
 static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, const MIROperand& rhs, MIROperand& outLhs,
                              MIROperand& outRhs, MIROperand& outOp) {
     const auto op = static_cast<CompareOp>(operand.imm());
-    if(!isOperandFPR(lhs) || !isOperandFPR(rhs) || op == CompareOp::FCmpUnorderedNotEqual)
+    if(!isOperandFPR(lhs) || !isOperandFPR(rhs))
         return false;
     outLhs = lhs;
     outRhs = rhs;
