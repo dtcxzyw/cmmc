@@ -143,11 +143,9 @@ class ARMScheduleClassGeneralLoad final : public ScheduleClass {
 
 public:
     bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
-        if(isOperandGPR(inst.getOperand(0))) {
+        if(isOperandGPR(inst.getOperand(0)))
             return mLoad.schedule(state, inst, instInfo);
-        } else {
-            return mFPLoad.schedule(state, inst, instInfo);
-        }
+        return mFPLoad.schedule(state, inst, instInfo);
     }
 };
 

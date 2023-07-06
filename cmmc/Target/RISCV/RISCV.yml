@@ -1734,21 +1734,7 @@ ScheduleModel:
           UNIMP,
         ]
       LoadStore:
-        [
-          LB,
-          LH,
-          LW,
-          LBU,
-          LHU,
-          SB,
-          SH,
-          SW,
-          LD,
-          LWU,
-          SD,
-          InstStoreRegToStack,
-          InstLoadRegFromStack,
-        ]
+        [LB, LH, LW, LBU, LHU, SB, SH, SW, LD, LWU, SD, InstStoreRegToStack]
       Multi: [MUL, MULH, MULHSU, MULHU, MULW]
       DivRem: [DIV, DIVU, REM, REMU, DIVW, DIVUW, REMW, REMUW]
       FPCycle1: [FMV_X_W]
@@ -1758,3 +1744,4 @@ ScheduleModel:
       FPCycle5: [FADD_S, FSUB_S, FMUL_S]
       FPDiv: [FDIV_S]
       FPLoadStore: [FLW, FSW]
+      GeneralLoad: [InstLoadRegFromStack]

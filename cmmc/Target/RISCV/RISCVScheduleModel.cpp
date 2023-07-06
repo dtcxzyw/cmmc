@@ -241,6 +241,18 @@ public:
     }
 };
 
+class RISCVScheduleClassGeneralLoad final : public ScheduleClass {
+    RISCVScheduleClassLoadStore mLoad;
+    RISCVScheduleClassFPLoadStore mFPLoad;
+
+public:
+    bool schedule(ScheduleState& state, const MIRInst& inst, const InstInfo& instInfo) const override {
+        if(isOperandGPR(inst.getOperand(0)))
+            return mLoad.schedule(state, inst, instInfo);
+        return mFPLoad.schedule(state, inst, instInfo);
+    }
+};
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ScheduleModelImpl.hpp>
