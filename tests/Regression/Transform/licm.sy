@@ -1,0 +1,11 @@
+int licm1(int x) {
+    int sum = 0;
+    for(int i = 0; i < x; ++i)
+        sum = sum + i * i + x * x * x;
+    return sum;
+}
+int licm2(int head[], int tail[], int i) {
+    while(head[i] < tail[i])
+        head[i] = head[i] + 1;
+    return head[i];
+}
