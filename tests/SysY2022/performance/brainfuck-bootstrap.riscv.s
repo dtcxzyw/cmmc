@@ -27,10 +27,10 @@ main:
 	sd s4, 8(sp)
 	sd ra, 0(sp)
 	jal getch
-	xori a2, a0, 60
 	xori a1, a0, 62
-	sltu a2, zero, a2
+	xori a2, a0, 60
 	sltu a1, zero, a1
+	sltu a2, zero, a2
 	and a1, a1, a2
 	xori a2, a0, 43
 	sltu a2, zero, a2
@@ -241,9 +241,9 @@ label15:
 label17:
 	auipc a1, %pcrel_hi(tape)
 	mv s4, zero
-	mv a2, zero
 	addi a4, a1, %pcrel_lo(label17)
 	mv a1, zero
+	mv a2, zero
 	mv a3, zero
 	mv a5, zero
 	ble s2, zero, label50

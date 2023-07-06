@@ -117,7 +117,8 @@ bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
         auto& instructions = block->instructions();
 
         uint32_t versionId = 0;
-        std::unordered_map<MIROperand, std::pair<MIROperand, uint32_t>, MIROperandHasher> stack2Reg;
+        std::unordered_map<MIROperand, std::pair<MIROperand, uint32_t>, MIROperandHasher>
+            stack2Reg;  // stack object -> (reg, version)
         std::unordered_map<MIROperand, uint32_t, MIROperandHasher> regVersion;
         auto defReg = [&](MIROperand reg) { regVersion[reg] = ++versionId; };
 
@@ -157,6 +158,11 @@ bool eliminateStackLoads(MIRFunction& func, const CodeGenContext& ctx) {
                 }
                 for(auto reg : nonVReg)
                     defReg(reg);
+            }
+            if(inst.opcode() == InstLoadRegFromStack) {
+                auto& dst = inst.getOperand(0);
+                auto& obj = inst.getOperand(1);
+                stack2Reg[obj] = { dst, regVersion.at(dst) };
             }
         }
     }

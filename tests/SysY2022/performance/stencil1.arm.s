@@ -32,7 +32,7 @@ main:
 	b label19
 label20:
 	mov r0, #0
-label4:
+label7:
 	lsl r1, r0, #10
 	ldr r2, [r4, r1, lsl #2]
 	str r2, [r5, r1, lsl #2]
@@ -63,14 +63,14 @@ label4:
 	sub r1, r1, #1
 	ldr r2, [r4, r1, lsl #2]
 	str r2, [r5, r1, lsl #2]
-	bge label77
-	b label4
-label77:
+	bge label130
+	b label7
+label130:
 	mov r0, #0
-	b label6
+	b label9
 label19:
 	mov r3, #1
-label9:
+label4:
 	add r2, r0, r3, lsl #10
 	sub r7, r3, #1
 	add r9, r1, r7, lsl #10
@@ -104,16 +104,16 @@ label9:
 	str r7, [r5, r2, lsl #2]
 	movw r2, #1023
 	cmp r3, r2
-	bge label11
-	b label9
-label11:
+	bge label6
+	b label4
+label6:
 	add r0, r0, #1
 	sub r1, r0, #1
 	movw r2, #1023
 	cmp r0, r2
 	bge label20
 	b label19
-label6:
+label9:
 	add r1, r4, r0, lsl #2
 	ldr r3, [r4, r0, lsl #2]
 	add r2, r5, r0, lsl #2
@@ -150,9 +150,9 @@ label6:
 	add r1, r1, r3
 	ldr r1, [r1, #0]
 	str r1, [r2, #0]
-	bge label8
-	b label6
-label8:
+	bge label11
+	b label9
+label11:
 	mov r0, #59
 	bl _sysy_stoptime
 	mov r1, r5

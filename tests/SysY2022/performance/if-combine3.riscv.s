@@ -262,8 +262,8 @@ label7:
 	sw a3, 396(s0)
 label8:
 	sh2add a3, a2, s0
-	addiw a2, a2, 16
 	lw a5, 0(a3)
+	addiw a2, a2, 16
 	addw a4, a4, a5
 	lw a5, 4(a3)
 	addw a4, a4, a5

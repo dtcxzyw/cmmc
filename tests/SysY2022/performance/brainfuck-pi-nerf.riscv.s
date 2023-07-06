@@ -135,10 +135,10 @@ label9:
 	j label5
 label2:
 	jal getch
-	xori a1, a0, 62
 	xori a2, a0, 60
-	sltu a1, zero, a1
+	xori a1, a0, 62
 	sltu a2, zero, a2
+	sltu a1, zero, a1
 	and a1, a1, a2
 	xori a2, a0, 43
 	sltu a2, zero, a2

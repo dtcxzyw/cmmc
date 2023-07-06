@@ -25,9 +25,9 @@ main:
 	push { r4, r5, r6, r7, r8, r9, r10, r11, lr }
 	sub sp, sp, #20
 	bl getch
+	mov r2, #0
 	cmp r0, #62
 	mov r1, #0
-	mov r2, #0
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1
@@ -233,9 +233,9 @@ label54:
 	b label645
 label8:
 	bl getch
-	mov r2, #0
 	mov r1, #0
 	cmp r0, #62
+	mov r2, #0
 	movwne r1, #1
 	cmp r0, #60
 	movwne r2, #1
@@ -313,7 +313,6 @@ label17:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -322,7 +321,6 @@ label17:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -331,7 +329,6 @@ label17:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -435,7 +432,6 @@ label25:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -444,7 +440,6 @@ label25:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -453,7 +448,6 @@ label25:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -482,7 +476,6 @@ label27:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -491,7 +484,6 @@ label27:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -500,7 +492,6 @@ label27:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -529,7 +520,6 @@ label28:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -538,7 +528,6 @@ label28:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -547,7 +536,6 @@ label28:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -578,7 +566,6 @@ label29:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -587,7 +574,6 @@ label29:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -596,7 +582,6 @@ label29:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -621,7 +606,6 @@ label30:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -630,7 +614,6 @@ label30:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -639,7 +622,6 @@ label30:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -660,7 +642,6 @@ label39:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -669,7 +650,6 @@ label39:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -678,7 +658,6 @@ label39:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -687,7 +666,6 @@ label39:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -722,7 +700,6 @@ label45:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -731,7 +708,6 @@ label45:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -740,7 +716,6 @@ label45:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -749,7 +724,6 @@ label45:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -775,7 +749,6 @@ label31:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -784,7 +757,6 @@ label31:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -793,7 +765,6 @@ label31:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -823,7 +794,6 @@ label32:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -832,7 +802,6 @@ label32:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -841,7 +810,6 @@ label32:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -860,7 +828,6 @@ label36:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -869,7 +836,6 @@ label36:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -878,7 +844,6 @@ label36:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -887,7 +852,6 @@ label36:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -910,7 +874,6 @@ label35:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -919,7 +882,6 @@ label35:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -928,7 +890,6 @@ label35:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25
@@ -937,7 +898,6 @@ label35:
 	ldr r8, [sp, #8]
 	cmp r8, r3
 	ble label50
-	ldr r9, [sp, #0]
 	ldr r8, [r9, r3, lsl #2]
 	cmp r8, #62
 	bne label25

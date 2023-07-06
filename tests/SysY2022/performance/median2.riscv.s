@@ -27,8 +27,8 @@ pcrel236:
 	sraiw s2, a0, 1
 	li a0, 59
 	jal _sysy_starttime
-	mv a1, s3
 	mv a0, zero
+	mv a1, s3
 	mv a2, s4
 	lw a3, 0(s3)
 	addiw a4, s4, 1
