@@ -170,6 +170,11 @@
       "parent": "3e4564a6705cbe0a844e11403b448d3a25fd763c",
       "time": "2023-07-01 22:12:31 +0800"
     },
+    "5b63fc5dd7525b10e8fde57012f4b83cb0e82697": {
+      "message": "misc: update perf ref",
+      "parent": "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5",
+      "time": "2023-07-06 22:17:01 +0800"
+    },
     "6f138f87fa3ea11c75c258342c4a49a897c2b7cb": {
       "message": "misc: format code",
       "parent": "477105dd55329c239391b78522aea5e8ff4e855c",
@@ -189,6 +194,11 @@
       "message": "misc: update ref",
       "parent": "4d6d8fc8749723ae232ca54588f127c495075ac8",
       "time": "2023-07-02 02:26:54 +0800"
+    },
+    "78bb4ca547117d424c00fbb8537e9c2b90e322fb": {
+      "message": "fix(codegen): fix rv schedule model",
+      "parent": "bdc17f3cdfd8836d1d37aba6c96d3542950bd8b8",
+      "time": "2023-07-06 21:33:57 +0800"
     },
     "791d799938ed2429ceaf4f7f52e5a38e47e055e0": {
       "message": "feat(transfrom): remove unused store-only globals",
@@ -255,6 +265,11 @@
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
       "time": "2023-07-02 03:27:32 +0800"
     },
+    "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5": {
+      "message": "feat(transform): fold strunc/ztrunc",
+      "parent": "78bb4ca547117d424c00fbb8537e9c2b90e322fb",
+      "time": "2023-07-06 21:58:24 +0800"
+    },
     "9c5da85a06ef97bc6d4700a1dc515d848cb16063": {
       "message": "misc: update ref",
       "parent": "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996",
@@ -309,6 +324,11 @@
       "message": "ci: install libgtest-dev",
       "parent": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45",
       "time": "2023-07-05 17:38:34 +0800"
+    },
+    "c9c373ab7eefd99835ddc5441c452517ef6c17ad": {
+      "message": "feat(codegen): remove unused loads from stack",
+      "parent": "5b63fc5dd7525b10e8fde57012f4b83cb0e82697",
+      "time": "2023-07-06 22:37:50 +0800"
     },
     "cb2bacbaa905b3a86d42ec948cba23be3058ae1f": {
       "message": "test(perf): add summary",
@@ -371,5 +391,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "bdc17f3cdfd8836d1d37aba6c96d3542950bd8b8"
+  "head": "c9c373ab7eefd99835ddc5441c452517ef6c17ad"
 }
