@@ -125,7 +125,7 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op

@@ -438,9 +438,7 @@ class BlockReorder final : public TransformPass<Function> {
                         }
                         break;
                     }
-                    case InstructionID::SCmp:
-                        [[fallthrough]];
-                    case InstructionID::UCmp:
+                    case InstructionID::ICmp:
                         [[fallthrough]];
                     case InstructionID::FCmp: {
                         if(auto op = inst.as<CompareInst>()->getOp(); (op == CompareOp::Equal || op == CompareOp::NotEqual) &&

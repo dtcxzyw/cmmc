@@ -604,9 +604,8 @@ static void lower(CompareInst* inst, LoweringContext& ctx) {
         switch(instID) {
             case InstructionID::FCmp:
                 return InstFCmp;
-            // FIXME
             case InstructionID::ICmp:
-                return InstSCmp;
+                return InstICmp;
             default:
                 reportUnreachable(CMMC_LOCATION());
         }
@@ -830,9 +829,8 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
     } else if(auto condInst = dynamic_cast<CompareInst*>(inst->getOperand(0))) {
         const auto id = [instID = condInst->getInstID()] {
             switch(instID) {
-                // FIXME
                 case InstructionID::ICmp:
-                    return InstSCmp;
+                    return InstICmp;
                 case InstructionID::FCmp:
                     return InstFCmp;
                 default:
@@ -840,16 +838,12 @@ static void lower(BranchInst* inst, LoweringContext& ctx) {
             }
         }();
 
-        if(id == InstFCmp) {
-            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
-                           condInst->getOp(), true);
-        } else
-            emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
-                           getInvertedOp(condInst->getOp()), false);
+        emitCondBranch(ctx.mapOperand(condInst->getOperand(0)), ctx.mapOperand(condInst->getOperand(1)), id,
+                       getInvertedOp(condInst->getOp()), false);
     } else {
         // beqz %cond, false_label
         const auto cond = ctx.mapOperand(inst->getOperand(0));
-        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstSCmp, CompareOp::ICmpEqual, false);
+        emitCondBranch(cond, MIROperand::asImm(0, cond.type()), InstICmp, CompareOp::ICmpEqual, false);
     }
 }
 static void lower(UnreachableInst*, LoweringContext& ctx) {

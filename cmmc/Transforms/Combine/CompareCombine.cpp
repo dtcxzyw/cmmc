@@ -13,10 +13,10 @@
 */
 
 // FIXME: it defeats the optimization in ArithmeticReduce.
-// %1 = scmp eq a,b
-// %2 = scmp neq a,b
+// %1 = icmp eq a,b
+// %2 = icmp neq a,b
 // ->
-// %1 = scmp eq a,b
+// %1 = icmp eq a,b
 // %2 = not %1
 
 #include <cmmc/Analysis/DominateAnalysis.hpp>

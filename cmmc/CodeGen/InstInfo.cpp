@@ -190,8 +190,7 @@ const InstInfo& TargetInstInfo::getInstInfo(uint32_t opcode) const {
     CMMC_ASSERT_OFFSET(FDiv);
     CMMC_ASSERT_OFFSET(FNeg);
     CMMC_ASSERT_OFFSET(FFma);
-    CMMC_ASSERT_OFFSET(SCmp);
-    CMMC_ASSERT_OFFSET(UCmp);
+    CMMC_ASSERT_OFFSET(ICmp);
     CMMC_ASSERT_OFFSET(FCmp);
     CMMC_ASSERT_OFFSET(SExt);
     CMMC_ASSERT_OFFSET(ZExt);

@@ -427,14 +427,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
             // FIXME: conflict with loop analysis
             /*
             // (x op c1) cmp c2
-            if(scmp(cmp, add(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+            if(icmp(cmp, add(any(v1), int_(i1)), int_(i2))(matchCtx)) {
                 const auto res = builder.makeOp<CompareInst>(inst->getInstID(), cmp, v1, makeIntLike(i2 - i1, v1));
                 return res;
             }
-            if(scmp(cmp, sub(any(v1), int_(i1)), int_(i2))(matchCtx)) {
+            if(icmp(cmp, sub(any(v1), int_(i1)), int_(i2))(matchCtx)) {
                 return builder.makeOp<CompareInst>(inst->getInstID(), cmp, v1, makeIntLike(i2 + i1, v1));
             }
-            if(scmp(cmp, sub(int_(i1), any(v1)), int_(i2))(matchCtx)) {
+            if(icmp(cmp, sub(int_(i1), any(v1)), int_(i2))(matchCtx)) {
                 return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(i1 - i2, v1), v1);
             }
             */
@@ -616,7 +616,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
-            // x % (2^k) only used by scmp eq/neq with 0 -> (x & (2^k-1))
+            // x % (2^k) only used by icmp eq/neq with 0 -> (x & (2^k-1))
             if(srem(any(v1), capture(intLog2(v2), v3))(matchCtx)) {
                 auto usedByCompareWithZero = [&] {
                     for(auto user : inst->users()) {

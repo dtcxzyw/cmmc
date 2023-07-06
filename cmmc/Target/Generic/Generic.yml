@@ -80,10 +80,8 @@ InstInfo:
     Format: FNeg $Dst:FReg[Def], $Src:FReg[Use]
   FFma:
     Format: FFma $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use], $Acc:FReg[Use]
-  SCmp:
-    Format: SCmp $Dst:BoolReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
-  UCmp:
-    Format: UCmp $Dst:BoolReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
+  ICmp:
+    Format: ICmp $Dst:BoolReg[Def], $Lhs:IVal[Use], $Rhs:IVal[Use], $Op:Flag[Metadata]
   FCmp:
     Format: FCmp $Dst:BoolReg[Def], $Lhs:FVal[Use], $Rhs:FVal[Use], $Op:Flag[Metadata]
   SExt:

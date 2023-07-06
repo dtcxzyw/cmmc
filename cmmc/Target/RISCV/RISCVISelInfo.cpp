@@ -33,9 +33,13 @@ static bool isZero(const MIROperand& operand) {
     return operand.isImm() && operand.imm() == 0;
 }
 
-static RISCVInst getSignedBranchOpcode(const MIROperand& operand) {
+static RISCVInst getICmpBranchOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     switch(op) {
+        case CompareOp::ICmpEqual:
+            return BEQ;
+        case CompareOp::ICmpNotEqual:
+            return BNE;
         case CompareOp::ICmpSignedLessThan:
             return BLT;
         case CompareOp::ICmpSignedLessEqual:
@@ -44,10 +48,14 @@ static RISCVInst getSignedBranchOpcode(const MIROperand& operand) {
             return BGT;
         case CompareOp::ICmpSignedGreaterEqual:
             return BGE;
-        case CompareOp::ICmpEqual:
-            return BEQ;
-        case CompareOp::ICmpNotEqual:
-            return BNE;
+        case CompareOp::ICmpUnsignedLessThan:
+            return BLTU;
+        case CompareOp::ICmpUnsignedLessEqual:
+            return BLEU;
+        case CompareOp::ICmpUnsignedGreaterThan:
+            return BGTU;
+        case CompareOp::ICmpUnsignedGreaterEqual:
+            return BGEU;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -194,8 +202,8 @@ static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, c
     return true;
 }
 
-static MIROperand getEqualOp() {
-    return MIROperand::asImm(CompareOp::ICmpEqual, OperandType::Special);
+static MIROperand getFCmpOrderedEqualOp() {
+    return MIROperand::asImm(CompareOp::FCmpOrderedEqual, OperandType::Special);
 }
 
 static bool isOperandI64(const MIROperand& op) {
@@ -468,9 +476,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
 
             break;
         }
-        case InstSCmp: {
+        case InstICmp: {
             auto& op = inst.getOperand(3);
-            if(!isLessThanOrLessEqualOp(op) && swapImmReg()) {
+            if(!isICmpLessThanOrLessEqualOp(op) && swapImmReg()) {
                 op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
                 modified = true;
             }
@@ -478,69 +486,47 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
             // a <= c -> a < c + 1 (if no overflow occurs)
-            if(isLessEqualOp(op) && isOperandImm(rhs) && rhs.imm() < getMaxSignedValue(rhs.type())) {
+            if(isCompareOp(op, CompareOp::ICmpSignedLessEqual) && isOperandImm(rhs) &&
+               rhs.imm() < getMaxSignedValue(rhs.type())) {
                 op = MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
                 modified = true;
             }
             // a >= c -> a > c - 1 (if no overflow occurs)
-            if(isGreaterEqualOp(op) && isOperandImm(rhs) && rhs.imm() > getMinSignedValue(rhs.type())) {
+            if(isCompareOp(op, CompareOp::ICmpSignedGreaterEqual) && isOperandImm(rhs) &&
+               rhs.imm() > getMinSignedValue(rhs.type())) {
                 op = MIROperand::asImm(CompareOp::ICmpSignedGreaterThan, OperandType::Special);
                 rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
                 modified = true;
             }
-            if(isGreaterThanOrGreaterEqualOp(op)) {
-                std::swap(lhs, rhs);
-                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+            // a <= c -> a < c + 1 (if no overflow occurs)
+            if(isCompareOp(op, CompareOp::ICmpUnsignedLessEqual) && isOperandImm(rhs) &&
+               getUnsignedImm(rhs) < getMaxUnsignedValue(rhs.type())) {
+                op = MIROperand::asImm(CompareOp::ICmpUnsignedLessThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
                 modified = true;
             }
-            imm2reg(lhs);
-            if(isEqualityOp(op) && !isZero(rhs)) {
-                const auto dst = getVRegAs(ctx, lhs);
-                ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
-                lhs = dst;
-                rhs = getZero(rhs);
-                modified = true;
-            } else {
-                largeImm2reg(rhs);
-            }
-            break;
-        }
-        case InstUCmp: {
-            auto& op = inst.getOperand(3);
-            if(!isLessThanOrLessEqualOp(op) && swapImmReg()) {
-                op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
+            // a >= c -> a > c - 1 (if no overflow occurs)
+            if(isCompareOp(op, CompareOp::ICmpUnsignedGreaterEqual) && isOperandImm(rhs) && getUnsignedImm(rhs) > 0) {
+                op = MIROperand::asImm(CompareOp::ICmpUnsignedGreaterThan, OperandType::Special);
+                rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
                 modified = true;
             }
 
-            auto& lhs = inst.getOperand(1);
-            auto& rhs = inst.getOperand(2);
-            // a <= c -> a < c + 1 (if no overflow occurs)
-            if(isLessEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) < getMaxUnsignedValue(rhs.type())) {
-                op = MIROperand::asImm(CompareOp::ICmpSignedLessThan, OperandType::Special);
-                rhs = MIROperand::asImm(rhs.imm() + 1, rhs.type());
-                modified = true;
-            }
-            // a >= c -> a > c - 1 (if no overflow occurs)
-            if(isGreaterEqualOp(op) && isOperandImm(rhs) && getUnsignedImm(rhs) > 0) {
-                op = MIROperand::asImm(CompareOp::ICmpSignedGreaterThan, OperandType::Special);
-                rhs = MIROperand::asImm(rhs.imm() - 1, rhs.type());
-                modified = true;
-            }
-            if(isGreaterThanOrGreaterEqualOp(op)) {
+            if(isICmpGreaterThanOrGreaterEqualOp(op)) {
                 std::swap(lhs, rhs);
                 op = MIROperand::asImm(getReversedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
                 modified = true;
             }
             imm2reg(lhs);
-            if(isEqualityOp(op) && !isZero(rhs)) {
+            if(isICmpEqualityOp(op) && !isZero(rhs)) {
                 const auto dst = getVRegAs(ctx, lhs);
                 ctx.newInst(InstXor).setOperand<0>(dst).setOperand<1>(lhs).setOperand<2>(rhs);
                 lhs = dst;
                 rhs = getZero(rhs);
                 modified = true;
             } else {
-                if(isLessEqualOp(op))
+                if(isCompareOp(op, CompareOp::ICmpUnsignedLessEqual))
                     imm2reg(rhs);
                 else
                     largeImm2reg(rhs);

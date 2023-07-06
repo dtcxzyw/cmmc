@@ -414,12 +414,12 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
+            $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isICmpSignedRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -433,12 +433,12 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && isOperandImm16(getNeg($Rhs)) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
+            $Predicate: isOperandIReg($Lhs) && isOperandImm($Rhs) && isOperandImm16(getNeg($Rhs)) && isICmpSignedRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -456,12 +456,12 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandImm32($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
+            $Predicate: isOperandIReg($Lhs) && isOperandImm32($Rhs) && isICmpSignedRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -482,12 +482,12 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
+            $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isICmpSignedRationalOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -505,12 +505,12 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Dst
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isEqualityOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
+            $Predicate: isOperandIReg($Lhs) && isOperandIRegOrImm($Rhs) && isICmpEqualityOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -536,12 +536,12 @@ InstSelection:
         Prob: $Prob
 
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpSignedLessThan)
     Replace:
       SLT:
         Rd: $Dst
@@ -549,12 +549,12 @@ InstSelection:
         Rt: $Rhs
 
   - Pattern:
-      InstUCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpUnsignedLessThan)
     Replace:
       SLTU:
         Rd: $Dst
@@ -562,12 +562,12 @@ InstSelection:
         Rt: $Rhs
 
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isGreaterThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpSignedGreaterThan)
     Replace:
       SLT:
         Rd: $Dst
@@ -575,12 +575,12 @@ InstSelection:
         Rt: $Lhs
 
   - Pattern:
-      InstUCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isGreaterThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpUnsignedGreaterThan)
     Replace:
       SLTU:
         Rd: $Dst
@@ -588,12 +588,12 @@ InstSelection:
         Rt: $Lhs
 
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isCompareOp($Op, CompareOp::ICmpSignedLessThan)
     Replace:
       SLTI:
         Rd: $Dst
@@ -601,12 +601,12 @@ InstSelection:
         Imm: $Rhs
 
   - Pattern:
-      InstUCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isLessThanOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandImm16($Rhs) && isCompareOp($Op, CompareOp::ICmpUnsignedLessThan)
     Replace:
       SLTIU:
         Rd: $Dst
@@ -614,12 +614,12 @@ InstSelection:
         Imm: $Rhs
 
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isCompareOp($Op, CompareOp::ICmpEqual)
     Replace:
       SLTIU:
         Rd: $Dst
@@ -627,38 +627,12 @@ InstSelection:
         Imm: getOne($Lhs)
 
   - Pattern:
-      InstUCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isEqualOp($Op)
-    Replace:
-      SLTIU:
-        Rd: $Dst
-        Rs: $Lhs
-        Imm: getOne($Lhs)
-
-  - Pattern:
-      InstSCmp:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
-    Replace:
-      SLTU:
-        Rd: $Dst
-        Rs: getZero($Rhs)
-        Rt: $Lhs
-
-  - Pattern:
-      InstUCmp:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isNotEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isZero($Rhs) && isCompareOp($Op, CompareOp::ICmpNotEqual)
     Replace:
       SLTU:
         Rd: $Dst
@@ -667,12 +641,12 @@ InstSelection:
 
   # x<=y -> !(y<x)
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpSignedLessEqual)
     Replace:
       XORI:
         Rd: $Dst
@@ -684,12 +658,12 @@ InstSelection:
         Imm: getOne($Dst)
 
   - Pattern:
-      InstUCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isLessEqualOp($Op)
+        $Predicate: isOperandIReg($Lhs) && isOperandIReg($Rhs) && isCompareOp($Op, CompareOp::ICmpUnsignedLessEqual)
     Replace:
       XORI:
         Rd: $Dst

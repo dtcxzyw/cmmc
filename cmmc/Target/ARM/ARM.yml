@@ -906,7 +906,7 @@ InstSelection:
   - Pattern:
       InstBranch:
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Cond
             Lhs: $Lhs
             Rhs: $Rhs
@@ -923,7 +923,7 @@ InstSelection:
             Rn: $Lhs
             Op2: $Out
             CC: getCC()
-        CF: getCondFieldSCmp($Op)
+        CF: getCondFieldICmp($Op)
         Tgt: $Reloc
         Prob: $Prob
 
@@ -948,7 +948,7 @@ InstSelection:
       InstSelect:
         Dst: $Dst
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Cond
             Lhs: $Lhs
             Rhs: $Rhs
@@ -969,13 +969,13 @@ InstSelection:
             Rn: $Lhs
             Op2: $Out
             CC: getCC()
-        CF: getCondFieldSCmp($Op)
+        CF: getCondFieldICmp($Op)
 
   - Pattern:
       InstSelect:
         Dst: $Dst
         Cond:
-          InstSCmp:
+          InstICmp:
             Dst: $Cond
             Lhs: $Lhs
             Rhs: $Rhs
@@ -996,7 +996,7 @@ InstSelection:
             Rn: $Lhs
             Op2: $Out
             CC: getCC()
-        CF: getCondFieldSCmp($Op)
+        CF: getCondFieldICmp($Op)
 
   - Pattern:
       InstSelect:
@@ -1039,12 +1039,12 @@ InstSelection:
         CF: $CF
 
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isEqualOp($Op) && buildSub(ctx, $Lhs, $Rhs, [$Out])
+        $Predicate: isCompareOp($Op, CompareOp::ICmpEqual) && buildSub(ctx, $Lhs, $Rhs, [$Out])
     Replace:
       LSR:
         Rd: $Dst
@@ -1056,7 +1056,7 @@ InstSelection:
 
   # Fallbacks for cmp/branch/select
   - Pattern:
-      InstSCmp:
+      InstICmp:
         Dst: $Dst
         Lhs: $Lhs
         Rhs: $Rhs
@@ -1072,26 +1072,7 @@ InstSelection:
             Rn: $Lhs
             Op2: $Out
             CC: getCC()
-        CF: getCondFieldSCmp($Op)
-
-  - Pattern:
-      InstUCmp:
-        Dst: $Dst
-        Lhs: $Lhs
-        Rhs: $Rhs
-        Op: $Op
-        $Predicate: isOperandIReg($Lhs) && selectCompareOp2($Rhs, [$Out], [$IsOpposite])
-    Replace:
-      NZCVFlag2GPR:
-        Rd: $Dst
-        CC:
-          Compare:
-            $Opcode: getCompareOpcode(($IsOpposite).imm())
-            $Template: CMP
-            Rn: $Lhs
-            Op2: $Out
-            CC: getCC()
-        CF: getCondFieldUCmp($Op)
+        CF: getCondFieldICmp($Op)
 
   - Pattern:
       InstFCmp:

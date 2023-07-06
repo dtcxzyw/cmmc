@@ -72,7 +72,7 @@ bool TACISelInfo::isLegalGenericInst(uint32_t opcode) const {
 
 bool TACISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
     if(allowComplexPattern) {
-        if(inst.opcode() == InstSCmp) {
+        if(inst.opcode() == InstICmp) {
             return expandCmp(inst, ctx);
         }
         if(inst.opcode() == InstSelect) {

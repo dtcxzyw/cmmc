@@ -404,7 +404,7 @@ bool TargetISelInfo::expandSelect(MIRInst& inst, ISelContext& ctx) {
 }
 
 bool TargetISelInfo::expandCmp(MIRInst& inst, ISelContext& ctx) {
-    assert(inst.opcode() == InstSCmp || inst.opcode() == InstUCmp || inst.opcode() == InstFCmp);
+    assert(inst.opcode() == InstICmp || inst.opcode() == InstFCmp);
     auto iter = ctx.getCurrentInstIter();
     auto& instrcutions = ctx.getInstructions();
     auto& codeGenCtx = ctx.getCodeGenCtx();
