@@ -85,6 +85,11 @@
       "parent": "7aede7c6d709e297c4656116f21caeeec62fa9ab",
       "time": "2023-07-03 22:03:46 +0800"
     },
+    "31ee101773cca21aabbf09112fc6980d32b7be0c": {
+      "message": "feat(transform): reapply SmallBlockInlining",
+      "parent": "9c5da85a06ef97bc6d4700a1dc515d848cb16063",
+      "time": "2023-07-06 20:56:42 +0800"
+    },
     "377826e4b87e1b09d4f811708c15375e9d09a15f": {
       "message": "ci: fix typos",
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
@@ -250,6 +255,11 @@
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
       "time": "2023-07-02 03:27:32 +0800"
     },
+    "9c5da85a06ef97bc6d4700a1dc515d848cb16063": {
+      "message": "misc: update ref",
+      "parent": "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996",
+      "time": "2023-07-06 19:54:04 +0800"
+    },
     "a398fc69ea29911ee35d3ef481e077fc10e79317": {
       "message": "feat(transform): move large allocas to global",
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
@@ -356,5 +366,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996"
+  "head": "31ee101773cca21aabbf09112fc6980d32b7be0c"
 }
