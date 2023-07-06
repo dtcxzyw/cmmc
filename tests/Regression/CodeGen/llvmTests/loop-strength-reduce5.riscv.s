@@ -15,10 +15,10 @@ Y:
 .globl foo
 foo:
 	ble a0, zero, label4
-	mv a1, zero
-	li a2, 65535
 pcrel34:
 	auipc a4, %pcrel_hi(X)
+	li a2, 65535
+	mv a1, zero
 	and a3, zero, a2
 	addiw a1, zero, 1
 	sh a3, %pcrel_lo(pcrel34)(a4)

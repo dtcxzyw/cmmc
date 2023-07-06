@@ -8,10 +8,10 @@ test_local_strategy:
 	and a0, a0, a1
 	subw a0, a0, a2
 	bne a0, zero, label20
-	addw a1, a3, a4
 	li a2, 4294967295
-	addw a1, a5, a1
+	addw a1, a3, a4
 	and a0, a0, a2
+	addw a1, a5, a1
 	addw a0, a1, a0
 	j label3
 label20:

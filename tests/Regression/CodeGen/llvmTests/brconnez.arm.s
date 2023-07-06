@@ -20,8 +20,8 @@ test:
 	ldr r0, [r0, #0]
 	cmp r0, #0
 	bne label3
-	movw r0, #:lower16:result
 	mov r1, #1
+	movw r0, #:lower16:result
 	movt r0, #:upper16:result
 	str r1, [r0, #0]
 label3:

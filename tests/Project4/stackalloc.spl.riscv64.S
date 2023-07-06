@@ -32,28 +32,28 @@ main:
 	mv a3, zero
 	jal read
 	sh2add a4, a3, a1
-	addiw a3, a3, 1
 	sw a0, 0(a4)
+	addiw a3, a3, 1
 	ble a2, a3, label31
 	jal read
 	sh2add a4, a3, a1
-	addiw a3, a3, 1
 	sw a0, 0(a4)
+	addiw a3, a3, 1
 	ble a2, a3, label31
 	jal read
 	sh2add a4, a3, a1
-	addiw a3, a3, 1
 	sw a0, 0(a4)
+	addiw a3, a3, 1
 	ble a2, a3, label31
 	jal read
 	sh2add a4, a3, a1
-	addiw a3, a3, 1
 	sw a0, 0(a4)
+	addiw a3, a3, 1
 	ble a2, a3, label31
 	jal read
 	sh2add a4, a3, a1
-	addiw a3, a3, 1
 	sw a0, 0(a4)
+	addiw a3, a3, 1
 	ble a2, a3, label31
 	jal read
 	sh2add a4, a3, a1
@@ -92,44 +92,44 @@ label23:
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 label188:
@@ -153,33 +153,33 @@ label43:
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
@@ -197,8 +197,8 @@ label194:
 	j label188
 label14:
 	ble a2, zero, label17
-	mv a3, zero
 	sh2add a0, zero, a1
+	mv a3, zero
 	lw a0, 0(a0)
 	jal write
 	addiw a3, a3, 1
@@ -267,33 +267,33 @@ label13:
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
@@ -323,33 +323,33 @@ label31:
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	sh2add a5, a0, a1
 	lw a5, 0(a5)
 	slt a5, a4, a5
 	beq a5, zero, label13
-	addiw a5, a0, 1
 	sh2add t0, a0, a1
-	sh2add a5, a5, a1
-	addiw a0, a0, -1
+	addiw a5, a0, 1
 	lw t0, 0(t0)
+	addiw a0, a0, -1
+	sh2add a5, a5, a1
 	sw t0, 0(a5)
 	blt a0, zero, label43
 	j label188
