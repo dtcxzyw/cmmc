@@ -5,6 +5,11 @@
       "parent": "31b662379aa1db01ecb8bda98ee1e81ac76921d4",
       "time": "2023-07-03 22:21:17 +0800"
     },
+    "019d6e514365b22eb6a7f95d207d65272218b506": {
+      "message": "test(transform): add licm cases",
+      "parent": "f2fd2172264d8a6e368c350464502093c909c048",
+      "time": "2023-07-07 02:12:10 +0800"
+    },
     "06a1668979545faf5da61846bca1aa7c8bbe3728": {
       "message": "feat(analysis): add range analysis for shl/shr",
       "parent": "b642f635bd39964b79138897e82d1cd1ca8de9f6",
@@ -406,5 +411,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "f2fd2172264d8a6e368c350464502093c909c048"
+  "head": "019d6e514365b22eb6a7f95d207d65272218b506"
 }
