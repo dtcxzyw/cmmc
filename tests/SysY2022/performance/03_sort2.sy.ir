@@ -9,8 +9,8 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     [16 * i32]* %tail = alloc [16 * i32];
     [16 * i32]* %head = alloc [16 * i32];
     i32 %0 = add i32 %l, i32 1;
-    i1 %1 = scmp le i32 %r, i32 %0;
-    i1 %2 = scmp eq i32 %bitround, i32 -1;
+    i1 %1 = icmp sle i32 %r, i32 %0;
+    i1 %2 = icmp eq i32 %bitround, i32 -1;
     i1 %3 = or i1 %1, i1 %2;
     i32* %4 = getelementptr &([16 * i32]* %head)[i64 0][i64 0];
     store i32* %4 with i32 0;
@@ -110,8 +110,8 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     store i32* %51 with i32 0;
     cbr i1 %3(prob = 0.5), ^if.then, ^b;
   ^b:
-    i1 %52 = scmp lt i32 %l, i32 %r;
-    i1 %53 = scmp gt i32 %bitround, i32 0;
+    i1 %52 = icmp slt i32 %l, i32 %r;
+    i1 %53 = icmp sgt i32 %bitround, i32 0;
     i32 %54 = add i32 %bitround, i32 -1;
     cbr i1 %52(prob = 0.97), ^while.body, ^b1;
   ^if.then:
@@ -131,7 +131,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %60 = phi [^while.body, i32 %59] [^while.body2, i32 %97];
     i32 %61 = phi [^while.body, i32 0] [^while.body2, i32 %62];
     i32 %62 = add i32 %61, i32 4;
-    i1 %63 = scmp gt i32 %bitround, i32 %62;
+    i1 %63 = icmp sgt i32 %bitround, i32 %62;
     cbr i1 %63(prob = 0.89), ^while.body2, ^super.header1;
   ^while.body1:
     i32 %64 = phi [^b1, i32 1] [^while.body1, i32 %88];
@@ -167,7 +167,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32* %87 = getelementptr &(i32* %72)[i64 3];
     store i32* %87 with i32 %86;
     i32 %88 = add i32 %64, i32 4;
-    i1 %89 = scmp lt i32 %88, i32 13;
+    i1 %89 = icmp slt i32 %88, i32 13;
     cbr i1 %89(prob = 0.67), ^while.body1, ^while.body3;
   ^b2:
     i32 %90 = phi [^while.body, i32 %59] [^while.body6, i32 %137];
@@ -177,7 +177,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %94 = add i32 %93, i32 1;
     store i32* %92 with i32 %94;
     i32 %95 = add i32 %57, i32 1;
-    i1 %96 = scmp gt i32 %r, i32 %95;
+    i1 %96 = icmp sgt i32 %r, i32 %95;
     cbr i1 %96(prob = 0.97), ^while.body, ^b1;
   ^while.body2:
     i32 %97 = sdiv i32 %60, i32 65536;
@@ -212,7 +212,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %116 = phi [^super.header, i32 %60] [^while.body4, i32 %120];
     i32 %117 = phi [^super.header, i32 %61] [^while.body4, i32 %118];
     i32 %118 = add i32 %117, i32 4;
-    i1 %119 = scmp gt i32 %bitround, i32 %118;
+    i1 %119 = icmp sgt i32 %bitround, i32 %118;
     cbr i1 %119(prob = 0.89), ^while.body4, ^super.header2;
   ^while.body4:
     i32 %120 = sdiv i32 %116, i32 65536;
@@ -221,11 +221,11 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %121 = phi [^super.header1, i32 %116] [^while.body5, i32 %130];
     i32 %122 = phi [^super.header1, i32 %117] [^while.body5, i32 %123];
     i32 %123 = add i32 %122, i32 4;
-    i1 %124 = scmp gt i32 %bitround, i32 %123;
+    i1 %124 = icmp sgt i32 %bitround, i32 %123;
     cbr i1 %124(prob = 0.89), ^while.body5, ^while.body6;
   ^while.header:
     i32 %125 = phi [^while.body3, i32 0] [^b4, i32 %143];
-    i1 %126 = scmp lt i32 %125, i32 16;
+    i1 %126 = icmp slt i32 %125, i32 16;
     cbr i1 %126(prob = 0.97), ^indirect, ^b3;
   ^indirect:
     i32* %127 = getelementptr &([16 * i32]* %head)[i64 0][i32 %125];
@@ -245,17 +245,17 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %133 = phi [^super.header2, i32 %121] [^while.body6, i32 %137];
     i32 %134 = phi [^super.header2, i32 %122] [^while.body6, i32 %135];
     i32 %135 = add i32 %134, i32 1;
-    i1 %136 = scmp gt i32 %bitround, i32 %135;
+    i1 %136 = icmp sgt i32 %bitround, i32 %135;
     i32 %137 = sdiv i32 %133, i32 16;
     cbr i1 %136(prob = 0.97), ^while.body6, ^b2;
   ^while.header1:
     i32 %138 = phi [^indirect, i32 %128] [^b7, i32 %172];
     i32 %139 = load i32* %129;
-    i1 %140 = scmp lt i32 %138, i32 %139;
+    i1 %140 = icmp slt i32 %138, i32 %139;
     cbr i1 %140(prob = 0.97), ^while.body7, ^b4;
   ^while.header2:
     i32 %141 = phi [^b3, i32 0] [^b5, i32 %160];
-    i1 %142 = scmp lt i32 %141, i32 16;
+    i1 %142 = icmp slt i32 %141, i32 16;
     cbr i1 %142(prob = 0.97), ^while.body8, ^if.then;
   ^b4:
     i32 %143 = add i32 %125, i32 1;
@@ -266,7 +266,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %146 = load i32* %145;
     cbr i1 %53(prob = 0.97), ^super.header3, ^b6;
   ^while.body8:
-    i1 %147 = scmp gt i32 %141, i32 0;
+    i1 %147 = icmp sgt i32 %141, i32 0;
     cbr i1 %147(prob = 0.5), ^if.then1, ^b5;
   ^if.then1:
     i32 %148 = add i32 %141, i32 -1;
@@ -292,12 +292,12 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %161 = phi [^while.body7, i32 %146] [^while.body9, i32 %168];
     i32 %162 = phi [^while.body7, i32 0] [^while.body9, i32 %163];
     i32 %163 = add i32 %162, i32 4;
-    i1 %164 = scmp gt i32 %bitround, i32 %163;
+    i1 %164 = icmp sgt i32 %bitround, i32 %163;
     cbr i1 %164(prob = 0.89), ^while.body9, ^super.header4;
   ^b6:
     i32 %165 = phi [^while.body7, i32 %146] [^while.body14, i32 %206];
     i32 %166 = srem i32 %165, i32 16;
-    i1 %167 = scmp neq i32 %125, i32 %166;
+    i1 %167 = icmp neq i32 %125, i32 %166;
     cbr i1 %167(prob = 0.97), ^while.body10, ^b7;
   ^while.body9:
     i32 %168 = sdiv i32 %161, i32 65536;
@@ -314,7 +314,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %173 = phi [^super.header3, i32 %161] [^while.body11, i32 %182];
     i32 %174 = phi [^super.header3, i32 %162] [^while.body11, i32 %175];
     i32 %175 = add i32 %174, i32 4;
-    i1 %176 = scmp gt i32 %bitround, i32 %175;
+    i1 %176 = icmp sgt i32 %bitround, i32 %175;
     cbr i1 %176(prob = 0.89), ^while.body11, ^super.header6;
   ^while.body10:
     i32* %177 = getelementptr &([16 * i32]* %head)[i64 0][i32 %166];
@@ -332,18 +332,18 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %183 = phi [^while.body10, i32 %180] [^while.body12, i32 %194];
     i32 %184 = phi [^while.body10, i32 0] [^while.body12, i32 %185];
     i32 %185 = add i32 %184, i32 4;
-    i1 %186 = scmp gt i32 %bitround, i32 %185;
+    i1 %186 = icmp sgt i32 %bitround, i32 %185;
     cbr i1 %186(prob = 0.89), ^while.body12, ^super.header7;
   ^super.header6:
     i32 %187 = phi [^super.header4, i32 %173] [^while.body13, i32 %195];
     i32 %188 = phi [^super.header4, i32 %174] [^while.body13, i32 %189];
     i32 %189 = add i32 %188, i32 4;
-    i1 %190 = scmp gt i32 %bitround, i32 %189;
+    i1 %190 = icmp sgt i32 %bitround, i32 %189;
     cbr i1 %190(prob = 0.89), ^while.body13, ^while.body14;
   ^b8:
     i32 %191 = phi [^while.body10, i32 %180] [^while.body18, i32 %237];
     i32 %192 = srem i32 %191, i32 16;
-    i1 %193 = scmp neq i32 %125, i32 %192;
+    i1 %193 = icmp neq i32 %125, i32 %192;
     cbr i1 %193(prob = 0.97), ^indirect2, ^indirect1;
   ^while.body12:
     i32 %194 = sdiv i32 %183, i32 65536;
@@ -358,7 +358,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %197 = phi [^super.header5, i32 %183] [^while.body15, i32 %207];
     i32 %198 = phi [^super.header5, i32 %184] [^while.body15, i32 %199];
     i32 %199 = add i32 %198, i32 4;
-    i1 %200 = scmp gt i32 %bitround, i32 %199;
+    i1 %200 = icmp sgt i32 %bitround, i32 %199;
     cbr i1 %200(prob = 0.89), ^while.body15, ^super.header9;
   ^indirect2:
     i32 %201 = phi [^b8, i32 %180] [^b10, i32 %221];
@@ -367,7 +367,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %202 = phi [^super.header6, i32 %187] [^while.body14, i32 %206];
     i32 %203 = phi [^super.header6, i32 %188] [^while.body14, i32 %204];
     i32 %204 = add i32 %203, i32 1;
-    i1 %205 = scmp gt i32 %bitround, i32 %204;
+    i1 %205 = icmp sgt i32 %bitround, i32 %204;
     i32 %206 = sdiv i32 %202, i32 16;
     cbr i1 %205(prob = 0.97), ^while.body14, ^b6;
   ^while.body15:
@@ -377,13 +377,13 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %208 = phi [^indirect2, i32 %201] [^while.body16, i32 %223];
     i32 %209 = phi [^indirect2, i32 0] [^while.body16, i32 %210];
     i32 %210 = add i32 %209, i32 4;
-    i1 %211 = scmp gt i32 %bitround, i32 %210;
+    i1 %211 = icmp sgt i32 %bitround, i32 %210;
     cbr i1 %211(prob = 0.89), ^while.body16, ^super.header10;
   ^super.header9:
     i32 %212 = phi [^super.header7, i32 %197] [^while.body17, i32 %224];
     i32 %213 = phi [^super.header7, i32 %198] [^while.body17, i32 %214];
     i32 %214 = add i32 %213, i32 4;
-    i1 %215 = scmp gt i32 %bitround, i32 %214;
+    i1 %215 = icmp sgt i32 %bitround, i32 %214;
     cbr i1 %215(prob = 0.89), ^while.body17, ^while.body18;
   ^b9:
     i32 %216 = phi [^indirect2, i32 %201] [^while.body23, i32 %258];
@@ -406,25 +406,25 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %225 = phi [^super.header8, i32 %208] [^while.body20, i32 %242];
     i32 %226 = phi [^super.header8, i32 %209] [^while.body20, i32 %227];
     i32 %227 = add i32 %226, i32 4;
-    i1 %228 = scmp gt i32 %bitround, i32 %227;
+    i1 %228 = icmp sgt i32 %bitround, i32 %227;
     cbr i1 %228(prob = 0.89), ^while.body20, ^super.header12;
   ^super.header11:
     i32 %229 = phi [^b9, i32 %221] [^while.body19, i32 %241];
     i32 %230 = phi [^b9, i32 0] [^while.body19, i32 %231];
     i32 %231 = add i32 %230, i32 4;
-    i1 %232 = scmp gt i32 %bitround, i32 %231;
+    i1 %232 = icmp sgt i32 %bitround, i32 %231;
     cbr i1 %232(prob = 0.89), ^while.body19, ^super.header13;
   ^while.body18:
     i32 %233 = phi [^super.header9, i32 %212] [^while.body18, i32 %237];
     i32 %234 = phi [^super.header9, i32 %213] [^while.body18, i32 %235];
     i32 %235 = add i32 %234, i32 1;
-    i1 %236 = scmp gt i32 %bitround, i32 %235;
+    i1 %236 = icmp sgt i32 %bitround, i32 %235;
     i32 %237 = sdiv i32 %233, i32 16;
     cbr i1 %236(prob = 0.97), ^while.body18, ^b8;
   ^b10:
     i32 %238 = phi [^b9, i32 %221] [^while.body25, i32 %268];
     i32 %239 = srem i32 %238, i32 16;
-    i1 %240 = scmp neq i32 %125, i32 %239;
+    i1 %240 = icmp neq i32 %125, i32 %239;
     cbr i1 %240(prob = 0.97), ^indirect2, ^indirect3;
   ^while.body19:
     i32 %241 = sdiv i32 %229, i32 65536;
@@ -439,13 +439,13 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %244 = phi [^super.header10, i32 %225] [^while.body22, i32 %253];
     i32 %245 = phi [^super.header10, i32 %226] [^while.body22, i32 %246];
     i32 %246 = add i32 %245, i32 4;
-    i1 %247 = scmp gt i32 %bitround, i32 %246;
+    i1 %247 = icmp sgt i32 %bitround, i32 %246;
     cbr i1 %247(prob = 0.89), ^while.body22, ^while.body23;
   ^super.header13:
     i32 %248 = phi [^super.header11, i32 %229] [^while.body21, i32 %252];
     i32 %249 = phi [^super.header11, i32 %230] [^while.body21, i32 %250];
     i32 %250 = add i32 %249, i32 4;
-    i1 %251 = scmp gt i32 %bitround, i32 %250;
+    i1 %251 = icmp sgt i32 %bitround, i32 %250;
     cbr i1 %251(prob = 0.89), ^while.body21, ^super.header14;
   ^while.body21:
     i32 %252 = sdiv i32 %248, i32 65536;
@@ -457,14 +457,14 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %254 = phi [^super.header12, i32 %244] [^while.body23, i32 %258];
     i32 %255 = phi [^super.header12, i32 %245] [^while.body23, i32 %256];
     i32 %256 = add i32 %255, i32 1;
-    i1 %257 = scmp gt i32 %bitround, i32 %256;
+    i1 %257 = icmp sgt i32 %bitround, i32 %256;
     i32 %258 = sdiv i32 %254, i32 16;
     cbr i1 %257(prob = 0.97), ^while.body23, ^b9;
   ^super.header14:
     i32 %259 = phi [^super.header13, i32 %248] [^while.body24, i32 %263];
     i32 %260 = phi [^super.header13, i32 %249] [^while.body24, i32 %261];
     i32 %261 = add i32 %260, i32 4;
-    i1 %262 = scmp gt i32 %bitround, i32 %261;
+    i1 %262 = icmp sgt i32 %bitround, i32 %261;
     cbr i1 %262(prob = 0.89), ^while.body24, ^while.body25;
   ^while.body24:
     i32 %263 = sdiv i32 %259, i32 65536;
@@ -473,7 +473,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %264 = phi [^super.header14, i32 %259] [^while.body25, i32 %268];
     i32 %265 = phi [^super.header14, i32 %260] [^while.body25, i32 %266];
     i32 %266 = add i32 %265, i32 1;
-    i1 %267 = scmp gt i32 %bitround, i32 %266;
+    i1 %267 = icmp sgt i32 %bitround, i32 %266;
     i32 %268 = sdiv i32 %264, i32 16;
     cbr i1 %267(prob = 0.97), ^while.body25, ^b10;
 }
@@ -485,13 +485,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %2 = call (i32*) -> i32 @getarray(i32* %1);
     call (i32) -> void @starttime(i32 90);
     call (i32, i32*, i32, i32) -> void @radixSort(i32 8, i32* %1, i32 0, i32 %2);
-    i1 %3 = scmp gt i32 %2, i32 0;
+    i1 %3 = icmp sgt i32 %2, i32 0;
     cbr i1 %3(prob = 0.97), ^super.header, ^b;
   ^super.header:
     i32 %4 = phi [^entry, i32 0] [^while.body, i32 %33];
     i32 %5 = phi [^entry, i32 0] [^while.body, i32 %6];
     i32 %6 = add i32 %5, i32 4;
-    i1 %7 = scmp gt i32 %2, i32 %6;
+    i1 %7 = icmp sgt i32 %2, i32 %6;
     cbr i1 %7(prob = 0.89), ^while.body, ^super.header1;
   ^b:
     i32 %8 = phi [^entry, i32 0] [^while.body2, i32 %69];
@@ -530,7 +530,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %34 = phi [^super.header, i32 %4] [^while.body1, i32 %61];
     i32 %35 = phi [^super.header, i32 %5] [^while.body1, i32 %36];
     i32 %36 = add i32 %35, i32 4;
-    i1 %37 = scmp gt i32 %2, i32 %36;
+    i1 %37 = icmp sgt i32 %2, i32 %36;
     cbr i1 %37(prob = 0.89), ^while.body1, ^while.body2;
   ^while.body1:
     i32* %38 = getelementptr &([30000010 * i32]* %0)[i64 0][i32 %35];
@@ -568,6 +568,6 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %68 = mul i32 %63, i32 %67;
     i32 %69 = add i32 %62, i32 %68;
     i32 %70 = add i32 %63, i32 1;
-    i1 %71 = scmp gt i32 %2, i32 %70;
+    i1 %71 = icmp sgt i32 %2, i32 %70;
     cbr i1 %71(prob = 0.97), ^while.body2, ^b;
 }

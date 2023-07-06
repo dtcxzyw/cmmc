@@ -120,7 +120,7 @@ func @my_fabs(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
 }
 func @simpson(f32 %l, f32 %r, f32 %fl, f32 %fm, f32 %fr) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    f32 %0 = fmul f32 4, f32 %fm;
+    f32 %0 = fmul f32 %fm, f32 4;
     f32 %1 = fadd f32 %fl, f32 %0;
     f32 %2 = fadd f32 %1, f32 %fr;
     f32 %3 = fsub f32 %r, f32 %l;
@@ -133,7 +133,7 @@ func @SAAImpl(f32 %l, f32 %m, f32 %r, f32 %fl, f32 %fm, f32 %fr, f32 %sm) -> f32
     f32 %0 = fadd f32 %l, f32 %m;
     f32 %1 = fmul f32 %0, f32 0.5;
     f32 %2 = fmul f32 %1, f32 %1;
-    f32 %3 = fmul f32 4, f32 %2;
+    f32 %3 = fmul f32 %2, f32 4;
     f32 %4 = fadd f32 %fl, f32 %3;
     f32 %5 = fadd f32 %4, f32 %fm;
     f32 %6 = fsub f32 %m, f32 %l;
@@ -142,7 +142,7 @@ func @SAAImpl(f32 %l, f32 %m, f32 %r, f32 %fl, f32 %fm, f32 %fr, f32 %sm) -> f32
     f32 %9 = fadd f32 %m, f32 %r;
     f32 %10 = fmul f32 %9, f32 0.5;
     f32 %11 = fmul f32 %10, f32 %10;
-    f32 %12 = fmul f32 4, f32 %11;
+    f32 %12 = fmul f32 %11, f32 4;
     f32 %13 = fadd f32 %fm, f32 %12;
     f32 %14 = fadd f32 %13, f32 %fr;
     f32 %15 = fsub f32 %r, f32 %m;
@@ -169,7 +169,7 @@ func @SAA(f32 %l, f32 %r) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     f32 %0 = fadd f32 %l, f32 %r;
     f32 %1 = fmul f32 %0, f32 0.5;
     f32 %2 = fmul f32 %1, f32 %1;
-    f32 %3 = fmul f32 4, f32 %2;
+    f32 %3 = fmul f32 %2, f32 4;
     f32 %4 = fmul f32 %l, f32 %l;
     f32 %5 = fadd f32 %4, f32 %3;
     f32 %6 = fmul f32 %r, f32 %r;
@@ -225,7 +225,7 @@ func @main() -> i32 { NoRecurse } {
     f32 %25 = fadd f32 %1, f32 %2;
     f32 %26 = fmul f32 %25, f32 0.5;
     f32 %27 = fmul f32 %26, f32 %26;
-    f32 %28 = fmul f32 4, f32 %27;
+    f32 %28 = fmul f32 %27, f32 4;
     f32 %29 = fmul f32 %1, f32 %1;
     f32 %30 = fadd f32 %29, f32 %28;
     f32 %31 = fmul f32 %2, f32 %2;

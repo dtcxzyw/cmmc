@@ -5,7 +5,7 @@ internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp gt i32 %0, i32 0;
+    i1 %1 = icmp sgt i32 %0, i32 0;
     call (i32) -> void @starttime(i32 22);
     [4096 * f32]* %2 = ptrcast [4096 * f32]* @x to [4096 * f32]*;
     f32* %3 = getelementptr &([4096 * f32]* %2)[i64 0][i64 0];
@@ -18,22 +18,22 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     f32 %8 = phi [^entry, f32 1] [^b2, f32 %15];
     f32 %9 = phi [^entry, f32 0] [^b2, f32 %17];
     i32 %10 = phi [^entry, i32 0] [^b2, i32 %52];
-    i1 %11 = scmp lt i32 %10, i32 500000;
+    i1 %11 = icmp slt i32 %10, i32 500000;
     cbr i1 %11(prob = 0.97), ^while.body, ^b;
   ^while.body:
     i32 %12 = srem i32 %10, i32 10;
-    i1 %13 = scmp neq i32 %12, i32 0;
+    i1 %13 = icmp neq i32 %12, i32 0;
     f32 %14 = fadd f32 %8, f32 0.2;
     f32 %15 = select i1 %13 ? f32 1 : f32 %14;
     f32 %16 = fadd f32 %9, f32 0.1;
     f32 %17 = select i1 %13 ? f32 0 : f32 %16;
-    i1 %18 = scmp gt i32 %0, i32 %7;
+    i1 %18 = icmp sgt i32 %0, i32 %7;
     cbr i1 %18(prob = 0.97), ^super.header, ^b1;
   ^b:
     call (i32) -> void @stoptime(i32 39);
     f32 %19 = fsub f32 %6, f32 1.14424e+16;
-    i1 %20 = fcmp le f32 %19, f32 1e-06;
-    i1 %21 = fcmp ge f32 %19, f32 -1e-06;
+    i1 %20 = fcmp ole f32 %19, f32 1e-06;
+    i1 %21 = fcmp oge f32 %19, f32 -1e-06;
     i1 %22 = or i1 %20, i1 %21;
     cbr i1 %22(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
@@ -45,7 +45,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
   ^super.header:
     i32 %23 = phi [^while.body, i32 %7] [^while.body1, i32 %24];
     i32 %24 = add i32 %23, i32 4;
-    i1 %25 = scmp gt i32 %0, i32 %24;
+    i1 %25 = icmp sgt i32 %0, i32 %24;
     cbr i1 %25(prob = 0.89), ^while.body1, ^super.header1;
   ^b1:
     i32 %26 = phi [^while.body, i32 %7] [^while.body4, i32 %114];
@@ -91,13 +91,13 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
   ^super.header1:
     i32 %53 = phi [^super.header, i32 %23] [^while.body2, i32 %54];
     i32 %54 = add i32 %53, i32 4;
-    i1 %55 = scmp gt i32 %0, i32 %54;
+    i1 %55 = icmp sgt i32 %0, i32 %54;
     cbr i1 %55(prob = 0.89), ^while.body2, ^while.body4;
   ^super.header2:
     f32 %56 = phi [^b1, f32 0] [^while.body3, f32 %107];
     i32 %57 = phi [^b1, i32 0] [^while.body3, i32 %58];
     i32 %58 = add i32 %57, i32 4;
-    i1 %59 = scmp gt i32 %0, i32 %58;
+    i1 %59 = icmp sgt i32 %0, i32 %58;
     cbr i1 %59(prob = 0.89), ^while.body3, ^super.header3;
   ^b3:
     i32 %60 = phi [^if.then, i32 0] [^if.else, i32 1];
@@ -171,13 +171,13 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     f32* %113 = getelementptr &([4096 * f32]* %4)[i64 0][i32 %108];
     store f32* %113 with f32 %112;
     i32 %114 = add i32 %108, i32 1;
-    i1 %115 = scmp gt i32 %0, i32 %114;
+    i1 %115 = icmp sgt i32 %0, i32 %114;
     cbr i1 %115(prob = 0.97), ^while.body4, ^b1;
   ^super.header3:
     f32 %116 = phi [^super.header2, f32 %56] [^while.body5, f32 %143];
     i32 %117 = phi [^super.header2, i32 %57] [^while.body5, i32 %118];
     i32 %118 = add i32 %117, i32 4;
-    i1 %119 = scmp gt i32 %0, i32 %118;
+    i1 %119 = icmp sgt i32 %0, i32 %118;
     cbr i1 %119(prob = 0.89), ^while.body5, ^super.header4;
   ^while.body5:
     f32* %120 = getelementptr &(f32* %3)[i32 %117];
@@ -209,7 +209,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     f32 %144 = phi [^super.header3, f32 %116] [^while.body6, f32 %171];
     i32 %145 = phi [^super.header3, i32 %117] [^while.body6, i32 %146];
     i32 %146 = add i32 %145, i32 4;
-    i1 %147 = scmp gt i32 %0, i32 %146;
+    i1 %147 = icmp sgt i32 %0, i32 %146;
     cbr i1 %147(prob = 0.89), ^while.body6, ^while.body7;
   ^while.body6:
     f32* %148 = getelementptr &(f32* %3)[i32 %145];
@@ -247,7 +247,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     f32 %178 = fmul f32 %175, f32 %177;
     f32 %179 = fadd f32 %172, f32 %178;
     i32 %180 = add i32 %173, i32 1;
-    i1 %181 = scmp gt i32 %0, i32 %180;
+    i1 %181 = icmp sgt i32 %0, i32 %180;
     cbr i1 %181(prob = 0.97), ^while.body7, ^b2;
 }
 internal [4096 * f32]* @y;

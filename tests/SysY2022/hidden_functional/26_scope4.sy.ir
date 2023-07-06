@@ -7,7 +7,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %1 = phi [^entry, i32 1352] [^entry2, i32 %27] [^entry3, i32 %38];
     i32 %2 = phi [^entry, i32 0] [^entry2, i32 %29] [^entry3, i32 %40];
     i32 %3 = phi [^entry, i32 2] [^entry2, i32 %3] [^entry3, i32 %39];
-    i1 %4 = scmp lt i32 %2, i32 3;
+    i1 %4 = icmp slt i32 %2, i32 3;
     cbr i1 %4(prob = 0.97), ^entry1, ^b;
   ^entry1:
     i32 %5 = add i32 %3, i32 10;
@@ -21,7 +21,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %13 = mul i32 %12, i32 3;
     i32 %14 = add i32 %11, i32 %13;
     i32 %15 = add i32 %0, i32 6;
-    i1 %16 = scmp eq i32 %2, i32 1;
+    i1 %16 = icmp eq i32 %2, i32 1;
     cbr i1 %16(prob = 0.5), ^entry2, ^entry3;
   ^b:
     call (i32) -> void @putint(i32 %1);

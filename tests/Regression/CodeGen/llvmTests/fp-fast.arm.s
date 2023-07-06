@@ -19,7 +19,7 @@ test2:
 	movw r0, #0
 	movt r0, #16512
 	vmov s1, r0
-	vmul.f32 s1, s1, s0
+	vmul.f32 s1, s0, s1
 	vadd.f32 s0, s0, s0
 	vadd.f32 s0, s1, s0
 	bx lr
@@ -38,7 +38,7 @@ test4:
 	movw r0, #0
 	movt r0, #16512
 	vmov s2, r0
-	vmul.f32 s0, s2, s0
+	vmul.f32 s0, s0, s2
 	vadd.f32 s0, s1, s0
 	bx lr
 .globl test5

@@ -15,7 +15,7 @@ test10:
 test2:
 	lui a0, 264192
 	fmv.w.x f11, a0
-	fmul.s f11, f11, f10
+	fmul.s f11, f10, f11
 	fadd.s f10, f10, f10
 	fadd.s f10, f11, f10
 	ret
@@ -32,7 +32,7 @@ test4:
 	fadd.s f11, f10, f10
 	lui a0, 264192
 	fmv.w.x f12, a0
-	fmul.s f10, f12, f10
+	fmul.s f10, f10, f12
 	fadd.s f10, f11, f10
 	ret
 .globl test5

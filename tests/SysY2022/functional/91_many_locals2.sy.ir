@@ -4,12 +4,12 @@ internal func @putch() -> void { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     i32 %0 = call () -> i32 @getint();
-    i1 %1 = scmp eq i32 %0, i32 5;
+    i1 %1 = icmp eq i32 %0, i32 5;
     cbr i1 %1(prob = 0.97), ^while.body, ^b;
   ^while.body:
     i32 %2 = phi [^entry, i32 %0] [^while.body, i32 %3];
     i32 %3 = add i32 %2, i32 1;
-    i1 %4 = scmp eq i32 %3, i32 5;
+    i1 %4 = icmp eq i32 %3, i32 5;
     cbr i1 %4(prob = 0.97), ^while.body, ^b;
   ^b:
     i32 %5 = phi [^entry, i32 %0] [^while.body, i32 %3];

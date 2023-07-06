@@ -37,6 +37,27 @@ class ArithmeticReduce final : public TransformPass<Function> {
     static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target) {
         bool modified = false;
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
+            // commutative c x -> commutative x c
+            switch(inst->getInstID()) {
+                case InstructionID::Add:
+                case InstructionID::Mul:
+                case InstructionID::Or:
+                case InstructionID::Xor:
+                case InstructionID::And:
+                case InstructionID::SMax:
+                case InstructionID::SMin:
+                case InstructionID::FAdd:
+                case InstructionID::FMul: {
+                    if(inst->getOperand(0)->isConstant() && !inst->getOperand(1)->isConstant()) {
+                        auto& operands = inst->mutableOperands();
+                        std::swap(operands[0], operands[1]);
+                        modified = true;
+                    }
+                } break;
+                default:
+                    break;
+            }
+
             MatchContext<Value> matchCtx{ inst };
 
             auto makeIntLike = [](intmax_t val, const Value* like) { return ConstantInteger::get(like->getType(), val); };
@@ -347,31 +368,6 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(sub(add(any(v1), int_(i1)), int_(i2))(matchCtx))
                 return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i1 - i2, v1));
 
-            // commutative c x -> commutative x c
-            switch(inst->getInstID()) {
-                case InstructionID::Add:
-                    [[fallthrough]];
-                case InstructionID::Mul:
-                    [[fallthrough]];
-                case InstructionID::Or:
-                    [[fallthrough]];
-                case InstructionID::Xor:
-                    [[fallthrough]];
-                case InstructionID::And:
-                    [[fallthrough]];
-                case InstructionID::SMax:
-                    [[fallthrough]];
-                case InstructionID::SMin: {
-                    if(inst->getOperand(0)->isConstant() && !inst->getOperand(1)->isConstant()) {
-                        auto& operands = inst->mutableOperands();
-                        std::swap(operands[0], operands[1]);
-                        modified = true;
-                    }
-                } break;
-                default:
-                    break;
-            }
-
             // a - c -> a + (-c)
             if(sub(any(v1), int_(i1))(matchCtx) && !v1->isConstant())
                 return builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(-i1, v1));
@@ -538,7 +534,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(icmp(cmp, and_(zext(boolean(v1)), zext(boolean(v2))), cuint_(0))(matchCtx)) {
                 if(cmp == CompareOp::ICmpNotEqual)
                     return builder.makeOp<BinaryInst>(InstructionID::And, v1, v2);
-                else if(cmp == CompareOp::ICmpEqual)
+                if(cmp == CompareOp::ICmpEqual)
                     return makeNot(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
             }
 

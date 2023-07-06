@@ -9,7 +9,7 @@ func @test2(i32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffe
   ^entry:
     i1 %0 = icmp neq i32 %var0, i32 0;
     f32 %1 = select i1 %0 ? f32 1 : f32 %var1;
-    f32 %2 = fadd f32 2, f32 %1;
+    f32 %2 = fadd f32 %1, f32 2;
     ret f32 %2;
 }
 func @test3(i32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

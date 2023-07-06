@@ -6,11 +6,11 @@ internal func @starttime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @stoptime() -> void { NoMemoryRead NoMemoryWrite };
 internal func @fibFP(f32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
-    i1 %0 = fcmp lt f32 %n, f32 2;
+    i1 %0 = fcmp olt f32 %n, f32 2;
     cbr i1 %0(prob = 0.5), ^b1, ^b;
   ^b:
     f32 %1 = fsub f32 %n, f32 2;
-    i1 %2 = fcmp lt f32 %1, f32 2;
+    i1 %2 = fcmp olt f32 %1, f32 2;
     cbr i1 %2(prob = 0.5), ^b3, ^b2;
   ^b1:
     f32 %3 = phi [^entry, f32 1] [^b4, f32 %13];
@@ -25,7 +25,7 @@ internal func @fibFP(f32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect St
   ^b3:
     f32 %9 = phi [^b, f32 1] [^b2, f32 %8];
     f32 %10 = fsub f32 %n, f32 1;
-    i1 %11 = fcmp lt f32 %10, f32 2;
+    i1 %11 = fcmp olt f32 %10, f32 2;
     cbr i1 %11(prob = 0.5), ^b4, ^b5;
   ^b4:
     f32 %12 = phi [^b3, f32 1] [^b5, f32 %18];
@@ -46,11 +46,11 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %1 = phi [^0, f32 %z] [^b2, f32 %2] [^if.then3, f32 %42];
     f32 %2 = phi [^0, f32 %y] [^b2, f32 %30] [^if.then3, f32 %30];
     f32 %3 = phi [^0, f32 %x] [^b2, f32 %17] [^if.then3, f32 %17];
-    i1 %4 = fcmp lt f32 %2, f32 %3;
+    i1 %4 = fcmp olt f32 %2, f32 %3;
     cbr i1 %4(prob = 0.5), ^if.then, ^b;
   ^if.then:
     f32 %5 = fsub f32 %3, f32 1;
-    i1 %6 = fcmp lt f32 %2, f32 %5;
+    i1 %6 = fcmp olt f32 %2, f32 %5;
     cbr i1 %6(prob = 0.5), ^if.then1, ^b1;
   ^b:
     ret f32 %1;
@@ -62,14 +62,14 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %11 = call (f32, f32, f32) -> f32 @takFP(f32 %10, f32 %8, f32 %9);
     f32 %12 = fsub f32 %8, f32 1;
     f32 %13 = call (f32, f32, f32) -> f32 @takFP(f32 %12, f32 %9, f32 %7);
-    i1 %14 = fcmp lt f32 %13, f32 %11;
+    i1 %14 = fcmp olt f32 %13, f32 %11;
     f32 %15 = fsub f32 %9, f32 1;
     f32 %16 = call (f32, f32, f32) -> f32 @takFP(f32 %15, f32 %7, f32 %8);
     cbr i1 %14(prob = 0.5), ^if.then1, ^b1;
   ^b1:
     f32 %17 = phi [^if.then, f32 %1] [^if.then1, f32 %16];
     f32 %18 = fsub f32 %2, f32 1;
-    i1 %19 = fcmp lt f32 %1, f32 %18;
+    i1 %19 = fcmp olt f32 %1, f32 %18;
     cbr i1 %19(prob = 0.5), ^if.then2, ^b2;
   ^if.then2:
     f32 %20 = phi [^b1, f32 %18] [^if.then2, f32 %24];
@@ -79,14 +79,14 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %24 = call (f32, f32, f32) -> f32 @takFP(f32 %23, f32 %21, f32 %22);
     f32 %25 = fsub f32 %21, f32 1;
     f32 %26 = call (f32, f32, f32) -> f32 @takFP(f32 %25, f32 %22, f32 %20);
-    i1 %27 = fcmp lt f32 %26, f32 %24;
+    i1 %27 = fcmp olt f32 %26, f32 %24;
     f32 %28 = fsub f32 %22, f32 1;
     f32 %29 = call (f32, f32, f32) -> f32 @takFP(f32 %28, f32 %20, f32 %21);
     cbr i1 %27(prob = 0.5), ^if.then2, ^b2;
   ^b2:
     f32 %30 = phi [^b1, f32 %3] [^if.then2, f32 %29];
     f32 %31 = fsub f32 %1, f32 1;
-    i1 %32 = fcmp lt f32 %3, f32 %31;
+    i1 %32 = fcmp olt f32 %3, f32 %31;
     cbr i1 %32(prob = 0.5), ^if.then3, ^entry;
   ^if.then3:
     f32 %33 = phi [^b2, f32 %31] [^if.then3, f32 %37];
@@ -96,7 +96,7 @@ internal func @takFP(f32 %x, f32 %y, f32 %z) -> f32 { NoMemoryRead NoMemoryWrite
     f32 %37 = call (f32, f32, f32) -> f32 @takFP(f32 %36, f32 %34, f32 %35);
     f32 %38 = fsub f32 %34, f32 1;
     f32 %39 = call (f32, f32, f32) -> f32 @takFP(f32 %38, f32 %35, f32 %33);
-    i1 %40 = fcmp lt f32 %39, f32 %37;
+    i1 %40 = fcmp olt f32 %39, f32 %37;
     f32 %41 = fsub f32 %35, f32 1;
     f32 %42 = call (f32, f32, f32) -> f32 @takFP(f32 %41, f32 %33, f32 %34);
     cbr i1 %40(prob = 0.5), ^if.then3, ^entry;
@@ -110,9 +110,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %3 = call () -> f32 @getfloat();
     f32 %4 = call (f32, f32, f32) -> f32 @takFP(f32 %1, f32 %2, f32 %3);
     f32 %5 = s2f i32 %0 to f32;
-    f32 %6 = fadd f32 28, f32 %5;
+    f32 %6 = fadd f32 %5, f32 28;
     f32 %7 = call (f32) -> f32 @fibFP(f32 %6);
-    i1 %8 = fcmp eq f32 %7, f32 6.3246e+07;
+    i1 %8 = fcmp oeq f32 %7, f32 6.3246e+07;
     cbr i1 %8(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     call (i32) -> void @putch(i32 112);
@@ -121,7 +121,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @putint(i32 1);
     ubr ^b;
   ^b:
-    i1 %9 = fcmp eq f32 %4, f32 2;
+    i1 %9 = fcmp oeq f32 %4, f32 2;
     cbr i1 %9(prob = 0.5), ^if.then1, ^if.else1;
   ^if.then1:
     call (i32) -> void @putch(i32 112);

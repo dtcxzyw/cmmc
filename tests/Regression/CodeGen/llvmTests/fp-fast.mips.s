@@ -21,7 +21,7 @@ test2:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
-	mul.s $f4, $f4, $f12
+	mul.s $f4, $f12, $f4
 	add.s $f6, $f12, $f12
 	add.s $f0, $f4, $f6
 	jr $ra
@@ -42,7 +42,7 @@ test4:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f6, 0($t0)
-	mul.s $f6, $f6, $f12
+	mul.s $f6, $f12, $f6
 	add.s $f0, $f4, $f6
 	jr $ra
 	nop

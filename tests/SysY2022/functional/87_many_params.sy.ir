@@ -56,7 +56,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^while.header;
   ^while.header:
     i32 %32 = phi [^entry, i32 0] [^while.header1, i32 %35];
-    i1 %33 = scmp lt i32 %32, i32 15;
+    i1 %33 = icmp slt i32 %32, i32 15;
     cbr i1 %33(prob = 0.97), ^while.body, ^entry1;
   ^while.body:
     i32* %34 = getelementptr &(i32* %16)[i32 %32];
@@ -64,7 +64,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^while.header1;
   ^entry1:
     i32 %36 = load i32* %16;
-    i1 %37 = scmp eq i32 %36, i32 0;
+    i1 %37 = icmp eq i32 %36, i32 0;
     i32 %38 = load i32* %17;
     i32 %39 = load i32* %18;
     i32 %40 = load i32* %19;
@@ -214,7 +214,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^while.body2;
   ^while.header1:
     i32 %118 = phi [^while.body, i32 %35] [^b1, i32 %185];
-    i1 %119 = scmp lt i32 %118, i32 16;
+    i1 %119 = icmp slt i32 %118, i32 16;
     cbr i1 %119(prob = 0.97), ^while.body1, ^while.header;
   ^if.else:
     i32 %120 = phi [^entry1, i32 %36] [^if.else, i32 %154];
@@ -252,13 +252,13 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %152 = add i32 %121, i32 %122;
     i32 %153 = srem i32 %152, i32 998244353;
     i32 %154 = add i32 %120, i32 -1;
-    i1 %155 = scmp eq i32 %154, i32 0;
+    i1 %155 = icmp eq i32 %154, i32 0;
     cbr i1 %155(prob = 0.5), ^b, ^if.else;
   ^while.body1:
     i32* %156 = getelementptr &(i32* %16)[i32 %118];
     i32 %157 = load i32* %34;
     i32 %158 = load i32* %156;
-    i1 %159 = scmp lt i32 %157, i32 %158;
+    i1 %159 = icmp slt i32 %157, i32 %158;
     cbr i1 %159(prob = 0.5), ^if.then, ^b1;
   ^while.body2:
     i32 %160 = phi [^b, i32 1] [^while.body2, i32 %182];
@@ -292,7 +292,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %181 = getelementptr &([2 * i32]* %161)[i64 3][i64 1];
     store i32* %181 with i32 %180;
     i32 %182 = add i32 %160, i32 4;
-    i1 %183 = scmp lt i32 %182, i32 29;
+    i1 %183 = icmp slt i32 %182, i32 29;
     cbr i1 %183(prob = 0.86), ^while.body2, ^while.body3;
   ^if.then:
     i32 %184 = load i32* %34;

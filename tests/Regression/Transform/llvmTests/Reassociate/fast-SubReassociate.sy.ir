@@ -1,7 +1,7 @@
 func @test1(f32 %var0, f32 %var1) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    f32 %0 = fadd f32 -7, f32 %var0;
-    f32 %1 = fadd f32 5, f32 %var1;
+    f32 %0 = fadd f32 %var0, f32 -7;
+    f32 %1 = fadd f32 %var1, f32 5;
     f32 %2 = fsub f32 %0, f32 %1;
     f32 %3 = fadd f32 %2, f32 12;
     ret f32 %3;
@@ -41,19 +41,19 @@ func @test3(f32 %var0, f32 %var1, f32 %var2, f32 %var3) -> f32 { NoMemoryRead No
 }
 func @test4(f32 %var0, f32 %var1, f32 %var2, f32 %var3) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    f32 %0 = fadd f32 12, f32 %var0;
+    f32 %0 = fadd f32 %var0, f32 12;
     f32 %1 = fadd f32 %0, f32 %var1;
     f32 %2 = fadd f32 %1, f32 %var2;
     f32 %3 = fsub f32 %var3, f32 %2;
-    f32 %4 = fadd f32 12, f32 %3;
+    f32 %4 = fadd f32 %3, f32 12;
     ret f32 %4;
 }
 func @test4_reassoc(f32 %var0, f32 %var1, f32 %var2, f32 %var3) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    f32 %0 = fadd f32 12, f32 %var0;
+    f32 %0 = fadd f32 %var0, f32 12;
     f32 %1 = fadd f32 %0, f32 %var1;
     f32 %2 = fadd f32 %1, f32 %var2;
     f32 %3 = fsub f32 %var3, f32 %2;
-    f32 %4 = fadd f32 12, f32 %3;
+    f32 %4 = fadd f32 %3, f32 12;
     ret f32 %4;
 }

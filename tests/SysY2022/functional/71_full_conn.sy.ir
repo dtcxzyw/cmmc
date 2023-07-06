@@ -32,11 +32,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^while.header;
   ^while.header:
     i32 %26 = phi [^entry, i32 %0] [^entry1, i32 %582];
-    i1 %27 = scmp gt i32 %26, i32 0;
+    i1 %27 = icmp sgt i32 %26, i32 0;
     cbr i1 %27(prob = 0.97), ^while.header1, ^b;
   ^while.header1:
     i32 %28 = phi [^while.header, i32 0] [^b1, i32 %588];
-    i1 %29 = scmp lt i32 %28, i32 5;
+    i1 %29 = icmp slt i32 %28, i32 5;
     cbr i1 %29(prob = 0.97), ^indirect, ^entry1;
   ^b:
     ret i32 0;
@@ -590,7 +590,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %574 = smin i32 %573, i32 127;
     i32 %575 = mul i32 %574, i32 46;
     i32 %576 = add i32 %524, i32 %575;
-    i1 %577 = scmp gt i32 %576, i32 0;
+    i1 %577 = icmp sgt i32 %576, i32 0;
     i32 %578 = zext i1 %577 to i32;
     i32 %579 = sub i32 100, i32 %578;
     call (i32) -> void @putch(i32 %579);
@@ -607,7 +607,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %585 = getelementptr &([5 * i32]* %30)[i64 0][i32 %583];
     store i32* %585 with i32 %584;
     i32 %586 = add i32 %583, i32 1;
-    i1 %587 = scmp lt i32 %586, i32 5;
+    i1 %587 = icmp slt i32 %586, i32 5;
     cbr i1 %587(prob = 0.8), ^while.body, ^b1;
   ^b1:
     i32 %588 = add i32 %28, i32 1;

@@ -21,7 +21,7 @@ func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
   ^super.header:
     i64 %8 = phi [^entry, i64 0] [^b, i64 %9];
     i64 %9 = add i64 %8, i64 4;
-    i1 %10 = scmp lt i64 %9, i64 4090;
+    i1 %10 = icmp slt i64 %9, i64 4090;
     cbr i1 %10(prob = 0.89), ^b, ^super.header1;
   ^b:
     i32* %11 = getelementptr &(i32* %7)[i64 %8];
@@ -36,7 +36,7 @@ func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
   ^super.header1:
     i64 %15 = phi [^super.header, i64 %8] [^b1, i64 %16];
     i64 %16 = add i64 %15, i64 4;
-    i1 %17 = scmp lt i64 %16, i64 4090;
+    i1 %17 = icmp slt i64 %16, i64 4090;
     cbr i1 %17(prob = 0.89), ^b1, ^super.header2;
   ^b1:
     i32* %18 = getelementptr &(i32* %7)[i64 %15];
@@ -51,7 +51,7 @@ func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
   ^super.header2:
     i64 %22 = phi [^super.header1, i64 %15] [^b2, i64 %23];
     i64 %23 = add i64 %22, i64 4;
-    i1 %24 = scmp lt i64 %23, i64 4090;
+    i1 %24 = icmp slt i64 %23, i64 4090;
     cbr i1 %24(prob = 0.89), ^b2, ^b3;
   ^b2:
     i32* %25 = getelementptr &(i32* %7)[i64 %22];
@@ -68,7 +68,7 @@ func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
     i32* %30 = getelementptr &(i32* %7)[i64 %29];
     store i32* %30 with i32 0;
     i64 %31 = add i64 %29, i64 1;
-    i1 %32 = scmp lt i64 %31, i64 4090;
+    i1 %32 = icmp slt i64 %31, i64 4090;
     cbr i1 %32(prob = 0.97), ^b3, ^entry1;
   ^entry1:
     [4096 * i32]* %33 = ptrcast [4096 * i32]* @a to [4096 * i32]*;
