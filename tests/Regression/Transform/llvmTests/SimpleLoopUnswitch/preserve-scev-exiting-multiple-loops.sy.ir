@@ -1,4 +1,4 @@
-func @f() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @f() -> void { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
   ^entry:
-    ret;
+    unreachable;
 }

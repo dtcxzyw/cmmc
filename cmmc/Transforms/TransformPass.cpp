@@ -314,6 +314,8 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Preprocess
             "FunctionAttrInfer",      //
             "BlockSort",              //
+            "ScalarMem2Reg",          //
+            "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
             // Constant
             "ConstexprFuncEval",       //
@@ -402,7 +404,6 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
 
     if(level >= OptimizationLevel::O2) {
         for(const auto& pass : passesSource.collectFunctionPass({
-                "ScalarMem2Reg",          //
                 "SmallBlockInlining",     //
                 "NoSideEffectEliminate",  // clean up
                 "PhiEliminate",           //

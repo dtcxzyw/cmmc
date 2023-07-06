@@ -4,23 +4,23 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     ubr ^for.header;
   ^for.header:
-    i32 %0 = phi [^entry, i32 1] [^b, i32 %9];
-    f32 %1 = phi [^entry, f32 0] [^b, f32 %8];
-    i1 %2 = icmp slt i32 %0, i32 101;
+    f32 %0 = phi [^entry, f32 0] [^b, f32 %8];
+    i32 %1 = phi [^entry, i32 1] [^b, i32 %9];
+    i1 %2 = icmp slt i32 %1, i32 101;
     cbr i1 %2(prob = 0.97), ^for.body, ^jump;
   ^for.body:
     f32 %3 = call () -> f32 @getfloat();
     i1 %4 = fcmp olt f32 %3, f32 0;
     cbr i1 %4(prob = 0.5), ^jump, ^b;
   ^jump:
-    call (f32) -> void @putfloat(f32 %1);
-    i32 %5 = add i32 %0, i32 -1;
+    call (f32) -> void @putfloat(f32 %0);
+    i32 %5 = add i32 %1, i32 -1;
     f32 %6 = s2f i32 %5 to f32;
-    f32 %7 = fdiv f32 %1, f32 %6;
+    f32 %7 = fdiv f32 %0, f32 %6;
     call (f32) -> void @putfloat(f32 %7);
     ret i32 0;
   ^b:
-    f32 %8 = fadd f32 %1, f32 %3;
-    i32 %9 = add i32 %0, i32 1;
+    f32 %8 = fadd f32 %0, f32 %3;
+    i32 %9 = add i32 %1, i32 1;
     ubr ^for.header;
 }

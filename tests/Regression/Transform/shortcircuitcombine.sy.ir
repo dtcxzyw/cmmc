@@ -12,9 +12,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     call (i32) -> void @putint(i32 1);
     ubr ^b;
   ^b:
-    i32 %5 = or i32 %0, i32 %2;
-    i1 %6 = icmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.5), ^if.then1, ^b1;
+    i1 %5 = or i1 %1, i1 %3;
+    cbr i1 %5(prob = 0.5), ^if.then1, ^b1;
   ^if.then1:
     call (i32) -> void @putint(i32 2);
     ubr ^b1;

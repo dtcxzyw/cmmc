@@ -24,30 +24,31 @@ result2:
 .text
 .globl test
 test:
-pcrel45:
-	auipc a0, %pcrel_hi(i)
-	lw a1, %pcrel_lo(pcrel45)(a0)
 pcrel46:
-	auipc a0, %pcrel_hi(j)
-	lw a2, %pcrel_lo(pcrel46)(a0)
-	mv a0, a1
-	ble a2, a1, label2
-	li a1, 1
+	auipc a0, %pcrel_hi(i)
+	lw a1, %pcrel_lo(pcrel46)(a0)
 pcrel47:
-	auipc a2, %pcrel_hi(result1)
-	sw a1, %pcrel_lo(pcrel47)(a2)
+	auipc a0, %pcrel_hi(j)
+	lw a2, %pcrel_lo(pcrel47)(a0)
+	mv a0, a1
+	ble a2, a1, label3
+	li a1, 1
 pcrel48:
+	auipc a2, %pcrel_hi(result1)
+	sw a1, %pcrel_lo(pcrel48)(a2)
+pcrel49:
 	auipc a1, %pcrel_hi(k)
-	lw a1, %pcrel_lo(pcrel48)(a1)
-	ble a0, a1, label4
+	lw a1, %pcrel_lo(pcrel49)(a1)
+	ble a0, a1, label5
+	j label44
+label3:
+	auipc a1, %pcrel_hi(k)
+	lw a1, %pcrel_lo(label3)(a1)
+	ble a0, a1, label5
+	j label44
+label5:
+	ret
 label44:
 	auipc a0, %pcrel_hi(result1)
 	sw zero, %pcrel_lo(label44)(a0)
-	j label4
-label2:
-	auipc a1, %pcrel_hi(k)
-	lw a1, %pcrel_lo(label2)(a1)
-	ble a0, a1, label4
-	j label44
-label4:
-	ret
+	j label5

@@ -201,7 +201,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %126 = add i32 %120, i32 1;
     ubr ^while.header11;
   ^while.header13:
-    i32 %127 = phi [^while.header12, i32 %123] [^b15, i32 %132];
+    i32 %127 = phi [^while.header12, i32 %123] [^b15, i32 %131];
     i32 %128 = phi [^while.header12, i32 0] [^b15, i32 %134];
     i1 %129 = icmp slt i32 %128, i32 2;
     cbr i1 %129(prob = 0.97), ^while.header14, ^b14;
@@ -209,24 +209,24 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %130 = add i32 %124, i32 1;
     ubr ^while.header12;
   ^while.header14:
-    i32 %131 = phi [^while.header13, i32 0] [^b16, i32 %138];
-    i32 %132 = phi [^while.header13, i32 %127] [^b16, i32 %136];
-    i1 %133 = icmp slt i32 %131, i32 2;
+    i32 %131 = phi [^while.header13, i32 %127] [^b16, i32 %135];
+    i32 %132 = phi [^while.header13, i32 0] [^b16, i32 %138];
+    i1 %133 = icmp slt i32 %132, i32 2;
     cbr i1 %133(prob = 0.97), ^while.header15, ^b15;
   ^b15:
     i32 %134 = add i32 %128, i32 1;
     ubr ^while.header13;
   ^while.header15:
-    i32 %135 = phi [^while.header14, i32 0] [^b17, i32 %168];
-    i32 %136 = phi [^while.header14, i32 %132] [^b17, i32 %167];
-    i1 %137 = icmp slt i32 %135, i32 2;
-    cbr i1 %137(prob = 0.97), ^indirect, ^b16;
+    i32 %135 = phi [^while.header14, i32 %131] [^b17, i32 %167];
+    i32 %136 = phi [^while.header14, i32 0] [^b17, i32 %168];
+    i1 %137 = icmp slt i32 %136, i32 2;
+    cbr i1 %137(prob = 0.97), ^while.body, ^b16;
   ^b16:
-    i32 %138 = add i32 %131, i32 1;
+    i32 %138 = add i32 %132, i32 1;
     ubr ^while.header14;
-  ^indirect:
-    i32 %139 = phi [^while.header15, i32 %136] [^indirect, i32 %167];
-    i32 %140 = phi [^while.header15, i32 0] [^indirect, i32 %165];
+  ^while.body:
+    i32 %139 = phi [^while.header15, i32 0] [^while.body, i32 %165];
+    i32 %140 = phi [^while.header15, i32 %135] [^while.body, i32 %167];
     [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]* %141 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]]* %0)[i64 0][i32 %22];
     [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]* %142 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]* %141)[i64 0][i32 %25];
     [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]* %143 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]* %142)[i64 0][i32 %84];
@@ -241,26 +241,26 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]* %152 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]* %151)[i64 0][i32 %120];
     [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]* %153 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]* %152)[i64 0][i32 %124];
     [2 * [2 * [2 * [2 * [2 * i32]]]]]* %154 = getelementptr &([2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]* %153)[i64 0][i32 %128];
-    [2 * [2 * [2 * [2 * i32]]]]* %155 = getelementptr &([2 * [2 * [2 * [2 * [2 * i32]]]]]* %154)[i64 0][i32 %131];
-    [2 * [2 * [2 * i32]]]* %156 = getelementptr &([2 * [2 * [2 * [2 * i32]]]]* %155)[i64 0][i32 %135];
-    [2 * [2 * i32]]* %157 = getelementptr &([2 * [2 * [2 * i32]]]* %156)[i64 0][i32 %140];
+    [2 * [2 * [2 * [2 * i32]]]]* %155 = getelementptr &([2 * [2 * [2 * [2 * [2 * i32]]]]]* %154)[i64 0][i32 %132];
+    [2 * [2 * [2 * i32]]]* %156 = getelementptr &([2 * [2 * [2 * [2 * i32]]]]* %155)[i64 0][i32 %136];
+    [2 * [2 * i32]]* %157 = getelementptr &([2 * [2 * [2 * i32]]]* %156)[i64 0][i32 %139];
     i32* %158 = getelementptr &([2 * [2 * i32]]* %157)[i64 0][i64 0][i64 0];
-    store i32* %158 with i32 %139;
+    store i32* %158 with i32 %140;
     i32* %159 = getelementptr &([2 * [2 * i32]]* %157)[i64 0][i64 0][i64 1];
-    i32 %160 = add i32 %139, i32 1;
+    i32 %160 = add i32 %140, i32 1;
     store i32* %159 with i32 %160;
     i32* %161 = getelementptr &([2 * [2 * i32]]* %157)[i64 0][i64 1][i64 0];
-    i32 %162 = add i32 %139, i32 2;
+    i32 %162 = add i32 %140, i32 2;
     store i32* %161 with i32 %162;
     i32* %163 = getelementptr &([2 * [2 * i32]]* %157)[i64 0][i64 1][i64 1];
-    i32 %164 = add i32 %139, i32 3;
+    i32 %164 = add i32 %140, i32 3;
     store i32* %163 with i32 %164;
-    i32 %165 = add i32 %140, i32 1;
+    i32 %165 = add i32 %139, i32 1;
     i1 %166 = icmp slt i32 %165, i32 2;
-    i32 %167 = add i32 %139, i32 4;
-    cbr i1 %166(prob = 0.5), ^indirect, ^b17;
+    i32 %167 = add i32 %140, i32 4;
+    cbr i1 %166(prob = 0.5), ^while.body, ^b17;
   ^b17:
-    i32 %168 = add i32 %135, i32 1;
+    i32 %168 = add i32 %136, i32 1;
     ubr ^while.header15;
 }
 internal [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * [2 * i32]]]]]]]]]]]]]]]]]]]* @array;

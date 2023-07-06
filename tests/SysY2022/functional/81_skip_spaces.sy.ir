@@ -2,33 +2,32 @@ internal func @getint() -> i32 { NoMemoryRead NoMemoryWrite };
 func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
   ^entry:
     [100 * i32]* %arr = alloc [100 * i32];
-    i32 %0 = call () -> i32 @getint();
-    i1 %1 = icmp neq i32 %0, i32 0;
-    cbr i1 %1(prob = 0.97), ^while.body, ^indirect;
+    ubr ^while.header;
+  ^while.header:
+    i32 %0 = phi [^entry, i32 0] [^while.body, i32 %5];
+    i32 %1 = call () -> i32 @getint();
+    i1 %2 = icmp neq i32 %1, i32 0;
+    cbr i1 %2(prob = 0.97), ^while.body, ^while.header1;
   ^while.body:
-    i32 %2 = phi [^entry, i32 0] [^while.body, i32 %7];
     i32 %3 = call () -> i32 @getint();
-    i32* %4 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %2];
+    i32* %4 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %0];
     store i32* %4 with i32 %3;
-    i32 %5 = call () -> i32 @getint();
-    i1 %6 = icmp neq i32 %5, i32 0;
-    i32 %7 = add i32 %2, i32 1;
-    cbr i1 %6(prob = 0.97), ^while.body, ^indirect;
-  ^indirect:
-    i32 %8 = phi [^entry, i32 0] [^while.body, i32 %7];
-    i1 %9 = icmp neq i32 %8, i32 0;
-    cbr i1 %9(prob = 0.97), ^while.body1, ^b;
+    i32 %5 = add i32 %0, i32 1;
+    ubr ^while.header;
+  ^while.header1:
+    i1 %6 = icmp neq i32 %0, i32 0;
+    cbr i1 %6(prob = 0.97), ^while.body1, ^b;
   ^while.body1:
-    i32 %10 = phi [^indirect, i32 %8] [^while.body1, i32 %12];
-    i32 %11 = phi [^indirect, i32 0] [^while.body1, i32 %15];
-    i32 %12 = add i32 %10, i32 -1;
-    i32* %13 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %12];
-    i32 %14 = load i32* %13;
-    i32 %15 = add i32 %11, i32 %14;
-    i1 %16 = icmp neq i32 %12, i32 0;
-    cbr i1 %16(prob = 0.97), ^while.body1, ^b;
+    i32 %7 = phi [^while.header1, i32 %0] [^while.body1, i32 %9];
+    i32 %8 = phi [^while.header1, i32 0] [^while.body1, i32 %12];
+    i32 %9 = add i32 %7, i32 -1;
+    i32* %10 = getelementptr &([100 * i32]* %arr)[i64 0][i32 %9];
+    i32 %11 = load i32* %10;
+    i32 %12 = add i32 %8, i32 %11;
+    i1 %13 = icmp neq i32 %9, i32 0;
+    cbr i1 %13(prob = 0.97), ^while.body1, ^b;
   ^b:
-    i32 %17 = phi [^indirect, i32 0] [^while.body1, i32 %15];
-    i32 %18 = srem i32 %17, i32 79;
-    ret i32 %18;
+    i32 %14 = phi [^while.header1, i32 0] [^while.body1, i32 %12];
+    i32 %15 = srem i32 %14, i32 79;
+    ret i32 %15;
 }

@@ -9,22 +9,22 @@ func @normal_srem1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stat
 func @normal_srem2(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i1 %0 = icmp sgt i32 %x, i32 1000000007;
-    cbr i1 %0(prob = 0.97), ^while.body, ^indirect;
+    cbr i1 %0(prob = 0.97), ^while.body, ^while.header;
   ^while.body:
     i32 %1 = phi [^entry, i32 %x] [^while.body, i32 %2];
     i32 %2 = add i32 %1, i32 -1000000007;
     i1 %3 = icmp sgt i32 %2, i32 1000000007;
-    cbr i1 %3(prob = 0.97), ^while.body, ^indirect;
-  ^indirect:
+    cbr i1 %3(prob = 0.97), ^while.body, ^while.header;
+  ^while.header:
     i32 %4 = phi [^entry, i32 %x] [^while.body, i32 %2];
     i1 %5 = icmp slt i32 %4, i32 0;
     cbr i1 %5(prob = 0.97), ^while.body1, ^b;
   ^while.body1:
-    i32 %6 = phi [^indirect, i32 %4] [^while.body1, i32 %7];
+    i32 %6 = phi [^while.header, i32 %4] [^while.body1, i32 %7];
     i32 %7 = add i32 %6, i32 1000000007;
     i1 %8 = icmp slt i32 %7, i32 0;
     cbr i1 %8(prob = 0.97), ^while.body1, ^b;
   ^b:
-    i32 %9 = phi [^indirect, i32 %4] [^while.body1, i32 %7];
+    i32 %9 = phi [^while.header, i32 %4] [^while.body1, i32 %7];
     ret i32 %9;
 }

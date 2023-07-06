@@ -17,23 +17,34 @@ Y:
 .fpu vfpv4
 .globl foo
 foo:
+	push { r4 }
 	cmp r0, #0
-	ble label4
-	mov r1, #0
-label2:
-	uxth r2, r1
-	movw r3, #:lower16:X
-	movt r3, #:upper16:X
-	strh r2, [r3, #0]
+	ble label5
+	movw r2, #:lower16:X
+	mov r4, #0
 	movw r3, #:lower16:Y
-	movw r2, #65535
+	cmp r0, #1
+	movt r2, #:upper16:X
 	movt r3, #:upper16:Y
-	and r2, r1, r2
-	add r1, r1, #1
-	lsl r2, r2, #2
-	cmp r0, r1
-	uxth r2, r2
-	strh r2, [r3, #0]
-	bne label2
-label4:
+	strh r4, [r2, #0]
+	mov r1, r2
+	strh r4, [r3, #0]
+	mov r2, r3
+	bne label18
+	b label5
+label18:
+	mov r3, #1
+label3:
+	uxth r4, r3
+	strh r4, [r1, #0]
+	movw r4, #65535
+	and r4, r3, r4
+	add r3, r3, #1
+	lsl r4, r4, #2
+	cmp r0, r3
+	uxth r4, r4
+	strh r4, [r2, #0]
+	bne label3
+label5:
+	pop { r4 }
 	bx lr

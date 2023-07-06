@@ -92,14 +92,7 @@ pcrel95:
 	ret
 .globl memset_impl
 memset_impl:
-	sw zero, 0(a0)
-	li a1, 7
-	sw zero, 4(a0)
-	sw zero, 8(a0)
-	sw zero, 12(a0)
-	sw zero, 16(a0)
-	sw zero, 20(a0)
-	sw zero, 24(a0)
+	mv a1, zero
 label97:
 	sh2add a2, a1, a0
 	sw zero, 0(a2)
@@ -119,18 +112,8 @@ label97:
 	sw zero, 52(a2)
 	sw zero, 56(a2)
 	sw zero, 60(a2)
-	li a2, 119
+	li a2, 128
 	bge a1, a2, label99
 	j label97
 label99:
-	sh2add a0, a1, a0
-	sw zero, 0(a0)
-	sw zero, 4(a0)
-	sw zero, 8(a0)
-	sw zero, 12(a0)
-	sw zero, 16(a0)
-	sw zero, 20(a0)
-	sw zero, 24(a0)
-	sw zero, 28(a0)
-	sw zero, 32(a0)
 	ret

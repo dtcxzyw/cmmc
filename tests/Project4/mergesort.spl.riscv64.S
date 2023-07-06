@@ -34,7 +34,7 @@ merge:
 	mv s1, a3
 	sd s4, 8(sp)
 	sd ra, 0(sp)
-	ble a3, a0, label15
+	ble a3, a0, label17
 	addw a0, a2, a3
 	srliw a1, a0, 31
 	add a0, a0, a1
@@ -48,10 +48,10 @@ merge:
 	mv a2, s4
 	mv a3, s1
 	jal merge
+	mv a0, s3
 	mv a1, s3
 	mv a2, s4
-	mv a0, s3
-	beq s1, s3, label12
+	beq s1, s3, label14
 	xor a3, s4, s3
 	xor a4, s1, s4
 	sltu a3, zero, a3
@@ -69,7 +69,7 @@ merge:
 	lw a3, 0(a3)
 	addiw a0, s3, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, s4
 	sltu a3, zero, a3
@@ -87,82 +87,94 @@ merge:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
-	j label155
-label12:
-	beq s1, s3, label15
+	beq s1, a0, label14
+	j label180
+label14:
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
+	beq s1, s3, label17
 	sh2add a0, s3, s2
 	sh2add a1, s3, s0
 	lw a0, 0(a0)
 	addiw s3, s3, 1
 	sw a0, 0(a1)
-	beq s1, s3, label15
-	j label177
-label155:
+	beq s1, s3, label17
+	j label206
+label180:
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
+	j label194
+label206:
+	sh2add a0, s3, s2
+	sh2add a1, s3, s0
+	lw a0, 0(a0)
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+	beq s1, s3, label17
+label220:
+	sh2add a0, s3, s2
+	sh2add a1, s3, s0
+	lw a0, 0(a0)
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+	beq s1, s3, label17
+	j label220
+label208:
 	sh2add a3, a1, s0
 	sh2add a4, a0, s2
 	addiw a1, a1, 1
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
-	j label155
+	beq s1, a0, label14
+	j label180
 label11:
-	beq s4, a1, label10
+	beq s4, a1, label13
 	sh2add a3, a1, s0
 	sh2add a4, a0, s2
 	addiw a1, a1, 1
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -180,7 +192,7 @@ label11:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -198,7 +210,7 @@ label11:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -210,31 +222,70 @@ label11:
 	lw a3, 0(a3)
 	lw a4, 0(a4)
 	bge a3, a4, label10
-	j label187
-label177:
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label15
-label189:
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label15
-	j label189
-label187:
+	j label208
+label13:
+	sh2add a3, a2, s0
+	sh2add a4, a0, s2
+	addiw a2, a2, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
 	sh2add a3, a1, s0
 	sh2add a4, a0, s2
 	addiw a1, a1, 1
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
-	j label155
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	j label180
 label10:
 	sh2add a3, a2, s0
 	sh2add a4, a0, s2
@@ -242,7 +293,7 @@ label10:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -260,7 +311,7 @@ label10:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -278,7 +329,7 @@ label10:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
+	beq s1, a0, label14
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
@@ -296,9 +347,16 @@ label10:
 	lw a3, 0(a3)
 	addiw a0, a0, 1
 	sw a3, 0(a4)
-	beq s1, a0, label12
-	j label155
-label15:
+	beq s1, a0, label14
+	j label180
+label194:
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	j label208
+label17:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
 	ld s1, 16(sp)
@@ -315,130 +373,130 @@ main:
 	sd ra, 800(sp)
 	jal read
 	mv a5, a0
-	ble a0, zero, label209
+	ble a0, zero, label243
 	mv a2, zero
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
+	ble a5, a2, label243
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
-label286:
+	ble a5, a2, label243
+label320:
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label209
-	j label286
-label209:
+	ble a5, a2, label243
+	j label320
+label243:
 	mv a0, t0
 	mv a2, zero
 	mv a3, a5
 	jal merge
-	ble a5, zero, label212
+	ble a5, zero, label246
 	mv a1, zero
 	sh2add a0, zero, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
+	ble a5, a1, label246
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
-label288:
+	ble a5, a1, label246
+label322:
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label212
-	j label288
-label212:
+	ble a5, a1, label246
+	j label322
+label246:
 	mv a0, zero
 	ld ra, 800(sp)
 	addi sp, sp, 808

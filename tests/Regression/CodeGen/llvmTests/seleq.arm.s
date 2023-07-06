@@ -43,56 +43,111 @@ z4:
 .fpu vfpv4
 .globl calc_seleq
 calc_seleq:
-	push { r4 }
-	movw r0, #:lower16:a
-	movt r0, #:upper16:a
+	movw r1, #:lower16:a
+	movt r1, #:upper16:a
+	ldr r3, [r1, #0]
+	mov r0, r1
+	movw r1, #:lower16:b
+	movt r1, #:upper16:b
+	mov r2, r1
+	ldr r1, [r1, #0]
+	cmp r3, r1
+	bne label17
+	movw r1, #:lower16:f
+	movt r1, #:upper16:f
+	ldr r1, [r1, #0]
+	movw r3, #:lower16:z1
+	movt r3, #:upper16:z1
+	str r1, [r3, #0]
+	ldr r1, [r2, #0]
+	ldr r2, [r0, #0]
+	cmp r1, r2
+	bne label16
+label36:
+	movw r1, #:lower16:f
+	movt r1, #:upper16:f
+	ldr r1, [r1, #0]
+	movw r2, #:lower16:z2
+	movt r2, #:upper16:z2
+	str r1, [r2, #0]
+	movw r1, #:lower16:c
+	movt r1, #:upper16:c
+	mov r2, r1
+	ldr r1, [r1, #0]
 	ldr r3, [r0, #0]
-	mov r1, r0
-	movw r0, #:lower16:b
-	movt r0, #:upper16:b
-	mov r2, r0
+	cmp r1, r3
+	bne label9
+	movw r1, #:lower16:t
+	movt r1, #:upper16:t
+	ldr r1, [r1, #0]
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
 	ldr r0, [r0, #0]
-	cmp r3, r0
-	bne label14
+	ldr r1, [r2, #0]
+	cmp r0, r1
+	bne label64
+	b label90
+label17:
+	movw r1, #:lower16:t
+	movt r1, #:upper16:t
+	ldr r1, [r1, #0]
+	movw r3, #:lower16:z1
+	movt r3, #:upper16:z1
+	str r1, [r3, #0]
+	ldr r1, [r2, #0]
+	ldr r2, [r0, #0]
+	cmp r1, r2
+	bne label16
+	b label36
+label9:
+	movw r1, #:lower16:f
+	movt r1, #:upper16:f
+	ldr r1, [r1, #0]
+	movw r3, #:lower16:z3
+	movt r3, #:upper16:z3
+	str r1, [r3, #0]
+	ldr r0, [r0, #0]
+	ldr r1, [r2, #0]
+	cmp r0, r1
+	bne label64
+	b label90
+label64:
 	movw r0, #:lower16:f
 	movt r0, #:upper16:f
 	ldr r0, [r0, #0]
-	b label3
 label14:
+	movw r1, #:lower16:z4
+	movt r1, #:upper16:z4
+	str r0, [r1, #0]
+	bx lr
+label90:
 	movw r0, #:lower16:t
 	movt r0, #:upper16:t
 	ldr r0, [r0, #0]
-label3:
-	movw r3, #:lower16:z1
-	movw r4, #:lower16:z2
-	movt r3, #:upper16:z1
-	movt r4, #:upper16:z2
-	str r0, [r3, #0]
-	movw r0, #:lower16:f
-	ldr r3, [r2, #0]
-	movt r0, #:upper16:f
-	ldr r2, [r1, #0]
+	b label14
+label16:
 	movw r1, #:lower16:t
 	movt r1, #:upper16:t
-	cmp r3, r2
-	mov r3, r1
-	moveq r3, r0
-	ldr r3, [r3, #0]
-	str r3, [r4, #0]
-	movw r3, #:lower16:c
-	movt r3, #:upper16:c
-	ldr r3, [r3, #0]
-	cmp r2, r3
+	ldr r1, [r1, #0]
+	movw r2, #:lower16:z2
+	movt r2, #:upper16:z2
+	str r1, [r2, #0]
+	movw r1, #:lower16:c
+	movt r1, #:upper16:c
+	mov r2, r1
+	ldr r1, [r1, #0]
+	ldr r3, [r0, #0]
+	cmp r1, r3
+	bne label9
+	movw r1, #:lower16:t
+	movt r1, #:upper16:t
+	ldr r1, [r1, #0]
 	movw r3, #:lower16:z3
-	mov r2, r0
 	movt r3, #:upper16:z3
-	moveq r2, r1
-	moveq r0, r1
-	ldr r2, [r2, #0]
-	movw r1, #:lower16:z4
-	movt r1, #:upper16:z4
-	str r2, [r3, #0]
+	str r1, [r3, #0]
 	ldr r0, [r0, #0]
-	str r0, [r1, #0]
-	pop { r4 }
-	bx lr
+	ldr r1, [r2, #0]
+	cmp r0, r1
+	bne label64
+	b label90

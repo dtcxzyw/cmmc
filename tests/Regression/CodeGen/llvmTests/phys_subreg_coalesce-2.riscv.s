@@ -19,8 +19,8 @@ label5:
 	bgeu a2, a1, label21
 	j label2
 label21:
-	li a3, 1
 	mv a1, a0
+	li a3, 1
 	subw a4, a0, a3
 	mulw a1, a0, a4
 	addiw a4, a3, 1

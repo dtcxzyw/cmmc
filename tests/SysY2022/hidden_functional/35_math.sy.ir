@@ -11,52 +11,44 @@ internal func @my_pow(f32 %a, i32 %n) -> f32 { NoMemoryRead NoMemoryWrite NoSide
     i1 %2 = icmp sgt i32 %n, i32 0;
     cbr i1 %2(prob = 0.5), ^if.then1, ^while.header1;
   ^while.header:
-    f32 %3 = phi [^entry, f32 %a] [^if.then3, f32 %18] [^indirect, f32 %20];
-    f32 %4 = phi [^entry, f32 1] [^if.then3, f32 %17] [^indirect, f32 %4];
-    i32 %5 = phi [^entry, i32 %n] [^if.then3, i32 %19] [^indirect, i32 %21];
-    i1 %6 = icmp neq i32 %5, i32 0;
-    cbr i1 %6(prob = 0.97), ^while.body, ^b;
+    i1 %3 = icmp neq i32 %n, i32 0;
+    cbr i1 %3(prob = 0.97), ^while.body, ^b;
   ^if.then1:
-    f32 %7 = call (f32, i32) -> f32 @my_pow(f32 %a, i32 %n);
-    f32 %8 = fdiv f32 1, f32 %7;
+    f32 %4 = call (f32, i32) -> f32 @my_pow(f32 %a, i32 %n);
+    f32 %5 = fdiv f32 1, f32 %4;
     ubr ^if.then2;
   ^while.body:
-    i1 %9 = ztrunc i32 %5 to i1;
-    cbr i1 %9(prob = 0.5), ^if.then3, ^indirect;
-  ^while.header1:
-    f32 %10 = phi [^if.then, f32 %a] [^if.then4, f32 %24] [^indirect1, f32 %26];
-    f32 %11 = phi [^if.then, f32 1] [^if.then4, f32 %23] [^indirect1, f32 %11];
-    i32 %12 = phi [^if.then, i32 %1] [^if.then4, i32 %25] [^indirect1, i32 %27];
+    i32 %6 = phi [^while.header, i32 %n] [^while.body, i32 %12];
+    f32 %7 = phi [^while.header, f32 1] [^while.body, f32 %11];
+    f32 %8 = phi [^while.header, f32 %a] [^while.body, f32 %14];
+    f32 %9 = fmul f32 %7, f32 %8;
+    i1 %10 = ztrunc i32 %6 to i1;
+    f32 %11 = select i1 %10 ? f32 %9 : f32 %7;
+    i32 %12 = sdiv i32 %6, i32 2;
     i1 %13 = icmp neq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.97), ^while.body1, ^if.then2;
+    f32 %14 = fmul f32 %8, f32 %8;
+    cbr i1 %13(prob = 0.97), ^while.body, ^b;
+  ^while.header1:
+    i1 %15 = icmp neq i32 %n, i32 0;
+    cbr i1 %15(prob = 0.97), ^while.body1, ^if.then2;
   ^b:
-    f32 %14 = phi [^while.header, f32 %4] [^if.then2, f32 %16];
-    ret f32 %14;
+    f32 %16 = phi [^while.header, f32 1] [^while.body, f32 %11] [^if.then2, f32 %18];
+    ret f32 %16;
   ^if.then2:
-    f32 %15 = phi [^if.then1, f32 %8] [^while.header1, f32 %11];
-    f32 %16 = fdiv f32 1, f32 %15;
+    f32 %17 = phi [^if.then1, f32 %5] [^while.header1, f32 1] [^while.body1, f32 %24];
+    f32 %18 = fdiv f32 1, f32 %17;
     ubr ^b;
-  ^if.then3:
-    f32 %17 = fmul f32 %4, f32 %3;
-    f32 %18 = fmul f32 %3, f32 %3;
-    i32 %19 = sdiv i32 %5, i32 2;
-    ubr ^while.header;
-  ^indirect:
-    f32 %20 = fmul f32 %3, f32 %3;
-    i32 %21 = sdiv i32 %5, i32 2;
-    ubr ^while.header;
   ^while.body1:
-    i1 %22 = ztrunc i32 %12 to i1;
-    cbr i1 %22(prob = 0.5), ^if.then4, ^indirect1;
-  ^if.then4:
-    f32 %23 = fmul f32 %11, f32 %10;
-    f32 %24 = fmul f32 %10, f32 %10;
-    i32 %25 = sdiv i32 %12, i32 2;
-    ubr ^while.header1;
-  ^indirect1:
-    f32 %26 = fmul f32 %10, f32 %10;
-    i32 %27 = sdiv i32 %12, i32 2;
-    ubr ^while.header1;
+    i32 %19 = phi [^while.header1, i32 %1] [^while.body1, i32 %25];
+    f32 %20 = phi [^while.header1, f32 1] [^while.body1, f32 %24];
+    f32 %21 = phi [^while.header1, f32 %a] [^while.body1, f32 %27];
+    f32 %22 = fmul f32 %20, f32 %21;
+    i1 %23 = ztrunc i32 %19 to i1;
+    f32 %24 = select i1 %23 ? f32 %22 : f32 %20;
+    i32 %25 = sdiv i32 %19, i32 2;
+    i1 %26 = icmp neq i32 %25, i32 0;
+    f32 %27 = fmul f32 %21, f32 %21;
+    cbr i1 %26(prob = 0.97), ^while.body1, ^if.then2;
 }
 internal func @my_sqrt(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
@@ -211,7 +203,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     ubr ^while.header;
   ^while.header:
-    i32 %1 = phi [^entry, i32 %0] [^entry3, i32 %60] [^if.else2, i32 %61];
+    i32 %1 = phi [^entry, i32 %0] [^b3, i32 %60];
     i1 %2 = icmp neq i32 %1, i32 0;
     cbr i1 %2(prob = 0.97), ^while.body, ^b;
   ^while.body:
@@ -303,12 +295,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     f32 %58 = fmul f32 %7, f32 %57;
     f32 %59 = call (f32) -> f32 @my_exp(f32 %58);
     call (f32) -> void @putfloat(f32 %59);
-    call (i32) -> void @putch(i32 10);
-    i32 %60 = add i32 %1, i32 -1;
-    ubr ^while.header;
+    ubr ^b3;
   ^if.else2:
     call (i32) -> void @putch(i32 45);
+    ubr ^b3;
+  ^b3:
     call (i32) -> void @putch(i32 10);
-    i32 %61 = add i32 %1, i32 -1;
+    i32 %60 = add i32 %1, i32 -1;
     ubr ^while.header;
 }

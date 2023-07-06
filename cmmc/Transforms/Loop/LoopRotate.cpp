@@ -81,6 +81,8 @@ public:
         for(auto loop : detectLoops(func, analysis)) {
             if(loop.header == loop.latch)
                 continue;
+            if(hasCall(*loop.header))
+                continue;
             auto& pred = cfg.predecessors(loop.latch);
             if(!(pred.size() == 1 && pred.front() == loop.header))
                 continue;

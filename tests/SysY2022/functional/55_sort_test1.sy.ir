@@ -31,7 +31,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i1 %13 = icmp slt i32 %10, i32 9;
     cbr i1 %13(prob = 0.97), ^while.header1, ^while.body;
   ^while.header1:
-    i32 %14 = phi [^while.header, i32 0] [^b2, i32 %30];
+    i32 %14 = phi [^while.header, i32 0] [^while.body1, i32 %27] [^if.then, i32 %27];
     i1 %15 = icmp sgt i32 %12, i32 %14;
     cbr i1 %15(prob = 0.97), ^while.body1, ^b;
   ^while.body:
@@ -52,17 +52,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %24 = getelementptr &(i32* %22)[i64 1];
     i32 %25 = load i32* %24;
     i1 %26 = icmp sgt i32 %23, i32 %25;
-    cbr i1 %26(prob = 0.5), ^if.then, ^b2;
+    i32 %27 = add i32 %14, i32 1;
+    cbr i1 %26(prob = 0.5), ^if.then, ^while.header1;
   ^b1:
     ret i32 0;
   ^if.then:
-    i32 %27 = add i32 %14, i32 1;
-    i32* %28 = getelementptr &(i32* %0)[i32 %27];
-    i32 %29 = load i32* %28;
-    store i32* %28 with i32 %23;
-    store i32* %22 with i32 %29;
-    ubr ^b2;
-  ^b2:
-    i32 %30 = add i32 %14, i32 1;
+    store i32* %24 with i32 %23;
+    store i32* %22 with i32 %25;
     ubr ^while.header1;
 }

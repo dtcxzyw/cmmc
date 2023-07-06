@@ -26,8 +26,8 @@ label5:
 	bhs label21
 	b label2
 label21:
-	mov r3, #1
 	mov r1, r0
+	mov r3, #1
 	sub r4, r0, r3
 	mul r1, r0, r4
 	add r4, r3, #1

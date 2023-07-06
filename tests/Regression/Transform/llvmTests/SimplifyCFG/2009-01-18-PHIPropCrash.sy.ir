@@ -1,4 +1,4 @@
-func @func_105() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoReturn NoRecurse } {
+func @func_105() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    unreachable;
+    ret i32 0;
 }

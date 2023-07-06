@@ -16,6 +16,10 @@ func @unswitch_trivial_select_cmp_outside(i32 %var0) -> i32 { NoMemoryRead NoMem
     i32 %1 = zext i1 %0 to i32;
     i32 %2 = ztrunc i32 %1 to i32;
     i1 %3 = icmp neq i32 %2, i32 0;
-    i32 %4 = select i1 %3 ? i32 35 : i32 0;
+    ubr ^block1;
+  ^block1:
+    i32 %4 = phi [^entry, i32 0] [^block1, i32 35];
+    cbr i1 %3(prob = 0.5), ^block1, ^if.else;
+  ^if.else:
     ret i32 %4;
 }

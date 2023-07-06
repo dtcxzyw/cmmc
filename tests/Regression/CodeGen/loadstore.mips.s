@@ -118,14 +118,7 @@ global_addressing_array:
 	nop
 .globl memset_impl
 memset_impl:
-	sw $zero, 0($a0)
-	sw $zero, 4($a0)
-	sw $zero, 8($a0)
-	sw $zero, 12($a0)
-	sw $zero, 16($a0)
-	sw $zero, 20($a0)
-	sw $zero, 24($a0)
-	li $t0, 7
+	move $t0, $zero
 label98:
 	sll $t1, $t0, 2
 	addu $t1, $a0, $t1
@@ -146,22 +139,11 @@ label98:
 	sw $zero, 56($t1)
 	sw $zero, 60($t1)
 	addiu $t0, $t0, 16
-	addiu $t1, $t0, -119
+	addiu $t1, $t0, -128
 	bgez $t1, label100
 	nop
 	b label98
 	nop
 label100:
-	sll $t0, $t0, 2
-	addu $t0, $a0, $t0
-	sw $zero, 0($t0)
-	sw $zero, 4($t0)
-	sw $zero, 8($t0)
-	sw $zero, 12($t0)
-	sw $zero, 16($t0)
-	sw $zero, 20($t0)
-	sw $zero, 24($t0)
-	sw $zero, 28($t0)
-	sw $zero, 32($t0)
 	jr $ra
 	nop

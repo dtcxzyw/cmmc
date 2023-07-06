@@ -126,7 +126,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %32 = icmp sgt i32 %31, i32 0;
     [30 * [30 * i32]]* %33 = ptrcast [30 * [30 * i32]]* @graph to [30 * [30 * i32]]*;
     [600 * [2 * i32]]* %34 = ptrcast [600 * [2 * i32]]* @edges to [600 * [2 * i32]]*;
-    cbr i1 %32(prob = 0.97), ^while.body, ^b;
+    cbr i1 %32(prob = 0.97), ^while.body, ^while.header;
   ^while.body:
     i32 %35 = phi [^entry, i32 0] [^while.body, i32 %41];
     i32 %36 = call () -> i32 @getint();
@@ -138,15 +138,15 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %40 with i32 %39;
     i32 %41 = add i32 %35, i32 1;
     i1 %42 = icmp sgt i32 %31, i32 %41;
-    cbr i1 %42(prob = 0.97), ^while.body, ^b;
-  ^b:
-    cbr i1 %32(prob = 0.97), ^super.header, ^b1;
+    cbr i1 %42(prob = 0.97), ^while.body, ^while.header;
+  ^while.header:
+    cbr i1 %32(prob = 0.97), ^super.header, ^b;
   ^super.header:
-    i32 %43 = phi [^b, i32 0] [^while.body1, i32 %44];
+    i32 %43 = phi [^while.header, i32 0] [^while.body1, i32 %44];
     i32 %44 = add i32 %43, i32 4;
     i1 %45 = icmp sgt i32 %31, i32 %44;
     cbr i1 %45(prob = 0.89), ^while.body1, ^super.header1;
-  ^b1:
+  ^b:
     i32 %46 = call (i32, [30 * i32]*, i32*) -> i32 @maxCliques(i32 1, [30 * i32]* %store, i32* %n);
     call (i32) -> void @putint(i32 %46);
     ret i32 0;
@@ -256,6 +256,6 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %125 with i32 1;
     i32 %126 = add i32 %116, i32 1;
     i1 %127 = icmp sgt i32 %31, i32 %126;
-    cbr i1 %127(prob = 0.97), ^while.body3, ^b1;
+    cbr i1 %127(prob = 0.97), ^while.body3, ^b;
 }
 internal [600 * [2 * i32]]* @edges;

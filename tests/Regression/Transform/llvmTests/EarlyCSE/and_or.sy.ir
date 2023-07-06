@@ -33,15 +33,15 @@ func @test_02_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMe
     i1 %2 = icmp slt i32 %0, i32 %1;
     i32 %3 = select i1 %2 ? i32 %var2 : i32 0;
     i1 %4 = icmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.5), ^if.then, ^rhsBlock;
-  ^if.then:
+    cbr i1 %4(prob = 0.5), ^rhsBlock, ^rhsBlock1;
+  ^rhsBlock:
     i32 %5 = select i1 %2 ? i32 %var0 : i32 %var1;
     ubr ^b;
-  ^rhsBlock:
+  ^rhsBlock1:
     i32 %6 = select i1 %2 ? i32 %var0 : i32 %var1;
     ubr ^b;
   ^b:
-    i32 %7 = phi [^if.then, i32 %5] [^rhsBlock, i32 %6];
+    i32 %7 = phi [^rhsBlock, i32 %5] [^rhsBlock1, i32 %6];
     ret i32 %7;
 }
 func @test_03(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
@@ -71,15 +71,15 @@ func @test_03_select(i32 %var0, i32 %var1, i32 %var2) -> i32 { NoMemoryRead NoMe
     i1 %2 = icmp slt i32 %0, i32 %1;
     i32 %3 = select i1 %2 ? i32 1 : i32 %var2;
     i1 %4 = icmp neq i32 %3, i32 0;
-    cbr i1 %4(prob = 0.5), ^if.then, ^rhsBlock;
-  ^if.then:
+    cbr i1 %4(prob = 0.5), ^rhsBlock, ^rhsBlock1;
+  ^rhsBlock:
     i32 %5 = select i1 %2 ? i32 %var0 : i32 %var1;
     ubr ^b;
-  ^rhsBlock:
+  ^rhsBlock1:
     i32 %6 = select i1 %2 ? i32 %var0 : i32 %var1;
     ubr ^b;
   ^b:
-    i32 %7 = phi [^if.then, i32 %5] [^rhsBlock, i32 %6];
+    i32 %7 = phi [^rhsBlock, i32 %5] [^rhsBlock1, i32 %6];
     ret i32 %7;
 }
 func @test_04(i32 %var0, i32 %var1, i32 %var2, i32 %var3) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {

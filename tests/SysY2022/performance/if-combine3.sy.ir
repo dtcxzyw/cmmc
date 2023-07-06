@@ -230,11 +230,11 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     call (i32) -> void @stoptime(i32 328);
     ret i32 0;
   ^while.body1:
-    i32 %108 = phi [^if.then, i32 %104] [^while.body1, i32 %157];
-    i32 %109 = phi [^if.then, i32 0] [^while.body1, i32 %158];
-    i32* %110 = getelementptr &([100 * i32]* %s)[i64 0][i32 %109];
+    i32 %108 = phi [^if.then, i32 0] [^while.body1, i32 %158];
+    i32 %109 = phi [^if.then, i32 %104] [^while.body1, i32 %157];
+    i32* %110 = getelementptr &([100 * i32]* %s)[i64 0][i32 %108];
     i32 %111 = load i32* %110;
-    i32 %112 = add i32 %108, i32 %111;
+    i32 %112 = add i32 %109, i32 %111;
     i32* %113 = getelementptr &(i32* %110)[i64 1];
     i32 %114 = load i32* %113;
     i32 %115 = add i32 %112, i32 %114;
@@ -280,7 +280,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32* %155 = getelementptr &(i32* %110)[i64 15];
     i32 %156 = load i32* %155;
     i32 %157 = add i32 %154, i32 %156;
-    i32 %158 = add i32 %109, i32 16;
+    i32 %158 = add i32 %108, i32 16;
     i1 %159 = icmp slt i32 %158, i32 96;
     cbr i1 %159(prob = 0.83), ^while.body1, ^while.body2;
   ^while.body2:

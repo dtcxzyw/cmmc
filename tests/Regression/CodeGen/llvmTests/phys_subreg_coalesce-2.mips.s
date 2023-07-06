@@ -28,8 +28,8 @@ label5:
 	b label2
 	nop
 label21:
-	li $t0, 1
 	move $v0, $a0
+	li $t0, 1
 	subu $t1, $a0, $t0
 	mult $a0, $t1
 	mflo $t2
