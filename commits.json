@@ -265,6 +265,11 @@
       "parent": "fff5d50daaa4fdf0b5dfbf75446966c0d0861dab",
       "time": "2023-07-06 01:25:03 +0800"
     },
+    "980aab119d0f34261e3300838ff5aade4d070ba0": {
+      "message": "revert post-RA scheduling",
+      "parent": "1a70f2f04fced16774cb9c947638742a1066ff32",
+      "time": "2023-07-07 01:11:58 +0800"
+    },
     "99c96ab3877598e40db347786b94293026922ee6": {
       "message": "ci: support collecting multiple commits at one push",
       "parent": "77647bb276d3cd17b652e9f52f197a2963439072",
@@ -396,5 +401,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "1a70f2f04fced16774cb9c947638742a1066ff32"
+  "head": "980aab119d0f34261e3300838ff5aade4d070ba0"
 }
