@@ -300,6 +300,11 @@
       "parent": "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c",
       "time": "2023-07-02 00:48:30 +0800"
     },
+    "bdc17f3cdfd8836d1d37aba6c96d3542950bd8b8": {
+      "message": "misc: relax time limitation",
+      "parent": "31ee101773cca21aabbf09112fc6980d32b7be0c",
+      "time": "2023-07-06 21:06:55 +0800"
+    },
     "c486fc2beb3aa47793bb2b73d8de6496dac4e292": {
       "message": "ci: install libgtest-dev",
       "parent": "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45",
@@ -366,5 +371,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "31ee101773cca21aabbf09112fc6980d32b7be0c"
+  "head": "bdc17f3cdfd8836d1d37aba6c96d3542950bd8b8"
 }
