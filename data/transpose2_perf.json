@@ -12,6 +12,17 @@
       "sysy_time": 10.669459,
       "task-clock:u": 10656.62
     },
+    "019d6e514365b22eb6a7f95d207d65272218b506": {
+      "branch-load-misses:u": 2186982,
+      "branch-loads:u": 2818459381,
+      "cycles:u": 15836999998,
+      "iTLB-load-misses:u": 23,
+      "inst_retired:u": 7269604415,
+      "inst_spec:u": 7299130036,
+      "instructions:u": 7269604415,
+      "sysy_time": 10.679771,
+      "task-clock:u": 10666.96
+    },
     "0b262f1b8d8739d46c9e9b5ec2fc3a5796d22c26": {
       "branch-load-misses:u": 2187019,
       "branch-loads:u": 2327307609,
