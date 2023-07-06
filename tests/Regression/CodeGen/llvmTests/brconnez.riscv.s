@@ -16,9 +16,9 @@ pcrel18:
 	auipc a0, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel18)(a0)
 	bne a0, zero, label3
+	li a0, 1
 pcrel19:
 	auipc a1, %pcrel_hi(result)
-	li a0, 1
 	sw a0, %pcrel_lo(pcrel19)(a1)
 label3:
 	ret

@@ -8,10 +8,10 @@ t:
 	j label2
 label16:
 	mv a1, a0
+	mv a0, a2
 	subw a5, zero, a2
 	mv a3, a2
 	mv a4, zero
-	mv a0, a2
 	mulw a2, a5, zero
 	addw a2, a1, a2
 	bge a3, a2, label11

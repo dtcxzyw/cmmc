@@ -32,9 +32,9 @@ pcrel46:
 	lw a2, %pcrel_lo(pcrel46)(a0)
 	mv a0, a1
 	ble a2, a1, label2
+	li a1, 1
 pcrel47:
 	auipc a2, %pcrel_hi(result1)
-	li a1, 1
 	sw a1, %pcrel_lo(pcrel47)(a2)
 pcrel48:
 	auipc a1, %pcrel_hi(k)

@@ -18,8 +18,8 @@ pcrel46:
 	addi a0, a2, %pcrel_lo(pcrel46)
 	lw a2, %pcrel_lo(pcrel46)(a2)
 	bne a1, zero, label12
-	li a1, 4294967295
 	addiw a2, a2, 11
+	li a1, 4294967295
 	and a2, a2, a1
 	sw a2, 0(a0)
 pcrel47:

@@ -36,8 +36,8 @@ test:
 	mov r0, r1
 	cmp r2, r1
 	ble label2
-	mov r2, #1
 	movw r1, #:lower16:result1
+	mov r2, #1
 	movt r1, #:upper16:result1
 	str r2, [r1, #0]
 	movw r1, #:lower16:k

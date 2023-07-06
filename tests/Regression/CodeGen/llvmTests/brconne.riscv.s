@@ -23,9 +23,9 @@ pcrel25:
 	lw a0, %pcrel_lo(pcrel24)(a0)
 	lw a1, %pcrel_lo(pcrel25)(a1)
 	bne a0, a1, label3
+	li a0, 1
 pcrel26:
 	auipc a1, %pcrel_hi(result)
-	li a0, 1
 	sw a0, %pcrel_lo(pcrel26)(a1)
 label3:
 	ret

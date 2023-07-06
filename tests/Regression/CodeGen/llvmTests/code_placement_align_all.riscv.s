@@ -4,11 +4,11 @@
 .globl foo
 foo:
 	bne a0, zero, label10
-	mv a0, zero
 	sltiu a1, a1, 1
+	mv a0, zero
 	bne a1, zero, label21
-	li a1, 4294967295
 	li a0, 5
+	li a1, 4294967295
 	and a0, a0, a1
 	j label3
 label10:

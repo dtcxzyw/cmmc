@@ -13,10 +13,10 @@ t:
 	b label2
 label16:
 	mov r1, r0
+	mov r0, r2
 	rsb r5, r2, #0
 	mov r3, r2
 	mov r4, #0
-	mov r0, r2
 	mla r2, r5, r4, r1
 	cmp r3, r2
 	bge label11

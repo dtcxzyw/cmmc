@@ -481,6 +481,15 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
+        // Stage 9: post-RA scheduling, minimize latency
+        // TODO: after post legalization?
+        if(ctx.registerInfo && optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
+            Stage stage{ "Post-RA scheduling"sv };
+            postRASchedule(mfunc, ctx);
+            while(genericPeepholeOpt(mfunc, ctx))
+                ;
+            assert(mfunc.verify(std::cerr, ctx));
+        }
         // Stage 5: ICF & Tail duplication
         if(optLevel >= OptimizationLevel::O2 && !debugISel.get()) {
             Stage stage{ "ICF & Tail duplication"sv };
@@ -515,15 +524,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
-        // Stage 9: post-RA scheduling, minimize latency
-        // TODO: after post legalization?
-        if(ctx.registerInfo && optLevel >= OptimizationLevel::O3 && !debugISel.get()) {
-            Stage stage{ "Post-RA scheduling"sv };
-            postRASchedule(mfunc, ctx);
-            while(genericPeepholeOpt(mfunc, ctx))
-                ;
-            assert(mfunc.verify(std::cerr, ctx));
-        }
+
         {
             // Stage 13: post legalization
             Stage stage{ "Post legalization"sv };

@@ -44,8 +44,8 @@ label33:
 	j label9
 label18:
 	li a1, 1
-	li a2, 1
 	mulw a1, a0, a1
+	li a2, 1
 	addiw a0, a0, -1
 	bne a0, a2, label6
 	j label34
