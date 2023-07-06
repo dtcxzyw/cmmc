@@ -45,9 +45,7 @@ calc_seleq:
 	lui $t3, %hi(b)
 	addiu $t2, $t3, %lo(b)
 	lw $t3, %lo(b)($t3)
-	xor $t0, $t0, $t3
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label14
+	bne $t0, $t3, label14
 	nop
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)

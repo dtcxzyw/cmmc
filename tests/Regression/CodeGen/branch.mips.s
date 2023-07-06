@@ -194,85 +194,67 @@ label220:
 bfeq:
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label230
+	movt $t0, $zero, $fcc0
+	bne $t0, $zero, label231
 	nop
+	sw $zero, 0($a2)
 label231:
 	jr $ra
-	nop
-label230:
-	sw $zero, 0($a2)
-	b label231
 	nop
 .globl bfne
 bfne:
 	c.eq.s $f12, $f14
 	li $t0, 1
-	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label240
+	movf $t0, $zero, $fcc0
+	bne $t0, $zero, label241
 	nop
+	sw $zero, 0($a2)
 label241:
 	jr $ra
 	nop
-label240:
-	sw $zero, 0($a2)
-	b label241
-	nop
 .globl bflt
 bflt:
-	c.olt.s $f12, $f14
-	li $t0, 1
-	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label250
-	nop
-label251:
-	jr $ra
-	nop
-label250:
-	sw $zero, 0($a2)
-	b label251
-	nop
-.globl bfle
-bfle:
 	c.ole.s $f12, $f14
 	li $t0, 1
 	movf $t0, $zero, $fcc0
-	bne $t0, $zero, label260
+	bne $t0, $zero, label251
 	nop
-label261:
+	sw $zero, 0($a2)
+label251:
 	jr $ra
 	nop
-label260:
+.globl bfle
+bfle:
+	c.olt.s $f12, $f14
+	li $t0, 1
+	movf $t0, $zero, $fcc0
+	bne $t0, $zero, label261
+	nop
 	sw $zero, 0($a2)
-	b label261
+label261:
+	jr $ra
 	nop
 .globl bfge
 bfge:
 	c.ult.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label270
+	bne $t0, $zero, label271
 	nop
+	sw $zero, 0($a2)
 label271:
 	jr $ra
-	nop
-label270:
-	sw $zero, 0($a2)
-	b label271
 	nop
 .globl bfgt
 bfgt:
 	c.ule.s $f12, $f14
 	li $t0, 1
 	movt $t0, $zero, $fcc0
-	bne $t0, $zero, label280
+	bne $t0, $zero, label281
 	nop
+	sw $zero, 0($a2)
 label281:
 	jr $ra
-	nop
-label280:
-	sw $zero, 0($a2)
-	b label281
 	nop
 .globl normal_srem
 normal_srem:

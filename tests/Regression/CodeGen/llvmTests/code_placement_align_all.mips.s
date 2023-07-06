@@ -2,8 +2,7 @@
 .text
 .globl foo
 foo:
-	sltu $t0, $zero, $a0
-	bne $t0, $zero, label10
+	bne $a0, $zero, label10
 	nop
 	sltiu $t0, $a1, 1
 	li $v0, 5

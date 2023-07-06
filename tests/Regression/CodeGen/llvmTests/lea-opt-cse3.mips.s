@@ -27,9 +27,8 @@ foo1_mult_basic_blocks:
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 2
 	addu $t1, $t0, $t1
-	xori $t2, $t1, 10
-	sltiu $t2, $t2, 1
-	bne $t2, $zero, label36
+	li $t2, 10
+	beq $t1, $t2, label36
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
@@ -47,18 +46,17 @@ foo1_mult_basic_blocks_illegal_scale:
 	addiu $t0, $a0, 4
 	sll $t1, $a1, 1
 	addu $t1, $t0, $t1
-	xori $t2, $t1, 10
-	sltiu $t2, $t2, 1
-	bne $t2, $zero, label56
+	li $t2, 10
+	beq $t1, $t2, label57
 	nop
 	sll $t2, $a1, 3
 	addu $t0, $t0, $t2
 	mult $t0, $t1
 	mflo $v0
-	b label47
+	b label48
 	nop
-label56:
+label57:
 	move $v0, $zero
-label47:
+label48:
 	jr $ra
 	nop

@@ -2,9 +2,7 @@
 .text
 .globl t
 t:
-	xor $t0, $a0, $a1
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label16
+	bne $a0, $a1, label16
 	nop
 	move $v0, $a0
 	b label2
@@ -21,9 +19,7 @@ label16:
 	bgez $t4, label11
 	nop
 	subu $v0, $v0, $a1
-	xor $t4, $a1, $v0
-	sltu $t4, $zero, $t4
-	bne $t4, $zero, label10
+	bne $a1, $v0, label10
 	nop
 label2:
 	jr $ra
@@ -37,17 +33,13 @@ label10:
 	bgez $t4, label11
 	nop
 	subu $v0, $v0, $t0
-	xor $t4, $t0, $v0
-	sltu $t4, $zero, $t4
-	bne $t4, $zero, label10
+	bne $t0, $v0, label10
 	nop
 	b label2
 	nop
 label11:
 	subu $t0, $t0, $v0
-	xor $t1, $v0, $t0
-	sltu $t1, $zero, $t1
-	bne $t1, $zero, label36
+	bne $v0, $t0, label36
 	nop
 	b label2
 	nop
@@ -63,9 +55,7 @@ label36:
 	bgez $t4, label11
 	nop
 	subu $v0, $v0, $t0
-	xor $t4, $t0, $v0
-	sltu $t4, $zero, $t4
-	bne $t4, $zero, label10
+	bne $t0, $v0, label10
 	nop
 	b label2
 	nop

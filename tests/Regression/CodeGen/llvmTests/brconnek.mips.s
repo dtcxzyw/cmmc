@@ -13,9 +13,8 @@ result:
 test:
 	lui $t0, %hi(j)
 	lw $t0, %lo(j)($t0)
-	xori $t0, $t0, 5
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label3
+	li $t1, 5
+	bne $t0, $t1, label3
 	nop
 	li $t0, 1
 	lui $t1, %hi(result)

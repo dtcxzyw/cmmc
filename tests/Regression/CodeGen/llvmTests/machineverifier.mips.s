@@ -10,8 +10,7 @@ foo:
 	lui $t1, %hi(g)
 	addiu $t0, $t1, %lo(g)
 	lw $t1, %lo(g)($t1)
-	sltu $t2, $zero, $t1
-	bne $t2, $zero, label9
+	bne $t1, $zero, label9
 	nop
 	b label2
 	nop

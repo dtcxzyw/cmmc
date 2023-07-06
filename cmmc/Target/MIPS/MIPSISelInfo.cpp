@@ -178,6 +178,10 @@ static MIROperand getIReg(ISelContext& ctx, const MIROperand& src) {
 static MIPSInst getFCmpOpcode(const MIROperand& operand) {
     const auto op = static_cast<CompareOp>(operand.imm());
     switch(op) {
+        case CompareOp::FCmpOrderedEqual:
+            return C_EQ_S;
+        case CompareOp::FCmpOrderedNotEqual:
+            return C_UEQ_S;
         case CompareOp::FCmpOrderedLessThan:
             return C_OLT_S;
         case CompareOp::FCmpOrderedLessEqual:
@@ -186,10 +190,18 @@ static MIPSInst getFCmpOpcode(const MIROperand& operand) {
             return C_ULE_S;
         case CompareOp::FCmpOrderedGreaterEqual:
             return C_ULT_S;
-        case CompareOp::FCmpOrderedEqual:
-            return C_EQ_S;
+        case CompareOp::FCmpUnorderedEqual:
+            return C_UEQ_S;
         case CompareOp::FCmpUnorderedNotEqual:
             return C_EQ_S;
+        case CompareOp::FCmpUnorderedLessThan:
+            return C_ULT_S;
+        case CompareOp::FCmpUnorderedLessEqual:
+            return C_ULE_S;
+        case CompareOp::FCmpUnorderedGreaterThan:
+            return C_OLT_S;
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return C_OLE_S;
         default:
             reportUnreachable(CMMC_LOCATION());
     }
@@ -200,11 +212,12 @@ static MIROperand shouldInvertFCmp(const MIROperand& operand) {
     constexpr auto zero = MIROperand::asImm(0, OperandType::Special);
     constexpr auto one = MIROperand::asImm(1, OperandType::Special);
     switch(op) {
-        case CompareOp::FCmpOrderedLessThan:
-            [[fallthrough]];
-        case CompareOp::FCmpOrderedLessEqual:
-            [[fallthrough]];
         case CompareOp::FCmpOrderedEqual:
+        case CompareOp::FCmpOrderedLessThan:
+        case CompareOp::FCmpOrderedLessEqual:
+        case CompareOp::FCmpUnorderedEqual:
+        case CompareOp::FCmpUnorderedGreaterThan:
+        case CompareOp::FCmpUnorderedGreaterEqual:
             return zero;
         default:
             return one;

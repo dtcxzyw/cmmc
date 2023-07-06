@@ -604,8 +604,7 @@ andn:
 	lwc1 $f6, 16($t0)
 	c.eq.s $f4, $f6
 	li $t0, 1
-	movf $t0, $zero, $fcc0
-	xori $t0, $t0, 1
+	movt $t0, $zero, $fcc0
 	sltu $t1, $zero, $a0
 	and $v0, $t0, $t1
 	jr $ra

@@ -13,7 +13,6 @@ j:
 main:
 	lui $t0, %hi(i)
 	lw $t0, %lo(i)($t0)
-	sltu $t0, $zero, $t0
 	bne $t0, $zero, label3
 	nop
 	li $t0, 10

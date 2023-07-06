@@ -13,7 +13,6 @@ result:
 test:
 	lui $t0, %hi(j)
 	lw $t0, %lo(j)($t0)
-	sltu $t0, $zero, $t0
 	bne $t0, $zero, label3
 	nop
 	li $t0, 1

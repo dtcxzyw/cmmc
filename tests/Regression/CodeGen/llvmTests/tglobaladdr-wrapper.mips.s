@@ -18,7 +18,6 @@ foo:
 	lui $t0, %hi(x)
 	addiu $t1, $t0, %lo(x)
 	lw $t0, %lo(x)($t0)
-	sltu $t0, $zero, $t0
 	bne $t0, $zero, label11
 	nop
 	lui $t0, %hi(a)

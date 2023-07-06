@@ -19,9 +19,7 @@ test:
 	lw $t0, %lo(i)($t0)
 	lui $t1, %hi(j)
 	lw $t1, %lo(j)($t1)
-	xor $t0, $t0, $t1
-	sltu $t0, $zero, $t0
-	bne $t0, $zero, label12
+	bne $t0, $t1, label12
 	nop
 	b label2
 	nop

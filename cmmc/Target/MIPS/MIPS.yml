@@ -100,6 +100,8 @@ InstInfo:
     Instances:
       C_EQ_S:
         Mnemonic: c.eq.s
+      C_UEQ_S:
+        Mnemonic: c.ueq.s
       C_OLT_S:
         Mnemonic: c.olt.s
       C_OLE_S:

@@ -15,8 +15,7 @@ label2:
 	jr $ra
 	nop
 label4:
-	sltu $t0, $zero, $a1
-	bne $t0, $zero, label5
+	bne $a1, $zero, label5
 	nop
 	b label35
 	nop

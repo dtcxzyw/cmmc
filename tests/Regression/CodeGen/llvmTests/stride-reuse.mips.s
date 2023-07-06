@@ -36,9 +36,7 @@ label2:
 	addiu $t2, $t2, 64
 	sw $t2, 0($t1)
 	addiu $t0, $t0, 1
-	xor $t1, $a0, $t0
-	sltu $t1, $zero, $t1
-	bne $t1, $zero, label2
+	bne $a0, $t0, label2
 	nop
 label4:
 	jr $ra

@@ -16,6 +16,18 @@ foo:
 	blez $a0, label4
 	nop
 	move $t0, $zero
+	andi $t1, $zero, 65535
+	lui $t2, %hi(X)
+	sh $t1, %lo(X)($t2)
+	sll $t1, $t1, 2
+	andi $t1, $t1, 65535
+	lui $t2, %hi(Y)
+	sh $t1, %lo(Y)($t2)
+	addiu $t0, $zero, 1
+	bne $a0, $t0, label2
+	nop
+	b label4
+	nop
 label2:
 	andi $t1, $t0, 65535
 	lui $t2, %hi(X)
@@ -25,9 +37,7 @@ label2:
 	lui $t2, %hi(Y)
 	sh $t1, %lo(Y)($t2)
 	addiu $t0, $t0, 1
-	xor $t1, $a0, $t0
-	sltu $t1, $zero, $t1
-	bne $t1, $zero, label2
+	bne $a0, $t0, label2
 	nop
 label4:
 	jr $ra

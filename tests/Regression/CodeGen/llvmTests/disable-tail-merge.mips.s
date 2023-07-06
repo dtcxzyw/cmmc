@@ -14,8 +14,7 @@ test1:
 	lui $t1, %hi(g0)
 	addiu $t0, $t1, %lo(g0)
 	lw $t1, %lo(g0)($t1)
-	sltu $t2, $zero, $a0
-	bne $t2, $zero, label12
+	bne $a0, $zero, label12
 	nop
 	addiu $t1, $t1, 11
 	sw $t1, 0($t0)
