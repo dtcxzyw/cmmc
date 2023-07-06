@@ -3,19 +3,19 @@ func @foo() -> void { NoMemoryRead NoRecurse } {
     [64 * i32]* %0 = ptrcast [64 * i32]* @v_146 to [64 * i32]*;
     ubr ^block4;
   ^block4:
-    i16 %1 = phi [^entry, i16 0] [^block4, i16 %6];
+    i16 %1 = phi [^entry, i16 0] [^block4, i16 %9];
     i16 %2 = strunc i16 %1 to i16;
     i32 %3 = sext i16 %2 to i32;
     i32 %4 = add i32 %3, i32 1;
     i16 %5 = strunc i32 %4 to i16;
-    i16 %6 = ztrunc i16 %5 to i16;
-    i16 %7 = strunc i16 %6 to i16;
-    i32 %8 = sext i16 %7 to i32;
-    i1 %9 = icmp slt i32 %8, i32 15;
+    i16 %6 = strunc i16 %5 to i16;
+    i32 %7 = sext i16 %6 to i32;
+    i1 %8 = icmp slt i32 %7, i32 15;
+    i16 %9 = ztrunc i16 %5 to i16;
     i64 %10 = zext i16 %1 to i64;
     i32* %11 = getelementptr &([64 * i32]* %0)[i64 0][i64 %10];
     store i32* %11 with i32 0;
-    cbr i1 %9(prob = 0.5), ^block4, ^if.else;
+    cbr i1 %8(prob = 0.5), ^block4, ^if.else;
   ^if.else:
     ret;
 }

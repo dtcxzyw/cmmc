@@ -357,6 +357,10 @@ template <typename Value>
 auto ztrunc(Value value) {
     return CastMatcher{ InstructionID::UnsignedTrunc, value };
 }
+template <typename Value>
+auto strunc(Value value) {
+    return CastMatcher{ InstructionID::SignedTrunc, value };
+}
 
 template <typename Value>
 auto f2s(Value value) {

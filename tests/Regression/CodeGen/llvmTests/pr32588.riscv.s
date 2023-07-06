@@ -16,14 +16,13 @@ d:
 .text
 .globl fn1
 fn1:
-pcrel18:
+pcrel15:
 	auipc a0, %pcrel_hi(c)
-	lw a0, %pcrel_lo(pcrel18)(a0)
-	sltiu a1, a0, 1
-	li a0, 4294967295
-	and a1, a1, a0
-	and a0, a1, a0
-pcrel19:
+	li a1, 4294967295
+	lw a0, %pcrel_lo(pcrel15)(a0)
+	sltiu a0, a0, 1
+	and a0, a0, a1
+pcrel16:
 	auipc a1, %pcrel_hi(d)
-	sw a0, %pcrel_lo(pcrel19)(a1)
+	sw a0, %pcrel_lo(pcrel16)(a1)
 	ret

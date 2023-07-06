@@ -6,9 +6,8 @@ test_local_strategy:
 	divw a0, a0, a1
 	li a1, 4294967295
 	and a0, a0, a1
-	subw a1, a0, a2
-	mv a0, a1
-	bne a1, zero, label20
+	subw a0, a0, a2
+	bne a0, zero, label20
 	addw a1, a3, a4
 	li a2, 4294967295
 	addw a1, a5, a1

@@ -11,16 +11,15 @@ func @CeilLog2(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
     i32 %4 = phi [^entry, i32 0] [^if.then, i32 %6];
     ret i32 %4;
   ^if.then:
-    i32 %5 = phi [^block2, i32 1] [^if.else, i32 %11];
+    i32 %5 = phi [^block2, i32 1] [^if.else, i32 %10];
     i32 %6 = ztrunc i32 %5 to i32;
     ubr ^b;
   ^if.else:
-    i32 %7 = phi [^block2, i32 1] [^if.else, i32 %11];
-    i32 %8 = phi [^block2, i32 %2] [^if.else, i32 %12];
-    i32 %9 = ztrunc i32 %7 to i32;
-    i32 %10 = strunc i32 %9 to i32;
-    i32 %11 = add i32 %10, i32 1;
-    i32 %12 = lshr i32 %8, i32 1;
-    i1 %13 = icmp eq i32 %12, i32 0;
-    cbr i1 %13(prob = 0.5), ^if.then, ^if.else;
+    i32 %7 = phi [^block2, i32 1] [^if.else, i32 %10];
+    i32 %8 = phi [^block2, i32 %2] [^if.else, i32 %11];
+    i32 %9 = strunc i32 %7 to i32;
+    i32 %10 = add i32 %9, i32 1;
+    i32 %11 = lshr i32 %8, i32 1;
+    i1 %12 = icmp eq i32 %11, i32 0;
+    cbr i1 %12(prob = 0.5), ^if.then, ^if.else;
 }

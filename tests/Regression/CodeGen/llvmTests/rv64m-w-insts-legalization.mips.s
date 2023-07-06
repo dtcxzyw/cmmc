@@ -65,20 +65,20 @@ mulw:
 	subu $t3, $a1, $t1
 	blez $t3, label21
 	nop
-	b label65
+	b label63
 	nop
 label16:
 	li $v0, 1
 	b label8
 	nop
-label65:
+label63:
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
 	subu $t3, $t2, $t1
 	blez $t3, label21
 	nop
-	b label66
+	b label64
 	nop
 label8:
 	jr $ra
@@ -87,12 +87,12 @@ label21:
 	move $v0, $t0
 	b label8
 	nop
-label66:
+label64:
 	mult $t1, $t0
 	mflo $t0
 	addiu $t1, $t1, 1
 	subu $t3, $t2, $t1
 	blez $t3, label21
 	nop
-	b label66
+	b label64
 	nop

@@ -898,6 +898,20 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<BinaryInst>(InstructionID::Mul, v1, makeIntLike(-i1, v1));
             }
 
+            // trunc(trunc(x)) -> trunc(x)
+            if(ztrunc(capture(ztrunc(any(v1)), v2))(matchCtx) && v1->getType()->isSame(inst->getType())) {
+                return v2;
+            }
+            if(ztrunc(strunc(any(v1)))(matchCtx) && v1->getType()->isSame(inst->getType())) {
+                return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(), v1);
+            }
+            if(strunc(capture(strunc(any(v1)), v2))(matchCtx) && v1->getType()->isSame(inst->getType())) {
+                return v2;
+            }
+            if(strunc(ztrunc(any(v1)))(matchCtx) && v1->getType()->isSame(inst->getType())) {
+                return builder.makeOp<CastInst>(InstructionID::SignedTrunc, inst->getType(), v1);
+            }
+
             return nullptr;
         });
         return ret || modified;

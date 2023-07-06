@@ -10,7 +10,6 @@ fn:
 	li a1, 4294967295
 	and a0, a0, a1
 	and a2, a2, a1
-	and a0, a0, a1
 	sltu a2, zero, a2
 	subw a2, zero, a2
 	andi a2, a2, 2

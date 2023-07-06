@@ -30,7 +30,6 @@ func @main(i32 %argc) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless
     i32 %7 = xor i32 %5, i32 %6;
     i32 %8 = ashr i32 %7, i32 7;
     i32 %9 = mul i32 %8, i32 64;
-    i32 %10 = ztrunc i32 %9 to i32;
-    i32 %11 = strunc i32 %10 to i32;
-    ret i32 %11;
+    i32 %10 = strunc i32 %9 to i32;
+    ret i32 %10;
 }

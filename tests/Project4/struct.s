@@ -31,13 +31,13 @@ gcd:
 	move $t0, $a0
 	addiu $a0, $sp, 16
 	lw $v0, 0($t0)
-	lw $t1, 4($t0)
-	move $t0, $t1
-	beq $t1, $zero, label3
+	lw $t0, 4($t0)
+	move $t1, $t0
+	beq $t0, $zero, label3
 	nop
-	div $zero, $v0, $t1
-	mflo $t1
-	mult $t0, $t1
+	div $zero, $v0, $t0
+	mflo $t2
+	mult $t0, $t2
 	mflo $t1
 	subu $t1, $v0, $t1
 	sw $t0, 16($sp)

@@ -10,8 +10,7 @@ test_local_strategy:
 	sdiv r0, r0, r1
 	ldr r4, [sp, #24]
 	ldr r5, [sp, #28]
-	subs r1, r0, r2
-	mov r0, r1
+	subs r0, r0, r2
 	bne label3
 	add r1, r3, r4
 	add r1, r5, r1
