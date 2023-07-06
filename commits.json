@@ -40,6 +40,11 @@
       "parent": "1f59ecf03b60013c8fede43a47937e42df1bfca6",
       "time": "2023-07-04 23:09:07 +0800"
     },
+    "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996": {
+      "message": "fix(codegen): fix orn folding",
+      "parent": "8a4d1036a3eecea8e3fbd9346076680e12e3a425",
+      "time": "2023-07-06 19:29:22 +0800"
+    },
     "169ca45c333c980ad64271f0522d6f9a82c220cc": {
       "message": "feat(analysis): add basic integer range analysis",
       "parent": "1292361bcc4707b210683cac907bbcdc03ca0e14",
@@ -84,6 +89,11 @@
       "message": "ci: fix typos",
       "parent": "584e11c9f78ddd8d7ca394b03f2341f4203a5677",
       "time": "2023-07-01 21:30:30 +0800"
+    },
+    "39c5773d449d4403551d874c601e2cf3041610fa": {
+      "message": "misc: update ref",
+      "parent": "816f822888acbcef7ed3f4fb74188f7b6c856ce0",
+      "time": "2023-07-06 19:29:20 +0800"
     },
     "3c9bfc69a8452250b22638e3e6231f85e7f64a85": {
       "message": "fix(transform): fix phi merge",
@@ -195,6 +205,11 @@
       "parent": "075cfde698d64f95d0c80923a0ad7cf5e03dd6d4",
       "time": "2023-07-04 20:02:55 +0800"
     },
+    "816f822888acbcef7ed3f4fb74188f7b6c856ce0": {
+      "message": "refactor(ir): refactor compare insts",
+      "parent": "881628785826c53f9f768396459a25913a196c7d",
+      "time": "2023-07-06 19:29:20 +0800"
+    },
     "84648e12b6bda57ce06277c9d225d6f6c00a1481": {
       "message": "misc: update ref",
       "parent": "bc4999d1ddd872bad964ca1fd4720bc9dfb4b700",
@@ -205,10 +220,20 @@
       "parent": "e08641d29e96a13eb5410e28160018520c77dfcb",
       "time": "2023-07-05 23:26:48 +0800"
     },
+    "881628785826c53f9f768396459a25913a196c7d": {
+      "message": "test: add sccp tests",
+      "parent": "97cc72f856cc319dc4b12d569da66b09a1abf5ea",
+      "time": "2023-07-06 19:29:20 +0800"
+    },
     "8a442367ad14b632eadb8d0719bb9237ab864a62": {
       "message": "feat(transform): fold constant arguments",
       "parent": "70a3c44eef43f6781909d868fb8132a3678a2c66",
       "time": "2023-07-02 21:25:05 +0800"
+    },
+    "8a4d1036a3eecea8e3fbd9346076680e12e3a425": {
+      "message": "misc: update riscv ref",
+      "parent": "b099c5645c68f0df070ef9fe2173fd5d01d93e00",
+      "time": "2023-07-06 19:29:22 +0800"
     },
     "9281299f68c3f217140406e04f046824bfe4bd33": {
       "message": "feat(codegen): don't apply tail duplication for target blocks that end with conditional branches",
@@ -234,6 +259,16 @@
       "message": "ci: record historical summary data",
       "parent": "53380379f6f03d5950eb3de091380278c20ee681",
       "time": "2023-07-05 23:43:19 +0800"
+    },
+    "ad894f668c6480d476152947b318ab84f45bb804": {
+      "message": "misc: update arm ref",
+      "parent": "cbef3bea2dd3ff904d69f41b8bda4cb71719af57",
+      "time": "2023-07-06 19:29:21 +0800"
+    },
+    "b099c5645c68f0df070ef9fe2173fd5d01d93e00": {
+      "message": "misc: update mips ref",
+      "parent": "ad894f668c6480d476152947b318ab84f45bb804",
+      "time": "2023-07-06 19:29:22 +0800"
     },
     "b642f635bd39964b79138897e82d1cd1ca8de9f6": {
       "message": "feat(codegen): add and-not folding on riscv and arm",
@@ -264,6 +299,11 @@
       "message": "test(perf): add summary",
       "parent": "3c9bfc69a8452250b22638e3e6231f85e7f64a85",
       "time": "2023-07-04 20:34:37 +0800"
+    },
+    "cbef3bea2dd3ff904d69f41b8bda4cb71719af57": {
+      "message": "refactor(codegen): refactor compare predicates for backends",
+      "parent": "39c5773d449d4403551d874c601e2cf3041610fa",
+      "time": "2023-07-06 19:29:21 +0800"
     },
     "d704adc43cc2208d15df5443ba72a7be262aeb0c": {
       "message": "feat(transform): add range-aware arith reduce",
@@ -316,5 +356,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "97cc72f856cc319dc4b12d569da66b09a1abf5ea"
+  "head": "15c54ccbc7f3ccee2471389b56e2dd6b6b8b2996"
 }
