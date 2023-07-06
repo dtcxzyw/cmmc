@@ -16,20 +16,31 @@ Y:
 foo:
 	ble a0, zero, label4
 	mv a1, zero
+	li a2, 65535
+pcrel34:
+	auipc a4, %pcrel_hi(X)
+	and a3, zero, a2
+	addiw a1, zero, 1
+	sh a3, %pcrel_lo(pcrel34)(a4)
+	slliw a3, a3, 2
+	and a2, a3, a2
+pcrel35:
+	auipc a3, %pcrel_hi(Y)
+	sh a2, %pcrel_lo(pcrel35)(a3)
+	bne a0, a1, label2
+	j label4
 label2:
 	li a2, 65535
-pcrel32:
+pcrel36:
 	auipc a4, %pcrel_hi(X)
 	and a3, a1, a2
 	addiw a1, a1, 1
-	sh a3, %pcrel_lo(pcrel32)(a4)
+	sh a3, %pcrel_lo(pcrel36)(a4)
 	slliw a3, a3, 2
 	and a2, a3, a2
-pcrel33:
+pcrel37:
 	auipc a3, %pcrel_hi(Y)
-	sh a2, %pcrel_lo(pcrel33)(a3)
-	xor a2, a0, a1
-	sltu a2, zero, a2
-	bne a2, zero, label2
+	sh a2, %pcrel_lo(pcrel37)(a3)
+	bne a0, a1, label2
 label4:
 	ret

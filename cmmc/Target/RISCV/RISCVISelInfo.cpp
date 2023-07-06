@@ -196,14 +196,28 @@ static bool selectFCmpOpcode(const MIROperand& operand, const MIROperand& lhs, c
             opcode = FEQ_S;
             break;
         default:
-            reportUnreachable(CMMC_LOCATION());
+            return false;
     }
     outOp = MIROperand::asImm(opcode, OperandType::Special);
     return true;
 }
 
-static MIROperand getFCmpOrderedEqualOp() {
-    return MIROperand::asImm(CompareOp::FCmpOrderedEqual, OperandType::Special);
+static bool isFCmpUnorderedOp(const MIROperand& op) {
+    switch(static_cast<CompareOp>(op.imm())) {
+        case CompareOp::FCmpUnorderedEqual:
+        case CompareOp::FCmpUnorderedNotEqual:
+        case CompareOp::FCmpUnorderedLessThan:
+        case CompareOp::FCmpUnorderedLessEqual:
+        case CompareOp::FCmpUnorderedGreaterThan:
+        case CompareOp::FCmpUnorderedGreaterEqual:
+            return true;
+        default:
+            return false;
+    }
+}
+
+static MIROperand getFCmpOrderedOp(const MIROperand& op) {
+    return MIROperand::asImm(getInvertedOp(static_cast<CompareOp>(op.imm())), OperandType::Special);
 }
 
 static bool isOperandI64(const MIROperand& op) {

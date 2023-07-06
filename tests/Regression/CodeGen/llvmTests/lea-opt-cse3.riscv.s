@@ -22,10 +22,9 @@ foo1:
 .globl foo1_mult_basic_blocks
 foo1_mult_basic_blocks:
 	addiw a0, a0, 4
+	li a3, 10
 	sh2add a2, a1, a0
-	xori a3, a2, 10
-	sltiu a3, a3, 1
-	bne a3, zero, label38
+	beq a2, a3, label38
 	sh3add a0, a1, a0
 	li a1, 4294967295
 	mulw a0, a0, a2
@@ -38,16 +37,15 @@ label29:
 .globl foo1_mult_basic_blocks_illegal_scale
 foo1_mult_basic_blocks_illegal_scale:
 	addiw a0, a0, 4
+	li a3, 10
 	sh1add a2, a1, a0
-	xori a3, a2, 10
-	sltiu a3, a3, 1
-	bne a3, zero, label59
+	beq a2, a3, label60
 	sh3add a0, a1, a0
 	li a1, 4294967295
 	mulw a0, a0, a2
 	and a0, a0, a1
-	j label50
-label59:
+	j label51
+label60:
 	mv a0, zero
-label50:
+label51:
 	ret

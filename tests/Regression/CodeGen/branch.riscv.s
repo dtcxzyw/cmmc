@@ -142,57 +142,45 @@ label213:
 .globl bfeq
 bfeq:
 	feq.s a0, f10, f11
-	bne a0, zero, label222
+	beq a0, zero, label223
+	sw zero, 0(a2)
 label223:
 	ret
-label222:
-	sw zero, 0(a2)
-	j label223
 .globl bfne
 bfne:
 	feq.s a0, f10, f11
-	beq a0, zero, label232
-label233:
-	ret
-label232:
+	bne a0, zero, label235
 	sw zero, 0(a2)
-	j label233
+label235:
+	ret
 .globl bflt
 bflt:
 	flt.s a0, f10, f11
-	bne a0, zero, label244
+	beq a0, zero, label245
+	sw zero, 0(a2)
 label245:
 	ret
-label244:
-	sw zero, 0(a2)
-	j label245
 .globl bfle
 bfle:
 	fle.s a0, f10, f11
-	bne a0, zero, label254
-label255:
-	ret
-label254:
+	beq a0, zero, label257
 	sw zero, 0(a2)
-	j label255
+label257:
+	ret
 .globl bfge
 bfge:
 	fle.s a0, f11, f10
-	bne a0, zero, label264
-label265:
-	ret
-label264:
+	beq a0, zero, label269
 	sw zero, 0(a2)
-	j label265
+label269:
+	ret
 .globl bfgt
 bfgt:
 	flt.s a0, f11, f10
-	bne a0, zero, label274
-label275:
-	ret
-label274:
+	beq a0, zero, label281
 	sw zero, 0(a2)
-	j label275
+label281:
+	ret
 .globl normal_srem
 normal_srem:
 	li a1, 1152921497
@@ -205,7 +193,7 @@ normal_srem:
 	subw a1, a0, a1
 	addw a0, a1, a2
 	slti a3, a1, 0
-	bne a3, zero, label299
+	bne a3, zero, label307
 	mv a0, a1
-label299:
+label307:
 	ret

@@ -56,41 +56,37 @@ label63:
 	ret
 .globl sltiu_beq0
 sltiu_beq0:
-	li a1, 32766
-	sltu a1, a1, a0
-	bne a1, zero, label79
-pcrel90:
+	li a1, 32767
+	bgeu a0, a1, label79
+pcrel91:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel90)(a1)
+	sw a0, %pcrel_lo(pcrel91)(a1)
 label79:
 	ret
 .globl sltiu_beq1
 sltiu_beq1:
-	li a1, 32767
-	sltu a1, a1, a0
-	bne a1, zero, label93
-pcrel104:
+	li a1, 32768
+	bgeu a0, a1, label94
+pcrel106:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel104)(a1)
-label93:
+	sw a0, %pcrel_lo(pcrel106)(a1)
+label94:
 	ret
 .globl sltiu_beq2
 sltiu_beq2:
-	li a1, -32769
-	sltu a1, a1, a0
-	bne a1, zero, label107
-pcrel118:
+	li a1, -32768
+	bgeu a0, a1, label109
+pcrel121:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel118)(a1)
-label107:
+	sw a0, %pcrel_lo(pcrel121)(a1)
+label109:
 	ret
 .globl sltiu_beq3
 sltiu_beq3:
-	li a1, -32770
-	sltu a1, a1, a0
-	bne a1, zero, label121
-pcrel132:
+	li a1, -32769
+	bgeu a0, a1, label124
+pcrel136:
 	auipc a1, %pcrel_hi(g1)
-	sw a0, %pcrel_lo(pcrel132)(a1)
-label121:
+	sw a0, %pcrel_lo(pcrel136)(a1)
+label124:
 	ret

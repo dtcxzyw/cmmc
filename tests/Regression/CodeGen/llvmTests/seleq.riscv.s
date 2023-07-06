@@ -48,9 +48,7 @@ pcrel79:
 	addi a2, a3, %pcrel_lo(pcrel79)
 	lw a0, %pcrel_lo(pcrel78)(a0)
 	lw a3, %pcrel_lo(pcrel79)(a3)
-	xor a0, a0, a3
-	sltu a0, zero, a0
-	bne a0, zero, label14
+	bne a0, a3, label14
 pcrel80:
 	auipc a0, %pcrel_hi(f)
 	lw a0, %pcrel_lo(pcrel80)(a0)

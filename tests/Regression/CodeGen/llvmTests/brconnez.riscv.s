@@ -15,7 +15,6 @@ test:
 pcrel18:
 	auipc a0, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel18)(a0)
-	sltu a0, zero, a0
 	bne a0, zero, label3
 	li a0, 1
 pcrel19:

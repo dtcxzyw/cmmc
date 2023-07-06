@@ -1400,7 +1400,7 @@ InstSelection:
         Tgt: $Reloc
         Prob: $Prob
 
-  # a != b -> (a == b) == 0
+  # a unordered fcmp b -> (a ordered fcmp b) == 0
   - Pattern:
       InstBranch:
         Cond:
@@ -1409,7 +1409,7 @@ InstSelection:
             Lhs: $Lhs
             Rhs: $Rhs
             Op: $Op
-            $Predicate: isCompareOp($Op, CompareOp::FCmpUnorderedNotEqual) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
+            $Predicate: isFCmpUnorderedOp($Op) && ctx.isSafeToUse($Lhs, $Dst) && ctx.isSafeToUse($Rhs, $Dst)
         Tgt: $Reloc
         Prob: $Prob
     Replace:
@@ -1419,7 +1419,7 @@ InstSelection:
             Dst: getVRegAs(ctx, $Dst)
             Lhs: $Lhs
             Rhs: $Rhs
-            Op: getFCmpOrderedEqualOp()
+            Op: getFCmpOrderedOp($Op)
         Rs2: getZero($Dst)
         Tgt: $Reloc
         Prob: $Prob
@@ -1560,7 +1560,7 @@ InstSelection:
         Lhs: $Lhs
         Rhs: $Rhs
         Op: $Op
-        $Predicate: isCompareOp($Op, CompareOp::FCmpUnorderedNotEqual)
+        $Predicate: isFCmpUnorderedOp($Op)
     Replace:
       XORI:
         Rd: $Dst
@@ -1569,7 +1569,7 @@ InstSelection:
             Dst: getVRegAs(ctx, $Dst)
             Lhs: $Lhs
             Rhs: $Rhs
-            Op: getFCmpOrderedEqualOp()
+            Op: getFCmpOrderedOp($Op)
         Imm: getOne($Dst)
 
   - Pattern:

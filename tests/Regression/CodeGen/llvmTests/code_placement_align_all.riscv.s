@@ -3,8 +3,7 @@
 .text
 .globl foo
 foo:
-	sltu a2, zero, a0
-	bne a2, zero, label10
+	bne a0, zero, label10
 	sltiu a1, a1, 1
 	mv a0, zero
 	bne a1, zero, label21
