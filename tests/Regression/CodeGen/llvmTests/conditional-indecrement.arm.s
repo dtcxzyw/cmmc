@@ -20,16 +20,14 @@ test1_commute:
 	bx lr
 .globl test2
 test2:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	add r0, r1, r0
 	bx lr
 .globl test3
 test3:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	add r0, r1, r0
 	bx lr
 .globl test4
@@ -48,16 +46,14 @@ test5:
 	bx lr
 .globl test6
 test6:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	sub r0, r1, r0
 	bx lr
 .globl test7
 test7:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	sub r0, r1, r0
 	bx lr
 .globl test8

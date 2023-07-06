@@ -68,14 +68,14 @@ label3:
 	movt r3, #:upper16:z1
 	movt r4, #:upper16:z2
 	str r0, [r3, #0]
-	ldr r0, [r2, #0]
+	movw r0, #:lower16:f
+	ldr r3, [r2, #0]
+	movt r0, #:upper16:f
 	ldr r2, [r1, #0]
 	movw r1, #:lower16:t
 	movt r1, #:upper16:t
+	cmp r3, r2
 	mov r3, r1
-	cmp r0, r2
-	movw r0, #:lower16:f
-	movt r0, #:upper16:f
 	moveq r3, r0
 	ldr r3, [r3, #0]
 	str r3, [r4, #0]

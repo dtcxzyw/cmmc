@@ -24,8 +24,7 @@ fn1:
 	movt r0, #:upper16:c
 	movt r1, #:upper16:d
 	ldr r0, [r0, #0]
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	str r0, [r1, #0]
 	bx lr

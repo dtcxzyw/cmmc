@@ -13,9 +13,9 @@ compare_i_gt:
 	bx lr
 .globl compare_r_eq
 compare_r_eq:
-	rsb r1, r1, #0
-	cmp r0, r1
-	mov r0, #24
+	rsb r2, r1, #0
+	cmp r0, r2
 	mov r1, #42
+	mov r0, #24
 	moveq r0, r1
 	bx lr

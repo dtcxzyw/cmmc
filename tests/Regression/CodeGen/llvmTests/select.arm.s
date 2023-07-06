@@ -96,8 +96,9 @@ select_or:
 	bx lr
 .globl select_or_1
 select_or_1:
-	ands r2, r2, #1
+	and r2, r2, #1
 	orr r1, r0, r1
+	cmp r2, #0
 	moveq r1, r0
 	mov r0, r1
 	bx lr
@@ -126,8 +127,9 @@ select_or_2b:
 	bx lr
 .globl select_or_3
 select_or_3:
-	ands r2, r2, #1
+	and r2, r2, #1
 	orr r1, r0, r1
+	cmp r2, #0
 	moveq r0, r1
 	bx lr
 .globl select_or_3b
@@ -189,45 +191,45 @@ select_sub_3:
 .globl select_udiv_1
 select_udiv_1:
 	cmp r0, #0
-	beq label201
+	beq label203
 	udiv r0, r1, r2
-	b label194
-label201:
+	b label196
+label203:
 	mov r0, r2
-label194:
+label196:
 	bx lr
 .globl select_udiv_2
 select_udiv_2:
 	cmp r0, #0
-	beq label214
+	beq label216
 	mov r0, r1
-	b label206
-label214:
+	b label208
+label216:
 	udiv r0, r1, r2
-label206:
+label208:
 	bx lr
 .globl select_udiv_3
 select_udiv_3:
 	cmp r0, #0
-	beq label226
+	beq label228
 	mov r0, r1
-	b label219
-label226:
+	b label221
+label228:
 	mov r0, #42
 	udiv r0, r1, r0
-label219:
+label221:
 	bx lr
 .globl select_xor_1
 select_xor_1:
 	uxtb r1, r1
 	ands r1, r1, #1
-	bne label242
+	bne label244
 	uxth r0, r0
-	b label233
-label242:
+	b label235
+label244:
 	uxth r0, r0
 	eor r0, r0, #43
-label233:
+label235:
 	uxth r0, r0
 	bx lr
 .globl select_xor_1b
@@ -235,13 +237,13 @@ select_xor_1b:
 	uxtb r1, r1
 	and r1, r1, #1
 	cmp r1, #1
-	beq label259
+	beq label261
 	uxth r0, r0
-	b label250
-label259:
+	b label252
+label261:
 	uxth r0, r0
 	eor r0, r0, #43
-label250:
+label252:
 	uxth r0, r0
 	bx lr
 .globl select_xor_2
@@ -265,13 +267,13 @@ select_xor_2b:
 select_xor_3:
 	uxtb r1, r1
 	ands r1, r1, #1
-	bne label297
+	bne label299
 	uxth r0, r0
 	eor r0, r0, #43
-	b label288
-label297:
+	b label290
+label299:
 	uxth r0, r0
-label288:
+label290:
 	uxth r0, r0
 	bx lr
 .globl select_xor_3b
@@ -279,13 +281,13 @@ select_xor_3b:
 	uxtb r1, r1
 	and r1, r1, #1
 	cmp r1, #1
-	beq label314
+	beq label316
 	uxth r0, r0
 	eor r0, r0, #43
-	b label305
-label314:
+	b label307
+label316:
 	uxth r0, r0
-label305:
+label307:
 	uxth r0, r0
 	bx lr
 .globl select_xor_4

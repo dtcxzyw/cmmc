@@ -6,8 +6,10 @@
 .fpu vfpv4
 .globl x
 x:
-	ands r1, r0, #256
-	mvn r0, #25
+	and r0, r0, #256
 	mov r1, #0
+	mvn r2, #25
+	cmp r0, #0
+	mov r0, r2
 	moveq r0, r1
 	bx lr

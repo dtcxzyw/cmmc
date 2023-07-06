@@ -33,10 +33,10 @@ test:
 	movt r1, #:upper16:k
 	ldr r0, [r0, #0]
 	ldr r1, [r1, #0]
-	cmp r0, r1
+	sub r0, r0, r1
 	movw r1, #:lower16:r1
-	mov r0, #0
+	clz r0, r0
 	movt r1, #:upper16:r1
-	movweq r0, #1
+	lsr r0, r0, #5
 	str r0, [r1, #0]
 	bx lr

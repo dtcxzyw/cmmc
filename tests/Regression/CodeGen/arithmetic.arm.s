@@ -490,9 +490,9 @@ andn:
 	vcvt.f32.s32 s0, s0
 	vcmp.f32 s0, s1
 	vmrs APSR_nzcv, FPSCR
-	movweq r1, #1
+	movwne r1, #1
 	cmp r0, #0
 	mov r0, #0
 	movwne r0, #1
-	bic r0, r0, r1
+	and r0, r1, r0
 	bx lr

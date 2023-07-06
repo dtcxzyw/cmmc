@@ -12,16 +12,16 @@ f1:
 	bx lr
 .globl f2
 f2:
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl f6
 f6:
 	lsl r1, r1, #5
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl f7
 f7:
@@ -33,9 +33,9 @@ f7:
 .globl f8
 f8:
 	lsr r1, r1, #7
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl f9
 f9:

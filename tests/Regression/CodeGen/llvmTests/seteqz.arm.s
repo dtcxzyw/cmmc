@@ -28,17 +28,16 @@ test:
 	movt r0, #:upper16:i
 	movt r1, #:upper16:r1
 	ldr r0, [r0, #0]
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	str r0, [r1, #0]
 	movw r1, #:lower16:r2
 	movw r0, #:lower16:j
 	movt r1, #:upper16:r2
 	movt r0, #:upper16:j
 	ldr r0, [r0, #0]
-	cmp r0, #99
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #99
+	clz r0, r0
+	lsr r0, r0, #5
 	str r0, [r1, #0]
 	bx lr

@@ -44,24 +44,24 @@ select_const_int_pow2_zero:
 	bx lr
 .globl select_eq_10000_10001
 select_eq_10000_10001:
-	cmp r0, r1
+	sub r0, r0, r1
 	movw r1, #10002
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	sub r0, r1, r0
 	bx lr
 .globl select_eq_1_2
 select_eq_1_2:
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	rsb r0, r0, #2
 	bx lr
 .globl select_eq_zero_negone
 select_eq_zero_negone:
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	rsb r0, r0, #0
 	bx lr
 .globl select_ne_10001_10002

@@ -24,9 +24,9 @@ signed_i8:
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	uxtb r0, r0
 	bx lr
 .globl unsigned_i1
@@ -34,9 +34,9 @@ unsigned_i1:
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl unsigned_i16
 unsigned_i16:
@@ -56,9 +56,9 @@ unsigned_i8:
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	uxtb r0, r0
 	bx lr
 .globl use_i1
@@ -66,9 +66,9 @@ use_i1:
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl use_i16
 use_i16:
@@ -89,8 +89,8 @@ use_i8:
 	movw r0, #:lower16:x
 	movt r0, #:upper16:x
 	ldr r0, [r0, #0]
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	and r0, r0, #255
 	bx lr

@@ -24,10 +24,10 @@ t:
 	movt r0, #:upper16:i
 	movt r1, #:upper16:j
 	ldr r0, [r0, #0]
-	ldr r1, [r1, #0]
-	cmp r0, r1
-	mov r0, #3
+	ldr r2, [r1, #0]
 	mov r1, #1
+	cmp r0, r2
+	mov r0, #3
 	moveq r0, r1
 	movw r1, #:lower16:k
 	movt r1, #:upper16:k

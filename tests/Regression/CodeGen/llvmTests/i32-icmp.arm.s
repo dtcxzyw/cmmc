@@ -6,48 +6,47 @@
 .fpu vfpv4
 .globl icmp_eq
 icmp_eq:
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eq_constant
 icmp_eq_constant:
-	cmp r0, #42
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #42
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eq_constant_2048
 icmp_eq_constant_2048:
-	cmp r0, #2048
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, #2048
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eq_constant_2049
 icmp_eq_constant_2049:
 	movw r1, #2049
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eq_constant_neg_2047
 icmp_eq_constant_neg_2047:
 	movw r1, #63489
 	movt r1, #65535
-	cmp r0, r1
-	mov r0, #0
-	movweq r0, #1
+	sub r0, r0, r1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eq_constant_neg_2048
 icmp_eq_constant_neg_2048:
-	cmn r0, #2048
-	mov r0, #0
-	movweq r0, #1
+	add r0, r0, #2048
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_eqz
 icmp_eqz:
-	cmp r0, #0
-	mov r0, #0
-	movweq r0, #1
+	clz r0, r0
+	lsr r0, r0, #5
 	bx lr
 .globl icmp_ne
 icmp_ne:

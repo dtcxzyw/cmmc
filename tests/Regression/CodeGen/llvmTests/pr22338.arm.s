@@ -6,10 +6,10 @@
 .fpu vfpv4
 .globl fn
 fn:
-	cmp r1, #1
+	sub r1, r1, #1
 	mov r2, #2
-	mov r1, #0
-	movweq r1, #1
+	clz r1, r1
+	lsr r1, r1, #5
 	cmp r1, #0
 	mov r1, #0
 	movne r1, r2
