@@ -370,6 +370,11 @@
       "parent": "48d1d909299606555ee6fd868cbcd8648fe7ee9d",
       "time": "2023-07-02 03:31:52 +0800"
     },
+    "df7551af60523f1ec1eb36e92ae19c1c45386d44": {
+      "message": "feat(codegen): also eliminate redundant loads",
+      "parent": "019d6e514365b22eb6a7f95d207d65272218b506",
+      "time": "2023-07-07 20:48:26 +0800"
+    },
     "e08641d29e96a13eb5410e28160018520c77dfcb": {
       "message": "test: add random tests for range analysis",
       "parent": "06a1668979545faf5da61846bca1aa7c8bbe3728",
@@ -411,5 +416,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "019d6e514365b22eb6a7f95d207d65272218b506"
+  "head": "df7551af60523f1ec1eb36e92ae19c1c45386d44"
 }
