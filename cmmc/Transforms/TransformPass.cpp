@@ -451,6 +451,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "TailCallEliminate",   //
                 "ShrinkWrapping",      //
                 "CallEliminate",       //
+                "LoadEliminate",       //
                 "FuncInlining",        //
             }))
             perFuncWithInline->addPass(pass);
@@ -468,6 +469,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
                 "DiscardReturnValue",  //
                 "TailCallEliminate",   //
                 "CallEliminate",       //
+                "LoadEliminate",       //
                 "FuncInlining",        //
             }))
             perFuncWithInline->addPass(pass);

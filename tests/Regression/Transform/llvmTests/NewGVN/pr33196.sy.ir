@@ -5,32 +5,27 @@ func @main() -> i32 { NoRecurse } {
     i32* %2 = ptrcast i32* @c to i32*;
     i32 %3 = load i32* %2;
     i1 %4 = icmp eq i32 %3, i32 -1;
-    i32* %5 = ptrcast i32* @a to i32*;
-    i32* %6 = ptrcast i32* @b to i32*;
+    i32 %5 = strunc i32 %3 to i32;
+    i32* %6 = ptrcast i32* @a to i32*;
+    i32* %7 = ptrcast i32* @b to i32*;
     cbr i1 %4(prob = 0.5), ^block3, ^block2;
   ^block2:
-    i32 %7 = phi [^entry, i32 %3] [^indirect, i32 %21];
-    i32 %8 = phi [^entry, i32 0] [^indirect, i32 %10];
+    i32 %8 = phi [^entry, i32 0] [^block3, i32 %9];
     ubr ^block3;
   ^block3:
-    i32 %9 = phi [^entry, i32 %3] [^block2, i32 %7];
-    i32 %10 = phi [^entry, i32 %1] [^block2, i32 %8];
-    i32 %11 = load i32* %6;
-    i32 %12 = shl i32 %11, i32 16;
-    i32 %13 = lshr i32 %12, i32 16;
-    i32 %14 = strunc i32 %13 to i32;
+    i32 %9 = phi [^entry, i32 %1] [^block2, i32 %8];
+    i32 %10 = load i32* %7;
+    i32 %11 = shl i32 %10, i32 16;
+    i32 %12 = lshr i32 %11, i32 16;
+    i32 %13 = strunc i32 %12 to i32;
+    i32 %14 = add i32 %5, i32 %13;
     i32 %15 = strunc i32 %9 to i32;
     i32 %16 = add i32 %14, i32 %15;
-    i32 %17 = strunc i32 %10 to i32;
-    i32 %18 = add i32 %16, i32 %17;
-    i32 %19 = ztrunc i32 %18 to i32;
-    store i32* %6 with i32 0;
-    store i32* %5 with i32 %19;
-    i1 %20 = icmp eq i32 %18, i32 0;
-    cbr i1 %20(prob = 0.5), ^if.then, ^indirect;
-  ^indirect:
-    i32 %21 = load i32* %2;
-    ubr ^block2;
+    i32 %17 = ztrunc i32 %16 to i32;
+    store i32* %7 with i32 0;
+    store i32* %6 with i32 %17;
+    i1 %18 = icmp eq i32 %16, i32 0;
+    cbr i1 %18(prob = 0.5), ^if.then, ^block2;
   ^if.then:
     ret i32 0;
 }

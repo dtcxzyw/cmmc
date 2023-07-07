@@ -39,83 +39,67 @@ z4:
 .text
 .globl calc_seleq
 calc_seleq:
-	lui $t1, %hi(a)
-	addiu $t0, $t1, %lo(a)
-	lw $t1, %lo(a)($t1)
-	lui $t3, %hi(b)
-	addiu $t2, $t3, %lo(b)
-	lw $t3, %lo(b)($t3)
-	bne $t1, $t3, label17
+	lui $t0, %hi(a)
+	lw $t1, %lo(a)($t0)
+	lui $t0, %hi(b)
+	lw $t2, %lo(b)($t0)
+	bne $t1, $t2, label17
 	nop
-	lui $t1, %hi(f)
-	lw $t1, %lo(f)($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	lui $t3, %hi(z1)
-	sw $t1, %lo(z1)($t3)
-	lw $t1, 0($t2)
-	lw $t2, 0($t0)
+	sw $t0, %lo(z1)($t3)
 	bne $t1, $t2, label16
 	nop
-	lui $t1, %hi(f)
-	lw $t1, %lo(f)($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	lui $t2, %hi(z2)
-	sw $t1, %lo(z2)($t2)
-	lui $t1, %hi(c)
-	addiu $t2, $t1, %lo(c)
-	lw $t1, %lo(c)($t1)
-	lw $t3, 0($t0)
-	bne $t1, $t3, label9
+	sw $t0, %lo(z2)($t2)
+	lui $t0, %hi(c)
+	lw $t2, %lo(c)($t0)
+	bne $t1, $t2, label9
 	nop
-	lui $t1, %hi(t)
-	lw $t1, %lo(t)($t1)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	lui $t3, %hi(z3)
-	sw $t1, %lo(z3)($t3)
-	lw $t0, 0($t0)
-	lw $t1, 0($t2)
-	bne $t0, $t1, label64
+	sw $t0, %lo(z3)($t3)
+	bne $t1, $t2, label59
 	nop
-	b label130
+	b label125
 	nop
 label17:
-	lui $t1, %hi(t)
-	lw $t1, %lo(t)($t1)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	lui $t3, %hi(z1)
-	sw $t1, %lo(z1)($t3)
-	lw $t1, 0($t2)
-	lw $t2, 0($t0)
+	sw $t0, %lo(z1)($t3)
 	bne $t1, $t2, label16
 	nop
-	lui $t1, %hi(f)
-	lw $t1, %lo(f)($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	lui $t2, %hi(z2)
-	sw $t1, %lo(z2)($t2)
-	lui $t1, %hi(c)
-	addiu $t2, $t1, %lo(c)
-	lw $t1, %lo(c)($t1)
-	lw $t3, 0($t0)
-	bne $t1, $t3, label9
+	sw $t0, %lo(z2)($t2)
+	lui $t0, %hi(c)
+	lw $t2, %lo(c)($t0)
+	bne $t1, $t2, label9
 	nop
-	lui $t1, %hi(t)
-	lw $t1, %lo(t)($t1)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	lui $t3, %hi(z3)
-	sw $t1, %lo(z3)($t3)
-	lw $t0, 0($t0)
-	lw $t1, 0($t2)
-	bne $t0, $t1, label64
+	sw $t0, %lo(z3)($t3)
+	bne $t1, $t2, label59
 	nop
-	b label130
+	b label125
 	nop
 label9:
-	lui $t1, %hi(f)
-	lw $t1, %lo(f)($t1)
+	lui $t0, %hi(f)
+	lw $t0, %lo(f)($t0)
 	lui $t3, %hi(z3)
-	sw $t1, %lo(z3)($t3)
-	lw $t0, 0($t0)
-	lw $t1, 0($t2)
-	bne $t0, $t1, label64
+	sw $t0, %lo(z3)($t3)
+	bne $t1, $t2, label59
 	nop
-	b label130
+	b label125
 	nop
-label64:
+label59:
 	lui $t0, %hi(f)
 	lw $t0, %lo(f)($t0)
 label14:
@@ -123,29 +107,25 @@ label14:
 	sw $t0, %lo(z4)($t1)
 	jr $ra
 	nop
-label130:
+label125:
 	lui $t0, %hi(t)
 	lw $t0, %lo(t)($t0)
 	b label14
 	nop
 label16:
-	lui $t1, %hi(t)
-	lw $t1, %lo(t)($t1)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	lui $t2, %hi(z2)
-	sw $t1, %lo(z2)($t2)
-	lui $t1, %hi(c)
-	addiu $t2, $t1, %lo(c)
-	lw $t1, %lo(c)($t1)
-	lw $t3, 0($t0)
-	bne $t1, $t3, label9
+	sw $t0, %lo(z2)($t2)
+	lui $t0, %hi(c)
+	lw $t2, %lo(c)($t0)
+	bne $t1, $t2, label9
 	nop
-	lui $t1, %hi(t)
-	lw $t1, %lo(t)($t1)
+	lui $t0, %hi(t)
+	lw $t0, %lo(t)($t0)
 	lui $t3, %hi(z3)
-	sw $t1, %lo(z3)($t3)
-	lw $t0, 0($t0)
-	lw $t1, 0($t2)
-	bne $t0, $t1, label64
+	sw $t0, %lo(z3)($t3)
+	bne $t1, $t2, label59
 	nop
-	b label130
+	b label125
 	nop
