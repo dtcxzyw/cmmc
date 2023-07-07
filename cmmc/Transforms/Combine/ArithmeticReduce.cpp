@@ -852,7 +852,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // and(ztrunc x1 to i1, ztrunc x2 to i2) -> ztrunc (x1 and x2) to i1
-            if(inst->getType()->isBoolean() && and_(oneUse(ztrunc(any(v1))), oneUse(ztrunc(any(v2))))(matchCtx)) {
+            if(inst->getType()->isBoolean() && and_(oneUse(ztrunc(any(v1))), oneUse(ztrunc(any(v2))))(matchCtx) &&
+               v1->getType()->isSame(v2->getType())) {
                 return builder.makeOp<CastInst>(InstructionID::UnsignedTrunc, inst->getType(),
                                                 builder.makeOp<BinaryInst>(InstructionID::And, v1, v2));
             }
