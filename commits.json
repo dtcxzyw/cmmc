@@ -220,6 +220,11 @@
       "parent": "7723c3f8edd1fa9c76bcbdca70e504aecd661775",
       "time": "2023-07-02 17:59:31 +0800"
     },
+    "738794d0b3a8c5c37e6ab70bf25aa1eb8a98af42": {
+      "message": "feat(codegen): don't duplicate blocks with calls",
+      "parent": "682c6b62948d7cc72a528aa33d7a04cdf1f53502",
+      "time": "2023-07-08 04:13:46 +0800"
+    },
     "7723c3f8edd1fa9c76bcbdca70e504aecd661775": {
       "message": "ci: update format of `commits.json`",
       "parent": "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1",
@@ -456,5 +461,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "682c6b62948d7cc72a528aa33d7a04cdf1f53502"
+  "head": "738794d0b3a8c5c37e6ab70bf25aa1eb8a98af42"
 }
