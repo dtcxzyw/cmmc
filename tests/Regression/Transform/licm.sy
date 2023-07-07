@@ -17,3 +17,14 @@ void licm3(int x) {
         b[i] = a[x];
     }
 }
+
+void licm4(int a[], float b[], int c, int n) {
+    for(int i = 0; i < n; ++i)
+        a[i] = b[c] + a[i];
+}
+
+int licm5(int i) {
+    while(a[i] < b[i])
+        a[i] = a[i] + 1;
+    return a[i];
+}

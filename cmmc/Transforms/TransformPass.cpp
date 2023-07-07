@@ -335,10 +335,12 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             "ExtGEPCombine",             //
             "NoSideEffectEliminate",     // clean up
             // Loop
-            "LoopRotate",         //
-            "LoopCanonicalize",   //
-            "LoopBranchProbFix",  //
-            "LoopEliminate",      //
+            "LoopRotate",               //
+            "LoopCanonicalize",         //
+            "LoopBranchProbFix",        //
+            "LoopEliminate",            //
+            "LICMMemory",               //
+            "LoopInvariantCodeMotion",  //
             // Control flow
             "Branch2Select",        //
             "MergeBranch",          //
