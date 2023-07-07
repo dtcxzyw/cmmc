@@ -4,16 +4,16 @@
 .globl test1
 test1:
 	andi a1, a0, 255
-	slliw a2, a1, 8
-	li a1, 65280
-	and a3, a0, a1
-	slli a1, a1, 8
-	srliw a3, a3, 8
-	and a1, a0, a1
-	or a2, a2, a3
+	li a2, 65280
 	slliw a1, a1, 8
-	or a1, a2, a1
-	li a2, -16777216
+	and a2, a0, a2
+	srliw a2, a2, 8
+	or a1, a1, a2
+	lui a2, 4080
+	and a2, a0, a2
+	slliw a2, a2, 8
+	or a1, a1, a2
+	lui a2, 1044480
 	or a0, a0, a2
 	srliw a0, a0, 8
 	or a0, a1, a0
@@ -22,12 +22,12 @@ test1:
 test2:
 	srliw a1, a0, 8
 	li a2, 65280
-	li a4, -16777216
+	lui a3, 1044480
 	slliw a0, a0, 8
-	and a3, a1, a2
-	and a0, a0, a4
-	slli a2, a2, 8
-	or a0, a3, a0
+	and a2, a1, a2
+	and a0, a0, a3
+	or a0, a2, a0
+	lui a2, 4080
 	and a1, a1, a2
 	or a0, a0, a1
 	ret
@@ -35,16 +35,16 @@ test2:
 test3:
 	fcvt.w.s a1, f10, rtz
 	li a0, 4294967295
-	li a2, 16711680
-	li a5, -16777216
-	and a3, a1, a0
-	srliw a4, a3, 8
-	slliw a3, a3, 8
-	and a4, a4, a2
-	and a3, a3, a5
-	srli a2, a2, 8
-	or a3, a4, a3
-	and a1, a1, a2
+	lui a4, 4080
+	and a2, a1, a0
+	srliw a3, a2, 8
+	slliw a2, a2, 8
+	and a3, a3, a4
+	lui a4, 1044480
+	and a2, a2, a4
+	or a2, a3, a2
+	li a3, 65280
+	and a1, a1, a3
 	and a0, a1, a0
-	or a0, a3, a0
+	or a0, a2, a0
 	ret

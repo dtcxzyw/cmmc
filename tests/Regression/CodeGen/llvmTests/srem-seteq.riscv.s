@@ -53,14 +53,14 @@ test_srem_even_bit30:
 .globl test_srem_even_bit31
 test_srem_even_bit31:
 	li a1, 2147483545
-	mul a1, a0, a1
-	srli a1, a1, 32
-	sub a1, a1, a0
-	sraiw a2, a1, 30
-	srliw a1, a1, 31
-	add a1, a1, a2
-	li a2, -2147483546
-	mulw a1, a1, a2
+	mul a2, a0, a1
+	xori a1, a1, -1
+	srli a2, a2, 32
+	sub a2, a2, a0
+	sraiw a3, a2, 30
+	srliw a2, a2, 31
+	add a2, a2, a3
+	mulw a1, a2, a1
 	subw a0, a0, a1
 	li a1, 4294967295
 	sltiu a0, a0, 1
@@ -75,7 +75,7 @@ test_srem_int_min:
 	sraiw a2, a1, 30
 	srliw a1, a1, 31
 	add a1, a1, a2
-	li a2, -2147483648
+	lui a2, 524288
 	mulw a1, a1, a2
 	subw a0, a0, a1
 	li a1, 4294967295

@@ -31,16 +31,9 @@ main:
 	sw $ra, 16($sp)
 	jal read
 	nop
-	blez $v0, label9
+	blez $v0, label4
 	nop
 	li $a0, 1
-	jal write
-	nop
-	b label3
-	nop
-label9:
-	slti $t0, $v0, 0
-	subu $a0, $zero, $t0
 	jal write
 	nop
 label3:
@@ -48,4 +41,11 @@ label3:
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 24
 	jr $ra
+	nop
+label4:
+	slti $t0, $v0, 0
+	subu $a0, $zero, $t0
+	jal write
+	nop
+	b label3
 	nop

@@ -54,7 +54,7 @@ test5:
 .globl test6
 test6:
 	srliw a1, a0, 16
-	li a2, 16711680
+	lui a2, 4080
 	slliw a0, a0, 16
 	andi a1, a1, 255
 	and a0, a0, a2
@@ -63,7 +63,7 @@ test6:
 .globl test7
 test7:
 	srliw a1, a0, 16
-	li a2, 16711680
+	lui a2, 4080
 	slliw a0, a0, 16
 	andi a1, a1, 255
 	and a0, a0, a2
@@ -72,7 +72,7 @@ test7:
 .globl test8
 test8:
 	slliw a1, a0, 8
-	li a2, 16711680
+	lui a2, 4080
 	srliw a0, a0, 24
 	and a1, a1, a2
 	or a0, a1, a0
@@ -80,7 +80,7 @@ test8:
 .globl test9
 test9:
 	slliw a1, a0, 8
-	li a2, 16711680
+	lui a2, 4080
 	srliw a0, a0, 24
 	and a1, a1, a2
 	or a0, a1, a0

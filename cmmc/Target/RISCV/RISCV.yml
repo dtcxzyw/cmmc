@@ -379,10 +379,11 @@ InstSelection:
         Imm: getLowBits($Addr)
 
   - Pattern:
-      InstLoadImmToReg:
+      $Template:
         Dst: $Dst
         Imm: $Imm
         $Predicate: isZero($Imm)
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       # TODO: using ResetToZero -> InstFlagLoadConstant
       MoveGPR:
@@ -390,51 +391,33 @@ InstSelection:
         Rs1: getZero($Dst)
 
   - Pattern:
-      InstLoadImm:
-        Dst: $Dst
-        Imm: $Imm
-        $Predicate: isZero($Imm)
-    Replace:
-      # TODO: using InstResetToZero with flag InstFlagLoadConstant
-      InstCopyFromReg:
-        Dst: $Dst
-        Src: getZero($Dst)
-
-  - Pattern:
-      InstLoadImmToReg:
+      $Template:
         Dst: $Dst
         Imm: $Imm
         $Predicate: isOperandNonZeroImm12($Imm)
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       LoadImm12:
         Rd: $Dst
         Imm: $Imm
 
   - Pattern:
-      InstLoadImmToReg:
+      $Template:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: selectOperandNonZeroHigh20Bits($Imm, [$UImm])
+      $Instances: [InstLoadImmToReg, InstLoadImm]
+    Replace:
+      LUI:
+        Rd: $Dst
+        Imm: $UImm
+
+  - Pattern:
+      $Template:
         Dst: $Dst
         Imm: $Imm
         $Predicate: isOperandNonZeroImm32($Imm)
-    Replace:
-      LoadImm32:
-        Rd: $Dst
-        Imm: $Imm
-
-  - Pattern:
-      InstLoadImm:
-        Dst: $Dst
-        Imm: $Imm
-        $Predicate: isOperandNonZeroImm12($Imm)
-    Replace:
-      LoadImm12:
-        Rd: $Dst
-        Imm: $Imm
-
-  - Pattern:
-      InstLoadImm:
-        Dst: $Dst
-        Imm: $Imm
-        $Predicate: isOperandNonZeroImm32($Imm)
+      $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       LoadImm32:
         Rd: $Dst

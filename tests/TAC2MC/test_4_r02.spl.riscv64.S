@@ -26,16 +26,16 @@ main:
 	addi sp, sp, -8
 	sd ra, 0(sp)
 	jal read
-	ble a0, zero, label8
+	ble a0, zero, label4
 	li a0, 1
-	jal write
-	j label3
-label8:
-	slti a0, a0, 0
-	subw a0, zero, a0
 	jal write
 label3:
 	mv a0, zero
 	ld ra, 0(sp)
 	addi sp, sp, 8
 	ret
+label4:
+	slti a0, a0, 0
+	subw a0, zero, a0
+	jal write
+	j label3

@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <type_traits>
 
 CMMC_TARGET_NAMESPACE_BEGIN
 
@@ -95,6 +96,13 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
                 offset = off;
                 if(auto baseReg = ctx.getRegRef(base, *addrInst)) {
                     base = *baseReg;
+
+                    if(auto baseInst = ctx.lookupDef(base)) {
+                        if(baseInst->opcode() == InstLoadStackObjectAddr) {
+                            base = baseInst->getOperand(1);
+                        }
+                    }
+
                     return true;
                 }
             }
@@ -343,6 +351,20 @@ static uint32_t selectSExtOpcode(OperandType type) {
         default:
             reportUnreachable(CMMC_LOCATION());
     }
+}
+
+static bool selectOperandNonZeroHigh20Bits(const MIROperand& imm, MIROperand& high) {
+    if(isZero(imm))
+        return false;
+    const auto immVal = imm.imm();
+
+    const auto val = static_cast<uint32_t>((immVal >> 12) & 0xfffff);
+    const auto realVal = static_cast<intmax_t>(static_cast<int32_t>(val << 12));
+    if(realVal == immVal) {
+        high = MIROperand::asImm(val, OperandType::Int64);
+        return true;
+    }
+    return false;
 }
 
 CMMC_TARGET_NAMESPACE_END
@@ -655,6 +677,26 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
     auto& inst = ctx.inst;
     [[maybe_unused]] auto checkOpIdx = [&](uint32_t idx) { return &inst.getOperand(idx) == &op; };
     int64_t immVal = obj.offset;
+    switch(inst.opcode()) {
+        case SD:
+        case SW:
+        case SH:
+        case SB:
+        case FSW:
+        case LD:
+        case LW:
+        case LWU:
+        case LH:
+        case LHU:
+        case LB:
+        case LBU:
+        case FLW: {
+            immVal += inst.getOperand(1).imm();
+            break;
+        }
+        default:
+            break;
+    }
     MIROperand base = sp;
     legalizeAddrBaseOffsetPostRA(ctx.instructions, ctx.iter, base, immVal);
     const auto imm = MIROperand::asImm(immVal, OperandType::Int64);

@@ -71,6 +71,16 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             }
         }
 
+        auto hasCall = [&](const MIRBasicBlock& block) {
+            for(auto& inst : block.instructions()) {
+                auto& instInfo = ctx.instInfo.getInstInfo(inst);
+                if(requireFlag(instInfo.getInstFlag(), InstFlagCall)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
             const auto nextIter = std::next(iter);
@@ -87,7 +97,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
                    (!dontCopyBranchJumps ||
                     isUnconditionalBranch(
                         targetBlock->instructions().back()))  // don't duplicate branch jumps that needs BTB/RAS entries
-                ) {
+                   && !hasCall(*targetBlock)) {
                     instructions.pop_back();
                     instructions.insert(instructions.cend(), targetBlock->instructions().cbegin(),
                                         targetBlock->instructions().cend());

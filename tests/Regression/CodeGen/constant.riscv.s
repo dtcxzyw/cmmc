@@ -57,52 +57,52 @@ imm_build_pattern1:
 	sw a1, 40(a0)
 	slli a1, a1, 1
 	sw a1, 44(a0)
-	slli a1, a1, 1
+	lui a1, 1
 	sw a1, 48(a0)
-	slli a1, a1, 1
+	lui a1, 2
 	sw a1, 52(a0)
-	slli a1, a1, 1
+	lui a1, 4
 	sw a1, 56(a0)
-	slli a1, a1, 1
+	lui a1, 8
 	sw a1, 60(a0)
-	slli a1, a1, 1
+	lui a1, 16
 	sw a1, 64(a0)
-	slli a1, a1, 1
+	lui a1, 32
 	sw a1, 68(a0)
-	slli a1, a1, 1
+	lui a1, 64
 	sw a1, 72(a0)
-	slli a1, a1, 1
+	lui a1, 128
 	sw a1, 76(a0)
-	slli a1, a1, 1
+	lui a1, 256
 	sw a1, 80(a0)
-	slli a1, a1, 1
+	lui a1, 512
 	sw a1, 84(a0)
-	slli a1, a1, 1
+	lui a1, 1024
 	sw a1, 88(a0)
-	slli a1, a1, 1
+	lui a1, 2048
 	sw a1, 92(a0)
-	slli a1, a1, 1
+	lui a1, 4096
 	sw a1, 96(a0)
-	slli a1, a1, 1
+	lui a1, 8192
 	sw a1, 100(a0)
-	slli a1, a1, 1
+	lui a1, 16384
 	sw a1, 104(a0)
-	slli a1, a1, 1
+	lui a1, 32768
 	sw a1, 108(a0)
-	slli a1, a1, 1
+	lui a1, 65536
 	sw a1, 112(a0)
-	slli a1, a1, 1
+	lui a1, 131072
 	sw a1, 116(a0)
-	slli a1, a1, 1
+	lui a1, 262144
 	sw a1, 120(a0)
 	ret
 .globl imm_build_pattern2
 imm_build_pattern2:
-	li a1, 1024000
+	lui a1, 250
 	sw a1, 0(a0)
-	srli a1, a1, 1
+	lui a1, 125
 	sw a1, 4(a0)
-	srli a1, a1, 1
+	li a1, 256000
 	sw a1, 8(a0)
 	srli a1, a1, 1
 	sw a1, 12(a0)

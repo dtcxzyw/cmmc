@@ -192,8 +192,10 @@ class LLVMConversionContext final {
                     return builder.CreateBr(blockMap.lookup(trueTarget));
                 return builder.CreateCondBr(getOperand(0), blockMap.lookup(trueTarget), blockMap.lookup(falseTarget));
             }
-            case InstructionID::Unreachable:
+            case InstructionID::Unreachable: {
+                builder.CreateIntrinsic(llvm::Intrinsic::trap, {}, {});
                 return builder.CreateUnreachable();
+            }
             case InstructionID::Load:
                 return builder.CreateAlignedLoad(getType(inst.getType()), getOperand(0),
                                                  llvm::MaybeAlign{ inst.getType()->getAlignment(dataLayout) });

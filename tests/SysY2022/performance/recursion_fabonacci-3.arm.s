@@ -76,10 +76,10 @@ label10:
 takFP:
 	push { r4, lr }
 	vpush { s16, s17, s18, s19, s20, s21, s22, s23, s24 }
-	vmov.f32 s18, s0
+	vmov.f32 s17, s1
 	vmov.f32 s16, s2
 	sub sp, sp, #4
-	vmov.f32 s17, s1
+	vmov.f32 s18, s0
 	vcmp.f32 s1, s0
 	vmrs APSR_nzcv, FPSCR
 	bhs label93

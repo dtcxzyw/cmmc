@@ -11,7 +11,7 @@ add_imm:
 	ret
 .globl add_large_imm
 add_large_imm:
-	li a1, 262144
+	lui a1, 64
 	addw a0, a0, a1
 	ret
 .globl add_reg
@@ -24,7 +24,7 @@ and_imm:
 	ret
 .globl and_large_imm
 and_large_imm:
-	li a1, 262144
+	lui a1, 64
 	and a0, a0, a1
 	ret
 .globl and_reg
@@ -37,7 +37,7 @@ or_imm:
 	ret
 .globl or_large_imm
 or_large_imm:
-	li a1, 262144
+	lui a1, 64
 	or a0, a0, a1
 	ret
 .globl or_reg
@@ -50,7 +50,7 @@ xor_imm:
 	ret
 .globl xor_large_imm
 xor_large_imm:
-	li a1, 262144
+	lui a1, 64
 	xor a0, a0, a1
 	ret
 .globl xor_reg
@@ -281,7 +281,7 @@ imm:
 	ret
 .globl large_imm0
 large_imm0:
-	li a0, 1048576
+	lui a0, 256
 	ret
 .globl large_imm1
 large_imm1:

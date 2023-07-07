@@ -7,8 +7,8 @@
 func:
 	push { r4, r5, r6, lr }
 	vpush { s16, s17 }
-	cmp r1, #0
 	mov r4, r1
+	cmp r1, #0
 	vmov.f32 s16, s0
 	bge label4
 	mov r0, #0

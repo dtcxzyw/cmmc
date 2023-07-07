@@ -20,7 +20,7 @@ setne0:
 	ret
 .globl slti_beq0
 slti_beq0:
-	li a1, -32768
+	lui a1, 1048568
 	bge a0, a1, label15
 pcrel28:
 	auipc a1, %pcrel_hi(g1)
@@ -47,7 +47,7 @@ label47:
 	ret
 .globl slti_beq3
 slti_beq3:
-	li a1, 32768
+	lui a1, 8
 	bge a0, a1, label63
 pcrel76:
 	auipc a1, %pcrel_hi(g1)
@@ -65,7 +65,7 @@ label79:
 	ret
 .globl sltiu_beq1
 sltiu_beq1:
-	li a1, 32768
+	lui a1, 8
 	bgeu a0, a1, label94
 pcrel106:
 	auipc a1, %pcrel_hi(g1)
@@ -74,7 +74,7 @@ label94:
 	ret
 .globl sltiu_beq2
 sltiu_beq2:
-	li a1, -32768
+	lui a1, 1048568
 	bgeu a0, a1, label109
 pcrel121:
 	auipc a1, %pcrel_hi(g1)

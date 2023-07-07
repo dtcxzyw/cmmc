@@ -8,7 +8,7 @@ f1:
 	ret
 .globl f2
 f2:
-	li a1, -8388608
+	lui a1, 1046528
 	and a0, a0, a1
 	ret
 .globl f3

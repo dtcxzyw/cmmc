@@ -12,7 +12,7 @@ unfold1:
 .globl unfold10
 unfold10:
 	slliw a0, a0, 10
-	li a2, 4177920
+	lui a2, 1020
 	or a0, a0, a2
 	slt a0, a1, a0
 	li a1, 4294967295
@@ -21,7 +21,7 @@ unfold10:
 .globl unfold11
 unfold11:
 	slliw a0, a0, 11
-	li a2, 16252928
+	lui a2, 3968
 	addw a0, a0, a2
 	slt a0, a1, a0
 	li a1, 4294967295
@@ -39,14 +39,14 @@ unfold2:
 .globl unfold3
 unfold3:
 	slliw a0, a0, 4
-	li a2, 1044480
+	lui a2, 255
 	or a0, a0, a2
 	and a0, a1, a0
 	ret
 .globl unfold4
 unfold4:
 	slliw a0, a0, 5
-	li a2, 33423360
+	lui a2, 8160
 	or a0, a0, a2
 	xor a0, a1, a0
 	ret
@@ -60,7 +60,7 @@ unfold5:
 .globl unfold6
 unfold6:
 	slliw a0, a0, 8
-	li a2, 2031616
+	lui a2, 496
 	addw a0, a0, a2
 	and a0, a1, a0
 	ret
@@ -75,7 +75,7 @@ unfold7:
 .globl unfold8
 unfold8:
 	slliw a0, a0, 9
-	li a2, 65011712
+	lui a2, 15872
 	addw a0, a0, a2
 	xor a0, a1, a0
 	ret

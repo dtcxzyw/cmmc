@@ -10,7 +10,7 @@ test1:
 	ret
 .globl test10
 test10:
-	li a2, -65536
+	lui a2, 1048560
 	srliw a1, a1, 17
 	and a0, a0, a2
 	or a0, a0, a1
@@ -18,7 +18,7 @@ test10:
 .globl test2
 test2:
 	slliw a1, a1, 12
-	li a2, -65536
+	lui a2, 1048560
 	and a1, a1, a2
 	li a2, 65535
 	and a0, a0, a2
@@ -35,20 +35,20 @@ test3:
 test4:
 	li a2, 65535
 	and a0, a0, a2
-	li a2, -65536
+	lui a2, 1048560
 	and a1, a1, a2
 	or a0, a0, a1
 	ret
 .globl test5
 test5:
-	li a2, -65536
+	lui a2, 1048560
 	srliw a1, a1, 16
 	and a0, a0, a2
 	or a0, a0, a1
 	ret
 .globl test5a
 test5a:
-	li a2, -65536
+	lui a2, 1048560
 	srliw a1, a1, 16
 	and a0, a0, a2
 	or a0, a0, a1
@@ -58,7 +58,7 @@ test6:
 	srliw a1, a1, 12
 	li a2, 65535
 	and a1, a1, a2
-	li a2, -65536
+	lui a2, 1048560
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
@@ -67,20 +67,20 @@ test7:
 	srliw a1, a1, 18
 	li a2, 65535
 	and a1, a1, a2
-	li a2, -65536
+	lui a2, 1048560
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
 .globl test8
 test8:
-	li a2, -65536
+	lui a2, 1048560
 	srliw a1, a1, 22
 	and a0, a0, a2
 	or a0, a0, a1
 	ret
 .globl test9
 test9:
-	li a2, -65536
+	lui a2, 1048560
 	srliw a1, a1, 16
 	and a0, a0, a2
 	or a0, a0, a1

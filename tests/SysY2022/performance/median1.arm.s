@@ -28,8 +28,8 @@ main:
 	ldr r3, [r7, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -52,8 +52,8 @@ main:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -83,8 +83,8 @@ label15:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -107,8 +107,8 @@ label15:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -122,8 +122,8 @@ label18:
 	ldr r3, [r1, #0]
 	add r7, r0, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -146,8 +146,8 @@ label18:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -184,8 +184,8 @@ label11:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -209,8 +209,8 @@ label134:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	b label148
 label190:
 	cmp r7, r8
@@ -221,8 +221,8 @@ label21:
 	ldr r10, [r4, r7, lsl #2]
 	str r10, [r4, r8, lsl #2]
 	str r9, [r4, r7, lsl #2]
-	cmp r8, r7
-	bge label11
+	cmp r7, r8
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -245,8 +245,8 @@ label21:
 	ldr r3, [r1, #0]
 	add r7, r8, #1
 	mov r8, r2
-	cmp r2, r7
-	bge label11
+	cmp r7, r2
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9
@@ -273,8 +273,8 @@ label148:
 	ble label8
 	b label162
 label8:
-	cmp r8, r7
-	bge label11
+	cmp r7, r8
+	ble label11
 	sub r7, r7, #1
 	ldr r9, [r4, r7, lsl #2]
 	cmp r3, r9

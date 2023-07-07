@@ -525,6 +525,7 @@ main:
 	blez $v0, label244
 	nop
 	move $t0, $zero
+label242:
 	jal read
 	nop
 	sll $t1, $t0, 2
@@ -534,98 +535,7 @@ main:
 	subu $t1, $t5, $t0
 	blez $t1, label244
 	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-label326:
-	jal read
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	sw $v0, 0($t1)
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label244
-	nop
-	b label326
+	b label242
 	nop
 label244:
 	move $a0, $t6
@@ -636,15 +546,7 @@ label244:
 	blez $t5, label247
 	nop
 	move $t0, $zero
-	sll $t1, $zero, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
+label245:
 	sll $t1, $t0, 2
 	addu $t1, $t6, $t1
 	lw $a0, 0($t1)
@@ -654,89 +556,7 @@ label244:
 	subu $t1, $t5, $t0
 	blez $t1, label247
 	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-label328:
-	sll $t1, $t0, 2
-	addu $t1, $t6, $t1
-	lw $a0, 0($t1)
-	jal write
-	nop
-	addiu $t0, $t0, 1
-	subu $t1, $t5, $t0
-	blez $t1, label247
-	nop
-	b label328
+	b label245
 	nop
 label247:
 	move $v0, $zero

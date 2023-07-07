@@ -125,7 +125,8 @@ bool isNoSideEffectExpr(const Instruction& inst) {
             const auto callee = inst.lastOperand();
             if(auto func = dynamic_cast<Function*>(callee)) {
                 auto& attr = func->attr();
-                return attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless);
+                return attr.hasAttr(FunctionAttribute::NoSideEffect) && attr.hasAttr(FunctionAttribute::Stateless) &&
+                    !attr.hasAttr(FunctionAttribute::NoReturn);
             }
             return false;
         }

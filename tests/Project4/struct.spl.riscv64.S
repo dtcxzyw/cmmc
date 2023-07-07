@@ -37,7 +37,7 @@ gcd:
 	and a2, a2, a3
 	and a0, a0, a3
 	sw a2, 0(sp)
-	sw a0, 4(a1)
+	sw a0, 4(sp)
 	mv a0, a1
 	jal gcd
 label3:
@@ -55,7 +55,7 @@ main:
 	sw a0, 0(sp)
 	jal read
 	and a0, a0, a2
-	sw a0, 4(a1)
+	sw a0, 4(sp)
 	mv a0, a1
 	jal gcd
 	jal write

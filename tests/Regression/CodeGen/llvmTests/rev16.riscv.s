@@ -7,7 +7,7 @@ bswap_ror_commuted:
 	li a2, 16711935
 	slliw a0, a0, 8
 	and a1, a1, a2
-	li a2, -16711936
+	xori a2, a2, -1
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
@@ -33,7 +33,7 @@ different_shift_amount:
 	li a2, -16711936
 	srliw a0, a0, 8
 	and a1, a1, a2
-	li a2, 16711935
+	xori a2, a2, -1
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
@@ -43,7 +43,7 @@ different_vars:
 	li a2, -16711936
 	srliw a1, a1, 8
 	and a0, a0, a2
-	li a2, 16711935
+	xori a2, a2, -1
 	and a1, a1, a2
 	or a0, a0, a1
 	ret
@@ -53,7 +53,7 @@ extra_maskop_uses2:
 	li a2, -16711936
 	srliw a0, a0, 8
 	and a1, a1, a2
-	li a2, 16711935
+	xori a2, a2, -1
 	and a0, a0, a2
 	or a2, a1, a0
 	mulw a0, a1, a0
@@ -61,18 +61,18 @@ extra_maskop_uses2:
 	ret
 .globl f2
 f2:
-	slliw a2, a0, 8
-	li a1, 65280
+	slliw a1, a0, 8
+	li a2, 65280
 	srliw a0, a0, 8
-	and a3, a2, a1
-	andi a4, a0, 255
-	slli a1, a1, 8
-	or a3, a3, a4
-	and a0, a0, a1
-	li a4, -16777216
-	and a2, a2, a4
-	or a2, a3, a2
-	or a0, a2, a0
+	and a2, a1, a2
+	andi a3, a0, 255
+	or a2, a2, a3
+	lui a3, 1044480
+	and a1, a1, a3
+	or a1, a2, a1
+	lui a2, 4080
+	and a0, a0, a2
+	or a0, a1, a0
 	ret
 .globl not_rev16
 not_rev16:
@@ -80,7 +80,7 @@ not_rev16:
 	li a2, -16711936
 	slliw a0, a0, 8
 	and a1, a1, a2
-	li a2, 16711935
+	xori a2, a2, -1
 	and a0, a0, a2
 	or a0, a1, a0
 	ret
@@ -90,7 +90,7 @@ rev16:
 	li a2, -16711936
 	srliw a0, a0, 8
 	and a1, a1, a2
-	li a2, 16711935
+	xori a2, a2, -1
 	and a0, a0, a2
 	or a0, a1, a0
 	ret

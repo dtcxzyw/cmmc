@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include "cmmc/CodeGen/MIR.hpp"
 #include <RISCV/InstInfoDecl.hpp>
 #include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
@@ -358,6 +359,11 @@ static bool largeImmMaterialize(MIRBasicBlock& block) {
                 inst.setOpcode(SUB).setOperand<1>(MIROperand::asISAReg(X0, rhsOp.type())).setOperand<2>(rhsOp);
                 return true;
             }
+            // xor
+            if(~rhs == val) {
+                inst.setOpcode(XORI).setOperand<1>(rhsOp).setOperand<2>(MIROperand::asImm(-1, OperandType::Int64));
+                return true;
+            }
         }
 
         return false;
@@ -376,11 +382,44 @@ static bool largeImmMaterialize(MIRBasicBlock& block) {
     return modified;
 }
 
+static bool foldStoreZero(MIRFunction& func, MIRBasicBlock& block) {
+    bool modified = false;
+    for(auto iter = block.instructions().begin(); iter != block.instructions().end(); ++iter) {
+        if(iter == block.instructions().begin())
+            continue;
+        auto isStoreZero = [&](const MIRInst& inst, int32_t offset) {
+            if(inst.opcode() != SW)
+                return false;
+            if(inst.getOperand(0).reg() != X0)
+                return false;
+            const auto& base = inst.getOperand(2);
+            if(!isOperandStackObject(base))
+                return false;
+            const auto off = inst.getOperand(1).imm();
+            const auto baseOff = func.stackObjects().at(base).offset;
+            return (baseOff + off) % static_cast<int32_t>(sizeof(uint64_t)) == offset;
+        };
+        auto& inst = *iter;
+        auto& prevInst = *std::prev(iter);
+        if(isStoreZero(prevInst, 0) && isStoreZero(inst, 4)) {
+            inst.setOpcode(SD);
+            inst.setOperand<1>(prevInst.getOperand(1));
+            block.instructions().erase(std::prev(iter));
+            modified = true;
+        }
+    }
+    return modified;
+}
+
 bool RISCVScheduleModel_sifive_u74::peepholeOpt(MIRFunction& func, const CodeGenContext& ctx) const {
     bool modified = false;
     if(ctx.flags.preRA) {
         for(auto& block : func.blocks())
             modified |= largeImmMaterialize(*block);
+    }
+    if(ctx.flags.postSA) {
+        for(auto& block : func.blocks())
+            modified |= foldStoreZero(func, *block);
     }
     modified |= branch2jump(func, ctx);
     return modified;

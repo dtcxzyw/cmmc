@@ -10,17 +10,38 @@ main:
 	mv s0, a0
 	li a0, 121
 	jal _sysy_starttime
-	ble s0, zero, label22
-	mv a1, zero
+	ble s0, zero, label14
 	mv a2, zero
+	mv a1, zero
 	addiw a0, zero, 4
-	ble s0, a0, label6
+	ble s0, a0, label19
 	j label5
-label22:
-	mv s0, zero
-	j label17
 label14:
-	addiw a0, a2, 1
+	mv s0, zero
+	j label9
+label5:
+	addiw a2, a1, 15
+	li a1, 12009599
+	mul a3, a2, a1
+	srai a4, a3, 54
+	srli a3, a3, 63
+	add a4, a3, a4
+	li a3, 1500000001
+	mulw a4, a4, a3
+	subw a2, a2, a4
+	addiw a2, a2, 45
+	mul a1, a2, a1
+	srai a4, a1, 54
+	srli a1, a1, 63
+	add a1, a1, a4
+	mulw a1, a1, a3
+	subw a1, a2, a1
+	mv a2, a0
+	addiw a0, a0, 4
+	ble s0, a0, label19
+	j label5
+label6:
+	addiw a0, a0, 1
 	addiw a1, a1, 15
 	li a2, 12009599
 	mul a2, a1, a2
@@ -30,12 +51,11 @@ label14:
 	li a3, 1500000001
 	mulw a2, a2, a3
 	subw a1, a1, a2
-	ble s0, a0, label56
-	mv a2, a0
-	j label14
-label56:
+	ble s0, a0, label30
+	j label6
+label30:
 	mv s0, a1
-label17:
+label9:
 	li a0, 123
 	jal _sysy_stoptime
 	mv a0, s0
@@ -47,74 +67,6 @@ label17:
 	ld s0, 8(sp)
 	addi sp, sp, 16
 	ret
-label6:
-	addiw a0, a2, 4
-	ble s0, a0, label10
-	j label9
-label10:
-	addiw a0, a2, 4
-	ble s0, a0, label14
-	j label13
-label9:
-	addiw a3, a1, 15
-	li a1, 12009599
-	mul a2, a3, a1
-	srai a4, a2, 54
-	srli a2, a2, 63
-	add a4, a2, a4
-	li a2, 1500000001
-	mulw a4, a4, a2
-	subw a3, a3, a4
-	addiw a3, a3, 45
-	mul a1, a3, a1
-	srai a4, a1, 54
-	srli a1, a1, 63
-	add a1, a1, a4
-	mulw a1, a1, a2
-	mv a2, a0
-	subw a1, a3, a1
-	addiw a0, a0, 4
-	ble s0, a0, label10
-	j label9
-label13:
-	addiw a3, a1, 15
-	li a1, 12009599
-	mul a2, a3, a1
-	srai a4, a2, 54
-	srli a2, a2, 63
-	add a4, a2, a4
-	li a2, 1500000001
-	mulw a4, a4, a2
-	subw a3, a3, a4
-	addiw a3, a3, 45
-	mul a1, a3, a1
-	srai a4, a1, 54
-	srli a1, a1, 63
-	add a1, a1, a4
-	mulw a1, a1, a2
-	mv a2, a0
-	subw a1, a3, a1
-	addiw a0, a0, 4
-	ble s0, a0, label14
-	j label13
-label5:
-	addiw a3, a1, 15
-	li a1, 12009599
-	mul a2, a3, a1
-	srai a4, a2, 54
-	srli a2, a2, 63
-	add a4, a2, a4
-	li a2, 1500000001
-	mulw a4, a4, a2
-	subw a3, a3, a4
-	addiw a3, a3, 45
-	mul a1, a3, a1
-	srai a4, a1, 54
-	srli a1, a1, 63
-	add a1, a1, a4
-	mulw a1, a1, a2
-	mv a2, a0
-	subw a1, a3, a1
-	addiw a0, a0, 4
-	ble s0, a0, label6
-	j label5
+label19:
+	mv a0, a2
+	j label6
