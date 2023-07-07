@@ -12,7 +12,6 @@
     limitations under the License.
 */
 
-// FIXME
 // func fac(int a) -> int:
 // entry(int a):
 //     bool c = a == 1;
@@ -98,11 +97,11 @@ public:
             if(instCount == 0)
                 continue;
 
-            auto usedByOuterOrTerminator = [&](const Instruction& inst) {
+            auto usedByOuterOrTerminatorOrPhi = [&](const Instruction& inst) {
                 for(auto user : inst.users()) {
                     if(user->getBlock() != block)
                         return true;
-                    if(user->isTerminator())
+                    if(user->isTerminator() || user->getInstID() == InstructionID::Phi)
                         return true;
                 }
                 return false;
@@ -121,7 +120,7 @@ public:
                     continue;
                 }
                 PhiInst* phi = nullptr;
-                if(inst.canbeOperand() && usedByOuterOrTerminator(inst)) {
+                if(inst.canbeOperand() && usedByOuterOrTerminatorOrPhi(inst)) {
                     phi = make<PhiInst>(inst.getType());
                 }
                 for(auto pred : preds) {

@@ -21,10 +21,12 @@
 //     call () -> void @exit(i32 0); // no return call
 //     unreachable;
 
+#include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
+#include <iterator>
 #include <queue>
 
 CMMC_NAMESPACE_BEGIN
@@ -47,6 +49,11 @@ public:
                             applyForSuccessors(branch, [&](Block* target) { removePhi(block, target); });
                         }
                         DisableValueRefCheckScope scope;
+                        for(auto it = std::next(iter); it != insts.end(); ++it)
+                            if(it->isUsed()) {
+                                const auto undef = make<UndefinedValue>(it->getType());
+                                it->replaceWith(undef);
+                            }
                         insts.erase(std::next(iter), insts.end());
                         auto newTerminator = make<UnreachableInst>();
                         newTerminator->insertBefore(block, block->instructions().end());

@@ -87,10 +87,26 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
 
     // TODO: gep range hint
 
+    const auto i64 = IntegerType::get(64);
+
     while(!q.empty()) {
         auto* inst = q.front();
         q.pop();
         inQueue.erase(inst);
+
+        const auto type = inst->getType();
+
+        if(!type->isInteger() || type->isSame(i64))
+            continue;
+        bool valid = true;
+        for(auto operand : inst->operands())
+            if(!operand->getType()->isInteger() || operand->getType()->isSame(i64)) {
+                valid = false;
+                break;
+            }
+        if(!valid)
+            continue;
+
         auto getOperandRange = [&](uint32_t idx) { return getRange(inst->getOperand(idx)); };
 
         switch(inst->getInstID()) {

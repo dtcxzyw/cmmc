@@ -39,6 +39,9 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             const auto type = inst->getType();
             if(!type->isInteger() || type->isSame(i64))
                 return nullptr;
+            for(auto operand : inst->operands())
+                if(!operand->getType()->isInteger() || operand->getType()->isSame(i64))
+                    return nullptr;
             auto range = rangeAnalysis.query(inst);
             if(auto c = range.inferConstant())
                 return ConstantInteger::get(inst->getType(), *c);

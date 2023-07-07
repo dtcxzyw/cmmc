@@ -437,7 +437,17 @@ class ArithmeticReduce final : public TransformPass<Function> {
 
             // -x cmp c -> -c cmp x
             if(icmp(cmp, neg(any(v1)), int_(i1))(matchCtx)) {
-                return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(-i1, v1), v1);
+                switch(cmp) {
+                    case CompareOp::ICmpEqual:
+                    case CompareOp::ICmpNotEqual:
+                    case CompareOp::ICmpSignedLessThan:
+                    case CompareOp::ICmpSignedLessEqual:
+                    case CompareOp::ICmpSignedGreaterThan:
+                    case CompareOp::ICmpSignedGreaterEqual:
+                        return builder.makeOp<CompareInst>(inst->getInstID(), cmp, makeIntLike(-i1, v1), v1);
+                    default:
+                        break;
+                }
             }
 
             // FIXME: Range analysis
