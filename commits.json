@@ -185,6 +185,11 @@
       "parent": "9b2d702f4dd7429a9c9cf9cbf42e4e024133e2a5",
       "time": "2023-07-06 22:17:01 +0800"
     },
+    "601dbbbf9624a2514fd0de00e8f3469b48e3ff0d": {
+      "message": "test: add scev cases",
+      "parent": "78a95e6f941947103f9f1d6b8d70881e9f9c384a",
+      "time": "2023-07-07 20:59:59 +0800"
+    },
     "6f138f87fa3ea11c75c258342c4a49a897c2b7cb": {
       "message": "misc: format code",
       "parent": "477105dd55329c239391b78522aea5e8ff4e855c",
@@ -204,6 +209,11 @@
       "message": "misc: update ref",
       "parent": "4d6d8fc8749723ae232ca54588f127c495075ac8",
       "time": "2023-07-02 02:26:54 +0800"
+    },
+    "78a95e6f941947103f9f1d6b8d70881e9f9c384a": {
+      "message": "fix(transform): fix wrong folding",
+      "parent": "c21d0e32e6bc1ddcba9e943da4e07765c9455f0c",
+      "time": "2023-07-07 20:59:59 +0800"
     },
     "78bb4ca547117d424c00fbb8537e9c2b90e322fb": {
       "message": "fix(codegen): fix rv schedule model",
@@ -305,6 +315,11 @@
       "parent": "cbef3bea2dd3ff904d69f41b8bda4cb71719af57",
       "time": "2023-07-06 19:29:21 +0800"
     },
+    "aeac1e66c11f6efbdcde8214496b70e6d6b171ca": {
+      "message": "fix(transform): filter out scalar allocs used by phi nodes",
+      "parent": "601dbbbf9624a2514fd0de00e8f3469b48e3ff0d",
+      "time": "2023-07-07 21:25:23 +0800"
+    },
     "b099c5645c68f0df070ef9fe2173fd5d01d93e00": {
       "message": "misc: update mips ref",
       "parent": "ad894f668c6480d476152947b318ab84f45bb804",
@@ -334,6 +349,11 @@
       "message": "misc: relax time limitation",
       "parent": "31ee101773cca21aabbf09112fc6980d32b7be0c",
       "time": "2023-07-06 21:06:55 +0800"
+    },
+    "c21d0e32e6bc1ddcba9e943da4e07765c9455f0c": {
+      "message": "fix(transform): fix miscompilations",
+      "parent": "df7551af60523f1ec1eb36e92ae19c1c45386d44",
+      "time": "2023-07-07 20:59:58 +0800"
     },
     "c486fc2beb3aa47793bb2b73d8de6496dac4e292": {
       "message": "ci: install libgtest-dev",
@@ -416,5 +436,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "df7551af60523f1ec1eb36e92ae19c1c45386d44"
+  "head": "aeac1e66c11f6efbdcde8214496b70e6d6b171ca"
 }
