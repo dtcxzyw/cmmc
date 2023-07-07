@@ -19,6 +19,7 @@
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cstdint>
 #include <limits>
 #include <unordered_map>
@@ -28,6 +29,7 @@ CMMC_NAMESPACE_BEGIN
 class IntegerRangeAnalysisResult final {
     std::unordered_map<Value*, IntegerRange> mRanges;
     std::unordered_map<Value*, std::unordered_map<Block*, IntegerRange>> mContextualRanges;
+    std::unordered_map<Value*, std::unordered_map<Instruction*, IntegerRange>> mInstContextualRanges;
 
 public:
     auto& storage() {
@@ -35,6 +37,9 @@ public:
     }
     auto& contextualStorage() {
         return mContextualRanges;
+    }
+    auto& instContextualStorage() {
+        return mInstContextualRanges;
     }
     IntegerRange query(Value* val, const DominateAnalysisResult& dom, Instruction* ctx, uint32_t depth) const;
 };

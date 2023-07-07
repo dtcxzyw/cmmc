@@ -27,33 +27,26 @@ main:
 	sd ra, 0(sp)
 	jal read
 	li a1, 1
-	ble a0, a1, label14
-	bne a0, a1, label18
-	j label33
-label14:
+	ble a0, a1, label11
+	mulw a1, a0, a1
+	li a2, 1
+	addiw a0, a0, -1
+	bne a0, a2, label2
+label24:
+	mulw a0, a1, a0
+	j label6
+label11:
 	li a0, 1
-label9:
+	j label6
+label2:
+	mulw a1, a0, a1
+	li a2, 1
+	addiw a0, a0, -1
+	bne a0, a2, label2
+	j label24
+label6:
 	jal write
 	ld ra, 0(sp)
 	mv a0, zero
 	addi sp, sp, 8
 	ret
-label33:
-	li a1, 1
-	mulw a0, a0, a1
-	j label9
-label18:
-	li a1, 1
-	mulw a1, a0, a1
-	li a2, 1
-	addiw a0, a0, -1
-	bne a0, a2, label6
-	j label34
-label6:
-	mulw a1, a0, a1
-	li a2, 1
-	addiw a0, a0, -1
-	bne a0, a2, label6
-label34:
-	mulw a0, a0, a1
-	j label9

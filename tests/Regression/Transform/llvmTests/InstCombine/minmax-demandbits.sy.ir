@@ -31,12 +31,9 @@ func @and_umax_muchless(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEff
     i32 %2 = and i32 %1, i32 -32;
     ret i32 %2;
 }
-func @and_umin(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @and_umin() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = icmp ugt i32 %var0, i32 15;
-    i32 %1 = select i1 %0 ? i32 15 : i32 %var0;
-    i32 %2 = and i32 %1, i32 -32;
-    ret i32 %2;
+    ret i32 0;
 }
 func @f_10_1(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -73,12 +70,9 @@ func @or_min_31_30() -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
   ^entry:
     ret i8 -1;
 }
-func @or_umin(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @or_umin() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = icmp ugt i32 %var0, i32 15;
-    i32 %1 = select i1 %0 ? i32 15 : i32 %var0;
-    i32 %2 = or i32 %1, i32 31;
-    ret i32 %2;
+    ret i32 31;
 }
 func @shr_umax(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

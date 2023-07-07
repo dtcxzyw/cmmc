@@ -25,7 +25,7 @@ qemu_gcc_ref_command = {
 binary = sys.argv[1]
 test_count = int(sys.argv[2])
 if target == "llvm":
-    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 --jumps "
+    csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 --jumps --no-longlong "
 else:
     csmith_ext = "--max-funcs 2 --max-block-depth 2 --max-expr-complexity 3 "
     csmith_ext += "--no-longlong --no-uint8 --no-math64 "
@@ -65,7 +65,7 @@ if os.path.exists(cwd):
 os.makedirs(cwd)
 base = os.path.dirname(os.path.abspath(__file__))
 if target == 'llvm':
-    header_path = base+"/csmith_header.h"
+    header_path = base+"/csmith_header_32only.h"
 else:
     header_path = base+"/csmith_header_32only.h"
 with open(header_path) as f:
@@ -76,9 +76,9 @@ def generate():
     src = src.replace('#include "csmith.h"', header)
     src = src.replace('int print_hash_value = 0;', 'int print_hash_value = 1;')
     src = src.replace('long', 'int32_t')
-    if target != 'llvm':
-        src = src.replace('#define NO_LONGLONG', '')
-        src = src.replace('0xFFFFFFFFUL', '0xFFFFFFFFU')
+    #if target != 'llvm':
+    src = src.replace('#define NO_LONGLONG', '')
+    src = src.replace('0xFFFFFFFFUL', '0xFFFFFFFFU')
     src = src.replace('printf("index = [%d]\\n", ', 'putdim(')
     src = src.replace('printf("index = [%d][%d]\\n", ', 'putdim2(')
     src = src.replace('printf("index = [%d][%d][%d]\\n", ', 'putdim3(')

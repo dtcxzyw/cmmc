@@ -12,6 +12,7 @@
     limitations under the License.
 */
 
+#include <cmmc/Analysis/CFGAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
@@ -19,6 +20,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Diagnostics.hpp>
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -43,6 +45,13 @@ IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysi
     IntegerRange range;
     if(auto iter = mRanges.find(val); iter != mRanges.cend()) {
         range = iter->second;
+    }
+    if(ctx) {
+        if(auto iter = mInstContextualRanges.find(val); iter != mInstContextualRanges.cend()) {
+            auto& ranges = iter->second;
+            if(auto it = ranges.find(ctx); it != ranges.end())
+                range = range.intersectSet(it->second);
+        }
     }
     if(ctx && ctx->getBlock() != val->getBlock()) {
         if(auto iter = mContextualRanges.find(val); iter != mContextualRanges.cend()) {
@@ -70,9 +79,11 @@ IntegerRange IntegerRangeAnalysisResult::query(Value* val, const DominateAnalysi
 
 IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPassManager& analysis) {
     auto& dom = analysis.get<DominateAnalysis>(func);
+    auto& cfg = analysis.get<CFGAnalysis>(func);
     IntegerRangeAnalysisResult ret;
     auto& ranges = ret.storage();
     auto& contextualRanges = ret.contextualStorage();
+    auto& instContextualRanges = ret.instContextualStorage();
 
     constexpr uint32_t maxEnqueueCount = 32;
     std::unordered_map<Value*, uint32_t> enqueueCount;
@@ -112,27 +123,44 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
         }
     };
 
-    auto updateContextual = [&](Value* value, const Instruction* ctx, const IntegerRange& newRange) {
+    auto updateContextual = [&](Value* value, Block* ctxBlock, const IntegerRange& newRange) {
         if(!value->getType()->isSame(i32))
+            return;
+        if(newRange.isFull())
             return;
         if(!value->is<TrackableValue>())
             return;
-        const auto block = ctx->getBlock();
-        if(value->getBlock() == block) {
+        if(value->getBlock() == ctxBlock) {
             update(value->as<Instruction>(), newRange);
             return;
         }
 
-        auto& range = contextualRanges[value][block];
+        // value->dump(std::cerr, Noop{});
+        // std::cerr << " -> \n";
+        // newRange.print(std::cerr);
+
+        auto& range = contextualRanges[value][ctxBlock];
         const auto intersection = range.intersectSet(newRange);
         if(range != intersection) {
             range = intersection;
             const auto trackedValue = value->as<TrackableValue>();
             for(auto user : trackedValue->users()) {
-                if(dom.dominate(block, user->getBlock()) && !inQueue.count(user) && ++enqueueCount[user] < maxEnqueueCount) {
+                if(dom.dominate(ctxBlock, user->getBlock()) && !inQueue.count(user) && ++enqueueCount[user] < maxEnqueueCount) {
                     q.push(user);
                     inQueue.insert(user);
                 }
+            }
+        }
+    };
+
+    auto updateInstContextual = [&](Value* value, Instruction* ctx, const IntegerRange& newRange) {
+        auto& range = instContextualRanges[value][ctx];
+        const auto intersection = range.intersectSet(newRange);
+        if(range != intersection) {
+            range = intersection;
+            if(!inQueue.count(ctx) && ++enqueueCount[ctx] < maxEnqueueCount) {
+                q.push(ctx);
+                inQueue.insert(ctx);
             }
         }
     };
@@ -171,7 +199,7 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                 update(inst, getOperandRange(0).srem(getOperandRange(1)));
                 // TODO: contextual
                 if(getOperandRange(1).isPositive() && getRange(inst, inst).isNonNegative()) {
-                    updateContextual(inst->getOperand(0), inst, IntegerRange::getNonNegative());
+                    updateContextual(inst->getOperand(0), inst->getBlock(), IntegerRange::getNonNegative());
                 }
                 break;
             }
@@ -278,7 +306,7 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
 
                         for(auto user : inst->users())
                             if(user->getInstID() == InstructionID::Load || user->getInstID() == InstructionID::Store)
-                                updateContextual(arg, user, range);
+                                updateContextual(arg, user->getBlock(), range);
                     }
 
                     if(type->isPointer()) {
@@ -288,6 +316,159 @@ IntegerRangeAnalysisResult IntegerRangeAnalysis::run(Function& func, AnalysisPas
                     } else {
                         const auto offset = arg->as<ConstantOffset>();
                         type = offset->base()->fields()[offset->index()].type;
+                    }
+                }
+                break;
+            }
+            case InstructionID::ICmp: {
+                const auto setCompareContextual = [&](Value* lhs, Value* rhs, CompareOp op, auto updateFunc) {
+                    const auto lhsRange = getRange(lhs, inst);
+                    const auto rhsRange = getRange(rhs, inst);
+
+                    switch(op) {
+                        case CompareOp::ICmpEqual:
+                        case CompareOp::ICmpNotEqual: {
+                            break;
+                        }
+                        case CompareOp::ICmpSignedLessThan: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setSignedRange(std::numeric_limits<int32_t>::min(), rhsRange.maxSignedValue() - 1);
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setSignedRange(lhsRange.minSignedValue() + 1, std::numeric_limits<int32_t>::max());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpSignedLessEqual: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setSignedRange(std::numeric_limits<int32_t>::min(), rhsRange.maxSignedValue());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setSignedRange(lhsRange.minSignedValue(), std::numeric_limits<int32_t>::max());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpSignedGreaterThan: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setSignedRange(rhsRange.minSignedValue() + 1, std::numeric_limits<int32_t>::max());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setSignedRange(std::numeric_limits<int32_t>::min(), lhsRange.maxSignedValue() - 1);
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpSignedGreaterEqual: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setSignedRange(rhsRange.minSignedValue(), std::numeric_limits<int32_t>::max());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setSignedRange(std::numeric_limits<int32_t>::min(), lhsRange.maxSignedValue());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpUnsignedLessThan: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setUnsignedRange(std::numeric_limits<uint32_t>::min(), rhsRange.maxUnsignedValue() - 1);
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setUnsignedRange(lhsRange.minUnsignedValue() + 1, std::numeric_limits<uint32_t>::max());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpUnsignedLessEqual: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setUnsignedRange(std::numeric_limits<uint32_t>::min(), rhsRange.maxUnsignedValue());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setUnsignedRange(lhsRange.minUnsignedValue(), std::numeric_limits<uint32_t>::max());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpUnsignedGreaterThan: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setUnsignedRange(rhsRange.minUnsignedValue() + 1, std::numeric_limits<uint32_t>::max());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setUnsignedRange(std::numeric_limits<uint32_t>::min(), lhsRange.maxUnsignedValue() - 1);
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        case CompareOp::ICmpUnsignedGreaterEqual: {
+                            IntegerRange lhsNewRange;
+                            lhsNewRange.setUnsignedRange(rhsRange.minUnsignedValue(), std::numeric_limits<uint32_t>::max());
+                            lhsNewRange.sync();
+                            updateFunc(lhs, lhsNewRange);
+
+                            IntegerRange rhsNewRange;
+                            rhsNewRange.setUnsignedRange(std::numeric_limits<uint32_t>::min(), lhsRange.maxUnsignedValue());
+                            rhsNewRange.sync();
+                            updateFunc(rhs, rhsNewRange);
+                            break;
+                        }
+                        default:
+                            reportUnreachable(CMMC_LOCATION());
+                    }
+                };
+
+                const auto op = inst->as<CompareInst>()->getOp();
+
+                for(auto user : inst->users()) {
+                    if(user->getInstID() == InstructionID::ConditionalBranch) {
+                        const auto branch = user->as<BranchInst>();
+                        const auto trueTarget = branch->getTrueTarget();
+                        const auto falseTarget = branch->getFalseTarget();
+                        if(trueTarget == falseTarget)
+                            continue;
+
+                        const auto block = branch->getBlock();
+                        if(block != trueTarget && dom.dominate(block, trueTarget) && cfg.predecessors(trueTarget).size() == 1) {
+                            setCompareContextual(
+                                inst->getOperand(0), inst->getOperand(1), op,
+                                [&](Value* val, const IntegerRange& newRange) { updateContextual(val, trueTarget, newRange); });
+                        }
+                        if(block != falseTarget && dom.dominate(block, falseTarget) &&
+                           cfg.predecessors(falseTarget).size() == 1) {
+                            setCompareContextual(
+                                inst->getOperand(0), inst->getOperand(1), getInvertedOp(op),
+                                [&](Value* val, const IntegerRange& newRange) { updateContextual(val, falseTarget, newRange); });
+                        }
+                    } else if(user->getInstID() == InstructionID::Select && user->getOperand(0) == inst &&
+                              user->getType()->isSame(i32)) {
+                        const auto trueVal = user->getOperand(1);
+                        const auto falseVal = user->getOperand(2);
+                        if(trueVal == falseVal)
+                            continue;
+                        setCompareContextual(inst->getOperand(0), inst->getOperand(1), op,
+                                             [&](Value* val, const IntegerRange& newRange) {
+                                                 if(val == trueVal)
+                                                     updateInstContextual(val, user, newRange);
+                                             });
+                        setCompareContextual(inst->getOperand(0), inst->getOperand(1), getInvertedOp(op),
+                                             [&](Value* val, const IntegerRange& newRange) {
+                                                 if(val == falseVal)
+                                                     updateInstContextual(val, user, newRange);
+                                             });
                     }
                 }
                 break;

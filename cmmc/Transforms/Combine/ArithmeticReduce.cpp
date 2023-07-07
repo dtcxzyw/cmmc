@@ -923,6 +923,14 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 return builder.makeOp<CastInst>(InstructionID::SignedTrunc, inst->getType(), v1);
             }
 
+            if(or_(capture(icmp(cmp1, any(v1), any(v2)), v5), capture(icmp(cmp2, any(v3), any(v4)), v6))(matchCtx) && v1 == v3 &&
+               v2 == v4) {
+                // (x < y) || (x != y) -> x != y
+                if(cmp1 == CompareOp::ICmpSignedLessThan && cmp2 == CompareOp::ICmpNotEqual) {
+                    return v6;
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

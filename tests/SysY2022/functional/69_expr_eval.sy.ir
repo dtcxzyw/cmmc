@@ -399,8 +399,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %209 = or i1 %207, i1 %208;
     i1 %210 = icmp eq i32 %193, i32 37;
     i1 %211 = or i1 %209, i1 %210;
-    i32 %212 = select i1 %211 ? i32 20 : i32 0;
-    i1 %213 = icmp sle i32 %129, i32 %212;
+    i1 %212 = icmp sle i32 %129, i32 0;
+    i1 %213 = or i1 %211, i1 %212;
     cbr i1 %213(prob = 0.97), ^entry25, ^entry23;
   ^b19:
     i1 %214 = icmp eq i32 %176, i32 42;

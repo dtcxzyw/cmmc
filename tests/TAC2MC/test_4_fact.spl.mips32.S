@@ -32,48 +32,39 @@ main:
 	jal read
 	nop
 	addiu $t0, $v0, -1
-	blez $t0, label15
+	blez $t0, label12
 	nop
-	li $t0, 1
-	bne $v0, $t0, label19
+	move $t0, $v0
+	li $t1, 1
+	mult $v0, $t1
+	mflo $t1
+	addiu $t0, $v0, -1
+	li $t2, 1
+	bne $t0, $t2, label2
 	nop
-	b label35
+label26:
+	mult $t1, $t0
+	mflo $a0
+	b label6
 	nop
-label15:
+label12:
 	li $a0, 1
-label9:
+	b label6
+	nop
+label2:
+	mult $t0, $t1
+	mflo $t1
+	addiu $t0, $t0, -1
+	li $t2, 1
+	bne $t0, $t2, label2
+	nop
+	b label26
+	nop
+label6:
 	jal write
 	nop
 	move $v0, $zero
 	lw $ra, 16($sp)
 	addiu $sp, $sp, 24
 	jr $ra
-	nop
-label35:
-	li $t0, 1
-	mult $v0, $t0
-	mflo $a0
-	b label9
-	nop
-label19:
-	li $t0, 1
-	mult $v0, $t0
-	mflo $t0
-	addiu $v0, $v0, -1
-	li $t1, 1
-	bne $v0, $t1, label6
-	nop
-	b label36
-	nop
-label6:
-	mult $v0, $t0
-	mflo $t0
-	addiu $v0, $v0, -1
-	li $t1, 1
-	bne $v0, $t1, label6
-	nop
-label36:
-	mult $v0, $t0
-	mflo $a0
-	b label9
 	nop

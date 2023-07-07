@@ -36,24 +36,18 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
         CMMC_UNUSED(target);
         bool modified = false;
         constexpr uint32_t depth = 8;
-        const auto i64 = IntegerType::get(64);
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             const auto type = inst->getType();
-            if(!type->isInteger() || type->isSame(i64))
+            if(!type->isInteger())
                 return nullptr;
             for(auto operand : inst->operands())
-                if(!operand->getType()->isInteger() || operand->getType()->isSame(i64))
+                if(!operand->getType()->isInteger())
                     return nullptr;
             auto range = rangeAnalysis.query(inst, dom, inst, depth);
             if(auto c = range.inferConstant())
                 return ConstantInteger::get(inst->getType(), *c);
 
-            MatchContext<Value> matchCtx{ inst };
-
-            CompareOp cmp;
-            Value *v1, *v2;
-
-            if(icmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
+            auto foldCmp = [&](CompareOp cmp, Value* v1, Value* v2) -> Value* {
                 auto lhs = rangeAnalysis.query(v1, dom, inst, depth);
                 auto rhs = rangeAnalysis.query(v2, dom, inst, depth);
 
@@ -131,6 +125,17 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                     default:
                         break;
                 }
+                return nullptr;
+            };
+
+            MatchContext<Value> matchCtx{ inst };
+
+            CompareOp cmp;
+            Value *v1, *v2, *v3, *v4;
+
+            if(icmp(cmp, any(v1), any(v2))(matchCtx)) {
+                if(auto val = foldCmp(cmp, v1, v2))
+                    return val;
             }
 
             if(srem(any(v1), any(v2))(matchCtx)) {
@@ -138,6 +143,19 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 auto self = rangeAnalysis.query(inst, dom, inst, depth);
                 if(rhs.isPositive() && self.isNonNegative()) {
                     return builder.makeOp<BinaryInst>(InstructionID::URem, v1, v2);
+                }
+            }
+
+            if(icmp(cmp, oneUse(select(any(v1), any(v2), any(v3))), any(v4))(matchCtx)) {
+                auto trueCmp = foldCmp(cmp, v2, v4);
+                auto falseCmp = foldCmp(cmp, v3, v4);
+
+                if(trueCmp || falseCmp) {
+                    if(!trueCmp)
+                        trueCmp = builder.makeOp<CompareInst>(InstructionID::ICmp, cmp, v2, v4);
+                    if(!falseCmp)
+                        falseCmp = builder.makeOp<CompareInst>(InstructionID::ICmp, cmp, v3, v4);
+                    return builder.makeOp<SelectInst>(v1, trueCmp, falseCmp);
                 }
             }
 
