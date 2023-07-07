@@ -115,6 +115,11 @@
       "parent": "500e485f35d479493f784d9c6fdacead96fb1859",
       "time": "2023-07-08 02:19:01 +0800"
     },
+    "3bd7294b551f0cd4ce139f1943f6c4b15e3be191": {
+      "message": "feat(transform): add more range-aware arith reduce",
+      "parent": "93ba47b34e53b711ffe38ebbc54f2f5a3109ec14",
+      "time": "2023-07-08 06:38:15 +0800"
+    },
     "3c9bfc69a8452250b22638e3e6231f85e7f64a85": {
       "message": "fix(transform): fix phi merge",
       "parent": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25",
@@ -466,5 +471,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "93ba47b34e53b711ffe38ebbc54f2f5a3109ec14"
+  "head": "3bd7294b551f0cd4ce139f1943f6c4b15e3be191"
 }
