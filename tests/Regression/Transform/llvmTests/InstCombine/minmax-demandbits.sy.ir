@@ -84,18 +84,16 @@ func @shr_umax(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect State
 func @t_0_1(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smax i32 %0, i32 0;
-    i32 %2 = and i32 %1, i32 1;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    i32 %1 = and i32 %0, i32 1;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
 }
 func @t_0_10(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i32 %0 = zext i8 %var0 to i32;
-    i32 %1 = smax i32 %0, i32 0;
-    i32 %2 = and i32 %1, i32 10;
-    i8 %3 = ztrunc i32 %2 to i8;
-    ret i8 %3;
+    i32 %1 = and i32 %0, i32 10;
+    i8 %2 = ztrunc i32 %1 to i8;
+    ret i8 %2;
 }
 func @t_1_10(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
