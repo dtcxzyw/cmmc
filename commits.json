@@ -130,6 +130,11 @@
       "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
       "time": "2023-07-04 18:25:34 +0800"
     },
+    "4678b367c4ef70bb6da5aee7664f1d330d1c988c": {
+      "message": "feat(codegen): add LICM",
+      "parent": "aeac1e66c11f6efbdcde8214496b70e6d6b171ca",
+      "time": "2023-07-08 00:00:37 +0800"
+    },
     "477105dd55329c239391b78522aea5e8ff4e855c": {
       "message": "test(transform): decrease loop count of `loop_evaluate_3.sy`",
       "parent": "569de15b0c73b5c4753a65e91196ec62cefc3958",
@@ -436,5 +441,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "aeac1e66c11f6efbdcde8214496b70e6d6b171ca"
+  "head": "4678b367c4ef70bb6da5aee7664f1d330d1c988c"
 }
