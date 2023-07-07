@@ -50,7 +50,7 @@ public:
 
     DomTreeNode::NodeIndex getIndex(Block* block) const;
     bool reachable(Block* block) const;
-    const Block* parent(Block* node) const;
+    Block* parent(Block* node) const;
     const std::vector<Block*>& blocks() const {
         return mOrder;
     }

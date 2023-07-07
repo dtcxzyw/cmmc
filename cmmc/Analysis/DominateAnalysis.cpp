@@ -35,7 +35,7 @@ DominateAnalysisResult::DominateAnalysisResult(std::unordered_map<Block*, DomTre
     std::reverse_copy(mOrder.cbegin(), mOrder.cend(), mReservedOrder.begin());
 }
 
-const Block* DominateAnalysisResult::parent(Block* node) const {
+Block* DominateAnalysisResult::parent(Block* node) const {
     const auto idx = getIndex(node);
     if(idx == DomTreeNode::invalidNode)
         return nullptr;

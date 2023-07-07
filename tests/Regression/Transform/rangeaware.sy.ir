@@ -6,9 +6,21 @@ func @foo2() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurs
   ^entry:
     ret i32 65535;
 }
-func @foo3(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+func @foo3() -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i32 %0 = abs i32 %x;
-    i32 %1 = and i32 %0, i32 1879048192;
-    ret i32 %1;
+    ret i32 0;
+}
+func @foo4([10 * i32]* %a, i32 %b) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32* %0 = getelementptr &([10 * i32]* %a)[i64 0][i32 %b];
+    i32 %1 = load i32* %0;
+    i32 %2 = add i32 %1, i32 1;
+    ret i32 %2;
+}
+func @foo5([16 * i32]* %a, i32 %b) -> i32 { NoMemoryWrite NoSideEffect NoRecurse } {
+  ^entry:
+    i32 %0 = and i32 %b, i32 15;
+    i32* %1 = getelementptr &([16 * i32]* %a)[i64 0][i32 %0];
+    i32 %2 = load i32* %1;
+    ret i32 %2;
 }

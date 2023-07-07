@@ -14,6 +14,7 @@
 
 #pragma once
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/IntegerRange.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -26,10 +27,16 @@ CMMC_NAMESPACE_BEGIN
 
 class IntegerRangeAnalysisResult final {
     std::unordered_map<Value*, IntegerRange> mRanges;
+    std::unordered_map<Value*, std::unordered_map<Block*, IntegerRange>> mContextualRanges;
 
 public:
-    explicit IntegerRangeAnalysisResult(std::unordered_map<Value*, IntegerRange> ranges) : mRanges{ std::move(ranges) } {}
-    IntegerRange query(Value* val) const;
+    auto& storage() {
+        return mRanges;
+    }
+    auto& contextualStorage() {
+        return mContextualRanges;
+    }
+    IntegerRange query(Value* val, const DominateAnalysisResult& dom, Instruction* ctx, uint32_t depth) const;
 };
 
 class IntegerRangeAnalysis final : public FuncAnalysisPassWrapper<IntegerRangeAnalysis, IntegerRangeAnalysisResult> {

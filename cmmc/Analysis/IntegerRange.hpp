@@ -37,6 +37,8 @@ public:
     explicit IntegerRange(int64_t sval);
     explicit IntegerRange(class ConstantInteger* integer);
 
+    static IntegerRange getNonNegative();
+
     void setUnsignedRange(uint64_t min, uint64_t max);
     void setSignedRange(int64_t min, int64_t max);
     void setKnownBits(uint32_t zeros, uint32_t ones);
@@ -45,6 +47,15 @@ public:
 
     bool operator==(const IntegerRange& rhs) const;
     bool operator!=(const IntegerRange& rhs) const;
+
+    [[nodiscard]] bool isEmpty() const;
+    [[nodiscard]] bool isFull() const;
+    [[nodiscard]] bool isNonNegative() const noexcept {
+        return mMinSignedValue >= 0;
+    }
+    [[nodiscard]] bool isPositive() const noexcept {
+        return mMinSignedValue > 0;
+    }
 
     [[nodiscard]] bool intersectWith(const IntegerRange& rhs) const;
     [[nodiscard]] std::optional<int64_t> inferConstant() const;

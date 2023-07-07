@@ -171,7 +171,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     cbr i1 %89(prob = 0.67), ^while.body1, ^while.body3;
   ^b1:
     i32 %90 = phi [^while.body, i32 %59] [^while.body6, i32 %137];
-    i32 %91 = srem i32 %90, i32 16;
+    i32 %91 = and i32 %90, i32 15;
     i32* %92 = getelementptr &([16 * i32]* %cnt)[i64 0][i32 %91];
     i32 %93 = load i32* %92;
     i32 %94 = add i32 %93, i32 1;

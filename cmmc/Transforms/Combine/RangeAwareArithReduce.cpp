@@ -13,6 +13,7 @@
 */
 
 #include <cmmc/Analysis/AnalysisPass.hpp>
+#include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/IntegerRangeAnalysis.hpp>
 #include <cmmc/CodeGen/Target.hpp>
 #include <cmmc/IR/ConstantValue.hpp>
@@ -30,10 +31,11 @@
 CMMC_NAMESPACE_BEGIN
 
 class RangeAwareArithReduce final : public TransformPass<Function> {
-    static bool runOnBlock(IRBuilder& builder, Block& block, const mir::Target& target,
+    static bool runOnBlock(IRBuilder& builder, const DominateAnalysisResult& dom, Block& block, const mir::Target& target,
                            const IntegerRangeAnalysisResult& rangeAnalysis) {
         CMMC_UNUSED(target);
         bool modified = false;
+        constexpr uint32_t depth = 8;
         const auto i64 = IntegerType::get(64);
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             const auto type = inst->getType();
@@ -42,7 +44,7 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             for(auto operand : inst->operands())
                 if(!operand->getType()->isInteger() || operand->getType()->isSame(i64))
                     return nullptr;
-            auto range = rangeAnalysis.query(inst);
+            auto range = rangeAnalysis.query(inst, dom, inst, depth);
             if(auto c = range.inferConstant())
                 return ConstantInteger::get(inst->getType(), *c);
 
@@ -52,8 +54,8 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             Value *v1, *v2;
 
             if(icmp(cmp, any(v1), any(v2))(matchCtx) && !v1->getType()->isSame(i64)) {
-                auto lhs = rangeAnalysis.query(v1);
-                auto rhs = rangeAnalysis.query(v2);
+                auto lhs = rangeAnalysis.query(v1, dom, inst, depth);
+                auto rhs = rangeAnalysis.query(v2, dom, inst, depth);
 
                 switch(cmp) {
                     case CompareOp::ICmpEqual: {
@@ -131,6 +133,14 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 }
             }
 
+            if(srem(any(v1), any(v2))(matchCtx)) {
+                auto rhs = rangeAnalysis.query(v2, dom, inst, depth);
+                auto self = rangeAnalysis.query(inst, dom, inst, depth);
+                if(rhs.isPositive() && self.isNonNegative()) {
+                    return builder.makeOp<BinaryInst>(InstructionID::URem, v1, v2);
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;
@@ -139,11 +149,12 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
 public:
     bool run(Function& func, AnalysisPassManager& analysis) const override {
         auto& rangeAnalysis = analysis.get<IntegerRangeAnalysis>(func);
+        auto& dom = analysis.get<DominateAnalysis>(func);
         const auto& target = analysis.module().getTarget();
         IRBuilder builder{ target };
         bool modified = false;
         for(auto block : func.blocks()) {
-            modified |= runOnBlock(builder, *block, target, rangeAnalysis);
+            modified |= runOnBlock(builder, dom, *block, target, rangeAnalysis);
         }
         return modified;
     }

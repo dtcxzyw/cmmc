@@ -211,6 +211,13 @@ IntegerRange IntegerRange::unionSet(const IntegerRange& rhs) const {
     return ret;
 }
 
+[[nodiscard]] bool IntegerRange::isEmpty() const {
+    return mMinSignedValue > mMaxSignedValue || mMinUnsignedValue < mMaxUnsignedValue || (mKnownOnes & mKnownZeros) != 0;
+}
+[[nodiscard]] bool IntegerRange::isFull() const {
+    return *this == IntegerRange();
+}
+
 IntegerRange IntegerRange::operator+(const IntegerRange& rhs) const {
     IntegerRange ret;
     const auto signedLow = mMinSignedValue + rhs.mMinSignedValue, signedHigh = mMaxSignedValue + rhs.mMaxSignedValue;
@@ -416,8 +423,8 @@ IntegerRange IntegerRange::ashr(const IntegerRange& rhs) const {
     for(auto i = beg; i <= end; ++i) {
         const auto mask = ~((0xffffffff << i) >> i);
         IntegerRange subRange;
-        subRange.setKnownBits((mKnownZeros >> i) | (mKnownZeros & 0x70000000 ? mask : 0),
-                              mKnownOnes >> i | (mKnownOnes & 0x70000000 ? mask : 0));
+        subRange.setKnownBits((mKnownZeros >> i) | (mKnownZeros & 0x80000000 ? mask : 0),
+                              mKnownOnes >> i | (mKnownOnes & 0x80000000 ? mask : 0));
         if(retRange.has_value()) {
             retRange = retRange->unionSet(subRange);
         } else {
@@ -465,6 +472,13 @@ IntegerRange IntegerRange::neg() const {
     if(mMinSignedValue != std::numeric_limits<int32_t>::min()) {
         ret.setSignedRange(-mMaxSignedValue, -mMinSignedValue);
     }
+    ret.sync();
+    return ret;
+}
+
+IntegerRange IntegerRange::getNonNegative() {
+    IntegerRange ret;
+    ret.setSignedRange(0, std::numeric_limits<int32_t>::max());
     ret.sync();
     return ret;
 }

@@ -13,7 +13,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body:
     i32 %6 = phi [^entry, i32 1] [^while.body, i32 %18];
     i32 %7 = call () -> i32 @getint();
-    i32 %8 = srem i32 %7, i32 2;
+    i32 %8 = and i32 %7, i32 1;
     [2 * i32]* %9 = getelementptr &([1005 * [2 * i32]]* %5)[i64 0][i32 %6];
     i32* %10 = getelementptr &([2 * i32]* %9)[i64 0][i32 %8];
     store i32* %10 with i32 1;
@@ -48,7 +48,7 @@ func @main() -> i32 { NoRecurse Entry } {
     ubr ^while.header;
   ^while.body1:
     i32 %30 = add i32 %26, i32 1;
-    i32 %31 = srem i32 %30, i32 2;
+    i32 %31 = and i32 %30, i32 1;
     i32* %32 = getelementptr &([2 * i32]* %24)[i64 0][i32 %31];
     i32* %33 = getelementptr &([35 * i32]* %22)[i64 0][i32 %26];
     i32 %34 = load i32* %33;

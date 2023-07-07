@@ -9,5 +9,11 @@ int foo2(int x) {
 }
 int foo3(int x) {
     int absv = x > 0 ? x : -x;
-    return absv & 0x70000000;
+    return absv & 0x80000000;
+}
+int foo4(int a[10], int b) {
+    return a[b] + (b<10);
+}
+int foo5(int a[16], int b) {
+    return a[b % 16];
 }
