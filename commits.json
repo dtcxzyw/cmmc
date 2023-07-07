@@ -110,6 +110,11 @@
       "parent": "816f822888acbcef7ed3f4fb74188f7b6c856ce0",
       "time": "2023-07-06 19:29:20 +0800"
     },
+    "3b456200e42e06bf7b9c01045913353124de379f": {
+      "message": "feat(transform): aggressive range-aware arith reduce",
+      "parent": "500e485f35d479493f784d9c6fdacead96fb1859",
+      "time": "2023-07-08 02:19:01 +0800"
+    },
     "3c9bfc69a8452250b22638e3e6231f85e7f64a85": {
       "message": "fix(transform): fix phi merge",
       "parent": "80d6e89e289ec70a1f33edcd9a24c093f2a50a25",
@@ -170,6 +175,11 @@
       "parent": "84648e12b6bda57ce06277c9d225d6f6c00a1481",
       "time": "2023-07-02 02:00:59 +0800"
     },
+    "500e485f35d479493f784d9c6fdacead96fb1859": {
+      "message": "feat(transform): add contextual range-aware optimizations",
+      "parent": "4678b367c4ef70bb6da5aee7664f1d330d1c988c",
+      "time": "2023-07-08 02:19:00 +0800"
+    },
     "53380379f6f03d5950eb3de091380278c20ee681": {
       "message": "feat(transform): eliminate redundant function calls",
       "parent": "84ec2b3394ff6aecb740769207da5b06edac6cf9",
@@ -194,6 +204,11 @@
       "message": "test: add scev cases",
       "parent": "78a95e6f941947103f9f1d6b8d70881e9f9c384a",
       "time": "2023-07-07 20:59:59 +0800"
+    },
+    "682c6b62948d7cc72a528aa33d7a04cdf1f53502": {
+      "message": "fix(transform): fix re-unrolling",
+      "parent": "3b456200e42e06bf7b9c01045913353124de379f",
+      "time": "2023-07-08 02:55:14 +0800"
     },
     "6f138f87fa3ea11c75c258342c4a49a897c2b7cb": {
       "message": "misc: format code",
@@ -441,5 +456,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "4678b367c4ef70bb6da5aee7664f1d330d1c988c"
+  "head": "682c6b62948d7cc72a528aa33d7a04cdf1f53502"
 }
