@@ -188,17 +188,25 @@ public:
 };
 
 class ScalarMem2Reg final : public TransformPass<Function> {
-    void filterPromotable(Function& func, std::unordered_set<Value*>& interested) const {
+    static void filterPromotable(Function& func, std::unordered_set<Value*>& interested) {
         for(auto block : func.blocks()) {
             for(auto& inst : block->instructions()) {
                 switch(inst.getInstID()) {
+                    case InstructionID::Phi: {
+                        if(inst.getType()->isPointer())
+                            for(auto operand : inst.operands())
+                                interested.erase(operand);
+                        break;
+                    }
                     case InstructionID::Store: {
                         interested.erase(inst.getOperand(1));  // use as value
                         break;
                     }
                     case InstructionID::Select: {
-                        interested.erase(inst.getOperand(1));
-                        interested.erase(inst.getOperand(2));
+                        if(inst.getType()->isPointer()) {
+                            interested.erase(inst.getOperand(1));
+                            interested.erase(inst.getOperand(2));
+                        }
                         break;
                     }
                     case InstructionID::PtrToInt:

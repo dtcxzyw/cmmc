@@ -17,18 +17,18 @@ func @licm1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %10 = phi [^entry, i32 0] [^for.body2, i32 %43];
     ret i32 %10;
   ^for.body:
-    i32 %11 = add i32 %2, i32 %7;
-    i32 %12 = mul i32 %6, i32 %6;
-    i32 %13 = add i32 %11, i32 %12;
-    i32 %14 = add i32 %6, i32 1;
-    i32 %15 = mul i32 %14, i32 %14;
-    i32 %16 = add i32 %13, i32 %15;
-    i32 %17 = add i32 %6, i32 2;
-    i32 %18 = mul i32 %17, i32 %17;
-    i32 %19 = add i32 %16, i32 %18;
-    i32 %20 = add i32 %6, i32 3;
-    i32 %21 = mul i32 %20, i32 %20;
-    i32 %22 = add i32 %19, i32 %21;
+    i32 %11 = mul i32 %6, i32 %6;
+    i32 %12 = add i32 %2, i32 %11;
+    i32 %13 = add i32 %6, i32 1;
+    i32 %14 = mul i32 %13, i32 %13;
+    i32 %15 = add i32 %12, i32 %14;
+    i32 %16 = add i32 %6, i32 2;
+    i32 %17 = mul i32 %16, i32 %16;
+    i32 %18 = add i32 %15, i32 %17;
+    i32 %19 = add i32 %6, i32 3;
+    i32 %20 = mul i32 %19, i32 %19;
+    i32 %21 = add i32 %18, i32 %20;
+    i32 %22 = add i32 %7, i32 %21;
     ubr ^super.header;
   ^super.header1:
     i32 %23 = phi [^super.header, i32 %6] [^for.body1, i32 %25];

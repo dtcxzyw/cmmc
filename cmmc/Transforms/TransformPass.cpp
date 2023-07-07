@@ -314,6 +314,7 @@ std::shared_ptr<PassManager<Module>> PassManager<Module>::get(OptimizationLevel 
             // Preprocess
             "FunctionAttrInfer",      //
             "BlockSort",              //
+            "ConstantPropagation",    //
             "ScalarMem2Reg",          //
             "StoreEliminate",         //
             "NoSideEffectEliminate",  // clean up
