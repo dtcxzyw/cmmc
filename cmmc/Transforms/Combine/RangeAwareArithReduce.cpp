@@ -20,6 +20,7 @@
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
 #include <cmmc/IR/Type.hpp>
+#include <cmmc/Support/Bits.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -141,7 +142,13 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
             if(srem(any(v1), any(v2))(matchCtx)) {
                 auto rhs = rangeAnalysis.query(v2, dom, inst, depth);
                 auto self = rangeAnalysis.query(inst, dom, inst, depth);
-                if(rhs.isPositive() && self.isNonNegative()) {
+                auto isNonPowerOf2Constant = [](Value* val) {
+                    if(auto cval = dynamic_cast<ConstantInteger*>(val))
+                        return !isPowerOf2(static_cast<size_t>(cval->getSignExtended()));
+                    return false;
+                };
+
+                if(rhs.isPositive() && self.isNonNegative() && !isNonPowerOf2Constant(v2)) {
                     return builder.makeOp<BinaryInst>(InstructionID::URem, v1, v2);
                 }
             }

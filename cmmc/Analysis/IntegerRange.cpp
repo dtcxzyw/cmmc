@@ -332,7 +332,17 @@ IntegerRange IntegerRange::srem(const IntegerRange& rhs) const {
         return ret;
 
     if(rhs.mMinSignedValue >= 0) {
-        ret.setSignedRange(-rhs.mMaxSignedValue + 1, rhs.mMaxSignedValue - 1);
+        if(isNonNegative())
+            ret.setSignedRange(0, rhs.mMaxSignedValue - 1);
+        else
+            ret.setSignedRange(-rhs.mMaxSignedValue + 1, rhs.mMaxSignedValue - 1);
+        if(mMinSignedValue != std::numeric_limits<int32_t>::min()) {
+            const auto maxRange = std::max(std::abs(mMaxSignedValue), std::abs(mMinSignedValue));
+            if(maxRange < rhs.mMaxSignedValue) {
+                ret.mMinSignedValue = std::max(ret.mMinSignedValue, -maxRange);
+                ret.mMaxSignedValue = std::min(ret.mMaxSignedValue, maxRange);
+            }
+        }
     } else if(rhs.mMaxSignedValue <= 0) {
         ret.setSignedRange(rhs.mMinSignedValue + 1, -rhs.mMinSignedValue - 1);
     } else {
