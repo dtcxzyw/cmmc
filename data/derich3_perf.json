@@ -124,6 +124,9 @@
     "49e29bb90dac47096baa55c815d5cd71d0d6fd45": {
       "sysy_time": 0.009988
     },
+    "5491a561d6ee2f3d71472c605d57f9aa69c806a7": {
+      "sysy_time": 0.010529
+    },
     "682c6b62948d7cc72a528aa33d7a04cdf1f53502": {
       "branch-load-misses:u": 546,
       "branch-loads:u": 66411,
