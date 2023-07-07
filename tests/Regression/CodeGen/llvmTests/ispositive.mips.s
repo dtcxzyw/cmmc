@@ -2,6 +2,6 @@
 .text
 .globl test1
 test1:
-	slti $v0, $a0, 0
+	srl $v0, $a0, 31
 	jr $ra
 	nop

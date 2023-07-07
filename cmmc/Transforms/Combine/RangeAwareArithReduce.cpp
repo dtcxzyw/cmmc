@@ -166,6 +166,33 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 }
             }
 
+            // abs (non-negative x) -> x
+            if(abs(any(v1))(matchCtx)) {
+                auto valRange = rangeAnalysis.query(v1, dom, inst, depth);
+                if(valRange.isNonNegative())
+                    return v1;
+            }
+
+            // smax (x, y) (x >= y) -> x
+            if(smax(any(v1), any(v2))(matchCtx)) {
+                auto lhsRange = rangeAnalysis.query(v1, dom, inst, depth);
+                auto rhsRange = rangeAnalysis.query(v2, dom, inst, depth);
+                if(lhsRange.maxSignedValue() <= rhsRange.minSignedValue())
+                    return v2;
+                if(lhsRange.minSignedValue() >= rhsRange.maxSignedValue())
+                    return v1;
+            }
+
+            // smin (x, y) (x <= y) -> x
+            if(smin(any(v1), any(v2))(matchCtx)) {
+                auto lhsRange = rangeAnalysis.query(v1, dom, inst, depth);
+                auto rhsRange = rangeAnalysis.query(v2, dom, inst, depth);
+                if(lhsRange.maxSignedValue() <= rhsRange.minSignedValue())
+                    return v1;
+                if(lhsRange.minSignedValue() >= rhsRange.maxSignedValue())
+                    return v2;
+            }
+
             return nullptr;
         });
         return ret || modified;

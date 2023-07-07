@@ -59,8 +59,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^while.header1;
   ^b1:
     i1 %29 = phi [^while.body1, i1 false] [^b, i1 %23];
-    i32 %30 = add i32 %14, i32 1;
-    i32 %31 = select i1 %29 ? i32 %30 : i32 %14;
+    i32 %30 = zext i1 %29 to i32;
+    i32 %31 = add i32 %14, i32 %30;
     i32* %32 = getelementptr &(i32* %0)[i32 %31];
     i32* %33 = getelementptr &(i32* %0)[i32 %13];
     i32 %34 = load i32* %33;
@@ -93,8 +93,8 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     ubr ^b3;
   ^b3:
     i1 %49 = phi [^while.body4, i1 false] [^b2, i1 %48];
-    i32 %50 = add i32 %40, i32 1;
-    i32 %51 = select i1 %49 ? i32 %50 : i32 %40;
+    i32 %50 = zext i1 %49 to i32;
+    i32 %51 = add i32 %40, i32 %50;
     i32* %52 = getelementptr &(i32* %0)[i32 %51];
     i32* %53 = getelementptr &(i32* %0)[i32 %39];
     i32 %54 = load i32* %53;

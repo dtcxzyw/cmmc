@@ -221,7 +221,7 @@ icmp_slt_constant_neg_2049:
 	nop
 .globl icmp_slt_constant_zero
 icmp_slt_constant_zero:
-	slti $v0, $a0, 0
+	srl $v0, $a0, 31
 	jr $ra
 	nop
 .globl icmp_uge

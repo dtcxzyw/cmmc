@@ -931,6 +931,42 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            if(and_(oneUse(add(any(v1), int_(i1))), capture(cint_(1), v2))(matchCtx)) {
+                if((i1 & 1) != i1)
+                    return builder.makeOp<BinaryInst>(
+                        InstructionID::And, builder.makeOp<BinaryInst>(InstructionID::Add, v1, makeIntLike(i1 & 1, v1)), v2);
+            }
+
+            if(and_(oneUse(select(any(v1), oneUse(add(any(v2), int_(i1))), any(v3))), capture(cint_(1), v4))(matchCtx)) {
+                if((i1 & 1) != i1) {
+                    return builder.makeOp<BinaryInst>(
+                        InstructionID::And,
+                        builder.makeOp<SelectInst>(
+                            v1, builder.makeOp<BinaryInst>(InstructionID::Add, v2, makeIntLike(i1 & 1, v2)), v3),
+                        v4);
+                }
+            }
+
+            if(select(any(v1), add(any(v2), cint_(1)), any(v3))(matchCtx) && v2 == v3) {
+                return builder.makeOp<BinaryInst>(InstructionID::Add, v2,
+                                                  builder.makeOp<CastInst>(InstructionID::ZExt, v2->getType(), v1));
+            }
+
+            // zext (x < 0) -> x lsr (bitwidth - 1)
+            if(zext(oneUse(icmp(cmp, any(v1), cint_(0))))(matchCtx)) {
+                bool usedByCmp = false;
+                for(auto user : inst->users()) {
+                    if(user->getInstID() == InstructionID::ICmp) {
+                        usedByCmp = true;
+                        break;
+                    }
+                }
+                if(!usedByCmp && cmp == CompareOp::ICmpSignedLessThan) {
+                    return builder.makeOp<BinaryInst>(InstructionID::LShr, v1,
+                                                      makeIntLike(v1->getType()->as<IntegerType>()->getBitwidth() - 1, v1));
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

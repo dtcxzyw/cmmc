@@ -196,7 +196,7 @@ public:
     explicit BinaryOpMatcher(InstructionID target, LhsMatcher lhsMatcher, RhsMatcher rhsMatcher) noexcept
         : mTarget{ target }, mLhsMatcher{ lhsMatcher }, mRhsMatcher{ rhsMatcher } {}
     [[nodiscard]] bool handle(const MatchContext<BinaryInst>& ctx) const noexcept {
-        if(ctx.value->getInstID() != mTarget)
+        if(mTarget != InstructionID::None && ctx.value->getInstID() != mTarget)
             return false;
         if(mLhsMatcher(ctx.getOperand(0)) && mRhsMatcher(ctx.getOperand(1)))
             return true;
@@ -237,6 +237,10 @@ auto urem(Lhs lhs, Rhs rhs) {
 template <typename Lhs, typename Rhs>
 auto commutative(InstructionID id, Lhs lhs, Rhs rhs) {
     return BinaryOpMatcher<true, Lhs, Rhs>{ id, lhs, rhs };
+}
+template <typename Lhs, typename Rhs>
+auto binop(Lhs lhs, Rhs rhs) {
+    return BinaryOpMatcher<false, Lhs, Rhs>{ InstructionID::None, lhs, rhs };
 }
 
 template <typename Lhs, typename Rhs>

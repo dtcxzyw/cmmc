@@ -263,7 +263,7 @@ icmp_slt_constant_neg_2049:
 	ret
 .globl icmp_slt_constant_zero
 icmp_slt_constant_zero:
-	slti a0, a0, 0
+	srliw a0, a0, 31
 	li a1, 4294967295
 	and a0, a0, a1
 	ret

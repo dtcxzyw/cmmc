@@ -2,39 +2,37 @@ func @abs_different_constants(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSid
   ^entry:
     i8 %0 = strunc i8 %var0 to i8;
     i32 %1 = sext i8 %0 to i32;
-    i1 %2 = icmp slt i32 %1, i32 0;
-    i32 %3 = zext i1 %2 to i32;
-    i32 %4 = ztrunc i32 %3 to i32;
-    i1 %5 = icmp neq i32 %4, i32 0;
-    i32 %6 = zext i8 %var0 to i32;
-    i32 %7 = neg i32 %6;
-    i32 %8 = and i32 %7, i32 255;
-    i32 %9 = select i1 %5 ? i32 %8 : i32 %6;
-    i1 %10 = icmp sgt i32 %1, i32 -1;
-    i32 %11 = select i1 %10 ? i32 %6 : i32 %8;
-    i32 %12 = and i32 %11, i32 255;
-    i32 %13 = xor i32 %9, i32 %12;
-    i8 %14 = ztrunc i32 %13 to i8;
-    ret i8 %14;
+    i32 %2 = lshr i32 %1, i32 31;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i1 %4 = icmp neq i32 %3, i32 0;
+    i32 %5 = zext i8 %var0 to i32;
+    i32 %6 = neg i32 %5;
+    i32 %7 = and i32 %6, i32 255;
+    i32 %8 = select i1 %4 ? i32 %7 : i32 %5;
+    i1 %9 = icmp sgt i32 %1, i32 -1;
+    i32 %10 = select i1 %9 ? i32 %5 : i32 %7;
+    i32 %11 = and i32 %10, i32 255;
+    i32 %12 = xor i32 %8, i32 %11;
+    i8 %13 = ztrunc i32 %12 to i8;
+    ret i8 %13;
 }
 func @abs_swapped(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
     i8 %0 = strunc i8 %var0 to i8;
     i32 %1 = sext i8 %0 to i32;
-    i1 %2 = icmp slt i32 %1, i32 0;
-    i32 %3 = zext i1 %2 to i32;
-    i32 %4 = ztrunc i32 %3 to i32;
-    i1 %5 = icmp neq i32 %4, i32 0;
-    i32 %6 = zext i8 %var0 to i32;
-    i32 %7 = neg i32 %6;
-    i32 %8 = and i32 %7, i32 255;
-    i32 %9 = select i1 %5 ? i32 %8 : i32 %6;
-    i1 %10 = icmp sgt i32 %1, i32 0;
-    i32 %11 = select i1 %10 ? i32 %6 : i32 %8;
-    i32 %12 = and i32 %11, i32 255;
-    i32 %13 = or i32 %9, i32 %12;
-    i8 %14 = ztrunc i32 %13 to i8;
-    ret i8 %14;
+    i32 %2 = lshr i32 %1, i32 31;
+    i32 %3 = ztrunc i32 %2 to i32;
+    i1 %4 = icmp neq i32 %3, i32 0;
+    i32 %5 = zext i8 %var0 to i32;
+    i32 %6 = neg i32 %5;
+    i32 %7 = and i32 %6, i32 255;
+    i32 %8 = select i1 %4 ? i32 %7 : i32 %5;
+    i1 %9 = icmp sgt i32 %1, i32 0;
+    i32 %10 = select i1 %9 ? i32 %5 : i32 %7;
+    i32 %11 = and i32 %10, i32 255;
+    i32 %12 = or i32 %8, i32 %11;
+    i8 %13 = ztrunc i32 %12 to i8;
+    ret i8 %13;
 }
 func @nabs_different_constants(i8 %var0) -> i8 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

@@ -269,9 +269,9 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %167 = icmp eq i32 %166, i32 93;
     i32 %168 = add i32 %160, i32 -1;
     i32 %169 = select i1 %167 ? i32 %168 : i32 %160;
-    i32 %170 = add i32 %169, i32 1;
-    i1 %171 = icmp eq i32 %166, i32 91;
-    i32 %172 = select i1 %171 ? i32 %170 : i32 %169;
+    i1 %170 = icmp eq i32 %166, i32 91;
+    i32 %171 = zext i1 %170 to i32;
+    i32 %172 = add i32 %169, i32 %171;
     ubr ^while.header1;
   ^if.else6:
     i32 %173 = add i32 %117, i32 -1;

@@ -6,7 +6,5 @@
 .fpu vfpv4
 .globl test1
 test1:
-	cmp r0, #0
-	mov r0, #0
-	movwlt r0, #1
+	lsr r0, r0, #31
 	bx lr

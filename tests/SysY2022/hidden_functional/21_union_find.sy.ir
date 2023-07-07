@@ -99,8 +99,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i32* %29 = getelementptr &([1005 * i32]* %3)[i64 0][i32 %26];
     i32 %30 = load i32* %29;
     i1 %31 = icmp eq i32 %26, i32 %30;
-    i32 %32 = add i32 %25, i32 1;
-    i32 %33 = select i1 %31 ? i32 %32 : i32 %25;
+    i32 %32 = zext i1 %31 to i32;
+    i32 %33 = add i32 %25, i32 %32;
     i32 %34 = add i32 %26, i32 1;
     ubr ^while.header1;
   ^while.body4:

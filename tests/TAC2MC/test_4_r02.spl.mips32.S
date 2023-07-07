@@ -43,7 +43,7 @@ label3:
 	jr $ra
 	nop
 label4:
-	slti $t0, $v0, 0
+	srl $t0, $v0, 31
 	subu $a0, $zero, $t0
 	jal write
 	nop

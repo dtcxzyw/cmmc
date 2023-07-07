@@ -35,7 +35,7 @@ label3:
 	addi sp, sp, 8
 	ret
 label4:
-	slti a0, a0, 0
+	srliw a0, a0, 31
 	subw a0, zero, a0
 	jal write
 	j label3

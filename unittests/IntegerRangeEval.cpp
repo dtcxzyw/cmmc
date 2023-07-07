@@ -285,6 +285,8 @@ TEST(IntegerRangeEval, URem) {
 TEST(IntegerRangeEval, And) {
     testBinary([](int64_t x, int64_t y) { return x & y; },
                [](const IntegerRange& lhs, const IntegerRange& rhs) { return lhs & rhs; }, MatchBits);
+
+    ASSERT_TRUE((IntegerRange{} & IntegerRange{ 1 }).isNonNegative());
 }
 
 TEST(IntegerRangeEval, Or) {

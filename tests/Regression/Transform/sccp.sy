@@ -18,3 +18,10 @@ int foo3(int x) {
     }
     return x;
 }
+int foo4(int x) {
+    int y = x % 1000000007;
+    if(y < 0) {
+        y += 1000000007;
+    }
+    return y % 2;
+}

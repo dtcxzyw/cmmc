@@ -55,7 +55,7 @@ func @foo(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect
     i32 %13 = phi [^if.then, i32 %8] [^if.else, i32 %12];
     i32 %14 = and i32 %var0, i32 %13;
     i32 %15 = strunc i32 %14 to i32;
-    i1 %16 = icmp sge i32 %15, i32 0;
-    i32 %17 = zext i1 %16 to i32;
+    i32 %16 = lshr i32 %15, i32 31;
+    i32 %17 = sub i32 1, i32 %16;
     ret i32 %17;
 }

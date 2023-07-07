@@ -254,9 +254,7 @@ icmp_slt_constant_neg_2049:
 	bx lr
 .globl icmp_slt_constant_zero
 icmp_slt_constant_zero:
-	cmp r0, #0
-	mov r0, #0
-	movwlt r0, #1
+	lsr r0, r0, #31
 	bx lr
 .globl icmp_uge
 icmp_uge:

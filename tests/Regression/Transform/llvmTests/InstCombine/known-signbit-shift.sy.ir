@@ -24,10 +24,9 @@ func @test_shift_negative(i32 %var0, i32 %var1) -> i32 { NoMemoryRead NoMemoryWr
     i32 %3 = and i32 %var1, i32 7;
     i32 %4 = strunc i32 %3 to i32;
     i32 %5 = shl i32 %2, i32 %4;
-    i1 %6 = icmp slt i32 %5, i32 0;
-    i32 %7 = zext i1 %6 to i32;
-    i32 %8 = ztrunc i32 %7 to i32;
-    ret i32 %8;
+    i32 %6 = lshr i32 %5, i32 31;
+    i32 %7 = ztrunc i32 %6 to i32;
+    ret i32 %7;
 }
 func @test_shift_nonnegative(i32 %var0) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

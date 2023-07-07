@@ -67,7 +67,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %49 = icmp slt i32 %48, i32 0;
     i32 %50 = add i32 %48, i32 1000000007;
     i32 %51 = select i1 %49 ? i32 %50 : i32 %48;
-    i32 %52 = srem i32 %51, i32 2;
+    i32 %52 = and i32 %51, i32 1;
     i32 %53 = srem i32 %45, i32 300000;
     i32 %54 = sdiv i32 %53, i32 30;
     i32* %55 = getelementptr &(i32* %35)[i32 %54];
@@ -103,7 +103,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %32 with i32 536870912;
     store i32* %33 with i32 1073741824;
     i32 %56 = load i32* %55;
-    i32 %57 = urem i32 %53, i32 30;
+    i32 %57 = srem i32 %53, i32 30;
     i32* %58 = getelementptr &([31 * i32]* %x)[i64 0][i32 %57];
     i32 %59 = load i32* %58;
     i32 %60 = sdiv i32 %56, i32 %59;
