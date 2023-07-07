@@ -4,5 +4,5 @@ void foo(int a[], int n, int k) {
 }
 void foo2(int a[], int n) {
     for(int x = 0; x < n; ++x)
-        a[i] = x*x*x + 2*x*x + 3*x + 7;
+        a[x] = x*x*x + 2*x*x + 3*x + 7;
 }
