@@ -36,37 +36,37 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header2:
     i32 %14 = phi [^while.header1, i32 0] [^while.body5, i32 %160];
     i1 %15 = icmp slt i32 %14, i32 1000;
-    cbr i1 %15(prob = 0.97), ^while.body1, ^while.header5;
+    cbr i1 %15(prob = 0.97), ^while.body1, ^while.header4;
   ^while.header3:
     f32 %16 = phi [^while.header1, f32 %10] [^while.body6, f32 %189];
     i32 %17 = phi [^while.header1, i32 0] [^while.body6, i32 %190];
     i1 %18 = icmp slt i32 %17, i32 1000;
-    cbr i1 %18(prob = 0.97), ^while.header4, ^b3;
+    cbr i1 %18(prob = 0.97), ^prebody, ^b3;
   ^while.body1:
-    [1000 * f32]* %19 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %14];
-    f32* %20 = getelementptr &([1000 * f32]* %1)[i64 0][i32 %14];
+    f32* %19 = getelementptr &([1000 * f32]* %1)[i64 0][i32 %14];
+    [1000 * f32]* %20 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %14];
     ubr ^while.body3;
-  ^while.header4:
+  ^prebody:
     [1000 * f32]* %21 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %17];
     ubr ^while.body4;
   ^b3:
     call (i32) -> void @stoptime(i32 95);
     call (f32) -> void @putfloat(f32 %16);
     ubr ^b2;
-  ^while.header5:
+  ^while.header4:
     i32 %22 = phi [^while.header2, i32 0] [^while.body11, i32 %453];
     i1 %23 = icmp slt i32 %22, i32 1000;
-    cbr i1 %23(prob = 0.97), ^while.body2, ^while.header6;
+    cbr i1 %23(prob = 0.97), ^while.body2, ^while.header5;
   ^while.body2:
     f32* %24 = getelementptr &([1000 * f32]* %1)[i64 0][i32 %22];
     f32 %25 = load f32* %24;
-    [1000 * f32]* %26 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %22];
-    f32* %27 = getelementptr &([1000 * f32]* %2)[i64 0][i32 %22];
+    f32* %26 = getelementptr &([1000 * f32]* %2)[i64 0][i32 %22];
+    [1000 * f32]* %27 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %22];
     ubr ^while.body7;
   ^while.body3:
     f32 %28 = phi [^while.body1, f32 0] [^while.body3, f32 %77];
     i32 %29 = phi [^while.body1, i32 0] [^while.body3, i32 %78];
-    f32* %30 = getelementptr &([1000 * f32]* %19)[i64 0][i32 %29];
+    f32* %30 = getelementptr &([1000 * f32]* %20)[i64 0][i32 %29];
     f32 %31 = load f32* %30;
     f32 %32 = fadd f32 %28, f32 %31;
     f32* %33 = getelementptr &(f32* %30)[i64 1];
@@ -118,8 +118,8 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %79 = icmp slt i32 %78, i32 992;
     cbr i1 %79(prob = 0.98), ^while.body3, ^while.body5;
   ^while.body4:
-    i32 %80 = phi [^while.header4, i32 0] [^while.body4, i32 %130];
-    f32 %81 = phi [^while.header4, f32 %16] [^while.body4, f32 %129];
+    i32 %80 = phi [^prebody, i32 0] [^while.body4, i32 %130];
+    f32 %81 = phi [^prebody, f32 %16] [^while.body4, f32 %129];
     f32* %82 = getelementptr &([1000 * f32]* %21)[i64 0][i32 %80];
     f32 %83 = load f32* %82;
     f32 %84 = fadd f32 %81, f32 %83;
@@ -171,13 +171,13 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %130 = add i32 %80, i32 16;
     i1 %131 = icmp slt i32 %130, i32 992;
     cbr i1 %131(prob = 0.98), ^while.body4, ^while.body6;
-  ^while.header6:
-    f32 %132 = phi [^while.header5, f32 %10] [^while.body10, f32 %442];
-    i32 %133 = phi [^while.header5, i32 0] [^while.body10, i32 %443];
+  ^while.header5:
+    f32 %132 = phi [^while.header4, f32 %10] [^while.body10, f32 %442];
+    i32 %133 = phi [^while.header4, i32 0] [^while.body10, i32 %443];
     i1 %134 = icmp slt i32 %133, i32 1000;
-    cbr i1 %134(prob = 0.97), ^while.header7, ^b4;
+    cbr i1 %134(prob = 0.97), ^prebody1, ^b4;
   ^while.body5:
-    f32* %135 = getelementptr &([1000 * f32]* %19)[i64 0][i32 %78];
+    f32* %135 = getelementptr &([1000 * f32]* %20)[i64 0][i32 %78];
     f32 %136 = load f32* %135;
     f32 %137 = fadd f32 %77, f32 %136;
     f32* %138 = getelementptr &(f32* %135)[i64 1];
@@ -202,13 +202,13 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %157 = load f32* %156;
     f32 %158 = fadd f32 %155, f32 %157;
     f32 %159 = fdiv f32 %158, f32 1000;
-    store f32* %20 with f32 %159;
+    store f32* %19 with f32 %159;
     i32 %160 = add i32 %14, i32 1;
     ubr ^while.header2;
-  ^while.header7:
-    f32* %161 = getelementptr &([1000 * f32]* %1)[i64 0][i32 %133];
+  ^prebody1:
+    f32* %161 = getelementptr &([1000 * f32]* %2)[i64 0][i32 %133];
     f32 %162 = load f32* %161;
-    f32* %163 = getelementptr &([1000 * f32]* %2)[i64 0][i32 %133];
+    f32* %163 = getelementptr &([1000 * f32]* %1)[i64 0][i32 %133];
     f32 %164 = load f32* %163;
     [1000 * f32]* %165 = getelementptr &([1000 * [1000 * f32]]* %0)[i64 0][i32 %133];
     ubr ^while.body9;
@@ -242,7 +242,7 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body7:
     f32 %191 = phi [^while.body2, f32 0] [^while.body7, f32 %272];
     i32 %192 = phi [^while.body2, i32 0] [^while.body7, i32 %273];
-    f32* %193 = getelementptr &([1000 * f32]* %26)[i64 0][i32 %192];
+    f32* %193 = getelementptr &([1000 * f32]* %27)[i64 0][i32 %192];
     f32 %194 = load f32* %193;
     f32 %195 = fsub f32 %194, f32 %25;
     f32 %196 = fmul f32 %195, f32 %195;
@@ -322,7 +322,6 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %270 = fsub f32 %269, f32 %25;
     f32 %271 = fmul f32 %270, f32 %270;
     f32 %272 = fadd f32 %267, f32 %271;
-    store f32* %27 with f32 %272;
     i32 %273 = add i32 %192, i32 16;
     i1 %274 = icmp slt i32 %273, i32 992;
     cbr i1 %274(prob = 0.98), ^while.body7, ^while.body8;
@@ -330,7 +329,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %275 = add i32 %11, i32 1;
     ubr ^while.header1;
   ^while.body8:
-    f32* %276 = getelementptr &([1000 * f32]* %26)[i64 0][i32 %273];
+    f32* %276 = getelementptr &([1000 * f32]* %27)[i64 0][i32 %273];
     f32 %277 = load f32* %276;
     f32 %278 = fsub f32 %277, f32 %25;
     f32 %279 = fmul f32 %278, f32 %278;
@@ -373,104 +372,104 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %316 = fdiv f32 %315, f32 1000;
     f32 %317 = fadd f32 %316, f32 0.01;
     f32 %318 = fmul f32 %317, f32 0.5;
-    ubr ^while.header8;
+    ubr ^while.header6;
   ^while.body9:
-    i32 %319 = phi [^while.header7, i32 0] [^while.body9, i32 %401];
-    f32 %320 = phi [^while.header7, f32 %132] [^while.body9, f32 %400];
+    i32 %319 = phi [^prebody1, i32 0] [^while.body9, i32 %401];
+    f32 %320 = phi [^prebody1, f32 %132] [^while.body9, f32 %400];
     f32* %321 = getelementptr &([1000 * f32]* %165)[i64 0][i32 %319];
     f32 %322 = load f32* %321;
-    f32 %323 = fsub f32 %322, f32 %162;
-    f32 %324 = fdiv f32 %323, f32 %164;
+    f32 %323 = fsub f32 %322, f32 %164;
+    f32 %324 = fdiv f32 %323, f32 %162;
     store f32* %321 with f32 %324;
     f32 %325 = fadd f32 %320, f32 %324;
     f32* %326 = getelementptr &(f32* %321)[i64 1];
     f32 %327 = load f32* %326;
-    f32 %328 = fsub f32 %327, f32 %162;
-    f32 %329 = fdiv f32 %328, f32 %164;
+    f32 %328 = fsub f32 %327, f32 %164;
+    f32 %329 = fdiv f32 %328, f32 %162;
     f32 %330 = fadd f32 %325, f32 %329;
     store f32* %326 with f32 %329;
     f32* %331 = getelementptr &(f32* %321)[i64 2];
     f32 %332 = load f32* %331;
-    f32 %333 = fsub f32 %332, f32 %162;
-    f32 %334 = fdiv f32 %333, f32 %164;
+    f32 %333 = fsub f32 %332, f32 %164;
+    f32 %334 = fdiv f32 %333, f32 %162;
     f32 %335 = fadd f32 %330, f32 %334;
     store f32* %331 with f32 %334;
     f32* %336 = getelementptr &(f32* %321)[i64 3];
     f32 %337 = load f32* %336;
-    f32 %338 = fsub f32 %337, f32 %162;
-    f32 %339 = fdiv f32 %338, f32 %164;
+    f32 %338 = fsub f32 %337, f32 %164;
+    f32 %339 = fdiv f32 %338, f32 %162;
     f32 %340 = fadd f32 %335, f32 %339;
     store f32* %336 with f32 %339;
     f32* %341 = getelementptr &(f32* %321)[i64 4];
     f32 %342 = load f32* %341;
-    f32 %343 = fsub f32 %342, f32 %162;
-    f32 %344 = fdiv f32 %343, f32 %164;
+    f32 %343 = fsub f32 %342, f32 %164;
+    f32 %344 = fdiv f32 %343, f32 %162;
     f32 %345 = fadd f32 %340, f32 %344;
     store f32* %341 with f32 %344;
     f32* %346 = getelementptr &(f32* %321)[i64 5];
     f32 %347 = load f32* %346;
-    f32 %348 = fsub f32 %347, f32 %162;
-    f32 %349 = fdiv f32 %348, f32 %164;
+    f32 %348 = fsub f32 %347, f32 %164;
+    f32 %349 = fdiv f32 %348, f32 %162;
     f32 %350 = fadd f32 %345, f32 %349;
     store f32* %346 with f32 %349;
     f32* %351 = getelementptr &(f32* %321)[i64 6];
     f32 %352 = load f32* %351;
-    f32 %353 = fsub f32 %352, f32 %162;
-    f32 %354 = fdiv f32 %353, f32 %164;
+    f32 %353 = fsub f32 %352, f32 %164;
+    f32 %354 = fdiv f32 %353, f32 %162;
     f32 %355 = fadd f32 %350, f32 %354;
     store f32* %351 with f32 %354;
     f32* %356 = getelementptr &(f32* %321)[i64 7];
     f32 %357 = load f32* %356;
-    f32 %358 = fsub f32 %357, f32 %162;
-    f32 %359 = fdiv f32 %358, f32 %164;
+    f32 %358 = fsub f32 %357, f32 %164;
+    f32 %359 = fdiv f32 %358, f32 %162;
     f32 %360 = fadd f32 %355, f32 %359;
     store f32* %356 with f32 %359;
     f32* %361 = getelementptr &(f32* %321)[i64 8];
     f32 %362 = load f32* %361;
-    f32 %363 = fsub f32 %362, f32 %162;
-    f32 %364 = fdiv f32 %363, f32 %164;
+    f32 %363 = fsub f32 %362, f32 %164;
+    f32 %364 = fdiv f32 %363, f32 %162;
     f32 %365 = fadd f32 %360, f32 %364;
     store f32* %361 with f32 %364;
     f32* %366 = getelementptr &(f32* %321)[i64 9];
     f32 %367 = load f32* %366;
-    f32 %368 = fsub f32 %367, f32 %162;
-    f32 %369 = fdiv f32 %368, f32 %164;
+    f32 %368 = fsub f32 %367, f32 %164;
+    f32 %369 = fdiv f32 %368, f32 %162;
     f32 %370 = fadd f32 %365, f32 %369;
     store f32* %366 with f32 %369;
     f32* %371 = getelementptr &(f32* %321)[i64 10];
     f32 %372 = load f32* %371;
-    f32 %373 = fsub f32 %372, f32 %162;
-    f32 %374 = fdiv f32 %373, f32 %164;
+    f32 %373 = fsub f32 %372, f32 %164;
+    f32 %374 = fdiv f32 %373, f32 %162;
     f32 %375 = fadd f32 %370, f32 %374;
     store f32* %371 with f32 %374;
     f32* %376 = getelementptr &(f32* %321)[i64 11];
     f32 %377 = load f32* %376;
-    f32 %378 = fsub f32 %377, f32 %162;
-    f32 %379 = fdiv f32 %378, f32 %164;
+    f32 %378 = fsub f32 %377, f32 %164;
+    f32 %379 = fdiv f32 %378, f32 %162;
     f32 %380 = fadd f32 %375, f32 %379;
     store f32* %376 with f32 %379;
     f32* %381 = getelementptr &(f32* %321)[i64 12];
     f32 %382 = load f32* %381;
-    f32 %383 = fsub f32 %382, f32 %162;
-    f32 %384 = fdiv f32 %383, f32 %164;
+    f32 %383 = fsub f32 %382, f32 %164;
+    f32 %384 = fdiv f32 %383, f32 %162;
     f32 %385 = fadd f32 %380, f32 %384;
     store f32* %381 with f32 %384;
     f32* %386 = getelementptr &(f32* %321)[i64 13];
     f32 %387 = load f32* %386;
-    f32 %388 = fsub f32 %387, f32 %162;
-    f32 %389 = fdiv f32 %388, f32 %164;
+    f32 %388 = fsub f32 %387, f32 %164;
+    f32 %389 = fdiv f32 %388, f32 %162;
     f32 %390 = fadd f32 %385, f32 %389;
     store f32* %386 with f32 %389;
     f32* %391 = getelementptr &(f32* %321)[i64 14];
     f32 %392 = load f32* %391;
-    f32 %393 = fsub f32 %392, f32 %162;
-    f32 %394 = fdiv f32 %393, f32 %164;
+    f32 %393 = fsub f32 %392, f32 %164;
+    f32 %394 = fdiv f32 %393, f32 %162;
     f32 %395 = fadd f32 %390, f32 %394;
     store f32* %391 with f32 %394;
     f32* %396 = getelementptr &(f32* %321)[i64 15];
     f32 %397 = load f32* %396;
-    f32 %398 = fsub f32 %397, f32 %162;
-    f32 %399 = fdiv f32 %398, f32 %164;
+    f32 %398 = fsub f32 %397, f32 %164;
+    f32 %399 = fdiv f32 %398, f32 %162;
     f32 %400 = fadd f32 %395, f32 %399;
     store f32* %396 with f32 %399;
     i32 %401 = add i32 %319, i32 16;
@@ -479,55 +478,55 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.body10:
     f32* %403 = getelementptr &([1000 * f32]* %165)[i64 0][i32 %401];
     f32 %404 = load f32* %403;
-    f32 %405 = fsub f32 %404, f32 %162;
-    f32 %406 = fdiv f32 %405, f32 %164;
+    f32 %405 = fsub f32 %404, f32 %164;
+    f32 %406 = fdiv f32 %405, f32 %162;
     store f32* %403 with f32 %406;
     f32 %407 = fadd f32 %400, f32 %406;
     f32* %408 = getelementptr &(f32* %403)[i64 1];
     f32 %409 = load f32* %408;
-    f32 %410 = fsub f32 %409, f32 %162;
-    f32 %411 = fdiv f32 %410, f32 %164;
+    f32 %410 = fsub f32 %409, f32 %164;
+    f32 %411 = fdiv f32 %410, f32 %162;
     f32 %412 = fadd f32 %407, f32 %411;
     store f32* %408 with f32 %411;
     f32* %413 = getelementptr &(f32* %403)[i64 2];
     f32 %414 = load f32* %413;
-    f32 %415 = fsub f32 %414, f32 %162;
-    f32 %416 = fdiv f32 %415, f32 %164;
+    f32 %415 = fsub f32 %414, f32 %164;
+    f32 %416 = fdiv f32 %415, f32 %162;
     f32 %417 = fadd f32 %412, f32 %416;
     store f32* %413 with f32 %416;
     f32* %418 = getelementptr &(f32* %403)[i64 3];
     f32 %419 = load f32* %418;
-    f32 %420 = fsub f32 %419, f32 %162;
-    f32 %421 = fdiv f32 %420, f32 %164;
+    f32 %420 = fsub f32 %419, f32 %164;
+    f32 %421 = fdiv f32 %420, f32 %162;
     f32 %422 = fadd f32 %417, f32 %421;
     store f32* %418 with f32 %421;
     f32* %423 = getelementptr &(f32* %403)[i64 4];
     f32 %424 = load f32* %423;
-    f32 %425 = fsub f32 %424, f32 %162;
-    f32 %426 = fdiv f32 %425, f32 %164;
+    f32 %425 = fsub f32 %424, f32 %164;
+    f32 %426 = fdiv f32 %425, f32 %162;
     f32 %427 = fadd f32 %422, f32 %426;
     store f32* %423 with f32 %426;
     f32* %428 = getelementptr &(f32* %403)[i64 5];
     f32 %429 = load f32* %428;
-    f32 %430 = fsub f32 %429, f32 %162;
-    f32 %431 = fdiv f32 %430, f32 %164;
+    f32 %430 = fsub f32 %429, f32 %164;
+    f32 %431 = fdiv f32 %430, f32 %162;
     f32 %432 = fadd f32 %427, f32 %431;
     store f32* %428 with f32 %431;
     f32* %433 = getelementptr &(f32* %403)[i64 6];
     f32 %434 = load f32* %433;
-    f32 %435 = fsub f32 %434, f32 %162;
-    f32 %436 = fdiv f32 %435, f32 %164;
+    f32 %435 = fsub f32 %434, f32 %164;
+    f32 %436 = fdiv f32 %435, f32 %162;
     f32 %437 = fadd f32 %432, f32 %436;
     store f32* %433 with f32 %436;
     f32* %438 = getelementptr &(f32* %403)[i64 7];
     f32 %439 = load f32* %438;
-    f32 %440 = fsub f32 %439, f32 %162;
-    f32 %441 = fdiv f32 %440, f32 %164;
+    f32 %440 = fsub f32 %439, f32 %164;
+    f32 %441 = fdiv f32 %440, f32 %162;
     f32 %442 = fadd f32 %437, f32 %441;
     store f32* %438 with f32 %441;
     i32 %443 = add i32 %133, i32 1;
-    ubr ^while.header6;
-  ^while.header8:
+    ubr ^while.header5;
+  ^while.header6:
     f32 %444 = phi [^while.body8, f32 0] [^if.then, f32 %444] [^if.else, f32 %446];
     f32 %445 = phi [^while.body8, f32 %317] [^if.then, f32 %446] [^if.else, f32 %445];
     f32 %446 = phi [^while.body8, f32 %318] [^if.then, f32 %456] [^if.else, f32 %458];
@@ -539,20 +538,20 @@ func @main() -> i32 { NoRecurse Entry } {
     i1 %452 = fcmp ogt f32 %451, f32 0.001;
     cbr i1 %452(prob = 0.97), ^while.body12, ^while.body11;
   ^while.body11:
-    store f32* %27 with f32 %446;
+    store f32* %26 with f32 %446;
     i32 %453 = add i32 %22, i32 1;
-    ubr ^while.header5;
+    ubr ^while.header4;
   ^while.body12:
     i1 %454 = fcmp ogt f32 %447, f32 %317;
     cbr i1 %454(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
     f32 %455 = fadd f32 %446, f32 %444;
     f32 %456 = fmul f32 %455, f32 0.5;
-    ubr ^while.header8;
+    ubr ^while.header6;
   ^if.else:
     f32 %457 = fadd f32 %446, f32 %445;
     f32 %458 = fmul f32 %457, f32 0.5;
-    ubr ^while.header8;
+    ubr ^while.header6;
 }
 internal [1000 * f32]* @var;
 internal [1000 * f32]* @mean;

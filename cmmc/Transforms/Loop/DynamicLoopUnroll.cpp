@@ -58,6 +58,8 @@ public:
             // handled by static loop unroll
             if(loop.bound->isConstant() && loop.initial->isConstant())
                 continue;
+            if(loop.header->getTransformMetadata().scalarBlock)
+                continue;
 
             const auto terminator = loop.latch->getTerminator();
             const auto cond = terminator->getOperand(0);
@@ -70,6 +72,7 @@ public:
             }
 
             modified = true;
+            loop.header->getTransformMetadata().scalarBlock = true;
             std::vector<Block*> insertedBlocks;
             std::unordered_map<Block*, ReplaceMap> replaceMap;
 

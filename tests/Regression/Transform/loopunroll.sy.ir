@@ -326,31 +326,20 @@ func @multi_loop() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %79 = phi [^for.body1, i32 %76] [^for.body2, i32 %84];
     i32 %80 = add i32 %78, i32 -4;
     i1 %81 = icmp sgt i32 %80, i32 0;
-    cbr i1 %81(prob = 0.89), ^for.body2, ^super.header1;
+    cbr i1 %81(prob = 0.89), ^for.body2, ^for.body3;
   ^for.body2:
     i32 %82 = mul i32 %78, i32 4;
     i32 %83 = add i32 %79, i32 -6;
     i32 %84 = add i32 %82, i32 %83;
     ubr ^super.header;
-  ^super.header1:
-    i32 %85 = phi [^super.header, i32 %78] [^for.body3, i32 %87];
-    i32 %86 = phi [^super.header, i32 %79] [^for.body3, i32 %91];
-    i32 %87 = add i32 %85, i32 -4;
-    i1 %88 = icmp sgt i32 %87, i32 0;
-    cbr i1 %88(prob = 0.89), ^for.body3, ^for.body4;
   ^for.body3:
-    i32 %89 = mul i32 %85, i32 4;
-    i32 %90 = add i32 %89, i32 -6;
-    i32 %91 = add i32 %86, i32 %90;
-    ubr ^super.header1;
-  ^for.body4:
-    i32 %92 = phi [^super.header1, i32 %85] [^for.body4, i32 %95];
-    i32 %93 = phi [^super.header1, i32 %86] [^for.body4, i32 %94];
-    i32 %94 = add i32 %92, i32 %93;
-    i32 %95 = add i32 %92, i32 -1;
-    i1 %96 = icmp sgt i32 %95, i32 0;
-    cbr i1 %96(prob = 0.97), ^for.body4, ^b;
+    i32 %85 = phi [^super.header, i32 %78] [^for.body3, i32 %88];
+    i32 %86 = phi [^super.header, i32 %79] [^for.body3, i32 %87];
+    i32 %87 = add i32 %85, i32 %86;
+    i32 %88 = add i32 %85, i32 -1;
+    i1 %89 = icmp sgt i32 %88, i32 0;
+    cbr i1 %89(prob = 0.97), ^for.body3, ^b;
   ^b:
-    call (i32) -> void @putint(i32 %94);
-    ret i32 %94;
+    call (i32) -> void @putint(i32 %87);
+    ret i32 %87;
 }

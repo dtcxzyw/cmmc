@@ -7,8 +7,8 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header:
     i32 %1 = phi [^entry, i32 0] [^while.body1, i32 %164];
     i1 %2 = icmp slt i32 %1, i32 20;
-    cbr i1 %2(prob = 0.97), ^while.header1, ^b;
-  ^while.header1:
+    cbr i1 %2(prob = 0.97), ^prebody, ^b;
+  ^prebody:
     [100 * i32]* %3 = getelementptr &([20 * [100 * i32]]* %0)[i64 0][i32 %1];
     ubr ^while.body;
   ^b:
@@ -134,7 +134,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (i32) -> void @putint(i32 %122);
     ret i32 0;
   ^while.body:
-    i32 %123 = phi [^while.header1, i32 0] [^while.body, i32 %155];
+    i32 %123 = phi [^prebody, i32 0] [^while.body, i32 %155];
     i32* %124 = getelementptr &([100 * i32]* %3)[i64 0][i32 %123];
     store i32* %124 with i32 %123;
     i32* %125 = getelementptr &(i32* %124)[i64 1];

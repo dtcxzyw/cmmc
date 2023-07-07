@@ -211,31 +211,20 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %197 = phi [^for.body3, i32 %195] [^for.body4, i32 %203];
     i32 %198 = add i32 %196, i32 4;
     i1 %199 = icmp sgt i32 %149, i32 %198;
-    cbr i1 %199(prob = 0.89), ^for.body4, ^super.header1;
+    cbr i1 %199(prob = 0.89), ^for.body4, ^for.body5;
   ^b:
-    i32 %200 = phi [^for.body3, i32 %195] [^for.body6, i32 %215];
+    i32 %200 = phi [^for.body3, i32 %195] [^for.body5, i32 %208];
     ret i32 %200;
   ^for.body4:
     i32 %201 = mul i32 %196, i32 4;
     i32 %202 = add i32 %197, i32 6;
     i32 %203 = add i32 %201, i32 %202;
     ubr ^super.header;
-  ^super.header1:
-    i32 %204 = phi [^super.header, i32 %196] [^for.body5, i32 %206];
-    i32 %205 = phi [^super.header, i32 %197] [^for.body5, i32 %210];
-    i32 %206 = add i32 %204, i32 4;
-    i1 %207 = icmp sgt i32 %149, i32 %206;
-    cbr i1 %207(prob = 0.89), ^for.body5, ^for.body6;
   ^for.body5:
-    i32 %208 = mul i32 %204, i32 4;
-    i32 %209 = add i32 %208, i32 6;
-    i32 %210 = add i32 %205, i32 %209;
-    ubr ^super.header1;
-  ^for.body6:
-    i32 %211 = phi [^super.header1, i32 %204] [^for.body6, i32 %213];
-    i32 %212 = phi [^super.header1, i32 %205] [^for.body6, i32 %215];
-    i32 %213 = add i32 %211, i32 1;
-    i1 %214 = icmp sgt i32 %149, i32 %213;
-    i32 %215 = add i32 %211, i32 %212;
-    cbr i1 %214(prob = 0.97), ^for.body6, ^b;
+    i32 %204 = phi [^super.header, i32 %196] [^for.body5, i32 %206];
+    i32 %205 = phi [^super.header, i32 %197] [^for.body5, i32 %208];
+    i32 %206 = add i32 %204, i32 1;
+    i1 %207 = icmp sgt i32 %149, i32 %206;
+    i32 %208 = add i32 %204, i32 %205;
+    cbr i1 %207(prob = 0.97), ^for.body5, ^b;
 }

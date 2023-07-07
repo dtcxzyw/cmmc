@@ -141,6 +141,7 @@ class LICMMemory final : public TransformPass<Function> {
             Block* exit = block->getTerminator()->as<BranchInst>()->getFalseTarget();
             assert(exit != block);
             resetTarget(block->getTerminator()->as<BranchInst>(), exit, postBody);
+            retargetBlock(exit, block, postBody);
             builder.setInsertPoint(postBody, postBody->instructions().end());
             builder.makeOp<BranchInst>(exit);
         }

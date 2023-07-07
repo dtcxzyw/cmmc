@@ -14,9 +14,9 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %3 = phi [^entry, i32 0] [^while.body, i32 %10];
     i32 %4 = add i32 %2, i32 4;
     i1 %5 = icmp sgt i32 %0, i32 %4;
-    cbr i1 %5(prob = 0.89), ^while.body, ^super.header1;
+    cbr i1 %5(prob = 0.89), ^while.body, ^while.body1;
   ^b:
-    i32 %6 = phi [^entry, i32 0] [^while.body3, i32 %32];
+    i32 %6 = phi [^entry, i32 0] [^while.body1, i32 %16];
     call (i32) -> void @stoptime(i32 123);
     call (i32) -> void @putint(i32 %6);
     call (i32) -> void @putch(i32 10);
@@ -27,36 +27,12 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %9 = add i32 %8, i32 45;
     i32 %10 = srem i32 %9, i32 1500000001;
     ubr ^super.header;
-  ^super.header1:
-    i32 %11 = phi [^super.header, i32 %2] [^while.body1, i32 %13];
-    i32 %12 = phi [^super.header, i32 %3] [^while.body1, i32 %18];
-    i32 %13 = add i32 %11, i32 4;
-    i1 %14 = icmp sgt i32 %0, i32 %13;
-    cbr i1 %14(prob = 0.89), ^while.body1, ^super.header2;
   ^while.body1:
+    i32 %11 = phi [^super.header, i32 %2] [^while.body1, i32 %13];
+    i32 %12 = phi [^super.header, i32 %3] [^while.body1, i32 %16];
+    i32 %13 = add i32 %11, i32 1;
+    i1 %14 = icmp sgt i32 %0, i32 %13;
     i32 %15 = add i32 %12, i32 15;
     i32 %16 = srem i32 %15, i32 1500000001;
-    i32 %17 = add i32 %16, i32 45;
-    i32 %18 = srem i32 %17, i32 1500000001;
-    ubr ^super.header1;
-  ^super.header2:
-    i32 %19 = phi [^super.header1, i32 %11] [^while.body2, i32 %21];
-    i32 %20 = phi [^super.header1, i32 %12] [^while.body2, i32 %26];
-    i32 %21 = add i32 %19, i32 4;
-    i1 %22 = icmp sgt i32 %0, i32 %21;
-    cbr i1 %22(prob = 0.89), ^while.body2, ^while.body3;
-  ^while.body2:
-    i32 %23 = add i32 %20, i32 15;
-    i32 %24 = srem i32 %23, i32 1500000001;
-    i32 %25 = add i32 %24, i32 45;
-    i32 %26 = srem i32 %25, i32 1500000001;
-    ubr ^super.header2;
-  ^while.body3:
-    i32 %27 = phi [^super.header2, i32 %19] [^while.body3, i32 %29];
-    i32 %28 = phi [^super.header2, i32 %20] [^while.body3, i32 %32];
-    i32 %29 = add i32 %27, i32 1;
-    i1 %30 = icmp sgt i32 %0, i32 %29;
-    i32 %31 = add i32 %28, i32 15;
-    i32 %32 = srem i32 %31, i32 1500000001;
-    cbr i1 %30(prob = 0.97), ^while.body3, ^b;
+    cbr i1 %14(prob = 0.97), ^while.body1, ^b;
 }

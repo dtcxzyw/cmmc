@@ -6,7 +6,7 @@ func @foo(i32* %a, i32 %n, i32 %k) -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 0] [^for.body, i32 %2];
     i32 %2 = add i32 %1, i32 4;
     i1 %3 = icmp sgt i32 %n, i32 %2;
-    cbr i1 %3(prob = 0.89), ^for.body, ^super.header1;
+    cbr i1 %3(prob = 0.89), ^for.body, ^for.body1;
   ^b:
     ret;
   ^for.body:
@@ -26,36 +26,14 @@ func @foo(i32* %a, i32 %n, i32 %k) -> void { NoMemoryRead NoRecurse } {
     i32 %14 = mul i32 %k, i32 %13;
     store i32* %12 with i32 %14;
     ubr ^super.header;
-  ^super.header1:
-    i32 %15 = phi [^super.header, i32 %1] [^for.body1, i32 %16];
-    i32 %16 = add i32 %15, i32 4;
-    i1 %17 = icmp sgt i32 %n, i32 %16;
-    cbr i1 %17(prob = 0.89), ^for.body1, ^for.body2;
   ^for.body1:
-    i32* %18 = getelementptr &(i32* %a)[i32 %15];
-    i32 %19 = mul i32 %k, i32 %15;
-    store i32* %18 with i32 %19;
-    i32* %20 = getelementptr &(i32* %18)[i64 1];
-    i32 %21 = add i32 %15, i32 1;
-    i32 %22 = mul i32 %k, i32 %21;
-    store i32* %20 with i32 %22;
-    i32* %23 = getelementptr &(i32* %18)[i64 2];
-    i32 %24 = add i32 %15, i32 2;
-    i32 %25 = mul i32 %k, i32 %24;
-    store i32* %23 with i32 %25;
-    i32* %26 = getelementptr &(i32* %18)[i64 3];
-    i32 %27 = add i32 %15, i32 3;
-    i32 %28 = mul i32 %k, i32 %27;
-    store i32* %26 with i32 %28;
-    ubr ^super.header1;
-  ^for.body2:
-    i32 %29 = phi [^super.header1, i32 %15] [^for.body2, i32 %32];
-    i32* %30 = getelementptr &(i32* %a)[i32 %29];
-    i32 %31 = mul i32 %k, i32 %29;
-    store i32* %30 with i32 %31;
-    i32 %32 = add i32 %29, i32 1;
-    i1 %33 = icmp sgt i32 %n, i32 %32;
-    cbr i1 %33(prob = 0.97), ^for.body2, ^b;
+    i32 %15 = phi [^super.header, i32 %1] [^for.body1, i32 %18];
+    i32* %16 = getelementptr &(i32* %a)[i32 %15];
+    i32 %17 = mul i32 %k, i32 %15;
+    store i32* %16 with i32 %17;
+    i32 %18 = add i32 %15, i32 1;
+    i1 %19 = icmp sgt i32 %n, i32 %18;
+    cbr i1 %19(prob = 0.97), ^for.body1, ^b;
 }
 func @foo2(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
   ^entry:
@@ -65,7 +43,7 @@ func @foo2(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
     i32 %1 = phi [^entry, i32 0] [^for.body, i32 %2];
     i32 %2 = add i32 %1, i32 4;
     i1 %3 = icmp sgt i32 %n, i32 %2;
-    cbr i1 %3(prob = 0.89), ^for.body, ^super.header1;
+    cbr i1 %3(prob = 0.89), ^for.body, ^for.body1;
   ^b:
     ret;
   ^for.body:
@@ -98,51 +76,16 @@ func @foo2(i32* %a, i32 %n) -> void { NoMemoryRead NoRecurse } {
     i32* %27 = getelementptr &(i32* %9)[i64 3];
     store i32* %27 with i32 %26;
     ubr ^super.header;
-  ^super.header1:
-    i32 %28 = phi [^super.header, i32 %1] [^for.body1, i32 %29];
-    i32 %29 = add i32 %28, i32 4;
-    i1 %30 = icmp sgt i32 %n, i32 %29;
-    cbr i1 %30(prob = 0.89), ^for.body1, ^for.body2;
   ^for.body1:
-    i32 %31 = add i32 %28, i32 2;
+    i32 %28 = phi [^super.header, i32 %1] [^for.body1, i32 %35];
+    i32 %29 = add i32 %28, i32 2;
+    i32 %30 = mul i32 %28, i32 %29;
+    i32 %31 = add i32 %30, i32 3;
     i32 %32 = mul i32 %28, i32 %31;
-    i32 %33 = add i32 %32, i32 3;
-    i32 %34 = mul i32 %28, i32 %33;
-    i32 %35 = add i32 %34, i32 7;
-    i32* %36 = getelementptr &(i32* %a)[i32 %28];
-    store i32* %36 with i32 %35;
-    i32 %37 = add i32 %28, i32 1;
-    i32 %38 = add i32 %28, i32 3;
-    i32 %39 = mul i32 %37, i32 %38;
-    i32 %40 = add i32 %39, i32 3;
-    i32 %41 = mul i32 %37, i32 %40;
-    i32 %42 = add i32 %41, i32 7;
-    i32* %43 = getelementptr &(i32* %36)[i64 1];
-    store i32* %43 with i32 %42;
-    i32 %44 = mul i32 %29, i32 %31;
-    i32 %45 = add i32 %44, i32 3;
-    i32 %46 = mul i32 %31, i32 %45;
-    i32 %47 = add i32 %46, i32 7;
-    i32* %48 = getelementptr &(i32* %36)[i64 2];
-    store i32* %48 with i32 %47;
-    i32 %49 = add i32 %28, i32 5;
-    i32 %50 = mul i32 %38, i32 %49;
-    i32 %51 = add i32 %50, i32 3;
-    i32 %52 = mul i32 %38, i32 %51;
-    i32 %53 = add i32 %52, i32 7;
-    i32* %54 = getelementptr &(i32* %36)[i64 3];
-    store i32* %54 with i32 %53;
-    ubr ^super.header1;
-  ^for.body2:
-    i32 %55 = phi [^super.header1, i32 %28] [^for.body2, i32 %62];
-    i32 %56 = add i32 %55, i32 2;
-    i32 %57 = mul i32 %55, i32 %56;
-    i32 %58 = add i32 %57, i32 3;
-    i32 %59 = mul i32 %55, i32 %58;
-    i32 %60 = add i32 %59, i32 7;
-    i32* %61 = getelementptr &(i32* %a)[i32 %55];
-    store i32* %61 with i32 %60;
-    i32 %62 = add i32 %55, i32 1;
-    i1 %63 = icmp sgt i32 %n, i32 %62;
-    cbr i1 %63(prob = 0.97), ^for.body2, ^b;
+    i32 %33 = add i32 %32, i32 7;
+    i32* %34 = getelementptr &(i32* %a)[i32 %28];
+    store i32* %34 with i32 %33;
+    i32 %35 = add i32 %28, i32 1;
+    i1 %36 = icmp sgt i32 %n, i32 %35;
+    cbr i1 %36(prob = 0.97), ^for.body1, ^b;
 }
