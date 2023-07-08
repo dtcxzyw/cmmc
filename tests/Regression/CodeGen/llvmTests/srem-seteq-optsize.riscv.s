@@ -10,10 +10,9 @@ test_minsize:
 	add a1, a1, a2
 	li a2, 5
 	mulw a1, a1, a2
-	subw a0, a0, a1
-	sltiu a1, a0, 1
+	subw a1, a0, a1
 	li a0, 42
-	bne a1, zero, label18
+	beq a1, zero, label18
 	li a0, -10
 label18:
 	li a1, 4294967295
@@ -28,10 +27,9 @@ test_optsize:
 	add a1, a1, a2
 	li a2, 5
 	mulw a1, a1, a2
-	subw a0, a0, a1
-	sltiu a1, a0, 1
+	subw a1, a0, a1
 	li a0, 42
-	bne a1, zero, label36
+	beq a1, zero, label36
 	li a0, -10
 label36:
 	li a1, 4294967295

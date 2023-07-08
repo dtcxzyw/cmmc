@@ -35,23 +35,23 @@ mulw:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	j label61
+	j label53
 label16:
 	li a0, 1
 	j label8
-label61:
+label53:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	j label62
+	j label3
 label8:
 	ret
 label21:
 	li a1, 4294967295
 	and a0, a0, a1
 	j label8
-label62:
+label3:
 	mulw a0, a1, a0
 	addiw a1, a1, 1
 	ble a3, a1, label21
-	j label62
+	j label3

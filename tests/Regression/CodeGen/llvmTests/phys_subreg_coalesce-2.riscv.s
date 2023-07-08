@@ -21,21 +21,15 @@ label5:
 label21:
 	mv a1, a0
 	li a3, 1
+label6:
 	subw a4, a0, a3
-	mulw a1, a0, a4
-	addiw a4, a3, 1
-	addiw a3, a3, 2
-	divuw a1, a1, a4
-	bgeu a2, a3, label30
-label29:
-	mv a0, a1
-	j label2
-label30:
-	mv a3, a4
-	subw a4, a0, a4
 	mulw a1, a1, a4
 	addiw a4, a3, 1
 	addiw a3, a3, 2
 	divuw a1, a1, a4
 	bgeu a2, a3, label30
-	j label29
+	mv a0, a1
+	j label2
+label30:
+	mv a3, a4
+	j label6

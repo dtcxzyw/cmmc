@@ -14,10 +14,9 @@ j:
 main:
 pcrel17:
 	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel17)(a0)
-	sltiu a1, a0, 1
+	lw a1, %pcrel_lo(pcrel17)(a0)
 	li a0, 10
-	bne a1, zero, label16
+	beq a1, zero, label16
 	li a0, 55
 label16:
 	li a1, 4294967295

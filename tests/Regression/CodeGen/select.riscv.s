@@ -8,23 +8,20 @@ __cmmc_fp_constant_pool:
 .text
 .globl select_gpr_gpr_gpr
 select_gpr_gpr_gpr:
-	sltu a3, zero, a0
-	mv a0, a1
-	bne a3, zero, label8
-	mv a0, a2
+	bne a0, zero, label8
+	mv a1, a2
 label8:
+	mv a0, a1
 	ret
 .globl select_not_gpr_gpr_gpr
 select_not_gpr_gpr_gpr:
-	sltiu a3, a0, 1
-	mv a0, a1
-	bne a3, zero, label16
-	mv a0, a2
+	beq a0, zero, label16
+	mv a1, a2
 label16:
+	mv a0, a1
 	ret
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
-	sltu a0, zero, a0
 	fmv.s f10, f11
 	bne a0, zero, label24
 	fmv.s f10, f12
@@ -32,113 +29,92 @@ label24:
 	ret
 .globl select_not_gpr_fpr_fpr
 select_not_gpr_fpr_fpr:
-	sltiu a0, a0, 1
 	fmv.s f10, f11
-	bne a0, zero, label32
+	beq a0, zero, label32
 	fmv.s f10, f12
 label32:
 	ret
 .globl select_slt_gpr_gpr
 select_slt_gpr_gpr:
-	slt a1, a0, a1
-	mv a0, a2
-	bne a1, zero, label41
-	mv a0, a3
+	blt a0, a1, label41
+	mv a2, a3
 label41:
+	mv a0, a2
 	ret
 .globl select_slt_fpr_fpr
 select_slt_fpr_fpr:
-	slt a0, a0, a1
 	fmv.s f10, f12
-	bne a0, zero, label50
+	blt a0, a1, label50
 	fmv.s f10, f13
 label50:
 	ret
 .globl select_sle_gpr_gpr
 select_sle_gpr_gpr:
-	slt a0, a1, a0
-	xori a1, a0, 1
-	mv a0, a2
-	bne a1, zero, label60
-	mv a0, a3
+	ble a0, a1, label60
+	mv a2, a3
 label60:
+	mv a0, a2
 	ret
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
-	slt a0, a1, a0
 	fmv.s f10, f12
-	xori a0, a0, 1
-	bne a0, zero, label70
+	ble a0, a1, label70
 	fmv.s f10, f13
 label70:
 	ret
 .globl select_sgt_gpr_gpr
 select_sgt_gpr_gpr:
-	slt a1, a1, a0
-	mv a0, a2
-	bne a1, zero, label79
-	mv a0, a3
+	bgt a0, a1, label79
+	mv a2, a3
 label79:
+	mv a0, a2
 	ret
 .globl select_sgt_fpr_fpr
 select_sgt_fpr_fpr:
-	slt a0, a1, a0
 	fmv.s f10, f12
-	bne a0, zero, label88
+	bgt a0, a1, label88
 	fmv.s f10, f13
 label88:
 	ret
 .globl select_sge_gpr_gpr
 select_sge_gpr_gpr:
-	slt a0, a0, a1
-	xori a1, a0, 1
-	mv a0, a2
-	bne a1, zero, label98
-	mv a0, a3
+	bge a0, a1, label98
+	mv a2, a3
 label98:
+	mv a0, a2
 	ret
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
-	slt a0, a0, a1
 	fmv.s f10, f12
-	xori a0, a0, 1
-	bne a0, zero, label108
+	bge a0, a1, label108
 	fmv.s f10, f13
 label108:
 	ret
 .globl select_eq_gpr_gpr
 select_eq_gpr_gpr:
-	xor a0, a0, a1
-	sltiu a1, a0, 1
-	mv a0, a2
-	bne a1, zero, label118
-	mv a0, a3
+	beq a0, a1, label118
+	mv a2, a3
 label118:
+	mv a0, a2
 	ret
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
-	xor a0, a0, a1
 	fmv.s f10, f12
-	sltiu a0, a0, 1
-	bne a0, zero, label128
+	beq a0, a1, label128
 	fmv.s f10, f13
 label128:
 	ret
 .globl select_ne_gpr_gpr
 select_ne_gpr_gpr:
-	xor a0, a0, a1
-	sltu a1, zero, a0
-	mv a0, a2
-	bne a1, zero, label138
-	mv a0, a3
+	bne a0, a1, label138
+	mv a2, a3
 label138:
+	mv a0, a2
 	ret
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
-	xor a0, a0, a1
 	fmv.s f10, f12
-	sltu a0, zero, a0
-	bne a0, zero, label148
+	bne a0, a1, label148
 	fmv.s f10, f13
 label148:
 	ret
@@ -160,20 +136,18 @@ label166:
 	ret
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
-	feq.s a0, f10, f11
-	xori a1, a0, 1
-	mv a0, a2
-	bne a1, zero, label176
+	feq.s a1, f10, f11
 	mv a0, a3
+	bne a1, zero, label176
+	mv a0, a2
 label176:
 	ret
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
 	feq.s a0, f10, f11
-	fmv.s f10, f12
-	xori a0, a0, 1
-	bne a0, zero, label186
 	fmv.s f10, f13
+	bne a0, zero, label186
+	fmv.s f10, f12
 label186:
 	ret
 .globl select_flt_gpr_gpr
@@ -242,18 +216,14 @@ label258:
 	ret
 .globl select_cross
 select_cross:
-	mv a3, a0
-	mv a0, a1
-	slt a1, a3, a1
-	li a3, 1
-	bne a1, zero, label271
-	li a3, 10
-label271:
-	slt a2, a0, a2
-	mv a0, a3
-	bne a2, zero, label269
-	mv a0, a1
+	slt a3, a0, a1
+	li a0, 1
+	bne a3, zero, label269
+	li a0, 10
 label269:
+	blt a1, a2, label271
+	mv a0, a3
+label271:
 	ret
 .globl select_cross_fpr
 select_cross_fpr:
@@ -273,17 +243,17 @@ label274:
 	ret
 .globl select_round
 select_round:
-	fmv.s f11, f10
 pcrel310:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel310)
-	flw f10, 0(a1)
-	flt.s a0, f11, f10
-	flw f10, 4(a1)
-	fadd.s f10, f11, f10
+	flw f11, 0(a1)
+	flt.s a0, f10, f11
+	flw f11, 4(a1)
+	fadd.s f11, f10, f11
 	bne a0, zero, label309
-	fmv.s f10, f11
+	fmv.s f11, f10
 label309:
+	fmv.s f10, f11
 	ret
 .globl select_bitset
 select_bitset:
@@ -311,4 +281,12 @@ select_zero:
 select_imm:
 	sltu a0, zero, a0
 	addiw a0, a0, 1
+	ret
+.globl select_one
+select_one:
+	li a3, 1
+	beq a0, a3, label348
+	mv a1, a2
+label348:
+	mv a0, a1
 	ret

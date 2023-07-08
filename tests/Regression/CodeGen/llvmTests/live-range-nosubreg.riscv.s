@@ -22,25 +22,25 @@ b:
 .globl main
 main:
 pcrel56:
-	auipc a2, %pcrel_hi(a)
-	li a3, 65535
+	auipc a0, %pcrel_hi(a)
 pcrel57:
 	auipc a4, %pcrel_hi(c)
-	lh a1, %pcrel_lo(pcrel56)(a2)
-	lhu a0, %pcrel_lo(pcrel56)(a2)
+	lh a2, %pcrel_lo(pcrel56)(a0)
+	lhu a1, %pcrel_lo(pcrel56)(a0)
 	lw a4, %pcrel_lo(pcrel57)(a4)
-	addiw a0, a0, 1
-	sltiu a4, a4, 1
-	and a0, a0, a3
-	bne a4, zero, label55
-	mv a0, a1
+	addiw a3, a1, 1
+	li a1, 65535
+	and a3, a3, a1
+	beq a4, zero, label55
+	mv a3, a2
 label55:
-	and a0, a0, a3
-	addiw a0, a0, -1
-	and a1, a0, a3
+	and a2, a3, a1
+	addiw a2, a2, -1
+	and a3, a2, a1
+	and a1, a2, a1
 pcrel58:
-	auipc a2, %pcrel_hi(a)
-	sh a1, %pcrel_lo(pcrel58)(a2)
+	auipc a0, %pcrel_hi(a)
+	sh a3, %pcrel_lo(pcrel58)(a0)
 pcrel59:
 	auipc a2, %pcrel_hi(d)
 	addi a0, a2, %pcrel_lo(pcrel59)

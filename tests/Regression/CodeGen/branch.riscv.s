@@ -192,8 +192,7 @@ normal_srem:
 	mulw a1, a1, a2
 	subw a1, a0, a1
 	addw a0, a1, a2
-	slti a3, a1, 0
-	bne a3, zero, label307
+	blt a1, zero, label307
 	mv a0, a1
 label307:
 	ret

@@ -3,14 +3,13 @@
 .text
 .globl sgt
 sgt:
-	li a1, 32767
-	slt a1, a1, a0
-	li a0, 7
-	bne a1, zero, label10
-	li a0, 5
-label10:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 32767
+	li a1, 7
+	bgt a0, a2, label11
+	li a1, 5
+label11:
+	li a0, 4294967295
+	and a0, a1, a0
 	ret
 .globl slt
 slt:

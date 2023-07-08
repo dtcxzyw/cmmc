@@ -3,13 +3,11 @@
 .text
 .globl function
 function:
-	mv a2, a0
+	mulw a2, a0, a0
 	li a3, 4294967295
-	xor a1, a0, a1
-	mulw a0, a0, a0
-	sltiu a1, a1, 1
-	and a0, a0, a3
-	bne a1, zero, label12
-	mv a0, a2
+	and a2, a2, a3
+	beq a0, a1, label12
+	mv a2, a0
 label12:
+	mv a0, a2
 	ret

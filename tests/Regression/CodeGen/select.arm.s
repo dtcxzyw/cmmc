@@ -261,3 +261,9 @@ select_imm:
 	movwne r0, #1
 	add r0, r0, #1
 	bx lr
+.globl select_one
+select_one:
+	cmp r0, #1
+	mov r0, r2
+	moveq r0, r1
+	bx lr

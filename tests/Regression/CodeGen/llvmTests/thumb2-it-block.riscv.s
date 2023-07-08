@@ -3,19 +3,17 @@
 .text
 .globl test
 test:
-	subw a2, zero, a0
-	li a3, 4294967295
-	slti a4, a0, 0
-	and a2, a2, a3
-	bne a4, zero, label24
-	mv a2, a0
-label24:
-	subw a0, zero, a1
-	slti a4, a1, 0
-	and a0, a0, a3
-	bne a4, zero, label22
-	mv a0, a1
+	subw a3, zero, a0
+	li a2, 4294967295
+	and a3, a3, a2
+	blt a0, zero, label22
+	mv a3, a0
 label22:
-	addw a0, a2, a0
-	and a0, a0, a3
+	subw a0, zero, a1
+	and a0, a0, a2
+	blt a1, zero, label24
+	mv a0, a1
+label24:
+	addw a0, a3, a0
+	and a0, a0, a2
 	ret

@@ -21,15 +21,13 @@ pcrel23:
 pcrel24:
 	auipc a1, %pcrel_hi(j)
 	lw a0, %pcrel_lo(pcrel23)(a0)
-	lw a1, %pcrel_lo(pcrel24)(a1)
-	xor a0, a0, a1
-	sltiu a1, a0, 1
-	li a0, 1
-	bne a1, zero, label22
-	li a0, 3
+	lw a2, %pcrel_lo(pcrel24)(a1)
+	li a1, 1
+	beq a0, a2, label22
+	li a1, 3
 label22:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a0, 4294967295
+	and a0, a1, a0
 pcrel25:
 	auipc a1, %pcrel_hi(k)
 	sw a0, %pcrel_lo(pcrel25)(a1)

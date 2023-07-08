@@ -363,6 +363,14 @@ InstInfo:
     Format: "mv $Rd:GPR[Def], $Rs1:GPR[Use]"
     Flag: [RegCopy]
 
+  Select_GPR_GPR:
+    Format: "select_gpr_gpr $Rd:GPR[Def], $Rs1:IRegOrImm[Use], $Rs2:IRegOrImm[Use], $Lhs:GPR[Use], $Rhs:GPR[Use], $CC:CC[Metadata]"
+    Flag: [LegalizePreRA]
+
+  Select_FPR_GPR:
+    Format: "select_fpr_gpr $Rd:FPR[Def], $Rs1:FPR[Use], $Rs2:FPR[Use], $Lhs:GPR[Use], $Rhs:GPR[Use], $CC:CC[Metadata]"
+    Flag: [LegalizePreRA]
+
 InstSelection:
   # Constants
   - Pattern:
@@ -1635,6 +1643,82 @@ InstSelection:
         $Template: SEXT_W
         Rd: $Dst
         Rs1: $Src
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond: $Cond
+        Lhs: $TrueV
+        Rhs: $FalseV
+        $Predicate: isOperandIReg($Dst) && isOperandIRegOrImm($TrueV) && isOperandIRegOrImm($FalseV) && selectCompare(ctx, $Cond, [$Lhs], [$Rhs], [$CmpOpcode])
+    Replace:
+      Select_GPR_GPR:
+        Rd: $Dst
+        Rs1: $TrueV
+        Rs2: $FalseV
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC: $CmpOpcode
+
+  - Pattern:
+      InstSelect:
+        Dst: $Dst
+        Cond: $Cond
+        Lhs: $TrueV
+        Rhs: $FalseV
+        $Predicate: isOperandFPR($Dst) && isOperandFPR($TrueV) && isOperandFPR($FalseV) && selectCompare(ctx, $Cond, [$Lhs], [$Rhs], [$CmpOpcode])
+    Replace:
+      Select_FPR_GPR:
+        Rd: $Dst
+        Rs1: $TrueV
+        Rs2: $FalseV
+        Lhs: $Lhs
+        Rhs: $Rhs
+        CC: $CmpOpcode
+
+  - Pattern:
+      Select_GPR_GPR:
+        Rd: $Dst
+        Rs1: $TrueV
+        Rs2: $FalseV
+        Lhs:
+          XORI:
+            Rd: $Cond
+            Rs1: $InvCond
+            Imm: $Imm
+        Rhs: $Rhs
+        CC: $CmpOpcode
+        $Predicate: ctx.hasOneUse($Cond) && isOperandIReg($InvCond) && isOne($Imm) && isZero($Rhs) && isCompareOp($CmpOpcode, CompareOp::ICmpNotEqual)
+    Replace:
+      Select_GPR_GPR:
+        Rd: $Dst
+        Rs1: $FalseV
+        Rs2: $TrueV
+        Lhs: $InvCond
+        Rhs: $Rhs
+        CC: $CmpOpcode
+
+  - Pattern:
+      Select_FPR_GPR:
+        Rd: $Dst
+        Rs1: $TrueV
+        Rs2: $FalseV
+        Lhs:
+          XORI:
+            Rd: $Cond
+            Rs1: $InvCond
+            Imm: $Imm
+        Rhs: $Rhs
+        CC: $CmpOpcode
+        $Predicate: ctx.hasOneUse($Cond) && isOperandIReg($InvCond) && isOne($Imm) && isZero($Rhs) && isCompareOp($CmpOpcode, CompareOp::ICmpNotEqual)
+    Replace:
+      Select_FPR_GPR:
+        Rd: $Dst
+        Rs1: $FalseV
+        Rs2: $TrueV
+        Lhs: $InvCond
+        Rhs: $Rhs
+        CC: $CmpOpcode
 
 ScheduleModel:
   sifive-u74:

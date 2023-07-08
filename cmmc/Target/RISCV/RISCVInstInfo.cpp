@@ -13,9 +13,12 @@
 */
 
 #include <RISCV/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
+#include <cmmc/IR/Instruction.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
+#include <cstdint>
 #include <ostream>
 
 CMMC_TARGET_NAMESPACE_BEGIN
@@ -74,11 +77,17 @@ static std::ostream& operator<<(std::ostream& out, const OperandDumper& operand)
     reportUnreachable(CMMC_LOCATION());
 }
 
+using mir::isOperandIRegOrImm;
 using mir::isOperandProb;
 using mir::isOperandReloc;
 
 static MIRInst emitGotoImpl(MIRBasicBlock* targetBlock) {
     return MIRInst{ J }.setOperand<0>(MIROperand::asReloc(targetBlock));
+}
+
+static bool isOperandCC(const MIROperand& op) {
+    return op.isImm() && op.type() == OperandType::Special &&
+        op.imm() <= static_cast<intmax_t>(CompareOp::ICmpUnsignedGreaterEqual);
 }
 
 CMMC_TARGET_NAMESPACE_END

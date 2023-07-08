@@ -445,7 +445,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             assert(mfunc.verify(std::cerr, ctx));
             while(genericPeepholeOpt(mfunc, ctx))
                 ;
-            //  dumpFunc(mfunc);
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
 
@@ -488,6 +488,7 @@ static void lowerToMachineModule(MIRModule& machineModule, Module& module, Analy
             postRASchedule(mfunc, ctx);
             while(genericPeepholeOpt(mfunc, ctx))
                 ;
+            // dumpFunc(mfunc);
             assert(mfunc.verify(std::cerr, ctx));
         }
         // Stage 5: ICF & Tail duplication

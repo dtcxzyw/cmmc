@@ -81,6 +81,15 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             return false;
         };
 
+        auto isPredecessor = [&](MIRBasicBlock* block, MIRBasicBlock* target) {
+            for(auto [pred, prob] : cfg.predecessors(block)) {
+                CMMC_UNUSED(prob);
+                if(pred == target)
+                    return true;
+            }
+            return false;
+        };
+
         bool modified = false;
         for(auto iter = func.blocks().begin(); iter != func.blocks().end();) {
             const auto nextIter = std::next(iter);
@@ -90,7 +99,7 @@ void tailDuplication(MIRFunction& func, CodeGenContext& ctx) {
             const auto& terminator = instructions.back();
             MIRBasicBlock* targetBlock;
             if(ctx.instInfo.matchUnconditionalBranch(terminator, targetBlock)) {
-                if(targetBlock != block &&
+                if(targetBlock != block && !isPredecessor(block, targetBlock) &&
                    !(nextIter != func.blocks().end() && nextIter->get() == targetBlock) &&  // should be handled by SimplifyCFG
                    !isReturn(targetBlock->instructions().back()) &&                         // unify return
                    targetBlock->instructions().size() <= heuristic.duplicationThreshold &&

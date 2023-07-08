@@ -118,3 +118,6 @@ int select_zero(int x, int y) {
 int select_imm(int x) {
     return x ? 2 : 1;
 }
+int select_one(int x, int y, int z) {
+    return x == 1 ? y : z;
+}

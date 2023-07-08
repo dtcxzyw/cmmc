@@ -49,21 +49,21 @@ mulw:
 	add r1, r1, #1
 	cmp r3, r1
 	ble label8
-	b label57
+	b label49
 label16:
 	mov r0, #1
 	b label8
-label57:
+label49:
 	mul r0, r1, r0
 	add r1, r1, #1
 	cmp r3, r1
 	ble label8
-	b label58
+	b label3
 label8:
 	bx lr
-label58:
+label3:
 	mul r0, r1, r0
 	add r1, r1, #1
 	cmp r3, r1
 	ble label8
-	b label58
+	b label3

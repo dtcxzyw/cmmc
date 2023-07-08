@@ -4,9 +4,10 @@
 .globl f1
 f1:
 	mulw a1, a0, a1
-	subw a1, a2, a1
-	sltiu a2, a0, 1
-	bne a2, zero, label10
-	mv a0, a1
+	subw a2, a2, a1
+	mv a1, a0
+	beq a0, zero, label10
+	mv a1, a2
 label10:
+	mv a0, a1
 	ret

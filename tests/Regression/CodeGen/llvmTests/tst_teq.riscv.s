@@ -3,10 +3,9 @@
 .text
 .globl f
 f:
-	andi a0, a0, 255
-	sltiu a1, a0, 1
+	andi a1, a0, 255
 	li a0, 20
-	bne a1, zero, label9
+	beq a1, zero, label9
 	li a0, 10
 label9:
 	li a1, 4294967295
@@ -14,10 +13,9 @@ label9:
 	ret
 .globl g
 g:
-	xori a0, a0, 255
-	sltiu a1, a0, 1
+	xori a1, a0, 255
 	li a0, 20
-	bne a1, zero, label18
+	beq a1, zero, label18
 	li a0, 10
 label18:
 	li a1, 4294967295

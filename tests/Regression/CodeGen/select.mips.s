@@ -342,3 +342,11 @@ select_imm:
 	addiu $v0, $t0, 1
 	jr $ra
 	nop
+.globl select_one
+select_one:
+	xori $t0, $a0, 1
+	sltiu $t0, $t0, 1
+	movn $a2, $a1, $t0
+	move $v0, $a2
+	jr $ra
+	nop

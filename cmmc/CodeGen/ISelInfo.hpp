@@ -61,7 +61,9 @@ struct InstLegalizeContext final {
     MIRInst& inst;
     std::list<MIRInst>& instructions;
     std::list<MIRInst>::iterator iter;
-    const CodeGenContext& ctx;
+    CodeGenContext& ctx;
+    std::optional<std::list<std::unique_ptr<MIRBasicBlock>>::iterator> blockIter;
+    MIRFunction& func;
 };
 
 class TargetISelInfo {

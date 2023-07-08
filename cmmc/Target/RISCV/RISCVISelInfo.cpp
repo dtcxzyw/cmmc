@@ -21,6 +21,7 @@
 #include <cmmc/Support/Bits.hpp>
 #include <cmmc/Support/Diagnostics.hpp>
 #include <cmmc/Target/RISCV/RISCV.hpp>
+#include <cmmc/Transforms/Hyperparameters.hpp>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
@@ -367,6 +368,36 @@ static bool selectOperandNonZeroHigh20Bits(const MIROperand& imm, MIROperand& hi
     return false;
 }
 
+static bool selectCompare(ISelContext& ctx, const MIROperand& cond, MIROperand& lhs, MIROperand& rhs, MIROperand& cc) {
+    auto asIReg = [&](const MIROperand& op) {
+        if(isOperandVReg(op))
+            return op;
+        if(isZero(op))
+            return getZero(op);
+        const auto dst = getVRegAs(ctx, op);
+        ctx.newInst(InstLoadImm).setOperand<0>(dst).setOperand<1>(op);
+        return dst;
+    };
+    if(ctx.hasOneUse(cond)) {
+        const auto def = ctx.lookupDef(cond);
+        if(def && def->opcode() == InstICmp) {
+            const auto& defLhs = def->getOperand(1);
+            const auto& defRhs = def->getOperand(2);
+            const auto& defCC = def->getOperand(3);
+
+            lhs = asIReg(defLhs);
+            rhs = asIReg(defRhs);
+            cc = defCC;
+            return true;
+        }
+    }
+
+    lhs = asIReg(cond);
+    rhs = getZero(cond);
+    cc = MIROperand::asImm(CompareOp::ICmpNotEqual, OperandType::Special);
+    return true;
+}
+
 CMMC_TARGET_NAMESPACE_END
 
 #include <RISCV/ISelInfoImpl.hpp>
@@ -610,6 +641,11 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             imm2reg(rhs);
             break;
         }
+        case InstSelect: {
+            auto& cond = inst.getOperand(1);
+            imm2reg(cond);
+            break;
+        }
         default:
             break;
     }
@@ -620,9 +656,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
 bool RISCVISelInfo::matchAndSelect(MIRInst& inst, ISelContext& ctx, bool allowComplexPattern) const {
     bool ret = legalizeInst(inst, ctx);
     if(allowComplexPattern) {
-        if(inst.opcode() == InstSelect) {
-            return expandSelect(inst, ctx);
-        }
+        // noop
     }
     return ret | matchAndSelectImpl(inst, ctx);
 }
@@ -670,8 +704,86 @@ void RISCVISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
             reportLegalizationFailure(inst, ctx.ctx, CMMC_LOCATION());
     }
 }
+
+static void emitImm(std::list<MIRInst>& instructions, std::list<MIRInst>::iterator iter, const MIROperand& dst,
+                    const MIROperand& imm) {
+    if(isZero(imm)) {
+        instructions.insert(iter, MIRInst{ MoveGPR }.setOperand<0>(dst).setOperand<1>(getZero(imm)));
+        return;
+    }
+    if(isOperandNonZeroImm12(imm)) {
+        instructions.insert(iter, MIRInst{ LoadImm12 }.setOperand<0>(dst).setOperand<1>(imm));
+        return;
+    }
+    MIROperand high20;
+    if(selectOperandNonZeroHigh20Bits(imm, high20)) {
+        instructions.insert(iter, MIRInst{ LUI }.setOperand<0>(dst).setOperand<1>(high20));
+        return;
+    }
+
+    if(isOperandNonZeroImm32(imm)) {
+        instructions.insert(iter, MIRInst{ LoadImm32 }.setOperand<0>(dst).setOperand<1>(imm));
+        return;
+    }
+
+    reportUnreachable(CMMC_LOCATION());
+}
+
 void RISCVISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
-    CMMC_UNUSED(ctx);
+    switch(ctx.inst.opcode()) {
+        case Select_GPR_GPR:
+        case Select_FPR_GPR: {
+            auto& dst = ctx.inst.getOperand(0);
+            auto& trueV = ctx.inst.getOperand(1);
+            auto& falseV = ctx.inst.getOperand(2);
+            auto& lhs = ctx.inst.getOperand(3);
+            auto& rhs = ctx.inst.getOperand(4);
+            auto& cc = ctx.inst.getOperand(5);
+            const auto moveCode = ctx.inst.opcode() == Select_GPR_GPR ? MoveGPR : FMV_S;
+
+            auto& curInstructions = ctx.instructions;
+            constexpr auto prob = defaultSelectProb;
+
+            auto prevBlock = (*ctx.blockIter)->get();
+            const auto insertPoint = std::next(*ctx.blockIter);
+            auto falseBlock =
+                ctx.func.blocks()
+                    .insert(insertPoint,
+                            std::make_unique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                            &ctx.func, prevBlock->getTripCount() * (1.0 - prob)))
+                    ->get();
+            auto nextBlock =
+                ctx.func.blocks()
+                    .insert(insertPoint,
+                            std::make_unique<MIRBasicBlock>(prevBlock->symbol().withID(static_cast<int32_t>(ctx.ctx.nextId())),
+                                                            &ctx.func, prevBlock->getTripCount()))
+                    ->get();
+
+            nextBlock->instructions().splice(nextBlock->instructions().end(), curInstructions, std::next(ctx.iter),
+                                             curInstructions.end());
+            if(trueV.isImm()) {
+                emitImm(prevBlock->instructions(), prevBlock->instructions().end(), dst, trueV);
+            } else {
+                prevBlock->instructions().push_back(MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(trueV));
+            }
+            prevBlock->instructions().push_back(MIRInst{ getICmpBranchOpcode(cc) }
+                                                    .setOperand<0>(lhs)
+                                                    .setOperand<1>(rhs)
+                                                    .setOperand<2>(MIROperand::asReloc(nextBlock))
+                                                    .setOperand<3>(MIROperand::asProb(prob)));
+            if(falseV.isImm()) {
+                emitImm(falseBlock->instructions(), falseBlock->instructions().end(), dst, falseV);
+            } else {
+                falseBlock->instructions().push_back(MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(falseV));
+            }
+            falseBlock->instructions().push_back(MIRInst{ J }.setOperand<0>(MIROperand::asReloc(nextBlock)));
+
+            *ctx.iter = MIRInst{ moveCode }.setOperand<0>(dst).setOperand<1>(dst);  // noop
+            break;
+        }
+        default:
+            reportLegalizationFailure(ctx.inst, ctx.ctx, CMMC_LOCATION());
+    }
 }
 void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, MIROperand& op, const StackObject& obj) const {
     auto& inst = ctx.inst;

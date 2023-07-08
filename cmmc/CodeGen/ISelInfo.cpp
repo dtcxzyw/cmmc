@@ -301,8 +301,9 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
                 auto& instInfo = ctx.instInfo.getInstInfo(inst);
                 for(uint32_t idx = 0; idx < instInfo.getOperandNum(); ++idx) {
                     if(auto& op = inst.getOperand(idx); isOperandStackObject(op)) {
-                        ctx.iselInfo.legalizeInstWithStackOperand(InstLegalizeContext{ inst, instructions, iter, ctx }, op,
-                                                                  func.stackObjects().at(op));
+                        ctx.iselInfo.legalizeInstWithStackOperand(
+                            InstLegalizeContext{ inst, instructions, iter, ctx, std::nullopt, func }, op,
+                            func.stackObjects().at(op));
                     }
                 }
                 iter = nextIter;
@@ -315,7 +316,7 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
         for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
             auto& inst = *iter;
             if(inst.opcode() < ISASpecificBegin) {
-                ctx.iselInfo.postLegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx });
+                ctx.iselInfo.postLegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx, std::nullopt, func });
             }
         }
     }
@@ -338,13 +339,14 @@ void postLegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
 }
 
 void preRALegalizeFunc(MIRFunction& func, CodeGenContext& ctx) {
-    for(auto& block : func.blocks()) {
+    for(auto blockIter = func.blocks().begin(); blockIter != func.blocks().end(); ++blockIter) {
+        auto& block = *blockIter;
         auto& instructions = block->instructions();
         for(auto iter = instructions.begin(); iter != instructions.end(); ++iter) {
             auto& inst = *iter;
             auto& instInfo = ctx.instInfo.getInstInfo(inst);
             if(requireFlag(instInfo.getInstFlag(), InstFlagLegalizePreRA)) {
-                ctx.iselInfo.preRALegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx });
+                ctx.iselInfo.preRALegalizeInst(InstLegalizeContext{ inst, instructions, iter, ctx, blockIter, func });
             }
         }
     }

@@ -88,204 +88,14 @@ merge:
 	addiw a0, a0, 1
 	sw a3, 0(a4)
 	beq s1, a0, label14
-	j label180
-label14:
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	j label206
-label180:
+label170:
 	xor a3, s4, a1
 	xor a4, s1, a2
 	sltu a3, zero, a3
 	sltu a4, zero, a4
 	and a3, a3, a4
 	beq a3, zero, label11
-	j label194
-label206:
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-label220:
-	sh2add a0, s3, s2
-	sh2add a1, s3, s0
-	lw a0, 0(a0)
-	addiw s3, s3, 1
-	sw a0, 0(a1)
-	beq s1, s3, label17
-	j label220
-label208:
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	j label180
-label11:
-	beq s4, a1, label13
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	j label208
-label13:
-	sh2add a3, a2, s0
-	sh2add a4, a0, s2
-	addiw a2, a2, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	xor a3, s4, a1
-	xor a4, s1, a2
-	sltu a3, zero, a3
-	sltu a4, zero, a4
-	and a3, a3, a4
-	beq a3, zero, label11
-	sh2add a3, a1, s0
-	sh2add a4, a2, s0
-	lw a3, 0(a3)
-	lw a4, 0(a4)
-	bge a3, a4, label10
-	sh2add a3, a1, s0
-	sh2add a4, a0, s2
-	addiw a1, a1, 1
-	lw a3, 0(a3)
-	addiw a0, a0, 1
-	sw a3, 0(a4)
-	beq s1, a0, label14
-	j label180
+	j label183
 label10:
 	sh2add a3, a2, s0
 	sh2add a4, a0, s2
@@ -348,14 +158,152 @@ label10:
 	addiw a0, a0, 1
 	sw a3, 0(a4)
 	beq s1, a0, label14
-	j label180
+	j label170
+label195:
+	sh2add a0, s3, s2
+	sh2add a1, s3, s0
+	lw a0, 0(a0)
+	addiw s3, s3, 1
+	sw a0, 0(a1)
+label14:
+	beq s1, s3, label17
+	j label195
 label194:
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	j label170
+label11:
+	beq s4, a1, label13
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
 	sh2add a3, a1, s0
 	sh2add a4, a2, s0
 	lw a3, 0(a3)
 	lw a4, 0(a4)
 	bge a3, a4, label10
-	j label208
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	j label194
+label13:
+	sh2add a3, a2, s0
+	sh2add a4, a0, s2
+	addiw a2, a2, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	xor a3, s4, a1
+	xor a4, s1, a2
+	sltu a3, zero, a3
+	sltu a4, zero, a4
+	and a3, a3, a4
+	beq a3, zero, label11
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	sh2add a3, a1, s0
+	sh2add a4, a0, s2
+	addiw a1, a1, 1
+	lw a3, 0(a3)
+	addiw a0, a0, 1
+	sw a3, 0(a4)
+	beq s1, a0, label14
+	j label170
+label183:
+	sh2add a3, a1, s0
+	sh2add a4, a2, s0
+	lw a3, 0(a3)
+	lw a4, 0(a4)
+	bge a3, a4, label10
+	j label194
 label17:
 	ld ra, 0(sp)
 	ld s4, 8(sp)
@@ -373,30 +321,30 @@ main:
 	sd ra, 800(sp)
 	jal read
 	mv a5, a0
-	ble a0, zero, label243
+	ble a0, zero, label223
 	mv a2, zero
-label241:
+label221:
 	jal read
 	sh2add a3, a2, t0
 	addiw a2, a2, 1
 	sw a0, 0(a3)
-	ble a5, a2, label243
-	j label241
-label243:
+	ble a5, a2, label223
+	j label221
+label223:
 	mv a0, t0
 	mv a2, zero
 	mv a3, a5
 	jal merge
-	ble a5, zero, label246
+	ble a5, zero, label226
 	mv a1, zero
-label244:
+label224:
 	sh2add a0, a1, t0
 	lw a0, 0(a0)
 	jal write
 	addiw a1, a1, 1
-	ble a5, a1, label246
-	j label244
-label246:
+	ble a5, a1, label226
+	j label224
+label226:
 	mv a0, zero
 	ld ra, 800(sp)
 	addi sp, sp, 808

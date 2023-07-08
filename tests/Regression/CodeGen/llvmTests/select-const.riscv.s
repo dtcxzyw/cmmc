@@ -3,7 +3,6 @@
 .text
 .globl select_const_fp
 select_const_fp:
-	sltu a0, zero, a0
 	lui a1, 263168
 	fmv.w.x f10, a1
 	lui a1, 264192
@@ -20,13 +19,12 @@ select_const_int_easy:
 	ret
 .globl select_const_int_harder
 select_const_int_harder:
-	sltu a1, zero, a0
-	li a0, 6
-	bne a1, zero, label24
-	li a0, 38
+	li a1, 6
+	bne a0, zero, label24
+	li a1, 38
 label24:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a0, 4294967295
+	and a0, a1, a0
 	ret
 .globl select_const_int_one_away
 select_const_int_one_away:
@@ -106,14 +104,13 @@ select_sge_zero_negone:
 	ret
 .globl select_sgt_negative_one_constant1_constant2
 select_sgt_negative_one_constant1_constant2:
-	li a1, -1
-	slt a1, a1, a0
-	li a0, 7
-	bne a1, zero, label118
-	li a0, -3
-label118:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, -1
+	li a1, 7
+	bgt a0, a2, label119
+	li a1, -3
+label119:
+	li a0, 4294967295
+	and a0, a1, a0
 	ret
 .globl select_sgt_zero_negone
 select_sgt_zero_negone:
@@ -132,13 +129,12 @@ select_sle_zero_negone:
 	ret
 .globl select_slt_zero_constant1_constant2
 select_slt_zero_constant1_constant2:
-	slti a1, a0, 0
-	li a0, 7
-	bne a1, zero, label148
-	li a0, -3
-label148:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a1, 7
+	blt a0, zero, label149
+	li a1, -3
+label149:
+	li a0, 4294967295
+	and a0, a1, a0
 	ret
 .globl select_slt_zero_negone
 select_slt_zero_negone:

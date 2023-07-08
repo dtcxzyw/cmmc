@@ -14,6 +14,7 @@
 
 #pragma once
 #include <RISCV/InstInfoDecl.hpp>
+#include <cmmc/CodeGen/InstInfo.hpp>
 #include <cmmc/CodeGen/MIR.hpp>
 
 CMMC_TARGET_NAMESPACE_BEGIN

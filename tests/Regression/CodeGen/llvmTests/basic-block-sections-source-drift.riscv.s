@@ -7,10 +7,10 @@ foo:
 	li a2, 4294967295
 	subw a1, zero, a1
 	andi a1, a1, 2
-	and a1, a1, a2
-	sltu a2, zero, a0
-	li a0, 1
-	bne a2, zero, label12
-	mv a0, a1
+	and a2, a1, a2
+	li a1, 1
+	bne a0, zero, label12
+	mv a1, a2
 label12:
+	mv a0, a1
 	ret

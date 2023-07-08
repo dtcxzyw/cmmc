@@ -30,8 +30,9 @@ label5:
 label21:
 	move $v0, $a0
 	li $t0, 1
+label6:
 	subu $t1, $a0, $t0
-	mult $a0, $t1
+	mult $v0, $t1
 	mflo $t2
 	addiu $t1, $t0, 1
 	divu $zero, $t2, $t1
@@ -45,16 +46,5 @@ label21:
 	nop
 label30:
 	move $t0, $t1
-	subu $t1, $a0, $t1
-	mult $v0, $t1
-	mflo $t2
-	addiu $t1, $t0, 1
-	divu $zero, $t2, $t1
-	mflo $v0
-	addiu $t0, $t0, 2
-	sltu $t0, $a1, $t0
-	xori $t0, $t0, 1
-	bne $t0, $zero, label30
-	nop
-	b label2
+	b label6
 	nop
