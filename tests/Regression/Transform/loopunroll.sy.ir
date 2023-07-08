@@ -338,7 +338,7 @@ func @multi_loop() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %87 = add i32 %85, i32 %86;
     i32 %88 = add i32 %85, i32 -1;
     i1 %89 = icmp sgt i32 %88, i32 0;
-    cbr i1 %89(prob = 0.97), ^for.body3, ^b;
+    cbr i1 %89(prob = 0.75), ^for.body3, ^b;
   ^b:
     call (i32) -> void @putint(i32 %87);
     ret i32 %87;

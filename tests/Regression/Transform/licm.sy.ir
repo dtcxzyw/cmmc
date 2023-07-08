@@ -39,7 +39,7 @@ func @licm1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless N
     i32 %26 = add i32 %23, i32 %25;
     i32 %27 = add i32 %22, i32 1;
     i1 %28 = icmp sgt i32 %x, i32 %27;
-    cbr i1 %28(prob = 0.97), ^for.body1, ^b;
+    cbr i1 %28(prob = 0.75), ^for.body1, ^b;
 }
 func @licm2(i32* %head, i32* %tail, i32 %i) -> i32 { NoRecurse } {
   ^entry:
@@ -93,7 +93,7 @@ func @licm3(i32 %x) -> void { NoRecurse } {
     store i32* %13 with i32 %3;
     i32 %14 = add i32 %12, i32 1;
     i1 %15 = icmp sgt i32 %x, i32 %14;
-    cbr i1 %15(prob = 0.97), ^for.body1, ^b;
+    cbr i1 %15(prob = 0.75), ^for.body1, ^b;
 }
 func @licm4(i32* %a, f32* %b, i32 %c, i32 %n) -> void { NoRecurse } {
   ^entry:
@@ -146,7 +146,7 @@ func @licm4(i32* %a, f32* %b, i32 %c, i32 %n) -> void { NoRecurse } {
     store i32* %27 with i32 %31;
     i32 %32 = add i32 %26, i32 1;
     i1 %33 = icmp sgt i32 %n, i32 %32;
-    cbr i1 %33(prob = 0.97), ^for.body1, ^b1;
+    cbr i1 %33(prob = 0.75), ^for.body1, ^b1;
 }
 func @licm5(i32 %i) -> i32 { NoRecurse } {
   ^entry:
@@ -170,12 +170,12 @@ func @licm5(i32 %i) -> i32 { NoRecurse } {
     i32 %11 = phi [^super.header, i32 %7] [^super.header1, i32 %12];
     i32 %12 = add i32 %11, i32 4;
     i1 %13 = icmp sgt i32 %5, i32 %12;
-    cbr i1 %13(prob = 0.89), ^super.header1, ^while.body;
+    cbr i1 %13(prob = 0.75), ^super.header1, ^while.body;
   ^while.body:
     i32 %14 = phi [^super.header1, i32 %11] [^while.body, i32 %15];
     i32 %15 = add i32 %14, i32 1;
     i1 %16 = icmp sgt i32 %5, i32 %15;
-    cbr i1 %16(prob = 0.97), ^while.body, ^postbody;
+    cbr i1 %16(prob = 0.75), ^while.body, ^postbody;
   ^postbody:
     store i32* %1 with i32 %15;
     ubr ^b;

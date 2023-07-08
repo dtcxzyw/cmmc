@@ -226,5 +226,5 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse } {
     i32 %206 = add i32 %204, i32 1;
     i1 %207 = icmp sgt i32 %149, i32 %206;
     i32 %208 = add i32 %204, i32 %205;
-    cbr i1 %207(prob = 0.97), ^for.body5, ^b;
+    cbr i1 %207(prob = 0.75), ^for.body5, ^b;
 }

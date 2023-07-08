@@ -226,6 +226,13 @@ public:
                 }
             }
 
+            // fix branch prob of the scalar block
+            {
+                auto scalarTerminator = loop.header->getTerminator()->as<BranchInst>();
+                const auto exitProb = 1.0 / static_cast<double>(heuristic.unrollBlockSize);
+                scalarTerminator->updateBranchProb(1.0 - exitProb);
+            }
+
             auto& blocks = func.blocks();
             const auto iter = std::find(blocks.cbegin(), blocks.cend(), loop.latch);
             for(auto block : insertedBlocks)
