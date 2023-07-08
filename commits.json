@@ -370,6 +370,11 @@
       "parent": "c486fc2beb3aa47793bb2b73d8de6496dac4e292",
       "time": "2023-07-05 19:31:36 +0800"
     },
+    "b7d36f972cbc2009e4f303e8fe31a7143211ee73": {
+      "message": "feat(codegen): optimize select insts for riscv",
+      "parent": "5491a561d6ee2f3d71472c605d57f9aa69c806a7",
+      "time": "2023-07-08 17:57:53 +0800"
+    },
     "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1": {
       "message": "feat(codegen): optimize clamp/smax/smin for arm",
       "parent": "113483ade1c34ea82f3db51a354e1176dad083e4",
@@ -476,5 +481,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "5491a561d6ee2f3d71472c605d57f9aa69c806a7"
+  "head": "b7d36f972cbc2009e4f303e8fe31a7143211ee73"
 }
