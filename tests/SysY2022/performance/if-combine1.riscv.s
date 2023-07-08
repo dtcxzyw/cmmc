@@ -11,49 +11,13 @@ main:
 	jal _sysy_starttime
 	jal getint
 	mv a1, zero
-	li a2, 100
-	bge zero, a2, label19
-	sh2add a2, zero, s0
-	addiw a1, zero, 1
-	sw zero, 0(a2)
+label2:
 	li a2, 100
 	bge a1, a2, label19
 	sh2add a2, a1, s0
 	addiw a1, a1, 1
 	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	j label328
+	j label2
 label19:
 	mv a3, zero
 	mv a1, zero
@@ -321,13 +285,6 @@ label12:
 	subw a3, a2, a3
 	ble a0, a1, label13
 	j label8
-label328:
-	sh2add a2, a1, s0
-	addiw a1, a1, 1
-	sw zero, 0(a2)
-	li a2, 100
-	bge a1, a2, label19
-	j label328
 label13:
 	mv a0, a3
 	jal putint

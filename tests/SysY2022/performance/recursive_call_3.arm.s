@@ -7,8 +7,8 @@
 func:
 	push { r4, r5, r6, lr }
 	vpush { s16, s17 }
-	cmp r1, #0
 	mov r4, r1
+	cmp r1, #0
 	vmov.f32 s16, s0
 	bge label4
 	mov r0, #0
@@ -63,12 +63,12 @@ main:
 	sub sp, sp, #4
 	bl _sysy_starttime
 	bl getint
+	movw r1, #8389
+	movt r1, #16256
+	vmov s1, r1
+	vmov.f32 s0, s1
 	mov r1, r0
-	movw r2, #8389
-	movt r2, #16256
-	vmov s0, r2
 	bl func
-	vmov s1, r2
 	vsub.f32 s0, s0, s1
 	vcmp.f32 s0, #0
 	vmrs APSR_nzcv, FPSCR

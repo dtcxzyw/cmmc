@@ -13,42 +13,13 @@ main:
 	bl _sysy_starttime
 	bl getint
 	mov r1, #0
+label2:
 	cmp r1, #100
 	bge label19
 	mov r2, #0
 	str r2, [r4, r1, lsl #2]
 	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	b label318
+	b label2
 label19:
 	mov r3, #0
 	mov r1, r3
@@ -315,13 +286,6 @@ label12:
 	cmp r0, r1
 	ble label13
 	b label8
-label318:
-	mov r2, #0
-	str r2, [r4, r1, lsl #2]
-	add r1, r1, #1
-	cmp r1, #100
-	bge label19
-	b label318
 label13:
 	mov r0, r3
 	bl putint

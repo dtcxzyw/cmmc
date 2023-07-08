@@ -24,9 +24,9 @@ main:
 label9:
 	li a0, 64
 	jal _sysy_stoptime
-pcrel204:
+pcrel208:
 	auipc a0, %pcrel_hi(a)
-	addi a1, a0, %pcrel_lo(pcrel204)
+	addi a1, a0, %pcrel_lo(pcrel208)
 	li a0, 10000
 	jal putarray
 	ld ra, 128(sp)
@@ -38,40 +38,38 @@ pcrel204:
 	ret
 label15:
 	auipc a0, %pcrel_hi(a)
-	mv a2, s2
+	mv a3, s2
 	mv a1, s1
 	addi a0, a0, %pcrel_lo(label15)
 label3:
-	li a3, 19971231
+	li a2, 19971231
 	li a5, 19981013
 	li t0, 1152921497
-	mulw a2, a2, a3
-	addw a4, a2, a5
-	mul a2, a4, t0
-	srai t1, a2, 60
-	srli a2, a2, 63
-	add t1, a2, t1
-	li a2, 1000000007
-	mulw t1, t1, a2
+	mulw a3, a3, a2
+	addw a4, a3, a5
+	mul a3, a4, t0
+	srai t1, a3, 60
+	srli a3, a3, 63
+	add t1, a3, t1
+	li a3, 1000000007
+	mulw t1, t1, a3
 	subw t1, a4, t1
-	addw a4, t1, a2
-	slti t2, t1, 0
-	bne t2, zero, label194
+	addw a4, t1, a3
+	blt t1, zero, label191
 	mv a4, t1
-label194:
-	mulw a3, a4, a3
-	addw a3, a3, a5
-	mul a5, a3, t0
+label191:
+	mulw a2, a4, a2
+	addw a2, a2, a5
+	mul a5, a2, t0
 	srai t0, a5, 60
 	srli a5, a5, 63
 	add a5, a5, t0
-	mulw a5, a5, a2
-	subw a3, a3, a5
-	addw a2, a3, a2
-	slti a5, a3, 0
-	bne a5, zero, label190
-	mv a2, a3
-label190:
+	mulw a5, a5, a3
+	subw a5, a2, a5
+	addw a2, a5, a3
+	blt a5, zero, label193
+	mv a2, a5
+label193:
 	andi a3, a2, 1
 	li a5, 1876499845
 	li t2, 1
@@ -178,26 +176,36 @@ label190:
 	subw t3, zero, t3
 	and t2, t0, t2
 	and t2, t2, t3
-	sltiu t3, a3, 1
 	subw t0, t2, t0
-	mv a3, t0
-	bne t3, zero, label196
-	mv a3, t2
-label196:
-	li t0, -2147483647
-	and a5, a5, t0
-	xori a5, a5, 1
-	sltiu a5, a5, 1
-	bne a5, zero, label192
-	mv a3, t2
-label192:
-	addw a3, t1, a3
+	beq a3, zero, label195
+	mv t0, t2
+	li a3, -2147483647
+	li t3, 1
+	and a3, a5, a3
+	mv a5, t2
+	beq a3, t3, label197
+	addw a3, t1, t2
 	sh2add a4, a4, a0
 	sw a3, 0(a4)
 	ble a1, zero, label9
+label206:
+	mv a3, a2
 	j label3
+label195:
+	li a3, -2147483647
+	li t3, 1
+	and a3, a5, a3
+	mv a5, t0
+	beq a3, t3, label197
+	mv a5, t2
+label197:
+	addw a3, t1, a5
+	sh2add a4, a4, a0
+	sw a3, 0(a4)
+	ble a1, zero, label9
+	j label206
 label8:
 	sh2add a3, a4, a0
 	sw t1, 0(a3)
 	ble a1, zero, label9
-	j label3
+	j label206

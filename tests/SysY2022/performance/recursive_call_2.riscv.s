@@ -69,10 +69,9 @@ main:
 	sd ra, 0(sp)
 	jal _sysy_starttime
 	jal getint
-pcrel74:
+pcrel70:
 	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a1, %pcrel_lo(pcrel74)
-	flw f11, 0(a1)
+	addi a1, a1, %pcrel_lo(pcrel70)
 	flw f10, 0(a1)
 	mv a1, a0
 	jal func

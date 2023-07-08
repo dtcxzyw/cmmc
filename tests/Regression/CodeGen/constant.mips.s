@@ -35,10 +35,9 @@ cse_fp:
 	lui $t0, %hi(__cmmc_fp_constant_pool)
 	addiu $t0, $t0, %lo(__cmmc_fp_constant_pool)
 	lwc1 $f4, 0($t0)
-	mul.s $f4, $f12, $f4
-	lwc1 $f6, 0($t0)
-	mul.s $f6, $f14, $f6
-	add.s $f0, $f4, $f6
+	mul.s $f6, $f12, $f4
+	mul.s $f4, $f14, $f4
+	add.s $f0, $f6, $f4
 	jr $ra
 	nop
 .globl imm_build_pattern1

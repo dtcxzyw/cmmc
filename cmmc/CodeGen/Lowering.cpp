@@ -114,8 +114,8 @@ MIROperand FloatingPointConstantPool::getFPConstant(class LoweringContext& ctx, 
     assert(val->getType()->as<FloatingPointType>()->getFixedSize() == sizeof(float));
     const auto fpVal = static_cast<float>(val->getValue());
     uint32_t rep;
-    memcpy(&rep, &fpVal, sizeof(float));               // TODO: endianness?
-    const auto it = mFloatingPointConstant.find(rep);  // TODO: for zero: copy from gpr
+    memcpy(&rep, &fpVal, sizeof(float));  // TODO: endianness?
+    const auto it = mFloatingPointConstant.find(rep);
     uint32_t offset;
     if(it != mFloatingPointConstant.cend()) {
         offset = it->second;
@@ -159,9 +159,14 @@ MIROperand LoweringContext::mapOperand(Value* operand) {
     const auto operandType = getOperandType(operand->getType(), mPtrType);
     if(operand->getType()->isFloatingPoint()) {
         const auto fpv = operand->as<ConstantFloatingPoint>();
+
+        auto& blockCache = mFPLoadedConstantCache[getCurrentBasicBlock()];
+        if(auto it = blockCache.find(fpv); it != blockCache.cend())
+            return it->second;
+
         if(auto fp = mCodeGenCtx.iselInfo.materializeFPConstant(fpv, *this); !fp.isUnused())
-            return fp;
-        return mFPConstantPool.getFPConstant(*this, fpv);
+            return blockCache[fpv] = fp;
+        return blockCache[fpv] = mFPConstantPool.getFPConstant(*this, fpv);
     }
     // FIXME: detect undef by caller
     if(operand->isUndefined()) {
