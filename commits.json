@@ -135,6 +135,11 @@
       "parent": "377826e4b87e1b09d4f811708c15375e9d09a15f",
       "time": "2023-07-01 21:34:20 +0800"
     },
+    "3eecd2e0648f0b3991eadac45a074fe3543a2b0f": {
+      "message": "fix(codegen): fix riscv calling convention",
+      "parent": "4ca44d60cea852b643949c0a3c123f214077684b",
+      "time": "2023-07-08 23:25:52 +0800"
+    },
     "44b16c8abb617d0b7e4d6e519c88f9b46f248b7b": {
       "message": "refactor(codegen): rename for style",
       "parent": "11b5dd1333286ce15e75aad7dda613c2d560d589",
@@ -169,6 +174,11 @@
       "message": "feat(transform): add more optimizations for trunc/bitwise ops",
       "parent": "56c9086846a535e80a65c5d5b88c5b2f7398c1bf",
       "time": "2023-07-01 23:10:49 +0800"
+    },
+    "4ca44d60cea852b643949c0a3c123f214077684b": {
+      "message": "feat(codegen): reuse fp constants",
+      "parent": "b7d36f972cbc2009e4f303e8fe31a7143211ee73",
+      "time": "2023-07-08 22:35:47 +0800"
     },
     "4cf8f417f2ab41a89ca4b3870a2da71d2a403b45": {
       "message": "feat(transform): add range-aware ucmp folding",
@@ -440,6 +450,11 @@
       "parent": "019d6e514365b22eb6a7f95d207d65272218b506",
       "time": "2023-07-07 20:48:26 +0800"
     },
+    "e064c2c26c0e93124b57a73b09a98f08bbfd077a": {
+      "message": "fix(codegen): fix arm calling convention",
+      "parent": "3eecd2e0648f0b3991eadac45a074fe3543a2b0f",
+      "time": "2023-07-08 23:42:59 +0800"
+    },
     "e08641d29e96a13eb5410e28160018520c77dfcb": {
       "message": "test: add random tests for range analysis",
       "parent": "06a1668979545faf5da61846bca1aa7c8bbe3728",
@@ -481,5 +496,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "b7d36f972cbc2009e4f303e8fe31a7143211ee73"
+  "head": "e064c2c26c0e93124b57a73b09a98f08bbfd077a"
 }
