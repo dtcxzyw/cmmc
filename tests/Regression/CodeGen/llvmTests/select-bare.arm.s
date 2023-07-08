@@ -13,6 +13,6 @@ bare_select:
 .globl bare_select_float
 bare_select_float:
 	cmp r0, #0
-	vmov.f32 s0, s2
-	vmovne.f32 s0, s1
+	vmovne.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr

@@ -7,26 +7,26 @@
 .globl select_icmp_eq
 select_icmp_eq:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmoveq.f32 s0, s2
+	vmoveq.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_ne
 select_icmp_ne:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovne.f32 s0, s2
+	vmovne.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_sge
 select_icmp_sge:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovge.f32 s0, s2
+	vmovge.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_sgt
 select_icmp_sgt:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovgt.f32 s0, s2
+	vmovgt.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_sgt_zero
 select_icmp_sgt_zero:
@@ -40,14 +40,14 @@ select_icmp_sgt_zero:
 .globl select_icmp_sle
 select_icmp_sle:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovle.f32 s0, s2
+	vmovle.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_slt
 select_icmp_slt:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovlt.f32 s0, s2
+	vmovlt.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_slt_one
 select_icmp_slt_one:
@@ -61,24 +61,24 @@ select_icmp_slt_one:
 .globl select_icmp_uge
 select_icmp_uge:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovhs.f32 s0, s2
+	vmovhs.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_ugt
 select_icmp_ugt:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovhi.f32 s0, s2
+	vmovhi.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_ule
 select_icmp_ule:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovls.f32 s0, s2
+	vmovls.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr
 .globl select_icmp_ult
 select_icmp_ult:
 	cmp r0, r1
-	vmov.f32 s0, s3
-	vmovlo.f32 s0, s2
+	vmovlo.f32 s1, s0
+	vmov.f32 s0, s1
 	bx lr

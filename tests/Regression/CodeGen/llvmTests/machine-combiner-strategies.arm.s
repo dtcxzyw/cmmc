@@ -8,8 +8,8 @@
 test_local_strategy:
 	push { r4, r5 }
 	sdiv r0, r0, r1
-	ldr r4, [sp, #24]
-	ldr r5, [sp, #28]
+	ldr r4, [sp, #8]
+	ldr r5, [sp, #12]
 	subs r0, r0, r2
 	bne label3
 	add r1, r3, r4

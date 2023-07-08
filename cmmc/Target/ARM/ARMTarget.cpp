@@ -34,7 +34,7 @@
 
 CMMC_MIR_NAMESPACE_BEGIN
 
-constexpr int32_t passingByRegisterThreshold = 16;
+constexpr int32_t passingByRegBase = 0x100000;
 
 class ARMDataLayout final : public DataLayout {
 public:
@@ -247,10 +247,23 @@ CMMC_TARGET("arm", ARMTarget);
 void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const {
     const auto& args = mfunc.args();
     int32_t curOffset = 0U;
-    std::vector<int32_t> offsets;
+    std::vector<int32_t> offsets;  // off >= passingByGPR: passing by reg[off - passingByRegBase]
     offsets.reserve(args.size());
 
+    int32_t gprCount = 0, fprCount = 0;
     for(auto& arg : args) {
+        if(isIntegerType(arg.type())) {
+            if(gprCount < 4) {
+                offsets.push_back(passingByRegBase + gprCount++);
+                continue;
+            }
+        } else {
+            if(fprCount < 16) {
+                offsets.push_back(passingByRegBase + fprCount++);
+                continue;
+            }
+        }
+
         auto size = static_cast<int32_t>(getOperandSize(arg.type()));
         auto alignment = size;
 
@@ -269,11 +282,11 @@ void ARMFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const 
         const auto size = getOperandSize(arg.type());
         const auto alignment = size;
 
-        if(offset < passingByRegisterThreshold) {
+        if(offset >= passingByRegBase) {
             // $r0-$r3 $s0-$s3
-            MIROperand src =
-                MIROperand::asISAReg((ARM::isOperandFPR(arg) ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
-                                     ARM::isOperandFPR(arg) ? OperandType::Float32 : OperandType::Int32);
+            MIROperand src = MIROperand::asISAReg((ARM::isOperandFPR(arg) ? ARM::S0 : ARM::R0) +
+                                                      static_cast<uint32_t>(offset - passingByRegBase),
+                                                  ARM::isOperandFPR(arg) ? OperandType::Float32 : OperandType::Int32);
             ctx.emitCopy(arg, src);
         } else {
             auto obj = mfunc.addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::Argument);
@@ -294,10 +307,23 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
     const auto& dataLayout = ctx.getDataLayout();
 
     int32_t curOffset = 0U;
-    std::vector<int32_t> offsets;
+    std::vector<int32_t> offsets;  // off >= passingByGPR: passing by reg[off - passingByRegBase]
     offsets.reserve(inst->operands().size() - 1);
 
+    int32_t gprCount = 0, fprCount = 0;
     for(auto arg : inst->arguments()) {
+        if(!arg->getType()->isFloatingPoint()) {
+            if(gprCount < 4) {
+                offsets.push_back(passingByRegBase + gprCount++);
+                continue;
+            }
+        } else {
+            if(fprCount < 16) {
+                offsets.push_back(passingByRegBase + fprCount++);
+                continue;
+            }
+        }
+
         auto size = static_cast<int32_t>(arg->getType()->getSize(dataLayout));
         auto alignment = static_cast<int32_t>(arg->getType()->getAlignment(dataLayout));
 
@@ -319,7 +345,7 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
-        if(offset >= passingByRegisterThreshold) {
+        if(offset < passingByRegBase) {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
             if(!isOperandVRegOrISAReg(val)) {
@@ -335,11 +361,11 @@ void ARMFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) const 
         const auto arg = inst->getOperand(idx);
         auto val = ctx.mapOperand(arg);
 
-        if(offset < passingByRegisterThreshold) {
+        if(offset >= passingByRegBase) {
             // $r0-$r3 $s0-$s3
-            MIROperand dst =
-                MIROperand::asISAReg((arg->getType()->isFloatingPoint() ? ARM::S0 : ARM::R0) + static_cast<uint32_t>(offset) / 4,
-                                     arg->getType()->isFloatingPoint() ? OperandType::Float32 : OperandType::Int32);
+            MIROperand dst = MIROperand::asISAReg((arg->getType()->isFloatingPoint() ? ARM::S0 : ARM::R0) +
+                                                      static_cast<uint32_t>(offset - passingByRegBase),
+                                                  arg->getType()->isFloatingPoint() ? OperandType::Float32 : OperandType::Int32);
             ctx.emitCopy(dst, val);
         }
     }

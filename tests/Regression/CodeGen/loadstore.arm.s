@@ -33,7 +33,7 @@ store:
 .globl store_float
 store_float:
 	add r0, r0, r1, lsl #2
-	vstr s2, [r0, #0]
+	vstr s0, [r0, #0]
 	bx lr
 .globl store_float_constant
 store_float_constant:
