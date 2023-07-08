@@ -195,6 +195,9 @@
       "sysy_time": 0.009999,
       "task-clock:u": 8.88
     },
+    "b7d36f972cbc2009e4f303e8fe31a7143211ee73": {
+      "sysy_time": 0.010223
+    },
     "ba3bf9379f25db9a5b510a6b3522bbf8ea4b7cb1": {
       "branch-load-misses:u": 2616,
       "branch-loads:u": 393531,
