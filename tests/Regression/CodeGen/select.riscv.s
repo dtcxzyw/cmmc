@@ -22,16 +22,14 @@ label16:
 	ret
 .globl select_gpr_fpr_fpr
 select_gpr_fpr_fpr:
-	fmv.s f10, f11
 	bne a0, zero, label24
-	fmv.s f10, f12
+	fmv.s f10, f11
 label24:
 	ret
 .globl select_not_gpr_fpr_fpr
 select_not_gpr_fpr_fpr:
-	fmv.s f10, f11
 	beq a0, zero, label32
-	fmv.s f10, f12
+	fmv.s f10, f11
 label32:
 	ret
 .globl select_slt_gpr_gpr
@@ -43,9 +41,8 @@ label41:
 	ret
 .globl select_slt_fpr_fpr
 select_slt_fpr_fpr:
-	fmv.s f10, f12
 	blt a0, a1, label50
-	fmv.s f10, f13
+	fmv.s f10, f11
 label50:
 	ret
 .globl select_sle_gpr_gpr
@@ -57,9 +54,8 @@ label60:
 	ret
 .globl select_sle_fpr_fpr
 select_sle_fpr_fpr:
-	fmv.s f10, f12
 	ble a0, a1, label70
-	fmv.s f10, f13
+	fmv.s f10, f11
 label70:
 	ret
 .globl select_sgt_gpr_gpr
@@ -71,9 +67,8 @@ label79:
 	ret
 .globl select_sgt_fpr_fpr
 select_sgt_fpr_fpr:
-	fmv.s f10, f12
 	bgt a0, a1, label88
-	fmv.s f10, f13
+	fmv.s f10, f11
 label88:
 	ret
 .globl select_sge_gpr_gpr
@@ -85,9 +80,8 @@ label98:
 	ret
 .globl select_sge_fpr_fpr
 select_sge_fpr_fpr:
-	fmv.s f10, f12
 	bge a0, a1, label108
-	fmv.s f10, f13
+	fmv.s f10, f11
 label108:
 	ret
 .globl select_eq_gpr_gpr
@@ -99,9 +93,8 @@ label118:
 	ret
 .globl select_eq_fpr_fpr
 select_eq_fpr_fpr:
-	fmv.s f10, f12
 	beq a0, a1, label128
-	fmv.s f10, f13
+	fmv.s f10, f11
 label128:
 	ret
 .globl select_ne_gpr_gpr
@@ -113,17 +106,15 @@ label138:
 	ret
 .globl select_ne_fpr_fpr
 select_ne_fpr_fpr:
-	fmv.s f10, f12
 	bne a0, a1, label148
-	fmv.s f10, f13
+	fmv.s f10, f11
 label148:
 	ret
 .globl select_feq_gpr_gpr
 select_feq_gpr_gpr:
-	feq.s a1, f10, f11
-	mv a0, a2
-	bne a1, zero, label157
-	mv a0, a3
+	feq.s a2, f10, f11
+	bne a2, zero, label157
+	mv a0, a1
 label157:
 	ret
 .globl select_feq_fpr_fpr
@@ -136,11 +127,11 @@ label166:
 	ret
 .globl select_fne_gpr_gpr
 select_fne_gpr_gpr:
-	feq.s a1, f10, f11
-	mv a0, a3
-	bne a1, zero, label176
-	mv a0, a2
+	feq.s a2, f10, f11
+	bne a2, zero, label176
+	mv a1, a0
 label176:
+	mv a0, a1
 	ret
 .globl select_fne_fpr_fpr
 select_fne_fpr_fpr:
@@ -152,10 +143,9 @@ label186:
 	ret
 .globl select_flt_gpr_gpr
 select_flt_gpr_gpr:
-	flt.s a1, f10, f11
-	mv a0, a2
-	bne a1, zero, label195
-	mv a0, a3
+	flt.s a2, f10, f11
+	bne a2, zero, label195
+	mv a0, a1
 label195:
 	ret
 .globl select_flt_fpr_fpr
@@ -168,10 +158,9 @@ label204:
 	ret
 .globl select_fle_gpr_gpr
 select_fle_gpr_gpr:
-	fle.s a1, f10, f11
-	mv a0, a2
-	bne a1, zero, label213
-	mv a0, a3
+	fle.s a2, f10, f11
+	bne a2, zero, label213
+	mv a0, a1
 label213:
 	ret
 .globl select_fle_fpr_fpr
@@ -184,10 +173,9 @@ label222:
 	ret
 .globl select_fgt_gpr_gpr
 select_fgt_gpr_gpr:
-	flt.s a1, f11, f10
-	mv a0, a2
-	bne a1, zero, label231
-	mv a0, a3
+	flt.s a2, f11, f10
+	bne a2, zero, label231
+	mv a0, a1
 label231:
 	ret
 .globl select_fgt_fpr_fpr
@@ -200,10 +188,9 @@ label240:
 	ret
 .globl select_fge_gpr_gpr
 select_fge_gpr_gpr:
-	fle.s a1, f11, f10
-	mv a0, a2
-	bne a1, zero, label249
-	mv a0, a3
+	fle.s a2, f11, f10
+	bne a2, zero, label249
+	mv a0, a1
 label249:
 	ret
 .globl select_fge_fpr_fpr

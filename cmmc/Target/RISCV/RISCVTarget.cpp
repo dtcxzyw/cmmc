@@ -53,7 +53,7 @@ write:
     ret
 )";
 
-constexpr int32_t passingByRegisterThreshold = 64;
+constexpr int32_t passingByRegBase = 0x100000;
 
 class RISCVDataLayout final : public DataLayout {
 public:
@@ -301,10 +301,23 @@ CMMC_TARGET("riscv", RISCVTarget);
 void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) const {
     const auto& args = mfunc.args();
     int32_t curOffset = 0U;
-    std::vector<int32_t> offsets;
+    std::vector<int32_t> offsets;  // off >= passingByGPR: passing by reg[off - passingByRegBase]
     offsets.reserve(args.size());
 
+    int32_t gprCount = 0, fprCount = 0;
     for(auto& arg : args) {
+        if(isIntegerType(arg.type())) {
+            if(gprCount < 8) {
+                offsets.push_back(passingByRegBase + gprCount++);
+                continue;
+            }
+        } else {
+            if(fprCount < 8) {
+                offsets.push_back(passingByRegBase + fprCount++);
+                continue;
+            }
+        }
+
         auto size = static_cast<int32_t>(getOperandSize(arg.type()));
         auto alignment = size;
 
@@ -323,13 +336,13 @@ void RISCVFrameInfo::emitPrologue(MIRFunction& mfunc, LoweringContext& ctx) cons
         const auto size = getOperandSize(arg.type());
         const auto alignment = size;
 
-        if(offset < passingByRegisterThreshold) {
+        if(offset >= passingByRegBase) {
             // $a0-$a7 $fa0-$fa7
             MIROperand src;
             if(isFPType(arg.type())) {
-                src = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset) / 8U, OperandType::Float32);
+                src = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset - passingByRegBase), OperandType::Float32);
             } else {
-                src = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset) / 8U, OperandType::Int64);
+                src = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset - passingByRegBase), OperandType::Int64);
             }
             ctx.emitCopy(arg, src);
         } else {
@@ -351,10 +364,23 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
     const auto& dataLayout = ctx.getDataLayout();
 
     int32_t curOffset = 0U;
-    std::vector<int32_t> offsets;
+    std::vector<int32_t> offsets;  // off >= passingByGPR: passing by reg[off - passingByRegBase]
     offsets.reserve(inst->operands().size() - 1);
 
+    int32_t gprCount = 0, fprCount = 0;
     for(auto arg : inst->arguments()) {
+        if(!arg->getType()->isFloatingPoint()) {
+            if(gprCount < 8) {
+                offsets.push_back(passingByRegBase + gprCount++);
+                continue;
+            }
+        } else {
+            if(fprCount < 8) {
+                offsets.push_back(passingByRegBase + fprCount++);
+                continue;
+            }
+        }
+
         auto size = static_cast<int32_t>(arg->getType()->getSize(dataLayout));
         auto alignment = static_cast<int32_t>(arg->getType()->getAlignment(dataLayout));
 
@@ -375,7 +401,7 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
         const auto size = static_cast<uint32_t>(arg->getType()->getSize(dataLayout));
         const auto alignment = size;
 
-        if(offset >= passingByRegisterThreshold) {
+        if(offset < passingByRegBase) {
             const auto obj =
                 mfunc->addStackObject(ctx.getCodeGenContext(), size, alignment, offset, StackObjectUsage::CalleeArgument);
             if(!isOperandVRegOrISAReg(val)) {
@@ -391,12 +417,12 @@ void RISCVFrameInfo::emitCall(FunctionCallInst* inst, LoweringContext& ctx) cons
         const auto arg = inst->getOperand(idx);
         auto val = ctx.mapOperand(arg);
 
-        if(offset < passingByRegisterThreshold) {
+        if(offset >= passingByRegBase) {
             MIROperand dst;
             if(isFPType(val.type())) {
-                dst = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset) / 8U, OperandType::Float32);
+                dst = MIROperand::asISAReg(RISCV::F10 + static_cast<uint32_t>(offset - passingByRegBase), OperandType::Float32);
             } else {
-                dst = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset) / 8U, OperandType::Int64);
+                dst = MIROperand::asISAReg(RISCV::X10 + static_cast<uint32_t>(offset - passingByRegBase), OperandType::Int64);
             }
             ctx.emitCopy(dst, val);
         }

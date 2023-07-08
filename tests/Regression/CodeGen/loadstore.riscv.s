@@ -33,7 +33,7 @@ store:
 .globl store_float
 store_float:
 	sh2add a0, a1, a0
-	fsw f12, 0(a0)
+	fsw f10, 0(a0)
 	ret
 .globl store_float_constant
 store_float_constant:

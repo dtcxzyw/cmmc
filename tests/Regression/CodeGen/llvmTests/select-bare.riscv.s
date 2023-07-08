@@ -10,8 +10,7 @@ label8:
 	ret
 .globl bare_select_float
 bare_select_float:
-	fmv.s f10, f11
 	bne a0, zero, label16
-	fmv.s f10, f12
+	fmv.s f10, f11
 label16:
 	ret

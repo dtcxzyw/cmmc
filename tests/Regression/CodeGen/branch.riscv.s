@@ -141,44 +141,44 @@ label213:
 	ret
 .globl bfeq
 bfeq:
-	feq.s a0, f10, f11
-	beq a0, zero, label223
-	sw zero, 0(a2)
+	feq.s a1, f10, f11
+	beq a1, zero, label223
+	sw zero, 0(a0)
 label223:
 	ret
 .globl bfne
 bfne:
-	feq.s a0, f10, f11
-	bne a0, zero, label235
-	sw zero, 0(a2)
+	feq.s a1, f10, f11
+	bne a1, zero, label235
+	sw zero, 0(a0)
 label235:
 	ret
 .globl bflt
 bflt:
-	flt.s a0, f10, f11
-	beq a0, zero, label245
-	sw zero, 0(a2)
+	flt.s a1, f10, f11
+	beq a1, zero, label245
+	sw zero, 0(a0)
 label245:
 	ret
 .globl bfle
 bfle:
-	fle.s a0, f10, f11
-	beq a0, zero, label257
-	sw zero, 0(a2)
+	fle.s a1, f10, f11
+	beq a1, zero, label257
+	sw zero, 0(a0)
 label257:
 	ret
 .globl bfge
 bfge:
-	fle.s a0, f11, f10
-	beq a0, zero, label269
-	sw zero, 0(a2)
+	fle.s a1, f11, f10
+	beq a1, zero, label269
+	sw zero, 0(a0)
 label269:
 	ret
 .globl bfgt
 bfgt:
-	flt.s a0, f11, f10
-	beq a0, zero, label281
-	sw zero, 0(a2)
+	flt.s a1, f11, f10
+	beq a1, zero, label281
+	sw zero, 0(a0)
 label281:
 	ret
 .globl normal_srem

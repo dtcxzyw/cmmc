@@ -40,6 +40,8 @@ class ImmutableScalarRefArg2Value final : public TransformPass<Module> {
             return false;
         if(!arg->getType()->as<PointerType>()->getPointee()->isPrimitive())
             return false;
+        if(!arg->isUsed())
+            return false;
         for(auto user : arg->users()) {
             if(user->getInstID() == InstructionID::Load)
                 continue;
