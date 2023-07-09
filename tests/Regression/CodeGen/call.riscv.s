@@ -125,33 +125,17 @@ pcrel123:
 	ret
 .globl callee13_cmmc_noinline
 callee13_cmmc_noinline:
-	addw a0, a0, a1
-pcrel162:
+	li a0, 1
+pcrel130:
 	auipc a1, %pcrel_hi(touch)
-	addw a0, a2, a0
-	addw a0, a3, a0
-	addw a0, a4, a0
-	addw a0, a5, a0
-	addw a0, a6, a0
-	addw a0, a7, a0
-	fcvt.s.w f0, a0
-	fadd.s f10, f0, f10
-	fadd.s f10, f10, f11
-	fadd.s f10, f10, f12
-	fadd.s f10, f10, f13
-	fadd.s f10, f10, f14
-	fadd.s f10, f10, f15
-	fadd.s f10, f10, f16
-	fadd.s f10, f10, f17
-	fcvt.w.s a0, f10, rtz
-	sw a0, %pcrel_lo(pcrel162)(a1)
+	sw a0, %pcrel_lo(pcrel130)(a1)
 	ret
 .globl callee14_cmmc_noinline
 callee14_cmmc_noinline:
 	ld t0, 0(sp)
 	addw a0, a0, a1
 	flw f0, 8(sp)
-pcrel208:
+pcrel176:
 	auipc a1, %pcrel_hi(touch)
 	addw a0, a2, a0
 	addw a0, a3, a0
@@ -172,7 +156,7 @@ pcrel208:
 	fadd.s f10, f10, f11
 	fadd.s f10, f10, f0
 	fcvt.w.s a0, f10, rtz
-	sw a0, %pcrel_lo(pcrel208)(a1)
+	sw a0, %pcrel_lo(pcrel176)(a1)
 	ret
 .globl callee15_cmmc_noinline
 callee15_cmmc_noinline:
@@ -226,22 +210,6 @@ calling_convention:
 	li a1, 1
 	li a0, 1
 	jal callee12_cmmc_noinline
-	li a0, 1
-	li a1, 1
-	li a2, 1
-	li a3, 1
-	li a4, 1
-	li a5, 1
-	li a6, 1
-	li a7, 1
-	fmv.s f10, f8
-	fmv.s f11, f8
-	fmv.s f12, f8
-	fmv.s f13, f8
-	fmv.s f14, f8
-	fmv.s f15, f8
-	fmv.s f16, f8
-	fmv.s f17, f8
 	jal callee13_cmmc_noinline
 	li a7, 1
 	sd a7, 0(sp)
