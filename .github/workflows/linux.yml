@@ -102,7 +102,7 @@ jobs:
       - name: Push perf data to gh-pages
         if: always()
         run: |
-          python3 tests/SysY2022/perf/collect.py bin/SysY2022/performance pages
+          python3 tests/SysY2022/perf/collect.py bin/SysY2022/performance pages arm
           cd pages
           git config user.name github-actions
           git config user.email github-actions@github.com
