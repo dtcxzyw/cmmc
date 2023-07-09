@@ -230,6 +230,11 @@
       "parent": "78a95e6f941947103f9f1d6b8d70881e9f9c384a",
       "time": "2023-07-07 20:59:59 +0800"
     },
+    "604f16fe40efdfa37823e071c4f24f743b4e02bc": {
+      "message": "ci: do multiple perf tests",
+      "parent": "3628affbb0d62df57fec2147a4efcb473f1db33e",
+      "time": "2023-07-09 21:49:55 +0800"
+    },
     "682c6b62948d7cc72a528aa33d7a04cdf1f53502": {
       "message": "fix(transform): fix re-unrolling",
       "parent": "3b456200e42e06bf7b9c01045913353124de379f",
@@ -501,5 +506,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "3628affbb0d62df57fec2147a4efcb473f1db33e"
+  "head": "604f16fe40efdfa37823e071c4f24f743b4e02bc"
 }
