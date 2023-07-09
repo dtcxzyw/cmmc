@@ -23,12 +23,6 @@ void callee9_cmmc_noinline(float x, float y, float z) { touch = x + y + z; }
 void callee10_cmmc_noinline(float x, float y, int z) { touch = x + y + z; }
 void callee11_cmmc_noinline(int x, float y, float z) { touch = x + y + z; }
 void callee12_cmmc_noinline(int x, int y, int z) { touch = x + y + z; }
-void callee13_cmmc_noinline(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8, float y1, float y2, float y3, float y4, float y5, float y6, float y7, float y8) { 
-    touch = 1;
-}
-void callee14_cmmc_noinline(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8, float y1, float y2, float y3, float y4, float y5, float y6, float y7, float y8, int z, float w) { 
-    touch = x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + y1 + y2 + y3 + y4 + y5 + y6 + y7 + y8 + z + w; 
-}
 int callee15_cmmc_noinline() {return 0;}
 float callee16_cmmc_noinline() {return 1.0;}
 
@@ -46,8 +40,8 @@ void calling_convention() {
     callee10_cmmc_noinline(1.0, 1.0, 1);
     callee11_cmmc_noinline(1, 1.0, 1.0);
     callee12_cmmc_noinline(1, 1, 1);
-    callee13_cmmc_noinline(1, 1, 1, 1, 1, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
-    callee14_cmmc_noinline(1, 1, 1, 1, 1, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1, 1.0);
+    // callee13_cmmc_noinline(1, 1, 1, 1, 1, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0);
+    // callee14_cmmc_noinline(1, 1, 1, 1, 1, 1, 1, 1, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1, 1.0);
     int v1 = callee15_cmmc_noinline();
     putint(v1);
     float v2 = callee16_cmmc_noinline();

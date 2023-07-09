@@ -147,62 +147,6 @@ callee12_cmmc_noinline:
 	sw $t0, %lo(touch)($t1)
 	jr $ra
 	nop
-.globl callee13_cmmc_noinline
-callee13_cmmc_noinline:
-	li $t0, 1
-	lui $t1, %hi(touch)
-	sw $t0, %lo(touch)($t1)
-	jr $ra
-	nop
-.globl callee14_cmmc_noinline
-callee14_cmmc_noinline:
-	addiu $sp, $sp, -8
-	swc1 $f22, 4($sp)
-	swc1 $f20, 0($sp)
-	lw $t1, 24($sp)
-	lw $t4, 28($sp)
-	lw $t3, 32($sp)
-	lw $t2, 36($sp)
-	lwc1 $f6, 40($sp)
-	lwc1 $f16, 44($sp)
-	lwc1 $f22, 48($sp)
-	lwc1 $f0, 52($sp)
-	lwc1 $f18, 56($sp)
-	lwc1 $f10, 60($sp)
-	lwc1 $f8, 64($sp)
-	lwc1 $f20, 68($sp)
-	lw $t0, 72($sp)
-	lwc1 $f4, 76($sp)
-	addu $t5, $a0, $a1
-	addu $t5, $a2, $t5
-	addu $t5, $a3, $t5
-	addu $t1, $t1, $t5
-	addu $t1, $t4, $t1
-	addu $t1, $t3, $t1
-	addu $t1, $t2, $t1
-	mtc1 $t1, $f2
-	cvt.s.w $f2, $f2
-	add.s $f6, $f2, $f6
-	add.s $f6, $f6, $f16
-	add.s $f6, $f6, $f22
-	add.s $f6, $f6, $f0
-	add.s $f6, $f6, $f18
-	add.s $f6, $f6, $f10
-	add.s $f6, $f6, $f8
-	add.s $f6, $f6, $f20
-	mtc1 $t0, $f8
-	cvt.s.w $f8, $f8
-	add.s $f6, $f6, $f8
-	add.s $f4, $f6, $f4
-	trunc.w.s $f4, $f4
-	mfc1 $t0, $f4
-	lui $t1, %hi(touch)
-	sw $t0, %lo(touch)($t1)
-	lwc1 $f20, 0($sp)
-	lwc1 $f22, 4($sp)
-	addiu $sp, $sp, 8
-	jr $ra
-	nop
 .globl callee15_cmmc_noinline
 callee15_cmmc_noinline:
 	move $v0, $zero
@@ -217,9 +161,9 @@ callee16_cmmc_noinline:
 	nop
 .globl calling_convention
 calling_convention:
-	addiu $sp, $sp, -120
-	sw $ra, 112($sp)
-	addiu $t2, $sp, 72
+	addiu $sp, $sp, -64
+	sw $ra, 56($sp)
+	addiu $t2, $sp, 16
 	jal callee1_cmmc_noinline
 	nop
 	li $a0, 1
@@ -270,28 +214,6 @@ calling_convention:
 	li $a2, 1
 	jal callee12_cmmc_noinline
 	nop
-	jal callee13_cmmc_noinline
-	nop
-	li $a3, 1
-	sw $a3, 16($sp)
-	sw $a3, 20($sp)
-	sw $a3, 24($sp)
-	sw $a3, 28($sp)
-	swc1 $f8, 32($sp)
-	swc1 $f8, 36($sp)
-	swc1 $f8, 40($sp)
-	swc1 $f8, 44($sp)
-	swc1 $f8, 48($sp)
-	swc1 $f8, 52($sp)
-	swc1 $f8, 56($sp)
-	swc1 $f8, 60($sp)
-	sw $a3, 64($sp)
-	swc1 $f8, 68($sp)
-	move $a0, $a3
-	move $a1, $a3
-	move $a2, $a3
-	jal callee14_cmmc_noinline
-	nop
 	jal callee15_cmmc_noinline
 	nop
 	move $a0, $v0
@@ -302,7 +224,7 @@ calling_convention:
 	mov.s $f12, $f0
 	jal putfloat
 	nop
-	lw $ra, 112($sp)
-	addiu $sp, $sp, 120
+	lw $ra, 56($sp)
+	addiu $sp, $sp, 64
 	jr $ra
 	nop

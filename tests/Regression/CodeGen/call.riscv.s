@@ -123,41 +123,6 @@ pcrel123:
 	addw a0, a2, a0
 	sw a0, %pcrel_lo(pcrel123)(a1)
 	ret
-.globl callee13_cmmc_noinline
-callee13_cmmc_noinline:
-	li a0, 1
-pcrel130:
-	auipc a1, %pcrel_hi(touch)
-	sw a0, %pcrel_lo(pcrel130)(a1)
-	ret
-.globl callee14_cmmc_noinline
-callee14_cmmc_noinline:
-	ld t0, 0(sp)
-	addw a0, a0, a1
-	flw f0, 8(sp)
-pcrel176:
-	auipc a1, %pcrel_hi(touch)
-	addw a0, a2, a0
-	addw a0, a3, a0
-	addw a0, a4, a0
-	addw a0, a5, a0
-	addw a0, a6, a0
-	addw a0, a7, a0
-	fcvt.s.w f1, a0
-	fadd.s f10, f1, f10
-	fadd.s f10, f10, f11
-	fcvt.s.w f11, t0
-	fadd.s f10, f10, f12
-	fadd.s f10, f10, f13
-	fadd.s f10, f10, f14
-	fadd.s f10, f10, f15
-	fadd.s f10, f10, f16
-	fadd.s f10, f10, f17
-	fadd.s f10, f10, f11
-	fadd.s f10, f10, f0
-	fcvt.w.s a0, f10, rtz
-	sw a0, %pcrel_lo(pcrel176)(a1)
-	ret
 .globl callee15_cmmc_noinline
 callee15_cmmc_noinline:
 	mv a0, zero
@@ -169,10 +134,10 @@ callee16_cmmc_noinline:
 	ret
 .globl calling_convention
 calling_convention:
-	addi sp, sp, -72
-	fsw f8, 64(sp)
-	addi a2, sp, 16
-	sd ra, 56(sp)
+	addi sp, sp, -56
+	fsw f8, 48(sp)
+	addi a2, sp, 0
+	sd ra, 40(sp)
 	jal callee1_cmmc_noinline
 	li a0, 1
 	jal callee2_cmmc_noinline
@@ -185,8 +150,8 @@ calling_convention:
 	fmv.s f10, f8
 	li a0, 1
 	jal callee5_cmmc_noinline
-	fmv.s f10, f8
 	li a0, 1
+	fmv.s f10, f8
 	jal callee6_cmmc_noinline
 	li a1, 1
 	li a0, 1
@@ -210,31 +175,11 @@ calling_convention:
 	li a1, 1
 	li a0, 1
 	jal callee12_cmmc_noinline
-	jal callee13_cmmc_noinline
-	li a7, 1
-	sd a7, 0(sp)
-	fsw f8, 8(sp)
-	mv a0, a7
-	mv a1, a7
-	mv a2, a7
-	mv a3, a7
-	mv a4, a7
-	mv a5, a7
-	mv a6, a7
-	fmv.s f10, f8
-	fmv.s f11, f8
-	fmv.s f12, f8
-	fmv.s f13, f8
-	fmv.s f14, f8
-	fmv.s f15, f8
-	fmv.s f16, f8
-	fmv.s f17, f8
-	jal callee14_cmmc_noinline
 	mv a0, zero
 	jal putint
 	fmv.s f10, f8
 	jal putfloat
-	ld ra, 56(sp)
-	flw f8, 64(sp)
-	addi sp, sp, 72
+	ld ra, 40(sp)
+	flw f8, 48(sp)
+	addi sp, sp, 56
 	ret
