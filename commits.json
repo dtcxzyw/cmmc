@@ -295,6 +295,11 @@
       "parent": "f5456db3e19187aa4d028032103b60006886a52b",
       "time": "2023-07-02 14:22:39 +0800"
     },
+    "79d0c32350816fb89f5c807773c6ab5a17fc8c4b": {
+      "message": "ci: compile riscv source",
+      "parent": "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a",
+      "time": "2023-07-10 23:27:38 +0800"
+    },
     "7aede7c6d709e297c4656116f21caeeec62fa9ab": {
       "message": "feat(codegen): allow copying branches when the size of BTB is large enough",
       "parent": "3e248a8ab400477fc93e1fcc384824d4347a3217",
@@ -531,5 +536,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a"
+  "head": "79d0c32350816fb89f5c807773c6ab5a17fc8c4b"
 }
