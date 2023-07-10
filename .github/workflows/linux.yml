@@ -65,7 +65,7 @@ jobs:
         run: cd build && ctest --verbose
 
       - name: Generate Performance Source
-        run: cd build && python3 ../tests/test_driver.py bin/cmmc ../tests arm,compile
+        run: cd build && python3 ../tests/test_driver.py bin/cmmc ../tests arm,riscv,compile
 
       - name: Upload Performance Source
         uses: actions/upload-artifact@v2

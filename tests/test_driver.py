@@ -7,6 +7,7 @@ import platform
 import subprocess
 import sys
 import time
+import platform
 import CodeGenTAC.irsim_quiet as irsim
 from collections import defaultdict
 
@@ -54,10 +55,12 @@ tac_inst_count_ref = 224.116
 
 class PerformanceEnv:
     def __enter__(self):
-        os.system('sudo cpupower frequency-set -g performance')
+        if platform.machine() != 'riscv64':
+            os.system('sudo cpupower frequency-set -g performance')
 
     def __exit__(self, exc_type, exc_value, traceback):
-        os.system('sudo cpupower frequency-set -g ondemand')
+        if platform.machine() != 'riscv64':
+            os.system('sudo cpupower frequency-set -g ondemand')
 
 
 def geo_means(prod, count):
