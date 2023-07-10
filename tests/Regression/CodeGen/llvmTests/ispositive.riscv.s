@@ -3,7 +3,7 @@
 .text
 .globl test1
 test1:
-	srliw a0, a0, 31
-	li a1, 4294967295
-	and a0, a0, a1
+	srliw a1, a0, 31
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

@@ -35,15 +35,15 @@ smax_ge:
 	ret
 .globl clamp_mask
 clamp_mask:
-	max a0, a0, zero
-	li a1, 127
-	min a0, a0, a1
+	max a1, a0, zero
+	li a2, 127
+	min a0, a1, a2
 	ret
 .globl clamp_mask2
 clamp_mask2:
 	li a1, 255
-	min a0, a0, a1
-	max a0, a0, zero
+	min a2, a0, a1
+	max a0, a2, zero
 	ret
 .globl smax_zero
 smax_zero:
@@ -61,8 +61,8 @@ smin_imm:
 	ret
 .globl ssat
 ssat:
-	li a1, 255
-	min a0, a0, a1
-	li a1, -256
-	max a0, a0, a1
+	li a2, 255
+	li a3, -256
+	min a1, a0, a2
+	max a0, a1, a3
 	ret

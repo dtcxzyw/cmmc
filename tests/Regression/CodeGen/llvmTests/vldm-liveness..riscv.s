@@ -7,8 +7,8 @@ t1:
 	bne a0, zero, label8
 	li a1, 20
 label8:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl t2
 t2:
@@ -31,8 +31,8 @@ t4:
 	bne a0, zero, label32
 	li a1, -1
 label32:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl t5
 t5:

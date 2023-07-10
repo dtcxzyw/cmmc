@@ -3,8 +3,8 @@
 .text
 .globl test
 test:
-	andi a0, a0, 255
-	li a1, 4294967295
-	sext.b a0, a0
-	and a0, a0, a1
+	andi a2, a0, 255
+	li a3, 4294967295
+	sext.b a1, a2
+	and a0, a1, a3
 	ret

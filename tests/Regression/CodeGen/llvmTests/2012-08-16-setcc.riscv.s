@@ -5,35 +5,35 @@
 and_1:
 	andi a0, a0, 255
 	andi a1, a1, 255
-	and a0, a0, a1
-	sltu a0, zero, a0
-	subw a0, zero, a0
-	and a0, a2, a0
+	and a3, a0, a1
+	sltu a4, zero, a3
+	subw a1, zero, a4
+	and a0, a2, a1
 	ret
 .globl and_2
 and_2:
-	andi a0, a0, 255
-	andi a1, a1, 255
-	and a0, a0, a1
-	li a1, 4294967295
-	sltu a0, zero, a0
-	and a0, a0, a1
+	andi a2, a0, 255
+	andi a0, a1, 255
+	and a3, a2, a0
+	li a2, 4294967295
+	sltu a1, zero, a3
+	and a0, a1, a2
 	ret
 .globl xor_1
 xor_1:
 	andi a0, a0, 255
 	andi a1, a1, 255
-	xor a0, a0, a1
-	sltu a0, zero, a0
-	subw a0, zero, a0
-	and a0, a2, a0
+	xor a3, a0, a1
+	sltu a4, zero, a3
+	subw a1, zero, a4
+	and a0, a2, a1
 	ret
 .globl xor_2
 xor_2:
-	andi a0, a0, 255
-	andi a1, a1, 255
-	xor a0, a0, a1
-	li a1, 4294967295
-	sltu a0, zero, a0
-	and a0, a0, a1
+	andi a2, a0, 255
+	andi a0, a1, 255
+	xor a3, a2, a0
+	li a2, 4294967295
+	sltu a1, zero, a3
+	and a0, a1, a2
 	ret

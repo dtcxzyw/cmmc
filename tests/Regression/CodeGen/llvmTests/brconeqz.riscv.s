@@ -13,8 +13,8 @@ result:
 .globl test
 test:
 pcrel18:
-	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel18)(a0)
+	auipc a1, %pcrel_hi(i)
+	lw a0, %pcrel_lo(pcrel18)(a1)
 	bne a0, zero, label9
 	j label2
 label9:

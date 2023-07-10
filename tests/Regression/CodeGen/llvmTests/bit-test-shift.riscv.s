@@ -3,11 +3,11 @@
 .text
 .globl x
 x:
-	andi a1, a0, 256
-	mv a0, zero
-	beq a1, zero, label9
-	li a0, -26
+	andi a2, a0, 256
+	mv a1, zero
+	beq a2, zero, label9
+	li a1, -26
 label9:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

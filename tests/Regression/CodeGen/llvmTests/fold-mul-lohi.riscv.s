@@ -21,13 +21,13 @@ pcrel58:
 	auipc a2, %pcrel_hi(B)
 pcrel59:
 	auipc a4, %pcrel_hi(A)
-	li a5, 17
+	lb a3, %pcrel_lo(pcrel58)(a2)
 	addi a1, a2, %pcrel_lo(pcrel58)
-	lb a2, %pcrel_lo(pcrel58)(a2)
-	andi a2, a2, 255
-	slliw a2, a2, 1
-	andi a3, a2, 255
+	andi a2, a3, 255
+	slliw a5, a2, 1
 	addi a2, a4, %pcrel_lo(pcrel59)
+	andi a3, a5, 255
+	li a5, 17
 	sb a3, %pcrel_lo(pcrel59)(a4)
 pcrel60:
 	auipc a4, %pcrel_hi(P)
@@ -42,17 +42,17 @@ label3:
 	li a5, 4294967295
 	and t0, a4, a5
 	add t1, a1, t0
-	add t0, a2, t0
-	lb t1, 0(t1)
-	andi t1, t1, 255
-	slliw t1, t1, 1
-	andi t1, t1, 255
-	sb t1, 0(t0)
+	lb t2, 0(t1)
+	andi t4, t2, 255
+	add t2, a2, t0
+	slliw t3, t4, 1
 	sh3add t0, a4, a4
+	andi t1, t3, 255
 	addiw a4, a4, 1
-	and a5, t0, a5
+	sb t1, 0(t2)
+	and t1, t0, a5
 	li t0, 17
-	add a5, a3, a5
+	add a5, a3, t1
 	sb t0, 0(a5)
 	bne a0, a4, label3
 label5:

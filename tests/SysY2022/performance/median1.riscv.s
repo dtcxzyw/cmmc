@@ -23,9 +23,9 @@ pcrel236:
 	addiw s4, a0, -1
 	mv s1, a0
 	srliw a0, a0, 31
-	add a0, s1, a0
-	sraiw s2, a0, 1
+	add a1, s1, a0
 	li a0, 59
+	sraiw s2, a1, 1
 	jal _sysy_starttime
 	mv a1, s3
 	mv a0, zero
@@ -36,13 +36,13 @@ pcrel236:
 	ble a4, zero, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, zero, label15
 	addiw a5, zero, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(s3)
 	sh2add a4, a5, s0
@@ -57,8 +57,8 @@ pcrel236:
 	ble a4, zero, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, zero, label15
 	j label191
 label177:
@@ -66,8 +66,8 @@ label177:
 label191:
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	j label205
 label15:
 	bne a4, a5, label21
@@ -84,13 +84,13 @@ label15:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a0, label15
 	addiw a5, a0, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -105,8 +105,8 @@ label15:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	j label177
 label18:
 	ble s2, a5, label20
@@ -118,13 +118,13 @@ label18:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a0, label15
 	addiw a5, a0, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -139,8 +139,8 @@ label18:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	j label177
 label20:
 	li a0, 61
@@ -148,16 +148,16 @@ label20:
 	mv a0, s1
 	mv a1, s0
 	jal putarray
-	sh2add a0, s2, s0
-	lw a0, 0(a0)
+	sh2add a2, s2, s0
+	lw a0, 0(a2)
 	ld ra, 0(sp)
 	slli a1, a0, 1
 	ld s2, 8(sp)
-	srli a1, a1, 56
+	srli a2, a1, 56
 	ld s4, 16(sp)
-	add a1, a0, a1
+	add a3, a0, a2
 	ld s1, 24(sp)
-	andi a1, a1, -256
+	andi a1, a3, -256
 	ld s0, 32(sp)
 	subw a0, a0, a1
 	ld s3, 40(sp)
@@ -167,8 +167,8 @@ label11:
 	ble a4, a5, label15
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -183,13 +183,13 @@ label11:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a0, label15
 	addiw a5, a0, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -217,13 +217,13 @@ label21:
 	ble a4, a5, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a5, label15
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0
@@ -238,13 +238,13 @@ label21:
 	ble a4, a0, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a0, label15
 	addiw a5, a0, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	j label205
 label216:
 	sw a3, 0(a1)
@@ -257,20 +257,20 @@ label216:
 label163:
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	j label177
 label8:
 	ble a4, a5, label11
 	addiw a4, a4, -1
 	sh2add t0, a4, s0
-	lw t0, 0(t0)
-	ble a3, t0, label8
+	lw t1, 0(t0)
+	ble a3, t1, label8
 	ble a4, a5, label15
 	addiw a5, a5, 1
 	sh2add t0, a5, s0
-	lw t0, 0(t0)
-	bgt a3, t0, label11
+	lw t1, 0(t0)
+	bgt a3, t1, label11
 	bne a4, a5, label21
 	sw a3, 0(a1)
 	sh2add a4, a5, s0

@@ -3,11 +3,11 @@
 .text
 .globl pass_bool
 pass_bool:
-	sltu a0, zero, a0
-	li a1, 4294967295
-	subw a0, zero, a0
-	andi a0, a0, 66
-	and a0, a0, a1
+	sltu a2, zero, a0
+	subw a3, zero, a2
+	li a2, 4294967295
+	andi a1, a3, 66
+	and a0, a1, a2
 	ret
 .globl ret_true
 ret_true:

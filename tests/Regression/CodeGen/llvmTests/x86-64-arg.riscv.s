@@ -3,7 +3,7 @@
 .text
 .globl test
 test:
-	sext.h a0, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	sext.h a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

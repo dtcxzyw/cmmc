@@ -8,14 +8,14 @@ sgt:
 	bgt a0, a2, label11
 	li a1, 5
 label11:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl slt
 slt:
-	slti a0, a0, 7
-	li a1, 4
-	subw a0, a1, a0
+	slti a1, a0, 7
+	li a3, 4
+	subw a2, a3, a1
 	li a1, 4294967295
-	and a0, a0, a1
+	and a0, a2, a1
 	ret

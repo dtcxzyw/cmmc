@@ -13,10 +13,10 @@ result:
 .globl test
 test:
 pcrel20:
-	auipc a0, %pcrel_hi(i)
-	li a1, 10
-	lw a0, %pcrel_lo(pcrel20)(a0)
-	bne a0, a1, label9
+	auipc a1, %pcrel_hi(i)
+	li a2, 10
+	lw a0, %pcrel_lo(pcrel20)(a1)
+	bne a0, a2, label9
 	j label2
 label9:
 	li a0, 1

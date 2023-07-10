@@ -3,6 +3,6 @@
 .text
 .globl test
 test:
-	subw a0, zero, a0
-	andi a0, a0, 255
+	subw a1, zero, a0
+	andi a0, a1, 255
 	ret

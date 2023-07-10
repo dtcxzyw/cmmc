@@ -3,11 +3,11 @@
 .text
 .globl f1
 f1:
-	mulw a1, a0, a1
-	subw a2, a2, a1
+	mulw a4, a0, a1
 	mv a1, a0
+	subw a3, a2, a4
 	beq a0, zero, label10
-	mv a1, a2
+	mv a1, a3
 label10:
 	mv a0, a1
 	ret

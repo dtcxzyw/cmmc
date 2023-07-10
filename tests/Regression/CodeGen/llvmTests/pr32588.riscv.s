@@ -17,11 +17,11 @@ d:
 .globl fn1
 fn1:
 pcrel15:
-	auipc a0, %pcrel_hi(c)
-	li a1, 4294967295
-	lw a0, %pcrel_lo(pcrel15)(a0)
-	sltiu a0, a0, 1
-	and a0, a0, a1
+	auipc a2, %pcrel_hi(c)
+	lw a0, %pcrel_lo(pcrel15)(a2)
+	li a2, 4294967295
+	sltiu a1, a0, 1
+	and a0, a1, a2
 pcrel16:
 	auipc a1, %pcrel_hi(d)
 	sw a0, %pcrel_lo(pcrel16)(a1)

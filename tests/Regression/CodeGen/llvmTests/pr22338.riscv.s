@@ -3,17 +3,17 @@
 .text
 .globl fn
 fn:
-	xori a1, a1, 1
+	xori a3, a1, 1
 	xori a0, a0, 1
-	sltiu a2, a1, 1
-	sltu a0, zero, a0
 	li a1, 4294967295
-	and a0, a0, a1
-	and a2, a2, a1
-	sltu a2, zero, a2
-	subw a2, zero, a2
-	andi a2, a2, 2
-	and a2, a2, a1
-	sllw a0, a0, a2
-	and a0, a0, a1
+	sltiu a2, a3, 1
+	and a4, a2, a1
+	sltu a2, zero, a4
+	subw a3, zero, a2
+	andi a4, a3, 2
+	and a2, a4, a1
+	sltu a4, zero, a0
+	and a3, a4, a1
+	sllw a2, a3, a2
+	and a0, a2, a1
 	ret

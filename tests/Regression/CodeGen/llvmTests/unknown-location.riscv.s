@@ -3,9 +3,9 @@
 .text
 .globl foo
 foo:
-	addw a0, a0, a1
-	li a1, 4294967295
-	divw a0, a0, a2
-	and a0, a0, a1
-	addw a0, a3, a0
+	addw a1, a0, a1
+	divw a0, a1, a2
+	li a2, 4294967295
+	and a1, a0, a2
+	addw a0, a3, a1
 	ret

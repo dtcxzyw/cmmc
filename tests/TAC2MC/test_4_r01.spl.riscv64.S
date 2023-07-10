@@ -38,9 +38,9 @@ label14:
 	mv s0, a2
 	j label4
 label2:
-	li a0, 10000
-	mulw a0, a1, a0
-	addw a0, s2, a0
+	li a2, 10000
+	mulw a1, a1, a2
+	addw a0, s2, a1
 	jal write
 	ld ra, 0(sp)
 	ld s0, 8(sp)
@@ -56,12 +56,12 @@ label4:
 	mv a2, s2
 	mv a3, s0
 	jal hanoi
-	li a0, 10000
-	mulw a0, s1, a0
-	addw a0, s2, a0
+	li a1, 10000
+	mulw a2, s1, a1
+	addw a0, s2, a2
 	jal write
-	li a0, 1
-	bne s3, a0, label23
+	li a2, 1
+	bne s3, a2, label23
 	mv a1, s0
 	j label2
 label23:

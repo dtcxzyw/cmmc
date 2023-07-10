@@ -20,24 +20,24 @@ pcrel46:
 	bne a1, zero, label12
 	addiw a2, a2, 11
 	li a1, 4294967295
-	and a2, a2, a1
-	sw a2, 0(a0)
+	and a3, a2, a1
+	sw a3, 0(a0)
 pcrel47:
 	auipc a0, %pcrel_hi(g1)
-	lw a0, %pcrel_lo(pcrel47)(a0)
-	addiw a0, a0, 23
-	and a0, a0, a1
+	lw a3, %pcrel_lo(pcrel47)(a0)
+	addiw a2, a3, 23
+	and a0, a2, a1
 	j label3
 label12:
 	addiw a2, a2, 1
 	li a1, 4294967295
-	and a2, a2, a1
-	sw a2, 0(a0)
+	and a3, a2, a1
+	sw a3, 0(a0)
 pcrel48:
 	auipc a0, %pcrel_hi(g1)
-	lw a0, %pcrel_lo(pcrel48)(a0)
-	addiw a0, a0, 23
-	and a0, a0, a1
+	lw a2, %pcrel_lo(pcrel48)(a0)
+	addiw a3, a2, 23
+	and a0, a3, a1
 label3:
 	auipc a1, %pcrel_hi(g1)
 	sw a0, %pcrel_lo(label3)(a1)

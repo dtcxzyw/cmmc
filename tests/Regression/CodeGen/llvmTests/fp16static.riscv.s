@@ -11,6 +11,6 @@ foo:
 pcrel9:
 	auipc a0, %pcrel_hi(x)
 	flw f10, %pcrel_lo(pcrel9)(a0)
-	fmul.s f10, f10, f10
-	fsw f10, %pcrel_lo(pcrel9)(a0)
+	fmul.s f11, f10, f10
+	fsw f11, %pcrel_lo(pcrel9)(a0)
 	ret

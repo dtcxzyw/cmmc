@@ -13,10 +13,10 @@ y:
 .globl t
 t:
 pcrel13:
-	auipc a0, %pcrel_hi(y)
+	auipc a1, %pcrel_hi(y)
 pcrel14:
-	auipc a1, %pcrel_hi(x)
-	lw a0, %pcrel_lo(pcrel13)(a0)
-	lw a1, %pcrel_lo(pcrel14)(a1)
+	auipc a2, %pcrel_hi(x)
+	lw a0, %pcrel_lo(pcrel13)(a1)
+	lw a1, %pcrel_lo(pcrel14)(a2)
 	addw a0, a0, a1
 	ret

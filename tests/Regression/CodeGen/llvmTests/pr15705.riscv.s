@@ -3,11 +3,12 @@
 .text
 .globl PR15705
 PR15705:
+	mv a4, a3
 	beq a0, a2, label13
-	mv a3, a1
+	mv a4, a1
 label13:
 	beq a0, a1, label15
-	mv a2, a3
+	mv a2, a4
 label15:
 	mv a0, a2
 	ret

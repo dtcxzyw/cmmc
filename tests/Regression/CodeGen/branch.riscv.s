@@ -183,15 +183,16 @@ label281:
 	ret
 .globl normal_srem
 normal_srem:
-	li a1, 1152921497
-	mul a1, a0, a1
+	li a3, 1152921497
+	mul a1, a0, a3
+	srli a3, a1, 63
 	srai a2, a1, 60
-	srli a1, a1, 63
-	add a1, a1, a2
+	add a1, a3, a2
 	li a2, 1000000007
-	mulw a1, a1, a2
-	subw a1, a0, a1
-	addw a0, a1, a2
+	mulw a3, a1, a2
+	subw a1, a0, a3
+	addw a2, a1, a2
+	mv a0, a2
 	blt a1, zero, label307
 	mv a0, a1
 label307:

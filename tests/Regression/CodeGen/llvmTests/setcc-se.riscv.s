@@ -8,15 +8,15 @@ g1:
 .text
 .globl seteq0
 seteq0:
-	sltiu a0, a0, 1
-	li a1, 4294967295
-	and a0, a0, a1
+	sltiu a1, a0, 1
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl setne0
 setne0:
-	sltu a0, zero, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	sltu a1, zero, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl slti_beq0
 slti_beq0:

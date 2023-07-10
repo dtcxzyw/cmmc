@@ -21,7 +21,7 @@ pcrel12:
 .globl main
 main:
 pcrel18:
-	auipc a0, %pcrel_hi(a)
-	sw zero, %pcrel_lo(pcrel18)(a0)
+	auipc a1, %pcrel_hi(a)
 	mv a0, zero
+	sw zero, %pcrel_lo(pcrel18)(a1)
 	ret

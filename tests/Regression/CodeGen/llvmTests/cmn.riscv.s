@@ -8,17 +8,17 @@ compare_i_gt:
 	bgt a0, a2, label11
 	li a1, 24
 label11:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl compare_r_eq
 compare_r_eq:
-	subw a2, zero, a1
-	li a1, 4294967295
-	and a3, a2, a1
-	li a2, 42
-	beq a0, a3, label25
-	li a2, 24
+	subw a3, zero, a1
+	li a2, 4294967295
+	li a1, 42
+	and a4, a3, a2
+	beq a0, a4, label25
+	li a1, 24
 label25:
-	and a0, a2, a1
+	and a0, a1, a2
 	ret

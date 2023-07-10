@@ -7,17 +7,17 @@ __cmmc_fp_constant_pool:
 .text
 fibFP:
 	addi sp, sp, -24
-	lui a0, 262144
+	lui a1, 262144
 	fsw f9, 16(sp)
 	fmv.s f9, f10
 	fsw f18, 12(sp)
-	fmv.w.x f10, a0
+	fmv.w.x f10, a1
 	fsw f8, 8(sp)
 	flt.s a0, f9, f10
 	sd ra, 0(sp)
 	beq a0, zero, label4
-	lui a0, 260096
-	fmv.w.x f10, a0
+	lui a1, 260096
+	fmv.w.x f10, a1
 	j label2
 label72:
 	lui a0, 260096
@@ -36,37 +36,38 @@ label4:
 	fsub.s f18, f9, f10
 	flt.s a0, f18, f10
 	beq a0, zero, label10
+	lui a1, 260096
+	fmv.w.x f8, a1
 	lui a0, 260096
-	fmv.w.x f8, a0
 	fmv.w.x f10, a0
 	lui a0, 262144
 	fsub.s f18, f9, f10
 	fmv.w.x f10, a0
-	flt.s a0, f18, f10
-	beq a0, zero, label9
+	flt.s a1, f18, f10
+	beq a1, zero, label9
 	j label72
 label9:
 	lui a0, 262144
-	fmv.w.x f10, a0
-	fsub.s f10, f18, f10
+	fmv.w.x f11, a0
+	fsub.s f10, f18, f11
 	jal fibFP
 	lui a0, 260096
 	fmv.s f9, f10
-	fmv.w.x f10, a0
-	fsub.s f10, f18, f10
+	fmv.w.x f11, a0
+	fsub.s f10, f18, f11
 	jal fibFP
 	fadd.s f10, f9, f10
 	fadd.s f10, f8, f10
 	j label2
 label10:
 	lui a0, 262144
-	fmv.w.x f10, a0
-	fsub.s f10, f18, f10
+	fmv.w.x f11, a0
+	fsub.s f10, f18, f11
 	jal fibFP
 	lui a0, 260096
 	fmv.s f8, f10
-	fmv.w.x f10, a0
-	fsub.s f10, f18, f10
+	fmv.w.x f11, a0
+	fsub.s f10, f18, f11
 	jal fibFP
 	fadd.s f8, f8, f10
 	lui a0, 260096
@@ -74,8 +75,8 @@ label10:
 	lui a0, 262144
 	fsub.s f18, f9, f10
 	fmv.w.x f10, a0
-	flt.s a0, f18, f10
-	beq a0, zero, label9
+	flt.s a1, f18, f10
+	beq a1, zero, label9
 	j label72
 takFP:
 	addi sp, sp, -48
@@ -277,14 +278,14 @@ main:
 	jal fibFP
 pcrel235:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel235)
-	flw f11, 0(a0)
+	addi a1, a0, %pcrel_lo(pcrel235)
+	flw f11, 0(a1)
 	feq.s a0, f10, f11
 	beq a0, zero, label201
 	li a0, 112
 	jal putch
-	lui a0, 260096
-	fmv.w.x f10, a0
+	lui a1, 260096
+	fmv.w.x f10, a1
 	feq.s a0, f8, f10
 	beq a0, zero, label200
 label198:
@@ -307,8 +308,8 @@ label200:
 label201:
 	li a0, 1
 	jal putint
-	lui a0, 260096
-	fmv.w.x f10, a0
+	lui a1, 260096
+	fmv.w.x f10, a1
 	feq.s a0, f8, f10
 	beq a0, zero, label200
 	j label198

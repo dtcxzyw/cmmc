@@ -4,24 +4,24 @@
 .globl t0
 t0:
 	li a2, 32
-	subw a0, a2, a0
-	subw a0, a0, a1
+	subw a3, a2, a0
+	subw a0, a3, a1
 	ret
 .globl t1
 t1:
-	addw a0, a0, a1
-	li a1, 32
-	subw a0, a1, a0
+	addw a2, a0, a1
+	li a3, 32
+	subw a0, a3, a2
 	ret
 .globl t2
 t2:
-	addw a0, a0, a1
-	li a1, 32
-	subw a0, a1, a0
+	addw a2, a0, a1
+	li a3, 32
+	subw a0, a3, a2
 	ret
 .globl t3
 t3:
-	addiw a0, a0, -32
-	addw a0, a1, a0
-	subw a0, zero, a0
+	addiw a2, a0, -32
+	addw a3, a1, a2
+	subw a0, zero, a3
 	ret

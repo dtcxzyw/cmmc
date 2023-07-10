@@ -9,14 +9,14 @@ v:
 .globl f
 f:
 pcrel8:
-	auipc a0, %pcrel_hi(v)
-	lw a0, %pcrel_lo(pcrel8)(a0)
-	addiw a0, a0, 1
+	auipc a1, %pcrel_hi(v)
+	lw a2, %pcrel_lo(pcrel8)(a1)
+	addiw a0, a2, 1
 	ret
 .globl f_alias
 f_alias:
 pcrel16:
-	auipc a0, %pcrel_hi(v)
-	lw a0, %pcrel_lo(pcrel16)(a0)
-	addiw a0, a0, 1
+	auipc a1, %pcrel_hi(v)
+	lw a2, %pcrel_lo(pcrel16)(a1)
+	addiw a0, a2, 1
 	ret

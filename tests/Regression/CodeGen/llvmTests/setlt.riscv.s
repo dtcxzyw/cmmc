@@ -33,14 +33,14 @@ r3:
 .globl test
 test:
 pcrel22:
-	auipc a0, %pcrel_hi(j)
+	auipc a1, %pcrel_hi(j)
 pcrel23:
-	auipc a1, %pcrel_hi(k)
-	lw a0, %pcrel_lo(pcrel22)(a0)
-	lw a1, %pcrel_lo(pcrel23)(a1)
-	slt a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	auipc a2, %pcrel_hi(k)
+	lw a0, %pcrel_lo(pcrel22)(a1)
+	lw a3, %pcrel_lo(pcrel23)(a2)
+	li a2, 4294967295
+	slt a1, a0, a3
+	and a0, a1, a2
 pcrel24:
 	auipc a1, %pcrel_hi(r1)
 	sw a0, %pcrel_lo(pcrel24)(a1)

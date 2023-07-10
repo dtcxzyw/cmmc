@@ -30,12 +30,12 @@ gcd:
 	mv a0, a4
 	mv a3, a2
 	beq a2, zero, label3
-	divw a4, a4, a2
-	mulw a3, a2, a4
-	subw a0, a0, a3
+	divw a5, a4, a2
+	mulw t0, a2, a5
 	li a3, 4294967295
+	subw a4, a4, t0
 	and a2, a2, a3
-	and a0, a0, a3
+	and a0, a4, a3
 	sw a2, 0(sp)
 	sw a0, 4(sp)
 	mv a0, a1
@@ -51,11 +51,11 @@ main:
 	sd ra, 8(sp)
 	jal read
 	li a2, 4294967295
-	and a0, a0, a2
-	sw a0, 0(sp)
+	and a3, a0, a2
+	sw a3, 0(sp)
 	jal read
-	and a0, a0, a2
-	sw a0, 4(sp)
+	and a2, a0, a2
+	sw a2, 4(sp)
 	mv a0, a1
 	jal gcd
 	jal write

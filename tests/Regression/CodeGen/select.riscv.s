@@ -218,9 +218,9 @@ select_cross_fpr:
 	mv a3, a0
 	bge a1, a2, label284
 	lui a1, 260096
+	lui a2, 266752
 	fmv.w.x f10, a1
-	lui a1, 266752
-	fmv.w.x f11, a1
+	fmv.w.x f11, a2
 	bne a0, zero, label274
 	fmv.s f10, f11
 	j label274
@@ -234,9 +234,10 @@ pcrel310:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
 	addi a1, a0, %pcrel_lo(pcrel310)
 	flw f11, 0(a1)
+	flw f12, 4(a1)
 	flt.s a0, f10, f11
-	flw f11, 4(a1)
-	fadd.s f11, f10, f11
+	fadd.s f13, f10, f12
+	fmv.s f11, f13
 	bne a0, zero, label309
 	fmv.s f11, f10
 label309:
@@ -244,11 +245,11 @@ label309:
 	ret
 .globl select_bitset
 select_bitset:
-	xori a1, a1, 1
-	or a0, a0, a1
-	sltiu a0, a0, 1
-	subw a0, zero, a0
-	and a0, a2, a0
+	xori a3, a1, 1
+	or a0, a0, a3
+	sltiu a1, a0, 1
+	subw a3, zero, a1
+	and a0, a2, a3
 	ret
 .globl select_imax
 select_imax:
@@ -260,14 +261,14 @@ select_imin:
 	ret
 .globl select_zero
 select_zero:
-	sltiu a0, a0, 1
-	subw a0, zero, a0
-	and a0, a1, a0
+	sltiu a2, a0, 1
+	subw a3, zero, a2
+	and a0, a1, a3
 	ret
 .globl select_imm
 select_imm:
-	sltu a0, zero, a0
-	addiw a0, a0, 1
+	sltu a1, zero, a0
+	addiw a0, a1, 1
 	ret
 .globl select_one
 select_one:

@@ -4,26 +4,26 @@
 .globl and0xf30_lshr4
 and0xf30_lshr4:
 	li a1, 3888
-	and a0, a0, a1
-	srliw a0, a0, 4
+	and a2, a0, a1
+	srliw a0, a2, 4
 	ret
 .globl and0xff0_lshr3
 and0xff0_lshr3:
 	li a1, 4080
-	and a0, a0, a1
-	srliw a0, a0, 3
+	and a2, a0, a1
+	srliw a0, a2, 3
 	ret
 .globl and0xff0_lshr4
 and0xff0_lshr4:
 	li a1, 4080
-	and a0, a0, a1
-	srliw a0, a0, 4
+	and a2, a0, a1
+	srliw a0, a2, 4
 	ret
 .globl and4080_ashr5
 and4080_ashr5:
 	li a1, 4080
-	and a0, a0, a1
-	srliw a0, a0, 5
+	and a2, a0, a1
+	srliw a0, a2, 5
 	ret
 .globl and4095
 and4095:
@@ -37,13 +37,13 @@ and8191:
 	ret
 .globl ashr20_and511
 ashr20_and511:
-	srliw a0, a0, 20
-	andi a0, a0, 511
+	srliw a1, a0, 20
+	andi a0, a1, 511
 	ret
 .globl lshr10_and255
 lshr10_and255:
-	srliw a0, a0, 10
-	andi a0, a0, 255
+	srliw a1, a0, 10
+	andi a0, a1, 255
 	ret
 .globl zext_i16_to_i32
 zext_i16_to_i32:

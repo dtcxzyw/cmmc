@@ -17,14 +17,14 @@ kkkk:
 .globl test
 test:
 pcrel21:
-	auipc a0, %pcrel_hi(iiii)
+	auipc a1, %pcrel_hi(iiii)
 pcrel22:
-	auipc a1, %pcrel_hi(jjjj)
-	lw a0, %pcrel_lo(pcrel21)(a0)
-	lw a1, %pcrel_lo(pcrel22)(a1)
-	divw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	auipc a3, %pcrel_hi(jjjj)
+	lw a0, %pcrel_lo(pcrel21)(a1)
+	lw a2, %pcrel_lo(pcrel22)(a3)
+	li a3, 4294967295
+	divw a1, a0, a2
+	and a0, a1, a3
 pcrel23:
 	auipc a1, %pcrel_hi(kkkk)
 	sw a0, %pcrel_lo(pcrel23)(a1)

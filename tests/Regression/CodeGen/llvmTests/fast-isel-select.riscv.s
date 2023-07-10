@@ -3,11 +3,11 @@
 .text
 .globl fastisel_select
 fastisel_select:
-	subw a0, a0, a1
-	li a1, 1204476887
-	sltu a0, zero, a0
-	subw a0, zero, a0
-	and a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	subw a2, a0, a1
+	sltu a3, zero, a2
+	li a2, 1204476887
+	subw a0, zero, a3
+	li a3, 4294967295
+	and a1, a0, a2
+	and a0, a1, a3
 	ret

@@ -13,10 +13,10 @@ f:
 .globl foo
 foo:
 	lui a0, 262144
-	fmv.w.x f10, a0
 pcrel8:
-	auipc a0, %pcrel_hi(f)
-	fsw f10, %pcrel_lo(pcrel8)(a0)
+	auipc a1, %pcrel_hi(f)
+	fmv.w.x f10, a0
+	fsw f10, %pcrel_lo(pcrel8)(a1)
 	ret
 .globl fv
 fv:
@@ -26,8 +26,8 @@ fv:
 .globl iv
 iv:
 pcrel18:
-	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel18)(a0)
+	auipc a1, %pcrel_hi(i)
+	lw a0, %pcrel_lo(pcrel18)(a1)
 	ret
 .globl vif
 vif:

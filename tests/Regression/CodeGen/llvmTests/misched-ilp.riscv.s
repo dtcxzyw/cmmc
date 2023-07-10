@@ -4,8 +4,8 @@
 .globl ilpsched
 ilpsched:
 	fadd.s f12, f12, f13
-	fadd.s f10, f10, f11
-	fadd.s f13, f14, f15
-	fsub.s f12, f12, f13
-	fadd.s f10, f10, f12
+	fadd.s f14, f14, f15
+	fadd.s f11, f10, f11
+	fsub.s f13, f12, f14
+	fadd.s f10, f11, f13
 	ret

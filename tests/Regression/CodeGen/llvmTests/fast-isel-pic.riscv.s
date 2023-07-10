@@ -14,12 +14,12 @@ i:
 .globl LoadGV
 LoadGV:
 pcrel7:
-	auipc a0, %pcrel_hi(g)
-	lw a0, %pcrel_lo(pcrel7)(a0)
+	auipc a1, %pcrel_hi(g)
+	lw a0, %pcrel_lo(pcrel7)(a1)
 	ret
 .globl LoadIndirectSymbol
 LoadIndirectSymbol:
 pcrel14:
-	auipc a0, %pcrel_hi(i)
-	lw a0, %pcrel_lo(pcrel14)(a0)
+	auipc a1, %pcrel_hi(i)
+	lw a0, %pcrel_lo(pcrel14)(a1)
 	ret

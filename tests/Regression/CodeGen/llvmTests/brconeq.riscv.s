@@ -17,11 +17,11 @@ result:
 .globl test
 test:
 pcrel24:
-	auipc a0, %pcrel_hi(i)
+	auipc a1, %pcrel_hi(i)
 pcrel25:
-	auipc a1, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel24)(a0)
-	lw a1, %pcrel_lo(pcrel25)(a1)
+	auipc a2, %pcrel_hi(j)
+	lw a0, %pcrel_lo(pcrel24)(a1)
+	lw a1, %pcrel_lo(pcrel25)(a2)
 	bne a0, a1, label12
 	j label2
 label12:

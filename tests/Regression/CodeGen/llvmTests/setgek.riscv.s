@@ -21,12 +21,12 @@ r3:
 .globl test
 test:
 pcrel17:
-	auipc a0, %pcrel_hi(k)
-	li a1, -32769
-	lw a0, %pcrel_lo(pcrel17)(a0)
-	slt a0, a1, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	auipc a1, %pcrel_hi(k)
+	li a2, -32769
+	li a3, 4294967295
+	lw a0, %pcrel_lo(pcrel17)(a1)
+	slt a1, a2, a0
+	and a0, a1, a3
 pcrel18:
 	auipc a1, %pcrel_hi(r1)
 	sw a0, %pcrel_lo(pcrel18)(a1)

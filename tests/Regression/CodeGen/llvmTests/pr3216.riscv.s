@@ -10,11 +10,11 @@ foo:
 main:
 pcrel14:
 	auipc a0, %pcrel_hi(foo)
-	lb a0, %pcrel_lo(pcrel14)(a0)
-	andi a0, a0, 255
-	sraiw a0, a0, 5
-	andi a0, a0, 7
-	slliw a0, a0, 5
-	sraiw a0, a0, 5
-	sext.b a0, a0
+	lb a1, %pcrel_lo(pcrel14)(a0)
+	andi a2, a1, 255
+	sraiw a0, a2, 5
+	andi a1, a0, 7
+	slliw a2, a1, 5
+	sraiw a3, a2, 5
+	sext.b a0, a3
 	ret

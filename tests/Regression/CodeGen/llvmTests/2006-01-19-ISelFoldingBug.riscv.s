@@ -8,16 +8,16 @@ A:
 .text
 .globl test5
 test5:
-	andi a1, a1, 255
-	li a2, 32
+	andi a2, a1, 255
+	li a4, 32
 	li a3, 4294967295
-	subw a2, a2, a1
-	and a2, a2, a3
-	srlw a0, a0, a2
+	subw a1, a4, a2
+	and a4, a1, a3
 pcrel18:
-	auipc a2, %pcrel_hi(A)
-	lw a3, %pcrel_lo(pcrel18)(a2)
-	sllw a1, a3, a1
-	or a0, a0, a1
-	sw a0, %pcrel_lo(pcrel18)(a2)
+	auipc a1, %pcrel_hi(A)
+	srlw a0, a0, a4
+	lw a3, %pcrel_lo(pcrel18)(a1)
+	sllw a2, a3, a2
+	or a0, a0, a2
+	sw a0, %pcrel_lo(pcrel18)(a1)
 	ret

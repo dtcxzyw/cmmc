@@ -25,15 +25,15 @@ r2:
 .globl test
 test:
 pcrel21:
-	auipc a0, %pcrel_hi(i)
+	auipc a1, %pcrel_hi(i)
 pcrel22:
-	auipc a1, %pcrel_hi(k)
-	lw a0, %pcrel_lo(pcrel21)(a0)
-	lw a1, %pcrel_lo(pcrel22)(a1)
-	xor a0, a0, a1
-	li a1, 4294967295
-	sltiu a0, a0, 1
-	and a0, a0, a1
+	auipc a3, %pcrel_hi(k)
+	lw a0, %pcrel_lo(pcrel21)(a1)
+	lw a2, %pcrel_lo(pcrel22)(a3)
+	xor a0, a0, a2
+	li a2, 4294967295
+	sltiu a1, a0, 1
+	and a0, a1, a2
 pcrel23:
 	auipc a1, %pcrel_hi(r1)
 	sw a0, %pcrel_lo(pcrel23)(a1)

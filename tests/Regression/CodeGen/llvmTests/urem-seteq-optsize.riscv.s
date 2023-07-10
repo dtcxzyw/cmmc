@@ -3,8 +3,8 @@
 .text
 .globl test_minsize
 test_minsize:
-	li a1, 5
-	remuw a1, a0, a1
+	li a2, 5
+	remuw a1, a0, a2
 	li a0, 42
 	beq a1, zero, label10
 	li a0, -10
@@ -14,8 +14,8 @@ label10:
 	ret
 .globl test_optsize
 test_optsize:
-	li a1, 5
-	remuw a1, a0, a1
+	li a2, 5
+	remuw a1, a0, a2
 	li a0, 42
 	beq a1, zero, label20
 	li a0, -10

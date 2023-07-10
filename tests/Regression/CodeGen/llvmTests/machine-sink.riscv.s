@@ -3,7 +3,8 @@
 .text
 .globl test
 test:
-	addiw a2, a1, 2
+	addiw a3, a1, 2
+	mv a2, a3
 	bltu a0, a1, label8
 	li a2, 1
 label8:

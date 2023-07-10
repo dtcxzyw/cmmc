@@ -39,18 +39,18 @@ label34:
 .globl sat0_base_8bit
 sat0_base_8bit:
 	sext.b a1, a0
-	mv a2, zero
-	andi a0, a0, 255
+	andi a2, a0, 255
+	mv a0, zero
 	blt a1, zero, label44
-	mv a2, a0
+	mv a0, a2
 label44:
-	andi a0, a2, 255
+	andi a0, a0, 255
 	ret
 .globl sat0_lower_1
 sat0_lower_1:
 	slt a1, zero, a0
-	subw a1, zero, a1
-	and a0, a0, a1
+	subw a2, zero, a1
+	and a0, a0, a2
 	ret
 .globl sat1_base_16bit
 sat1_base_16bit:
@@ -76,13 +76,13 @@ label71:
 .globl sat1_base_8bit
 sat1_base_8bit:
 	sext.b a1, a0
+	andi a2, a0, 255
 	li a3, -1
-	li a2, -1
-	andi a0, a0, 255
+	li a0, -1
 	blt a1, a3, label82
-	mv a2, a0
+	mv a0, a2
 label82:
-	andi a0, a2, 255
+	andi a0, a0, 255
 	ret
 .globl sat1_lower_1
 sat1_lower_1:

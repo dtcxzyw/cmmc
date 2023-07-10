@@ -13,13 +13,13 @@ test_movb_Oz:
 .globl test_movb_hreg
 test_movb_hreg:
 	li a1, 65535
-	and a1, a0, a1
+	and a3, a0, a1
 	andi a0, a0, 255
-	sraiw a1, a1, 8
-	andi a0, a0, 255
-	andi a1, a1, 255
-	addw a0, a1, a0
-	andi a0, a0, 255
+	sraiw a2, a3, 8
+	andi a1, a2, 255
+	andi a2, a0, 255
+	addw a1, a1, a2
+	andi a0, a1, 255
 	ret
 .globl test_movw
 test_movw:

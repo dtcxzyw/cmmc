@@ -3,14 +3,14 @@
 .text
 .globl f
 f:
-	mulw a1, a0, a1
+	mulw a3, a0, a1
 	li a0, 4294967295
-	and a1, a1, a0
-	srliw a3, a1, 2
+	and a1, a3, a0
+	srliw a4, a1, 2
 	srliw a1, a1, 5
-	andi a3, a3, 15
-	andi a1, a1, 127
-	mulw a1, a3, a1
-	and a0, a1, a0
-	addw a0, a2, a0
+	andi a3, a4, 15
+	andi a4, a1, 127
+	mulw a3, a3, a4
+	and a1, a3, a0
+	addw a0, a2, a1
 	ret

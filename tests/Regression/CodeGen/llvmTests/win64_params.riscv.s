@@ -3,19 +3,19 @@
 .text
 .globl f6
 f6:
-	addw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	addw a2, a0, a1
+	li a3, 4294967295
+	and a0, a2, a3
 	ret
 .globl f7
 f7:
-	addw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	addw a2, a0, a1
+	li a3, 4294967295
+	and a0, a2, a3
 	ret
 .globl f8
 f8:
-	addw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	addw a2, a0, a1
+	li a3, 4294967295
+	and a0, a2, a3
 	ret

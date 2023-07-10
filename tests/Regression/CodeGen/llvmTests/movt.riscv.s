@@ -8,8 +8,8 @@ t:
 	ret
 .globl t2
 t2:
-	lui a1, 1048544
-	or a0, a0, a1
-	li a1, -65537
-	and a0, a0, a1
+	lui a2, 1048544
+	li a3, -65537
+	or a1, a0, a2
+	and a0, a1, a3
 	ret

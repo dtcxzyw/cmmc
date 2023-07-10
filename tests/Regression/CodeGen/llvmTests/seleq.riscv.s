@@ -41,22 +41,22 @@ z4:
 .globl calc_seleq
 calc_seleq:
 pcrel128:
-	auipc a0, %pcrel_hi(a)
-	lw a1, %pcrel_lo(pcrel128)(a0)
+	auipc a2, %pcrel_hi(a)
 pcrel129:
 	auipc a0, %pcrel_hi(b)
+	lw a1, %pcrel_lo(pcrel128)(a2)
 	lw a2, %pcrel_lo(pcrel129)(a0)
 	bne a1, a2, label17
 pcrel130:
-	auipc a0, %pcrel_hi(f)
-	lw a0, %pcrel_lo(pcrel130)(a0)
+	auipc a3, %pcrel_hi(f)
+	lw a0, %pcrel_lo(pcrel130)(a3)
 pcrel131:
 	auipc a3, %pcrel_hi(z1)
 	sw a0, %pcrel_lo(pcrel131)(a3)
 	bne a1, a2, label16
 pcrel132:
-	auipc a0, %pcrel_hi(f)
-	lw a0, %pcrel_lo(pcrel132)(a0)
+	auipc a2, %pcrel_hi(f)
+	lw a0, %pcrel_lo(pcrel132)(a2)
 pcrel133:
 	auipc a2, %pcrel_hi(z2)
 	sw a0, %pcrel_lo(pcrel133)(a2)
@@ -65,23 +65,23 @@ pcrel134:
 	lw a2, %pcrel_lo(pcrel134)(a0)
 	bne a1, a2, label9
 pcrel135:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(pcrel135)(a0)
+	auipc a3, %pcrel_hi(t)
+	lw a0, %pcrel_lo(pcrel135)(a3)
 pcrel136:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel136)(a3)
 	bne a1, a2, label59
 	j label125
 label17:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(label17)(a0)
+	auipc a3, %pcrel_hi(t)
+	lw a0, %pcrel_lo(label17)(a3)
 pcrel137:
 	auipc a3, %pcrel_hi(z1)
 	sw a0, %pcrel_lo(pcrel137)(a3)
 	bne a1, a2, label16
 pcrel138:
-	auipc a0, %pcrel_hi(f)
-	lw a0, %pcrel_lo(pcrel138)(a0)
+	auipc a2, %pcrel_hi(f)
+	lw a0, %pcrel_lo(pcrel138)(a2)
 pcrel139:
 	auipc a2, %pcrel_hi(z2)
 	sw a0, %pcrel_lo(pcrel139)(a2)
@@ -90,35 +90,35 @@ pcrel140:
 	lw a2, %pcrel_lo(pcrel140)(a0)
 	bne a1, a2, label9
 pcrel141:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(pcrel141)(a0)
+	auipc a3, %pcrel_hi(t)
+	lw a0, %pcrel_lo(pcrel141)(a3)
 pcrel142:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel142)(a3)
 	bne a1, a2, label59
 	j label125
 label9:
-	auipc a0, %pcrel_hi(f)
-	lw a0, %pcrel_lo(label9)(a0)
+	auipc a3, %pcrel_hi(f)
+	lw a0, %pcrel_lo(label9)(a3)
 pcrel143:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel143)(a3)
 	bne a1, a2, label59
 	j label125
 label59:
-	auipc a0, %pcrel_hi(f)
-	lw a0, %pcrel_lo(label59)(a0)
+	auipc a1, %pcrel_hi(f)
+	lw a0, %pcrel_lo(label59)(a1)
 label14:
 	auipc a1, %pcrel_hi(z4)
 	sw a0, %pcrel_lo(label14)(a1)
 	ret
 label125:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(label125)(a0)
+	auipc a1, %pcrel_hi(t)
+	lw a0, %pcrel_lo(label125)(a1)
 	j label14
 label16:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(label16)(a0)
+	auipc a2, %pcrel_hi(t)
+	lw a0, %pcrel_lo(label16)(a2)
 pcrel144:
 	auipc a2, %pcrel_hi(z2)
 	sw a0, %pcrel_lo(pcrel144)(a2)
@@ -127,8 +127,8 @@ pcrel145:
 	lw a2, %pcrel_lo(pcrel145)(a0)
 	bne a1, a2, label9
 pcrel146:
-	auipc a0, %pcrel_hi(t)
-	lw a0, %pcrel_lo(pcrel146)(a0)
+	auipc a3, %pcrel_hi(t)
+	lw a0, %pcrel_lo(pcrel146)(a3)
 pcrel147:
 	auipc a3, %pcrel_hi(z3)
 	sw a0, %pcrel_lo(pcrel147)(a3)

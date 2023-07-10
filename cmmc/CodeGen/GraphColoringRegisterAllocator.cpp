@@ -25,8 +25,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
+#include <iterator>
+#include <limits>
 #include <ostream>
 #include <queue>
+#include <set>
 #include <stack>
 #include <unordered_map>
 #include <unordered_set>
@@ -169,6 +172,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
     const auto& list = ctx.registerInfo->getAllocationList(allocationClass);
     const std::unordered_set<uint32_t> allocableISARegs{ list.cbegin(), list.cend() };
     std::unordered_set<uint32_t> blockList;
+    bool fixWAWHazard = ctx.scheduleModel.getInfo().enablePostRAScheduling && !ctx.scheduleModel.getInfo().hasRegRenaming;
     constexpr auto debugRA = false;
 
     if(debugRA) {
@@ -198,6 +202,16 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 }
             }
         }
+
+        std::unordered_map<RegNum, std::set<InstNum>> defTime;
+        auto colorDef = [&](RegNum src, RegNum dst) {
+            assert(isVirtualReg(src) && isISAReg(dst));
+            if(!fixWAWHazard || !defTime.count(src))
+                return;
+            auto& dstInfo = defTime[dst];
+            auto& srcInfo = defTime[src];
+            dstInfo.insert(srcInfo.begin(), srcInfo.end());
+        };
 
         std::unordered_map<RegNum, std::unordered_map<RegNum, double>> copyHint;
         auto updateCopyHint = [&](RegNum dst, RegNum src, double weight) {
@@ -301,6 +315,7 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                         auto& op = inst.getOperand(idx);
                         if(!isAllocatableType(op.type()))
                             continue;
+                        defTime[op.reg()].insert(liveInterval.instNum.at(&inst));
                         if(isOperandISAReg(op) && !ctx.registerInfo->isZeroRegister(op.reg())) {
                             lockedISAReg.insert(op.reg());
                             for(auto vreg : liveVRegs)
@@ -457,23 +472,79 @@ static void graphColoringAllocateImpl(MIRFunction& mfunc, CodeGenContext& ctx, I
                 if(auto isaReg = calcCopyFreeProposal(u, exclude)) {
                     assert(allocableISARegs.count(*isaReg));
                     regMap[u] = *isaReg;
+                    colorDef(u, *isaReg);
                     assigned = true;
                 } else {
-                    for(auto reg : list) {
-                        if(!exclude.count(reg)) {
-                            regMap[u] = reg;
-                            assigned = true;
-                            break;
+                    if(!fixWAWHazard) {
+                        for(auto reg : list) {
+                            if(!exclude.count(reg)) {
+                                regMap[u] = reg;
+                                assigned = true;
+                                break;
+                            }
                         }
+                    } else {
+                        RegNum bestReg = invalidReg;
+                        double cost = 1e20;
+                        auto evalCost = [&](RegNum reg) {
+                            assert(isISAReg(reg));
+                            constexpr double calleeSavedCost = 5.0;
+
+                            double maxFreq = -1.0;
+                            constexpr InstNum infDist = 10;
+                            InstNum minDist = infDist;
+
+                            auto& defTimeOfColored = defTime[reg];
+                            auto evalDist = [&](InstNum curDefTime) {
+                                if(defTimeOfColored.empty())
+                                    return infDist;
+                                const auto it = defTimeOfColored.lower_bound(curDefTime);
+                                if(it == defTimeOfColored.begin())
+                                    return std::min(infDist, *it - curDefTime);
+                                if(it == defTimeOfColored.end())
+                                    return std::min(infDist, curDefTime - *std::prev(it));
+                                return std::min(infDist, std::min(curDefTime - *std::prev(it), *it - curDefTime));
+                            };
+
+                            for(auto instNum : defTime[u]) {
+                                const auto f = getBlockFreq(instNum);
+                                if(f > maxFreq) {
+                                    minDist = evalDist(instNum);
+                                    maxFreq = f;
+                                } else if(f == maxFreq)
+                                    minDist = std::min(minDist, evalDist(instNum));
+                            }
+
+                            double curCost = -static_cast<double>(minDist);
+                            if(ctx.frameInfo.isCalleeSaved(MIROperand::asISAReg(reg, OperandType::Special))) {
+                                curCost += calleeSavedCost;
+                            }
+
+                            return curCost;
+                        };
+                        for(auto reg : list) {
+                            if(!exclude.count(reg)) {
+                                const auto curCost = evalCost(reg);
+                                if constexpr(debugRA) {
+                                    std::cerr << reg << " cost " << curCost << std::endl;
+                                }
+                                if(curCost < cost) {
+                                    cost = curCost;
+                                    bestReg = reg;
+                                }
+                            }
+                        }
+
+                        regMap[u] = bestReg;
+                        colorDef(u, bestReg);
+                        assigned = true;
                     }
                 }
                 if(!assigned)
                     reportUnreachable(CMMC_LOCATION());
-            }
-
-            if(debugRA) {
-                for(auto [u, v] : regMap)
-                    std::cerr << (u ^ virtualRegBegin) << " -> " << v << std::endl;
+                if constexpr(debugRA) {
+                    std::cerr << (u ^ virtualRegBegin) << " -> " << regMap.at(u) << std::endl;
+                }
             }
 
             for(auto& block : mfunc.blocks()) {

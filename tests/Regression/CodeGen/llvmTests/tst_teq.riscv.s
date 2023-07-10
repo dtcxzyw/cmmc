@@ -3,21 +3,21 @@
 .text
 .globl f
 f:
-	andi a1, a0, 255
-	li a0, 20
-	beq a1, zero, label9
-	li a0, 10
+	andi a2, a0, 255
+	li a1, 20
+	beq a2, zero, label9
+	li a1, 10
 label9:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl g
 g:
-	xori a1, a0, 255
-	li a0, 20
-	beq a1, zero, label18
-	li a0, 10
+	xori a2, a0, 255
+	li a1, 20
+	beq a2, zero, label18
+	li a1, 10
 label18:
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

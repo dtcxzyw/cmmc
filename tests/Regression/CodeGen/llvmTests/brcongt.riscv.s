@@ -21,11 +21,11 @@ result:
 .globl test
 test:
 pcrel26:
-	auipc a0, %pcrel_hi(i)
+	auipc a1, %pcrel_hi(i)
 pcrel27:
-	auipc a1, %pcrel_hi(j)
-	lw a0, %pcrel_lo(pcrel26)(a0)
-	lw a1, %pcrel_lo(pcrel27)(a1)
+	auipc a2, %pcrel_hi(j)
+	lw a0, %pcrel_lo(pcrel26)(a1)
+	lw a1, %pcrel_lo(pcrel27)(a2)
 	ble a0, a1, label14
 	j label2
 label14:

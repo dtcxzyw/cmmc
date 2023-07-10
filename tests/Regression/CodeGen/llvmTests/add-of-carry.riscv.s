@@ -3,16 +3,16 @@
 .text
 .globl test1
 test1:
-	addw a0, a0, a1
-	li a2, 4294967295
-	sltu a1, a0, a1
-	and a1, a1, a2
-	addw a0, a0, a1
+	addw a2, a0, a1
+	sltu a0, a2, a1
+	li a1, 4294967295
+	and a3, a0, a1
+	addw a0, a2, a3
 	ret
 .globl test2
 test2:
 	sltu a0, a1, a0
-	li a1, 4294967295
-	addw a0, a0, a2
-	and a0, a0, a1
+	addw a1, a0, a2
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

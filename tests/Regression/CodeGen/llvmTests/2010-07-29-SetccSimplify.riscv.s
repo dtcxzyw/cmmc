@@ -3,10 +3,10 @@
 .text
 .globl extend2bit_v2
 extend2bit_v2:
-	andi a0, a0, 255
-	li a1, 4294967295
-	sext.b a0, a0
-	xori a0, a0, 3
-	sltiu a0, a0, 1
-	and a0, a0, a1
+	andi a1, a0, 255
+	sext.b a2, a1
+	xori a0, a2, 3
+	li a2, 4294967295
+	sltiu a1, a0, 1
+	and a0, a1, a2
 	ret

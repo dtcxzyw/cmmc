@@ -25,11 +25,11 @@ result2:
 .globl test
 test:
 pcrel47:
-	auipc a0, %pcrel_hi(i)
+	auipc a2, %pcrel_hi(i)
 pcrel48:
-	auipc a2, %pcrel_hi(j)
-	lw a1, %pcrel_lo(pcrel47)(a0)
-	lw a2, %pcrel_lo(pcrel48)(a2)
+	auipc a3, %pcrel_hi(j)
+	lw a1, %pcrel_lo(pcrel47)(a2)
+	lw a2, %pcrel_lo(pcrel48)(a3)
 	mv a0, a1
 	bge a1, a2, label3
 	li a1, 1
@@ -37,13 +37,13 @@ pcrel49:
 	auipc a2, %pcrel_hi(result1)
 	sw a1, %pcrel_lo(pcrel49)(a2)
 pcrel50:
-	auipc a1, %pcrel_hi(k)
-	lw a1, %pcrel_lo(pcrel50)(a1)
+	auipc a2, %pcrel_hi(k)
+	lw a1, %pcrel_lo(pcrel50)(a2)
 	bge a0, a1, label5
 	j label45
 label3:
-	auipc a1, %pcrel_hi(k)
-	lw a1, %pcrel_lo(label3)(a1)
+	auipc a2, %pcrel_hi(k)
+	lw a1, %pcrel_lo(label3)(a2)
 	bge a0, a1, label5
 	j label45
 label5:

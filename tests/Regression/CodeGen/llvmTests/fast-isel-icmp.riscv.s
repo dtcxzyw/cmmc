@@ -3,40 +3,40 @@
 .text
 .globl icmp_i16_signed
 icmp_i16_signed:
-	sext.h a0, a0
-	sext.h a1, a1
-	slt a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	sext.h a2, a0
+	sext.h a0, a1
+	slt a1, a2, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl icmp_i16_unsigned
 icmp_i16_unsigned:
 	li a2, 65535
-	and a1, a1, a2
+	and a3, a1, a2
 	and a0, a0, a2
-	slt a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 4294967295
+	slt a1, a0, a3
+	and a0, a1, a2
 	ret
 .globl icmp_i1_unsigned
 icmp_i1_unsigned:
-	sltu a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	sltu a2, a0, a1
+	li a3, 4294967295
+	and a0, a2, a3
 	ret
 .globl icmp_i8_signed
 icmp_i8_signed:
-	sext.b a0, a0
-	sext.b a1, a1
-	slt a0, a1, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	sext.b a2, a0
+	sext.b a0, a1
+	slt a1, a0, a2
+	li a2, 4294967295
+	and a0, a1, a2
 	ret
 .globl icmp_i8_unsigned
 icmp_i8_unsigned:
-	andi a0, a0, 255
-	andi a1, a1, 255
-	slt a0, a1, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	andi a2, a0, 255
+	andi a0, a1, 255
+	slt a1, a0, a2
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

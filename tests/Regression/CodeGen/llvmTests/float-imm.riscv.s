@@ -9,8 +9,8 @@ __cmmc_fp_constant_pool:
 float_imm:
 pcrel6:
 	auipc a0, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a0, a0, %pcrel_lo(pcrel6)
-	flw f10, 0(a0)
+	addi a1, a0, %pcrel_lo(pcrel6)
+	flw f10, 0(a1)
 	ret
 .globl float_imm_op
 float_imm_op:

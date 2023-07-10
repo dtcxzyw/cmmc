@@ -3,11 +3,11 @@
 .text
 .globl foo
 foo:
-	sltu a1, zero, a1
-	li a2, 4294967295
-	subw a1, zero, a1
-	andi a1, a1, 2
-	and a2, a1, a2
+	sltu a3, zero, a1
+	subw a2, zero, a3
+	li a3, 4294967295
+	andi a1, a2, 2
+	and a2, a1, a3
 	li a1, 1
 	bne a0, zero, label12
 	mv a1, a2

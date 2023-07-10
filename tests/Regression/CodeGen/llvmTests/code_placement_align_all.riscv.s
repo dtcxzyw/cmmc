@@ -11,9 +11,9 @@ foo:
 	and a0, a0, a1
 	j label3
 label10:
-	addiw a0, a0, 2
-	li a1, 4294967295
-	and a0, a0, a1
+	addiw a1, a0, 2
+	li a2, 4294967295
+	and a0, a1, a2
 	j label3
 label21:
 	li a1, 4294967295

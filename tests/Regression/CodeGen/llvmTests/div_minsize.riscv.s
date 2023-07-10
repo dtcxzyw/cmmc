@@ -4,21 +4,21 @@
 .globl testsize1
 testsize1:
 	slli a1, a0, 1
-	srli a1, a1, 59
-	add a0, a0, a1
-	li a1, 4294967295
-	sraiw a0, a0, 5
-	and a0, a0, a1
+	srli a2, a1, 59
+	add a0, a0, a2
+	li a2, 4294967295
+	sraiw a1, a0, 5
+	and a0, a1, a2
 	ret
 .globl testsize2
 testsize2:
-	li a1, 1041204193
-	mul a0, a0, a1
-	srai a1, a0, 35
-	srli a0, a0, 63
-	add a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 1041204193
+	li a3, 4294967295
+	mul a1, a0, a2
+	srli a2, a1, 63
+	srai a0, a1, 35
+	add a1, a2, a0
+	and a0, a1, a3
 	ret
 .globl testsize3
 testsize3:

@@ -30,10 +30,11 @@ label18:
 	li a3, 1
 label3:
 	li a4, 65535
+	and t0, a3, a4
 	and a5, a3, a4
 	addiw a3, a3, 1
 	sh a5, 0(a1)
-	slliw a5, a5, 2
+	slliw a5, t0, 2
 	and a4, a5, a4
 	sh a4, 0(a2)
 	bne a0, a3, label3

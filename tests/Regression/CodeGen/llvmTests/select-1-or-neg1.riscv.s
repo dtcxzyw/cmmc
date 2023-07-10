@@ -8,6 +8,6 @@ PR28968:
 	beq a0, a2, label10
 	li a1, -1
 label10:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

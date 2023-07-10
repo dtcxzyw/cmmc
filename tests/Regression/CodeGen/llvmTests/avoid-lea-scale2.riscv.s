@@ -3,6 +3,6 @@
 .text
 .globl foo
 foo:
-	slliw a0, a0, 1
-	addiw a0, a0, -2
+	slliw a1, a0, 1
+	addiw a0, a1, -2
 	ret

@@ -3,7 +3,7 @@
 .text
 .globl test
 test:
-	addiw a0, a0, -1
-	addiw a1, a1, 1
-	mulw a0, a0, a1
+	addiw a2, a0, -1
+	addiw a3, a1, 1
+	mulw a0, a2, a3
 	ret

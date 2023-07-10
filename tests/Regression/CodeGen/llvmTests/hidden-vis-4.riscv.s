@@ -9,6 +9,6 @@ x:
 .globl t
 t:
 pcrel7:
-	auipc a0, %pcrel_hi(x)
-	lw a0, %pcrel_lo(pcrel7)(a0)
+	auipc a1, %pcrel_hi(x)
+	lw a0, %pcrel_lo(pcrel7)(a1)
 	ret

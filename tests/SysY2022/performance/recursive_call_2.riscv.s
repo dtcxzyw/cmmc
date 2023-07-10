@@ -10,12 +10,12 @@ func:
 	fsw f8, 40(sp)
 	fmv.s f8, f10
 	sd s0, 32(sp)
-	mv s0, a1
+	mv s0, a0
 	sd s2, 24(sp)
 	fsw f9, 16(sp)
 	sd s1, 8(sp)
 	sd ra, 0(sp)
-	bge a1, zero, label4
+	bge a0, zero, label4
 	fmv.w.x f10, zero
 	j label2
 label52:
@@ -40,11 +40,11 @@ label4:
 label9:
 	addiw s0, s0, -2
 	fmv.s f10, f8
-	mv a1, s0
+	mv a0, s0
 	jal func
 	fadd.s f9, f8, f10
 	fmv.s f10, f9
-	mv a1, s0
+	mv a0, s0
 	jal func
 	fsub.s f10, f9, f10
 	fsub.s f10, f8, f10
@@ -52,11 +52,11 @@ label9:
 label10:
 	addiw s1, s0, -2
 	fmv.s f10, f8
-	mv a1, s1
+	mv a0, s1
 	jal func
 	fadd.s f9, f8, f10
 	fmv.s f10, f9
-	mv a1, s1
+	mv a0, s1
 	jal func
 	fsub.s f10, f9, f10
 	fadd.s f8, f8, f10
@@ -70,10 +70,9 @@ main:
 	jal _sysy_starttime
 	jal getint
 pcrel70:
-	auipc a1, %pcrel_hi(__cmmc_fp_constant_pool)
-	addi a1, a1, %pcrel_lo(pcrel70)
+	auipc a2, %pcrel_hi(__cmmc_fp_constant_pool)
+	addi a1, a2, %pcrel_lo(pcrel70)
 	flw f10, 0(a1)
-	mv a1, a0
 	jal func
 	fmv.w.x f11, zero
 	feq.s a0, f10, f11

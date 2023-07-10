@@ -3,9 +3,9 @@
 .text
 .globl f
 f:
-	ori a1, a0, 1
-	srliw a0, a0, 27
-	slliw a1, a1, 5
-	andi a0, a0, 1
-	or a0, a1, a0
+	ori a2, a0, 1
+	srliw a3, a0, 27
+	slliw a1, a2, 5
+	andi a2, a3, 1
+	or a0, a1, a2
 	ret

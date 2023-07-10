@@ -4,27 +4,27 @@
 .globl test1
 test1:
 	li a1, -2139062143
-	mul a1, a0, a1
-	srli a1, a1, 32
-	add a1, a1, a0
+	mul a2, a0, a1
+	srli a3, a2, 32
+	add a1, a3, a0
+	srliw a3, a1, 31
 	sraiw a2, a1, 7
-	srliw a1, a1, 31
-	add a1, a1, a2
+	add a1, a3, a2
 	li a2, 255
-	mulw a1, a1, a2
-	subw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	mulw a3, a1, a2
+	li a2, 4294967295
+	subw a1, a0, a3
+	and a0, a1, a2
 	ret
 .globl test2
 test2:
 	slli a1, a0, 1
-	srli a1, a1, 56
-	add a1, a0, a1
-	andi a1, a1, -256
-	subw a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	srli a4, a1, 56
+	add a2, a0, a4
+	andi a3, a2, -256
+	li a2, 4294967295
+	subw a1, a0, a3
+	and a0, a1, a2
 	ret
 .globl test3
 test3:
@@ -37,8 +37,8 @@ test4:
 	ret
 .globl test5
 test5:
-	li a1, 41
-	remw a0, a1, a0
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 41
+	li a3, 4294967295
+	remw a1, a2, a0
+	and a0, a1, a3
 	ret

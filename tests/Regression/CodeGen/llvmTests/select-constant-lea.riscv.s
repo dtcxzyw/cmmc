@@ -8,6 +8,6 @@ select_unsigned_lt_10_8_13:
 	bltu a0, a2, label9
 	li a1, 13
 label9:
-	li a0, 4294967295
-	and a0, a1, a0
+	li a2, 4294967295
+	and a0, a1, a2
 	ret

@@ -4,8 +4,8 @@
 .globl test5
 test5:
 	li a1, 65535
-	and a0, a0, a1
-	slliw a0, a0, 2
-	sraiw a0, a0, 8
-	and a0, a0, a1
+	and a2, a0, a1
+	slliw a3, a2, 2
+	sraiw a4, a3, 8
+	and a0, a4, a1
 	ret

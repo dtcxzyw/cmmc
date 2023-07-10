@@ -17,7 +17,7 @@ pcrel17:
 label9:
 	addiw a1, a1, 10
 	li a2, 4294967295
-	and a1, a1, a2
-	sw a1, 0(a0)
+	and a3, a1, a2
+	sw a3, 0(a0)
 label2:
 	ret

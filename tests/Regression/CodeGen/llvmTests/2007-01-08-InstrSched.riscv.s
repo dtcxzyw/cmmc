@@ -4,18 +4,18 @@
 .globl foo
 foo:
 	lui a0, 263168
-	fmv.w.x f11, a0
+	fmv.w.x f12, a0
 	lui a0, 264704
-	fmul.s f11, f10, f11
+	fmul.s f11, f10, f12
 	fmv.w.x f12, a0
 	lui a0, 265728
-	fmul.s f12, f10, f12
-	fadd.s f11, f11, f12
+	fmul.s f13, f10, f12
 	fmv.w.x f12, a0
 	lui a0, 267008
-	fmul.s f12, f10, f12
-	fadd.s f11, f11, f12
+	fadd.s f11, f11, f13
+	fmul.s f13, f10, f12
 	fmv.w.x f12, a0
-	fmul.s f10, f10, f12
-	fadd.s f10, f11, f10
+	fadd.s f11, f11, f13
+	fmul.s f13, f10, f12
+	fadd.s f10, f11, f13
 	ret

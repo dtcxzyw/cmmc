@@ -21,13 +21,13 @@ llll:
 .globl test
 test:
 pcrel22:
-	auipc a0, %pcrel_hi(iiii)
+	auipc a1, %pcrel_hi(iiii)
 pcrel23:
-	auipc a1, %pcrel_hi(jjjj)
+	auipc a3, %pcrel_hi(jjjj)
+	lw a0, %pcrel_lo(pcrel22)(a1)
+	lw a1, %pcrel_lo(pcrel23)(a3)
 pcrel24:
 	auipc a3, %pcrel_hi(kkkk)
-	lw a0, %pcrel_lo(pcrel22)(a0)
-	lw a1, %pcrel_lo(pcrel23)(a1)
 	divuw a2, a0, a1
 	remuw a0, a0, a1
 pcrel25:

@@ -3,56 +3,56 @@
 .text
 .globl f0
 f0:
-	sext.h a0, a0
-	srliw a1, a0, 31
-	add a0, a0, a1
-	li a1, 65535
-	sraiw a0, a0, 1
-	and a0, a0, a1
+	sext.h a1, a0
+	srliw a2, a1, 31
+	add a0, a1, a2
+	li a2, 65535
+	sraiw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl f1
 f1:
 	slli a1, a0, 1
-	srli a1, a1, 62
-	add a0, a0, a1
-	li a1, 4294967295
-	sraiw a0, a0, 2
-	and a0, a0, a1
+	srli a2, a1, 62
+	add a0, a0, a2
+	li a2, 4294967295
+	sraiw a1, a0, 2
+	and a0, a1, a2
 	ret
 .globl f2
 f2:
-	li a1, 1717986919
-	mul a0, a0, a1
-	srai a1, a0, 33
-	srli a0, a0, 63
-	add a0, a0, a1
-	li a1, 4294967295
-	and a0, a0, a1
+	li a2, 1717986919
+	li a3, 4294967295
+	mul a1, a0, a2
+	srli a2, a1, 63
+	srai a0, a1, 33
+	add a1, a2, a0
+	and a0, a1, a3
 	ret
 .globl f3
 f3:
 	slli a1, a0, 1
-	srli a1, a1, 56
-	add a0, a0, a1
-	li a1, 4294967295
-	sraiw a0, a0, 8
-	and a0, a0, a1
+	srli a2, a1, 56
+	add a0, a0, a2
+	li a2, 4294967295
+	sraiw a1, a0, 8
+	and a0, a1, a2
 	ret
 .globl f4
 f4:
-	sext.h a0, a0
-	srliw a1, a0, 31
-	add a0, a0, a1
-	li a1, 65535
-	sraiw a0, a0, 1
-	and a0, a0, a1
+	sext.h a1, a0
+	srliw a2, a1, 31
+	add a0, a1, a2
+	li a2, 65535
+	sraiw a1, a0, 1
+	and a0, a1, a2
 	ret
 .globl f5
 f5:
 	slli a1, a0, 1
-	srli a1, a1, 62
-	add a0, a0, a1
-	li a1, 4294967295
-	sraiw a0, a0, 2
-	and a0, a0, a1
+	srli a2, a1, 62
+	add a0, a0, a2
+	li a2, 4294967295
+	sraiw a1, a0, 2
+	and a0, a1, a2
 	ret
