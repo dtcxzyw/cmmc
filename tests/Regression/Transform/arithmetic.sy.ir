@@ -753,3 +753,10 @@ func @div_eq(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless 
     i32 %2 = zext i1 %1 to i32;
     ret i32 %2;
 }
+func @ml_select(i32 %x, i32 %y) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = or i32 %x, i32 %y;
+    i1 %1 = icmp eq i32 %0, i32 0;
+    i32 %2 = select i1 %1 ? i32 10 : i32 0;
+    ret i32 %2;
+}

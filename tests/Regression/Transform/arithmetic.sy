@@ -442,3 +442,7 @@ int select_imm(int c) {
 int div_eq(int x) {
     return x / 2 == 0;
 }
+int ml_select(int x, int y, int z) {
+    int w = y == 0 ? 10 : 0;
+    return x == 0 ? w : 0;
+}

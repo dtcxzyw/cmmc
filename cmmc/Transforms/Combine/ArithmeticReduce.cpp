@@ -1023,6 +1023,10 @@ class ArithmeticReduce final : public TransformPass<Function> {
             if(fabs(capture(fabs(any(v1)), v2))(matchCtx))
                 return v2;
 
+            if(select(any(v1), oneUse(select(any(v2), any(v3), any(v4))), any(v5))(matchCtx) && v4 == v5) {
+                return builder.makeOp<SelectInst>(builder.makeOp<BinaryInst>(InstructionID::And, v1, v2), v3, v4);
+            }
+
             return nullptr;
         });
         return ret || modified;
