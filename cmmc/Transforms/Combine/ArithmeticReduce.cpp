@@ -22,6 +22,7 @@
 #include <cmmc/IR/ConstantValue.hpp>
 #include <cmmc/IR/Function.hpp>
 #include <cmmc/IR/Instruction.hpp>
+#include <cmmc/IR/Type.hpp>
 #include <cmmc/Transforms/TransformPass.hpp>
 #include <cmmc/Transforms/Util/BlockUtil.hpp>
 #include <cmmc/Transforms/Util/PatternMatch.hpp>
@@ -485,14 +486,28 @@ class ArithmeticReduce final : public TransformPass<Function> {
                                                    builder.makeOp<BinaryInst>(InstructionID::Or, v1, v2), makeIntLike(0, v1));
             }
 
+            auto isLegalShamt = [](intmax_t shamt, const Type* t) {
+                const auto bitwidth = t->as<IntegerType>()->getBitwidth();
+                return 0 <= shamt && shamt < static_cast<int32_t>(bitwidth);
+            };
             if(shl(shl(any(v1), int_(i1)), int_(i2))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, makeIntLike(i1 + i2, v1));
+                const auto shamt = i1 + i2;
+                if(isLegalShamt(shamt, v1->getType()))
+                    return builder.makeOp<BinaryInst>(InstructionID::Shl, v1, makeIntLike(shamt, v1));
+
+                return makeIntLike(0, v1);
             }
             if(lshr(lshr(any(v1), int_(i1)), int_(i2))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::LShr, v1, makeIntLike(i1 + i2, v1));
+                const auto shamt = i1 + i2;
+                if(isLegalShamt(shamt, v1->getType()))
+                    return builder.makeOp<BinaryInst>(InstructionID::LShr, v1, makeIntLike(shamt, v1));
+                return makeIntLike(0, v1);
             }
             if(ashr(ashr(any(v1), int_(i1)), int_(i2))(matchCtx)) {
-                return builder.makeOp<BinaryInst>(InstructionID::AShr, v1, makeIntLike(i1 + i2, v1));
+                const auto shamt = i1 + i2;
+                if(isLegalShamt(shamt, v1->getType()))
+                    return builder.makeOp<BinaryInst>(InstructionID::AShr, v1, makeIntLike(shamt, v1));
+                return makeIntLike(0, v1);
             }
 
             // select c1, c2, false -> c1 & c2
@@ -953,7 +968,7 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // zext (x < 0) -> x lsr (bitwidth - 1)
-            if(zext(oneUse(icmp(cmp, any(v1), cint_(0))))(matchCtx)) {
+            if(zext(oneUse(icmp(cmp, any(v1), cint_(0))))(matchCtx) && inst->getType()->isSame(v1->getType())) {
                 bool usedByCmp = false;
                 for(auto user : inst->users()) {
                     if(user->getInstID() == InstructionID::ICmp) {

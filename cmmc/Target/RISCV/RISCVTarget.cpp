@@ -174,7 +174,7 @@ public:
                 RISCV::X20, RISCV::X21, RISCV::X22, RISCV::X23,  //
                 RISCV::X24, RISCV::X25, RISCV::X26, RISCV::X27,  //
                 // $gp
-                RISCV::X3,  //
+                // RISCV::X3,  //
             };
             return list;
         }

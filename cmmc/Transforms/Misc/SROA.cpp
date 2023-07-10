@@ -85,16 +85,23 @@ public:
     bool run(Function& func, AnalysisPassManager&) const override {
         std::list<Instruction*> todo;
 
-        for(auto block : func.blocks()) {
-            for(auto& inst : block->instructions()) {
-                if(inst.getInstID() == InstructionID::Alloc && inst.getType()->as<PointerType>()->getPointee()->isAggregate()) {
-                    const auto type = inst.getType()->as<PointerType>()->getPointee();
-                    const auto bound = type->isArray() ? type->as<ArrayType>()->getElementCount() : 0;
-                    if(bound > 16U)
-                        continue;
-                    if(isIndexedByConstantIndices(&inst, type, bound))
-                        todo.push_back(&inst);
+        for(auto& inst : func.entryBlock()->instructions()) {
+            if(inst.getInstID() == InstructionID::Alloc && inst.getType()->as<PointerType>()->getPointee()->isAggregate()) {
+                const auto type = inst.getType()->as<PointerType>()->getPointee();
+                const auto bound = type->isArray() ? type->as<ArrayType>()->getElementCount() : 0;
+                if(bound > 16U)
+                    continue;
+                bool usedByPhi = false;
+                for(auto user : inst.users()) {
+                    if(user->getInstID() == InstructionID::Phi) {
+                        usedByPhi = true;
+                        break;
+                    }
                 }
+                if(usedByPhi)
+                    continue;
+                if(isIndexedByConstantIndices(&inst, type, bound))
+                    todo.push_back(&inst);
             }
         }
         if(todo.empty())
