@@ -212,21 +212,18 @@ class ConstantPropagation final : public TransformPass<Function> {
 
                 switch(inst->getInstID()) {
                     case InstructionID::SignedTrunc:
-                        [[fallthrough]];
                     case InstructionID::SExt: {
                         if(int_(sval)(matchCtx))
                             return makeInt(inst, sval);
                         break;
                     }
                     case InstructionID::ZExt:
-                        [[fallthrough]];
                     case InstructionID::UnsignedTrunc: {
                         if(uint_(uval)(matchCtx))
                             return makeInt(inst, static_cast<intmax_t>(uval));
                         break;
                     }
                     case InstructionID::F2U:
-                        [[fallthrough]];
                     case InstructionID::F2S: {
                         if(fp_(fval)(matchCtx))
                             return makeInt(inst,

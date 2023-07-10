@@ -675,7 +675,6 @@ static void lower(CastInst* inst, LoweringContext& ctx) {
                 case InstructionID::S2F:
                     return InstS2F;
                 case InstructionID::FCast:
-                    [[fallthrough]];
                 default:
                     reportUnreachable(CMMC_LOCATION());
             }
@@ -938,55 +937,33 @@ static void lower(FunctionCallInst* inst, LoweringContext& ctx) {
 static void lowerInst(Instruction* inst, LoweringContext& ctx) {
     switch(inst->getInstID()) {
         case InstructionID::Add:
-            [[fallthrough]];
         case InstructionID::Sub:
-            [[fallthrough]];
         case InstructionID::Mul:
-            [[fallthrough]];
         case InstructionID::SDiv:
-            [[fallthrough]];
         case InstructionID::UDiv:
-            [[fallthrough]];
         case InstructionID::SRem:
-            [[fallthrough]];
         case InstructionID::URem:
-            [[fallthrough]];
         case InstructionID::And:
-            [[fallthrough]];
         case InstructionID::Or:
-            [[fallthrough]];
         case InstructionID::Xor:
-            [[fallthrough]];
         case InstructionID::Shl:
-            [[fallthrough]];
         case InstructionID::LShr:
-            [[fallthrough]];
         case InstructionID::AShr:
-            [[fallthrough]];
         case InstructionID::SMin:
-            [[fallthrough]];
         case InstructionID::SMax:
-            [[fallthrough]];
         case InstructionID::FAdd:
-            [[fallthrough]];
         case InstructionID::FSub:
-            [[fallthrough]];
         case InstructionID::FMul:
-            [[fallthrough]];
         case InstructionID::FDiv:
             lower(inst->as<BinaryInst>(), ctx);
             break;
         case InstructionID::Neg:
-            [[fallthrough]];
         case InstructionID::Abs:
-            [[fallthrough]];
         case InstructionID::FNeg:
-            [[fallthrough]];
         case InstructionID::FAbs:
             lower(inst->as<UnaryInst>(), ctx);
             break;
         case InstructionID::ICmp:
-            [[fallthrough]];
         case InstructionID::FCmp:
             lower(inst->as<CompareInst>(), ctx);
             break;
@@ -994,7 +971,6 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
             lower(inst->as<ReturnInst>(), ctx);
             break;
         case InstructionID::Branch:
-            [[fallthrough]];
         case InstructionID::ConditionalBranch:
             lower(inst->as<BranchInst>(), ctx);
             break;
@@ -1008,23 +984,14 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
             lower(inst->as<StoreInst>(), ctx);
             break;
         case InstructionID::SExt:
-            [[fallthrough]];
         case InstructionID::ZExt:
-            [[fallthrough]];
         case InstructionID::SignedTrunc:
-            [[fallthrough]];
         case InstructionID::UnsignedTrunc:
-            [[fallthrough]];
         case InstructionID::Bitcast:
-            [[fallthrough]];
         case InstructionID::F2U:
-            [[fallthrough]];
         case InstructionID::F2S:
-            [[fallthrough]];
         case InstructionID::U2F:
-            [[fallthrough]];
         case InstructionID::S2F:
-            [[fallthrough]];
         case InstructionID::FCast:
             lower(inst->as<CastInst>(), ctx);
             break;

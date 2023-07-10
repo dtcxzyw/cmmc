@@ -111,13 +111,9 @@ public:
     [[nodiscard]] uint32_t getAllocationClass(OperandType type) const override {
         switch(type) {
             case OperandType::Bool:
-                [[fallthrough]];
             case OperandType::Int8:
-                [[fallthrough]];
             case OperandType::Int16:
-                [[fallthrough]];
             case OperandType::Int32:
-                [[fallthrough]];
             case OperandType::Int64:
                 return 0;
             case OperandType::Float32:
@@ -129,13 +125,9 @@ public:
     [[nodiscard]] OperandType getCanonicalizedRegisterType(OperandType type) const override {
         switch(type) {
             case OperandType::Bool:
-                [[fallthrough]];
             case OperandType::Int8:
-                [[fallthrough]];
             case OperandType::Int16:
-                [[fallthrough]];
             case OperandType::Int32:
-                [[fallthrough]];
             case OperandType::Int64:
                 return OperandType::Int64;
             case OperandType::Float32:

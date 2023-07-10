@@ -210,7 +210,6 @@ class ScalarMem2Reg final : public TransformPass<Function> {
                         break;
                     }
                     case InstructionID::PtrToInt:
-                        [[fallthrough]];
                     case InstructionID::PtrCast: {
                         interested.erase(inst.getOperand(0));
                         break;

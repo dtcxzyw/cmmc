@@ -360,7 +360,6 @@ static ARMInst getCompareOpcode(const bool isOpposite) {
 static ARMInst getFusedLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return LDRSB_Fused;
         case OperandType::Int16:
@@ -375,7 +374,6 @@ static ARMInst getFusedLoadOpcode(const MIROperand& dst) {
 static ARMInst getLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return LDRSB;
         case OperandType::Int16:
@@ -403,7 +401,6 @@ static ARMInst getZExtLoadOpcode(const MIROperand& dst) {
 static ARMInst getStoreOpcode(const MIROperand& src) {
     switch(src.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return STRB;
         case OperandType::Int16:
@@ -420,7 +417,6 @@ static ARMInst getStoreOpcode(const MIROperand& src) {
 static ARMInst getFusedStoreOpcode(const MIROperand& src) {
     switch(src.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return STRB_Fused;
         case OperandType::Int16:
@@ -569,15 +565,10 @@ CMMC_TARGET_NAMESPACE_BEGIN
 bool ARMISelInfo::isLegalGenericInst(uint32_t opcode) const {
     switch(opcode) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg:
-            [[fallthrough]];
         case InstLoadRegFromStack:
-            [[fallthrough]];
         case InstStoreRegToStack:
-            [[fallthrough]];
         case InstLoadStackObjectAddr:
             return true;
         default:
@@ -618,7 +609,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
     };
     switch(inst.opcode()) {
         case InstAdd:
-            [[fallthrough]];
         case InstSub: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -654,9 +644,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstAnd:
-            [[fallthrough]];
         case InstOr:
-            [[fallthrough]];
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -708,13 +696,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstMul:
-            [[fallthrough]];
         case InstSDiv:
-            [[fallthrough]];
         case InstSRem:
-            [[fallthrough]];
         case InstUDiv:
-            [[fallthrough]];
         case InstURem: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -743,7 +727,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSExt:
-            [[fallthrough]];
         case InstTrunc: {
             imm2reg(inst.getOperand(1));
             break;
@@ -763,7 +746,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSMin:
-            [[fallthrough]];
         case InstSMax: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -775,9 +757,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstShl:
-            [[fallthrough]];
         case InstAShr:
-            [[fallthrough]];
         case InstLShr: {
             auto& lhs = inst.getOperand(1);
             auto& shamt = inst.getOperand(2);
@@ -805,9 +785,7 @@ void ARMISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg: {
             auto& dst = inst.getOperand(0);
             auto& src = inst.getOperand(1);
@@ -925,7 +903,6 @@ void ARMISelInfo::preRALegalizeInst(const InstLegalizeContext& ctx) const {
             break;
         }
         case PseudoSMax:
-            [[fallthrough]];
         case PseudoSMin: {
             auto dst = inst.getOperand(0);
             auto lhs = inst.getOperand(1);
@@ -972,23 +949,14 @@ void ARMISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, M
             break;
         }
         case STR:
-            [[fallthrough]];
         case STRB:
-            [[fallthrough]];
         case STRH:
-            [[fallthrough]];
         case VSTR:
-            [[fallthrough]];
         case LDR:
-            [[fallthrough]];
         case VLDR:
-            [[fallthrough]];
         case LDRB:
-            [[fallthrough]];
         case LDRSB:
-            [[fallthrough]];
         case LDRH:
-            [[fallthrough]];
         case LDRSH: {
             assert(checkOpIdx(1));
             inst.setOperand<1>(base).setOperand<2>(imm);

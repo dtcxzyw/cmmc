@@ -268,15 +268,10 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
                 return InstructionID::FDiv;
 
             case OperatorID::LessThan:
-                [[fallthrough]];
             case OperatorID::LessEqual:
-                [[fallthrough]];
             case OperatorID::GreaterThan:
-                [[fallthrough]];
             case OperatorID::GreaterEqual:
-                [[fallthrough]];
             case OperatorID::Equal:
-                [[fallthrough]];
             case OperatorID::NotEqual:
                 return InstructionID::FCmp;
 
@@ -298,15 +293,10 @@ static InstructionID getBinaryOp(OperatorID op, bool isSigned, bool isFloatingPo
                 return isSigned ? InstructionID::SRem : InstructionID::URem;
 
             case OperatorID::LessThan:
-                [[fallthrough]];
             case OperatorID::LessEqual:
-                [[fallthrough]];
             case OperatorID::GreaterThan:
-                [[fallthrough]];
             case OperatorID::GreaterEqual:
-                [[fallthrough]];
             case OperatorID::Equal:
-                [[fallthrough]];
             case OperatorID::NotEqual:
                 return InstructionID::ICmp;
 
@@ -473,25 +463,15 @@ static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type
     switch(op) {
         // IOP/FOP
         case OperatorID::Add:
-            [[fallthrough]];
         case OperatorID::Sub:
-            [[fallthrough]];
         case OperatorID::Mul:
-            [[fallthrough]];
         case OperatorID::Div:
-            [[fallthrough]];
         case OperatorID::LessThan:
-            [[fallthrough]];
         case OperatorID::LessEqual:
-            [[fallthrough]];
         case OperatorID::GreaterThan:
-            [[fallthrough]];
         case OperatorID::GreaterEqual:
-            [[fallthrough]];
         case OperatorID::Equal:
-            [[fallthrough]];
         case OperatorID::NotEqual:
-            [[fallthrough]];
         case OperatorID::Select: {
             if(lt->isFloatingPoint() && rt->isFloatingPoint()) {
                 target = lt->getFixedSize() > rt->getFixedSize() ? lt : rt;
@@ -506,15 +486,10 @@ static void calcImplicitTypeConversion(OperatorID op, const Type* lt, const Type
         }
         // IOP
         case OperatorID::Rem:
-            [[fallthrough]];
         case OperatorID::BitwiseAnd:
-            [[fallthrough]];
         case OperatorID::BitwiseOr:
-            [[fallthrough]];
         case OperatorID::Xor:
-            [[fallthrough]];
         case OperatorID::ShiftLeft:
-            [[fallthrough]];
         case OperatorID::ShiftRight: {
             if(lt->isFloatingPoint() || rt->isFloatingPoint())
                 DiagnosticsContext::get().attach<Reason>("rem/band/bor/xor/shl/shr float,float is not allowed").reportFatal();

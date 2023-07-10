@@ -740,7 +740,6 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             };
             case InstructionID::Branch:
-                [[fallthrough]];
             case InstructionID::ConditionalBranch: {
                 ++branchCount;
                 auto branch = inst.as<BranchInst>();
@@ -904,14 +903,12 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 break;
             }
             case InstructionID::SExt:
-                [[fallthrough]];
             case InstructionID::SignedTrunc: {
                 addInt(getInt(0));
                 --instructionCount;
                 break;
             }
             case InstructionID::ZExt:
-                [[fallthrough]];
             case InstructionID::UnsignedTrunc: {
                 addUInt(getUInt(0));
                 --instructionCount;

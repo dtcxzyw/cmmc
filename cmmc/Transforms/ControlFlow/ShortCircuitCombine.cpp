@@ -91,18 +91,12 @@ class ShortCircuitCombine final : public TransformPass<Function> {
             }
             switch(inst.getInstID()) {
                 case InstructionID::Phi:
-                    [[fallthrough]];
                 case InstructionID::Store:
-                    [[fallthrough]];
                 case InstructionID::Call:
-                    [[fallthrough]];
                 // It is not safe to speculate division, since SIGFPE may be raised.
                 case InstructionID::SDiv:
-                    [[fallthrough]];
                 case InstructionID::UDiv:
-                    [[fallthrough]];
                 case InstructionID::SRem:
-                    [[fallthrough]];
                 case InstructionID::URem:
                     return false;
                 case InstructionID::Load: {

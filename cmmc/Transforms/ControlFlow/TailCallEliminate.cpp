@@ -54,9 +54,7 @@ class TailCallEliminate final : public TransformPass<Function> {
     static ConstantValue* getIdentity(InstructionID inst, const Type* type) {
         switch(inst) {
             case InstructionID::Add:
-                [[fallthrough]];
             case InstructionID::Or:
-                [[fallthrough]];
             case InstructionID::Xor:
                 return ConstantInteger::get(type, 0);
             case InstructionID::And:
@@ -105,24 +103,19 @@ class TailCallEliminate final : public TransformPass<Function> {
             // associative & commutative
             switch(iter->getInstID()) {
                 case InstructionID::Add:
-                    [[fallthrough]];
                 case InstructionID::And:
-                    [[fallthrough]];
                 case InstructionID::Or:
-                    [[fallthrough]];
                 case InstructionID::Xor:
-                    [[fallthrough]];
                 case InstructionID::Mul:
+                case InstructionID::SMax:
+                case InstructionID::SMin:
                     // FIXME: fp ops
                     /*
-                        [[fallthrough]];
                     case InstructionID::FAdd:
-                        [[fallthrough]];
                     case InstructionID::FMul:
                     */
                     accInst = iter.get();
                     break;
-                    // TODO: max/min
                 default:
                     return false;
             }

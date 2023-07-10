@@ -424,13 +424,9 @@ class BlockReorder final : public TransformPass<Function> {
             for(auto& inst : block->instructions()) {
                 switch(inst.getInstID()) {
                     case InstructionID::Add:
-                        [[fallthrough]];
                     case InstructionID::Mul:
-                        [[fallthrough]];
                     case InstructionID::And:
-                        [[fallthrough]];
                     case InstructionID::Or:
-                        [[fallthrough]];
                     case InstructionID::Xor: {
                         if(comp(inst.getOperand(0), inst.getOperand(1)) == StrongOrder::LessThan) {
                             std::swap(inst.operands()[0], inst.operands()[1]);
@@ -439,7 +435,6 @@ class BlockReorder final : public TransformPass<Function> {
                         break;
                     }
                     case InstructionID::ICmp:
-                        [[fallthrough]];
                     case InstructionID::FCmp: {
                         if(auto op = inst.as<CompareInst>()->getOp(); (op == CompareOp::Equal || op == CompareOp::NotEqual) &&
                            comp(inst.getOperand(0), inst.getOperand(1)) == StrongOrder::LessThan) {

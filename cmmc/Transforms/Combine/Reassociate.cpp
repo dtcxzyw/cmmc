@@ -48,14 +48,11 @@ class Reassociate final : public TransformPass<Function> {
         const auto ret = reduceBlock(builder, block, [&](Instruction* inst) -> Value* {
             switch(inst->getInstID()) {
                 case InstructionID::Add:
-                    [[fallthrough]];
                 case InstructionID::Mul:
-                    [[fallthrough]];
                 case InstructionID::Or:
-                    [[fallthrough]];
                 case InstructionID::Xor:
-                    [[fallthrough]];
                 case InstructionID::And:
+                    // TODO: max/min
                     break;
                 default:
                     return nullptr;

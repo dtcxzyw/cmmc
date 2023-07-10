@@ -148,18 +148,13 @@ bool isMovableExpr(const Instruction& inst, bool relaxedCtx) {
         return false;
     switch(inst.getInstID()) {
         case InstructionID::Alloc:
-            [[fallthrough]];
         case InstructionID::Phi:
-            [[fallthrough]];
         case InstructionID::Load:
             return false;
         // It is not safe to speculate division, since SIGFPE may be raised.
         case InstructionID::SDiv:
-            [[fallthrough]];
         case InstructionID::UDiv:
-            [[fallthrough]];
         case InstructionID::SRem:
-            [[fallthrough]];
         case InstructionID::URem:
             return !relaxedCtx || isNonZero(inst.getOperand(1));
         default:

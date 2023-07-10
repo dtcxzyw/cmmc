@@ -156,9 +156,7 @@ static bool isOperandShOp(const MIROperand& op) {
 
     switch(op.imm()) {
         case LSL:
-            [[fallthrough]];
         case LSR:
-            [[fallthrough]];
         case ASR:
             return true;
         default:
@@ -171,11 +169,8 @@ AddressingImmRange getAddressingImmRange(OperandType type, uint32_t opcode) {
         return AddressingImmRange::VFP;
     switch(opcode) {
         case LDRH:
-            [[fallthrough]];
         case STRH:
-            [[fallthrough]];
         case LDRSH:
-            [[fallthrough]];
         case LDRSB:
             return AddressingImmRange::Imm9;
         default:

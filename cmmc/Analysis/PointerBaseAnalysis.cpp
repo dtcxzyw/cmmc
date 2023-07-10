@@ -75,7 +75,6 @@ static Value* traceInterProceduralInst(Instruction* inst, uint32_t depth) {
 
     switch(inst->getInstID()) {
         case InstructionID::GetElementPtr:
-            [[fallthrough]];
         case InstructionID::PtrCast:
             return traceInterProceduralVal(inst->lastOperand(), depth + 1);
         case InstructionID::Select: {
@@ -124,7 +123,6 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
 
             switch(inst.getInstID()) {
                 case InstructionID::GetElementPtr:
-                    [[fallthrough]];
                 case InstructionID::PtrCast:
                     graph[inst.lastOperand()].push_back(&inst);
                     degree[&inst] = 1;
@@ -195,7 +193,6 @@ PointerBaseAnalysisResult PointerBaseAnalysis::run(Function& func, AnalysisPassM
 
         switch(inst->getInstID()) {
             case InstructionID::GetElementPtr:
-                [[fallthrough]];
             case InstructionID::PtrCast:
                 setStorage(inst, storage.at(inst->lastOperand()));
                 break;

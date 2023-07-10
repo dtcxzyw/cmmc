@@ -122,7 +122,6 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
 static MIPSInst getLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return LB;
         case OperandType::Int16:
@@ -150,7 +149,6 @@ static MIPSInst getZExtLoadOpcode(const MIROperand& dst) {
 static MIPSInst getStoreOpcode(const MIROperand& src) {
     switch(src.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return SB;
         case OperandType::Int16:
@@ -325,15 +323,10 @@ CMMC_TARGET_NAMESPACE_BEGIN
 bool MIPSISelInfo::isLegalGenericInst(uint32_t opcode) const {
     switch(opcode) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg:
-            [[fallthrough]];
         case InstLoadRegFromStack:
-            [[fallthrough]];
         case InstStoreRegToStack:
-            [[fallthrough]];
         case InstLoadStackObjectAddr:
             return true;
         default:
@@ -378,11 +371,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
     };
     switch(inst.opcode()) {
         case InstAdd:
-            [[fallthrough]];
         case InstAnd:
-            [[fallthrough]];
         case InstOr:
-            [[fallthrough]];
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -420,13 +410,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstMul:
-            [[fallthrough]];
         case InstSDiv:
-            [[fallthrough]];
         case InstSRem:
-            [[fallthrough]];
         case InstUDiv:
-            [[fallthrough]];
         case InstURem: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -500,7 +486,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSExt:
-            [[fallthrough]];
         case InstTrunc: {
             imm2reg(inst.getOperand(1));
             break;
@@ -518,9 +503,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstShl:
-            [[fallthrough]];
         case InstAShr:
-            [[fallthrough]];
         case InstLShr: {
             auto& lhs = inst.getOperand(1);
             auto& shamt = inst.getOperand(2);
@@ -548,9 +531,7 @@ void MIPSISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg: {
             auto& dst = inst.getOperand(0);
             auto& src = inst.getOperand(1);
@@ -655,19 +636,12 @@ void MIPSISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx, 
             break;
         }
         case SW:
-            [[fallthrough]];
         case SH:
-            [[fallthrough]];
         case SB:
-            [[fallthrough]];
         case SWC1:
-            [[fallthrough]];
         case LW:
-            [[fallthrough]];
         case LH:
-            [[fallthrough]];
         case LB:
-            [[fallthrough]];
         case LWC1: {
             assert(checkOpIdx(2));
             inst.setOperand<2>(base).setOperand<1>(imm);

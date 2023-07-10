@@ -130,7 +130,6 @@ static bool selectAddrOffset(const MIROperand& addr, ISelContext& ctx, MIROperan
 static RISCVInst getLoadOpcode(const MIROperand& dst) {
     switch(dst.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return LB;
         case OperandType::Int16:
@@ -162,7 +161,6 @@ static RISCVInst getZExtLoadOpcode(const MIROperand& dst) {
 static RISCVInst getStoreOpcode(const MIROperand& src) {
     switch(src.type()) {
         case OperandType::Bool:
-            [[fallthrough]];
         case OperandType::Int8:
             return SB;
         case OperandType::Int16:
@@ -407,15 +405,10 @@ CMMC_TARGET_NAMESPACE_BEGIN
 bool RISCVISelInfo::isLegalGenericInst(uint32_t opcode) const {
     switch(opcode) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg:
-            [[fallthrough]];
         case InstLoadRegFromStack:
-            [[fallthrough]];
         case InstStoreRegToStack:
-            [[fallthrough]];
         case InstLoadStackObjectAddr:
             return true;
         default:
@@ -460,11 +453,8 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
     };
     switch(inst.opcode()) {
         case InstAdd:
-            [[fallthrough]];
         case InstAnd:
-            [[fallthrough]];
         case InstOr:
-            [[fallthrough]];
         case InstXor: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -518,13 +508,9 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstMul:
-            [[fallthrough]];
         case InstSDiv:
-            [[fallthrough]];
         case InstSRem:
-            [[fallthrough]];
         case InstUDiv:
-            [[fallthrough]];
         case InstURem: {
             auto& lhs = inst.getOperand(1);
             auto& rhs = inst.getOperand(2);
@@ -610,7 +596,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSExt:
-            [[fallthrough]];
         case InstTrunc: {
             imm2reg(inst.getOperand(1));
             break;
@@ -621,9 +606,7 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstShl:
-            [[fallthrough]];
         case InstAShr:
-            [[fallthrough]];
         case InstLShr: {
             auto& lhs = inst.getOperand(1);
             auto& shamt = inst.getOperand(2);
@@ -633,7 +616,6 @@ static bool legalizeInst(MIRInst& inst, ISelContext& ctx) {
             break;
         }
         case InstSMin:
-            [[fallthrough]];
         case InstSMax: {
             auto& lhs = inst.getOperand(1);
             imm2reg(lhs);
@@ -665,9 +647,7 @@ void RISCVISelInfo::postLegalizeInst(const InstLegalizeContext& ctx) const {
     auto& inst = ctx.inst;
     switch(inst.opcode()) {
         case InstCopy:
-            [[fallthrough]];
         case InstCopyFromReg:
-            [[fallthrough]];
         case InstCopyToReg: {
             auto& dst = inst.getOperand(0);
             auto& src = inst.getOperand(1);
@@ -829,29 +809,17 @@ void RISCVISelInfo::legalizeInstWithStackOperand(const InstLegalizeContext& ctx,
             break;
         }
         case SD:
-            [[fallthrough]];
         case SW:
-            [[fallthrough]];
         case SH:
-            [[fallthrough]];
         case SB:
-            [[fallthrough]];
         case FSW:
-            [[fallthrough]];
         case LD:
-            [[fallthrough]];
         case LW:
-            [[fallthrough]];
         case LWU:
-            [[fallthrough]];
         case LH:
-            [[fallthrough]];
         case LHU:
-            [[fallthrough]];
         case LB:
-            [[fallthrough]];
         case LBU:
-            [[fallthrough]];
         case FLW: {
             assert(checkOpIdx(2));
             inst.setOperand<2>(base).setOperand<1>(imm);

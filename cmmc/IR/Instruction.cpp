@@ -934,12 +934,10 @@ bool CastInst::verify(std::ostream& out) const {
     auto src = getOperand(0);
     switch(getInstID()) {
         case InstructionID::SignedTrunc:
-            [[fallthrough]];
         case InstructionID::UnsignedTrunc: {
             return src->getType()->getFixedSize() >= getType()->getFixedSize();
         }
         case InstructionID::SExt:
-            [[fallthrough]];
         case InstructionID::ZExt: {
             if(src->getType()->isBoolean() && !getType()->isBoolean())
                 return true;

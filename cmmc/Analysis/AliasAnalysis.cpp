@@ -305,7 +305,6 @@ AliasAnalysisResult AliasAnalysis::run(Function& func, AnalysisPassManager& anal
                     break;
                 }
                 case InstructionID::Load:
-                    [[fallthrough]];
                 case InstructionID::Call: {
                     result.addValue(&inst, {});
                     break;

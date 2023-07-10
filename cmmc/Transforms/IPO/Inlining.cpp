@@ -141,7 +141,6 @@ class FuncInlining final : public TransformPass<Function> {
                     break;
                 }
                 case InstructionID::Branch:
-                    [[fallthrough]];
                 case InstructionID::ConditionalBranch: {
                     auto branch = terminator->as<BranchInst>();
                     auto& trueTarget = branch->getTrueTarget();
