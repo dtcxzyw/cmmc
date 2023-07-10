@@ -100,6 +100,11 @@
       "parent": "9c5da85a06ef97bc6d4700a1dc515d848cb16063",
       "time": "2023-07-06 20:56:42 +0800"
     },
+    "358d96c9221178bd343c4e1d41e2c314c51b75fa": {
+      "message": "test: update regression ref",
+      "parent": "dabfc3a1c89344fa298928384e4e5a0a72ce1506",
+      "time": "2023-07-10 19:22:24 +0800"
+    },
     "3628affbb0d62df57fec2147a4efcb473f1db33e": {
       "message": "feat(transform): fix branch prob of scalar blocks",
       "parent": "e064c2c26c0e93124b57a73b09a98f08bbfd077a",
@@ -521,5 +526,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "dabfc3a1c89344fa298928384e4e5a0a72ce1506"
+  "head": "358d96c9221178bd343c4e1d41e2c314c51b75fa"
 }
