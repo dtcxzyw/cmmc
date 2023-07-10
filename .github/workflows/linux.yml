@@ -25,15 +25,23 @@ jobs:
           path: pages
 
       - name: Update commit information on gh-pages
-        run: |
-          python3 tests/SysY2022/perf/update_info.py pages
-          cd pages
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git status
-          git commit -m "Update commit information by ${{github.sha}}"
-          git push
+        uses: nick-fields/retry@v2
+        if: always()
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: |
+            cd pages
+            git reset origin/gh-pages --
+            git clean -f -d
+            git pull
+            python3 ../tests/SysY2022/perf/update_info.py .
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git status
+            git commit -m "Update commit information by ${{github.sha}}"
+            git push
 
       - name: Env
         run: |

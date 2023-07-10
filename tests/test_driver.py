@@ -460,7 +460,7 @@ def sysy_cmmc_native_perf(src, target, i):
     os.makedirs(os.path.dirname(output), exist_ok=True)
     fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
 
-    link_executable(src, target, output, runtime=os.path.join(tests_path, 'SysY2022/perf/runtime.c'))
+    link_executable(src, target, output, runtime=os.path.join(tests_path, f'SysY2022/perf/runtime.{target}.c'))
     time_used = run_executable(['taskset', '-c', '2,3', output], fake_src, f"cmmc_native_{target}")
     collect_perf_data(fake_src, target, i, time_used)
 
