@@ -59,10 +59,10 @@ for file in os.listdir(raw_perf_data_path):
     data_file = os.path.join(collected_perf_data_path, target, 'data', f'{name}_perf.json')
     data = read_json(data_file)
     if 'gcc' in target:
-        data[target] = perf_data
+        data['gcc'] = perf_data
     else:
-        data[target] = data.get(target, {})  # init empty
-        data[target][commit_hash] = perf_data
+        data['data'] = data.get('data', {})  # init empty
+        data['data'][commit_hash] = perf_data
     with open(data_file, 'w') as f:
         json.dump(data, f, indent=2, sort_keys=True)
 

@@ -73,8 +73,8 @@ jobs:
           name: PerformanceSource
           path: build/bin/SysY2022/
 
-  test:
-    runs-on: self-hosted
+  arm_perf:
+    runs-on: [ self-hosted, ARM64 ]
     needs: build
 
     steps:
@@ -100,12 +100,63 @@ jobs:
           path: pages
 
       - name: Push perf data to gh-pages
+        uses: nick-fields/retry@v2
         if: always()
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: |
+            cd pages
+            git reset origin/gh-pages --
+            git clean -f -d
+            git pull
+            python3 ../tests/SysY2022/perf/collect.py ../bin/SysY2022/performance . arm
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "Push perf data by ${{github.sha}} (ARM)"
+            git push
+
+  riscv_perf:
+    runs-on: [ self-hosted, riscv64 ]
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: PerformanceSource
+          path: ${{github.workspace}}/bin/SysY2022/
+
+      - name: Run
         run: |
-          python3 tests/SysY2022/perf/collect.py bin/SysY2022/performance pages arm
-          cd pages
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "Push perf data by ${{github.sha}}"
-          git push
+          cd bin
+          python3 ../tests/test_driver.py cmmc ../tests riscv,run
+
+      - uses: actions/checkout@v3
+        if: always()
+        with:
+          ref: gh-pages
+          path: pages
+
+      - name: Push perf data to gh-pages
+        uses: nick-fields/retry@v2
+        if: always()
+        with:
+          timeout_minutes: 60
+          max_attempts: 3
+          command: |
+            cd pages
+            git reset origin/gh-pages --
+            git clean -f -d
+            git pull
+            python3 ../tests/SysY2022/perf/collect.py ../bin/SysY2022/performance . riscv
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .
+            git commit -m "Push perf data by ${{github.sha}} (RISC-V)"
+            git push

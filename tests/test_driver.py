@@ -439,7 +439,7 @@ def sysy_cmmc_native(src, target):
 
 def sysy_cmmc_compile_only(src, target):
     output = get_output_path(src) + "_cmmc"
-    output_asm = output + '.s'
+    output_asm = f'{output}.{target}.s'
     run_cmmc(src, target=target, output=output_asm, hide_symbol=True)
     # link_executable(output_asm, target, output)
 
@@ -452,7 +452,7 @@ def sysy_gcc_native_perf(src, target, i):
 
 
 def sysy_cmmc_native_perf(src, target, i):
-    testname = src.removesuffix('_cmmc.s').split('SysY2022/')[1]
+    testname = src.removesuffix(f'_cmmc.{target}.s').split('SysY2022/')[1]
     output = os.path.join(binary_dir, testname) + '_cmmc'
     os.makedirs(os.path.dirname(output), exist_ok=True)
     fake_src = os.path.join(tests_path, 'SysY2022', testname) + '.sy'
@@ -630,7 +630,7 @@ if not generate_ref:
             with PerformanceEnv():
                 for i in range(5):
                     res.append(test("SysY codegen performance (native-{})".format(target),
-                                    "SysY2022/performance", ".s", lambda x: sysy_cmmc_native_perf(x, target, i)))
+                                    "SysY2022/performance", f".{target}.s", lambda x: sysy_cmmc_native_perf(x, target, i)))
         if "run-gcc" in test_cases:
             with PerformanceEnv():
                 for i in range(5):
