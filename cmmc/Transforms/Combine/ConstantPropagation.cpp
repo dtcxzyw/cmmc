@@ -134,6 +134,8 @@ class ConstantPropagation final : public TransformPass<Function> {
                     return makeFP(inst, f1 * f2);
                 if(fdiv(fp_(f1), fp_(f2))(matchCtx))
                     return makeFP(inst, f1 / f2);
+                if(fabs(fp_(f1))(matchCtx))
+                    return makeFP(inst, std::fabs(f1));
                 if(fma_(fp_(f1), fp_(f2), fp_(f3))(matchCtx))
                     return makeFP(inst, fma(f1, f2, f3));
             } else if(inst->isCompareOp()) {

@@ -1016,6 +1016,15 @@ InstSelection:
             Rt: $Sign
         Rt: $Sign
 
+  - Pattern:
+      InstFAbs:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      ABS_S:
+        Rd: $Dst
+        Rs: $Src
+
   # For csmith
   - Pattern:
       InstZExt:

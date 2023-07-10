@@ -186,6 +186,11 @@ auto fneg(T value) noexcept {
     return UnaryOpMatcher{ InstructionID::FNeg, value };
 }
 
+template <typename T>
+auto fabs(T value) noexcept {
+    return UnaryOpMatcher{ InstructionID::FAbs, value };
+}
+
 template <bool IsCommutative, typename LhsMatcher, typename RhsMatcher>
 class BinaryOpMatcher final : public GenericMatcher<BinaryInst, BinaryOpMatcher<IsCommutative, LhsMatcher, RhsMatcher>> {
     InstructionID mTarget;

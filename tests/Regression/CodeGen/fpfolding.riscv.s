@@ -3,26 +3,21 @@
 .text
 .globl my_fabs
 my_fabs:
-	fmv.w.x f11, zero
-	fle.s a0, f11, f10
-	fneg.s f11, f10
-	bne a0, zero, label8
-	fmv.s f10, f11
-label8:
+	fabs.s f10, f10
 	ret
 .globl my_fmin
 my_fmin:
 	flt.s a0, f10, f11
-	bne a0, zero, label15
+	bne a0, zero, label10
 	fmv.s f10, f11
-label15:
+label10:
 	ret
 .globl my_fmax
 my_fmax:
 	flt.s a0, f11, f10
-	bne a0, zero, label22
+	bne a0, zero, label17
 	fmv.s f10, f11
-label22:
+label17:
 	ret
 .globl my_trunc
 my_trunc:

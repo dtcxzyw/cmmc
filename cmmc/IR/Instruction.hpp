@@ -77,6 +77,7 @@ enum class InstructionID {
     FMul,
     FDiv,
     FNeg,
+    FAbs,
     FFma,
     FloatingPointOpEnd,
     // compare ops

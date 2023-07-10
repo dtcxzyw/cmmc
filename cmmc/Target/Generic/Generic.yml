@@ -78,6 +78,8 @@ InstInfo:
         Op: FDiv
   FNeg:
     Format: FNeg $Dst:FReg[Def], $Src:FReg[Use]
+  FAbs:
+    Format: FAbs $Dst:FReg[Def], $Src:FReg[Use]
   FFma:
     Format: FFma $Dst:FReg[Def], $Lhs:FReg[Use], $Rhs:FReg[Use], $Acc:FReg[Use]
   ICmp:

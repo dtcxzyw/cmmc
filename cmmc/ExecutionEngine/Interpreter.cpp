@@ -887,6 +887,10 @@ std::variant<ConstantValue*, SimulationFailReason> Interpreter::execute(Module& 
                 addFP(-getFP(0));
                 break;
             }
+            case InstructionID::FAbs: {
+                addFP(std::fabs(getFP(0)));
+                break;
+            }
             case InstructionID::FFma: {
                 addFP(fma(getFP(0), getFP(1), getFP(2)));
                 break;

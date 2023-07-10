@@ -265,6 +265,7 @@ enum MIRGenericInst : uint32_t {
     InstFMul,
     InstFDiv,
     InstFNeg,
+    InstFAbs,
     InstFFma,
     // Comparison
     InstICmp,  // dst, lhs, rhs, op

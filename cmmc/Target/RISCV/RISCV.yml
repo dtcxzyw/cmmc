@@ -238,6 +238,8 @@ InstInfo:
     Template: FFType
     FNEG_S:
       Mnemonic: fneg.s
+    FABS_S:
+      Mnemonic: fabs.s
     FSGNJ_S:
       Mnemonic: fsgnj.s
     FMV_S:
@@ -1720,6 +1722,15 @@ InstSelection:
         Rhs: $Rhs
         CC: $CmpOpcode
 
+  - Pattern:
+      InstFAbs:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      FABS_S:
+        Rd: $Dst
+        Rs1: $Src
+
 ScheduleModel:
   sifive-u74:
     CustomPeepholeOpt: true
@@ -1806,7 +1817,17 @@ ScheduleModel:
       DivRem: [DIV, DIVU, REM, REMU, DIVW, DIVUW, REMW, REMUW]
       FPCycle1: [FMV_X_W]
       FPCycle2:
-        [FNEG_S, FCVT_S_W, FCVT_S_WU, FMV_S, FMV_W_X, FMIN_S, FMAX_S, FSGNJ_S]
+        [
+          FNEG_S,
+          FCVT_S_W,
+          FCVT_S_WU,
+          FMV_S,
+          FMV_W_X,
+          FMIN_S,
+          FMAX_S,
+          FSGNJ_S,
+          FABS_S,
+        ]
       FPCycle4: [FEQ_S, FLT_S, FLE_S, FCVT_W_S, FCVT_WU_S]
       FPCycle5: [FADD_S, FSUB_S, FMUL_S]
       FPDiv: [FDIV_S]

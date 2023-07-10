@@ -161,6 +161,8 @@ public:
                 [[fallthrough]];
             case InstructionID::FNeg:
                 [[fallthrough]];
+            case InstructionID::FAbs:
+                [[fallthrough]];
             case InstructionID::FFma:
                 [[fallthrough]];
             case InstructionID::SExt:

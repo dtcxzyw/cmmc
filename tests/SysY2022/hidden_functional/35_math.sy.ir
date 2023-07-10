@@ -81,25 +81,23 @@ internal func @asr5(f32 %a, f32 %b, f32 %eps, f32 %A, i32 %flag) -> f32 { NoMemo
     f32 %23 = fdiv f32 %22, f32 6;
     f32 %24 = fadd f32 %23, f32 %13;
     f32 %25 = fsub f32 %24, f32 %A;
-    i1 %26 = fcmp ogt f32 %25, f32 0;
-    f32 %27 = fneg f32 %25;
-    f32 %28 = select i1 %26 ? f32 %25 : f32 %27;
-    f32 %29 = fmul f32 %eps, f32 15;
-    i1 %30 = fcmp ole f32 %28, f32 %29;
-    cbr i1 %30(prob = 0.5), ^if.then, ^b1;
+    f32 %26 = fabs f32 %25;
+    f32 %27 = fmul f32 %eps, f32 15;
+    i1 %28 = fcmp ole f32 %26, f32 %27;
+    cbr i1 %28(prob = 0.5), ^if.then, ^b1;
   ^if.then:
-    f32 %31 = fdiv f32 %25, f32 15;
-    f32 %32 = fadd f32 %24, f32 %31;
+    f32 %29 = fdiv f32 %25, f32 15;
+    f32 %30 = fadd f32 %24, f32 %29;
     ubr ^b2;
   ^b1:
-    f32 %33 = fmul f32 %eps, f32 0.5;
-    f32 %34 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %a, f32 %2, f32 %33, f32 %23, i32 1);
-    f32 %35 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %2, f32 %b, f32 %33, f32 %13, i32 1);
-    f32 %36 = fadd f32 %34, f32 %35;
+    f32 %31 = fmul f32 %eps, f32 0.5;
+    f32 %32 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %a, f32 %2, f32 %31, f32 %23, i32 1);
+    f32 %33 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 %2, f32 %b, f32 %31, f32 %13, i32 1);
+    f32 %34 = fadd f32 %32, f32 %33;
     ubr ^b2;
   ^b2:
-    f32 %37 = phi [^if.then, f32 %32] [^b1, f32 %36];
-    ret f32 %37;
+    f32 %35 = phi [^if.then, f32 %30] [^b1, f32 %34];
+    ret f32 %35;
 }
 internal func @eee(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
@@ -225,116 +223,115 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %0 = call () -> i32 @getint();
     ubr ^while.header;
   ^while.header:
-    i32 %1 = phi [^entry, i32 %0] [^b4, i32 %68];
+    i32 %1 = phi [^entry, i32 %0] [^b4, i32 %67];
     i1 %2 = icmp neq i32 %1, i32 0;
     cbr i1 %2(prob = 0.97), ^while.body, ^b;
   ^while.body:
     f32 %3 = call () -> f32 @getfloat();
-    i1 %4 = fcmp ogt f32 %3, f32 0;
-    f32 %5 = fneg f32 %3;
-    f32 %6 = select i1 %4 ? f32 %3 : f32 %5;
-    f32 %7 = call () -> f32 @getfloat();
-    call (f32) -> void @putfloat(f32 %6);
+    f32 %4 = fabs f32 %3;
+    f32 %5 = call () -> f32 @getfloat();
+    call (f32) -> void @putfloat(f32 %4);
     call (i32) -> void @putch(i32 32);
     ubr ^while.body1;
   ^b:
     ret i32 0;
   ^while.body1:
-    i32 %8 = phi [^while.body, i32 2] [^while.body1, i32 %14];
-    f32 %9 = phi [^while.body, f32 1] [^while.body1, f32 %13];
-    f32 %10 = phi [^while.body, f32 %3] [^while.body1, f32 %16];
-    f32 %11 = fmul f32 %9, f32 %10;
-    i1 %12 = ztrunc i32 %8 to i1;
-    f32 %13 = select i1 %12 ? f32 %11 : f32 %9;
-    i32 %14 = sdiv i32 %8, i32 2;
-    i1 %15 = icmp neq i32 %14, i32 0;
-    f32 %16 = fmul f32 %10, f32 %10;
-    cbr i1 %15(prob = 0.97), ^while.body1, ^b1;
+    i32 %6 = phi [^while.body, i32 2] [^while.body1, i32 %12];
+    f32 %7 = phi [^while.body, f32 1] [^while.body1, f32 %11];
+    f32 %8 = phi [^while.body, f32 %3] [^while.body1, f32 %14];
+    f32 %9 = fmul f32 %7, f32 %8;
+    i1 %10 = ztrunc i32 %6 to i1;
+    f32 %11 = select i1 %10 ? f32 %9 : f32 %7;
+    i32 %12 = sdiv i32 %6, i32 2;
+    i1 %13 = icmp neq i32 %12, i32 0;
+    f32 %14 = fmul f32 %8, f32 %8;
+    cbr i1 %13(prob = 0.97), ^while.body1, ^b1;
   ^b1:
-    call (f32) -> void @putfloat(f32 %13);
-    f32 %17 = call (f32) -> f32 @my_sqrt(f32 %3);
+    call (f32) -> void @putfloat(f32 %11);
+    f32 %15 = call (f32) -> f32 @my_sqrt(f32 %3);
     call (i32) -> void @putch(i32 32);
-    call (f32) -> void @putfloat(f32 %17);
-    f32 %18 = call (f32) -> f32 @my_exp(f32 %3);
+    call (f32) -> void @putfloat(f32 %15);
+    f32 %16 = call (f32) -> f32 @my_exp(f32 %3);
     call (i32) -> void @putch(i32 32);
-    call (f32) -> void @putfloat(f32 %18);
+    call (f32) -> void @putfloat(f32 %16);
     call (i32) -> void @putch(i32 32);
-    cbr i1 %4(prob = 0.5), ^entry1, ^if.else;
+    i1 %17 = fcmp ogt f32 %3, f32 0;
+    cbr i1 %17(prob = 0.5), ^entry1, ^if.else;
   ^entry1:
-    f32 %19 = fsub f32 %3, f32 1;
-    f32 %20 = fmul f32 %19, f32 0.5;
-    f32 %21 = fadd f32 %20, f32 1;
-    f32 %22 = fdiv f32 1, f32 %21;
-    f32 %23 = fmul f32 %22, f32 4;
-    f32 %24 = fadd f32 %23, f32 1;
-    f32 %25 = fdiv f32 1, f32 %3;
-    f32 %26 = fadd f32 %24, f32 %25;
-    f32 %27 = fmul f32 %26, f32 %19;
-    f32 %28 = fdiv f32 %27, f32 6;
-    f32 %29 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %28, i32 1);
-    call (f32) -> void @putfloat(f32 %29);
+    f32 %18 = fsub f32 %3, f32 1;
+    f32 %19 = fmul f32 %18, f32 0.5;
+    f32 %20 = fadd f32 %19, f32 1;
+    f32 %21 = fdiv f32 1, f32 %20;
+    f32 %22 = fmul f32 %21, f32 4;
+    f32 %23 = fadd f32 %22, f32 1;
+    f32 %24 = fdiv f32 1, f32 %3;
+    f32 %25 = fadd f32 %23, f32 %24;
+    f32 %26 = fmul f32 %25, f32 %18;
+    f32 %27 = fdiv f32 %26, f32 6;
+    f32 %28 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %27, i32 1);
+    call (f32) -> void @putfloat(f32 %28);
     ubr ^b2;
   ^if.else:
     call (i32) -> void @putch(i32 45);
     ubr ^b2;
   ^b2:
     call (i32) -> void @putch(i32 32);
-    i1 %30 = fcmp ogt f32 %7, f32 0;
-    i1 %31 = and i1 %4, i1 %30;
-    cbr i1 %31(prob = 0.5), ^entry2, ^if.else1;
+    i1 %29 = fcmp ogt f32 %5, f32 0;
+    i1 %30 = and i1 %17, i1 %29;
+    cbr i1 %30(prob = 0.5), ^entry2, ^if.else1;
   ^entry2:
-    f32 %32 = fsub f32 %7, f32 1;
-    f32 %33 = fmul f32 %32, f32 0.5;
-    f32 %34 = fadd f32 %33, f32 1;
-    f32 %35 = fdiv f32 1, f32 %34;
-    f32 %36 = fmul f32 %35, f32 4;
-    f32 %37 = fadd f32 %36, f32 1;
-    f32 %38 = fdiv f32 1, f32 %7;
-    f32 %39 = fadd f32 %37, f32 %38;
-    f32 %40 = fmul f32 %39, f32 %32;
-    f32 %41 = fdiv f32 %40, f32 6;
-    f32 %42 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %7, f32 1e-08, f32 %41, i32 1);
-    f32 %43 = fsub f32 %3, f32 1;
-    f32 %44 = fmul f32 %43, f32 0.5;
-    f32 %45 = fadd f32 %44, f32 1;
-    f32 %46 = fdiv f32 1, f32 %45;
-    f32 %47 = fmul f32 %46, f32 4;
-    f32 %48 = fadd f32 %47, f32 1;
-    f32 %49 = fdiv f32 1, f32 %3;
-    f32 %50 = fadd f32 %48, f32 %49;
-    f32 %51 = fmul f32 %50, f32 %43;
-    f32 %52 = fdiv f32 %51, f32 6;
-    f32 %53 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %52, i32 1);
-    f32 %54 = fdiv f32 %42, f32 %53;
-    call (f32) -> void @putfloat(f32 %54);
+    f32 %31 = fsub f32 %5, f32 1;
+    f32 %32 = fmul f32 %31, f32 0.5;
+    f32 %33 = fadd f32 %32, f32 1;
+    f32 %34 = fdiv f32 1, f32 %33;
+    f32 %35 = fmul f32 %34, f32 4;
+    f32 %36 = fadd f32 %35, f32 1;
+    f32 %37 = fdiv f32 1, f32 %5;
+    f32 %38 = fadd f32 %36, f32 %37;
+    f32 %39 = fmul f32 %38, f32 %31;
+    f32 %40 = fdiv f32 %39, f32 6;
+    f32 %41 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %5, f32 1e-08, f32 %40, i32 1);
+    f32 %42 = fsub f32 %3, f32 1;
+    f32 %43 = fmul f32 %42, f32 0.5;
+    f32 %44 = fadd f32 %43, f32 1;
+    f32 %45 = fdiv f32 1, f32 %44;
+    f32 %46 = fmul f32 %45, f32 4;
+    f32 %47 = fadd f32 %46, f32 1;
+    f32 %48 = fdiv f32 1, f32 %3;
+    f32 %49 = fadd f32 %47, f32 %48;
+    f32 %50 = fmul f32 %49, f32 %42;
+    f32 %51 = fdiv f32 %50, f32 6;
+    f32 %52 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %51, i32 1);
+    f32 %53 = fdiv f32 %41, f32 %52;
+    call (f32) -> void @putfloat(f32 %53);
     ubr ^b3;
   ^if.else1:
     call (i32) -> void @putch(i32 45);
     ubr ^b3;
   ^b3:
     call (i32) -> void @putch(i32 32);
-    cbr i1 %4(prob = 0.5), ^entry3, ^if.else2;
+    cbr i1 %17(prob = 0.5), ^entry3, ^if.else2;
   ^entry3:
-    f32 %55 = fsub f32 %3, f32 1;
-    f32 %56 = fmul f32 %55, f32 0.5;
-    f32 %57 = fadd f32 %56, f32 1;
-    f32 %58 = fdiv f32 1, f32 %57;
-    f32 %59 = fmul f32 %58, f32 4;
-    f32 %60 = fadd f32 %59, f32 1;
-    f32 %61 = fdiv f32 1, f32 %3;
-    f32 %62 = fadd f32 %60, f32 %61;
-    f32 %63 = fmul f32 %62, f32 %55;
-    f32 %64 = fdiv f32 %63, f32 6;
-    f32 %65 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %64, i32 1);
-    f32 %66 = fmul f32 %7, f32 %65;
-    f32 %67 = call (f32) -> f32 @my_exp(f32 %66);
-    call (f32) -> void @putfloat(f32 %67);
+    f32 %54 = fsub f32 %3, f32 1;
+    f32 %55 = fmul f32 %54, f32 0.5;
+    f32 %56 = fadd f32 %55, f32 1;
+    f32 %57 = fdiv f32 1, f32 %56;
+    f32 %58 = fmul f32 %57, f32 4;
+    f32 %59 = fadd f32 %58, f32 1;
+    f32 %60 = fdiv f32 1, f32 %3;
+    f32 %61 = fadd f32 %59, f32 %60;
+    f32 %62 = fmul f32 %61, f32 %54;
+    f32 %63 = fdiv f32 %62, f32 6;
+    f32 %64 = call (f32, f32, f32, f32, i32) -> f32 @asr5(f32 1, f32 %3, f32 1e-08, f32 %63, i32 1);
+    f32 %65 = fmul f32 %5, f32 %64;
+    f32 %66 = call (f32) -> f32 @my_exp(f32 %65);
+    call (f32) -> void @putfloat(f32 %66);
     ubr ^b4;
   ^if.else2:
     call (i32) -> void @putch(i32 45);
     ubr ^b4;
   ^b4:
     call (i32) -> void @putch(i32 10);
-    i32 %68 = add i32 %1, i32 -1;
+    i32 %67 = add i32 %1, i32 -1;
     ubr ^while.header;
 }

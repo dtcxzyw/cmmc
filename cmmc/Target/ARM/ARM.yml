@@ -1466,6 +1466,15 @@ InstSelection:
             Op2: $InvertedRhs
             CC: getCC()
 
+  - Pattern:
+      InstFAbs:
+        Dst: $Dst
+        Src: $Src
+    Replace:
+      VABS_F32:
+        Fd: $Dst
+        Fm: $Src
+
   # For csmith
   - Pattern:
       InstZExt:

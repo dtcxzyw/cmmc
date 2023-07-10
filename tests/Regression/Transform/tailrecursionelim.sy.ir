@@ -113,10 +113,8 @@ func @f(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRec
 }
 func @my_fabs(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
-    i1 %0 = fcmp oge f32 %x, f32 0;
-    f32 %1 = fneg f32 %x;
-    f32 %2 = select i1 %0 ? f32 %x : f32 %1;
-    ret f32 %2;
+    f32 %0 = fabs f32 %x;
+    ret f32 %0;
 }
 func @simpson(f32 %l, f32 %r, f32 %fl, f32 %fm, f32 %fr) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:
@@ -150,19 +148,17 @@ func @SAAImpl(f32 %l, f32 %m, f32 %r, f32 %fl, f32 %fm, f32 %fr, f32 %sm) -> f32
     f32 %17 = fdiv f32 %16, f32 6;
     f32 %18 = fadd f32 %8, f32 %17;
     f32 %19 = fsub f32 %sm, f32 %18;
-    i1 %20 = fcmp oge f32 %19, f32 0;
-    f32 %21 = fneg f32 %19;
-    f32 %22 = select i1 %20 ? f32 %19 : f32 %21;
-    i1 %23 = fcmp olt f32 %22, f32 1e-08;
-    cbr i1 %23(prob = 0.5), ^b1, ^b;
+    f32 %20 = fabs f32 %19;
+    i1 %21 = fcmp olt f32 %20, f32 1e-08;
+    cbr i1 %21(prob = 0.5), ^b1, ^b;
   ^b:
-    f32 %24 = call (f32, f32, f32, f32, f32, f32, f32) -> f32 @SAAImpl(f32 %l, f32 %1, f32 %m, f32 %fl, f32 %2, f32 %fm, f32 %8);
-    f32 %25 = call (f32, f32, f32, f32, f32, f32, f32) -> f32 @SAAImpl(f32 %m, f32 %10, f32 %r, f32 %fm, f32 %11, f32 %fr, f32 %17);
-    f32 %26 = fadd f32 %24, f32 %25;
+    f32 %22 = call (f32, f32, f32, f32, f32, f32, f32) -> f32 @SAAImpl(f32 %l, f32 %1, f32 %m, f32 %fl, f32 %2, f32 %fm, f32 %8);
+    f32 %23 = call (f32, f32, f32, f32, f32, f32, f32) -> f32 @SAAImpl(f32 %m, f32 %10, f32 %r, f32 %fm, f32 %11, f32 %fr, f32 %17);
+    f32 %24 = fadd f32 %22, f32 %23;
     ubr ^b1;
   ^b1:
-    f32 %27 = phi [^entry, f32 %18] [^b, f32 %26];
-    ret f32 %27;
+    f32 %25 = phi [^entry, f32 %18] [^b, f32 %24];
+    ret f32 %25;
 }
 func @SAA(f32 %l, f32 %r) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
   ^entry:

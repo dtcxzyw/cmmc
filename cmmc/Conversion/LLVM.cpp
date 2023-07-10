@@ -246,6 +246,8 @@ class LLVMConversionContext final {
                 return builder.CreateFDiv(getOperand(0), getOperand(1));
             case InstructionID::FNeg:
                 return builder.CreateFNeg(getOperand(0));
+            case InstructionID::FAbs:
+                return builder.CreateUnaryIntrinsic(llvm::Intrinsic::fabs, getOperand(0));
             case InstructionID::FFma: {
                 const auto type = getType(inst.getType());
                 return builder.CreateIntrinsic(llvm::Intrinsic::fma, { type, type, type },

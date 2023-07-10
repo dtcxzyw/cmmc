@@ -290,6 +290,8 @@ static std::string_view getInstName(InstructionID instID) {
             return "fdiv"sv;
         case InstructionID::FNeg:
             return "fneg"sv;
+        case InstructionID::FAbs:
+            return "fabs"sv;
         case InstructionID::FFma:
             return "ffma"sv;
         case InstructionID::ICmp:

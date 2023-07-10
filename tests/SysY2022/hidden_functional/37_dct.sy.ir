@@ -7,37 +7,33 @@ internal [8 * [8 * f32]]* @test_dct;
 internal [8 * [8 * f32]]* @test_idct;
 internal func @my_sin_impl(f32 %x) -> f32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless } {
   ^entry:
-    i1 %0 = fcmp ogt f32 %x, f32 0;
-    f32 %1 = fneg f32 %x;
-    f32 %2 = select i1 %0 ? f32 %x : f32 %1;
-    i1 %3 = fcmp ole f32 %2, f32 1e-06;
-    cbr i1 %3(prob = 0.5), ^b1, ^b;
+    f32 %0 = fabs f32 %x;
+    i1 %1 = fcmp ole f32 %0, f32 1e-06;
+    cbr i1 %1(prob = 0.5), ^b1, ^b;
   ^b:
-    f32 %4 = fdiv f32 %x, f32 3;
-    i1 %5 = fcmp ogt f32 %4, f32 0;
-    f32 %6 = fneg f32 %4;
-    f32 %7 = select i1 %5 ? f32 %4 : f32 %6;
-    i1 %8 = fcmp ole f32 %7, f32 1e-06;
-    cbr i1 %8(prob = 0.5), ^b2, ^b3;
+    f32 %2 = fdiv f32 %x, f32 3;
+    f32 %3 = fabs f32 %2;
+    i1 %4 = fcmp ole f32 %3, f32 1e-06;
+    cbr i1 %4(prob = 0.5), ^b2, ^b3;
   ^b1:
-    f32 %9 = phi [^entry, f32 %x] [^b2, f32 %15];
-    ret f32 %9;
+    f32 %5 = phi [^entry, f32 %x] [^b2, f32 %11];
+    ret f32 %5;
   ^b2:
-    f32 %10 = phi [^b, f32 %4] [^b3, f32 %22];
-    f32 %11 = fmul f32 %10, f32 4;
-    f32 %12 = fmul f32 %11, f32 %10;
-    f32 %13 = fmul f32 %12, f32 %10;
-    f32 %14 = fmul f32 %10, f32 3;
-    f32 %15 = fsub f32 %14, f32 %13;
+    f32 %6 = phi [^b, f32 %2] [^b3, f32 %18];
+    f32 %7 = fmul f32 %6, f32 4;
+    f32 %8 = fmul f32 %7, f32 %6;
+    f32 %9 = fmul f32 %8, f32 %6;
+    f32 %10 = fmul f32 %6, f32 3;
+    f32 %11 = fsub f32 %10, f32 %9;
     ubr ^b1;
   ^b3:
-    f32 %16 = fdiv f32 %4, f32 3;
-    f32 %17 = call (f32) -> f32 @my_sin_impl(f32 %16);
-    f32 %18 = fmul f32 %17, f32 4;
-    f32 %19 = fmul f32 %18, f32 %17;
-    f32 %20 = fmul f32 %19, f32 %17;
-    f32 %21 = fmul f32 %17, f32 3;
-    f32 %22 = fsub f32 %21, f32 %20;
+    f32 %12 = fdiv f32 %2, f32 3;
+    f32 %13 = call (f32) -> f32 @my_sin_impl(f32 %12);
+    f32 %14 = fmul f32 %13, f32 4;
+    f32 %15 = fmul f32 %14, f32 %13;
+    f32 %16 = fmul f32 %15, f32 %13;
+    f32 %17 = fmul f32 %13, f32 3;
+    f32 %18 = fsub f32 %17, f32 %16;
     ubr ^b2;
 }
 func @main() -> i32 { NoRecurse Entry } {

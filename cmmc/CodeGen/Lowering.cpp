@@ -637,6 +637,8 @@ static void lower(UnaryInst* inst, LoweringContext& ctx) {
                 return InstAbs;
             case InstructionID::FNeg:
                 return InstFNeg;
+            case InstructionID::FAbs:
+                return InstFAbs;
             default:
                 reportUnreachable(CMMC_LOCATION());
         }
@@ -979,6 +981,8 @@ static void lowerInst(Instruction* inst, LoweringContext& ctx) {
         case InstructionID::Abs:
             [[fallthrough]];
         case InstructionID::FNeg:
+            [[fallthrough]];
+        case InstructionID::FAbs:
             lower(inst->as<UnaryInst>(), ctx);
             break;
         case InstructionID::ICmp:

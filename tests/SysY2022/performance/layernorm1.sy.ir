@@ -54,7 +54,7 @@ func @main() -> i32 { NoRecurse Entry } {
     call (f32) -> void @putfloat(f32 %16);
     ubr ^b2;
   ^while.header4:
-    i32 %22 = phi [^while.header2, i32 0] [^while.body11, i32 %453];
+    i32 %22 = phi [^while.header2, i32 0] [^while.body11, i32 %451];
     i1 %23 = icmp slt i32 %22, i32 1000;
     cbr i1 %23(prob = 0.97), ^while.body2, ^while.header5;
   ^while.body2:
@@ -529,28 +529,26 @@ func @main() -> i32 { NoRecurse Entry } {
   ^while.header6:
     f32 %444 = phi [^while.body8, f32 0] [^if.then, f32 %444] [^if.else, f32 %446];
     f32 %445 = phi [^while.body8, f32 %317] [^if.then, f32 %446] [^if.else, f32 %445];
-    f32 %446 = phi [^while.body8, f32 %318] [^if.then, f32 %456] [^if.else, f32 %458];
+    f32 %446 = phi [^while.body8, f32 %318] [^if.then, f32 %454] [^if.else, f32 %456];
     f32 %447 = fmul f32 %446, f32 %446;
     f32 %448 = fsub f32 %447, f32 %317;
-    i1 %449 = fcmp olt f32 %448, f32 0;
-    f32 %450 = fneg f32 %448;
-    f32 %451 = select i1 %449 ? f32 %450 : f32 %448;
-    i1 %452 = fcmp ogt f32 %451, f32 0.001;
-    cbr i1 %452(prob = 0.97), ^while.body12, ^while.body11;
+    f32 %449 = fabs f32 %448;
+    i1 %450 = fcmp ogt f32 %449, f32 0.001;
+    cbr i1 %450(prob = 0.97), ^while.body12, ^while.body11;
   ^while.body11:
     store f32* %26 with f32 %446;
-    i32 %453 = add i32 %22, i32 1;
+    i32 %451 = add i32 %22, i32 1;
     ubr ^while.header4;
   ^while.body12:
-    i1 %454 = fcmp ogt f32 %447, f32 %317;
-    cbr i1 %454(prob = 0.5), ^if.then, ^if.else;
+    i1 %452 = fcmp ogt f32 %447, f32 %317;
+    cbr i1 %452(prob = 0.5), ^if.then, ^if.else;
   ^if.then:
-    f32 %455 = fadd f32 %446, f32 %444;
-    f32 %456 = fmul f32 %455, f32 0.5;
+    f32 %453 = fadd f32 %446, f32 %444;
+    f32 %454 = fmul f32 %453, f32 0.5;
     ubr ^while.header6;
   ^if.else:
-    f32 %457 = fadd f32 %446, f32 %445;
-    f32 %458 = fmul f32 %457, f32 0.5;
+    f32 %455 = fadd f32 %446, f32 %445;
+    f32 %456 = fmul f32 %455, f32 0.5;
     ubr ^while.header6;
 }
 internal [1000 * f32]* @var;

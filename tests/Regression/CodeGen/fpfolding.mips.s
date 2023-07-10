@@ -2,13 +2,7 @@
 .text
 .globl my_fabs
 my_fabs:
-	mtc1 $zero, $f4
-	c.ult.s $f12, $f4
-	li $t0, 1
-	movt $t0, $zero, $fcc0
-	neg.s $f4, $f12
-	mov.s $f0, $f12
-	movz.s $f0, $f4, $t0
+	abs.s $f0, $f12
 	jr $ra
 	nop
 .globl my_fmin

@@ -1010,6 +1010,19 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // TODO: nan and negative zero?
+            if(select(fcmp(cmp, any(v1), cfp_(0.0)), fneg(any(v2)), any(v3))(matchCtx) &&
+               (cmp == CompareOp::FCmpOrderedLessThan || cmp == CompareOp::FCmpOrderedLessEqual) && v1 == v2 && v1 == v3) {
+                return builder.makeOp<UnaryInst>(InstructionID::FAbs, v1);
+            }
+            if(select(fcmp(cmp, any(v1), cfp_(0.0)), any(v2), fneg(any(v3)))(matchCtx) &&
+               (cmp == CompareOp::FCmpOrderedGreaterEqual || cmp == CompareOp::FCmpOrderedGreaterThan) && v1 == v2 && v1 == v3) {
+                return builder.makeOp<UnaryInst>(InstructionID::FAbs, v1);
+            }
+
+            if(fabs(capture(fabs(any(v1)), v2))(matchCtx))
+                return v2;
+
             return nullptr;
         });
         return ret || modified;
