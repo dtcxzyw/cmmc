@@ -160,6 +160,11 @@
       "parent": "e03e3c83399238f730406314e82a701c4971d4a5",
       "time": "2023-07-09 23:35:37 +0800"
     },
+    "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a": {
+      "message": "ci: add risc-v perf test",
+      "parent": "358d96c9221178bd343c4e1d41e2c314c51b75fa",
+      "time": "2023-07-10 21:35:46 +0800"
+    },
     "4678b367c4ef70bb6da5aee7664f1d330d1c988c": {
       "message": "feat(codegen): add LICM",
       "parent": "aeac1e66c11f6efbdcde8214496b70e6d6b171ca",
@@ -526,5 +531,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "358d96c9221178bd343c4e1d41e2c314c51b75fa"
+  "head": "464e8e1230c6a1aa3473ad0935c5b4bcc78ef76a"
 }
