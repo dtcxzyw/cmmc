@@ -138,7 +138,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %33 with i32 0;
     i32 %34 = add i32 %32, i32 1;
     i1 %35 = icmp slt i32 %34, i32 10;
-    cbr i1 %35(prob = 0.97), ^while.body1, ^entry1;
+    cbr i1 %35(prob = 0.75), ^while.body1, ^entry1;
   ^entry1:
     i1 %36 = icmp sgt i32 %21, i32 0;
     cbr i1 %36(prob = 0.97), ^while.body2, ^while.header;
@@ -201,7 +201,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %71 with i32 0;
     i32 %72 = add i32 %70, i32 1;
     i1 %73 = icmp slt i32 %72, i32 10;
-    cbr i1 %73(prob = 0.97), ^while.body4, ^while.header1;
+    cbr i1 %73(prob = 0.75), ^while.body4, ^while.header1;
   ^while.header1:
     i32 %74 = call (i32, i32, i32, [10 * i32]*, [10 * i32]*) -> i32 @dfs(i32 1, i32 %20, i32 1879048192, [10 * i32]* %size, [10 * i32]* %used);
     i1 %75 = icmp eq i32 %74, i32 0;

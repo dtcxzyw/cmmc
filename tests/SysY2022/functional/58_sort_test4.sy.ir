@@ -88,7 +88,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %56 = select i1 %55 ? i32 %49 : i32 %50;
     i32 %57 = add i32 %49, i32 1;
     i1 %58 = icmp slt i32 %57, i32 10;
-    cbr i1 %58(prob = 0.97), ^while.body3, ^b1;
+    cbr i1 %58(prob = 0.75), ^while.body3, ^b1;
   ^b1:
     i1 %59 = icmp neq i32 %10, i32 %56;
     cbr i1 %59(prob = 0.5), ^if.then, ^while.header;

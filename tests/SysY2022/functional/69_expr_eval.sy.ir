@@ -69,7 +69,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %35 with i32 0;
     i64 %36 = add i64 %34, i64 1;
     i1 %37 = icmp slt i64 %36, i64 256;
-    cbr i1 %37(prob = 0.97), ^b2, ^super.header1;
+    cbr i1 %37(prob = 0.75), ^b2, ^super.header1;
   ^super.header1:
     i64 %38 = phi [^b2, i64 0] [^b3, i64 %39];
     i64 %39 = add i64 %38, i64 4;
@@ -91,7 +91,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %46 with i32 0;
     i64 %47 = add i64 %45, i64 1;
     i1 %48 = icmp slt i64 %47, i64 256;
-    cbr i1 %48(prob = 0.97), ^b4, ^entry5;
+    cbr i1 %48(prob = 0.75), ^b4, ^entry5;
   ^entry5:
     i1 %49 = icmp neq i32 %25, i32 0;
     cbr i1 %49(prob = 0.5), ^entry6, ^b5;

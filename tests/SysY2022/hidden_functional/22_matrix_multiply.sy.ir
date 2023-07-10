@@ -146,7 +146,7 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %86 = add i32 %78, i32 %85;
     i32 %87 = add i32 %79, i32 1;
     i1 %88 = icmp sgt i32 %1, i32 %87;
-    cbr i1 %88(prob = 0.97), ^while.body4, ^postbody;
+    cbr i1 %88(prob = 0.75), ^while.body4, ^postbody;
   ^postbody:
     store i32* %37 with i32 %86;
     ubr ^b5;

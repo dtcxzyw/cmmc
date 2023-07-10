@@ -39,7 +39,7 @@ func @main() -> i32 { NoMemoryRead NoRecurse Entry } {
     store i32* %16 with i32 0;
     i64 %17 = add i64 %15, i64 1;
     i1 %18 = icmp slt i64 %17, i64 4090;
-    cbr i1 %18(prob = 0.97), ^b1, ^entry1;
+    cbr i1 %18(prob = 0.75), ^b1, ^entry1;
   ^entry1:
     [4096 * i32]* %19 = ptrcast [4096 * i32]* @a to [4096 * i32]*;
     i32* %20 = getelementptr &([4096 * i32]* %19)[i64 0][i64 5];

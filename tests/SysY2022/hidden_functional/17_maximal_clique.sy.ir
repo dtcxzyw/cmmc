@@ -210,6 +210,6 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %91 with i32 1;
     i32 %92 = add i32 %82, i32 1;
     i1 %93 = icmp sgt i32 %31, i32 %92;
-    cbr i1 %93(prob = 0.97), ^while.body2, ^b;
+    cbr i1 %93(prob = 0.75), ^while.body2, ^b;
 }
 internal [600 * [2 * i32]]* @edges;

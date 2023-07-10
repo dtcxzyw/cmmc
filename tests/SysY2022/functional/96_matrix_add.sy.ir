@@ -167,7 +167,7 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     store f32* %114 with f32 %113;
     i32 %115 = add i32 %96, i32 1;
     i1 %116 = icmp slt i32 %115, i32 3;
-    cbr i1 %116(prob = 0.97), ^while.body1, ^while.body2;
+    cbr i1 %116(prob = 0.75), ^while.body1, ^while.body2;
   ^while.body2:
     i32 %117 = phi [^while.body1, i32 0] [^while.body2, i32 %121];
     f32* %118 = getelementptr &([6 * f32]* %c0)[i64 0][i32 %117];

@@ -108,7 +108,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     store f32* %65 with f32 %64;
     i32 %66 = add i32 %60, i32 1;
     i1 %67 = icmp sgt i32 %0, i32 %66;
-    cbr i1 %67(prob = 0.97), ^while.body2, ^b1;
+    cbr i1 %67(prob = 0.75), ^while.body2, ^b1;
   ^b3:
     i32 %68 = phi [^if.then, i32 0] [^if.else, i32 1];
     ret i32 %68;
@@ -149,7 +149,7 @@ func @main() -> i32 { NoMemoryWrite NoRecurse Entry } {
     f32 %100 = fadd f32 %94, f32 %99;
     i32 %101 = add i32 %93, i32 1;
     i1 %102 = icmp sgt i32 %0, i32 %101;
-    cbr i1 %102(prob = 0.97), ^while.body4, ^b2;
+    cbr i1 %102(prob = 0.75), ^while.body4, ^b2;
 }
 internal [4096 * f32]* @y;
 internal [4096 * f32]* @x;

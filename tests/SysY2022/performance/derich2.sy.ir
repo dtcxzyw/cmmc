@@ -112,7 +112,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %77 with f32 %76;
     i32 %78 = add i32 %65, i32 1;
     i1 %79 = icmp slt i32 %78, i32 270;
-    cbr i1 %79(prob = 0.97), ^while.body1, ^b;
+    cbr i1 %79(prob = 0.75), ^while.body1, ^b;
   ^super.header1:
     i32 %80 = phi [^prebody1, i32 269] [^while.body2, i32 %85];
     f32 %81 = phi [^prebody1, f32 0] [^while.body2, f32 %124];
@@ -189,7 +189,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %139 = load f32* %138;
     i32 %140 = add i32 %126, i32 -1;
     i1 %141 = icmp sgt i32 %140, i32 -1;
-    cbr i1 %141(prob = 0.97), ^while.body3, ^b1;
+    cbr i1 %141(prob = 0.75), ^while.body3, ^b1;
   ^super.header2:
     i32 %142 = phi [^prebody2, i32 0] [^while.body4, i32 %143];
     i32 %143 = add i32 %142, i32 4;
@@ -301,7 +301,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %228 with f32 %227;
     i32 %229 = add i32 %222, i32 1;
     i1 %230 = icmp slt i32 %229, i32 270;
-    cbr i1 %230(prob = 0.97), ^while.body6, ^b2;
+    cbr i1 %230(prob = 0.75), ^while.body6, ^b2;
   ^while.body7:
     i32 %231 = phi [^super.header3, i32 %145] [^while.body7, i32 %246];
     f32 %232 = phi [^super.header3, f32 %146] [^while.body7, f32 %237];
@@ -321,7 +321,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %245 with f32 %243;
     i32 %246 = add i32 %231, i32 1;
     i1 %247 = icmp slt i32 %246, i32 512;
-    cbr i1 %247(prob = 0.97), ^while.body7, ^b3;
+    cbr i1 %247(prob = 0.75), ^while.body7, ^b3;
   ^super.header4:
     i32 %248 = phi [^while.header4, i32 511] [^while.body8, i32 %253];
     f32 %249 = phi [^while.header4, f32 0] [^while.body8, f32 %301];
@@ -416,7 +416,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %321 = load f32* %320;
     i32 %322 = add i32 %306, i32 -1;
     i1 %323 = icmp sgt i32 %322, i32 -1;
-    cbr i1 %323(prob = 0.97), ^while.body9, ^b4;
+    cbr i1 %323(prob = 0.75), ^while.body9, ^b4;
   ^entry1:
     call (i32) -> void @stoptime(i32 158);
     f32* %324 = getelementptr &([512 * [270 * f32]]* %4)[i64 0][i64 0][i64 0];
@@ -471,7 +471,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store f32* %359 with f32 %358;
     i32 %360 = add i32 %353, i32 1;
     i1 %361 = icmp slt i32 %360, i32 270;
-    cbr i1 %361(prob = 0.97), ^while.body11, ^b5;
+    cbr i1 %361(prob = 0.75), ^while.body11, ^b5;
   ^b5:
     i32 %362 = add i32 %255, i32 1;
     ubr ^while.header5;

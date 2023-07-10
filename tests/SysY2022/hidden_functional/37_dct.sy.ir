@@ -320,7 +320,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %170 = fadd f32 %164, f32 %169;
     i32 %171 = add i32 %165, i32 1;
     i1 %172 = icmp sgt i32 %0, i32 %171;
-    cbr i1 %172(prob = 0.97), ^while.body9, ^postbody;
+    cbr i1 %172(prob = 0.75), ^while.body9, ^postbody;
   ^while.header11:
     cbr i1 %26(prob = 0.97), ^prebody4, ^b14;
   ^postbody:
@@ -370,7 +370,7 @@ func @main() -> i32 { NoRecurse Entry } {
     f32 %207 = fadd f32 %202, f32 %206;
     i32 %208 = add i32 %203, i32 1;
     i1 %209 = icmp sgt i32 %1, i32 %208;
-    cbr i1 %209(prob = 0.97), ^while.body11, ^postbody1;
+    cbr i1 %209(prob = 0.75), ^while.body11, ^postbody1;
   ^if.then2:
     f32 %210 = fdiv f32 %197, f32 6.28319;
     i32 %211 = f2s f32 %210 to i32;

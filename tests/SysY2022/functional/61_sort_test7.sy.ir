@@ -84,7 +84,7 @@ internal func @merge_sort(i32 %l, i32 %r) -> void {
     i32 %47 = add i32 %42, i32 1;
     i1 %48 = icmp sgt i32 %3, i32 %47;
     i32 %49 = add i32 %43, i32 1;
-    cbr i1 %48(prob = 0.97), ^while.body2, ^while.header2;
+    cbr i1 %48(prob = 0.75), ^while.body2, ^while.header2;
   ^super.header1:
     i32 %50 = phi [^while.header2, i32 %8] [^while.body3, i32 %52];
     i32 %51 = phi [^while.header2, i32 %28] [^while.body3, i32 %67];
@@ -123,7 +123,7 @@ internal func @merge_sort(i32 %l, i32 %r) -> void {
     i32 %73 = add i32 %68, i32 1;
     i1 %74 = icmp sgt i32 %r, i32 %73;
     i32 %75 = add i32 %69, i32 1;
-    cbr i1 %74(prob = 0.97), ^while.body4, ^while.header3;
+    cbr i1 %74(prob = 0.75), ^while.body4, ^while.header3;
   ^super.header2:
     i32 %76 = phi [^while.header3, i32 %l] [^while.body5, i32 %77];
     i32 %77 = add i32 %76, i32 4;
@@ -155,7 +155,7 @@ internal func @merge_sort(i32 %l, i32 %r) -> void {
     store i32* %94 with i32 %93;
     i32 %95 = add i32 %91, i32 1;
     i1 %96 = icmp sgt i32 %r, i32 %95;
-    cbr i1 %96(prob = 0.97), ^while.body6, ^if.then;
+    cbr i1 %96(prob = 0.75), ^while.body6, ^if.then;
 }
 func @main() -> i32 { NoRecurse Entry } {
   ^entry:

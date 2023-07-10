@@ -66,5 +66,5 @@ func @main() -> i32 { NoMemoryRead NoMemoryWrite NoRecurse Entry } {
     i32 %46 = srem i32 %45, i32 2147385347;
     i32 %47 = add i32 %38, i32 1;
     i1 %48 = icmp sgt i32 %0, i32 %47;
-    cbr i1 %48(prob = 0.97), ^prebody1, ^b;
+    cbr i1 %48(prob = 0.75), ^prebody1, ^b;
 }

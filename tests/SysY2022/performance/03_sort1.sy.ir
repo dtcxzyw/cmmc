@@ -214,7 +214,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %118 = add i32 %116, i32 1;
     i1 %119 = icmp sgt i32 %bitround, i32 %118;
     i32 %120 = sdiv i32 %117, i32 16;
-    cbr i1 %119(prob = 0.97), ^while.body4, ^b1;
+    cbr i1 %119(prob = 0.75), ^while.body4, ^b1;
   ^while.header1:
     i32 %121 = phi [^while.body3, i32 0] [^b3, i32 %135];
     i1 %122 = icmp slt i32 %121, i32 16;
@@ -308,7 +308,7 @@ internal func @radixSort(i32 %bitround, i32* %a, i32 %l, i32 %r) -> void {
     i32 %169 = add i32 %167, i32 1;
     i1 %170 = icmp sgt i32 %bitround, i32 %169;
     i32 %171 = sdiv i32 %168, i32 16;
-    cbr i1 %170(prob = 0.97), ^while.body9, ^b5;
+    cbr i1 %170(prob = 0.75), ^while.body9, ^b5;
 }
 internal [30000010 * i32]* @a;
 func @main() -> i32 { NoRecurse Entry } {
@@ -370,5 +370,5 @@ func @main() -> i32 { NoRecurse Entry } {
     i32 %41 = add i32 %34, i32 %40;
     i32 %42 = add i32 %35, i32 1;
     i1 %43 = icmp sgt i32 %2, i32 %42;
-    cbr i1 %43(prob = 0.97), ^while.body1, ^b;
+    cbr i1 %43(prob = 0.75), ^while.body1, ^b;
 }

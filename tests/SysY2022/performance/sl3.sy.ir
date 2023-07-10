@@ -170,7 +170,7 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %118 with i32 1;
     i32 %119 = add i32 %117, i32 1;
     i1 %120 = icmp sgt i32 %0, i32 %119;
-    cbr i1 %120(prob = 0.97), ^while.body2, ^b2;
+    cbr i1 %120(prob = 0.75), ^while.body2, ^b2;
   ^while.body3:
     i32 %121 = phi [^super.header1, i32 %40] [^while.body3, i32 %141];
     i32* %122 = getelementptr &([600 * i32]* %35)[i64 0][i32 %121];
@@ -195,5 +195,5 @@ func @main() -> i32 { NoRecurse Entry } {
     store i32* %133 with i32 %140;
     i32 %141 = add i32 %121, i32 1;
     i1 %142 = icmp sgt i32 %1, i32 %141;
-    cbr i1 %142(prob = 0.97), ^while.body3, ^while.header4;
+    cbr i1 %142(prob = 0.75), ^while.body3, ^while.header4;
 }

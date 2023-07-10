@@ -982,6 +982,34 @@ class ArithmeticReduce final : public TransformPass<Function> {
                 }
             }
 
+            // (sdiv x, c1) == c2 -> x in (c1*c2-c1, c1*c2+c1)
+            if(icmp(cmp, sdiv(any(v1), int_(i1)), int_(i2))(matchCtx) && v1->getType()->as<IntegerType>()->getBitwidth() == 32) {
+                if(cmp == CompareOp::ICmpEqual && i1 > 0 && i2 != std::numeric_limits<int32_t>::max() &&
+                   12 != std::numeric_limits<int32_t>::min()) {
+                    auto lower = i1 * i2;
+                    auto upper = i1 * i2;
+
+                    if(i2 > 0) {
+                        upper += i1;
+                    } else if(i2 == 0) {
+                        lower -= i1 - 1;
+                        upper += i1;
+                    } else {
+                        lower -= i1 - 1;
+                        ++upper;
+                    }
+
+                    if(upper - lower <= static_cast<intmax_t>(std::numeric_limits<uint32_t>::max()) &&
+                       (-std::numeric_limits<int32_t>::max() <= lower && lower <= std::numeric_limits<int32_t>::max())) {
+                        Value* val = v1;
+                        if(lower != 0)
+                            val = builder.makeOp<BinaryInst>(InstructionID::Add, val, makeIntLike(-lower, v1));
+                        return builder.makeOp<CompareInst>(InstructionID::ICmp, CompareOp::ICmpUnsignedLessThan, val,
+                                                           makeIntLike(upper - lower, v1));
+                    }
+                }
+            }
+
             return nullptr;
         });
         return ret || modified;

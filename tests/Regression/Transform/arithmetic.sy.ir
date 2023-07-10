@@ -746,3 +746,10 @@ func @select_imm(i32 %c) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Statel
     i32 %2 = neg i32 %1;
     ret i32 %2;
 }
+func @div_eq(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = add i32 %x, i32 1;
+    i1 %1 = icmp ult i32 %0, i32 3;
+    i32 %2 = zext i1 %1 to i32;
+    ret i32 %2;
+}

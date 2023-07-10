@@ -439,3 +439,6 @@ int32_t fused_div_rem_constant(int32_t x) {
 int select_imm(int c) {
     return c ? -1 : 0;
 }
+int div_eq(int x) {
+    return x / 2 == 0;
+}
