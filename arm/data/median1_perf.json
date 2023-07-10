@@ -1,5 +1,5 @@
 {
-  "arm": {
+  "data": {
     "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7": [
       {
         "sysy_time": 0.001803
@@ -471,7 +471,7 @@
       }
     ]
   },
-  "arm_gcc": [
+  "gcc": [
     {
       "sysy_time": 0.002732
     }

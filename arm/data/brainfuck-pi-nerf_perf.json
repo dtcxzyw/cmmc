@@ -1,5 +1,5 @@
 {
-  "arm": {
+  "data": {
     "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7": [
       {
         "branch-load-misses:u": 808366,
@@ -687,7 +687,7 @@
       }
     ]
   },
-  "arm_gcc": [
+  "gcc": [
     {
       "branch-load-misses:u": 1175455,
       "branch-loads:u": 1131531776,
