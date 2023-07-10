@@ -983,7 +983,8 @@ class ArithmeticReduce final : public TransformPass<Function> {
             }
 
             // (sdiv x, c1) == c2 -> x in (c1*c2-c1, c1*c2+c1)
-            if(icmp(cmp, sdiv(any(v1), int_(i1)), int_(i2))(matchCtx) && v1->getType()->as<IntegerType>()->getBitwidth() == 32) {
+            if(target.isNativeSupported(InstructionID::ICmp) && icmp(cmp, sdiv(any(v1), int_(i1)), int_(i2))(matchCtx) &&
+               v1->getType()->as<IntegerType>()->getBitwidth() == 32) {
                 if(cmp == CompareOp::ICmpEqual && i1 > 0 && i2 != std::numeric_limits<int32_t>::max() &&
                    12 != std::numeric_limits<int32_t>::min()) {
                     auto lower = i1 * i2;
