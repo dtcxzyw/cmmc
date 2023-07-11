@@ -71,6 +71,10 @@ constexpr bool isOperandNonZeroImm32(const MIROperand& operand) {
     return isOperandImm32(operand) && operand.imm() != 0;
 }
 
+constexpr bool isOperandNonZeroImm64(const MIROperand& operand) {
+    return operand.isImm() && operand.imm() != 0;
+}
+
 constexpr bool isOperandGPR(const MIROperand& operand) {
     if(!operand.isReg())
         return false;

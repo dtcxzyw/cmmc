@@ -206,6 +206,7 @@ class RISCVTarget final : public Target {
 public:
     [[nodiscard]] const TargetOptHeuristic& getOptHeuristic() const noexcept override {
         static TargetOptHeuristic defaultHeuristic{
+            .registerLength = 64U,
             .unrollBlockSize = 4U,
             .maxUnrollSize = 8U,
             .maxUnrollBodySize = 32U,

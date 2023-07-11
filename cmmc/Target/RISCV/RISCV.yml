@@ -361,6 +361,10 @@ InstInfo:
     Format: "li $Rd:GPR[Def], $Imm:NonZeroImm32[Metadata]" # lui + addi
     Flag: [LoadConstant]
 
+  LoadImm64:
+    Format: "li $Rd:GPR[Def], $Imm:NonZeroImm64[Metadata]"
+    Flag: [LoadConstant]
+
   MoveGPR:
     Format: "mv $Rd:GPR[Def], $Rs1:GPR[Use]"
     Flag: [RegCopy]
@@ -430,6 +434,17 @@ InstSelection:
       $Instances: [InstLoadImmToReg, InstLoadImm]
     Replace:
       LoadImm32:
+        Rd: $Dst
+        Imm: $Imm
+
+  - Pattern:
+      $Template:
+        Dst: $Dst
+        Imm: $Imm
+        $Predicate: isOperandNonZeroImm64($Imm)
+      $Instances: [InstLoadImmToReg, InstLoadImm]
+    Replace:
+      LoadImm64:
         Rd: $Dst
         Imm: $Imm
 
@@ -1787,7 +1802,7 @@ ScheduleModel:
           InstCopyFromReg,
           InstCopyToReg,
         ]
-      SlowLoadImm: [InstLoadImm, LoadImm32]
+      SlowLoadImm: [InstLoadImm, LoadImm32, LoadImm64]
       IntegerArithmeticLateB:
         [ROL, ROLW, ROR, RORI, RORIW, RORW, CLZ, CLZW, CTZ, CTZW, ORC_B]
       IntegerArithmeticEarlyB: [CPOP, CPOPW]

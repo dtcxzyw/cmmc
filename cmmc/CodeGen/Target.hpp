@@ -41,6 +41,7 @@ class MIRRelocable;
 enum class RuntimeType { None, SplRuntime };
 
 struct TargetOptHeuristic final {
+    uint32_t registerLength = 32U;
     // loop unrolling
     intmax_t unrollBlockSize = 4U;
     uint32_t maxUnrollSize = 8U;  // static loop unrolling only
