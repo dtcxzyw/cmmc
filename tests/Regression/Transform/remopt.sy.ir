@@ -1,0 +1,7 @@
+func @foo1(i32 %x) -> i32 { NoMemoryRead NoMemoryWrite NoSideEffect Stateless NoRecurse } {
+  ^entry:
+    i32 %0 = srem i32 %x, i32 256;
+    i32 %1 = mul i32 %0, i32 1089;
+    i32 %2 = srem i32 %1, i32 256;
+    ret i32 %2;
+}

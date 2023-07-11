@@ -15,6 +15,7 @@
 #pragma once
 #include <cmmc/Config.hpp>
 #include <cstdint>
+#include <limits>
 #include <optional>
 #include <ostream>
 
@@ -55,6 +56,9 @@ public:
     }
     [[nodiscard]] bool isPositive() const noexcept {
         return mMinSignedValue > 0;
+    }
+    [[nodiscard]] bool isNoSignedOverflow() const noexcept {
+        return mMinSignedValue > std::numeric_limits<int32_t>::min() && mMaxSignedValue < std::numeric_limits<int32_t>::max();
     }
 
     [[nodiscard]] bool intersectWith(const IntegerRange& rhs) const;

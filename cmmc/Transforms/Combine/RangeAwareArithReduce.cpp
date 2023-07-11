@@ -45,6 +45,12 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                 if(!operand->getType()->isInteger())
                     return nullptr;
             auto range = rangeAnalysis.query(inst, dom, inst, depth);
+
+            // inst->dumpInst(std::cerr);
+            // std::cerr << " -> ";
+            // range.print(std::cerr);
+            // std::cerr << '\n';
+
             if(auto c = range.inferConstant())
                 return ConstantInteger::get(inst->getType(), *c);
 
@@ -191,6 +197,16 @@ class RangeAwareArithReduce final : public TransformPass<Function> {
                     return v1;
                 if(lhsRange.minSignedValue() >= rhsRange.maxSignedValue())
                     return v2;
+            }
+
+            if(srem(oneUse(mul(oneUse(srem(any(v1), any(v2))), any(v3))), any(v4))(matchCtx) && v2 == v4) {
+                auto range1 = rangeAnalysis.query(v1, dom, inst, depth);
+                auto range2 = rangeAnalysis.query(v3, dom, inst, depth);
+                const auto product = range1 * range2;
+                if(product.isNoSignedOverflow()) {
+                    return builder.makeOp<BinaryInst>(InstructionID::SRem, builder.makeOp<BinaryInst>(InstructionID::Mul, v1, v3),
+                                                      v2);
+                }
             }
 
             return nullptr;

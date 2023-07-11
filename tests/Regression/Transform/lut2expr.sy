@@ -30,3 +30,11 @@ int test5(int x) {
         c[i] = -i;
     return c[x];
 }
+int test6(int x) {
+    int c[10];
+    for(int i = 0; i < 10; ++i)
+        c[i] = i;
+    int y = c[x];
+    c[4] = 100;
+    return c[x] + y;
+}

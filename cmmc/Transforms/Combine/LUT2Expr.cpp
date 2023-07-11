@@ -205,7 +205,7 @@ class LUT2Expr final : public TransformPass<Function> {
                 } else if(lutAddr.count(baseAddr)) {
                     const auto index = getConstantIndex(addr);
                     if(index.has_value()) {
-                        lut[baseAddr].emplace(*index, val);
+                        lut[baseAddr][*index] = val;
                     } else
                         lut.erase(baseAddr);
                 }
