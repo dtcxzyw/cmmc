@@ -19,10 +19,10 @@
 // ==>
 // int* a = alloc int;
 
-#include "cmmc/Analysis/PointerBaseAnalysis.hpp"
 #include <cmmc/Analysis/AliasAnalysis.hpp>
 #include <cmmc/Analysis/DominateAnalysis.hpp>
 #include <cmmc/Analysis/PointerAddressSpaceAnalysis.hpp>
+#include <cmmc/Analysis/PointerBaseAnalysis.hpp>
 #include <cmmc/Analysis/SimpleValueAnalysis.hpp>
 #include <cmmc/Analysis/StackAddressLeakAnalysis.hpp>
 #include <cmmc/IR/Block.hpp>
