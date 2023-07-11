@@ -13,6 +13,7 @@
 */
 
 #pragma once
+#include "cmmc/CodeGen/DataLayout.hpp"
 #include <cmmc/Analysis/AnalysisPass.hpp>
 #include <cmmc/IR/Block.hpp>
 #include <cmmc/IR/Function.hpp>
@@ -22,19 +23,19 @@
 
 CMMC_NAMESPACE_BEGIN
 
-class PointerBaseAnalysisResult final {
-    std::unordered_map<Value*, Value*> mInfo;
+class PointerAlignmentAnalysisResult final {
+    std::unordered_map<Value*, uint32_t> mInfo;
 
 public:
-    std::unordered_map<Value*, Value*>& storage() {
+    std::unordered_map<Value*, uint32_t>& storage() {
         return mInfo;
     }
-    Value* lookup(Value* pointer) const;
+    uint32_t lookup(Value* pointer, const DataLayout& dataLayout) const;
 };
 
-class PointerBaseAnalysis final : public FuncAnalysisPassWrapper<PointerBaseAnalysis, PointerBaseAnalysisResult> {
+class PointerAlignmentAnalysis final : public FuncAnalysisPassWrapper<PointerAlignmentAnalysis, PointerAlignmentAnalysisResult> {
 public:
-    static PointerBaseAnalysisResult run(Function& func, AnalysisPassManager& analysis);
+    static PointerAlignmentAnalysisResult run(Function& func, AnalysisPassManager& analysis);
 };
 
 CMMC_NAMESPACE_END
