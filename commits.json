@@ -20,6 +20,11 @@
       "parent": "26714d9d6988bee0ab3fee76f2c56aec14c5b2af",
       "time": "2023-07-04 19:55:33 +0800"
     },
+    "086e03c6856345fe64903c5818ac5f1b1b3471bb": {
+      "message": "misc: update ref",
+      "parent": "722eb895c5ff9ec49b2ffa12de20846c1425c4fa",
+      "time": "2023-07-11 19:47:26 +0800"
+    },
     "095dcd60f2d6b2f7cb106b55f72a4bed7c87ca2c": {
       "message": "feat(codegen): update ARM parameters",
       "parent": "2eb7ac2d5b6aceb7d0fc92b7b3bfe0886a3c9e29",
@@ -270,6 +275,11 @@
       "parent": "7723c3f8edd1fa9c76bcbdca70e504aecd661775",
       "time": "2023-07-02 17:59:31 +0800"
     },
+    "722eb895c5ff9ec49b2ffa12de20846c1425c4fa": {
+      "message": "fix(transform): fix lut2expr",
+      "parent": "e15d2533f26a57059fbb95edf8f811865c3d1a3f",
+      "time": "2023-07-11 19:45:20 +0800"
+    },
     "738794d0b3a8c5c37e6ab70bf25aa1eb8a98af42": {
       "message": "feat(codegen): don't duplicate blocks with calls",
       "parent": "682c6b62948d7cc72a528aa33d7a04cdf1f53502",
@@ -404,6 +414,11 @@
       "message": "feat(transform): move large allocas to global",
       "parent": "791d799938ed2429ceaf4f7f52e5a38e47e055e0",
       "time": "2023-07-02 14:55:49 +0800"
+    },
+    "a503ddcee8ddaf70ac35a73a90bb1ab414dced46": {
+      "message": "feat(codegen): simplify insts with zero for riscv",
+      "parent": "086e03c6856345fe64903c5818ac5f1b1b3471bb",
+      "time": "2023-07-11 21:14:46 +0800"
     },
     "a91e65b0fca3872769dbf87485e5f29b11066c21": {
       "message": "ci: fix RISC-V perf events",
@@ -540,6 +555,11 @@
       "parent": "06a1668979545faf5da61846bca1aa7c8bbe3728",
       "time": "2023-07-05 23:22:57 +0800"
     },
+    "e15d2533f26a57059fbb95edf8f811865c3d1a3f": {
+      "message": "feat(transform): add lut2expr",
+      "parent": "d59c49feebe67bdca8b7a92cca1d865c892253fb",
+      "time": "2023-07-11 18:55:29 +0800"
+    },
     "e65a04c5d006866fb356411e3978a98e19f6a0b4": {
       "message": "misc: update `.gitattributes` for generated references",
       "parent": "00e6cd2b13e3b99ff19815f49db801e9cc1d7db7",
@@ -581,5 +601,5 @@
       "time": "2023-07-06 01:05:50 +0800"
     }
   },
-  "head": "d59c49feebe67bdca8b7a92cca1d865c892253fb"
+  "head": "a503ddcee8ddaf70ac35a73a90bb1ab414dced46"
 }
